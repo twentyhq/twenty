@@ -25,10 +25,7 @@ import {
   type WorkflowWorkspaceEntity,
 } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 import { type WorkflowAiAgentAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
-import {
-  type RecordedExecutionResult,
-  WorkflowAgentConversationWorkspaceService,
-} from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/services/workflow-agent-conversation.workspace-service';
+import { WorkflowAgentConversationWorkspaceService } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/services/workflow-agent-conversation.workspace-service';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 import {
   type WorkflowManualTrigger,
@@ -47,66 +44,35 @@ const SYSTEM_ACTOR: ActorMetadata = {
   context: {},
 };
 
-const SEEDED_AGENT_QUESTION_RUNS: {
-  key: string;
-  prompt: string;
-  questions: AskQuestionItem[];
-}[] = [
+const PROMPT =
+  'Qualify the inbound lead from Figma and decide who should follow up.';
+
+const QUESTIONS: AskQuestionItem[] = [
   {
-    key: 'discount',
-    prompt:
-      'Qualify the inbound lead from Anthropic and draft the first reply.',
-    questions: [
-      {
-        header: 'Discount',
-        question:
-          'Anthropic asked for startup pricing. Should I offer the 20% startup discount in the first reply?',
-        options: [
-          {
-            label: 'Offer it',
-            description: 'Mention the discount in the first reply',
-            isRecommended: true,
-          },
-          {
-            label: 'Hold it',
-            description: 'Keep it for the negotiation',
-          },
-        ],
-      },
+    header: 'Budget',
+    question: 'Which budget range did Figma mention on the demo call?',
+    options: [
+      { label: 'Under $10k' },
+      { label: '$10k to $50k', isRecommended: true },
+      { label: 'Over $50k' },
     ],
   },
   {
-    key: 'qualification',
-    prompt:
-      'Qualify the inbound lead from Figma and decide who should follow up.',
-    questions: [
-      {
-        header: 'Budget',
-        question: 'Which budget range did Figma mention on the demo call?',
-        options: [
-          { label: 'Under $10k' },
-          { label: '$10k to $50k', isRecommended: true },
-          { label: 'Over $50k' },
-        ],
-      },
-      {
-        header: 'Owner',
-        question: 'Who should own the follow-up?',
-        options: [
-          { label: 'Tim', description: 'Account executive' },
-          { label: 'Phil', description: 'Solutions engineer' },
-        ],
-      },
-      {
-        header: 'Channels',
-        question: 'Which channels should the follow-up use?',
-        allowMultiSelect: true,
-        options: [
-          { label: 'Email', isRecommended: true },
-          { label: 'Call' },
-          { label: 'LinkedIn' },
-        ],
-      },
+    header: 'Owner',
+    question: 'Who should own the follow-up?',
+    options: [
+      { label: 'Tim', description: 'Account executive' },
+      { label: 'Phil', description: 'Solutions engineer' },
+    ],
+  },
+  {
+    header: 'Channels',
+    question: 'Which channels should the follow-up use?',
+    allowMultiSelect: true,
+    options: [
+      { label: 'Email', isRecommended: true },
+      { label: 'Call' },
+      { label: 'LinkedIn' },
     ],
   },
 ];
@@ -148,7 +114,7 @@ export class DevSeederWorkflowAgentQuestionWorkspaceService {
       valid: true,
       settings: {
         input: {
-          prompt: 'Qualify the inbound lead and draft the first reply.',
+          prompt: PROMPT,
           canAskQuestions: true,
         },
         outputSchema: {},
@@ -182,91 +148,77 @@ export class DevSeederWorkflowAgentQuestionWorkspaceService {
       agentStep,
     });
 
-    for (const seededRun of SEEDED_AGENT_QUESTION_RUNS) {
-      const workflowRunId = seedId(`workflowRun:${seededRun.key}`);
+    const workflowRunId = seedId('workflowRun');
+    const toolCallId = seedId('toolCall');
 
-      await this.workflowRunWorkspaceService.createCoreWorkflowRun({
-        workflowRunId,
-        coreWorkflowId,
-        coreWorkflowVersionId,
-        workspaceWorkflowId,
-        workspaceWorkflowVersionId,
-        workflowName: WORKFLOW_NAME,
-        trigger,
-        steps: [agentStep],
-        createdBy: {
-          source: FieldActorSource.MANUAL,
-          workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
-          name: 'Tim Apple',
-          context: {},
-        },
-        status: WorkflowRunStatus.NOT_STARTED,
-        triggerPayload: {},
-        workspaceId,
-      });
+    await this.workflowRunWorkspaceService.createCoreWorkflowRun({
+      workflowRunId,
+      coreWorkflowId,
+      coreWorkflowVersionId,
+      workspaceWorkflowId,
+      workspaceWorkflowVersionId,
+      workflowName: WORKFLOW_NAME,
+      trigger,
+      steps: [agentStep],
+      createdBy: {
+        source: FieldActorSource.MANUAL,
+        workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
+        name: 'Tim Apple',
+        context: {},
+      },
+      status: WorkflowRunStatus.NOT_STARTED,
+      triggerPayload: {},
+      workspaceId,
+    });
 
-      await this.workflowRunWorkspaceService.startWorkflowRun({
-        workflowRunId,
-        workspaceId,
-      });
+    await this.workflowRunWorkspaceService.startWorkflowRun({
+      workflowRunId,
+      workspaceId,
+    });
 
-      await this.workflowRunWorkspaceService.updateWorkflowRunStepInfo({
-        stepId: agentStep.id,
-        stepInfo: { status: StepStatus.PENDING },
-        workflowRunId,
-        workspaceId,
-      });
+    await this.workflowRunWorkspaceService.updateWorkflowRunStepInfo({
+      stepId: agentStep.id,
+      stepInfo: { status: StepStatus.PENDING },
+      workflowRunId,
+      workspaceId,
+    });
 
-      await this.workflowAgentConversationService.recordExecution({
-        workspaceId,
-        workflowRunId,
-        stepId: agentStep.id,
-        title: agentStep.name,
-        agentId: null,
-        prompt: seededRun.prompt,
-        initiatorUserWorkspaceId: null,
-        executionResult: this.buildAskingResult({
-          toolCallId: seedId(`toolCall:${seededRun.key}`),
-          questions: seededRun.questions,
-        }),
-      });
-    }
-  }
-
-  private buildAskingResult({
-    toolCallId,
-    questions,
-  }: {
-    toolCallId: string;
-    questions: AskQuestionItem[];
-  }): RecordedExecutionResult {
-    return {
-      isPaused: true,
-      steps: [
-        {
-          content: [
-            {
-              type: 'tool-call',
-              toolCallId,
-              toolName: ASK_QUESTIONS_TOOL_NAME,
-              input: { questions },
-            },
-            {
-              type: 'tool-result',
-              toolCallId,
-              toolName: ASK_QUESTIONS_TOOL_NAME,
-              input: { questions },
-              output: {
-                success: true,
-                message:
-                  'Questions presented to the user; awaiting their answer.',
-                result: { questions, status: 'pending' },
+    await this.workflowAgentConversationService.recordExecution({
+      workspaceId,
+      workflowRunId,
+      stepId: agentStep.id,
+      title: agentStep.name,
+      agentId: null,
+      prompt: PROMPT,
+      initiatorUserWorkspaceId: null,
+      executionResult: {
+        isPaused: true,
+        steps: [
+          {
+            content: [
+              {
+                type: 'tool-call',
+                toolCallId,
+                toolName: ASK_QUESTIONS_TOOL_NAME,
+                input: { questions: QUESTIONS },
               },
-            },
-          ],
-        },
-      ],
-    };
+              {
+                type: 'tool-result',
+                toolCallId,
+                toolName: ASK_QUESTIONS_TOOL_NAME,
+                input: { questions: QUESTIONS },
+                output: {
+                  success: true,
+                  message:
+                    'Questions presented to the user; awaiting their answer.',
+                  result: { questions: QUESTIONS, status: 'pending' },
+                },
+              },
+            ],
+          },
+        ],
+      },
+    });
   }
 
   private async insertWorkflow({

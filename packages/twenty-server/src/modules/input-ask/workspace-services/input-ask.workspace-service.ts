@@ -176,57 +176,34 @@ export class InputAskWorkspaceService {
     });
   }
 
-  // A conversation has at most one question pending at a time, the one its
-  // pending marker points at, so the thread alone identifies the Ask.
-  async answerPendingForThread({
+  // An agent can ask several times in one conversation, so the answer is
+  // matched to its question by tool call, never to whichever Ask is pending.
+  async answerForToolCall({
     workspaceId,
     threadId,
+    toolCallId,
     response,
   }: {
     workspaceId: string;
     threadId: string;
+    toolCallId: string | null;
     response: Record<string, unknown>;
-  }): Promise<string | null> {
-    if (!(await this.hasInputAskObject(workspaceId))) {
-      return null;
+  }): Promise<void> {
+    if (
+      !isDefined(toolCallId) ||
+      !(await this.hasInputAskObject(workspaceId))
+    ) {
+      return;
     }
 
-    return this.executeAsSystem(workspaceId, async (inputAskRepository) => {
-      const pendingInputAsk = await inputAskRepository.findOne({
-        where: { threadId, status: InputAskStatus.PENDING },
-        select: { id: true },
-      });
-
-      if (!isDefined(pendingInputAsk)) {
-        return null;
-      }
-
+    await this.executeAsSystem(workspaceId, async (inputAskRepository) => {
       await inputAskRepository.update(
-        { id: pendingInputAsk.id, status: InputAskStatus.PENDING },
+        { threadId, toolCallId, status: InputAskStatus.PENDING },
         {
           status: InputAskStatus.ANSWERED,
           response,
           answeredAt: new Date().toISOString(),
         },
-      );
-
-      return pendingInputAsk.id;
-    });
-  }
-
-  // Undoes answerPendingForThread when the answer it recorded is rolled back,
-  // so the Ask reads pending again alongside its reopened question.
-  async reopenAnswered({
-    workspaceId,
-    inputAskId,
-  }: {
-    workspaceId: string;
-    inputAskId: string;
-  }): Promise<void> {
-    await this.executeAsSystem(workspaceId, async (inputAskRepository) => {
-      await inputAskRepository.update(
-        { id: inputAskId, status: InputAskStatus.ANSWERED },
-        { status: InputAskStatus.PENDING, response: null, answeredAt: null },
       );
     });
   }

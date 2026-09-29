@@ -793,10 +793,13 @@ export class AgentChatService {
     threadId: string;
     messageId: string;
     answers: AskQuestionAnswer[];
-    streamId: string;
+    // Null for a conversation no chat stream continues, such as a workflow
+    // run's: its question is claimed by its marker alone.
+    streamId: string | null;
     workspaceId: string;
   }): Promise<{
     answerText: string;
+    toolCallId: string | null;
     turnId: string | null;
     rollback: PendingQuestionRollback;
   }> {
@@ -834,34 +837,20 @@ export class AgentChatService {
 
     this.validateQuestionAnswers(answers, questions);
 
-    const claim = await this.threadRepository.update(
-      workspaceId,
-      {
-        id: threadId,
-        pendingQuestionMessageId: messageId,
-        activeStreamId: IsNull(),
-      },
-      {
-        pendingQuestionMessageId: null,
-        activeStreamId: streamId,
-        lastStreamError: null,
-      },
-    );
+    const isClaimed = isDefined(streamId)
+      ? await this.claimQuestionForStream({
+          threadId,
+          messageId,
+          streamId,
+          workspaceId,
+        })
+      : await this.claimQuestionMarker({ threadId, messageId, workspaceId });
 
-    if ((claim.affected ?? 0) === 0) {
-      const adopted = await this.claimOrphanedQuestion({
-        threadId,
-        messageId,
-        streamId,
-        workspaceId,
-      });
-
-      if (!adopted) {
-        throw new AiException(
-          'No pending question to answer',
-          AiExceptionCode.QUESTION_NOT_PENDING,
-        );
-      }
+    if (!isClaimed) {
+      throw new AiException(
+        'No pending question to answer',
+        AiExceptionCode.QUESTION_NOT_PENDING,
+      );
     }
 
     try {
@@ -882,13 +871,12 @@ export class AgentChatService {
         },
       );
     } catch (error) {
-      await this.threadRepository
-        .update(
-          workspaceId,
-          { id: threadId, activeStreamId: streamId },
-          { pendingQuestionMessageId: messageId, activeStreamId: null },
-        )
-        .catch(() => {});
+      await this.releaseQuestionClaim({
+        threadId,
+        messageId,
+        streamId,
+        workspaceId,
+      });
       throw error;
     }
 
@@ -906,9 +894,94 @@ export class AgentChatService {
 
     return {
       answerText,
+      toolCallId: pendingPart.toolCallId,
       turnId: message.turnId,
       rollback: { partId: pendingPart.id, previousOutput },
     };
+  }
+
+  private async claimQuestionForStream({
+    threadId,
+    messageId,
+    streamId,
+    workspaceId,
+  }: {
+    threadId: string;
+    messageId: string;
+    streamId: string;
+    workspaceId: string;
+  }): Promise<boolean> {
+    const claim = await this.threadRepository.update(
+      workspaceId,
+      {
+        id: threadId,
+        pendingQuestionMessageId: messageId,
+        activeStreamId: IsNull(),
+      },
+      {
+        pendingQuestionMessageId: null,
+        activeStreamId: streamId,
+        lastStreamError: null,
+      },
+    );
+
+    if ((claim.affected ?? 0) > 0) {
+      return true;
+    }
+
+    return this.claimOrphanedQuestion({
+      threadId,
+      messageId,
+      streamId,
+      workspaceId,
+    });
+  }
+
+  // Clearing the marker is the claim: of two concurrent answers only one
+  // matches it. No orphan is adopted here, since without a stream an orphaned
+  // question cannot be told apart from one another answer has just claimed.
+  private async claimQuestionMarker({
+    threadId,
+    messageId,
+    workspaceId,
+  }: {
+    threadId: string;
+    messageId: string;
+    workspaceId: string;
+  }): Promise<boolean> {
+    const claim = await this.threadRepository.update(
+      workspaceId,
+      { id: threadId, pendingQuestionMessageId: messageId },
+      { pendingQuestionMessageId: null },
+    );
+
+    return (claim.affected ?? 0) > 0;
+  }
+
+  private async releaseQuestionClaim({
+    threadId,
+    messageId,
+    streamId,
+    workspaceId,
+  }: {
+    threadId: string;
+    messageId: string;
+    streamId: string | null;
+    workspaceId: string;
+  }): Promise<void> {
+    const release = isDefined(streamId)
+      ? this.threadRepository.update(
+          workspaceId,
+          { id: threadId, activeStreamId: streamId },
+          { pendingQuestionMessageId: messageId, activeStreamId: null },
+        )
+      : this.threadRepository.update(
+          workspaceId,
+          { id: threadId, pendingQuestionMessageId: IsNull() },
+          { pendingQuestionMessageId: messageId },
+        );
+
+    await release.catch(() => {});
   }
 
   private async claimOrphanedQuestion({
@@ -961,7 +1034,7 @@ export class AgentChatService {
   }: {
     threadId: string;
     messageId: string;
-    streamId: string;
+    streamId: string | null;
     workspaceId: string;
     rollback: PendingQuestionRollback;
   }): Promise<void> {
@@ -973,26 +1046,22 @@ export class AgentChatService {
       )
       .catch(() => {});
 
-    await this.threadRepository
-      .update(
-        workspaceId,
-        { id: threadId, activeStreamId: streamId },
-        { pendingQuestionMessageId: messageId, activeStreamId: null },
-      )
-      .catch(() => {});
+    await this.releaseQuestionClaim({
+      threadId,
+      messageId,
+      streamId,
+      workspaceId,
+    });
   }
 
   // For a question nothing can consume any more: its run ended, or the step
   // moved on to another conversation. Restoring it would leave a card that
-  // every answer is refused on, so it is closed instead.
+  // every answer is refused on, so it is closed instead. An ending run closes
+  // its questions itself; this covers an answer that claimed one just before.
   async closePendingQuestion({
-    threadId,
-    streamId,
     workspaceId,
     rollback,
   }: {
-    threadId: string;
-    streamId: string;
     workspaceId: string;
     rollback: PendingQuestionRollback;
   }): Promise<void> {
@@ -1006,14 +1075,6 @@ export class AgentChatService {
             result: { ...rollback.previousOutput.result, status: 'skipped' },
           },
         },
-      )
-      .catch(() => {});
-
-    await this.threadRepository
-      .update(
-        workspaceId,
-        { id: threadId, activeStreamId: streamId },
-        { activeStreamId: null },
       )
       .catch(() => {});
   }

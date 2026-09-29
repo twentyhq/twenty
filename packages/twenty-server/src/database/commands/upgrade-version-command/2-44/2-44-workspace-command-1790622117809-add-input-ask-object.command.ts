@@ -9,17 +9,25 @@ import { getStandardFlatEntitiesToCreateOrThrow } from 'src/database/commands/up
 import { collectInputAskStandardUniversalIdentifiers } from 'src/database/commands/upgrade-version-command/2-44/utils/collect-input-ask-standard-universal-identifiers.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
-import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { type FlatSearchFieldMetadata } from 'src/engine/metadata-modules/flat-search-field-metadata/types/flat-search-field-metadata.type';
-import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
-import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field.type';
-import { type FlatViewFilter } from 'src/engine/metadata-modules/flat-view-filter/types/flat-view-filter.type';
-import { type FlatViewFieldGroup } from 'src/engine/metadata-modules/flat-view-field-group/types/flat-view-field-group.type';
+import { type SyncableFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-from.type';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
+
+const buildCreationOperations = <TFlatEntity extends SyncableFlatEntity>(
+  standardFlatEntityMaps: FlatEntityMaps<TFlatEntity>,
+  existingFlatEntityMaps: FlatEntityMaps<TFlatEntity>,
+  universalIdentifiers: string[],
+) => ({
+  flatEntityToCreate: getStandardFlatEntitiesToCreateOrThrow({
+    standardFlatEntityMaps,
+    existingFlatEntityMaps,
+    universalIdentifiers,
+  }),
+  flatEntityToDelete: [],
+  flatEntityToUpdate: [],
+});
 
 @RegisteredWorkspaceCommand('2.44.0', 1790622117809)
 @Command({
@@ -48,17 +56,13 @@ export class AddInputAskObjectCommand extends ProvisionedWorkspaceCommandRunner 
       flatIndexMaps,
       flatSearchFieldMetadataMaps,
       flatViewMaps,
-      flatViewFieldGroupMaps,
       flatViewFieldMaps,
-      flatViewFilterMaps,
     } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
-      'flatViewFilterMaps',
       'flatObjectMetadataMaps',
       'flatFieldMetadataMaps',
       'flatIndexMaps',
       'flatSearchFieldMetadataMaps',
       'flatViewMaps',
-      'flatViewFieldGroupMaps',
       'flatViewFieldMaps',
     ]);
 
@@ -97,90 +101,36 @@ export class AddInputAskObjectCommand extends ProvisionedWorkspaceCommandRunner 
       standardAllFlatEntityMaps,
     });
     const allFlatEntityOperationByMetadataName = {
-      objectMetadata: {
-        flatEntityToCreate:
-          getStandardFlatEntitiesToCreateOrThrow<FlatObjectMetadata>({
-            standardFlatEntityMaps:
-              standardAllFlatEntityMaps.flatObjectMetadataMaps,
-            existingFlatEntityMaps: flatObjectMetadataMaps,
-            universalIdentifiers: universalIdentifiers.objectMetadata,
-          }),
-        flatEntityToDelete: [],
-        flatEntityToUpdate: [],
-      },
-      fieldMetadata: {
-        flatEntityToCreate:
-          getStandardFlatEntitiesToCreateOrThrow<FlatFieldMetadata>({
-            standardFlatEntityMaps:
-              standardAllFlatEntityMaps.flatFieldMetadataMaps,
-            existingFlatEntityMaps: flatFieldMetadataMaps,
-            universalIdentifiers: universalIdentifiers.fieldMetadata,
-          }),
-        flatEntityToDelete: [],
-        flatEntityToUpdate: [],
-      },
-      index: {
-        flatEntityToCreate:
-          getStandardFlatEntitiesToCreateOrThrow<FlatIndexMetadata>({
-            standardFlatEntityMaps: standardAllFlatEntityMaps.flatIndexMaps,
-            existingFlatEntityMaps: flatIndexMaps,
-            universalIdentifiers: universalIdentifiers.index,
-          }),
-        flatEntityToDelete: [],
-        flatEntityToUpdate: [],
-      },
-      searchFieldMetadata: {
-        flatEntityToCreate:
-          getStandardFlatEntitiesToCreateOrThrow<FlatSearchFieldMetadata>({
-            standardFlatEntityMaps:
-              standardAllFlatEntityMaps.flatSearchFieldMetadataMaps,
-            existingFlatEntityMaps: flatSearchFieldMetadataMaps,
-            universalIdentifiers: universalIdentifiers.searchFieldMetadata,
-          }),
-        flatEntityToDelete: [],
-        flatEntityToUpdate: [],
-      },
-      view: {
-        flatEntityToCreate: getStandardFlatEntitiesToCreateOrThrow<FlatView>({
-          standardFlatEntityMaps: standardAllFlatEntityMaps.flatViewMaps,
-          existingFlatEntityMaps: flatViewMaps,
-          universalIdentifiers: universalIdentifiers.view,
-        }),
-        flatEntityToDelete: [],
-        flatEntityToUpdate: [],
-      },
-      viewFieldGroup: {
-        flatEntityToCreate:
-          getStandardFlatEntitiesToCreateOrThrow<FlatViewFieldGroup>({
-            standardFlatEntityMaps:
-              standardAllFlatEntityMaps.flatViewFieldGroupMaps,
-            existingFlatEntityMaps: flatViewFieldGroupMaps,
-            universalIdentifiers: universalIdentifiers.viewFieldGroup,
-          }),
-        flatEntityToDelete: [],
-        flatEntityToUpdate: [],
-      },
-      viewField: {
-        flatEntityToCreate:
-          getStandardFlatEntitiesToCreateOrThrow<FlatViewField>({
-            standardFlatEntityMaps: standardAllFlatEntityMaps.flatViewFieldMaps,
-            existingFlatEntityMaps: flatViewFieldMaps,
-            universalIdentifiers: universalIdentifiers.viewField,
-          }),
-        flatEntityToDelete: [],
-        flatEntityToUpdate: [],
-      },
-      viewFilter: {
-        flatEntityToCreate:
-          getStandardFlatEntitiesToCreateOrThrow<FlatViewFilter>({
-            standardFlatEntityMaps:
-              standardAllFlatEntityMaps.flatViewFilterMaps,
-            existingFlatEntityMaps: flatViewFilterMaps,
-            universalIdentifiers: universalIdentifiers.viewFilter,
-          }),
-        flatEntityToDelete: [],
-        flatEntityToUpdate: [],
-      },
+      objectMetadata: buildCreationOperations(
+        standardAllFlatEntityMaps.flatObjectMetadataMaps,
+        flatObjectMetadataMaps,
+        universalIdentifiers.objectMetadata,
+      ),
+      fieldMetadata: buildCreationOperations(
+        standardAllFlatEntityMaps.flatFieldMetadataMaps,
+        flatFieldMetadataMaps,
+        universalIdentifiers.fieldMetadata,
+      ),
+      index: buildCreationOperations(
+        standardAllFlatEntityMaps.flatIndexMaps,
+        flatIndexMaps,
+        universalIdentifiers.index,
+      ),
+      searchFieldMetadata: buildCreationOperations(
+        standardAllFlatEntityMaps.flatSearchFieldMetadataMaps,
+        flatSearchFieldMetadataMaps,
+        universalIdentifiers.searchFieldMetadata,
+      ),
+      view: buildCreationOperations(
+        standardAllFlatEntityMaps.flatViewMaps,
+        flatViewMaps,
+        universalIdentifiers.view,
+      ),
+      viewField: buildCreationOperations(
+        standardAllFlatEntityMaps.flatViewFieldMaps,
+        flatViewFieldMaps,
+        universalIdentifiers.viewField,
+      ),
     };
     const totalOperationCount = Object.values(
       allFlatEntityOperationByMetadataName,

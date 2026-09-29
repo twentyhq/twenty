@@ -941,36 +941,6 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
-  inputAsks: createStandardRelationFieldFlatMetadata({
-    objectName,
-    workspaceId,
-    context: {
-      type: FieldMetadataType.RELATION,
-      morphId: null,
-      fieldName: 'inputAsks',
-      label: i18nLabel(
-        msg({ message: `Asks`, context: 'fieldMetadata.label' }),
-      ),
-      description: i18nLabel(
-        msg({
-          message: `What is waiting on this member`,
-          context: 'fieldMetadata.description',
-        }),
-      ),
-      icon: 'IconHelpCircle',
-      isNullable: true,
-      isUIEditable: false,
-      targetObjectName: 'inputAsk',
-      targetFieldName: 'assignee',
-      settings: {
-        relationType: RelationType.ONE_TO_MANY,
-      },
-    },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
-  }),
   createdBy: createStandardFieldFlatMetadata({
     objectName,
     workspaceId,
@@ -1024,6 +994,36 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
         source: "'MANUAL'",
         name: "'System'",
         workspaceMemberId: null,
+      },
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
+  inputAsks: createStandardRelationFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
+      fieldName: 'inputAsks',
+      label: i18nLabel(
+        msg({ message: `Asks`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `What is waiting on this member`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
+      icon: 'IconHelpCircle',
+      isNullable: true,
+      isUIEditable: false,
+      targetObjectName: 'inputAsk',
+      targetFieldName: 'assignee',
+      settings: {
+        relationType: RelationType.ONE_TO_MANY,
       },
     },
     standardObjectMetadataRelatedEntityIds,

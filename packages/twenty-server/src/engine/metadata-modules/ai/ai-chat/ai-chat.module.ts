@@ -49,7 +49,7 @@ import { SystemPromptBuilderService } from './services/system-prompt-builder.ser
 
 import { AgentChatWorkflowQuestionService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-workflow-question.service';
 import { InputAskModule } from 'src/modules/input-ask/input-ask.module';
-import { WorkflowRunModule } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.module';
+import { WorkflowRunnerModule } from 'src/modules/workflow/workflow-runner/workflow-runner.module';
 
 @Module({
   imports: [
@@ -80,7 +80,7 @@ import { WorkflowRunModule } from 'src/modules/workflow/workflow-runner/workflow
     ToolProviderModule,
     DashboardToolsModule,
     WorkflowToolsModule,
-    WorkflowRunModule,
+    WorkflowRunnerModule,
     InputAskModule,
   ],
   providers: [

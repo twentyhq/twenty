@@ -12,4 +12,5 @@ export type WorkflowBranchExecutorInput = {
   workflowRunId: string;
   workspaceId: string;
   executedStepsCount?: number;
+  isResumingAnsweredStep?: boolean;
 };
