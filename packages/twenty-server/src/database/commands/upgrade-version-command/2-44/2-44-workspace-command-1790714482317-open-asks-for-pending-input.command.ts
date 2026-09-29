@@ -38,7 +38,7 @@ type PendingQuestionThread = Pick<
 // started before this release may have none: an agent question was answered
 // through its conversation's pending marker, a form step through its run.
 // Each one still waiting gets the Ask it would have opened.
-@RegisteredWorkspaceCommand('2.44.0', 1790681152511)
+@RegisteredWorkspaceCommand('2.44.0', 1790714482317)
 @Command({
   name: 'upgrade:2-44:open-asks-for-pending-input',
   description:

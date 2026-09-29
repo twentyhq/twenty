@@ -2,7 +2,7 @@ import { randomUUID } from 'node:crypto';
 
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
-import { type OpenAsksForPendingInputCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790681152511-open-asks-for-pending-input.command';
+import { type OpenAsksForPendingInputCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790714482317-open-asks-for-pending-input.command';
 import { type UpgradeCommandRegistryService } from 'src/engine/core-modules/upgrade/services/upgrade-command-registry.service';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -25,7 +25,7 @@ const QUESTIONS = [
   },
 ];
 
-describe('2-44 workspace command 1790681152511 - OpenAsksForPendingInputCommand (integration)', () => {
+describe('2-44 workspace command 1790714482317 - OpenAsksForPendingInputCommand (integration)', () => {
   let command: OpenAsksForPendingInputCommand;
   let workspaceOrmManager: WorkspaceOrmManager;
 
@@ -145,7 +145,7 @@ describe('2-44 workspace command 1790681152511 - OpenAsksForPendingInputCommand 
 
     expect(registry.getBundleForVersion('2.44.0').workspaceCommands).toEqual(
       expect.arrayContaining([
-        expect.objectContaining({ command, timestamp: 1790681152511 }),
+        expect.objectContaining({ command, timestamp: 1790714482317 }),
       ]),
     );
   });
