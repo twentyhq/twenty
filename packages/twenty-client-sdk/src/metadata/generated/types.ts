@@ -13013,6 +13013,9 @@ export default {
             "isCampaignClickTrackingEnabled": [
                 8
             ],
+            "isCampaignOpenTrackingEnabled": [
+                8
+            ],
             "workspaceDiscoverability": [
                 72
             ],

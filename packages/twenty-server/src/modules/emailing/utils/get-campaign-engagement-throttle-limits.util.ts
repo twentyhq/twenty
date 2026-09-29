@@ -1,8 +1,8 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
-import { type CampaignTrackingTokenPayload } from 'src/engine/core-modules/emailing-domain/types/campaign-tracking-token-payload.type';
 import { CAMPAIGN_ENGAGEMENT_CAPTURE_RATE_LIMIT_PER_LINK } from 'src/modules/emailing/constants/campaign-engagement-capture-rate-limit-per-link.constant';
 import { CAMPAIGN_ENGAGEMENT_CAPTURE_RATE_LIMIT_PER_REQUESTER } from 'src/modules/emailing/constants/campaign-engagement-capture-rate-limit-per-requester.constant';
+import { type CampaignEngagement } from 'src/modules/emailing/types/campaign-engagement.type';
 
 type CampaignEngagementThrottleLimit = {
   key: string;
@@ -10,11 +10,20 @@ type CampaignEngagementThrottleLimit = {
   windowMs: number;
 };
 
+const getEngagementTargetKey = (engagement: CampaignEngagement): string => {
+  switch (engagement.type) {
+    case 'CLICK':
+      return `${engagement.deliveryId}:${engagement.shortLinkId}`;
+    case 'OPEN':
+      return `${engagement.deliveryId}:open`;
+  }
+};
+
 export const getCampaignEngagementThrottleLimits = ({
-  payload,
+  engagement,
   requesterIp,
 }: {
-  payload: CampaignTrackingTokenPayload;
+  engagement: CampaignEngagement;
   requesterIp: string | null;
 }): CampaignEngagementThrottleLimit[] => [
   ...(isNonEmptyString(requesterIp)
@@ -26,7 +35,7 @@ export const getCampaignEngagementThrottleLimits = ({
       ]
     : []),
   {
-    key: `campaign-engagement:${payload.deliveryId}:${payload.shortLinkId}`,
+    key: `campaign-engagement:${getEngagementTargetKey(engagement)}`,
     ...CAMPAIGN_ENGAGEMENT_CAPTURE_RATE_LIMIT_PER_LINK,
   },
 ];

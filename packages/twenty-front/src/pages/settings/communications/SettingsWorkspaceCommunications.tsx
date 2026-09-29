@@ -4,6 +4,7 @@ import { useLingui } from '@lingui/react/macro';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsDiscoveryHeroCard } from '@/settings/components/SettingsDiscoveryHeroCard';
 import { ClickTrackingSwitch } from '@/settings/workspace/components/ClickTrackingSwitch';
+import { OpenTrackingSwitch } from '@/settings/workspace/components/OpenTrackingSwitch';
 import { SettingsWorkspaceBlocklistSection } from '@/settings/workspace/components/SettingsWorkspaceBlocklistSection';
 import { SettingsWorkspaceEmailGroupSection } from '@/settings/workspace/components/SettingsWorkspaceEmailGroupSection';
 import { SettingsWorkspaceEmailSyncSection } from '@/settings/workspace/components/SettingsWorkspaceEmailSyncSection';
@@ -96,7 +97,10 @@ export const SettingsWorkspaceCommunications = () => {
               title={t`Tracking`}
               description={t`Measure engagement on the campaigns this workspace sends`}
             />
-            <ClickTrackingSwitch />
+            <StyledCardsColumn>
+              <ClickTrackingSwitch />
+              <OpenTrackingSwitch />
+            </StyledCardsColumn>
           </Section.Root>
         )}
         {isMessageCampaignFeatureEnabled && (
