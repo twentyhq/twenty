@@ -5,8 +5,11 @@ import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { PermissionFlagType } from 'twenty-shared/constants';
 
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
-import { PermissionsException } from 'src/engine/metadata-modules/permissions/permissions.exception';
-import { type PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
+import {
+  PermissionsException,
+  PermissionsExceptionCode,
+} from 'src/engine/metadata-modules/permissions/permissions.exception';
+import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 
 describe('SettingsPermissionGuard', () => {
   let guard: any;
@@ -84,6 +87,94 @@ describe('SettingsPermissionGuard', () => {
       await expect(guard.canActivate(mockExecutionContext)).rejects.toThrow(
         PermissionsException,
       );
+    });
+  });
+
+  describe('canActivate with an application-only token', () => {
+    let mockApplicationRepository: { findOne: jest.Mock };
+    let mockRoleRepository: { findOne: jest.Mock };
+
+    beforeEach(() => {
+      mockApplicationRepository = { findOne: jest.fn() };
+      mockRoleRepository = { findOne: jest.fn() };
+
+      mockGqlContext.req.userWorkspaceId = undefined;
+      mockGqlContext.req.application = { id: 'application-id' };
+
+      const permissionsService = new PermissionsService(
+        {} as any,
+        {} as any,
+        {} as any,
+        mockRoleRepository as any,
+        mockApplicationRepository as any,
+      );
+
+      const GuardClass = SettingsPermissionGuard(PermissionFlagType.LAYOUTS);
+
+      guard = new GuardClass(permissionsService);
+    });
+
+    it('should deny with PERMISSION_DENIED when the application has no default role', async () => {
+      mockApplicationRepository.findOne.mockResolvedValue({
+        id: 'application-id',
+        defaultRoleId: null,
+      });
+
+      await expect(
+        guard.canActivate(mockExecutionContext),
+      ).rejects.toMatchObject({
+        code: PermissionsExceptionCode.PERMISSION_DENIED,
+      });
+      expect(mockRoleRepository.findOne).not.toHaveBeenCalled();
+    });
+
+    it('should allow when the default role of the application grants the setting', async () => {
+      mockApplicationRepository.findOne.mockResolvedValue({
+        id: 'application-id',
+        defaultRoleId: 'role-id',
+      });
+      mockRoleRepository.findOne.mockResolvedValue({
+        id: 'role-id',
+        canUpdateAllSettings: true,
+        rolePermissionFlags: [],
+      });
+
+      await expect(guard.canActivate(mockExecutionContext)).resolves.toBe(true);
+      expect(mockRoleRepository.findOne).toHaveBeenCalledWith('workspace-id', {
+        where: { id: 'role-id' },
+        relations: [
+          'rolePermissionFlags',
+          'rolePermissionFlags.permissionFlag',
+        ],
+      });
+    });
+
+    it('should deny with PERMISSION_DENIED when the default role of the application lacks the setting', async () => {
+      mockApplicationRepository.findOne.mockResolvedValue({
+        id: 'application-id',
+        defaultRoleId: 'role-id',
+      });
+      mockRoleRepository.findOne.mockResolvedValue({
+        id: 'role-id',
+        canUpdateAllSettings: false,
+        rolePermissionFlags: [],
+      });
+
+      await expect(
+        guard.canActivate(mockExecutionContext),
+      ).rejects.toMatchObject({
+        code: PermissionsExceptionCode.PERMISSION_DENIED,
+      });
+    });
+
+    it('should reject with NO_AUTHENTICATION_CONTEXT when the application does not exist', async () => {
+      mockApplicationRepository.findOne.mockResolvedValue(null);
+
+      await expect(
+        guard.canActivate(mockExecutionContext),
+      ).rejects.toMatchObject({
+        code: PermissionsExceptionCode.NO_AUTHENTICATION_CONTEXT,
+      });
     });
   });
 });
