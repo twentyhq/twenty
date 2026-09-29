@@ -1,4 +1,7 @@
 import { useExportProcessRecordsForCSV } from '@/object-record/object-options-dropdown/hooks/useExportProcessRecordsForCSV';
+import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
+import { generateCsv } from '@/object-record/record-index/export/hooks/useRecordIndexExportRecords';
+import { type ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { renderHook } from '@testing-library/react';
 import { act } from 'react';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
@@ -87,6 +90,53 @@ describe('useExportProcessRecordsForCSV', () => {
         name: 'Item 1',
       },
     ]);
+  });
+
+  it('writes an empty amount cell in the CSV when the currency amount is null', () => {
+    const { result } = renderHook(() =>
+      useExportProcessRecordsForCSV('someObject'),
+    );
+
+    const columns: Pick<
+      ColumnDefinition<FieldMetadata>,
+      'size' | 'label' | 'type' | 'metadata'
+    >[] = [
+      {
+        label: 'Price',
+        size: 100,
+        type: FieldMetadataType.CURRENCY,
+        metadata: { fieldName: 'price' },
+      },
+    ];
+
+    const records = [
+      {
+        __typename: 'ObjectRecord',
+        id: '1',
+        price: { amountMicros: null, currencyCode: 'USD' },
+        name: 'No amount',
+      },
+      {
+        __typename: 'ObjectRecord',
+        id: '2',
+        price: { amountMicros: 123456000, currencyCode: 'EUR' },
+        name: 'Has amount',
+      },
+    ];
+
+    let processedRecords: Parameters<typeof generateCsv>[0]['rows'] = [];
+
+    act(() => {
+      processedRecords = result.current.processRecordsForCSVExport(records);
+    });
+
+    const csv = generateCsv({ columns, rows: processedRecords });
+
+    expect(csv).toContain('Price / Amount');
+    expect(csv).toContain('Price / Currency');
+    expect(csv).toContain('1,,USD');
+    expect(csv).toContain('2,123.456,EUR');
+    expect(csv).not.toContain(',0,');
   });
 
   it('processes records with multi-select and array fields correctly', () => {
