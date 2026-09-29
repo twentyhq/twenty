@@ -196,10 +196,17 @@ export const useInviteTeam = () => {
           throw result.error;
         }
 
-        const sentInvitationsCount =
-          result.data?.sendInvitations.result.length ?? 0;
+        const sentInvitations = result.data?.sendInvitations.result ?? [];
+        const sentInvitationsCount = sentInvitations.length;
 
         setInviteTeamFreeCredits(sentInvitationsCount);
+
+        if (isNonEmptyArray(emails)) {
+          store.set(
+            onboardingInviteTeamEmailsDraftState.atom,
+            sentInvitations.map((sentInvitation) => sentInvitation.email),
+          );
+        }
 
         if (emails.length > 0) {
           enqueueToast({

@@ -221,7 +221,15 @@ describe('useInviteTeam', () => {
       '',
     ]);
     mockSendInvitation.mockResolvedValue({
-      data: { sendInvitations: { result: [{}, {}, {}] } },
+      data: {
+        sendInvitations: {
+          result: [
+            { email: 'grace@example.com' },
+            { email: 'alan@example.com' },
+            { email: 'ada@example.com' },
+          ],
+        },
+      },
     });
 
     const { result } = renderInviteTeam();
@@ -236,6 +244,30 @@ describe('useInviteTeam', () => {
         onboardingFreeCreditsFamilyState.atomFamily(mockCurrentWorkspace.id),
       ).inviteTeam,
     ).toBe(1);
+  });
+
+  it('should keep only the invitations the server accepted in the email draft', async () => {
+    jotaiStore.set(onboardingInviteTeamEmailsDraftState.atom, [
+      'grace@example.com',
+      'alan@example.com',
+      '',
+    ]);
+    mockSendInvitation.mockResolvedValue({
+      data: {
+        sendInvitations: { result: [{ email: 'grace@example.com' }] },
+      },
+    });
+
+    const { result } = renderInviteTeam();
+
+    act(() => {
+      result.current.handleInvite();
+    });
+
+    await waitFor(() => expect(mockSetNextOnboardingStatus).toHaveBeenCalled());
+    expect(jotaiStore.get(onboardingInviteTeamEmailsDraftState.atom)).toEqual([
+      'grace@example.com',
+    ]);
   });
 
   it('should send the invitations once when inviting again while they are being sent', async () => {
