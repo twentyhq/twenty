@@ -13,6 +13,8 @@ import { currentRecordFiltersComponentState } from '@/object-record/record-filte
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { SoftDeleteFilterChip } from '@/views/components/SoftDeleteFilterChip';
 import { ToggleMineFilterButton } from '@/views/components/ToggleMineFilterButton';
+import { ToggleMineFilterEffect } from '@/views/components/ToggleMineFilterEffect';
+import { omitToggleMineRecordFilter } from '@/views/utils/omitToggleMineRecordFilter';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { useApplyCurrentViewFiltersToCurrentRecordFilters } from '@/views/hooks/useApplyCurrentViewFiltersToCurrentRecordFilters';
 import { useApplyCurrentViewSortsToCurrentRecordSorts } from '@/views/hooks/useApplyCurrentViewSortsToCurrentRecordSorts';
@@ -165,7 +167,7 @@ export const ViewBarDetails = ({
   );
 
   const recordFilters = useMemo(() => {
-    return currentRecordFilters.filter(
+    return omitToggleMineRecordFilter(currentRecordFilters).filter(
       (recordFilter) =>
         !recordFilter.recordFilterGroupId &&
         !isSeeDeletedRecordsFilter(recordFilter),
@@ -229,6 +231,10 @@ export const ViewBarDetails = ({
   return (
     <StyledBar>
       <StyledFilterContainer>
+        <ToggleMineFilterEffect
+          viewBarId={viewBarId}
+          objectNameSingular={objectNameSingular}
+        />
         <ToggleMineFilterButton
           viewBarId={viewBarId}
           objectNameSingular={objectNameSingular}

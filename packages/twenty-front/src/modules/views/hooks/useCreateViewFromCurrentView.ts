@@ -18,6 +18,7 @@ import { duplicateViewFiltersAndViewFilterGroups } from '@/views/utils/duplicate
 import { mapRecordFilterGroupToViewFilterGroup } from '@/views/utils/mapRecordFilterGroupToViewFilterGroup';
 import { mapRecordFilterToViewFilter } from '@/views/utils/mapRecordFilterToViewFilter';
 import { mapRecordSortToViewSort } from '@/views/utils/mapRecordSortToViewSort';
+import { omitToggleMineRecordFilter } from '@/views/utils/omitToggleMineRecordFilter';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -191,9 +192,9 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
             }),
         );
 
-        const viewFiltersToCopy = currentRecordFilters.map(
-          mapRecordFilterToViewFilter,
-        );
+        const viewFiltersToCopy = omitToggleMineRecordFilter(
+          currentRecordFilters,
+        ).map(mapRecordFilterToViewFilter);
 
         const {
           duplicatedViewFilterGroups: viewFilterGroupsToCreate,

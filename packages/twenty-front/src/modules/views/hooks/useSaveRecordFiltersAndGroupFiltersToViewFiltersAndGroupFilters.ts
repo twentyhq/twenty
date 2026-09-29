@@ -15,6 +15,7 @@ import { getViewFiltersToDelete } from '@/views/utils/getViewFiltersToDelete';
 import { getViewFiltersToUpdate } from '@/views/utils/getViewFiltersToUpdate';
 import { mapRecordFilterGroupToViewFilterGroup } from '@/views/utils/mapRecordFilterGroupToViewFilterGroup';
 import { mapRecordFilterToViewFilter } from '@/views/utils/mapRecordFilterToViewFilter';
+import { omitToggleMineRecordFilter } from '@/views/utils/omitToggleMineRecordFilter';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -104,9 +105,9 @@ export const useSaveRecordFiltersAndGroupFiltersToViewFiltersAndGroupFilters =
           currentRecordFiltersCallbackState,
         );
 
-        const newViewFilters = currentRecordFilters.map(
-          mapRecordFilterToViewFilter,
-        );
+        const newViewFilters = omitToggleMineRecordFilter(
+          currentRecordFilters,
+        ).map(mapRecordFilterToViewFilter);
 
         const viewFiltersToCreate = getViewFiltersToCreate(
           currentViewFilters,

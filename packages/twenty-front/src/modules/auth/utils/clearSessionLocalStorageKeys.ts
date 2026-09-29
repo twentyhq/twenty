@@ -12,6 +12,7 @@ const SESSION_KEYS_TO_CLEAR = [
   'currentWorkspaceState',
   'currentWorkspaceMemberState',
   'currentUserWorkspaceState',
+  'toggleMineFilterPerViewState',
 ];
 
 export const clearSessionLocalStorageKeys = () => {

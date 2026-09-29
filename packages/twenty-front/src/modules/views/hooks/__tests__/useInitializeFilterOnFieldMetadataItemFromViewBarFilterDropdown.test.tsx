@@ -21,6 +21,7 @@ import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentTyp
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
+import { buildToggleMineRecordFilter } from '@/views/utils/buildToggleMineRecordFilter';
 import { getFilterTypeFromFieldType } from 'twenty-shared/utils';
 import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
@@ -264,6 +265,54 @@ describe('useInitializeFilterOnFieldMetadataItemFromViewBarFilterDropdown', () =
     expect(result.current.objectFilterDropdownCurrentRecordFilter).toBe(
       mockExistingFilterOnCity,
     );
+  });
+
+  it('should not reuse the All/Mine toggle filter as a duplicate', () => {
+    const { result } = renderHook(
+      () => {
+        const { initializeFilterOnFieldMetataItemFromViewBarFilterDropdown } =
+          useInitializeFilterOnFieldMetadataItemFromViewBarFilterDropdown();
+
+        const objectFilterDropdownCurrentRecordFilter =
+          useAtomComponentStateValue(
+            objectFilterDropdownCurrentRecordFilterComponentState,
+          );
+
+        const setCurrentRecordFilters = useSetAtomComponentState(
+          currentRecordFiltersComponentState,
+          'test',
+        );
+
+        return {
+          initializeFilterOnFieldMetataItemFromViewBarFilterDropdown,
+          objectFilterDropdownCurrentRecordFilter,
+          setCurrentRecordFilters,
+        };
+      },
+      {
+        wrapper,
+      },
+    );
+
+    if (!personCompanyFieldMetadataItemMock) {
+      throw new Error('personCompanyFieldMetadataItemMock is not defined');
+    }
+
+    act(() => {
+      result.current.setCurrentRecordFilters([
+        buildToggleMineRecordFilter(personCompanyFieldMetadataItemMock),
+      ]);
+    });
+
+    act(() => {
+      result.current.initializeFilterOnFieldMetataItemFromViewBarFilterDropdown(
+        personCompanyFieldMetadataItemMock,
+      );
+    });
+
+    expect(
+      result.current.objectFilterDropdownCurrentRecordFilter,
+    ).toBeUndefined();
   });
 
   it('should initialize filter on a date field correctly', () => {

@@ -16,6 +16,7 @@ import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentTyp
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { ObjectFilterDropdownComponentInstanceContext } from '@/object-record/object-filter-dropdown/states/contexts/ObjectFilterDropdownComponentInstanceContext';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
+import { omitToggleMineRecordFilter } from '@/views/utils/omitToggleMineRecordFilter';
 
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
@@ -100,7 +101,7 @@ export const useInitializeFilterOnFieldMetadataItemFromViewBarFilterDropdown =
 
           const duplicateFilterInCurrentRecordFilters =
             findDuplicateRecordFilterInNonAdvancedRecordFilters({
-              recordFilters: currentRecordFilters,
+              recordFilters: omitToggleMineRecordFilter(currentRecordFilters),
               fieldMetadataItemId: fieldMetadataItem.id,
             });
 

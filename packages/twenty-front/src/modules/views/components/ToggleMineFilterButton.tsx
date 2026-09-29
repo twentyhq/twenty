@@ -1,14 +1,26 @@
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { useRemoveRecordFilter } from '@/object-record/record-filter/hooks/useRemoveRecordFilter';
-import { useUpsertRecordFilter } from '@/object-record/record-filter/hooks/useUpsertRecordFilter';
-import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
-import { computeToggleMineRecordFilter } from '@/views/utils/computeToggleMineRecordFilter';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { useToggleMineFilter } from '@/views/hooks/useToggleMineFilter';
+import { isToggleMineSelectedPerViewState } from '@/views/states/isToggleMineSelectedPerViewState';
+import { toggleMineFilterPerViewState } from '@/views/states/toggleMineFilterPerViewState';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { Button } from 'twenty-ui/primitives/input';
-import { v4 } from 'uuid';
+import { SegmentedControl } from 'twenty-ui/primitives/input';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
+import { themeCssVariables } from 'twenty-ui/theme';
+
+type ToggleMineFilterValue = 'all' | 'mine';
+
+const StyledToggleMineFilterContainer = styled.div`
+  display: flex;
+  flex-shrink: 0;
+
+  [data-checked] {
+    background: ${themeCssVariables.color.blue};
+    color: color(display-p3 1 1 1);
+  }
+`;
 
 type ToggleMineFilterButtonProps = {
   viewBarId: string;
@@ -19,51 +31,60 @@ export const ToggleMineFilterButton = ({
   viewBarId,
   objectNameSingular,
 }: ToggleMineFilterButtonProps) => {
-  const { currentView } = useGetCurrentViewOnly();
+  const {
+    viewId,
+    toggleMineFilterFieldMetadataItem,
+    isToggleMineFilterBlocked,
+    isMineSelected,
+  } = useToggleMineFilter({ viewBarId, objectNameSingular });
 
-  const { objectMetadataItem } = useObjectMetadataItem({
-    objectNameSingular,
-  });
-
-  const currentRecordFilters = useAtomComponentStateValue(
-    currentRecordFiltersComponentState,
-    viewBarId,
+  const setIsToggleMineSelectedPerView = useSetAtomState(
+    isToggleMineSelectedPerViewState,
   );
 
-  const { upsertRecordFilter } = useUpsertRecordFilter(viewBarId);
-  const { removeRecordFilter } = useRemoveRecordFilter(viewBarId);
-
-  const toggleMineFilterFieldMetadataItem = objectMetadataItem.fields.find(
-    (field) => field.id === currentView?.toggleMineFilterFieldMetadataId,
+  const setToggleMineFilterPerView = useSetAtomState(
+    toggleMineFilterPerViewState,
   );
 
-  if (!isDefined(toggleMineFilterFieldMetadataItem)) {
+  if (!isDefined(viewId) || !isDefined(toggleMineFilterFieldMetadataItem)) {
     return null;
   }
 
-  const { isMineSelected, toggleAction } = computeToggleMineRecordFilter({
-    currentRecordFilters,
-    toggleMineFilterFieldMetadataItem,
-    newRecordFilterId: v4(),
-  });
+  const handleValueChange = (value: ToggleMineFilterValue) => {
+    const isMineSelectedNext = value === 'mine';
 
-  const handleClick = () => {
-    if (toggleAction.type === 'remove') {
-      removeRecordFilter({ recordFilterId: toggleAction.recordFilterId });
-      return;
-    }
+    setIsToggleMineSelectedPerView((previous) => ({
+      ...previous,
+      [viewId]: isMineSelectedNext,
+    }));
 
-    upsertRecordFilter(toggleAction.recordFilter);
+    setToggleMineFilterPerView((previous) => ({
+      ...previous,
+      [viewId]: isMineSelectedNext,
+    }));
   };
 
+  const fieldLabel = toggleMineFilterFieldMetadataItem.label;
+
   return (
-    <Button
-      size="sm"
-      variant={isMineSelected ? 'solid' : 'outline'}
-      color={isMineSelected ? 'accent' : 'neutral'}
-      onClick={handleClick}
+    <Tooltip
+      content={t`${fieldLabel} filter active`}
+      delay={TooltipDelay.shortDelay}
+      disabled={!isToggleMineFilterBlocked}
     >
-      {isMineSelected ? t`Mine` : t`All`}
-    </Button>
+      <StyledToggleMineFilterContainer>
+        <SegmentedControl<ToggleMineFilterValue>
+          aria-label={t`Show all or only my records`}
+          itemWidth="content"
+          disabled={isToggleMineFilterBlocked}
+          value={isMineSelected ? 'mine' : 'all'}
+          onValueChange={handleValueChange}
+          options={[
+            { value: 'all', label: t`All` },
+            { value: 'mine', label: t`Mine` },
+          ]}
+        />
+      </StyledToggleMineFilterContainer>
+    </Tooltip>
   );
 };
