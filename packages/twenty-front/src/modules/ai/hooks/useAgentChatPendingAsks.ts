@@ -1,5 +1,8 @@
 import { useCallback, useMemo } from 'react';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import {
+  CoreObjectNameSingular,
+  type RecordGqlOperationOrderBy,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type AgentChatPendingAsk } from '@/ai/types/AgentChatPendingAsk';
@@ -10,18 +13,23 @@ import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useListenToEventsForQuery } from '@/sse-db-event/hooks/useListenToEventsForQuery';
 
+const ORDER_BY_CREATION: RecordGqlOperationOrderBy = [
+  { createdAt: 'AscNullsLast' },
+];
+
 type PendingInputAskRecord = ObjectRecord & {
   toolCallId: string | null;
   form: unknown;
 };
 
-// The Ask is the record of what the conversation waits on, so the card is
-// read from it rather than from the last message, and follows it live.
-export const useAgentChatPendingAsk = ({
+// The Asks are the record of what the conversation waits on, so the cards
+// are read from them rather than from the last message, and follow them live.
+// A step that paused on several calls waits on one Ask each, oldest first.
+export const useAgentChatPendingAsks = ({
   threadId,
 }: {
   threadId: string;
-}): AgentChatPendingAsk | null => {
+}): AgentChatPendingAsk[] => {
   const { objectMetadataItem: inputAskObjectMetadataItem } =
     useObjectMetadataItem({
       objectNameSingular: CoreObjectNameSingular.InputAsk,
@@ -38,6 +46,7 @@ export const useAgentChatPendingAsk = ({
   const { records, refetch } = useFindManyRecords<PendingInputAskRecord>({
     objectNameSingular: CoreObjectNameSingular.InputAsk,
     filter,
+    orderBy: ORDER_BY_CREATION,
     recordGqlFields: { id: true, toolCallId: true, form: true },
     fetchPolicy: 'network-only',
   });
@@ -69,15 +78,15 @@ export const useAgentChatPendingAsk = ({
     objectMetadataItemId: inputAskObjectMetadataItem.id,
   });
 
-  return useMemo(() => {
-    for (const record of records) {
-      const form = parseInputAskForm(record.form);
+  return useMemo(
+    () =>
+      records.flatMap((record) => {
+        const form = parseInputAskForm(record.form);
 
-      if (isDefined(record.toolCallId) && isDefined(form)) {
-        return { id: record.id, toolCallId: record.toolCallId, form };
-      }
-    }
-
-    return null;
-  }, [records]);
+        return isDefined(record.toolCallId) && isDefined(form)
+          ? [{ id: record.id, toolCallId: record.toolCallId, form }]
+          : [];
+      }),
+    [records],
+  );
 };

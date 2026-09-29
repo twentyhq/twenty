@@ -86,7 +86,8 @@ export const useAnswerAgentChatAsk = () => {
           modelId: modelIdForRequest,
         });
 
-        // A workflow run resumes in its own executor, so no chunk follows.
+        // No chunk follows when a workflow run resumes in its own executor,
+        // or when other calls of the same step still wait on their answers.
         if (!isDefined(streamId)) {
           store.set(isAwaitingFirstChunkAtom, false);
         }
