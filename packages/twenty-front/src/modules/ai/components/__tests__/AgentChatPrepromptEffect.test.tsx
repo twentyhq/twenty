@@ -1,11 +1,17 @@
-import { act, render } from '@testing-library/react';
+import { act, render, renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 
+import { serializePlainTextAsAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializePlainTextAsAdvancedTextEditorDocument';
 import { AgentChatPrepromptEffect } from '@/ai/components/AgentChatPrepromptEffect';
 import { AGENT_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME } from '@/ai/constants/AgentChatRestoreEditorContentEventName';
 import { AGENT_CHAT_SEND_MESSAGE_EVENT_NAME } from '@/ai/constants/AgentChatSendMessageEventName';
-import { agentChatPrepromptState } from '@/ai/states/agentChatPrepromptState';
+import { useStageAiChatPreprompt } from '@/ai/hooks/useStageAiChatPreprompt';
+import { AGENT_CHAT_NEW_THREAD_DRAFT_KEY } from '@/ai/states/agentChatDraftsByThreadIdState';
+import {
+  type AgentChatPrepromptMode,
+  agentChatPrepromptState,
+} from '@/ai/states/agentChatPrepromptState';
 import { shouldFocusChatEditorState } from '@/ai/states/shouldFocusChatEditorState';
 import {
   jotaiStore,
@@ -21,6 +27,26 @@ const listenToEvent = (eventName: string) => {
   window.addEventListener(eventName, listener);
 
   return listener;
+};
+
+const stagePreprompt = ({
+  text,
+  mode,
+}: {
+  text: string;
+  mode: AgentChatPrepromptMode;
+}) => {
+  const { result } = renderHook(() => useStageAiChatPreprompt(), {
+    wrapper: Wrapper,
+  });
+
+  act(() => {
+    result.current.stageAiChatPreprompt({
+      serializedDocument: serializePlainTextAsAdvancedTextEditorDocument(text),
+      mode,
+      draftKey: AGENT_CHAT_NEW_THREAD_DRAFT_KEY,
+    });
+  });
 };
 
 describe('AgentChatPrepromptEffect', () => {
@@ -39,12 +65,8 @@ describe('AgentChatPrepromptEffect', () => {
     const restoreListener = listenToEvent(
       AGENT_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME,
     );
-    jotaiStore.set(agentChatPrepromptState.atom, {
-      text: 'What can you do?',
-      mode: 'SEND',
-    });
-
     render(<AgentChatPrepromptEffect />, { wrapper: Wrapper });
+    stagePreprompt({ text: 'What can you do?', mode: 'SEND' });
     act(() => {
       jest.runAllTimers();
     });
@@ -60,12 +82,8 @@ describe('AgentChatPrepromptEffect', () => {
     const restoreListener = listenToEvent(
       AGENT_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME,
     );
-    jotaiStore.set(agentChatPrepromptState.atom, {
-      text: 'Create a workflow that ',
-      mode: 'PREFILL',
-    });
-
     render(<AgentChatPrepromptEffect />, { wrapper: Wrapper });
+    stagePreprompt({ text: 'Create a workflow that ', mode: 'PREFILL' });
     act(() => {
       jest.runAllTimers();
     });

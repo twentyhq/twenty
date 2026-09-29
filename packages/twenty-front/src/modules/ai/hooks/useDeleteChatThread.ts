@@ -30,19 +30,7 @@ export const useDeleteChatThread = () => {
 
   const deleteChatThread = async (id: string) => {
     try {
-      await deleteMutation({
-        variables: { id },
-        // The mutation returns a Boolean, so there is no entity for Apollo to
-        // normalize away: without evicting it, every mounted list holding the
-        // thread, chatThreadsForRecord included, keeps a row that opens a
-        // THREAD_NOT_FOUND chat.
-        update: (cache) => {
-          cache.evict({
-            id: cache.identify({ __typename: 'AgentChatThread', id }),
-          });
-          cache.gc();
-        },
-      });
+      await deleteMutation({ variables: { id } });
 
       removeFromDraft({ key: 'agentChatThreads', itemIds: [id] });
       applyChanges();
