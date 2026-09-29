@@ -2,15 +2,13 @@ import { isUndefined } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
 import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
-import { MILLISECONDS_PER_MINUTE } from 'src/logic-functions/constants/milliseconds-per-minute';
-import { RECALL_RECOVERY_CALLS_PER_MINUTE } from 'src/logic-functions/constants/recall-recovery-calls-per-minute';
 import { type CalendarEventRecord } from 'src/logic-functions/types/calendar-event-record.type';
 import { type CallRecordingRecord } from 'src/logic-functions/types/call-recording-record.type';
 import { enqueuePendingCallRecordingRecoveries } from 'src/logic-functions/data/enqueue-pending-call-recording-recoveries.util';
+import { groupPendingCallRecordingRecoveriesIntoMinuteSlots } from 'src/logic-functions/domain/group-pending-call-recording-recoveries-into-minute-slots.util';
 import { hasMeetingEnded } from 'src/logic-functions/domain/has-meeting-ended.util';
 import { fetchCalendarEventsByIds } from 'src/logic-functions/data/fetch-calendar-events-by-ids.util';
 import { findOpenScheduledCallRecordings } from 'src/logic-functions/data/find-open-scheduled-call-recordings.util';
-import { getBatches } from 'src/logic-functions/utils/get-batches.util';
 import { getUniqueSortedIds } from 'src/logic-functions/utils/get-unique-sorted-ids.util';
 import { updateCallRecording } from 'src/logic-functions/data/update-call-recording.util';
 
@@ -89,14 +87,16 @@ export const scheduleRecallBotsForPendingCallRecordings = async ({
     result.enqueuedCallRecordingIds.push(callRecording.id);
   }
 
-  for (const [minuteIndex, callRecordingIds] of getBatches(
+  for (const {
+    delayMs,
+    callRecordingIds,
+  } of groupPendingCallRecordingRecoveriesIntoMinuteSlots(
     result.enqueuedCallRecordingIds,
-    RECALL_RECOVERY_CALLS_PER_MINUTE,
-  ).entries()) {
+  )) {
     await enqueuePendingCallRecordingRecoveries({
       callRecordingIds,
       recoveryDate: now.toISOString().slice(0, 10),
-      delayMs: minuteIndex * MILLISECONDS_PER_MINUTE,
+      delayMs,
     });
   }
 
