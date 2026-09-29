@@ -16,10 +16,10 @@ Read the [breaking release notes](./CHANGELOG.md#unreleased) before upgrading. T
 
 ## Installation
 
-For a standalone React application, install the library and its peer dependencies. React 19 is required.
+For a standalone React application, install the library. React 19 is required.
 
 ```bash
-npm install twenty-ui react@^19 react-dom@^19
+npm install twenty-ui
 ```
 
 The code editor is available separately from `twenty-ui/components/code-editor`. Applications using that entry point must install its optional peers and configure Monaco workers for their bundler before mounting the editor:
