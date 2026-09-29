@@ -287,15 +287,18 @@ const MP3_FRAME_HEADER_BYTES = Uint8Array.from([
 
 const RECALL_METADATA_FILTER_PREFIX = 'metadata__';
 
-const matchesRecallBotListFilters = (
-  bot: FakeRecallBot,
-  listFilters: URLSearchParams,
-): boolean => {
+const matchesRecallBotListFilters = ({
+  bot,
+  listFilters,
+}: {
+  bot: Pick<FakeRecallBot, 'metadata' | 'statusCode'>;
+  listFilters: URLSearchParams;
+}): boolean => {
   const statusFilters = listFilters.getAll('status');
 
   if (
     statusFilters.length > 0 &&
-    (bot.statusCode === undefined || !statusFilters.includes(bot.statusCode))
+    (isUndefined(bot.statusCode) || !statusFilters.includes(bot.statusCode))
   ) {
     return false;
   }
@@ -512,7 +515,7 @@ class FakeRecallApi {
       return jsonResponse(200, {
         next: null,
         results: [...this.bots.values()]
-          .filter((bot) => matchesRecallBotListFilters(bot, listFilters))
+          .filter((bot) => matchesRecallBotListFilters({ bot, listFilters }))
           .map((bot) => ({
             id: bot.id,
             metadata: bot.metadata,

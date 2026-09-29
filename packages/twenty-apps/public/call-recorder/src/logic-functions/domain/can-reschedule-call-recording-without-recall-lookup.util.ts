@@ -17,8 +17,11 @@ export const canRescheduleCallRecordingWithoutRecallLookup = ({
   workspaceId,
   now,
 }: {
-  callRecording: CallRecordingRecord;
-  calendarEvent: CalendarEventRecord;
+  callRecording: Pick<
+    CallRecordingRecord,
+    'id' | 'botScheduleAttemptedAt' | 'botScheduleIdempotencyKey'
+  >;
+  calendarEvent: Pick<CalendarEventRecord, 'conferenceLinkUrl' | 'startsAt'>;
   workspaceId: string | undefined;
   now: Date;
 }): boolean =>

@@ -136,7 +136,6 @@ export const scheduleRecallBotsForPendingCallRecordings = async ({
     return result;
   }
 
-  // A run that died before the bot id write-back leaves its bot claimable by metadata.
   const lookupResult = await findScheduledRecallBotIdsByCallRecordingId(
     ambiguousCallRecordings.map(({ callRecording }) => callRecording.id),
   );
