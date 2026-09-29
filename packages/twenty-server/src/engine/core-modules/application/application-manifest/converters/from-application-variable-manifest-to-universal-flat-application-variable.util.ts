@@ -29,7 +29,7 @@ export const fromApplicationVariableManifestToUniversalFlatApplicationVariable =
     universalIdentifier: string;
     description?: string;
     label?: string;
-    encryptedValue: EncryptedString;
+    encryptedValue: EncryptedString | null;
     isSecret?: boolean;
     isDeprecated?: boolean;
     isRequired?: boolean;

@@ -610,16 +610,22 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
       const isSecret = applicationVariableManifest.isSecret;
       const rawValue = isSecret ? '' : plaintextValue;
 
+      const isUserVariableWithoutValue =
+        applicationVariableManifest.scope === 'USER' &&
+        !('value' in applicationVariableManifest);
+
       addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
         universalFlatEntity:
           fromApplicationVariableManifestToUniversalFlatApplicationVariable({
             key,
             universalIdentifier:
               applicationVariableManifest.universalIdentifier,
-            encryptedValue: this.secretEncryptionService.encryptVersioned(
-              rawValue as PlaintextString,
-              { workspaceId },
-            ),
+            encryptedValue: isUserVariableWithoutValue
+              ? null
+              : this.secretEncryptionService.encryptVersioned(
+                  rawValue as PlaintextString,
+                  { workspaceId },
+                ),
             description: applicationVariableManifest.description,
             label: applicationVariableManifest.label,
             isSecret,
