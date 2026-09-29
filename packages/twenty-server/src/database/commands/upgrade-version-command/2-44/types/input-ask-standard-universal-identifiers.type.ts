@@ -4,7 +4,5 @@ export type InputAskStandardUniversalIdentifiers = {
   index: string[];
   searchFieldMetadata: string[];
   view: string[];
-  viewFieldGroup: string[];
   viewField: string[];
-  viewFilter: string[];
 };

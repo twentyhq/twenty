@@ -1611,59 +1611,6 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
           },
         },
       },
-      "inputAskRecordPageFields": {
-        "universalIdentifier": "37612ea0-b6cc-564c-b952-4647b2e7677c",
-        "viewFieldGroups": {
-          "general": {
-            "universalIdentifier": "71855671-f159-5434-82b5-397266e4a862",
-          },
-        },
-        "viewFields": {
-          "answeredAt": {
-            "universalIdentifier": "60bf2207-0d21-5213-ba48-2a0dde5a0389",
-          },
-          "assignee": {
-            "universalIdentifier": "5f53e663-acbf-52fa-9946-18dbe9570a0c",
-          },
-          "name": {
-            "universalIdentifier": "dafbcd58-b311-5cf8-b60e-7d2edc251b16",
-          },
-          "status": {
-            "universalIdentifier": "4adc644d-eae8-5692-ac22-c2285f66183b",
-          },
-          "thread": {
-            "universalIdentifier": "eaf50f5c-8b9d-5e12-8dae-dfa413ff3134",
-          },
-          "workflowRun": {
-            "universalIdentifier": "1ff7997b-742f-5b42-9180-44acc5ae78aa",
-          },
-        },
-      },
-      "waitingOnMe": {
-        "universalIdentifier": "6596299e-f656-42d1-8927-efdd3d2285be",
-        "viewFields": {
-          "createdAt": {
-            "universalIdentifier": "a5b4b662-28bf-46a3-a89a-6f555280c6bb",
-          },
-          "name": {
-            "universalIdentifier": "f1ae6a65-159f-4e87-a99d-04d39598c74a",
-          },
-          "thread": {
-            "universalIdentifier": "c81b54d7-ffaf-4222-8beb-4479e662426e",
-          },
-          "workflowRun": {
-            "universalIdentifier": "52e80140-79f9-43b6-b051-ea2c47587392",
-          },
-        },
-        "viewFilters": {
-          "assigneeIsMe": {
-            "universalIdentifier": "07bdd1b3-f583-4b08-89a6-2a0c2f031efb",
-          },
-          "statusIsPending": {
-            "universalIdentifier": "9e2aa248-8d6f-4ba1-b518-2284610be939",
-          },
-        },
-      },
     },
   },
   "message": {

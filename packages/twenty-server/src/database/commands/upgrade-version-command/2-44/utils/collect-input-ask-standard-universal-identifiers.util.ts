@@ -65,15 +65,6 @@ export const collectInputAskStandardUniversalIdentifiers = ({
     flatViews.map((flatView) => flatView.universalIdentifier),
   );
 
-  const viewFieldGroup = Object.values(
-    standardAllFlatEntityMaps.flatViewFieldGroupMaps.byUniversalIdentifier,
-  )
-    .filter(isDefined)
-    .filter((flatViewFieldGroup) =>
-      viewUniversalIdentifiers.has(flatViewFieldGroup.viewUniversalIdentifier),
-    )
-    .map((flatViewFieldGroup) => flatViewFieldGroup.universalIdentifier);
-
   const viewField = Object.values(
     standardAllFlatEntityMaps.flatViewFieldMaps.byUniversalIdentifier,
   )
@@ -83,23 +74,12 @@ export const collectInputAskStandardUniversalIdentifiers = ({
     )
     .map((flatViewField) => flatViewField.universalIdentifier);
 
-  const viewFilter = Object.values(
-    standardAllFlatEntityMaps.flatViewFilterMaps.byUniversalIdentifier,
-  )
-    .filter(isDefined)
-    .filter((flatViewFilter) =>
-      viewUniversalIdentifiers.has(flatViewFilter.viewUniversalIdentifier),
-    )
-    .map((flatViewFilter) => flatViewFilter.universalIdentifier);
-
   return {
     objectMetadata: [INPUT_ASK_OBJECT_UNIVERSAL_IDENTIFIER],
     fieldMetadata,
     index,
     searchFieldMetadata,
     view: flatViews.map((flatView) => flatView.universalIdentifier),
-    viewFieldGroup,
     viewField,
-    viewFilter,
   };
 };
