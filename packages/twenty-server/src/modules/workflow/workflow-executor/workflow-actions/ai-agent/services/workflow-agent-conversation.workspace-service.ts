@@ -19,7 +19,7 @@ import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-age
 import { finalizeDanglingToolParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/finalize-dangling-tool-parts.util';
 import { mapAiStepsToUiMessageParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/map-ai-steps-to-ui-message-parts.util';
 import { mapDBPartsToUIMessageParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/mapDBPartsToUIMessageParts';
-import { mapUIMessagePartsToDBParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/mapUIMessagePartsToDBParts';
+import { mapUIMessagePartsToPersistedDBParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/map-ui-message-parts-to-persisted-db-parts.util';
 import { findPendingQuestionPart } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-pending-question-part.util';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
@@ -270,7 +270,11 @@ export class WorkflowAgentConversationWorkspaceService {
       ...(isDefined(senderUserWorkspaceId) ? { senderUserWorkspaceId } : {}),
     });
 
-    const dbParts = mapUIMessagePartsToDBParts(parts, messageId, workspaceId);
+    const dbParts = mapUIMessagePartsToPersistedDBParts(
+      parts,
+      messageId,
+      workspaceId,
+    );
 
     if (dbParts.length > 0) {
       await this.messagePartRepository.insert(
