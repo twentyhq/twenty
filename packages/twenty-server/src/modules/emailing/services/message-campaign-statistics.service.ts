@@ -50,6 +50,7 @@ export class MessageCampaignStatisticsService {
 
     const acquired = await this.cacheStorageService.acquireLock(
       lockKey,
+      'lock',
       REFRESH_LOCK_TTL_MS,
     );
 
@@ -67,7 +68,7 @@ export class MessageCampaignStatisticsService {
         },
       )
       .catch(async (error) => {
-        await this.cacheStorageService.releaseLock(lockKey);
+        await this.cacheStorageService.releaseLock(lockKey, 'lock');
 
         throw error;
       });

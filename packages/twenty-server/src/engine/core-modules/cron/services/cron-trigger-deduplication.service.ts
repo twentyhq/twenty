@@ -44,6 +44,7 @@ export class CronTriggerDeduplicationService {
 
     return this.cacheStorageService.acquireLock(
       dedupKey,
+      'lock',
       CRON_DISPATCH_DEDUP_TTL_MS,
     );
   }

@@ -1,3 +1,4 @@
+import * as crypto from 'crypto';
 import { Injectable, Logger } from '@nestjs/common';
 
 import {
@@ -35,14 +36,19 @@ export class CacheLockService {
     const { ms = 100, maxRetries = 50, ttl = 5_500 } = options || {};
 
     for (let attempt = 0; attempt < maxRetries; attempt++) {
-      const acquired = await this.cacheStorageService.acquireLock(key, ttl);
+      const ownerToken = crypto.randomUUID();
+      const acquired = await this.cacheStorageService.acquireLock(
+        key,
+        ownerToken,
+        ttl,
+      );
 
       if (acquired) {
         try {
           return await fn();
         } finally {
           try {
-            await this.cacheStorageService.releaseLock(key);
+            await this.cacheStorageService.releaseLock(key, ownerToken);
           } catch (releaseError) {
             this.logger.warn(
               `Failed to release lock for key "${key}": ${releaseError}`,
