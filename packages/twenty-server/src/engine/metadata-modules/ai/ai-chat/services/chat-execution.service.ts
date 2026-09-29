@@ -75,6 +75,10 @@ import {
   createAttachConversationToRecordTool,
 } from 'src/engine/metadata-modules/ai/ai-chat/tools/attach-conversation-to-record.tool';
 import {
+  PROPOSE_EMAIL_TOOL_NAME,
+  createProposeEmailTool,
+} from 'src/engine/metadata-modules/ai/ai-chat/tools/propose-email.tool';
+import {
   COMPLETE_WORKSPACE_SETUP_TOOL_NAME,
   createCompleteWorkspaceSetupTool,
 } from 'src/engine/metadata-modules/ai/ai-chat/tools/complete-workspace-setup.tool';
@@ -298,10 +302,16 @@ export class ChatExecutionService {
         workspace.id,
       ));
 
+    // Proposing an email only helps someone who could then send it.
+    const canProposeEmail = toolCatalog.some(
+      (toolIndexEntry) => toolIndexEntry.name === 'send_email',
+    );
+
     const preloadedToolNames = [
       ...Object.keys(preloadedTools),
       ...Object.keys(nativeTools),
       ASK_QUESTIONS_TOOL_NAME,
+      ...(canProposeEmail ? [PROPOSE_EMAIL_TOOL_NAME] : []),
       ...(isWorkspaceSetupThread ? [COMPLETE_WORKSPACE_SETUP_TOOL_NAME] : []),
       ...(canAttachConversationToRecords
         ? [ATTACH_CONVERSATION_TO_RECORD_TOOL_NAME]
@@ -318,6 +328,9 @@ export class ChatExecutionService {
       [ASK_QUESTIONS_TOOL_NAME]: createAskQuestionsTool({
         isWorkspaceSetupThread,
       }),
+      ...(canProposeEmail
+        ? { [PROPOSE_EMAIL_TOOL_NAME]: createProposeEmailTool() }
+        : {}),
       ...(isWorkspaceSetupThread
         ? {
             [COMPLETE_WORKSPACE_SETUP_TOOL_NAME]:

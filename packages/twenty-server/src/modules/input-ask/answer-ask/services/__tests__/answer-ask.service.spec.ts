@@ -1,3 +1,4 @@
+import { withWorkspaceAuthContext } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AnswerAskService } from 'src/modules/input-ask/answer-ask/services/answer-ask.service';
 import { InputAskStatus } from 'src/modules/input-ask/enums/input-ask-status.enum';
@@ -11,6 +12,12 @@ const QUESTIONS = [
 ];
 
 const ANSWERS = [{ questionIndex: 0, selectedOptionIndices: [1] }];
+
+const PROPOSED_EMAIL = {
+  recipients: { to: 'tim@apple.dev', cc: '', bcc: '' },
+  subject: 'Renewal',
+  body: 'Hi Tim,\n\nYour plan renews next week.',
+};
 
 type BuildOptions = {
   inputAsk?: Record<string, unknown> | null;
@@ -333,6 +340,109 @@ describe('AnswerAskService', () => {
       expect(publishedEvents.map((event) => event.type)).not.toContain(
         'tool-call-resolved',
       );
+    });
+  });
+
+  describe('an email approval', () => {
+    const emailInputAsk = {
+      ...chatInputAsk,
+      form: { kind: 'emailApproval', email: PROPOSED_EMAIL },
+    };
+    const emailPart = {
+      ...questionPart,
+      toolName: 'propose_email',
+      toolInput: PROPOSED_EMAIL,
+      toolOutput: { result: { status: 'pending', email: PROPOSED_EMAIL } },
+    };
+
+    it('sends the edited email as the person only once the Ask is answered', async () => {
+      const {
+        service,
+        toolRegistryService,
+        inputAskWorkspaceService,
+        agentChatService,
+      } = buildService({ inputAsk: emailInputAsk, toolPart: emailPart });
+      const editedEmail = { ...PROPOSED_EMAIL, subject: 'Your renewal' };
+
+      // The email goes out as whoever answered, from their request.
+      await withWorkspaceAuthContext(
+        {
+          type: 'user',
+          workspace: { id: 'workspace-id' },
+          userWorkspaceId: 'user-workspace-id',
+        } as never,
+        () =>
+          service.answer({
+            ...answerArguments,
+            response: { decision: 'send', email: editedEmail },
+          }),
+      );
+
+      expect(toolRegistryService.resolveAndExecute).toHaveBeenCalledWith(
+        'send_email',
+        {
+          recipients: PROPOSED_EMAIL.recipients,
+          subject: 'Your renewal',
+          body: '<p>Hi Tim,</p><p>Your plan renews next week.</p>',
+        },
+        expect.objectContaining({
+          userWorkspaceId: 'user-workspace-id',
+          roleId: 'role-id',
+        }),
+      );
+      expect(
+        inputAskWorkspaceService.answer.mock.invocationCallOrder[0],
+      ).toBeLessThan(
+        toolRegistryService.resolveAndExecute.mock.invocationCallOrder[0],
+      );
+      expect(agentChatService.updateToolPartOutput).toHaveBeenCalledWith(
+        expect.objectContaining({
+          toolOutput: expect.objectContaining({
+            success: true,
+            result: expect.objectContaining({
+              status: 'sent',
+              email: editedEmail,
+            }),
+          }),
+        }),
+      );
+    });
+
+    it('sends nothing when the person discards the email', async () => {
+      const { service, toolRegistryService, agentChatService } = buildService({
+        inputAsk: emailInputAsk,
+        toolPart: emailPart,
+      });
+
+      await service.answer({
+        ...answerArguments,
+        response: { decision: 'discard' },
+      });
+
+      expect(toolRegistryService.resolveAndExecute).not.toHaveBeenCalled();
+      expect(agentChatService.updateToolPartOutput).toHaveBeenCalledWith(
+        expect.objectContaining({
+          toolOutput: expect.objectContaining({
+            result: expect.objectContaining({ status: 'discarded' }),
+          }),
+        }),
+      );
+    });
+
+    it('sends nothing when another answer already claimed the Ask', async () => {
+      const { service, toolRegistryService } = buildService({
+        inputAsk: emailInputAsk,
+        toolPart: emailPart,
+        hasAnswered: false,
+      });
+
+      await expect(
+        service.answer({
+          ...answerArguments,
+          response: { decision: 'send', email: PROPOSED_EMAIL },
+        }),
+      ).rejects.toMatchObject({ code: 'ASK_NOT_PENDING' });
+      expect(toolRegistryService.resolveAndExecute).not.toHaveBeenCalled();
     });
   });
 
