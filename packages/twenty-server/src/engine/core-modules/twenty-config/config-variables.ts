@@ -42,6 +42,7 @@ import {
   type TwentyLogLevel,
 } from 'src/engine/core-modules/logger/interfaces';
 import { type MeterDriver } from 'src/engine/core-modules/metrics/types/meter-driver.type';
+import { MeterTemporality } from 'src/engine/core-modules/metrics/types/meter-temporality.type';
 import { CastToLogLevelArray } from 'src/engine/core-modules/twenty-config/decorators/cast-to-log-level-array.decorator';
 import { CastToMeterDriverArray } from 'src/engine/core-modules/twenty-config/decorators/cast-to-meter-driver.decorator';
 import { CastToPositiveNumber } from 'src/engine/core-modules/twenty-config/decorators/cast-to-positive-number.decorator';
@@ -1256,6 +1257,18 @@ export class ConfigVariables {
   @CastToPositiveNumber()
   @IsOptional()
   METER_EXPORT_INTERVAL_MS = 30_000;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.LOGGING,
+    description:
+      'Temporality of the metrics pushed by the opentelemetry driver: delta sends what changed since the previous export, cumulative sends running totals on every export. Read before the config store is available, so it cannot be overridden from the database.',
+    type: ConfigVariableType.ENUM,
+    options: Object.values(MeterTemporality),
+    isEnvOnly: true,
+  })
+  @IsOptional()
+  @IsEnum(MeterTemporality)
+  METER_TEMPORALITY: MeterTemporality = MeterTemporality.Delta;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LOGGING,
