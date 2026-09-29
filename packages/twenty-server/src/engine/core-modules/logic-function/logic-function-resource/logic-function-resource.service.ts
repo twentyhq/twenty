@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import crypto from 'crypto';
 import { promises as fs } from 'fs';
 import { dirname, join } from 'path';
 import { FileFolder } from 'twenty-shared/types';
@@ -17,7 +18,6 @@ import {
   LogicFunctionException,
   LogicFunctionExceptionCode,
 } from 'src/engine/metadata-modules/logic-function/logic-function.exception';
-import { computeBuiltCodeChecksum } from 'src/engine/metadata-modules/logic-function/utils/compute-built-code-checksum.util';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
 type Identifier = {
@@ -111,7 +111,10 @@ export class LogicFunctionResourceService {
       },
     });
 
-    const checksum = computeBuiltCodeChecksum(builtFile.content);
+    const checksum = crypto
+      .createHash('md5')
+      .update(builtFile.content)
+      .digest('hex');
 
     return {
       handlerName: 'main',
@@ -147,19 +150,6 @@ export class LogicFunctionResourceService {
       applicationUniversalIdentifier,
       fileFolder: FileFolder.Source,
       resourcePath: sourceHandlerPath,
-    });
-  }
-
-  async deleteBuiltFile({
-    builtHandlerPath,
-    workspaceId,
-    applicationUniversalIdentifier,
-  }: GetBuiltCodeParams): Promise<void> {
-    await this.fileStorageService.deleteFile({
-      workspaceId,
-      applicationUniversalIdentifier,
-      fileFolder: FileFolder.BuiltLogicFunction,
-      resourcePath: builtHandlerPath,
     });
   }
 
