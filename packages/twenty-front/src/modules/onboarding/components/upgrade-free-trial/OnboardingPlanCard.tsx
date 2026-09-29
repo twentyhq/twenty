@@ -1,4 +1,5 @@
 import { styled } from '@linaria/react';
+import { isNonEmptyString } from '@sniptt/guards';
 import { isValidElement, type ReactNode, useId } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { Radio } from 'twenty-ui/primitives/input';
@@ -108,6 +109,10 @@ const StyledRadioContainer = styled.div`
   width: ${themeCssVariables.spacing[6]};
 `;
 
+const StyledTags = styled.span`
+  display: contents;
+`;
+
 const StyledBody = styled.div`
   display: flex;
   flex-direction: column;
@@ -136,8 +141,13 @@ export const OnboardingPlanCard = ({
 }: OnboardingPlanCardProps) => {
   const titleId = useId();
   const noteId = useId();
+  const tagsId = useId();
   const hasBody = isValidElement(children);
   const hasNote = isDefined(note);
+  const hasTags = isDefined(tags);
+  const describedByIds = [hasTags ? tagsId : null, hasNote ? noteId : null]
+    .filter(isDefined)
+    .join(' ');
 
   return (
     <StyledCard>
@@ -152,14 +162,16 @@ export const OnboardingPlanCard = ({
                 </StyledTitleSuffix>
               )}
             </StyledTitleText>
-            {tags}
+            {hasTags && <StyledTags id={tagsId}>{tags}</StyledTags>}
             {isDefined(badge) && <StyledBadge>{badge}</StyledBadge>}
           </StyledTitleContent>
           <StyledRadioContainer>
             <Radio
               value={value}
               aria-labelledby={titleId}
-              aria-describedby={hasNote ? noteId : undefined}
+              aria-describedby={
+                isNonEmptyString(describedByIds) ? describedByIds : undefined
+              }
             />
           </StyledRadioContainer>
         </StyledTitleRow>
