@@ -1,5 +1,6 @@
 import { RuleTester } from 'oxlint/plugins-dev';
 
+import { REPLACED_CALLER_GUARD_NAMES } from '../utils/typedTokenHelpers';
 import { rule, RULE_NAME } from './rest-api-methods-should-be-guarded';
 
 const ruleTester = new RuleTester();
@@ -10,7 +11,7 @@ ruleTester.run(RULE_NAME, rule, {
       code: `
         class TestController {
           @Get()
-          @UseGuards(UserAuthGuard, NoPermissionGuard)
+          @UseGuards(CallerGuard({ userSession: true }), NoPermissionGuard)
           testMethod() {}
         }
       `,
@@ -20,7 +21,7 @@ ruleTester.run(RULE_NAME, rule, {
       code: `
         class TestController {
           @Get()
-          @UseGuards(WorkspaceAuthGuard, CustomPermissionGuard)
+          @UseGuards(CallerGuard({ userSession: true, apiKey: true }), CustomPermissionGuard)
           testMethod() {}
         }
       `,
@@ -48,7 +49,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        @UseGuards(UserAuthGuard, NoPermissionGuard)
+        @UseGuards(CallerGuard({ userSession: true }), NoPermissionGuard)
         class TestController {
           @Get()
           testMethod() {}
@@ -58,7 +59,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        @UseGuards(WorkspaceAuthGuard, CustomPermissionGuard)
+        @UseGuards(CallerGuard({ userSession: true, apiKey: true }), CustomPermissionGuard)
         class TestController {
           @Get()
           testMethod() {}
@@ -80,7 +81,7 @@ ruleTester.run(RULE_NAME, rule, {
       code: `
         class TestController {
           @Post()
-          @UseGuards(WorkspaceAuthGuard, CustomPermissionGuard)
+          @UseGuards(CallerGuard({ userSession: true, apiKey: true }), CustomPermissionGuard)
           createMethod() {}
         }
       `,
@@ -90,7 +91,7 @@ ruleTester.run(RULE_NAME, rule, {
       code: `
         class TestController {
           @Put()
-          @UseGuards(WorkspaceAuthGuard, UpdatePermissionGuard)
+          @UseGuards(CallerGuard({ userSession: true, apiKey: true }), UpdatePermissionGuard)
           updateMethod() {}
         }
       `,
@@ -100,7 +101,7 @@ ruleTester.run(RULE_NAME, rule, {
       code: `
         class TestController {
           @Patch()
-          @UseGuards(WorkspaceAuthGuard, NoPermissionGuard)
+          @UseGuards(CallerGuard({ userSession: true, apiKey: true }), NoPermissionGuard)
           patchMethod() {}
         }
       `,
@@ -110,7 +111,7 @@ ruleTester.run(RULE_NAME, rule, {
       code: `
         class TestController {
           @Delete()
-          @UseGuards(WorkspaceAuthGuard, DeletePermissionGuard)
+          @UseGuards(CallerGuard({ userSession: true, apiKey: true }), DeletePermissionGuard)
           deleteMethod() {}
         }
       `,
@@ -118,7 +119,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        @UseGuards(WorkspaceAuthGuard, CustomPermissionGuard)
+        @UseGuards(CallerGuard({ userSession: true, apiKey: true }), CustomPermissionGuard)
         class TestController {
           @Post()
           createMethod() {}
@@ -128,7 +129,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        @UseGuards(WorkspaceAuthGuard, SettingsPermissionGuard(PermissionFlagType.WORKSPACE))
+        @UseGuards(CallerGuard({ userSession: true, apiKey: true }), SettingsPermissionGuard(PermissionFlagType.WORKSPACE))
         class TestController {
           @Delete()
           deleteMethod() {}
@@ -142,6 +143,39 @@ ruleTester.run(RULE_NAME, rule, {
           regularMethod() {}
         }
       `,
+    },
+    {
+      code: `
+        class TestController {
+          @Post()
+          @UseGuards(
+            CallerGuard({ userSession: { playground: false } }),
+            SettingsPermissionGuard(PermissionFlagType.ROLES),
+          )
+          createMethod() {}
+        }
+      `,
+      filename: 'test.tsx',
+    },
+    {
+      code: `
+        class TestController {
+          @Get()
+          @UseGuards(FileByIdGuard, NoPermissionGuard)
+          testMethod() {}
+        }
+      `,
+      filename: 'test.tsx',
+    },
+    {
+      code: `
+        class TestController {
+          @Post()
+          @UseGuards(FileUploadTokenGuard, NoPermissionGuard)
+          testMethod() {}
+        }
+      `,
+      filename: 'test.tsx',
     },
   ],
   invalid: [
@@ -177,7 +211,7 @@ ruleTester.run(RULE_NAME, rule, {
       code: `
         class TestController {
           @Get()
-          @UseGuards(WorkspaceAuthGuard)
+          @UseGuards(CallerGuard({ userSession: true, apiKey: true }))
           testMethod() {}
         }
       `,
@@ -220,7 +254,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        @UseGuards(WorkspaceAuthGuard)
+        @UseGuards(CallerGuard({ userSession: true, apiKey: true }))
         class TestController {
           @Get()
           testMethod() {}
@@ -237,7 +271,7 @@ ruleTester.run(RULE_NAME, rule, {
       code: `
         class TestController {
           @Post()
-          @UseGuards(WorkspaceAuthGuard)
+          @UseGuards(CallerGuard({ userSession: true, apiKey: true }))
           createMethod() {}
         }
       `,
@@ -252,7 +286,7 @@ ruleTester.run(RULE_NAME, rule, {
       code: `
         class TestController {
           @Put()
-          @UseGuards(WorkspaceAuthGuard)
+          @UseGuards(CallerGuard({ userSession: true, apiKey: true }))
           updateMethod() {}
         }
       `,
@@ -267,7 +301,7 @@ ruleTester.run(RULE_NAME, rule, {
       code: `
         class TestController {
           @Patch()
-          @UseGuards(WorkspaceAuthGuard)
+          @UseGuards(CallerGuard({ userSession: true, apiKey: true }))
           patchMethod() {}
         }
       `,
@@ -282,7 +316,7 @@ ruleTester.run(RULE_NAME, rule, {
       code: `
         class TestController {
           @Delete()
-          @UseGuards(WorkspaceAuthGuard)
+          @UseGuards(CallerGuard({ userSession: true, apiKey: true }))
           deleteMethod() {}
         }
       `,
@@ -295,7 +329,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        @UseGuards(WorkspaceAuthGuard)
+        @UseGuards(CallerGuard({ userSession: true, apiKey: true }))
         class TestController {
           @Post()
           createMethod() {}
@@ -310,7 +344,7 @@ ruleTester.run(RULE_NAME, rule, {
     },
     {
       code: `
-        @UseGuards(WorkspaceAuthGuard)
+        @UseGuards(CallerGuard({ userSession: true, apiKey: true }))
         class TestController {
           @Delete()
           deleteMethod() {}
@@ -321,6 +355,83 @@ ruleTester.run(RULE_NAME, rule, {
           messageId: 'restApiMethodsShouldBeGuarded',
         },
       ],
+      filename: 'test.tsx',
+    },
+    ...REPLACED_CALLER_GUARD_NAMES.map((guardName) => ({
+      code: `
+        class TestController {
+          @Get()
+          @UseGuards(${guardName}, NoPermissionGuard)
+          testMethod() {}
+        }
+      `,
+      errors: [
+        { messageId: 'restApiMethodsShouldBeGuarded' },
+        { messageId: 'replacedCallerGuard', data: { guardName } },
+      ],
+      filename: 'test.tsx',
+    })),
+    {
+      code: `
+        @UseGuards(JwtAuthGuard, WorkspaceAuthGuard, NoPermissionGuard)
+        class TestController {
+          @Get()
+          testMethod() {}
+        }
+      `,
+      errors: [
+        {
+          messageId: 'replacedCallerGuard',
+          data: { guardName: 'WorkspaceAuthGuard' },
+        },
+        { messageId: 'restApiMethodsShouldBeGuarded' },
+      ],
+      filename: 'test.tsx',
+    },
+    {
+      code: `
+        @UseGuards(CallerGuard({ userSession: true }), NoPermissionGuard)
+        class TestController {
+          @Delete()
+          @UseGuards(RequireAccessTokenGuard)
+          deleteMethod() {}
+        }
+      `,
+      errors: [
+        {
+          messageId: 'replacedCallerGuard',
+          data: { guardName: 'RequireAccessTokenGuard' },
+        },
+      ],
+      filename: 'test.tsx',
+    },
+    ...[
+      'CallerGuard(CALLER_GUARD_CONFIG)',
+      'CallerGuard({ ...USER_SESSION_ONLY, apiKey: true })',
+      'CallerGuard({ userSession: USER_SESSION_OPTIONS })',
+    ].map((callerGuard) => ({
+      code: `
+        class TestController {
+          @Get()
+          @UseGuards(${callerGuard}, NoPermissionGuard)
+          testMethod() {}
+        }
+      `,
+      errors: [
+        { messageId: 'restApiMethodsShouldBeGuarded' },
+        { messageId: 'callerGuardConfigNotInline' },
+      ],
+      filename: 'test.tsx',
+    })),
+    {
+      code: `
+        class TestController {
+          @Get()
+          @UseGuards(CallerGuard({}), NoPermissionGuard)
+          testMethod() {}
+        }
+      `,
+      errors: [{ messageId: 'callerGuardAcceptsNoCaller' }],
       filename: 'test.tsx',
     },
   ],
