@@ -1,1 +1,0 @@
-export const MAX_RUN_AGENT_MESSAGE_ATTACHMENTS = 10;

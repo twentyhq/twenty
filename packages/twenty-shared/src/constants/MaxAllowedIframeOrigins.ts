@@ -1,1 +1,0 @@
-export const MAX_ALLOWED_IFRAME_ORIGINS = 20;

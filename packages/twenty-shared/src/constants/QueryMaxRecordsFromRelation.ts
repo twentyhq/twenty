@@ -1,1 +1,0 @@
-export const QUERY_MAX_RECORDS_FROM_RELATION = 60;

@@ -1,1 +1,0 @@
-export const DEFAULT_VIEW_GROUP_LOAD_LIMIT = 8;

@@ -1,1 +1,0 @@
-export const DEFAULT_COMPANION_SUMMARY_ENABLED = true;

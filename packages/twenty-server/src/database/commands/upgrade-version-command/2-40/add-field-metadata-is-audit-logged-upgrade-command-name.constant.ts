@@ -1,2 +1,0 @@
-export const ADD_FIELD_METADATA_IS_AUDIT_LOGGED_UPGRADE_COMMAND_NAME =
-  '2.40.0_AddIsAuditLoggedToFieldMetadataFastInstanceCommand_1788885873410';

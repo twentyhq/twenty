@@ -1,1 +1,0 @@
-export const MESSAGE_SUPPRESSIONS_PAGE_SIZE = 30;

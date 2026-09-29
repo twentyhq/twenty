@@ -1,1 +1,0 @@
-export const ONBOARDING_CONTENT_BLOCK_WIDTH = 440;

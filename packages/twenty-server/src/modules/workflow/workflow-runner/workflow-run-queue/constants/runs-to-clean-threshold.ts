@@ -1,1 +1,0 @@
-export const RUNS_TO_CLEAN_THRESHOLD_DAYS = 14;

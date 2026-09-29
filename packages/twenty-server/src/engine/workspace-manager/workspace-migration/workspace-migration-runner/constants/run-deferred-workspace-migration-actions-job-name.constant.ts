@@ -1,2 +1,0 @@
-export const RUN_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_JOB_NAME =
-  'RunDeferredWorkspaceMigrationActionsJob';

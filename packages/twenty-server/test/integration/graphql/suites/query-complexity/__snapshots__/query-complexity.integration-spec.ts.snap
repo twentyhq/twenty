@@ -1,3 +1,0 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
-
-exports[`Query Complexity should fail to execute a query with too many root resolvers 1`] = `"Query too complex - Too many root resolvers requested: 23 - Maximum allowed root resolvers: 20"`;

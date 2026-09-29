@@ -1,1 +1,0 @@
-export { CaseStudyCatalogGrid } from './CaseStudyCatalogGrid';

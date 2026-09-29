@@ -1,1 +1,0 @@
-export const PERSON_MATCH_COST_DOLLARS = 0.28;

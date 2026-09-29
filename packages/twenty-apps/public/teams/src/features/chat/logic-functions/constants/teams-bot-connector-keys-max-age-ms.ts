@@ -1,1 +1,0 @@
-export const TEAMS_BOT_CONNECTOR_KEYS_MAX_AGE_MS = 24 * 60 * 60 * 1000;

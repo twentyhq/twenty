@@ -1,1 +1,0 @@
-export const SSE_RESYNC_DEBOUNCE_TIME_IN_MS = 1_000;

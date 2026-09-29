@@ -1,1 +1,0 @@
-export const DEFAULT_MIN_LIKELIHOOD = 2;

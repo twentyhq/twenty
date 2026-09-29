@@ -1,4 +1,0 @@
-export enum BlocklistScope {
-  WORKSPACE_MEMBER = 'WORKSPACE_MEMBER',
-  WORKSPACE = 'WORKSPACE',
-}

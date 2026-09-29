@@ -1,1 +1,0 @@
-export const LOG_CONSOLE_NARROW_BODY_MAX_WIDTH = 880;

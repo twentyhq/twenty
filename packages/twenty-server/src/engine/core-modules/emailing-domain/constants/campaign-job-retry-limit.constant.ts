@@ -1,1 +1,0 @@
-export const CAMPAIGN_JOB_RETRY_LIMIT = 3;

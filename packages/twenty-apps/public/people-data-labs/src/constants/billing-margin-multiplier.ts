@@ -1,1 +1,0 @@
-export const BILLING_MARGIN_MULTIPLIER = 1.2;

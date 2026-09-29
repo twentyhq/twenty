@@ -1,1 +1,0 @@
-export const RECORD_LIST_ROW_FIELD_MAX_WIDTH = 156;

@@ -1,1 +1,0 @@
-export const TRASH_CLEANUP_BATCH_SIZE = 1_000;

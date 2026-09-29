@@ -1,1 +1,0 @@
-export const GRAPH_REQUEST_MAX_ATTEMPTS = 4;

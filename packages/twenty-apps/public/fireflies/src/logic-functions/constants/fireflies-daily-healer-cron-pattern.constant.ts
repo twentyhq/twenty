@@ -1,1 +1,0 @@
-export const FIREFLIES_DAILY_HEALER_CRON_PATTERN = '0 3 * * *';

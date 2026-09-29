@@ -1,1 +1,0 @@
-export { ReleasesFeed } from './ReleasesFeed';
