@@ -3137,6 +3137,13 @@
         "description": "Keyboard shortcut keys displayed at the end of the row. Registering the\nshortcut is up to the application."
       },
       {
+        "name": "hotkeysJoinLabel",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Text between shortcut keys. Defaults to `then`; pass an empty string to omit it."
+      },
+      {
         "name": "indicator",
         "type": "\"check\" | \"checkbox\" | \"none\"",
         "required": false,
@@ -4515,6 +4522,13 @@
             "description": "Keyboard shortcut keys displayed at the end of the row. Registering the\nshortcut is up to the application."
           },
           {
+            "name": "hotkeysJoinLabel",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "Text between shortcut keys. Defaults to `then`."
+          },
+          {
             "name": "label",
             "type": "string",
             "required": false,
@@ -4630,6 +4644,13 @@
             "required": false,
             "defaultValue": null,
             "description": "Keyboard shortcut keys displayed at the end of the row. Registering the\nshortcut is up to the application."
+          },
+          {
+            "name": "hotkeysJoinLabel",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "Text between shortcut keys. Defaults to `then`."
           },
           {
             "name": "label",
@@ -4801,6 +4822,13 @@
             "required": false,
             "defaultValue": null,
             "description": "Keyboard shortcut keys displayed at the end of the row. Registering the\nshortcut is up to the application."
+          },
+          {
+            "name": "hotkeysJoinLabel",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "Text between shortcut keys. Defaults to `then`."
           },
           {
             "name": "label",
@@ -5092,6 +5120,13 @@
             "required": false,
             "defaultValue": null,
             "description": "Keyboard shortcut keys displayed at the end of the row. Registering the\nshortcut is up to the application."
+          },
+          {
+            "name": "hotkeysJoinLabel",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "Text between shortcut keys. Defaults to `then`."
           },
           {
             "name": "label",
@@ -7035,6 +7070,13 @@
             "description": "Keyboard shortcut keys displayed at the end of the row. Registering the\nshortcut is up to the application."
           },
           {
+            "name": "hotkeysJoinLabel",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "Text between shortcut keys. Defaults to `then`."
+          },
+          {
             "name": "nativeButton",
             "type": "boolean",
             "required": false,
@@ -7136,6 +7178,13 @@
             "required": false,
             "defaultValue": null,
             "description": "Keyboard shortcut keys displayed at the end of the row. Registering the\nshortcut is up to the application."
+          },
+          {
+            "name": "hotkeysJoinLabel",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "Text between shortcut keys. Defaults to `then`."
           },
           {
             "name": "indicator",
@@ -7392,6 +7441,13 @@
             "description": "Keyboard shortcut keys displayed at the end of the row. Registering the\nshortcut is up to the application."
           },
           {
+            "name": "hotkeysJoinLabel",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "Text between shortcut keys. Defaults to `then`."
+          },
+          {
             "name": "nativeButton",
             "type": "boolean",
             "required": false,
@@ -7540,6 +7596,13 @@
             "required": false,
             "defaultValue": null,
             "description": "Keyboard shortcut keys displayed at the end of the row. Registering the\nshortcut is up to the application."
+          },
+          {
+            "name": "hotkeysJoinLabel",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "Text between shortcut keys. Defaults to `then`."
           },
           {
             "name": "nativeButton",
@@ -8205,6 +8268,13 @@
         "description": "Optional footer action with a label and onClick callback."
       },
       {
+        "name": "closeLabel",
+        "type": "string",
+        "required": false,
+        "defaultValue": "Close",
+        "description": "Accessible name of the dismiss button. Defaults to `Close`."
+      },
+      {
         "name": "description",
         "type": "string",
         "required": false,
@@ -8503,14 +8573,14 @@
         "type": "string",
         "required": true,
         "defaultValue": null,
-        "description": "Visible caption for the dark scheme. The control’s accessible name remains Dark."
+        "description": "Visible label and accessible name of the dark choice."
       },
       {
         "name": "lightLabel",
         "type": "string",
         "required": true,
         "defaultValue": null,
-        "description": "Visible caption for the light scheme. The control’s accessible name remains Light."
+        "description": "Visible label and accessible name of the light choice."
       },
       {
         "name": "onChange",
@@ -8524,7 +8594,7 @@
         "type": "string",
         "required": true,
         "defaultValue": null,
-        "description": "Visible caption for the system scheme. The control’s accessible name remains System."
+        "description": "Visible label and accessible name of the system choice."
       },
       {
         "name": "value",
@@ -8714,6 +8784,13 @@
         "required": false,
         "defaultValue": null,
         "description": "Visible shortcut hints. Register handlers in the application."
+      },
+      {
+        "name": "hotKeysJoinLabel",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Text between shortcut keys. Defaults to `then`."
       },
       {
         "name": "iconButtons",

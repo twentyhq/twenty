@@ -229,6 +229,10 @@ Use `type="panel"` for form inputs. Input interaction keeps the panel open; a sa
 
 Escape dismisses the popup and restores focus to its trigger. Outside interaction also dismisses it, and the click that dismisses it doesn't activate what it lands on. Keys pressed inside the popup stay inside it, except Ctrl or Cmd shortcuts the dropdown doesn't handle, so page-level shortcuts keep working. `Content` accepts focus and portal options from Popover, including an explicit return-focus target for editor workflows.
 
+## Labels
+
+Each part owns its text: supply `Search.placeholder` and native accessible names, `Close` accessible attributes, and children for `Back`, `Loading`, and `Empty`. `Back` defaults to `Back`; loading and empty states have no built-in message. Item parts accept `hotkeysJoinLabel` to replace the default `then` between shortcut keys. Native `aria-labelledby` takes precedence over `aria-label`.
+
 ## Props
 
 <DropdownReference />

@@ -29,5 +29,6 @@ export const MENU_ITEM_PROP_DESCRIPTIONS = {
   focused: 'Applies focused appearance without moving DOM focus.',
   selected: 'Applies selected appearance without owning selection state.',
   hotKeys: 'Visible shortcut hints. Register handlers in the application.',
+  hotKeysJoinLabel: 'Text between shortcut keys. Defaults to `then`.',
   isSubMenuOpened: 'Applies the open treatment to the submenu chevron.',
 } satisfies Partial<Record<keyof ComponentProps<typeof MenuItem>, string>>;

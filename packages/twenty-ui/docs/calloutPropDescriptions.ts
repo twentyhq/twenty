@@ -11,5 +11,6 @@ export const CALLOUT_PROP_DESCRIPTIONS = {
   action: 'Optional footer action with a label and onClick callback.',
   isClosable:
     'Shows a close button that hides the callout until it is remounted.',
+  closeLabel: 'Accessible name of the dismiss button. Defaults to `Close`.',
   onClose: 'Called after the close button hides the callout.',
 } satisfies Partial<Record<keyof ComponentProps<typeof Callout>, string>>;

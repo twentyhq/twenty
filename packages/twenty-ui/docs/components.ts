@@ -279,6 +279,8 @@ export const DOCUMENTED_COMPONENTS = [
     entryPoint: 'twenty-ui/primitives/navigation',
     slug: 'navigation/list-item',
     propDescriptions: {
+      hotkeysJoinLabel:
+        'Text between shortcut keys. Defaults to `then`; pass an empty string to omit it.',
       actionsVisibility:
         'When trailing actions are visible: on hover and focus, or always.',
     },
@@ -330,7 +332,17 @@ export const DOCUMENTED_COMPONENTS = [
     entryPoint: 'twenty-ui/primitives/surfaces',
     slug: 'surfaces/menu',
     partPropDescriptions: {
+      Item: {
+        hotkeysJoinLabel: 'Text between shortcut keys. Defaults to `then`.',
+      },
+      CheckboxItem: {
+        hotkeysJoinLabel: 'Text between shortcut keys. Defaults to `then`.',
+      },
+      RadioItem: {
+        hotkeysJoinLabel: 'Text between shortcut keys. Defaults to `then`.',
+      },
       SubmenuTrigger: {
+        hotkeysJoinLabel: 'Text between shortcut keys. Defaults to `then`.',
         onClick: 'The click handler for the submenu trigger.',
       },
     },
