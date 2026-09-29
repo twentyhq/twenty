@@ -1,3 +1,6 @@
+import { isString } from '@sniptt/guards';
+
+import { asRecord } from 'src/logic-functions/utils/as-record.util';
 import { fetchWithTimeout } from 'src/logic-functions/utils/fetch-with-timeout.util';
 
 const MAX_ATTEMPTS = 3;
@@ -11,6 +14,24 @@ const sleep = (delayMs: number): Promise<void> =>
 
 const resolveRetryDelayMs = (attemptNumber: number): number =>
   Math.round((RETRY_DELAY_MS * attemptNumber * (1 + Math.random())) / 2);
+
+const isGraphqlQueryRequest = (
+  options: Parameters<typeof fetch>[1],
+): boolean => {
+  const body = options?.body;
+
+  if (!isString(body)) {
+    return false;
+  }
+
+  try {
+    const operation = asRecord(JSON.parse(body))?.query;
+
+    return isString(operation) && operation.startsWith('query');
+  } catch {
+    return false;
+  }
+};
 
 const fetchWithTransientRetryAttempt = async ({
   input,
@@ -50,4 +71,6 @@ const fetchWithTransientRetryAttempt = async ({
 };
 
 export const fetchWithTransientRetry: typeof fetch = (input, options) =>
-  fetchWithTransientRetryAttempt({ input, options, attemptNumber: 1 });
+  isGraphqlQueryRequest(options)
+    ? fetchWithTransientRetryAttempt({ input, options, attemptNumber: 1 })
+    : fetchWithTimeout(input, options);

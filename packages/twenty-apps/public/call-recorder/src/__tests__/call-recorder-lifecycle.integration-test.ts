@@ -1806,6 +1806,59 @@ describe('call recorder app lifecycle (integration)', () => {
       expect(callRecording.recordingRequestStatus).toBe('REQUESTED');
       expect(recall.bots.has(callRecording.externalBotId)).toBe(true);
     });
+
+    it('sends a Core API write once when it fails with a 503', async () => {
+      const { calendarEventId } =
+        await scheduleRecordingThroughCalendarReconciliation();
+      const unavailableWriteBodies: string[] = [];
+      const fetchBeforeOutage = globalThis.fetch;
+
+      await client.mutation({
+        updateCalendarEvent: {
+          __args: {
+            id: calendarEventId,
+            data: { title: 'Customer Sync (renamed)' },
+          },
+          id: true,
+        },
+      });
+
+      vi.stubGlobal(
+        'fetch',
+        (input: Parameters<typeof fetch>[0], init?: RequestInit) => {
+          const body = String(init?.body ?? '');
+
+          if (
+            String(input) === `${process.env.TWENTY_API_URL}/graphql` &&
+            body.includes('updateCallRecording(')
+          ) {
+            unavailableWriteBodies.push(body);
+
+            return Promise.resolve(
+              new Response('Service Unavailable', { status: 503 }),
+            );
+          }
+
+          return fetchBeforeOutage(input, init);
+        },
+      );
+
+      const result = await deliverCalendarEventUpdates({
+        calendarEventId,
+        updatedFields: ['title'],
+        before: { title: 'Customer Sync' },
+        after: { title: 'Customer Sync (renamed)' },
+      });
+
+      expect(unavailableWriteBodies).toHaveLength(1);
+      expect(result).toEqual(
+        expect.objectContaining({
+          reconciliationResults: [
+            expect.objectContaining({ action: 'FAILED' }),
+          ],
+        }),
+      );
+    });
   });
 
   describe('credit gate', () => {
