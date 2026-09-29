@@ -104,7 +104,7 @@ describe('planTranslationWrites', () => {
       deletions: [],
     });
     expect(plan.compiledEntryCountByLocale).toEqual({ 'fr-FR': 1 });
-    expect(await compileApplicationTranslations(appPath)).toEqual(
+    expect(await compileApplicationTranslations({ appPath })).toEqual(
       EXPORTED_TRANSLATIONS,
     );
   });

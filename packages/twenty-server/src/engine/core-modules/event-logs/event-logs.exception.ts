@@ -9,6 +9,8 @@ import { CustomException } from 'src/utils/custom-exception';
 export enum EventLogsExceptionCode {
   CLICKHOUSE_NOT_CONFIGURED = 'CLICKHOUSE_NOT_CONFIGURED',
   NO_ENTITLEMENT = 'NO_ENTITLEMENT',
+  INVALID_FIELD_FILTER = 'INVALID_FIELD_FILTER',
+  INVALID_TABLE = 'INVALID_TABLE',
 }
 
 const getEventLogsExceptionUserFriendlyMessage = (
@@ -19,6 +21,10 @@ const getEventLogsExceptionUserFriendlyMessage = (
       return msg`Audit logs require ClickHouse to be configured.`;
     case EventLogsExceptionCode.NO_ENTITLEMENT:
       return msg`Audit logs require an Enterprise subscription.`;
+    case EventLogsExceptionCode.INVALID_FIELD_FILTER:
+      return msg`This log filter is not valid.`;
+    case EventLogsExceptionCode.INVALID_TABLE:
+      return msg`This log table is not valid.`;
     default:
       assertUnreachable(code);
   }

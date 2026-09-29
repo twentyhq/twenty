@@ -1,0 +1,25 @@
+---
+title: NotificationCounter
+description: A compact numeric badge for notification counts.
+---
+
+import NotificationCounterReference from '/snippets/ui/generated/components/notification-counter.mdx';
+
+`NotificationCounter` displays the supplied number without clamping it or hiding zero. Use the surrounding label to explain what the count means.
+
+```tsx
+import { NotificationCounter } from 'twenty-ui/components';
+import { Button } from 'twenty-ui/primitives/input';
+
+export const InboxButton = ({ count }: { count: number }) => (
+  <Button endIcon={<NotificationCounter count={count} />}>
+    Inbox ({count} unread)
+  </Button>
+);
+```
+
+`variant="secondary"` changes the badge appearance. The counter has no click handler or live-region behavior of its own.
+
+## Props
+
+<NotificationCounterReference />

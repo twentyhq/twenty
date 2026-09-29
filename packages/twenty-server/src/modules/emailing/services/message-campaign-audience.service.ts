@@ -6,6 +6,7 @@ import { In } from 'typeorm';
 
 import { type CampaignAudienceResolution } from 'src/engine/core-modules/emailing-domain/types/campaign-audience-resolution.type';
 import { resolveCampaignAudience } from 'src/engine/core-modules/emailing-domain/utils/resolve-campaign-audience.util';
+import { MessageSuppressionReason } from 'src/engine/core-modules/emailing-domain/types/message-suppression-reason.type';
 import { HARD_SUPPRESSION_REASONS } from 'src/engine/core-modules/emailing-domain/constants/hard-suppression-reasons.constant';
 import { type RawCampaignRecipient } from 'src/engine/core-modules/emailing-domain/types/raw-campaign-recipient.type';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
@@ -74,8 +75,14 @@ export class MessageCampaignAudienceService {
     const hardSuppressedEmails = new Set<string>();
     const globallySuppressedEmails = new Set<string>();
     const topicSuppressedEmails = new Set<string>();
+    const trackingRefusedEmails = new Set<string>();
 
     for (const suppression of suppressions) {
+      if (suppression.reason === MessageSuppressionReason.TRACKING) {
+        trackingRefusedEmails.add(suppression.emailAddress);
+        continue;
+      }
+
       if (isDefined(suppression.unsubscribeTopicId)) {
         topicSuppressedEmails.add(suppression.emailAddress);
         continue;
@@ -95,6 +102,7 @@ export class MessageCampaignAudienceService {
       hardSuppressedEmails,
       globallySuppressedEmails,
       topicSuppressedEmails,
+      trackingRefusedEmails,
     });
   }
 

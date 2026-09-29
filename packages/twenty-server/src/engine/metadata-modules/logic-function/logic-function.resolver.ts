@@ -1,5 +1,12 @@
 import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
-import { Args, Mutation, Query, Subscription } from '@nestjs/graphql';
+import {
+  Args,
+  Mutation,
+  Parent,
+  Query,
+  ResolveField,
+  Subscription,
+} from '@nestjs/graphql';
 
 import graphqlTypeJson from 'graphql-type-json';
 import { PermissionFlagType } from 'twenty-shared/constants';
@@ -34,6 +41,7 @@ import { LogicFunctionLogsDTO } from 'src/engine/metadata-modules/logic-function
 import { LogicFunctionLogsInput } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-logs.input';
 import { LogicFunctionDTO } from 'src/engine/metadata-modules/logic-function/dtos/logic-function.dto';
 import { UpdateLogicFunctionFromSourceInput } from 'src/engine/metadata-modules/logic-function/dtos/update-logic-function-from-source.input';
+import { LogicFunctionFromSourceHelperService } from 'src/engine/metadata-modules/logic-function/services/logic-function-from-source-helper.service';
 import { LogicFunctionFromSourceService } from 'src/engine/metadata-modules/logic-function/services/logic-function-from-source.service';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 import { findFlatLogicFunctionOrThrow } from 'src/engine/metadata-modules/logic-function/utils/find-flat-logic-function-or-throw.util';
@@ -46,7 +54,7 @@ import { wrapAsyncIteratorWithLifecycle } from 'src/engine/subscriptions/utils/w
 import { EventLogLiveService } from 'src/engine/core-modules/event-logs/live/event-log-live.service';
 
 @UseGuards(WorkspaceAuthGuard, FeatureFlagGuard, NoPermissionGuard)
-@MetadataResolver()
+@MetadataResolver(() => LogicFunctionDTO)
 @UsePipes(ResolverValidationPipe)
 @UseFilters(
   UsageLimitGraphqlApiExceptionFilter,
@@ -57,6 +65,7 @@ import { EventLogLiveService } from 'src/engine/core-modules/event-logs/live/eve
 export class LogicFunctionResolver {
   constructor(
     private readonly logicFunctionFromSourceService: LogicFunctionFromSourceService,
+    private readonly logicFunctionFromSourceHelperService: LogicFunctionFromSourceHelperService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly subscriptionService: SubscriptionService,
     private readonly eventLogLiveService: EventLogLiveService,
@@ -126,6 +135,20 @@ export class LogicFunctionResolver {
     }
   }
 
+  @ResolveField(() => Boolean, { nullable: true })
+  async canRunOnDemand(
+    @Parent() { id }: Pick<LogicFunctionDTO, 'id'>,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+  ): Promise<boolean> {
+    try {
+      return await this.logicFunctionFromSourceHelperService.isLogicFunctionRunnableOnDemand(
+        { id, workspaceId },
+      );
+    } catch (error) {
+      return logicFunctionGraphQLApiExceptionHandler(error);
+    }
+  }
+
   @Query(() => graphqlTypeJson)
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.WORKFLOWS))
   async getAvailablePackages(
@@ -172,6 +195,10 @@ export class LogicFunctionResolver {
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<LogicFunctionDTO> {
     try {
+      await this.logicFunctionFromSourceHelperService.findWorkspaceCustomLogicFunctionOrThrow(
+        { id, workspaceId },
+      );
+
       return await this.logicFunctionFromSourceService.deleteOneWithSource({
         id,
         workspaceId,

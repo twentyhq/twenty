@@ -535,7 +535,9 @@
                 "ui/tokens",
                 "ui/dark-mode",
                 "ui/ssr",
-                "ui/accessibility"
+                "ui/accessibility",
+                "ui/icons",
+                "ui/testing"
               ]
             },
             {
@@ -645,7 +647,23 @@
                 "ui/components/dropdown",
                 "ui/components/tab-button",
                 "ui/components/code-editor",
-                "ui/components/toast"
+                "ui/components/toast",
+                "ui/components/animated-icon-crossfade",
+                "ui/components/avatar-group",
+                "ui/components/callout",
+                "ui/components/card-picker",
+                "ui/components/color-scheme-picker",
+                "ui/components/command-block",
+                "ui/components/info",
+                "ui/components/inline-banner",
+                "ui/components/json-tree",
+                "ui/components/menu-items",
+                "ui/components/menu-picker",
+                "ui/components/navigation-bar",
+                "ui/components/notification-counter",
+                "ui/components/rounded-link",
+                "ui/components/search-input",
+                "ui/components/tinted-icon-tile"
               ]
             }
           ]

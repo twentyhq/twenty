@@ -13,5 +13,9 @@ export const filterUrlQueryParamsSchema = z.object({
       ),
     )
     .optional(),
+  filterDisplayValue: z
+    .record(z.string(), z.partialRecord(z.enum(ViewFilterOperand), z.string()))
+    .optional()
+    .catch(undefined),
   filterGroup: urlRecursiveFilterGroupSchema.optional(),
 });

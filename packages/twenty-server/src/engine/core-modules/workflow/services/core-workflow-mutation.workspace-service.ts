@@ -30,6 +30,7 @@ import { CoreWorkflowListService } from 'src/engine/core-modules/workflow/servic
 import { CoreWorkflowVersionWriteService } from 'src/engine/core-modules/workflow/services/core-workflow-version-write.service';
 import { assertExactlyOneMirrorRowWasWritten } from 'src/engine/core-modules/workflow/utils/assert-exactly-one-mirror-row-was-written.util';
 import { CoreWorkflowAccessService } from 'src/engine/core-modules/workflow/services/core-workflow-access.service';
+import { WorkflowRunRecordShareService } from 'src/engine/core-modules/workflow/services/workflow-run-record-share.service';
 import { WorkflowCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-core-sync.service';
 import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -75,6 +76,7 @@ export class CoreWorkflowMutationWorkspaceService {
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly applicationService: ApplicationService,
+    private readonly workflowRunRecordShareService: WorkflowRunRecordShareService,
   ) {}
 
   private async runCoreWorkflowMigration({
@@ -875,14 +877,20 @@ export class CoreWorkflowMutationWorkspaceService {
     // cannot both pass it and have the later write silently take the workflow.
     // A workspace-visible workflow is already editable and deletable by every
     // member, so claiming one grants no access the claimer did not have.
-    const claimResult = await this.coreWorkflowRepository.update(
-      workspaceId,
-      {
-        id: coreWorkflowId,
-        createdByUserWorkspaceId: Or(IsNull(), Equal(userWorkspaceId)),
-      },
-      { visibility, createdByUserWorkspaceId: userWorkspaceId },
-    );
+    const claimResult =
+      await this.workflowRunRecordShareService.updateAccessThenSyncRuns({
+        workspaceId,
+        coreWorkflowId,
+        updateAccess: () =>
+          this.coreWorkflowRepository.update(
+            workspaceId,
+            {
+              id: coreWorkflowId,
+              createdByUserWorkspaceId: Or(IsNull(), Equal(userWorkspaceId)),
+            },
+            { visibility, createdByUserWorkspaceId: userWorkspaceId },
+          ),
+      });
 
     if (claimResult.affected === 0) {
       const coreWorkflowExists = await this.coreWorkflowRepository.exists(

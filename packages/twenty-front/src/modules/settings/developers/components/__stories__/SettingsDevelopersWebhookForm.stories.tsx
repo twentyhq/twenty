@@ -1,6 +1,6 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { HttpResponse, graphql } from 'msw';
-import { expect, within } from 'storybook/test';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { SettingsDevelopersWebhookForm } from '@/settings/developers/components/SettingsDevelopersWebhookForm';
 import { WebhookFormMode } from '@/settings/developers/constants/WebhookFormMode';
@@ -67,6 +67,65 @@ export const EditMode: Story = {
 
     await canvas.findByText('Danger zone');
     await canvas.findByText('Delete this webhook');
+  },
+};
+
+export const EntityPicker: Story = {
+  args: {
+    mode: WebhookFormMode.Edit,
+    webhookId: '1234',
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+    const [trigger] = await canvas.findAllByRole(
+      'button',
+      { name: 'All Objects' },
+      { timeout: 3000 },
+    );
+
+    await userEvent.click(trigger);
+    const picker = await body.findByRole('dialog', { name: 'Select entity' });
+    const search = within(picker).getByRole('searchbox', { name: 'Search' });
+
+    await waitFor(() => expect(search).toHaveFocus());
+    expect(
+      within(picker).getByRole('group', { name: 'Core Objects' }),
+    ).toBeVisible();
+    expect(
+      within(picker).getByRole('group', { name: 'Metadata' }),
+    ).toBeVisible();
+
+    await userEvent.type(search, 'compan');
+    expect(
+      within(picker).queryByRole('group', { name: 'Metadata' }),
+    ).not.toBeInTheDocument();
+    await waitFor(() =>
+      expect(
+        within(picker).getByRole('button', { name: 'Companies' }),
+      ).toHaveAttribute('data-highlighted'),
+    );
+    await userEvent.keyboard('{Enter}');
+    await waitFor(() => expect(picker).not.toBeInTheDocument());
+    expect(trigger).toHaveTextContent('Companies');
+
+    await userEvent.click(trigger);
+    const reopenedPicker = await body.findByRole('dialog', {
+      name: 'Select entity',
+    });
+
+    expect(
+      within(reopenedPicker).getByRole('searchbox', { name: 'Search' }),
+    ).toHaveValue('');
+    expect(
+      within(reopenedPicker).getByRole('button', {
+        name: 'Companies',
+        pressed: true,
+      }),
+    ).toBeVisible();
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() => expect(reopenedPicker).not.toBeInTheDocument());
+    await waitFor(() => expect(trigger).toHaveFocus());
   },
 };
 
