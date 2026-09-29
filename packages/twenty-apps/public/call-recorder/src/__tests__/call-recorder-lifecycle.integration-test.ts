@@ -1179,7 +1179,7 @@ describe('call recorder app lifecycle (integration)', () => {
       ).toEqual([]);
     });
 
-    it('asks the queue to redeliver a batch when the recording On echo lookup fails', async () => {
+    it('does not ask the queue to redeliver a batch when the recording On echo lookup fails', async () => {
       const calendarEventId = await createCalendarEvent();
 
       recall.failCallRecordingReads = true;
@@ -1191,12 +1191,54 @@ describe('call recorder app lifecycle (integration)', () => {
           before: { callRecorderPreference: null },
           after: { callRecorderPreference: 'ON' },
         }),
-      ).rejects.toMatchObject({ name: 'RetryableLogicFunctionError' });
+      ).rejects.not.toMatchObject({ name: 'RetryableLogicFunctionError' });
       expect(
         await findCallRecordings({
           calendarEventId: { in: [calendarEventId] },
         }),
       ).toEqual([]);
+    });
+
+    it('retries a Core API read that failed with a 503 and finishes the batch', async () => {
+      const calendarEventId = await createCalendarEvent();
+      const unavailableResponses: Response[] = [];
+      const fetchBeforeOutage = globalThis.fetch;
+
+      vi.stubGlobal(
+        'fetch',
+        (input: Parameters<typeof fetch>[0], init?: RequestInit) => {
+          if (
+            unavailableResponses.length === 0 &&
+            String(input) === `${process.env.TWENTY_API_URL}/graphql` &&
+            String(init?.body ?? '').includes('callRecordings(')
+          ) {
+            const unavailableResponse = new Response('Service Unavailable', {
+              status: 503,
+            });
+
+            unavailableResponses.push(unavailableResponse);
+
+            return Promise.resolve(unavailableResponse);
+          }
+
+          return fetchBeforeOutage(input, init);
+        },
+      );
+
+      await deliverCalendarEventUpdates({
+        calendarEventId,
+        updatedFields: ['title'],
+        before: { title: 'Customer Sync' },
+        after: { title: 'Customer Sync (renamed)' },
+      });
+
+      const [callRecording] = await findCallRecordings({
+        calendarEventId: { eq: calendarEventId },
+      });
+
+      expect(unavailableResponses).toHaveLength(1);
+      expect(callRecording.recordingRequestStatus).toBe('REQUESTED');
+      expect(recall.bots.has(callRecording.externalBotId)).toBe(true);
     });
   });
 
