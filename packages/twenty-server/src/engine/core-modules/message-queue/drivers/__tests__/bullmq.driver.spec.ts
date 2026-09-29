@@ -1,3 +1,5 @@
+import { Logger } from '@nestjs/common';
+
 import { type Job, Worker } from 'bullmq';
 
 import { BullMQDriver } from 'src/engine/core-modules/message-queue/drivers/bullmq.driver';
@@ -8,6 +10,7 @@ const mockGetJob = jest.fn();
 const mockAdd = jest.fn();
 const mockAddBulk = jest.fn();
 const mockSetGlobalConcurrency = jest.fn();
+const mockRemoveGlobalConcurrency = jest.fn();
 
 jest.mock('bullmq', () => ({
   Queue: jest.fn().mockImplementation(() => ({
@@ -16,6 +19,7 @@ jest.mock('bullmq', () => ({
     add: mockAdd,
     addBulk: mockAddBulk,
     setGlobalConcurrency: mockSetGlobalConcurrency,
+    removeGlobalConcurrency: mockRemoveGlobalConcurrency,
   })),
   Worker: jest.fn().mockImplementation(() => ({ on: jest.fn() })),
   MetricsTime: { ONE_WEEK: 1 },
@@ -25,41 +29,6 @@ jest.mock('uuid', () => ({ v4: () => 'generated-uuid-000000000000000000000' }));
 
 const WAITING_JOB_ID = 'sync-catalog-ws-1-5c98b035-5b09-4550-a4fb-b52056c494d1';
 
-describe('BullMQDriver queue registration', () => {
-  const driver = new BullMQDriver(
-    {} as never,
-    {} as never,
-    {} as never,
-    {} as never,
-  );
-
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
-
-  it('limits record exports across workers', async () => {
-    await driver.register(MessageQueue.recordExportQueue);
-
-    expect(mockSetGlobalConcurrency).toHaveBeenCalledWith(2);
-  });
-
-  it('leaves queues without a global limit unchanged', async () => {
-    await driver.register(MessageQueue.workspaceQueue);
-
-    expect(mockSetGlobalConcurrency).not.toHaveBeenCalled();
-  });
-
-  it('fails registration when the global limit cannot be configured', async () => {
-    mockSetGlobalConcurrency.mockRejectedValueOnce(
-      new Error('Redis unavailable'),
-    );
-
-    await expect(
-      driver.register(MessageQueue.recordExportQueue),
-    ).rejects.toThrow('Redis unavailable');
-  });
-});
-
 describe('BullMQDriver deduplication', () => {
   const driver = new BullMQDriver(
     {} as never,
@@ -68,9 +37,7 @@ describe('BullMQDriver deduplication', () => {
     {} as never,
   );
 
-  beforeAll(async () => {
-    await driver.register(MessageQueue.workspaceQueue);
-  });
+  driver.register(MessageQueue.workspaceQueue);
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -180,9 +147,7 @@ describe('BullMQDriver progress', () => {
     {} as never,
   );
 
-  beforeAll(async () => {
-    await driver.register(MessageQueue.workspaceQueue);
-  });
+  driver.register(MessageQueue.workspaceQueue);
 
   it.each([0, 50, { completed: 5, total: 10 }])(
     'persists progress %p through BullMQ and exposes it in job snapshots',
@@ -231,4 +196,59 @@ describe('BullMQDriver progress', () => {
       expect(jobs['job-id']).toMatchObject({ state: 'active', progress });
     },
   );
+});
+
+describe('BullMQDriver global concurrency', () => {
+  const driver = new BullMQDriver(
+    {} as never,
+    {} as never,
+    {} as never,
+    {} as never,
+  );
+
+  driver.register(MessageQueue.recordExportQueue);
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('sets the global concurrency when the queue declares one', () => {
+    driver.work(MessageQueue.recordExportQueue, jest.fn(), {
+      globalConcurrency: 2,
+    });
+
+    expect(mockSetGlobalConcurrency).toHaveBeenCalledWith(2);
+    expect(mockRemoveGlobalConcurrency).not.toHaveBeenCalled();
+  });
+
+  it('removes the global concurrency when the queue declares none', () => {
+    driver.work(MessageQueue.recordExportQueue, jest.fn(), {
+      globalConcurrency: null,
+    });
+
+    expect(mockRemoveGlobalConcurrency).toHaveBeenCalledTimes(1);
+    expect(mockSetGlobalConcurrency).not.toHaveBeenCalled();
+  });
+
+  it('starts the worker and logs when the global concurrency write fails', async () => {
+    const loggerError = jest
+      .spyOn(Logger.prototype, 'error')
+      .mockImplementation();
+
+    mockSetGlobalConcurrency.mockRejectedValueOnce(
+      new Error('Redis unavailable'),
+    );
+
+    driver.work(MessageQueue.recordExportQueue, jest.fn(), {
+      globalConcurrency: 2,
+    });
+
+    await jest.advanceTimersByTimeAsync(0);
+
+    expect(Worker).toHaveBeenCalledTimes(1);
+    expect(loggerError).toHaveBeenCalledWith(
+      'Failed to write global concurrency for queue record-export-queue',
+      expect.any(Error),
+    );
+  });
 });

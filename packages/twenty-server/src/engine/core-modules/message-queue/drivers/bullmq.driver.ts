@@ -108,15 +108,8 @@ export class BullMQDriver
     });
   }
 
-  async register(queueName: MessageQueue): Promise<void> {
-    const queue = new Queue(queueName, this.options);
-    const { globalConcurrency } = MESSAGE_QUEUE_WORKER_CONFIG[queueName];
-
-    this.queueMap[queueName] = queue;
-
-    if (isDefined(globalConcurrency)) {
-      await queue.setGlobalConcurrency(globalConcurrency);
-    }
+  register(queueName: MessageQueue): void {
+    this.queueMap[queueName] = new Queue(queueName, this.options);
   }
 
   async onModuleDestroy() {
@@ -188,6 +181,28 @@ export class BullMQDriver
     }
   }
 
+  private async writeGlobalConcurrency(
+    queueName: MessageQueue,
+    globalConcurrency: number | null | undefined,
+  ): Promise<void> {
+    const queue = this.queueMap[queueName];
+
+    try {
+      if (isDefined(globalConcurrency)) {
+        await queue.setGlobalConcurrency(globalConcurrency);
+
+        return;
+      }
+
+      await queue.removeGlobalConcurrency();
+    } catch (error) {
+      this.logger.error(
+        `Failed to write global concurrency for queue ${queueName}`,
+        error,
+      );
+    }
+  }
+
   work<T>(
     queueName: MessageQueue,
     handler: (job: MessageQueueJob<T>) => Promise<void>,
@@ -211,6 +226,8 @@ export class BullMQDriver
     };
 
     this.workerOptionsMap[queueName] = options;
+
+    void this.writeGlobalConcurrency(queueName, options?.globalConcurrency);
 
     this.workerMap[queueName] = new Worker(
       queueName,

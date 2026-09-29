@@ -8,6 +8,8 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 //
 // priority: applied when enqueuing, lower value is processed first
 // concurrency: max jobs processed in parallel per worker process
+// globalConcurrency: max jobs processed in parallel across all workers, null
+//   for no limit
 // lockDuration: ms a job may run before BullMQ considers it stalled
 // maxStalledCount: times a stalled job is re-queued before failing permanently
 // boundedShutdownDrain: on shutdown, abort still-active jobs after
@@ -15,7 +17,6 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 
 export type MessageQueueWorkerConfig = {
   priority: number;
-  globalConcurrency?: number;
   workerOptions: Required<MessageQueueWorkerOptions>;
 };
 
@@ -25,9 +26,9 @@ export const MESSAGE_QUEUE_WORKER_CONFIG: Record<
 > = {
   [MessageQueue.recordExportQueue]: {
     priority: 7,
-    globalConcurrency: 2,
     workerOptions: {
       concurrency: 1,
+      globalConcurrency: 2,
       lockDuration: 60_000,
       maxStalledCount: 0,
       boundedShutdownDrain: false,
@@ -37,6 +38,7 @@ export const MESSAGE_QUEUE_WORKER_CONFIG: Record<
     priority: 4,
     workerOptions: {
       concurrency: 1,
+      globalConcurrency: null,
       lockDuration: 30_000,
       maxStalledCount: 1,
       boundedShutdownDrain: false,
@@ -46,6 +48,7 @@ export const MESSAGE_QUEUE_WORKER_CONFIG: Record<
     priority: 2,
     workerOptions: {
       concurrency: 1,
+      globalConcurrency: null,
       lockDuration: 30_000,
       maxStalledCount: 1,
       boundedShutdownDrain: false,
@@ -55,6 +58,7 @@ export const MESSAGE_QUEUE_WORKER_CONFIG: Record<
     priority: 2,
     workerOptions: {
       concurrency: 1,
+      globalConcurrency: null,
       lockDuration: 30_000,
       maxStalledCount: 1,
       boundedShutdownDrain: false,
@@ -64,6 +68,7 @@ export const MESSAGE_QUEUE_WORKER_CONFIG: Record<
     priority: 7,
     workerOptions: {
       concurrency: 1,
+      globalConcurrency: null,
       lockDuration: 30_000,
       maxStalledCount: 1,
       boundedShutdownDrain: false,
@@ -73,6 +78,7 @@ export const MESSAGE_QUEUE_WORKER_CONFIG: Record<
     priority: 1,
     workerOptions: {
       concurrency: 1,
+      globalConcurrency: null,
       lockDuration: 30_000,
       maxStalledCount: 1,
       boundedShutdownDrain: false,
@@ -82,6 +88,7 @@ export const MESSAGE_QUEUE_WORKER_CONFIG: Record<
     priority: 6,
     workerOptions: {
       concurrency: 10,
+      globalConcurrency: null,
       lockDuration: 30_000,
       maxStalledCount: 1,
       boundedShutdownDrain: false,
@@ -91,6 +98,7 @@ export const MESSAGE_QUEUE_WORKER_CONFIG: Record<
     priority: 6,
     workerOptions: {
       concurrency: 10,
+      globalConcurrency: null,
       lockDuration: 30_000,
       maxStalledCount: 1,
       boundedShutdownDrain: false,
@@ -100,6 +108,7 @@ export const MESSAGE_QUEUE_WORKER_CONFIG: Record<
     priority: 8,
     workerOptions: {
       concurrency: 50,
+      globalConcurrency: null,
       lockDuration: 30_000,
       maxStalledCount: 1,
       boundedShutdownDrain: false,
@@ -109,6 +118,7 @@ export const MESSAGE_QUEUE_WORKER_CONFIG: Record<
     priority: 4,
     workerOptions: {
       concurrency: 1,
+      globalConcurrency: null,
       lockDuration: 30_000,
       maxStalledCount: 1,
       boundedShutdownDrain: false,
@@ -118,6 +128,7 @@ export const MESSAGE_QUEUE_WORKER_CONFIG: Record<
     priority: 1,
     workerOptions: {
       concurrency: 5,
+      globalConcurrency: null,
       lockDuration: 30_000,
       maxStalledCount: 1,
       boundedShutdownDrain: false,
@@ -127,6 +138,7 @@ export const MESSAGE_QUEUE_WORKER_CONFIG: Record<
     priority: 4,
     workerOptions: {
       concurrency: 1,
+      globalConcurrency: null,
       lockDuration: 30_000,
       maxStalledCount: 1,
       boundedShutdownDrain: false,
@@ -136,6 +148,7 @@ export const MESSAGE_QUEUE_WORKER_CONFIG: Record<
     priority: 1,
     workerOptions: {
       concurrency: 1,
+      globalConcurrency: null,
       lockDuration: 30_000,
       maxStalledCount: 1,
       boundedShutdownDrain: false,
@@ -145,6 +158,7 @@ export const MESSAGE_QUEUE_WORKER_CONFIG: Record<
     priority: 5,
     workerOptions: {
       concurrency: 1,
+      globalConcurrency: null,
       lockDuration: 30_000,
       maxStalledCount: 1,
       boundedShutdownDrain: false,
@@ -154,6 +168,7 @@ export const MESSAGE_QUEUE_WORKER_CONFIG: Record<
     priority: 1,
     workerOptions: {
       concurrency: 1,
+      globalConcurrency: null,
       lockDuration: 30_000,
       maxStalledCount: 1,
       boundedShutdownDrain: false,
@@ -163,6 +178,7 @@ export const MESSAGE_QUEUE_WORKER_CONFIG: Record<
     priority: 1,
     workerOptions: {
       concurrency: 3,
+      globalConcurrency: null,
       lockDuration: 30_000,
       maxStalledCount: 1,
       boundedShutdownDrain: false,
@@ -172,6 +188,7 @@ export const MESSAGE_QUEUE_WORKER_CONFIG: Record<
     priority: 2,
     workerOptions: {
       concurrency: 1,
+      globalConcurrency: null,
       lockDuration: 30_000,
       maxStalledCount: 1,
       boundedShutdownDrain: false,
@@ -181,6 +198,7 @@ export const MESSAGE_QUEUE_WORKER_CONFIG: Record<
     priority: 3,
     workerOptions: {
       concurrency: 1,
+      globalConcurrency: null,
       lockDuration: 30_000,
       maxStalledCount: 1,
       boundedShutdownDrain: false,
@@ -190,6 +208,7 @@ export const MESSAGE_QUEUE_WORKER_CONFIG: Record<
     priority: 6,
     workerOptions: {
       concurrency: 1,
+      globalConcurrency: null,
       lockDuration: 30_000,
       maxStalledCount: 1,
       boundedShutdownDrain: false,
@@ -199,6 +218,7 @@ export const MESSAGE_QUEUE_WORKER_CONFIG: Record<
     priority: 4,
     workerOptions: {
       concurrency: 20,
+      globalConcurrency: null,
       lockDuration: 30_000,
       maxStalledCount: 1,
       boundedShutdownDrain: false,
@@ -208,6 +228,7 @@ export const MESSAGE_QUEUE_WORKER_CONFIG: Record<
     priority: 4,
     workerOptions: {
       concurrency: 1,
+      globalConcurrency: null,
       lockDuration: 30_000,
       maxStalledCount: 1,
       boundedShutdownDrain: false,
@@ -217,6 +238,7 @@ export const MESSAGE_QUEUE_WORKER_CONFIG: Record<
     priority: 6,
     workerOptions: {
       concurrency: 2,
+      globalConcurrency: null,
       lockDuration: 60_000,
       maxStalledCount: 1,
       boundedShutdownDrain: false,
@@ -226,6 +248,7 @@ export const MESSAGE_QUEUE_WORKER_CONFIG: Record<
     priority: 5,
     workerOptions: {
       concurrency: 1,
+      globalConcurrency: null,
       lockDuration: 30_000,
       maxStalledCount: 1,
       boundedShutdownDrain: false,
@@ -235,6 +258,7 @@ export const MESSAGE_QUEUE_WORKER_CONFIG: Record<
     priority: 5,
     workerOptions: {
       concurrency: 1,
+      globalConcurrency: null,
       lockDuration: 30_000,
       maxStalledCount: 1,
       boundedShutdownDrain: false,
@@ -244,6 +268,7 @@ export const MESSAGE_QUEUE_WORKER_CONFIG: Record<
     priority: 2,
     workerOptions: {
       concurrency: 20,
+      globalConcurrency: null,
       // 10 minutes: a stream job holds its lock for the whole stream duration
       lockDuration: 600_000,
       // A stalled stream cannot be resumed client-side, never re-queue it

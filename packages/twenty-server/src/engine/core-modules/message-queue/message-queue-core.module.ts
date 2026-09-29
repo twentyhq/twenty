@@ -134,9 +134,7 @@ export class MessageQueueCoreModule extends ConfigurableModuleClass {
   static createQueueProviders(): Provider[] {
     return Object.values(MessageQueue).map((queueName) => ({
       provide: getQueueToken(queueName),
-      useFactory: async (driver: MessageQueueDriver) => {
-        await driver.register?.(queueName);
-
+      useFactory: (driver: MessageQueueDriver) => {
         return new MessageQueueService(driver, queueName);
       },
       inject: [QUEUE_DRIVER],
