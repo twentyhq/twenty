@@ -1,18 +1,29 @@
 import { Injectable } from '@nestjs/common';
-import { InjectDataSource } from '@nestjs/typeorm';
 
 import {
   ASK_QUESTIONS_TOOL_NAME,
   type AskQuestionItem,
 } from 'twenty-shared/ai';
-import { FieldActorSource } from 'twenty-shared/types';
+import { type ActorMetadata, FieldActorSource } from 'twenty-shared/types';
 import { StepStatus, WorkflowActionType } from 'twenty-shared/workflow';
-import { DataSource } from 'typeorm';
 import { v5 } from 'uuid';
 
+import {
+  WorkflowVersionEntity,
+  WorkflowVersionStatus,
+} from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
 import { WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
+import { type WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
+import {
+  WorkflowStatus,
+  type WorkflowWorkspaceEntity,
+} from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 import { type WorkflowAiAgentAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import {
   type RecordedExecutionResult,
@@ -28,6 +39,13 @@ const WORKFLOW_AGENT_QUESTION_SEED_NAMESPACE =
   '6f0a9a3e-2b1f-4c55-9f0b-7c1d2e3f4a5b';
 
 const WORKFLOW_NAME = 'Qualify inbound lead';
+
+const SYSTEM_ACTOR: ActorMetadata = {
+  source: FieldActorSource.SYSTEM,
+  workspaceMemberId: null,
+  name: 'System',
+  context: {},
+};
 
 const SEEDED_AGENT_QUESTION_RUNS: {
   key: string;
@@ -101,17 +119,18 @@ export class DevSeederWorkflowAgentQuestionWorkspaceService {
   constructor(
     private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
     private readonly workflowAgentConversationService: WorkflowAgentConversationWorkspaceService,
-    @InjectDataSource()
-    private readonly coreDataSource: DataSource,
+    private readonly workspaceOrmManager: WorkspaceOrmManager,
+    @InjectWorkspaceScopedRepository(WorkflowEntity)
+    private readonly coreWorkflowRepository: WorkspaceScopedRepository<WorkflowEntity>,
+    @InjectWorkspaceScopedRepository(WorkflowVersionEntity)
+    private readonly coreWorkflowVersionRepository: WorkspaceScopedRepository<WorkflowVersionEntity>,
   ) {}
 
   async seed({
     workspaceId,
-    schemaName,
     applicationId,
   }: {
     workspaceId: string;
-    schemaName: string;
     applicationId: string;
   }): Promise<void> {
     const seedId = (name: string) =>
@@ -154,7 +173,6 @@ export class DevSeederWorkflowAgentQuestionWorkspaceService {
 
     await this.insertWorkflow({
       workspaceId,
-      schemaName,
       applicationId,
       workspaceWorkflowId,
       workspaceWorkflowVersionId,
@@ -253,7 +271,6 @@ export class DevSeederWorkflowAgentQuestionWorkspaceService {
 
   private async insertWorkflow({
     workspaceId,
-    schemaName,
     applicationId,
     workspaceWorkflowId,
     workspaceWorkflowVersionId,
@@ -263,7 +280,6 @@ export class DevSeederWorkflowAgentQuestionWorkspaceService {
     agentStep,
   }: {
     workspaceId: string;
-    schemaName: string;
     applicationId: string;
     workspaceWorkflowId: string;
     workspaceWorkflowVersionId: string;
@@ -272,121 +288,68 @@ export class DevSeederWorkflowAgentQuestionWorkspaceService {
     trigger: WorkflowManualTrigger;
     agentStep: WorkflowAiAgentAction;
   }): Promise<void> {
-    await this.coreDataSource.transaction(async (entityManager) => {
-      await entityManager
-        .createQueryBuilder()
-        .insert()
-        .into(`${schemaName}.workflow`, [
-          'id',
-          'name',
-          'lastPublishedVersionId',
-          'statuses',
-          'position',
-          'createdBySource',
-          'createdByWorkspaceMemberId',
-          'createdByName',
-          'createdByContext',
-          'updatedBySource',
-          'updatedByWorkspaceMemberId',
-          'updatedByName',
-          'coreWorkflowId',
-        ])
-        .orIgnore()
-        .values({
+    await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+      await this.workspaceOrmManager
+        .getRepository<WorkflowWorkspaceEntity>(
+          'workflow',
+          { shouldBypassPermissionChecks: true },
+          { shouldSkipEventEmission: true },
+        )
+        .insert({
           id: workspaceWorkflowId,
           name: WORKFLOW_NAME,
           lastPublishedVersionId: workspaceWorkflowVersionId,
-          statuses: ['ACTIVE'],
+          statuses: [WorkflowStatus.ACTIVE],
           position: 3,
-          createdBySource: FieldActorSource.SYSTEM,
-          createdByWorkspaceMemberId: null,
-          createdByName: 'System',
-          createdByContext: {},
-          updatedBySource: FieldActorSource.SYSTEM,
-          updatedByWorkspaceMemberId: null,
-          updatedByName: 'System',
+          createdBy: SYSTEM_ACTOR,
+          updatedBy: SYSTEM_ACTOR,
           coreWorkflowId,
-        })
-        .execute();
+        });
 
-      await entityManager
-        .createQueryBuilder()
-        .insert()
-        .into(WorkflowEntity)
-        .orIgnore()
-        .values({
-          id: coreWorkflowId,
-          workspaceId,
-          universalIdentifier: v5(
-            `workflowUniversalIdentifier:${workspaceId}`,
-            WORKFLOW_AGENT_QUESTION_SEED_NAMESPACE,
-          ),
-          applicationId,
-          name: WORKFLOW_NAME,
-          lastPublishedVersionId: workspaceWorkflowVersionId,
-          workspaceWorkflowId,
-          lastPublishedCoreWorkflowVersionId: coreWorkflowVersionId,
-        })
-        .execute();
-
-      await entityManager
-        .createQueryBuilder()
-        .insert()
-        .into(`${schemaName}.workflowVersion`, [
-          'id',
-          'name',
-          'trigger',
-          'steps',
-          'status',
-          'position',
-          'workflowId',
-          'coreWorkflowVersionId',
-        ])
-        .orIgnore()
-        .values({
+      await this.workspaceOrmManager
+        .getRepository<WorkflowVersionWorkspaceEntity>(
+          'workflowVersion',
+          { shouldBypassPermissionChecks: true },
+          { shouldSkipEventEmission: true },
+        )
+        .insert({
           id: workspaceWorkflowVersionId,
           name: 'v1',
-          trigger: JSON.stringify(trigger),
-          steps: JSON.stringify([agentStep]),
-          status: 'ACTIVE',
+          trigger,
+          steps: [agentStep],
+          status: WorkflowVersionStatus.ACTIVE,
           position: 1,
           workflowId: workspaceWorkflowId,
           coreWorkflowVersionId,
-        })
-        .execute();
+        });
+    }, buildSystemAuthContext(workspaceId));
 
-      await entityManager
-        .createQueryBuilder()
-        .insert()
-        .into('core.workflowVersion', [
-          'id',
-          'workspaceId',
-          'universalIdentifier',
-          'applicationId',
-          'triggers',
-          'steps',
-          'status',
-          'workflowId',
-          'coreWorkflowId',
-          'workspaceWorkflowVersionId',
-        ])
-        .orIgnore()
-        .values({
-          id: coreWorkflowVersionId,
-          workspaceId,
-          universalIdentifier: v5(
-            `workflowVersionUniversalIdentifier:${workspaceId}`,
-            WORKFLOW_AGENT_QUESTION_SEED_NAMESPACE,
-          ),
-          applicationId,
-          triggers: [trigger],
-          steps: [agentStep],
-          status: 'ACTIVE',
-          workflowId: workspaceWorkflowId,
-          coreWorkflowId,
-          workspaceWorkflowVersionId,
-        })
-        .execute();
+    await this.coreWorkflowRepository.insert(workspaceId, {
+      id: coreWorkflowId,
+      universalIdentifier: v5(
+        `workflowUniversalIdentifier:${workspaceId}`,
+        WORKFLOW_AGENT_QUESTION_SEED_NAMESPACE,
+      ),
+      applicationId,
+      name: WORKFLOW_NAME,
+      lastPublishedVersionId: workspaceWorkflowVersionId,
+      workspaceWorkflowId,
+      lastPublishedCoreWorkflowVersionId: coreWorkflowVersionId,
+    });
+
+    await this.coreWorkflowVersionRepository.insert(workspaceId, {
+      id: coreWorkflowVersionId,
+      universalIdentifier: v5(
+        `workflowVersionUniversalIdentifier:${workspaceId}`,
+        WORKFLOW_AGENT_QUESTION_SEED_NAMESPACE,
+      ),
+      applicationId,
+      triggers: [trigger],
+      steps: [agentStep],
+      status: WorkflowVersionStatus.ACTIVE,
+      workflowId: workspaceWorkflowId,
+      coreWorkflowId,
+      workspaceWorkflowVersionId,
     });
   }
 }
