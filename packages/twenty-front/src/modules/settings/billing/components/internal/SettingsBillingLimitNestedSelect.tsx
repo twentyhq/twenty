@@ -3,20 +3,15 @@ import { type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { Dropdown } from 'twenty-ui/components';
 import { type IconComponent } from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme';
 
 import { StyledSettingsBillingFieldLabel } from '@/settings/billing/components/internal/SettingsBillingFieldLabel';
+import { StyledSelectDescription } from '@/ui/input/components/internal/select/components/StyledSelectDescription';
 import { SelectControl } from '@/ui/input/components/SelectControl';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 
 const StyledContainer = styled.div`
   width: 100%;
-`;
-
-const StyledDescription = styled.span`
-  color: ${themeCssVariables.font.color.light};
-  font-size: ${themeCssVariables.font.size.sm};
 `;
 
 type SettingsBillingLimitNestedSelectProps = {
@@ -72,7 +67,7 @@ export const SettingsBillingLimitNestedSelect = ({
         </DropdownRoot>
       )}
       {isDefined(description) && (
-        <StyledDescription>{description}</StyledDescription>
+        <StyledSelectDescription>{description}</StyledSelectDescription>
       )}
     </StyledContainer>
   );
