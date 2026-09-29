@@ -113,8 +113,8 @@ export const Default: Story = {
 };
 
 export const Documentation: Story = {
-  ...Default,
-  play: undefined,
+  decorators: Default.decorators,
+  parameters: Default.parameters,
 };
 
 export const Controlled: Story = {
