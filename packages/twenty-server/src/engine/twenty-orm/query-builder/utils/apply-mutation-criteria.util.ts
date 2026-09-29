@@ -5,18 +5,16 @@ import {
   TwentyOrmExceptionCode,
 } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
-import { type ObjectWhereLike } from 'src/engine/twenty-orm/query-builder/types/query-builder.type';
+import {
+  isObjectWhereLike,
+  type ObjectWhereLike,
+} from 'src/engine/twenty-orm/query-builder/types/query-builder.type';
 
 export type MutationCriteria =
   | string
   | string[]
   | ObjectWhereLike
   | ObjectWhereLike[];
-
-const isPlainObject = (value: unknown): value is ObjectWhereLike =>
-  typeof value === 'object' &&
-  value !== null &&
-  Object.getPrototypeOf(value) === Object.prototype;
 
 export const applyMutationCriteriaToQueryBuilder = (
   queryBuilder: WorkspaceSelectQueryBuilder,
@@ -49,7 +47,7 @@ export const applyMutationCriteriaToQueryBuilder = (
       return queryBuilder;
     }
 
-    if (!criteria.every(isPlainObject)) {
+    if (!criteria.every(isObjectWhereLike)) {
       throw new TwentyOrmException(
         'A mutation criteria array must be all ids or all where objects',
         TwentyOrmExceptionCode.INVALID_PARAMETER,

@@ -1,3 +1,5 @@
+import { runInNewContext } from 'node:vm';
+
 import { And, Equal, In, LessThan, Not } from 'typeorm';
 
 import { TwentyOrmException } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
@@ -203,5 +205,30 @@ describe('WorkspaceSelectQueryBuilder where', () => {
       .where({ companyId: null });
 
     expect(queryBuilder.getQuery()).toContain('("person"."companyId" IS NULL)');
+  });
+
+  it('should filter on an object-literal where built in another realm', () => {
+    const { queryBuilder } = buildQueryBuilder();
+
+    queryBuilder
+      .setFindOptions({ select: { id: true } })
+      .where(runInNewContext("({ companyId: 'company-1' })"));
+
+    const [text, values] = queryBuilder.getQueryAndParameters();
+
+    expect(text).toContain('("person"."companyId" = $1)');
+    expect(values).toEqual(['company-1']);
+  });
+
+  it('should refuse a where condition it cannot read instead of dropping it', () => {
+    const { queryBuilder } = buildQueryBuilder();
+
+    queryBuilder.setFindOptions({ select: { id: true } });
+
+    expect(() =>
+      queryBuilder.where(
+        new Map([['companyId', 'company-1']]) as unknown as string,
+      ),
+    ).toThrow(TwentyOrmException);
   });
 });
