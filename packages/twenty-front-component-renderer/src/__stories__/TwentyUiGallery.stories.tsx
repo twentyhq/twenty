@@ -9,6 +9,7 @@ import { buttonControlsTest } from '@/__stories__/twenty-ui-gallery/utils/button
 import { responsiveHooksTest } from '@/__stories__/twenty-ui-gallery/utils/responsiveHooksTest';
 import { dialogTest } from '@/__stories__/twenty-ui-gallery/utils/dialogTest';
 import { dropdownSandboxFailureTest } from '@/__stories__/twenty-ui-gallery/utils/dropdownSandboxFailureTest';
+import { selectPreactTest } from '@/__stories__/twenty-ui-gallery/utils/selectPreactTest';
 import { type Meta } from '@storybook/react-vite';
 
 import {
@@ -321,7 +322,7 @@ export const SelectReact: Story = createGalleryStory({
 export const SelectPreact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-select',
   runtime: 'preact',
-  play: selectTest,
+  play: selectPreactTest,
 });
 
 export const ToastReact: Story = createGalleryStory({
