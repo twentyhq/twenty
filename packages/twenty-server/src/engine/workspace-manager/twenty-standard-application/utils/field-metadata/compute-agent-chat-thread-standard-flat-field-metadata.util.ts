@@ -656,4 +656,33 @@ export const buildAgentChatThreadStandardFlatFieldMetadatas = (
     writability: MetadataWritability.SYSTEM,
     isAuditLogged: false,
   },
+  inputAsks: {
+    ...createStandardRelationFieldFlatMetadata({
+      ...args,
+      context: {
+        fieldName: 'inputAsks',
+        type: FieldMetadataType.RELATION,
+        label: i18nLabel(
+          msg({ message: 'Asks', context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: 'Questions asked in this conversation',
+            context: 'fieldMetadata.description',
+          }),
+        ),
+        icon: 'IconHelpCircle',
+        isUIEditable: false,
+        isNullable: true,
+        targetObjectName: 'inputAsk',
+        targetFieldName: 'thread',
+        morphId: null,
+        settings: {
+          relationType: RelationType.ONE_TO_MANY,
+        },
+      },
+    }),
+    writability: MetadataWritability.SYSTEM,
+    isAuditLogged: false,
+  },
 });
