@@ -30,14 +30,13 @@ import { DevSeederPermissionsService } from 'src/engine/workspace-manager/dev-se
 import { DevSeederDataService } from 'src/engine/workspace-manager/dev-seeder/data/services/dev-seeder-data.service';
 import { DevSeederWorkflowAgentQuestionWorkspaceService } from 'src/engine/workspace-manager/dev-seeder/data/services/dev-seeder-workflow-agent-question.workspace-service';
 import { TimelineActivitySeederService } from 'src/engine/workspace-manager/dev-seeder/data/services/timeline-activity-seeder.service';
-import { InputAskModule } from 'src/modules/input-ask/input-ask.module';
 import { TimelineActivityModule } from 'src/modules/timeline/timeline-activity.module';
 import { DevSeederMetadataService } from 'src/engine/workspace-manager/dev-seeder/metadata/services/dev-seeder-metadata.service';
-import { DevSeederService } from 'src/engine/workspace-manager/dev-seeder/services/dev-seeder.service';
+import { DevSeederWorkspaceService } from 'src/engine/workspace-manager/dev-seeder/services/dev-seeder.workspace-service';
 import { StandardObjectsPrefillModule } from 'src/engine/workspace-manager/standard-objects-prefill-data/standard-objects-prefill.module';
 import { TwentyStandardApplicationModule } from 'src/engine/workspace-manager/twenty-standard-application/twenty-standard-application.module';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
-import { WorkflowAgentConversationWorkspaceService } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/services/workflow-agent-conversation.workspace-service';
+import { WorkflowAgentConversationModule } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/workflow-agent-conversation.module';
 import { WorkflowRunModule } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.module';
 
 @Module({
@@ -69,17 +68,16 @@ import { WorkflowRunModule } from 'src/modules/workflow/workflow-runner/workflow
     SecretEncryptionModule,
     UpgradeModule,
     WorkflowRunModule,
-    InputAskModule,
+    WorkflowAgentConversationModule,
   ],
-  exports: [DevSeederService],
+  exports: [DevSeederWorkspaceService],
   providers: [
-    DevSeederService,
+    DevSeederWorkspaceService,
     DevSeederMetadataService,
     DevSeederPermissionsService,
     DevSeederDataService,
     TimelineActivitySeederService,
     DevSeederWorkflowAgentQuestionWorkspaceService,
-    WorkflowAgentConversationWorkspaceService,
     provideWorkspaceScopedRepository(RoleEntity),
     provideWorkspaceScopedRepository(ObjectMetadataEntity),
   ],
