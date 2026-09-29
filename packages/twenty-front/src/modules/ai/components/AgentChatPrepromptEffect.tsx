@@ -1,7 +1,9 @@
+import { useStore } from 'jotai';
 import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { AGENT_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME } from '@/ai/constants/AgentChatRestoreEditorContentEventName';
+import { agentChatDraftsByThreadIdState } from '@/ai/states/agentChatDraftsByThreadIdState';
 import { agentChatPrepromptState } from '@/ai/states/agentChatPrepromptState';
 import { shouldFocusChatEditorState } from '@/ai/states/shouldFocusChatEditorState';
 import { dispatchAgentChatSendMessageEvent } from '@/ai/utils/dispatchAgentChatSendMessageEvent';
@@ -10,6 +12,7 @@ import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
 export const AgentChatPrepromptEffect = () => {
+  const store = useStore();
   const [agentChatPreprompt, setAgentChatPreprompt] = useAtomState(
     agentChatPrepromptState,
   );
@@ -20,7 +23,7 @@ export const AgentChatPrepromptEffect = () => {
       return;
     }
 
-    const { serializedDocument, mode } = agentChatPreprompt;
+    const { draftKey, mode } = agentChatPreprompt;
 
     const timeoutId = setTimeout(() => {
       if (mode === 'SEND') {
@@ -30,7 +33,9 @@ export const AgentChatPrepromptEffect = () => {
         });
       } else {
         dispatchBrowserEvent(AGENT_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME, {
-          content: serializedDocument,
+          content:
+            store.get(agentChatDraftsByThreadIdState.atom)[draftKey]
+              ?.serializedDocument ?? '',
         });
         setShouldFocusChatEditor(true);
       }
@@ -39,7 +44,12 @@ export const AgentChatPrepromptEffect = () => {
     }, 0);
 
     return () => clearTimeout(timeoutId);
-  }, [agentChatPreprompt, setAgentChatPreprompt, setShouldFocusChatEditor]);
+  }, [
+    agentChatPreprompt,
+    setAgentChatPreprompt,
+    setShouldFocusChatEditor,
+    store,
+  ]);
 
   return null;
 };

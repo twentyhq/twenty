@@ -3,7 +3,7 @@ import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomStat
 export type AgentChatPrepromptMode = 'PREFILL' | 'SEND';
 
 export type AgentChatPreprompt = {
-  serializedDocument: string;
+  draftKey: string;
   mode: AgentChatPrepromptMode;
 };
 

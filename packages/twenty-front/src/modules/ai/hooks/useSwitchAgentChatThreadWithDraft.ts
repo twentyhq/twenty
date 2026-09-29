@@ -40,7 +40,8 @@ export const useSwitchAgentChatThreadWithDraft = () => {
           isDefined(thread) ? getAgentChatUsageFromThread(thread) : null,
         );
         const destinationDraft =
-          store.get(agentChatDraftsByThreadIdState.atom)[toThreadId] ?? '';
+          store.get(agentChatDraftsByThreadIdState.atom)[toThreadId]
+            ?.serializedDocument ?? '';
         setAgentChatInput(tipTapDocumentToMarkdown(destinationDraft));
       }
     },

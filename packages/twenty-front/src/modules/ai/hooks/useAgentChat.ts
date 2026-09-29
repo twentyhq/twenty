@@ -58,7 +58,7 @@ export const useAgentChat = (
   const aiModels = useAtomStateValue(aiModelsState);
   const { getBrowsingContext } = useGetBrowsingContext();
   const { applyOptimisticUnarchive } = useOptimisticallyUnarchiveOnSend();
-  const { movePendingRecordTargetToThread, attachPendingRecordTargetOnSend } =
+  const { attachPendingRecordTargetOnSend } =
     useAttachPendingRecordTargetOnSend();
   const apolloClient = useApolloClient();
   const { enqueueToast } = useToast();
@@ -79,8 +79,13 @@ export const useAgentChat = (
     const draftKey =
       store.get(currentAiChatThreadState.atom) ??
       AGENT_CHAT_NEW_THREAD_DRAFT_KEY;
-    const serializedContentToSend =
-      store.get(agentChatDraftsByThreadIdState.atom)[draftKey] ?? '';
+    // Read before the first await: the composer clears itself right after
+    // asking to send, and clearing the record's mention drops the record.
+    const draftToSend = store.get(agentChatDraftsByThreadIdState.atom)[
+      draftKey
+    ];
+    const serializedContentToSend = draftToSend?.serializedDocument ?? '';
+    const pendingRecordTarget = draftToSend?.pendingRecordTarget;
     const contentToSend = tipTapDocumentToMarkdown(
       serializedContentToSend,
     ).trim();
@@ -115,13 +120,12 @@ export const useAgentChat = (
     if (draftKey === AGENT_CHAT_NEW_THREAD_DRAFT_KEY) {
       setCurrentAiChatThread(threadId);
       projectAiChatThreadToUrl(threadId);
-      movePendingRecordTargetToThread({ draftKey, threadId });
     }
 
     setAgentChatInput('');
-    setAgentChatDraftsByThreadId((prev) => ({
-      ...prev,
-      [draftKey]: '',
+    setAgentChatDraftsByThreadId((previousDrafts) => ({
+      ...previousDrafts,
+      [draftKey]: { serializedDocument: '' },
     }));
 
     const browsingContext = getBrowsingContext();
@@ -218,7 +222,7 @@ export const useAgentChat = (
         store.set(lastSentBrowsingContextAtom, browsingContext);
       }
 
-      void attachPendingRecordTargetOnSend({ threadId });
+      void attachPendingRecordTargetOnSend({ threadId, pendingRecordTarget });
 
       if (data?.sendChatMessage?.queued) {
         const latestMessages = store.get(messagesAtom);
@@ -238,11 +242,15 @@ export const useAgentChat = (
       rollbackOptimisticUnarchive?.();
 
       setAgentChatInput(contentToSend);
-      setAgentChatDraftsByThreadId((prev) => ({
-        ...prev,
-        [restoredDraftKey]: serializedContentToSend,
+      // The record goes back with the draft, so the retry still attaches it.
+      setAgentChatDraftsByThreadId((previousDrafts) => ({
+        ...previousDrafts,
+        [restoredDraftKey]: {
+          serializedDocument: serializedContentToSend,
+          pendingRecordTarget,
+        },
         ...(draftKey === AGENT_CHAT_NEW_THREAD_DRAFT_KEY
-          ? { [AGENT_CHAT_NEW_THREAD_DRAFT_KEY]: '' }
+          ? { [AGENT_CHAT_NEW_THREAD_DRAFT_KEY]: { serializedDocument: '' } }
           : {}),
       }));
       setAgentChatUploadedFiles((currentUploadedFiles) => [
@@ -287,7 +295,6 @@ export const useAgentChat = (
     setCurrentAiChatThread,
     apolloClient,
     applyOptimisticUnarchive,
-    movePendingRecordTargetToThread,
     attachPendingRecordTargetOnSend,
   ]);
 

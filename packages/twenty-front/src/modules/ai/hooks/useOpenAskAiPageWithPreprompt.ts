@@ -5,6 +5,7 @@ import { useStageAiChatPreprompt } from '@/ai/hooks/useStageAiChatPreprompt';
 import { useSwitchToNewAiChat } from '@/ai/hooks/useSwitchToNewAiChat';
 import { AGENT_CHAT_NEW_THREAD_DRAFT_KEY } from '@/ai/states/agentChatDraftsByThreadIdState';
 import { type AgentChatPrepromptMode } from '@/ai/states/agentChatPrepromptState';
+import { type AgentChatDraft } from '@/ai/types/AgentChatDraft';
 import { useWorkspaceAiModelTiers } from '@/ai/hooks/useWorkspaceAiModelTiers';
 import { agentChatUserSelectedModelTierState } from '@/ai/states/agentChatUserSelectedModelTierState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
@@ -19,21 +20,23 @@ const TIER_BY_PRESELECTION: Record<AgentChatModelPreselection, AiModelTier> = {
 
 export const useOpenAskAiPageWithPreprompt = () => {
   const { switchToNewChat } = useSwitchToNewAiChat();
-  const { stageAiChatPreprompt } = useStageAiChatPreprompt();
+  const { stageAiChatPreprompt, stageAiChatPrepromptDraft } =
+    useStageAiChatPreprompt();
   const setAgentChatUserSelectedModelTier = useSetAtomState(
     agentChatUserSelectedModelTierState,
   );
   const { chatTier } = useWorkspaceAiModelTiers();
 
-  const openAskAiPageWithPreprompt = ({
-    text,
-    mode = 'PREFILL',
-    model,
-  }: {
-    text: string;
-    mode?: AgentChatPrepromptMode;
-    model?: AgentChatModelPreselection;
-  }) => {
+  // A draft carries a serialized editor document, which can mention records,
+  // and the record the new chat is filed under on its first send.
+  const openAskAiPageWithPreprompt = (
+    preprompt: ({ text: string } | { draft: AgentChatDraft }) & {
+      mode?: AgentChatPrepromptMode;
+      model?: AgentChatModelPreselection;
+    },
+  ) => {
+    const { mode = 'PREFILL', model } = preprompt;
+
     switchToNewChat();
 
     if (isDefined(model)) {
@@ -43,8 +46,18 @@ export const useOpenAskAiPageWithPreprompt = () => {
       setAgentChatUserSelectedModelTier(tier === chatTier ? null : tier);
     }
 
+    if ('draft' in preprompt) {
+      stageAiChatPrepromptDraft({
+        draft: preprompt.draft,
+        mode,
+        draftKey: AGENT_CHAT_NEW_THREAD_DRAFT_KEY,
+      });
+
+      return;
+    }
+
     stageAiChatPreprompt({
-      text,
+      text: preprompt.text,
       mode,
       draftKey: AGENT_CHAT_NEW_THREAD_DRAFT_KEY,
     });

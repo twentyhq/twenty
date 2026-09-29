@@ -6,7 +6,6 @@ import {
   AGENT_CHAT_NEW_THREAD_DRAFT_KEY,
   agentChatDraftsByThreadIdState,
 } from '@/ai/states/agentChatDraftsByThreadIdState';
-import { agentChatPendingRecordTargetByDraftKeyState } from '@/ai/states/agentChatPendingRecordTargetByDraftKeyState';
 import { agentChatInputState } from '@/ai/states/agentChatInputState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { shouldFocusChatEditorState } from '@/ai/states/shouldFocusChatEditorState';
@@ -15,7 +14,6 @@ import { isCreatingChatThreadState } from '@/ai/states/isCreatingChatThreadState
 import { isCreatingForFirstSendState } from '@/ai/states/isCreatingForFirstSendState';
 import { skipMessagesSkeletonUntilLoadedState } from '@/ai/states/skipMessagesSkeletonUntilLoadedState';
 import { threadIdCreatedFromDraftState } from '@/ai/states/threadIdCreatedFromDraftState';
-import { movePendingRecordTargetToDraftKey } from '@/ai/utils/movePendingRecordTargetToDraftKey';
 import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
 import { type FlatAgentChatThread } from '@/metadata-store/types/FlatAgentChatThread';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
@@ -68,27 +66,20 @@ export const useCreateAgentChatThread = () => {
       const previousDraftKey =
         store.get(currentAiChatThreadState.atom) ??
         AGENT_CHAT_NEW_THREAD_DRAFT_KEY;
-      const draftsSnapshot = store.get(agentChatDraftsByThreadIdState.atom);
-      const newDraft = draftsSnapshot[AGENT_CHAT_NEW_THREAD_DRAFT_KEY] ?? '';
+      const newDraft = store.get(agentChatDraftsByThreadIdState.atom)[
+        AGENT_CHAT_NEW_THREAD_DRAFT_KEY
+      ];
 
       setIsCreatingChatThread(false);
 
       if (previousDraftKey === AGENT_CHAT_NEW_THREAD_DRAFT_KEY) {
         store.set(hasTriggeredCreateForDraftState.atom, true);
+        // The record a new chat was started from moves with its draft.
         setAgentChatDraftsByThreadId((previousDrafts) => ({
           ...previousDrafts,
-          [newThreadId]: newDraft,
-          [AGENT_CHAT_NEW_THREAD_DRAFT_KEY]: '',
+          [newThreadId]: newDraft ?? { serializedDocument: '' },
+          [AGENT_CHAT_NEW_THREAD_DRAFT_KEY]: { serializedDocument: '' },
         }));
-        store.set(
-          agentChatPendingRecordTargetByDraftKeyState.atom,
-          (pendingRecordTargetByDraftKey) =>
-            movePendingRecordTargetToDraftKey({
-              pendingRecordTargetByDraftKey,
-              fromDraftKey: AGENT_CHAT_NEW_THREAD_DRAFT_KEY,
-              toDraftKey: newThreadId,
-            }),
-        );
         store.set(shouldFocusChatEditorState.atom, true);
         store.set(skipMessagesSkeletonUntilLoadedState.atom, true);
         store.set(threadIdCreatedFromDraftState.atom, newThreadId);
@@ -96,7 +87,9 @@ export const useCreateAgentChatThread = () => {
 
       setCurrentAiChatThread(newThreadId);
       projectAiChatThreadToUrl(newThreadId);
-      setAgentChatInput(tipTapDocumentToMarkdown(newDraft));
+      setAgentChatInput(
+        tipTapDocumentToMarkdown(newDraft?.serializedDocument ?? ''),
+      );
     },
     onError: () => {
       setIsCreatingChatThread(false);

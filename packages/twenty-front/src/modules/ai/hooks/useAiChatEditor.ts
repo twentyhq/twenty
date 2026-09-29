@@ -16,6 +16,7 @@ import { agentChatInputState } from '@/ai/states/agentChatInputState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { dispatchAgentChatEnsureThreadForDraftEvent } from '@/ai/utils/dispatchAgentChatEnsureThreadForDraftEvent';
 import { dispatchAgentChatSendMessageEvent } from '@/ai/utils/dispatchAgentChatSendMessageEvent';
+import { updateAgentChatDraftDocument } from '@/ai/utils/updateAgentChatDraftDocument';
 import { MENTION_SUGGESTION_PLUGIN_KEY } from '@/mention/constants/MentionSuggestionPluginKey';
 import { useMentionSearch } from '@/mention/hooks/useMentionSearch';
 import { SKILL_SUGGESTION_PLUGIN_KEY } from '@/skill-suggestion/constants/SkillSuggestionPluginKey';
@@ -41,7 +42,8 @@ export const useAiChatEditor = () => {
     useRemoveFocusItemFromFocusStackById();
 
   const draftKey = currentAiChatThread ?? AGENT_CHAT_NEW_THREAD_DRAFT_KEY;
-  const initialDraft = agentChatDraftsByThreadId[draftKey] ?? '';
+  const initialDraft =
+    agentChatDraftsByThreadId[draftKey]?.serializedDocument ?? '';
   const editor = useAdvancedTextEditor({
     profile: AI_CHAT_EDITOR_PROFILE,
     placeholder: t`Ask anything, @ a record or / a skill...`,
@@ -78,9 +80,12 @@ export const useAiChatEditor = () => {
         text === '' ? '' : serializeAdvancedTextEditorDocument(currentEditor);
 
       setAgentChatInput(text);
-      setAgentChatDraftsByThreadId((prev) => ({
-        ...prev,
-        [draftKey]: serializedDraft,
+      setAgentChatDraftsByThreadId((previousDrafts) => ({
+        ...previousDrafts,
+        [draftKey]: updateAgentChatDraftDocument({
+          draft: previousDrafts[draftKey],
+          serializedDocument: serializedDraft,
+        }),
       }));
       if (draftKey === AGENT_CHAT_NEW_THREAD_DRAFT_KEY && text.trim() !== '') {
         dispatchAgentChatEnsureThreadForDraftEvent();

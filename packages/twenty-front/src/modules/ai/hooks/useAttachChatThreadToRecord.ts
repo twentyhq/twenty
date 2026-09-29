@@ -3,7 +3,6 @@ import { useToast } from 'twenty-ui/components';
 
 import { AGENT_CHAT_THREAD_OBJECT_NAME_SINGULAR } from '@/ai/constants/AgentChatThreadObjectNameSingular';
 import { useAgentChatThreadJunctionConfig } from '@/ai/hooks/useAgentChatThreadJunctionConfig';
-import { type AgentChatRecordTarget } from '@/ai/types/AgentChatRecordTarget';
 import { findAgentChatThreadTargetFieldInfo } from '@/ai/utils/findAgentChatThreadTargetFieldInfo';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
@@ -11,6 +10,7 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { type RecordGqlOperationFindManyResult } from '@/object-record/graphql/types/RecordGqlOperationFindManyResult';
 import { useCreateManyRecords } from '@/object-record/hooks/useCreateManyRecords';
 import { useFindManyRecordsQuery } from '@/object-record/hooks/useFindManyRecordsQuery';
+import { type SearchRecord } from '~/generated/graphql';
 
 const EXISTING_LINK_GQL_FIELDS = { id: true };
 
@@ -41,7 +41,9 @@ export const useAttachChatThreadToRecord = () => {
     threadId,
     objectNameSingular,
     recordId,
-  }: AgentChatRecordTarget & { threadId: string }) => {
+  }: Pick<SearchRecord, 'objectNameSingular' | 'recordId'> & {
+    threadId: string;
+  }) => {
     const targetJoinColumnName = isDefined(junctionConfig)
       ? findAgentChatThreadTargetFieldInfo({
           targetFields: junctionConfig.targetFields,

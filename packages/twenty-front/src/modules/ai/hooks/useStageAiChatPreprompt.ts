@@ -4,6 +4,7 @@ import {
   type AgentChatPrepromptMode,
   agentChatPrepromptState,
 } from '@/ai/states/agentChatPrepromptState';
+import { type AgentChatDraft } from '@/ai/types/AgentChatDraft';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
 // Staging a preprompt is always these two steps: sending reads the draft rather
@@ -15,20 +16,20 @@ export const useStageAiChatPreprompt = () => {
   );
   const setAgentChatPreprompt = useSetAtomState(agentChatPrepromptState);
 
-  const stageAiChatPrepromptDocument = ({
-    serializedDocument,
+  const stageAiChatPrepromptDraft = ({
+    draft,
     mode,
     draftKey,
   }: {
-    serializedDocument: string;
+    draft: AgentChatDraft;
     mode: AgentChatPrepromptMode;
     draftKey: string;
   }) => {
     setAgentChatDraftsByThreadId((previousDrafts) => ({
       ...previousDrafts,
-      [draftKey]: serializedDocument,
+      [draftKey]: draft,
     }));
-    setAgentChatPreprompt({ serializedDocument, mode });
+    setAgentChatPreprompt({ draftKey, mode });
   };
 
   const stageAiChatPreprompt = ({
@@ -40,11 +41,14 @@ export const useStageAiChatPreprompt = () => {
     mode: AgentChatPrepromptMode;
     draftKey: string;
   }) =>
-    stageAiChatPrepromptDocument({
-      serializedDocument: serializePlainTextAsAdvancedTextEditorDocument(text),
+    stageAiChatPrepromptDraft({
+      draft: {
+        serializedDocument:
+          serializePlainTextAsAdvancedTextEditorDocument(text),
+      },
       mode,
       draftKey,
     });
 
-  return { stageAiChatPreprompt, stageAiChatPrepromptDocument };
+  return { stageAiChatPreprompt, stageAiChatPrepromptDraft };
 };

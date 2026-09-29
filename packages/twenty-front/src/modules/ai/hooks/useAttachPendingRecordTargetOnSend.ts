@@ -1,44 +1,21 @@
 import { useStore } from 'jotai';
-import omit from 'lodash.omit';
 import { isDefined } from 'twenty-shared/utils';
 
 import { useAttachChatThreadToRecord } from '@/ai/hooks/useAttachChatThreadToRecord';
-import { agentChatPendingRecordTargetByDraftKeyState } from '@/ai/states/agentChatPendingRecordTargetByDraftKeyState';
-import { movePendingRecordTargetToDraftKey } from '@/ai/utils/movePendingRecordTargetToDraftKey';
+import { agentChatDraftsByThreadIdState } from '@/ai/states/agentChatDraftsByThreadIdState';
+import { type AgentChatDraft } from '@/ai/types/AgentChatDraft';
 
 export const useAttachPendingRecordTargetOnSend = () => {
   const store = useStore();
   const { attachChatThreadToRecord } = useAttachChatThreadToRecord();
 
-  // A failed first send restores its draft under the thread it created, so the
-  // record has to move with it for the retry to find it.
-  const movePendingRecordTargetToThread = ({
-    draftKey,
-    threadId,
-  }: {
-    draftKey: string;
-    threadId: string;
-  }) => {
-    store.set(
-      agentChatPendingRecordTargetByDraftKeyState.atom,
-      (pendingRecordTargetByDraftKey) =>
-        movePendingRecordTargetToDraftKey({
-          pendingRecordTargetByDraftKey,
-          fromDraftKey: draftKey,
-          toDraftKey: threadId,
-        }),
-    );
-  };
-
   const attachPendingRecordTargetOnSend = async ({
     threadId,
+    pendingRecordTarget,
   }: {
     threadId: string;
+    pendingRecordTarget: AgentChatDraft['pendingRecordTarget'];
   }) => {
-    const pendingRecordTarget = store.get(
-      agentChatPendingRecordTargetByDraftKeyState.atom,
-    )[threadId];
-
     if (!isDefined(pendingRecordTarget)) {
       return;
     }
@@ -48,13 +25,19 @@ export const useAttachPendingRecordTargetOnSend = () => {
       ...pendingRecordTarget,
     });
 
-    // Kept on failure so the next message sent in the thread retries it.
-    if (isAttached) {
-      store.set(agentChatPendingRecordTargetByDraftKeyState.atom, (previous) =>
-        omit(previous, threadId),
-      );
+    // Put back on the thread's draft on failure, so the next message sent in
+    // the thread retries it.
+    if (!isAttached) {
+      store.set(agentChatDraftsByThreadIdState.atom, (previousDrafts) => ({
+        ...previousDrafts,
+        [threadId]: {
+          serializedDocument:
+            previousDrafts[threadId]?.serializedDocument ?? '',
+          pendingRecordTarget,
+        },
+      }));
     }
   };
 
-  return { movePendingRecordTargetToThread, attachPendingRecordTargetOnSend };
+  return { attachPendingRecordTargetOnSend };
 };

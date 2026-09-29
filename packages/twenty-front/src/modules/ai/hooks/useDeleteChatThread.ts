@@ -56,14 +56,17 @@ export const useDeleteChatThread = () => {
         setCurrentAiChatThread(nextThreadId);
         projectAiChatThreadToUrl(nextThreadId);
         setAgentChatInput(
-          tipTapDocumentToMarkdown(draftsByThreadId[nextThreadId] ?? ''),
+          tipTapDocumentToMarkdown(
+            draftsByThreadId[nextThreadId]?.serializedDocument ?? '',
+          ),
         );
       } else {
         setCurrentAiChatThread(AGENT_CHAT_NEW_THREAD_DRAFT_KEY);
         projectAiChatThreadToUrl(AGENT_CHAT_NEW_THREAD_DRAFT_KEY);
         setAgentChatInput(
           tipTapDocumentToMarkdown(
-            draftsByThreadId[AGENT_CHAT_NEW_THREAD_DRAFT_KEY] ?? '',
+            draftsByThreadId[AGENT_CHAT_NEW_THREAD_DRAFT_KEY]
+              ?.serializedDocument ?? '',
           ),
         );
       }
