@@ -35,6 +35,7 @@ import { agentChatIsAwaitingFirstChunkComponentFamilyState } from '@/ai/states/a
 import { agentChatLastSentBrowsingContextFamilyState } from '@/ai/states/agentChatLastSentBrowsingContextFamilyState';
 import { agentChatMessagesComponentFamilyState } from '@/ai/states/agentChatMessagesComponentFamilyState';
 import { agentChatSelectedFilesState } from '@/ai/states/agentChatSelectedFilesState';
+import { agentChatSentMessageHandOffState } from '@/ai/states/agentChatSentMessageHandOffState';
 import { agentChatUploadedFilesState } from '@/ai/states/agentChatUploadedFilesState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { isAiChatCreditsExhaustedError } from '@/ai/utils/isAiChatCreditsExhaustedError';
@@ -170,6 +171,11 @@ export const useAgentChat = (
 
     const currentMessages = store.get(messagesAtom);
 
+    store.set(agentChatSentMessageHandOffState.atom, (sentMessageHandOff) =>
+      isDefined(sentMessageHandOff)
+        ? { ...sentMessageHandOff, messageId }
+        : null,
+    );
     store.set(messagesAtom, [...currentMessages, optimisticUserMessage]);
     store.set(errorAtom, null);
     store.set(isAwaitingFirstChunkAtom, true);

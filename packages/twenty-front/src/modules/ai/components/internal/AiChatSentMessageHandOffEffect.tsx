@@ -5,7 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { AGENT_CHAT_SEND_MESSAGE_EVENT_NAME } from '@/ai/constants/AgentChatSendMessageEventName';
 import { agentChatSentMessageHandOffState } from '@/ai/states/agentChatSentMessageHandOffState';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
+import { getTextBoundingClientRect } from '@/ai/utils/getTextBoundingClientRect';
 import { useListenToBrowserEvent } from '@/browser-event/hooks/useListenToBrowserEvent';
 
 type AiChatSentMessageHandOffEffectProps = {
@@ -20,21 +20,19 @@ export const AiChatSentMessageHandOffEffect = ({
   const store = useStore();
 
   const handOffSentMessage = () => {
-    const currentAiChatThread = store.get(currentAiChatThreadState.atom);
-
     if (
       !isComposerCentered ||
-      !isDefined(currentAiChatThread) ||
       !isDefined(editor) ||
       editor.isDestroyed ||
       !isNonEmptyString(editor.getText().trim())
     ) {
+      store.set(agentChatSentMessageHandOffState.atom, null);
       return;
     }
 
     store.set(agentChatSentMessageHandOffState.atom, {
-      threadId: currentAiChatThread,
-      composerTextElement: editor.view.dom,
+      composerTextRect: getTextBoundingClientRect(editor.view.dom),
+      messageId: null,
     });
   };
 
