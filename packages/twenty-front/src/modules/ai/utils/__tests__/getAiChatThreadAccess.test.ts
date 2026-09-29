@@ -29,6 +29,19 @@ describe('getAiChatThreadAccess', () => {
       permissions: READ_ONLY_PERMISSIONS,
       expectedAccess: 'viewer',
     },
+    {
+      description: 'lets a member who can update the thread write in it',
+      isOnNewAiChatSlot: false,
+      permissions: { ...READ_ONLY_PERMISSIONS, canUpdate: true },
+      expectedAccess: 'writer',
+    },
+    {
+      description:
+        'marks a thread the member can no longer read as unavailable',
+      isOnNewAiChatSlot: false,
+      permissions: { ...READ_ONLY_PERMISSIONS, canRead: false },
+      expectedAccess: 'unavailable',
+    },
   ])('$description', ({ isOnNewAiChatSlot, permissions, expectedAccess }) => {
     expect(
       getAiChatThreadAccess({
