@@ -1643,15 +1643,14 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         isSystem: true,
         isAuditLogged: false,
         isUICreatable: false,
-        isUIEditable: false,
+        isUIEditable: true,
         // A question shows what its run or conversation was doing, so it is
-        // read exactly as they are, never more widely: assigning it to someone
-        // does not share it, so only a reader can be made its assignee.
+        // read exactly as they are, never more widely.
         readability: MetadataReadability.INHERITED,
         readabilityParentFieldMetadataNames: ['workflowRun', 'thread'],
-        // An Ask gates something parked on it, so a user token deleting the
-        // row or patching its status or response would strand what waits.
-        writability: MetadataWritability.SYSTEM,
+        // Only the assignee is written through the API; every other field
+        // changes with what the Ask gates.
+        writability: MetadataWritability.OPEN,
         labelIdentifierFieldMetadataName: 'name',
       },
       workspaceId,

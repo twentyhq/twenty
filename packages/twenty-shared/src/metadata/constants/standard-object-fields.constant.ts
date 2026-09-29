@@ -706,7 +706,6 @@ export const STANDARD_OBJECT_FIELDS = {
     response: { universalIdentifier: '04906a36-ec59-4d3f-8da9-7ef6696ed326' },
     assignee: { universalIdentifier: '410fabce-972b-40d3-8b11-3c0807ecab90' },
     answeredAt: { universalIdentifier: '618f303d-123b-480f-9d40-64fcb0db2e01' },
-    source: { universalIdentifier: '55698568-39cb-453e-85b2-7a8ba3793f6a' },
     workflowRun: {
       universalIdentifier: 'cf2d5592-f51c-4dca-a6f2-cb4f7d1fcc80',
     },

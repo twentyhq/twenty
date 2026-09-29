@@ -17,7 +17,6 @@ import {
 } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { InputAskSource } from 'src/modules/input-ask/enums/input-ask-source.enum';
 import { InputAskStatus } from 'src/modules/input-ask/enums/input-ask-status.enum';
 import { type InputAskWorkspaceEntity } from 'src/modules/input-ask/standard-objects/input-ask.workspace-entity';
 import { type WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
@@ -372,7 +371,6 @@ export class InputAskWorkspaceService {
       await inputAskRepository.insert({
         ...inputAsk,
         status: InputAskStatus.PENDING,
-        source: InputAskSource.WORKFLOW_RUN_STEP,
         assigneeId: await this.findRunInitiatorWorkspaceMemberId(
           inputAsk.workflowRunId,
         ),
