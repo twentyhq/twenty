@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { LightIconButton } from 'twenty-ui/components';
@@ -10,6 +10,7 @@ import { themeCssVariables } from 'twenty-ui/theme';
 import { useAttachChatThreadToRecord } from '@/ai/hooks/useAttachChatThreadToRecord';
 import { useDetachChatThreadFromRecord } from '@/ai/hooks/useDetachChatThreadFromRecord';
 import { agentChatThreadPermissionsFamilySelector } from '@/ai/states/selectors/agentChatThreadPermissionsFamilySelector';
+import { useListenToObjectRecordOperationBrowserEvent } from '@/browser-event/hooks/useListenToObjectRecordOperationBrowserEvent';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { RecordChip } from '@/object-record/components/RecordChip';
 import { generateJunctionRelationGqlFields } from '@/object-record/graphql/record-gql-fields/utils/generateJunctionRelationGqlFields';
@@ -27,6 +28,7 @@ import { useFieldWidgetJunctionRelationRecords } from '@/page-layout/widgets/fie
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
+import { useListenToEventsForQuery } from '@/sse-db-event/hooks/useListenToEventsForQuery';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
@@ -69,7 +71,6 @@ export const AiChatThreadRecordTargets = ({
   const recordGqlFields = useMemo(
     () => ({
       id: true,
-      workflowRunId: true,
       ...(isDefined(junctionConfig)
         ? {
             [junctionConfig.junctionField.name]:
@@ -83,11 +84,40 @@ export const AiChatThreadRecordTargets = ({
     [junctionConfig, objectMetadataItems],
   );
 
-  const { record: thread } = useFindOneRecord({
+  const isThreadQuerySkipped =
+    !isConversationsTabEnabled || !isDefined(junctionConfig);
+
+  const { record: thread, refetch } = useFindOneRecord({
     objectNameSingular: CoreObjectNameSingular.AgentChatThread,
     objectRecordId: threadId,
     recordGqlFields,
-    skip: !isConversationsTabEnabled || !isDefined(junctionConfig),
+    skip: isThreadQuerySkipped,
+  });
+
+  // The chat model files the conversation through its own tool on the server,
+  // so its links are read again whenever one is written.
+  const linksOperationSignature = useMemo(
+    () => ({
+      objectNameSingular: CoreObjectNameSingular.AgentChatThreadTarget,
+      variables: { filter: { threadId: { eq: threadId } } },
+    }),
+    [threadId],
+  );
+
+  useListenToEventsForQuery({
+    queryId: `${instanceId}-${threadId}-record-targets`,
+    operationSignature: linksOperationSignature,
+    skip: isThreadQuerySkipped,
+  });
+
+  const handleLinkOperation = useCallback(() => {
+    void refetch();
+  }, [refetch]);
+
+  useListenToObjectRecordOperationBrowserEvent({
+    onObjectRecordOperationBrowserEvent: handleLinkOperation,
+    objectMetadataItemId: junctionConfig?.junctionObjectMetadata.id,
+    enabled: !isThreadQuerySkipped,
   });
 
   const junctionRecords: ObjectRecord[] | undefined = isDefined(junctionConfig)
@@ -122,10 +152,7 @@ export const AiChatThreadRecordTargets = ({
     return null;
   }
 
-  // A workflow run's conversation is the record of what its agent step did,
-  // so it is not filed under anything else.
-  const canEditRecordTargets =
-    (permissions?.canUpdate ?? false) && !isDefined(thread.workflowRunId);
+  const canEditRecordTargets = permissions?.canUpdate ?? false;
 
   const hasTargetRecords = targetRecords.length > 0;
 

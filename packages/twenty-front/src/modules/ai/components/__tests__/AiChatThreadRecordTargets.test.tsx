@@ -1,6 +1,6 @@
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
-import { render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { type ReactNode } from 'react';
 import { MemoryRouter } from 'react-router-dom';
@@ -8,6 +8,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { AiChatThreadRecordTargets } from '@/ai/components/AiChatThreadRecordTargets';
 import { setAgentChatThreadPermissions } from '@/ai/testing/setAgentChatThreadPermissions';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { dispatchObjectRecordOperationBrowserEvent } from '@/browser-event/utils/dispatchObjectRecordOperationBrowserEvent';
 import { PreComputedChipGeneratorsProvider } from '@/object-metadata/components/PreComputedChipGeneratorsProvider';
 import { type RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
@@ -51,8 +52,17 @@ jest.mock('@/ai/hooks/useDetachChatThreadFromRecord', () => ({
   }),
 }));
 
+const refetchThread = jest.fn(() => Promise.resolve());
+
 jest.mock('@/object-record/hooks/useFindOneRecord', () => ({
-  useFindOneRecord: () => ({ record: mockThread.current }),
+  useFindOneRecord: () => ({
+    record: mockThread.current,
+    refetch: refetchThread,
+  }),
+}));
+
+jest.mock('@/sse-db-event/hooks/useListenToEventsForQuery', () => ({
+  useListenToEventsForQuery: jest.fn(),
 }));
 
 jest.mock(
@@ -126,15 +136,12 @@ const ACME_LINK: ObjectRecord = {
 };
 
 const buildThread = ({
-  workflowRunId = null,
   recordTargets = [ACME_LINK],
 }: {
-  workflowRunId?: string | null;
   recordTargets?: ObjectRecord[];
 } = {}): ObjectRecord => ({
   __typename: 'AgentChatThread',
   id: THREAD_ID,
-  workflowRunId,
   recordTargets,
 });
 
@@ -291,17 +298,21 @@ describe('AiChatThreadRecordTargets', () => {
     ).not.toBeInTheDocument();
   });
 
-  it('keeps a workflow run conversation read-only', async () => {
-    mockThread.current = buildThread({
-      workflowRunId: '20202020-0000-4000-8000-0000000000bb',
-      recordTargets: [],
-    });
-
+  // The chat model files the conversation through its own tool.
+  it('reads the links again when one is written elsewhere', async () => {
     await renderRecordTargets();
 
-    expect(
-      screen.queryByRole('button', { name: 'Link to a record' }),
-    ).not.toBeInTheDocument();
+    act(() => {
+      dispatchObjectRecordOperationBrowserEvent({
+        objectMetadataItem: personObjectMetadataItem,
+        operation: {
+          type: 'create-one',
+          createdRecord: { id: 'link-2', threadId: THREAD_ID },
+        },
+      });
+    });
+
+    expect(refetchThread).toHaveBeenCalledTimes(1);
   });
 
   it('stays hidden until the conversations tab is enabled', async () => {
