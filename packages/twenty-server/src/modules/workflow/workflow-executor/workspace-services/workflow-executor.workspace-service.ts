@@ -102,11 +102,37 @@ export class WorkflowExecutorWorkspaceService {
     }
   }
 
+  // Runs a step whose question was answered, which the caller has already
+  // claimed out of PENDING, then carries on from it like any other step.
+  async resumeAnsweredStep({
+    stepId,
+    workflowRunId,
+    workspaceId,
+  }: {
+    stepId: string;
+    workflowRunId: string;
+    workspaceId: string;
+  }) {
+    await this.executeFromStep({
+      stepId,
+      workflowRunId,
+      workspaceId,
+      executedStepsCount: 0,
+      isResumingAnsweredStep: true,
+    });
+
+    await this.computeWorkflowRunStatus({
+      workflowRunId,
+      workspaceId,
+    });
+  }
+
   private async executeFromStep({
     stepId,
     workflowRunId,
     workspaceId,
     executedStepsCount,
+    isResumingAnsweredStep = false,
   }: WorkflowBranchExecutorInput): Promise<void> {
     const workflowRun =
       await this.workflowRunWorkspaceService.getWorkflowRunOrFail({
@@ -152,12 +178,11 @@ export class WorkflowExecutorWorkspaceService {
 
     let actionOutput: WorkflowActionOutput;
 
-    // A step that already holds its conversation is resuming after its
-    // question was answered. Its node run was charged, and the quota checked,
-    // when it first ran and paused, so neither happens a second time.
-    const isResumingAnsweredStep = isDefined(stepInfos[stepId]?.threadId);
-
+    // A resumed step was claimed as started, which shouldExecuteStep refuses.
+    // Its node run was charged, and the quota checked, when it first ran and
+    // paused, so neither happens a second time.
     if (
+      isResumingAnsweredStep ||
       shouldExecuteStep({
         step: stepToExecute,
         steps,
@@ -173,6 +198,9 @@ export class WorkflowExecutorWorkspaceService {
         workspaceId,
         billingSpenders,
         shouldCheckNodeRunQuota: !isResumingAnsweredStep,
+        resumedThreadId: isResumingAnsweredStep
+          ? stepInfos[stepId]?.threadId
+          : undefined,
       });
 
       if (isDefined(actionOutput.error) && !actionOutput.isUserError) {
@@ -515,6 +543,7 @@ export class WorkflowExecutorWorkspaceService {
     workspaceId,
     billingSpenders,
     shouldCheckNodeRunQuota,
+    resumedThreadId,
   }: {
     step: WorkflowAction;
     steps: WorkflowAction[];
@@ -523,6 +552,7 @@ export class WorkflowExecutorWorkspaceService {
     workspaceId: string;
     billingSpenders: WorkflowBillingSpenders;
     shouldCheckNodeRunQuota: boolean;
+    resumedThreadId?: string;
   }) {
     const stepId = step.id;
 
@@ -555,6 +585,7 @@ export class WorkflowExecutorWorkspaceService {
           workflowRunId,
           workspaceId,
         },
+        resumedThreadId,
       });
     } catch (error) {
       const isUserError = isUserFacingWorkflowExecutorError(error);

@@ -599,36 +599,6 @@ export const buildWorkflowRunStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
-  inputAsks: createStandardRelationFieldFlatMetadata({
-    objectName,
-    workspaceId,
-    context: {
-      type: FieldMetadataType.RELATION,
-      morphId: null,
-      fieldName: 'inputAsks',
-      label: i18nLabel(
-        msg({ message: `Asks`, context: 'fieldMetadata.label' }),
-      ),
-      description: i18nLabel(
-        msg({
-          message: `What the run is waiting on people for`,
-          context: 'fieldMetadata.description',
-        }),
-      ),
-      icon: 'IconHelpCircle',
-      isNullable: true,
-      isUIEditable: false,
-      targetObjectName: 'inputAsk',
-      targetFieldName: 'workflowRun',
-      settings: {
-        relationType: RelationType.ONE_TO_MANY,
-      },
-    },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
-  }),
   agentChatThreads: createStandardRelationFieldFlatMetadata({
     objectName,
     workspaceId,
@@ -683,6 +653,36 @@ export const buildWorkflowRunStandardFlatFieldMetadatas = ({
       isUIEditable: false,
       targetObjectName: 'timelineActivity',
       targetFieldName: 'targetWorkflowRun',
+      settings: {
+        relationType: RelationType.ONE_TO_MANY,
+      },
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
+  inputAsks: createStandardRelationFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
+      fieldName: 'inputAsks',
+      label: i18nLabel(
+        msg({ message: `Asks`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `What the run is waiting on people for`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
+      icon: 'IconHelpCircle',
+      isNullable: true,
+      isUIEditable: false,
+      targetObjectName: 'inputAsk',
+      targetFieldName: 'workflowRun',
       settings: {
         relationType: RelationType.ONE_TO_MANY,
       },

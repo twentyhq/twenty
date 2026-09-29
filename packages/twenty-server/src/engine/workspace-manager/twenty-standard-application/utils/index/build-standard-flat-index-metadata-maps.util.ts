@@ -89,10 +89,10 @@ const STANDARD_FLAT_INDEX_METADATA_BUILDERS_BY_OBJECT_NAME = {
   workflow: buildWorkflowStandardFlatIndexMetadatas,
   workflowAutomatedTrigger:
     buildWorkflowAutomatedTriggerStandardFlatIndexMetadatas,
-  inputAsk: buildInputAskStandardFlatIndexMetadatas,
   workflowRun: buildWorkflowRunStandardFlatIndexMetadatas,
   workflowVersion: buildWorkflowVersionStandardFlatIndexMetadatas,
   workspaceMember: buildWorkspaceMemberStandardFlatIndexMetadatas,
+  inputAsk: buildInputAskStandardFlatIndexMetadatas,
 } satisfies {
   [P in AllStandardObjectName]?: StandardIndexBuilder<P>;
 };

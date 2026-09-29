@@ -43,6 +43,7 @@ export class RunWorkflowJob {
     workflowRunId,
     lastExecutedStepId,
     stepIdsToRetry,
+    stepIdToResume,
     workspaceId,
   }: RunWorkflowJobData): Promise<void> {
     this.logger.log(
@@ -52,7 +53,13 @@ export class RunWorkflowJob {
 
     await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       try {
-        if (isDefined(stepIdsToRetry)) {
+        if (isDefined(stepIdToResume)) {
+          await this.resumeAnsweredStep({
+            workspaceId,
+            workflowRunId,
+            stepIdToResume,
+          });
+        } else if (isDefined(stepIdsToRetry)) {
           await this.retryWorkflowExecution({
             workspaceId,
             workflowRunId,
@@ -210,6 +217,53 @@ export class RunWorkflowJob {
 
     await this.workflowExecutorWorkspaceService.executeFromSteps({
       stepIds: stepIdsToRetry,
+      workflowRunId,
+      workspaceId,
+    });
+  }
+
+  // An answered step stays PENDING until here, which keeps its run from
+  // completing while the resume waits in the queue. Claiming it out of PENDING
+  // is what makes a second resume of the same step do nothing.
+  private async resumeAnsweredStep({
+    workflowRunId,
+    stepIdToResume,
+    workspaceId,
+  }: {
+    workflowRunId: string;
+    stepIdToResume: string;
+    workspaceId: string;
+  }): Promise<void> {
+    const workflowRun =
+      await this.workflowRunWorkspaceService.getWorkflowRunOrFail({
+        workflowRunId,
+        workspaceId,
+      });
+
+    const stepInfo = workflowRun.state?.stepInfos?.[stepIdToResume];
+
+    if (
+      workflowRun.status !== WorkflowRunStatus.RUNNING ||
+      stepInfo?.status !== StepStatus.PENDING ||
+      !isDefined(stepInfo.threadId)
+    ) {
+      return;
+    }
+
+    const isClaimed =
+      await this.workflowRunWorkspaceService.updateStepInfoIfPending({
+        stepId: stepIdToResume,
+        stepInfo: { status: StepStatus.RUNNING },
+        workflowRunId,
+        workspaceId,
+      });
+
+    if (!isClaimed) {
+      return;
+    }
+
+    await this.workflowExecutorWorkspaceService.resumeAnsweredStep({
+      stepId: stepIdToResume,
       workflowRunId,
       workspaceId,
     });
