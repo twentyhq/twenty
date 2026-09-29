@@ -190,6 +190,7 @@ describe('Shared conversation API boundaries', () => {
             VIEWER_ID,
             'member',
             workspace,
+            undefined,
           ),
         rename: () =>
           resolver.renameChatThread(THREAD_ID, 'Changed', VIEWER_ID, workspace),
