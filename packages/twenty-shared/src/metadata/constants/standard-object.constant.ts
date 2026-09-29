@@ -359,9 +359,6 @@ export const STANDARD_OBJECTS = {
           thread: {
             universalIdentifier: 'c81b54d7-ffaf-4222-8beb-4479e662426e',
           },
-          source: {
-            universalIdentifier: '76633724-5037-45cb-871a-08c576e3059b',
-          },
           createdAt: {
             universalIdentifier: 'a5b4b662-28bf-46a3-a89a-6f555280c6bb',
           },
@@ -384,7 +381,6 @@ export const STANDARD_OBJECTS = {
           'status',
           'assignee',
           'answeredAt',
-          'source',
           'workflowRun',
           'thread',
         ],
