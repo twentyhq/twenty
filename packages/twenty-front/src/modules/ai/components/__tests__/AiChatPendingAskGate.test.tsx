@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import { type AskQuestionItem } from 'twenty-shared/ai';
+import { type AskQuestionItem, type ProposedEmail } from 'twenty-shared/ai';
 
 import { AiChatPendingAskGate } from '@/ai/components/AiChatPendingAskGate';
 import { type AgentChatPendingQuestion } from '@/ai/types/AgentChatPendingQuestion';
@@ -17,6 +17,13 @@ jest.mock('@/ai/components/AiChatQuestionCard', () => ({
   }) => (
     <div role="group" aria-label="Questions">
       {pendingQuestion.questions[0].question}
+    </div>
+  ),
+}));
+jest.mock('@/ai/components/AiChatEmailApprovalCard', () => ({
+  AiChatEmailApprovalCard: ({ email }: { email: ProposedEmail }) => (
+    <div role="group" aria-label="Email approval">
+      {email.subject}
     </div>
   ),
 }));
@@ -55,6 +62,28 @@ describe('AiChatPendingAskGate', () => {
     expect(screen.getByRole('group', { name: 'Questions' })).toHaveTextContent(
       'Which plan?',
     );
+    expect(screen.queryByRole('textbox', { name: 'Message' })).toBeNull();
+  });
+
+  it('shows an email waiting for approval in place of the composer', () => {
+    useAgentChatPendingAsk.mockReturnValue({
+      id: 'ask-2',
+      toolCallId: 'call-2',
+      form: {
+        kind: 'emailApproval',
+        email: {
+          recipients: { to: 'tim@apple.dev', cc: '', bcc: '' },
+          subject: 'Your renewal',
+          body: 'Hi Tim',
+        },
+      },
+    });
+
+    renderGate();
+
+    expect(
+      screen.getByRole('group', { name: 'Email approval' }),
+    ).toHaveTextContent('Your renewal');
     expect(screen.queryByRole('textbox', { name: 'Message' })).toBeNull();
   });
 

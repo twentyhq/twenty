@@ -1,5 +1,6 @@
 import { assertUnreachable } from 'twenty-shared/utils';
 
+import { AiChatEmailApprovalCard } from '@/ai/components/AiChatEmailApprovalCard';
 import { AiChatFormFieldsAskCard } from '@/ai/components/AiChatFormFieldsAskCard';
 import { AiChatQuestionCard } from '@/ai/components/AiChatQuestionCard';
 import { type AgentChatPendingAsk } from '@/ai/types/AgentChatPendingAsk';
@@ -23,7 +24,13 @@ export const AiChatAskCard = ({ pendingAsk }: AiChatAskCardProps) => {
         />
       );
     case 'emailApproval':
-      return null;
+      return (
+        <AiChatEmailApprovalCard
+          askId={id}
+          toolCallId={toolCallId}
+          email={form.email}
+        />
+      );
     case 'formFields':
       return (
         <AiChatFormFieldsAskCard
