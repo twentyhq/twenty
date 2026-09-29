@@ -15,7 +15,6 @@ import { type AgentHistoryStorageService } from 'src/engine/metadata-modules/ai/
 import { type WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { randomUUID } from 'node:crypto';
 import { parse } from 'graphql';
-import { EventEmitter2 } from '@nestjs/event-emitter';
 import { EVERYONE_PRINCIPAL_ID } from 'twenty-shared/constants';
 import { type ObjectRecordDestroyEvent } from 'twenty-shared/database-events';
 import {
@@ -28,6 +27,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
+import { type WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { type AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
@@ -864,30 +864,50 @@ describe('Conversations through the record API', () => {
     }
   });
 
+  // The application exposes its events through WorkspaceEventEmitter, so the
+  // destroy batch is captured there, as delivered to its subscribers.
   const waitForDestroyedThread = (threadId: string) => {
-    const eventEmitter = global.app.get(EventEmitter2, { strict: false });
-    const eventName = computeEventName(
-      'agentChatThread',
-      DatabaseEventAction.DESTROYED,
-    );
+    const workspaceEventEmitter =
+      getAppProviderByClassName<WorkspaceEventEmitter>('WorkspaceEventEmitter');
+    const emitDatabaseBatchEvent =
+      workspaceEventEmitter.emitDatabaseBatchEvent.bind(workspaceEventEmitter);
 
     return new Promise<WorkspaceEventBatch<ObjectRecordDestroyEvent>>(
       (resolve, reject) => {
-        const listener = (
-          batch: WorkspaceEventBatch<ObjectRecordDestroyEvent>,
-        ) => {
-          if (batch.events.some((event) => event.recordId === threadId)) {
-            clearTimeout(timeout);
-            eventEmitter.off(eventName, listener);
-            resolve(batch);
-          }
-        };
+        const emitSpy = jest
+          .spyOn(workspaceEventEmitter, 'emitDatabaseBatchEvent')
+          .mockImplementation((databaseBatchEventInput) => {
+            emitDatabaseBatchEvent(databaseBatchEventInput);
+
+            if (
+              databaseBatchEventInput?.objectMetadataNameSingular !==
+                'agentChatThread' ||
+              databaseBatchEventInput.action !== DatabaseEventAction.DESTROYED
+            ) {
+              return;
+            }
+
+            const events =
+              databaseBatchEventInput.events as ObjectRecordDestroyEvent[];
+
+            if (events.some((event) => event.recordId === threadId)) {
+              clearTimeout(timeout);
+              emitSpy.mockRestore();
+              resolve({
+                name: computeEventName(
+                  'agentChatThread',
+                  DatabaseEventAction.DESTROYED,
+                ),
+                workspaceId: databaseBatchEventInput.workspaceId,
+                objectMetadata: databaseBatchEventInput.objectMetadata,
+                events,
+              });
+            }
+          });
         const timeout = setTimeout(() => {
-          eventEmitter.off(eventName, listener);
+          emitSpy.mockRestore();
           reject(new Error(`No destroy event for conversation ${threadId}`));
         }, 10_000);
-
-        eventEmitter.on(eventName, listener);
       },
     );
   };
