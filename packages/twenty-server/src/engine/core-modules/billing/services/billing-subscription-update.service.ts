@@ -37,6 +37,7 @@ import {
 import { computeSubscriptionUpdateOptions } from 'src/engine/core-modules/billing/utils/compute-subscription-update-options.util';
 import { findSellableBaseProductPriceOrThrow } from 'src/engine/core-modules/billing/utils/find-sellable-base-product-price-or-throw.util';
 import { findProductPriceForIntervalOrThrow } from 'src/engine/core-modules/billing/utils/find-product-price-for-interval-or-throw.util';
+import { isResourceCreditPriceForSubscription } from 'src/engine/core-modules/billing/utils/is-resource-credit-price-for-subscription.util';
 import { isSellableCatalogPrice } from 'src/engine/core-modules/billing/utils/is-sellable-catalog-price.util';
 import { getBaseProductSubscriptionItemOrThrow } from 'src/engine/core-modules/billing/utils/get-base-product-subscription-item-or-throw.util';
 import { getCurrentResourceCreditSubscriptionItemOrThrow } from 'src/engine/core-modules/billing/utils/get-resource-credit-subscription-item-or-throw.util';
@@ -79,19 +80,28 @@ export class BillingSubscriptionUpdateService {
         { workspaceId },
       );
 
-    // Only this entry point takes a price id from the client, so a superseded
-    // package must be refused here rather than in the shared price computation,
-    // which is also reused to rewrite a scheduled phase and to cancel a pending
-    // switch back onto the package the workspace already pays for.
     const newResourceCreditPrice =
       await this.billingPriceRepository.findOneOrFail({
         where: { stripePriceId: resourceCreditPriceId },
         relations: ['billingProduct'],
       });
 
-    billingValidator.assertIsLicensedResourceCreditPrice(
-      newResourceCreditPrice,
-    );
+    const currentPlanKey =
+      getBaseProductSubscriptionItemOrThrow(billingSubscription).billingProduct
+        ?.metadata.planKey;
+
+    if (
+      !isResourceCreditPriceForSubscription({
+        billingPrice: newResourceCreditPrice,
+        interval: billingSubscription.interval,
+        planKey: currentPlanKey,
+      })
+    ) {
+      throw new BillingException(
+        `Resource credit price ${resourceCreditPriceId} does not match the subscription interval and plan`,
+        BillingExceptionCode.BILLING_PRICE_INVALID,
+      );
+    }
 
     if (!isSellableCatalogPrice(newResourceCreditPrice)) {
       throw new BillingException(
