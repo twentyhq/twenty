@@ -34,17 +34,32 @@ export const resolveDiscoverableFieldMetadataIds = ({
     flatObjectMetadata.discoverableFieldUniversalIdentifiers ?? [],
   );
 
+  const flatFieldMetadatas = getFlatFieldsFromFlatObjectMetadata(
+    flatObjectMetadata,
+    flatFieldMetadataMaps,
+  );
+  const isDeclared = (flatFieldMetadata: OrmFlatFieldMetadata) =>
+    declaredFieldUniversalIdentifiers.has(
+      flatFieldMetadata.universalIdentifier,
+    );
+
+  // Declaring one side of a morph relation covers the targets added to it
+  // later, custom objects' included.
+  const declaredMorphIds = new Set(
+    flatFieldMetadatas
+      .filter(isDeclared)
+      .map((flatFieldMetadata) => flatFieldMetadata.morphId)
+      .filter(isDefined),
+  );
+
   return new Set(
-    getFlatFieldsFromFlatObjectMetadata(
-      flatObjectMetadata,
-      flatFieldMetadataMaps,
-    )
+    flatFieldMetadatas
       .filter(
         (flatFieldMetadata) =>
           DISCOVERABLE_SYSTEM_FIELD_NAMES.includes(flatFieldMetadata.name) ||
-          declaredFieldUniversalIdentifiers.has(
-            flatFieldMetadata.universalIdentifier,
-          ),
+          isDeclared(flatFieldMetadata) ||
+          (isDefined(flatFieldMetadata.morphId) &&
+            declaredMorphIds.has(flatFieldMetadata.morphId)),
       )
       .map((flatFieldMetadata) => flatFieldMetadata.id),
   );
