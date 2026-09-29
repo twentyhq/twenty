@@ -126,6 +126,19 @@ describe('compileValidationRuleExpression', () => {
     ).toBe(false);
   });
 
+  it('should reject member access written with spaces around the dot', () => {
+    expect(compile('company . industry == "SaaS"')).toEqual({
+      isValid: false,
+      errorMessage: 'Write company.industry without spaces around the dot',
+    });
+    expect(compile('company.industry == "SaaS"').isValid).toBe(true);
+  });
+
+  it('should reject the conditional operator, which can return a value that is not true or false', () => {
+    expect(compile('isDefined(stage) ? stage : false').isValid).toBe(false);
+    expect(compile('stage != "WON" or isDefined(amount)').isValid).toBe(true);
+  });
+
   it('should keep array literals', () => {
     expect(compile('stage in ["WON", "LOST"]').isValid).toBe(true);
   });

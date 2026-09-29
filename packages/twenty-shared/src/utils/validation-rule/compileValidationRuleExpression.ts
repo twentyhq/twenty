@@ -8,6 +8,8 @@ import { hasValidationRuleBracketAccess } from '@/utils/validation-rule/hasValid
 import { evaluateValidationRuleExpression } from '@/utils/validation-rule/evaluateValidationRuleExpression';
 import { parseValidationRuleExpression } from '@/utils/validation-rule/parseValidationRuleExpression';
 import { resolveValidationRuleIdentifierPath } from '@/utils/validation-rule/resolveValidationRuleIdentifierPath';
+import { tokenizeValidationRuleExpression } from '@/utils/validation-rule/tokenizeValidationRuleExpression';
+import { isDefined } from '@/utils/validation/isDefined';
 
 export const compileValidationRuleExpression = ({
   expression,
@@ -46,6 +48,21 @@ export const compileValidationRuleExpression = ({
   }
 
   const identifierPaths = parsedExpression.variables({ withMembers: true });
+  const tokenizedPaths = new Set(
+    tokenizeValidationRuleExpression(expression)
+      .filter((token) => token.type === 'path')
+      .map((token) => token.text),
+  );
+  const spacedMemberPath = identifierPaths.find(
+    (path) => path.includes('.') && !tokenizedPaths.has(path),
+  );
+
+  if (isDefined(spacedMemberPath)) {
+    return {
+      isValid: false,
+      errorMessage: `Write ${spacedMemberPath} without spaces around the dot`,
+    };
+  }
 
   let bindings: ValidationRuleBindings = {};
 
