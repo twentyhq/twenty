@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import crypto from 'crypto';
-
 import { v4 } from 'uuid';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -23,6 +21,7 @@ import { LogicFunctionFromSourceHelperService } from 'src/engine/metadata-module
 import { type UpdateLogicFunctionFromSourceInput } from 'src/engine/metadata-modules/logic-function/dtos/update-logic-function-from-source.input';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 import { buildDuplicatedCodeStepLogicFunctionToCreate } from 'src/engine/metadata-modules/logic-function/utils/build-duplicated-code-step-logic-function-to-create.util';
+import { computeBuiltCodeChecksum } from 'src/engine/metadata-modules/logic-function/utils/compute-built-code-checksum.util';
 import { fromCreateLogicFunctionFromSourceInputToUniversalFlatLogicFunctionToCreate } from 'src/engine/metadata-modules/logic-function/utils/from-create-logic-function-from-source-input-to-universal-flat-logic-function-to-create.util';
 import { fromFlatLogicFunctionToLogicFunctionDto } from 'src/engine/metadata-modules/logic-function/utils/from-flat-logic-function-to-logic-function-dto.util';
 import { fromUpdateLogicFunctionFromSourceInputToFlatLogicFunctionToUpdate } from 'src/engine/metadata-modules/logic-function/utils/from-update-logic-function-from-source-input-to-flat-logic-function-to-update.util';
@@ -271,7 +270,7 @@ export class LogicFunctionFromSourceService {
     });
 
     return {
-      checksum: crypto.createHash('md5').update(builtCode).digest('hex'),
+      checksum: computeBuiltCodeChecksum(builtCode),
       isBuildUpToDate: true,
     };
   }
@@ -405,7 +404,7 @@ export class LogicFunctionFromSourceService {
       builtCode,
     });
 
-    const checksum = crypto.createHash('md5').update(builtCode).digest('hex');
+    const checksum = computeBuiltCodeChecksum(builtCode);
 
     await this.helperService.updateOneFromMetadata({
       flatLogicFunctionToUpdate: {
