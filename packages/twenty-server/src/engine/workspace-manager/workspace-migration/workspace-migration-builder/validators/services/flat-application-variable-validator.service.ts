@@ -106,7 +106,6 @@ export class FlatApplicationVariableValidatorService {
 
   public validateFlatApplicationVariableUpdate({
     universalIdentifier,
-    flatEntityUpdate,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatApplicationVariableMaps: optimisticFlatApplicationVariableMaps,
     },
@@ -131,19 +130,6 @@ export class FlatApplicationVariableValidatorService {
         code: ApplicationVariableEntityExceptionCode.APPLICATION_VARIABLE_NOT_FOUND,
         message: t`Application variable not found`,
         userFriendlyMessage: msg`Application variable not found`,
-      });
-    }
-
-    const keyUpdate = flatEntityUpdate.key;
-
-    if (
-      isDefined(keyUpdate) &&
-      ENGINE_INJECTED_ENV_VARIABLE_NAMES.has(keyUpdate)
-    ) {
-      validationResult.errors.push({
-        code: ApplicationVariableEntityExceptionCode.INVALID_APPLICATION_VARIABLE_INPUT,
-        message: t`Application variable key ${keyUpdate} is reserved`,
-        userFriendlyMessage: msg`Application variable key ${keyUpdate} is reserved`,
       });
     }
 
