@@ -5,6 +5,7 @@ import {
   HttpCode,
   HttpStatus,
   Post,
+  Query,
   Res,
   UseFilters,
   UseGuards,
@@ -66,6 +67,7 @@ export class McpCoreController {
     application: FlatApplication | undefined,
     @Headers('accept') acceptHeader: string | undefined,
     @Res({ passthrough: true }) res: Response,
+    @Query('mode') mode?: string,
   ) {
     const authContext = {
       workspace,
@@ -73,6 +75,7 @@ export class McpCoreController {
       userWorkspaceId,
       apiKey,
       application,
+      isDirectMode: mode === 'direct',
     };
 
     // JSON-RPC notifications (no id) expect no response body regardless of Accept

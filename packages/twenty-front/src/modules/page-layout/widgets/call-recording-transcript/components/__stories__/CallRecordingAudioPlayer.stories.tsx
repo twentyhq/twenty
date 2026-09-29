@@ -99,14 +99,14 @@ export const MediaStates: Story = {
 
     const pauseButton = await canvas.findByRole('button', { name: 'Pause' });
 
-    expect(pauseButton.querySelector('circle')).toBeInTheDocument();
+    expect(pauseButton).toHaveAttribute('aria-busy', 'true');
 
     fireEvent.pause(audioElement);
 
     await waitFor(() => {
       const playButton = canvas.getByRole('button', { name: 'Play' });
 
-      expect(playButton.querySelector('circle')).not.toBeInTheDocument();
+      expect(playButton).toHaveAttribute('aria-busy', 'false');
       expect(canvas.queryByText('Playback failed')).not.toBeInTheDocument();
     });
   },

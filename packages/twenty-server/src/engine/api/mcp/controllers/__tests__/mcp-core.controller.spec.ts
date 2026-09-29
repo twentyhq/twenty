@@ -124,6 +124,7 @@ describe('McpCoreController', () => {
           userWorkspaceId: mockUserWorkspaceId,
           apiKey: mockApiKey,
           application: undefined,
+          isDirectMode: false,
         },
       );
       expect(result).toEqual(mockResponse);
@@ -172,6 +173,7 @@ describe('McpCoreController', () => {
           userWorkspaceId: mockUserWorkspaceId,
           apiKey: mockApiKey,
           application: undefined,
+          isDirectMode: false,
         },
       );
       expect(result).toEqual(mockResponse);
@@ -219,6 +221,7 @@ describe('McpCoreController', () => {
           userWorkspaceId: mockUserWorkspaceId,
           apiKey: mockApiKey,
           application: undefined,
+          isDirectMode: false,
         },
       );
       expect(result).toEqual(mockResponse);
@@ -284,6 +287,7 @@ describe('McpCoreController', () => {
           userId: undefined,
           userWorkspaceId: undefined,
           apiKey: mockApiKey,
+          isDirectMode: false,
         },
       );
       expect(result).toEqual(mockResponse);
@@ -348,6 +352,7 @@ describe('McpCoreController', () => {
           userWorkspaceId: mockUserWorkspaceId,
           apiKey: mockApiKey,
           application: undefined,
+          isDirectMode: false,
         },
         expect.any(Function),
       );
