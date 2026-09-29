@@ -224,14 +224,22 @@ export class WorkflowRunnerWorkspaceService {
     senderUserWorkspaceId: string;
   }): Promise<void> {
     try {
-      await this.workflowAgentConversationWorkspaceService.recordAnswer({
-        workspaceId,
-        threadId,
-        toolCallId,
-        toolResult,
-        answerText,
-        senderUserWorkspaceId,
-      });
+      const { hasAwaitingToolCalls } =
+        await this.workflowAgentConversationWorkspaceService.recordAnswer({
+          workspaceId,
+          threadId,
+          toolCallId,
+          toolResult,
+          answerText,
+          senderUserWorkspaceId,
+        });
+
+      // The agent paused on several calls and continues once all are
+      // answered. Two answers that both see none left each queue a resume,
+      // and the resume's claim on the step lets only one of them run it.
+      if (hasAwaitingToolCalls) {
+        return;
+      }
 
       await this.messageQueueService.add<RunWorkflowJobData>(
         RunWorkflowJob.name,

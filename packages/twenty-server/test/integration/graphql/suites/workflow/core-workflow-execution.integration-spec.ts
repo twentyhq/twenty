@@ -1438,12 +1438,18 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       return { runId, agent, finalStep, threadId };
     };
 
-    const answer = async ({ threadId }: { threadId: string }) =>
+    const answer = async ({
+      threadId,
+      toolCallId = 'ask-1',
+    }: {
+      threadId: string;
+      toolCallId?: string;
+    }) =>
       answerAsk({
         askId: (
           await global.testDataSource.query(
-            `SELECT id FROM "${schema}"."inputAsk" WHERE "threadId" = $1 AND "toolCallId" = 'ask-1'`,
-            [threadId],
+            `SELECT id FROM "${schema}"."inputAsk" WHERE "threadId" = $1 AND "toolCallId" = $2`,
+            [threadId, toolCallId],
           )
         )[0]?.id,
         response: {
@@ -1553,6 +1559,85 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       expect(await getThreadInputAsks(threadId)).toMatchObject([
         { status: 'ANSWERED' },
       ]);
+    });
+
+    it('waits for every question asked at once and resumes once all are answered', async () => {
+      const askCall = (toolCallId: string) => [
+        {
+          type: 'tool-call',
+          toolCallId,
+          toolName: 'ask_questions',
+          input: { questions: QUESTIONS },
+        },
+        {
+          type: 'tool-result',
+          toolCallId,
+          toolName: 'ask_questions',
+          input: { questions: QUESTIONS },
+          output: {
+            success: true,
+            message: 'Questions presented to the user; awaiting their answer.',
+            result: { questions: QUESTIONS, status: 'pending' },
+          },
+        },
+      ];
+      const executeAgent = jest
+        .spyOn(
+          getAppProviderByClassName<AgentAsyncExecutorService>(
+            'AgentAsyncExecutorService',
+          ),
+          'executeAgent',
+        )
+        .mockResolvedValueOnce(
+          agentResult({
+            isPaused: true,
+            steps: [
+              { content: [...askCall('ask-1'), ...askCall('ask-2')] },
+            ] as AgentExecutionResult['steps'],
+          }),
+        )
+        .mockResolvedValueOnce(replyingResult);
+      const { runId, agent, threadId } = await startAskingRun();
+
+      expect(
+        (await getThreadInputAsks(threadId)).map(
+          ({ toolCallId, status }: { toolCallId: string; status: string }) => ({
+            toolCallId,
+            status,
+          }),
+        ),
+      ).toEqual(
+        expect.arrayContaining([
+          { toolCallId: 'ask-1', status: 'PENDING' },
+          { toolCallId: 'ask-2', status: 'PENDING' },
+        ]),
+      );
+
+      const first = await answer({ threadId, toolCallId: 'ask-1' });
+
+      expect(first.body.errors).toBeUndefined();
+
+      const waitingRun = await getRun(runId);
+
+      expect(waitingRun.status).toBe('RUNNING');
+      expect(waitingRun.state.stepInfos[agent.id].status).toBe('PENDING');
+
+      // Had the first answer resumed the step, the second would find it no
+      // longer waiting.
+      const second = await answer({ threadId, toolCallId: 'ask-2' });
+
+      expect(second.body.errors).toBeUndefined();
+
+      const run = await waitForRun(runId, 'COMPLETED');
+
+      expect(run.state.stepInfos[agent.id]).toMatchObject({
+        status: 'SUCCESS',
+        result: { response: 'Quote sent' },
+      });
+      expect(executeAgent).toHaveBeenCalledTimes(2);
+      expect(
+        JSON.stringify(executeAgent.mock.calls[1][0].priorModelMessages),
+      ).not.toContain('"pending"');
     });
 
     it('refuses an answer once the run is stopped, whose end canceled the Ask', async () => {

@@ -100,7 +100,7 @@ describe('AgentChatStreamingService.retryLastFailedTurn', () => {
         }),
       } as never,
       {
-        findPendingForThread: jest.fn().mockResolvedValue(null),
+        findPendingForThread: jest.fn().mockResolvedValue([]),
         cancel: jest.fn().mockResolvedValue(false),
       } as never,
     );

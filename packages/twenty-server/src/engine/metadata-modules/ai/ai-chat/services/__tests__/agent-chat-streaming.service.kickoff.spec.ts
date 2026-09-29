@@ -99,7 +99,7 @@ describe('AgentChatStreamingService.startHiddenKickoffStream', () => {
         }),
       } as never,
       {
-        findPendingForThread: jest.fn().mockResolvedValue(null),
+        findPendingForThread: jest.fn().mockResolvedValue([]),
         cancel: jest.fn().mockResolvedValue(false),
       } as never,
     );

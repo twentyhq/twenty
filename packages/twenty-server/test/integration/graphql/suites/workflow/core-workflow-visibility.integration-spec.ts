@@ -1084,7 +1084,7 @@ describe('core workflow visibility (e2e)', () => {
         },
       });
 
-      expect(recordedConversation?.pendingAsk).toBeDefined();
+      expect(recordedConversation?.pendingAsks).toHaveLength(1);
       threadId = recordedConversation!.threadId;
 
       // Parked the way the executor parks a step that asked, which is what
@@ -1094,7 +1094,7 @@ describe('core workflow visibility (e2e)', () => {
       ).updateWorkflowRunStepInfo({
         stepId: askStepId,
         stepInfo: { status: StepStatus.PENDING },
-        pendingAsk: recordedConversation!.pendingAsk!,
+        pendingAsks: recordedConversation!.pendingAsks,
         workflowRunId: askRunId,
         workspaceId: SEED_APPLE_WORKSPACE_ID,
       });

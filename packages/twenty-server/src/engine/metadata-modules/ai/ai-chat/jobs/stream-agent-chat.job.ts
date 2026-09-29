@@ -38,8 +38,8 @@ import {
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import {
   type AwaitingPausingToolPart,
-  findAwaitingPausingToolPart,
-} from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/find-awaiting-pausing-tool-part.util';
+  findAwaitingPausingToolParts,
+} from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/find-awaiting-pausing-tool-parts.util';
 import { AgentChatCancelSubscriberService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-cancel-subscriber.service';
 import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
 import { AgentChatStreamHeartbeatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-heartbeat.service';
@@ -822,9 +822,9 @@ export class StreamAgentChatJob {
       (part) => part.type === 'text' && isNonEmptyString(part.text),
     );
 
-    const awaitingPart = findAwaitingPausingToolPart(responseMessage.parts);
+    const awaitingParts = findAwaitingPausingToolParts(responseMessage.parts);
 
-    if ((isAborted || !hasText) && !isDefined(awaitingPart)) {
+    if ((isAborted || !hasText) && awaitingParts.length === 0) {
       this.logAssistantTurnWithoutText({
         responseMessage,
         isAborted,
@@ -845,7 +845,7 @@ export class StreamAgentChatJob {
     const outcome = classifyAgentChatTurnOutcome({
       hasText,
       isAborted,
-      isAwaitingUserAnswer: isDefined(awaitingPart),
+      isAwaitingUserAnswer: awaitingParts.length > 0,
       outOfCredits,
     });
 
@@ -891,14 +891,12 @@ export class StreamAgentChatJob {
       return resolveSupersededTurnOutcome(outcome);
     }
 
-    if (isDefined(awaitingPart)) {
-      await this.openAskForAwaitingPart({
-        awaitingPart,
-        threadId,
-        workspaceId,
-        workspaceMemberId,
-      });
-    }
+    await this.openAsksForAwaitingParts({
+      awaitingParts,
+      threadId,
+      workspaceId,
+      workspaceMemberId,
+    });
 
     await this.agentChatService.notifyThreadUsageUpdated({
       threadId,
@@ -909,42 +907,48 @@ export class StreamAgentChatJob {
     return outcome;
   }
 
-  // Pausing is only complete once its Ask exists: without it nothing can
-  // answer the call, so failing here fails the turn, which leaves it
-  // retryable rather than silently stuck.
-  private async openAskForAwaitingPart({
-    awaitingPart,
+  // Pausing is only complete once every waiting call has its Ask: without
+  // one nothing can answer that call, so failing here fails the turn, which
+  // leaves it retryable rather than silently stuck. Every call is read before
+  // any Ask opens, and the Asks open in the order of the calls.
+  private async openAsksForAwaitingParts({
+    awaitingParts,
     threadId,
     workspaceId,
     workspaceMemberId,
   }: {
-    awaitingPart: AwaitingPausingToolPart;
+    awaitingParts: AwaitingPausingToolPart[];
     threadId: string;
     workspaceId: string;
     workspaceMemberId: string;
   }): Promise<void> {
-    const pausingToolCall = awaitingPart.pausingTool.parseCall(
-      awaitingPart.input,
-    );
-
-    if (!isDefined(pausingToolCall)) {
-      throw new AiException(
-        `The ${awaitingPart.toolName} call could not be read`,
-        AiExceptionCode.INVALID_TOOL_CALL_OUTPUT,
+    const inputAsks = awaitingParts.map((awaitingPart) => {
+      const pausingToolCall = awaitingPart.pausingTool.parseCall(
+        awaitingPart.input,
       );
-    }
 
-    await this.inputAskWorkspaceService.open({
-      workspaceId,
-      inputAsk: {
+      if (!isDefined(pausingToolCall)) {
+        throw new AiException(
+          `The ${awaitingPart.toolName} call could not be read`,
+          AiExceptionCode.INVALID_TOOL_CALL_OUTPUT,
+        );
+      }
+
+      return {
         ...pausingToolCall.buildAsk(),
         threadId,
         toolCallId: awaitingPart.toolCallId,
         assigneeId: workspaceMemberId,
-      },
+      };
     });
 
-    this.isAwaitingInput = true;
+    for (const inputAsk of inputAsks) {
+      await this.inputAskWorkspaceService.open({ workspaceId, inputAsk });
+    }
+
+    if (inputAsks.length > 0) {
+      this.isAwaitingInput = true;
+    }
   }
 
   private logAssistantTurnWithoutText({

@@ -502,7 +502,7 @@ export class WorkflowExecutorWorkspaceService {
     await this.workflowRunWorkspaceService.updateWorkflowRunStepInfo({
       stepId,
       stepInfo,
-      pendingAsk: isPendingEvent ? actionOutput.pendingAsk : undefined,
+      pendingAsks: isPendingEvent ? actionOutput.pendingAsks : undefined,
       workflowRunId,
       workspaceId,
     });

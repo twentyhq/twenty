@@ -48,7 +48,7 @@ const build = () => {
     { incrementCounterBy: jest.fn() } as never,
     {} as never,
     actors as never,
-    { findPendingForThread: jest.fn().mockResolvedValue(null) } as never,
+    { findPendingForThread: jest.fn().mockResolvedValue([]) } as never,
   );
   return { service, threads, queue, chat, actors, heartbeat };
 };

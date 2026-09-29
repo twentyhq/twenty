@@ -1,3 +1,5 @@
+import { isDefined } from 'twenty-shared/utils';
+
 import { AgentChatStreamRecoveryService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-recovery.service';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
@@ -67,7 +69,9 @@ describe('AgentChatStreamingService claim & reap', () => {
       updateToolPartOutput: jest.fn().mockResolvedValue(undefined),
     };
     const inputAskWorkspaceService = {
-      findPendingForThread: jest.fn().mockResolvedValue(pendingInputAsk),
+      findPendingForThread: jest
+        .fn()
+        .mockResolvedValue(isDefined(pendingInputAsk) ? [pendingInputAsk] : []),
       cancel: jest.fn().mockResolvedValue(true),
     };
     const eventPublisherService = {

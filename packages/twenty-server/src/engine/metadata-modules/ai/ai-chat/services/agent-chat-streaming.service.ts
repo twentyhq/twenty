@@ -148,7 +148,7 @@ export class AgentChatStreamingService {
       workspaceId: workspace.id,
     });
 
-    await this.settlePendingInputAskBeforeSending({
+    await this.settlePendingInputAsksBeforeSending({
       threadId,
       workspaceId: workspace.id,
     });
@@ -600,13 +600,13 @@ export class AgentChatStreamingService {
 
     // Queued messages wait behind an Ask: they are the conversation after
     // the answer, not a replacement for it.
-    const pendingInputAsk =
+    const pendingInputAsks =
       await this.inputAskWorkspaceService.findPendingForThread({
         threadId,
         workspaceId,
       });
 
-    if (isDefined(pendingInputAsk)) {
+    if (pendingInputAsks.length > 0) {
       return;
     }
 
@@ -771,40 +771,52 @@ export class AgentChatStreamingService {
   }
 
   // A message sent while the agent waits on a person moves the conversation
-  // past the chat's own question, which is closed as skipped so the model
-  // sees why it went unanswered. A workflow run's question gates the run, so
-  // it is never closed by a chat message.
-  private async settlePendingInputAskBeforeSending({
+  // past the chat's own questions, which are closed as skipped so the model
+  // sees why they went unanswered. A workflow run's question gates the run,
+  // so it is never closed by a chat message.
+  private async settlePendingInputAsksBeforeSending({
     threadId,
     workspaceId,
   }: {
     threadId: string;
     workspaceId: string;
   }): Promise<void> {
-    const pendingInputAsk =
+    const pendingInputAsks =
       await this.inputAskWorkspaceService.findPendingForThread({
         threadId,
         workspaceId,
       });
 
-    if (!isDefined(pendingInputAsk)) {
-      return;
-    }
-
-    if (isDefined(pendingInputAsk.workflowRunId)) {
+    if (
+      pendingInputAsks.some((pendingInputAsk) =>
+        isDefined(pendingInputAsk.workflowRunId),
+      )
+    ) {
       throw new AiException(
         'This conversation is waiting on an answer to its workflow run',
         AiExceptionCode.THREAD_AWAITING_WORKFLOW_INPUT,
       );
     }
 
-    if (!isDefined(pendingInputAsk.toolCallId)) {
-      return;
+    for (const { toolCallId } of pendingInputAsks) {
+      if (isDefined(toolCallId)) {
+        await this.skipPendingToolCall({ threadId, toolCallId, workspaceId });
+      }
     }
+  }
 
+  private async skipPendingToolCall({
+    threadId,
+    toolCallId,
+    workspaceId,
+  }: {
+    threadId: string;
+    toolCallId: string;
+    workspaceId: string;
+  }): Promise<void> {
     const hasCanceled = await this.inputAskWorkspaceService.cancel({
       workspaceId,
-      match: { threadId, toolCallId: pendingInputAsk.toolCallId },
+      match: { threadId, toolCallId },
     });
 
     if (!hasCanceled) {
@@ -813,7 +825,7 @@ export class AgentChatStreamingService {
 
     const toolPart = await this.agentChatService.findToolPart({
       threadId,
-      toolCallId: pendingInputAsk.toolCallId,
+      toolCallId,
       workspaceId,
     });
     const pausingToolCall = isDefined(toolPart?.toolName)

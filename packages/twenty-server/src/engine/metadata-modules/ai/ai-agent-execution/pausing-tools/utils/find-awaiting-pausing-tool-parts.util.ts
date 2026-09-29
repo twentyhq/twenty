@@ -12,26 +12,29 @@ export type AwaitingPausingToolPart = {
   pausingTool: PausingTool;
 };
 
-export const findAwaitingPausingToolPart = (
+// A step can call several pausing tools at once: each waits on its own Ask,
+// in the order the model made the calls.
+export const findAwaitingPausingToolParts = (
   parts: ExtendedUIMessagePart[],
-): AwaitingPausingToolPart | undefined => {
-  for (const part of parts) {
+): AwaitingPausingToolPart[] =>
+  parts.flatMap((part) => {
     if (!isToolUIPart(part)) {
-      continue;
+      return [];
     }
 
     const toolName = getToolName(part);
     const pausingTool = PAUSING_TOOLS.get(toolName);
 
-    if (isDefined(pausingTool) && pausingTool.isAwaitingOutput(part.output)) {
-      return {
+    if (!isDefined(pausingTool) || !pausingTool.isAwaitingOutput(part.output)) {
+      return [];
+    }
+
+    return [
+      {
         toolName,
         toolCallId: part.toolCallId,
         input: part.input,
         pausingTool,
-      };
-    }
-  }
-
-  return undefined;
-};
+      },
+    ];
+  });

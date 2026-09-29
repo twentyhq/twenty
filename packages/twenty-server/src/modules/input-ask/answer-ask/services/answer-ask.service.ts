@@ -350,6 +350,7 @@ export class AnswerAskService {
     }
 
     let turnId: string | null;
+    let hasOtherPendingAsks = false;
 
     // The answer is already recorded, so a failure from here on leaves a
     // failed turn to retry rather than an answer that can be given twice.
@@ -377,16 +378,35 @@ export class AnswerAskService {
 
       turnId = answerMessage.turnId;
 
-      await this.agentChatStreamingService.enqueueResumeStream({
-        threadId,
-        userWorkspaceId,
-        workspaceMemberId,
-        workspace,
-        turnId,
-        streamId,
-        modelId,
-        messageId: answerMessage.id,
-      });
+      // The agent continues once every call it paused on is answered. Each
+      // answer holds the stream claim until here, so exactly one of them,
+      // the last, finds none left.
+      hasOtherPendingAsks =
+        (
+          await this.inputAskWorkspaceService.findPendingForThread({
+            threadId,
+            workspaceId,
+          })
+        ).length > 0;
+
+      if (hasOtherPendingAsks) {
+        await this.agentChatStreamingService.releaseStreamClaim(
+          threadId,
+          workspaceId,
+          streamId,
+        );
+      } else {
+        await this.agentChatStreamingService.enqueueResumeStream({
+          threadId,
+          userWorkspaceId,
+          workspaceMemberId,
+          workspace,
+          turnId,
+          streamId,
+          modelId,
+          messageId: answerMessage.id,
+        });
+      }
     } catch (error) {
       const streamError = mapErrorToStreamError(error);
 
@@ -419,7 +439,11 @@ export class AnswerAskService {
 
     await this.publishToolCallResolved({ threadId, toolCallId, workspaceId });
 
-    return { streamId, threadId, turnId };
+    return {
+      streamId: hasOtherPendingAsks ? null : streamId,
+      threadId,
+      turnId,
+    };
   }
 
   private async answerWorkflowRunToolCall({

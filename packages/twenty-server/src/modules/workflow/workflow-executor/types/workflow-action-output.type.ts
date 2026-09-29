@@ -5,7 +5,7 @@ export type WorkflowActionOutput = {
   error?: string;
   isUserError?: boolean;
   pendingEvent?: boolean;
-  pendingAsk?: WorkflowPendingAsk;
+  pendingAsks?: WorkflowPendingAsk[];
   shouldEndWorkflowRun?: boolean;
   shouldRemainRunning?: boolean;
   shouldSkipStepExecution?: boolean;

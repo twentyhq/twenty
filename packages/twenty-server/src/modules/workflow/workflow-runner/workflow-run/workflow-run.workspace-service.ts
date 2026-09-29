@@ -241,13 +241,13 @@ export class WorkflowRunWorkspaceService {
   async updateWorkflowRunStepInfo({
     stepId,
     stepInfo,
-    pendingAsk,
+    pendingAsks,
     workflowRunId,
     workspaceId,
   }: {
     stepId: string;
     stepInfo: WorkflowRunStepInfo;
-    pendingAsk?: WorkflowPendingAsk;
+    pendingAsks?: WorkflowPendingAsk[];
     workflowRunId: string;
     workspaceId: string;
   }) {
@@ -256,16 +256,18 @@ export class WorkflowRunWorkspaceService {
       workspaceId,
     });
 
-    if (isDefined(pendingAsk) && stepInfo.status === StepStatus.PENDING) {
-      await this.inputAskWorkspaceService.open({
-        workspaceId,
-        inputAsk: {
-          ...pendingAsk,
-          workflowRunId,
-          stepId,
-          assigneeId: getRunInitiatorWorkspaceMemberId(workflowRunToUpdate),
-        },
-      });
+    if (stepInfo.status === StepStatus.PENDING) {
+      for (const pendingAsk of pendingAsks ?? []) {
+        await this.inputAskWorkspaceService.open({
+          workspaceId,
+          inputAsk: {
+            ...pendingAsk,
+            workflowRunId,
+            stepId,
+            assigneeId: getRunInitiatorWorkspaceMemberId(workflowRunToUpdate),
+          },
+        });
+      }
     }
 
     const partialUpdate = {

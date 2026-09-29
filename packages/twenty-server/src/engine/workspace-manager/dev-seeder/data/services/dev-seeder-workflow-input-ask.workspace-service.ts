@@ -403,7 +403,7 @@ export class DevSeederWorkflowInputAskWorkspaceService {
     await this.workflowRunWorkspaceService.updateWorkflowRunStepInfo({
       stepId: workflow.step.id,
       stepInfo: { status: StepStatus.PENDING },
-      pendingAsk: recordedConversation?.pendingAsk ?? undefined,
+      pendingAsks: recordedConversation?.pendingAsks,
       workflowRunId,
       workspaceId,
     });
@@ -427,10 +427,12 @@ export class DevSeederWorkflowInputAskWorkspaceService {
     await this.workflowRunWorkspaceService.updateWorkflowRunStepInfo({
       stepId: formStep.id,
       stepInfo: { status: StepStatus.PENDING },
-      pendingAsk: {
-        name: formStep.name,
-        form: { kind: 'formFields', fields: formStep.settings.input },
-      },
+      pendingAsks: [
+        {
+          name: formStep.name,
+          form: { kind: 'formFields', fields: formStep.settings.input },
+        },
+      ],
       workflowRunId,
       workspaceId,
     });

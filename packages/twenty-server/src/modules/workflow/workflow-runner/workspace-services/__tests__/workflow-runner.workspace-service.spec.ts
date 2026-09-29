@@ -17,7 +17,7 @@ describe('WorkflowRunnerWorkspaceService', () => {
   const workflowRunWorkspaceService = { endWorkflowRun: jest.fn() };
   const messageQueueService = { add: jest.fn() };
   const workflowAgentConversationWorkspaceService = {
-    recordAnswer: jest.fn(),
+    recordAnswer: jest.fn().mockResolvedValue({ hasAwaitingToolCalls: false }),
   };
 
   const service = new WorkflowRunnerWorkspaceService(
@@ -73,6 +73,17 @@ describe('WorkflowRunnerWorkspaceService', () => {
         workflowAgentConversationWorkspaceService.recordAnswer.mock
           .invocationCallOrder[0],
       ).toBeLessThan(messageQueueService.add.mock.invocationCallOrder[0]);
+      expect(workflowRunWorkspaceService.endWorkflowRun).not.toHaveBeenCalled();
+    });
+
+    it('schedules nothing while another call of the step still waits on its answer', async () => {
+      workflowAgentConversationWorkspaceService.recordAnswer.mockResolvedValueOnce(
+        { hasAwaitingToolCalls: true },
+      );
+
+      await resumeAnsweredAgentStep();
+
+      expect(messageQueueService.add).not.toHaveBeenCalled();
       expect(workflowRunWorkspaceService.endWorkflowRun).not.toHaveBeenCalled();
     });
 

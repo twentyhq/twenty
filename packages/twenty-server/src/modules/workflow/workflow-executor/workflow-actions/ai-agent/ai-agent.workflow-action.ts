@@ -4,7 +4,7 @@ import {
   ASK_QUESTIONS_TOOL_NAME,
   PROPOSE_EMAIL_TOOL_NAME,
 } from 'twenty-shared/ai';
-import { isDefined, resolveInput } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray, resolveInput } from 'twenty-shared/utils';
 import { type WorkflowRunStepLog } from 'twenty-shared/workflow';
 
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
@@ -201,7 +201,7 @@ export class AiAgentWorkflowAction implements WorkflowAction {
     if (executionResult.isPaused === true) {
       // The conversation is where the question is answered, so without it the
       // run would wait for an answer nobody can give.
-      if (!isDefined(recordedConversation?.pendingAsk)) {
+      if (!isNonEmptyArray(recordedConversation?.pendingAsks)) {
         return {
           error: 'Agent asked a question that could not be recorded.',
         };
@@ -209,7 +209,7 @@ export class AiAgentWorkflowAction implements WorkflowAction {
 
       return {
         pendingEvent: true,
-        pendingAsk: recordedConversation.pendingAsk,
+        pendingAsks: recordedConversation.pendingAsks,
       };
     }
 

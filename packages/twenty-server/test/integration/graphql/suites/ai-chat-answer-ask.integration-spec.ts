@@ -39,7 +39,9 @@ describe('Answering a chat tool call through its Ask', () => {
   let enqueueStream: jest.SpyInstance;
   const spies: jest.SpyInstance[] = [];
 
-  const pauseOnQuestion = async (toolCallId: string) => {
+  // One assistant message that calls ask_questions once per id, as a model
+  // asking several things in one step does.
+  const pauseOnQuestions = async (...toolCallIds: string[]) => {
     const userMessage = await chat.addMessage({
       workspaceId,
       threadId,
@@ -55,31 +57,31 @@ describe('Answering a chat tool call through its Ask', () => {
       threadId,
       turnId: userMessage.turnId,
       workspaceId,
-      parts: [
-        {
-          type: 'tool-ask_questions',
-          toolCallId,
-          state: 'output-available',
-          input: { questions: QUESTIONS },
-          output: {
-            success: true,
-            message: 'Questions presented to the user; awaiting their answer.',
-            result: { questions: QUESTIONS, status: 'pending' },
-          },
+      parts: toolCallIds.map((toolCallId) => ({
+        type: 'tool-ask_questions',
+        toolCallId,
+        state: 'output-available',
+        input: { questions: QUESTIONS },
+        output: {
+          success: true,
+          message: 'Questions presented to the user; awaiting their answer.',
+          result: { questions: QUESTIONS, status: 'pending' },
         },
-      ] as never,
+      })) as never,
     });
 
-    await inputAsks.open({
-      workspaceId,
-      inputAsk: {
-        name: QUESTIONS[0].question,
-        form: { kind: 'questions', questions: QUESTIONS },
-        threadId,
-        toolCallId,
-        assigneeId: workspaceMemberId,
-      },
-    });
+    for (const toolCallId of toolCallIds) {
+      await inputAsks.open({
+        workspaceId,
+        inputAsk: {
+          name: QUESTIONS[0].question,
+          form: { kind: 'questions', questions: QUESTIONS },
+          threadId,
+          toolCallId,
+          assigneeId: workspaceMemberId,
+        },
+      });
+    }
   };
 
   const answerToolCallAsk = async (toolCallId: string) => {
@@ -177,7 +179,7 @@ describe('Answering a chat tool call through its Ask', () => {
   });
 
   it('answers the Ask once, records the answer and resumes the chat', async () => {
-    await pauseOnQuestion('call-answered');
+    await pauseOnQuestions('call-answered');
 
     expect(await readAsk('call-answered')).toEqual({
       status: 'PENDING',
@@ -211,8 +213,58 @@ describe('Answering a chat tool call through its Ask', () => {
     expect(JSON.stringify(second.body.errors)).toContain('ASK_NOT_PENDING');
   });
 
+  it('resumes the chat only once every question asked together is answered', async () => {
+    await pauseOnQuestions('call-first', 'call-last');
+    enqueueStream.mockClear();
+
+    const first = await answerToolCallAsk('call-first');
+
+    expect(first.body.errors).toBeUndefined();
+    expect(first.body.data.answerAsk.streamId).toBeNull();
+    expect(await readAsk('call-first')).toMatchObject({ status: 'ANSWERED' });
+    expect(await readToolCallStatus('call-first')).toBe('answered');
+    expect(await readAsk('call-last')).toMatchObject({ status: 'PENDING' });
+    expect(enqueueStream).not.toHaveBeenCalled();
+
+    const last = await answerToolCallAsk('call-last');
+
+    expect(last.body.errors).toBeUndefined();
+    expect(last.body.data.answerAsk.streamId).toEqual(expect.any(String));
+    expect(enqueueStream).toHaveBeenCalledTimes(1);
+    expect(enqueueStream).toHaveBeenLastCalledWith(
+      expect.any(String),
+      expect.objectContaining({
+        threadId,
+        streamId: last.body.data.answerAsk.streamId,
+      }),
+    );
+  });
+
+  it('cancels every pending Ask when a message is sent instead of the answers', async () => {
+    await pauseOnQuestions('call-skipped-first', 'call-skipped-last');
+
+    const response = await makeMetadataApiRequest({
+      query: parse(
+        `mutation Send($threadId: UUID!, $text: String!, $messageId: UUID!) {
+          sendChatMessage(threadId: $threadId, text: $text, messageId: $messageId) { queued streamId }
+        }`,
+      ),
+      variables: { threadId, text: 'Never mind', messageId: randomUUID() },
+    });
+
+    expect(response.body.errors).toBeUndefined();
+
+    for (const toolCallId of ['call-skipped-first', 'call-skipped-last']) {
+      expect(await readAsk(toolCallId)).toEqual({
+        status: 'CANCELED',
+        response: null,
+      });
+      expect(await readToolCallStatus(toolCallId)).toBe('skipped');
+    }
+  });
+
   it('cancels a pending Ask when a message is sent instead of an answer', async () => {
-    await pauseOnQuestion('call-skipped');
+    await pauseOnQuestions('call-skipped');
 
     const response = await makeMetadataApiRequest({
       query: parse(

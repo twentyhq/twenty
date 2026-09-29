@@ -140,12 +140,14 @@ describe('WorkflowRunWorkspaceService Ask lifecycle', () => {
       await service.updateWorkflowRunStepInfo({
         stepId: 'step-id',
         stepInfo: { status: StepStatus.PENDING },
-        pendingAsk: {
-          name: 'Which plan?',
-          form: QUESTIONS_FORM,
-          threadId: 'thread-id',
-          toolCallId: 'tool-call-id',
-        },
+        pendingAsks: [
+          {
+            name: 'Which plan?',
+            form: QUESTIONS_FORM,
+            threadId: 'thread-id',
+            toolCallId: 'tool-call-id',
+          },
+        ],
         workflowRunId: 'workflow-run-id',
         workspaceId: 'workspace-id',
       });
@@ -177,10 +179,12 @@ describe('WorkflowRunWorkspaceService Ask lifecycle', () => {
         service.updateWorkflowRunStepInfo({
           stepId: 'step-id',
           stepInfo: { status: StepStatus.PENDING },
-          pendingAsk: {
-            name: 'Approve',
-            form: { kind: 'formFields', fields: [] },
-          },
+          pendingAsks: [
+            {
+              name: 'Approve',
+              form: { kind: 'formFields', fields: [] },
+            },
+          ],
           workflowRunId: 'workflow-run-id',
           workspaceId: 'workspace-id',
         }),

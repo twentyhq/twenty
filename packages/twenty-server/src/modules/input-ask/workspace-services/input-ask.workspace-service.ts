@@ -198,15 +198,14 @@ export class InputAskWorkspaceService {
   }: {
     workspaceId: string;
     threadId: string;
-  }): Promise<Pick<
-    InputAskWorkspaceEntity,
-    'id' | 'toolCallId' | 'workflowRunId'
-  > | null> {
+  }): Promise<
+    Pick<InputAskWorkspaceEntity, 'id' | 'toolCallId' | 'workflowRunId'>[]
+  > {
     return this.execute({
       workspaceId,
-      whenObjectMissing: () => null,
+      whenObjectMissing: () => [],
       run: (inputAskRepository) =>
-        inputAskRepository.findOne({
+        inputAskRepository.find({
           where: { threadId, status: InputAskStatus.PENDING },
           select: { id: true, toolCallId: true, workflowRunId: true },
         }),

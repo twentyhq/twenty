@@ -26,6 +26,7 @@ type BuildOptions = {
   hasAnswered?: boolean;
   hasPermission?: boolean;
   hasSubmittedForm?: boolean;
+  otherPendingAsks?: Record<string, unknown>[];
 };
 
 const chatInputAsk = {
@@ -65,6 +66,7 @@ describe('AnswerAskService', () => {
     hasAnswered = true,
     hasPermission = true,
     hasSubmittedForm = true,
+    otherPendingAsks = [],
   }: BuildOptions = {}) => {
     const publishedEvents: Array<{ type: string }> = [];
     const agentChatService = {
@@ -96,6 +98,7 @@ describe('AnswerAskService', () => {
     const inputAskWorkspaceService = {
       findReadable: jest.fn().mockResolvedValue(inputAsk),
       answer: jest.fn().mockResolvedValue(hasAnswered),
+      findPendingForThread: jest.fn().mockResolvedValue(otherPendingAsks),
     };
     const workflowRunnerWorkspaceService = {
       claimAgentStepToolCall: jest
@@ -245,6 +248,41 @@ describe('AnswerAskService', () => {
           messageId: 'answer-message-id',
           turnId: 'answer-turn',
         }),
+      );
+      expect(publishedEvents).toContainEqual({
+        type: 'tool-call-resolved',
+        toolCallId: 'tool-call-id',
+      });
+    });
+
+    it('records the answer but leaves the agent paused while another call of the step waits', async () => {
+      const {
+        service,
+        agentChatService,
+        agentChatStreamingService,
+        publishedEvents,
+      } = buildService({
+        otherPendingAsks: [
+          { id: 'other-ask', toolCallId: 'other-call', workflowRunId: null },
+        ],
+      });
+
+      const result = await service.answer(answerArguments);
+
+      expect(result).toEqual({
+        streamId: null,
+        threadId: 'thread-id',
+        turnId: 'answer-turn',
+      });
+      expect(agentChatService.updateToolPartOutput).toHaveBeenCalled();
+      expect(agentChatService.addMessage).toHaveBeenCalled();
+      expect(
+        agentChatStreamingService.enqueueResumeStream,
+      ).not.toHaveBeenCalled();
+      expect(agentChatStreamingService.releaseStreamClaim).toHaveBeenCalledWith(
+        'thread-id',
+        'workspace-id',
+        expect.any(String),
       );
       expect(publishedEvents).toContainEqual({
         type: 'tool-call-resolved',
