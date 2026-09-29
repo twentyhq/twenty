@@ -48,10 +48,11 @@ const WORKSPACE_DEFINITION_COMMANDS = new Set<EngineComponentKey>([
   EngineComponentKey.NAVIGATE_TO_PREVIOUS_RECORD,
 ]);
 
-const APPLICATION_WORKFLOW_MUTATION_COMMANDS = new Set<EngineComponentKey>([
+const UNAVAILABLE_APPLICATION_WORKFLOW_COMMANDS = new Set<EngineComponentKey>([
   EngineComponentKey.ACTIVATE_WORKFLOW,
   EngineComponentKey.DEACTIVATE_WORKFLOW,
   EngineComponentKey.DISCARD_DRAFT_WORKFLOW,
+  EngineComponentKey.DUPLICATE_WORKFLOW,
   EngineComponentKey.TIDY_UP_WORKFLOW,
   EngineComponentKey.TOGGLE_WORKFLOW_VISIBILITY,
   EngineComponentKey.DELETE_RECORDS,
@@ -124,7 +125,9 @@ export const CommandMenuContextProviderContent = ({
       .filter(
         (item) =>
           !isWorkflowDefinitionReadOnly ||
-          !APPLICATION_WORKFLOW_MUTATION_COMMANDS.has(item.engineComponentKey),
+          !UNAVAILABLE_APPLICATION_WORKFLOW_COMMANDS.has(
+            item.engineComponentKey,
+          ),
       )
       .filter(
         (item) =>

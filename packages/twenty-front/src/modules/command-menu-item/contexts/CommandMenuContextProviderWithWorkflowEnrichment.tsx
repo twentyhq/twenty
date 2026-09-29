@@ -1,5 +1,4 @@
-import { isTwentyStandardApplication } from '@/applications/utils/isTwentyStandardApplication';
-import { isWorkspaceCustomApplication } from '@/applications/utils/isWorkspaceCustomApplication';
+import { isThirdPartyApplication } from '@/applications/utils/isThirdPartyApplication';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type CommandMenuContextApi } from 'twenty-shared/types';
@@ -52,11 +51,7 @@ export const CommandMenuContextProviderWithWorkflowEnrichment = ({
             installedApplication.id === workflow.applicationId,
         );
 
-        return (
-          isDefined(application) &&
-          !isTwentyStandardApplication(application) &&
-          !isWorkspaceCustomApplication(application, currentWorkspace)
-        );
+        return isThirdPartyApplication({ application, currentWorkspace });
       }));
 
   const enrichedSelectedRecords = commandMenuContextApi.selectedRecords.map(

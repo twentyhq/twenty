@@ -98,12 +98,14 @@ const renderCommands = (isWorkflowDefinitionReadOnly: boolean) => {
 };
 
 describe('application workflow commands', () => {
-  it('keeps the standard test, runs and duplicate commands while hiding definition mutations', () => {
+  it('keeps test and runs commands while hiding unsupported application workflow commands', () => {
     renderCommands(true);
 
     expect(screen.getByRole('button', { name: 'Test workflow' })).toBeVisible();
     expect(screen.getByRole('button', { name: 'See runs' })).toBeVisible();
-    expect(screen.getByRole('button', { name: 'Duplicate' })).toBeVisible();
+    expect(
+      screen.queryByRole('button', { name: 'Duplicate' }),
+    ).not.toBeInTheDocument();
     expect(
       screen.queryByRole('button', { name: 'Deactivate' }),
     ).not.toBeInTheDocument();
@@ -117,6 +119,8 @@ describe('application workflow commands', () => {
 
   it('keeps definition commands available for editable workflows', () => {
     renderCommands(false);
+
+    expect(screen.getByRole('button', { name: 'Duplicate' })).toBeVisible();
 
     expect(screen.getByRole('button', { name: 'Test workflow' })).toBeVisible();
     expect(screen.getByRole('button', { name: 'Deactivate' })).toBeVisible();
