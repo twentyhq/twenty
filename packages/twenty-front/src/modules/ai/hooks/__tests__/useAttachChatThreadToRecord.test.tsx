@@ -8,11 +8,6 @@ const THREAD_ID = '20202020-0000-4000-8000-0000000000aa';
 const COMPANY_ID = '20202020-0000-4000-8000-000000000002';
 
 const companyObjectMetadataItem = getMockObjectMetadataItemOrThrow('company');
-// A custom object on the same leg, to cover the legs without a unique index.
-const customCompanyObjectMetadataItem = {
-  ...companyObjectMetadataItem,
-  nameSingular: 'customCompany',
-};
 const personObjectMetadataItem = getMockObjectMetadataItemOrThrow('person');
 // Any relation to company stands in for the thread target's company leg.
 const companyTargetField = getMockFieldMetadataItemOrThrow({
@@ -52,11 +47,7 @@ jest.mock('twenty-ui/components', () => ({
 
 jest.mock('@/object-metadata/hooks/useObjectMetadataItems', () => ({
   useObjectMetadataItems: () => ({
-    objectMetadataItems: [
-      companyObjectMetadataItem,
-      customCompanyObjectMetadataItem,
-      personObjectMetadataItem,
-    ],
+    objectMetadataItems: [companyObjectMetadataItem, personObjectMetadataItem],
   }),
 }));
 
@@ -94,20 +85,8 @@ describe('useAttachChatThreadToRecord', () => {
     refetchQueries.mockResolvedValue([]);
   });
 
-  // The standard leg's unique index lets the upsert absorb a link the chat
-  // tool wrote during the same turn.
-  it('links the conversation to a standard record without looking first', async () => {
+  it('links the conversation to a record it is not linked to yet', async () => {
     await attachTo();
-
-    expect(query).not.toHaveBeenCalled();
-    expect(createManyRecords).toHaveBeenCalledWith({
-      recordsToCreate: [{ threadId: THREAD_ID, companyId: COMPANY_ID }],
-      upsert: true,
-    });
-  });
-
-  it('links the conversation to a custom record it is not linked to yet', async () => {
-    await attachTo('customCompany');
 
     expect(query).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -121,13 +100,16 @@ describe('useAttachChatThreadToRecord', () => {
         fetchPolicy: 'network-only',
       }),
     );
-    expect(createManyRecords).toHaveBeenCalledTimes(1);
+    expect(createManyRecords).toHaveBeenCalledWith({
+      recordsToCreate: [{ threadId: THREAD_ID, companyId: COMPANY_ID }],
+      upsert: true,
+    });
   });
 
-  it('does not link a custom record twice', async () => {
+  it('does not link a record twice', async () => {
     query.mockResolvedValue(buildExistingLinks(['link-by-the-chat-tool']));
 
-    await attachTo('customCompany');
+    await attachTo();
 
     expect(createManyRecords).not.toHaveBeenCalled();
     expect(enqueueToast).not.toHaveBeenCalled();

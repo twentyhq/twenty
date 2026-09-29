@@ -15,14 +15,6 @@ import { findTargetFieldInfo } from '@/object-record/record-field/ui/utils/junct
 
 const EXISTING_LINK_GQL_FIELDS = { id: true };
 
-// The legs the standard link object declares, each with a unique index on the
-// conversation and the record; the legs added for other objects have none.
-const UNIQUE_LINK_OBJECT_NAMES: string[] = [
-  CoreObjectNameSingular.Person,
-  CoreObjectNameSingular.Company,
-  CoreObjectNameSingular.Opportunity,
-];
-
 export const useAttachChatThreadToRecord = () => {
   const { enqueueToast } = useToast();
   const apolloCoreClient = useApolloCoreClient();
@@ -66,33 +58,32 @@ export const useAttachChatThreadToRecord = () => {
     }
 
     try {
-      // The upsert resolves a link on a unique leg; any other is looked up.
-      if (!UNIQUE_LINK_OBJECT_NAMES.includes(objectNameSingular)) {
-        const { data: existingLinks, error: existingLinksError } =
-          await apolloCoreClient.query<RecordGqlOperationFindManyResult>({
-            query: findExistingLinksQuery,
-            variables: {
-              filter: {
-                [junctionConfig.sourceJoinColumnName]: { eq: threadId },
-                [targetJoinColumnName]: { eq: recordId },
-              },
-              limit: 1,
+      // Links to custom objects have no unique index for the upsert to
+      // resolve, so an existing link is looked up first.
+      const { data: existingLinks, error: existingLinksError } =
+        await apolloCoreClient.query<RecordGqlOperationFindManyResult>({
+          query: findExistingLinksQuery,
+          variables: {
+            filter: {
+              [junctionConfig.sourceJoinColumnName]: { eq: threadId },
+              [targetJoinColumnName]: { eq: recordId },
             },
-            fetchPolicy: 'network-only',
-          });
+            limit: 1,
+          },
+          fetchPolicy: 'network-only',
+        });
 
-        if (isDefined(existingLinksError)) {
-          throw existingLinksError;
-        }
+      if (isDefined(existingLinksError)) {
+        throw existingLinksError;
+      }
 
-        if (
-          isNonEmptyArray(
-            existingLinks?.[junctionConfig.junctionObjectMetadata.namePlural]
-              ?.edges,
-          )
-        ) {
-          return;
-        }
+      if (
+        isNonEmptyArray(
+          existingLinks?.[junctionConfig.junctionObjectMetadata.namePlural]
+            ?.edges,
+        )
+      ) {
+        return;
       }
 
       await createLinks({
