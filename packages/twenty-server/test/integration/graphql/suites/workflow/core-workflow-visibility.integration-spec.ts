@@ -904,38 +904,26 @@ describe('core workflow visibility (e2e)', () => {
       ).not.toContain(threadId);
     });
 
-    it('refuses to rename it or add to it, even for the workflow creator', async () => {
-      const renameResponse = await metadataRequestAs(
-        APPLE_JANE_ADMIN_ACCESS_TOKEN,
-        `
-          mutation RenameRunConversation($threadId: UUID!) {
-            renameChatThread(id: $threadId, title: "Renamed") {
-              id
+    it('lets the workflow creator rename it like any conversation they can write', async () => {
+      const rename = (title: string) =>
+        metadataRequestAs(
+          APPLE_JANE_ADMIN_ACCESS_TOKEN,
+          `
+            mutation RenameRunConversation($threadId: UUID!, $title: String!) {
+              renameChatThread(id: $threadId, title: $title) {
+                title
+              }
             }
-          }
-        `,
-        { threadId },
-      );
+          `,
+          { threadId, title },
+        );
 
-      expect(renameResponse.body.errors?.[0]?.extensions?.code).toBe(
-        'FORBIDDEN',
-      );
+      const renameResponse = await rename('Renamed');
 
-      const archiveResponse = await metadataRequestAs(
-        APPLE_JANE_ADMIN_ACCESS_TOKEN,
-        `
-          mutation ArchiveRunConversation($threadId: UUID!) {
-            archiveChatThread(id: $threadId) {
-              id
-            }
-          }
-        `,
-        { threadId },
-      );
+      expect(renameResponse.body.errors).toBeUndefined();
+      expect(renameResponse.body.data.renameChatThread.title).toBe('Renamed');
 
-      expect(archiveResponse.body.errors?.[0]?.extensions?.code).toBe(
-        'FORBIDDEN',
-      );
+      expect((await rename('Summarize the lead')).body.errors).toBeUndefined();
     });
 
     it('follows the workflow visibility for another member', async () => {
