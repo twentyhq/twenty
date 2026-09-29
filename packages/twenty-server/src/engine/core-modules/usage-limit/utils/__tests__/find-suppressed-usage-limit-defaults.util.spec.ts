@@ -37,6 +37,21 @@ const buildStockScope = (
     ...overrides,
   });
 
+const buildQuotaScope = (
+  overrides: Partial<UsageLimitScope> = {},
+): UsageLimitScope =>
+  buildUsageLimitScope({
+    resourceType: UsageResourceType.EMAIL,
+    operationType: UsageOperationType.EMAIL_SEND,
+    spenderType: 'workspace',
+    spenderId: '',
+    limitKind: 'quota',
+    periodCount: 1,
+    periodUnit: 'day',
+    meter: 'quantity',
+    ...overrides,
+  });
+
 describe('findSuppressedUsageLimitDefaults', () => {
   it('returns only the overridable default when a resource declares one of each', () => {
     const suppressed = findSuppressedUsageLimitDefaults(buildSpeedScope());
@@ -117,6 +132,32 @@ describe('findSuppressedUsageLimitDefaults', () => {
       );
 
     expect(suppressionKeysWithTwoDefaults).toEqual([]);
+  });
+
+  it('replaces the email quota default whatever period the row names', () => {
+    const suppressed = findSuppressedUsageLimitDefaults(
+      buildQuotaScope({ periodUnit: 'month', periodCount: 3 }),
+    );
+
+    expect(suppressed.map((entry) => entry.limitValueConfigVariable)).toEqual([
+      'EMAIL_SEND_WORKSPACE_DAILY_LIMIT',
+    ]);
+  });
+
+  it('leaves the email quota default alone for a row on every operation', () => {
+    expect(
+      findSuppressedUsageLimitDefaults(
+        buildQuotaScope({ operationType: UsageOperationType.ALL }),
+      ),
+    ).toEqual([]);
+  });
+
+  it('leaves the email quota default alone for the speed kind', () => {
+    expect(
+      findSuppressedUsageLimitDefaults(
+        buildQuotaScope({ limitKind: 'speed', periodUnit: 'second' }),
+      ).map((entry) => entry.limitKind),
+    ).toEqual(['speed']);
   });
 
   it('returns nothing for a resource that declares no default', () => {

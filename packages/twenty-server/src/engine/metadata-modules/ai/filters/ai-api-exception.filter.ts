@@ -25,6 +25,7 @@ export class AiRestApiExceptionFilter implements ExceptionFilter {
     switch (exception.code) {
       case AiExceptionCode.AGENT_NOT_FOUND:
       case AiExceptionCode.THREAD_NOT_FOUND:
+      case AiExceptionCode.RECORD_NOT_FOUND:
       case AiExceptionCode.MESSAGE_NOT_FOUND:
       case AiExceptionCode.USER_WORKSPACE_ID_NOT_FOUND:
       case AiExceptionCode.ROLE_NOT_FOUND:
@@ -38,6 +39,12 @@ export class AiRestApiExceptionFilter implements ExceptionFilter {
           exception,
           response,
           503, // Service Unavailable - the AI service is not configured
+        );
+      case AiExceptionCode.WORKFLOW_RUN_THREAD_READ_ONLY:
+        return this.httpExceptionHandlerService.handleError(
+          exception,
+          response,
+          403,
         );
       case AiExceptionCode.AGENT_EXECUTION_FAILED:
       case AiExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_AGENTS:

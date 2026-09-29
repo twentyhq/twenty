@@ -1,3 +1,5 @@
+import { type EnableCommonRecordSharingCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-workspace-command-1790312694997-enable-common-record-sharing.command';
+import { type AddWorkflowRunToChatThreadsCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790607161319-add-workflow-run-to-chat-threads.command';
 import { randomUUID } from 'node:crypto';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
@@ -104,7 +106,7 @@ describe('versioned agent history upgrade (integration)', () => {
       'WorkspaceOrmManager',
     );
     storage = getAppProviderByClassName<AgentHistoryStorageService>(
-      'AgentHistoryStorageService',
+      'AgentHistoryUpgradeStorageService',
     );
     heartbeat = getAppProviderByClassName<AgentChatStreamHeartbeatService>(
       'AgentChatStreamHeartbeatService',
@@ -207,6 +209,24 @@ describe('versioned agent history upgrade (integration)', () => {
     await dataSource.query('DELETE FROM core."agentChatThread" WHERE id = $1', [
       threadId,
     ]);
+    await getAppProviderByClassName<EnableCommonRecordSharingCommand>(
+      'EnableCommonRecordSharingCommand',
+    ).up({
+      workspaceId: WORKSPACE_ID,
+      dataSource,
+      index: 0,
+      total: 1,
+      options: {},
+    });
+    // The history objects were rebuilt as 2.42 leaves them; replay the later
+    // upgrade that links threads to runs for the suites that follow.
+    await workspaceOrmManager.executeInWorkspaceContext(
+      () =>
+        getAppProviderByClassName<AddWorkflowRunToChatThreadsCommand>(
+          'AddWorkflowRunToChatThreadsCommand',
+        ).up({ workspaceId: WORKSPACE_ID, index: 0, total: 1, options: {} }),
+      buildSystemAuthContext(WORKSPACE_ID),
+    );
     expect(await describeAgentChatThreadTarget(dataSource)).toEqual(
       seededAgentChatThreadTarget,
     );
@@ -298,6 +318,16 @@ describe('versioned agent history upgrade (integration)', () => {
     }
   });
 
+  const readStorage = async () => {
+    const runner = dataSource.createQueryRunner();
+    try {
+      await runner.connect();
+      return (await storage.readState(runner, WORKSPACE_ID)).storage;
+    } finally {
+      await runner.release();
+    }
+  };
+
   it('is discovered by upgrade, prepares missing objects, preserves live streams, recovers interrupted streams and supports reverse copy', async () => {
     await expect(runCommand('up', true)).rejects.toThrow(/stream/i);
     expect(
@@ -315,9 +345,7 @@ describe('versioned agent history upgrade (integration)', () => {
         [WORKSPACE_ID, upgradeCommandName],
       ),
     ).toEqual([{ status: 'failed' }]);
-    await storage.run(WORKSPACE_ID, async ({ storage: selected }) => {
-      expect(selected).toBe('core');
-    });
+    expect(await readStorage()).toBe('core');
     expect(
       await dataSource.query(
         'SELECT id FROM core."objectMetadata" WHERE "workspaceId" = $1 AND "nameSingular" = ANY($2)',
@@ -334,9 +362,7 @@ describe('versioned agent history upgrade (integration)', () => {
         [WORKSPACE_ID, upgradeCommandName],
       ),
     ).toEqual([{ status: 'completed' }]);
-    await storage.run(WORKSPACE_ID, async ({ storage: selected }) => {
-      expect(selected).toBe('workspace');
-    });
+    expect(await readStorage()).toBe('workspace');
     expect(
       await dataSource.query(
         `SELECT title, "activeStreamId", "lastStreamError"->>'code' AS error FROM "${SCHEMA}"."agentChatThread" WHERE id = $1`,

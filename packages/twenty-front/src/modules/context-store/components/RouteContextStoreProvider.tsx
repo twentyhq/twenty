@@ -55,13 +55,10 @@ const getViewId = ({
 export const RouteContextStoreProvider = () => {
   const location = useLocation();
   const routeObjects = useWorkspaceRouteObjects();
-  const isCoreWorkflowIndexPage = isMatchingLocation(
+  const isRecordIndexPage = isMatchingLocation(
     location,
-    AppPath.WorkflowCoreIndexPage,
+    AppPath.RecordIndexPage,
   );
-  const isRecordIndexPage =
-    isCoreWorkflowIndexPage ||
-    isMatchingLocation(location, AppPath.RecordIndexPage);
   const isCoreWorkflowShowPage = isMatchingLocation(
     location,
     AppPath.WorkflowCoreShowPage,
@@ -75,8 +72,7 @@ export const RouteContextStoreProvider = () => {
 
   const routeParams = matchRoutes(routeObjects, location)?.at(-1)?.params;
   const objectNamePlural = routeParams?.objectNamePlural;
-  const isCoreWorkflowPage = isCoreWorkflowIndexPage || isCoreWorkflowShowPage;
-  const objectNameSingular = isCoreWorkflowPage
+  const objectNameSingular = isCoreWorkflowShowPage
     ? CoreObjectNameSingular.Workflow
     : routeParams?.objectNameSingular;
 
@@ -155,7 +151,7 @@ export const RouteContextStoreProvider = () => {
 
   return (
     <RouteContextStoreProviderEffect
-      viewId={isCoreWorkflowPage ? undefined : viewId}
+      viewId={isCoreWorkflowShowPage ? undefined : viewId}
       objectMetadataItem={objectMetadataItem}
       isRecordIndexPage={isRecordIndexPage}
       isRecordShowPage={isRecordShowPage}

@@ -16,4 +16,22 @@ export const buildAgentChatThreadStandardFlatIndexMetadatas = (
       indexWhereClause: null,
     },
   }),
+  workspaceMemberIndex: createStandardIndexFlatMetadata({
+    ...args,
+    context: {
+      indexName: 'workspaceMemberIndex',
+      relatedFieldNames: ['workspaceMember'],
+      isUnique: false,
+      indexWhereClause: null,
+    },
+  }),
+  workflowRunIndex: createStandardIndexFlatMetadata({
+    ...args,
+    context: {
+      indexName: 'workflowRunIndex',
+      relatedFieldNames: ['workflowRun'],
+      isUnique: false,
+      indexWhereClause: null,
+    },
+  }),
 });

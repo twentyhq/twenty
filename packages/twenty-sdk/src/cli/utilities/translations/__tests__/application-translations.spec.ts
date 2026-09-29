@@ -155,7 +155,7 @@ describe('compileApplicationTranslations', () => {
       JSON.stringify({ Company: 'Company' }),
     );
 
-    const result = await compileApplicationTranslations(appPath);
+    const result = await compileApplicationTranslations({ appPath });
 
     expect(result).toEqual({
       'fr-FR': { [generateMessageId('Company')]: 'Entreprise' },
@@ -176,7 +176,7 @@ describe('compileApplicationTranslations', () => {
       }),
     );
 
-    const result = await compileApplicationTranslations(appPath);
+    const result = await compileApplicationTranslations({ appPath });
 
     expect(result).toEqual({
       'fr-FR': { [generateMessageId('Open', 'door')]: 'Ouvrir' },
@@ -186,7 +186,7 @@ describe('compileApplicationTranslations', () => {
   it('declares nothing when there is no locales directory, so the sync leaves stored translations alone', async () => {
     const appPath = await mkdtemp(join(tmpdir(), 'twenty-translations-empty-'));
 
-    expect(await compileApplicationTranslations(appPath)).toBeUndefined();
+    expect(await compileApplicationTranslations({ appPath })).toBeUndefined();
   });
 
   it('declares zero locales when the locales directory exists but holds none', async () => {
@@ -196,7 +196,7 @@ describe('compileApplicationTranslations', () => {
 
     await mkdir(join(appPath, 'locales'), { recursive: true });
 
-    expect(await compileApplicationTranslations(appPath)).toEqual({});
+    expect(await compileApplicationTranslations({ appPath })).toEqual({});
   });
 
   it('declares zero locales when only the source locale is present', async () => {
@@ -211,7 +211,7 @@ describe('compileApplicationTranslations', () => {
       JSON.stringify({ Company: 'Company' }),
     );
 
-    expect(await compileApplicationTranslations(appPath)).toEqual({});
+    expect(await compileApplicationTranslations({ appPath })).toEqual({});
   });
 
   it('merges compiled catalogs and lets an authored entry win on the same id', async () => {
@@ -230,7 +230,7 @@ describe('compileApplicationTranslations', () => {
       }),
     );
 
-    expect(await compileApplicationTranslations(appPath)).toEqual({
+    expect(await compileApplicationTranslations({ appPath })).toEqual({
       'fr-FR': {
         [generateMessageId('Company')]: 'Entreprise',
         zzzzzz: 'orphan',
@@ -248,7 +248,7 @@ describe('compileApplicationTranslations', () => {
       JSON.stringify({ zzzzzz: 'Waise' }),
     );
 
-    expect(await compileApplicationTranslations(appPath)).toEqual({
+    expect(await compileApplicationTranslations({ appPath })).toEqual({
       'de-DE': { zzzzzz: 'Waise' },
     });
   });
@@ -267,7 +267,7 @@ describe('compileApplicationTranslations', () => {
       JSON.stringify({ cccccc: 'nuqneH' }),
     );
 
-    expect(await compileApplicationTranslations(appPath)).toEqual({
+    expect(await compileApplicationTranslations({ appPath })).toEqual({
       'fr-FR': { bbbbbb: 'kept' },
     });
   });
@@ -285,7 +285,7 @@ describe('compileApplicationTranslations', () => {
       JSON.stringify({ Company: 'Azienda' }),
     );
 
-    expect(await compileApplicationTranslations(appPath)).toEqual({
+    expect(await compileApplicationTranslations({ appPath })).toEqual({
       'it-IT': { [generateMessageId('Company')]: 'Azienda' },
     });
   });
@@ -303,7 +303,7 @@ describe('compileApplicationTranslations', () => {
       JSON.stringify({ Company: 'Azienda' }),
     );
 
-    expect(await compileApplicationTranslations(appPath)).toEqual({
+    expect(await compileApplicationTranslations({ appPath })).toEqual({
       'it-IT': { [generateMessageId('Company')]: 'Azienda' },
     });
   });

@@ -79,7 +79,9 @@ describe('AgentChatStreamingService claim & reap', () => {
       {
         authorizeJob: jest.fn().mockResolvedValue(undefined),
         authorizeRetry: jest.fn().mockResolvedValue(undefined),
-        authorize: jest.fn().mockResolvedValue({}),
+        authorize: jest
+          .fn()
+          .mockResolvedValue({ authContext: { workspaceMemberId: 'member' } }),
         resolveMessage: jest.fn().mockResolvedValue({
           sender: {
             userWorkspaceId: 'user-workspace-id',
@@ -101,6 +103,7 @@ describe('AgentChatStreamingService claim & reap', () => {
   };
 
   const sendArguments = {
+    workspaceMemberId: 'member',
     threadId: 'thread-id',
     userWorkspaceId: 'user-workspace-id',
     workspace,

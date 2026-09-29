@@ -49,6 +49,7 @@ const InnerSelectExample = () => {
   return (
     <DropdownMenuInnerSelect
       dropdownId="inner-select-story"
+      aria-label="Position"
       selectedOption={option}
       options={options}
       onChange={setOption}
@@ -70,14 +71,17 @@ export const CurrencySearchAndKeyboard: Story = {
     const body = within(canvasElement.ownerDocument.body);
     const trigger = canvas.getByRole('button');
     await userEvent.click(trigger);
+    expect(await body.findByRole('dialog', { name: 'Currency' })).toBeVisible();
     const search = await body.findByRole('searchbox', { name: 'Search' });
     await userEvent.type(search, 'zzzzzz');
     expect(await body.findByText('No results')).toBeVisible();
     await userEvent.clear(search);
     await userEvent.type(search, 'euro');
     const euro = await body.findByRole('button', { name: /Euro \(EUR\)/ });
-    await userEvent.keyboard('{ArrowDown}{ArrowDown}');
-    await expect(euro).toHaveFocus();
+    expect(
+      body.queryByRole('button', { pressed: true }),
+    ).not.toBeInTheDocument();
+    await waitFor(() => expect(euro).toHaveAttribute('data-highlighted'));
     await userEvent.keyboard('{Enter}');
     await waitFor(() =>
       expect(body.queryByRole('dialog')).not.toBeInTheDocument(),
@@ -98,13 +102,19 @@ export const PhoneSearchAndSelection: Story = {
     const body = within(canvasElement.ownerDocument.body);
     const trigger = within(canvasElement).getByRole('button');
     await userEvent.click(trigger);
+    expect(await body.findByRole('dialog', { name: 'Country' })).toBeVisible();
     await userEvent.type(
       await body.findByRole('searchbox', { name: 'Search' }),
       'france',
     );
-    await userEvent.click(
-      await body.findByRole('button', { name: /France \(\+33\)/ }),
-    );
+    const france = await body.findByRole('button', {
+      name: /France \(\+33\)/,
+    });
+    expect(
+      body.queryByRole('button', { pressed: true }),
+    ).not.toBeInTheDocument();
+    await waitFor(() => expect(france).toHaveAttribute('data-highlighted'));
+    await userEvent.keyboard('{Enter}');
     await waitFor(() =>
       expect(body.queryByRole('dialog')).not.toBeInTheDocument(),
     );
@@ -158,6 +168,7 @@ export const InnerSelectSkipsDisabled: Story = {
     const trigger = within(canvasElement).getByRole('button');
     const body = within(canvasElement.ownerDocument.body);
     await userEvent.click(trigger);
+    expect(await body.findByRole('dialog', { name: 'Position' })).toBeVisible();
     expect(
       await body.findByRole('button', { name: 'Disabled' }),
     ).toHaveAttribute('aria-disabled', 'true');

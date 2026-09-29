@@ -3,6 +3,7 @@ import { msg } from '@lingui/core/macro';
 import {
   FieldMetadataType,
   MetadataWritability,
+  RelationOnDeleteAction,
   RelationType,
 } from 'twenty-shared/types';
 import { STANDARD_RELATION_FIELD_PROPERTIES_BY_RELATION_OBJECT } from 'src/engine/metadata-modules/object-metadata/constants/standard-relation-field-properties.constant';
@@ -63,7 +64,10 @@ export const buildAgentChatThreadStandardFlatFieldMetadatas = (
         icon: 'IconId',
         isSystem: true,
         isUIEditable: false,
-        isNullable: false,
+        // A workflow run's conversation has no owner: it is read through the
+        // run. The column goes away with the owner contract step
+        // (twentyhq/core-team-issues#2925).
+        isNullable: true,
       },
     }),
     writability: MetadataWritability.SYSTEM,
@@ -493,6 +497,96 @@ export const buildAgentChatThreadStandardFlatFieldMetadatas = (
           relationType: RelationType.ONE_TO_MANY,
           joinColumnName: null,
         },
+      },
+    }),
+    writability: MetadataWritability.SYSTEM,
+    isAuditLogged: false,
+  },
+  workspaceMember: {
+    ...createStandardRelationFieldFlatMetadata({
+      ...args,
+      context: {
+        fieldName: 'workspaceMember',
+        type: FieldMetadataType.RELATION,
+        label: i18nLabel(
+          msg({ message: 'Workspace Member', context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: 'Workspace member who owns the thread',
+            context: 'fieldMetadata.description',
+          }),
+        ),
+        icon: 'IconUsers',
+        isUIEditable: false,
+        // Stays optional for a workflow run's conversation, which is read
+        // through its run rather than owned. Every other thread gets an owner
+        // with the owner contract step (twentyhq/core-team-issues#2925).
+        isNullable: true,
+        targetObjectName: 'workspaceMember',
+        targetFieldName: 'agentChatThreads',
+        morphId: null,
+        settings: {
+          relationType: RelationType.MANY_TO_ONE,
+          onDelete: RelationOnDeleteAction.CASCADE,
+          joinColumnName: 'workspaceMemberId',
+        },
+      },
+    }),
+    writability: MetadataWritability.SYSTEM,
+    isAuditLogged: false,
+  },
+  workflowRun: {
+    ...createStandardRelationFieldFlatMetadata({
+      ...args,
+      context: {
+        fieldName: 'workflowRun',
+        type: FieldMetadataType.RELATION,
+        label: i18nLabel(
+          msg({ message: 'Workflow Run', context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: 'Workflow run whose agent step held this conversation',
+            context: 'fieldMetadata.description',
+          }),
+        ),
+        icon: 'IconHistoryToggle',
+        isUIEditable: false,
+        isNullable: true,
+        targetObjectName: 'workflowRun',
+        targetFieldName: 'agentChatThreads',
+        morphId: null,
+        settings: {
+          relationType: RelationType.MANY_TO_ONE,
+          onDelete: RelationOnDeleteAction.CASCADE,
+          joinColumnName: 'workflowRunId',
+        },
+      },
+    }),
+    writability: MetadataWritability.SYSTEM,
+    isAuditLogged: false,
+  },
+  workflowStepId: {
+    ...createStandardFieldFlatMetadata({
+      ...args,
+      context: {
+        fieldName: 'workflowStepId',
+        type: FieldMetadataType.TEXT,
+        label: i18nLabel(
+          msg({ message: 'Workflow Step ID', context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message:
+              'Agent step of the workflow run that held this conversation',
+            context: 'fieldMetadata.description',
+          }),
+        ),
+        icon: 'IconId',
+        isSystem: true,
+        isUIEditable: false,
+        isNullable: true,
       },
     }),
     writability: MetadataWritability.SYSTEM,

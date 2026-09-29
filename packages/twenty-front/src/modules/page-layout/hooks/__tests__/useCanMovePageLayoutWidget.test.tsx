@@ -2,6 +2,7 @@ import { useCanMovePageLayoutWidget } from '@/page-layout/hooks/useCanMovePageLa
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import {
   makeDraft,
+  makeFlagGatedWidget,
   makeTab,
   makeWidget,
 } from '@/page-layout/testing/pageLayoutDraftFixtures';
@@ -111,6 +112,32 @@ describe('useCanMovePageLayoutWidget', () => {
 
         expect(
           result.current.canMovePageLayoutWidget(edgeWidgetId, direction),
+        ).toBe(false);
+      });
+
+      it(`should return false when only a widget feature flags hide is ${adjacentPosition} it`, () => {
+        const store = createStore();
+
+        const flagGatedWidgets = {
+          up: [
+            makeFlagGatedWidget('flag-gated-widget', 0),
+            makeWidget('widget-a', 1),
+          ],
+          down: [
+            makeWidget('widget-a', 0),
+            makeFlagGatedWidget('flag-gated-widget', 1),
+          ],
+        };
+
+        store.set(
+          getDraftAtom(),
+          makeDraft([makeTab('tab-1', flagGatedWidgets[direction])]),
+        );
+
+        const { result } = renderCanMoveHook(store);
+
+        expect(
+          result.current.canMovePageLayoutWidget('widget-a', direction),
         ).toBe(false);
       });
 

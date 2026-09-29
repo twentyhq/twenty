@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { EventLogLiveModule } from 'src/engine/core-modules/event-logs/live/event-log-live.module';
@@ -26,6 +27,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     TypeOrmModule.forFeature([
       LogicFunctionEntity,
       ApplicationEntity,
+      ApplicationRegistrationEntity,
       FeatureFlagEntity,
     ]),
     ThrottlerModule,

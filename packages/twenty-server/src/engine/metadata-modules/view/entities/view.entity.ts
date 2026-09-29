@@ -63,9 +63,10 @@ export type ViewOverrides = {
 
 // We could refactor this type to be dynamic to view type
 @Entity({ name: 'view', schema: 'core' })
-@Index('IDX_VIEW_WORKSPACE_ID_OBJECT_METADATA_ID', [
-  'workspaceId',
+@Index('IDX_VIEW_APPLICATION_ID', ['applicationId'])
+@Index('IDX_VIEW_OBJECT_METADATA_ID_WORKSPACE_ID', [
   'objectMetadataId',
+  'workspaceId',
 ])
 @Index('IDX_VIEW_VISIBILITY', ['visibility'])
 @Index('IDX_VIEW_CALENDAR_FIELD_METADATA', ['calendarFieldMetadataId'])

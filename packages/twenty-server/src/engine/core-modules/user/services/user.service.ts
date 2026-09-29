@@ -44,7 +44,7 @@ import {
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { ConnectedAccountOwnershipTransferService } from 'src/engine/metadata-modules/connected-account/services/connected-account-ownership-transfer.service';
-import { type AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
+import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
@@ -70,7 +70,7 @@ export class UserService {
     private readonly workspaceMemberTranspiler: WorkspaceMemberTranspiler,
     private readonly twentyConfigService: TwentyConfigService,
     @InjectAgentHistoryRepository('agentChatThread')
-    private readonly agentChatThreadRepository: AgentHistoryRepository<AgentChatThreadEntity>,
+    private readonly agentChatThreadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
   ) {}
 
   async refreshWorkspaceIfPendingOrOngoingCreation<
@@ -407,7 +407,7 @@ export class UserService {
     // Runs after the membership is gone so a failed removal keeps the history
     // and threads created during the removal are still cleaned up.
     await this.agentChatThreadRepository.delete(workspaceId, {
-      userWorkspaceId,
+      workspaceMemberId: workspaceMember.id,
     });
   }
 

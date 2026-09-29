@@ -6,6 +6,7 @@ import { type UsageResourceType } from 'src/engine/core-modules/usage/enums/usag
 
 export type LimitQuotaCounter = {
   kind: 'limit';
+  isDefault: boolean;
   key: string;
   limitValue: number;
   meter: QuotaMeter;

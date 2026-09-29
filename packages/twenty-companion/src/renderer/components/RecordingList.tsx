@@ -11,7 +11,7 @@ import { formatDate } from '../utils/formatDate';
 export const RecordingList = ({ state, isPending, command }: ActionProps) => {
   const recordings = state.recordings.slice(0, 5);
   return recordings.length ? (
-    <Card
+    <Card.Root
       className="recording-list"
       backgroundColor="var(--t-background-secondary)"
     >
@@ -52,7 +52,7 @@ export const RecordingList = ({ state, isPending, command }: ActionProps) => {
           </div>
         </button>
       ))}
-    </Card>
+    </Card.Root>
   ) : (
     <Empty
       icon={

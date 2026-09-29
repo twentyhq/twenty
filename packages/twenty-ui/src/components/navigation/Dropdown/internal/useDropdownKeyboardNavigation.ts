@@ -1,3 +1,4 @@
+import { useDirection } from '@base-ui/react/direction-provider';
 import { useState, type KeyboardEvent } from 'react';
 
 import { isDefined } from '@ui/utilities/utils/isDefined';
@@ -5,6 +6,7 @@ import { isDefined } from '@ui/utilities/utils/isDefined';
 import { type DropdownType } from '../types/DropdownType';
 import { getDropdownItemLabel } from './getDropdownItemLabel';
 import { getDropdownItems } from './getDropdownItems';
+import { getDropdownSearchTarget } from './getDropdownSearchTarget';
 import { getDropdownTrigger } from './getDropdownTrigger';
 import { getNextDropdownItem } from './getNextDropdownItem';
 
@@ -19,6 +21,7 @@ export const useDropdownKeyboardNavigation = ({
   isSubmenu: boolean;
   setOpen: (open: boolean) => void;
 }) => {
+  const direction = useDirection();
   const [typeahead, setTypeahead] = useState({ text: '', timestamp: 0 });
 
   return (event: KeyboardEvent<HTMLDivElement>) => {
@@ -39,7 +42,7 @@ export const useDropdownKeyboardNavigation = ({
     const isEditable = target.matches(
       'input,textarea,select,[contenteditable="true"]',
     );
-    const isRightToLeft = getComputedStyle(content).direction === 'rtl';
+    const isRightToLeft = direction === 'rtl';
     const backwardKey = isRightToLeft ? 'ArrowRight' : 'ArrowLeft';
 
     const shouldCloseSubmenu =
@@ -69,6 +72,17 @@ export const useDropdownKeyboardNavigation = ({
     const items = getDropdownItems(content).filter(
       (item) => !isDefined(search) || !item.hasAttribute('data-dropdown-back'),
     );
+    const searchTarget =
+      isSearch && event.key === 'Enter' && !event.nativeEvent.isComposing
+        ? getDropdownSearchTarget(content)
+        : undefined;
+
+    if (isDefined(searchTarget)) {
+      event.preventDefault();
+      searchTarget.click();
+      return;
+    }
+
     const currentIndex = items.indexOf(target);
     const nextItem = getNextDropdownItem({
       key: event.key,

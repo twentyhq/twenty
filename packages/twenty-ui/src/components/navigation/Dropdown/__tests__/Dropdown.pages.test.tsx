@@ -1,11 +1,12 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useState } from 'react';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import { Input } from '@ui/primitives/input/Input/Input';
 
 import { Dropdown } from '../Dropdown';
+import { useDropdownPage } from '../hooks/useDropdownPage';
 import { type DropdownType } from '../types/DropdownType';
 
 type FilterPagesProps = {
@@ -50,7 +51,115 @@ const FilterPages = ({
   );
 };
 
+const StatusOptions = ({
+  onStatusChange,
+}: {
+  onStatusChange: (status: string) => void;
+}) => {
+  const { goBack } = useDropdownPage();
+
+  return ['Active', 'Archived'].map((status) => (
+    <Dropdown.OptionItem
+      key={status}
+      selected={false}
+      closeOnSelect={false}
+      onSelect={() => {
+        onStatusChange(status);
+        goBack();
+      }}
+    >
+      {status}
+    </Dropdown.OptionItem>
+  ));
+};
+
+const CurrentPage = () => {
+  const { page, canGoBack } = useDropdownPage();
+
+  return <p>{canGoBack ? `${page} page with history` : `${page} page`}</p>;
+};
+
+const OpenDetailsAction = () => {
+  const { goToPage } = useDropdownPage();
+
+  return (
+    <Dropdown.ActionItem
+      closeOnClick={false}
+      onClick={() => goToPage('details')}
+    >
+      Open details
+    </Dropdown.ActionItem>
+  );
+};
+
 describe('Dropdown pages', () => {
+  it('returns to the previous page after a selection and restores its invoking row', async () => {
+    const user = userEvent.setup();
+    const onStatusChange = vi.fn();
+
+    render(
+      <Dropdown.Root type="picker">
+        <Dropdown.Trigger>Filters</Dropdown.Trigger>
+        <Dropdown.Content aria-label="Filters">
+          <Dropdown.Page id="root">
+            <Dropdown.ActionItem>Clear filters</Dropdown.ActionItem>
+            <Dropdown.ActionItem page="status">Status</Dropdown.ActionItem>
+          </Dropdown.Page>
+          <Dropdown.Page id="status">
+            <Dropdown.Back>Back to filters</Dropdown.Back>
+            <StatusOptions onStatusChange={onStatusChange} />
+          </Dropdown.Page>
+        </Dropdown.Content>
+      </Dropdown.Root>,
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Filters' }));
+    await user.click(screen.getByRole('button', { name: 'Status' }));
+    await user.click(screen.getByRole('button', { name: 'Archived' }));
+
+    expect(onStatusChange).toHaveBeenCalledWith('Archived');
+    expect(screen.getByRole('dialog', { name: 'Filters' })).toBeVisible();
+    expect(
+      screen.queryByRole('button', { name: 'Archived' }),
+    ).not.toBeInTheDocument();
+    await waitFor(() =>
+      expect(screen.getByRole('button', { name: 'Status' })).toHaveFocus(),
+    );
+  });
+
+  it('navigates programmatically and exposes the current page and history', async () => {
+    const user = userEvent.setup();
+
+    render(
+      <Dropdown.Root type="menu">
+        <Dropdown.Trigger>Record actions</Dropdown.Trigger>
+        <Dropdown.Content aria-label="Record actions">
+          <Dropdown.Page id="root">
+            <CurrentPage />
+            <OpenDetailsAction />
+          </Dropdown.Page>
+          <Dropdown.Page id="details">
+            <CurrentPage />
+            <Dropdown.Back>Back to actions</Dropdown.Back>
+          </Dropdown.Page>
+        </Dropdown.Content>
+      </Dropdown.Root>,
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Record actions' }));
+    expect(screen.getByText('root page')).toBeVisible();
+    await user.click(screen.getByRole('menuitem', { name: 'Open details' }));
+    expect(screen.getByText('details page with history')).toBeVisible();
+    expect(screen.getByRole('menu', { name: 'Record actions' })).toBeVisible();
+    await user.click(screen.getByRole('menuitem', { name: 'Back to actions' }));
+    expect(screen.getByText('root page')).toBeVisible();
+    await waitFor(() =>
+      expect(
+        screen.getByRole('menuitem', { name: 'Open details' }),
+      ).toHaveFocus(),
+    );
+  });
+
   it('keeps the current page and focus when navigation is prevented', async () => {
     const user = userEvent.setup();
 

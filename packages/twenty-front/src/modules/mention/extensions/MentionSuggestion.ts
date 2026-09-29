@@ -4,6 +4,7 @@ import Suggestion from '@tiptap/suggestion';
 import { MentionSuggestionMenu } from '@/mention/components/MentionSuggestionMenu';
 import { MENTION_SUGGESTION_PLUGIN_KEY } from '@/mention/constants/MentionSuggestionPluginKey';
 import type { MentionSearchResult } from '@/mention/types/MentionSearchResult';
+import { getMentionTagContent } from '@/mention/utils/getMentionTagContent';
 import { createSuggestionRenderLifecycle } from '@/ui/suggestion/components/createSuggestionRenderLifecycle';
 
 type MentionSuggestionOptions = {
@@ -41,16 +42,7 @@ export const MentionSuggestion = Extension.create<MentionSuggestionOptions>({
             .chain()
             .focus()
             .deleteRange(range)
-            .insertContent({
-              type: 'mentionTag',
-              attrs: {
-                recordId: selectedItem.recordId,
-                objectNameSingular: selectedItem.objectNameSingular,
-                label: selectedItem.label,
-                imageUrl: selectedItem.imageUrl,
-              },
-            })
-            .insertContent(' ')
+            .insertContent(getMentionTagContent(selectedItem))
             .run();
         },
         render: () =>

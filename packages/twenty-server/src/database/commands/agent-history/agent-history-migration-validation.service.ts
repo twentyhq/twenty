@@ -6,14 +6,57 @@ import { AGENT_HISTORY_TABLES } from 'src/database/commands/agent-history/agent-
 import { getAgentHistoryColumn } from 'src/database/commands/agent-history/utils/get-agent-history-column.util';
 import { getAgentHistoryMigrationColumns } from 'src/database/commands/agent-history/utils/get-agent-history-migration-columns.util';
 import { getAgentHistoryTable } from 'src/database/commands/agent-history/utils/get-agent-history-table.util';
-import { type AgentHistoryStorageState } from 'src/engine/metadata-modules/ai/ai-history/types/agent-history-storage-state.type';
+import { type AgentHistoryMigrationState } from 'src/database/commands/agent-history/agent-history-migration-state.type';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
-type Storage = AgentHistoryStorageState['storage'];
+type Storage = AgentHistoryMigrationState['storage'];
 
 @Injectable()
 export class AgentHistoryMigrationValidationService {
+  // agentChatThreadTarget rows point at the workspace-schema thread table. A
+  // rollback leaves that store in place, but the next forward migration clears
+  // it, cascading the links away with no way to rebuild them from core. Refuse
+  // instead of losing them silently.
+  async assertNoThreadTargets({
+    runner,
+    workspaceId,
+  }: {
+    runner: QueryRunner;
+    workspaceId: string;
+  }): Promise<void> {
+    const table = `${escapeIdentifier(getWorkspaceSchemaName(workspaceId))}."agentChatThreadTarget"`;
+
+    const [{ exists }]: { exists: boolean }[] = await runner.query(
+      'SELECT to_regclass($1) IS NOT NULL AS exists',
+      [table],
+    );
+
+    if (!exists) {
+      return;
+    }
+
+    // A custom object leg is set to null when its record is destroyed, as on
+    // noteTarget, so such a row links nothing and there is no record left to
+    // detach it from. Every leg's column is target<Object>Id, whatever the
+    // object, which finds the legs without reading the metadata.
+    const rows: { id: string }[] = await runner.query(
+      `SELECT target.id FROM ${table} target
+       WHERE target."deletedAt" IS NULL
+         AND EXISTS (
+           SELECT 1 FROM jsonb_each(to_jsonb(target)) leg
+           WHERE leg.key LIKE 'target%Id' AND leg.value <> 'null'::jsonb
+         )
+       LIMIT 1`,
+    );
+
+    if (isNonEmptyArray(rows)) {
+      throw new Error(
+        'Records are still linked to chat threads in this workspace. Detach them before rolling agent history back to core.',
+      );
+    }
+  }
+
   async assertNoCoreIdCollisions({
     runner,
     workspaceId,
