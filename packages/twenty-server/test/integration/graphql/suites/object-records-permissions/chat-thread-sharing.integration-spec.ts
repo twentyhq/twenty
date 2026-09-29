@@ -15,7 +15,7 @@ import { type AgentHistoryStorageService } from 'src/engine/metadata-modules/ai/
 import { type WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { randomUUID } from 'node:crypto';
 import { parse } from 'graphql';
-import { type EventEmitter2 } from '@nestjs/event-emitter';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { EVERYONE_PRINCIPAL_ID } from 'twenty-shared/constants';
 import { type ObjectRecordDestroyEvent } from 'twenty-shared/database-events';
 import {
@@ -865,8 +865,7 @@ describe('Conversations through the record API', () => {
   });
 
   const waitForDestroyedThread = (threadId: string) => {
-    const eventEmitter =
-      getAppProviderByClassName<EventEmitter2>('EventEmitter2');
+    const eventEmitter = global.app.get(EventEmitter2, { strict: false });
     const eventName = computeEventName(
       'agentChatThread',
       DatabaseEventAction.DESTROYED,
