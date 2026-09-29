@@ -26,11 +26,11 @@ import {
   WorkflowRunException,
   WorkflowRunExceptionCode,
 } from 'src/modules/workflow/workflow-runner/exceptions/workflow-run.exception';
+import { findStepIdByThreadId } from 'src/modules/workflow/workflow-runner/utils/find-step-id-by-thread-id.util';
 
 export type StepAnswerRelease =
-  | 'RELEASED'
-  | 'NOT_YET_AWAITING'
-  | 'NO_LONGER_AWAITING';
+  | { status: 'RELEASED'; stepId: string }
+  | { status: 'NOT_YET_AWAITING' | 'NO_LONGER_AWAITING' };
 
 @Injectable()
 export class WorkflowRunWorkspaceService {
@@ -442,18 +442,17 @@ export class WorkflowRunWorkspaceService {
     return true;
   }
 
-  // Hands a step whose agent asked a question back to the executor, once and
-  // only for that question: a stop, a retry or another loop iteration has
-  // moved the step on or replaced its conversation. A step still RUNNING has
-  // asked but not yet been parked, which an answer only has to wait out.
+  // Hands the step whose agent asked a question in this conversation back to
+  // the executor, once and only for that question: a stop, a retry or another
+  // loop iteration has moved the step on or replaced its conversation. A step
+  // still RUNNING has asked but not yet been parked, which an answer only has
+  // to wait out.
   @WithLock('workflowRunId')
   async releaseStepAwaitingAnswer({
-    stepId,
     threadId,
     workflowRunId,
     workspaceId,
   }: {
-    stepId: string;
     threadId: string;
     workflowRunId: string;
     workspaceId: string;
@@ -463,22 +462,25 @@ export class WorkflowRunWorkspaceService {
       workspaceId,
     });
 
-    const currentStepInfo = workflowRunToUpdate.state?.stepInfos?.[stepId];
+    const stepInfos = workflowRunToUpdate.state?.stepInfos ?? {};
+    const stepId = findStepIdByThreadId({ stepInfos, threadId });
+    const currentStepInfo = isDefined(stepId) ? stepInfos[stepId] : undefined;
 
     if (
       workflowRunToUpdate.status !== WorkflowRunStatus.RUNNING ||
-      currentStepInfo?.threadId !== threadId ||
-      isDefined(currentStepInfo?.error)
+      !isDefined(stepId) ||
+      !isDefined(currentStepInfo) ||
+      isDefined(currentStepInfo.error)
     ) {
-      return 'NO_LONGER_AWAITING';
+      return { status: 'NO_LONGER_AWAITING' };
     }
 
     if (currentStepInfo.status === StepStatus.RUNNING) {
-      return 'NOT_YET_AWAITING';
+      return { status: 'NOT_YET_AWAITING' };
     }
 
     if (currentStepInfo.status !== StepStatus.PENDING) {
-      return 'NO_LONGER_AWAITING';
+      return { status: 'NO_LONGER_AWAITING' };
     }
 
     await this.updateWorkflowRun({
@@ -495,7 +497,7 @@ export class WorkflowRunWorkspaceService {
       },
     });
 
-    return 'RELEASED';
+    return { status: 'RELEASED', stepId };
   }
 
   // Undoes releaseStepAwaitingAnswer when the resume it prepared could not be
