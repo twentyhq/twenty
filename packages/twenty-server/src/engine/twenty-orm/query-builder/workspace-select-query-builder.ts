@@ -1,6 +1,7 @@
 import { type ObjectsPermissions } from 'twenty-shared/types';
 import { isDefined, pascalCase } from 'twenty-shared/utils';
-import { FindOperator, type ObjectLiteral } from 'typeorm';
+import { type ObjectLiteral } from 'typeorm';
+import { InstanceChecker } from 'typeorm/util/InstanceChecker';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
@@ -59,7 +60,7 @@ const isNestedWhereObject = (value: unknown): value is ObjectWhereLike =>
   isDefined(value) &&
   typeof value === 'object' &&
   !Array.isArray(value) &&
-  !(value instanceof FindOperator) &&
+  !InstanceChecker.isFindOperator(value) &&
   !(value instanceof Date);
 
 export type QueryBuilderContext = {
@@ -904,7 +905,7 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
         hasCompositeChildColumns &&
         isDefined(value) &&
         typeof value === 'object' &&
-        !(value instanceof FindOperator) &&
+        !InstanceChecker.isFindOperator(value) &&
         !Array.isArray(value)
       ) {
         for (const [subFieldName, subValue] of Object.entries(
@@ -1086,7 +1087,7 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
       return parameterName;
     };
 
-    if (value instanceof FindOperator) {
+    if (InstanceChecker.isFindOperator(value)) {
       switch (value.type) {
         case 'in':
           return `${quotedColumn} IN (:...${nextParameter(value.value)})`;

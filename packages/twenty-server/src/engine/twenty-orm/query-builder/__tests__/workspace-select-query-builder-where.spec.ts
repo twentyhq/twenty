@@ -220,6 +220,26 @@ describe('WorkspaceSelectQueryBuilder where', () => {
     expect(values).toEqual(['company-1']);
   });
 
+  it('should apply a find operator from another copy of typeorm', () => {
+    let isolatedIn: typeof In = In;
+
+    jest.isolateModules(() => {
+      isolatedIn = jest.requireActual<typeof import('typeorm')>('typeorm').In;
+    });
+
+    const { queryBuilder } = buildQueryBuilder();
+
+    queryBuilder
+      .setFindOptions({ select: { id: true } })
+      .where({ companyId: isolatedIn(['company-1', 'company-2']) });
+
+    const [text, values] = queryBuilder.getQueryAndParameters();
+
+    expect(isolatedIn).not.toBe(In);
+    expect(text).toContain('("person"."companyId" IN ($1, $2))');
+    expect(values).toEqual(['company-1', 'company-2']);
+  });
+
   it('should refuse a where condition it cannot read instead of dropping it', () => {
     const { queryBuilder } = buildQueryBuilder();
 
