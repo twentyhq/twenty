@@ -9,11 +9,16 @@ import { type DropdownSectionProps } from '../types/DropdownSectionProps';
 
 export const DropdownSection = ({
   label,
+  scrollable,
   className,
   children,
   ...props
 }: DropdownSectionProps) => (
-  <MenuGroup {...props} className={clsx(styles.section, className)}>
+  <MenuGroup
+    {...props}
+    data-scrollable={scrollable || undefined}
+    className={clsx(styles.section, className)}
+  >
     {isDefined(label) && <MenuGroupLabel>{label}</MenuGroupLabel>}
     {children}
   </MenuGroup>

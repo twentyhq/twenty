@@ -12,7 +12,7 @@ import { FieldMetadataType, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components';
 import { IconPlus } from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { SettingsObjectFieldTable } from '~/pages/settings/data-model/SettingsObjectFieldTable';
 
 const StyledButtonContainer = styled.div`

@@ -44,6 +44,19 @@ export const STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS = {
       },
     },
   },
+  attachmentRecordPage: buildStandardObjectRecordPageLayout({
+    objectUniversalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.attachment,
+    tabs: {
+      home: {
+        title: 'Home',
+        widgets: {
+          preview: 'Preview',
+          fields: 'Fields',
+          attachedTo: 'Attached to',
+        },
+      },
+    },
+  }),
   companyRecordPage: buildStandardObjectRecordPageLayout({
     objectUniversalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company,
     tabs: {
@@ -83,6 +96,12 @@ export const STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS = {
         title: 'Emails',
         widgets: {
           emails: 'Emails',
+        },
+      },
+      conversations: {
+        title: 'Conversations',
+        widgets: {
+          conversations: 'Conversations',
         },
       },
       calendar: {
@@ -135,6 +154,12 @@ export const STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS = {
           emails: 'Emails',
         },
       },
+      conversations: {
+        title: 'Conversations',
+        widgets: {
+          conversations: 'Conversations',
+        },
+      },
       calendar: {
         title: 'Calendar',
         widgets: {
@@ -184,6 +209,12 @@ export const STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS = {
         title: 'Emails',
         widgets: {
           emails: 'Emails',
+        },
+      },
+      conversations: {
+        title: 'Conversations',
+        widgets: {
+          conversations: 'Conversations',
         },
       },
       calendar: {

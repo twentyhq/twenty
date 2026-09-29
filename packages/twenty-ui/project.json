@@ -111,7 +111,7 @@
       "inputs": ["production"],
       "options": {
         "cwd": "{projectRoot}",
-        "command": "tsx scripts/checkOptionalDependencies.ts"
+        "command": "tsx scripts/checkOptionalDependencies.ts && tsx scripts/checkThemeExports.ts"
       }
     },
     "clean": {
@@ -133,6 +133,7 @@
       "configurations": { "watch": { "command": "npx vitest --project unit" } }
     },
     "typecheck": {},
+    "knip": {},
     "storybook:build": {
       "configurations": {
         "test": {},

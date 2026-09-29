@@ -1,0 +1,40 @@
+---
+title: HorizontalSeparator
+description: Separate adjacent content with a line and an optional label.
+---
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import HorizontalSeparatorReference from '/snippets/ui/generated/layout/horizontal-separator.mdx';
+
+`HorizontalSeparator` is a visual divider with optional text. It has no interaction or state and does not render native `hr` semantics.
+
+<StoryEmbed
+  storyId="ui-layout-horizontalseparator--default"
+  title="HorizontalSeparator example"
+/>
+
+## Usage
+
+```tsx
+import { HorizontalSeparator } from 'twenty-ui/primitives/layout';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const ImportSources = () => (
+  <>
+    <Text>Import records from a CSV file.</Text>
+    <HorizontalSeparator text="or" />
+    <Text>Connect an external data source.</Text>
+  </>
+);
+```
+
+## Spacing and visibility
+
+Omit `text` for one continuous line. `noMargin` removes the vertical margins. `visible={false}` hides the line while preserving the margins and any text. A custom `color` changes the line color; the default uses the medium border color.
+
+Use headings to communicate document structure. If a separator must have semantic meaning, place the unlabeled component in a wrapper with `role="separator"`. Native attributes, event handlers, and children are not forwarded.
+
+## Props
+
+<HorizontalSeparatorReference />

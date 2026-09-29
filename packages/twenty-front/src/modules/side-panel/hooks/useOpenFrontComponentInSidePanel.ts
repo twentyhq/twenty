@@ -1,6 +1,7 @@
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { viewableFrontComponentIdComponentState } from '@/side-panel/pages/front-component/states/viewableFrontComponentIdComponentState';
 import { viewableFrontComponentRecordContextComponentState } from '@/side-panel/pages/front-component/states/viewableFrontComponentRecordContextComponentState';
+import { type FrontComponentRecordContext } from '@/side-panel/pages/front-component/types/FrontComponentRecordContext';
 import { useStore } from 'jotai';
 import { SidePanelPages } from 'twenty-shared/types';
 import { type IconComponent } from 'twenty-ui/icon';
@@ -21,10 +22,7 @@ export const useOpenFrontComponentInSidePanel = () => {
     pageTitle: string;
     pageIcon: IconComponent;
     resetNavigationStack?: boolean;
-    recordContext?: {
-      recordId: string;
-      objectNameSingular: string;
-    };
+    recordContext?: FrontComponentRecordContext;
   }) => {
     const pageComponentInstanceId = v4();
 

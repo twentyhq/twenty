@@ -4,7 +4,12 @@ import { Args, Mutation, Query } from '@nestjs/graphql';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { isNonEmptyString } from '@sniptt/guards';
 
+import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { canCallerReachApplication } from 'src/engine/core-modules/application/utils/can-caller-reach-application.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { ApplicationTargetArg } from 'src/engine/decorators/auth/application-target-arg.decorator';
+import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
@@ -28,7 +33,7 @@ import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filt
   AiGraphqlApiExceptionInterceptor,
 )
 @MetadataResolver()
-@UseFilters(AuthGraphqlApiExceptionFilter)
+@UseFilters(ApplicationExceptionFilter, AuthGraphqlApiExceptionFilter)
 export class AgentResolver {
   constructor(
     private readonly agentService: AgentService,
@@ -38,16 +43,30 @@ export class AgentResolver {
   @Query(() => [AgentDTO])
   async findManyAgents(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @AuthApplication({ allowUndefined: true })
+    callingApplication: FlatApplication | undefined,
   ): Promise<AgentDTO[]> {
     const flatAgentsWithRoleId =
       await this.agentService.findManyAgents(workspaceId);
 
-    return flatAgentsWithRoleId.map(fromFlatAgentWithRoleIdToAgentDto);
+    return flatAgentsWithRoleId
+      .filter((flatAgent) =>
+        canCallerReachApplication({
+          callingApplication,
+          applicationId: flatAgent.applicationId,
+        }),
+      )
+      .map(fromFlatAgentWithRoleIdToAgentDto);
   }
 
   @Query(() => AgentDTO)
   async findOneAgent(
-    @Args('input') { id }: AgentIdInput,
+    @ApplicationTargetArg<AgentIdInput>('input', {
+      kind: 'applicationOwnedEntity',
+      metadataName: 'agent',
+      idKey: 'id',
+    })
+    { id }: AgentIdInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<AgentDTO> {
     const fatAgentWithRoleId = await this.agentService.findOneAgentById({

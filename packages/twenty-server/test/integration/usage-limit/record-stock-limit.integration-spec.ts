@@ -1,7 +1,7 @@
 import { createManyOperationFactory } from 'test/integration/graphql/utils/create-many-operation-factory.util';
 import { deleteManyOperationFactory } from 'test/integration/graphql/utils/delete-many-operation-factory.util';
 import { destroyManyOperationFactory } from 'test/integration/graphql/utils/destroy-many-operation-factory.util';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { expectEventually } from 'test/integration/utils/expect-eventually.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
@@ -34,7 +34,7 @@ describe('Record stock limit', () => {
 
     createdRocketIds.push(...ids);
 
-    return makeGraphqlAPIRequest(
+    return makeGraphqlApiRequest(
       createManyOperationFactory({
         objectMetadataSingularName: 'rocket',
         objectMetadataPluralName: 'rockets',
@@ -45,7 +45,7 @@ describe('Record stock limit', () => {
   };
 
   const softDeleteRockets = (ids: string[]) =>
-    makeGraphqlAPIRequest(
+    makeGraphqlApiRequest(
       deleteManyOperationFactory({
         objectMetadataSingularName: 'rocket',
         objectMetadataPluralName: 'rockets',
@@ -55,7 +55,7 @@ describe('Record stock limit', () => {
     );
 
   const destroyRockets = (ids: string[]) =>
-    makeGraphqlAPIRequest(
+    makeGraphqlApiRequest(
       destroyManyOperationFactory({
         objectMetadataSingularName: 'rocket',
         objectMetadataPluralName: 'rockets',

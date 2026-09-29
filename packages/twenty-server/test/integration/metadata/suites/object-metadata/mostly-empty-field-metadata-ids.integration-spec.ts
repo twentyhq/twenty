@@ -3,7 +3,7 @@ import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-m
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 
 import { FieldMetadataType } from 'twenty-shared/types';
 
@@ -18,7 +18,7 @@ const MOSTLY_EMPTY_FIELD_METADATA_IDS_QUERY = gql`
 const fetchMostlyEmptyFieldMetadataIds = async (
   objectMetadataId: string,
 ): Promise<string[]> => {
-  const response = await makeMetadataAPIRequest({
+  const response = await makeMetadataApiRequest({
     query: MOSTLY_EMPTY_FIELD_METADATA_IDS_QUERY,
     variables: { objectMetadataId },
   });

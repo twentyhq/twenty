@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
-import { type MouseEvent, type ReactNode, useContext } from 'react';
+import { type MouseEvent, type ReactNode } from 'react';
 import { IconX } from 'twenty-ui/icon';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 const StyledChip = styled.div<{
   deletable: boolean;
@@ -125,7 +125,7 @@ export const BaseChip = ({
   maxWidth,
   leftIcon,
 }: BaseChipProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const isDeletable = onRemove !== undefined;
 
   return (

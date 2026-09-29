@@ -1,4 +1,5 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
 import { getUiZoom } from '@/ui/theme/utils/getUiZoom';
 import { useTrackPointer } from '@/ui/utilities/pointer-event/hooks/useTrackPointer';
@@ -11,67 +12,71 @@ import { type ResizablePanelSide } from '@/ui/layout/resizable-panel/types/Resiz
 type UseResizablePanelProps = {
   side: ResizablePanelSide;
   constraints: ResizablePanelConstraints;
-  currentWidth: number;
-  onWidthChange: (width: number) => void;
-  onCollapse: () => void;
+  currentSize: number;
+  onSizeChange: (size: number) => void;
+  onCollapse?: () => void;
   cssVariableName?: string;
-  onResizeStart?: () => void;
+  onResizeStart?: (size: number) => void;
 };
 
-const clampWidth = (width: number, min: number, max: number): number =>
-  Math.min(max, Math.max(min, width));
+const clampSize = (size: number, min: number, max: number): number =>
+  Math.min(max, Math.max(min, size));
 
 export const useResizablePanel = ({
   side,
   constraints,
-  currentWidth,
-  onWidthChange,
+  currentSize,
+  onSizeChange,
   onCollapse,
   cssVariableName,
   onResizeStart,
 }: UseResizablePanelProps) => {
   const [isHovered, setIsHovered] = useState(false);
   const [isResizing, setIsResizing] = useState(false);
-  const [startX, setStartX] = useState<number | null>(null);
-  const [startWidth, setStartWidth] = useState<number>(0);
-  const [hasDragged, setHasDragged] = useState(false);
+  const [startPointerPosition, setStartPointerPosition] = useState<
+    number | null
+  >(null);
+  const [startSize, setStartSize] = useState<number>(0);
+  // eslint-disable-next-line twenty/no-state-useref -- pointer callbacks read this synchronously; useState causes stale closures
+  const hasDraggedRef = useRef(false);
 
-  // captured once per drag: reading computed style on every move would
-  // force a synchronous style recalc, and the zoom cannot change mid-drag
+  // reading computed style on every pointer move forces a synchronous style recalc; zoom cannot change mid-drag
   const [dragUiZoom, setDragUiZoom] = useState(1);
 
   const handleResizeMove = useCallback<PointerEventListener>(
-    ({ x }) => {
-      if (startX === null) return;
+    ({ x, y }) => {
+      if (startPointerPosition === null) return;
 
-      const deltaX = (x - startX) / dragUiZoom;
+      const pointerDelta =
+        ((side === 'top' ? y : x) - startPointerPosition) / dragUiZoom;
 
-      if (!hasDragged && Math.abs(deltaX) > RESIZE_DRAG_THRESHOLD_PX) {
-        setHasDragged(true);
-        onResizeStart?.();
+      if (Math.abs(pointerDelta) <= RESIZE_DRAG_THRESHOLD_PX) {
+        return;
       }
 
-      if (Math.abs(deltaX) > RESIZE_DRAG_THRESHOLD_PX) {
-        const widthDelta = side === 'right' ? deltaX : -deltaX;
-        const clampedWidth = clampWidth(
-          startWidth + widthDelta,
-          constraints.min,
-          constraints.max,
-        );
+      const sizeDelta = side === 'right' ? pointerDelta : -pointerDelta;
+      const clampedSize = clampSize(
+        startSize + sizeDelta,
+        constraints.min,
+        constraints.max,
+      );
 
-        if (cssVariableName !== undefined) {
-          document.documentElement.style.setProperty(
-            cssVariableName,
-            `${clampedWidth}px`,
-          );
-        }
+      if (!hasDraggedRef.current) {
+        hasDraggedRef.current = true;
+        onResizeStart?.(clampedSize);
+      }
+
+      if (isDefined(cssVariableName)) {
+        document.documentElement.style.setProperty(
+          cssVariableName,
+          `${clampedSize}px`,
+        );
       }
     },
     [
       dragUiZoom,
-      startX,
-      startWidth,
-      hasDragged,
+      startPointerPosition,
+      startSize,
       side,
       constraints.min,
       constraints.max,
@@ -81,39 +86,39 @@ export const useResizablePanel = ({
   );
 
   const handleResizeEnd = useCallback<PointerEventListener>(
-    ({ x }) => {
-      if (startX === null) {
+    ({ x, y }) => {
+      if (startPointerPosition === null) {
         setIsResizing(false);
         return;
       }
 
-      const deltaX = (x - startX) / dragUiZoom;
+      const pointerDelta =
+        ((side === 'top' ? y : x) - startPointerPosition) / dragUiZoom;
 
-      if (!hasDragged) {
-        onCollapse();
-      } else {
-        const widthDelta = side === 'right' ? deltaX : -deltaX;
-        const finalWidth = clampWidth(
-          startWidth + widthDelta,
+      if (hasDraggedRef.current) {
+        const sizeDelta = side === 'right' ? pointerDelta : -pointerDelta;
+        const finalSize = clampSize(
+          startSize + sizeDelta,
           constraints.min,
           constraints.max,
         );
-        onWidthChange(finalWidth);
+        onSizeChange(finalSize);
+      } else {
+        onCollapse?.();
       }
 
-      setStartX(null);
+      setStartPointerPosition(null);
       setIsResizing(false);
     },
     [
       dragUiZoom,
-      startX,
-      startWidth,
-      hasDragged,
+      startPointerPosition,
+      startSize,
       side,
       constraints.min,
       constraints.max,
+      onSizeChange,
       onCollapse,
-      onWidthChange,
     ],
   );
 
@@ -127,12 +132,12 @@ export const useResizablePanel = ({
     (event: React.MouseEvent) => {
       event.preventDefault();
       setDragUiZoom(getUiZoom());
-      setStartX(event.clientX);
-      setStartWidth(currentWidth);
-      setHasDragged(false);
+      setStartPointerPosition(side === 'top' ? event.clientY : event.clientX);
+      setStartSize(currentSize);
+      hasDraggedRef.current = false;
       setIsResizing(true);
     },
-    [currentWidth],
+    [side, currentSize],
   );
 
   const handleMouseEnter = useCallback(() => {

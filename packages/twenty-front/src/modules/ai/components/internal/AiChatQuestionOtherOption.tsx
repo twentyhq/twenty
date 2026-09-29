@@ -1,8 +1,8 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { type KeyboardEvent, useContext, useId, useRef } from 'react';
+import { type KeyboardEvent, useId, useRef } from 'react';
 import { type IconComponent } from 'twenty-ui/icon';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
@@ -81,7 +81,7 @@ export const AiChatQuestionOtherOption = ({
   onTextareaKeyDown,
 }: AiChatQuestionOtherOptionProps) => {
   const { t } = useLingui();
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const textAreaFocusId = useId();
 

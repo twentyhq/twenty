@@ -8,10 +8,9 @@ import { useUsageValueFormatter } from '@/settings/usage/hooks/useUsageValueForm
 import { getUsageOperationTypeLabel } from '@/settings/usage/utils/getUsageOperationTypeLabel';
 import { Select } from '@/ui/input/components/Select';
 import { useLingui } from '@lingui/react/macro';
-import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components';
-import { ThemeContext } from 'twenty-ui/theme-constants';
+import { useTheme } from 'twenty-ui/theme';
 import { type UsageOperationType } from '~/generated-metadata/graphql';
 
 type UsageBreakdownField = 'operationType' | 'application' | 'model';
@@ -35,7 +34,7 @@ export const UsageBreakdownPieSection = ({
   breakdownField,
   sectionId,
 }: UsageBreakdownPieSectionProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const { t } = useLingui();
   const { formatUsageValue } = useUsageValueFormatter();
   const colorRegistry = createGraphColorRegistry(theme.color);

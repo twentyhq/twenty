@@ -13,7 +13,6 @@ import {
   WorkflowVersionStepExceptionCode,
 } from 'src/modules/workflow/common/exceptions/workflow-version-step.exception';
 import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
-import { setAllIteratorsStepInfosAsStopped } from 'src/modules/workflow/common/utils/set-all-iterators-step-infos-as-stopped.util';
 import { workflowHasRunningSteps } from 'src/modules/workflow/common/utils/workflow-has-running-steps.util';
 import { WorkflowVersionStepOperationsWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step-operations.workspace-service';
 import { isWorkflowFormAction } from 'src/modules/workflow/workflow-executor/workflow-actions/form/guards/is-workflow-form-action.guard';
@@ -145,15 +144,26 @@ export class WorkflowRunnerWorkspaceService {
         },
       );
 
-    await this.workflowRunWorkspaceService.updateWorkflowRunStepInfo({
-      stepId,
-      stepInfo: {
-        status: StepStatus.SUCCESS,
-        result: enrichedResponse,
-      },
-      workspaceId,
-      workflowRunId,
-    });
+    const hasCompletedStep =
+      await this.workflowRunWorkspaceService.updateStepInfoIfPending({
+        stepId,
+        stepInfo: {
+          status: StepStatus.SUCCESS,
+          result: enrichedResponse,
+        },
+        workspaceId,
+        workflowRunId,
+      });
+
+    if (!hasCompletedStep) {
+      throw new WorkflowVersionStepException(
+        'Form is no longer awaiting a submission',
+        WorkflowVersionStepExceptionCode.INVALID_REQUEST,
+        {
+          userFriendlyMessage: msg`This form is no longer awaiting a submission`,
+        },
+      );
+    }
 
     await this.resume({
       workspaceId,
@@ -198,28 +208,24 @@ export class WorkflowRunnerWorkspaceService {
       const steps = workflowRun.state.flow.steps;
 
       if (workflowHasRunningSteps({ stepInfos, steps })) {
-        const stoppedIteratorStepInfos = setAllIteratorsStepInfosAsStopped({
-          stepInfos,
-          steps,
-        });
+        const isStopping =
+          await this.workflowRunWorkspaceService.markWorkflowRunAsStopping({
+            workflowRunId,
+            workspaceId,
+          });
 
-        const mergedStepInfos = {
-          ...stepInfos,
-          ...stoppedIteratorStepInfos,
-        };
+        if (isStopping) {
+          newStatus = WorkflowRunStatus.STOPPING;
+        } else {
+          // The run changed before the lock was taken, so report what it is now.
+          const currentWorkflowRun =
+            await this.workflowRunWorkspaceService.getWorkflowRunOrFail({
+              workflowRunId,
+              workspaceId,
+            });
 
-        await this.workflowRunWorkspaceService.updateWorkflowRun({
-          workflowRunId,
-          workspaceId,
-          partialUpdate: {
-            status: WorkflowRunStatus.STOPPING,
-            state: {
-              ...workflowRun.state,
-              stepInfos: mergedStepInfos,
-            },
-          },
-        });
-        newStatus = WorkflowRunStatus.STOPPING;
+          newStatus = currentWorkflowRun.status;
+        }
       } else {
         await this.workflowRunWorkspaceService.endWorkflowRun({
           workflowRunId,

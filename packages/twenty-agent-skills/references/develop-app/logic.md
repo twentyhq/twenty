@@ -21,6 +21,7 @@ Other rules:
 - Return a bulk summary with per-record results for multi-record actions, including counts for success, no match, and failed records.
 - Prefer idempotent behavior for jobs and repeated invocations.
 - Read secrets through the application-config helper, not raw `process.env`.
+- Twenty injects `TWENTY_API_URL`, `TWENTY_APP_ACCESS_TOKEN`, `TWENTY_APP_APPLICATION_ACCESS_TOKEN`, `TWENTY_API_KEY`, `TWENTY_FUNCTIONS_URL` and `APPLICATION_ID` into every run. Never declare an application or server variable with one of these names: the manifest is rejected on sync and publish.
 - Do not hide customer-impacting side effects behind UI-only actions.
 
 Soft cap: a `*.logic-function.ts` or `*.post-install.ts` file over 200 lines is a refactor signal.

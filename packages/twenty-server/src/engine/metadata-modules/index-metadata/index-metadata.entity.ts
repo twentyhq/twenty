@@ -24,11 +24,12 @@ import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-enti
   'workspaceId',
   'objectMetadataId',
 ])
-@Index('IDX_INDEX_METADATA_WORKSPACE_ID_OBJECT_METADATA_ID', [
-  'workspaceId',
+@Index('IDX_INDEX_METADATA_OBJECT_METADATA_ID_WORKSPACE_ID', [
   'objectMetadataId',
+  'workspaceId',
 ])
 @Entity('indexMetadata')
+@Index('IDX_INDEX_METADATA_APPLICATION_ID', ['applicationId'])
 export class IndexMetadataEntity
   extends SyncableEntity
   implements Required<IndexMetadataEntity>

@@ -16,17 +16,18 @@ export class WorkspaceSchemaForeignKeyManagerService {
     queryRunner,
     schemaName,
     foreignKey,
+    isNotValid = false,
   }: {
     queryRunner: QueryRunner;
     schemaName: string;
     foreignKey: WorkspaceSchemaForeignKeyDefinition;
+    isNotValid?: boolean;
   }): Promise<void> {
-    const foreignKeyName = queryRunner.connection.namingStrategy.foreignKeyName(
-      foreignKey.tableName,
-      [foreignKey.columnName],
-      `${schemaName}.${foreignKey.referencedTableName}`,
-      [foreignKey.referencedColumnName],
-    );
+    const foreignKeyName = this.computeForeignKeyName({
+      queryRunner,
+      schemaName,
+      foreignKey,
+    });
 
     let sql = `ALTER TABLE ${escapeIdentifier(schemaName)}.${escapeIdentifier(foreignKey.tableName)} ADD CONSTRAINT ${escapeIdentifier(foreignKeyName)} FOREIGN KEY (${escapeIdentifier(foreignKey.columnName)}) REFERENCES ${escapeIdentifier(schemaName)}.${escapeIdentifier(foreignKey.referencedTableName)} (${escapeIdentifier(foreignKey.referencedColumnName)})`;
 
@@ -44,7 +45,48 @@ export class WorkspaceSchemaForeignKeyManagerService {
       sql += ` ON UPDATE ${foreignKey.onUpdate}`;
     }
 
+    if (isNotValid) {
+      sql += ' NOT VALID';
+    }
+
     await queryRunner.query(sql);
+  }
+
+  async validateForeignKey({
+    queryRunner,
+    schemaName,
+    foreignKey,
+  }: {
+    queryRunner: QueryRunner;
+    schemaName: string;
+    foreignKey: WorkspaceSchemaForeignKeyDefinition;
+  }): Promise<void> {
+    const foreignKeyName = this.computeForeignKeyName({
+      queryRunner,
+      schemaName,
+      foreignKey,
+    });
+
+    await queryRunner.query(
+      `ALTER TABLE ${escapeIdentifier(schemaName)}.${escapeIdentifier(foreignKey.tableName)} VALIDATE CONSTRAINT ${escapeIdentifier(foreignKeyName)}`,
+    );
+  }
+
+  private computeForeignKeyName({
+    queryRunner,
+    schemaName,
+    foreignKey,
+  }: {
+    queryRunner: QueryRunner;
+    schemaName: string;
+    foreignKey: WorkspaceSchemaForeignKeyDefinition;
+  }): string {
+    return queryRunner.connection.namingStrategy.foreignKeyName(
+      foreignKey.tableName,
+      [foreignKey.columnName],
+      `${schemaName}.${foreignKey.referencedTableName}`,
+      [foreignKey.referencedColumnName],
+    );
   }
 
   async dropForeignKey({

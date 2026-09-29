@@ -4,7 +4,7 @@ import { HttpResponse, graphql } from 'msw';
 import { useEffect, useState } from 'react';
 import { expect, userEvent, within } from 'storybook/test';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
+import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { SidePanelComposeCalendarEventPage } from '@/side-panel/pages/compose-calendar-event/components/SidePanelComposeCalendarEventPage';
 import { composeCalendarEventInitialValuesComponentState } from '@/side-panel/pages/compose-calendar-event/states/composeCalendarEventInitialValuesComponentState';
@@ -18,6 +18,7 @@ import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadat
 import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 import { WorkspaceDecorator } from '~/testing/decorators/WorkspaceDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
+import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 
 const STORY_PAGE_INSTANCE_ID = 'side-panel-composer-story';
 const GOOGLE_ACCOUNT_ID = '20202020-9ac0-4390-9a1a-ab4d2c4e1bb7';
@@ -210,7 +211,7 @@ const meta = {
     ComponentDecorator,
     ObjectMetadataItemsDecorator,
     ToastDecorator,
-    RouterDecorator,
+    MemoryRouterDecorator,
     WorkspaceDecorator,
   ],
 } satisfies Meta<typeof SidePanelComposerStory>;

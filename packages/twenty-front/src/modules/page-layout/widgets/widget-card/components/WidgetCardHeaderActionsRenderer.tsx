@@ -5,7 +5,7 @@ import { WidgetHeaderCommandMenuItems } from '@/page-layout/widgets/widget-card/
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { WidgetType } from '~/generated-metadata/graphql';
 
 const StyledActionsContainer = styled.div`

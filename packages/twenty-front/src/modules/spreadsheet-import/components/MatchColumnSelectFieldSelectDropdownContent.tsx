@@ -4,7 +4,7 @@ import { DO_NOT_IMPORT_OPTION_KEY } from '@/spreadsheet-import/constants/DoNotIm
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
 import { hasNestedFields } from '@/spreadsheet-import/utils/spreadsheetImportHasNestedFields';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -83,7 +83,9 @@ export const MatchColumnSelectFieldSelectDropdownContent = ({
   const { t } = useLingui();
 
   return (
-    <DropdownContent widthInPixels={GenericDropdownContentWidth.ExtraLarge}>
+    <LegacyDropdownContent
+      widthInPixels={GenericDropdownContentWidth.ExtraLarge}
+    >
       <DropdownMenuHeader
         StartComponent={
           <DropdownMenuHeaderLeftComponent
@@ -162,6 +164,6 @@ export const MatchColumnSelectFieldSelectDropdownContent = ({
           </DropdownMenuItemsContainer>
         </ScrollWrapper>
       </StyledContainer>
-    </DropdownContent>
+    </LegacyDropdownContent>
   );
 };

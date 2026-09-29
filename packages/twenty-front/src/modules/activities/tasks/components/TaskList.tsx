@@ -3,8 +3,8 @@ import { styled } from '@linaria/react';
 import { ActivityList } from '@/activities/components/ActivityList';
 import { type Task } from '@/activities/types/Task';
 import { SelectDisplay } from '@/ui/field/display/components/SelectDisplay/SelectDisplay';
-import { type ThemeColor } from 'twenty-ui/theme';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { type ThemeColor, themeCssVariables } from 'twenty-ui/theme';
+
 import { TaskRow } from './TaskRow';
 
 type TaskListProps = {

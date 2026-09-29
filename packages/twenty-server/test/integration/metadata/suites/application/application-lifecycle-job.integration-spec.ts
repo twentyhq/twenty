@@ -6,7 +6,7 @@ import { buildBaseManifest } from 'test/integration/metadata/suites/application/
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -54,7 +54,7 @@ describe('Application lifecycle jobs', () => {
   let workspaceQueue: Queue;
 
   const triggerUninstallApplicationJob = async () => {
-    const response = await makeMetadataAPIRequest({
+    const response = await makeMetadataApiRequest({
       query: TRIGGER_UNINSTALL_APPLICATION_JOB,
       variables: { input: { universalIdentifier: appId } },
     });
@@ -65,7 +65,7 @@ describe('Application lifecycle jobs', () => {
   };
 
   const findUninstallApplicationJobStatus = async () => {
-    const response = await makeMetadataAPIRequest({
+    const response = await makeMetadataApiRequest({
       query: FIND_UNINSTALL_APPLICATION_JOB_STATUS,
       variables: { universalIdentifier: appId },
     });
@@ -150,7 +150,7 @@ describe('Application lifecycle jobs', () => {
 
       expect(await triggerUninstallApplicationJob()).toBe(jobId);
 
-      const installResponse = await makeMetadataAPIRequest({
+      const installResponse = await makeMetadataApiRequest({
         query: TRIGGER_INSTALL_APPLICATION_JOB,
         variables: { input: { universalIdentifier: appId } },
       });

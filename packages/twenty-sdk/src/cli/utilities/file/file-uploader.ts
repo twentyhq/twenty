@@ -1,6 +1,5 @@
 import { ApiService } from '@/cli/utilities/api/api-service';
 import { type ApplicationFileUploadRequest } from '@/cli/utilities/api/file-api';
-import { isMissingGraphqlFieldError } from '@/cli/utilities/api/is-missing-graphql-field-error';
 import { serializeError } from '@/cli/utilities/error/serialize-error';
 import { putFileToUploadUrl } from '@/cli/utilities/file/put-file-to-upload-url';
 import * as fs from 'fs';
@@ -80,19 +79,6 @@ export class FileUploader {
     });
 
     if (!createResult.success) {
-      if (
-        isMissingGraphqlFieldError({
-          error: createResult.error ?? createResult.message,
-          fieldNames: [
-            'createApplicationFileUploads',
-            'ApplicationFileUploadRequestInput',
-            'CreateApplicationFileUploads',
-          ],
-        })
-      ) {
-        return this.uploadBatchWithMultipartMutation(batch);
-      }
-
       return this.failWholeBatch(batch, serializeError(createResult.error));
     }
 
@@ -155,30 +141,6 @@ export class FileUploader {
         error: error.message,
       });
     }
-
-    return failures;
-  }
-
-  private async uploadBatchWithMultipartMutation(
-    batch: FileToUpload[],
-  ): Promise<FileUploadFailure[]> {
-    const failures: FileUploadFailure[] = [];
-
-    await this.runWithConcurrency(batch, async ({ builtPath, fileFolder }) => {
-      const result = await this.apiService.uploadFile({
-        filePath: path.join(this.appPath, builtPath),
-        builtHandlerPath: relative(OUTPUT_DIR, builtPath),
-        fileFolder,
-        applicationUniversalIdentifier: this.applicationUniversalIdentifier,
-      });
-
-      if (!result.success) {
-        failures.push({
-          builtPath,
-          error: serializeError(result.error ?? result.message),
-        });
-      }
-    });
 
     return failures;
   }

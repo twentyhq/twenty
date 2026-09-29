@@ -8,7 +8,7 @@ import { useState } from 'react';
 import { type WorkflowClassifyCriterion } from 'twenty-shared/workflow';
 import { IconTrash } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { v4 } from 'uuid';
 
 const StyledContainer = styled.div`

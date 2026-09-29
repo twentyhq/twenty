@@ -13,7 +13,7 @@ import { TextArea } from '@/ui/input/components/TextArea';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { Section } from 'twenty-ui/components';
 import { Button } from 'twenty-ui/primitives/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledInputsContainer = styled.div`
   display: flex;

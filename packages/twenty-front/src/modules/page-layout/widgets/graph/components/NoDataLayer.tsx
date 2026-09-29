@@ -1,6 +1,5 @@
 import { useLingui } from '@lingui/react/macro';
-import { useContext } from 'react';
-import { ThemeContext } from 'twenty-ui/theme-constants';
+import { useTheme } from 'twenty-ui/theme';
 
 type NoDataLayerProps = {
   innerWidth: number;
@@ -13,7 +12,7 @@ export const NoDataLayer = ({
   innerHeight,
   hasNoData,
 }: NoDataLayerProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const { t } = useLingui();
 
   if (!hasNoData) {

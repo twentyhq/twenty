@@ -16,7 +16,7 @@ import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { IconCopy } from 'twenty-ui/icon';
 import { Tag, type TagColor } from 'twenty-ui/primitives/data-display';
 import { Button } from 'twenty-ui/primitives/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import {
   GetSigningKeysDocument,
   type SigningKeyDto,

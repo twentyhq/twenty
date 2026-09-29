@@ -41,7 +41,7 @@ import {
   verticalCompactor,
 } from 'react-grid-layout';
 import { isDefined } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const disabledTransitionsClass = css`
   .react-grid-layout {

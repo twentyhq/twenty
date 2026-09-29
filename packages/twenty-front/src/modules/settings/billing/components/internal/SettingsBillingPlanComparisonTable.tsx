@@ -16,7 +16,7 @@ import {
   SegmentedControl,
   type SegmentedControlOption,
 } from 'twenty-ui/primitives/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import {
   BillingPlanKey,
   SubscriptionInterval,
@@ -185,9 +185,9 @@ export const SettingsBillingPlanComparisonTable = ({
                 </StyledPlanSubtitle>
               </StyledHeaderText>
               <SegmentedControl
-                ariaLabel={t`Billing period`}
+                aria-label={t`Billing period`}
                 itemWidth="content"
-                onChange={onBillingIntervalChange}
+                onValueChange={onBillingIntervalChange}
                 options={billingIntervalOptions}
                 value={billingInterval}
               />

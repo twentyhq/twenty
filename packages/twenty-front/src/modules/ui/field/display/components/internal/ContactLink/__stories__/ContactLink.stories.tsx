@@ -1,8 +1,8 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { fn } from 'storybook/test';
 
-import { ComponentWithRouterDecorator } from 'twenty-ui/testing';
 import { ContactLink } from '@/ui/field/display/components/internal/ContactLink/ContactLink';
+import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 
 const meta: Meta<typeof ContactLink> = {
   title: 'UI/Navigation/Link/ContactLink',

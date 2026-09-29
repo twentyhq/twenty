@@ -1,12 +1,12 @@
 import gql from 'graphql-tag';
 import { deleteOneOperationFactory } from 'test/integration/graphql/utils/delete-one-operation-factory.util';
-import { makeGraphqlAPIRequestWithMemberRole } from 'test/integration/graphql/utils/make-graphql-api-request-with-member-role.util';
+import { makeGraphqlApiRequestWithMemberRole } from 'test/integration/graphql/utils/make-graphql-api-request-with-member-role.util';
 import { updateOneOperationFactory } from 'test/integration/graphql/utils/update-one-operation-factory.util';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
 import { deleteOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/delete-one-field-metadata.util';
 import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
-import { makeMetadataAPIRequestWithMemberRole } from 'test/integration/metadata/suites/utils/make-metadata-api-request-with-member-role.util';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeMetadataApiRequestWithMemberRole } from 'test/integration/metadata/suites/utils/make-metadata-api-request-with-member-role.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
@@ -136,7 +136,7 @@ describe('workspace members permissions', () => {
     });
 
     const response =
-      await makeGraphqlAPIRequestWithMemberRole(graphqlOperation);
+      await makeGraphqlApiRequestWithMemberRole(graphqlOperation);
 
     expect(response.body.data).toStrictEqual({ updateWorkspaceMember: null });
     expect(response.body.errors).toBeDefined();
@@ -160,7 +160,7 @@ describe('workspace members permissions', () => {
     });
 
     const response =
-      await makeGraphqlAPIRequestWithMemberRole(graphqlOperation);
+      await makeGraphqlApiRequestWithMemberRole(graphqlOperation);
 
     expect(response.body.data).toStrictEqual({ updateWorkspaceMember: null });
     expect(response.body.errors).toBeDefined();
@@ -185,7 +185,7 @@ describe('workspace members permissions', () => {
     });
 
     const response =
-      await makeGraphqlAPIRequestWithMemberRole(graphqlOperation);
+      await makeGraphqlApiRequestWithMemberRole(graphqlOperation);
 
     expect(response.body.data).toStrictEqual({ updateWorkspaceMember: null });
     expect(response.body.errors).toBeDefined();
@@ -206,7 +206,7 @@ describe('workspace members permissions', () => {
     });
 
     const response =
-      await makeGraphqlAPIRequestWithMemberRole(graphqlOperation);
+      await makeGraphqlApiRequestWithMemberRole(graphqlOperation);
 
     expect(response.body.data).toStrictEqual({ updateWorkspaceMember: null });
     expect(response.body.errors).toBeDefined();
@@ -225,7 +225,7 @@ describe('workspace members permissions', () => {
     });
 
     const response =
-      await makeGraphqlAPIRequestWithMemberRole(graphqlOperation);
+      await makeGraphqlApiRequestWithMemberRole(graphqlOperation);
 
     expect(response.body.data).toStrictEqual({ updateWorkspaceMember: null });
     expect(response.body.errors).toBeDefined();
@@ -254,7 +254,7 @@ describe('workspace members permissions', () => {
       },
     };
 
-    const response = await makeMetadataAPIRequestWithMemberRole(operation);
+    const response = await makeMetadataApiRequestWithMemberRole(operation);
 
     expect(response.body.errors).toBeUndefined();
     expect(response.body.data.updateWorkspaceMemberSettings).toBe(true);
@@ -279,7 +279,7 @@ describe('workspace members permissions', () => {
       },
     };
 
-    const response = await makeMetadataAPIRequestWithMemberRole(operation);
+    const response = await makeMetadataApiRequestWithMemberRole(operation);
 
     expect(response.body.data).toBeNull();
     expect(response.body.errors).toBeDefined();
@@ -308,7 +308,7 @@ describe('workspace members permissions', () => {
       },
     };
 
-    const response = await makeMetadataAPIRequest(operation);
+    const response = await makeMetadataApiRequest(operation);
 
     expect(response.body.errors).toBeUndefined();
     expect(response.body.data.updateWorkspaceMemberSettings).toBe(true);
@@ -333,7 +333,7 @@ describe('workspace members permissions', () => {
       },
     };
 
-    const response = await makeMetadataAPIRequestWithMemberRole(operation);
+    const response = await makeMetadataApiRequestWithMemberRole(operation);
 
     expect(response.body.data).toBeNull();
     expect(response.body.errors).toBeDefined();
@@ -364,7 +364,7 @@ describe('workspace members permissions', () => {
       },
     };
 
-    const response = await makeMetadataAPIRequestWithMemberRole(operation);
+    const response = await makeMetadataApiRequestWithMemberRole(operation);
 
     expect(response.body.data).toBeNull();
     expect(response.body.errors).toBeDefined();
@@ -393,7 +393,7 @@ describe('workspace members permissions', () => {
       },
     };
 
-    const response = await makeMetadataAPIRequestWithMemberRole(operation);
+    const response = await makeMetadataApiRequestWithMemberRole(operation);
 
     expect(response.body.data).toBeNull();
     expect(response.body.errors).toBeDefined();
@@ -426,7 +426,7 @@ describe('workspace members permissions', () => {
       },
     };
 
-    const response = await makeMetadataAPIRequestWithMemberRole(operation);
+    const response = await makeMetadataApiRequestWithMemberRole(operation);
 
     expect(response.body.data).toBeNull();
     expect(response.body.errors).toBeDefined();
@@ -446,7 +446,7 @@ describe('workspace members permissions', () => {
     });
 
     const response =
-      await makeGraphqlAPIRequestWithMemberRole(graphqlOperation);
+      await makeGraphqlApiRequestWithMemberRole(graphqlOperation);
 
     expect(response.body.data).toStrictEqual({ deleteWorkspaceMember: null });
     expect(response.body.errors).toBeDefined();
@@ -466,7 +466,7 @@ describe('workspace members permissions', () => {
     });
 
     const response =
-      await makeGraphqlAPIRequestWithMemberRole(graphqlOperation);
+      await makeGraphqlApiRequestWithMemberRole(graphqlOperation);
 
     expect(response.body.data).toStrictEqual({ deleteWorkspaceMember: null });
     expect(response.body.errors).toBeDefined();

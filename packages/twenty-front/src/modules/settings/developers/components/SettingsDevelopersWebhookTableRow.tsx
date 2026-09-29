@@ -3,11 +3,10 @@ import { styled } from '@linaria/react';
 import { WEBHOOK_TABLE_ROW_GRID_TEMPLATE_COLUMNS } from '@/settings/developers/constants/WebhookTableRowGridTemplateColumns';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { useContext } from 'react';
 import { getUrlHostnameOrThrow, isValidUrl } from 'twenty-shared/utils';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { IconChevronRight } from 'twenty-ui/icon';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { type Webhook } from '~/generated-metadata/graphql';
 
 const StyledIconChevronRightContainer = styled.span`
@@ -26,7 +25,7 @@ export const SettingsDevelopersWebhookTableRow = ({
   >;
   to: string;
 }) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   return (
     <TableRow
       gridTemplateColumns={WEBHOOK_TABLE_ROW_GRID_TEMPLATE_COLUMNS}

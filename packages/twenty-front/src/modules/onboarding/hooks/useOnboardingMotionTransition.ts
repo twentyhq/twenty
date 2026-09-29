@@ -1,5 +1,5 @@
 import { type Transition, useReducedMotion } from 'framer-motion';
-import { useTheme } from 'twenty-ui/theme-constants';
+import { useTheme } from 'twenty-ui/theme';
 
 export const useOnboardingMotionTransition = (): Transition => {
   const theme = useTheme();

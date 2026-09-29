@@ -5,7 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import {
   type GroupByField,
   type GroupByRelationField,
-} from 'src/engine/api/common/common-query-runners/types/group-by-field.types';
+} from 'src/engine/api/common/common-query-runners/types/group-by-field.type';
 import { isGroupByRelationField } from 'src/engine/api/common/common-query-runners/utils/is-group-by-relation-field.util';
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';

@@ -29,11 +29,9 @@ export { Radio } from './Radio/Radio';
 export type { RadioProps } from './Radio/types/RadioProps';
 export { RadioGroup } from './RadioGroup/RadioGroup';
 export type { RadioGroupProps } from './RadioGroup/types/RadioGroupProps';
-export type {
-  SegmentedControlOption,
-  SegmentedControlProps,
-} from './SegmentedControl/SegmentedControl';
 export { SegmentedControl } from './SegmentedControl/SegmentedControl';
+export type { SegmentedControlOption } from './SegmentedControl/types/SegmentedControlOption';
+export type { SegmentedControlProps } from './SegmentedControl/types/SegmentedControlProps';
 export { Select } from './Select/Select';
 export type { SelectGroupLabelProps } from './Select/types/SelectGroupLabelProps';
 export type { SelectGroupProps } from './Select/types/SelectGroupProps';

@@ -2,8 +2,8 @@ import { TABLE_Z_INDEX } from '@/object-record/record-table/constants/TableZInde
 import { getRecordTableColumnFieldWidthClassName } from '@/object-record/record-table/utils/getRecordTableColumnFieldWidthClassName';
 import { cx } from '@linaria/core';
 import { styled } from '@linaria/react';
-import { useContext, type ReactNode } from 'react';
-import { ThemeContext } from 'twenty-ui/theme-constants';
+import { type ReactNode } from 'react';
+import { useTheme } from 'twenty-ui/theme';
 
 const StyledRecordTableTd = styled.div<{
   backgroundColor: string;
@@ -45,7 +45,7 @@ export const RecordTableCellFirstRowFirstColumn = ({
   hasRightBorder?: boolean;
   hasBottomBorder?: boolean;
 }) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
 
   const zIndex = TABLE_Z_INDEX.cell.sticky;
 

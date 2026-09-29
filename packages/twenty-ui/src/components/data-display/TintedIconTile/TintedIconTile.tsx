@@ -1,7 +1,7 @@
 import { StyledTintedIconTileContainer } from '@ui/components/data-display/TintedIconTile/internal/StyledTintedIconTileContainer/StyledTintedIconTileContainer';
 import { getIconTileColorShades } from '@ui/components/data-display/TintedIconTile/utils/getIconTileColorShades';
-import { DEFAULT_THEME_COLOR_FALLBACK } from '@ui/theme';
-import { useTheme } from '@ui/theme-constants';
+import { DEFAULT_THEME_COLOR_FALLBACK, useTheme } from '@ui/theme';
+
 import { isDefined } from '@ui/utilities/utils/isDefined';
 import { type TintedIconTileProps } from './types/TintedIconTileProps';
 

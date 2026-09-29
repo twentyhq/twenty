@@ -1,7 +1,7 @@
 import { ListItem } from 'twenty-ui/primitives/navigation';
 import { useObjectOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsDropdown';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -69,7 +69,7 @@ export const ObjectOptionsDropdownVisibilityContent = () => {
   const currentVisibility = currentView?.visibility ?? ViewVisibility.WORKSPACE;
 
   return (
-    <DropdownContent widthInPixels={GenericDropdownContentWidth.Large}>
+    <LegacyDropdownContent widthInPixels={GenericDropdownContentWidth.Large}>
       <DropdownMenuHeader
         StartComponent={
           <DropdownMenuHeaderLeftComponent
@@ -153,6 +153,6 @@ export const ObjectOptionsDropdownVisibilityContent = () => {
           )}
         </SelectableList>
       </DropdownMenuItemsContainer>
-    </DropdownContent>
+    </LegacyDropdownContent>
   );
 };

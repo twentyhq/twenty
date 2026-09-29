@@ -12,6 +12,9 @@ import { EMPTY_ORCHESTRATOR_FAILURE_REPORT } from 'src/engine/workspace-manager/
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 
 describe('WorkspaceIteratorService', () => {
+  let workspaceRepository: jest.Mocked<
+    Pick<Repository<WorkspaceEntity>, 'findOne' | 'exists'>
+  >;
   let workspaceCacheService: jest.Mocked<
     Pick<WorkspaceCacheService, 'evictWorkspaceFromLocalCache'>
   >;
@@ -22,11 +25,12 @@ describe('WorkspaceIteratorService', () => {
     jest.spyOn(Logger.prototype, 'warn').mockImplementation(() => undefined);
     jest.spyOn(Logger.prototype, 'error').mockImplementation(() => undefined);
 
-    const workspaceRepository = {
+    workspaceRepository = {
       findOne: jest
         .fn()
         .mockResolvedValue({ databaseSchema: 'workspace_schema' }),
-    } as unknown as Repository<WorkspaceEntity>;
+      exists: jest.fn().mockResolvedValue(true),
+    };
     const workspaceOrmManager = {
       executeInWorkspaceContext: jest.fn((fn: () => Promise<void>) => fn()),
     } as unknown as WorkspaceOrmManager;
@@ -40,7 +44,7 @@ describe('WorkspaceIteratorService', () => {
     };
 
     service = new WorkspaceIteratorService(
-      workspaceRepository,
+      workspaceRepository as unknown as Repository<WorkspaceEntity>,
       {} as DataSource,
       workspaceOrmManager,
       commandShutdownService,
@@ -50,6 +54,78 @@ describe('WorkspaceIteratorService', () => {
 
   afterEach(() => {
     jest.restoreAllMocks();
+  });
+
+  it('skips a workspace deleted after the target list was captured', async () => {
+    workspaceRepository.findOne.mockResolvedValueOnce(null);
+    const callback = jest.fn();
+
+    const report = await service.iterate({
+      workspaceIds: ['deleted-workspace', 'live-workspace'],
+      callback,
+    });
+
+    expect(callback).toHaveBeenCalledTimes(1);
+    expect(callback).toHaveBeenCalledWith(
+      expect.objectContaining({ workspaceId: 'live-workspace' }),
+    );
+    expect(report.skipped).toEqual([{ workspaceId: 'deleted-workspace' }]);
+    expect(report.success).toEqual([{ workspaceId: 'live-workspace' }]);
+    expect(report.fail).toEqual([]);
+  });
+
+  it.each([
+    'No workspace data source',
+    'migration history foreign key violation',
+  ])('skips deletion during execution after %s', async (message) => {
+    workspaceRepository.exists.mockResolvedValueOnce(false);
+
+    const report = await service.iterate({
+      workspaceIds: ['deleted-workspace', 'live-workspace'],
+      callback: async ({ workspaceId }) => {
+        if (workspaceId === 'deleted-workspace') {
+          throw new Error(message);
+        }
+      },
+    });
+
+    expect(report.skipped).toEqual([{ workspaceId: 'deleted-workspace' }]);
+    expect(report.fail).toEqual([]);
+    expect(report.success).toEqual([{ workspaceId: 'live-workspace' }]);
+  });
+
+  it('retains a missing-data-source failure for an existing workspace', async () => {
+    workspaceRepository.findOne.mockResolvedValueOnce({
+      databaseSchema: null,
+    } as WorkspaceEntity);
+    const error = new Error('No workspace data source');
+
+    const report = await service.iterate({
+      workspaceIds: ['live-workspace'],
+      callback: async ({ dataSource }) => {
+        expect(dataSource).toBeUndefined();
+        throw error;
+      },
+    });
+
+    expect(report.fail).toEqual([{ workspaceId: 'live-workspace', error }]);
+    expect(report.skipped).toEqual([]);
+    expect(report.success).toEqual([]);
+  });
+
+  it('does not infer deletion when the existence check fails', async () => {
+    workspaceRepository.exists.mockRejectedValueOnce(
+      new Error('database unavailable'),
+    );
+
+    await expect(
+      service.iterate({
+        workspaceIds: ['live-workspace'],
+        callback: async () => {
+          throw new Error('command failed');
+        },
+      }),
+    ).rejects.toThrow('database unavailable');
   });
 
   it('evicts each workspace from the local cache once its callback has run', async () => {

@@ -9,7 +9,7 @@ import {
   type GroupByDateField,
   type GroupByRegularField,
   type GroupByRelationField,
-} from 'src/engine/api/common/common-query-runners/types/group-by-field.types';
+} from 'src/engine/api/common/common-query-runners/types/group-by-field.type';
 import { getObjectAlias } from 'src/engine/api/common/common-query-runners/utils/get-object-alias-for-group-by.util';
 import { GraphqlQueryOrderGroupByParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/graphql-query-order-group-by.parser';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';

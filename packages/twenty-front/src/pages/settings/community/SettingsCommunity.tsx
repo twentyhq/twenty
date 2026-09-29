@@ -5,7 +5,6 @@ import { SettingsLabContent } from '@/settings/lab/components/SettingsLabContent
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { useContext } from 'react';
 import { Section } from 'twenty-ui/components';
 import {
   IconBrandX,
@@ -16,11 +15,7 @@ import {
 } from 'twenty-ui/icon';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import {
-  MOBILE_VIEWPORT,
-  ThemeContext,
-  themeCssVariables,
-} from 'twenty-ui/theme-constants';
+import { MOBILE_VIEWPORT, useTheme, themeCssVariables } from 'twenty-ui/theme';
 import coverDark from '~/pages/settings/community/assets/cover-dark.png';
 import coverLight from '~/pages/settings/community/assets/cover-light.png';
 
@@ -55,7 +50,7 @@ type SettingsCommunityLink = {
 };
 
 export const SettingsCommunity = () => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const { getIcon } = useIcons();
   const IconBrandDiscord = getIcon('IconBrandDiscord');
 

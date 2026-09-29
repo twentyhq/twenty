@@ -21,6 +21,7 @@ const buildLimit = (
   meter: 'creditsUsedMicro',
   limitValue: 1000,
   burstValue: null,
+  isInstanceOverride: false,
   ...overrides,
 });
 
@@ -38,7 +39,12 @@ describe('selectAiChatUsage', () => {
         limits: [buildLimit()],
         consumptionById: new Map([['limit-1', buildConsumption(200)]]),
       }),
-    ).toEqual({ limitValue: 1000, consumedValue: 200, periodEnd });
+    ).toEqual({
+      limitValue: 1000,
+      consumedValue: 200,
+      periodEnd,
+      kind: 'limit',
+    });
   });
 
   it('surfaces the limit closest to exhaustion when several periods apply', () => {
@@ -53,7 +59,12 @@ describe('selectAiChatUsage', () => {
           ['daily', buildConsumption(90)],
         ]),
       }),
-    ).toEqual({ limitValue: 100, consumedValue: 90, periodEnd });
+    ).toEqual({
+      limitValue: 100,
+      consumedValue: 90,
+      periodEnd,
+      kind: 'limit',
+    });
   });
 
   it('treats a zero limit as the most exhausted', () => {
@@ -77,7 +88,12 @@ describe('selectAiChatUsage', () => {
         limits: [buildLimit()],
         consumptionById: new Map(),
       }),
-    ).toEqual({ limitValue: 1000, consumedValue: null, periodEnd: null });
+    ).toEqual({
+      limitValue: 1000,
+      consumedValue: null,
+      periodEnd: null,
+      kind: 'limit',
+    });
   });
 
   it('prefers an unreadable counter over a warm one', () => {
@@ -89,7 +105,12 @@ describe('selectAiChatUsage', () => {
         ],
         consumptionById: new Map([['warm', buildConsumption(200)]]),
       }),
-    ).toEqual({ limitValue: 100, consumedValue: null, periodEnd: null });
+    ).toEqual({
+      limitValue: 100,
+      consumedValue: null,
+      periodEnd: null,
+      kind: 'limit',
+    });
   });
 
   it('returns nothing when no limit applies', () => {

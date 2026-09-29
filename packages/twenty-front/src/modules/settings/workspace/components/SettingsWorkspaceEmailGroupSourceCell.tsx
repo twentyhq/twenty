@@ -2,7 +2,7 @@ import { styled } from '@linaria/react';
 
 import { type MessageChannel } from '@/accounts/types/MessageChannel';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledNameCell = styled.div`
   align-items: center;

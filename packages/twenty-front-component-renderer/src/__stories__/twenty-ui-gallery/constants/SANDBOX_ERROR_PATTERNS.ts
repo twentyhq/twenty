@@ -9,8 +9,6 @@ export const SANDBOX_ERROR_PATTERNS = {
     "Uncaught TypeError: Cannot read properties of undefined (reading 'defaultPrevented')",
   POINTER_TYPE:
     "Uncaught TypeError: Cannot read properties of undefined (reading 'pointerType')",
-  ELEMENT_MATCHES: /^(?:Uncaught TypeError: )?\w+\.matches is not a function$/,
-  ELEMENT_CLOSEST: /^(?:Uncaught TypeError: )?\w+\.closest is not a function$/,
   ELEMENT_CONTAINS:
     /^(?:Uncaught TypeError: )?\w+\.contains is not a function$/,
   HOST_EVENT_LISTENER: 'Uncaught TypeError: listener is not a function',

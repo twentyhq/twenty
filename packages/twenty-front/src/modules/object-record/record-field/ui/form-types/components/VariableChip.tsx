@@ -1,11 +1,10 @@
 import { BaseChip } from '@/ui/input/components/BaseChip';
 import { useSearchVariable } from '@/workflow/workflow-variables/hooks/useSearchVariable';
 import { useLingui } from '@lingui/react/macro';
-import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { extractRawVariableNamePart } from 'twenty-shared/workflow';
 import { IconAlertTriangle } from 'twenty-ui/icon';
-import { ThemeContext } from 'twenty-ui/theme-constants';
+import { useTheme } from 'twenty-ui/theme';
 
 type VariableChipProps = {
   rawVariableName: string;
@@ -19,7 +18,7 @@ export const VariableChip = ({
   isFullRecord = false,
 }: VariableChipProps) => {
   const { t } = useLingui();
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
 
   const { variableLabel, variablePathLabel } = useSearchVariable({
     stepId: extractRawVariableNamePart({

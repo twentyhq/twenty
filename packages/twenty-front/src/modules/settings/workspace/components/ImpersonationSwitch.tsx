@@ -42,7 +42,7 @@ export const ImpersonationSwitch = () => {
   };
 
   return (
-    <Card rounded>
+    <Card.Root rounded>
       <SettingsOptionCardContentSwitch
         Icon={IconLifebuoy}
         title={t`Allow Support Team Access`}
@@ -51,6 +51,6 @@ export const ImpersonationSwitch = () => {
         onChange={handleChange}
         advancedMode
       />
-    </Card>
+    </Card.Root>
   );
 };

@@ -1,5 +1,5 @@
 import { type WorkflowTriggerType } from '@/workflow/types/Workflow';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 export const getTriggerIconColor = (
   triggerType: WorkflowTriggerType,

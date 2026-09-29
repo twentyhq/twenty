@@ -1,4 +1,5 @@
-import { ListItem } from 'twenty-ui/primitives/navigation';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { useApolloClient, useMutation } from '@apollo/client/react';
 import {
@@ -7,13 +8,9 @@ import {
   MessageChannelSyncStage,
   SettingsPath,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 
 import { useTriggerProviderReconnect } from '@/settings/accounts/hooks/useTriggerProviderReconnect';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { Trans, useLingui } from '@lingui/react/macro';
@@ -27,8 +24,8 @@ import {
   IconTrash,
   IconUnlink,
 } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/components';
-import { useNavigateSettings } from '~/hooks/useNavigateSettings';
+import { Dropdown, LightIconButton } from 'twenty-ui/components';
+import { Link } from 'react-router-dom';
 import { DELETE_CONNECTED_ACCOUNT } from '../graphql/mutations/deleteConnectedAccount';
 import { DISCONNECT_CONNECTED_ACCOUNT } from '../graphql/mutations/disconnectConnectedAccount';
 import { isConnectedAccountEligibleForProviderReconnect } from '../constants/isConnectedAccountEligibleForProviderReconnect.const';
@@ -47,9 +44,6 @@ export const SettingsAccountsRowDropdownMenu = ({
 
   const { t } = useLingui();
   const { openDialog } = useDialog();
-
-  const navigate = useNavigateSettings();
-  const { closeDropdown } = useCloseDropdown();
 
   const apolloClient = useApolloClient();
   const [deleteConnectedAccountMutation] = useMutation(
@@ -89,86 +83,83 @@ export const SettingsAccountsRowDropdownMenu = ({
 
   return (
     <>
-      <Dropdown
-        dropdownId={dropdownId}
-        dropdownPlacement="right-start"
-        clickableComponent={
-          <LightIconButton emphasis="subtle" aria-label={t`More options`}>
-            <IconDotsVertical />
-          </LightIconButton>
-        }
-        dropdownComponents={
-          <DropdownContent>
-            <DropdownMenuItemsContainer>
-              {hasPendingConfiguration && (
-                <ListItem
-                  startIcon={<IconPlayerPlay />}
-                  onClick={() => {
-                    navigate(SettingsPath.AccountsConfiguration, {
+      <DropdownRoot type="menu" dropdownId={dropdownId}>
+        <Dropdown.Trigger
+          render={
+            <LightIconButton emphasis="subtle" aria-label={t`More options`}>
+              <IconDotsVertical />
+            </LightIconButton>
+          }
+        />
+        <DropdownContent side="right" align="start">
+          <Dropdown.Section>
+            {hasPendingConfiguration && (
+              <Dropdown.ActionItem
+                startIcon={<IconPlayerPlay />}
+                render={
+                  <Link
+                    to={getSettingsPath(SettingsPath.AccountsConfiguration, {
                       connectedAccountId: account.id,
-                    });
-                    closeDropdown(dropdownId);
-                  }}
-                >{t`Complete setup`}</ListItem>
-              )}
-              {account.provider ===
-                ConnectedAccountProvider.IMAP_SMTP_CALDAV && (
-                <ListItem
-                  startIcon={<IconAt />}
-                  onClick={() => {
-                    navigate(SettingsPath.EditImapSmtpCaldavConnection, {
-                      connectedAccountId: account.id,
-                    });
-                    closeDropdown(dropdownId);
-                  }}
-                >{t`Connection settings`}</ListItem>
-              )}
-              <ListItem
-                startIcon={<IconMail />}
+                    })}
+                  />
+                }
+              >{t`Complete setup`}</Dropdown.ActionItem>
+            )}
+            {account.provider === ConnectedAccountProvider.IMAP_SMTP_CALDAV && (
+              <Dropdown.ActionItem
+                startIcon={<IconAt />}
+                render={
+                  <Link
+                    to={getSettingsPath(
+                      SettingsPath.EditImapSmtpCaldavConnection,
+                      {
+                        connectedAccountId: account.id,
+                      },
+                    )}
+                  />
+                }
+              >{t`Connection settings`}</Dropdown.ActionItem>
+            )}
+            <Dropdown.ActionItem
+              startIcon={<IconMail />}
+              render={
+                <Link to={getSettingsPath(SettingsPath.AccountsEmails)} />
+              }
+            >{t`Emails settings`}</Dropdown.ActionItem>
+            <Dropdown.ActionItem
+              startIcon={<IconCalendarEvent />}
+              render={
+                <Link to={getSettingsPath(SettingsPath.AccountsCalendars)} />
+              }
+            >{t`Calendar settings`}</Dropdown.ActionItem>
+            {isEligibleForProviderReconnect && (
+              <Dropdown.ActionItem
+                startIcon={<IconRefresh />}
                 onClick={() => {
-                  navigate(SettingsPath.AccountsEmails);
-                  closeDropdown(dropdownId);
+                  triggerProviderReconnect(account.provider, account.id, {
+                    loginHint: account.handle,
+                  });
                 }}
-              >{t`Emails settings`}</ListItem>
-              <ListItem
-                startIcon={<IconCalendarEvent />}
+              >{t`Reconnect`}</Dropdown.ActionItem>
+            )}
+            {!isDefined(account.archivedAt) && (
+              <Dropdown.ActionItem
+                startIcon={<IconUnlink />}
                 onClick={() => {
-                  navigate(SettingsPath.AccountsCalendars);
-                  closeDropdown(dropdownId);
+                  openDialog(disconnectAccountModalId);
                 }}
-              >{t`Calendar settings`}</ListItem>
-              {isEligibleForProviderReconnect && (
-                <ListItem
-                  startIcon={<IconRefresh />}
-                  onClick={() => {
-                    triggerProviderReconnect(account.provider, account.id, {
-                      loginHint: account.handle,
-                    });
-                    closeDropdown(dropdownId);
-                  }}
-                >{t`Reconnect`}</ListItem>
-              )}
-              {!isDefined(account.archivedAt) && (
-                <ListItem
-                  startIcon={<IconUnlink />}
-                  onClick={() => {
-                    closeDropdown(dropdownId);
-                    openDialog(disconnectAccountModalId);
-                  }}
-                >{t`Disconnect account`}</ListItem>
-              )}
-              <ListItem
-                color="danger"
-                startIcon={<IconTrash />}
-                onClick={() => {
-                  closeDropdown(dropdownId);
-                  openDialog(deleteAccountModalId);
-                }}
-              >{t`Delete account and synced data`}</ListItem>
-            </DropdownMenuItemsContainer>
-          </DropdownContent>
-        }
-      />
+              >{t`Disconnect account`}</Dropdown.ActionItem>
+            )}
+            <Dropdown.ActionItem
+              color="danger"
+              startIcon={<IconTrash />}
+              onClick={() => {
+                openDialog(deleteAccountModalId);
+              }}
+            >{t`Delete account and synced data`}</Dropdown.ActionItem>
+          </Dropdown.Section>
+        </DropdownContent>
+      </DropdownRoot>
       <ConfirmationDialog
         dialogId={disconnectAccountModalId}
         title={t`Disconnect account`}

@@ -1,5 +1,5 @@
 import { gql } from 'graphql-tag';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 
 export const deleteConnectedAccount = async ({
   id,
@@ -8,7 +8,7 @@ export const deleteConnectedAccount = async ({
   id: string;
   expectToFail: boolean;
 }) => {
-  const response = await makeMetadataAPIRequest({
+  const response = await makeMetadataApiRequest({
     query: gql`
       mutation DeleteConnectedAccount($id: UUID!) {
         deleteConnectedAccount(id: $id) {

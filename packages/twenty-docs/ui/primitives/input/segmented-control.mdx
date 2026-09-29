@@ -1,0 +1,100 @@
+---
+title: SegmentedControl
+description: Choose one value from a compact group of labeled or icon options.
+---
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import SegmentedControlReference from '/snippets/ui/generated/input/segmented-control.mdx';
+
+`SegmentedControl` is a radio group with joined options. Use it for a short, mutually exclusive choice. For navigation between content panels, use [Tabs](/ui/primitives/navigation/tabs).
+
+<StoryEmbed
+  storyId="ui-input-segmentedcontrol--default"
+  title="SegmentedControl example"
+/>
+
+## Usage
+
+Supply an accessible group name with `aria-label` or `aria-labelledby`. Each option needs a unique string `value`. Selection belongs to the group; options do not have independent checked state.
+
+## Uncontrolled state
+
+```tsx
+import { SegmentedControl } from 'twenty-ui/primitives/input';
+
+export const BillingPeriod = () => (
+  <SegmentedControl
+    aria-label="Billing period"
+    name="billingPeriod"
+    defaultValue="annual"
+    options={[
+      { label: 'Annual', value: 'annual' },
+      { label: 'Monthly', value: 'monthly' },
+    ]}
+  />
+);
+```
+
+`defaultValue` initializes selection. The group owns later changes. Add `onValueChange` if you need to observe them without controlling the value.
+
+## Controlled state
+
+```tsx
+import { useState } from 'react';
+import { SegmentedControl } from 'twenty-ui/primitives/input';
+
+export const BillingPeriod = () => {
+  const [period, setPeriod] = useState('annual');
+
+  return (
+    <SegmentedControl
+      aria-label="Billing period"
+      name="billingPeriod"
+      value={period}
+      onValueChange={setPeriod}
+      options={[
+        { label: 'Annual', value: 'annual' },
+        { label: 'Monthly', value: 'monthly' },
+      ]}
+    />
+  );
+};
+```
+
+Keep `value` in application state and update it in `onValueChange`. Do not combine `value` and `defaultValue` or switch ownership modes after mounting.
+
+## Icon options
+
+```tsx
+import { SegmentedControl } from 'twenty-ui/primitives/input';
+import { IconList, IconLayoutKanban } from 'twenty-ui/icon';
+
+export const RecordLayout = () => (
+  <SegmentedControl
+    aria-label="Record layout"
+    defaultValue="list"
+    itemWidth="content"
+    options={[
+      { value: 'list', startIcon: <IconList />, 'aria-label': 'List' },
+      {
+        value: 'kanban',
+        startIcon: <IconLayoutKanban />,
+        'aria-label': 'Kanban',
+      },
+    ]}
+  />
+);
+```
+
+An icon-only option requires an `aria-label`. `startIcon` is decorative and hidden from assistive technology. Options with visible text use `label` and may also provide `startIcon`. Set `disabled` on an option to prevent its selection, or on the group to disable every option.
+
+## Keyboard, forms, and direction
+
+Tab enters the group; arrow keys move between enabled options and update selection. `itemWidth="equal"` is the default; use `content` when labels should determine widths. Set `name` to include the selected value in native form submission.
+
+For right-to-left content, pair [TextDirectionProvider](/ui/primitives/layout/text-direction-provider) with a matching `dir` attribute. The provider controls directional interaction; `dir` controls the document layout.
+
+## Props
+
+<SegmentedControlReference />

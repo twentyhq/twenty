@@ -28,7 +28,7 @@ import {
 } from 'twenty-ui/icon';
 import { Button, Field } from 'twenty-ui/primitives/input';
 import { HorizontalSeparator } from 'twenty-ui/primitives/layout';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledQuestion = styled.div`
   display: flex;
@@ -246,7 +246,7 @@ export const WorkflowEditActionClassify = ({
         )}
       </WorkflowStepBody>
 
-      <WorkflowStepFooter stepId={action.id} />
+      {!readonly && <WorkflowStepFooter stepId={action.id} />}
     </>
   );
 };

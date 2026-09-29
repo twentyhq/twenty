@@ -17,7 +17,12 @@ import { UsageLimitStockService } from 'src/engine/core-modules/usage-limit/serv
 import { UsagePeriodService } from 'src/engine/core-modules/usage-limit/services/usage-period.service';
 import { type SpenderType } from 'src/engine/core-modules/usage-limit/types/spender-type.type';
 import { UsageLimitEntity } from 'src/engine/core-modules/usage-limit/usage-limit.entity';
-import { buildUsageLimitScope } from 'src/engine/core-modules/usage-limit/utils/build-usage-limit-scope.util';
+import { assertUsageLimitDefaultOverrideIsAllowed } from 'src/engine/core-modules/usage-limit/utils/assert-usage-limit-default-override-is-allowed.util';
+import { assertUsageLimitInstanceOverrideIsAllowed } from 'src/engine/core-modules/usage-limit/utils/assert-usage-limit-instance-override-is-allowed.util';
+import {
+  buildUsageLimitScope,
+  type UsageLimitScope,
+} from 'src/engine/core-modules/usage-limit/utils/build-usage-limit-scope.util';
 import { isIntraWorkspaceScoped } from 'src/engine/core-modules/usage-limit/utils/is-intra-workspace-scoped.util';
 import { isStockLimit } from 'src/engine/core-modules/usage-limit/utils/is-stock-limit.util';
 import { validateUsageLimitAgainstDefinition } from 'src/engine/core-modules/usage-limit/utils/validate-usage-limit-against-definition.util';
@@ -58,13 +63,17 @@ export class UsageLimitService {
   async create({
     workspaceId,
     input,
+    isOperator,
   }: {
     workspaceId: string;
     input: CreateUsageLimitInput;
+    isOperator: boolean;
   }): Promise<UsageLimitEntity> {
-    await this.validateInput({ workspaceId, input });
+    await this.validateInput({ workspaceId, input, isOperator });
 
     const scope = buildUsageLimitScope(input);
+
+    assertUsageLimitDefaultOverrideIsAllowed({ scope, isOperator });
 
     await this.assertScopeIsFree({ workspaceId, scope });
 
@@ -73,6 +82,7 @@ export class UsageLimitService {
       ...scope,
       limitValue: input.limitValue,
       burstValue: input.burstValue ?? null,
+      isInstanceOverride: isOperator,
     });
 
     await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
@@ -92,12 +102,12 @@ export class UsageLimitService {
   async update({
     workspaceId,
     input,
+    isOperator,
   }: {
     workspaceId: string;
     input: UpdateUsageLimitInput;
+    isOperator: boolean;
   }): Promise<UsageLimitEntity> {
-    await this.validateInput({ workspaceId, input: input.payload });
-
     const usageLimit = await this.usageLimitRepository.findOne(workspaceId, {
       where: { id: input.id },
     });
@@ -109,7 +119,20 @@ export class UsageLimitService {
       );
     }
 
+    const authorizedScope = buildUsageLimitScope(usageLimit);
+
+    assertUsageLimitInstanceOverrideIsAllowed({ usageLimit, isOperator });
+
+    assertUsageLimitDefaultOverrideIsAllowed({
+      scope: authorizedScope,
+      isOperator,
+    });
+
+    await this.validateInput({ workspaceId, input: input.payload, isOperator });
+
     const scope = buildUsageLimitScope(input.payload);
+
+    assertUsageLimitDefaultOverrideIsAllowed({ scope, isOperator });
 
     await this.assertScopeIsFree({
       workspaceId,
@@ -117,15 +140,27 @@ export class UsageLimitService {
       allowedUsageLimitId: usageLimit.id,
     });
 
-    await this.usageLimitRepository.update(
+    const { affected } = await this.usageLimitRepository.update(
       workspaceId,
-      { id: usageLimit.id },
+      {
+        id: usageLimit.id,
+        ...authorizedScope,
+        isInstanceOverride: usageLimit.isInstanceOverride,
+      },
       {
         ...scope,
         limitValue: input.payload.limitValue,
         burstValue: input.payload.burstValue ?? null,
+        isInstanceOverride: isOperator,
       },
     );
+
+    if (!isDefined(affected) || affected === 0) {
+      throw new UsageLimitException(
+        `Usage limit ${input.id} changed while this request was being authorized`,
+        UsageLimitExceptionCode.LIMIT_CONFLICT,
+      );
+    }
 
     await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
       'usageLimits',
@@ -149,7 +184,7 @@ export class UsageLimitService {
     allowedUsageLimitId,
   }: {
     workspaceId: string;
-    scope: ReturnType<typeof buildUsageLimitScope>;
+    scope: UsageLimitScope;
     allowedUsageLimitId?: string;
   }): Promise<void> {
     const usageLimitHoldingScope = await this.usageLimitRepository.findOne(
@@ -171,14 +206,17 @@ export class UsageLimitService {
   private async validateInput({
     workspaceId,
     input,
+    isOperator,
   }: {
     workspaceId: string;
     input: CreateUsageLimitInput;
+    isOperator: boolean;
   }): Promise<void> {
     validateUsageLimitAgainstDefinition(input);
     validateUsageLimitAgainstKindRule(input);
 
     if (
+      !isOperator &&
       isIntraWorkspaceScoped(input.spenderType) &&
       !(await this.usageLimitEntitlementService.isIntraWorkspaceLimitEntitled(
         workspaceId,
@@ -212,9 +250,11 @@ export class UsageLimitService {
   async delete({
     workspaceId,
     usageLimitId,
+    isOperator,
   }: {
     workspaceId: string;
     usageLimitId: string;
+    isOperator: boolean;
   }): Promise<boolean> {
     const usageLimit = await this.usageLimitRepository.findOne(workspaceId, {
       where: { id: usageLimitId },
@@ -224,12 +264,24 @@ export class UsageLimitService {
       return false;
     }
 
+    assertUsageLimitInstanceOverrideIsAllowed({ usageLimit, isOperator });
+
+    assertUsageLimitDefaultOverrideIsAllowed({
+      scope: buildUsageLimitScope(usageLimit),
+      isOperator,
+    });
+
     const { affected } = await this.usageLimitRepository.delete(workspaceId, {
       id: usageLimitId,
+      ...buildUsageLimitScope(usageLimit),
+      isInstanceOverride: usageLimit.isInstanceOverride,
     });
 
     if (!isDefined(affected) || affected === 0) {
-      return false;
+      throw new UsageLimitException(
+        `Usage limit ${usageLimitId} changed while this request was being authorized`,
+        UsageLimitExceptionCode.LIMIT_CONFLICT,
+      );
     }
 
     await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [

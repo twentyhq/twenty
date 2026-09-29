@@ -179,7 +179,7 @@ describe('CallRecording standard metadata build', () => {
     });
   });
 
-  it('configures the native call recording tab on the call recording record page', () => {
+  it('configures the native transcript tab on the call recording record page', () => {
     const callRecordingTabUniversalIdentifier =
       STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.callRecordingRecordPage.tabs
         .callRecording.universalIdentifier;
@@ -187,13 +187,20 @@ describe('CallRecording standard metadata build', () => {
       STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.callRecordingRecordPage.tabs
         .callRecording.widgets.transcript.universalIdentifier;
 
+    expect(callRecordingTabUniversalIdentifier).toBe(
+      'e8a4c6f5-3307-5747-acb6-019cf00aaaf2',
+    );
+    expect(transcriptWidgetUniversalIdentifier).toBe(
+      '335b21cf-4da9-54dd-9663-e933a51915a8',
+    );
+
     expect(
       allFlatEntityMaps.flatPageLayoutTabMaps.byUniversalIdentifier[
         callRecordingTabUniversalIdentifier
       ],
     ).toMatchObject({
-      title: 'Call Recording',
-      icon: 'IconVideo',
+      title: 'Transcript',
+      icon: 'IconBlockquote',
       position: 40,
       layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
     });

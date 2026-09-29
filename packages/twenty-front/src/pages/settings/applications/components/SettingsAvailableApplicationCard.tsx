@@ -10,7 +10,7 @@ import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { Avatar } from 'twenty-ui/primitives/data-display';
 import { Card } from 'twenty-ui/primitives/surfaces';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { type MarketplaceApp } from '~/generated-metadata/graphql';
 import { getApplicationDescriptionSummary } from '~/pages/settings/applications/utils/getApplicationDescriptionSummary';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
@@ -58,7 +58,7 @@ export const SettingsAvailableApplicationCard = ({
           availableApplicationId: application.id,
         })}
       >
-        <Card rounded fullWidth>
+        <Card.Root rounded fullWidth>
           <StyledSettingsCardContent alignItems="flex-start" fullHeight>
             <Avatar
               src={getAbsoluteImageUrl(application.logoUrl || null)}
@@ -77,7 +77,7 @@ export const SettingsAvailableApplicationCard = ({
               </StyledSettingsCardThirdLine>
             </div>
           </StyledSettingsCardContent>
-        </Card>
+        </Card.Root>
       </Link>
     </StyledLinkContainer>
   );

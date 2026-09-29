@@ -13,7 +13,7 @@ import { SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilder } 
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { SettingsPath } from 'twenty-shared/types';
 import { Button } from 'twenty-ui/primitives/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { OrganizationAdornment } from '~/pages/settings/enterprise/components/OrganizationAdornment';
 
@@ -50,7 +50,7 @@ export const SettingsRolePermissionsObjectLevelRecordLevelSection = ({
           adornment={<OrganizationAdornment />}
         />
         <StyledCardContainer>
-          <Card rounded>
+          <Card.Root rounded>
             <SettingsOptionCardContentButton
               Icon={IconLock}
               title={t`Upgrade to access`}
@@ -71,7 +71,7 @@ export const SettingsRolePermissionsObjectLevelRecordLevelSection = ({
                 >{t`Upgrade`}</Button>
               }
             />
-          </Card>
+          </Card.Root>
         </StyledCardContainer>
       </Section.Root>
     );

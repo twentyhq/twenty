@@ -1,11 +1,15 @@
+import { agentChatThreadPermissionsFamilySelector } from '@/ai/states/selectors/agentChatThreadPermissionsFamilySelector';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useLingui } from '@lingui/react/macro';
 import { type ReactElement } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import {
   IconArchive,
   IconArchiveOff,
   IconDotsVertical,
   IconPencil,
   IconTrash,
+  IconUnlink,
 } from 'twenty-ui/icon';
 import { Dropdown, LightIconButton } from 'twenty-ui/components';
 
@@ -24,6 +28,7 @@ type AiChatThreadItemMenuProps = {
   isArchived: boolean;
   surface: AiChatThreadActionsSurface;
   onRenameRequested: () => void;
+  onDetach?: () => void;
   trigger?: ReactElement;
 };
 
@@ -33,6 +38,7 @@ export const AiChatThreadItemMenu = ({
   isArchived,
   surface,
   onRenameRequested,
+  onDetach,
   trigger,
 }: AiChatThreadItemMenuProps) => {
   const { t } = useLingui();
@@ -44,9 +50,19 @@ export const AiChatThreadItemMenu = ({
     surface,
   );
 
+  const permissions = useAtomFamilySelectorValue(
+    agentChatThreadPermissionsFamilySelector,
+    threadId,
+  );
+
   const handleRename = (event: React.MouseEvent) => {
     event.stopPropagation();
     onRenameRequested();
+  };
+
+  const handleDetach = (event: React.MouseEvent) => {
+    event.stopPropagation();
+    onDetach?.();
   };
 
   const handleArchive = async (event: React.MouseEvent) => {
@@ -65,6 +81,15 @@ export const AiChatThreadItemMenu = ({
     openDialog(getAiChatThreadDeleteModalId(surface));
   };
 
+  if (
+    !isDefined(permissions) ||
+    (!permissions.canUpdate &&
+      !permissions.canDelete &&
+      !permissions.canSoftDelete)
+  ) {
+    return null;
+  }
+
   return (
     <DropdownRoot
       dropdownId={getAiChatThreadItemMenuDropdownId({ threadId, surface })}
@@ -81,25 +106,39 @@ export const AiChatThreadItemMenu = ({
       />
       <Dropdown.Content align="end" aria-label={t`Chat actions`}>
         <Dropdown.Section>
-          <Dropdown.ActionItem
-            startIcon={<IconPencil />}
-            onClick={handleRename}
-          >
-            {t`Rename`}
-          </Dropdown.ActionItem>
-          <Dropdown.ActionItem
-            startIcon={isArchived ? <IconArchiveOff /> : <IconArchive />}
-            onClick={handleArchive}
-          >
-            {isArchived ? t`Unarchive` : t`Archive`}
-          </Dropdown.ActionItem>
-          <Dropdown.ActionItem
-            color="danger"
-            startIcon={<IconTrash />}
-            onClick={handleDelete}
-          >
-            {t`Delete`}
-          </Dropdown.ActionItem>
+          {isDefined(onDetach) && permissions.canUpdate && (
+            <Dropdown.ActionItem
+              startIcon={<IconUnlink />}
+              onClick={handleDetach}
+            >
+              {t`Detach`}
+            </Dropdown.ActionItem>
+          )}
+          {permissions.canUpdate && (
+            <Dropdown.ActionItem
+              startIcon={<IconPencil />}
+              onClick={handleRename}
+            >
+              {t`Rename`}
+            </Dropdown.ActionItem>
+          )}
+          {permissions.canSoftDelete && (
+            <Dropdown.ActionItem
+              startIcon={isArchived ? <IconArchiveOff /> : <IconArchive />}
+              onClick={handleArchive}
+            >
+              {isArchived ? t`Unarchive` : t`Archive`}
+            </Dropdown.ActionItem>
+          )}
+          {permissions.canDelete && (
+            <Dropdown.ActionItem
+              color="danger"
+              startIcon={<IconTrash />}
+              onClick={handleDelete}
+            >
+              {t`Delete`}
+            </Dropdown.ActionItem>
+          )}
         </Dropdown.Section>
       </Dropdown.Content>
     </DropdownRoot>

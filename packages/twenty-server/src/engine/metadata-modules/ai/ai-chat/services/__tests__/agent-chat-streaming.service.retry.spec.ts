@@ -3,9 +3,9 @@ import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspac
 import {
   AgentMessageRole,
   AgentMessageStatus,
-  type AgentMessageEntity,
 } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
-import { type AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
+import { AgentMessageWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message.workspace-entity';
+import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-streaming.service';
 import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
 
@@ -22,7 +22,7 @@ describe('AgentChatStreamingService.retryLastFailedTurn', () => {
       message: 'Provider timed out',
       failedAt: '2026-01-01T00:00:00.000Z',
     },
-  } as unknown as AgentChatThreadEntity;
+  } as unknown as AgentChatThreadWorkspaceEntity;
 
   const userMessageEntity = {
     id: 'user-message-id',
@@ -30,7 +30,7 @@ describe('AgentChatStreamingService.retryLastFailedTurn', () => {
     status: AgentMessageStatus.SENT,
     parts: [{ type: 'text', textContent: 'hello', orderIndex: 0 }],
     createdAt: new Date('2026-01-01T00:00:00.000Z'),
-  } as unknown as AgentMessageEntity;
+  } as unknown as AgentMessageWorkspaceEntity;
 
   const buildService = ({
     thread = failedThread,
@@ -44,12 +44,15 @@ describe('AgentChatStreamingService.retryLastFailedTurn', () => {
     const threadRepository = {
       findOneOrFail: jest
         .fn()
-        .mockResolvedValue({ userWorkspaceId: 'user-workspace-id' }),
+        .mockResolvedValue({ workspaceMemberId: 'member' }),
       findOne: jest.fn().mockResolvedValue(thread),
       update: jest.fn().mockResolvedValue({ affected: 1 }),
     };
     const messageQueueService = { add: jest.fn().mockResolvedValue(undefined) };
     const agentChatService = {
+      getWritableThread: jest
+        .fn()
+        .mockImplementation(() => threadRepository.findOne()),
       findLatestSentUserMessage: jest.fn().mockResolvedValue(lastUserMessage),
       deleteAssistantMessagesForTurn: jest.fn().mockResolvedValue(undefined),
       getMessagesForThread: jest.fn().mockResolvedValue(threadMessages),
@@ -86,7 +89,9 @@ describe('AgentChatStreamingService.retryLastFailedTurn', () => {
       {
         authorizeJob: jest.fn().mockResolvedValue(undefined),
         authorizeRetry: jest.fn().mockResolvedValue(undefined),
-        authorize: jest.fn().mockResolvedValue({}),
+        authorize: jest
+          .fn()
+          .mockResolvedValue({ authContext: { workspaceMemberId: 'member' } }),
         resolveMessage: jest.fn().mockResolvedValue({
           sender: {
             userWorkspaceId: 'user-workspace-id',
@@ -100,10 +105,32 @@ describe('AgentChatStreamingService.retryLastFailedTurn', () => {
   };
 
   const retryArguments = {
+    workspaceMemberId: 'member',
     threadId: 'thread-id',
     userWorkspaceId: 'user-workspace-id',
     workspace,
   };
+
+  it('rejects a shared viewer without deleting messages or scheduling execution', async () => {
+    const { service, threadRepository, messageQueueService, agentChatService } =
+      buildService();
+    agentChatService.getWritableThread.mockRejectedValue({
+      code: AiExceptionCode.THREAD_NOT_FOUND,
+    });
+    await expect(
+      service.retryLastFailedTurn(retryArguments),
+    ).rejects.toMatchObject({ code: AiExceptionCode.THREAD_NOT_FOUND });
+    expect(agentChatService.getWritableThread).toHaveBeenCalledWith({
+      workspaceId: workspace.id,
+      threadId: retryArguments.threadId,
+      workspaceMemberId: retryArguments.workspaceMemberId,
+    });
+    expect(threadRepository.update).not.toHaveBeenCalled();
+    expect(
+      agentChatService.deleteAssistantMessagesForTurn,
+    ).not.toHaveBeenCalled();
+    expect(messageQueueService.add).not.toHaveBeenCalled();
+  });
 
   it('rejects when the thread has no persisted stream error', async () => {
     const { service, messageQueueService } = buildService({
@@ -136,7 +163,7 @@ describe('AgentChatStreamingService.retryLastFailedTurn', () => {
       ...userMessageEntity,
       id: 'newer-message-id',
       role: AgentMessageRole.ASSISTANT,
-    } as unknown as AgentMessageEntity;
+    } as unknown as AgentMessageWorkspaceEntity;
     const { service, threadRepository, messageQueueService } = buildService({
       threadMessages: [userMessageEntity, newerAssistantMessage],
     });
@@ -196,7 +223,7 @@ describe('AgentChatStreamingService.retryLastFailedTurn', () => {
       status: AgentMessageStatus.SENT,
       isHidden: true,
       parts: [{ type: 'text', textContent: 'kickoff prompt', orderIndex: 0 }],
-    } as unknown as AgentMessageEntity;
+    } as unknown as AgentMessageWorkspaceEntity;
     const { service, threadRepository, messageQueueService, agentChatService } =
       buildService({
         lastUserMessage: {

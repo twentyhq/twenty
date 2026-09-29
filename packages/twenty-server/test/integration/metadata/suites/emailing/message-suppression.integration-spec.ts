@@ -1,11 +1,14 @@
 import { gql } from 'graphql-tag';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { FeatureFlagKey } from 'twenty-shared/types';
 import { v4 } from 'uuid';
 import { isDefined } from 'twenty-shared/utils';
 
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
+import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
+
+const MESSAGE_SUPPRESSION_TABLE = `"${getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID)}"."messageSuppression"`;
 
 const CREATE_MESSAGE_SUPPRESSION = gql`
   mutation CreateMessageSuppression($input: CreateMessageSuppressionInput!) {
@@ -60,14 +63,14 @@ describe('messageSuppressionResolver (integration)', () => {
   afterEach(async () => {
     for (const id of createdSuppressionIds) {
       await testDataSource
-        .query('DELETE FROM core."messageSuppression" WHERE id = $1', [id])
+        .query(`DELETE FROM ${MESSAGE_SUPPRESSION_TABLE} WHERE id = $1`, [id])
         .catch(() => {});
     }
     createdSuppressionIds.length = 0;
   });
 
   const createSuppression = async (emailAddress: string) => {
-    const response = await makeMetadataAPIRequest({
+    const response = await makeMetadataApiRequest({
       query: CREATE_MESSAGE_SUPPRESSION,
       variables: { input: { emailAddress } },
     });
@@ -86,10 +89,10 @@ describe('messageSuppressionResolver (integration)', () => {
     const suppressionId = v4();
 
     await testDataSource.query(
-      `INSERT INTO core."messageSuppression"
-       ("id", "workspaceId", "emailAddress", "reason", "source", "providerEventId", "unsubscribeTopicId")
-       VALUES ($1, $2, $3, 'BOUNCE', 'WEBHOOK', NULL, NULL)`,
-      [suppressionId, SEED_APPLE_WORKSPACE_ID, emailAddress],
+      `INSERT INTO ${MESSAGE_SUPPRESSION_TABLE}
+       ("id", "emailAddress", "reason", "source", "providerEventId", "unsubscribeTopicId")
+       VALUES ($1, $2, 'BOUNCE', 'WEBHOOK', NULL, NULL)`,
+      [suppressionId, emailAddress],
     );
     createdSuppressionIds.push(suppressionId);
 
@@ -109,7 +112,7 @@ describe('messageSuppressionResolver (integration)', () => {
       unsubscribeTopicId: null,
     });
 
-    const listResponse = await makeMetadataAPIRequest({
+    const listResponse = await makeMetadataApiRequest({
       query: MESSAGE_SUPPRESSIONS,
       variables: { input: { searchTerm: emailAddress, limit: 30, offset: 0 } },
     });
@@ -132,7 +135,7 @@ describe('messageSuppressionResolver (integration)', () => {
     const createResponse = await createSuppression(emailAddress);
     const suppressionId = createResponse.body.data.createMessageSuppression.id;
 
-    const deleteResponse = await makeMetadataAPIRequest({
+    const deleteResponse = await makeMetadataApiRequest({
       query: DELETE_MESSAGE_SUPPRESSION,
       variables: { id: suppressionId },
     });
@@ -140,7 +143,7 @@ describe('messageSuppressionResolver (integration)', () => {
     expect(deleteResponse.body.errors).toBeUndefined();
     expect(deleteResponse.body.data.deleteMessageSuppression).toBe(true);
 
-    const listResponse = await makeMetadataAPIRequest({
+    const listResponse = await makeMetadataApiRequest({
       query: MESSAGE_SUPPRESSIONS,
       variables: { input: { searchTerm: emailAddress, limit: 30, offset: 0 } },
     });
@@ -153,7 +156,7 @@ describe('messageSuppressionResolver (integration)', () => {
       `bounced-${v4()}@example.com`,
     );
 
-    const deleteResponse = await makeMetadataAPIRequest({
+    const deleteResponse = await makeMetadataApiRequest({
       query: DELETE_MESSAGE_SUPPRESSION,
       variables: { id: suppressionId },
     });
@@ -165,7 +168,7 @@ describe('messageSuppressionResolver (integration)', () => {
   });
 
   it('should fail when the suppression does not exist', async () => {
-    const deleteResponse = await makeMetadataAPIRequest({
+    const deleteResponse = await makeMetadataApiRequest({
       query: DELETE_MESSAGE_SUPPRESSION,
       variables: { id: v4() },
     });

@@ -9,7 +9,7 @@ import {
 
 import { type PersistedDeferredWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/deferred-workspace-migration-action.type';
 import { type DeferredWorkspaceMigrationActionStatus } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/deferred-workspace-migration-action-status.type';
-import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/workspace-related-entity';
+import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/workspace-related-entity.type';
 
 @Index('IDX_DEFERRED_WORKSPACE_MIGRATION_ACTION_WORKSPACE_ID_STATUS', [
   'workspaceId',
@@ -24,7 +24,7 @@ export class DeferredWorkspaceMigrationActionEntity extends WorkspaceRelatedEnti
   applicationUniversalIdentifier: string;
 
   @Column({ type: 'varchar' })
-  actionHandlerKey: PersistedDeferredWorkspaceMigrationAction['actionHandlerKey'];
+  name: PersistedDeferredWorkspaceMigrationAction['name'];
 
   @Column({ type: 'jsonb' })
   payload: PersistedDeferredWorkspaceMigrationAction['payload'];

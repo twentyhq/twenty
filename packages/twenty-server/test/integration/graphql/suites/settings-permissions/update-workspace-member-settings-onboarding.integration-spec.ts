@@ -3,10 +3,10 @@ import { randomUUID } from 'crypto';
 import gql from 'graphql-tag';
 import { deleteUser } from 'test/integration/graphql/utils/delete-user.util';
 import { getOnboardingStatus } from 'test/integration/graphql/utils/get-onboarding-status.util';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { signUpInWorkspaceAndGetAccessToken } from 'test/integration/graphql/utils/sign-up-in-workspace-and-get-access-token.util';
 import { skipSyncEmailOnboardingStep } from 'test/integration/graphql/utils/skip-sync-email-onboarding-step.util';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 
 import { OnboardingStatus } from 'src/engine/core-modules/onboarding/enums/onboarding-status.enum';
 
@@ -23,7 +23,7 @@ describe('updateWorkspaceMemberSettings and profile onboarding', () => {
       }
     `;
 
-    const response = await makeMetadataAPIRequest(
+    const response = await makeMetadataApiRequest(
       {
         query: currentWorkspaceQuery,
         variables: {},
@@ -48,7 +48,7 @@ describe('updateWorkspaceMemberSettings and profile onboarding', () => {
       }
     `;
 
-    await makeMetadataAPIRequest(
+    await makeMetadataApiRequest(
       {
         query: restoreMutation,
         variables: {
@@ -104,7 +104,7 @@ describe('updateWorkspaceMemberSettings and profile onboarding', () => {
       }
     `;
 
-    const workspaceMemberResponse = await makeGraphqlAPIRequest(
+    const workspaceMemberResponse = await makeGraphqlApiRequest(
       {
         query: workspaceMemberQuery,
         variables: {
@@ -134,7 +134,7 @@ describe('updateWorkspaceMemberSettings and profile onboarding', () => {
       }
     `;
 
-    const updateNameResponse = await makeMetadataAPIRequest(
+    const updateNameResponse = await makeMetadataApiRequest(
       {
         query: updateWorkspaceMemberSettingsMutation,
         variables: {

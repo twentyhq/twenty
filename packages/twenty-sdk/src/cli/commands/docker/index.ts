@@ -120,15 +120,21 @@ const resetAction = (options: { test?: boolean }) => {
   const volumeStorage = options.test
     ? 'twenty-app-dev-test-storage'
     : 'twenty-app-dev-storage';
+  const volumeClickHouse = options.test
+    ? 'twenty-app-dev-test-clickhouse'
+    : 'twenty-app-dev-clickhouse';
 
   if (containerExists(containerName)) {
     execSync(`docker rm -f ${containerName}`, { stdio: 'ignore' });
   }
 
   try {
-    execSync(`docker volume rm ${volumeData} ${volumeStorage}`, {
-      stdio: 'ignore',
-    });
+    execSync(
+      `docker volume rm ${volumeData} ${volumeStorage} ${volumeClickHouse}`,
+      {
+        stdio: 'ignore',
+      },
+    );
   } catch {
     // Volumes may not exist
   }

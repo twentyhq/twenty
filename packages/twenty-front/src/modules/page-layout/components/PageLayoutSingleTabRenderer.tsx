@@ -24,7 +24,7 @@ import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/con
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledRecordIdentifierBar = styled.div`
   align-items: center;

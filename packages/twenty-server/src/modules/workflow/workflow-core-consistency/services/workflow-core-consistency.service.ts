@@ -89,7 +89,7 @@ export class WorkflowCoreConsistencyService {
          count(*) FILTER (WHERE wf."coreWorkflowId" IS NULL)::int AS unlinked,
          count(*) FILTER (WHERE wf."coreWorkflowId" IS NOT NULL AND c.id IS NULL)::int AS "missingCore",
          count(*) FILTER (WHERE c.id IS NOT NULL AND (
-           wf.name IS DISTINCT FROM c.name
+           COALESCE(wf.name, '') IS DISTINCT FROM COALESCE(c.name, '')
            OR NULLIF(wf."lastPublishedVersionId", '') IS DISTINCT FROM c."lastPublishedVersionId"::text
          ))::int AS "fieldMismatch"
        FROM "${schema}"."workflow" wf

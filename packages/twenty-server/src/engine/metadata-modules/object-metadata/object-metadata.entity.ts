@@ -2,6 +2,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   OneToMany,
   PrimaryGeneratedColumn,
   type Relation,
@@ -40,6 +41,7 @@ import { type AuthoredOverrides } from 'src/engine/metadata-modules/overrides/ty
 import { type JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
 
 @Entity('objectMetadata')
+@Index('IDX_OBJECT_METADATA_APPLICATION_ID', ['applicationId'])
 @Unique('IDX_OBJECT_METADATA_NAME_SINGULAR_WORKSPACE_ID_UNIQUE', [
   'nameSingular',
   'workspaceId',

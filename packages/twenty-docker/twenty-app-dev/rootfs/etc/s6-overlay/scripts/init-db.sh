@@ -30,6 +30,17 @@ su-exec postgres psql -h localhost -tc \
 # Run Twenty database setup and migrations
 cd /app/packages/twenty-server
 
+step_start "Running ClickHouse migrations"
+TRIES=0
+until curl -sf http://localhost:8123/ping > /dev/null 2>&1 || [ "$TRIES" -ge 120 ]; do
+  TRIES=$((TRIES + 1))
+  sleep 0.5
+done
+if ! yarn clickhouse:migrate:prod; then
+  echo "Warning: ClickHouse migrations failed, but continuing startup..."
+fi
+step_done
+
 has_schema=$(PGPASSWORD=twenty psql -h localhost -U twenty -d default -tAc \
   "SELECT EXISTS (SELECT 1 FROM information_schema.schemata WHERE schema_name = 'core')")
 

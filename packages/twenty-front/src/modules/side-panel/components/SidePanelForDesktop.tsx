@@ -22,7 +22,7 @@ import { styled } from '@linaria/react';
 import { useReducedMotion } from 'framer-motion';
 import { useStore } from 'jotai';
 import { type AnimationEvent, useCallback, useState } from 'react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledSidePanelWrapper = styled.div<{
   isOpen: boolean;
@@ -165,8 +165,8 @@ export const SidePanelForDesktop = () => {
       <ResizablePanelGap
         side="left"
         constraints={SIDE_PANEL_CONSTRAINTS}
-        currentWidth={sidePanelWidth}
-        onWidthChange={handleWidthChange}
+        currentSize={sidePanelWidth}
+        onSizeChange={handleWidthChange}
         onCollapse={handleCollapse}
         gapWidth={0}
         cssVariableName={SIDE_PANEL_WIDTH_VAR}

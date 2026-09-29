@@ -1,6 +1,6 @@
 import { useObjectNamePluralFromSingular } from '@/object-metadata/hooks/useObjectNamePluralFromSingular';
 import { useObjectOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsDropdown';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -35,7 +35,7 @@ export const ObjectOptionsDropdownHiddenFieldsContent = () => {
   );
 
   return (
-    <DropdownContent>
+    <LegacyDropdownContent>
       <DropdownMenuHeader
         StartComponent={
           <DropdownMenuHeaderLeftComponent
@@ -59,6 +59,6 @@ export const ObjectOptionsDropdownHiddenFieldsContent = () => {
           <ListItem startIcon={<IconSettings />}>{t`Edit Fields`}</ListItem>
         </DropdownMenuItemsContainer>
       </UndecoratedLink>
-    </DropdownContent>
+    </LegacyDropdownContent>
   );
 };

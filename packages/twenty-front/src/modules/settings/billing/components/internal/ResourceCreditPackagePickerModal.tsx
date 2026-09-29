@@ -16,7 +16,7 @@ import {
 } from 'twenty-ui/icon';
 import { Button, Slider } from 'twenty-ui/primitives/input';
 import { Dialog } from 'twenty-ui/primitives/surfaces';
-import { themeCssVariables, useTheme } from 'twenty-ui/theme-constants';
+import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 const PACKAGE_SUMMARY_ROW_HEIGHT = 24;
 const PACKAGE_SUMMARY_ROW_GAP = 4;

@@ -2,7 +2,7 @@ import { RecordPickerLoadingSkeletonList } from '@/object-record/record-picker/c
 import { RecordPickerNoRecordFoundMenuItem } from '@/object-record/record-picker/components/RecordPickerNoRecordFoundMenuItem';
 import { RecordTableWidgetRelationPickerMenuItem } from '@/object-record/record-table-widget/components/RecordTableWidgetRelationPickerMenuItem';
 import { useRecordsForSelect } from '@/object-record/select/hooks/useRecordsForSelect';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
@@ -39,7 +39,7 @@ export const RecordTableWidgetRelationPickerDropdownContent = ({
   });
 
   return (
-    <DropdownContent>
+    <LegacyDropdownContent>
       <DropdownMenuSearchInput
         autoFocus
         type="text"
@@ -74,6 +74,6 @@ export const RecordTableWidgetRelationPickerDropdownContent = ({
           )}
         </SelectableList>
       </DropdownMenuItemsContainer>
-    </DropdownContent>
+    </LegacyDropdownContent>
   );
 };

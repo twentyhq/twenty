@@ -9,7 +9,7 @@ import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { MainButton } from 'twenty-ui/components';
 import { ClickToActionLink } from 'twenty-ui/primitives/navigation';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledFooter = styled(StyledOnboardingContentBlock)`
   align-items: center;

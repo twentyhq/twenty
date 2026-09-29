@@ -13,6 +13,7 @@ import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/wo
 
 const OBJECT_NAMES = [
   'agentChatThread',
+  'agentChatThreadTarget',
   'agentMessage',
   'agentMessagePart',
   'agentTurn',
@@ -88,25 +89,57 @@ describe('agent history workspace metadata', () => {
       ).toMatchObject({ isUnique: false });
     },
   );
-  it.each(OBJECT_NAMES)(
-    'keeps %s inaccessible through generic APIs and search',
-    (name) => {
-      expect(
-        allFlatEntityMaps.flatObjectMetadataMaps.byUniversalIdentifier[
-          STANDARD_OBJECTS[name].universalIdentifier
-        ],
-      ).toMatchObject({
-        nameSingular: name,
-        isSystem: true,
-        isSearchable: false,
-        isAuditLogged: false,
-        isUICreatable: false,
-        isUIEditable: false,
+  // Conversations are shareable records and their record links inherit from
+  // them; the rest of the history is written and read by the platform only.
+  const SHARED_ACCESS_POLICY_BY_OBJECT_NAME: Partial<
+    Record<
+      (typeof OBJECT_NAMES)[number],
+      { readability: MetadataReadability; writability: MetadataWritability }
+    >
+  > = {
+    agentChatThread: {
+      readability: MetadataReadability.INHERITED,
+      writability: MetadataWritability.OPEN,
+    },
+    agentChatThreadTarget: {
+      readability: MetadataReadability.INHERITED,
+      writability: MetadataWritability.OPEN,
+    },
+  };
+
+  it.each(OBJECT_NAMES)('keeps %s protected by metadata policy', (name) => {
+    expect(
+      allFlatEntityMaps.flatObjectMetadataMaps.byUniversalIdentifier[
+        STANDARD_OBJECTS[name].universalIdentifier
+      ],
+    ).toMatchObject({
+      nameSingular: name,
+      isSystem: true,
+      isSearchable: false,
+      isAuditLogged: false,
+      isUICreatable: false,
+      isUIEditable: false,
+      ...(SHARED_ACCESS_POLICY_BY_OBJECT_NAME[name] ?? {
         readability: MetadataReadability.SYSTEM,
         writability: MetadataWritability.SYSTEM,
-      });
-    },
-  );
+      }),
+    });
+  });
+
+  it('retains messages when a sender member is deleted', () => {
+    expect(
+      allFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier[
+        STANDARD_OBJECTS.agentMessage.fields.senderWorkspaceMember
+          .universalIdentifier
+      ],
+    ).toMatchObject({
+      isNullable: true,
+      settings: {
+        onDelete: 'SET_NULL',
+        joinColumnName: 'senderWorkspaceMemberId',
+      },
+    });
+  });
 
   it('retains exact precision for credits and cache token counts', () => {
     for (const name of [

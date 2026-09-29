@@ -13,7 +13,7 @@ import { format, getYear } from 'date-fns';
 import { Section } from 'twenty-ui/components';
 
 import { Heading } from 'twenty-ui/primitives/typography';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { type TimelineCalendarEvent } from '~/generated/graphql';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 

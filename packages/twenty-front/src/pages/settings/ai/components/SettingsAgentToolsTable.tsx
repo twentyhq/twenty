@@ -1,4 +1,3 @@
-import { useContext } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 
 import { type CurrentWorkspace } from '@/auth/states/currentWorkspaceState';
@@ -9,7 +8,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronRight } from 'twenty-ui/icon';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { SettingsToolIcon } from '~/pages/settings/ai/components/SettingsToolIcon';
 import {
   SettingsToolTableRow,
@@ -43,7 +42,7 @@ export const SettingsAgentToolsTable = ({
   marketplaceAppByUniversalIdentifier,
   currentWorkspace,
 }: SettingsAgentToolsTableProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const { t } = useLingui();
 
   return (

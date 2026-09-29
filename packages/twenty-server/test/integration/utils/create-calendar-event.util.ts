@@ -1,6 +1,6 @@
 import gql from 'graphql-tag';
 
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 
 type CreateCalendarEventInput = {
   connectedAccountId: string;
@@ -39,7 +39,7 @@ const CREATE_CALENDAR_EVENT_MUTATION = gql`
 export const createCalendarEvent = async (
   input: CreateCalendarEventInput,
 ): Promise<CreateCalendarEventResult> => {
-  const response = await makeMetadataAPIRequest({
+  const response = await makeMetadataApiRequest({
     query: CREATE_CALENDAR_EVENT_MUTATION,
     variables: { input },
   });

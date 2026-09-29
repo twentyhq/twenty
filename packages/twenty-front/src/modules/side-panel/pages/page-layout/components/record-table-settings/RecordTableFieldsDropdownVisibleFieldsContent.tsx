@@ -7,7 +7,7 @@ import { visibleRecordFieldsComponentSelector } from '@/object-record/record-fie
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
 import { type DraggableListDropResult } from '@/ui/layout/draggable-list/types/DraggableListDropResult';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
@@ -92,7 +92,7 @@ export const RecordTableFieldsDropdownVisibleFieldsContent = ({
   };
 
   return (
-    <DropdownContent>
+    <LegacyDropdownContent>
       <DropdownMenuItemsContainer>
         {isDefined(fieldMetadataItemLabelIdentifier) && (
           <MenuItemDraggable
@@ -152,6 +152,6 @@ export const RecordTableFieldsDropdownVisibleFieldsContent = ({
           hasSubmenu
         >{t`Hidden Fields`}</ListItem>
       </DropdownMenuItemsContainer>
-    </DropdownContent>
+    </LegacyDropdownContent>
   );
 };

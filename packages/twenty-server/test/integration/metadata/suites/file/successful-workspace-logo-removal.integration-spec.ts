@@ -1,6 +1,6 @@
 import gql from 'graphql-tag';
 import { seedWorkspaceLogo } from 'test/integration/metadata/suites/file/utils/seed-workspace-logo.util';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 
 describe('Workspace logo removal should succeed', () => {
   let workspaceId: string;
@@ -24,7 +24,7 @@ describe('Workspace logo removal should succeed', () => {
   it('should clear logoFileId so the resolver stops signing a deleted file', async () => {
     jest.useRealTimers();
 
-    const response = await makeMetadataAPIRequest({
+    const response = await makeMetadataApiRequest({
       query: gql`
         mutation UpdateWorkspace {
           updateWorkspace(data: { logo: null }) {

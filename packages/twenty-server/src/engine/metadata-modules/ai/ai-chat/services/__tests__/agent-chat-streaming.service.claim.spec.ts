@@ -29,6 +29,9 @@ describe('AgentChatStreamingService claim & reap', () => {
     };
     const messageQueueService = { add: jest.fn().mockResolvedValue(undefined) };
     const agentChatService = {
+      getWritableThread: jest
+        .fn()
+        .mockImplementation(() => threadRepository.findOne()),
       addMessage: jest
         .fn()
         .mockResolvedValue({ id: 'user-message-id', turnId: 'turn-id' }),
@@ -76,7 +79,9 @@ describe('AgentChatStreamingService claim & reap', () => {
       {
         authorizeJob: jest.fn().mockResolvedValue(undefined),
         authorizeRetry: jest.fn().mockResolvedValue(undefined),
-        authorize: jest.fn().mockResolvedValue({}),
+        authorize: jest
+          .fn()
+          .mockResolvedValue({ authContext: { workspaceMemberId: 'member' } }),
         resolveMessage: jest.fn().mockResolvedValue({
           sender: {
             userWorkspaceId: 'user-workspace-id',
@@ -98,6 +103,7 @@ describe('AgentChatStreamingService claim & reap', () => {
   };
 
   const sendArguments = {
+    workspaceMemberId: 'member',
     threadId: 'thread-id',
     userWorkspaceId: 'user-workspace-id',
     workspace,
@@ -106,6 +112,30 @@ describe('AgentChatStreamingService claim & reap', () => {
   };
 
   describe('streamAgentChat', () => {
+    it('announces the participant prompt to the thread before enqueuing the reply', async () => {
+      const {
+        service,
+        agentChatService,
+        eventPublisherService,
+        messageQueueService,
+      } = buildService();
+      await service.streamAgentChat({
+        ...sendArguments,
+        userWorkspaceId: 'other-participant',
+      });
+      expect(agentChatService.addMessage).toHaveBeenCalledWith(
+        expect.objectContaining({ userWorkspaceId: 'other-participant' }),
+      );
+      expect(eventPublisherService.publish).toHaveBeenCalledWith({
+        workspaceId: workspace.id,
+        threadId: 'thread-id',
+        event: { type: 'message-persisted', messageId: 'user-message-id' },
+      });
+      expect(
+        eventPublisherService.publish.mock.invocationCallOrder[0],
+      ).toBeLessThan(messageQueueService.add.mock.invocationCallOrder[0]);
+    });
+
     it('claims the thread conditionally before enqueueing', async () => {
       const { service, threadRepository, streamHeartbeatService } =
         buildService();

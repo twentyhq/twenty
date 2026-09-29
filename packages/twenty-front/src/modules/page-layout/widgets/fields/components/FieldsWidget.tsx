@@ -18,7 +18,7 @@ import { SidePanelProvider } from '@/ui/layout/side-panel/contexts/SidePanelCont
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { type FieldsConfiguration } from '~/generated-metadata/graphql';
 
 const StyledPropertyBox = styled.div`

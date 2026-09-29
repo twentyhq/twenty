@@ -3,18 +3,18 @@ import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { SearchInput, Section } from 'twenty-ui/components';
 import { IconChevronRight } from 'twenty-ui/icon';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { ApplicationRegistrationSourceType } from '~/generated-metadata/graphql';
 import {
   APPLICATION_TABLE_ROW_GRID_TEMPLATE_COLUMNS,
   SettingsApplicationTableRow,
 } from '~/pages/settings/applications/components/SettingsApplicationTableRow';
-import { type ApplicationWithoutRelation } from '~/pages/settings/applications/types/applicationWithoutRelation';
+import { type ApplicationWithoutRelation } from '~/pages/settings/applications/types/ApplicationWithoutRelation';
 import { isNewerSemver } from '~/pages/settings/applications/utils/isNewerSemver';
 
 const StyledTableRowsContainer = styled.div`
@@ -32,7 +32,7 @@ export const SettingsApplicationsTable = ({
 }: {
   applications: ApplicationWithoutRelation[];
 }) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const { t } = useLingui();
 
   const [searchTerm, setSearchTerm] = useState('');

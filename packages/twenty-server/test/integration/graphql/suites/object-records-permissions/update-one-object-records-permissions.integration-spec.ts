@@ -3,9 +3,9 @@ import { randomUUID } from 'node:crypto';
 import { PERSON_GQL_FIELDS } from 'test/integration/constants/person-gql-fields.constants';
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
 import { findOneOperationFactory } from 'test/integration/graphql/utils/find-one-operation-factory.util';
-import { makeGraphqlAPIRequestWithApiKey } from 'test/integration/graphql/utils/make-graphql-api-request-with-api-key.util';
-import { makeGraphqlAPIRequestWithGuestRole } from 'test/integration/graphql/utils/make-graphql-api-request-with-guest-role.util';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { makeGraphqlApiRequestWithApiKey } from 'test/integration/graphql/utils/make-graphql-api-request-with-api-key.util';
+import { makeGraphqlApiRequestWithGuestRole } from 'test/integration/graphql/utils/make-graphql-api-request-with-guest-role.util';
+import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateOneOperationFactory } from 'test/integration/graphql/utils/update-one-operation-factory.util';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
@@ -26,7 +26,7 @@ describe('updateOneObjectRecordsPermissions', () => {
       },
     });
 
-    await makeGraphqlAPIRequest(createPersonOperation);
+    await makeGraphqlApiRequest(createPersonOperation);
 
     const findAllMessagesOperation = findOneOperationFactory({
       objectMetadataSingularName: 'message',
@@ -41,7 +41,7 @@ describe('updateOneObjectRecordsPermissions', () => {
       },
     });
 
-    const findAllMessagesResponse = await makeGraphqlAPIRequest(
+    const findAllMessagesResponse = await makeGraphqlApiRequest(
       findAllMessagesOperation,
     );
 
@@ -59,7 +59,7 @@ describe('updateOneObjectRecordsPermissions', () => {
       },
     });
 
-    await makeGraphqlAPIRequest(updateMessageOperation);
+    await makeGraphqlApiRequest(updateMessageOperation);
   });
 
   it('should throw a permission error when user does not have permission (guest role)', async () => {
@@ -72,7 +72,7 @@ describe('updateOneObjectRecordsPermissions', () => {
       },
     });
 
-    const response = await makeGraphqlAPIRequestWithGuestRole(graphqlOperation);
+    const response = await makeGraphqlApiRequestWithGuestRole(graphqlOperation);
 
     expect(response.body.data).toStrictEqual({ updatePerson: null });
     expect(response.body.errors).toBeDefined();
@@ -95,7 +95,7 @@ describe('updateOneObjectRecordsPermissions', () => {
       },
     });
 
-    const response = await makeGraphqlAPIRequestWithGuestRole(graphqlOperation);
+    const response = await makeGraphqlApiRequestWithGuestRole(graphqlOperation);
 
     expect(response.body.data).toBeDefined();
     expect(response.body.data.updateMessage).toBeDefined();
@@ -115,7 +115,7 @@ describe('updateOneObjectRecordsPermissions', () => {
       },
     });
 
-    const response = await makeGraphqlAPIRequest(graphqlOperation);
+    const response = await makeGraphqlApiRequest(graphqlOperation);
 
     expect(response.body.data).toBeDefined();
     expect(response.body.data.updatePerson).toBeDefined();
@@ -135,7 +135,7 @@ describe('updateOneObjectRecordsPermissions', () => {
       },
     });
 
-    const response = await makeGraphqlAPIRequestWithApiKey(graphqlOperation);
+    const response = await makeGraphqlApiRequestWithApiKey(graphqlOperation);
 
     expect(response.body.data).toBeDefined();
     expect(response.body.data.updatePerson).toBeDefined();

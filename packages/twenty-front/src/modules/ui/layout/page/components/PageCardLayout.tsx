@@ -2,7 +2,7 @@ import { InformationBannerWrapper } from '@/information-banner/components/Inform
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
-import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
+import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme';
 
 type PageCardLayoutProps = {
   header: ReactNode;

@@ -1,7 +1,7 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -55,11 +55,11 @@ export const ContextDropdownAndAvatar: Story = {
       <Dropdown
         dropdownId="story-dropdown-id-context-menu"
         dropdownComponents={
-          <DropdownContent>
+          <LegacyDropdownContent>
             <DropdownMenuItemsContainer>
               <ListItem startIcon={<IconPlus />}>{'Create Workspace'}</ListItem>
             </DropdownMenuItemsContainer>
-          </DropdownContent>
+          </LegacyDropdownContent>
         }
       />
     ),

@@ -2,7 +2,7 @@ import { Dialog as DialogPrimitive } from '@base-ui/react/dialog';
 import { isBoolean } from '@sniptt/guards';
 import { useDirection } from '@base-ui/react/direction-provider';
 
-import { useThemeContainer } from '@ui/theme-constants';
+import { useThemeContainer } from '@ui/theme';
 import { mergeClassNames } from '@ui/utilities/internal/mergeClassNames';
 
 import styles from '@ui/primitives/surfaces/internal/Dialog.module.scss';

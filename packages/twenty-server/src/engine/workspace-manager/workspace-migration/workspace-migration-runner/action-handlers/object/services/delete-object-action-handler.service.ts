@@ -12,7 +12,7 @@ import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-s
 import {
   type FlatDeleteObjectAction,
   type UniversalDeleteObjectAction,
-} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/object/types/workspace-migration-object-action';
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/object/types/workspace-migration-object-action.type';
 import {
   type WorkspaceMigrationActionRunnerArgs,
   type WorkspaceMigrationActionRunnerContext,

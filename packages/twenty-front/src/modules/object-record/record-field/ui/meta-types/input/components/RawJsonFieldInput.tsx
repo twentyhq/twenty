@@ -11,7 +11,7 @@ import { Key } from 'ts-key-enum';
 import { IconButton, JsonTree } from 'twenty-ui/components';
 import { CodeEditor } from 'twenty-ui/components/code-editor';
 import { IconPencil } from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 const CONTAINER_HEIGHT = 300;

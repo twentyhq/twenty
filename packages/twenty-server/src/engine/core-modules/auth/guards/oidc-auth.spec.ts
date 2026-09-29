@@ -32,7 +32,7 @@ jest.mock('openid-client', () => ({
   Strategy: jest.fn(),
 }));
 
-describe('OIDCAuthGuard', () => {
+describe('OidcAuthGuard', () => {
   let guard: OidcAuthGuard;
   let ssoService: SsoService;
   let guardRedirectService: GuardRedirectService;

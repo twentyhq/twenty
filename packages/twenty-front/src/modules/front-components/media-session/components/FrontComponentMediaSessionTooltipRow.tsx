@@ -4,7 +4,7 @@ import { t } from '@lingui/core/macro';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { IconMicrophone, IconVideo } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { themeCssVariables, useTheme } from 'twenty-ui/theme-constants';
+import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 type FrontComponentMediaSessionTooltipRowProps = {
   sessions: FrontComponentMediaSessionStatus[];
