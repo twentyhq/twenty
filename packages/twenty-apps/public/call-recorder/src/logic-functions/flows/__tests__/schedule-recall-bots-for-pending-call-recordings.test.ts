@@ -183,11 +183,9 @@ const buildCalendarEvent = (
 });
 
 const stubRecallApi = ({
-  listedBots = [],
   listStatus = 200,
   createBotStatus = 201,
 }: {
-  listedBots?: unknown[];
   listStatus?: number;
   createBotStatus?: number;
 } = {}) => {
@@ -199,10 +197,9 @@ const stubRecallApi = ({
         method === 'GET' &&
         requestUrl.startsWith(RECALL_LIST_BOTS_URL_PREFIX)
       ) {
-        return new Response(
-          JSON.stringify({ next: null, results: listedBots }),
-          { status: listStatus },
-        );
+        return new Response(JSON.stringify({ next: null, results: [] }), {
+          status: listStatus,
+        });
       }
 
       if (method === 'POST' && requestUrl === RECALL_CREATE_BOT_URL) {

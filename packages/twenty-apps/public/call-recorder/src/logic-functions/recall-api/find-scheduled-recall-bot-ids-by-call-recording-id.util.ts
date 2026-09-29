@@ -1,6 +1,7 @@
 import { isUndefined } from '@sniptt/guards';
 
 import { getCurrentWorkspaceId } from 'src/logic-functions/data/get-current-workspace-id.util';
+import { buildRecallRoutingMetadata } from 'src/logic-functions/domain/build-recall-routing-metadata.util';
 import { hasRecallBotEnded } from 'src/logic-functions/recall-api/has-recall-bot-ended.util';
 import { listScheduledRecallBots } from 'src/logic-functions/recall-api/list-scheduled-recall-bots.util';
 
@@ -22,10 +23,7 @@ export const findScheduledRecallBotIdsByCallRecordingId = async (
   for (const callRecordingId of callRecordingIds) {
     // No status filter: a bot scheduled for later has no status until it starts joining.
     const listResult = await listScheduledRecallBots({
-      metadata: {
-        twentyWorkspaceId: workspaceId,
-        twentyCallRecordingId: callRecordingId,
-      },
+      metadata: buildRecallRoutingMetadata({ callRecordingId, workspaceId }),
     });
 
     if (!listResult.ok) {

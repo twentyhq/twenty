@@ -103,11 +103,6 @@ export const scheduleRecallBotsForPendingCallRecordings = async ({
     return result;
   }
 
-  // Rows without a schedule-attempt marker never reached Recall, so no bot
-  // can exist for them. Rows whose stored idempotency key still matches the
-  // current scheduling inputs can re-send the creation and let Recall dedupe
-  // it. Only attempts whose inputs drifted since the attempt pay for a
-  // Recall lookup.
   const workspaceId = getCurrentWorkspaceId();
   const ambiguousCallRecordings = resumableCallRecordings.filter(
     ({ callRecording, calendarEvent }) =>

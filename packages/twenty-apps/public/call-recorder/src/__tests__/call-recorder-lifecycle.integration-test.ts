@@ -690,7 +690,6 @@ class FakeRecallApi {
     const bot: FakeRecallBot = {
       id: `recall-bot-${randomUUID()}`,
       metadata: body.metadata ?? {},
-      statusCode: 'ready',
     };
 
     this.bots.set(bot.id, bot);
@@ -2388,7 +2387,7 @@ describe('call recorder app lifecycle (integration)', () => {
       const calendarEventId = await createCalendarEvent();
       const callRecordingId = await createPendingCallRecording({
         calendarEventId,
-        botScheduleAttemptedAt: hoursAgo(1),
+        botScheduleAttemptedAt: hoursAgo(0.25),
         botScheduleIdempotencyKey: 'key-from-before-the-meeting-moved',
       });
 
@@ -2423,11 +2422,7 @@ describe('call recorder app lifecycle (integration)', () => {
       expect((await fetchCallRecording(callRecordingId)).externalBotId).toBe(
         'recall-bot-scheduled-before-lost-write-back',
       );
-      expect(
-        [...recall.bots.values()].filter(
-          (bot) => bot.metadata.twentyCallRecordingId === callRecordingId,
-        ),
-      ).toHaveLength(1);
+      expect(recall.bots.size).toBe(1);
     });
 
     it('fails a recording whose meeting ended before any bot creation was attempted', async () => {
