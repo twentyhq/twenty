@@ -44,8 +44,9 @@ export const Truncate: Story = {
 };
 
 export const Documentation: Story = {
-  ...Truncate,
-  play: undefined,
+  decorators: Truncate.decorators,
+  args: Truncate.args,
+  parameters: Truncate.parameters,
 };
 
 export const LineClamp: Story = {

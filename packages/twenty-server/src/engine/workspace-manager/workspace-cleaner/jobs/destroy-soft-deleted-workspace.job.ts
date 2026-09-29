@@ -16,7 +16,7 @@ export type DestroySoftDeletedWorkspaceJobData = {
 };
 
 @Injectable()
-@Processor(MessageQueue.workspaceQueue)
+@Processor(MessageQueue.workspaceDestroyQueue)
 export class DestroySoftDeletedWorkspaceJob {
   private readonly logger = new Logger(DestroySoftDeletedWorkspaceJob.name);
 

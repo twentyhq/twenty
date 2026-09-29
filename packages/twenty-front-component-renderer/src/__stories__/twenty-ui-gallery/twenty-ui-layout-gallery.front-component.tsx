@@ -2,10 +2,7 @@ import { defineFrontComponent } from 'twenty-sdk/define';
 import 'twenty-ui/style.css';
 import { AnimatedIconCrossfade } from 'twenty-ui/components';
 import { IconHeart, IconStar } from 'twenty-ui/icon';
-import {
-  AnimatedExpandableContainer,
-  HorizontalSeparator,
-} from 'twenty-ui/primitives/layout';
+import { Collapsible, HorizontalSeparator } from 'twenty-ui/primitives/layout';
 import { ThemeProvider } from 'twenty-ui/theme';
 import { ResizeHandleExample } from './resize-handle-example';
 
@@ -16,12 +13,8 @@ import {
 
 const LAYOUT_ENTRIES: GalleryEntry[] = [
   {
-    name: 'AnimatedExpandableContainer',
-    node: (
-      <AnimatedExpandableContainer isExpanded={true}>
-        Expandable
-      </AnimatedExpandableContainer>
-    ),
+    name: 'Collapsible',
+    node: <Collapsible isExpanded={true}>Expandable</Collapsible>,
   },
   {
     name: 'AnimatedIconCrossfade',

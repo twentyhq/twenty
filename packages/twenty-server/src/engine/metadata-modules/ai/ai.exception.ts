@@ -30,6 +30,8 @@ export enum AiExceptionCode {
   EVALUATION_MODEL_NOT_FOUND = 'EVALUATION_MODEL_NOT_FOUND',
   EVALUATION_QUESTION_UNSUPPORTED = 'EVALUATION_QUESTION_UNSUPPORTED',
   INVALID_EVALUATION_REQUEST = 'INVALID_EVALUATION_REQUEST',
+  WORKFLOW_RUN_THREAD_READ_ONLY = 'WORKFLOW_RUN_THREAD_READ_ONLY',
+  WORKFLOW_RUN_QUESTION_FORBIDDEN = 'WORKFLOW_RUN_QUESTION_FORBIDDEN',
 }
 
 const getAiExceptionUserFriendlyMessage = (code: AiExceptionCode) => {
@@ -84,6 +86,10 @@ const getAiExceptionUserFriendlyMessage = (code: AiExceptionCode) => {
       return msg`This model cannot answer one of the questions asked.`;
     case AiExceptionCode.INVALID_EVALUATION_REQUEST:
       return msg`Invalid classification request.`;
+    case AiExceptionCode.WORKFLOW_RUN_THREAD_READ_ONLY:
+      return msg`This conversation belongs to a workflow run and can only be read.`;
+    case AiExceptionCode.WORKFLOW_RUN_QUESTION_FORBIDDEN:
+      return msg`You need the Workflows permission to answer a workflow's question.`;
     default:
       assertUnreachable(code);
   }

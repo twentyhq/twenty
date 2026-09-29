@@ -102,7 +102,7 @@ const StyledInstallButton = styled.div`
 type InstallAppsContentProps = {
   apps: (OnboardingInstallableApp & { logoUrl: string | null })[];
   selectedUniversalIdentifiers: string[];
-  creditsRewardPerApp?: number;
+  creditsReward?: number;
   isCompleting: boolean;
   onToggleApp: (universalIdentifier: string) => void;
   onInstall: () => void;
@@ -112,7 +112,7 @@ type InstallAppsContentProps = {
 export const InstallAppsContent = ({
   apps,
   selectedUniversalIdentifiers,
-  creditsRewardPerApp,
+  creditsReward,
   isCompleting,
   onToggleApp,
   onInstall,
@@ -139,13 +139,10 @@ export const InstallAppsContent = ({
               : t`No apps are available to install right now`}
           </StyledOnboardingStepSubtitle>
         </OnboardingStepAnimatedItem>
-        {isDefined(creditsRewardPerApp) && hasApps && (
+        {isDefined(creditsReward) && hasApps && (
           <OnboardingStepAnimatedItem index={2}>
             <StyledOnboardingStepTagsRow>
-              <OnboardingCreditsRewardTag
-                amount={creditsRewardPerApp * apps.length}
-                suffix={t`free credits (${creditsRewardPerApp} per tool)`}
-              />
+              <OnboardingCreditsRewardTag amount={creditsReward} />
             </StyledOnboardingStepTagsRow>
           </OnboardingStepAnimatedItem>
         )}

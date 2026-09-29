@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
 import { type ActorMetadata } from 'twenty-shared/types';
@@ -8,12 +8,12 @@ import { StepStatus } from 'twenty-shared/workflow';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { InputAskWorkspaceService } from 'src/modules/input-ask/workspace-services/input-ask.workspace-service';
 import {
   WorkflowVersionStepException,
   WorkflowVersionStepExceptionCode,
 } from 'src/modules/workflow/common/exceptions/workflow-version-step.exception';
 import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
-import { setAllIteratorsStepInfosAsStopped } from 'src/modules/workflow/common/utils/set-all-iterators-step-infos-as-stopped.util';
 import { workflowHasRunningSteps } from 'src/modules/workflow/common/utils/workflow-has-running-steps.util';
 import { WorkflowVersionStepOperationsWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step-operations.workspace-service';
 import { isWorkflowFormAction } from 'src/modules/workflow/workflow-executor/workflow-actions/form/guards/is-workflow-form-action.guard';
@@ -27,12 +27,17 @@ import { buildRetryStepInfos } from 'src/modules/workflow/workflow-runner/utils/
 import { buildRunWorkflowJobOptions } from 'src/modules/workflow/workflow-runner/utils/build-run-workflow-job-options.util';
 import { getRunnableStepIds } from 'src/modules/workflow/workflow-runner/utils/get-runnable-step-ids.util';
 import { WorkflowThrottlingWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run-queue/workspace-services/workflow-throttling.workspace-service';
-import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
+import {
+  type StepAwaitingAnswer,
+  WorkflowRunWorkspaceService,
+} from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 import { CoreWorkflowRunnerService } from 'src/modules/workflow/workflow-runner/services/core-workflow-runner.service';
 import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
 
 @Injectable()
 export class WorkflowRunnerWorkspaceService {
+  private readonly logger = new Logger(WorkflowRunnerWorkspaceService.name);
+
   constructor(
     private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
     @InjectMessageQueue(MessageQueue.workflowQueue)
@@ -41,6 +46,7 @@ export class WorkflowRunnerWorkspaceService {
     private readonly workflowThrottlingWorkspaceService: WorkflowThrottlingWorkspaceService,
     private readonly coreWorkflowRunnerService: CoreWorkflowRunnerService,
     private readonly workflowVersionCoreSyncService: WorkflowVersionCoreSyncService,
+    private readonly inputAskWorkspaceService: InputAskWorkspaceService,
   ) {}
 
   async run({
@@ -145,21 +151,83 @@ export class WorkflowRunnerWorkspaceService {
         },
       );
 
-    await this.workflowRunWorkspaceService.updateWorkflowRunStepInfo({
-      stepId,
-      stepInfo: {
-        status: StepStatus.SUCCESS,
-        result: enrichedResponse,
-      },
-      workspaceId,
-      workflowRunId,
-    });
+    const hasCompletedStep =
+      await this.workflowRunWorkspaceService.updateStepInfoIfPending({
+        stepId,
+        stepInfo: {
+          status: StepStatus.SUCCESS,
+          result: enrichedResponse,
+        },
+        workspaceId,
+        workflowRunId,
+      });
+
+    if (!hasCompletedStep) {
+      throw new WorkflowVersionStepException(
+        'Form is no longer awaiting a submission',
+        WorkflowVersionStepExceptionCode.INVALID_REQUEST,
+        {
+          userFriendlyMessage: msg`This form is no longer awaiting a submission`,
+        },
+      );
+    }
+
+    // Recorded before the run is resumed: the resumed run can reach its end,
+    // and ending a run cancels whatever is still pending, so an Ask answered
+    // afterwards would read as canceled on a form somebody did answer. The
+    // submission is already accepted, so a failure here must not keep the run
+    // from resuming; the run's end records the answer from the step instead.
+    try {
+      await this.inputAskWorkspaceService.answerForFormStep({
+        workspaceId,
+        workflowRunId,
+        stepId,
+        response: enrichedResponse,
+      });
+    } catch (error) {
+      this.logger.warn(
+        `Could not record the answer to form step ${stepId} of workflow run ${workflowRunId} in workspace ${workspaceId}: ${error instanceof Error ? error.message : String(error)}`,
+      );
+    }
 
     await this.resume({
       workspaceId,
       workflowRunId,
       lastExecutedStepId: stepId,
     });
+  }
+
+  // The answer is already recorded in the step's conversation. The step stays
+  // PENDING, which keeps its run alive, until the resume job claims it.
+  async resumeAgentStepWithAnswer({
+    threadId,
+    workflowRunId,
+    workspaceId,
+  }: {
+    threadId: string;
+    workflowRunId: string;
+    workspaceId: string;
+  }): Promise<StepAwaitingAnswer> {
+    const stepAwaitingAnswer =
+      await this.workflowRunWorkspaceService.findStepAwaitingAnswer({
+        threadId,
+        workflowRunId,
+        workspaceId,
+      });
+
+    if (stepAwaitingAnswer.status === 'AWAITING_ANSWER') {
+      await this.messageQueueService.add<RunWorkflowJobData>(
+        RunWorkflowJob.name,
+        {
+          workspaceId,
+          workflowRunId,
+          stepToResume: { stepId: stepAwaitingAnswer.stepId, threadId },
+        },
+        buildRunWorkflowJobOptions(workflowRunId),
+      );
+    }
+
+    return stepAwaitingAnswer;
   }
 
   async stopWorkflowRun(workspaceId: string, workflowRunId: string) {
@@ -198,28 +266,24 @@ export class WorkflowRunnerWorkspaceService {
       const steps = workflowRun.state.flow.steps;
 
       if (workflowHasRunningSteps({ stepInfos, steps })) {
-        const stoppedIteratorStepInfos = setAllIteratorsStepInfosAsStopped({
-          stepInfos,
-          steps,
-        });
+        const isStopping =
+          await this.workflowRunWorkspaceService.markWorkflowRunAsStopping({
+            workflowRunId,
+            workspaceId,
+          });
 
-        const mergedStepInfos = {
-          ...stepInfos,
-          ...stoppedIteratorStepInfos,
-        };
+        if (isStopping) {
+          newStatus = WorkflowRunStatus.STOPPING;
+        } else {
+          // The run changed before the lock was taken, so report what it is now.
+          const currentWorkflowRun =
+            await this.workflowRunWorkspaceService.getWorkflowRunOrFail({
+              workflowRunId,
+              workspaceId,
+            });
 
-        await this.workflowRunWorkspaceService.updateWorkflowRun({
-          workflowRunId,
-          workspaceId,
-          partialUpdate: {
-            status: WorkflowRunStatus.STOPPING,
-            state: {
-              ...workflowRun.state,
-              stepInfos: mergedStepInfos,
-            },
-          },
-        });
-        newStatus = WorkflowRunStatus.STOPPING;
+          newStatus = currentWorkflowRun.status;
+        }
       } else {
         await this.workflowRunWorkspaceService.endWorkflowRun({
           workflowRunId,

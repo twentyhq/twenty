@@ -7,13 +7,13 @@ import { Injectable } from '@nestjs/common';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import {
-  AgentMessageEntity,
   AgentMessageRole,
   AgentMessageStatus,
 } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
+import { AgentMessageWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message.workspace-entity';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
-import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
+import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { UserWorkspaceAuthContextService } from 'src/engine/core-modules/user-workspace/services/user-workspace-auth-context.service';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
@@ -29,9 +29,9 @@ import {
 export class AgentChatActorService {
   constructor(
     @InjectAgentHistoryRepository('agentMessage')
-    private readonly messages: AgentHistoryRepository<AgentMessageEntity>,
+    private readonly messages: AgentHistoryRepository<AgentMessageWorkspaceEntity>,
     @InjectAgentHistoryRepository('agentChatThread')
-    private readonly threads: AgentHistoryRepository<AgentChatThreadEntity>,
+    private readonly threads: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
     private readonly chatService: AgentChatService,
     private readonly userAuthContextService: UserWorkspaceAuthContextService,
     private readonly permissionsService: PermissionsService,
@@ -74,13 +74,24 @@ export class AgentChatActorService {
     }
     // Only pre-attribution messages inherit the original participant. Never use
     // a worker's caller or the participant whose preceding turn drained the queue.
-    const userWorkspaceId =
-      message.senderUserWorkspaceId ??
-      (
-        await this.threads.findOneOrFail(workspaceId, {
-          where: { id: threadId },
+    let userWorkspaceId = message.senderUserWorkspaceId;
+    if (!isDefined(userWorkspaceId)) {
+      const thread = await this.threads.findOneOrFail(workspaceId, {
+        where: { id: threadId },
+      });
+      if (!isDefined(thread.workspaceMemberId)) {
+        throw new AiException(
+          'Message has no sender or workspace member owner',
+          AiExceptionCode.RUN_AS_WORKSPACE_MEMBER_NOT_FOUND,
+        );
+      }
+      userWorkspaceId = (
+        await this.userAuthContextService.resolveWorkspaceMember({
+          workspaceId,
+          workspaceMemberId: thread.workspaceMemberId,
         })
       ).userWorkspaceId;
+    }
     const sender: AgentChatSender = {
       userWorkspaceId,
       applicationId: message.senderApplicationId ?? null,
@@ -105,10 +116,10 @@ export class AgentChatActorService {
       this.chatService.getWritableThread({
         workspaceId,
         threadId,
-        userWorkspaceId: sender.userWorkspaceId,
+        workspaceMemberId: authContext.workspaceMemberId,
       }),
     );
-    if (isDefined(thread.deletedAt)) {
+    if (isDefined(thread.archivedAt)) {
       throw new AiException(
         'Thread is archived',
         AiExceptionCode.THREAD_NOT_FOUND,

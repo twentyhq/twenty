@@ -10,6 +10,7 @@ describe('evaluateWidgetVisibility', () => {
       context: {
         device: 'DESKTOP',
         selectedRecords: [],
+        featureFlags: {},
       },
     });
 
@@ -31,6 +32,7 @@ describe('evaluateWidgetVisibility', () => {
       context: {
         device: 'MOBILE',
         selectedRecords: [],
+        featureFlags: {},
       },
     });
 
@@ -52,6 +54,7 @@ describe('evaluateWidgetVisibility', () => {
       context: {
         device: 'DESKTOP',
         selectedRecords: [],
+        featureFlags: {},
       },
     });
 
@@ -73,6 +76,7 @@ describe('evaluateWidgetVisibility', () => {
       context: {
         device: 'DESKTOP',
         selectedRecords: [],
+        featureFlags: {},
       },
     });
 
@@ -94,6 +98,7 @@ describe('evaluateWidgetVisibility', () => {
       context: {
         device: 'MOBILE',
         selectedRecords: [],
+        featureFlags: {},
       },
     });
 
@@ -118,6 +123,7 @@ describe('evaluateWidgetVisibility', () => {
       context: {
         device: 'MOBILE',
         selectedRecords: [],
+        featureFlags: {},
       },
     });
 
@@ -127,6 +133,7 @@ describe('evaluateWidgetVisibility', () => {
       context: {
         device: 'DESKTOP',
         selectedRecords: [],
+        featureFlags: {},
       },
     });
 
@@ -146,6 +153,7 @@ describe('evaluateWidgetVisibility', () => {
         context: {
           device: 'DESKTOP',
           selectedRecords: [],
+          featureFlags: {},
         },
       });
     }).toThrow();
@@ -159,6 +167,7 @@ describe('evaluateWidgetVisibility', () => {
         context: {
           device: 'MOBILE',
           selectedRecords: [],
+          featureFlags: {},
         },
       });
 
@@ -172,6 +181,7 @@ describe('evaluateWidgetVisibility', () => {
         context: {
           device: 'DESKTOP',
           selectedRecords: [],
+          featureFlags: {},
         },
       });
 
@@ -185,6 +195,7 @@ describe('evaluateWidgetVisibility', () => {
         context: {
           device: 'DESKTOP',
           selectedRecords: [],
+          featureFlags: {},
         },
       });
 
@@ -206,6 +217,7 @@ describe('evaluateWidgetVisibility', () => {
         context: {
           device: 'DESKTOP',
           selectedRecords: [],
+          featureFlags: {},
         },
       });
 
@@ -229,6 +241,7 @@ describe('evaluateWidgetVisibility', () => {
         context: {
           device: 'DESKTOP',
           selectedRecords: [],
+          featureFlags: {},
         },
       });
 
@@ -252,6 +265,7 @@ describe('evaluateWidgetVisibility', () => {
         context: {
           device: 'DESKTOP',
           selectedRecords: [],
+          featureFlags: {},
         },
       });
 
