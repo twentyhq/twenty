@@ -30,7 +30,6 @@ import {
   type OperationType,
   validateOperationIsPermittedOrThrow,
 } from 'src/engine/twenty-orm/repository/permissions.utils';
-import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 import { type InheritedReadabilityChildRecords } from 'src/engine/core-modules/record-share/types/inherited-readability-child-records.type';
 import { type InheritedReadabilityChildrenParent } from 'src/engine/core-modules/record-share/types/inherited-readability-children-parent.type';
@@ -154,7 +153,6 @@ type WorkspaceRepositoryOptions<TEntity extends ObjectLiteral> = {
     objectMetadataId: string,
   ) => WorkspaceRepository<Entity>;
   isTransactional: boolean;
-  runInSavepoint: WorkspaceTransactionScope['runInSavepoint'] | null;
   runInNewTransaction: <T>(
     work: (transactionalRepository: WorkspaceRepository<TEntity>) => Promise<T>,
   ) => Promise<T>;
@@ -1458,13 +1456,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       return work(this);
     }
 
-    const { runInSavepoint } = this.options;
-
-    if (!isDefined(runInSavepoint)) {
-      return this.options.runInNewTransaction(work);
-    }
-
-    return runInSavepoint(() => work(this));
+    return this.runAtomically(work);
   }
 
   private async attachRelatedRecordsForValidationRules({

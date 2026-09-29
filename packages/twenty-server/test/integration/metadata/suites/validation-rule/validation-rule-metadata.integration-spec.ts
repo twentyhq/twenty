@@ -39,15 +39,15 @@ describe('Validation rule metadata', () => {
       `,
     });
 
-    const findObjectId = (nameSingular: string) => {
+    const findObjectId = (nameSingular: string): string => {
       const object = objects.find(
-        (candidate: { nameSingular: string }) =>
+        (candidate: { id: string; nameSingular: string }) =>
           candidate.nameSingular === nameSingular,
       );
 
       jestExpectToBeDefined(object);
 
-      return object.id as string;
+      return object.id;
     };
 
     companyObjectMetadataId = findObjectId('company');
