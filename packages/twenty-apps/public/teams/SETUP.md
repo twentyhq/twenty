@@ -16,12 +16,12 @@
    enable **Microsoft Graph access**. Without it, Graph answers transcript
    requests with `GraphAccessToTranscriptsDisabled`.
 
-| Permission                         | Purpose                                           |
-| ---------------------------------- | ------------------------------------------------- |
-| `User.Read`                        | Identify the connected Microsoft account          |
-| `Calendars.ReadBasic`              | Find the scheduled meetings the account organizes |
-| `OnlineMeetings.Read`              | Resolve a calendar event to its online meeting    |
-| `OnlineMeetingTranscript.Read.All` | List the transcripts of those meetings            |
+| Permission                         | Purpose                                                        |
+| ---------------------------------- | -------------------------------------------------------------- |
+| `User.Read`                        | Identify the connected Microsoft account                       |
+| `Calendars.ReadBasic`              | Find the scheduled meetings the account organizes              |
+| `OnlineMeetings.Read`              | Resolve a calendar event to its online meeting and its subject |
+| `OnlineMeetingTranscript.Read.All` | List and download the transcripts of those meetings            |
 
 The connection also requests `openid`, `profile`, `email`, and `offline_access`
 for account identity and refresh tokens. It uses the authorization code flow
@@ -56,7 +56,7 @@ Connecting an account does not import transcripts or register webhooks. The
 transcript release flag and workspace setting remain off. Connecting an account
 does not enable them.
 
-## Test the list action
+## Test the transcript actions
 
 1. For a development build, set `IS_TRANSCRIPT_IMPORT_ENABLED` to `true`, rebuild
    and deploy the app, then enable transcripts in the Microsoft Teams settings.
@@ -67,10 +67,17 @@ does not enable them.
    **List My Teams Transcripts** action to a workflow. The result carries one
    entry per transcript with the meeting subject, the Graph meeting ID, and the
    transcript ID.
+4. Ask the assistant to sync one of them, or add **Sync Teams Transcript** to
+   the workflow with that `meetingId` and `transcriptId`. The transcript appears
+   as a Call Recording named after the meeting subject.
 
-The action uses your own connection first and falls back to a workspace-shared
+Both actions use your own connection first and fall back to a workspace-shared
 one. Optional `startDateTime` and `endDateTime` select the meeting window,
 which defaults to the last 31 days; `nextPageUrl` continues a paginated result.
+
+Syncing the same transcript again updates the same Call Recording. A Call
+Recording deleted in Twenty stays deleted. If Microsoft is still processing the
+transcript, the recording is saved as Processing; sync it again later.
 
 References: [Microsoft authorization code flow](https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth2-auth-code-flow)
 and [transcript permissions](https://learn.microsoft.com/en-us/graph/api/onlinemeeting-list-transcripts?view=graph-rest-1.0),
@@ -150,6 +157,9 @@ workspace. Public apps use the monorepo CI workflows.
   connection and the workspace has no shared one.
 - `GraphAccessToTranscriptsDisabled`: enable Microsoft Graph transcript access
   in Teams meeting settings.
+- Call Recording without speaker names: the tenant disallows speaker
+  attribution in Teams meeting settings, so Microsoft only serves the transcript
+  without speakers.
 - Empty result: verify that transcription was started during the scheduled
   meeting time, give or take 15 minutes, Microsoft has finished processing it,
   and the connected account organized the meeting.
