@@ -1,6 +1,7 @@
 import { useLingui } from '@lingui/react/macro';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
+import { useAiChatSentMessageHandOff } from '@/ai/hooks/useAiChatSentMessageHandOff';
 import { useIsCurrentAiChatThreadReadOnly } from '@/ai/hooks/useIsCurrentAiChatThreadReadOnly';
 import { styled } from '@linaria/react';
 
@@ -161,6 +162,7 @@ export const AiChatMessage = ({
   onRetry,
 }: AiChatMessageProps) => {
   const isReadOnly = useIsCurrentAiChatThreadReadOnly();
+  const sentMessageHandOffRef = useAiChatSentMessageHandOff();
   const { t } = useLingui();
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const currentWorkspaceMembers = useAtomStateValue(
@@ -201,7 +203,10 @@ export const AiChatMessage = ({
         <StyledSender>{senderLabel}</StyledSender>
       )}
       <StyledMessageContainer isUser={isUser}>
-        <StyledMessageText isUser={isUser}>
+        <StyledMessageText
+          isUser={isUser}
+          ref={isUser ? sentMessageHandOffRef : undefined}
+        >
           <AiChatAssistantMessageRenderer
             isLastMessageStreaming={isLastMessageStreaming}
             messageParts={agentChatMessage.parts}

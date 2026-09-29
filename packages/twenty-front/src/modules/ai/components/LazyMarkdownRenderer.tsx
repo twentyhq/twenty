@@ -201,6 +201,12 @@ export const LazyMarkdownContent = ({
   );
 };
 
+export const LazyMarkdownRendererPreloader = () => (
+  <Suspense fallback={null}>
+    <MarkdownRenderer>{''}</MarkdownRenderer>
+  </Suspense>
+);
+
 type LazyMarkdownRendererProps = LazyMarkdownContentProps;
 
 export const LazyMarkdownRenderer = ({
