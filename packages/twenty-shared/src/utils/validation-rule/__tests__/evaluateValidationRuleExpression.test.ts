@@ -27,6 +27,16 @@ const FIELDS: ValidationRuleFieldDescriptor[] = [
     universalIdentifier: 'opportunity-close-date',
   },
   {
+    name: 'isQualified',
+    type: FieldMetadataType.BOOLEAN,
+    universalIdentifier: 'opportunity-is-qualified',
+  },
+  {
+    name: 'notes',
+    type: FieldMetadataType.RICH_TEXT,
+    universalIdentifier: 'opportunity-notes',
+  },
+  {
     name: 'company',
     type: FieldMetadataType.RELATION,
     universalIdentifier: 'opportunity-company',
@@ -41,6 +51,11 @@ const FIELDS: ValidationRuleFieldDescriptor[] = [
         name: 'address',
         type: FieldMetadataType.ADDRESS,
         universalIdentifier: 'company-address',
+      },
+      {
+        name: 'isPartner',
+        type: FieldMetadataType.BOOLEAN,
+        universalIdentifier: 'company-is-partner',
       },
     ],
   },
@@ -165,6 +180,38 @@ describe('evaluateValidationRuleExpression', () => {
     expect(evaluate('isEmpty(stage)', { stage: ' ' })).toEqual({
       status: 'failed',
     });
+  });
+
+  it('should read a Boolean field without a value as false', () => {
+    expect(evaluate('isQualified', { isQualified: null })).toEqual({
+      status: 'failed',
+    });
+    expect(evaluate('isQualified', {})).toEqual({ status: 'failed' });
+    expect(evaluate('isQualified', { isQualified: true })).toEqual({
+      status: 'passed',
+    });
+    expect(
+      evaluate('company.isPartner', { company: { isPartner: null } }),
+    ).toEqual({ status: 'failed' });
+  });
+
+  it('should treat a rich text as empty when its markdown is blank, whatever its blocknote holds', () => {
+    expect(
+      evaluate('isEmpty(notes)', { notes: { markdown: '', blocknote: '[]' } }),
+    ).toEqual({ status: 'passed' });
+    expect(
+      evaluate('isEmpty(notes)', {
+        notes: {
+          markdown: '\n',
+          blocknote: '[{"type":"paragraph","content":[]}]',
+        },
+      }),
+    ).toEqual({ status: 'passed' });
+    expect(
+      evaluate('isEmpty(notes)', {
+        notes: { markdown: 'Signed', blocknote: '[{"type":"paragraph"}]' },
+      }),
+    ).toEqual({ status: 'failed' });
   });
 
   it('should report an expression that does not return a boolean', () => {

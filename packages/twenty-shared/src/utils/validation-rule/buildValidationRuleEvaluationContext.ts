@@ -1,5 +1,6 @@
 import { VALIDATION_RULE_NOW_VARIABLE_NAME } from '@/constants/ValidationRuleNowVariableName';
 import { compositeTypeDefinitions } from '@/types/composite-types/composite-type-definitions';
+import { FieldMetadataType } from '@/types/FieldMetadataType';
 import { type ValidationRuleFieldDescriptor } from '@/types/ValidationRuleFieldDescriptor';
 import { isPlainObject } from '@/utils/typeguard/isPlainObject';
 import { isDefined } from '@/utils/validation/isDefined';
@@ -10,9 +11,12 @@ import {
 
 type EvaluationContainer = Record<string, unknown>;
 
-const normalizeLeafValue = (value: unknown): unknown => {
-  if (value === undefined) {
-    return null;
+const normalizeLeafValue = (
+  value: unknown,
+  field: ValidationRuleFieldDescriptor | undefined,
+): unknown => {
+  if (!isDefined(value)) {
+    return field?.type === FieldMetadataType.BOOLEAN ? false : null;
   }
 
   return value instanceof Date ? value.toISOString() : value;
@@ -103,7 +107,7 @@ export const buildValidationRuleEvaluationContext = ({
     const rootField = fieldByName.get(rootSegment);
 
     if (!(rootSegment in context)) {
-      const rootValue = normalizeLeafValue(record[rootSegment]);
+      const rootValue = normalizeLeafValue(record[rootSegment], rootField);
 
       registerCompositeValue(rootValue, rootField);
       context[rootSegment] = rootValue;
@@ -117,7 +121,14 @@ export const buildValidationRuleEvaluationContext = ({
       }
 
       if (index === segments.length - 1) {
-        container[segment] = normalizeLeafValue(container[segment]);
+        container[segment] = normalizeLeafValue(
+          container[segment],
+          index === 0
+            ? rootField
+            : rootField?.relationTargetFields?.find(
+                (field) => field.name === segment,
+              ),
+        );
         break;
       }
 

@@ -1,4 +1,6 @@
 import { VALIDATION_RULE_EMPTINESS_SUBFIELDS_BY_COMPOSITE_TYPE } from '@/constants/ValidationRuleEmptinessSubfieldsByCompositeType';
+import { FieldMetadataType } from '@/types/FieldMetadataType';
+import { isNonEmptyString } from '@/utils/typeguard/isNonEmptyString';
 import { isPlainObject } from '@/utils/typeguard/isPlainObject';
 import { isDefined } from '@/utils/validation/isDefined';
 import {
@@ -24,6 +26,12 @@ export const isValidationRuleValueEmpty = (value: unknown): boolean => {
   }
 
   const compositeFieldType = validationRuleCompositeFieldTypeByValue.get(value);
+
+  if (compositeFieldType === FieldMetadataType.RICH_TEXT) {
+    return (
+      !isNonEmptyString(value.markdown) || value.markdown.trim().length === 0
+    );
+  }
 
   const emptinessSubfields = isDefined(compositeFieldType)
     ? VALIDATION_RULE_EMPTINESS_SUBFIELDS_BY_COMPOSITE_TYPE[compositeFieldType]

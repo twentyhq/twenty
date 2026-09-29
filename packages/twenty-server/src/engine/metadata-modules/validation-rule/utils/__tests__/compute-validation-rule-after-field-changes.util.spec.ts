@@ -158,6 +158,17 @@ describe('computeValidationRuleAfterFieldChanges', () => {
     ).toEqual({ ...validationRule, isActive: false });
   });
 
+  it('should keep the condition and disable the rule when a field it reads is renamed to a reserved word', () => {
+    for (const reservedName of ['now', 'isDefined', 'true']) {
+      expect(
+        computeValidationRuleAfterFieldChanges({
+          validationRule: RULE,
+          fieldChanges: [rename(STAGE_UNIVERSAL_IDENTIFIER, reservedName)],
+        }),
+      ).toEqual({ ...RULE, isActive: false });
+    }
+  });
+
   it('should move errors shown on the field to the record level without disabling a rule that does not read it', () => {
     expect(
       computeValidationRuleAfterFieldChanges({

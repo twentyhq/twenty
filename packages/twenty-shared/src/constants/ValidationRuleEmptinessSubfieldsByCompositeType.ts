@@ -8,5 +8,4 @@ export const VALIDATION_RULE_EMPTINESS_SUBFIELDS_BY_COMPOSITE_TYPE: Partial<
   [FieldMetadataType.LINKS]: ['primaryLinkUrl'],
   [FieldMetadataType.EMAILS]: ['primaryEmail'],
   [FieldMetadataType.PHONES]: ['primaryPhoneNumber'],
-  [FieldMetadataType.RICH_TEXT]: ['markdown', 'blocknote'],
 };

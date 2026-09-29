@@ -29,6 +29,11 @@ const OPPORTUNITY_FIELDS: ValidationRuleFieldDescriptor[] = [
     universalIdentifier: 'opportunity-amount',
   },
   {
+    name: 'isQualified',
+    type: FieldMetadataType.BOOLEAN,
+    universalIdentifier: 'opportunity-is-qualified',
+  },
+  {
     name: 'company',
     type: FieldMetadataType.RELATION,
     universalIdentifier: 'opportunity-company',
@@ -137,6 +142,11 @@ describe('compileValidationRuleExpression', () => {
   it('should reject the conditional operator, which can return a value that is not true or false', () => {
     expect(compile('isDefined(stage) ? stage : false').isValid).toBe(false);
     expect(compile('stage != "WON" or isDefined(amount)').isValid).toBe(true);
+  });
+
+  it('should accept a Boolean field on its own and still reject other fields on their own', () => {
+    expect(compile('isQualified').isValid).toBe(true);
+    expect(compile('stage').isValid).toBe(false);
   });
 
   it('should keep array literals', () => {
