@@ -2,7 +2,7 @@ import { useLingui } from '@lingui/react/macro';
 import { useAtomValue } from 'jotai';
 import { useState } from 'react';
 import { isNonEmptyArray } from 'twenty-shared/utils';
-import { Dropdown, LightIconButton } from 'twenty-ui/components';
+import { Dropdown } from 'twenty-ui/components';
 import { IconMessage, IconPlus } from 'twenty-ui/icon';
 
 import { useChatThreadRecordAttachmentActions } from '@/ai/hooks/useChatThreadRecordAttachmentActions';
@@ -10,6 +10,7 @@ import { useChatThreadsForRecord } from '@/ai/hooks/useChatThreadsForRecord';
 import { agentChatEditableThreadsSelector } from '@/ai/states/selectors/agentChatEditableThreadsSelector';
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { type FlatAgentChatThread } from '@/metadata-store/types/FlatAgentChatThread';
+import { WidgetCardHeaderActionButton } from '@/page-layout/widgets/widget-card/components/WidgetCardHeaderActionButton';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
@@ -79,19 +80,8 @@ export const WidgetActionChatThreadAttach = ({
         }
       }}
     >
-      {/* The same button WidgetCardHeaderActionButton renders, built here
-          because the trigger has to pass its own props to it. */}
       <Dropdown.Trigger
-        render={
-          <LightIconButton
-            aria-label={label}
-            title={label}
-            emphasis="subtle"
-            size="sm"
-          >
-            <IconPlus />
-          </LightIconButton>
-        }
+        render={<WidgetCardHeaderActionButton Icon={IconPlus} label={label} />}
       />
       <DropdownContent
         align="end"

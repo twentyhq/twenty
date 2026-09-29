@@ -47,9 +47,8 @@ export const Default: Story = {
 };
 
 export const Documentation: Story = {
-  ...Default,
+  decorators: Default.decorators,
   args: { defaultOpen: false },
-  play: undefined,
 };
 
 export const DocumentationInteractions: Story = {

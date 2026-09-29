@@ -51,6 +51,7 @@ const buildService = () => {
     {
       getReadableThreadIds: jest.fn().mockResolvedValue(READABLE_THREAD_IDS),
     } as never,
+    {} as never,
   );
 
   return { service, rankedThreadsQuery, threadRepository };

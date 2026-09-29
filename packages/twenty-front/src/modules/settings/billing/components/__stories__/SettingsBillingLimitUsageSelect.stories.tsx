@@ -74,7 +74,7 @@ export const NavigateAndSelect: Story = {
     await userEvent.click(within(popup).getByRole('button', { name: 'AI' }));
     expect(
       await within(popup).findByRole('button', {
-        name: 'AI Chat',
+        name: 'Chats',
         pressed: true,
       }),
     ).toBeVisible();
