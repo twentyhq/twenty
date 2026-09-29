@@ -23,7 +23,6 @@ export class AgentChatThreadWorkspaceEntity extends BaseWorkspaceEntity {
 
   workspaceMemberId: string | null;
   workflowRunId: string | null;
-  workflowStepId: string | null;
   title: string | null;
   totalInputTokens: number;
   totalOutputTokens: number;

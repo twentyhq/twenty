@@ -24,7 +24,6 @@ const RUN_ON_WORKSPACE_ARGS = {
 
 const FIELD_UNIVERSAL_IDENTIFIERS = [
   STANDARD_OBJECTS.agentChatThread.fields.workflowRun.universalIdentifier,
-  STANDARD_OBJECTS.agentChatThread.fields.workflowStepId.universalIdentifier,
   STANDARD_OBJECTS.workflowRun.fields.agentChatThreads.universalIdentifier,
 ];
 
