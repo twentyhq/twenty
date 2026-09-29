@@ -26,7 +26,6 @@ import {
   WorkflowRunException,
   WorkflowRunExceptionCode,
 } from 'src/modules/workflow/workflow-runner/exceptions/workflow-run.exception';
-import { findStepIdByThreadId } from 'src/modules/workflow/workflow-runner/utils/find-step-id-by-thread-id.util';
 
 export type StepAwaitingAnswer =
   | { status: 'AWAITING_ANSWER'; stepId: string }
@@ -463,8 +462,13 @@ export class WorkflowRunWorkspaceService {
       workspaceId,
     });
 
+    // A run conversation names no step: it belongs to the step whose current
+    // execution recorded it, so one replaced by a retry or a later loop
+    // iteration belongs to no step anymore.
     const stepInfos = workflowRun.state?.stepInfos ?? {};
-    const stepId = findStepIdByThreadId({ stepInfos, threadId });
+    const stepId = Object.keys(stepInfos).find(
+      (candidateStepId) => stepInfos[candidateStepId]?.threadId === threadId,
+    );
     const currentStepInfo = isDefined(stepId) ? stepInfos[stepId] : undefined;
 
     if (
