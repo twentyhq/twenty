@@ -323,73 +323,6 @@ export const STANDARD_OBJECTS = {
       }),
     },
   },
-  inputAsk: {
-    universalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.inputAsk,
-    fields: STANDARD_OBJECT_FIELDS.inputAsk,
-    indexes: {
-      assigneeStatusIndex: {
-        universalIdentifier: '255cba21-0107-4c31-b497-9c4081114da8',
-      },
-      workflowRunStepUniqueIndex: {
-        universalIdentifier: 'c6c2c67e-2f2e-4a1e-9c0b-1b3d5e7a9f41',
-      },
-      workflowRunStatusIndex: {
-        universalIdentifier: '77615052-0e81-4210-b259-37a9e939bb41',
-      },
-      threadToolCallUniqueIndex: {
-        universalIdentifier: '6a0ac44d-84f3-4bfa-8939-ce3d82f0d043',
-      },
-    },
-    views: {
-      allInputAsks: buildStandardObjectIndexView({
-        objectUniversalIdentifier:
-          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.inputAsk,
-        fields: STANDARD_OBJECT_FIELDS.inputAsk,
-        viewFieldNames: ['name', 'status', 'assignee', 'createdAt'],
-      }),
-      waitingOnMe: {
-        universalIdentifier: '6596299e-f656-42d1-8927-efdd3d2285be',
-        viewFields: {
-          name: {
-            universalIdentifier: 'f1ae6a65-159f-4e87-a99d-04d39598c74a',
-          },
-          workflowRun: {
-            universalIdentifier: '52e80140-79f9-43b6-b051-ea2c47587392',
-          },
-          thread: {
-            universalIdentifier: 'c81b54d7-ffaf-4222-8beb-4479e662426e',
-          },
-          createdAt: {
-            universalIdentifier: 'a5b4b662-28bf-46a3-a89a-6f555280c6bb',
-          },
-        },
-        viewFilters: {
-          assigneeIsMe: {
-            universalIdentifier: '07bdd1b3-f583-4b08-89a6-2a0c2f031efb',
-          },
-          statusIsPending: {
-            universalIdentifier: '9e2aa248-8d6f-4ba1-b518-2284610be939',
-          },
-        },
-      },
-      inputAskRecordPageFields: buildStandardObjectRecordPageFieldsView({
-        objectUniversalIdentifier:
-          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.inputAsk,
-        fields: STANDARD_OBJECT_FIELDS.inputAsk,
-        viewFieldNames: [
-          'name',
-          'status',
-          'assignee',
-          'answeredAt',
-          'workflowRun',
-          'thread',
-        ],
-        viewFieldGroupNames: {
-          general: 'General',
-        },
-      }),
-    },
-  },
   company: {
     universalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company,
     fields: STANDARD_OBJECT_FIELDS.company,
@@ -1613,6 +1546,73 @@ export const STANDARD_OBJECTS = {
       emailAddressTopicUniqueIndex: {
         universalIdentifier: 'a6c1f4dc-d925-49f9-8205-3e7f95545966',
       },
+    },
+  },
+  inputAsk: {
+    universalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.inputAsk,
+    fields: STANDARD_OBJECT_FIELDS.inputAsk,
+    indexes: {
+      assigneeStatusIndex: {
+        universalIdentifier: '255cba21-0107-4c31-b497-9c4081114da8',
+      },
+      workflowRunStepUniqueIndex: {
+        universalIdentifier: 'c6c2c67e-2f2e-4a1e-9c0b-1b3d5e7a9f41',
+      },
+      workflowRunStatusIndex: {
+        universalIdentifier: '77615052-0e81-4210-b259-37a9e939bb41',
+      },
+      threadToolCallUniqueIndex: {
+        universalIdentifier: '6a0ac44d-84f3-4bfa-8939-ce3d82f0d043',
+      },
+    },
+    views: {
+      allInputAsks: buildStandardObjectIndexView({
+        objectUniversalIdentifier:
+          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.inputAsk,
+        fields: STANDARD_OBJECT_FIELDS.inputAsk,
+        viewFieldNames: ['name', 'status', 'assignee', 'createdAt'],
+      }),
+      waitingOnMe: {
+        universalIdentifier: '6596299e-f656-42d1-8927-efdd3d2285be',
+        viewFields: {
+          name: {
+            universalIdentifier: 'f1ae6a65-159f-4e87-a99d-04d39598c74a',
+          },
+          workflowRun: {
+            universalIdentifier: '52e80140-79f9-43b6-b051-ea2c47587392',
+          },
+          thread: {
+            universalIdentifier: 'c81b54d7-ffaf-4222-8beb-4479e662426e',
+          },
+          createdAt: {
+            universalIdentifier: 'a5b4b662-28bf-46a3-a89a-6f555280c6bb',
+          },
+        },
+        viewFilters: {
+          assigneeIsMe: {
+            universalIdentifier: '07bdd1b3-f583-4b08-89a6-2a0c2f031efb',
+          },
+          statusIsPending: {
+            universalIdentifier: '9e2aa248-8d6f-4ba1-b518-2284610be939',
+          },
+        },
+      },
+      inputAskRecordPageFields: buildStandardObjectRecordPageFieldsView({
+        objectUniversalIdentifier:
+          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.inputAsk,
+        fields: STANDARD_OBJECT_FIELDS.inputAsk,
+        viewFieldNames: [
+          'name',
+          'status',
+          'assignee',
+          'answeredAt',
+          'workflowRun',
+          'thread',
+        ],
+        viewFieldGroupNames: {
+          general: 'General',
+        },
+      }),
     },
   },
 } as const satisfies Record<
