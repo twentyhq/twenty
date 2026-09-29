@@ -83,7 +83,7 @@ export const generateFieldFilterZodSchema = (
 
       return z
         .object({
-          in: z
+          containsAny: z
             .array(multiSelectEnum)
             .optional()
             .describe('Contains any of these values'),
