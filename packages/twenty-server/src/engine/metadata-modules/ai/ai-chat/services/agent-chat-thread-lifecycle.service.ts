@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
-import { In, IsNull } from 'typeorm';
+import { In, IsNull, Not } from 'typeorm';
 
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
@@ -57,6 +57,32 @@ export class AgentChatThreadLifecycleService {
           }`,
         ),
       );
+  }
+
+  // Awaited by the archive paths so the stream is stopped before they respond
+  async stopArchivedThreads({
+    workspaceId,
+    threadIds,
+  }: {
+    workspaceId: string;
+    threadIds: string[];
+  }): Promise<void> {
+    if (!isNonEmptyArray(threadIds)) {
+      return;
+    }
+
+    const archivedThreads = await this.threadRepository.find(workspaceId, {
+      where: { id: In(threadIds), archivedAt: Not(IsNull()) },
+    });
+
+    for (const archivedThread of archivedThreads) {
+      await this.stopStreamIfAny({ workspaceId, thread: archivedThread });
+
+      this.releaseThreadSandboxBestEffort({
+        workspaceId,
+        threadId: archivedThread.id,
+      });
+    }
   }
 
   // The owner field is not writable through the record API. Owned and

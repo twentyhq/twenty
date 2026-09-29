@@ -476,11 +476,18 @@ export class AgentChatResolver {
     @AuthWorkspaceMemberId() workspaceMemberId: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<AgentChatThreadWorkspaceEntity> {
-    return this.agentChatService.archiveThread({
+    const thread = await this.agentChatService.archiveThread({
       threadId: id,
       workspaceMemberId,
       workspaceId,
     });
+
+    await this.threadLifecycleService.stopArchivedThreads({
+      workspaceId,
+      threadIds: [id],
+    });
+
+    return thread;
   }
 
   @Mutation(() => AgentChatThreadDTO)
