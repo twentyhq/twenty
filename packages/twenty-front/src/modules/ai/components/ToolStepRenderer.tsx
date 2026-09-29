@@ -3,7 +3,7 @@ import { useState } from 'react';
 
 import { JsonTree } from 'twenty-ui/components';
 import { IconChevronDown, IconChevronUp } from 'twenty-ui/icon';
-import { AnimatedExpandableContainer } from 'twenty-ui/primitives/layout';
+import { Collapsible } from 'twenty-ui/primitives/layout';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 import { CodeExecutionDisplay } from '@/ai/components/CodeExecutionDisplay';
@@ -219,17 +219,14 @@ export const ToolStepRenderer = ({
           </StyledRightContent>
         </StyledToggleButton>
         {isCodeInterpreter && (
-          <AnimatedExpandableContainer
-            isExpanded={isExpanded}
-            mode="fit-content"
-          >
+          <Collapsible isExpanded={isExpanded}>
             <CodeExecutionDisplay
               code={codeInput?.code ?? ''}
               stdout=""
               stderr=""
               isRunning={isStreaming}
             />
-          </AnimatedExpandableContainer>
+          </Collapsible>
         )}
       </StyledContainer>
     );
@@ -332,7 +329,7 @@ export const ToolStepRenderer = ({
       </StyledToggleButton>
 
       {isExpandable && (
-        <AnimatedExpandableContainer isExpanded={isExpanded} mode="fit-content">
+        <Collapsible isExpanded={isExpanded}>
           {isCodeInterpreter ? (
             renderExpandedContent()
           ) : (
@@ -340,7 +337,7 @@ export const ToolStepRenderer = ({
               {renderExpandedContent()}
             </StyledContentContainer>
           )}
-        </AnimatedExpandableContainer>
+        </Collapsible>
       )}
     </StyledContainer>
   );

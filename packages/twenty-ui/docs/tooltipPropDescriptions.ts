@@ -10,6 +10,8 @@ export const TOOLTIP_PROP_DESCRIPTIONS = {
   sideOffset: 'Distance from the trigger in pixels. Defaults to 10.',
   alignOffset: 'Offset along the alignment axis in pixels.',
   arrow: 'Displays an arrow pointing to the trigger. Defaults to false.',
+  withExitAnimation:
+    'Fades and slides the popup out when it closes instead of hiding it at once.',
   maxWidth: 'Maximum popup width. Defaults to 300 pixels.',
   positionMethod: 'CSS positioning method for the popup.',
   open: 'Controlled visibility of the tooltip.',

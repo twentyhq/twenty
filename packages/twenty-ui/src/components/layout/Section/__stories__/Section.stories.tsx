@@ -34,8 +34,8 @@ export const WithDescription: Story = {
 };
 
 export const Documentation: Story = {
-  ...WithDescription,
-  play: undefined,
+  decorators: WithDescription.decorators,
+  args: WithDescription.args,
   render: (args) => (
     <Section.Root>
       <Section.Header {...args} />

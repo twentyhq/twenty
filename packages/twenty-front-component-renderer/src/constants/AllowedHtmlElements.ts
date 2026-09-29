@@ -286,13 +286,7 @@ export const ALLOWED_HTML_ELEMENTS: AllowedHtmlElement[] = [
   { tag: 'html-var', name: 'HtmlVar', properties: {} },
   { tag: 'html-dfn', name: 'HtmlDfn', properties: {} },
   { tag: 'html-bdi', name: 'HtmlBdi', properties: {} },
-  {
-    tag: 'html-bdo',
-    name: 'HtmlBdo',
-    properties: {
-      dir: { type: 'string', optional: true },
-    },
-  },
+  { tag: 'html-bdo', name: 'HtmlBdo', properties: {} },
   {
     tag: 'html-data',
     name: 'HtmlData',

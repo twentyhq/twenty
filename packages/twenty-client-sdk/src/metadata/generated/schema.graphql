@@ -1176,6 +1176,7 @@ enum WidgetType {
   MESSAGE_CAMPAIGN_BODY
   MESSAGE_CAMPAIGN_DETAILS
   FORM_FIELD
+  CHAT_THREADS
 }
 
 union PageLayoutWidgetPosition = PageLayoutWidgetGridPosition | PageLayoutWidgetVerticalListPosition | PageLayoutWidgetCanvasPosition
@@ -1209,7 +1210,7 @@ type PageLayoutWidgetCanvasPosition {
   layoutMode: PageLayoutTabLayoutMode!
 }
 
-union WidgetConfiguration = AggregateChartConfiguration | StandaloneRichTextConfiguration | PieChartConfiguration | LineChartConfiguration | IframeConfiguration | BarChartConfiguration | CalendarConfiguration | FrontComponentConfiguration | EmailsConfiguration | EmailThreadConfiguration | CallRecordingSummaryConfiguration | CallRecordingTranscriptConfiguration | MessageCampaignBodyConfiguration | MessageCampaignDetailsConfiguration | FieldConfiguration | FieldRichTextConfiguration | FieldsConfiguration | FormFieldConfiguration | FilesConfiguration | NotesConfiguration | TasksConfiguration | TimelineConfiguration | ViewConfiguration | RecordTableConfiguration | WorkflowConfiguration | WorkflowRunConfiguration | WorkflowVersionConfiguration
+union WidgetConfiguration = AggregateChartConfiguration | StandaloneRichTextConfiguration | PieChartConfiguration | LineChartConfiguration | IframeConfiguration | BarChartConfiguration | CalendarConfiguration | FrontComponentConfiguration | EmailsConfiguration | EmailThreadConfiguration | CallRecordingSummaryConfiguration | CallRecordingTranscriptConfiguration | ChatThreadsConfiguration | MessageCampaignBodyConfiguration | MessageCampaignDetailsConfiguration | FieldConfiguration | FieldRichTextConfiguration | FieldsConfiguration | FormFieldConfiguration | FilesConfiguration | NotesConfiguration | TasksConfiguration | TimelineConfiguration | ViewConfiguration | RecordTableConfiguration | WorkflowConfiguration | WorkflowRunConfiguration | WorkflowVersionConfiguration
 
 type AggregateChartConfiguration {
   configurationType: WidgetConfigurationType!
@@ -1255,6 +1256,7 @@ enum WidgetConfigurationType {
   MESSAGE_CAMPAIGN_BODY
   MESSAGE_CAMPAIGN_DETAILS
   FORM_FIELD
+  CHAT_THREADS
 }
 
 """Format used to display the chart value"""
@@ -1427,6 +1429,10 @@ type CallRecordingSummaryConfiguration {
 }
 
 type CallRecordingTranscriptConfiguration {
+  configurationType: WidgetConfigurationType!
+}
+
+type ChatThreadsConfiguration {
   configurationType: WidgetConfigurationType!
 }
 
@@ -2072,6 +2078,8 @@ enum FeatureFlagKey {
   IS_EXECUTION_QUOTA_ENABLED
   IS_RECORD_CREATION_FORM_ENABLED
   IS_LOGS_SETTINGS_SECTION_ENABLED
+  IS_CONVERSATIONS_TAB_ENABLED
+  IS_VALIDATION_RULES_ENABLED
 }
 
 type WorkspaceUrls {
@@ -3699,6 +3707,18 @@ type TimelineActivityType {
   updatedAt: DateTime!
 }
 
+type ValidationRule {
+  id: UUID!
+  objectMetadataId: UUID!
+  errorFieldMetadataId: UUID
+  name: String!
+  description: String
+  icon: String
+  expression: String!
+  message: String!
+  isActive: Boolean!
+}
+
 type PermissionFlag {
   id: UUID!
   universalIdentifier: UUID!
@@ -3751,6 +3771,7 @@ enum AllMetadataName {
   searchFieldMetadata
   timelineActivityType
   settingsMenuItem
+  validationRule
   workflow
   workflowVersion
 }
@@ -3907,11 +3928,11 @@ type Query {
   chatThread(id: UUID!): AgentChatThread!
   chatMessages(threadId: UUID!): [AgentMessage!]!
   chatStreamCatchupChunks(threadId: UUID!): ChatStreamCatchupChunks!
-  chatThreadsForRecord(objectNameSingular: String!, recordId: UUID!, limit: Int! = 20, offset: Int! = 0): [AgentChatThread!]!
   getAiSystemPromptPreview: AiSystemPromptPreview!
   skills: [Skill!]!
   skill(id: UUID!): Skill
   agentTurns(agentId: UUID!): [AgentTurn!]!
+  validationRules(objectMetadataId: UUID!): [ValidationRule!]!
   timelineActivityTypes: [TimelineActivityType!]!
   metadataTranslations(input: MetadataTranslationsInput!): [MetadataTranslation!]!
   recordPermissions(targets: [RecordPermissionsTargetInput!]!): [RecordPermissionsResult!]!
@@ -4265,8 +4286,6 @@ type Mutation {
   enqueueJob(input: EnqueueJobInput!): EnqueueJobResult! @deprecated(reason: "Use enqueueJobs instead.")
   enqueueJobs(input: EnqueueJobsInput!): EnqueueJobsResult!
   reportAppConnectionAuthFailure(input: ReportAppConnectionAuthFailureInput!): Boolean!
-  attachChatThreadToRecord(threadId: UUID!, objectNameSingular: String!, recordId: UUID!): Boolean!
-  detachChatThreadFromRecord(threadId: UUID!, objectNameSingular: String!, recordId: UUID!): Boolean!
   createChatThread: AgentChatThread!
   sendChatMessage(threadId: UUID!, text: String!, messageId: UUID!, browsingContext: JSON, modelId: String, fileAttachments: [FileAttachmentInput!]): SendChatMessageResult!
   retryChatMessage(threadId: UUID!, modelId: String): SendChatMessageResult!
@@ -4285,6 +4304,9 @@ type Mutation {
   deactivateSkill(id: UUID!): Skill!
   evaluateAgentTurn(turnId: UUID!): AgentTurnEvaluation!
   runEvaluationInput(agentId: UUID!, input: String!): AgentTurn!
+  createValidationRule(input: CreateValidationRuleInput!): ValidationRule!
+  updateValidationRule(input: UpdateValidationRuleInput!): ValidationRule!
+  deleteValidationRule(id: UUID!): ValidationRule!
   updateTimelineActivityType(input: UpdateTimelineActivityTypeInput!): TimelineActivityType!
   resetTimelineActivityType(id: UUID!): TimelineActivityType!
   getAuthorizationUrlForSSO(input: GetAuthorizationUrlForSSOInput!): GetAuthorizationUrlForSSO!
@@ -5575,6 +5597,32 @@ input UpdateSkillInput {
   icon: String
   description: String
   content: String
+  isActive: Boolean
+}
+
+input CreateValidationRuleInput {
+  objectMetadataId: UUID!
+  errorFieldMetadataId: UUID
+  name: String!
+  description: String
+  icon: String
+  expression: String!
+  message: String!
+  isActive: Boolean
+}
+
+input UpdateValidationRuleInput {
+  id: UUID!
+  update: UpdateValidationRuleInputUpdates!
+}
+
+input UpdateValidationRuleInputUpdates {
+  errorFieldMetadataId: UUID
+  name: String
+  description: String
+  icon: String
+  expression: String
+  message: String
   isActive: Boolean
 }
 

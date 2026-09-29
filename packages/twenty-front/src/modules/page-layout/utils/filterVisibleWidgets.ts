@@ -1,6 +1,7 @@
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
 import { type WidgetVisibilityContext } from '@/page-layout/types/WidgetVisibilityContext';
 import { evaluateWidgetVisibility } from '@/page-layout/utils/evaluateWidgetVisibility';
+import { isWidgetEnabledByFeatureFlags } from '@/page-layout/utils/isWidgetEnabledByFeatureFlags';
 import { isFieldWidget } from '@/page-layout/widgets/field/utils/isFieldWidget';
 
 type FilterVisibleWidgetsParams = {
@@ -18,6 +19,15 @@ export const filterVisibleWidgets = ({
     context.hiddenFieldMetadataIdsOrNames ?? [];
 
   return widgets.filter((widget) => {
+    if (
+      !isWidgetEnabledByFeatureFlags({
+        widget,
+        featureFlags: context.featureFlags,
+      })
+    ) {
+      return false;
+    }
+
     if (
       isFieldWidget(widget) &&
       hiddenFieldMetadataIdsOrNames.includes(
