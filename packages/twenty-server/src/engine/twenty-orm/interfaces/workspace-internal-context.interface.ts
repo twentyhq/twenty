@@ -20,7 +20,7 @@ export interface WorkspaceInternalContext {
   flatIndexMaps: FlatEntityMaps<FlatIndexMetadata>;
   flatRowLevelPermissionPredicateMaps: FlatRowLevelPermissionPredicateMaps;
   flatRowLevelPermissionPredicateGroupMaps: FlatRowLevelPermissionPredicateGroupMaps;
-  flatValidationRuleMaps: FlatValidationRuleMaps;
+  flatValidationRuleMaps?: FlatValidationRuleMaps;
   objectIdByNameSingular: Record<string, string>;
   featureFlagsMap: Record<FeatureFlagKey, boolean>;
   billingEntitlements: BillingEntitlements;

@@ -66,7 +66,7 @@ const compute = (
   });
 
 describe('computeDraftValidationRuleViolations', () => {
-  it('should report the rule and its field when the draft violates it', () => {
+  it('should report the rule when the draft violates it', () => {
     expect(
       compute({
         stage: 'CUSTOMER',
@@ -76,7 +76,6 @@ describe('computeDraftValidationRuleViolations', () => {
       {
         ruleId: 'amount-rule',
         message: 'A customer deal needs an amount',
-        fieldMetadataId: 'amount-field',
       },
     ]);
   });

@@ -21,7 +21,7 @@ import { buildValidationRuleFieldDescriptors } from '@/validation-rules/utils/bu
 import { computeDraftValidationRuleViolations } from '@/validation-rules/utils/computeDraftValidationRuleViolations';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { Key } from 'ts-key-enum';
@@ -38,7 +38,7 @@ const StyledContainer = styled.div`
   height: 100%;
 `;
 
-const StyledRecordLevelError = styled.div`
+const StyledValidationRuleError = styled.div`
   background: ${themeCssVariables.background.danger};
   border-radius: ${themeCssVariables.border.radius.sm};
   color: ${themeCssVariables.font.color.danger};
@@ -104,8 +104,6 @@ const SidePanelRecordCreationForm = ({
 
   const draftRecord = recordCreationFormDraft ?? initialDraftRecord;
 
-  const contentRef = useRef<HTMLDivElement>(null);
-
   const { recordFormFieldMetadataItems } = useRecordFormFieldMetadataItems({
     objectMetadataItem,
   });
@@ -149,38 +147,19 @@ const SidePanelRecordCreationForm = ({
     updateDraftRecord(gqlFieldName, null);
   };
 
-  const errorMessageByFieldMetadataId = Object.fromEntries(
-    validationRuleViolations
-      .filter((violation) => isDefined(violation.fieldMetadataId))
-      .map((violation) => [violation.fieldMetadataId, violation.message]),
-  );
-
-  const recordLevelViolations = validationRuleViolations.filter(
-    (violation) =>
-      !isDefined(violation.fieldMetadataId) ||
-      !recordFormFieldMetadataItems.some(
-        (fieldMetadataItem) =>
-          fieldMetadataItem.id === violation.fieldMetadataId,
-      ),
-  );
-
   const handleCreateClick = async () => {
     if (isSubmitting) {
       return;
     }
 
-    const draftViolations = computeViolations(draftRecord);
+    if (validationRules.length > 0) {
+      const draftViolations = computeViolations(draftRecord);
 
-    setValidationRuleViolations(draftViolations);
+      setValidationRuleViolations(draftViolations);
 
-    if (draftViolations.length > 0) {
-      requestAnimationFrame(() =>
-        contentRef.current
-          ?.querySelector('[role="alert"]')
-          ?.scrollIntoView({ block: 'center', behavior: 'smooth' }),
-      );
-
-      return;
+      if (draftViolations.length > 0) {
+        return;
+      }
     }
 
     setIsSubmitting(true);
@@ -221,11 +200,11 @@ const SidePanelRecordCreationForm = ({
           />
         }
       />
-      <StyledContent ref={contentRef}>
-        {recordLevelViolations.map((violation) => (
-          <StyledRecordLevelError key={violation.ruleId} role="alert">
+      <StyledContent>
+        {validationRuleViolations.map((violation) => (
+          <StyledValidationRuleError key={violation.ruleId} role="alert">
             {violation.message}
-          </StyledRecordLevelError>
+          </StyledValidationRuleError>
         ))}
         <RecordFormFieldInputs
           objectMetadataItem={objectMetadataItem}
@@ -233,7 +212,6 @@ const SidePanelRecordCreationForm = ({
           draftRecord={draftRecord}
           onFieldValueChange={handleFieldValueChange}
           onFieldValueClear={handleFieldValueClear}
-          errorMessageByFieldMetadataId={errorMessageByFieldMetadataId}
         />
       </StyledContent>
       <SidePanelFooter

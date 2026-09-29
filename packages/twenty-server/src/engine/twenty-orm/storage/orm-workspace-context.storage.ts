@@ -29,7 +29,7 @@ export type ORMWorkspaceContext = {
   apiKeyRoleMap: Record<string, string>;
   flatRowLevelPermissionPredicateMaps: FlatRowLevelPermissionPredicateMaps;
   flatRowLevelPermissionPredicateGroupMaps: FlatRowLevelPermissionPredicateGroupMaps;
-  flatValidationRuleMaps: FlatValidationRuleMaps;
+  flatValidationRuleMaps?: FlatValidationRuleMaps;
 };
 
 export const workspaceContextStorage =

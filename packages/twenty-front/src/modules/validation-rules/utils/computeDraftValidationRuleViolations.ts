@@ -106,5 +106,4 @@ export const computeDraftValidationRuleViolations = ({
     .map((validationRule) => ({
       ruleId: validationRule.id,
       message: validationRule.message,
-      fieldMetadataId: validationRule.errorFieldMetadataId ?? null,
     }));
