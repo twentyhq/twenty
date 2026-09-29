@@ -1,29 +1,33 @@
 import { getNavigationDrawerModeTransitionDirection } from '@/navigation/utils/getNavigationDrawerModeTransitionDirection';
 import { NAVIGATION_DRAWER_TABS } from '@/ui/navigation/states/navigationDrawerTabs';
 
-const orderedNavigationDrawerModes = [
-  NAVIGATION_DRAWER_TABS.NAVIGATION_MENU,
-  NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY,
-  NAVIGATION_DRAWER_TABS.SETTINGS,
-];
-
 describe('getNavigationDrawerModeTransitionDirection', () => {
-  it('slides forward when the next mode comes later in the switcher', () => {
+  it('slides in from the right when moving to a later mode', () => {
     expect(
       getNavigationDrawerModeTransitionDirection({
-        orderedNavigationDrawerModes,
         previousNavigationDrawerMode: NAVIGATION_DRAWER_TABS.NAVIGATION_MENU,
         nextNavigationDrawerMode: NAVIGATION_DRAWER_TABS.SETTINGS,
+        textDirection: 'ltr',
       }),
     ).toBe(1);
   });
 
-  it('slides backward when the next mode comes earlier in the switcher', () => {
+  it('slides in from the left when moving to an earlier mode', () => {
     expect(
       getNavigationDrawerModeTransitionDirection({
-        orderedNavigationDrawerModes,
         previousNavigationDrawerMode: NAVIGATION_DRAWER_TABS.SETTINGS,
         nextNavigationDrawerMode: NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY,
+        textDirection: 'ltr',
+      }),
+    ).toBe(-1);
+  });
+
+  it('mirrors the slide when the switcher is laid out right to left', () => {
+    expect(
+      getNavigationDrawerModeTransitionDirection({
+        previousNavigationDrawerMode: NAVIGATION_DRAWER_TABS.NAVIGATION_MENU,
+        nextNavigationDrawerMode: NAVIGATION_DRAWER_TABS.SETTINGS,
+        textDirection: 'rtl',
       }),
     ).toBe(-1);
   });

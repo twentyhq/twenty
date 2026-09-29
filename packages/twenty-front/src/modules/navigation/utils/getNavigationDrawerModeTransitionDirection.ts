@@ -1,18 +1,26 @@
+import { type TextDirection } from 'twenty-shared/translations';
+
+import { NAVIGATION_DRAWER_MODE_ORDER } from '@/navigation/constants/NavigationDrawerModeOrder';
 import { type NavigationDrawerModeTransitionDirection } from '@/navigation/types/NavigationDrawerModeTransitionDirection';
 import { type NavigationDrawerActiveTab } from '@/ui/navigation/states/navigationDrawerTabs';
 
 type GetNavigationDrawerModeTransitionDirectionParams = {
-  orderedNavigationDrawerModes: NavigationDrawerActiveTab[];
   previousNavigationDrawerMode: NavigationDrawerActiveTab;
   nextNavigationDrawerMode: NavigationDrawerActiveTab;
+  textDirection: TextDirection;
 };
 
 export const getNavigationDrawerModeTransitionDirection = ({
-  orderedNavigationDrawerModes,
   previousNavigationDrawerMode,
   nextNavigationDrawerMode,
-}: GetNavigationDrawerModeTransitionDirectionParams): NavigationDrawerModeTransitionDirection =>
-  orderedNavigationDrawerModes.indexOf(nextNavigationDrawerMode) >
-  orderedNavigationDrawerModes.indexOf(previousNavigationDrawerMode)
-    ? 1
-    : -1;
+  textDirection,
+}: GetNavigationDrawerModeTransitionDirectionParams): NavigationDrawerModeTransitionDirection => {
+  const isMovingForward =
+    NAVIGATION_DRAWER_MODE_ORDER.indexOf(nextNavigationDrawerMode) >
+    NAVIGATION_DRAWER_MODE_ORDER.indexOf(previousNavigationDrawerMode);
+
+  const isEnteringFromTheRight =
+    textDirection === 'rtl' ? !isMovingForward : isMovingForward;
+
+  return isEnteringFromTheRight ? 1 : -1;
+};

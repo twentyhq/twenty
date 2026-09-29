@@ -1,10 +1,11 @@
+import { useLingui } from '@lingui/react';
 import { useReducedMotion } from 'framer-motion';
 import { type RefObject, useLayoutEffect, useState } from 'react';
+import { getLocaleTextDirection } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 
 import { NAVIGATION_DRAWER_MODE_TRANSITION } from '@/navigation/constants/NavigationDrawerModeTransition';
 import { useActiveNavigationDrawerMode } from '@/navigation/hooks/useActiveNavigationDrawerMode';
-import { useNavigationDrawerModes } from '@/navigation/hooks/useNavigationDrawerModes';
 import { type NavigationDrawerModeTransitionDirection } from '@/navigation/types/NavigationDrawerModeTransitionDirection';
 import { getNavigationDrawerModeTransitionDirection } from '@/navigation/utils/getNavigationDrawerModeTransitionDirection';
 
@@ -16,7 +17,7 @@ export const NavigationDrawerModeTransitionEffect = ({
   containerRef,
 }: NavigationDrawerModeTransitionEffectProps) => {
   const activeNavigationDrawerMode = useActiveNavigationDrawerMode();
-  const navigationDrawerModes = useNavigationDrawerModes();
+  const { i18n } = useLingui();
   const shouldReduceMotion = useReducedMotion();
 
   const [previousNavigationDrawerMode, setPreviousNavigationDrawerMode] =
@@ -29,11 +30,9 @@ export const NavigationDrawerModeTransitionEffect = ({
     setPreviousNavigationDrawerMode(activeNavigationDrawerMode);
     setModeTransition({
       direction: getNavigationDrawerModeTransitionDirection({
-        orderedNavigationDrawerModes: navigationDrawerModes.map(
-          ({ mode }) => mode,
-        ),
         previousNavigationDrawerMode,
         nextNavigationDrawerMode: activeNavigationDrawerMode,
+        textDirection: getLocaleTextDirection(i18n.locale),
       }),
     });
   }
@@ -43,7 +42,7 @@ export const NavigationDrawerModeTransitionEffect = ({
 
     if (
       !isDefined(modeTransition) ||
-      shouldReduceMotion === true ||
+      shouldReduceMotion ||
       !isDefined(container)
     ) {
       return;
