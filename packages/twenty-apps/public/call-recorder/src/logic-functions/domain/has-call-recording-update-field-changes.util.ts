@@ -26,7 +26,7 @@ const COMPARABLE_CALL_RECORDING_FIELDS: Record<
 const isComparableCallRecordingFieldName = (
   fieldName: string,
 ): fieldName is ComparableCallRecordingFieldName =>
-  Object.keys(COMPARABLE_CALL_RECORDING_FIELDS).includes(fieldName);
+  fieldName in COMPARABLE_CALL_RECORDING_FIELDS;
 
 export const hasCallRecordingUpdateFieldChanges = ({
   callRecording,
