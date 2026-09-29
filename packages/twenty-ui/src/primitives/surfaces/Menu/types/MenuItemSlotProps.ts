@@ -8,4 +8,5 @@ export type MenuItemSlotProps = Pick<
   | 'description'
   | 'descriptionPlacement'
   | 'hotkeys'
+  | 'hotkeysJoinLabel'
 >;

@@ -7,12 +7,9 @@ export const COLOR_SCHEME_PICKER_PROP_DESCRIPTIONS = {
     'Selected scheme: Light, Dark, or System. The application resolves system to a concrete theme.',
   className: 'Class applied to the outer container.',
   onChange: 'Called with the newly selected color scheme.',
-  lightLabel:
-    'Visible caption for the light scheme. The control’s accessible name remains Light.',
-  darkLabel:
-    'Visible caption for the dark scheme. The control’s accessible name remains Dark.',
-  systemLabel:
-    'Visible caption for the system scheme. The control’s accessible name remains System.',
+  lightLabel: 'Visible label and accessible name of the light choice.',
+  darkLabel: 'Visible label and accessible name of the dark choice.',
+  systemLabel: 'Visible label and accessible name of the system choice.',
 } satisfies Partial<
   Record<keyof ComponentProps<typeof ColorSchemePicker>, string>
 >;

@@ -25,7 +25,7 @@ import { ICONS_PROVIDER_PROP_DESCRIPTIONS } from './iconsProviderPropDescription
 import { ILLUSTRATION_ICON_WRAPPER_PROP_DESCRIPTIONS } from './illustrationIconWrapperPropDescriptions';
 import { THINKING_ORBIT_LOADER_ICON_PROP_DESCRIPTIONS } from './thinkingOrbitLoaderIconPropDescriptions';
 import { COMPONENT_STORYBOOK_LAYOUT_PROP_DESCRIPTIONS } from './componentStorybookLayoutPropDescriptions';
-import { ANIMATED_EXPANDABLE_CONTAINER_PROP_DESCRIPTIONS } from './animatedExpandableContainerPropDescriptions';
+import { COLLAPSIBLE_PROP_DESCRIPTIONS } from './collapsiblePropDescriptions';
 import { AVATAR_PROP_DESCRIPTIONS } from './avatarPropDescriptions';
 import { BANNER_PROP_DESCRIPTIONS } from './bannerPropDescriptions';
 import { BUTTON_GROUP_PROP_DESCRIPTIONS } from './buttonGroupPropDescriptions';
@@ -35,7 +35,6 @@ import { CARD_FOOTER_PROP_DESCRIPTIONS } from './cardFooterPropDescriptions';
 import { CARD_HEADER_PROP_DESCRIPTIONS } from './cardHeaderPropDescriptions';
 import { CARD_PROP_DESCRIPTIONS } from './cardPropDescriptions';
 import { CHIP_PROP_DESCRIPTIONS } from './chipPropDescriptions';
-import { CIRCULAR_PROGRESS_BAR_PROP_DESCRIPTIONS } from './circularProgressBarPropDescriptions';
 import { CLICK_TO_ACTION_LINK_PROP_DESCRIPTIONS } from './clickToActionLinkPropDescriptions';
 import { CODE_EDITOR_HEADER_PROP_DESCRIPTIONS } from './codeEditorHeaderPropDescriptions';
 import { CODE_EDITOR_PROP_DESCRIPTIONS } from './codeEditorPropDescriptions';
@@ -94,13 +93,6 @@ export const DOCUMENTED_COMPONENTS = [
     propDescriptions: BANNER_PROP_DESCRIPTIONS,
   },
   {
-    name: 'CircularProgressBar',
-    source: 'primitives/feedback/CircularProgressBar/CircularProgressBar.tsx',
-    entryPoint: 'twenty-ui/primitives/feedback',
-    slug: 'feedback/circular-progress-bar',
-    propDescriptions: CIRCULAR_PROGRESS_BAR_PROP_DESCRIPTIONS,
-  },
-  {
     name: 'Loader',
     source: 'primitives/feedback/Loader/Loader.tsx',
     entryPoint: 'twenty-ui/primitives/feedback',
@@ -122,12 +114,11 @@ export const DOCUMENTED_COMPONENTS = [
     propDescriptions: SEGMENTED_CONTROL_PROP_DESCRIPTIONS,
   },
   {
-    name: 'AnimatedExpandableContainer',
-    source:
-      'primitives/layout/AnimatedExpandableContainer/AnimatedExpandableContainer.tsx',
+    name: 'Collapsible',
+    source: 'primitives/layout/Collapsible/Collapsible.tsx',
     entryPoint: 'twenty-ui/primitives/layout',
-    slug: 'layout/animated-expandable-container',
-    propDescriptions: ANIMATED_EXPANDABLE_CONTAINER_PROP_DESCRIPTIONS,
+    slug: 'layout/collapsible',
+    propDescriptions: COLLAPSIBLE_PROP_DESCRIPTIONS,
   },
   {
     name: 'HorizontalSeparator',
@@ -279,6 +270,8 @@ export const DOCUMENTED_COMPONENTS = [
     entryPoint: 'twenty-ui/primitives/navigation',
     slug: 'navigation/list-item',
     propDescriptions: {
+      hotkeysJoinLabel:
+        'Text between shortcut keys. Defaults to `then`; pass an empty string to omit it.',
       actionsVisibility:
         'When trailing actions are visible: on hover and focus, or always.',
     },
@@ -330,7 +323,17 @@ export const DOCUMENTED_COMPONENTS = [
     entryPoint: 'twenty-ui/primitives/surfaces',
     slug: 'surfaces/menu',
     partPropDescriptions: {
+      Item: {
+        hotkeysJoinLabel: 'Text between shortcut keys. Defaults to `then`.',
+      },
+      CheckboxItem: {
+        hotkeysJoinLabel: 'Text between shortcut keys. Defaults to `then`.',
+      },
+      RadioItem: {
+        hotkeysJoinLabel: 'Text between shortcut keys. Defaults to `then`.',
+      },
       SubmenuTrigger: {
+        hotkeysJoinLabel: 'Text between shortcut keys. Defaults to `then`.',
         onClick: 'The click handler for the submenu trigger.',
       },
     },

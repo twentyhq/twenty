@@ -2,6 +2,7 @@ import { useIsSettingsDrawer } from '@/navigation/hooks/useIsSettingsDrawer';
 
 import { MainNavigationDrawerContent } from '@/navigation/components/MainNavigationDrawerContent';
 import { MainNavigationDrawerModeSwitcher } from '@/navigation/components/MainNavigationDrawerModeSwitcher';
+import { NavigationDrawerModeTransition } from '@/navigation/components/NavigationDrawerModeTransition';
 import { SettingsNavigationDrawerContent } from '@/navigation/components/SettingsNavigationDrawerContent';
 import { NavigationDrawer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawer';
 import { NavigationDrawerFixedContent } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerFixedContent';
@@ -32,11 +33,13 @@ export const AppNavigationDrawer = ({
         </NavigationDrawerFixedContent>
       )}
 
-      {isSettingsDrawer ? (
-        <SettingsNavigationDrawerContent />
-      ) : (
-        <MainNavigationDrawerContent />
-      )}
+      <NavigationDrawerModeTransition>
+        {isSettingsDrawer ? (
+          <SettingsNavigationDrawerContent />
+        ) : (
+          <MainNavigationDrawerContent />
+        )}
+      </NavigationDrawerModeTransition>
     </NavigationDrawer>
   );
 };
