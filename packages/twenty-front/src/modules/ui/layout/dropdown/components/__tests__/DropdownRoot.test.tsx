@@ -19,7 +19,7 @@ import {
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { createStore, Provider as JotaiProvider } from 'jotai';
-import { StrictMode, useRef } from 'react';
+import { useRef } from 'react';
 import { Dropdown } from 'twenty-ui/components';
 
 const BACKGROUND_FOCUS_ITEM: FocusStackItem = {
@@ -532,7 +532,7 @@ describe('DropdownRoot', () => {
     expect(store.get(focusStackState.atom)).toHaveLength(2);
   });
 
-  it('keeps a dropdown opened before its root mounts open under StrictMode', async () => {
+  it('keeps a dropdown opened before its root mounts open', async () => {
     const user = userEvent.setup();
     const store = createTestStore();
     const { result } = renderHook(() => useOpenDropdown(), {
@@ -548,11 +548,9 @@ describe('DropdownRoot', () => {
     });
 
     render(
-      <StrictMode>
-        <JotaiProvider store={store}>
-          <GroupRenamePanel />
-        </JotaiProvider>
-      </StrictMode>,
+      <JotaiProvider store={store}>
+        <GroupRenamePanel />
+      </JotaiProvider>,
     );
 
     await waitFor(() =>

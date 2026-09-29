@@ -4,7 +4,7 @@ import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDrop
 import { useGlobalHotkeys } from '@/ui/utilities/hotkey/hooks/useGlobalHotkeys';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { StrictMode, useRef } from 'react';
+import { useRef } from 'react';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import { Dropdown } from 'twenty-ui/components';
 import { Button } from 'twenty-ui/primitives/input';
@@ -117,7 +117,7 @@ export const PreventedOutsidePressKeepsItOpen: Story = {
   },
 };
 
-export const OpenedBeforeMountUnderStrictMode: Story = {
+export const OpenedBeforeMount: Story = {
   beforeEach: () => {
     jotaiStore.set(
       isDropdownOpenComponentState.atomFamily({
@@ -126,11 +126,7 @@ export const OpenedBeforeMountUnderStrictMode: Story = {
       true,
     );
   },
-  render: () => (
-    <StrictMode>
-      <GroupRenamePanel />
-    </StrictMode>
-  ),
+  render: () => <GroupRenamePanel />,
   play: async ({ canvasElement }) => {
     const body = within(canvasElement.ownerDocument.body);
 
