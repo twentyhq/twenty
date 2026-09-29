@@ -6,7 +6,7 @@ import { type AccountType } from 'twenty-shared/constants';
 
 import { type ConnectionFormData } from '@/settings/accounts/hooks/useImapSmtpCaldavConnectionForm';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
-import { ClickToActionLink } from 'twenty-ui/primitives/navigation';
+import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledPasswordFieldContainer = styled.div`
@@ -15,7 +15,7 @@ const StyledPasswordFieldContainer = styled.div`
   gap: ${themeCssVariables.spacing[1]};
 `;
 
-const StyledChangePasswordLink = styled(ClickToActionLink)`
+const StyledChangePasswordButton = styled(Button)`
   align-self: flex-end;
 `;
 
@@ -53,9 +53,9 @@ export const SettingsAccountsPasswordController = ({
             disabled={disabled}
           />
           {disabled && (
-            <StyledChangePasswordLink onClick={onUnlock}>
+            <StyledChangePasswordButton variant="link" onClick={onUnlock}>
               <Trans>Change password</Trans>
-            </StyledChangePasswordLink>
+            </StyledChangePasswordButton>
           )}
         </StyledPasswordFieldContainer>
       )}

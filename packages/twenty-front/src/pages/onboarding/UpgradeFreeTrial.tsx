@@ -30,8 +30,7 @@ import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Info, MainButton } from 'twenty-ui/components';
 import { Loader } from 'twenty-ui/primitives/feedback';
-import { RadioGroup } from 'twenty-ui/primitives/input';
-import { ClickToActionLink } from 'twenty-ui/primitives/navigation';
+import { Button, RadioGroup } from 'twenty-ui/primitives/input';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme';
 import {
   type Billing,
@@ -243,17 +242,18 @@ const UpgradeFreeTrialContent = ({
             >{t`Continue`}</MainButton>
           )}
           <StyledLinkGroup>
-            <ClickToActionLink onClick={signOut}>
+            <Button variant="link" onClick={signOut}>
               <Trans>Log out</Trans>
-            </ClickToActionLink>
+            </Button>
             <span />
-            <ClickToActionLink
+            <Button
+              variant="link"
               href={calendarBookingPageId ? AppPath.BookCall : CAL_LINK}
               target={calendarBookingPageId ? '_self' : '_blank'}
               rel={calendarBookingPageId ? '' : 'noreferrer'}
             >
               <Trans>Book a Call</Trans>
-            </ClickToActionLink>
+            </Button>
           </StyledLinkGroup>
         </StyledFooter>
       </OnboardingStepAnimatedItem>

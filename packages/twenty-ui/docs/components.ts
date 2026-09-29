@@ -36,7 +36,6 @@ import { CARD_HEADER_PROP_DESCRIPTIONS } from './cardHeaderPropDescriptions';
 import { CARD_PROP_DESCRIPTIONS } from './cardPropDescriptions';
 import { CHIP_PROP_DESCRIPTIONS } from './chipPropDescriptions';
 import { CIRCULAR_PROGRESS_BAR_PROP_DESCRIPTIONS } from './circularProgressBarPropDescriptions';
-import { CLICK_TO_ACTION_LINK_PROP_DESCRIPTIONS } from './clickToActionLinkPropDescriptions';
 import { CODE_EDITOR_HEADER_PROP_DESCRIPTIONS } from './codeEditorHeaderPropDescriptions';
 import { CODE_EDITOR_PROP_DESCRIPTIONS } from './codeEditorPropDescriptions';
 import { COLOR_SAMPLE_PROP_DESCRIPTIONS } from './colorSamplePropDescriptions';
@@ -149,13 +148,6 @@ export const DOCUMENTED_COMPONENTS = [
     entryPoint: 'twenty-ui/primitives/layout',
     slug: 'layout/text-direction-provider',
     propDescriptions: TEXT_DIRECTION_PROVIDER_PROP_DESCRIPTIONS,
-  },
-  {
-    name: 'ClickToActionLink',
-    source: 'primitives/navigation/ClickToActionLink/ClickToActionLink.tsx',
-    entryPoint: 'twenty-ui/primitives/navigation',
-    slug: 'navigation/click-to-action-link',
-    propDescriptions: CLICK_TO_ACTION_LINK_PROP_DESCRIPTIONS,
   },
   {
     name: 'OverflowingTextWithTooltip',
