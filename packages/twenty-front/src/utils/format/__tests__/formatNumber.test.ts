@@ -116,6 +116,13 @@ describe('formatNumber', () => {
       ).toEqual('1.23M');
     });
 
+    it('should correctly format rounding boundaries without displaying 1,000k or 1,000M', () => {
+      expect(formatNumber(999999, { abbreviate: true, decimals: 1 })).toEqual('1M');
+      expect(formatNumber(999500, { abbreviate: true })).toEqual('1M');
+      expect(formatNumber(999999999, { abbreviate: true, decimals: 2 })).toEqual('1B');
+      expect(formatNumber(999.6, { abbreviate: true })).toEqual('1k');
+    });
+
     it('should preserve sign for negative values', () => {
       expect(formatNumber(-1500, { abbreviate: true, decimals: 1 })).toEqual(
         '-1.5k',
