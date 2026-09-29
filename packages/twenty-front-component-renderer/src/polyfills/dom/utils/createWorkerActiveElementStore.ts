@@ -11,24 +11,33 @@ const isElementConnectedToDocument = (element: object): boolean =>
 
 export const createWorkerActiveElementStore = (): WorkerActiveElementStore => {
   let activeElement: object | null = null;
+  let isFocusVisible = false;
+
+  const getActiveElement = (): object | null => {
+    if (
+      isDefined(activeElement) &&
+      !isElementConnectedToDocument(activeElement)
+    ) {
+      activeElement = null;
+      isFocusVisible = false;
+    }
+
+    return activeElement;
+  };
 
   return {
-    getActiveElement: () => {
-      if (
-        isDefined(activeElement) &&
-        !isElementConnectedToDocument(activeElement)
-      ) {
-        activeElement = null;
-      }
-
-      return activeElement;
-    },
-    setActiveElement: (element) => {
+    getActiveElement,
+    getFocusVisibleElement: () => (isFocusVisible ? getActiveElement() : null),
+    setActiveElement: ({
+      element,
+      isFocusVisible: nextIsFocusVisible = false,
+    }) => {
       if (isDefined(element) && !isElementConnectedToDocument(element)) {
         return;
       }
 
       activeElement = element;
+      isFocusVisible = nextIsFocusVisible;
     },
   };
 };

@@ -239,6 +239,10 @@ describe('installFocusAndBlurMethodsPolyfill', () => {
     const polyfillWindow = new Window();
     const activeElementStore = createWorkerActiveElementStore();
 
+    installActiveElementDetachmentHook({
+      hooks: polyfillWindow[HOOKS],
+      activeElementStore,
+    });
     installFocusAndBlurMethodsPolyfill({
       elementPrototype: polyfillWindow.Element.prototype,
       activeElementStore,
@@ -247,6 +251,8 @@ describe('installFocusAndBlurMethodsPolyfill', () => {
       elementPrototype: polyfillWindow.Element.prototype,
       querySelectorTargets: [polyfillWindow.document],
       resolveActiveElement: () => activeElementStore.getActiveElement(),
+      resolveFocusVisibleElement: () =>
+        activeElementStore.getFocusVisibleElement(),
     });
 
     const document = polyfillWindow.document as unknown as Document;
@@ -260,10 +266,29 @@ describe('installFocusAndBlurMethodsPolyfill', () => {
     expect(button.matches(':focus')).toBe(true);
     expect(container.matches(':focus-within')).toBe(true);
     expect(document.querySelector(':focus')).toBe(button);
+    expect(button.matches(':focus-visible')).toBe(false);
+
+    activeElementStore.setActiveElement({
+      element: button,
+      isFocusVisible: true,
+    });
+
+    expect(button.matches(':focus-visible')).toBe(true);
 
     button.blur();
 
     expect(button.matches(':focus')).toBe(false);
     expect(container.matches(':focus-within')).toBe(false);
+    expect(button.matches(':focus-visible')).toBe(false);
+
+    activeElementStore.setActiveElement({
+      element: button,
+      isFocusVisible: true,
+    });
+    container.remove();
+    document.body.append(container);
+
+    expect(button.matches(':focus-visible')).toBe(false);
+    expect(button.matches(':focus')).toBe(false);
   });
 });

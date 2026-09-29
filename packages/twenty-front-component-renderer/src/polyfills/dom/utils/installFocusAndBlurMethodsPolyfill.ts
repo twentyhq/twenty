@@ -20,7 +20,7 @@ export const installFocusAndBlurMethodsPolyfill = ({
         return;
       }
 
-      activeElementStore.setActiveElement(element);
+      activeElementStore.setActiveElement({ element });
     },
   });
 
@@ -29,7 +29,7 @@ export const installFocusAndBlurMethodsPolyfill = ({
     methodName: 'blur',
     method: (element: object): void => {
       if (activeElementStore.getActiveElement() === element) {
-        activeElementStore.setActiveElement(null);
+        activeElementStore.setActiveElement({ element: null });
       }
     },
   });

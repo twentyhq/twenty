@@ -16,6 +16,7 @@ const createRemoteElement = (tagName: string): RemoteElementWithProperties => {
     elementPrototype: element,
     querySelectorTargets: [element],
     resolveActiveElement: () => null,
+    resolveFocusVisibleElement: () => null,
   });
 
   return element;

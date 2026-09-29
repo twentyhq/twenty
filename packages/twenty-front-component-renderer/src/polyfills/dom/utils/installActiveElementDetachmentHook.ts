@@ -29,7 +29,7 @@ export const installActiveElementDetachmentHook = ({
       isDefined(activeElement) &&
       isAncestorOrSelfOfNode(node, activeElement)
     ) {
-      activeElementStore.setActiveElement(null);
+      activeElementStore.setActiveElement({ element: null });
     }
 
     previousRemoveChildHook?.(parent, node, index);

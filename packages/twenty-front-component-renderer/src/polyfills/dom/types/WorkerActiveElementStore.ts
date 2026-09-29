@@ -1,4 +1,8 @@
 export type WorkerActiveElementStore = {
   getActiveElement: () => object | null;
-  setActiveElement: (element: object | null) => void;
+  getFocusVisibleElement: () => object | null;
+  setActiveElement: (input: {
+    element: object | null;
+    isFocusVisible?: boolean;
+  }) => void;
 };

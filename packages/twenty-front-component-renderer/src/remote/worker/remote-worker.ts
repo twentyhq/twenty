@@ -81,6 +81,8 @@ installSelectorMethodsPolyfill({
     document,
   ],
   resolveActiveElement: () => workerActiveElementStore.getActiveElement(),
+  resolveFocusVisibleElement: () =>
+    workerActiveElementStore.getFocusVisibleElement(),
 });
 installFocusAndBlurMethodsPolyfill({
   elementPrototype: Element.prototype,
@@ -190,12 +192,13 @@ const workerExports: WorkerExports = {
   pushGeometryUpdates: async (batch) => {
     workerGeometryStore.applyGeometryBatch(batch);
   },
-  pushFocusedRemoteElementId: async (remoteElementId) => {
-    workerActiveElementStore.setActiveElement(
-      isDefined(remoteElementId)
+  pushFocusUpdate: async ({ remoteElementId, isFocusVisible }) => {
+    workerActiveElementStore.setActiveElement({
+      element: isDefined(remoteElementId)
         ? findElementByRemoteId({ rootNode: document.body, remoteElementId })
         : null,
-    );
+      isFocusVisible,
+    });
   },
   pushMediaSessionEvents: async (batch) => {
     workerMediaBridge.dispatchEvents(batch);

@@ -19,8 +19,10 @@ const isAlwaysMatching = (_element: SelectorElementLike): boolean => true;
 
 export const buildSelectorPseudoClassMatchers = ({
   resolveActiveElement,
+  resolveFocusVisibleElement,
 }: {
   resolveActiveElement: () => object | null;
+  resolveFocusVisibleElement: () => object | null;
 }): CssSelectPseudoClassMatchers => {
   const isActiveElement = (element: SelectorElementLike): boolean =>
     element === resolveActiveElement();
@@ -47,7 +49,7 @@ export const buildSelectorPseudoClassMatchers = ({
     defined: isAlwaysMatching,
     root: (element) => isDocumentNode(element.parentNode),
     focus: isActiveElement,
-    'focus-visible': isActiveElement,
+    'focus-visible': (element) => element === resolveFocusVisibleElement(),
     'focus-within': (element) =>
       isAncestorOrSelfOfNode(element, resolveActiveElement()),
   };

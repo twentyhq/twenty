@@ -1,15 +1,18 @@
 import { Window } from '@remote-dom/polyfill';
 
+import { type WorkerActiveElementStore } from '@/polyfills/dom/types/WorkerActiveElementStore';
+import { createWorkerActiveElementStore } from '@/polyfills/dom/utils/createWorkerActiveElementStore';
+
 import { installSelectorMethodsPolyfill } from '../installSelectorMethodsPolyfill';
 
 type SelectorFixture = {
   document: Document;
-  setActiveElement: (element: object | null) => void;
+  setActiveElement: WorkerActiveElementStore['setActiveElement'];
 };
 
 const createSelectorFixture = (): SelectorFixture => {
   const polyfillWindow = new Window();
-  let activeElement: object | null = null;
+  const activeElementStore = createWorkerActiveElementStore();
 
   installSelectorMethodsPolyfill({
     elementPrototype: polyfillWindow.Element.prototype,
@@ -18,14 +21,14 @@ const createSelectorFixture = (): SelectorFixture => {
       polyfillWindow.DocumentFragment.prototype,
       polyfillWindow.document,
     ],
-    resolveActiveElement: () => activeElement,
+    resolveActiveElement: () => activeElementStore.getActiveElement(),
+    resolveFocusVisibleElement: () =>
+      activeElementStore.getFocusVisibleElement(),
   });
 
   return {
     document: polyfillWindow.document as unknown as Document,
-    setActiveElement: (element) => {
-      activeElement = element;
-    },
+    setActiveElement: activeElementStore.setActiveElement,
   };
 };
 
@@ -121,16 +124,24 @@ describe('installSelectorMethodsPolyfill', () => {
       const { document, setActiveElement } = createSelectorFixture();
       const { list, firstTab, secondTab } = createTree(document);
 
-      setActiveElement(firstTab);
+      setActiveElement({ element: firstTab, isFocusVisible: false });
 
       expect(firstTab.matches(':focus')).toBe(true);
+      expect(firstTab.matches(':focus-visible')).toBe(false);
+      expect(document.querySelector(':focus-visible')).toBeNull();
+
+      setActiveElement({ element: firstTab, isFocusVisible: true });
+
       expect(firstTab.matches(':focus-visible')).toBe(true);
+      expect(document.querySelector(':focus-visible')).toBe(firstTab);
       expect(list.matches(':focus-within')).toBe(true);
       expect(secondTab.matches(':focus')).toBe(false);
       expect(secondTab.matches(':focus-within')).toBe(false);
-      setActiveElement(secondTab);
+      setActiveElement({ element: secondTab });
       expect(firstTab.matches(':focus')).toBe(false);
       expect(secondTab.matches(':focus')).toBe(true);
+      expect(firstTab.matches(':focus-visible')).toBe(false);
+      expect(secondTab.matches(':focus-visible')).toBe(false);
     });
 
     it('should inherit fieldset disability except inside the first legend', () => {
@@ -824,7 +835,7 @@ describe('installSelectorMethodsPolyfill', () => {
       'should exclude %s inputs from both required and optional selectors',
       (inputType) => {
         const { document } = createSelectorFixture();
-        const input = document.createElement('html-input');
+        const input = document.createElement('html-input') as Element;
 
         input.setAttribute('type', inputType);
         document.body.append(input);
