@@ -13,7 +13,7 @@ export const validationRuleParser = new Parser({
     remainder: true,
     comparison: true,
     concatenate: true,
-    conditional: true,
+    conditional: false,
     logical: true,
     in: true,
     length: true,

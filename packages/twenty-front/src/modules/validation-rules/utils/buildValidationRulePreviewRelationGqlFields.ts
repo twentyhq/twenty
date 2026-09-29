@@ -29,7 +29,13 @@ export const buildValidationRulePreviewRelationGqlFields = ({
       [relationFieldName]: {
         ...(typeof existingGqlFields === 'object' ? existingGqlFields : {}),
         id: true,
-        ...(isDefined(targetFieldName) ? { [targetFieldName]: true } : {}),
+        ...(isDefined(targetFieldName)
+          ? { [targetFieldName]: true }
+          : relationField.relationTargetFields?.some(
+                (targetField) => targetField.name === 'name',
+              )
+            ? { name: true }
+            : {}),
       },
     };
   }, {});
