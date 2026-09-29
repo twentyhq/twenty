@@ -57,18 +57,24 @@ const renameFieldsInValidationRule = <
   validationRule: TValidationRule;
   newFieldNameByUniversalIdentifier: Map<string, string>;
 }): TValidationRule | null => {
-  if (
-    [...newFieldNameByUniversalIdentifier.values()].some(
-      isValidationRuleReservedName,
-    )
-  ) {
-    return null;
-  }
-
   const { bindings } = validationRule;
   const renamedBindings: ValidationRuleBindings = {};
 
   for (const [path, boundUniversalIdentifier] of Object.entries(bindings)) {
+    const newFieldName = newFieldNameByUniversalIdentifier.get(
+      boundUniversalIdentifier,
+    );
+
+    if (
+      isDefined(newFieldName) &&
+      isValidationRuleReservedName({
+        name: newFieldName,
+        isMember: path.includes('.'),
+      })
+    ) {
+      return null;
+    }
+
     const renamedPath = renamePath({
       path,
       bindings,
