@@ -3,7 +3,6 @@ import { type FlatWorkflowVersion } from 'src/engine/metadata-modules/flat-workf
 import { addWorkflowManifestsToFlatEntityMapsOrThrow } from 'src/engine/core-modules/application/application-manifest/utils/add-workflow-manifests-to-flat-entity-maps-or-throw.util';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { createEmptyAllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-all-flat-entity-maps.constant';
 import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
 
@@ -44,7 +43,10 @@ describe('application workflow installation gate', () => {
       expect(() =>
         addWorkflowManifestsToFlatEntityMapsOrThrow({
           workflows: MANIFEST.workflows ?? [],
-          ownerFlatApplication: {} as FlatApplication,
+          ownerFlatApplication: {
+            id: MANIFEST.application.universalIdentifier,
+            universalIdentifier: MANIFEST.application.universalIdentifier,
+          },
           fromAllFlatEntityMaps: createEmptyAllFlatEntityMaps(),
           toAllUniversalFlatEntityMaps: createEmptyAllFlatEntityMaps(),
           existingAllFlatEntityMaps: createEmptyAllFlatEntityMaps(),
@@ -80,7 +82,7 @@ const compute = ({
     ownerFlatApplication: {
       id: MANIFEST.application.universalIdentifier,
       universalIdentifier: MANIFEST.application.universalIdentifier,
-    } as FlatApplication,
+    },
     fromAllFlatEntityMaps,
     toAllUniversalFlatEntityMaps,
     existingAllFlatEntityMaps: fromAllFlatEntityMaps,

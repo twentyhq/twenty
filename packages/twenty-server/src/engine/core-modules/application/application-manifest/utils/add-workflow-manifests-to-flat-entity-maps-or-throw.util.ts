@@ -24,7 +24,7 @@ export const addWorkflowManifestsToFlatEntityMapsOrThrow = ({
   now,
 }: {
   workflows: WorkflowManifest[];
-  ownerFlatApplication: FlatApplication;
+  ownerFlatApplication: Pick<FlatApplication, 'id' | 'universalIdentifier'>;
   fromAllFlatEntityMaps: AllFlatEntityMaps;
   toAllUniversalFlatEntityMaps: AllFlatEntityMaps;
   existingAllFlatEntityMaps: AllFlatEntityMaps;
