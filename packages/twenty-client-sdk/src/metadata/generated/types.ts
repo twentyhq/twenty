@@ -3125,11 +3125,29 @@ export default {
             ]
         },
         "ApplicationVariableUserValue": {
-            "userWorkspaceId": [
-                3
+            "key": [
+                1
             ],
-            "workspaceMemberId": [
-                3
+            "label": [
+                1
+            ],
+            "description": [
+                1
+            ],
+            "type": [
+                1
+            ],
+            "options": [
+                9
+            ],
+            "isSecret": [
+                8
+            ],
+            "isRequired": [
+                8
+            ],
+            "isDeprecated": [
+                8
             ],
             "value": [
                 1
@@ -3138,12 +3156,15 @@ export default {
                 1
             ]
         },
-        "MyApplicationVariable": {
-            "key": [
-                1
+        "WorkspaceMemberApplicationVariables": {
+            "userWorkspaceId": [
+                3
             ],
-            "value": [
-                1
+            "workspaceMemberId": [
+                3
+            ],
+            "variables": [
+                155
             ],
             "__typename": [
                 1
@@ -7697,21 +7718,16 @@ export default {
                 }
             ],
             "myApplicationVariables": [
-                156,
-                {
-                    "applicationId": [
-                        3
-                    ]
-                }
-            ],
-            "applicationVariableUserValues": [
                 155,
                 {
-                    "key": [
+                    "applicationUniversalIdentifier": [
                         1,
                         "String!"
                     ]
                 }
+            ],
+            "applicationVariableUserValues": [
+                156
             ],
             "applicationConnectionProviders": [
                 150,
@@ -9421,6 +9437,10 @@ export default {
             "updateMyApplicationVariable": [
                 8,
                 {
+                    "applicationUniversalIdentifier": [
+                        1,
+                        "String!"
+                    ],
                     "key": [
                         1,
                         "String!"
@@ -9428,9 +9448,6 @@ export default {
                     "value": [
                         1,
                         "String!"
-                    ],
-                    "applicationId": [
-                        3
                     ]
                 }
             ],

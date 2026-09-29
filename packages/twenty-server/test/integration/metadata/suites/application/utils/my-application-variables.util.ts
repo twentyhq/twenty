@@ -8,16 +8,20 @@ import { type PerformMetadataQueryParams } from 'test/integration/metadata/types
 import { warnIfErrorButNotExpectedToFail } from 'test/integration/metadata/utils/warn-if-error-but-not-expected-to-fail.util';
 import { warnIfNoErrorButExpectedToFail } from 'test/integration/metadata/utils/warn-if-no-error-but-expected-to-fail.util';
 
-import { type MyApplicationVariableDTO } from 'src/engine/core-modules/application/application-variable/dtos/my-application-variable.dto';
+import { type ApplicationVariableUserValueDTO } from 'src/engine/core-modules/application/application-variable/dtos/application-variable-user-value.dto';
 
 export const myApplicationVariables = async ({
   input,
+  gqlFields,
   expectToFail = false,
   token,
 }: PerformMetadataQueryParams<MyApplicationVariablesFactoryInput>): CommonResponseBody<{
-  myApplicationVariables: MyApplicationVariableDTO[];
+  myApplicationVariables: ApplicationVariableUserValueDTO[];
 }> => {
-  const graphqlOperation = myApplicationVariablesQueryFactory({ input });
+  const graphqlOperation = myApplicationVariablesQueryFactory({
+    input,
+    gqlFields,
+  });
 
   const response = await makeMetadataApiRequest(graphqlOperation, token);
 

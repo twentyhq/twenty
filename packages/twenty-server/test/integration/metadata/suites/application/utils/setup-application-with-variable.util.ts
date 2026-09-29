@@ -59,7 +59,10 @@ export const setupApplicationWithVariable = async ({
             [variableKey]: {
               universalIdentifier: uuidv4(),
               scope: variableScope,
-              ...(isSecret ? { isSecret: true } : { value: 'initial' }),
+              ...(isSecret ? { isSecret: true } : {}),
+              ...(isSecret || variableScope === 'USER'
+                ? {}
+                : { value: 'initial' }),
             },
           },
           packageJsonChecksum: null,

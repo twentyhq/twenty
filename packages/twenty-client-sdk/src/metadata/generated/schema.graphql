@@ -1621,14 +1621,21 @@ type EnterpriseSubscriptionStatusDTO {
 }
 
 type ApplicationVariableUserValue {
-  userWorkspaceId: UUID!
-  workspaceMemberId: UUID!
+  key: String!
+  label: String!
+  description: String!
+  type: String!
+  options: JSON
+  isSecret: Boolean!
+  isRequired: Boolean!
+  isDeprecated: Boolean!
   value: String!
 }
 
-type MyApplicationVariable {
-  key: String!
-  value: String!
+type WorkspaceMemberApplicationVariables {
+  userWorkspaceId: UUID!
+  workspaceMemberId: UUID!
+  variables: [ApplicationVariableUserValue!]!
 }
 
 type UsageQuotaDefinition {
@@ -3840,8 +3847,8 @@ type Query {
   getResourceCreditUsage: [BillingResourceCreditUsage!]!
   myConnectedAccounts: [ConnectedAccountPublicDTO!]!
   applicationConnectedAccounts(applicationId: UUID!): [ApplicationConnectedAccountDTO!]!
-  myApplicationVariables(applicationId: UUID): [MyApplicationVariable!]!
-  applicationVariableUserValues(key: String!): [ApplicationVariableUserValue!]!
+  myApplicationVariables(applicationUniversalIdentifier: String!): [ApplicationVariableUserValue!]!
+  applicationVariableUserValues: [WorkspaceMemberApplicationVariables!]!
   applicationConnectionProviders(applicationId: UUID!): [ApplicationConnectionProvider!]!
   getInviteSuggestions: [InviteSuggestion!]!
   findWorkspaceInvitations: [WorkspaceInvitation!]!
@@ -4171,7 +4178,7 @@ type Mutation {
   deleteConnectedAccount(id: UUID!): ConnectedAccountPublicDTO!
   disconnectConnectedAccount(id: UUID!): ConnectedAccountPublicDTO!
   updateOneApplicationVariable(key: String!, value: String!, applicationId: UUID): Boolean!
-  updateMyApplicationVariable(key: String!, value: String!, applicationId: UUID): Boolean!
+  updateMyApplicationVariable(applicationUniversalIdentifier: String!, key: String!, value: String!): Boolean!
   skipSyncEmailOnboardingStep(isAutoSkipped: Boolean! = false): OnboardingStepSuccess!
   completeBookCallOnboardingStep(hasBookedCall: Boolean! = false, isAutoSkipped: Boolean! = false): OnboardingStepSuccess!
   triggerInstallAppsOnboardingStep(universalIdentifiers: [String!]!, isAutoSkipped: Boolean! = false): OnboardingStepSuccess!

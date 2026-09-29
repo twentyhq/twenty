@@ -1,18 +1,42 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
-import { IsString, IsUUID } from 'class-validator';
-
-import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { IsBoolean, IsOptional, IsString } from 'class-validator';
+import { GraphQLJSON } from 'graphql-type-json';
+import { type ApplicationVariableOption } from 'twenty-shared/application';
 
 @ObjectType('ApplicationVariableUserValue')
 export class ApplicationVariableUserValueDTO {
-  @IsUUID()
-  @Field(() => UUIDScalarType)
-  userWorkspaceId: string;
+  @IsString()
+  @Field()
+  key: string;
 
-  @IsUUID()
-  @Field(() => UUIDScalarType)
-  workspaceMemberId: string;
+  @IsString()
+  @Field()
+  label: string;
+
+  @IsString()
+  @Field()
+  description: string;
+
+  @IsString()
+  @Field()
+  type: string;
+
+  @IsOptional()
+  @Field(() => GraphQLJSON, { nullable: true })
+  options?: ApplicationVariableOption[] | null;
+
+  @IsBoolean()
+  @Field()
+  isSecret: boolean;
+
+  @IsBoolean()
+  @Field()
+  isRequired: boolean;
+
+  @IsBoolean()
+  @Field()
+  isDeprecated: boolean;
 
   @IsString()
   @Field()

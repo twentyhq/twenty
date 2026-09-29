@@ -1,8 +1,13 @@
 import { Injectable } from '@nestjs/common';
 
+import groupBy from 'lodash.groupby';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
+import {
+  ApplicationException,
+  ApplicationExceptionCode,
+} from 'src/engine/core-modules/application/application.exception';
 import { ApplicationVariableUserValueEntity } from 'src/engine/core-modules/application/application-variable/application-variable-user-value.entity';
 import {
   ApplicationVariableEntityException,
@@ -10,9 +15,9 @@ import {
 } from 'src/engine/core-modules/application/application-variable/application-variable.exception';
 import { ApplicationVariableEntityService } from 'src/engine/core-modules/application/application-variable/application-variable.service';
 import { type ApplicationVariableUserValueDTO } from 'src/engine/core-modules/application/application-variable/dtos/application-variable-user-value.dto';
-import { type MyApplicationVariableDTO } from 'src/engine/core-modules/application/application-variable/dtos/my-application-variable.dto';
+import { type WorkspaceMemberApplicationVariablesDTO } from 'src/engine/core-modules/application/application-variable/dtos/workspace-member-application-variables.dto';
+import { findActiveFlatApplicationByUniversalIdentifier } from 'src/engine/core-modules/application/utils/find-active-flat-application-by-universal-identifier.util';
 import { resolveWorkspaceMemberIdForUser } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/resolve-workspace-member-id-for-user.util';
-import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/encrypted-string.type';
 import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -26,6 +31,11 @@ type ApplicationVariableTarget = {
   applicationId: string;
 };
 
+type UserValue = Pick<
+  ApplicationVariableUserValueEntity,
+  'applicationVariableId' | 'value'
+>;
+
 @Injectable()
 export class ApplicationVariableUserValueService {
   constructor(
@@ -38,19 +48,25 @@ export class ApplicationVariableUserValueService {
     private readonly secretEncryptionService: SecretEncryptionService,
   ) {}
 
-  async findUserValues({
+  async findMyApplicationVariables({
     workspaceId,
-    applicationId,
+    applicationUniversalIdentifier,
     userWorkspaceId,
-  }: ApplicationVariableTarget & {
+  }: {
+    workspaceId: string;
+    applicationUniversalIdentifier: string;
     userWorkspaceId: string;
-  }): Promise<MyApplicationVariableDTO[]> {
-    const userFlatApplicationVariables = (
-      await this.applicationVariableService.findFlatApplicationVariables({
+  }): Promise<ApplicationVariableUserValueDTO[]> {
+    const applicationId = await this.findApplicationIdOrThrow({
+      workspaceId,
+      applicationUniversalIdentifier,
+    });
+
+    const userFlatApplicationVariables =
+      await this.findUserFlatApplicationVariables({
         workspaceId,
         applicationId,
-      })
-    ).filter(({ scope }) => scope === 'USER');
+      });
 
     if (!isNonEmptyArray(userFlatApplicationVariables)) {
       return [];
@@ -59,6 +75,7 @@ export class ApplicationVariableUserValueService {
     const userValues = await this.applicationVariableUserValueRepository.find(
       workspaceId,
       {
+        select: { applicationVariableId: true, value: true },
         where: {
           userWorkspaceId,
           applicationVariableId: In(
@@ -68,41 +85,30 @@ export class ApplicationVariableUserValueService {
       },
     );
 
-    const userValueByApplicationVariableId = new Map(
-      userValues.map(({ applicationVariableId, value }) => [
-        applicationVariableId,
-        value,
-      ]),
-    );
-
-    return userFlatApplicationVariables.map((flatApplicationVariable) => ({
-      key: flatApplicationVariable.key,
-      value: this.resolveValue({
-        flatApplicationVariable,
-        userValue: userValueByApplicationVariableId.get(
-          flatApplicationVariable.id,
-        ),
-        workspaceId,
-        shouldMaskSecret: true,
-      }),
-    }));
+    return this.toApplicationVariableUserValues({
+      userFlatApplicationVariables,
+      userValues,
+      workspaceId,
+      shouldMaskSecret: true,
+    });
   }
 
-  async findAllUserValues({
+  async findApplicationVariableUserValues({
     workspaceId,
     applicationId,
-    key,
     requestUserWorkspaceId,
   }: ApplicationVariableTarget & {
-    key: string;
     requestUserWorkspaceId: string | undefined;
-  }): Promise<ApplicationVariableUserValueDTO[]> {
-    const flatApplicationVariable =
-      await this.findUserFlatApplicationVariableOrThrow({
+  }): Promise<WorkspaceMemberApplicationVariablesDTO[]> {
+    const userFlatApplicationVariables =
+      await this.findUserFlatApplicationVariables({
         workspaceId,
         applicationId,
-        key,
       });
+
+    if (!isNonEmptyArray(userFlatApplicationVariables)) {
+      return [];
+    }
 
     const [userWorkspaces, userValues, { flatWorkspaceMemberMaps }] =
       await Promise.all([
@@ -113,9 +119,15 @@ export class ApplicationVariableUserValueService {
             : undefined,
         }),
         this.applicationVariableUserValueRepository.find(workspaceId, {
-          select: { userWorkspaceId: true, value: true },
+          select: {
+            userWorkspaceId: true,
+            applicationVariableId: true,
+            value: true,
+          },
           where: {
-            applicationVariableId: flatApplicationVariable.id,
+            applicationVariableId: In(
+              userFlatApplicationVariables.map(({ id }) => id),
+            ),
             ...(isDefined(requestUserWorkspaceId)
               ? { userWorkspaceId: requestUserWorkspaceId }
               : {}),
@@ -126,9 +138,7 @@ export class ApplicationVariableUserValueService {
         ]),
       ]);
 
-    const userValueByUserWorkspaceId = new Map(
-      userValues.map(({ userWorkspaceId, value }) => [userWorkspaceId, value]),
-    );
+    const userValuesByUserWorkspaceId = groupBy(userValues, 'userWorkspaceId');
 
     return userWorkspaces.flatMap(({ id: userWorkspaceId, userId }) => {
       const workspaceMemberId = resolveWorkspaceMemberIdForUser({
@@ -144,9 +154,9 @@ export class ApplicationVariableUserValueService {
         {
           userWorkspaceId,
           workspaceMemberId,
-          value: this.resolveValue({
-            flatApplicationVariable,
-            userValue: userValueByUserWorkspaceId.get(userWorkspaceId),
+          variables: this.toApplicationVariableUserValues({
+            userFlatApplicationVariables,
+            userValues: userValuesByUserWorkspaceId[userWorkspaceId] ?? [],
             workspaceId,
             shouldMaskSecret: isDefined(requestUserWorkspaceId),
           }),
@@ -155,17 +165,24 @@ export class ApplicationVariableUserValueService {
     });
   }
 
-  async setUserValue({
+  async updateMyApplicationVariable({
     workspaceId,
-    applicationId,
+    applicationUniversalIdentifier,
     userWorkspaceId,
     key,
     plainTextValue,
-  }: ApplicationVariableTarget & {
+  }: {
+    workspaceId: string;
+    applicationUniversalIdentifier: string;
     userWorkspaceId: string;
     key: string;
     plainTextValue: PlaintextString;
   }): Promise<void> {
+    const applicationId = await this.findApplicationIdOrThrow({
+      workspaceId,
+      applicationUniversalIdentifier,
+    });
+
     const flatApplicationVariable =
       await this.findUserFlatApplicationVariableOrThrow({
         workspaceId,
@@ -186,29 +203,80 @@ export class ApplicationVariableUserValueService {
     );
   }
 
-  private resolveValue({
-    flatApplicationVariable: { value, isSecret },
-    userValue,
+  private toApplicationVariableUserValues({
+    userFlatApplicationVariables,
+    userValues,
     workspaceId,
     shouldMaskSecret,
   }: {
-    flatApplicationVariable: Pick<
-      FlatApplicationVariable,
-      'value' | 'isSecret'
-    >;
-    userValue: EncryptedString | undefined;
+    userFlatApplicationVariables: FlatApplicationVariable[];
+    userValues: UserValue[];
     workspaceId: string;
     shouldMaskSecret: boolean;
-  }): string {
-    if (isSecret && !isDefined(userValue)) {
-      return '';
+  }): ApplicationVariableUserValueDTO[] {
+    const userValueByApplicationVariableId = new Map(
+      userValues.map(({ applicationVariableId, value }) => [
+        applicationVariableId,
+        value,
+      ]),
+    );
+
+    return userFlatApplicationVariables.map((flatApplicationVariable) => ({
+      key: flatApplicationVariable.key,
+      label: flatApplicationVariable.label,
+      description: flatApplicationVariable.description,
+      type: flatApplicationVariable.type,
+      options: flatApplicationVariable.options,
+      isSecret: flatApplicationVariable.isSecret,
+      isRequired: flatApplicationVariable.isRequired,
+      isDeprecated: flatApplicationVariable.isDeprecated,
+      value: this.applicationVariableService.getDisplayValue({
+        value:
+          userValueByApplicationVariableId.get(flatApplicationVariable.id) ??
+          null,
+        workspaceId,
+        isSecret: flatApplicationVariable.isSecret && shouldMaskSecret,
+      }),
+    }));
+  }
+
+  private async findApplicationIdOrThrow({
+    workspaceId,
+    applicationUniversalIdentifier,
+  }: {
+    workspaceId: string;
+    applicationUniversalIdentifier: string;
+  }): Promise<string> {
+    const { flatApplicationMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatApplicationMaps',
+      ]);
+
+    const flatApplication = findActiveFlatApplicationByUniversalIdentifier(
+      flatApplicationMaps,
+      applicationUniversalIdentifier,
+    );
+
+    if (!isDefined(flatApplication)) {
+      throw new ApplicationException(
+        `Application ${applicationUniversalIdentifier} not found`,
+        ApplicationExceptionCode.APPLICATION_NOT_FOUND,
+      );
     }
 
-    return this.applicationVariableService.getDisplayValue({
-      value: userValue ?? value,
-      workspaceId,
-      isSecret: isSecret && shouldMaskSecret,
-    });
+    return flatApplication.id;
+  }
+
+  private async findUserFlatApplicationVariables({
+    workspaceId,
+    applicationId,
+  }: ApplicationVariableTarget): Promise<FlatApplicationVariable[]> {
+    return (
+      await this.applicationVariableService.findFlatApplicationVariables({
+        workspaceId,
+        applicationId,
+      })
+    ).filter(({ scope }) => scope === 'USER');
   }
 
   private async findUserFlatApplicationVariableOrThrow({

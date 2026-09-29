@@ -1,3 +1,4 @@
+import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
 import { applicationVariableUserValues } from 'test/integration/metadata/suites/application/utils/application-variable-user-values.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import { myApplicationVariables } from 'test/integration/metadata/suites/application/utils/my-application-variables.util';
@@ -10,6 +11,9 @@ import { generateAppleAdminApplicationTokenPair } from 'test/integration/utils/g
 import { generateApplicationTokenPair } from 'test/integration/utils/generate-application-token-pair.util';
 
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
+
+const NOT_INSTALLED_APPLICATION_UNIVERSAL_IDENTIFIER =
+  '8f7c1e0a-4b2d-4c3e-9a1f-0d2e3c4b5a69';
 
 describe('Application variable user values should fail', () => {
   let userVariableApplication: ApplicationWithVariable;
@@ -57,80 +61,90 @@ describe('Application variable user values should fail', () => {
   it('should refuse to set a member value on a workspace variable', async () => {
     const { errors } = await updateMyApplicationVariable({
       input: {
+        applicationUniversalIdentifier:
+          workspaceVariableApplication.universalIdentifier,
         key: workspaceVariableApplication.variableKey,
         value: 'mine',
-        applicationId: workspaceVariableApplication.id,
       },
       expectToFail: true,
     });
 
-    expect(errors.map(({ extensions }) => extensions.code)).toEqual([
-      'BAD_USER_INPUT',
-    ]);
+    expectOneNotInternalServerErrorSnapshot({ errors });
   });
 
   it('should refuse a key the application does not declare', async () => {
     const { errors } = await updateMyApplicationVariable({
       input: {
+        applicationUniversalIdentifier:
+          userVariableApplication.universalIdentifier,
         key: 'UNDECLARED_VARIABLE',
         value: 'mine',
-        applicationId: userVariableApplication.id,
       },
       expectToFail: true,
     });
 
-    expect(errors.map(({ extensions }) => extensions.code)).toEqual([
-      'NOT_FOUND',
-    ]);
+    expectOneNotInternalServerErrorSnapshot({ errors });
+  });
+
+  it('should refuse an application that is not installed', async () => {
+    const { errors } = await myApplicationVariables({
+      input: {
+        applicationUniversalIdentifier:
+          NOT_INSTALLED_APPLICATION_UNIVERSAL_IDENTIFIER,
+      },
+      expectToFail: true,
+    });
+
+    expectOneNotInternalServerErrorSnapshot({ errors });
   });
 
   it('should refuse to read member values with a token no person is behind', async () => {
     const { errors } = await myApplicationVariables({
-      input: {},
+      input: {
+        applicationUniversalIdentifier:
+          userVariableApplication.universalIdentifier,
+      },
       token: applicationToken,
       expectToFail: true,
     });
 
-    expect(errors.map(({ extensions }) => extensions.code)).toEqual([
-      'FORBIDDEN',
-    ]);
+    expectOneNotInternalServerErrorSnapshot({ errors });
   });
 
-  it('should refuse an application token naming another application', async () => {
-    const { errors } = await updateMyApplicationVariable({
+  it('should refuse an application token reading another application', async () => {
+    const { errors } = await myApplicationVariables({
       input: {
-        key: workspaceVariableApplication.variableKey,
-        value: 'mine',
-        applicationId: workspaceVariableApplication.id,
+        applicationUniversalIdentifier:
+          workspaceVariableApplication.universalIdentifier,
       },
       token: janeApplicationToken,
       expectToFail: true,
     });
 
-    expect(errors.map(({ extensions }) => extensions.code)).toEqual([
-      'FORBIDDEN',
-    ]);
+    expectOneNotInternalServerErrorSnapshot({ errors });
   });
 
-  it('should require an application id from a session', async () => {
-    const { errors } = await myApplicationVariables({
-      input: {},
+  it('should refuse an application token writing another application', async () => {
+    const { errors } = await updateMyApplicationVariable({
+      input: {
+        applicationUniversalIdentifier:
+          workspaceVariableApplication.universalIdentifier,
+        key: workspaceVariableApplication.variableKey,
+        value: 'mine',
+      },
+      token: janeApplicationToken,
       expectToFail: true,
     });
 
-    expect(errors.map(({ extensions }) => extensions.code)).toEqual([
-      'BAD_USER_INPUT',
-    ]);
+    expectOneNotInternalServerErrorSnapshot({ errors });
   });
 
   it('should refuse to list every member value from a session', async () => {
     const { errors } = await applicationVariableUserValues({
-      input: { key: userVariableApplication.variableKey },
+      input: {},
       expectToFail: true,
     });
 
-    expect(errors.map(({ extensions }) => extensions.code)).toEqual([
-      'FORBIDDEN',
-    ]);
+    expectOneNotInternalServerErrorSnapshot({ errors });
   });
 });

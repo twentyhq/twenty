@@ -605,9 +605,15 @@ export enum ApplicationVariableScope {
 
 export type ApplicationVariableUserValue = {
   __typename?: 'ApplicationVariableUserValue';
-  userWorkspaceId: Scalars['UUID']['output'];
+  description: Scalars['String']['output'];
+  isDeprecated: Scalars['Boolean']['output'];
+  isRequired: Scalars['Boolean']['output'];
+  isSecret: Scalars['Boolean']['output'];
+  key: Scalars['String']['output'];
+  label: Scalars['String']['output'];
+  options?: Maybe<Scalars['JSON']['output']>;
+  type: Scalars['String']['output'];
   value: Scalars['String']['output'];
-  workspaceMemberId: Scalars['UUID']['output'];
 };
 
 export type ApprovedAccessDomain = {
@@ -4413,7 +4419,7 @@ export type MutationUpdateMessageFoldersArgs = {
 
 
 export type MutationUpdateMyApplicationVariableArgs = {
-  applicationId?: InputMaybe<Scalars['UUID']['input']>;
+  applicationUniversalIdentifier: Scalars['String']['input'];
   key: Scalars['String']['input'];
   value: Scalars['String']['input'];
 };
@@ -4673,12 +4679,6 @@ export type MutationVerifyEmailingDomainArgs = {
 
 export type MutationVerifyTwoFactorAuthenticationMethodForAuthenticatedUserArgs = {
   otp: Scalars['String']['input'];
-};
-
-export type MyApplicationVariable = {
-  __typename?: 'MyApplicationVariable';
-  key: Scalars['String']['output'];
-  value: Scalars['String']['output'];
 };
 
 export type NativeModelCapabilities = {
@@ -5226,7 +5226,7 @@ export type Query = {
   applicationCoreGraphqlSchema: Scalars['String']['output'];
   applicationRegistrationTarballUrl?: Maybe<Scalars['String']['output']>;
   applicationSdkClientChecksums?: Maybe<SdkClientChecksums>;
-  applicationVariableUserValues: Array<ApplicationVariableUserValue>;
+  applicationVariableUserValues: Array<WorkspaceMemberApplicationVariables>;
   barChartData: BarChartData;
   billingPortalSession: BillingSession;
   callRecordingIdForCalendarEvent?: Maybe<Scalars['UUID']['output']>;
@@ -5323,7 +5323,7 @@ export type Query = {
   metadataTranslations: Array<MetadataTranslation>;
   minimalMetadata: MinimalMetadata;
   mostlyEmptyFieldMetadataIds: Array<Scalars['UUID']['output']>;
-  myApplicationVariables: Array<MyApplicationVariable>;
+  myApplicationVariables: Array<ApplicationVariableUserValue>;
   myCalendarChannels: Array<CalendarChannel>;
   myConnectedAccounts: Array<ConnectedAccountPublicDto>;
   myMessageChannels: Array<MessageChannel>;
@@ -5406,11 +5406,6 @@ export type QueryApplicationRegistrationTarballUrlArgs = {
 
 export type QueryApplicationSdkClientChecksumsArgs = {
   applicationId: Scalars['UUID']['input'];
-};
-
-
-export type QueryApplicationVariableUserValuesArgs = {
-  key: Scalars['String']['input'];
 };
 
 
@@ -5769,7 +5764,7 @@ export type QueryMostlyEmptyFieldMetadataIdsArgs = {
 
 
 export type QueryMyApplicationVariablesArgs = {
-  applicationId?: InputMaybe<Scalars['UUID']['input']>;
+  applicationUniversalIdentifier: Scalars['String']['input'];
 };
 
 
@@ -7786,6 +7781,13 @@ export type WorkspaceMember = {
   userEmail: Scalars['String']['output'];
   userId: Scalars['UUID']['output'];
   userWorkspaceId?: Maybe<Scalars['UUID']['output']>;
+};
+
+export type WorkspaceMemberApplicationVariables = {
+  __typename?: 'WorkspaceMemberApplicationVariables';
+  userWorkspaceId: Scalars['UUID']['output'];
+  variables: Array<ApplicationVariableUserValue>;
+  workspaceMemberId: Scalars['UUID']['output'];
 };
 
 /** Date format as Month first, Day first, Year first or system as default */
