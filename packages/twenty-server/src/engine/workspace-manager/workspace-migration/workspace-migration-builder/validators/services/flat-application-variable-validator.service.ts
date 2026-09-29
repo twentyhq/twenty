@@ -154,11 +154,16 @@ export class FlatApplicationVariableValidatorService {
       });
     }
 
-    validationResult.errors.push(
-      ...validateApplicationVariableScope({
-        scope: flatEntityUpdate.scope ?? fromFlatApplicationVariable.scope,
-      }),
-    );
+    if (
+      isDefined(flatEntityUpdate.scope) &&
+      flatEntityUpdate.scope !== fromFlatApplicationVariable.scope
+    ) {
+      validationResult.errors.push({
+        code: ApplicationVariableEntityExceptionCode.INVALID_APPLICATION_VARIABLE_INPUT,
+        message: t`Application variable scope cannot be changed after creation`,
+        userFriendlyMessage: msg`Application variable scope cannot be changed`,
+      });
+    }
 
     return validationResult;
   }
