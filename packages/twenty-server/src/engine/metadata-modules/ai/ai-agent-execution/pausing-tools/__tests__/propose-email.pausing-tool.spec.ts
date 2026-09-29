@@ -101,6 +101,28 @@ describe('PROPOSE_EMAIL_PAUSING_TOOL', () => {
     );
   });
 
+  it('sends from the proposed account even when the answer names another', async () => {
+    const context = buildContext({ success: true, message: 'Email sent' });
+
+    await parseCall().complete(
+      {
+        decision: 'send',
+        email: {
+          ...PROPOSED_EMAIL,
+          connectedAccountId: '20202020-1111-4111-8111-111111111111',
+        },
+      },
+      context,
+    );
+
+    expect(context.executeTool).toHaveBeenCalledWith(
+      'send_email',
+      expect.objectContaining({
+        connectedAccountId: PROPOSED_EMAIL.connectedAccountId,
+      }),
+    );
+  });
+
   it('saves the email as a draft through draft_email', async () => {
     const context = buildContext({ success: true, message: 'Draft created' });
 

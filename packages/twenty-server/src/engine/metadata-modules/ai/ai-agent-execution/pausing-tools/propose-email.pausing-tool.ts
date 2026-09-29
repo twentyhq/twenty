@@ -62,7 +62,12 @@ export const PROPOSE_EMAIL_PAUSING_TOOL = definePausingTool<
     form: { kind: 'emailApproval', email },
   }),
   complete: async ({ output: { decision, email }, input, context }) => {
-    const finalEmail = email ?? input;
+    // The person may edit what is sent, not which account sends it: the card
+    // offers no choice of account, so one in the answer is not theirs to pick.
+    const finalEmail = {
+      ...(email ?? input),
+      connectedAccountId: input.connectedAccountId,
+    };
 
     if (decision === 'discard') {
       return {
