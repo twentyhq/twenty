@@ -177,6 +177,34 @@ ruleTester.run(RULE_NAME, rule, {
       `,
       filename: 'test.tsx',
     },
+    {
+      code: `
+        @UseGuards(
+          CallerGuard({ userSession: true, apiKey: true }),
+          NoPermissionGuard,
+        )
+        class TestController {
+          @Get()
+          @UseGuards(CallerGuard({ userSession: { impersonation: false } }))
+          testMethod() {}
+        }
+      `,
+      filename: 'test.tsx',
+    },
+    {
+      code: `
+        @UseGuards(
+          CallerGuard({ oauthClient: { requireUser: true } }),
+          NoPermissionGuard,
+        )
+        class TestController {
+          @Get()
+          @UseGuards(CallerGuard({ apiKey: true, oauthClient: true }))
+          testMethod() {}
+        }
+      `,
+      filename: 'test.tsx',
+    },
   ],
   invalid: [
     {
@@ -432,6 +460,18 @@ ruleTester.run(RULE_NAME, rule, {
         }
       `,
       errors: [{ messageId: 'callerGuardAcceptsNoCaller' }],
+      filename: 'test.tsx',
+    },
+    {
+      code: `
+        @UseGuards(CallerGuard({ apiKey: true }), NoPermissionGuard)
+        class TestController {
+          @Get()
+          @UseGuards(CallerGuard({ userSession: true }))
+          testMethod() {}
+        }
+      `,
+      errors: [{ messageId: 'callerGuardsShareNoCaller' }],
       filename: 'test.tsx',
     },
   ],

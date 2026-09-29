@@ -58,12 +58,77 @@ const isCallerGuardWithInlineConfig = (node: any): boolean =>
   node.arguments.length === 1 &&
   isInlineCallerGuardConfig(node.arguments[0]);
 
+const getPropertyValue = (objectNode: any, propertyName: string): any =>
+  objectNode.properties.find(
+    (property: any) =>
+      (property.key.name ?? property.key.value) === propertyName,
+  )?.value;
+
+const isTrueLiteral = (node: any): boolean =>
+  node?.type === 'Literal' && node.value === true;
+
+const getUserSessionCallerVariants = (node: any): string[] => {
+  if (isTrueLiteral(node)) {
+    return ['session', 'impersonatedSession', 'playgroundSession'];
+  }
+
+  if (node?.type !== 'ObjectExpression') {
+    return [];
+  }
+
+  return [
+    'session',
+    ...(getPropertyValue(node, 'impersonation')?.value !== false
+      ? ['impersonatedSession']
+      : []),
+    ...(getPropertyValue(node, 'playground')?.value !== false
+      ? ['playgroundSession']
+      : []),
+    ...(getPropertyValue(node, 'workspaceAgnostic')?.value === true
+      ? ['workspaceAgnosticSession']
+      : []),
+  ];
+};
+
+const getApplicationKindCallerVariants = (
+  node: any,
+  callerKind: string,
+): string[] => {
+  if (isTrueLiteral(node)) {
+    return [`${callerKind}WithUser`, `${callerKind}WithoutUser`];
+  }
+
+  if (node?.type !== 'ObjectExpression') {
+    return [];
+  }
+
+  return getPropertyValue(node, 'requireUser')?.value === true
+    ? [`${callerKind}WithUser`]
+    : [`${callerKind}WithUser`, `${callerKind}WithoutUser`];
+};
+
+// Mirrors how CallerGuard evaluates its config, so lint can tell which
+// callers an endpoint accepts once its class and method guards are combined.
+const getAcceptedCallerVariants = (callerGuard: any): string[] => {
+  const config = callerGuard.arguments[0];
+
+  return [
+    ...getUserSessionCallerVariants(getPropertyValue(config, 'userSession')),
+    ...(isTrueLiteral(getPropertyValue(config, 'apiKey')) ? ['apiKey'] : []),
+    ...getApplicationKindCallerVariants(
+      getPropertyValue(config, 'oauthClient'),
+      'oauthClient',
+    ),
+    ...getApplicationKindCallerVariants(
+      getPropertyValue(config, 'application'),
+      'application',
+    ),
+  ];
+};
+
 const isCallerGuardAcceptingNoCaller = (node: any): boolean =>
   isCallerGuardWithInlineConfig(node) &&
-  node.arguments[0].properties.every(
-    (property: any) =>
-      property.value.type === 'Literal' && property.value.value === false,
-  );
+  getAcceptedCallerVariants(node).length === 0;
 
 export const typedTokenHelpers = {
   nodeHasDecoratorsNamed: (node: any, decoratorNames: string[]): boolean => {
@@ -109,6 +174,11 @@ export const typedTokenHelpers = {
 
   getCallerGuardsAcceptingNoCaller: (node: any): any[] =>
     getUseGuardsArguments(node).filter(isCallerGuardAcceptingNoCaller),
+
+  getInlineCallerGuards: (node: any): any[] =>
+    getUseGuardsArguments(node).filter(isCallerGuardWithInlineConfig),
+
+  getAcceptedCallerVariants,
 
   nodeHasPermissionsGuard: (node: any): boolean => {
     if (!node.decorators) {

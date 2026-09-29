@@ -12,6 +12,7 @@ type GuardedEndpointRuleOptions = {
 const REPLACED_CALLER_GUARD_MESSAGE_ID = 'replacedCallerGuard';
 const CALLER_GUARD_CONFIG_NOT_INLINE_MESSAGE_ID = 'callerGuardConfigNotInline';
 const CALLER_GUARD_ACCEPTS_NO_CALLER_MESSAGE_ID = 'callerGuardAcceptsNoCaller';
+const CALLER_GUARDS_SHARE_NO_CALLER_MESSAGE_ID = 'callerGuardsShareNoCaller';
 
 const findClassDeclaration = (node: any): any | null => {
   if (node.type === 'ClassDeclaration') return node;
@@ -58,6 +59,8 @@ export const createGuardedEndpointRule = ({
           'CallerGuard takes an inline object literal (no variable, no spread) so the accepted callers can be read at the endpoint.',
         [CALLER_GUARD_ACCEPTS_NO_CALLER_MESSAGE_ID]:
           'CallerGuard refuses every caller: accept at least one caller kind.',
+        [CALLER_GUARDS_SHARE_NO_CALLER_MESSAGE_ID]:
+          'The class-level and method-level CallerGuard configs accept no caller in common, so every request to this endpoint is refused.',
       },
       schema: [],
       hasSuggestions: false,
@@ -92,6 +95,52 @@ export const createGuardedEndpointRule = ({
         }
       };
 
+      const reportCallerGuardsSharingNoCaller = (node: any): void => {
+        const classNode = findClassDeclaration(node);
+
+        if (!classNode) {
+          return;
+        }
+
+        const methodCallerGuards =
+          typedTokenHelpers.getInlineCallerGuards(node);
+        const callerGuards = [
+          ...typedTokenHelpers.getInlineCallerGuards(classNode),
+          ...methodCallerGuards,
+        ];
+
+        if (methodCallerGuards.length === 0 || callerGuards.length < 2) {
+          return;
+        }
+
+        const acceptedCallerVariantsByGuard = callerGuards.map(
+          typedTokenHelpers.getAcceptedCallerVariants,
+        );
+
+        // A guard that accepts nobody on its own is reported separately.
+        if (
+          acceptedCallerVariantsByGuard.some(
+            (acceptedCallerVariants) => acceptedCallerVariants.length === 0,
+          )
+        ) {
+          return;
+        }
+
+        const sharedCallerVariants = acceptedCallerVariantsByGuard.reduce(
+          (shared, acceptedCallerVariants) =>
+            shared.filter((callerVariant) =>
+              acceptedCallerVariants.includes(callerVariant),
+            ),
+        );
+
+        if (sharedCallerVariants.length === 0) {
+          context.report({
+            node: methodCallerGuards[0],
+            messageId: CALLER_GUARDS_SHARE_NO_CALLER_MESSAGE_ID,
+          });
+        }
+      };
+
       return {
         ClassDeclaration: (node: any): void => {
           const hasEndpoint = node.body.body.some(
@@ -115,6 +164,7 @@ export const createGuardedEndpointRule = ({
           }
 
           reportCallerGuardUsage(node);
+          reportCallerGuardsSharingNoCaller(node);
 
           if (isMissingGuards(node, triggerDecorators)) {
             context.report({ node, messageId });
