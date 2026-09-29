@@ -1,6 +1,6 @@
 # Programmatic application builds
 
-`twenty-sdk/build` exposes local build and typecheck operations for scripts, CI jobs, and integrations. It requires an app project and its installed dependencies, but no workspace connection or separate CLI package. The SDK does not manage credentials, read CLI configuration, contact a workspace, prompt, print results, or exit the process through this entry point. Application source is trusted executable code and can have its own side effects; callers that need process isolation should use a worker or child process.
+`twenty-sdk/build` exposes local build, typecheck, and client-generation operations for scripts, CI jobs, and integrations. It requires an app project and its installed dependencies, but no workspace connection or separate CLI package. The SDK does not manage credentials, read CLI configuration, contact a workspace, prompt, print results, or exit the process through this entry point. Application source is trusted executable code and can have its own side effects; callers that need process isolation should use a worker or child process.
 
 Read `twenty-sdk/build/descriptor.json` before importing the SDK. It is generated from the package version and Node requirement at build time. Its protocol version is independent of SDK semver and server compatibility. Importing the build entry does not load TypeScript or esbuild.
 
@@ -30,17 +30,17 @@ try {
 
 Save the example as `build.mjs` in the app project and run it with Node. `typecheckApp({ appPath: process.cwd() })` checks the project without building artifacts. Public types, including `BuildSnapshot`, `BuildResult`, and `BuildDiagnostic`, are exported from `twenty-sdk/build`; consumers do not need the private `twenty-shared` package.
 
-Protocol 1 advertises `build`, `typecheck`, and `releaseSnapshot`. Check the descriptor's capabilities rather than inferring them from the SDK version. Operations are loaded lazily, so importing the entry or reading `BUILD_DESCRIPTOR` does not load TypeScript or esbuild.
+Protocol 1 advertises `build`, `typecheck`, `releaseSnapshot`, and `generateClient`. Older SDK releases may not offer every capability. Check the descriptor's capabilities rather than inferring them from the SDK version. Operations are loaded lazily, so importing the entry or reading `BUILD_DESCRIPTOR` does not load TypeScript or esbuild.
 
-The import path and named exports `buildAppSnapshot`, `typecheckApp`, `releaseAppSnapshot`, and `BUILD_DESCRIPTOR` are public SDK API for local application builds and typechecking. A protocol version bump does not make renaming those exports backward-compatible; changes must preserve existing imports or follow a breaking SDK release. Workspace authentication, uploads, and synchronization remain outside this entry point.
+The import path and named exports `buildAppSnapshot`, `typecheckApp`, `releaseAppSnapshot`, `generateAppClient`, and `BUILD_DESCRIPTOR` are public SDK API for local application tooling. A protocol version bump does not make renaming those exports backward-compatible; changes must preserve existing imports or follow a breaking SDK release. Workspace authentication, uploads, and synchronization remain outside this entry point.
 
 ## Results and diagnostics
 
 Operations return `{ success: true, data, diagnostics }` or `{ success: false, error: { code, message }, diagnostics }`. Typechecking succeeds with `data: null` and emits no files. Missing or invalid TypeScript configuration is a failure, including diagnostics without a source location.
 
-Diagnostics have `severity`, `code`, and `message`, with optional project-relative `file` and one-based `line` and `column`. Codes include TypeScript codes such as `TS2322`. Operation error codes are `INVALID_APP_PATH`, `MANIFEST_BUILD_FAILED`, `BUILD_FAILED`, `TYPECHECK_FAILED`, `CANCELLED`, `SNAPSHOT_NOT_FOUND`, and `SNAPSHOT_RELEASE_FAILED`. Callers decide how to display results and which exit codes to use.
+Diagnostics have `severity`, `code`, and `message`, with optional project-relative `file` and one-based `line` and `column`. Codes include TypeScript codes such as `TS2322`. Operation error codes are `INVALID_APP_PATH`, `MANIFEST_BUILD_FAILED`, `BUILD_FAILED`, `TYPECHECK_FAILED`, `CLIENT_GENERATION_FAILED`, `CANCELLED`, `SNAPSHOT_NOT_FOUND`, and `SNAPSHOT_RELEASE_FAILED`. Callers decide how to display results and which exit codes to use.
 
-Both new operations fail on TypeScript configuration and project-reference errors, including errors without a source location. The legacy builder's text parser silently ignored some of these failures; successful legacy builds do not establish that a project passes typechecking. Before migrating, run the new typecheck operation and fix its diagnostics. For `TS6305`, build the referenced TypeScript projects first, or correct references that should not be part of the app compilation. Regenerate any app-specific client types against the intended workspace and SDK. The SDK never builds referenced projects or emits declarations implicitly, so its declared file writes remain accurate.
+Build and typecheck fail on TypeScript configuration and project-reference errors, including errors without a source location. The legacy builder's text parser silently ignored some of these failures; successful legacy builds do not establish that a project passes typechecking. Before migrating, run the new typecheck operation and fix its diagnostics. For `TS6305`, build the referenced TypeScript projects first, or correct references that should not be part of the app compilation. Regenerate any app-specific client types against the intended workspace and SDK. The SDK never builds referenced projects or emits declarations implicitly, so its declared file writes remain accurate.
 
 Build and typecheck accept an optional `AbortSignal`. Cancellation is checked between asynchronous stages; synchronous TypeScript checking cannot be interrupted in-process. Use a worker or child process when immediate cancellation or protection against app code calling `process.exit` is required. This is process isolation, not a sandbox for untrusted code.
 
@@ -63,6 +63,30 @@ Each build allocates a new `.twenty/snapshots/build-*/` directory inside the exi
 Keep the owning SDK instance alive while consuming a snapshot. `releaseSnapshot` deletes the entire directory and its lease, not just the in-memory handle. Release in a `finally` block after consuming or uploading the artifacts. Unknown or foreign build IDs fail without deleting files. Never release a snapshot while another operation still uses its files.
 
 Failed builds clean up their own directory. A killed process can leave an orphan. Protocol 1 does not automatically prune other processes' directories. To remove crash leftovers manually, stop all SDK build processes using that app first, then remove its `.twenty/snapshots` directory. This keeps active snapshots safe from PID reuse and cleanup races.
+
+## Client generation
+
+`generateAppClient({ appPath, schema, signal? })` generates the core API client from a supplied GraphQL schema string. The caller fetches the application schema using its own workspace connection. The SDK reuses the existing client generator without network requests and returns `BuildResult<null>`. It does not register, install, or synchronize an application, modify app source, or write pull-base state.
+
+```ts
+import { readFile } from 'node:fs/promises';
+import { generateAppClient } from 'twenty-sdk/build';
+
+const result = await generateAppClient({
+  appPath: process.cwd(),
+  schema: await readFile('./application-schema.graphql', 'utf8'),
+});
+
+if (!result.success) {
+  throw new Error(result.error.message);
+}
+```
+
+`appPath` must be an absolute path to an existing directory with `node_modules/twenty-client-sdk` installed. The operation validates the package manifest before writing, with no fallback to a parent or global installation. Dependency symlinks are followed, so a linked package's target is modified. Avoid parallel generation for apps sharing the same installed client package.
+
+The descriptor lists writes under `node_modules/twenty-client-sdk/dist`: `core/generated/**`, the temporary `core/generated.tmp/**` directory, `core.mjs`, and `core.cjs`. Metadata clients and other package files are preserved. Client replacement is not atomic: generation or filesystem failures can leave partially updated local files. Fix the cause and rerun generation against the intended schema; failure does not roll back a prior remote sync.
+
+Cancellation is checked before generation starts and after the generator settles. An already-aborted signal causes no writes. In-flight generation cannot be interrupted cooperatively; the operation waits for its writes to stop before returning `CANCELLED`. Completed or partial local writes can remain, including if the caller forcibly terminates a worker. Callers should report the remote sync and local generation outcomes separately.
 
 ## Existing SDK commands
 
