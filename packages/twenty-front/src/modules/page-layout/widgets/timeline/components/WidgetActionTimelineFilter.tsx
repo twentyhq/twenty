@@ -5,11 +5,12 @@ import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
+import { WidgetCardHeaderActionButton } from '@/page-layout/widgets/widget-card/components/WidgetCardHeaderActionButton';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
-import { Dropdown, LightIconButton } from 'twenty-ui/components';
+import { Dropdown } from 'twenty-ui/components';
 import { IconFilter, IconFilterOff, useIcons } from 'twenty-ui/icon';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
@@ -75,14 +76,10 @@ export const WidgetActionTimelineFilter = () => {
     >
       <Dropdown.Trigger
         render={
-          <LightIconButton
-            aria-label={t`Filter timeline`}
-            title={t`Filter timeline`}
-            emphasis="subtle"
-            size="sm"
-          >
-            <IconFilter />
-          </LightIconButton>
+          <WidgetCardHeaderActionButton
+            Icon={IconFilter}
+            label={t`Filter timeline`}
+          />
         }
       />
       <DropdownContent
