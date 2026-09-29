@@ -1,4 +1,4 @@
-import { type SuggestionItem } from '@/blocknote-editor/types/types';
+import { type SuggestionItem } from '@/blocknote-editor/types/SuggestionMenuItems';
 import { SLASH_MENU_LIST_ID } from '@/ui/input/constants/SlashMenuListId';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';

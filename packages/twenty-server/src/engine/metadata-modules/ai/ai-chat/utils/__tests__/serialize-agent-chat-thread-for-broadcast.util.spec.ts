@@ -1,9 +1,9 @@
-import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
+import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { serializeAgentChatThreadForBroadcast } from 'src/engine/metadata-modules/ai/ai-chat/utils/serialize-agent-chat-thread-for-broadcast.util';
 
 describe('Thread broadcasts', () => {
   it('contains thread data without viewer-specific permissions', () => {
-    const thread = Object.assign(new AgentChatThreadEntity(), {
+    const thread = Object.assign(new AgentChatThreadWorkspaceEntity(), {
       id: 'thread',
       userWorkspaceId: 'owner',
       totalInputCredits: 0,

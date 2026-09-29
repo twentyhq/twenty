@@ -14,27 +14,35 @@
 ### Dropdown.Root
 
 <ParamField body="Root.defaultOpen" type="boolean">
-
+  Whether the popup is initially open when uncontrolled.
 </ParamField>
 
 <ParamField body="Root.defaultPage" type="string">
-
+  ID of the `Page` shown when the popup opens. Closing the popup resets the page history to it. Defaults to `root`.
 </ParamField>
 
 <ParamField body="Root.multiple" type="boolean">
+  Allows selecting several options. Options then keep the popup open and show a checkbox by default.
+</ParamField>
 
+<ParamField body="Root.onEscapeKeyDown" type="((event: DropdownDismissEvent) =&gt; void)">
+  Called when Escape is about to close the popup. Call `event.preventDefault()` to keep it open.
+</ParamField>
+
+<ParamField body="Root.onInteractOutside" type="((event: DropdownDismissEvent) =&gt; void)">
+  Called when a press outside the popup, or Tab out of it, is about to close it. `event.target` is the element pressed outside, or `null` after Tab. Call `event.preventDefault()` to keep it open.
 </ParamField>
 
 <ParamField body="Root.onOpenChange" type="((open: boolean) =&gt; void)">
-
+  Called with the next open state when the popup opens or closes.
 </ParamField>
 
 <ParamField body="Root.open" type="boolean">
-
+  Whether the popup is open. Use with `onOpenChange` to control it.
 </ParamField>
 
 <ParamField body="Root.type" type="&quot;menu&quot; | &quot;panel&quot; | &quot;picker&quot;" required>
-
+  Interaction model: `menu` for commands and links, `picker` for search and selectable options, or `panel` for forms. It sets the ARIA roles, initial focus, and keyboard navigation.
 </ParamField>
 
 ### Dropdown.Trigger
@@ -111,6 +119,11 @@
   returns a class based on the component's state.
 </ParamField>
 
+<ParamField body="Content.collisionPadding" type="Padding">
+  Space in pixels kept between the popup and the edges of its collision
+  boundary, for all sides or per side. Defaults to 5.
+</ParamField>
+
 <ParamField body="Content.container" type="HTMLElement | ShadowRoot | RefObject&lt;HTMLElement | ShadowRoot | null&gt; | null">
   Element the popup is portaled into. Defaults to the theme's portal
   container.
@@ -163,17 +176,17 @@
 </ParamField>
 
 <ParamField body="Content.width" type="Width&lt;string | number&gt;" default="200">
-
+  CSS width of the popup. Numbers are in pixels.
 </ParamField>
 
 ### Dropdown.ActionItem
 
 <ParamField body="ActionItem.className" type="string">
-
+  CSS class applied to the row.
 </ParamField>
 
 <ParamField body="ActionItem.closeOnClick" type="boolean" default="true">
-
+  Closes the dropdown after activation, along with parent menus when inside a submenu. Ignored when `page` is set.
 </ParamField>
 
 <ParamField body="ActionItem.color" type="&quot;danger&quot; | &quot;neutral&quot;">
@@ -206,6 +219,10 @@
   shortcut is up to the application.
 </ParamField>
 
+<ParamField body="ActionItem.hotkeysJoinLabel" type="string">
+  Text between shortcut keys. Defaults to `then`.
+</ParamField>
+
 <ParamField body="ActionItem.nativeButton" type="boolean" default="true when render is omitted; false otherwise">
   Whether the component renders a native `<button>` element when replacing it
   via the `render` prop.
@@ -213,11 +230,11 @@
 </ParamField>
 
 <ParamField body="ActionItem.page" type="string">
-
+  ID of the `Page` to show on activation. The popup stays open, and the row shows a chevron by default.
 </ParamField>
 
 <ParamField body="ActionItem.render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt;">
-
+  Element rendered as the row instead of a native button. Custom components must forward the supplied props and ref.
 </ParamField>
 
 <ParamField body="ActionItem.startIcon" type="ReactNode">
@@ -225,17 +242,17 @@
 </ParamField>
 
 <ParamField body="ActionItem.style" type="CSSProperties">
-
+  Inline styles applied to the row.
 </ParamField>
 
 ### Dropdown.OptionItem
 
 <ParamField body="OptionItem.className" type="string">
-
+  CSS class applied to the row.
 </ParamField>
 
 <ParamField body="OptionItem.closeOnSelect" type="boolean">
-
+  Closes the dropdown after selection. Defaults to `true`, or `false` when `multiple` is set.
 </ParamField>
 
 <ParamField body="OptionItem.color" type="&quot;danger&quot; | &quot;neutral&quot;">
@@ -268,8 +285,12 @@
   shortcut is up to the application.
 </ParamField>
 
-<ParamField body="OptionItem.indicator" type="&quot;check&quot; | &quot;checkbox&quot; | &quot;none&quot;">
+<ParamField body="OptionItem.hotkeysJoinLabel" type="string">
+  Text between shortcut keys. Defaults to `then`.
+</ParamField>
 
+<ParamField body="OptionItem.indicator" type="&quot;check&quot; | &quot;checkbox&quot; | &quot;none&quot;">
+  Selection indicator: a check icon after the content, a checkbox before it, or none. Defaults to `checkbox` when `multiple` is set, otherwise `check`.
 </ParamField>
 
 <ParamField body="OptionItem.nativeButton" type="boolean" default="true when render is omitted; false otherwise">
@@ -279,15 +300,15 @@
 </ParamField>
 
 <ParamField body="OptionItem.onSelect" type="(() =&gt; void)">
-
+  Called when the option is activated. The application owns the selected value.
 </ParamField>
 
 <ParamField body="OptionItem.render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt;">
-
+  Element rendered as the row instead of a native button. Custom components must forward the supplied props and ref.
 </ParamField>
 
 <ParamField body="OptionItem.selected" type="boolean" required>
-
+  Whether the option is selected. Exposed as `aria-checked` in menus and `aria-pressed` in other dropdown types.
 </ParamField>
 
 <ParamField body="OptionItem.startIcon" type="ReactNode">
@@ -295,7 +316,7 @@
 </ParamField>
 
 <ParamField body="OptionItem.style" type="CSSProperties">
-
+  Inline styles applied to the row.
 </ParamField>
 
 ### Dropdown.Search
@@ -310,7 +331,7 @@
 </ParamField>
 
 <ParamField body="Search.onValueChange" type="((value: string) =&gt; void)">
-
+  Called with the search text on every change. The application filters the results.
 </ParamField>
 
 <ParamField body="Search.render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, InputState&gt;">
@@ -329,20 +350,77 @@
   The value of the input. Use when controlled.
 </ParamField>
 
+### Dropdown.Header
+
+<ParamField body="Header.render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, {}&gt;">
+  Allows you to replace the component's HTML element
+  with a different tag, or compose it with another component.
+
+  Accepts a `ReactElement` or a function that returns the element to render.
+</ParamField>
+
+### Dropdown.Title
+
+<ParamField body="Title.className" type="string | ((state: PopoverTitleState) =&gt; string | undefined)">
+  CSS class applied to the element, or a function that
+  returns a class based on the component's state.
+</ParamField>
+
+<ParamField body="Title.render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, PopoverTitleState&gt;">
+  Allows you to replace the component's HTML element
+  with a different tag, or compose it with another component.
+
+  Accepts a `ReactElement` or a function that returns the element to render.
+</ParamField>
+
+<ParamField body="Title.style" type="CSSProperties | ((state: PopoverTitleState) =&gt; CSSProperties | undefined)">
+  Style applied to the element, or a function that
+  returns a style object based on the component's state.
+</ParamField>
+
+### Dropdown.Close
+
+<ParamField body="Close.aria-label" type="string" required>
+  Accessible name of the close control. Required because the default control only shows an icon.
+</ParamField>
+
+<ParamField body="Close.className" type="string | ((state: PopoverCloseState) =&gt; string | undefined)">
+  CSS class applied to the element, or a function that
+  returns a class based on the component's state.
+</ParamField>
+
+<ParamField body="Close.nativeButton" type="boolean" default="true">
+  Whether the component renders a native `<button>` element when replacing it
+  via the `render` prop.
+  Set to `false` if the rendered element is not a button (for example, `<div>`).
+</ParamField>
+
+<ParamField body="Close.render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, PopoverCloseState&gt;">
+  Allows you to replace the component's HTML element
+  with a different tag, or compose it with another component.
+
+  Accepts a `ReactElement` or a function that returns the element to render.
+</ParamField>
+
+<ParamField body="Close.style" type="CSSProperties | ((state: PopoverCloseState) =&gt; CSSProperties | undefined)">
+  Style applied to the element, or a function that
+  returns a style object based on the component's state.
+</ParamField>
+
 ### Dropdown.Page
 
 <ParamField body="Page.id" type="string" required>
-
+  Identifier matched by `defaultPage`, the `page` prop of actions, and `goToPage`. The page renders only while it is current.
 </ParamField>
 
 <ParamField body="Page.type" type="&quot;menu&quot; | &quot;panel&quot; | &quot;picker&quot;">
-
+  Interaction model while the page is shown. Defaults to the root `type`.
 </ParamField>
 
 ### Dropdown.Back
 
 <ParamField body="Back.className" type="string">
-
+  CSS class applied to the row.
 </ParamField>
 
 <ParamField body="Back.color" type="&quot;danger&quot; | &quot;neutral&quot;">
@@ -375,6 +453,10 @@
   shortcut is up to the application.
 </ParamField>
 
+<ParamField body="Back.hotkeysJoinLabel" type="string">
+  Text between shortcut keys. Defaults to `then`.
+</ParamField>
+
 <ParamField body="Back.nativeButton" type="boolean" default="true when render is omitted; false otherwise">
   Whether the component renders a native `<button>` element when replacing it
   via the `render` prop.
@@ -382,7 +464,7 @@
 </ParamField>
 
 <ParamField body="Back.render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt;">
-
+  Element rendered as the row instead of a native button. Custom components must forward the supplied props and ref.
 </ParamField>
 
 <ParamField body="Back.startIcon" type="ReactNode">
@@ -390,43 +472,43 @@
 </ParamField>
 
 <ParamField body="Back.style" type="CSSProperties">
-
+  Inline styles applied to the row.
 </ParamField>
 
 ### Dropdown.Submenu
 
 <ParamField body="Submenu.defaultOpen" type="boolean">
-
+  Whether the popup is initially open when uncontrolled.
 </ParamField>
 
 <ParamField body="Submenu.defaultPage" type="string">
-
+  ID of the `Page` shown when the popup opens. Closing the popup resets the page history to it. Defaults to `root`.
 </ParamField>
 
 <ParamField body="Submenu.multiple" type="boolean">
-
+  Allows selecting several options. Options then keep the popup open and show a checkbox by default.
 </ParamField>
 
 <ParamField body="Submenu.onOpenChange" type="((open: boolean) =&gt; void)">
-
+  Called with the next open state when the popup opens or closes.
 </ParamField>
 
 <ParamField body="Submenu.open" type="boolean">
-
+  Whether the popup is open. Use with `onOpenChange` to control it.
 </ParamField>
 
 <ParamField body="Submenu.type" type="&quot;menu&quot; | &quot;panel&quot; | &quot;picker&quot;" default="menu">
-
+  Interaction model: `menu` for commands and links, `picker` for search and selectable options, or `panel` for forms. It sets the ARIA roles, initial focus, and keyboard navigation.
 </ParamField>
 
 ### Dropdown.SubmenuTrigger
 
 <ParamField body="SubmenuTrigger.className" type="string">
-
+  CSS class applied to the row.
 </ParamField>
 
 <ParamField body="SubmenuTrigger.closeDelay" type="number">
-
+  Delay in milliseconds before a submenu opened on hover closes. Requires `openOnHover`. Defaults to `0`.
 </ParamField>
 
 <ParamField body="SubmenuTrigger.color" type="&quot;danger&quot; | &quot;neutral&quot;">
@@ -434,7 +516,7 @@
 </ParamField>
 
 <ParamField body="SubmenuTrigger.delay" type="number">
-
+  Delay in milliseconds before the submenu opens on hover. Requires `openOnHover`. Defaults to `300`.
 </ParamField>
 
 <ParamField body="SubmenuTrigger.description" type="ReactNode">
@@ -463,6 +545,10 @@
   shortcut is up to the application.
 </ParamField>
 
+<ParamField body="SubmenuTrigger.hotkeysJoinLabel" type="string">
+  Text between shortcut keys. Defaults to `then`.
+</ParamField>
+
 <ParamField body="SubmenuTrigger.nativeButton" type="boolean" default="true when render is omitted; false otherwise">
   Whether the component renders a native `<button>` element when replacing it
   via the `render` prop.
@@ -470,11 +556,11 @@
 </ParamField>
 
 <ParamField body="SubmenuTrigger.openOnHover" type="boolean" default="true">
-
+  Also opens the submenu when the row is hovered.
 </ParamField>
 
 <ParamField body="SubmenuTrigger.render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt;">
-
+  Element rendered as the row instead of a native button. Custom components must forward the supplied props and ref.
 </ParamField>
 
 <ParamField body="SubmenuTrigger.startIcon" type="ReactNode">
@@ -482,15 +568,41 @@
 </ParamField>
 
 <ParamField body="SubmenuTrigger.style" type="CSSProperties">
-
+  Inline styles applied to the row.
 </ParamField>
 
 ### Dropdown.Section
 
 <ParamField body="Section.label" type="ReactNode">
-
+  Heading displayed above the rows. It also names the group for assistive technologies.
 </ParamField>
 
 <ParamField body="Section.scrollable" type="boolean">
+  Caps the section height and scrolls its rows. Nest labelled sections inside it to scroll them as one list.
+</ParamField>
 
+### Dropdown.Separator
+
+<ParamField body="Separator.className" type="string">
+  Class applied to the separator. Native div attributes and refs are also accepted.
+</ParamField>
+
+### Dropdown.Loading
+
+<ParamField body="Loading.children" type="ReactNode">
+  Loading message announced as a polite, busy status.
+</ParamField>
+
+<ParamField body="Loading.className" type="string">
+  Class applied to the status. Native div attributes and refs are also accepted.
+</ParamField>
+
+### Dropdown.Empty
+
+<ParamField body="Empty.children" type="ReactNode">
+  Empty-state message announced as a polite status.
+</ParamField>
+
+<ParamField body="Empty.className" type="string">
+  Class applied to the status. Native div attributes and refs are also accepted.
 </ParamField>

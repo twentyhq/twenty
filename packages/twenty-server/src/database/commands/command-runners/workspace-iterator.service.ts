@@ -50,6 +50,9 @@ export type WorkspaceIteratorReport = {
   success: {
     workspaceId: string;
   }[];
+  skipped: {
+    workspaceId: string;
+  }[];
   interrupted: boolean;
 };
 
@@ -79,6 +82,7 @@ export class WorkspaceIteratorService {
     const report: WorkspaceIteratorReport = {
       fail: [],
       success: [],
+      skipped: [],
       interrupted: false,
     };
 
@@ -108,15 +112,22 @@ export class WorkspaceIteratorService {
       );
 
       try {
+        const workspace = await this.workspaceRepository.findOne({
+          // TypeORM discards a row when every explicitly selected value is null.
+          select: ['id', 'databaseSchema'],
+          where: { id: workspaceId },
+        });
+
+        if (!isDefined(workspace)) {
+          this.recordDeletedWorkspace({ report, workspaceId });
+
+          continue;
+        }
+
         const authContext = buildSystemAuthContext(workspaceId);
 
         await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-          const workspace = await this.workspaceRepository.findOne({
-            select: ['databaseSchema'],
-            where: { id: workspaceId },
-          });
-
-          const dataSource = isNonEmptyString(workspace?.databaseSchema)
+          const dataSource = isNonEmptyString(workspace.databaseSchema)
             ? this.coreDataSource
             : undefined;
 
@@ -124,14 +135,13 @@ export class WorkspaceIteratorService {
             this.logger.warn(
               `Could not retrieve a workspace data source for workspace ${workspaceId} ` +
                 `(index ${index + 1}/${workspaceIdsToProcess.length}): ` +
-                `workspaceRowFound=${isDefined(workspace)}, ` +
-                `databaseSchema=${JSON.stringify(workspace?.databaseSchema ?? null)}`,
+                `databaseSchema=${JSON.stringify(workspace.databaseSchema ?? null)}`,
             );
           }
 
           await callback({
             workspaceId,
-            databaseSchema: workspace?.databaseSchema ?? undefined,
+            databaseSchema: workspace.databaseSchema ?? undefined,
             dataSource,
             index,
             total: workspaceIdsToProcess.length,
@@ -140,6 +150,17 @@ export class WorkspaceIteratorService {
 
         report.success.push({ workspaceId });
       } catch (error: unknown) {
+        // Deletion can also race a command or its migration-history write.
+        const workspaceStillExists = await this.workspaceRepository.exists({
+          where: { id: workspaceId },
+        });
+
+        if (!workspaceStillExists) {
+          this.recordDeletedWorkspace({ report, workspaceId });
+
+          continue;
+        }
+
         report.fail.push({ error: error as Error, workspaceId });
       } finally {
         await this.workspaceCacheService.evictWorkspaceFromLocalCache(
@@ -179,6 +200,19 @@ export class WorkspaceIteratorService {
     });
 
     return report;
+  }
+
+  private recordDeletedWorkspace({
+    report,
+    workspaceId,
+  }: {
+    report: WorkspaceIteratorReport;
+    workspaceId: string;
+  }): void {
+    this.logger.warn(
+      `Skipping workspace ${workspaceId}: it has been deleted or no longer exists.`,
+    );
+    report.skipped.push({ workspaceId });
   }
 
   private async fetchWorkspaceIds(

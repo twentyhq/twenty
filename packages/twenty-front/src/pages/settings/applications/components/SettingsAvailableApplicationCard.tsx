@@ -58,7 +58,7 @@ export const SettingsAvailableApplicationCard = ({
           availableApplicationId: application.id,
         })}
       >
-        <Card rounded fullWidth>
+        <Card.Root rounded fullWidth>
           <StyledSettingsCardContent alignItems="flex-start" fullHeight>
             <Avatar
               src={getAbsoluteImageUrl(application.logoUrl || null)}
@@ -77,7 +77,7 @@ export const SettingsAvailableApplicationCard = ({
               </StyledSettingsCardThirdLine>
             </div>
           </StyledSettingsCardContent>
-        </Card>
+        </Card.Root>
       </Link>
     </StyledLinkContainer>
   );

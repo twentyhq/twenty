@@ -142,6 +142,10 @@
   CSS positioning method for the popup.
 </ParamField>
 
+<ParamField body="ref" type="Ref&lt;HTMLDivElement&gt;">
+  Ref forwarded to the popup element.
+</ParamField>
+
 <ParamField body="render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, TooltipPopupState&gt;">
   Allows you to replace the component's HTML element
   with a different tag, or compose it with another component.
@@ -299,6 +303,10 @@
   Displays an arrow pointing to the trigger. Defaults to false.
 </ParamField>
 
+<ParamField body="Popup.children" type="ReactNode">
+  Content displayed inside the popup.
+</ParamField>
+
 <ParamField body="Popup.className" type="string | ((state: TooltipPopupState) =&gt; string | undefined)">
   Additional CSS class for the popup.
 </ParamField>
@@ -343,6 +351,10 @@
   Portal destination. Defaults to the current theme container.
 </ParamField>
 
+<ParamField body="Popup.content" type="string">
+  Supplementary content displayed in the tooltip.
+</ParamField>
+
 <ParamField body="Popup.disableAnchorTracking" type="boolean" default="false">
   Whether to disable the popup from tracking any layout shift of its positioning anchor.
 </ParamField>
@@ -357,6 +369,10 @@
 
 <ParamField body="Popup.positionMethod" type="&quot;absolute&quot; | &quot;fixed&quot;" default="absolute">
   CSS positioning method for the popup.
+</ParamField>
+
+<ParamField body="Popup.ref" type="Ref&lt;HTMLDivElement&gt;">
+  Ref forwarded to the popup element.
 </ParamField>
 
 <ParamField body="Popup.render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, TooltipPopupState&gt;">
@@ -384,6 +400,10 @@
 </ParamField>
 
 ### Tooltip.Content
+
+<ParamField body="Content.children" type="ReactNode">
+  Primary text displayed in the tooltip.
+</ParamField>
 
 <ParamField body="Content.description" type="ReactNode">
   Secondary explanation beneath the primary text.

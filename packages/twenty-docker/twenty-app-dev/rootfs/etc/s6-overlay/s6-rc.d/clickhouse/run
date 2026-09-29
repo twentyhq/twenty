@@ -1,0 +1,4 @@
+#!/bin/sh
+# s6 supervises the server, no need for ClickHouse's own watchdog process
+export CLICKHOUSE_WATCHDOG_ENABLE=0
+exec su-exec clickhouse clickhouse server --config-file=/etc/clickhouse-server/config.xml

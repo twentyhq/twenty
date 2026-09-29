@@ -2,7 +2,7 @@
 // Legal wording changes must be reviewed and accompanied by a template-version bump.
 // Merge fields use {{DOUBLE_BRACES}} and are resolved at render time.
 
-import { type DpaTemplateBlock } from 'src/engine/core-modules/dpa/types/dpa.types';
+import { type DpaTemplateBlock } from 'src/engine/core-modules/dpa/types/dpa.type';
 
 export const DPA_TEMPLATE_BLOCKS: DpaTemplateBlock[] = [
   {

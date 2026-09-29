@@ -246,9 +246,12 @@ describe('Quick Lead Workflow (e2e)', () => {
 
       expect(testWorkflowRunId).toBeDefined();
 
-      let workflowRun = await waitForWorkflowRunStatus(
+      await waitForWorkflowRunStatus(testWorkflowRunId as string, 'RUNNING');
+
+      let workflowRun = await waitForWorkflowRunStepStatus(
         testWorkflowRunId as string,
-        'RUNNING',
+        FORM_STEP_ID,
+        'PENDING',
       );
 
       expect(workflowRun?.status).toBe('RUNNING');

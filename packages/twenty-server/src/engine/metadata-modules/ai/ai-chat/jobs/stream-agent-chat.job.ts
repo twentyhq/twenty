@@ -28,14 +28,14 @@ import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service'
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { computeCostBreakdown } from 'src/engine/metadata-modules/ai/ai-billing/utils/compute-cost-breakdown.util';
+import { computeStepCostBreakdown } from 'src/engine/metadata-modules/ai/ai-billing/utils/compute-step-cost-breakdown.util';
 import { convertDollarsToCreditsMicro } from 'src/engine/metadata-modules/ai/ai-billing/utils/convert-dollars-to-credits-micro.util';
 import { extractCacheCreationTokens } from 'src/engine/metadata-modules/ai/ai-billing/utils/extract-cache-creation-tokens.util';
 import {
   AiException,
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
-import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
+import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { AgentChatCancelSubscriberService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-cancel-subscriber.service';
 import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
 import { AgentChatStreamHeartbeatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-heartbeat.service';
@@ -77,7 +77,7 @@ export class StreamAgentChatJob {
 
   constructor(
     @InjectAgentHistoryRepository('agentChatThread')
-    private readonly threadRepository: AgentHistoryRepository<AgentChatThreadEntity>,
+    private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     private readonly agentChatService: AgentChatService,
@@ -162,7 +162,7 @@ export class StreamAgentChatJob {
         );
       }
 
-      const { message } = await this.actorService.authorizeJob({
+      const { message, authorization } = await this.actorService.authorizeJob({
         workspaceId: data.workspaceId,
         threadId: data.threadId,
         messageId: data.messageId,
@@ -176,7 +176,12 @@ export class StreamAgentChatJob {
         );
       }
       await this.executeStream(
-        { ...data, messageId: message.id, existingTurnId: message.turnId },
+        {
+          ...data,
+          messageId: message.id,
+          existingTurnId: message.turnId,
+          workspaceMemberId: authorization.authContext.workspaceMemberId,
+        },
         workspace,
         abortController.signal,
         turnModelId,
@@ -334,7 +339,10 @@ export class StreamAgentChatJob {
   }
 
   private async executeStream(
-    data: StreamAgentChatJobData & { existingTurnId: string },
+    data: StreamAgentChatJobData & {
+      existingTurnId: string;
+      workspaceMemberId: string;
+    },
     workspace: WorkspaceEntity,
     abortSignal: AbortSignal,
     turnModelId: string,
@@ -343,7 +351,7 @@ export class StreamAgentChatJob {
       ? Promise.resolve(null)
       : this.agentChatService
           .generateTitleIfNeeded({
-            userWorkspaceId: data.userWorkspaceId,
+            workspaceMemberId: data.workspaceMemberId,
             threadId: data.threadId,
             messageContent: data.lastUserMessageText,
             workspaceId: data.workspaceId,
@@ -369,7 +377,7 @@ export class StreamAgentChatJob {
     turnModelId,
   }: {
     workspace: WorkspaceEntity;
-    data: StreamAgentChatJobData;
+    data: StreamAgentChatJobData & { workspaceMemberId: string };
     turnId: string;
     titlePromise: Promise<string | null>;
     abortSignal: AbortSignal;
@@ -497,6 +505,7 @@ export class StreamAgentChatJob {
                 return this.computeMessageMetadata({
                   part,
                   modelConfig,
+                  streamUsage,
                   lastStepConversationSize,
                   totalCacheCreationTokens,
                   onUpdateUsage: (usage) => {
@@ -524,7 +533,7 @@ export class StreamAgentChatJob {
                     outOfCredits: checkHasNoMoreAvailableCredits(),
                     threadId: data.threadId,
                     workspaceId: data.workspaceId,
-                    userWorkspaceId: data.userWorkspaceId,
+                    workspaceMemberId: data.workspaceMemberId,
                     streamUsage,
                     lastStepConversationSize,
                     totalCacheCreationTokens,
@@ -645,6 +654,7 @@ export class StreamAgentChatJob {
   private computeMessageMetadata({
     part,
     modelConfig,
+    streamUsage,
     lastStepConversationSize,
     totalCacheCreationTokens,
     onUpdateUsage,
@@ -655,9 +665,6 @@ export class StreamAgentChatJob {
       type: string;
       usage?: {
         inputTokens?: number;
-      };
-      totalUsage?: {
-        inputTokens?: number;
         outputTokens?: number;
         inputTokenDetails?: { cacheReadTokens?: number };
         outputTokenDetails?: { reasoningTokens?: number };
@@ -665,6 +672,13 @@ export class StreamAgentChatJob {
       providerMetadata?: Record<string, Record<string, unknown> | undefined>;
     };
     modelConfig: AiModelConfig;
+    streamUsage: {
+      inputTokens: number;
+      outputTokens: number;
+      inputCredits: number;
+      outputCredits: number;
+      cacheReadTokens: number;
+    };
     lastStepConversationSize: number;
     totalCacheCreationTokens: number;
     onUpdateUsage: (usage: {
@@ -678,47 +692,44 @@ export class StreamAgentChatJob {
     onUpdateCacheCreationTokens: (tokens: number) => void;
   }) {
     if (part.type === 'finish-step') {
-      const stepInput = part.usage?.inputTokens ?? 0;
-      const stepCacheCreation = extractCacheCreationTokens(
+      const stepCacheCreationTokens = extractCacheCreationTokens(
         part.providerMetadata,
       );
+      const stepBreakdown = computeStepCostBreakdown(modelConfig, {
+        usage: part.usage,
+        cacheCreationTokens: stepCacheCreationTokens,
+      });
 
-      onUpdateCacheCreationTokens(totalCacheCreationTokens + stepCacheCreation);
-      onUpdateConversationSize(stepInput);
+      onUpdateUsage({
+        inputTokens:
+          streamUsage.inputTokens + stepBreakdown.tokenCounts.totalInputTokens,
+        outputTokens:
+          streamUsage.outputTokens + (part.usage?.outputTokens ?? 0),
+        inputCredits:
+          streamUsage.inputCredits +
+          convertDollarsToCreditsMicro(stepBreakdown.inputCostInDollars),
+        outputCredits:
+          streamUsage.outputCredits +
+          convertDollarsToCreditsMicro(stepBreakdown.outputCostInDollars),
+        cacheReadTokens:
+          streamUsage.cacheReadTokens +
+          stepBreakdown.tokenCounts.cachedInputTokens,
+      });
+      onUpdateCacheCreationTokens(
+        totalCacheCreationTokens + stepCacheCreationTokens,
+      );
+      onUpdateConversationSize(part.usage?.inputTokens ?? 0);
     }
 
     if (part.type === 'finish') {
-      const breakdown = computeCostBreakdown(modelConfig, {
-        inputTokens: part.totalUsage?.inputTokens,
-        outputTokens: part.totalUsage?.outputTokens,
-        cachedInputTokens: part.totalUsage?.inputTokenDetails?.cacheReadTokens,
-        reasoningTokens: part.totalUsage?.outputTokenDetails?.reasoningTokens,
-        cacheCreationTokens: totalCacheCreationTokens,
-      });
-
-      const inputCredits = convertDollarsToCreditsMicro(
-        breakdown.inputCostInDollars,
-      );
-      const outputCredits = convertDollarsToCreditsMicro(
-        breakdown.outputCostInDollars,
-      );
-
-      onUpdateUsage({
-        inputTokens: breakdown.tokenCounts.totalInputTokens,
-        outputTokens: part.totalUsage?.outputTokens ?? 0,
-        inputCredits,
-        outputCredits,
-        cacheReadTokens: breakdown.tokenCounts.cachedInputTokens,
-      });
-
       return {
         createdAt: new Date().toISOString(),
         usage: {
-          inputTokens: breakdown.tokenCounts.totalInputTokens,
-          outputTokens: part.totalUsage?.outputTokens ?? 0,
-          cachedInputTokens: breakdown.tokenCounts.cachedInputTokens,
-          inputCredits: toDisplayCredits(inputCredits),
-          outputCredits: toDisplayCredits(outputCredits),
+          inputTokens: streamUsage.inputTokens,
+          outputTokens: streamUsage.outputTokens,
+          cachedInputTokens: streamUsage.cacheReadTokens,
+          inputCredits: toDisplayCredits(streamUsage.inputCredits),
+          outputCredits: toDisplayCredits(streamUsage.outputCredits),
           conversationSize: lastStepConversationSize,
         },
         model: {
@@ -739,7 +750,7 @@ export class StreamAgentChatJob {
     outOfCredits: boolean;
     threadId: string;
     workspaceId: string;
-    userWorkspaceId: string;
+    workspaceMemberId: string;
     streamUsage: {
       inputTokens: number;
       outputTokens: number;
@@ -771,7 +782,7 @@ export class StreamAgentChatJob {
     outOfCredits,
     threadId,
     workspaceId,
-    userWorkspaceId,
+    workspaceMemberId,
     streamUsage,
     lastStepConversationSize,
     totalCacheCreationTokens,
@@ -787,7 +798,7 @@ export class StreamAgentChatJob {
     outOfCredits: boolean;
     threadId: string;
     workspaceId: string;
-    userWorkspaceId: string;
+    workspaceMemberId: string;
     streamUsage: {
       inputTokens: number;
       outputTokens: number;
@@ -838,10 +849,10 @@ export class StreamAgentChatJob {
 
     const threadStatus = await this.threadRepository.findOne(workspaceId, {
       where: { id: threadId },
-      select: ['id', 'deletedAt'],
+      select: ['id', 'archivedAt'],
     });
 
-    if (!threadStatus || threadStatus.deletedAt) {
+    if (!threadStatus || threadStatus.archivedAt) {
       return resolveSupersededTurnOutcome(outcome);
     }
 
@@ -879,7 +890,7 @@ export class StreamAgentChatJob {
 
     await this.agentChatService.notifyThreadUsageUpdated({
       threadId,
-      userWorkspaceId,
+      workspaceMemberId,
       workspaceId,
     });
 

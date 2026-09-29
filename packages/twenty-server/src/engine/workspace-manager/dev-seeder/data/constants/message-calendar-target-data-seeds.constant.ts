@@ -6,12 +6,8 @@ import { type MessageParticipantDataSeed } from 'src/engine/workspace-manager/de
 import { OPPORTUNITY_DATA_SEEDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/opportunity-data-seeds.constant';
 import { PERSON_DATA_SEEDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/person-data-seeds.constant';
 
-// Timeline reads resolve through the target junctions once
-// IS_MESSAGE_CALENDAR_TARGET_READ_ENABLED is on, and reconciliation only runs
-// on sync paths, so seeded workspaces must seed the rows reconciliation would
-// have produced: per parent, a Person target for each participant person, a
-// Company target for each of their companies, and an Opportunity target for
-// each opportunity they are the point of contact of.
+// Raw seeds bypass participant reconciliation, so seeded timelines need the
+// person, company, and point-of-contact opportunity targets it would create.
 
 type TargetColumnsDataSeed = {
   targetPersonId: string | null;

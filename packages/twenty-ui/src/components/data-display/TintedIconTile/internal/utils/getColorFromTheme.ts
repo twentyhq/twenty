@@ -5,10 +5,6 @@ export const getColorFromTheme = (
   shade: number,
 ): string => {
   const colorMap = themeCssVariables.color as unknown as Record<string, string>;
-  const tagText = themeCssVariables.tag.text as unknown as Record<
-    string,
-    string
-  >;
   const key = `${themeColor}${shade}`;
-  return colorMap[key] ?? tagText[themeColor];
+  return colorMap[key] ?? themeCssVariables.tag.text[themeColor];
 };

@@ -42,14 +42,6 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Partial<
     label: msg`Workflow index page`,
     description: msg`Use the dedicated workflow index page to browse workflows and their versions.`,
   },
-  [FeatureFlagKey.IS_MESSAGE_CALENDAR_TARGET_READ_ENABLED]: {
-    label: msg`Message and calendar target reads`,
-    description: msg`Use target relations to find messages and calendar events linked to records.`,
-  },
-  [FeatureFlagKey.IS_RECORD_SHARING_ENABLED]: {
-    label: msg`Record sharing`,
-    description: msg`Allow sharing individual records with workspace members.`,
-  },
   [FeatureFlagKey.IS_AI_CHAT_SHARING_DROPDOWN_ENABLED]: {
     label: msg`AI chat sharing dropdown`,
     description: msg`Show the sharing dropdown on AI conversations when record sharing is enabled.`,
@@ -69,5 +61,13 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Partial<
   [FeatureFlagKey.IS_RECORD_CREATION_FORM_ENABLED]: {
     label: msg`Record creation form`,
     description: msg`Use a dedicated form when creating records.`,
+  },
+  [FeatureFlagKey.IS_LOGS_SETTINGS_SECTION_ENABLED]: {
+    label: msg`Logs console`,
+    description: msg`Show a logs console at the bottom of the app in Advanced mode.`,
+  },
+  [FeatureFlagKey.IS_CONVERSATIONS_TAB_ENABLED]: {
+    label: msg`Conversations tab`,
+    description: msg`Show a Conversations tab listing the AI conversations attached to the record, on record pages of new workspaces.`,
   },
 };

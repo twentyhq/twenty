@@ -1,4 +1,4 @@
-import { type WorkflowValidationIssueCode } from '@/workflow/validation/types/workflow-validation.type';
+import { type WorkflowValidationIssueCode } from '@/workflow/validation/types/WorkflowValidation';
 
 export const MALFORMED_WORKFLOW_VALIDATION_ISSUE_CODES: ReadonlySet<WorkflowValidationIssueCode> =
   new Set([

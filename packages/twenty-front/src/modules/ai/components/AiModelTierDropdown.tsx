@@ -10,8 +10,9 @@ import { useAiModelTiers } from '@/ai/hooks/useAiModelTiers';
 import { useIsWorkspaceSetupChat } from '@/ai/hooks/useIsWorkspaceSetupChat';
 import { useWorkspaceAiModelTiers } from '@/ai/hooks/useWorkspaceAiModelTiers';
 import { agentChatUserSelectedModelTierState } from '@/ai/states/agentChatUserSelectedModelTierState';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
+import { Dropdown } from 'twenty-ui/components';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 
 const SLIDER_DROPDOWN_WIDTH_PX = 240;
@@ -48,35 +49,36 @@ export const AiModelTierDropdown = ({
   };
 
   return (
-    <Dropdown
-      dropdownId={dropdownId}
-      dropdownPlacement="top-end"
-      dropdownOffset={{ x: 0, y: 8 }}
-      clickableComponent={
-        <AiModelTierBars
-          selectedTier={selectedTier}
-          label={
-            isDefined(selectedResolvedTier.model)
-              ? t`${selectedResolvedTier.label}: ${selectedResolvedTier.model.label}`
-              : selectedResolvedTier.label
-          }
-          disabled={disabled}
-        />
-      }
-      dropdownComponents={
-        <LegacyDropdownContent widthInPixels={SLIDER_DROPDOWN_WIDTH_PX}>
-          <StyledSliderContainer
-            role="group"
-            aria-label={t`Choose a model mode`}
-          >
-            <AiModelTierSlider
-              selectedTier={selectedTier}
-              onTierChange={handleTierChange}
-              disabled={disabled}
-            />
-          </StyledSliderContainer>
-        </LegacyDropdownContent>
-      }
-    />
+    <DropdownRoot dropdownId={dropdownId} type="panel">
+      <Dropdown.Trigger
+        disabled={disabled}
+        render={
+          <AiModelTierBars
+            selectedTier={selectedTier}
+            label={
+              isDefined(selectedResolvedTier.model)
+                ? t`${selectedResolvedTier.label}: ${selectedResolvedTier.model.label}`
+                : selectedResolvedTier.label
+            }
+            disabled={disabled}
+          />
+        }
+      />
+      <DropdownContent
+        width={SLIDER_DROPDOWN_WIDTH_PX}
+        side="top"
+        align="end"
+        sideOffset={8}
+        aria-label={t`Choose a model mode`}
+      >
+        <StyledSliderContainer role="group" aria-label={t`Choose a model mode`}>
+          <AiModelTierSlider
+            selectedTier={selectedTier}
+            onTierChange={handleTierChange}
+            disabled={disabled}
+          />
+        </StyledSliderContainer>
+      </DropdownContent>
+    </DropdownRoot>
   );
 };

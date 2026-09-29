@@ -194,6 +194,7 @@ import { AddWorkspaceWorkflowVersionIdToWorkflowVersionFastInstanceCommand } fro
 import { AddReadabilityParentFieldsToObjectMetadataFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-41/2-41-instance-command-fast-1789373200000-add-readability-parent-fields-to-object-metadata';
 import { AddAppMessageChannelTypeFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-41/2-41-instance-command-fast-1789395506192-add-app-message-channel-type';
 import { AddAppMessageChannelUniqueHandleFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-41/2-41-instance-command-fast-1789418882171-add-app-message-channel-unique-handle';
+import { AddCampaignTrackingFlagsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-instance-command-fast-1790615265539-add-campaign-tracking-flags';
 import { AddWorkflowExecutionCompatibilityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-fast-1789719131000-add-workflow-execution-compatibility';
 import { CoreWorkflowCommandMenuItemsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-fast-1789730706712-core-workflow-command-menu-items';
 import { AddWorkflowVisibilityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-fast-1789893300000-add-workflow-visibility';
@@ -209,7 +210,10 @@ import { BackfillSettingsMenuItemSlowInstanceCommand } from 'src/database/comman
 import { AddChatMessageSenderFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-instance-command-fast-1790171503074-add-chat-message-sender';
 import { AddWorkspaceAllowedIframeOriginsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-instance-command-fast-1790232481570-add-workspace-allowed-iframe-origins';
 import { AddUsageLimitInstanceOverrideFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-instance-command-fast-1790245573467-add-usage-limit-instance-override';
-import { AddToggleMineFilterFieldMetadataIdToViewFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-instance-command-fast-1790326599000-add-toggle-mine-filter-field-metadata-id-to-view';
+import { EnforceWorkflowVersionCoreParentSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-instance-command-slow-1790323148754-enforce-workflow-version-core-parent';
+import { AddCoreForeignKeyIndexesSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-instance-command-slow-1790343790126-add-core-foreign-key-indexes';
+import { AddChatThreadsWidgetTypeFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-instance-command-fast-1790621229217-add-chat-threads-widget-type';
+import { AddToggleMineFilterFieldMetadataIdToViewFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-instance-command-fast-1790696856000-add-toggle-mine-filter-field-metadata-id-to-view';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -409,6 +413,7 @@ export const INSTANCE_COMMANDS = [
   AddReadabilityParentFieldsToObjectMetadataFastInstanceCommand,
   AddAppMessageChannelTypeFastInstanceCommand,
   AddAppMessageChannelUniqueHandleFastInstanceCommand,
+  AddCampaignTrackingFlagsFastInstanceCommand,
   AddAiEvaluationModelToWorkspaceFastInstanceCommand,
   AddIsRequiredToApplicationVariablesFastInstanceCommand,
   AddDeferredWorkspaceMigrationActionTableFastInstanceCommand,
@@ -421,5 +426,8 @@ export const INSTANCE_COMMANDS = [
   AddChatMessageSenderFastInstanceCommand,
   AddWorkspaceAllowedIframeOriginsFastInstanceCommand,
   AddUsageLimitInstanceOverrideFastInstanceCommand,
+  EnforceWorkflowVersionCoreParentSlowInstanceCommand,
+  AddCoreForeignKeyIndexesSlowInstanceCommand,
+  AddChatThreadsWidgetTypeFastInstanceCommand,
   AddToggleMineFilterFieldMetadataIdToViewFastInstanceCommand,
 ];

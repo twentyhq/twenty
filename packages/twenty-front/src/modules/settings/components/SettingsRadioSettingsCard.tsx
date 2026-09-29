@@ -4,7 +4,7 @@ import { useLingui } from '@lingui/react/macro';
 import { type ReactNode, useId } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { Radio, RadioGroup } from 'twenty-ui/primitives/input';
-import { Card, CardContent } from 'twenty-ui/primitives/surfaces';
+import { Card } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 type SettingsRadioSettingsCardProps<Option extends { value: string }> = {
@@ -87,13 +87,13 @@ export const SettingsRadioSettingsCard = <
         }
       }}
     >
-      <Card fullWidth rounded>
+      <Card.Root fullWidth rounded>
         {options.map((option, index) => {
           const isSelected = value === option.value;
 
           return (
             <StyledCardContentContainer key={option.value}>
-              <CardContent divider={index < options.length - 1}>
+              <Card.Content divider={index < options.length - 1}>
                 <StyledOptionHeader>
                   {option.cardMedia}
                   <StyledTextContainer>
@@ -117,11 +117,11 @@ export const SettingsRadioSettingsCard = <
                     {option.cardContentExpanded}
                   </StyledExpandedContent>
                 )}
-              </CardContent>
+              </Card.Content>
             </StyledCardContentContainer>
           );
         })}
-      </Card>
+      </Card.Root>
     </RadioGroup>
   );
 };

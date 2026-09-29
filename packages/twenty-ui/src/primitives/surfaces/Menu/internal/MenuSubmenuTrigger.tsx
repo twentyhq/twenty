@@ -9,6 +9,6 @@ export const MenuSubmenuTrigger = (props: MenuSubmenuTriggerProps) => (
     {...getMenuListItemProps<
       MenuPrimitive.SubmenuTrigger.State,
       MenuSubmenuTriggerProps
-    >(props, () => ({ hasSubmenu: true }))}
+    >({ props, getListItemState: () => ({ hasSubmenu: true }) })}
   />
 );

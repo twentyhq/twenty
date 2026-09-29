@@ -23,6 +23,10 @@
   transform: rotate(-90deg);
   transition: transform 0.3s ease;
 
+  &:dir(rtl) {
+    transform: rotate(90deg);
+  }
+
   &[data-open] {
     transform: rotate(0deg);
   }

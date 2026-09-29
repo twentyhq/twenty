@@ -4,8 +4,10 @@ import { getDataSourceToken, getRepositoryToken } from '@nestjs/typeorm';
 import { type DataSource } from 'typeorm';
 
 import { BillingCreditGrantType } from 'src/engine/core-modules/billing/enums/billing-credit-grant-type.enum';
+import { BillingCreditGrantService } from 'src/engine/core-modules/billing/services/billing-credit-grant.service';
 import { BillingCreditService } from 'src/engine/core-modules/billing/services/billing-credit.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
+import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
@@ -55,6 +57,8 @@ describe('OnboardingService', () => {
         OnboardingService,
         { provide: BillingService, useValue: { isBillingEnabled: jest.fn() } },
         { provide: BillingCreditService, useValue: { grantCredits } },
+        { provide: BillingCreditGrantService, useValue: {} },
+        { provide: CacheLockService, useValue: {} },
         {
           provide: ExceptionHandlerService,
           useValue: { captureExceptions },

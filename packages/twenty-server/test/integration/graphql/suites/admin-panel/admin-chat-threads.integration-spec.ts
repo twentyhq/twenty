@@ -1,3 +1,4 @@
+import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { randomUUID } from 'crypto';
 
 import { gql } from 'graphql-tag';
@@ -102,6 +103,7 @@ describe('Admin panel global chat threads (integration)', () => {
   let dataSource: DataSource;
   let storage: AgentHistoryStorageService;
   let userWorkspaceId: string;
+  let workspaceMemberId: string;
   let userEmail: string;
   let kickoffThreadId: string;
   let deterministicThreadId: string;
@@ -119,15 +121,9 @@ describe('Admin panel global chat threads (integration)', () => {
     onConflict = '',
   ): Promise<void> => {
     await storage.run(SEED_APPLE_WORKSPACE_ID, async (context) => {
-      const scopedColumns = [...columns];
-      const scopedValues = [...values];
-      if (context.storage === 'core') {
-        scopedColumns.push('workspaceId');
-        scopedValues.push(SEED_APPLE_WORKSPACE_ID);
-      }
       await context.manager.query(
-        `INSERT INTO ${context.table(name)} (${scopedColumns.map(escapeIdentifier).join(', ')}) VALUES (${scopedValues.map((_, index) => `$${index + 1}`).join(', ')}) ${onConflict}`,
-        scopedValues,
+        `INSERT INTO ${context.table(name)} (${columns.map(escapeIdentifier).join(', ')}) VALUES (${values.map((_, index) => `$${index + 1}`).join(', ')}) ${onConflict}`,
+        values,
       );
     });
   };
@@ -143,9 +139,16 @@ describe('Admin panel global chat threads (integration)', () => {
   }): Promise<string> => {
     await insertHistory(
       'agentChatThread',
-      ['id', 'userWorkspaceId', 'title', 'lastStreamError'],
+      [
+        'id',
+        'workspaceMemberId',
+        'userWorkspaceId',
+        'title',
+        'lastStreamError',
+      ],
       [
         id,
+        workspaceMemberId,
         userWorkspaceId,
         title,
         lastStreamError ? JSON.stringify(lastStreamError) : null,
@@ -258,13 +261,14 @@ describe('Admin panel global chat threads (integration)', () => {
   beforeAll(async () => {
     dataSource = global.testDataSource;
     storage = getAppProviderByClassName<AgentHistoryStorageService>(
-      'AgentHistoryStorageService',
+      'AgentHistoryUpgradeStorageService',
     );
 
     const [firstUserWorkspace] = await dataSource.query(
-      `SELECT "userWorkspace".id, "user".email
+      `SELECT "userWorkspace".id, "user".email, "workspaceMember".id AS "workspaceMemberId"
        FROM core."userWorkspace" "userWorkspace"
        JOIN core."user" "user" ON "user".id = "userWorkspace"."userId"
+       JOIN "${getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID)}"."workspaceMember" "workspaceMember" ON "workspaceMember"."userId" = "user".id AND "workspaceMember"."deletedAt" IS NULL
        WHERE "userWorkspace"."workspaceId" = $1
          AND "userWorkspace"."deletedAt" IS NULL
        ORDER BY "userWorkspace"."createdAt" ASC
@@ -273,6 +277,7 @@ describe('Admin panel global chat threads (integration)', () => {
     );
 
     userWorkspaceId = firstUserWorkspace.id;
+    workspaceMemberId = firstUserWorkspace.workspaceMemberId;
     userEmail = firstUserWorkspace.email;
 
     kickoffThreadId = await insertThread({
@@ -486,6 +491,34 @@ describe('Admin panel global chat threads (integration)', () => {
         userReplyCount: 0,
         userEmail,
       });
+    });
+
+    // A workflow run's conversation belongs to no member, and a null owner
+    // must not null out a non-null field and fail the whole list.
+    it('lists a thread without an owner', async () => {
+      const ownerlessThreadId = randomUUID();
+
+      await insertHistory(
+        'agentChatThread',
+        ['id', 'userWorkspaceId', 'title'],
+        [ownerlessThreadId, null, 'Workflow run conversation'],
+        'ON CONFLICT (id) DO NOTHING',
+      );
+      seededThreadIds.push(ownerlessThreadId);
+
+      const result = await fetchThreads({
+        scope: 'ALL',
+        searchTerm: ownerlessThreadId,
+      });
+
+      expect(result.threads).toEqual([
+        expect.objectContaining({
+          id: ownerlessThreadId,
+          userWorkspaceId: null,
+          userEmail: null,
+          isOnboardingThread: false,
+        }),
+      ]);
     });
 
     it('counts only visible messages and user replies', async () => {

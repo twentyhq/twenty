@@ -1,4 +1,4 @@
-import { type MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message';
+import { type MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message.type';
 
 export type InboundEmailMessageSourceInterface = {
   isConfigured(): boolean;

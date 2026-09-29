@@ -29,7 +29,7 @@ import { ADD_IS_SYSTEM_SIDE_EFFECT_UPGRADE_COMMAND_NAME } from 'src/database/com
 import { ADD_VIEW_KANBAN_COLUMN_WIDTH_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-15/add-view-kanban-column-width-upgrade-command-name.constant';
 import { ADD_CALENDAR_END_FIELD_METADATA_ID_TO_VIEW_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-22/add-calendar-end-field-metadata-id-to-view-upgrade-command-name.constant';
 import { ADD_VIEW_GROUP_LOAD_LIMIT_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-42/add-view-group-load-limit-upgrade-command-name.constant';
-import { ADD_TOGGLE_MINE_FILTER_FIELD_METADATA_ID_TO_VIEW_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-43/add-toggle-mine-filter-field-metadata-id-to-view-upgrade-command-name.constant';
+import { ADD_TOGGLE_MINE_FILTER_FIELD_METADATA_ID_TO_VIEW_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-44/add-toggle-mine-filter-field-metadata-id-to-view-upgrade-command-name.constant';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { NavigationMenuItemEntity } from 'src/engine/metadata-modules/navigation-menu-item/entities/navigation-menu-item.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -39,7 +39,7 @@ import { ViewFilterGroupEntity } from 'src/engine/metadata-modules/view-filter-g
 import { ViewFilterEntity } from 'src/engine/metadata-modules/view-filter/entities/view-filter.entity';
 import { ViewGroupEntity } from 'src/engine/metadata-modules/view-group/entities/view-group.entity';
 import { ViewSortEntity } from 'src/engine/metadata-modules/view-sort/entities/view-sort.entity';
-import { OverridableEntity } from 'src/engine/workspace-manager/types/overridable-entity';
+import { OverridableEntity } from 'src/engine/workspace-manager/types/overridable-entity.type';
 
 export type ViewOverrides = {
   isActive?: boolean;
@@ -65,9 +65,10 @@ export type ViewOverrides = {
 
 // We could refactor this type to be dynamic to view type
 @Entity({ name: 'view', schema: 'core' })
-@Index('IDX_VIEW_WORKSPACE_ID_OBJECT_METADATA_ID', [
-  'workspaceId',
+@Index('IDX_VIEW_APPLICATION_ID', ['applicationId'])
+@Index('IDX_VIEW_OBJECT_METADATA_ID_WORKSPACE_ID', [
   'objectMetadataId',
+  'workspaceId',
 ])
 @Index('IDX_VIEW_VISIBILITY', ['visibility'])
 @Index('IDX_VIEW_CALENDAR_FIELD_METADATA', ['calendarFieldMetadataId'])

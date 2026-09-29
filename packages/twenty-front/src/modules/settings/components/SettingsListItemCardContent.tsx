@@ -3,7 +3,7 @@ import { type ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronRight, type IconComponent } from 'twenty-ui/icon';
-import { CardContent } from 'twenty-ui/primitives/surfaces';
+import { Card } from 'twenty-ui/primitives/surfaces';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 const StyledRowContainer = styled.div`
@@ -95,7 +95,7 @@ export const SettingsListItemCardContent = ({
 
   const content = (
     <StyledRowContainer>
-      <CardContent
+      <Card.Content
         onClick={onClick}
         divider={divider}
         isClickable={isInteractive}
@@ -122,7 +122,7 @@ export const SettingsListItemCardContent = ({
             />
           )}
         </StyledRightContainer>
-      </CardContent>
+      </Card.Content>
     </StyledRowContainer>
   );
 
