@@ -1,7 +1,7 @@
 import { AiChatThreadRecordTargets } from '@/ai/components/AiChatThreadRecordTargets';
+import { AGENT_CHAT_NEW_THREAD_DRAFT_KEY } from '@/ai/states/agentChatDraftsByThreadIdState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { currentAiChatThreadTitleComponentFamilyState } from '@/ai/states/currentAiChatThreadTitleComponentFamilyState';
-import { currentAiChatThreadDataSelector } from '@/ai/states/selectors/currentAiChatThreadDataSelector';
 import { HeaderIdentifier } from '@/ui/layout/page/components/HeaderIdentifier';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -23,19 +23,17 @@ export const SidePanelAskAiInfo = () => {
     currentAiChatThreadTitleComponentFamilyState,
     { threadId: currentAiChatThread },
   );
-  const currentAiChatThreadData = useAtomStateValue(
-    currentAiChatThreadDataSelector,
-  );
 
   return (
     <StyledContainer>
       <HeaderIdentifier title={currentAiChatThreadTitle ?? t`Ask AI`} />
-      {isDefined(currentAiChatThreadData) && (
-        <AiChatThreadRecordTargets
-          threadId={currentAiChatThreadData.id}
-          instanceId="side-panel-ask-ai-thread-record-targets"
-        />
-      )}
+      {isDefined(currentAiChatThread) &&
+        currentAiChatThread !== AGENT_CHAT_NEW_THREAD_DRAFT_KEY && (
+          <AiChatThreadRecordTargets
+            threadId={currentAiChatThread}
+            instanceId="side-panel-ask-ai-thread-record-targets"
+          />
+        )}
     </StyledContainer>
   );
 };
