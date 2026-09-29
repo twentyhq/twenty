@@ -1,8 +1,8 @@
 import { useState } from 'react';
 
-import { DEFAULT_TOAST_LIMIT } from './internal/DefaultToastLimit';
-import { ToastContext } from './internal/ToastContext';
-import { createToastStore } from './internal/createToastStore';
+import { DEFAULT_TOAST_LIMIT } from './internal/constants/DefaultToastLimit';
+import { ToastContext } from './internal/contexts/ToastContext';
+import { createToastStore } from './internal/stores/createToastStore';
 import { type ToastProviderProps } from './types/ToastProviderProps';
 
 export const ToastProvider = ({

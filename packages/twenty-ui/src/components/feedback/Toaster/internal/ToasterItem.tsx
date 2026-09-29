@@ -1,7 +1,7 @@
 import { useRef } from 'react';
 
 import { Toast } from '@ui/components/feedback/Toast/Toast';
-import { type ToastEntry } from '@ui/components/feedback/Toast/internal/ToastEntry';
+import { type ToastEntry } from '@ui/components/feedback/Toast/internal/types/ToastEntry';
 
 import styles from '../Toaster.module.scss';
 import { type ToasterProps } from '../types/ToasterProps';

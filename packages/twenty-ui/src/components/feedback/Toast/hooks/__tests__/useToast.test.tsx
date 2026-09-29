@@ -3,9 +3,9 @@ import { StrictMode, useEffect } from 'react';
 import { expect, it, vi } from 'vitest';
 
 import { ToasterLifecycleEffect } from '../../../Toaster/internal/ToasterLifecycleEffect';
-import { ToastContext } from '../../internal/ToastContext';
-import { createToastStore } from '../../internal/createToastStore';
-import { completeToastExit } from '../../internal/completeToastExit';
+import { ToastContext } from '../../internal/contexts/ToastContext';
+import { createToastStore } from '../../internal/stores/createToastStore';
+import { completeToastExit } from '../../internal/utils/completeToastExit';
 import { useToast } from '../useToast';
 
 const renderToastHooks = ({ hasToaster = true } = {}) => {

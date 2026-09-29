@@ -2,10 +2,10 @@ import { act, render, renderHook } from '@testing-library/react';
 import { expect, it, vi } from 'vitest';
 
 import { ToastProvider } from '../ToastProvider';
-import { ToastContext } from '../internal/ToastContext';
+import { ToastContext } from '../internal/contexts/ToastContext';
 import { useToast } from '../hooks/useToast';
-import { useToastEntries } from '../internal/useToastEntries';
-import { createToastStore } from '../internal/createToastStore';
+import { useToastEntries } from '../internal/hooks/useToastEntries';
+import { createToastStore } from '../internal/stores/createToastStore';
 
 it.each([0, -1, 1.5])('rejects an invalid toast limit of %s', (limit) => {
   expect(() => render(<ToastProvider limit={limit} />)).toThrow(

@@ -2,9 +2,9 @@ import { useMemo } from 'react';
 
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
-import { type ToastOptions } from '../types/ToastOptions';
-import { dismissToasts } from './dismissToasts';
-import { isToastVisible } from './isToastVisible';
+import { type ToastOptions } from '../../types/ToastOptions';
+import { dismissToasts } from '../utils/dismissToasts';
+import { isToastVisible } from '../utils/isToastVisible';
 import { useToastContext } from './useToastContext';
 
 let lastToastId = 0;
