@@ -1,5 +1,7 @@
 import { randomUUID } from 'node:crypto';
 
+import { Queue } from 'bullmq';
+import IORedis from 'ioredis';
 import request from 'supertest';
 import { runWorkflowActionStep } from 'test/integration/graphql/suites/workflow/utils/run-workflow-action-step.util';
 import { workflowGraphqlRequest } from 'test/integration/graphql/suites/workflow/utils/workflow-graphql-request.util';
@@ -16,6 +18,7 @@ import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { FeatureFlagKey } from 'twenty-shared/types';
 
 import { type LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
@@ -289,6 +292,8 @@ const runWorkflow = async (workflow: TestWorkflow): Promise<string> => {
 
 type TestWorkflowRun = {
   status: string;
+  enqueuedAt: string | null;
+  startedAt: string | null;
   state: {
     stepInfos: Record<string, { status: string; error?: string }>;
   };
@@ -296,7 +301,7 @@ type TestWorkflowRun = {
 
 const findRun = async (workflowRunId: string): Promise<TestWorkflowRun> => {
   const [workflowRun] = await globalThis.testDataSource.query(
-    `SELECT status, state FROM "${SCHEMA}"."workflowRun" WHERE id = $1`,
+    `SELECT status, state, "enqueuedAt", "startedAt" FROM "${SCHEMA}"."workflowRun" WHERE id = $1`,
     [workflowRunId],
   );
 
@@ -321,12 +326,59 @@ const waitForRun = async (
   return findRun(workflowRunId);
 };
 
+const hasRunEnded = ({ status }: TestWorkflowRun) =>
+  ['COMPLETED', 'FAILED', 'STOPPED'].includes(status);
+
 const waitForRunToEnd = (workflowRunId: string, maxAttempts?: number) =>
-  waitForRun(
-    workflowRunId,
-    ({ status }) => ['COMPLETED', 'FAILED', 'STOPPED'].includes(status),
-    maxAttempts,
+  waitForRun(workflowRunId, hasRunEnded, maxAttempts);
+
+const describeWorkflowQueueJobsOfRun = async (workflowRunId: string) => {
+  const connection = new IORedis(
+    process.env.REDIS_QUEUE_URL ??
+      process.env.REDIS_URL ??
+      'redis://localhost:6379',
+    { maxRetriesPerRequest: null },
   );
+  const queue = new Queue(MessageQueue.workflowQueue, { connection });
+
+  try {
+    const jobs = await queue.getJobs(
+      [
+        'waiting',
+        'prioritized',
+        'active',
+        'delayed',
+        'failed',
+        'completed',
+        'paused',
+        'waiting-children',
+      ],
+      0,
+      1000,
+    );
+
+    return {
+      isPaused: await queue.isPaused(),
+      counts: await queue.getJobCounts(),
+      runJobs: await Promise.all(
+        jobs
+          .filter((job) => job.data?.workflowRunId === workflowRunId)
+          .map(async (job) => ({
+            name: job.name,
+            state: await job.getState(),
+            attemptsMade: job.attemptsMade,
+            failedReason: job.failedReason,
+            timestamp: job.timestamp,
+            processedOn: job.processedOn,
+            finishedOn: job.finishedOn,
+          })),
+      ),
+    };
+  } finally {
+    await queue.close();
+    await connection.quit();
+  }
+};
 
 const countRecordsByName = async (
   objectTable: 'company' | 'opportunity',
@@ -343,6 +395,7 @@ const countRecordsByName = async (
 
 describe('application workflow execution permissions', () => {
   let firstCompanyRun: TestWorkflowRun;
+  let firstCompanyRunQueueJobs: unknown;
 
   beforeAll(async () => {
     jest.useRealTimers();
@@ -379,11 +432,15 @@ describe('application workflow execution permissions', () => {
 
     expect(otherInstallation.errors).toBeUndefined();
 
-    firstCompanyRun = await waitForRunToEnd(
-      await runWorkflow(CREATE_COMPANY_WORKFLOW),
-      2400,
-    );
-  }, 420000);
+    const firstCompanyRunId = await runWorkflow(CREATE_COMPANY_WORKFLOW);
+
+    firstCompanyRun = await waitForRunToEnd(firstCompanyRunId, 600);
+
+    if (!hasRunEnded(firstCompanyRun)) {
+      firstCompanyRunQueueJobs =
+        await describeWorkflowQueueJobsOfRun(firstCompanyRunId);
+    }
+  }, 300000);
 
   afterAll(async () => {
     await globalThis.testDataSource.query(
@@ -419,7 +476,10 @@ describe('application workflow execution permissions', () => {
   });
 
   it('runs a record step the application role allows', async () => {
-    expect(firstCompanyRun).toMatchObject({ status: 'COMPLETED' });
+    expect({
+      run: firstCompanyRun,
+      queueJobs: firstCompanyRunQueueJobs,
+    }).toMatchObject({ run: { status: 'COMPLETED' } });
     expect(await countRecordsByName('company', COMPANY_NAME)).toBe(1);
   }, 120000);
 
