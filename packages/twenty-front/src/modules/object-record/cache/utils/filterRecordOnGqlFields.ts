@@ -25,7 +25,7 @@ export const filterRecordOnGqlFields = ({
         if (isNonEmptyArray(value)) {
           return [
             key,
-            value.map((item) => {
+            value.map((item: unknown) => {
               if (!isDefined(item) || typeof item !== 'object') {
                 return item;
               }

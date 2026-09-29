@@ -4,20 +4,19 @@ import {
   type ExtendedUIMessagePart,
 } from 'twenty-shared/ai';
 
-import { type AgentMessagePartEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message-part.entity';
+import { AgentMessagePartWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message-part.workspace-entity';
 
 export const mapUIMessagePartsToDBParts = (
   uiMessageParts: ExtendedUIMessagePart[],
   messageId: string,
-  workspaceId: string,
-): Partial<AgentMessagePartEntity>[] => {
+  _workspaceId: string,
+): Partial<AgentMessagePartWorkspaceEntity>[] => {
   return uiMessageParts
     .map((part, index) => {
-      const basePart: Partial<AgentMessagePartEntity> = {
+      const basePart: Partial<AgentMessagePartWorkspaceEntity> = {
         messageId,
         orderIndex: index,
         type: part.type,
-        workspaceId,
       };
 
       switch (part.type) {
@@ -99,5 +98,7 @@ export const mapUIMessagePartsToDBParts = (
         }
       }
     })
-    .filter((part): part is Partial<AgentMessagePartEntity> => part !== null);
+    .filter(
+      (part): part is Partial<AgentMessagePartWorkspaceEntity> => part !== null,
+    );
 };

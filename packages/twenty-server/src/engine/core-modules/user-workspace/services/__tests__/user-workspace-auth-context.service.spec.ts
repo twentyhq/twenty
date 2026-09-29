@@ -11,7 +11,11 @@ const build = () => {
       user: { id: 'user', createdAt: new Date(), updatedAt: new Date() },
     }),
   };
-  const member = { id: 'member', deletedAt: null as Date | null };
+  const member = {
+    id: 'member',
+    userId: 'user',
+    deletedAt: null as Date | null,
+  };
   const cache = {
     getOrRecompute: jest.fn().mockResolvedValue({
       flatWorkspaceMemberMaps: {
@@ -146,5 +150,53 @@ describe('Persisted application scope', () => {
         (await service.resolve({ ...args, applicationId: null })).application,
       ).toBeUndefined();
     });
+  });
+});
+
+describe('Workspace member authorization', () => {
+  const memberArgs = { workspaceId: 'workspace', workspaceMemberId: 'member' };
+  it('resolves a member to a fresh membership scoped to the same workspace', async () => {
+    const { service, repository } = build();
+    await expect(
+      service.resolveWorkspaceMember(memberArgs),
+    ).resolves.toMatchObject({
+      userWorkspaceId: 'membership',
+      workspaceMemberId: 'member',
+    });
+    expect(repository.findOne).toHaveBeenCalledWith({
+      where: { workspaceId: 'workspace', userId: 'user' },
+      select: { id: true },
+    });
+    repository.findOne.mockResolvedValue(null);
+    await expect(
+      service.resolveWorkspaceMember(memberArgs),
+    ).rejects.toMatchObject({ code: 'UNAUTHENTICATED' });
+  });
+  it.each(['', 'unknown'])(
+    'rejects missing member %s without looking up membership',
+    async (workspaceMemberId) => {
+      const { service, repository } = build();
+      await expect(
+        service.resolveWorkspaceMember({ ...memberArgs, workspaceMemberId }),
+      ).rejects.toMatchObject({ code: 'UNAUTHENTICATED' });
+      expect(repository.findOne).not.toHaveBeenCalled();
+    },
+  );
+  it('rejects a deleted member before resolving membership', async () => {
+    const { service, repository, member } = build();
+    member.deletedAt = new Date();
+    await expect(
+      service.resolveWorkspaceMember(memberArgs),
+    ).rejects.toMatchObject({ code: 'UNAUTHENTICATED' });
+    expect(repository.findOne).not.toHaveBeenCalled();
+  });
+  it('rejects a member replaced during authorization', async () => {
+    const { service } = build();
+    jest
+      .spyOn(service, 'resolve')
+      .mockResolvedValue({ workspaceMemberId: 'replacement' } as never);
+    await expect(
+      service.resolveWorkspaceMember(memberArgs),
+    ).rejects.toMatchObject({ code: 'UNAUTHENTICATED' });
   });
 });

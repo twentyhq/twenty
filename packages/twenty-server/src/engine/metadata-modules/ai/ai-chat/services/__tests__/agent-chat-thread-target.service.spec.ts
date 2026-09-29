@@ -18,7 +18,11 @@ jest.mock(
   'src/engine/twenty-orm/storage/orm-workspace-context.storage',
   () => ({
     getWorkspaceContext: () => ({
-      authContext: { type: 'user', userWorkspaceId: 'owner' },
+      authContext: {
+        type: 'user',
+        userWorkspaceId: 'owner',
+        workspaceMemberId: 'owner',
+      },
       userWorkspaceRoleMap: {
         owner: '20202020-0000-4000-8000-000000000009',
       },
@@ -39,7 +43,7 @@ const OTHER_MEMBER_ID = 'other-member';
 
 const args = {
   workspaceId: WORKSPACE_ID,
-  userWorkspaceId: OWNER_ID,
+  workspaceMemberId: OWNER_ID,
   threadId: THREAD_ID,
   objectNameSingular: 'company',
   recordId: RECORD_ID,
@@ -53,9 +57,9 @@ const buildService = () => {
   const agentChatSharingService = {
     getThreadWithAccess: jest
       .fn()
-      .mockImplementation(async ({ threadId, userWorkspaceId }) => {
+      .mockImplementation(async ({ threadId, workspaceMemberId }) => {
         if (
-          !(editableThreadIdsByMember.get(userWorkspaceId) ?? []).includes(
+          !(editableThreadIdsByMember.get(workspaceMemberId) ?? []).includes(
             threadId,
           )
         ) {
@@ -168,7 +172,7 @@ describe('Attaching a conversation to a record', () => {
     await expect(
       service.attachThreadToRecord({
         ...args,
-        userWorkspaceId: OTHER_MEMBER_ID,
+        workspaceMemberId: OTHER_MEMBER_ID,
       }),
     ).rejects.toMatchObject({ code: 'THREAD_NOT_FOUND' });
 
@@ -183,7 +187,7 @@ describe('Attaching a conversation to a record', () => {
 
     expect(agentChatSharingService.getThreadWithAccess).toHaveBeenCalledWith({
       workspaceId: WORKSPACE_ID,
-      userWorkspaceId: OWNER_ID,
+      workspaceMemberId: OWNER_ID,
       threadId: THREAD_ID,
       operationType: 'update',
     });
@@ -362,6 +366,25 @@ describe('Authorizing the record a conversation is attached to', () => {
       select: { id: true },
       withDeleted: false,
     });
+  });
+
+  it('checks the record as the member a chat turn runs for when given their context', async () => {
+    const { service, workspaceOrmManager } = buildService();
+    const senderAuthContext = {
+      type: 'user',
+      userWorkspaceId: OWNER_ID,
+      workspaceMemberId: OWNER_ID,
+    } as never;
+
+    await service.attachThreadToRecord({
+      ...args,
+      authContext: senderAuthContext,
+    });
+
+    expect(workspaceOrmManager.executeInWorkspaceContext).toHaveBeenCalledWith(
+      expect.any(Function),
+      senderAuthContext,
+    );
   });
 
   it('treats a permission denial as a record that does not exist', async () => {

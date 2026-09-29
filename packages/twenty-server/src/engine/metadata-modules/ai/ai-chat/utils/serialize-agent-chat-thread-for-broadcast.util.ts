@@ -1,11 +1,11 @@
-import { type AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
+import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
 
 export const serializeAgentChatThreadForBroadcast = ({
   thread,
   lastMessageAt,
 }: {
-  thread: AgentChatThreadEntity;
+  thread: AgentChatThreadWorkspaceEntity;
   lastMessageAt: Date | null;
 }) => ({
   id: thread.id,
@@ -13,13 +13,13 @@ export const serializeAgentChatThreadForBroadcast = ({
   title: thread.title,
   totalInputTokens: thread.totalInputTokens,
   totalOutputTokens: thread.totalOutputTokens,
-  totalCacheReadTokens: thread.totalCacheReadTokens,
-  totalCacheCreationTokens: thread.totalCacheCreationTokens,
+  totalCacheReadTokens: Number(thread.totalCacheReadTokens),
+  totalCacheCreationTokens: Number(thread.totalCacheCreationTokens),
   contextWindowTokens: thread.contextWindowTokens,
   conversationSize: thread.conversationSize,
-  totalInputCredits: toDisplayCredits(thread.totalInputCredits),
-  totalOutputCredits: toDisplayCredits(thread.totalOutputCredits),
-  deletedAt: thread.deletedAt,
+  totalInputCredits: toDisplayCredits(Number(thread.totalInputCredits)),
+  totalOutputCredits: toDisplayCredits(Number(thread.totalOutputCredits)),
+  deletedAt: thread.archivedAt,
   lastMessageAt,
   createdAt: thread.createdAt,
   updatedAt: thread.updatedAt,
