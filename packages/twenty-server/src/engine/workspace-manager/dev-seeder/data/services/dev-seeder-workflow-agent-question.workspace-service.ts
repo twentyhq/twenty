@@ -35,6 +35,9 @@ import {
 const WORKFLOW_AGENT_QUESTION_SEED_NAMESPACE =
   '6f0a9a3e-2b1f-4c55-9f0b-7c1d2e3f4a5b';
 
+const seedId = (name: string, workspaceId: string) =>
+  v5(`${name}:${workspaceId}`, WORKFLOW_AGENT_QUESTION_SEED_NAMESPACE);
+
 const WORKFLOW_NAME = 'Qualify inbound lead';
 
 const SYSTEM_ACTOR: ActorMetadata = {
@@ -99,16 +102,13 @@ export class DevSeederWorkflowAgentQuestionWorkspaceService {
     workspaceId: string;
     applicationId: string;
   }): Promise<void> {
-    const seedId = (name: string) =>
-      v5(`${name}:${workspaceId}`, WORKFLOW_AGENT_QUESTION_SEED_NAMESPACE);
-
-    const workspaceWorkflowId = seedId('workflow');
-    const workspaceWorkflowVersionId = seedId('workflowVersion');
-    const coreWorkflowId = seedId('coreWorkflow');
-    const coreWorkflowVersionId = seedId('coreWorkflowVersion');
+    const workspaceWorkflowId = seedId('workflow', workspaceId);
+    const workspaceWorkflowVersionId = seedId('workflowVersion', workspaceId);
+    const coreWorkflowId = seedId('coreWorkflow', workspaceId);
+    const coreWorkflowVersionId = seedId('coreWorkflowVersion', workspaceId);
 
     const agentStep: WorkflowAiAgentAction = {
-      id: seedId('agentStep'),
+      id: seedId('agentStep', workspaceId),
       name: 'Qualify the lead',
       type: WorkflowActionType.AI_AGENT,
       valid: true,
@@ -148,8 +148,8 @@ export class DevSeederWorkflowAgentQuestionWorkspaceService {
       agentStep,
     });
 
-    const workflowRunId = seedId('workflowRun');
-    const toolCallId = seedId('toolCall');
+    const workflowRunId = seedId('workflowRun', workspaceId);
+    const toolCallId = seedId('toolCall', workspaceId);
 
     await this.workflowRunWorkspaceService.createCoreWorkflowRun({
       workflowRunId,
@@ -278,10 +278,7 @@ export class DevSeederWorkflowAgentQuestionWorkspaceService {
 
     await this.coreWorkflowRepository.insert(workspaceId, {
       id: coreWorkflowId,
-      universalIdentifier: v5(
-        `workflowUniversalIdentifier:${workspaceId}`,
-        WORKFLOW_AGENT_QUESTION_SEED_NAMESPACE,
-      ),
+      universalIdentifier: seedId('workflowUniversalIdentifier', workspaceId),
       applicationId,
       name: WORKFLOW_NAME,
       lastPublishedVersionId: workspaceWorkflowVersionId,
@@ -291,9 +288,9 @@ export class DevSeederWorkflowAgentQuestionWorkspaceService {
 
     await this.coreWorkflowVersionRepository.insert(workspaceId, {
       id: coreWorkflowVersionId,
-      universalIdentifier: v5(
-        `workflowVersionUniversalIdentifier:${workspaceId}`,
-        WORKFLOW_AGENT_QUESTION_SEED_NAMESPACE,
+      universalIdentifier: seedId(
+        'workflowVersionUniversalIdentifier',
+        workspaceId,
       ),
       applicationId,
       triggers: [trigger],
