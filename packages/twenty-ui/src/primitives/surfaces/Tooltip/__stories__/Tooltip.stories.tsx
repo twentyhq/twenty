@@ -54,6 +54,11 @@ export const WithArrow: Story = {
   args: { arrow: true },
 };
 
+export const WithExitAnimation: Story = {
+  ...Default,
+  args: { withExitAnimation: true },
+};
+
 export const WithDescription: Story = {
   ...Default,
   args: {
