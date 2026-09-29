@@ -2,6 +2,7 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { A11Y_DEFER_COLOR_CONTRAST, ComponentDecorator } from '@ui/testing';
 import { clsx } from 'clsx';
 import { useState } from 'react';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { Collapsible } from '@ui/primitives/layout/Collapsible/Collapsible';
 import { Button } from '@ui/primitives/input/Button/Button';
 import { Text } from '@ui/primitives/typography/Text/Text';
@@ -39,6 +40,7 @@ const CollapsibleWithButton = ({
         type="button"
         className={styles.button}
         aria-label={isExpanded ? 'Collapse' : 'Expand'}
+        aria-expanded={isExpanded}
         onClick={() => setIsExpanded(!isExpanded)}
       >
         {isExpanded ? 'Collapse' : 'Expand'}
@@ -122,6 +124,32 @@ export const Default: Story = {
     hasFixedHeight: true,
     animationDurations: 'default',
   },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const contentText =
+      'This is some content inside the Collapsible. It will animate smoothly when expanding or collapsing.';
+    const toggleButton = canvas.getByRole('button', { name: 'Expand' });
+
+    await expect(toggleButton).toHaveAttribute('aria-expanded', 'false');
+    await expect(canvas.queryByText(contentText)).not.toBeInTheDocument();
+
+    await userEvent.click(toggleButton);
+
+    await expect(toggleButton).toHaveAttribute('aria-expanded', 'true');
+    await waitFor(() => expect(canvas.getByText(contentText)).toBeVisible());
+
+    await userEvent.click(canvas.getByRole('button', { name: 'Collapse' }));
+
+    await expect(toggleButton).toHaveAttribute('aria-expanded', 'false');
+    await waitFor(() =>
+      expect(canvas.queryByText(contentText)).not.toBeInTheDocument(),
+    );
+  },
+};
+
+export const Documentation: Story = {
+  parameters: Default.parameters,
+  args: Default.args,
 };
 
 export const FitContent: Story = {
@@ -146,4 +174,5 @@ export const WidthAnimation: Story = {
     ...Default.args,
     dimension: 'width',
   },
+  play: Default.play,
 };
