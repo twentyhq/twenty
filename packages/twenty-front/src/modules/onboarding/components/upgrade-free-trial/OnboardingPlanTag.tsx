@@ -30,14 +30,12 @@ const StyledValue = styled.span`
 
 type OnboardingPlanTagProps = {
   Icon: IconComponent;
-  prefix?: string;
   value: string;
   suffix?: string;
 };
 
 export const OnboardingPlanTag = ({
   Icon,
-  prefix,
   value,
   suffix,
 }: OnboardingPlanTagProps) => {
@@ -46,7 +44,6 @@ export const OnboardingPlanTag = ({
   return (
     <StyledTag>
       <Icon size={theme.icon.size.md} color={themeCssVariables.color.green9} />
-      {isDefined(prefix) && <StyledLabel>{prefix}</StyledLabel>}
       <StyledValue>{value}</StyledValue>
       {isDefined(suffix) && <StyledLabel>{suffix}</StyledLabel>}
     </StyledTag>

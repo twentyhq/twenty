@@ -5,7 +5,7 @@ import { currentUserState } from '@/auth/states/currentUserState';
 import { calendarBookingPageIdState } from '@/client-config/states/calendarBookingPageIdState';
 import { onboardingConfigState } from '@/client-config/states/onboardingConfigState';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
-import { OnboardingCreditsRewardChip } from '@/onboarding/components/OnboardingCreditsRewardChip';
+import { OnboardingRewardMainButton } from '@/onboarding/components/OnboardingRewardMainButton';
 import { OnboardingStepAnimatedItem } from '@/onboarding/components/OnboardingStepAnimatedItem';
 import { StyledOnboardingContentBlock } from '@/onboarding/components/StyledOnboardingContentBlock';
 import { StyledOnboardingStepHeading } from '@/onboarding/components/StyledOnboardingStepHeading';
@@ -18,7 +18,6 @@ import { OnboardingPlanTag } from '@/onboarding/components/upgrade-free-trial/On
 import { useSetOnboardingUpgradeTrialFreeCredits } from '@/onboarding/hooks/useSetOnboardingUpgradeTrialFreeCredits';
 import { isOnboardingCheckoutPendingState } from '@/onboarding/states/isOnboardingCheckoutPendingState';
 import { formatOnboardingCredits } from '@/onboarding/utils/formatOnboardingCredits';
-import { getOnboardingCreditsRewardAriaLabel } from '@/onboarding/utils/getOnboardingCreditsRewardAriaLabel';
 import { useBaseLicensedPriceByPlanKeyAndInterval } from '@/settings/billing/hooks/useBaseLicensedPriceByPlanKeyAndInterval';
 import { useHandleCheckoutSession } from '@/settings/billing/hooks/useHandleCheckoutSession';
 import { useStripeAppearance } from '@/settings/billing/hooks/useStripeAppearance';
@@ -30,7 +29,6 @@ import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomStat
 import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { Elements, PaymentElement } from '@stripe/react-stripe-js';
-import { type ReactNode } from 'react';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Info, MainButton } from 'twenty-ui/components';
@@ -79,15 +77,13 @@ type UpgradeFreeTrialProps = {
 type UpgradeFreeTrialSubmitButtonProps = {
   plan: BillingPlanKey;
   recurringInterval: SubscriptionInterval;
-  endIcon: ReactNode;
-  ariaLabel?: string;
+  creditsReward: number;
 };
 
 const UpgradeFreeTrialSubmitButton = ({
   plan,
   recurringInterval,
-  endIcon,
-  ariaLabel,
+  creditsReward,
 }: UpgradeFreeTrialSubmitButtonProps) => {
   const { t } = useLingui();
 
@@ -109,16 +105,13 @@ const UpgradeFreeTrialSubmitButton = ({
   };
 
   return (
-    <MainButton
+    <OnboardingRewardMainButton
+      label={t`Continue`}
+      creditsReward={creditsReward}
       onClick={handleSubmit}
-      fullWidth
-      startIcon={isSubmitting ? <Loader /> : null}
+      isLoading={isSubmitting}
       disabled={!isStripeReady || isSubmitting}
-      endIcon={endIcon}
-      aria-label={ariaLabel}
-    >
-      {t`Continue`}
-    </MainButton>
+    />
   );
 };
 
@@ -202,17 +195,8 @@ const UpgradeFreeTrialContent = ({
   };
 
   const requirePaymentMethod = billingCheckoutSession.requirePaymentMethod;
-  const upgradeCreditsChip =
-    upgradeCreditsReward > 0 ? (
-      <OnboardingCreditsRewardChip
-        formattedCreditsReward={formattedUpgradeCreditsReward}
-      />
-    ) : undefined;
-  const upgradeCreditsAriaLabel = getOnboardingCreditsRewardAriaLabel({
-    label: t`Continue`,
-    creditsReward: upgradeCreditsReward,
-    formattedCreditsReward: formattedUpgradeCreditsReward,
-  });
+  const hasTrialDurationTag = isDefined(trialDuration);
+  const hasUpgradeCreditsTag = upgradeCreditsReward > 0;
 
   return (
     <>
@@ -227,21 +211,23 @@ const UpgradeFreeTrialContent = ({
             title={t`Upgraded`}
             titleSuffix={t`· FREE`}
             tags={
-              <>
-                {isDefined(trialDuration) && (
-                  <OnboardingPlanTag
-                    Icon={IconCalendarEvent}
-                    value={`${trialDuration}`}
-                    suffix={t`days`}
-                  />
-                )}
-                {upgradeCreditsReward > 0 && (
-                  <OnboardingPlanTag
-                    Icon={IconCoins}
-                    value={`+${formattedUpgradeCreditsReward}`}
-                  />
-                )}
-              </>
+              hasTrialDurationTag || hasUpgradeCreditsTag ? (
+                <>
+                  {hasTrialDurationTag && (
+                    <OnboardingPlanTag
+                      Icon={IconCalendarEvent}
+                      value={`${trialDuration}`}
+                      suffix={t`days`}
+                    />
+                  )}
+                  {hasUpgradeCreditsTag && (
+                    <OnboardingPlanTag
+                      Icon={IconCoins}
+                      value={`+${formattedUpgradeCreditsReward}`}
+                    />
+                  )}
+                </>
+              ) : undefined
             }
             note={t`No charge will be made. You'll receive an email reminder 7 days before it ends.`}
             value={true}
@@ -287,18 +273,15 @@ const UpgradeFreeTrialContent = ({
               <UpgradeFreeTrialSubmitButton
                 plan={billingCheckoutSession.plan}
                 recurringInterval={billingCheckoutSession.interval}
-                endIcon={upgradeCreditsChip}
-                ariaLabel={upgradeCreditsAriaLabel}
+                creditsReward={upgradeCreditsReward}
               />
             ) : (
-              <MainButton
-                fullWidth
+              <OnboardingRewardMainButton
+                label={t`Continue`}
+                creditsReward={upgradeCreditsReward}
+                onClick={handleCheckoutSessionClick}
                 disabled
-                endIcon={upgradeCreditsChip}
-                aria-label={upgradeCreditsAriaLabel}
-              >
-                {t`Continue`}
-              </MainButton>
+              />
             )
           ) : (
             <MainButton
