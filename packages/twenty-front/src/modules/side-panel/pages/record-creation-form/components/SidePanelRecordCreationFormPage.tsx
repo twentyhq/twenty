@@ -46,11 +46,22 @@ const StyledValidationRuleError = styled.div`
   padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[3]};
 `;
 
+const StyledValidationRuleErrors = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  gap: ${themeCssVariables.spacing[2]};
+  max-height: 30%;
+  overflow-y: auto;
+  padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[3]};
+`;
+
 const StyledContent = styled.div`
   display: flex;
   flex: 1;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[4]};
+  min-height: 0;
   overflow-y: auto;
   padding: ${themeCssVariables.spacing[4]};
 `;
@@ -201,11 +212,6 @@ const SidePanelRecordCreationForm = ({
         }
       />
       <StyledContent>
-        {validationRuleViolations.map((violation) => (
-          <StyledValidationRuleError key={violation.ruleId} role="alert">
-            {violation.message}
-          </StyledValidationRuleError>
-        ))}
         <RecordFormFieldInputs
           objectMetadataItem={objectMetadataItem}
           fieldMetadataItems={recordFormFieldMetadataItems}
@@ -214,6 +220,15 @@ const SidePanelRecordCreationForm = ({
           onFieldValueClear={handleFieldValueClear}
         />
       </StyledContent>
+      {validationRuleViolations.length > 0 && (
+        <StyledValidationRuleErrors>
+          {validationRuleViolations.map((violation) => (
+            <StyledValidationRuleError key={violation.ruleId} role="alert">
+              {violation.message}
+            </StyledValidationRuleError>
+          ))}
+        </StyledValidationRuleErrors>
+      )}
       <SidePanelFooter
         actions={[
           <Button

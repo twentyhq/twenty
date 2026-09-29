@@ -246,4 +246,87 @@ describe('Validation rules should be enforced on record writes', () => {
       await findOpportunitiesByName('Validation rule partial update'),
     ).toEqual([{ id: opportunityId, stage: 'NEW' }]);
   });
+
+  it('should retain relation keys and composite fields when selecting rule dependencies', async () => {
+    const companyResponse = await makeGraphqlApiRequest({
+      query: gql`
+        mutation {
+          createCompany(
+            data: { name: "Validation projection company", employees: 5 }
+          ) {
+            id
+          }
+        }
+      `,
+    });
+    const companyId = companyResponse.body.data.createCompany.id;
+    const ruleResponse = await createValidationRule({
+      objectMetadataId: opportunityObjectMetadataId,
+      name: 'Company employee requirement',
+      expression: 'isDefined(company) and company.employees >= 10',
+      message: 'The company needs ten employees',
+    });
+    const relationRuleId = ruleResponse.body.data.createValidationRule.id;
+
+    try {
+      const createOpportunity = () =>
+        makeGraphqlApiRequest({
+          query: gql`
+            mutation CreateProjectionOpportunity($companyId: UUID!) {
+              createOpportunity(
+                data: {
+                  name: "Validation projection opportunity"
+                  companyId: $companyId
+                  stage: CUSTOMER
+                  amount: { amountMicros: 1000000, currencyCode: "USD" }
+                }
+              ) {
+                id
+              }
+            }
+          `,
+          variables: { companyId },
+        });
+
+      const rejected = await createOpportunity();
+      expect(
+        rejected.body.errors[0].extensions.validationRuleViolations,
+      ).toEqual([expect.objectContaining({ ruleId: relationRuleId })]);
+
+      await makeGraphqlApiRequest({
+        query: gql`
+          mutation UpdateProjectionCompany($id: UUID!) {
+            updateCompany(id: $id, data: { employees: 10 }) {
+              id
+            }
+          }
+        `,
+        variables: { id: companyId },
+      });
+      const accepted = await createOpportunity();
+      expect(accepted.body.errors).toBeUndefined();
+      createdOpportunityIds.push(accepted.body.data.createOpportunity.id);
+    } finally {
+      await makeMetadataApiRequest({
+        query: gql`
+          mutation DeleteProjectionRule($id: UUID!) {
+            deleteValidationRule(id: $id) {
+              id
+            }
+          }
+        `,
+        variables: { id: relationRuleId },
+      });
+      await makeGraphqlApiRequest({
+        query: gql`
+          mutation DeleteProjectionCompany($id: UUID!) {
+            deleteCompany(id: $id) {
+              id
+            }
+          }
+        `,
+        variables: { id: companyId },
+      });
+    }
+  });
 });

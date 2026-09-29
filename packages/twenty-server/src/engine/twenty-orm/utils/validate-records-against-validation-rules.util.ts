@@ -176,6 +176,15 @@ export const validateRecordsAgainstValidationRulesOrThrow = async <
     flatObjectMetadataMaps: repository.internalContext.flatObjectMetadataMaps,
     flatFieldMetadataMaps: repository.internalContext.flatFieldMetadataMaps,
   });
+  const fieldNames = [
+    ...new Set(
+      validationRules.flatMap((validationRule) =>
+        Object.keys(validationRule.bindings).filter(
+          (bindingPath) => !bindingPath.includes('.'),
+        ),
+      ),
+    ),
+  ];
   const now = new Date().toISOString();
 
   const violations: RecordValidationRuleViolation[] = [];
@@ -190,6 +199,7 @@ export const validateRecordsAgainstValidationRulesOrThrow = async <
   ) {
     const rawWrittenRecords =
       await repository.findRecordSnapshotsBypassingPermissions({
+        fieldNames,
         ids: recordIds.slice(
           chunkStart,
           chunkStart + VALIDATION_RULE_RECORD_CHUNK_SIZE,
