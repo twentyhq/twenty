@@ -148,20 +148,23 @@ describe('generateAppClient', () => {
     });
   });
 
-  it('does not write files when already cancelled', async () => {
-    expect(
-      await generateAppClient({
-        appPath,
-        schema: SCHEMA,
-        signal: AbortSignal.abort(),
-      }),
-    ).toMatchObject({ success: false, error: { code: 'CANCELLED' } });
-    expect((await readdir(join(packageRoot, 'dist'))).sort()).toEqual([
-      'core.cjs',
-      'core.mjs',
-      'metadata.cjs',
-    ]);
-  });
+  it.each([undefined, 'Stopped by caller', Number.NaN])(
+    'does not write files when already cancelled with reason %s',
+    async (reason) => {
+      expect(
+        await generateAppClient({
+          appPath,
+          schema: SCHEMA,
+          signal: AbortSignal.abort(reason),
+        }),
+      ).toMatchObject({ success: false, error: { code: 'CANCELLED' } });
+      expect((await readdir(join(packageRoot, 'dist'))).sort()).toEqual([
+        'core.cjs',
+        'core.mjs',
+        'metadata.cjs',
+      ]);
+    },
+  );
 
   it('waits for an in-flight generator to settle before reporting cancellation', async () => {
     const controller = new AbortController();
@@ -174,16 +177,16 @@ describe('generateAppClient', () => {
       resolveFinish = resolve;
     });
 
-    vi.spyOn(clientGenerator, 'replaceCoreClient').mockImplementation(
-      async () => {
+    const replaceCoreClientSpy = vi
+      .spyOn(clientGenerator, 'replaceCoreClient')
+      .mockImplementation(async () => {
         resolveStarted?.();
         await finish;
         await writeFile(
           join(packageRoot, 'dist', 'core.cjs'),
           'finished client',
         );
-      },
-    );
+      });
 
     let settled = false;
     const operation = generateAppClient({
@@ -205,31 +208,55 @@ describe('generateAppClient', () => {
       success: false,
       error: { code: 'CANCELLED' },
     });
+    expect(replaceCoreClientSpy).toHaveBeenCalledTimes(1);
+    expect(replaceCoreClientSpy).toHaveBeenCalledWith({
+      packageRoot,
+      schema: SCHEMA,
+    });
     expect(await readFile(join(packageRoot, 'dist', 'core.cjs'), 'utf8')).toBe(
       'finished client',
     );
   });
 
-  it('reports a generator failure without promising rollback of local writes', async () => {
-    vi.spyOn(clientGenerator, 'replaceCoreClient').mockImplementation(
-      async () => {
-        await writeFile(
-          join(packageRoot, 'dist', 'core.cjs'),
-          'partially replaced',
-        );
-        throw new Error('Client compilation failed');
-      },
-    );
+  it.each([false, true])(
+    'preserves a generator failure and partial writes when cancellation is %s',
+    async (shouldCancel) => {
+      const controller = new AbortController();
+      const replaceCoreClientSpy = vi
+        .spyOn(clientGenerator, 'replaceCoreClient')
+        .mockImplementation(async () => {
+          if (shouldCancel) {
+            controller.abort();
+          }
 
-    expect(await generateAppClient({ appPath, schema: SCHEMA })).toMatchObject({
-      success: false,
-      error: {
-        code: 'CLIENT_GENERATION_FAILED',
-        message: 'Client compilation failed',
-      },
-    });
-    expect(await readFile(join(packageRoot, 'dist', 'core.cjs'), 'utf8')).toBe(
-      'partially replaced',
-    );
-  });
+          await writeFile(
+            join(packageRoot, 'dist', 'core.cjs'),
+            'partially replaced',
+          );
+          throw new Error('Client compilation failed');
+        });
+
+      expect(
+        await generateAppClient({
+          appPath,
+          schema: SCHEMA,
+          signal: controller.signal,
+        }),
+      ).toMatchObject({
+        success: false,
+        error: {
+          code: 'CLIENT_GENERATION_FAILED',
+          message: 'Client compilation failed',
+        },
+      });
+      expect(replaceCoreClientSpy).toHaveBeenCalledTimes(1);
+      expect(replaceCoreClientSpy).toHaveBeenCalledWith({
+        packageRoot,
+        schema: SCHEMA,
+      });
+      expect(
+        await readFile(join(packageRoot, 'dist', 'core.cjs'), 'utf8'),
+      ).toBe('partially replaced');
+    },
+  );
 });

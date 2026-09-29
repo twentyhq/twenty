@@ -86,7 +86,7 @@ if (!result.success) {
 
 The descriptor lists writes under `node_modules/twenty-client-sdk/dist`: `core/generated/**`, the temporary `core/generated.tmp/**` directory, `core.mjs`, and `core.cjs`. Metadata clients and other package files are preserved. Client replacement is not atomic: generation or filesystem failures can leave partially updated local files. Fix the cause and rerun generation against the intended schema; failure does not roll back a prior remote sync.
 
-Cancellation is checked before generation starts and after the generator settles. An already-aborted signal causes no writes. In-flight generation cannot be interrupted cooperatively; the operation waits for its writes to stop before returning `CANCELLED`. Completed or partial local writes can remain, including if the caller forcibly terminates a worker. Callers should report the remote sync and local generation outcomes separately.
+Cancellation is checked before generation starts and after the generator settles. An already-aborted signal causes no writes. In-flight generation cannot be interrupted cooperatively; the operation waits for its writes to stop before returning `CANCELLED`. An independent generation failure remains `CLIENT_GENERATION_FAILED` even if the signal was aborted while generation was running. Completed or partial local writes can remain, including if the caller forcibly terminates a worker. Callers should report the remote sync and local generation outcomes separately.
 
 ## Existing SDK commands
 

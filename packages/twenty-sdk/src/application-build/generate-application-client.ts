@@ -51,7 +51,10 @@ export const generateApplicationClient = async ({
     return {
       success: false,
       error: {
-        code: signal?.aborted ? 'CANCELLED' : 'CLIENT_GENERATION_FAILED',
+        code:
+          signal?.aborted && Object.is(error, signal.reason)
+            ? 'CANCELLED'
+            : 'CLIENT_GENERATION_FAILED',
         message: error instanceof Error ? error.message : String(error),
       },
       diagnostics: [],
