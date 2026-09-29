@@ -35,7 +35,6 @@ import { CARD_FOOTER_PROP_DESCRIPTIONS } from './cardFooterPropDescriptions';
 import { CARD_HEADER_PROP_DESCRIPTIONS } from './cardHeaderPropDescriptions';
 import { CARD_PROP_DESCRIPTIONS } from './cardPropDescriptions';
 import { CHIP_PROP_DESCRIPTIONS } from './chipPropDescriptions';
-import { CIRCULAR_PROGRESS_BAR_PROP_DESCRIPTIONS } from './circularProgressBarPropDescriptions';
 import { CLICK_TO_ACTION_LINK_PROP_DESCRIPTIONS } from './clickToActionLinkPropDescriptions';
 import { CODE_EDITOR_HEADER_PROP_DESCRIPTIONS } from './codeEditorHeaderPropDescriptions';
 import { CODE_EDITOR_PROP_DESCRIPTIONS } from './codeEditorPropDescriptions';
@@ -92,13 +91,6 @@ export const DOCUMENTED_COMPONENTS = [
     entryPoint: 'twenty-ui/primitives/feedback',
     slug: 'feedback/banner',
     propDescriptions: BANNER_PROP_DESCRIPTIONS,
-  },
-  {
-    name: 'CircularProgressBar',
-    source: 'primitives/feedback/CircularProgressBar/CircularProgressBar.tsx',
-    entryPoint: 'twenty-ui/primitives/feedback',
-    slug: 'feedback/circular-progress-bar',
-    propDescriptions: CIRCULAR_PROGRESS_BAR_PROP_DESCRIPTIONS,
   },
   {
     name: 'Loader',
