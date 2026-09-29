@@ -7,7 +7,6 @@ import { isDefined, isPlainObject } from 'twenty-shared/utils';
 import { StepStatus, type WorkflowRunStepInfo } from 'twenty-shared/workflow';
 import { IsNull, Not } from 'typeorm';
 
-import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
@@ -283,70 +282,6 @@ export class InputAskWorkspaceService {
         { status: InputAskStatus.CANCELED },
       );
     });
-  }
-
-  // Assigning is not answering: whoever may read an Ask may hand it to
-  // someone else, but the Ask stays SYSTEM-writable so its status and
-  // response only ever change with what it gates. An assignee who cannot read
-  // the Ask would never see it, and a closed Ask records who it waited on.
-  async assign({
-    workspaceId,
-    inputAskId,
-    authContext,
-    assignee,
-  }: {
-    workspaceId: string;
-    inputAskId: string;
-    authContext: WorkspaceAuthContext;
-    assignee: {
-      workspaceMemberId: string;
-      authContext: WorkspaceAuthContext;
-    } | null;
-  }): Promise<boolean> {
-    if (!(await this.hasInputAskObject(workspaceId))) {
-      return false;
-    }
-
-    if (!(await this.canRead({ inputAskId, authContext }))) {
-      return false;
-    }
-
-    if (
-      isDefined(assignee) &&
-      !(await this.canRead({ inputAskId, authContext: assignee.authContext }))
-    ) {
-      return false;
-    }
-
-    return this.executeAsSystem(workspaceId, async (inputAskRepository) => {
-      const updateResult = await inputAskRepository.update(
-        { id: inputAskId, status: InputAskStatus.PENDING },
-        { assigneeId: assignee?.workspaceMemberId ?? null },
-      );
-
-      return (updateResult.affected ?? 0) > 0;
-    });
-  }
-
-  private async canRead({
-    inputAskId,
-    authContext,
-  }: {
-    inputAskId: string;
-    authContext: WorkspaceAuthContext;
-  }): Promise<boolean> {
-    const readableInputAsk =
-      await this.workspaceOrmManager.executeInWorkspaceContext(
-        () =>
-          this.workspaceOrmManager
-            .getRepositoryWithContextPermissions<InputAskWorkspaceEntity>(
-              'inputAsk',
-            )
-            .findOne({ where: { id: inputAskId }, select: { id: true } }),
-        authContext,
-      );
-
-    return isDefined(readableInputAsk);
   }
 
   private async insertUnlessPresent({

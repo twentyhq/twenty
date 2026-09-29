@@ -77,30 +77,6 @@ export class UserWorkspaceAuthContextService {
     return authContext;
   }
 
-  // Checking what someone other than the caller can do starts from their
-  // member record rather than a session. A member who can no longer sign in is
-  // not the caller's authentication failing, so it must not surface as one.
-  async resolveForWorkspaceMember({
-    workspaceId,
-    workspaceMemberId,
-  }: {
-    workspaceId: string;
-    workspaceMemberId: string;
-  }) {
-    try {
-      return await this.resolveWorkspaceMember({
-        workspaceId,
-        workspaceMemberId,
-      });
-    } catch (error) {
-      if (error instanceof AuthException) {
-        return null;
-      }
-
-      throw error;
-    }
-  }
-
   // Queued work and subscriptions must rebuild their subject after membership changes.
   async resolve({
     workspaceId,
