@@ -4,6 +4,7 @@ import { assertUnreachable } from 'twenty-shared/utils';
 import { msg } from '@lingui/core/macro';
 
 import {
+  ConflictError,
   ForbiddenError,
   UserInputError,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
@@ -26,6 +27,8 @@ export class TwoFactorAuthenticationExceptionFilter implements ExceptionFilter {
         throw new UserInputError(exception);
       case TwoFactorAuthenticationExceptionCode.RECOVERY_CODE_TARGET_NOT_ALLOWED:
         throw new ForbiddenError(exception);
+      case TwoFactorAuthenticationExceptionCode.RECOVERY_CODE_ISSUANCE_CONFLICT:
+        throw new ConflictError(exception);
       case TwoFactorAuthenticationExceptionCode.INVALID_CONFIGURATION:
       case TwoFactorAuthenticationExceptionCode.TWO_FACTOR_AUTHENTICATION_METHOD_NOT_FOUND:
       case TwoFactorAuthenticationExceptionCode.MALFORMED_DATABASE_OBJECT:

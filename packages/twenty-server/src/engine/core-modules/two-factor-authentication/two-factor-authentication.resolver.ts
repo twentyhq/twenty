@@ -248,7 +248,7 @@ export class TwoFactorAuthenticationResolver {
   ): Promise<boolean> {
     return await this.twoFactorAuthenticationRecoveryService.revokeRecoveryCode(
       {
-        actorUserId: user.id,
+        actor: user,
         targetUserId: userId,
         targetWorkspaceId: workspace.id,
       },

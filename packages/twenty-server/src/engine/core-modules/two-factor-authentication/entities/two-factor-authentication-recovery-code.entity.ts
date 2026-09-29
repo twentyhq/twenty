@@ -15,6 +15,11 @@ import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import type { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Entity({ name: 'twoFactorAuthenticationRecoveryCode', schema: 'core' })
+@Index(
+  'IDX_TWO_FACTOR_AUTHENTICATION_RECOVERY_CODE_PENDING_UNIQUE',
+  ['userWorkspaceId'],
+  { unique: true, where: '"usedAt" IS NULL AND "revokedAt" IS NULL' },
+)
 export class TwoFactorAuthenticationRecoveryCodeEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;

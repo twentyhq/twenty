@@ -357,6 +357,37 @@ describe('Two-factor authentication recovery codes (integration)', () => {
           .pendingRecoveryCodeExpiresAt,
       ).toBeNull();
     });
+
+    it('leaves exactly one usable code when two are issued at the same time', async () => {
+      const otp = await generateOtp(janeSecret);
+
+      const responses = await Promise.all(
+        [0, 1].map(() =>
+          generateTwoFactorAuthenticationRecoveryCode({
+            userId: USER_DATA_SEED_IDS.JONY,
+            otp,
+            accessToken: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+          }),
+        ),
+      );
+
+      for (const { errors } of responses) {
+        if (errors !== undefined) {
+          expect(errors[0]?.extensions?.subCode).toBe(
+            'RECOVERY_CODE_ISSUANCE_CONFLICT',
+          );
+        }
+      }
+
+      const pendingCodes = await global.testDataSource.query(
+        `SELECT "id" FROM core."twoFactorAuthenticationRecoveryCode" WHERE "userWorkspaceId" = $1 AND "usedAt" IS NULL AND "revokedAt" IS NULL`,
+        [USER_WORKSPACE_DATA_SEED_IDS.JONY],
+      );
+
+      expect(pendingCodes).toHaveLength(1);
+
+      await deleteRecoveryCodes();
+    });
   });
 
   describe('redeeming a code', () => {

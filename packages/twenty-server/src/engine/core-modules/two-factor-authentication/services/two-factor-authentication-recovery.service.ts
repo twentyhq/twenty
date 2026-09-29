@@ -11,8 +11,10 @@ import {
 } from 'twenty-emails';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
-import { IsNull, MoreThan, Repository } from 'typeorm';
+import { IsNull, MoreThan, QueryFailedError, Repository } from 'typeorm';
 
+import { POSTGRESQL_ERROR_CODES } from 'src/engine/api/graphql/workspace-query-runner/constants/postgres-error-codes.constants';
+import { type QueryFailedErrorWithCode } from 'src/engine/api/graphql/workspace-query-runner/utils/workspace-query-runner-graphql-api-exception-handler.util';
 import {
   AppTokenEntity,
   AppTokenType,
@@ -126,18 +128,10 @@ export class TwoFactorAuthenticationRecoveryService {
       targetWorkspaceId,
     });
 
-    if (
-      userHasAdminPrivileges(targetUserWorkspace.user) &&
-      !userHasAdminPrivileges(actor)
-    ) {
-      throw new TwoFactorAuthenticationException(
-        'Only a server administrator can generate a recovery code for a server administrator',
-        TwoFactorAuthenticationExceptionCode.RECOVERY_CODE_TARGET_NOT_ALLOWED,
-        {
-          userFriendlyMessage: msg`Only a server administrator can generate a recovery code for this member.`,
-        },
-      );
-    }
+    this.assertActorCanManageRecoveryCodesForTargetOrThrow({
+      actor,
+      targetUserWorkspace,
+    });
 
     const hasVerifiedTwoFactorAuthenticationMethod =
       await this.twoFactorAuthenticationMethodRepository.exists(
@@ -160,7 +154,7 @@ export class TwoFactorAuthenticationRecoveryService {
       );
     }
 
-    await this.revokePendingRecoveryCodes({
+    await this.twoFactorAuthenticationService.revokePendingRecoveryCodes({
       workspaceId: targetWorkspaceId,
       userWorkspaceId: targetUserWorkspace.id,
     });
@@ -175,15 +169,32 @@ export class TwoFactorAuthenticationRecoveryService {
         ),
     );
 
-    await this.twoFactorAuthenticationRecoveryCodeRepository.insert(
-      targetWorkspaceId,
-      {
-        userWorkspaceId: targetUserWorkspace.id,
-        codeHash: hashTwoFactorAuthenticationRecoveryCode(recoveryCode),
-        issuedByUserId: actor.id,
-        expiresAt,
-      },
-    );
+    // The partial unique index allows one pending code per member, so when two
+    // admins issue at the same time only the first insert succeeds.
+    try {
+      await this.twoFactorAuthenticationRecoveryCodeRepository.insert(
+        targetWorkspaceId,
+        {
+          userWorkspaceId: targetUserWorkspace.id,
+          codeHash: hashTwoFactorAuthenticationRecoveryCode(recoveryCode),
+          issuedByUserId: actor.id,
+          expiresAt,
+        },
+      );
+    } catch (error) {
+      if (
+        error instanceof QueryFailedError &&
+        (error as QueryFailedErrorWithCode).code ===
+          POSTGRESQL_ERROR_CODES.UNIQUE_VIOLATION
+      ) {
+        throw new TwoFactorAuthenticationException(
+          'A recovery code was issued concurrently for this member',
+          TwoFactorAuthenticationExceptionCode.RECOVERY_CODE_ISSUANCE_CONFLICT,
+        );
+      }
+
+      throw error;
+    }
 
     this.twoFactorAuthenticationService.emitTwoFactorAuthenticationEvent({
       workspaceId: targetWorkspaceId,
@@ -202,11 +213,11 @@ export class TwoFactorAuthenticationRecoveryService {
   }
 
   async revokeRecoveryCode({
-    actorUserId,
+    actor,
     targetUserId,
     targetWorkspaceId,
   }: {
-    actorUserId: UserEntity['id'];
+    actor: RecoveryCodeActor;
     targetUserId: UserEntity['id'];
     targetWorkspaceId: WorkspaceEntity['id'];
   }): Promise<boolean> {
@@ -215,15 +226,21 @@ export class TwoFactorAuthenticationRecoveryService {
       targetWorkspaceId,
     });
 
-    const revokedCount = await this.revokePendingRecoveryCodes({
-      workspaceId: targetWorkspaceId,
-      userWorkspaceId: targetUserWorkspace.id,
+    this.assertActorCanManageRecoveryCodesForTargetOrThrow({
+      actor,
+      targetUserWorkspace,
     });
+
+    const revokedCount =
+      await this.twoFactorAuthenticationService.revokePendingRecoveryCodes({
+        workspaceId: targetWorkspaceId,
+        userWorkspaceId: targetUserWorkspace.id,
+      });
 
     if (revokedCount > 0) {
       this.twoFactorAuthenticationService.emitTwoFactorAuthenticationEvent({
         workspaceId: targetWorkspaceId,
-        userId: actorUserId,
+        userId: actor.id,
         action: 'recovery_code_revoked',
         targetUserId,
       });
@@ -302,54 +319,72 @@ export class TwoFactorAuthenticationRecoveryService {
         TWO_FACTOR_AUTHENTICATION_RECOVERY_CODE_REDEMPTION_RATE_LIMIT_WINDOW_MS,
     });
 
-    // The conditional UPDATE is what makes a code single use: when two
-    // requests race, Postgres re-checks the WHERE clause for the second one
-    // after the first commits, so only one of them affects the row.
-    const consumeResult =
-      await this.twoFactorAuthenticationRecoveryCodeRepository.update(
+    const redeemableCodeWhere = {
+      userWorkspaceId: userWorkspace.id,
+      codeHash: hashTwoFactorAuthenticationRecoveryCode(recoveryCode),
+      usedAt: IsNull(),
+      revokedAt: IsNull(),
+      expiresAt: MoreThan(new Date()),
+    };
+
+    const isRedeemable =
+      await this.twoFactorAuthenticationRecoveryCodeRepository.exists(
         workspace.id,
-        {
-          userWorkspaceId: userWorkspace.id,
-          codeHash: hashTwoFactorAuthenticationRecoveryCode(recoveryCode),
-          usedAt: IsNull(),
-          revokedAt: IsNull(),
-          expiresAt: MoreThan(new Date()),
-        },
-        { usedAt: new Date() },
+        { where: redeemableCodeWhere },
       );
 
-    if ((consumeResult.affected ?? 0) === 0) {
-      this.twoFactorAuthenticationService.emitTwoFactorAuthenticationEvent({
-        workspaceId: workspace.id,
-        userId,
-        action: 'recovery_code_rejected',
-      });
-
-      throw new TwoFactorAuthenticationException(
-        'Invalid recovery code',
-        TwoFactorAuthenticationExceptionCode.INVALID_RECOVERY_CODE,
-      );
+    if (!isRedeemable) {
+      this.rejectRecoveryCode({ userId, workspaceId: workspace.id });
     }
 
-    await this.twoFactorAuthenticationMethodRepository.delete(workspace.id, {
-      userWorkspaceId: userWorkspace.id,
-    });
-
-    await this.appTokenRepository.update(
-      {
-        userId,
-        workspaceId: workspace.id,
-        type: AppTokenType.RefreshToken,
-        revokedAt: IsNull(),
-      },
-      { revokedAt: new Date() },
-    );
-
+    // Sessions live partly in the cache, so they are revoked before the code
+    // is consumed: if this fails the code stays usable and the member retries.
     await this.userSessionService.revokeAllSessionsForUser({
       userId,
       workspaceId: workspace.id,
       reason: UserSessionRevokedReason.TwoFactorAuthenticationReset,
     });
+
+    const isConsumed = await this.appTokenRepository.manager.transaction(
+      async (entityManager) => {
+        // The conditional UPDATE is what makes a code single use: when two
+        // requests race, Postgres re-checks the WHERE clause for the second
+        // one after the first commits, so only one of them affects the row.
+        const consumeResult = await entityManager
+          .getRepository(TwoFactorAuthenticationRecoveryCodeEntity)
+          .update(
+            { ...redeemableCodeWhere, workspaceId: workspace.id },
+            { usedAt: new Date() },
+          );
+
+        if ((consumeResult.affected ?? 0) === 0) {
+          return false;
+        }
+
+        await entityManager
+          .getRepository(TwoFactorAuthenticationMethodEntity)
+          .delete({
+            workspaceId: workspace.id,
+            userWorkspaceId: userWorkspace.id,
+          });
+
+        await entityManager.getRepository(AppTokenEntity).update(
+          {
+            userId,
+            workspaceId: workspace.id,
+            type: AppTokenType.RefreshToken,
+            revokedAt: IsNull(),
+          },
+          { revokedAt: new Date() },
+        );
+
+        return true;
+      },
+    );
+
+    if (!isConsumed) {
+      this.rejectRecoveryCode({ userId, workspaceId: workspace.id });
+    }
 
     this.twoFactorAuthenticationService.emitTwoFactorAuthenticationEvent({
       workspaceId: workspace.id,
@@ -390,21 +425,44 @@ export class TwoFactorAuthenticationRecoveryService {
     return userWorkspace;
   }
 
-  private async revokePendingRecoveryCodes({
-    workspaceId,
-    userWorkspaceId,
+  private assertActorCanManageRecoveryCodesForTargetOrThrow({
+    actor,
+    targetUserWorkspace,
   }: {
-    workspaceId: WorkspaceEntity['id'];
-    userWorkspaceId: string;
-  }): Promise<number> {
-    const updateResult =
-      await this.twoFactorAuthenticationRecoveryCodeRepository.update(
-        workspaceId,
-        { userWorkspaceId, usedAt: IsNull(), revokedAt: IsNull() },
-        { revokedAt: new Date() },
+    actor: RecoveryCodeActor;
+    targetUserWorkspace: UserWorkspaceEntity;
+  }): void {
+    if (
+      userHasAdminPrivileges(targetUserWorkspace.user) &&
+      !userHasAdminPrivileges(actor)
+    ) {
+      throw new TwoFactorAuthenticationException(
+        'Only a server administrator can manage recovery codes for a server administrator',
+        TwoFactorAuthenticationExceptionCode.RECOVERY_CODE_TARGET_NOT_ALLOWED,
+        {
+          userFriendlyMessage: msg`Only a server administrator can manage recovery codes for this member.`,
+        },
       );
+    }
+  }
 
-    return updateResult.affected ?? 0;
+  private rejectRecoveryCode({
+    userId,
+    workspaceId,
+  }: {
+    userId: UserEntity['id'];
+    workspaceId: WorkspaceEntity['id'];
+  }): never {
+    this.twoFactorAuthenticationService.emitTwoFactorAuthenticationEvent({
+      workspaceId,
+      userId,
+      action: 'recovery_code_rejected',
+    });
+
+    throw new TwoFactorAuthenticationException(
+      'Invalid recovery code',
+      TwoFactorAuthenticationExceptionCode.INVALID_RECOVERY_CODE,
+    );
   }
 
   private async sendRecoveryCodeIssuedEmail({

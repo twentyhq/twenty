@@ -264,32 +264,14 @@ export class TwoFactorAuthenticationService {
       });
     }
 
-    await this.revokePendingRecoveryCodesAfterSuccessfulVerification({
+    // A working authenticator means the member was not locked out after all, so
+    // a recovery code issued for them must not stay redeemable.
+    const revokedRecoveryCodeCount = await this.revokePendingRecoveryCodes({
       workspaceId,
-      userId,
       userWorkspaceId: userTwoFactorAuthenticationMethod.userWorkspaceId,
     });
-  }
 
-  // A working authenticator means the member was not locked out after all, so
-  // a recovery code issued for them must not stay redeemable.
-  private async revokePendingRecoveryCodesAfterSuccessfulVerification({
-    workspaceId,
-    userId,
-    userWorkspaceId,
-  }: {
-    workspaceId: WorkspaceEntity['id'];
-    userId: UserEntity['id'];
-    userWorkspaceId: string;
-  }) {
-    const updateResult =
-      await this.twoFactorAuthenticationRecoveryCodeRepository.update(
-        workspaceId,
-        { userWorkspaceId, usedAt: IsNull(), revokedAt: IsNull() },
-        { revokedAt: new Date() },
-      );
-
-    if ((updateResult.affected ?? 0) > 0) {
+    if (revokedRecoveryCodeCount > 0) {
       this.emitTwoFactorAuthenticationEvent({
         workspaceId,
         userId,
@@ -297,6 +279,23 @@ export class TwoFactorAuthenticationService {
         message: 'Revoked after a successful authenticator verification',
       });
     }
+  }
+
+  async revokePendingRecoveryCodes({
+    workspaceId,
+    userWorkspaceId,
+  }: {
+    workspaceId: WorkspaceEntity['id'];
+    userWorkspaceId: string;
+  }): Promise<number> {
+    const updateResult =
+      await this.twoFactorAuthenticationRecoveryCodeRepository.update(
+        workspaceId,
+        { userWorkspaceId, usedAt: IsNull(), revokedAt: IsNull() },
+        { revokedAt: new Date() },
+      );
+
+    return updateResult.affected ?? 0;
   }
 
   async assertFreshStepUpAuthenticationOrThrow({

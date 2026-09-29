@@ -19,6 +19,9 @@ export class AddTwoFactorAuthenticationRecoveryCodeFastInstanceCommand implement
       'CREATE UNIQUE INDEX "IDX_e1dcc0914c63aeaaff099a2e9c" ON "core"."twoFactorAuthenticationRecoveryCode" ("codeHash") ',
     );
     await queryRunner.query(
+      'CREATE UNIQUE INDEX "IDX_TWO_FACTOR_AUTHENTICATION_RECOVERY_CODE_PENDING_UNIQUE" ON "core"."twoFactorAuthenticationRecoveryCode" ("userWorkspaceId") WHERE "usedAt" IS NULL AND "revokedAt" IS NULL',
+    );
+    await queryRunner.query(
       'ALTER TABLE "core"."twoFactorAuthenticationRecoveryCode" ADD CONSTRAINT "FK_e43ca67c9b33e61693d665dd69b" FOREIGN KEY ("workspaceId") REFERENCES "core"."workspace"("id") ON DELETE CASCADE ON UPDATE NO ACTION',
     );
     await queryRunner.query(
@@ -38,6 +41,9 @@ export class AddTwoFactorAuthenticationRecoveryCodeFastInstanceCommand implement
     );
     await queryRunner.query(
       'ALTER TABLE "core"."twoFactorAuthenticationRecoveryCode" DROP CONSTRAINT "FK_e43ca67c9b33e61693d665dd69b"',
+    );
+    await queryRunner.query(
+      'DROP INDEX "core"."IDX_TWO_FACTOR_AUTHENTICATION_RECOVERY_CODE_PENDING_UNIQUE"',
     );
     await queryRunner.query(
       'DROP INDEX "core"."IDX_e1dcc0914c63aeaaff099a2e9c"',
