@@ -570,11 +570,9 @@ export class AgentChatStreamingService {
 
     await this.streamHeartbeatService.markClaimed(streamId);
 
-    let resolved: {
-      answerText: string;
-      turnId: string | null;
-      rollback: { partId: string; previousOutput: Record<string, unknown> };
-    };
+    let resolved: Awaited<
+      ReturnType<AgentChatService['resolvePendingQuestion']>
+    >;
 
     try {
       resolved = await this.agentChatService.resolvePendingQuestion({

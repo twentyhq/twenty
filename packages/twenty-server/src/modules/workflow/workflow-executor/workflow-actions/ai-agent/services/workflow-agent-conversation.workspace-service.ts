@@ -1,4 +1,3 @@
-import { InputAskWorkspaceService } from 'src/modules/input-ask/workspace-services/input-ask.workspace-service';
 import { Injectable } from '@nestjs/common';
 
 import { randomUUID } from 'node:crypto';
@@ -26,6 +25,7 @@ import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-histor
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { hasWorkflowRunThreadFields } from 'src/engine/metadata-modules/ai/ai-history/utils/has-workflow-run-thread-fields.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { InputAskWorkspaceService } from 'src/modules/input-ask/workspace-services/input-ask.workspace-service';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 
 type RecordedExecutionResult = {
@@ -76,7 +76,7 @@ export class WorkflowAgentConversationWorkspaceService {
     agentId: string | null;
     prompt: string;
     initiatorUserWorkspaceId: string | null;
-    executionResult?: RecordedExecutionResult;
+    executionResult: RecordedExecutionResult;
   }): Promise<RecordedConversation | null> {
     const { flatFieldMetadataMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
@@ -143,7 +143,7 @@ export class WorkflowAgentConversationWorkspaceService {
     stepId: string;
     threadId: string;
     agentId: string | null;
-    executionResult?: RecordedExecutionResult;
+    executionResult: RecordedExecutionResult;
   }): Promise<RecordedConversation> {
     const turnId = await this.insertTurn({ workspaceId, threadId, agentId });
 
@@ -202,9 +202,9 @@ export class WorkflowAgentConversationWorkspaceService {
     threadId: string;
     turnId: string;
     agentId: string | null;
-    executionResult?: RecordedExecutionResult;
+    executionResult: RecordedExecutionResult;
   }): Promise<boolean> {
-    const replyParts = mapAiStepsToUiMessageParts(executionResult?.steps ?? []);
+    const replyParts = mapAiStepsToUiMessageParts(executionResult.steps ?? []);
 
     if (replyParts.length === 0) {
       return false;
@@ -220,7 +220,7 @@ export class WorkflowAgentConversationWorkspaceService {
       parts: replyParts,
     });
 
-    const pendingQuestionPart = executionResult?.isPaused
+    const pendingQuestionPart = executionResult.isPaused
       ? findPendingQuestionPart(replyParts)
       : undefined;
 

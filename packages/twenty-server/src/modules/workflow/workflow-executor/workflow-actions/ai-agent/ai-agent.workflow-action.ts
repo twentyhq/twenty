@@ -97,7 +97,7 @@ export class AiAgentWorkflowAction implements WorkflowAction {
     // The conversation is a record of the step, not part of its outcome, so a
     // failure to write it must not fail a step whose agent did its work.
     const recordConversation = (
-      executionResult?: AgentExecutionResult,
+      executionResult: AgentExecutionResult,
     ): Promise<RecordedConversation | null> =>
       (isDefined(resumedThreadId)
         ? this.workflowAgentConversationService.recordContinuation({
@@ -132,43 +132,36 @@ export class AiAgentWorkflowAction implements WorkflowAction {
 
     const startedAtMs = Date.now();
 
-    const executionResult = await this.aiAgentExecutionService
-      .executeAgent({
-        agent,
-        ...(isDefined(resumedThreadId)
-          ? {
-              messages: [],
-              priorModelMessages:
-                await this.workflowAgentConversationService.loadModelMessages({
-                  workspaceId,
-                  threadId: resumedThreadId,
-                }),
-            }
-          : { messages: [{ role: 'user', content: resolvedPrompt }] }),
-        baseSystemPrompt: isAskingQuestionsAllowed
-          ? `${WORKFLOW_BASE_SYSTEM_PROMPT}\n\n${WORKFLOW_AGENT_ASK_QUESTIONS_PROMPT}`
-          : WORKFLOW_BASE_SYSTEM_PROMPT,
-        pausingTools: isAskingQuestionsAllowed
-          ? {
-              [ASK_QUESTIONS_TOOL_NAME]: createAskQuestionsTool({
-                isWorkspaceSetupThread: false,
+    const executionResult = await this.aiAgentExecutionService.executeAgent({
+      agent,
+      ...(isDefined(resumedThreadId)
+        ? {
+            messages: [],
+            priorModelMessages:
+              await this.workflowAgentConversationService.loadModelMessages({
+                workspaceId,
+                threadId: resumedThreadId,
               }),
-            }
-          : {},
-        actorContext: executionContext.isActingOnBehalfOfUser
-          ? executionContext.initiator
-          : undefined,
-        authContext: executionContext.authContext,
-        workspaceId,
-        userWorkspaceId,
-        operationType: UsageOperationType.AI_WORKFLOW_TOKEN,
-      })
-      .catch(async (error: unknown) => {
-        if (isDefined(resumedThreadId)) {
-          await recordConversation();
-        }
-        throw error;
-      });
+          }
+        : { messages: [{ role: 'user', content: resolvedPrompt }] }),
+      baseSystemPrompt: isAskingQuestionsAllowed
+        ? `${WORKFLOW_BASE_SYSTEM_PROMPT}\n\n${WORKFLOW_AGENT_ASK_QUESTIONS_PROMPT}`
+        : WORKFLOW_BASE_SYSTEM_PROMPT,
+      pausingTools: isAskingQuestionsAllowed
+        ? {
+            [ASK_QUESTIONS_TOOL_NAME]: createAskQuestionsTool({
+              isWorkspaceSetupThread: false,
+            }),
+          }
+        : {},
+      actorContext: executionContext.isActingOnBehalfOfUser
+        ? executionContext.initiator
+        : undefined,
+      authContext: executionContext.authContext,
+      workspaceId,
+      userWorkspaceId,
+      operationType: UsageOperationType.AI_WORKFLOW_TOKEN,
+    });
 
     const durationMs = Date.now() - startedAtMs;
 
