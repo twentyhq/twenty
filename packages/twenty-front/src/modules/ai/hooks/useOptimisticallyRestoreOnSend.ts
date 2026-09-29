@@ -4,11 +4,11 @@ import { useApplyAgentChatThreadUpdate } from '@/ai/hooks/useApplyAgentChatThrea
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { type FlatAgentChatThread } from '@/metadata-store/types/FlatAgentChatThread';
 
-export const useOptimisticallyUnarchiveOnSend = () => {
+export const useOptimisticallyRestoreOnSend = () => {
   const { applyAgentChatThreadUpdate } = useApplyAgentChatThreadUpdate();
   const store = useStore();
 
-  const applyOptimisticUnarchive = (
+  const applyOptimisticRestore = (
     threadId: string,
     optimisticUpdatedAt: string,
   ): (() => void) | null => {
@@ -43,5 +43,5 @@ export const useOptimisticallyUnarchiveOnSend = () => {
     };
   };
 
-  return { applyOptimisticUnarchive };
+  return { applyOptimisticRestore };
 };

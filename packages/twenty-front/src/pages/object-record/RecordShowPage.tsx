@@ -1,6 +1,10 @@
-import { useParams } from 'react-router-dom';
-import { FeatureFlagKey } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { Navigate, useParams } from 'react-router-dom';
+import {
+  AppPath,
+  CoreObjectNameSingular,
+  FeatureFlagKey,
+} from 'twenty-shared/types';
+import { getAppPath, isDefined } from 'twenty-shared/utils';
 
 import { WorkspaceRouteUnavailable } from '@/app/routing/components/WorkspaceRouteUnavailable';
 import { findCoreObjectShowPage } from '@/object-core/utils/findCoreObjectShowPage';
@@ -61,6 +65,22 @@ export const RecordShowPage = () => {
 
   if (isInSidePanel && !isRouteObjectMetadataAvailable) {
     return <WorkspaceRouteUnavailable />;
+  }
+
+  // A chat's record page is the chat page, on its own route
+  if (
+    !isInSidePanel &&
+    parameters.objectNameSingular === CoreObjectNameSingular.AgentChatThread &&
+    isDefined(parameters.objectRecordId)
+  ) {
+    return (
+      <Navigate
+        replace
+        to={getAppPath(AppPath.AiChat, {
+          threadId: parameters.objectRecordId,
+        })}
+      />
+    );
   }
 
   if (

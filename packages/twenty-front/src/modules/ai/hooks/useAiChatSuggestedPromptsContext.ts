@@ -1,3 +1,4 @@
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type AiChatSuggestedPromptsContext } from '@/ai/types/AiChatSuggestedPromptsContext';
@@ -52,7 +53,13 @@ export const useAiChatSuggestedPromptsContext =
       viewType: contextStoreCurrentViewType,
     });
 
-    if (!isDefined(objectMetadataItem) || !isDefined(browsingContextType)) {
+    // The chat page is the chat's own record page, which is not what the user
+    // is asking about
+    if (
+      !isDefined(objectMetadataItem) ||
+      !isDefined(browsingContextType) ||
+      objectMetadataItem.nameSingular === CoreObjectNameSingular.AgentChatThread
+    ) {
       return null;
     }
 
