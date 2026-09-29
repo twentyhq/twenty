@@ -10,6 +10,8 @@ import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-
 import { SdkClientModule } from 'src/engine/core-modules/sdk-client/sdk-client.module';
 import { SecretEncryptionModule } from 'src/engine/core-modules/secret-encryption/secret-encryption.module';
 import { FileStorageModule } from 'src/engine/core-modules/file-storage/file-storage.module';
+import { WorkflowVersionEntity } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
+import { WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { FieldMetadataModule } from 'src/engine/metadata-modules/field-metadata/field-metadata.module';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
@@ -57,7 +59,12 @@ import { WorkflowRunModule } from 'src/modules/workflow/workflow-runner/workflow
     ApplicationRegistrationModule,
     FeatureFlagModule,
     FileStorageModule,
-    TypeOrmModule.forFeature([WorkspaceEntity, ObjectMetadataEntity]),
+    TypeOrmModule.forFeature([
+      WorkspaceEntity,
+      ObjectMetadataEntity,
+      WorkflowEntity,
+      WorkflowVersionEntity,
+    ]),
     ObjectPermissionModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     StandardObjectsPrefillModule,
@@ -80,6 +87,8 @@ import { WorkflowRunModule } from 'src/modules/workflow/workflow-runner/workflow
     DevSeederWorkflowAgentQuestionWorkspaceService,
     provideWorkspaceScopedRepository(RoleEntity),
     provideWorkspaceScopedRepository(ObjectMetadataEntity),
+    provideWorkspaceScopedRepository(WorkflowEntity),
+    provideWorkspaceScopedRepository(WorkflowVersionEntity),
   ],
 })
 export class DevSeederModule {}

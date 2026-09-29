@@ -4,7 +4,6 @@ import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules
 
 export type WorkflowRunThreadFields = {
   workflowRunId: string;
-  workflowStepId?: string | null;
 };
 
 export const isWorkflowRunThread = <
