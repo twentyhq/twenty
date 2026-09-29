@@ -26,7 +26,7 @@ export const useAiChatThreadClick = (
   const store = useStore();
   const { openAskAiPage } = useOpenAskAiPageInSidePanel();
 
-  const handleThreadClick = (thread: AgentChatThread) => {
+  const handleThreadClick = (thread: Pick<AgentChatThread, 'id' | 'title'>) => {
     setThreadIdCreatedFromDraft(null);
 
     selectAiChatThread(thread.id);

@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { motion } from 'framer-motion';
 import Linkify from 'linkify-react';
-import { AnimatedExpandableContainer } from 'twenty-ui/primitives/layout';
+import { Collapsible } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledThreadMessageBody = styled(motion.div)`
@@ -35,7 +35,7 @@ export const EmailThreadMessageBody = ({
   isDisplayed,
 }: EmailThreadMessageBodyProps) => {
   return (
-    <AnimatedExpandableContainer isExpanded={isDisplayed} duration="fast">
+    <Collapsible isExpanded={isDisplayed} duration="fast">
       <StyledThreadMessageBody>
         <Linkify
           options={{
@@ -46,6 +46,6 @@ export const EmailThreadMessageBody = ({
           {body}
         </Linkify>
       </StyledThreadMessageBody>
-    </AnimatedExpandableContainer>
+    </Collapsible>
   );
 };

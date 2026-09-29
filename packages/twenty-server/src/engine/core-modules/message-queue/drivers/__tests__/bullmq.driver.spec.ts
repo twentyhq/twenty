@@ -7,6 +7,8 @@ const mockGetJobs = jest.fn();
 const mockGetJob = jest.fn();
 const mockAdd = jest.fn();
 const mockAddBulk = jest.fn();
+const mockSetGlobalConcurrency = jest.fn();
+const mockRemoveGlobalConcurrency = jest.fn();
 
 jest.mock('bullmq', () => ({
   Queue: jest.fn().mockImplementation(() => ({
@@ -14,6 +16,8 @@ jest.mock('bullmq', () => ({
     getJob: mockGetJob,
     add: mockAdd,
     addBulk: mockAddBulk,
+    setGlobalConcurrency: mockSetGlobalConcurrency,
+    removeGlobalConcurrency: mockRemoveGlobalConcurrency,
   })),
   Worker: jest.fn().mockImplementation(() => ({ on: jest.fn() })),
   MetricsTime: { ONE_WEEK: 1 },
@@ -190,4 +194,35 @@ describe('BullMQDriver progress', () => {
       expect(jobs['job-id']).toMatchObject({ state: 'active', progress });
     },
   );
+});
+
+describe('BullMQDriver global concurrency', () => {
+  const driver = new BullMQDriver(
+    {} as never,
+    {} as never,
+    {} as never,
+    {} as never,
+  );
+
+  driver.register(MessageQueue.recordExportQueue);
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('sets the global concurrency when the queue declares one', () => {
+    driver.work(MessageQueue.recordExportQueue, jest.fn(), {
+      globalConcurrency: 2,
+    });
+
+    expect(mockSetGlobalConcurrency).toHaveBeenCalledWith(2);
+    expect(mockRemoveGlobalConcurrency).not.toHaveBeenCalled();
+  });
+
+  it('removes the global concurrency when the queue declares none', () => {
+    driver.work(MessageQueue.recordExportQueue, jest.fn(), {});
+
+    expect(mockRemoveGlobalConcurrency).toHaveBeenCalledTimes(1);
+    expect(mockSetGlobalConcurrency).not.toHaveBeenCalled();
+  });
 });

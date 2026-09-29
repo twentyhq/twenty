@@ -112,34 +112,6 @@
     ]
   },
   {
-    "name": "CircularProgressBar",
-    "entryPoint": "twenty-ui/primitives/feedback",
-    "slug": "feedback/circular-progress-bar",
-    "props": [
-      {
-        "name": "barColor",
-        "type": "string",
-        "required": false,
-        "defaultValue": "currentColor",
-        "description": "CSS stroke color. Defaults to the inherited text color."
-      },
-      {
-        "name": "barWidth",
-        "type": "number",
-        "required": false,
-        "defaultValue": "5",
-        "description": "Stroke width in pixels. Keep it smaller than half of `size`."
-      },
-      {
-        "name": "size",
-        "type": "number",
-        "required": false,
-        "defaultValue": "50",
-        "description": "Width and height of the spinner in pixels."
-      }
-    ]
-  },
-  {
     "name": "Loader",
     "entryPoint": "twenty-ui/primitives/feedback",
     "slug": "feedback/loader",
@@ -208,6 +180,20 @@
         "description": "Called when the countdown animation ends."
       },
       {
+        "name": "onGrowInComplete",
+        "type": "(() => void)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Called when the grow-in animation ends."
+      },
+      {
+        "name": "size",
+        "type": "\"md\" | \"sm\"",
+        "required": false,
+        "defaultValue": "md",
+        "description": "Bar height: `sm` (6px) or `md` (8px)."
+      },
+      {
         "name": "value",
         "type": "number",
         "required": true,
@@ -220,6 +206,34 @@
         "required": false,
         "defaultValue": "false",
         "description": "Rounds the track and indicator corners."
+      },
+      {
+        "name": "withGlint",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Sweeps a highlight across the filled bar each time the value changes."
+      },
+      {
+        "name": "withGrowIn",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Grows the bar in from zero width when it mounts."
+      },
+      {
+        "name": "withMinimumFillWidth",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "true",
+        "description": "Keeps a small visible fill for any value above zero."
+      },
+      {
+        "name": "withSpringFill",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Animates value changes with a spring that slightly overshoots the target."
       }
     ]
   },
@@ -343,9 +357,9 @@
     ]
   },
   {
-    "name": "AnimatedExpandableContainer",
+    "name": "Collapsible",
     "entryPoint": "twenty-ui/primitives/layout",
-    "slug": "layout/animated-expandable-container",
+    "slug": "layout/collapsible",
     "props": [
       {
         "name": "animationDurations",
@@ -383,25 +397,11 @@
         "description": "Theme timing preset for both opacity and size. Explicit `animationDurations` take precedence."
       },
       {
-        "name": "initial",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": null,
-        "description": "Compatibility prop accepted by the type but not used by the current implementation."
-      },
-      {
         "name": "isExpanded",
         "type": "boolean",
         "required": true,
         "defaultValue": null,
         "description": "Controlled visibility of the panel. The application owns the trigger and state."
-      },
-      {
-        "name": "mode",
-        "type": "\"fit-content\" | \"scroll-height\"",
-        "required": false,
-        "defaultValue": null,
-        "description": "Compatibility prop accepted by the type but not used by the current implementation."
       }
     ]
   },
@@ -5376,6 +5376,13 @@
             "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
           },
           {
+            "name": "collisionPadding",
+            "type": "Padding",
+            "required": false,
+            "defaultValue": null,
+            "description": "Space in pixels kept between the popup and the edges of its collision\nboundary, for all sides or per side. Defaults to 5."
+          },
+          {
             "name": "container",
             "type": "HTMLElement | ShadowRoot | RefObject<HTMLElement | ShadowRoot | null> | null",
             "required": false,
@@ -5762,6 +5769,13 @@
         "required": false,
         "defaultValue": null,
         "description": "ID of the trigger that the tooltip is associated with.\nThis is useful in conjunction with the `open` prop to create a controlled tooltip.\nThere's no need to specify this prop when the tooltip is uncontrolled (that is, when the `open` prop is not set)."
+      },
+      {
+        "name": "withExitAnimation",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": null,
+        "description": "Fades and slides the popup out when it closes instead of hiding it at once."
       }
     ],
     "parts": [
@@ -6071,6 +6085,13 @@
             "required": false,
             "defaultValue": null,
             "description": "Inline styles for the popup."
+          },
+          {
+            "name": "withExitAnimation",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Fades and slides the popup out when it closes instead of hiding it at once."
           }
         ]
       },
@@ -6810,6 +6831,20 @@
             "description": "Allows selecting several options. Options then keep the popup open and show a checkbox by default."
           },
           {
+            "name": "onEscapeKeyDown",
+            "type": "((event: DropdownDismissEvent) => void)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Called when Escape is about to close the popup. Call `event.preventDefault()` to keep it open."
+          },
+          {
+            "name": "onInteractOutside",
+            "type": "((event: DropdownDismissEvent) => void)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Called when a press outside the popup, or Tab out of it, is about to close it. `event.target` is the element pressed outside, or `null` after Tab. Call `event.preventDefault()` to keep it open."
+          },
+          {
             "name": "onOpenChange",
             "type": "((open: boolean) => void)",
             "required": false,
@@ -6937,6 +6972,13 @@
             "required": false,
             "defaultValue": null,
             "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+          },
+          {
+            "name": "collisionPadding",
+            "type": "Padding",
+            "required": false,
+            "defaultValue": null,
+            "description": "Space in pixels kept between the popup and the edges of its collision\nboundary, for all sides or per side. Defaults to 5."
           },
           {
             "name": "container",
