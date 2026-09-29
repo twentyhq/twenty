@@ -4,7 +4,7 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 const CONTROL_LOADER_SIZE_PIXELS = 16;
 const CONTROL_LOADER_BAR_WIDTH_PIXELS = 2;
 
-// TODO: Replace CircularProgressBar with Loader when upgrading twenty-ui.
+// TODO @bosiraphael: Replace CircularProgressBar with Loader when upgrading twenty-ui.
 export const SettingsControlLoader = () => (
   <CircularProgressBar
     size={CONTROL_LOADER_SIZE_PIXELS}
