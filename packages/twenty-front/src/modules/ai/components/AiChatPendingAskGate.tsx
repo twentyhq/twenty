@@ -11,6 +11,7 @@ const StyledGate = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[1]};
+  width: 100%;
 `;
 
 const StyledWaitingCount = styled.span`
