@@ -1,5 +1,5 @@
 import { isFunction } from '@sniptt/guards';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { type WorkerMediaQueryList } from '@/polyfills/media-query/types/WorkerMediaQueryList';
 import { type WorkerMediaQueryListEvent } from '@/polyfills/media-query/types/WorkerMediaQueryListEvent';
@@ -23,8 +23,7 @@ type ChangeListenerRegistration = {
 };
 
 class WorkerMediaQueryListImplementation extends EventTarget {
-  readonly media: string;
-
+  #media: string;
   #evaluateMatches: () => boolean;
   #subscribeToEnvironmentUpdates: (listener: () => void) => () => void;
   #reportListenerError: (error: unknown) => void;
@@ -45,7 +44,7 @@ class WorkerMediaQueryListImplementation extends EventTarget {
   }: CreateWorkerMediaQueryListInput) {
     super();
 
-    this.media = media;
+    this.#media = media;
     this.#evaluateMatches = evaluateMatches;
     this.#subscribeToEnvironmentUpdates = subscribeToEnvironmentUpdates;
     this.#reportListenerError = reportListenerError;
@@ -53,6 +52,10 @@ class WorkerMediaQueryListImplementation extends EventTarget {
     super.addEventListener(CHANGE_EVENT_TYPE, (event) => {
       this.#invokeChangeListeners(event);
     });
+  }
+
+  get media(): string {
+    return this.#media;
   }
 
   get matches(): boolean {
@@ -152,8 +155,9 @@ class WorkerMediaQueryListImplementation extends EventTarget {
   ): void {
     const registrationIndex =
       this.#changeListenerRegistrations.indexOf(registration);
+    const isRegistered = registrationIndex !== -1;
 
-    if (registrationIndex === -1) {
+    if (!isRegistered) {
       return;
     }
 
@@ -210,7 +214,7 @@ class WorkerMediaQueryListImplementation extends EventTarget {
 
   #releaseEnvironmentSubscriptionIfUnused(): void {
     if (
-      this.#changeListenerRegistrations.length > 0 ||
+      isNonEmptyArray(this.#changeListenerRegistrations) ||
       !isDefined(this.#unsubscribeFromEnvironmentUpdates)
     ) {
       return;
@@ -231,7 +235,7 @@ class WorkerMediaQueryListImplementation extends EventTarget {
 
     this.dispatchEvent(
       createWorkerMediaQueryListEvent({
-        media: this.media,
+        media: this.#media,
         matches: nextMatches,
       }),
     );

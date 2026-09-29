@@ -130,6 +130,25 @@ describe('createWorkerMediaQueryList', () => {
     expect(changeListener).toHaveBeenCalledTimes(1);
   });
 
+  it('should expose media as a read-only accessor', () => {
+    const { mediaQueryList, setMatches } = setupMediaQueryList();
+    const changeListener = jest.fn();
+
+    mediaQueryList.addListener(changeListener);
+
+    expect(Reflect.set(mediaQueryList, 'media', '(max-width: 1px)')).toBe(
+      false,
+    );
+    expect(mediaQueryList.media).toBe('(min-width: 600px)');
+    expect(Object.keys(mediaQueryList)).toEqual([]);
+
+    setMatches(true);
+
+    expect(changeListener.mock.calls[0][0]).toMatchObject({
+      media: '(min-width: 600px)',
+    });
+  });
+
   it('should invoke and clear the onchange handler', () => {
     const { mediaQueryList, setMatches, unsubscribe } = setupMediaQueryList();
     const onchangeHandler = jest.fn();
