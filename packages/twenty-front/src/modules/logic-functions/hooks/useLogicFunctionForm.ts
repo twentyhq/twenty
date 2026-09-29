@@ -3,6 +3,7 @@ import {
   useLogicFunctionUpdateFormState,
 } from '@/logic-functions/hooks/useLogicFunctionUpdateFormState';
 import { usePersistLogicFunction } from '@/logic-functions/hooks/usePersistLogicFunction';
+import { shouldInferInputSchemaFromSourceCode } from '@/logic-functions/utils/shouldInferInputSchemaFromSourceCode';
 import {
   getInputSchemaFromSourceCode,
   jsonSchemaToInputSchema,
@@ -33,7 +34,10 @@ export const useLogicFunctionForm = ({
     return async (
       value: LogicFunctionFormValues[TKey],
     ): Promise<InputJsonSchema | undefined> => {
-      if (key === 'sourceHandlerCode') {
+      if (
+        key === 'sourceHandlerCode' &&
+        shouldInferInputSchemaFromSourceCode(logicFunction)
+      ) {
         const inferredJsonSchema = await getInputSchemaFromSourceCode(
           value as LogicFunctionFormValues['sourceHandlerCode'],
         );

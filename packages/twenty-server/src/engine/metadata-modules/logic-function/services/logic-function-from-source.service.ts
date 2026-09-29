@@ -26,6 +26,7 @@ import { buildDuplicatedCodeStepLogicFunctionToCreate } from 'src/engine/metadat
 import { fromCreateLogicFunctionFromSourceInputToUniversalFlatLogicFunctionToCreate } from 'src/engine/metadata-modules/logic-function/utils/from-create-logic-function-from-source-input-to-universal-flat-logic-function-to-create.util';
 import { fromFlatLogicFunctionToLogicFunctionDto } from 'src/engine/metadata-modules/logic-function/utils/from-flat-logic-function-to-logic-function-dto.util';
 import { fromUpdateLogicFunctionFromSourceInputToFlatLogicFunctionToUpdate } from 'src/engine/metadata-modules/logic-function/utils/from-update-logic-function-from-source-input-to-flat-logic-function-to-update.util';
+import { stripNodeEsmCjsBanner } from 'src/engine/metadata-modules/logic-function/utils/strip-node-esm-cjs-banner.util';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
@@ -257,7 +258,7 @@ export class LogicFunctionFromSourceService {
 
     await this.logicFunctionResourceService.uploadSourceFile({
       sourceHandlerPath,
-      sourceHandlerCode: builtCode,
+      sourceHandlerCode: stripNodeEsmCjsBanner(builtCode),
       workspaceId,
       applicationUniversalIdentifier,
     });
