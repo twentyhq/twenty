@@ -20,7 +20,7 @@ export const findScheduledRecallBotIdsByCallRecordingId = async (
   const externalBotIdByCallRecordingId = new Map<string, string>();
 
   for (const callRecordingId of callRecordingIds) {
-    // No status filter: Recall gives a bot no status until it starts joining, so filtering by status hides every bot that is only scheduled.
+    // No status filter: a bot scheduled for later has no status until it starts joining.
     const listResult = await listScheduledRecallBots({
       metadata: {
         twentyWorkspaceId: workspaceId,

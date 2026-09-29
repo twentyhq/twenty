@@ -5,8 +5,7 @@ import { type CalendarEventRecord } from 'src/logic-functions/types/calendar-eve
 import { type CallRecordingRecord } from 'src/logic-functions/types/call-recording-record.type';
 import { hasUnchangedBotScheduleIdempotencyKey } from 'src/logic-functions/domain/has-unchanged-bot-schedule-idempotency-key.util';
 
-// Recall honors an idempotency key for 1 hour; past that a re-send creates a
-// twin bot instead of deduping, so re-sends stay a margin inside it.
+// Recall forgets idempotency keys after 1 hour, and a re-send after that creates a twin bot.
 const IDEMPOTENT_RESEND_WINDOW_MINUTES = 45;
 
 // Rows without a schedule-attempt marker never reached Recall, so no bot can
