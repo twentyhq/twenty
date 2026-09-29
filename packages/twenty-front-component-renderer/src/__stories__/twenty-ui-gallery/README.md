@@ -53,7 +53,8 @@ No stories are skipped or marked as expected-to-fail by the runner.
 | Field controls | Forwarded events lack the `nativeEvent` Base UI reads for `composedPath`. Textarea's cloned render element loses its change handler in React. The value report checks the state received by the component after typing. |
 | Tabs | Activation fails on the missing `nativeEvent` for `composedPath` in both runtimes. |
 | Popover, Dialog, AlertDialog | Opening fails while reading pointer contact data from the missing `nativeEvent`. |
-| Menu, Select | Opening fails on the missing `nativeEvent.pointerType` and pointer contact data. |
+| Menu | Opening fails on the missing `nativeEvent.pointerType` and pointer contact data. |
+| Select | Opening fails on missing native event data and focus support. Preact can report only the last of these failures when the host coalesces sandbox errors. |
 | Switch, Checkbox, Radio, CardPicker, SegmentedControl | Activation attempts to construct an unavailable `PointerEvent`. `CardPickerReact` never gets that far: React drops the click handler Base UI adds through `React.cloneElement`, so only the group's focus handling fails on the missing `nativeEvent` for `composedPath`. |
 | Slider | Thumbs stay hidden because the sandbox has no `ResizeObserver` to re-measure after the first geometry batch. |
 | Tooltip | `TooltipReact` opens on hover but remains open after Escape because React drops the handlers Base UI adds through `React.cloneElement`. |
