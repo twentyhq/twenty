@@ -11,7 +11,7 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
-const INHERITED_TARGET_PARENT_FIELDS = {
+const INHERITED_TARGET_PARENT_FIELDS: Record<string, string[]> = {
   [STANDARD_OBJECTS.messageThreadTarget.universalIdentifier]: [
     STANDARD_OBJECT_FIELDS.messageThreadTarget.messageThread
       .universalIdentifier,

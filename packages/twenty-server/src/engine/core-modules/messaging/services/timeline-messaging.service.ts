@@ -6,6 +6,7 @@ import {
   MessageParticipantRole,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { In } from 'typeorm';
 
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { type TimelineThreadDTO } from 'src/engine/core-modules/messaging/dtos/timeline-thread.dto';
@@ -51,6 +52,7 @@ export class TimelineMessagingService {
 
       const totalQueryBuilder = messageThreadRepository
         .createQueryBuilder('messageThread')
+        .select('messageThread.id', 'id')
         .innerJoin('messageThread.messages', 'messages')
         .groupBy('messageThread.id');
       const threadIdsQueryBuilder = messageThreadRepository
@@ -116,23 +118,16 @@ export class TimelineMessagingService {
           undefined,
           'existence',
         )
-        .createQueryBuilder('message')
-        .select([
-          'message.id',
-          'message.messageThreadId',
-          'message.receivedAt',
-          'message.isDraft',
-        ])
-        .where('message.messageThreadId IN (:...messageThreadIds)', {
-          messageThreadIds,
-        })
-        .orderBy('message.receivedAt', 'DESC')
-        .getMany<
-          Pick<
-            MessageWorkspaceEntity,
-            'id' | 'messageThreadId' | 'receivedAt' | 'isDraft'
-          >
-        >();
+        .find({
+          where: { messageThreadId: In(messageThreadIds) },
+          select: {
+            id: true,
+            messageThreadId: true,
+            receivedAt: true,
+            isDraft: true,
+          },
+          order: { receivedAt: 'DESC' },
+        });
 
       const messageContentById =
         await this.findReadableMessageContentById(messageThreadIds);
@@ -184,12 +179,10 @@ export class TimelineMessagingService {
     try {
       const messages = await this.workspaceOrmManager
         .getRepositoryWithContextPermissions<MessageWorkspaceEntity>('message')
-        .createQueryBuilder('message')
-        .select(['message.id', 'message.subject', 'message.text'])
-        .where('message.messageThreadId IN (:...messageThreadIds)', {
-          messageThreadIds,
-        })
-        .getMany<Pick<MessageWorkspaceEntity, 'id' | 'subject' | 'text'>>();
+        .find({
+          where: { messageThreadId: In(messageThreadIds) },
+          select: { id: true, subject: true, text: true },
+        });
 
       return new Map(messages.map((message) => [message.id, message]));
     } catch (error) {

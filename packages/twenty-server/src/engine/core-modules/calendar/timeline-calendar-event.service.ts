@@ -68,11 +68,8 @@ export class TimelineCalendarEventService {
             'existence',
           );
 
-        totalNumberOfCalendarEvents =
-          await discoverableCalendarEventRepository.count({ where });
-
-        const calendarEventIds = await discoverableCalendarEventRepository.find(
-          {
+        const [calendarEventIds, calendarEventCount] =
+          await discoverableCalendarEventRepository.findAndCount({
             where,
             select: {
               id: true,
@@ -83,9 +80,9 @@ export class TimelineCalendarEventService {
             order: {
               startsAt: 'DESC',
             },
-          },
-        );
+          });
 
+        totalNumberOfCalendarEvents = calendarEventCount;
         ids = calendarEventIds.map(({ id }) => id);
       } catch (error) {
         if (error instanceof PermissionsException) {
