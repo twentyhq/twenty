@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { type ToolExecuteFunction, type ToolSet } from 'ai';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
 import { TOOL_EXECUTION_DURATION_MS_BUCKET_BOUNDARIES } from 'src/engine/core-modules/metrics/constants/tool-execution-duration-ms-bucket-boundaries.constant';
 import { TOOL_OUTPUT_TOKENS_BUCKET_BOUNDARIES } from 'src/engine/core-modules/metrics/constants/tool-output-tokens-bucket-boundaries.constant';
@@ -173,7 +173,10 @@ export class McpToolExecutorService {
         return {
           name,
           description: toolDefinition.description,
-          inputSchema,
+          inputSchema: {
+            ...(isPlainObject(inputSchema) ? inputSchema : {}),
+            type: 'object',
+          },
           ...(isDefined(toolDefinition.annotations) && {
             annotations: toolDefinition.annotations,
           }),

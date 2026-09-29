@@ -16,6 +16,10 @@ const DROPDOWN_ROOT_PROP_DESCRIPTIONS = {
   defaultOpen: 'Whether the popup is initially open when uncontrolled.',
   onOpenChange:
     'Called with the next open state when the popup opens or closes.',
+  onEscapeKeyDown:
+    'Called when Escape is about to close the popup. Call `event.preventDefault()` to keep it open.',
+  onInteractOutside:
+    'Called when a press outside the popup, or Tab out of it, is about to close it. `event.target` is the element pressed outside, or `null` after Tab. Call `event.preventDefault()` to keep it open.',
   multiple:
     'Allows selecting several options. Options then keep the popup open and show a checkbox by default.',
   defaultPage:

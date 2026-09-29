@@ -1,3 +1,4 @@
+import { useDirection } from '@base-ui/react/direction-provider';
 import { useMergedRefs } from '@base-ui/utils/useMergedRefs';
 import { useId } from 'react';
 
@@ -31,6 +32,7 @@ export const DropdownSubmenuTrigger = ({
   ref,
   ...props
 }: DropdownSubmenuTriggerProps) => {
+  const direction = useDirection();
   const { type, parentType, open, setOpen, setFocusOnOpen, registerTrigger } =
     useDropdownContext();
   const generatedId = useId();
@@ -66,8 +68,7 @@ export const DropdownSubmenuTrigger = ({
           return;
         }
 
-        const isRightToLeft =
-          getComputedStyle(event.currentTarget).direction === 'rtl';
+        const isRightToLeft = direction === 'rtl';
         const forwardKey = isRightToLeft ? 'ArrowLeft' : 'ArrowRight';
 
         if (event.key === forwardKey) {

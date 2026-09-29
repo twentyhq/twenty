@@ -7,11 +7,23 @@ type PillProps = {
   className?: string;
   label?: string;
   Icon?: IconComponent;
+  size?: 'sm' | 'md';
+  color?: 'tertiary' | 'inherit';
 };
 
-export const Pill = ({ className, label, Icon }: PillProps) => {
+export const Pill = ({
+  className,
+  label,
+  Icon,
+  size = 'sm',
+  color = 'tertiary',
+}: PillProps) => {
   return (
-    <span className={clsx(styles.pill, className)}>
+    <span
+      className={clsx(styles.pill, className)}
+      data-size={size}
+      data-color={color}
+    >
       {Icon && <Icon size={12} />}
       {label}
     </span>

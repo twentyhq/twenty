@@ -82,11 +82,11 @@ export const ColorSchemeCard = ({
   const mixedSegments = (
     <>
       <ColorSchemeSegment
-        style={{ borderTopRightRadius: 0, borderBottomRightRadius: 0 }}
+        style={{ borderStartEndRadius: 0, borderEndEndRadius: 0 }}
         variant="Light"
       />
       <ColorSchemeSegment
-        style={{ borderTopLeftRadius: 0, borderBottomLeftRadius: 0 }}
+        style={{ borderStartStartRadius: 0, borderEndStartRadius: 0 }}
         variant="Dark"
       />
     </>

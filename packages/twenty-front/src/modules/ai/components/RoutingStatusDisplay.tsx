@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { type DataMessagePart } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronDown, IconChevronUp, IconCpu } from 'twenty-ui/icon';
-import { AnimatedExpandableContainer } from 'twenty-ui/primitives/layout';
+import { Collapsible } from 'twenty-ui/primitives/layout';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 const StyledContainer = styled.div`
@@ -105,11 +105,11 @@ export const RoutingStatusDisplay = ({
       </StyledToggleButton>
 
       {isExpandable && (
-        <AnimatedExpandableContainer isExpanded={isExpanded} mode="fit-content">
+        <Collapsible isExpanded={isExpanded}>
           <StyledContentContainer>
             <RoutingDebugDisplay debug={data.debug!} />
           </StyledContentContainer>
-        </AnimatedExpandableContainer>
+        </Collapsible>
       )}
     </StyledContainer>
   );

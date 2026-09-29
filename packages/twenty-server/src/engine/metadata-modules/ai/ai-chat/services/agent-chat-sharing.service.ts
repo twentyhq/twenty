@@ -1,4 +1,3 @@
-import { hasLegacyChatThreadOwnerField } from 'src/engine/metadata-modules/ai/ai-chat/utils/has-legacy-chat-thread-owner-field.util';
 import { lockAgentChatThread } from 'src/engine/metadata-modules/ai/ai-chat/utils/lock-agent-chat-thread.util';
 import { IsNull } from 'typeorm';
 import { type AgentHistoryStorageContext } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-workspace-storage.service';
@@ -149,10 +148,6 @@ export class AgentChatSharingService {
   }): Promise<AgentChatThreadWorkspaceEntity> {
     const authContext = await this.getAuthContext(args);
     const objectMetadata = await this.getThreadObjectMetadata(args.workspaceId);
-    const writesLegacyOwner = await hasLegacyChatThreadOwnerField(
-      args.workspaceId,
-      this.workspaceCacheService,
-    );
 
     await this.workspaceOrmManager.executeInWorkspaceContext(
       () =>
@@ -170,13 +165,13 @@ export class AgentChatSharingService {
       args.workspaceId,
       async ({ manager, table }) => {
         const records = await manager.query<AgentChatThreadWorkspaceEntity[]>(
-          `INSERT INTO ${table('agentChatThread')} (id, title, "workspaceMemberId"${writesLegacyOwner ? ', "userWorkspaceId"' : ''})
-         VALUES ($1, $2, $3${writesLegacyOwner ? ', $4' : ''}) RETURNING *`,
+          `INSERT INTO ${table('agentChatThread')} (id, title, "workspaceMemberId", "userWorkspaceId")
+         VALUES ($1, $2, $3, $4) RETURNING *`,
           [
             args.id ?? randomUUID(),
             args.title ?? null,
             authContext.workspaceMemberId,
-            ...(writesLegacyOwner ? [authContext.userWorkspaceId] : []),
+            authContext.userWorkspaceId,
           ],
         );
         const record = records[0];
@@ -209,9 +204,7 @@ export class AgentChatSharingService {
     ...args
   }: ThreadAccessArgs & {
     operationType: 'update' | 'soft-delete' | 'restore';
-    changes:
-      | { title: string }
-      | { archivedAt: Date | null; activeStreamId?: null };
+    changes: { title: string } | { archivedAt: Date | null };
   }): Promise<AgentChatThreadWorkspaceEntity> {
     return this.mutateThreadWithAccess({
       ...args,
@@ -237,8 +230,10 @@ export class AgentChatSharingService {
     });
   }
 
-  async deleteThreadWithShares(args: ThreadAccessArgs): Promise<boolean> {
-    const objectMetadata = await this.getThreadObjectMetadata(args.workspaceId);
+  // Sharing grants stay, as for any destroyed record, so that the destroy
+  // event still reaches the thread's audience; createThread clears them when
+  // an id is reused
+  async deleteThreadWithAccess(args: ThreadAccessArgs): Promise<boolean> {
     return this.mutateThreadWithAccess({
       ...args,
       operationType: 'delete',
@@ -248,12 +243,6 @@ export class AgentChatSharingService {
           `WITH deleted_thread AS (DELETE FROM ${table('agentChatThread')} WHERE id = $1 RETURNING id) SELECT id FROM deleted_thread`,
           [args.threadId],
         );
-        await this.recordShareStorageService.deleteByRecordIdsInTransaction({
-          workspaceId: args.workspaceId,
-          objectMetadataId: objectMetadata.id,
-          recordIds: [args.threadId],
-          manager,
-        });
         return deleted.length === 1;
       },
     });

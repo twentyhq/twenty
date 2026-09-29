@@ -9,7 +9,6 @@
 
 export type { BannerColor, BannerVariant } from './Banner/Banner';
 export { Banner } from './Banner/Banner';
-export { CircularProgressBar } from './CircularProgressBar/CircularProgressBar';
 export { Loader } from './Loader/Loader';
 export type { ProgressBarProps } from './ProgressBar/ProgressBar';
 export { ProgressBar } from './ProgressBar/ProgressBar';

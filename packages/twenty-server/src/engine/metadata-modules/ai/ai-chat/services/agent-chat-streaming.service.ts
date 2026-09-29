@@ -40,6 +40,7 @@ import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/a
 import { AgentChatStreamHeartbeatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-heartbeat.service';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { AiChatFileAttachment } from 'src/engine/metadata-modules/ai/ai-chat/types/ai-chat-file-attachment.type';
+import { hasQuestionAnswerContent } from 'src/engine/metadata-modules/ai/ai-chat/utils/has-question-answer-content.util';
 import { mapErrorToStreamError } from 'src/engine/metadata-modules/ai/ai-chat/utils/map-error-to-stream-error.util';
 import {
   AiException,
@@ -550,11 +551,7 @@ export class AgentChatStreamingService {
       workspaceId: workspace.id,
     });
     if (
-      !answers.some(
-        (answer) =>
-          isNonEmptyString(answer.freeText?.trim()) ||
-          isNonEmptyArray(answer.selectedOptionIndices),
-      ) &&
+      !hasQuestionAnswerContent(answers) &&
       !isNonEmptyArray(fileAttachments)
     ) {
       throw new AiException(
@@ -573,11 +570,9 @@ export class AgentChatStreamingService {
 
     await this.streamHeartbeatService.markClaimed(streamId);
 
-    let resolved: {
-      answerText: string;
-      turnId: string | null;
-      rollback: { partId: string; previousOutput: Record<string, unknown> };
-    };
+    let resolved: Awaited<
+      ReturnType<AgentChatService['resolvePendingQuestion']>
+    >;
 
     try {
       resolved = await this.agentChatService.resolvePendingQuestion({

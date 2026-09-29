@@ -7,7 +7,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { JsonTree } from 'twenty-ui/components';
 import { IconChevronDown, IconChevronUp, IconTool } from 'twenty-ui/icon';
 import { Tag } from 'twenty-ui/primitives/data-display';
-import { AnimatedExpandableContainer } from 'twenty-ui/primitives/layout';
+import { Collapsible } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { type AdminChatThreadMessagePart } from '@/settings/admin-panel/types/AdminChatThreadMessagePart';
@@ -136,7 +136,7 @@ export const SettingsAdminChatToolCallPart = ({
           )}
         </StyledRightContent>
       </StyledToggleRow>
-      <AnimatedExpandableContainer isExpanded={isExpanded} mode="fit-content">
+      <Collapsible isExpanded={isExpanded}>
         <StyledTabContainer>
           <StyledTab
             isActive={activeTab === 'output'}
@@ -172,7 +172,7 @@ export const SettingsAdminChatToolCallPart = ({
         {isNonEmptyString(part.errorMessage) && (
           <StyledErrorMessage>{part.errorMessage}</StyledErrorMessage>
         )}
-      </AnimatedExpandableContainer>
+      </Collapsible>
     </StyledContainer>
   );
 };
