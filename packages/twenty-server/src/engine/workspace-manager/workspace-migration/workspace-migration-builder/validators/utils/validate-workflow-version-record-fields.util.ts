@@ -6,41 +6,32 @@ import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-m
 import { getMorphNameFromMorphFieldMetadataName } from 'src/engine/metadata-modules/flat-object-metadata/utils/get-morph-name-from-morph-field-metadata-name.util';
 
 export const validateWorkflowVersionRecordFields = ({
-  step,
+  steps,
   flatObjectMetadataMaps,
   flatFieldMetadataMaps,
 }: {
-  step: WorkflowAction;
+  steps: WorkflowAction[];
 } & Pick<
   MetadataUniversalFlatEntityAndRelatedFlatEntityMapsForValidation<'workflowVersion'>,
   'flatObjectMetadataMaps' | 'flatFieldMetadataMaps'
 >): string[] => {
-  if (
-    step.type !== 'CREATE_RECORD' &&
-    step.type !== 'UPDATE_RECORD' &&
-    step.type !== 'UPSERT_RECORD'
-  ) {
-    return [];
-  }
-
   const errors: string[] = [];
-  const object = Object.values(
+  const fieldNamesByObjectName = new Map<string, Set<string>>();
+  const fieldNamesByObjectIdentifier = new Map<string, Set<string>>();
+  for (const object of Object.values(
     flatObjectMetadataMaps.byUniversalIdentifier,
-  ).find(
-    (candidate) => candidate?.nameSingular === step.settings.input.objectName,
-  );
-  if (!isDefined(object)) {
-    return [
-      `Workflow step ${step.name}: unknown object ${step.settings.input.objectName}`,
-    ];
+  ).filter(isDefined)) {
+    const fieldNames = new Set<string>();
+    fieldNamesByObjectName.set(object.nameSingular, fieldNames);
+    fieldNamesByObjectIdentifier.set(object.universalIdentifier, fieldNames);
   }
-  const fieldNames = new Set<string>();
   for (const field of Object.values(
     flatFieldMetadataMaps.byUniversalIdentifier,
   ).filter(isDefined)) {
-    if (
-      field.objectMetadataUniversalIdentifier !== object.universalIdentifier
-    ) {
+    const fieldNames = fieldNamesByObjectIdentifier.get(
+      field.objectMetadataUniversalIdentifier,
+    );
+    if (!isDefined(fieldNames)) {
       continue;
     }
     fieldNames.add(field.name);
@@ -79,28 +70,46 @@ export const validateWorkflowVersionRecordFields = ({
     }
   }
 
-  for (const name of Object.keys(step.settings.input.objectRecord)) {
-    if (!fieldNames.has(name)) {
-      errors.push(`Workflow step ${step.name}: unknown record field ${name}`);
+  for (const step of steps) {
+    if (
+      step.type !== 'CREATE_RECORD' &&
+      step.type !== 'UPDATE_RECORD' &&
+      step.type !== 'UPSERT_RECORD'
+    ) {
+      continue;
     }
-  }
-
-  if (
-    step.type === 'UPDATE_RECORD' &&
-    (!isDefined(step.settings.input.fieldsToUpdate) ||
-      step.settings.input.fieldsToUpdate.length === 0 ||
-      step.settings.input.fieldsToUpdate.some(
-        (name) =>
-          !fieldNames.has(name) ||
-          !Object.prototype.hasOwnProperty.call(
-            step.settings.input.objectRecord,
-            name,
-          ),
-      ))
-  ) {
-    errors.push(
-      `Workflow step ${step.name}: fieldsToUpdate must select existing fields with values in objectRecord`,
+    const fieldNames = fieldNamesByObjectName.get(
+      step.settings.input.objectName,
     );
+    if (!isDefined(fieldNames)) {
+      errors.push(
+        `Workflow step ${step.name}: unknown object ${step.settings.input.objectName}`,
+      );
+      continue;
+    }
+    for (const name of Object.keys(step.settings.input.objectRecord)) {
+      if (!fieldNames.has(name)) {
+        errors.push(`Workflow step ${step.name}: unknown record field ${name}`);
+      }
+    }
+
+    if (
+      step.type === 'UPDATE_RECORD' &&
+      (!isDefined(step.settings.input.fieldsToUpdate) ||
+        step.settings.input.fieldsToUpdate.length === 0 ||
+        step.settings.input.fieldsToUpdate.some(
+          (name) =>
+            !fieldNames.has(name) ||
+            !Object.prototype.hasOwnProperty.call(
+              step.settings.input.objectRecord,
+              name,
+            ),
+        ))
+    ) {
+      errors.push(
+        `Workflow step ${step.name}: fieldsToUpdate must select existing fields with values in objectRecord`,
+      );
+    }
   }
   return errors;
 };

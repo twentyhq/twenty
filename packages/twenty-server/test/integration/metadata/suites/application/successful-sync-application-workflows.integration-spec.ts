@@ -1,4 +1,5 @@
-import { FeatureFlagKey } from 'twenty-shared/types';
+import { buildDefaultObjectManifest } from 'test/integration/metadata/suites/application/utils/build-default-object-manifest.util';
+import { FieldMetadataType, FeatureFlagKey } from 'twenty-shared/types';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { randomUUID } from 'node:crypto';
 import { type Manifest } from 'twenty-shared/application';
@@ -16,6 +17,12 @@ import { setupApplicationForSync } from 'test/integration/metadata/suites/applic
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
+const REFERENCE_APP_ID = randomUUID();
+const REFERENCE_ROLE_ID = randomUUID();
+const REFERENCE_OBJECT_ID = randomUUID();
+const REFERENCE_FIELD_ID = randomUUID();
+const REFERENCE_WORKFLOW_ID = randomUUID();
+const REFERENCE_STEP_ID = randomUUID();
 const APP_ID = randomUUID();
 const ROLE_ID = randomUUID();
 const WORKFLOW_ID = randomUUID();
@@ -82,6 +89,30 @@ const MANIFEST: Manifest = buildBaseManifest({
           ],
         },
       },
+      {
+        universalIdentifier: REFERENCE_WORKFLOW_ID,
+        name: 'Workflow referencing another app',
+        version: {
+          universalIdentifier: randomUUID(),
+          trigger: {
+            universalIdentifier: randomUUID(),
+            type: 'MANUAL',
+            nextStepIds: [REFERENCE_STEP_ID],
+          },
+          steps: [
+            {
+              universalIdentifier: REFERENCE_STEP_ID,
+              name: 'Create external record',
+              type: 'CREATE_RECORD',
+              input: {
+                objectUniversalIdentifier: REFERENCE_OBJECT_ID,
+                objectRecord: { name: 'External record' },
+              },
+              nextStepIds: [],
+            },
+          ],
+        },
+      },
     ],
   },
 });
@@ -121,6 +152,41 @@ describe('application-owned core workflows', () => {
       expectToFail: false,
     });
     await setupApplicationForSync({
+      applicationUniversalIdentifier: REFERENCE_APP_ID,
+      name: 'Workflow referenced application',
+      description: 'Owns an object used by another app workflow',
+      sourcePath: 'workflow-referenced-app',
+    });
+    await syncApplication({
+      manifest: buildBaseManifest({
+        appId: REFERENCE_APP_ID,
+        roleId: REFERENCE_ROLE_ID,
+        overrides: {
+          objects: [
+            buildDefaultObjectManifest({
+              applicationUniversalIdentifier: REFERENCE_APP_ID,
+              universalIdentifier: REFERENCE_OBJECT_ID,
+              nameSingular: 'workflowReferencedRecord',
+              namePlural: 'workflowReferencedRecords',
+              labelSingular: 'Workflow referenced record',
+              labelPlural: 'Workflow referenced records',
+              labelIdentifierFieldMetadataUniversalIdentifier:
+                REFERENCE_FIELD_ID,
+              additionalFields: [
+                {
+                  universalIdentifier: REFERENCE_FIELD_ID,
+                  type: FieldMetadataType.TEXT,
+                  name: 'name',
+                  label: 'Name',
+                },
+              ],
+            }),
+          ],
+        },
+      }),
+      expectToFail: false,
+    });
+    await setupApplicationForSync({
       applicationUniversalIdentifier: APP_ID,
       name: 'Workflow POC integration',
       description: 'Application workflow synchronization',
@@ -137,6 +203,9 @@ describe('application-owned core workflows', () => {
     await cleanupApplicationAndAppRegistration({
       applicationUniversalIdentifier: APP_ID,
     });
+    await cleanupApplicationAndAppRegistration({
+      applicationUniversalIdentifier: REFERENCE_APP_ID,
+    });
     await updateFeatureFlag({
       featureFlag: FeatureFlagKey.IS_APPLICATION_WORKFLOWS_ENABLED,
       value: false,
@@ -148,6 +217,23 @@ describe('application-owned core workflows', () => {
   it('installs, upgrades through additive pre-install sync, and protects saved runs and app-owned definitions', async () => {
     const initial = await syncApplication({ manifest: MANIFEST });
     expect(initial.errors).toBeUndefined();
+    const [referencingVersion] = await globalThis.testDataSource.query(
+      'SELECT v.steps, v."isSystemSideEffect" FROM core.workflow w JOIN core."workflowVersion" v ON v."coreWorkflowId" = w.id WHERE w."workspaceId" = $1 AND w."universalIdentifier" = $2',
+      [WORKSPACE_ID, REFERENCE_WORKFLOW_ID],
+    );
+    expect(referencingVersion).toMatchObject({
+      isSystemSideEffect: true,
+      steps: [
+        {
+          settings: {
+            input: {
+              objectName: 'workflowReferencedRecord',
+              objectRecord: { name: 'External record' },
+            },
+          },
+        },
+      ],
+    });
     const definitions = await findDefinitions();
     expect(definitions).toHaveLength(1);
     const [installed] = definitions;

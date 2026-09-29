@@ -20,7 +20,7 @@ export const validateApplicationWorkflowVersion = ({
   version: UniversalFlatWorkflowVersion;
   relatedFlatEntityMaps: MetadataUniversalFlatEntityAndRelatedFlatEntityMapsForValidation<'workflowVersion'>;
 }): FlatEntityValidationError[] => {
-  if (version.isSystemSideEffect !== true) {
+  if (!version.isSystemSideEffect) {
     return [];
   }
 
@@ -79,14 +79,9 @@ export const validateApplicationWorkflowVersion = ({
     );
   }
 
-  for (const step of steps) {
-    messages.push(
-      ...validateWorkflowVersionRecordFields({
-        step,
-        ...relatedFlatEntityMaps,
-      }),
-    );
-  }
+  messages.push(
+    ...validateWorkflowVersionRecordFields({ steps, ...relatedFlatEntityMaps }),
+  );
 
   return messages.map((message) => ({
     code: CoreWorkflowMetadataExceptionCode.INVALID_WORKFLOW_VERSION_DEFINITION,
