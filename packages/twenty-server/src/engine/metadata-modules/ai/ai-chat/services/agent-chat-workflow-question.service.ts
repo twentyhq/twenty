@@ -7,9 +7,6 @@ import { PermissionFlagType } from 'twenty-shared/constants';
 import { type AskQuestionAnswer } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 
-import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
-import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { type AgentMessageEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
 import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
@@ -21,14 +18,12 @@ import {
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
-import { RUN_WORKFLOW_JOB_NAME } from 'src/modules/workflow/workflow-runner/constants/run-workflow-job-name';
-import { type RunWorkflowJobData } from 'src/modules/workflow/workflow-runner/types/run-workflow-job-data.type';
-import { buildRunWorkflowJobOptions } from 'src/modules/workflow/workflow-runner/utils/build-run-workflow-job-options.util';
-import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
+import { WorkflowRunnerWorkspaceService } from 'src/modules/workflow/workflow-runner/workspace-services/workflow-runner.workspace-service';
 
 // A workflow agent's question is answered in its run's conversation, but what
-// the answer resumes is the run, not a chat stream: the step is handed back to
-// the executor, which continues the same conversation with the answer.
+// the answer resumes is the run, not a chat stream: this records the answer in
+// the conversation and hands the step back to the workflow runner, which
+// continues the same conversation with it.
 @Injectable()
 export class AgentChatWorkflowQuestionService {
   constructor(
@@ -38,9 +33,7 @@ export class AgentChatWorkflowQuestionService {
     private readonly messageRepository: AgentHistoryRepository<AgentMessageEntity>,
     private readonly agentChatService: AgentChatService,
     private readonly permissionsService: PermissionsService,
-    private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
-    @InjectMessageQueue(MessageQueue.workflowQueue)
-    private readonly messageQueueService: MessageQueueService,
+    private readonly workflowRunnerWorkspaceService: WorkflowRunnerWorkspaceService,
   ) {}
 
   async answer({
@@ -110,7 +103,7 @@ export class AgentChatWorkflowQuestionService {
       answerMessageId = answerMessage.id;
 
       const stepAwaitingAnswer =
-        await this.workflowRunWorkspaceService.findStepAwaitingAnswer({
+        await this.workflowRunnerWorkspaceService.resumeAgentStepWithAnswer({
           threadId: thread.id,
           workflowRunId,
           workspaceId,
@@ -124,18 +117,6 @@ export class AgentChatWorkflowQuestionService {
           AiExceptionCode.QUESTION_NOT_PENDING,
         );
       }
-
-      // The step stays PENDING, keeping its run alive, until the resume job
-      // claims it; the answer itself was claimed once above.
-      await this.messageQueueService.add<RunWorkflowJobData>(
-        RUN_WORKFLOW_JOB_NAME,
-        {
-          workspaceId,
-          workflowRunId,
-          stepIdToResume: stepAwaitingAnswer.stepId,
-        },
-        buildRunWorkflowJobOptions(workflowRunId),
-      );
     } catch (error) {
       if (isDefined(answerMessageId)) {
         await this.messageRepository
