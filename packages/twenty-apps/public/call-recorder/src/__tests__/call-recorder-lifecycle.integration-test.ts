@@ -1340,7 +1340,7 @@ describe('call recorder app lifecycle (integration)', () => {
     });
 
     it.each(['calendarEventId', 'id'])(
-      'leaves existing recordings intact and requests redelivery when the %s lookup fails',
+      'leaves existing recordings intact without redelivery when the %s lookup fails',
       async (filterField) => {
         const { calendarEventId, callRecordingId, botId } =
           await scheduleRecordingThroughCalendarReconciliation();
@@ -1367,11 +1367,11 @@ describe('call recorder app lifecycle (integration)', () => {
           return sendRequest();
         });
 
-        await expect(deliverCalendarEventUpdates(update)).rejects.toMatchObject(
-          {
-            name: 'RetryableLogicFunctionError',
-          },
-        );
+        await expect(
+          deliverCalendarEventUpdates(update),
+        ).rejects.not.toMatchObject({
+          name: 'RetryableLogicFunctionError',
+        });
 
         expect(lookupFailed).toBe(true);
         expect(mutationCount).toBe(0);
