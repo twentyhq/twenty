@@ -48,7 +48,9 @@ const workflow: WorkflowManifest = {
 
 const getStep = (definition: WorkflowManifest, index: number) => {
   const step = definition.version.steps[index];
-  if (!isDefined(step)) throw new Error(`Missing fixture step ${index}`);
+  if (!isDefined(step)) {
+    throw new Error(`Missing fixture step ${index}`);
+  }
   return step;
 };
 
@@ -58,15 +60,18 @@ describe('workflow manifest iterator cycles', () => {
     getStep(invalid, 1).nextStepIds = [];
     const result = workflowManifestSchema.safeParse(invalid);
     expect(result.success).toBe(false);
-    if (!result.success)
+    if (!result.success) {
       expect(result.error.message).toContain('must return to iterator');
+    }
   });
 
   it('requires nested iterators to return to their enclosing iterator after completion', () => {
     const nested = structuredClone(workflow);
     const innerId = '77777777-7777-4777-8777-777777777777';
     const outer = getStep(nested, 0);
-    if (outer.type !== 'ITERATOR') throw new Error('Expected iterator');
+    if (outer.type !== 'ITERATOR') {
+      throw new Error('Expected iterator');
+    }
     outer.input.initialLoopStepIds = [innerId];
     getStep(nested, 1).nextStepIds = [innerId];
     nested.version.steps.push({
@@ -84,7 +89,9 @@ describe('workflow manifest iterator cycles', () => {
   it('rejects references to a missing step', () => {
     const invalid = structuredClone(workflow);
     const iterator = getStep(invalid, 0);
-    if (iterator.type !== 'ITERATOR') throw new Error('Expected iterator');
+    if (iterator.type !== 'ITERATOR') {
+      throw new Error('Expected iterator');
+    }
     iterator.input.items = '{{missing.items}}';
     expect(workflowManifestSchema.safeParse(invalid).success).toBe(false);
   });
@@ -108,7 +115,9 @@ describe('workflow manifest iterator cycles', () => {
   it('rejects an iterator pointing to itself as its loop body', () => {
     const invalid = structuredClone(workflow);
     const iterator = getStep(invalid, 0);
-    if (iterator.type !== 'ITERATOR') throw new Error('Expected iterator');
+    if (iterator.type !== 'ITERATOR') {
+      throw new Error('Expected iterator');
+    }
     iterator.input.initialLoopStepIds = [iteratorId, delayId];
     expect(workflowManifestSchema.safeParse(invalid).success).toBe(false);
   });

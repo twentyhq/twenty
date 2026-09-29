@@ -151,7 +151,9 @@ const convert = (type: WorkflowActionType) =>
 describe('application workflow actions', () => {
   it('rejects unknown record fields before installing the workflow', () => {
     const step = stepFor(WorkflowActionType.UPDATE_RECORD);
-    if (step.type !== 'UPDATE_RECORD') throw new Error('Expected update');
+    if (step.type !== 'UPDATE_RECORD') {
+      throw new Error('Expected update');
+    }
     step.input.objectRecord = { employees: 10 };
     step.input.fieldsToUpdate = ['employees'];
     expect(() =>
@@ -163,7 +165,9 @@ describe('application workflow actions', () => {
     'rejects an update with no supplied values for its selection %j',
     ({ fieldsToUpdate }) => {
       const step = stepFor(WorkflowActionType.UPDATE_RECORD);
-      if (step.type !== 'UPDATE_RECORD') throw new Error('Expected update');
+      if (step.type !== 'UPDATE_RECORD') {
+        throw new Error('Expected update');
+      }
       step.input.fieldsToUpdate = fieldsToUpdate;
       expect(() =>
         fromWorkflowStepManifestToActionOrThrow({ step, index: 0, references }),

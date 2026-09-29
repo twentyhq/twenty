@@ -11,7 +11,7 @@ import {
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { getMorphNameFromMorphFieldMetadataName } from 'src/engine/metadata-modules/flat-object-metadata/utils/get-morph-name-from-morph-field-metadata-name.util';
 
-export const validateWorkflowManifestRecordFields = ({
+export const validateWorkflowManifestRecordFieldsOrThrow = ({
   step,
   references,
 }: {

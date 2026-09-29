@@ -1,6 +1,4 @@
-import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { Module } from '@nestjs/common';
-import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
@@ -18,8 +16,6 @@ import { WorkflowVersionCoreModule } from 'src/engine/core-modules/workflow/work
 
 @Module({
   imports: [
-    ApplicationModule,
-    FeatureFlagModule,
     WorkflowCommonModule,
     WorkflowExecutorModule,
     BillingModule,
