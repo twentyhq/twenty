@@ -14,7 +14,11 @@ const MenuExample = () => {
         <Menu.Popup>
           <Menu.Group>
             <Menu.GroupLabel>Record</Menu.GroupLabel>
-            <Menu.Item onClick={() => setAction('duplicated')}>
+            <Menu.Item
+              hotkeys={['G', 'A']}
+              hotkeysJoinLabel="followed by"
+              onClick={() => setAction('duplicated')}
+            >
               Duplicate
             </Menu.Item>
             <Menu.Item disabled onClick={() => setAction('archived')}>

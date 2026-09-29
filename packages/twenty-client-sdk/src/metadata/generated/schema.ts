@@ -1681,7 +1681,7 @@ export interface FeatureFlag {
     __typename: 'FeatureFlag'
 }
 
-export type FeatureFlagKey = 'IS_ASYNC_CSV_EXPORT_ENABLED' | 'IS_UNIQUE_INDEXES_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_JSON_FILTER_ENABLED' | 'IS_MESSAGE_CAMPAIGN_ENABLED' | 'IS_JUNCTION_RELATIONS_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED' | 'IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED' | 'IS_RECORD_SHARING_ENABLED' | 'IS_AI_CHAT_SHARING_DROPDOWN_ENABLED' | 'IS_INITIAL_OBJECT_VIEW_ENABLED' | 'IS_WEBHOOK_RATE_LIMIT_ENABLED' | 'IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED' | 'IS_EXECUTION_QUOTA_ENABLED' | 'IS_RECORD_CREATION_FORM_ENABLED' | 'IS_LOGS_SETTINGS_SECTION_ENABLED' | 'IS_CONVERSATIONS_TAB_ENABLED'
+export type FeatureFlagKey = 'IS_ASYNC_CSV_EXPORT_ENABLED' | 'IS_UNIQUE_INDEXES_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_JSON_FILTER_ENABLED' | 'IS_MESSAGE_CAMPAIGN_ENABLED' | 'IS_JUNCTION_RELATIONS_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED' | 'IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED' | 'IS_RECORD_SHARING_ENABLED' | 'IS_AI_CHAT_SHARING_DROPDOWN_ENABLED' | 'IS_INITIAL_OBJECT_VIEW_ENABLED' | 'IS_WEBHOOK_RATE_LIMIT_ENABLED' | 'IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED' | 'IS_EXECUTION_QUOTA_ENABLED' | 'IS_RECORD_CREATION_FORM_ENABLED' | 'IS_LOGS_SETTINGS_SECTION_ENABLED' | 'IS_CONVERSATIONS_TAB_ENABLED' | 'IS_VALIDATION_RULES_ENABLED'
 
 export interface WorkspaceUrls {
     customUrl?: Scalars['String']
@@ -3281,6 +3281,19 @@ export interface TimelineActivityType {
     __typename: 'TimelineActivityType'
 }
 
+export interface ValidationRule {
+    id: Scalars['UUID']
+    objectMetadataId: Scalars['UUID']
+    errorFieldMetadataId?: Scalars['UUID']
+    name: Scalars['String']
+    description?: Scalars['String']
+    icon?: Scalars['String']
+    expression: Scalars['String']
+    message: Scalars['String']
+    isActive: Scalars['Boolean']
+    __typename: 'ValidationRule'
+}
+
 export interface PermissionFlag {
     id: Scalars['UUID']
     universalIdentifier: Scalars['UUID']
@@ -3301,7 +3314,7 @@ export interface CollectionHash {
     __typename: 'CollectionHash'
 }
 
-export type AllMetadataName = 'fieldMetadata' | 'objectMetadata' | 'view' | 'viewField' | 'viewFieldGroup' | 'viewGroup' | 'viewSort' | 'rowLevelPermissionPredicate' | 'rowLevelPermissionPredicateGroup' | 'viewFilterGroup' | 'index' | 'logicFunction' | 'viewFilter' | 'role' | 'roleTarget' | 'agent' | 'skill' | 'pageLayout' | 'pageLayoutWidget' | 'pageLayoutTab' | 'commandMenuItem' | 'navigationMenuItem' | 'rolePermissionFlag' | 'permissionFlag' | 'objectPermission' | 'fieldPermission' | 'frontComponent' | 'webhook' | 'applicationVariable' | 'connectionProvider' | 'searchFieldMetadata' | 'timelineActivityType' | 'settingsMenuItem' | 'workflow' | 'workflowVersion'
+export type AllMetadataName = 'fieldMetadata' | 'objectMetadata' | 'view' | 'viewField' | 'viewFieldGroup' | 'viewGroup' | 'viewSort' | 'rowLevelPermissionPredicate' | 'rowLevelPermissionPredicateGroup' | 'viewFilterGroup' | 'index' | 'logicFunction' | 'viewFilter' | 'role' | 'roleTarget' | 'agent' | 'skill' | 'pageLayout' | 'pageLayoutWidget' | 'pageLayoutTab' | 'commandMenuItem' | 'navigationMenuItem' | 'rolePermissionFlag' | 'permissionFlag' | 'objectPermission' | 'fieldPermission' | 'frontComponent' | 'webhook' | 'applicationVariable' | 'connectionProvider' | 'searchFieldMetadata' | 'timelineActivityType' | 'settingsMenuItem' | 'validationRule' | 'workflow' | 'workflowVersion'
 
 export interface MinimalObjectMetadata {
     id: Scalars['UUID']
@@ -3440,11 +3453,11 @@ export interface Query {
     chatThread: AgentChatThread
     chatMessages: AgentMessage[]
     chatStreamCatchupChunks: ChatStreamCatchupChunks
-    chatThreadsForRecord: AgentChatThread[]
     getAiSystemPromptPreview: AiSystemPromptPreview
     skills: Skill[]
     skill?: Skill
     agentTurns: AgentTurn[]
+    validationRules: ValidationRule[]
     timelineActivityTypes: TimelineActivityType[]
     metadataTranslations: MetadataTranslation[]
     recordPermissions: RecordPermissionsResult[]
@@ -3671,8 +3684,6 @@ export interface Mutation {
     enqueueJob: EnqueueJobResult
     enqueueJobs: EnqueueJobsResult
     reportAppConnectionAuthFailure: Scalars['Boolean']
-    attachChatThreadToRecord: Scalars['Boolean']
-    detachChatThreadFromRecord: Scalars['Boolean']
     createChatThread: AgentChatThread
     sendChatMessage: SendChatMessageResult
     retryChatMessage: SendChatMessageResult
@@ -3691,6 +3702,9 @@ export interface Mutation {
     deactivateSkill: Skill
     evaluateAgentTurn: AgentTurnEvaluation
     runEvaluationInput: AgentTurn
+    createValidationRule: ValidationRule
+    updateValidationRule: ValidationRule
+    deleteValidationRule: ValidationRule
     updateTimelineActivityType: TimelineActivityType
     resetTimelineActivityType: TimelineActivityType
     getAuthorizationUrlForSSO: GetAuthorizationUrlForSSO
@@ -7184,6 +7198,20 @@ export interface TimelineActivityTypeGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface ValidationRuleGenqlSelection{
+    id?: boolean | number
+    objectMetadataId?: boolean | number
+    errorFieldMetadataId?: boolean | number
+    name?: boolean | number
+    description?: boolean | number
+    icon?: boolean | number
+    expression?: boolean | number
+    message?: boolean | number
+    isActive?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface PermissionFlagGenqlSelection{
     id?: boolean | number
     universalIdentifier?: boolean | number
@@ -7358,11 +7386,11 @@ export interface QueryGenqlSelection{
     chatThread?: (AgentChatThreadGenqlSelection & { __args: {id: Scalars['UUID']} })
     chatMessages?: (AgentMessageGenqlSelection & { __args: {threadId: Scalars['UUID']} })
     chatStreamCatchupChunks?: (ChatStreamCatchupChunksGenqlSelection & { __args: {threadId: Scalars['UUID']} })
-    chatThreadsForRecord?: (AgentChatThreadGenqlSelection & { __args: {objectNameSingular: Scalars['String'], recordId: Scalars['UUID'], limit: Scalars['Int'], offset: Scalars['Int']} })
     getAiSystemPromptPreview?: AiSystemPromptPreviewGenqlSelection
     skills?: SkillGenqlSelection
     skill?: (SkillGenqlSelection & { __args: {id: Scalars['UUID']} })
     agentTurns?: (AgentTurnGenqlSelection & { __args: {agentId: Scalars['UUID']} })
+    validationRules?: (ValidationRuleGenqlSelection & { __args: {objectMetadataId: Scalars['UUID']} })
     timelineActivityTypes?: TimelineActivityTypeGenqlSelection
     metadataTranslations?: (MetadataTranslationGenqlSelection & { __args: {input: MetadataTranslationsInput} })
     recordPermissions?: (RecordPermissionsResultGenqlSelection & { __args: {targets: RecordPermissionsTargetInput[]} })
@@ -7630,8 +7658,6 @@ export interface MutationGenqlSelection{
     enqueueJob?: (EnqueueJobResultGenqlSelection & { __args: {input: EnqueueJobInput} })
     enqueueJobs?: (EnqueueJobsResultGenqlSelection & { __args: {input: EnqueueJobsInput} })
     reportAppConnectionAuthFailure?: { __args: {input: ReportAppConnectionAuthFailureInput} }
-    attachChatThreadToRecord?: { __args: {threadId: Scalars['UUID'], objectNameSingular: Scalars['String'], recordId: Scalars['UUID']} }
-    detachChatThreadFromRecord?: { __args: {threadId: Scalars['UUID'], objectNameSingular: Scalars['String'], recordId: Scalars['UUID']} }
     createChatThread?: AgentChatThreadGenqlSelection
     sendChatMessage?: (SendChatMessageResultGenqlSelection & { __args: {threadId: Scalars['UUID'], text: Scalars['String'], messageId: Scalars['UUID'], browsingContext?: (Scalars['JSON'] | null), modelId?: (Scalars['String'] | null), fileAttachments?: (FileAttachmentInput[] | null)} })
     retryChatMessage?: (SendChatMessageResultGenqlSelection & { __args: {threadId: Scalars['UUID'], modelId?: (Scalars['String'] | null)} })
@@ -7650,6 +7676,9 @@ export interface MutationGenqlSelection{
     deactivateSkill?: (SkillGenqlSelection & { __args: {id: Scalars['UUID']} })
     evaluateAgentTurn?: (AgentTurnEvaluationGenqlSelection & { __args: {turnId: Scalars['UUID']} })
     runEvaluationInput?: (AgentTurnGenqlSelection & { __args: {agentId: Scalars['UUID'], input: Scalars['String']} })
+    createValidationRule?: (ValidationRuleGenqlSelection & { __args: {input: CreateValidationRuleInput} })
+    updateValidationRule?: (ValidationRuleGenqlSelection & { __args: {input: UpdateValidationRuleInput} })
+    deleteValidationRule?: (ValidationRuleGenqlSelection & { __args: {id: Scalars['UUID']} })
     updateTimelineActivityType?: (TimelineActivityTypeGenqlSelection & { __args: {input: UpdateTimelineActivityTypeInput} })
     resetTimelineActivityType?: (TimelineActivityTypeGenqlSelection & { __args: {id: Scalars['UUID']} })
     getAuthorizationUrlForSSO?: (GetAuthorizationUrlForSSOGenqlSelection & { __args: {input: GetAuthorizationUrlForSSOInput} })
@@ -8120,6 +8149,12 @@ export interface AgentChatQuestionAnswerInput {questionIndex: Scalars['Int'],sel
 export interface CreateSkillInput {id?: (Scalars['UUID'] | null),name: Scalars['String'],label: Scalars['String'],icon?: (Scalars['String'] | null),description?: (Scalars['String'] | null),content: Scalars['String']}
 
 export interface UpdateSkillInput {id: Scalars['UUID'],name?: (Scalars['String'] | null),label?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),description?: (Scalars['String'] | null),content?: (Scalars['String'] | null),isActive?: (Scalars['Boolean'] | null)}
+
+export interface CreateValidationRuleInput {objectMetadataId: Scalars['UUID'],errorFieldMetadataId?: (Scalars['UUID'] | null),name: Scalars['String'],description?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),expression: Scalars['String'],message: Scalars['String'],isActive?: (Scalars['Boolean'] | null)}
+
+export interface UpdateValidationRuleInput {id: Scalars['UUID'],update: UpdateValidationRuleInputUpdates}
+
+export interface UpdateValidationRuleInputUpdates {errorFieldMetadataId?: (Scalars['UUID'] | null),name?: (Scalars['String'] | null),description?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),expression?: (Scalars['String'] | null),message?: (Scalars['String'] | null),isActive?: (Scalars['Boolean'] | null)}
 
 export interface UpdateTimelineActivityTypeInput {id: Scalars['UUID'],label?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),isActive?: (Scalars['Boolean'] | null),translations?: (MetadataTranslationOverrideInput[] | null)}
 
@@ -10606,6 +10641,14 @@ export interface CreateRecordExportInput {objectMetadataId: Scalars['UUID'],fiel
     
 
 
+    const ValidationRule_possibleTypes: string[] = ['ValidationRule']
+    export const isValidationRule = (obj?: { __typename?: any } | null): obj is ValidationRule => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isValidationRule"')
+      return ValidationRule_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const PermissionFlag_possibleTypes: string[] = ['PermissionFlag']
     export const isPermissionFlag = (obj?: { __typename?: any } | null): obj is PermissionFlag => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isPermissionFlag"')
@@ -11246,7 +11289,8 @@ export const enumFeatureFlagKey = {
    IS_EXECUTION_QUOTA_ENABLED: 'IS_EXECUTION_QUOTA_ENABLED' as const,
    IS_RECORD_CREATION_FORM_ENABLED: 'IS_RECORD_CREATION_FORM_ENABLED' as const,
    IS_LOGS_SETTINGS_SECTION_ENABLED: 'IS_LOGS_SETTINGS_SECTION_ENABLED' as const,
-   IS_CONVERSATIONS_TAB_ENABLED: 'IS_CONVERSATIONS_TAB_ENABLED' as const
+   IS_CONVERSATIONS_TAB_ENABLED: 'IS_CONVERSATIONS_TAB_ENABLED' as const,
+   IS_VALIDATION_RULES_ENABLED: 'IS_VALIDATION_RULES_ENABLED' as const
 }
 
 export const enumIdentityProviderType = {
@@ -11546,6 +11590,7 @@ export const enumAllMetadataName = {
    searchFieldMetadata: 'searchFieldMetadata' as const,
    timelineActivityType: 'timelineActivityType' as const,
    settingsMenuItem: 'settingsMenuItem' as const,
+   validationRule: 'validationRule' as const,
    workflow: 'workflow' as const,
    workflowVersion: 'workflowVersion' as const
 }

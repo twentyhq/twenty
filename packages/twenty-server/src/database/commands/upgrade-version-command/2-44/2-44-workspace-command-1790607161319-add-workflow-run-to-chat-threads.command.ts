@@ -19,7 +19,6 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
 
 const WORKFLOW_RUN_THREAD_FIELD_UNIVERSAL_IDENTIFIERS = [
   STANDARD_OBJECTS.agentChatThread.fields.workflowRun.universalIdentifier,
-  STANDARD_OBJECTS.agentChatThread.fields.workflowStepId.universalIdentifier,
   STANDARD_OBJECTS.workflowRun.fields.agentChatThreads.universalIdentifier,
 ];
 

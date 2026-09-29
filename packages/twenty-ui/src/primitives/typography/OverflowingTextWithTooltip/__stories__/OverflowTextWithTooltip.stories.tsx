@@ -34,6 +34,11 @@ export const SingleLineOverflowing: Story = {
   },
 };
 
+export const SingleLineOverflowingDocumentation: Story = {
+  args: SingleLineOverflowing.args,
+  decorators: SingleLineOverflowing.decorators,
+};
+
 export const SingleLineNotOverflowing: Story = {
   args: {
     text: 'Short',

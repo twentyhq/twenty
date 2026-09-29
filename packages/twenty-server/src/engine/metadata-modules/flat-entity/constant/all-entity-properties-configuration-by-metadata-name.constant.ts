@@ -2065,6 +2065,63 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: undefined,
     },
   },
+  validationRule: {
+    objectMetadataId: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: 'objectMetadataUniversalIdentifier',
+    },
+    errorFieldMetadataId: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: 'errorFieldMetadataUniversalIdentifier',
+    },
+    name: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    description: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    icon: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    expression: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    bindings: {
+      toCompare: true,
+      toStringify: true,
+      universalProperty: undefined,
+    },
+    message: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    isActive: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    createdAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    updatedAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+  },
   workflow: {
     name: { toCompare: true, toStringify: false, universalProperty: undefined },
     visibility: {

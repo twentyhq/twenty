@@ -10,6 +10,8 @@ import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-
 import { SdkClientModule } from 'src/engine/core-modules/sdk-client/sdk-client.module';
 import { SecretEncryptionModule } from 'src/engine/core-modules/secret-encryption/secret-encryption.module';
 import { FileStorageModule } from 'src/engine/core-modules/file-storage/file-storage.module';
+import { WorkflowVersionEntity } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
+import { WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { FieldMetadataModule } from 'src/engine/metadata-modules/field-metadata/field-metadata.module';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
@@ -28,13 +30,16 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { DevSeederPermissionsService } from 'src/engine/workspace-manager/dev-seeder/core/services/dev-seeder-permissions.service';
 import { DevSeederDataService } from 'src/engine/workspace-manager/dev-seeder/data/services/dev-seeder-data.service';
+import { DevSeederWorkflowAgentQuestionWorkspaceService } from 'src/engine/workspace-manager/dev-seeder/data/services/dev-seeder-workflow-agent-question.workspace-service';
 import { TimelineActivitySeederService } from 'src/engine/workspace-manager/dev-seeder/data/services/timeline-activity-seeder.service';
 import { TimelineActivityModule } from 'src/modules/timeline/timeline-activity.module';
 import { DevSeederMetadataService } from 'src/engine/workspace-manager/dev-seeder/metadata/services/dev-seeder-metadata.service';
-import { DevSeederService } from 'src/engine/workspace-manager/dev-seeder/services/dev-seeder.service';
+import { DevSeederWorkspaceService } from 'src/engine/workspace-manager/dev-seeder/services/dev-seeder.workspace-service';
 import { StandardObjectsPrefillModule } from 'src/engine/workspace-manager/standard-objects-prefill-data/standard-objects-prefill.module';
 import { TwentyStandardApplicationModule } from 'src/engine/workspace-manager/twenty-standard-application/twenty-standard-application.module';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
+import { WorkflowAgentConversationModule } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/workflow-agent-conversation.module';
+import { WorkflowRunModule } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.module';
 
 @Module({
   imports: [
@@ -54,7 +59,12 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     ApplicationRegistrationModule,
     FeatureFlagModule,
     FileStorageModule,
-    TypeOrmModule.forFeature([WorkspaceEntity, ObjectMetadataEntity]),
+    TypeOrmModule.forFeature([
+      WorkspaceEntity,
+      ObjectMetadataEntity,
+      WorkflowEntity,
+      WorkflowVersionEntity,
+    ]),
     ObjectPermissionModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     StandardObjectsPrefillModule,
@@ -64,16 +74,21 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     SdkClientModule,
     SecretEncryptionModule,
     UpgradeModule,
+    WorkflowRunModule,
+    WorkflowAgentConversationModule,
   ],
-  exports: [DevSeederService],
+  exports: [DevSeederWorkspaceService],
   providers: [
-    DevSeederService,
+    DevSeederWorkspaceService,
     DevSeederMetadataService,
     DevSeederPermissionsService,
     DevSeederDataService,
     TimelineActivitySeederService,
+    DevSeederWorkflowAgentQuestionWorkspaceService,
     provideWorkspaceScopedRepository(RoleEntity),
     provideWorkspaceScopedRepository(ObjectMetadataEntity),
+    provideWorkspaceScopedRepository(WorkflowEntity),
+    provideWorkspaceScopedRepository(WorkflowVersionEntity),
   ],
 })
 export class DevSeederModule {}

@@ -9,6 +9,7 @@ import { FormSelectFieldInput } from '@/object-record/record-field/ui/form-types
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
 import { useMyConnectedAccounts } from '@/settings/accounts/hooks/useMyConnectedAccounts';
 import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTriggerApiOAuth';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
@@ -44,6 +45,7 @@ import { isStandaloneVariableString } from 'twenty-shared/workflow';
 import { Callout } from 'twenty-ui/components';
 import { IconPlus } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
+import { PermissionFlagType } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 type WorkflowEditActionEmailBaseProps = {
@@ -63,6 +65,9 @@ export const WorkflowEditActionEmailBase = ({
   actionOptions,
 }: WorkflowEditActionEmailBaseProps) => {
   const { triggerApisOAuth } = useTriggerApisOAuth();
+  const hasConnectedAccountsPermission = useHasPermissionFlag(
+    PermissionFlagType.CONNECTED_ACCOUNTS,
+  );
 
   const workflowVisualizerWorkflowId = useAtomComponentStateValue(
     workflowVisualizerWorkflowIdComponentState,
@@ -238,25 +243,34 @@ export const WorkflowEditActionEmailBase = ({
             onChange={handleSenderChange}
             VariablePicker={WorkflowVariablePicker}
             readonly={actionOptions.readonly}
-            callToActionButton={{
-              onClick: () => {
-                closeSidePanelMenu();
-                navigate(SettingsPath.NewAccount);
-              },
-              Icon: IconPlus,
-              text: t`Add account`,
-            }}
+            callToActionButton={
+              hasConnectedAccountsPermission
+                ? {
+                    onClick: () => {
+                      closeSidePanelMenu();
+                      navigate(SettingsPath.NewAccount);
+                    },
+                    Icon: IconPlus,
+                    text: t`Add account`,
+                  }
+                : undefined
+            }
           />
           {isDefined(missingScopes) && (
             <>
               <Callout
                 variant={'error'}
                 title={t`Missing email draft permission.`}
-                description={t`This account is connected, but we don't have permission to draft emails on your behalf yet. You'll be redirected to approve this access.`}
-                action={{
-                  label: t`Reauthorize`,
-                  onClick: handleReauthorize,
-                }}
+                description={
+                  hasConnectedAccountsPermission
+                    ? t`This account is connected, but we don't have permission to draft emails on your behalf yet. You'll be redirected to approve this access.`
+                    : t`Ask a workspace admin for the Sync Account permission to reconnect this account.`
+                }
+                action={
+                  hasConnectedAccountsPermission
+                    ? { label: t`Reauthorize`, onClick: handleReauthorize }
+                    : undefined
+                }
               />
             </>
           )}

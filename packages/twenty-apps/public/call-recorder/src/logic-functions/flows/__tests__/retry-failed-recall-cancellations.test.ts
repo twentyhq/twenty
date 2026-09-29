@@ -81,8 +81,9 @@ class FakeCoreApiClient {
       const matchingCallRecordings = this.callRecordings.filter(
         (callRecording) =>
           callRecording.id === filter.id.eq &&
-          callRecording.recordingRequestStatus ===
-            filter.recordingRequestStatus.eq &&
+          (filter.recordingRequestStatus === undefined ||
+            callRecording.recordingRequestStatus ===
+              filter.recordingRequestStatus.eq) &&
           filter.status.in.includes(callRecording.status) &&
           (filter.externalBotId.is === 'NULL'
             ? callRecording.externalBotId === null
@@ -186,7 +187,14 @@ describe('retryFailedRecallCancellations', () => {
       expect.objectContaining({ method: 'DELETE' }),
     );
     expect(client.mutations).toEqual([
-      { id: 'call-recording-1', data: { externalBotId: null } },
+      {
+        id: 'call-recording-1',
+        data: {
+          externalBotId: null,
+          botScheduleAttemptedAt: null,
+          botScheduleIdempotencyKey: null,
+        },
+      },
     ]);
     expect(result.canceledExternalBotCallRecordingIds).toEqual([
       'call-recording-1',
@@ -316,7 +324,14 @@ describe('retryFailedRecallCancellations', () => {
         id: 'call-recording-1',
         data: { externalBotId: 'recall-bot-recovered' },
       },
-      { id: 'call-recording-1', data: { externalBotId: null } },
+      {
+        id: 'call-recording-1',
+        data: {
+          externalBotId: null,
+          botScheduleAttemptedAt: null,
+          botScheduleIdempotencyKey: null,
+        },
+      },
     ]);
     expect(result.canceledExternalBotCallRecordingIds).toEqual([
       'call-recording-1',

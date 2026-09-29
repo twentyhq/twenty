@@ -53,6 +53,10 @@ jest.mock('@/ai/components/AiChatSharingDropdown', () => ({
   AiChatSharingDropdown: () => <button>Share</button>,
 }));
 
+jest.mock('@/ai/components/AiChatThreadRecordTargets', () => ({
+  AiChatThreadRecordTargets: () => null,
+}));
+
 const THREAD: AgentChatThread = {
   __typename: 'AgentChatThread',
   id: 'thread-1',
