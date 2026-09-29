@@ -246,7 +246,7 @@ describe('useInviteTeam', () => {
     ).toBe(1);
   });
 
-  it('should keep only the invitations the server accepted in the email draft', async () => {
+  it('should bring the typed emails back when going back after the server rejected them all', async () => {
     jotaiStore.set(onboardingInviteTeamEmailsDraftState.atom, [
       'grace@example.com',
       'alan@example.com',
@@ -254,7 +254,49 @@ describe('useInviteTeam', () => {
     ]);
     mockSendInvitation.mockResolvedValue({
       data: {
-        sendInvitations: { result: [{ email: 'grace@example.com' }] },
+        sendInvitations: {
+          success: false,
+          errors: [
+            'grace@example.com already invited',
+            'alan@example.com is already in the workspace',
+          ],
+          result: [],
+        },
+      },
+    });
+
+    const { result, unmount } = renderInviteTeam();
+
+    act(() => {
+      result.current.handleInvite();
+    });
+
+    await waitFor(() =>
+      expect(mockSetNextOnboardingStatus).toHaveBeenCalledWith({
+        stepHistoryEffect: 'recordAsReversible',
+      }),
+    );
+    unmount();
+
+    const { result: resultAfterGoingBack } = renderInviteTeam();
+
+    expect(
+      resultAfterGoingBack.current.fields.map(({ email }) => email),
+    ).toEqual(['grace@example.com', 'alan@example.com', '']);
+  });
+
+  it('should show the server errors instead of the success toast when every invitation is rejected', async () => {
+    jotaiStore.set(onboardingInviteTeamEmailsDraftState.atom, [
+      'grace@example.com',
+      '',
+    ]);
+    mockSendInvitation.mockResolvedValue({
+      data: {
+        sendInvitations: {
+          success: false,
+          errors: ['grace@example.com already invited'],
+          result: [],
+        },
       },
     });
 
@@ -265,9 +307,13 @@ describe('useInviteTeam', () => {
     });
 
     await waitFor(() => expect(mockSetNextOnboardingStatus).toHaveBeenCalled());
-    expect(jotaiStore.get(onboardingInviteTeamEmailsDraftState.atom)).toEqual([
-      'grace@example.com',
-    ]);
+    expect(mockEnqueueToast).toHaveBeenCalledTimes(1);
+    expect(mockEnqueueToast).toHaveBeenCalledWith(
+      expect.objectContaining({
+        variant: 'error',
+        children: 'grace@example.com already invited',
+      }),
+    );
   });
 
   it('should send the invitations once when inviting again while they are being sent', async () => {

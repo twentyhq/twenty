@@ -182,19 +182,25 @@ export const useInviteTeam = () => {
           throw result.error;
         }
 
-        const sentInvitations = result.data?.sendInvitations.result ?? [];
-        const sentInvitationsCount = sentInvitations.length;
+        const sentInvitationsCount =
+          result.data?.sendInvitations.result.length ?? 0;
+        const invitationErrors = result.data?.sendInvitations.errors ?? [];
 
         setInviteTeamFreeCredits(sentInvitationsCount);
 
-        if (isNonEmptyArray(emails)) {
-          store.set(
-            onboardingInviteTeamEmailsDraftState.atom,
-            sentInvitations.map((sentInvitation) => sentInvitation.email),
-          );
+        if (
+          sentInvitationsCount === 0 &&
+          isNonEmptyArray(emails) &&
+          isNonEmptyArray(invitationErrors)
+        ) {
+          enqueueToast({
+            variant: 'error',
+            children: invitationErrors.join(', '),
+            duration: 5000,
+          });
         }
 
-        if (emails.length > 0) {
+        if (sentInvitationsCount > 0) {
           enqueueToast({
             variant: 'success',
             children: t`Invite link sent to email addresses`,
