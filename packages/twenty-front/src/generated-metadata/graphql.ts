@@ -58,6 +58,12 @@ export type AgentChatEvent = {
   threadId: Scalars['String']['output'];
 };
 
+export type AgentChatQuestionAnswerInput = {
+  freeText?: InputMaybe<Scalars['String']['input']>;
+  questionIndex: Scalars['Int']['input'];
+  selectedOptionIndices: Array<Scalars['Int']['input']>;
+};
+
 export type AgentChatThread = {
   __typename?: 'AgentChatThread';
   contextWindowTokens?: Maybe<Scalars['Int']['output']>;
@@ -3048,6 +3054,8 @@ export type Mutation = {
   activateSkill: Skill;
   activateWorkspace: Workspace;
   addQueryToEventStream: Scalars['Boolean']['output'];
+  /** @deprecated Use answerAsk with the question's Ask */
+  answerAgentChatQuestion: SendChatMessageResult;
   archiveChatThread: AgentChatThread;
   assignRoleToAgent: Scalars['Boolean']['output'];
   assignRoleToApiKey: Scalars['Boolean']['output'];
@@ -3334,6 +3342,15 @@ export type MutationActivateWorkspaceArgs = {
 
 export type MutationAddQueryToEventStreamArgs = {
   input: AddQuerySubscriptionInput;
+};
+
+
+export type MutationAnswerAgentChatQuestionArgs = {
+  answers: Array<AgentChatQuestionAnswerInput>;
+  fileAttachments?: InputMaybe<Array<FileAttachmentInput>>;
+  messageId: Scalars['UUID']['input'];
+  modelId?: InputMaybe<Scalars['String']['input']>;
+  threadId: Scalars['UUID']['input'];
 };
 
 

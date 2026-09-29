@@ -460,6 +460,8 @@ export type Mutation = {
   runCoreWorkflowVersion: RunWorkflowVersion;
   runWorkflowVersion: RunWorkflowVersion;
   stopWorkflowRun: WorkflowRun;
+  /** @deprecated Use answerAsk with the form step's Ask */
+  submitFormStep: Scalars['Boolean']['output'];
   testHttpRequest: TestHttpRequest;
   updateCoreWorkflow?: Maybe<CoreWorkflowDto>;
   updateCoreWorkflowVersionPositions: Scalars['Boolean']['output'];
@@ -616,6 +618,11 @@ export type MutationRunWorkflowVersionArgs = {
 
 export type MutationStopWorkflowRunArgs = {
   workflowRunId: Scalars['UUID']['input'];
+};
+
+
+export type MutationSubmitFormStepArgs = {
+  input: SubmitFormStepInput;
 };
 
 
@@ -887,6 +894,15 @@ export type SearchResultPageInfo = {
   __typename?: 'SearchResultPageInfo';
   endCursor?: Maybe<Scalars['String']['output']>;
   hasNextPage: Scalars['Boolean']['output'];
+};
+
+export type SubmitFormStepInput = {
+  /** Form response in JSON format */
+  response: Scalars['JSON']['input'];
+  /** Workflow step ID */
+  stepId: Scalars['UUID']['input'];
+  /** Workflow run ID */
+  workflowRunId: Scalars['UUID']['input'];
 };
 
 export type TestHttpRequest = {

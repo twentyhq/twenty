@@ -3749,6 +3749,8 @@ export interface Mutation {
     startChannelSync: ChannelSyncSuccess
     saveImapSmtpCaldavAccount: ImapSmtpCaldavConnectionSuccess
     updateLabPublicFeatureFlag: FeatureFlag
+    /** @deprecated Use answerAsk with the question's Ask */
+    answerAgentChatQuestion: SendChatMessageResult
     createPublicDomain: PublicDomain
     deletePublicDomain: Scalars['Boolean']
     checkPublicDomainValidRecords?: DomainValidRecords
@@ -7721,6 +7723,8 @@ export interface MutationGenqlSelection{
     startChannelSync?: (ChannelSyncSuccessGenqlSelection & { __args: {connectedAccountId: Scalars['UUID']} })
     saveImapSmtpCaldavAccount?: (ImapSmtpCaldavConnectionSuccessGenqlSelection & { __args: {handle: Scalars['String'], connectionParameters: EmailAccountConnectionParameters, id?: (Scalars['UUID'] | null)} })
     updateLabPublicFeatureFlag?: (FeatureFlagGenqlSelection & { __args: {input: UpdateLabPublicFeatureFlagInput} })
+    /** @deprecated Use answerAsk with the question's Ask */
+    answerAgentChatQuestion?: (SendChatMessageResultGenqlSelection & { __args: {threadId: Scalars['UUID'], messageId: Scalars['UUID'], answers: AgentChatQuestionAnswerInput[], modelId?: (Scalars['String'] | null), fileAttachments?: (FileAttachmentInput[] | null)} })
     createPublicDomain?: (PublicDomainGenqlSelection & { __args: {domain: Scalars['String'], applicationId: Scalars['String']} })
     deletePublicDomain?: { __args: {domain: Scalars['String']} }
     checkPublicDomainValidRecords?: (DomainValidRecordsGenqlSelection & { __args: {domain: Scalars['String']} })
@@ -8175,6 +8179,8 @@ export interface EmailAccountConnectionParameters {name?: (Scalars['String'] | n
 export interface ConnectionParametersInput {host: Scalars['String'],port: Scalars['Float'],username?: (Scalars['String'] | null),password?: (Scalars['String'] | null),connectionSecurity?: (EmailConnectionSecurity | null)}
 
 export interface UpdateLabPublicFeatureFlagInput {publicFeatureFlag: Scalars['String'],value: Scalars['Boolean']}
+
+export interface AgentChatQuestionAnswerInput {questionIndex: Scalars['Int'],selectedOptionIndices: Scalars['Int'][],freeText?: (Scalars['String'] | null)}
 
 export interface ApplicationFileUploadRequestInput {fileFolder: FileFolder,filePath: Scalars['String'],size: Scalars['Int']}
 
