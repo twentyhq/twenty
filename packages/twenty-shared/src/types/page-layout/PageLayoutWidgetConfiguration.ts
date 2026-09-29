@@ -199,6 +199,10 @@ export type WorkflowRunConfiguration = {
   configurationType: 'WORKFLOW_RUN';
 };
 
+export type ChatThreadsConfiguration = {
+  configurationType: 'CHAT_THREADS';
+};
+
 export type PageLayoutWidgetConfiguration =
   | AggregateChartConfiguration
   | PieChartConfiguration
@@ -226,4 +230,5 @@ export type PageLayoutWidgetConfiguration =
   | MessageCampaignBodyConfiguration
   | MessageCampaignDetailsConfiguration
   | CallRecordingSummaryConfiguration
-  | CallRecordingTranscriptConfiguration;
+  | CallRecordingTranscriptConfiguration
+  | ChatThreadsConfiguration;

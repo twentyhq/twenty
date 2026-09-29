@@ -114,3 +114,4 @@ my-app/
 - **Remotes**: Named connections to Twenty instances. Stored in `~/.twenty/config.json`. Switch with `yarn twenty remote:use <name>`.
 - **Sync**: `yarn twenty apply` builds, deploys, and installs the app on the active remote in one step. This is the standard way to get code changes onto a Twenty instance.
 - **Publish**: `yarn twenty app:publish` packages the app for distribution to other instances or the marketplace. Requires a strictly higher semver version than the previously published version.
+- **Reserved variable names**: `TWENTY_API_URL`, `TWENTY_APP_ACCESS_TOKEN`, `TWENTY_APP_APPLICATION_ACCESS_TOKEN`, `TWENTY_API_KEY`, `TWENTY_FUNCTIONS_URL` and `APPLICATION_ID` are set by Twenty for every logic function run. A manifest that declares one of them as an application or server variable is rejected on sync and publish.

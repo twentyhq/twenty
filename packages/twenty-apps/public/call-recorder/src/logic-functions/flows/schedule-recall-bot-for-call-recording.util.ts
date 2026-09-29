@@ -7,12 +7,14 @@ import { type MeetingRecording } from 'src/logic-functions/types/meeting-recordi
 import { buildRecallBotAutomaticVideoOutput } from 'src/logic-functions/domain/build-recall-bot-automatic-video-output.util';
 import { buildRecallRoutingMetadata } from 'src/logic-functions/domain/build-recall-routing-metadata.util';
 import { computeRecallBotJoinAt } from 'src/logic-functions/domain/compute-recall-bot-join-at.util';
+import { hasUnchangedBotScheduleIdempotencyKey } from 'src/logic-functions/domain/has-unchanged-bot-schedule-idempotency-key.util';
 import { isRecallBotJoinWithinCreditCheckLead } from 'src/logic-functions/domain/is-recall-bot-join-within-credit-check-lead.util';
 import { enqueuePreJoinCreditCheck } from 'src/logic-functions/data/enqueue-pre-join-credit-check.util';
 import { findCallRecordingsByIds } from 'src/logic-functions/data/find-call-recordings-by-ids.util';
 import { getCreditsUnavailableFailureReason } from 'src/logic-functions/data/get-credits-unavailable-failure-reason.util';
 import { getCurrentWorkspaceId } from 'src/logic-functions/data/get-current-workspace-id.util';
 import { markCallRecordingNotRecorded } from 'src/logic-functions/data/mark-call-recording-not-recorded.util';
+import { recordBotScheduleAttempt } from 'src/logic-functions/data/record-bot-schedule-attempt.util';
 import { isCalendarBotSchedulingEnabled } from 'src/logic-functions/utils/is-calendar-bot-scheduling-enabled.util';
 import {
   computeRecallBotCreationIdempotencyKey,
@@ -97,31 +99,41 @@ export const scheduleRecallBotForCallRecording = async (
     callRecordingId: callRecording.id,
     workspaceId,
   });
+  // Persisted before the POST so a crash leaves proof that a bot creation may
+  // have reached Recall; while the stored key still matches the scheduling
+  // inputs, recovery can re-send the creation idempotently instead of asking
+  // Recall whether a bot already exists. Re-sends of the recorded attempt keep
+  // its timestamp, and with it its key, so repeated unknown outcomes age out of
+  // the resend window instead of staying trusted forever.
+  const attemptedAt =
+    !isUndefined(freshCallRecording.botScheduleAttemptedAt) &&
+    hasUnchangedBotScheduleIdempotencyKey({
+      callRecording: freshCallRecording,
+      calendarEvent,
+      workspaceId,
+    })
+      ? freshCallRecording.botScheduleAttemptedAt
+      : new Date().toISOString();
   const idempotencyKey = computeRecallBotCreationIdempotencyKey({
     meetingUrl,
     joinAt,
     metadata,
+    attemptedAt,
   });
 
-  // Persisted before the POST so a crash leaves proof that a bot creation may
-  // have reached Recall; while the stored key still matches the scheduling
-  // inputs, recovery can re-send the creation idempotently instead of asking
-  // Recall whether a bot already exists. Re-sends of the same key keep the
-  // first attempt's timestamp so repeated unknown outcomes age out of the
-  // resend window instead of staying trusted forever.
-  const recordedAttemptTimestamp =
-    freshCallRecording.botScheduleIdempotencyKey === idempotencyKey
-      ? freshCallRecording.botScheduleAttemptedAt
-      : undefined;
-
-  await updateCallRecording(client, {
+  const isAttemptRecorded = await recordBotScheduleAttempt(client, {
     id: callRecording.id,
-    data: {
-      botScheduleAttemptedAt:
-        recordedAttemptTimestamp ?? new Date().toISOString(),
-      botScheduleIdempotencyKey: idempotencyKey,
-    },
+    expectedAttemptedAt: freshCallRecording.botScheduleAttemptedAt,
+    attemptedAt,
+    idempotencyKey,
   });
+
+  if (!isAttemptRecorded) {
+    return {
+      status: 'skipped',
+      reason: 'another run is already scheduling this bot',
+    };
+  }
 
   const scheduleResult = await scheduleRecallBot({
     meetingUrl,

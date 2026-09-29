@@ -20,12 +20,16 @@ export const buildStepInfosReset = ({
         status: StepStatus.NOT_STARTED,
         result: undefined,
         error: undefined,
+        // Step infos are merged on write, so a value left out here would keep
+        // pointing the next iteration at the previous one's conversation.
+        threadId: undefined,
         history: [
           ...(stepInfo.history ?? []),
           {
             result: stepInfo.result,
             error: stepInfo.error,
             status: stepInfo.status,
+            threadId: stepInfo.threadId,
           },
         ],
       };

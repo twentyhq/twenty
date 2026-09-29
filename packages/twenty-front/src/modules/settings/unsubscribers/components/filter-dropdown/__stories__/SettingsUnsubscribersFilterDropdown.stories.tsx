@@ -58,12 +58,12 @@ export const PagesSelectionAndClear: Story = {
     const canvas = within(canvasElement);
     const body = within(canvasElement.ownerDocument.body);
     const trigger = canvas.getByRole('button', {
-      name: 'Filter unsubscribers',
+      name: 'Filter opt-outs',
     });
 
     await userEvent.click(trigger);
     const popup = await body.findByRole('dialog', {
-      name: 'Filter unsubscribers',
+      name: 'Filter opt-outs',
     });
 
     expect(
@@ -81,7 +81,7 @@ export const PagesSelectionAndClear: Story = {
 
     await userEvent.click(trigger);
     const reopened = await body.findByRole('dialog', {
-      name: 'Filter unsubscribers',
+      name: 'Filter opt-outs',
     });
 
     expect(
