@@ -418,15 +418,19 @@ export class WorkflowRunWorkspaceService {
   // the step no longer PENDING. A stop is refused too: endWorkflowRun turns a
   // pending step into FAILED, and a stop still waiting on another branch
   // leaves the run STOPPING with the step PENDING but nothing left to resume.
+  // An expected conversation must still be the step's: a retry or another loop
+  // iteration replaces it.
   @WithLock('workflowRunId')
   async updateStepInfoIfPending({
     stepId,
     stepInfo,
+    expectedThreadId,
     workflowRunId,
     workspaceId,
   }: {
     stepId: string;
     stepInfo: Partial<WorkflowRunStepInfo>;
+    expectedThreadId?: string;
     workflowRunId: string;
     workspaceId: string;
   }): Promise<boolean> {
@@ -439,7 +443,9 @@ export class WorkflowRunWorkspaceService {
 
     if (
       workflowRunToUpdate.status !== WorkflowRunStatus.RUNNING ||
-      currentStepInfo?.status !== StepStatus.PENDING
+      currentStepInfo?.status !== StepStatus.PENDING ||
+      (isDefined(expectedThreadId) &&
+        currentStepInfo.threadId !== expectedThreadId)
     ) {
       return false;
     }

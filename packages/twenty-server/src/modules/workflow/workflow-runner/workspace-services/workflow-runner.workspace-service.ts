@@ -199,7 +199,7 @@ export class WorkflowRunnerWorkspaceService {
         {
           workspaceId,
           workflowRunId,
-          stepIdToResume: stepAwaitingAnswer.stepId,
+          stepToResume: { stepId: stepAwaitingAnswer.stepId, threadId },
         },
         buildRunWorkflowJobOptions(workflowRunId),
       );

@@ -81,16 +81,17 @@ describe('WorkflowExecutorWorkspaceService', () => {
     workflowAction.execute.mockResolvedValue({ result: { response: 'done' } });
   });
 
-  describe('resumeAnsweredStep', () => {
-    it('runs the claimed step without charging it or checking the quota again', async () => {
+  describe('executeFromSteps', () => {
+    it('runs a resumed step without charging it or checking the quota again', async () => {
       mockWorkflowRun({
         [AGENT_STEP_ID]: { status: StepStatus.RUNNING, threadId: 'thread' },
       });
 
-      await service.resumeAnsweredStep({
-        stepId: AGENT_STEP_ID,
+      await service.executeFromSteps({
+        stepIds: [AGENT_STEP_ID],
         workflowRunId: WORKFLOW_RUN_ID,
         workspaceId: WORKSPACE_ID,
+        resumedThreadId: 'thread',
       });
 
       expect(workflowAction.execute).toHaveBeenCalledTimes(1);
@@ -112,9 +113,7 @@ describe('WorkflowExecutorWorkspaceService', () => {
       expect(usageLimitQuotaService.consumeQuota).not.toHaveBeenCalled();
       expect(usageRecorderService.record).not.toHaveBeenCalled();
     });
-  });
 
-  describe('executeFromSteps', () => {
     it('charges a step it runs, whatever conversation it holds', async () => {
       mockWorkflowRun({
         [AGENT_STEP_ID]: { status: StepStatus.NOT_STARTED, threadId: 'thread' },
