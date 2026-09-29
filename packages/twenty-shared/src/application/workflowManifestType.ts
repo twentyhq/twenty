@@ -4,6 +4,7 @@ import { validateWorkflowVariableReferences } from '@/workflow/validation/utils/
 
 import { workflowStepManifestSchema } from '@/application/workflowStepManifestType';
 import { buildWorkflowGraph } from '@/workflow/validation/utils/build-workflow-graph.util';
+import { validateWorkflowExecutionPaths } from '@/workflow/validation/utils/validate-workflow-execution-paths.util';
 import { validateWorkflowGraph } from '@/workflow/validation/utils/validate-workflow-graph.util';
 
 export const workflowManifestSchema = z
@@ -50,7 +51,10 @@ export const workflowManifestSchema = z
       ...validateWorkflowGraph({
         workflow: validatableWorkflow,
         graph,
-        mode: 'executable',
+      }),
+      ...validateWorkflowExecutionPaths({
+        workflow: validatableWorkflow,
+        graph,
       }),
       ...validateWorkflowVariableReferences({
         workflow: validatableWorkflow,

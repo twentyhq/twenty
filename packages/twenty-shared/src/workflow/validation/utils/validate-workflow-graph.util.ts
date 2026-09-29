@@ -1,4 +1,3 @@
-import { validateWorkflowExecutionPaths } from '@/workflow/validation/utils/validate-workflow-execution-paths.util';
 import { isDefined, isNonEmptyArray } from '@/utils';
 import { WorkflowActionType } from '@/workflow/types/WorkflowActionType';
 import {
@@ -14,11 +13,9 @@ import { getStepInput } from '@/workflow/validation/utils/get-step-outgoing-step
 export const validateWorkflowGraph = ({
   workflow,
   graph,
-  mode = 'structure',
 }: {
   workflow: ValidatableWorkflow;
   graph: WorkflowGraph;
-  mode?: 'structure' | 'executable';
 }): WorkflowValidationIssue[] => {
   const issues: WorkflowValidationIssue[] = [];
   const steps = workflow.steps ?? [];
@@ -84,10 +81,6 @@ export const validateWorkflowGraph = ({
         stepId: step.id,
       });
     }
-  }
-
-  if (mode === 'executable') {
-    issues.push(...validateWorkflowExecutionPaths({ workflow, graph }));
   }
 
   return issues;
