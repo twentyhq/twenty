@@ -27,7 +27,7 @@ import { hasWorkflowRunThreadFields } from 'src/engine/metadata-modules/ai/ai-hi
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 
-export type RecordedExecutionResult = {
+type RecordedExecutionResult = {
   steps?: Pick<NonNullable<AgentExecutionResult['steps']>[number], 'content'>[];
   isPaused?: boolean;
 };
@@ -37,10 +37,11 @@ export type RecordedConversation = {
   isAwaitingAnswer: boolean;
 };
 
-// Each execution of an agent step gets its own conversation, so a loop
-// iteration or a retry never reads or continues another one's messages. The
-// conversation has no owner: it belongs to the run and is readable by whoever
-// can read the run.
+// A conversation is recorded only for an execution of an agent step that asks
+// a question, and continued when that execution resumes. Each gets its own, so
+// a loop iteration or a retry never reads or continues another one's messages.
+// The conversation has no owner: it belongs to the run and is readable by
+// whoever can read the run.
 @Injectable()
 export class WorkflowAgentConversationWorkspaceService {
   constructor(
