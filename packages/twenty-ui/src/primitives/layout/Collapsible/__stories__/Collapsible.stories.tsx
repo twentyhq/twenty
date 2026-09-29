@@ -78,7 +78,6 @@ const CollapsibleWithButton = ({
 };
 
 const meta: Meta<typeof CollapsibleWithButton> = {
-  id: 'ui-layout-animatedexpandablecontainer',
   title: 'UI/Layout/Collapsible',
   component: CollapsibleWithButton,
   decorators: [ComponentDecorator],
