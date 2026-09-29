@@ -10,32 +10,35 @@ type CampaignEngagementThrottleLimit = {
   windowMs: number;
 };
 
-const getEngagementTargetKey = (engagement: CampaignEngagement): string => {
-  switch (engagement.type) {
-    case 'CLICK':
-      return `${engagement.deliveryId}:${engagement.shortLinkId}`;
-    case 'OPEN':
-      return `${engagement.deliveryId}:open`;
-  }
-};
-
 export const getCampaignEngagementThrottleLimits = ({
   engagement,
   requesterIp,
 }: {
   engagement: CampaignEngagement;
   requesterIp: string | null;
-}): CampaignEngagementThrottleLimit[] => [
-  ...(isNonEmptyString(requesterIp)
-    ? [
+}): CampaignEngagementThrottleLimit[] => {
+  switch (engagement.type) {
+    case 'CLICK':
+      return [
+        ...(isNonEmptyString(requesterIp)
+          ? [
+              {
+                key: `campaign-engagement:requester:${requesterIp}`,
+                ...CAMPAIGN_ENGAGEMENT_CAPTURE_RATE_LIMIT_PER_REQUESTER,
+              },
+            ]
+          : []),
         {
-          key: `campaign-engagement:requester:${requesterIp}`,
-          ...CAMPAIGN_ENGAGEMENT_CAPTURE_RATE_LIMIT_PER_REQUESTER,
+          key: `campaign-engagement:${engagement.deliveryId}:${engagement.shortLinkId}`,
+          ...CAMPAIGN_ENGAGEMENT_CAPTURE_RATE_LIMIT_PER_LINK,
         },
-      ]
-    : []),
-  {
-    key: `campaign-engagement:${getEngagementTargetKey(engagement)}`,
-    ...CAMPAIGN_ENGAGEMENT_CAPTURE_RATE_LIMIT_PER_LINK,
-  },
-];
+      ];
+    case 'OPEN':
+      return [
+        {
+          key: `campaign-engagement:${engagement.deliveryId}:open`,
+          ...CAMPAIGN_ENGAGEMENT_CAPTURE_RATE_LIMIT_PER_LINK,
+        },
+      ];
+  }
+};

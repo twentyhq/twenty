@@ -44,7 +44,7 @@ describe('getCampaignEngagementThrottleLimits', () => {
     ]);
   });
 
-  it('limits the opens of a delivery apart from its link clicks', () => {
+  it('limits opens per delivery only, since mail image proxies fetch pixels for many recipients from the same IP', () => {
     expect(
       getCampaignEngagementThrottleLimits({
         engagement: {
@@ -52,7 +52,7 @@ describe('getCampaignEngagementThrottleLimits', () => {
           workspaceId: CLICK.workspaceId,
           deliveryId: CLICK.deliveryId,
         },
-        requesterIp: null,
+        requesterIp: '192.0.2.1',
       }),
     ).toEqual([
       {
