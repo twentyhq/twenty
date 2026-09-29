@@ -7,4 +7,8 @@ export type CampaignCountGroup = {
   bouncedCount: string;
   complainedCount: string;
   providerFailedCount: string;
+  uniqueClickCount: string;
+  totalClickCount: string;
+  uniqueOpenCount: string;
+  totalOpenCount: string;
 };

@@ -95,7 +95,11 @@ export class MessageCampaignStatisticsService {
         COUNT("deliveredAt") AS "deliveredCount",
         COUNT("bouncedAt") AS "bouncedCount",
         COUNT("complainedAt") AS "complainedCount",
-        COUNT(*) FILTER (WHERE "rejectedAt" IS NOT NULL OR "renderingFailedAt" IS NOT NULL) AS "providerFailedCount"
+        COUNT(*) FILTER (WHERE "rejectedAt" IS NOT NULL OR "renderingFailedAt" IS NOT NULL) AS "providerFailedCount",
+        COUNT("clickedAt") AS "uniqueClickCount",
+        COALESCE(SUM("clickCount"), 0) AS "totalClickCount",
+        COUNT("openedAt") AS "uniqueOpenCount",
+        COALESCE(SUM("openCount"), 0) AS "totalOpenCount"
       FROM ${getCampaignDeliveryTableName(workspaceId)}
       WHERE "campaignId" = :campaignId
       GROUP BY "state"`,
@@ -183,6 +187,10 @@ export class MessageCampaignStatisticsService {
           skippedCount: true,
           bouncedCount: true,
           complainedCount: true,
+          uniqueClickCount: true,
+          totalClickCount: true,
+          uniqueOpenCount: true,
+          totalOpenCount: true,
         },
       });
 
@@ -197,6 +205,10 @@ export class MessageCampaignStatisticsService {
         skippedCount: counts.skippedCount,
         bouncedCount: counts.bouncedCount,
         complainedCount: counts.complainedCount,
+        uniqueClickCount: counts.uniqueClickCount,
+        totalClickCount: counts.totalClickCount,
+        uniqueOpenCount: counts.uniqueOpenCount,
+        totalOpenCount: counts.totalOpenCount,
       };
 
       const storedCounts = {
@@ -206,6 +218,10 @@ export class MessageCampaignStatisticsService {
         skippedCount: campaign.skippedCount,
         bouncedCount: campaign.bouncedCount,
         complainedCount: campaign.complainedCount,
+        uniqueClickCount: campaign.uniqueClickCount,
+        totalClickCount: campaign.totalClickCount,
+        uniqueOpenCount: campaign.uniqueOpenCount,
+        totalOpenCount: campaign.totalOpenCount,
       };
 
       if (fastDeepEqual(storedCounts, nextCounts)) {

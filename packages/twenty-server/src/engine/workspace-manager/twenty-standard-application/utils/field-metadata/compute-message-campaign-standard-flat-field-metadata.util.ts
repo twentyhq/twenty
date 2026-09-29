@@ -527,6 +527,86 @@ export const buildMessageCampaignStandardFlatFieldMetadatas = ({
         defaultValue: 0,
       },
     }),
+    uniqueClickCount: createStandardFieldFlatMetadata({
+      ...base,
+      context: {
+        fieldName: 'uniqueClickCount',
+        type: FieldMetadataType.NUMBER,
+        label: i18nLabel(
+          msg({ message: `Unique clicks`, context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: `Number of recipients who clicked a tracked link`,
+            context: 'fieldMetadata.description',
+          }),
+        ),
+        icon: 'IconClick',
+        isNullable: false,
+        isUIEditable: false,
+        defaultValue: 0,
+      },
+    }),
+    totalClickCount: createStandardFieldFlatMetadata({
+      ...base,
+      context: {
+        fieldName: 'totalClickCount',
+        type: FieldMetadataType.NUMBER,
+        label: i18nLabel(
+          msg({ message: `Total clicks`, context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: `Total clicks on tracked links`,
+            context: 'fieldMetadata.description',
+          }),
+        ),
+        icon: 'IconClick',
+        isNullable: false,
+        isUIEditable: false,
+        defaultValue: 0,
+      },
+    }),
+    uniqueOpenCount: createStandardFieldFlatMetadata({
+      ...base,
+      context: {
+        fieldName: 'uniqueOpenCount',
+        type: FieldMetadataType.NUMBER,
+        label: i18nLabel(
+          msg({ message: `Unique opens`, context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: `Number of recipients who opened the email`,
+            context: 'fieldMetadata.description',
+          }),
+        ),
+        icon: 'IconEye',
+        isNullable: false,
+        isUIEditable: false,
+        defaultValue: 0,
+      },
+    }),
+    totalOpenCount: createStandardFieldFlatMetadata({
+      ...base,
+      context: {
+        fieldName: 'totalOpenCount',
+        type: FieldMetadataType.NUMBER,
+        label: i18nLabel(
+          msg({ message: `Total opens`, context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: `Total opens of the email`,
+            context: 'fieldMetadata.description',
+          }),
+        ),
+        icon: 'IconEye',
+        isNullable: false,
+        isUIEditable: false,
+        defaultValue: 0,
+      },
+    }),
     unsubscribeTopicId: createStandardFieldFlatMetadata({
       ...base,
       context: {
