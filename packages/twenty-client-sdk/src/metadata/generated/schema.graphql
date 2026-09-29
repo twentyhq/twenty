@@ -1648,43 +1648,11 @@ type UsageLimit {
   updatedAt: DateTime!
 }
 
-type ApplicationConnectionProviderOAuthConfig {
-  scopes: [String!]!
-  isClientCredentialsConfigured: Boolean!
-}
-
-type ApplicationConnectionProvider {
+type ApprovedAccessDomain {
   id: UUID!
-  applicationId: String!
-  type: String!
-  name: String!
-  displayName: String!
-  oauth: ApplicationConnectionProviderOAuthConfig
-  logoUrl: String
-}
-
-type LogicFunctionExecutionResult {
-  """Execution result in JSON format"""
-  data: JSON
-
-  """Execution Logs"""
-  logs: String!
-
-  """Execution duration in milliseconds"""
-  duration: Float!
-
-  """Execution status"""
-  status: LogicFunctionExecutionStatus!
-
-  """Execution error in JSON format"""
-  error: JSON
-}
-
-"""Status of the logic function execution"""
-enum LogicFunctionExecutionStatus {
-  IDLE
-  SUCCESS
-  ERROR
+  domain: String!
+  isValidated: Boolean!
+  createdAt: DateTime!
 }
 
 type EnterpriseLicenseInfoDTO {
@@ -1929,6 +1897,63 @@ type BillingUpdate {
   billingSubscriptions: [BillingSubscription!]!
 }
 
+type InviteSuggestion {
+  email: String!
+  displayName: String
+}
+
+type OnboardingStepNavigation {
+  """Onboarding status the user landed on"""
+  onboardingStatus: OnboardingStatus
+
+  """Step the user can go back to from there, if any"""
+  previousOnboardingStatus: OnboardingStatus
+}
+
+type OnboardingStepSuccess {
+  """Boolean that confirms query was dispatched"""
+  success: Boolean!
+}
+
+type ApplicationConnectionProviderOAuthConfig {
+  scopes: [String!]!
+  isClientCredentialsConfigured: Boolean!
+}
+
+type ApplicationConnectionProvider {
+  id: UUID!
+  applicationId: String!
+  type: String!
+  name: String!
+  displayName: String!
+  oauth: ApplicationConnectionProviderOAuthConfig
+  logoUrl: String
+}
+
+type LogicFunctionExecutionResult {
+  """Execution result in JSON format"""
+  data: JSON
+
+  """Execution Logs"""
+  logs: String!
+
+  """Execution duration in milliseconds"""
+  duration: Float!
+
+  """Execution status"""
+  status: LogicFunctionExecutionStatus!
+
+  """Execution error in JSON format"""
+  error: JSON
+}
+
+"""Status of the logic function execution"""
+enum LogicFunctionExecutionStatus {
+  IDLE
+  SUCCESS
+  ERROR
+}
+
 type UsageBreakdownItem {
   key: String!
   label: String
@@ -1954,31 +1979,6 @@ type UsageAnalytics {
   periodStart: DateTime!
   periodEnd: DateTime!
   userDailyUsage: UsageUserDaily
-}
-
-type ApprovedAccessDomain {
-  id: UUID!
-  domain: String!
-  isValidated: Boolean!
-  createdAt: DateTime!
-}
-
-type InviteSuggestion {
-  email: String!
-  displayName: String
-}
-
-type OnboardingStepNavigation {
-  """Onboarding status the user landed on"""
-  onboardingStatus: OnboardingStatus
-
-  """Step the user can go back to from there, if any"""
-  previousOnboardingStatus: OnboardingStatus
-}
-
-type OnboardingStepSuccess {
-  """Boolean that confirms query was dispatched"""
-  success: Boolean!
 }
 
 type WorkspaceInvitation {
