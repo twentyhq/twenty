@@ -18,9 +18,11 @@ import {
 import {
   APPLICATION_UNIVERSAL_IDENTIFIER,
   CHECK_CREDITS_BEFORE_RECALL_BOT_JOIN_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
+  PENDING_CALL_RECORDING_REQUESTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
   STALE_BOT_STATE_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
 import { type CallRecorderPreference } from 'src/constants/call-recorder-preference';
+import { processPendingCallRecordingRequestsHandler } from 'src/logic-functions/process-pending-call-recording-requests';
 import { reconcileStaleBotStateHandler } from 'src/logic-functions/reconcile-stale-bot-state';
 import { CALL_RECORDER_CALENDAR_BOT_SCHEDULING_ENABLED_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-calendar-bot-scheduling-enabled-env-var-name';
 import { CALENDAR_EVENT_UPDATE_BATCH_SIZE } from 'src/logic-functions/constants/calendar-event-update-batch-size';
@@ -326,6 +328,7 @@ class FakeRecallApi {
   artifactImportRequests: object[] = [];
   activeArtifactJobIds = new Set<string>();
   recoveryRequests: object[] = [];
+  pendingRecoveryRequests: object[] = [];
   creditCheckRequests: object[] = [];
   // Undefined lets the credit verdict fall through to the real server.
   creditAvailability:
@@ -336,6 +339,7 @@ class FakeRecallApi {
   failNextDelete = false;
   failCalendarEventUpdates = false;
   failRecallRemovals = false;
+  failBotLists = false;
 
   seedBot(bot: FakeRecallBot): void {
     this.bots.set(bot.id, bot);
@@ -471,6 +475,11 @@ class FakeRecallApi {
         this.recoveryRequests.push(...payloads);
       } else if (
         input?.logicFunctionUniversalIdentifier ===
+        PENDING_CALL_RECORDING_REQUESTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER
+      ) {
+        this.pendingRecoveryRequests.push(...payloads);
+      } else if (
+        input?.logicFunctionUniversalIdentifier ===
         CHECK_CREDITS_BEFORE_RECALL_BOT_JOIN_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER
       ) {
         this.creditCheckRequests.push(...payloads);
@@ -509,6 +518,10 @@ class FakeRecallApi {
 
     if (method === 'GET' && requestUrl.startsWith(`${RECALL_BASE_URL}/bot/?`)) {
       this.listRequestCount += 1;
+
+      if (this.failBotLists) {
+        return jsonResponse(400, {});
+      }
 
       const listFilters = new URL(requestUrl).searchParams;
 
@@ -1149,8 +1162,20 @@ describe('call recorder app lifecycle (integration)', () => {
   };
 
   // Mocked cron trigger: runs the flows the recovery cron dispatches.
-  const runPendingRecoveryCron = () =>
-    scheduleRecallBotsForPendingCallRecordings({ client, now: new Date() });
+  const runPendingRecoveryCron = async () => {
+    const result = await scheduleRecallBotsForPendingCallRecordings({
+      client,
+      now: new Date(),
+    });
+
+    while (recall.pendingRecoveryRequests.length > 0) {
+      await processPendingCallRecordingRequestsHandler(
+        recall.pendingRecoveryRequests.shift(),
+      );
+    }
+
+    return result;
+  };
   const runCancellationRetryCron = () =>
     retryFailedRecallCancellations({ client, now: new Date() });
   const runStaleStateCron = async () => {
@@ -2426,6 +2451,25 @@ describe('call recorder app lifecycle (integration)', () => {
         'recall-bot-scheduled-before-lost-write-back',
       );
       expect(recall.bots.size).toBe(1);
+    });
+
+    it('retries a recording whose Recall lookup failed instead of creating a bot', async () => {
+      const calendarEventId = await createCalendarEvent();
+      const callRecordingId = await createPendingCallRecording({
+        calendarEventId,
+        botScheduleAttemptedAt: hoursAgo(24),
+      });
+
+      recall.failBotLists = true;
+
+      await expect(runPendingRecoveryCron()).rejects.toMatchObject({
+        name: 'RetryableLogicFunctionError',
+      });
+
+      expect(
+        (await fetchCallRecording(callRecordingId)).externalBotId,
+      ).toBeFalsy();
+      expect(recall.bots.size).toBe(0);
     });
 
     it('fails a recording whose meeting ended before any bot creation was attempted', async () => {
