@@ -21,7 +21,7 @@ const createInput = ({
   input.type = type;
   input.checked = checked;
 
-  if (name !== undefined) {
+  if (isDefined(name)) {
     input.name = name;
   }
 
@@ -297,3 +297,4 @@ describe('installInputClickActivationPolyfill', () => {
     container.remove();
   });
 });
+import { isDefined } from 'twenty-shared/utils';
