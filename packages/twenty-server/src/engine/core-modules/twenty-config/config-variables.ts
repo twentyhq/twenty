@@ -1117,13 +1117,13 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.BILLING_CONFIG,
     description:
-      'Free credits granted per app installed during the install-apps onboarding step (in microCredits)',
+      'Free credits granted for installing apps during the install-apps onboarding step, whatever the number of apps (in microCredits)',
     type: ConfigVariableType.NUMBER,
   })
   @CastToPositiveNumber()
   @IsInt()
   @IsOptional()
-  ONBOARDING_INSTALL_APPS_CREDITS_REWARD_PER_APP = 500_000;
+  ONBOARDING_INSTALL_APPS_CREDITS_REWARD = 500_000;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.BILLING_CONFIG,
@@ -1146,6 +1146,22 @@ export class ConfigVariables {
   @IsUrl({ require_tld: false, require_protocol: true })
   @IsOptional()
   FRONTEND_URL: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.SERVER_CONFIG,
+    description:
+      'Direct HTTPS origin URL for deployments that publish frontend HTML separately. Leave unset for standard self-hosted installations to use bundled HTML.',
+    type: ConfigVariableType.STRING,
+    isEnvOnly: true,
+    isHiddenInAdminPanel: true,
+  })
+  @IsUrl({
+    protocols: ['https'],
+    require_tld: false,
+    require_protocol: true,
+  })
+  @IsOptional()
+  FRONTEND_INDEX_URL: string | undefined;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SERVER_CONFIG,

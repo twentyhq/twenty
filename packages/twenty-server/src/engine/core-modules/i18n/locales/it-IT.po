@@ -760,6 +760,12 @@ msgstr "Agente non trovato."
 msgid "Agent step execution failed."
 msgstr "Esecuzione del passaggio dell'agente fallita."
 
+#. js-lingui-id: DLyw5k
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Agent step of the workflow run that held this conversation"
+msgstr ""
+
 #. js-lingui-id: fX04ru
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
@@ -833,11 +839,17 @@ msgctxt "commandMenuItem.shortLabel"
 msgid "AI"
 msgstr "AI"
 
+#. js-lingui-id: t/7WbN
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "AI chat messages sent by the workspace member"
+msgstr "Messaggi di chat AI inviati dal membro dello spazio di lavoro"
+
 #. js-lingui-id: NHpbHJ
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "AI chat threads owned by the workspace member"
-msgstr ""
+msgstr "Thread di chat IA di proprietà del membro del workspace"
 
 #. js-lingui-id: eObJ3x
 #: src/engine/metadata-modules/ai/ai-history/exceptions/agent-history-storage.exception.ts
@@ -2337,6 +2349,12 @@ msgstr "Il valore del filtro del grafico non è valido per questo operando"
 msgid "Chat message not found."
 msgstr "Messaggio della chat non trovato."
 
+#. js-lingui-id: wATfZo
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Chat messages"
+msgstr "Messaggi di chat"
+
 #. js-lingui-id: /VxChJ
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "Chat thread not found."
@@ -2351,7 +2369,7 @@ msgstr "Il titolo del thread di chat non può essere vuoto."
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Chat threads"
-msgstr ""
+msgstr "Thread di chat"
 
 #. js-lingui-id: 9P+QyJ
 #: src/engine/metadata-modules/object-metadata/constants/standard-relation-field-properties.constant.ts
@@ -2887,6 +2905,18 @@ msgstr "Dimensione della conversazione"
 msgctxt "fieldMetadata.label"
 msgid "Conversation Size"
 msgstr "Dimensione della conversazione"
+
+#. js-lingui-id: qsiOwY
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Conversations"
+msgstr ""
+
+#. js-lingui-id: z+qran
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Conversations held by the run's agent steps"
+msgstr ""
 
 #. js-lingui-id: X/ryFh
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
@@ -10325,6 +10355,12 @@ msgctxt "commandMenuItem.label"
 msgid "Send Test Email"
 msgstr "Invia email di prova"
 
+#. js-lingui-id: fZP2UR
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Sender"
+msgstr "Mittente"
+
 #. js-lingui-id: nzBQFi
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -12094,6 +12130,11 @@ msgstr "Questo account connesso non può essere utilizzato per questa azione."
 msgid "This connection is not allowed."
 msgstr "Questa connessione non è consentita."
 
+#. js-lingui-id: 4GicxZ
+#: src/engine/metadata-modules/ai/ai.exception.ts
+msgid "This conversation belongs to a workflow run and can only be read."
+msgstr ""
+
 #. js-lingui-id: y3SNqs
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "This conversation is too long for the model. Start a new thread to continue."
@@ -12226,6 +12267,11 @@ msgstr "Il percorso di questo file è troppo lungo per il caricamento."
 msgid "This file upload has already been finalized."
 msgstr "Il caricamento di questo file è già stato finalizzato."
 
+#. js-lingui-id: Ee9ncG
+#: src/modules/workflow/workflow-runner/workspace-services/workflow-runner.workspace-service.ts
+msgid "This form is no longer awaiting a submission"
+msgstr "Questo modulo non è più in attesa di un invio"
+
 #. js-lingui-id: bHna44
 #: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
 msgid "This HTTP method is not allowed on this server route."
@@ -12264,12 +12310,12 @@ msgstr "Questo limite è cambiato mentre lo stavi modificando. Ricarica e riprov
 #. js-lingui-id: ReKpPg
 #: src/engine/core-modules/event-logs/event-logs.exception.ts
 msgid "This log filter is not valid."
-msgstr ""
+msgstr "Questo filtro di registro non è valido."
 
 #. js-lingui-id: BuvBj9
 #: src/engine/core-modules/event-logs/event-logs.exception.ts
 msgid "This log table is not valid."
-msgstr ""
+msgstr "Questa tabella di registro non è valida."
 
 #. js-lingui-id: 6Z/zIt
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
@@ -13107,6 +13153,7 @@ msgid "Udpated field is not a morph relation or a relation"
 msgstr "Il campo aggiornato non è né una relazione polimorfica né una relazione"
 
 #. js-lingui-id: y1AZAF
+#: src/database/commands/agent-history/agent-history-migration-state.exception.ts
 #: src/engine/metadata-modules/ai/ai-history/exceptions/agent-history-storage.exception.ts
 msgid "Unable to access AI history. Please try again."
 msgstr "Impossibile accedere alla cronologia AI. Riprova."
@@ -14275,6 +14322,12 @@ msgstr "Posizione del record del workflow"
 msgid "Workflow root step not found."
 msgstr "Passaggio radice del flusso di lavoro non trovato."
 
+#. js-lingui-id: U1tpnT
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Workflow Run"
+msgstr ""
+
 #. js-lingui-id: hqdwCt
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelSingular"
@@ -14345,6 +14398,12 @@ msgctxt "fieldMetadata.label"
 msgid "Workflow run status"
 msgstr "Stato dell'esecuzione del workflow"
 
+#. js-lingui-id: jwF6Mg
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Workflow run whose agent step held this conversation"
+msgstr ""
+
 #. js-lingui-id: Tinlvs
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelPlural"
@@ -14362,6 +14421,12 @@ msgstr "Esecuzioni del workflow legate alla versione."
 msgctxt "fieldMetadata.description"
 msgid "Workflow runs linked to the workflow."
 msgstr "Esecuzioni del workflow collegate al workflow."
+
+#. js-lingui-id: 0madNH
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Workflow Step ID"
+msgstr ""
 
 #. js-lingui-id: dD9Vpa
 #: src/modules/workflow/common/exceptions/workflow-version-step.exception.ts
@@ -14691,7 +14756,13 @@ msgstr "Posizione del membro dello spazio di lavoro"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Workspace member who owns the thread"
-msgstr ""
+msgstr "Membro dello spazio di lavoro proprietario della conversazione"
+
+#. js-lingui-id: Ws6spT
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Workspace member who sent this message"
+msgstr "Membro dello spazio di lavoro che ha inviato questo messaggio"
 
 #. js-lingui-id: scar7N
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
@@ -14824,6 +14895,11 @@ msgstr "Anno per primo"
 #: src/modules/dashboard/chart-data/utils/format-dimension-value.util.ts
 msgid "Yes"
 msgstr "Sì"
+
+#. js-lingui-id: 3N5PgZ
+#: src/engine/metadata-modules/logic-function/logic-function.exception.ts
+msgid "You are not allowed to access this function."
+msgstr ""
 
 #. js-lingui-id: chHKg8
 #: src/engine/subscriptions/event-stream.exception.ts

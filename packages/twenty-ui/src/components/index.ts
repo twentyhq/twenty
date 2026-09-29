@@ -71,6 +71,7 @@ export { Section } from './layout/Section/Section';
 export type { SectionHeaderProps } from './layout/Section/types/SectionHeaderProps';
 export type { SectionRootProps } from './layout/Section/types/SectionRootProps';
 export { Dropdown } from './navigation/Dropdown/Dropdown';
+export { useDropdownPage } from './navigation/Dropdown/hooks/useDropdownPage';
 export type { DropdownActionItemProps } from './navigation/Dropdown/types/DropdownActionItemProps';
 export type { DropdownCloseProps } from './navigation/Dropdown/types/DropdownCloseProps';
 export type { DropdownContentProps } from './navigation/Dropdown/types/DropdownContentProps';

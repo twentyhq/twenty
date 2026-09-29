@@ -17,7 +17,8 @@ export const usePageLayoutRenderableTabs = () => {
   const isMobile = useIsMobile();
   const { targetRecordIdentifier } = useLayoutRenderingContext();
   const isInSidePanel = useWorkspaceSurface().type === 'side-panel';
-  const { currentPageLayout } = useCurrentPageLayoutOrThrow();
+  const { currentPageLayout, pageLayoutPersisted } =
+    useCurrentPageLayoutOrThrow();
   const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
   const { objectMetadataItems } = useObjectMetadataItems();
   const widgetVisibilityContext = useWidgetVisibilityContext();
@@ -31,6 +32,7 @@ export const usePageLayoutRenderableTabs = () => {
 
   const tabsWithVisibleWidgets = getTabsWithVisibleWidgets({
     tabs: currentPageLayout.tabs,
+    persistedTabs: pageLayoutPersisted?.tabs,
     isEditMode: isPageLayoutInEditMode,
     context: widgetVisibilityContext,
   });
