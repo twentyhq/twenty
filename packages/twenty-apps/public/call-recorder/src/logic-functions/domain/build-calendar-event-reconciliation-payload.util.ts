@@ -9,6 +9,8 @@ import { getUniqueSortedIds } from 'src/logic-functions/utils/get-unique-sorted-
 import { resolveConferenceLinkUrl } from 'src/logic-functions/domain/resolve-conference-link-url.util';
 import { stripRestrictedFieldValue } from 'src/logic-functions/data/strip-restricted-field-value.util';
 
+// location and description are key fields because the conference link is
+// parsed out of them when the structured conferenceLink is empty.
 const CALL_RECORDER_KEY_CALENDAR_EVENT_FIELDS = [
   'conferenceLink',
   'location',
