@@ -13,13 +13,18 @@ import { type SyncableFlatEntity } from 'src/engine/metadata-modules/flat-entity
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
+import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-const buildCreationOperations = <TFlatEntity extends SyncableFlatEntity>(
-  standardFlatEntityMaps: FlatEntityMaps<TFlatEntity>,
-  existingFlatEntityMaps: FlatEntityMaps<TFlatEntity>,
-  universalIdentifiers: string[],
-) => ({
+const buildCreationOperations = <TFlatEntity extends SyncableFlatEntity>({
+  standardFlatEntityMaps,
+  existingFlatEntityMaps,
+  universalIdentifiers,
+}: {
+  standardFlatEntityMaps: FlatEntityMaps<TFlatEntity>;
+  existingFlatEntityMaps: FlatEntityMaps<TFlatEntity>;
+  universalIdentifiers: string[];
+}) => ({
   flatEntityToCreate: getStandardFlatEntitiesToCreateOrThrow({
     standardFlatEntityMaps,
     existingFlatEntityMaps,
@@ -101,36 +106,36 @@ export class AddInputAskObjectCommand extends ProvisionedWorkspaceCommandRunner 
       standardAllFlatEntityMaps,
     });
     const allFlatEntityOperationByMetadataName = {
-      objectMetadata: buildCreationOperations(
-        standardAllFlatEntityMaps.flatObjectMetadataMaps,
-        flatObjectMetadataMaps,
-        universalIdentifiers.objectMetadata,
-      ),
-      fieldMetadata: buildCreationOperations(
-        standardAllFlatEntityMaps.flatFieldMetadataMaps,
-        flatFieldMetadataMaps,
-        universalIdentifiers.fieldMetadata,
-      ),
-      index: buildCreationOperations(
-        standardAllFlatEntityMaps.flatIndexMaps,
-        flatIndexMaps,
-        universalIdentifiers.index,
-      ),
-      searchFieldMetadata: buildCreationOperations(
-        standardAllFlatEntityMaps.flatSearchFieldMetadataMaps,
-        flatSearchFieldMetadataMaps,
-        universalIdentifiers.searchFieldMetadata,
-      ),
-      view: buildCreationOperations(
-        standardAllFlatEntityMaps.flatViewMaps,
-        flatViewMaps,
-        universalIdentifiers.view,
-      ),
-      viewField: buildCreationOperations(
-        standardAllFlatEntityMaps.flatViewFieldMaps,
-        flatViewFieldMaps,
-        universalIdentifiers.viewField,
-      ),
+      objectMetadata: buildCreationOperations({
+        standardFlatEntityMaps: standardAllFlatEntityMaps.flatObjectMetadataMaps,
+        existingFlatEntityMaps: flatObjectMetadataMaps,
+        universalIdentifiers: universalIdentifiers.objectMetadata,
+      }),
+      fieldMetadata: buildCreationOperations({
+        standardFlatEntityMaps: standardAllFlatEntityMaps.flatFieldMetadataMaps,
+        existingFlatEntityMaps: flatFieldMetadataMaps,
+        universalIdentifiers: universalIdentifiers.fieldMetadata,
+      }),
+      index: buildCreationOperations({
+        standardFlatEntityMaps: standardAllFlatEntityMaps.flatIndexMaps,
+        existingFlatEntityMaps: flatIndexMaps,
+        universalIdentifiers: universalIdentifiers.index,
+      }),
+      searchFieldMetadata: buildCreationOperations({
+        standardFlatEntityMaps: standardAllFlatEntityMaps.flatSearchFieldMetadataMaps,
+        existingFlatEntityMaps: flatSearchFieldMetadataMaps,
+        universalIdentifiers: universalIdentifiers.searchFieldMetadata,
+      }),
+      view: buildCreationOperations({
+        standardFlatEntityMaps: standardAllFlatEntityMaps.flatViewMaps,
+        existingFlatEntityMaps: flatViewMaps,
+        universalIdentifiers: universalIdentifiers.view,
+      }),
+      viewField: buildCreationOperations({
+        standardFlatEntityMaps: standardAllFlatEntityMaps.flatViewFieldMaps,
+        existingFlatEntityMaps: flatViewFieldMaps,
+        universalIdentifiers: universalIdentifiers.viewField,
+      }),
     };
     const totalOperationCount = Object.values(
       allFlatEntityOperationByMetadataName,
@@ -169,8 +174,9 @@ export class AddInputAskObjectCommand extends ProvisionedWorkspaceCommandRunner 
       );
 
     if (result.status === 'fail') {
-      throw new Error(
-        `Failed to create the inputAsk object for workspace ${workspaceId}: ${JSON.stringify(result, null, 2)}`,
+      throw new WorkspaceMigrationBuilderException(
+        result,
+        `Failed to create the inputAsk object for workspace ${workspaceId}`,
       );
     }
 
@@ -281,8 +287,9 @@ export class AddInputAskObjectCommand extends ProvisionedWorkspaceCommandRunner 
       );
 
     if (result.status === 'fail') {
-      throw new Error(
-        `Failed to remove the inputAsk object for workspace ${workspaceId}: ${JSON.stringify(result, null, 2)}`,
+      throw new WorkspaceMigrationBuilderException(
+        result,
+        `Failed to remove the inputAsk object for workspace ${workspaceId}`,
       );
     }
   }
