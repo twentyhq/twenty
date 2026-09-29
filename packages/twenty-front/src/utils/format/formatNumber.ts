@@ -62,13 +62,17 @@ export const formatNumber = (
     let suffix = '';
     let divisor = 1;
 
-    if (abs >= 1e9) {
+    // Compare the rounded value so 999_999 shows as 1M instead of 1,000k
+    const reachesThousandOnceRounded = (unitDivisor: number) =>
+      Number((abs / unitDivisor).toFixed(options.decimals)) >= 1000;
+
+    if (reachesThousandOnceRounded(1e6)) {
       suffix = 'B';
       divisor = 1e9;
-    } else if (abs >= 1e6) {
+    } else if (reachesThousandOnceRounded(1e3)) {
       suffix = 'M';
       divisor = 1e6;
-    } else if (abs >= 1e3) {
+    } else if (reachesThousandOnceRounded(1)) {
       suffix = 'k';
       divisor = 1e3;
     }
