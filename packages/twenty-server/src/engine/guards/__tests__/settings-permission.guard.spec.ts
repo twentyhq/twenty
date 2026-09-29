@@ -143,6 +143,11 @@ describe('SettingsPermissionGuard', () => {
       ).rejects.toMatchObject({
         code: PermissionsExceptionCode.PERMISSION_DENIED,
       });
+      expect(mockApplicationRepository.findOne).toHaveBeenCalledTimes(1);
+      expect(mockApplicationRepository.findOne).toHaveBeenCalledWith(
+        'workspace-id',
+        { where: { id: 'application-id' } },
+      );
       expect(mockRoleRepository.findOne).not.toHaveBeenCalled();
     });
 
@@ -158,6 +163,12 @@ describe('SettingsPermissionGuard', () => {
       });
 
       await expect(guard.canActivate(mockExecutionContext)).resolves.toBe(true);
+      expect(mockApplicationRepository.findOne).toHaveBeenCalledTimes(1);
+      expect(mockApplicationRepository.findOne).toHaveBeenCalledWith(
+        'workspace-id',
+        { where: { id: 'application-id' } },
+      );
+      expect(mockRoleRepository.findOne).toHaveBeenCalledTimes(1);
       expect(mockRoleRepository.findOne).toHaveBeenCalledWith('workspace-id', {
         where: { id: 'role-id' },
         relations: [
@@ -183,6 +194,19 @@ describe('SettingsPermissionGuard', () => {
       ).rejects.toMatchObject({
         code: PermissionsExceptionCode.PERMISSION_DENIED,
       });
+      expect(mockApplicationRepository.findOne).toHaveBeenCalledTimes(1);
+      expect(mockApplicationRepository.findOne).toHaveBeenCalledWith(
+        'workspace-id',
+        { where: { id: 'application-id' } },
+      );
+      expect(mockRoleRepository.findOne).toHaveBeenCalledTimes(1);
+      expect(mockRoleRepository.findOne).toHaveBeenCalledWith('workspace-id', {
+        where: { id: 'role-id' },
+        relations: [
+          'rolePermissionFlags',
+          'rolePermissionFlags.permissionFlag',
+        ],
+      });
     });
 
     it('should reject with NO_AUTHENTICATION_CONTEXT when the application does not exist', async () => {
@@ -193,6 +217,12 @@ describe('SettingsPermissionGuard', () => {
       ).rejects.toMatchObject({
         code: PermissionsExceptionCode.NO_AUTHENTICATION_CONTEXT,
       });
+      expect(mockApplicationRepository.findOne).toHaveBeenCalledTimes(1);
+      expect(mockApplicationRepository.findOne).toHaveBeenCalledWith(
+        'workspace-id',
+        { where: { id: 'application-id' } },
+      );
+      expect(mockRoleRepository.findOne).not.toHaveBeenCalled();
     });
   });
 });
