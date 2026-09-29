@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { type KeyboardEvent, useMemo, useState } from 'react';
+import { type KeyboardEvent, useState } from 'react';
 import {
   type AskQuestionAnswer,
   type AskQuestionItem,
@@ -357,20 +357,11 @@ export const AiChatQuestionCard = ({
     }
   };
 
-  const allQuestionsAnswered = useMemo(
-    () =>
-      areAllQuestionsAnswered(
-        questions,
-        selectedByQuestion,
-        freeTextByQuestion,
-        otherSelectedByQuestion,
-      ),
-    [
-      questions,
-      selectedByQuestion,
-      freeTextByQuestion,
-      otherSelectedByQuestion,
-    ],
+  const allQuestionsAnswered = areAllQuestionsAnswered(
+    questions,
+    selectedByQuestion,
+    freeTextByQuestion,
+    otherSelectedByQuestion,
   );
 
   const handleSend = () => {
