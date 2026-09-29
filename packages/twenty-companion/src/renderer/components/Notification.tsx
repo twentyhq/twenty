@@ -11,14 +11,16 @@ export const Notification = ({
   message,
   closeLabel,
   onClose,
-}: NotificationProps) => (
-  <Toast
-    className={styles.container}
-    variant="info"
-    duration={6000}
-    closeLabel={closeLabel}
-    onClose={onClose}
-  >
-    {message}
-  </Toast>
-);
+}: NotificationProps) => {
+  return (
+    <Toast
+      className={styles.container}
+      variant="info"
+      duration={6000}
+      closeLabel={closeLabel}
+      onClose={onClose}
+    >
+      {message}
+    </Toast>
+  );
+};
