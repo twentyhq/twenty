@@ -17,7 +17,10 @@ export const isThirdPartyApplication = ({
 }: {
   application: ApplicationLike | null | undefined;
   currentWorkspace: WorkspaceLike | null | undefined;
-}): boolean =>
-  isDefined(application) &&
-  !isTwentyStandardApplication(application) &&
-  !isWorkspaceCustomApplication(application, currentWorkspace);
+}): boolean => {
+  return (
+    isDefined(application) &&
+    !isTwentyStandardApplication(application) &&
+    !isWorkspaceCustomApplication(application, currentWorkspace)
+  );
+};
