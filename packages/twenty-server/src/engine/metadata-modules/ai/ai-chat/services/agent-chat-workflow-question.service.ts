@@ -56,11 +56,11 @@ export class AgentChatWorkflowQuestionService {
     userWorkspaceId: string;
     workspaceId: string;
   }): Promise<void> {
-    const { workflowRunId, workflowStepId } = thread;
+    const { workflowRunId } = thread;
 
-    if (!isNonEmptyString(workflowRunId) || !isNonEmptyString(workflowStepId)) {
+    if (!isNonEmptyString(workflowRunId)) {
       throw new AiException(
-        'This conversation does not belong to a workflow step',
+        'This conversation does not belong to a workflow run',
         AiExceptionCode.QUESTION_NOT_PENDING,
       );
     }
@@ -93,7 +93,7 @@ export class AgentChatWorkflowQuestionService {
     });
 
     let answerMessageId: string | undefined;
-    let isReleased = false;
+    let releasedStepId: string | undefined;
     let isNoLongerAwaited = false;
 
     try {
@@ -112,21 +112,21 @@ export class AgentChatWorkflowQuestionService {
 
       const release =
         await this.workflowRunWorkspaceService.releaseStepAwaitingAnswer({
-          stepId: workflowStepId,
           threadId: thread.id,
           workflowRunId,
           workspaceId,
         });
 
-      isReleased = release === 'RELEASED';
-      isNoLongerAwaited = release === 'NO_LONGER_AWAITING';
+      isNoLongerAwaited = release.status === 'NO_LONGER_AWAITING';
 
-      if (!isReleased) {
+      if (release.status !== 'RELEASED') {
         throw new AiException(
           'This workflow is no longer waiting for this answer',
           AiExceptionCode.QUESTION_NOT_PENDING,
         );
       }
+
+      releasedStepId = release.stepId;
 
       // Re-executing the released step is what a retry does; the step is no
       // longer awaiting a retry, so the retry path runs it without resetting
@@ -134,13 +134,13 @@ export class AgentChatWorkflowQuestionService {
       // schedules would leave the run waiting on an answer it already has.
       await this.messageQueueService.add<RunWorkflowJobData>(
         RUN_WORKFLOW_JOB_NAME,
-        { workspaceId, workflowRunId, stepIdsToRetry: [workflowStepId] },
+        { workspaceId, workflowRunId, stepIdsToRetry: [releasedStepId] },
         buildRunWorkflowJobOptions(workflowRunId),
       );
     } catch (error) {
-      if (isReleased) {
+      if (isDefined(releasedStepId)) {
         await this.workflowRunWorkspaceService.restoreStepAwaitingAnswer({
-          stepId: workflowStepId,
+          stepId: releasedStepId,
           threadId: thread.id,
           workflowRunId,
           workspaceId,

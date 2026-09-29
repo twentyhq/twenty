@@ -13,13 +13,13 @@ import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialE
 import { type AgentMessagePartEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message-part.entity';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
 import { type AgentTurnEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-turn.entity';
+import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { type AgentMessageWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message.workspace-entity';
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
 import { finalizeDanglingToolParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/finalize-dangling-tool-parts.util';
 import { mapAiStepsToUiMessageParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/map-ai-steps-to-ui-message-parts.util';
 import { mapDBPartsToUIMessageParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/mapDBPartsToUIMessageParts';
 import { mapUIMessagePartsToDBParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/mapUIMessagePartsToDBParts';
-import { type AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
 import { findPendingQuestionPart } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-pending-question-part.util';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
@@ -45,7 +45,7 @@ export type RecordedConversation = {
 export class WorkflowAgentConversationWorkspaceService {
   constructor(
     @InjectAgentHistoryRepository('agentChatThread')
-    private readonly threadRepository: AgentHistoryRepository<AgentChatThreadEntity>,
+    private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
     @InjectAgentHistoryRepository('agentTurn')
     private readonly turnRepository: AgentHistoryRepository<AgentTurnEntity>,
     @InjectAgentHistoryRepository('agentMessage')
@@ -84,15 +84,11 @@ export class WorkflowAgentConversationWorkspaceService {
       return null;
     }
 
-    const threadId = randomUUID();
-
-    await this.threadRepository.query(workspaceId, ({ manager, table }) =>
-      manager.query(
-        `INSERT INTO ${table('agentChatThread')} (id, title, "workflowRunId", "workflowStepId")
-         VALUES ($1, $2, $3, $4)`,
-        [threadId, title, workflowRunId, stepId],
-      ),
-    );
+    const threadInsertResult = await this.threadRepository.insert(workspaceId, {
+      title,
+      workflowRunId,
+    });
+    const threadId = threadInsertResult.identifiers[0].id as string;
 
     const turnId = await this.insertTurn({ workspaceId, threadId, agentId });
 
@@ -215,11 +211,10 @@ export class WorkflowAgentConversationWorkspaceService {
 
     // The same marker a chat question sets, so the answer flow can claim the
     // question exactly once.
-    await this.threadRepository.query(workspaceId, ({ manager, table }) =>
-      manager.query(
-        `UPDATE ${table('agentChatThread')} SET "pendingQuestionMessageId" = $2 WHERE id = $1`,
-        [threadId, messageId],
-      ),
+    await this.threadRepository.update(
+      workspaceId,
+      { id: threadId },
+      { pendingQuestionMessageId: messageId },
     );
 
     return true;
