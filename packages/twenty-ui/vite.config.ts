@@ -1,6 +1,5 @@
 import react from '@vitejs/plugin-react-swc';
 import * as fs from 'fs';
-import { Features } from 'lightningcss';
 import * as path from 'path';
 import { defineConfig } from 'vite';
 import checker from 'vite-plugin-checker';
@@ -63,9 +62,6 @@ export default defineConfig(({ command }) => {
       modules: {
         localsConvention: 'camelCaseOnly',
       },
-      lightningcss: {
-        exclude: Features.DirSelector,
-      },
       preprocessorOptions: {
         scss: {
           api: 'modern-compiler',
@@ -120,6 +116,7 @@ export default defineConfig(({ command }) => {
     ],
     build: {
       cssCodeSplit: false,
+      cssMinify: 'esbuild',
       minify: 'esbuild',
       sourcemap: false,
       emptyOutDir: false,

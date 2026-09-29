@@ -40,7 +40,7 @@ Legacy MenuItem, MenuItemAvatar, MenuItemDraggable, MenuItemSuggestion, and Menu
 
 ## Build and renderer
 
-Lightning CSS lowers `:dir()` into a `:lang()` approximation for targets without native support, which picks the wrong rules whenever `dir` differs from the document language. The twenty-ui and twenty-front Vite configs exclude that lowering through `css.lightningcss.exclude`, so both the published stylesheet and the application bundle keep `:dir()`.
+The twenty-ui and twenty-front builds use their existing esbuild dependency to minify CSS while preserving native `:dir()` selectors. Direction-sensitive styles follow the HTML `dir` attribute independently of the document language.
 
 The front component renderer forwards the global `dir` attribute on every element, which logical properties and `:dir()` selectors need inside front components. Popup compatibility in the renderer sandbox is tracked in the renderer gallery README.
 
