@@ -87,7 +87,8 @@ export const validateWorkflowVersionRecordFields = ({
 
   if (
     step.type === 'UPDATE_RECORD' &&
-    (step.settings.input.fieldsToUpdate.length === 0 ||
+    (!isDefined(step.settings.input.fieldsToUpdate) ||
+      step.settings.input.fieldsToUpdate.length === 0 ||
       step.settings.input.fieldsToUpdate.some(
         (name) =>
           !fieldNames.has(name) ||

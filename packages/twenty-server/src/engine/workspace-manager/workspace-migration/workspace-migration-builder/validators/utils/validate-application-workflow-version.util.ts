@@ -52,7 +52,9 @@ export const validateApplicationWorkflowVersion = ({
     const identities = [
       workflow?.universalIdentifier,
       version.universalIdentifier,
-      trigger.universalIdentifier,
+      'universalIdentifier' in trigger
+        ? trigger.universalIdentifier
+        : undefined,
       ...steps.map((step) => step.id),
     ].filter(isDefined);
     if (new Set(identities).size !== identities.length) {

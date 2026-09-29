@@ -18,7 +18,7 @@ const STEP_ID = '55555555-5555-4555-8555-555555555555';
 const buildOptions = {
   isSystemBuild: false,
   applicationUniversalIdentifier: APPLICATION_ID,
-  inferDeletionFromMissingEntities: true,
+  inferDeletionFromMissingEntities: true as const,
 };
 const manifest: WorkflowManifest = {
   universalIdentifier: WORKFLOW_ID,
@@ -112,9 +112,9 @@ describe('application workflow version side effects', () => {
   it('creates a managed companion and excludes its payload from scalar storage', () => {
     const { workflow, version } = convert();
     const operations = expand(workflow);
-    expect(operations.workflowVersion?.flatEntityToCreate[VERSION_ID]).toEqual(
-      version,
-    );
+    expect(
+      operations.workflowVersion?.flatEntityToCreate?.[VERSION_ID],
+    ).toEqual(version);
     expect(version.isSystemSideEffect).toBe(true);
     expect(
       flatEntityToScalarFlatEntity({
@@ -134,7 +134,7 @@ describe('application workflow version side effects', () => {
       before.workflow.versionDefinitionHash,
     );
     expect(
-      operations.workflowVersion?.flatEntityToUpdate[VERSION_ID],
+      operations.workflowVersion?.flatEntityToUpdate?.[VERSION_ID],
     ).toMatchObject({
       id: before.version.id,
       steps: [{ name: 'Updated step' }],
@@ -195,7 +195,7 @@ describe('application workflow version side effects', () => {
     const after = convert(manifest, existing);
     const operations = expand(after.workflow, existing);
     expect(
-      operations.workflowVersion?.flatEntityToUpdate[VERSION_ID],
+      operations.workflowVersion?.flatEntityToUpdate?.[VERSION_ID],
     ).toMatchObject({ id: before.version.id, isSystemSideEffect: true });
     expect(operations.workflowVersion?.flatEntityToDelete).toBeUndefined();
   });
