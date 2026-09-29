@@ -177,7 +177,6 @@ export class InputAskWorkspaceService {
         await inputAskRepository.insert({
           name,
           status: InputAskStatus.PENDING,
-          source: InputAskSource.WORKFLOW_RUN_STEP,
           form: { questions },
           workflowRunId,
           stepId,
