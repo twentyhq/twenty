@@ -1,8 +1,3 @@
-import {
-  MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID,
-  MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID,
-} from '@/ui/input/components/internal/date/components/DatePicker';
-import { DATE_TIME_PICKER_MONTH_YEAR_PANEL_DROPDOWN_ID } from '@/ui/input/components/internal/date/constants/DateTimePickerMonthYearPanelDropdownId';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useId, useRef, useState } from 'react';
@@ -16,6 +11,7 @@ import {
 } from '@floating-ui/react';
 
 import { DateTimePicker } from '@/ui/input/components/internal/date/components/DateTimePicker';
+import { useIsDatePickerDropdownOpen } from '@/ui/input/components/internal/date/hooks/useIsDatePickerDropdownOpen';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
 import { ParentClickOutsideIdContext } from '@/ui/utilities/pointer-event/contexts/ParentClickOutsideIdContext';
@@ -86,6 +82,7 @@ export const SettingsDatePickerInput = ({
   const generatedId = useId();
 
   const pickerInstanceId = instanceId ?? label ?? generatedId;
+  const dateTimePickerInstanceId = `settings-date-picker-${pickerInstanceId}`;
 
   const { refs, floatingStyles } = useFloating({
     open: isOpen,
@@ -98,17 +95,20 @@ export const SettingsDatePickerInput = ({
     setIsOpen(false);
   };
 
+  const { isDatePickerDropdownOpen } = useIsDatePickerDropdownOpen();
+
   useListenClickOutside({
     refs: [containerRef],
-    listenerId: `settings-date-picker-${pickerInstanceId}`,
-    callback: handleClose,
+    listenerId: dateTimePickerInstanceId,
+    callback: () => {
+      if (isDatePickerDropdownOpen(dateTimePickerInstanceId)) {
+        return;
+      }
+
+      handleClose();
+    },
     enabled: isOpen,
-    excludedClickOutsideIds: [
-      SETTINGS_DATE_PICKER_CLICK_OUTSIDE_ID,
-      DATE_TIME_PICKER_MONTH_YEAR_PANEL_DROPDOWN_ID,
-      MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID,
-      MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID,
-    ],
+    excludedClickOutsideIds: [SETTINGS_DATE_PICKER_CLICK_OUTSIDE_ID],
   });
 
   const handleDateTimeChange = (newDateTime: Temporal.ZonedDateTime | null) => {
@@ -172,7 +172,7 @@ export const SettingsDatePickerInput = ({
                 value={SETTINGS_DATE_PICKER_CLICK_OUTSIDE_ID}
               >
                 <DateTimePicker
-                  instanceId={`settings-date-picker-${pickerInstanceId}`}
+                  instanceId={dateTimePickerInstanceId}
                   date={zonedDateTime}
                   onChange={handleDateTimeChange}
                   onClose={handleDateTimeClose}

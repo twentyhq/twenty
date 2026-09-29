@@ -1,4 +1,4 @@
-import { OverlayMenuList } from '@/ui/layout/overlay/components/OverlayMenuList';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { StyledOverlayPortalLayer } from '@/ui/layout/overlay/components/StyledOverlayPortalLayer';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
@@ -13,11 +13,12 @@ type ExpandedListDropdownProps = {
   onClickOutside?: () => void;
 };
 
-const StyledExpandedListContainer = styled.div`
+const StyledExpandedListContainer = styled.div<{ widthInPixels: number }>`
   display: flex;
   flex-wrap: wrap;
   gap: ${themeCssVariables.spacing[1]};
   padding: ${themeCssVariables.spacing[2]};
+  width: ${({ widthInPixels }) => widthInPixels}px;
 `;
 
 // TODO: unify this and use Dropdown component instead
@@ -43,7 +44,7 @@ export const ExpandedListDropdown = ({
 
   const dropdownContentWidth = anchorElement
     ? Math.max(220, anchorElement.offsetWidth)
-    : undefined;
+    : GenericDropdownContentWidth.Medium;
 
   return (
     <FloatingPortal>
@@ -53,15 +54,9 @@ export const ExpandedListDropdown = ({
         style={floatingStyles}
       >
         <OverlayContainer>
-          <OverlayMenuList
-            width={dropdownContentWidth}
-            padded={false}
-            maxHeight={null}
-          >
-            <StyledExpandedListContainer>
-              {children}
-            </StyledExpandedListContainer>
-          </OverlayMenuList>
+          <StyledExpandedListContainer widthInPixels={dropdownContentWidth}>
+            {children}
+          </StyledExpandedListContainer>
         </OverlayContainer>
       </StyledOverlayPortalLayer>
     </FloatingPortal>

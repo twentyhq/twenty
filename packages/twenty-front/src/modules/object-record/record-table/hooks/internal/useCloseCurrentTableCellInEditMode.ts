@@ -25,7 +25,6 @@ export const useCloseCurrentTableCellInEditMode = (recordTableId?: string) => {
   }, [
     store,
     currentTableCellInEditModePosition,
-
     removeLastFocusItemFromFocusStackByComponentType,
   ]);
 };

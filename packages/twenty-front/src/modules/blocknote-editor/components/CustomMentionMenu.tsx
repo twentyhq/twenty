@@ -7,11 +7,10 @@ import { createPortal } from 'react-dom';
 import { MENTION_MENU_DROPDOWN_CLICK_OUTSIDE_ID } from '@/ui/input/constants/MentionMenuDropdownClickOutsideId';
 import { MentionMenuListItem } from '@/mention/components/MentionMenuListItem';
 import { type CustomMentionMenuProps } from '@/blocknote-editor/types/SuggestionMenuItems';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { OverlayMenuList } from '@/ui/layout/overlay/components/OverlayMenuList';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
 import { isDefined } from 'twenty-shared/utils';
-
-const MENU_WIDTH = 240;
 
 const StyledContainer = styled.div`
   height: 1px;
@@ -58,7 +57,7 @@ export const CustomMentionMenu = ({
               style={floatingStyles}
               data-click-outside-id={MENTION_MENU_DROPDOWN_CLICK_OUTSIDE_ID}
             >
-              <OverlayMenuList width={MENU_WIDTH}>
+              <OverlayMenuList width={GenericDropdownContentWidth.Large}>
                 {filteredItems.map((item, index) => (
                   <MentionMenuListItem
                     key={item.recordId!}

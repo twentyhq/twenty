@@ -1,23 +1,21 @@
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { styled } from '@linaria/react';
 import { type ReactNode, type Ref } from 'react';
-import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-const DEFAULT_MENU_WIDTH = 200;
-const DEFAULT_MENU_MAX_HEIGHT = 176;
+const MENU_MAX_HEIGHT = 176;
 
-const StyledContainer = styled.div<{ width: number }>`
+const StyledContainer = styled.div<{ widthInPixels: number }>`
   display: flex;
   flex-direction: column;
   height: 100%;
-  width: ${({ width }) => width}px;
+  width: ${({ widthInPixels }) => widthInPixels}px;
 `;
 
-const StyledScrollableContainer = styled.div<{ maxHeight?: number | null }>`
+const StyledScrollableContainer = styled.div`
   box-sizing: border-box;
   display: flex;
-  max-height: ${({ maxHeight }) =>
-    isDefined(maxHeight) ? `${maxHeight}px` : 'none'};
+  max-height: ${MENU_MAX_HEIGHT}px;
   overflow-y: auto;
   scrollbar-color: ${themeCssVariables.border.color.medium} transparent;
   scrollbar-width: thin;
@@ -28,34 +26,30 @@ const StyledScrollableContainer = styled.div<{ maxHeight?: number | null }>`
   }
 `;
 
-const StyledItems = styled.div<{ padded: boolean }>`
+const StyledItems = styled.div`
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.betweenSiblingsGap};
   height: fit-content;
-  padding: ${({ padded }) => (padded ? themeCssVariables.spacing[1] : 0)};
+  padding: ${themeCssVariables.spacing[1]};
   width: 100%;
 `;
 
 type OverlayMenuListProps = {
   children: ReactNode;
   width?: number;
-  maxHeight?: number | null;
-  padded?: boolean;
   ref?: Ref<HTMLDivElement>;
 };
 
 export const OverlayMenuList = ({
   children,
-  width = DEFAULT_MENU_WIDTH,
-  maxHeight = DEFAULT_MENU_MAX_HEIGHT,
-  padded = true,
+  width = GenericDropdownContentWidth.Medium,
   ref,
 }: OverlayMenuListProps) => (
-  <StyledContainer ref={ref} width={width}>
-    <StyledScrollableContainer maxHeight={maxHeight}>
-      <StyledItems padded={padded}>{children}</StyledItems>
+  <StyledContainer ref={ref} widthInPixels={width}>
+    <StyledScrollableContainer>
+      <StyledItems>{children}</StyledItems>
     </StyledScrollableContainer>
   </StyledContainer>
 );

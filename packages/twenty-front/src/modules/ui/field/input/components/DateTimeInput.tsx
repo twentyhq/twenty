@@ -1,14 +1,8 @@
-import {
-  MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID,
-  MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID,
-} from '@/ui/input/components/internal/date/components/DatePicker';
-import { DATE_TIME_PICKER_MONTH_YEAR_PANEL_DROPDOWN_ID } from '@/ui/input/components/internal/date/constants/DateTimePickerMonthYearPanelDropdownId';
 import { useCallback, useRef, useState } from 'react';
 
 import { useRegisterInputEvents } from '@/object-record/record-field/ui/meta-types/input/hooks/useRegisterInputEvents';
 import { DateTimePicker } from '@/ui/input/components/internal/date/components/DateTimePicker';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { currentFocusIdSelector } from '@/ui/utilities/focus/states/currentFocusIdSelector';
 import { useStore } from 'jotai';
 import { type Temporal } from 'temporal-polyfill';
@@ -64,23 +58,11 @@ export const DateTimeInput = ({
     onSubmit?.(newDateTime?.toInstant());
   };
 
-  const { closeDropdown: closeDropdownMonthSelect } = useCloseDropdown();
-  const { closeDropdown: closeDropdownYearSelect } = useCloseDropdown();
-  const { closeDropdown: closeMonthYearPanel } = useCloseDropdown();
-
   const handleEnter = () => {
-    closeDropdownYearSelect(MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID);
-    closeDropdownMonthSelect(MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID);
-    closeMonthYearPanel(DATE_TIME_PICKER_MONTH_YEAR_PANEL_DROPDOWN_ID);
-
     onEnter(internalValue);
   };
 
   const handleEscape = () => {
-    closeDropdownYearSelect(MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID);
-    closeDropdownMonthSelect(MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID);
-    closeMonthYearPanel(DATE_TIME_PICKER_MONTH_YEAR_PANEL_DROPDOWN_ID);
-
     onEscape(internalValue);
   };
 
@@ -89,21 +71,10 @@ export const DateTimeInput = ({
       const currentFocusId = store.get(currentFocusIdSelector.atom);
 
       if (currentFocusId === instanceId) {
-        closeDropdownYearSelect(MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID);
-        closeDropdownMonthSelect(MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID);
-        closeMonthYearPanel(DATE_TIME_PICKER_MONTH_YEAR_PANEL_DROPDOWN_ID);
         onClickOutside(event, internalValue);
       }
     },
-    [
-      instanceId,
-      closeDropdownYearSelect,
-      closeDropdownMonthSelect,
-      closeMonthYearPanel,
-      onClickOutside,
-      internalValue,
-      store,
-    ],
+    [instanceId, onClickOutside, internalValue, store],
   );
 
   const internalZonedDateTime = internalValue?.toZonedDateTimeISO(userTimezone);

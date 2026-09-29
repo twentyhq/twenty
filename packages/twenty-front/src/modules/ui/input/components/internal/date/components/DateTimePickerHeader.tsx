@@ -8,12 +8,12 @@ import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
 import { Select } from '@/ui/input/components/Select';
 import { DateTimePickerInput } from '@/ui/input/components/internal/date/components/DateTimePickerInput';
 import { useTimeInput } from '@/ui/input/components/internal/date/hooks/useTimeInput';
+import { getDatePickerDropdownIds } from '@/ui/input/components/internal/date/utils/getDatePickerDropdownIds';
 import { getMonthSelectOptions } from '@/ui/input/components/internal/date/utils/getMonthSelectOptions';
 import { getTimeBlocks } from '@/ui/input/components/internal/date/utils/getTimeBlocks';
 import { getTimeMask } from '@/ui/input/components/internal/date/utils/getTimeMask';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
-import { DATE_TIME_PICKER_MONTH_YEAR_PANEL_DROPDOWN_ID } from '@/ui/input/components/internal/date/constants/DateTimePickerMonthYearPanelDropdownId';
 import { t } from '@lingui/core/macro';
 import { type Temporal } from 'temporal-polyfill';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
@@ -26,11 +26,6 @@ import {
   IconClock,
 } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
-
-import {
-  MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID,
-  MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID,
-} from '@/ui/input/components/internal/date/components/DatePicker';
 
 const YEARS_SELECT_OPTIONS = Array.from(
   { length: 200 },
@@ -126,6 +121,7 @@ const StyledMonthYearSelector = styled.div`
 `;
 
 type DateTimePickerHeaderProps = {
+  instanceId: string;
   date: Temporal.ZonedDateTime | null;
   onChange?: (date: Temporal.ZonedDateTime | null) => void;
   onAddMonth: () => void;
@@ -138,6 +134,7 @@ type DateTimePickerHeaderProps = {
 };
 
 export const DateTimePickerHeader = ({
+  instanceId,
   date,
   onChange,
   onAddMonth,
@@ -153,6 +150,12 @@ export const DateTimePickerHeader = ({
 
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const userLocale = currentWorkspaceMember?.locale ?? SOURCE_LOCALE;
+
+  const {
+    monthSelectDropdownId,
+    yearSelectDropdownId,
+    monthYearPanelDropdownId,
+  } = getDatePickerDropdownIds(instanceId);
 
   const { ref: iMaskRef, setValue } = useIMask(
     {
@@ -210,10 +213,7 @@ export const DateTimePickerHeader = ({
           </StyledTimeInputContainer>
         </StyledTimeInputWrapper>
         <StyledRightControls>
-          <DropdownRoot
-            dropdownId={DATE_TIME_PICKER_MONTH_YEAR_PANEL_DROPDOWN_ID}
-            type="panel"
-          >
+          <DropdownRoot dropdownId={monthYearPanelDropdownId} type="panel">
             <Dropdown.Trigger
               render={
                 <LightIconButton
@@ -232,7 +232,7 @@ export const DateTimePickerHeader = ({
             >
               <StyledMonthYearSelector>
                 <Select
-                  dropdownId={MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID}
+                  dropdownId={monthSelectDropdownId}
                   options={getMonthSelectOptions(userLocale)}
                   onChange={onChangeMonth}
                   value={date?.month}
@@ -240,7 +240,7 @@ export const DateTimePickerHeader = ({
                   dropdownWidth={160}
                 />
                 <Select
-                  dropdownId={MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID}
+                  dropdownId={yearSelectDropdownId}
                   onChange={onChangeYear}
                   value={date?.year}
                   options={YEARS_SELECT_OPTIONS}

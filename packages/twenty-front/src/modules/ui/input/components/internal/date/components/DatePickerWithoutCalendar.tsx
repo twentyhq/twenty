@@ -78,9 +78,6 @@ export const DatePickerWithoutCalendar = ({
 
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
 
-  const monthSelectDropdownId = `${instanceId}-month-select`;
-  const yearSelectDropdownId = `${instanceId}-year-select`;
-
   const handleChangeMonth = (month: number) => {
     const newDate = plainDate?.with({ month: month });
 
@@ -193,8 +190,7 @@ export const DatePickerWithoutCalendar = ({
             }) => (
               <>
                 <DatePickerHeader
-                  monthSelectDropdownId={monthSelectDropdownId}
-                  yearSelectDropdownId={yearSelectDropdownId}
+                  instanceId={instanceId}
                   date={plainDate?.toString() ?? null}
                   onChange={onChange}
                   onChangeMonth={handleChangeMonth}

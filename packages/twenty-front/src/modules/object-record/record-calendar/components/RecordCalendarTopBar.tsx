@@ -23,6 +23,7 @@ import { useUpdateCurrentView } from '@/views/hooks/useUpdateCurrentView';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { format } from 'date-fns';
+import { useRef } from 'react';
 import { Temporal } from 'temporal-polyfill';
 import { type Nullable } from 'twenty-shared/types';
 import {
@@ -94,6 +95,7 @@ export const RecordCalendarTopBar = () => {
   const { updateCurrentView } = useUpdateCurrentView();
 
   const datePickerDropdownId = `record-calendar-date-picker-${recordCalendarId}`;
+  const datePickerDropdownContentRef = useRef<HTMLDivElement>(null);
   const { closeDropdown } = useCloseDropdown();
 
   const handleDateChange = (plainDateString: Nullable<string>) => {
@@ -181,7 +183,9 @@ export const RecordCalendarTopBar = () => {
             />
           </Dropdown.Trigger>
           <DropdownContent
-            width={280}
+            ref={datePickerDropdownContentRef}
+            initialFocus={datePickerDropdownContentRef}
+            width="fit-content"
             align="end"
             alignOffset={-140}
             aria-label={t`Select date`}

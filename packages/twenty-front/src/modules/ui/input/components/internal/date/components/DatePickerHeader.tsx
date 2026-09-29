@@ -5,8 +5,8 @@ import { Select } from '@/ui/input/components/Select';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { DatePickerInput } from '@/ui/input/components/internal/date/components/DatePickerInput';
+import { getDatePickerDropdownIds } from '@/ui/input/components/internal/date/utils/getDatePickerDropdownIds';
 import { getMonthSelectOptions } from '@/ui/input/components/internal/date/utils/getMonthSelectOptions';
-import { ClickOutsideListenerContext } from '@/ui/utilities/pointer-event/contexts/ClickOutsideListenerContext';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { Temporal } from 'temporal-polyfill';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
@@ -15,10 +15,6 @@ import { LightIconButton } from 'twenty-ui/components';
 import { IconChevronLeft, IconChevronRight } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-const MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID =
-  'date-picker-month-and-year-dropdown-month-select';
-const MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID =
-  'date-picker-month-and-year-dropdown-year-select';
 const YEARS_SELECT_OPTIONS = Array.from(
   { length: 200 },
   (_, i) => new Date().getFullYear() + 50 - i,
@@ -36,6 +32,7 @@ const StyledCustomDatePickerHeader = styled.div`
 `;
 
 type DatePickerHeaderProps = {
+  instanceId: string;
   date: string | null;
   onChange?: (date: string | null) => void;
   onChangeMonth: (month: number) => void;
@@ -45,11 +42,10 @@ type DatePickerHeaderProps = {
   prevMonthButtonDisabled: boolean;
   nextMonthButtonDisabled: boolean;
   hideInput?: boolean;
-  monthSelectDropdownId?: string;
-  yearSelectDropdownId?: string;
 };
 
 export const DatePickerHeader = ({
+  instanceId,
   date,
   onChange,
   onChangeMonth,
@@ -59,11 +55,12 @@ export const DatePickerHeader = ({
   prevMonthButtonDisabled,
   nextMonthButtonDisabled,
   hideInput = false,
-  monthSelectDropdownId = MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID,
-  yearSelectDropdownId = MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID,
 }: DatePickerHeaderProps) => {
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const userLocale = currentWorkspaceMember?.locale ?? SOURCE_LOCALE;
+
+  const { monthSelectDropdownId, yearSelectDropdownId } =
+    getDatePickerDropdownIds(instanceId);
 
   const dateParsed = isDefined(date) ? Temporal.PlainDate.from(date) : null;
 
@@ -71,32 +68,20 @@ export const DatePickerHeader = ({
     <>
       {!hideInput && <DatePickerInput date={date} onChange={onChange} />}
       <StyledCustomDatePickerHeader>
-        <ClickOutsideListenerContext.Provider
-          value={{
-            excludedClickOutsideId: monthSelectDropdownId,
-          }}
-        >
-          <Select
-            dropdownId={monthSelectDropdownId}
-            options={getMonthSelectOptions(userLocale)}
-            onChange={onChangeMonth}
-            value={dateParsed?.month}
-            fullWidth
-          />
-        </ClickOutsideListenerContext.Provider>
-        <ClickOutsideListenerContext.Provider
-          value={{
-            excludedClickOutsideId: yearSelectDropdownId,
-          }}
-        >
-          <Select
-            dropdownId={yearSelectDropdownId}
-            onChange={onChangeYear}
-            value={dateParsed?.year}
-            options={YEARS_SELECT_OPTIONS}
-            fullWidth
-          />
-        </ClickOutsideListenerContext.Provider>
+        <Select
+          dropdownId={monthSelectDropdownId}
+          options={getMonthSelectOptions(userLocale)}
+          onChange={onChangeMonth}
+          value={dateParsed?.month}
+          fullWidth
+        />
+        <Select
+          dropdownId={yearSelectDropdownId}
+          onChange={onChangeYear}
+          value={dateParsed?.year}
+          options={YEARS_SELECT_OPTIONS}
+          fullWidth
+        />
         <LightIconButton
           onClick={onSubtractMonth}
           size="md"

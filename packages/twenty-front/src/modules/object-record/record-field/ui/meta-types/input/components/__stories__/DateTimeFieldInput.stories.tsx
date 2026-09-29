@@ -6,7 +6,6 @@ import { Button } from 'twenty-ui/primitives/input';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
-import { RecordFieldsScopeContextProvider } from '@/object-record/record-field-list/contexts/RecordFieldsScopeContext';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { useDateTimeField } from '@/object-record/record-field/ui/meta-types/hooks/useDateTimeField';
 import { getFieldInputEventContextProviderWithJestMocks } from '@/object-record/record-field/ui/meta-types/input/components/__stories__/utils/getFieldInputEventContextProviderWithJestMocks';
@@ -91,14 +90,10 @@ const DateFieldInputWithContext = ({
           isRecordFieldReadOnly: false,
         }}
       >
-        <RecordFieldsScopeContextProvider
-          value={{ scopeInstanceId: instanceId }}
-        >
-          <FieldInputEventContextProviderWithJestMocks>
-            <DateFieldValueSetterEffect value={value} />
-            <DateFieldValueGater />
-          </FieldInputEventContextProviderWithJestMocks>
-        </RecordFieldsScopeContextProvider>
+        <FieldInputEventContextProviderWithJestMocks>
+          <DateFieldValueSetterEffect value={value} />
+          <DateFieldValueGater />
+        </FieldInputEventContextProviderWithJestMocks>
       </FieldContext.Provider>
       <Button>Outside date field</Button>
     </RecordFieldComponentInstanceContext.Provider>

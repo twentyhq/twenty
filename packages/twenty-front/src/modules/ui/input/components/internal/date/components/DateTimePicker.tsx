@@ -1,4 +1,3 @@
-import { DATE_TIME_PICKER_MONTH_YEAR_PANEL_DROPDOWN_ID } from '@/ui/input/components/internal/date/constants/DateTimePickerMonthYearPanelDropdownId';
 import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
 import {
   convertFirstDayOfTheWeekToCalendarStartDayNumber,
@@ -12,7 +11,6 @@ import { RelativeDatePickerHeader } from '@/ui/input/components/internal/date/co
 import { RelativeDateTimeRangeText } from '@/ui/input/components/internal/date/components/RelativeDateTimeRangeText';
 import { StyledDatePickerContainer } from '@/ui/input/components/internal/date/components/StyledDatePickerContainer';
 import { getRelativeDatePickerCalendarRange } from '@/ui/input/components/internal/date/utils/getRelativeDatePickerCalendarRange';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { Suspense, lazy, type ComponentType } from 'react';
@@ -148,8 +146,6 @@ export const DateTimePicker = ({
   const dateToUse =
     date ?? Temporal.Now.zonedDateTimeISO(timeZone ?? userTimezone);
 
-  const { closeDropdown: closeMonthYearPanel } = useCloseDropdown();
-
   const { getShiftedDateToSystemTimeZone } =
     useGetShiftedDateToSystemTimeZone();
 
@@ -168,16 +164,6 @@ export const DateTimePicker = ({
       });
 
     return { zonedDateTime };
-  };
-
-  const handleClear = () => {
-    closeMonthYearPanel(DATE_TIME_PICKER_MONTH_YEAR_PANEL_DROPDOWN_ID);
-    onClear?.();
-  };
-
-  const handleClose = (newDate: Temporal.ZonedDateTime) => {
-    closeMonthYearPanel(DATE_TIME_PICKER_MONTH_YEAR_PANEL_DROPDOWN_ID);
-    onClose?.(newDate);
   };
 
   const handleChangeMonth = (month: number) => {
@@ -219,7 +205,7 @@ export const DateTimePicker = ({
     }
     const { zonedDateTime } = getZonedDateTimeFromDatePicked(newDate);
 
-    handleClose?.(zonedDateTime);
+    onClose?.(zonedDateTime);
   };
 
   const relativeUnit = relativeDate?.unit ?? 'DAY';
@@ -350,6 +336,7 @@ export const DateTimePicker = ({
                   />
                 ) : (
                   <DateTimePickerHeader
+                    instanceId={instanceId}
                     date={dateToUse}
                     onChange={onChange}
                     onAddMonth={handleAddMonth}
@@ -368,7 +355,7 @@ export const DateTimePicker = ({
         {clearable && (
           <>
             <StyledSeparator />
-            <StyledButtonContainer onClick={handleClear}>
+            <StyledButtonContainer onClick={() => onClear?.()}>
               <StyledButtonContent>
                 <IconCalendarX size={theme.icon.size.md} />
                 <Text>{t`Clear`}</Text>

@@ -4,6 +4,14 @@ const DISMISSING_EVENT_TYPES_FOLLOWED_BY_CLICK = [
   'focusout',
 ];
 
+const EVENT_TYPES_CANCELLING_FOLLOWING_CLICK = ['pointerdown', 'keydown'];
+
+const EVENT_TYPES_CANCELLING_FOLLOWING_CLICK_AFTER_FOCUS_OUT = [
+  ...EVENT_TYPES_CANCELLING_FOLLOWING_CLICK,
+  'keyup',
+  'mousedown',
+];
+
 const stopActivation = (event: Event) => {
   event.preventDefault();
   event.stopPropagation();
@@ -30,6 +38,10 @@ export const preventDismissingClickActivation = (event: Event) => {
     capture: true,
     signal: followingClickListeners.signal,
   };
+  const eventTypesCancellingFollowingClick =
+    event.type === 'focusout'
+      ? EVENT_TYPES_CANCELLING_FOLLOWING_CLICK_AFTER_FOCUS_OUT
+      : EVENT_TYPES_CANCELLING_FOLLOWING_CLICK;
 
   listenerTarget.addEventListener(
     'click',
@@ -39,14 +51,12 @@ export const preventDismissingClickActivation = (event: Event) => {
     },
     listenerOptions,
   );
-  listenerTarget.addEventListener(
-    'pointerdown',
-    stopListeningForFollowingClick,
-    listenerOptions,
-  );
-  listenerTarget.addEventListener(
-    'keydown',
-    stopListeningForFollowingClick,
-    listenerOptions,
-  );
+
+  for (const eventType of eventTypesCancellingFollowingClick) {
+    listenerTarget.addEventListener(
+      eventType,
+      stopListeningForFollowingClick,
+      listenerOptions,
+    );
+  }
 };

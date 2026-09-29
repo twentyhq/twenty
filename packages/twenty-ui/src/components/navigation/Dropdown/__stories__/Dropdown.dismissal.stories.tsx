@@ -38,6 +38,24 @@ const DismissibleRecordActions = ({
   );
 };
 
+const RecordDetailsPanel = ({
+  onInteractOutside,
+  onOutsideClick,
+}: DismissibleRecordActionsProps) => {
+  return (
+    <>
+      <Button>Before</Button>
+      <Dropdown.Root type="panel" onInteractOutside={onInteractOutside}>
+        <Dropdown.Trigger>Record details</Dropdown.Trigger>
+        <Dropdown.Content aria-label="Record details" initialFocus={false}>
+          Last updated today
+        </Dropdown.Content>
+      </Dropdown.Root>
+      <Button onClick={onOutsideClick}>Outside</Button>
+    </>
+  );
+};
+
 const preventDismiss = (event: DropdownDismissEvent) => {
   event.preventDefault();
 };
@@ -185,5 +203,33 @@ export const TabAway: Story = {
     expect(args.onInteractOutside).toHaveBeenCalledWith(
       expect.objectContaining({ target: null }),
     );
+  },
+};
+
+export const ShiftTabAwayKeepsNextClick: Story = {
+  render: (args) => <RecordDetailsPanel {...args} />,
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+    const trigger = canvas.getByRole('button', { name: 'Record details' });
+
+    await userEvent.click(trigger);
+    await waitFor(() =>
+      expect(
+        body.getByRole('dialog', { name: 'Record details' }),
+      ).toBeVisible(),
+    );
+    expect(trigger).toHaveFocus();
+
+    await userEvent.tab({ shift: true });
+
+    await waitFor(() =>
+      expect(body.queryByRole('dialog')).not.toBeInTheDocument(),
+    );
+    expect(args.onInteractOutside).toHaveBeenCalled();
+
+    canvas.getByRole('button', { name: 'Outside' }).click();
+
+    expect(args.onOutsideClick).toHaveBeenCalledOnce();
   },
 };
