@@ -322,12 +322,25 @@ describe('systemObjectRecordsPermissions', () => {
     });
 
     it('should deny creating a message thread', async () => {
+      // Threads are shared per record, so an API key must say whom it shares
+      // a new one with before its role is checked.
       const response = await makeGraphqlApiRequest(
-        createOneOperationFactory({
-          objectMetadataSingularName: 'messageThread',
-          gqlFields: 'id',
-          data: { id: messageThreadId },
-        }),
+        {
+          query: gql`
+            mutation CreateMessageThread(
+              $data: MessageThreadCreateInput!
+              $shareWith: [ShareWithInput!]
+            ) {
+              createMessageThread(data: $data, shareWith: $shareWith) {
+                id
+              }
+            }
+          `,
+          variables: {
+            data: { id: messageThreadId },
+            shareWith: [{ everyone: true, accessLevel: 'READ' }],
+          },
+        },
         readOnlyApiKeyToken,
       );
 
