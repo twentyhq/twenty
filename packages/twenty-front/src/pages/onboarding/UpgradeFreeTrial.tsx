@@ -18,6 +18,7 @@ import { CAL_LINK } from '@/onboarding/constants/CalLink';
 import { OnboardingPlanTag } from '@/onboarding/components/upgrade-free-trial/OnboardingPlanTag';
 import { useSetOnboardingUpgradeTrialFreeCredits } from '@/onboarding/hooks/useSetOnboardingUpgradeTrialFreeCredits';
 import { isOnboardingCheckoutPendingState } from '@/onboarding/states/isOnboardingCheckoutPendingState';
+import { formatOnboardingCredits } from '@/onboarding/utils/formatOnboardingCredits';
 import { getOnboardingCreditsRewardAriaLabel } from '@/onboarding/utils/getOnboardingCreditsRewardAriaLabel';
 import { useBaseLicensedPriceByPlanKeyAndInterval } from '@/settings/billing/hooks/useBaseLicensedPriceByPlanKeyAndInterval';
 import { useHandleCheckoutSession } from '@/settings/billing/hooks/useHandleCheckoutSession';
@@ -143,10 +144,11 @@ const UpgradeFreeTrialContent = ({
 
   const onboardingConfig = useAtomStateValue(onboardingConfigState);
   const upgradeCreditsReward = onboardingConfig?.upgradeCreditsReward ?? 0;
-  const { formatNumber } = useNumberFormat();
-  const formattedUpgradeCreditsReward = formatNumber(upgradeCreditsReward, {
-    decimals: 2,
-  });
+  const { numberFormat } = useNumberFormat();
+  const formattedUpgradeCreditsReward = formatOnboardingCredits(
+    upgradeCreditsReward,
+    numberFormat,
+  );
   const [billingCheckoutSession, setBillingCheckoutSession] = useAtomState(
     billingCheckoutSessionState,
   );
