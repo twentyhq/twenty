@@ -73,7 +73,10 @@ describe('generateFieldFilterZodSchema', () => {
   describe('MULTI_SELECT', () => {
     it('exposes containsAny instead of in', () => {
       const field = fieldOfType(FieldMetadataType.MULTI_SELECT);
-      field.options = [{ value: 'A' }, { value: 'B' }];
+      field.options = [
+        { id: '1', value: 'A', position: 0, label: 'A', color: 'green' },
+        { id: '2', value: 'B', position: 1, label: 'B', color: 'red' },
+      ];
 
       const schema = generateFieldFilterZodSchema(field);
 
