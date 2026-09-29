@@ -113,6 +113,12 @@ Passing `progress` supplies a percentage and disables the countdown. Cancellatio
 
 The default role is `status` with polite announcements. Use `role="alert"` for urgent feedback. Set `cancelLabel` and `closeLabel` to localize the controls, and allow enough time to read the content or interact with its actions.
 
+## Migration
+
+Toast's store, context, and lifecycle helpers are private. Replace `useEnqueueToast` and `useCloseToast` with `useToast`, which returns both `enqueueToast` and `closeToast`. Replace manually created stores and context providers with `ToastProvider`, and use `Toaster` to render the notifications. Set the provider's `limit` prop instead of importing `DEFAULT_TOAST_LIMIT`.
+
+`useToastEntries`, `completeToastExit`, `dismissToasts`, `isToastVisible`, `ToastEntry`, and `ToastStoreState` are no longer exported. The toaster owns queue subscriptions and exit cleanup. Use `getToastProps` to customize a notification and `onClose` to react to dismissal. `ToastNotification` remains public for the `getToastProps` callback, alongside the component props, `ToastOptions`, and `ToastVariant`.
+
 ## Props
 
 The reference is generated from the public component types. Native attributes, including accessible names and event handlers, are also accepted on parts that render elements.

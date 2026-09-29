@@ -1,11 +1,30 @@
-import { act, render, renderHook } from '@testing-library/react';
+import { render, renderHook, screen, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { expect, it, vi } from 'vitest';
 
+import { Toaster } from '../../Toaster/Toaster';
 import { ToastProvider } from '../ToastProvider';
-import { ToastContext } from '../contexts/ToastContext';
 import { useToast } from '../hooks/useToast';
-import { useToastEntries } from '../hooks/useToastEntries';
-import { createToastStore } from '../stores/createToastStore';
+
+const ToastControls = ({ source }: { source: string }) => {
+  const { enqueueToast, closeToast } = useToast();
+
+  return (
+    <>
+      <button
+        onClick={() =>
+          enqueueToast({
+            dedupeKey: 'saved',
+            children: `${source} notification`,
+          })
+        }
+      >
+        Add {source}
+      </button>
+      <button onClick={() => closeToast()}>Close {source}</button>
+    </>
+  );
+};
 
 it.each([0, -1, 1.5])('rejects an invalid toast limit of %s', (limit) => {
   expect(() => render(<ToastProvider limit={limit} />)).toThrow(
@@ -13,43 +32,35 @@ it.each([0, -1, 1.5])('rejects an invalid toast limit of %s', (limit) => {
   );
 });
 
-it('isolates nested provider queues and deduplication', () => {
-  const parentStore = createToastStore();
-  parentStore.set('toasts', [
-    {
-      notification: { id: 'parent', children: 'Parent notification' },
-      dedupeKey: 'saved',
-      status: 'visible',
-    },
-  ]);
-  const parentToasts = parentStore.state.toasts;
-  const { result } = renderHook(
-    () => ({ ...useToast(), toasts: useToastEntries() }),
-    {
-      wrapper: ({ children }) => (
-        <ToastContext.Provider value={parentStore}>
-          <ToastProvider>{children}</ToastProvider>
-        </ToastContext.Provider>
-      ),
-    },
+it('isolates nested provider queues and deduplication', async () => {
+  const user = userEvent.setup();
+  render(
+    <ToastProvider>
+      <ToastControls source="Parent" />
+      <Toaster aria-label="Parent notifications" />
+      <ToastProvider>
+        <ToastControls source="Child" />
+        <Toaster aria-label="Child notifications" />
+      </ToastProvider>
+    </ToastProvider>,
+  );
+  const parent = within(
+    screen.getByRole('region', { name: 'Parent notifications' }),
+  );
+  const child = within(
+    screen.getByRole('region', { name: 'Child notifications' }),
   );
 
-  act(() => {
-    result.current.enqueueToast({
-      dedupeKey: 'saved',
-      children: 'Child notification',
-    });
-  });
+  await user.click(screen.getByRole('button', { name: 'Add Parent' }));
+  await user.click(screen.getByRole('button', { name: 'Add Child' }));
 
-  expect(result.current.toasts).toHaveLength(1);
-  expect(result.current.toasts[0]?.notification.children).toBe(
-    'Child notification',
-  );
+  expect(parent.getByRole('status')).toHaveTextContent('Parent notification');
+  expect(child.getByRole('status')).toHaveTextContent('Child notification');
 
-  act(() => result.current.closeToast());
+  await user.click(screen.getByRole('button', { name: 'Close Child' }));
 
-  expect(result.current.toasts).toEqual([]);
-  expect(parentStore.state.toasts).toBe(parentToasts);
+  expect(child.queryByRole('status')).not.toBeInTheDocument();
+  expect(parent.getByRole('status')).toHaveTextContent('Parent notification');
 });
 
 it('deduplicates consecutive enqueues and applies the provider limit synchronously', () => {

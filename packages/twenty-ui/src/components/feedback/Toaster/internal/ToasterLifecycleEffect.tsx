@@ -1,7 +1,7 @@
 import { useLayoutEffect } from 'react';
 
-import { useToastContext } from '@ui/components/feedback/Toast/hooks/useToastContext';
-import { isToastVisible } from '@ui/components/feedback/Toast/utils/isToastVisible';
+import { useToastContext } from '@ui/components/feedback/Toast/internal/useToastContext';
+import { isToastVisible } from '@ui/components/feedback/Toast/internal/isToastVisible';
 
 export const ToasterLifecycleEffect = () => {
   const store = useToastContext();

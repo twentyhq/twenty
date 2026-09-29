@@ -1,8 +1,8 @@
 import { Store } from '@base-ui/utils/store';
 import { isPositiveInteger } from '@sniptt/guards';
 
-import { DEFAULT_TOAST_LIMIT } from '../constants/DefaultToastLimit';
-import { type ToastStoreState } from '../types/ToastStoreState';
+import { DEFAULT_TOAST_LIMIT } from './DefaultToastLimit';
+import { type ToastStoreState } from './ToastStoreState';
 
 export const createToastStore = (limit = DEFAULT_TOAST_LIMIT) => {
   if (!isPositiveInteger(limit)) {

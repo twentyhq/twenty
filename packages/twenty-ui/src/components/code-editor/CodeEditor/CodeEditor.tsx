@@ -1,7 +1,7 @@
 import Editor, { loader, type Monaco } from '@monaco-editor/react';
 import { Loader } from '@ui/primitives/feedback/Loader/Loader';
-import { BASE_CODE_EDITOR_THEME_ID } from '@ui/components/code-editor/CodeEditor/constants/BaseCodeEditorThemeId';
-import { getBaseCodeEditorTheme } from '@ui/components/code-editor/CodeEditor/utils/getBaseCodeEditorTheme';
+import { BASE_CODE_EDITOR_THEME_ID } from '@ui/components/code-editor/CodeEditor/internal/BaseCodeEditorThemeId';
+import { getBaseCodeEditorTheme } from '@ui/components/code-editor/CodeEditor/internal/getBaseCodeEditorTheme';
 import { ResizeHandle } from '@ui/primitives/layout/ResizeHandle/ResizeHandle';
 import { useTheme, useThemeColorScheme, type ThemeType } from '@ui/theme';
 import { type editor } from 'monaco-editor';
@@ -39,14 +39,18 @@ const configureMonacoLoader = () => {
   return monacoLoaderConfiguration;
 };
 
-const setCodeEditorTheme = (
-  monaco: Monaco,
-  theme: ThemeType,
-  colorScheme: 'light' | 'dark',
-) => {
+const setCodeEditorTheme = ({
+  monaco,
+  theme,
+  colorScheme,
+}: {
+  monaco: Monaco;
+  theme: ThemeType;
+  colorScheme: 'light' | 'dark';
+}) => {
   monaco.editor.defineTheme(
     BASE_CODE_EDITOR_THEME_ID,
-    getBaseCodeEditorTheme(theme, colorScheme),
+    getBaseCodeEditorTheme({ theme, colorScheme }),
   );
   monaco.editor.setTheme(BASE_CODE_EDITOR_THEME_ID);
 };
@@ -147,7 +151,7 @@ export const CodeEditor = ({
       return;
     }
 
-    setCodeEditorTheme(monaco, theme, colorScheme);
+    setCodeEditorTheme({ monaco, theme, colorScheme });
   }, [colorScheme, monaco, theme]);
 
   // Drive the container height from Monaco's content height; the editor's
@@ -218,7 +222,7 @@ export const CodeEditor = ({
             setMonaco(monaco);
             setEditor(editor);
 
-            setCodeEditorTheme(monaco, theme, colorScheme);
+            setCodeEditorTheme({ monaco, theme, colorScheme });
 
             editor.onDidFocusEditorWidget(() => {
               setIsEditorFocused(true);

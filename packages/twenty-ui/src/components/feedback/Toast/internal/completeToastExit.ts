@@ -1,5 +1,5 @@
-import { type createToastStore } from '../stores/createToastStore';
-import { type ToastEntry } from '../types/ToastEntry';
+import { type createToastStore } from './createToastStore';
+import { type ToastEntry } from './ToastEntry';
 
 export const completeToastExit = ({
   store,

@@ -93,6 +93,10 @@ Monaco reports its own diagnostics, such as JSON syntax errors, through `onValid
 
 While the editor has focus, it stops keyboard events from propagating. React key handlers on parent components and document-level shortcuts do not receive keystrokes typed in the editor.
 
+## Migration
+
+`BASE_CODE_EDITOR_THEME_ID` and `getBaseCodeEditorTheme` are no longer exported. Configure the surrounding `ThemeProvider` to customize the editor's theme. `CodeEditor` applies theme and color-scheme changes automatically; the host still configures Monaco's language workers.
+
 ## Props
 
 ### CodeEditor

@@ -13,10 +13,18 @@
       "inputs": [
         "{projectRoot}/src/**/*",
         "{projectRoot}/docs/module-ownership.json",
-        "{projectRoot}/scripts/checkModuleOwnership.ts"
+        "{projectRoot}/docs/public-exports.json",
+        "{projectRoot}/package.json",
+        "{projectRoot}/scripts/checkModuleOwnership.ts",
+        "{projectRoot}/scripts/getPublicExportSnapshot.ts",
+        "{projectRoot}/scripts/__tests__/getPublicExportSnapshot.test.ts"
       ],
       "options": {
-        "command": "tsx {projectRoot}/scripts/checkModuleOwnership.ts"
+        "commands": [
+          "tsx --test {projectRoot}/scripts/__tests__/getPublicExportSnapshot.test.ts",
+          "tsx {projectRoot}/scripts/checkModuleOwnership.ts"
+        ],
+        "parallel": false
       }
     },
     "generateTokens": {

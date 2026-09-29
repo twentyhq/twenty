@@ -1,4 +1,4 @@
-import { type ToastNotification } from './ToastNotification';
+import { type ToastNotification } from '../types/ToastNotification';
 
 export type ToastEntry = {
   notification: ToastNotification;

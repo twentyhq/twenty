@@ -1,5 +1,5 @@
-import { useCloseToast } from '@ui/components/feedback/Toast/hooks/useCloseToast';
-import { useToastEntries } from '@ui/components/feedback/Toast/hooks/useToastEntries';
+import { useCloseToast } from '@ui/components/feedback/Toast/internal/useCloseToast';
+import { useToastEntries } from '@ui/components/feedback/Toast/internal/useToastEntries';
 
 import { type ToasterProps } from '../types/ToasterProps';
 import { ToasterItem } from './ToasterItem';

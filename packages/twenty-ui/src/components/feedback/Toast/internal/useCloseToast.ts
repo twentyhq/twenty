@@ -2,8 +2,8 @@ import { isNonEmptyArray } from '@sniptt/guards';
 
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
-import { dismissToasts } from '../utils/dismissToasts';
-import { isToastVisible } from '../utils/isToastVisible';
+import { dismissToasts } from './dismissToasts';
+import { isToastVisible } from './isToastVisible';
 import { useToastContext } from './useToastContext';
 
 export const useCloseToast = () => {

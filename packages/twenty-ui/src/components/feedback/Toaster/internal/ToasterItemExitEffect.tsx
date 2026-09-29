@@ -1,8 +1,8 @@
 import { type RefObject, useLayoutEffect } from 'react';
 
-import { useToastContext } from '@ui/components/feedback/Toast/hooks/useToastContext';
-import { type ToastEntry } from '@ui/components/feedback/Toast/types/ToastEntry';
-import { completeToastExit } from '@ui/components/feedback/Toast/utils/completeToastExit';
+import { useToastContext } from '@ui/components/feedback/Toast/internal/useToastContext';
+import { type ToastEntry } from '@ui/components/feedback/Toast/internal/ToastEntry';
+import { completeToastExit } from '@ui/components/feedback/Toast/internal/completeToastExit';
 
 type ToasterItemExitEffectProps = {
   elementRef: RefObject<HTMLDivElement | null>;
