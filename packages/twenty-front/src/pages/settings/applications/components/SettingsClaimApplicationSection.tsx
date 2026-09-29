@@ -241,6 +241,7 @@ export const SettingsClaimApplicationSection = () => {
                 ),
             }}
             isClosable
+            closeLabel={t`Close`}
             onClose={dismissClaimError}
           />
         </StyledCalloutContainer>

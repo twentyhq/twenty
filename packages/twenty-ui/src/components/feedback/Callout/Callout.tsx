@@ -34,6 +34,7 @@ export const Callout = ({
   Icon = IconHelp,
   action,
   isClosable = false,
+  closeLabel = 'Close',
   onClose,
 }: CalloutProps) => {
   const [isVisible, setIsVisible] = useState(true);
@@ -75,7 +76,7 @@ export const Callout = ({
             className={styles.closeButton}
             variant="ghost"
             size="sm"
-            aria-label="Close"
+            aria-label={closeLabel}
             onClick={handleClose}
           />
         )}

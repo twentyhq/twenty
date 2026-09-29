@@ -139,6 +139,23 @@ export class UpgradeSequenceRunnerService {
           break;
         }
 
+        if (options.dryRun) {
+          this.logger.log(
+            formatUpgradeLog({
+              humanMessage:
+                `Dry run stopped before instance step "${step.name}": ` +
+                'instance commands cannot run in dry-run mode.',
+              event: 'sequence.stopped',
+              logFields: {
+                before: step.name,
+                reason: 'dry-run',
+              },
+            }),
+          );
+
+          break;
+        }
+
         const previousStep = cursor > 0 ? sequence[cursor - 1] : undefined;
 
         if (previousStep?.kind === 'workspace') {

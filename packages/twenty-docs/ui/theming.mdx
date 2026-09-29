@@ -3,6 +3,8 @@ title: Theming
 description: Use Twenty UI theme tokens and scope theme overrides to part of your application.
 ---
 
+import ThemeProviderReference from '/snippets/ui/generated/theme/theme-provider.mdx';
+
 Twenty UI components read public CSS custom properties prefixed with `--t-`. Prefer semantic tokens such as `background.secondary` and `font.color.primary` when styling your own components; these values adapt to the active palette.
 
 ## Use tokens in styles
@@ -78,3 +80,13 @@ A scoped provider adds a wrapper with `display: contents`; it does not create a 
 Variables prefixed with `--tw-` are private component details. Use public props and `--t-` tokens instead of depending on those variables.
 
 See the [token reference](/ui/tokens) for the available names and palette values.
+
+## Explicit values and scale
+
+The `theme` prop supplies resolved JavaScript theme values instead of reading computed styles. It also flows to nested providers unless they supply another explicit theme. This changes values read by hooks; load the appropriate stylesheet and use CSS overrides to style components.
+
+`scale` writes `--t-scale-user` on the document root. It only affects interfaces whose CSS consumes that variable and is ignored by scoped providers. `className` applies to a scoped wrapper; passing it alone does not create a wrapper. `overrides` creates a scope even when `applyToRoot` remains true.
+
+## ThemeProvider props
+
+<ThemeProviderReference />
