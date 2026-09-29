@@ -1,4 +1,5 @@
 import { type Editor } from '@tiptap/react';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useStore } from 'jotai';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -26,7 +27,7 @@ export const AiChatSentMessageHandOffEffect = ({
       !isDefined(currentAiChatThread) ||
       !isDefined(editor) ||
       editor.isDestroyed ||
-      editor.getText().trim() === ''
+      !isNonEmptyString(editor.getText().trim())
     ) {
       return;
     }
