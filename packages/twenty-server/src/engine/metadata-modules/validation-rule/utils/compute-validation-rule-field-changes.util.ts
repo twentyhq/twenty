@@ -1,7 +1,7 @@
 import { type FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type ValidationRuleFieldChange } from 'src/engine/metadata-modules/validation-rule/utils/compute-validation-rule-after-field-change.util';
+import { type ValidationRuleFieldChange } from 'src/engine/metadata-modules/validation-rule/types/validation-rule-field-change.type';
 
 type ValidationRuleFieldState = {
   universalIdentifier: string;
