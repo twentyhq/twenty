@@ -1,5 +1,5 @@
-import { useCloseToast } from './useCloseToast';
-import { useEnqueueToast } from './useEnqueueToast';
+import { useCloseToast } from '../internal/hooks/useCloseToast';
+import { useEnqueueToast } from '../internal/hooks/useEnqueueToast';
 
 export const useToast = () => {
   const { closeToast } = useCloseToast();

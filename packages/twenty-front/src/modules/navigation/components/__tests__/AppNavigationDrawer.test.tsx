@@ -24,6 +24,12 @@ jest.mock('@/navigation/components/SettingsNavigationDrawerContent', () => ({
   SettingsNavigationDrawerContent: () => <div>Settings content</div>,
 }));
 
+jest.mock('@/navigation/components/NavigationDrawerModeTransition', () => ({
+  NavigationDrawerModeTransition: ({ children }: { children: ReactNode }) => (
+    <>{children}</>
+  ),
+}));
+
 jest.mock(
   '@/ui/navigation/navigation-drawer/components/NavigationDrawer',
   () => ({

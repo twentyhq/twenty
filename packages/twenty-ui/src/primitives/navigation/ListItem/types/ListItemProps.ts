@@ -45,6 +45,7 @@ export type ListItemProps = Omit<
    * shortcut is up to the application.
    */
   hotkeys?: string[];
+  hotkeysJoinLabel?: string;
   /** Shows a chevron indicating that the item opens a submenu. */
   hasSubmenu?: boolean;
 };
