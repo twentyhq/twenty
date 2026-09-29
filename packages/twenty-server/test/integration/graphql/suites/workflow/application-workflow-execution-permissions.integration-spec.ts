@@ -283,7 +283,7 @@ const findVersionId = async (workflow: TestWorkflow): Promise<string> => {
 const runWorkflow = async (workflow: TestWorkflow): Promise<string> => {
   const response = await workflowGraphqlRequest(RUN_CORE_WORKFLOW_VERSION, {
     input: { coreWorkflowVersionId: await findVersionId(workflow) },
-  });
+  }).timeout(90000);
 
   expect(response.body.errors).toBeUndefined();
 
@@ -325,6 +325,27 @@ const waitForRun = async (
 
   return findRun(workflowRunId);
 };
+
+const withTimeout = <TResult>(
+  promise: Promise<TResult>,
+  label: string,
+  timeoutMs: number,
+): Promise<TResult> =>
+  Promise.race([
+    promise,
+    new Promise<TResult>((_, reject) =>
+      setTimeout(
+        () => reject(new Error(`${label} did not settle in ${timeoutMs}ms`)),
+        timeoutMs,
+      ),
+    ),
+  ]);
+
+const logSetupPhase = (phase: string) =>
+  // oxlint-disable-next-line no-console
+  console.log(
+    `[app workflow permissions] ${new Date().toISOString()} ${phase}`,
+  );
 
 const hasRunEnded = ({ status }: TestWorkflowRun) =>
   ['COMPLETED', 'FAILED', 'STOPPED'].includes(status);
@@ -418,27 +439,26 @@ describe('application workflow execution permissions', () => {
     });
 
     expect(installation.errors).toBeUndefined();
-
-    await setupApplicationForSync({
-      applicationUniversalIdentifier: OTHER_APP_ID,
-      name: 'Other application',
-      description: 'Application that tries to start another one workflows',
-      sourcePath: 'application-workflow-permissions-other',
-    });
-
-    const otherInstallation = await syncApplication({
-      manifest: OTHER_APPLICATION_MANIFEST,
-    });
-
-    expect(otherInstallation.errors).toBeUndefined();
+    logSetupPhase('application installed');
 
     const firstCompanyRunId = await runWorkflow(CREATE_COMPANY_WORKFLOW);
 
-    firstCompanyRun = await waitForRunToEnd(firstCompanyRunId, 600);
+    logSetupPhase(`first run ${firstCompanyRunId} started`);
+
+    firstCompanyRun = await withTimeout(
+      waitForRunToEnd(firstCompanyRunId, 600),
+      'Waiting for the first run',
+      120000,
+    );
+
+    logSetupPhase(`first run status ${firstCompanyRun.status}`);
 
     if (!hasRunEnded(firstCompanyRun)) {
-      firstCompanyRunQueueJobs =
-        await describeWorkflowQueueJobsOfRun(firstCompanyRunId);
+      firstCompanyRunQueueJobs = await withTimeout(
+        describeWorkflowQueueJobsOfRun(firstCompanyRunId),
+        'Reading the workflow queue',
+        30000,
+      ).catch((error: Error) => error.message);
     }
   }, 300000);
 
@@ -571,6 +591,19 @@ describe('application workflow execution permissions', () => {
   }, 120000);
 
   it('only lets an application token start that application workflows', async () => {
+    await setupApplicationForSync({
+      applicationUniversalIdentifier: OTHER_APP_ID,
+      name: 'Other application',
+      description: 'Application that tries to start another one workflows',
+      sourcePath: 'application-workflow-permissions-other',
+    });
+
+    const otherInstallation = await syncApplication({
+      manifest: OTHER_APPLICATION_MANIFEST,
+    });
+
+    expect(otherInstallation.errors).toBeUndefined();
+
     const coreWorkflowVersionId = await findVersionId(CREATE_COMPANY_WORKFLOW);
     const [{ id: otherApplicationId }] = await globalThis.testDataSource.query(
       `SELECT id FROM core.application WHERE "universalIdentifier" = $1 AND "workspaceId" = $2`,
