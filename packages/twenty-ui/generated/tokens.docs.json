@@ -6097,6 +6097,13 @@
     "isNumber": true
   },
   {
+    "path": "modal.size.compact.width",
+    "cssVariable": "--t-modal-size-compact-width",
+    "light": "360px",
+    "dark": "360px",
+    "isNumber": false
+  },
+  {
     "path": "modal.size.fullscreen.height",
     "cssVariable": "--t-modal-size-fullscreen-height",
     "light": "calc(100dvh / var(--t-zoom, 1))",

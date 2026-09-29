@@ -16,6 +16,7 @@ export type AvatarProps = Omit<AvatarPrimitive.Root.Props, 'children'> & {
   backgroundColor?: string;
   borderColor?: string;
   pulsing?: boolean;
+  ring?: boolean;
   disabled?: boolean;
   nativeButton?: boolean;
 };
