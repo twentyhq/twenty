@@ -104,12 +104,20 @@ export const SyncEmails = () => {
     },
   ].filter((providerAction) => providerAction.isEnabled);
 
-  const handleSkip = () => openDialog(ONBOARDING_SKIP_DIALOG_IDS.syncEmails);
-
   const handleSkipConfirm = async () => {
     await skipSyncEmailOnboardingStep({ isAutoSkipped: false });
 
     setOnboardingStepFreeCredits('importContacts', 0);
+  };
+
+  const handleSkip = () => {
+    if (!hasProviderEnabled) {
+      void handleSkipConfirm();
+
+      return;
+    }
+
+    openDialog(ONBOARDING_SKIP_DIALOG_IDS.syncEmails);
   };
 
   useOnboardingStepEnterHotkey({
