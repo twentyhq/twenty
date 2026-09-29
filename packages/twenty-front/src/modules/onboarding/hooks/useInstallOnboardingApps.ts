@@ -4,6 +4,7 @@ import { onboardingFreeCreditsState } from '@/onboarding/states/onboardingFreeCr
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useState } from 'react';
+import { isNonEmptyArray } from 'twenty-shared/utils';
 
 export const useInstallOnboardingApps = () => {
   const onboardingConfig = useAtomStateValue(onboardingConfigState);
@@ -35,12 +36,11 @@ export const useInstallOnboardingApps = () => {
         isAutoSkipped: false,
       });
 
-      const creditsRewardPerApp =
-        onboardingConfig?.installAppsCreditsRewardPerApp ?? 0;
+      const creditsReward = onboardingConfig?.installAppsCreditsReward ?? 0;
 
       setOnboardingFreeCredits((current) => ({
         ...current,
-        installApps: creditsRewardPerApp * universalIdentifiers.length,
+        installApps: isNonEmptyArray(universalIdentifiers) ? creditsReward : 0,
       }));
     } catch {
       setIsCompleting(false);

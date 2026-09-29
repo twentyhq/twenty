@@ -444,10 +444,19 @@ const reconcileCanceledMeeting = async ({
     ...meetingPolicyResult.calendarEventIds,
     ...removedCalendarEventIds,
   ]);
-  const meetingCallRecordings = await findCallRecordingsByCalendarEventIds(
+  const linkedCallRecordings = await findCallRecordingsByCalendarEventIds(
     client,
     calendarEventIds,
   );
+  const orphanedPolicyManagedCallRecordings = (
+    await findCallRecordingsByIds(client, [
+      computeCallRecordingIdForMeeting(meetingPolicyResult.realMeetingKey),
+    ])
+  ).filter((callRecording) => isUndefined(callRecording.calendarEventId));
+  const meetingCallRecordings = [
+    ...linkedCallRecordings,
+    ...orphanedPolicyManagedCallRecordings,
+  ];
   const cancellableCallRecordings = meetingCallRecordings.filter(
     (callRecording) =>
       callRecording.status === CallRecordingStatus.SCHEDULED &&

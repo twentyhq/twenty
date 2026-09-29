@@ -1,11 +1,18 @@
-export type BuildCapability = 'build' | 'typecheck' | 'releaseSnapshot';
+export type BuildCapability =
+  | 'build'
+  | 'typecheck'
+  | 'releaseSnapshot'
+  | 'generateClient';
 
 export type BuildDescriptor = {
   protocolVersion: number;
   sdkVersion: string;
   requiredNode: string;
   capabilities: readonly BuildCapability[];
-  fileWrites: Record<BuildCapability, readonly string[]>;
+  fileWrites: Record<
+    'build' | 'typecheck' | 'releaseSnapshot',
+    readonly string[]
+  > & { generateClient?: readonly string[] };
 };
 
 export type BuildDiagnostic = {
@@ -23,6 +30,7 @@ export type BuildErrorCode =
   | 'MANIFEST_BUILD_FAILED'
   | 'BUILD_FAILED'
   | 'TYPECHECK_FAILED'
+  | 'CLIENT_GENERATION_FAILED'
   | 'SNAPSHOT_NOT_FOUND'
   | 'SNAPSHOT_RELEASE_FAILED';
 
@@ -64,3 +72,7 @@ export type BuildSnapshot = {
 };
 
 export type BuildOperationOptions = { appPath: string; signal?: AbortSignal };
+
+export type GenerateAppClientOptions = BuildOperationOptions & {
+  schema: string;
+};

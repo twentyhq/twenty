@@ -162,10 +162,14 @@ export const useInviteTeam = () => {
 
         const creditsRewardPerUser =
           onboardingConfig?.inviteTeamCreditsRewardPerUser ?? 0;
+        const maxRewardedInvitationsCount =
+          onboardingConfig?.inviteTeamMaxInvites ?? 0;
 
         setOnboardingFreeCredits((current) => ({
           ...current,
-          inviteTeam: sentInvitationsCount * creditsRewardPerUser,
+          inviteTeam:
+            Math.min(sentInvitationsCount, maxRewardedInvitationsCount) *
+            creditsRewardPerUser,
         }));
 
         if (emails.length > 0) {
@@ -195,6 +199,7 @@ export const useInviteTeam = () => {
       isBookCallOnboardingStepEnabled,
       isCompanyEnrichmentEnabled,
       onboardingConfig?.inviteTeamCreditsRewardPerUser,
+      onboardingConfig?.inviteTeamMaxInvites,
       sendInvitation,
       setNextOnboardingStatus,
       setOnboardingFreeCredits,

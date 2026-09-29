@@ -4,6 +4,8 @@ import { type LogicFunctionEvent } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { isObject, isString } from '@sniptt/guards';
 
+import { isCredentialRequestHeaderName } from 'src/engine/metadata-modules/logic-function/utils/is-credential-request-header-name.util';
+
 const normalizeHeaderValue = (
   headerValue: string | string[] | undefined,
 ): string | undefined =>
@@ -22,7 +24,10 @@ export const filterRequestHeaders = ({
     const allHeaders: Record<string, string | undefined> = {};
 
     for (const [headerName, headerValue] of Object.entries(requestHeaders)) {
-      if (headerValue === undefined) {
+      if (
+        !isDefined(headerValue) ||
+        isCredentialRequestHeaderName(headerName)
+      ) {
         continue;
       }
 
@@ -32,16 +37,16 @@ export const filterRequestHeaders = ({
     return allHeaders;
   }
 
-  const lowercaseForwardedHeaders = forwardedRequestHeaders.map((h) =>
-    h.toLowerCase(),
-  );
+  const lowercaseForwardedHeaders = forwardedRequestHeaders
+    .map((headerName) => headerName.toLowerCase())
+    .filter((headerName) => !isCredentialRequestHeaderName(headerName));
 
   const filteredHeaders: Record<string, string | undefined> = {};
 
   for (const headerName of lowercaseForwardedHeaders) {
     const headerValue = requestHeaders[headerName];
 
-    if (headerValue !== undefined) {
+    if (isDefined(headerValue)) {
       filteredHeaders[headerName] = normalizeHeaderValue(headerValue);
     }
   }
