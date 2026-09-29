@@ -75,7 +75,14 @@ export const Toast = ({
         onFocus?.(event);
       },
       onBlur: (event: FocusEvent<HTMLDivElement>) => {
-        setIsFocused(false);
+        const isFocusInsideToast = event.currentTarget.contains(
+          event.relatedTarget,
+        );
+
+        if (!isFocusInsideToast) {
+          setIsFocused(false);
+        }
+
         onBlur?.(event);
       },
       children: (

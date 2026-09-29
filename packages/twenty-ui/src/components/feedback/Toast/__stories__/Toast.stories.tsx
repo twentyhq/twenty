@@ -194,6 +194,7 @@ export const PauseOnFocus: Story = {
   args: {
     ...Countdown.args,
     duration: 1200,
+    onCancel: fn(),
     onFocus: fn(),
     onBlur: fn(),
   },
@@ -203,14 +204,26 @@ export const PauseOnFocus: Story = {
     await userEvent.hover(toast);
     await userEvent.tab();
     await userEvent.tab();
-    expect(canvas.getByRole('button', { name: 'Close' })).toHaveFocus();
+    expect(canvas.getByRole('button', { name: 'Cancel' })).toHaveFocus();
     await userEvent.unhover(toast);
     await new Promise((resolve) => setTimeout(resolve, 1400));
     expect(toast).toBeVisible();
     expect(args.onClose).not.toHaveBeenCalled();
     expect(args.onFocus).toHaveBeenCalledOnce();
-    await userEvent.tab({ shift: true });
+    await userEvent.tab();
+    expect(canvas.getByRole('button', { name: 'Close' })).toHaveFocus();
+    await new Promise((resolve) => setTimeout(resolve, 1400));
+    expect(toast).toBeVisible();
+    expect(args.onClose).not.toHaveBeenCalled();
+    expect(args.onFocus).toHaveBeenCalledTimes(2);
     expect(args.onBlur).toHaveBeenCalledOnce();
+    await userEvent.tab({ shift: true });
+    expect(canvas.getByRole('button', { name: 'Cancel' })).toHaveFocus();
+    await userEvent.tab({ shift: true });
+    expect(
+      canvas.getByRole('button', { name: 'Show notification' }),
+    ).toHaveFocus();
+    expect(args.onBlur).toHaveBeenCalledTimes(3);
     await waitFor(() => expect(args.onClose).toHaveBeenCalledOnce(), {
       timeout: 3000,
     });
