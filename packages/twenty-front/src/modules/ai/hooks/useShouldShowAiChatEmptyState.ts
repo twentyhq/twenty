@@ -1,13 +1,12 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { AGENT_CHAT_NEW_THREAD_DRAFT_KEY } from '@/ai/states/agentChatDraftsByThreadIdState';
+import { useIsOnNewAiChatSlot } from '@/ai/hooks/useIsOnNewAiChatSlot';
 import { agentChatErrorComponentFamilyState } from '@/ai/states/agentChatErrorComponentFamilyState';
 import { agentChatIsAwaitingFirstChunkComponentFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkComponentFamilyState';
 import { agentChatIsStreamingComponentFamilyState } from '@/ai/states/agentChatIsStreamingComponentFamilyState';
 import { agentChatThreadsLoadingState } from '@/ai/states/agentChatThreadsLoadingState';
 import { agentChatHasMessageComponentSelector } from '@/ai/states/selectors/agentChatHasMessageComponentSelector';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
-import { threadIdCreatedFromDraftState } from '@/ai/states/threadIdCreatedFromDraftState';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
@@ -15,9 +14,6 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 
 export const useShouldShowAiChatEmptyState = () => {
   const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
-  const threadIdCreatedFromDraft = useAtomStateValue(
-    threadIdCreatedFromDraftState,
-  );
   const agentChatError = useAtomComponentFamilyStateValue(
     agentChatErrorComponentFamilyState,
     { threadId: currentAiChatThread },
@@ -40,13 +36,10 @@ export const useShouldShowAiChatEmptyState = () => {
 
   const isMobile = useIsMobile();
 
-  const isOnNewChatSlot =
-    currentAiChatThread === AGENT_CHAT_NEW_THREAD_DRAFT_KEY ||
-    (isDefined(threadIdCreatedFromDraft) &&
-      currentAiChatThread === threadIdCreatedFromDraft);
+  const isOnNewAiChatSlot = useIsOnNewAiChatSlot();
 
   return (
-    isOnNewChatSlot &&
+    isOnNewAiChatSlot &&
     !isMobile &&
     !hasMessages &&
     !isDefined(agentChatError) &&

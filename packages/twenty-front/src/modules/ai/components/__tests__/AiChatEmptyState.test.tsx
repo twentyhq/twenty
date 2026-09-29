@@ -17,9 +17,6 @@ import {
 jest.mock('@/ai/components/suggested-prompts/AiChatSuggestedPrompts', () => ({
   AiChatSuggestedPrompts: () => <div data-testid="suggested-prompts" />,
 }));
-jest.mock('@/ai/components/LazyMarkdownRenderer', () => ({
-  LazyMarkdownRendererPreloader: () => null,
-}));
 
 const INSTANCE_ID = 'aiChatEmptyStateTest';
 const THREAD_ID = AGENT_CHAT_NEW_THREAD_DRAFT_KEY;

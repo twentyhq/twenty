@@ -1,4 +1,3 @@
-import { LazyMarkdownRendererPreloader } from '@/ai/components/LazyMarkdownRenderer';
 import { StyledAiChatContentContainer } from '@/ai/components/StyledAiChatContentContainer';
 import { styled } from '@linaria/react';
 
@@ -28,7 +27,6 @@ export const AiChatEmptyState = ({
   return (
     <StyledEmptyState>
       <AiChatSuggestedPrompts isCentered={isCentered} />
-      <LazyMarkdownRendererPreloader />
     </StyledEmptyState>
   );
 };

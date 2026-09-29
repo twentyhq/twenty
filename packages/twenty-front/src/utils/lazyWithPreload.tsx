@@ -1,19 +1,30 @@
-import { type ComponentType } from 'react';
+import { type ComponentType, createElement } from 'react';
 
-type LoadState =
+type LoadState<TProps extends object> =
   | { status: 'idle' }
   | { status: 'pending'; promise: Promise<void> }
-  | { status: 'loaded'; component: ComponentType }
+  | { status: 'loaded'; component: ComponentType<TProps> }
   | { status: 'failed'; error: unknown };
 
-type PreloadableComponent = ComponentType & {
+type PreloadableComponentProps<TProps extends object> = TProps;
+
+type PreloadableComponent<TProps extends object> = ComponentType<TProps> & {
   preload: () => void;
 };
 
-export const lazyWithPreload = (
-  loader: () => Promise<{ default: ComponentType }>,
-): PreloadableComponent => {
-  let loadState: LoadState = { status: 'idle' };
+type LazyWithPreload = {
+  (
+    loader: () => Promise<{ default: ComponentType }>,
+  ): PreloadableComponent<object>;
+  <TProps extends object>(
+    loader: () => Promise<{ default: ComponentType<TProps> }>,
+  ): PreloadableComponent<TProps>;
+};
+
+export const lazyWithPreload: LazyWithPreload = <TProps extends object>(
+  loader: () => Promise<{ default: ComponentType<TProps> }>,
+): PreloadableComponent<TProps> => {
+  let loadState: LoadState<TProps> = { status: 'idle' };
 
   const startLoading = (): Promise<void> => {
     if (loadState.status === 'pending') {
@@ -48,15 +59,13 @@ export const lazyWithPreload = (
     startLoading();
   };
 
-  const PreloadableComponent = () => {
+  const PreloadableComponent = (props: PreloadableComponentProps<TProps>) => {
     if (loadState.status === 'failed') {
       throw loadState.error;
     }
 
     if (loadState.status === 'loaded') {
-      const Component = loadState.component;
-
-      return <Component />;
+      return createElement(loadState.component, props);
     }
 
     throw startLoading();

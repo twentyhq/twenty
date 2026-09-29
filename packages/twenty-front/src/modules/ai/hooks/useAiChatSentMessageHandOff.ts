@@ -1,3 +1,4 @@
+import { useReducedMotion } from 'framer-motion';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -10,6 +11,7 @@ import { getTextBoundingClientRect } from '@/ai/utils/getTextBoundingClientRect'
 export const useAiChatSentMessageHandOff = () => {
   const store = useStore();
   const theme = useTheme();
+  const shouldReduceMotion = useReducedMotion();
 
   return useCallback(
     (messageTextElement: HTMLDivElement | null) => {
@@ -29,8 +31,8 @@ export const useAiChatSentMessageHandOff = () => {
       store.set(agentChatSentMessageHandOffState.atom, null);
 
       if (
-        !sentMessageHandOff.composerTextElement.isConnected ||
-        window.matchMedia('(prefers-reduced-motion: reduce)').matches
+        shouldReduceMotion === true ||
+        !sentMessageHandOff.composerTextElement.isConnected
       ) {
         return;
       }
@@ -53,6 +55,6 @@ export const useAiChatSentMessageHandOff = () => {
         },
       );
     },
-    [store, theme],
+    [store, theme, shouldReduceMotion],
   );
 };
