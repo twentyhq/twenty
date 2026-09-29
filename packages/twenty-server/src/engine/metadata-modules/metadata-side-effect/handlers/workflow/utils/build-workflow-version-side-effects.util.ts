@@ -8,6 +8,7 @@ import { type MetadataSideEffectResult } from 'src/engine/metadata-modules/metad
 export const buildWorkflowVersionSideEffects = ({
   flatEntity,
   relatedFlatEntityMaps,
+  allFlatEntityOperationRecordByMetadataName,
 }: BuildSideEffectsArgs<'workflow'>): MetadataSideEffectResult => {
   const version = flatEntity.flatUniversalWorkflowVersion;
 
@@ -20,25 +21,37 @@ export const buildWorkflowVersionSideEffects = ({
       version.universalIdentifier
     ];
 
+  const workflowOperations =
+    allFlatEntityOperationRecordByMetadataName.workflow;
+  const sharesVersionWithAnotherWorkflow = [
+    ...Object.values(workflowOperations?.flatEntityToCreate ?? {}),
+    ...Object.values(workflowOperations?.flatEntityToUpdate ?? {}),
+  ].some(
+    (workflow) =>
+      workflow.universalIdentifier !== flatEntity.universalIdentifier &&
+      workflow.flatUniversalWorkflowVersion?.universalIdentifier ===
+        version.universalIdentifier,
+  );
+
   if (
-    isDefined(existingVersion) &&
-    (existingVersion.coreWorkflowId !== version.coreWorkflowId ||
-      existingVersion.applicationUniversalIdentifier !==
-        flatEntity.applicationUniversalIdentifier)
+    sharesVersionWithAnotherWorkflow ||
+    (isDefined(existingVersion) &&
+      (existingVersion.coreWorkflowId !== version.coreWorkflowId ||
+        existingVersion.applicationUniversalIdentifier !==
+          flatEntity.applicationUniversalIdentifier))
   ) {
     return {
       status: 'fail',
       metadataName: 'workflowVersion',
-      type: 'update',
+      type: isDefined(existingVersion) ? 'update' : 'create',
       flatEntityMinimalInformation: {
         universalIdentifier: version.universalIdentifier,
       },
       errors: [
         {
-          code: CoreWorkflowMetadataExceptionCode.WORKFLOW_VERSION_MISSING_WORKFLOW,
-          message:
-            'An application workflow cannot adopt another workflow version',
-          userFriendlyMessage: msg`The workflow version belongs to another workflow or application.`,
+          code: CoreWorkflowMetadataExceptionCode.INVALID_WORKFLOW_VERSION_DEFINITION,
+          message: 'Application workflows cannot share a version identifier',
+          userFriendlyMessage: msg`Each application workflow must have its own version identifier.`,
         },
       ],
     };

@@ -88,7 +88,7 @@ const MANIFEST: Manifest = buildBaseManifest({
 
 const findDefinitions = () =>
   globalThis.testDataSource.query(
-    `SELECT w.id AS "workflowId", w."workspaceWorkflowId", w."lastPublishedCoreWorkflowVersionId", v.id AS "versionId", v."workspaceWorkflowVersionId", v.status, v.steps, f.id AS "functionId"
+    `SELECT w.id AS "workflowId", w."workspaceWorkflowId", w."versionDefinitionHash", w."lastPublishedCoreWorkflowVersionId", v.id AS "versionId", v."workspaceWorkflowVersionId", v."isSystemSideEffect", v.status, v.steps, f.id AS "functionId"
    FROM core.workflow w
    JOIN core."workflowVersion" v ON v."coreWorkflowId" = w.id
    JOIN core."logicFunction" f ON f."applicationId" = w."applicationId" AND f."universalIdentifier" = $3
@@ -153,6 +153,8 @@ describe('application-owned core workflows', () => {
     const [installed] = definitions;
     expect(installed).toMatchObject({
       status: 'ACTIVE',
+      isSystemSideEffect: true,
+      versionDefinitionHash: expect.any(String),
       workspaceWorkflowId: null,
       workspaceWorkflowVersionId: null,
       lastPublishedCoreWorkflowVersionId: installed.versionId,
@@ -230,12 +232,29 @@ describe('application-owned core workflows', () => {
     const [updated] = updatedDefinitions;
     expect(updated.workflowId).toBe(installed.workflowId);
     expect(updated.versionId).toBe(installed.versionId);
+    expect(updated.versionDefinitionHash).not.toBe(
+      installed.versionDefinitionHash,
+    );
     expect(updated.steps[0].settings.input.logicFunctionInput).toEqual({
       greeting: 'After',
     });
     expect((await findRun(oldRunId)).state?.flow).toEqual(oldRun.state?.flow);
     const newRunId = await runVersion(updated.versionId);
     expect((await findRun(newRunId)).state?.flow?.steps).toEqual(updated.steps);
+
+    const conflicting = structuredClone(changed);
+    conflicting.workflows!.push({
+      ...conflicting.workflows![0],
+      universalIdentifier: randomUUID(),
+      name: 'Conflicting workflow',
+    });
+    const conflict = await syncApplication({
+      manifest: conflicting,
+      expectToFail: true,
+    });
+    expect(conflict.errors).toBeDefined();
+    expect(JSON.stringify(conflict.errors)).toContain('version identifier');
+    expect(await findDefinitions()).toEqual(updatedDefinitions);
 
     const missingWorkflow = { ...changed, workflows: [] };
     const additive = await syncApplication({
