@@ -1,4 +1,8 @@
+import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
+import { destroyOneOperationFactory } from 'test/integration/graphql/utils/destroy-one-operation-factory.util';
+import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
 import { findOneOperationFactory } from 'test/integration/graphql/utils/find-one-operation-factory.util';
+import { updateOneOperationFactory } from 'test/integration/graphql/utils/update-one-operation-factory.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { setManualRecordShare } from 'test/integration/utils/set-manual-record-share.util';
 import { type AgentChatActorService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-actor.service';
@@ -15,6 +19,7 @@ import {
   FeatureFlagKey,
   RecordShareAccessLevel,
   RecordSharePrincipalType,
+  RecordShareRowCause,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -660,6 +665,195 @@ describe('Conversation sharing through the authenticated API', () => {
       ]);
     } finally {
       await chat.hardDeleteThread(owner);
+    }
+  });
+});
+
+describe('Conversations through the record API', () => {
+  const schema = getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID);
+  const readStoredThread = async (threadId: string) => {
+    const rows: {
+      workspaceMemberId: string | null;
+      title: string | null;
+      archivedAt: Date | null;
+      activeStreamId: string | null;
+    }[] = await global.testDataSource.query(
+      `SELECT "workspaceMemberId", title, "archivedAt", "activeStreamId" FROM ${schema}."agentChatThread" WHERE id = $1`,
+      [threadId],
+    );
+    return rows[0] ?? null;
+  };
+  const readShares = (threadId: string) =>
+    global.testDataSource.query(
+      `SELECT "principalId", "principalType", "accessLevel", "rowCause" FROM ${schema}."recordShare" WHERE "recordId" = $1`,
+      [threadId],
+    );
+  const updateThread = (
+    threadId: string,
+    data: Record<string, unknown>,
+    token: string = APPLE_JANE_ADMIN_ACCESS_TOKEN,
+  ) =>
+    makeGraphqlApiRequest(
+      updateOneOperationFactory({
+        objectMetadataSingularName: 'agentChatThread',
+        gqlFields: 'id title archivedAt',
+        recordId: threadId,
+        data,
+      }),
+      token,
+    );
+
+  let previousRecordSharingEnabled = false;
+
+  beforeAll(async () => {
+    const cache = getAppProviderByClassName<WorkspaceCacheService>(
+      'WorkspaceCacheService',
+    );
+    const { featureFlagsMap } = await cache.getOrRecompute(
+      SEED_APPLE_WORKSPACE_ID,
+      ['featureFlagsMap'],
+    );
+    previousRecordSharingEnabled =
+      featureFlagsMap[FeatureFlagKey.IS_RECORD_SHARING_ENABLED] === true;
+    await updateFeatureFlag({
+      featureFlag: FeatureFlagKey.IS_RECORD_SHARING_ENABLED,
+      value: true,
+      expectToFail: false,
+    });
+  });
+
+  afterAll(async () => {
+    await updateFeatureFlag({
+      featureFlag: FeatureFlagKey.IS_RECORD_SHARING_ENABLED,
+      value: previousRecordSharingEnabled,
+      expectToFail: false,
+    });
+  });
+
+  it('creates, renames, archives and destroys a conversation only for its owner', async () => {
+    const created = await makeGraphqlApiRequest(
+      createOneOperationFactory({
+        objectMetadataSingularName: 'agentChatThread',
+        gqlFields: 'id title',
+        data: { title: 'Record API conversation' },
+      }),
+    );
+    expect(created.body.errors).toBeUndefined();
+    const threadId: string = created.body.data.createAgentChatThread.id;
+
+    try {
+      expect(await readStoredThread(threadId)).toMatchObject({
+        workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+        title: 'Record API conversation',
+      });
+      expect(await readShares(threadId)).toEqual([
+        {
+          principalId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+          principalType: RecordSharePrincipalType.WORKSPACE_MEMBER,
+          accessLevel: RecordShareAccessLevel.FULL,
+          rowCause: RecordShareRowCause.OWNER,
+        },
+      ]);
+
+      const ownerView = await makeGraphqlApiRequest(
+        findOneOperationFactory({
+          objectMetadataSingularName: 'agentChatThread',
+          gqlFields: 'id title',
+          filter: { id: { eq: threadId } },
+        }),
+      );
+      expect(ownerView.body.errors).toBeUndefined();
+      expect(ownerView.body.data.agentChatThread).toEqual({
+        id: threadId,
+        title: 'Record API conversation',
+      });
+
+      const outsiderList = await makeGraphqlApiRequest(
+        findManyOperationFactory({
+          objectMetadataSingularName: 'agentChatThread',
+          objectMetadataPluralName: 'agentChatThreads',
+          gqlFields: 'id',
+          filter: { id: { eq: threadId } },
+        }),
+        APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      );
+      expect(
+        outsiderList.body.data?.agentChatThreads?.edges ?? [],
+      ).toHaveLength(0);
+      const outsiderView = await makeGraphqlApiRequest(
+        findOneOperationFactory({
+          objectMetadataSingularName: 'agentChatThread',
+          gqlFields: 'id',
+          filter: { id: { eq: threadId } },
+        }),
+        APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      );
+      expect(outsiderView.body.data?.agentChatThread ?? null).toBeNull();
+      const outsiderRename = await updateThread(
+        threadId,
+        { title: 'Unauthorized rename' },
+        APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      );
+      expect(outsiderRename.body.errors).toBeDefined();
+
+      const renamed = await updateThread(threadId, {
+        title: 'Renamed through the record API',
+      });
+      expect(renamed.body.errors).toBeUndefined();
+      expect(renamed.body.data.updateAgentChatThread.title).toBe(
+        'Renamed through the record API',
+      );
+
+      // Stands in for a running turn, which archiving has to stop.
+      await global.testDataSource.query(
+        `UPDATE ${schema}."agentChatThread" SET "activeStreamId" = 'record-api-stream' WHERE id = $1`,
+        [threadId],
+      );
+      const archived = await updateThread(threadId, {
+        archivedAt: new Date().toISOString(),
+      });
+      expect(archived.body.errors).toBeUndefined();
+      expect(
+        archived.body.data.updateAgentChatThread.archivedAt,
+      ).not.toBeNull();
+      const archivedThread = await readStoredThread(threadId);
+      expect(archivedThread?.archivedAt).not.toBeNull();
+      expect(archivedThread?.activeStreamId).toBeNull();
+
+      const unarchived = await updateThread(threadId, { archivedAt: null });
+      expect(unarchived.body.errors).toBeUndefined();
+      expect((await readStoredThread(threadId))?.archivedAt).toBeNull();
+
+      const outsiderDestroy = await makeGraphqlApiRequest(
+        destroyOneOperationFactory({
+          objectMetadataSingularName: 'agentChatThread',
+          gqlFields: 'id',
+          recordId: threadId,
+        }),
+        APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      );
+      expect(outsiderDestroy.body.errors).toBeDefined();
+      expect(await readStoredThread(threadId)).not.toBeNull();
+
+      const destroyed = await makeGraphqlApiRequest(
+        destroyOneOperationFactory({
+          objectMetadataSingularName: 'agentChatThread',
+          gqlFields: 'id',
+          recordId: threadId,
+        }),
+      );
+      expect(destroyed.body.errors).toBeUndefined();
+      expect(await readStoredThread(threadId)).toBeNull();
+      expect(await readShares(threadId)).toEqual([]);
+    } finally {
+      await global.testDataSource.query(
+        `DELETE FROM ${schema}."agentChatThread" WHERE id = $1`,
+        [threadId],
+      );
+      await global.testDataSource.query(
+        `DELETE FROM ${schema}."recordShare" WHERE "recordId" = $1`,
+        [threadId],
+      );
     }
   });
 });
