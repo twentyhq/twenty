@@ -1,5 +1,4 @@
 import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
-import { type InputAskSource } from 'src/modules/input-ask/enums/input-ask-source.enum';
 import { type InputAskStatus } from 'src/modules/input-ask/enums/input-ask-status.enum';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { type EntityRelation } from 'src/engine/workspace-manager/workspace-migration/types/entity-relation.interface';
@@ -17,7 +16,6 @@ export class InputAskWorkspaceEntity extends BaseWorkspaceEntity {
   form: { fields: FormFieldMetadata[] } | null;
   response: Record<string, unknown> | null;
   answeredAt: string | null;
-  source: InputAskSource;
   stepId: string | null;
   toolCallId: string | null;
   thread: EntityRelation<AgentChatThreadWorkspaceEntity> | null;
