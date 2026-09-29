@@ -1,3 +1,4 @@
+import { AgentMessageRole } from '@/ai/constants/AgentMessageRole';
 import { AgentChatComponentInstanceContext } from '@/ai/contexts/AgentChatComponentInstanceContext';
 import { agentChatMessagesComponentFamilyState } from '@/ai/states/agentChatMessagesComponentFamilyState';
 import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
@@ -17,7 +18,13 @@ export const agentChatNonLastMessageIdsComponentSelector =
           familyKey: { threadId: currentThreadId },
         });
 
-        return messages.slice(0, -1).map((message) => message.id);
+        const isLastMessageFromUser =
+          messages.at(-1)?.role === AgentMessageRole.USER;
+        const messagesWithoutStreamingState = isLastMessageFromUser
+          ? messages
+          : messages.slice(0, -1);
+
+        return messagesWithoutStreamingState.map((message) => message.id);
       },
     areEqual: (previous, next) =>
       previous.length === next.length &&
