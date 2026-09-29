@@ -9,8 +9,8 @@ import { AgentChatThreadLifecycleService } from 'src/engine/metadata-modules/ai/
 import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 
-// The destroy query hooks only see the columns the caller selected, and the
-// row is gone by then, so the running stream is found in the event snapshot.
+// Destroy query hooks only see the selected columns of a row that is already
+// gone, so the running stream is read from the event snapshot
 @Injectable()
 export class AgentChatThreadDestroyedListener {
   constructor(

@@ -11,9 +11,6 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-// The standard definition only reaches workspaces created after it changed, so
-// existing ones need their archivedAt field opened here for conversations to be
-// archived through the record API.
 @RegisteredWorkspaceCommand('2.44.0', 1790672076234)
 @Command({
   name: 'upgrade:2-44:open-agent-chat-thread-archived-at-writability',
