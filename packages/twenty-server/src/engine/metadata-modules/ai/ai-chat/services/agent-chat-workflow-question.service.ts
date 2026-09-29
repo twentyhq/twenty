@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { randomUUID } from 'node:crypto';
-
 import { isNonEmptyString } from '@sniptt/guards';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { type AskQuestionAnswer } from 'twenty-shared/ai';
@@ -27,8 +25,6 @@ import { WorkflowRunnerWorkspaceService } from 'src/modules/workflow/workflow-ru
 @Injectable()
 export class AgentChatWorkflowQuestionService {
   constructor(
-    @InjectAgentHistoryRepository('agentChatThread')
-    private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
     @InjectAgentHistoryRepository('agentMessage')
     private readonly messageRepository: AgentHistoryRepository<AgentMessageEntity>,
     private readonly agentChatService: AgentChatService,
@@ -74,14 +70,13 @@ export class AgentChatWorkflowQuestionService {
       );
     }
 
-    // Only a claim token here: no chat stream runs for a workflow conversation.
-    const claimId = randomUUID();
-
+    // No chat stream continues a workflow conversation, so its question is
+    // claimed by its marker alone and nothing is left holding the thread.
     const resolved = await this.agentChatService.resolvePendingQuestion({
       threadId: thread.id,
       messageId,
       answers,
-      streamId: claimId,
+      streamId: null,
       workspaceId,
     });
 
@@ -126,8 +121,6 @@ export class AgentChatWorkflowQuestionService {
 
       if (isNoLongerAwaited) {
         await this.agentChatService.closePendingQuestion({
-          threadId: thread.id,
-          streamId: claimId,
           workspaceId,
           rollback: resolved.rollback,
         });
@@ -135,7 +128,7 @@ export class AgentChatWorkflowQuestionService {
         await this.agentChatService.restorePendingQuestion({
           threadId: thread.id,
           messageId,
-          streamId: claimId,
+          streamId: null,
           workspaceId,
           rollback: resolved.rollback,
         });
@@ -143,11 +136,5 @@ export class AgentChatWorkflowQuestionService {
 
       throw error;
     }
-
-    await this.threadRepository.update(
-      workspaceId,
-      { id: thread.id, activeStreamId: claimId },
-      { activeStreamId: null },
-    );
   }
 }
