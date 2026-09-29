@@ -44,6 +44,7 @@ import { RoleValidationService } from 'src/engine/metadata-modules/role-validati
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { assert } from 'src/utils/assert';
 import { getDomainFromEmailOrThrow } from 'src/utils/get-domain-from-email-or-throw';
@@ -69,6 +70,7 @@ export class UserWorkspaceService {
     private readonly fileUrlService: FileUrlService,
     private readonly onboardingService: OnboardingService,
     private readonly coreEntityCacheService: CoreEntityCacheService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly workflowRunRecordShareService: WorkflowRunRecordShareService,
   ) {}
@@ -380,6 +382,10 @@ export class UserWorkspaceService {
         coreWorkflowIds: createdCoreWorkflowIds,
       });
     }
+
+    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+      'applicationVariableUserValueMaps',
+    ]);
   }
 
   async findAvailableWorkspacesByEmail(email: string) {

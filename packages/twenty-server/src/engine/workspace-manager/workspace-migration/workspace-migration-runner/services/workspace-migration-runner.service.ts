@@ -89,7 +89,10 @@ export class WorkspaceMigrationRunnerService {
     }
 
     if (flatMapsKeysSet.has('flatApplicationVariableMaps')) {
-      legacyCacheKeyNames.push('applicationVariableMaps');
+      legacyCacheKeyNames.push(
+        'applicationVariableMaps',
+        'applicationVariableUserValueMaps',
+      );
     }
 
     return {
