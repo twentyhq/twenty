@@ -142,13 +142,42 @@ const createMatchMediaTest =
     expect(canvas.getByTestId('match-media-orientation')).toHaveTextContent(
       'orientation matches: true',
     );
+    expect(
+      canvas.getByTestId('match-media-color-scheme-change-count'),
+    ).toHaveTextContent('color scheme changes: 0');
+    expect(
+      canvas.getByTestId('match-media-wide-width-change-count'),
+    ).toHaveTextContent('wide width changes: 0');
+    expect(
+      canvas.getByTestId('match-media-portrait-orientation-change-count'),
+    ).toHaveTextContent('portrait orientation changes: 0');
 
     const container = canvas.getByTestId('match-media-container');
 
-    for (const { width, height } of [
-      { width: 700, height: 300 },
-      { width: 700, height: 900 },
-      { width: 400, height: 600 },
+    for (const {
+      width,
+      height,
+      wideWidthChangeCount,
+      portraitOrientationChangeCount,
+    } of [
+      {
+        width: 700,
+        height: 300,
+        wideWidthChangeCount: 1,
+        portraitOrientationChangeCount: 1,
+      },
+      {
+        width: 700,
+        height: 900,
+        wideWidthChangeCount: 1,
+        portraitOrientationChangeCount: 2,
+      },
+      {
+        width: 400,
+        height: 600,
+        wideWidthChangeCount: 2,
+        portraitOrientationChangeCount: 2,
+      },
     ]) {
       container.style.width = `${width}px`;
       container.style.height = `${height}px`;
@@ -170,10 +199,22 @@ const createMatchMediaTest =
           expect(
             canvas.getByTestId('match-media-orientation'),
           ).toHaveTextContent('orientation matches: true');
+          expect(
+            canvas.getByTestId('match-media-wide-width-change-count'),
+          ).toHaveTextContent(`wide width changes: ${wideWidthChangeCount}`);
+          expect(
+            canvas.getByTestId('match-media-portrait-orientation-change-count'),
+          ).toHaveTextContent(
+            `portrait orientation changes: ${portraitOrientationChangeCount}`,
+          );
         },
         { timeout: INTERACTION_TIMEOUT },
       );
     }
+
+    expect(
+      canvas.getByTestId('match-media-color-scheme-change-count'),
+    ).toHaveTextContent('color scheme changes: 0');
 
     expect(errorHandler).not.toHaveBeenCalled();
   };

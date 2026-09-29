@@ -2,6 +2,8 @@ import { defineFrontComponent } from 'twenty-sdk/define';
 import { useEffect, useState } from 'react';
 
 const DARK_COLOR_SCHEME_QUERY = '(prefers-color-scheme: dark)';
+const WIDE_WIDTH_QUERY = '(min-width: 600px)';
+const PORTRAIT_ORIENTATION_QUERY = '(orientation: portrait)';
 const MEASUREMENT_INTERVAL_MS = 50;
 
 const readOwnBoxSize = () => ({
@@ -9,8 +11,33 @@ const readOwnBoxSize = () => ({
   height: document.body.clientHeight,
 });
 
+const useMediaQueryChangeCount = (mediaQuery: string) => {
+  const [changeCount, setChangeCount] = useState(0);
+
+  useEffect(() => {
+    const mediaQueryList = window.matchMedia(mediaQuery);
+    const handleChange = () => {
+      setChangeCount((count) => count + 1);
+    };
+
+    mediaQueryList.addEventListener('change', handleChange);
+
+    return () => {
+      mediaQueryList.removeEventListener('change', handleChange);
+    };
+  }, [mediaQuery]);
+
+  return changeCount;
+};
+
 const MatchMediaComponent = () => {
-  const [colorSchemeChangeCount, setColorSchemeChangeCount] = useState(0);
+  const colorSchemeChangeCount = useMediaQueryChangeCount(
+    DARK_COLOR_SCHEME_QUERY,
+  );
+  const wideWidthChangeCount = useMediaQueryChangeCount(WIDE_WIDTH_QUERY);
+  const portraitOrientationChangeCount = useMediaQueryChangeCount(
+    PORTRAIT_ORIENTATION_QUERY,
+  );
   const [ownBoxSize, setOwnBoxSize] = useState(readOwnBoxSize);
 
   useEffect(() => {
@@ -26,27 +53,6 @@ const MatchMediaComponent = () => {
     }, MEASUREMENT_INTERVAL_MS);
 
     return () => clearInterval(intervalId);
-  }, []);
-
-  useEffect(() => {
-    const darkColorSchemeMediaQueryList = window.matchMedia(
-      DARK_COLOR_SCHEME_QUERY,
-    );
-    const handleColorSchemeChange = () => {
-      setColorSchemeChangeCount((count) => count + 1);
-    };
-
-    darkColorSchemeMediaQueryList.addEventListener(
-      'change',
-      handleColorSchemeChange,
-    );
-
-    return () => {
-      darkColorSchemeMediaQueryList.removeEventListener(
-        'change',
-        handleColorSchemeChange,
-      );
-    };
   }, []);
 
   const { width: ownWidth, height: ownHeight } = ownBoxSize;
@@ -96,6 +102,12 @@ const MatchMediaComponent = () => {
       <p data-testid="match-media-color-scheme">color scheme: {colorScheme}</p>
       <p data-testid="match-media-color-scheme-change-count">
         color scheme changes: {colorSchemeChangeCount}
+      </p>
+      <p data-testid="match-media-wide-width-change-count">
+        wide width changes: {wideWidthChangeCount}
+      </p>
+      <p data-testid="match-media-portrait-orientation-change-count">
+        portrait orientation changes: {portraitOrientationChangeCount}
       </p>
     </div>
   );
