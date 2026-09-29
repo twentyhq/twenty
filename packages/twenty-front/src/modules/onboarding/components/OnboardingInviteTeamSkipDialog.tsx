@@ -1,6 +1,7 @@
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { OnboardingSkipDialog } from '@/onboarding/components/OnboardingSkipDialog';
 import { OnboardingSkipDialogAvatars } from '@/onboarding/components/OnboardingSkipDialogAvatars';
+import { ONBOARDING_INVITE_TEAM_EMPTY_SEATS_COUNT } from '@/onboarding/constants/OnboardingInviteTeamEmptySeatsCount';
 import { ONBOARDING_SKIP_DIALOG_IDS } from '@/onboarding/constants/OnboardingSkipDialogIds';
 import { onboardingInviteTeamCreditsRewardSelector } from '@/onboarding/states/selectors/onboardingInviteTeamCreditsRewardSelector';
 import { onboardingInviteTeamValidEmailsSelector } from '@/onboarding/states/selectors/onboardingInviteTeamValidEmailsSelector';
@@ -57,7 +58,9 @@ export const OnboardingInviteTeamSkipDialog = ({
               shape: 'circle' as const,
             })),
           ]}
-          emptySeatsCount={hasInviteEmails ? 0 : 2}
+          emptySeatsCount={
+            hasInviteEmails ? 0 : ONBOARDING_INVITE_TEAM_EMPTY_SEATS_COUNT
+          }
         />
       }
       title={
