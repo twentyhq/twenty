@@ -28,6 +28,7 @@ export const buildWorkflowVersionSideEffects = ({
     ...Object.values(workflowOperations?.flatEntityToUpdate ?? {}),
   ].some(
     (workflow) =>
+      isDefined(workflow) &&
       workflow.universalIdentifier !== flatEntity.universalIdentifier &&
       workflow.flatUniversalWorkflowVersion?.universalIdentifier ===
         version.universalIdentifier,
