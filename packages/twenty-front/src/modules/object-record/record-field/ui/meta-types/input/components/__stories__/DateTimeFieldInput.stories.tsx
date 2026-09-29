@@ -1,6 +1,6 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useEffect } from 'react';
-import { expect, userEvent, within } from 'storybook/test';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
@@ -14,7 +14,6 @@ import { RecordFieldComponentInstanceContext } from '@/object-record/record-fiel
 import { RECORD_TABLE_CELL_INPUT_ID_PREFIX } from '@/object-record/record-table/constants/RecordTableCellInputIdPrefix';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
-import { StorybookFieldInputDropdownFocusIdSetterEffect } from '~/testing/components/StorybookFieldInputDropdownFocusIdSetterEffect';
 
 const {
   FieldInputEventContextProviderWithJestMocks,
@@ -95,7 +94,6 @@ const DateFieldInputWithContext = ({
           value={{ scopeInstanceId: instanceId }}
         >
           <FieldInputEventContextProviderWithJestMocks>
-            <StorybookFieldInputDropdownFocusIdSetterEffect />
             <DateFieldValueSetterEffect value={value} />
             <DateFieldValueGater />
           </FieldInputEventContextProviderWithJestMocks>
@@ -170,6 +168,12 @@ export const ClickOutside: Story = {
 
     const emptyDiv = canvas.getByTestId('data-field-input-click-outside-div');
     await userEvent.click(emptyDiv);
+    await waitFor(() => {
+      expect(
+        body.queryByRole('dialog', { name: 'Select month and year' }),
+      ).not.toBeInTheDocument();
+    });
+    await expect(handleClickoutsideMocked).not.toHaveBeenCalled();
     await userEvent.click(emptyDiv);
 
     await expect(handleClickoutsideMocked).toHaveBeenCalledTimes(1);
@@ -193,6 +197,12 @@ export const Escape: Story = {
     await body.findByText('January', {}, { timeout: 10000 });
 
     await userEvent.keyboard('{escape}');
+    await waitFor(() => {
+      expect(
+        body.queryByRole('dialog', { name: 'Select month and year' }),
+      ).not.toBeInTheDocument();
+    });
+    await expect(handleEscapeMocked).not.toHaveBeenCalled();
     await userEvent.keyboard('{escape}');
 
     await expect(handleEscapeMocked).toHaveBeenCalledTimes(1);
@@ -216,6 +226,12 @@ export const Enter: Story = {
     await body.findByText('January', {}, { timeout: 10000 });
 
     await userEvent.keyboard('{enter}');
+    await waitFor(() => {
+      expect(
+        body.queryByRole('dialog', { name: 'Select month and year' }),
+      ).not.toBeInTheDocument();
+    });
+    await expect(handleEnterMocked).not.toHaveBeenCalled();
     await userEvent.keyboard('{enter}');
 
     await expect(handleEnterMocked).toHaveBeenCalledTimes(1);

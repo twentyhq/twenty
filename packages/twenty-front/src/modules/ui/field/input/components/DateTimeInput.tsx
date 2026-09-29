@@ -1,12 +1,12 @@
+import {
+  MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID,
+  MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID,
+} from '@/ui/input/components/internal/date/components/DatePicker';
+import { DATE_TIME_PICKER_MONTH_YEAR_PANEL_DROPDOWN_ID } from '@/ui/input/components/internal/date/constants/DateTimePickerMonthYearPanelDropdownId';
 import { useCallback, useRef, useState } from 'react';
 
 import { useRegisterInputEvents } from '@/object-record/record-field/ui/meta-types/input/hooks/useRegisterInputEvents';
-import {
-  DATE_TIME_PICKER_MONTH_YEAR_PANEL_DROPDOWN_ID,
-  DateTimePicker,
-  MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID,
-  MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID,
-} from '@/ui/input/components/internal/date/components/DateTimePicker';
+import { DateTimePicker } from '@/ui/input/components/internal/date/components/DateTimePicker';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { currentFocusIdSelector } from '@/ui/utilities/focus/states/currentFocusIdSelector';
@@ -14,7 +14,7 @@ import { useStore } from 'jotai';
 import { type Temporal } from 'temporal-polyfill';
 import { type Nullable } from 'twenty-ui/utilities';
 
-export type DateTimeInputProps = {
+type DateTimeInputProps = {
   instanceId: string;
   value: Nullable<Temporal.Instant>;
   onEnter: (newDateTime: Nullable<Temporal.Instant>) => void;

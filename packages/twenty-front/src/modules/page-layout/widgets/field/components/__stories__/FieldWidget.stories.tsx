@@ -1012,3 +1012,28 @@ export const OneToManyRelationCardWidgetWithProgressiveLoading: Story = {
     ).not.toBeInTheDocument();
   },
 };
+
+export const NestedCurrencyPickerKeepsFieldOpen: Story = {
+  ...CurrencyFieldWidget,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+    await userEvent.click(await canvas.findByText('5m'));
+    await userEvent.click(await body.findByRole('button', { name: 'USD' }));
+    await body.findByRole('dialog', { name: 'Currency' });
+    await userEvent.click(canvasElement);
+    await waitFor(() => {
+      expect(
+        body.queryByRole('dialog', { name: 'Currency' }),
+      ).not.toBeInTheDocument();
+    });
+    await expect(body.getByRole('button', { name: 'USD' })).toBeVisible();
+    await userEvent.click(canvasElement);
+    await waitFor(() => {
+      expect(
+        body.queryByRole('button', { name: 'USD' }),
+      ).not.toBeInTheDocument();
+    });
+    await expect(canvas.getByText('5m')).toBeVisible();
+  },
+};

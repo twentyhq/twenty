@@ -10,10 +10,10 @@ import { DatePickerWithoutCalendar } from '@/ui/input/components/internal/date/c
 import { TimeZoneAbbreviation } from '@/ui/input/components/internal/date/components/TimeZoneAbbreviation';
 import { Select } from '@/ui/input/components/Select';
 import { SelectControl } from '@/ui/input/components/SelectControl';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
+import { Dropdown } from 'twenty-ui/components';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { type DropdownOffset } from '@/ui/layout/dropdown/types/DropdownOffset';
 import { useAvailableComponentInstanceId } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceId';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -153,8 +153,6 @@ export const RecordCalendarTopBar = () => {
             { locale: dateLocale.localeCatalog },
           );
 
-  const dropdownContentOffset = { x: 140, y: 0 } satisfies DropdownOffset;
-
   return (
     <StyledContainer>
       <StyledLeftSection>
@@ -172,9 +170,8 @@ export const RecordCalendarTopBar = () => {
             onChange={handleCalendarLayoutChange}
           />
         )}
-        <Dropdown
-          dropdownId={datePickerDropdownId}
-          clickableComponent={
+        <DropdownRoot dropdownId={datePickerDropdownId} type="panel">
+          <Dropdown.Trigger render={<div />} nativeButton={false}>
             <SelectControl
               selectedOption={{
                 label: formattedDate,
@@ -182,21 +179,23 @@ export const RecordCalendarTopBar = () => {
               }}
               selectSizeVariant="small"
             />
-          }
-          dropdownComponents={
-            <LegacyDropdownContent widthInPixels={280}>
-              <DatePickerWithoutCalendar
-                instanceId={recordCalendarId}
-                date={recordCalendarSelectedDate.toString()}
-                onChange={handleDateChange}
-                onClose={handleDateChange}
-                onEnter={handleDateChange}
-                onEscape={handleDateChange}
-              />
-            </LegacyDropdownContent>
-          }
-          dropdownOffset={dropdownContentOffset}
-        />
+          </Dropdown.Trigger>
+          <DropdownContent
+            width={280}
+            align="end"
+            alignOffset={-140}
+            aria-label={t`Select date`}
+          >
+            <DatePickerWithoutCalendar
+              instanceId={recordCalendarId}
+              date={recordCalendarSelectedDate.toString()}
+              onChange={handleDateChange}
+              onClose={handleDateChange}
+              onEnter={handleDateChange}
+              onEscape={handleDateChange}
+            />
+          </DropdownContent>
+        </DropdownRoot>
         <TimeZoneAbbreviation instant={Temporal.Now.instant()} />
       </StyledLeftSection>
 

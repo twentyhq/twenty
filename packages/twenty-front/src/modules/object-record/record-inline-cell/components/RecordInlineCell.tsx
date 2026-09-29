@@ -9,16 +9,15 @@ import { useGetButtonIcon } from '@/object-record/record-field/ui/hooks/useGetBu
 import { useIsFieldInputOnly } from '@/object-record/record-field/ui/hooks/useIsFieldInputOnly';
 import { useOpenFieldInputEditMode } from '@/object-record/record-field/ui/hooks/useOpenFieldInputEditMode';
 
-import { useRecordFieldsScopeContextOrThrow } from '@/object-record/record-field-list/contexts/RecordFieldsScopeContext';
 import {
   FieldInputEventContext,
   type FieldInputClickOutsideEvent,
   type FieldInputEvent,
 } from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
 import { usePersistFieldFromFieldInputContext } from '@/object-record/record-field/ui/hooks/usePersistFieldFromFieldInputContext';
-import { getDropdownFocusIdForRecordField } from '@/object-record/utils/getDropdownFocusIdForRecordField';
-import { useGoBackToPreviousDropdownFocusId } from '@/ui/layout/dropdown/hooks/useGoBackToPreviousDropdownFocusId';
-import { activeDropdownFocusIdState } from '@/ui/layout/dropdown/states/activeDropdownFocusIdState';
+import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
+import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
+import { currentFocusIdSelector } from '@/ui/utilities/focus/states/currentFocusIdSelector';
 import { useStore } from 'jotai';
 import { useIcons } from 'twenty-ui/icon';
 import { RecordInlineCellContainer } from './RecordInlineCellContainer';
@@ -45,7 +44,9 @@ export const RecordInlineCell = ({
     onCloseEditMode: onCloseEditModeFromContext,
     isRecordFieldReadOnly: isReadOnly,
   } = useContext(FieldContext);
-  const { scopeInstanceId } = useRecordFieldsScopeContextOrThrow();
+  const instanceId = useAvailableComponentInstanceIdOrThrow(
+    RecordFieldComponentInstanceContext,
+  );
   const store = useStore();
 
   const { openFieldInput, closeFieldInput } = useOpenFieldInputEditMode();
@@ -79,14 +80,6 @@ export const RecordInlineCell = ({
 
   const isFieldInputOnly = useIsFieldInputOnly();
 
-  const { goBackToPreviousDropdownFocusId } =
-    useGoBackToPreviousDropdownFocusId();
-
-  const closeInlineCell = useCallback(() => {
-    onCloseEditMode();
-    goBackToPreviousDropdownFocusId();
-  }, [onCloseEditMode, goBackToPreviousDropdownFocusId]);
-
   const { persistFieldFromFieldInputContext } =
     usePersistFieldFromFieldInputContext();
 
@@ -95,7 +88,7 @@ export const RecordInlineCell = ({
       persistFieldFromFieldInputContext(newValue);
     }
 
-    closeInlineCell();
+    onCloseEditMode();
   };
 
   const handleSubmit: FieldInputEvent = ({
@@ -108,12 +101,12 @@ export const RecordInlineCell = ({
     }
 
     if (skipClose !== true) {
-      closeInlineCell();
+      onCloseEditMode();
     }
   };
 
   const handleCancel = () => {
-    closeInlineCell();
+    onCloseEditMode();
   };
 
   const handleEscape: FieldInputEvent = ({ newValue, skipPersist }) => {
@@ -121,7 +114,7 @@ export const RecordInlineCell = ({
       persistFieldFromFieldInputContext(newValue);
     }
 
-    closeInlineCell();
+    onCloseEditMode();
   };
 
   const handleTab: FieldInputEvent = ({ newValue, skipPersist }) => {
@@ -129,7 +122,7 @@ export const RecordInlineCell = ({
       persistFieldFromFieldInputContext(newValue);
     }
 
-    closeInlineCell();
+    onCloseEditMode();
   };
 
   const handleShiftTab: FieldInputEvent = ({ newValue, skipPersist }) => {
@@ -137,7 +130,7 @@ export const RecordInlineCell = ({
       persistFieldFromFieldInputContext(newValue);
     }
 
-    closeInlineCell();
+    onCloseEditMode();
   };
 
   const handleClickOutside = useCallback(
@@ -146,16 +139,9 @@ export const RecordInlineCell = ({
       newValue,
       skipPersist,
     }: Parameters<FieldInputClickOutsideEvent>[0]) => {
-      const currentDropdownFocusId = store.get(activeDropdownFocusIdState.atom);
+      const currentFocusId = store.get(currentFocusIdSelector.atom);
 
-      const expectedDropdownFocusId = getDropdownFocusIdForRecordField({
-        recordId,
-        fieldMetadataId: fieldDefinition.fieldMetadataId,
-        componentType: 'inline-cell',
-        instanceId: scopeInstanceId,
-      });
-
-      if (currentDropdownFocusId !== expectedDropdownFocusId) {
+      if (currentFocusId !== instanceId) {
         return;
       }
 
@@ -166,16 +152,9 @@ export const RecordInlineCell = ({
         persistFieldFromFieldInputContext(newValue);
       }
 
-      closeInlineCell();
+      onCloseEditMode();
     },
-    [
-      recordId,
-      fieldDefinition.fieldMetadataId,
-      scopeInstanceId,
-      closeInlineCell,
-      persistFieldFromFieldInputContext,
-      store,
-    ],
+    [instanceId, onCloseEditMode, persistFieldFromFieldInputContext, store],
   );
 
   const { getIcon } = useIcons();

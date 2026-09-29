@@ -19,7 +19,6 @@ import { RecordFieldComponentInstanceContext } from '@/object-record/record-fiel
 import { RECORD_TABLE_CELL_INPUT_ID_PREFIX } from '@/object-record/record-table/constants/RecordTableCellInputIdPrefix';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
-import { StorybookFieldInputDropdownFocusIdSetterEffect } from '~/testing/components/StorybookFieldInputDropdownFocusIdSetterEffect';
 
 const {
   FieldInputEventContextProviderWithJestMocks,
@@ -104,7 +103,6 @@ const NumberFieldInputWithContext = ({
           value={{ scopeInstanceId: RECORD_TABLE_CELL_INPUT_ID_PREFIX }}
         >
           <FieldInputEventContextProviderWithJestMocks>
-            {isReady && <StorybookFieldInputDropdownFocusIdSetterEffect />}
             <NumberFieldValueSetterEffect value={value} />
             <NumberFieldInput />
           </FieldInputEventContextProviderWithJestMocks>

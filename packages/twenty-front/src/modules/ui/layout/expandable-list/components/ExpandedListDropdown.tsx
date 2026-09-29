@@ -1,5 +1,5 @@
-import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
-import { StyledDropdownContentContainer } from '@/ui/layout/dropdown/components/internal/DropdownInternalContainer';
+import { OverlayMenuList } from '@/ui/layout/overlay/components/OverlayMenuList';
+import { StyledOverlayPortalLayer } from '@/ui/layout/overlay/components/StyledOverlayPortalLayer';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { styled } from '@linaria/react';
@@ -47,19 +47,23 @@ export const ExpandedListDropdown = ({
 
   return (
     <FloatingPortal>
-      <StyledDropdownContentContainer
+      <StyledOverlayPortalLayer
         data-floating-ui-viewport
         ref={refs.setFloating}
         style={floatingStyles}
       >
         <OverlayContainer>
-          <LegacyDropdownContent widthInPixels={dropdownContentWidth}>
+          <OverlayMenuList
+            width={dropdownContentWidth}
+            padded={false}
+            maxHeight={null}
+          >
             <StyledExpandedListContainer>
               {children}
             </StyledExpandedListContainer>
-          </LegacyDropdownContent>
+          </OverlayMenuList>
         </OverlayContainer>
-      </StyledDropdownContentContainer>
+      </StyledOverlayPortalLayer>
     </FloatingPortal>
   );
 };

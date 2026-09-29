@@ -23,7 +23,6 @@ import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFi
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { CurrencyCode } from 'twenty-shared/constants';
-import { StorybookFieldInputDropdownFocusIdSetterEffect } from '~/testing/components/StorybookFieldInputDropdownFocusIdSetterEffect';
 
 const {
   FieldInputEventContextProviderWithJestMocks,
@@ -124,7 +123,6 @@ const CurrencyFieldInputWithContext = ({
           value={{ scopeInstanceId: RECORD_TABLE_CELL_INPUT_ID_PREFIX }}
         >
           <FieldInputEventContextProviderWithJestMocks>
-            {isReady && <StorybookFieldInputDropdownFocusIdSetterEffect />}
             <CurrencyFieldValueSetterEffect
               amountMicros={amountMicros}
               numberFormat={numberFormat}

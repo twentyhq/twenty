@@ -45,6 +45,8 @@ type DatePickerHeaderProps = {
   prevMonthButtonDisabled: boolean;
   nextMonthButtonDisabled: boolean;
   hideInput?: boolean;
+  monthSelectDropdownId?: string;
+  yearSelectDropdownId?: string;
 };
 
 export const DatePickerHeader = ({
@@ -57,6 +59,8 @@ export const DatePickerHeader = ({
   prevMonthButtonDisabled,
   nextMonthButtonDisabled,
   hideInput = false,
+  monthSelectDropdownId = MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID,
+  yearSelectDropdownId = MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID,
 }: DatePickerHeaderProps) => {
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const userLocale = currentWorkspaceMember?.locale ?? SOURCE_LOCALE;
@@ -69,11 +73,11 @@ export const DatePickerHeader = ({
       <StyledCustomDatePickerHeader>
         <ClickOutsideListenerContext.Provider
           value={{
-            excludedClickOutsideId: MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID,
+            excludedClickOutsideId: monthSelectDropdownId,
           }}
         >
           <Select
-            dropdownId={MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID}
+            dropdownId={monthSelectDropdownId}
             options={getMonthSelectOptions(userLocale)}
             onChange={onChangeMonth}
             value={dateParsed?.month}
@@ -82,11 +86,11 @@ export const DatePickerHeader = ({
         </ClickOutsideListenerContext.Provider>
         <ClickOutsideListenerContext.Provider
           value={{
-            excludedClickOutsideId: MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID,
+            excludedClickOutsideId: yearSelectDropdownId,
           }}
         >
           <Select
-            dropdownId={MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID}
+            dropdownId={yearSelectDropdownId}
             onChange={onChangeYear}
             value={dateParsed?.year}
             options={YEARS_SELECT_OPTIONS}

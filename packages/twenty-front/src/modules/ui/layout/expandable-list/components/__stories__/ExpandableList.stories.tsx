@@ -53,7 +53,11 @@ export const WithExpandedList: Story = {
     const body = canvasElement.ownerDocument.body;
     const bodyCanvas = within(body);
 
-    expect(await bodyCanvas.findByText('Option 7')).toBeDefined();
+    expect(await bodyCanvas.findByText('Option 7')).toBeVisible();
+    await userEvent.click(canvasElement);
+    await waitFor(() => {
+      expect(bodyCanvas.queryByText('Option 7')).not.toBeInTheDocument();
+    });
   },
 };
 

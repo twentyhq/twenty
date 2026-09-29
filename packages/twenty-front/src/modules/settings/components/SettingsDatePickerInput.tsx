@@ -1,3 +1,8 @@
+import {
+  MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID,
+  MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID,
+} from '@/ui/input/components/internal/date/components/DatePicker';
+import { DATE_TIME_PICKER_MONTH_YEAR_PANEL_DROPDOWN_ID } from '@/ui/input/components/internal/date/constants/DateTimePickerMonthYearPanelDropdownId';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useId, useRef, useState } from 'react';
@@ -10,12 +15,7 @@ import {
   useFloating,
 } from '@floating-ui/react';
 
-import {
-  DATE_TIME_PICKER_MONTH_YEAR_PANEL_DROPDOWN_ID,
-  DateTimePicker,
-  MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID,
-  MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID,
-} from '@/ui/input/components/internal/date/components/DateTimePicker';
+import { DateTimePicker } from '@/ui/input/components/internal/date/components/DateTimePicker';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
 import { ParentClickOutsideIdContext } from '@/ui/utilities/pointer-event/contexts/ParentClickOutsideIdContext';
@@ -64,7 +64,7 @@ const StyledIconContainer = styled.div`
   display: flex;
 `;
 
-export type SettingsDatePickerInputProps = {
+type SettingsDatePickerInputProps = {
   label?: string;
   instanceId?: string;
   value: Date | undefined;
