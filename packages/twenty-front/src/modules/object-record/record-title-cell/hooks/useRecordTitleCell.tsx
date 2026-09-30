@@ -3,7 +3,6 @@ import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/uti
 import { useInitDraftValue } from '@/object-record/record-field/ui/hooks/useInitDraftValue';
 import { RecordTitleCellComponentInstanceContext } from '@/object-record/record-title-cell/states/contexts/RecordTitleCellComponentInstanceContext';
 import { isTitleCellInEditModeComponentState } from '@/object-record/record-title-cell/states/isTitleCellInEditModeComponentState';
-import { useGoBackToPreviousDropdownFocusId } from '@/ui/layout/dropdown/hooks/useGoBackToPreviousDropdownFocusId';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
@@ -19,9 +18,6 @@ type OpenTitleCellFunctionParams = {
 };
 
 export const useRecordTitleCell = () => {
-  const { goBackToPreviousDropdownFocusId } =
-    useGoBackToPreviousDropdownFocusId();
-
   const instanceId = useAvailableComponentInstanceId(
     RecordTitleCellComponentInstanceContext,
   );
@@ -54,15 +50,8 @@ export const useRecordTitleCell = () => {
       removeFocusItemFromFocusStackById({
         focusId: computedInstanceId,
       });
-
-      goBackToPreviousDropdownFocusId();
     },
-    [
-      goBackToPreviousDropdownFocusId,
-      instanceId,
-      removeFocusItemFromFocusStackById,
-      store,
-    ],
+    [instanceId, removeFocusItemFromFocusStackById, store],
   );
 
   const initFieldInputDraftValue = useInitDraftValue();
