@@ -51,7 +51,6 @@ import { findPendingQuestionPart } from 'src/engine/metadata-modules/ai/ai-chat/
 import { AGENT_CHAT_CHECKPOINT_INTERVAL_MS } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-checkpoint-interval-ms.constant';
 import { getCancelChannel } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-cancel-channel.util';
 import { mapErrorToStreamError } from 'src/engine/metadata-modules/ai/ai-chat/utils/map-error-to-stream-error.util';
-import { tagAiChatModelScope } from 'src/engine/metadata-modules/ai/ai-chat/utils/tag-ai-chat-model-scope.util';
 import { tagAiChatStreamScope } from 'src/engine/metadata-modules/ai/ai-chat/utils/tag-ai-chat-stream-scope.util';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import type { AiModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-config.type';
@@ -122,8 +121,6 @@ export class StreamAgentChatJob {
     });
 
     const turnModelId = this.resolveTurnModelId(data.modelId, workspace);
-
-    tagAiChatModelScope({ modelId: turnModelId });
 
     this.metricsService.incrementCounterBy({
       key: MetricsKeys.AiChatTurnStarted,
