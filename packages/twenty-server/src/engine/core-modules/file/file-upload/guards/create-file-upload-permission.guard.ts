@@ -8,8 +8,10 @@ import { GqlExecutionContext } from '@nestjs/graphql';
 import { msg } from '@lingui/core/macro';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { FileFolder } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
+import { getScopedCallingApplication } from 'src/engine/core-modules/application/utils/get-scoped-calling-application.util';
 import { CORE_PICTURE_UPLOAD_PERMISSION_FLAGS } from 'src/engine/core-modules/file/file-upload/constants/core-picture-upload-permission-flags.constant';
 import {
   PermissionsException,
@@ -17,6 +19,15 @@ import {
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
+
+const buildPermissionDeniedException = () =>
+  new PermissionsException(
+    PermissionsExceptionMessage.PERMISSION_DENIED,
+    PermissionsExceptionCode.PERMISSION_DENIED,
+    {
+      userFriendlyMessage: msg`You do not have permission to access this feature. Please contact your workspace administrator for access.`,
+    },
+  );
 
 @Injectable()
 export class CreateFileUploadPermissionGuard implements CanActivate {
@@ -26,6 +37,15 @@ export class CreateFileUploadPermissionGuard implements CanActivate {
     const gqlContext = GqlExecutionContext.create(context);
     const request = gqlContext.getContext().req;
     const { fileFolder } = gqlContext.getArgs<{ fileFolder: FileFolder }>();
+
+    // The folder is an argument, so AuthPrincipalGuard cannot refuse it: an
+    // installed application never publishes an application, not even its own.
+    if (
+      fileFolder === FileFolder.AppTarball &&
+      isDefined(getScopedCallingApplication(request.application))
+    ) {
+      throw buildPermissionDeniedException();
+    }
 
     if (
       [
@@ -56,12 +76,6 @@ export class CreateFileUploadPermissionGuard implements CanActivate {
       }
     }
 
-    throw new PermissionsException(
-      PermissionsExceptionMessage.PERMISSION_DENIED,
-      PermissionsExceptionCode.PERMISSION_DENIED,
-      {
-        userFriendlyMessage: msg`You do not have permission to access this feature. Please contact your workspace administrator for access.`,
-      },
-    );
+    throw buildPermissionDeniedException();
   }
 }

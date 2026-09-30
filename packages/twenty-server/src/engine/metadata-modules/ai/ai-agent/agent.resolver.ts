@@ -94,7 +94,20 @@ export class AgentResolver {
   }
 
   @Mutation(() => AgentDTO)
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.AI_SETTINGS))
+  @UseGuards(
+    AuthPrincipalGuard({
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: true,
+      oauthClient: true,
+      application: false,
+    }),
+    SettingsPermissionGuard(PermissionFlagType.AI_SETTINGS),
+  )
   async createOneAgent(
     @Args('input') input: CreateAgentInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -112,7 +125,20 @@ export class AgentResolver {
   }
 
   @Mutation(() => AgentDTO)
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.AI_SETTINGS))
+  @UseGuards(
+    AuthPrincipalGuard({
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: true,
+      oauthClient: true,
+      application: false,
+    }),
+    SettingsPermissionGuard(PermissionFlagType.AI_SETTINGS),
+  )
   async updateOneAgent(
     @Args('input') input: UpdateAgentInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -130,7 +156,20 @@ export class AgentResolver {
   }
 
   @Mutation(() => AgentDTO)
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.AI_SETTINGS))
+  @UseGuards(
+    AuthPrincipalGuard({
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: true,
+      oauthClient: true,
+      application: false,
+    }),
+    SettingsPermissionGuard(PermissionFlagType.AI_SETTINGS),
+  )
   async deleteOneAgent(
     @Args('input') { id }: AgentIdInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,

@@ -65,7 +65,20 @@ export class ApplicationDevelopmentResolver {
   ) {}
 
   @Mutation(() => DevelopmentApplicationDTO)
-  @UseGuards(ApplicationTargetGuard)
+  @UseGuards(
+    AuthPrincipalGuard({
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: true,
+      oauthClient: true,
+      application: false,
+    }),
+    ApplicationTargetGuard,
+  )
   async createDevelopmentApplication(
     @ApplicationTargetArgs<CreateDevelopmentApplicationInput>({
       kind: 'applicationUniversalIdentifier',
@@ -100,7 +113,20 @@ export class ApplicationDevelopmentResolver {
   }
 
   @Mutation(() => WorkspaceMigrationDTO)
-  @UseGuards(ApplicationTargetGuard)
+  @UseGuards(
+    AuthPrincipalGuard({
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: true,
+      oauthClient: true,
+      application: false,
+    }),
+    ApplicationTargetGuard,
+  )
   async syncApplication(
     @ApplicationTargetArgs<ApplicationInput>({
       kind: 'applicationUniversalIdentifier',
@@ -123,6 +149,17 @@ export class ApplicationDevelopmentResolver {
       'Use createApplicationFileUploads and completeApplicationFileUploads, which send the files straight to file storage.',
   })
   @UseGuards(
+    AuthPrincipalGuard({
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: true,
+      oauthClient: true,
+      application: false,
+    }),
     SettingsPermissionGuard(PermissionFlagType.UPLOAD_FILE),
     ApplicationTargetGuard,
   )
@@ -156,6 +193,17 @@ export class ApplicationDevelopmentResolver {
 
   @Mutation(() => CreateApplicationFileUploadsResultDTO)
   @UseGuards(
+    AuthPrincipalGuard({
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: true,
+      oauthClient: true,
+      application: false,
+    }),
     SettingsPermissionGuard(PermissionFlagType.UPLOAD_FILE),
     ApplicationTargetGuard,
   )
@@ -180,6 +228,17 @@ export class ApplicationDevelopmentResolver {
 
   @Mutation(() => CompleteApplicationFileUploadsResultDTO)
   @UseGuards(
+    AuthPrincipalGuard({
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: true,
+      oauthClient: true,
+      application: false,
+    }),
     SettingsPermissionGuard(PermissionFlagType.UPLOAD_FILE),
     ApplicationTargetGuard,
   )

@@ -1,0 +1,79 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Application token REST webhook writes should fail with a user-bound application token should refuse to create a webhook 1`] = `
+{
+  "body": {
+    "error": "AuthPrincipalRefusedException",
+    "messages": [
+      "This endpoint is not available to this caller",
+    ],
+    "statusCode": 403,
+  },
+  "status": 403,
+}
+`;
+
+exports[`Application token REST webhook writes should fail with a user-bound application token should refuse to delete a webhook 1`] = `
+{
+  "body": {
+    "error": "AuthPrincipalRefusedException",
+    "messages": [
+      "This endpoint is not available to this caller",
+    ],
+    "statusCode": 403,
+  },
+  "status": 403,
+}
+`;
+
+exports[`Application token REST webhook writes should fail with a user-bound application token should refuse to update a webhook 1`] = `
+{
+  "body": {
+    "error": "AuthPrincipalRefusedException",
+    "messages": [
+      "This endpoint is not available to this caller",
+    ],
+    "statusCode": 403,
+  },
+  "status": 403,
+}
+`;
+
+exports[`Application token REST webhook writes should fail with an application token without user binding should refuse to create a webhook 1`] = `
+{
+  "body": {
+    "error": "AuthPrincipalRefusedException",
+    "messages": [
+      "This endpoint is not available to this caller",
+    ],
+    "statusCode": 403,
+  },
+  "status": 403,
+}
+`;
+
+exports[`Application token REST webhook writes should fail with an application token without user binding should refuse to delete a webhook 1`] = `
+{
+  "body": {
+    "error": "AuthPrincipalRefusedException",
+    "messages": [
+      "This endpoint is not available to this caller",
+    ],
+    "statusCode": 403,
+  },
+  "status": 403,
+}
+`;
+
+exports[`Application token REST webhook writes should fail with an application token without user binding should refuse to update a webhook 1`] = `
+{
+  "body": {
+    "error": "AuthPrincipalRefusedException",
+    "messages": [
+      "This endpoint is not available to this caller",
+    ],
+    "statusCode": 403,
+  },
+  "status": 403,
+}
+`;

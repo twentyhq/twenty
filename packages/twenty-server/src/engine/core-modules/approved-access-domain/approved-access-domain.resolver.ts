@@ -51,6 +51,19 @@ export class ApprovedAccessDomainResolver {
   ) {}
 
   @Mutation(() => ApprovedAccessDomainDTO)
+  @UseGuards(
+    AuthPrincipalGuard({
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: true,
+      oauthClient: true,
+      application: false,
+    }),
+  )
   async createApprovedAccessDomain(
     @Args('input') { domain, email }: CreateApprovedAccessDomainInput,
     @AuthWorkspace() currentWorkspace: WorkspaceEntity,

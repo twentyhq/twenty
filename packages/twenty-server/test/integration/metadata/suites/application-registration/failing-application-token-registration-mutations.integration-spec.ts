@@ -1,6 +1,10 @@
 import { updateApplicationRegistrationVariable } from 'test/integration/metadata/suites/application-registration-variable/utils/application-registration-variable-api.util';
+import { insertApplicationRegistrationVariable } from 'test/integration/metadata/suites/application-registration-variable/utils/insert-application-registration-variable.util';
 import { deleteApplicationRegistration } from 'test/integration/metadata/suites/application-registration/utils/delete-application-registration.util';
-import { insertApplicationRegistrationWithVariable } from 'test/integration/metadata/suites/application-registration/utils/insert-application-registration-with-variable.util';
+import {
+  insertApplicationRegistrationWithVariable,
+  TARGET_VARIABLE_KEY,
+} from 'test/integration/metadata/suites/application-registration/utils/insert-application-registration-with-variable.util';
 import { readApplicationRegistrationState } from 'test/integration/metadata/suites/application-registration/utils/read-application-registration-state.util';
 import { rotateApplicationRegistrationClientSecret } from 'test/integration/metadata/suites/application-registration/utils/rotate-application-registration-client-secret.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
@@ -36,6 +40,15 @@ type TargetRegistration = {
   variableId: string;
 };
 
+type TargetTestContext = {
+  createTargetRegistration: (
+    globalContext: GlobalTestContext,
+  ) => Promise<TargetRegistration>;
+  removeTargetRegistration: (
+    targetRegistration: TargetRegistration,
+  ) => Promise<unknown>;
+};
+
 type MutationTestContext = {
   requestTargetRegistration: (params: {
     targetRegistration: TargetRegistration;
@@ -54,6 +67,43 @@ const tokenTestCases: EachTestingContext<TokenTestContext>[] = [
   },
 ];
 
+const targetTestCases: EachTestingContext<TargetTestContext>[] = [
+  {
+    title: 'its own registration',
+    context: {
+      createTargetRegistration: async ({ callingApplication }) => ({
+        applicationRegistrationId: callingApplication.applicationRegistrationId,
+        variableId: await insertApplicationRegistrationVariable({
+          applicationRegistrationId:
+            callingApplication.applicationRegistrationId,
+          key: TARGET_VARIABLE_KEY,
+          value: 'target-secret-value',
+        }),
+      }),
+      removeTargetRegistration: ({ applicationRegistrationId }) =>
+        globalThis.testDataSource.query(
+          `DELETE FROM core."applicationRegistrationVariable"
+           WHERE "applicationRegistrationId" = $1`,
+          [applicationRegistrationId],
+        ),
+    },
+  },
+  {
+    title: 'another registration of the same workspace',
+    context: {
+      createTargetRegistration: () =>
+        insertApplicationRegistrationWithVariable({
+          name: 'Registration Mutation Target',
+        }),
+      removeTargetRegistration: ({ applicationRegistrationId }) =>
+        globalThis.testDataSource.query(
+          `DELETE FROM core."applicationRegistration" WHERE id = $1`,
+          [applicationRegistrationId],
+        ),
+    },
+  },
+];
+
 const mutationTestCases: EachTestingContext<MutationTestContext>[] = [
   {
     title: 'updateApplicationRegistration',
@@ -62,8 +112,8 @@ const mutationTestCases: EachTestingContext<MutationTestContext>[] = [
         updateApplicationRegistration({
           id: targetRegistration.applicationRegistrationId,
           update: {
-            name: 'Renamed by another application',
-            oAuthRedirectUris: ['https://other-app.example.com/callback'],
+            name: 'Renamed by an application',
+            oAuthRedirectUris: ['https://application.example.com/callback'],
           },
           token,
           expectToFail: true,
@@ -98,7 +148,7 @@ const mutationTestCases: EachTestingContext<MutationTestContext>[] = [
       requestTargetRegistration: ({ targetRegistration, token }) =>
         updateApplicationRegistrationVariable({
           id: targetRegistration.variableId,
-          value: 'https://other-app.example.com',
+          value: 'https://application.example.com',
           token,
           expectToFail: true,
         }),
@@ -106,9 +156,8 @@ const mutationTestCases: EachTestingContext<MutationTestContext>[] = [
   },
 ];
 
-describe('Application token mutations on another registration of the same workspace should fail', () => {
+describe('Application token mutations on a registration should fail', () => {
   let globalTestContext: GlobalTestContext;
-  let targetRegistration: TargetRegistration;
 
   beforeAll(async () => {
     const callingApplication = await setupApplicationWithResources({
@@ -137,19 +186,6 @@ describe('Application token mutations on another registration of the same worksp
     };
   }, 120000);
 
-  beforeEach(async () => {
-    targetRegistration = await insertApplicationRegistrationWithVariable({
-      name: 'Registration Mutation Target',
-    });
-  });
-
-  afterEach(async () => {
-    await globalThis.testDataSource.query(
-      `DELETE FROM core."applicationRegistration" WHERE id = $1`,
-      [targetRegistration.applicationRegistrationId],
-    );
-  });
-
   afterAll(async () => {
     await cleanupApplicationAndAppRegistration({
       applicationUniversalIdentifier:
@@ -157,27 +193,43 @@ describe('Application token mutations on another registration of the same worksp
     });
   });
 
-  describe.each(eachTestingContextFilter(tokenTestCases))(
-    '$title',
-    ({ context: tokenContext }) => {
-      it.each(eachTestingContextFilter(mutationTestCases))(
-        'should refuse $title and leave the registration unchanged',
-        async ({ context }) => {
-          const stateBeforeAttempt = await readApplicationRegistrationState(
-            targetRegistration.applicationRegistrationId,
+  describe.each(eachTestingContextFilter(targetTestCases))(
+    'on $title',
+    ({ context: targetContext }) => {
+      let targetRegistration: TargetRegistration;
+
+      beforeEach(async () => {
+        targetRegistration =
+          await targetContext.createTargetRegistration(globalTestContext);
+      });
+
+      afterEach(async () => {
+        await targetContext.removeTargetRegistration(targetRegistration);
+      });
+
+      describe.each(eachTestingContextFilter(tokenTestCases))(
+        '$title',
+        ({ context: tokenContext }) => {
+          it.each(eachTestingContextFilter(mutationTestCases))(
+            'should refuse $title and leave the registration unchanged',
+            async ({ context }) => {
+              const stateBeforeAttempt = await readApplicationRegistrationState(
+                targetRegistration.applicationRegistrationId,
+              );
+
+              const { errors } = await context.requestTargetRegistration({
+                targetRegistration,
+                token: tokenContext.token(globalTestContext),
+              });
+
+              expectOneNotInternalServerErrorSnapshot({ errors });
+              expect(
+                await readApplicationRegistrationState(
+                  targetRegistration.applicationRegistrationId,
+                ),
+              ).toEqual(stateBeforeAttempt);
+            },
           );
-
-          const { errors } = await context.requestTargetRegistration({
-            targetRegistration,
-            token: tokenContext.token(globalTestContext),
-          });
-
-          expectOneNotInternalServerErrorSnapshot({ errors });
-          expect(
-            await readApplicationRegistrationState(
-              targetRegistration.applicationRegistrationId,
-            ),
-          ).toEqual(stateBeforeAttempt);
         },
       );
     },

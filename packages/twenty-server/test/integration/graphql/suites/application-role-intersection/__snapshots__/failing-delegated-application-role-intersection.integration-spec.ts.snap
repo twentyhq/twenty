@@ -4,11 +4,9 @@ exports[`A delegated application without the flag is refused should refuse a del
 {
   "extensions": {
     "code": "FORBIDDEN",
-    "subCode": "CANNOT_DELETE_OWN_ROLE",
-    "userFriendlyMessage": "You cannot delete a role you are assigned to. Ask another administrator to delete it.",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
   },
-  "message": "Cannot delete a role assigned to the acting user",
-  "name": "ForbiddenError",
+  "message": "This endpoint is not available to this caller",
 }
 `;
 

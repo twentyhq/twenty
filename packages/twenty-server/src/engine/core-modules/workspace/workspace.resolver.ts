@@ -202,7 +202,7 @@ export class WorkspaceResolver {
       },
       apiKey: true,
       oauthClient: true,
-      application: true,
+      application: false,
     }),
     SettingsPermissionGuard(PermissionFlagType.SECURITY),
   )
@@ -244,7 +244,7 @@ export class WorkspaceResolver {
       },
       apiKey: true,
       oauthClient: true,
-      application: true,
+      application: false,
     }),
     SettingsPermissionGuard(PermissionFlagType.WORKSPACE),
   )

@@ -1,0 +1,1321 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Administration operations with an application token should fail with a user-bound application token should refuse activateSkill 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with a user-bound application token should refuse assignRoleToAgent 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with a user-bound application token should refuse billingPortalSession 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with a user-bound application token should refuse cancelSwitchBillingInterval 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with a user-bound application token should refuse cancelSwitchBillingPlan 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with a user-bound application token should refuse cancelSwitchResourceCreditPrice 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with a user-bound application token should refuse completeApplicationFileUploads 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with a user-bound application token should refuse createApplicationFileUploads 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with a user-bound application token should refuse createApplicationRegistration 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with a user-bound application token should refuse createApprovedAccessDomain 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with a user-bound application token should refuse createBillingPaymentMethodSetupIntent 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with a user-bound application token should refuse createDevelopmentApplication 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with a user-bound application token should refuse createEmailingDomain 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with a user-bound application token should refuse createFrontComponent 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with a user-bound application token should refuse createOIDCIdentityProvider 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with a user-bound application token should refuse createOneAgent 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with a user-bound application token should refuse createOneLogicFunction 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with a user-bound application token should refuse createOneRole 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with a user-bound application token should refuse createPublicDomain 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with a user-bound application token should refuse createSAMLIdentityProvider 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with a user-bound application token should refuse createSkill 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with a user-bound application token should refuse createWebhook 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with a user-bound application token should refuse deactivateSkill 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with a user-bound application token should refuse deleteApplicationRegistration 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with a user-bound application token should refuse deleteCurrentWorkspace 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with a user-bound application token should refuse deleteEmailingDomain 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with a user-bound application token should refuse deleteFrontComponent 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with a user-bound application token should refuse deleteOneAgent 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with a user-bound application token should refuse deleteOneLogicFunction 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with a user-bound application token should refuse deleteOneRole 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with a user-bound application token should refuse deletePublicDomain 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with a user-bound application token should refuse deleteSSOIdentityProvider 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with a user-bound application token should refuse deleteSkill 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with a user-bound application token should refuse deleteWebhook 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with a user-bound application token should refuse editSSOIdentityProvider 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with a user-bound application token should refuse endSubscriptionTrialPeriod 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with a user-bound application token should refuse installApplication 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with a user-bound application token should refuse installMarketplaceApp 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with a user-bound application token should refuse removeRoleFromAgent 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with a user-bound application token should refuse rotateApplicationRegistrationClientSecret 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with a user-bound application token should refuse setResourceCreditSubscriptionPrice 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with a user-bound application token should refuse switchBillingPlan 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with a user-bound application token should refuse switchSubscriptionInterval 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with a user-bound application token should refuse syncApplication 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with a user-bound application token should refuse syncMarketplaceCatalog 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with a user-bound application token should refuse to raise its own role, which stays unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with a user-bound application token should refuse triggerInstallApplicationJob 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with a user-bound application token should refuse triggerUninstallApplicationJob 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with a user-bound application token should refuse uninstallApplication 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with a user-bound application token should refuse updateApplication 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with a user-bound application token should refuse updateApplicationRegistration 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with a user-bound application token should refuse updateApplicationRegistrationVariable 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with a user-bound application token should refuse updateFrontComponent 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with a user-bound application token should refuse updateLabPublicFeatureFlag 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with a user-bound application token should refuse updateOneAgent 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with a user-bound application token should refuse updateOneRole 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with a user-bound application token should refuse updateSkill 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with a user-bound application token should refuse updateWebhook 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with a user-bound application token should refuse updateWorkspaceAllowedIframeOrigins 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with a user-bound application token should refuse updateWorkspaceMemberRole 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with a user-bound application token should refuse upgradeApplication 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with a user-bound application token should refuse upsertFieldPermissions 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with a user-bound application token should refuse upsertObjectPermissions 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with a user-bound application token should refuse upsertPermissionFlags 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with a user-bound application token should refuse upsertRowLevelPermissionPredicates 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with a user-bound application token should refuse verifyEmailingDomain 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with an application token without user binding should refuse activateSkill 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with an application token without user binding should refuse assignRoleToAgent 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with an application token without user binding should refuse billingPortalSession 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with an application token without user binding should refuse cancelSwitchBillingInterval 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with an application token without user binding should refuse cancelSwitchBillingPlan 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with an application token without user binding should refuse cancelSwitchResourceCreditPrice 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with an application token without user binding should refuse completeApplicationFileUploads 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with an application token without user binding should refuse createApplicationFileUploads 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with an application token without user binding should refuse createApplicationRegistration 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with an application token without user binding should refuse createApprovedAccessDomain 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with an application token without user binding should refuse createBillingPaymentMethodSetupIntent 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with an application token without user binding should refuse createDevelopmentApplication 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with an application token without user binding should refuse createEmailingDomain 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with an application token without user binding should refuse createFrontComponent 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with an application token without user binding should refuse createOIDCIdentityProvider 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with an application token without user binding should refuse createOneAgent 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with an application token without user binding should refuse createOneLogicFunction 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with an application token without user binding should refuse createOneRole 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with an application token without user binding should refuse createPublicDomain 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with an application token without user binding should refuse createSAMLIdentityProvider 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with an application token without user binding should refuse createSkill 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with an application token without user binding should refuse createWebhook 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with an application token without user binding should refuse deactivateSkill 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with an application token without user binding should refuse deleteApplicationRegistration 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with an application token without user binding should refuse deleteCurrentWorkspace 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with an application token without user binding should refuse deleteEmailingDomain 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with an application token without user binding should refuse deleteFrontComponent 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with an application token without user binding should refuse deleteOneAgent 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with an application token without user binding should refuse deleteOneLogicFunction 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with an application token without user binding should refuse deleteOneRole 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with an application token without user binding should refuse deletePublicDomain 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with an application token without user binding should refuse deleteSSOIdentityProvider 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with an application token without user binding should refuse deleteSkill 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with an application token without user binding should refuse deleteWebhook 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with an application token without user binding should refuse editSSOIdentityProvider 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with an application token without user binding should refuse endSubscriptionTrialPeriod 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with an application token without user binding should refuse installApplication 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with an application token without user binding should refuse installMarketplaceApp 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with an application token without user binding should refuse removeRoleFromAgent 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with an application token without user binding should refuse rotateApplicationRegistrationClientSecret 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with an application token without user binding should refuse setResourceCreditSubscriptionPrice 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with an application token without user binding should refuse switchBillingPlan 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with an application token without user binding should refuse switchSubscriptionInterval 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with an application token without user binding should refuse syncApplication 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with an application token without user binding should refuse syncMarketplaceCatalog 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with an application token without user binding should refuse to raise its own role, which stays unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with an application token without user binding should refuse triggerInstallApplicationJob 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with an application token without user binding should refuse triggerUninstallApplicationJob 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with an application token without user binding should refuse uninstallApplication 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with an application token without user binding should refuse updateApplication 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with an application token without user binding should refuse updateApplicationRegistration 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with an application token without user binding should refuse updateApplicationRegistrationVariable 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with an application token without user binding should refuse updateFrontComponent 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with an application token without user binding should refuse updateLabPublicFeatureFlag 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with an application token without user binding should refuse updateOneAgent 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with an application token without user binding should refuse updateOneRole 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with an application token without user binding should refuse updateSkill 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with an application token without user binding should refuse updateWebhook 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with an application token without user binding should refuse updateWorkspaceAllowedIframeOrigins 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with an application token without user binding should refuse updateWorkspaceMemberRole 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with an application token without user binding should refuse upgradeApplication 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with an application token without user binding should refuse upsertFieldPermissions 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with an application token without user binding should refuse upsertObjectPermissions 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with an application token without user binding should refuse upsertPermissionFlags 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with an application token without user binding should refuse upsertRowLevelPermissionPredicates 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`Administration operations with an application token should fail with an application token without user binding should refuse verifyEmailingDomain 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;

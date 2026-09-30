@@ -180,10 +180,8 @@ describe('A delegated application without the flag is refused', () => {
     },
   );
 
-  // Lockout protection covers the roles the caller depends on. An application
-  // acting for a member depends on its own declared role as much as on the
-  // member's, so deleting it must be refused even though the member's role,
-  // and the ROLES flag it needs to get here, say otherwise.
+  // An installed application never reaches the role mutations, whatever the
+  // member's role and the ROLES flag say, so its own declared role stays.
   it('should refuse a delegated application deleting its own declared role', async () => {
     const { flaggedApplication, flaggedApplicationToken } =
       delegatedApplications;

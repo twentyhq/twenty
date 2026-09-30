@@ -82,7 +82,20 @@ export class SkillResolver {
   }
 
   @Mutation(() => SkillDTO)
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.AI_SETTINGS))
+  @UseGuards(
+    AuthPrincipalGuard({
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: true,
+      oauthClient: true,
+      application: false,
+    }),
+    SettingsPermissionGuard(PermissionFlagType.AI_SETTINGS),
+  )
   async createSkill(
     @Args('input') input: CreateSkillInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -91,7 +104,20 @@ export class SkillResolver {
   }
 
   @Mutation(() => SkillDTO)
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.AI_SETTINGS))
+  @UseGuards(
+    AuthPrincipalGuard({
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: true,
+      oauthClient: true,
+      application: false,
+    }),
+    SettingsPermissionGuard(PermissionFlagType.AI_SETTINGS),
+  )
   async updateSkill(
     @Args('input') input: UpdateSkillInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -100,7 +126,20 @@ export class SkillResolver {
   }
 
   @Mutation(() => SkillDTO)
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.AI_SETTINGS))
+  @UseGuards(
+    AuthPrincipalGuard({
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: true,
+      oauthClient: true,
+      application: false,
+    }),
+    SettingsPermissionGuard(PermissionFlagType.AI_SETTINGS),
+  )
   async deleteSkill(
     @Args('id', { type: () => UUIDScalarType }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -109,7 +148,20 @@ export class SkillResolver {
   }
 
   @Mutation(() => SkillDTO)
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.AI_SETTINGS))
+  @UseGuards(
+    AuthPrincipalGuard({
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: true,
+      oauthClient: true,
+      application: false,
+    }),
+    SettingsPermissionGuard(PermissionFlagType.AI_SETTINGS),
+  )
   async activateSkill(
     @Args('id', { type: () => UUIDScalarType }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -118,7 +170,20 @@ export class SkillResolver {
   }
 
   @Mutation(() => SkillDTO)
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.AI_SETTINGS))
+  @UseGuards(
+    AuthPrincipalGuard({
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: true,
+      oauthClient: true,
+      application: false,
+    }),
+    SettingsPermissionGuard(PermissionFlagType.AI_SETTINGS),
+  )
   async deactivateSkill(
     @Args('id', { type: () => UUIDScalarType }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
