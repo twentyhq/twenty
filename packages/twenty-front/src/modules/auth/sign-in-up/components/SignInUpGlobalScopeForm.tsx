@@ -6,7 +6,7 @@ import { useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { FormProvider } from 'react-hook-form';
-import { ClickToActionLink } from 'twenty-ui/primitives/navigation';
+import { Button } from 'twenty-ui/primitives/input';
 
 import { StyledOnboardingContentContainer } from '@/auth/components/StyledOnboardingContentContainer';
 import { SignInUpWithCredentials } from '@/auth/sign-in-up/components/internal/SignInUpWithCredentials';
@@ -260,11 +260,12 @@ export const SignInUpGlobalScopeForm = () => {
           </FormProvider>
           {signInUpStep === SignInUpStep.Password && (
             <StyledForgotPasswordLinkContainer>
-              <ClickToActionLink
+              <Button
+                variant="link"
                 onClick={handleResetPassword(form.getValues('email'))}
               >
                 <Trans>Forgot your password?</Trans>
-              </ClickToActionLink>
+              </Button>
             </StyledForgotPasswordLinkContainer>
           )}
         </StyledOnboardingContentContainer>
