@@ -5,6 +5,7 @@
 ### Breaking Changes
 
 - Removed `ColorSchemePicker`, `ColorSchemePickerProps`, and the app-specific `ColorScheme` type. Profile appearance settings now own the theme previews and preference choices, using `Radio` and `RadioGroup` for selection.
+- Removed `RoundedLink`. The Twenty frontend now owns the shared field and settings link adapter. Other applications can compose native anchors or use `Button` with `href`; `getSafeUrl` remains available from `twenty-ui/utilities`.
 
 - Removed `CardPicker` and `CardPickerProps`. Use `Radio variant="card"` inside `RadioGroup` from `twenty-ui/primitives/input`. Card layout, selection, keyboard navigation, and form behavior are preserved.
 - Removed `Info`, `InfoProps`, and `InfoAccent`. Use `InlineBanner` from `twenty-ui/components` with `variant="compact"`, `message`, and `color` to preserve wrapping and presentation. Its `button` supports native links through `href`, custom links through `render`, and button actions through `onClick`. The separately versioned Granola app must migrate its four Info-consuming files together with its `twenty-ui@^1.0.0-alpha.1` dependency upgrade.

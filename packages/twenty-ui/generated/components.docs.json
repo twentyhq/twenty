@@ -9124,48 +9124,6 @@
     ]
   },
   {
-    "name": "RoundedLink",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/rounded-link",
-    "props": [
-      {
-        "name": "className",
-        "type": "string",
-        "required": false,
-        "defaultValue": null,
-        "description": "Class applied to the link."
-      },
-      {
-        "name": "color",
-        "type": "\"primary\" | \"secondary\"",
-        "required": false,
-        "defaultValue": "primary",
-        "description": "Label text color: primary or secondary."
-      },
-      {
-        "name": "href",
-        "type": "string",
-        "required": true,
-        "defaultValue": null,
-        "description": "Destination URL, normalized by the safe-URL helper. Opens in a new tab."
-      },
-      {
-        "name": "label",
-        "type": "string",
-        "required": false,
-        "defaultValue": null,
-        "description": "Visible link text. An absent or empty label renders nothing."
-      },
-      {
-        "name": "onClick",
-        "type": "((event: MouseEvent<HTMLElement, MouseEvent>) => void)",
-        "required": false,
-        "defaultValue": null,
-        "description": "Click callback after propagation is stopped."
-      }
-    ]
-  },
-  {
     "name": "ThemeProvider",
     "entryPoint": "twenty-ui/theme",
     "slug": "theme/theme-provider",
