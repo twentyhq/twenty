@@ -10,6 +10,7 @@ import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-
 import { SdkClientModule } from 'src/engine/core-modules/sdk-client/sdk-client.module';
 import { SecretEncryptionModule } from 'src/engine/core-modules/secret-encryption/secret-encryption.module';
 import { FileStorageModule } from 'src/engine/core-modules/file-storage/file-storage.module';
+import { RecordShareStorageModule } from 'src/engine/core-modules/record-share/record-share-storage.module';
 import { WorkflowVersionEntity } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
 import { WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -29,9 +30,11 @@ import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { DevSeederPermissionsService } from 'src/engine/workspace-manager/dev-seeder/core/services/dev-seeder-permissions.service';
+import { DevSeederAgentChatInputAskWorkspaceService } from 'src/engine/workspace-manager/dev-seeder/data/services/dev-seeder-agent-chat-input-ask.workspace-service';
 import { DevSeederDataService } from 'src/engine/workspace-manager/dev-seeder/data/services/dev-seeder-data.service';
-import { DevSeederWorkflowAgentQuestionWorkspaceService } from 'src/engine/workspace-manager/dev-seeder/data/services/dev-seeder-workflow-agent-question.workspace-service';
+import { DevSeederWorkflowInputAskWorkspaceService } from 'src/engine/workspace-manager/dev-seeder/data/services/dev-seeder-workflow-input-ask.workspace-service';
 import { TimelineActivitySeederService } from 'src/engine/workspace-manager/dev-seeder/data/services/timeline-activity-seeder.service';
+import { InputAskModule } from 'src/modules/input-ask/input-ask.module';
 import { TimelineActivityModule } from 'src/modules/timeline/timeline-activity.module';
 import { ChannelRecordShareModule } from 'src/modules/connected-account/channel-record-share/channel-record-share.module';
 import { DevSeederMetadataService } from 'src/engine/workspace-manager/dev-seeder/metadata/services/dev-seeder-metadata.service';
@@ -78,6 +81,8 @@ import { WorkflowRunModule } from 'src/modules/workflow/workflow-runner/workflow
     WorkflowRunModule,
     WorkflowAgentConversationModule,
     ChannelRecordShareModule,
+    InputAskModule,
+    RecordShareStorageModule,
   ],
   exports: [DevSeederWorkspaceService],
   providers: [
@@ -86,7 +91,8 @@ import { WorkflowRunModule } from 'src/modules/workflow/workflow-runner/workflow
     DevSeederPermissionsService,
     DevSeederDataService,
     TimelineActivitySeederService,
-    DevSeederWorkflowAgentQuestionWorkspaceService,
+    DevSeederWorkflowInputAskWorkspaceService,
+    DevSeederAgentChatInputAskWorkspaceService,
     provideWorkspaceScopedRepository(RoleEntity),
     provideWorkspaceScopedRepository(ObjectMetadataEntity),
     provideWorkspaceScopedRepository(WorkflowEntity),

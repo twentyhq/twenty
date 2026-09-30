@@ -1,5 +1,9 @@
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 import { setManualRecordShare } from 'test/integration/utils/set-manual-record-share.util';
+import { destroyAgentChatThread } from 'test/integration/utils/destroy-agent-chat-thread.util';
+import { type AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
+import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
+import { USER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-users.util';
 /* @license Enterprise */
 
 import { type WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
@@ -171,6 +175,14 @@ describe('recordShare object', () => {
       workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
       threadId: randomUUID(),
     };
+    const { token: timAccessToken } =
+      await getAppProviderByClassName<AccessTokenService>(
+        'AccessTokenService',
+      ).generateAccessToken({
+        userId: USER_DATA_SEED_IDS.TIM,
+        workspaceId: args.workspaceId,
+        authProvider: AuthProviderEnum.Password,
+      });
     const readGrants = () =>
       recordShareStorageService.findByRecordIds({
         workspaceId: args.workspaceId,
@@ -193,7 +205,10 @@ describe('recordShare object', () => {
       },
     });
     try {
-      await chatService.hardDeleteThread(args);
+      await destroyAgentChatThread({
+        threadId: args.threadId,
+        token: timAccessToken,
+      });
       await expect(chatService.findWritableThread(args)).resolves.toBeNull();
       await expect(readGrants()).resolves.toHaveLength(2);
 
@@ -208,7 +223,10 @@ describe('recordShare object', () => {
       ]);
     } finally {
       if (await chatService.findWritableThread(args)) {
-        await chatService.hardDeleteThread(args);
+        await destroyAgentChatThread({
+          threadId: args.threadId,
+          token: timAccessToken,
+        });
       }
       await recordShareStorageService.deleteByRecordIds({
         workspaceId: args.workspaceId,
