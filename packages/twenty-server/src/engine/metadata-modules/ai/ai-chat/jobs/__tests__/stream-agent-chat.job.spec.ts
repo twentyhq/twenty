@@ -105,6 +105,32 @@ const PENDING_QUESTION_PARTS: ModelStreamPart[] = [
   ...FINISH_PARTS,
 ];
 
+const RECOVERED_TOOL_CALL_PARTS: ModelStreamPart[] = [
+  ...START_PARTS,
+  {
+    type: 'tool-call',
+    toolCallId: 'tool-call-id',
+    toolName: 'code_interpreter',
+    input: {},
+    dynamic: true,
+    invalid: true,
+    error: new Error("Model tried to call unavailable tool 'code_interpreter'"),
+  },
+  {
+    type: 'tool-error',
+    toolCallId: 'tool-call-id',
+    toolName: 'code_interpreter',
+    input: {},
+    dynamic: true,
+    error:
+      "AI_NoSuchToolError: Model tried to call unavailable tool 'code_interpreter'",
+  },
+  { type: 'text-start', id: 'text-1' },
+  { type: 'text-delta', id: 'text-1', text: 'Here is the answer' },
+  { type: 'text-end', id: 'text-1' },
+  ...FINISH_PARTS,
+];
+
 const createFakeChatStream = ({
   parts = TEXT_PARTS,
   midStreamError,
@@ -116,6 +142,7 @@ const createFakeChatStream = ({
   onFirstPart?: () => void;
   isAborted?: boolean;
 } = {}) => ({
+  streamError: midStreamError,
   stream: new ReadableStream<ModelStreamPart>(
     {
       pull(controller) {
@@ -177,9 +204,7 @@ describe('StreamAgentChatJob', () => {
       inputCostPerMillionTokens: 1,
       outputCostPerMillionTokens: 2,
     },
-    inputAskOpenRejection,
   }: {
-    inputAskOpenRejection?: Error;
     workspaceFound?: boolean;
     chatStream?: ReturnType<typeof createFakeChatStream>;
     streamChatRejection?: Error;
@@ -228,6 +253,7 @@ describe('StreamAgentChatJob', () => {
             stream: chatStream,
             modelConfig,
             hasNoMoreAvailableCredits: () => false,
+            getStreamError: () => chatStream.streamError,
           }),
     };
     const eventPublisherService = {
@@ -278,12 +304,6 @@ describe('StreamAgentChatJob', () => {
         message: { id: 'user-message-id', turnId: 'turn-id' },
       }),
     };
-    const inputAskWorkspaceService = {
-      open: inputAskOpenRejection
-        ? jest.fn().mockRejectedValue(inputAskOpenRejection)
-        : jest.fn().mockResolvedValue(undefined),
-      cancel: jest.fn().mockResolvedValue(true),
-    };
     const job = new StreamAgentChatJob(
       threadRepository as never,
       workspaceRepository as never,
@@ -296,7 +316,6 @@ describe('StreamAgentChatJob', () => {
       metricsService as never,
       aiModelRegistryService as never,
       actorService as never,
-      inputAskWorkspaceService as never,
     );
 
     const turnCounts = (key: string) =>
@@ -317,7 +336,6 @@ describe('StreamAgentChatJob', () => {
       cancelCallbacks,
       metricsService,
       aiModelRegistryService,
-      inputAskWorkspaceService,
       turnCounts,
     };
   };
@@ -832,103 +850,72 @@ describe('StreamAgentChatJob', () => {
     expect(turnCounts('ai-chat/turn-failed')).toEqual([]);
   });
 
-  it('opens the Ask of a turn that paused on a question and leaves the queue waiting on it', async () => {
-    const { job, inputAskWorkspaceService, agentChatStreamingService } =
-      buildJob({
-        chatStream: createFakeChatStream({ parts: PENDING_QUESTION_PARTS }),
-      });
+  const pendingQuestionMessageIdOf = (threadUsageQuery: jest.Mock) =>
+    (threadUsageQuery.mock.calls[0] as unknown as [string, unknown[]])[1][10];
+
+  it('marks the conversation as waiting on the message that paused, in the totals write, and leaves the queue waiting', async () => {
+    const { job, threadUsageQuery, agentChatStreamingService } = buildJob({
+      chatStream: createFakeChatStream({ parts: PENDING_QUESTION_PARTS }),
+    });
 
     await job.handle(jobData);
 
-    expect(inputAskWorkspaceService.open).toHaveBeenCalledWith({
-      workspaceId: 'workspace-id',
-      inputAsk: {
-        name: 'Which plan?',
-        form: { kind: 'questions', questions: QUESTIONS },
-        threadId: 'thread-id',
-        toolCallId: 'tool-call-id',
-        assigneeId: 'member',
-      },
-    });
+    expect(pendingQuestionMessageIdOf(threadUsageQuery)).toEqual(
+      expect.any(String),
+    );
     expect(
       agentChatStreamingService.flushNextQueuedMessage,
     ).not.toHaveBeenCalled();
   });
 
-  it('opens no Ask for a turn that did not pause', async () => {
-    const { job, inputAskWorkspaceService } = buildJob();
+  it('leaves a conversation whose turn did not pause waiting on nothing', async () => {
+    const { job, threadUsageQuery } = buildJob();
 
     await job.handle(jobData);
 
-    expect(inputAskWorkspaceService.open).not.toHaveBeenCalled();
+    expect(pendingQuestionMessageIdOf(threadUsageQuery)).toBeNull();
   });
 
-  it('fails the turn, leaving it retryable, when its Ask cannot be opened', async () => {
-    const { job, publishedEvents, threadRepository, turnCounts } = buildJob({
-      chatStream: createFakeChatStream({ parts: PENDING_QUESTION_PARTS }),
-      inputAskOpenRejection: new Error('Ask insert failed'),
+  it('fails the turn, leaving it retryable, when a paused call cannot be read', async () => {
+    const { job, threadUsageQuery, publishedEvents, turnCounts } = buildJob({
+      chatStream: createFakeChatStream({
+        parts: PENDING_QUESTION_PARTS.map((part) =>
+          part.type === 'tool-call' || part.type === 'tool-result'
+            ? { ...part, input: { questions: [] } }
+            : part,
+        ),
+      }),
     });
 
-    await expect(job.handle(jobData)).rejects.toThrow('Ask insert failed');
-
-    expect(threadRepository.update).toHaveBeenCalledWith(
-      'workspace-id',
-      { id: 'thread-id', activeStreamId: 'stream-id' },
-      {
-        lastStreamError: expect.objectContaining({
-          message: 'Ask insert failed',
-        }),
-      },
+    await expect(job.handle(jobData)).rejects.toThrow(
+      'A call waiting on the user could not be read',
     );
+
+    expect(pendingQuestionMessageIdOf(threadUsageQuery)).toBeNull();
     expect(publishedEvents.map((event) => event.type)).toContain(
       'stream-error',
     );
     expect(turnCounts('ai-chat/turn-completed')).toEqual([]);
   });
 
-  it('cancels the Asks it opened when a later one of the turn cannot be opened', async () => {
-    const askQuestionsCallParts = (toolCallId: string): ModelStreamPart[] => [
-      {
-        type: 'tool-input-start',
-        id: toolCallId,
-        toolName: ASK_QUESTIONS_TOOL_NAME,
-      },
-      {
-        type: 'tool-call',
-        toolCallId,
-        toolName: ASK_QUESTIONS_TOOL_NAME,
-        input: { questions: QUESTIONS },
-      },
-      {
-        type: 'tool-result',
-        toolCallId,
-        toolName: ASK_QUESTIONS_TOOL_NAME,
-        input: { questions: QUESTIONS },
-        output: { result: { questions: QUESTIONS, status: 'pending' } },
-      },
-    ];
-    const { job, inputAskWorkspaceService } = buildJob({
+  it('counts a reply as answered when the model recovers from a failed tool call', async () => {
+    const { job, publishedEvents, turnCounts } = buildJob({
       chatStream: createFakeChatStream({
-        parts: [
-          ...START_PARTS,
-          ...askQuestionsCallParts('first-call-id'),
-          ...askQuestionsCallParts('second-call-id'),
-          ...FINISH_PARTS,
-        ],
+        parts: RECOVERED_TOOL_CALL_PARTS,
       }),
     });
 
-    inputAskWorkspaceService.open
-      .mockResolvedValueOnce(undefined)
-      .mockRejectedValueOnce(new Error('Ask insert failed'));
+    await job.handle(jobData);
 
-    await expect(job.handle(jobData)).rejects.toThrow('Ask insert failed');
-
-    expect(inputAskWorkspaceService.cancel).toHaveBeenCalledTimes(1);
-    expect(inputAskWorkspaceService.cancel).toHaveBeenCalledWith({
-      workspaceId: 'workspace-id',
-      match: { threadId: 'thread-id', toolCallId: 'first-call-id' },
-    });
+    expect(turnCounts('ai-chat/turn-completed')).toEqual([
+      expect.objectContaining({
+        attributes: { model: 'openai/gpt-5.6-luna', outcome: 'answered' },
+      }),
+    ]);
+    expect(turnCounts('ai-chat/turn-failed')).toEqual([]);
+    expect(publishedEvents.map((event) => event.type)).not.toContain(
+      'stream-error',
+    );
   });
 
   it('counts an aborted turn as cancelled rather than leaving it unaccounted', async () => {

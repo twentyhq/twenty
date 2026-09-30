@@ -19,7 +19,7 @@ jest.mock('@/ai/hooks/useAiChatEditor', () => ({
 jest.mock('@/ai/components/AiChatStandaloneError', () => ({
   AiChatStandaloneError: () => null,
 }));
-// The gate's Ask cards pull in the form filler's rich text editor, which
+// The gate's cards pull in the form fields' rich text editor, which
 // Jest cannot load; this suite is about the composer, not the gate.
 jest.mock('@/ai/components/AiChatPendingAskGate', () => ({
   AiChatPendingAskGate: ({ children }: { children: ReactNode }) => children,

@@ -130,7 +130,7 @@ export const SettingsAgentSkillsTab = () => {
         <SearchInput
           placeholder={t`Search a skill...`}
           value={searchTerm}
-          onChange={setSearchTerm}
+          onValueChange={setSearchTerm}
           filterDropdown={(filterButton) => (
             <DropdownRoot
               dropdownId="settings-skills-filter-dropdown"
