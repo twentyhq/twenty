@@ -1,43 +1,37 @@
 ---
-title: ColorSchemePicker
-description: Choose light, dark, or the system color scheme.
+title: Appearance choices
+description: Compose application-owned theme choices with RadioGroup.
 ---
 
 import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
-import ColorSchemePickerReference from '/snippets/ui/generated/components/color-scheme-picker.mdx';
 
-`ColorSchemePicker` is controlled through `value` and `onChange`. Supply the three labels from your application. Selecting a scheme does not persist it or change a theme provider automatically.
+Applications own appearance preferences, preview content, persistence, and system-theme resolution. Compose an exclusive choice with [RadioGroup](/ui/primitives/input/radio-group) and [Radio](/ui/primitives/input/radio).
 
 <StoryEmbed
-  storyId="ui-input-colorschemepicker--default"
-  title="Color scheme choices"
+  storyId="ui-input-radio--cards-documentation"
+  title="Radio card choices"
   height={260}
 />
 
 ```tsx
 import { useState } from 'react';
-import { ColorSchemePicker } from 'twenty-ui/components';
-import { type ColorScheme } from 'twenty-ui/primitives/input';
+import { Radio, RadioGroup } from 'twenty-ui/primitives/input';
+
+type Appearance = 'Light' | 'Dark' | 'System';
 
 export const AppearanceChoice = () => {
-  const [scheme, setScheme] = useState<ColorScheme>('System');
+  const [scheme, setScheme] = useState<Appearance>('System');
 
   return (
-    <ColorSchemePicker
-      value={scheme}
-      onChange={setScheme}
-      lightLabel="Light"
-      darkLabel="Dark"
-      systemLabel="Use system setting"
-    />
+    <RadioGroup aria-label="Appearance" value={scheme} onValueChange={setScheme}>
+      <Radio variant="card" value="Light">Light</Radio>
+      <Radio variant="card" value="Dark">Dark</Radio>
+      <Radio variant="card" value="System">Use system setting</Radio>
+    </RadioGroup>
   );
 };
 ```
 
-`ColorScheme` values are capitalized, while [ThemeProvider](/ui/theming) expects `light` or `dark`. Map `Light` and `Dark` to their lowercase names and resolve `System` from the system preference before passing the result to the provider. The three previews are separate button controls with Enter and Space activation. The selected checkmark is visual.
+RadioGroup owns exclusive selection, focus, and arrow-key navigation. Labels provide accessible names. Pass `disabled` to the group or an individual radio when a choice is unavailable. Decorative previews belong inside each radio and should use `aria-hidden`.
 
-Each label is both visible text and the accessible name of its choice. Supply localized `lightLabel`, `darkLabel`, and `systemLabel` values. Selection callbacks still receive `Light`, `Dark`, or `System`.
-
-## Props
-
-<ColorSchemePickerReference />
+Resolve the application's system preference before passing `light` or `dark` to [ThemeProvider](/ui/theming). Saving the preference and applying it remain application responsibilities.

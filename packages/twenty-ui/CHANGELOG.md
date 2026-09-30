@@ -4,6 +4,8 @@
 
 ### Breaking Changes
 
+- Removed `ColorSchemePicker`, `ColorSchemePickerProps`, and the app-specific `ColorScheme` type. Profile appearance settings now own the theme previews and preference choices, using `Radio` and `RadioGroup` for selection.
+
 - Removed `CardPicker` and `CardPickerProps`. Use `Radio variant="card"` inside `RadioGroup` from `twenty-ui/primitives/input`. Card layout, selection, keyboard navigation, and form behavior are preserved.
 - Removed `Info`, `InfoProps`, and `InfoAccent`. Use `InlineBanner` from `twenty-ui/components` with `variant="compact"`, `message`, and `color` to preserve wrapping and presentation. Its `button` supports native links through `href`, custom links through `render`, and button actions through `onClick`. The separately versioned Granola app must migrate its four Info-consuming files together with its `twenty-ui@^1.0.0-alpha.1` dependency upgrade.
 
@@ -35,7 +37,7 @@ Keep `twenty-ui`, `twenty-sdk`, and `twenty-client-sdk` versions aligned when up
 
 ### Added
 
-- `Callout.closeLabel` customizes the dismiss button name. `ListItem`, `Menu` items, and `Dropdown` items accept `hotkeysJoinLabel` (default `then`); the legacy `MenuItem` uses `hotKeysJoinLabel`. `ColorSchemePicker` uses its supplied visible labels as accessible names.
+- `Callout.closeLabel` customizes the dismiss button name. `ListItem`, `Menu` items, and `Dropdown` items accept `hotkeysJoinLabel` (default `then`); the legacy `MenuItem` uses `hotKeysJoinLabel`.
 
 - `twenty-ui/utilities` exports `useMediaQuery`, `MOBILE_MEDIA_QUERY`, and `TOUCH_DEVICE_MEDIA_QUERY`. `twenty-ui/testing` exports `overrideMediaQueryMatches`.
 
