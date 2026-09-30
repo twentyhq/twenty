@@ -43,4 +43,17 @@ describe('useGeneratedRecoveryCode', () => {
 
     expect(result.current.generatedRecoveryCode).toBe(newerRecoveryCode);
   });
+
+  it('keeps the code visible for a while when the browser clock is ahead of the server', () => {
+    const { result } = renderHook(() => useGeneratedRecoveryCode());
+    const recoveryCode = {
+      recoveryCode: 'AAAAA-BBBBB-CCCCC-DDDDD',
+      expiresAt: new Date(Date.now() - ONE_HOUR_MS).toISOString(),
+    };
+
+    act(() => result.current.showGeneratedRecoveryCode(recoveryCode));
+    act(() => jest.advanceTimersByTime(1000));
+
+    expect(result.current.generatedRecoveryCode).toBe(recoveryCode);
+  });
 });

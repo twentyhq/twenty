@@ -1,9 +1,4 @@
-import {
-  ForbiddenException,
-  UseFilters,
-  UseGuards,
-  UsePipes,
-} from '@nestjs/common';
+import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Int, Mutation, Query } from '@nestjs/graphql';
 import { InjectRepository } from '@nestjs/typeorm';
 
@@ -83,7 +78,10 @@ import { FeatureFlagException } from 'src/engine/core-modules/feature-flag/featu
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
-import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import {
+  ForbiddenError,
+  UserInputError,
+} from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { MarketplaceCatalogSyncCronJob } from 'src/engine/core-modules/application/application-marketplace/crons/marketplace-catalog-sync.cron.job';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -236,7 +234,7 @@ export class AdminPanelResolver {
       );
 
     if (!isRecoveryCodeEnabled) {
-      throw new ForbiddenException(
+      throw new ForbiddenError(
         `Feature flag "${FeatureFlagKey.IS_TWO_FACTOR_AUTHENTICATION_RECOVERY_CODE_ENABLED}" is not enabled for this workspace`,
       );
     }
