@@ -1,8 +1,7 @@
 import { MobileBreadcrumb } from '@/ui/navigation/bread-crumb/components/MobileBreadcrumb';
 import { type BreadcrumbProps } from '@/ui/navigation/bread-crumb/types/BreadcrumbProps';
+import { getBreadcrumbItems } from '@/ui/navigation/bread-crumb/utils/getBreadcrumbItems';
 import { t } from '@lingui/core/macro';
-import { isNonEmptyString } from '@sniptt/guards';
-import { Link } from 'react-router-dom';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 import { Breadcrumb as BreadcrumbPrimitive } from 'twenty-ui/primitives/navigation';
 import { useIsMobile } from 'twenty-ui/utilities';
@@ -18,11 +17,7 @@ export const Breadcrumb = ({ className, links }: BreadcrumbProps) => {
     <BreadcrumbPrimitive
       aria-label={t`Breadcrumb`}
       className={className}
-      links={links.map(({ children, href }) => ({
-        children,
-        href: isNonEmptyString(href) ? href : undefined,
-        render: isNonEmptyString(href) ? <Link to={href} /> : undefined,
-      }))}
+      links={getBreadcrumbItems(links)}
     />
   );
 };

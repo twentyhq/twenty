@@ -1,5 +1,6 @@
 import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 import { type BreadcrumbProps } from '@/ui/navigation/bread-crumb/types/BreadcrumbProps';
+import { getBreadcrumbItems } from '@/ui/navigation/bread-crumb/utils/getBreadcrumbItems';
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import { styled } from '@linaria/react';
@@ -67,11 +68,7 @@ export const MobileBreadcrumb = ({
       <BreadcrumbPrimitive
         aria-label={t`Breadcrumb`}
         className={className}
-        links={links.map(({ children, href }) => ({
-          children,
-          href: isNonEmptyString(href) ? href : undefined,
-          render: isNonEmptyString(href) ? <Link to={href} /> : undefined,
-        }))}
+        links={getBreadcrumbItems(links)}
       />
     );
   }
