@@ -17,6 +17,7 @@ env:
   # restore-cache action adds 'v4-' prefix and '-<branch>-<sha>' suffix to the key
   STORYBOOK_BUILD_CACHE_KEY_FOR_RESTORE_ACTION: storybook-build-ubuntu-latest-8-cores-runner
   STORYBOOK_BUILD_CACHE_KEY_FOR_SAVE_ACTION: v4-storybook-build-ubuntu-latest-8-cores-runner-${{ github.ref_name }}-${{ github.sha }}
+  FRONT_TEST_SHARD_COUNTER: 3
 
 jobs:
   changed-files-check:
@@ -241,7 +242,7 @@ jobs:
         with:
           tag: scope:frontend
           tasks: ${{ matrix.tasks }}
-          args: ${{ matrix.shard && format('--shard={0}/3 --coverageThreshold={{}}', matrix.shard) || '' }}
+          args: ${{ matrix.shard && format('--shard={0}/{1} --coverageThreshold={{}}', matrix.shard, env.FRONT_TEST_SHARD_COUNTER) || '' }}
       - name: Upload unit test coverage
         if: matrix.name == 'test'
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
@@ -274,7 +275,7 @@ jobs:
       - name: Check merged coverage thresholds
         run: |
           mkdir -p front-unit-coverage
-          node packages/twenty-front/scripts/check-sharded-coverage.mjs front-unit-coverage packages/twenty-front/jest.config.mjs 3
+          node packages/twenty-front/scripts/check-sharded-coverage.mjs front-unit-coverage packages/twenty-front/jest.config.mjs "$FRONT_TEST_SHARD_COUNTER"
   front-build:
     needs: changed-files-check
     if: needs.changed-files-check.outputs.any_changed == 'true'
