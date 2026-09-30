@@ -1,15 +1,7 @@
-import { isObject } from '@sniptt/guards';
-
+import { collectAncestorChainFromRootToNode } from '@/polyfills/dom/utils/collectAncestorChainFromRootToNode';
 import { type SelectorElementLike } from '@/polyfills/selectors/types/SelectorElementLike';
 
 export const resolveNodeTreeRoot = (
   node: SelectorElementLike,
-): SelectorElementLike => {
-  let currentNode = node;
-
-  while (isObject(currentNode.parentNode)) {
-    currentNode = currentNode.parentNode as SelectorElementLike;
-  }
-
-  return currentNode;
-};
+): SelectorElementLike =>
+  (collectAncestorChainFromRootToNode(node)[0] ?? node) as SelectorElementLike;
