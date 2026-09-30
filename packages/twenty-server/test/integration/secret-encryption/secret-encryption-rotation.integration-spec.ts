@@ -8,6 +8,7 @@ import {
   findOneApplicationIdByUniversalIdentifier,
   findOneApplicationVariables,
 } from 'test/integration/secret-encryption/utils/find-one-application.util';
+import { overwriteApplicationVariableStoredValue } from 'test/integration/secret-encryption/utils/overwrite-application-variable-stored-value.util';
 import { runSecretEncryptionRotationCommand } from 'test/integration/secret-encryption/utils/run-secret-encryption-rotation-command.util';
 import { updateOneApplicationVariable } from 'test/integration/secret-encryption/utils/update-one-application-variable.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
@@ -137,16 +138,11 @@ describe('secret-encryption:rotate command (integration)', () => {
   }, 90000);
 
   it('refreshes the workspace cache so cached applicationVariables decrypt without the fallback key', async () => {
-    await global.testDataSource.query(
-      `UPDATE core."applicationVariable"
-          SET "value" = $1
-        WHERE "applicationId" = $2 AND "key" = $3`,
-      [
-        encryptWithPreviousEncryptionKey(plaintext),
-        applicationId,
-        ROTATION_VARIABLE_KEY,
-      ],
-    );
+    await overwriteApplicationVariableStoredValue({
+      applicationId,
+      key: ROTATION_VARIABLE_KEY,
+      storedValue: encryptWithPreviousEncryptionKey(plaintext),
+    });
     await getAppProviderByClassName<WorkspaceCacheService>(
       'WorkspaceCacheService',
     ).invalidateAndRecompute(SEED_APPLE_WORKSPACE_ID, [
