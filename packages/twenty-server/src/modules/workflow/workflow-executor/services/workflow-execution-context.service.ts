@@ -53,19 +53,18 @@ export class WorkflowExecutionContextService {
     return this.buildExecutionContext(workflowRun, runInfo.workspaceId);
   }
 
-  async getApplicationBoundExecutionContext(
-    runInfo: WorkflowRunInfo,
-  ): Promise<WorkflowExecutionContext | null> {
-    const workflowRun = await this.workflowRunService.getWorkflowRunOrFail({
-      workflowRunId: runInfo.workflowRunId,
-      workspaceId: runInfo.workspaceId,
-    });
-
+  async getApplicationBoundExecutionContext({
+    workflowRun,
+    workspaceId,
+  }: {
+    workflowRun: WorkflowRunWorkspaceEntity;
+    workspaceId: string;
+  }): Promise<WorkflowExecutionContext | null> {
     if (!isDefined(workflowRun.createdBy.context?.applicationId)) {
       return null;
     }
 
-    return this.buildExecutionContext(workflowRun, runInfo.workspaceId);
+    return this.buildExecutionContext(workflowRun, workspaceId);
   }
 
   async assertStepTargetBelongsToRunApplicationOrThrow({
@@ -79,7 +78,7 @@ export class WorkflowExecutionContextService {
     targetApplicationId: string | null;
     targetLabel: string;
   }): Promise<void> {
-    if (!isDefined(application)) {
+    if (!isDefined(application) || targetApplicationId === application.id) {
       return;
     }
 

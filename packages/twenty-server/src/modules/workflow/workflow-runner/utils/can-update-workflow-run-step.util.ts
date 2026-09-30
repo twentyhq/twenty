@@ -3,7 +3,10 @@ import { type ActorMetadata } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { WorkflowActionType } from 'twenty-shared/workflow';
 
-import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+import {
+  type WorkflowAction,
+  type WorkflowFormAction,
+} from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
 export const canUpdateWorkflowRunStep = ({
   workflowRun,
@@ -23,14 +26,20 @@ export const canUpdateWorkflowRunStep = ({
     ({ id }) => id === step.id,
   );
 
-  if (existingStep?.type !== WorkflowActionType.FORM) {
+  if (
+    existingStep?.type !== WorkflowActionType.FORM ||
+    step.type !== WorkflowActionType.FORM
+  ) {
     return false;
   }
 
-  return isEqual(withoutFormInput(existingStep), withoutFormInput(step));
+  return isEqual(withoutFormValues(existingStep), withoutFormValues(step));
 };
 
-const withoutFormInput = (step: WorkflowAction) => ({
+const withoutFormValues = (step: WorkflowFormAction) => ({
   ...step,
-  settings: { ...step.settings, input: undefined },
+  settings: {
+    ...step.settings,
+    input: step.settings.input.map((field) => ({ ...field, value: undefined })),
+  },
 });

@@ -147,7 +147,7 @@ export class WorkflowRunnerWorkspaceService {
 
     const applicationBoundExecutionContext =
       await this.workflowExecutionContextService
-        .getApplicationBoundExecutionContext({ workflowRunId, workspaceId })
+        .getApplicationBoundExecutionContext({ workflowRun, workspaceId })
         .catch((error: unknown) => {
           if (error instanceof WorkflowStepExecutorException) {
             throw new WorkflowVersionStepException(
