@@ -1914,6 +1914,12 @@ export interface ClientConfig {
     __typename: 'ClientConfig'
 }
 
+export interface TwoFactorAuthenticationRecoveryCode {
+    recoveryCode: Scalars['String']
+    expiresAt: Scalars['DateTime']
+    __typename: 'TwoFactorAuthenticationRecoveryCode'
+}
+
 export interface ClaimableApplicationRegistration {
     id: Scalars['String']
     universalIdentifier: Scalars['String']
@@ -2377,12 +2383,6 @@ export interface InitiateTwoFactorAuthenticationProvisioning {
 export interface VerifyTwoFactorAuthenticationMethod {
     success: Scalars['Boolean']
     __typename: 'VerifyTwoFactorAuthenticationMethod'
-}
-
-export interface TwoFactorAuthenticationRecoveryCode {
-    recoveryCode: Scalars['String']
-    expiresAt: Scalars['DateTime']
-    __typename: 'TwoFactorAuthenticationRecoveryCode'
 }
 
 export interface TwoFactorAuthenticationRecoveryStatus {
@@ -5745,6 +5745,13 @@ export interface ClientConfigGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface TwoFactorAuthenticationRecoveryCodeGenqlSelection{
+    recoveryCode?: boolean | number
+    expiresAt?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface ClaimableApplicationRegistrationGenqlSelection{
     id?: boolean | number
     universalIdentifier?: boolean | number
@@ -6234,13 +6241,6 @@ export interface InitiateTwoFactorAuthenticationProvisioningGenqlSelection{
 
 export interface VerifyTwoFactorAuthenticationMethodGenqlSelection{
     success?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface TwoFactorAuthenticationRecoveryCodeGenqlSelection{
-    recoveryCode?: boolean | number
-    expiresAt?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -9436,6 +9436,14 @@ export interface CreateRecordExportInput {objectMetadataId: Scalars['UUID'],fiel
     
 
 
+    const TwoFactorAuthenticationRecoveryCode_possibleTypes: string[] = ['TwoFactorAuthenticationRecoveryCode']
+    export const isTwoFactorAuthenticationRecoveryCode = (obj?: { __typename?: any } | null): obj is TwoFactorAuthenticationRecoveryCode => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isTwoFactorAuthenticationRecoveryCode"')
+      return TwoFactorAuthenticationRecoveryCode_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const ClaimableApplicationRegistration_possibleTypes: string[] = ['ClaimableApplicationRegistration']
     export const isClaimableApplicationRegistration = (obj?: { __typename?: any } | null): obj is ClaimableApplicationRegistration => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isClaimableApplicationRegistration"')
@@ -9816,14 +9824,6 @@ export interface CreateRecordExportInput {objectMetadataId: Scalars['UUID'],fiel
     export const isVerifyTwoFactorAuthenticationMethod = (obj?: { __typename?: any } | null): obj is VerifyTwoFactorAuthenticationMethod => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isVerifyTwoFactorAuthenticationMethod"')
       return VerifyTwoFactorAuthenticationMethod_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const TwoFactorAuthenticationRecoveryCode_possibleTypes: string[] = ['TwoFactorAuthenticationRecoveryCode']
-    export const isTwoFactorAuthenticationRecoveryCode = (obj?: { __typename?: any } | null): obj is TwoFactorAuthenticationRecoveryCode => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isTwoFactorAuthenticationRecoveryCode"')
-      return TwoFactorAuthenticationRecoveryCode_possibleTypes.includes(obj.__typename)
     }
     
 

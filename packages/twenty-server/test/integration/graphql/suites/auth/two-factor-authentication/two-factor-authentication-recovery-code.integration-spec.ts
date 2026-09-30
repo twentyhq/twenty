@@ -10,6 +10,7 @@ import { getLoginTokenFromCredentialsQueryFactory } from 'test/integration/graph
 import { initiateOtpProvisioningForAuthenticatedUser } from 'test/integration/graphql/utils/initiate-otp-provisioning-for-authenticated-user.util';
 import { verifyTwoFactorAuthenticationMethod } from 'test/integration/graphql/utils/verify-two-factor-authentication-method.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeAdminPanelApiRequest } from 'test/integration/twenty-config/utils/make-admin-panel-api-request.util';
 
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { TWO_FACTOR_AUTHENTICATION_RECOVERY_CODE_REDEMPTION_RATE_LIMIT_MAX } from 'src/engine/core-modules/two-factor-authentication/constants/two-factor-authentication-recovery-code.constant';
@@ -644,6 +645,58 @@ describe('Two-factor authentication recovery codes (integration)', () => {
         ).fill('INVALID_RECOVERY_CODE'),
       );
       expect(subCodes[subCodes.length - 1]).toBe('LIMIT_REACHED');
+    });
+  });
+
+  describe('server admin panel', () => {
+    const generateAsServerAdmin = async (workspaceId: string) => {
+      const response = await makeAdminPanelApiRequest({
+        query: gql`
+          mutation GenerateTwoFactorAuthenticationRecoveryCodeAsServerAdmin(
+            $userId: UUID!
+            $workspaceId: UUID!
+            $otp: String
+          ) {
+            generateTwoFactorAuthenticationRecoveryCodeAsServerAdmin(
+              userId: $userId
+              workspaceId: $workspaceId
+              otp: $otp
+            ) {
+              recoveryCode
+              expiresAt
+            }
+          }
+        `,
+        variables: {
+          userId: USER_DATA_SEED_IDS.JONY,
+          workspaceId,
+          otp: await generateOtp(janeSecret),
+        },
+      });
+
+      return response.body;
+    };
+
+    it('issues a code for a member of the given workspace', async () => {
+      const { data, errors } = await generateAsServerAdmin(
+        SEED_APPLE_WORKSPACE_ID,
+      );
+
+      expect(errors).toBeUndefined();
+      expect(
+        data.generateTwoFactorAuthenticationRecoveryCodeAsServerAdmin
+          .recoveryCode,
+      ).toMatch(/^[0-9A-Z]{5}(-[0-9A-Z]{5}){3}$/);
+    });
+
+    it('reaches members of other workspaces but still requires an authenticator to recover', async () => {
+      const { errors } = await generateAsServerAdmin(
+        SEED_YCOMBINATOR_WORKSPACE_ID,
+      );
+
+      expect(errors?.[0]?.extensions?.subCode).toBe(
+        'RECOVERY_CODE_TARGET_NOT_ALLOWED',
+      );
     });
   });
 });

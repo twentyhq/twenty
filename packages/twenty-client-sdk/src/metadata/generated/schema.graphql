@@ -2309,6 +2309,11 @@ type ClientConfig {
   maintenance: ClientConfigMaintenanceMode
 }
 
+type TwoFactorAuthenticationRecoveryCode {
+  recoveryCode: String!
+  expiresAt: DateTime!
+}
+
 type ClaimableApplicationRegistration {
   id: String!
   universalIdentifier: String!
@@ -2783,11 +2788,6 @@ type InitiateTwoFactorAuthenticationProvisioning {
 
 type VerifyTwoFactorAuthenticationMethod {
   success: Boolean!
-}
-
-type TwoFactorAuthenticationRecoveryCode {
-  recoveryCode: String!
-  expiresAt: DateTime!
 }
 
 type TwoFactorAuthenticationRecoveryStatus {
