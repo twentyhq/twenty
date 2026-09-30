@@ -6814,9 +6814,6 @@ export default {
             "deletedAt": [
                 4
             ],
-            "lastMessageAt": [
-                4
-            ],
             "__typename": [
                 1
             ]
@@ -8208,9 +8205,6 @@ export default {
             ],
             "aiChatUsage": [
                 374
-            ],
-            "chatThreads": [
-                376
             ],
             "chatThread": [
                 376,
@@ -10546,46 +10540,6 @@ export default {
                 8,
                 {
                     "threadId": [
-                        3,
-                        "UUID!"
-                    ]
-                }
-            ],
-            "renameChatThread": [
-                376,
-                {
-                    "id": [
-                        3,
-                        "UUID!"
-                    ],
-                    "title": [
-                        1,
-                        "String!"
-                    ]
-                }
-            ],
-            "archiveChatThread": [
-                376,
-                {
-                    "id": [
-                        3,
-                        "UUID!"
-                    ]
-                }
-            ],
-            "unarchiveChatThread": [
-                376,
-                {
-                    "id": [
-                        3,
-                        "UUID!"
-                    ]
-                }
-            ],
-            "deleteChatThread": [
-                8,
-                {
-                    "id": [
                         3,
                         "UUID!"
                     ]

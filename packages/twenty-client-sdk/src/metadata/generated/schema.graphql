@@ -178,6 +178,8 @@ enum EngineComponentKey {
   SEARCH_RECORDS_FALLBACK
   ASK_AI
   VIEW_PREVIOUS_AI_CHATS
+  NEW_AI_CHAT
+  SHARE_RECORD
   NAVIGATION
   TRIGGER_WORKFLOW_VERSION
   FRONT_COMPONENT_RENDERER
@@ -3448,7 +3450,6 @@ type AgentChatThread {
   createdAt: DateTime!
   updatedAt: DateTime!
   deletedAt: DateTime
-  lastMessageAt: DateTime
 }
 
 type AiSystemPromptSection {
@@ -3925,7 +3926,6 @@ type Query {
   appConnection(id: ID!): AppConnection!
   findWorkspaceAiStats: WorkspaceAiStats!
   aiChatUsage: AiChatUsage
-  chatThreads: [AgentChatThread!]!
   chatThread(id: UUID!): AgentChatThread!
   chatMessages(threadId: UUID!): [AgentMessage!]!
   chatStreamCatchupChunks(threadId: UUID!): ChatStreamCatchupChunks!
@@ -4291,10 +4291,6 @@ type Mutation {
   sendChatMessage(threadId: UUID!, text: String!, messageId: UUID!, browsingContext: JSON, modelId: String, fileAttachments: [FileAttachmentInput!]): SendChatMessageResult!
   retryChatMessage(threadId: UUID!, modelId: String): SendChatMessageResult!
   stopAgentChatStream(threadId: UUID!): Boolean!
-  renameChatThread(id: UUID!, title: String!): AgentChatThread!
-  archiveChatThread(id: UUID!): AgentChatThread!
-  unarchiveChatThread(id: UUID!): AgentChatThread!
-  deleteChatThread(id: UUID!): Boolean!
   deleteQueuedChatMessage(messageId: UUID!): Boolean!
   startWorkspaceSetupChat(companyContext: JSON, personContext: JSON): StartWorkspaceSetupChatResult!
   createSkill(input: CreateSkillInput!): Skill!

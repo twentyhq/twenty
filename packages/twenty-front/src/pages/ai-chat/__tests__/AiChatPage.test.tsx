@@ -41,6 +41,14 @@ jest.mock('@/ai/components/AiChatPageCloseAskAiPanelEffect', () => ({
   AiChatPageCloseAskAiPanelEffect: () => null,
 }));
 
+jest.mock('@/ai/components/AiChatPageDeletedThreadBanner', () => ({
+  AiChatPageDeletedThreadBanner: () => null,
+}));
+
+jest.mock('@/information-banner/components/InformationBannerWrapper', () => ({
+  InformationBannerWrapper: () => null,
+}));
+
 const Wrapper = ({ children }: { children: ReactNode }) => (
   <JotaiProvider store={jotaiStore}>
     <I18nProvider i18n={i18n}>{children}</I18nProvider>

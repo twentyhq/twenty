@@ -3,6 +3,8 @@ import { useState } from 'react';
 import { expect, fn, userEvent, within } from 'storybook/test';
 
 import { IconArrowRight, IconPlus } from '@ui/icon';
+import { Pill } from '@ui/primitives/data-display';
+import { Text } from '@ui/primitives/typography';
 import {
   A11Y_DEFER_COLOR_CONTRAST,
   CatalogDecorator,
@@ -53,7 +55,21 @@ export const LinkAction: Story = {
 };
 export const Soon: Story = {
   ...Disabled,
-  args: { soon: true, soonLabel: 'Coming soon', onClick: fn() },
+  render: ({ children, ...args }) => (
+    <Button {...args}>
+      <Text
+        render={<span />}
+        style={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: 'var(--t-spacing-1)',
+        }}
+      >
+        {children}
+        <Pill label="Coming soon" />
+      </Text>
+    </Button>
+  ),
 };
 
 const LoadingExample = () => {
