@@ -1,31 +1,30 @@
 import { FieldActorSource } from 'twenty-shared/types';
 
-import { type FlatApplicationCacheMaps } from 'src/engine/core-modules/application/types/flat-application-cache-maps.type';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { resolveWorkflowRunApplication } from 'src/modules/workflow/workflow-executor/utils/resolve-workflow-run-application.util';
 
+type TestApplication = Pick<
+  FlatApplication,
+  'id' | 'name' | 'deletedAt' | 'defaultRoleId'
+>;
+
 const INSTALLED_APPLICATION_ID = 'installed-app-id';
 
-const INSTALLED_APPLICATION = {
+const INSTALLED_APPLICATION: TestApplication = {
   id: INSTALLED_APPLICATION_ID,
   name: 'Installed app',
   defaultRoleId: 'installed-app-role-id',
   deletedAt: null,
-} as unknown as FlatApplication;
+};
 
 const resolve = ({
   applicationId,
   application = INSTALLED_APPLICATION,
 }: {
   applicationId?: string;
-  application?: FlatApplication | null;
-}) => {
-  const flatApplicationMaps: FlatApplicationCacheMaps = {
-    byId: application ? { [application.id]: application } : {},
-    idByUniversalIdentifier: {},
-  };
-
-  return resolveWorkflowRunApplication({
+  application?: TestApplication | null;
+}) =>
+  resolveWorkflowRunApplication({
     workflowRun: {
       createdBy: {
         source: FieldActorSource.MANUAL,
@@ -34,9 +33,8 @@ const resolve = ({
         context: { applicationId },
       },
     },
-    flatApplicationMaps,
+    applicationsById: application ? { [application.id]: application } : {},
   });
-};
 
 describe('resolveWorkflowRunApplication', () => {
   it('leaves a run that no application bounds unbound', () => {
@@ -57,10 +55,7 @@ describe('resolveWorkflowRunApplication', () => {
     expect(() =>
       resolve({
         applicationId: INSTALLED_APPLICATION_ID,
-        application: {
-          ...INSTALLED_APPLICATION,
-          deletedAt: new Date().toISOString(),
-        } as unknown as FlatApplication,
+        application: { ...INSTALLED_APPLICATION, deletedAt: new Date() },
       }),
     ).toThrow('no longer installed');
   });
@@ -69,10 +64,7 @@ describe('resolveWorkflowRunApplication', () => {
     expect(() =>
       resolve({
         applicationId: INSTALLED_APPLICATION_ID,
-        application: {
-          ...INSTALLED_APPLICATION,
-          defaultRoleId: null,
-        } as unknown as FlatApplication,
+        application: { ...INSTALLED_APPLICATION, defaultRoleId: null },
       }),
     ).toThrow('has no role');
   });

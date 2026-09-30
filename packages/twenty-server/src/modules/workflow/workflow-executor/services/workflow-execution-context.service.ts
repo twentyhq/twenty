@@ -156,7 +156,10 @@ export class WorkflowExecutionContextService {
         'flatApplicationMaps',
       ]);
 
-    return resolveWorkflowRunApplication({ workflowRun, flatApplicationMaps });
+    return resolveWorkflowRunApplication({
+      workflowRun,
+      applicationsById: flatApplicationMaps.byId,
+    });
   }
 
   private buildAuthContext({

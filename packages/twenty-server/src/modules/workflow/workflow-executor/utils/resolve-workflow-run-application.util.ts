@@ -1,6 +1,5 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { type FlatApplicationCacheMaps } from 'src/engine/core-modules/application/types/flat-application-cache-maps.type';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import {
@@ -8,20 +7,25 @@ import {
   WorkflowStepExecutorExceptionCode,
 } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
 
-export const resolveWorkflowRunApplication = ({
+export const resolveWorkflowRunApplication = <
+  TApplication extends Pick<
+    FlatApplication,
+    'name' | 'deletedAt' | 'defaultRoleId'
+  >,
+>({
   workflowRun,
-  flatApplicationMaps,
+  applicationsById,
 }: {
   workflowRun: Pick<WorkflowRunWorkspaceEntity, 'createdBy'>;
-  flatApplicationMaps: FlatApplicationCacheMaps;
-}): FlatApplication | null => {
+  applicationsById: Partial<Record<string, TApplication>>;
+}): TApplication | null => {
   const applicationId = workflowRun.createdBy.context?.applicationId;
 
   if (!isDefined(applicationId)) {
     return null;
   }
 
-  const application = flatApplicationMaps.byId[applicationId];
+  const application = applicationsById[applicationId];
 
   if (!isDefined(application) || isDefined(application.deletedAt)) {
     throw new WorkflowStepExecutorException(
