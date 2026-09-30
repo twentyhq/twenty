@@ -1,4 +1,5 @@
 import { ToolCategory } from 'twenty-shared/ai';
+import { ToolExecutionExceptionHandlerService } from 'src/engine/core-modules/tool-provider/services/tool-execution-exception-handler.service';
 import { ToolExecutorService } from 'src/engine/core-modules/tool-provider/services/tool-executor.service';
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
 import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
@@ -35,7 +36,9 @@ const build = () => {
     {} as never,
     {} as never,
     {} as never,
-    { captureExceptions: jest.fn() } as never,
+    new ToolExecutionExceptionHandlerService({
+      captureExceptions: jest.fn(),
+    } as never),
   );
   const current = {
     workspaceId: 'workspace',

@@ -1,4 +1,4 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { type AggregateOperations } from 'twenty-shared/types';
@@ -9,7 +9,6 @@ import { type ObjectRecordGroupBy } from 'src/engine/api/graphql/workspace-query
 
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
 
-import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
 import { CreateManyRecordsService } from 'src/engine/core-modules/record-crud/services/create-many-records.service';
 import { CreateRecordService } from 'src/engine/core-modules/record-crud/services/create-record.service';
@@ -23,25 +22,20 @@ import { UpsertManyRecordsService } from 'src/engine/core-modules/record-crud/se
 import { type FindRecordsParams } from 'src/engine/core-modules/record-crud/types/find-records-params.type';
 import { TOOL_PROVIDERS } from 'src/engine/core-modules/tool-provider/constants/tool-providers.token';
 import { RecordFilesResolverService } from 'src/engine/core-modules/tool-provider/services/record-files-resolver.service';
+import { ToolExecutionExceptionHandlerService } from 'src/engine/core-modules/tool-provider/services/tool-execution-exception-handler.service';
 import { type ToolProvider } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
 import { type ToolDescriptor } from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
 import { type ToolExecutionRef } from 'src/engine/core-modules/tool-provider/types/tool-execution-ref.type';
 import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
 import { buildRequiredToolAuthContext } from 'src/engine/core-modules/tool-provider/utils/build-required-tool-auth-context.util';
-import { formatValidationErrors } from 'src/engine/core-modules/tool-provider/utils/format-validation-errors.util';
-import { isToolExecutionRefusal } from 'src/engine/core-modules/tool-provider/utils/is-tool-execution-refusal.util';
 import { withResolvedToolAuthContext } from 'src/engine/core-modules/tool-provider/utils/with-resolved-tool-auth-context.util';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
-import { shouldCaptureException } from 'src/engine/utils/global-exception-handler.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 
 @Injectable()
 export class ToolExecutorService {
-  private readonly logger = new Logger(ToolExecutorService.name);
-
   constructor(
     @Inject(TOOL_PROVIDERS)
     private readonly providers: ToolProvider[],
@@ -61,7 +55,7 @@ export class ToolExecutorService {
     private readonly userRepository: Repository<UserEntity>,
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
-    private readonly exceptionHandlerService: ExceptionHandlerService,
+    private readonly toolExecutionExceptionHandlerService: ToolExecutionExceptionHandlerService,
   ) {}
 
   async dispatch(
@@ -84,27 +78,13 @@ export class ToolExecutorService {
           this.dispatchByExecutionRef(descriptor, args ?? {}, contextWithAuth),
       );
     } catch (error) {
-      const errorMessage =
-        error instanceof WorkspaceMigrationBuilderException
-          ? formatValidationErrors(error)
-          : String(error instanceof Error ? error.message : error);
-
-      this.logger.error(
-        `Error executing tool "${descriptor.name}": ${errorMessage}`,
+      return this.toolExecutionExceptionHandlerService.handleToolExecutionException(
+        {
+          error,
+          toolName: descriptor.name,
+          workspaceId: context.workspaceId,
+        },
       );
-
-      if (!isToolExecutionRefusal(error) && shouldCaptureException(error)) {
-        this.exceptionHandlerService.captureExceptions([error], {
-          workspace: { id: context.workspaceId },
-          additionalData: { toolName: descriptor.name },
-        });
-      }
-
-      return {
-        success: false,
-        message: `Failed to execute ${descriptor.name}`,
-        error: errorMessage,
-      };
     }
   }
 
