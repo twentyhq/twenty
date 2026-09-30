@@ -7,8 +7,6 @@ import { type ApplicationAuthorizationEntity } from 'src/engine/core-modules/app
 import { ApplicationAuthorizationDTO } from 'src/engine/core-modules/application/application-authorization/dtos/application-authorization.dto';
 import { ApplicationAuthorizationService } from 'src/engine/core-modules/application/application-authorization/services/application-authorization.service';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
-import { isDefined } from 'twenty-shared/utils';
-
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
@@ -26,7 +24,12 @@ import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 @UseFilters(AuthGraphqlApiExceptionFilter)
 @UseGuards(
   AuthPrincipalGuard({
-    userSession: true,
+    userSession: {
+      standard: true,
+      impersonated: true,
+      playground: true,
+      workspaceAgnostic: false,
+    },
     apiKey: false,
     oauthClient: false,
     application: false,
@@ -42,16 +45,8 @@ export class ApplicationAuthorizationResolver {
   @Query(() => [ApplicationAuthorizationDTO])
   async currentUserApplicationAuthorizations(
     @AuthUser() user: AuthContextUser,
-    @AuthWorkspace({ allowUndefined: true }) workspace:
-      | WorkspaceEntity
-      | undefined,
+    @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<ApplicationAuthorizationDTO[]> {
-    // Workspace-agnostic sessions are admitted and have no workspace to
-    // scope to. Nothing is in scope rather than everything.
-    if (!isDefined(workspace)) {
-      return [];
-    }
-
     const authorizations =
       await this.applicationAuthorizationService.findActiveAuthorizationsForUserWorkspace(
         { userId: user.id, workspaceId: workspace.id },
@@ -65,16 +60,10 @@ export class ApplicationAuthorizationResolver {
   @Mutation(() => Boolean)
   async revokeApplicationAuthorization(
     @AuthUser() user: AuthContextUser,
-    @AuthWorkspace({ allowUndefined: true }) workspace:
-      | WorkspaceEntity
-      | undefined,
+    @AuthWorkspace() workspace: WorkspaceEntity,
     @Args('applicationAuthorizationId', { type: () => UUIDScalarType })
     applicationAuthorizationId: string,
   ): Promise<boolean> {
-    if (!isDefined(workspace)) {
-      return false;
-    }
-
     return await this.applicationAuthorizationService.revokeAuthorizationByIdForUserWorkspace(
       {
         authorizationId: applicationAuthorizationId,

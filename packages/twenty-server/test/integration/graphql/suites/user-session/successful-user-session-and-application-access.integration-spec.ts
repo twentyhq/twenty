@@ -246,14 +246,6 @@ describe('User session operations and application access that must keep working'
 
       expect(sessionsErrors).toBeUndefined();
 
-      const { errors: authorizationsErrors } =
-        await currentUserApplicationAuthorizations({
-          token: workspaceAgnosticToken,
-          expectToFail: false,
-        });
-
-      expect(authorizationsErrors).toBeUndefined();
-
       await deleteUser({
         accessToken: workspaceAgnosticToken,
         expectToFail: false,
