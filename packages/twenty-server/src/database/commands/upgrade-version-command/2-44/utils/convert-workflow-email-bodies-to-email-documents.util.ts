@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import {
   parseCanonicalEmailDocument,
   parseEmailBodyAsEmailDocument,
@@ -15,7 +16,7 @@ const emailStepSchema = z.object({
 
 const convertBodyToEmailDocumentJson = (body: string): string | undefined => {
   if (
-    body.trim() === '' ||
+    !isNonEmptyString(body.trim()) ||
     parseCanonicalEmailDocument(parseJson<unknown>(body)).success
   ) {
     return undefined;

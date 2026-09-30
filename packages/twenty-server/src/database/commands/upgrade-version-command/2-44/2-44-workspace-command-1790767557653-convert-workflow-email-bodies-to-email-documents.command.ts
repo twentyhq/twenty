@@ -71,28 +71,23 @@ export class ConvertWorkflowEmailBodiesToEmailDocumentsCommand extends Provision
 
     const allVersions = await workflowVersionRepository.find();
 
-    const convertedVersions: WorkflowVersionWorkspaceEntity[] = [];
-
-    for (const version of allVersions) {
+    const convertedVersions = allVersions.flatMap((version) => {
       const { value, hasChanged } = convertWorkflowEmailBodiesToEmailDocuments(
         version.steps,
       );
 
-      if (!hasChanged) {
-        continue;
-      }
-
-      convertedVersions.push({ ...version, steps: value });
-
-      if (!isDryRun) {
-        await dataSource.query(
-          `UPDATE "${getWorkspaceSchemaName(workspaceId)}"."workflowVersion" SET steps = $1::jsonb WHERE id = $2`,
-          [JSON.stringify(value), version.id],
-        );
-      }
-    }
+      return hasChanged ? [{ ...version, steps: value }] : [];
+    });
 
     if (convertedVersions.length === 0) {
+      return;
+    }
+
+    if (isDryRun) {
+      this.logger.log(
+        `[DRY RUN] Would convert email bodies in ${convertedVersions.length} workflow version(s) for workspace ${workspaceId}`,
+      );
+
       return;
     }
 
@@ -103,23 +98,26 @@ export class ConvertWorkflowEmailBodiesToEmailDocumentsCommand extends Provision
       ],
     );
 
-    if (!hasCoreWorkflowVersionIdField) {
-      this.logger.warn(
-        `${isDryRun ? '[DRY RUN] ' : ''}Converted email bodies in ${convertedVersions.length} workflow version(s) for workspace ${workspaceId}; workflowVersion.coreWorkflowVersionId is missing, skipping the core sync`,
-      );
-
-      return;
-    }
-
-    if (!isDryRun) {
+    if (hasCoreWorkflowVersionIdField) {
       await this.workflowVersionCoreSyncService.upsertToCore(
         workspaceId,
         convertedVersions,
       );
+    } else {
+      this.logger.warn(
+        `workflowVersion.coreWorkflowVersionId is missing for workspace ${workspaceId}, skipping the core sync`,
+      );
+    }
+
+    for (const version of convertedVersions) {
+      await dataSource.query(
+        `UPDATE "${getWorkspaceSchemaName(workspaceId)}"."workflowVersion" SET steps = $1::jsonb WHERE id = $2`,
+        [JSON.stringify(version.steps), version.id],
+      );
     }
 
     this.logger.log(
-      `${isDryRun ? '[DRY RUN] ' : ''}Converted email bodies in ${convertedVersions.length} workflow version(s) and synced them to core for workspace ${workspaceId}`,
+      `Converted email bodies in ${convertedVersions.length} workflow version(s) for workspace ${workspaceId}`,
     );
   }
 }

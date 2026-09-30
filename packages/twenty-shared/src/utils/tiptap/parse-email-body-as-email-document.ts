@@ -1,15 +1,25 @@
 import { parseJson } from '@/utils/parseJson';
+import { isPlainObject } from '@/utils/typeguard/isPlainObject';
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
 
 import { convertPlainTextToEmailDocument } from './convert-plain-text-to-email-document';
 import { type EmailDocument } from './email-document-schema';
 import { EMAIL_DOCUMENT_SCHEMA_VERSION } from './email-document-schema-version';
+import { HTML_ELEMENT_NAMES } from './html-element-names';
 import { isEmailDocumentShape } from './is-email-document-shape';
 import { parseEmailDocument } from './parse-email-document';
 import { TIPTAP_NODE_TYPES } from './tiptap-node-types';
 
-const HTML_MARKUP_PATTERN =
-  /<\/?[a-z][a-z0-9-]*(?:\s[^<>]*)?\/?>|<!--|&(?:[a-z][a-z0-9]*|#\d+|#x[0-9a-f]+);/i;
+const HTML_TAG_PATTERN = /<\/?([a-z][a-z0-9]*)(?:\s[^<>]*)?\/?>/gi;
+
+const HTML_COMMENT_DOCTYPE_OR_ENTITY_PATTERN =
+  /<!--|<!doctype\s|&(?:[a-z][a-z0-9]*|#\d+|#x[0-9a-f]+);/i;
+
+const containsHtmlMarkup = (body: string): boolean =>
+  HTML_COMMENT_DOCTYPE_OR_ENTITY_PATTERN.test(body) ||
+  Array.from(body.matchAll(HTML_TAG_PATTERN)).some(([, tagName]) =>
+    HTML_ELEMENT_NAMES.has(tagName?.toLowerCase() ?? ''),
+  );
 
 const convertStringToEmailDocument = (body: string): EmailDocument => {
   if (body.trim() === '') {
@@ -20,10 +30,7 @@ const convertStringToEmailDocument = (body: string): EmailDocument => {
     };
   }
 
-  if (
-    !HTML_MARKUP_PATTERN.test(body) &&
-    !isStandaloneVariableString(body.trim())
-  ) {
+  if (!containsHtmlMarkup(body) && !isStandaloneVariableString(body.trim())) {
     return convertPlainTextToEmailDocument(body);
   }
 
@@ -48,13 +55,14 @@ export const parseEmailBodyAsEmailDocument = (body: unknown) => {
     return parseEmailDocument(value);
   }
 
-  const { attrs } = value as EmailDocument;
+  const attrs =
+    'attrs' in value && isPlainObject(value.attrs) ? value.attrs : {};
 
   return parseEmailDocument({
     ...value,
     attrs: {
       ...attrs,
-      schemaVersion: attrs?.schemaVersion ?? EMAIL_DOCUMENT_SCHEMA_VERSION,
+      schemaVersion: attrs.schemaVersion ?? EMAIL_DOCUMENT_SCHEMA_VERSION,
     },
   });
 };

@@ -59,12 +59,18 @@ describe('parseEmailBodyAsEmailDocument', () => {
     });
   });
 
-  it('should treat angle-bracketed addresses as plain text', () => {
-    const result = parseEmailBodyAsEmailDocument('Reach Bob <bob@acme.com>');
+  it('should treat angle-bracketed words that are not HTML tags as plain text', () => {
+    for (const body of [
+      'Reach Bob <bob@acme.com>',
+      'Hi <John>',
+      '<support> {{contact.name}}',
+    ]) {
+      const result = parseEmailBodyAsEmailDocument(body);
 
-    expect(result.success && result.document.content?.[0]?.type).toBe(
-      'paragraph',
-    );
+      expect(result.success && result.document.content?.[0]?.type).toBe(
+        'paragraph',
+      );
+    }
   });
 
   it('should turn a blank body into an empty document', () => {
