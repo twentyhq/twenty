@@ -1,5 +1,6 @@
 import { t } from '@lingui/core/macro';
 import { useCallback } from 'react';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type BrowsingContext } from '@/ai/types/BrowsingContext';
@@ -60,7 +61,12 @@ export const useGetBrowsingContext = () => {
       (item) => item.id === objectMetadataItemId,
     );
 
-    if (!objectMetadataItem) {
+    // The chat page is the chat's own record page, which is not what the user
+    // is asking about
+    if (
+      !objectMetadataItem ||
+      objectMetadataItem.nameSingular === CoreObjectNameSingular.AgentChatThread
+    ) {
       return null;
     }
 

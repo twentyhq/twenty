@@ -7,7 +7,9 @@ import { pickerListItemsTest } from '@/__stories__/twenty-ui-gallery/utils/picke
 import { iconButtonElevatedTest } from '@/__stories__/twenty-ui-gallery/utils/iconButtonElevatedTest';
 import { buttonControlsTest } from '@/__stories__/twenty-ui-gallery/utils/buttonControlsTest';
 import { responsiveHooksTest } from '@/__stories__/twenty-ui-gallery/utils/responsiveHooksTest';
+import { RESPONSIVE_HOOKS_WIDGET_SIZING } from '@/__stories__/twenty-ui-gallery/constants/RESPONSIVE_HOOKS_WIDGET_SIZING';
 import { dialogTest } from '@/__stories__/twenty-ui-gallery/utils/dialogTest';
+import { toastCountdownTest } from '@/__stories__/twenty-ui-gallery/utils/toastCountdownTest';
 import { dropdownSandboxFailureTest } from '@/__stories__/twenty-ui-gallery/utils/dropdownSandboxFailureTest';
 import { selectPreactTest } from '@/__stories__/twenty-ui-gallery/utils/selectPreactTest';
 import { type Meta } from '@storybook/react-vite';
@@ -336,6 +338,18 @@ export const ToastPreact: Story = createGalleryStory({
   play: toastTest,
 });
 
+export const ToastCountdownReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-toast-countdown',
+  runtime: 'react',
+  play: toastCountdownTest,
+});
+
+export const ToastCountdownPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-toast-countdown',
+  runtime: 'preact',
+  play: toastCountdownTest,
+});
+
 export const AlertDialogReact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-alert-dialog',
   runtime: 'react',
@@ -449,16 +463,29 @@ export const ButtonControlsPreact: Story = createGalleryStory({
   play: buttonControlsTest,
 });
 
+const RESPONSIVE_HOOKS_DECORATORS: Story['decorators'] = [
+  (Story) => (
+    <div
+      data-testid={RESPONSIVE_HOOKS_WIDGET_SIZING.containerTestId}
+      style={{ width: RESPONSIVE_HOOKS_WIDGET_SIZING.desktopWidth }}
+    >
+      <Story />
+    </div>
+  ),
+];
+
 export const ResponsiveHooksReact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-responsive-hooks',
   runtime: 'react',
   play: responsiveHooksTest,
+  decorators: RESPONSIVE_HOOKS_DECORATORS,
 });
 
 export const ResponsiveHooksPreact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-responsive-hooks',
   runtime: 'preact',
   play: responsiveHooksTest,
+  decorators: RESPONSIVE_HOOKS_DECORATORS,
 });
 
 export const AvatarControlsReact: Story = createGalleryStory({
