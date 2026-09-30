@@ -182,7 +182,7 @@ export class RecordPendingFormConversationsCommand extends ProvisionedWorkspaceC
       if (hasRecordedConversation) {
         await workflowRunRepository.update(workflowRun.id, {
           state: { ...workflowRun.state, stepInfos },
-        } as Partial<WorkflowRunWorkspaceEntity>);
+        });
       }
     }
 
