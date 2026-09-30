@@ -10,10 +10,10 @@ import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules
 
 @Injectable()
 @WorkspaceQueryHook({
-  key: `agentChatThread.updateOne`,
+  key: `agentChatThread.deleteOne`,
   type: WorkspaceQueryHookType.POST_HOOK,
 })
-export class AgentChatThreadUpdateOnePostQueryHook implements WorkspacePostQueryHookInstance {
+export class AgentChatThreadDeleteOnePostQueryHook implements WorkspacePostQueryHookInstance {
   constructor(
     private readonly threadLifecycleService: AgentChatThreadLifecycleService,
   ) {}
@@ -23,7 +23,7 @@ export class AgentChatThreadUpdateOnePostQueryHook implements WorkspacePostQuery
     _objectName: string,
     payload: Pick<AgentChatThreadWorkspaceEntity, 'id'>[],
   ): Promise<void> {
-    await this.threadLifecycleService.stopArchivedThreads({
+    await this.threadLifecycleService.stopDeletedThreads({
       workspaceId: authContext.workspace.id,
       threadIds: payload.map((thread) => thread.id),
     });

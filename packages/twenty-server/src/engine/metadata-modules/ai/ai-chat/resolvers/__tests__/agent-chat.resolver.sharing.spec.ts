@@ -5,6 +5,7 @@ import {
 import { AgentChatResolver } from 'src/engine/metadata-modules/ai/ai-chat/resolvers/agent-chat.resolver';
 import { AgentChatThreadLifecycleService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-lifecycle.service';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
+import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { AgentChatTurnPreflightService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-turn-preflight.service';
 
 const WORKSPACE_ID = 'workspace';
@@ -22,6 +23,7 @@ const buildResolver = () => {
     findOne: jest.fn().mockResolvedValue({ id: 'queued', threadId: THREAD_ID }),
     find: jest.fn(),
     delete: jest.fn(),
+    query: jest.fn().mockResolvedValue([]),
   };
   const sharing = {
     getAuthContext: jest.fn().mockResolvedValue({ userWorkspaceId: 'owner' }),
@@ -50,12 +52,11 @@ const buildResolver = () => {
         canDelete: workspaceMemberId === 'owner',
         canSoftDelete: workspaceMemberId === 'owner',
       })),
-    updateThreadWithAccess: jest
+    restoreThreadWithAccess: jest
       .fn()
       .mockRejectedValue(
         new AiException('Thread not found', AiExceptionCode.THREAD_NOT_FOUND),
       ),
-    deleteThreadWithAccess: jest.fn(),
   };
   const broadcaster = { broadcast: jest.fn() };
   const recordEvents = {
@@ -125,25 +126,66 @@ const buildResolver = () => {
 };
 
 describe('Shared conversation API boundaries', () => {
-  it('does not announce deletion when the transaction rolls back', async () => {
+  it('does not announce a restore when the transaction rolls back', async () => {
     const context = buildResolver();
     context.threadRepository.findOne.mockResolvedValue({
       id: THREAD_ID,
       workspaceMemberId: 'owner',
       workspaceId: WORKSPACE_ID,
+      deletedAt: '2026-09-01T00:00:00.000Z',
     });
-    context.sharing.deleteThreadWithAccess.mockRejectedValue(
-      new Error('delete failed'),
+    context.sharing.restoreThreadWithAccess.mockRejectedValue(
+      new Error('restore failed'),
     );
     await expect(
-      context.chatService.hardDeleteThread({
+      context.chatService.restoreThread({
         threadId: THREAD_ID,
         workspaceMemberId: 'owner',
         workspaceId: WORKSPACE_ID,
       }),
-    ).rejects.toThrow('delete failed');
+    ).rejects.toThrow('restore failed');
     expect(context.broadcaster.broadcast).not.toHaveBeenCalled();
-    expect(context.recordEvents.emitThreadDestroyed).not.toHaveBeenCalled();
+    expect(context.recordEvents.emitThreadUpdated).not.toHaveBeenCalled();
+  });
+
+  it('restores a soft deleted conversation before sending to it', async () => {
+    const { resolver, sharing, streaming, recordEvents, threadRepository } =
+      buildResolver();
+    const deletedThread = {
+      id: THREAD_ID,
+      workspaceMemberId: 'owner',
+      workspaceId: WORKSPACE_ID,
+      deletedAt: '2026-09-01T00:00:00.000Z',
+    };
+    sharing.getThreadWithAccess.mockResolvedValue(deletedThread);
+    threadRepository.findOne.mockResolvedValue(deletedThread);
+    sharing.restoreThreadWithAccess.mockResolvedValue({
+      ...deletedThread,
+      deletedAt: null,
+    });
+    await resolver.sendChatMessage(
+      THREAD_ID,
+      'Pick this back up',
+      'message',
+      null,
+      undefined,
+      null,
+      VIEWER_ID,
+      'member',
+      workspace,
+    );
+    expect(sharing.restoreThreadWithAccess).toHaveBeenCalledWith({
+      threadId: THREAD_ID,
+      workspaceMemberId: 'member',
+      workspaceId: WORKSPACE_ID,
+    });
+    expect(recordEvents.emitThreadUpdated).toHaveBeenCalledWith(
+      expect.objectContaining({
+        threadBefore: deletedThread,
+        action: DatabaseEventAction.RESTORED,
+      }),
+    );
+    expect(streaming.streamAgentChat).toHaveBeenCalled();
   });
 
   it('returns readable threads and catchup to viewers without granting ownership', async () => {
@@ -156,14 +198,7 @@ describe('Shared conversation API boundaries', () => {
     ).resolves.toMatchObject({ chunks: [] });
   });
 
-  it.each([
-    'send',
-    'rename',
-    'archive',
-    'unarchive',
-    'delete',
-    'deleteQueued',
-  ] as const)(
+  it.each(['send', 'restore', 'deleteQueued'] as const)(
     'rejects %s from a viewer without mutating or executing',
     async (operation) => {
       const context = buildResolver();
@@ -181,14 +216,12 @@ describe('Shared conversation API boundaries', () => {
             'member',
             workspace,
           ),
-        rename: () =>
-          resolver.renameChatThread(THREAD_ID, 'Changed', VIEWER_ID, workspace),
-        archive: () =>
-          resolver.archiveChatThread(THREAD_ID, VIEWER_ID, workspace),
-        unarchive: () =>
-          resolver.unarchiveChatThread(THREAD_ID, VIEWER_ID, workspace),
-        delete: () =>
-          resolver.deleteChatThread(THREAD_ID, VIEWER_ID, workspace),
+        restore: () =>
+          context.chatService.restoreThread({
+            threadId: THREAD_ID,
+            workspaceMemberId: VIEWER_ID,
+            workspaceId: WORKSPACE_ID,
+          }),
         deleteQueued: () =>
           resolver.deleteQueuedChatMessage('queued', VIEWER_ID, workspace),
       };
@@ -205,6 +238,8 @@ describe('Shared conversation API boundaries', () => {
       }
       expect(context.threadRepository.update).not.toHaveBeenCalled();
       expect(context.threadRepository.delete).not.toHaveBeenCalled();
+      expect(context.broadcaster.broadcast).not.toHaveBeenCalled();
+      expect(context.recordEvents.emitThreadUpdated).not.toHaveBeenCalled();
       expect(context.messages.delete).not.toHaveBeenCalled();
       expect(context.streaming.streamAgentChat).not.toHaveBeenCalled();
       expect(context.events.publish).not.toHaveBeenCalled();

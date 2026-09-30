@@ -183,11 +183,11 @@ describe('Chat execution sender', () => {
       code: 'THREAD_NOT_FOUND',
     });
   });
-  it('denies archived threads', async () => {
+  it('denies soft deleted threads', async () => {
     const { service, chat } = build();
     chat.getWritableThread.mockResolvedValue({
       id: threadId,
-      archivedAt: new Date().toISOString(),
+      deletedAt: new Date().toISOString(),
     } as never);
     await expect(service.authorizeJob(job)).rejects.toMatchObject({
       code: 'THREAD_NOT_FOUND',
