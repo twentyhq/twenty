@@ -40,6 +40,7 @@ import {
 } from 'src/engine/core-modules/search/exceptions/search.exception';
 import { type RecordsWithObjectMetadataItem } from 'src/engine/core-modules/search/types/records-with-object-metadata-item.type';
 import { formatSearchTerms } from 'src/engine/core-modules/search/utils/format-search-terms';
+import { hasCjkCharacters } from 'src/engine/core-modules/search/utils/has-cjk-characters';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
@@ -67,8 +68,6 @@ export type SearchCursor = {
 };
 
 const OBJECT_METADATA_ITEMS_CHUNK_SIZE = 5;
-const CJK_CHARACTER_PATTERN =
-  /[\p{Script_Extensions=Han}\p{Script_Extensions=Hiragana}\p{Script_Extensions=Katakana}\p{Script_Extensions=Hangul}]/u;
 
 @Injectable()
 export class SearchService {
@@ -245,7 +244,7 @@ export class SearchService {
 
     if (
       tsvectorResults.length > 0 ||
-      !CJK_CHARACTER_PATTERN.test(searchInput) ||
+      !hasCjkCharacters(searchInput) ||
       isDefined(after)
     ) {
       return tsvectorResults;
