@@ -4,6 +4,7 @@ import { type ViewportGeometrySnapshot } from '@/types/ViewportGeometrySnapshot'
 export const createGeometryTrackerStub = (): GeometryTracker => ({
   registerNode: jest.fn(),
   unregisterNode: jest.fn(),
+  getRegisteredNode: jest.fn(),
   findRemoteElementIdContainingNode: jest.fn(),
   observe: jest.fn(),
   unobserve: jest.fn(),

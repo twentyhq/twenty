@@ -17,6 +17,8 @@ import { createHtmlHostWrapper } from '@/host/elements/utils/createHtmlHostWrapp
 import { FrontComponentHostFocusControllerContext } from '@/host/focus/contexts/FrontComponentHostFocusControllerContext';
 import { createFocusAwareRemoteConnection } from '@/host/focus/utils/createFocusAwareRemoteConnection';
 import { createHostFocusController } from '@/host/focus/utils/createHostFocusController';
+import { FrontComponentGeometryTrackerContext } from '@/host/geometry/contexts/FrontComponentGeometryTrackerContext';
+import { createGeometryTracker } from '@/host/geometry/utils/createGeometryTracker';
 
 import { createWorkerActiveElementStore } from '../createWorkerActiveElementStore';
 import { createWorkerFocusTransport } from '../createWorkerFocusTransport';
@@ -47,7 +49,10 @@ describe('forwarding focus methods to the host', () => {
 
   const renderRemoteButtons = () => {
     const receiver = new RemoteReceiver();
-    const hostFocusController = createHostFocusController();
+    const geometryTracker = createGeometryTracker();
+    const hostFocusController = createHostFocusController({
+      geometryTracker,
+    });
     const connection = new BatchingRemoteConnection(
       createFocusAwareRemoteConnection({
         connection: receiver.connection,
@@ -82,23 +87,25 @@ describe('forwarding focus methods to the host', () => {
 
     act(() => {
       root.render(
-        <FrontComponentHostFocusControllerContext.Provider
-          value={hostFocusController}
-        >
-          <RemoteRootRenderer
-            receiver={receiver}
-            components={
-              new Map([
-                [
-                  'html-button',
-                  createRemoteComponentRenderer(
-                    createHtmlHostWrapper('button'),
-                  ),
-                ],
-              ])
-            }
-          />
-        </FrontComponentHostFocusControllerContext.Provider>,
+        <FrontComponentGeometryTrackerContext.Provider value={geometryTracker}>
+          <FrontComponentHostFocusControllerContext.Provider
+            value={hostFocusController}
+          >
+            <RemoteRootRenderer
+              receiver={receiver}
+              components={
+                new Map([
+                  [
+                    'html-button',
+                    createRemoteComponentRenderer(
+                      createHtmlHostWrapper('button'),
+                    ),
+                  ],
+                ])
+              }
+            />
+          </FrontComponentHostFocusControllerContext.Provider>
+        </FrontComponentGeometryTrackerContext.Provider>,
       );
     });
 

@@ -1,4 +1,15 @@
+import { createGeometryTracker } from '@/host/geometry/utils/createGeometryTracker';
+
 import { createHostFocusController } from '../createHostFocusController';
+
+const createFocusFixture = () => {
+  const geometryTracker = createGeometryTracker();
+
+  return {
+    geometryTracker,
+    controller: createHostFocusController({ geometryTracker }),
+  };
+};
 
 describe('createHostFocusController', () => {
   afterEach(() => {
@@ -6,7 +17,7 @@ describe('createHostFocusController', () => {
   });
 
   it('should apply only the latest pending focus request as elements mount', () => {
-    const controller = createHostFocusController();
+    const { geometryTracker, controller } = createFocusFixture();
     const first = document.createElement('button');
     const second = document.createElement('button');
 
@@ -19,14 +30,16 @@ describe('createHostFocusController', () => {
       remoteElementId: 'second',
       methodName: 'focus',
     });
-    controller.registerElement({ remoteElementId: 'first', element: first });
+    geometryTracker.registerNode('first', first);
+    controller.retryPendingFocus();
     expect(document.activeElement).toBe(document.body);
-    controller.registerElement({ remoteElementId: 'second', element: second });
+    geometryTracker.registerNode('second', second);
+    controller.retryPendingFocus();
     expect(document.activeElement).toBe(second);
   });
 
   it('should cancel pending focus when the same element is blurred', () => {
-    const controller = createHostFocusController();
+    const { geometryTracker, controller } = createFocusFixture();
     const button = document.createElement('button');
 
     document.body.append(button);
@@ -38,44 +51,36 @@ describe('createHostFocusController', () => {
       remoteElementId: 'button',
       methodName: 'blur',
     });
-    controller.registerElement({ remoteElementId: 'button', element: button });
+    geometryTracker.registerNode('button', button);
+    controller.retryPendingFocus();
 
     expect(document.activeElement).toBe(document.body);
   });
 
-  it('should clear pending focus and registered elements on reset', () => {
-    const controller = createHostFocusController();
-    const first = document.createElement('button');
-    const second = document.createElement('button');
+  it('should clear pending focus on reset', () => {
+    const { geometryTracker, controller } = createFocusFixture();
+    const button = document.createElement('button');
 
-    document.body.append(first, second);
-    controller.registerElement({ remoteElementId: 'first', element: first });
+    document.body.append(button);
     controller.callFocusMethod({
-      remoteElementId: 'second',
+      remoteElementId: 'button',
       methodName: 'focus',
     });
     controller.reset();
-    controller.registerElement({ remoteElementId: 'second', element: second });
-    expect(document.activeElement).toBe(document.body);
+    geometryTracker.registerNode('button', button);
+    controller.retryPendingFocus();
 
-    controller.callFocusMethod({
-      remoteElementId: 'first',
-      methodName: 'focus',
-    });
     expect(document.activeElement).toBe(document.body);
   });
 
   it('should stop using an unmounted element', () => {
-    const controller = createHostFocusController();
+    const { geometryTracker, controller } = createFocusFixture();
     const button = document.createElement('button');
     const focus = jest.spyOn(button, 'focus');
 
     document.body.append(button);
-    controller.registerElement({ remoteElementId: 'button', element: button });
-    controller.unregisterElement({
-      remoteElementId: 'button',
-      element: button,
-    });
+    geometryTracker.registerNode('button', button);
+    geometryTracker.unregisterNode('button', button);
     controller.callFocusMethod({
       remoteElementId: 'button',
       methodName: 'focus',

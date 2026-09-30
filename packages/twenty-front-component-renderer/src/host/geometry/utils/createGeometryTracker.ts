@@ -270,6 +270,8 @@ export const createGeometryTracker = (): GeometryTracker => {
   return {
     registerNode,
     unregisterNode,
+    getRegisteredNode: (remoteElementId) =>
+      registeredNodes.get(remoteElementId),
     findRemoteElementIdContainingNode: (node) =>
       findRemoteElementIdContainingNode({
         node,

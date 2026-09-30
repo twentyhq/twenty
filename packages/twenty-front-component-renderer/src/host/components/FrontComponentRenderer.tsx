@@ -72,7 +72,9 @@ export const FrontComponentRenderer = ({
   const [isExecutionContextInitialized, setIsExecutionContextInitialized] =
     useState(false);
   const [geometryTracker] = useState(() => createGeometryTracker());
-  const [hostFocusController] = useState(() => createHostFocusController());
+  const [hostFocusController] = useState(() =>
+    createHostFocusController({ geometryTracker }),
+  );
   const [initialExecutionContext] = useState(executionContext);
 
   const isReady = isDefined(receiver) && isExecutionContextInitialized;
