@@ -23,12 +23,9 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { AllowSuspendedWorkspace } from 'src/engine/decorators/auth/allow-suspended-workspace.decorator';
 import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard';
 import { ImpersonatePermissionGuard } from 'src/engine/guards/impersonate-permission.guard';
-import { NoImpersonationGuard } from 'src/engine/guards/no-impersonation.guard';
+import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
-import { RequireUserSessionGuard } from 'src/engine/guards/require-user-session.guard';
-import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
-import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
 @MetadataResolver()
 @UsePipes(ResolverValidationPipe)
@@ -41,10 +38,17 @@ export class ImpersonationResolver {
   constructor(private readonly impersonationService: ImpersonationService) {}
 
   @UseGuards(
-    WorkspaceAuthGuard,
-    UserAuthGuard,
-    RequireUserSessionGuard,
-    NoImpersonationGuard,
+    AuthPrincipalGuard({
+      userSession: {
+        standard: true,
+        impersonated: false,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: false,
+      oauthClient: false,
+      application: false,
+    }),
     ImpersonatePermissionGuard,
     CustomPermissionGuard,
   )
@@ -68,9 +72,17 @@ export class ImpersonationResolver {
   }
 
   @UseGuards(
-    WorkspaceAuthGuard,
-    UserAuthGuard,
-    RequireUserSessionGuard,
+    AuthPrincipalGuard({
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: false,
+      oauthClient: false,
+      application: false,
+    }),
     NoPermissionGuard,
   )
   @Mutation(() => StopImpersonationDTO)
