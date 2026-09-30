@@ -4,7 +4,7 @@ exports[`Application authorizations with a workspace-agnostic session should fai
 {
   "extensions": {
     "code": "FORBIDDEN",
-    "userFriendlyMessage": "An error occurred.",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
   },
   "message": "This endpoint is not available to this caller",
 }
@@ -14,7 +14,7 @@ exports[`Application authorizations with a workspace-agnostic session should fai
 {
   "extensions": {
     "code": "FORBIDDEN",
-    "userFriendlyMessage": "An error occurred.",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
   },
   "message": "This endpoint is not available to this caller",
 }

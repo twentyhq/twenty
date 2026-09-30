@@ -4,7 +4,7 @@ exports[`Application token renewal should fail when the caller is an API key 1`]
 {
   "extensions": {
     "code": "FORBIDDEN",
-    "userFriendlyMessage": "An error occurred.",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
   },
   "message": "This endpoint is not available to this caller",
 }
@@ -14,7 +14,7 @@ exports[`Application token renewal should fail when the caller is an application
 {
   "extensions": {
     "code": "FORBIDDEN",
-    "userFriendlyMessage": "An error occurred.",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
   },
   "message": "This endpoint is not available to this caller",
 }

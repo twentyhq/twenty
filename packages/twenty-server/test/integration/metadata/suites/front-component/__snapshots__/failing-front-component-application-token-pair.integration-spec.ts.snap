@@ -4,7 +4,7 @@ exports[`Front component read with token pair should fail when called with a use
 {
   "extensions": {
     "code": "FORBIDDEN",
-    "userFriendlyMessage": "An error occurred.",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
   },
   "message": "This endpoint is not available to this caller",
 }
@@ -14,7 +14,7 @@ exports[`Front component read with token pair should fail when called with a use
 {
   "extensions": {
     "code": "FORBIDDEN",
-    "userFriendlyMessage": "An error occurred.",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
   },
   "message": "This endpoint is not available to this caller",
 }
@@ -24,7 +24,7 @@ exports[`Front component read with token pair should fail when called with an AP
 {
   "extensions": {
     "code": "FORBIDDEN",
-    "userFriendlyMessage": "An error occurred.",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
   },
   "message": "This endpoint is not available to this caller",
 }
@@ -34,7 +34,7 @@ exports[`Front component read with token pair should fail when called with an ap
 {
   "extensions": {
     "code": "FORBIDDEN",
-    "userFriendlyMessage": "An error occurred.",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
   },
   "message": "This endpoint is not available to this caller",
 }

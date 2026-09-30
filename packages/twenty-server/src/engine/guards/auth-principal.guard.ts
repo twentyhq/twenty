@@ -1,7 +1,6 @@
 import {
   type CanActivate,
   type ExecutionContext,
-  ForbiddenException,
   Injectable,
   mixin,
   type Type,
@@ -9,7 +8,7 @@ import {
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { AUTH_PRINCIPAL_REFUSED_MESSAGE } from 'src/engine/guards/constants/auth-principal-refused-message.constant';
+import { AuthPrincipalRefusedException } from 'src/engine/guards/exceptions/auth-principal-refused.exception';
 import { type AuthPrincipalGuardConfig } from 'src/engine/guards/types/auth-principal-guard-config.type';
 import { classifyAuthPrincipal } from 'src/engine/guards/utils/classify-auth-principal.util';
 import { getRequestOrThrowWhenUnauthenticated } from 'src/engine/guards/utils/get-request-or-throw-when-unauthenticated.util';
@@ -38,7 +37,7 @@ export const AuthPrincipalGuard = (
 
       // A 403 on REST and FORBIDDEN on GraphQL, and unlike a GraphQL error thrown
       // from a guard, Nest does not log it as an unhandled exception.
-      throw new ForbiddenException(AUTH_PRINCIPAL_REFUSED_MESSAGE);
+      throw new AuthPrincipalRefusedException();
     }
   }
 
