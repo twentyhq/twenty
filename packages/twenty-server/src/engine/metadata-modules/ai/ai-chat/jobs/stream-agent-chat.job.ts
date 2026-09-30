@@ -860,7 +860,7 @@ export class StreamAgentChatJob {
       where: { id: threadId },
     });
 
-    if (!threadBeforeUsage || threadBeforeUsage.archivedAt) {
+    if (!threadBeforeUsage || threadBeforeUsage.deletedAt) {
       return resolveSupersededTurnOutcome(outcome);
     }
 

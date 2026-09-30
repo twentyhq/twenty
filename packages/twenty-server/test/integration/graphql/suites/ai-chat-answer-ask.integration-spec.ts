@@ -3,6 +3,7 @@ import { randomUUID } from 'node:crypto';
 import { parse } from 'graphql';
 import { answerAsk } from 'test/integration/graphql/suites/workflow/utils/answer-ask.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { destroyAgentChatThread } from 'test/integration/utils/destroy-agent-chat-thread.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -157,7 +158,7 @@ describe('Answering a chat tool call through its Ask', () => {
 
   afterAll(async () => {
     spies.forEach((spy) => spy.mockRestore());
-    await chat.hardDeleteThread({ workspaceId, workspaceMemberId, threadId });
+    await destroyAgentChatThread({ threadId });
   });
 
   afterEach(async () => {
