@@ -5,6 +5,10 @@ import {
   type TargetFunction,
 } from '@/cli/utilities/build/manifest/manifest-extract-config';
 import { extractManifestFromFile } from '@/cli/utilities/build/manifest/manifest-extract-config-from-file';
+import {
+  APPLICATION_SOURCE_GLOBS,
+  APPLICATION_SOURCE_IGNORED_GLOBS,
+} from '@/cli/utilities/file/application-source-globs';
 import { glob } from 'tinyglobby';
 import { readFile } from 'node:fs/promises';
 import { relative } from 'node:path';
@@ -30,10 +34,10 @@ export const scanProjectSourceFiles = async ({
   appPath: string;
   includeConfig?: boolean;
 }): Promise<ScannedSourceFile[]> => {
-  const filePaths = await glob(['**/*.ts', '**/*.tsx'], {
+  const filePaths = await glob(APPLICATION_SOURCE_GLOBS, {
     cwd: appPath,
     absolute: true,
-    ignore: ['**/node_modules/**', '**/*.d.ts', '**/dist/**', '**/.twenty/**'],
+    ignore: APPLICATION_SOURCE_IGNORED_GLOBS,
     onlyFiles: true,
   });
 

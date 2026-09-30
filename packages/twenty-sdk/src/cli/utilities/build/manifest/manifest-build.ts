@@ -13,6 +13,10 @@ import { extractFrontComponentSharedDependencies } from '@/cli/utilities/build/m
 import { validateConditionalAvailabilityUsage } from '@/cli/utilities/build/manifest/utils/validate-conditional-availability-usage';
 import { validateAgentRolesWithinApplicationRole } from '@/cli/utilities/build/manifest/utils/validate-agent-roles-within-application-role';
 import { validateViewFilterOperands } from '@/cli/utilities/build/manifest/utils/validate-view-filter-operands';
+import {
+  APPLICATION_SOURCE_GLOBS,
+  APPLICATION_SOURCE_IGNORED_GLOBS,
+} from '@/cli/utilities/file/application-source-globs';
 import { getEngineVersionRange } from '@/cli/utilities/version/get-engine-version-range';
 import { type ApplicationConfig, type LogicFunctionConfig } from '@/sdk/define';
 import { type CommandMenuItemConfig } from '@/sdk/define/command-menu-items/command-menu-item-config';
@@ -66,10 +70,10 @@ import {
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 
 const loadSources = async (appPath: string): Promise<string[]> => {
-  return await glob(['**/*.ts', '**/*.tsx'], {
+  return await glob(APPLICATION_SOURCE_GLOBS, {
     cwd: appPath,
     absolute: true,
-    ignore: ['**/node_modules/**', '**/*.d.ts', '**/dist/**', '**/.twenty/**'],
+    ignore: APPLICATION_SOURCE_IGNORED_GLOBS,
     onlyFiles: true,
   });
 };
