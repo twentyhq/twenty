@@ -20,7 +20,7 @@ const LOGIC_FUNCTION_INFRASTRUCTURE_FAILURE_CODES = [
   LogicFunctionExceptionCode.LOGIC_FUNCTION_PREBUILT_BUNDLE_NOT_INSTALLED,
 ];
 
-export const isToolExecutionRefusal = (error: unknown): boolean => {
+export const isUserFacingToolExecutionError = (error: unknown): boolean => {
   if (error instanceof WorkspaceMigrationBuilderException) {
     return true;
   }

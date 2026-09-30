@@ -16,7 +16,6 @@ import { ViewToolProvider } from 'src/engine/core-modules/tool-provider/provider
 import { WebhookToolProvider } from 'src/engine/core-modules/tool-provider/providers/webhook-tool.provider';
 import { WorkflowToolProvider } from 'src/engine/core-modules/tool-provider/providers/workflow-tool.provider';
 import { RecordFilesResolverService } from 'src/engine/core-modules/tool-provider/services/record-files-resolver.service';
-import { ToolExecutionExceptionHandlerService } from 'src/engine/core-modules/tool-provider/services/tool-execution-exception-handler.service';
 import { ToolExecutorService } from 'src/engine/core-modules/tool-provider/services/tool-executor.service';
 import { ToolModule } from 'src/engine/core-modules/tool/tool.module';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -82,7 +81,6 @@ import { ToolRegistryService } from './services/tool-registry.service';
   providers: [
     ToolIndexResolver,
     ToolExecutorService,
-    ToolExecutionExceptionHandlerService,
     RecordFilesResolverService,
     provideWorkspaceScopedRepository(FileEntity),
     ActionToolProvider,

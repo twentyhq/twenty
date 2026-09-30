@@ -1,6 +1,6 @@
 import { msg } from '@lingui/core/macro';
 
-import { isToolExecutionRefusal } from 'src/engine/core-modules/tool-provider/utils/is-tool-execution-refusal.util';
+import { isUserFacingToolExecutionError } from 'src/engine/core-modules/tool-provider/utils/is-user-facing-tool-execution-error.util';
 import {
   LogicFunctionException,
   LogicFunctionExceptionCode,
@@ -16,7 +16,7 @@ import {
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-runner.exception';
 import { UnknownException } from 'src/utils/custom-exception';
 
-describe('isToolExecutionRefusal', () => {
+describe('isUserFacingToolExecutionError', () => {
   it.each([
     [
       'a metadata validation failure',
@@ -78,7 +78,7 @@ describe('isToolExecutionRefusal', () => {
       false,
     ],
     ['a plain runtime error', new TypeError('records is not iterable'), false],
-  ])('should classify %s', (_, error, isRefusal) => {
-    expect(isToolExecutionRefusal(error)).toBe(isRefusal);
+  ])('should classify %s', (_, error, isUserFacing) => {
+    expect(isUserFacingToolExecutionError(error)).toBe(isUserFacing);
   });
 });
