@@ -372,9 +372,18 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     workspaceId: string,
     cacheKeyNames: WorkspaceCacheKeyName[],
   ): Promise<void> {
-    await this.deleteFromRedis(workspaceId, cacheKeyNames);
+    await this.flushForWorkspaces([workspaceId], cacheKeyNames);
+  }
 
-    this.deleteFromLocalCache(workspaceId, cacheKeyNames);
+  public async flushForWorkspaces(
+    workspaceIds: string[],
+    cacheKeyNames: WorkspaceCacheKeyName[],
+  ): Promise<void> {
+    await this.deleteFromRedis(workspaceIds, cacheKeyNames);
+
+    for (const workspaceId of workspaceIds) {
+      this.deleteFromLocalCache(workspaceId, cacheKeyNames);
+    }
   }
 
   public async evictWorkspaceFromLocalCache(
@@ -732,14 +741,16 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
   }
 
   private async deleteFromRedis(
-    workspaceId: string,
+    workspaceIds: string[],
     cacheKeyNames: WorkspaceCacheKeyName[],
   ): Promise<void> {
-    const keysToDelete = cacheKeyNames.flatMap((keyName) => {
-      const baseKey = this.buildCacheKey(workspaceId, keyName);
+    const keysToDelete = workspaceIds.flatMap((workspaceId) =>
+      cacheKeyNames.flatMap((keyName) => {
+        const baseKey = this.buildCacheKey(workspaceId, keyName);
 
-      return [`${baseKey}:data`, `${baseKey}:hash`];
-    });
+        return [`${baseKey}:data`, `${baseKey}:hash`];
+      }),
+    );
 
     await this.cacheStorage.mdel(keysToDelete);
   }

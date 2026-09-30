@@ -2,6 +2,7 @@ import { Injectable, Logger, type OnModuleInit } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
 import { InjectDataSource } from '@nestjs/typeorm';
 
+import chunk from 'lodash.chunk';
 import { performance } from 'perf_hooks';
 import { DataSource } from 'typeorm';
 
@@ -21,6 +22,8 @@ import { resolveEncryptionKeysOrThrow } from 'src/engine/core-modules/secret-enc
 import { EnvironmentConfigDriver } from 'src/engine/core-modules/twenty-config/drivers/environment-config.driver';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { isDefined, typedObjectEntries } from 'twenty-shared/utils';
+
+const WORKSPACE_CACHE_FLUSH_BATCH_SIZE = 500;
 
 export type RotationRunOptions = {
   site?: SecretEncryptionRotationSiteName | string;
@@ -238,8 +241,11 @@ export class SecretEncryptionRotationRunnerService implements OnModuleInit {
       `SELECT "id" FROM "core"."workspace"`,
     );
 
-    for (const workspace of workspaces) {
-      await this.workspaceCacheService.flush(workspace.id, cacheKeysToFlush);
+    for (const batch of chunk(workspaces, WORKSPACE_CACHE_FLUSH_BATCH_SIZE)) {
+      await this.workspaceCacheService.flushForWorkspaces(
+        batch.map(({ id }) => id),
+        cacheKeysToFlush,
+      );
     }
 
     this.logger.log(
