@@ -53,7 +53,24 @@ export const WithExpandedList: Story = {
     const body = canvasElement.ownerDocument.body;
     const bodyCanvas = within(body);
 
-    expect(await bodyCanvas.findByText('Option 7')).toBeDefined();
+    expect(await bodyCanvas.findByText('Option 7')).toBeVisible();
+  },
+};
+
+export const ClosesExpandedListOnClickOutside: Story = {
+  ...WithChipCount,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const bodyCanvas = within(canvasElement.ownerDocument.body);
+
+    await userEvent.click(await canvas.findByText(/^\+\d+$/));
+    expect(await bodyCanvas.findByText('Option 7')).toBeVisible();
+
+    await userEvent.click(canvasElement);
+
+    await waitFor(() => {
+      expect(bodyCanvas.queryByText('Option 7')).not.toBeInTheDocument();
+    });
   },
 };
 

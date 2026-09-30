@@ -20,14 +20,18 @@ export const filterAndSortNavigationMenuItems = (
     (meta) => meta.isActive,
   );
 
+  // Chat favorites are listed in the chat menu instead
+  const hiddenRecordObjectNames: string[] = [
+    CoreObjectNameSingular.AgentChatThread,
+    ...(isWorkflowCoreIndexPageEnabled
+      ? [CoreObjectNameSingular.Workflow]
+      : []),
+  ];
+
   const hiddenRecordObjectMetadataIds = new Set(
-    isWorkflowCoreIndexPageEnabled
-      ? activeObjectMetadataItems
-          .filter(
-            (meta) => meta.nameSingular === CoreObjectNameSingular.Workflow,
-          )
-          .map((meta) => meta.id)
-      : [],
+    activeObjectMetadataItems
+      .filter((meta) => hiddenRecordObjectNames.includes(meta.nameSingular))
+      .map((meta) => meta.id),
   );
 
   return navigationMenuItems

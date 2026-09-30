@@ -55,19 +55,23 @@ No stories are skipped or marked as expected-to-fail by the runner.
 | Popover, Dialog, AlertDialog | Opening fails while reading pointer contact data from the missing `nativeEvent`. |
 | Menu | Opening fails on the missing `nativeEvent.pointerType` and pointer contact data. |
 | Select | Opening fails on missing native event data and focus support. Preact can report only the last of these failures when the host coalesces sandbox errors. |
-| Switch, Checkbox, Radio, CardPicker, SegmentedControl | Activation attempts to construct an unavailable `PointerEvent`. `CardPickerReact` never gets that far: React drops the click handler Base UI adds through `React.cloneElement`, so only the group's focus handling fails on the missing `nativeEvent` for `composedPath`. |
+| Switch, Checkbox, Radio (standard and card), SegmentedControl | Activation attempts to construct an unavailable `PointerEvent`. `RadioCardReact` never gets that far: React drops the click handler Base UI adds through `React.cloneElement`, so only the group's focus handling fails on the missing `nativeEvent` for `composedPath`. |
 | Slider | Thumbs stay hidden because the sandbox has no `ResizeObserver` to re-measure after the first geometry batch. |
 | Tooltip | `TooltipReact` opens on hover but remains open after Escape because React drops the handlers Base UI adds through `React.cloneElement`. |
 | Responsive hooks | The sandbox `window.matchMedia` answers for the widget's own box, so `useIsMobile` follows the widget width rather than the browser viewport: a widget 768px wide or narrower gets the mobile layout, and Button drops its hotkey hint, on any screen. `useIsTouchDevice` follows the primary input of the host device, so it is `false` under the desktop Chromium that runs these stories. The fixture asserts both at a 1024px and a 400px widget width. |
 
 The worker DOM now provides `Node.contains`, `compareDocumentPosition`,
 `getRootNode`, `Element.matches`, `closest`, `querySelector` backed by
-`css-select`, and property accessors for boolean ARIA attributes so React and
-Preact forward `true`/`false` instead of empty strings and remove the attribute
-when the prop is cleared. `getAttribute` and the selector engine read the remote
-properties React and Preact set, and the selector engine matches the sandbox's
-custom element tags by their HTML tag names. `TooltipPreact` therefore covers
-hover opening and Escape dismissal. Pointer leave still needs document-level
+`css-select`, `focus`/`blur` forwarding to page elements with a
+`document.activeElement` that the host keeps in sync with the page's focus
+inside the component and that clears when
+the focused subtree is detached, and property accessors for boolean ARIA
+attributes so React and Preact forward `true`/`false` instead of empty strings
+and remove the attribute when the prop is cleared. `getAttribute` and the
+selector engine read the remote properties React and Preact set, and the
+selector engine matches the sandbox's custom element tags by their HTML tag
+names and reads live control properties. `TooltipPreact` therefore covers hover
+opening and Escape dismissal. Pointer leave still needs document-level
 `mousemove` delivery for the safe polygon, and the compound tooltip's title and
 description are not covered yet.
 
