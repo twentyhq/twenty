@@ -37,7 +37,6 @@ import { WorkflowMetadataReadService } from 'src/modules/workflow/common/workspa
 import { assertWorkflowVersionIsNotMalformedOrThrow } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/assert-workflow-version-is-not-malformed-or-throw.util';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { type WorkflowTrigger } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
-import { convertWorkflowEmailBodiesToEmailDocuments } from 'src/modules/workflow/workflow-builder/workflow-version-step/utils/convert-workflow-email-bodies-to-email-documents.util';
 
 export type ValidatedDraftCoreWorkflowVersion = {
   coreWorkflowVersion: WorkflowVersionEntity;
@@ -162,7 +161,7 @@ export class CoreWorkflowVersionWriteService {
     coreWorkflowVersionId,
     expectedVersion,
     trigger,
-    steps: incomingSteps,
+    steps,
   }: {
     workspaceId: string;
     coreWorkflowVersionId: string;
@@ -170,9 +169,6 @@ export class CoreWorkflowVersionWriteService {
     trigger: WorkflowTrigger | null;
     steps: WorkflowAction[] | null;
   }): Promise<void> {
-    const steps =
-      convertWorkflowEmailBodiesToEmailDocuments(incomingSteps).value;
-
     await this.assertContentIsNotMalformed({
       workspaceId,
       coreWorkflowVersionId,
@@ -327,7 +323,7 @@ export class CoreWorkflowVersionWriteService {
     coreWorkflowId,
     workspaceWorkflowId,
     trigger,
-    steps: incomingSteps,
+    steps,
   }: {
     workspaceId: string;
     coreWorkflowId: string;
@@ -335,9 +331,6 @@ export class CoreWorkflowVersionWriteService {
     trigger: WorkflowTrigger | null;
     steps: WorkflowAction[] | null;
   }): Promise<{ coreWorkflowVersionId: string }> {
-    const steps =
-      convertWorkflowEmailBodiesToEmailDocuments(incomingSteps).value;
-
     await this.assertContentIsNotMalformed({
       workspaceId,
       coreWorkflowVersionId: 'new draft',

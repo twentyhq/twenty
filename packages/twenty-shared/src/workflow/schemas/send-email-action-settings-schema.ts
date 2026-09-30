@@ -28,7 +28,12 @@ export const workflowSendEmailActionSettingsSchema =
         bcc: z.string().optional().default(''),
       }),
       subject: z.string().optional(),
-      body: z.string().optional(),
+      body: z
+        .string()
+        .optional()
+        .describe(
+          'The email body as a serialized email document: JSON.stringify of {"type":"doc","attrs":{"schemaVersion":1},"content":[...]} with paragraph, heading, bulletList, orderedList, image, button, divider and html blocks. Use {{stepId.field}} for variables. HTML or plain text strings are rejected.',
+        ),
       files: workflowEmailFilesSchema,
       inReplyTo: z.string().trim().optional(),
     }),

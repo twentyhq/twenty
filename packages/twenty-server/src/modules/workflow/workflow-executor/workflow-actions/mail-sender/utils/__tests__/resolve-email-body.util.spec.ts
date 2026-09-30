@@ -99,49 +99,24 @@ describe('resolveEmailBody', () => {
     );
   });
 
-  it('should interpret the value of a single-variable body once resolved', async () => {
-    const paragraphDocument = {
-      type: 'doc',
-      attrs: { schemaVersion: EMAIL_DOCUMENT_SCHEMA_VERSION },
-      content: [
-        { type: 'paragraph', content: [{ type: 'text', text: 'From code' }] },
-      ],
-    };
-
-    const resolve = async (value: string) =>
-      JSON.parse(
-        await resolveEmailBody('{{code.body}}', { code: { body: value } }),
-      );
-
-    expect(await resolve('<h1>Report</h1>')).toEqual(
-      htmlDocument('<h1>Report</h1>'),
-    );
-    expect(await resolve(JSON.stringify(paragraphDocument))).toEqual(
-      paragraphDocument,
-    );
-    expect(await resolve('First\nSecond')).toEqual({
-      type: 'doc',
-      attrs: { schemaVersion: EMAIL_DOCUMENT_SCHEMA_VERSION },
-      content: [
-        {
-          type: 'paragraph',
-          content: [
-            { type: 'text', text: 'First' },
-            { type: 'hardBreak' },
-            { type: 'text', text: 'Second' },
-          ],
-        },
-      ],
+  it('should send the value of a single-variable body as HTML', async () => {
+    const resolvedBody = await resolveEmailBody('{{code.body}}', {
+      code: { body: '<h1>Report</h1>' },
     });
+
+    expect(JSON.parse(resolvedBody)).toEqual(htmlDocument('<h1>Report</h1>'));
   });
 
-  it('should reject a single-variable body resolving to an invalid document', async () => {
-    await expect(
-      resolveEmailBody('{{code.body}}', {
-        code: {
-          body: JSON.stringify({ type: 'doc', content: [{ type: 'nope' }] }),
-        },
-      }),
-    ).rejects.toThrow('Invalid workflow email document');
+  it('should keep stored plain text as editable lines with its line breaks', async () => {
+    const resolvedBody = await resolveEmailBody('Hi {{trigger.name}}\nBye', {
+      trigger: { name: 'Ada' },
+    });
+
+    expect(JSON.parse(resolvedBody).content[0].content).toEqual([
+      { type: 'text', text: 'Hi ' },
+      { type: 'text', text: 'Ada' },
+      { type: 'hardBreak' },
+      { type: 'text', text: 'Bye' },
+    ]);
   });
 });
