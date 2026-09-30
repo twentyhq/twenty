@@ -5,15 +5,13 @@ export const extractToolExecutionErrors = (
 ) => {
   const invalidToolCallIds = new Set(
     content.flatMap((part) =>
-      part.type === 'tool-call' && part.invalid === true
-        ? [part.toolCallId]
-        : [],
+      part.type === 'tool-call' && part.invalid ? [part.toolCallId] : [],
     ),
   );
 
   return content.flatMap((part) =>
     part.type === 'tool-error' &&
-    part.providerExecuted !== true &&
+    !part.providerExecuted &&
     !invalidToolCallIds.has(part.toolCallId)
       ? [part]
       : [],
