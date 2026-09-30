@@ -16,6 +16,7 @@ import { RemoveAddNodeWorkflowCommandMenuItemCommand } from 'src/database/comman
 import { OpenAgentChatThreadArchivedAtWritabilityCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790672076234-open-agent-chat-thread-archived-at-writability.command';
 import { AddInputAskObjectCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790681093095-add-input-ask-object.command';
 import { GateConversationsWidgetOnFeatureFlagCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790700866168-gate-conversations-widget-on-feature-flag.command';
+import { OpenAsksForPendingInputCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790714482317-open-asks-for-pending-input.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/workspace-migration-runner.module';
 
@@ -41,6 +42,7 @@ import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/wor
     OpenAgentChatThreadArchivedAtWritabilityCommand,
     AddInputAskObjectCommand,
     GateConversationsWidgetOnFeatureFlagCommand,
+    OpenAsksForPendingInputCommand,
   ],
 })
 export class V2_44_UpgradeVersionCommandModule {}
