@@ -104,3 +104,62 @@ it.each([
     await waitFor(() => expect(trigger).toHaveFocus());
   },
 );
+
+const renderRecordPageMenu = ({
+  canUpdate,
+  onDetach,
+}: {
+  canUpdate: boolean;
+  onDetach: () => void;
+}) => {
+  const store = createStore();
+  setAgentChatThreadPermissions(store, 'thread-record-page', {
+    canRead: true,
+    canUpdate,
+    canDelete: false,
+    canSoftDelete: true,
+  });
+
+  render(
+    <I18nProvider i18n={i18n}>
+      <Provider store={store}>
+        <MemoryRouter>
+          <AiChatThreadItemMenu
+            threadId="thread-record-page"
+            threadTitle="Pricing call"
+            isArchived={false}
+            surface={AI_CHAT_THREAD_ACTIONS_SURFACE.RECORD_PAGE}
+            onRenameRequested={jest.fn()}
+            onDetach={onDetach}
+          />
+        </MemoryRouter>
+      </Provider>
+    </I18nProvider>,
+  );
+};
+
+it('detaches the conversation from the record it is listed on', async () => {
+  const user = userEvent.setup();
+  const onDetach = jest.fn();
+
+  renderRecordPageMenu({ canUpdate: true, onDetach });
+
+  await user.click(screen.getByRole('button', { name: 'Chat actions' }));
+  await user.click(await screen.findByRole('menuitem', { name: 'Detach' }));
+
+  expect(onDetach).toHaveBeenCalledTimes(1);
+});
+
+// Detaching changes the conversation, so it takes the access renaming does.
+it('does not offer to detach a conversation the member can only read', async () => {
+  const user = userEvent.setup();
+
+  renderRecordPageMenu({ canUpdate: false, onDetach: jest.fn() });
+
+  await user.click(screen.getByRole('button', { name: 'Chat actions' }));
+
+  expect(
+    await screen.findByRole('menuitem', { name: 'Archive' }),
+  ).toBeInTheDocument();
+  expect(screen.queryByRole('menuitem', { name: 'Detach' })).toBeNull();
+});

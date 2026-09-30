@@ -6,9 +6,13 @@ import { visit } from 'unist-util-visit';
 export const checkStoryEmbeds = ({
   content,
   storyIds,
+  storiesWithPlayFunctions = new Set<string>(),
+  getPresentationErrors = () => [],
 }: {
   content: string;
   storyIds: Set<string>;
+  storiesWithPlayFunctions?: Set<string>;
+  getPresentationErrors?: (storyId: string) => string[];
 }): string[] => {
   const errors: string[] = [];
   const tree = createProcessor({
@@ -66,6 +70,18 @@ export const checkStoryEmbeds = ({
 
     if (!storyIds.has(value)) {
       errors.push(`Line ${line}: Storybook story "${value}" does not exist.`);
+      return;
+    }
+
+    if (storiesWithPlayFunctions.has(value)) {
+      errors.push(
+        `Line ${line}: Storybook story "${value}" has a play function. Documentation stories must be presentational.`,
+      );
+      return;
+    }
+
+    for (const error of getPresentationErrors(value)) {
+      errors.push(`Line ${line}: Storybook story "${value}": ${error}`);
     }
   });
 

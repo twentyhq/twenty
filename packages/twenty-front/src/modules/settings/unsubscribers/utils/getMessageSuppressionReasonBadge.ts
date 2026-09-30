@@ -17,6 +17,8 @@ export const getMessageSuppressionReasonBadge = (
       return { color: 'red', label: t`Complaint` };
     case MessageSuppressionReason.BOUNCE:
       return { color: 'orange', label: t`Bounce` };
+    case MessageSuppressionReason.TRACKING:
+      return { color: 'blue', label: t`Tracking off` };
     default:
       return { color: 'gray', label: t`Unknown` };
   }

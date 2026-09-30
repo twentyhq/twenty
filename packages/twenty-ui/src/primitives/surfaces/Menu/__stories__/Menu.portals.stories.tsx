@@ -92,6 +92,25 @@ export const ScopedTheme: Story = {
   },
 };
 
+export const InheritedDirection: Story = {
+  render: () => (
+    <section aria-label="Right-to-left container" dir="rtl">
+      <ThemeProvider colorScheme="light" applyToRoot={false}>
+        <div style={{ width: 260, height: 240 }}>
+          <PortalMenu />
+        </div>
+      </ThemeProvider>
+    </section>
+  ),
+  play: async ({ canvasElement }) => {
+    const scope = within(canvasElement).getByRole('region', {
+      name: 'Right-to-left container',
+    });
+    const menu = await within(scope).findByRole('menu', { name: 'Options' });
+    expect(getComputedStyle(menu).direction).toBe('rtl');
+  },
+};
+
 const DeferredContainerMenu = () => {
   const [showContainer, setShowContainer] = useState(false);
   const [container, setContainer] = useState<HTMLDivElement | null>(null);

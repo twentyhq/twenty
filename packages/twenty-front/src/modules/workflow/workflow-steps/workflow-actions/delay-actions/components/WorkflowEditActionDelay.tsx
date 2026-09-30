@@ -232,7 +232,7 @@ export const WorkflowEditActionDelay = ({
         )}
       </WorkflowStepBody>
 
-      <WorkflowStepFooter stepId={action.id} />
+      {!actionOptions.readonly && <WorkflowStepFooter stepId={action.id} />}
     </>
   );
 };

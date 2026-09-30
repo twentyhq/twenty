@@ -14,7 +14,7 @@ export const WORKFLOW_CORE_TABLE_COLUMNS: CoreObjectTableColumn<CoreWorkflow>[] 
       fieldLabel: msg`Name`,
       fieldType: 'string',
       align: 'left',
-      gridTrack: 'minmax(0, 1fr)',
+      gridTrack: 'minmax(200px, 1fr)',
       renderCell: (workflow) => (
         <CoreWorkflowNameCell name={workflow.name} workflowId={workflow.id} />
       ),
@@ -32,7 +32,7 @@ export const WORKFLOW_CORE_TABLE_COLUMNS: CoreObjectTableColumn<CoreWorkflow>[] 
       fieldName: 'visibility',
       fieldLabel: msg`Visibility`,
       align: 'left',
-      gridTrack: '140px',
+      gridTrack: '120px',
       renderCell: (workflow) => (
         <CoreWorkflowVisibilityCell visibility={workflow.visibility} />
       ),
@@ -42,7 +42,7 @@ export const WORKFLOW_CORE_TABLE_COLUMNS: CoreObjectTableColumn<CoreWorkflow>[] 
       fieldLabel: msg`Last update`,
       fieldType: 'string',
       align: 'left',
-      gridTrack: '180px',
+      gridTrack: '150px',
       renderCell: (workflow) => <DateTimeDisplay value={workflow.updatedAt} />,
     },
   ];

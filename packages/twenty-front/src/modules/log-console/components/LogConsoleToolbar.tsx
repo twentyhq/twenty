@@ -253,6 +253,7 @@ export const LogConsoleToolbar = ({
         </DropdownMenuHeader>
         <DropdownMenuInnerSelect
           dropdownId={`${dropdownId}-operand`}
+          aria-label={t`Operand`}
           selectedOption={getOperandOption(filter.operand)}
           options={Object.values(EventLogFilterOperand).map(getOperandOption)}
           onChange={(operandOption) =>

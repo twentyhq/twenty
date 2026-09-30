@@ -16,7 +16,7 @@ import {
 } from 'ai';
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
 import { type APP_LOCALES } from 'twenty-shared/translations';
-import { AppPath } from 'twenty-shared/types';
+import { AppPath, FeatureFlagKey } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
 
 import { AI_LATENCY_MS_BUCKET_BOUNDARIES } from 'src/engine/core-modules/metrics/constants/ai-latency-ms-bucket-boundaries.constant';
@@ -31,6 +31,7 @@ import { type CodeExecutionStreamEmitter } from 'src/engine/core-modules/tool-pr
 import { CodeInterpreterService } from 'src/engine/core-modules/code-interpreter/code-interpreter.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
 import {
   createExecuteToolTool,
@@ -46,6 +47,7 @@ import { isToolOutputSuccessful } from 'src/engine/core-modules/tool-provider/ut
 import { resolveToolName } from 'src/engine/core-modules/tool-provider/utils/resolve-tool-name.util';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentActorContextService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-actor-context.service';
+import { endsOnPausingToolCall } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/ends-on-pausing-tool-call.util';
 import { finalizeDanglingToolParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/finalize-dangling-tool-parts.util';
 import { guideUncallableToolCallsToMetaTool } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/guide-uncallable-tool-calls-to-meta-tool.util';
 import { AGENT_CONFIG } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-config.const';
@@ -62,11 +64,20 @@ import { AI_CHAT_EXCLUDED_TOOL_NAMES } from 'src/engine/metadata-modules/ai/ai-c
 import { AI_CHAT_STREAM_FUNCTION_ID } from 'src/engine/metadata-modules/ai/ai-chat/constants/ai-chat-stream-function-id.constant';
 import { AI_CHAT_TOOL_NAMES_TO_PRELOAD } from 'src/engine/metadata-modules/ai/ai-chat/constants/ai-chat-tool-names-to-preload.const';
 import { AI_CHAT_WORKSPACE_SETUP_STREAM_FUNCTION_ID } from 'src/engine/metadata-modules/ai/ai-chat/constants/ai-chat-workspace-setup-stream-function-id.constant';
+import { AgentChatThreadTargetService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-target.service';
 import { MessagePruningService } from 'src/engine/metadata-modules/ai/ai-chat/services/message-pruning.service';
 import {
   ASK_QUESTIONS_TOOL_NAME,
   createAskQuestionsTool,
 } from 'src/engine/metadata-modules/ai/ai-chat/tools/ask-questions.tool';
+import {
+  ATTACH_CONVERSATION_TO_RECORD_TOOL_NAME,
+  createAttachConversationToRecordTool,
+} from 'src/engine/metadata-modules/ai/ai-chat/tools/attach-conversation-to-record.tool';
+import {
+  PROPOSE_EMAIL_TOOL_NAME,
+  createProposeEmailTool,
+} from 'src/engine/metadata-modules/ai/ai-chat/tools/propose-email.tool';
 import {
   COMPLETE_WORKSPACE_SETUP_TOOL_NAME,
   createCompleteWorkspaceSetupTool,
@@ -140,6 +151,8 @@ export class ChatExecutionService {
     private readonly messagePruningService: MessagePruningService,
     private readonly metricsService: MetricsService,
     private readonly chatActorService: AgentChatActorService,
+    private readonly agentChatThreadTargetService: AgentChatThreadTargetService,
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   async streamChat({
@@ -262,13 +275,16 @@ export class ChatExecutionService {
       ...nativeTools,
     };
 
-    const isWorkspaceSetupThread =
+    const isWorkspaceSetupConversation =
       isDefined(threadId) &&
       threadId ===
         buildWorkspaceSetupChatThreadId({
           workspaceId: workspace.id,
           userWorkspaceId,
-        }) &&
+        });
+
+    const isWorkspaceSetupThread =
+      isWorkspaceSetupConversation &&
       !hasSucceededWorkspaceSetupCompletion(messages);
 
     const isWorkspaceSetupKickoffTurn =
@@ -276,11 +292,30 @@ export class ChatExecutionService {
 
     tagAiChatKindScope({ isWorkspaceSetupThread });
 
+    // Judged on the conversation rather than on setup still running: once setup
+    // completes, the member's onboarding carries on in this same conversation,
+    // and it is not one to file under their records.
+    const canAttachConversationToRecords =
+      !isWorkspaceSetupConversation &&
+      (await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_CONVERSATIONS_TAB_ENABLED,
+        workspace.id,
+      ));
+
+    // Proposing an email only helps someone who could then send it.
+    const canProposeEmail = toolCatalog.some(
+      (toolIndexEntry) => toolIndexEntry.name === 'send_email',
+    );
+
     const preloadedToolNames = [
       ...Object.keys(preloadedTools),
       ...Object.keys(nativeTools),
       ASK_QUESTIONS_TOOL_NAME,
+      ...(canProposeEmail ? [PROPOSE_EMAIL_TOOL_NAME] : []),
       ...(isWorkspaceSetupThread ? [COMPLETE_WORKSPACE_SETUP_TOOL_NAME] : []),
+      ...(canAttachConversationToRecords
+        ? [ATTACH_CONVERSATION_TO_RECORD_TOOL_NAME]
+        : []),
     ];
 
     const isToolAllowed = (toolName: string) =>
@@ -293,10 +328,22 @@ export class ChatExecutionService {
       [ASK_QUESTIONS_TOOL_NAME]: createAskQuestionsTool({
         isWorkspaceSetupThread,
       }),
+      ...(canProposeEmail
+        ? { [PROPOSE_EMAIL_TOOL_NAME]: createProposeEmailTool() }
+        : {}),
       ...(isWorkspaceSetupThread
         ? {
             [COMPLETE_WORKSPACE_SETUP_TOOL_NAME]:
               createCompleteWorkspaceSetupTool(),
+          }
+        : {}),
+      ...(canAttachConversationToRecords
+        ? {
+            [ATTACH_CONVERSATION_TO_RECORD_TOOL_NAME]:
+              createAttachConversationToRecordTool({
+                agentChatThreadTargetService: this.agentChatThreadTargetService,
+                toolContext,
+              }),
           }
         : {}),
       [LEARN_TOOLS_TOOL_NAME]: createLearnToolsTool(
@@ -397,6 +444,7 @@ export class ChatExecutionService {
       workspaceInstructions: workspace.aiAdditionalInstructions ?? undefined,
       userContext,
       isWorkspaceSetupThread,
+      canAttachConversationToRecords,
     });
 
     this.logger.log(
@@ -486,9 +534,9 @@ export class ChatExecutionService {
       const cacheCreationTokens = extractCacheCreationTokensFromSteps(steps);
       const totalTokens = (usage.inputTokens ?? 0) + (usage.outputTokens ?? 0);
 
-      const costInDollars = this.aiBillingService.calculateCost(
+      const costInDollars = this.aiBillingService.calculateStepsCost(
         registeredModel.modelId,
-        { usage, cacheCreationTokens },
+        steps,
       );
       const creditsUsedMicro = convertDollarsToCreditsMicro(costInDollars);
 
@@ -546,12 +594,12 @@ export class ChatExecutionService {
       instructions: systemMessage,
       messages: modelMessages,
       tools: activeTools,
-      // Every step of the kickoff turn is forced so it cannot end in prose; stopWhen ends it at the first ask_questions.
+      // Every step of the kickoff turn is forced so it cannot end in prose; stopWhen ends it at the first pausing tool call.
       toolChoice: isWorkspaceSetupKickoffTurn ? 'required' : 'auto',
       abortSignal,
       stopWhen: (step) =>
         isStepCount(AGENT_CONFIG.MAX_STEPS)(step) ||
-        hasToolCall(ASK_QUESTIONS_TOOL_NAME)(step) ||
+        endsOnPausingToolCall({ steps: step.steps }) ||
         hasToolCall(COMPLETE_WORKSPACE_SETUP_TOOL_NAME)(step) ||
         hasNoMoreAvailableCredits,
       ...buildAiTelemetry({

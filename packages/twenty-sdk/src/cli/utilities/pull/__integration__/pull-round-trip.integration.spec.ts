@@ -727,7 +727,7 @@ describe('pull round trip', () => {
         await readFile(join(appPath, 'locales/compiled/fr-FR.json'), 'utf8'),
       ),
     ).toEqual({ zzzzzz: 'orphan' });
-    expect(await compileApplicationTranslations(appPath)).toEqual(
+    expect(await compileApplicationTranslations({ appPath })).toEqual(
       EXPORTED_TRANSLATIONS,
     );
   });

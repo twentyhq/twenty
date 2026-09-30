@@ -3,6 +3,7 @@ import { Module } from '@nestjs/common';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { LogicFunctionModule } from 'src/engine/core-modules/logic-function/logic-function.module';
 import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
+import { LogicFunctionModule as LogicFunctionMetadataModule } from 'src/engine/metadata-modules/logic-function/logic-function.module';
 import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
 import { WorkflowCommonModule } from 'src/modules/workflow/common/workflow-common.module';
@@ -14,6 +15,7 @@ import { WorkflowRunModule } from 'src/modules/workflow/workflow-runner/workflow
   imports: [
     ApplicationModule,
     LogicFunctionModule,
+    LogicFunctionMetadataModule,
     WorkflowRunModule,
     UserWorkspaceModule,
     UserRoleModule,

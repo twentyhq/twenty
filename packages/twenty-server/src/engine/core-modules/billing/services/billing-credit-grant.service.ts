@@ -3,7 +3,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
-import { type EntityManager, IsNull, LessThan, MoreThan } from 'typeorm';
+import { type EntityManager, IsNull, LessThan, Like, MoreThan } from 'typeorm';
 
 import {
   BillingException,
@@ -254,6 +254,25 @@ export class BillingCreditGrantService {
   async listGrants(workspaceId: string): Promise<BillingCreditGrantEntity[]> {
     return this.billingCreditGrantRepository.find(workspaceId, {
       order: { createdAt: 'DESC' },
+    });
+  }
+
+  async countGrantsByIdempotencyKeyPrefix({
+    workspaceId,
+    type,
+    idempotencyKeyPrefix,
+  }: {
+    workspaceId: string;
+    type: BillingCreditGrantType;
+    idempotencyKeyPrefix: string;
+  }): Promise<number> {
+    return this.billingCreditGrantRepository.count(workspaceId, {
+      where: {
+        type,
+        revokedAt: IsNull(),
+        sourceGrantId: IsNull(),
+        idempotencyKey: Like(`${idempotencyKeyPrefix}%`),
+      },
     });
   }
 
