@@ -1,6 +1,5 @@
 import { defineFrontComponent } from 'twenty-sdk/define';
 import {
-  CardPicker,
   ColorSchemePicker,
   IconButton,
   LightButton,
@@ -41,10 +40,12 @@ const INPUT_ENTRIES: GalleryEntry[] = [
     ),
   },
   {
-    name: 'CardPicker',
+    name: 'Radio (card)',
     node: (
       <RadioGroup defaultValue="card" aria-label="Card selection">
-        <CardPicker value="card">Card</CardPicker>
+        <Radio variant="card" value="card">
+          Card
+        </Radio>
       </RadioGroup>
     ),
   },
