@@ -6,9 +6,12 @@ import {
   type ExtendedUIMessagePart,
   PROPOSE_EMAIL_TOOL_NAME,
   type ProposedEmail,
+  REQUEST_FORM_TOOL_NAME,
+  type RequestFormField,
 } from 'twenty-shared/ai';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import {
+  FieldMetadataType,
   RecordShareAccessLevel,
   RecordSharePrincipalType,
   RecordShareRowCause,
@@ -26,6 +29,7 @@ import { mapAiStepsToUiMessageParts } from 'src/engine/metadata-modules/ai/ai-ag
 import { mapUIMessagePartsToDBParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/mapUIMessagePartsToDBParts';
 import { createAskQuestionsTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/ask-questions.tool';
 import { createProposeEmailTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/propose-email.tool';
+import { createRequestFormTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/request-form.tool';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
@@ -133,6 +137,51 @@ export const askQuestionsCall = (
     }),
 });
 
+export const requestFormCall = (
+  fields: RequestFormField[],
+): SeededToolCall => ({
+  toolName: REQUEST_FORM_TOOL_NAME,
+  input: { fields },
+  buildPendingOutput: () => createRequestFormTool().execute({ fields }),
+});
+
+const AIRBNB_EXPANSION_FIELDS: RequestFormField[] = [
+  {
+    name: 'company',
+    label: 'Company',
+    type: 'RECORD',
+    settings: { objectName: 'company' },
+  },
+  {
+    name: 'amount',
+    label: 'Amount (USD)',
+    type: FieldMetadataType.NUMBER,
+    placeholder: '50000',
+  },
+  { name: 'closeDate', label: 'Expected close', type: FieldMetadataType.DATE },
+  {
+    name: 'nextStep',
+    label: 'Next step',
+    type: FieldMetadataType.TEXT,
+    placeholder: 'Security review with their IT team',
+  },
+];
+
+const FIGMA_CALL_FIELDS: RequestFormField[] = [
+  { name: 'callDate', label: 'Call date', type: FieldMetadataType.DATE },
+  {
+    name: 'attendees',
+    label: 'Attendees on their side',
+    type: FieldMetadataType.NUMBER,
+  },
+  {
+    name: 'summary',
+    label: 'Summary',
+    type: FieldMetadataType.TEXT,
+    placeholder: 'What was decided',
+  },
+];
+
 const LINEAR_WELCOME_EMAIL: ProposedEmail = {
   recipients: { to: 'ops@linear.app', cc: '', bcc: '' },
   subject: 'Welcome to Twenty, Linear',
@@ -234,9 +283,34 @@ const CONVERSATIONS_TO_SEED: ConversationToSeed[] = [
       proposeEmailCall(FIGMA_WELCOME_EMAIL),
     ],
   },
+  {
+    threadId: AGENT_CHAT_PENDING_INPUT_THREAD_DATA_SEED_IDS.PENDING_FORM,
+    title: 'Open the Airbnb expansion deal',
+    askedBy: 'TIM',
+    prompt: 'Airbnb wants to roll Twenty out to their EMEA team. Log the deal.',
+    intro: 'Fill in the deal details and I will create the opportunity:',
+    calls: [requestFormCall(AIRBNB_EXPANSION_FIELDS)],
+  },
+  {
+    threadId: AGENT_CHAT_PENDING_INPUT_THREAD_DATA_SEED_IDS.ANSWERED_FORM,
+    title: 'Log the Figma kickoff call',
+    askedBy: 'TIM',
+    prompt: 'Log my kickoff call with Figma.',
+    intro: 'A few details about the call:',
+    calls: [requestFormCall(FIGMA_CALL_FIELDS)],
+    answer: {
+      response: {
+        callDate: '2026-09-29',
+        attendees: 4,
+        summary: 'Pipeline import first, SSO the week after.',
+      },
+      reply:
+        'Logged the call on Figma with a note. I also created a task for Phil to schedule the SSO setup next week.',
+    },
+  },
 ];
 
-// Seeds Tim's conversations that wait on a question or an email, or have
+// Seeds Tim's conversations that wait on a question, an email or a form, or have
 // just been answered, so each card and each answered state renders without
 // calling a model.
 @Injectable()
