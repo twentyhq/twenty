@@ -6,7 +6,7 @@ import { StyledOnboardingFreeCreditsCount } from '@/onboarding/components/free-c
 import { StyledOnboardingFreeCreditsLabel } from '@/onboarding/components/free-credits/StyledOnboardingFreeCreditsLabel';
 import { StyledOnboardingFreeCreditsText } from '@/onboarding/components/free-credits/StyledOnboardingFreeCreditsText';
 import { useOnboardingFreeCreditsTooltipContent } from '@/onboarding/hooks/useOnboardingFreeCreditsTooltipContent';
-import { useOnboardingNewlyEarnedCredits } from '@/onboarding/hooks/useOnboardingNewlyEarnedCredits';
+import { useMarkOnboardingFreeCreditsAsSeen } from '@/onboarding/hooks/useMarkOnboardingFreeCreditsAsSeen';
 import { type OnboardingCreditsProgress } from '@/onboarding/types/OnboardingCreditsProgress';
 import { formatOnboardingCredits } from '@/onboarding/utils/formatOnboardingCredits';
 import { currentFocusedItemSelector } from '@/ui/utilities/focus/states/currentFocusedItemSelector';
@@ -138,13 +138,11 @@ export const OnboardingFreeCreditsPill = ({
     goalCredits,
     currentStep,
     currentStepCredits,
-  } = progress;
-  const {
     seenCredits,
     newlyEarnedCredits,
     isFirstCreditsGain,
-    markCreditsAsSeen,
-  } = useOnboardingNewlyEarnedCredits();
+  } = progress;
+  const markCreditsAsSeen = useMarkOnboardingFreeCreditsAsSeen();
   const tooltipContent = useOnboardingFreeCreditsTooltipContent({
     currentStep,
     newlyEarnedCredits,

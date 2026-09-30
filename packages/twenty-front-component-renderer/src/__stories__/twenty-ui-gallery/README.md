@@ -27,7 +27,7 @@ requiring them to occur.
 | `twenty-ui-switch` | Switch (interaction coverage in addition to the original input gallery) |
 | `twenty-ui-tooltip` | Tooltip (convenience and compound APIs) |
 | `twenty-ui-responsive-hooks` | useIsMobile, useIsTouchDevice, Button hotkeys |
-| `twenty-ui-reading-directions` | Callout, ColorSchemePicker, ButtonGroup, Button, AvatarGroup, ListItem, JsonTree in LTR and RTL side by side (`TwentyUiReadingDirections.stories.tsx`) |
+| `twenty-ui-reading-directions` | Callout, ButtonGroup, Button, AvatarGroup, ListItem, JsonTree in LTR and RTL side by side (`TwentyUiReadingDirections.stories.tsx`) |
 
 The focused fixtures import public twenty-ui entry points and use
 `TwentyUiGalleryCard` for the light theme, mount marker, and `twenty-ui/style.css`.
@@ -62,12 +62,16 @@ No stories are skipped or marked as expected-to-fail by the runner.
 
 The worker DOM now provides `Node.contains`, `compareDocumentPosition`,
 `getRootNode`, `Element.matches`, `closest`, `querySelector` backed by
-`css-select`, and property accessors for boolean ARIA attributes so React and
-Preact forward `true`/`false` instead of empty strings and remove the attribute
-when the prop is cleared. `getAttribute` and the selector engine read the remote
-properties React and Preact set, and the selector engine matches the sandbox's
-custom element tags by their HTML tag names. `TooltipPreact` therefore covers
-hover opening and Escape dismissal. Pointer leave still needs document-level
+`css-select`, `focus`/`blur` forwarding to page elements with a
+`document.activeElement` that the host keeps in sync with the page's focus
+inside the component and that clears when
+the focused subtree is detached, and property accessors for boolean ARIA
+attributes so React and Preact forward `true`/`false` instead of empty strings
+and remove the attribute when the prop is cleared. `getAttribute` and the
+selector engine read the remote properties React and Preact set, and the
+selector engine matches the sandbox's custom element tags by their HTML tag
+names and reads live control properties. `TooltipPreact` therefore covers hover
+opening and Escape dismissal. Pointer leave still needs document-level
 `mousemove` delivery for the safe polygon, and the compound tooltip's title and
 description are not covered yet.
 

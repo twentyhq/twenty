@@ -153,7 +153,6 @@ export const AiChatThreadActionsDropdown = ({
           }}
         >
           <Dropdown.Trigger
-            data-command-menu-anchor-instance-id={instanceId}
             render={
               trigger ?? (
                 <LightIconButton aria-label={t`Chat actions`} emphasis="subtle">

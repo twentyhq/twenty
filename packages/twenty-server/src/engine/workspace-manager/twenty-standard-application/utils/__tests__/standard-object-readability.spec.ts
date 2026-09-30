@@ -77,7 +77,6 @@ describe('Standard object readability', () => {
     STANDARD_OBJECTS.workflowRun.universalIdentifier,
     STANDARD_OBJECTS.messageThread.universalIdentifier,
     STANDARD_OBJECTS.calendarEvent.universalIdentifier,
-    STANDARD_OBJECTS.inputAsk.universalIdentifier,
     STANDARD_OBJECTS.shortLink.universalIdentifier,
     ...inheritedObjectNames.map(
       (objectName) => STANDARD_OBJECTS[objectName].universalIdentifier,
@@ -103,27 +102,6 @@ describe('Standard object readability', () => {
     expect(findStandardFlatObjectMetadata('workflowVersion')).toMatchObject({
       readability: MetadataReadability.OPEN,
     });
-  });
-
-  // A question reads as what asked it does: its run, or for a question asked
-  // outside a run, its conversation.
-  it('resolves its run and its conversation as the parents of an inputAsk', () => {
-    expect(findStandardFlatObjectMetadata('inputAsk')).toMatchObject({
-      readability: MetadataReadability.INHERITED,
-    });
-    expect(
-      resolveParents('inputAsk').map((parent) =>
-        parent.kind === 'column'
-          ? {
-              joinColumnName: parent.joinColumnName,
-              parentNameSingular: parent.parentFlatObjectMetadata.nameSingular,
-            }
-          : parent.kind,
-      ),
-    ).toEqual([
-      { joinColumnName: 'workflowRunId', parentNameSingular: 'workflowRun' },
-      { joinColumnName: 'threadId', parentNameSingular: 'agentChatThread' },
-    ]);
   });
 
   it.each(['recordShare', 'shortLink'] as const)(

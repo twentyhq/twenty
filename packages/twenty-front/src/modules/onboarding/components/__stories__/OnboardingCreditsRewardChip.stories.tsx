@@ -19,3 +19,12 @@ export const Default: Story = {
     await expect(await within(canvasElement).findByText('+2')).toBeVisible();
   },
 };
+
+export const PerItem: Story = {
+  args: { formattedCreditsReward: '0.5', isRewardPerItem: true },
+  play: async ({ canvasElement }) => {
+    await expect(
+      await within(canvasElement).findByText('+0.5 each'),
+    ).toBeVisible();
+  },
+};

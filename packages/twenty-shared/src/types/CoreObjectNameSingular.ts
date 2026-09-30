@@ -13,7 +13,6 @@ export enum CoreObjectNameSingular {
   Comment = 'comment',
   Company = 'company',
   Dashboard = 'dashboard',
-  InputAsk = 'inputAsk',
   TimelineActivity = 'timelineActivity',
   Message = 'message',
   MessageCampaign = 'messageCampaign',

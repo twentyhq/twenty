@@ -85,3 +85,28 @@ export const RemovesAllInputsButTheLast: Story = {
     );
   },
 };
+
+export const FocusesTheInvalidEmailAfterAddTeammates: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement.ownerDocument.body);
+
+    await canvas.findByText('Invite your team');
+
+    const [firstEmailInput, secondEmailInput] = await findEmailInputs(canvas);
+
+    await userEvent.type(firstEmailInput, 'grace@example.com');
+    await userEvent.type(secondEmailInput, 'alan@');
+    await userEvent.click(canvas.getByRole('button', { name: 'Skip' }));
+
+    const dialog = await canvas.findByRole('dialog', {
+      name: "Your invite isn't sent yet",
+    });
+
+    await userEvent.click(
+      within(dialog).getByRole('button', { name: /^Add teammates/ }),
+    );
+
+    await waitFor(() => expect(dialog).not.toBeInTheDocument());
+    await waitFor(() => expect(secondEmailInput).toHaveFocus());
+  },
+};

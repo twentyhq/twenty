@@ -167,7 +167,7 @@ export const SettingsWorkspaceMembersTeamTab = () => {
       <StyledSearchContainer>
         <SearchInput
           value={searchFilter}
-          onChange={handleSearchChange}
+          onValueChange={handleSearchChange}
           placeholder={t`Search a team member...`}
         />
         <DropdownRoot type="menu" dropdownId="workspace-members-open-dropdown">

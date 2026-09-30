@@ -70,6 +70,7 @@ const buildLimitCounterScope = (
   limitKind: 'quota',
   periodUnit: 'month',
   meter: 'creditsUsedMicro',
+  limitValue: 1_000,
   ...overrides,
 });
 
@@ -632,6 +633,7 @@ describe('UsageLimitQuotaService', () => {
           meter: 'creditsUsedMicro',
           periodUnit: 'month',
           periodStart: MONTH_PERIOD.periodStart,
+          limitValue: 1_000,
         }),
         buildQuotaCounterKey({
           workspaceId: 'workspace-1',
@@ -642,6 +644,7 @@ describe('UsageLimitQuotaService', () => {
           meter: 'creditsUsedMicro',
           periodUnit: 'week',
           periodStart: WEEK_PERIOD.periodStart,
+          limitValue: 1_000,
         }),
       ]);
     });
@@ -674,6 +677,7 @@ describe('UsageLimitQuotaService', () => {
           meter: 'creditsUsedMicro',
           periodUnit: 'month',
           periodStart: MONTH_PERIOD.periodStart,
+          limitValue: 1_000,
         }),
       ]);
     });
@@ -700,6 +704,7 @@ describe('UsageLimitQuotaService', () => {
           meter: 'quantity',
           periodUnit: 'day',
           periodStart: DAY_PERIOD.periodStart,
+          limitValue: 1_000,
         }),
         buildQuotaDefaultCounterKey({
           workspaceId: 'workspace-1',
