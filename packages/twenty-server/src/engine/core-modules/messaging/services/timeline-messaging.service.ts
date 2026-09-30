@@ -6,6 +6,7 @@ import {
   MessageParticipantRole,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import groupBy from 'lodash.groupby';
 import { In } from 'typeorm';
 
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
@@ -129,14 +130,20 @@ export class TimelineMessagingService {
           order: { receivedAt: 'DESC' },
         });
 
-      const messageContentById =
-        await this.findReadableMessageContentById(messageThreadIds);
+      const messagesByThreadId = groupBy(
+        messages,
+        (message) => message.messageThreadId,
+      );
+      const messageContentById = await this.findReadableMessageContentById(
+        Object.values(messagesByThreadId).flatMap((threadMessages) => [
+          threadMessages[0].id,
+          threadMessages[threadMessages.length - 1].id,
+        ]),
+      );
 
       return {
         messageThreads: messageThreadIds.flatMap((messageThreadId) => {
-          const threadMessages = messages.filter(
-            (message) => message.messageThreadId === messageThreadId,
-          );
+          const threadMessages = messagesByThreadId[messageThreadId] ?? [];
           const lastMessage = threadMessages[0];
           const firstMessage = threadMessages[threadMessages.length - 1];
 
@@ -174,13 +181,13 @@ export class TimelineMessagingService {
 
   // A role that cannot read subjects or bodies sees every thread as unshared.
   private async findReadableMessageContentById(
-    messageThreadIds: string[],
+    messageIds: string[],
   ): Promise<Map<string, Pick<MessageWorkspaceEntity, 'subject' | 'text'>>> {
     try {
       const messages = await this.workspaceOrmManager
         .getRepositoryWithContextPermissions<MessageWorkspaceEntity>('message')
         .find({
-          where: { messageThreadId: In(messageThreadIds) },
+          where: { id: In(messageIds) },
           select: { id: true, subject: true, text: true },
         });
 
