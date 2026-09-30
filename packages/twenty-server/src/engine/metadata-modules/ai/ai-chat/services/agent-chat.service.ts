@@ -21,6 +21,7 @@ import {
 import { AgentMessageWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message.workspace-entity';
 import { AgentTurnWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-turn.workspace-entity';
 import { mapUIMessagePartsToPersistedDBParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/map-ui-message-parts-to-persisted-db-parts.util';
+import { PAUSING_TOOLS } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/constants/pausing-tools.constant';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import {
   AiException,
@@ -590,13 +591,13 @@ export class AgentChatService {
   }): Promise<
     | (Pick<
         AgentMessagePartWorkspaceEntity,
-        'id' | 'messageId' | 'toolName' | 'toolInput'
+        'id' | 'messageId' | 'toolName' | 'toolInput' | 'toolOutput'
       > & { turnId: string | null })
     | null
   > {
     const parts = await this.messagePartRepository.find(workspaceId, {
       where: { toolCallId },
-      select: ['id', 'messageId', 'toolName', 'toolInput'],
+      select: ['id', 'messageId', 'toolName', 'toolInput', 'toolOutput'],
     });
 
     if (!isNonEmptyArray(parts)) {
@@ -631,6 +632,49 @@ export class AgentChatService {
       workspaceId,
       { id: partId },
       { toolOutput },
+    );
+  }
+
+  async findAwaitingToolParts({
+    messageId,
+    workspaceId,
+  }: {
+    messageId: string;
+    workspaceId: string;
+  }): Promise<
+    Pick<
+      AgentMessagePartWorkspaceEntity,
+      'id' | 'toolName' | 'toolCallId' | 'toolInput'
+    >[]
+  > {
+    const parts = await this.messagePartRepository.find(workspaceId, {
+      where: { messageId },
+      select: ['id', 'toolName', 'toolCallId', 'toolInput', 'toolOutput'],
+    });
+
+    return parts.filter(
+      (part) =>
+        isDefined(part.toolName) &&
+        PAUSING_TOOLS.get(part.toolName)?.isAwaitingOutput(part.toolOutput) ===
+          true,
+    );
+  }
+
+  // Once no call of the message it names still waits, the conversation no
+  // longer waits on anyone.
+  async clearPendingToolCalls({
+    threadId,
+    messageId,
+    workspaceId,
+  }: {
+    threadId: string;
+    messageId: string;
+    workspaceId: string;
+  }): Promise<void> {
+    await this.threadRepository.update(
+      workspaceId,
+      { id: threadId, pendingQuestionMessageId: messageId },
+      { pendingQuestionMessageId: null },
     );
   }
 

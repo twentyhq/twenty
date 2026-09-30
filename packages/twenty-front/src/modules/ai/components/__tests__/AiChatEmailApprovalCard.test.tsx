@@ -6,9 +6,9 @@ import { createStore, Provider } from 'jotai';
 
 import { AiChatEmailApprovalCard } from '@/ai/components/AiChatEmailApprovalCard';
 
-const answerAgentChatAsk = jest.fn();
-jest.mock('@/ai/hooks/useAnswerAgentChatAsk', () => ({
-  useAnswerAgentChatAsk: () => ({ answerAgentChatAsk }),
+const answerAgentChatToolCall = jest.fn();
+jest.mock('@/ai/hooks/useAnswerAgentChatToolCall', () => ({
+  useAnswerAgentChatToolCall: () => ({ answerAgentChatToolCall }),
 }));
 
 const EMAIL = {
@@ -22,23 +22,19 @@ const renderCard = () =>
   render(
     <I18nProvider i18n={i18n}>
       <Provider store={createStore()}>
-        <AiChatEmailApprovalCard
-          askId="ask-1"
-          toolCallId="call-1"
-          email={EMAIL}
-        />
+        <AiChatEmailApprovalCard toolCallId="call-1" email={EMAIL} />
       </Provider>
     </I18nProvider>,
   );
 
 describe('AiChatEmailApprovalCard', () => {
   beforeEach(() => {
-    answerAgentChatAsk.mockReset();
+    answerAgentChatToolCall.mockReset();
   });
 
   it('sends the email as the person edited it', async () => {
     const user = userEvent.setup();
-    answerAgentChatAsk.mockReturnValue(new Promise(() => {}));
+    answerAgentChatToolCall.mockReturnValue(new Promise(() => {}));
 
     renderCard();
 
@@ -47,8 +43,7 @@ describe('AiChatEmailApprovalCard', () => {
     await user.type(subject, 'Renewal confirmed');
     await user.click(screen.getByRole('button', { name: 'Send' }));
 
-    expect(answerAgentChatAsk).toHaveBeenCalledWith({
-      askId: 'ask-1',
+    expect(answerAgentChatToolCall).toHaveBeenCalledWith({
       toolCallId: 'call-1',
       response: {
         decision: 'send',
@@ -65,7 +60,7 @@ describe('AiChatEmailApprovalCard', () => {
 
   it('saves a draft to the recipients the person chose', async () => {
     const user = userEvent.setup();
-    answerAgentChatAsk.mockResolvedValue(true);
+    answerAgentChatToolCall.mockResolvedValue(true);
 
     renderCard();
 
@@ -78,7 +73,7 @@ describe('AiChatEmailApprovalCard', () => {
     );
     await user.click(screen.getByRole('button', { name: 'Save as draft' }));
 
-    expect(answerAgentChatAsk).toHaveBeenCalledWith(
+    expect(answerAgentChatToolCall).toHaveBeenCalledWith(
       expect.objectContaining({
         response: {
           decision: 'saveDraft',
@@ -130,14 +125,13 @@ describe('AiChatEmailApprovalCard', () => {
 
   it('discards the email without sending it, and shows it discarded right away', async () => {
     const user = userEvent.setup();
-    answerAgentChatAsk.mockResolvedValue(true);
+    answerAgentChatToolCall.mockResolvedValue(true);
 
     renderCard();
 
     await user.click(screen.getByRole('button', { name: 'Discard' }));
 
-    expect(answerAgentChatAsk).toHaveBeenCalledWith({
-      askId: 'ask-1',
+    expect(answerAgentChatToolCall).toHaveBeenCalledWith({
       toolCallId: 'call-1',
       response: { decision: 'discard' },
       optimisticToolOutput: {
@@ -149,7 +143,7 @@ describe('AiChatEmailApprovalCard', () => {
 
   it('lets the person decide again when the answer is refused', async () => {
     const user = userEvent.setup();
-    answerAgentChatAsk.mockResolvedValue(false);
+    answerAgentChatToolCall.mockResolvedValue(false);
 
     renderCard();
 
