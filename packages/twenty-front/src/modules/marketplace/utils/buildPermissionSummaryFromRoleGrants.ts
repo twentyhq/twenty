@@ -3,7 +3,7 @@ import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/Enriche
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { t } from '@lingui/core/macro';
 import { SystemPermissionFlag } from 'twenty-shared/constants';
-import { isDefined } from 'twenty-shared/utils';
+import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import {
   type IconComponent,
   IconAddressBook,
@@ -158,6 +158,8 @@ export const buildPermissionSummaryFromRoleGrants = ({
               label: t`Use a permission added by this version`,
             };
       }
+      default:
+        return assertUnreachable(grant.type);
     }
   };
 
