@@ -231,6 +231,7 @@ export { uncapitalize } from './strings/uncapitalize';
 export { getSubdomainSlugFromDisplayName } from './subdomain/getSubdomainSlugFromDisplayName';
 export type { CanvasTheme } from './tiptap/canvas-theme';
 export { CANVAS_THEME_DEFAULTS } from './tiptap/canvas-theme';
+export { convertPlainTextToEmailDocument } from './tiptap/convert-plain-text-to-email-document';
 export { convertTipTapBlocksToMarkdown } from './tiptap/convert-tiptap-blocks-to-markdown';
 export type { EmailDocumentMarkType } from './tiptap/email-document-mark-catalog';
 export {
@@ -251,10 +252,12 @@ export { EMAIL_DOCUMENT_SCHEMA_VERSION } from './tiptap/email-document-schema-ve
 export type { EmailDocument } from './tiptap/email-document-schema';
 export { emailDocumentSchema } from './tiptap/email-document-schema';
 export type { EmailDocumentStringContext } from './tiptap/email-document-string-context';
+export { getEmailDocumentStandaloneHtml } from './tiptap/get-email-document-standalone-html';
 export { isCanvasTheme } from './tiptap/is-canvas-theme';
 export { isEmailDocumentShape } from './tiptap/is-email-document-shape';
 export type { CampaignVariableDefinition } from './tiptap/list-campaign-variables-for-fields';
 export { listCampaignVariablesForFields } from './tiptap/list-campaign-variables-for-fields';
+export { parseEmailBodyAsEmailDocument } from './tiptap/parse-email-body-as-email-document';
 export {
   parseEmailDocument,
   parseCanonicalEmailDocument,

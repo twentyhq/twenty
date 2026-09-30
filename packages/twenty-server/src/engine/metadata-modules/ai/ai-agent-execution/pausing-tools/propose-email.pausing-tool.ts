@@ -4,10 +4,13 @@ import {
   type ProposeEmailToolResult,
   type ProposedEmail,
 } from 'twenty-shared/ai';
-import { isDefined, isPlainObject } from 'twenty-shared/utils';
+import {
+  convertPlainTextToEmailDocument,
+  isDefined,
+  isPlainObject,
+} from 'twenty-shared/utils';
 import { z } from 'zod';
 
-import { convertPlainTextToEmailHtml } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/convert-plain-text-to-email-html.util';
 import { definePausingTool } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/define-pausing-tool.util';
 import { proposeEmailInputSchema } from 'src/engine/metadata-modules/ai/ai-chat/tools/propose-email.tool';
 
@@ -87,7 +90,7 @@ export const PROPOSE_EMAIL_PAUSING_TOOL = definePausingTool<
       args: {
         recipients: finalEmail.recipients,
         subject: finalEmail.subject,
-        body: convertPlainTextToEmailHtml(finalEmail.body),
+        body: convertPlainTextToEmailDocument(finalEmail.body),
         ...(isDefined(finalEmail.connectedAccountId)
           ? { connectedAccountId: finalEmail.connectedAccountId }
           : {}),

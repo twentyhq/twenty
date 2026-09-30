@@ -19,6 +19,8 @@ import { GateConversationsWidgetOnFeatureFlagCommand } from 'src/database/comman
 import { MoveAgentChatThreadsToRecordModelCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790751626421-move-agent-chat-threads-to-record-model.command';
 import { AddChatRecordPageCommandMenuItemsCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790751626422-add-chat-record-page-command-menu-items.command';
 import { OpenAsksForPendingInputCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790714482317-open-asks-for-pending-input.command';
+import { ConvertWorkflowEmailBodiesToEmailDocumentsCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790767557653-convert-workflow-email-bodies-to-email-documents.command';
+import { WorkflowVersionCoreModule } from 'src/engine/core-modules/workflow/workflow-version-core.module';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/workspace-migration-runner.module';
 
@@ -30,6 +32,7 @@ import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/wor
     WorkspaceCacheModule,
     WorkspaceIteratorModule,
     WorkspaceMigrationModule,
+    WorkflowVersionCoreModule,
   ],
   providers: [
     RenameCallRecordingTabsToTranscriptCommand,
@@ -47,6 +50,7 @@ import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/wor
     MoveAgentChatThreadsToRecordModelCommand,
     AddChatRecordPageCommandMenuItemsCommand,
     OpenAsksForPendingInputCommand,
+    ConvertWorkflowEmailBodiesToEmailDocumentsCommand,
   ],
 })
 export class V2_44_UpgradeVersionCommandModule {}

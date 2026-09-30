@@ -41,6 +41,7 @@ const NODE_RENDERERS = {
   [TIPTAP_NODE_TYPES.BUTTON]: button,
   [TIPTAP_NODE_TYPES.DIVIDER]: divider,
   [TIPTAP_NODE_TYPES.HTML]: html,
+  [TIPTAP_NODE_TYPES.HTML_DOCUMENT]: html,
 } satisfies Record<RenderedEmailDocumentNodeType, EmailNodeRenderer>;
 
 const renderNode = (

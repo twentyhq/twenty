@@ -185,11 +185,13 @@ export const runWorkflowActionStep = async ({
   stepType,
   input,
   payload,
+  beforeRun,
 }: {
   name: string;
   stepType: WorkflowActionStepType;
   input: Record<string, unknown>;
   payload?: object;
+  beforeRun?: (workflowVersionId: string) => Promise<void>;
 }): Promise<WorkflowActionStepRun> => {
   const workflowId = await createWorkflow(name);
 
@@ -214,6 +216,8 @@ export const runWorkflowActionStep = async ({
     const step = await findWorkflowVersionStep({ workflowVersionId, stepType });
 
     await updateWorkflowVersionStepInput({ workflowVersionId, step, input });
+
+    await beforeRun?.(workflowVersionId);
 
     workflowRunId = await runWorkflowVersion({ workflowVersionId, payload });
 

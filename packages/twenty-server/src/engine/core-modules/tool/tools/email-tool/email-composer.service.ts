@@ -14,6 +14,7 @@ import {
   isDefined,
   isNonEmptyArray,
   isValidUuid,
+  parseEmailBodyAsEmailDocument,
 } from 'twenty-shared/utils';
 import { In, IsNull, LessThanOrEqual, type Repository } from 'typeorm';
 import { z } from 'zod';
@@ -439,8 +440,16 @@ export class EmailComposerService {
 
     const attachments = await this.getAttachments(files || [], workspaceId);
 
+    const bodyParseResult = parseEmailBodyAsEmailDocument(body ?? '');
+
+    if (!bodyParseResult.success) {
+      throw new Error(
+        `Invalid outbound email document: ${bodyParseResult.error}`,
+      );
+    }
+
     const { html: sanitizedHtmlBody, plainText: plainTextBody } =
-      await compileOutboundEmailContent(body ?? '');
+      await compileOutboundEmailContent(bodyParseResult.document);
     const sanitizedSubject = await sanitizeOutboundEmailSubject(subject || '');
 
     const { threadExternalId, references } =

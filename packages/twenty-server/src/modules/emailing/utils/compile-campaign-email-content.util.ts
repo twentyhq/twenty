@@ -38,7 +38,7 @@ export const compileCampaignEmailContent = async (
     isDefined(variables)
       ? resolveEmailDocumentBindings(parseResult.document, (value, context) =>
           renderCampaignTemplate(value, variables, {
-            escapeValues: context === 'html',
+            escapeValues: context === 'html' || context === 'rawHtml',
           }),
         )
       : parseResult.document,

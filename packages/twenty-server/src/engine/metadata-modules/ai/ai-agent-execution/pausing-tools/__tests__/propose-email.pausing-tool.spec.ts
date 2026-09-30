@@ -1,3 +1,5 @@
+import { convertPlainTextToEmailDocument } from 'twenty-shared/utils';
+
 import { PROPOSE_EMAIL_PAUSING_TOOL } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/propose-email.pausing-tool';
 
 const PROPOSED_EMAIL = {
@@ -64,7 +66,9 @@ describe('PROPOSE_EMAIL_PAUSING_TOOL', () => {
       args: {
         recipients: PROPOSED_EMAIL.recipients,
         subject: 'Renewal confirmed',
-        body: '<p>Hi Tim,<br>Thanks for renewing.</p><p>Best, Jane</p>',
+        body: convertPlainTextToEmailDocument(
+          'Hi Tim,\nThanks for renewing.\n\nBest, Jane',
+        ),
         connectedAccountId: PROPOSED_EMAIL.connectedAccountId,
       },
     });

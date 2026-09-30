@@ -19,6 +19,7 @@ export const TIPTAP_NODE_TYPES = {
   BUTTON: 'button',
   DIVIDER: 'divider',
   HTML: 'html',
+  HTML_DOCUMENT: 'htmlDocument',
 } as const;
 
 export type TipTapNodeType =

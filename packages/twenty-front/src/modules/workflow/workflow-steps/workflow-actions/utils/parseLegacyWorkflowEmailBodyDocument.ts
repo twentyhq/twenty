@@ -1,14 +1,20 @@
 import { type AdvancedTextEditorLegacyDocumentParser } from '@/advanced-text-editor/types/AdvancedTextEditorLegacyDocumentParser';
-import { parseLegacyHtmlOrPlainTextDocument } from '@/advanced-text-editor/utils/parseLegacyHtmlOrPlainTextDocument';
-import { parseTipTapJsonDocument } from 'twenty-shared/utils';
+import { getInitialEditorContent } from '@/advanced-text-editor/utils/getInitialEditorContent';
+import { type JSONContent } from '@tiptap/core';
+import {
+  parseEmailBodyAsEmailDocument,
+  parseTipTapJsonDocument,
+} from 'twenty-shared/utils';
 
 export const parseLegacyWorkflowEmailBodyDocument: AdvancedTextEditorLegacyDocumentParser =
   (serializedDocument) => {
-    const document = parseTipTapJsonDocument(serializedDocument);
+    const parseResult = parseEmailBodyAsEmailDocument(serializedDocument);
 
-    if (document !== undefined && document.attrs?.schemaVersion === undefined) {
-      return document;
+    if (parseResult.success) {
+      return parseResult.document as JSONContent;
     }
 
-    return parseLegacyHtmlOrPlainTextDocument(serializedDocument);
+    return (
+      parseTipTapJsonDocument(serializedDocument) ?? getInitialEditorContent('')
+    );
   };
