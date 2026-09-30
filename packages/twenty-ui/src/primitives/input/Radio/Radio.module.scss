@@ -87,3 +87,30 @@
     transition: none;
   }
 }
+
+.card {
+  background-color: var(--t-background-secondary);
+  border: 1px solid var(--t-border-color-medium);
+  border-radius: var(--t-border-radius-md);
+  display: flex;
+  padding: 0;
+  position: relative;
+  text-align: start;
+  width: 100%;
+}
+
+.card:hover {
+  background: var(--t-background-tertiary);
+}
+
+.card > .control {
+  inset-block-start: var(--t-spacing-2);
+  inset-inline-end: var(--t-spacing-2);
+  position: absolute;
+}
+
+.cardContent {
+  display: flex;
+  padding: var(--t-spacing-4) var(--t-spacing-3);
+  width: 100%;
+}

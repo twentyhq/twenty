@@ -1779,6 +1779,13 @@
     "slug": "input/radio",
     "props": [
       {
+        "name": "children",
+        "type": "ReactNode",
+        "required": false,
+        "defaultValue": null,
+        "description": "Option content. Card options wrap it in a padded full-width content area."
+      },
+      {
         "name": "className",
         "type": "string | ((state: RadioRootState) => string | undefined)",
         "required": false,
@@ -1847,6 +1854,13 @@
         "required": true,
         "defaultValue": null,
         "description": "The unique identifying value of the radio in a group."
+      },
+      {
+        "name": "variant",
+        "type": "\"card\" | \"default\"",
+        "required": false,
+        "defaultValue": "default",
+        "description": "Presentation of the option: a standard radio or a full-width card. Defaults to default."
       }
     ]
   },
@@ -8277,65 +8291,16 @@
     ]
   },
   {
-    "name": "Info",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/info",
-    "props": [
-      {
-        "name": "accent",
-        "type": "\"blue\" | \"danger\"",
-        "required": false,
-        "defaultValue": "blue",
-        "description": "Information or danger styling."
-      },
-      {
-        "name": "buttonTitle",
-        "type": "string",
-        "required": false,
-        "defaultValue": null,
-        "description": "Visible label for the optional action. Requires href or onClick."
-      },
-      {
-        "name": "href",
-        "type": "string",
-        "required": false,
-        "defaultValue": null,
-        "description": "Action destination. Takes precedence over onClick."
-      },
-      {
-        "name": "onClick",
-        "type": "((event: MouseEvent<HTMLButtonElement, MouseEvent>) => void)",
-        "required": false,
-        "defaultValue": null,
-        "description": "Action callback when href is absent."
-      },
-      {
-        "name": "render",
-        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, ButtonState>",
-        "required": false,
-        "defaultValue": null,
-        "description": "Custom render element for the link action, forwarded to Button when href is supplied."
-      },
-      {
-        "name": "text",
-        "type": "string",
-        "required": true,
-        "defaultValue": null,
-        "description": "Message displayed beside the information icon."
-      }
-    ]
-  },
-  {
     "name": "InlineBanner",
     "entryPoint": "twenty-ui/components",
     "slug": "components/inline-banner",
     "props": [
       {
         "name": "button",
-        "type": "{ title?: string | undefined; onClick?: (() => void) | undefined; hidden?: boolean | undefined; disabled?: boolean | undefined; Icon?: IconComponent | undefined; }",
+        "type": "InlineBannerButtonProps",
         "required": false,
         "defaultValue": null,
-        "description": "Optional action with title, onClick, hidden, disabled, and Icon fields."
+        "description": "Optional button or destination link. All fields are optional:\n\n- `title` (`string`): visible action label.\n- `onClick` (`(event: BaseUIEvent<React.MouseEvent<HTMLButtonElement>>) => void`): activation handler, including keyboard activation.\n- `href` (`string`): destination URL; selects native link semantics.\n- `render` (`ReactElement | ((props: HTMLProps, state: { disabled: boolean }) => ReactElement)`): custom root element or renderer. Preserve an anchor when `href` is set, or a native button otherwise. `HTMLProps` includes native element attributes and its ref.\n- `target` (`string`): link browsing context, such as `_blank`.\n- `rel` (`string`): link relationship, such as `noopener noreferrer`.\n- `download` (native anchor attribute): use `true` to download the destination or a `string` to suggest a filename.\n- `disabled` (`boolean`): prevents activation.\n- `hidden` (`boolean`): omits the action from the banner.\n- `aria-label` (`string`): accessible action name, needed when no visible title is supplied.\n- `Icon` (`IconComponent`): decorative icon component displayed before the title.\n\nAction and link fields use the corresponding [Button props](/ui/primitives/input/button). `BaseUIEvent` extends the React event with `preventBaseUIHandler()` and `baseUIHandlerPrevented`."
       },
       {
         "name": "className",
@@ -8348,7 +8313,7 @@
         "name": "color",
         "type": "\"blue\" | \"danger\"",
         "required": false,
-        "defaultValue": null,
+        "defaultValue": "blue",
         "description": "Banner palette color. An omitted color uses Banner’s default."
       },
       {
@@ -8356,7 +8321,7 @@
         "type": "boolean",
         "required": false,
         "defaultValue": "false",
-        "description": "Uses the embedded banner appearance."
+        "description": "Removes the bottom margin from standard banners. Compact banners have no bottom margin."
       },
       {
         "name": "LeftIcon",
@@ -8370,7 +8335,14 @@
         "type": "string",
         "required": true,
         "defaultValue": null,
-        "description": "Message, truncated with its full text available in a tooltip."
+        "description": "Message text. Standard banners truncate with a focusable tooltip; compact banners wrap."
+      },
+      {
+        "name": "variant",
+        "type": "\"compact\" | \"standard\"",
+        "required": false,
+        "defaultValue": "standard",
+        "description": "Standard full-width banner or compact wrapping message with a 512px maximum content width."
       }
     ]
   },
@@ -8420,90 +8392,6 @@
         "required": false,
         "defaultValue": null,
         "description": "Custom root element composed through Base UI."
-      }
-    ]
-  },
-  {
-    "name": "CardPicker",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/card-picker",
-    "props": [
-      {
-        "name": "children",
-        "type": "ReactNode",
-        "required": false,
-        "defaultValue": null,
-        "description": "Card content inside the radio control."
-      },
-      {
-        "name": "className",
-        "type": "string | ((state: RadioRootState) => string | undefined)",
-        "required": false,
-        "defaultValue": null,
-        "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
-      },
-      {
-        "name": "disabled",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": null,
-        "description": "Whether the component should ignore user interaction."
-      },
-      {
-        "name": "inputRef",
-        "type": "Ref<HTMLInputElement>",
-        "required": false,
-        "defaultValue": null,
-        "description": "A ref to access the hidden input element."
-      },
-      {
-        "name": "nativeButton",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": "false",
-        "description": "Whether the component renders a native `<button>` element when replacing it\nvia the `render` prop.\nSet to `true` if the rendered element is a native button."
-      },
-      {
-        "name": "readOnly",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": null,
-        "description": "Whether the user should be unable to select the radio button."
-      },
-      {
-        "name": "render",
-        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, RadioRootState>",
-        "required": false,
-        "defaultValue": null,
-        "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
-      },
-      {
-        "name": "required",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": null,
-        "description": "Whether the user must choose a value before submitting a form."
-      },
-      {
-        "name": "size",
-        "type": "\"md\" | \"sm\"",
-        "required": false,
-        "defaultValue": null,
-        "description": "Visual size of the radio."
-      },
-      {
-        "name": "style",
-        "type": "CSSProperties | ((state: RadioRootState) => CSSProperties | undefined)",
-        "required": false,
-        "defaultValue": null,
-        "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
-      },
-      {
-        "name": "value",
-        "type": "TValue",
-        "required": true,
-        "defaultValue": null,
-        "description": "The unique identifying value of the radio in a group."
       }
     ]
   },

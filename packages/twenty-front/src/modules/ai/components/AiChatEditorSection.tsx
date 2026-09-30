@@ -24,6 +24,7 @@ import { AiChatDictationEffect } from '@/ai/dictation/components/AiChatDictation
 import { AiChatDictationHint } from '@/ai/dictation/components/AiChatDictationHint';
 import { AiChatContextUsageButton } from '@/ai/components/internal/AiChatContextUsageButton';
 import { AiChatEditorFocusEffect } from '@/ai/components/internal/AiChatEditorFocusEffect';
+import { AiChatSentMessageHandOffEffect } from '@/ai/components/internal/AiChatSentMessageHandOffEffect';
 import { SendMessageButton } from '@/ai/components/internal/SendMessageButton';
 import { useAiChatEditor } from '@/ai/hooks/useAiChatEditor';
 import { useInsertDictatedText } from '@/ai/dictation/hooks/useInsertDictatedText';
@@ -32,9 +33,11 @@ import { useHasReachedAiChatCreditsCap } from '@/ai/hooks/useHasReachedAiChatCre
 import { useHasReachedAiChatUsageLimit } from '@/ai/hooks/useHasReachedAiChatUsageLimit';
 import { AGENT_CHAT_NEW_THREAD_DRAFT_KEY } from '@/ai/states/agentChatDraftsByThreadIdState';
 import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
+import { agentChatHasMessageComponentSelector } from '@/ai/states/selectors/agentChatHasMessageComponentSelector';
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
 import { aiModelsState } from '@/client-config/states/aiModelsState';
 import { useIsMobile } from 'twenty-ui/utilities';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
@@ -109,13 +112,21 @@ const StyledEditorWrapper = styled.div<{ isMobile: boolean }>`
   }
 `;
 
+const StyledMessageListPlaceholder = styled.div`
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+`;
+
 // Collapsing this spacer is what slides the composer from the middle of an
 // empty page down to the bottom once the conversation starts.
 const StyledComposerBottomSpacer = styled.div`
   flex-basis: 0;
   flex-grow: 0;
   flex-shrink: 0;
-  transition-duration: calc(${themeCssVariables.animation.duration.fast} * 1s);
+  transition-duration: calc(
+    ${themeCssVariables.animation.duration.normal} * 1s
+  );
   transition-property: flex-grow;
   transition-timing-function: ease-out;
 
@@ -175,7 +186,6 @@ const EditableAiChatEditorSection = () => {
     { objectName: CoreObjectNameSingular.InputAsk, objectNameType: 'singular' },
   );
   const pendingAskThreadId =
-    isDefined(inputAskObjectMetadataItem) &&
     isDefined(agentChatDisplayedThread) &&
     agentChatDisplayedThread !== AGENT_CHAT_NEW_THREAD_DRAFT_KEY
       ? agentChatDisplayedThread
@@ -206,16 +216,27 @@ const EditableAiChatEditorSection = () => {
       </StyledButtonsContainer>
     </StyledInputBox>
   );
+  const hasMessages = useAtomComponentSelectorValue(
+    agentChatHasMessageComponentSelector,
+  );
 
   return (
     <>
       <AiChatEditorFocusEffect editor={editor} />
+      <AiChatSentMessageHandOffEffect
+        editor={editor}
+        isComposerCentered={isComposerCentered}
+      />
       <AiChatDictationEffect
         onInterimText={setDictationInterimText}
         onFinalText={insertDictatedText}
       />
-      <AiChatEmptyState isCentered={isComposerCentered} />
-      <AiChatStandaloneError />
+      {!hasMessages && (
+        <StyledMessageListPlaceholder>
+          <AiChatEmptyState isCentered={isComposerCentered} />
+          <AiChatStandaloneError />
+        </StyledMessageListPlaceholder>
+      )}
 
       <StyledInputArea isMobile={isMobile}>
         <AgentChatContextPreview />
@@ -226,7 +247,7 @@ const EditableAiChatEditorSection = () => {
         )}
         {hasReachedAiChatCreditsCap && <AIChatNoMoreBillingCreditsBanner />}
         {shouldShowUsageLimitBanner && <AiChatUsageLimitReachedBanner />}
-        {isDefined(pendingAskThreadId) ? (
+        {isDefined(inputAskObjectMetadataItem) ? (
           <AiChatPendingAskGate threadId={pendingAskThreadId}>
             {composer}
           </AiChatPendingAskGate>

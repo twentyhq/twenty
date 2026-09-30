@@ -1,3 +1,4 @@
+import { type ReactNode } from 'react';
 import { Navigate, useParams } from 'react-router-dom';
 import {
   AppPath,
@@ -11,6 +12,7 @@ import { findCoreObjectShowPage } from '@/object-core/utils/findCoreObjectShowPa
 import { isWorkspaceWorkflowVersionRouteHidden } from '@/object-core/workflows/utils/isWorkspaceWorkflowVersionRouteHidden';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { RecordShowPageShell } from '@/object-record/record-show/components/RecordShowPageShell';
+import { type RecordShowPageHeaderTitleMode } from '@/object-record/record-show/types/RecordShowPageHeaderTitleMode';
 import { useRecordShowPage } from '@/object-record/record-show/hooks/useRecordShowPage';
 import { useRecordShowPageResource } from '@/object-record/record-show/hooks/useRecordShowPageResource';
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
@@ -21,10 +23,16 @@ type RecordShowPageParameters = {
   objectRecordId?: string;
 };
 
-const WorkspaceRecordShowPageContent = ({
+export const RecordShowPageContent = ({
   parameters,
+  headerActions,
+  headerTitleMode,
+  isRecordIdentifierBarHidden,
 }: {
   parameters: RecordShowPageParameters;
+  headerActions?: ReactNode;
+  headerTitleMode?: RecordShowPageHeaderTitleMode;
+  isRecordIdentifierBarHidden?: boolean;
 }) => {
   const { objectNameSingular, objectRecordId } = useRecordShowPage(
     parameters.objectNameSingular ?? '',
@@ -43,6 +51,9 @@ const WorkspaceRecordShowPageContent = ({
       record={record}
       loading={loading}
       error={error}
+      headerActions={headerActions}
+      headerTitleMode={headerTitleMode}
+      isRecordIdentifierBarHidden={isRecordIdentifierBarHidden}
     />
   );
 };
@@ -100,5 +111,5 @@ export const RecordShowPage = () => {
     return <CoreObjectShowPage objectRecordId={parameters.objectRecordId} />;
   }
 
-  return <WorkspaceRecordShowPageContent parameters={parameters} />;
+  return <RecordShowPageContent parameters={parameters} />;
 };

@@ -231,7 +231,6 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         ),
         {} as never,
         {} as never,
-        { broadcast: jest.fn().mockResolvedValue(undefined) } as never,
         {
           getThreadWithAccess: ({
             workspaceId,

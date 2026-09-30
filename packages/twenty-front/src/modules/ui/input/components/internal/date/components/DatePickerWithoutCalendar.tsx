@@ -13,7 +13,6 @@ import {
   DATE_PICKER_CONTAINER_WIDTH,
   StyledDatePickerContainer,
 } from '@/ui/input/components/internal/date/components/StyledDatePickerContainer';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import 'react-datepicker/dist/react-datepicker.css';
 
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -21,11 +20,6 @@ import { Temporal } from 'temporal-polyfill';
 import { type Nullable } from 'twenty-shared/types';
 import { isDefined, turnJSDateToPlainDate } from 'twenty-shared/utils';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
-
-export const MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID =
-  'date-picker-month-and-year-dropdown-month-select';
-export const MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID =
-  'date-picker-month-and-year-dropdown-year-select';
 
 const DATE_PICKER_SKELETON_PADDING = 16;
 
@@ -74,6 +68,7 @@ const ReactDatePicker = lazy<ComponentType<DatePickerPropsType>>(() =>
 );
 
 export const DatePickerWithoutCalendar = ({
+  instanceId,
   date,
   onChange,
   onClose,
@@ -81,19 +76,7 @@ export const DatePickerWithoutCalendar = ({
   const theme = useTheme();
   const plainDate = isDefined(date) ? Temporal.PlainDate.from(date) : null;
 
-  const { closeDropdown: closeDropdownMonthSelect } = useCloseDropdown();
-  const { closeDropdown: closeDropdownYearSelect } = useCloseDropdown();
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
-
-  const closeDropdowns = () => {
-    closeDropdownYearSelect(MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID);
-    closeDropdownMonthSelect(MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID);
-  };
-
-  const handleClose = (newDate: string) => {
-    closeDropdowns();
-    onClose?.(newDate);
-  };
 
   const handleChangeMonth = (month: number) => {
     const newDate = plainDate?.with({ month: month });
@@ -134,7 +117,7 @@ export const DatePickerWithoutCalendar = ({
     }
     const plainDatePicked = turnJSDateToPlainDate(datePicked);
 
-    handleClose?.(plainDatePicked.toString());
+    onClose?.(plainDatePicked.toString());
   };
 
   const calendarStartDay =
@@ -207,6 +190,7 @@ export const DatePickerWithoutCalendar = ({
             }) => (
               <>
                 <DatePickerHeader
+                  instanceId={instanceId}
                   date={plainDate?.toString() ?? null}
                   onChange={onChange}
                   onChangeMonth={handleChangeMonth}

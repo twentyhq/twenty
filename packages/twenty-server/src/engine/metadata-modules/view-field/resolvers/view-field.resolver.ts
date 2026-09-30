@@ -5,7 +5,7 @@ import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorato
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
-import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { CreateViewFieldInput } from 'src/engine/metadata-modules/view-field/dtos/inputs/create-view-field.input';
 import { DeleteViewFieldInput } from 'src/engine/metadata-modules/view-field/dtos/inputs/delete-view-field.input';
 import { DestroyViewFieldInput } from 'src/engine/metadata-modules/view-field/dtos/inputs/destroy-view-field.input';
@@ -19,7 +19,19 @@ import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filt
 
 @MetadataResolver(() => ViewFieldDTO)
 @UseFilters(ViewGraphqlApiExceptionFilter, AuthGraphqlApiExceptionFilter)
-@UseGuards(WorkspaceAuthGuard)
+@UseGuards(
+  AuthPrincipalGuard({
+    userSession: {
+      standard: true,
+      impersonated: true,
+      playground: true,
+      workspaceAgnostic: false,
+    },
+    apiKey: true,
+    oauthClient: true,
+    application: true,
+  }),
+)
 export class ViewFieldResolver {
   constructor(private readonly viewFieldService: ViewFieldService) {}
 
