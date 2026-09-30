@@ -32,5 +32,7 @@ export const MENU_ITEM_PROP_DESCRIPTIONS = {
     'Explicit shortcut combination or sequence. Register handlers in the application.',
   shortcutJoinLabel:
     'Text between sequential shortcut steps. Defaults to `then`.',
+  shortcutAccessibleKeyLabels:
+    'Localized accessible key names forwarded to Shortcut. Missing entries retain the default name; display symbols are unchanged.',
   isSubMenuOpened: 'Applies the open treatment to the submenu chevron.',
 } satisfies Partial<Record<keyof ComponentProps<typeof MenuItem>, string>>;

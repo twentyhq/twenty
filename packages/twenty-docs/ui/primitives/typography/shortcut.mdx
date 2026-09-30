@@ -36,7 +36,9 @@ A combination presses its keys together. A sequence presses each step in order, 
 
 Use `sequenceJoinLabel` for localized join text. `combinationSeparator` can preserve a host convention such as `+`. The default text separator is empty on Apple devices and a space elsewhere. `variant` selects `keys`, `text`, or `button`. `visibility="desktop"` hides the hint at mobile viewport widths while `always` remains visible.
 
-Key symbols have readable accessible names. Supply `aria-label` or `aria-labelledby` for a localized name, or `aria-hidden` for a decorative hint. Buttons keep their action names and hide their decorative hints on mobile. Menu and list rows keep their hints visible.
+Key symbols have readable accessible names. Pass `accessibleKeyLabels` to localize individual key names while preserving the visual symbols. The map uses readable English names as keys: `Command`, `Option`, `Shift`, `Control`, `Enter`, `Backspace`, `Arrow up`, `Arrow down`, `Arrow left`, `Arrow right`, and `Escape`. It also accepts unchanged key names such as `Alt`, `Space`, `Tab`, and `Delete`. For example, map `Command` to your application’s localized command-key label. Missing entries retain their default readable names or the original key string. The application owns translation.
+
+Supply `aria-label` or `aria-labelledby` to replace the full accessible name, or `aria-hidden` for a decorative hint. `accessibleKeyLabels` does not change the string returned by `formatShortcut`. Buttons keep their action names and hide their decorative hints on mobile. Menu and list rows keep their hints visible; pass `shortcutAccessibleKeyLabels` to `ListItem`, legacy `MenuItem`, or `Menu` and `Dropdown` item parts to localize those hints.
 
 ## Migration
 

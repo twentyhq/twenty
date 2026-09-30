@@ -1,3 +1,4 @@
+import { type ShortcutFormatOptions } from '@ui/primitives/typography/Shortcut/types/ShortcutFormatOptions';
 import { type ShortcutDefinition } from '@ui/primitives/typography/Shortcut/types/ShortcutDefinition';
 import { type useRender } from '@base-ui/react/use-render';
 import { type ReactNode } from 'react';
@@ -47,6 +48,7 @@ export type ListItemProps = Omit<
    */
   shortcut?: ShortcutDefinition;
   shortcutJoinLabel?: string;
+  shortcutAccessibleKeyLabels?: ShortcutFormatOptions['accessibleKeyLabels'];
   /** Shows a chevron indicating that the item opens a submenu. */
   hasSubmenu?: boolean;
 };

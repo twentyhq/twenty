@@ -39,6 +39,7 @@ export const MenuItem = ({
   selected = false,
   shortcut,
   shortcutJoinLabel,
+  shortcutAccessibleKeyLabels,
   isSubMenuOpened = false,
 }: MenuItemProps) => {
   const theme = useTheme();
@@ -81,7 +82,11 @@ export const MenuItem = ({
           </StyledMenuItemRightContent>
         )}
         {isDefined(shortcut) && (
-          <Shortcut shortcut={shortcut} sequenceJoinLabel={shortcutJoinLabel} />
+          <Shortcut
+            shortcut={shortcut}
+            sequenceJoinLabel={shortcutJoinLabel}
+            accessibleKeyLabels={shortcutAccessibleKeyLabels}
+          />
         )}
         {RightIcon && (
           <RightIcon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />

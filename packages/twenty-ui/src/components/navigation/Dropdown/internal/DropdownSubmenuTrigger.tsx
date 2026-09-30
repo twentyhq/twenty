@@ -20,6 +20,7 @@ export const DropdownSubmenuTrigger = ({
   descriptionPlacement,
   shortcut,
   shortcutJoinLabel,
+  shortcutAccessibleKeyLabels,
   hasSubmenu = true,
   children,
   render,
@@ -100,6 +101,7 @@ export const DropdownSubmenuTrigger = ({
           descriptionPlacement={descriptionPlacement}
           shortcut={shortcut}
           shortcutJoinLabel={shortcutJoinLabel}
+          shortcutAccessibleKeyLabels={shortcutAccessibleKeyLabels}
           hasSubmenu={hasSubmenu}
         >
           {children}

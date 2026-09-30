@@ -1,3 +1,4 @@
+import { type ShortcutFormatOptions } from '@ui/primitives/typography/Shortcut/types/ShortcutFormatOptions';
 import { type ShortcutDefinition } from '@ui/primitives/typography/Shortcut/types/ShortcutDefinition';
 import { type MenuItemAccent } from '@ui/components/navigation/MenuItem/types/MenuItemAccent';
 import { type IconComponent } from '@ui/icon';
@@ -30,5 +31,6 @@ export type MenuItemProps = {
   selected?: boolean;
   shortcut?: ShortcutDefinition;
   shortcutJoinLabel?: string;
+  shortcutAccessibleKeyLabels?: ShortcutFormatOptions['accessibleKeyLabels'];
   isSubMenuOpened?: boolean;
 };

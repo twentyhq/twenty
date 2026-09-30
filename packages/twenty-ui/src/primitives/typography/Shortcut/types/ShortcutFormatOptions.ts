@@ -5,4 +5,5 @@ export type ShortcutFormatOptions = {
   platform?: 'mac' | 'other';
   sequenceJoinLabel?: string;
   combinationSeparator?: string;
+  accessibleKeyLabels?: Readonly<Record<string, string>>;
 };

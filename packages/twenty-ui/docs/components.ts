@@ -71,6 +71,8 @@ export const DOCUMENTED_COMPONENTS = [
       platform:
         'Optional mac or other platform override. Defaults to server-safe device detection.',
       sequenceJoinLabel: 'Text between sequence steps. Defaults to then.',
+      accessibleKeyLabels:
+        'Localized accessible key names keyed by their readable English names. Missing entries retain the default name; display symbols are unchanged.',
       combinationSeparator:
         'Optional separator between simultaneous keys. Defaults to no separator on Apple devices and a space elsewhere.',
       variant: 'Keycaps, inline text, or a separated button hint.',
@@ -280,6 +282,8 @@ export const DOCUMENTED_COMPONENTS = [
     propDescriptions: {
       shortcutJoinLabel:
         'Text between sequential shortcut steps. Defaults to `then`; pass an empty string to omit it.',
+      shortcutAccessibleKeyLabels:
+        'Localized accessible key names forwarded to Shortcut. Missing entries retain the default name; display symbols are unchanged.',
       actionsVisibility:
         'When trailing actions are visible: on hover and focus, or always.',
     },
@@ -334,18 +338,26 @@ export const DOCUMENTED_COMPONENTS = [
       Item: {
         shortcutJoinLabel:
           'Text between sequential shortcut steps. Defaults to `then`.',
+        shortcutAccessibleKeyLabels:
+          'Localized accessible key names forwarded to Shortcut. Missing entries retain the default name; display symbols are unchanged.',
       },
       CheckboxItem: {
         shortcutJoinLabel:
           'Text between sequential shortcut steps. Defaults to `then`.',
+        shortcutAccessibleKeyLabels:
+          'Localized accessible key names forwarded to Shortcut. Missing entries retain the default name; display symbols are unchanged.',
       },
       RadioItem: {
         shortcutJoinLabel:
           'Text between sequential shortcut steps. Defaults to `then`.',
+        shortcutAccessibleKeyLabels:
+          'Localized accessible key names forwarded to Shortcut. Missing entries retain the default name; display symbols are unchanged.',
       },
       SubmenuTrigger: {
         shortcutJoinLabel:
           'Text between sequential shortcut steps. Defaults to `then`.',
+        shortcutAccessibleKeyLabels:
+          'Localized accessible key names forwarded to Shortcut. Missing entries retain the default name; display symbols are unchanged.',
         onClick: 'The click handler for the submenu trigger.',
       },
     },

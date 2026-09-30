@@ -1,3 +1,4 @@
+import { useShortcutAccessibleKeyLabels } from '@/ui/utilities/hotkey/hooks/useShortcutAccessibleKeyLabels';
 import { type NavigationDrawerItemProps } from '@/ui/navigation/navigation-drawer/types/NavigationDrawerItemProps';
 import { isObject } from '@sniptt/guards';
 import { useIsNavigationDrawerContentExpanded } from '@/navigation/hooks/useIsNavigationDrawerContentExpanded';
@@ -218,6 +219,7 @@ export const NavigationDrawerItem = ({
   const theme = useTheme();
   const editingContent = useContext(NavigationDrawerItemEditingContext);
   const isMobile = useIsMobile();
+  const accessibleKeyLabels = useShortcutAccessibleKeyLabels();
   const isExpanded = useIsNavigationDrawerContentExpanded();
   const setIsNavigationDrawerExpanded = useSetAtomState(
     isNavigationDrawerExpandedState,
@@ -389,6 +391,7 @@ export const NavigationDrawerItem = ({
                   className="keyboard-shortcuts"
                   shortcut={keyboardKeys}
                   sequenceJoinLabel={t`then`}
+                  accessibleKeyLabels={accessibleKeyLabels}
                 />
               </NavigationDrawerAnimatedCollapseWrapper>
             )}

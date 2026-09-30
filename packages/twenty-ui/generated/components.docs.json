@@ -5,6 +5,13 @@
     "slug": "typography/shortcut",
     "props": [
       {
+        "name": "accessibleKeyLabels",
+        "type": "Readonly<Record<string, string>>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Localized accessible key names keyed by their readable English names. Missing entries retain the default name; display symbols are unchanged."
+      },
+      {
         "name": "combinationSeparator",
         "type": "string",
         "required": false,
@@ -3144,6 +3151,13 @@
         "description": "Keyboard shortcut keys displayed at the end of the row. Registering the\nshortcut is up to the application."
       },
       {
+        "name": "shortcutAccessibleKeyLabels",
+        "type": "Readonly<Record<string, string>>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Localized accessible key names forwarded to Shortcut. Missing entries retain the default name; display symbols are unchanged."
+      },
+      {
         "name": "shortcutJoinLabel",
         "type": "string",
         "required": false,
@@ -4536,6 +4550,13 @@
             "description": "Keyboard shortcut keys displayed at the end of the row. Registering the\nshortcut is up to the application."
           },
           {
+            "name": "shortcutAccessibleKeyLabels",
+            "type": "Readonly<Record<string, string>>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Localized accessible key names forwarded to Shortcut. Missing entries retain the default name; display symbols are unchanged."
+          },
+          {
             "name": "shortcutJoinLabel",
             "type": "string",
             "required": false,
@@ -4665,6 +4686,13 @@
             "required": false,
             "defaultValue": null,
             "description": "Keyboard shortcut keys displayed at the end of the row. Registering the\nshortcut is up to the application."
+          },
+          {
+            "name": "shortcutAccessibleKeyLabels",
+            "type": "Readonly<Record<string, string>>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Localized accessible key names forwarded to Shortcut. Missing entries retain the default name; display symbols are unchanged."
           },
           {
             "name": "shortcutJoinLabel",
@@ -4836,6 +4864,13 @@
             "required": false,
             "defaultValue": null,
             "description": "Keyboard shortcut keys displayed at the end of the row. Registering the\nshortcut is up to the application."
+          },
+          {
+            "name": "shortcutAccessibleKeyLabels",
+            "type": "Readonly<Record<string, string>>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Localized accessible key names forwarded to Shortcut. Missing entries retain the default name; display symbols are unchanged."
           },
           {
             "name": "shortcutJoinLabel",
@@ -5141,6 +5176,13 @@
             "required": false,
             "defaultValue": null,
             "description": "Keyboard shortcut keys displayed at the end of the row. Registering the\nshortcut is up to the application."
+          },
+          {
+            "name": "shortcutAccessibleKeyLabels",
+            "type": "Readonly<Record<string, string>>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Localized accessible key names forwarded to Shortcut. Missing entries retain the default name; display symbols are unchanged."
           },
           {
             "name": "shortcutJoinLabel",
@@ -7126,6 +7168,13 @@
             "description": "Keyboard shortcut keys displayed at the end of the row. Registering the\nshortcut is up to the application."
           },
           {
+            "name": "shortcutAccessibleKeyLabels",
+            "type": "Readonly<Record<string, string>>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Localized accessible key names forwarded to Shortcut. Missing entries retain the default name; display symbols are unchanged."
+          },
+          {
             "name": "shortcutJoinLabel",
             "type": "string",
             "required": false,
@@ -7248,6 +7297,13 @@
             "required": false,
             "defaultValue": null,
             "description": "Keyboard shortcut keys displayed at the end of the row. Registering the\nshortcut is up to the application."
+          },
+          {
+            "name": "shortcutAccessibleKeyLabels",
+            "type": "Readonly<Record<string, string>>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Localized accessible key names forwarded to Shortcut. Missing entries retain the default name; display symbols are unchanged."
           },
           {
             "name": "shortcutJoinLabel",
@@ -7490,6 +7546,13 @@
             "description": "Keyboard shortcut keys displayed at the end of the row. Registering the\nshortcut is up to the application."
           },
           {
+            "name": "shortcutAccessibleKeyLabels",
+            "type": "Readonly<Record<string, string>>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Localized accessible key names forwarded to Shortcut. Missing entries retain the default name; display symbols are unchanged."
+          },
+          {
             "name": "shortcutJoinLabel",
             "type": "string",
             "required": false,
@@ -7652,6 +7715,13 @@
             "required": false,
             "defaultValue": null,
             "description": "Keyboard shortcut keys displayed at the end of the row. Registering the\nshortcut is up to the application."
+          },
+          {
+            "name": "shortcutAccessibleKeyLabels",
+            "type": "Readonly<Record<string, string>>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Localized accessible key names forwarded to Shortcut. Missing entries retain the default name; display symbols are unchanged."
           },
           {
             "name": "shortcutJoinLabel",
@@ -8777,6 +8847,13 @@
         "required": false,
         "defaultValue": null,
         "description": "Explicit shortcut combination or sequence. Register handlers in the application."
+      },
+      {
+        "name": "shortcutAccessibleKeyLabels",
+        "type": "Readonly<Record<string, string>>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Localized accessible key names forwarded to Shortcut. Missing entries retain the default name; display symbols are unchanged."
       },
       {
         "name": "shortcutJoinLabel",
