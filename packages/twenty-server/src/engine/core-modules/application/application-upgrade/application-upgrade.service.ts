@@ -354,6 +354,7 @@ export class ApplicationUpgradeService {
     const appRegistration = application.applicationRegistration;
 
     if (
+      !isDefined(application.version) ||
       !isDefined(appRegistration?.latestAvailableVersion) ||
       appRegistration.latestAvailableVersion === application.version
     ) {
