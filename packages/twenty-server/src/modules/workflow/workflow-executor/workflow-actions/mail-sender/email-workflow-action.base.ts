@@ -28,6 +28,7 @@ import { type WorkflowSendEmailActionInput } from 'src/modules/workflow/workflow
 import { buildEmailStepLog } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/utils/build-email-step-log.util';
 import { resolveEmailBody } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/utils/resolve-email-body.util';
 import { resolveEmailFiles } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/utils/resolve-email-files.util';
+import { buildWorkflowToolExecutionContextOrThrow } from 'src/modules/workflow/workflow-executor/workflow-actions/tool-backed/utils/build-workflow-tool-execution-context-or-throw.util';
 import { ToolBackedWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/tool-backed/tool-backed.workflow-action';
 import { WorkflowRunStepLogWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run-step-log.workspace-service';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
@@ -78,35 +79,18 @@ export abstract class EmailWorkflowActionBase extends ToolBackedWorkflowAction<W
   protected override async buildToolExecutionContext(
     runInfo: WorkflowRunInfo,
   ): Promise<ToolExecutionContext> {
-    const { authContext, rolePermissionConfig, application } =
+    const executionContext =
       await this.workflowExecutionContextService.getExecutionContext(runInfo);
 
-    const toolExecutionContext: ToolExecutionContext = {
-      workspaceId: runInfo.workspaceId,
-      ...getUserFromAuthContext(authContext),
-    };
-
-    if (!isDefined(application)) {
-      return toolExecutionContext;
-    }
-
-    const hasToolPermission = await this.permissionsService.hasToolPermission(
-      rolePermissionConfig,
-      runInfo.workspaceId,
-      PermissionFlagType.SEND_EMAIL_TOOL,
-    );
-
-    if (!hasToolPermission) {
-      throw new WorkflowStepExecutorException(
-        `Application "${application.name}" is missing the ${PermissionFlagType.SEND_EMAIL_TOOL} permission required by this step`,
-        WorkflowStepExecutorExceptionCode.FORBIDDEN,
-      );
-    }
-
-    return {
-      ...toolExecutionContext,
-      requireConnectedAccountUsableByCaller: true,
-    };
+    return buildWorkflowToolExecutionContextOrThrow({
+      executionContext,
+      workspaceRunToolContext: {
+        workspaceId: runInfo.workspaceId,
+        ...getUserFromAuthContext(executionContext.authContext),
+      },
+      permissionFlag: PermissionFlagType.SEND_EMAIL_TOOL,
+      permissionsService: this.permissionsService,
+    });
   }
 
   protected override async postprocessInput(

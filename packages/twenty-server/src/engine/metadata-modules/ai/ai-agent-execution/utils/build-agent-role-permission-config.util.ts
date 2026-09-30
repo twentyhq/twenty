@@ -5,15 +5,16 @@ import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-perm
 export const buildAgentRolePermissionConfig = ({
   agentRoleId,
   runAsRoleId,
-  executionRoleIds = [],
+  additionalRoleRestrictionIds = [],
 }: {
   agentRoleId: string;
   runAsRoleId?: string;
-  executionRoleIds?: string[];
+  additionalRoleRestrictionIds?: string[];
 }): RolePermissionConfig => {
+  // Restrictions must narrow the selected role, never replace it.
   const baseRoleId = isDefined(runAsRoleId) ? runAsRoleId : agentRoleId;
 
   return {
-    intersectionOf: [...new Set([baseRoleId, ...executionRoleIds])],
+    intersectionOf: [...new Set([baseRoleId, ...additionalRoleRestrictionIds])],
   };
 };

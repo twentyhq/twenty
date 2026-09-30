@@ -29,7 +29,7 @@ describe('buildAgentRolePermissionConfig', () => {
     expect(
       buildAgentRolePermissionConfig({
         agentRoleId: 'agent-role-id',
-        executionRoleIds: ['member-role-id', 'application-role-id'],
+        additionalRoleRestrictionIds: ['member-role-id', 'application-role-id'],
       }),
     ).toEqual({
       intersectionOf: [
@@ -40,11 +40,21 @@ describe('buildAgentRolePermissionConfig', () => {
     });
   });
 
+  it('narrows the run-as role instead of replacing it with the additional restrictions', () => {
+    expect(
+      buildAgentRolePermissionConfig({
+        agentRoleId: 'agent-role-id',
+        runAsRoleId: 'member-role-id',
+        additionalRoleRestrictionIds: ['application-role-id'],
+      }),
+    ).toEqual({ intersectionOf: ['member-role-id', 'application-role-id'] });
+  });
+
   it('does not repeat a role shared by the agent and the run', () => {
     expect(
       buildAgentRolePermissionConfig({
         agentRoleId: 'application-role-id',
-        executionRoleIds: ['application-role-id'],
+        additionalRoleRestrictionIds: ['application-role-id'],
       }),
     ).toEqual({ intersectionOf: ['application-role-id'] });
   });

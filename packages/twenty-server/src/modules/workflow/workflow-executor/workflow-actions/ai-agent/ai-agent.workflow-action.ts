@@ -180,7 +180,7 @@ export class AiAgentWorkflowAction implements WorkflowAction {
       operationType: UsageOperationType.AI_WORKFLOW_TOKEN,
       ...(isDefined(application)
         ? {
-            executionRoleIds: getRoleIdsFromRolePermissionConfig(
+            additionalRoleRestrictionIds: getRoleIdsFromRolePermissionConfig(
               executionContext.rolePermissionConfig,
             ),
             requireConnectedAccountUsableByCaller: true,

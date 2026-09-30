@@ -152,7 +152,7 @@ export class AgentAsyncExecutorService {
     agent,
     agentRoleId,
     runAsRoleId,
-    executionRoleIds,
+    additionalRoleRestrictionIds,
     requireConnectedAccountUsableByCaller,
     authContext,
     actorContext,
@@ -160,7 +160,7 @@ export class AgentAsyncExecutorService {
     agent: AgentEntity;
     agentRoleId: string;
     runAsRoleId?: string;
-    executionRoleIds?: string[];
+    additionalRoleRestrictionIds?: string[];
     requireConnectedAccountUsableByCaller?: boolean;
     authContext?: WorkspaceAuthContext;
     actorContext?: ActorMetadata;
@@ -173,7 +173,7 @@ export class AgentAsyncExecutorService {
       rolePermissionConfig: buildAgentRolePermissionConfig({
         agentRoleId,
         runAsRoleId,
-        executionRoleIds,
+        additionalRoleRestrictionIds,
       }),
       requireExplicitObjectGrants: true,
       requireConnectedAccountUsableByCaller,
@@ -188,7 +188,7 @@ export class AgentAsyncExecutorService {
       excludeTools: [
         ...OUTPUT_NAVIGATION_TOOL_NAMES,
         ...WORKFLOW_AGENT_EXCLUDED_TOOL_NAMES,
-        ...(isNonEmptyArray(executionRoleIds)
+        ...(isNonEmptyArray(additionalRoleRestrictionIds)
           ? EXECUTION_ROLE_BYPASSING_TOOL_NAMES
           : []),
       ],
@@ -204,7 +204,7 @@ export class AgentAsyncExecutorService {
     agent,
     agentRoleId,
     runAsRoleId,
-    executionRoleIds,
+    additionalRoleRestrictionIds,
     requireConnectedAccountUsableByCaller,
     authContext,
     actorContext,
@@ -212,7 +212,7 @@ export class AgentAsyncExecutorService {
     agent: AgentEntity;
     agentRoleId: string;
     runAsRoleId?: string;
-    executionRoleIds?: string[];
+    additionalRoleRestrictionIds?: string[];
     requireConnectedAccountUsableByCaller?: boolean;
     authContext?: WorkspaceAuthContext;
     actorContext?: ActorMetadata;
@@ -220,11 +220,11 @@ export class AgentAsyncExecutorService {
     const { userId, userWorkspaceId } = this.resolveUserIdentity(authContext);
 
     const rolePermissionConfig =
-      isDefined(runAsRoleId) || isNonEmptyArray(executionRoleIds)
+      isDefined(runAsRoleId) || isNonEmptyArray(additionalRoleRestrictionIds)
         ? buildAgentRolePermissionConfig({
             agentRoleId,
             runAsRoleId,
-            executionRoleIds,
+            additionalRoleRestrictionIds,
           })
         : undefined;
 
@@ -251,7 +251,7 @@ export class AgentAsyncExecutorService {
     const excludedToolNames = new Set<string>([
       ...OUTPUT_NAVIGATION_TOOL_NAMES,
       ...WORKFLOW_AGENT_EXCLUDED_TOOL_NAMES,
-      ...(isNonEmptyArray(executionRoleIds)
+      ...(isNonEmptyArray(additionalRoleRestrictionIds)
         ? EXECUTION_ROLE_BYPASSING_TOOL_NAMES
         : []),
     ]);
@@ -294,7 +294,7 @@ export class AgentAsyncExecutorService {
     workspaceId,
     userWorkspaceId,
     runAsRoleId,
-    executionRoleIds,
+    additionalRoleRestrictionIds,
     requireConnectedAccountUsableByCaller,
     operationType = UsageOperationType.AI_WORKFLOW_TOKEN,
     toolLoadingStrategy = 'preload',
@@ -315,7 +315,7 @@ export class AgentAsyncExecutorService {
     workspaceId: string;
     userWorkspaceId?: string | null;
     runAsRoleId?: string;
-    executionRoleIds?: string[];
+    additionalRoleRestrictionIds?: string[];
     requireConnectedAccountUsableByCaller?: boolean;
     operationType?: UsageOperationType;
     toolLoadingStrategy?: AgentToolLoadingStrategy;
@@ -391,7 +391,7 @@ export class AgentAsyncExecutorService {
               agent,
               agentRoleId,
               runAsRoleId,
-              executionRoleIds,
+              additionalRoleRestrictionIds,
               requireConnectedAccountUsableByCaller,
               authContext,
               actorContext,
@@ -404,7 +404,7 @@ export class AgentAsyncExecutorService {
               agent,
               agentRoleId,
               runAsRoleId,
-              executionRoleIds,
+              additionalRoleRestrictionIds,
               requireConnectedAccountUsableByCaller,
               authContext,
               actorContext,
