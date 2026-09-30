@@ -10,6 +10,7 @@ import {
   renderEmail,
 } from 'twenty-emails';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
+import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IsNull, MoreThan, QueryFailedError, Repository } from 'typeorm';
 
@@ -21,6 +22,7 @@ import {
 } from 'src/engine/core-modules/app-token/app-token.entity';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { userHasAdminPrivileges } from 'src/engine/core-modules/impersonation/utils/user-has-admin-privileges.util';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
@@ -78,6 +80,7 @@ export class TwoFactorAuthenticationRecoveryService {
     private readonly emailService: EmailService,
     private readonly i18nService: I18nService,
     private readonly twentyConfigService: TwentyConfigService,
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   async generateRecoveryCode({
@@ -311,6 +314,19 @@ export class TwoFactorAuthenticationRecoveryService {
     workspace: Pick<WorkspaceEntity, 'id' | 'displayName'>;
     recoveryCode: string;
   }): Promise<void> {
+    const isRecoveryCodeEnabled =
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_TWO_FACTOR_AUTHENTICATION_RECOVERY_CODE_ENABLED,
+        workspace.id,
+      );
+
+    if (!isRecoveryCodeEnabled) {
+      throw new TwoFactorAuthenticationException(
+        'Recovery codes are not enabled for this workspace',
+        TwoFactorAuthenticationExceptionCode.INVALID_RECOVERY_CODE,
+      );
+    }
+
     const userWorkspace = await this.getTargetUserWorkspaceOrThrow({
       targetUserId: userId,
       targetWorkspaceId: workspace.id,
@@ -326,32 +342,6 @@ export class TwoFactorAuthenticationRecoveryService {
         TWO_FACTOR_AUTHENTICATION_RECOVERY_CODE_REDEMPTION_RATE_LIMIT_WINDOW_MS,
     });
 
-    const redeemableCodeWhere = {
-      userWorkspaceId: userWorkspace.id,
-      codeHash: hashTwoFactorAuthenticationRecoveryCode(recoveryCode),
-      usedAt: IsNull(),
-      revokedAt: IsNull(),
-      expiresAt: MoreThan(new Date()),
-    };
-
-    const isRedeemable =
-      await this.twoFactorAuthenticationRecoveryCodeRepository.exists(
-        workspace.id,
-        { where: redeemableCodeWhere },
-      );
-
-    if (!isRedeemable) {
-      this.rejectRecoveryCode({ userId, workspaceId: workspace.id });
-    }
-
-    // Sessions live partly in the cache, so they are revoked before the code
-    // is consumed: if this fails the code stays usable and the member retries.
-    await this.userSessionService.revokeAllSessionsForUser({
-      userId,
-      workspaceId: workspace.id,
-      reason: UserSessionRevokedReason.TwoFactorAuthenticationReset,
-    });
-
     const isConsumed = await this.appTokenRepository.manager.transaction(
       async (entityManager) => {
         // The conditional UPDATE is what makes a code single use: when two
@@ -360,7 +350,14 @@ export class TwoFactorAuthenticationRecoveryService {
         const consumeResult = await entityManager
           .getRepository(TwoFactorAuthenticationRecoveryCodeEntity)
           .update(
-            { ...redeemableCodeWhere, workspaceId: workspace.id },
+            {
+              workspaceId: workspace.id,
+              userWorkspaceId: userWorkspace.id,
+              codeHash: hashTwoFactorAuthenticationRecoveryCode(recoveryCode),
+              usedAt: IsNull(),
+              revokedAt: IsNull(),
+              expiresAt: MoreThan(new Date()),
+            },
             { usedAt: new Date() },
           );
 
@@ -392,6 +389,14 @@ export class TwoFactorAuthenticationRecoveryService {
     if (!isConsumed) {
       this.rejectRecoveryCode({ userId, workspaceId: workspace.id });
     }
+
+    // Only the request that consumed the code signs the member out, so one
+    // that lost a race for the same code cannot revoke the winner's session.
+    await this.userSessionService.revokeAllSessionsForUser({
+      userId,
+      workspaceId: workspace.id,
+      reason: UserSessionRevokedReason.TwoFactorAuthenticationReset,
+    });
 
     this.twoFactorAuthenticationService.emitTwoFactorAuthenticationEvent({
       workspaceId: workspace.id,

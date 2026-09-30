@@ -563,9 +563,11 @@ describe('Two-factor authentication recovery codes (integration)', () => {
       jonySecret = await enrollAuthenticator(APPLE_JONY_MEMBER_ACCESS_TOKEN);
     });
 
-    it('admits exactly one of two simultaneous redemptions', async () => {
+    it('admits exactly one of two simultaneous redemptions and keeps the winner signed in', async () => {
       const { recoveryCode } = await generateCodeForJony();
       const loginToken = await getJonyLoginToken();
+      const [{ now: raceStartedAt }] =
+        await global.testDataSource.query('SELECT now()');
 
       const responses = await Promise.all(
         [0, 1].map(() =>
@@ -580,6 +582,13 @@ describe('Two-factor authentication recovery codes (integration)', () => {
       expect(
         responses.filter(({ errors }) => errors === undefined),
       ).toHaveLength(1);
+
+      const activeSessionsFromRace = await global.testDataSource.query(
+        `SELECT "id" FROM core."userSession" WHERE "userId" = $1 AND "workspaceId" = $2 AND "revokedAt" IS NULL AND "createdAt" >= $3`,
+        [USER_DATA_SEED_IDS.JONY, SEED_APPLE_WORKSPACE_ID, raceStartedAt],
+      );
+
+      expect(activeSessionsFromRace).toHaveLength(1);
 
       jonySecret = await enrollAuthenticator(APPLE_JONY_MEMBER_ACCESS_TOKEN);
     });
