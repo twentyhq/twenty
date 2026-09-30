@@ -1,6 +1,7 @@
 import { Command } from 'nest-commander';
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import { MetadataWritability } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { AgentHistoryUpgradeStorageService } from 'src/database/commands/agent-history/agent-history-upgrade-storage.service';
@@ -75,18 +76,37 @@ export class MoveAgentChatThreadsToRecordModelCommand extends ProvisionedWorkspa
         now: new Date().toISOString(),
         direction,
       });
-    const hasArchivedAtField = isDefined(
+    const archivedAtField =
       flatFieldMetadataMaps.byUniversalIdentifier[
         STANDARD_OBJECTS.agentChatThread.fields.archivedAt.universalIdentifier
-      ],
-    );
+      ];
+
+    // A chat this moved to the trash looks like one archived and deleted
+    // before the upgrade, so chats only move while archivedAt still has the
+    // writability this direction starts from, and before it changes
+    const shouldMoveChats =
+      isDefined(archivedAtField) &&
+      archivedAtField.writability ===
+        (direction === 'up'
+          ? MetadataWritability.OPEN
+          : MetadataWritability.SYSTEM);
 
     if (options.dryRun) {
       this.logger.log(
-        `[DRY RUN] Workspace ${workspaceId} (${direction}): would ${isDefined(objectToUpdate) ? 'update the chat object, ' : ''}update ${fieldsToUpdate.length} chat field(s)${hasArchivedAtField ? ' and move archived chats' : ''}`,
+        `[DRY RUN] Workspace ${workspaceId} (${direction}): would ${isDefined(objectToUpdate) ? 'update the chat object, ' : ''}update ${fieldsToUpdate.length} chat field(s)${shouldMoveChats ? ' and move archived chats' : ''}`,
       );
 
       return;
+    }
+
+    if (shouldMoveChats) {
+      const movedCount = await this.storage.run(workspaceId, ({ manager }) =>
+        moveArchivedChatThreadsToSoftDelete({ manager, workspaceId, direction }),
+      );
+
+      this.logger.log(
+        `Workspace ${workspaceId} (${direction}): moved ${movedCount} archived chat(s)`,
+      );
     }
 
     if (isDefined(objectToUpdate) || fieldsToUpdate.length > 0) {
@@ -118,17 +138,5 @@ export class MoveAgentChatThreadsToRecordModelCommand extends ProvisionedWorkspa
         throw new WorkspaceMigrationBuilderException(result);
       }
     }
-
-    if (!hasArchivedAtField) {
-      return;
-    }
-
-    const movedCount = await this.storage.run(workspaceId, ({ manager }) =>
-      moveArchivedChatThreadsToSoftDelete({ manager, workspaceId, direction }),
-    );
-
-    this.logger.log(
-      `Workspace ${workspaceId} (${direction}): moved ${movedCount} archived chat(s)`,
-    );
   }
 }
