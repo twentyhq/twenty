@@ -21,7 +21,7 @@ type RecordShowPageParameters = {
   objectRecordId?: string;
 };
 
-const WorkspaceRecordShowPageContent = ({
+export const RecordShowPageContent = ({
   parameters,
 }: {
   parameters: RecordShowPageParameters;
@@ -100,5 +100,5 @@ export const RecordShowPage = () => {
     return <CoreObjectShowPage objectRecordId={parameters.objectRecordId} />;
   }
 
-  return <WorkspaceRecordShowPageContent parameters={parameters} />;
+  return <RecordShowPageContent parameters={parameters} />;
 };
