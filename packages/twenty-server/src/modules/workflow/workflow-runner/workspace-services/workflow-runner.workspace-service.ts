@@ -19,6 +19,7 @@ import {
   type AnsweredToolPart,
   WorkflowAgentConversationWorkspaceService,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/services/workflow-agent-conversation.workspace-service';
+import { WorkflowStepExecutorException } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
 import { isWorkflowFormAction } from 'src/modules/workflow/workflow-executor/workflow-actions/form/guards/is-workflow-form-action.guard';
 import {
   WorkflowRunException,
@@ -145,9 +146,21 @@ export class WorkflowRunnerWorkspaceService {
     }
 
     const applicationBoundExecutionContext =
-      await this.workflowExecutionContextService.getApplicationBoundExecutionContext(
-        { workflowRunId, workspaceId },
-      );
+      await this.workflowExecutionContextService
+        .getApplicationBoundExecutionContext({ workflowRunId, workspaceId })
+        .catch((error: unknown) => {
+          if (error instanceof WorkflowStepExecutorException) {
+            throw new WorkflowVersionStepException(
+              error.message,
+              WorkflowVersionStepExceptionCode.INVALID_REQUEST,
+              {
+                userFriendlyMessage: msg`The permissions of this run no longer allow submitting this form.`,
+              },
+            );
+          }
+
+          throw error;
+        });
 
     const enrichedResponse =
       await this.workflowVersionStepOperationsWorkspaceService.enrichFormStepResponse(

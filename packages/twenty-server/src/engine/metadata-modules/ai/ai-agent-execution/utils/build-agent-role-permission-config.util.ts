@@ -11,7 +11,6 @@ export const buildAgentRolePermissionConfig = ({
   runAsRoleId?: string;
   additionalRoleRestrictionIds?: string[];
 }): RolePermissionConfig => {
-  // Restrictions must narrow the selected role, never replace it.
   const baseRoleId = isDefined(runAsRoleId) ? runAsRoleId : agentRoleId;
 
   return {
