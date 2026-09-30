@@ -1,8 +1,13 @@
+import { InMemoryCache } from '@apollo/client';
 import { act, renderHook } from '@testing-library/react';
 import { v4 } from 'uuid';
 
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { triggerCreateRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerCreateRecordsOptimisticEffect';
+import {
+  CACHED_PEOPLE_CONNECTION,
+  CACHED_PEOPLE_CONNECTION_QUERY,
+} from '@/object-record/hooks/__mocks__/cachedPeopleConnection';
 import {
   query,
   response,
@@ -125,5 +130,55 @@ describe('useCreateManyRecords', () => {
       }),
     );
     expect(mockRefetchAggregateQueries).toHaveBeenCalledTimes(1);
+  });
+
+  it('leaves cached connections unchanged when the creation fails', async () => {
+    jest
+      .mocked(triggerCreateRecordsOptimisticEffect)
+      .mockImplementationOnce(
+        jest.requireActual(
+          '@/apollo/optimistic-effect/utils/triggerCreateRecordsOptimisticEffect',
+        ).triggerCreateRecordsOptimisticEffect,
+      );
+
+    const cache = new InMemoryCache();
+
+    cache.writeQuery({
+      query: CACHED_PEOPLE_CONNECTION_QUERY,
+      data: CACHED_PEOPLE_CONNECTION,
+    });
+
+    const { result } = renderHook(
+      () =>
+        useCreateManyRecords({
+          objectNameSingular: CoreObjectNameSingular.Person,
+        }),
+      {
+        wrapper: getJestMetadataAndApolloMocksWrapper({
+          apolloMocks: [
+            {
+              request: {
+                query,
+                variables,
+              },
+              result: { errors: [{ message: 'Creation rejected' }] },
+            },
+          ],
+          cache,
+        }),
+      },
+    );
+
+    await act(async () => {
+      await expect(
+        result.current.createManyRecords({
+          recordsToCreate: variables.data,
+        }),
+      ).rejects.toThrow('Creation rejected');
+    });
+
+    expect(cache.readQuery({ query: CACHED_PEOPLE_CONNECTION_QUERY })).toEqual(
+      CACHED_PEOPLE_CONNECTION,
+    );
   });
 });

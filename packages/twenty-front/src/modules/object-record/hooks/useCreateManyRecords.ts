@@ -1,7 +1,6 @@
 import { v4 } from 'uuid';
 
 import { triggerCreateRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerCreateRecordsOptimisticEffect';
-import { triggerDestroyRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerDestroyRecordsOptimisticEffect';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
@@ -224,15 +223,6 @@ export const useCreateManyRecords = <
             upsertRecordsInStore,
             objectPermissionsByObjectMetadataId,
           });
-        });
-
-        triggerDestroyRecordsOptimisticEffect({
-          cache: apolloCoreClient.cache,
-          objectMetadataItem,
-          recordsToDestroy: recordsCreatedInCache,
-          objectMetadataItems,
-          upsertRecordsInStore,
-          objectPermissionsByObjectMetadataId,
         });
 
         throw error;

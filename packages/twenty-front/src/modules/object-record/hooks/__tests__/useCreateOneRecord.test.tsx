@@ -1,6 +1,11 @@
+import { InMemoryCache } from '@apollo/client';
 import { act, renderHook } from '@testing-library/react';
 
 import { CoreObjectNameSingular } from 'twenty-shared/types';
+import {
+  CACHED_PEOPLE_CONNECTION,
+  CACHED_PEOPLE_CONNECTION_QUERY,
+} from '@/object-record/hooks/__mocks__/cachedPeopleConnection';
 import {
   query,
   responseData,
@@ -65,5 +70,45 @@ describe('useCreateOneRecord', () => {
 
     expect(mocks[0].result).toHaveBeenCalled();
     expect(mockRefetchAggregateQueries).toHaveBeenCalledTimes(1);
+  });
+
+  it('leaves cached connections unchanged when the creation fails', async () => {
+    const cache = new InMemoryCache();
+
+    cache.writeQuery({
+      query: CACHED_PEOPLE_CONNECTION_QUERY,
+      data: CACHED_PEOPLE_CONNECTION,
+    });
+
+    const { result } = renderHook(
+      () =>
+        useCreateOneRecord({
+          objectNameSingular: CoreObjectNameSingular.Person,
+        }),
+      {
+        wrapper: getJestMetadataAndApolloMocksWrapper({
+          apolloMocks: [
+            {
+              request: {
+                query,
+                variables: { input: { ...input, id: PERSON_ID } },
+              },
+              result: { errors: [{ message: 'Creation rejected' }] },
+            },
+          ],
+          cache,
+        }),
+      },
+    );
+
+    await act(async () => {
+      await expect(result.current.createOneRecord(input)).rejects.toThrow(
+        'Creation rejected',
+      );
+    });
+
+    expect(cache.readQuery({ query: CACHED_PEOPLE_CONNECTION_QUERY })).toEqual(
+      CACHED_PEOPLE_CONNECTION,
+    );
   });
 });
