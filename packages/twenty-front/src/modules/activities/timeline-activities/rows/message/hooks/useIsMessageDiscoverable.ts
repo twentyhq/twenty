@@ -14,7 +14,7 @@ export const useIsMessageDiscoverable = ({
 }) => {
   const apolloCoreClient = useApolloCoreClient();
 
-  const { data, loading } = useQuery<{
+  const { data, loading, error } = useQuery<{
     messages: { edges: { node: { id: string } }[] };
   }>(DISCOVER_MESSAGE, {
     skip,
@@ -25,5 +25,6 @@ export const useIsMessageDiscoverable = ({
   return {
     isMessageDiscoverable: (data?.messages.edges.length ?? 0) > 0,
     loading,
+    error,
   };
 };

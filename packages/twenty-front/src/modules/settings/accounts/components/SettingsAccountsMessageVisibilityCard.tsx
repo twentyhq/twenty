@@ -23,7 +23,7 @@ const inboxSettingsVisibilityOptions = [
   },
   {
     title: msg`Private`,
-    description: msg`Only you and others who received an email can read it. Your workspace sees who took part and when.`,
+    description: msg`Only you and teammates who synced the same email can read the subject and body. Your workspace sees who took part and when.`,
     value: MessageChannelVisibility.METADATA,
     cardMedia: (
       <SettingsAccountsVisibilityIcon

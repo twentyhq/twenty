@@ -87,8 +87,11 @@ export const EventCardMessage = ({
       (graphQLError) => graphQLError.extensions?.code === 'NOT_FOUND',
     );
 
-  const { isMessageDiscoverable, loading: isMessageDiscoverableLoading } =
-    useIsMessageDiscoverable({ messageId, skip: !isMessageNotFound });
+  const {
+    isMessageDiscoverable,
+    loading: isMessageDiscoverableLoading,
+    error: isMessageDiscoverableError,
+  } = useIsMessageDiscoverable({ messageId, skip: !isMessageNotFound });
 
   if (isDefined(error)) {
     if (CombinedGraphQLErrors.is(error)) {
@@ -102,7 +105,7 @@ export const EventCardMessage = ({
         );
       }
 
-      if (isMessageNotFound) {
+      if (isMessageNotFound && !isDefined(isMessageDiscoverableError)) {
         if (isMessageDiscoverableLoading) {
           return <Trans>Loading...</Trans>;
         }

@@ -97,6 +97,7 @@ describe('EventCardMessage', () => {
       jest.mocked(useIsMessageDiscoverable).mockReturnValue({
         isMessageDiscoverable: true,
         loading: false,
+        error: undefined,
       });
 
       renderCard();
@@ -111,11 +112,25 @@ describe('EventCardMessage', () => {
       jest.mocked(useIsMessageDiscoverable).mockReturnValue({
         isMessageDiscoverable: false,
         loading: false,
+        error: undefined,
       });
 
       renderCard();
 
       expect(screen.getByText('Message not found')).toBeInTheDocument();
+    });
+
+    it('renders a loading error when the discovery check fails', () => {
+      jest.mocked(useIsMessageDiscoverable).mockReturnValue({
+        isMessageDiscoverable: false,
+        loading: false,
+        error: new Error('Network error'),
+      });
+
+      renderCard();
+
+      expect(screen.getByText('Error loading message')).toBeInTheDocument();
+      expect(screen.queryByText('Message not found')).not.toBeInTheDocument();
     });
   });
 
