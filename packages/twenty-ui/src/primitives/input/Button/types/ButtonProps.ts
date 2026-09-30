@@ -19,6 +19,4 @@ export type ButtonProps = Omit<
     startIcon?: ReactNode;
     endIcon?: ReactNode;
     hotkeys?: string[];
-    soon?: boolean;
-    soonLabel?: string;
   };

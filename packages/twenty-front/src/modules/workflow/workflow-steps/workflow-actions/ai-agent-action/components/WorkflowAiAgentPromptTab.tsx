@@ -5,6 +5,7 @@ import { agentResponseSchemaToOutputSchema } from '@/ai/utils/agentResponseSchem
 import { createDefaultOutputSchemaField } from '@/ai/utils/createDefaultOutputSchemaField';
 import { fieldsToSchema } from '@/ai/utils/fieldsToSchema';
 import { schemaToFields } from '@/ai/utils/schemaToFields';
+import { FormBooleanFieldInput } from '@/object-record/record-field/ui/form-types/components/FormBooleanFieldInput';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { type WorkflowAiAgentAction } from '@/workflow/types/Workflow';
@@ -125,6 +126,19 @@ export const WorkflowAiAgentPromptTab = ({
     });
   };
 
+  const handleCanAskQuestionsChange = (value: boolean | string | null) => {
+    onActionUpdate?.({
+      ...action,
+      settings: {
+        ...action.settings,
+        input: {
+          ...action.settings.input,
+          canAskQuestions: value === true,
+        },
+      },
+    });
+  };
+
   const handleOutputSchemaChange = (updatedFields: OutputSchemaField[]) => {
     setOutputSchemaFields(updatedFields);
     void debouncedUpdateResponseSchema(fieldsToSchema(updatedFields));
@@ -146,6 +160,13 @@ export const WorkflowAiAgentPromptTab = ({
         defaultValue={prompt}
         onChange={onPromptChange}
         readonly={readonly}
+      />
+
+      <FormBooleanFieldInput
+        label={t`Can ask questions`}
+        defaultValue={action.settings.input.canAskQuestions === true}
+        readonly={readonly}
+        onChange={handleCanAskQuestionsChange}
       />
 
       <SettingsAgentModelCapabilities

@@ -29,5 +29,6 @@ export type MenuItemProps = {
   focused?: boolean;
   selected?: boolean;
   hotKeys?: Nullable<string[]>;
+  hotKeysJoinLabel?: string;
   isSubMenuOpened?: boolean;
 };

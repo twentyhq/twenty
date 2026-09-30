@@ -1,11 +1,5 @@
-import {
-  mapAgentHistorySelectToWorkspace,
-  mapAgentHistoryValuesToWorkspace,
-  mapAgentHistoryWhereToWorkspace,
-} from 'src/engine/metadata-modules/ai/ai-history/utils/agent-history-workspace-mapping.util';
-import { normalizeAgentHistoryRecord } from 'src/engine/metadata-modules/ai/ai-history/utils/normalize-agent-history-record.util';
-import { prepareAgentMessageSenderValues } from 'src/engine/metadata-modules/ai/ai-history/utils/prepare-agent-message-sender-values.util';
-import { mapAgentHistoryOrderToWorkspace } from 'src/engine/metadata-modules/ai/ai-history/utils/map-agent-history-order-to-workspace.util';
+import { assertAgentMessageSenderFields } from 'src/engine/metadata-modules/ai/ai-history/utils/assert-agent-message-sender-fields.util';
+import { addAgentMessageSenderWorkspaceMember } from 'src/engine/metadata-modules/ai/ai-history/utils/add-agent-message-sender-workspace-member.util';
 import { hydrateAgentHistoryFiles } from 'src/engine/metadata-modules/ai/ai-history/utils/hydrate-agent-history-files.util';
 import { removeAgentHistoryFileRelations } from 'src/engine/metadata-modules/ai/ai-history/utils/remove-agent-history-file-relations.util';
 import {
@@ -14,19 +8,14 @@ import {
 } from 'src/engine/metadata-modules/ai/ai.exception';
 import { AgentHistoryStorageException } from 'src/engine/metadata-modules/ai/ai-history/exceptions/agent-history-storage.exception';
 import { type AgentHistoryObjectName } from 'src/engine/metadata-modules/ai/ai-history/types/agent-history-object-name.type';
-import {
-  type FindManyOptions,
-  type FindOneOptions,
-  type FindOptionsWhere,
-  type ObjectLiteral,
-} from 'typeorm';
+import { type FindOptionsWhere, type ObjectLiteral } from 'typeorm';
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyString } from 'twenty-shared/utils';
 
 import {
-  type AgentHistoryStorageService,
+  type AgentHistoryWorkspaceStorageService,
   type AgentHistoryStorageContext,
-} from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-storage.service';
+} from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-workspace-storage.service';
 import { type WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import {
@@ -35,12 +24,13 @@ import {
 } from 'src/engine/twenty-orm/query-builder/utils/apply-find-options.util';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 
-export class AgentHistoryRepository<
-  TRecord extends { id: string; workspaceId: string },
-> {
+export class AgentHistoryRepository<TRecord extends { id: string }> {
   constructor(
     private readonly name: AgentHistoryObjectName,
-    private readonly storageService: AgentHistoryStorageService,
+    private readonly storageService: Pick<
+      AgentHistoryWorkspaceStorageService,
+      'run'
+    >,
     private readonly workspaceOrmManager: Pick<
       WorkspaceOrmManager,
       'executeInWorkspaceContext' | 'getRepository'
@@ -54,14 +44,9 @@ export class AgentHistoryRepository<
       context: AgentHistoryStorageContext,
     ) => Promise<TResult>,
   ): Promise<TResult> {
-    // Load metadata before reserving a core connection: a cold cache may itself
-    // need the core pool. Holding every pool slot here would deadlock startup.
-    // WorkspaceDataSourceService owns a separate pg pool. Keep the fence until
-    // its write commits; the core transaction contains only coordination reads.
-    // A later core COMMIT failure does not roll back an already committed write.
-    return this.workspaceOrmManager.executeInWorkspaceContext(
-      () =>
-        this.storageService.run(workspaceId, (context) =>
+    return this.storageService.run(workspaceId, (context) =>
+      this.workspaceOrmManager.executeInWorkspaceContext(
+        () =>
           work(
             this.workspaceOrmManager.getRepository<TRecord>(
               this.name,
@@ -70,59 +55,44 @@ export class AgentHistoryRepository<
             ),
             context,
           ),
-        ),
-      buildSystemAuthContext(workspaceId),
-      { lite: true },
+        buildSystemAuthContext(workspaceId),
+        { lite: true },
+      ),
     );
   }
 
   async find(
     workspaceId: string,
-    options?: FindManyOptions<TRecord>,
+    options?: WorkspaceFindOptions,
   ): Promise<TRecord[]> {
     return this.run(workspaceId, async (repository, context) => {
-      const relations = normalizeFindOptionsRelations(
-        (options?.relations ?? {}) as WorkspaceFindOptions['relations'] & {},
-      );
+      const relations = normalizeFindOptionsRelations(options?.relations ?? {});
       const records = await repository.find({
         ...options,
-        select: mapAgentHistorySelectToWorkspace(this.name, options?.select),
-        order: mapAgentHistoryOrderToWorkspace(this.name, options?.order),
-        where: mapAgentHistoryWhereToWorkspace<TRecord>(
-          this.name,
-          options?.where,
-        ),
         withDeleted: true,
         relations: removeAgentHistoryFileRelations(relations),
-      } as WorkspaceFindOptions);
-      const normalized = records.map((record) =>
-        normalizeAgentHistoryRecord({
-          record,
-          workspaceId,
-          objectName: this.name,
-        }),
-      );
+      });
       if (JSON.stringify(relations).includes('"file"')) {
         await hydrateAgentHistoryFiles({
-          records: normalized,
+          records,
           manager: context.manager,
           workspaceId,
         });
       }
-      return normalized as TRecord[];
+      return records as TRecord[];
     });
   }
 
   async findOne(
     workspaceId: string,
-    options: FindOneOptions<TRecord>,
+    options: WorkspaceFindOptions,
   ): Promise<TRecord | null> {
     return (await this.find(workspaceId, { ...options, take: 1 }))[0] ?? null;
   }
 
   async findOneOrFail(
     workspaceId: string,
-    options: FindOneOptions<TRecord>,
+    options: WorkspaceFindOptions,
   ): Promise<TRecord> {
     const record = await this.findOne(workspaceId, options);
     if (!isDefined(record)) {
@@ -146,20 +116,12 @@ export class AgentHistoryRepository<
     return record;
   }
 
-  count(
-    workspaceId: string,
-    options?: FindManyOptions<TRecord>,
-  ): Promise<number> {
+  count(workspaceId: string, options?: WorkspaceFindOptions): Promise<number> {
     return this.run(workspaceId, (repository) =>
       repository.count({
         ...options,
-        order: mapAgentHistoryOrderToWorkspace(this.name, options?.order),
-        where: mapAgentHistoryWhereToWorkspace<TRecord>(
-          this.name,
-          options?.where,
-        ),
         withDeleted: true,
-      } as WorkspaceFindOptions),
+      }),
     );
   }
 
@@ -169,30 +131,22 @@ export class AgentHistoryRepository<
   ): Promise<boolean> {
     return this.run(workspaceId, (repository) =>
       repository.exists({
-        where: mapAgentHistoryWhereToWorkspace<TRecord>(this.name, where),
+        where,
         withDeleted: true,
       }),
     );
-  }
-
-  private async prepareWorkspaceInsert(
-    values: QueryDeepPartialEntity<TRecord> | QueryDeepPartialEntity<TRecord>[],
-    context: AgentHistoryStorageContext,
-  ): Promise<ObjectLiteral | ObjectLiteral[]> {
-    const mapped = mapAgentHistoryValuesToWorkspace<TRecord>(this.name, values);
-
-    return this.name === 'agentMessage'
-      ? prepareAgentMessageSenderValues(mapped, context)
-      : mapped;
   }
 
   insert(
     workspaceId: string,
     values: QueryDeepPartialEntity<TRecord> | QueryDeepPartialEntity<TRecord>[],
   ) {
-    return this.run(workspaceId, async (repository, context) =>
-      repository.insert(await this.prepareWorkspaceInsert(values, context)),
-    );
+    return this.run(workspaceId, async (repository, context) => {
+      if (this.name === 'agentMessage') assertAgentMessageSenderFields();
+      return repository.insert(
+        await this.addSenderRelation(values, workspaceId, context),
+      );
+    });
   }
 
   insertAndReturnOne(
@@ -200,15 +154,24 @@ export class AgentHistoryRepository<
     values: QueryDeepPartialEntity<TRecord>,
   ): Promise<TRecord> {
     return this.run(workspaceId, async (repository, context) => {
+      if (this.name === 'agentMessage') assertAgentMessageSenderFields();
       const result = await repository.insert(
-        await this.prepareWorkspaceInsert(values, context),
+        await this.addSenderRelation(values, workspaceId, context),
       );
-      return normalizeAgentHistoryRecord({
-        record: result.raw[0],
-        workspaceId,
-        objectName: this.name,
-      }) as TRecord;
+      return result.raw[0] as TRecord;
     });
+  }
+
+  private async addSenderRelation(
+    values: QueryDeepPartialEntity<TRecord> | QueryDeepPartialEntity<TRecord>[],
+    workspaceId: string,
+    context: AgentHistoryStorageContext,
+  ) {
+    const records: ObjectLiteral[] = Array.isArray(values) ? values : [values];
+    return this.name === 'agentMessage' &&
+      records.some((record) => isNonEmptyString(record.senderUserWorkspaceId))
+      ? await addAgentMessageSenderWorkspaceMember(values, workspaceId, context)
+      : values;
   }
 
   update(
@@ -220,14 +183,16 @@ export class AgentHistoryRepository<
       const result = await repository
         .createQueryBuilder()
         .withDeleted()
-        .where(mapAgentHistoryWhereToWorkspace<TRecord>(this.name, where) ?? {})
+        .where(where)
         .update()
-        .set(mapAgentHistoryValuesToWorkspace<TRecord>(this.name, values))
+        .set(values)
         .returning(['id'])
         .execute();
       return {
         affected: result.generatedMaps.length,
-        generatedMaps: result.generatedMaps,
+        generatedMaps: result.generatedMaps.map(
+          ({ id }): Pick<TRecord, 'id'> => ({ id }),
+        ),
         raw: result.generatedMaps,
       };
     });
@@ -238,7 +203,7 @@ export class AgentHistoryRepository<
       const result = await repository
         .createQueryBuilder()
         .withDeleted()
-        .where(mapAgentHistoryWhereToWorkspace<TRecord>(this.name, where) ?? {})
+        .where(where)
         .delete()
         .returning(['id'])
         .execute();
@@ -256,6 +221,7 @@ export class AgentHistoryRepository<
     conflictPaths: string[],
   ) {
     return this.run(workspaceId, async (repository, context) => {
+      if (this.name === 'agentMessage') assertAgentMessageSenderFields();
       // Workspace upsert selects before inserting. Serialize concurrent stream
       // checkpoints for the same identity so both cannot take the insert path.
       const valuesByField: ObjectLiteral = values;
@@ -269,7 +235,11 @@ export class AgentHistoryRepository<
         ],
       );
       return repository.upsert(
-        mapAgentHistoryValuesToWorkspace<TRecord>(this.name, values),
+        (await this.addSenderRelation(
+          values,
+          workspaceId,
+          context,
+        )) as QueryDeepPartialEntity<TRecord>,
         conflictPaths,
       );
     });

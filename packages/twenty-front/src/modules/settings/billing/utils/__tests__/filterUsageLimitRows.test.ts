@@ -6,7 +6,7 @@ import { UsageResourceType } from '~/generated-metadata/graphql';
 
 const buildRow = (overrides: Partial<UsageLimitRow> = {}): UsageLimitRow => ({
   id: 'row-id',
-  name: 'AI · AI Chat',
+  name: 'AI · Chats',
   NameIcon: IconCoins,
   spenderName: 'Tim Cook',
   spenderAvatarUrl: null,

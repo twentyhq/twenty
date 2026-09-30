@@ -5,27 +5,17 @@ import {
   RecordShareAccessLevel,
 } from 'twenty-shared/types';
 import { RecordAccessPolicyService } from 'src/engine/core-modules/record-share/services/record-access-policy.service';
-import { RecordSharingFeatureService } from 'src/engine/core-modules/record-share/services/record-sharing-feature.service';
 import { RecordShareStorageService } from 'src/engine/core-modules/record-share/services/record-share-storage.service';
 import { COMPANY_FLAT_OBJECT_MOCK } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/company-flat-object.mock';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
-const setup = async ({
-  rowCause,
-  legacyOpen = false,
-}: { rowCause?: RecordShareRowCause; legacyOpen?: boolean } = {}) => {
+const setup = async ({ rowCause }: { rowCause?: RecordShareRowCause } = {}) => {
   const module = await Test.createTestingModule({
     providers: [
       RecordAccessPolicyService,
       { provide: WorkspaceOrmManager, useValue: {} },
       { provide: WorkspaceCacheService, useValue: {} },
-      {
-        provide: RecordSharingFeatureService,
-        useValue: {
-          isLegacyRecordAccessOpen: jest.fn().mockResolvedValue(legacyOpen),
-        },
-      },
       {
         provide: RecordShareStorageService,
         useValue: {
@@ -64,7 +54,7 @@ const subject = {
 };
 
 describe('mandatory event visibility', () => {
-  it('resolves rollout access once per batch across concurrent subscribers', async () => {
+  it('loads record grants once per batch across concurrent subscribers', async () => {
     const { module, gate } = await setup({
       rowCause: RecordShareRowCause.OWNER,
     });
@@ -78,11 +68,11 @@ describe('mandatory event visibility', () => {
     ]);
     expect(admitted).toEqual([new Set(['record']), new Set()]);
     expect(
-      module.get(RecordSharingFeatureService).isLegacyRecordAccessOpen,
+      module.get(RecordShareStorageService).findByRecordIds,
     ).toHaveBeenCalledTimes(1);
     await gate(MetadataReadability.PRIVATE).resolveAdmittedRecordIds(subject);
     expect(
-      module.get(RecordSharingFeatureService).isLegacyRecordAccessOpen,
+      module.get(RecordShareStorageService).findByRecordIds,
     ).toHaveBeenCalledTimes(2);
     await module.close();
   });
@@ -113,16 +103,11 @@ describe('mandatory event visibility', () => {
     await module.close();
   });
 
-  it.each([true, false])(
-    'uses the resolved legacy-access decision (%s) for unshared events',
-    async (legacyOpen) => {
-      const { module, gate } = await setup({ legacyOpen });
-      expect(
-        await gate(MetadataReadability.PRIVATE).resolveAdmittedRecordIds(
-          subject,
-        ),
-      ).toEqual(new Set(legacyOpen ? ['record'] : []));
-      await module.close();
-    },
-  );
+  it('denies unshared private events', async () => {
+    const { module, gate } = await setup();
+    expect(
+      await gate(MetadataReadability.PRIVATE).resolveAdmittedRecordIds(subject),
+    ).toEqual(new Set());
+    await module.close();
+  });
 });

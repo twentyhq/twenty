@@ -1,4 +1,3 @@
-import { msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
 import { isNumber } from 'class-validator';
@@ -8,15 +7,9 @@ import {
 } from 'src/engine/core-modules/billing/billing.exception';
 import { type BillingPriceEntity } from 'src/engine/core-modules/billing/entities/billing-price.entity';
 import { type BillingSubscriptionItemEntity } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
-import { type BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
 import { BillingUsageType } from 'src/engine/core-modules/billing/enums/billing-usage-type.enum';
 import { type BillingMeterPrice } from 'src/engine/core-modules/billing/types/billing-meter-price.type';
-import {
-  type LicensedBillingSubscriptionItem,
-  type MeteredBillingSubscriptionItem,
-} from 'src/engine/core-modules/billing/types/billing-subscription-item.type';
-import { type BillingSubscriptionWithSubscriptionItems } from 'src/engine/core-modules/billing/types/billing-subscription-with-subscription-items.type';
 import { type MeterBillingPriceTiers } from 'src/engine/core-modules/billing/types/meter-billing-price-tier.type';
 
 const assertIsMeteredTiersSchemaOrThrow = (
@@ -50,38 +43,6 @@ const isMeteredTiersSchema = (
   }
 
   return true;
-};
-
-const assertIsLicensedSubscriptionItem = (
-  subscriptionItem: BillingSubscriptionItemEntity,
-): asserts subscriptionItem is LicensedBillingSubscriptionItem => {
-  if (
-    subscriptionItem.quantity !== null &&
-    subscriptionItem.billingProduct.metadata.priceUsageBased ===
-      BillingUsageType.LICENSED
-  )
-    return;
-
-  throw new BillingException(
-    'Subscription Item is not a licence subscription item',
-    BillingExceptionCode.BILLING_SUBSCRIPTION_ITEM_INVALID,
-  );
-};
-
-const assertIsMeteredSubscriptionItem = (
-  subscriptionItem: BillingSubscriptionItemEntity,
-): asserts subscriptionItem is MeteredBillingSubscriptionItem => {
-  if (
-    subscriptionItem.quantity === null &&
-    subscriptionItem.billingProduct.metadata.priceUsageBased ===
-      BillingUsageType.METERED
-  )
-    return;
-
-  throw new BillingException(
-    'Subscription Item is not a meter subscription item',
-    BillingExceptionCode.BILLING_SUBSCRIPTION_ITEM_INVALID,
-  );
 };
 
 const assertIsMeteredPrice = (
@@ -118,36 +79,6 @@ const isMeteredPrice = (
   }
 
   return true;
-};
-
-const assertIsSubscription = (
-  subscription: BillingSubscriptionEntity | undefined,
-): asserts subscription is BillingSubscriptionEntity &
-  BillingSubscriptionWithSubscriptionItems => {
-  if (!isDefined(subscription)) {
-    throw new BillingException(
-      'Subscription is not defined',
-      BillingExceptionCode.BILLING_SUBSCRIPTION_NOT_FOUND,
-    );
-  }
-  if (!isDefined(subscription.billingSubscriptionItems)) {
-    throw new BillingException(
-      'Subscription items is not defined. Check the relation in the query',
-      BillingExceptionCode.BILLING_SUBSCRIPTION_ITEM_NOT_FOUND,
-    );
-  }
-
-  if (subscription.billingSubscriptionItems.length !== 2) {
-    throw new BillingException(
-      'Subscription must have exactly two subscription items. Check that stripe and database are in sync',
-      BillingExceptionCode.BILLING_SUBSCRIPTION_INVALID,
-      {
-        userFriendlyMessage: msg`Your billing subscription is corrupted. Please contact support.`,
-      },
-    );
-  }
-
-  return;
 };
 
 // V2 validators — do not throw for V1 items; only used on V2 code paths
@@ -192,10 +123,7 @@ const getCapFromCreditMetadata = (price: BillingPriceEntity): number => {
 export const billingValidator: {
   assertIsMeteredTiersSchemaOrThrow: typeof assertIsMeteredTiersSchemaOrThrow;
   isMeteredTiersSchema: typeof isMeteredTiersSchema;
-  assertIsLicensedSubscriptionItem: typeof assertIsLicensedSubscriptionItem;
-  assertIsMeteredSubscriptionItem: typeof assertIsMeteredSubscriptionItem;
   assertIsMeteredPrice: typeof assertIsMeteredPrice;
-  assertIsSubscription: typeof assertIsSubscription;
   isMeteredPrice: typeof isMeteredPrice;
   assertIsLicensedResourceCreditPrice: typeof assertIsLicensedResourceCreditPrice;
   isLicensedResourceCreditItem: typeof isLicensedResourceCreditItem;
@@ -203,10 +131,7 @@ export const billingValidator: {
 } = {
   assertIsMeteredTiersSchemaOrThrow,
   isMeteredTiersSchema,
-  assertIsLicensedSubscriptionItem,
-  assertIsMeteredSubscriptionItem,
   assertIsMeteredPrice,
-  assertIsSubscription,
   isMeteredPrice,
   assertIsLicensedResourceCreditPrice,
   isLicensedResourceCreditItem,

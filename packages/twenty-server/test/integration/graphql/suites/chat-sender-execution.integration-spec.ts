@@ -1,6 +1,8 @@
+import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 import { AddChatMessageSenderFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-instance-command-fast-1790171503074-add-chat-message-sender';
 import { randomUUID } from 'node:crypto';
 import { parse } from 'graphql';
+import { destroyAgentChatThread } from 'test/integration/utils/destroy-agent-chat-thread.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
@@ -14,6 +16,7 @@ import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 
 const workspaceId = SEED_APPLE_WORKSPACE_ID;
+const workspaceMemberId = WORKSPACE_MEMBER_DATA_SEED_IDS.JANE;
 const userWorkspaceId = USER_WORKSPACE_DATA_SEED_IDS.JANE;
 const otherUserWorkspaceId = USER_WORKSPACE_DATA_SEED_IDS.JONY;
 
@@ -28,13 +31,13 @@ describe('Persisted chat senders', () => {
     );
     await chat.createThread({
       workspaceId,
-      userWorkspaceId,
+      workspaceMemberId,
       id: threadId,
       title: 'Sender regression',
     });
   });
   afterAll(async () => {
-    await chat.hardDeleteThread({ workspaceId, userWorkspaceId, threadId });
+    await destroyAgentChatThread({ threadId });
   });
 
   it('persists the authenticated user on ordinary and queued messages', async () => {
@@ -51,6 +54,7 @@ describe('Persisted chat senders', () => {
       workspaceId,
       threadId,
       userWorkspaceId,
+      workspaceMemberId,
       text: 'Next',
     });
     for (const messageId of [message.id, queued.id]) {
@@ -98,6 +102,7 @@ describe('Persisted chat senders', () => {
       workspaceId,
       threadId,
       userWorkspaceId,
+      workspaceMemberId,
       text: 'Next attributed message',
     });
     const turnId = await chat.promoteQueuedMessage({
@@ -150,6 +155,7 @@ describe('Persisted chat senders', () => {
       getCoreRepository<UserWorkspaceEntity>(UserWorkspaceEntity).manager
         .connection;
     const args = { workspaceId, dataSource, index: 0, total: 1, options: {} };
+
     await expect(
       actors.authorizeJob({
         workspaceId,
@@ -164,7 +170,7 @@ describe('Persisted chat senders', () => {
     await command.up(args);
     await command.down(args);
     const storage = getAppProviderByClassName<AgentHistoryStorageService>(
-      'AgentHistoryStorageService',
+      'AgentHistoryUpgradeStorageService',
     );
     const records = await storage.run(workspaceId, ({ manager, table }) =>
       manager.query(

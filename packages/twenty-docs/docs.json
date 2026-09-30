@@ -525,7 +525,9 @@
                       "ui/tokens",
                       "ui/dark-mode",
                       "ui/ssr",
-                      "ui/accessibility"
+                      "ui/accessibility",
+                      "ui/icons",
+                      "ui/testing"
                     ]
                   },
                   {
@@ -553,7 +555,6 @@
                         "group": "Feedback",
                         "pages": [
                           "ui/primitives/feedback/banner",
-                          "ui/primitives/feedback/circular-progress-bar",
                           "ui/primitives/feedback/loader",
                           "ui/primitives/feedback/progress-bar"
                         ]
@@ -579,7 +580,7 @@
                       {
                         "group": "Layout",
                         "pages": [
-                          "ui/primitives/layout/animated-expandable-container",
+                          "ui/primitives/layout/collapsible",
                           "ui/primitives/layout/horizontal-separator",
                           "ui/primitives/layout/resize-handle",
                           "ui/primitives/layout/text-direction-provider"
@@ -589,8 +590,7 @@
                         "group": "Navigation",
                         "pages": [
                           "ui/primitives/navigation/list-item",
-                          "ui/primitives/navigation/tabs",
-                          "ui/primitives/navigation/click-to-action-link"
+                          "ui/primitives/navigation/tabs"
                         ]
                       },
                       {
@@ -627,7 +627,23 @@
                       "ui/components/dropdown",
                       "ui/components/tab-button",
                       "ui/components/code-editor",
-                      "ui/components/toast"
+                      "ui/components/toast",
+                      "ui/components/animated-icon-crossfade",
+                      "ui/components/avatar-group",
+                      "ui/components/callout",
+                      "ui/components/card-picker",
+                      "ui/components/color-scheme-picker",
+                      "ui/components/command-block",
+                      "ui/components/info",
+                      "ui/components/inline-banner",
+                      "ui/components/json-tree",
+                      "ui/components/menu-items",
+                      "ui/components/menu-picker",
+                      "ui/components/navigation-bar",
+                      "ui/components/notification-counter",
+                      "ui/components/rounded-link",
+                      "ui/components/search-input",
+                      "ui/components/tinted-icon-tile"
                     ]
                   }
                 ]
@@ -6665,6 +6681,10 @@
     }
   },
   "redirects": [
+    {
+      "source": "/ui/primitives/layout/animated-expandable-container",
+      "destination": "/ui/primitives/layout/collapsible"
+    },
     {
       "source": "/twenty-ui/input/checkbox",
       "destination": "/ui/primitives/input/checkbox"

@@ -253,7 +253,7 @@ describe('Generic sharing API on an ordinary private object', () => {
     await setFlag(originalFlag);
   });
 
-  it('keeps flag-off creates private after activation', async () => {
+  it('keeps creates private independently of the retired sharing flag', async () => {
     await setFlag(false);
     const recordId = randomUUID();
     const created = await makeGraphqlApiRequest(
@@ -278,7 +278,7 @@ describe('Generic sharing API on an ordinary private object', () => {
         (await readSettings(APPLE_JANE_ADMIN_ACCESS_TOKEN)).body.data
           .recordSharing,
       ).toMatchObject({
-        isEnabled: false,
+        isEnabled: true,
         permissions: { canRead: true, canUpdate: true },
         shares: [
           expect.objectContaining({
@@ -627,13 +627,13 @@ describe('Generic sharing API on an ordinary private object', () => {
     }
   });
 
-  it('preserves saved grants while the sharing UI is disabled', async () => {
+  it('enforces saved grants independently of the retired sharing flag', async () => {
     await grant(RecordShareAccessLevel.READ);
     await setFlag(false);
     expect((await read()).body.data[OBJECT_PLURAL].edges).toHaveLength(1);
     expect(
       (await settings(APPLE_JANE_ADMIN_ACCESS_TOKEN)).body.data.recordSharing,
-    ).toMatchObject({ isEnabled: false, permissions: { canUpdate: true } });
+    ).toMatchObject({ isEnabled: true, permissions: { canUpdate: true } });
     await grant(RecordShareAccessLevel.READ, RecordShareRowCause.APPLICATION);
     expect((await read()).body.data[OBJECT_PLURAL].edges).toHaveLength(1);
     expect(

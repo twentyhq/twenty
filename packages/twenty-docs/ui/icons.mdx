@@ -1,0 +1,82 @@
+---
+title: Icons
+description: Named icons, dynamic lookup, illustration wrappers, and their supported props.
+---
+
+import IconReference from '/snippets/ui/generated/icon/icon.mdx';
+import IconsProviderReference from '/snippets/ui/generated/icon/icons-provider.mdx';
+import IllustrationIconWrapperReference from '/snippets/ui/generated/icon/illustration-icon-wrapper.mdx';
+import ThinkingOrbitLoaderIconReference from '/snippets/ui/generated/icon/thinking-orbit-loader-icon.mdx';
+import IconCatalog from '/snippets/ui/generated/icon/catalog.mdx';
+
+Import named icons from `twenty-ui/icon`. Use the surrounding control or visible text to communicate meaning. Decorative icons should be hidden from assistive technology.
+
+```tsx
+import { IconCheck } from 'twenty-ui/icon';
+import { Button } from 'twenty-ui/primitives/input';
+
+export const CompleteButton = () => (
+  <Button startIcon={<IconCheck />}>Complete task</Button>
+);
+```
+
+Button icon slots already size their icon and hide it from assistive technology, so the icon needs no extra props there.
+
+## Supported props
+
+Tabler icons accept `size` (number or CSS length), `stroke` (stroke width), `color`, and native SVG attributes and refs. Custom brand and illustration icons accept only the props listed in the generated catalog below. Their sizing defaults vary; pass `size` for a consistent result. Brand colors can be fixed by the artwork, so a color override is available only where listed.
+
+Custom icons that do not accept accessible attributes need a wrapper with the appropriate label or `aria-hidden`. `className` and `style` are also available only where listed. Import a specific icon when possible to avoid loading the dynamic catalog.
+
+## Dynamic icon names
+
+Use `IconsProvider` and `Icon` when names are chosen at runtime. The provider loads the complete icon map asynchronously; bundles built without code splitting, such as front components, include the whole map. Before loading completes, and for unknown names, `Icon` renders `Icon123`. The dynamic map differs from the named export catalog; do not assume every brand or illustration export can be resolved by name.
+
+```tsx
+import { Icon, IconsProvider } from 'twenty-ui/icon';
+import { Button } from 'twenty-ui/primitives/input';
+
+export const DynamicAction = ({ iconName }: { iconName: string }) => (
+  <IconsProvider>
+    <Button startIcon={<Icon name={iconName} />}>Open record</Button>
+  </IconsProvider>
+);
+```
+
+`useIcons()` exposes `getIcon(name, customDefaultIcon)` and `getIcons()` inside the same provider. `getIcons()` initially returns an empty map. `getIcon` uses the named fallback when it exists, then `Icon123`. The provider accepts one child element; use a fragment for multiple children.
+
+### Icon props
+
+<IconReference />
+
+### IconsProvider props
+
+<IconsProviderReference />
+
+## Illustration wrapper
+
+`IllustrationIconWrapper` supplies the illustration container styling and forwards native div attributes, children, styles, and refs. Every `IllustrationIcon*` export already renders inside it, so use the wrapper only to frame your own illustration content.
+
+```tsx
+import { IconCalendarEvent, IllustrationIconWrapper } from 'twenty-ui/icon';
+
+export const CalendarIllustration = () => (
+  <IllustrationIconWrapper role="img" aria-label="Calendar event">
+    <IconCalendarEvent size={32} />
+  </IllustrationIconWrapper>
+);
+```
+
+<IllustrationIconWrapperReference />
+
+## Animated loader icon
+
+`ThinkingOrbitLoaderIcon` animates continuously while mounted. It is decorative and always hidden from assistive technology. Show loading text separately and mount or remove the icon according to application state.
+
+<ThinkingOrbitLoaderIconReference />
+
+## Named icon catalog
+
+This catalog is generated from the public `twenty-ui/icon` exports and groups icons by the props they accept.
+
+<IconCatalog />

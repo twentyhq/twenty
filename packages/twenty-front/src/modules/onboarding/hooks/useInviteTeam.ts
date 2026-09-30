@@ -2,12 +2,11 @@ import { isBookCallOnboardingStepEnabledState } from '@/client-config/states/isB
 import { isCompanyEnrichmentEnabledState } from '@/client-config/states/isCompanyEnrichmentEnabledState';
 import { onboardingConfigState } from '@/client-config/states/onboardingConfigState';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
-import { onboardingFreeCreditsState } from '@/onboarding/states/onboardingFreeCreditsState';
+import { useSetOnboardingStepFreeCredits } from '@/onboarding/hooks/useSetOnboardingStepFreeCredits';
 import { waitForCompanyEnrichmentSettlement } from '@/onboarding/utils/waitForCompanyEnrichmentSettlement';
 import { PageFocusId } from '@/types/PageFocusId';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useCreateWorkspaceInvitation } from '@/workspace-invitation/hooks/useCreateWorkspaceInvitation';
 import { useQuery } from '@apollo/client/react';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -32,7 +31,7 @@ export const useInviteTeam = () => {
   const { enqueueToast } = useToast();
   const { sendInvitation } = useCreateWorkspaceInvitation();
   const setNextOnboardingStatus = useSetNextOnboardingStatus();
-  const setOnboardingFreeCredits = useSetAtomState(onboardingFreeCreditsState);
+  const setOnboardingStepFreeCredits = useSetOnboardingStepFreeCredits();
   const onboardingConfig = useAtomStateValue(onboardingConfigState);
   const isBookCallOnboardingStepEnabled = useAtomStateValue(
     isBookCallOnboardingStepEnabledState,
@@ -162,11 +161,14 @@ export const useInviteTeam = () => {
 
         const creditsRewardPerUser =
           onboardingConfig?.inviteTeamCreditsRewardPerUser ?? 0;
+        const maxRewardedInvitationsCount =
+          onboardingConfig?.inviteTeamMaxInvites ?? 0;
 
-        setOnboardingFreeCredits((current) => ({
-          ...current,
-          inviteTeam: sentInvitationsCount * creditsRewardPerUser,
-        }));
+        setOnboardingStepFreeCredits(
+          'inviteTeam',
+          Math.min(sentInvitationsCount, maxRewardedInvitationsCount) *
+            creditsRewardPerUser,
+        );
 
         if (emails.length > 0) {
           enqueueToast({
@@ -195,9 +197,10 @@ export const useInviteTeam = () => {
       isBookCallOnboardingStepEnabled,
       isCompanyEnrichmentEnabled,
       onboardingConfig?.inviteTeamCreditsRewardPerUser,
+      onboardingConfig?.inviteTeamMaxInvites,
       sendInvitation,
       setNextOnboardingStatus,
-      setOnboardingFreeCredits,
+      setOnboardingStepFreeCredits,
       store,
       t,
     ],

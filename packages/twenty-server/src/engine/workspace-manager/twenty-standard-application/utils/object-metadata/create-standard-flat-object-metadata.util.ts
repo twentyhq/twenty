@@ -31,13 +31,13 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         namePlural: 'agentChatThreads',
         labelSingular: i18nLabel(
           msg({
-            message: 'Agent chat thread',
+            message: 'Chat',
             context: 'objectMetadata.labelSingular',
           }),
         ),
         labelPlural: i18nLabel(
           msg({
-            message: 'Agent chat threads',
+            message: 'Chats',
             context: 'objectMetadata.labelPlural',
           }),
         ),
@@ -51,11 +51,15 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         isSystem: true,
         isSearchable: false,
         isAuditLogged: false,
-        isUIEditable: false,
+        isUIEditable: true,
         isUICreatable: false,
-        readability: MetadataReadability.PRIVATE,
+        // A conversation outside a workflow run has no parent and is read only
+        // through its own grants, as a PRIVATE record is. One held by a run's
+        // agent step is read by whoever reads the run.
+        readability: MetadataReadability.INHERITED,
+        readabilityParentFieldMetadataNames: ['workflowRun'],
         writability: MetadataWritability.OPEN,
-        labelIdentifierFieldMetadataName: 'id',
+        labelIdentifierFieldMetadataName: 'title',
       },
     }),
   agentChatThreadTarget: (
@@ -1351,6 +1355,53 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
       twentyStandardApplicationId,
       now,
     }),
+  shortLink: ({
+    now,
+    workspaceId,
+    standardObjectMetadataRelatedEntityIds,
+    twentyStandardApplicationId,
+    dependencyFlatEntityMaps,
+  }: Omit<CreateStandardObjectArgs<'shortLink'>, 'context' | 'objectName'>) =>
+    createStandardObjectFlatMetadata({
+      objectName: 'shortLink',
+      dependencyFlatEntityMaps,
+      context: {
+        universalIdentifier: STANDARD_OBJECTS.shortLink.universalIdentifier,
+        nameSingular: 'shortLink',
+        namePlural: 'shortLinks',
+        labelSingular: i18nLabel(
+          msg({
+            message: `Short link`,
+            context: 'objectMetadata.labelSingular',
+          }),
+        ),
+        labelPlural: i18nLabel(
+          msg({
+            message: `Short links`,
+            context: 'objectMetadata.labelPlural',
+          }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: `A link tracked in a campaign`,
+            context: 'objectMetadata.description',
+          }),
+        ),
+        icon: 'IconLink',
+        isSystem: true,
+        isSearchable: false,
+        isAuditLogged: false,
+        isUIEditable: false,
+        isUICreatable: false,
+        writability: MetadataWritability.SYSTEM,
+        readability: MetadataReadability.SYSTEM,
+        labelIdentifierFieldMetadataName: 'resolvedDestinationUrl',
+      },
+      workspaceId,
+      standardObjectMetadataRelatedEntityIds,
+      twentyStandardApplicationId,
+      now,
+    }),
   task: ({
     now,
     workspaceId,
@@ -1596,6 +1647,10 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         isSystem: true,
         isAuditLogged: false,
         isUICreatable: false,
+        // A run carries its workflow's inputs and outputs, so it is exactly as
+        // private as its core workflow; WorkflowRunRecordShareService writes
+        // the grants.
+        readability: MetadataReadability.PRIVATE,
         labelIdentifierFieldMetadataName: 'name',
       },
       workspaceId,
@@ -1692,6 +1747,53 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         isUICreatable: false,
         labelIdentifierFieldMetadataName: 'name',
         imageIdentifierFieldMetadataName: 'avatarUrl',
+      },
+      workspaceId,
+      standardObjectMetadataRelatedEntityIds,
+      twentyStandardApplicationId,
+      now,
+    }),
+  inputAsk: ({
+    now,
+    workspaceId,
+    standardObjectMetadataRelatedEntityIds,
+    twentyStandardApplicationId,
+    dependencyFlatEntityMaps,
+  }: Omit<CreateStandardObjectArgs<'inputAsk'>, 'context' | 'objectName'>) =>
+    createStandardObjectFlatMetadata({
+      objectName: 'inputAsk',
+      dependencyFlatEntityMaps,
+      context: {
+        universalIdentifier: STANDARD_OBJECTS.inputAsk.universalIdentifier,
+        // The code name is deliberately longer than the label: `ask` alone is
+        // unsearchable in a codebase, while the label is what anyone reads.
+        nameSingular: 'inputAsk',
+        namePlural: 'inputAsks',
+        labelSingular: i18nLabel(
+          msg({ message: `Ask`, context: 'objectMetadata.labelSingular' }),
+        ),
+        labelPlural: i18nLabel(
+          msg({ message: `Asks`, context: 'objectMetadata.labelPlural' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: `Something waiting on a person before it can continue`,
+            context: 'objectMetadata.description',
+          }),
+        ),
+        icon: 'IconHelpCircle',
+        isSystem: true,
+        isAuditLogged: false,
+        isUICreatable: false,
+        isUIEditable: true,
+        // A question shows what its run or conversation was doing, so it is
+        // read exactly as they are, never more widely.
+        readability: MetadataReadability.INHERITED,
+        readabilityParentFieldMetadataNames: ['workflowRun', 'thread'],
+        // Only the assignee is written through the API; every other field
+        // changes with what the Ask gates.
+        writability: MetadataWritability.OPEN,
+        labelIdentifierFieldMetadataName: 'name',
       },
       workspaceId,
       standardObjectMetadataRelatedEntityIds,

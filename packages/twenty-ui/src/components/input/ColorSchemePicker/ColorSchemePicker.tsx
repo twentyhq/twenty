@@ -19,6 +19,7 @@ export const ColorSchemePicker = ({
           className={styles.card}
           onClick={() => onChange('Light')}
           variant="Light"
+          aria-label={lightLabel}
           selected={value === 'Light'}
         />
         <span className={styles.label}>{lightLabel}</span>
@@ -28,6 +29,7 @@ export const ColorSchemePicker = ({
           className={styles.card}
           onClick={() => onChange('Dark')}
           variant="Dark"
+          aria-label={darkLabel}
           selected={value === 'Dark'}
         />
         <span className={styles.label}>{darkLabel}</span>
@@ -37,6 +39,7 @@ export const ColorSchemePicker = ({
           className={styles.card}
           onClick={() => onChange('System')}
           variant="System"
+          aria-label={systemLabel}
           selected={value === 'System'}
         />
         <span className={styles.label}>{systemLabel}</span>

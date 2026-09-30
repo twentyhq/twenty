@@ -1,18 +1,16 @@
-import { type AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
+import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { type AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 
-type ThreadUsageUpdate = Pick<
-  AgentChatThreadEntity,
-  | 'totalInputTokens'
-  | 'totalOutputTokens'
-  | 'totalInputCredits'
-  | 'totalOutputCredits'
-  | 'totalCacheReadTokens'
-  | 'totalCacheCreationTokens'
-  | 'contextWindowTokens'
-  | 'conversationSize'
-  | 'pendingQuestionMessageId'
->;
+type ThreadUsageUpdate = {
+  totalInputTokens: number;
+  totalOutputTokens: number;
+  totalInputCredits: number;
+  totalOutputCredits: number;
+  totalCacheReadTokens: number;
+  totalCacheCreationTokens: number;
+  contextWindowTokens: number | null;
+  conversationSize: number;
+};
 
 export const updateAgentChatThreadUsage = async ({
   repository,
@@ -21,7 +19,7 @@ export const updateAgentChatThreadUsage = async ({
   streamId,
   usage,
 }: {
-  repository: AgentHistoryRepository<AgentChatThreadEntity>;
+  repository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>;
   workspaceId: string;
   threadId: string;
   streamId: string;
@@ -41,7 +39,7 @@ export const updateAgentChatThreadUsage = async ({
         "totalCacheReadTokens" = "totalCacheReadTokens" + $7,
         "totalCacheCreationTokens" = "totalCacheCreationTokens" + $8,
         "contextWindowTokens" = $9, "conversationSize" = $10,
-        "pendingQuestionMessageId" = $11, "lastStreamError" = NULL, "updatedAt" = now()
+        "lastStreamError" = NULL, "updatedAt" = now()
       WHERE id = $1 AND "activeStreamId" = $2
       RETURNING id
     ) SELECT id FROM updated`,
@@ -56,7 +54,6 @@ export const updateAgentChatThreadUsage = async ({
         usage.totalCacheCreationTokens,
         usage.contextWindowTokens,
         usage.conversationSize,
-        usage.pendingQuestionMessageId,
       ],
     );
     return { affected: rows.length };

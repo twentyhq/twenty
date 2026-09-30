@@ -6612,6 +6612,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@floating-ui/dom@npm:^1.6.13, @floating-ui/dom@npm:^1.8.0":
+  version: 1.8.0
+  resolution: "@floating-ui/dom@npm:1.8.0"
+  dependencies:
+    "@floating-ui/core": "npm:^1.8.0"
+    "@floating-ui/utils": "npm:^0.2.12"
+  checksum: 10c0/c32b2de7a596b69cfffa909c7028825e14f6319be1b45da529f8943c89fe16b75a49c214e800c87ded3f172353d3b99163d50072f11410488e756961b7b629cc
+  languageName: node
+  linkType: hard
+
 "@floating-ui/dom@npm:^1.7.4, @floating-ui/dom@npm:^1.7.6":
   version: 1.7.6
   resolution: "@floating-ui/dom@npm:1.7.6"
@@ -6629,16 +6639,6 @@ __metadata:
     "@floating-ui/core": "npm:^1.7.4"
     "@floating-ui/utils": "npm:^0.2.10"
   checksum: 10c0/94bd262127fbf1177e542f4908cb07c17392782b1ca0ab9f2dfd7e102cabcc77b4de807847304dcb4c864d4b48e8ba292b27cdcfaca3ad4e3525ab397b766a3a
-  languageName: node
-  linkType: hard
-
-"@floating-ui/dom@npm:^1.8.0":
-  version: 1.8.0
-  resolution: "@floating-ui/dom@npm:1.8.0"
-  dependencies:
-    "@floating-ui/core": "npm:^1.8.0"
-    "@floating-ui/utils": "npm:^0.2.12"
-  checksum: 10c0/c32b2de7a596b69cfffa909c7028825e14f6319be1b45da529f8943c89fe16b75a49c214e800c87ded3f172353d3b99163d50072f11410488e756961b7b629cc
   languageName: node
   linkType: hard
 
@@ -19877,12 +19877,52 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@tiptap/extension-collaboration@npm:3.30.5":
+  version: 3.30.5
+  resolution: "@tiptap/extension-collaboration@npm:3.30.5"
+  peerDependencies:
+    "@tiptap/core": 3.30.5
+    "@tiptap/pm": 3.30.5
+    "@tiptap/y-tiptap": ^3.0.7
+    yjs: ^13
+  checksum: 10c0/0c1c0d7d626841a0913f8b2c21dac0ed41d1bb1935cad2ad7cf18577d57d433ed32655cdea90bf85161dac5b55c8852952b0640cd90717b26dd638cdc702b680
+  languageName: node
+  linkType: hard
+
 "@tiptap/extension-document@npm:3.30.5":
   version: 3.30.5
   resolution: "@tiptap/extension-document@npm:3.30.5"
   peerDependencies:
     "@tiptap/core": 3.30.5
   checksum: 10c0/57784178971d5e3043382ddcd1f14daf840120894f134f19f782d6555bf91ad4b6c5376cce87cd76339cca579b5c0b77c68e7a2b4882a9fc6853185d98919caf
+  languageName: node
+  linkType: hard
+
+"@tiptap/extension-drag-handle-react@npm:3.30.5":
+  version: 3.30.5
+  resolution: "@tiptap/extension-drag-handle-react@npm:3.30.5"
+  peerDependencies:
+    "@tiptap/extension-drag-handle": 3.30.5
+    "@tiptap/pm": 3.30.5
+    "@tiptap/react": 3.30.5
+    react: ^16.8 || ^17 || ^18 || ^19
+    react-dom: ^16.8 || ^17 || ^18 || ^19
+  checksum: 10c0/890134f6ef52ee3a69d1e77524f84ad212ad1ede8324498e62cc2b55ec2bb8329e04e2b84290449e096f13b2e26c2ea138a7af7b306cd66b757a609070af09cb
+  languageName: node
+  linkType: hard
+
+"@tiptap/extension-drag-handle@npm:3.30.5":
+  version: 3.30.5
+  resolution: "@tiptap/extension-drag-handle@npm:3.30.5"
+  dependencies:
+    "@floating-ui/dom": "npm:^1.6.13"
+  peerDependencies:
+    "@tiptap/core": 3.30.5
+    "@tiptap/extension-collaboration": 3.30.5
+    "@tiptap/extension-node-range": 3.30.5
+    "@tiptap/pm": 3.30.5
+    "@tiptap/y-tiptap": ^3.0.7
+  checksum: 10c0/2701246bf49977789b3046a01c81cecf7f08f06f686ccc270544e30c28413d871ae3a047e31bb02607798d65aafe9607ac2fc3ddf8196a4a5b56e5029b944819
   languageName: node
   linkType: hard
 
@@ -19971,6 +20011,16 @@ __metadata:
     "@tiptap/core": 3.30.5
     "@tiptap/pm": 3.30.5
   checksum: 10c0/bcab0d6932e1ba37c96df31bf294d9bbaa64358f410e727064f0fc52f4b8e53a73ab2f6c48d28ddc440e111d8eaba31380b22d96b295162a82bd5e9d03eca717
+  languageName: node
+  linkType: hard
+
+"@tiptap/extension-node-range@npm:3.30.5":
+  version: 3.30.5
+  resolution: "@tiptap/extension-node-range@npm:3.30.5"
+  peerDependencies:
+    "@tiptap/core": 3.30.5
+    "@tiptap/pm": 3.30.5
+  checksum: 10c0/293e610f54a60c8e100ddc7c45c9f5f5d7c7b46dc80b818236dec711ce13aa64b8cc0fce8a11dc23dd4bffea0f67adb1fab9dd472af190732f1abcd6ef53d52a
   languageName: node
   linkType: hard
 
@@ -20145,6 +20195,21 @@ __metadata:
     "@tiptap/core": 3.30.5
     "@tiptap/pm": 3.30.5
   checksum: 10c0/e0351d0205882c511f3704558ffc900268bb4caac4cc2903e3e3c6b5b04ac38d066fcd9ae4c1b0619b9ed95fdb12fe86f08fb4b1a4722986cdbf519c7602a3fc
+  languageName: node
+  linkType: hard
+
+"@tiptap/y-tiptap@npm:^3.0.7":
+  version: 3.0.9
+  resolution: "@tiptap/y-tiptap@npm:3.0.9"
+  dependencies:
+    lib0: "npm:^0.2.100"
+  peerDependencies:
+    prosemirror-model: ^1.7.1
+    prosemirror-state: ^1.2.3
+    prosemirror-view: ^1.9.10
+    y-protocols: ^1.0.1
+    yjs: ^13.5.38
+  checksum: 10c0/451330971bf0eb5ba1102b2dadc87ead84e9446b54e5ff736befcd9da5513db89fdd56a01fd3066b000de2305a6c95921e7ca0dd6041d3df040e1dbbe5d319fc
   languageName: node
   linkType: hard
 
@@ -26340,6 +26405,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"boolbase@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "boolbase@npm:2.0.0"
+  checksum: 10c0/08b2e79d3368fc7592cf3edb0a070a7288ece00ee2c5378f63c11dbf98c3a35386b65c368bd584a9e689c450070d2dae154df7ac42e9e8f64c6853507abcb8c4
+  languageName: node
+  linkType: hard
+
 "boolean@npm:^3.0.1":
   version: 3.2.0
   resolution: "boolean@npm:3.2.0"
@@ -28347,6 +28419,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"css-select@npm:^7.0.0":
+  version: 7.0.0
+  resolution: "css-select@npm:7.0.0"
+  dependencies:
+    boolbase: "npm:^2.0.0"
+    css-what: "npm:^8.0.0"
+    domhandler: "npm:^6.0.1"
+    domutils: "npm:^4.0.2"
+    nth-check: "npm:^3.0.1"
+  checksum: 10c0/cf485fc635d05d1a5443984cc1c1ff079ba221fe53a7bdd7aca31813d4d5c818ce441e2fbb0043f36d7caa94eb409c22c9defd5900502a985698ede2e4e9dfa4
+  languageName: node
+  linkType: hard
+
 "css-to-react-native@npm:3.2.0":
   version: 3.2.0
   resolution: "css-to-react-native@npm:3.2.0"
@@ -28392,6 +28477,13 @@ __metadata:
   version: 6.1.0
   resolution: "css-what@npm:6.1.0"
   checksum: 10c0/a09f5a6b14ba8dcf57ae9a59474722e80f20406c53a61e9aedb0eedc693b135113ffe2983f4efc4b5065ae639442e9ae88df24941ef159c218b231011d733746
+  languageName: node
+  linkType: hard
+
+"css-what@npm:^8.0.0":
+  version: 8.0.0
+  resolution: "css-what@npm:8.0.0"
+  checksum: 10c0/11053f3da58abda961bf3ddc9de28a1d84e2e072a7a6873e68bfce7d0796b55800a41e31c0857b632b71d1a3fc42d0dd1d8e96237e52f43d7cfd90510040bdd4
   languageName: node
   linkType: hard
 
@@ -29650,7 +29742,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"domhandler@npm:^6.0.0":
+"domhandler@npm:^6.0.0, domhandler@npm:^6.0.1":
   version: 6.0.1
   resolution: "domhandler@npm:6.0.1"
   dependencies:
@@ -37677,7 +37769,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lib0@npm:^0.2.109":
+"lib0@npm:^0.2.100, lib0@npm:^0.2.109":
   version: 0.2.117
   resolution: "lib0@npm:0.2.117"
   dependencies:
@@ -41131,6 +41223,15 @@ __metadata:
   dependencies:
     boolbase: "npm:^1.0.0"
   checksum: 10c0/5fee7ff309727763689cfad844d979aedd2204a817fbaaf0e1603794a7c20db28548d7b024692f953557df6ce4a0ee4ae46cd8ebd9b36cfb300b9226b567c479
+  languageName: node
+  linkType: hard
+
+"nth-check@npm:^3.0.1":
+  version: 3.0.1
+  resolution: "nth-check@npm:3.0.1"
+  dependencies:
+    boolbase: "npm:^2.0.0"
+  checksum: 10c0/392479224b596b8fb1a2f6378d2a3401aa26577c3f7619b07409fc7d95dbfbe224458920a4ab5ce75c43b468fc7e0f60424fda950aec8159353687eb5c508f9a
   languageName: node
   linkType: hard
 
@@ -50333,6 +50434,8 @@ __metadata:
     "@types/react-dom": "npm:^19.2.0"
     "@typescript/native-preview": "npm:^7.0.0-dev.20260116.1"
     "@vitest/browser-playwright": "npm:^4.1.0"
+    css-select: "npm:^7.0.0"
+    css-what: "npm:^8.0.0"
     monaco-editor: "npm:0.52.2"
     playwright: "npm:^1.60.0"
     prettier: "npm:^3.1.1"
@@ -50411,13 +50514,17 @@ __metadata:
     "@testing-library/react": "npm:^16.3.0"
     "@tiptap/core": "npm:3.30.5"
     "@tiptap/extension-bold": "npm:3.30.5"
+    "@tiptap/extension-collaboration": "npm:3.30.5"
     "@tiptap/extension-document": "npm:3.30.5"
+    "@tiptap/extension-drag-handle": "npm:3.30.5"
+    "@tiptap/extension-drag-handle-react": "npm:3.30.5"
     "@tiptap/extension-hard-break": "npm:3.30.5"
     "@tiptap/extension-heading": "npm:3.30.5"
     "@tiptap/extension-image": "npm:3.30.5"
     "@tiptap/extension-italic": "npm:3.30.5"
     "@tiptap/extension-link": "npm:3.30.5"
     "@tiptap/extension-list": "npm:3.30.5"
+    "@tiptap/extension-node-range": "npm:3.30.5"
     "@tiptap/extension-paragraph": "npm:3.30.5"
     "@tiptap/extension-strike": "npm:3.30.5"
     "@tiptap/extension-text": "npm:3.30.5"
@@ -50425,6 +50532,7 @@ __metadata:
     "@tiptap/extensions": "npm:3.30.5"
     "@tiptap/react": "npm:3.30.5"
     "@tiptap/suggestion": "npm:3.30.5"
+    "@tiptap/y-tiptap": "npm:^3.0.7"
     "@types/deep-equal": "npm:^1.0.1"
     "@types/file-saver": "npm:^2.0.7"
     "@types/jest": "npm:^30.0.0"
@@ -50465,6 +50573,7 @@ __metadata:
     json-2-csv: "npm:^5.4.0"
     json-logic-js: "npm:^2.0.5"
     libphonenumber-js: "npm:^1.10.26"
+    lightningcss: "npm:^1.32.0"
     linkify-react: "npm:^4.1.3"
     linkifyjs: "npm:^4.1.3"
     lodash.camelcase: "npm:^4.3.0"
@@ -50902,6 +51011,7 @@ __metadata:
     esbuild: "npm:^0.28.1"
     glob: "npm:^11.1.0"
     jsdom: "npm:^30.0.1"
+    lightningcss: "npm:^1.32.0"
     monaco-editor: "npm:0.52.2"
     prettier: "npm:^3.1.1"
     react: "npm:^19.2.0"

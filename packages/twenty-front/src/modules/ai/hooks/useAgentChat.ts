@@ -22,8 +22,9 @@ import { AGENT_CHAT_STOP_EVENT_NAME } from '@/ai/constants/AgentChatStopEventNam
 import { SEND_CHAT_MESSAGE } from '@/ai/graphql/mutations/sendChatMessage';
 import { STOP_AGENT_CHAT_STREAM } from '@/ai/graphql/mutations/stopAgentChatStream';
 import { useAgentChatModelId } from '@/ai/hooks/useAgentChatModelId';
+import { useAttachChatThreadToRecord } from '@/ai/hooks/useAttachChatThreadToRecord';
 import { useGetBrowsingContext } from '@/ai/hooks/useBrowsingContext';
-import { useOptimisticallyUnarchiveOnSend } from '@/ai/hooks/useOptimisticallyUnarchiveOnSend';
+import { useOptimisticallyRestoreOnSend } from '@/ai/hooks/useOptimisticallyRestoreOnSend';
 import { useProjectAiChatThreadToUrl } from '@/ai/hooks/useProjectAiChatThreadToUrl';
 import {
   AGENT_CHAT_NEW_THREAD_DRAFT_KEY,
@@ -37,6 +38,7 @@ import { agentChatMessagesComponentFamilyState } from '@/ai/states/agentChatMess
 import { agentChatSelectedFilesState } from '@/ai/states/agentChatSelectedFilesState';
 import { agentChatUploadedFilesState } from '@/ai/states/agentChatUploadedFilesState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
+import { getConversationTargetsFromSerializedDocument } from '@/ai/utils/getConversationTargetsFromSerializedDocument';
 import { isAiChatCreditsExhaustedError } from '@/ai/utils/isAiChatCreditsExhaustedError';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useListenToBrowserEvent } from '@/browser-event/hooks/useListenToBrowserEvent';
@@ -56,7 +58,8 @@ export const useAgentChat = (
   const { modelIdForRequest } = useAgentChatModelId();
   const aiModels = useAtomStateValue(aiModelsState);
   const { getBrowsingContext } = useGetBrowsingContext();
-  const { applyOptimisticUnarchive } = useOptimisticallyUnarchiveOnSend();
+  const { applyOptimisticRestore } = useOptimisticallyRestoreOnSend();
+  const { attachChatThreadToRecord } = useAttachChatThreadToRecord();
   const apolloClient = useApolloClient();
   const { enqueueToast } = useToast();
   const setCurrentAiChatThread = useSetAtomState(currentAiChatThreadState);
@@ -134,7 +137,7 @@ export const useAgentChat = (
       : null;
     const messageId = v4();
     const optimisticMessageCreatedAt = new Date().toISOString();
-    const rollbackOptimisticUnarchive = applyOptimisticUnarchive(
+    const rollbackOptimisticRestore = applyOptimisticRestore(
       threadId,
       optimisticMessageCreatedAt,
     );
@@ -214,6 +217,14 @@ export const useAgentChat = (
         store.set(lastSentBrowsingContextAtom, browsingContext);
       }
 
+      // Filed once the message is in: a failed send restores the draft with
+      // its mentions, so the retry files it instead.
+      getConversationTargetsFromSerializedDocument(
+        serializedContentToSend,
+      ).forEach((conversationTarget) => {
+        void attachChatThreadToRecord({ threadId, ...conversationTarget });
+      });
+
       if (data?.sendChatMessage?.queued) {
         const latestMessages = store.get(messagesAtom);
 
@@ -229,7 +240,7 @@ export const useAgentChat = (
       const restoredDraftKey =
         draftKey === AGENT_CHAT_NEW_THREAD_DRAFT_KEY ? threadId : draftKey;
 
-      rollbackOptimisticUnarchive?.();
+      rollbackOptimisticRestore?.();
 
       setAgentChatInput(contentToSend);
       setAgentChatDraftsByThreadId((prev) => ({
@@ -280,7 +291,8 @@ export const useAgentChat = (
     enqueueToast,
     setCurrentAiChatThread,
     apolloClient,
-    applyOptimisticUnarchive,
+    applyOptimisticRestore,
+    attachChatThreadToRecord,
   ]);
 
   useListenToBrowserEvent({

@@ -98,7 +98,7 @@ describe('agent history workspace metadata', () => {
     >
   > = {
     agentChatThread: {
-      readability: MetadataReadability.PRIVATE,
+      readability: MetadataReadability.INHERITED,
       writability: MetadataWritability.OPEN,
     },
     agentChatThreadTarget: {
@@ -118,11 +118,54 @@ describe('agent history workspace metadata', () => {
       isSearchable: false,
       isAuditLogged: false,
       isUICreatable: false,
-      isUIEditable: false,
+      // Chats can be renamed from their record page
+      isUIEditable: name === 'agentChatThread',
       ...(SHARED_ACCESS_POLICY_BY_OBJECT_NAME[name] ?? {
         readability: MetadataReadability.SYSTEM,
         writability: MetadataWritability.SYSTEM,
       }),
+    });
+  });
+
+  it('presents conversations as chats identified by an editable title', () => {
+    const chatObject =
+      allFlatEntityMaps.flatObjectMetadataMaps.byUniversalIdentifier[
+        STANDARD_OBJECTS.agentChatThread.universalIdentifier
+      ];
+    const titleField =
+      allFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier[
+        STANDARD_OBJECTS.agentChatThread.fields.title.universalIdentifier
+      ];
+
+    expect(chatObject).toMatchObject({
+      labelSingular: 'Chat',
+      labelPlural: 'Chats',
+      labelIdentifierFieldMetadataUniversalIdentifier:
+        STANDARD_OBJECTS.agentChatThread.fields.title.universalIdentifier,
+    });
+    expect(titleField).toMatchObject({ isUIEditable: true });
+  });
+
+  it('keeps the legacy archive column out of reach now that archive is soft delete', () => {
+    expect(
+      allFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier[
+        STANDARD_OBJECTS.agentChatThread.fields.archivedAt.universalIdentifier
+      ],
+    ).toMatchObject({ writability: MetadataWritability.SYSTEM });
+  });
+
+  it('retains messages when a sender member is deleted', () => {
+    expect(
+      allFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier[
+        STANDARD_OBJECTS.agentMessage.fields.senderWorkspaceMember
+          .universalIdentifier
+      ],
+    ).toMatchObject({
+      isNullable: true,
+      settings: {
+        onDelete: 'SET_NULL',
+        joinColumnName: 'senderWorkspaceMemberId',
+      },
     });
   });
 

@@ -11,6 +11,7 @@ const TOOL_NAMES = {
   createNote: 'create_one_note',
   createNoteTarget: 'create_one_note_target',
   groupByNoteTargets: 'group_by_note_targets',
+  groupByCompanies: 'group_by_companies',
 } as const;
 
 type McpToolCallResult = {
@@ -372,6 +373,93 @@ describe('MCP tool execution (integration)', () => {
 
       expect(countsByCompany[createdCompanyAId as string]).toBe(2);
       expect(countsByCompany[createdCompanyBId as string]).toBe(1);
+    });
+  });
+
+  describe('group_by_companies (multi-select work policy)', () => {
+    const createdCompanyIds: string[] = [];
+    const createdCompanyNames: string[] = [];
+
+    type GroupByResult = {
+      groups: Array<{ dimensions: unknown[]; value: string | number }>;
+      dimensionLabels: string[];
+      aggregation: string;
+      groupCount: number;
+    };
+
+    beforeAll(async () => {
+      const workPolicies = [
+        ['ON_SITE', 'HYBRID'],
+        ['HYBRID'],
+        ['REMOTE_WORK'],
+        [],
+      ];
+
+      for (const workPolicy of workPolicies) {
+        const name = `mcp-group-by-work-policy-${randomUUID()}`;
+        const company = await executeWorkspaceTool<CreatedRecord>(
+          TOOL_NAMES.createCompany,
+          { name, workPolicy },
+        );
+
+        createdCompanyIds.push(company.id);
+        createdCompanyNames.push(name);
+      }
+    });
+
+    afterAll(async () => {
+      if (createdCompanyIds.length > 0) {
+        await deleteRecordsByIds('company', createdCompanyIds);
+      }
+    });
+
+    it('counts each selected value and preserves the empty-array null group', async () => {
+      const result = await executeWorkspaceTool<GroupByResult>(
+        TOOL_NAMES.groupByCompanies,
+        {
+          groupBy: [{ workPolicy: { unnest: true } }],
+          aggregateOperation: 'COUNT',
+          name: { in: createdCompanyNames },
+        },
+      );
+
+      expect(result.dimensionLabels).toEqual(['workPolicy']);
+      expect(result.aggregation).toBe('COUNT');
+      expect(result.groupCount).toBe(4);
+      expect(result.groups).toHaveLength(4);
+
+      const countsByWorkPolicy = Object.fromEntries(
+        result.groups.map((group) => [
+          String(group.dimensions[0]),
+          Number(group.value),
+        ]),
+      );
+
+      expect(countsByWorkPolicy).toEqual({
+        HYBRID: 2,
+        ON_SITE: 1,
+        REMOTE_WORK: 1,
+        null: 1,
+      });
+    });
+
+    it('keeps whole-array grouping as the default', async () => {
+      const result = await executeWorkspaceTool<GroupByResult>(
+        TOOL_NAMES.groupByCompanies,
+        {
+          groupBy: [{ workPolicy: true }],
+          aggregateOperation: 'COUNT',
+          name: { in: createdCompanyNames },
+        },
+      );
+
+      expect(result.dimensionLabels).toEqual(['workPolicy']);
+      expect(result.aggregation).toBe('COUNT');
+      expect(result.groupCount).toBe(4);
+      expect(result.groups).toHaveLength(4);
+      expect(result.groups.map((group) => Number(group.value))).toEqual([
+        1, 1, 1, 1,
+      ]);
     });
   });
 });

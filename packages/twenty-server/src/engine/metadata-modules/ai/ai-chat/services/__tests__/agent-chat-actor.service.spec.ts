@@ -16,7 +16,9 @@ const build = () => {
   };
   const messages = { findOne: jest.fn().mockResolvedValue(message) };
   const threads = {
-    findOneOrFail: jest.fn().mockResolvedValue({ userWorkspaceId: 'owner' }),
+    findOneOrFail: jest
+      .fn()
+      .mockResolvedValue({ workspaceMemberId: 'owner-member' }),
   };
   const chat = {
     getWritableThread: jest
@@ -24,12 +26,16 @@ const build = () => {
       .mockResolvedValue({ id: threadId, deletedAt: null }),
   };
   const auth = {
+    resolveWorkspaceMember: jest
+      .fn()
+      .mockResolvedValue({ userWorkspaceId: 'owner' }),
     resolve: jest
       .fn()
       .mockImplementation(async ({ userWorkspaceId, applicationId }) => ({
         type: 'user',
         workspace: { id: workspaceId },
         userWorkspaceId,
+        workspaceMemberId: userWorkspaceId + '-member',
         user: { id: 'user' },
         workspaceMember: { id: 'member' },
         ...(applicationId
@@ -79,8 +85,17 @@ describe('Chat execution sender', () => {
     expect(chat.getWritableThread).toHaveBeenCalledWith({
       workspaceId,
       threadId,
-      userWorkspaceId: 'sender',
+      workspaceMemberId: 'sender-member',
     });
+  });
+  it('rejects unattributed messages on ownerless threads', async () => {
+    const { service, message, threads, auth } = build();
+    message.senderUserWorkspaceId = null;
+    threads.findOneOrFail.mockResolvedValue({ workspaceMemberId: null });
+    await expect(service.resolveMessage(job)).rejects.toMatchObject({
+      code: 'RUN_AS_WORKSPACE_MEMBER_NOT_FOUND',
+    });
+    expect(auth.resolveWorkspaceMember).not.toHaveBeenCalled();
   });
   it('rejects a job attempting to execute another participant’s message', async () => {
     const { service, chat } = build();
@@ -168,11 +183,11 @@ describe('Chat execution sender', () => {
       code: 'THREAD_NOT_FOUND',
     });
   });
-  it('denies archived threads', async () => {
+  it('denies soft deleted threads', async () => {
     const { service, chat } = build();
     chat.getWritableThread.mockResolvedValue({
       id: threadId,
-      deletedAt: new Date(),
+      deletedAt: new Date().toISOString(),
     } as never);
     await expect(service.authorizeJob(job)).rejects.toMatchObject({
       code: 'THREAD_NOT_FOUND',
@@ -222,7 +237,7 @@ describe('Chat execution sender', () => {
     });
   });
   it.each([null, 'other-app'])(
-    'rejects answering an application question from a different context (%s)',
+    'rejects resolving an application tool call from a different context (%s)',
     async (applicationId) => {
       const { service, message } = build();
       message.senderApplicationId = 'original-app';
@@ -234,14 +249,14 @@ describe('Chat execution sender', () => {
             userWorkspaceId: 'sender',
             application: applicationId ? { id: applicationId } : undefined,
           } as never,
-          () => service.authorizeQuestionAnswer(job),
+          () => service.authorizeToolCallResolution(job),
         ),
-      ).rejects.toMatchObject({ code: 'INVALID_QUESTION_ANSWER' });
+      ).rejects.toMatchObject({ code: 'TOOL_CALL_RESOLUTION_FORBIDDEN' });
     },
   );
 
   it.each([null, 'original-app'])(
-    'allows another participant to answer in the same application context (%s)',
+    'allows another participant to resolve in the same application context (%s)',
     async (applicationId) => {
       const { service, message } = build();
       message.senderApplicationId = applicationId;
@@ -253,16 +268,18 @@ describe('Chat execution sender', () => {
             userWorkspaceId: 'another-participant',
             application: applicationId ? { id: applicationId } : undefined,
           } as never,
-          () => service.authorizeQuestionAnswer(job),
+          () => service.authorizeToolCallResolution(job),
         ),
       ).resolves.toBeUndefined();
     },
   );
 
-  it('rejects an answer without an authenticated request context', async () => {
+  it('rejects a resolution without an authenticated request context', async () => {
     const { service } = build();
-    await expect(service.authorizeQuestionAnswer(job)).rejects.toMatchObject({
-      code: 'INVALID_QUESTION_ANSWER',
+    await expect(
+      service.authorizeToolCallResolution(job),
+    ).rejects.toMatchObject({
+      code: 'TOOL_CALL_RESOLUTION_FORBIDDEN',
     });
   });
 });

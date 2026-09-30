@@ -28,14 +28,18 @@ import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service'
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { computeCostBreakdown } from 'src/engine/metadata-modules/ai/ai-billing/utils/compute-cost-breakdown.util';
+import { computeStepCostBreakdown } from 'src/engine/metadata-modules/ai/ai-billing/utils/compute-step-cost-breakdown.util';
 import { convertDollarsToCreditsMicro } from 'src/engine/metadata-modules/ai/ai-billing/utils/convert-dollars-to-credits-micro.util';
 import { extractCacheCreationTokens } from 'src/engine/metadata-modules/ai/ai-billing/utils/extract-cache-creation-tokens.util';
 import {
   AiException,
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
-import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
+import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
+import {
+  type AwaitingPausingToolPart,
+  findAwaitingPausingToolParts,
+} from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/find-awaiting-pausing-tool-parts.util';
 import { AgentChatCancelSubscriberService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-cancel-subscriber.service';
 import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
 import { AgentChatStreamHeartbeatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-heartbeat.service';
@@ -47,7 +51,6 @@ import {
   classifyAgentChatTurnOutcome,
   resolveSupersededTurnOutcome,
 } from 'src/engine/metadata-modules/ai/ai-chat/utils/classify-agent-chat-turn-outcome.util';
-import { findPendingQuestionPart } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-pending-question-part.util';
 import { AGENT_CHAT_CHECKPOINT_INTERVAL_MS } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-checkpoint-interval-ms.constant';
 import { getCancelChannel } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-cancel-channel.util';
 import { mapErrorToStreamError } from 'src/engine/metadata-modules/ai/ai-chat/utils/map-error-to-stream-error.util';
@@ -58,6 +61,7 @@ import type { AiModelConfig } from 'src/engine/metadata-modules/ai/ai-models/typ
 import { STREAM_AGENT_CHAT_JOB_NAME } from './stream-agent-chat-job-name.constant';
 import { type StreamAgentChatJobData } from './stream-agent-chat-job.types';
 import { getChatModelId } from 'src/engine/metadata-modules/ai/ai-models/utils/get-chat-model-id.util';
+import { InputAskWorkspaceService } from 'src/modules/input-ask/workspace-services/input-ask.workspace-service';
 
 export { STREAM_AGENT_CHAT_JOB_NAME, type StreamAgentChatJobData };
 
@@ -75,9 +79,13 @@ export class StreamAgentChatJob {
   // handle(), which would otherwise count the same turn a second time.
   private hasRecordedTurnOutcome = false;
 
+  // Set once the turn has paused on an Ask, which is what the queue waits on:
+  // a queued message drained now would bypass the answer it is waiting for.
+  private isAwaitingInput = false;
+
   constructor(
     @InjectAgentHistoryRepository('agentChatThread')
-    private readonly threadRepository: AgentHistoryRepository<AgentChatThreadEntity>,
+    private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     private readonly agentChatService: AgentChatService,
@@ -89,6 +97,7 @@ export class StreamAgentChatJob {
     private readonly metricsService: MetricsService,
     private readonly aiModelRegistryService: AiModelRegistryService,
     private readonly actorService: AgentChatActorService,
+    private readonly inputAskWorkspaceService: InputAskWorkspaceService,
   ) {}
 
   @Process(STREAM_AGENT_CHAT_JOB_NAME)
@@ -162,7 +171,7 @@ export class StreamAgentChatJob {
         );
       }
 
-      const { message } = await this.actorService.authorizeJob({
+      const { message, authorization } = await this.actorService.authorizeJob({
         workspaceId: data.workspaceId,
         threadId: data.threadId,
         messageId: data.messageId,
@@ -176,7 +185,12 @@ export class StreamAgentChatJob {
         );
       }
       await this.executeStream(
-        { ...data, messageId: message.id, existingTurnId: message.turnId },
+        {
+          ...data,
+          messageId: message.id,
+          existingTurnId: message.turnId,
+          workspaceMemberId: authorization.authContext.workspaceMemberId,
+        },
         workspace,
         abortController.signal,
         turnModelId,
@@ -245,7 +259,7 @@ export class StreamAgentChatJob {
         )
         .catch(() => {});
 
-      if (!abortController.signal.aborted) {
+      if (!abortController.signal.aborted && !this.isAwaitingInput) {
         await this.agentChatStreamingService
           .flushNextQueuedMessage({
             threadId: data.threadId,
@@ -334,7 +348,10 @@ export class StreamAgentChatJob {
   }
 
   private async executeStream(
-    data: StreamAgentChatJobData & { existingTurnId: string },
+    data: StreamAgentChatJobData & {
+      existingTurnId: string;
+      workspaceMemberId: string;
+    },
     workspace: WorkspaceEntity,
     abortSignal: AbortSignal,
     turnModelId: string,
@@ -343,7 +360,7 @@ export class StreamAgentChatJob {
       ? Promise.resolve(null)
       : this.agentChatService
           .generateTitleIfNeeded({
-            userWorkspaceId: data.userWorkspaceId,
+            workspaceMemberId: data.workspaceMemberId,
             threadId: data.threadId,
             messageContent: data.lastUserMessageText,
             workspaceId: data.workspaceId,
@@ -369,7 +386,7 @@ export class StreamAgentChatJob {
     turnModelId,
   }: {
     workspace: WorkspaceEntity;
-    data: StreamAgentChatJobData;
+    data: StreamAgentChatJobData & { workspaceMemberId: string };
     turnId: string;
     titlePromise: Promise<string | null>;
     abortSignal: AbortSignal;
@@ -497,6 +514,7 @@ export class StreamAgentChatJob {
                 return this.computeMessageMetadata({
                   part,
                   modelConfig,
+                  streamUsage,
                   lastStepConversationSize,
                   totalCacheCreationTokens,
                   onUpdateUsage: (usage) => {
@@ -524,7 +542,7 @@ export class StreamAgentChatJob {
                     outOfCredits: checkHasNoMoreAvailableCredits(),
                     threadId: data.threadId,
                     workspaceId: data.workspaceId,
-                    userWorkspaceId: data.userWorkspaceId,
+                    workspaceMemberId: data.workspaceMemberId,
                     streamUsage,
                     lastStepConversationSize,
                     totalCacheCreationTokens,
@@ -645,6 +663,7 @@ export class StreamAgentChatJob {
   private computeMessageMetadata({
     part,
     modelConfig,
+    streamUsage,
     lastStepConversationSize,
     totalCacheCreationTokens,
     onUpdateUsage,
@@ -655,9 +674,6 @@ export class StreamAgentChatJob {
       type: string;
       usage?: {
         inputTokens?: number;
-      };
-      totalUsage?: {
-        inputTokens?: number;
         outputTokens?: number;
         inputTokenDetails?: { cacheReadTokens?: number };
         outputTokenDetails?: { reasoningTokens?: number };
@@ -665,6 +681,13 @@ export class StreamAgentChatJob {
       providerMetadata?: Record<string, Record<string, unknown> | undefined>;
     };
     modelConfig: AiModelConfig;
+    streamUsage: {
+      inputTokens: number;
+      outputTokens: number;
+      inputCredits: number;
+      outputCredits: number;
+      cacheReadTokens: number;
+    };
     lastStepConversationSize: number;
     totalCacheCreationTokens: number;
     onUpdateUsage: (usage: {
@@ -678,47 +701,44 @@ export class StreamAgentChatJob {
     onUpdateCacheCreationTokens: (tokens: number) => void;
   }) {
     if (part.type === 'finish-step') {
-      const stepInput = part.usage?.inputTokens ?? 0;
-      const stepCacheCreation = extractCacheCreationTokens(
+      const stepCacheCreationTokens = extractCacheCreationTokens(
         part.providerMetadata,
       );
+      const stepBreakdown = computeStepCostBreakdown(modelConfig, {
+        usage: part.usage,
+        cacheCreationTokens: stepCacheCreationTokens,
+      });
 
-      onUpdateCacheCreationTokens(totalCacheCreationTokens + stepCacheCreation);
-      onUpdateConversationSize(stepInput);
+      onUpdateUsage({
+        inputTokens:
+          streamUsage.inputTokens + stepBreakdown.tokenCounts.totalInputTokens,
+        outputTokens:
+          streamUsage.outputTokens + (part.usage?.outputTokens ?? 0),
+        inputCredits:
+          streamUsage.inputCredits +
+          convertDollarsToCreditsMicro(stepBreakdown.inputCostInDollars),
+        outputCredits:
+          streamUsage.outputCredits +
+          convertDollarsToCreditsMicro(stepBreakdown.outputCostInDollars),
+        cacheReadTokens:
+          streamUsage.cacheReadTokens +
+          stepBreakdown.tokenCounts.cachedInputTokens,
+      });
+      onUpdateCacheCreationTokens(
+        totalCacheCreationTokens + stepCacheCreationTokens,
+      );
+      onUpdateConversationSize(part.usage?.inputTokens ?? 0);
     }
 
     if (part.type === 'finish') {
-      const breakdown = computeCostBreakdown(modelConfig, {
-        inputTokens: part.totalUsage?.inputTokens,
-        outputTokens: part.totalUsage?.outputTokens,
-        cachedInputTokens: part.totalUsage?.inputTokenDetails?.cacheReadTokens,
-        reasoningTokens: part.totalUsage?.outputTokenDetails?.reasoningTokens,
-        cacheCreationTokens: totalCacheCreationTokens,
-      });
-
-      const inputCredits = convertDollarsToCreditsMicro(
-        breakdown.inputCostInDollars,
-      );
-      const outputCredits = convertDollarsToCreditsMicro(
-        breakdown.outputCostInDollars,
-      );
-
-      onUpdateUsage({
-        inputTokens: breakdown.tokenCounts.totalInputTokens,
-        outputTokens: part.totalUsage?.outputTokens ?? 0,
-        inputCredits,
-        outputCredits,
-        cacheReadTokens: breakdown.tokenCounts.cachedInputTokens,
-      });
-
       return {
         createdAt: new Date().toISOString(),
         usage: {
-          inputTokens: breakdown.tokenCounts.totalInputTokens,
-          outputTokens: part.totalUsage?.outputTokens ?? 0,
-          cachedInputTokens: breakdown.tokenCounts.cachedInputTokens,
-          inputCredits: toDisplayCredits(inputCredits),
-          outputCredits: toDisplayCredits(outputCredits),
+          inputTokens: streamUsage.inputTokens,
+          outputTokens: streamUsage.outputTokens,
+          cachedInputTokens: streamUsage.cacheReadTokens,
+          inputCredits: toDisplayCredits(streamUsage.inputCredits),
+          outputCredits: toDisplayCredits(streamUsage.outputCredits),
           conversationSize: lastStepConversationSize,
         },
         model: {
@@ -739,7 +759,7 @@ export class StreamAgentChatJob {
     outOfCredits: boolean;
     threadId: string;
     workspaceId: string;
-    userWorkspaceId: string;
+    workspaceMemberId: string;
     streamUsage: {
       inputTokens: number;
       outputTokens: number;
@@ -771,7 +791,7 @@ export class StreamAgentChatJob {
     outOfCredits,
     threadId,
     workspaceId,
-    userWorkspaceId,
+    workspaceMemberId,
     streamUsage,
     lastStepConversationSize,
     totalCacheCreationTokens,
@@ -787,7 +807,7 @@ export class StreamAgentChatJob {
     outOfCredits: boolean;
     threadId: string;
     workspaceId: string;
-    userWorkspaceId: string;
+    workspaceMemberId: string;
     streamUsage: {
       inputTokens: number;
       outputTokens: number;
@@ -805,9 +825,9 @@ export class StreamAgentChatJob {
       (part) => part.type === 'text' && isNonEmptyString(part.text),
     );
 
-    const pendingQuestionPart = findPendingQuestionPart(responseMessage.parts);
+    const awaitingParts = findAwaitingPausingToolParts(responseMessage.parts);
 
-    if ((isAborted || !hasText) && !isDefined(pendingQuestionPart)) {
+    if ((isAborted || !hasText) && awaitingParts.length === 0) {
       this.logAssistantTurnWithoutText({
         responseMessage,
         isAborted,
@@ -828,7 +848,7 @@ export class StreamAgentChatJob {
     const outcome = classifyAgentChatTurnOutcome({
       hasText,
       isAborted,
-      isAwaitingUserAnswer: isDefined(pendingQuestionPart),
+      isAwaitingUserAnswer: awaitingParts.length > 0,
       outOfCredits,
     });
 
@@ -836,12 +856,11 @@ export class StreamAgentChatJob {
       return outcome;
     }
 
-    const threadStatus = await this.threadRepository.findOne(workspaceId, {
+    const threadBeforeUsage = await this.threadRepository.findOne(workspaceId, {
       where: { id: threadId },
-      select: ['id', 'deletedAt'],
     });
 
-    if (!threadStatus || threadStatus.deletedAt) {
+    if (!threadBeforeUsage || threadBeforeUsage.deletedAt) {
       return resolveSupersededTurnOutcome(outcome);
     }
 
@@ -867,9 +886,6 @@ export class StreamAgentChatJob {
         totalCacheCreationTokens,
         contextWindowTokens: modelConfig.contextWindowTokens,
         conversationSize: lastStepConversationSize,
-        pendingQuestionMessageId: isDefined(pendingQuestionPart)
-          ? assistantMessageId
-          : null,
       },
     });
 
@@ -877,13 +893,70 @@ export class StreamAgentChatJob {
       return resolveSupersededTurnOutcome(outcome);
     }
 
-    await this.agentChatService.notifyThreadUsageUpdated({
+    await this.openAsksForAwaitingParts({
+      awaitingParts,
       threadId,
-      userWorkspaceId,
+      workspaceId,
+      workspaceMemberId,
+    });
+
+    await this.agentChatService.notifyThreadUsageUpdated({
+      threadBefore: threadBeforeUsage,
+      workspaceMemberId,
       workspaceId,
     });
 
     return outcome;
+  }
+
+  // Pausing is only complete once every waiting call has its Ask: without
+  // one nothing can answer that call, so failing here fails the turn, which
+  // leaves it retryable rather than silently stuck. Every call is read before
+  // any Ask opens, and the Asks open in the order of the calls.
+  private async openAsksForAwaitingParts({
+    awaitingParts,
+    threadId,
+    workspaceId,
+    workspaceMemberId,
+  }: {
+    awaitingParts: AwaitingPausingToolPart[];
+    threadId: string;
+    workspaceId: string;
+    workspaceMemberId: string;
+  }): Promise<void> {
+    const inputAsks = awaitingParts.map(({ toolName, toolCallId, ask }) => {
+      if (!isDefined(ask)) {
+        throw new AiException(
+          `The ${toolName} call could not be read`,
+          AiExceptionCode.INVALID_TOOL_CALL_OUTPUT,
+        );
+      }
+
+      return { ...ask, threadId, toolCallId, assigneeId: workspaceMemberId };
+    });
+
+    const openedToolCallIds: string[] = [];
+
+    try {
+      for (const inputAsk of inputAsks) {
+        await this.inputAskWorkspaceService.open({ workspaceId, inputAsk });
+        openedToolCallIds.push(inputAsk.toolCallId);
+      }
+    } catch (error) {
+      // A retry replaces this turn's calls, so the Asks already opened for them
+      // would wait on calls that no longer exist.
+      for (const toolCallId of openedToolCallIds) {
+        await this.inputAskWorkspaceService
+          .cancel({ workspaceId, match: { threadId, toolCallId } })
+          .catch(() => false);
+      }
+
+      throw error;
+    }
+
+    if (inputAsks.length > 0) {
+      this.isAwaitingInput = true;
+    }
   }
 
   private logAssistantTurnWithoutText({
