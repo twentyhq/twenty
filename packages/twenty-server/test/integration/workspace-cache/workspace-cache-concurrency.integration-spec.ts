@@ -5,7 +5,7 @@ import {
   type ApplicationWithVariable,
   setupApplicationWithVariable,
 } from 'test/integration/metadata/suites/application/utils/setup-application-with-variable.util';
-import { updateMyApplicationVariable } from 'test/integration/metadata/suites/application/utils/update-my-application-variable.util';
+import { updateOneApplicationVariable } from 'test/integration/metadata/suites/application/utils/update-one-application-variable.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
 import { type CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
@@ -13,26 +13,26 @@ import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/typ
 import { plaintextStringSchema } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
 import { type SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 import { type WorkspaceORMEntityMetadatasCacheService } from 'src/engine/twenty-orm/workspace-orm-entity-metadatas-cache.service';
-import { type ApplicationVariableUserValueMaps } from 'src/engine/core-modules/application/application-variable/types/application-variable-user-value-maps.type';
+import { type ApplicationVariableCacheMaps } from 'src/engine/core-modules/application/application-variable/types/application-variable-cache-maps.type';
 import { type WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
-import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 
 describe('Workspace cache concurrent publication', () => {
   let application: ApplicationWithVariable;
   let applicationVariableId: string;
+  let applicationVariableUniversalIdentifier: string;
   let workspaceCacheService: WorkspaceCacheService;
 
   const readCachedValue = async () => {
-    const { applicationVariableUserValueMaps } =
+    const { applicationVariableMaps } =
       await workspaceCacheService.getOrRecompute(SEED_APPLE_WORKSPACE_ID, [
-        'applicationVariableUserValueMaps',
+        'applicationVariableMaps',
       ]);
     const value =
-      applicationVariableUserValueMaps.byApplicationVariableId[
-        applicationVariableId
-      ]?.[USER_WORKSPACE_DATA_SEED_IDS.JONY];
+      applicationVariableMaps.byUniversalIdentifier[
+        applicationVariableUniversalIdentifier
+      ]?.value;
 
     return isDefined(value)
       ? getAppProviderByClassName<SecretEncryptionService>(
@@ -44,13 +44,12 @@ describe('Workspace cache concurrent publication', () => {
   };
 
   const updateValue = (value: string) =>
-    updateMyApplicationVariable({
+    updateOneApplicationVariable({
       input: {
-        applicationUniversalIdentifier: application.universalIdentifier,
+        applicationId: application.id,
         key: application.variableKey,
         value,
       },
-      token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
       expectToFail: false,
     });
 
@@ -64,8 +63,8 @@ describe('Workspace cache concurrent publication', () => {
       signalSnapshotLoaded = resolve;
     });
     const provider = getAppProviderByClassName<
-      WorkspaceCacheProvider<ApplicationVariableUserValueMaps>
-    >('WorkspaceApplicationVariableUserValueMapCacheService');
+      WorkspaceCacheProvider<ApplicationVariableCacheMaps>
+    >('WorkspaceApplicationVariableMapCacheService');
     const compute = provider.computeForCache.bind(provider);
 
     jest
@@ -88,7 +87,7 @@ describe('Workspace cache concurrent publication', () => {
     });
 
     await global.testDataSource.query(
-      'UPDATE core."applicationVariableUserValue" SET value = $1 WHERE "applicationVariableId" = $2',
+      'UPDATE core."applicationVariable" SET value = $1 WHERE id = $2',
       [encryptedValue, applicationVariableId],
     );
   };
@@ -100,15 +99,16 @@ describe('Workspace cache concurrent publication', () => {
     application = await setupApplicationWithVariable({
       name: 'Concurrent Cache Application',
       variableKey: 'API_KEY',
-      variableScope: 'USER',
     });
-    const [applicationVariable]: { id: string }[] =
+    const [applicationVariable]: { id: string; universalIdentifier: string }[] =
       await global.testDataSource.query(
-        'SELECT id FROM core."applicationVariable" WHERE "applicationId" = $1 AND key = $2',
+        'SELECT id, "universalIdentifier" FROM core."applicationVariable" WHERE "applicationId" = $1 AND key = $2',
         [application.id, application.variableKey],
       );
 
     applicationVariableId = applicationVariable.id;
+    applicationVariableUniversalIdentifier =
+      applicationVariable.universalIdentifier;
   }, 120000);
 
   afterEach(async () => {
@@ -123,7 +123,7 @@ describe('Workspace cache concurrent publication', () => {
     async (operation) => {
       await updateValue('first');
       await workspaceCacheService.flush(SEED_APPLE_WORKSPACE_ID, [
-        'applicationVariableUserValueMaps',
+        'applicationVariableMaps',
       ]);
       const { snapshotLoaded, resume } = pauseNextValueSnapshot();
       const pendingOperation =
@@ -149,7 +149,7 @@ describe('Workspace cache concurrent publication', () => {
     async (operation) => {
       await updateValue('first');
       await workspaceCacheService.flush(SEED_APPLE_WORKSPACE_ID, [
-        'applicationVariableUserValueMaps',
+        'applicationVariableMaps',
       ]);
       const { snapshotLoaded, resume } = pauseNextValueSnapshot();
       const pendingRead = readCachedValue();
@@ -160,14 +160,12 @@ describe('Workspace cache concurrent publication', () => {
 
         if (operation === 'flush') {
           await workspaceCacheService.flush(SEED_APPLE_WORKSPACE_ID, [
-            'applicationVariableUserValueMaps',
+            'applicationVariableMaps',
           ]);
         } else {
           await global.app
             .get<CacheStorageService>(CacheStorageNamespace.EngineWorkspace)
-            .del(
-              `applicationVariableUserValueMaps:${SEED_APPLE_WORKSPACE_ID}:hash`,
-            );
+            .del(`applicationVariableMaps:${SEED_APPLE_WORKSPACE_ID}:hash`);
         }
       } finally {
         resume();
@@ -186,7 +184,7 @@ describe('Workspace cache concurrent publication', () => {
     const cacheStorage = global.app.get<CacheStorageService>(
       CacheStorageNamespace.EngineWorkspace,
     );
-    const cacheKey = `applicationVariableUserValueMaps:${SEED_APPLE_WORKSPACE_ID}`;
+    const cacheKey = `applicationVariableMaps:${SEED_APPLE_WORKSPACE_ID}`;
 
     await cacheStorage.del(`${cacheKey}:hash`);
     await workspaceCacheService.evictWorkspaceFromLocalCache(
@@ -205,11 +203,12 @@ describe('Workspace cache concurrent publication', () => {
     await pendingRead;
     expect(await readCachedValue()).toBe('first');
   });
+
   it('fails boundedly instead of publishing under sustained invalidation', async () => {
     await updateValue('first');
     const provider = getAppProviderByClassName<
-      WorkspaceCacheProvider<ApplicationVariableUserValueMaps>
-    >('WorkspaceApplicationVariableUserValueMapCacheService');
+      WorkspaceCacheProvider<ApplicationVariableCacheMaps>
+    >('WorkspaceApplicationVariableMapCacheService');
     const compute = provider.computeForCache.bind(provider);
 
     jest
@@ -217,14 +216,14 @@ describe('Workspace cache concurrent publication', () => {
       .mockImplementation(async (context) => {
         const snapshot = await compute(context);
         await workspaceCacheService.flush(SEED_APPLE_WORKSPACE_ID, [
-          'applicationVariableUserValueMaps',
+          'applicationVariableMaps',
         ]);
         return snapshot;
       });
 
     await expect(
       workspaceCacheService.invalidateAndRecompute(SEED_APPLE_WORKSPACE_ID, [
-        'applicationVariableUserValueMaps',
+        'applicationVariableMaps',
       ]),
     ).rejects.toThrow(
       'Workspace cache changed repeatedly during recomputation',
@@ -232,9 +231,7 @@ describe('Workspace cache concurrent publication', () => {
     expect(
       await global.app
         .get<CacheStorageService>(CacheStorageNamespace.EngineWorkspace)
-        .get(
-          `applicationVariableUserValueMaps:${SEED_APPLE_WORKSPACE_ID}:data`,
-        ),
+        .get(`applicationVariableMaps:${SEED_APPLE_WORKSPACE_ID}:data`),
     ).toBeUndefined();
   });
 
