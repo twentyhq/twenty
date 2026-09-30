@@ -10,7 +10,7 @@ import twentyClientTemplateSource from './twenty-client-template.ts?raw';
 
 const COMMON_SCALAR_TYPES = {
   DateTime: 'string',
-  JSON: 'Record<string, unknown>',
+  JSON: 'unknown',
   UUID: 'string',
 };
 

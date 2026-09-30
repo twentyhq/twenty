@@ -26,6 +26,19 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
   The returned `{ id, path, size, createdAt, url }` is unchanged. `uploadFile` now requires a Twenty server that exposes the `createFileUpload` and `completeFileUpload` mutations.
 
+- **JSON fields are typed `unknown` in generated clients instead of `Record<string, unknown>`.** A JSON field can hold any JSON value, such as the array in a call recording's `transcript`, so arrays are now written without a cast. Reading a key off a selected JSON field now needs a type guard or a cast to the shape you store:
+
+  ```diff
+  - data: { transcript: entries as unknown as Record<string, unknown> },
+  + data: { transcript: entries },
+
+  - const plan = company.settings?.plan;
+  + const settings = company.settings as { plan?: string } | undefined;
+  + const plan = settings?.plan;
+  ```
+
+  Nothing changes at runtime. The new types apply once the client is regenerated with this SDK version.
+
 ### Removed
 
 - **The per-file multipart fallback in `twenty app deploy` and `twenty app dev`.** Application files are only uploaded straight to file storage now (`createApplicationFileUploads`, PUT, `completeApplicationFileUploads`). The CLI no longer falls back to the `uploadApplicationFile` mutation on a server that lacks the batch mutations, so deploying to a server older than the direct upload fails instead of degrading.

@@ -4,7 +4,7 @@ export type Scalars = {
     UUID: string,
     DateTime: string,
     Boolean: boolean,
-    JSON: Record<string, unknown>,
+    JSON: unknown,
     Float: number,
     Int: number,
     ConnectionCursor: any,
