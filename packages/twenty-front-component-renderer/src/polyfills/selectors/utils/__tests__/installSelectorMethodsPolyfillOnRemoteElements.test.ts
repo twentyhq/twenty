@@ -16,6 +16,7 @@ const createRemoteElement = (tagName: string): RemoteElementWithProperties => {
     elementPrototype: element,
     querySelectorTargets: [element],
     resolveActiveElement: () => null,
+    resolveFocusVisibleElement: () => null,
   });
 
   return element;
@@ -25,6 +26,25 @@ describe('installSelectorMethodsPolyfill on remote elements', () => {
   beforeAll(() => {
     installStylePropertyOnRemoteElements();
     patchRemoteElementAttributes();
+  });
+
+  it('should use live control properties after an attribute initializes them', () => {
+    const button = createRemoteElement('html-button');
+    const checkbox = createRemoteElement('html-input');
+
+    button.setAttribute('disabled', '');
+    checkbox.setAttribute('type', 'checkbox');
+    checkbox.setAttribute('checked', '');
+    expect(button.matches(':disabled')).toBe(true);
+    expect(checkbox.matches(':checked')).toBe(true);
+
+    button.disabled = false;
+    checkbox.checked = false;
+    expect(button.matches(':disabled')).toBe(false);
+    expect(button.matches(':enabled')).toBe(true);
+    expect(button.matches(':not([disabled])')).toBe(true);
+    expect(checkbox.matches(':checked')).toBe(false);
+    expect(checkbox.matches('[checked]')).toBe(true);
   });
 
   it('should read declared remote properties and ignore inherited accessors', () => {
@@ -67,11 +87,32 @@ describe('installSelectorMethodsPolyfill on remote elements', () => {
 
   it('should prefer the live property over a stale attribute', () => {
     const input = createRemoteElement('html-input');
+    const details = createRemoteElement('html-details');
 
     input.setAttribute('aria-label', 'First label');
     input['aria-label'] = 'Second label';
+    input.setAttribute('readonly', '');
+    input.readOnly = false;
+    details.setAttribute('open', '');
+    details.open = false;
 
     expect(input.matches('[aria-label="Second label"]')).toBe(true);
     expect(input.matches('[aria-label="First label"]')).toBe(false);
+    expect(input.matches(':read-write')).toBe(true);
+    expect(input.matches(':read-only')).toBe(false);
+    expect(details.matches(':open')).toBe(false);
+  });
+
+  it('should report the option matching a controlled select value as checked', () => {
+    const select = createRemoteElement('html-select');
+    const firstOption = createRemoteElement('html-option');
+    const secondOption = createRemoteElement('html-option');
+
+    firstOption.value = 'first';
+    secondOption.value = 'second';
+    select.append(firstOption, secondOption);
+    select.value = 'second';
+
+    expect(select.querySelector('option:checked')).toBe(secondOption);
   });
 });

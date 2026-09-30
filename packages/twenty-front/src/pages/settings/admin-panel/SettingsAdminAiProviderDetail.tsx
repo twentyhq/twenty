@@ -350,7 +350,7 @@ export const SettingsAdminAiProviderDetail = () => {
             <SearchInput
               placeholder={t`Search a model...`}
               value={searchQuery}
-              onChange={setSearchQuery}
+              onValueChange={setSearchQuery}
             />
           )}
 

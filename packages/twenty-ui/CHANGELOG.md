@@ -4,6 +4,9 @@
 
 ### Breaking Changes
 
+- Removed `CardPicker` and `CardPickerProps`. Use `Radio variant="card"` inside `RadioGroup` from `twenty-ui/primitives/input`. Card layout, selection, keyboard navigation, and form behavior are preserved.
+- Removed `Info`, `InfoProps`, and `InfoAccent`. Use `InlineBanner` from `twenty-ui/components` with `variant="compact"`, `message`, and `color` to preserve wrapping and presentation. Its `button` supports native links through `href`, custom links through `render`, and button actions through `onClick`. The separately versioned Granola app must migrate its four Info-consuming files together with its `twenty-ui@^1.0.0-alpha.1` dependency upgrade.
+
 - `ProgressBar` no longer accepts `countdownDurationInMs`, `isCountdownPaused`, or `onCountdownComplete`. Notification countdowns belong to `Toast`. Its duration, hover pause, manual progress, and close behavior are preserved, and keyboard focus now also pauses the countdown. The desktop companion uses the shared Toast.
 - Removed `ClickToActionLink`. Use `Button variant="link"` from `twenty-ui/primitives/input`: pass `onClick` for actions or `href` for navigation. The link appearance preserves compact text styling while actions gain native button keyboard behavior and prop forwarding.
 - Removed `soon` and `soonLabel` from `Button`, `MainButton`, and `LightButton`. Compose a disabled button with `Pill` from `twenty-ui/primitives/data-display` and supply the upcoming-feature label from the application.
@@ -19,7 +22,7 @@
 - **Public module ownership changes without a deprecation window.** This release removes 55 public React exports and the `twenty-ui/primitives/json-visualizer` entry point. Applications using the removed imports must migrate when upgrading; compatibility exports are not provided.
 - Import shared compositions, including `JsonTree`, menu presets, and Toast components and hooks, from `twenty-ui/components`. Foundational controls retain `twenty-ui/primitives/<family>` imports. The optional code editor retains `twenty-ui/components/code-editor`.
 - Field displays, application links, placeholders, and feature animations are no longer package exports. External applications must own these integrations or compose supported primitives. Internal implementation parts are private.
-- `Info` uses `href` and `render` in place of `to`. Replace `AnimatedEaseInOut` and `AnimatedExpandableContainer` with `Collapsible`. Remove the unused `mode` and `initial` props.
+- Replace `AnimatedEaseInOut` and `AnimatedExpandableContainer` with `Collapsible`. Remove the unused `mode` and `initial` props.
 - `SegmentedControl` is a radio group. Use `aria-label` or `aria-labelledby` (one is required), `value` or `defaultValue`, and `onValueChange(value, eventDetails)` in place of `ariaLabel`, `value`, and `onChange(value)`. Options take `startIcon` and `'aria-label'` in place of `Icon` and `ariaLabel`. `role` and `width` are removed: use `Tabs` for tab lists and `className` or `style` to size the control. Arrow keys select the next option, Enter no longer selects, and choosing the selected option again no longer calls `onValueChange`.
 - Dropdown submenu arrow keys follow `TextDirectionProvider` instead of the computed CSS direction. RTL content set only through `dir` or `direction` now uses LTR keys; wrap it in `TextDirectionProvider`. A Base UI `DirectionProvider` on its own no longer sets `dir` on Select, Dialog, AlertDialog, or Toaster portals; use `TextDirectionProvider`.
 - `Dropdown.Header` and `Dropdown.Back` no longer rotate caller-supplied icons in RTL. Pass an icon that already points the intended way.

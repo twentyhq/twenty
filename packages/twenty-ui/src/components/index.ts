@@ -24,10 +24,9 @@ export { getIconTileColorShades } from './data-display/TintedIconTile/utils/getI
 export { Callout } from './feedback/Callout/Callout';
 export type { CalloutProps } from './feedback/Callout/types/CalloutProps';
 export type { CalloutVariant } from './feedback/Callout/types/CalloutVariant';
-export { Info } from './feedback/Info/Info';
-export type { InfoAccent } from './feedback/Info/types/InfoAccent';
-export type { InfoProps } from './feedback/Info/types/InfoProps';
 export { InlineBanner } from './feedback/InlineBanner/InlineBanner';
+export type { InlineBannerButtonProps } from './feedback/InlineBanner/types/InlineBannerButtonProps';
+export type { InlineBannerProps } from './feedback/InlineBanner/types/InlineBannerProps';
 export { useToast } from './feedback/Toast/hooks/useToast';
 export { Toast } from './feedback/Toast/Toast';
 export { ToastProvider } from './feedback/Toast/ToastProvider';
@@ -38,8 +37,6 @@ export type { ToastProviderProps } from './feedback/Toast/types/ToastProviderPro
 export type { ToastVariant } from './feedback/Toast/types/ToastVariant';
 export { Toaster } from './feedback/Toaster/Toaster';
 export type { ToasterProps } from './feedback/Toaster/types/ToasterProps';
-export { CardPicker } from './input/CardPicker/CardPicker';
-export type { CardPickerProps } from './input/CardPicker/types/CardPickerProps';
 export { ColorSchemePicker } from './input/ColorSchemePicker/ColorSchemePicker';
 export type { ColorSchemePickerProps } from './input/ColorSchemePicker/types/ColorSchemePickerProps';
 export { IconButton } from './input/IconButton/IconButton';
