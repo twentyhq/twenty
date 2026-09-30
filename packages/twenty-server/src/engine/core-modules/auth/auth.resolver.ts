@@ -484,8 +484,6 @@ export class AuthResolver {
       recoveryCode: recoveryCodeVerificationInput.recoveryCode,
     });
 
-    // The login token stays valid, so the client continues to the existing
-    // setup step with it when the workspace requires two-factor authentication.
     if (workspace.isTwoFactorAuthenticationEnforced) {
       throw new AuthException(
         'Two factor authentication setup required',

@@ -1,16 +1,11 @@
 import { ArgsType, Field } from '@nestjs/graphql';
 
-import { IsNotEmpty, IsOptional, IsString, IsUUID } from 'class-validator';
+import { IsOptional, IsString } from 'class-validator';
 
-import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { TwoFactorAuthenticationRecoveryTargetInput } from 'src/engine/core-modules/two-factor-authentication/dto/two-factor-authentication-recovery-target.input';
 
 @ArgsType()
-export class GenerateTwoFactorAuthenticationRecoveryCodeInput {
-  @Field(() => UUIDScalarType)
-  @IsNotEmpty()
-  @IsUUID()
-  userId: string;
-
+export class GenerateTwoFactorAuthenticationRecoveryCodeInput extends TwoFactorAuthenticationRecoveryTargetInput {
   @Field(() => String, { nullable: true })
   @IsOptional()
   @IsString()

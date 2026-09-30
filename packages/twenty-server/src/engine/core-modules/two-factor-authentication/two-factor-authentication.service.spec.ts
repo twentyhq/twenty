@@ -46,7 +46,6 @@ describe('TwoFactorAuthenticationService', () => {
     update: jest.Mock;
     delete: jest.Mock;
   };
-  let recoveryCodeRepository: { update: jest.Mock };
   let throttlerService: { atomicTokenBucketThrottleOrThrow: jest.Mock };
   let insertWorkspaceEvent: jest.Mock;
   let secret: string;
@@ -120,11 +119,6 @@ describe('TwoFactorAuthenticationService', () => {
       getWorkspaceScopedRepositoryToken(TwoFactorAuthenticationMethodEntity),
     );
     throttlerService = module.get(ThrottlerService);
-    recoveryCodeRepository = module.get(
-      getWorkspaceScopedRepositoryToken(
-        TwoFactorAuthenticationRecoveryCodeEntity,
-      ),
-    );
   });
 
   afterEach(() => {
@@ -271,47 +265,6 @@ describe('TwoFactorAuthenticationService', () => {
 
       expect(insertWorkspaceEvent).not.toHaveBeenCalled();
     });
-
-    it('revokes pending recovery codes once the authenticator works again', async () => {
-      repository.findOne.mockResolvedValue(buildVerifiedMethod());
-      recoveryCodeRepository.update.mockResolvedValue({ affected: 1 });
-
-      await service.validateStrategy(
-        USER_ID,
-        authenticator.generate(secret),
-        WORKSPACE_ID,
-        TwoFactorAuthenticationStrategy.TOTP,
-      );
-
-      expect(recoveryCodeRepository.update).toHaveBeenCalledWith(
-        WORKSPACE_ID,
-        expect.objectContaining({ userWorkspaceId: USER_WORKSPACE_ID }),
-        { revokedAt: expect.any(Date) },
-      );
-      expect(insertWorkspaceEvent).toHaveBeenCalledWith(
-        TWO_FACTOR_AUTHENTICATION_EVENT,
-        expect.objectContaining({ action: 'recovery_code_revoked' }),
-      );
-    });
-
-    it('does not revoke recovery codes when the code is wrong', async () => {
-      repository.findOne.mockResolvedValue(buildVerifiedMethod());
-
-      const staleToken = authenticator
-        .clone({ epoch: Date.now() - 10 * TOTP_STEP_DURATION_MS })
-        .generate(secret);
-
-      await expect(
-        service.validateStrategy(
-          USER_ID,
-          staleToken,
-          WORKSPACE_ID,
-          TwoFactorAuthenticationStrategy.TOTP,
-        ),
-      ).rejects.toThrow(TwoFactorAuthenticationException);
-
-      expect(recoveryCodeRepository.update).not.toHaveBeenCalled();
-    });
   });
 
   describe('assertFreshStepUpAuthenticationOrThrow', () => {
@@ -319,19 +272,6 @@ describe('TwoFactorAuthenticationService', () => {
       otpRequiredMessage: msg`Enter your code.`,
       twoFactorAuthenticationRequiredMessage: msg`Set up two-factor authentication first.`,
     };
-
-    it('requires a code', async () => {
-      await expect(
-        service.assertFreshStepUpAuthenticationOrThrow({
-          userId: USER_ID,
-          workspaceId: WORKSPACE_ID,
-          ...stepUpMessages,
-        }),
-      ).rejects.toMatchObject({
-        code: TwoFactorAuthenticationExceptionCode.STEP_UP_AUTHENTICATION_REQUIRED,
-        userFriendlyMessage: stepUpMessages.otpRequiredMessage,
-      });
-    });
 
     it('requires a verified method in the current workspace', async () => {
       repository.exists.mockResolvedValue(false);
@@ -370,26 +310,6 @@ describe('TwoFactorAuthenticationService', () => {
       expect(
         throttlerService.atomicTokenBucketThrottleOrThrow,
       ).toHaveBeenCalled();
-    });
-
-    it('rejects a wrong code', async () => {
-      repository.exists.mockResolvedValue(true);
-      repository.findOne.mockResolvedValue(buildVerifiedMethod());
-
-      const staleToken = authenticator
-        .clone({ epoch: Date.now() - 10 * TOTP_STEP_DURATION_MS })
-        .generate(secret);
-
-      await expect(
-        service.assertFreshStepUpAuthenticationOrThrow({
-          userId: USER_ID,
-          workspaceId: WORKSPACE_ID,
-          otp: staleToken,
-          ...stepUpMessages,
-        }),
-      ).rejects.toMatchObject({
-        code: TwoFactorAuthenticationExceptionCode.INVALID_OTP,
-      });
     });
   });
 

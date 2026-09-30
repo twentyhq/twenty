@@ -6,8 +6,6 @@ import {
   TWO_FACTOR_AUTHENTICATION_RECOVERY_CODE_LENGTH,
 } from 'src/engine/core-modules/two-factor-authentication/constants/two-factor-authentication-recovery-code.constant';
 
-// The alphabet has 32 symbols, so a byte modulo 32 picks each one with equal
-// probability and 20 symbols carry 100 bits of entropy.
 export const generateTwoFactorAuthenticationRecoveryCode = (): string => {
   const symbols = Array.from(
     randomBytes(TWO_FACTOR_AUTHENTICATION_RECOVERY_CODE_LENGTH),

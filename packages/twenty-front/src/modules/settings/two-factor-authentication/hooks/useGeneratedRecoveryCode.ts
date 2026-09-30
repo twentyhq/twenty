@@ -1,7 +1,5 @@
 import { useState } from 'react';
 
-// Keeps the code visible long enough to copy when the browser clock is ahead
-// of the server's.
 const MINIMUM_DISPLAY_DURATION_MS = 5 * 60 * 1000;
 
 type GeneratedRecoveryCode = {
@@ -18,8 +16,6 @@ export const useGeneratedRecoveryCode = () => {
   ) => {
     setGeneratedRecoveryCode(recoveryCodeToShow);
 
-    // An expired code can no longer be redeemed, so it is hidden instead of
-    // staying copyable for an admin who left the page open.
     setTimeout(
       () =>
         setGeneratedRecoveryCode((currentRecoveryCode) =>

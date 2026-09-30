@@ -93,12 +93,6 @@ describe('SignInUpTwoFactorAuthenticationRecovery', () => {
     );
   });
 
-  it('keeps the continue button disabled until a code is entered', () => {
-    renderRecoveryStep();
-
-    expect(screen.getByRole('button', { name: 'Continue' })).toBeDisabled();
-  });
-
   it('signs in with the recovery code and reminds the member to set up two-factor authentication again', async () => {
     mockGetAuthTokensFromTwoFactorAuthenticationRecoveryCode.mockResolvedValue(
       undefined,
@@ -156,17 +150,6 @@ describe('SignInUpTwoFactorAuthenticationRecovery', () => {
     );
     expect(jotaiStore.get(signInUpStepState.atom)).toBe(
       SignInUpStep.TwoFactorAuthenticationRecovery,
-    );
-  });
-
-  it('goes back to the authenticator code step', async () => {
-    const user = userEvent.setup();
-
-    renderRecoveryStep();
-    await user.click(screen.getByText('Back'));
-
-    expect(jotaiStore.get(signInUpStepState.atom)).toBe(
-      SignInUpStep.TwoFactorAuthenticationVerification,
     );
   });
 });

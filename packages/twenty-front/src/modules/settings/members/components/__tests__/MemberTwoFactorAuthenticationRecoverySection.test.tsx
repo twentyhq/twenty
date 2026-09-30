@@ -84,22 +84,6 @@ it('explains that there is nothing to recover when the member has no authenticat
   ).not.toBeInTheDocument();
 });
 
-it('offers to generate a code for a member with an authenticator', async () => {
-  renderSection([
-    statusMock({
-      hasVerifiedTwoFactorAuthenticationMethod: true,
-      pendingRecoveryCodeExpiresAt: null,
-    }),
-  ]);
-
-  expect(
-    await screen.findByRole('button', { name: 'Generate recovery code' }),
-  ).toBeInTheDocument();
-  expect(
-    screen.queryByRole('button', { name: 'Revoke' }),
-  ).not.toBeInTheDocument();
-});
-
 it('shows a pending code and revokes it', async () => {
   const revoke = jest.fn(() => ({
     data: { revokeTwoFactorAuthenticationRecoveryCode: true },

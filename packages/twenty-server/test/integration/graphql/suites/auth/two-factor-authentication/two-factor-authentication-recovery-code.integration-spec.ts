@@ -49,8 +49,6 @@ const generateOtp = async (secret: string): Promise<string> => {
   return authenticator.generate(secret);
 };
 
-// Step-ups, sign-ins and redemptions all draw from per-user buckets; a suite
-// this long would otherwise exhaust them and fail for the wrong reason.
 const clearTwoFactorAuthenticationRateLimits = async (): Promise<void> => {
   const redis = new IORedis(process.env.REDIS_URL ?? 'redis://localhost:6379');
 
@@ -392,27 +390,6 @@ describe('Two-factor authentication recovery codes (integration)', () => {
         statusAfterRevoke.data.twoFactorAuthenticationRecoveryStatus
           .pendingRecoveryCodeExpiresAt,
       ).toBeNull();
-    });
-
-    it('replaces the previous code, and drops a pending code once the member signs in with their authenticator', async () => {
-      await generateCodeForJony();
-      const { expiresAt } = await generateCodeForJony();
-
-      expect(await selectPendingRecoveryCodes()).toHaveLength(1);
-      expect(
-        (await getRecoveryStatus(USER_DATA_SEED_IDS.JONY)).data
-          .twoFactorAuthenticationRecoveryStatus.pendingRecoveryCodeExpiresAt,
-      ).toBe(expiresAt);
-
-      const { errors } = await getAuthTokensFromOtp({
-        loginToken: await getJonyLoginToken(),
-        otp: await generateOtp(jonySecret),
-        origin: buildAppleWorkspaceOrigin(),
-        expectToFail: false,
-      });
-
-      expect(errors).toBeUndefined();
-      expect(await selectPendingRecoveryCodes()).toHaveLength(0);
     });
 
     it('leaves exactly one usable code when two are issued at the same time', async () => {

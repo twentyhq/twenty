@@ -1,7 +1,5 @@
 import { createHash } from 'crypto';
 
-// Codes are compared case-insensitively and without separators, so the same
-// normalization runs before hashing on issue and on redemption.
 export const hashTwoFactorAuthenticationRecoveryCode = (
   recoveryCode: string,
 ): string =>

@@ -261,8 +261,6 @@ export class TwoFactorAuthenticationService {
       });
     }
 
-    // A working authenticator means the member was not locked out after all, so
-    // a recovery code issued for them must not stay redeemable.
     const revokedRecoveryCodeCount = await this.revokePendingRecoveryCodes({
       workspaceId,
       userWorkspaceId: userTwoFactorAuthenticationMethod.userWorkspaceId,
@@ -316,9 +314,6 @@ export class TwoFactorAuthenticationService {
       );
     }
 
-    // Verify against the actor's current workspace only: checking the same code
-    // against every workspace they belong to would allow one OTP guess per
-    // workspace, weakening brute-force resistance.
     const hasVerifiedTwoFactorAuthenticationMethod =
       await this.twoFactorAuthenticationMethodRepository.exists(workspaceId, {
         where: { userWorkspace: { userId }, status: OTPStatus.VERIFIED },

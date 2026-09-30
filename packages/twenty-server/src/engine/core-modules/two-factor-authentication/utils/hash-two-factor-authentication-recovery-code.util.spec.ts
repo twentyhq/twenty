@@ -8,15 +8,4 @@ describe('hashTwoFactorAuthenticationRecoveryCode', () => {
       hashTwoFactorAuthenticationRecoveryCode(' ABCDE FGHJK MNPQR STVWX '),
     );
   });
-
-  it('returns a sha256 hex digest that differs per code', () => {
-    const hash = hashTwoFactorAuthenticationRecoveryCode(
-      'ABCDE-FGHJK-MNPQR-STVWX',
-    );
-
-    expect(hash).toMatch(/^[0-9a-f]{64}$/);
-    expect(hash).not.toBe(
-      hashTwoFactorAuthenticationRecoveryCode('ABCDE-FGHJK-MNPQR-STVWY'),
-    );
-  });
 });

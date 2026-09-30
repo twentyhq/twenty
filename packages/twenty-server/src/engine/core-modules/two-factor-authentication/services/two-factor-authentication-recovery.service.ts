@@ -126,26 +126,15 @@ export class TwoFactorAuthenticationRecoveryService {
       },
     );
 
-    const targetUserWorkspace = await this.getTargetUserWorkspaceOrThrow({
-      targetUserId,
-      targetWorkspaceId,
-    });
-
-    this.assertActorCanManageRecoveryCodesForTargetOrThrow({
-      actor,
-      targetUserWorkspace,
-    });
+    const targetUserWorkspace =
+      await this.getManageableTargetUserWorkspaceOrThrow({
+        actor,
+        targetUserId,
+        targetWorkspaceId,
+      });
 
     const hasVerifiedTwoFactorAuthenticationMethod =
-      await this.twoFactorAuthenticationMethodRepository.exists(
-        targetWorkspaceId,
-        {
-          where: {
-            userWorkspaceId: targetUserWorkspace.id,
-            status: OTPStatus.VERIFIED,
-          },
-        },
-      );
+      await this.hasVerifiedTwoFactorAuthenticationMethod(targetUserWorkspace);
 
     if (!hasVerifiedTwoFactorAuthenticationMethod) {
       throw new TwoFactorAuthenticationException(
@@ -172,8 +161,6 @@ export class TwoFactorAuthenticationRecoveryService {
         ),
     );
 
-    // The partial unique index allows one pending code per member, so when two
-    // admins issue at the same time only the first insert succeeds.
     try {
       await this.twoFactorAuthenticationRecoveryCodeRepository.insert(
         targetWorkspaceId,
@@ -224,15 +211,12 @@ export class TwoFactorAuthenticationRecoveryService {
     targetUserId: UserEntity['id'];
     targetWorkspaceId: WorkspaceEntity['id'];
   }): Promise<boolean> {
-    const targetUserWorkspace = await this.getTargetUserWorkspaceOrThrow({
-      targetUserId,
-      targetWorkspaceId,
-    });
-
-    this.assertActorCanManageRecoveryCodesForTargetOrThrow({
-      actor,
-      targetUserWorkspace,
-    });
+    const targetUserWorkspace =
+      await this.getManageableTargetUserWorkspaceOrThrow({
+        actor,
+        targetUserId,
+        targetWorkspaceId,
+      });
 
     const revokedCount =
       await this.twoFactorAuthenticationService.revokePendingRecoveryCodes({
@@ -264,26 +248,15 @@ export class TwoFactorAuthenticationRecoveryService {
     hasVerifiedTwoFactorAuthenticationMethod: boolean;
     pendingRecoveryCodeExpiresAt: Date | null;
   }> {
-    const targetUserWorkspace = await this.getTargetUserWorkspaceOrThrow({
-      targetUserId,
-      targetWorkspaceId,
-    });
-
-    this.assertActorCanManageRecoveryCodesForTargetOrThrow({
-      actor,
-      targetUserWorkspace,
-    });
+    const targetUserWorkspace =
+      await this.getManageableTargetUserWorkspaceOrThrow({
+        actor,
+        targetUserId,
+        targetWorkspaceId,
+      });
 
     const hasVerifiedTwoFactorAuthenticationMethod =
-      await this.twoFactorAuthenticationMethodRepository.exists(
-        targetWorkspaceId,
-        {
-          where: {
-            userWorkspaceId: targetUserWorkspace.id,
-            status: OTPStatus.VERIFIED,
-          },
-        },
-      );
+      await this.hasVerifiedTwoFactorAuthenticationMethod(targetUserWorkspace);
 
     const pendingRecoveryCode =
       await this.twoFactorAuthenticationRecoveryCodeRepository.findOne(
@@ -295,7 +268,6 @@ export class TwoFactorAuthenticationRecoveryService {
             revokedAt: IsNull(),
             expiresAt: MoreThan(new Date()),
           },
-          order: { createdAt: 'DESC' },
         },
       );
 
@@ -344,9 +316,6 @@ export class TwoFactorAuthenticationRecoveryService {
 
     const isConsumed = await this.appTokenRepository.manager.transaction(
       async (entityManager) => {
-        // The conditional UPDATE is what makes a code single use: when two
-        // requests race, Postgres re-checks the WHERE clause for the second
-        // one after the first commits, so only one of them affects the row.
         const consumeResult = await entityManager
           .getRepository(TwoFactorAuthenticationRecoveryCodeEntity)
           .update(
@@ -390,8 +359,6 @@ export class TwoFactorAuthenticationRecoveryService {
       this.rejectRecoveryCode({ userId, workspaceId: workspace.id });
     }
 
-    // Only the request that consumed the code signs the member out, so one
-    // that lost a race for the same code cannot revoke the winner's session.
     await this.userSessionService.revokeAllSessionsForUser({
       userId,
       workspaceId: workspace.id,
@@ -435,6 +402,42 @@ export class TwoFactorAuthenticationRecoveryService {
     }
 
     return userWorkspace;
+  }
+
+  private async getManageableTargetUserWorkspaceOrThrow({
+    actor,
+    targetUserId,
+    targetWorkspaceId,
+  }: {
+    actor: RecoveryCodeActor;
+    targetUserId: UserEntity['id'];
+    targetWorkspaceId: WorkspaceEntity['id'];
+  }): Promise<UserWorkspaceEntity> {
+    const targetUserWorkspace = await this.getTargetUserWorkspaceOrThrow({
+      targetUserId,
+      targetWorkspaceId,
+    });
+
+    this.assertActorCanManageRecoveryCodesForTargetOrThrow({
+      actor,
+      targetUserWorkspace,
+    });
+
+    return targetUserWorkspace;
+  }
+
+  private hasVerifiedTwoFactorAuthenticationMethod(
+    userWorkspace: Pick<UserWorkspaceEntity, 'id' | 'workspaceId'>,
+  ): Promise<boolean> {
+    return this.twoFactorAuthenticationMethodRepository.exists(
+      userWorkspace.workspaceId,
+      {
+        where: {
+          userWorkspaceId: userWorkspace.id,
+          status: OTPStatus.VERIFIED,
+        },
+      },
+    );
   }
 
   private assertActorCanManageRecoveryCodesForTargetOrThrow({
@@ -523,8 +526,6 @@ export class TwoFactorAuthenticationRecoveryService {
     });
   }
 
-  // Notification failures must not undo or block the security action that
-  // already happened, so they are logged instead of thrown.
   private async sendSecurityEmail({
     to,
     locale,

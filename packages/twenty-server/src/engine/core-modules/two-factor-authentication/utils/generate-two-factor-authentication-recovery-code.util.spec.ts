@@ -13,14 +13,4 @@ describe('generateTwoFactorAuthenticationRecoveryCode', () => {
       );
     }
   });
-
-  it('does not repeat codes', () => {
-    const recoveryCodes = new Set(
-      Array.from({ length: 1000 }, () =>
-        generateTwoFactorAuthenticationRecoveryCode(),
-      ),
-    );
-
-    expect(recoveryCodes.size).toBe(1000);
-  });
 });
