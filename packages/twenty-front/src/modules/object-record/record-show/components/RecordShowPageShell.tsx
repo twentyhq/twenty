@@ -1,4 +1,5 @@
 import { type ErrorLike } from '@apollo/client';
+import { type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { TimelineActivityContext } from '@/activities/timeline-activities/contexts/TimelineActivityContext';
@@ -26,6 +27,7 @@ type RecordShowPageShellProps = {
   record: ObjectRecord | undefined;
   loading: boolean;
   error?: ErrorLike;
+  headerActions?: ReactNode;
 };
 
 export const RecordShowPageShell = ({
@@ -34,6 +36,7 @@ export const RecordShowPageShell = ({
   record,
   loading,
   error,
+  headerActions,
 }: RecordShowPageShellProps) => {
   const isInSidePanel = useWorkspaceSurface().type === 'side-panel';
   const isLayoutCustomizationModeEnabled = useAtomStateValue(
@@ -86,6 +89,7 @@ export const RecordShowPageShell = ({
                   {!isLayoutCustomizationModeEnabled && (
                     <SidePanelToggleButton />
                   )}
+                  {headerActions}
                 </>
               )}
             </RecordShowPageHeader>

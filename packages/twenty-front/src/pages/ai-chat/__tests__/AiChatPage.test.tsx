@@ -2,6 +2,7 @@ import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { render } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
+import { type ReactNode } from 'react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
@@ -39,8 +40,19 @@ jest.mock('@/ai/components/AiChatPageThreadUrlSyncEffect', () => ({
   AiChatPageThreadUrlSyncEffect: () => null,
 }));
 
-jest.mock('@/ai/components/AiChatPageCloseAskAiPanelEffect', () => ({
-  AiChatPageCloseAskAiPanelEffect: () => null,
+jest.mock('@/ai/components/AiChatPageCloseSidePanelChatEffect', () => ({
+  AiChatPageCloseSidePanelChatEffect: () => null,
+}));
+
+let mockIsMobile = false;
+
+jest.mock('twenty-ui/utilities', () => ({
+  ...jest.requireActual('twenty-ui/utilities'),
+  useIsMobile: () => mockIsMobile,
+}));
+
+jest.mock('@/ai/components/AiChatCloseButton', () => ({
+  AiChatCloseButton: () => <button>Close chat</button>,
 }));
 
 jest.mock('@/information-banner/components/InformationBannerWrapper', () => ({
@@ -50,11 +62,14 @@ jest.mock('@/information-banner/components/InformationBannerWrapper', () => ({
 jest.mock('~/pages/object-record/RecordShowPage', () => ({
   RecordShowPageContent: ({
     parameters,
+    headerActions,
   }: {
     parameters: { objectNameSingular: string; objectRecordId: string };
+    headerActions?: ReactNode;
   }) => (
     <div>
       Record page {parameters.objectNameSingular} {parameters.objectRecordId}
+      {headerActions}
     </div>
   ),
 }));
@@ -77,6 +92,7 @@ const renderAt = (path: string) =>
 describe('AiChatPage', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockIsMobile = false;
     sessionStorage.clear();
     resetJotaiStore();
   });
@@ -110,6 +126,14 @@ describe('AiChatPage', () => {
       getByText(`Record page agentChatThread ${THREAD_ID}`),
     ).toBeInTheDocument();
     expect(queryByText('Chat header')).toBeNull();
+  });
+
+  it('keeps the close button of a saved chat on mobile', () => {
+    mockIsMobile = true;
+
+    const { getByRole } = renderAt(`/chat/${THREAD_ID}`);
+
+    expect(getByRole('button', { name: 'Close chat' })).toBeInTheDocument();
   });
 
   it('should mark the chat for side panel continuation while mounted', () => {

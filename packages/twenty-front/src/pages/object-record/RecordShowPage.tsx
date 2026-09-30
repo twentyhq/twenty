@@ -1,3 +1,4 @@
+import { type ReactNode } from 'react';
 import { Navigate, useParams } from 'react-router-dom';
 import {
   AppPath,
@@ -23,8 +24,10 @@ type RecordShowPageParameters = {
 
 export const RecordShowPageContent = ({
   parameters,
+  headerActions,
 }: {
   parameters: RecordShowPageParameters;
+  headerActions?: ReactNode;
 }) => {
   const { objectNameSingular, objectRecordId } = useRecordShowPage(
     parameters.objectNameSingular ?? '',
@@ -43,6 +46,7 @@ export const RecordShowPageContent = ({
       record={record}
       loading={loading}
       error={error}
+      headerActions={headerActions}
     />
   );
 };

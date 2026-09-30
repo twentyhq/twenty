@@ -81,7 +81,9 @@ export class AddChatRecordPageCommand extends ProvisionedWorkspaceCommandRunner 
     // present, so a deleted layout or tab would still get children created
     // under it
     const isParentSoftDeleted = [
-      flatPageLayoutMaps.byUniversalIdentifier[PAGE_LAYOUT_UNIVERSAL_IDENTIFIER],
+      flatPageLayoutMaps.byUniversalIdentifier[
+        PAGE_LAYOUT_UNIVERSAL_IDENTIFIER
+      ],
       flatPageLayoutTabMaps.byUniversalIdentifier[
         CHAT_TAB_UNIVERSAL_IDENTIFIER
       ],
@@ -176,16 +178,59 @@ export class AddChatRecordPageCommand extends ProvisionedWorkspaceCommandRunner 
   }
 
   async down({ workspaceId, options }: RunOnWorkspaceArgs): Promise<void> {
-    const { flatPageLayoutMaps, flatPageLayoutTabMaps, flatPageLayoutWidgetMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatPageLayoutMaps',
-        'flatPageLayoutTabMaps',
-        'flatPageLayoutWidgetMaps',
-      ]);
+    const {
+      flatPageLayoutMaps,
+      flatPageLayoutTabMaps,
+      flatPageLayoutWidgetMaps,
+    } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
+      'flatPageLayoutMaps',
+      'flatPageLayoutTabMaps',
+      'flatPageLayoutWidgetMaps',
+    ]);
 
-    const pageLayoutsToDelete = [
-      flatPageLayoutMaps.byUniversalIdentifier[PAGE_LAYOUT_UNIVERSAL_IDENTIFIER],
-    ].filter(isDefined);
+    const pageLayout =
+      flatPageLayoutMaps.byUniversalIdentifier[
+        PAGE_LAYOUT_UNIVERSAL_IDENTIFIER
+      ];
+
+    if (!isDefined(pageLayout)) {
+      return;
+    }
+
+    const pageLayoutTabs = Object.values(
+      flatPageLayoutTabMaps.byUniversalIdentifier,
+    ).filter(
+      (tab): tab is FlatPageLayoutTab =>
+        isDefined(tab) && tab.pageLayoutId === pageLayout.id,
+    );
+    const pageLayoutTabIds = pageLayoutTabs.map(({ id }) => id);
+    const pageLayoutWidgets = Object.values(
+      flatPageLayoutWidgetMaps.byUniversalIdentifier,
+    ).filter(
+      (widget): widget is FlatPageLayoutWidget =>
+        isDefined(widget) && pageLayoutTabIds.includes(widget.pageLayoutTabId),
+    );
+
+    // Deleting the layout cascades to tabs and widgets a workspace added,
+    // which this command did not create
+    const hasWorkspaceAdditions =
+      pageLayoutTabs.some(
+        ({ universalIdentifier }) =>
+          universalIdentifier !== CHAT_TAB_UNIVERSAL_IDENTIFIER,
+      ) ||
+      pageLayoutWidgets.some(
+        ({ universalIdentifier }) =>
+          universalIdentifier !== CHAT_WIDGET_UNIVERSAL_IDENTIFIER,
+      );
+
+    if (hasWorkspaceAdditions) {
+      this.logger.warn(
+        `Kept the chat record page for workspace ${workspaceId}, which has tabs or widgets added to it`,
+      );
+      return;
+    }
+
+    const pageLayoutsToDelete = [pageLayout];
     const pageLayoutTabsToDelete = [
       flatPageLayoutTabMaps.byUniversalIdentifier[
         CHAT_TAB_UNIVERSAL_IDENTIFIER
@@ -196,15 +241,6 @@ export class AddChatRecordPageCommand extends ProvisionedWorkspaceCommandRunner 
         CHAT_WIDGET_UNIVERSAL_IDENTIFIER
       ],
     ].filter(isDefined);
-
-    if (
-      pageLayoutsToDelete.length +
-        pageLayoutTabsToDelete.length +
-        pageLayoutWidgetsToDelete.length ===
-      0
-    ) {
-      return;
-    }
 
     const { twentyStandardFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(

@@ -3,7 +3,7 @@ import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 import { SidePanelPages } from 'twenty-shared/types';
 
-import { AiChatPageCloseAskAiPanelEffect } from '@/ai/components/AiChatPageCloseAskAiPanelEffect';
+import { AiChatPageCloseSidePanelChatEffect } from '@/ai/components/AiChatPageCloseSidePanelChatEffect';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import {
   type SidePanelNavigationStackItem,
@@ -16,7 +16,10 @@ import {
 } from '@/ui/utilities/state/jotai/jotaiStore';
 import { IconDotsVertical } from 'twenty-ui/icon';
 
-const setCurrentSidePanelPage = (page: ActiveSidePanelPage) => {
+const setCurrentSidePanelPage = (
+  page: ActiveSidePanelPage,
+  routedPathname = '/test',
+) => {
   const navigationItem: SidePanelNavigationStackItem =
     page === SidePanelPages.RoutedPage
       ? {
@@ -25,7 +28,7 @@ const setCurrentSidePanelPage = (page: ActiveSidePanelPage) => {
           pageIcon: IconDotsVertical,
           pageId: 'test-page',
           routedLocation: {
-            pathname: '/test',
+            pathname: routedPathname,
             search: '',
             hash: '',
             state: null,
@@ -52,7 +55,7 @@ const Wrapper = ({ children }: { children: ReactNode }) => (
   <JotaiProvider store={jotaiStore}>{children}</JotaiProvider>
 );
 
-describe('AiChatPageCloseAskAiPanelEffect', () => {
+describe('AiChatPageCloseSidePanelChatEffect', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     resetJotaiStore();
@@ -62,7 +65,19 @@ describe('AiChatPageCloseAskAiPanelEffect', () => {
     jotaiStore.set(isSidePanelOpenedState.atom, true);
     setCurrentSidePanelPage(SidePanelPages.AskAI);
 
-    render(<AiChatPageCloseAskAiPanelEffect />, { wrapper: Wrapper });
+    render(<AiChatPageCloseSidePanelChatEffect />, { wrapper: Wrapper });
+
+    expect(closeSidePanelMenuMock).toHaveBeenCalled();
+  });
+
+  it('should dismiss a chat record opened in the panel', () => {
+    jotaiStore.set(isSidePanelOpenedState.atom, true);
+    setCurrentSidePanelPage(
+      SidePanelPages.RoutedPage,
+      '/object/agentChatThread/20202020-0000-4000-8000-0000000000aa',
+    );
+
+    render(<AiChatPageCloseSidePanelChatEffect />, { wrapper: Wrapper });
 
     expect(closeSidePanelMenuMock).toHaveBeenCalled();
   });
@@ -71,7 +86,7 @@ describe('AiChatPageCloseAskAiPanelEffect', () => {
     jotaiStore.set(isSidePanelOpenedState.atom, true);
     setCurrentSidePanelPage(SidePanelPages.RoutedPage);
 
-    render(<AiChatPageCloseAskAiPanelEffect />, { wrapper: Wrapper });
+    render(<AiChatPageCloseSidePanelChatEffect />, { wrapper: Wrapper });
 
     expect(closeSidePanelMenuMock).not.toHaveBeenCalled();
   });
@@ -80,13 +95,13 @@ describe('AiChatPageCloseAskAiPanelEffect', () => {
     jotaiStore.set(isSidePanelOpenedState.atom, false);
     setCurrentSidePanelPage(SidePanelPages.AskAI);
 
-    render(<AiChatPageCloseAskAiPanelEffect />, { wrapper: Wrapper });
+    render(<AiChatPageCloseSidePanelChatEffect />, { wrapper: Wrapper });
 
     expect(closeSidePanelMenuMock).not.toHaveBeenCalled();
   });
 
   it('should not fight a panel chat opened after mount', () => {
-    render(<AiChatPageCloseAskAiPanelEffect />, { wrapper: Wrapper });
+    render(<AiChatPageCloseSidePanelChatEffect />, { wrapper: Wrapper });
 
     jotaiStore.set(isSidePanelOpenedState.atom, true);
     setCurrentSidePanelPage(SidePanelPages.AskAI);

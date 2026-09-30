@@ -1,3 +1,5 @@
+import { createOnePageLayoutTab } from 'test/integration/metadata/suites/page-layout-tab/utils/create-one-page-layout-tab.util';
+import { destroyOnePageLayoutTab } from 'test/integration/metadata/suites/page-layout-tab/utils/destroy-one-page-layout-tab.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import {
   STANDARD_OBJECTS,
@@ -124,5 +126,28 @@ describe('2-44 workspace command 1790756589463 - AddChatRecordPageCommand (integ
     expect(after.pageLayout?.id).toBe(before.pageLayout?.id);
     expect(after.tab?.id).toBe(before.tab?.id);
     expect(after.widget?.id).toBe(before.widget?.id);
+  });
+
+  it('keeps a chat record page with added tabs on rollback', async () => {
+    const { pageLayout } = await readChatRecordPage();
+    const { data } = await createOnePageLayoutTab({
+      expectToFail: false,
+      input: { title: 'Added tab', pageLayoutId: pageLayout?.id ?? '' },
+    });
+
+    await runCommand('down');
+
+    const afterDown = await readChatRecordPage();
+
+    expect(afterDown.pageLayout?.id).toBe(pageLayout?.id);
+    expect(afterDown.widget).toBeDefined();
+
+    await destroyOnePageLayoutTab({
+      expectToFail: false,
+      input: { id: data.createPageLayoutTab.id },
+    });
+    await runCommand('down');
+
+    expect((await readChatRecordPage()).pageLayout).toBeUndefined();
   });
 });

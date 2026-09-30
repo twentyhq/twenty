@@ -1,13 +1,16 @@
 import { styled } from '@linaria/react';
+import { useState } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AiChatTab } from '@/ai/components/AiChatTab';
 import { AiChatThreadRecordTargets } from '@/ai/components/AiChatThreadRecordTargets';
 import { AI_CHAT_SURFACE } from '@/ai/constants/AiChatSurface';
 import { AiChatSurfaceContext } from '@/ai/contexts/AiChatSurfaceContext';
+import { ChatWidgetOpenInChatPageEffect } from '@/page-layout/widgets/chat/components/ChatWidgetOpenInChatPageEffect';
 import { ChatWidgetThreadSyncEffect } from '@/page-layout/widgets/chat/components/ChatWidgetThreadSyncEffect';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
+import { isCurrentPathAiChatPage } from '~/utils/isCurrentPathAiChatPage';
 
 const StyledChatContainer = styled.div`
   --ai-chat-content-max-width: 768px;
@@ -31,6 +34,15 @@ const StyledRecordTargets = styled.div`
 export const ChatWidget = () => {
   const targetRecord = useTargetRecord();
   const isInSidePanel = useWorkspaceSurface().type === 'side-panel';
+  // Checked once, so leaving for the chat page later does not pull this chat
+  // into it
+  const [isOpenedBesideChatPage] = useState(
+    () => isInSidePanel && isCurrentPathAiChatPage(),
+  );
+
+  if (isOpenedBesideChatPage) {
+    return <ChatWidgetOpenInChatPageEffect threadId={targetRecord.id} />;
+  }
 
   return (
     <StyledChatContainer>
