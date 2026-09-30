@@ -186,6 +186,13 @@ export class CoreWorkflowMutationWorkspaceService {
       name: `${sourceCoreWorkflow.name ?? ''} (Duplicate)`,
       // duplicating a private workflow must not publish it to the workspace
       visibility: sourceCoreWorkflow.visibility,
+    }).catch(async (error: unknown) => {
+      await this.deleteClonedStepResources({
+        workspaceId,
+        clonedSteps: remappedSteps,
+      });
+
+      throw error;
     });
 
     try {
