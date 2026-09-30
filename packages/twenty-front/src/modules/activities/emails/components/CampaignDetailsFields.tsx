@@ -24,6 +24,7 @@ import { useMyMessageChannels } from '@/settings/accounts/hooks/useMyMessageChan
 import { Select } from '@/ui/input/components/Select';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
+import { useRemoveFocusItemFromFocusStackOnUnmount } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackOnUnmount';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 
 const StyledSubjectInput = styled.input`
@@ -57,6 +58,10 @@ export const CampaignDetailsFields = ({
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
   const { removeFocusItemFromFocusStackById } =
     useRemoveFocusItemFromFocusStackById();
+  useRemoveFocusItemFromFocusStackOnUnmount({
+    focusId: subjectFocusId,
+    isEnabled: true,
+  });
 
   const handleSubjectFocus = () =>
     pushFocusItemToFocusStack({
