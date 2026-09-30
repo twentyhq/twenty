@@ -83,7 +83,6 @@ const buildKickoffMock = ({
                   totalInputCredits: 0,
                   totalOutputCredits: 0,
                   deletedAt: null,
-                  lastMessageAt: null,
                   createdAt: '2026-07-21T10:00:00.000Z',
                   updatedAt: '2026-07-21T10:00:00.000Z',
                 },
