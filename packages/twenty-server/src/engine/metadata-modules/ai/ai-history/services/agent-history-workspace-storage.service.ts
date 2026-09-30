@@ -56,6 +56,7 @@ export class AgentHistoryWorkspaceStorageService {
   async run<TResult>(
     workspaceId: string,
     work: (context: AgentHistoryStorageContext) => Promise<TResult>,
+    { lockMode = 'shared' }: { lockMode?: 'shared' | 'exclusive' } = {},
   ): Promise<TResult> {
     if (!isNonEmptyString(workspaceId)) {
       throw new AgentHistoryStorageException(
@@ -70,7 +71,9 @@ export class AgentHistoryWorkspaceStorageService {
       await runner.startTransaction();
       // A retried upgrade clears its destination; no live write may race that copy.
       await runner.query(
-        'SELECT pg_advisory_xact_lock_shared(hashtextextended($1, 0))',
+        lockMode === 'exclusive'
+          ? 'SELECT pg_advisory_xact_lock(hashtextextended($1, 0))'
+          : 'SELECT pg_advisory_xact_lock_shared(hashtextextended($1, 0))',
         [`${HISTORY_READINESS_KEY}:${workspaceId}`],
       );
       const ready = await runner.query(

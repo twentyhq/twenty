@@ -436,7 +436,7 @@ export class WorkflowRunWorkspaceService {
   }: {
     stepId: string;
     stepInfo: Partial<WorkflowRunStepInfo>;
-    expectedThreadId?: string;
+    expectedThreadId?: string | null;
     workflowRunId: string;
     workspaceId: string;
   }): Promise<boolean> {
@@ -450,8 +450,9 @@ export class WorkflowRunWorkspaceService {
     if (
       workflowRunToUpdate.status !== WorkflowRunStatus.RUNNING ||
       currentStepInfo?.status !== StepStatus.PENDING ||
-      (isDefined(expectedThreadId) &&
-        currentStepInfo.threadId !== expectedThreadId)
+      isDefined(currentStepInfo.error) ||
+      (expectedThreadId !== undefined &&
+        (currentStepInfo.threadId ?? null) !== expectedThreadId)
     ) {
       return false;
     }

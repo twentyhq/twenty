@@ -40,6 +40,31 @@ describe('AgentHistoryWorkspaceStorageService', () => {
     expect(runner.release).toHaveBeenCalledTimes(1);
   });
 
+  it.each([
+    ['shared', 'pg_advisory_xact_lock_shared'],
+    ['exclusive', 'pg_advisory_xact_lock'],
+  ] as const)(
+    'holds the %s workspace fence until the operation completes',
+    async (lockMode, lockFunction) => {
+      await service.run(
+        WORKSPACE_ID,
+        async () => {
+          expect(runner.query).toHaveBeenNthCalledWith(
+            1,
+            `SELECT ${lockFunction}(hashtextextended($1, 0))`,
+            [`agent-history-storage-v1:${WORKSPACE_ID}`],
+          );
+          expect(runner.commitTransaction).not.toHaveBeenCalled();
+          expect(runner.release).not.toHaveBeenCalled();
+        },
+        { lockMode },
+      );
+
+      expect(runner.commitTransaction).toHaveBeenCalledTimes(1);
+      expect(runner.release).toHaveBeenCalledTimes(1);
+    },
+  );
+
   it.each([[], undefined])(
     'rejects incomplete upgrades before running domain writes (%s)',
     async (ready) => {
