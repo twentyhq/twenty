@@ -324,26 +324,32 @@ describe('Parallel branch leaf resume workflow (e2e)', () => {
       'NOT_STARTED',
     );
 
+    const [{ id: formAskId }] = await global.testDataSource.query(
+      `SELECT id FROM "${getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID)}"."inputAsk" WHERE "workflowRunId" = $1 AND "stepId" = $2`,
+      [createdWorkflowRunId, formStepId],
+    );
+
     const submitFormResponse = await client
       .post('/graphql')
       .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
       .send({
         query: `
-          mutation SubmitFormStep($input: SubmitFormStepInput!) {
-            submitFormStep(input: $input)
+          mutation AnswerAsk($input: AnswerAskInput!) {
+            answerAsk(input: $input) {
+              streamId
+            }
           }
         `,
         variables: {
           input: {
-            stepId: formStepId,
-            workflowRunId: createdWorkflowRunId,
+            askId: formAskId,
             response: { answer: 'Submitted from integration test' },
           },
         },
       });
 
     expect(submitFormResponse.body.errors).toBeUndefined();
-    expect(submitFormResponse.body.data.submitFormStep).toBe(true);
+    expect(submitFormResponse.body.data.answerAsk.streamId).toBeNull();
 
     await (
       await global.workflowTestServices.runJob()

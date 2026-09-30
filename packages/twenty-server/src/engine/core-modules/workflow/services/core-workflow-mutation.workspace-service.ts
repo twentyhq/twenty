@@ -443,6 +443,7 @@ export class CoreWorkflowMutationWorkspaceService {
       createdByUserWorkspaceId: userWorkspaceId ?? null,
       lastPublishedVersionId: null,
       lastPublishedCoreWorkflowVersionId: null,
+      versionDefinitionHash: null,
       createdAt,
       updatedAt: createdAt,
     };

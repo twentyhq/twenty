@@ -61,6 +61,13 @@
         "description": "CSS class applied to the pill."
       },
       {
+        "name": "color",
+        "type": "\"inherit\" | \"tertiary\"",
+        "required": false,
+        "defaultValue": "tertiary",
+        "description": "Text color. `inherit` takes the parent color and font weight on a tinted background."
+      },
+      {
         "name": "Icon",
         "type": "IconComponent",
         "required": false,
@@ -73,6 +80,13 @@
         "required": false,
         "defaultValue": null,
         "description": "Short text displayed inside the pill."
+      },
+      {
+        "name": "size",
+        "type": "\"md\" | \"sm\"",
+        "required": false,
+        "defaultValue": "sm",
+        "description": "Pill size. `md` uses a larger font, height and icon."
       }
     ]
   },
@@ -159,27 +173,6 @@
         "description": "CSS class applied to the progress root."
       },
       {
-        "name": "countdownDurationInMs",
-        "type": "number",
-        "required": false,
-        "defaultValue": null,
-        "description": "Starts a visual animation from full to empty over this duration in milliseconds. Does not update `value`."
-      },
-      {
-        "name": "isCountdownPaused",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": "false",
-        "description": "Pauses the countdown animation without resetting its position."
-      },
-      {
-        "name": "onCountdownComplete",
-        "type": "(() => void)",
-        "required": false,
-        "defaultValue": null,
-        "description": "Called when the countdown animation ends."
-      },
-      {
         "name": "onGrowInComplete",
         "type": "(() => void)",
         "required": false,
@@ -198,7 +191,7 @@
         "type": "number",
         "required": true,
         "defaultValue": null,
-        "description": "Current progress from 0 to 100. Also supplies the accessible value during a countdown."
+        "description": "Current progress from 0 to 100."
       },
       {
         "name": "withBorderRadius",
@@ -532,55 +525,6 @@
     ]
   },
   {
-    "name": "ClickToActionLink",
-    "entryPoint": "twenty-ui/primitives/navigation",
-    "slug": "navigation/click-to-action-link",
-    "props": [
-      {
-        "name": "children",
-        "type": "ReactNode",
-        "required": false,
-        "defaultValue": null,
-        "description": "Visible link text or content. Use a descriptive destination label."
-      },
-      {
-        "name": "className",
-        "type": "string",
-        "required": false,
-        "defaultValue": null,
-        "description": "CSS class applied to the anchor."
-      },
-      {
-        "name": "href",
-        "type": "string",
-        "required": false,
-        "defaultValue": null,
-        "description": "Destination URL for native link navigation."
-      },
-      {
-        "name": "onClick",
-        "type": "MouseEventHandler<HTMLAnchorElement>",
-        "required": false,
-        "defaultValue": null,
-        "description": "Click handler called when the link is activated."
-      },
-      {
-        "name": "rel",
-        "type": "string",
-        "required": false,
-        "defaultValue": null,
-        "description": "Relationship to the destination, such as `noopener noreferrer` for a new tab."
-      },
-      {
-        "name": "target",
-        "type": "HTMLAttributeAnchorTarget",
-        "required": false,
-        "defaultValue": null,
-        "description": "Browsing context in which to open the destination."
-      }
-    ]
-  },
-  {
     "name": "OverflowingTextWithTooltip",
     "entryPoint": "twenty-ui/primitives/typography",
     "slug": "typography/overflowing-text-with-tooltip",
@@ -776,10 +720,10 @@
       },
       {
         "name": "variant",
-        "type": "\"ghost\" | \"outline\" | \"soft\" | \"solid\"",
+        "type": "\"ghost\" | \"link\" | \"outline\" | \"soft\" | \"solid\"",
         "required": false,
         "defaultValue": "ghost",
-        "description": "Visual treatment of the button surface."
+        "description": "Visual treatment of the button surface. `link` uses compact text styling without a filled surface or border; `href` still determines link semantics."
       }
     ]
   },
@@ -902,10 +846,10 @@
       },
       {
         "name": "variant",
-        "type": "\"ghost\" | \"outline\" | \"soft\" | \"solid\"",
+        "type": "\"ghost\" | \"link\" | \"outline\" | \"soft\" | \"solid\"",
         "required": false,
         "defaultValue": null,
-        "description": "Visual treatment of the button surface."
+        "description": "Visual treatment of the button surface. `link` uses compact text styling without a filled surface or border; `href` still determines link semantics."
       }
     ]
   },
@@ -989,21 +933,7 @@
         "type": "\"md\" | \"sm\"",
         "required": false,
         "defaultValue": null,
-        "description": "Button height: `sm` (24px) or `md` (32px)."
-      },
-      {
-        "name": "soon",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": null,
-        "description": "Displays a coming-soon label and disables activation."
-      },
-      {
-        "name": "soonLabel",
-        "type": "string",
-        "required": false,
-        "defaultValue": null,
-        "description": "Text for the coming-soon label."
+        "description": "Button height: `sm` (24px) or `md` (32px). The `link` variant uses its content height at either size."
       },
       {
         "name": "startIcon",
@@ -1021,10 +951,10 @@
       },
       {
         "name": "variant",
-        "type": "\"ghost\" | \"outline\" | \"soft\" | \"solid\"",
+        "type": "\"ghost\" | \"link\" | \"outline\" | \"soft\" | \"solid\"",
         "required": false,
         "defaultValue": "solid",
-        "description": "Visual treatment of the button surface."
+        "description": "Visual treatment of the button surface. `link` uses compact text styling without a filled surface or border; `href` still determines link semantics."
       }
     ]
   },
@@ -1115,21 +1045,7 @@
         "type": "\"md\" | \"sm\"",
         "required": false,
         "defaultValue": "sm",
-        "description": "Button height: `sm` (24px) or `md` (32px)."
-      },
-      {
-        "name": "soon",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": null,
-        "description": "Displays a coming-soon label and disables activation."
-      },
-      {
-        "name": "soonLabel",
-        "type": "string",
-        "required": false,
-        "defaultValue": null,
-        "description": "Text for the coming-soon label."
+        "description": "Button height: `sm` (24px) or `md` (32px). The `link` variant uses its content height at either size."
       },
       {
         "name": "startIcon",
@@ -1147,10 +1063,10 @@
       },
       {
         "name": "variant",
-        "type": "\"ghost\" | \"outline\" | \"soft\" | \"solid\"",
+        "type": "\"ghost\" | \"link\" | \"outline\" | \"soft\" | \"solid\"",
         "required": false,
         "defaultValue": "ghost",
-        "description": "Visual treatment of the button surface."
+        "description": "Visual treatment of the button surface. `link` uses compact text styling without a filled surface or border; `href` still determines link semantics."
       }
     ]
   },
@@ -1234,21 +1150,7 @@
         "type": "\"md\" | \"sm\"",
         "required": false,
         "defaultValue": "md",
-        "description": "Button height: `sm` (24px) or `md` (32px)."
-      },
-      {
-        "name": "soon",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": "false",
-        "description": "Displays a coming-soon label and disables activation."
-      },
-      {
-        "name": "soonLabel",
-        "type": "string",
-        "required": false,
-        "defaultValue": null,
-        "description": "Text for the coming-soon label."
+        "description": "Button height: `sm` (24px) or `md` (32px). The `link` variant uses its content height at either size."
       },
       {
         "name": "startIcon",
@@ -1266,10 +1168,10 @@
       },
       {
         "name": "variant",
-        "type": "\"ghost\" | \"outline\" | \"soft\" | \"solid\"",
+        "type": "\"ghost\" | \"link\" | \"outline\" | \"soft\" | \"solid\"",
         "required": false,
         "defaultValue": "outline",
-        "description": "Visual treatment of the button surface."
+        "description": "Visual treatment of the button surface. `link` uses compact text styling without a filled surface or border; `href` still determines link semantics."
       }
     ]
   },
@@ -1315,7 +1217,7 @@
       },
       {
         "name": "variant",
-        "type": "\"ghost\" | \"outline\" | \"soft\" | \"solid\"",
+        "type": "\"ghost\" | \"link\" | \"outline\" | \"soft\" | \"solid\"",
         "required": false,
         "defaultValue": null,
         "description": "Shared surface treatment that overrides the variant of buttons in the group."
@@ -3712,7 +3614,7 @@
           },
           {
             "name": "size",
-            "type": "\"fullscreen\" | \"lg\" | \"md\" | \"sm\" | \"xl\"",
+            "type": "\"compact\" | \"fullscreen\" | \"lg\" | \"md\" | \"sm\" | \"xl\"",
             "required": false,
             "defaultValue": "md",
             "description": "Width of the dialog, or `fullscreen` to fill the viewport."
@@ -6194,7 +6096,7 @@
         "type": "number",
         "required": false,
         "defaultValue": "6000",
-        "description": "Milliseconds before `onClose` is called. The countdown pauses while the\npointer is over the toast."
+        "description": "Milliseconds before `onClose` is called. The countdown pauses while the\npointer is over the toast or keyboard focus is inside it."
       },
       {
         "name": "icon",
@@ -6356,6 +6258,13 @@
         "required": false,
         "defaultValue": null,
         "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+      },
+      {
+        "name": "ring",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Surrounds the avatar with a background-colored ring so overlapping avatars stay distinct."
       },
       {
         "name": "shape",

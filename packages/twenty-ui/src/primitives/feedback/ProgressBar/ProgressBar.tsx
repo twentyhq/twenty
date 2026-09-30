@@ -1,25 +1,10 @@
 import { Progress } from '@base-ui/react/progress';
+import { isNonEmptyString } from '@sniptt/guards';
 import { clsx } from 'clsx';
+import { type CSSProperties } from 'react';
 
 import styles from './ProgressBar.module.scss';
-
-export type ProgressBarProps = {
-  value: number;
-  size?: 'sm' | 'md';
-  className?: string;
-  barColor?: string;
-  backgroundColor?: string;
-  withBorderRadius?: boolean;
-  withGrowIn?: boolean;
-  withGlint?: boolean;
-  withSpringFill?: boolean;
-  withMinimumFillWidth?: boolean;
-  ariaLabel?: string;
-  countdownDurationInMs?: number;
-  isCountdownPaused?: boolean;
-  onCountdownComplete?: () => void;
-  onGrowInComplete?: () => void;
-};
+import { type ProgressBarProps } from './types/ProgressBarProps';
 
 export const ProgressBar = ({
   value,
@@ -33,13 +18,8 @@ export const ProgressBar = ({
   withSpringFill = false,
   withMinimumFillWidth = true,
   ariaLabel,
-  countdownDurationInMs,
-  isCountdownPaused = false,
-  onCountdownComplete,
   onGrowInComplete,
 }: ProgressBarProps) => {
-  const isCountdown = countdownDurationInMs !== undefined;
-
   return (
     <Progress.Root
       className={clsx(styles.bar, className)}
@@ -56,25 +36,18 @@ export const ProgressBar = ({
       style={
         {
           '--progress-bar-background-color': backgroundColor,
-          ...(barColor ? { '--progress-bar-color': barColor } : {}),
-          ...(isCountdown
-            ? {
-                '--progress-bar-countdown-duration': `${countdownDurationInMs}ms`,
-              }
+          ...(isNonEmptyString(barColor)
+            ? { '--progress-bar-color': barColor }
             : {}),
-        } as React.CSSProperties
+        } as CSSProperties
       }
     >
       <Progress.Track className={styles.track}>
         <Progress.Indicator
-          className={clsx(styles.indicator, isCountdown && styles.countdown)}
+          className={styles.indicator}
           data-with-border-radius={withBorderRadius || undefined}
           data-spring-fill={withSpringFill || undefined}
-          data-nonzero={
-            (withMinimumFillWidth && value > 0 && !isCountdown) || undefined
-          }
-          data-paused={(isCountdown && isCountdownPaused) || undefined}
-          onAnimationEnd={isCountdown ? onCountdownComplete : undefined}
+          data-nonzero={(withMinimumFillWidth && value > 0) || undefined}
         >
           {withGlint && <span key={value} className={styles.glint} />}
         </Progress.Indicator>

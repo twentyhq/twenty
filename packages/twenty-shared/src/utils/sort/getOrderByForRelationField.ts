@@ -20,5 +20,7 @@ export const getOrderByForRelationField = ({
   return getOrderByForFieldMetadataType({
     field: labelIdentifierField,
     orderByDirection,
-  }).map((entry) => ({ [field.name]: entry }));
+  }).map((entry) => {
+    return { [field.name]: entry };
+  });
 };

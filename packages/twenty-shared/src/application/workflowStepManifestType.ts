@@ -49,19 +49,13 @@ const stepFilterManifestSchema = stepFilterSchema
 
 const recordObjectShape = { objectUniversalIdentifier: z.uuid() };
 
-const functionStepSchema = <TType extends 'CODE' | 'LOGIC_FUNCTION'>(
-  type: TType,
-) =>
+export const workflowStepManifestSchema = z.discriminatedUnion('type', [
   z.strictObject({
     ...baseStepShape,
-    type: z.literal(type),
+    type: z.literal('LOGIC_FUNCTION'),
     logicFunctionUniversalIdentifier: z.uuid(),
     input: z.record(z.string(), z.unknown()),
-  });
-
-export const workflowStepManifestSchema = z.discriminatedUnion('type', [
-  functionStepSchema('CODE'),
-  functionStepSchema('LOGIC_FUNCTION'),
+  }),
   stepSchema('SEND_EMAIL', workflowSendEmailActionSettingsSchema.shape.input),
   stepSchema(
     'CREATE_CALENDAR_EVENT',

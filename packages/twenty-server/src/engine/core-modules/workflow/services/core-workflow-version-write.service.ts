@@ -389,6 +389,7 @@ export class CoreWorkflowVersionWriteService {
               triggers: isDefined(trigger) ? [trigger] : null,
               steps: steps ?? null,
               status: CoreWorkflowVersionStatus.DRAFT,
+              isSystemSideEffect: false,
               workspaceWorkflowVersionId,
               applicationUniversalIdentifier:
                 workspaceCustomFlatApplication.universalIdentifier,

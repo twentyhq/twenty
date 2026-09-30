@@ -241,6 +241,3 @@ export type {
   PageLayoutWidgetUniversalConfiguration,
   PageLayoutWidgetVerticalListPosition,
 } from 'twenty-shared/types';
-
-export { defineWorkflow } from './workflows/define-workflow';
-export type { WorkflowManifest } from 'twenty-shared/application';

@@ -63,18 +63,22 @@ export const RouteContextStoreProvider = () => {
     location,
     AppPath.WorkflowCoreShowPage,
   );
+  const isAiChatPage = isMatchingLocation(location, AppPath.AiChat);
+  // The chat page is the record page of a chat, on its own route
   const isRecordShowPage =
     isCoreWorkflowShowPage ||
+    isAiChatPage ||
     isMatchingLocation(location, AppPath.RecordShowPage);
   const isStandalonePage = isMatchingLocation(location, AppPath.PageLayoutPage);
-  const isAiChatPage = isMatchingLocation(location, AppPath.AiChat);
   const isSettingsPage = useIsSettingsPage();
 
   const routeParams = matchRoutes(routeObjects, location)?.at(-1)?.params;
   const objectNamePlural = routeParams?.objectNamePlural;
   const objectNameSingular = isCoreWorkflowShowPage
     ? CoreObjectNameSingular.Workflow
-    : routeParams?.objectNameSingular;
+    : isAiChatPage
+      ? CoreObjectNameSingular.AgentChatThread
+      : routeParams?.objectNameSingular;
 
   const [searchParams] = useSearchParams();
   const viewIdQueryParamRaw = searchParams.get('viewId');
@@ -141,7 +145,6 @@ export const RouteContextStoreProvider = () => {
     (isRecordIndexPage ||
       isRecordShowPage ||
       isStandalonePage ||
-      isAiChatPage ||
       isSettingsPage) &&
     metadataStore.status === 'up-to-date';
 
@@ -151,7 +154,7 @@ export const RouteContextStoreProvider = () => {
 
   return (
     <RouteContextStoreProviderEffect
-      viewId={isCoreWorkflowShowPage ? undefined : viewId}
+      viewId={isCoreWorkflowShowPage || isAiChatPage ? undefined : viewId}
       objectMetadataItem={objectMetadataItem}
       isRecordIndexPage={isRecordIndexPage}
       isRecordShowPage={isRecordShowPage}

@@ -31,7 +31,6 @@ export const prepareWorkflowManifestReferences = ({
     BaseOutputSchemaV2
   >();
   const logicFunctionIdByUniversalIdentifier = new Map<string, string>();
-  const codeFunctionIdByUniversalIdentifier = new Map<string, string>();
   const agentIdByUniversalIdentifier = new Map<string, string>();
   const objectByUniversalIdentifier = new Map<
     string,
@@ -52,10 +51,6 @@ export const prepareWorkflowManifestReferences = ({
       fromAllFlatEntityMaps.flatLogicFunctionMaps.byUniversalIdentifier[
         logicFunction.universalIdentifier
       ]?.id ?? v4();
-    codeFunctionIdByUniversalIdentifier.set(
-      logicFunction.universalIdentifier,
-      logicFunction.id,
-    );
     const declaredOutputSchema =
       logicFunction.workflowActionTriggerSettings?.outputSchema;
     if (isDefined(declaredOutputSchema)) {
@@ -130,7 +125,6 @@ export const prepareWorkflowManifestReferences = ({
     logicFunctionOutputSchemaByUniversalIdentifier,
     agentOutputSchemaByUniversalIdentifier,
     logicFunctionIdByUniversalIdentifier,
-    codeFunctionIdByUniversalIdentifier,
     agentIdByUniversalIdentifier,
     objectByUniversalIdentifier,
     fieldByUniversalIdentifier,

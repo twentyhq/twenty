@@ -14,7 +14,6 @@ import { type UninstallLogicFunctionConfig } from '@/sdk/define/logic-functions/
 import { type RoleConfig } from '@/sdk/define/roles/role-config';
 import { type SettingsMenuItemConfig } from '@/sdk/define/settings-menu-items/settings-menu-item-config';
 import {
-  type WorkflowManifest,
   type AgentManifest,
   type ConnectionProviderManifest,
   type FieldManifest,
@@ -32,7 +31,6 @@ export type ValidationResult<T> = {
 };
 
 export type DefinableEntity =
-  | WorkflowManifest
   | ApplicationConfig
   | ObjectConfig
   | FieldManifest

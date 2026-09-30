@@ -1,5 +1,4 @@
 import { computeWorkflowManifestOutputSchema } from 'src/engine/core-modules/application/application-manifest/utils/compute-workflow-manifest-output-schema.util';
-import { validateWorkflowManifestRecordFields } from 'src/engine/core-modules/application/application-manifest/utils/validate-workflow-manifest-record-fields.util';
 import { computeWorkflowManifestOrderBy } from 'src/engine/core-modules/application/application-manifest/utils/compute-workflow-manifest-order-by.util';
 import { msg } from '@lingui/core/macro';
 import { type WorkflowStepManifest } from 'twenty-shared/application';
@@ -81,20 +80,14 @@ export const fromWorkflowStepManifestToActionOrThrow = ({
         : {}),
     };
   };
-  validateWorkflowManifestRecordFields({ step, references });
   let input: unknown;
   switch (step.type) {
-    case 'CODE':
     case 'LOGIC_FUNCTION':
       input = {
         logicFunctionId: resolve(
-          step.type === 'CODE'
-            ? references.codeFunctionIdByUniversalIdentifier
-            : references.logicFunctionIdByUniversalIdentifier,
+          references.logicFunctionIdByUniversalIdentifier,
           step.logicFunctionUniversalIdentifier,
-          step.type === 'CODE'
-            ? 'application code function'
-            : 'application workflow action',
+          'application workflow action',
         ),
         logicFunctionInput: step.input,
       };

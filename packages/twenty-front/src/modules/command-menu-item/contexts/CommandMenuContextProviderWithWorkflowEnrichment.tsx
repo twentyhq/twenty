@@ -1,3 +1,6 @@
+import { isThirdPartyApplication } from '@/applications/utils/isThirdPartyApplication';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type CommandMenuContextApi } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -26,6 +29,7 @@ export const CommandMenuContextProviderWithWorkflowEnrichment = ({
   isInPreviewMode,
 }: CommandMenuContextProviderWithWorkflowEnrichmentProps) => {
   const isCore = useIsWorkflowCoreEnabled();
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const workflowsWithCurrentVersions = useWorkflowsWithCurrentVersions(
     isCore ? [] : selectedWorkflowRecordIds,
   );
@@ -36,6 +40,19 @@ export const CommandMenuContextProviderWithWorkflowEnrichment = ({
   const workflows = isCore
     ? coreWorkflowsWithCurrentVersions
     : workflowsWithCurrentVersions;
+
+  const isWorkflowDefinitionReadOnly =
+    isCore &&
+    (coreWorkflowsWithCurrentVersions.length !==
+      selectedWorkflowRecordIds.length ||
+      coreWorkflowsWithCurrentVersions.some((workflow) => {
+        const application = currentWorkspace?.installedApplications.find(
+          (installedApplication) =>
+            installedApplication.id === workflow.applicationId,
+        );
+
+        return isThirdPartyApplication({ application, currentWorkspace });
+      }));
 
   const enrichedSelectedRecords = commandMenuContextApi.selectedRecords.map(
     (record) => {
@@ -60,6 +77,7 @@ export const CommandMenuContextProviderWithWorkflowEnrichment = ({
 
   return (
     <CommandMenuContextProviderContent
+      isWorkflowDefinitionReadOnly={isWorkflowDefinitionReadOnly}
       displayType={displayType}
       containerType={containerType}
       commandMenuContextApi={{

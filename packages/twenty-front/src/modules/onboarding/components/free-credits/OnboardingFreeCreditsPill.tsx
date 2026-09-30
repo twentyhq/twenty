@@ -9,6 +9,9 @@ import { useOnboardingFreeCreditsTooltipContent } from '@/onboarding/hooks/useOn
 import { useOnboardingNewlyEarnedCredits } from '@/onboarding/hooks/useOnboardingNewlyEarnedCredits';
 import { type OnboardingCreditsProgress } from '@/onboarding/types/OnboardingCreditsProgress';
 import { formatOnboardingCredits } from '@/onboarding/utils/formatOnboardingCredits';
+import { currentFocusedItemSelector } from '@/ui/utilities/focus/states/currentFocusedItemSelector';
+import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { plural } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
@@ -120,6 +123,10 @@ export const OnboardingFreeCreditsPill = ({
   const shouldReduceMotion = useReducedMotion();
   const { numberFormat } = useNumberFormat();
   const [isPopoverShown, setIsPopoverShown] = useState(false);
+  const currentFocusedItem = useAtomStateValue(currentFocusedItemSelector);
+  const isModalFocused =
+    currentFocusedItem?.componentInstance.componentType ===
+    FocusComponentType.MODAL;
   const [hasTrackGrown, setHasTrackGrown] = useState(
     shouldReduceMotion ?? false,
   );
@@ -233,7 +240,9 @@ export const OnboardingFreeCreditsPill = ({
           </Popover.Popup>
         </Popover.Root>
       </StyledPillAnchor>
-      <Tooltip.Root open={!isPopoverShown && isDefined(tooltipContent)}>
+      <Tooltip.Root
+        open={!isPopoverShown && !isModalFocused && isDefined(tooltipContent)}
+      >
         <Tooltip.Popup
           anchor={pillRef}
           side="bottom"

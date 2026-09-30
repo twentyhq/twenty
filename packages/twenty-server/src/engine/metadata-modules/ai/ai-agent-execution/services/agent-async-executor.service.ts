@@ -432,7 +432,7 @@ export class AgentAsyncExecutorService {
           )?.modalities,
         });
 
-      const pausingToolNames = Object.keys(pausingTools);
+      const offeredToolNames = Object.keys(pausingTools);
 
       const textResponse = await generateText({
         instructions: `${baseSystemPrompt}\n\n${agent ? tipTapDocumentToMarkdown(agent.prompt) : ''}${toolCatalogSection}`,
@@ -441,7 +441,7 @@ export class AgentAsyncExecutorService {
         messages: [...priorModelMessages, ...modelMessages],
         stopWhen: (step) =>
           isStepCount(AGENT_CONFIG.MAX_STEPS)(step) ||
-          endsOnPausingToolCall({ steps: step.steps, pausingToolNames }) ||
+          endsOnPausingToolCall({ steps: step.steps, offeredToolNames }) ||
           hasNoMoreAvailableCredits,
         providerOptions,
         ...buildAiTelemetry({
@@ -548,7 +548,7 @@ export class AgentAsyncExecutorService {
 
       const endsOnPausingTool = endsOnPausingToolCall({
         steps: textResponse.steps,
-        pausingToolNames,
+        offeredToolNames,
       });
 
       // An execution stopped on a pausing tool has no final answer to structure.

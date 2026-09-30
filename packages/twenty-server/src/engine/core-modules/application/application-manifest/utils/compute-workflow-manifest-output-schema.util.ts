@@ -19,7 +19,7 @@ export const computeWorkflowManifestOutputSchema = ({
     return step.outputSchema;
   }
 
-  if (step.type === 'CODE' || step.type === 'LOGIC_FUNCTION') {
+  if (step.type === 'LOGIC_FUNCTION') {
     const declaredOutputSchema =
       references.logicFunctionOutputSchemaByUniversalIdentifier?.get(
         step.logicFunctionUniversalIdentifier,

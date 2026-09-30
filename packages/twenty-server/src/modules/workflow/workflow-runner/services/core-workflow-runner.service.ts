@@ -1,10 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { type ActorMetadata, FeatureFlagKey } from 'twenty-shared/types';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { type ActorMetadata } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -40,8 +38,6 @@ export class CoreWorkflowRunnerService {
     private readonly billingUsageService: BillingUsageService,
     private readonly workflowThrottlingWorkspaceService: WorkflowThrottlingWorkspaceService,
     private readonly metricsService: MetricsService,
-    private readonly featureFlagService: FeatureFlagService,
-    private readonly applicationService: ApplicationService,
     @InjectMessageQueue(MessageQueue.workflowQueue)
     private readonly messageQueueService: MessageQueueService,
   ) {}
@@ -99,25 +95,6 @@ export class CoreWorkflowRunnerService {
     ) {
       throw new WorkflowRunException(
         'Core workflow not found',
-        WorkflowRunExceptionCode.WORKFLOW_RUN_INVALID,
-      );
-    }
-
-    const { workspaceCustomFlatApplication, twentyStandardFlatApplication } =
-      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
-        { workspaceId },
-      );
-
-    if (
-      workflow.applicationId !== workspaceCustomFlatApplication.id &&
-      workflow.applicationId !== twentyStandardFlatApplication.id &&
-      !(await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_APPLICATION_WORKFLOWS_ENABLED,
-        workspaceId,
-      ))
-    ) {
-      throw new WorkflowRunException(
-        'Application workflows are not enabled for this workspace',
         WorkflowRunExceptionCode.WORKFLOW_RUN_INVALID,
       );
     }

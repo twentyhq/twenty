@@ -231,8 +231,6 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         ),
         {} as never,
         {} as never,
-        { broadcast: jest.fn().mockResolvedValue(undefined) } as never,
-        {} as never,
         {
           getThreadWithAccess: ({
             workspaceId,
@@ -1188,7 +1186,6 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
             totalCacheCreationTokens: 0,
             contextWindowTokens: 1000,
             conversationSize: 3,
-            pendingQuestionMessageId: null,
           },
         };
         expect(

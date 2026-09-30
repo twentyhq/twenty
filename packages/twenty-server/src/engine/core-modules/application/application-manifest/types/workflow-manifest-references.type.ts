@@ -22,7 +22,8 @@ export type WorkflowManifestFieldReference = {
   | 'type'
   | 'settings'
   | 'relationTargetObjectMetadataUniversalIdentifier'
->;
+> &
+  Partial<Pick<FlatFieldMetadata, 'universalSettings'>>;
 
 export type WorkflowManifestReferences = {
   logicFunctionOutputSchemaByUniversalIdentifier?: ReadonlyMap<
@@ -34,7 +35,6 @@ export type WorkflowManifestReferences = {
     BaseOutputSchemaV2
   >;
   logicFunctionIdByUniversalIdentifier: ReadonlyMap<string, string>;
-  codeFunctionIdByUniversalIdentifier?: ReadonlyMap<string, string>;
   agentIdByUniversalIdentifier?: ReadonlyMap<string, string>;
   objectByUniversalIdentifier?: ReadonlyMap<
     string,

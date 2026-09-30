@@ -4,6 +4,8 @@ import { TIPTAP_NODE_TYPES, type TipTapNodeType } from 'twenty-shared/utils';
 import { type IconComponent } from 'twenty-ui/icon';
 
 export const ADVANCED_TEXT_EDITOR_BLOCK_NODE_TYPES = [
+  TIPTAP_NODE_TYPES.PARAGRAPH,
+  TIPTAP_NODE_TYPES.HEADING,
   TIPTAP_NODE_TYPES.SECTION,
   TIPTAP_NODE_TYPES.COLUMNS,
   TIPTAP_NODE_TYPES.COLUMN,

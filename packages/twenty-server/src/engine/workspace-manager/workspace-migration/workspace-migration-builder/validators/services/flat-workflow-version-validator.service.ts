@@ -1,3 +1,4 @@
+import { validateApplicationWorkflowVersion } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-application-workflow-version.util';
 import { Injectable } from '@nestjs/common';
 
 import { msg, t } from '@lingui/core/macro';
@@ -15,9 +16,7 @@ import { type UniversalFlatEntityValidationArgs } from 'src/engine/workspace-man
 export class FlatWorkflowVersionValidatorService {
   public validateFlatWorkflowVersionCreation({
     flatEntityToValidate: flatWorkflowVersion,
-    optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
-      flatWorkflowVersionMaps: optimisticFlatWorkflowVersionMaps,
-    },
+    optimisticFlatEntityMapsAndRelatedFlatEntityMaps: relatedFlatEntityMaps,
   }: UniversalFlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.workflowVersion
   >): FailedFlatEntityValidation<'workflowVersion', 'create'> {
@@ -31,7 +30,7 @@ export class FlatWorkflowVersionValidatorService {
 
     const existingWorkflowVersion = findFlatEntityByUniversalIdentifier({
       universalIdentifier: flatWorkflowVersion.universalIdentifier,
-      flatEntityMaps: optimisticFlatWorkflowVersionMaps,
+      flatEntityMaps: relatedFlatEntityMaps.flatWorkflowVersionMaps,
     });
 
     if (isDefined(existingWorkflowVersion)) {
@@ -42,14 +41,19 @@ export class FlatWorkflowVersionValidatorService {
       });
     }
 
+    validationResult.errors.push(
+      ...validateApplicationWorkflowVersion({
+        version: flatWorkflowVersion,
+        relatedFlatEntityMaps,
+      }),
+    );
+
     return validationResult;
   }
 
   public validateFlatWorkflowVersionDeletion({
     flatEntityToValidate,
-    optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
-      flatWorkflowVersionMaps: optimisticFlatWorkflowVersionMaps,
-    },
+    optimisticFlatEntityMapsAndRelatedFlatEntityMaps: relatedFlatEntityMaps,
   }: UniversalFlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.workflowVersion
   >): FailedFlatEntityValidation<'workflowVersion', 'delete'> {
@@ -63,7 +67,7 @@ export class FlatWorkflowVersionValidatorService {
 
     const existingWorkflowVersion = findFlatEntityByUniversalIdentifier({
       universalIdentifier: flatEntityToValidate.universalIdentifier,
-      flatEntityMaps: optimisticFlatWorkflowVersionMaps,
+      flatEntityMaps: relatedFlatEntityMaps.flatWorkflowVersionMaps,
     });
 
     if (!isDefined(existingWorkflowVersion)) {
@@ -79,9 +83,8 @@ export class FlatWorkflowVersionValidatorService {
 
   public validateFlatWorkflowVersionUpdate({
     universalIdentifier,
-    optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
-      flatWorkflowVersionMaps: optimisticFlatWorkflowVersionMaps,
-    },
+    flatEntityUpdate,
+    optimisticFlatEntityMapsAndRelatedFlatEntityMaps: relatedFlatEntityMaps,
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.workflowVersion
   >): FailedFlatEntityValidation<'workflowVersion', 'update'> {
@@ -95,7 +98,7 @@ export class FlatWorkflowVersionValidatorService {
 
     const existingWorkflowVersion = findFlatEntityByUniversalIdentifier({
       universalIdentifier,
-      flatEntityMaps: optimisticFlatWorkflowVersionMaps,
+      flatEntityMaps: relatedFlatEntityMaps.flatWorkflowVersionMaps,
     });
 
     if (!isDefined(existingWorkflowVersion)) {
@@ -104,6 +107,15 @@ export class FlatWorkflowVersionValidatorService {
         message: t`Workflow version not found`,
         userFriendlyMessage: msg`Workflow version not found`,
       });
+    }
+
+    if (isDefined(existingWorkflowVersion)) {
+      validationResult.errors.push(
+        ...validateApplicationWorkflowVersion({
+          version: { ...existingWorkflowVersion, ...flatEntityUpdate },
+          relatedFlatEntityMaps,
+        }),
+      );
     }
 
     return validationResult;

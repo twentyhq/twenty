@@ -460,7 +460,6 @@
                       "developers/extend/apps/logic/key-value-store",
                       "developers/extend/apps/logic/background-jobs",
                       "developers/extend/apps/logic/skills-and-agents",
-                      "developers/extend/apps/logic/workflows",
                       "developers/extend/apps/logic/connections",
                       "developers/extend/apps/logic/messaging-channels",
                       "developers/extend/apps/logic/credits"
@@ -591,8 +590,7 @@
                         "group": "Navigation",
                         "pages": [
                           "ui/primitives/navigation/list-item",
-                          "ui/primitives/navigation/tabs",
-                          "ui/primitives/navigation/click-to-action-link"
+                          "ui/primitives/navigation/tabs"
                         ]
                       },
                       {

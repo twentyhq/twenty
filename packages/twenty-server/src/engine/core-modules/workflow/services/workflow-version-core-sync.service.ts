@@ -212,6 +212,7 @@ export class WorkflowVersionCoreSyncService {
         id: string;
       } = {
         ...coreRow,
+        isSystemSideEffect: false,
         coreWorkflowId:
           coreRow.coreWorkflowId ??
           existingFlatWorkflowVersion?.coreWorkflowId ??

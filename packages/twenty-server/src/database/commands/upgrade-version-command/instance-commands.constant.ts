@@ -1,3 +1,4 @@
+import { AddApplicationWorkflowSideEffectsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-instance-command-fast-1790757604624-add-application-workflow-side-effects';
 // Auto-edited by generate:instance-command — do not edit manually
 
 import { AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand } from 'src/database/commands/upgrade-version-command/1-21/1-21-instance-command-fast-1775129420309-add-view-field-group-id-index-on-view-field';
@@ -214,6 +215,7 @@ import { EnforceWorkflowVersionCoreParentSlowInstanceCommand } from 'src/databas
 import { AddCoreForeignKeyIndexesSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-instance-command-slow-1790343790126-add-core-foreign-key-indexes';
 import { AddChatThreadsWidgetTypeFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-instance-command-fast-1790621229217-add-chat-threads-widget-type';
 import { AddValidationRuleTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-instance-command-fast-1790624264147-add-validation-rule-table';
+import { ReapplyUsageLimitPeriodReshapeFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-instance-command-fast-1790755883509-reapply-usage-limit-period-reshape';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -430,4 +432,6 @@ export const INSTANCE_COMMANDS = [
   AddCoreForeignKeyIndexesSlowInstanceCommand,
   AddChatThreadsWidgetTypeFastInstanceCommand,
   AddValidationRuleTableFastInstanceCommand,
+  ReapplyUsageLimitPeriodReshapeFastInstanceCommand,
+  AddApplicationWorkflowSideEffectsFastInstanceCommand,
 ];
