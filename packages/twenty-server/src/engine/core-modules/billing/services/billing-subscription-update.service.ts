@@ -36,11 +36,12 @@ import {
   type SubscriptionUpdate,
   SubscriptionUpdateType,
 } from 'src/engine/core-modules/billing/types/billing-subscription-update.type';
+import { type LicensedBillingSubscriptionItem } from 'src/engine/core-modules/billing/types/billing-subscription-item.type';
+import { type SubscriptionStripePrices } from 'src/engine/core-modules/billing/types/subscription-stripe-prices.type';
+import { computeImmediateSubscriptionUpdate } from 'src/engine/core-modules/billing/utils/compute-immediate-subscription-update.util';
 import { computeSubscriptionUpdateOptions } from 'src/engine/core-modules/billing/utils/compute-subscription-update-options.util';
 import { findSellableBaseProductPriceOrThrow } from 'src/engine/core-modules/billing/utils/find-sellable-base-product-price-or-throw.util';
 import { findProductPriceForIntervalOrThrow } from 'src/engine/core-modules/billing/utils/find-product-price-for-interval-or-throw.util';
-import { isNoOpSubscriptionUpdate } from 'src/engine/core-modules/billing/utils/is-no-op-subscription-update.util';
-import { getStripeSubscriptionPeriodEnd } from 'src/engine/core-modules/billing/utils/get-stripe-subscription-period-end.util';
 import { isSellableCatalogPrice } from 'src/engine/core-modules/billing/utils/is-sellable-catalog-price.util';
 import { getBaseProductSubscriptionItemOrThrow } from 'src/engine/core-modules/billing/utils/get-base-product-subscription-item-or-throw.util';
 import { getCurrentLicensedBillingSubscriptionItemOrThrow } from 'src/engine/core-modules/billing/utils/get-licensed-billing-subscription-item-or-throw.util';
@@ -52,11 +53,6 @@ import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
-export type SubscriptionStripePrices = {
-  licensedPriceId: string;
-  seats: number;
-  resourceCreditPriceId: string;
-};
 
 @Injectable()
 export class BillingSubscriptionUpdateService {
@@ -240,13 +236,15 @@ export class BillingSubscriptionUpdateService {
         ? subscriptionUpdate.newSeats
         : await this.countWorkspaceMembers(workspaceId);
 
+    const currentPrices: SubscriptionStripePrices = {
+      licensedPriceId: licensedItem.stripePriceId,
+      resourceCreditPriceId: resourceCreditItem.stripePriceId,
+      seats: licensedItem.quantity,
+    };
+
     const toUpdateCurrentPrices = await this.computeSubscriptionPricesUpdate(
       subscriptionUpdate,
-      {
-        licensedPriceId: licensedItem.stripePriceId,
-        resourceCreditPriceId: resourceCreditItem.stripePriceId,
-        seats: seats > 0 ? seats : licensedItem.quantity,
-      },
+      { ...currentPrices, seats: seats > 0 ? seats : currentPrices.seats },
     );
 
     const { schedule, currentPhase, nextPhase } =
@@ -305,22 +303,21 @@ export class BillingSubscriptionUpdateService {
         });
       }
     } else {
-      const isNoOpUpdate = isNoOpSubscriptionUpdate({
+      const immediateSubscriptionUpdate = computeImmediateSubscriptionUpdate({
+        subscriptionUpdate,
+        currentPrices,
         toUpdatePrices: toUpdateCurrentPrices,
-        currentLicensedPriceId: licensedItem.stripePriceId,
-        currentResourceCreditPriceId: resourceCreditItem.stripePriceId,
-        currentSeats: licensedItem.quantity,
       });
 
-      const updatedStripeSubscription = isNoOpUpdate
-        ? undefined
-        : await this.applyImmediateSubscriptionUpdate({
+      const updatedStripeSubscription = isDefined(immediateSubscriptionUpdate)
+        ? await this.applyImmediateSubscriptionUpdate({
             subscription,
-            subscriptionUpdate,
+            subscriptionUpdate: immediateSubscriptionUpdate,
             toUpdateCurrentPrices,
             licensedItem,
             resourceCreditItem,
-          });
+          })
+        : undefined;
 
       if (isDefined(nextPhase)) {
         assertIsDefinedOrThrow(schedule);
@@ -347,7 +344,7 @@ export class BillingSubscriptionUpdateService {
               refreshedCurrentPhase,
             ),
           subscriptionCurrentPeriodEnd:
-            getStripeSubscriptionPeriodEnd(updatedStripeSubscription) ??
+            updatedStripeSubscription?.items.data[0].current_period_end ??
             Math.floor(subscription.currentPeriodEnd.getTime() / 1000),
         });
       }
@@ -473,14 +470,6 @@ export class BillingSubscriptionUpdateService {
     licensedItem: LicensedBillingSubscriptionItem;
     resourceCreditItem: BillingSubscriptionItemEntity;
   }): Promise<Stripe.Subscription> {
-    const subscriptionOptions = computeSubscriptionUpdateOptions(
-      subscriptionUpdate,
-      {
-        currentSeats: licensedItem.quantity,
-        isTrialing: subscription.status === SubscriptionStatus.Trialing,
-      },
-    );
-
     if (
       subscriptionUpdate.type === SubscriptionUpdateType.RESOURCE_CREDIT_PRICE
     ) {
@@ -491,56 +480,32 @@ export class BillingSubscriptionUpdateService {
       });
     }
 
-    return await this.runSubscriptionUpdate({
-      stripeSubscriptionId: subscription.stripeSubscriptionId,
-      licensedStripeItemId: licensedItem.stripeSubscriptionItemId,
-      resourceCreditStripeItemId: resourceCreditItem.stripeSubscriptionItemId,
-      licensedStripePriceId: toUpdateCurrentPrices.licensedPriceId,
-      resourceCreditStripePriceId: toUpdateCurrentPrices.resourceCreditPriceId,
-      seats: toUpdateCurrentPrices.seats,
-      ...subscriptionOptions,
-    });
-  }
+    const { proration, anchor, metadata } = computeSubscriptionUpdateOptions(
+      subscriptionUpdate,
+      {
+        currentSeats: licensedItem.quantity,
+        isTrialing: subscription.status === SubscriptionStatus.Trialing,
+      },
+    );
 
-  private async runSubscriptionUpdate({
-    stripeSubscriptionId,
-    licensedStripeItemId,
-    resourceCreditStripeItemId,
-    licensedStripePriceId,
-    resourceCreditStripePriceId,
-    seats,
-    anchor,
-    proration,
-    metadata,
-  }: {
-    stripeSubscriptionId: string;
-    licensedStripeItemId: string;
-    resourceCreditStripeItemId: string;
-    licensedStripePriceId: string;
-    resourceCreditStripePriceId: string;
-    seats: number;
-    anchor?: Stripe.SubscriptionUpdateParams.BillingCycleAnchor;
-    proration?: Stripe.SubscriptionUpdateParams.ProrationBehavior;
-    metadata?: Record<string, string>;
-  }) {
     return await this.stripeSubscriptionService.updateSubscription(
-      stripeSubscriptionId,
+      subscription.stripeSubscriptionId,
       {
         items: [
           {
-            id: licensedStripeItemId,
-            price: licensedStripePriceId,
-            quantity: seats,
+            id: licensedItem.stripeSubscriptionItemId,
+            price: toUpdateCurrentPrices.licensedPriceId,
+            quantity: toUpdateCurrentPrices.seats,
           },
           {
-            id: resourceCreditStripeItemId,
-            price: resourceCreditStripePriceId,
+            id: resourceCreditItem.stripeSubscriptionItemId,
+            price: toUpdateCurrentPrices.resourceCreditPriceId,
             quantity: 1,
           },
         ],
-        ...(anchor ? { billing_cycle_anchor: anchor } : {}),
-        ...(proration ? { proration_behavior: proration } : {}),
-        ...(metadata ? { metadata } : {}),
+        proration_behavior: proration,
+        billing_cycle_anchor: anchor,
+        metadata,
       },
     );
   }

@@ -16,7 +16,7 @@ import { type BillingSubscriptionSchedulePhaseDTO } from 'src/engine/core-module
 import { BillingPriceEntity } from 'src/engine/core-modules/billing/entities/billing-price.entity';
 import { BillingPlanService } from 'src/engine/core-modules/billing/services/billing-plan.service';
 import { BillingPriceService } from 'src/engine/core-modules/billing/services/billing-price.service';
-import { SubscriptionStripePrices } from 'src/engine/core-modules/billing/services/billing-subscription-update.service';
+import { type SubscriptionStripePrices } from 'src/engine/core-modules/billing/types/subscription-stripe-prices.type';
 import { normalizePriceRef } from 'src/engine/core-modules/billing/utils/normalize-price-ref.utils';
 
 @Injectable()
