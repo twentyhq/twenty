@@ -8,7 +8,7 @@ import {
 import { getAiSdkErrorFingerprint } from 'src/engine/core-modules/exception-handler/utils/get-ai-sdk-error-fingerprint.util';
 
 describe('getAiSdkErrorFingerprint', () => {
-  it('should group provider errors by error class and HTTP status', () => {
+  it('should group provider errors by error class, HTTP status and provider code', () => {
     expect(
       getAiSdkErrorFingerprint(
         new APICallError({
@@ -17,9 +17,22 @@ describe('getAiSdkErrorFingerprint', () => {
           url: 'https://api.openai.com/v1/responses',
           requestBodyValues: {},
           statusCode: 400,
+          data: {
+            error: {
+              message:
+                'The image data you provided does not represent a valid image.',
+              type: 'invalid_request_error',
+              code: 'invalid_image_format',
+            },
+          },
         }),
       ),
-    ).toEqual(['ai-sdk-error', 'AI_APICallError', '400']);
+    ).toEqual([
+      'ai-sdk-error',
+      'AI_APICallError',
+      '400',
+      'invalid_image_format',
+    ]);
   });
 
   it('should group exhausted retries with the error that was retried', () => {
@@ -36,7 +49,7 @@ describe('getAiSdkErrorFingerprint', () => {
           errors: [overloaded, overloaded],
         }),
       ),
-    ).toEqual(['ai-sdk-error', 'AI_StreamProviderError', '503']);
+    ).toEqual(['ai-sdk-error', 'AI_StreamProviderError', '503', 'no-code']);
   });
 
   it('should group errors without an HTTP status by error class', () => {
@@ -47,6 +60,11 @@ describe('getAiSdkErrorFingerprint', () => {
           message: 'The messages do not match the ModelMessage[] schema.',
         }),
       ),
-    ).toEqual(['ai-sdk-error', 'AI_InvalidPromptError', 'no-status']);
+    ).toEqual([
+      'ai-sdk-error',
+      'AI_InvalidPromptError',
+      'no-status',
+      'no-code',
+    ]);
   });
 });
