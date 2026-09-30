@@ -4,7 +4,6 @@ import { type AllMetadataName } from 'twenty-shared/metadata';
 // event stream via WorkspaceEventBroadcaster, but are NOT part of the
 // workspace migration / syncable entity system (ALL_METADATA_NAME).
 const ALL_NON_SYNCABLE_BROADCAST_ENTITY_NAME = {
-  agentChatThread: 'agentChatThread',
   application: 'application',
   applicationRegistration: 'applicationRegistration',
 } as const;

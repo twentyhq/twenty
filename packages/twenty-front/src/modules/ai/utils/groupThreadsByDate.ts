@@ -1,12 +1,12 @@
 import { t } from '@lingui/core/macro';
 import { differenceInCalendarDays } from 'date-fns';
 
-import { type AgentChatThread } from '~/generated-metadata/graphql';
+import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 
 export type AgentChatThreadDateGroup = {
   id: string;
   title: string;
-  threads: AgentChatThread[];
+  threads: AgentChatThreadRecord[];
 };
 
 const getLocalDayDifference = (date: Date, today: Date) =>
@@ -55,14 +55,14 @@ const getThreadDateGroup = (
 };
 
 export const groupThreadsByDate = (
-  threads: AgentChatThread[],
+  threads: AgentChatThreadRecord[],
   today = new Date(),
 ): AgentChatThreadDateGroup[] => {
   const groupedThreadsByDate = new Map<string, AgentChatThreadDateGroup>();
 
   for (const thread of threads) {
     const threadDateGroup = getThreadDateGroup(
-      new Date(thread.lastMessageAt ?? thread.updatedAt),
+      new Date(thread.updatedAt),
       today,
     );
     const existingThreadDateGroup = groupedThreadsByDate.get(

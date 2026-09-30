@@ -2,19 +2,18 @@ import { AGENT_CHAT_THREAD_FILTER_STATUS } from '@/ai/constants/AgentChatThreadF
 import { AGENT_CHAT_THREAD_LAST_ACTIVITY_FILTER_DAYS } from '@/ai/constants/AgentChatThreadLastActivityFilterDays';
 import { agentChatThreadFilterStatusState } from '@/ai/states/agentChatThreadFilterStatusState';
 import { agentChatThreadLastActivityFilterState } from '@/ai/states/agentChatThreadLastActivityFilterState';
-import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
-import { type FlatAgentChatThread } from '@/metadata-store/types/FlatAgentChatThread';
+import { agentChatThreadsSelector } from '@/ai/states/selectors/agentChatThreadsSelector';
+import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { createAtomSelector } from '@/ui/utilities/state/jotai/utils/createAtomSelector';
 
 const MILLISECONDS_PER_DAY = 24 * 60 * 60 * 1000;
 
 export const agentChatVisibleThreadsSelector = createAtomSelector<
-  FlatAgentChatThread[]
+  AgentChatThreadRecord[]
 >({
   key: 'agentChatVisibleThreadsSelector',
   get: ({ get }) => {
-    const storeItem = get(metadataStoreState, 'agentChatThreads');
-    const allThreads = storeItem.current as FlatAgentChatThread[];
+    const allThreads = get(agentChatThreadsSelector);
     const filterStatus = get(agentChatThreadFilterStatusState);
     const lastActivityFilter = get(agentChatThreadLastActivityFilterState);
     const lastActivityDays =
@@ -38,9 +37,7 @@ export const agentChatVisibleThreadsSelector = createAtomSelector<
       }
 
       if (cutoffMs !== null) {
-        const lastActivityMs = new Date(
-          thread.lastMessageAt ?? thread.updatedAt,
-        ).getTime();
+        const lastActivityMs = new Date(thread.updatedAt).getTime();
         if (lastActivityMs < cutoffMs) return false;
       }
 

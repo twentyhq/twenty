@@ -1,8 +1,7 @@
 import { useStore } from 'jotai';
 
 import { useApplyAgentChatThreadUpdate } from '@/ai/hooks/useApplyAgentChatThreadUpdate';
-import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
-import { type FlatAgentChatThread } from '@/metadata-store/types/FlatAgentChatThread';
+import { agentChatThreadsSelector } from '@/ai/states/selectors/agentChatThreadsSelector';
 
 export const useOptimisticallyRestoreOnSend = () => {
   const { applyAgentChatThreadUpdate } = useApplyAgentChatThreadUpdate();
@@ -12,11 +11,9 @@ export const useOptimisticallyRestoreOnSend = () => {
     threadId: string,
     optimisticUpdatedAt: string,
   ): (() => void) | null => {
-    const entry = store.get(metadataStoreState.atomFamily('agentChatThreads'));
-    const threads = (
-      entry.status === 'draft-pending' ? entry.draft : entry.current
-    ) as FlatAgentChatThread[];
-    const thread = threads.find((t) => t.id === threadId);
+    const thread = store
+      .get(agentChatThreadsSelector.atom)
+      .find(({ id }) => id === threadId);
 
     if (!thread?.deletedAt) {
       return null;
@@ -24,13 +21,11 @@ export const useOptimisticallyRestoreOnSend = () => {
 
     const previousDeletedAt = thread.deletedAt;
     const previousUpdatedAt = thread.updatedAt;
-    const previousLastMessageAt = thread.lastMessageAt;
 
     applyAgentChatThreadUpdate({
       id: threadId,
       deletedAt: null,
       updatedAt: optimisticUpdatedAt,
-      lastMessageAt: optimisticUpdatedAt,
     });
 
     return () => {
@@ -38,7 +33,6 @@ export const useOptimisticallyRestoreOnSend = () => {
         id: threadId,
         deletedAt: previousDeletedAt,
         updatedAt: previousUpdatedAt,
-        lastMessageAt: previousLastMessageAt,
       });
     };
   };
