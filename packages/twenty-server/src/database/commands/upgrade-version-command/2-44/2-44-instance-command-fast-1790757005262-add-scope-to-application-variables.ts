@@ -24,6 +24,9 @@ export class AddScopeToApplicationVariablesFastInstanceCommand
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
+      `DELETE FROM "core"."applicationVariable" WHERE "scope" = 'USER'`,
+    );
+    await queryRunner.query(
       `ALTER TABLE "core"."applicationVariable" DROP CONSTRAINT "CHK_applicationVariable_value_null_only_for_user_scope"`,
     );
     await queryRunner.query(
