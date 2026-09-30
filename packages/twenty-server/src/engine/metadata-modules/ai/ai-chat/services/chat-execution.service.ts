@@ -85,7 +85,6 @@ import { collectReferencedSkillIds } from 'src/engine/metadata-modules/ai/ai-cha
 import { collectUploadedFileReferences } from 'src/engine/metadata-modules/ai/ai-chat/utils/collect-uploaded-file-references.util';
 import { extractCodeInterpreterFiles } from 'src/engine/metadata-modules/ai/ai-chat/utils/extract-code-interpreter-files.util';
 import { hasValidToolCall } from 'src/engine/metadata-modules/ai/ai-chat/utils/has-valid-tool-call.util';
-import { shouldCaptureException } from 'src/engine/utils/global-exception-handler.util';
 import { injectMessageTimestamps } from 'src/engine/metadata-modules/ai/ai-chat/utils/inject-message-timestamps.util';
 import {
   getCacheProviderOptions,
@@ -700,14 +699,6 @@ export class ChatExecutionService {
         for (const part of step.content) {
           if (part.type !== 'tool-result' && part.type !== 'tool-error') {
             continue;
-          }
-
-          if (
-            part.type === 'tool-error' &&
-            part.error instanceof Error &&
-            shouldCaptureException(part.error)
-          ) {
-            this.exceptionHandlerService.captureExceptions([part.error]);
           }
 
           const succeeded =
