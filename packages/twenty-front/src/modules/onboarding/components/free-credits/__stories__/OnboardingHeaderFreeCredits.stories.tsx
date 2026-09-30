@@ -1,6 +1,10 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
-import { ComponentDecorator } from 'twenty-ui/testing';
+import {
+  ComponentDecorator,
+  overrideMediaQueryMatches,
+} from 'twenty-ui/testing';
+import { MOBILE_MEDIA_QUERY } from 'twenty-ui/utilities';
 
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -128,6 +132,35 @@ export const EarnedSoFar: Story = {
       canvasElement,
       'Start with apps and earn 0.5 free credits',
     );
+  },
+};
+
+export const EarnedSoFarOnPhone: Story = {
+  beforeEach: () => {
+    seedOnboardingFreeCredits({
+      onboardingStatus: OnboardingStatus.APPS_INSTALLATION,
+      onboardingFreeCredits: { importContacts: 1, seenCredits: 1 },
+    });
+
+    return overrideMediaQueryMatches({ [MOBILE_MEDIA_QUERY]: true });
+  },
+  parameters: {
+    viewport: {
+      defaultViewport: 'mobile1',
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const pill = await within(canvasElement).findByRole('button', {
+      name: /free credit/,
+    });
+    const freeCreditsLabel = within(pill).getByText('free credit');
+
+    await expect(
+      freeCreditsLabel.getBoundingClientRect().width,
+    ).toBeLessThanOrEqual(1);
+    await expect(
+      freeCreditsLabel.getBoundingClientRect().height,
+    ).toBeLessThanOrEqual(1);
   },
 };
 

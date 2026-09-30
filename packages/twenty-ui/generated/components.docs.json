@@ -61,6 +61,13 @@
         "description": "CSS class applied to the pill."
       },
       {
+        "name": "color",
+        "type": "\"inherit\" | \"tertiary\"",
+        "required": false,
+        "defaultValue": "tertiary",
+        "description": "Text color. `inherit` takes the parent color and font weight on a tinted background."
+      },
+      {
         "name": "Icon",
         "type": "IconComponent",
         "required": false,
@@ -73,6 +80,13 @@
         "required": false,
         "defaultValue": null,
         "description": "Short text displayed inside the pill."
+      },
+      {
+        "name": "size",
+        "type": "\"md\" | \"sm\"",
+        "required": false,
+        "defaultValue": "sm",
+        "description": "Pill size. `md` uses a larger font, height and icon."
       }
     ]
   },
@@ -3712,7 +3726,7 @@
           },
           {
             "name": "size",
-            "type": "\"fullscreen\" | \"lg\" | \"md\" | \"sm\" | \"xl\"",
+            "type": "\"compact\" | \"fullscreen\" | \"lg\" | \"md\" | \"sm\" | \"xl\"",
             "required": false,
             "defaultValue": "md",
             "description": "Width of the dialog, or `fullscreen` to fill the viewport."
@@ -6356,6 +6370,13 @@
         "required": false,
         "defaultValue": null,
         "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+      },
+      {
+        "name": "ring",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Surrounds the avatar with a background-colored ring so overlapping avatars stay distinct."
       },
       {
         "name": "shape",
