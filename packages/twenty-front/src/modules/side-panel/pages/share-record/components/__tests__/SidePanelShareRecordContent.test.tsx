@@ -4,12 +4,12 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
-import { Dropdown } from 'twenty-ui/components';
+import { MemoryRouter } from 'react-router-dom';
 import { RecordShareAccessLevel } from '~/generated-metadata/graphql';
 import { RecordSharePrincipalType } from 'twenty-shared/types';
 
-import { RecordSharingDropdownContent } from '@/object-record/record-sharing/components/RecordSharingDropdownContent';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
+import { SidePanelShareRecordContent } from '@/side-panel/pages/share-record/components/SidePanelShareRecordContent';
 import {
   jotaiStore,
   resetJotaiStore,
@@ -39,17 +39,13 @@ const sharing = {
 const Wrapper = ({ children }: { children: ReactNode }) => (
   <JotaiProvider store={jotaiStore}>
     <I18nProvider i18n={i18n}>
-      <Dropdown.Root type="menu" defaultOpen>
-        <Dropdown.Trigger>Share</Dropdown.Trigger>
-        <Dropdown.Content width={320}>{children}</Dropdown.Content>
-      </Dropdown.Root>
+      <MemoryRouter>{children}</MemoryRouter>
     </I18nProvider>
   </JotaiProvider>
 );
 const renderSharing = (overrides = {}) => {
   return render(
-    <RecordSharingDropdownContent
-      title="Share record"
+    <SidePanelShareRecordContent
       recordUrl="https://example.com/record"
       sharingState={{
         sharing,
@@ -67,7 +63,7 @@ const renderSharing = (overrides = {}) => {
   );
 };
 
-describe('Record sharing', () => {
+describe('Share record side panel', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     refetch.mockResolvedValue(undefined);
@@ -85,7 +81,7 @@ describe('Record sharing', () => {
     const user = userEvent.setup();
     renderSharing();
     await user.click(
-      screen.getByRole('menuitem', { name: 'Add people or roles' }),
+      screen.getByRole('button', { name: 'Add people or roles' }),
     );
     await user.type(
       screen.getByPlaceholderText('Search people or roles'),
@@ -104,7 +100,7 @@ describe('Record sharing', () => {
     const user = userEvent.setup();
     renderSharing();
     await user.click(
-      screen.getByRole('menuitem', { name: 'Add people or roles' }),
+      screen.getByRole('button', { name: 'Add people or roles' }),
     );
     await user.type(
       screen.getByPlaceholderText('Search people or roles'),
@@ -122,7 +118,7 @@ describe('Record sharing', () => {
   it('enables workspace-wide viewing', async () => {
     const user = userEvent.setup();
     renderSharing();
-    await user.click(screen.getByRole('menuitem', { name: 'Restricted' }));
+    await user.click(screen.getByRole('button', { name: 'Restricted' }));
     await user.click(screen.getByRole('menuitemradio', { name: 'Viewer' }));
     expect(setShare).toHaveBeenCalledWith({
       principal: { everyone: true },
@@ -148,7 +144,7 @@ describe('Record sharing', () => {
       },
     });
     await user.click(
-      screen.getByRole('menuitem', { name: /^Everyone in the workspace/ }),
+      screen.getByRole('button', { name: /^Everyone in the workspace/ }),
     );
     await user.click(screen.getByRole('menuitemradio', { name: 'Restricted' }));
     expect(setShare).toHaveBeenCalledWith({
@@ -194,7 +190,7 @@ describe('Record sharing', () => {
     const user = userEvent.setup();
     renderSharing();
     await user.click(
-      screen.getByRole('menuitem', { name: 'Add people or roles' }),
+      screen.getByRole('button', { name: 'Add people or roles' }),
     );
     const input = screen.getByPlaceholderText('Search people or roles');
     await user.type(input, 'no match');
@@ -231,7 +227,7 @@ describe('Record sharing', () => {
     expect(screen.queryByPlaceholderText('Search people or roles')).toBeNull();
     expect(screen.queryByText('Remove access')).toBeNull();
     await user.click(
-      screen.getByRole('menuitem', { name: 'Alice Smith access' }),
+      screen.getByRole('button', { name: 'Alice Smith Viewer' }),
     );
     await user.click(screen.getByRole('menuitem', { name: 'Remove access' }));
     expect(setShare).toHaveBeenCalledWith({
@@ -243,7 +239,7 @@ describe('Record sharing', () => {
   it('copies the supplied record link', async () => {
     const user = userEvent.setup();
     renderSharing();
-    await user.click(screen.getByText('Copy link'));
+    await user.click(screen.getByRole('button', { name: 'Copy link' }));
     expect(copyToClipboard).toHaveBeenCalledWith('https://example.com/record');
   });
 
@@ -313,7 +309,7 @@ describe('Record sharing', () => {
       const user = userEvent.setup();
       renderSharing();
       await user.click(
-        screen.getByRole('menuitem', { name: 'Add people or roles' }),
+        screen.getByRole('button', { name: 'Add people or roles' }),
       );
       await user.click(
         screen.getByRole('button', { name: 'Invitation access' }),
@@ -333,18 +329,13 @@ describe('Record sharing', () => {
 
   it.each([
     [
-      'Alice Smith access',
+      'Alice Smith',
       'WORKSPACE_MEMBER',
       'alice-member',
       { workspaceMemberId: 'alice-member' },
     ],
-    ['Sales access', 'ROLE', 'sales-role', { roleId: 'sales-role' }],
-    [
-      'Everyone in the workspace access',
-      'EVERYONE',
-      'everyone',
-      { everyone: true },
-    ],
+    ['Sales', 'ROLE', 'sales-role', { roleId: 'sales-role' }],
+    ['Everyone in the workspace', 'EVERYONE', 'everyone', { everyone: true }],
   ])(
     'can upgrade and downgrade %s without removing their grant',
     async (label, principalType, principalId, principal) => {
@@ -360,11 +351,11 @@ describe('Record sharing', () => {
       ];
       const view = renderSharing({ sharing: { ...sharing, shares } });
       await user.click(
-        screen.getByRole('menuitem', {
+        screen.getByRole('button', {
           name:
             principalType === 'EVERYONE'
               ? /^Everyone in the workspace/
-              : (label as string),
+              : new RegExp(`^${label}`),
         }),
       );
       await user.click(screen.getByText('Full access'));
@@ -381,11 +372,11 @@ describe('Record sharing', () => {
         },
       });
       await user.click(
-        screen.getByRole('menuitem', {
+        screen.getByRole('button', {
           name:
             principalType === 'EVERYONE'
               ? /^Everyone in the workspace/
-              : (label as string),
+              : new RegExp(`^${label}`),
         }),
       );
       await user.click(screen.getAllByText('Viewer').at(-1)!);
