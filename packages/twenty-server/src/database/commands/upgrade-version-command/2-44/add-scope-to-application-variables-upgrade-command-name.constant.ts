@@ -1,2 +1,2 @@
 export const ADD_SCOPE_TO_APPLICATION_VARIABLES_UPGRADE_COMMAND_NAME =
-  '2.44.0_AddScopeToApplicationVariablesFastInstanceCommand_1790703844042';
+  '2.44.0_AddScopeToApplicationVariablesFastInstanceCommand_1790757005262';

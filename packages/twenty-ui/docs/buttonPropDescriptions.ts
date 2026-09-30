@@ -1,9 +1,10 @@
 import { type ButtonProps } from '../src/primitives/input/Button/types/ButtonProps';
 
 export const BUTTON_PROP_DESCRIPTIONS = {
-  variant: 'Visual treatment of the button surface.',
+  variant:
+    'Visual treatment of the button surface. `link` uses compact text styling without a filled surface or border; `href` still determines link semantics.',
   color: 'Semantic color of the button.',
-  size: 'Button height: `sm` (24px) or `md` (32px).',
+  size: 'Button height: `sm` (24px) or `md` (32px). The `link` variant uses its content height at either size.',
   fullWidth: 'Expands the button to fill its container width.',
   loading:
     'Shows a loading indicator and disables activation while preserving the button width.',
