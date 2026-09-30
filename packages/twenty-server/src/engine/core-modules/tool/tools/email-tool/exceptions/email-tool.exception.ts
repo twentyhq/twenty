@@ -14,6 +14,7 @@ export enum EmailToolExceptionCode {
   TOO_MANY_RECIPIENTS = 'TOO_MANY_RECIPIENTS',
   NO_EMAIL_CAPABLE_CONNECTED_ACCOUNT = 'NO_EMAIL_CAPABLE_CONNECTED_ACCOUNT',
   CONNECTED_ACCOUNT_NOT_EMAIL_CAPABLE = 'CONNECTED_ACCOUNT_NOT_EMAIL_CAPABLE',
+  CONNECTED_ACCOUNT_NOT_USABLE_BY_CALLER = 'CONNECTED_ACCOUNT_NOT_USABLE_BY_CALLER',
 }
 
 const getEmailToolExceptionUserFriendlyMessage = (
@@ -38,6 +39,8 @@ const getEmailToolExceptionUserFriendlyMessage = (
       return msg`No mailbox is connected for this action. Connect one in Settings.`;
     case EmailToolExceptionCode.CONNECTED_ACCOUNT_NOT_EMAIL_CAPABLE:
       return msg`This connected account cannot be used for this action.`;
+    case EmailToolExceptionCode.CONNECTED_ACCOUNT_NOT_USABLE_BY_CALLER:
+      return msg`This connected account is private to another member.`;
     default:
       assertUnreachable(code);
   }

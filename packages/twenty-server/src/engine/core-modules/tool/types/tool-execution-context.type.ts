@@ -6,4 +6,5 @@ export type ToolExecutionContext = {
   userWorkspaceId?: string;
   threadId?: string;
   onCodeExecutionUpdate?: CodeExecutionStreamEmitter;
+  requireConnectedAccountUsableByCaller?: boolean;
 };

@@ -16,6 +16,7 @@ import { createAskQuestionsTool } from 'src/engine/metadata-modules/ai/ai-chat/t
 import { createProposeEmailTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/propose-email.tool';
 import { WORKFLOW_BASE_SYSTEM_PROMPT } from 'src/engine/metadata-modules/ai/ai-agent/constants/workflow-base-system-prompt.const';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
+import { getRoleIdsFromRolePermissionConfig } from 'src/engine/twenty-orm/utils/get-role-ids-from-role-permission-config.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import {
@@ -177,6 +178,14 @@ export class AiAgentWorkflowAction implements WorkflowAction {
       workspaceId,
       userWorkspaceId,
       operationType: UsageOperationType.AI_WORKFLOW_TOKEN,
+      ...(isDefined(application)
+        ? {
+            additionalRoleRestrictionIds: getRoleIdsFromRolePermissionConfig(
+              executionContext.rolePermissionConfig,
+            ),
+            requireConnectedAccountUsableByCaller: true,
+          }
+        : {}),
     });
 
     const durationMs = Date.now() - startedAtMs;

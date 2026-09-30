@@ -44,6 +44,7 @@ import { OUTPUT_NAVIGATION_TOOL_NAMES } from 'src/engine/core-modules/tool/tools
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { OPEN_ENDED_AGENT_REGISTRY_TOOL_CATEGORIES } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/open-ended-agent-registry-tool-categories.const';
+import { EXECUTION_ROLE_BYPASSING_TOOL_NAMES } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/execution-role-bypassing-tool-names.const';
 import { WORKFLOW_AGENT_EXCLUDED_TOOL_NAMES } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/workflow-agent-excluded-tool-names.const';
 import { WORKFLOW_AGENT_REGISTRY_TOOL_CATEGORIES } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/workflow-agent-registry-tool-categories.const';
 import { RunAgentAttachmentService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/run-agent-attachment.service';
@@ -151,12 +152,16 @@ export class AgentAsyncExecutorService {
     agent,
     agentRoleId,
     runAsRoleId,
+    additionalRoleRestrictionIds,
+    requireConnectedAccountUsableByCaller,
     authContext,
     actorContext,
   }: {
     agent: AgentEntity;
     agentRoleId: string;
     runAsRoleId?: string;
+    additionalRoleRestrictionIds?: string[];
+    requireConnectedAccountUsableByCaller?: boolean;
     authContext?: WorkspaceAuthContext;
     actorContext?: ActorMetadata;
   }): Promise<ToolSet> {
@@ -168,8 +173,10 @@ export class AgentAsyncExecutorService {
       rolePermissionConfig: buildAgentRolePermissionConfig({
         agentRoleId,
         runAsRoleId,
+        additionalRoleRestrictionIds,
       }),
       requireExplicitObjectGrants: true,
+      requireConnectedAccountUsableByCaller,
       authContext,
       actorContext,
       userId,
@@ -181,6 +188,9 @@ export class AgentAsyncExecutorService {
       excludeTools: [
         ...OUTPUT_NAVIGATION_TOOL_NAMES,
         ...WORKFLOW_AGENT_EXCLUDED_TOOL_NAMES,
+        ...(isNonEmptyArray(additionalRoleRestrictionIds)
+          ? EXECUTION_ROLE_BYPASSING_TOOL_NAMES
+          : []),
       ],
       wrapWithErrorContext: false,
     });
@@ -194,20 +204,29 @@ export class AgentAsyncExecutorService {
     agent,
     agentRoleId,
     runAsRoleId,
+    additionalRoleRestrictionIds,
+    requireConnectedAccountUsableByCaller,
     authContext,
     actorContext,
   }: {
     agent: AgentEntity;
     agentRoleId: string;
     runAsRoleId?: string;
+    additionalRoleRestrictionIds?: string[];
+    requireConnectedAccountUsableByCaller?: boolean;
     authContext?: WorkspaceAuthContext;
     actorContext?: ActorMetadata;
   }): Promise<{ tools: ToolSet; catalogSection: string }> {
     const { userId, userWorkspaceId } = this.resolveUserIdentity(authContext);
 
-    const rolePermissionConfig = isDefined(runAsRoleId)
-      ? buildAgentRolePermissionConfig({ agentRoleId, runAsRoleId })
-      : undefined;
+    const rolePermissionConfig =
+      isDefined(runAsRoleId) || isNonEmptyArray(additionalRoleRestrictionIds)
+        ? buildAgentRolePermissionConfig({
+            agentRoleId,
+            runAsRoleId,
+            additionalRoleRestrictionIds,
+          })
+        : undefined;
 
     const toolContext: ToolContext = {
       workspaceId: agent.workspaceId,
@@ -217,6 +236,7 @@ export class AgentAsyncExecutorService {
       actorContext,
       userId,
       userWorkspaceId,
+      requireConnectedAccountUsableByCaller,
     };
 
     const fullCatalog = await this.toolRegistry.buildToolIndex(
@@ -231,6 +251,9 @@ export class AgentAsyncExecutorService {
     const excludedToolNames = new Set<string>([
       ...OUTPUT_NAVIGATION_TOOL_NAMES,
       ...WORKFLOW_AGENT_EXCLUDED_TOOL_NAMES,
+      ...(isNonEmptyArray(additionalRoleRestrictionIds)
+        ? EXECUTION_ROLE_BYPASSING_TOOL_NAMES
+        : []),
     ]);
 
     const catalog = fullCatalog.filter(
@@ -271,6 +294,8 @@ export class AgentAsyncExecutorService {
     workspaceId,
     userWorkspaceId,
     runAsRoleId,
+    additionalRoleRestrictionIds,
+    requireConnectedAccountUsableByCaller,
     operationType = UsageOperationType.AI_WORKFLOW_TOKEN,
     toolLoadingStrategy = 'preload',
     priorModelMessages = [],
@@ -290,6 +315,8 @@ export class AgentAsyncExecutorService {
     workspaceId: string;
     userWorkspaceId?: string | null;
     runAsRoleId?: string;
+    additionalRoleRestrictionIds?: string[];
+    requireConnectedAccountUsableByCaller?: boolean;
     operationType?: UsageOperationType;
     toolLoadingStrategy?: AgentToolLoadingStrategy;
   }): Promise<AgentExecutionResult> {
@@ -364,6 +391,8 @@ export class AgentAsyncExecutorService {
               agent,
               agentRoleId,
               runAsRoleId,
+              additionalRoleRestrictionIds,
+              requireConnectedAccountUsableByCaller,
               authContext,
               actorContext,
             });
@@ -375,6 +404,8 @@ export class AgentAsyncExecutorService {
               agent,
               agentRoleId,
               runAsRoleId,
+              additionalRoleRestrictionIds,
+              requireConnectedAccountUsableByCaller,
               authContext,
               actorContext,
             });
