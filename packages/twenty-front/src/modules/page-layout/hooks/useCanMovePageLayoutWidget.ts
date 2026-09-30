@@ -1,9 +1,9 @@
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
-import { getWidgetMoveWithinTab } from '@/page-layout/utils/getWidgetMoveWithinTab';
+import { getAdjacentFitContentWidgetIndex } from '@/page-layout/utils/getAdjacentFitContentWidgetIndex';
+import { sortWidgetsByVerticalListPosition } from '@/page-layout/utils/sortWidgetsByVerticalListPosition';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
-import { useWorkspaceFeatureFlagsMap } from '@/workspace/hooks/useWorkspaceFeatureFlagsMap';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -22,8 +22,6 @@ export const useCanMovePageLayoutWidget = (pageLayoutIdFromProps?: string) => {
 
   const store = useStore();
 
-  const featureFlags = useWorkspaceFeatureFlagsMap();
-
   const canMovePageLayoutWidget = useCallback(
     (widgetId: string, direction: 'up' | 'down') => {
       const draft = store.get(pageLayoutDraftState);
@@ -36,16 +34,21 @@ export const useCanMovePageLayoutWidget = (pageLayoutIdFromProps?: string) => {
         return false;
       }
 
+      const sortedWidgets = sortWidgetsByVerticalListPosition(tab.widgets);
+
+      const widgetIndex = sortedWidgets.findIndex(
+        (widget) => widget.id === widgetId,
+      );
+
       return isDefined(
-        getWidgetMoveWithinTab({
-          widgets: tab.widgets,
-          widgetId,
+        getAdjacentFitContentWidgetIndex({
+          widgets: sortedWidgets,
+          widgetIndex,
           direction,
-          featureFlags,
         }),
       );
     },
-    [featureFlags, pageLayoutDraftState, store],
+    [pageLayoutDraftState, store],
   );
 
   return { canMovePageLayoutWidget };

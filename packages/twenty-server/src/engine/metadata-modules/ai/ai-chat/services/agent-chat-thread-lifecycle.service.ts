@@ -10,7 +10,6 @@ import { CodeInterpreterService } from 'src/engine/core-modules/code-interpreter
 import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
 import { AgentChatThreadRecordEventService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-record-event.service';
 import { getCancelChannel } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-cancel-channel.util';
-import { hasLegacyChatThreadOwnerField } from 'src/engine/metadata-modules/ai/ai-chat/utils/has-legacy-chat-thread-owner-field.util';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
@@ -29,24 +28,6 @@ export class AgentChatThreadLifecycleService {
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly threadRecordEventService: AgentChatThreadRecordEventService,
   ) {}
-
-  async cancelActiveStreamIfAny({
-    workspaceId,
-    threadId,
-  }: {
-    workspaceId: string;
-    threadId: string;
-  }): Promise<void> {
-    const thread = await this.threadRepository.findOne(workspaceId, {
-      where: { id: threadId },
-    });
-
-    if (!isDefined(thread) || !isNonEmptyString(thread.activeStreamId)) {
-      return;
-    }
-
-    await this.cancelStream({ threadId, streamId: thread.activeStreamId });
-  }
 
   async cancelStream({
     threadId,
@@ -78,8 +59,7 @@ export class AgentChatThreadLifecycleService {
       );
   }
 
-  // Archiving sets archivedAt rather than soft deleting, so it reaches the
-  // update hooks, which only know which rows they touched
+  // Awaited by the archive paths so the stream is stopped before they respond
   async stopArchivedThreads({
     workspaceId,
     threadIds,
@@ -105,20 +85,6 @@ export class AgentChatThreadLifecycleService {
     }
   }
 
-  // Sharing grants stay, as for any destroyed record, so that the destroy
-  // event still reaches the thread's audience
-  releaseDestroyedThreadSandboxes({
-    workspaceId,
-    threadIds,
-  }: {
-    workspaceId: string;
-    threadIds: string[];
-  }): void {
-    for (const threadId of threadIds) {
-      this.releaseThreadSandboxBestEffort({ workspaceId, threadId });
-    }
-  }
-
   // The owner field is not writable through the record API. Owned and
   // workflow-run threads are skipped so an upsert cannot reassign them
   async assignCreatedThreadsToCreator({
@@ -137,10 +103,6 @@ export class AgentChatThreadLifecycleService {
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatFieldMetadataMaps',
       ]);
-    const writesLegacyOwner = await hasLegacyChatThreadOwnerField(
-      workspaceId,
-      this.workspaceCacheService,
-    );
     const unassignedThreadCriteria = {
       workspaceMemberId: IsNull(),
       ...(hasWorkflowRunThreadFields(flatFieldMetadataMaps)
@@ -165,9 +127,7 @@ export class AgentChatThreadLifecycleService {
         },
         {
           workspaceMemberId: authContext.workspaceMemberId,
-          ...(writesLegacyOwner
-            ? { userWorkspaceId: authContext.userWorkspaceId }
-            : {}),
+          userWorkspaceId: authContext.userWorkspaceId,
         },
       );
 
@@ -196,7 +156,7 @@ export class AgentChatThreadLifecycleService {
     }
   }
 
-  private async stopStreamIfAny({
+  async stopStreamIfAny({
     workspaceId,
     thread,
   }: {

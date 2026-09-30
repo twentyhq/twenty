@@ -546,55 +546,6 @@
     ]
   },
   {
-    "name": "ClickToActionLink",
-    "entryPoint": "twenty-ui/primitives/navigation",
-    "slug": "navigation/click-to-action-link",
-    "props": [
-      {
-        "name": "children",
-        "type": "ReactNode",
-        "required": false,
-        "defaultValue": null,
-        "description": "Visible link text or content. Use a descriptive destination label."
-      },
-      {
-        "name": "className",
-        "type": "string",
-        "required": false,
-        "defaultValue": null,
-        "description": "CSS class applied to the anchor."
-      },
-      {
-        "name": "href",
-        "type": "string",
-        "required": false,
-        "defaultValue": null,
-        "description": "Destination URL for native link navigation."
-      },
-      {
-        "name": "onClick",
-        "type": "MouseEventHandler<HTMLAnchorElement>",
-        "required": false,
-        "defaultValue": null,
-        "description": "Click handler called when the link is activated."
-      },
-      {
-        "name": "rel",
-        "type": "string",
-        "required": false,
-        "defaultValue": null,
-        "description": "Relationship to the destination, such as `noopener noreferrer` for a new tab."
-      },
-      {
-        "name": "target",
-        "type": "HTMLAttributeAnchorTarget",
-        "required": false,
-        "defaultValue": null,
-        "description": "Browsing context in which to open the destination."
-      }
-    ]
-  },
-  {
     "name": "OverflowingTextWithTooltip",
     "entryPoint": "twenty-ui/primitives/typography",
     "slug": "typography/overflowing-text-with-tooltip",
@@ -790,10 +741,10 @@
       },
       {
         "name": "variant",
-        "type": "\"ghost\" | \"outline\" | \"soft\" | \"solid\"",
+        "type": "\"ghost\" | \"link\" | \"outline\" | \"soft\" | \"solid\"",
         "required": false,
         "defaultValue": "ghost",
-        "description": "Visual treatment of the button surface."
+        "description": "Visual treatment of the button surface. `link` uses compact text styling without a filled surface or border; `href` still determines link semantics."
       }
     ]
   },
@@ -916,10 +867,10 @@
       },
       {
         "name": "variant",
-        "type": "\"ghost\" | \"outline\" | \"soft\" | \"solid\"",
+        "type": "\"ghost\" | \"link\" | \"outline\" | \"soft\" | \"solid\"",
         "required": false,
         "defaultValue": null,
-        "description": "Visual treatment of the button surface."
+        "description": "Visual treatment of the button surface. `link` uses compact text styling without a filled surface or border; `href` still determines link semantics."
       }
     ]
   },
@@ -1003,7 +954,7 @@
         "type": "\"md\" | \"sm\"",
         "required": false,
         "defaultValue": null,
-        "description": "Button height: `sm` (24px) or `md` (32px)."
+        "description": "Button height: `sm` (24px) or `md` (32px). The `link` variant uses its content height at either size."
       },
       {
         "name": "soon",
@@ -1035,10 +986,10 @@
       },
       {
         "name": "variant",
-        "type": "\"ghost\" | \"outline\" | \"soft\" | \"solid\"",
+        "type": "\"ghost\" | \"link\" | \"outline\" | \"soft\" | \"solid\"",
         "required": false,
         "defaultValue": "solid",
-        "description": "Visual treatment of the button surface."
+        "description": "Visual treatment of the button surface. `link` uses compact text styling without a filled surface or border; `href` still determines link semantics."
       }
     ]
   },
@@ -1129,7 +1080,7 @@
         "type": "\"md\" | \"sm\"",
         "required": false,
         "defaultValue": "sm",
-        "description": "Button height: `sm` (24px) or `md` (32px)."
+        "description": "Button height: `sm` (24px) or `md` (32px). The `link` variant uses its content height at either size."
       },
       {
         "name": "soon",
@@ -1161,10 +1112,10 @@
       },
       {
         "name": "variant",
-        "type": "\"ghost\" | \"outline\" | \"soft\" | \"solid\"",
+        "type": "\"ghost\" | \"link\" | \"outline\" | \"soft\" | \"solid\"",
         "required": false,
         "defaultValue": "ghost",
-        "description": "Visual treatment of the button surface."
+        "description": "Visual treatment of the button surface. `link` uses compact text styling without a filled surface or border; `href` still determines link semantics."
       }
     ]
   },
@@ -1248,7 +1199,7 @@
         "type": "\"md\" | \"sm\"",
         "required": false,
         "defaultValue": "md",
-        "description": "Button height: `sm` (24px) or `md` (32px)."
+        "description": "Button height: `sm` (24px) or `md` (32px). The `link` variant uses its content height at either size."
       },
       {
         "name": "soon",
@@ -1280,10 +1231,10 @@
       },
       {
         "name": "variant",
-        "type": "\"ghost\" | \"outline\" | \"soft\" | \"solid\"",
+        "type": "\"ghost\" | \"link\" | \"outline\" | \"soft\" | \"solid\"",
         "required": false,
         "defaultValue": "outline",
-        "description": "Visual treatment of the button surface."
+        "description": "Visual treatment of the button surface. `link` uses compact text styling without a filled surface or border; `href` still determines link semantics."
       }
     ]
   },
@@ -1329,7 +1280,7 @@
       },
       {
         "name": "variant",
-        "type": "\"ghost\" | \"outline\" | \"soft\" | \"solid\"",
+        "type": "\"ghost\" | \"link\" | \"outline\" | \"soft\" | \"solid\"",
         "required": false,
         "defaultValue": null,
         "description": "Shared surface treatment that overrides the variant of buttons in the group."

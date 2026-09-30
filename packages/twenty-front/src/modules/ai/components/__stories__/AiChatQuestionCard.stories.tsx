@@ -23,7 +23,7 @@ const StyledContainer = styled.div`
 const INSTANCE_ID = 'agentChatQuestionCardStory';
 
 const singleQuestion: AgentChatPendingQuestion = {
-  messageId: 'assistant-1',
+  askId: 'ask-1',
   toolCallId: 'call-1',
   questions: [
     {
@@ -43,7 +43,7 @@ const singleQuestion: AgentChatPendingQuestion = {
 };
 
 const multipleQuestions: AgentChatPendingQuestion = {
-  messageId: 'assistant-1',
+  askId: 'ask-2',
   toolCallId: 'call-2',
   questions: [
     singleQuestion.questions[0],
@@ -59,7 +59,7 @@ const multipleQuestions: AgentChatPendingQuestion = {
 };
 
 const longQuestion: AgentChatPendingQuestion = {
-  messageId: 'assistant-1',
+  askId: 'ask-3',
   toolCallId: 'call-3',
   questions: [
     {
@@ -78,7 +78,7 @@ const longQuestion: AgentChatPendingQuestion = {
 };
 
 const multiSelectQuestion: AgentChatPendingQuestion = {
-  messageId: 'assistant-1',
+  askId: 'ask-4',
   toolCallId: 'call-4',
   questions: [
     {
