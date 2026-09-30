@@ -47,6 +47,7 @@ import { isToolOutputSuccessful } from 'src/engine/core-modules/tool-provider/ut
 import { resolveToolName } from 'src/engine/core-modules/tool-provider/utils/resolve-tool-name.util';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentActorContextService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-actor-context.service';
+import { endsOnPausingToolCall } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/ends-on-pausing-tool-call.util';
 import { finalizeDanglingToolParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/finalize-dangling-tool-parts.util';
 import { guideUncallableToolCallsToMetaTool } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/guide-uncallable-tool-calls-to-meta-tool.util';
 import { AGENT_CONFIG } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-config.const';
@@ -73,6 +74,10 @@ import {
   ATTACH_CONVERSATION_TO_RECORD_TOOL_NAME,
   createAttachConversationToRecordTool,
 } from 'src/engine/metadata-modules/ai/ai-chat/tools/attach-conversation-to-record.tool';
+import {
+  PROPOSE_EMAIL_TOOL_NAME,
+  createProposeEmailTool,
+} from 'src/engine/metadata-modules/ai/ai-chat/tools/propose-email.tool';
 import {
   COMPLETE_WORKSPACE_SETUP_TOOL_NAME,
   createCompleteWorkspaceSetupTool,
@@ -297,10 +302,16 @@ export class ChatExecutionService {
         workspace.id,
       ));
 
+    // Proposing an email only helps someone who could then send it.
+    const canProposeEmail = toolCatalog.some(
+      (toolIndexEntry) => toolIndexEntry.name === 'send_email',
+    );
+
     const preloadedToolNames = [
       ...Object.keys(preloadedTools),
       ...Object.keys(nativeTools),
       ASK_QUESTIONS_TOOL_NAME,
+      ...(canProposeEmail ? [PROPOSE_EMAIL_TOOL_NAME] : []),
       ...(isWorkspaceSetupThread ? [COMPLETE_WORKSPACE_SETUP_TOOL_NAME] : []),
       ...(canAttachConversationToRecords
         ? [ATTACH_CONVERSATION_TO_RECORD_TOOL_NAME]
@@ -317,6 +328,9 @@ export class ChatExecutionService {
       [ASK_QUESTIONS_TOOL_NAME]: createAskQuestionsTool({
         isWorkspaceSetupThread,
       }),
+      ...(canProposeEmail
+        ? { [PROPOSE_EMAIL_TOOL_NAME]: createProposeEmailTool() }
+        : {}),
       ...(isWorkspaceSetupThread
         ? {
             [COMPLETE_WORKSPACE_SETUP_TOOL_NAME]:
@@ -580,12 +594,12 @@ export class ChatExecutionService {
       instructions: systemMessage,
       messages: modelMessages,
       tools: activeTools,
-      // Every step of the kickoff turn is forced so it cannot end in prose; stopWhen ends it at the first ask_questions.
+      // Every step of the kickoff turn is forced so it cannot end in prose; stopWhen ends it at the first pausing tool call.
       toolChoice: isWorkspaceSetupKickoffTurn ? 'required' : 'auto',
       abortSignal,
       stopWhen: (step) =>
         isStepCount(AGENT_CONFIG.MAX_STEPS)(step) ||
-        hasToolCall(ASK_QUESTIONS_TOOL_NAME)(step) ||
+        endsOnPausingToolCall({ steps: step.steps }) ||
         hasToolCall(COMPLETE_WORKSPACE_SETUP_TOOL_NAME)(step) ||
         hasNoMoreAvailableCredits,
       ...buildAiTelemetry({

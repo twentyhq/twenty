@@ -111,7 +111,7 @@ export class AdminPanelGlobalChatThreadsService {
           WITH candidates AS (
             SELECT thread.id, thread.title, workspace.id AS "workspaceId", workspace."displayName" AS "workspaceDisplayName",
               membership.id AS "userWorkspaceId", owner.email AS "userEmail", owner."firstName" AS "userFirstName", owner."lastName" AS "userLastName",
-              thread."archivedAt" AS "deletedAt", thread."createdAt", thread."updatedAt", thread."lastStreamError" IS NOT NULL AS "hasError",
+              thread."deletedAt", thread."createdAt", thread."updatedAt", thread."lastStreamError" IS NOT NULL AS "hasError",
               (EXISTS (SELECT 1 FROM ${table('agentMessage')} hidden WHERE hidden."threadId" = thread.id AND hidden."isHidden" = true)
                 OR (membership.id IS NOT NULL AND thread.id = public.uuid_generate_v5($2::uuid, workspace.id::text || ':' || membership.id::text))) AS "isOnboardingThread",
               (SELECT COUNT(*)::int FROM ${table('agentMessage')} message WHERE message."threadId" = thread.id AND message."isHidden" = false) AS "messageCount",

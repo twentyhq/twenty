@@ -4,7 +4,6 @@ import { useContext } from 'react';
 
 import { Loader } from '@ui/primitives/feedback/Loader/Loader';
 import { ButtonHotkeys } from '@ui/primitives/input/Button/internal/ButtonHotKeys';
-import { ButtonSoon } from '@ui/primitives/input/Button/internal/ButtonSoon';
 import { ButtonGroupContext } from '@ui/primitives/input/ButtonGroup/internal/ButtonGroupContext';
 import { mergeClassNames } from '@ui/utilities/internal/mergeClassNames';
 import { useIsMobile } from '@ui/utilities';
@@ -23,8 +22,6 @@ export const Button = ({
   startIcon,
   endIcon,
   hotkeys,
-  soon = false,
-  soonLabel,
   disabled = false,
   href,
   render,
@@ -52,7 +49,7 @@ export const Button = ({
       data-loading={loading || undefined}
       data-elevated={elevated || undefined}
       aria-busy={loading ? 'true' : props['aria-busy']}
-      disabled={disabled || soon || loading}
+      disabled={disabled || loading}
       role={isLink ? 'link' : undefined}
       nativeButton={!isLink}
       render={render ?? (isLink ? <a href={href}>{children}</a> : undefined)}
@@ -72,7 +69,6 @@ export const Button = ({
           </span>
         )}
         {isDefined(hotkeys) && !isMobile && <ButtonHotkeys hotkeys={hotkeys} />}
-        {soon && <ButtonSoon label={soonLabel} />}
       </span>
       {loading && (
         <span className={styles.loader} aria-hidden>

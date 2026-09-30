@@ -8,7 +8,7 @@ import { Injectable, type Type } from '@nestjs/common';
 
 import { type ObjectLiteral } from 'typeorm';
 
-import { type ObjectRecord } from 'twenty-shared/types';
+import { FeatureFlagKey, type ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { getWorkspaceAuthContext } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
@@ -167,6 +167,16 @@ export class WorkspaceOrmManager {
     const { idByNameSingular: objectIdByNameSingular } =
       buildObjectIdByNameMaps(flatObjectMetadataMaps);
 
+    const flatValidationRuleMaps = featureFlagsMap[
+      FeatureFlagKey.IS_VALIDATION_RULES_ENABLED
+    ]
+      ? (
+          await this.workspaceCacheService.getOrRecompute(workspaceId, [
+            'flatValidationRuleMaps',
+          ])
+        ).flatValidationRuleMaps
+      : undefined;
+
     return {
       authContext,
       flatObjectMetadataMaps,
@@ -174,6 +184,7 @@ export class WorkspaceOrmManager {
       flatIndexMaps,
       flatRowLevelPermissionPredicateMaps,
       flatRowLevelPermissionPredicateGroupMaps,
+      flatValidationRuleMaps,
       objectIdByNameSingular,
       featureFlagsMap,
       billingEntitlements,

@@ -346,6 +346,26 @@
         "supportsReasoning": true
       },
       {
+        "name": "gpt-6.1-sol",
+        "label": "GPT-6.1 Sol",
+        "modelFamily": "GPT",
+        "inputCostPerMillionTokens": 2,
+        "outputCostPerMillionTokens": 10,
+        "cachedInputCostPerMillionTokens": 0.1,
+        "cacheCreationCostPerMillionTokens": 2.5,
+        "longContextCost": {
+          "inputCostPerMillionTokens": 4,
+          "outputCostPerMillionTokens": 15,
+          "thresholdTokens": 200000,
+          "cachedInputCostPerMillionTokens": 0.2,
+          "cacheCreationCostPerMillionTokens": 5
+        },
+        "contextWindowTokens": 1050000,
+        "maxOutputTokens": 128000,
+        "modalities": ["image", "pdf"],
+        "supportsReasoning": true
+      },
+      {
         "name": "gpt-4o-2024-08-06",
         "label": "GPT-4o (2024-08-06)",
         "modelFamily": "GPT",

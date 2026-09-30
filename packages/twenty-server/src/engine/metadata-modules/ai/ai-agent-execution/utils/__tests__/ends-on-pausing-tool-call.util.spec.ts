@@ -5,11 +5,10 @@ const stepCalling = (...toolNames: string[]) => ({
 });
 
 describe('endsOnPausingToolCall', () => {
-  it('pauses when the last step calls a pausing tool', () => {
+  it('pauses when the last step calls a declared pausing tool', () => {
     expect(
       endsOnPausingToolCall({
         steps: [stepCalling('search'), stepCalling('ask_questions')],
-        pausingToolNames: ['ask_questions'],
       }),
     ).toBe(true);
   });
@@ -18,20 +17,32 @@ describe('endsOnPausingToolCall', () => {
     expect(
       endsOnPausingToolCall({
         steps: [stepCalling('ask_questions'), stepCalling('search')],
-        pausingToolNames: ['ask_questions'],
       }),
     ).toBe(false);
   });
 
-  it('never pauses without pausing tools or steps', () => {
+  it('does not pause on a tool that is not declared as pausing', () => {
+    expect(endsOnPausingToolCall({ steps: [stepCalling('search')] })).toBe(
+      false,
+    );
+  });
+
+  it('only pauses on a pausing tool the run was offered', () => {
     expect(
       endsOnPausingToolCall({
         steps: [stepCalling('ask_questions')],
-        pausingToolNames: [],
+        offeredToolNames: [],
       }),
     ).toBe(false);
     expect(
-      endsOnPausingToolCall({ steps: [], pausingToolNames: ['ask_questions'] }),
-    ).toBe(false);
+      endsOnPausingToolCall({
+        steps: [stepCalling('ask_questions')],
+        offeredToolNames: ['ask_questions'],
+      }),
+    ).toBe(true);
+  });
+
+  it('never pauses without steps', () => {
+    expect(endsOnPausingToolCall({ steps: [] })).toBe(false);
   });
 });

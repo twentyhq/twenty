@@ -52,7 +52,12 @@ const ButtonControls = () => {
       <LightButton onClick={() => setLoading(false)}>
         Complete request
       </LightButton>
-      <Button href="https://twenty.com" target="_blank" rel="noreferrer">
+      <Button
+        variant="link"
+        href="https://twenty.com"
+        target="_blank"
+        rel="noreferrer"
+      >
         Documentation
       </Button>
       <ButtonGroup aria-label="Actions" size="sm">
@@ -115,6 +120,9 @@ const ButtonControls = () => {
           </LightIconButton>
         }
       />
+      <Button variant="link" onClick={handleClick}>
+        Log out
+      </Button>
       <output aria-label="Activations">{activations}</output>
     </ThemeProvider>
   );
