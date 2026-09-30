@@ -8,11 +8,6 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.service';
-import {
-  TWO_FACTOR_AUTHENTICATION_EVENT,
-  type TwoFactorAuthenticationTrackEvent,
-} from 'src/engine/core-modules/event-logs/emit/events/workspace-event/two-factor-authentication/two-factor-authentication';
 import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/encrypted-string.type';
 import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
@@ -50,7 +45,6 @@ export class TwoFactorAuthenticationService {
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly secretEncryptionService: SecretEncryptionService,
     private readonly throttlerService: ThrottlerService,
-    private readonly eventLogEmitterService: EventLogEmitterService,
   ) {}
 
   private async decryptStoredSecret({
@@ -157,13 +151,6 @@ export class TwoFactorAuthenticationService {
       ['userWorkspaceId', 'strategy'],
     );
 
-    this.emitTwoFactorAuthenticationEvent({
-      workspaceId,
-      userId,
-      action: 'method_provisioned',
-      strategy: TwoFactorAuthenticationStrategy.TOTP,
-    });
-
     return uri;
   }
 
@@ -191,14 +178,6 @@ export class TwoFactorAuthenticationService {
       });
 
     if (!isDefined(userTwoFactorAuthenticationMethod)) {
-      this.emitTwoFactorAuthenticationEvent({
-        workspaceId,
-        userId,
-        action: 'otp_rejected',
-        strategy: twoFactorAuthenticationStrategy,
-        message: 'No two-factor authentication method configured',
-      });
-
       throw new TwoFactorAuthenticationException(
         'Two Factor Authentication Method not found.',
         TwoFactorAuthenticationExceptionCode.INVALID_CONFIGURATION,
@@ -227,13 +206,6 @@ export class TwoFactorAuthenticationService {
     ).validate(token, otpContext);
 
     if (!validationResult.isValid) {
-      this.emitTwoFactorAuthenticationEvent({
-        workspaceId,
-        userId,
-        action: 'otp_rejected',
-        strategy: twoFactorAuthenticationStrategy,
-      });
-
       throw new TwoFactorAuthenticationException(
         'Invalid OTP',
         TwoFactorAuthenticationExceptionCode.INVALID_OTP,
@@ -245,86 +217,6 @@ export class TwoFactorAuthenticationService {
       { id: userTwoFactorAuthenticationMethod.id },
       { status: OTPStatus.VERIFIED },
     );
-
-    if (userTwoFactorAuthenticationMethod.status !== OTPStatus.VERIFIED) {
-      this.emitTwoFactorAuthenticationEvent({
-        workspaceId,
-        userId,
-        action: 'method_verified',
-        strategy: twoFactorAuthenticationStrategy,
-      });
-    }
-  }
-
-  async deleteTwoFactorAuthenticationMethodForAuthenticatedUser({
-    userId,
-    workspaceId,
-    twoFactorAuthenticationMethodId,
-  }: {
-    userId: UserEntity['id'];
-    workspaceId: WorkspaceEntity['id'];
-    twoFactorAuthenticationMethodId: TwoFactorAuthenticationMethodEntity['id'];
-  }) {
-    const twoFactorMethod =
-      await this.twoFactorAuthenticationMethodRepository.findOne(workspaceId, {
-        where: { id: twoFactorAuthenticationMethodId },
-        relations: ['userWorkspace'],
-      });
-
-    if (!isDefined(twoFactorMethod)) {
-      throw new AuthException(
-        'Two-factor authentication method not found',
-        AuthExceptionCode.INVALID_INPUT,
-      );
-    }
-
-    if (twoFactorMethod.userWorkspace.userId !== userId) {
-      throw new AuthException(
-        'You can only delete your own two-factor authentication methods',
-        AuthExceptionCode.FORBIDDEN_EXCEPTION,
-      );
-    }
-
-    const deleteResult =
-      await this.twoFactorAuthenticationMethodRepository.delete(workspaceId, {
-        id: twoFactorAuthenticationMethodId,
-      });
-
-    if ((deleteResult.affected ?? 0) > 0) {
-      this.emitTwoFactorAuthenticationEvent({
-        workspaceId,
-        userId,
-        action: 'method_deleted',
-        strategy: twoFactorMethod.strategy,
-      });
-    }
-
-    return { success: true };
-  }
-
-  private emitTwoFactorAuthenticationEvent({
-    workspaceId,
-    userId,
-    action,
-    strategy,
-    message,
-  }: {
-    workspaceId: WorkspaceEntity['id'];
-    userId: UserEntity['id'];
-    action: TwoFactorAuthenticationTrackEvent['properties']['action'];
-    strategy: TwoFactorAuthenticationStrategy;
-    message?: string;
-  }) {
-    const eventLogContext = this.eventLogEmitterService.createContext({
-      workspaceId,
-      userId,
-    });
-
-    void eventLogContext.insertWorkspaceEvent(TWO_FACTOR_AUTHENTICATION_EVENT, {
-      action,
-      strategy,
-      ...(isDefined(message) ? { message } : {}),
-    });
   }
 
   async verifyTwoFactorAuthenticationMethodForAuthenticatedUser(

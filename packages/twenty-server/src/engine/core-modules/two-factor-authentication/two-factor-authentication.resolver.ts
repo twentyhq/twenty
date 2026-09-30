@@ -3,6 +3,8 @@ import { Args, Mutation } from '@nestjs/graphql';
 
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import {
   AuthException,
@@ -34,6 +36,7 @@ import { InitiateTwoFactorAuthenticationProvisioningInput } from './dto/initiate
 import { InitiateTwoFactorAuthenticationProvisioningDTO } from './dto/initiate-two-factor-authentication-provisioning.dto';
 import { VerifyTwoFactorAuthenticationMethodInput } from './dto/verify-two-factor-authentication-method.input';
 import { VerifyTwoFactorAuthenticationMethodDTO } from './dto/verify-two-factor-authentication-method.dto';
+import { TwoFactorAuthenticationMethodEntity } from './entities/two-factor-authentication-method.entity';
 
 @MetadataResolver()
 @UseFilters(
@@ -48,6 +51,8 @@ export class TwoFactorAuthenticationResolver {
     private readonly loginTokenService: LoginTokenService,
     private readonly userService: UserService,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
+    @InjectWorkspaceScopedRepository(TwoFactorAuthenticationMethodEntity)
+    private readonly twoFactorAuthenticationMethodRepository: WorkspaceScopedRepository<TwoFactorAuthenticationMethodEntity>,
   ) {}
 
   @Mutation(() => InitiateTwoFactorAuthenticationProvisioningDTO)
@@ -164,14 +169,33 @@ export class TwoFactorAuthenticationResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUser() user: AuthContextUser,
   ): Promise<DeleteTwoFactorAuthenticationMethodDTO> {
-    return await this.twoFactorAuthenticationService.deleteTwoFactorAuthenticationMethodForAuthenticatedUser(
-      {
-        userId: user.id,
-        workspaceId: workspace.id,
-        twoFactorAuthenticationMethodId:
-          deleteTwoFactorAuthenticationMethodInput.twoFactorAuthenticationMethodId,
-      },
-    );
+    const twoFactorMethod =
+      await this.twoFactorAuthenticationMethodRepository.findOne(workspace.id, {
+        where: {
+          id: deleteTwoFactorAuthenticationMethodInput.twoFactorAuthenticationMethodId,
+        },
+        relations: ['userWorkspace'],
+      });
+
+    if (!twoFactorMethod) {
+      throw new AuthException(
+        'Two-factor authentication method not found',
+        AuthExceptionCode.INVALID_INPUT,
+      );
+    }
+
+    if (twoFactorMethod.userWorkspace.userId !== user.id) {
+      throw new AuthException(
+        'You can only delete your own two-factor authentication methods',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
+    }
+
+    await this.twoFactorAuthenticationMethodRepository.delete(workspace.id, {
+      id: deleteTwoFactorAuthenticationMethodInput.twoFactorAuthenticationMethodId,
+    });
+
+    return { success: true };
   }
 
   @Mutation(() => VerifyTwoFactorAuthenticationMethodDTO)
