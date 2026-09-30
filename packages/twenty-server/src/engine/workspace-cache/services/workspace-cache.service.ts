@@ -15,6 +15,9 @@ import { DataSource } from 'typeorm';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
 
 import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
+import { CLAIM_WORKSPACE_CACHE_HASHES_SCRIPT } from 'src/engine/workspace-cache/constants/claim-workspace-cache-hashes-script.constant';
+import { INVALIDATE_WORKSPACE_CACHE_SCRIPT } from 'src/engine/workspace-cache/constants/invalidate-workspace-cache-script.constant';
+import { PUBLISH_WORKSPACE_CACHE_SCRIPT } from 'src/engine/workspace-cache/constants/publish-workspace-cache-script.constant';
 
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
@@ -52,6 +55,7 @@ import {
 } from 'src/engine/workspace-cache/utils/serialize-cache-blob.util';
 import { sweepLocalCache } from 'src/engine/workspace-cache/utils/sweep-local-cache.util';
 
+const MAX_RECOMPUTE_ATTEMPTS = 3;
 const LOCAL_TTL_MS = 100; // 100ms
 const MEMOIZER_TTL_MS = 10_000; // 10 seconds
 const STALE_VERSION_TTL_MS = 5_000; // 5 seconds
@@ -77,13 +81,6 @@ type CacheEntriesResult = {
   data: Partial<WorkspaceCacheDataMap>;
   hashes: Partial<Record<WorkspaceCacheKeyName, string>>;
 };
-
-type RecomputeHashResolution =
-  | { strategy: 'mint' }
-  | {
-      strategy: 'recover';
-      adoptableHashes: Partial<Record<WorkspaceCacheKeyName, string>>;
-    };
 
 @Injectable()
 export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
@@ -223,15 +220,8 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
           return freshEntries;
         }
 
-        const {
-          validKeys,
-          keysNeedingDataFromRedis,
-          keysNeedingRecompute,
-          adoptableHashes,
-        } = await this.validateLocalHashAgainstRedisHash(
-          workspaceId,
-          staleKeys,
-        );
+        const { validKeys, keysNeedingDataFromRedis, keysNeedingRecompute } =
+          await this.validateLocalHashAgainstRedisHash(workspaceId, staleKeys);
         const validatedEntries = this.getFromLocalCache(workspaceId, validKeys);
 
         const { redisEntries, missingInRedis } = await this.fetchDataFromRedis(
@@ -243,7 +233,6 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
         const recomputedEntries = await this.recomputeDataFromProvider(
           workspaceId,
           keysToRecompute,
-          { strategy: 'recover', adoptableHashes },
         );
 
         return {
@@ -313,9 +302,7 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
         await this.memoizer.clearKeys(`${workspaceId}-`);
 
         await this.flush(workspaceId, cacheKeyNames);
-        await this.recomputeDataFromProvider(workspaceId, cacheKeyNames, {
-          strategy: 'mint',
-        });
+        await this.recomputeDataFromProvider(workspaceId, cacheKeyNames);
 
         // Clear memoizer again after recomputation to evict any stale entries
         // cached by concurrent getOrRecompute calls during the flush window.
@@ -353,9 +340,21 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     workspaceId: string,
     cacheKeyNames: WorkspaceCacheKeyName[],
   ): Promise<void> {
-    await this.deleteFromRedis(workspaceId, cacheKeyNames);
+    if (cacheKeyNames.length === 0) {
+      return;
+    }
 
+    await this.memoizer.clearKeys(`${workspaceId}-`);
+    await this.cacheStorage.runScript<number>({
+      script: INVALIDATE_WORKSPACE_CACHE_SCRIPT,
+      keys: this.buildCacheEntryKeys(workspaceId, cacheKeyNames),
+      args: [
+        String(this.twentyConfigService.get('CACHE_STORAGE_TTL') * 1000),
+        ...cacheKeyNames.map(() => JSON.stringify(crypto.randomUUID())),
+      ],
+    });
     this.deleteFromLocalCache(workspaceId, cacheKeyNames);
+    await this.memoizer.clearKeys(`${workspaceId}-`);
   }
 
   public async evictWorkspaceFromLocalCache(
@@ -415,19 +414,16 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     validKeys: WorkspaceCacheKeyName[];
     keysNeedingDataFromRedis: WorkspaceCacheKeyName[];
     keysNeedingRecompute: WorkspaceCacheKeyName[];
-    adoptableHashes: Partial<Record<WorkspaceCacheKeyName, string>>;
   }> {
     const validKeys: WorkspaceCacheKeyName[] = [];
     const keysNeedingDataFromRedis: WorkspaceCacheKeyName[] = [];
     const keysNeedingRecompute: WorkspaceCacheKeyName[] = [];
-    const adoptableHashes: Partial<Record<WorkspaceCacheKeyName, string>> = {};
 
     if (cacheKeyNames.length === 0) {
       return {
         validKeys,
         keysNeedingDataFromRedis,
         keysNeedingRecompute,
-        adoptableHashes,
       };
     }
 
@@ -451,10 +447,6 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
         validKeys.push(keyName);
       } else if (this.localDataOnlyKeys.has(keyName)) {
         keysNeedingRecompute.push(keyName);
-
-        if (isDefined(redisHash)) {
-          adoptableHashes[keyName] = redisHash;
-        }
       } else {
         keysNeedingDataFromRedis.push(keyName);
       }
@@ -464,7 +456,6 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
       validKeys,
       keysNeedingDataFromRedis,
       keysNeedingRecompute,
-      adoptableHashes,
     };
   }
 
@@ -525,7 +516,7 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
   private async recomputeDataFromProvider(
     workspaceId: string,
     cacheKeyNames: WorkspaceCacheKeyName[],
-    hashResolution: RecomputeHashResolution,
+    attemptsRemaining = MAX_RECOMPUTE_ATTEMPTS,
   ): Promise<CacheEntriesResult> {
     const result: CacheEntriesResult = { data: {}, hashes: {} };
 
@@ -533,6 +524,15 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
       return result;
     }
 
+    const cacheTtlMs = this.twentyConfigService.get('CACHE_STORAGE_TTL') * 1000;
+    const hashes = await this.cacheStorage.runScript<string[]>({
+      script: CLAIM_WORKSPACE_CACHE_HASHES_SCRIPT,
+      keys: this.buildCacheEntryKeys(workspaceId, cacheKeyNames),
+      args: [
+        String(cacheTtlMs),
+        ...cacheKeyNames.map(() => JSON.stringify(crypto.randomUUID())),
+      ],
+    });
     const rowsBatchLoader = new WorkspaceCacheRowsBatchLoader(
       this.coreDataSource,
       workspaceId,
@@ -540,7 +540,7 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
 
     await rowsBatchLoader.loadRows(this.collectRowsRequirements(cacheKeyNames));
 
-    const computePromises = cacheKeyNames.map(async (keyName) => {
+    const computePromises = cacheKeyNames.map(async (keyName, index) => {
       const provider = this.getProviderOrThrow(keyName);
       const isLocalDataOnly = this.localDataOnlyKeys.has(keyName);
       const computeStartedAt = performance.now();
@@ -553,7 +553,6 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
             onlyIfParent: true,
             attributes: {
               'cache.key_name': keyName,
-              'cache.recompute.strategy': hashResolution.strategy,
               'cache.local_data_only': isLocalDataOnly,
             },
           },
@@ -564,18 +563,7 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
             }),
         );
 
-        if (hashResolution.strategy === 'mint') {
-          return { keyName, data, hash: crypto.randomUUID(), isAdopted: false };
-        }
-
-        const adoptableHash = hashResolution.adoptableHashes[keyName];
-
-        return {
-          keyName,
-          data,
-          hash: adoptableHash ?? crypto.randomUUID(),
-          isAdopted: isDefined(adoptableHash),
-        };
+        return { keyName, data, hash: hashes[index] };
       } finally {
         this.cacheMetricsService.recordRecompute(
           (performance.now() - computeStartedAt) / 1000,
@@ -604,58 +592,47 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
       { computed: [], computeFailures: [] },
     );
 
-    const redisEntries: Array<{
-      key: string;
-      value: StoredCacheDataType | string;
-    }> = [];
-    const bootstrapHashEntries: Array<{ key: string; value: string }> = [];
+    const keysToRetry: WorkspaceCacheKeyName[] = [];
 
-    for (const { keyName, data, hash, isAdopted } of computed) {
-      Object.assign(result.data, { [keyName]: data });
-      result.hashes[keyName] = hash;
-
-      const baseKey = this.buildCacheKey(workspaceId, keyName);
-      const isLocalDataOnly = this.localDataOnlyKeys.has(keyName);
-      const isRecoveryBootstrap =
-        hashResolution.strategy === 'recover' && !isAdopted && isLocalDataOnly;
-
-      if (isRecoveryBootstrap) {
-        bootstrapHashEntries.push({ key: `${baseKey}:hash`, value: hash });
-      } else if (!isAdopted) {
-        redisEntries.push({ key: `${baseKey}:hash`, value: hash });
-      }
-
-      if (!isLocalDataOnly) {
-        redisEntries.push({
-          key: `${baseKey}:data`,
-          value: this.getProviderOrThrow(keyName).compactForStorage(data),
-        });
-      }
-
-      this.setInLocalCache(workspaceId, keyName, data, hash);
-    }
-
-    if (redisEntries.length > 0) {
+    if (computed.length > 0) {
       const redisWriteStartedAt = performance.now();
+      let published: number[];
 
       try {
-        await this.cacheStorage.mset(redisEntries);
+        published = await this.cacheStorage.runScript<number[]>({
+          script: PUBLISH_WORKSPACE_CACHE_SCRIPT,
+          keys: this.buildCacheEntryKeys(
+            workspaceId,
+            computed.map(({ keyName }) => keyName),
+          ),
+          args: [
+            String(cacheTtlMs),
+            ...computed.flatMap(({ keyName, data, hash }) => [
+              JSON.stringify(hash),
+              this.localDataOnlyKeys.has(keyName)
+                ? ''
+                : JSON.stringify(
+                    this.getProviderOrThrow(keyName).compactForStorage(data),
+                  ),
+            ]),
+          ],
+        });
       } finally {
         this.cacheMetricsService.recordRedisWrite(
           (performance.now() - redisWriteStartedAt) / 1000,
         );
       }
-    }
 
-    if (bootstrapHashEntries.length > 0) {
-      const bootstrapHashTtlMs =
-        this.twentyConfigService.get('CACHE_STORAGE_TTL') * 1000;
+      for (const [index, { keyName, data, hash }] of computed.entries()) {
+        if (published[index] !== 1) {
+          keysToRetry.push(keyName);
+          continue;
+        }
 
-      await Promise.all(
-        bootstrapHashEntries.map(({ key, value }) =>
-          this.cacheStorage.setIfAbsent(key, value, bootstrapHashTtlMs),
-        ),
-      );
+        Object.assign(result.data, { [keyName]: data });
+        result.hashes[keyName] = hash;
+        this.setInLocalCache(workspaceId, keyName, data, hash);
+      }
     }
 
     if (computeFailures.length > 0) {
@@ -665,6 +642,24 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
         ),
       );
       throw computeFailures[0].reason;
+    }
+
+    if (keysToRetry.length > 0) {
+      if (attemptsRemaining <= 1) {
+        throw new WorkspaceCacheException(
+          `Workspace cache changed repeatedly during recomputation for workspace ${workspaceId}`,
+          WorkspaceCacheExceptionCode.INTERNAL_SERVER_ERROR,
+        );
+      }
+
+      const retried = await this.recomputeDataFromProvider(
+        workspaceId,
+        keysToRetry,
+        attemptsRemaining - 1,
+      );
+
+      Object.assign(result.data, retried.data);
+      Object.assign(result.hashes, retried.hashes);
     }
 
     return result;
@@ -712,17 +707,15 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     }
   }
 
-  private async deleteFromRedis(
+  private buildCacheEntryKeys(
     workspaceId: string,
     cacheKeyNames: WorkspaceCacheKeyName[],
-  ): Promise<void> {
-    const keysToDelete = cacheKeyNames.flatMap((keyName) => {
+  ): string[] {
+    return cacheKeyNames.flatMap((keyName) => {
       const baseKey = this.buildCacheKey(workspaceId, keyName);
 
-      return [`${baseKey}:data`, `${baseKey}:hash`];
+      return [`${baseKey}:hash`, `${baseKey}:data`];
     });
-
-    await this.cacheStorage.mdel(keysToDelete);
   }
 
   private setInLocalCache(
