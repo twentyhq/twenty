@@ -16,6 +16,7 @@ export const ONBOARDING_CREDITS_PROGRESS_EMPTY_VALUE: OnboardingCreditsProgress 
     currentStepCredits: 0,
     seenCredits: 0,
     newlyEarnedCredits: 0,
+    lostCredits: 0,
     isFirstCreditsGain: true,
     inviteTeamButtonReward: { creditsReward: 0, isRewardPerItem: false },
   };

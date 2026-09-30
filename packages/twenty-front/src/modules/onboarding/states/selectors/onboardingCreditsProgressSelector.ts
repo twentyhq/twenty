@@ -5,6 +5,7 @@ import { billingState } from '@/client-config/states/billingState';
 import { onboardingConfigState } from '@/client-config/states/onboardingConfigState';
 import { ONBOARDING_CREDITS_PROGRESS_EMPTY_VALUE } from '@/onboarding/constants/OnboardingCreditsProgressEmptyValue';
 import { onboardingCreateProfileDraftState } from '@/onboarding/states/onboardingCreateProfileDraftState';
+import { onboardingUpgradeTrialLostCreditsState } from '@/onboarding/states/onboardingUpgradeTrialLostCreditsState';
 import { currentWorkspaceOnboardingFreeCreditsSelector } from '@/onboarding/states/selectors/currentWorkspaceOnboardingFreeCreditsSelector';
 import { onboardingInviteTeamValidEmailsSelector } from '@/onboarding/states/selectors/onboardingInviteTeamValidEmailsSelector';
 import { type OnboardingCreditsProgress } from '@/onboarding/types/OnboardingCreditsProgress';
@@ -42,6 +43,7 @@ export const onboardingCreditsProgressSelector =
           get(currentWorkspaceMemberState)?.name,
         inviteTeamValidEmailsCount: get(onboardingInviteTeamValidEmailsSelector)
           .length,
+        upgradeTrialLostCredits: get(onboardingUpgradeTrialLostCreditsState),
       });
     },
     areEqual: isDeeplyEqual,
