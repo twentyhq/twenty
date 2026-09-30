@@ -19,7 +19,7 @@ export const applySerializedEventTargetProperties = ({
     element.checked = eventData.checked;
   }
 
-  if (eventData.checked === true) {
+  if (eventData.checked) {
     uncheckOtherRadioButtons(element);
   }
 
