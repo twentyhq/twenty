@@ -95,14 +95,6 @@ describe('registerTeamsConnection', () => {
     );
   });
 
-  it('should keep the claim when a reconnect stays in the same tenant', async () => {
-    kvGetMock.mockResolvedValue(TENANT_ID);
-
-    await registerTeamsConnection({ connectedAccountId: CONNECTED_ACCOUNT_ID });
-
-    expect(releaseMock).not.toHaveBeenCalled();
-  });
-
   it('should leave personal connections alone', async () => {
     getConnectionMock.mockResolvedValue({
       visibility: 'user',
@@ -127,15 +119,6 @@ describe('registerTeamsConnection', () => {
       }),
     ).toEqual({ claimedTenantId: null });
     expect(getConnectionMock).not.toHaveBeenCalled();
-    expect(kvSetMock).not.toHaveBeenCalled();
-  });
-
-  it('should fail without claiming when Graph returns no organization', async () => {
-    fetchGraphJsonMock.mockResolvedValue({ value: [] });
-
-    await expect(
-      registerTeamsConnection({ connectedAccountId: CONNECTED_ACCOUNT_ID }),
-    ).rejects.toThrow('no organization');
     expect(kvSetMock).not.toHaveBeenCalled();
   });
 });

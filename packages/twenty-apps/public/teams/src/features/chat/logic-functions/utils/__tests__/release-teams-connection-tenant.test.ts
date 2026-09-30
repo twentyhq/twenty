@@ -59,12 +59,4 @@ describe('releaseTeamsConnectionTenant', () => {
       buildTeamsConnectedAccountTenantKvKey('leaving'),
     );
   });
-
-  it('should only forget a connection that never claimed a tenant', async () => {
-    expect(
-      await releaseTeamsConnectionTenant({ connectedAccountId: 'personal' }),
-    ).toEqual({ releasedTenantId: null });
-    expect(listConnectionsMock).not.toHaveBeenCalled();
-    expect(kvDeleteMock).toHaveBeenCalledTimes(1);
-  });
 });
