@@ -4,11 +4,9 @@ exports[`Application token renewal should fail when the caller is an API key 1`]
 {
   "extensions": {
     "code": "FORBIDDEN",
-    "subCode": "FORBIDDEN_EXCEPTION",
-    "userFriendlyMessage": "You do not have permission to perform this action.",
+    "userFriendlyMessage": "An error occurred.",
   },
-  "message": "This endpoint requires a session access token",
-  "name": "ForbiddenError",
+  "message": "This endpoint is not available to this caller",
 }
 `;
 
@@ -16,11 +14,9 @@ exports[`Application token renewal should fail when the caller is an application
 {
   "extensions": {
     "code": "FORBIDDEN",
-    "subCode": "FORBIDDEN_EXCEPTION",
-    "userFriendlyMessage": "You do not have permission to perform this action.",
+    "userFriendlyMessage": "An error occurred.",
   },
-  "message": "This endpoint requires a session access token",
-  "name": "ForbiddenError",
+  "message": "This endpoint is not available to this caller",
 }
 `;
 

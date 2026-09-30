@@ -6,7 +6,7 @@ exports[`Account operations with an application token should fail with an applic
     "code": "FORBIDDEN",
     "userFriendlyMessage": "An error occurred.",
   },
-  "message": "Forbidden resource",
+  "message": "This endpoint is not available to this caller",
 }
 `;
 
@@ -16,7 +16,7 @@ exports[`Account operations with an application token should fail with an applic
     "code": "FORBIDDEN",
     "userFriendlyMessage": "An error occurred.",
   },
-  "message": "Forbidden resource",
+  "message": "This endpoint is not available to this caller",
 }
 `;
 
@@ -26,7 +26,7 @@ exports[`Account operations with an application token should fail with an applic
     "code": "FORBIDDEN",
     "userFriendlyMessage": "An error occurred.",
   },
-  "message": "Forbidden resource",
+  "message": "This endpoint is not available to this caller",
 }
 `;
 
@@ -36,7 +36,7 @@ exports[`Account operations with an application token should fail with an applic
     "code": "FORBIDDEN",
     "userFriendlyMessage": "An error occurred.",
   },
-  "message": "Forbidden resource",
+  "message": "This endpoint is not available to this caller",
 }
 `;
 
@@ -46,7 +46,7 @@ exports[`Account operations with an application token should fail with an applic
     "code": "FORBIDDEN",
     "userFriendlyMessage": "An error occurred.",
   },
-  "message": "Forbidden resource",
+  "message": "This endpoint is not available to this caller",
 }
 `;
 
@@ -56,7 +56,7 @@ exports[`Account operations with an application token should fail with an applic
     "code": "FORBIDDEN",
     "userFriendlyMessage": "An error occurred.",
   },
-  "message": "Forbidden resource",
+  "message": "This endpoint is not available to this caller",
 }
 `;
 
@@ -64,11 +64,9 @@ exports[`Account operations with an application token should fail with an applic
 {
   "extensions": {
     "code": "FORBIDDEN",
-    "subCode": "FORBIDDEN_EXCEPTION",
-    "userFriendlyMessage": "You do not have permission to perform this action.",
+    "userFriendlyMessage": "An error occurred.",
   },
-  "message": "This endpoint requires a user session",
-  "name": "ForbiddenError",
+  "message": "This endpoint is not available to this caller",
 }
 `;
 
@@ -78,7 +76,7 @@ exports[`Account operations with an application token should fail with an applic
     "code": "FORBIDDEN",
     "userFriendlyMessage": "An error occurred.",
   },
-  "message": "Forbidden resource",
+  "message": "This endpoint is not available to this caller",
 }
 `;
 
@@ -88,7 +86,7 @@ exports[`Account operations with an application token should fail with an applic
     "code": "FORBIDDEN",
     "userFriendlyMessage": "An error occurred.",
   },
-  "message": "Forbidden resource",
+  "message": "This endpoint is not available to this caller",
 }
 `;
 
@@ -98,7 +96,7 @@ exports[`Account operations with an application token should fail with an applic
     "code": "FORBIDDEN",
     "userFriendlyMessage": "An error occurred.",
   },
-  "message": "Forbidden resource",
+  "message": "This endpoint is not available to this caller",
 }
 `;
 
@@ -108,7 +106,7 @@ exports[`Account operations with an application token should fail with an applic
     "code": "FORBIDDEN",
     "userFriendlyMessage": "An error occurred.",
   },
-  "message": "Forbidden resource",
+  "message": "This endpoint is not available to this caller",
 }
 `;
 
@@ -118,7 +116,7 @@ exports[`Account operations with an application token should fail with an applic
     "code": "FORBIDDEN",
     "userFriendlyMessage": "An error occurred.",
   },
-  "message": "Forbidden resource",
+  "message": "This endpoint is not available to this caller",
 }
 `;
 
@@ -128,7 +126,7 @@ exports[`Account operations with an application token should fail with an applic
     "code": "FORBIDDEN",
     "userFriendlyMessage": "An error occurred.",
   },
-  "message": "Forbidden resource",
+  "message": "This endpoint is not available to this caller",
 }
 `;
 
@@ -138,7 +136,7 @@ exports[`Account operations with an application token should fail with an applic
     "code": "FORBIDDEN",
     "userFriendlyMessage": "An error occurred.",
   },
-  "message": "Forbidden resource",
+  "message": "This endpoint is not available to this caller",
 }
 `;
 
@@ -148,7 +146,7 @@ exports[`Account operations with an application token should fail with an applic
     "code": "FORBIDDEN",
     "userFriendlyMessage": "An error occurred.",
   },
-  "message": "Forbidden resource",
+  "message": "This endpoint is not available to this caller",
 }
 `;
 
@@ -158,7 +156,7 @@ exports[`Account operations with an application token should fail with an applic
     "code": "FORBIDDEN",
     "userFriendlyMessage": "An error occurred.",
   },
-  "message": "Forbidden resource",
+  "message": "This endpoint is not available to this caller",
 }
 `;
 
@@ -168,7 +166,7 @@ exports[`Account operations with an application token should fail with an applic
     "code": "FORBIDDEN",
     "userFriendlyMessage": "An error occurred.",
   },
-  "message": "Forbidden resource",
+  "message": "This endpoint is not available to this caller",
 }
 `;
 
@@ -178,7 +176,7 @@ exports[`Account operations with an application token should fail with an applic
     "code": "FORBIDDEN",
     "userFriendlyMessage": "An error occurred.",
   },
-  "message": "Forbidden resource",
+  "message": "This endpoint is not available to this caller",
 }
 `;
 
@@ -188,7 +186,7 @@ exports[`Account operations with an application token should fail with an applic
     "code": "FORBIDDEN",
     "userFriendlyMessage": "An error occurred.",
   },
-  "message": "Forbidden resource",
+  "message": "This endpoint is not available to this caller",
 }
 `;
 
@@ -198,7 +196,7 @@ exports[`Account operations with an application token should fail with an applic
     "code": "FORBIDDEN",
     "userFriendlyMessage": "An error occurred.",
   },
-  "message": "Forbidden resource",
+  "message": "This endpoint is not available to this caller",
 }
 `;
 
@@ -208,7 +206,7 @@ exports[`Account operations with an application token should fail with an applic
     "code": "FORBIDDEN",
     "userFriendlyMessage": "An error occurred.",
   },
-  "message": "Forbidden resource",
+  "message": "This endpoint is not available to this caller",
 }
 `;
 
@@ -218,7 +216,7 @@ exports[`Account operations with an application token should fail with an applic
     "code": "FORBIDDEN",
     "userFriendlyMessage": "An error occurred.",
   },
-  "message": "Forbidden resource",
+  "message": "This endpoint is not available to this caller",
 }
 `;
 
@@ -228,7 +226,7 @@ exports[`Account operations with an application token should fail with an applic
     "code": "FORBIDDEN",
     "userFriendlyMessage": "An error occurred.",
   },
-  "message": "Forbidden resource",
+  "message": "This endpoint is not available to this caller",
 }
 `;
 
@@ -238,7 +236,7 @@ exports[`Account operations with an application token should fail with an applic
     "code": "FORBIDDEN",
     "userFriendlyMessage": "An error occurred.",
   },
-  "message": "Forbidden resource",
+  "message": "This endpoint is not available to this caller",
 }
 `;
 
@@ -248,7 +246,7 @@ exports[`Account operations with an application token should fail with an applic
     "code": "FORBIDDEN",
     "userFriendlyMessage": "An error occurred.",
   },
-  "message": "Forbidden resource",
+  "message": "This endpoint is not available to this caller",
 }
 `;
 
@@ -258,7 +256,7 @@ exports[`Account operations with an application token should fail with an applic
     "code": "FORBIDDEN",
     "userFriendlyMessage": "An error occurred.",
   },
-  "message": "Forbidden resource",
+  "message": "This endpoint is not available to this caller",
 }
 `;
 
@@ -268,7 +266,7 @@ exports[`Account operations with an application token should fail with an applic
     "code": "FORBIDDEN",
     "userFriendlyMessage": "An error occurred.",
   },
-  "message": "Forbidden resource",
+  "message": "This endpoint is not available to this caller",
 }
 `;
 
@@ -278,7 +276,7 @@ exports[`Account operations with an application token should fail with an applic
     "code": "FORBIDDEN",
     "userFriendlyMessage": "An error occurred.",
   },
-  "message": "Forbidden resource",
+  "message": "This endpoint is not available to this caller",
 }
 `;
 
@@ -288,7 +286,7 @@ exports[`Account operations with an application token should fail with an applic
     "code": "FORBIDDEN",
     "userFriendlyMessage": "An error occurred.",
   },
-  "message": "Forbidden resource",
+  "message": "This endpoint is not available to this caller",
 }
 `;
 
@@ -296,11 +294,9 @@ exports[`Account operations with an application token should fail with an applic
 {
   "extensions": {
     "code": "FORBIDDEN",
-    "subCode": "FORBIDDEN_EXCEPTION",
-    "userFriendlyMessage": "You do not have permission to perform this action.",
+    "userFriendlyMessage": "An error occurred.",
   },
-  "message": "This endpoint requires a user session",
-  "name": "ForbiddenError",
+  "message": "This endpoint is not available to this caller",
 }
 `;
 
@@ -308,11 +304,9 @@ exports[`Account operations with an application token should fail with an applic
 {
   "extensions": {
     "code": "FORBIDDEN",
-    "subCode": "FORBIDDEN_EXCEPTION",
-    "userFriendlyMessage": "You do not have permission to perform this action.",
+    "userFriendlyMessage": "An error occurred.",
   },
-  "message": "This endpoint requires a user session",
-  "name": "ForbiddenError",
+  "message": "This endpoint is not available to this caller",
 }
 `;
 
@@ -320,11 +314,9 @@ exports[`Account operations with an application token should fail with an applic
 {
   "extensions": {
     "code": "FORBIDDEN",
-    "subCode": "FORBIDDEN_EXCEPTION",
-    "userFriendlyMessage": "You do not have permission to perform this action.",
+    "userFriendlyMessage": "An error occurred.",
   },
-  "message": "This endpoint requires a user session",
-  "name": "ForbiddenError",
+  "message": "This endpoint is not available to this caller",
 }
 `;
 
@@ -332,11 +324,9 @@ exports[`Account operations with an application token should fail with an applic
 {
   "extensions": {
     "code": "FORBIDDEN",
-    "subCode": "FORBIDDEN_EXCEPTION",
-    "userFriendlyMessage": "You do not have permission to perform this action.",
+    "userFriendlyMessage": "An error occurred.",
   },
-  "message": "This endpoint requires a user session",
-  "name": "ForbiddenError",
+  "message": "This endpoint is not available to this caller",
 }
 `;
 
@@ -344,11 +334,9 @@ exports[`Account operations with an application token should fail with an applic
 {
   "extensions": {
     "code": "FORBIDDEN",
-    "subCode": "FORBIDDEN_EXCEPTION",
-    "userFriendlyMessage": "You do not have permission to perform this action.",
+    "userFriendlyMessage": "An error occurred.",
   },
-  "message": "This endpoint requires a user session",
-  "name": "ForbiddenError",
+  "message": "This endpoint is not available to this caller",
 }
 `;
 
@@ -356,11 +344,9 @@ exports[`Account operations with an application token should fail with an applic
 {
   "extensions": {
     "code": "FORBIDDEN",
-    "subCode": "FORBIDDEN_EXCEPTION",
-    "userFriendlyMessage": "You do not have permission to perform this action.",
+    "userFriendlyMessage": "An error occurred.",
   },
-  "message": "This endpoint requires a user session",
-  "name": "ForbiddenError",
+  "message": "This endpoint is not available to this caller",
 }
 `;
 
@@ -368,11 +354,9 @@ exports[`Account operations with an application token should fail with an applic
 {
   "extensions": {
     "code": "FORBIDDEN",
-    "subCode": "FORBIDDEN_EXCEPTION",
-    "userFriendlyMessage": "You do not have permission to perform this action.",
+    "userFriendlyMessage": "An error occurred.",
   },
-  "message": "This endpoint requires a user session",
-  "name": "ForbiddenError",
+  "message": "This endpoint is not available to this caller",
 }
 `;
 
@@ -380,11 +364,9 @@ exports[`Account operations with an application token should fail with an applic
 {
   "extensions": {
     "code": "FORBIDDEN",
-    "subCode": "FORBIDDEN_EXCEPTION",
-    "userFriendlyMessage": "You do not have permission to perform this action.",
+    "userFriendlyMessage": "An error occurred.",
   },
-  "message": "This endpoint requires a user session",
-  "name": "ForbiddenError",
+  "message": "This endpoint is not available to this caller",
 }
 `;
 
@@ -440,11 +422,9 @@ exports[`Account operations with an application token should fail with an applic
 {
   "extensions": {
     "code": "FORBIDDEN",
-    "subCode": "FORBIDDEN_EXCEPTION",
-    "userFriendlyMessage": "You do not have permission to perform this action.",
+    "userFriendlyMessage": "An error occurred.",
   },
-  "message": "This endpoint requires a user session",
-  "name": "ForbiddenError",
+  "message": "This endpoint is not available to this caller",
 }
 `;
 
@@ -452,11 +432,9 @@ exports[`Account operations with an application token should fail with an applic
 {
   "extensions": {
     "code": "FORBIDDEN",
-    "subCode": "FORBIDDEN_EXCEPTION",
-    "userFriendlyMessage": "You do not have permission to perform this action.",
+    "userFriendlyMessage": "An error occurred.",
   },
-  "message": "This endpoint requires a user session",
-  "name": "ForbiddenError",
+  "message": "This endpoint is not available to this caller",
 }
 `;
 
@@ -464,11 +442,9 @@ exports[`Account operations with an application token should fail with an applic
 {
   "extensions": {
     "code": "FORBIDDEN",
-    "subCode": "FORBIDDEN_EXCEPTION",
-    "userFriendlyMessage": "You do not have permission to perform this action.",
+    "userFriendlyMessage": "An error occurred.",
   },
-  "message": "This endpoint requires a user session",
-  "name": "ForbiddenError",
+  "message": "This endpoint is not available to this caller",
 }
 `;
 
@@ -476,11 +452,9 @@ exports[`Account operations with an application token should fail with an applic
 {
   "extensions": {
     "code": "FORBIDDEN",
-    "subCode": "FORBIDDEN_EXCEPTION",
-    "userFriendlyMessage": "You do not have permission to perform this action.",
+    "userFriendlyMessage": "An error occurred.",
   },
-  "message": "This endpoint requires a user session",
-  "name": "ForbiddenError",
+  "message": "This endpoint is not available to this caller",
 }
 `;
 
@@ -488,11 +462,9 @@ exports[`Account operations with an application token should fail with an applic
 {
   "extensions": {
     "code": "FORBIDDEN",
-    "subCode": "FORBIDDEN_EXCEPTION",
-    "userFriendlyMessage": "You do not have permission to perform this action.",
+    "userFriendlyMessage": "An error occurred.",
   },
-  "message": "This endpoint requires a user session",
-  "name": "ForbiddenError",
+  "message": "This endpoint is not available to this caller",
 }
 `;
 
@@ -500,11 +472,9 @@ exports[`Account operations with an application token should fail with an applic
 {
   "extensions": {
     "code": "FORBIDDEN",
-    "subCode": "FORBIDDEN_EXCEPTION",
-    "userFriendlyMessage": "You do not have permission to perform this action.",
+    "userFriendlyMessage": "An error occurred.",
   },
-  "message": "This endpoint requires a user session",
-  "name": "ForbiddenError",
+  "message": "This endpoint is not available to this caller",
 }
 `;
 
@@ -512,11 +482,9 @@ exports[`Account operations with an application token should fail with an applic
 {
   "extensions": {
     "code": "FORBIDDEN",
-    "subCode": "FORBIDDEN_EXCEPTION",
-    "userFriendlyMessage": "You do not have permission to perform this action.",
+    "userFriendlyMessage": "An error occurred.",
   },
-  "message": "This endpoint requires a user session",
-  "name": "ForbiddenError",
+  "message": "This endpoint is not available to this caller",
 }
 `;
 
@@ -524,11 +492,9 @@ exports[`Account operations with an application token should fail with an applic
 {
   "extensions": {
     "code": "FORBIDDEN",
-    "subCode": "FORBIDDEN_EXCEPTION",
-    "userFriendlyMessage": "You do not have permission to perform this action.",
+    "userFriendlyMessage": "An error occurred.",
   },
-  "message": "This endpoint requires a user session",
-  "name": "ForbiddenError",
+  "message": "This endpoint is not available to this caller",
 }
 `;
 
@@ -536,11 +502,9 @@ exports[`Account operations with an application token should fail with an applic
 {
   "extensions": {
     "code": "FORBIDDEN",
-    "subCode": "FORBIDDEN_EXCEPTION",
-    "userFriendlyMessage": "You do not have permission to perform this action.",
+    "userFriendlyMessage": "An error occurred.",
   },
-  "message": "This endpoint requires a user session",
-  "name": "ForbiddenError",
+  "message": "This endpoint is not available to this caller",
 }
 `;
 
@@ -548,11 +512,9 @@ exports[`Account operations with an application token should fail with an applic
 {
   "extensions": {
     "code": "FORBIDDEN",
-    "subCode": "FORBIDDEN_EXCEPTION",
-    "userFriendlyMessage": "You do not have permission to perform this action.",
+    "userFriendlyMessage": "An error occurred.",
   },
-  "message": "This endpoint requires a user session",
-  "name": "ForbiddenError",
+  "message": "This endpoint is not available to this caller",
 }
 `;
 
@@ -572,11 +534,9 @@ exports[`Account operations with an application token should fail with an applic
 {
   "extensions": {
     "code": "FORBIDDEN",
-    "subCode": "FORBIDDEN_EXCEPTION",
-    "userFriendlyMessage": "You do not have permission to perform this action.",
+    "userFriendlyMessage": "An error occurred.",
   },
-  "message": "This endpoint requires a user session",
-  "name": "ForbiddenError",
+  "message": "This endpoint is not available to this caller",
 }
 `;
 
@@ -584,11 +544,9 @@ exports[`Account operations with an application token should fail with an applic
 {
   "extensions": {
     "code": "FORBIDDEN",
-    "subCode": "FORBIDDEN_EXCEPTION",
-    "userFriendlyMessage": "You do not have permission to perform this action.",
+    "userFriendlyMessage": "An error occurred.",
   },
-  "message": "This endpoint requires a user session",
-  "name": "ForbiddenError",
+  "message": "This endpoint is not available to this caller",
 }
 `;
 
@@ -596,11 +554,9 @@ exports[`Account operations with an application token should fail with an applic
 {
   "extensions": {
     "code": "FORBIDDEN",
-    "subCode": "FORBIDDEN_EXCEPTION",
-    "userFriendlyMessage": "You do not have permission to perform this action.",
+    "userFriendlyMessage": "An error occurred.",
   },
-  "message": "This endpoint requires a user session",
-  "name": "ForbiddenError",
+  "message": "This endpoint is not available to this caller",
 }
 `;
 
@@ -608,11 +564,9 @@ exports[`Account operations with an application token should fail with an applic
 {
   "extensions": {
     "code": "FORBIDDEN",
-    "subCode": "FORBIDDEN_EXCEPTION",
-    "userFriendlyMessage": "You do not have permission to perform this action.",
+    "userFriendlyMessage": "An error occurred.",
   },
-  "message": "This endpoint requires a user session",
-  "name": "ForbiddenError",
+  "message": "This endpoint is not available to this caller",
 }
 `;
 
@@ -620,11 +574,9 @@ exports[`Account operations with an application token should fail with an applic
 {
   "extensions": {
     "code": "FORBIDDEN",
-    "subCode": "FORBIDDEN_EXCEPTION",
-    "userFriendlyMessage": "You do not have permission to perform this action.",
+    "userFriendlyMessage": "An error occurred.",
   },
-  "message": "This endpoint requires a user session",
-  "name": "ForbiddenError",
+  "message": "This endpoint is not available to this caller",
 }
 `;
 
@@ -632,10 +584,8 @@ exports[`Account operations with an application token should fail with an applic
 {
   "extensions": {
     "code": "FORBIDDEN",
-    "subCode": "FORBIDDEN_EXCEPTION",
-    "userFriendlyMessage": "You do not have permission to perform this action.",
+    "userFriendlyMessage": "An error occurred.",
   },
-  "message": "This endpoint requires a user session",
-  "name": "ForbiddenError",
+  "message": "This endpoint is not available to this caller",
 }
 `;

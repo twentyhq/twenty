@@ -23,6 +23,7 @@ import {
 import { SystemPermissionFlag } from 'twenty-shared/constants';
 
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
+import { AUTH_PRINCIPAL_REFUSED_MESSAGE } from 'src/engine/guards/constants/auth-principal-refused-message.constant';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { USER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-users.util';
 import { TWO_FACTOR_AUTHENTICATION_METHOD_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-two-factor-authentication-methods.util';
@@ -40,8 +41,6 @@ const OFFICIAL_APPLICATION_CURRENT_USER_FIELDS = `
     id
   }
 `;
-
-const USER_SESSION_REFUSAL_MESSAGE = 'This endpoint requires a user session';
 
 describe('User session operations and application access that must keep working', () => {
   let applicationsApplication: ApplicationWithVariable;
@@ -381,7 +380,7 @@ describe('User session operations and application access that must keep working'
     });
 
     // Billing is off in the integration environment, so the mutation cannot
-    // complete; what this asserts is that the user-session guard is not what
+    // complete; what this asserts is that AuthPrincipalGuard is not what
     // stopped it, leaving checkoutSession on its permission path.
     it('should reach the checkout session permission path', async () => {
       const { errors } = await checkoutSession({
@@ -391,7 +390,7 @@ describe('User session operations and application access that must keep working'
       });
 
       expect((errors ?? []).map(({ message }) => message)).not.toContain(
-        USER_SESSION_REFUSAL_MESSAGE,
+        AUTH_PRINCIPAL_REFUSED_MESSAGE,
       );
     });
   });
