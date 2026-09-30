@@ -13,11 +13,14 @@ import { SettingsAppearancePreview } from '~/pages/settings/profile/appearance/c
 
 const StyledChoices = styled.div`
   box-sizing: border-box;
-  flex-direction: row;
-  gap: ${themeCssVariables.spacing[4]};
   overflow-x: auto;
   padding: ${themeCssVariables.spacing[1]};
   width: 100%;
+
+  && {
+    flex-direction: row;
+    gap: ${themeCssVariables.spacing[4]};
+  }
 `;
 
 const StyledChoice = styled.div`

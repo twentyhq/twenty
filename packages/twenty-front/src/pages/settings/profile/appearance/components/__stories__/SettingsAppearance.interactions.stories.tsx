@@ -148,3 +148,34 @@ export const RightToLeftKeyboard: Story = {
     );
   },
 };
+
+export const HorizontalLayout: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const lateRadioGroupStyles =
+      canvasElement.ownerDocument.createElement('style');
+
+    lateRadioGroupStyles.textContent =
+      '[role="radiogroup"] { flex-direction: column; }';
+    canvasElement.ownerDocument.head.append(lateRadioGroupStyles);
+
+    try {
+      const lightBounds = canvas
+        .getByRole('radio', { name: 'Light' })
+        .getBoundingClientRect();
+      const darkBounds = canvas
+        .getByRole('radio', { name: 'Dark' })
+        .getBoundingClientRect();
+      const systemBounds = canvas
+        .getByRole('radio', { name: 'System settings' })
+        .getBoundingClientRect();
+
+      expect(darkBounds.top).toBe(lightBounds.top);
+      expect(systemBounds.top).toBe(lightBounds.top);
+      expect(darkBounds.left).toBeGreaterThan(lightBounds.right);
+      expect(systemBounds.left).toBeGreaterThan(darkBounds.right);
+    } finally {
+      lateRadioGroupStyles.remove();
+    }
+  },
+};
