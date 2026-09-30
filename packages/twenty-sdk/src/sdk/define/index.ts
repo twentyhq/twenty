@@ -248,3 +248,6 @@ export type {
   PageLayoutWidgetUniversalConfiguration,
   PageLayoutWidgetVerticalListPosition,
 } from '@/sdk/define/common/types/loose-shared-types.type';
+
+export { defineWorkflow } from '@/sdk/define/workflows/define-workflow';
+export type { WorkflowManifest } from '@/sdk/define/common/types/loose-shared-types.type';

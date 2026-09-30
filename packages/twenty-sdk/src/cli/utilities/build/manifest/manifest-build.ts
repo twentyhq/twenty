@@ -59,6 +59,7 @@ import {
   type SettingsMenuItemManifest,
   type TimelineActivityTypeManifest,
   type ViewManifest,
+  type WorkflowManifest,
 } from 'twenty-shared/application';
 import {
   getInputSchemaFromSourceCode,
@@ -116,6 +117,7 @@ export const buildManifest = async (
   const roles: RoleManifest[] = [];
   const skills: SkillManifest[] = [];
   const agents: AgentManifest[] = [];
+  const workflows: WorkflowManifest[] = [];
   const connectionProviders: ConnectionProviderManifest[] = [];
   const logicFunctions: LogicFunctionManifest[] = [];
   const frontComponents: FrontComponentManifest[] = [];
@@ -147,6 +149,7 @@ export const buildManifest = async (
   const rolesFilePaths: string[] = [];
   const skillsFilePaths: string[] = [];
   const agentsFilePaths: string[] = [];
+  const workflowsFilePaths: string[] = [];
   const connectionProvidersFilePaths: string[] = [];
   const logicFunctionsFilePaths: string[] = [];
   const frontComponentsFilePaths: string[] = [];
@@ -264,6 +267,17 @@ export const buildManifest = async (
         errors.push(...extract.errors);
         warnings.push(...(extract.warnings ?? []));
         agentsFilePaths.push(relativePath);
+        break;
+      }
+      case ManifestEntityKey.Workflows: {
+        const extract = await extractManifestFromFile<WorkflowManifest>({
+          appPath,
+          filePath,
+        });
+        workflows.push(extract.config);
+        errors.push(...extract.errors);
+        warnings.push(...(extract.warnings ?? []));
+        workflowsFilePaths.push(relativePath);
         break;
       }
       case ManifestEntityKey.ConnectionProviders: {
@@ -751,6 +765,7 @@ export const buildManifest = async (
         roles: roles.sort(byId),
         skills: skills.sort(byId),
         agents: agents.sort(byId),
+        workflows: workflows.sort(byId),
         connectionProviders: connectionProviders.sort(byId),
         logicFunctions: logicFunctions.sort(byId),
         frontComponents: frontComponents.sort(byId),
@@ -775,6 +790,7 @@ export const buildManifest = async (
     roles: rolesFilePaths,
     skills: skillsFilePaths,
     agents: agentsFilePaths,
+    workflows: workflowsFilePaths,
     connectionProviders: connectionProvidersFilePaths,
     logicFunctions: logicFunctionsFilePaths,
     frontComponents: frontComponentsFilePaths,
