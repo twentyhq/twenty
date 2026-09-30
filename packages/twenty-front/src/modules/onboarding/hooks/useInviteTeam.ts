@@ -1,11 +1,17 @@
 import { isBookCallOnboardingStepEnabledState } from '@/client-config/states/isBookCallOnboardingStepEnabledState';
 import { isCompanyEnrichmentEnabledState } from '@/client-config/states/isCompanyEnrichmentEnabledState';
 import { onboardingConfigState } from '@/client-config/states/onboardingConfigState';
+import { ONBOARDING_SKIP_DIALOG_IDS } from '@/onboarding/constants/OnboardingSkipDialogIds';
+import { useOnboardingStepEnterHotkey } from '@/onboarding/hooks/useOnboardingStepEnterHotkey';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
 import { useSetOnboardingStepFreeCredits } from '@/onboarding/hooks/useSetOnboardingStepFreeCredits';
+import { onboardingInviteTeamEmailsDraftState } from '@/onboarding/states/onboardingInviteTeamEmailsDraftState';
+import { onboardingInviteTeamValidEmailsSelector } from '@/onboarding/states/selectors/onboardingInviteTeamValidEmailsSelector';
+import { getInviteTeamCreditsReward } from '@/onboarding/utils/getInviteTeamCreditsReward';
+import { getValidInviteEmails } from '@/onboarding/utils/getValidInviteEmails';
 import { waitForCompanyEnrichmentSettlement } from '@/onboarding/utils/waitForCompanyEnrichmentSettlement';
 import { PageFocusId } from '@/types/PageFocusId';
-import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useCreateWorkspaceInvitation } from '@/workspace-invitation/hooks/useCreateWorkspaceInvitation';
 import { useQuery } from '@apollo/client/react';
@@ -14,8 +20,7 @@ import { useLingui } from '@lingui/react/macro';
 import { useStore } from 'jotai';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { type SubmitHandler, useFieldArray, useForm } from 'react-hook-form';
-import { Key } from 'ts-key-enum';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components';
 import { z } from 'zod';
 import { GetInviteSuggestionsDocument } from '~/generated-metadata/graphql';
@@ -32,7 +37,6 @@ export const useInviteTeam = () => {
   const { sendInvitation } = useCreateWorkspaceInvitation();
   const setNextOnboardingStatus = useSetNextOnboardingStatus();
   const setOnboardingStepFreeCredits = useSetOnboardingStepFreeCredits();
-  const onboardingConfig = useAtomStateValue(onboardingConfigState);
   const isBookCallOnboardingStepEnabled = useAtomStateValue(
     isBookCallOnboardingStepEnabledState,
   );
@@ -40,19 +44,29 @@ export const useInviteTeam = () => {
     isCompanyEnrichmentEnabledState,
   );
   const store = useStore();
+  const { openDialog } = useDialog();
 
   const [isNavigating, setIsNavigating] = useState(false);
+  const [emailIndexToFocus, setEmailIndexToFocus] = useState(0);
+  const [initialEmailsDraft] = useState(() =>
+    store.get(onboardingInviteTeamEmailsDraftState.atom),
+  );
 
   const {
     control,
     handleSubmit,
     watch,
     reset,
+    getValues,
+    trigger,
+    getFieldState,
     formState: { isValid, isSubmitting, isDirty },
   } = useForm<InviteTeamFormInput>({
     mode: 'onChange',
     defaultValues: {
-      emails: [{ email: '' }, { email: '' }, { email: '' }],
+      emails: isDefined(initialEmailsDraft)
+        ? initialEmailsDraft.map((email) => ({ email }))
+        : [{ email: '' }, { email: '' }, { email: '' }],
     },
     resolver: zodResolver(validationSchema),
   });
@@ -62,7 +76,9 @@ export const useInviteTeam = () => {
     name: 'emails',
   });
 
-  const [hasPrefilledSuggestions, setHasPrefilledSuggestions] = useState(false);
+  const [hasPrefilledSuggestions, setHasPrefilledSuggestions] = useState(
+    isDefined(initialEmailsDraft),
+  );
 
   const { data: inviteSuggestionsData } = useQuery(
     GetInviteSuggestionsDocument,
@@ -103,6 +119,10 @@ export const useInviteTeam = () => {
         return;
       }
       const emailValues = emails.map((email) => email?.email);
+      store.set(
+        onboardingInviteTeamEmailsDraftState.atom,
+        emailValues.map((email) => email ?? ''),
+      );
       if (emailValues[emailValues.length - 1] !== '') {
         append({ email: '' });
       }
@@ -115,7 +135,7 @@ export const useInviteTeam = () => {
     });
 
     return () => subscription.unsubscribe();
-  }, [watch, append, remove]);
+  }, [watch, append, remove, store]);
 
   const getPlaceholder = (emailIndex: number) => {
     if (emailIndex === 0) {
@@ -132,12 +152,8 @@ export const useInviteTeam = () => {
 
   const onSubmit: SubmitHandler<InviteTeamFormInput> = useCallback(
     async (data) => {
-      const emails = Array.from(
-        new Set(
-          data.emails
-            .map((emailData) => emailData.email.trim())
-            .filter((email) => email.length > 0),
-        ),
+      const emails = getValidInviteEmails(
+        data.emails.map((emailData) => emailData.email),
       );
 
       setIsNavigating(true);
@@ -158,19 +174,29 @@ export const useInviteTeam = () => {
 
         const sentInvitationsCount =
           result.data?.sendInvitations.result.length ?? 0;
-
-        const creditsRewardPerUser =
-          onboardingConfig?.inviteTeamCreditsRewardPerUser ?? 0;
-        const maxRewardedInvitationsCount =
-          onboardingConfig?.inviteTeamMaxInvites ?? 0;
+        const invitationErrors = result.data?.sendInvitations.errors ?? [];
 
         setOnboardingStepFreeCredits(
           'inviteTeam',
-          Math.min(sentInvitationsCount, maxRewardedInvitationsCount) *
-            creditsRewardPerUser,
+          getInviteTeamCreditsReward({
+            invitedTeammatesCount: sentInvitationsCount,
+            onboardingConfig: store.get(onboardingConfigState.atom),
+          }),
         );
 
-        if (emails.length > 0) {
+        if (
+          sentInvitationsCount === 0 &&
+          isNonEmptyArray(emails) &&
+          isNonEmptyArray(invitationErrors)
+        ) {
+          enqueueToast({
+            variant: 'error',
+            children: invitationErrors.join(', '),
+            duration: 5000,
+          });
+        }
+
+        if (sentInvitationsCount > 0) {
           enqueueToast({
             variant: 'success',
             children: t`Invite link sent to email addresses`,
@@ -196,8 +222,6 @@ export const useInviteTeam = () => {
       enqueueToast,
       isBookCallOnboardingStepEnabled,
       isCompanyEnrichmentEnabled,
-      onboardingConfig?.inviteTeamCreditsRewardPerUser,
-      onboardingConfig?.inviteTeamMaxInvites,
       sendInvitation,
       setNextOnboardingStatus,
       setOnboardingStepFreeCredits,
@@ -210,22 +234,45 @@ export const useInviteTeam = () => {
     await onSubmit({ emails: [] });
   };
 
-  useHotkeysOnFocusedElement({
-    keys: Key.Enter,
-    callback: () => {
-      handleSubmit(onSubmit)();
-    },
+  const openSkipDialog = async () => {
+    await trigger();
+
+    const firstInvalidEmailIndex = getValues('emails').findIndex(
+      (_, index) => getFieldState(`emails.${index}.email`).invalid,
+    );
+
+    setEmailIndexToFocus(Math.max(firstInvalidEmailIndex, 0));
+    openDialog(ONBOARDING_SKIP_DIALOG_IDS.inviteTeam);
+  };
+
+  const handleInvite = () => {
+    if (isSubmitting || isNavigating) {
+      return;
+    }
+
+    if (
+      !isNonEmptyArray(store.get(onboardingInviteTeamValidEmailsSelector.atom))
+    ) {
+      void openSkipDialog();
+      return;
+    }
+
+    void handleSubmit(onSubmit)();
+  };
+
+  useOnboardingStepEnterHotkey({
     focusId: PageFocusId.InviteTeam,
-    dependencies: [handleSubmit, onSubmit],
+    onEnter: handleInvite,
   });
 
   return {
     control,
     fields,
     remove,
-    handleSubmit,
-    onSubmit,
     handleSkip,
+    handleInvite,
+    openSkipDialog,
+    emailIndexToFocus,
     getPlaceholder,
     isValid,
     isSubmitting,
