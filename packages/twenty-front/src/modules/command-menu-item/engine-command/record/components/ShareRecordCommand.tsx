@@ -1,26 +1,38 @@
 import { useLingui } from '@lingui/react/macro';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
 import { useUnmountCommand } from '@/command-menu-item/engine-command/hooks/useUnmountEngineCommand';
+import { ShareRecordDropdownOpenEffect } from '@/command-menu-item/engine-command/record/components/ShareRecordDropdownOpenEffect';
 import { CommandComponentInstanceContext } from '@/command-menu-item/engine-command/states/contexts/CommandComponentInstanceContext';
 import { createVirtualElementFromPosition } from '@/command-menu-item/utils/createVirtualElementFromPosition';
+import { useContextStoreInstanceId } from '@/context-store/hooks/useContextStoreInstanceId';
 import { getLinkToShowPage } from '@/object-metadata/utils/getLinkToShowPage';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { RecordSharingDropdownContent } from '@/object-record/record-sharing/components/RecordSharingDropdownContent';
 import { RecordSharingRefreshEffect } from '@/object-record/record-sharing/components/RecordSharingRefreshEffect';
 import { useRecordSharing } from '@/object-record/record-sharing/hooks/useRecordSharing';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
-import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 
 const SHARE_DROPDOWN_FALLBACK_TOP_OFFSET = 48;
 const SHARE_DROPDOWN_FALLBACK_RIGHT_OFFSET = 16;
 
 // Sharing is edited in submenus, so the command opens the sharing dropdown on
-// the button it was launched from, or in the top right corner otherwise
-const findShareDropdownAnchor = (commandMenuItemId: string) =>
+// what it was launched from: a row menu marks its trigger with its context
+// store instance, a pinned button carries its command menu item id
+const findShareDropdownAnchor = ({
+  commandMenuItemId,
+  contextStoreInstanceId,
+}: {
+  commandMenuItemId: string;
+  contextStoreInstanceId: string;
+}) =>
+  document.querySelector(
+    `[data-command-menu-anchor-instance-id="${contextStoreInstanceId}"]`,
+  ) ??
   document.querySelector(
     `[data-command-menu-item-id="${commandMenuItemId}"]`,
   ) ??
@@ -29,34 +41,34 @@ const findShareDropdownAnchor = (commandMenuItemId: string) =>
     y: SHARE_DROPDOWN_FALLBACK_TOP_OFFSET,
   });
 
-export const ShareRecordCommand = () => {
+type ShareRecordDropdownProps = {
+  objectMetadataItem: EnrichedObjectMetadataItem;
+  recordId: string;
+  commandMenuItemId: string;
+};
+
+const ShareRecordDropdown = ({
+  objectMetadataItem,
+  recordId,
+  commandMenuItemId,
+}: ShareRecordDropdownProps) => {
   const { t } = useLingui();
-  const { objectMetadataItem, selectedRecords } =
-    useHeadlessCommandContextApi();
-  const commandMenuItemId = useAvailableComponentInstanceIdOrThrow(
-    CommandComponentInstanceContext,
-  );
   const unmountCommand = useUnmountCommand();
-  const { openDropdown } = useOpenDropdown();
-  const [anchor] = useState(() => findShareDropdownAnchor(commandMenuItemId));
+  const contextStoreInstanceId = useContextStoreInstanceId();
+  const [anchor] = useState(() =>
+    findShareDropdownAnchor({ commandMenuItemId, contextStoreInstanceId }),
+  );
+  const sharingState = useRecordSharing({
+    recordTarget: { objectMetadataId: objectMetadataItem.id, recordId },
+    isOpen: true,
+  });
   const dropdownId = `share-record-${commandMenuItemId}`;
-
-  if (!isDefined(objectMetadataItem) || selectedRecords.length !== 1) {
-    throw new Error('Sharing needs exactly one selected record');
-  }
-
-  const recordId = selectedRecords[0].id;
-  const recordTarget = { objectMetadataId: objectMetadataItem.id, recordId };
-  const sharingState = useRecordSharing({ recordTarget, isOpen: true });
   const objectLabel = objectMetadataItem.labelSingular.toLowerCase();
-
-  useEffect(() => {
-    openDropdown({ dropdownComponentInstanceIdFromProps: dropdownId });
-  }, [dropdownId, openDropdown]);
 
   return (
     <>
       <RecordSharingRefreshEffect refetch={sharingState.refetch} />
+      <ShareRecordDropdownOpenEffect dropdownId={dropdownId} />
       <DropdownRoot
         dropdownId={dropdownId}
         type="menu"
@@ -82,5 +94,25 @@ export const ShareRecordCommand = () => {
         </DropdownContent>
       </DropdownRoot>
     </>
+  );
+};
+
+export const ShareRecordCommand = () => {
+  const { objectMetadataItem, selectedRecords } =
+    useHeadlessCommandContextApi();
+  const commandMenuItemId = useAvailableComponentInstanceIdOrThrow(
+    CommandComponentInstanceContext,
+  );
+
+  if (!isDefined(objectMetadataItem) || selectedRecords.length !== 1) {
+    throw new Error('Sharing needs exactly one selected record');
+  }
+
+  return (
+    <ShareRecordDropdown
+      objectMetadataItem={objectMetadataItem}
+      recordId={selectedRecords[0].id}
+      commandMenuItemId={commandMenuItemId}
+    />
   );
 };
