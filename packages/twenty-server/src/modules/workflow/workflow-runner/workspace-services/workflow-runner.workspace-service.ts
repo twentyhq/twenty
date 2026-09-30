@@ -10,7 +10,10 @@ import { MessageQueueService } from 'src/engine/core-modules/message-queue/servi
 import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { workflowHasRunningSteps } from 'src/modules/workflow/common/utils/workflow-has-running-steps.util';
 import { WorkflowVersionStepOperationsWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step-operations.workspace-service';
-import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+import {
+  type WorkflowFormAction,
+  type WorkflowAction,
+} from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { isWorkflowFormAction } from 'src/modules/workflow/workflow-executor/workflow-actions/form/guards/is-workflow-form-action.guard';
 import {
   WorkflowRunException,
@@ -123,6 +126,28 @@ export class WorkflowRunnerWorkspaceService {
       return;
     }
 
+    await this.resumeFormStep({
+      workspaceId,
+      workflowRunId,
+      step,
+      expectedThreadId: threadId,
+      response,
+    });
+  }
+
+  async resumeFormStep({
+    workspaceId,
+    workflowRunId,
+    step,
+    expectedThreadId,
+    response,
+  }: {
+    workspaceId: string;
+    workflowRunId: string;
+    step: WorkflowFormAction;
+    expectedThreadId: string | null;
+    response: Record<string, unknown>;
+  }): Promise<boolean> {
     const enrichedResponse =
       await this.workflowVersionStepOperationsWorkspaceService.enrichFormStepResponse(
         {
@@ -139,7 +164,7 @@ export class WorkflowRunnerWorkspaceService {
           status: StepStatus.SUCCESS,
           result: enrichedResponse,
         },
-        expectedThreadId: threadId,
+        expectedThreadId,
         workspaceId,
         workflowRunId,
       });
@@ -151,6 +176,8 @@ export class WorkflowRunnerWorkspaceService {
         lastExecutedStepId: step.id,
       });
     }
+
+    return hasCompletedStep;
   }
 
   async stopWorkflowRun(workspaceId: string, workflowRunId: string) {

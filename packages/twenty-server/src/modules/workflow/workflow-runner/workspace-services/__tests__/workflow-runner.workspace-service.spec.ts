@@ -3,7 +3,10 @@ import { WorkflowActionType } from 'twenty-shared/workflow';
 import { type MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { type WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
 import { type WorkflowVersionStepOperationsWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step-operations.workspace-service';
-import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+import {
+  type WorkflowAction,
+  type WorkflowFormAction,
+} from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { RUN_WORKFLOW_JOB_NAME } from 'src/modules/workflow/workflow-runner/constants/run-workflow-job-name';
 import { type CoreWorkflowRunnerService } from 'src/modules/workflow/workflow-runner/services/core-workflow-runner.service';
 import { type WorkflowThrottlingWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run-queue/workspace-services/workflow-throttling.workspace-service';
@@ -19,11 +22,20 @@ const AGENT_STEP = {
   type: WorkflowActionType.AI_AGENT,
 } as WorkflowAction;
 
-const FORM_STEP = {
+const FORM_STEP: WorkflowFormAction = {
   id: 'form-step-id',
+  name: 'Form',
+  valid: true,
   type: WorkflowActionType.FORM,
-  settings: { input: [] },
-} as unknown as WorkflowAction;
+  settings: {
+    input: [],
+    outputSchema: {},
+    errorHandlingOptions: {
+      retryOnFailure: { value: 0 },
+      continueOnFailure: { value: false },
+    },
+  },
+};
 
 describe('WorkflowRunnerWorkspaceService', () => {
   const messageQueueService = { add: jest.fn() };
@@ -59,6 +71,30 @@ describe('WorkflowRunnerWorkspaceService', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+  });
+
+  it('resumes a form without a conversation after recording its enriched result', async () => {
+    const completed = await service.resumeFormStep({
+      workspaceId: WORKSPACE_ID,
+      workflowRunId: WORKFLOW_RUN_ID,
+      step: FORM_STEP,
+      expectedThreadId: null,
+      response: { discount: 15 },
+    });
+
+    expect(completed).toBe(true);
+    expect(
+      workflowRunWorkspaceService.updateStepInfoIfPending,
+    ).toHaveBeenCalledWith(
+      expect.objectContaining({
+        expectedThreadId: null,
+        stepInfo: {
+          status: 'SUCCESS',
+          result: { discount: 15, enriched: true },
+        },
+      }),
+    );
+    expect(messageQueueService.add).toHaveBeenCalledTimes(1);
   });
 
   describe('resumeAnsweredStep', () => {

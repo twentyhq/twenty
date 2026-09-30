@@ -5,7 +5,9 @@ import { useAnswerToolCall } from '@/ai/hooks/useAnswerToolCall';
 import { AiChatErrorCode } from '@/ai/utils/aiChatErrorCode';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useFindOneRecordQuery } from '@/object-record/hooks/useFindOneRecordQuery';
+import { SUBMIT_FORM_STEP } from '@/workflow/graphql/mutations/submitFormStep';
 import { useWorkflowRun } from '@/workflow/hooks/useWorkflowRun';
+import { type MutationSubmitFormStepArgs } from '~/generated/graphql';
 import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
 
 export const useAnswerFormStep = ({
@@ -39,20 +41,24 @@ export const useAnswerFormStep = ({
       fetchPolicy: 'network-only',
     });
 
-  // A form step's call is named after the step, in the conversation its
-  // current execution recorded. Returns false when the form no longer waits:
-  // it has no conversation, or someone answered it or the run ended first.
+  // Forms started before conversations are available still have the run and step IDs.
   const answerFormStep = async (
     response: Record<string, unknown>,
   ): Promise<boolean> => {
-    const threadId = workflowRun?.state?.stepInfos[stepId]?.threadId;
-
-    if (!isDefined(threadId)) {
-      return false;
-    }
-
     try {
-      await answerToolCall({ threadId, toolCallId: stepId, response });
+      const threadId = workflowRun?.state?.stepInfos[stepId]?.threadId;
+
+      if (isDefined(threadId)) {
+        await answerToolCall({ threadId, toolCallId: stepId, response });
+      } else {
+        await apolloCoreClient.mutate<
+          { submitFormStep: boolean },
+          MutationSubmitFormStepArgs
+        >({
+          mutation: SUBMIT_FORM_STEP,
+          variables: { input: { workflowRunId, stepId, response } },
+        });
+      }
     } catch (error) {
       if (!isGraphqlErrorOfType(error, AiChatErrorCode.TOOL_CALL_NOT_PENDING)) {
         throw error;
