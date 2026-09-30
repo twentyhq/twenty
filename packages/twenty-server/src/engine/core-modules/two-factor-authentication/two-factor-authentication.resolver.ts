@@ -112,7 +112,7 @@ export class TwoFactorAuthenticationResolver {
       userSession: {
         standard: true,
         impersonated: false,
-        playground: true,
+        playground: false,
         workspaceAgnostic: true,
       },
       apiKey: false,
@@ -149,7 +149,7 @@ export class TwoFactorAuthenticationResolver {
       userSession: {
         standard: true,
         impersonated: false,
-        playground: true,
+        playground: false,
         workspaceAgnostic: false,
       },
       apiKey: false,
@@ -180,7 +180,7 @@ export class TwoFactorAuthenticationResolver {
       userSession: {
         standard: true,
         impersonated: false,
-        playground: true,
+        playground: false,
         workspaceAgnostic: false,
       },
       apiKey: false,

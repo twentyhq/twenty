@@ -1,4 +1,5 @@
 import { deleteTwoFactorAuthenticationMethod } from 'test/integration/graphql/suites/user-session/utils/delete-two-factor-authentication-method.util';
+import { generatePlaygroundToken } from 'test/integration/graphql/suites/user-session/utils/generate-playground-token.util';
 import { getAuthTokensFromLoginToken } from 'test/integration/graphql/utils/get-auth-tokens-from-login-token.util';
 import { getAuthTokensFromOtp } from 'test/integration/graphql/utils/get-auth-tokens-from-otp.util';
 import { impersonate } from 'test/integration/graphql/utils/impersonate.util';
@@ -119,5 +120,43 @@ describe('Impersonation - two-factor authentication mutations denial (integratio
     });
 
     expectImpersonationDenied(errors);
+  });
+
+  it('rejects two-factor mutations with a playground token, which drops the impersonation context', async () => {
+    const { data } = await generatePlaygroundToken({
+      token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+      expectToFail: false,
+    });
+
+    const playgroundToken = data.generatePlaygroundToken.token;
+
+    const { errors: provisioningErrors } =
+      await initiateOtpProvisioningForAuthenticatedUser({
+        accessToken: playgroundToken,
+        expectToFail: true,
+      });
+
+    expectImpersonationDenied(provisioningErrors);
+
+    const { errors: verificationErrors } =
+      await verifyTwoFactorAuthenticationMethod({
+        otp: '123456',
+        accessToken: playgroundToken,
+        expectToFail: true,
+      });
+
+    expectImpersonationDenied(verificationErrors);
+
+    const { errors: deletionErrors } =
+      await deleteTwoFactorAuthenticationMethod({
+        input: {
+          twoFactorAuthenticationMethodId:
+            '20202020-1111-4a01-8001-000000000004',
+        },
+        token: playgroundToken,
+        expectToFail: true,
+      });
+
+    expectImpersonationDenied(deletionErrors);
   });
 });
