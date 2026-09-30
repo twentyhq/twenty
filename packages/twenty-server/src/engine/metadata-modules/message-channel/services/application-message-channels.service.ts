@@ -210,11 +210,18 @@ export class ApplicationMessageChannelsService {
       isDefined(data.visibility) &&
       data.visibility !== messageChannel.visibility
     ) {
-      await this.channelRecordShareService.syncChannelRecordShares({
-        workspaceId,
-        source: MESSAGE_THREAD_CHANNEL_RECORD_SHARE_SOURCE,
-        channelId: id,
-      });
+      await this.channelRecordShareService.syncChannelRecordSharesAfterVisibilityChange(
+        {
+          workspaceId,
+          source: MESSAGE_THREAD_CHANNEL_RECORD_SHARE_SOURCE,
+          channelId: id,
+          revertVisibilityChange: () =>
+            this.messageChannelRepository.update(
+              { id, workspaceId },
+              { visibility: messageChannel.visibility },
+            ),
+        },
+      );
     }
 
     return this.messageChannelRepository.findOneOrFail({

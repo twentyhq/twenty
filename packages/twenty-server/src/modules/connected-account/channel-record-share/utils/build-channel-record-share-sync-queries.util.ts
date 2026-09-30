@@ -31,8 +31,7 @@ export const buildChannelRecordShareSyncQueries = ({
     JOIN core."connectedAccount" account ON account.id = channel."connectedAccountId"`;
 
   // A grant stays only while the channel still holds the record and would
-  // still write that grant: a deleted channel, a new account owner or a
-  // visibility change all drop the grants that no longer apply.
+  // write that exact grant again, so a re-sync rewrites whatever changed.
   const deleteStaleRecordShares = `DELETE FROM ${recordShareTable} share
     WHERE share."objectMetadataId" = $3
       AND share."sourceId" = $2
@@ -49,8 +48,11 @@ export const buildChannelRecordShareSyncQueries = ({
         WHERE channel_record."recordId" = share."recordId"
           AND CASE share."rowCause"
             WHEN '${RecordShareRowCause.OWNER}' THEN share."principalId" = member.id
+              AND share."accessLevel" = '${RecordShareAccessLevel.FULL}'
             WHEN '${RecordShareRowCause.APPLICATION}' THEN share."principalId" = application."defaultRoleId"
+              AND share."accessLevel" = '${RecordShareAccessLevel.FULL}'
             WHEN '${RecordShareRowCause.RULE}' THEN channel.visibility = '${source.shareEverythingVisibility}'
+              AND share."accessLevel" = '${RecordShareAccessLevel.READ}'
             ELSE FALSE
           END
       )`;
