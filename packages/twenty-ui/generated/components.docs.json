@@ -957,20 +957,6 @@
         "description": "Button height: `sm` (24px) or `md` (32px). The `link` variant uses its content height at either size."
       },
       {
-        "name": "soon",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": null,
-        "description": "Displays a coming-soon label and disables activation."
-      },
-      {
-        "name": "soonLabel",
-        "type": "string",
-        "required": false,
-        "defaultValue": null,
-        "description": "Text for the coming-soon label."
-      },
-      {
         "name": "startIcon",
         "type": "ReactNode",
         "required": false,
@@ -1083,20 +1069,6 @@
         "description": "Button height: `sm` (24px) or `md` (32px). The `link` variant uses its content height at either size."
       },
       {
-        "name": "soon",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": null,
-        "description": "Displays a coming-soon label and disables activation."
-      },
-      {
-        "name": "soonLabel",
-        "type": "string",
-        "required": false,
-        "defaultValue": null,
-        "description": "Text for the coming-soon label."
-      },
-      {
         "name": "startIcon",
         "type": "ReactNode",
         "required": false,
@@ -1200,20 +1172,6 @@
         "required": false,
         "defaultValue": "md",
         "description": "Button height: `sm` (24px) or `md` (32px). The `link` variant uses its content height at either size."
-      },
-      {
-        "name": "soon",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": "false",
-        "description": "Displays a coming-soon label and disables activation."
-      },
-      {
-        "name": "soonLabel",
-        "type": "string",
-        "required": false,
-        "defaultValue": null,
-        "description": "Text for the coming-soon label."
       },
       {
         "name": "startIcon",
