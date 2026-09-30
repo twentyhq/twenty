@@ -63,6 +63,32 @@ const failingApplicationVariableScopeSyncTestCases: EachTestingContext<TestConte
       },
     },
     {
+      title: 'when adding a value to an existing user variable',
+      context: {
+        applicationVariables: {
+          API_KEY: {
+            universalIdentifier: USER_VARIABLE_ID,
+            scope: 'USER',
+            value: 'personal-api-key',
+          },
+        },
+      },
+    },
+    {
+      title:
+        'when adding a value and changing metadata on an existing user variable',
+      context: {
+        applicationVariables: {
+          API_KEY: {
+            universalIdentifier: USER_VARIABLE_ID,
+            scope: 'USER',
+            value: 'personal-api-key',
+            description: 'Updated description',
+          },
+        },
+      },
+    },
+    {
       title: 'when changing the scope of an existing variable',
       context: {
         applicationVariables: {
