@@ -3,6 +3,7 @@ import {
   Logger,
   OnModuleDestroy,
   OnModuleInit,
+  Type,
 } from '@nestjs/common';
 import { DiscoveryService, Reflector } from '@nestjs/core';
 import { InjectDataSource } from '@nestjs/typeorm';
@@ -12,7 +13,11 @@ import crypto from 'crypto';
 
 import { DataSource } from 'typeorm';
 
-import { isDefined, isValidUuid } from 'twenty-shared/utils';
+import {
+  isDefined,
+  isValidUuid,
+  typedObjectEntries,
+} from 'twenty-shared/utils';
 
 import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
 
@@ -21,6 +26,7 @@ import { CacheStorageService } from 'src/engine/core-modules/cache-storage/servi
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { PromiseMemoizer } from 'src/engine/twenty-orm/storage/promise-memoizer.storage';
+import { ALL_WORKSPACE_CACHE_ENTITY_BY_NAME } from 'src/engine/workspace-cache/constants/all-workspace-cache-entity-by-name.constant';
 import {
   WORKSPACE_CACHE_KEY,
   WORKSPACE_CACHE_OPTIONS,
@@ -347,6 +353,19 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     }
 
     return result;
+  }
+
+  public getCacheKeyNamesLoadingEntity(
+    entity: Type<unknown>,
+  ): WorkspaceCacheKeyName[] {
+    return [...this.workspaceCacheProviders]
+      .filter(([, provider]) =>
+        typedObjectEntries(provider.rowsRequirement).some(
+          ([entityName]) =>
+            ALL_WORKSPACE_CACHE_ENTITY_BY_NAME[entityName] === entity,
+        ),
+      )
+      .map(([cacheKeyName]) => cacheKeyName);
   }
 
   public async flush(

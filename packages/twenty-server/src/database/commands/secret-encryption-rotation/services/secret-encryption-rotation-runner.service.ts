@@ -127,46 +127,48 @@ export class SecretEncryptionRotationRunnerService implements OnModuleInit {
     const startedAt = performance.now();
     const results: SecretEncryptionRotationSiteResult[] = [];
 
-    for (const [siteName, handler] of handlersToRun) {
-      const siteStartedAt = performance.now();
+    try {
+      for (const [siteName, handler] of handlersToRun) {
+        const siteStartedAt = performance.now();
 
-      const remainingBefore = await handler.countRemaining({
-        siteName,
-        currentEncryptionKeyId,
-      });
+        const remainingBefore = await handler.countRemaining({
+          siteName,
+          currentEncryptionKeyId,
+        });
 
-      this.logger.log(
-        `[${siteName}] start: ${remainingBefore} row(s) need rotation`,
-      );
+        this.logger.log(
+          `[${siteName}] start: ${remainingBefore} row(s) need rotation`,
+        );
 
-      const { rotated, skipped, errors } = await handler.rotate({
-        siteName,
-        currentEncryptionKeyId,
-        batchSize: options.batchSize,
-        dryRun: options.dryRun,
-      });
+        const { rotated, skipped, errors } = await handler.rotate({
+          siteName,
+          currentEncryptionKeyId,
+          batchSize: options.batchSize,
+          dryRun: options.dryRun,
+        });
 
-      const durationMs = Math.round(performance.now() - siteStartedAt);
-      const result: SecretEncryptionRotationSiteResult = {
-        siteName,
-        remainingBefore,
-        rotated,
-        skipped,
-        errors,
-        durationMs,
-      };
+        const durationMs = Math.round(performance.now() - siteStartedAt);
+        const result: SecretEncryptionRotationSiteResult = {
+          siteName,
+          remainingBefore,
+          rotated,
+          skipped,
+          errors,
+          durationMs,
+        };
 
-      results.push(result);
+        results.push(result);
 
-      this.logger.log(
-        `[${siteName}] DONE in ${durationMs}ms — rotated=${rotated} skipped=${skipped} errors=${errors}`,
-      );
-    }
-
-    if (!options.dryRun) {
-      await this.flushWorkspaceCaches(
-        handlersToRun.map(([siteName]) => siteName),
-      );
+        this.logger.log(
+          `[${siteName}] DONE in ${durationMs}ms — rotated=${rotated} skipped=${skipped} errors=${errors}`,
+        );
+      }
+    } finally {
+      if (!options.dryRun) {
+        await this.flushWorkspaceCaches(
+          handlersToRun.map(([siteName]) => siteName),
+        );
+      }
     }
 
     const totalDurationMs = Math.round(performance.now() - startedAt);
@@ -212,14 +214,23 @@ export class SecretEncryptionRotationRunnerService implements OnModuleInit {
   private async flushWorkspaceCaches(
     siteNames: SecretEncryptionRotationSiteName[],
   ): Promise<void> {
-    const workspaceCacheKeyNames = Object.values(
-      SECRET_ENCRYPTION_ROTATION_SITE_ENTRIES,
-    )
-      .flatMap((entry) => Object.values(entry.columnSiteNames))
-      .filter((meta) => siteNames.includes(meta.siteName))
-      .flatMap((meta) => meta.workspaceCacheKeyNames);
+    const cacheKeysToFlush = [
+      ...new Set(
+        Object.values(SECRET_ENCRYPTION_ROTATION_SITE_ENTRIES)
+          .filter((entry) =>
+            Object.values(entry.columnSiteNames).some((meta) =>
+              siteNames.includes(meta.siteName),
+            ),
+          )
+          .flatMap((entry) =>
+            this.workspaceCacheService.getCacheKeyNamesLoadingEntity(
+              entry.entity,
+            ),
+          ),
+      ),
+    ];
 
-    if (workspaceCacheKeyNames.length === 0) {
+    if (cacheKeysToFlush.length === 0) {
       return;
     }
 
@@ -228,14 +239,11 @@ export class SecretEncryptionRotationRunnerService implements OnModuleInit {
     );
 
     for (const workspace of workspaces) {
-      await this.workspaceCacheService.flush(
-        workspace.id,
-        workspaceCacheKeyNames,
-      );
+      await this.workspaceCacheService.flush(workspace.id, cacheKeysToFlush);
     }
 
     this.logger.log(
-      `[secret-encryption:rotate] flushed workspace cache keys ${workspaceCacheKeyNames.join(
+      `[secret-encryption:rotate] flushed workspace cache keys ${cacheKeysToFlush.join(
         ', ',
       )} for ${workspaces.length} workspace(s)`,
     );
