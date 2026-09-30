@@ -493,6 +493,32 @@ describe('Admin panel global chat threads (integration)', () => {
       });
     });
 
+    it('reports a soft deleted thread with its deletion date', async () => {
+      const deletedThreadId = await insertThread({
+        id: randomUUID(),
+        title: 'integration-soft-deleted-thread',
+      });
+
+      await storage.run(SEED_APPLE_WORKSPACE_ID, (context) =>
+        context.manager.query(
+          `UPDATE ${context.table('agentChatThread')} SET "deletedAt" = $2 WHERE id = $1`,
+          [deletedThreadId, '2026-01-02T00:00:00.000Z'],
+        ),
+      );
+
+      const result = await fetchThreads({
+        scope: 'ALL',
+        searchTerm: deletedThreadId,
+      });
+
+      expect(result.threads).toEqual([
+        expect.objectContaining({
+          id: deletedThreadId,
+          deletedAt: '2026-01-02T00:00:00.000Z',
+        }),
+      ]);
+    });
+
     // A workflow run's conversation belongs to no member, and a null owner
     // must not null out a non-null field and fail the whole list.
     it('lists a thread without an owner', async () => {

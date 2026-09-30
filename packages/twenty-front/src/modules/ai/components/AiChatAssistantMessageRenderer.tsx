@@ -4,6 +4,7 @@ import { CodeExecutionDisplay } from '@/ai/components/CodeExecutionDisplay';
 import { RoutingStatusDisplay } from '@/ai/components/RoutingStatusDisplay';
 import { ThinkingStepsDisplay } from '@/ai/components/ThinkingStepsDisplay';
 
+import { AiChatEmailApprovalStatusRenderer } from '@/ai/components/AiChatEmailApprovalStatusRenderer';
 import { AiChatQuestionStatusRenderer } from '@/ai/components/AiChatQuestionStatusRenderer';
 import { AiChatToolPartRenderer } from '@/ai/components/AiChatToolPartRenderer';
 import { LazyMarkdownContent } from '@/ai/components/LazyMarkdownRenderer';
@@ -21,6 +22,7 @@ import {
   ASK_QUESTIONS_TOOL_NAME,
   type ExtendedUIMessagePart,
   isSucceededCompleteWorkspaceSetupToolPart,
+  PROPOSE_EMAIL_TOOL_NAME,
 } from 'twenty-shared/ai';
 import { themeCssVariables } from 'twenty-ui/theme';
 
@@ -64,6 +66,15 @@ const MessagePartRenderer = ({
         if (getToolName(part) === ASK_QUESTIONS_TOOL_NAME) {
           return (
             <AiChatQuestionStatusRenderer
+              toolPart={part}
+              isStreaming={isStreaming}
+            />
+          );
+        }
+
+        if (getToolName(part) === PROPOSE_EMAIL_TOOL_NAME) {
+          return (
+            <AiChatEmailApprovalStatusRenderer
               toolPart={part}
               isStreaming={isStreaming}
             />

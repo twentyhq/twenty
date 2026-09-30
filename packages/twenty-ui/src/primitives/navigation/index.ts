@@ -7,7 +7,6 @@
  *                              |___/
  */
 
-export { ClickToActionLink } from './ClickToActionLink/ClickToActionLink';
 export { ListItem } from './ListItem/ListItem';
 export type { ListItemColor } from './ListItem/types/ListItemColor';
 export type { ListItemDescriptionPlacement } from './ListItem/types/ListItemDescriptionPlacement';

@@ -166,6 +166,35 @@ describe('createWorkerGeometryStore', () => {
     expect(store.getViewportSnapshot()?.innerWidth).toBe(1200);
   });
 
+  it('should notify geometry subscribers after each applied batch', () => {
+    const { store } = createRootedStore();
+    const geometryUpdateListener = jest.fn(() => store.getViewportSnapshot());
+
+    store.subscribeToGeometryUpdates(geometryUpdateListener);
+
+    store.applyGeometryBatch({ elements: { '0': createSnapshot(5) } });
+    expect(geometryUpdateListener).toHaveBeenCalledTimes(1);
+
+    store.applyGeometryBatch({ viewport: createViewport(800) });
+    expect(geometryUpdateListener).toHaveBeenCalledTimes(2);
+    expect(geometryUpdateListener).toHaveLastReturnedWith(createViewport(800));
+  });
+
+  it('should stop notifying an unsubscribed geometry listener', () => {
+    const { store } = createRootedStore();
+    const geometryUpdateListener = jest.fn();
+
+    const unsubscribe = store.subscribeToGeometryUpdates(
+      geometryUpdateListener,
+    );
+
+    store.applyGeometryBatch({ viewport: createViewport(800) });
+    unsubscribe();
+    store.applyGeometryBatch({ viewport: createViewport(1200) });
+
+    expect(geometryUpdateListener).toHaveBeenCalledTimes(1);
+  });
+
   it('should stop enrolling once the observation limit is reached', async () => {
     const { store, rootElement } = createRootedStore();
     const observeElementGeometry = jest.fn().mockResolvedValue(undefined);

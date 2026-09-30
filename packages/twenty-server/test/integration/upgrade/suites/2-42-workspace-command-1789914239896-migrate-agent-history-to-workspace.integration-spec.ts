@@ -1,6 +1,9 @@
 import { type EnableCommonRecordSharingCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-workspace-command-1790312694997-enable-common-record-sharing.command';
 import { type AddWorkflowRunToChatThreadsCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790607161319-add-workflow-run-to-chat-threads.command';
+import { type OpenAgentChatThreadArchivedAtWritabilityCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790672076234-open-agent-chat-thread-archived-at-writability.command';
 import { type AddInputAskObjectCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790681093095-add-input-ask-object.command';
+import { type MoveAgentChatThreadsToRecordModelCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790751626421-move-agent-chat-threads-to-record-model.command';
+import { type AddChatRecordPageCommandMenuItemsCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790751626422-add-chat-record-page-command-menu-items.command';
 import { randomUUID } from 'node:crypto';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
@@ -254,13 +257,22 @@ describe('versioned agent history upgrade (integration)', () => {
       options: {},
     });
     // The history objects were rebuilt as 2.42 leaves them; replay the later
-    // upgrades that link threads to runs and asks for the suites that follow.
+    // upgrades that change them, in order, for the suites that follow.
     for (const laterCommand of [
       getAppProviderByClassName<AddWorkflowRunToChatThreadsCommand>(
         'AddWorkflowRunToChatThreadsCommand',
       ),
+      getAppProviderByClassName<OpenAgentChatThreadArchivedAtWritabilityCommand>(
+        'OpenAgentChatThreadArchivedAtWritabilityCommand',
+      ),
       getAppProviderByClassName<AddInputAskObjectCommand>(
         'AddInputAskObjectCommand',
+      ),
+      getAppProviderByClassName<MoveAgentChatThreadsToRecordModelCommand>(
+        'MoveAgentChatThreadsToRecordModelCommand',
+      ),
+      getAppProviderByClassName<AddChatRecordPageCommandMenuItemsCommand>(
+        'AddChatRecordPageCommandMenuItemsCommand',
       ),
     ]) {
       await workspaceOrmManager.executeInWorkspaceContext(
