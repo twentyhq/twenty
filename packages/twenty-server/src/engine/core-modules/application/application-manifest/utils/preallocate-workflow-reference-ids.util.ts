@@ -9,13 +9,14 @@ const preallocateIds = ({
 }: {
   toByUniversalIdentifier: Partial<Record<string, unknown>>;
   fromByUniversalIdentifier: Partial<Record<string, { id: string }>>;
-}): Record<string, string> =>
-  Object.fromEntries(
+}): Record<string, string> => {
+  return Object.fromEntries(
     Object.keys(toByUniversalIdentifier).map((universalIdentifier) => [
       universalIdentifier,
       fromByUniversalIdentifier[universalIdentifier]?.id ?? v4(),
     ]),
   );
+};
 
 export const preallocateWorkflowReferenceIds = ({
   fromAllFlatEntityMaps,
@@ -23,23 +24,27 @@ export const preallocateWorkflowReferenceIds = ({
 }: {
   fromAllFlatEntityMaps: AllFlatEntityMaps;
   toAllUniversalFlatEntityMaps: AllFlatEntityMaps;
-}): IdByUniversalIdentifierByMetadataName => ({
-  logicFunction: preallocateIds({
-    toByUniversalIdentifier:
-      toAllUniversalFlatEntityMaps.flatLogicFunctionMaps.byUniversalIdentifier,
-    fromByUniversalIdentifier:
-      fromAllFlatEntityMaps.flatLogicFunctionMaps.byUniversalIdentifier,
-  }),
-  agent: preallocateIds({
-    toByUniversalIdentifier:
-      toAllUniversalFlatEntityMaps.flatAgentMaps.byUniversalIdentifier,
-    fromByUniversalIdentifier:
-      fromAllFlatEntityMaps.flatAgentMaps.byUniversalIdentifier,
-  }),
-  fieldMetadata: preallocateIds({
-    toByUniversalIdentifier:
-      toAllUniversalFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier,
-    fromByUniversalIdentifier:
-      fromAllFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier,
-  }),
-});
+}): IdByUniversalIdentifierByMetadataName => {
+  return {
+    logicFunction: preallocateIds({
+      toByUniversalIdentifier:
+        toAllUniversalFlatEntityMaps.flatLogicFunctionMaps
+          .byUniversalIdentifier,
+      fromByUniversalIdentifier:
+        fromAllFlatEntityMaps.flatLogicFunctionMaps.byUniversalIdentifier,
+    }),
+    agent: preallocateIds({
+      toByUniversalIdentifier:
+        toAllUniversalFlatEntityMaps.flatAgentMaps.byUniversalIdentifier,
+      fromByUniversalIdentifier:
+        fromAllFlatEntityMaps.flatAgentMaps.byUniversalIdentifier,
+    }),
+    fieldMetadata: preallocateIds({
+      toByUniversalIdentifier:
+        toAllUniversalFlatEntityMaps.flatFieldMetadataMaps
+          .byUniversalIdentifier,
+      fromByUniversalIdentifier:
+        fromAllFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier,
+    }),
+  };
+};

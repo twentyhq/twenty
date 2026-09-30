@@ -37,8 +37,8 @@ const getStandardItem = (universalIdentifier: string): FlatCommandMenuItem => {
   return commandMenuItem;
 };
 
-const withPreviousExpressions = () =>
-  Object.fromEntries(
+const withPreviousExpressions = () => {
+  return Object.fromEntries(
     WORKFLOW_COMMAND_UNIVERSAL_IDENTIFIERS.map((universalIdentifier) => {
       const standardItem = getStandardItem(universalIdentifier);
 
@@ -55,6 +55,7 @@ const withPreviousExpressions = () =>
       ];
     }),
   );
+};
 
 describe('buildWorkflowCommandUpdatePermissionUpdates', () => {
   it('moves the workflow commands to the current standard expressions', () => {

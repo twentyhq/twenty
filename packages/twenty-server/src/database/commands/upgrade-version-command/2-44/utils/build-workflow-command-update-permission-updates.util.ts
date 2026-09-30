@@ -39,8 +39,8 @@ export const buildWorkflowCommandUpdatePermissionUpdates = ({
   >;
   now: string;
   direction: 'up' | 'down';
-}): FlatCommandMenuItem[] =>
-  Object.values(PREVIOUS_WORKFLOW_COMMAND_EXPRESSIONS).flatMap(
+}): FlatCommandMenuItem[] => {
+  return Object.values(PREVIOUS_WORKFLOW_COMMAND_EXPRESSIONS).flatMap(
     ({ universalIdentifier, expression }) => {
       const commandMenuItem =
         flatCommandMenuItemsByUniversalIdentifier[universalIdentifier];
@@ -66,3 +66,4 @@ export const buildWorkflowCommandUpdatePermissionUpdates = ({
       ];
     },
   );
+};
