@@ -1,3 +1,4 @@
+import { msg } from '@lingui/core/macro';
 import {
   STANDARD_OBJECTS,
   STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS,
@@ -8,6 +9,7 @@ import {
   TAB_PROPS,
   WIDGET_PROPS,
 } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template';
+import { i18nLabel } from 'src/engine/workspace-manager/twenty-standard-application/utils/i18n-label.util';
 import {
   type StandardPageLayoutConfig,
   type StandardPageLayoutTabConfig,
@@ -31,7 +33,9 @@ const AGENT_CHAT_THREAD_PAGE_TABS = {
 } as const satisfies Record<string, StandardPageLayoutTabConfig>;
 
 export const STANDARD_AGENT_CHAT_THREAD_PAGE_LAYOUT_CONFIG = {
-  name: 'Default Chat Layout',
+  name: i18nLabel(
+    msg({ message: `Default Chat Layout`, context: 'pageLayout.name' }),
+  ),
   type: PageLayoutType.RECORD_PAGE,
   objectUniversalIdentifier:
     STANDARD_OBJECTS.agentChatThread.universalIdentifier,

@@ -17,7 +17,6 @@ export const getStandardPageLayoutNames = () => [
   }),
   msg({ message: `Default Call Recording Layout`, context: 'pageLayout.name' }),
   msg({ message: `Default Campaign Layout`, context: 'pageLayout.name' }),
-  msg({ message: `Default Chat Layout`, context: 'pageLayout.name' }),
   msg({ message: `Default Company Layout`, context: 'pageLayout.name' }),
   msg({ message: `Default List Layout`, context: 'pageLayout.name' }),
   msg({
