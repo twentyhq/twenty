@@ -4,6 +4,7 @@ import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { type ColorScheme } from '@/workspace-member/types/WorkspaceMember';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { graphql, HttpResponse } from 'msw';
+import { expect, within } from 'storybook/test';
 import { ToastProvider } from 'twenty-ui/components';
 import { TextDirectionProvider } from 'twenty-ui/primitives/layout';
 import { ThemeProvider, themeCssVariables } from 'twenty-ui/theme';
@@ -38,6 +39,32 @@ const meta = {
           },
     );
     jotaiStore.set(persistedColorSchemeState.atom, colorScheme);
+  },
+  play: async ({ canvasElement, parameters }) => {
+    const group = within(
+      within(canvasElement).getByRole('radiogroup', { name: 'Appearance' }),
+    );
+    const isDisabled = parameters.disabled === true;
+    const selectedColorScheme = isDisabled
+      ? 'System'
+      : (parameters.colorScheme ?? 'Light');
+    const selectedLabel =
+      selectedColorScheme === 'System'
+        ? 'System settings'
+        : selectedColorScheme;
+
+    expect(group.getAllByRole('radio', { checked: true })).toHaveLength(1);
+    expect(group.getByRole('radio', { checked: true })).toHaveAccessibleName(
+      selectedLabel,
+    );
+
+    if (!isDisabled) {
+      return;
+    }
+
+    for (const radio of group.getAllByRole('radio')) {
+      expect(radio).toHaveAttribute('aria-disabled', 'true');
+    }
   },
   decorators: [
     (Story, { parameters }) => (
