@@ -2,6 +2,7 @@ import { act, render } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 
 import { AgentChatThreadRecordOperationsEffect } from '@/ai/components/AgentChatThreadRecordOperationsEffect';
+import { agentChatThreadListState } from '@/ai/states/agentChatThreadListState';
 import { dispatchObjectRecordOperationBrowserEvent } from '@/browser-event/utils/dispatchObjectRecordOperationBrowserEvent';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import {
@@ -65,6 +66,11 @@ describe('AgentChatThreadRecordOperationsEffect', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     resetJotaiStore();
+    jotaiStore.set(agentChatThreadListState.atom, {
+      threadIds: [CHAT_ID],
+      hasNextPage: true,
+      endCursor: 'page-1',
+    });
     refreshAgentChatThreads.mockResolvedValue([]);
     render(
       <JotaiProvider store={jotaiStore}>
@@ -101,6 +107,21 @@ describe('AgentChatThreadRecordOperationsEffect', () => {
       title: 'Renamed',
       totalInputTokens: 12,
     });
+    expect(refreshAgentChatThreads).not.toHaveBeenCalled();
+  });
+
+  it('reloads the list when a chat past the loaded pages is updated', () => {
+    dispatchChatOperation({
+      type: 'update-one',
+      result: {
+        updateInput: {
+          recordId: 'older-chat',
+          updatedFields: [{ title: 'Renamed' }],
+        },
+      },
+    });
+
+    expect(refreshAgentChatThreads).toHaveBeenCalledTimes(1);
   });
 
   it('lists a created chat but leaves a workflow run conversation to its run', () => {
@@ -141,12 +162,23 @@ describe('AgentChatThreadRecordOperationsEffect', () => {
     });
   });
 
-  it('reads the chats again after a destroy and leaves a chat that is gone', async () => {
+  it('reads the chats again after a destroy and leaves a chat that is gone, even when the reload fails', async () => {
+    refreshAgentChatThreads.mockResolvedValue(undefined);
+
     dispatchChatOperation({ type: 'destroy-one' });
 
     await act(async () => {
       await Promise.resolve();
     });
+
+    expect(refreshAgentChatThreads).toHaveBeenCalledTimes(1);
+    expect(leaveRemovedAiChatThread).toHaveBeenCalledTimes(1);
+  });
+
+  it('reads the chats again after the event stream reconnects', async () => {
+    const { onSseReconnected } = useListenToEventsForQuery.mock.calls[0][0];
+
+    await act(() => onSseReconnected());
 
     expect(refreshAgentChatThreads).toHaveBeenCalledTimes(1);
     expect(leaveRemovedAiChatThread).toHaveBeenCalledTimes(1);

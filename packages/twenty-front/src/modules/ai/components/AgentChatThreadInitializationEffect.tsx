@@ -24,6 +24,8 @@ import { hasInitializedAgentChatThreadsState } from '@/ai/states/hasInitializedA
 import { hasTriggeredCreateForDraftState } from '@/ai/states/hasTriggeredCreateForDraftState';
 import { sortChatThreadsByLastActivityDesc } from '@/ai/utils/sortChatThreadsByLastActivityDesc';
 import { metadataStoreStatusFamilySelector } from '@/metadata-store/states/metadataStoreStatusFamilySelector';
+import { useIsWorkspaceActivationStatusEqualsTo } from '@/workspace/hooks/useIsWorkspaceActivationStatusEqualsTo';
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
@@ -44,6 +46,12 @@ export const AgentChatThreadInitializationEffect = () => {
       metadataStoreStatusFamilySelector,
       'fieldMetadataItems',
     ) === 'up-to-date';
+
+  // The record API refuses a suspended workspace
+  const isWorkspaceSuspended = useIsWorkspaceActivationStatusEqualsTo(
+    WorkspaceActivationStatus.SUSPENDED,
+  );
+  const canLoadAgentChatThreads = hasAiPermission && !isWorkspaceSuspended;
 
   const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
   const setCurrentAiChatThread = useSetAtomState(currentAiChatThreadState);
@@ -70,7 +78,7 @@ export const AgentChatThreadInitializationEffect = () => {
   useEffect(() => {
     if (
       areAgentChatThreadsLoaded ||
-      !hasAiPermission ||
+      !canLoadAgentChatThreads ||
       !areFieldMetadataItemsLoaded
     ) {
       return;
@@ -104,18 +112,24 @@ export const AgentChatThreadInitializationEffect = () => {
   }, [
     areAgentChatThreadsLoaded,
     areFieldMetadataItemsLoaded,
-    hasAiPermission,
+    canLoadAgentChatThreads,
     refreshAgentChatThreads,
   ]);
 
   useEffect(() => {
-    setAgentChatThreadsLoading(!areAgentChatThreadsLoaded && hasAiPermission);
-  }, [areAgentChatThreadsLoaded, hasAiPermission, setAgentChatThreadsLoading]);
+    setAgentChatThreadsLoading(
+      !areAgentChatThreadsLoaded && canLoadAgentChatThreads,
+    );
+  }, [
+    areAgentChatThreadsLoaded,
+    canLoadAgentChatThreads,
+    setAgentChatThreadsLoading,
+  ]);
 
   useEffect(() => {
     if (
       hasInitializedAgentChatThreads ||
-      (!areAgentChatThreadsLoaded && hasAiPermission)
+      (!areAgentChatThreadsLoaded && canLoadAgentChatThreads)
     ) {
       return;
     }
@@ -173,7 +187,7 @@ export const AgentChatThreadInitializationEffect = () => {
   }, [
     agentChatVisibleThreads,
     currentAiChatThread,
-    hasAiPermission,
+    canLoadAgentChatThreads,
     hasInitializedAgentChatThreads,
     setHasInitializedAgentChatThreads,
     areAgentChatThreadsLoaded,

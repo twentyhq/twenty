@@ -1,12 +1,6 @@
 import { getAgentChatUsageFromThread } from '@/ai/utils/getAgentChatUsageFromThread';
 
 const storedThread = {
-  __typename: 'AgentChatThread',
-  id: 'thread',
-  title: null,
-  deletedAt: null,
-  createdAt: '2026-09-01T00:00:00.000Z',
-  updatedAt: '2026-09-01T00:00:00.000Z',
   conversationSize: 120,
   contextWindowTokens: 1000,
   totalInputTokens: 250,

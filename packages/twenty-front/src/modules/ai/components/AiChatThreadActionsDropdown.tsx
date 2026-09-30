@@ -90,7 +90,7 @@ export const AiChatThreadActionsDropdown = ({
     return null;
   }
 
-  const canUpdate = permissions?.canUpdate === true;
+  const canUpdate = isDefined(permissions) && permissions.canUpdate;
   const isDeleted = isDefined(thread.deletedAt);
 
   const targetThreadInContextStore = () => {
@@ -153,6 +153,7 @@ export const AiChatThreadActionsDropdown = ({
           }}
         >
           <Dropdown.Trigger
+            data-command-menu-anchor-instance-id={instanceId}
             render={
               trigger ?? (
                 <LightIconButton aria-label={t`Chat actions`} emphasis="subtle">

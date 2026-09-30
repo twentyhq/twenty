@@ -4,6 +4,9 @@ import { type ReactNode } from 'react';
 
 import { useRefreshAgentChatThreads } from '@/ai/hooks/useRefreshAgentChatThreads';
 import { agentChatThreadListState } from '@/ai/states/agentChatThreadListState';
+import { AGENT_CHAT_INSTANCE_ID } from '@/ai/constants/AgentChatInstanceId';
+import { agentChatThreadRecordUpdateCountState } from '@/ai/states/agentChatThreadRecordUpdateCountState';
+import { agentChatUsageComponentFamilyState } from '@/ai/states/agentChatUsageComponentFamilyState';
 import { agentChatThreadsSelector } from '@/ai/states/selectors/agentChatThreadsSelector';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 
@@ -207,6 +210,39 @@ describe('useRefreshAgentChatThreads', () => {
     ]);
   });
 
+  it('retries rather than overwrite a chat updated during the request', async () => {
+    const store = buildStore();
+    let resolveQuery: (value: ReturnType<typeof buildPage>) => void = () =>
+      undefined;
+
+    queryMock
+      .mockReturnValueOnce(
+        new Promise((resolve) => {
+          resolveQuery = resolve;
+        }),
+      )
+      .mockResolvedValueOnce(
+        buildPage([buildThread('thread-1', 'Renamed meanwhile')]),
+      );
+    const result = renderRefresh(store);
+
+    const refreshPromise = result.current.refreshAgentChatThreads();
+
+    act(() => {
+      store.set(agentChatThreadRecordUpdateCountState.atom, 1);
+    });
+
+    await act(async () => {
+      resolveQuery(buildPage([buildThread('thread-1', 'Stale title')]));
+      await refreshPromise;
+    });
+
+    expect(queryMock).toHaveBeenCalledTimes(2);
+    expect(store.get(agentChatThreadsSelector.atom)).toMatchObject([
+      { id: 'thread-1', title: 'Renamed meanwhile' },
+    ]);
+  });
+
   it('stops retrying when record events keep changing the list', async () => {
     const store = buildStore();
     let changeCount = 0;
@@ -306,5 +342,71 @@ describe('useRefreshAgentChatThreads', () => {
         await result.current.loadAgentChatThread('unknown'),
       ).toBeUndefined();
     });
+  });
+
+  it('restores the usage of a chat opened past the loaded pages', async () => {
+    const store = buildStore();
+    queryMock.mockResolvedValueOnce(
+      buildPage([
+        {
+          ...buildThread('old-thread', 'Old chat'),
+          conversationSize: 3,
+          contextWindowTokens: 1000,
+          totalInputTokens: 42,
+        },
+      ]),
+    );
+    const result = renderRefresh(store);
+
+    await act(async () => {
+      await result.current.loadAgentChatThread('old-thread');
+    });
+
+    expect(
+      store.get(
+        agentChatUsageComponentFamilyState.atomFamily({
+          instanceId: AGENT_CHAT_INSTANCE_ID,
+          familyKey: { threadId: 'old-thread' },
+        }),
+      ),
+    ).toMatchObject({ inputTokens: 42 });
+  });
+
+  it('looks a chat up again rather than overwrite an update applied during the request', async () => {
+    const store = buildStore();
+    let resolveQuery: (value: ReturnType<typeof buildPage>) => void = () =>
+      undefined;
+
+    queryMock
+      .mockReturnValueOnce(
+        new Promise((resolve) => {
+          resolveQuery = resolve;
+        }),
+      )
+      .mockResolvedValueOnce(
+        buildPage([buildThread('old-thread', 'Renamed meanwhile')]),
+      );
+    store.set(agentChatThreadListState.atom, {
+      threadIds: [],
+      hasNextPage: true,
+      endCursor: 'page-1',
+    });
+    const result = renderRefresh(store);
+
+    const loadPromise = result.current.loadAgentChatThread('old-thread');
+
+    act(() => {
+      store.set(agentChatThreadRecordUpdateCountState.atom, 1);
+    });
+
+    await act(async () => {
+      resolveQuery(buildPage([buildThread('old-thread', 'Stale title')]));
+      await loadPromise;
+    });
+
+    expect(queryMock).toHaveBeenCalledTimes(2);
+    expect(store.get(agentChatThreadsSelector.atom)).toMatchObject([
+      { id: 'old-thread', title: 'Renamed meanwhile' },
+    ]);
   });
 });

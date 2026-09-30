@@ -1,7 +1,12 @@
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { agentChatUsageComponentFamilyState } from '@/ai/states/agentChatUsageComponentFamilyState';
 import { setAgentChatThreadList } from '@/ai/testing/setAgentChatThreadList';
+import {
+  type CurrentWorkspace,
+  currentWorkspaceState,
+} from '@/auth/states/currentWorkspaceState';
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { act, render } from '@testing-library/react';
 import { createStore, Provider as JotaiProvider } from 'jotai';
 
@@ -23,6 +28,8 @@ jest.mock('@/settings/roles/hooks/useHasPermissionFlag', () => ({
 const buildStore = () => {
   const store = createStore();
 
+  // The workspace is persisted in local storage, shared across stores
+  store.set(currentWorkspaceState.atom, null);
   store.set(metadataStoreState.atomFamily('fieldMetadataItems'), {
     current: [],
     draft: [],
@@ -77,6 +84,30 @@ describe('AgentChatThreadInitializationEffect', () => {
       draft: [],
       status: 'empty',
     });
+
+    render(
+      <JotaiProvider store={store}>
+        <AgentChatComponentInstanceContext.Provider
+          value={{ instanceId: 'agent-chat-initialization-test' }}
+        >
+          <AgentChatThreadInitializationEffect />
+        </AgentChatComponentInstanceContext.Provider>
+      </JotaiProvider>,
+    );
+
+    await act(async () => {
+      await Promise.resolve();
+    });
+
+    expect(refreshAgentChatThreadsMock).not.toHaveBeenCalled();
+  });
+
+  it('does not read chats in a suspended workspace, which the record API refuses', async () => {
+    const store = buildStore();
+    store.set(currentWorkspaceState.atom, {
+      id: 'workspace-id',
+      activationStatus: WorkspaceActivationStatus.SUSPENDED,
+    } as CurrentWorkspace);
 
     render(
       <JotaiProvider store={store}>

@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 
 import { agentChatThreadListState } from '@/ai/states/agentChatThreadListState';
+import { agentChatThreadRecordUpdateCountState } from '@/ai/states/agentChatThreadRecordUpdateCountState';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { useStore } from 'jotai';
@@ -13,20 +14,23 @@ export const useApplyAgentChatThreadUpdate = () => {
   const store = useStore();
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
 
+  // A list page requested before this update must not overwrite it
   const applyAgentChatThreadUpdate = useCallback(
     (update: AgentChatThreadUpdate) => {
       upsertRecordsInStore({
         partialRecords: [{ __typename: 'AgentChatThread', ...update }],
       });
+      store.set(
+        agentChatThreadRecordUpdateCountState.atom,
+        (updateCount) => updateCount + 1,
+      );
     },
-    [upsertRecordsInStore],
+    [store, upsertRecordsInStore],
   );
 
   const addAgentChatThread = useCallback(
     (thread: AgentChatThreadUpdate) => {
-      upsertRecordsInStore({
-        partialRecords: [{ __typename: 'AgentChatThread', ...thread }],
-      });
+      applyAgentChatThreadUpdate(thread);
 
       const agentChatThreadList = store.get(agentChatThreadListState.atom);
 
@@ -42,7 +46,7 @@ export const useApplyAgentChatThreadUpdate = () => {
         threadIds: [thread.id, ...agentChatThreadList.threadIds],
       });
     },
-    [store, upsertRecordsInStore],
+    [applyAgentChatThreadUpdate, store],
   );
 
   return { applyAgentChatThreadUpdate, addAgentChatThread };

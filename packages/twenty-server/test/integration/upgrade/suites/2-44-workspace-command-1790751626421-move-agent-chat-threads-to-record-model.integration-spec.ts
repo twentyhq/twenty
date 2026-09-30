@@ -165,7 +165,7 @@ describe('2-44 workspace command 1790751626421 - MoveAgentChatThreadsToRecordMod
     const threads = await readThreads();
 
     // Trashed as of the upgrade, so trash cleanup does not purge old archives
-    expect(threads[archivedThreadId].archivedAt).toBeNull();
+    expect(threads[archivedThreadId].archivedAt).toEqual(ARCHIVED_AT);
     expect(
       threads[archivedThreadId].deletedAt!.getTime(),
     ).toBeGreaterThanOrEqual(startedAt.getTime() - 1000);
@@ -187,5 +187,31 @@ describe('2-44 workspace command 1790751626421 - MoveAgentChatThreadsToRecordMod
 
     expect(await readMetadataState()).toEqual(metadataBefore);
     expect(await readThreads()).toEqual(threadsBefore);
+  });
+
+  it('rolls back only the chats it moved to the trash', async () => {
+    const deletedAfterUpgradeAt = new Date('2026-03-01T00:00:00.000Z');
+
+    await global.testDataSource.query(
+      `UPDATE ${SCHEMA}."agentChatThread" SET "deletedAt" = $2 WHERE id = $1`,
+      [liveThreadId, deletedAfterUpgradeAt],
+    );
+
+    await runCommand('down');
+
+    const threads = await readThreads();
+
+    expect(threads[archivedThreadId]).toMatchObject({
+      archivedAt: ARCHIVED_AT,
+      deletedAt: null,
+    });
+    expect(threads[archivedAndDeletedThreadId]).toMatchObject({
+      archivedAt: null,
+      deletedAt: PREVIOUSLY_DELETED_AT,
+    });
+    expect(threads[liveThreadId]).toMatchObject({
+      archivedAt: null,
+      deletedAt: deletedAfterUpgradeAt,
+    });
   });
 });

@@ -8,7 +8,16 @@ const toDisplayCredits = (internalCredits: number | string | undefined) =>
   Number(internalCredits ?? 0) / INTERNAL_CREDITS_PER_DISPLAY_CREDIT;
 
 export const getAgentChatUsageFromThread = (
-  thread: AgentChatThreadRecord,
+  thread: Pick<
+    AgentChatThreadRecord,
+    | 'conversationSize'
+    | 'contextWindowTokens'
+    | 'totalCacheReadTokens'
+    | 'totalInputTokens'
+    | 'totalOutputTokens'
+    | 'totalInputCredits'
+    | 'totalOutputCredits'
+  >,
 ): AgentChatUsageState | null => {
   const conversationSize = thread.conversationSize ?? 0;
 

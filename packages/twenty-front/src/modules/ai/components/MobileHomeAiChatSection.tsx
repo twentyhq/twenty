@@ -1,3 +1,4 @@
+import { AgentChatThreadsFetchMoreTrigger } from '@/ai/components/AgentChatThreadsFetchMoreTrigger';
 import { NavigationDrawerAiChatThreadSection } from '@/ai/components/NavigationDrawerAiChatThreadSection';
 import { useAiChatThreadClick } from '@/ai/hooks/useAiChatThreadClick';
 import { useChatThreads } from '@/ai/hooks/useChatThreads';
@@ -21,12 +22,15 @@ export const MobileHomeAiChatSection = () => {
   }
 
   return (
-    <NavigationDrawerAiChatThreadSection
-      sectionId={MOBILE_HOME_AI_CHAT_SECTION_ID}
-      title={t`Conversations`}
-      threads={threads}
-      currentThreadId={currentAiChatThread}
-      onThreadClick={handleThreadClick}
-    />
+    <>
+      <NavigationDrawerAiChatThreadSection
+        sectionId={MOBILE_HOME_AI_CHAT_SECTION_ID}
+        title={t`Conversations`}
+        threads={threads}
+        currentThreadId={currentAiChatThread}
+        onThreadClick={handleThreadClick}
+      />
+      <AgentChatThreadsFetchMoreTrigger />
+    </>
   );
 };
