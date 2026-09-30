@@ -6,12 +6,13 @@ export const endsOnPausingToolCall = ({
   steps,
   offeredToolNames,
 }: {
-  steps: { toolCalls: { toolName: string }[] }[];
+  steps: { toolCalls: { toolName: string; invalid?: boolean }[] }[];
   // Narrows the pause to the pausing tools a run was actually given.
   offeredToolNames?: string[];
 }): boolean =>
   steps[steps.length - 1]?.toolCalls.some(
     (toolCall) =>
+      !toolCall.invalid &&
       PAUSING_TOOLS.has(toolCall.toolName) &&
       (offeredToolNames?.includes(toolCall.toolName) ?? true),
   ) ?? false;

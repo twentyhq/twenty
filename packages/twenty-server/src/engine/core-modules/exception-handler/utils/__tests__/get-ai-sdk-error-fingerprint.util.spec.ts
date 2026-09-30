@@ -1,0 +1,52 @@
+import {
+  APICallError,
+  InvalidPromptError,
+  RetryError,
+  StreamProviderError,
+} from 'ai';
+
+import { getAiSdkErrorFingerprint } from 'src/engine/core-modules/exception-handler/utils/get-ai-sdk-error-fingerprint.util';
+
+describe('getAiSdkErrorFingerprint', () => {
+  it('should group provider errors by error class and HTTP status', () => {
+    expect(
+      getAiSdkErrorFingerprint(
+        new APICallError({
+          message:
+            'The image data you provided does not represent a valid image.',
+          url: 'https://api.openai.com/v1/responses',
+          requestBodyValues: {},
+          statusCode: 400,
+        }),
+      ),
+    ).toEqual(['ai-sdk-error', 'AI_APICallError', '400']);
+  });
+
+  it('should group exhausted retries with the error that was retried', () => {
+    const overloaded = new StreamProviderError({
+      message: 'Overloaded',
+      statusCode: 503,
+    });
+
+    expect(
+      getAiSdkErrorFingerprint(
+        new RetryError({
+          message: 'Failed after 3 attempts. Last error: Overloaded',
+          reason: 'maxRetriesExceeded',
+          errors: [overloaded, overloaded],
+        }),
+      ),
+    ).toEqual(['ai-sdk-error', 'AI_StreamProviderError', '503']);
+  });
+
+  it('should group errors without an HTTP status by error class', () => {
+    expect(
+      getAiSdkErrorFingerprint(
+        new InvalidPromptError({
+          prompt: [],
+          message: 'The messages do not match the ModelMessage[] schema.',
+        }),
+      ),
+    ).toEqual(['ai-sdk-error', 'AI_InvalidPromptError', 'no-status']);
+  });
+});

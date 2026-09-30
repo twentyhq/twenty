@@ -42,6 +42,14 @@ describe('endsOnPausingToolCall', () => {
     ).toBe(true);
   });
 
+  it('does not pause on an invalid call so the model can retry it', () => {
+    expect(
+      endsOnPausingToolCall({
+        steps: [{ toolCalls: [{ toolName: 'ask_questions', invalid: true }] }],
+      }),
+    ).toBe(false);
+  });
+
   it('never pauses without steps', () => {
     expect(endsOnPausingToolCall({ steps: [] })).toBe(false);
   });
