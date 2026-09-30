@@ -11,6 +11,7 @@ import { frontComponentHostCommunicationApi } from '@/remote/worker/thread/state
 import { HTML_TAG_TO_CUSTOM_ELEMENT_TAG } from '@/constants/HtmlTagToCustomElementTag';
 import { installClipboardPolyfill } from '@/polyfills/clipboard/utils/installClipboardPolyfill';
 import { workerActiveElementStore } from '@/polyfills/dom/states/workerActiveElementStore';
+import { workerFocusTransport } from '@/polyfills/dom/states/workerFocusTransport';
 import { installActiveElementDetachmentHook } from '@/polyfills/dom/utils/installActiveElementDetachmentHook';
 import { installClassAttributeAccessors } from '@/polyfills/dom/utils/installClassAttributeAccessors';
 import { installCompareDocumentPositionPolyfill } from '@/polyfills/dom/utils/installCompareDocumentPositionPolyfill';
@@ -87,6 +88,7 @@ installSelectorMethodsPolyfill({
 installFocusAndBlurMethodsPolyfill({
   elementPrototype: Element.prototype,
   activeElementStore: workerActiveElementStore,
+  forwardFocusMethod: workerFocusTransport.forwardFocusMethod,
 });
 installDocumentActiveElementPolyfill({
   documentTarget: document,
@@ -97,6 +99,7 @@ installActiveElementDetachmentHook({
     resolveGlobalScopeInstallTargets(toGlobalScopeRecord(globalThis)),
   ),
   activeElementStore: workerActiveElementStore,
+  onRemoveSubtree: workerFocusTransport.blurFocusedElementWithinSubtree,
 });
 
 installGetComputedStyle(toGlobalScopeRecord(globalThis));

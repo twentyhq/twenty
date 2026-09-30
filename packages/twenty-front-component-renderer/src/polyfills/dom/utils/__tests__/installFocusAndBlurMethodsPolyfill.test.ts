@@ -1,8 +1,14 @@
 import { HOOKS, Window } from '@remote-dom/polyfill';
+import {
+  connectRemoteNode,
+  disconnectRemoteNode,
+  remoteId,
+} from '@remote-dom/core/elements';
 
 import { installSelectorMethodsPolyfill } from '@/polyfills/selectors/utils/installSelectorMethodsPolyfill';
 
 import { createWorkerActiveElementStore } from '../createWorkerActiveElementStore';
+import { createWorkerFocusTransport } from '../createWorkerFocusTransport';
 import { installActiveElementDetachmentHook } from '../installActiveElementDetachmentHook';
 import { installDocumentActiveElementPolyfill } from '../installDocumentActiveElementPolyfill';
 import { installFocusAndBlurMethodsPolyfill } from '../installFocusAndBlurMethodsPolyfill';
@@ -123,6 +129,45 @@ describe('installFocusAndBlurMethodsPolyfill', () => {
     document.body.append(button);
 
     expect(document.activeElement).toBe(document.body);
+  });
+
+  it('should cancel host focus before a focused subtree is disconnected', () => {
+    const polyfillWindow = new Window();
+    const activeElementStore = createWorkerActiveElementStore();
+    const focusTransport = createWorkerFocusTransport();
+    const connection = { mutate: jest.fn(), call: jest.fn() };
+    const document = polyfillWindow.document as unknown as Document;
+    const container = document.createElement('div');
+    const button = document.createElement('button');
+    const removeChild = jest.fn(({ node }: { node: Node }) =>
+      disconnectRemoteNode(node),
+    );
+
+    polyfillWindow[HOOKS].removeChild = (_parent, node) =>
+      removeChild({ node: node as unknown as Node });
+    installActiveElementDetachmentHook({
+      hooks: polyfillWindow[HOOKS],
+      activeElementStore,
+      onRemoveSubtree: focusTransport.blurFocusedElementWithinSubtree,
+    });
+    installFocusAndBlurMethodsPolyfill({
+      elementPrototype: polyfillWindow.Element.prototype,
+      activeElementStore,
+      forwardFocusMethod: focusTransport.forwardFocusMethod,
+    });
+    container.append(button);
+    document.body.append(container);
+    connectRemoteNode(container, connection);
+    remoteId(button);
+    focusTransport.setRootElement(container);
+    button.focus();
+    container.remove();
+
+    expect(connection.call).toHaveBeenLastCalledWith(remoteId(button), 'blur');
+    expect(connection.call.mock.invocationCallOrder[1]).toBeLessThan(
+      removeChild.mock.invocationCallOrder[0],
+    );
+    expect(activeElementStore.getActiveElement()).toBeNull();
   });
 
   it('should ignore a focus call on a detached element even if it is inserted later', () => {

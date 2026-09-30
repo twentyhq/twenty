@@ -13,6 +13,7 @@ import { extractReactUnsupportedEventHandlers } from '@/host/events/utils/extrac
 import { getRemoteElementIdFromProps } from '@/host/elements/utils/getRemoteElementIdFromProps';
 import { preventDefaultThenForwardToRemote } from '@/host/events/utils/preventDefaultThenForwardToRemote';
 import { sanitizeIframeSandbox } from '@/host/elements/utils/sanitizeIframeSandbox';
+import { useHostFocusElementRef } from '@/host/focus/hooks/useHostFocusElementRef';
 
 type HtmlHostElementProps = {
   setEditableFocused: SetEditableFocused | null;
@@ -42,10 +43,12 @@ export const useHtmlHostElementProps = ({
   );
 
   const geometryNodeRef = useGeometryNodeRef(remoteElementId);
+  const hostFocusElementRef = useHostFocusElementRef(remoteElementId);
 
   const composedElementRef = useComposedElementRef([
     reactUnsupportedEventListenerRef,
     geometryNodeRef,
+    hostFocusElementRef,
   ]);
 
   const hostEnforcedProps: Record<string, unknown> = {

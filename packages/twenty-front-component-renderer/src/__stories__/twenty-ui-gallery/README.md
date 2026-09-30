@@ -62,8 +62,9 @@ No stories are skipped or marked as expected-to-fail by the runner.
 
 The worker DOM now provides `Node.contains`, `compareDocumentPosition`,
 `getRootNode`, `Element.matches`, `closest`, `querySelector` backed by
-`css-select`, local `focus`/`blur` with a `document.activeElement` that the host
-keeps in sync with the page's focus inside the component and that clears when
+`css-select`, `focus`/`blur` forwarding to page elements with a
+`document.activeElement` that the host keeps in sync with the page's focus
+inside the component and that clears when
 the focused subtree is detached, and property accessors for boolean ARIA
 attributes so React and Preact forward `true`/`false` instead of empty strings
 and remove the attribute when the prop is cleared. `getAttribute` and the

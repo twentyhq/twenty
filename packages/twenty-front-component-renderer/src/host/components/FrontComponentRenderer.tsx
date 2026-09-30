@@ -1,6 +1,8 @@
 import { ROOT_CONTAINER_STYLE } from '@/host/constants/RootContainerStyle';
 import { FrontComponentGeometryTrackerContext } from '@/host/geometry/contexts/FrontComponentGeometryTrackerContext';
 import { createGeometryTracker } from '@/host/geometry/utils/createGeometryTracker';
+import { FrontComponentHostFocusControllerContext } from '@/host/focus/contexts/FrontComponentHostFocusControllerContext';
+import { createHostFocusController } from '@/host/focus/utils/createHostFocusController';
 import { FrontComponentConfirmationModalResultEffect } from '@/host/effect-components/FrontComponentConfirmationModalResultEffect';
 import { FrontComponentErrorEffect } from '@/host/effect-components/FrontComponentErrorEffect';
 import { FrontComponentFocusTrackerEffect } from '@/host/effect-components/FrontComponentFocusTrackerEffect';
@@ -70,6 +72,7 @@ export const FrontComponentRenderer = ({
   const [isExecutionContextInitialized, setIsExecutionContextInitialized] =
     useState(false);
   const [geometryTracker] = useState(() => createGeometryTracker());
+  const [hostFocusController] = useState(() => createHostFocusController());
   const [initialExecutionContext] = useState(executionContext);
 
   const isReady = isDefined(receiver) && isExecutionContextInitialized;
@@ -88,6 +91,7 @@ export const FrontComponentRenderer = ({
           storageNamespace={storageNamespace}
           initialExecutionContext={initialExecutionContext}
           geometryTracker={geometryTracker}
+          hostFocusController={hostFocusController}
           mediaSessionHost={mediaSessionHost}
           setReceiver={setReceiver}
           setThread={setThread}
@@ -151,10 +155,14 @@ export const FrontComponentRenderer = ({
               resetKeys={[componentUrl]}
               fallbackRender={() => null}
             >
-              <RemoteRootRenderer
-                receiver={receiver}
-                components={fallbackComponentRegistry}
-              />
+              <FrontComponentHostFocusControllerContext.Provider
+                value={hostFocusController}
+              >
+                <RemoteRootRenderer
+                  receiver={receiver}
+                  components={fallbackComponentRegistry}
+                />
+              </FrontComponentHostFocusControllerContext.Provider>
             </ErrorBoundary>
           </ThemeProvider>
         )}

@@ -7,11 +7,13 @@ import { isAncestorOrSelfOfNode } from '@/polyfills/dom/utils/isAncestorOrSelfOf
 type InstallActiveElementDetachmentHookInput = {
   hooks: Partial<Hooks> | null;
   activeElementStore: WorkerActiveElementStore;
+  onRemoveSubtree?: (node: object) => void;
 };
 
 export const installActiveElementDetachmentHook = ({
   hooks,
   activeElementStore,
+  onRemoveSubtree,
 }: InstallActiveElementDetachmentHookInput): void => {
   if (!isDefined(hooks)) {
     throw new CustomError(
@@ -32,6 +34,7 @@ export const installActiveElementDetachmentHook = ({
       activeElementStore.setActiveElement({ element: null });
     }
 
+    onRemoveSubtree?.(node);
     previousRemoveChildHook?.(parent, node, index);
   };
 };
