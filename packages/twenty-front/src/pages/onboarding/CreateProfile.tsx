@@ -1,7 +1,6 @@
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
-import { onboardingConfigState } from '@/client-config/states/onboardingConfigState';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { OnboardingProfilePictureUploader } from '@/onboarding/components/OnboardingProfilePictureUploader';
 import { OnboardingStepAnimatedItem } from '@/onboarding/components/OnboardingStepAnimatedItem';
@@ -13,6 +12,7 @@ import { ONBOARDING_CONTENT_BLOCK_WIDTH } from '@/onboarding/constants/Onboardin
 import { usePrefetchInviteSuggestions } from '@/onboarding/hooks/usePrefetchInviteSuggestions';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
 import { useSetOnboardingStepFreeCredits } from '@/onboarding/hooks/useSetOnboardingStepFreeCredits';
+import { onboardingCreditsProgressSelector } from '@/onboarding/states/selectors/onboardingCreditsProgressSelector';
 import { useUpdateWorkspaceMemberSettings } from '@/settings/profile/hooks/useUpdateWorkspaceMemberSettings';
 import { PageFocusId } from '@/types/PageFocusId';
 import { TextInput } from '@/ui/input/components/TextInput';
@@ -24,6 +24,7 @@ import { styled } from '@linaria/react';
 import { i18n } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
+import { useStore } from 'jotai';
 import { useCallback, useState } from 'react';
 import { Controller, type SubmitHandler, useForm } from 'react-hook-form';
 import { Key } from 'ts-key-enum';
@@ -88,9 +89,8 @@ export const CreateProfile = () => {
 
   const { enqueueToast } = useToast();
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
-  const currentUser = useAtomStateValue(currentUserState);
+  const store = useStore();
   const setCurrentUser = useSetAtomState(currentUserState);
-  const onboardingConfig = useAtomStateValue(onboardingConfigState);
   const setCurrentWorkspaceMembers = useSetAtomState(
     currentWorkspaceMembersState,
   );
@@ -163,9 +163,8 @@ export const CreateProfile = () => {
 
         setOnboardingStepFreeCredits(
           'createProfile',
-          currentUser?.isWorkspaceCreator
-            ? (onboardingConfig?.createProfileCreditsReward ?? 0)
-            : 0,
+          store.get(onboardingCreditsProgressSelector.atom)?.rewardCreditsByStep
+            .createProfile ?? 0,
         );
         setNextOnboardingStatus({ stepHistoryEffect: 'recordAsReversible' });
         setIsNavigating(true);
@@ -176,8 +175,7 @@ export const CreateProfile = () => {
     },
     [
       currentWorkspaceMember?.id,
-      currentUser?.isWorkspaceCreator,
-      onboardingConfig?.createProfileCreditsReward,
+      store,
       setNextOnboardingStatus,
       setOnboardingStepFreeCredits,
       enqueueToast,

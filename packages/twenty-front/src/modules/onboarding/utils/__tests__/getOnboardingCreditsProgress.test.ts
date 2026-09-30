@@ -31,11 +31,21 @@ describe('getOnboardingCreditsProgress', () => {
         isPlanRequired: true,
       }),
     ).toEqual({
+      rewardCreditsByStep: {
+        importContacts: 2,
+        installApps: 1,
+        createProfile: 0.5,
+        inviteTeam: 2,
+        upgradeTrial: 0.5,
+      },
       earnedCredits: 0,
       earnedCreditsByStep: [],
       goalCredits: 0,
       currentStep: 'importContacts',
       currentStepCredits: 2,
+      seenCredits: 0,
+      newlyEarnedCredits: 0,
+      isFirstCreditsGain: true,
     });
   });
 
@@ -56,6 +66,24 @@ describe('getOnboardingCreditsProgress', () => {
     });
 
     expect(progress.earnedCredits).toBe(5);
+  });
+
+  it('should announce the counted credits not seen yet', () => {
+    const progress = getOnboardingCreditsProgress({
+      onboardingFreeCredits: buildOnboardingFreeCredits({
+        importContacts: 2,
+        installApps: 1,
+        seenCredits: 2,
+      }),
+      onboardingConfig,
+      onboardingStatus: OnboardingStatus.PROFILE_CREATION,
+      isWorkspaceCreator: true,
+      isPlanRequired: false,
+    });
+
+    expect(progress.earnedCredits).toBe(3);
+    expect(progress.newlyEarnedCredits).toBe(1);
+    expect(progress.isFirstCreditsGain).toBe(false);
   });
 
   it('should leave the step at hand out of the goal until it is done', () => {
@@ -85,11 +113,21 @@ describe('getOnboardingCreditsProgress', () => {
         isPlanRequired: true,
       }),
     ).toEqual({
+      rewardCreditsByStep: {
+        importContacts: 2,
+        installApps: 1,
+        createProfile: 0.5,
+        inviteTeam: 2,
+        upgradeTrial: 0.5,
+      },
       earnedCredits: 0,
       earnedCreditsByStep: [],
       goalCredits: 0,
       currentStep: 'importContacts',
       currentStepCredits: 2,
+      seenCredits: 0,
+      newlyEarnedCredits: 0,
+      isFirstCreditsGain: true,
     });
   });
 

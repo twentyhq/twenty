@@ -1,6 +1,6 @@
+import { ONBOARDING_CREDITS_STEPS } from '@/onboarding/constants/OnboardingCreditsSteps';
 import { useSetCurrentWorkspaceOnboardingFreeCredits } from '@/onboarding/hooks/useSetCurrentWorkspaceOnboardingFreeCredits';
 import { type OnboardingCreditsStep } from '@/onboarding/types/OnboardingCreditsStep';
-import { getOnboardingEarnedCredits } from '@/onboarding/utils/getOnboardingEarnedCredits';
 import { useCallback } from 'react';
 
 type SetOnboardingStepFreeCreditsOptions = {
@@ -20,12 +20,16 @@ export const useSetOnboardingStepFreeCredits = () => {
       setOnboardingFreeCredits((current) => {
         const onboardingFreeCredits = { ...current, [step]: credits };
         const quietCreditsChange = isQuiet ? credits - current[step] : 0;
+        const storedCredits = ONBOARDING_CREDITS_STEPS.reduce(
+          (total, creditsStep) => total + onboardingFreeCredits[creditsStep],
+          0,
+        );
 
         return {
           ...onboardingFreeCredits,
           seenCredits: Math.min(
             Math.max(0, current.seenCredits + quietCreditsChange),
-            getOnboardingEarnedCredits(onboardingFreeCredits),
+            storedCredits,
           ),
         };
       }),

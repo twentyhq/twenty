@@ -1,11 +1,9 @@
-import { currentUserState } from '@/auth/states/currentUserState';
 import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadedState';
 import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
 import { isGoogleCalendarEnabledState } from '@/client-config/states/isGoogleCalendarEnabledState';
 import { isGoogleMessagingEnabledState } from '@/client-config/states/isGoogleMessagingEnabledState';
 import { isMicrosoftCalendarEnabledState } from '@/client-config/states/isMicrosoftCalendarEnabledState';
 import { isMicrosoftMessagingEnabledState } from '@/client-config/states/isMicrosoftMessagingEnabledState';
-import { onboardingConfigState } from '@/client-config/states/onboardingConfigState';
 import { OnboardingSkipDialog } from '@/onboarding/components/OnboardingSkipDialog';
 import { OnboardingSkipDialogAvatars } from '@/onboarding/components/OnboardingSkipDialogAvatars';
 import { ONBOARDING_NETWORK_PREVIEW_PEOPLE } from '@/onboarding/constants/OnboardingNetworkPreviewPeople';
@@ -14,6 +12,7 @@ import { SyncEmailsAutoSkipEffect } from '@/onboarding/effect-components/SyncEma
 import { useOnboardingStepEnterHotkey } from '@/onboarding/hooks/useOnboardingStepEnterHotkey';
 import { useSetOnboardingStepFreeCredits } from '@/onboarding/hooks/useSetOnboardingStepFreeCredits';
 import { useSkipSyncEmailOnboardingStep } from '@/onboarding/hooks/useSkipSyncEmailOnboardingStep';
+import { onboardingCreditsProgressSelector } from '@/onboarding/states/selectors/onboardingCreditsProgressSelector';
 import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTriggerApiOAuth';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { PageFocusId } from '@/types/PageFocusId';
@@ -33,11 +32,9 @@ import {
 export const SyncEmails = () => {
   const { t } = useLingui();
   const { openDialog } = useDialog();
-  const onboardingConfig = useAtomStateValue(onboardingConfigState);
-  const currentUser = useAtomStateValue(currentUserState);
-  const importContactsCreditsReward = currentUser?.isWorkspaceCreator
-    ? (onboardingConfig?.importContactsCreditsReward ?? 0)
-    : 0;
+  const importContactsCreditsReward =
+    useAtomStateValue(onboardingCreditsProgressSelector)?.rewardCreditsByStep
+      .importContacts ?? 0;
   const { triggerApisOAuth } = useTriggerApisOAuth();
   const skipSyncEmailOnboardingStep = useSkipSyncEmailOnboardingStep();
   const setOnboardingStepFreeCredits = useSetOnboardingStepFreeCredits();
