@@ -1,7 +1,11 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { type KeyboardEvent, useMemo, useState } from 'react';
-import { type AskQuestionAnswer, type AskQuestionItem } from 'twenty-shared/ai';
+import { type KeyboardEvent, useState } from 'react';
+import {
+  type AskQuestionAnswer,
+  type AskQuestionItem,
+  type AskQuestionsToolResult,
+} from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { IconButton, LightIconButton } from 'twenty-ui/components';
 import {
@@ -23,12 +27,12 @@ import {
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
+import { StyledAiChatAskCard } from '@/ai/components/AiChatAskStyledComponents';
 import { AiModelTierDropdown } from '@/ai/components/AiModelTierDropdown';
 import { TextWithChatReferences } from '@/ai/components/TextWithChatReferences';
-import { AgentChatFileUploadButton } from '@/ai/components/internal/AgentChatFileUploadButton';
 import { AiChatContextUsageButton } from '@/ai/components/internal/AiChatContextUsageButton';
 import { AiChatQuestionOtherOption } from '@/ai/components/internal/AiChatQuestionOtherOption';
-import { useSubmitQuestionAnswer } from '@/ai/hooks/useSubmitQuestionAnswer';
+import { useAnswerAgentChatAsk } from '@/ai/hooks/useAnswerAgentChatAsk';
 import { type AgentChatPendingQuestion } from '@/ai/types/AgentChatPendingQuestion';
 import { aiModelsState } from '@/client-config/states/aiModelsState';
 import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
@@ -45,16 +49,6 @@ const NUMBER_ICONS: IconComponent[] = [
   IconSquareNumber8,
   IconSquareNumber9,
 ];
-
-const StyledCard = styled.div`
-  background-color: ${themeCssVariables.background.transparent.lighter};
-  border: 1px solid ${themeCssVariables.border.color.medium};
-  border-radius: ${themeCssVariables.border.radius.sm};
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-`;
 
 const StyledQuestionSection = styled.div`
   display: flex;
@@ -203,7 +197,7 @@ export const AiChatQuestionCard = ({
 }: AiChatQuestionCardProps) => {
   const { t } = useLingui();
   const theme = useTheme();
-  const { messageId, toolCallId, questions } = pendingQuestion;
+  const { askId, toolCallId, questions } = pendingQuestion;
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedByQuestion, setSelectedByQuestion] = useState<
@@ -217,7 +211,7 @@ export const AiChatQuestionCard = ({
   >({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const { submitAnswer } = useSubmitQuestionAnswer();
+  const { answerAgentChatAsk } = useAnswerAgentChatAsk();
 
   const aiModels = useAtomStateValue(aiModelsState);
   const hasNoEnabledModels = aiModels.length === 0;
@@ -248,8 +242,25 @@ export const AiChatQuestionCard = ({
     }
 
     setIsSubmitting(true);
-    await submitAnswer({ messageId, toolCallId, answers });
-    setIsSubmitting(false);
+
+    const isAnswered = await answerAgentChatAsk({
+      askId,
+      toolCallId,
+      response: { answers },
+      optimisticToolOutput: {
+        success: true,
+        result: {
+          questions,
+          status: 'answered',
+          answers,
+        } satisfies AskQuestionsToolResult,
+      },
+    });
+
+    // The card goes once its Ask does, so it stays disabled until then.
+    if (!isAnswered) {
+      setIsSubmitting(false);
+    }
   };
 
   const handleSelectOption = (optionIndex: number) => {
@@ -337,20 +348,11 @@ export const AiChatQuestionCard = ({
     }
   };
 
-  const allQuestionsAnswered = useMemo(
-    () =>
-      areAllQuestionsAnswered(
-        questions,
-        selectedByQuestion,
-        freeTextByQuestion,
-        otherSelectedByQuestion,
-      ),
-    [
-      questions,
-      selectedByQuestion,
-      freeTextByQuestion,
-      otherSelectedByQuestion,
-    ],
+  const allQuestionsAnswered = areAllQuestionsAnswered(
+    questions,
+    selectedByQuestion,
+    freeTextByQuestion,
+    otherSelectedByQuestion,
   );
 
   const handleSend = () => {
@@ -376,7 +378,7 @@ export const AiChatQuestionCard = ({
   };
 
   return (
-    <StyledCard>
+    <StyledAiChatAskCard>
       <StyledQuestionSection>
         <StyledQuestionHeaderRow>
           <StyledQuestionText>
@@ -500,7 +502,6 @@ export const AiChatQuestionCard = ({
       <StyledComposerSection>
         <StyledActionsRow>
           <StyledLeftActions>
-            <AgentChatFileUploadButton />
             <AiChatContextUsageButton />
           </StyledLeftActions>
           <StyledRightActions>
@@ -522,6 +523,6 @@ export const AiChatQuestionCard = ({
           </StyledRightActions>
         </StyledActionsRow>
       </StyledComposerSection>
-    </StyledCard>
+    </StyledAiChatAskCard>
   );
 };

@@ -16,7 +16,7 @@ const args = {
   workspaceMemberId: 'reader',
 };
 
-const buildService = (legacyOwnerFieldPresent = true) => {
+const buildService = () => {
   const query = jest.fn().mockResolvedValue([{ id: THREAD_ID }]);
   const thread: Record<string, unknown> = {
     id: THREAD_ID,
@@ -62,9 +62,7 @@ const buildService = (legacyOwnerFieldPresent = true) => {
     readability: MetadataReadability.PRIVATE,
   };
   const flatFieldMetadataMaps = {
-    byUniversalIdentifier: (legacyOwnerFieldPresent
-      ? { 'bf830886-b6dc-46e9-a229-eecbb0e66032': { id: 'legacy' } }
-      : {}) as Record<string, unknown>,
+    byUniversalIdentifier: {} as Record<string, unknown>,
   };
   const cache = {
     getOrRecompute: jest.fn().mockResolvedValue({
@@ -119,30 +117,25 @@ const buildService = (legacyOwnerFieldPresent = true) => {
 };
 
 describe('Conversation common record access', () => {
-  it.each([true, false])(
-    'creates threads before and after legacy owner contraction (legacy field: %s)',
-    async (legacyOwnerFieldPresent) => {
-      const { service, query } = buildService(legacyOwnerFieldPresent);
-      await expect(
-        service.createThread({
-          workspaceId: WORKSPACE_ID,
-          workspaceMemberId: 'reader',
-          id: THREAD_ID,
-        }),
-      ).resolves.toMatchObject({ id: THREAD_ID });
-      const [insert, parameters] = query.mock.calls[0];
-      expect(insert).toContain('"workspaceMemberId"');
-      expect(insert.includes('"userWorkspaceId"')).toBe(
-        legacyOwnerFieldPresent,
-      );
-      expect(parameters).toEqual([
-        THREAD_ID,
-        null,
-        'reader',
-        ...(legacyOwnerFieldPresent ? ['reader-membership'] : []),
-      ]);
-    },
-  );
+  it('creates threads owned by the member, with the legacy owner', async () => {
+    const { service, query } = buildService();
+    await expect(
+      service.createThread({
+        workspaceId: WORKSPACE_ID,
+        workspaceMemberId: 'reader',
+        id: THREAD_ID,
+      }),
+    ).resolves.toMatchObject({ id: THREAD_ID });
+    const [insert, parameters] = query.mock.calls[0];
+    expect(insert).toContain('"workspaceMemberId"');
+    expect(insert).toContain('"userWorkspaceId"');
+    expect(parameters).toEqual([
+      THREAD_ID,
+      null,
+      'reader',
+      'reader-membership',
+    ]);
+  });
 
   it('uses the common record policy for a non-owner reader', async () => {
     const { service, repository } = buildService();
@@ -284,14 +277,13 @@ describe('Conversation common record access', () => {
   });
 
   it.each(['update', 'delete', 'soft-delete', 'restore'] as const)(
-    'refuses %s on a workflow run conversation while still letting its readers read it',
+    'lets whoever may %s a workflow run conversation do so, like any other',
     async (operation) => {
       const { service, thread } = buildService();
       thread.workflowRunId = 'workflow-run';
-      await expect(service.getReadableThread(args)).resolves.toBeDefined();
       await expect(
         service.getThreadWithAccess({ ...args, operationType: operation }),
-      ).rejects.toMatchObject({ code: 'WORKFLOW_RUN_THREAD_READ_ONLY' });
+      ).resolves.toBe(thread);
     },
   );
 
