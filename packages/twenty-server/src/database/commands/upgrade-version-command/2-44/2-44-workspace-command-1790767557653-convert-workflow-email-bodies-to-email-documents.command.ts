@@ -5,7 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
-import { convertWorkflowEmailBodiesToEmailDocuments } from 'src/database/commands/upgrade-version-command/2-44/utils/convert-workflow-email-bodies-to-email-documents.util';
+import { convertWorkflowEmailBodiesToEmailDocuments } from 'src/modules/workflow/workflow-builder/workflow-version-step/utils/convert-workflow-email-bodies-to-email-documents.util';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';

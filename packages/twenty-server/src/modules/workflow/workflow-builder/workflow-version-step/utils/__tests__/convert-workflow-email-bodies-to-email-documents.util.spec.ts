@@ -1,6 +1,6 @@
 import { EMAIL_DOCUMENT_SCHEMA_VERSION } from 'twenty-shared/utils';
 
-import { convertWorkflowEmailBodiesToEmailDocuments } from 'src/database/commands/upgrade-version-command/2-44/utils/convert-workflow-email-bodies-to-email-documents.util';
+import { convertWorkflowEmailBodiesToEmailDocuments } from 'src/modules/workflow/workflow-builder/workflow-version-step/utils/convert-workflow-email-bodies-to-email-documents.util';
 
 const emailStep = (body: string, type = 'SEND_EMAIL') => ({
   id: 'step-1',

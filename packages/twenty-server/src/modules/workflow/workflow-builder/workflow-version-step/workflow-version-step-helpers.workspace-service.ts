@@ -6,6 +6,7 @@ import { assertWorkflowVersionIsDraft } from 'src/modules/workflow/common/utils/
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { type WorkflowTrigger } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
+import { convertWorkflowEmailBodiesToEmailDocuments } from 'src/modules/workflow/workflow-builder/workflow-version-step/utils/convert-workflow-email-bodies-to-email-documents.util';
 
 @Injectable()
 export class WorkflowVersionStepHelpersWorkspaceService {
@@ -49,7 +50,8 @@ export class WorkflowVersionStepHelpersWorkspaceService {
     > = {};
 
     if (steps !== undefined) {
-      updateData.steps = steps;
+      updateData.steps =
+        convertWorkflowEmailBodiesToEmailDocuments(steps).value;
     }
 
     if (trigger !== undefined) {
