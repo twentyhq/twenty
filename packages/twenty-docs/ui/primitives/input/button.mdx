@@ -69,7 +69,9 @@ export const CreateRecord = () => (
 );
 ```
 
-Choose `solid`, `outline`, `soft`, or `ghost` independently of the `neutral`, `accent`, `danger`, or `success` color. Sizes are `sm` and `md`; the defaults are `outline`, `neutral`, and `md`. `fullWidth` fills the available width. `startIcon` and `endIcon` accept elements and are decorative. `elevated` adds a shadow and backdrop blur. Neutral outline buttons also gain a bordered surface with matching text and interaction colors. Other variants and semantic colors keep their existing palette. It defaults to `false` and does not change size or position. `hotkeys` displays keyboard hints on larger screens; bind the shortcuts in your application.
+Choose `solid`, `outline`, `soft`, `ghost`, or `link` independently of the `neutral`, `accent`, `danger`, or `success` color. Sizes are `sm` and `md`; the defaults are `outline`, `neutral`, and `md`. `fullWidth` fills the available width. `startIcon` and `endIcon` accept elements and are decorative. `elevated` adds a shadow and backdrop blur. Neutral outline buttons also gain a bordered surface with matching text and interaction colors. Other variants and semantic colors keep their existing palette. It defaults to `false` and does not change size or position. `hotkeys` displays keyboard hints on larger screens; bind the shortcuts in your application.
+
+`link` uses compact text with no border or filled background. It follows its content height at either size, with a smaller font and narrower padding. Its neutral color uses stronger text on hover. The appearance does not determine semantics: use `onClick` for actions and `href` for navigation.
 
 `disabled`, `loading`, and `soon` prevent activation. Loading keeps the label accessible and preserves the button's width while showing a spinner. Customize the upcoming-feature label with `soonLabel`.
 
@@ -119,7 +121,12 @@ When an icon is itself an action, use `IconButton` or `LightIconButton` and anim
 import { Button } from 'twenty-ui/primitives/input';
 
 export const DocumentationLink = () => (
-  <Button href="https://twenty.com" target="_blank" rel="noreferrer">
+  <Button
+    variant="link"
+    href="https://twenty.com"
+    target="_blank"
+    rel="noreferrer"
+  >
     Read documentation
   </Button>
 );
@@ -128,6 +135,22 @@ export const DocumentationLink = () => (
 `href` renders an anchor with link semantics. The caller can supply its own `render` element or router link. Set `href` and preserve an anchor for navigation; without `href`, preserve a native button. Button derives its semantics without public `nativeButton` or `role` flags. Disabled links cannot activate.
 
 Buttons default to `type="button"`. Set `type="submit"` or `type="reset"` explicitly for forms. Native props, event handlers, refs, and Base UI's `render` prop pass through to the root.
+
+## Migration from ClickToActionLink
+
+Import `Button` from `twenty-ui/primitives/input` and replace `ClickToActionLink` with `Button variant="link"`. Keep `href`, `target`, and `rel` for navigation. Actions without `href` now render a native button with keyboard activation. Native attributes, events, and refs pass through to the root.
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+
+type LogOutProps = { onLogOut: () => void };
+
+export const LogOut = ({ onLogOut }: LogOutProps) => (
+  <Button variant="link" onClick={onLogOut}>
+    Log out
+  </Button>
+);
+```
 
 ## Props
 

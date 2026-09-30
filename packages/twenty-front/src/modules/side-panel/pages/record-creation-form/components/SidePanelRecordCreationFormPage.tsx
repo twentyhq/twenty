@@ -15,6 +15,10 @@ import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { recordCreationFormDraftComponentState } from '@/side-panel/pages/record-creation-form/states/recordCreationFormDraftComponentState';
 import { recordCreationFormRequestComponentState } from '@/side-panel/pages/record-creation-form/states/recordCreationFormRequestComponentState';
 import { SidePanelFooter } from '@/ui/layout/side-panel/components/SidePanelFooter';
+import { useValidationRules } from '@/validation-rules/hooks/useValidationRules';
+import { type DraftValidationRuleViolation } from '@/validation-rules/types/DraftValidationRuleViolation';
+import { buildValidationRuleFieldDescriptors } from '@/validation-rules/utils/buildValidationRuleFieldDescriptors';
+import { computeDraftValidationRuleViolations } from '@/validation-rules/utils/computeDraftValidationRuleViolations';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useState } from 'react';
@@ -34,11 +38,30 @@ const StyledContainer = styled.div`
   height: 100%;
 `;
 
+const StyledValidationRuleError = styled.div`
+  background: ${themeCssVariables.background.danger};
+  border-radius: ${themeCssVariables.border.radius.sm};
+  color: ${themeCssVariables.font.color.danger};
+  font-size: ${themeCssVariables.font.size.sm};
+  padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[3]};
+`;
+
+const StyledValidationRuleErrors = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  gap: ${themeCssVariables.spacing[2]};
+  max-height: 30%;
+  overflow-y: auto;
+  padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[3]};
+`;
+
 const StyledContent = styled.div`
   display: flex;
   flex: 1;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[4]};
+  min-height: 0;
   overflow-y: auto;
   padding: ${themeCssVariables.spacing[4]};
 `;
@@ -83,6 +106,11 @@ const SidePanelRecordCreationForm = ({
     useAtomComponentState(recordCreationFormDraftComponentState);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [validationRuleViolations, setValidationRuleViolations] = useState<
+    DraftValidationRuleViolation[]
+  >([]);
+
+  const { validationRules } = useValidationRules({ objectMetadataId });
   const currentFocusId = useAtomStateValue(currentFocusIdSelector);
 
   const draftRecord = recordCreationFormDraft ?? initialDraftRecord;
@@ -91,23 +119,58 @@ const SidePanelRecordCreationForm = ({
     objectMetadataItem,
   });
 
-  const handleFieldValueChange = (gqlFieldName: string, value: JsonValue) => {
+  const computeViolations = (draftRecordToCheck: Partial<ObjectRecord>) =>
+    computeDraftValidationRuleViolations({
+      validationRules,
+      draftRecord: draftRecordToCheck,
+      fields: buildValidationRuleFieldDescriptors({
+        objectMetadataItem,
+        objectMetadataItems,
+      }),
+      serverFilledFieldNames: objectMetadataItem.fields
+        .filter(
+          (fieldMetadataItem) =>
+            fieldMetadataItem.isSystem ||
+            isDefined(fieldMetadataItem.defaultValue),
+        )
+        .map((fieldMetadataItem) => fieldMetadataItem.name),
+      now: new Date().toISOString(),
+    });
+
+  const updateDraftRecord = (gqlFieldName: string, value: JsonValue) => {
     setRecordCreationFormDraft((previousDraftRecord) => ({
       ...(previousDraftRecord ?? initialDraftRecord),
       [gqlFieldName]: value,
     }));
+
+    if (validationRuleViolations.length > 0) {
+      setValidationRuleViolations(
+        computeViolations({ ...draftRecord, [gqlFieldName]: value }),
+      );
+    }
+  };
+
+  const handleFieldValueChange = (gqlFieldName: string, value: JsonValue) => {
+    updateDraftRecord(gqlFieldName, value);
   };
 
   const handleFieldValueClear = (gqlFieldName: string) => {
-    setRecordCreationFormDraft((previousDraftRecord) => ({
-      ...(previousDraftRecord ?? initialDraftRecord),
-      [gqlFieldName]: null,
-    }));
+    updateDraftRecord(gqlFieldName, null);
   };
 
   const handleCreateClick = async () => {
     if (isSubmitting) {
       return;
+    }
+
+    if (validationRules.length > 0) {
+      const draftViolations = computeViolations(draftRecord);
+
+      setValidationRuleViolations(draftViolations);
+
+      if (draftViolations.length > 0) {
+        return;
+      }
     }
 
     setIsSubmitting(true);
@@ -157,6 +220,15 @@ const SidePanelRecordCreationForm = ({
           onFieldValueClear={handleFieldValueClear}
         />
       </StyledContent>
+      {validationRuleViolations.length > 0 && (
+        <StyledValidationRuleErrors>
+          {validationRuleViolations.map((violation) => (
+            <StyledValidationRuleError key={violation.ruleId} role="alert">
+              {violation.message}
+            </StyledValidationRuleError>
+          ))}
+        </StyledValidationRuleErrors>
+      )}
       <SidePanelFooter
         actions={[
           <Button

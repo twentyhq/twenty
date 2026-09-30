@@ -80,7 +80,6 @@ describe('attach_conversation_to_record tool', () => {
 
     expect(attachThreadToRecord).toHaveBeenCalledWith({
       workspaceId: WORKSPACE_ID,
-      workspaceMemberId: 'member-at-call-time',
       threadId: THREAD_ID,
       objectNameSingular: 'company',
       recordId: RECORD_ID,

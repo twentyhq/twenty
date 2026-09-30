@@ -14,6 +14,7 @@ import { OnboardingCreditsRewardTag } from '@/onboarding/components/import-conta
 import { OnboardingPlanCard } from '@/onboarding/components/upgrade-free-trial/OnboardingPlanCard';
 import { OnboardingTrialExtensionTag } from '@/onboarding/components/upgrade-free-trial/OnboardingTrialExtensionTag';
 import { CAL_LINK } from '@/onboarding/constants/CalLink';
+import { useSetOnboardingUpgradeTrialFreeCredits } from '@/onboarding/hooks/useSetOnboardingUpgradeTrialFreeCredits';
 import { isOnboardingCheckoutPendingState } from '@/onboarding/states/isOnboardingCheckoutPendingState';
 import { useBaseLicensedPriceByPlanKeyAndInterval } from '@/settings/billing/hooks/useBaseLicensedPriceByPlanKeyAndInterval';
 import { useHandleCheckoutSession } from '@/settings/billing/hooks/useHandleCheckoutSession';
@@ -30,8 +31,7 @@ import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Info, MainButton } from 'twenty-ui/components';
 import { Loader } from 'twenty-ui/primitives/feedback';
-import { RadioGroup } from 'twenty-ui/primitives/input';
-import { ClickToActionLink } from 'twenty-ui/primitives/navigation';
+import { Button, RadioGroup } from 'twenty-ui/primitives/input';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme';
 import {
   type Billing,
@@ -96,8 +96,11 @@ const UpgradeFreeTrialSubmitButton = ({
   const setIsOnboardingCheckoutPending = useSetAtomState(
     isOnboardingCheckoutPendingState,
   );
+  const setOnboardingUpgradeTrialFreeCredits =
+    useSetOnboardingUpgradeTrialFreeCredits();
 
   const handleSubmit = () => {
+    setOnboardingUpgradeTrialFreeCredits(true);
     setIsOnboardingCheckoutPending(true);
     void submit();
   };
@@ -157,8 +160,13 @@ const UpgradeFreeTrialContent = ({
   const setIsOnboardingCheckoutPending = useSetAtomState(
     isOnboardingCheckoutPendingState,
   );
+  const setOnboardingUpgradeTrialFreeCredits =
+    useSetOnboardingUpgradeTrialFreeCredits();
 
   const handleCheckoutSessionClick = () => {
+    setOnboardingUpgradeTrialFreeCredits(
+      billingCheckoutSession.requirePaymentMethod,
+    );
     setIsOnboardingCheckoutPending(true);
     void handleCheckoutSession();
   };
@@ -173,6 +181,7 @@ const UpgradeFreeTrialContent = ({
         interval: baseProductPrice.recurringInterval,
         requirePaymentMethod: withCreditCard,
       });
+      setOnboardingUpgradeTrialFreeCredits(withCreditCard);
     }
   };
 
@@ -243,17 +252,18 @@ const UpgradeFreeTrialContent = ({
             >{t`Continue`}</MainButton>
           )}
           <StyledLinkGroup>
-            <ClickToActionLink onClick={signOut}>
+            <Button variant="link" onClick={signOut}>
               <Trans>Log out</Trans>
-            </ClickToActionLink>
+            </Button>
             <span />
-            <ClickToActionLink
+            <Button
+              variant="link"
               href={calendarBookingPageId ? AppPath.BookCall : CAL_LINK}
               target={calendarBookingPageId ? '_self' : '_blank'}
               rel={calendarBookingPageId ? '' : 'noreferrer'}
             >
               <Trans>Book a Call</Trans>
-            </ClickToActionLink>
+            </Button>
           </StyledLinkGroup>
         </StyledFooter>
       </OnboardingStepAnimatedItem>

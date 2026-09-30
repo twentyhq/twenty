@@ -63,6 +63,25 @@ export const WithOverflowCount: Story = {
   },
 };
 
+export const WithRing: Story = {
+  decorators: [ComponentDecorator],
+  render: () => (
+    <AvatarGroup
+      avatars={getAvatars({ shape: 'circle', size: 'lg', ring: true })}
+      maxVisible={5}
+      overlap="left"
+      overlapOffset="4px"
+    />
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await expect(await canvas.findByText('S')).toBeVisible();
+    await expect(canvas.getByText('L')).toBeVisible();
+    await expect(canvas.getAllByText('J')).toHaveLength(2);
+  },
+};
+
 export const Catalog: Story = {
   parameters: {
     a11y: A11Y_DEFER_COLOR_CONTRAST,

@@ -25,6 +25,7 @@ import {
   type EnqueueSnackbarParams,
 } from 'twenty-shared/types';
 
+import { serializePlainTextAsAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializePlainTextAsAdvancedTextEditorDocument';
 import { useOpenAskAiPageWithPreprompt } from '@/ai/hooks/useOpenAskAiPageWithPreprompt';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { useCommandMenuConfirmationModal } from '@/command-menu-item/confirmation-modal/hooks/useCommandMenuConfirmationModal';
@@ -372,7 +373,9 @@ export const useFrontComponentExecutionContext = ({
         isNonEmptyString(params.preprompt.text)
       ) {
         openAskAiPageWithPreprompt({
-          text: params.preprompt.text,
+          serializedDocument: serializePlainTextAsAdvancedTextEditorDocument(
+            params.preprompt.text,
+          ),
           mode: params.preprompt.mode,
           model: params.preprompt.model,
         });

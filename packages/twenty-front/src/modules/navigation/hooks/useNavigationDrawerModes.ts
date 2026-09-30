@@ -7,6 +7,7 @@ import {
   IconSettings,
 } from 'twenty-ui/icon';
 
+import { NAVIGATION_DRAWER_MODE_ORDER } from '@/navigation/constants/NavigationDrawerModeOrder';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import {
   type NavigationDrawerActiveTab,
@@ -36,25 +37,26 @@ export const useNavigationDrawerModes = (): NavigationDrawerMode[] => {
     return [];
   }
 
-  return [
-    {
+  const navigationDrawerModeDisplays: Record<
+    NavigationDrawerActiveTab,
+    Omit<NavigationDrawerMode, 'mode'>
+  > = {
+    [NAVIGATION_DRAWER_TABS.NAVIGATION_MENU]: {
       Icon: IconHome,
       label: t`Home`,
-      mode: NAVIGATION_DRAWER_TABS.NAVIGATION_MENU,
     },
-    ...(hasAiPermission
-      ? [
-          {
-            Icon: IconComment,
-            label: t`AI`,
-            mode: NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY,
-          },
-        ]
-      : []),
-    {
+    [NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY]: {
+      Icon: IconComment,
+      label: t`AI`,
+    },
+    [NAVIGATION_DRAWER_TABS.SETTINGS]: {
       Icon: IconSettings,
       label: t`Settings`,
-      mode: NAVIGATION_DRAWER_TABS.SETTINGS,
     },
-  ];
+  };
+
+  return NAVIGATION_DRAWER_MODE_ORDER.filter(
+    (mode) =>
+      mode !== NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY || hasAiPermission,
+  ).map((mode) => ({ ...navigationDrawerModeDisplays[mode], mode }));
 };

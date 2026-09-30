@@ -30,6 +30,7 @@ export { DATABASE_CRUD_OPERATIONS } from './constants/database-crud-operation.co
 export { DEFAULT_AI_AGENT_MODEL_TIER } from './constants/default-ai-agent-model-tier.const';
 export { DEFAULT_AI_CHAT_MODEL_TIER } from './constants/default-ai-chat-model-tier.const';
 export { JEV_MODEL_ID } from './constants/jev-model-id.const';
+export { PROPOSE_EMAIL_TOOL_NAME } from './constants/propose-email-tool-name.const';
 export { ToolCategory } from './constants/tool-category.const';
 export type { AgentChatSubscriptionEvent } from './types/AgentChatSubscriptionEvent';
 export type {
@@ -56,14 +57,22 @@ export type {
   DataMessagePart,
 } from './types/DataMessagePart';
 export { isExtendedFileUIPart } from './types/DataMessagePart';
+export type { EmailApprovalDecision } from './types/EmailApprovalDecision';
 export type {
   AiChatUsageMetadata,
   AiChatModelMetadata,
   ExtendedUIMessage,
 } from './types/ExtendedUIMessage';
 export type { ExtendedUIMessagePart } from './types/ExtendedUIMessagePart';
+export type { InputAskForm } from './types/InputAskForm';
+export type { InputAskEmailApprovalResponse } from './types/InputAskResponse';
 export type { ModelConfiguration } from './types/ModelConfiguration';
 export type { NavigateAppToolOutput } from './types/NavigateAppToolOutput';
+export type { ProposedEmail } from './types/ProposedEmail';
+export type {
+  ProposeEmailToolStatus,
+  ProposeEmailToolResult,
+} from './types/ProposeEmailToolResult';
 export type { ToolWidgetName, ToolRecordReference } from './types/ToolWidget';
 export {
   RECORDS_TOOL_WIDGET_NAME,
