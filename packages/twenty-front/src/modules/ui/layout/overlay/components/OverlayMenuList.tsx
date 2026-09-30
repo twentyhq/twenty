@@ -1,9 +1,8 @@
+import { DROPDOWN_MENU_ITEMS_CONTAINER_MAX_HEIGHT } from '@/ui/layout/dropdown/constants/DropdownMenuItemsContainerMaxHeight';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { styled } from '@linaria/react';
 import { type ReactNode, type Ref } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme';
-
-const MENU_MAX_HEIGHT = 176;
 
 const StyledContainer = styled.div<{ widthInPixels: number }>`
   display: flex;
@@ -15,7 +14,7 @@ const StyledContainer = styled.div<{ widthInPixels: number }>`
 const StyledScrollableContainer = styled.div`
   box-sizing: border-box;
   display: flex;
-  max-height: ${MENU_MAX_HEIGHT}px;
+  max-height: ${DROPDOWN_MENU_ITEMS_CONTAINER_MAX_HEIGHT}px;
   overflow-y: auto;
   scrollbar-color: ${themeCssVariables.border.color.medium} transparent;
   scrollbar-width: thin;
