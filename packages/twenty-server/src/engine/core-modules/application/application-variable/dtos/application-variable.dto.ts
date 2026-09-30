@@ -10,9 +10,10 @@ import {
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
-const ApplicationVariableScopeEnum = Object.fromEntries(
-  APPLICATION_VARIABLE_SCOPES.map((scope) => [scope, scope]),
-) as { [P in ApplicationVariableScope]: P };
+const ApplicationVariableScopeEnum = {
+  WORKSPACE: 'WORKSPACE',
+  USER: 'USER',
+} as const satisfies { [P in ApplicationVariableScope]: P };
 
 registerEnumType(ApplicationVariableScopeEnum, {
   name: 'ApplicationVariableScope',
