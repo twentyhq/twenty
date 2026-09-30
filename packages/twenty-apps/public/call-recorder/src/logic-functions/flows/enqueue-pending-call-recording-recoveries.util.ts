@@ -4,8 +4,7 @@ import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
 import { type CalendarEventRecord } from 'src/logic-functions/types/calendar-event-record.type';
 import { type CallRecordingRecord } from 'src/logic-functions/types/call-recording-record.type';
-import { enqueuePendingCallRecordingRecoveries } from 'src/logic-functions/data/enqueue-pending-call-recording-recoveries.util';
-import { groupPendingCallRecordingRecoveriesIntoMinuteSlots } from 'src/logic-functions/domain/group-pending-call-recording-recoveries-into-minute-slots.util';
+import { enqueuePendingCallRecordingRecoveryJobs } from 'src/logic-functions/data/enqueue-pending-call-recording-recovery-jobs.util';
 import { hasMeetingEnded } from 'src/logic-functions/domain/has-meeting-ended.util';
 import { fetchCalendarEventsByIds } from 'src/logic-functions/data/fetch-calendar-events-by-ids.util';
 import { findOpenScheduledCallRecordings } from 'src/logic-functions/data/find-open-scheduled-call-recordings.util';
@@ -20,20 +19,19 @@ export const BOT_SCHEDULE_OUTCOME_UNKNOWN_FAILURE_REASON =
 // pass will resolve the row anymore, so keeping it pending only wastes runs.
 const UNRESOLVED_ATTEMPT_MAX_AGE_DAYS = 7;
 
-export type ScheduleRecallBotsForPendingCallRecordingsResult = {
+export type EnqueuePendingCallRecordingRecoveriesResult = {
   enqueuedCallRecordingIds: string[];
   markedFailedCallRecordingIds: string[];
 };
 
-// Resumes a CallRecording inserted before its Recall bot was scheduled.
-export const scheduleRecallBotsForPendingCallRecordings = async ({
+export const enqueuePendingCallRecordingRecoveries = async ({
   client,
   now,
 }: {
   client: CoreApiClient;
   now: Date;
-}): Promise<ScheduleRecallBotsForPendingCallRecordingsResult> => {
-  const result: ScheduleRecallBotsForPendingCallRecordingsResult = {
+}): Promise<EnqueuePendingCallRecordingRecoveriesResult> => {
+  const result: EnqueuePendingCallRecordingRecoveriesResult = {
     enqueuedCallRecordingIds: [],
     markedFailedCallRecordingIds: [],
   };
@@ -87,18 +85,10 @@ export const scheduleRecallBotsForPendingCallRecordings = async ({
     result.enqueuedCallRecordingIds.push(callRecording.id);
   }
 
-  for (const {
-    delayMs,
-    callRecordingIds,
-  } of groupPendingCallRecordingRecoveriesIntoMinuteSlots(
-    result.enqueuedCallRecordingIds,
-  )) {
-    await enqueuePendingCallRecordingRecoveries({
-      callRecordingIds,
-      recoveryDate: now.toISOString().slice(0, 10),
-      delayMs,
-    });
-  }
+  await enqueuePendingCallRecordingRecoveryJobs({
+    callRecordingIds: result.enqueuedCallRecordingIds,
+    recoveryDate: now.toISOString().slice(0, 10),
+  });
 
   return result;
 };
@@ -117,7 +107,7 @@ const resolveEndedPendingCallRecording = async ({
   callRecording: CallRecordingRecord;
   calendarEvent: CalendarEventRecord;
   now: Date;
-  result: ScheduleRecallBotsForPendingCallRecordingsResult;
+  result: EnqueuePendingCallRecordingRecoveriesResult;
 }): Promise<void> => {
   if (isUndefined(callRecording.botScheduleAttemptedAt)) {
     await markCallRecordingFailed({

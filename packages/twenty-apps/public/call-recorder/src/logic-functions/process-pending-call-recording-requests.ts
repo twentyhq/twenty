@@ -8,10 +8,7 @@ import {
   retryFailedRecallCancellations,
   type RetryFailedRecallCancellationsResult,
 } from 'src/logic-functions/flows/retry-failed-recall-cancellations.util';
-import {
-  scheduleRecallBotsForPendingCallRecordings,
-  type ScheduleRecallBotsForPendingCallRecordingsResult,
-} from 'src/logic-functions/flows/schedule-recall-bots-for-pending-call-recordings.util';
+import { enqueuePendingCallRecordingRecoveries } from 'src/logic-functions/flows/enqueue-pending-call-recording-recoveries.util';
 import { asRecord } from 'src/logic-functions/utils/as-record.util';
 import {
   buildRetryableStepFailure,
@@ -42,28 +39,28 @@ export const processPendingCallRecordingRequestsHandler = async (
     }
   }
 
-  const pendingCallRecordingScheduleResult =
-    await scheduleRecallBotsForPendingCallRecordingsSafely(client, now);
+  const pendingCallRecordingRecoveryResult =
+    await enqueuePendingCallRecordingRecoveries({ client, now }).catch(
+      (error: unknown) => ({
+        error: buildRetryableStepFailure(
+          'pending call recording recovery enqueueing',
+          error,
+        ),
+      }),
+    );
   const failedCancellationResult = await retryFailedRecallCancellationsSafely(
     client,
     now,
   );
 
+  if ('error' in pendingCallRecordingRecoveryResult) {
+    throw pendingCallRecordingRecoveryResult.error;
+  }
+
   return {
-    pendingCallRecordingScheduleResult,
+    pendingCallRecordingRecoveryResult,
     failedCancellationResult,
   };
-};
-
-const scheduleRecallBotsForPendingCallRecordingsSafely = async (
-  client: CoreApiClient,
-  now: Date,
-): Promise<ScheduleRecallBotsForPendingCallRecordingsResult | StepFailure> => {
-  try {
-    return await scheduleRecallBotsForPendingCallRecordings({ client, now });
-  } catch (error) {
-    return buildStepFailure('pending Recall bot scheduling', error);
-  }
 };
 
 const retryFailedRecallCancellationsSafely = async (
