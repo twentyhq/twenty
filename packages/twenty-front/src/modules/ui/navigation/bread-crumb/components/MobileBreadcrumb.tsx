@@ -73,9 +73,8 @@ export const MobileBreadcrumb = ({
     );
   }
 
-  const text = isNonEmptyString(previousLink.children)
-    ? previousLink.children
-    : undefined;
+  const text = previousLink.children;
+  const title = isNonEmptyString(text) ? text : undefined;
 
   return (
     <StyledWrapper aria-label={t`Breadcrumb`} className={className}>
@@ -83,15 +82,13 @@ export const MobileBreadcrumb = ({
         <>
           <IconChevronLeft size={theme.icon.size.md} aria-hidden />
           <StyledLinkContainer>
-            <Link title={text} to={previousLink.href}>
-              <Trans>
-                Back to <span>{previousLink.children}</span>
-              </Trans>
+            <Link title={title} to={previousLink.href}>
+              <Trans>Back to {text}</Trans>
             </Link>
           </StyledLinkContainer>
         </>
       ) : (
-        <StyledText title={text}>{previousLink.children}</StyledText>
+        <StyledText title={title}>{text}</StyledText>
       )}
     </StyledWrapper>
   );

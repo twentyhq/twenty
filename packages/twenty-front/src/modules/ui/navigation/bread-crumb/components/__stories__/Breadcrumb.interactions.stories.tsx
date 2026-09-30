@@ -1,4 +1,7 @@
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
+import { setupI18n } from '@lingui/core';
+import { msg } from '@lingui/core/macro';
+import { I18nProvider } from '@lingui/react';
 import { Trans } from '@lingui/react/macro';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { MemoryRouter, useLocation } from 'react-router-dom';
@@ -9,6 +12,12 @@ import {
   overrideMediaQueryMatches,
 } from 'twenty-ui/testing';
 import { MOBILE_MEDIA_QUERY } from 'twenty-ui/utilities';
+import { messages as frenchMessages } from '~/locales/generated/fr-FR';
+
+const frenchI18n = setupI18n({
+  locale: 'fr-FR',
+  messages: { 'fr-FR': frenchMessages },
+});
 
 const CurrentLocation = () => {
   const { pathname } = useLocation();
@@ -152,5 +161,33 @@ export const MobileSettingsRoot: Story = {
     await expect(
       canvas.getByRole('status', { name: 'Current location' }),
     ).toHaveTextContent('/settings/general');
+  },
+};
+
+export const MobileTranslatedBack: Story = {
+  ...MobileSettingsBack,
+  render: (args) => (
+    <I18nProvider i18n={frenchI18n}>
+      <MemoryRouter initialEntries={['/settings/accounts/email']}>
+        <Breadcrumb {...args} />
+        <CurrentLocation />
+      </MemoryRouter>
+    </I18nProvider>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const text = frenchI18n._(msg`Account`);
+    const translatedBackLabel = frenchI18n._(msg`Back to ${text}`);
+
+    await expect(translatedBackLabel).not.toBe(`Back to ${text}`);
+
+    const backLink = await canvas.findByRole('link', {
+      name: translatedBackLabel,
+    });
+
+    await userEvent.click(backLink);
+    await expect(
+      canvas.getByRole('status', { name: 'Current location' }).textContent,
+    ).toBe('/settings/accounts');
   },
 };
