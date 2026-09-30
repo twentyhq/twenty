@@ -315,21 +315,18 @@ export class BillingSubscriptionUpdateService {
         toUpdatePrices: toUpdateCurrentPrices,
       });
 
-      if (isDefined(immediateSubscriptionUpdate)) {
-        await this.applyImmediateSubscriptionUpdate({
-          subscription,
-          subscriptionUpdate: immediateSubscriptionUpdate,
-          currentPrices,
-          toUpdateCurrentPrices,
-        });
-      }
+      const updatedStripeSubscription = isDefined(immediateSubscriptionUpdate)
+        ? await this.applyImmediateSubscriptionUpdate({
+            subscription,
+            subscriptionUpdate: immediateSubscriptionUpdate,
+            currentPrices,
+            toUpdateCurrentPrices,
+          })
+        : undefined;
 
       if (isDefined(nextPhase)) {
         assertIsDefinedOrThrow(schedule);
-        const {
-          subscription: refreshedSubscription,
-          currentPhase: refreshedCurrentPhase,
-        } =
+        const { currentPhase: refreshedCurrentPhase } =
           await this.stripeSubscriptionScheduleService.loadSubscriptionSchedule(
             subscription.stripeSubscriptionId,
           );
@@ -351,7 +348,8 @@ export class BillingSubscriptionUpdateService {
           currentPhase: toPhaseUpdateParams(refreshedCurrentPhase),
           nextPhase: toPhaseUpdateParams(nextPhase),
           subscriptionCurrentPeriodEnd:
-            refreshedSubscription.items.data[0].current_period_end,
+            updatedStripeSubscription?.items.data[0].current_period_end ??
+            Math.floor(subscription.currentPeriodEnd.getTime() / 1000),
         });
       }
     }
@@ -447,14 +445,16 @@ export class BillingSubscriptionUpdateService {
   private async getSubscriptionPricesFromItems(
     items: { price: string | { id: string }; quantity?: number }[],
   ): Promise<SubscriptionStripePrices> {
-    const itemPriceIds = items.map((item) => normalizePriceRef(item.price));
+    const phaseItemPriceIds = items.map((item) =>
+      normalizePriceRef(item.price),
+    );
 
-    const itemPrices = await this.billingPriceRepository.find({
-      where: { stripePriceId: In(itemPriceIds) },
+    const phaseItemPrices = await this.billingPriceRepository.find({
+      where: { stripePriceId: In(phaseItemPriceIds) },
       relations: ['billingProduct'],
     });
 
-    const basePlanPrice = itemPrices.find(
+    const basePlanPrice = phaseItemPrices.find(
       (price) =>
         price.billingProduct?.metadata?.productKey ===
         BillingProductKey.BASE_PRODUCT,
@@ -462,14 +462,14 @@ export class BillingSubscriptionUpdateService {
 
     assertIsDefinedOrThrow(basePlanPrice);
 
-    const basePlanItem = findOrThrow(
+    const basePlanPhaseItem = findOrThrow(
       items,
       (item) => normalizePriceRef(item.price) === basePlanPrice.stripePriceId,
     );
 
-    assertIsDefinedOrThrow(basePlanItem.quantity);
+    assertIsDefinedOrThrow(basePlanPhaseItem.quantity);
 
-    const resourceCreditPrice = itemPrices.find(
+    const resourceCreditPrice = phaseItemPrices.find(
       (price) =>
         price.billingProduct?.metadata?.productKey ===
         BillingProductKey.RESOURCE_CREDIT,
@@ -479,7 +479,7 @@ export class BillingSubscriptionUpdateService {
 
     return {
       baseProductPriceId: basePlanPrice.stripePriceId,
-      seats: basePlanItem.quantity,
+      seats: basePlanPhaseItem.quantity,
       resourceCreditPriceId: resourceCreditPrice.stripePriceId,
     };
   }
@@ -494,7 +494,7 @@ export class BillingSubscriptionUpdateService {
     subscriptionUpdate: SubscriptionUpdate;
     currentPrices: SubscriptionStripePrices;
     toUpdateCurrentPrices: SubscriptionStripePrices;
-  }) {
+  }): Promise<Stripe.Subscription> {
     if (
       subscriptionUpdate.type === SubscriptionUpdateType.RESOURCE_CREDIT_PRICE
     ) {
