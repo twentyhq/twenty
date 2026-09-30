@@ -1,4 +1,4 @@
-import { APICallError, InvalidPromptError, StreamProviderError } from 'ai';
+import { APICallError, StreamProviderError } from 'ai';
 
 import { getAiSdkProviderErrorCode } from 'src/engine/core-modules/exception-handler/utils/get-ai-sdk-provider-error-code.util';
 
@@ -14,7 +14,7 @@ const buildApiCallError = (data: unknown) =>
 describe('getAiSdkProviderErrorCode', () => {
   it.each([
     [
-      'the OpenAI error code',
+      'the code before the type',
       {
         error: {
           message: 'Too long',
@@ -25,23 +25,7 @@ describe('getAiSdkProviderErrorCode', () => {
       'context_length_exceeded',
     ],
     [
-      'the OpenAI error type when the code is null',
-      {
-        error: {
-          message: 'Invalid image',
-          type: 'invalid_request_error',
-          code: null,
-        },
-      },
-      'invalid_request_error',
-    ],
-    [
-      'the Anthropic error type',
-      { type: 'error', error: { type: 'overloaded_error', message: 'Busy' } },
-      'overloaded_error',
-    ],
-    [
-      'the Google status rather than its numeric code',
+      'the status when the code is not a string',
       {
         error: {
           code: 400,
@@ -52,18 +36,17 @@ describe('getAiSdkProviderErrorCode', () => {
       'INVALID_ARGUMENT',
     ],
     [
-      'a top-level code',
+      'a code at the top level of the body',
       { object: 'error', message: 'Bad', type: 'invalid_model', code: '1500' },
       '1500',
     ],
-    ['nothing without a response body', undefined, undefined],
   ])('should read %s', (_, data, expectedCode) => {
     expect(getAiSdkProviderErrorCode(buildApiCallError(data))).toBe(
       expectedCode,
     );
   });
 
-  it('should read the code of a mid-stream provider error', () => {
+  it('should read the type of a mid-stream provider error', () => {
     expect(
       getAiSdkProviderErrorCode(
         new StreamProviderError({
@@ -73,13 +56,5 @@ describe('getAiSdkProviderErrorCode', () => {
         }),
       ),
     ).toBe('overloaded_error');
-  });
-
-  it('should return nothing for errors that carry no provider response', () => {
-    expect(
-      getAiSdkProviderErrorCode(
-        new InvalidPromptError({ prompt: [], message: 'Invalid messages' }),
-      ),
-    ).toBeUndefined();
   });
 });

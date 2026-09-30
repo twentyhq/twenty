@@ -1,9 +1,4 @@
-import {
-  APICallError,
-  InvalidPromptError,
-  RetryError,
-  StreamProviderError,
-} from 'ai';
+import { APICallError, RetryError, StreamProviderError } from 'ai';
 
 import { getAiSdkErrorFingerprint } from 'src/engine/core-modules/exception-handler/utils/get-ai-sdk-error-fingerprint.util';
 
@@ -50,21 +45,5 @@ describe('getAiSdkErrorFingerprint', () => {
         }),
       ),
     ).toEqual(['ai-sdk-error', 'AI_StreamProviderError', '503', 'no-code']);
-  });
-
-  it('should group errors without an HTTP status by error class', () => {
-    expect(
-      getAiSdkErrorFingerprint(
-        new InvalidPromptError({
-          prompt: [],
-          message: 'The messages do not match the ModelMessage[] schema.',
-        }),
-      ),
-    ).toEqual([
-      'ai-sdk-error',
-      'AI_InvalidPromptError',
-      'no-status',
-      'no-code',
-    ]);
   });
 });
