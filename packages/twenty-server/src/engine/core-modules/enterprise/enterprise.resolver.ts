@@ -33,11 +33,19 @@ const SERVER_BINDING_REJECTION_CODES: EnterpriseExceptionCode[] = [
 @Resolver()
 @UseGuards(
   AuthPrincipalGuard({
-    userSession: true,
+    userSession: {
+      standard: true,
+      impersonated: true,
+      playground: true,
+      workspaceAgnostic: false,
+    },
     apiKey: false,
     oauthClient: false,
     application: false,
   }),
+  BillingDisabledGuard,
+  AdminPanelGuard,
+  NoPermissionGuard,
 )
 @UsePipes(ResolverValidationPipe)
 @UseFilters(EnterpriseExceptionFilter, PreventNestToAutoLogGraphqlErrorsFilter)
@@ -65,22 +73,6 @@ export class EnterpriseResolver {
   }
 
   @Query(() => String, { nullable: true })
-  @UseGuards(
-    AuthPrincipalGuard({
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: true,
-        workspaceAgnostic: false,
-      },
-      apiKey: false,
-      oauthClient: false,
-      application: false,
-    }),
-    BillingDisabledGuard,
-    AdminPanelGuard,
-    NoPermissionGuard,
-  )
   async enterprisePortalSession(
     // for existing subscriptions
     @Args('returnUrlPath', { nullable: true }) returnUrlPath?: string,
@@ -89,22 +81,6 @@ export class EnterpriseResolver {
   }
 
   @Query(() => String, { nullable: true })
-  @UseGuards(
-    AuthPrincipalGuard({
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: true,
-        workspaceAgnostic: false,
-      },
-      apiKey: false,
-      oauthClient: false,
-      application: false,
-    }),
-    BillingDisabledGuard,
-    AdminPanelGuard,
-    NoPermissionGuard,
-  )
   async enterpriseCheckoutSession(
     // for new subscriptions
     @Args('billingInterval', { nullable: true }) billingInterval?: string,
@@ -116,43 +92,11 @@ export class EnterpriseResolver {
   }
 
   @Query(() => EnterpriseSubscriptionStatusDTO, { nullable: true })
-  @UseGuards(
-    AuthPrincipalGuard({
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: true,
-        workspaceAgnostic: false,
-      },
-      apiKey: false,
-      oauthClient: false,
-      application: false,
-    }),
-    BillingDisabledGuard,
-    AdminPanelGuard,
-    NoPermissionGuard,
-  )
   async enterpriseSubscriptionStatus(): Promise<EnterpriseSubscriptionStatusDTO | null> {
     return this.enterprisePlanService.getSubscriptionStatus();
   }
 
   @Mutation(() => Boolean)
-  @UseGuards(
-    AuthPrincipalGuard({
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: true,
-        workspaceAgnostic: false,
-      },
-      apiKey: false,
-      oauthClient: false,
-      application: false,
-    }),
-    BillingDisabledGuard,
-    AdminPanelGuard,
-    NoPermissionGuard,
-  )
   async refreshEnterpriseValidityToken(): Promise<boolean> {
     const refreshed = await this.enterprisePlanService.refreshValidityToken();
 
@@ -162,22 +106,6 @@ export class EnterpriseResolver {
   }
 
   @Mutation(() => EnterpriseLicenseInfoDTO)
-  @UseGuards(
-    AuthPrincipalGuard({
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: true,
-        workspaceAgnostic: false,
-      },
-      apiKey: false,
-      oauthClient: false,
-      application: false,
-    }),
-    BillingDisabledGuard,
-    AdminPanelGuard,
-    NoPermissionGuard,
-  )
   async releaseEnterpriseServerBinding(): Promise<EnterpriseLicenseInfoDTO> {
     await this.enterprisePlanService.releaseServerBinding();
 
@@ -191,22 +119,6 @@ export class EnterpriseResolver {
   }
 
   @Mutation(() => EnterpriseLicenseInfoDTO)
-  @UseGuards(
-    AuthPrincipalGuard({
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: true,
-        workspaceAgnostic: false,
-      },
-      apiKey: false,
-      oauthClient: false,
-      application: false,
-    }),
-    BillingDisabledGuard,
-    AdminPanelGuard,
-    NoPermissionGuard,
-  )
   async setEnterpriseKey(
     @Args('enterpriseKey') enterpriseKey: string,
   ): Promise<EnterpriseLicenseInfoDTO> {

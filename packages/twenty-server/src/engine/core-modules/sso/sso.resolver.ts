@@ -37,24 +37,24 @@ import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-module
   SsoGraphqlApiExceptionFilter,
 )
 @UsePipes(ResolverValidationPipe)
-@UseGuards(SettingsPermissionGuard(PermissionFlagType.SECURITY))
+@UseGuards(
+  AuthPrincipalGuard({
+    userSession: {
+      standard: true,
+      impersonated: true,
+      playground: true,
+      workspaceAgnostic: false,
+    },
+    apiKey: true,
+    oauthClient: true,
+    application: true,
+  }),
+  SettingsPermissionGuard(PermissionFlagType.SECURITY),
+  EnterpriseFeaturesEnabledGuard,
+)
 export class SsoResolver {
   constructor(private readonly ssoService: SsoService) {}
 
-  @UseGuards(
-    AuthPrincipalGuard({
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: true,
-        workspaceAgnostic: false,
-      },
-      apiKey: true,
-      oauthClient: true,
-      application: true,
-    }),
-    EnterpriseFeaturesEnabledGuard,
-  )
   @Mutation(() => SetupSsoDTO)
   async createOIDCIdentityProvider(
     @Args('input') setupSsoInput: SetupOidcSsoInput,
@@ -66,20 +66,6 @@ export class SsoResolver {
     );
   }
 
-  @UseGuards(
-    AuthPrincipalGuard({
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: true,
-        workspaceAgnostic: false,
-      },
-      apiKey: true,
-      oauthClient: true,
-      application: true,
-    }),
-    EnterpriseFeaturesEnabledGuard,
-  )
   @Query(() => [FindAvailableSsoIdpDTO])
   async getSSOIdentityProviders(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -87,20 +73,6 @@ export class SsoResolver {
     return this.ssoService.getSsoIdentityProviders(workspaceId);
   }
 
-  @UseGuards(
-    AuthPrincipalGuard({
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: true,
-        workspaceAgnostic: false,
-      },
-      apiKey: true,
-      oauthClient: true,
-      application: true,
-    }),
-    EnterpriseFeaturesEnabledGuard,
-  )
   @Mutation(() => SetupSsoDTO)
   async createSAMLIdentityProvider(
     @Args('input') setupSsoInput: SetupSamlSsoInput,
@@ -112,20 +84,6 @@ export class SsoResolver {
     );
   }
 
-  @UseGuards(
-    AuthPrincipalGuard({
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: true,
-        workspaceAgnostic: false,
-      },
-      apiKey: true,
-      oauthClient: true,
-      application: true,
-    }),
-    EnterpriseFeaturesEnabledGuard,
-  )
   @Mutation(() => DeleteSsoDTO)
   async deleteSSOIdentityProvider(
     @Args('input') { identityProviderId }: DeleteSsoInput,
@@ -137,20 +95,6 @@ export class SsoResolver {
     );
   }
 
-  @UseGuards(
-    AuthPrincipalGuard({
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: true,
-        workspaceAgnostic: false,
-      },
-      apiKey: true,
-      oauthClient: true,
-      application: true,
-    }),
-    EnterpriseFeaturesEnabledGuard,
-  )
   @Mutation(() => EditSsoDTO)
   async editSSOIdentityProvider(
     @Args('input') input: EditSsoInput,

@@ -24,6 +24,15 @@ import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 // lives elsewhere.
 @UsePipes(ResolverValidationPipe)
 @UseFilters(AuthGraphqlApiExceptionFilter)
+@UseGuards(
+  AuthPrincipalGuard({
+    userSession: true,
+    apiKey: false,
+    oauthClient: false,
+    application: false,
+  }),
+  NoPermissionGuard,
+)
 @MetadataResolver()
 export class ApplicationAuthorizationResolver {
   constructor(
@@ -31,15 +40,6 @@ export class ApplicationAuthorizationResolver {
   ) {}
 
   @Query(() => [ApplicationAuthorizationDTO])
-  @UseGuards(
-    AuthPrincipalGuard({
-      userSession: true,
-      apiKey: false,
-      oauthClient: false,
-      application: false,
-    }),
-    NoPermissionGuard,
-  )
   async currentUserApplicationAuthorizations(
     @AuthUser() user: AuthContextUser,
     @AuthWorkspace({ allowUndefined: true }) workspace:
@@ -63,15 +63,6 @@ export class ApplicationAuthorizationResolver {
   }
 
   @Mutation(() => Boolean)
-  @UseGuards(
-    AuthPrincipalGuard({
-      userSession: true,
-      apiKey: false,
-      oauthClient: false,
-      application: false,
-    }),
-    NoPermissionGuard,
-  )
   async revokeApplicationAuthorization(
     @AuthUser() user: AuthContextUser,
     @AuthWorkspace({ allowUndefined: true }) workspace:

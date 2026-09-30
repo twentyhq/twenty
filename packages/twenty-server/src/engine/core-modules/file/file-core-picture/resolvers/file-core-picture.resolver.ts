@@ -55,20 +55,7 @@ export class FileCorePictureResolver {
     deprecationReason:
       'Use createFileUpload with the CorePicture folder and completeWorkspaceLogoUpload, which send the logo straight to file storage.',
   })
-  @UseGuards(
-    AuthPrincipalGuard({
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: true,
-        workspaceAgnostic: false,
-      },
-      apiKey: true,
-      oauthClient: true,
-      application: true,
-    }),
-    SettingsPermissionGuard(PermissionFlagType.WORKSPACE),
-  )
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.WORKSPACE))
   async uploadWorkspaceLogo(
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Args({ name: 'file', type: () => GraphQLUpload })
@@ -90,20 +77,7 @@ export class FileCorePictureResolver {
     deprecationReason:
       'Use createFileUpload with the CorePicture folder and completeWorkspaceMemberProfilePictureUpload, which send the picture straight to file storage.',
   })
-  @UseGuards(
-    AuthPrincipalGuard({
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: true,
-        workspaceAgnostic: false,
-      },
-      apiKey: true,
-      oauthClient: true,
-      application: true,
-    }),
-    UploadProfilePicturePermissionGuard,
-  )
+  @UseGuards(UploadProfilePicturePermissionGuard)
   async uploadWorkspaceMemberProfilePicture(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @Args({ name: 'file', type: () => GraphQLUpload })
@@ -124,20 +98,7 @@ export class FileCorePictureResolver {
   }
 
   @Mutation(() => FileWithSignedUrlDTO)
-  @UseGuards(
-    AuthPrincipalGuard({
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: true,
-        workspaceAgnostic: false,
-      },
-      apiKey: true,
-      oauthClient: true,
-      application: true,
-    }),
-    SettingsPermissionGuard(PermissionFlagType.WORKSPACE),
-  )
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.WORKSPACE))
   async completeWorkspaceLogoUpload(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @Args({ name: 'fileId', type: () => String })
@@ -150,20 +111,7 @@ export class FileCorePictureResolver {
   }
 
   @Mutation(() => FileWithSignedUrlDTO)
-  @UseGuards(
-    AuthPrincipalGuard({
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: true,
-        workspaceAgnostic: false,
-      },
-      apiKey: true,
-      oauthClient: true,
-      application: true,
-    }),
-    UploadProfilePicturePermissionGuard,
-  )
+  @UseGuards(UploadProfilePicturePermissionGuard)
   async completeWorkspaceMemberProfilePictureUpload(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @Args({ name: 'fileId', type: () => String })

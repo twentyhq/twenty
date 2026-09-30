@@ -24,6 +24,15 @@ import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 
 @UsePipes(ResolverValidationPipe)
 @UseFilters(AuthGraphqlApiExceptionFilter)
+@UseGuards(
+  AuthPrincipalGuard({
+    userSession: true,
+    apiKey: false,
+    oauthClient: false,
+    application: false,
+  }),
+  NoPermissionGuard,
+)
 @MetadataResolver()
 @AllowSuspendedWorkspace()
 export class UserSessionResolver {
@@ -33,15 +42,6 @@ export class UserSessionResolver {
   ) {}
 
   @Query(() => [UserSessionDTO])
-  @UseGuards(
-    AuthPrincipalGuard({
-      userSession: true,
-      apiKey: false,
-      oauthClient: false,
-      application: false,
-    }),
-    NoPermissionGuard,
-  )
   async currentUserSessions(
     @AuthUser() user: AuthContextUser,
     @AuthWorkspace({ allowUndefined: true }) workspace:
@@ -73,15 +73,6 @@ export class UserSessionResolver {
   }
 
   @Mutation(() => Boolean)
-  @UseGuards(
-    AuthPrincipalGuard({
-      userSession: true,
-      apiKey: false,
-      oauthClient: false,
-      application: false,
-    }),
-    NoPermissionGuard,
-  )
   async revokeUserSession(
     @AuthUser() user: AuthContextUser,
     @AuthWorkspace({ allowUndefined: true }) workspace:
@@ -151,15 +142,6 @@ export class UserSessionResolver {
   }
 
   @Mutation(() => Int)
-  @UseGuards(
-    AuthPrincipalGuard({
-      userSession: true,
-      apiKey: false,
-      oauthClient: false,
-      application: false,
-    }),
-    NoPermissionGuard,
-  )
   async revokeAllOtherUserSessions(
     @AuthUser() user: AuthContextUser,
     @AuthWorkspace({ allowUndefined: true }) workspace:
