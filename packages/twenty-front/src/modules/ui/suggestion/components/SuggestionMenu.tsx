@@ -16,8 +16,7 @@ import {
 } from 'react';
 
 import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
-import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { OverlayMenuList } from '@/ui/layout/overlay/components/OverlayMenuList';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
 import { SuggestionItemPreviewTooltip } from '@/ui/suggestion/components/SuggestionItemPreviewTooltip';
 import type { SuggestionMenuProps } from '@/ui/suggestion/types/SuggestionMenuProps';
@@ -203,26 +202,24 @@ const SuggestionMenuInner = <TItem,>(
           zIndex: RootStackingContextZIndices.DropdownPortalAboveModal,
         }}
       >
-        <LegacyDropdownContent ref={listContainerRef}>
-          <DropdownMenuItemsContainer hasMaxHeight>
-            {items.map((item, index) => {
-              const isSelected = index === clampedSelectedIndex;
+        <OverlayMenuList ref={listContainerRef}>
+          {items.map((item, index) => {
+            const isSelected = index === clampedSelectedIndex;
 
-              return (
-                <div
-                  key={getItemKey(item)}
-                  id={getSuggestionMenuItemAnchorId(getItemKey(item))}
-                  ref={isSelected ? activeItemRef : null}
-                  onMouseDown={(event) => {
-                    event.preventDefault();
-                  }}
-                >
-                  {renderItem(item, isSelected)}
-                </div>
-              );
-            })}
-          </DropdownMenuItemsContainer>
-        </LegacyDropdownContent>
+            return (
+              <div
+                key={getItemKey(item)}
+                id={getSuggestionMenuItemAnchorId(getItemKey(item))}
+                ref={isSelected ? activeItemRef : null}
+                onMouseDown={(event) => {
+                  event.preventDefault();
+                }}
+              >
+                {renderItem(item, isSelected)}
+              </div>
+            );
+          })}
+        </OverlayMenuList>
       </OverlayContainer>
       {shouldDisplayPreview && (
         <SuggestionItemPreviewTooltip

@@ -33,7 +33,6 @@ export const ALL_METADATA_ENTITY_KEYS = [
   'rowLevelPermissionPredicateGroups',
   // TODO: clarify what really is metadata  (syncable entity?)
   // vs 'core engine entity' or 'broadcastable entity'
-  'agentChatThreads',
   'applications',
 ] as const;
 

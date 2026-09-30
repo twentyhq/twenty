@@ -46,7 +46,10 @@ export const LeftToRight: Story = {
     expect(Math.abs(descriptionBox.left - titleBox.left)).toBeLessThan(1);
     expect(Math.abs(descriptionBox.right - titleBox.right)).toBeLessThan(1);
     const soon = canvas.getByText('Soon');
-    const upcoming = canvas.getByRole('button', { name: /Upcoming action/ });
+    const upcoming = canvas.getByRole('button', {
+      name: 'Upcoming action Soon',
+    });
+    expect(upcoming).toBeDisabled();
     expect(
       soon.getBoundingClientRect().left <
         upcoming.getBoundingClientRect().left +

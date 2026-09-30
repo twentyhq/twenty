@@ -116,8 +116,11 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
     ];
   }
 
-  clone(): WorkspaceSelectQueryBuilder {
-    const cloned = new WorkspaceSelectQueryBuilder(this.alias, this.context);
+  clone(executor?: QueryExecutor): WorkspaceSelectQueryBuilder {
+    const cloned = new WorkspaceSelectQueryBuilder(
+      this.alias,
+      isDefined(executor) ? { ...this.context, executor } : this.context,
+    );
 
     cloned.whereClauses.push(...this.whereClauses);
     cloned.existsFilterClauses.push(

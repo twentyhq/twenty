@@ -1,5 +1,5 @@
 import { AuthWorkspaceMemberId } from 'src/engine/decorators/auth/auth-workspace-member-id.decorator';
-import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
+import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { AgentChatThreadLifecycleService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-lifecycle.service';
 import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
 import { UseFilters, UseGuards, UseInterceptors } from '@nestjs/common';
@@ -22,9 +22,7 @@ import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { AllowSuspendedWorkspace } from 'src/engine/decorators/auth/allow-suspended-workspace.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
-import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { AgentMessageDTO } from 'src/engine/metadata-modules/ai/ai-agent-execution/dtos/agent-message.dto';
 import { type BrowsingContextType } from 'src/engine/metadata-modules/ai/ai-agent/types/browsing-context.type';
 import { AgentChatThreadDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-thread.dto';
@@ -49,8 +47,17 @@ import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 
 @UseGuards(
-  WorkspaceAuthGuard,
-  UserAuthGuard,
+  AuthPrincipalGuard({
+    userSession: {
+      standard: true,
+      impersonated: true,
+      playground: true,
+      workspaceAgnostic: false,
+    },
+    apiKey: false,
+    oauthClient: { withUser: true, withoutUser: false },
+    application: { withUser: true, withoutUser: false },
+  }),
   SettingsPermissionGuard(PermissionFlagType.AI),
 )
 @UseInterceptors(AiGraphqlApiExceptionInterceptor)
@@ -70,18 +77,6 @@ export class AgentChatResolver {
     private readonly turnPreflightService: AgentChatTurnPreflightService,
     private readonly threadLifecycleService: AgentChatThreadLifecycleService,
   ) {}
-
-  @Query(() => [AgentChatThreadDTO])
-  @AllowSuspendedWorkspace()
-  async chatThreads(
-    @AuthWorkspaceMemberId() workspaceMemberId: string,
-    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ) {
-    return this.agentChatService.getThreadsForMember({
-      workspaceMemberId,
-      workspaceId,
-    });
-  }
 
   @Query(() => AgentChatThreadDTO)
   async chatThread(
@@ -187,8 +182,8 @@ export class AgentChatResolver {
       workspace,
     });
 
-    if (isDefined(thread.archivedAt)) {
-      await this.agentChatService.unarchiveThread({
+    if (isDefined(thread.deletedAt)) {
+      await this.agentChatService.restoreThread({
         threadId,
         workspaceMemberId,
         workspaceId: workspace.id,
@@ -321,73 +316,6 @@ export class AgentChatResolver {
     return true;
   }
 
-  @Mutation(() => AgentChatThreadDTO)
-  async renameChatThread(
-    @Args('id', { type: () => UUIDScalarType }) id: string,
-    @Args('title') title: string,
-
-    @AuthWorkspaceMemberId() workspaceMemberId: string,
-    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ): Promise<AgentChatThreadWorkspaceEntity> {
-    return this.agentChatService.updateThreadTitle({
-      threadId: id,
-      workspaceMemberId,
-      workspaceId,
-      title,
-    });
-  }
-
-  @Mutation(() => AgentChatThreadDTO)
-  async archiveChatThread(
-    @Args('id', { type: () => UUIDScalarType }) id: string,
-
-    @AuthWorkspaceMemberId() workspaceMemberId: string,
-    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ): Promise<AgentChatThreadWorkspaceEntity> {
-    const thread = await this.agentChatService.archiveThread({
-      threadId: id,
-      workspaceMemberId,
-      workspaceId,
-    });
-
-    await this.threadLifecycleService.stopArchivedThreads({
-      workspaceId,
-      threadIds: [id],
-    });
-
-    return thread;
-  }
-
-  @Mutation(() => AgentChatThreadDTO)
-  async unarchiveChatThread(
-    @Args('id', { type: () => UUIDScalarType }) id: string,
-
-    @AuthWorkspaceMemberId() workspaceMemberId: string,
-    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ): Promise<AgentChatThreadWorkspaceEntity> {
-    return this.agentChatService.unarchiveThread({
-      threadId: id,
-      workspaceMemberId,
-      workspaceId,
-    });
-  }
-
-  @Mutation(() => Boolean)
-  async deleteChatThread(
-    @Args('id', { type: () => UUIDScalarType }) id: string,
-
-    @AuthWorkspaceMemberId() workspaceMemberId: string,
-    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ): Promise<boolean> {
-    await this.agentChatService.hardDeleteThread({
-      threadId: id,
-      workspaceMemberId,
-      workspaceId,
-    });
-
-    return true;
-  }
-
   @Mutation(() => Boolean)
   async deleteQueuedChatMessage(
     @Args('messageId', { type: () => UUIDScalarType }) messageId: string,
@@ -452,7 +380,7 @@ export class AgentChatResolver {
 
   @ResolveField(() => Date, { nullable: true })
   deletedAt(@Parent() thread: AgentChatThreadWorkspaceEntity): Date | null {
-    return isDefined(thread.archivedAt) ? new Date(thread.archivedAt) : null;
+    return isDefined(thread.deletedAt) ? new Date(thread.deletedAt) : null;
   }
 
   @ResolveField(() => Float)
@@ -463,21 +391,5 @@ export class AgentChatResolver {
   @ResolveField(() => Float)
   totalOutputCredits(@Parent() thread: AgentChatThreadWorkspaceEntity): number {
     return toDisplayCredits(Number(thread.totalOutputCredits));
-  }
-
-  @ResolveField('lastMessageAt', () => Date, { nullable: true })
-  async lastMessageAt(
-    @Parent()
-    thread: AgentChatThreadWorkspaceEntity & { lastMessageAt?: Date | null },
-    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ): Promise<Date | null> {
-    if (thread.lastMessageAt !== undefined) {
-      return thread.lastMessageAt;
-    }
-
-    return this.agentChatService.getLastMessageAtForThread({
-      threadId: thread.id,
-      workspaceId,
-    });
   }
 }

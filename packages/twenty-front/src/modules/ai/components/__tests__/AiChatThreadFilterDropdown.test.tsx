@@ -46,7 +46,7 @@ describe('AiChatThreadFilterDropdown', () => {
 
     await user.click(trigger);
     await user.click(await screen.findByRole('menuitem', { name: /Status/ }));
-    await user.click(await screen.findByRole('button', { name: 'Archived' }));
+    await user.click(await screen.findByRole('button', { name: 'Deleted' }));
 
     expect(store.get(agentChatThreadFilterStatusState.atom)).toBe('archived');
     await waitFor(() =>
@@ -57,7 +57,7 @@ describe('AiChatThreadFilterDropdown', () => {
 
     await user.click(trigger);
     expect(
-      await screen.findByRole('menuitem', { name: /Status Archived/ }),
+      await screen.findByRole('menuitem', { name: /Status Deleted/ }),
     ).toBeVisible();
     await user.click(screen.getByRole('menuitem', { name: 'Clear filters' }));
     expect(store.get(agentChatThreadFilterStatusState.atom)).toBe('active');

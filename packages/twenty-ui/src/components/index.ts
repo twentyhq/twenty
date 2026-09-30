@@ -38,8 +38,6 @@ export type { ToastProviderProps } from './feedback/Toast/types/ToastProviderPro
 export type { ToastVariant } from './feedback/Toast/types/ToastVariant';
 export { Toaster } from './feedback/Toaster/Toaster';
 export type { ToasterProps } from './feedback/Toaster/types/ToasterProps';
-export { CardPicker } from './input/CardPicker/CardPicker';
-export type { CardPickerProps } from './input/CardPicker/types/CardPickerProps';
 export { ColorSchemePicker } from './input/ColorSchemePicker/ColorSchemePicker';
 export type { ColorSchemePickerProps } from './input/ColorSchemePicker/types/ColorSchemePickerProps';
 export { IconButton } from './input/IconButton/IconButton';

@@ -93,12 +93,9 @@ import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { AdminPanelGuard } from 'src/engine/guards/admin-panel-guard';
 import { AdminPanelOrImpersonateGuard } from 'src/engine/guards/admin-panel-or-impersonate.guard';
-import { NoImpersonationGuard } from 'src/engine/guards/no-impersonation.guard';
+import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { ServerLevelImpersonateGuard } from 'src/engine/guards/server-level-impersonate.guard';
-import { RequireUserSessionGuard } from 'src/engine/guards/require-user-session.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
-import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
-import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { MODEL_FAMILY_LABELS } from 'src/engine/metadata-modules/ai/ai-models/constants/model-family-labels.const';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { AiModelTier } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-tier.enum';
@@ -119,9 +116,17 @@ import { getAvailableEfforts } from 'src/engine/metadata-modules/ai/ai-models/ut
   ConfigVariableGraphqlApiExceptionFilter,
 )
 @UseGuards(
-  WorkspaceAuthGuard,
-  UserAuthGuard,
-  RequireUserSessionGuard,
+  AuthPrincipalGuard({
+    userSession: {
+      standard: true,
+      impersonated: true,
+      playground: true,
+      workspaceAgnostic: false,
+    },
+    apiKey: false,
+    oauthClient: false,
+    application: false,
+  }),
   SettingsPermissionGuard(PermissionFlagType.SECURITY),
 )
 export class AdminPanelResolver {
@@ -188,13 +193,39 @@ export class AdminPanelResolver {
     return this.adminStatisticsService.getTopWorkspaces(searchTerm);
   }
 
-  @UseGuards(AdminPanelGuard, NoImpersonationGuard)
+  @UseGuards(
+    AuthPrincipalGuard({
+      userSession: {
+        standard: true,
+        impersonated: false,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: false,
+      oauthClient: false,
+      application: false,
+    }),
+    AdminPanelGuard,
+  )
   @Query(() => [ServerAdminDTO])
   async getServerAdmins(): Promise<ServerAdminDTO[]> {
     return this.adminServerAdminService.getServerAdmins();
   }
 
-  @UseGuards(AdminPanelGuard, NoImpersonationGuard)
+  @UseGuards(
+    AuthPrincipalGuard({
+      userSession: {
+        standard: true,
+        impersonated: false,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: false,
+      oauthClient: false,
+      application: false,
+    }),
+    AdminPanelGuard,
+  )
   @Mutation(() => ServerAdminDTO)
   async updateServerAdminAccess(
     @Args() input: UpdateServerAdminAccessInput,

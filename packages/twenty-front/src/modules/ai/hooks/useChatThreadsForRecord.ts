@@ -9,14 +9,8 @@ import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { getActivityTargetsFilter } from '@/activities/utils/getActivityTargetsFilter';
 import { type AgentChatThreadTargetRecord } from '@/ai/types/AgentChatThreadTargetRecord';
 import { sortChatThreadsByLastActivityDesc } from '@/ai/utils/sortChatThreadsByLastActivityDesc';
-import { useListenToMetadataOperationBrowserEvent } from '@/browser-event/hooks/useListenToMetadataOperationBrowserEvent';
 import { useListenToObjectRecordOperationBrowserEvent } from '@/browser-event/hooks/useListenToObjectRecordOperationBrowserEvent';
-import { type MetadataOperation } from '@/browser-event/types/MetadataOperation';
-import { type MetadataOperationBrowserEventDetail } from '@/browser-event/types/MetadataOperationBrowserEventDetail';
-import { type FlatAgentChatThread } from '@/metadata-store/types/FlatAgentChatThread';
-import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { getObjectTypename } from '@/object-record/cache/utils/getObjectTypename';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useObjectMorphJunctionConfig } from '@/object-record/record-field/ui/hooks/useObjectMorphJunctionConfig';
 import { type ObjectRecordOperation } from '@/object-record/types/ObjectRecordOperation';
@@ -35,7 +29,7 @@ const CHAT_THREADS_FOR_RECORD_ORDER_BY: RecordGqlOperationOrderBy = [
 const CHAT_THREADS_FOR_RECORD_GQL_FIELDS = {
   id: true,
   threadId: true,
-  thread: { id: true, title: true, archivedAt: true, updatedAt: true },
+  thread: { id: true, title: true, deletedAt: true, updatedAt: true },
 };
 
 // A link's record event carries its columns but not its conversation, so a
@@ -45,14 +39,21 @@ const LINK_OPERATION_TYPES: ObjectRecordOperation['type'][] = [
   'create-many',
 ];
 
-const THREAD_OPERATION_TYPES: MetadataOperation<FlatAgentChatThread>['type'][] =
-  ['update', 'delete'];
+// Title and activity changes reach the listed conversations through the
+// record cache; these change which conversations the page holds.
+const THREAD_OPERATION_TYPES: ObjectRecordOperation['type'][] = [
+  'delete-one',
+  'delete-many',
+  'restore-one',
+  'restore-many',
+  'destroy-one',
+  'destroy-many',
+];
 
 export const useChatThreadsForRecord = ({
   id,
   targetObjectNameSingular,
 }: TargetRecordIdentifier) => {
-  const apolloCoreClient = useApolloCoreClient();
   const { objectMetadataItems } = useObjectMetadataItems();
   const junctionConfig = useObjectMorphJunctionConfig({
     objectNameSingular: CoreObjectNameSingular.AgentChatThread,
@@ -100,20 +101,20 @@ export const useChatThreadsForRecord = ({
     skip: !isRecordLinkable,
   });
 
-  const handleLinkCreated = useCallback(() => {
+  const refetchLinks = useCallback(() => {
     void refetch();
   }, [refetch]);
 
   useListenToObjectRecordOperationBrowserEvent({
-    onObjectRecordOperationBrowserEvent: handleLinkCreated,
+    onObjectRecordOperationBrowserEvent: refetchLinks,
     objectMetadataItemId: junctionConfig?.junctionObjectMetadata.id,
     operationTypes: LINK_OPERATION_TYPES,
     enabled: isRecordLinkable,
   });
 
   // A custom object leg carries no unique index, so a conversation can be
-  // linked to the record more than once. Sorted here too, as an update patched
-  // in from the chat's broadcast does not reorder the fetched page.
+  // linked to the record more than once. Sorted here too, as an update to a
+  // listed conversation does not reorder the fetched page.
   const threads = sortChatThreadsByLastActivityDesc(
     uniqBy(links.map(({ thread }) => thread).filter(isDefined), 'id'),
   );
@@ -121,59 +122,16 @@ export const useChatThreadsForRecord = ({
   const getLinkIdsToThread = (threadId: string) =>
     links.filter((link) => link.threadId === threadId).map(({ id }) => id);
 
-  // Conversations are renamed, archived and deleted through the chat API,
-  // which emits no record event, so its broadcast updates them here.
-  const handleThreadOperation = useCallback(
-    ({
-      operation,
-    }: MetadataOperationBrowserEventDetail<FlatAgentChatThread>) => {
-      if (operation.type === 'create') {
-        return;
-      }
+  const chatObjectMetadataItemId = objectMetadataItems.find(
+    ({ nameSingular }) =>
+      nameSingular === CoreObjectNameSingular.AgentChatThread,
+  )?.id;
 
-      const threadId =
-        operation.type === 'delete'
-          ? operation.deletedRecordId
-          : operation.updatedRecord.id;
-      const isThreadListed = links.some((link) => link.threadId === threadId);
-
-      if (operation.type === 'update' && isThreadListed) {
-        const { updatedRecord } = operation;
-
-        apolloCoreClient.cache.modify({
-          id: apolloCoreClient.cache.identify({
-            __typename: getObjectTypename(
-              CoreObjectNameSingular.AgentChatThread,
-            ),
-            id: updatedRecord.id,
-          }),
-          fields: {
-            title: () => updatedRecord.title ?? null,
-            archivedAt: () => updatedRecord.deletedAt ?? null,
-            updatedAt: () => updatedRecord.updatedAt,
-          },
-        });
-
-        return;
-      }
-
-      // A conversation past the page can move into it once it is updated.
-      const shouldRefetch =
-        operation.type === 'delete'
-          ? isThreadListed
-          : links.length >= CHAT_THREADS_FOR_RECORD_PAGE_SIZE;
-
-      if (shouldRefetch) {
-        void refetch();
-      }
-    },
-    [apolloCoreClient, links, refetch],
-  );
-
-  useListenToMetadataOperationBrowserEvent<FlatAgentChatThread>({
-    metadataName: 'agentChatThread',
+  useListenToObjectRecordOperationBrowserEvent({
+    onObjectRecordOperationBrowserEvent: refetchLinks,
+    objectMetadataItemId: chatObjectMetadataItemId,
     operationTypes: THREAD_OPERATION_TYPES,
-    onMetadataOperationBrowserEvent: handleThreadOperation,
+    enabled: isRecordLinkable && isDefined(chatObjectMetadataItemId),
   });
 
   return { threads, getLinkIdsToThread, loading, error, refetch };

@@ -3,6 +3,5 @@ declare const classNames: {
   readonly track: 'track';
   readonly indicator: 'indicator';
   readonly glint: 'glint';
-  readonly countdown: 'countdown';
 };
 export default classNames;

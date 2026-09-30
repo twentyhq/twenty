@@ -14,8 +14,6 @@ export type IconButtonProps = Omit<
   | 'endIcon'
   | 'hotkeys'
   | 'fullWidth'
-  | 'soon'
-  | 'soonLabel'
 > & {
   size?: IconButtonSize;
   shape?: 'square' | 'round';
