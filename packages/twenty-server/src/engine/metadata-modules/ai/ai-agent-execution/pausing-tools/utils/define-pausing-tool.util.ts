@@ -24,7 +24,6 @@ export const definePausingTool = <
     const outputSchema = definition.outputSchema(input);
 
     return {
-      buildAsk: () => definition.buildAsk(input),
       toSkippedToolResult: () => definition.toSkippedToolResult(input),
       validate: (output) => {
         const parsedOutput = outputSchema.safeParse(output);

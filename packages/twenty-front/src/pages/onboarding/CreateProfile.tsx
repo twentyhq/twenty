@@ -1,9 +1,9 @@
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
-import { onboardingConfigState } from '@/client-config/states/onboardingConfigState';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { OnboardingProfilePictureUploader } from '@/onboarding/components/OnboardingProfilePictureUploader';
+import { OnboardingRewardMainButton } from '@/onboarding/components/OnboardingRewardMainButton';
 import { OnboardingStepAnimatedItem } from '@/onboarding/components/OnboardingStepAnimatedItem';
 import { StyledOnboardingStepHeading } from '@/onboarding/components/StyledOnboardingStepHeading';
 import { StyledOnboardingStepPage } from '@/onboarding/components/StyledOnboardingStepPage';
@@ -13,6 +13,8 @@ import { ONBOARDING_CONTENT_BLOCK_WIDTH } from '@/onboarding/constants/Onboardin
 import { usePrefetchInviteSuggestions } from '@/onboarding/hooks/usePrefetchInviteSuggestions';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
 import { useSetOnboardingStepFreeCredits } from '@/onboarding/hooks/useSetOnboardingStepFreeCredits';
+import { onboardingCreateProfileDraftState } from '@/onboarding/states/onboardingCreateProfileDraftState';
+import { onboardingCreditsProgressSelector } from '@/onboarding/states/selectors/onboardingCreditsProgressSelector';
 import { useUpdateWorkspaceMemberSettings } from '@/settings/profile/hooks/useUpdateWorkspaceMemberSettings';
 import { PageFocusId } from '@/types/PageFocusId';
 import { TextInput } from '@/ui/input/components/TextInput';
@@ -24,11 +26,12 @@ import { styled } from '@linaria/react';
 import { i18n } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
+import { useStore } from 'jotai';
 import { useCallback, useState } from 'react';
 import { Controller, type SubmitHandler, useForm } from 'react-hook-form';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
-import { MainButton, useToast } from 'twenty-ui/components';
+import { useToast } from 'twenty-ui/components';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme';
 import { z } from 'zod';
 
@@ -88,9 +91,17 @@ export const CreateProfile = () => {
 
   const { enqueueToast } = useToast();
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
-  const currentUser = useAtomStateValue(currentUserState);
+  const store = useStore();
+  const onboardingCreditsProgress = useAtomStateValue(
+    onboardingCreditsProgressSelector,
+  );
+  const setOnboardingCreateProfileDraft = useSetAtomState(
+    onboardingCreateProfileDraftState,
+  );
+  const [initialCreateProfileDraft] = useState(() =>
+    store.get(onboardingCreateProfileDraftState.atom),
+  );
   const setCurrentUser = useSetAtomState(currentUserState);
-  const onboardingConfig = useAtomStateValue(onboardingConfigState);
   const setCurrentWorkspaceMembers = useSetAtomState(
     currentWorkspaceMembersState,
   );
@@ -101,16 +112,29 @@ export const CreateProfile = () => {
   const {
     control,
     handleSubmit,
+    getValues,
     formState: { isValid, isSubmitting },
   } = useForm<Form>({
     mode: 'onChange',
     defaultValues: {
-      firstName: currentWorkspaceMember?.name?.firstName ?? '',
-      lastName: currentWorkspaceMember?.name?.lastName ?? '',
+      firstName:
+        initialCreateProfileDraft?.firstName ??
+        currentWorkspaceMember?.name?.firstName ??
+        '',
+      lastName:
+        initialCreateProfileDraft?.lastName ??
+        currentWorkspaceMember?.name?.lastName ??
+        '',
       jobTitle: currentWorkspaceMember?.jobTitle ?? '',
     },
     resolver: zodResolver(validationSchema),
   });
+
+  const setCreateProfileDraftFromForm = () =>
+    setOnboardingCreateProfileDraft({
+      firstName: getValues('firstName'),
+      lastName: getValues('lastName'),
+    });
 
   const onSubmit: SubmitHandler<Form> = useCallback(
     async (data) => {
@@ -163,9 +187,8 @@ export const CreateProfile = () => {
 
         setOnboardingStepFreeCredits(
           'createProfile',
-          currentUser?.isWorkspaceCreator
-            ? (onboardingConfig?.createProfileCreditsReward ?? 0)
-            : 0,
+          store.get(onboardingCreditsProgressSelector.atom).rewardCreditsByStep
+            .createProfile,
         );
         setNextOnboardingStatus({ stepHistoryEffect: 'recordAsReversible' });
         setIsNavigating(true);
@@ -176,8 +199,7 @@ export const CreateProfile = () => {
     },
     [
       currentWorkspaceMember?.id,
-      currentUser?.isWorkspaceCreator,
-      onboardingConfig?.createProfileCreditsReward,
+      store,
       setNextOnboardingStatus,
       setOnboardingStepFreeCredits,
       enqueueToast,
@@ -203,7 +225,7 @@ export const CreateProfile = () => {
   });
 
   return (
-    <StyledOnboardingStepPage>
+    <StyledOnboardingStepPage data-testid="onboarding-create-profile-step">
       <StyledOnboardingStepHeading>
         <OnboardingStepAnimatedItem index={0}>
           <StyledOnboardingStepTitle>{t`Create profile`}</StyledOnboardingStepTitle>
@@ -240,7 +262,10 @@ export const CreateProfile = () => {
                       onBlur();
                       setIsEditingMode(false);
                     }}
-                    onChange={onChange}
+                    onChange={(firstName) => {
+                      onChange(firstName);
+                      setCreateProfileDraftFromForm();
+                    }}
                     placeholder={t`Tim`}
                     error={error?.message}
                     fullWidth
@@ -264,7 +289,10 @@ export const CreateProfile = () => {
                       onBlur();
                       setIsEditingMode(false);
                     }}
-                    onChange={onChange}
+                    onChange={(lastName) => {
+                      onChange(lastName);
+                      setCreateProfileDraftFromForm();
+                    }}
                     placeholder={t`Apple`}
                     error={error?.message}
                     fullWidth
@@ -296,11 +324,14 @@ export const CreateProfile = () => {
 
       <OnboardingStepAnimatedItem index={3}>
         <StyledButtonContainer>
-          <MainButton
-            onClick={handleSubmit(onSubmit)}
+          <OnboardingRewardMainButton
+            label={t`Continue`}
+            creditsReward={
+              onboardingCreditsProgress.rewardCreditsByStep.createProfile
+            }
             disabled={!isValid || isSubmitting || isNavigating}
-            fullWidth
-          >{t`Continue`}</MainButton>
+            onClick={handleSubmit(onSubmit)}
+          />
         </StyledButtonContainer>
       </OnboardingStepAnimatedItem>
     </StyledOnboardingStepPage>

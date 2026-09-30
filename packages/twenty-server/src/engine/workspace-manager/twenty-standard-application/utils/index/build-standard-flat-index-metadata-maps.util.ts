@@ -1,4 +1,3 @@
-import { buildInputAskStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-input-ask-standard-flat-index-metadata.util';
 import { buildCampaignDeliveryStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-campaign-delivery-standard-flat-index-metadata.util';
 import { buildMessageSuppressionStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-message-suppression-standard-flat-index-metadata.util';
 import { buildAgentTurnEvaluationStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-agent-turn-evaluation-standard-flat-index-metadata.util';
@@ -92,7 +91,6 @@ const STANDARD_FLAT_INDEX_METADATA_BUILDERS_BY_OBJECT_NAME = {
   workflowRun: buildWorkflowRunStandardFlatIndexMetadatas,
   workflowVersion: buildWorkflowVersionStandardFlatIndexMetadatas,
   workspaceMember: buildWorkspaceMemberStandardFlatIndexMetadatas,
-  inputAsk: buildInputAskStandardFlatIndexMetadatas,
 } satisfies {
   [P in AllStandardObjectName]?: StandardIndexBuilder<P>;
 };

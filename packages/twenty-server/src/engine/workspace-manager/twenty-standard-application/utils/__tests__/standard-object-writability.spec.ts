@@ -68,39 +68,4 @@ describe('Standard object writability', () => {
     );
     expect([...otherWritabilities]).toEqual([MetadataWritability.OPEN]);
   });
-
-  it('lets the API write only the assignee of an Ask', () => {
-    const inputAskObjectMetadata = standardFlatObjectMetadatas.find(
-      (flatObjectMetadata) => flatObjectMetadata.nameSingular === 'inputAsk',
-    );
-
-    const writableFieldNames = Object.values(
-      allFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier,
-    )
-      .filter(isDefined)
-      .filter(
-        (flatFieldMetadata) =>
-          flatFieldMetadata.objectMetadataId === inputAskObjectMetadata?.id &&
-          flatFieldMetadata.writability !== MetadataWritability.SYSTEM,
-      )
-      .map((flatFieldMetadata) => flatFieldMetadata.name);
-
-    const gatedFieldNames = [
-      'status',
-      'response',
-      'answeredAt',
-      'form',
-      'workflowRun',
-      'thread',
-      'stepId',
-      'toolCallId',
-    ];
-
-    expect(writableFieldNames).toContain('assignee');
-    expect(
-      writableFieldNames.filter((fieldName) =>
-        gatedFieldNames.includes(fieldName),
-      ),
-    ).toEqual([]);
-  });
 });

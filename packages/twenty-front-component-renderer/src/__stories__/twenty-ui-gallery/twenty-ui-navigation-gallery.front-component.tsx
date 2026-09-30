@@ -7,7 +7,6 @@ import {
   MenuItemSuggestion,
   MenuPicker,
   NavigationBar,
-  RoundedLink,
 } from 'twenty-ui/components';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { IconHome, IconUser } from 'twenty-ui/icon';
@@ -171,10 +170,6 @@ const NAVIGATION_ENTRIES: GalleryEntry[] = [
         ]}
       />
     ),
-  },
-  {
-    name: 'RoundedLink',
-    node: <RoundedLink href="https://twenty.com" label="Rounded link" />,
   },
 ];
 

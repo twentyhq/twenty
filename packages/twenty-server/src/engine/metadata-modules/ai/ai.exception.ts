@@ -17,6 +17,8 @@ export enum AiExceptionCode {
   INVALID_CHAT_THREAD_TITLE = 'INVALID_CHAT_THREAD_TITLE',
   MESSAGE_NOT_FOUND = 'MESSAGE_NOT_FOUND',
   INVALID_TOOL_CALL_OUTPUT = 'INVALID_TOOL_CALL_OUTPUT',
+  TOOL_CALL_NOT_FOUND = 'TOOL_CALL_NOT_FOUND',
+  TOOL_CALL_NOT_PENDING = 'TOOL_CALL_NOT_PENDING',
   API_KEY_NOT_CONFIGURED = 'API_KEY_NOT_CONFIGURED',
   USER_WORKSPACE_ID_NOT_FOUND = 'USER_WORKSPACE_ID_NOT_FOUND',
   ROLE_NOT_FOUND = 'ROLE_NOT_FOUND',
@@ -59,6 +61,10 @@ const getAiExceptionUserFriendlyMessage = (code: AiExceptionCode) => {
       return msg`Chat message not found.`;
     case AiExceptionCode.INVALID_TOOL_CALL_OUTPUT:
       return msg`Invalid answer for this request.`;
+    case AiExceptionCode.TOOL_CALL_NOT_FOUND:
+      return msg`This request for input could not be found.`;
+    case AiExceptionCode.TOOL_CALL_NOT_PENDING:
+      return msg`This request is no longer waiting for an answer.`;
     case AiExceptionCode.API_KEY_NOT_CONFIGURED:
       return msg`API key is not configured.`;
     case AiExceptionCode.USER_WORKSPACE_ID_NOT_FOUND:

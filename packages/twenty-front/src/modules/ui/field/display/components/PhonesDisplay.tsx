@@ -5,7 +5,7 @@ import { styled } from '@linaria/react';
 import { parsePhoneNumber } from 'libphonenumber-js';
 import React, { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { RoundedLink } from 'twenty-ui/components';
+import { RoundedLink } from '@/ui/navigation/link/components/RoundedLink/RoundedLink';
 
 type PhonesDisplayProps = {
   value?: FieldPhonesValue;

@@ -22,13 +22,6 @@ const buildContext = (toolOutput: Record<string, unknown>) => ({
 });
 
 describe('PROPOSE_EMAIL_PAUSING_TOOL', () => {
-  it('asks for approval of the proposed email, named after its subject', () => {
-    expect(parseCall().buildAsk()).toEqual({
-      name: 'Your renewal',
-      form: { kind: 'emailApproval', email: PROPOSED_EMAIL },
-    });
-  });
-
   it.each([
     ['an unknown decision', { decision: 'forward' }],
     [
