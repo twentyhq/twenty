@@ -28,7 +28,8 @@ export const canUpdateWorkflowRunStep = ({
 
   if (
     existingStep?.type !== WorkflowActionType.FORM ||
-    step.type !== WorkflowActionType.FORM
+    step.type !== WorkflowActionType.FORM ||
+    !Array.isArray(step.settings?.input)
   ) {
     return false;
   }
