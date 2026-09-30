@@ -3,9 +3,11 @@
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 
 import { t } from '@lingui/core/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { Dropdown } from 'twenty-ui/components';
 import { IconUserCircle, useIcons } from 'twenty-ui/icon';
+import { Field } from 'twenty-ui/primitives/input';
 import {
   CoreObjectNameSingular,
   FieldMetadataType,
@@ -250,22 +252,24 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelec
           <Dropdown.Title>{headerText}</Dropdown.Title>
           <Dropdown.Close aria-label={t`Close`} />
         </Dropdown.Header>
-        <Dropdown.Search
-          value={searchInput}
-          placeholder={placeholderText}
-          aria-label={placeholderText}
-          onValueChange={setSearchInput}
-        />
+        <Field.Root>
+          <Dropdown.Search
+            value={searchInput}
+            placeholder={placeholderText}
+            aria-label={placeholderText}
+            onValueChange={setSearchInput}
+          />
+        </Field.Root>
         <Dropdown.Section>
           {filteredMenuItems.map((item) => (
             <Dropdown.OptionItem
               key={item.id}
-              selected={false}
-              indicator="none"
               startIcon={
                 <SelectOptionIcon
                   Icon={
-                    isDefined(item.icon) ? getIcon(item.icon) : IconUserCircle
+                    isNonEmptyString(item.icon)
+                      ? getIcon(item.icon)
+                      : IconUserCircle
                   }
                 />
               }

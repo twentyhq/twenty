@@ -1,45 +1,37 @@
 /* @license Enterprise */
 
+import { t } from '@lingui/core/macro';
 import {
   FieldMetadataType,
   compositeTypeDefinitions,
 } from 'twenty-shared/types';
-import { getFilterTypeFromFieldType, isDefined } from 'twenty-shared/utils';
+import { getFilterTypeFromFieldType } from 'twenty-shared/utils';
 import { Dropdown } from 'twenty-ui/components';
 import { useIcons } from 'twenty-ui/icon';
 
-import { useAdvancedFilterFieldSelectDropdown } from '@/object-record/advanced-filter/hooks/useAdvancedFilterFieldSelectDropdown';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { useApplyAdvancedFilterCompositeSubField } from '@/object-record/advanced-filter/hooks/useApplyAdvancedFilterCompositeSubField';
-import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
 import { getCompositeSubFieldLabel } from '@/object-record/object-filter-dropdown/utils/getCompositeSubFieldLabel';
 import { isCompositeFilterableFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFilterableFieldType';
 import { ICON_NAME_BY_SUB_FIELD } from '@/object-record/record-filter/constants/IconNameBySubField';
 import { SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS } from '@/settings/data-model/constants/SettingsCompositeFieldTypeConfigs';
 import { type CompositeFieldSubFieldName } from '@/settings/data-model/types/CompositeFieldSubFieldName';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
-import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 
 type SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectSubFieldMenuProps =
   {
     recordFilterId: string;
+    fieldMetadataItem: FieldMetadataItem;
   };
 
 export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectSubFieldMenu =
   ({
     recordFilterId,
+    fieldMetadataItem,
   }: SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectSubFieldMenuProps) => {
     const { getIcon } = useIcons();
-    const fieldMetadataItem = useAtomComponentSelectorValue(
-      fieldMetadataItemUsedInDropdownComponentSelector,
-    );
-    const { closeAdvancedFilterFieldSelectDropdown } =
-      useAdvancedFilterFieldSelectDropdown(recordFilterId);
     const { applyAdvancedFilterCompositeSubField } =
       useApplyAdvancedFilterCompositeSubField();
-
-    if (!isDefined(fieldMetadataItem)) {
-      return null;
-    }
 
     const filterType = getFilterTypeFromFieldType(fieldMetadataItem.type);
 
@@ -67,20 +59,20 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectS
         subFieldName,
         recordFilterId,
       });
-      closeAdvancedFilterFieldSelectDropdown();
     };
 
     return (
       <>
-        <Dropdown.Back>{fieldMetadataItem.label}</Dropdown.Back>
+        <Dropdown.Back
+          aria-label={t`${fieldMetadataItem.label}, back to fields`}
+        >
+          {fieldMetadataItem.label}
+        </Dropdown.Back>
         <Dropdown.Section>
           {subFields.map(({ subFieldName }) => (
-            <Dropdown.OptionItem
+            <Dropdown.ActionItem
               key={subFieldName}
-              selected={false}
-              indicator="none"
-              closeOnSelect={false}
-              onSelect={() => handleSelectFilter(subFieldName)}
+              onClick={() => handleSelectFilter(subFieldName)}
               startIcon={
                 <SelectOptionIcon
                   Icon={getIcon(
@@ -91,7 +83,7 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectS
               }
             >
               {getCompositeSubFieldLabel(filterType, subFieldName)}
-            </Dropdown.OptionItem>
+            </Dropdown.ActionItem>
           ))}
         </Dropdown.Section>
       </>

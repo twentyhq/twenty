@@ -56,7 +56,7 @@ export const SelectMeAndResetSearch: Story = {
     const canvas = within(canvasElement);
     const body = within(canvasElement.ownerDocument.body);
     await userEvent.click(
-      await canvas.findByRole('button', { name: 'Workspace members' }),
+      await canvas.findByRole('button', { name: 'Select' }),
     );
     const dialog = await body.findByRole('dialog', {
       name: 'Select workspace members',
@@ -82,9 +82,7 @@ export const SelectMeAndResetSearch: Story = {
     await userEvent.type(search, 'missing-member');
     await userEvent.keyboard('{Escape}');
     await waitFor(() => expect(dialog).not.toBeInTheDocument());
-    await userEvent.click(
-      canvas.getByRole('button', { name: 'Workspace members' }),
-    );
+    await userEvent.click(canvas.getByRole('button', { name: 'Me' }));
     const reopened = within(
       await body.findByRole('dialog', { name: 'Select workspace members' }),
     );
@@ -117,7 +115,7 @@ export const Readonly: Story = {
     const canvas = within(canvasElement);
     expect(await canvas.findByText('Me')).toBeVisible();
     expect(
-      canvas.queryByRole('button', { name: 'Workspace members' }),
+      canvas.queryByRole('button', { name: 'Me' }),
     ).not.toBeInTheDocument();
   },
 };
@@ -141,7 +139,7 @@ export const LoadingPreventsSelection: Story = {
     const canvas = within(canvasElement);
     const body = within(canvasElement.ownerDocument.body);
     await userEvent.click(
-      await canvas.findByRole('button', { name: 'Workspace members' }),
+      await canvas.findByRole('button', { name: 'Select' }),
     );
     const dropdown = within(
       await body.findByRole('dialog', { name: 'Select workspace members' }),

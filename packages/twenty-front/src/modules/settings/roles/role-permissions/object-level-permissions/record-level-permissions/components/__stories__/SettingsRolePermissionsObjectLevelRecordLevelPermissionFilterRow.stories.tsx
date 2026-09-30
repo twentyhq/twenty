@@ -106,7 +106,7 @@ const PermissionFilterStory = () => {
       >
         <AdvancedFilterContext.Provider value={{ objectMetadataItem }}>
           <StyledContainer
-            onKeyDown={(event) => {
+            onKeyDownCapture={(event) => {
               if (event.key === 'F2') {
                 event.preventDefault();
                 store.set(filtersState, [
@@ -157,7 +157,9 @@ export const CompositeFieldPage: Story = {
     ).not.toBeInTheDocument();
     await userEvent.click(dropdown.getByRole('button', { name: 'Address' }));
     expect(await dropdown.findByRole('button', { name: 'City' })).toBeVisible();
-    await userEvent.click(dropdown.getByRole('button', { name: 'Address' }));
+    await userEvent.click(
+      dropdown.getByRole('button', { name: 'Address, back to fields' }),
+    );
     expect(
       await dropdown.findByRole('searchbox', { name: 'Search fields' }),
     ).toHaveFocus();

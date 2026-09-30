@@ -4,15 +4,11 @@ import { useAdvancedFilterFieldSelectDropdown } from '@/object-record/advanced-f
 import { useApplyAdvancedFilterSourceField } from '@/object-record/advanced-filter/hooks/useApplyAdvancedFilterSourceField';
 import { usePushFocusForLeafFieldValuePicker } from '@/object-record/advanced-filter/hooks/usePushFocusForLeafFieldValuePicker';
 import { AdvancedFilterContext } from '@/object-record/advanced-filter/states/context/AdvancedFilterContext';
-import { fieldMetadataItemIdUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemIdUsedInDropdownComponentState';
-import { objectFilterDropdownSearchInputComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSearchInputComponentState';
 import { isCompositeFilterableFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFilterableFieldType';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
 import { useFilterableFieldMetadataItems } from '@/object-record/record-filter/hooks/useFilterableFieldMetadataItems';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
-import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
-import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useLingui } from '@lingui/react/macro';
 import { Fragment, useContext } from 'react';
 import {
@@ -24,18 +20,24 @@ import { useIcons } from 'twenty-ui/icon';
 
 type AdvancedFilterFieldSelectMenuProps = {
   recordFilterId: string;
+  searchInput: string;
+  onSearchInputChange: (searchInput: string) => void;
+  onSubPageFieldMetadataItemSelect: (
+    fieldMetadataItem: FieldMetadataItem,
+  ) => void;
 };
 
 export const AdvancedFilterFieldSelectMenu = ({
   recordFilterId,
+  searchInput,
+  onSearchInputChange,
+  onSubPageFieldMetadataItemSelect,
 }: AdvancedFilterFieldSelectMenuProps) => {
   const { closeAdvancedFilterFieldSelectDropdown } =
     useAdvancedFilterFieldSelectDropdown(recordFilterId);
   const { goToPage } = useDropdownPage();
   const { getIcon } = useIcons();
   const { t } = useLingui();
-  const [objectFilterDropdownSearchInput, setObjectFilterDropdownSearchInput] =
-    useAtomComponentState(objectFilterDropdownSearchInputComponentState);
   const { objectMetadataItem } = useContext(AdvancedFilterContext);
   const { filterableFieldMetadataItems } = useFilterableFieldMetadataItems(
     objectMetadataItem.id,
@@ -50,7 +52,7 @@ export const AdvancedFilterFieldSelectMenu = ({
     filterableFieldMetadataItems.filter((fieldMetadataItem) =>
       fieldMetadataItem.label
         .toLocaleLowerCase()
-        .includes(objectFilterDropdownSearchInput.toLocaleLowerCase()),
+        .includes(searchInput.toLocaleLowerCase()),
     );
   const visibleFieldMetadataItems = filteredSearchInputFieldMetadataItems
     .filter((fieldMetadataItem) =>
@@ -71,9 +73,6 @@ export const AdvancedFilterFieldSelectMenu = ({
     );
   const { applyAdvancedFilterSourceField } =
     useApplyAdvancedFilterSourceField();
-  const setFieldMetadataItemIdUsedInDropdown = useSetAtomComponentState(
-    fieldMetadataItemIdUsedInDropdownComponentState,
-  );
   const { pushFocusForLeafFieldValuePicker } =
     usePushFocusForLeafFieldValuePicker();
 
@@ -81,7 +80,7 @@ export const AdvancedFilterFieldSelectMenu = ({
     fieldMetadataItem: FieldMetadataItem,
   ) => {
     if (isManyToOneRelationField(fieldMetadataItem)) {
-      setFieldMetadataItemIdUsedInDropdown(fieldMetadataItem.id);
+      onSubPageFieldMetadataItemSelect(fieldMetadataItem);
       goToPage('relation-target');
       return;
     }
@@ -91,7 +90,7 @@ export const AdvancedFilterFieldSelectMenu = ({
         getFilterTypeFromFieldType(fieldMetadataItem.type),
       )
     ) {
-      setFieldMetadataItemIdUsedInDropdown(fieldMetadataItem.id);
+      onSubPageFieldMetadataItemSelect(fieldMetadataItem);
       goToPage('composite');
       return;
     }
@@ -121,10 +120,10 @@ export const AdvancedFilterFieldSelectMenu = ({
   return (
     <>
       <Dropdown.Search
-        value={objectFilterDropdownSearchInput}
+        value={searchInput}
         placeholder={t`Search fields`}
         aria-label={t`Search fields`}
-        onValueChange={setObjectFilterDropdownSearchInput}
+        onValueChange={onSearchInputChange}
       />
       {sections.map((section, index) => (
         <Fragment key={section.id}>
@@ -133,8 +132,6 @@ export const AdvancedFilterFieldSelectMenu = ({
             {section.fields.map((fieldMetadataItem) => (
               <Dropdown.OptionItem
                 key={fieldMetadataItem.id}
-                selected={false}
-                indicator="none"
                 closeOnSelect={false}
                 onSelect={() =>
                   handleFieldMetadataItemSelect(fieldMetadataItem)

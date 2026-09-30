@@ -99,7 +99,7 @@ export const CompositePageAndBack: Story = {
       await within(popup).findByRole('button', { name: 'Currency' }),
     ).toBeVisible();
     await userEvent.click(
-      within(popup).getByRole('button', { name: 'Back to fields' }),
+      within(popup).getByRole('button', { name: 'Amount, back to fields' }),
     );
     await expect(
       await within(popup).findByPlaceholderText('Search fields'),
@@ -140,7 +140,7 @@ export const RelationTargetPageAndBack: Story = {
       within(popup).queryByRole('button', { name: 'Workspace Member' }),
     ).not.toBeInTheDocument();
     await userEvent.click(
-      within(popup).getByRole('button', { name: 'Back to fields' }),
+      within(popup).getByRole('button', { name: 'Company, back to fields' }),
     );
     await within(popup).findByPlaceholderText('Search fields');
     expect(
@@ -158,6 +158,30 @@ export const RelationTargetPageAndBack: Story = {
     await waitFor(() => expect(popup).not.toBeInTheDocument());
     await expect(
       await canvas.findByRole('button', { name: 'Company → Employees' }),
+    ).toBeVisible();
+  },
+};
+
+export const RelationTargetPageWithKeyboard: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+    await userEvent.click(await canvas.findByRole('button', { name: 'Name' }));
+    const popup = await body.findByRole('dialog', { name: 'Select field' });
+    const search = within(popup).getByRole('searchbox', {
+      name: 'Search fields',
+    });
+    await waitFor(() => expect(search).toHaveFocus());
+    await userEvent.type(search, 'Company');
+    await userEvent.keyboard('{Enter}');
+    await within(popup).findByRole('button', {
+      name: 'Company, back to fields',
+    });
+    await userEvent.keyboard('{Enter}');
+
+    await waitFor(() => expect(popup).not.toBeInTheDocument());
+    await expect(
+      await canvas.findByRole('button', { name: /^Company → / }),
     ).toBeVisible();
   },
 };

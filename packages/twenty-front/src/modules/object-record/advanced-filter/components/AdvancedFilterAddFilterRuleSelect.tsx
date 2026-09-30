@@ -14,7 +14,6 @@ import { getDefaultSubFieldNameForCompositeFilterableFieldType } from '@/object-
 import { Dropdown } from 'twenty-ui/components';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
@@ -46,8 +45,6 @@ export const AdvancedFilterAddFilterRuleSelect = ({
 
   const newPositionInRecordFilterGroup = lastChildPosition + 1;
 
-  const { closeDropdown } = useCloseDropdown();
-
   const { getDefaultFieldMetadataItemForFilter } =
     useGetDefaultFieldMetadataItemForFilter();
 
@@ -63,8 +60,6 @@ export const AdvancedFilterAddFilterRuleSelect = ({
     if (!isDefined(defaultFieldMetadataItemForFilter)) {
       throw new Error('Missing default field metadata item for filter');
     }
-
-    closeDropdown(dropdownId);
 
     const filterType = getFilterTypeFromFieldType(
       defaultFieldMetadataItemForFilter.type,
@@ -94,8 +89,6 @@ export const AdvancedFilterAddFilterRuleSelect = ({
   const handleAddFilterGroup = () => {
     const { defaultFieldMetadataItemForFilter } =
       getDefaultFieldMetadataItemForFilter(objectMetadataItem);
-
-    closeDropdown(dropdownId);
 
     if (!isDefined(defaultFieldMetadataItemForFilter)) {
       throw new Error('Missing default field metadata item for filter');

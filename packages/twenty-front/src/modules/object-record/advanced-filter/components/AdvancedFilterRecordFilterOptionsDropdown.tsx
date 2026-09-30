@@ -9,7 +9,6 @@ import { DEFAULT_ADVANCED_FILTER_DROPDOWN_SIDE_OFFSET } from '@/object-record/ad
 import { Dropdown, IconButton } from 'twenty-ui/components';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
@@ -23,8 +22,6 @@ export const AdvancedFilterRecordFilterOptionsDropdown = ({
   recordFilterId,
 }: AdvancedFilterRecordFilterOptionsDropdownProps) => {
   const dropdownId = `advanced-filter-record-filter-options-${recordFilterId}`;
-
-  const { closeDropdown } = useCloseDropdown();
 
   const { removeRecordFilter } = useRemoveRecordFilter();
   const { removeRecordFilterGroup } = useRemoveRecordFilterGroup();
@@ -46,8 +43,6 @@ export const AdvancedFilterRecordFilterOptionsDropdown = ({
     useRemoveRootRecordFilterGroupIfEmpty();
 
   const handleRemove = () => {
-    closeDropdown(dropdownId);
-
     const isOnlyViewFilterInGroup =
       childRecordFiltersAndRecordFilterGroups?.length === 1;
 

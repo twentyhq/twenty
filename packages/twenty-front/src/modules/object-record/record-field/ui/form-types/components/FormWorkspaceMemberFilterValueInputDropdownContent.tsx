@@ -9,6 +9,7 @@ import { CURRENT_WORKSPACE_MEMBER_SELECTABLE_ITEM_ID } from '@/object-record/obj
 import { type SelectableItem } from '@/object-record/select/types/SelectableItem';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
+import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
 type FormWorkspaceMemberFilterValueInputDropdownContentProps = {
   searchFilter: string;
@@ -32,9 +33,9 @@ export const FormWorkspaceMemberFilterValueInputDropdownContent = ({
   loading,
   onSelectChange,
 }: FormWorkspaceMemberFilterValueInputDropdownContentProps) => {
-  const isMeVisible = t`Me`
-    .toLocaleLowerCase()
-    .includes(searchFilter.toLocaleLowerCase());
+  const isMeVisible = normalizeSearchText(t`Me`).includes(
+    normalizeSearchText(searchFilter),
+  );
   const items = [...filteredSelectedRecords, ...recordsToSelect];
   const hasNoResults = !loading && !isMeVisible && !isNonEmptyArray(items);
 
@@ -69,7 +70,7 @@ export const FormWorkspaceMemberFilterValueInputDropdownContent = ({
         </Dropdown.Section>
       )}
       {isMeVisible && <Dropdown.Separator />}
-      <Dropdown.Section>
+      <Dropdown.Section scrollable>
         {items.map((item) => (
           <Dropdown.OptionItem
             key={item.id}

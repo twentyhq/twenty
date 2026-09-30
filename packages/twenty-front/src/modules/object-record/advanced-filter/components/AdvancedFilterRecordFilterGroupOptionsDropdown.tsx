@@ -7,7 +7,6 @@ import { useRemoveRecordFilter } from '@/object-record/record-filter/hooks/useRe
 import { Dropdown, IconButton } from 'twenty-ui/components';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { t } from '@lingui/core/macro';
 import { IconDotsVertical, IconTrash } from 'twenty-ui/icon';
 
@@ -19,8 +18,6 @@ export const AdvancedFilterRecordFilterGroupOptionsDropdown = ({
   recordFilterGroupId,
 }: AdvancedFilterRecordFilterGroupOptionsDropdownProps) => {
   const dropdownId = `advanced-filter-record-filter-group-options-${recordFilterGroupId}`;
-
-  const { closeDropdown } = useCloseDropdown();
 
   const { removeRecordFilter } = useRemoveRecordFilter();
   const { removeRecordFilterGroup } = useRemoveRecordFilterGroup();
@@ -39,8 +36,6 @@ export const AdvancedFilterRecordFilterGroupOptionsDropdown = ({
     removeRecordFilterGroup(recordFilterGroupId);
 
     removeRootRecordFilterGroupIfEmpty();
-
-    closeDropdown(dropdownId);
   };
 
   return (

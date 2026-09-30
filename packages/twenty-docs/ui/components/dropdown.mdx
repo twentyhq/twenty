@@ -24,7 +24,7 @@ Set `type` on `Dropdown.Root` to match the popup's contents.
 | `picker` | Search, selectable values, and optional commands | A dialog containing a search field and selectable toggle buttons. Arrow keys navigate result rows. |
 | `panel`  | Inputs, forms, and supporting actions            | A dialog with native input behavior and Tab navigation.                                            |
 
-Pickers allow creation actions and selectable values in the same list, in any order. Options expose their selected state with `aria-pressed`; commands keep their button semantics. Give `Search` an accessible name.
+Pickers allow creation actions and selectable values in the same list, in any order. Options expose their selected state with `aria-pressed`; commands keep their button semantics. Omit `selected` on an option that navigates or applies without a selection state, so it exposes no pressed state. Give `Search` an accessible name.
 
 `Content` takes its accessible name from `Trigger`, or from `SubmenuTrigger` in a submenu. Pass `aria-label` on `Content` when the trigger shows a value, such as the selected option, or when the root has no trigger. An explicit `aria-label` or `aria-labelledby`, and a `Title` inside a `Header`, take precedence over the trigger name.
 
@@ -134,7 +134,7 @@ Actions and single selection close by default. Set `multiple` on the root to kee
 
 Use `Page` for navigation that replaces the contents of the same popup. Wrap the first page in `Page id="root"`, or choose another initial page with `defaultPage`. Set `page` on an action to navigate without closing. `Back` returns to the previous page and restores focus to its invoking row. Closing the dropdown resets its page history.
 
-A page can override the root's `type`. For example, an action menu can open a searchable picker page or a form panel. Search receives focus when entering a searchable page.
+A page can override the root's `type`. For example, an action menu can open a searchable picker page or a form panel. Search receives focus when entering a searchable page; other pages focus their first row after `Back`.
 
 <StoryEmbed
   storyId="ui-components-dropdown--pages-documentation"

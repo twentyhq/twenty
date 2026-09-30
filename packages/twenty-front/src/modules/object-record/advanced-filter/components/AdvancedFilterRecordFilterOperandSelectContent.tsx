@@ -12,7 +12,6 @@ import { SelectControl } from '@/ui/input/components/SelectControl';
 import { Dropdown } from 'twenty-ui/components';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -33,8 +32,6 @@ export const AdvancedFilterRecordFilterOperandSelectContent = ({
 
   const { isWorkflowFindRecords } = useContext(AdvancedFilterContext);
 
-  const { closeDropdown } = useCloseDropdown();
-
   const { applyObjectFilterDropdownOperand } =
     useApplyObjectFilterDropdownOperand();
 
@@ -42,8 +39,6 @@ export const AdvancedFilterRecordFilterOperandSelectContent = ({
     useSetRecordFilterUsedInAdvancedFilterDropdownRow();
 
   const handleOperandChange = (operand: ViewFilterOperand) => {
-    closeDropdown(dropdownId);
-
     applyObjectFilterDropdownOperand(operand);
   };
 

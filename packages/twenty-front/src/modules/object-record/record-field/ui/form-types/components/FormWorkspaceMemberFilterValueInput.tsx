@@ -1,6 +1,5 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { isNonEmptyString } from '@sniptt/guards';
 import { useCallback, useId, useMemo, useState } from 'react';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -231,9 +230,6 @@ export const FormWorkspaceMemberFilterValueInput = ({
             <Dropdown.Trigger
               render={<StyledFormSelectContainerWrapper />}
               nativeButton={false}
-              aria-label={
-                isNonEmptyString(label) ? label : t`Select workspace members`
-              }
             >
               <FormFieldInputInnerContainer
                 formFieldInputInstanceId={componentId}

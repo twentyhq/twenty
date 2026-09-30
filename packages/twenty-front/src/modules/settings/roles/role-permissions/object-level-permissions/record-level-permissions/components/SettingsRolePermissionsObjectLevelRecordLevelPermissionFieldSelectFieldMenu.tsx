@@ -16,24 +16,28 @@ import { useAdvancedFilterFieldSelectDropdown } from '@/object-record/advanced-f
 import { useApplyAdvancedFilterSourceField } from '@/object-record/advanced-filter/hooks/useApplyAdvancedFilterSourceField';
 import { usePushFocusForLeafFieldValuePicker } from '@/object-record/advanced-filter/hooks/usePushFocusForLeafFieldValuePicker';
 import { AdvancedFilterContext } from '@/object-record/advanced-filter/states/context/AdvancedFilterContext';
-import { fieldMetadataItemIdUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemIdUsedInDropdownComponentState';
-import { objectFilterDropdownSearchInputComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSearchInputComponentState';
 import { isCompositeFilterableFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFilterableFieldType';
 import { useFilterableFieldMetadataItems } from '@/object-record/record-filter/hooks/useFilterableFieldMetadataItems';
 import { RECORD_LEVEL_PERMISSION_PREDICATE_FIELD_TYPES } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/constants/RecordLevelPermissionPredicateFieldTypes';
 import { getComparableWorkspaceMemberRelationFields } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/utils/getComparableWorkspaceMemberRelationFields';
-import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
-import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useContext } from 'react';
 
 type SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectFieldMenuProps =
   {
     recordFilterId: string;
+    searchInput: string;
+    onSearchInputChange: (searchInput: string) => void;
+    onSubPageFieldMetadataItemSelect: (
+      fieldMetadataItem: FieldMetadataItem,
+    ) => void;
   };
 
 export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectFieldMenu =
   ({
     recordFilterId,
+    searchInput,
+    onSearchInputChange,
+    onSubPageFieldMetadataItemSelect,
   }: SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectFieldMenuProps) => {
     const { t } = useLingui();
     const { getIcon } = useIcons();
@@ -41,11 +45,6 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectF
 
     const { closeAdvancedFilterFieldSelectDropdown } =
       useAdvancedFilterFieldSelectDropdown(recordFilterId);
-
-    const [
-      objectFilterDropdownSearchInput,
-      setObjectFilterDropdownSearchInput,
-    ] = useAtomComponentState(objectFilterDropdownSearchInputComponentState);
 
     const { objectMetadataItem } = useContext(AdvancedFilterContext);
 
@@ -95,17 +94,13 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectF
         (fieldMetadataItem) =>
           fieldMetadataItem.label
             .toLocaleLowerCase()
-            .includes(objectFilterDropdownSearchInput.toLocaleLowerCase()) &&
+            .includes(searchInput.toLocaleLowerCase()) &&
           isPredicateFieldMetadataItem(fieldMetadataItem),
       )
       .sort((a, b) => a.label.localeCompare(b.label));
 
     const { applyAdvancedFilterSourceField } =
       useApplyAdvancedFilterSourceField();
-
-    const setFieldMetadataItemIdUsedInDropdown = useSetAtomComponentState(
-      fieldMetadataItemIdUsedInDropdownComponentState,
-    );
 
     const { pushFocusForLeafFieldValuePicker } =
       usePushFocusForLeafFieldValuePicker();
@@ -118,7 +113,7 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectF
       );
 
       if (isCompositeFilterableFieldType(filterType)) {
-        setFieldMetadataItemIdUsedInDropdown(selectedFieldMetadataItem.id);
+        onSubPageFieldMetadataItemSelect(selectedFieldMetadataItem);
         goToPage('composite');
         return;
       }
@@ -136,8 +131,8 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectF
     return (
       <>
         <Dropdown.Search
-          value={objectFilterDropdownSearchInput}
-          onValueChange={setObjectFilterDropdownSearchInput}
+          value={searchInput}
+          onValueChange={onSearchInputChange}
           placeholder={t`Search fields`}
           aria-label={t`Search fields`}
         />
@@ -145,8 +140,6 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectF
           {filteredFieldMetadataItems.map((fieldMetadataItem) => (
             <Dropdown.OptionItem
               key={fieldMetadataItem.id}
-              selected={false}
-              indicator="none"
               closeOnSelect={false}
               hasSubmenu={isCompositeFilterableFieldType(
                 getFilterTypeFromFieldType(fieldMetadataItem.type),

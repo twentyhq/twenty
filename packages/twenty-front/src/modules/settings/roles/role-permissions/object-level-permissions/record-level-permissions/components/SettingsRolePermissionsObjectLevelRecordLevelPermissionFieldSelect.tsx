@@ -7,8 +7,7 @@ import { Dropdown } from 'twenty-ui/components';
 import { AdvancedFilterFieldSelectDropdownButtonClickableSelect } from '@/object-record/advanced-filter/components/AdvancedFilterFieldSelectDropdownButtonClickableSelect';
 import { DEFAULT_ADVANCED_FILTER_DROPDOWN_SIDE_OFFSET } from '@/object-record/advanced-filter/constants/DefaultAdvancedFilterDropdownSideOffset';
 import { useAdvancedFilterFieldSelectDropdown } from '@/object-record/advanced-filter/hooks/useAdvancedFilterFieldSelectDropdown';
-import { SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectFieldMenu } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectFieldMenu';
-import { SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectSubFieldMenu } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectSubFieldMenu';
+import { SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectDropdownContent } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectDropdownContent';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
@@ -47,16 +46,9 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelect 
             sideOffset={DEFAULT_ADVANCED_FILTER_DROPDOWN_SIDE_OFFSET}
             width={GenericDropdownContentWidth.ExtraLarge}
           >
-            <Dropdown.Page id="root">
-              <SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectFieldMenu
-                recordFilterId={recordFilterId}
-              />
-            </Dropdown.Page>
-            <Dropdown.Page id="composite">
-              <SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectSubFieldMenu
-                recordFilterId={recordFilterId}
-              />
-            </Dropdown.Page>
+            <SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectDropdownContent
+              recordFilterId={recordFilterId}
+            />
           </DropdownContent>
         </DropdownRoot>
       </StyledContainer>
