@@ -59,9 +59,20 @@ export default defineConfig(() => {
     cacheDir: '../../node_modules/.vite/packages/twenty-sdk-node',
     resolve: {
       tsconfigPaths: true,
-      alias: {
-        '@/': path.resolve(__dirname, 'src') + '/',
-      },
+      alias: [
+        ...(process.env.TWENTY_SDK_PREVIEW === 'true'
+          ? [
+              {
+                find: /^@\/sdk\/define$/,
+                replacement: path.resolve(
+                  __dirname,
+                  'src/sdk/define/preview.ts',
+                ),
+              },
+            ]
+          : []),
+        { find: '@/', replacement: path.resolve(__dirname, 'src') + '/' },
+      ],
     },
     plugins: [copyCoverAssetsPlugin(), writeBuildDescriptorPlugin()],
     build: {

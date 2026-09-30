@@ -8,7 +8,7 @@
     "build": {
       "executor": "nx:run-commands",
       "cache": true,
-      "inputs": ["production", "^production"],
+      "inputs": ["production", "^production", { "env": "TWENTY_SDK_PREVIEW" }],
       "dependsOn": ["^build"],
       "outputs": ["{projectRoot}/dist"],
       "options": {
@@ -90,7 +90,11 @@
       "executor": "nx:run-commands",
       "cache": true,
       "dependsOn": ["^build"],
-      "inputs": ["{projectRoot}/src/sdk/**/*", "^production"],
+      "inputs": [
+        "{projectRoot}/src/sdk/**/*",
+        "^production",
+        { "env": "TWENTY_SDK_PREVIEW" }
+      ],
       "outputs": [
         "{projectRoot}/dist/billing",
         "{projectRoot}/dist/define",

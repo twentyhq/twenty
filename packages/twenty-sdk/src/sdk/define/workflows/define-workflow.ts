@@ -3,10 +3,12 @@ import {
   workflowManifestSchema,
 } from 'twenty-shared/application';
 
-import { type DefineEntity } from '@/sdk/define/common/types/define-entity.type';
+import { type ValidationResult } from '@/sdk/define/common/types/define-entity.type';
 import { createValidationResult } from '@/sdk/define/common/utils/create-validation-result';
 
-export const defineWorkflow: DefineEntity<WorkflowManifest> = (config) => {
+export const defineWorkflow = (
+  config: WorkflowManifest,
+): ValidationResult<WorkflowManifest> => {
   const result = workflowManifestSchema.safeParse(config);
 
   return createValidationResult({
