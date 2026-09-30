@@ -4,6 +4,7 @@ import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/w
 import { RenameCallRecordingTabsToTranscriptCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790583246061-rename-call-recording-tabs-to-transcript.command';
 import { VerifyCommonRecordSharingCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790590808102-verify-common-record-sharing.command';
 import { DeleteFieldLessIndexMetadataCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790595494562-delete-field-less-index-metadata.command';
+import { AddMessageListMemberCommandMenuItemsCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790597839000-add-message-list-member-command-menu-items.command';
 import { FollowWorkflowVisibilityOnRunsCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790595877162-follow-workflow-visibility-on-runs.command';
 import { SyncShortLinkObjectCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790615265538-sync-short-link-object.command';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
@@ -32,6 +33,7 @@ import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/wor
     RenameCallRecordingTabsToTranscriptCommand,
     VerifyCommonRecordSharingCommand,
     DeleteFieldLessIndexMetadataCommand,
+    AddMessageListMemberCommandMenuItemsCommand,
     FollowWorkflowVisibilityOnRunsCommand,
     LinkChatMessageSendersToWorkspaceMembersCommand,
     AddWorkflowRunToChatThreadsCommand,
