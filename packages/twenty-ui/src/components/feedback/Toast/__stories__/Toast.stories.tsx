@@ -4,7 +4,6 @@ import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 
 import { IconBell } from '@ui/icon';
 import { Button } from '@ui/primitives/input/Button/Button';
-import { ClickToActionLink } from '@ui/primitives/navigation/ClickToActionLink/ClickToActionLink';
 import {
   A11Y_DEFER_COLOR_CONTRAST,
   CatalogDecorator,
@@ -82,11 +81,16 @@ export const WithDescriptionAndAction: Story = {
 
 export const CustomIconAndLink: Story = {
   ...Default,
+  parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
   args: { icon: <IconBell size={16} />, onClick: fn() },
   render: (args) => (
     <Toast
       {...args}
-      action={<ClickToActionLink href="#record">View record</ClickToActionLink>}
+      action={
+        <Button variant="link" href="#record">
+          View record
+        </Button>
+      }
     />
   ),
   play: async ({ canvasElement, args }) => {
@@ -189,13 +193,58 @@ export const PauseOnHover: Story = {
   },
 };
 
+export const PauseOnFocus: Story = {
+  ...Countdown,
+  args: {
+    ...Countdown.args,
+    duration: 1200,
+    onCancel: fn(),
+    onFocus: fn(),
+    onBlur: fn(),
+  },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const toast = canvas.getByRole('status');
+    await userEvent.hover(toast);
+    await userEvent.tab();
+    await userEvent.tab();
+    expect(canvas.getByRole('button', { name: 'Cancel' })).toHaveFocus();
+    await userEvent.unhover(toast);
+    await new Promise((resolve) => setTimeout(resolve, 1400));
+    expect(toast).toBeVisible();
+    expect(args.onClose).not.toHaveBeenCalled();
+    expect(args.onFocus).toHaveBeenCalledOnce();
+    await userEvent.tab();
+    expect(canvas.getByRole('button', { name: 'Close' })).toHaveFocus();
+    await new Promise((resolve) => setTimeout(resolve, 1400));
+    expect(toast).toBeVisible();
+    expect(args.onClose).not.toHaveBeenCalled();
+    expect(args.onFocus).toHaveBeenCalledTimes(2);
+    expect(args.onBlur).toHaveBeenCalledOnce();
+    await userEvent.tab({ shift: true });
+    expect(canvas.getByRole('button', { name: 'Cancel' })).toHaveFocus();
+    await userEvent.tab({ shift: true });
+    expect(
+      canvas.getByRole('button', { name: 'Show notification' }),
+    ).toHaveFocus();
+    expect(args.onBlur).toHaveBeenCalledTimes(3);
+    await waitFor(() => expect(args.onClose).toHaveBeenCalledOnce(), {
+      timeout: 3000,
+    });
+  },
+};
+
 export const ExplicitProgress: Story = {
   ...Countdown,
-  args: { progress: 40, duration: 100, onClose: fn() },
+  args: { progress: 0, duration: 100, onClose: fn() },
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
     await new Promise((resolve) => setTimeout(resolve, 300));
     expect(canvas.getByRole('status')).toBeVisible();
+    expect(canvas.getByRole('progressbar', { hidden: true })).toHaveAttribute(
+      'aria-valuenow',
+      '0',
+    );
     expect(args.onClose).not.toHaveBeenCalled();
     await userEvent.click(canvas.getByRole('button', { name: 'Close' }));
     expect(args.onClose).toHaveBeenCalledOnce();

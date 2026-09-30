@@ -46,8 +46,8 @@ export const useTriggerCommandMenuDropdown = ({
       event.preventDefault();
 
       store.set(recordIndexCommandMenuDropdownPositionCallbackState, {
-        x: event.pageX,
-        y: event.pageY,
+        x: event.clientX,
+        y: event.clientY,
       });
 
       const isRowSelected = store.get(isRowSelectedFamilyState(recordId));

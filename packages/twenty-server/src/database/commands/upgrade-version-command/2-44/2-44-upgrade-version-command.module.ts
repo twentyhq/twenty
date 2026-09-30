@@ -13,6 +13,12 @@ import { LinkChatMessageSendersToWorkspaceMembersCommand } from 'src/database/co
 import { AddWorkflowRunToChatThreadsCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790607161319-add-workflow-run-to-chat-threads.command';
 import { SyncDeactivateWorkflowAvailabilityCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790607920000-sync-deactivate-workflow-availability.command';
 import { RemoveAddNodeWorkflowCommandMenuItemCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790607921000-remove-add-node-workflow-command-menu-item.command';
+import { OpenAgentChatThreadArchivedAtWritabilityCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790672076234-open-agent-chat-thread-archived-at-writability.command';
+import { AddInputAskObjectCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790681093095-add-input-ask-object.command';
+import { GateConversationsWidgetOnFeatureFlagCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790700866168-gate-conversations-widget-on-feature-flag.command';
+import { MoveAgentChatThreadsToRecordModelCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790751626421-move-agent-chat-threads-to-record-model.command';
+import { AddChatRecordPageCommandMenuItemsCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790751626422-add-chat-record-page-command-menu-items.command';
+import { OpenAsksForPendingInputCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790714482317-open-asks-for-pending-input.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/workspace-migration-runner.module';
 
@@ -35,6 +41,12 @@ import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/wor
     SyncDeactivateWorkflowAvailabilityCommand,
     RemoveAddNodeWorkflowCommandMenuItemCommand,
     SyncShortLinkObjectCommand,
+    OpenAgentChatThreadArchivedAtWritabilityCommand,
+    AddInputAskObjectCommand,
+    GateConversationsWidgetOnFeatureFlagCommand,
+    MoveAgentChatThreadsToRecordModelCommand,
+    AddChatRecordPageCommandMenuItemsCommand,
+    OpenAsksForPendingInputCommand,
   ],
 })
 export class V2_44_UpgradeVersionCommandModule {}

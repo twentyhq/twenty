@@ -555,7 +555,6 @@
                         "group": "Feedback",
                         "pages": [
                           "ui/primitives/feedback/banner",
-                          "ui/primitives/feedback/circular-progress-bar",
                           "ui/primitives/feedback/loader",
                           "ui/primitives/feedback/progress-bar"
                         ]
@@ -591,8 +590,7 @@
                         "group": "Navigation",
                         "pages": [
                           "ui/primitives/navigation/list-item",
-                          "ui/primitives/navigation/tabs",
-                          "ui/primitives/navigation/click-to-action-link"
+                          "ui/primitives/navigation/tabs"
                         ]
                       },
                       {
@@ -633,7 +631,6 @@
                       "ui/components/animated-icon-crossfade",
                       "ui/components/avatar-group",
                       "ui/components/callout",
-                      "ui/components/card-picker",
                       "ui/components/color-scheme-picker",
                       "ui/components/command-block",
                       "ui/components/info",
@@ -7446,6 +7443,10 @@
     {
       "source": "/ui/primitives/surfaces/card-footer",
       "destination": "/ui/primitives/surfaces/card"
+    },
+    {
+      "source": "/ui/components/card-picker",
+      "destination": "/ui/primitives/input/radio#card-options"
     }
   ]
 }

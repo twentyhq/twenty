@@ -5,10 +5,9 @@ import { isDefined, isValidUuid } from 'twenty-shared/utils';
 import { useRefreshAgentChatThreads } from '@/ai/hooks/useRefreshAgentChatThreads';
 import { useSwitchAgentChatThreadWithDraft } from '@/ai/hooks/useSwitchAgentChatThreadWithDraft';
 import { useSwitchToNewAiChat } from '@/ai/hooks/useSwitchToNewAiChat';
+import { agentChatThreadListState } from '@/ai/states/agentChatThreadListState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { currentAiChatThreadDataSelector } from '@/ai/states/selectors/currentAiChatThreadDataSelector';
-import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
-import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const AiChatPageThreadUrlSyncEffect = () => {
@@ -17,12 +16,10 @@ export const AiChatPageThreadUrlSyncEffect = () => {
   const currentAiChatThreadData = useAtomStateValue(
     currentAiChatThreadDataSelector,
   );
-  const metadataStoreAgentChatThreads = useAtomFamilyStateValue(
-    metadataStoreState,
-    'agentChatThreads',
-  );
+  const areAgentChatThreadsLoaded =
+    useAtomStateValue(agentChatThreadListState) !== null;
   const { switchThreadWithDraft } = useSwitchAgentChatThreadWithDraft();
-  const { refreshAgentChatThreads } = useRefreshAgentChatThreads();
+  const { loadAgentChatThread } = useRefreshAgentChatThreads();
   const { switchToNewChat } = useSwitchToNewAiChat({
     shouldOpenInFullPage: true,
   });
@@ -37,18 +34,11 @@ export const AiChatPageThreadUrlSyncEffect = () => {
       return;
     }
 
-    if (
-      metadataStoreAgentChatThreads.status === 'up-to-date' &&
-      !isDefined(currentAiChatThreadData)
-    ) {
+    if (areAgentChatThreadsLoaded && !isDefined(currentAiChatThreadData)) {
       let isCurrentThread = true;
 
-      void refreshAgentChatThreads().then((chatThreads) => {
-        if (
-          !isCurrentThread ||
-          !isDefined(chatThreads) ||
-          chatThreads.some((chatThread) => chatThread.id === threadId)
-        ) {
+      void loadAgentChatThread(threadId).then((chatThread) => {
+        if (!isCurrentThread || chatThread !== null) {
           return;
         }
 
@@ -63,8 +53,8 @@ export const AiChatPageThreadUrlSyncEffect = () => {
     threadId,
     currentAiChatThread,
     currentAiChatThreadData,
-    metadataStoreAgentChatThreads.status,
-    refreshAgentChatThreads,
+    areAgentChatThreadsLoaded,
+    loadAgentChatThread,
     switchThreadWithDraft,
     switchToNewChat,
   ]);

@@ -132,7 +132,6 @@ export const DOCUMENTATION_PATHS = {
     '/ui/components/animated-icon-crossfade',
   UI_COMPONENTS_AVATAR_GROUP: '/ui/components/avatar-group',
   UI_COMPONENTS_CALLOUT: '/ui/components/callout',
-  UI_COMPONENTS_CARD_PICKER: '/ui/components/card-picker',
   UI_COMPONENTS_CODE_EDITOR: '/ui/components/code-editor',
   UI_COMPONENTS_COLOR_SCHEME_PICKER: '/ui/components/color-scheme-picker',
   UI_COMPONENTS_COMMAND_BLOCK: '/ui/components/command-block',
@@ -170,8 +169,6 @@ export const DOCUMENTATION_PATHS = {
   UI_PRIMITIVES_DATA_DISPLAY_STATUS: '/ui/primitives/data-display/status',
   UI_PRIMITIVES_DATA_DISPLAY_TAG: '/ui/primitives/data-display/tag',
   UI_PRIMITIVES_FEEDBACK_BANNER: '/ui/primitives/feedback/banner',
-  UI_PRIMITIVES_FEEDBACK_CIRCULAR_PROGRESS_BAR:
-    '/ui/primitives/feedback/circular-progress-bar',
   UI_PRIMITIVES_FEEDBACK_LOADER: '/ui/primitives/feedback/loader',
   UI_PRIMITIVES_FEEDBACK_PROGRESS_BAR: '/ui/primitives/feedback/progress-bar',
   UI_PRIMITIVES_INPUT_BUTTON: '/ui/primitives/input/button',
@@ -194,8 +191,6 @@ export const DOCUMENTATION_PATHS = {
   UI_PRIMITIVES_LAYOUT_RESIZE_HANDLE: '/ui/primitives/layout/resize-handle',
   UI_PRIMITIVES_LAYOUT_TEXT_DIRECTION_PROVIDER:
     '/ui/primitives/layout/text-direction-provider',
-  UI_PRIMITIVES_NAVIGATION_CLICK_TO_ACTION_LINK:
-    '/ui/primitives/navigation/click-to-action-link',
   UI_PRIMITIVES_NAVIGATION_LIST_ITEM: '/ui/primitives/navigation/list-item',
   UI_PRIMITIVES_NAVIGATION_TABS: '/ui/primitives/navigation/tabs',
   UI_PRIMITIVES_OVERVIEW: '/ui/primitives/overview',

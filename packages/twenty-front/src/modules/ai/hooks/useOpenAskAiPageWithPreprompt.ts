@@ -26,11 +26,11 @@ export const useOpenAskAiPageWithPreprompt = () => {
   const { chatTier } = useWorkspaceAiModelTiers();
 
   const openAskAiPageWithPreprompt = ({
-    text,
+    serializedDocument,
     mode = 'PREFILL',
     model,
   }: {
-    text: string;
+    serializedDocument: string;
     mode?: AgentChatPrepromptMode;
     model?: AgentChatModelPreselection;
   }) => {
@@ -44,7 +44,7 @@ export const useOpenAskAiPageWithPreprompt = () => {
     }
 
     stageAiChatPreprompt({
-      text,
+      serializedDocument,
       mode,
       draftKey: AGENT_CHAT_NEW_THREAD_DRAFT_KEY,
     });

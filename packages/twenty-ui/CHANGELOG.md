@@ -4,6 +4,12 @@
 
 ### Breaking Changes
 
+- Removed `CardPicker` and `CardPickerProps`. Use `Radio variant="card"` inside `RadioGroup` from `twenty-ui/primitives/input`. Card layout, selection, keyboard navigation, and form behavior are preserved.
+
+- `ProgressBar` no longer accepts `countdownDurationInMs`, `isCountdownPaused`, or `onCountdownComplete`. Notification countdowns belong to `Toast`. Its duration, hover pause, manual progress, and close behavior are preserved, and keyboard focus now also pauses the countdown. The desktop companion uses the shared Toast.
+- Removed `ClickToActionLink`. Use `Button variant="link"` from `twenty-ui/primitives/input`: pass `onClick` for actions or `href` for navigation. The link appearance preserves compact text styling while actions gain native button keyboard behavior and prop forwarding.
+- Removed `soon` and `soonLabel` from `Button`, `MainButton`, and `LightButton`. Compose a disabled button with `Pill` from `twenty-ui/primitives/data-display` and supply the upcoming-feature label from the application.
+- Removed `CircularProgressBar`. Use `Loader` from `twenty-ui/primitives/feedback` for indeterminate loading. The separately versioned Granola app will migrate when its `twenty-ui` dependency is upgraded.
 - Removed the product URL exports `CAL_LINK`, `GITHUB_LINK`, and `TWENTY_PRICING_LINK`. Applications own their destination URLs.
 - `Card` is now a compound component. Import `Card` from `twenty-ui/primitives/surfaces`, replace `<Card>` with `<Card.Root>`, and replace the removed `CardHeader`, `CardContent`, and `CardFooter` exports with `Card.Header`, `Card.Content`, and `Card.Footer`. Use `Card.Root` in styled wrappers and prop types. Rendering, styling, props, and independent use of the parts are unchanged. See the [Card migration guide](https://docs.twenty.com/ui/primitives/surfaces/card#migration).
 - The in-repo Slack app still uses the separately versioned `twenty-ui@^1.0.0-alpha.1` package. Migrate its `twenty-ui/surfaces` import and `<Card>` usage together with its UI dependency upgrade; that published version does not expose `Card.Root`.

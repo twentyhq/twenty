@@ -12,7 +12,6 @@ import { useNavigatePageLayoutSidePanel } from '@/side-panel/pages/page-layout/h
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
-import { useWorkspaceFeatureFlagsMap } from '@/workspace/hooks/useWorkspaceFeatureFlagsMap';
 import { t } from '@lingui/core/macro';
 import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -48,8 +47,6 @@ export const useOpenWidgetSettingsInSidePanel = (
     pageLayoutTabSettingsOpenTabIdComponentState,
     pageLayoutId,
   );
-
-  const featureFlags = useWorkspaceFeatureFlagsMap();
 
   const openWidgetSettingsInSidePanel = useCallback(
     ({
@@ -133,7 +130,7 @@ export const useOpenWidgetSettingsInSidePanel = (
 
       const isContainingTabSingleWidget =
         isDefined(containingTab) &&
-        getIsSingleWidgetTab({ tab: containingTab, featureFlags });
+        getIsSingleWidgetTab({ tab: containingTab });
 
       const widgetInContainingTab = containingTab?.widgets.find(
         (widget) => widget.id === widgetId,
@@ -166,7 +163,6 @@ export const useOpenWidgetSettingsInSidePanel = (
     [
       isDashboardPageLayout,
       pageLayoutDraft,
-      featureFlags,
       setPageLayoutEditingWidgetId,
       setPageLayoutTabSettingsOpenTabId,
       navigatePageLayoutSidePanel,
