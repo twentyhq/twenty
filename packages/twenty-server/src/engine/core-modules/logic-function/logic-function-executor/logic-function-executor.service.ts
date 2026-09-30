@@ -671,7 +671,6 @@ export class LogicFunctionExecutorService {
       applicationId: flatApplication.id,
     };
 
-    // Consumed even at zero credits: an exempt run still counts toward run-count limits.
     await this.usageLimitQuotaService.consumeQuota({
       workspaceId,
       resourceType: UsageResourceType.LOGIC_FUNCTION,

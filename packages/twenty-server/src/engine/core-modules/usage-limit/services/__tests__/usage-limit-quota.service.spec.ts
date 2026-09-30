@@ -1019,6 +1019,7 @@ describe('UsageLimitQuotaService', () => {
       usageAnalyticsService.getConsumptionRowsForAllScopes.mockResolvedValue([
         {
           operationType: UsageOperationType.EMAIL_SEND,
+          unit: UsageUnit.INVOCATION,
           userWorkspaceId: '',
           apiKeyId: '',
           applicationId: '',

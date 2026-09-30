@@ -16,28 +16,12 @@ import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user
 import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
-import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
+import { USAGE_UNIT_BY_OPERATION_TYPE } from 'src/engine/core-modules/usage/constants/usage-unit-by-operation-type.constant';
 import { UsageRecorderService } from 'src/engine/core-modules/usage/services/usage-recorder.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 type AppChargeableOperationType =
   (typeof UsageOperationType)[UsageOperationTypeValue];
-
-// An app sends a quantity and never a unit, so the platform names what the
-// number counts. Keyed on the app-facing vocabulary, so adding a value to
-// twenty-shared's USAGE_OPERATION_TYPES fails to compile until it has a unit.
-const USAGE_UNIT_BY_OPERATION_TYPE: Record<
-  AppChargeableOperationType,
-  UsageUnit
-> = {
-  [UsageOperationType.AI_CHAT_TOKEN]: UsageUnit.TOKEN,
-  [UsageOperationType.AI_WORKFLOW_TOKEN]: UsageUnit.TOKEN,
-  [UsageOperationType.WORKFLOW_EXECUTION]: UsageUnit.INVOCATION,
-  [UsageOperationType.CODE_EXECUTION]: UsageUnit.INVOCATION,
-  [UsageOperationType.WEB_SEARCH]: UsageUnit.INVOCATION,
-  [UsageOperationType.CALL_RECORDING]: UsageUnit.MINUTE,
-  [UsageOperationType.EMAIL_SEND]: UsageUnit.INVOCATION,
-};
 
 // `workspaceId` + `applicationId` come from the application-access token,
 // never from the body — an app can't charge a different workspace or

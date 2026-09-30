@@ -5,8 +5,12 @@ import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-op
 import { USAGE_SPENDER_COLUMN_BY_SPENDER_TYPE } from 'src/engine/core-modules/usage-limit/constants/usage-spender-column-by-spender-type.constant';
 
 import { type LimitQuotaCounter } from 'src/engine/core-modules/usage-limit/types/limit-quota-counter.type';
+import { USAGE_UNIT_BY_OPERATION_TYPE } from 'src/engine/core-modules/usage/constants/usage-unit-by-operation-type.constant';
+import { type UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 import { type UsageConsumptionRow } from 'src/engine/core-modules/usage/types/usage-consumption-row.type';
-import { findUsageLimitDefinition } from 'src/engine/core-modules/usage-limit/utils/find-usage-limit-definition.util';
+
+const unitByOperationType: Partial<Record<string, UsageUnit>> =
+  USAGE_UNIT_BY_OPERATION_TYPE;
 
 const spenderColumnMatches = (
   rowValue: string,
@@ -16,7 +20,7 @@ const spenderColumnMatches = (
 
 export type QuotaConsumptionScope = Pick<
   LimitQuotaCounter,
-  'resourceType' | 'operationType' | 'spenderType' | 'spenderId' | 'meter'
+  'operationType' | 'spenderType' | 'spenderId' | 'meter'
 >;
 
 const rowMatchesScope = (
@@ -40,26 +44,29 @@ const rowMatchesScope = (
   );
 };
 
+const rowCountsTowardMeter = (
+  row: UsageConsumptionRow,
+  meter: QuotaConsumptionScope['meter'],
+): boolean => {
+  if (meter !== 'quantity') {
+    return true;
+  }
+
+  const quantityUnit = unitByOperationType[row.operationType];
+
+  return !isDefined(quantityUnit) || row.unit === quantityUnit;
+};
+
 export const computeQuotaConsumed = ({
   rows,
   scope,
 }: {
   rows: UsageConsumptionRow[];
   scope: QuotaConsumptionScope;
-}): number => {
-  const quantityUnit =
-    scope.meter === 'quantity'
-      ? findUsageLimitDefinition({
-          resourceType: scope.resourceType,
-          limitKind: 'quota',
-        })?.quantityUnit
-      : undefined;
-
-  return rows
+}): number =>
+  rows
     .filter(
       (row) =>
-        rowMatchesScope(row, scope) &&
-        (!isDefined(quantityUnit) || row.unit === quantityUnit),
+        rowMatchesScope(row, scope) && rowCountsTowardMeter(row, scope.meter),
     )
     .reduce((total, row) => total + Number(row[scope.meter]), 0);
-};

@@ -6,7 +6,6 @@ import { type StockLimitDefaultDefinition } from 'src/engine/core-modules/usage-
 import { type StockMeter } from 'src/engine/core-modules/usage-limit/types/stock-meter.type';
 import { type UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { type UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
-import { type UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 
 type SpeedLimitDefinition<TResourceType extends UsageResourceType> = {
   allowedOperationTypes: UsageOperationType[];
@@ -18,7 +17,6 @@ type QuotaLimitDefinition<TResourceType extends UsageResourceType> = {
   allowedOperationTypes: UsageOperationType[];
   allowedSpenderTypes: SpenderType[];
   allowedMeters: QuotaMeter[];
-  quantityUnit?: UsageUnit;
   defaults: QuotaLimitDefaultDefinition<TResourceType>[];
 };
 

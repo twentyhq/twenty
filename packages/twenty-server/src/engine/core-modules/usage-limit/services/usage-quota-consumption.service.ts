@@ -94,7 +94,6 @@ export class UsageQuotaConsumptionService {
         consumedValue: computeQuotaConsumed({
           rows,
           scope: {
-            resourceType: scope.resourceType,
             operationType: scope.operationType,
             spenderType: scope.spenderType,
             spenderId: normalizeSpenderId(scope.spenderId ?? ''),
