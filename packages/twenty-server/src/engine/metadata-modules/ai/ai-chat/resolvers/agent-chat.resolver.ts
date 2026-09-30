@@ -187,8 +187,8 @@ export class AgentChatResolver {
       workspace,
     });
 
-    if (isDefined(thread.archivedAt)) {
-      await this.agentChatService.unarchiveThread({
+    if (isDefined(thread.deletedAt)) {
+      await this.agentChatService.restoreThread({
         threadId,
         workspaceMemberId,
         workspaceId: workspace.id,
@@ -321,73 +321,6 @@ export class AgentChatResolver {
     return true;
   }
 
-  @Mutation(() => AgentChatThreadDTO)
-  async renameChatThread(
-    @Args('id', { type: () => UUIDScalarType }) id: string,
-    @Args('title') title: string,
-
-    @AuthWorkspaceMemberId() workspaceMemberId: string,
-    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ): Promise<AgentChatThreadWorkspaceEntity> {
-    return this.agentChatService.updateThreadTitle({
-      threadId: id,
-      workspaceMemberId,
-      workspaceId,
-      title,
-    });
-  }
-
-  @Mutation(() => AgentChatThreadDTO)
-  async archiveChatThread(
-    @Args('id', { type: () => UUIDScalarType }) id: string,
-
-    @AuthWorkspaceMemberId() workspaceMemberId: string,
-    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ): Promise<AgentChatThreadWorkspaceEntity> {
-    const thread = await this.agentChatService.archiveThread({
-      threadId: id,
-      workspaceMemberId,
-      workspaceId,
-    });
-
-    await this.threadLifecycleService.stopArchivedThreads({
-      workspaceId,
-      threadIds: [id],
-    });
-
-    return thread;
-  }
-
-  @Mutation(() => AgentChatThreadDTO)
-  async unarchiveChatThread(
-    @Args('id', { type: () => UUIDScalarType }) id: string,
-
-    @AuthWorkspaceMemberId() workspaceMemberId: string,
-    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ): Promise<AgentChatThreadWorkspaceEntity> {
-    return this.agentChatService.unarchiveThread({
-      threadId: id,
-      workspaceMemberId,
-      workspaceId,
-    });
-  }
-
-  @Mutation(() => Boolean)
-  async deleteChatThread(
-    @Args('id', { type: () => UUIDScalarType }) id: string,
-
-    @AuthWorkspaceMemberId() workspaceMemberId: string,
-    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ): Promise<boolean> {
-    await this.agentChatService.hardDeleteThread({
-      threadId: id,
-      workspaceMemberId,
-      workspaceId,
-    });
-
-    return true;
-  }
-
   @Mutation(() => Boolean)
   async deleteQueuedChatMessage(
     @Args('messageId', { type: () => UUIDScalarType }) messageId: string,
@@ -452,7 +385,7 @@ export class AgentChatResolver {
 
   @ResolveField(() => Date, { nullable: true })
   deletedAt(@Parent() thread: AgentChatThreadWorkspaceEntity): Date | null {
-    return isDefined(thread.archivedAt) ? new Date(thread.archivedAt) : null;
+    return isDefined(thread.deletedAt) ? new Date(thread.deletedAt) : null;
   }
 
   @ResolveField(() => Float)

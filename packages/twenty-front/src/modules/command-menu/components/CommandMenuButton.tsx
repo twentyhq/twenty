@@ -62,7 +62,7 @@ export const CommandMenuButton = ({
       sideOffset={5}
       disabled={!hasHotKeys && isDefined(resolvedShortLabel)}
     >
-      <div>
+      <div data-command-menu-item-id={command.key}>
         {resolvedShortLabel !== undefined ? (
           <NavigationButton
             startIcon={isDefined(command.Icon) ? <command.Icon /> : undefined}
