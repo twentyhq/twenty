@@ -2,6 +2,7 @@ import { deleteTwoFactorAuthenticationMethod } from 'test/integration/graphql/su
 import { generateTwoFactorAuthenticationRecoveryCode } from 'test/integration/graphql/utils/generate-two-factor-authentication-recovery-code.util';
 import { getAuthTokensFromLoginToken } from 'test/integration/graphql/utils/get-auth-tokens-from-login-token.util';
 import { getAuthTokensFromOtp } from 'test/integration/graphql/utils/get-auth-tokens-from-otp.util';
+import { getAuthTokensFromTwoFactorAuthenticationRecoveryCode } from 'test/integration/graphql/utils/get-auth-tokens-from-two-factor-authentication-recovery-code.util';
 import { impersonate } from 'test/integration/graphql/utils/impersonate.util';
 import { initiateOtpProvisioning } from 'test/integration/graphql/utils/initiate-otp-provisioning.util';
 import { initiateOtpProvisioningForAuthenticatedUser } from 'test/integration/graphql/utils/initiate-otp-provisioning-for-authenticated-user.util';
@@ -88,6 +89,18 @@ describe('Impersonation - two-factor authentication mutations denial (integratio
       otp: '000000',
       expectToFail: true,
     });
+
+    expectImpersonationLoginTokenRejected(errors);
+  });
+
+  it('rejects exchanging a recovery code for tokens with an impersonation login token', async () => {
+    const { errors } =
+      await getAuthTokensFromTwoFactorAuthenticationRecoveryCode({
+        loginToken: impersonationLoginToken,
+        origin: impersonationOrigin,
+        recoveryCode: 'ABCDE-FGHJK-MNPQR-STVWX',
+        expectToFail: true,
+      });
 
     expectImpersonationLoginTokenRejected(errors);
   });

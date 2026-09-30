@@ -14,6 +14,7 @@ export * from './emails/send-email-verification-link.email';
 export * from './emails/send-invite-link.email';
 export * from './emails/server-admin-access-changed.email';
 export * from './emails/two-factor-authentication-recovery-code-issued.email';
+export * from './emails/two-factor-authentication-reset.email';
 export * from './emails/validate-approved-access-domain.email';
 export * from './emails/warn-suspended-workspace.email';
 export * from './utils/email-renderer/email-renderer';

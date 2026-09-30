@@ -15,6 +15,8 @@ export const twoFactorAuthenticationSchema = z.strictObject({
       'otp_rejected',
       'recovery_code_issued',
       'recovery_code_revoked',
+      'recovery_code_used',
+      'recovery_code_rejected',
     ]),
     strategy: z.string().optional(),
     targetUserId: z.string().optional(),

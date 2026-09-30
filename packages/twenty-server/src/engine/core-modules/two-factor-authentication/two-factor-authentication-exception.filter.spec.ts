@@ -106,11 +106,11 @@ describe('TwoFactorAuthenticationExceptionFilter', () => {
       }
     });
 
-    it('should throw UserInputError for STEP_UP_AUTHENTICATION_REQUIRED exception', () => {
-      const exception = new TwoFactorAuthenticationException(
-        'Error',
-        TwoFactorAuthenticationExceptionCode.STEP_UP_AUTHENTICATION_REQUIRED,
-      );
+    it.each([
+      TwoFactorAuthenticationExceptionCode.INVALID_RECOVERY_CODE,
+      TwoFactorAuthenticationExceptionCode.STEP_UP_AUTHENTICATION_REQUIRED,
+    ])('should throw UserInputError for %s exception', (code) => {
+      const exception = new TwoFactorAuthenticationException('Error', code);
 
       expect(() => filter.catch(exception)).toThrow(UserInputError);
     });

@@ -1,18 +1,24 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import ms from 'ms';
 import {
   TwoFactorAuthenticationRecoveryCodeIssuedEmail,
+  TwoFactorAuthenticationResetEmail,
   renderEmail,
 } from 'twenty-emails';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
-import { IsNull, MoreThan, QueryFailedError } from 'typeorm';
+import { IsNull, MoreThan, QueryFailedError, Repository } from 'typeorm';
 
 import { POSTGRESQL_ERROR_CODES } from 'src/engine/api/graphql/workspace-query-runner/constants/postgres-error-codes.constants';
 import { type QueryFailedErrorWithCode } from 'src/engine/api/graphql/workspace-query-runner/utils/workspace-query-runner-graphql-api-exception-handler.util';
+import {
+  AppTokenEntity,
+  AppTokenType,
+} from 'src/engine/core-modules/app-token/app-token.entity';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
@@ -22,6 +28,8 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import {
   TWO_FACTOR_AUTHENTICATION_RECOVERY_CODE_ISSUANCE_RATE_LIMIT_MAX,
   TWO_FACTOR_AUTHENTICATION_RECOVERY_CODE_ISSUANCE_RATE_LIMIT_WINDOW_MS,
+  TWO_FACTOR_AUTHENTICATION_RECOVERY_CODE_REDEMPTION_RATE_LIMIT_MAX,
+  TWO_FACTOR_AUTHENTICATION_RECOVERY_CODE_REDEMPTION_RATE_LIMIT_WINDOW_MS,
 } from 'src/engine/core-modules/two-factor-authentication/constants/two-factor-authentication-recovery-code.constant';
 import { TwoFactorAuthenticationMethodEntity } from 'src/engine/core-modules/two-factor-authentication/entities/two-factor-authentication-method.entity';
 import { TwoFactorAuthenticationRecoveryCodeEntity } from 'src/engine/core-modules/two-factor-authentication/entities/two-factor-authentication-recovery-code.entity';
@@ -32,8 +40,11 @@ import {
 } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication.exception';
 import { TwoFactorAuthenticationService } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication.service';
 import { buildTwoFactorAuthenticationRecoveryCodeIssuanceRateLimitKey } from 'src/engine/core-modules/two-factor-authentication/utils/build-two-factor-authentication-recovery-code-issuance-rate-limit-key.util';
+import { buildTwoFactorAuthenticationRecoveryCodeRedemptionRateLimitKey } from 'src/engine/core-modules/two-factor-authentication/utils/build-two-factor-authentication-recovery-code-redemption-rate-limit-key.util';
 import { generateTwoFactorAuthenticationRecoveryCode } from 'src/engine/core-modules/two-factor-authentication/utils/generate-two-factor-authentication-recovery-code.util';
 import { hashTwoFactorAuthenticationRecoveryCode } from 'src/engine/core-modules/two-factor-authentication/utils/hash-two-factor-authentication-recovery-code.util';
+import { UserSessionService } from 'src/engine/core-modules/user-session/services/user-session.service';
+import { UserSessionRevokedReason } from 'src/engine/core-modules/user-session/types/user-session-revoked-reason.type';
 import { type UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { type UserEntity } from 'src/engine/core-modules/user/user.entity';
@@ -58,8 +69,11 @@ export class TwoFactorAuthenticationRecoveryService {
     private readonly twoFactorAuthenticationRecoveryCodeRepository: WorkspaceScopedRepository<TwoFactorAuthenticationRecoveryCodeEntity>,
     @InjectWorkspaceScopedRepository(TwoFactorAuthenticationMethodEntity)
     private readonly twoFactorAuthenticationMethodRepository: WorkspaceScopedRepository<TwoFactorAuthenticationMethodEntity>,
+    @InjectRepository(AppTokenEntity)
+    private readonly appTokenRepository: Repository<AppTokenEntity>,
     private readonly twoFactorAuthenticationService: TwoFactorAuthenticationService,
     private readonly userWorkspaceService: UserWorkspaceService,
+    private readonly userSessionService: UserSessionService,
     private readonly throttlerService: ThrottlerService,
     private readonly emailService: EmailService,
     private readonly i18nService: I18nService,
@@ -281,6 +295,109 @@ export class TwoFactorAuthenticationRecoveryService {
     };
   }
 
+  async redeemRecoveryCode({
+    userId,
+    workspace,
+    recoveryCode,
+  }: {
+    userId: UserEntity['id'];
+    workspace: Pick<WorkspaceEntity, 'id' | 'displayName'>;
+    recoveryCode: string;
+  }): Promise<void> {
+    const userWorkspace = await this.getTargetUserWorkspaceOrThrow({
+      targetUserId: userId,
+      targetWorkspaceId: workspace.id,
+    });
+
+    await this.throttlerService.atomicTokenBucketThrottleOrThrow({
+      key: buildTwoFactorAuthenticationRecoveryCodeRedemptionRateLimitKey({
+        userWorkspaceId: userWorkspace.id,
+      }),
+      maxTokens:
+        TWO_FACTOR_AUTHENTICATION_RECOVERY_CODE_REDEMPTION_RATE_LIMIT_MAX,
+      timeWindow:
+        TWO_FACTOR_AUTHENTICATION_RECOVERY_CODE_REDEMPTION_RATE_LIMIT_WINDOW_MS,
+    });
+
+    const redeemableCodeWhere = {
+      userWorkspaceId: userWorkspace.id,
+      codeHash: hashTwoFactorAuthenticationRecoveryCode(recoveryCode),
+      usedAt: IsNull(),
+      revokedAt: IsNull(),
+      expiresAt: MoreThan(new Date()),
+    };
+
+    const isRedeemable =
+      await this.twoFactorAuthenticationRecoveryCodeRepository.exists(
+        workspace.id,
+        { where: redeemableCodeWhere },
+      );
+
+    if (!isRedeemable) {
+      this.rejectRecoveryCode({ userId, workspaceId: workspace.id });
+    }
+
+    // Sessions live partly in the cache, so they are revoked before the code
+    // is consumed: if this fails the code stays usable and the member retries.
+    await this.userSessionService.revokeAllSessionsForUser({
+      userId,
+      workspaceId: workspace.id,
+      reason: UserSessionRevokedReason.TwoFactorAuthenticationReset,
+    });
+
+    const isConsumed = await this.appTokenRepository.manager.transaction(
+      async (entityManager) => {
+        // The conditional UPDATE is what makes a code single use: when two
+        // requests race, Postgres re-checks the WHERE clause for the second
+        // one after the first commits, so only one of them affects the row.
+        const consumeResult = await entityManager
+          .getRepository(TwoFactorAuthenticationRecoveryCodeEntity)
+          .update(
+            { ...redeemableCodeWhere, workspaceId: workspace.id },
+            { usedAt: new Date() },
+          );
+
+        if ((consumeResult.affected ?? 0) === 0) {
+          return false;
+        }
+
+        await entityManager
+          .getRepository(TwoFactorAuthenticationMethodEntity)
+          .delete({
+            workspaceId: workspace.id,
+            userWorkspaceId: userWorkspace.id,
+          });
+
+        await entityManager.getRepository(AppTokenEntity).update(
+          {
+            userId,
+            workspaceId: workspace.id,
+            type: AppTokenType.RefreshToken,
+            revokedAt: IsNull(),
+          },
+          { revokedAt: new Date() },
+        );
+
+        return true;
+      },
+    );
+
+    if (!isConsumed) {
+      this.rejectRecoveryCode({ userId, workspaceId: workspace.id });
+    }
+
+    this.twoFactorAuthenticationService.emitTwoFactorAuthenticationEvent({
+      workspaceId: workspace.id,
+      userId,
+      action: 'recovery_code_used',
+    });
+
+    await this.sendTwoFactorAuthenticationResetEmail({
+      userWorkspace,
+      workspaceDisplayName: workspace.displayName,
+    });
+  }
+
   private async getTargetUserWorkspaceOrThrow({
     targetUserId,
     targetWorkspaceId,
@@ -329,6 +446,25 @@ export class TwoFactorAuthenticationRecoveryService {
     }
   }
 
+  private rejectRecoveryCode({
+    userId,
+    workspaceId,
+  }: {
+    userId: UserEntity['id'];
+    workspaceId: WorkspaceEntity['id'];
+  }): never {
+    this.twoFactorAuthenticationService.emitTwoFactorAuthenticationEvent({
+      workspaceId,
+      userId,
+      action: 'recovery_code_rejected',
+    });
+
+    throw new TwoFactorAuthenticationException(
+      'Invalid recovery code',
+      TwoFactorAuthenticationExceptionCode.INVALID_RECOVERY_CODE,
+    );
+  }
+
   private async sendRecoveryCodeIssuedEmail({
     actor,
     targetUserWorkspace,
@@ -349,6 +485,27 @@ export class TwoFactorAuthenticationRecoveryService {
           actorName: `${actor.firstName} ${actor.lastName}`.trim(),
           workspaceDisplayName: targetUserWorkspace.workspace.displayName ?? '',
           expiresAt,
+          locale,
+        }),
+    });
+  }
+
+  private async sendTwoFactorAuthenticationResetEmail({
+    userWorkspace,
+    workspaceDisplayName,
+  }: {
+    userWorkspace: UserWorkspaceEntity;
+    workspaceDisplayName: WorkspaceEntity['displayName'];
+  }): Promise<void> {
+    const locale = userWorkspace.locale ?? SOURCE_LOCALE;
+
+    await this.sendSecurityEmail({
+      to: userWorkspace.user.email,
+      locale,
+      subject: msg`Your two-factor authentication was reset`,
+      buildEmailTemplate: () =>
+        TwoFactorAuthenticationResetEmail({
+          workspaceDisplayName: workspaceDisplayName ?? '',
           locale,
         }),
     });

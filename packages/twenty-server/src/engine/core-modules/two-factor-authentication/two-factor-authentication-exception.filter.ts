@@ -22,6 +22,7 @@ export class TwoFactorAuthenticationExceptionFilter implements ExceptionFilter {
           subCode: exception.code,
           userFriendlyMessage: msg`Invalid verification code. Please try again.`,
         });
+      case TwoFactorAuthenticationExceptionCode.INVALID_RECOVERY_CODE:
       case TwoFactorAuthenticationExceptionCode.STEP_UP_AUTHENTICATION_REQUIRED:
         throw new UserInputError(exception);
       case TwoFactorAuthenticationExceptionCode.RECOVERY_CODE_TARGET_NOT_ALLOWED:

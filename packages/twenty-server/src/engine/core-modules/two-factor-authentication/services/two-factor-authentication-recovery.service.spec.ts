@@ -1,8 +1,13 @@
 import { Test, type TestingModule } from '@nestjs/testing';
+import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { renderEmail } from 'twenty-emails';
-import { QueryFailedError } from 'typeorm';
+import { IsNull, QueryFailedError } from 'typeorm';
 
+import {
+  AppTokenEntity,
+  AppTokenType,
+} from 'src/engine/core-modules/app-token/app-token.entity';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import {
@@ -19,7 +24,10 @@ import {
   TwoFactorAuthenticationExceptionCode,
 } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication.exception';
 import { TwoFactorAuthenticationService } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication.service';
+import { buildTwoFactorAuthenticationRecoveryCodeRedemptionRateLimitKey } from 'src/engine/core-modules/two-factor-authentication/utils/build-two-factor-authentication-recovery-code-redemption-rate-limit-key.util';
 import { hashTwoFactorAuthenticationRecoveryCode } from 'src/engine/core-modules/two-factor-authentication/utils/hash-two-factor-authentication-recovery-code.util';
+import { UserSessionService } from 'src/engine/core-modules/user-session/services/user-session.service';
+import { UserSessionRevokedReason } from 'src/engine/core-modules/user-session/types/user-session-revoked-reason.type';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { getWorkspaceScopedRepositoryToken } from 'src/engine/twenty-orm/workspace-scoped-repository/get-workspace-scoped-repository-token.util';
 
@@ -65,18 +73,45 @@ describe('TwoFactorAuthenticationRecoveryService', () => {
   let recoveryCodeRepository: {
     insert: jest.Mock;
     findOne: jest.Mock;
+    exists: jest.Mock;
   };
   let methodRepository: { exists: jest.Mock };
+  let transactionalRepositories: {
+    recoveryCode: { update: jest.Mock };
+    method: { delete: jest.Mock };
+    appToken: { update: jest.Mock };
+  };
   let twoFactorAuthenticationService: {
     assertFreshStepUpAuthenticationOrThrow: jest.Mock;
     emitTwoFactorAuthenticationEvent: jest.Mock;
     revokePendingRecoveryCodes: jest.Mock;
   };
   let userWorkspaceService: { getUserWorkspaceForUser: jest.Mock };
+  let userSessionService: { revokeAllSessionsForUser: jest.Mock };
   let throttlerService: { atomicTokenBucketThrottleOrThrow: jest.Mock };
   let emailService: { send: jest.Mock };
 
   beforeEach(async () => {
+    transactionalRepositories = {
+      recoveryCode: { update: jest.fn().mockResolvedValue({ affected: 1 }) },
+      method: { delete: jest.fn() },
+      appToken: { update: jest.fn() },
+    };
+
+    const entityManager = {
+      getRepository: (entity: unknown) => {
+        if (entity === TwoFactorAuthenticationRecoveryCodeEntity) {
+          return transactionalRepositories.recoveryCode;
+        }
+
+        if (entity === TwoFactorAuthenticationMethodEntity) {
+          return transactionalRepositories.method;
+        }
+
+        return transactionalRepositories.appToken;
+      },
+    };
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         TwoFactorAuthenticationRecoveryService,
@@ -87,6 +122,7 @@ describe('TwoFactorAuthenticationRecoveryService', () => {
           useValue: {
             insert: jest.fn(),
             findOne: jest.fn(),
+            exists: jest.fn().mockResolvedValue(true),
           },
         },
         {
@@ -95,6 +131,17 @@ describe('TwoFactorAuthenticationRecoveryService', () => {
           ),
           useValue: {
             exists: jest.fn().mockResolvedValue(true),
+          },
+        },
+        {
+          provide: getRepositoryToken(AppTokenEntity),
+          useValue: {
+            manager: {
+              transaction: jest.fn(
+                (callback: (manager: typeof entityManager) => unknown) =>
+                  callback(entityManager),
+              ),
+            },
           },
         },
         {
@@ -112,6 +159,10 @@ describe('TwoFactorAuthenticationRecoveryService', () => {
               .fn()
               .mockResolvedValue(buildTargetUserWorkspace()),
           },
+        },
+        {
+          provide: UserSessionService,
+          useValue: { revokeAllSessionsForUser: jest.fn() },
         },
         {
           provide: ThrottlerService,
@@ -149,6 +200,7 @@ describe('TwoFactorAuthenticationRecoveryService', () => {
     );
     twoFactorAuthenticationService = module.get(TwoFactorAuthenticationService);
     userWorkspaceService = module.get(UserWorkspaceService);
+    userSessionService = module.get(UserSessionService);
     throttlerService = module.get(ThrottlerService);
     emailService = module.get(EmailService);
   });
@@ -323,6 +375,124 @@ describe('TwoFactorAuthenticationRecoveryService', () => {
       await expect(generate()).resolves.toEqual(
         expect.objectContaining({ recoveryCode: expect.any(String) }),
       );
+    });
+  });
+
+  describe('redeemRecoveryCode', () => {
+    const redeem = () =>
+      service.redeemRecoveryCode({
+        userId: TARGET_USER_ID,
+        workspace: { id: WORKSPACE_ID, displayName: 'Apple' },
+        recoveryCode: 'abcde-fghjk-mnpqr-stvwx',
+      });
+
+    const redeemableCodeWhere = {
+      workspaceId: WORKSPACE_ID,
+      userWorkspaceId: TARGET_USER_WORKSPACE_ID,
+      codeHash: hashTwoFactorAuthenticationRecoveryCode('ABCDEFGHJKMNPQRSTVWX'),
+      usedAt: IsNull(),
+      revokedAt: IsNull(),
+    };
+
+    it('signs out the member, then consumes the code, removes the authenticator and revokes refresh tokens together', async () => {
+      await redeem();
+
+      expect(
+        throttlerService.atomicTokenBucketThrottleOrThrow,
+      ).toHaveBeenCalledWith(
+        expect.objectContaining({
+          key: buildTwoFactorAuthenticationRecoveryCodeRedemptionRateLimitKey({
+            userWorkspaceId: TARGET_USER_WORKSPACE_ID,
+          }),
+        }),
+      );
+      expect(userSessionService.revokeAllSessionsForUser).toHaveBeenCalledWith({
+        userId: TARGET_USER_ID,
+        workspaceId: WORKSPACE_ID,
+        reason: UserSessionRevokedReason.TwoFactorAuthenticationReset,
+      });
+      expect(
+        transactionalRepositories.recoveryCode.update,
+      ).toHaveBeenCalledWith(expect.objectContaining(redeemableCodeWhere), {
+        usedAt: expect.any(Date),
+      });
+      expect(transactionalRepositories.method.delete).toHaveBeenCalledWith({
+        workspaceId: WORKSPACE_ID,
+        userWorkspaceId: TARGET_USER_WORKSPACE_ID,
+      });
+      expect(transactionalRepositories.appToken.update).toHaveBeenCalledWith(
+        {
+          userId: TARGET_USER_ID,
+          workspaceId: WORKSPACE_ID,
+          type: AppTokenType.RefreshToken,
+          revokedAt: IsNull(),
+        },
+        { revokedAt: expect.any(Date) },
+      );
+      expect(
+        twoFactorAuthenticationService.emitTwoFactorAuthenticationEvent,
+      ).toHaveBeenCalledWith({
+        workspaceId: WORKSPACE_ID,
+        userId: TARGET_USER_ID,
+        action: 'recovery_code_used',
+      });
+      expect(emailService.send).toHaveBeenCalledWith(
+        expect.objectContaining({ to: 'target@example.com' }),
+      );
+    });
+
+    it('rejects an unknown, expired, used or revoked code without touching the member', async () => {
+      recoveryCodeRepository.exists.mockResolvedValue(false);
+
+      await expect(redeem()).rejects.toMatchObject({
+        code: TwoFactorAuthenticationExceptionCode.INVALID_RECOVERY_CODE,
+      });
+      expect(
+        twoFactorAuthenticationService.emitTwoFactorAuthenticationEvent,
+      ).toHaveBeenCalledWith({
+        workspaceId: WORKSPACE_ID,
+        userId: TARGET_USER_ID,
+        action: 'recovery_code_rejected',
+      });
+      expect(
+        userSessionService.revokeAllSessionsForUser,
+      ).not.toHaveBeenCalled();
+      expect(transactionalRepositories.method.delete).not.toHaveBeenCalled();
+    });
+
+    it('keeps the code usable when signing out the member fails', async () => {
+      userSessionService.revokeAllSessionsForUser.mockRejectedValue(
+        new Error('Redis down'),
+      );
+
+      await expect(redeem()).rejects.toThrow('Redis down');
+      expect(
+        transactionalRepositories.recoveryCode.update,
+      ).not.toHaveBeenCalled();
+    });
+
+    it('rejects a code that another request consumed first', async () => {
+      transactionalRepositories.recoveryCode.update.mockResolvedValue({
+        affected: 0,
+      });
+
+      await expect(redeem()).rejects.toMatchObject({
+        code: TwoFactorAuthenticationExceptionCode.INVALID_RECOVERY_CODE,
+      });
+      expect(transactionalRepositories.method.delete).not.toHaveBeenCalled();
+      expect(emailService.send).not.toHaveBeenCalled();
+    });
+
+    it('checks the rate limit before looking at the code', async () => {
+      throttlerService.atomicTokenBucketThrottleOrThrow.mockRejectedValue(
+        new ThrottlerException(
+          'Limit reached',
+          ThrottlerExceptionCode.LIMIT_REACHED,
+        ),
+      );
+
+      await expect(redeem()).rejects.toThrow(ThrottlerException);
+      expect(recoveryCodeRepository.exists).not.toHaveBeenCalled();
     });
   });
 

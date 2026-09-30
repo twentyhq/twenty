@@ -3178,6 +3178,7 @@ export type Mutation = {
   getAuthTokensFromLoginToken: AuthTokens;
   getAuthTokensFromOTP: AuthTokens;
   getAuthTokensFromSSOExchangeToken: AuthTokens;
+  getAuthTokensFromTwoFactorAuthenticationRecoveryCode: AuthTokens;
   getAuthorizationUrlForSSO: GetAuthorizationUrlForSso;
   getLoginTokenFromCredentials: LoginToken;
   goBackToPreviousOnboardingStep: OnboardingStepNavigation;
@@ -4005,6 +4006,14 @@ export type MutationGetAuthTokensFromOtpArgs = {
 
 export type MutationGetAuthTokensFromSsoExchangeTokenArgs = {
   ssoExchangeToken: Scalars['String']['input'];
+};
+
+
+export type MutationGetAuthTokensFromTwoFactorAuthenticationRecoveryCodeArgs = {
+  captchaToken?: InputMaybe<Scalars['String']['input']>;
+  loginToken: Scalars['String']['input'];
+  origin: Scalars['String']['input'];
+  recoveryCode: Scalars['String']['input'];
 };
 
 

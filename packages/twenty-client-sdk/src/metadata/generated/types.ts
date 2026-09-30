@@ -10870,6 +10870,26 @@ export default {
                     ]
                 }
             ],
+            "getAuthTokensFromTwoFactorAuthenticationRecoveryCode": [
+                304,
+                {
+                    "recoveryCode": [
+                        1,
+                        "String!"
+                    ],
+                    "loginToken": [
+                        1,
+                        "String!"
+                    ],
+                    "captchaToken": [
+                        1
+                    ],
+                    "origin": [
+                        1,
+                        "String!"
+                    ]
+                }
+            ],
             "signUp": [
                 292,
                 {
