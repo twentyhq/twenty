@@ -1,5 +1,5 @@
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { Callout, Info, InlineBanner } from 'twenty-ui/components';
+import { Callout, InlineBanner } from 'twenty-ui/components';
 import { Banner, Loader, ProgressBar } from 'twenty-ui/primitives/feedback';
 import { ThemeProvider } from 'twenty-ui/theme';
 
@@ -24,8 +24,14 @@ const FEEDBACK_ENTRIES: GalleryEntry[] = [
     ),
   },
   {
-    name: 'Info',
-    node: <Info accent="blue" text="Some information" />,
+    name: 'InlineBanner compact link',
+    node: (
+      <InlineBanner
+        variant="compact"
+        message="Connect your account to keep your contacts in sync."
+        button={{ title: 'Connection settings', href: '#connection-settings' }}
+      />
+    ),
   },
   {
     name: 'InlineBanner',
