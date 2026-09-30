@@ -89,4 +89,13 @@ describe('releaseTeamsConnectionTenant', () => {
       TENANT_ID,
     );
   });
+
+  it('should keep the connection tenant for a retry when listing connections fails', async () => {
+    listConnectionsMock.mockRejectedValue(new Error('refresh failed'));
+
+    await expect(
+      releaseTeamsConnectionTenant({ connectedAccountId: 'leaving' }),
+    ).rejects.toThrow('refresh failed');
+    expect(kvDeleteMock).not.toHaveBeenCalled();
+  });
 });

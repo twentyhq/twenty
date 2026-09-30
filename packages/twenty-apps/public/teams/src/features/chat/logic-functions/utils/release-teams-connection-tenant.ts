@@ -1,9 +1,9 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import { kv } from 'twenty-sdk/logic-function';
+import { kv, listConnections } from 'twenty-sdk/logic-function';
 
 import { buildTeamsConnectedAccountTenantKvKey } from 'src/features/chat/logic-functions/utils/build-teams-connected-account-tenant-kv-key';
 import { buildTeamsTenantKvKey } from 'src/features/chat/logic-functions/utils/build-teams-tenant-kv-key';
-import { isTeamsTenantClaimedByAnotherConnection } from 'src/features/chat/logic-functions/utils/is-teams-tenant-claimed-by-another-connection';
+import { TEAMS_PROVIDER_NAME } from 'src/features/transcripts/constants/teams-provider-name';
 
 export const releaseTeamsConnectionTenant = async ({
   connectedAccountId,
@@ -17,13 +17,23 @@ export const releaseTeamsConnectionTenant = async ({
   const connectedAccountTenantKvKey =
     buildTeamsConnectedAccountTenantKvKey(connectedAccountId);
   const tenantId = await kv.get<string>(connectedAccountTenantKvKey);
+  const connections = isNonEmptyString(tenantId)
+    ? await listConnections({ providerName: TEAMS_PROVIDER_NAME })
+    : [];
 
   await kv.delete(connectedAccountTenantKvKey);
 
-  if (
-    !isNonEmptyString(tenantId) ||
-    (await isTeamsTenantClaimedByAnotherConnection(tenantId))
-  ) {
+  if (!isNonEmptyString(tenantId)) {
+    return { releasedTenantId: null };
+  }
+
+  const claimedTenantIds = await Promise.all(
+    connections.map((connection) =>
+      kv.get<string>(buildTeamsConnectedAccountTenantKvKey(connection.id)),
+    ),
+  );
+
+  if (claimedTenantIds.includes(tenantId)) {
     return { releasedTenantId: null };
   }
 
