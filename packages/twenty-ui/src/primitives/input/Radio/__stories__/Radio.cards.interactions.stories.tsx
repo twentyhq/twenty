@@ -7,7 +7,7 @@ import { RadioGroup } from '@ui/primitives/input/RadioGroup/RadioGroup';
 import { type RadioGroupProps } from '@ui/primitives/input/RadioGroup/types/RadioGroupProps';
 import { ComponentDecorator } from '@ui/testing';
 
-import { CardPicker } from '../CardPicker';
+import { Radio } from '../Radio';
 
 const CardsExample = ({ onValueChange }: RadioGroupProps) => {
   const [value, setValue] = useState('monthly');
@@ -21,8 +21,12 @@ const CardsExample = ({ onValueChange }: RadioGroupProps) => {
         onValueChange?.(nextValue, details);
       }}
     >
-      <CardPicker value="monthly">Monthly</CardPicker>
-      <CardPicker value="yearly">Yearly</CardPicker>
+      <Radio variant="card" value="monthly">
+        Monthly
+      </Radio>
+      <Radio variant="card" value="yearly">
+        Yearly
+      </Radio>
       {value === 'yearly' && <Input aria-label="Purchase order" />}
     </RadioGroup>
   );

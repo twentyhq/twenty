@@ -14,7 +14,7 @@ import {
   FeatureFlagGuard,
   RequireFeatureFlag,
 } from 'src/engine/guards/feature-flag.guard';
-import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { DuplicatedMessageListDTO } from 'src/modules/emailing/dtos/duplicated-message-list.dto';
 import { MessageListDuplicationService } from 'src/modules/emailing/services/message-list-duplication.service';
@@ -28,7 +28,20 @@ import { MessageListGraphqlApiExceptionFilter } from 'src/modules/emailing/utils
   PermissionsGraphqlApiExceptionFilter,
   AuthGraphqlApiExceptionFilter,
 )
-@UseGuards(WorkspaceAuthGuard, FeatureFlagGuard)
+@UseGuards(
+  AuthPrincipalGuard({
+    userSession: {
+      standard: true,
+      impersonated: true,
+      playground: true,
+      workspaceAgnostic: false,
+    },
+    apiKey: true,
+    oauthClient: true,
+    application: true,
+  }),
+  FeatureFlagGuard,
+)
 @UsePipes(ResolverValidationPipe)
 export class MessageListResolver {
   constructor(
