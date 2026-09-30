@@ -83,7 +83,25 @@ const fields: SpreadsheetImportField[] = [
 const storyValues = {
   ...mockRsiValues,
   spreadsheetImportFields: fields,
-  availableFieldMetadataItems: [nameField, addressField, teamField],
+  availableFieldMetadataItems: [
+    nameField,
+    addressField,
+    teamField,
+    {
+      ...nameField,
+      id: 'matching-files-field',
+      name: 'files',
+      label: 'Files',
+      type: FieldMetadataType.FILES,
+    },
+    {
+      ...nameField,
+      id: 'matching-position-field',
+      name: 'position',
+      label: 'Position',
+      type: FieldMetadataType.POSITION,
+    },
+  ],
 };
 
 const MatchColumnsExample = ({ onClose }: { onClose: () => void }) => {
@@ -291,5 +309,48 @@ export const SubMatchingSearchSkipsUnmatchedSelection: Story = {
     expect(dialog).toBeVisible();
     expect(args.onClose).not.toHaveBeenCalled();
     await waitFor(() => expect(trigger).toHaveFocus());
+  },
+};
+
+export const UnsupportedFieldsAreExcluded: Story = {
+  play: async ({ canvasElement, args }) => {
+    const body = within(canvasElement.ownerDocument.body);
+    await userEvent.click(
+      within(canvasElement).getByRole('button', { name: 'Open import' }),
+    );
+    const dialog = await body.findByRole('dialog', { name: 'Import data' });
+    const trigger = within(dialog).getAllByRole('button', {
+      name: 'Select matching field',
+    })[0];
+    await userEvent.click(trigger);
+    const popup = await body.findByRole('dialog', {
+      name: 'Select matching field',
+    });
+    const search = within(popup).getByRole('searchbox', {
+      name: 'Search fields',
+    });
+
+    expect(
+      within(popup).queryByRole('button', { name: /^Files/ }),
+    ).not.toBeInTheDocument();
+    expect(
+      within(popup).queryByRole('button', { name: /^Position/ }),
+    ).not.toBeInTheDocument();
+
+    for (const unsupportedField of ['Files', 'Position']) {
+      await userEvent.clear(search);
+      await userEvent.type(search, unsupportedField);
+      expect(within(popup).getByText('No fields found')).toBeVisible();
+      await userEvent.keyboard('{Enter}');
+      expect(popup).toBeVisible();
+      expect(trigger).toHaveTextContent('Select column...');
+    }
+
+    await userEvent.clear(search);
+    await userEvent.type(search, 'Name');
+    await userEvent.keyboard('{Enter}');
+    await waitFor(() => expect(popup).not.toBeInTheDocument());
+    expect(trigger).toHaveTextContent('Name');
+    expect(args.onClose).not.toHaveBeenCalled();
   },
 };

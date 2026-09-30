@@ -37,17 +37,22 @@ export const MatchColumnSelectFieldSelectDropdownContent = ({
   suggestedOptions,
 }: MatchColumnSelectFieldSelectDropdownContentProps) => {
   const [searchFilter, setSearchFilter] = useState('');
-  const { availableFieldMetadataItems } = useSpreadsheetImportInternal();
+  const { availableFieldMetadataItems, spreadsheetImportFields } =
+    useSpreadsheetImportInternal();
   const { goToPage } = useDropdownPage();
   const { getIcon } = useIcons();
   const { t } = useLingui();
 
+  const importableFieldMetadataItemIds = new Set(
+    spreadsheetImportFields.map((field) => field.fieldMetadataItemId),
+  );
   const searchTerm = normalizeSearchText(searchFilter);
   const filteredAvailableFieldMetadataItems =
     availableFieldMetadataItems.filter(
       (field) =>
-        normalizeSearchText(field.label).includes(searchTerm) ||
-        normalizeSearchText(field.name).includes(searchTerm),
+        importableFieldMetadataItemIds.has(field.id) &&
+        (normalizeSearchText(field.label).includes(searchTerm) ||
+          normalizeSearchText(field.name).includes(searchTerm)),
     );
   const filteredSuggestedOptions = suggestedOptions.filter((option) =>
     normalizeSearchText(option.label).includes(searchTerm),
