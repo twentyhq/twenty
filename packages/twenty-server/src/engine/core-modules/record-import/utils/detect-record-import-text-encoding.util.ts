@@ -1,5 +1,5 @@
 // Excel saves CSV in the system code page, usually Windows-1252, so anything
-// that is not valid UTF-8 is read as Windows-1252 rather than garbled (DATA-7).
+// that is not valid UTF-8 is read as Windows-1252 rather than garbled.
 export const detectRecordImportTextEncoding = (prefix: Buffer): string => {
   if (prefix[0] === 0xff && prefix[1] === 0xfe) {
     return 'utf-16le';

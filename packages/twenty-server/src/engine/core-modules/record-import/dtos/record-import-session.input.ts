@@ -39,7 +39,7 @@ export class PreviewRecordImportSheetInput extends RecordImportSessionInput {
 
 @InputType()
 export class RecordImportVersionedInput extends RecordImportSessionInput {
-  // The session version the user acted on; stale writes are rejected (LIFE-3)
+  // The session version the user acted on; stale writes are rejected
   @Field(() => Int)
   @IsInt()
   @Min(1)

@@ -27,7 +27,7 @@ const columnSchema = z.object({
 
 // Columns come from the browser: every field key and option value must
 // exist in the live metadata, and the result is rebuilt from scratch so no
-// unexpected property reaches the session (SEC-7).
+// unexpected property reaches the session.
 export const parseRecordImportColumns = ({
   columns,
   headerValues,
@@ -167,7 +167,7 @@ export const buildRecordImportMappedFields = (
   });
 };
 
-// The data model can change between mapping and import (DATA-6): every
+// The data model can change between mapping and import: every
 // mapped field must still be importable with the same type and options.
 export const isRecordImportMappingOutdated = (
   mappedFields: RecordImportMappedField[],

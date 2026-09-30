@@ -63,7 +63,7 @@ export class CreateFileUploadPermissionGuard implements CanActivate {
   }
 
   // An import file is only ever read by the import, so importing records
-  // does not require the general file upload permission (SEC-1).
+  // does not require the general file upload permission.
   private getAcceptedPermissionFlags(
     fileFolder: FileFolder,
   ): readonly PermissionFlagType[] {

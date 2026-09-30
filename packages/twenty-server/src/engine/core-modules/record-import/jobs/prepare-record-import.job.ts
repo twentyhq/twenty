@@ -32,7 +32,7 @@ class RecordImportPreparationCancelled extends Error {}
 
 // Reads the chosen sheet once and stores its rows in chunks keyed by their
 // original row numbers, so validation, review and import never parse the
-// source file again (P1, P3, P4).
+// source file again.
 @Processor(MessageQueue.recordImportQueue)
 export class PrepareRecordImportJob {
   private readonly logger = new Logger(PrepareRecordImportJob.name);
@@ -96,7 +96,7 @@ export class PrepareRecordImportJob {
         ._(
           error instanceof RecordImportException
             ? error.userFriendlyMessage
-            : msg`The file could not be read. Check that it is a valid CSV or Excel file.`,
+            : msg`Reading the file failed. Please try again.`,
         );
 
       await this.recordImportSessionService.update(session, (current) =>

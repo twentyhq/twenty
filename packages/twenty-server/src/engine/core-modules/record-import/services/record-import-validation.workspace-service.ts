@@ -21,15 +21,14 @@ import {
   type RecordImportSession,
 } from 'src/engine/core-modules/record-import/types/record-import-session.type';
 
-export type RecordImportRowValidation = {
-  rowNumber: number;
+export type RecordImportRowValidation = RecordImportRow & {
   // Deleted in the review grid: never validated, shown or imported
   isDeleted: boolean;
   structuredRow: ImportedStructuredRow;
   errors: SpreadsheetImportRowErrors<SpreadsheetImportValidationMessage>;
 };
 
-// One validation for the review grid and the import (SEC-6): the mapping is
+// One validation for the review grid and the import: the mapping is
 // applied to the stored rows, the shared rules run per chunk, and the in-file
 // unique check, which needs every row, runs as a first pass.
 @Injectable()
@@ -73,11 +72,12 @@ export class RecordImportValidationWorkspaceService {
 
       yield {
         chunkIndex,
-        rows: rows.map(({ rowNumber }, rowIndex) => {
+        rows: rows.map(({ rowNumber, cells }, rowIndex) => {
           const isDeleted = edits.get(rowNumber)?.isDeleted === true;
 
           return {
             rowNumber,
+            cells,
             isDeleted,
             structuredRow: structuredRows[rowIndex],
             errors: isDeleted

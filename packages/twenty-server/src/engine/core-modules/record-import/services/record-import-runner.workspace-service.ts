@@ -50,8 +50,12 @@ type PendingRecord = { rowNumber: number; record: Record<string, unknown> };
 
 type ReportedRow = { rowNumber: number; messages: MessageDescriptor[] };
 
+// Reported rows are written out after each chunk, so memory holds at most
+// one chunk of them however many rows are skipped or fail
+type ImportReport = { pendingRows: ReportedRow[]; partCount: number };
+
 // Unique-constraint and relation lookup failures share one message, so the
-// report never confirms that a record the requester cannot see exists (SEC-4).
+// report never confirms that a record the requester cannot see exists.
 const ROW_WRITE_FAILED_MESSAGE = msg`This row could not be saved. It may conflict with an existing record or reference a record that does not exist.`;
 
 class RecordImportCancelled extends Error {}
@@ -85,7 +89,7 @@ export class RecordImportRunnerWorkspaceService {
       skippedRowCount: 0,
       failedRowCount: 0,
     };
-    const reportedRows: ReportedRow[] = [];
+    const report: ImportReport = { pendingRows: [], partCount: 0 };
     let status: RecordImportSession['status'] = 'COMPLETED';
     let errorMessage: string | undefined;
 
@@ -114,7 +118,7 @@ export class RecordImportRunnerWorkspaceService {
         session,
         context,
         result,
-        reportedRows,
+        report,
         updateProgress,
         abortSignal,
       });
@@ -133,7 +137,7 @@ export class RecordImportRunnerWorkspaceService {
       }
     }
 
-    const reportFileId = await this.writeReport(session, reportedRows).catch(
+    const reportFileId = await this.writeReport(session, report).catch(
       (error) => {
         this.logger.warn(
           `Failed to write report of import ${session.id}: ${error.message}`,
@@ -169,14 +173,14 @@ export class RecordImportRunnerWorkspaceService {
     session,
     context,
     result,
-    reportedRows,
+    report,
     updateProgress,
     abortSignal,
   }: {
     session: RecordImportSession;
     context: RecordImportContext;
     result: RecordImportResult;
-    reportedRows: ReportedRow[];
+    report: ImportReport;
     updateProgress: MessageQueueJobProgressContext['updateProgress'];
     abortSignal?: AbortSignal;
   }) {
@@ -185,7 +189,7 @@ export class RecordImportRunnerWorkspaceService {
     let lastRequesterRefreshAt = Date.now();
 
     // Also runs while the import waits for downstream queues, so a pause
-    // can be cancelled and never lets the workspace lease expire (LIFE-5)
+    // can be cancelled and never lets the workspace lease expire
     const keepAlive = async () => {
       abortSignal?.throwIfAborted();
 
@@ -202,11 +206,22 @@ export class RecordImportRunnerWorkspaceService {
           ttlMs: RECORD_IMPORT_LEASE_TTL_MS,
         }))
       ) {
-        await this.recordImportSessionService.acquireWorkspaceLease({
-          workspaceId: session.workspaceId,
-          id: session.id,
-          ttlMs: RECORD_IMPORT_LEASE_TTL_MS,
-        });
+        const reacquired =
+          await this.recordImportSessionService.acquireWorkspaceLease({
+            workspaceId: session.workspaceId,
+            id: session.id,
+            ttlMs: RECORD_IMPORT_LEASE_TTL_MS,
+          });
+
+        if (!reacquired) {
+          throw new RecordImportException(
+            'Workspace import lease held by another import',
+            'IMPORT_ALREADY_RUNNING',
+            {
+              userFriendlyMessage: msg`Another import started in this workspace, so this one was stopped.`,
+            },
+          );
+        }
       }
 
       await this.recordImportSessionService.touch(session);
@@ -216,7 +231,7 @@ export class RecordImportRunnerWorkspaceService {
       await keepAlive();
 
       // Membership and permissions are re-checked while the import runs,
-      // not only when it starts (SEC-5)
+      // not only when it starts
       if (
         Date.now() - lastRequesterRefreshAt >=
         RECORD_IMPORT_REQUESTER_REFRESH_INTERVAL_MS
@@ -250,7 +265,7 @@ export class RecordImportRunnerWorkspaceService {
           continue;
         }
 
-        // Warnings do not block a row, as in the browser import (EDIT-7)
+        // Warnings do not block a row, as in the browser import
         const blockingMessages = Object.values(errors)
           .filter(({ level }) => level === 'error')
           .map(({ message }) =>
@@ -259,7 +274,7 @@ export class RecordImportRunnerWorkspaceService {
 
         if (blockingMessages.length > 0) {
           result.skippedRowCount++;
-          reportedRows.push({ rowNumber, messages: blockingMessages });
+          report.pendingRows.push({ rowNumber, messages: blockingMessages });
           continue;
         }
 
@@ -298,18 +313,20 @@ export class RecordImportRunnerWorkspaceService {
         result.importedRecordCount += batch.length - failedRowNumbers.length;
         result.failedRowCount += failedRowNumbers.length;
         result.processedRowCount += batch.length;
-        reportedRows.push(
+        report.pendingRows.push(
           ...failedRowNumbers.map((rowNumber) => ({
             rowNumber,
             messages: [ROW_WRITE_FAILED_MESSAGE],
           })),
         );
       }
+
+      await this.flushReport(session, report);
     }
   }
 
   // One database error fails a whole batch, so failing batches are split
-  // until the failing rows are isolated (DATA-3). Returns their row numbers.
+  // until the failing rows are isolated. Returns their row numbers.
   private async writeBatch(
     context: RecordImportContext,
     batch: PendingRecord[],
@@ -343,7 +360,7 @@ export class RecordImportRunnerWorkspaceService {
         error instanceof UsageLimitException &&
         error.code === UsageLimitExceptionCode.RATE_LIMITED
       ) {
-        // The API speed limit paces imports like any other client (LOAD-1)
+        // The API speed limit paces imports like any other client
         await setTimeout(error.exhaustedScope?.retryAfterMs ?? 1000);
         await checkpoint();
 
@@ -375,7 +392,7 @@ export class RecordImportRunnerWorkspaceService {
   }
 
   // Each written record feeds event and webhook queues shared by all
-  // workspaces; the import waits while they are backed up (LOAD-1). The
+  // workspaces; the import waits while they are backed up. The
   // workflow queue is left out: runs are throttled by the workflow engine,
   // which drains it far slower than an import fills it, so waiting on it
   // would stall any import into an object with record-created workflows.
@@ -406,21 +423,16 @@ export class RecordImportRunnerWorkspaceService {
     }
   }
 
-  // Skipped and failed rows with their original row numbers (EDIT-8). Values
-  // are escaped against formula injection since the file opens in Excel.
-  private async writeReport(
+  private async flushReport(
     session: RecordImportSession,
-    reportedRows: ReportedRow[],
-  ): Promise<string | undefined> {
-    if (reportedRows.length === 0) {
-      return undefined;
+    report: ImportReport,
+  ): Promise<void> {
+    if (report.pendingRows.length === 0) {
+      return;
     }
 
     const i18n = this.i18nService.getI18nInstance(session.locale);
-    const header = [i18n._(msg`Row`), i18n._(msg`Errors`)]
-      .map((label) => formatValueForCSV(sanitizeValueForCSVExport(label)))
-      .join(',');
-    const lines = reportedRows
+    const lines = report.pendingRows
       .sort((rowA, rowB) => rowA.rowNumber - rowB.rowNumber)
       .map(
         ({ rowNumber, messages }) =>
@@ -431,12 +443,37 @@ export class RecordImportRunnerWorkspaceService {
           )}`,
       );
 
-    const file = await this.recordImportStorageService.writeReport(
+    await this.recordImportStorageService.writeReportPart(
       session,
-      '﻿' + [header, ...lines].join('\n') + '\n',
+      report.partCount,
+      lines,
     );
+    report.partCount++;
+    report.pendingRows = [];
+  }
 
-    return file.id;
+  // Skipped and failed rows with their original row numbers. Values
+  // are escaped against formula injection since the file opens in Excel.
+  private async writeReport(
+    session: RecordImportSession,
+    report: ImportReport,
+  ): Promise<string | undefined> {
+    await this.flushReport(session, report);
+
+    if (report.partCount === 0) {
+      return undefined;
+    }
+
+    const i18n = this.i18nService.getI18nInstance(session.locale);
+    const header = [i18n._(msg`Row`), i18n._(msg`Errors`)]
+      .map((label) => formatValueForCSV(sanitizeValueForCSVExport(label)))
+      .join(',');
+
+    return this.recordImportStorageService.writeReport(
+      session,
+      '\uFEFF' + header + '\n',
+      report.partCount,
+    );
   }
 
   private translate(session: RecordImportSession, message: MessageDescriptor) {

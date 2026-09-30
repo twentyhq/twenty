@@ -1,7 +1,7 @@
 import { type CacheScript } from 'src/engine/core-modules/cache-storage/types/cache-script.type';
 
 // Stores row edits and the session version they apply to in one step, so a
-// stale tab can neither lose nor reorder edits (LIFE-3). Returns 0 on a
+// stale tab can neither lose nor reorder edits. Returns 0 on a
 // version conflict and -1 when the overlay would exceed its cap.
 export const SAVE_RECORD_IMPORT_EDITS_SCRIPT: CacheScript = {
   name: 'record-import:save-edits',

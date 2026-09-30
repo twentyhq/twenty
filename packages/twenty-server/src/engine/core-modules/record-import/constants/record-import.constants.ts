@@ -1,4 +1,4 @@
-// Parser caps (SEC-2). Together with the direct upload size limit
+// Parser caps. Together with the direct upload size limit
 // (settings.storage.maxDirectUploadFileSize) they bound what one import can
 // load: a CSV is streamed, so rows and cells are the limit; a workbook is
 // decompressed in memory by a worker thread, so its file size and heap are.
@@ -12,6 +12,8 @@ export const RECORD_IMPORT_WORKBOOK_WORKER_TIMEOUT_MS = 5 * 60 * 1000;
 export const RECORD_IMPORT_PREVIEW_ROW_COUNT = 50;
 
 export const RECORD_IMPORT_ROWS_PER_CHUNK = 10_000;
+// Above the largest review page, so a page reads at most two of them
+export const RECORD_IMPORT_ERROR_ROWS_PER_PAGE = 1_000;
 export const RECORD_IMPORT_MAX_DISTINCT_VALUES_PER_COLUMN = 1_000;
 export const RECORD_IMPORT_EXAMPLE_ROW_COUNT = 2;
 

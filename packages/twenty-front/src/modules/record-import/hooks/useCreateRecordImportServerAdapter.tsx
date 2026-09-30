@@ -37,7 +37,7 @@ import {
 
 const RUNNING_STATUSES = ['PREPARING', 'IMPORTING', 'CANCELLING'];
 
-const isRejectedEditsError = (error: unknown) =>
+const isRejectedEditsError = (error: unknown): error is CombinedGraphQLErrors =>
   CombinedGraphQLErrors.is(error) &&
   error.errors.some(
     (graphQLError) => graphQLError.extensions?.code === 'BAD_USER_INPUT',
@@ -337,7 +337,7 @@ export const useCreateRecordImportServerAdapter = (
 
                 // The server rejects the same edits on every retry, and a
                 // later edit of the row still carries the rejected value
-                rejectedEditsErrorMessage = (error as Error).message;
+                rejectedEditsErrorMessage = error.message;
 
                 for (const edit of requestEdits) {
                   unsavedEdits.delete(edit.rowNumber);

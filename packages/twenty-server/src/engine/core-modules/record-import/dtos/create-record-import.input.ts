@@ -14,7 +14,7 @@ export class CreateRecordImportInput {
   @IsUUID()
   objectMetadataId: string;
 
-  // IANA zone dates without an explicit offset are read in (DATA-1)
+  // IANA zone dates without an explicit offset are read in
   @Field(() => String)
   @IsString()
   @MaxLength(64)

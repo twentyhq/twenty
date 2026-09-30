@@ -1,5 +1,6 @@
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { SpreadsheetImportTable } from '@/spreadsheet-import/components/SpreadsheetImportTable';
+import { SPREADSHEET_IMPORT_SERVER_REVIEW_PAGE_SIZE } from '@/spreadsheet-import/constants/SpreadsheetImportServerReviewPageSize';
 import { SPREADSHEET_IMPORT_UNSAVED_ROW_CLASS_NAME } from '@/spreadsheet-import/constants/SpreadsheetImportUnsavedRowClassName';
 import { StepNavigationButton } from '@/spreadsheet-import/components/StepNavigationButton';
 import { useHideStepBar } from '@/spreadsheet-import/hooks/useHideStepBar';
@@ -25,8 +26,6 @@ import { IconChevronLeft, IconChevronRight, IconTrash } from 'twenty-ui/icon';
 import { Button, Switch } from 'twenty-ui/primitives/input';
 import { Dialog } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
-
-export const SERVER_REVIEW_PAGE_SIZE = 100;
 
 const StyledContentWrapper = styled.div`
   display: flex;
@@ -89,7 +88,7 @@ type ServerReviewStepProps = {
 
 // Reviews rows the server validated, one page at a time: the browser never
 // holds the whole file. Edits and deletions are saved to the server, which
-// checks every row again before the import can start (EDIT-1, EDIT-5).
+// checks every row again before the import can start.
 export const ServerReviewStep = ({
   serverImport,
   importedColumns,
@@ -156,7 +155,7 @@ export const ServerReviewStep = ({
       }
     } catch (error) {
       setSaveStatus('failed');
-      onError((error as Error).message);
+      onError(error instanceof Error ? error.message : String(error));
     }
   };
 
@@ -208,7 +207,7 @@ export const ServerReviewStep = ({
     try {
       const nextPage = await serverImport.loadRows({
         offset: nextOffset,
-        limit: SERVER_REVIEW_PAGE_SIZE,
+        limit: SPREADSHEET_IMPORT_SERVER_REVIEW_PAGE_SIZE,
         onlyErrors: nextOnlyErrors,
       });
 
@@ -236,7 +235,7 @@ export const ServerReviewStep = ({
       setOffset(nextOffset);
       setOnlyErrors(nextOnlyErrors);
     } catch (error) {
-      onError((error as Error).message);
+      onError(error instanceof Error ? error.message : String(error));
     } finally {
       setIsLoading(false);
     }
@@ -257,7 +256,7 @@ export const ServerReviewStep = ({
       await serverImport.importRows();
       onClose();
     } catch (error) {
-      onError((error as Error).message);
+      onError(error instanceof Error ? error.message : String(error));
       setCurrentStepState({
         type: SpreadsheetImportStepType.reviewServerRows,
         importedColumns,
@@ -376,7 +375,10 @@ export const ServerReviewStep = ({
                 disabled={isPagingDisabled || offset === 0}
                 onClick={() =>
                   loadPage(
-                    Math.max(0, offset - SERVER_REVIEW_PAGE_SIZE),
+                    Math.max(
+                      0,
+                      offset - SPREADSHEET_IMPORT_SERVER_REVIEW_PAGE_SIZE,
+                    ),
                     onlyErrors,
                   )
                 }
@@ -388,7 +390,10 @@ export const ServerReviewStep = ({
                   isPagingDisabled || lastRowPosition >= page.totalCount
                 }
                 onClick={() =>
-                  loadPage(offset + SERVER_REVIEW_PAGE_SIZE, onlyErrors)
+                  loadPage(
+                    offset + SPREADSHEET_IMPORT_SERVER_REVIEW_PAGE_SIZE,
+                    onlyErrors,
+                  )
                 }
               />
             </StyledToolbarGroup>
@@ -399,7 +404,7 @@ export const ServerReviewStep = ({
         onContinue={handleContinue}
         onBack={onBack}
         continueTitle={t`Confirm`}
-        // The import must read exactly the rows shown (EDIT-5, EDIT-6)
+        // The import must read exactly the rows shown
         isContinueDisabled={saveStatus !== 'idle' || unsavedRowNumbers.size > 0}
       />
     </>

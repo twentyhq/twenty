@@ -17,7 +17,7 @@ export type RecordImportStatus =
   | 'FAILED';
 
 // What a column was matched to when the mapping was saved, re-checked
-// against live metadata when the import starts (DATA-6).
+// against live metadata when the import starts.
 export type RecordImportMappedField = {
   key: string;
   fieldMetadataId: string;
@@ -73,7 +73,7 @@ export type RecordImportSession = {
 };
 
 export type RecordImportRow = {
-  // 1-based row number as a spreadsheet application shows it (DATA-8)
+  // 1-based row number as a spreadsheet application shows it
   rowNumber: number;
   cells: string[];
 };
@@ -85,7 +85,7 @@ export type RecordImportColumnSamples = {
 };
 
 // A change the user made in the review grid, kept apart from the stored
-// rows and applied over them whenever rows are read (P1)
+// rows and applied over them whenever rows are read
 export type RecordImportRowEdit = {
   rowNumber: number;
   position: number;
@@ -94,9 +94,16 @@ export type RecordImportRowEdit = {
   values: Record<string, string | boolean | null>;
 };
 
-// Positions are indexes among the stored rows, in file order
+// Rows with any error or warning, in file order, split into pages of
+// RECORD_IMPORT_ERROR_ROWS_PER_PAGE so the error filter never reads rows
+// without errors
 export type RecordImportErrorIndex = {
-  errorRowPositions: number[];
+  rowCount: number;
+  pageCount: number;
+};
+
+export type RecordImportErrorRow<TRowErrors> = RecordImportRow & {
+  errors: TRowErrors;
 };
 
 export type RecordImportJobProgress = {

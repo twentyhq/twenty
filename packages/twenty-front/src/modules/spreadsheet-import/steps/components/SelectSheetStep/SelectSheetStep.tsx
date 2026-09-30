@@ -63,7 +63,7 @@ export const SelectSheetStep = ({
           });
           setPreviousStepState(currentStepState);
         } catch (error) {
-          onError((error as Error).message);
+          onError(error instanceof Error ? error.message : String(error));
         }
         return;
       }
