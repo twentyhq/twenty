@@ -18,18 +18,18 @@ export const releaseTeamsConnectionTenant = async ({
     buildTeamsConnectedAccountTenantKvKey(connectedAccountId);
   const tenantId = await kv.get<string>(connectedAccountTenantKvKey);
 
-  const shouldReleaseTenant =
-    isNonEmptyString(tenantId) &&
-    !(await isTeamsTenantClaimedByAnotherConnection({
-      tenantId,
-      excludedConnectedAccountId: connectedAccountId,
-    }));
-
-  const hasReleasedTenant = shouldReleaseTenant
-    ? await kv.delete(buildTeamsTenantKvKey(tenantId), { scope: 'SERVER' })
-    : false;
-
   await kv.delete(connectedAccountTenantKvKey);
+
+  if (
+    !isNonEmptyString(tenantId) ||
+    (await isTeamsTenantClaimedByAnotherConnection(tenantId))
+  ) {
+    return { releasedTenantId: null };
+  }
+
+  const hasReleasedTenant = await kv.delete(buildTeamsTenantKvKey(tenantId), {
+    scope: 'SERVER',
+  });
 
   return { releasedTenantId: hasReleasedTenant ? tenantId : null };
 };

@@ -13,7 +13,11 @@ const { kvStore, kvDeleteMock, listConnectionsMock } = vi.hoisted(() => ({
 vi.mock('twenty-sdk/logic-function', () => ({
   kv: {
     get: async (key: string) => kvStore.get(key) ?? null,
-    delete: kvDeleteMock,
+    delete: async (key: string, options?: { scope: string }) => {
+      kvStore.delete(key);
+
+      return kvDeleteMock(key, options);
+    },
   },
   listConnections: listConnectionsMock,
 }));
@@ -41,6 +45,7 @@ describe('releaseTeamsConnectionTenant', () => {
     );
     expect(kvDeleteMock).toHaveBeenCalledWith(
       buildTeamsConnectedAccountTenantKvKey('leaving'),
+      undefined,
     );
   });
 
@@ -57,6 +62,31 @@ describe('releaseTeamsConnectionTenant', () => {
     expect(kvDeleteMock).toHaveBeenCalledTimes(1);
     expect(kvDeleteMock).toHaveBeenCalledWith(
       buildTeamsConnectedAccountTenantKvKey('leaving'),
+      undefined,
+    );
+  });
+
+  it('should release the tenant when two connections holding it are released at the same time', async () => {
+    kvStore.set(
+      buildTeamsConnectedAccountTenantKvKey('also-leaving'),
+      TENANT_ID,
+    );
+    listConnectionsMock.mockResolvedValue([
+      { id: 'leaving' },
+      { id: 'also-leaving' },
+    ]);
+
+    const results = await Promise.all([
+      releaseTeamsConnectionTenant({ connectedAccountId: 'leaving' }),
+      releaseTeamsConnectionTenant({ connectedAccountId: 'also-leaving' }),
+    ]);
+
+    expect(kvDeleteMock).toHaveBeenCalledWith(
+      buildTeamsTenantKvKey(TENANT_ID),
+      { scope: 'SERVER' },
+    );
+    expect(results.map((result) => result.releasedTenantId)).toContain(
+      TENANT_ID,
     );
   });
 });

@@ -95,7 +95,7 @@ describe('registerTeamsConnection', () => {
     );
   });
 
-  it('should leave personal connections alone', async () => {
+  it('should release the claim instead of claiming when the connection is personal', async () => {
     getConnectionMock.mockResolvedValue({
       visibility: 'user',
       accessToken: 'graph-token',
@@ -106,11 +106,14 @@ describe('registerTeamsConnection', () => {
         connectedAccountId: CONNECTED_ACCOUNT_ID,
       }),
     ).toEqual({ claimedTenantId: null });
+    expect(releaseMock).toHaveBeenCalledWith({
+      connectedAccountId: CONNECTED_ACCOUNT_ID,
+    });
     expect(fetchGraphJsonMock).not.toHaveBeenCalled();
     expect(kvSetMock).not.toHaveBeenCalled();
   });
 
-  it('should not claim a tenant while chat is disabled for the workspace', async () => {
+  it('should release the claim instead of claiming while chat is disabled for the workspace', async () => {
     process.env[CHAT_ENABLED_APPLICATION_VARIABLE_KEY] = 'false';
 
     expect(
@@ -118,6 +121,9 @@ describe('registerTeamsConnection', () => {
         connectedAccountId: CONNECTED_ACCOUNT_ID,
       }),
     ).toEqual({ claimedTenantId: null });
+    expect(releaseMock).toHaveBeenCalledWith({
+      connectedAccountId: CONNECTED_ACCOUNT_ID,
+    });
     expect(getConnectionMock).not.toHaveBeenCalled();
     expect(kvSetMock).not.toHaveBeenCalled();
   });

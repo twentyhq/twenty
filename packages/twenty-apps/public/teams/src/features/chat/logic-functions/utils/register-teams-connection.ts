@@ -20,18 +20,17 @@ export const registerTeamsConnection = async ({
     );
   }
 
-  if (
-    !isFeatureEnabled({
-      isAvailable: FEATURE_FLAGS.IS_CHAT_ASSISTANT_ENABLED,
-      settingValue: process.env[CHAT_ENABLED_APPLICATION_VARIABLE_KEY],
-    })
-  ) {
-    return { claimedTenantId: null };
-  }
+  const isChatEnabled = isFeatureEnabled({
+    isAvailable: FEATURE_FLAGS.IS_CHAT_ASSISTANT_ENABLED,
+    settingValue: process.env[CHAT_ENABLED_APPLICATION_VARIABLE_KEY],
+  });
+  const connection = isChatEnabled
+    ? await getConnection(connectedAccountId)
+    : undefined;
 
-  const connection = await getConnection(connectedAccountId);
+  if (connection?.visibility !== 'workspace') {
+    await releaseTeamsConnectionTenant({ connectedAccountId });
 
-  if (connection.visibility !== 'workspace') {
     return { claimedTenantId: null };
   }
 
