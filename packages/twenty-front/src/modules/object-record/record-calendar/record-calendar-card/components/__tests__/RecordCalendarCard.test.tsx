@@ -35,16 +35,6 @@ jest.mock('@/ui/layout/dropdown/hooks/useOpenDropdown', () => ({
   useOpenDropdown: () => ({ openDropdown: jest.fn() }),
 }));
 jest.mock(
-  '@/object-record/record-field-list/contexts/RecordFieldsScopeContext',
-  () => ({
-    RecordFieldsScopeContextProvider: ({
-      children,
-    }: {
-      children: React.ReactNode;
-    }) => children,
-  }),
-);
-jest.mock(
   '@/object-record/record-calendar/record-calendar-card/anchored-portal/components/RecordCalendarCardCellHoveredPortal',
   () => ({ RecordCalendarCardCellHoveredPortal: () => null }),
 );

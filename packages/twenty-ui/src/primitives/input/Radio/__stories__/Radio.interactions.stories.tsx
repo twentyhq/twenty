@@ -10,17 +10,25 @@ import { type RadioGroupProps } from '@ui/primitives/input/RadioGroup/types/Radi
 import { A11Y_DEFER_COLOR_CONTRAST, ComponentDecorator } from '@ui/testing';
 
 import { Radio } from '../Radio';
+import { type RadioProps } from '../types/RadioProps';
 
-const RadioExample = (props: RadioGroupProps) => (
+const RadioExample = ({
+  variant,
+  ...props
+}: RadioGroupProps & Pick<RadioProps, 'variant'>) => (
   <RadioGroup aria-label="Fruit" {...props}>
-    <Radio value="apple">Apple</Radio>
+    <Radio variant={variant} value="apple">
+      Apple
+    </Radio>
     <div>
-      <Radio value="banana" disabled>
+      <Radio variant={variant} value="banana" disabled>
         Banana
       </Radio>
     </div>
     <div>
-      <Radio value="cherry">Cherry</Radio>
+      <Radio variant={variant} value="cherry">
+        Cherry
+      </Radio>
     </div>
   </RadioGroup>
 );
@@ -178,7 +186,7 @@ export const Controlled: Story = {
   },
 };
 
-const FormExample = () => {
+const FormExample = ({ variant }: Pick<RadioProps, 'variant'>) => {
   const [value, setValue] = useState('apple');
   const [submitted, setSubmitted] = useState('');
 
@@ -196,10 +204,14 @@ const FormExample = () => {
         <Field.Label>Fruit</Field.Label>
         <RadioGroup value={value} onValueChange={setValue} required>
           <FieldPrimitive.Item>
-            <Radio value="apple">Apple</Radio>
+            <Radio variant={variant} value="apple">
+              Apple
+            </Radio>
           </FieldPrimitive.Item>
           <FieldPrimitive.Item>
-            <Radio value="cherry">Cherry</Radio>
+            <Radio variant={variant} value="cherry">
+              Cherry
+            </Radio>
           </FieldPrimitive.Item>
         </RadioGroup>
         <Field.Description>Choose one fruit</Field.Description>
@@ -320,4 +332,29 @@ export const RightToLeft: Story = {
       expect(canvas.getByRole('radio', { name: 'Apple' })).toBeChecked(),
     );
   },
+};
+
+export const CardsKeyboard: Story = {
+  ...Keyboard,
+  args: { ...Keyboard.args, variant: 'card' },
+};
+
+export const CardsDisabledGroup: Story = {
+  ...DisabledGroup,
+  args: { ...DisabledGroup.args, variant: 'card' },
+};
+
+export const CardsReadOnlyGroup: Story = {
+  ...ReadOnlyGroup,
+  args: { ...ReadOnlyGroup.args, variant: 'card' },
+};
+
+export const CardsForm: Story = {
+  ...Form,
+  render: () => <FormExample variant="card" />,
+};
+
+export const CardsRightToLeft: Story = {
+  ...RightToLeft,
+  args: { ...RightToLeft.args, variant: 'card' },
 };

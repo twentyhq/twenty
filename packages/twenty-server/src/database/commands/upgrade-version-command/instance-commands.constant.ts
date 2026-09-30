@@ -215,6 +215,7 @@ import { AddCoreForeignKeyIndexesSlowInstanceCommand } from 'src/database/comman
 import { AddChatThreadsWidgetTypeFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-instance-command-fast-1790621229217-add-chat-threads-widget-type';
 import { AddValidationRuleTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-instance-command-fast-1790624264147-add-validation-rule-table';
 import { ReapplyUsageLimitPeriodReshapeFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-instance-command-fast-1790755883509-reapply-usage-limit-period-reshape';
+import { AddChatWidgetTypeFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-instance-command-fast-1790756560653-add-chat-widget-type';
 import { AddDiscoverableReadabilityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-instance-command-fast-1790762737965-add-discoverable-readability';
 
 export const INSTANCE_COMMANDS = [
@@ -433,5 +434,6 @@ export const INSTANCE_COMMANDS = [
   AddChatThreadsWidgetTypeFastInstanceCommand,
   AddValidationRuleTableFastInstanceCommand,
   ReapplyUsageLimitPeriodReshapeFastInstanceCommand,
+  AddChatWidgetTypeFastInstanceCommand,
   AddDiscoverableReadabilityFastInstanceCommand,
 ];

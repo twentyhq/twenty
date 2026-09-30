@@ -128,6 +128,30 @@ describe('compileOutboundEmailContent', () => {
     expect(html).toContain('2px dashed #ff0000');
   });
 
+  it('should apply text block styles to headings and paragraphs', async () => {
+    const html = await compileDocument({
+      type: 'doc',
+      content: [
+        {
+          type: 'heading',
+          attrs: { level: 2, style: { color: '#0000ff', fontSize: '40px' } },
+          content: [{ type: 'text', text: 'Styled heading' }],
+        },
+        {
+          type: 'paragraph',
+          attrs: { style: { textAlign: 'center', letterSpacing: '2px' } },
+          content: [{ type: 'text', text: 'Styled paragraph' }],
+        },
+      ],
+    });
+
+    expect(html).toContain('color:#0000ff');
+    expect(html).toContain('font-size:40px');
+    expect(html).not.toContain('font-size:24px');
+    expect(html).toContain('text-align:center');
+    expect(html).toContain('letter-spacing:2px');
+  });
+
   it('should wrap themed documents in a styled page and centered container', async () => {
     const html = await compileDocument({
       type: 'doc',

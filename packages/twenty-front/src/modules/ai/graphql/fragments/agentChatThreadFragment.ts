@@ -12,7 +12,6 @@ export const AGENT_CHAT_THREAD_FRAGMENT = gql`
     totalInputCredits
     totalOutputCredits
     deletedAt
-    lastMessageAt
     createdAt
     updatedAt
   }
