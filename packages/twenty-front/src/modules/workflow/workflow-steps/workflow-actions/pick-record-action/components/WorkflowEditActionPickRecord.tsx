@@ -15,8 +15,10 @@ import { isManyToOneRelationField } from '@/object-metadata/utils/isManyToOneRel
 import { FormMultiRecordPicker } from '@/object-record/record-field/ui/form-types/components/FormMultiRecordPicker';
 import { Select } from '@/ui/input/components/Select';
 import { SelectControl } from '@/ui/input/components/SelectControl';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
+import { Dropdown } from 'twenty-ui/components';
 import { type WorkflowPickRecordAction } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
@@ -71,8 +73,6 @@ export const WorkflowEditActionPickRecord = ({
     useObjectMetadataSelectHelpers();
 
   const dropdownId = `workflow-edit-action-pick-record-object-name-${action.id}`;
-
-  const { closeDropdown } = useCloseDropdown();
 
   const { objectMetadataItems } = useFilteredObjectMetadataItems();
 
@@ -182,7 +182,6 @@ export const WorkflowEditActionPickRecord = ({
 
     setFormData(newFormData);
     saveAction(newFormData);
-    closeDropdown(dropdownId);
   };
 
   const handleStrategyChange = (strategy: PickRecordStrategy) => {
@@ -225,7 +224,6 @@ export const WorkflowEditActionPickRecord = ({
 
     setFormData(newFormData);
     saveAction(newFormData);
-    closeDropdown(loadBalanceObjectDropdownId);
   };
 
   const handleLoadBalanceFieldChange = (fieldName: string) => {
@@ -247,25 +245,29 @@ export const WorkflowEditActionPickRecord = ({
       <WorkflowStepBody>
         <StyledObjectSelectContainer>
           <StyledLabel>{t`Object`}</StyledLabel>
-          <Dropdown
-            dropdownId={dropdownId}
-            dropdownPlacement="bottom-start"
-            clickableComponent={
-              <SelectControl
-                isDisabled={isFormDisabled}
-                selectedOption={selectedOption}
-              />
-            }
-            dropdownComponents={
-              !isFormDisabled && (
+          {isFormDisabled ? (
+            <SelectControl isDisabled selectedOption={selectedOption} />
+          ) : (
+            <DropdownRoot dropdownId={dropdownId} type="picker">
+              <Dropdown.Trigger
+                render={<div />}
+                nativeButton={false}
+                aria-label={t`Object`}
+              >
+                <SelectControl selectedOption={selectedOption} />
+              </Dropdown.Trigger>
+              <DropdownContent
+                width={GenericDropdownContentWidth.ExtraLarge}
+                align="start"
+                sideOffset={4}
+                aria-label={t`Object`}
+              >
                 <WorkflowObjectDropdownContent
-                  dropdownId={dropdownId}
                   onOptionClick={handleObjectChange}
                 />
-              )
-            }
-            dropdownOffset={{ y: 4 }}
-          />
+              </DropdownContent>
+            </DropdownRoot>
+          )}
         </StyledObjectSelectContainer>
 
         <Select
@@ -282,25 +284,35 @@ export const WorkflowEditActionPickRecord = ({
           <>
             <StyledObjectSelectContainer>
               <StyledLabel>{t`Balance by`}</StyledLabel>
-              <Dropdown
-                dropdownId={loadBalanceObjectDropdownId}
-                dropdownPlacement="bottom-start"
-                clickableComponent={
-                  <SelectControl
-                    isDisabled={isFormDisabled}
-                    selectedOption={loadBalanceObjectOption}
-                  />
-                }
-                dropdownComponents={
-                  !isFormDisabled && (
+              {isFormDisabled ? (
+                <SelectControl
+                  isDisabled
+                  selectedOption={loadBalanceObjectOption}
+                />
+              ) : (
+                <DropdownRoot
+                  dropdownId={loadBalanceObjectDropdownId}
+                  type="picker"
+                >
+                  <Dropdown.Trigger
+                    render={<div />}
+                    nativeButton={false}
+                    aria-label={t`Balance by`}
+                  >
+                    <SelectControl selectedOption={loadBalanceObjectOption} />
+                  </Dropdown.Trigger>
+                  <DropdownContent
+                    width={GenericDropdownContentWidth.ExtraLarge}
+                    align="start"
+                    sideOffset={4}
+                    aria-label={t`Balance by`}
+                  >
                     <WorkflowObjectDropdownContent
-                      dropdownId={loadBalanceObjectDropdownId}
                       onOptionClick={handleLoadBalanceObjectChange}
                     />
-                  )
-                }
-                dropdownOffset={{ y: 4 }}
-              />
+                  </DropdownContent>
+                </DropdownRoot>
+              )}
             </StyledObjectSelectContainer>
 
             {isDefined(loadBalanceObjectMetadataItem) && (

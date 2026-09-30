@@ -16,16 +16,16 @@ import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions
 import { turnSortsIntoOrderBy } from '@/object-record/object-sort-dropdown/utils/turnSortsIntoOrderBy';
 import { FormNumberFieldInput } from '@/object-record/record-field/ui/form-types/components/FormNumberFieldInput';
 import { RecordFilterGroupsComponentInstanceContext } from '@/object-record/record-filter-group/states/context/RecordFilterGroupsComponentInstanceContext';
-import { type RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
 import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
-import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { RecordIndexContextProvider } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useRecordIndexFieldMetadataDerivedStates } from '@/object-record/record-index/hooks/useRecordIndexFieldMetadataDerivedStates';
 import { type RecordSort } from '@/object-record/record-sort/types/RecordSort';
 import { SelectControl } from '@/ui/input/components/SelectControl';
 import { InputLabel } from '@/ui/input/components/internal/InputLabel/InputLabel';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
+import { Dropdown } from 'twenty-ui/components';
 import { type WorkflowFindRecordsAction } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
@@ -33,6 +33,7 @@ import { WorkflowFindRecordsFilters } from '@/workflow/workflow-steps/workflow-a
 import { WorkflowFindRecordsFiltersEffect } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowFindRecordsFiltersEffect';
 import { WorkflowFindRecordsSorts } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowFindRecordsSorts';
 import { WorkflowObjectDropdownContent } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowObjectDropdownContent';
+import { type FindRecordsActionFilter } from '@/workflow/workflow-steps/workflow-actions/find-records-action/types/FindRecordsActionFilter';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { isStandaloneVariableString } from 'twenty-shared/workflow';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -71,12 +72,7 @@ type FindRecordsFormData = {
   offset?: number | string;
 };
 
-export type FindRecordsActionFilter = {
-  recordFilterGroups?: RecordFilterGroup[];
-  recordFilters?: RecordFilter[];
-};
-
-export type FindRecordsActionOrderBy = {
+type FindRecordsActionOrderBy = {
   recordSorts?: RecordSort[];
   gqlOperationOrderBy?: JsonValue;
 };
@@ -91,8 +87,6 @@ export const WorkflowEditActionFindRecords = ({
   const maxRecordsFormatted = QUERY_MAX_RECORDS.toLocaleString();
 
   const dropdownId = 'workflow-edit-action-record-find-records-object-name';
-
-  const { closeDropdown } = useCloseDropdown();
 
   const { objectMetadataItems } = useFilteredObjectMetadataItems();
 
@@ -192,7 +186,6 @@ export const WorkflowEditActionFindRecords = ({
 
     setFormData(newFormData);
     saveAction(newFormData);
-    closeDropdown(dropdownId);
   };
 
   return (
@@ -200,25 +193,29 @@ export const WorkflowEditActionFindRecords = ({
       <WorkflowStepBody>
         <StyledRecordTypeSelectContainer fullWidth>
           <StyledLabel>{t`Object`}</StyledLabel>
-          <Dropdown
-            dropdownId={dropdownId}
-            dropdownPlacement="bottom-start"
-            clickableComponent={
-              <SelectControl
-                isDisabled={isFormDisabled}
-                selectedOption={selectedOption}
-              />
-            }
-            dropdownComponents={
-              !isFormDisabled && (
+          {isFormDisabled ? (
+            <SelectControl isDisabled selectedOption={selectedOption} />
+          ) : (
+            <DropdownRoot dropdownId={dropdownId} type="picker">
+              <Dropdown.Trigger
+                render={<div />}
+                nativeButton={false}
+                aria-label={t`Object`}
+              >
+                <SelectControl selectedOption={selectedOption} />
+              </Dropdown.Trigger>
+              <DropdownContent
+                width={GenericDropdownContentWidth.ExtraLarge}
+                align="start"
+                sideOffset={4}
+                aria-label={t`Object`}
+              >
                 <WorkflowObjectDropdownContent
-                  dropdownId={dropdownId}
                   onOptionClick={handleOptionClick}
                 />
-              )
-            }
-            dropdownOffset={{ y: 4 }}
-          />
+              </DropdownContent>
+            </DropdownRoot>
+          )}
         </StyledRecordTypeSelectContainer>
 
         <HorizontalSeparator noMargin />

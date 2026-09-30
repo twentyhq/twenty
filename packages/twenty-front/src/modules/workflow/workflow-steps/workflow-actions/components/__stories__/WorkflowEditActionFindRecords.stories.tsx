@@ -64,6 +64,51 @@ export const Default: Story = {
       onActionUpdate: fn(),
     },
   },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await userEvent.click(
+      await canvas.findByRole('button', { name: 'Object' }),
+    );
+
+    const dropdown = within(
+      await screen.findByRole('dialog', { name: 'Object' }),
+    );
+    const options = dropdown.getAllByRole('button');
+
+    expect(
+      options.indexOf(dropdown.getByRole('button', { name: 'People' })),
+    ).toBeLessThan(
+      options.indexOf(
+        dropdown.getByRole('button', { name: 'Calendar events' }),
+      ),
+    );
+
+    await userEvent.type(dropdown.getByRole('searchbox'), 'Person');
+    expect(dropdown.getByRole('button', { name: 'People' })).toBeVisible();
+    expect(
+      dropdown.queryByRole('button', { name: 'Companies' }),
+    ).not.toBeInTheDocument();
+
+    await userEvent.keyboard('{Enter}');
+
+    await waitFor(() => {
+      expect(
+        screen.queryByRole('dialog', { name: 'Object' }),
+      ).not.toBeInTheDocument();
+    });
+
+    await userEvent.click(canvas.getByRole('button', { name: 'Object' }));
+
+    expect(
+      await screen.findByRole('searchbox', { name: 'Search objects' }),
+    ).toHaveValue('');
+    expect(
+      await screen.findByRole('button', { name: 'Companies' }),
+    ).toBeVisible();
+
+    await userEvent.keyboard('{Escape}');
+  },
 };
 
 const onActionUpdateMock = fn();
@@ -78,6 +123,8 @@ export const KeepsLimitAndOffsetWhenObjectChanges: Story = {
           objectName: 'person',
           limit: 100,
           offset: 20,
+          filter: { recordFilters: [], recordFilterGroups: [] },
+          orderBy: { recordSorts: [] },
         },
       },
     },
@@ -97,7 +144,13 @@ export const KeepsLimitAndOffsetWhenObjectChanges: Story = {
       'Companies',
     );
 
-    await userEvent.click(await screen.findByText('Companies'));
+    await userEvent.keyboard('{Enter}');
+
+    await waitFor(() => {
+      expect(
+        screen.queryByRole('dialog', { name: 'Object' }),
+      ).not.toBeInTheDocument();
+    });
 
     await waitFor(
       () => {
@@ -108,6 +161,8 @@ export const KeepsLimitAndOffsetWhenObjectChanges: Story = {
                 objectName: 'company',
                 limit: 100,
                 offset: 20,
+                filter: undefined,
+                orderBy: undefined,
               }),
             }),
           }),
@@ -133,7 +188,7 @@ export const DisabledWithEmptyValues: Story = {
 
     {
       const searchInputInSelectDropdown =
-        canvas.queryByPlaceholderText('Search');
+        screen.queryByPlaceholderText('Search');
 
       expect(searchInputInSelectDropdown).not.toBeInTheDocument();
     }

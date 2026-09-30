@@ -1,13 +1,6 @@
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
-import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
-import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
-import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
-import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { WorkflowVariableSearchResultItems } from '@/workflow/workflow-variables/components/WorkflowVariableSearchResultItems';
 import { useVariableDropdown } from '@/workflow/workflow-variables/hooks/useVariableDropdown';
 import { isRecordOutputSchemaV2 } from '@/workflow/workflow-variables/types/guards/isRecordOutputSchemaV2';
@@ -22,10 +15,9 @@ import {
   type WorkflowVariableSpecialItem,
 } from '@/workflow/workflow-variables/utils/getWorkflowVariableSpecialItems';
 import { useLingui } from '@lingui/react/macro';
-import { isDefined } from 'twenty-shared/utils';
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { IconChevronLeft, useIcons } from 'twenty-ui/icon';
-import { ListItem } from 'twenty-ui/primitives/navigation';
+import { Dropdown, LightIconButton } from 'twenty-ui/components';
 
 type WorkflowVariablesDropdownStepItemsProps = {
   step: StepOutputSchemaV2;
@@ -129,28 +121,23 @@ export const WorkflowVariablesDropdownStepItems = ({
     displayedSubStepObjectDisplay?.isSelectable === true;
 
   return (
-    <LegacyDropdownContent
-      widthInPixels={GenericDropdownContentWidth.ExtraLarge}
-    >
-      <DropdownMenuHeader
-        StartComponent={
-          <DropdownMenuHeaderLeftComponent
-            onClick={goBack}
-            Icon={IconChevronLeft}
-          />
-        }
-      >
-        <OverflowingTextWithTooltip
-          text={getStepHeaderLabel(step, currentPath)}
-        />
-      </DropdownMenuHeader>
-      <DropdownMenuSearchInput
+    <>
+      <Dropdown.Header>
+        <LightIconButton size="sm" aria-label={t`Back`} onClick={goBack}>
+          <IconChevronLeft />
+        </LightIconButton>
+        <Dropdown.Title>{getStepHeaderLabel(step, currentPath)}</Dropdown.Title>
+        <Dropdown.Close aria-label={t`Close`} />
+      </Dropdown.Header>
+      <Dropdown.Search
+        key={JSON.stringify(currentPath)}
         autoFocus
+        aria-label={t`Search fields`}
         value={searchInputValue}
-        onChange={(event) => setSearchInputValue(event.target.value)}
+        onValueChange={setSearchInputValue}
       />
-      <DropdownMenuSeparator />
-      <DropdownMenuItemsContainer hasMaxHeight>
+      <Dropdown.Separator />
+      <Dropdown.Section scrollable>
         {isSearching ? (
           <WorkflowVariableSearchResultItems
             searchResults={searchResults}
@@ -159,14 +146,9 @@ export const WorkflowVariablesDropdownStepItems = ({
         ) : (
           <>
             {specialItems.map((specialItem) => (
-              <ListItem
+              <Dropdown.OptionItem
                 key={specialItem.id}
-                focused={false}
-                onClick={() => handleSelectSpecialItem(specialItem)}
-                role="option"
-                aria-selected={false}
-                selected={false}
-                indicator="check"
+                onSelect={() => handleSelectSpecialItem(specialItem)}
                 hasSubmenu={false}
                 description={specialItem.contextualText}
                 startIcon={
@@ -174,16 +156,11 @@ export const WorkflowVariablesDropdownStepItems = ({
                 }
               >
                 {specialItem.label}
-              </ListItem>
+              </Dropdown.OptionItem>
             ))}
             {shouldDisplaySubStepObject && (
-              <ListItem
-                focused={false}
-                onClick={handleSelectObject}
-                role="option"
-                aria-selected={false}
-                selected={false}
-                indicator="check"
+              <Dropdown.OptionItem
+                onSelect={handleSelectObject}
                 hasSubmenu={false}
                 description={t`Pick a ${displayedSubStepObjectDisplay?.label} record`}
                 startIcon={
@@ -194,11 +171,11 @@ export const WorkflowVariablesDropdownStepItems = ({
                 }
               >
                 {displayedSubStepObjectDisplay?.label ?? ''}
-              </ListItem>
+              </Dropdown.OptionItem>
             )}
-            {options.length > 0 &&
-              (shouldDisplaySubStepObject || specialItems.length > 0) && (
-                <DropdownMenuSeparator />
+            {isNonEmptyArray(options) &&
+              (shouldDisplaySubStepObject || isNonEmptyArray(specialItems)) && (
+                <Dropdown.Separator />
               )}
             {options.map(([key, subStep]) => {
               if (!isDefined(subStep)) {
@@ -206,22 +183,18 @@ export const WorkflowVariablesDropdownStepItems = ({
               }
 
               return (
-                <ListItem
+                <Dropdown.OptionItem
                   key={key}
-                  focused={false}
-                  onClick={() => handleSelectField(key)}
-                  role="option"
-                  aria-selected={false}
-                  selected={false}
-                  indicator="check"
+                  onSelect={() => handleSelectField(key)}
                   hasSubmenu={!subStep.isLeaf}
+                  closeOnSelect={subStep.isLeaf}
                   description={
                     subStep.isLeaf ? subStep.value?.toString() : undefined
                   }
                   startIcon={
                     <SelectOptionIcon
                       Icon={
-                        subStep.icon
+                        isDefined(subStep.icon)
                           ? getIcon(subStep.icon)
                           : getIcon(
                               getStepItemIcon({
@@ -233,12 +206,12 @@ export const WorkflowVariablesDropdownStepItems = ({
                   }
                 >
                   {subStep.label || key}
-                </ListItem>
+                </Dropdown.OptionItem>
               );
             })}
           </>
         )}
-      </DropdownMenuItemsContainer>
-    </LegacyDropdownContent>
+      </Dropdown.Section>
+    </>
   );
 };
