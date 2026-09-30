@@ -14,6 +14,7 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { hasAnySoftDeleteFilterOnViewComponentSelector } from '@/object-record/record-filter/states/hasAnySoftDeleteFilterOnView';
+import { recordPermissionsByRecordIdFamilySelector } from '@/object-record/record-sharing/states/recordPermissionsByRecordIdFamilySelector';
 import { recordStoreRecordsSelector } from '@/object-record/record-store/states/selectors/recordStoreRecordsSelector';
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
 import { currentPageLayoutIdState } from '@/page-layout/states/currentPageLayoutIdState';
@@ -75,9 +76,25 @@ export const useCurrentCommandMenuContextApi = (): CommandMenuContextApi => {
           ),
         );
 
-  const selectedRecords = useAtomFamilySelectorValue(
+  const storedSelectedRecords = useAtomFamilySelectorValue(
     recordStoreRecordsSelector,
     { recordIds: recordIds ?? [] },
+  );
+
+  const recordPermissionsByRecordId = useAtomFamilySelectorValue(
+    recordPermissionsByRecordIdFamilySelector,
+    {
+      objectMetadataId: objectMetadataItem?.id ?? '',
+      recordIds: recordIds ?? [],
+    },
+  );
+
+  // Records shared at a lower access level than the role grants carry their
+  // own permissions, which availability expressions read per record
+  const selectedRecords = storedSelectedRecords.map((record) =>
+    isDefined(recordPermissionsByRecordId[record.id])
+      ? { ...record, recordPermissions: recordPermissionsByRecordId[record.id] }
+      : record,
   );
 
   const currentPageLayoutId = useAtomStateValue(currentPageLayoutIdState);

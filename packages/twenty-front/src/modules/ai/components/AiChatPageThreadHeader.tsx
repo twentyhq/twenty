@@ -1,179 +1,121 @@
-import { agentChatThreadPermissionsFamilySelector } from '@/ai/states/selectors/agentChatThreadPermissionsFamilySelector';
-import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
-import { AiChatSharingDropdown } from '@/ai/components/AiChatSharingDropdown';
 import { styled } from '@linaria/react';
-import { useLingui } from '@lingui/react/macro';
-import { Key } from 'ts-key-enum';
-import { isDefined } from 'twenty-shared/utils';
-import { IconButton } from 'twenty-ui/components';
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
-import { IconDotsVertical, IconPlus } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/primitives/input';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { themeCssVariables } from 'twenty-ui/theme';
+import { useIsMobile } from 'twenty-ui/utilities';
 
-import { AiChatThreadItemMenu } from '@/ai/components/AiChatThreadItemMenu';
+import { AiChatCloseButton } from '@/ai/components/AiChatCloseButton';
 import { AiChatThreadRecordTargets } from '@/ai/components/AiChatThreadRecordTargets';
-import { AI_CHAT_THREAD_ACTIONS_SURFACE } from '@/ai/constants/AiChatThreadActionsSurface';
-import { useAiChatThreadRename } from '@/ai/hooks/useAiChatThreadRename';
-import { useSwitchToNewAiChat } from '@/ai/hooks/useSwitchToNewAiChat';
-import { agentChatMessagesComponentFamilyState } from '@/ai/states/agentChatMessagesComponentFamilyState';
-import { currentAiChatThreadTitleComponentFamilyState } from '@/ai/states/currentAiChatThreadTitleComponentFamilyState';
-import { TextInput } from '@/ui/input/components/TextInput';
-import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
-import { type AgentChatThread } from '~/generated-metadata/graphql';
+import { RecordShowCommandMenu } from '@/command-menu-item/components/RecordShowCommandMenu';
+import { CommandMenuComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuComponentInstanceContext';
+import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
+import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
+import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
+import { RecordShowContainerContextStoreTargetedRecordsEffect } from '@/object-record/record-show/components/RecordShowContainerContextStoreTargetedRecordsEffect';
+import { RecordShowPageResourceEffect } from '@/object-record/record-show/components/RecordShowPageResourceEffect';
+import { RecordShowPageSSESubscribeEffect } from '@/object-record/record-show/components/RecordShowPageSSESubscribeEffect';
+import { useRecordIdentifierTitle } from '@/object-record/record-show/hooks/useRecordIdentifierTitle';
+import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
+import { computeRecordShowComponentInstanceId } from '@/object-record/record-show/utils/computeRecordShowComponentInstanceId';
+import { RecordTitleCell } from '@/object-record/record-title-cell/components/RecordTitleCell';
+import { RecordTitleCellContainerType } from '@/object-record/record-title-cell/types/RecordTitleCellContainerType';
+import { SidePanelToggleButton } from '@/side-panel/components/SidePanelToggleButton';
+import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
+import { PageCardHeader } from '@/ui/layout/page/components/PageCardHeader';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const StyledTitle = styled.div`
-  color: ${themeCssVariables.font.color.primary};
-  flex-shrink: 1;
-  font-size: ${themeCssVariables.font.size.md};
-  font-weight: ${themeCssVariables.font.weight.medium};
-  max-width: 100%;
-  min-width: 0;
-  width: fit-content;
-`;
-
-const StyledTitleDisplay = styled.div`
-  align-items: center;
-  border-radius: ${themeCssVariables.border.radius.md};
-  box-sizing: border-box;
-  &[role='button'] {
-    cursor: pointer;
-  }
-  display: flex;
-  height: 24px;
-  overflow: hidden;
-  padding: 0 5px;
-
-  &[role='button']:hover,
-  &[role='button']:focus-visible {
-    background: ${themeCssVariables.background.transparent.light};
-    outline: none;
-  }
-`;
-
-const StyledActions = styled.div`
   align-items: center;
   display: flex;
-  flex-shrink: 0;
   gap: ${themeCssVariables.spacing[2]};
-  margin-left: auto;
+  min-width: 0;
 `;
+
+const StyledTitleCell = styled.div`
+  flex-shrink: 1;
+  min-width: 0;
+`;
+
+// A chat's messages and turns are not readable through the record API, so the
+// header reads the chat itself rather than the record page's relations
+const CHAT_HEADER_RECORD_GQL_FIELDS = {
+  id: true,
+  title: true,
+  deletedAt: true,
+  updatedAt: true,
+  workspaceMemberId: true,
+};
 
 type AiChatPageThreadHeaderProps = {
-  thread: AgentChatThread;
+  threadId: string;
 };
 
 export const AiChatPageThreadHeader = ({
-  thread,
+  threadId,
 }: AiChatPageThreadHeaderProps) => {
-  const { t } = useLingui();
-  const permissions = useAtomFamilySelectorValue(
-    agentChatThreadPermissionsFamilySelector,
-    thread.id,
+  const isMobile = useIsMobile();
+  const isLayoutCustomizationModeEnabled = useAtomStateValue(
+    isLayoutCustomizationModeEnabledState,
   );
-  const { switchToNewChat } = useSwitchToNewAiChat();
-  const currentAiChatThreadTitle = useAtomComponentFamilyStateValue(
-    currentAiChatThreadTitleComponentFamilyState,
-    { threadId: thread.id },
-  );
-  const title = thread.title ?? currentAiChatThreadTitle;
-  const {
-    isRenaming,
-    draftTitle,
-    setDraftTitle,
-    startRename,
-    cancelRename,
-    commitRename,
-  } = useAiChatThreadRename({ ...thread, title });
-  const displayTitle = title || t`New chat`;
-  const agentChatMessages = useAtomComponentFamilyStateValue(
-    agentChatMessagesComponentFamilyState,
-    { threadId: thread.id },
-  );
-  const hasConversation =
-    agentChatMessages.length > 0 || isDefined(thread.lastMessageAt);
+  const recordShowComponentInstanceId =
+    useWorkspaceSurfaceScopedComponentInstanceId(
+      computeRecordShowComponentInstanceId(threadId),
+    );
+  const { record, loading } = useFindOneRecord({
+    objectNameSingular: CoreObjectNameSingular.AgentChatThread,
+    objectRecordId: threadId,
+    recordGqlFields: CHAT_HEADER_RECORD_GQL_FIELDS,
+    withSoftDeleted: true,
+  });
+  const { titleFieldContextValue } = useRecordIdentifierTitle({
+    objectNameSingular: CoreObjectNameSingular.AgentChatThread,
+    objectRecordId: threadId,
+  });
 
   return (
-    <>
-      <StyledTitle>
-        {isRenaming ? (
-          <TextInput
-            value={draftTitle}
-            onChange={setDraftTitle}
-            onFocus={(event) => event.target.select()}
-            onBlur={() => commitRename(draftTitle)}
-            onKeyDown={(event) => {
-              if (event.nativeEvent.isComposing || event.keyCode === 229) {
-                return;
-              }
-              if (event.key === Key.Enter) {
-                event.preventDefault();
-                event.stopPropagation();
-                event.currentTarget.blur();
-              } else if (event.key === Key.Escape) {
-                event.preventDefault();
-                event.stopPropagation();
-                cancelRename();
-              }
-            }}
-            placeholder={t`Chat name`}
-            sizeVariant="sm"
-            autoGrow
-            inheritFontStyles
-            autoFocus
-          />
-        ) : (
-          <StyledTitleDisplay
-            role={permissions?.canUpdate ? 'button' : undefined}
-            tabIndex={permissions?.canUpdate ? 0 : undefined}
-            aria-label={permissions?.canUpdate ? t`Rename chat` : undefined}
-            onClick={permissions?.canUpdate ? startRename : undefined}
-            onKeyDown={(event) => {
-              if (
-                permissions?.canUpdate &&
-                (event.key === Key.Enter || event.key === ' ')
-              ) {
-                event.preventDefault();
-                startRename();
-              }
-            }}
-          >
-            <OverflowingTextWithTooltip text={displayTitle} />
-          </StyledTitleDisplay>
-        )}
-      </StyledTitle>
-      <AiChatThreadRecordTargets
-        threadId={thread.id}
-        instanceId="ai-chat-page-thread-record-targets"
-      />
-      <StyledActions>
-        <AiChatSharingDropdown threadId={thread.id} />
-        {hasConversation && (
-          <Button
-            startIcon={<IconPlus />}
-            size="sm"
-            onClick={() => switchToNewChat()}
-            variant="solid"
-            color="accent"
-          >{t`New chat`}</Button>
-        )}
-        <AiChatThreadItemMenu
-          threadId={thread.id}
-          threadTitle={displayTitle}
-          isArchived={Boolean(thread.deletedAt)}
-          surface={AI_CHAT_THREAD_ACTIONS_SURFACE.PAGE_HEADER}
-          onRenameRequested={startRename}
-          trigger={
-            <IconButton
-              size="sm"
-              variant="outline"
-              aria-label={t`Chat actions`}
-            >
-              <IconDotsVertical />
-            </IconButton>
+    <RecordComponentInstanceContextsWrapper
+      componentInstanceId={recordShowComponentInstanceId}
+    >
+      <CommandMenuComponentInstanceContext.Provider
+        value={{ instanceId: recordShowComponentInstanceId }}
+      >
+        <RecordShowPageResourceEffect
+          loading={loading}
+          record={record}
+          recordId={threadId}
+        />
+        <RecordShowPageSSESubscribeEffect
+          objectNameSingular={CoreObjectNameSingular.AgentChatThread}
+          recordId={threadId}
+        />
+        <RecordShowContainerContextStoreTargetedRecordsEffect
+          recordId={threadId}
+        />
+        <PageCardHeader
+          title={
+            <StyledTitle>
+              <StyledTitleCell>
+                <FieldContext.Provider value={titleFieldContextValue}>
+                  <RecordTitleCell
+                    sizeVariant="sm"
+                    containerType={RecordTitleCellContainerType.PageHeader}
+                  />
+                </FieldContext.Provider>
+              </StyledTitleCell>
+              <AiChatThreadRecordTargets
+                threadId={threadId}
+                instanceId="ai-chat-page-thread-record-targets"
+              />
+            </StyledTitle>
+          }
+          actionButton={
+            <>
+              <RecordShowCommandMenu />
+              {!isLayoutCustomizationModeEnabled && <SidePanelToggleButton />}
+              {isMobile && <AiChatCloseButton />}
+            </>
           }
         />
-      </StyledActions>
-    </>
+      </CommandMenuComponentInstanceContext.Provider>
+    </RecordComponentInstanceContextsWrapper>
   );
 };

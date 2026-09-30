@@ -119,9 +119,9 @@ export class AgentChatActorService {
         workspaceMemberId: authContext.workspaceMemberId,
       }),
     );
-    if (isDefined(thread.archivedAt)) {
+    if (isDefined(thread.deletedAt)) {
       throw new AiException(
-        'Thread is archived',
+        'Thread is deleted',
         AiExceptionCode.THREAD_NOT_FOUND,
       );
     }
@@ -157,7 +157,9 @@ export class AgentChatActorService {
     return { authContext, rolePermissionConfig, roleId };
   }
 
-  async authorizeQuestionAnswer({
+  // The call belongs to the turn that made it, so it is resolved from the
+  // application context that turn was sent from and not from another one.
+  async authorizeToolCallResolution({
     workspaceId,
     threadId,
     messageId,
@@ -166,20 +168,20 @@ export class AgentChatActorService {
     threadId: string;
     messageId: string;
   }): Promise<void> {
-    const question = await this.messages.findOne(workspaceId, {
+    const toolCallMessage = await this.messages.findOne(workspaceId, {
       where: { id: messageId, threadId, role: AgentMessageRole.ASSISTANT },
       select: ['turnId'],
     });
-    if (!isDefined(question?.turnId)) {
+    if (!isDefined(toolCallMessage?.turnId)) {
       throw new AiException(
-        'Question turn not found',
+        'Tool call turn not found',
         AiExceptionCode.MESSAGE_NOT_FOUND,
       );
     }
     const { sender } = await this.resolveMessage({
       workspaceId,
       threadId,
-      turnId: question.turnId,
+      turnId: toolCallMessage.turnId,
     });
     const request = workspaceAuthContextStorage.getStore();
     if (
@@ -189,8 +191,8 @@ export class AgentChatActorService {
       (request.application?.id ?? null) !== sender.applicationId
     ) {
       throw new AiException(
-        'Answer requires the original application context',
-        AiExceptionCode.INVALID_QUESTION_ANSWER,
+        'Resolving this tool call requires the original application context',
+        AiExceptionCode.TOOL_CALL_RESOLUTION_FORBIDDEN,
       );
     }
   }

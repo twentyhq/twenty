@@ -1,6 +1,4 @@
-import { AiChatThreadDeleteConfirmationModal } from '@/ai/components/AiChatThreadDeleteConfirmationModal';
 import { NavigationDrawerAiChatThreadSection } from '@/ai/components/NavigationDrawerAiChatThreadSection';
-import { AI_CHAT_THREAD_ACTIONS_SURFACE } from '@/ai/constants/AiChatThreadActionsSurface';
 import { useAiChatThreadClick } from '@/ai/hooks/useAiChatThreadClick';
 import { useChatThreads } from '@/ai/hooks/useChatThreads';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
@@ -23,17 +21,12 @@ export const MobileHomeAiChatSection = () => {
   }
 
   return (
-    <>
-      <NavigationDrawerAiChatThreadSection
-        sectionId={MOBILE_HOME_AI_CHAT_SECTION_ID}
-        title={t`Conversations`}
-        threads={threads}
-        currentThreadId={currentAiChatThread}
-        onThreadClick={handleThreadClick}
-      />
-      <AiChatThreadDeleteConfirmationModal
-        surface={AI_CHAT_THREAD_ACTIONS_SURFACE.NAV_DRAWER}
-      />
-    </>
+    <NavigationDrawerAiChatThreadSection
+      sectionId={MOBILE_HOME_AI_CHAT_SECTION_ID}
+      title={t`Conversations`}
+      threads={threads}
+      currentThreadId={currentAiChatThread}
+      onThreadClick={handleThreadClick}
+    />
   );
 };

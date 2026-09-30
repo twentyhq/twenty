@@ -1,3 +1,4 @@
+import { StepStatus } from 'twenty-shared/workflow';
 import { randomUUID } from 'node:crypto';
 
 import request from 'supertest';
@@ -903,12 +904,12 @@ describe('core workflow visibility (e2e)', () => {
       ).not.toContain(threadId);
     });
 
-    it('refuses to rename it or add to it, even for the workflow creator', async () => {
-      const renameResponse = await metadataRequestAs(
+    it('refuses to rename or delete it, even for the workflow creator', async () => {
+      const renameResponse = await graphqlRequestAs(
         APPLE_JANE_ADMIN_ACCESS_TOKEN,
         `
           mutation RenameRunConversation($threadId: UUID!) {
-            renameChatThread(id: $threadId, title: "Renamed") {
+            updateAgentChatThread(id: $threadId, data: { title: "Renamed" }) {
               id
             }
           }
@@ -920,11 +921,11 @@ describe('core workflow visibility (e2e)', () => {
         'FORBIDDEN',
       );
 
-      const archiveResponse = await metadataRequestAs(
+      const deleteResponse = await graphqlRequestAs(
         APPLE_JANE_ADMIN_ACCESS_TOKEN,
         `
-          mutation ArchiveRunConversation($threadId: UUID!) {
-            archiveChatThread(id: $threadId) {
+          mutation DeleteRunConversation($threadId: UUID!) {
+            deleteAgentChatThread(id: $threadId) {
               id
             }
           }
@@ -932,9 +933,19 @@ describe('core workflow visibility (e2e)', () => {
         { threadId },
       );
 
-      expect(archiveResponse.body.errors?.[0]?.extensions?.code).toBe(
+      expect(deleteResponse.body.errors?.[0]?.extensions?.code).toBe(
         'FORBIDDEN',
       );
+
+      const [storedThread] = await global.testDataSource.query(
+        `SELECT title, "deletedAt" FROM "${getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID)}"."agentChatThread" WHERE id = $1`,
+        [threadId],
+      );
+
+      expect(storedThread).toEqual({
+        title: 'Summarize the lead',
+        deletedAt: null,
+      });
     });
 
     it('follows the workflow visibility for another member', async () => {
@@ -1095,8 +1106,20 @@ describe('core workflow visibility (e2e)', () => {
         },
       });
 
-      expect(recordedConversation?.isAwaitingAnswer).toBe(true);
+      expect(recordedConversation?.pendingAsks).toHaveLength(1);
       threadId = recordedConversation!.threadId;
+
+      // Parked the way the executor parks a step that asked, which is what
+      // opens its Ask.
+      await getAppProviderByClassName<WorkflowRunWorkspaceService>(
+        'WorkflowRunWorkspaceService',
+      ).updateWorkflowRunStepInfo({
+        stepId: askStepId,
+        stepInfo: { status: StepStatus.PENDING },
+        pendingAsks: recordedConversation!.pendingAsks,
+        workflowRunId: askRunId,
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+      });
     });
 
     afterAll(async () => {
