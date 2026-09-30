@@ -231,11 +231,15 @@ export class PermissionsService {
         },
       );
 
-      if (!isDefined(application) || !isDefined(application.defaultRoleId)) {
-        throw new ApplicationException(
-          `Could not find application ${applicationId}`,
-          ApplicationExceptionCode.APPLICATION_NOT_FOUND,
+      if (!isDefined(application)) {
+        throw new PermissionsException(
+          PermissionsExceptionMessage.NO_AUTHENTICATION_CONTEXT,
+          PermissionsExceptionCode.NO_AUTHENTICATION_CONTEXT,
         );
+      }
+
+      if (!isDefined(application.defaultRoleId)) {
+        return false;
       }
 
       const applicationRoleId = application.defaultRoleId;

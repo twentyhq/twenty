@@ -8,18 +8,31 @@ import { type ProgressBarProps } from './types/ProgressBarProps';
 
 export const ProgressBar = ({
   value,
+  size = 'md',
   className,
   barColor,
   backgroundColor = 'none',
   withBorderRadius = false,
+  withGrowIn = false,
+  withGlint = false,
+  withSpringFill = false,
+  withMinimumFillWidth = true,
   ariaLabel,
+  onGrowInComplete,
 }: ProgressBarProps) => {
   return (
     <Progress.Root
       className={clsx(styles.bar, className)}
+      data-size={size}
       data-with-border-radius={withBorderRadius || undefined}
+      data-grow-in={withGrowIn || undefined}
       aria-label={ariaLabel}
       value={value}
+      onAnimationEnd={(event) => {
+        if (withGrowIn && event.target === event.currentTarget) {
+          onGrowInComplete?.();
+        }
+      }}
       style={
         {
           '--progress-bar-background-color': backgroundColor,
@@ -33,8 +46,11 @@ export const ProgressBar = ({
         <Progress.Indicator
           className={styles.indicator}
           data-with-border-radius={withBorderRadius || undefined}
-          data-nonzero={value > 0 || undefined}
-        />
+          data-spring-fill={withSpringFill || undefined}
+          data-nonzero={(withMinimumFillWidth && value > 0) || undefined}
+        >
+          {withGlint && <span key={value} className={styles.glint} />}
+        </Progress.Indicator>
       </Progress.Track>
     </Progress.Root>
   );

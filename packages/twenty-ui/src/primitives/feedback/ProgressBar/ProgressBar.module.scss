@@ -6,9 +6,17 @@
   border-radius: 0;
   overflow: hidden;
 
+  &[data-size='sm'] {
+    height: var(--t-spacing-1_5);
+  }
+
   &[data-with-border-radius] {
     border-radius: var(--t-border-radius-pill);
     corner-shape: round;
+  }
+
+  &[data-grow-in] {
+    animation: progressBarGrowIn duration(normal) cubic-bezier(0.2, 0, 0, 1);
   }
 }
 
@@ -22,6 +30,8 @@
   height: 100%;
   background-color: var(--progress-bar-color, var(--t-font-color-primary));
   border-radius: 0;
+  overflow: hidden;
+  position: relative;
   transition: width duration(normal) linear;
 
   &[data-with-border-radius] {
@@ -29,7 +39,74 @@
     corner-shape: round;
   }
 
+  &[data-spring-fill] {
+    transition: width calc(#{duration(normal)} * 2)
+      linear(
+        0,
+        0.092,
+        0.285,
+        0.496,
+        0.681,
+        0.823,
+        0.922,
+        0.982,
+        1.015,
+        1.028,
+        1.03,
+        1.026,
+        1.02,
+        1.014,
+        1.008,
+        1.004,
+        1.002,
+        1,
+        0.999,
+        0.999,
+        1
+      );
+  }
+
   &[data-nonzero] {
     min-width: 12px;
+  }
+}
+
+.glint {
+  animation: progressBarGlint calc(#{duration(normal)} * 3)
+    cubic-bezier(0.2, 0, 0, 1) forwards;
+  backdrop-filter: brightness(1.6);
+  inset: 0;
+  mask-image: linear-gradient(90deg, transparent, black, transparent);
+  position: absolute;
+  transform: translateX(-100%);
+}
+
+@keyframes progressBarGrowIn {
+  from {
+    width: 0;
+  }
+}
+
+@keyframes progressBarGlint {
+  from {
+    transform: translateX(-100%);
+  }
+
+  to {
+    transform: translateX(100%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bar[data-grow-in] {
+    animation-duration: 0s;
+  }
+
+  .indicator[data-spring-fill] {
+    transition: none;
+  }
+
+  .glint {
+    display: none;
   }
 }

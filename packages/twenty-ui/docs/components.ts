@@ -35,8 +35,6 @@ import { CARD_FOOTER_PROP_DESCRIPTIONS } from './cardFooterPropDescriptions';
 import { CARD_HEADER_PROP_DESCRIPTIONS } from './cardHeaderPropDescriptions';
 import { CARD_PROP_DESCRIPTIONS } from './cardPropDescriptions';
 import { CHIP_PROP_DESCRIPTIONS } from './chipPropDescriptions';
-import { CIRCULAR_PROGRESS_BAR_PROP_DESCRIPTIONS } from './circularProgressBarPropDescriptions';
-import { CLICK_TO_ACTION_LINK_PROP_DESCRIPTIONS } from './clickToActionLinkPropDescriptions';
 import { CODE_EDITOR_HEADER_PROP_DESCRIPTIONS } from './codeEditorHeaderPropDescriptions';
 import { CODE_EDITOR_PROP_DESCRIPTIONS } from './codeEditorPropDescriptions';
 import { COLOR_SAMPLE_PROP_DESCRIPTIONS } from './colorSamplePropDescriptions';
@@ -94,13 +92,6 @@ export const DOCUMENTED_COMPONENTS = [
     propDescriptions: BANNER_PROP_DESCRIPTIONS,
   },
   {
-    name: 'CircularProgressBar',
-    source: 'primitives/feedback/CircularProgressBar/CircularProgressBar.tsx',
-    entryPoint: 'twenty-ui/primitives/feedback',
-    slug: 'feedback/circular-progress-bar',
-    propDescriptions: CIRCULAR_PROGRESS_BAR_PROP_DESCRIPTIONS,
-  },
-  {
     name: 'Loader',
     source: 'primitives/feedback/Loader/Loader.tsx',
     entryPoint: 'twenty-ui/primitives/feedback',
@@ -149,13 +140,6 @@ export const DOCUMENTED_COMPONENTS = [
     entryPoint: 'twenty-ui/primitives/layout',
     slug: 'layout/text-direction-provider',
     propDescriptions: TEXT_DIRECTION_PROVIDER_PROP_DESCRIPTIONS,
-  },
-  {
-    name: 'ClickToActionLink',
-    source: 'primitives/navigation/ClickToActionLink/ClickToActionLink.tsx',
-    entryPoint: 'twenty-ui/primitives/navigation',
-    slug: 'navigation/click-to-action-link',
-    propDescriptions: CLICK_TO_ACTION_LINK_PROP_DESCRIPTIONS,
   },
   {
     name: 'OverflowingTextWithTooltip',

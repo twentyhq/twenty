@@ -103,11 +103,6 @@ export const scheduleRecallBotsForPendingCallRecordings = async ({
     return result;
   }
 
-  // Rows without a schedule-attempt marker never reached Recall, so no bot
-  // can exist for them. Rows whose stored idempotency key still matches the
-  // current scheduling inputs can re-send the creation and let Recall dedupe
-  // it. Only attempts whose inputs drifted since the attempt pay for a
-  // Recall lookup.
   const workspaceId = getCurrentWorkspaceId();
   const ambiguousCallRecordings = resumableCallRecordings.filter(
     ({ callRecording, calendarEvent }) =>
@@ -141,10 +136,9 @@ export const scheduleRecallBotsForPendingCallRecordings = async ({
     return result;
   }
 
-  // A run that POSTed a bot but died before the id write-back leaves the bot
-  // claimable by metadata; one workspace-wide lookup finds them all without a
-  // per-recording list call.
-  const lookupResult = await findScheduledRecallBotIdsByCallRecordingId();
+  const lookupResult = await findScheduledRecallBotIdsByCallRecordingId(
+    ambiguousCallRecordings.map(({ callRecording }) => callRecording.id),
+  );
 
   // A failed lookup can hide existing bots; creating one now could duplicate
   // them, so defer to the next run.

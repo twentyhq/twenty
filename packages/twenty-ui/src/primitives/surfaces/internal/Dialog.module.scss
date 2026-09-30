@@ -72,6 +72,10 @@
     inline-size: var(--t-modal-size-sm-width);
   }
 
+  &[data-size='compact'] {
+    inline-size: var(--t-modal-size-compact-width);
+  }
+
   &[data-size='lg'] {
     inline-size: max(
       var(--t-modal-size-md-width),
@@ -93,6 +97,7 @@
 }
 
 .header {
+  --tw-dialog-title-margin-block-end: 0;
   display: flex;
   flex-direction: column;
   flex-shrink: 0;

@@ -61,6 +61,13 @@
         "description": "CSS class applied to the pill."
       },
       {
+        "name": "color",
+        "type": "\"inherit\" | \"tertiary\"",
+        "required": false,
+        "defaultValue": "tertiary",
+        "description": "Text color. `inherit` takes the parent color and font weight on a tinted background."
+      },
+      {
         "name": "Icon",
         "type": "IconComponent",
         "required": false,
@@ -73,6 +80,13 @@
         "required": false,
         "defaultValue": null,
         "description": "Short text displayed inside the pill."
+      },
+      {
+        "name": "size",
+        "type": "\"md\" | \"sm\"",
+        "required": false,
+        "defaultValue": "sm",
+        "description": "Pill size. `md` uses a larger font, height and icon."
       }
     ]
   },
@@ -108,34 +122,6 @@
         "required": false,
         "defaultValue": "primary",
         "description": "Primary solid treatment or secondary translucent treatment."
-      }
-    ]
-  },
-  {
-    "name": "CircularProgressBar",
-    "entryPoint": "twenty-ui/primitives/feedback",
-    "slug": "feedback/circular-progress-bar",
-    "props": [
-      {
-        "name": "barColor",
-        "type": "string",
-        "required": false,
-        "defaultValue": "currentColor",
-        "description": "CSS stroke color. Defaults to the inherited text color."
-      },
-      {
-        "name": "barWidth",
-        "type": "number",
-        "required": false,
-        "defaultValue": "5",
-        "description": "Stroke width in pixels. Keep it smaller than half of `size`."
-      },
-      {
-        "name": "size",
-        "type": "number",
-        "required": false,
-        "defaultValue": "50",
-        "description": "Width and height of the spinner in pixels."
       }
     ]
   },
@@ -187,6 +173,20 @@
         "description": "CSS class applied to the progress root."
       },
       {
+        "name": "onGrowInComplete",
+        "type": "(() => void)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Called when the grow-in animation ends."
+      },
+      {
+        "name": "size",
+        "type": "\"md\" | \"sm\"",
+        "required": false,
+        "defaultValue": "md",
+        "description": "Bar height: `sm` (6px) or `md` (8px)."
+      },
+      {
         "name": "value",
         "type": "number",
         "required": true,
@@ -199,6 +199,34 @@
         "required": false,
         "defaultValue": "false",
         "description": "Rounds the track and indicator corners."
+      },
+      {
+        "name": "withGlint",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Sweeps a highlight across the filled bar each time the value changes."
+      },
+      {
+        "name": "withGrowIn",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Grows the bar in from zero width when it mounts."
+      },
+      {
+        "name": "withMinimumFillWidth",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "true",
+        "description": "Keeps a small visible fill for any value above zero."
+      },
+      {
+        "name": "withSpringFill",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Animates value changes with a spring that slightly overshoots the target."
       }
     ]
   },
@@ -497,55 +525,6 @@
     ]
   },
   {
-    "name": "ClickToActionLink",
-    "entryPoint": "twenty-ui/primitives/navigation",
-    "slug": "navigation/click-to-action-link",
-    "props": [
-      {
-        "name": "children",
-        "type": "ReactNode",
-        "required": false,
-        "defaultValue": null,
-        "description": "Visible link text or content. Use a descriptive destination label."
-      },
-      {
-        "name": "className",
-        "type": "string",
-        "required": false,
-        "defaultValue": null,
-        "description": "CSS class applied to the anchor."
-      },
-      {
-        "name": "href",
-        "type": "string",
-        "required": false,
-        "defaultValue": null,
-        "description": "Destination URL for native link navigation."
-      },
-      {
-        "name": "onClick",
-        "type": "MouseEventHandler<HTMLAnchorElement>",
-        "required": false,
-        "defaultValue": null,
-        "description": "Click handler called when the link is activated."
-      },
-      {
-        "name": "rel",
-        "type": "string",
-        "required": false,
-        "defaultValue": null,
-        "description": "Relationship to the destination, such as `noopener noreferrer` for a new tab."
-      },
-      {
-        "name": "target",
-        "type": "HTMLAttributeAnchorTarget",
-        "required": false,
-        "defaultValue": null,
-        "description": "Browsing context in which to open the destination."
-      }
-    ]
-  },
-  {
     "name": "OverflowingTextWithTooltip",
     "entryPoint": "twenty-ui/primitives/typography",
     "slug": "typography/overflowing-text-with-tooltip",
@@ -741,10 +720,10 @@
       },
       {
         "name": "variant",
-        "type": "\"ghost\" | \"outline\" | \"soft\" | \"solid\"",
+        "type": "\"ghost\" | \"link\" | \"outline\" | \"soft\" | \"solid\"",
         "required": false,
         "defaultValue": "ghost",
-        "description": "Visual treatment of the button surface."
+        "description": "Visual treatment of the button surface. `link` uses compact text styling without a filled surface or border; `href` still determines link semantics."
       }
     ]
   },
@@ -867,10 +846,10 @@
       },
       {
         "name": "variant",
-        "type": "\"ghost\" | \"outline\" | \"soft\" | \"solid\"",
+        "type": "\"ghost\" | \"link\" | \"outline\" | \"soft\" | \"solid\"",
         "required": false,
         "defaultValue": null,
-        "description": "Visual treatment of the button surface."
+        "description": "Visual treatment of the button surface. `link` uses compact text styling without a filled surface or border; `href` still determines link semantics."
       }
     ]
   },
@@ -954,7 +933,7 @@
         "type": "\"md\" | \"sm\"",
         "required": false,
         "defaultValue": null,
-        "description": "Button height: `sm` (24px) or `md` (32px)."
+        "description": "Button height: `sm` (24px) or `md` (32px). The `link` variant uses its content height at either size."
       },
       {
         "name": "soon",
@@ -986,10 +965,10 @@
       },
       {
         "name": "variant",
-        "type": "\"ghost\" | \"outline\" | \"soft\" | \"solid\"",
+        "type": "\"ghost\" | \"link\" | \"outline\" | \"soft\" | \"solid\"",
         "required": false,
         "defaultValue": "solid",
-        "description": "Visual treatment of the button surface."
+        "description": "Visual treatment of the button surface. `link` uses compact text styling without a filled surface or border; `href` still determines link semantics."
       }
     ]
   },
@@ -1080,7 +1059,7 @@
         "type": "\"md\" | \"sm\"",
         "required": false,
         "defaultValue": "sm",
-        "description": "Button height: `sm` (24px) or `md` (32px)."
+        "description": "Button height: `sm` (24px) or `md` (32px). The `link` variant uses its content height at either size."
       },
       {
         "name": "soon",
@@ -1112,10 +1091,10 @@
       },
       {
         "name": "variant",
-        "type": "\"ghost\" | \"outline\" | \"soft\" | \"solid\"",
+        "type": "\"ghost\" | \"link\" | \"outline\" | \"soft\" | \"solid\"",
         "required": false,
         "defaultValue": "ghost",
-        "description": "Visual treatment of the button surface."
+        "description": "Visual treatment of the button surface. `link` uses compact text styling without a filled surface or border; `href` still determines link semantics."
       }
     ]
   },
@@ -1199,7 +1178,7 @@
         "type": "\"md\" | \"sm\"",
         "required": false,
         "defaultValue": "md",
-        "description": "Button height: `sm` (24px) or `md` (32px)."
+        "description": "Button height: `sm` (24px) or `md` (32px). The `link` variant uses its content height at either size."
       },
       {
         "name": "soon",
@@ -1231,10 +1210,10 @@
       },
       {
         "name": "variant",
-        "type": "\"ghost\" | \"outline\" | \"soft\" | \"solid\"",
+        "type": "\"ghost\" | \"link\" | \"outline\" | \"soft\" | \"solid\"",
         "required": false,
         "defaultValue": "outline",
-        "description": "Visual treatment of the button surface."
+        "description": "Visual treatment of the button surface. `link` uses compact text styling without a filled surface or border; `href` still determines link semantics."
       }
     ]
   },
@@ -1280,7 +1259,7 @@
       },
       {
         "name": "variant",
-        "type": "\"ghost\" | \"outline\" | \"soft\" | \"solid\"",
+        "type": "\"ghost\" | \"link\" | \"outline\" | \"soft\" | \"solid\"",
         "required": false,
         "defaultValue": null,
         "description": "Shared surface treatment that overrides the variant of buttons in the group."
@@ -3677,7 +3656,7 @@
           },
           {
             "name": "size",
-            "type": "\"fullscreen\" | \"lg\" | \"md\" | \"sm\" | \"xl\"",
+            "type": "\"compact\" | \"fullscreen\" | \"lg\" | \"md\" | \"sm\" | \"xl\"",
             "required": false,
             "defaultValue": "md",
             "description": "Width of the dialog, or `fullscreen` to fill the viewport."
@@ -5341,6 +5320,13 @@
             "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
           },
           {
+            "name": "collisionPadding",
+            "type": "Padding",
+            "required": false,
+            "defaultValue": null,
+            "description": "Space in pixels kept between the popup and the edges of its collision\nboundary, for all sides or per side. Defaults to 5."
+          },
+          {
             "name": "container",
             "type": "HTMLElement | ShadowRoot | RefObject<HTMLElement | ShadowRoot | null> | null",
             "required": false,
@@ -5727,6 +5713,13 @@
         "required": false,
         "defaultValue": null,
         "description": "ID of the trigger that the tooltip is associated with.\nThis is useful in conjunction with the `open` prop to create a controlled tooltip.\nThere's no need to specify this prop when the tooltip is uncontrolled (that is, when the `open` prop is not set)."
+      },
+      {
+        "name": "withExitAnimation",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": null,
+        "description": "Fades and slides the popup out when it closes instead of hiding it at once."
       }
     ],
     "parts": [
@@ -6036,6 +6029,13 @@
             "required": false,
             "defaultValue": null,
             "description": "Inline styles for the popup."
+          },
+          {
+            "name": "withExitAnimation",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Fades and slides the popup out when it closes instead of hiding it at once."
           }
         ]
       },
@@ -6300,6 +6300,13 @@
         "required": false,
         "defaultValue": null,
         "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+      },
+      {
+        "name": "ring",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Surrounds the avatar with a background-colored ring so overlapping avatars stay distinct."
       },
       {
         "name": "shape",
@@ -6775,6 +6782,20 @@
             "description": "Allows selecting several options. Options then keep the popup open and show a checkbox by default."
           },
           {
+            "name": "onEscapeKeyDown",
+            "type": "((event: DropdownDismissEvent) => void)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Called when Escape is about to close the popup. Call `event.preventDefault()` to keep it open."
+          },
+          {
+            "name": "onInteractOutside",
+            "type": "((event: DropdownDismissEvent) => void)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Called when a press outside the popup, or Tab out of it, is about to close it. `event.target` is the element pressed outside, or `null` after Tab. Call `event.preventDefault()` to keep it open."
+          },
+          {
             "name": "onOpenChange",
             "type": "((open: boolean) => void)",
             "required": false,
@@ -6902,6 +6923,13 @@
             "required": false,
             "defaultValue": null,
             "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+          },
+          {
+            "name": "collisionPadding",
+            "type": "Padding",
+            "required": false,
+            "defaultValue": null,
+            "description": "Space in pixels kept between the popup and the edges of its collision\nboundary, for all sides or per side. Defaults to 5."
           },
           {
             "name": "container",

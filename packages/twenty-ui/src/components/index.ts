@@ -63,6 +63,7 @@ export { useDropdownPage } from './navigation/Dropdown/hooks/useDropdownPage';
 export type { DropdownActionItemProps } from './navigation/Dropdown/types/DropdownActionItemProps';
 export type { DropdownCloseProps } from './navigation/Dropdown/types/DropdownCloseProps';
 export type { DropdownContentProps } from './navigation/Dropdown/types/DropdownContentProps';
+export type { DropdownDismissEvent } from './navigation/Dropdown/types/DropdownDismissEvent';
 export type { DropdownHeaderProps } from './navigation/Dropdown/types/DropdownHeaderProps';
 export type { DropdownOptionItemProps } from './navigation/Dropdown/types/DropdownOptionItemProps';
 export type { DropdownPageProps } from './navigation/Dropdown/types/DropdownPageProps';
