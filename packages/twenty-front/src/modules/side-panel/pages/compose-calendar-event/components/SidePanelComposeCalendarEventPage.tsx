@@ -114,7 +114,7 @@ export const SidePanelComposeCalendarEventPage = () => {
             key="create"
             size="sm"
             startIcon={<IconCalendarEvent />}
-            shortcut={{ type: 'combination', keys: ['Mod', '⏎'] }}
+            shortcut={{ type: 'combination', keys: ['Mod', 'Enter'] }}
             onClick={composerState.handleCreate}
             disabled={!composerState.canCreate}
             variant="solid"
