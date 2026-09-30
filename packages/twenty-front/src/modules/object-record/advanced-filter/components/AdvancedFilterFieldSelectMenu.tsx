@@ -1,20 +1,16 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { isManyToOneRelationField } from '@/object-metadata/utils/isManyToOneRelationField';
 import { useAdvancedFilterFieldSelectDropdown } from '@/object-record/advanced-filter/hooks/useAdvancedFilterFieldSelectDropdown';
 import { useApplyAdvancedFilterSourceField } from '@/object-record/advanced-filter/hooks/useApplyAdvancedFilterSourceField';
 import { usePushFocusForLeafFieldValuePicker } from '@/object-record/advanced-filter/hooks/usePushFocusForLeafFieldValuePicker';
 import { AdvancedFilterContext } from '@/object-record/advanced-filter/states/context/AdvancedFilterContext';
-import { isCompositeFilterableFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFilterableFieldType';
+import { getAdvancedFilterFieldSubPage } from '@/object-record/advanced-filter/utils/getAdvancedFilterFieldSubPage';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
 import { useFilterableFieldMetadataItems } from '@/object-record/record-filter/hooks/useFilterableFieldMetadataItems';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useLingui } from '@lingui/react/macro';
 import { Fragment, useContext } from 'react';
-import {
-  getFilterTypeFromFieldType,
-  isNonEmptyArray,
-} from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { Dropdown, useDropdownPage } from 'twenty-ui/components';
 import { useIcons } from 'twenty-ui/icon';
 
@@ -79,19 +75,11 @@ export const AdvancedFilterFieldSelectMenu = ({
   const handleFieldMetadataItemSelect = (
     fieldMetadataItem: FieldMetadataItem,
   ) => {
-    if (isManyToOneRelationField(fieldMetadataItem)) {
-      onSubPageFieldMetadataItemSelect(fieldMetadataItem);
-      goToPage('relation-target');
-      return;
-    }
+    const subPage = getAdvancedFilterFieldSubPage(fieldMetadataItem);
 
-    if (
-      isCompositeFilterableFieldType(
-        getFilterTypeFromFieldType(fieldMetadataItem.type),
-      )
-    ) {
+    if (isDefined(subPage)) {
       onSubPageFieldMetadataItemSelect(fieldMetadataItem);
-      goToPage('composite');
+      goToPage(subPage);
       return;
     }
 
@@ -139,12 +127,9 @@ export const AdvancedFilterFieldSelectMenu = ({
                 startIcon={
                   <SelectOptionIcon Icon={getIcon(fieldMetadataItem.icon)} />
                 }
-                hasSubmenu={
-                  isManyToOneRelationField(fieldMetadataItem) ||
-                  isCompositeFilterableFieldType(
-                    getFilterTypeFromFieldType(fieldMetadataItem.type),
-                  )
-                }
+                hasSubmenu={isDefined(
+                  getAdvancedFilterFieldSubPage(fieldMetadataItem),
+                )}
               >
                 {fieldMetadataItem.label}
               </Dropdown.OptionItem>
