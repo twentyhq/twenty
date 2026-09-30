@@ -735,57 +735,6 @@ describe('installSelectorMethodsPolyfill', () => {
       expect(secondPlan.matches(':indeterminate')).toBe(false);
     });
 
-    it('should evaluate :lang and :dir from the nearest ancestor attributes', () => {
-      const { document } = createSelectorFixture();
-      const article = document.createElement('article');
-      const paragraph = document.createElement('p');
-      const quote = document.createElement('q');
-      article.setAttribute('lang', 'en-US');
-      article.setAttribute('dir', 'rtl');
-      quote.setAttribute('lang', 'fr');
-      article.append(paragraph);
-      paragraph.append(quote);
-      document.body.append(article);
-
-      expect(paragraph.matches(':lang(en)')).toBe(true);
-      expect(paragraph.matches(':lang("en-US")')).toBe(true);
-      expect(paragraph.matches(':lang(fr, en)')).toBe(true);
-      expect(paragraph.matches(':lang(fr)')).toBe(false);
-      expect(quote.matches(':lang(fr)')).toBe(true);
-      expect(document.body.matches(':lang(en)')).toBe(false);
-      expect(paragraph.matches(':dir(rtl)')).toBe(true);
-      expect(paragraph.matches(':dir(ltr)')).toBe(false);
-      expect(document.body.matches(':dir(ltr)')).toBe(true);
-    });
-
-    it('should resolve :dir from the text of dir="auto" and bdi elements', () => {
-      const { document } = createSelectorFixture();
-      const hebrewText = String.fromCodePoint(0x05e9, 0x05dc, 0x05d5, 0x05dd);
-      const rightToLeftContainer = document.createElement('article');
-      const autoHebrew = document.createElement('p');
-      const autoHebrewChild = document.createElement('span');
-      const autoLatin = document.createElement('p');
-      const autoDigits = document.createElement('p');
-      const isolatedHebrew = document.createElement('bdi');
-      rightToLeftContainer.setAttribute('dir', 'rtl');
-      autoHebrew.setAttribute('dir', 'auto');
-      autoLatin.setAttribute('dir', 'auto');
-      autoDigits.setAttribute('dir', 'auto');
-      autoHebrew.append(document.createTextNode(`42 ${hebrewText}`));
-      autoHebrew.append(autoHebrewChild);
-      autoLatin.append(document.createTextNode('Account'));
-      autoDigits.append(document.createTextNode('42'));
-      isolatedHebrew.append(document.createTextNode(hebrewText));
-      rightToLeftContainer.append(autoLatin, autoDigits);
-      document.body.append(autoHebrew, rightToLeftContainer, isolatedHebrew);
-
-      expect(autoHebrew.matches(':dir(rtl)')).toBe(true);
-      expect(autoHebrewChild.matches(':dir(rtl)')).toBe(true);
-      expect(autoLatin.matches(':dir(ltr)')).toBe(true);
-      expect(autoDigits.matches(':dir(ltr)')).toBe(true);
-      expect(isolatedHebrew.matches(':dir(rtl)')).toBe(true);
-    });
-
     it('should derive the checked option from the select value or its first enabled option', () => {
       const { document } = createSelectorFixture();
       const createSelect = (optionValues: string[]) => {

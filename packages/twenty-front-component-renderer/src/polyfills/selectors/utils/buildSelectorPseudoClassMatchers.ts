@@ -1,5 +1,4 @@
 import { isAncestorOrSelfOfNode } from '@/polyfills/dom/utils/isAncestorOrSelfOfNode';
-import { ARGUMENT_PSEUDO_CLASS_MATCHER_BY_NAME } from '@/polyfills/selectors/constants/ArgumentPseudoClassMatcherByName';
 import { STATE_PSEUDO_CLASS_MATCHER_BY_NAME } from '@/polyfills/selectors/constants/StatePseudoClassMatcherByName';
 import { UNOBSERVABLE_PSEUDO_CLASS_NAMES } from '@/polyfills/selectors/constants/UnobservablePseudoClassNames';
 import { type CssSelectPseudoClassMatchers } from '@/polyfills/selectors/types/CssSelectPseudoClassMatchers';
@@ -44,7 +43,6 @@ export const buildSelectorPseudoClassMatchers = ({
         ],
       ),
     ),
-    ...ARGUMENT_PSEUDO_CLASS_MATCHER_BY_NAME,
     state: isNeverMatchingWithArgument,
     defined: isAlwaysMatching,
     root: (element) => isDocumentNode(element.parentNode),
