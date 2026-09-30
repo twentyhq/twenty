@@ -119,6 +119,7 @@ export class ApplicationDevelopmentResolver {
     @ApplicationTargetArgs<UploadApplicationFileInput>({
       kind: 'applicationUniversalIdentifier',
       idKey: 'applicationUniversalIdentifier',
+      requireWorkspaceOwnership: true,
     })
     {
       applicationUniversalIdentifier,
@@ -146,6 +147,7 @@ export class ApplicationDevelopmentResolver {
     @ApplicationTargetArgs<CreateApplicationFileUploadsInput>({
       kind: 'applicationUniversalIdentifier',
       idKey: 'applicationUniversalIdentifier',
+      requireWorkspaceOwnership: true,
     })
     {
       applicationUniversalIdentifier,
@@ -166,6 +168,7 @@ export class ApplicationDevelopmentResolver {
     @ApplicationTargetArgs<CompleteApplicationFileUploadsInput>({
       kind: 'applicationUniversalIdentifier',
       idKey: 'applicationUniversalIdentifier',
+      requireWorkspaceOwnership: true,
     })
     {
       applicationUniversalIdentifier,

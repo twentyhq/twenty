@@ -4,6 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { APPLICATION_TARGET_METADATA_KEY } from 'src/engine/core-modules/application/constants/application-target-metadata-key.constant';
 import { type ApplicationTarget } from 'src/engine/core-modules/application/types/application-target.type';
+import { ApplicationRegistrationOwnershipGuard } from 'src/engine/guards/application-registration-ownership.guard';
 import { ApplicationTargetGuard } from 'src/engine/guards/application-target.guard';
 
 export const attachApplicationTarget = ({
@@ -39,4 +40,12 @@ export const attachApplicationTarget = ({
   );
 
   UseGuards(ApplicationTargetGuard)(prototype, propertyKey, descriptor);
+
+  if (target.requireWorkspaceOwnership === true) {
+    UseGuards(ApplicationRegistrationOwnershipGuard)(
+      prototype,
+      propertyKey,
+      descriptor,
+    );
+  }
 };

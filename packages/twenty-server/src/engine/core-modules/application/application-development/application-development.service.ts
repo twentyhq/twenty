@@ -229,11 +229,6 @@ export class ApplicationDevelopmentService {
       );
     }
 
-    await this.applicationRegistrationService.findOneOwnedByWorkspaceOrThrow({
-      universalIdentifier: applicationUniversalIdentifier,
-      workspaceId,
-    });
-
     return await this.fileStorageService.writeFile({
       sourceFile: await getFileBuffer(),
       fileFolder,

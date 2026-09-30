@@ -9,7 +9,10 @@ import { attachApplicationTarget } from 'src/engine/core-modules/application/uti
 // @ArgsType counterpart of ApplicationTargetArg: replaces a bare @Args()
 export const ApplicationTargetArgs =
   <TArgs = never>(
-    target: ApplicationTargetKind & { idKey: StringPathOf<TArgs> },
+    target: ApplicationTargetKind & {
+      idKey: StringPathOf<TArgs>;
+      requireWorkspaceOwnership?: boolean;
+    },
   ): ParameterDecorator =>
   (prototype, propertyKey, parameterIndex) => {
     attachApplicationTarget({

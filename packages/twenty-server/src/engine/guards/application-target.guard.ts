@@ -4,9 +4,8 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { GqlExecutionContext } from '@nestjs/graphql';
 
-import { isNonEmptyString, isObject } from '@sniptt/guards';
+import { isNonEmptyString } from '@sniptt/guards';
 import { type AllMetadataName } from 'twenty-shared/metadata';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 
@@ -18,6 +17,10 @@ import { APPLICATION_TARGET_METADATA_KEY } from 'src/engine/core-modules/applica
 import { type ApplicationTarget } from 'src/engine/core-modules/application/types/application-target.type';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { isOAuthOnlyApplication } from 'src/engine/core-modules/application/utils/is-oauth-only-application.util';
+import {
+  getApplicationTargetName,
+  readApplicationTargetValue,
+} from 'src/engine/core-modules/application/utils/read-application-target-value.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type SyncableFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-from.type';
@@ -52,11 +55,15 @@ export class ApplicationTargetGuard implements CanActivate {
       return true;
     }
 
-    const targetValue = this.readTargetValue({ context, request, target });
+    const targetValue = readApplicationTargetValue({
+      context,
+      request,
+      target,
+    });
 
     if (!isNonEmptyString(targetValue)) {
       throw new ApplicationException(
-        `Missing application target "${this.getTargetName(target)}"`,
+        `Missing application target "${getApplicationTargetName(target)}"`,
         ApplicationExceptionCode.FORBIDDEN,
       );
     }
@@ -87,63 +94,6 @@ export class ApplicationTargetGuard implements CanActivate {
           }),
           'An application token can only reach its own application',
         );
-      default:
-        return assertUnreachable(target);
-    }
-  }
-
-  private readTargetValue({
-    context,
-    request,
-    target,
-  }: {
-    context: ExecutionContext;
-    request: { params?: Record<string, unknown> };
-    target: ApplicationTarget;
-  }): unknown {
-    switch (target.source) {
-      case 'graphqlArg': {
-        const argValue =
-          GqlExecutionContext.create(context).getArgs()[target.argName];
-
-        return isDefined(target.idKey)
-          ? this.readPath(argValue, target.idKey)
-          : argValue;
-      }
-      case 'graphqlArgs':
-        return this.readPath(
-          GqlExecutionContext.create(context).getArgs(),
-          target.idKey,
-        );
-      case 'routeParam':
-        return request.params?.[target.argName];
-      default:
-        return assertUnreachable(target);
-    }
-  }
-
-  private readPath(value: unknown, path: string): unknown {
-    return path
-      .split('.')
-      .reduce<unknown>(
-        (currentValue, key) =>
-          isObject(currentValue)
-            ? (currentValue as Record<string, unknown>)[key]
-            : undefined,
-        value,
-      );
-  }
-
-  private getTargetName(target: ApplicationTarget): string {
-    switch (target.source) {
-      case 'graphqlArg':
-        return isDefined(target.idKey)
-          ? `${target.argName}.${target.idKey}`
-          : target.argName;
-      case 'graphqlArgs':
-        return target.idKey;
-      case 'routeParam':
-        return target.argName;
       default:
         return assertUnreachable(target);
     }
