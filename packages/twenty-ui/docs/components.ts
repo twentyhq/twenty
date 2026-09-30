@@ -8,7 +8,6 @@ import { INLINE_BANNER_PROP_DESCRIPTIONS } from './inlineBannerPropDescriptions'
 import { TOAST_PROVIDER_PROP_DESCRIPTIONS } from './toastProviderPropDescriptions';
 import { TOASTER_PROP_DESCRIPTIONS } from './toasterPropDescriptions';
 import { RADIO_PROP_DESCRIPTIONS } from './radioPropDescriptions';
-import { COLOR_SCHEME_PICKER_PROP_DESCRIPTIONS } from './colorSchemePickerPropDescriptions';
 import { SEARCH_INPUT_PROP_DESCRIPTIONS } from './searchInputPropDescriptions';
 import { ANIMATED_ICON_CROSSFADE_PROP_DESCRIPTIONS } from './animatedIconCrossfadePropDescriptions';
 import { MENU_ITEM_PROP_DESCRIPTIONS } from './menuItemPropDescriptions';
@@ -540,13 +539,6 @@ export const DOCUMENTED_COMPONENTS = [
     entryPoint: 'twenty-ui/components',
     slug: 'components/toaster',
     propDescriptions: TOASTER_PROP_DESCRIPTIONS,
-  },
-  {
-    name: 'ColorSchemePicker',
-    source: 'components/input/ColorSchemePicker/ColorSchemePicker.tsx',
-    entryPoint: 'twenty-ui/components',
-    slug: 'components/color-scheme-picker',
-    propDescriptions: COLOR_SCHEME_PICKER_PROP_DESCRIPTIONS,
   },
   {
     name: 'SearchInput',

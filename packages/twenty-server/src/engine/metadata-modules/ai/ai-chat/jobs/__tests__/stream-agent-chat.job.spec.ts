@@ -105,6 +105,32 @@ const PENDING_QUESTION_PARTS: ModelStreamPart[] = [
   ...FINISH_PARTS,
 ];
 
+const RECOVERED_TOOL_CALL_PARTS: ModelStreamPart[] = [
+  ...START_PARTS,
+  {
+    type: 'tool-call',
+    toolCallId: 'tool-call-id',
+    toolName: 'code_interpreter',
+    input: {},
+    dynamic: true,
+    invalid: true,
+    error: new Error("Model tried to call unavailable tool 'code_interpreter'"),
+  },
+  {
+    type: 'tool-error',
+    toolCallId: 'tool-call-id',
+    toolName: 'code_interpreter',
+    input: {},
+    dynamic: true,
+    error:
+      "AI_NoSuchToolError: Model tried to call unavailable tool 'code_interpreter'",
+  },
+  { type: 'text-start', id: 'text-1' },
+  { type: 'text-delta', id: 'text-1', text: 'Here is the answer' },
+  { type: 'text-end', id: 'text-1' },
+  ...FINISH_PARTS,
+];
+
 const createFakeChatStream = ({
   parts = TEXT_PARTS,
   midStreamError,
@@ -116,6 +142,7 @@ const createFakeChatStream = ({
   onFirstPart?: () => void;
   isAborted?: boolean;
 } = {}) => ({
+  streamError: midStreamError,
   stream: new ReadableStream<ModelStreamPart>(
     {
       pull(controller) {
@@ -226,6 +253,7 @@ describe('StreamAgentChatJob', () => {
             stream: chatStream,
             modelConfig,
             hasNoMoreAvailableCredits: () => false,
+            getStreamError: () => chatStream.streamError,
           }),
     };
     const eventPublisherService = {
@@ -868,6 +896,26 @@ describe('StreamAgentChatJob', () => {
       'stream-error',
     );
     expect(turnCounts('ai-chat/turn-completed')).toEqual([]);
+  });
+
+  it('counts a reply as answered when the model recovers from a failed tool call', async () => {
+    const { job, publishedEvents, turnCounts } = buildJob({
+      chatStream: createFakeChatStream({
+        parts: RECOVERED_TOOL_CALL_PARTS,
+      }),
+    });
+
+    await job.handle(jobData);
+
+    expect(turnCounts('ai-chat/turn-completed')).toEqual([
+      expect.objectContaining({
+        attributes: { model: 'openai/gpt-5.6-luna', outcome: 'answered' },
+      }),
+    ]);
+    expect(turnCounts('ai-chat/turn-failed')).toEqual([]);
+    expect(publishedEvents.map((event) => event.type)).not.toContain(
+      'stream-error',
+    );
   });
 
   it('counts an aborted turn as cancelled rather than leaving it unaccounted', async () => {
