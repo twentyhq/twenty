@@ -137,7 +137,7 @@ export class GenerateRecordExportJob {
     reportProgress: TrackedJobRun<TrackedJobProgress>['reportProgress'];
   }): AsyncGenerator<string> {
     const header =
-      '﻿' +
+      '\uFEFF' +
       columns
         .map((column) =>
           formatValueForCSV(sanitizeValueForCSVExport(column.label)),

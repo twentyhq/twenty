@@ -524,18 +524,20 @@ describe('record export lifecycle (integration)', () => {
     const queue = recordExportQueue();
     const add = queue.add.bind(queue);
     let jobId: string | undefined;
+    let exportId: string | undefined;
     jest.spyOn(queue, 'add').mockImplementation(async (...args) => {
+      exportId = args[1].id;
       jobId = await add(...args);
       return jobId;
     });
     const events = await streamFor(requester);
     try {
-      exportIds.add(jobId!);
+      exportIds.add(exportId!);
       await waitUntil(
         async () =>
           (await queue.getJobs([jobId!]))[jobId!]?.state === 'completed',
       );
-      expect(await fileExists(await getExport(jobId!))).toBe(true);
+      expect(await fileExists(await getExport(exportId!))).toBe(true);
       const completed = await events.next();
       expect(completed.value).toMatchObject({
         progress: 100,
@@ -571,11 +573,11 @@ describe('record export lifecycle (integration)', () => {
       const getJobs = queue.getJobs.bind(queue);
       let uploadedId: string | undefined;
       jest.spyOn(queue, 'getJobs').mockImplementation(async ([jobId]) => {
-        exportIds.add(jobId);
         await waitUntil(
           async () => (await getJobs([jobId]))[jobId]?.state === 'completed',
         );
-        uploadedId = jobId;
+        uploadedId = (await getJobs([jobId]))[jobId]?.data.id;
+        exportIds.add(uploadedId!);
         return {
           [jobId]: {
             id: jobId,
