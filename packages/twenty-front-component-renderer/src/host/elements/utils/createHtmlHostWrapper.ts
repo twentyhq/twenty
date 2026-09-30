@@ -35,19 +35,19 @@ export const createHtmlHostWrapper = (htmlTag: string) => {
       const { reactBindableProps, hostEnforcedProps, composedElementRef } =
         useHtmlHostElementProps({ props, htmlTag });
 
+      const { value, ...reactBindablePropsWithoutValue } = reactBindableProps;
+
       const shouldUseOptionSelectedState =
         htmlTag === 'select' &&
         reactBindableProps.multiple === true &&
-        !isArray(reactBindableProps.value);
-
-      if (shouldUseOptionSelectedState) {
-        delete reactBindableProps.value;
-      }
+        !isArray(value);
 
       return createPlainHostElement({
         htmlTag,
         isVoid,
-        reactBindableProps,
+        reactBindableProps: shouldUseOptionSelectedState
+          ? reactBindablePropsWithoutValue
+          : reactBindableProps,
         hostEnforcedProps,
         composedElementRef,
         children,
