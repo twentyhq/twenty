@@ -77,8 +77,6 @@ const baseProductYear = buildPrice({
   product: baseProduct,
 });
 
-// The resource-credit product carries one price per credit package. This is the
-// shape that made the single-price-per-interval guard throw in production.
 const creditMonthPackages = [50, 100, 200].map((creditAmount) =>
   buildPrice({
     stripePriceId: `price_credits_month_${creditAmount}`,
@@ -103,8 +101,6 @@ const allPrices = [
   ...creditYearPackages,
 ];
 
-// The interval lookup for the base product reads the prices off the product it
-// is given, so the fixture products carry their own prices.
 baseProduct.billingPrices.push(baseProductMonth, baseProductYear);
 resourceCreditProduct.billingPrices.push(
   ...creditMonthPackages,
@@ -147,9 +143,6 @@ describe('BillingSubscriptionUpdateService interval switch', () => {
         BillingSubscriptionUpdateService,
         {
           provide: BillingPriceService,
-          // The real service, so the package scaling runs rather than a canned
-          // answer: a mocked helper would pass even if the caller stopped
-          // scaling across the interval change.
           useValue: new BillingPriceService(
             noop as never,
             billingPriceRepository as never,
@@ -213,9 +206,6 @@ describe('BillingSubscriptionUpdateService interval switch', () => {
   });
 
   it('switches interval on a product holding several packages at that interval', async () => {
-    // The regression this pins: resolving the resource-credit item as "the one
-    // billable price at the interval" throws here, because the product
-    // legitimately holds three.
     expect(
       resourceCreditProduct.billingPrices.filter(
         (price) => price.interval === SubscriptionInterval.Year,

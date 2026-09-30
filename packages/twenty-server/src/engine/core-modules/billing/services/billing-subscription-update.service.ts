@@ -822,8 +822,6 @@ export class BillingSubscriptionUpdateService {
       return currentPrices;
     }
 
-    // Switching interval is not a repackaging, so the subscription stays on the
-    // products it already sits on rather than being resolved from the catalog.
     const targetBaseProductPrice = findProductPriceForIntervalOrThrow(
       currentBillingProduct,
       newInterval,
@@ -839,8 +837,6 @@ export class BillingSubscriptionUpdateService {
       currentResourceCreditPrice,
     );
 
-    // Resource credit has one price per package, not per interval, so match the
-    // equivalent package scaled for the interval change.
     const targetResourceCreditPrice =
       await this.billingPriceService.findEquivalentResourceCreditPrice({
         referencePrice: currentResourceCreditPrice,
