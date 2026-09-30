@@ -17,6 +17,12 @@ describe('collectQualifiedAndMainAliasColumnNames', () => {
     ).toEqual({ messageThread: ['subject'], messages: ['text'] });
   });
 
+  it('reports unquoted and partly quoted qualified references', () => {
+    expect(
+      collect(['messages.subject ILIKE :subject AND "messages".text = :text']),
+    ).toEqual({ messages: ['subject', 'text'] });
+  });
+
   it('attributes unqualified main alias columns to the main alias', () => {
     expect(
       collect(['subject ILIKE :subject', '("createdAt" > :since)']),

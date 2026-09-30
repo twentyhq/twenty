@@ -180,14 +180,22 @@ export class CalendarChannelMetadataService {
     );
 
     if (
+      isDefined(previousCalendarChannel) &&
       isDefined(data.visibility) &&
-      data.visibility !== previousCalendarChannel?.visibility
+      data.visibility !== previousCalendarChannel.visibility
     ) {
-      await this.channelRecordShareService.syncChannelRecordShares({
-        workspaceId,
-        source: CALENDAR_EVENT_CHANNEL_RECORD_SHARE_SOURCE,
-        channelId: id,
-      });
+      await this.channelRecordShareService.syncChannelRecordSharesAfterVisibilityChange(
+        {
+          workspaceId,
+          source: CALENDAR_EVENT_CHANNEL_RECORD_SHARE_SOURCE,
+          channelId: id,
+          revertVisibilityChange: () =>
+            this.repository.update(
+              { id, workspaceId },
+              { visibility: previousCalendarChannel.visibility },
+            ),
+        },
+      );
     }
 
     return this.repository.findOneOrFail({ where: { id, workspaceId } });

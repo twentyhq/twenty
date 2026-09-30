@@ -68,7 +68,7 @@ import {
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
-import { isDiscoverableObject } from 'src/engine/core-modules/record-share/utils/resolve-discoverable-field-metadata-ids.util';
+import { isDiscoverableObject } from 'src/engine/core-modules/record-share/utils/is-discoverable-object.util';
 import { RelationNestedQueries } from 'src/engine/twenty-orm/field-operations/relation-nested-queries/relation-nested-queries';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { type MutationKind } from 'src/engine/twenty-orm/sql/utils/build-mutation-statement.util';
@@ -375,7 +375,7 @@ export abstract class CommonBaseQueryRunnerService<
     }
 
     if (
-      queryRunnerContext.readScope === 'existence' &&
+      isDefined(queryRunnerContext.readScope) &&
       !isDiscoverableObject(queryRunnerContext.flatObjectMetadata)
     ) {
       throw new CommonQueryRunnerException(

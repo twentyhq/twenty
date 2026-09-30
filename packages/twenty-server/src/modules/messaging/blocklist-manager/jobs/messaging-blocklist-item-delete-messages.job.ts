@@ -247,10 +247,6 @@ export class BlocklistItemDeleteMessagesJob {
         continue;
       }
 
-      await messageChannelMessageAssociationRepository.delete(
-        messageChannelMessageAssociationsToDelete.map(({ id }) => id),
-      );
-
       const messages = await messageRepository.find({
         where: {
           id: In(
@@ -262,14 +258,29 @@ export class BlocklistItemDeleteMessagesJob {
         select: { messageThreadId: true },
       });
 
-      await this.channelRecordShareService.syncChannelRecordShares({
-        workspaceId,
-        source: MESSAGE_THREAD_CHANNEL_RECORD_SHARE_SOURCE,
-        channelId: messageChannel.id,
-        recordIds: messages
-          .map(({ messageThreadId }) => messageThreadId)
-          .filter(isDefined),
-      });
+      await this.workspaceOrmManager.runInWorkspaceTransaction(
+        async (transactionScope) => {
+          await transactionScope
+            .getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
+              'messageChannelMessageAssociation',
+              { shouldBypassPermissionChecks: true },
+            )
+            .delete(
+              messageChannelMessageAssociationsToDelete.map(({ id }) => id),
+            );
+
+          await this.channelRecordShareService.syncChannelRecordSharesInTransaction(
+            {
+              transactionScope,
+              source: MESSAGE_THREAD_CHANNEL_RECORD_SHARE_SOURCE,
+              channelId: messageChannel.id,
+              recordIds: messages
+                .map(({ messageThreadId }) => messageThreadId)
+                .filter(isDefined),
+            },
+          );
+        },
+      );
     }
   }
 }

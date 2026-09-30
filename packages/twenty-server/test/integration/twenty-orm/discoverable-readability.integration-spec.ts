@@ -257,6 +257,24 @@ describe('DISCOVERABLE readability (integration)', () => {
     ).rejects.toThrow('no permission to read field "title" on "note"');
   });
 
+  it('refuses an existence read that joins and selects another field', async () => {
+    await expect(
+      readAsJony((workspaceOrmManager) =>
+        workspaceOrmManager
+          .getRepositoryWithContextPermissions(
+            'noteTarget',
+            undefined,
+            'existence',
+          )
+          .createQueryBuilder('noteTarget')
+          .select(['id'])
+          .leftJoinAndSelect('noteTarget.note', 'note')
+          .where('noteTarget.id = :id', { id: NOTE_TARGET_ID })
+          .getMany(),
+      ),
+    ).rejects.toThrow(/no permission to read field "\w+" on "note"/);
+  });
+
   it('discovers a child that declares discoverable fields through its parent', async () => {
     expect(
       await discoverAsJony('noteTarget', ['id', 'noteId', 'targetPersonId']),
@@ -334,21 +352,24 @@ describe('DISCOVERABLE readability (integration)', () => {
     expect(response.body.errors?.[0]?.message).toContain('title');
   });
 
-  it('refuses GraphQL discovery on other objects', async () => {
-    const response = await makeGraphqlApiRequestWithMemberRole({
-      query: gql`
+  it.each([true, false])(
+    'refuses GraphQL discover: %s on other objects',
+    async (discover) => {
+      const response = await makeGraphqlApiRequestWithMemberRole({
+        query: gql`
         query DiscoverTasks {
-          tasks(discover: true) {
+          tasks(discover: ${discover}) {
             totalCount
           }
         }
       `,
-    });
+      });
 
-    expect(response.body.errors?.[0]?.message).toBe(
-      'Records of tasks cannot be discovered',
-    );
-  });
+      expect(response.body.errors?.[0]?.message).toBe(
+        'Records of tasks cannot be discovered',
+      );
+    },
+  );
 
   it('lets REST discover the record with only its discoverable fields', async () => {
     const response = await discoverAsJonyThroughRest(
@@ -365,11 +386,16 @@ describe('DISCOVERABLE readability (integration)', () => {
     ]);
   });
 
-  it('refuses REST discovery on other objects', async () => {
-    const response = await discoverAsJonyThroughRest('/tasks?discover=true');
+  it.each(['true', 'false'])(
+    'refuses REST discover=%s on other objects',
+    async (discover) => {
+      const response = await discoverAsJonyThroughRest(
+        `/tasks?discover=${discover}`,
+      );
 
-    expect(response.status).toBe(400);
-  });
+      expect(response.status).toBe(400);
+    },
+  );
 
   it('refuses REST discovery with an invalid value', async () => {
     const response = await discoverAsJonyThroughRest('/notes?discover=yes');

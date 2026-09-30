@@ -89,36 +89,45 @@ export class CalendarEventCleanerService {
       return;
     }
 
-    const calendarChannelEventAssociationRepository =
-      this.workspaceOrmManager.getRepository<CalendarChannelEventAssociationWorkspaceEntity>(
-        'calendarChannelEventAssociation',
-        { shouldBypassPermissionChecks: true },
-      );
+    const calendarEventIds =
+      await this.workspaceOrmManager.runInWorkspaceTransaction(
+        async (transactionScope) => {
+          const calendarChannelEventAssociationRepository =
+            transactionScope.getRepository<CalendarChannelEventAssociationWorkspaceEntity>(
+              'calendarChannelEventAssociation',
+              { shouldBypassPermissionChecks: true },
+            );
 
-    const associationsToDelete =
-      await calendarChannelEventAssociationRepository.find({
-        where: {
-          eventExternalId: In(eventExternalIds),
-          calendarChannelId,
+          const associationsToDelete =
+            await calendarChannelEventAssociationRepository.find({
+              where: {
+                eventExternalId: In(eventExternalIds),
+                calendarChannelId,
+              },
+              select: { calendarEventId: true },
+            });
+
+          await calendarChannelEventAssociationRepository.delete({
+            eventExternalId: In(eventExternalIds),
+            calendarChannelId,
+          });
+
+          const deletedCalendarEventIds = associationsToDelete.map(
+            ({ calendarEventId }) => calendarEventId,
+          );
+
+          await this.channelRecordShareService.syncChannelRecordSharesInTransaction(
+            {
+              transactionScope,
+              source: CALENDAR_EVENT_CHANNEL_RECORD_SHARE_SOURCE,
+              channelId: calendarChannelId,
+              recordIds: deletedCalendarEventIds,
+            },
+          );
+
+          return deletedCalendarEventIds;
         },
-        select: { calendarEventId: true },
-      });
-
-    await calendarChannelEventAssociationRepository.delete({
-      eventExternalId: In(eventExternalIds),
-      calendarChannelId,
-    });
-
-    const calendarEventIds = associationsToDelete.map(
-      ({ calendarEventId }) => calendarEventId,
-    );
-
-    await this.channelRecordShareService.syncChannelRecordShares({
-      workspaceId,
-      source: CALENDAR_EVENT_CHANNEL_RECORD_SHARE_SOURCE,
-      channelId: calendarChannelId,
-      recordIds: calendarEventIds,
-    });
+      );
 
     await this.deleteOrphanedCalendarEvents({ calendarEventIds, workspaceId });
   }
