@@ -6,6 +6,7 @@ import { USAGE_SPENDER_COLUMN_BY_SPENDER_TYPE } from 'src/engine/core-modules/us
 
 import { type LimitQuotaCounter } from 'src/engine/core-modules/usage-limit/types/limit-quota-counter.type';
 import { type UsageConsumptionRow } from 'src/engine/core-modules/usage/types/usage-consumption-row.type';
+import { findUsageLimitDefinition } from 'src/engine/core-modules/usage-limit/utils/find-usage-limit-definition.util';
 
 const spenderColumnMatches = (
   rowValue: string,
@@ -15,7 +16,7 @@ const spenderColumnMatches = (
 
 export type QuotaConsumptionScope = Pick<
   LimitQuotaCounter,
-  'operationType' | 'spenderType' | 'spenderId' | 'meter'
+  'resourceType' | 'operationType' | 'spenderType' | 'spenderId' | 'meter'
 >;
 
 const rowMatchesScope = (
@@ -45,7 +46,20 @@ export const computeQuotaConsumed = ({
 }: {
   rows: UsageConsumptionRow[];
   scope: QuotaConsumptionScope;
-}): number =>
-  rows
-    .filter((row) => rowMatchesScope(row, scope))
+}): number => {
+  const quantityUnit =
+    scope.meter === 'quantity'
+      ? findUsageLimitDefinition({
+          resourceType: scope.resourceType,
+          limitKind: 'quota',
+        })?.quantityUnit
+      : undefined;
+
+  return rows
+    .filter(
+      (row) =>
+        rowMatchesScope(row, scope) &&
+        (!isDefined(quantityUnit) || row.unit === quantityUnit),
+    )
     .reduce((total, row) => total + Number(row[scope.meter]), 0);
+};

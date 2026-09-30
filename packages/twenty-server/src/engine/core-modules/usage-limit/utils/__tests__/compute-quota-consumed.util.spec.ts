@@ -3,11 +3,13 @@ import { type UsageConsumptionRow } from 'src/engine/core-modules/usage/types/us
 import { computeQuotaConsumed } from 'src/engine/core-modules/usage-limit/utils/compute-quota-consumed.util';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
+import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 
 const buildRow = (
   overrides: Partial<UsageConsumptionRow>,
 ): UsageConsumptionRow => ({
   operationType: UsageOperationType.AI_CHAT_TOKEN,
+  unit: UsageUnit.TOKEN,
   userWorkspaceId: 'user-1',
   apiKeyId: '',
   applicationId: '',
@@ -52,6 +54,32 @@ const rows = [
     quantity: '3',
   }),
 ];
+
+const logicFunctionRows = [
+  buildRow({
+    operationType: UsageOperationType.CODE_EXECUTION,
+    unit: UsageUnit.INVOCATION,
+    userWorkspaceId: '',
+    logicFunctionId: 'logic-function-1',
+    creditsUsedMicro: '1000',
+    quantity: '10',
+  }),
+  buildRow({
+    operationType: UsageOperationType.CODE_EXECUTION,
+    unit: UsageUnit.MILLISECOND,
+    userWorkspaceId: '',
+    logicFunctionId: 'logic-function-1',
+    creditsUsedMicro: '1500',
+    quantity: '15000',
+  }),
+];
+
+const buildLogicFunctionCounter = (meter: LimitQuotaCounter['meter']) =>
+  buildCounter({
+    resourceType: UsageResourceType.LOGIC_FUNCTION,
+    operationType: UsageOperationType.CODE_EXECUTION,
+    meter,
+  });
 
 describe('computeQuotaConsumed', () => {
   it('sums every row for a workspace scope with no operation', () => {
@@ -133,5 +161,23 @@ describe('computeQuotaConsumed', () => {
         }),
       }),
     ).toBe(40);
+  });
+
+  it('counts logic function runs from the invocation rows, not the billed milliseconds', () => {
+    expect(
+      computeQuotaConsumed({
+        rows: logicFunctionRows,
+        scope: buildLogicFunctionCounter('quantity'),
+      }),
+    ).toBe(10);
+  });
+
+  it('sums logic function credits across the invocation and duration rows', () => {
+    expect(
+      computeQuotaConsumed({
+        rows: logicFunctionRows,
+        scope: buildLogicFunctionCounter('creditsUsedMicro'),
+      }),
+    ).toBe(2_500);
   });
 });

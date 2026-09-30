@@ -10,6 +10,7 @@ describe('computeLogicFunctionExecutionCreditsMicro', () => {
     ).toEqual({
       invocationCreditsMicro: 100,
       durationCreditsMicro: 100,
+      billedInvocationCount: 1,
       billedDurationMs: 1_000,
     });
   });
@@ -23,6 +24,7 @@ describe('computeLogicFunctionExecutionCreditsMicro', () => {
     ).toEqual({
       invocationCreditsMicro: 100,
       durationCreditsMicro: 0,
+      billedInvocationCount: 1,
       billedDurationMs: 9,
     });
 
@@ -34,6 +36,7 @@ describe('computeLogicFunctionExecutionCreditsMicro', () => {
     ).toEqual({
       invocationCreditsMicro: 100,
       durationCreditsMicro: 15,
+      billedInvocationCount: 1,
       billedDurationMs: 155,
     });
   });
@@ -47,6 +50,7 @@ describe('computeLogicFunctionExecutionCreditsMicro', () => {
     ).toEqual({
       invocationCreditsMicro: 100,
       durationCreditsMicro: 0,
+      billedInvocationCount: 1,
       billedDurationMs: 0,
     });
 
@@ -58,6 +62,7 @@ describe('computeLogicFunctionExecutionCreditsMicro', () => {
     ).toEqual({
       invocationCreditsMicro: 100,
       durationCreditsMicro: 0,
+      billedInvocationCount: 1,
       billedDurationMs: 0,
     });
   });
@@ -71,6 +76,7 @@ describe('computeLogicFunctionExecutionCreditsMicro', () => {
     ).toEqual({
       invocationCreditsMicro: 100,
       durationCreditsMicro: 90_000,
+      billedInvocationCount: 1,
       billedDurationMs: 900_000,
     });
   });
@@ -84,6 +90,7 @@ describe('computeLogicFunctionExecutionCreditsMicro', () => {
     ).toEqual({
       invocationCreditsMicro: 0,
       durationCreditsMicro: 0,
+      billedInvocationCount: 0,
       billedDurationMs: 0,
     });
   });

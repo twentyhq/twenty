@@ -25,6 +25,7 @@ import { buildQuotaDefaultCounterKey } from 'src/engine/core-modules/usage-limit
 import { buildQuotaWarmLockKey } from 'src/engine/core-modules/usage-limit/utils/build-quota-warm-lock-key.util';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
+import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 import { UsagePeriodService } from 'src/engine/core-modules/usage-limit/services/usage-period.service';
 import { UsageAnalyticsService } from 'src/engine/core-modules/usage/services/usage-analytics.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -830,6 +831,7 @@ describe('UsageLimitQuotaService', () => {
       overrides: Partial<UsageConsumptionRow> = {},
     ): UsageConsumptionRow => ({
       operationType: UsageOperationType.AI_CHAT_TOKEN,
+      unit: UsageUnit.TOKEN,
       userWorkspaceId: '',
       apiKeyId: '',
       applicationId: '',

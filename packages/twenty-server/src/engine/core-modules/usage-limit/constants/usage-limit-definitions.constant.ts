@@ -1,6 +1,7 @@
 import { type UsageLimitDefinitionsByResourceType } from 'src/engine/core-modules/usage-limit/types/usage-limit-definition.type';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
+import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 
 export const USAGE_LIMIT_DEFINITIONS = {
   [UsageResourceType.API]: {
@@ -101,7 +102,9 @@ export const USAGE_LIMIT_DEFINITIONS = {
     quota: {
       allowedOperationTypes: [UsageOperationType.CODE_EXECUTION],
       allowedSpenderTypes: ['workspace', 'application', 'logicFunction'],
-      allowedMeters: ['creditsUsedMicro'],
+      allowedMeters: ['creditsUsedMicro', 'quantity'],
+      // Each run also records a billed-duration row under the same scope, which is not a run.
+      quantityUnit: UsageUnit.INVOCATION,
       defaults: [],
     },
   },

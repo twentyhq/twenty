@@ -656,13 +656,17 @@ export class LogicFunctionExecutorService {
     // workspace's credits for the execution itself. Explicit chargeCredits
     // calls and AI token usage from within the function are billed separately
     // and stay untouched.
-    const { invocationCreditsMicro, durationCreditsMicro, billedDurationMs } =
-      computeLogicFunctionExecutionCreditsMicro({
-        durationMs: result.billedDurationMs,
-        isBillingExempt: isBillingExemptApplication(
-          flatApplication.universalIdentifier,
-        ),
-      });
+    const {
+      invocationCreditsMicro,
+      durationCreditsMicro,
+      billedInvocationCount,
+      billedDurationMs,
+    } = computeLogicFunctionExecutionCreditsMicro({
+      durationMs: result.billedDurationMs,
+      isBillingExempt: isBillingExemptApplication(
+        flatApplication.universalIdentifier,
+      ),
+    });
 
     const totalCreditsMicro = invocationCreditsMicro + durationCreditsMicro;
 
@@ -677,7 +681,10 @@ export class LogicFunctionExecutorService {
         resourceType: UsageResourceType.LOGIC_FUNCTION,
         operationType: UsageOperationType.CODE_EXECUTION,
         spenders,
-        cost: { creditsUsedMicro: totalCreditsMicro, quantity: 1 },
+        cost: {
+          creditsUsedMicro: totalCreditsMicro,
+          quantity: billedInvocationCount,
+        },
       });
     }
 
@@ -686,7 +693,7 @@ export class LogicFunctionExecutorService {
         resourceType: UsageResourceType.LOGIC_FUNCTION,
         operationType: UsageOperationType.CODE_EXECUTION,
         creditsUsedMicro: invocationCreditsMicro,
-        quantity: 1,
+        quantity: billedInvocationCount,
         unit: UsageUnit.INVOCATION,
         resourceId: flatLogicFunction.id,
         spenders,
