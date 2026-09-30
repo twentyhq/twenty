@@ -79,6 +79,10 @@ import {
   createProposeEmailTool,
 } from 'src/engine/metadata-modules/ai/ai-chat/tools/propose-email.tool';
 import {
+  REQUEST_FORM_TOOL_NAME,
+  createRequestFormTool,
+} from 'src/engine/metadata-modules/ai/ai-chat/tools/request-form.tool';
+import {
   COMPLETE_WORKSPACE_SETUP_TOOL_NAME,
   createCompleteWorkspaceSetupTool,
 } from 'src/engine/metadata-modules/ai/ai-chat/tools/complete-workspace-setup.tool';
@@ -315,6 +319,7 @@ export class ChatExecutionService {
       ...Object.keys(preloadedTools),
       ...Object.keys(nativeTools),
       ASK_QUESTIONS_TOOL_NAME,
+      REQUEST_FORM_TOOL_NAME,
       ...(canProposeEmail ? [PROPOSE_EMAIL_TOOL_NAME] : []),
       ...(isWorkspaceSetupThread ? [COMPLETE_WORKSPACE_SETUP_TOOL_NAME] : []),
       ...(canAttachConversationToRecords
@@ -332,6 +337,7 @@ export class ChatExecutionService {
       [ASK_QUESTIONS_TOOL_NAME]: createAskQuestionsTool({
         isWorkspaceSetupThread,
       }),
+      [REQUEST_FORM_TOOL_NAME]: createRequestFormTool(),
       ...(canProposeEmail
         ? { [PROPOSE_EMAIL_TOOL_NAME]: createProposeEmailTool() }
         : {}),

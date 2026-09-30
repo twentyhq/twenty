@@ -49,8 +49,6 @@ import { ChatExecutionService } from './services/chat-execution.service';
 import { MessagePruningService } from './services/message-pruning.service';
 import { SystemPromptBuilderService } from './services/system-prompt-builder.service';
 
-import { InputAskModule } from 'src/modules/input-ask/input-ask.module';
-
 @Module({
   imports: [
     RecordShareModule,
@@ -81,7 +79,6 @@ import { InputAskModule } from 'src/modules/input-ask/input-ask.module';
     ToolProviderModule,
     DashboardToolsModule,
     WorkflowToolsModule,
-    InputAskModule,
   ],
   providers: [
     AgentChatActorService,

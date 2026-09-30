@@ -1,36 +1,33 @@
 import { assertUnreachable } from 'twenty-shared/utils';
 
 import { AiChatEmailApprovalCard } from '@/ai/components/AiChatEmailApprovalCard';
+import { AiChatFormCard } from '@/ai/components/AiChatFormCard';
 import { AiChatQuestionCard } from '@/ai/components/AiChatQuestionCard';
-import { type AgentChatPendingAsk } from '@/ai/types/AgentChatPendingAsk';
+import { type AgentChatPendingToolCall } from '@/ai/types/AgentChatPendingToolCall';
 
 type AiChatAskCardProps = {
-  pendingAsk: AgentChatPendingAsk;
+  pendingToolCall: AgentChatPendingToolCall;
 };
 
-export const AiChatAskCard = ({ pendingAsk }: AiChatAskCardProps) => {
-  const { id, toolCallId, form } = pendingAsk;
-
-  switch (form.kind) {
+export const AiChatAskCard = ({ pendingToolCall }: AiChatAskCardProps) => {
+  switch (pendingToolCall.kind) {
     case 'questions':
-      return (
-        <AiChatQuestionCard
-          pendingQuestion={{
-            askId: id,
-            toolCallId,
-            questions: form.questions,
-          }}
-        />
-      );
+      return <AiChatQuestionCard pendingQuestion={pendingToolCall} />;
     case 'emailApproval':
       return (
         <AiChatEmailApprovalCard
-          askId={id}
-          toolCallId={toolCallId}
-          email={form.email}
+          toolCallId={pendingToolCall.toolCallId}
+          email={pendingToolCall.email}
+        />
+      );
+    case 'form':
+      return (
+        <AiChatFormCard
+          toolCallId={pendingToolCall.toolCallId}
+          fields={pendingToolCall.fields}
         />
       );
     default:
-      return assertUnreachable(form);
+      return assertUnreachable(pendingToolCall);
   }
 };

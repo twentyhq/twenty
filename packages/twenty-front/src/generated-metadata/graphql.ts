@@ -3060,7 +3060,7 @@ export type Mutation = {
   activateSkill: Skill;
   activateWorkspace: Workspace;
   addQueryToEventStream: Scalars['Boolean']['output'];
-  /** @deprecated Use answerAsk with the question's Ask */
+  /** @deprecated Use answerToolCall with the questions tool call */
   answerAgentChatQuestion: SendChatMessageResult;
   assignRoleToAgent: Scalars['Boolean']['output'];
   assignRoleToApiKey: Scalars['Boolean']['output'];
