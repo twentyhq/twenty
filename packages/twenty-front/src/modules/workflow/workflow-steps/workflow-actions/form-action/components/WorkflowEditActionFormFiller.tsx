@@ -1,20 +1,23 @@
-import { WorkflowStepCmdEnterButton } from '@/workflow/workflow-steps/components/WorkflowStepCmdEnterButton';
-import { useSidePanelHistory } from '@/side-panel/hooks/useSidePanelHistory';
+import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { FormFieldInput } from '@/object-record/record-field/ui/components/FormFieldInput';
 import { FormSingleRecordPicker } from '@/object-record/record-field/ui/form-types/components/FormSingleRecordPicker';
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
+import { useSidePanelHistory } from '@/side-panel/hooks/useSidePanelHistory';
 import { SidePanelFooter } from '@/ui/layout/side-panel/components/SidePanelFooter';
 import { useWorkflowRunIdOrThrow } from '@/workflow/hooks/useWorkflowRunIdOrThrow';
 import { type WorkflowFormAction } from '@/workflow/types/Workflow';
 import { WorkflowRunSSESubscribeEffect } from '@/workflow/workflow-diagram/components/WorkflowRunSSESubscribeEffect';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
+import { WorkflowStepCmdEnterButton } from '@/workflow/workflow-steps/components/WorkflowStepCmdEnterButton';
 import { useUpdateWorkflowRunStep } from '@/workflow/workflow-steps/hooks/useUpdateWorkflowRunStep';
 import { WorkflowFormFieldInput } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowFormFieldInput';
-import { useSubmitFormStep } from '@/workflow/workflow-steps/workflow-actions/form-action/hooks/useSubmitFormStep';
+import { WorkflowFormStepAskSubmitButton } from '@/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormStepAskSubmitButton';
 import { type WorkflowFormActionField } from '@/workflow/workflow-steps/workflow-actions/form-action/types/WorkflowFormActionField';
 import { getDefaultFormFieldSettings } from '@/workflow/workflow-steps/workflow-actions/form-action/utils/getDefaultFormFieldSettings';
 import { useLingui } from '@lingui/react/macro';
 import { useEffect, useState } from 'react';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useDebouncedCallback } from 'use-debounce';
 
@@ -32,12 +35,17 @@ export const WorkflowEditActionFormFiller = ({
   actionOptions,
 }: WorkflowEditActionFormFillerProps) => {
   const { t } = useLingui();
-  const { submitFormStep } = useSubmitFormStep();
   const [formData, setFormData] = useState<FormData>(action.settings.input);
   const workflowRunId = useWorkflowRunIdOrThrow();
   const { goBackFromSidePanel } = useSidePanelHistory();
   const { updateWorkflowRunStep } = useUpdateWorkflowRunStep();
   const [error, setError] = useState<string | undefined>(undefined);
+  // A form is submitted by answering its Ask, which a workspace the Ask
+  // object has not reached yet cannot do.
+  const inputAskObjectMetadataItem = useAtomFamilySelectorValue(
+    objectMetadataItemFamilySelector,
+    { objectName: CoreObjectNameSingular.InputAsk, objectNameType: 'singular' },
+  );
 
   const canSubmit = !actionOptions.readonly && !isDefined(error);
 
@@ -46,7 +54,7 @@ export const WorkflowEditActionFormFiller = ({
     value,
   }: {
     fieldId: string;
-    value: any;
+    value: unknown;
   }) => {
     if (actionOptions.readonly === true) {
       return;
@@ -75,24 +83,12 @@ export const WorkflowEditActionFormFiller = ({
     });
   }, 1_000);
 
-  const onSubmit = async () => {
+  const getResponse = async () => {
     await saveAction.flush();
 
-    const response = formData.reduce(
-      (acc, field) => {
-        acc[field.name] = field.value;
-        return acc;
-      },
-      {} as Record<string, any>,
+    return Object.fromEntries(
+      formData.map((field) => [field.name, field.value]),
     );
-
-    await submitFormStep({
-      stepId: action.id,
-      workflowRunId,
-      response,
-    });
-
-    goBackFromSidePanel();
   };
 
   useEffect(() => {
@@ -113,20 +109,13 @@ export const WorkflowEditActionFormFiller = ({
               return null;
             }
 
-            const recordId = field.value?.id;
-
             return (
               <FormSingleRecordPicker
                 key={field.id}
                 label={field.label}
-                defaultValue={recordId}
+                defaultValue={field.value?.id}
                 onChange={(recordId) => {
-                  onFieldUpdate({
-                    fieldId: field.id,
-                    value: {
-                      id: recordId,
-                    },
-                  });
+                  onFieldUpdate({ fieldId: field.id, value: { id: recordId } });
                 }}
                 objectNameSingulars={[objectNameSingular]}
                 disabled={actionOptions.readonly}
@@ -148,10 +137,7 @@ export const WorkflowEditActionFormFiller = ({
                 defaultValue={field.value}
                 readonly={actionOptions.readonly}
                 onChange={(value) => {
-                  onFieldUpdate({
-                    fieldId: field.id,
-                    value,
-                  });
+                  onFieldUpdate({ fieldId: field.id, value });
                 }}
               />
             );
@@ -166,10 +152,7 @@ export const WorkflowEditActionFormFiller = ({
                 metadata: {} as FieldMetadata,
               }}
               onChange={(value) => {
-                onFieldUpdate({
-                  fieldId: field.id,
-                  value,
-                });
+                onFieldUpdate({ fieldId: field.id, value });
               }}
               defaultValue={field.value}
               readonly={actionOptions.readonly}
@@ -177,9 +160,7 @@ export const WorkflowEditActionFormFiller = ({
                 field.placeholder ??
                 getDefaultFormFieldSettings(field.type).placeholder
               }
-              onError={(error) => {
-                setError(error);
-              }}
+              onError={setError}
             />
           );
         })}
@@ -187,11 +168,23 @@ export const WorkflowEditActionFormFiller = ({
       {!actionOptions.readonly && (
         <SidePanelFooter
           actions={[
-            <WorkflowStepCmdEnterButton
-              title={t`Submit`}
-              onClick={onSubmit}
-              disabled={!canSubmit}
-            />,
+            isDefined(inputAskObjectMetadataItem) ? (
+              <WorkflowFormStepAskSubmitButton
+                key="submit"
+                workflowRunId={workflowRunId}
+                stepId={action.id}
+                disabled={!canSubmit}
+                getResponse={getResponse}
+                onSubmitted={goBackFromSidePanel}
+              />
+            ) : (
+              <WorkflowStepCmdEnterButton
+                key="submit"
+                title={t`Submit`}
+                onClick={() => {}}
+                disabled
+              />
+            ),
           ]}
         />
       )}

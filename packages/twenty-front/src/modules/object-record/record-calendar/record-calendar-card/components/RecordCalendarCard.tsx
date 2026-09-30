@@ -26,7 +26,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { styled } from '@linaria/react';
-import { AnimatedExpandableContainer } from 'twenty-ui/primitives/layout';
+import { Collapsible } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledContainer = styled.div`
@@ -159,16 +159,13 @@ export const RecordCalendarCard = ({
                 isDragging={isDraggingThisCard}
               >
                 <RecordCalendarCardHeader recordId={recordId} />
-                <AnimatedExpandableContainer
-                  isExpanded={!isCompactModeActive}
-                  initial={false}
-                >
+                <Collapsible isExpanded={!isCompactModeActive}>
                   <RecordCalendarCardBody
                     recordId={recordId}
                     calendarDay={calendarDay}
                     isRecordReadOnly={false}
                   />
-                </AnimatedExpandableContainer>
+                </Collapsible>
               </RecordCard>
             </StyledCardContainer>
           </StyledRecordCardContainer>

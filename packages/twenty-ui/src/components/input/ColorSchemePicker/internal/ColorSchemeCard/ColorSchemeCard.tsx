@@ -11,7 +11,7 @@ import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import styles from './ColorSchemeCard.module.scss';
 
-export type ColorSchemeSegmentProps = {
+type ColorSchemeSegmentProps = {
   variant: ColorScheme;
   className?: string;
 } & React.ComponentPropsWithoutRef<'div'>;
@@ -23,6 +23,7 @@ const ColorSchemeSegment = ({
   onClick,
   onMouseEnter,
   onMouseLeave,
+  'aria-label': ariaLabel,
 }: ColorSchemeSegmentProps) => {
   const grayScale = variant === 'Dark' ? GRAY_SCALE_DARK : GRAY_SCALE_LIGHT;
 
@@ -43,7 +44,7 @@ const ColorSchemeSegment = ({
         style={segmentStyle}
         role="button"
         tabIndex={0}
-        aria-label={variant}
+        aria-label={ariaLabel ?? variant}
         onClick={onClick}
         onKeyDown={handleClickableElementKeyDown}
         onMouseEnter={onMouseEnter}
@@ -66,7 +67,7 @@ const ColorSchemeSegment = ({
   );
 };
 
-export type ColorSchemeCardProps = {
+type ColorSchemeCardProps = {
   variant: ColorScheme;
   selected?: boolean;
 } & React.ComponentPropsWithoutRef<'div'>;
@@ -76,15 +77,16 @@ export const ColorSchemeCard = ({
   selected,
   onClick,
   className,
+  'aria-label': ariaLabel,
 }: ColorSchemeCardProps) => {
   const mixedSegments = (
     <>
       <ColorSchemeSegment
-        style={{ borderTopRightRadius: 0, borderBottomRightRadius: 0 }}
+        style={{ borderStartEndRadius: 0, borderEndEndRadius: 0 }}
         variant="Light"
       />
       <ColorSchemeSegment
-        style={{ borderTopLeftRadius: 0, borderBottomLeftRadius: 0 }}
+        style={{ borderStartStartRadius: 0, borderEndStartRadius: 0 }}
         variant="Dark"
       />
     </>
@@ -98,7 +100,7 @@ export const ColorSchemeCard = ({
             className={styles.mixedColorSchemeSegment}
             role="button"
             tabIndex={0}
-            aria-label={variant}
+            aria-label={ariaLabel ?? variant}
             onClick={onClick}
             onKeyDown={handleClickableElementKeyDown}
           >
@@ -119,7 +121,11 @@ export const ColorSchemeCard = ({
 
   return (
     <div className={clsx(styles.container, className)}>
-      <ColorSchemeSegment variant={variant} onClick={onClick} />
+      <ColorSchemeSegment
+        variant={variant}
+        onClick={onClick}
+        aria-label={ariaLabel}
+      />
       <div
         className={styles.checkmarkContainer}
         data-selected={selected || undefined}

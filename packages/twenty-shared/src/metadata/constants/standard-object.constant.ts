@@ -1548,6 +1548,32 @@ export const STANDARD_OBJECTS = {
       },
     },
   },
+  inputAsk: {
+    universalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.inputAsk,
+    fields: STANDARD_OBJECT_FIELDS.inputAsk,
+    indexes: {
+      assigneeStatusIndex: {
+        universalIdentifier: '255cba21-0107-4c31-b497-9c4081114da8',
+      },
+      workflowRunStepUniqueIndex: {
+        universalIdentifier: 'c6c2c67e-2f2e-4a1e-9c0b-1b3d5e7a9f41',
+      },
+      workflowRunStatusIndex: {
+        universalIdentifier: '77615052-0e81-4210-b259-37a9e939bb41',
+      },
+      threadToolCallUniqueIndex: {
+        universalIdentifier: '6a0ac44d-84f3-4bfa-8939-ce3d82f0d043',
+      },
+    },
+    views: {
+      allInputAsks: buildStandardObjectIndexView({
+        objectUniversalIdentifier:
+          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.inputAsk,
+        fields: STANDARD_OBJECT_FIELDS.inputAsk,
+        viewFieldNames: ['name', 'status', 'assignee', 'createdAt'],
+      }),
+    },
+  },
 } as const satisfies Record<
   string,
   {

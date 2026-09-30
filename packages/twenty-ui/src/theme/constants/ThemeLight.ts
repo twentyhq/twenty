@@ -21,6 +21,9 @@ export const THEME_LIGHT = {
       sm: {
         width: '300px',
       },
+      compact: {
+        width: '360px',
+      },
       md: {
         width: '400px',
       },

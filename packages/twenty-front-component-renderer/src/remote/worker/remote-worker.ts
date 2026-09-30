@@ -11,17 +11,22 @@ import { frontComponentHostCommunicationApi } from '@/remote/worker/thread/state
 import { HTML_TAG_TO_CUSTOM_ELEMENT_TAG } from '@/constants/HtmlTagToCustomElementTag';
 import { installClipboardPolyfill } from '@/polyfills/clipboard/utils/installClipboardPolyfill';
 import { installClassAttributeAccessors } from '@/polyfills/dom/utils/installClassAttributeAccessors';
+import { installCompareDocumentPositionPolyfill } from '@/polyfills/dom/utils/installCompareDocumentPositionPolyfill';
 import { installDocumentGetElementById } from '@/polyfills/dom/utils/installDocumentGetElementById';
 import { installGetComputedStyle } from '@/polyfills/dom/utils/installGetComputedStyle';
 import { installGetElementsByClassName } from '@/polyfills/dom/utils/installGetElementsByClassName';
+import { installGetRootNodePolyfill } from '@/polyfills/dom/utils/installGetRootNodePolyfill';
 import { installLocalStyleOnBaseElements } from '@/polyfills/dom/utils/installLocalStyleOnBaseElements';
 import { installMutationObserver } from '@/polyfills/dom/utils/installMutationObserver';
+import { installNodeContainsPolyfill } from '@/polyfills/dom/utils/installNodeContainsPolyfill';
 import { installSelectorMethodsPolyfill } from '@/polyfills/selectors/utils/installSelectorMethodsPolyfill';
 import { workerGeometryStore } from '@/polyfills/geometry/states/workerGeometryStore';
 import { installElementGeometryPolyfill } from '@/polyfills/geometry/utils/installElementGeometryPolyfill';
 import { installWindowGeometryPolyfill } from '@/polyfills/geometry/utils/installWindowGeometryPolyfill';
+import { mediaQueryEnvironmentSource } from '@/polyfills/media-query/states/mediaQueryEnvironmentSource';
 import { workerMediaBridge } from '@/polyfills/media/states/workerMediaBridge';
 import { installMediaCapturePolyfills } from '@/polyfills/media/utils/installMediaCapturePolyfills';
+import { installMatchMediaPolyfill } from '@/polyfills/media-query/utils/installMatchMediaPolyfill';
 import { frontComponentStorageBridges } from '@/polyfills/storage/states/frontComponentStorageBridges';
 import { toGlobalScopeRecord } from '@/polyfills/utils/toGlobalScopeRecord';
 import { installStorageBridge } from '@/polyfills/storage/utils/installStorageBridge';
@@ -55,6 +60,12 @@ installClassAttributeAccessors({
 });
 installLocalStyleOnBaseElements(Element.prototype);
 
+installNodeContainsPolyfill(Node.prototype);
+installCompareDocumentPositionPolyfill({
+  nodeConstructor: Node,
+  nodePrototype: Node.prototype,
+});
+installGetRootNodePolyfill(Node.prototype);
 installSelectorMethodsPolyfill({
   elementPrototype: Element.prototype,
   querySelectorTargets: [
@@ -84,6 +95,11 @@ installWindowGeometryPolyfill({
 
 installWindowAliasesPolyfill({
   globalScope: toGlobalScopeRecord(globalThis),
+});
+
+installMatchMediaPolyfill({
+  globalScope: toGlobalScopeRecord(globalThis),
+  environmentSource: mediaQueryEnvironmentSource,
 });
 
 installStorageBridge({

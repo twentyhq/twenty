@@ -112,8 +112,8 @@ export class WorkspaceSetupChatService {
     });
 
     if (isDefined(thread)) {
-      if (isDefined(thread.archivedAt)) {
-        thread = await this.agentChatService.unarchiveThread({
+      if (isDefined(thread.deletedAt)) {
+        thread = await this.agentChatService.restoreThread({
           threadId,
           workspaceMemberId,
           workspaceId: workspace.id,

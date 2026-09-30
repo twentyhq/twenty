@@ -63,7 +63,7 @@ export const InstallApps = () => {
     <InstallAppsContent
       apps={availableApps}
       selectedUniversalIdentifiers={selectedUniversalIdentifiers}
-      creditsRewardPerApp={onboardingConfig?.installAppsCreditsRewardPerApp}
+      creditsReward={onboardingConfig?.installAppsCreditsReward}
       isCompleting={isCompleting}
       onToggleApp={toggleApp}
       onInstall={installSelectedAppsAndContinue}

@@ -3,7 +3,6 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { AiChatThreadDeleteConfirmationModal } from '@/ai/components/AiChatThreadDeleteConfirmationModal';
 import { AiChatThreadFilterDropdown } from '@/ai/components/AiChatThreadFilterDropdown';
 import { AiChatSkeletonLoader } from '@/ai/components/internal/AiChatSkeletonLoader';
 import { NavigationDrawerAiChatThreadSection } from '@/ai/components/NavigationDrawerAiChatThreadSection';
@@ -117,9 +116,6 @@ export const NavigationDrawerAiChatContent = () => {
         ) : null}
         {hasNextPage ? <StyledFetchMoreTrigger ref={fetchMoreRef} /> : null}
       </StyledThreadList>
-      <AiChatThreadDeleteConfirmationModal
-        surface={AI_CHAT_THREAD_ACTIONS_SURFACE.NAV_DRAWER}
-      />
     </StyledContainer>
   );
 };
