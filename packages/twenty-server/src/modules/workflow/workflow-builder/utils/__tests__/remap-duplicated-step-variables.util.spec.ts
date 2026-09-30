@@ -12,6 +12,15 @@ describe('remapDuplicatedStepVariables', () => {
     ).toBe('Company {{copy.id}} named {{copy.name}} ({{copy}})');
   });
 
+  it('remaps references padded with spaces, which the resolver trims', () => {
+    expect(
+      remapDuplicatedStepVariables(
+        '{{ source.name }}',
+        CLONED_STEP_ID_BY_SOURCE_STEP_ID,
+      ),
+    ).toBe('{{ copy.name }}');
+  });
+
   it('leaves trigger references, other steps and plain text untouched', () => {
     expect(
       remapDuplicatedStepVariables(

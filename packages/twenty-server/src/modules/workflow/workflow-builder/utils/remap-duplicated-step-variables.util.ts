@@ -13,7 +13,7 @@ const remapVariableTags = (
     CAPTURE_ALL_VARIABLE_TAG_INNER_REGEX,
     (variableTag, rawVariableName: string) => {
       const stepId = extractRawVariableNamePart({
-        rawVariableName,
+        rawVariableName: rawVariableName.trim(),
         part: 'stepId',
       });
       const clonedStepId = clonedStepIdBySourceStepId.get(stepId);
@@ -22,7 +22,7 @@ const remapVariableTags = (
         return variableTag;
       }
 
-      return `{{${clonedStepId}${rawVariableName.slice(stepId.length)}}}`;
+      return variableTag.replace(stepId, clonedStepId);
     },
   );
 };
