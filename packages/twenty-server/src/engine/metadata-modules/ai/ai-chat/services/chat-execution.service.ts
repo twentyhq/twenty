@@ -5,7 +5,6 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import {
   convertToModelMessages,
-  hasToolCall,
   type LanguageModelUsage,
   NoOutputGeneratedError,
   isStepCount,
@@ -86,7 +85,7 @@ import { collectReferencedSkillIds } from 'src/engine/metadata-modules/ai/ai-cha
 import { collectUploadedFileReferences } from 'src/engine/metadata-modules/ai/ai-chat/utils/collect-uploaded-file-references.util';
 import { extractCodeInterpreterFiles } from 'src/engine/metadata-modules/ai/ai-chat/utils/extract-code-interpreter-files.util';
 import { extractToolExecutionErrors } from 'src/engine/metadata-modules/ai/ai-chat/utils/extract-tool-execution-errors.util';
-import { getAiChatToolErrorFingerprint } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-ai-chat-tool-error-fingerprint.util';
+import { hasValidToolCall } from 'src/engine/metadata-modules/ai/ai-chat/utils/has-valid-tool-call.util';
 import { shouldCaptureException } from 'src/engine/utils/global-exception-handler.util';
 import { injectMessageTimestamps } from 'src/engine/metadata-modules/ai/ai-chat/utils/inject-message-timestamps.util';
 import {
@@ -589,8 +588,10 @@ export class ChatExecutionService {
       abortSignal,
       stopWhen: (step) =>
         isStepCount(AGENT_CONFIG.MAX_STEPS)(step) ||
-        hasToolCall(ASK_QUESTIONS_TOOL_NAME)(step) ||
-        hasToolCall(COMPLETE_WORKSPACE_SETUP_TOOL_NAME)(step) ||
+        hasValidToolCall(
+          ASK_QUESTIONS_TOOL_NAME,
+          COMPLETE_WORKSPACE_SETUP_TOOL_NAME,
+        )(step) ||
         hasNoMoreAvailableCredits,
       ...buildAiTelemetry({
         functionId: isWorkspaceSetupThread
@@ -728,22 +729,10 @@ export class ChatExecutionService {
           });
         }
 
-        for (const toolExecutionError of extractToolExecutionErrors(
-          step.content,
-        )) {
-          if (!shouldCaptureException(toolExecutionError.error)) {
-            continue;
+        for (const { error } of extractToolExecutionErrors(step.content)) {
+          if (shouldCaptureException(error)) {
+            this.exceptionHandlerService.captureExceptions([error]);
           }
-
-          this.exceptionHandlerService.captureExceptions(
-            [toolExecutionError.error],
-            {
-              fingerprint: getAiChatToolErrorFingerprint({
-                error: toolExecutionError.error,
-                toolName: resolveToolName(toolExecutionError),
-              }),
-            },
-          );
         }
       },
       onAbort: async ({ steps }) => {
