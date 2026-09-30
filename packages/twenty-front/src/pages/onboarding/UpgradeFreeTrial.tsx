@@ -3,7 +3,6 @@ import { useAuth } from '@/auth/hooks/useAuth';
 import { billingCheckoutSessionState } from '@/auth/states/billingCheckoutSessionState';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { calendarBookingPageIdState } from '@/client-config/states/calendarBookingPageIdState';
-import { onboardingConfigState } from '@/client-config/states/onboardingConfigState';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { OnboardingRewardMainButton } from '@/onboarding/components/OnboardingRewardMainButton';
 import { OnboardingStepAnimatedItem } from '@/onboarding/components/OnboardingStepAnimatedItem';
@@ -17,6 +16,7 @@ import { CAL_LINK } from '@/onboarding/constants/CalLink';
 import { OnboardingPlanTag } from '@/onboarding/components/upgrade-free-trial/OnboardingPlanTag';
 import { useSetOnboardingUpgradeTrialFreeCredits } from '@/onboarding/hooks/useSetOnboardingUpgradeTrialFreeCredits';
 import { isOnboardingCheckoutPendingState } from '@/onboarding/states/isOnboardingCheckoutPendingState';
+import { onboardingCreditsProgressSelector } from '@/onboarding/states/selectors/onboardingCreditsProgressSelector';
 import { formatOnboardingCredits } from '@/onboarding/utils/formatOnboardingCredits';
 import { useBaseLicensedPriceByPlanKeyAndInterval } from '@/settings/billing/hooks/useBaseLicensedPriceByPlanKeyAndInterval';
 import { useHandleCheckoutSession } from '@/settings/billing/hooks/useHandleCheckoutSession';
@@ -31,11 +31,10 @@ import { Trans, useLingui } from '@lingui/react/macro';
 import { Elements, PaymentElement } from '@stripe/react-stripe-js';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { Info, MainButton } from 'twenty-ui/components';
+import { Info } from 'twenty-ui/components';
 import { IconCalendarEvent, IconCoins } from 'twenty-ui/icon';
-import { Loader } from 'twenty-ui/primitives/feedback';
 import { Button, RadioGroup } from 'twenty-ui/primitives/input';
-import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme';
 import {
   type Billing,
   type BillingPlanKey,
@@ -131,8 +130,9 @@ const UpgradeFreeTrialContent = ({
   const { getBaseLicensedPriceByPlanKeyAndInterval } =
     useBaseLicensedPriceByPlanKeyAndInterval();
 
-  const onboardingConfig = useAtomStateValue(onboardingConfigState);
-  const upgradeCreditsReward = onboardingConfig?.upgradeCreditsReward ?? 0;
+  const upgradeCreditsReward = useAtomStateValue(
+    onboardingCreditsProgressSelector,
+  ).rewardCreditsByStep.upgradeTrial;
   const { numberFormat } = useNumberFormat();
   const formattedUpgradeCreditsReward = formatOnboardingCredits(
     upgradeCreditsReward,
@@ -268,30 +268,20 @@ const UpgradeFreeTrialContent = ({
 
       <OnboardingStepAnimatedItem index={3}>
         <StyledFooter>
-          {requirePaymentMethod ? (
-            isPaymentAvailable ? (
-              <UpgradeFreeTrialSubmitButton
-                plan={billingCheckoutSession.plan}
-                recurringInterval={billingCheckoutSession.interval}
-                creditsReward={upgradeCreditsReward}
-              />
-            ) : (
-              <OnboardingRewardMainButton
-                label={t`Continue`}
-                creditsReward={upgradeCreditsReward}
-                onClick={handleCheckoutSessionClick}
-                disabled
-              />
-            )
+          {requirePaymentMethod && isPaymentAvailable ? (
+            <UpgradeFreeTrialSubmitButton
+              plan={billingCheckoutSession.plan}
+              recurringInterval={billingCheckoutSession.interval}
+              creditsReward={upgradeCreditsReward}
+            />
           ) : (
-            <MainButton
+            <OnboardingRewardMainButton
+              label={t`Continue`}
+              creditsReward={requirePaymentMethod ? upgradeCreditsReward : 0}
               onClick={handleCheckoutSessionClick}
-              fullWidth
-              startIcon={isCheckoutSubmitting ? <Loader /> : null}
-              disabled={isCheckoutSubmitting}
-            >
-              {t`Continue`}
-            </MainButton>
+              isLoading={isCheckoutSubmitting}
+              disabled={requirePaymentMethod}
+            />
           )}
           <StyledLinkGroup>
             <Button variant="link" onClick={signOut}>
