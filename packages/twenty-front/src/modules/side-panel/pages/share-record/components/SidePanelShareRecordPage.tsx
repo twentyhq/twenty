@@ -42,9 +42,9 @@ export const SidePanelShareRecordPage = () => {
     shareRecordTargetComponentState,
   );
 
-  if (!isDefined(target)) {
+  if (!isDefined(shareRecordTarget)) {
     return null;
   }
 
-  return <SidePanelShareRecordPageContent target={target} />;
+  return <SidePanelShareRecordPageContent target={shareRecordTarget} />;
 };
