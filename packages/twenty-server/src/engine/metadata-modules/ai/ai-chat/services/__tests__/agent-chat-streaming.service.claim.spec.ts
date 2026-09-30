@@ -1,5 +1,3 @@
-import { isDefined } from 'twenty-shared/utils';
-
 import { AgentChatStreamRecoveryService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-recovery.service';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
@@ -29,11 +27,14 @@ describe('AgentChatStreamingService claim & reap', () => {
     claimAffected = 1,
     queuedMessages = [] as unknown[],
     heartbeatAlive = true,
-    pendingInputAsk = null as {
-      id: string;
-      toolCallId: string;
-      workflowRunId: string | null;
-    } | null,
+  }: {
+    thread?: typeof idleThread & {
+      pendingQuestionMessageId?: string;
+      workflowRunId?: string;
+    };
+    claimAffected?: number;
+    queuedMessages?: unknown[];
+    heartbeatAlive?: boolean;
   } = {}) => {
     const publishedEvents: Array<{ type: string }> = [];
     const threadRepository = {
@@ -58,24 +59,17 @@ describe('AgentChatStreamingService claim & reap', () => {
       queueMessage: jest.fn().mockResolvedValue({ id: 'queued-message-id' }),
       promoteQueuedMessage: jest.fn().mockResolvedValue('turn-id'),
       deleteQueuedMessage: jest.fn().mockResolvedValue(true),
-      findToolPart: jest.fn().mockResolvedValue({
-        id: 'part-id',
-        messageId: 'question-message-id',
-        turnId: 'question-turn-id',
-        toolName: 'ask_questions',
-        toolInput: { questions: QUESTIONS },
-        toolOutput: { result: { questions: QUESTIONS, status: 'pending' } },
-      }),
-      updateToolPartOutput: jest.fn().mockResolvedValue(undefined),
     };
-    const inputAskWorkspaceService = {
-      findPendingForThread: jest
-        .fn()
-        .mockResolvedValue(isDefined(pendingInputAsk) ? [pendingInputAsk] : []),
-      hasPendingForThread: jest
-        .fn()
-        .mockResolvedValue(isDefined(pendingInputAsk)),
-      cancel: jest.fn().mockResolvedValue(true),
+    const messagePartRepository = {
+      find: jest.fn().mockResolvedValue([
+        {
+          id: 'part-id',
+          toolName: 'ask_questions',
+          toolInput: { questions: QUESTIONS },
+          toolOutput: { result: { questions: QUESTIONS, status: 'pending' } },
+        },
+      ]),
+      update: jest.fn().mockResolvedValue({ affected: 1 }),
     };
     const eventPublisherService = {
       publish: jest.fn().mockImplementation(({ event }) => {
@@ -121,12 +115,12 @@ describe('AgentChatStreamingService claim & reap', () => {
           },
         }),
       } as never,
-      inputAskWorkspaceService as never,
+      messagePartRepository as never,
     );
 
     return {
       service,
-      inputAskWorkspaceService,
+      messagePartRepository,
       threadRepository,
       messageQueueService,
       agentChatService,
@@ -241,68 +235,65 @@ describe('AgentChatStreamingService claim & reap', () => {
       );
     });
 
-    it('cancels a pending chat Ask and closes its call as skipped before streaming', async () => {
+    const waitingThread = {
+      ...idleThread,
+      pendingQuestionMessageId: 'question-message-id',
+    };
+
+    it('stops waiting and closes the pending call as skipped before streaming', async () => {
       const {
         service,
-        inputAskWorkspaceService,
-        agentChatService,
+        threadRepository,
+        messagePartRepository,
         messageQueueService,
-      } = buildService({
-        pendingInputAsk: {
-          id: 'input-ask-id',
-          toolCallId: 'tool-call-id',
-          workflowRunId: null,
-        },
-      });
+      } = buildService({ thread: waitingThread });
 
       const result = await service.streamAgentChat(sendArguments);
 
       expect(result.queued).toBe(false);
-      expect(inputAskWorkspaceService.cancel).toHaveBeenCalledWith({
-        workspaceId: 'workspace-id',
-        match: { threadId: 'thread-id', toolCallId: 'tool-call-id' },
-      });
-      expect(agentChatService.updateToolPartOutput).toHaveBeenCalledWith({
-        partId: 'part-id',
-        workspaceId: 'workspace-id',
-        toolOutput: expect.objectContaining({
-          result: { questions: QUESTIONS, status: 'skipped' },
-        }),
-      });
+      expect(threadRepository.update).toHaveBeenCalledWith(
+        'workspace-id',
+        {
+          id: 'thread-id',
+          pendingQuestionMessageId: 'question-message-id',
+          activeStreamId: expect.anything(),
+        },
+        { pendingQuestionMessageId: null },
+      );
+      expect(messagePartRepository.update).toHaveBeenCalledWith(
+        'workspace-id',
+        { id: 'part-id' },
+        {
+          toolOutput: expect.objectContaining({
+            result: { questions: QUESTIONS, status: 'skipped' },
+          }),
+        },
+      );
       expect(
-        agentChatService.updateToolPartOutput.mock.invocationCallOrder[0],
+        messagePartRepository.update.mock.invocationCallOrder[0],
       ).toBeLessThan(messageQueueService.add.mock.invocationCallOrder[0]);
     });
 
-    it('leaves the call as it is when another request already closed the Ask', async () => {
-      const { service, inputAskWorkspaceService, agentChatService } =
-        buildService({
-          pendingInputAsk: {
-            id: 'input-ask-id',
-            toolCallId: 'tool-call-id',
-            workflowRunId: null,
-          },
-        });
+    it('leaves the call as it is when an answer holds the conversation', async () => {
+      const { service, threadRepository, messagePartRepository } = buildService(
+        { thread: waitingThread },
+      );
 
-      inputAskWorkspaceService.cancel.mockResolvedValue(false);
+      threadRepository.update.mockResolvedValueOnce({ affected: 0 });
 
       await service.streamAgentChat(sendArguments);
 
-      expect(agentChatService.updateToolPartOutput).not.toHaveBeenCalled();
+      expect(messagePartRepository.update).not.toHaveBeenCalled();
     });
 
-    it("refuses a message while the run's Ask is pending, without canceling it", async () => {
+    it('refuses a message while its workflow run waits on the conversation', async () => {
       const {
         service,
-        inputAskWorkspaceService,
+        messagePartRepository,
         agentChatService,
         messageQueueService,
       } = buildService({
-        pendingInputAsk: {
-          id: 'input-ask-id',
-          toolCallId: 'tool-call-id',
-          workflowRunId: 'workflow-run-id',
-        },
+        thread: { ...waitingThread, workflowRunId: 'workflow-run-id' },
       });
 
       await expect(
@@ -310,7 +301,7 @@ describe('AgentChatStreamingService claim & reap', () => {
       ).rejects.toMatchObject({
         code: AiExceptionCode.THREAD_AWAITING_WORKFLOW_INPUT,
       });
-      expect(inputAskWorkspaceService.cancel).not.toHaveBeenCalled();
+      expect(messagePartRepository.update).not.toHaveBeenCalled();
       expect(agentChatService.addMessage).not.toHaveBeenCalled();
       expect(agentChatService.queueMessage).not.toHaveBeenCalled();
       expect(messageQueueService.add).not.toHaveBeenCalled();
@@ -347,13 +338,12 @@ describe('AgentChatStreamingService claim & reap', () => {
       },
     ];
 
-    it('keeps queued messages waiting behind a pending Ask', async () => {
+    it('keeps queued messages waiting behind a pending call', async () => {
       const { service, agentChatService, messageQueueService } = buildService({
         queuedMessages,
-        pendingInputAsk: {
-          id: 'input-ask-id',
-          toolCallId: 'tool-call-id',
-          workflowRunId: null,
+        thread: {
+          ...idleThread,
+          pendingQuestionMessageId: 'question-message-id',
         },
       });
 

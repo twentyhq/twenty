@@ -79,6 +79,10 @@ import {
   createProposeEmailTool,
 } from 'src/engine/metadata-modules/ai/ai-chat/tools/propose-email.tool';
 import {
+  REQUEST_FORM_TOOL_NAME,
+  createRequestFormTool,
+} from 'src/engine/metadata-modules/ai/ai-chat/tools/request-form.tool';
+import {
   COMPLETE_WORKSPACE_SETUP_TOOL_NAME,
   createCompleteWorkspaceSetupTool,
 } from 'src/engine/metadata-modules/ai/ai-chat/tools/complete-workspace-setup.tool';
@@ -97,7 +101,7 @@ import {
   injectCacheBreakpoint,
 } from 'src/engine/metadata-modules/ai/ai-chat/utils/provider-options.util';
 import { replaceUnsupportedFileParts } from 'src/engine/metadata-modules/ai/ai-chat/utils/replace-unsupported-file-parts.util';
-import { tagAiChatKindScope } from 'src/engine/metadata-modules/ai/ai-chat/utils/tag-ai-chat-kind-scope.util';
+import { tagAiChatExecutionScope } from 'src/engine/metadata-modules/ai/ai-chat/utils/tag-ai-chat-execution-scope.util';
 import { buildAiTelemetry } from 'src/engine/metadata-modules/ai/ai-models/utils/build-ai-telemetry.util';
 import { AiModelConfigService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-config.service';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
@@ -131,6 +135,7 @@ export type ChatExecutionResult = {
   stream: ReturnType<typeof streamText>;
   modelConfig: AiModelConfig;
   hasNoMoreAvailableCredits: () => boolean;
+  getStreamError: () => unknown;
 };
 
 @Injectable()
@@ -290,7 +295,10 @@ export class ChatExecutionService {
     const isWorkspaceSetupKickoffTurn =
       isWorkspaceSetupThread && hasNoAssistantMessage(messages);
 
-    tagAiChatKindScope({ isWorkspaceSetupThread });
+    tagAiChatExecutionScope({
+      isWorkspaceSetupThread,
+      modelId: registeredModel.modelId,
+    });
 
     // Judged on the conversation rather than on setup still running: once setup
     // completes, the member's onboarding carries on in this same conversation,
@@ -311,6 +319,7 @@ export class ChatExecutionService {
       ...Object.keys(preloadedTools),
       ...Object.keys(nativeTools),
       ASK_QUESTIONS_TOOL_NAME,
+      REQUEST_FORM_TOOL_NAME,
       ...(canProposeEmail ? [PROPOSE_EMAIL_TOOL_NAME] : []),
       ...(isWorkspaceSetupThread ? [COMPLETE_WORKSPACE_SETUP_TOOL_NAME] : []),
       ...(canAttachConversationToRecords
@@ -328,6 +337,7 @@ export class ChatExecutionService {
       [ASK_QUESTIONS_TOOL_NAME]: createAskQuestionsTool({
         isWorkspaceSetupThread,
       }),
+      [REQUEST_FORM_TOOL_NAME]: createRequestFormTool(),
       ...(canProposeEmail
         ? { [PROPOSE_EMAIL_TOOL_NAME]: createProposeEmailTool() }
         : {}),
@@ -781,31 +791,6 @@ export class ChatExecutionService {
         }
 
         if (NoOutputGeneratedError.isInstance(error)) {
-          const underlying = lastUnderlyingStreamError;
-
-          this.exceptionHandlerService.captureExceptions([
-            Object.assign(
-              new Error(
-                `AI chat stream produced no output. ${JSON.stringify({
-                  modelId: registeredModel.modelId,
-                  provider: registeredModel.sdkPackage,
-                  workspaceId: workspace.id,
-                  threadId,
-                  streamId,
-                  turnId,
-                  messageCount: messages.length,
-                  conversationSizeTokens,
-                  elapsedMs: Math.round(performance.now() - streamStartedAt),
-                  underlyingError:
-                    underlying instanceof Error
-                      ? `${underlying.name}: ${underlying.message}`
-                      : String(underlying ?? 'none-recorded'),
-                })}`,
-              ),
-              { cause: underlying },
-            ),
-          ]);
-
           return;
         }
 
@@ -816,6 +801,7 @@ export class ChatExecutionService {
       stream,
       modelConfig,
       hasNoMoreAvailableCredits: () => hasNoMoreAvailableCredits,
+      getStreamError: () => lastUnderlyingStreamError,
     };
   }
 

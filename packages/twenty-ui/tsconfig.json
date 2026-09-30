@@ -37,6 +37,9 @@
     "scripts/checkDocsExamples.ts",
     "scripts/checkOptionalDependencies.ts",
     "scripts/checkThemeExports.ts",
-    "scripts/checkModuleOwnership.ts"
+    "scripts/checkModuleOwnership.ts",
+    "scripts/utils/**/*.ts",
+    "scripts/types/**/*.ts",
+    "scripts/__tests__/**/*.ts"
   ]
 }

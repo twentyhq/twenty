@@ -1,44 +1,18 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { ComponentDecorator } from '@ui/testing';
-import { useState } from 'react';
+import { Dropdown } from '@ui/components/navigation/Dropdown/Dropdown';
+import { SettingsRow } from '@ui/components/input/SettingsRow/SettingsRow';
 
-import { SearchInput } from '@ui/components/input/SearchInput/SearchInput';
+import { SearchInputExample } from './SearchInputExample';
 
-type InteractiveSearchInputProps = {
-  placeholder?: string;
-  disabled?: boolean;
-  autoFocus?: boolean;
-  className?: string;
-};
-
-const InteractiveSearchInput = ({
-  placeholder,
-  disabled,
-  autoFocus,
-  className,
-}: InteractiveSearchInputProps) => {
-  const [value, setValue] = useState('');
-
-  return (
-    <SearchInput
-      value={value}
-      onChange={setValue}
-      placeholder={placeholder}
-      disabled={disabled}
-      autoFocus={autoFocus}
-      className={className}
-    />
-  );
-};
-
-const meta: Meta<typeof InteractiveSearchInput> = {
+const meta: Meta<typeof SearchInputExample> = {
   title: 'UI/Input/SearchInput',
-  component: InteractiveSearchInput,
+  component: SearchInputExample,
   decorators: [ComponentDecorator],
 };
 
 export default meta;
-type Story = StoryObj<typeof InteractiveSearchInput>;
+type Story = StoryObj<typeof SearchInputExample>;
 
 export const Default: Story = {
   args: {
@@ -50,5 +24,29 @@ export const Disabled: Story = {
   args: {
     placeholder: 'Search...',
     disabled: true,
+  },
+};
+
+export const Compact: Story = {
+  args: {
+    placeholder: 'Search...',
+    size: 'sm',
+  },
+};
+
+export const WithFilter: Story = {
+  args: {
+    placeholder: 'Search people...',
+    filterButtonAriaLabel: 'Filter people',
+    filterDropdown: (filterButton) => (
+      <Dropdown.Root type="panel">
+        <Dropdown.Trigger render={filterButton} />
+        <Dropdown.Content align="end">
+          <Dropdown.Section>
+            <SettingsRow defaultChecked>Include inactive people</SettingsRow>
+          </Dropdown.Section>
+        </Dropdown.Content>
+      </Dropdown.Root>
+    ),
   },
 };
