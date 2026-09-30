@@ -155,10 +155,8 @@ export const RichTextFieldEditor = ({
       onPersist: ({ blocknote }) => {
         if (isRecordFieldReadOnly === true) return;
 
-        const preparedBlocknote = prepareBodyWithSignedUrls(blocknote);
-
         if (onPersistBody) {
-          onPersistBody(preparedBlocknote);
+          onPersistBody(blocknote);
           return;
         }
 
@@ -167,7 +165,7 @@ export const RichTextFieldEditor = ({
           objectNameSingular,
           updateOneRecordInput: {
             [fieldName]: {
-              blocknote: preparedBlocknote,
+              blocknote,
               markdown: null,
             },
           },
@@ -243,7 +241,9 @@ export const RichTextFieldEditor = ({
     // persisting optimistically rewrites the record, and doing that earlier
     // would make the attachment diff below compare the new body with itself,
     // leaving attachments removed from the body undeleted.
-    updateDraft({ blocknote: newStringifiedBody });
+    // Match the persisted image URLs before the save echo reaches the draft.
+    // Otherwise that echo looks like a remote edit and replaces the blocks.
+    updateDraft({ blocknote: prepareBodyWithSignedUrls(newStringifiedBody) });
 
     await syncAttachments(newStringifiedBody, oldFieldValue?.blocknote);
   };
