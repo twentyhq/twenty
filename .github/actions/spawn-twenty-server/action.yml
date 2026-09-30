@@ -84,12 +84,14 @@ runs:
         npx nx build twenty-shared
         npx nx build twenty-server
 
+    - name: Tune CI Postgres
+      if: inputs.source == 'local'
+      uses: ./.github/actions/tune-ci-postgres
     - name: Write server env and create databases
       if: inputs.source == 'local'
       shell: bash
       run: |
         npx nx reset:env:e2e-testing-server twenty-server
-        PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c 'ALTER SYSTEM SET fsync = off' -c 'ALTER SYSTEM SET synchronous_commit = off' -c 'ALTER SYSTEM SET full_page_writes = off' -c 'SELECT pg_reload_conf()'
         PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c 'CREATE DATABASE "default";'
         PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c 'CREATE DATABASE "test";'
         npx nx run twenty-server:database:reset

@@ -37,6 +37,7 @@ async function dropSchemasSequentially() {
   } catch (err) {
     // oxlint-disable-next-line no-console
     console.error('Error during schema dropping:', err);
+    process.exitCode = 1;
   } finally {
     if (rawDataSource.isInitialized) {
       await rawDataSource.destroy();

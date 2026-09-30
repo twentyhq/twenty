@@ -108,9 +108,10 @@ jobs:
       - name: Build current branch server
         run: npx nx build twenty-server
 
+      - name: Tune CI Postgres
+        uses: ./.github/actions/tune-ci-postgres
       - name: Setup databases
         run: |
-          PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c 'ALTER SYSTEM SET fsync = off' -c 'ALTER SYSTEM SET synchronous_commit = off' -c 'ALTER SYSTEM SET full_page_writes = off' -c 'SELECT pg_reload_conf()'
           PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c 'CREATE DATABASE "current_branch";'
           PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c 'CREATE DATABASE "main_branch";'
 

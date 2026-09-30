@@ -89,6 +89,7 @@ $$;`,
   .catch((err) => {
     // oxlint-disable-next-line no-console
     console.error('Error during Data Source initialization:', err);
+    process.exitCode = 1;
   })
   .then(async () => {
     if (rawDataSource.isInitialized) {
