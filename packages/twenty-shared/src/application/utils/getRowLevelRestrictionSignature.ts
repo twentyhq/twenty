@@ -1,6 +1,7 @@
 import {
   type RoleManifest,
   type RowLevelPermissionPredicateGroupManifest,
+  type RowLevelPermissionPredicateManifest,
 } from '@/application/roleManifestType';
 import { isPlainObject } from '@/utils/typeguard/isPlainObject';
 import { isDefined } from '@/utils/validation/isDefined';
@@ -16,41 +17,18 @@ const stringifyWithSortedKeys = (value: unknown): string =>
       : nestedValue,
   );
 
-const getGroupOperatorPath = ({
-  groupsByUniversalIdentifier,
-  predicateGroupUniversalIdentifier,
-}: {
-  groupsByUniversalIdentifier: Map<
-    string,
-    RowLevelPermissionPredicateGroupManifest
-  >;
-  predicateGroupUniversalIdentifier: string | null | undefined;
-}): string[] => {
-  const operatorPath: string[] = [];
-  const visitedGroupUniversalIdentifiers = new Set<string>();
-  let currentGroupUniversalIdentifier = predicateGroupUniversalIdentifier;
-
-  while (
-    isDefined(currentGroupUniversalIdentifier) &&
-    !visitedGroupUniversalIdentifiers.has(currentGroupUniversalIdentifier)
-  ) {
-    visitedGroupUniversalIdentifiers.add(currentGroupUniversalIdentifier);
-
-    const group = groupsByUniversalIdentifier.get(
-      currentGroupUniversalIdentifier,
-    );
-
-    if (!isDefined(group)) {
-      break;
-    }
-
-    operatorPath.push(group.logicalOperator);
-    currentGroupUniversalIdentifier =
-      group.parentPredicateGroupUniversalIdentifier;
-  }
-
-  return operatorPath;
-};
+const getPredicateSignature = (
+  predicate: RowLevelPermissionPredicateManifest,
+): string =>
+  stringifyWithSortedKeys({
+    fieldUniversalIdentifier: predicate.fieldUniversalIdentifier,
+    subFieldName: predicate.subFieldName ?? null,
+    operand: predicate.operand,
+    value: predicate.value ?? null,
+    workspaceMemberFieldUniversalIdentifier:
+      predicate.workspaceMemberFieldUniversalIdentifier ?? null,
+    workspaceMemberSubFieldName: predicate.workspaceMemberSubFieldName ?? null,
+  });
 
 export const getRowLevelRestrictionSignature = ({
   role,
@@ -58,35 +36,95 @@ export const getRowLevelRestrictionSignature = ({
 }: {
   role: RoleManifest;
   objectUniversalIdentifier: string;
-}): string[] => {
+}): string | undefined => {
+  const predicates = (role.rowLevelPermissionPredicates ?? []).filter(
+    (predicate) =>
+      predicate.objectUniversalIdentifier === objectUniversalIdentifier,
+  );
+
+  if (predicates.length === 0) {
+    return undefined;
+  }
+
+  const groups = (role.rowLevelPermissionPredicateGroups ?? []).filter(
+    (group) => group.objectUniversalIdentifier === objectUniversalIdentifier,
+  );
   const groupsByUniversalIdentifier = new Map(
-    (role.rowLevelPermissionPredicateGroups ?? []).map((group) => [
+    groups.map((group) => [group.universalIdentifier, group]),
+  );
+
+  const getGroupUniversalIdentifierIfKnown = (
+    groupUniversalIdentifier: string | null | undefined,
+  ): string | null =>
+    isDefined(groupUniversalIdentifier) &&
+    groupsByUniversalIdentifier.has(groupUniversalIdentifier)
+      ? groupUniversalIdentifier
+      : null;
+
+  const reachesRoot = (
+    group: RowLevelPermissionPredicateGroupManifest,
+  ): boolean => {
+    const visitedGroupUniversalIdentifiers = new Set([
       group.universalIdentifier,
-      group,
+    ]);
+    let parentGroupUniversalIdentifier = getGroupUniversalIdentifierIfKnown(
+      group.parentPredicateGroupUniversalIdentifier,
+    );
+
+    while (isDefined(parentGroupUniversalIdentifier)) {
+      if (
+        visitedGroupUniversalIdentifiers.has(parentGroupUniversalIdentifier)
+      ) {
+        return false;
+      }
+
+      visitedGroupUniversalIdentifiers.add(parentGroupUniversalIdentifier);
+      parentGroupUniversalIdentifier = getGroupUniversalIdentifierIfKnown(
+        groupsByUniversalIdentifier.get(parentGroupUniversalIdentifier)
+          ?.parentPredicateGroupUniversalIdentifier,
+      );
+    }
+
+    return true;
+  };
+
+  const parentGroupUniversalIdentifierByGroupUniversalIdentifier = new Map(
+    groups.map((group) => [
+      group.universalIdentifier,
+      reachesRoot(group)
+        ? getGroupUniversalIdentifierIfKnown(
+            group.parentPredicateGroupUniversalIdentifier,
+          )
+        : null,
     ]),
   );
 
-  return (role.rowLevelPermissionPredicates ?? [])
-    .filter(
-      (predicate) =>
-        predicate.objectUniversalIdentifier === objectUniversalIdentifier,
-    )
-    .map((predicate) =>
-      stringifyWithSortedKeys({
-        fieldUniversalIdentifier: predicate.fieldUniversalIdentifier,
-        subFieldName: predicate.subFieldName ?? null,
-        operand: predicate.operand,
-        value: predicate.value ?? null,
-        workspaceMemberFieldUniversalIdentifier:
-          predicate.workspaceMemberFieldUniversalIdentifier ?? null,
-        workspaceMemberSubFieldName:
-          predicate.workspaceMemberSubFieldName ?? null,
-        groupOperatorPath: getGroupOperatorPath({
-          groupsByUniversalIdentifier,
-          predicateGroupUniversalIdentifier:
-            predicate.predicateGroupUniversalIdentifier,
-        }),
-      }),
-    )
-    .sort();
+  const getChildSignatures = (
+    parentGroupUniversalIdentifier: string | null,
+  ): string[] =>
+    [
+      ...predicates
+        .filter(
+          (predicate) =>
+            getGroupUniversalIdentifierIfKnown(
+              predicate.predicateGroupUniversalIdentifier,
+            ) === parentGroupUniversalIdentifier,
+        )
+        .map(getPredicateSignature),
+      ...groups
+        .filter(
+          (group) =>
+            parentGroupUniversalIdentifierByGroupUniversalIdentifier.get(
+              group.universalIdentifier,
+            ) === parentGroupUniversalIdentifier,
+        )
+        .map((group) =>
+          stringifyWithSortedKeys({
+            logicalOperator: group.logicalOperator,
+            children: getChildSignatures(group.universalIdentifier),
+          }),
+        ),
+    ].sort();
+
+  return stringifyWithSortedKeys(getChildSignatures(null));
 };

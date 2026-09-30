@@ -343,7 +343,9 @@ export class ApplicationInstallService {
         applicationId: application.id,
         workspaceId: params.workspaceId,
         manifest: resolvedPackage.manifest,
-        hasUserApprovedRoleGrants: params.hasUserApprovedRoleGrants,
+        hasUserApprovedRoleGrants:
+          (params.hasUserApprovedRoleGrants ?? false) &&
+          params.version === newVersion,
       });
     }
 

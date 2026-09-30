@@ -8,22 +8,10 @@ import {
 import { getRowLevelRestrictionSignature } from '@/application/utils/getRowLevelRestrictionSignature';
 import { SystemPermissionFlag } from '@/constants/SystemPermissionFlag';
 import { TOOL_PERMISSION_FLAGS } from '@/constants/ToolPermissionFlags';
+import { isDefined } from '@/utils/validation/isDefined';
 
 const SYSTEM_TOOL_PERMISSION_FLAG_UNIVERSAL_IDENTIFIERS =
   TOOL_PERMISSION_FLAGS.map((flag) => SystemPermissionFlag[flag]);
-
-const haveSameRowLevelRestriction = ({
-  roleSignature,
-  supersetSignature,
-}: {
-  roleSignature: string[];
-  supersetSignature: string[];
-}): boolean =>
-  roleSignature.length === supersetSignature.length &&
-  roleSignature.every(
-    (predicateSignature, index) =>
-      predicateSignature === supersetSignature[index],
-  );
 
 const getRoleLevelGrantsNotCoveredBy = ({
   role,
@@ -138,8 +126,8 @@ const getObjectGrantsNotCoveredBy = ({
 
       const escapesRowLevelRestriction =
         roleReachesObject &&
-        supersetSignature.length > 0 &&
-        !haveSameRowLevelRestriction({ roleSignature, supersetSignature });
+        isDefined(supersetSignature) &&
+        roleSignature !== supersetSignature;
 
       return escapesRowLevelRestriction
         ? [
