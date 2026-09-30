@@ -13,6 +13,7 @@ export type OnboardingCreditsProgress = {
   currentStepCredits: number;
   seenCredits: number;
   newlyEarnedCredits: number;
+  lostCredits: number;
   isFirstCreditsGain: boolean;
   inviteTeamButtonReward: {
     creditsReward: number;

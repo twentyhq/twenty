@@ -92,6 +92,7 @@ describe('getOnboardingCreditsProgress', () => {
       currentStepCredits: 2,
       seenCredits: 0,
       newlyEarnedCredits: 0,
+      lostCredits: 0,
       isFirstCreditsGain: true,
       inviteTeamButtonReward: { creditsReward: 0.5, isRewardPerItem: true },
     });
@@ -183,6 +184,7 @@ describe('getOnboardingCreditsProgress', () => {
       currentStepCredits: 2,
       seenCredits: 0,
       newlyEarnedCredits: 0,
+      lostCredits: 0,
       isFirstCreditsGain: true,
       inviteTeamButtonReward: { creditsReward: 0.5, isRewardPerItem: true },
     });
@@ -272,6 +274,40 @@ describe('getOnboardingCreditsProgress', () => {
 
     expect(progress.earnedCredits).toBe(2.5);
     expect(progress.currentStep).toBeNull();
+  });
+
+  it('should announce the lost upgrade credits', () => {
+    const progress = getOnboardingCreditsProgress({
+      onboardingFreeCredits: buildOnboardingFreeCredits({
+        importContacts: 2,
+        seenCredits: 2,
+      }),
+      onboardingConfig,
+      onboardingStatus: OnboardingStatus.PLAN_REQUIRED,
+      isWorkspaceCreator: true,
+      isPlanRequired: true,
+      profileName: null,
+      inviteTeamValidEmailsCount: 0,
+      upgradeTrialLostCredits: 0.5,
+    });
+
+    expect(progress.lostCredits).toBe(0.5);
+  });
+
+  it('should hold the lost upgrade credits while earned credits are announced', () => {
+    const progress = getOnboardingCreditsProgress({
+      onboardingFreeCredits: buildOnboardingFreeCredits({ importContacts: 2 }),
+      onboardingConfig,
+      onboardingStatus: OnboardingStatus.PLAN_REQUIRED,
+      isWorkspaceCreator: true,
+      isPlanRequired: true,
+      profileName: null,
+      inviteTeamValidEmailsCount: 0,
+      upgradeTrialLostCredits: 0.5,
+    });
+
+    expect(progress.newlyEarnedCredits).toBe(2);
+    expect(progress.lostCredits).toBe(0);
   });
 
   it('should leave out the upgrade reward once the workspace has a plan', () => {
