@@ -8,6 +8,8 @@ import { getLoginTokenFromCredentialsQueryFactory } from 'test/integration/graph
 import { initiateOtpProvisioningForAuthenticatedUser } from 'test/integration/graphql/utils/initiate-otp-provisioning-for-authenticated-user.util';
 import { verifyTwoFactorAuthenticationMethod } from 'test/integration/graphql/utils/verify-two-factor-authentication-method.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
+import { FeatureFlagKey } from 'twenty-shared/types';
 
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
@@ -207,6 +209,34 @@ describe('Two-factor authentication recovery codes (integration)', () => {
   });
 
   describe('issuing a code', () => {
+    it('is unavailable while the feature flag is off', async () => {
+      await updateFeatureFlag({
+        featureFlag:
+          FeatureFlagKey.IS_TWO_FACTOR_AUTHENTICATION_RECOVERY_CODE_ENABLED,
+        value: false,
+        expectToFail: false,
+      });
+
+      try {
+        const { errors } = await generateTwoFactorAuthenticationRecoveryCode({
+          userId: USER_DATA_SEED_IDS.JONY,
+          otp: await generateOtp(janeSecret),
+          accessToken: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+          expectToFail: true,
+        });
+
+        expect(errors?.[0]?.extensions?.code).toBe('FORBIDDEN');
+        expect(await selectPendingRecoveryCodes()).toHaveLength(0);
+      } finally {
+        await updateFeatureFlag({
+          featureFlag:
+            FeatureFlagKey.IS_TWO_FACTOR_AUTHENTICATION_RECOVERY_CODE_ENABLED,
+          value: true,
+          expectToFail: false,
+        });
+      }
+    });
+
     it('is refused to a member without the security permission', async () => {
       const { errors } = await generateTwoFactorAuthenticationRecoveryCode({
         userId: USER_DATA_SEED_IDS.JANE,

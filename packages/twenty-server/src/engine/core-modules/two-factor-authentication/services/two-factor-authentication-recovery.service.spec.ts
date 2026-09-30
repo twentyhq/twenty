@@ -390,6 +390,7 @@ describe('TwoFactorAuthenticationRecoveryService', () => {
 
       await expect(
         service.getRecoveryStatus({
+          actor: ACTOR,
           targetUserId: TARGET_USER_ID,
           targetWorkspaceId: WORKSPACE_ID,
         }),
@@ -397,6 +398,23 @@ describe('TwoFactorAuthenticationRecoveryService', () => {
         hasVerifiedTwoFactorAuthenticationMethod: true,
         pendingRecoveryCodeExpiresAt: expiresAt,
       });
+    });
+
+    it('hides a server administrator status from an actor without those privileges', async () => {
+      userWorkspaceService.getUserWorkspaceForUser.mockResolvedValue(
+        buildTargetUserWorkspace({ canImpersonate: true }),
+      );
+
+      await expect(
+        service.getRecoveryStatus({
+          actor: ACTOR,
+          targetUserId: TARGET_USER_ID,
+          targetWorkspaceId: WORKSPACE_ID,
+        }),
+      ).rejects.toMatchObject({
+        code: TwoFactorAuthenticationExceptionCode.RECOVERY_CODE_TARGET_NOT_ALLOWED,
+      });
+      expect(recoveryCodeRepository.findOne).not.toHaveBeenCalled();
     });
   });
 });
