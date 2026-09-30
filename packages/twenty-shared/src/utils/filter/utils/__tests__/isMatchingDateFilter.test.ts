@@ -81,6 +81,22 @@ describe('isMatchingDateFilter', () => {
         }),
       ).toBe(true);
     });
+
+    it('evaluates comparison when combined with is: NOT_NULL', () => {
+      expect(
+        isMatchingDateFilter({
+          dateFilter: { is: 'NOT_NULL', eq: testDate },
+          value: testDate,
+        }),
+      ).toBe(true);
+
+      expect(
+        isMatchingDateFilter({
+          dateFilter: { is: 'NOT_NULL', eq: testDate },
+          value: '2023-12-18T12:15:29.810Z',
+        }),
+      ).toBe(false);
+    });
   });
 
   describe('null or undefined value', () => {
@@ -262,6 +278,100 @@ describe('isMatchingDateFilter', () => {
             value: testDateObject,
           }),
       ).toBe(true);
+    });
+  });
+
+  describe('non-string or malformed date inputs resilience', () => {
+    it.each([{}, { some: 'object' }, 12345, true, '', 'invalid-date-string'])(
+      'does not throw and returns false when value is %p',
+      (invalidValue) => {
+        expect(
+          isMatchingDateFilter({
+            dateFilter: { eq: testDate },
+            value: invalidValue as unknown as string,
+          }),
+        ).toBe(false);
+
+        expect(
+          isMatchingDateFilter({
+            dateFilter: { gte: testDate },
+            value: invalidValue as unknown as string,
+          }),
+        ).toBe(false);
+      },
+    );
+
+    it.each([{}, { date: '2023-12-19' }, 12345, true, '', 'not-a-date'])(
+      'does not throw e.split error and returns false when filter operand is %p',
+      (invalidOperand) => {
+        expect(
+          isMatchingDateFilter({
+            dateFilter: { eq: invalidOperand as unknown as string },
+            value: testDate,
+          }),
+        ).toBe(false);
+
+        expect(
+          isMatchingDateFilter({
+            dateFilter: { gte: invalidOperand as unknown as string },
+            value: testDate,
+          }),
+        ).toBe(false);
+
+        expect(
+          isMatchingDateFilter({
+            dateFilter: { in: [invalidOperand as unknown as string] },
+            value: testDate,
+          }),
+        ).toBe(false);
+      },
+    );
+
+    it.each(['', 'invalid-date-string', {}, 12345])(
+      'matches standalone "is: NOT_NULL" for non-null value %p',
+      (nonNullValue) => {
+        expect(
+          isMatchingDateFilter({
+            dateFilter: { is: 'NOT_NULL' },
+            value: nonNullValue as unknown as string,
+          }),
+        ).toBe(true);
+      },
+    );
+
+    it.each(['', 'invalid-date-string', {}, 12345])(
+      'does not match standalone "is: NULL" for non-null value %p',
+      (nonNullValue) => {
+        expect(
+          isMatchingDateFilter({
+            dateFilter: { is: 'NULL' },
+            value: nonNullValue as unknown as string,
+          }),
+        ).toBe(false);
+      },
+    );
+
+    it('requires valid date matching when "is: NOT_NULL" is combined with comparison filter', () => {
+      expect(
+        isMatchingDateFilter({
+          dateFilter: { is: 'NOT_NULL', eq: testDate },
+          value: '',
+        }),
+      ).toBe(false);
+
+      expect(
+        isMatchingDateFilter({
+          dateFilter: { is: 'NOT_NULL', eq: testDate },
+          value: testDate,
+        }),
+      ).toBe(true);
+
+      expect(
+        isMatchingDateFilter({
+          dateFilter: { is: 'NOT_NULL', eq: '2020-01-01' },
+          value: testDate,
+        }),
+      ).toBe(false);
     });
   });
 });

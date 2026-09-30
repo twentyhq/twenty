@@ -109,6 +109,7 @@ export class ObjectRecordEventPublisher {
       this.recordAccessPolicyService.buildEventRecordAccessGate(eventBatch);
 
     const streamIdsToRemove: string[] = [];
+    const streamProcessingErrors: Error[] = [];
 
     for (const [streamChannelId, streamData] of streamsData) {
       if (!isDefined(streamData)) {
@@ -120,21 +121,35 @@ export class ObjectRecordEventPublisher {
         continue;
       }
 
-      await this.processObjectRecordStreamEvents({
-        streamChannelId,
-        streamData,
-        workspaceEventBatch: eventBatch,
-        permissionsContext,
-        flatWorkspaceMemberMaps,
-        workspaceMemberIdByUserId,
-        eventRecordAccessGate,
-      });
+      try {
+        await this.processObjectRecordStreamEvents({
+          streamChannelId,
+          streamData,
+          workspaceEventBatch: eventBatch,
+          permissionsContext,
+          flatWorkspaceMemberMaps,
+          workspaceMemberIdByUserId,
+          eventRecordAccessGate,
+        });
+      } catch (error) {
+        this.logger.warn(
+          `Failed to process event stream "${streamChannelId}" for "${eventBatch.name}": ${error instanceof Error ? error.message : error}`,
+        );
+
+        streamProcessingErrors.push(
+          error instanceof Error ? error : new Error(String(error)),
+        );
+      }
     }
 
     await this.eventStreamService.removeFromActiveStreams(
       workspaceId,
       streamIdsToRemove,
     );
+
+    if (streamProcessingErrors.length > 0) {
+      throw streamProcessingErrors[0];
+    }
   }
 
   private async fetchObjectRecordStreamContext(workspaceId: string) {
@@ -587,6 +602,7 @@ export class ObjectRecordEventPublisher {
 
       if (
         this.isQueryMatchingObjectRecordEvent({
+          queryId,
           operationSignature,
           event,
           subscriberRLSFilter,
@@ -602,12 +618,14 @@ export class ObjectRecordEventPublisher {
   }
 
   private isQueryMatchingObjectRecordEvent({
+    queryId,
     operationSignature,
     event,
     subscriberRLSFilter,
     objectMetadata,
     flatFieldMetadataMaps,
   }: {
+    queryId: string;
     operationSignature: RecordGqlOperationSignature;
     event: ObjectRecordSubscriptionEvent;
     subscriberRLSFilter: RecordGqlOperationFilter | null;
@@ -635,16 +653,27 @@ export class ObjectRecordEventPublisher {
 
     if (
       isDefined(subscriberRLSFilter) &&
-      Object.keys(subscriberRLSFilter).length > 0 &&
-      !isRecordMatchingRLSRowLevelPermissionPredicate({
-        record: deliveredRecord,
-        filter: subscriberRLSFilter,
-        flatObjectMetadata: objectMetadata,
-        flatFieldMetadataMaps,
-        shouldIgnoreSoftDeleteDefaultFilter,
-      })
+      Object.keys(subscriberRLSFilter).length > 0
     ) {
-      return false;
+      try {
+        const isMatchingRLS = isRecordMatchingRLSRowLevelPermissionPredicate({
+          record: deliveredRecord,
+          filter: subscriberRLSFilter,
+          flatObjectMetadata: objectMetadata,
+          flatFieldMetadataMaps,
+          shouldIgnoreSoftDeleteDefaultFilter,
+        });
+
+        if (!isMatchingRLS) {
+          return false;
+        }
+      } catch (error) {
+        this.logger.warn(
+          `Error evaluating subscriber RLS filter for query "${queryId}" on "${objectMetadata.nameSingular}": ${error instanceof Error ? error.message : error}`,
+        );
+
+        return false;
+      }
     }
 
     const queryFilter = operationSignature.variables?.filter ?? {};
@@ -658,15 +687,23 @@ export class ObjectRecordEventPublisher {
         ? [properties?.after, properties?.before].filter(isDefined)
         : [deliveredRecord];
 
-    return candidateRecords.some((record) =>
-      isRecordMatchingRLSRowLevelPermissionPredicate({
-        record,
-        filter: queryFilter,
-        flatObjectMetadata: objectMetadata,
-        flatFieldMetadataMaps,
-        shouldIgnoreSoftDeleteDefaultFilter,
-      }),
-    );
+    return candidateRecords.some((record) => {
+      try {
+        return isRecordMatchingRLSRowLevelPermissionPredicate({
+          record,
+          filter: queryFilter,
+          flatObjectMetadata: objectMetadata,
+          flatFieldMetadataMaps,
+          shouldIgnoreSoftDeleteDefaultFilter,
+        });
+      } catch (error) {
+        this.logger.warn(
+          `Error evaluating subscription query filter "${queryId}" on "${objectMetadata.nameSingular}": ${error instanceof Error ? error.message : error}`,
+        );
+
+        return false;
+      }
+    });
   }
 
   private async fetchPermissionsContext(
