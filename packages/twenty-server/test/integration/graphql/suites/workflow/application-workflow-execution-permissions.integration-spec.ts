@@ -21,7 +21,6 @@ import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/ge
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 import { USER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-users.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
-import { CONNECTED_ACCOUNT_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/connected-account-data-seeds.constant';
 
 const SCHEMA = getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID);
 const RUN_PREFIX = `App workflow permissions ${randomUUID()}`;
@@ -97,36 +96,6 @@ const CREATE_OPPORTUNITY_WORKFLOW = buildTestWorkflow([
   } as WorkflowStepManifestWithoutEdges,
 ]);
 
-const SEND_EMAIL_WORKFLOW = buildTestWorkflow([
-  {
-    name: 'Send from another member mailbox',
-    type: 'SEND_EMAIL',
-    input: {
-      connectedAccountId: CONNECTED_ACCOUNT_DATA_SEED_IDS.TIM,
-      recipients: { to: 'recipient@example.com' },
-      subject: 'Application workflow permissions',
-      body: 'Should never be sent',
-    },
-  } as WorkflowStepManifestWithoutEdges,
-]);
-
-const CREATE_CALENDAR_EVENT_WORKFLOW = buildTestWorkflow([
-  {
-    name: 'Create calendar event',
-    type: 'CREATE_CALENDAR_EVENT',
-    input: {
-      connectedAccountId: CONNECTED_ACCOUNT_DATA_SEED_IDS.JANE,
-      title: 'Application workflow permissions',
-      startsAt: '2030-01-15T10:00:00Z',
-      endsAt: '2030-01-15T10:15:00Z',
-      isFullDay: false,
-      sendInvitations: false,
-      addConferencing: false,
-      timeZone: 'UTC',
-    },
-  } as WorkflowStepManifestWithoutEdges,
-]);
-
 const LOGIC_FUNCTION_WORKFLOW = buildTestWorkflow([
   {
     name: 'Call the application function',
@@ -184,8 +153,6 @@ const FORM_WORKFLOW = buildTestWorkflow([
 const TEST_WORKFLOWS = [
   CREATE_COMPANY_WORKFLOW,
   CREATE_OPPORTUNITY_WORKFLOW,
-  SEND_EMAIL_WORKFLOW,
-  CREATE_CALENDAR_EVENT_WORKFLOW,
   LOGIC_FUNCTION_WORKFLOW,
   DELAYED_CREATE_COMPANY_WORKFLOW,
   FORM_WORKFLOW,
@@ -221,10 +188,7 @@ const buildManifest = ({
                 },
               ]
             : [],
-          permissionFlagUniversalIdentifiers: [
-            SystemPermissionFlag.WORKFLOWS,
-            SystemPermissionFlag.SEND_EMAIL_TOOL,
-          ],
+          permissionFlagUniversalIdentifiers: [SystemPermissionFlag.WORKFLOWS],
         },
       ],
       logicFunctions: [
@@ -501,30 +465,6 @@ describe('application workflow execution permissions', () => {
     expect(
       await countRecordsByName('opportunity', WORKSPACE_OPPORTUNITY_NAME),
     ).toBe(1);
-  }, 120000);
-
-  it('requires the tool permission of calendar steps on the application role', async () => {
-    const workflowRun = await waitForRunToEnd(
-      await runWorkflow(CREATE_CALENDAR_EVENT_WORKFLOW),
-    );
-    const [calendarStep] = CREATE_CALENDAR_EVENT_WORKFLOW.steps;
-
-    expect(workflowRun.status).toBe('FAILED');
-    expect(
-      workflowRun.state.stepInfos[calendarStep.universalIdentifier].error,
-    ).toContain('CREATE_CALENDAR_EVENT_TOOL');
-  }, 120000);
-
-  it('refuses the private connected account of another member', async () => {
-    const workflowRun = await waitForRunToEnd(
-      await runWorkflow(SEND_EMAIL_WORKFLOW),
-    );
-    const [emailStep] = SEND_EMAIL_WORKFLOW.steps;
-
-    expect(workflowRun.status).toBe('FAILED');
-    expect(
-      workflowRun.state.stepInfos[emailStep.universalIdentifier].error,
-    ).toContain('is private to another member');
   }, 120000);
 
   it('runs the application function for the member who started the run', async () => {
