@@ -54,9 +54,9 @@ export default {
         121,
         132,
         147,
-        151,
-        155,
-        156,
+        149,
+        150,
+        153,
         159,
         166,
         169,
@@ -3021,6 +3021,148 @@ export default {
             ]
         },
         "PageLayoutType": {},
+        "UsageQuotaDefinition": {
+            "resourceType": [
+                149
+            ],
+            "limitKind": [
+                1
+            ],
+            "allowedOperationTypes": [
+                150
+            ],
+            "allowedSpenderTypes": [
+                1
+            ],
+            "allowedMeters": [
+                1
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "UsageResourceType": {},
+        "UsageOperationType": {},
+        "UsageQuotaDefinitions": {
+            "definitions": [
+                148
+            ],
+            "isIntraWorkspaceLimitEntitled": [
+                8
+            ],
+            "hasAllowancePeriod": [
+                8
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "UsageQuotaWithConsumption": {
+            "id": [
+                3
+            ],
+            "resourceType": [
+                149
+            ],
+            "operationType": [
+                150
+            ],
+            "spenderType": [
+                1
+            ],
+            "spenderId": [
+                1
+            ],
+            "spenderLabel": [
+                1
+            ],
+            "periodUnit": [
+                1
+            ],
+            "meter": [
+                1
+            ],
+            "limitValue": [
+                153
+            ],
+            "isEnforced": [
+                8
+            ],
+            "consumedValue": [
+                153
+            ],
+            "remainingValue": [
+                153
+            ],
+            "periodStart": [
+                4
+            ],
+            "periodEnd": [
+                4
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "BigInt": {},
+        "UsageQuotaScopeConsumption": {
+            "consumedValue": [
+                153
+            ],
+            "periodStart": [
+                4
+            ],
+            "periodEnd": [
+                4
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "UsageLimit": {
+            "id": [
+                3
+            ],
+            "resourceType": [
+                149
+            ],
+            "operationType": [
+                150
+            ],
+            "spenderType": [
+                1
+            ],
+            "spenderId": [
+                1
+            ],
+            "limitKind": [
+                1
+            ],
+            "periodCount": [
+                30
+            ],
+            "periodUnit": [
+                1
+            ],
+            "meter": [
+                1
+            ],
+            "limitValue": [
+                153
+            ],
+            "burstValue": [
+                153
+            ],
+            "createdAt": [
+                4
+            ],
+            "updatedAt": [
+                4
+            ],
+            "__typename": [
+                1
+            ]
+        },
         "ApplicationConnectionProviderOAuthConfig": {
             "scopes": [
                 1
@@ -3049,7 +3191,7 @@ export default {
                 1
             ],
             "oauth": [
-                148
+                156
             ],
             "logoUrl": [
                 1
@@ -3069,7 +3211,7 @@ export default {
                 15
             ],
             "status": [
-                151
+                159
             ],
             "error": [
                 9
@@ -3114,148 +3256,6 @@ export default {
             ],
             "isCancellationScheduled": [
                 8
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "UsageQuotaDefinition": {
-            "resourceType": [
-                155
-            ],
-            "limitKind": [
-                1
-            ],
-            "allowedOperationTypes": [
-                156
-            ],
-            "allowedSpenderTypes": [
-                1
-            ],
-            "allowedMeters": [
-                1
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "UsageResourceType": {},
-        "UsageOperationType": {},
-        "UsageQuotaDefinitions": {
-            "definitions": [
-                154
-            ],
-            "isIntraWorkspaceLimitEntitled": [
-                8
-            ],
-            "hasAllowancePeriod": [
-                8
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "UsageQuotaWithConsumption": {
-            "id": [
-                3
-            ],
-            "resourceType": [
-                155
-            ],
-            "operationType": [
-                156
-            ],
-            "spenderType": [
-                1
-            ],
-            "spenderId": [
-                1
-            ],
-            "spenderLabel": [
-                1
-            ],
-            "periodUnit": [
-                1
-            ],
-            "meter": [
-                1
-            ],
-            "limitValue": [
-                159
-            ],
-            "isEnforced": [
-                8
-            ],
-            "consumedValue": [
-                159
-            ],
-            "remainingValue": [
-                159
-            ],
-            "periodStart": [
-                4
-            ],
-            "periodEnd": [
-                4
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "BigInt": {},
-        "UsageQuotaScopeConsumption": {
-            "consumedValue": [
-                159
-            ],
-            "periodStart": [
-                4
-            ],
-            "periodEnd": [
-                4
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "UsageLimit": {
-            "id": [
-                3
-            ],
-            "resourceType": [
-                155
-            ],
-            "operationType": [
-                156
-            ],
-            "spenderType": [
-                1
-            ],
-            "spenderId": [
-                1
-            ],
-            "limitKind": [
-                1
-            ],
-            "periodCount": [
-                30
-            ],
-            "periodUnit": [
-                1
-            ],
-            "meter": [
-                1
-            ],
-            "limitValue": [
-                159
-            ],
-            "burstValue": [
-                159
-            ],
-            "createdAt": [
-                4
-            ],
-            "updatedAt": [
-                4
             ],
             "__typename": [
                 1
@@ -6721,10 +6721,10 @@ export default {
         },
         "AiChatUsage": {
             "limitValue": [
-                159
+                153
             ],
             "consumedValue": [
-                159
+                153
             ],
             "periodEnd": [
                 4
@@ -7497,7 +7497,7 @@ export default {
                 }
             ],
             "enterpriseSubscriptionStatus": [
-                153
+                161
             ],
             "applicationSdkClientChecksums": [
                 96,
@@ -7518,16 +7518,16 @@ export default {
                 }
             ],
             "usageLimits": [
-                161
+                155
             ],
             "usageQuotasWithConsumption": [
-                158
+                152
             ],
             "usageQuotaDefinitions": [
-                157
+                151
             ],
             "usageQuotaScopeConsumption": [
-                160,
+                154,
                 {
                     "input": [
                         420,
@@ -7823,7 +7823,7 @@ export default {
                 }
             ],
             "applicationConnectionProviders": [
-                149,
+                157,
                 {
                     "applicationId": [
                         3,
@@ -8477,10 +8477,10 @@ export default {
         },
         "UsageQuotaScopeInput": {
             "resourceType": [
-                155
+                149
             ],
             "operationType": [
-                156
+                150
             ],
             "spenderType": [
                 1
@@ -8563,7 +8563,7 @@ export default {
                 1
             ],
             "operationTypes": [
-                156
+                150
             ],
             "__typename": [
                 1
@@ -8884,10 +8884,10 @@ export default {
                 8
             ],
             "releaseEnterpriseServerBinding": [
-                152
+                160
             ],
             "setEnterpriseKey": [
-                152,
+                160,
                 {
                     "enterpriseKey": [
                         1,
@@ -8945,7 +8945,7 @@ export default {
                 }
             ],
             "createUsageLimit": [
-                161,
+                155,
                 {
                     "input": [
                         449,
@@ -8954,7 +8954,7 @@ export default {
                 }
             ],
             "updateUsageLimit": [
-                161,
+                155,
                 {
                     "input": [
                         450,
@@ -9436,7 +9436,7 @@ export default {
                 }
             ],
             "executeOneLogicFunction": [
-                150,
+                158,
                 {
                     "input": [
                         504,
@@ -11517,10 +11517,10 @@ export default {
         "Upload": {},
         "CreateUsageLimitInput": {
             "resourceType": [
-                155
+                149
             ],
             "operationType": [
-                156
+                150
             ],
             "spenderType": [
                 1
@@ -11541,10 +11541,10 @@ export default {
                 1
             ],
             "limitValue": [
-                159
+                153
             ],
             "burstValue": [
-                159
+                153
             ],
             "__typename": [
                 1
