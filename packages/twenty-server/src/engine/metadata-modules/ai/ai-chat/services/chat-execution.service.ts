@@ -84,7 +84,6 @@ import { hasSucceededWorkspaceSetupCompletion } from 'src/engine/metadata-module
 import { collectReferencedSkillIds } from 'src/engine/metadata-modules/ai/ai-chat/utils/collect-referenced-skill-ids.util';
 import { collectUploadedFileReferences } from 'src/engine/metadata-modules/ai/ai-chat/utils/collect-uploaded-file-references.util';
 import { extractCodeInterpreterFiles } from 'src/engine/metadata-modules/ai/ai-chat/utils/extract-code-interpreter-files.util';
-import { extractToolExecutionErrors } from 'src/engine/metadata-modules/ai/ai-chat/utils/extract-tool-execution-errors.util';
 import { hasValidToolCall } from 'src/engine/metadata-modules/ai/ai-chat/utils/has-valid-tool-call.util';
 import { shouldCaptureException } from 'src/engine/utils/global-exception-handler.util';
 import { injectMessageTimestamps } from 'src/engine/metadata-modules/ai/ai-chat/utils/inject-message-timestamps.util';
@@ -703,6 +702,14 @@ export class ChatExecutionService {
             continue;
           }
 
+          if (
+            part.type === 'tool-error' &&
+            part.error instanceof Error &&
+            shouldCaptureException(part.error)
+          ) {
+            this.exceptionHandlerService.captureExceptions([part.error]);
+          }
+
           const succeeded =
             part.type === 'tool-result' && isToolOutputSuccessful(part.output);
 
@@ -730,12 +737,6 @@ export class ChatExecutionService {
             attributes: executionAttributes,
             bucketBoundaries: TOOL_OUTPUT_TOKENS_BUCKET_BOUNDARIES,
           });
-        }
-
-        for (const { error } of extractToolExecutionErrors(step.content)) {
-          if (error instanceof Error && shouldCaptureException(error)) {
-            this.exceptionHandlerService.captureExceptions([error]);
-          }
         }
       },
       onAbort: async ({ steps }) => {
