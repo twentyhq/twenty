@@ -36,4 +36,8 @@ describe('computeInsertPositionFromBounds', () => {
   it('handles zero as next position', () => {
     expect(computeInsertPositionFromBounds(-2, 0)).toBe(-1);
   });
+
+  it('does not introduce floating point artifacts', () => {
+    expect(computeInsertPositionFromBounds(0.1, 0.2)).toBe(0.15);
+  });
 });

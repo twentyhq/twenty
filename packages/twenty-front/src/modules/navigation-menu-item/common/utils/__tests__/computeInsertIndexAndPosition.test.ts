@@ -48,4 +48,13 @@ describe('computeInsertIndexAndPosition', () => {
     expect(inserted.flatIndex).toBe(1);
     expect(inserted.position).toBe(15);
   });
+
+  it('should not introduce floating point artifacts', () => {
+    const draft: NavigationMenuItem[] = [
+      { id: '1', folderId: null, position: 0.1 } as NavigationMenuItem,
+      { id: '2', folderId: null, position: 0.2 } as NavigationMenuItem,
+    ];
+
+    expect(computeInsertIndexAndPosition(draft, null, 1).position).toBe(0.15);
+  });
 });

@@ -50884,6 +50884,7 @@ __metadata:
     ai: "npm:7.0.103"
     babel-plugin-module-resolver: "npm:^5.0.2"
     class-validator: "npm:^0.14.0"
+    decimal.js-light: "npm:^2.5.1"
     expr-eval-fork: "npm:3.0.3"
     glob: "npm:^11.1.0"
     jest: "npm:29.7.0"

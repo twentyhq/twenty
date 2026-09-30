@@ -1,6 +1,8 @@
-import { computeNewEvenlySpacedPositions } from '@/object-record/utils/computeNewEvenlySpacedPositions';
 import { type RecordWithPosition } from '@/object-record/utils/computeNewPositionOfDraggedRecord';
-import { isDefined } from 'twenty-shared/utils';
+import {
+  computeEvenlySpacedPositions,
+  isDefined,
+} from 'twenty-shared/utils';
 
 // TODO : refactor this
 export const computeNewPositionsOfDraggedRecords = ({
@@ -43,10 +45,10 @@ export const computeNewPositionsOfDraggedRecords = ({
   const shouldGoToFirstPosition = indexOfTargetItem === 0;
 
   if (shouldGoToFirstPosition) {
-    const newPositions = computeNewEvenlySpacedPositions({
+    const newPositions = computeEvenlySpacedPositions({
       startingPosition: targetPosition - 1,
       endingPosition: targetPosition,
-      numberOfRecordsToInsertBetween: sourceRecordIds.length,
+      numberOfPositions: sourceRecordIds.length,
     });
 
     const newSourceRecordsWithPosition: RecordWithPosition[] =
@@ -57,10 +59,10 @@ export const computeNewPositionsOfDraggedRecords = ({
 
     return newSourceRecordsWithPosition;
   } else if (isDroppedAfterList) {
-    const newPositions = computeNewEvenlySpacedPositions({
+    const newPositions = computeEvenlySpacedPositions({
       startingPosition: targetPosition,
       endingPosition: targetPosition + sourceRecordIds.length + 1,
-      numberOfRecordsToInsertBetween: sourceRecordIds.length,
+      numberOfPositions: sourceRecordIds.length,
     });
 
     const newSourceRecordsWithPosition: RecordWithPosition[] =
@@ -75,10 +77,10 @@ export const computeNewPositionsOfDraggedRecords = ({
       const itemBeforeTargetItem =
         arrayOfRecordsWithPosition[indexOfTargetItem - 1];
 
-      const newPositions = computeNewEvenlySpacedPositions({
+      const newPositions = computeEvenlySpacedPositions({
         startingPosition: itemBeforeTargetItem.position,
         endingPosition: targetItem.position,
-        numberOfRecordsToInsertBetween: sourceRecordIds.length,
+        numberOfPositions: sourceRecordIds.length,
       });
 
       const newSourceRecordsWithPosition: RecordWithPosition[] =
@@ -96,10 +98,10 @@ export const computeNewPositionsOfDraggedRecords = ({
       const itemAfterTargetItem =
         arrayOfRecordsWithPosition[indexOfTargetItem + 1];
 
-      const newPositions = computeNewEvenlySpacedPositions({
+      const newPositions = computeEvenlySpacedPositions({
         startingPosition: targetItem.position,
         endingPosition: itemAfterTargetItem.position,
-        numberOfRecordsToInsertBetween: sourceRecordIds.length,
+        numberOfPositions: sourceRecordIds.length,
       });
 
       const newSourceRecordsWithPosition: RecordWithPosition[] =
@@ -113,10 +115,10 @@ export const computeNewPositionsOfDraggedRecords = ({
       const itemBeforeTargetItem =
         arrayOfRecordsWithPosition[indexOfTargetItem - 1];
 
-      const newPositions = computeNewEvenlySpacedPositions({
+      const newPositions = computeEvenlySpacedPositions({
         startingPosition: itemBeforeTargetItem.position,
         endingPosition: targetItem.position,
-        numberOfRecordsToInsertBetween: sourceRecordIds.length,
+        numberOfPositions: sourceRecordIds.length,
       });
 
       const newSourceRecordsWithPosition: RecordWithPosition[] =

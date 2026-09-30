@@ -1,4 +1,4 @@
-import { isDefined } from 'twenty-shared/utils';
+import { computeMidpointPosition, isDefined } from 'twenty-shared/utils';
 
 export const getPositionBetween = (
   prevPosition: number | null | undefined,
@@ -12,7 +12,7 @@ export const getPositionBetween = (
     if (prevPosition === nextPosition) {
       return prevPosition - 1;
     }
-    return (prevPosition + nextPosition) / 2;
+    return computeMidpointPosition(prevPosition, nextPosition);
   }
   return 0;
 };

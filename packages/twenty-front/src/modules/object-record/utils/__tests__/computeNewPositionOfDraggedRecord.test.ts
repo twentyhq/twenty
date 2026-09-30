@@ -95,4 +95,19 @@ describe('computeNewPositionOfDraggedRecord', () => {
 
     expect(result).toBe(4 + 1);
   });
+
+  it('should not introduce floating point artifacts', () => {
+    const result = computeNewPositionOfDraggedRecord({
+      arrayOfRecordsWithPosition: [
+        { id: 'a', position: 0.1 },
+        { id: 'b', position: 0.2 },
+        { id: 'c', position: 0.3 },
+      ],
+      idOfItemToMove: 'c',
+      idOfTargetItem: 'b',
+      isDroppedAfterList: false,
+    });
+
+    expect(result).toBe(0.15);
+  });
 });
