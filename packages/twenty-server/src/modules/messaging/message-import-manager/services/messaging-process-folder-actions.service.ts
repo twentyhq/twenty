@@ -15,6 +15,7 @@ import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scope
 
 export type ProcessFolderActionsResult = {
   messageExternalIdsToImport: string[];
+  completedImportFolderIds: string[];
 };
 
 @Injectable()
@@ -43,7 +44,10 @@ export class MessagingProcessFolderActionsService {
     );
 
     if (foldersWithPendingActions.length === 0) {
-      return { messageExternalIdsToImport: [] };
+      return {
+        messageExternalIdsToImport: [],
+        completedImportFolderIds: [],
+      };
     }
 
     this.logger.log(
@@ -52,7 +56,7 @@ export class MessagingProcessFolderActionsService {
 
     const messageExternalIdsToImport = new Set<string>();
     const folderIdsToDelete: string[] = [];
-    const processedFolderIds: string[] = [];
+    const completedImportFolderIds: string[] = [];
     const failedFolderIds: Array<{ folderId: string; error: Error }> = [];
 
     for (const folder of foldersWithPendingActions) {
@@ -87,14 +91,14 @@ export class MessagingProcessFolderActionsService {
               messageExternalIdsToImport.add(messageExternalId);
             }
 
+            completedImportFolderIds.push(folder.id);
+
             this.logger.debug(
-              `WorkspaceId: ${workspaceId}, MessageChannelId: ${messageChannel.id}, FolderId: ${folder.id} - Completed FOLDER_IMPORT action`,
+              `WorkspaceId: ${workspaceId}, MessageChannelId: ${messageChannel.id}, FolderId: ${folder.id} - Enumerated ${folderMessageExternalIdsToImport.length} message ids for FOLDER_IMPORT action`,
             );
             break;
           }
         }
-
-        processedFolderIds.push(folder.id);
       } catch (error) {
         this.logger.error(
           `WorkspaceId: ${workspaceId}, MessageChannelId: ${messageChannel.id}, FolderId: ${folder.id} - Error processing folder action: ${error.message}`,
@@ -110,32 +114,18 @@ export class MessagingProcessFolderActionsService {
       );
     }
 
-    if (processedFolderIds.length > 0 || folderIdsToDelete.length > 0) {
+    if (folderIdsToDelete.length > 0) {
       const authContext = buildSystemAuthContext(workspaceId);
 
       await this.workspaceOrmManager.executeInWorkspaceContext(
         async () => {
-          if (processedFolderIds.length > 0) {
-            await this.messageFolderRepository.update(
-              workspaceId,
-              { id: In(processedFolderIds) },
-              { pendingSyncAction: MessageFolderPendingSyncAction.NONE },
-            );
+          await this.messageFolderRepository.delete(workspaceId, {
+            id: In(folderIdsToDelete),
+          });
 
-            this.logger.debug(
-              `WorkspaceId: ${workspaceId}, MessageChannelId: ${messageChannel.id} - Reset pendingSyncAction to NONE for ${processedFolderIds.length} folders`,
-            );
-          }
-
-          if (folderIdsToDelete.length > 0) {
-            await this.messageFolderRepository.delete(workspaceId, {
-              id: In(folderIdsToDelete),
-            });
-
-            this.logger.log(
-              `WorkspaceId: ${workspaceId}, MessageChannelId: ${messageChannel.id} - Deleted ${folderIdsToDelete.length} folders`,
-            );
-          }
+          this.logger.log(
+            `WorkspaceId: ${workspaceId}, MessageChannelId: ${messageChannel.id} - Deleted ${folderIdsToDelete.length} folders`,
+          );
         },
         authContext,
         { lite: true },
@@ -144,6 +134,38 @@ export class MessagingProcessFolderActionsService {
 
     return {
       messageExternalIdsToImport: [...messageExternalIdsToImport],
+      completedImportFolderIds,
     };
+  }
+
+  // FOLDER_IMPORT ids only become durable once the caller has filtered and
+  // written them to the import queue, so the action is cleared here instead of
+  // when the ids are enumerated: clearing it earlier loses the whole backfill
+  // whenever the sync fails between enumeration and the queue write.
+  async markFolderImportsAsCompleted(
+    folderIds: string[],
+    workspaceId: string,
+  ): Promise<void> {
+    if (folderIds.length === 0) {
+      return;
+    }
+
+    const authContext = buildSystemAuthContext(workspaceId);
+
+    await this.workspaceOrmManager.executeInWorkspaceContext(
+      async () => {
+        await this.messageFolderRepository.update(
+          workspaceId,
+          { id: In(folderIds) },
+          { pendingSyncAction: MessageFolderPendingSyncAction.NONE },
+        );
+
+        this.logger.debug(
+          `WorkspaceId: ${workspaceId} - Reset pendingSyncAction to NONE for ${folderIds.length} folders`,
+        );
+      },
+      authContext,
+      { lite: true },
+    );
   }
 }

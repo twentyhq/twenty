@@ -17,6 +17,7 @@ import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system
 import { BlocklistRepository } from 'src/modules/blocklist/repositories/blocklist.repository';
 import { EmailAliasManagerService } from 'src/modules/connected-account/email-alias-manager/services/email-alias-manager.service';
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
+import { MESSAGING_MESSAGES_TO_IMPORT_TTL } from 'src/modules/messaging/message-import-manager/constants/messaging-messages-to-import-ttl.constant';
 import {
   MessageImportDriverException,
   MessageImportDriverExceptionCode,
@@ -242,6 +243,7 @@ export class MessagingMessagesImportService {
           await this.cacheStorage.setAdd(
             `messages-to-import:${workspaceId}:${messageChannel.id}`,
             messageIdsToFetch,
+            MESSAGING_MESSAGES_TO_IMPORT_TTL,
           );
 
           await this.messageImportErrorHandlerService.handleDriverException(

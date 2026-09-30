@@ -20,6 +20,7 @@ import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/se
 import { type MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { MessagingMessageCleanerService } from 'src/modules/messaging/message-cleaner/services/messaging-message-cleaner.service';
 import { SyncMessageFoldersService } from 'src/modules/messaging/message-folder-manager/services/sync-message-folders.service';
+import { MESSAGING_MESSAGES_TO_IMPORT_TTL } from 'src/modules/messaging/message-import-manager/constants/messaging-messages-to-import-ttl.constant';
 import { MessagingCursorService } from 'src/modules/messaging/message-import-manager/services/messaging-cursor.service';
 import { MessagingGetMessageListService } from 'src/modules/messaging/message-import-manager/services/messaging-get-message-list.service';
 import {
@@ -34,8 +35,6 @@ import {
 import { MessagingProcessGroupEmailActionsService } from 'src/modules/messaging/message-import-manager/services/messaging-process-group-email-actions.service';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { filterMessageExternalIdsToDelete } from 'src/modules/messaging/message-import-manager/utils/filter-message-external-ids-to-delete.util';
-
-const ONE_WEEK_IN_MILLISECONDS = 7 * 24 * 60 * 60 * 1000;
 
 @Injectable()
 export class MessagingMessageListFetchService {
@@ -104,6 +103,8 @@ export class MessagingMessageListFetchService {
             return;
           }
 
+          const messagesToImportCacheKey = `messages-to-import:${workspaceId}:${freshMessageChannel.id}`;
+
           const messageFolders =
             await this.syncMessageFoldersService.syncMessageFolders({
               messageChannel: freshMessageChannel,
@@ -121,10 +122,9 @@ export class MessagingMessageListFetchService {
               messageFoldersToSync,
             );
 
-          await this.cacheStorage.del(
-            `messages-to-import:${workspaceId}:${freshMessageChannel.id}`,
-          );
-
+          // The queue is never replaced wholesale: a cursor-based list fetch
+          // only reports deltas, so dropping it would silently discard the
+          // historical folder backfill that has not been imported yet.
           const messageExternalIds = [
             ...messageLists.flatMap(
               (messageList) => messageList.messageExternalIds,
@@ -189,12 +189,21 @@ export class MessagingMessageListFetchService {
               totalMessagesToImportCount += messageExternalIdsToImport.length;
 
               await this.cacheStorage.setAdd(
-                `messages-to-import:${workspaceId}:${freshMessageChannel.id}`,
+                messagesToImportCacheKey,
                 messageExternalIdsToImport,
-                ONE_WEEK_IN_MILLISECONDS,
+                MESSAGING_MESSAGES_TO_IMPORT_TTL,
               );
             }
           }
+
+          await this.cacheStorage.expire(
+            messagesToImportCacheKey,
+            MESSAGING_MESSAGES_TO_IMPORT_TTL,
+          );
+          await this.messagingProcessFolderActionsService.markFolderImportsAsCompleted(
+            processedfolderActionsResult?.completedImportFolderIds ?? [],
+            workspaceId,
+          );
 
           for (const messageList of messageLists) {
             const { nextSyncCursor, folderId } = messageList;
@@ -227,6 +236,11 @@ export class MessagingMessageListFetchService {
             });
 
           if (allMessageExternalIdsToDelete.length) {
+            await this.cacheStorage.setRemove(
+              messagesToImportCacheKey,
+              allMessageExternalIdsToDelete,
+            );
+
             this.logger.log(
               `WorkspaceId: ${workspaceId}, MessageChannelId: ${freshMessageChannel.id} - Deleting ${allMessageExternalIdsToDelete.length} message channel message associations`,
             );
@@ -248,11 +262,14 @@ export class MessagingMessageListFetchService {
             }
           }
 
+          const pendingMessagesToImportCount =
+            await this.cacheStorage.getSetLength(messagesToImportCacheKey);
+
           this.logger.log(
-            `WorkspaceId: ${workspaceId}, MessageChannelId: ${freshMessageChannel.id} - Total messages to import count: ${totalMessagesToImportCount}`,
+            `WorkspaceId: ${workspaceId}, MessageChannelId: ${freshMessageChannel.id} - Total messages to import count: ${totalMessagesToImportCount}, pending in queue: ${pendingMessagesToImportCount}`,
           );
 
-          if (totalMessagesToImportCount === 0) {
+          if (pendingMessagesToImportCount === 0) {
             await this.messageChannelSyncStatusService.markAsMessageSyncCompleted(
               [freshMessageChannel.id],
               workspaceId,
