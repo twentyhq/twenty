@@ -7,31 +7,39 @@ import {
 } from 'twenty-shared/utils';
 
 import { useProjectAiChatThreadToUrl } from '@/ai/hooks/useProjectAiChatThreadToUrl';
+import { useRefreshAgentChatThreads } from '@/ai/hooks/useRefreshAgentChatThreads';
 import {
   AGENT_CHAT_NEW_THREAD_DRAFT_KEY,
   agentChatDraftsByThreadIdState,
 } from '@/ai/states/agentChatDraftsByThreadIdState';
 import { agentChatInputState } from '@/ai/states/agentChatInputState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
+import { agentChatThreadsSelector } from '@/ai/states/selectors/agentChatThreadsSelector';
 import { agentChatVisibleThreadsSelector } from '@/ai/states/selectors/agentChatVisibleThreadsSelector';
 import { sortChatThreadsByLastActivityDesc } from '@/ai/utils/sortChatThreadsByLastActivityDesc';
-import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
-import { type FlatAgentChatThread } from '@/metadata-store/types/FlatAgentChatThread';
 import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 
 export const useLeaveRemovedAiChatThread = () => {
   const store = useStore();
   const { projectAiChatThreadToUrl } = useProjectAiChatThreadToUrl();
+  const { loadAgentChatThread } = useRefreshAgentChatThreads();
 
-  const leaveRemovedAiChatThread = useCallback(() => {
+  const leaveRemovedAiChatThread = useCallback(async () => {
     const currentThreadId = store.get(currentAiChatThreadState.atom);
-    const threads = store.get(metadataStoreState.atomFamily('agentChatThreads'))
-      .current as FlatAgentChatThread[];
+    const threads = store.get(agentChatThreadsSelector.atom);
 
     if (
       !isDefined(currentThreadId) ||
       !isValidUuid(currentThreadId) ||
       threads.some(({ id }) => id === currentThreadId)
+    ) {
+      return;
+    }
+
+    // Only the first page is reloaded, so an older chat is looked up first
+    if (
+      (await loadAgentChatThread(currentThreadId)) !== null ||
+      store.get(currentAiChatThreadState.atom) !== currentThreadId
     ) {
       return;
     }
@@ -50,7 +58,7 @@ export const useLeaveRemovedAiChatThread = () => {
       agentChatInputState.atom,
       tipTapDocumentToMarkdown(draftsByThreadId[nextThreadId] ?? ''),
     );
-  }, [store, projectAiChatThreadToUrl]);
+  }, [store, projectAiChatThreadToUrl, loadAgentChatThread]);
 
   return { leaveRemovedAiChatThread };
 };

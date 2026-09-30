@@ -8,6 +8,7 @@ import { updateOneOperationFactory } from 'test/integration/graphql/utils/update
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { setManualRecordShare } from 'test/integration/utils/set-manual-record-share.util';
 import { destroyAgentChatThread } from 'test/integration/utils/destroy-agent-chat-thread.util';
+import { listChatThreadIds } from 'test/integration/utils/list-chat-thread-ids.util';
 import { type AgentChatActorService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-actor.service';
 import { buildWorkspaceSetupChatThreadId } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-workspace-setup-chat-thread-id.util';
 import { type RecordShareStorageService } from 'src/engine/core-modules/record-share/services/record-share-storage.service';
@@ -197,16 +198,8 @@ describe('Conversation sharing through the authenticated API', () => {
         title: 'Private sharing regression',
       });
       const read = () => readThread(threadId, APPLE_JONY_MEMBER_ACCESS_TOKEN);
-      const listedThreadIds = async () => {
-        const response = await makeMetadataApiRequest(
-          { query: parse('query ReadableThreads { chatThreads { id } }') },
-          APPLE_JONY_MEMBER_ACCESS_TOKEN,
-        );
-        expect(response.body.errors).toBeUndefined();
-        return response.body.data.chatThreads.map(
-          ({ id }: { id: string }) => id,
-        );
-      };
+      const listedThreadIds = () =>
+        listChatThreadIds(APPLE_JONY_MEMBER_ACCESS_TOKEN);
       const changeShare = (enabled: boolean) =>
         makeMetadataApiRequest({
           query: SET_SHARE,
@@ -586,11 +579,9 @@ describe('Conversation sharing through the authenticated API', () => {
       expect(
         (await chatService.getWritableThread(owner)).deletedAt,
       ).not.toBeNull();
-      expect(
-        (await chatService.getThreadsForMember(owner)).some(
-          ({ id }) => id === owner.threadId,
-        ),
-      ).toBe(true);
+      expect(await listChatThreadIds(APPLE_JANE_ADMIN_ACCESS_TOKEN)).toContain(
+        owner.threadId,
+      );
       expect((await readThread(owner.threadId)).body.errors).toBeUndefined();
       const restoredTwice = await Promise.all([
         chatService.restoreThread(owner),

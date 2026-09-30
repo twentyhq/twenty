@@ -10,12 +10,12 @@ import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDrop
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { NavigationDrawerInput } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerInput';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
-import { type AgentChatThread } from '~/generated-metadata/graphql';
+import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 
 type NavigationDrawerAiChatThreadItemProps = {
-  thread: AgentChatThread;
+  thread: AgentChatThreadRecord;
   isActive: boolean;
-  onClick: (thread: AgentChatThread) => void;
+  onClick: (thread: AgentChatThreadRecord) => void;
 };
 
 export const NavigationDrawerAiChatThreadItem = ({
