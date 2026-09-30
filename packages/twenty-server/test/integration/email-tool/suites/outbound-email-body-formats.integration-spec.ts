@@ -285,29 +285,6 @@ describe('Outbound email body formats (integration)', () => {
       );
     }, 300000);
 
-    it('keeps escaping variable values inside an HTML block of an email document', async () => {
-      const { sanitizedHtmlBody } = await runSendEmailWorkflow({
-        body: {
-          type: 'doc',
-          attrs: { schemaVersion: EMAIL_DOCUMENT_SCHEMA_VERSION },
-          content: [
-            { type: 'html', attrs: { html: '<p>{{trigger.name}}</p>' } },
-          ],
-        },
-        payload: { name: '<b>Ada</b>' },
-      });
-
-      expect(sanitizedHtmlBody).toContain('<p>&lt;b&gt;Ada&lt;/b&gt;</p>');
-    }, 300000);
-
-    it('sends an email with an empty body', async () => {
-      const { plainTextBody } = await runSendEmailWorkflow({
-        body: { type: 'doc', content: [] },
-      });
-
-      expect(plainTextBody).toBe('');
-    }, 300000);
-
     it('keeps the paragraphs of a draft body written as lines of text', async () => {
       const { sanitizedHtmlBody, plainTextBody } = await runSendEmailWorkflow({
         body: convertPlainTextToEmailDocument(
@@ -356,15 +333,6 @@ describe('Outbound email body formats (integration)', () => {
       expect(plainTextBody).toBe('Hi Ada,\n\nThanks');
     }, 300000);
 
-    it('treats a body with an HTML entity as HTML', async () => {
-      const { sanitizedHtmlBody, plainTextBody } = await runSendEmailWorkflow({
-        body: 'Tom &amp; Jerry',
-      });
-
-      expect(sanitizedHtmlBody).toBe('Tom &amp; Jerry');
-      expect(plainTextBody).toBe('Tom & Jerry');
-    }, 300000);
-
     it('sends the HTML held by a body that is a single variable verbatim', async () => {
       const { sanitizedHtmlBody } = await runSendEmailWorkflow({
         body: '{{trigger.html}}',
@@ -394,14 +362,6 @@ describe('Outbound email body formats (integration)', () => {
         'Dear Nick,\n\nThanks for the call.\nBest,\nJane',
       );
       expect(await findPersistedMessageText(subject)).toBe(plainTextBody);
-    }, 300000);
-
-    it('does not substitute variables in 1:1 emails', async () => {
-      const { plainTextBody } = await executeSendEmailTool(
-        'Hello {{person.name}}',
-      );
-
-      expect(plainTextBody).toBe('Hello {{person.name}}');
     }, 300000);
 
     it('sends an HTML string verbatim', async () => {

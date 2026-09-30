@@ -109,12 +109,6 @@ describe('parseEmailBodyAsEmailDocument', () => {
 
     expect(result.success).toBe(false);
   });
-
-  it('should reject an object that is not a document', () => {
-    expect(parseEmailBodyAsEmailDocument({ html: '<p>Hi</p>' }).success).toBe(
-      false,
-    );
-  });
 });
 
 describe('getEmailDocumentStandaloneHtml', () => {

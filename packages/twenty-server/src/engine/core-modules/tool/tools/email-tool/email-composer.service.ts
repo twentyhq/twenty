@@ -443,8 +443,9 @@ export class EmailComposerService {
     const bodyParseResult = parseEmailBodyAsEmailDocument(body ?? '');
 
     if (!bodyParseResult.success) {
-      throw new Error(
+      throw new EmailToolException(
         `Invalid outbound email document: ${bodyParseResult.error}`,
+        EmailToolExceptionCode.INVALID_EMAIL_BODY,
       );
     }
 

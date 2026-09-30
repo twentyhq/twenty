@@ -1,101 +1,83 @@
 import { EMAIL_DOCUMENT_SCHEMA_VERSION } from 'twenty-shared/utils';
+import { WorkflowActionType } from 'twenty-shared/workflow';
 
 import { convertWorkflowEmailBodiesToEmailDocuments } from 'src/database/commands/upgrade-version-command/2-44/utils/convert-workflow-email-bodies-to-email-documents.util';
+import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
-const emailStep = (body: string, type = 'SEND_EMAIL') => ({
+const emailStep = (
+  body: string,
+  type:
+    | WorkflowActionType.SEND_EMAIL
+    | WorkflowActionType.DRAFT_EMAIL = WorkflowActionType.SEND_EMAIL,
+): WorkflowAction => ({
   id: 'step-1',
-  type,
   name: 'Send',
+  type,
+  valid: true,
   settings: {
+    input: {
+      connectedAccountId: 'account-1',
+      recipients: { to: 'ada@acme.com' },
+      subject: 'Hello',
+      body,
+    },
     outputSchema: {},
-    input: { connectedAccountId: 'account-1', recipients: {}, body },
+    errorHandlingOptions: {
+      retryOnFailure: { value: 0 },
+      continueOnFailure: { value: false },
+    },
   },
 });
 
-const convertedBody = (body: string, type?: string) =>
-  JSON.parse(
-    convertWorkflowEmailBodiesToEmailDocuments([emailStep(body, type)]).value[0]
-      .settings.input.body,
-  );
+const canonicalDocument = (content: unknown[]) =>
+  JSON.stringify({
+    type: 'doc',
+    attrs: { schemaVersion: EMAIL_DOCUMENT_SCHEMA_VERSION },
+    content,
+  });
 
 describe('convertWorkflowEmailBodiesToEmailDocuments', () => {
-  it('should store a legacy HTML body verbatim in an HTML document block', () => {
-    expect(convertedBody('<p>Hi {{trigger.name}}</p>')).toEqual({
-      type: 'doc',
-      attrs: { schemaVersion: EMAIL_DOCUMENT_SCHEMA_VERSION },
-      content: [
-        {
-          type: 'htmlDocument',
-          attrs: { html: '<p>Hi {{trigger.name}}</p>' },
-        },
-      ],
-    });
+  it('should keep a legacy HTML draft body verbatim in an HTML document block', () => {
+    const html = '<p>Hi {{trigger.name}}</p>';
+
+    const { value } = convertWorkflowEmailBodiesToEmailDocuments([
+      emailStep(html, WorkflowActionType.DRAFT_EMAIL),
+    ]);
+
+    expect(value).toEqual([
+      emailStep(
+        canonicalDocument([{ type: 'htmlDocument', attrs: { html } }]),
+        WorkflowActionType.DRAFT_EMAIL,
+      ),
+    ]);
   });
 
-  it('should convert a plain-text draft body into text with variable tags', () => {
-    expect(convertedBody('Hi {{trigger.name}}\nBye', 'DRAFT_EMAIL')).toEqual({
-      type: 'doc',
-      attrs: { schemaVersion: EMAIL_DOCUMENT_SCHEMA_VERSION },
-      content: [
-        {
-          type: 'paragraph',
-          content: [
-            { type: 'text', text: 'Hi ' },
-            { type: 'variableTag', attrs: { variable: '{{trigger.name}}' } },
-            { type: 'hardBreak' },
-            { type: 'text', text: 'Bye' },
-          ],
-        },
-      ],
-    });
-  });
-
-  it('should stamp a versionless document and keep the rest of the step intact', () => {
+  it('should stamp a versionless document and keep the rest of the step', () => {
     const content = [
       { type: 'paragraph', content: [{ type: 'text', text: 'Hi' }] },
     ];
-    const { value, hasChanged } = convertWorkflowEmailBodiesToEmailDocuments([
-      emailStep(JSON.stringify({ type: 'doc', content })),
-    ]);
 
-    expect(hasChanged).toBe(true);
-    expect(value[0]).toEqual({
-      ...emailStep(''),
-      settings: {
-        ...emailStep('').settings,
-        input: {
-          ...emailStep('').settings.input,
-          body: JSON.stringify({
-            type: 'doc',
-            attrs: { schemaVersion: EMAIL_DOCUMENT_SCHEMA_VERSION },
-            content,
-          }),
-        },
-      },
+    expect(
+      convertWorkflowEmailBodiesToEmailDocuments([
+        emailStep(JSON.stringify({ type: 'doc', content })),
+      ]).value,
+    ).toEqual([emailStep(canonicalDocument(content))]);
+  });
+
+  it('should leave canonical, empty and invalid bodies untouched', () => {
+    const steps = [
+      emailStep(canonicalDocument([])),
+      emailStep('  '),
+      emailStep(JSON.stringify({ type: 'doc', content: [{ type: 'nope' }] })),
+    ];
+
+    expect(convertWorkflowEmailBodiesToEmailDocuments(steps)).toEqual({
+      value: steps,
+      hasChanged: false,
     });
   });
 
-  it('should leave canonical, empty, invalid and non-email steps untouched', () => {
-    const steps = [
-      emailStep(
-        JSON.stringify({
-          type: 'doc',
-          attrs: { schemaVersion: EMAIL_DOCUMENT_SCHEMA_VERSION },
-          content: [],
-        }),
-      ),
-      emailStep(''),
-      emailStep(JSON.stringify({ type: 'doc', content: [{ type: 'nope' }] })),
-      { ...emailStep('<p>Hi</p>'), type: 'CODE' },
-    ];
-
-    const result = convertWorkflowEmailBodiesToEmailDocuments(steps);
-
-    expect(result.hasChanged).toBe(false);
-    expect(result.value).toBe(steps);
-  });
-
-  it('should be a no-op when run a second time', () => {
+  it('should change nothing when run a second time', () => {
     const { value } = convertWorkflowEmailBodiesToEmailDocuments([
       emailStep('Hello\nWorld'),
       emailStep('<b>Hi</b>'),

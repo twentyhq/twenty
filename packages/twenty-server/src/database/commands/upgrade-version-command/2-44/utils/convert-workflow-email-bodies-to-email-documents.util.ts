@@ -1,21 +1,16 @@
-import { isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyString, isString } from '@sniptt/guards';
 import {
   parseCanonicalEmailDocument,
   parseEmailBodyAsEmailDocument,
   parseJson,
 } from 'twenty-shared/utils';
 import { WorkflowActionType } from 'twenty-shared/workflow';
-import { z } from 'zod';
 
-const emailStepSchema = z.object({
-  type: z.enum([WorkflowActionType.SEND_EMAIL, WorkflowActionType.DRAFT_EMAIL]),
-  settings: z.object({
-    input: z.object({ body: z.string() }),
-  }),
-});
+import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
-const convertBodyToEmailDocumentJson = (body: string): string | undefined => {
+const convertBodyToEmailDocumentJson = (body: unknown): string | undefined => {
   if (
+    !isString(body) ||
     !isNonEmptyString(body.trim()) ||
     parseCanonicalEmailDocument(parseJson<unknown>(body)).success
   ) {
@@ -27,40 +22,42 @@ const convertBodyToEmailDocumentJson = (body: string): string | undefined => {
   return parseResult.success ? JSON.stringify(parseResult.document) : undefined;
 };
 
-export const convertWorkflowEmailBodiesToEmailDocuments = <TSteps>(
-  steps: TSteps,
-): { value: TSteps; hasChanged: boolean } => {
+const convertEmailStepBody = (step: WorkflowAction): WorkflowAction => {
+  if (
+    step.type !== WorkflowActionType.SEND_EMAIL &&
+    step.type !== WorkflowActionType.DRAFT_EMAIL
+  ) {
+    return step;
+  }
+
+  const convertedBody = convertBodyToEmailDocumentJson(
+    step.settings.input.body,
+  );
+
+  if (convertedBody === undefined) {
+    return step;
+  }
+
+  return {
+    ...step,
+    settings: {
+      ...step.settings,
+      input: { ...step.settings.input, body: convertedBody },
+    },
+  };
+};
+
+export const convertWorkflowEmailBodiesToEmailDocuments = (
+  steps: WorkflowAction[] | null,
+): { value: WorkflowAction[] | null; hasChanged: boolean } => {
   if (!Array.isArray(steps)) {
     return { value: steps, hasChanged: false };
   }
 
-  let hasChanged = false;
+  const convertedSteps = steps.map(convertEmailStepBody);
+  const hasChanged = convertedSteps.some(
+    (convertedStep, index) => convertedStep !== steps[index],
+  );
 
-  const nextSteps = steps.map((step) => {
-    const parsedStep = emailStepSchema.safeParse(step);
-
-    if (!parsedStep.success) {
-      return step;
-    }
-
-    const convertedBody = convertBodyToEmailDocumentJson(
-      parsedStep.data.settings.input.body,
-    );
-
-    if (convertedBody === undefined) {
-      return step;
-    }
-
-    hasChanged = true;
-
-    return {
-      ...step,
-      settings: {
-        ...step.settings,
-        input: { ...step.settings.input, body: convertedBody },
-      },
-    };
-  });
-
-  return { value: hasChanged ? (nextSteps as TSteps) : steps, hasChanged };
+  return { value: hasChanged ? convertedSteps : steps, hasChanged };
 };
