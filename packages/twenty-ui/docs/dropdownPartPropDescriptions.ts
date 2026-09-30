@@ -29,8 +29,6 @@ const DROPDOWN_ROOT_PROP_DESCRIPTIONS = {
 const DROPDOWN_ITEM_PROP_DESCRIPTIONS = {
   shortcutJoinLabel:
     'Text between sequential shortcut steps. Defaults to `then`.',
-  shortcutAccessibleKeyLabels:
-    'Localized accessible key names forwarded to Shortcut. Missing entries retain the default name; display symbols are unchanged.',
   className: 'CSS class applied to the row.',
   style: 'Inline styles applied to the row.',
   render:

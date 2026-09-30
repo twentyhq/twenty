@@ -18,7 +18,6 @@ export const DropdownActionItem = ({
   descriptionPlacement,
   shortcut,
   shortcutJoinLabel,
-  shortcutAccessibleKeyLabels,
   hasSubmenu,
   children,
   render,
@@ -96,7 +95,6 @@ export const DropdownActionItem = ({
           descriptionPlacement={descriptionPlacement}
           shortcut={shortcut}
           shortcutJoinLabel={shortcutJoinLabel}
-          shortcutAccessibleKeyLabels={shortcutAccessibleKeyLabels}
           hasSubmenu={hasSubmenu ?? isDefined(page)}
         >
           {children}

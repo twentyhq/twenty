@@ -25,7 +25,6 @@ export const getMenuListItemProps = <
     descriptionPlacement,
     shortcut,
     shortcutJoinLabel,
-    shortcutAccessibleKeyLabels,
     disabled = false,
     children,
     render,
@@ -56,7 +55,6 @@ export const getMenuListItemProps = <
       descriptionPlacement={descriptionPlacement}
       shortcut={shortcut}
       shortcutJoinLabel={shortcutJoinLabel}
-      shortcutAccessibleKeyLabels={shortcutAccessibleKeyLabels}
       {...getListItemState?.(state)}
     >
       {children}

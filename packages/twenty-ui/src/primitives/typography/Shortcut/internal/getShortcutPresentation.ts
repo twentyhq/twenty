@@ -26,7 +26,6 @@ export const getShortcutPresentation = ({
   platform,
   sequenceJoinLabel = 'then',
   combinationSeparator,
-  accessibleKeyLabels,
 }: ShortcutFormatOptions) => {
   const device = getUserDevice();
   const isMac =
@@ -55,13 +54,7 @@ export const getShortcutPresentation = ({
     text: groups.map((keys) => keys.join(separator)).join(sequenceSeparator),
     accessibleLabel: groups
       .map((keys) =>
-        keys
-          .map((key) => {
-            const accessibleKey = ACCESSIBLE_KEY_LABELS.get(key) ?? key;
-
-            return accessibleKeyLabels?.[accessibleKey] ?? accessibleKey;
-          })
-          .join(' + '),
+        keys.map((key) => ACCESSIBLE_KEY_LABELS.get(key) ?? key).join(' + '),
       )
       .join(sequenceSeparator),
   };

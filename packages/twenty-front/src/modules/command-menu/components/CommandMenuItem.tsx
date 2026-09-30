@@ -1,5 +1,4 @@
 import { type CommandMenuItemProps } from '@/command-menu/types/CommandMenuItemProps';
-import { useShortcutAccessibleKeyLabels } from '@/ui/utilities/hotkey/hooks/useShortcutAccessibleKeyLabels';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { MenuItem } from 'twenty-ui/components';
@@ -26,7 +25,6 @@ export const CommandMenuItem = ({
   disabled = false,
 }: CommandMenuItemProps) => {
   const { t } = useLingui();
-  const shortcutAccessibleKeyLabels = useShortcutAccessibleKeyLabels();
   const { onItemClick } = useCommandMenuOnItemClick();
 
   if (isNonEmptyString(to) && !Icon) {
@@ -52,7 +50,6 @@ export const CommandMenuItem = ({
           : undefined
       }
       shortcutJoinLabel={t`then`}
-      shortcutAccessibleKeyLabels={shortcutAccessibleKeyLabels}
       onClick={
         onClick || to
           ? () =>

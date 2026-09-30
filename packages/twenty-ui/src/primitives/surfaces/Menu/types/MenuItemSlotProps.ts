@@ -9,5 +9,4 @@ export type MenuItemSlotProps = Pick<
   | 'descriptionPlacement'
   | 'shortcut'
   | 'shortcutJoinLabel'
-  | 'shortcutAccessibleKeyLabels'
 >;

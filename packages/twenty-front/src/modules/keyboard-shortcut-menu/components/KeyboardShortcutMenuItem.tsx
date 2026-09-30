@@ -1,7 +1,6 @@
 import { type Shortcut as ShortcutMenuEntry } from '@/keyboard-shortcut-menu/types/Shortcut';
 import { styled } from '@linaria/react';
-import { useLingui } from '@lingui/react/macro';
-import { useShortcutAccessibleKeyLabels } from '@/ui/utilities/hotkey/hooks/useShortcutAccessibleKeyLabels';
+import { t } from '@lingui/core/macro';
 import { Fragment } from 'react';
 import { Shortcut } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -26,25 +25,16 @@ type KeyboardMenuItemProps = {
   shortcut: ShortcutMenuEntry;
 };
 
-export const KeyboardMenuItem = ({ shortcut }: KeyboardMenuItemProps) => {
-  const { t } = useLingui();
-  const accessibleKeyLabels = useShortcutAccessibleKeyLabels();
-
-  return (
-    <StyledItem>
-      {shortcut.label}
-      <StyledShortcuts>
-        {shortcut.shortcuts.map((definition, index) => (
-          <Fragment key={index}>
-            {index > 0 && t`or`}
-            <Shortcut
-              shortcut={definition}
-              sequenceJoinLabel={t`then`}
-              accessibleKeyLabels={accessibleKeyLabels}
-            />
-          </Fragment>
-        ))}
-      </StyledShortcuts>
-    </StyledItem>
-  );
-};
+export const KeyboardMenuItem = ({ shortcut }: KeyboardMenuItemProps) => (
+  <StyledItem>
+    {shortcut.label}
+    <StyledShortcuts>
+      {shortcut.shortcuts.map((definition, index) => (
+        <Fragment key={index}>
+          {index > 0 && t`or`}
+          <Shortcut shortcut={definition} sequenceJoinLabel={t`then`} />
+        </Fragment>
+      ))}
+    </StyledShortcuts>
+  </StyledItem>
+);

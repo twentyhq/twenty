@@ -20,7 +20,6 @@ export const DropdownOptionItem = ({
   descriptionPlacement,
   shortcut,
   shortcutJoinLabel,
-  shortcutAccessibleKeyLabels,
   hasSubmenu,
   children,
   render,
@@ -82,7 +81,6 @@ export const DropdownOptionItem = ({
           descriptionPlacement={descriptionPlacement}
           shortcut={shortcut}
           shortcutJoinLabel={shortcutJoinLabel}
-          shortcutAccessibleKeyLabels={shortcutAccessibleKeyLabels}
           hasSubmenu={hasSubmenu}
         >
           {children}

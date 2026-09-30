@@ -27,7 +27,6 @@ export const ListItem = ({
   actionsVisibility = 'hover',
   shortcut,
   shortcutJoinLabel,
-  shortcutAccessibleKeyLabels,
   hasSubmenu = false,
   className,
   children,
@@ -99,7 +98,6 @@ export const ListItem = ({
               className={styles.hotkeys}
               shortcut={shortcut}
               sequenceJoinLabel={shortcutJoinLabel}
-              accessibleKeyLabels={shortcutAccessibleKeyLabels}
             />
           )}
           {isRenderableSlot(endIcon) && (
