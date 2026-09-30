@@ -1,4 +1,5 @@
 import { isAncestorOrSelfOfNode } from '@/polyfills/dom/utils/isAncestorOrSelfOfNode';
+import { STATE_PSEUDO_CLASS_MATCHER_BY_NAME } from '@/polyfills/selectors/constants/StatePseudoClassMatcherByName';
 import { UNOBSERVABLE_PSEUDO_CLASS_NAMES } from '@/polyfills/selectors/constants/UnobservablePseudoClassNames';
 import { type CssSelectPseudoClassMatchers } from '@/polyfills/selectors/types/CssSelectPseudoClassMatchers';
 import { type SelectorElementLike } from '@/polyfills/selectors/types/SelectorElementLike';
@@ -17,8 +18,10 @@ const isAlwaysMatching = (_element: SelectorElementLike): boolean => true;
 
 export const buildSelectorPseudoClassMatchers = ({
   resolveActiveElement,
+  resolveFocusVisibleElement,
 }: {
   resolveActiveElement: () => object | null;
+  resolveFocusVisibleElement: () => object | null;
 }): CssSelectPseudoClassMatchers => {
   const isActiveElement = (element: SelectorElementLike): boolean =>
     element === resolveActiveElement();
@@ -30,11 +33,21 @@ export const buildSelectorPseudoClassMatchers = ({
         isNeverMatching,
       ]),
     ),
+    // css-select's built-in aliases such as :disabled win over matcher
+    // functions, so each state pseudo-class goes through a string alias.
+    ...Object.fromEntries(
+      Object.entries(STATE_PSEUDO_CLASS_MATCHER_BY_NAME).flatMap(
+        ([pseudoClassName, matcher]) => [
+          [pseudoClassName, `:twenty-${pseudoClassName}`],
+          [`twenty-${pseudoClassName}`, matcher],
+        ],
+      ),
+    ),
     state: isNeverMatchingWithArgument,
     defined: isAlwaysMatching,
     root: (element) => isDocumentNode(element.parentNode),
     focus: isActiveElement,
-    'focus-visible': isActiveElement,
+    'focus-visible': (element) => element === resolveFocusVisibleElement(),
     'focus-within': (element) =>
       isAncestorOrSelfOfNode(element, resolveActiveElement()),
   };

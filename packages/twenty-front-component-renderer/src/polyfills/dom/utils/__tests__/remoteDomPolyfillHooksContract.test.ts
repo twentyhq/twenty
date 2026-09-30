@@ -137,6 +137,8 @@ describe('@remote-dom/polyfill mutation hooks contract the worker MutationObserv
     ['Node', 'getRootNode'],
     ['Element', 'closest'],
     ['Element', 'matches'],
+    ['Element', 'focus'],
+    ['Element', 'blur'],
   ])(
     'still ships %s without %s, which the worker polyfills install itself',
     (className, methodName) => {

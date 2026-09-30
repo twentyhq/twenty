@@ -21,7 +21,7 @@ const StyledWaitingCount = styled.span`
 `;
 
 type AiChatPendingAskGateProps = {
-  threadId: string;
+  threadId: string | null;
   children: ReactNode;
 };
 
