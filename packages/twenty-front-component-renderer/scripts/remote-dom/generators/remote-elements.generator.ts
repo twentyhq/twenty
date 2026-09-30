@@ -122,12 +122,14 @@ const generateCommonEventsType = (
               'dispatchEvent(this: Element, eventData: SerializedEventData) {',
             );
             writer.indent(() => {
-              writer.writeLine('applySerializedEventTargetProperties(');
+              writer.writeLine('applySerializedEventTargetProperties({');
               writer.indent(() => {
-                writer.writeLine('this as unknown as Record<string, unknown>,');
+                writer.writeLine(
+                  'element: this as unknown as Record<string, unknown>,',
+                );
                 writer.writeLine('eventData,');
               });
-              writer.writeLine(');');
+              writer.writeLine('});');
               writer.blankLine();
               writer.writeLine('const event = new CustomEvent(eventType, {');
               writer.indent(() => {

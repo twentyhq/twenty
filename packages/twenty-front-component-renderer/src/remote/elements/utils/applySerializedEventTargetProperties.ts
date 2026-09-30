@@ -1,15 +1,33 @@
+import { isDefined } from 'twenty-shared/utils';
+
+import { applySelectedOptionIndexes } from '@/remote/elements/utils/applySelectedOptionIndexes';
+import { uncheckOtherRadioButtons } from '@/remote/elements/utils/uncheckOtherRadioButtons';
 import { type SerializedEventData } from '@/types/SerializedEventData';
 
-export const applySerializedEventTargetProperties = (
-  element: Record<string, unknown>,
-  eventData: SerializedEventData,
-): void => {
+export const applySerializedEventTargetProperties = ({
+  element,
+  eventData,
+}: {
+  element: Record<string, unknown>;
+  eventData: SerializedEventData;
+}): void => {
   if ('value' in eventData) {
     element.value = eventData.value;
   }
 
   if ('checked' in eventData) {
     element.checked = eventData.checked;
+  }
+
+  if (eventData.checked === true) {
+    uncheckOtherRadioButtons(element);
+  }
+
+  if (isDefined(eventData.selectedOptionIndexes)) {
+    applySelectedOptionIndexes({
+      element,
+      selectedOptionIndexes: eventData.selectedOptionIndexes,
+    });
   }
 
   if ('files' in eventData) {

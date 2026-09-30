@@ -3,6 +3,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type SelectorElementLike } from '@/polyfills/selectors/types/SelectorElementLike';
 import { collectOptionsOfSelect } from '@/polyfills/selectors/utils/collectOptionsOfSelect';
+import { hasElementAttributeIgnoringCase } from '@/polyfills/selectors/utils/hasElementAttributeIgnoringCase';
 import { isOptionSelectedByDefault } from '@/polyfills/selectors/utils/isOptionSelectedByDefault';
 import { readBooleanControlState } from '@/polyfills/selectors/utils/readBooleanControlState';
 import { resolveOptionValue } from '@/polyfills/selectors/utils/resolveOptionValue';
@@ -14,7 +15,11 @@ export const isOptionElementSelected = (
   const select = resolveOwnerSelectElement(option);
   const selectValue = select?.value;
 
-  if (isDefined(select) && isString(selectValue)) {
+  if (
+    isDefined(select) &&
+    isString(selectValue) &&
+    !hasElementAttributeIgnoringCase(select, 'multiple')
+  ) {
     return (
       collectOptionsOfSelect(select).find(
         (candidateOption) =>
