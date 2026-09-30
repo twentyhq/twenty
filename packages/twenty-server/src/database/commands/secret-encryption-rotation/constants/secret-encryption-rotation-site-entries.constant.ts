@@ -9,6 +9,7 @@ import { SigningKeyEntity } from 'src/engine/core-modules/jwt/entities/signing-k
 import { type ExtractEncryptedColumns } from 'src/engine/core-modules/secret-encryption/branded-strings/extract-encrypted-columns.type';
 import { TwoFactorAuthenticationMethodEntity } from 'src/engine/core-modules/two-factor-authentication/entities/two-factor-authentication-method.entity';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
+import { type WorkspaceCacheKeyName } from 'src/engine/workspace-cache/types/workspace-cache-key.type';
 
 type DedicatedRotationHandlerClass = Type<SecretEncryptionRotationHandler>;
 
@@ -17,6 +18,7 @@ type ColumnRotationSiteMetadata<E extends Type<unknown>> = {
   customHandler: DedicatedRotationHandlerClass | undefined;
   isWorkspaceScoped: boolean;
   extraWhere: Readonly<Partial<InstanceType<E>>> | undefined;
+  workspaceCacheKeyNames: readonly WorkspaceCacheKeyName[];
 };
 
 type SecretEncryptionRotationRegistryShape<R> = {
@@ -47,6 +49,7 @@ export const SECRET_ENCRYPTION_ROTATION_SITE_ENTRIES = defineRotationRegistry({
         customHandler: undefined,
         isWorkspaceScoped: false,
         extraWhere: undefined,
+        workspaceCacheKeyNames: [],
       },
     },
   },
@@ -58,6 +61,10 @@ export const SECRET_ENCRYPTION_ROTATION_SITE_ENTRIES = defineRotationRegistry({
         customHandler: undefined,
         isWorkspaceScoped: true,
         extraWhere: undefined,
+        workspaceCacheKeyNames: [
+          'applicationVariableMaps',
+          'flatApplicationVariableMaps',
+        ],
       },
     },
   },
@@ -69,18 +76,21 @@ export const SECRET_ENCRYPTION_ROTATION_SITE_ENTRIES = defineRotationRegistry({
         customHandler: undefined,
         isWorkspaceScoped: true,
         extraWhere: undefined,
+        workspaceCacheKeyNames: [],
       },
       refreshToken: {
         siteName: 'connected-account-refresh-token',
         customHandler: undefined,
         isWorkspaceScoped: true,
         extraWhere: undefined,
+        workspaceCacheKeyNames: [],
       },
       connectionParameters: {
         siteName: 'connected-account-connection-parameters',
         customHandler: ConnectionParametersRotationHandler,
         isWorkspaceScoped: false,
         extraWhere: undefined,
+        workspaceCacheKeyNames: [],
       },
     },
   },
@@ -92,6 +102,7 @@ export const SECRET_ENCRYPTION_ROTATION_SITE_ENTRIES = defineRotationRegistry({
         customHandler: undefined,
         isWorkspaceScoped: false,
         extraWhere: undefined,
+        workspaceCacheKeyNames: [],
       },
     },
   },
@@ -103,6 +114,7 @@ export const SECRET_ENCRYPTION_ROTATION_SITE_ENTRIES = defineRotationRegistry({
         customHandler: undefined,
         isWorkspaceScoped: true,
         extraWhere: undefined,
+        workspaceCacheKeyNames: [],
       },
     },
   },
