@@ -34,6 +34,8 @@ import { DuplicateMessageListSingleRecordCommand } from '@/command-menu-item/eng
 import { EditDashboardSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/dashboard/components/EditDashboardSingleRecordCommand';
 import { SaveDashboardSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/dashboard/components/SaveDashboardSingleRecordCommand';
 import { ReplyToEmailThreadCommand } from '@/command-menu-item/engine-command/record/single-record/message-thread/components/ReplyToEmailThreadCommand';
+import { NewAiChatSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/agent-chat-thread/components/NewAiChatSingleRecordCommand';
+import { ShareRecordCommand } from '@/command-menu-item/engine-command/record/components/ShareRecordCommand';
 import { SeeVersionWorkflowRunSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/workflow-runs/components/SeeVersionWorkflowRunSingleRecordCommand';
 import { SeeWorkflowWorkflowRunSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/workflow-runs/components/SeeWorkflowWorkflowRunSingleRecordCommand';
 import { RetryWorkflowRunSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/workflow-runs/components/RetryWorkflowRunSingleRecordCommand';
@@ -258,6 +260,8 @@ export const ENGINE_COMPONENT_KEY_COMPONENT_MAP: Record<
     <HeadlessFrontComponentRendererEngineCommand />
   ),
   [EngineComponentKey.REPLY_TO_EMAIL_THREAD]: <ReplyToEmailThreadCommand />,
+  [EngineComponentKey.NEW_AI_CHAT]: <NewAiChatSingleRecordCommand />,
+  [EngineComponentKey.SHARE_RECORD]: <ShareRecordCommand />,
   [EngineComponentKey.COMPOSE_EMAIL]: <ComposeEmailCommand />,
   [EngineComponentKey.COMPOSE_CAMPAIGN]: <ComposeCampaignCommand />,
   [EngineComponentKey.SEND_MESSAGE_CAMPAIGN]: (
