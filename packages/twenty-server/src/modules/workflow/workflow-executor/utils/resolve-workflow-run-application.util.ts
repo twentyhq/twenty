@@ -2,48 +2,40 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatApplicationCacheMaps } from 'src/engine/core-modules/application/types/flat-application-cache-maps.type';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
-import { type WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
 import { type WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import {
   WorkflowStepExecutorException,
   WorkflowStepExecutorExceptionCode,
 } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
 
-export const resolveWorkflowRunOwningApplication = ({
+export const resolveWorkflowRunApplication = ({
   workflowRun,
-  coreWorkflow,
   flatApplicationMaps,
-  workspaceOwnedApplicationIds,
 }: {
-  workflowRun: Pick<WorkflowRunWorkspaceEntity, 'coreWorkflowId'>;
-  coreWorkflow: Pick<WorkflowEntity, 'applicationId'> | null;
+  workflowRun: Pick<WorkflowRunWorkspaceEntity, 'createdBy'>;
   flatApplicationMaps: FlatApplicationCacheMaps;
-  workspaceOwnedApplicationIds: string[];
 }): FlatApplication | null => {
-  if (!isDefined(workflowRun.coreWorkflowId)) {
+  const applicationId = workflowRun.createdBy.context?.applicationId;
+
+  if (!isDefined(applicationId)) {
     return null;
   }
 
-  if (!isDefined(coreWorkflow)) {
+  const application = flatApplicationMaps.byId[applicationId];
+
+  if (!isDefined(application) || isDefined(application.deletedAt)) {
     throw new WorkflowStepExecutorException(
-      'The workflow of this run no longer exists, so the permissions to run its steps cannot be determined',
+      'The application this run acts through is no longer installed',
       WorkflowStepExecutorExceptionCode.FORBIDDEN,
     );
   }
 
-  if (workspaceOwnedApplicationIds.includes(coreWorkflow.applicationId)) {
-    return null;
-  }
-
-  const owningApplication =
-    flatApplicationMaps.byId[coreWorkflow.applicationId];
-
-  if (!isDefined(owningApplication) || isDefined(owningApplication.deletedAt)) {
+  if (!isDefined(application.defaultRoleId)) {
     throw new WorkflowStepExecutorException(
-      'The application that owns this workflow is no longer installed',
+      `Application "${application.name}" has no role, so its workflow steps cannot run`,
       WorkflowStepExecutorExceptionCode.FORBIDDEN,
     );
   }
 
-  return owningApplication;
+  return application;
 };

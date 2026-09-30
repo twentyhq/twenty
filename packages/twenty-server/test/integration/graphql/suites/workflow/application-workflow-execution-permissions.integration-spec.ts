@@ -289,9 +289,9 @@ const SUBMIT_FORM_STEP = `
   }
 `;
 
-const RETRY_WORKFLOW_RUN = `
-  mutation RetryWorkflowRun($workflowRunId: UUID!) {
-    retryWorkflowRun(workflowRunId: $workflowRunId) {
+const UPDATE_WORKFLOW_RUN_STEP = `
+  mutation UpdateWorkflowRunStep($input: UpdateWorkflowRunStepInput!) {
+    updateWorkflowRunStep(input: $input) {
       id
     }
   }
@@ -343,6 +343,9 @@ const runWorkflow = async (workflow: TestWorkflow): Promise<string> => {
 type TestWorkflowRun = {
   status: string;
   state: {
+    flow?: {
+      steps: { id: string; name: string; settings: Record<string, unknown> }[];
+    };
     stepInfos: Record<
       string,
       { status: string; error?: string; result?: Record<string, unknown> }
@@ -600,38 +603,40 @@ describe('application workflow execution permissions', () => {
     ).toBe(0);
   }, 120000);
 
-  it('only lets the member who started an application workflow run retry it', async () => {
-    const workflowRunId = await runWorkflow(CREATE_OPPORTUNITY_WORKFLOW);
+  it('only lets the values of a form step change on an application workflow run', async () => {
+    const workflowRunId = await runWorkflow(FORM_WORKFLOW);
+    const [formStep] = FORM_WORKFLOW.steps;
 
-    expect((await waitForRunToEnd(workflowRunId)).status).toBe('FAILED');
-
-    const retryWithApiKey = await graphqlAs(
-      API_KEY_ACCESS_TOKEN,
-      RETRY_WORKFLOW_RUN,
-      { workflowRunId },
-    );
-
-    expect(retryWithApiKey.body.errors?.[0]?.message).toContain(
-      'Only the member who started this application-bound workflow run',
-    );
-
-    const retryThroughAnotherApplication = await graphqlAs(
-      await buildJaneTokenThroughApplication(OTHER_APP_ID),
-      RETRY_WORKFLOW_RUN,
-      { workflowRunId },
-    );
-
-    expect(retryThroughAnotherApplication.body.errors?.[0]?.message).toContain(
-      'Only the member who started this application-bound workflow run',
-    );
-
-    const retryByInitiator = await workflowGraphqlRequest(RETRY_WORKFLOW_RUN, {
+    const pendingRun = await waitForRun(
       workflowRunId,
+      ({ state }) =>
+        state?.stepInfos?.[formStep.universalIdentifier]?.status === 'PENDING',
+    );
+    const runFormStep = pendingRun.state.flow?.steps.find(
+      ({ id }) => id === formStep.universalIdentifier,
+    );
+
+    expect(runFormStep).toBeDefined();
+
+    const renamedStep = await workflowGraphqlRequest(UPDATE_WORKFLOW_RUN_STEP, {
+      input: { workflowRunId, step: { ...runFormStep, name: 'Renamed' } },
     });
 
-    expect(retryByInitiator.body.errors).toBeUndefined();
-    expect((await waitForRunToEnd(workflowRunId)).status).toBe('FAILED');
-    expect(await countRecordsByName('opportunity', OPPORTUNITY_NAME)).toBe(0);
+    expect(renamedStep.body.errors?.[0]?.message).toContain(
+      'Only the values of a form step can change',
+    );
+
+    const filledStep = await workflowGraphqlRequest(UPDATE_WORKFLOW_RUN_STEP, {
+      input: {
+        workflowRunId,
+        step: {
+          ...runFormStep,
+          settings: { ...runFormStep?.settings, input: [] },
+        },
+      },
+    });
+
+    expect(filledStep.body.errors).toBeUndefined();
   }, 120000);
 
   it('reads the records picked in a form with the permissions of the run', async () => {

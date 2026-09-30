@@ -26,7 +26,6 @@ import {
 import { WorkflowExecutionContextService } from 'src/modules/workflow/workflow-executor/services/workflow-execution-context.service';
 import { type WorkflowActionInput } from 'src/modules/workflow/workflow-executor/types/workflow-action-input.type';
 import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executor/types/workflow-action-output.type';
-import { assertStepTargetBelongsToOwningApplication } from 'src/modules/workflow/workflow-executor/utils/assert-step-target-belongs-to-owning-application.util';
 import { findStepOrThrow } from 'src/modules/workflow/workflow-executor/utils/find-step-or-throw.util';
 import { WORKFLOW_AGENT_ASK_QUESTIONS_PROMPT } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/constants/workflow-agent-ask-questions-prompt.constant';
 import {
@@ -93,14 +92,17 @@ export class AiAgentWorkflowAction implements WorkflowAction {
     const executionContext =
       await this.workflowExecutionContextService.getExecutionContext(runInfo);
 
-    const { owningApplication, actingApplication } = executionContext;
+    const { application } = executionContext;
 
     if (isDefined(agent)) {
-      assertStepTargetBelongsToOwningApplication({
-        owningApplication,
-        targetApplicationId: agent.applicationId,
-        targetLabel: `Agent "${agent.name}"`,
-      });
+      await this.workflowExecutionContextService.assertStepTargetBelongsToRunApplicationOrThrow(
+        {
+          application,
+          workspaceId,
+          targetApplicationId: agent.applicationId,
+          targetLabel: `Agent "${agent.name}"`,
+        },
+      );
     }
 
     const userWorkspaceId =
@@ -176,7 +178,7 @@ export class AiAgentWorkflowAction implements WorkflowAction {
       workspaceId,
       userWorkspaceId,
       operationType: UsageOperationType.AI_WORKFLOW_TOKEN,
-      ...(isDefined(actingApplication)
+      ...(isDefined(application)
         ? {
             executionRoleIds: getRoleIdsFromRolePermissionConfig(
               executionContext.rolePermissionConfig,

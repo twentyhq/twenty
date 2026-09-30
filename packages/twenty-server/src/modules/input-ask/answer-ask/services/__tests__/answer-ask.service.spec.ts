@@ -132,9 +132,6 @@ describe('AnswerAskService', () => {
         .fn()
         .mockReturnValue(workflowRunRepository),
     };
-    const workflowRunChangeAuthorizationWorkspaceService = {
-      assertMemberCanChangeRunOrThrow: jest.fn().mockResolvedValue(undefined),
-    };
     const toolRegistryService = {
       resolveAndExecute: jest.fn().mockResolvedValue({
         success: true,
@@ -172,7 +169,6 @@ describe('AnswerAskService', () => {
         }),
       } as never,
       toolRegistryService as never,
-      workflowRunChangeAuthorizationWorkspaceService as never,
     );
 
     return {
@@ -185,7 +181,6 @@ describe('AnswerAskService', () => {
       permissionsService,
       workflowRunRepository,
       toolRegistryService,
-      workflowRunChangeAuthorizationWorkspaceService,
       publishedEvents,
     };
   };
@@ -600,34 +595,6 @@ describe('AnswerAskService', () => {
         workflowRunWorkspaceService.resolveStepAwaitingToolCall,
       ).not.toHaveBeenCalled();
     });
-
-    it('refuses someone the run does not let change it before resolving the step', async () => {
-      const refusal = new Error('Only the member who started this run');
-      const {
-        service,
-        workflowRunWorkspaceService,
-        workflowRunChangeAuthorizationWorkspaceService,
-      } = buildService({ inputAsk: runInputAsk });
-
-      workflowRunChangeAuthorizationWorkspaceService.assertMemberCanChangeRunOrThrow.mockRejectedValue(
-        refusal,
-      );
-
-      await expect(service.answer(answerArguments)).rejects.toBe(refusal);
-      expect(
-        workflowRunChangeAuthorizationWorkspaceService.assertMemberCanChangeRunOrThrow,
-      ).toHaveBeenCalledWith({
-        runInfo: {
-          workflowRunId: 'workflow-run-id',
-          workspaceId: 'workspace-id',
-        },
-        workspaceMemberId: 'member-id',
-        callerApplicationId: undefined,
-      });
-      expect(
-        workflowRunWorkspaceService.resolveStepAwaitingToolCall,
-      ).not.toHaveBeenCalled();
-    });
   });
 
   describe('a form step', () => {
@@ -700,26 +667,6 @@ describe('AnswerAskService', () => {
       await expect(
         service.answer({ ...answerArguments, response: { discount: '20%' } }),
       ).rejects.toMatchObject({ code: 'ASK_ANSWER_FORBIDDEN' });
-      expect(
-        workflowRunnerWorkspaceService.submitFormStep,
-      ).not.toHaveBeenCalled();
-    });
-
-    it('refuses someone the run does not let change it before submitting', async () => {
-      const refusal = new Error('Only the member who started this run');
-      const {
-        service,
-        workflowRunnerWorkspaceService,
-        workflowRunChangeAuthorizationWorkspaceService,
-      } = buildService({ inputAsk: formInputAsk });
-
-      workflowRunChangeAuthorizationWorkspaceService.assertMemberCanChangeRunOrThrow.mockRejectedValue(
-        refusal,
-      );
-
-      await expect(
-        service.answer({ ...answerArguments, response: { discount: '20%' } }),
-      ).rejects.toBe(refusal);
       expect(
         workflowRunnerWorkspaceService.submitFormStep,
       ).not.toHaveBeenCalled();

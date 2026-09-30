@@ -37,7 +37,6 @@ import {
   WorkflowRunStatus,
   type WorkflowRunWorkspaceEntity,
 } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
-import { WorkflowRunChangeAuthorizationWorkspaceService } from 'src/modules/workflow/workflow-executor/services/workflow-run-change-authorization.workspace-service';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 import { WorkflowRunnerWorkspaceService } from 'src/modules/workflow/workflow-runner/workspace-services/workflow-runner.workspace-service';
 
@@ -90,7 +89,6 @@ export class AnswerAskService {
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly agentActorContextService: AgentActorContextService,
     private readonly toolRegistryService: ToolRegistryService,
-    private readonly workflowRunChangeAuthorizationWorkspaceService: WorkflowRunChangeAuthorizationWorkspaceService,
   ) {}
 
   async answer(args: AnswerAskArgs): Promise<AnswerAskOutcome> {
@@ -240,7 +238,6 @@ export class AnswerAskService {
   private async answerFormStep({
     response,
     userWorkspaceId,
-    workspaceMemberId,
     workspace,
     form,
     workflowRunId,
@@ -268,7 +265,6 @@ export class AnswerAskService {
 
     await this.assertCanAnswerForWorkflowRun({
       userWorkspaceId,
-      workspaceMemberId,
       workspaceId,
       workflowRunId,
     });
@@ -468,7 +464,6 @@ export class AnswerAskService {
     pausingToolCall,
     output,
     userWorkspaceId,
-    workspaceMemberId,
     workspace,
     workflowRunId,
   }: ToolCallToAnswer & { workflowRunId: string }): Promise<void> {
@@ -476,7 +471,6 @@ export class AnswerAskService {
 
     await this.assertCanAnswerForWorkflowRun({
       userWorkspaceId,
-      workspaceMemberId,
       workspaceId,
       workflowRunId,
     });
@@ -537,12 +531,10 @@ export class AnswerAskService {
   // read.
   private async assertCanAnswerForWorkflowRun({
     userWorkspaceId,
-    workspaceMemberId,
     workspaceId,
     workflowRunId,
   }: {
     userWorkspaceId: string;
-    workspaceMemberId: string;
     workspaceId: string;
     workflowRunId: string;
   }): Promise<void> {
@@ -575,14 +567,6 @@ export class AnswerAskService {
         InputAskExceptionCode.ASK_NOT_FOUND,
       );
     }
-
-    await this.workflowRunChangeAuthorizationWorkspaceService.assertMemberCanChangeRunOrThrow(
-      {
-        runInfo: { workflowRunId, workspaceId },
-        workspaceMemberId,
-        callerApplicationId: this.getCallerApplicationId(),
-      },
-    );
   }
 
   // Built only when a pausing tool runs another tool, and as the person who
@@ -646,12 +630,18 @@ export class AnswerAskService {
     userWorkspaceId: string;
     workspaceId: string;
   }): Promise<void> {
+    const requestAuthContext = workspaceAuthContextStorage.getStore();
+    const applicationId =
+      isDefined(requestAuthContext) && isUserAuthContext(requestAuthContext)
+        ? requestAuthContext.application?.id
+        : undefined;
+
     const hasPermission =
       await this.permissionsService.userHasWorkspaceSettingPermission({
         userWorkspaceId,
         workspaceId,
         setting,
-        applicationId: this.getCallerApplicationId(),
+        applicationId,
       });
 
     if (!hasPermission) {
@@ -660,15 +650,6 @@ export class AnswerAskService {
         InputAskExceptionCode.ASK_ANSWER_FORBIDDEN,
       );
     }
-  }
-
-  private getCallerApplicationId(): string | undefined {
-    const requestAuthContext = workspaceAuthContextStorage.getStore();
-
-    return isDefined(requestAuthContext) &&
-      isUserAuthContext(requestAuthContext)
-      ? requestAuthContext.application?.id
-      : undefined;
   }
 
   private notPending(): InputAskException {

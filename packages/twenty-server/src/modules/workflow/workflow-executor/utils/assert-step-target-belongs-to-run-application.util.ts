@@ -6,24 +6,27 @@ import {
   WorkflowStepExecutorExceptionCode,
 } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
 
-export const assertStepTargetBelongsToOwningApplication = ({
-  owningApplication,
+export const assertStepTargetBelongsToRunApplication = ({
+  application,
   targetApplicationId,
+  workspaceOwnedApplicationIds,
   targetLabel,
 }: {
-  owningApplication: Pick<FlatApplication, 'id' | 'name'> | null;
+  application: Pick<FlatApplication, 'id' | 'name'>;
   targetApplicationId: string | null;
+  workspaceOwnedApplicationIds: string[];
   targetLabel: string;
 }): void => {
   if (
-    !isDefined(owningApplication) ||
-    owningApplication.id === targetApplicationId
+    targetApplicationId === application.id ||
+    (isDefined(targetApplicationId) &&
+      workspaceOwnedApplicationIds.includes(targetApplicationId))
   ) {
     return;
   }
 
   throw new WorkflowStepExecutorException(
-    `${targetLabel} does not belong to application "${owningApplication.name}", so its workflows cannot run it`,
+    `${targetLabel} belongs to another application than "${application.name}", so this run cannot use it`,
     WorkflowStepExecutorExceptionCode.FORBIDDEN,
   );
 };
