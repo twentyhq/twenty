@@ -25,23 +25,23 @@ import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-module
   PermissionsGraphqlApiExceptionFilter,
   PreventNestToAutoLogGraphqlErrorsFilter,
 )
-@UseGuards(SettingsPermissionGuard(PermissionFlagType.WORKSPACE))
+@UseGuards(
+  AuthPrincipalGuard({
+    userSession: {
+      standard: true,
+      impersonated: true,
+      playground: true,
+      workspaceAgnostic: false,
+    },
+    apiKey: true,
+    oauthClient: true,
+    application: true,
+  }),
+  SettingsPermissionGuard(PermissionFlagType.WORKSPACE),
+)
 export class LabResolver {
   constructor(private featureFlagService: FeatureFlagService) {}
 
-  @UseGuards(
-    AuthPrincipalGuard({
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: true,
-        workspaceAgnostic: false,
-      },
-      apiKey: true,
-      oauthClient: true,
-      application: true,
-    }),
-  )
   @Mutation(() => FeatureFlagDTO)
   async updateLabPublicFeatureFlag(
     @Args('input') input: UpdateLabPublicFeatureFlagInput,
