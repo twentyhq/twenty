@@ -21,6 +21,11 @@ const installedApplication = {
   id: 'application-id',
   sourceType: ApplicationRegistrationSourceType.NPM,
 };
+const apiKey = { id: 'api-key-id' };
+const impersonationContext = {
+  impersonatorUserWorkspaceId: 'impersonator-user-workspace-id',
+  impersonatedUserWorkspaceId: 'impersonated-user-workspace-id',
+};
 
 const REQUEST_BY_PRINCIPAL_VARIANT = {
   'userSession.standard': {
@@ -32,10 +37,7 @@ const REQUEST_BY_PRINCIPAL_VARIANT = {
     user,
     workspace,
     tokenType: JwtTokenTypeEnum.ACCESS,
-    impersonationContext: {
-      impersonatorUserWorkspaceId: 'impersonator-user-workspace-id',
-      impersonatedUserWorkspaceId: 'impersonated-user-workspace-id',
-    },
+    impersonationContext,
   },
   'userSession.playground': {
     user,
@@ -47,7 +49,7 @@ const REQUEST_BY_PRINCIPAL_VARIANT = {
     tokenType: JwtTokenTypeEnum.WORKSPACE_AGNOSTIC,
   },
   apiKey: {
-    apiKey: { id: 'api-key-id' },
+    apiKey,
     workspace,
     tokenType: JwtTokenTypeEnum.API_KEY,
   },
@@ -356,6 +358,114 @@ describe('AuthPrincipalGuard', () => {
         tokenType,
       }),
     ).toBe(false);
+  });
+
+  it.each([
+    {
+      name: 'an API key token that also carries a user',
+      request: { apiKey, user, workspace, tokenType: JwtTokenTypeEnum.API_KEY },
+    },
+    {
+      name: 'an API key token that also carries an application',
+      request: {
+        apiKey,
+        application: installedApplication,
+        workspace,
+        tokenType: JwtTokenTypeEnum.API_KEY,
+      },
+    },
+    {
+      name: 'an API key token without an API key',
+      request: { workspace, tokenType: JwtTokenTypeEnum.API_KEY },
+    },
+    {
+      name: 'an API key without a token type',
+      request: { apiKey, workspace, tokenType: undefined },
+    },
+    {
+      name: 'an application token without an application',
+      request: {
+        user,
+        workspace,
+        tokenType: JwtTokenTypeEnum.APPLICATION_ACCESS,
+      },
+    },
+    {
+      name: 'an application token that also carries an API key',
+      request: {
+        application: installedApplication,
+        apiKey,
+        workspace,
+        tokenType: JwtTokenTypeEnum.APPLICATION_ACCESS,
+      },
+    },
+    {
+      name: 'an application token that carries an impersonation',
+      request: {
+        application: installedApplication,
+        user,
+        workspace,
+        tokenType: JwtTokenTypeEnum.APPLICATION_ACCESS,
+        impersonationContext,
+      },
+    },
+    {
+      name: 'an application without a token type',
+      request: {
+        application: installedApplication,
+        workspace,
+        tokenType: undefined,
+      },
+    },
+    {
+      name: 'a session token that also carries an application',
+      request: {
+        user,
+        application: installedApplication,
+        workspace,
+        tokenType: JwtTokenTypeEnum.ACCESS,
+      },
+    },
+    {
+      name: 'a session token that also carries an API key',
+      request: { user, apiKey, workspace, tokenType: JwtTokenTypeEnum.ACCESS },
+    },
+    {
+      name: 'a session token without a user',
+      request: { workspace, tokenType: JwtTokenTypeEnum.ACCESS },
+    },
+    {
+      name: 'a playground token that also carries an application',
+      request: {
+        user,
+        application: oauthClient,
+        workspace,
+        tokenType: JwtTokenTypeEnum.PLAYGROUND,
+      },
+    },
+    {
+      name: 'a playground token that carries an impersonation',
+      request: {
+        user,
+        workspace,
+        tokenType: JwtTokenTypeEnum.PLAYGROUND,
+        impersonationContext,
+      },
+    },
+    {
+      name: 'a workspace-agnostic token that also carries an API key',
+      request: { user, apiKey, tokenType: JwtTokenTypeEnum.WORKSPACE_AGNOSTIC },
+    },
+    {
+      name: 'a workspace-agnostic token that carries an impersonation',
+      request: {
+        user,
+        tokenType: JwtTokenTypeEnum.WORKSPACE_AGNOSTIC,
+        impersonationContext,
+      },
+    },
+  ])('should refuse $name', ({ request }) => {
+    expect(canActivateOverHttp(ACCEPT_EVERY_PRINCIPAL, request)).toBe(false);
   });
 
   it('should treat a session as impersonated only when both ids are set', () => {

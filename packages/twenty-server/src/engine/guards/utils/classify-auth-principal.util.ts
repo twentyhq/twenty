@@ -21,38 +21,58 @@ const isImpersonating = (
   isNonEmptyString(impersonationContext?.impersonatorUserWorkspaceId) &&
   isNonEmptyString(impersonationContext?.impersonatedUserWorkspaceId);
 
+const carriesUserWithoutOtherPrincipal = (
+  request: AuthPrincipalRequest,
+): boolean =>
+  isDefined(request.user) &&
+  !isDefined(request.apiKey) &&
+  !isDefined(request.application);
+
 export const classifyAuthPrincipal = (
   request: AuthPrincipalRequest,
 ): AuthPrincipalVariant | undefined => {
-  if (isDefined(request.apiKey)) {
-    return { kind: 'apiKey' };
-  }
-
-  if (isDefined(request.application)) {
-    return {
-      kind: isOAuthOnlyApplication(request.application)
-        ? 'oauthClient'
-        : 'application',
-      variant: isDefined(request.user) ? 'withUser' : 'withoutUser',
-    };
-  }
-
-  if (!isDefined(request.user)) {
-    return undefined;
-  }
-
   switch (request.tokenType) {
-    case JwtTokenTypeEnum.ACCESS:
+    case JwtTokenTypeEnum.API_KEY:
+      return isDefined(request.apiKey) &&
+        !isDefined(request.user) &&
+        !isDefined(request.application) &&
+        !isDefined(request.impersonationContext)
+        ? { kind: 'apiKey' }
+        : undefined;
+    case JwtTokenTypeEnum.APPLICATION_ACCESS:
+      if (
+        !isDefined(request.application) ||
+        isDefined(request.apiKey) ||
+        isDefined(request.impersonationContext)
+      ) {
+        return undefined;
+      }
+
       return {
-        kind: 'userSession',
-        variant: isImpersonating(request.impersonationContext)
-          ? 'impersonated'
-          : 'standard',
+        kind: isOAuthOnlyApplication(request.application)
+          ? 'oauthClient'
+          : 'application',
+        variant: isDefined(request.user) ? 'withUser' : 'withoutUser',
       };
+    case JwtTokenTypeEnum.ACCESS:
+      return carriesUserWithoutOtherPrincipal(request)
+        ? {
+            kind: 'userSession',
+            variant: isImpersonating(request.impersonationContext)
+              ? 'impersonated'
+              : 'standard',
+          }
+        : undefined;
     case JwtTokenTypeEnum.PLAYGROUND:
-      return { kind: 'userSession', variant: 'playground' };
+      return carriesUserWithoutOtherPrincipal(request) &&
+        !isDefined(request.impersonationContext)
+        ? { kind: 'userSession', variant: 'playground' }
+        : undefined;
     case JwtTokenTypeEnum.WORKSPACE_AGNOSTIC:
-      return { kind: 'userSession', variant: 'workspaceAgnostic' };
+      return carriesUserWithoutOtherPrincipal(request) &&
+        !isDefined(request.impersonationContext)
+        ? { kind: 'userSession', variant: 'workspaceAgnostic' }
+        : undefined;
     default:
       return undefined;
   }
