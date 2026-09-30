@@ -1,3 +1,4 @@
+import { StepStatus } from 'twenty-shared/workflow';
 import { randomUUID } from 'node:crypto';
 
 import request from 'supertest';
@@ -1105,8 +1106,20 @@ describe('core workflow visibility (e2e)', () => {
         },
       });
 
-      expect(recordedConversation?.isAwaitingAnswer).toBe(true);
+      expect(recordedConversation?.pendingAsks).toHaveLength(1);
       threadId = recordedConversation!.threadId;
+
+      // Parked the way the executor parks a step that asked, which is what
+      // opens its Ask.
+      await getAppProviderByClassName<WorkflowRunWorkspaceService>(
+        'WorkflowRunWorkspaceService',
+      ).updateWorkflowRunStepInfo({
+        stepId: askStepId,
+        stepInfo: { status: StepStatus.PENDING },
+        pendingAsks: recordedConversation!.pendingAsks,
+        workflowRunId: askRunId,
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+      });
     });
 
     afterAll(async () => {

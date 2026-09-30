@@ -14,7 +14,6 @@ import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { hasWorkflowRunThreadFields } from 'src/engine/metadata-modules/ai/ai-history/utils/has-workflow-run-thread-fields.util';
-import { isWorkflowRunThread } from 'src/engine/metadata-modules/ai/ai-chat/utils/is-workflow-run-thread.util';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -105,7 +104,7 @@ export class AgentChatThreadLifecycleService {
       where: { id: threadId },
     });
 
-    if (isDefined(thread) && isWorkflowRunThread(thread)) {
+    if (isDefined(thread?.workflowRunId)) {
       throw new PermissionsException(
         `${PermissionsExceptionMessage.PERMISSION_DENIED}: a workflow run conversation is read-only`,
         PermissionsExceptionCode.PERMISSION_DENIED,

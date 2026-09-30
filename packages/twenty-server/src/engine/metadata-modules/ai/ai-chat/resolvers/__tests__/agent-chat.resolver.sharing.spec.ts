@@ -6,6 +6,7 @@ import { AgentChatResolver } from 'src/engine/metadata-modules/ai/ai-chat/resolv
 import { AgentChatThreadLifecycleService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-lifecycle.service';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
+import { AgentChatTurnPreflightService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-turn-preflight.service';
 
 const WORKSPACE_ID = 'workspace';
 const THREAD_ID = 'thread';
@@ -78,7 +79,6 @@ const buildResolver = () => {
     streamAgentChat: jest
       .fn()
       .mockResolvedValue({ queued: false, messageId: 'message' }),
-    answerPendingQuestionAndResumeStream: jest.fn(),
     reapDeadStream: jest.fn().mockResolvedValue(null),
   };
   const events = {
@@ -95,19 +95,20 @@ const buildResolver = () => {
     {} as never,
     recordEvents as never,
   );
-  const workflowQuestions = { answer: jest.fn() };
   const resolver = new AgentChatResolver(
     chatService,
     sharing as never,
     streaming as never,
     events as never,
     {} as never,
-    { assertAiExecutionAllowed: jest.fn() } as never,
-    {
-      getAvailableModels: () => ['model'],
-      validateModelAvailability: jest.fn(),
-    } as never,
-    workflowQuestions as never,
+    new AgentChatTurnPreflightService(
+      {
+        getAvailableModels: () => ['model'],
+        validateModelAvailability: jest.fn(),
+      } as never,
+      chatService,
+      { assertAiExecutionAllowed: jest.fn() } as never,
+    ),
     threadLifecycle,
   );
   return {
@@ -197,7 +198,7 @@ describe('Shared conversation API boundaries', () => {
     ).resolves.toMatchObject({ chunks: [] });
   });
 
-  it.each(['send', 'answer', 'restore', 'deleteQueued'] as const)(
+  it.each(['send', 'restore', 'deleteQueued'] as const)(
     'rejects %s from a viewer without mutating or executing',
     async (operation) => {
       const context = buildResolver();
@@ -209,17 +210,6 @@ describe('Shared conversation API boundaries', () => {
             'Execute a tool',
             'message',
             null,
-            undefined,
-            null,
-            VIEWER_ID,
-            'member',
-            workspace,
-          ),
-        answer: () =>
-          resolver.answerAgentChatQuestion(
-            THREAD_ID,
-            'message',
-            [],
             undefined,
             null,
             VIEWER_ID,
@@ -252,9 +242,6 @@ describe('Shared conversation API boundaries', () => {
       expect(context.recordEvents.emitThreadUpdated).not.toHaveBeenCalled();
       expect(context.messages.delete).not.toHaveBeenCalled();
       expect(context.streaming.streamAgentChat).not.toHaveBeenCalled();
-      expect(
-        context.streaming.answerPendingQuestionAndResumeStream,
-      ).not.toHaveBeenCalled();
       expect(context.events.publish).not.toHaveBeenCalled();
       expect(context.redis.getClient).not.toHaveBeenCalled();
     },

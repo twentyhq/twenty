@@ -48,8 +48,9 @@ import { seedUnsubscribeTopics } from 'src/engine/workspace-manager/dev-seeder/c
 import { seedUserWorkspaces } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 import { seedUsers } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-users.util';
 import { createWorkspace } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-workspace.util';
+import { DevSeederAgentChatInputAskWorkspaceService } from 'src/engine/workspace-manager/dev-seeder/data/services/dev-seeder-agent-chat-input-ask.workspace-service';
 import { DevSeederDataService } from 'src/engine/workspace-manager/dev-seeder/data/services/dev-seeder-data.service';
-import { DevSeederWorkflowAgentQuestionWorkspaceService } from 'src/engine/workspace-manager/dev-seeder/data/services/dev-seeder-workflow-agent-question.workspace-service';
+import { DevSeederWorkflowInputAskWorkspaceService } from 'src/engine/workspace-manager/dev-seeder/data/services/dev-seeder-workflow-input-ask.workspace-service';
 import { DevSeederMetadataService } from 'src/engine/workspace-manager/dev-seeder/metadata/services/dev-seeder-metadata.service';
 import { PrefillFrontComponentService } from 'src/engine/workspace-manager/standard-objects-prefill-data/services/prefill-front-component.service';
 import { PrefillLogicFunctionService } from 'src/engine/workspace-manager/standard-objects-prefill-data/services/prefill-logic-function.service';
@@ -70,7 +71,8 @@ export class DevSeederWorkspaceService {
     private readonly devSeederMetadataService: DevSeederMetadataService,
     private readonly devSeederPermissionsService: DevSeederPermissionsService,
     private readonly devSeederDataService: DevSeederDataService,
-    private readonly devSeederWorkflowAgentQuestionService: DevSeederWorkflowAgentQuestionWorkspaceService,
+    private readonly devSeederWorkflowInputAskService: DevSeederWorkflowInputAskWorkspaceService,
+    private readonly devSeederAgentChatInputAskService: DevSeederAgentChatInputAskWorkspaceService,
     private readonly applicationService: ApplicationService,
     private readonly applicationRegistrationService: ApplicationRegistrationService,
     private readonly workspaceCacheService: WorkspaceCacheService,
@@ -226,6 +228,9 @@ export class DevSeederWorkspaceService {
       light,
     });
 
+    // Before the chat seed, whose owner grants then cover these threads too.
+    await this.devSeederAgentChatInputAskService.seed({ workspaceId });
+
     await this.seedAgentChat({
       workspaceId,
       chatReferenceIds: {
@@ -236,7 +241,7 @@ export class DevSeederWorkspaceService {
       },
     });
 
-    await this.devSeederWorkflowAgentQuestionService.seed({
+    await this.devSeederWorkflowInputAskService.seed({
       workspaceId,
       applicationId: workspaceCustomFlatApplication.id,
     });
