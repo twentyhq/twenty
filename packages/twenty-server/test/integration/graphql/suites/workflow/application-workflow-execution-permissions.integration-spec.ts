@@ -308,7 +308,11 @@ type TestWorkflowRun = {
   status: string;
   state: {
     flow?: {
-      steps: { id: string; name: string; settings: Record<string, unknown> }[];
+      steps: {
+        id: string;
+        name: string;
+        settings: { input: Record<string, unknown>[] };
+      }[];
     };
     stepInfos: Record<
       string,
@@ -489,6 +493,7 @@ describe('application workflow execution permissions', () => {
       );
 
       expect(workflowRun.status).toBe('COMPLETED');
+      expect(executeSpy).toHaveBeenCalledTimes(1);
       expect(executeSpy).toHaveBeenCalledWith(
         expect.objectContaining({
           workspaceId: SEED_APPLE_WORKSPACE_ID,
@@ -571,7 +576,13 @@ describe('application workflow execution permissions', () => {
         workflowRunId,
         step: {
           ...runFormStep,
-          settings: { ...runFormStep?.settings, input: [] },
+          settings: {
+            ...runFormStep?.settings,
+            input: runFormStep?.settings.input.map((field) => ({
+              ...field,
+              value: null,
+            })),
+          },
         },
       },
     });
