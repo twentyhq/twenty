@@ -19,7 +19,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { Info, Section, useToast } from 'twenty-ui/components';
+import { InlineBanner, Section, useToast } from 'twenty-ui/components';
 import { IconPlus } from 'twenty-ui/icon';
 import { Checkbox, Switch } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -342,16 +342,19 @@ export const SettingsAdminNewAiModel = () => {
       >
         <SettingsPageContainer>
           {!hasCustomAiProviderAccess && (
-            <Info
-              accent="danger"
-              text={customAiProviderGateDescription}
-              buttonTitle={t`Activate`}
-              href={getSettingsPath(SettingsPath.AdminPanelOrganization)}
-              render={
-                <Link
-                  to={getSettingsPath(SettingsPath.AdminPanelOrganization)}
-                />
-              }
+            <InlineBanner
+              variant="compact"
+              color="danger"
+              message={customAiProviderGateDescription}
+              button={{
+                title: t`Activate`,
+                href: getSettingsPath(SettingsPath.AdminPanelOrganization),
+                render: (
+                  <Link
+                    to={getSettingsPath(SettingsPath.AdminPanelOrganization)}
+                  />
+                ),
+              }}
             />
           )}
 

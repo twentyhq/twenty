@@ -4,7 +4,6 @@ import { JSON_TREE_PROP_DESCRIPTIONS } from './jsonTreePropDescriptions';
 import { NOTIFICATION_COUNTER_PROP_DESCRIPTIONS } from './notificationCounterPropDescriptions';
 import { TINTED_ICON_TILE_PROP_DESCRIPTIONS } from './tintedIconTilePropDescriptions';
 import { CALLOUT_PROP_DESCRIPTIONS } from './calloutPropDescriptions';
-import { INFO_PROP_DESCRIPTIONS } from './infoPropDescriptions';
 import { INLINE_BANNER_PROP_DESCRIPTIONS } from './inlineBannerPropDescriptions';
 import { TOAST_PROVIDER_PROP_DESCRIPTIONS } from './toastProviderPropDescriptions';
 import { TOASTER_PROP_DESCRIPTIONS } from './toasterPropDescriptions';
@@ -520,13 +519,6 @@ export const DOCUMENTED_COMPONENTS = [
     entryPoint: 'twenty-ui/components',
     slug: 'components/callout',
     propDescriptions: CALLOUT_PROP_DESCRIPTIONS,
-  },
-  {
-    name: 'Info',
-    source: 'components/feedback/Info/Info.tsx',
-    entryPoint: 'twenty-ui/components',
-    slug: 'components/info',
-    propDescriptions: INFO_PROP_DESCRIPTIONS,
   },
   {
     name: 'InlineBanner',

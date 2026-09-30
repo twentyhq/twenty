@@ -633,7 +633,6 @@
                       "ui/components/callout",
                       "ui/components/color-scheme-picker",
                       "ui/components/command-block",
-                      "ui/components/info",
                       "ui/components/inline-banner",
                       "ui/components/json-tree",
                       "ui/components/menu-items",
@@ -6680,6 +6679,10 @@
     }
   },
   "redirects": [
+    {
+      "source": "/ui/components/info",
+      "destination": "/ui/components/inline-banner"
+    },
     {
       "source": "/ui/primitives/layout/animated-expandable-container",
       "destination": "/ui/primitives/layout/collapsible"

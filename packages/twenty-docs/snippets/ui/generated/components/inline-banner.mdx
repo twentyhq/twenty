@@ -11,20 +11,20 @@
  *   npx nx generate:ui twenty-docs
  */}
 
-<ParamField body="button" type="{ title?: string | undefined; onClick?: (() =&gt; void) | undefined; hidden?: boolean | undefined; disabled?: boolean | undefined; Icon?: IconComponent | undefined; }">
-  Optional action with title, onClick, hidden, disabled, and Icon fields.
+<ParamField body="button" type="InlineBannerButtonProps">
+  Optional button or destination link with title, onClick, href, render, target, rel, download, hidden, disabled, aria-label, and Icon fields.
 </ParamField>
 
 <ParamField body="className" type="string">
   Class applied to the banner.
 </ParamField>
 
-<ParamField body="color" type="&quot;blue&quot; | &quot;danger&quot;">
+<ParamField body="color" type="&quot;blue&quot; | &quot;danger&quot;" default="blue">
   Banner palette color. An omitted color uses Banner’s default.
 </ParamField>
 
 <ParamField body="embedded" type="boolean" default="false">
-  Uses the embedded banner appearance.
+  Removes the bottom margin from standard banners. Compact banners have no bottom margin.
 </ParamField>
 
 <ParamField body="LeftIcon" type="IconComponent">
@@ -32,5 +32,9 @@
 </ParamField>
 
 <ParamField body="message" type="string" required>
-  Message, truncated with its full text available in a tooltip.
+  Message text. Standard banners truncate with a focusable tooltip; compact banners wrap.
+</ParamField>
+
+<ParamField body="variant" type="&quot;compact&quot; | &quot;standard&quot;" default="standard">
+  Standard full-width banner or compact wrapping message with a 512px maximum content width.
 </ParamField>

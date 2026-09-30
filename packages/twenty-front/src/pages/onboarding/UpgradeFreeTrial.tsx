@@ -29,7 +29,7 @@ import { Trans, useLingui } from '@lingui/react/macro';
 import { Elements, PaymentElement } from '@stripe/react-stripe-js';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { Info, MainButton } from 'twenty-ui/components';
+import { InlineBanner, MainButton } from 'twenty-ui/components';
 import { Loader } from 'twenty-ui/primitives/feedback';
 import { Button, RadioGroup } from 'twenty-ui/primitives/input';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme';
@@ -214,9 +214,10 @@ const UpgradeFreeTrialContent = ({
                   }}
                 />
               ) : (
-                <Info
-                  accent="danger"
-                  text={t`Card payment is currently unavailable. Please verify your Stripe configuration or contact your workspace admin.`}
+                <InlineBanner
+                  variant="compact"
+                  color="danger"
+                  message={t`Card payment is currently unavailable. Please verify your Stripe configuration or contact your workspace admin.`}
                 />
               ))}
           </OnboardingPlanCard>
