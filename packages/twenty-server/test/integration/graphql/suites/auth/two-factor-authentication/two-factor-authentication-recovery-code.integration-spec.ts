@@ -79,6 +79,27 @@ const deleteMethodRows = (userWorkspaceId: string) =>
     [userWorkspaceId],
   );
 
+const insertMethodRows = async (
+  rows: TwoFactorAuthenticationMethodRow[],
+): Promise<void> => {
+  for (const row of rows) {
+    await global.testDataSource.query(
+      `INSERT INTO core."twoFactorAuthenticationMethod" ("id", "workspaceId", "userWorkspaceId", "secret", "status", "strategy", "createdAt", "updatedAt", "deletedAt") VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
+      [
+        row.id,
+        row.workspaceId,
+        row.userWorkspaceId,
+        row.secret,
+        row.status,
+        row.strategy,
+        row.createdAt,
+        row.updatedAt,
+        row.deletedAt,
+      ],
+    );
+  }
+};
+
 const deleteRecoveryCodes = () =>
   global.testDataSource.query(
     `DELETE FROM core."twoFactorAuthenticationRecoveryCode" WHERE "userWorkspaceId" = ANY($1)`,
@@ -244,22 +265,7 @@ describe('Two-factor authentication recovery codes (integration)', () => {
     await deleteMethodRows(USER_WORKSPACE_DATA_SEED_IDS.JONY);
     await deleteMethodRows(USER_WORKSPACE_DATA_SEED_IDS.JANE);
 
-    for (const row of janeOriginalMethodRows) {
-      await global.testDataSource.query(
-        `INSERT INTO core."twoFactorAuthenticationMethod" ("id", "workspaceId", "userWorkspaceId", "secret", "status", "strategy", "createdAt", "updatedAt", "deletedAt") VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
-        [
-          row.id,
-          row.workspaceId,
-          row.userWorkspaceId,
-          row.secret,
-          row.status,
-          row.strategy,
-          row.createdAt,
-          row.updatedAt,
-          row.deletedAt,
-        ],
-      );
-    }
+    await insertMethodRows(janeOriginalMethodRows);
 
     await clearTwoFactorAuthenticationRateLimits();
   });
@@ -314,6 +320,30 @@ describe('Two-factor authentication recovery codes (integration)', () => {
       expect(errors?.[0]?.extensions?.subCode).toBe(
         'STEP_UP_AUTHENTICATION_REQUIRED',
       );
+    });
+
+    it('refuses an admin who has no authenticator in this workspace', async () => {
+      const janeMethodRows = await selectMethodRows(
+        USER_WORKSPACE_DATA_SEED_IDS.JANE,
+      );
+
+      await deleteMethodRows(USER_WORKSPACE_DATA_SEED_IDS.JANE);
+
+      try {
+        const { errors } = await generateTwoFactorAuthenticationRecoveryCode({
+          userId: USER_DATA_SEED_IDS.JONY,
+          otp: '000000',
+          accessToken: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+          expectToFail: true,
+        });
+
+        expect(errors?.[0]?.extensions?.subCode).toBe(
+          'STEP_UP_AUTHENTICATION_REQUIRED',
+        );
+        expect(await selectPendingRecoveryCodes()).toHaveLength(0);
+      } finally {
+        await insertMethodRows(janeMethodRows);
+      }
     });
 
     it('rejects a wrong confirmation code', async () => {

@@ -186,13 +186,6 @@ export class TwoFactorAuthenticationRecoveryService {
       throw error;
     }
 
-    this.twoFactorAuthenticationService.emitTwoFactorAuthenticationEvent({
-      workspaceId: targetWorkspaceId,
-      userId: actor.id,
-      action: 'recovery_code_issued',
-      targetUserId,
-    });
-
     await this.sendRecoveryCodeIssuedEmail({
       actor,
       targetUserWorkspace,
@@ -223,15 +216,6 @@ export class TwoFactorAuthenticationRecoveryService {
         workspaceId: targetWorkspaceId,
         userWorkspaceId: targetUserWorkspace.id,
       });
-
-    if (revokedCount > 0) {
-      this.twoFactorAuthenticationService.emitTwoFactorAuthenticationEvent({
-        workspaceId: targetWorkspaceId,
-        userId: actor.id,
-        action: 'recovery_code_revoked',
-        targetUserId,
-      });
-    }
 
     return revokedCount > 0;
   }
@@ -356,19 +340,16 @@ export class TwoFactorAuthenticationRecoveryService {
     );
 
     if (!isConsumed) {
-      this.rejectRecoveryCode({ userId, workspaceId: workspace.id });
+      throw new TwoFactorAuthenticationException(
+        'Invalid recovery code',
+        TwoFactorAuthenticationExceptionCode.INVALID_RECOVERY_CODE,
+      );
     }
 
     await this.userSessionService.revokeAllSessionsForUser({
       userId,
       workspaceId: workspace.id,
       reason: UserSessionRevokedReason.TwoFactorAuthenticationReset,
-    });
-
-    this.twoFactorAuthenticationService.emitTwoFactorAuthenticationEvent({
-      workspaceId: workspace.id,
-      userId,
-      action: 'recovery_code_used',
     });
 
     await this.sendTwoFactorAuthenticationResetEmail({
@@ -459,25 +440,6 @@ export class TwoFactorAuthenticationRecoveryService {
         },
       );
     }
-  }
-
-  private rejectRecoveryCode({
-    userId,
-    workspaceId,
-  }: {
-    userId: UserEntity['id'];
-    workspaceId: WorkspaceEntity['id'];
-  }): never {
-    this.twoFactorAuthenticationService.emitTwoFactorAuthenticationEvent({
-      workspaceId,
-      userId,
-      action: 'recovery_code_rejected',
-    });
-
-    throw new TwoFactorAuthenticationException(
-      'Invalid recovery code',
-      TwoFactorAuthenticationExceptionCode.INVALID_RECOVERY_CODE,
-    );
   }
 
   private async sendRecoveryCodeIssuedEmail({

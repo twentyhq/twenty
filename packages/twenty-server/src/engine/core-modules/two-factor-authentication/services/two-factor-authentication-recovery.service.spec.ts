@@ -75,7 +75,6 @@ describe('TwoFactorAuthenticationRecoveryService', () => {
   };
   let twoFactorAuthenticationService: {
     assertFreshStepUpAuthenticationOrThrow: jest.Mock;
-    emitTwoFactorAuthenticationEvent: jest.Mock;
     revokePendingRecoveryCodes: jest.Mock;
   };
   let userWorkspaceService: { getUserWorkspaceForUser: jest.Mock };
@@ -140,7 +139,6 @@ describe('TwoFactorAuthenticationRecoveryService', () => {
           provide: TwoFactorAuthenticationService,
           useValue: {
             assertFreshStepUpAuthenticationOrThrow: jest.fn(),
-            emitTwoFactorAuthenticationEvent: jest.fn(),
             revokePendingRecoveryCodes: jest.fn().mockResolvedValue(0),
           },
         },
@@ -242,14 +240,6 @@ describe('TwoFactorAuthenticationRecoveryService', () => {
         codeHash: hashTwoFactorAuthenticationRecoveryCode(recoveryCode),
         issuedByUserId: ACTOR.id,
         expiresAt,
-      });
-      expect(
-        twoFactorAuthenticationService.emitTwoFactorAuthenticationEvent,
-      ).toHaveBeenCalledWith({
-        workspaceId: WORKSPACE_ID,
-        userId: ACTOR.id,
-        action: 'recovery_code_issued',
-        targetUserId: TARGET_USER_ID,
       });
       expect(emailService.send).toHaveBeenCalledWith(
         expect.objectContaining({ to: 'target@example.com' }),
@@ -373,13 +363,6 @@ describe('TwoFactorAuthenticationRecoveryService', () => {
       ).toBeLessThan(
         userSessionService.revokeAllSessionsForUser.mock.invocationCallOrder[0],
       );
-      expect(
-        twoFactorAuthenticationService.emitTwoFactorAuthenticationEvent,
-      ).toHaveBeenCalledWith({
-        workspaceId: WORKSPACE_ID,
-        userId: TARGET_USER_ID,
-        action: 'recovery_code_used',
-      });
       expect(emailService.send).toHaveBeenCalledWith(
         expect.objectContaining({ to: 'target@example.com' }),
       );
@@ -392,13 +375,6 @@ describe('TwoFactorAuthenticationRecoveryService', () => {
 
       await expect(redeem()).rejects.toMatchObject({
         code: TwoFactorAuthenticationExceptionCode.INVALID_RECOVERY_CODE,
-      });
-      expect(
-        twoFactorAuthenticationService.emitTwoFactorAuthenticationEvent,
-      ).toHaveBeenCalledWith({
-        workspaceId: WORKSPACE_ID,
-        userId: TARGET_USER_ID,
-        action: 'recovery_code_rejected',
       });
       expect(
         userSessionService.revokeAllSessionsForUser,
@@ -420,28 +396,6 @@ describe('TwoFactorAuthenticationRecoveryService', () => {
   });
 
   describe('revokeRecoveryCode', () => {
-    it('revokes the pending code and records who revoked it', async () => {
-      twoFactorAuthenticationService.revokePendingRecoveryCodes.mockResolvedValue(
-        1,
-      );
-
-      await expect(
-        service.revokeRecoveryCode({
-          actor: ACTOR,
-          targetUserId: TARGET_USER_ID,
-          targetWorkspaceId: WORKSPACE_ID,
-        }),
-      ).resolves.toBe(true);
-      expect(
-        twoFactorAuthenticationService.emitTwoFactorAuthenticationEvent,
-      ).toHaveBeenCalledWith({
-        workspaceId: WORKSPACE_ID,
-        userId: ACTOR.id,
-        action: 'recovery_code_revoked',
-        targetUserId: TARGET_USER_ID,
-      });
-    });
-
     it('refuses to revoke a server administrator code for an actor without those privileges', async () => {
       userWorkspaceService.getUserWorkspaceForUser.mockResolvedValue(
         buildTargetUserWorkspace({ canImpersonate: true }),
