@@ -208,7 +208,7 @@ export const SettingsBillingLimitsTable = ({
             <SearchInput
               placeholder={t`Search a limit`}
               value={searchText}
-              onChange={setSearchText}
+              onValueChange={setSearchText}
               filterButtonAriaLabel={t`Filter limits`}
               filterDropdown={(filterButton) => (
                 <SettingsBillingLimitsFilterDropdown

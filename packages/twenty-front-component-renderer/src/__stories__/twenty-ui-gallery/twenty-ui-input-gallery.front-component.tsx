@@ -137,7 +137,7 @@ const INPUT_ENTRIES: GalleryEntry[] = [
   },
   {
     name: 'SearchInput',
-    node: <SearchInput value="" onChange={() => {}} placeholder="Search" />,
+    node: <SearchInput defaultValue="" placeholder="Search" />,
   },
   {
     name: 'SegmentedControl',

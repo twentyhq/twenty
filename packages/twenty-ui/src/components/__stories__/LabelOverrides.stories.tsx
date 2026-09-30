@@ -79,7 +79,7 @@ export const NativeNames: Story = {
       <Text id="search-label">Find contacts</Text>
       <SearchInput
         value=""
-        onChange={fn()}
+        onValueChange={fn()}
         placeholder="Search everything"
         aria-label="Fallback search"
         aria-labelledby="search-label"
