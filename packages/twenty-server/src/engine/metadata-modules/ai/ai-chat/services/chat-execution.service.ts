@@ -730,7 +730,7 @@ export class ChatExecutionService {
         }
 
         for (const { error } of extractToolExecutionErrors(step.content)) {
-          if (shouldCaptureException(error)) {
+          if (error instanceof Error && shouldCaptureException(error)) {
             this.exceptionHandlerService.captureExceptions([error]);
           }
         }
