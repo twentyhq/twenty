@@ -53,15 +53,7 @@
 </ParamField>
 
 <ParamField body="size" type="&quot;md&quot; | &quot;sm&quot;" default="md">
-  Button height: `sm` (24px) or `md` (32px).
-</ParamField>
-
-<ParamField body="soon" type="boolean" default="false">
-  Displays a coming-soon label and disables activation.
-</ParamField>
-
-<ParamField body="soonLabel" type="string">
-  Text for the coming-soon label.
+  Button height: `sm` (24px) or `md` (32px). The `link` variant uses its content height at either size.
 </ParamField>
 
 <ParamField body="startIcon" type="ReactNode">
@@ -73,6 +65,6 @@
   returns a style object based on the component's state.
 </ParamField>
 
-<ParamField body="variant" type="&quot;ghost&quot; | &quot;outline&quot; | &quot;soft&quot; | &quot;solid&quot;" default="outline">
-  Visual treatment of the button surface.
+<ParamField body="variant" type="&quot;ghost&quot; | &quot;link&quot; | &quot;outline&quot; | &quot;soft&quot; | &quot;solid&quot;" default="outline">
+  Visual treatment of the button surface. `link` uses compact text styling without a filled surface or border; `href` still determines link semantics.
 </ParamField>

@@ -1,6 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { AGENT_CHAT_NEW_THREAD_DRAFT_KEY } from '@/ai/states/agentChatDraftsByThreadIdState';
+import { useIsOnNewAiChatSlot } from '@/ai/hooks/useIsOnNewAiChatSlot';
 import { agentChatErrorComponentFamilyState } from '@/ai/states/agentChatErrorComponentFamilyState';
 import { agentChatIsAwaitingFirstChunkComponentFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkComponentFamilyState';
 import { agentChatIsStreamingComponentFamilyState } from '@/ai/states/agentChatIsStreamingComponentFamilyState';
@@ -36,11 +36,10 @@ export const useShouldShowAiChatEmptyState = () => {
 
   const isMobile = useIsMobile();
 
-  const isOnNewChatSlot =
-    currentAiChatThread === AGENT_CHAT_NEW_THREAD_DRAFT_KEY;
+  const isOnNewAiChatSlot = useIsOnNewAiChatSlot();
 
   return (
-    isOnNewChatSlot &&
+    isOnNewAiChatSlot &&
     !isMobile &&
     !hasMessages &&
     !isDefined(agentChatError) &&

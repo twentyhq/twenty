@@ -26,13 +26,10 @@ import {
   RequireFeatureFlag,
 } from 'src/engine/guards/feature-flag.guard';
 import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard';
-import { NoImpersonationGuard } from 'src/engine/guards/no-impersonation.guard';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
-import { RequireUserSessionGuard } from 'src/engine/guards/require-user-session.guard';
+import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
-import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
-import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 
 import { TwoFactorAuthenticationExceptionFilter } from './two-factor-authentication-exception.filter';
@@ -124,9 +121,17 @@ export class TwoFactorAuthenticationResolver {
 
   @Mutation(() => InitiateTwoFactorAuthenticationProvisioningDTO)
   @UseGuards(
-    UserAuthGuard,
-    RequireUserSessionGuard,
-    NoImpersonationGuard,
+    AuthPrincipalGuard({
+      userSession: {
+        standard: true,
+        impersonated: false,
+        playground: true,
+        workspaceAgnostic: true,
+      },
+      apiKey: false,
+      oauthClient: false,
+      application: false,
+    }),
     NoPermissionGuard,
   )
   async initiateOTPProvisioningForAuthenticatedUser(
@@ -153,10 +158,17 @@ export class TwoFactorAuthenticationResolver {
 
   @Mutation(() => DeleteTwoFactorAuthenticationMethodDTO)
   @UseGuards(
-    WorkspaceAuthGuard,
-    UserAuthGuard,
-    RequireUserSessionGuard,
-    NoImpersonationGuard,
+    AuthPrincipalGuard({
+      userSession: {
+        standard: true,
+        impersonated: false,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: false,
+      oauthClient: false,
+      application: false,
+    }),
     CustomPermissionGuard,
   )
   async deleteTwoFactorAuthenticationMethod(
@@ -177,10 +189,17 @@ export class TwoFactorAuthenticationResolver {
 
   @Mutation(() => VerifyTwoFactorAuthenticationMethodDTO)
   @UseGuards(
-    WorkspaceAuthGuard,
-    UserAuthGuard,
-    RequireUserSessionGuard,
-    NoImpersonationGuard,
+    AuthPrincipalGuard({
+      userSession: {
+        standard: true,
+        impersonated: false,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: false,
+      oauthClient: false,
+      application: false,
+    }),
     NoPermissionGuard,
   )
   async verifyTwoFactorAuthenticationMethodForAuthenticatedUser(
@@ -198,10 +217,17 @@ export class TwoFactorAuthenticationResolver {
 
   @Query(() => TwoFactorAuthenticationRecoveryStatusDTO)
   @UseGuards(
-    WorkspaceAuthGuard,
-    UserAuthGuard,
-    RequireUserSessionGuard,
-    NoImpersonationGuard,
+    AuthPrincipalGuard({
+      userSession: {
+        standard: true,
+        impersonated: false,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: false,
+      oauthClient: false,
+      application: false,
+    }),
     SettingsPermissionGuard(PermissionFlagType.SECURITY),
     FeatureFlagGuard,
   )
@@ -222,10 +248,17 @@ export class TwoFactorAuthenticationResolver {
 
   @Mutation(() => TwoFactorAuthenticationRecoveryCodeDTO)
   @UseGuards(
-    WorkspaceAuthGuard,
-    UserAuthGuard,
-    RequireUserSessionGuard,
-    NoImpersonationGuard,
+    AuthPrincipalGuard({
+      userSession: {
+        standard: true,
+        impersonated: false,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: false,
+      oauthClient: false,
+      application: false,
+    }),
     SettingsPermissionGuard(PermissionFlagType.SECURITY),
     FeatureFlagGuard,
   )
@@ -250,10 +283,17 @@ export class TwoFactorAuthenticationResolver {
 
   @Mutation(() => Boolean)
   @UseGuards(
-    WorkspaceAuthGuard,
-    UserAuthGuard,
-    RequireUserSessionGuard,
-    NoImpersonationGuard,
+    AuthPrincipalGuard({
+      userSession: {
+        standard: true,
+        impersonated: false,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: false,
+      oauthClient: false,
+      application: false,
+    }),
     SettingsPermissionGuard(PermissionFlagType.SECURITY),
     FeatureFlagGuard,
   )

@@ -25,7 +25,7 @@ import { useState } from 'react';
 import { Controller } from 'react-hook-form';
 import { AppPath } from 'twenty-shared/types';
 import { MainButton, useToast } from 'twenty-ui/components';
-import { ClickToActionLink } from 'twenty-ui/primitives/navigation';
+import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
@@ -273,14 +273,14 @@ export const SignInUpTOTPVerification = () => {
         disabled={isLoading}
       >{t`Submit`}</MainButton>
       <StyledActionBackLinkContainer>
-        <ClickToActionLink onClick={handleUseRecoveryCode}>
+        <Button variant="link" onClick={handleUseRecoveryCode}>
           <Trans>Lost your authenticator? Use a recovery code</Trans>
-        </ClickToActionLink>
+        </Button>
       </StyledActionBackLinkContainer>
       <StyledActionBackLinkContainer>
-        <ClickToActionLink onClick={handleBack}>
+        <Button variant="link" onClick={handleBack}>
           <Trans>Back</Trans>
-        </ClickToActionLink>
+        </Button>
       </StyledActionBackLinkContainer>
     </StyledForm>
   );

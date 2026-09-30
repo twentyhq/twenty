@@ -59,7 +59,7 @@ describe('Two-factor authentication OTP rate limiting (integration)', () => {
           extensions?: {
             code?: string;
             subCode?: string;
-            userFriendlyMessage?: unknown;
+            userFriendlyMessage?: string;
           };
         }
       | undefined;

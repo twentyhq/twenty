@@ -87,7 +87,7 @@ export const buildAgentChatThreadStandardFlatFieldMetadatas = (
         ),
         icon: 'IconText',
         isSystem: true,
-        isUIEditable: false,
+        isUIEditable: true,
         isNullable: true,
       },
     }),
@@ -428,7 +428,7 @@ export const buildAgentChatThreadStandardFlatFieldMetadatas = (
         isNullable: true,
       },
     }),
-    writability: MetadataWritability.OPEN,
+    writability: MetadataWritability.SYSTEM,
     isAuditLogged: false,
   },
   createdAt: {

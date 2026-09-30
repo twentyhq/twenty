@@ -8,7 +8,7 @@ import { INFO_PROP_DESCRIPTIONS } from './infoPropDescriptions';
 import { INLINE_BANNER_PROP_DESCRIPTIONS } from './inlineBannerPropDescriptions';
 import { TOAST_PROVIDER_PROP_DESCRIPTIONS } from './toastProviderPropDescriptions';
 import { TOASTER_PROP_DESCRIPTIONS } from './toasterPropDescriptions';
-import { CARD_PICKER_PROP_DESCRIPTIONS } from './cardPickerPropDescriptions';
+import { RADIO_PROP_DESCRIPTIONS } from './radioPropDescriptions';
 import { COLOR_SCHEME_PICKER_PROP_DESCRIPTIONS } from './colorSchemePickerPropDescriptions';
 import { SEARCH_INPUT_PROP_DESCRIPTIONS } from './searchInputPropDescriptions';
 import { ANIMATED_ICON_CROSSFADE_PROP_DESCRIPTIONS } from './animatedIconCrossfadePropDescriptions';
@@ -35,7 +35,6 @@ import { CARD_FOOTER_PROP_DESCRIPTIONS } from './cardFooterPropDescriptions';
 import { CARD_HEADER_PROP_DESCRIPTIONS } from './cardHeaderPropDescriptions';
 import { CARD_PROP_DESCRIPTIONS } from './cardPropDescriptions';
 import { CHIP_PROP_DESCRIPTIONS } from './chipPropDescriptions';
-import { CLICK_TO_ACTION_LINK_PROP_DESCRIPTIONS } from './clickToActionLinkPropDescriptions';
 import { CODE_EDITOR_HEADER_PROP_DESCRIPTIONS } from './codeEditorHeaderPropDescriptions';
 import { CODE_EDITOR_PROP_DESCRIPTIONS } from './codeEditorPropDescriptions';
 import { COLOR_SAMPLE_PROP_DESCRIPTIONS } from './colorSamplePropDescriptions';
@@ -143,13 +142,6 @@ export const DOCUMENTED_COMPONENTS = [
     propDescriptions: TEXT_DIRECTION_PROVIDER_PROP_DESCRIPTIONS,
   },
   {
-    name: 'ClickToActionLink',
-    source: 'primitives/navigation/ClickToActionLink/ClickToActionLink.tsx',
-    entryPoint: 'twenty-ui/primitives/navigation',
-    slug: 'navigation/click-to-action-link',
-    propDescriptions: CLICK_TO_ACTION_LINK_PROP_DESCRIPTIONS,
-  },
-  {
     name: 'OverflowingTextWithTooltip',
     source:
       'primitives/typography/OverflowingTextWithTooltip/OverflowingTextWithTooltip.tsx',
@@ -239,6 +231,7 @@ export const DOCUMENTED_COMPONENTS = [
     source: 'primitives/input/Radio/Radio.tsx',
     entryPoint: 'twenty-ui/primitives/input',
     slug: 'input/radio',
+    propDescriptions: RADIO_PROP_DESCRIPTIONS,
   },
   {
     name: 'RadioGroup',
@@ -555,13 +548,6 @@ export const DOCUMENTED_COMPONENTS = [
     entryPoint: 'twenty-ui/components',
     slug: 'components/toaster',
     propDescriptions: TOASTER_PROP_DESCRIPTIONS,
-  },
-  {
-    name: 'CardPicker',
-    source: 'components/input/CardPicker/CardPicker.tsx',
-    entryPoint: 'twenty-ui/components',
-    slug: 'components/card-picker',
-    propDescriptions: CARD_PICKER_PROP_DESCRIPTIONS,
   },
   {
     name: 'ColorSchemePicker',

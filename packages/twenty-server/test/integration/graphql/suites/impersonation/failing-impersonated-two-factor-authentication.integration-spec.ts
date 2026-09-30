@@ -18,9 +18,8 @@ import { USER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core
 const expectImpersonationDenied = (errors: BaseGraphQLError[]) => {
   expect(errors).toHaveLength(1);
   expect(errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
-  expect(errors[0].message).toContain('while impersonating');
   expect(errors[0].extensions.userFriendlyMessage).toBe(
-    "You can't do this while impersonating another user.",
+    'You do not have permission to perform this action.',
   );
 };
 

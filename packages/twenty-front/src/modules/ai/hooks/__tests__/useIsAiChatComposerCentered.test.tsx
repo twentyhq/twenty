@@ -12,6 +12,7 @@ import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThr
 import { agentChatMessagesComponentFamilyState } from '@/ai/states/agentChatMessagesComponentFamilyState';
 import { agentChatMessagesLoadingState } from '@/ai/states/agentChatMessagesLoadingState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
+import { threadIdCreatedFromDraftState } from '@/ai/states/threadIdCreatedFromDraftState';
 import { type AiChatSurface } from '@/ai/types/AiChatSurface';
 import {
   jotaiStore,
@@ -74,6 +75,27 @@ describe('useIsAiChatComposerCentered', () => {
     act(() => jotaiStore.set(agentChatMessagesLoadingState.atom, true));
     expect(result.current).toBe(false);
     act(() => jotaiStore.set(agentChatMessagesLoadingState.atom, false));
+    expect(result.current).toBe(false);
+  });
+
+  it('keeps the composer centered on the thread its draft created until the first message', () => {
+    jotaiStore.set(currentAiChatThreadState.atom, 'draft-thread');
+    jotaiStore.set(agentChatDisplayedThreadState.atom, 'draft-thread');
+    jotaiStore.set(threadIdCreatedFromDraftState.atom, 'draft-thread');
+    const { result } = renderForSurface();
+
+    expect(result.current).toBe(true);
+
+    act(() =>
+      jotaiStore.set(
+        agentChatMessagesComponentFamilyState.atomFamily({
+          instanceId: INSTANCE_ID,
+          familyKey: { threadId: 'draft-thread' },
+        }),
+        [{ id: 'message-1', role: 'user', parts: [] }],
+      ),
+    );
+
     expect(result.current).toBe(false);
   });
 

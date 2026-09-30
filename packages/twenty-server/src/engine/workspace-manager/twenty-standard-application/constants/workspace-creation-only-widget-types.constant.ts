@@ -8,4 +8,5 @@ import { WidgetType } from 'twenty-shared/types';
 export const WORKSPACE_CREATION_ONLY_WIDGET_TYPES: WidgetType[] = [
   // Added to the enum in 2.44
   WidgetType.CHAT_THREADS,
+  WidgetType.CHAT,
 ];

@@ -20,11 +20,23 @@ import { UploadProfilePicturePermissionGuard } from 'src/engine/core-modules/use
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
-import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
-@UseGuards(WorkspaceAuthGuard)
+@UseGuards(
+  AuthPrincipalGuard({
+    userSession: {
+      standard: true,
+      impersonated: true,
+      playground: true,
+      workspaceAgnostic: false,
+    },
+    apiKey: true,
+    oauthClient: true,
+    application: true,
+  }),
+)
 @UsePipes(ResolverValidationPipe)
 @UseFilters(
   UsageLimitGraphqlApiExceptionFilter,
@@ -43,10 +55,7 @@ export class FileCorePictureResolver {
     deprecationReason:
       'Use createFileUpload with the CorePicture folder and completeWorkspaceLogoUpload, which send the logo straight to file storage.',
   })
-  @UseGuards(
-    WorkspaceAuthGuard,
-    SettingsPermissionGuard(PermissionFlagType.WORKSPACE),
-  )
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.WORKSPACE))
   async uploadWorkspaceLogo(
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Args({ name: 'file', type: () => GraphQLUpload })
@@ -68,7 +77,7 @@ export class FileCorePictureResolver {
     deprecationReason:
       'Use createFileUpload with the CorePicture folder and completeWorkspaceMemberProfilePictureUpload, which send the picture straight to file storage.',
   })
-  @UseGuards(WorkspaceAuthGuard, UploadProfilePicturePermissionGuard)
+  @UseGuards(UploadProfilePicturePermissionGuard)
   async uploadWorkspaceMemberProfilePicture(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @Args({ name: 'file', type: () => GraphQLUpload })
@@ -89,10 +98,7 @@ export class FileCorePictureResolver {
   }
 
   @Mutation(() => FileWithSignedUrlDTO)
-  @UseGuards(
-    WorkspaceAuthGuard,
-    SettingsPermissionGuard(PermissionFlagType.WORKSPACE),
-  )
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.WORKSPACE))
   async completeWorkspaceLogoUpload(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @Args({ name: 'fileId', type: () => String })
@@ -105,7 +111,7 @@ export class FileCorePictureResolver {
   }
 
   @Mutation(() => FileWithSignedUrlDTO)
-  @UseGuards(WorkspaceAuthGuard, UploadProfilePicturePermissionGuard)
+  @UseGuards(UploadProfilePicturePermissionGuard)
   async completeWorkspaceMemberProfilePictureUpload(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @Args({ name: 'fileId', type: () => String })

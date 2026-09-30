@@ -18,7 +18,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { type FormEvent, useState } from 'react';
 import { AppPath } from 'twenty-shared/types';
 import { MainButton, useToast } from 'twenty-ui/components';
-import { ClickToActionLink } from 'twenty-ui/primitives/navigation';
+import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
@@ -132,9 +132,9 @@ export const SignInUpTwoFactorAuthenticationRecovery = () => {
         disabled={isLoading || !isNonEmptyString(recoveryCode.trim())}
       >{t`Continue`}</MainButton>
       <StyledActionBackLinkContainer>
-        <ClickToActionLink onClick={handleBack}>
+        <Button variant="link" onClick={handleBack}>
           <Trans>Back</Trans>
-        </ClickToActionLink>
+        </Button>
       </StyledActionBackLinkContainer>
     </StyledForm>
   );
