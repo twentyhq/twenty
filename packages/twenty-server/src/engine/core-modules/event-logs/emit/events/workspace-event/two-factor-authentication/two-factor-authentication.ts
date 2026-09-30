@@ -13,8 +13,11 @@ export const twoFactorAuthenticationSchema = z.strictObject({
       'method_verified',
       'method_deleted',
       'otp_rejected',
+      'recovery_code_issued',
+      'recovery_code_revoked',
     ]),
-    strategy: z.string(),
+    strategy: z.string().optional(),
+    targetUserId: z.string().optional(),
     message: z.string().optional(),
   }),
 });

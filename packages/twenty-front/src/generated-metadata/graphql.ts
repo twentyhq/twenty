@@ -3174,6 +3174,7 @@ export type Mutation = {
   generateFrontComponentApplicationTokenPair: ApplicationTokenPair;
   generatePlaygroundToken: AuthToken;
   generateTransientToken: TransientToken;
+  generateTwoFactorAuthenticationRecoveryCode: TwoFactorAuthenticationRecoveryCode;
   getAuthTokensFromLoginToken: AuthTokens;
   getAuthTokensFromOTP: AuthTokens;
   getAuthTokensFromSSOExchangeToken: AuthTokens;
@@ -3207,6 +3208,7 @@ export type Mutation = {
   revokeAllOtherUserSessions: Scalars['Int']['output'];
   revokeApiKey?: Maybe<ApiKey>;
   revokeApplicationAuthorization: Scalars['Boolean']['output'];
+  revokeTwoFactorAuthenticationRecoveryCode: Scalars['Boolean']['output'];
   revokeUserSession: Scalars['Boolean']['output'];
   rotateApplicationRegistrationClientSecret: RotateClientSecret;
   runAgent: RunAgentResult;
@@ -3981,6 +3983,12 @@ export type MutationGenerateFrontComponentApplicationTokenPairArgs = {
 };
 
 
+export type MutationGenerateTwoFactorAuthenticationRecoveryCodeArgs = {
+  otp?: InputMaybe<Scalars['String']['input']>;
+  userId: Scalars['UUID']['input'];
+};
+
+
 export type MutationGetAuthTokensFromLoginTokenArgs = {
   loginToken: Scalars['String']['input'];
   origin: Scalars['String']['input'];
@@ -4129,6 +4137,11 @@ export type MutationRevokeApiKeyArgs = {
 
 export type MutationRevokeApplicationAuthorizationArgs = {
   applicationAuthorizationId: Scalars['UUID']['input'];
+};
+
+
+export type MutationRevokeTwoFactorAuthenticationRecoveryCodeArgs = {
+  userId: Scalars['UUID']['input'];
 };
 
 
@@ -5323,6 +5336,7 @@ export type Query = {
   skill?: Maybe<Skill>;
   skills: Array<Skill>;
   timelineActivityTypes: Array<TimelineActivityType>;
+  twoFactorAuthenticationRecoveryStatus: TwoFactorAuthenticationRecoveryStatus;
   unsubscribeTopics: Array<UnsubscribeTopic>;
   usageLimits: Array<UsageLimit>;
   usageQuotaDefinitions: UsageQuotaDefinitions;
@@ -5807,6 +5821,11 @@ export type QueryRecordSharingArgs = {
 
 export type QuerySkillArgs = {
   id: Scalars['UUID']['input'];
+};
+
+
+export type QueryTwoFactorAuthenticationRecoveryStatusArgs = {
+  userId: Scalars['UUID']['input'];
 };
 
 
@@ -6456,6 +6475,18 @@ export type TwoFactorAuthenticationMethodSummary = {
   status: Scalars['String']['output'];
   strategy: Scalars['String']['output'];
   twoFactorAuthenticationMethodId: Scalars['UUID']['output'];
+};
+
+export type TwoFactorAuthenticationRecoveryCode = {
+  __typename?: 'TwoFactorAuthenticationRecoveryCode';
+  expiresAt: Scalars['DateTime']['output'];
+  recoveryCode: Scalars['String']['output'];
+};
+
+export type TwoFactorAuthenticationRecoveryStatus = {
+  __typename?: 'TwoFactorAuthenticationRecoveryStatus';
+  hasVerifiedTwoFactorAuthenticationMethod: Scalars['Boolean']['output'];
+  pendingRecoveryCodeExpiresAt?: Maybe<Scalars['DateTime']['output']>;
 };
 
 export type UuidFilterComparison = {

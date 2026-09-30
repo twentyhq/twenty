@@ -1,8 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
+import { type MessageDescriptor } from '@lingui/core';
+import { isNonEmptyString } from '@sniptt/guards';
 import { authenticator } from 'otplib';
 import { TwoFactorAuthenticationStrategy } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { IsNull } from 'typeorm';
 
 import {
   AuthException,
@@ -17,12 +20,15 @@ import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/
 import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
+import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import {
   TWO_FACTOR_AUTHENTICATION_OTP_RATE_LIMIT_MAX,
   TWO_FACTOR_AUTHENTICATION_OTP_RATE_LIMIT_WINDOW_MS,
 } from 'src/engine/core-modules/two-factor-authentication/constants/two-factor-authentication-otp-rate-limit.constant';
 import { TwoFactorAuthenticationMethodEntity } from 'src/engine/core-modules/two-factor-authentication/entities/two-factor-authentication-method.entity';
+import { TwoFactorAuthenticationRecoveryCodeEntity } from 'src/engine/core-modules/two-factor-authentication/entities/two-factor-authentication-recovery-code.entity';
 import { TOTP_DEFAULT_CONFIGURATION } from 'src/engine/core-modules/two-factor-authentication/strategies/otp/totp/constants/totp.strategy.constants';
 import { TotpStrategy } from 'src/engine/core-modules/two-factor-authentication/strategies/otp/totp/totp.strategy';
 import { buildTwoFactorAuthenticationOtpRateLimitKey } from 'src/engine/core-modules/two-factor-authentication/utils/build-two-factor-authentication-otp-rate-limit-key.util';
@@ -47,10 +53,13 @@ export class TwoFactorAuthenticationService {
   constructor(
     @InjectWorkspaceScopedRepository(TwoFactorAuthenticationMethodEntity)
     private readonly twoFactorAuthenticationMethodRepository: WorkspaceScopedRepository<TwoFactorAuthenticationMethodEntity>,
+    @InjectWorkspaceScopedRepository(TwoFactorAuthenticationRecoveryCodeEntity)
+    private readonly twoFactorAuthenticationRecoveryCodeRepository: WorkspaceScopedRepository<TwoFactorAuthenticationRecoveryCodeEntity>,
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly secretEncryptionService: SecretEncryptionService,
     private readonly throttlerService: ThrottlerService,
     private readonly eventLogEmitterService: EventLogEmitterService,
+    private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
   private async decryptStoredSecret({
@@ -254,6 +263,89 @@ export class TwoFactorAuthenticationService {
         strategy: twoFactorAuthenticationStrategy,
       });
     }
+
+    // A working authenticator means the member was not locked out after all, so
+    // a recovery code issued for them must not stay redeemable.
+    const revokedRecoveryCodeCount = await this.revokePendingRecoveryCodes({
+      workspaceId,
+      userWorkspaceId: userTwoFactorAuthenticationMethod.userWorkspaceId,
+    });
+
+    if (revokedRecoveryCodeCount > 0) {
+      this.emitTwoFactorAuthenticationEvent({
+        workspaceId,
+        userId,
+        action: 'recovery_code_revoked',
+        message: 'Revoked after a successful authenticator verification',
+      });
+    }
+  }
+
+  async revokePendingRecoveryCodes({
+    workspaceId,
+    userWorkspaceId,
+  }: {
+    workspaceId: WorkspaceEntity['id'];
+    userWorkspaceId: string;
+  }): Promise<number> {
+    const updateResult =
+      await this.twoFactorAuthenticationRecoveryCodeRepository.update(
+        workspaceId,
+        { userWorkspaceId, usedAt: IsNull(), revokedAt: IsNull() },
+        { revokedAt: new Date() },
+      );
+
+    return updateResult.affected ?? 0;
+  }
+
+  async assertFreshStepUpAuthenticationOrThrow({
+    userId,
+    workspaceId,
+    otp,
+    otpRequiredMessage,
+    twoFactorAuthenticationRequiredMessage,
+  }: {
+    userId: UserEntity['id'];
+    workspaceId: WorkspaceEntity['id'];
+    otp?: string;
+    otpRequiredMessage: MessageDescriptor;
+    twoFactorAuthenticationRequiredMessage: MessageDescriptor;
+  }): Promise<void> {
+    if (
+      this.twentyConfigService.get('NODE_ENV') === NodeEnvironment.DEVELOPMENT
+    ) {
+      return;
+    }
+
+    if (!isNonEmptyString(otp)) {
+      throw new TwoFactorAuthenticationException(
+        'A two-factor authentication code is required for this action',
+        TwoFactorAuthenticationExceptionCode.STEP_UP_AUTHENTICATION_REQUIRED,
+        { userFriendlyMessage: otpRequiredMessage },
+      );
+    }
+
+    // Verify against the actor's current workspace only: checking the same code
+    // against every workspace they belong to would allow one OTP guess per
+    // workspace, weakening brute-force resistance.
+    const hasVerifiedTwoFactorAuthenticationMethod =
+      await this.twoFactorAuthenticationMethodRepository.exists(workspaceId, {
+        where: { userWorkspace: { userId }, status: OTPStatus.VERIFIED },
+      });
+
+    if (!hasVerifiedTwoFactorAuthenticationMethod) {
+      throw new TwoFactorAuthenticationException(
+        'Two-factor authentication must be enabled in the current workspace for this action',
+        TwoFactorAuthenticationExceptionCode.STEP_UP_AUTHENTICATION_REQUIRED,
+        { userFriendlyMessage: twoFactorAuthenticationRequiredMessage },
+      );
+    }
+
+    await this.verifyTwoFactorAuthenticationMethodForAuthenticatedUser(
+      userId,
+      otp,
+      workspaceId,
+    );
   }
 
   async deleteTwoFactorAuthenticationMethodForAuthenticatedUser({
@@ -302,17 +394,19 @@ export class TwoFactorAuthenticationService {
     return { success: true };
   }
 
-  private emitTwoFactorAuthenticationEvent({
+  emitTwoFactorAuthenticationEvent({
     workspaceId,
     userId,
     action,
     strategy,
+    targetUserId,
     message,
   }: {
     workspaceId: WorkspaceEntity['id'];
     userId: UserEntity['id'];
     action: TwoFactorAuthenticationTrackEvent['properties']['action'];
-    strategy: TwoFactorAuthenticationStrategy;
+    strategy?: TwoFactorAuthenticationStrategy;
+    targetUserId?: UserEntity['id'];
     message?: string;
   }) {
     const eventLogContext = this.eventLogEmitterService.createContext({
@@ -322,7 +416,8 @@ export class TwoFactorAuthenticationService {
 
     void eventLogContext.insertWorkspaceEvent(TWO_FACTOR_AUTHENTICATION_EVENT, {
       action,
-      strategy,
+      ...(isDefined(strategy) ? { strategy } : {}),
+      ...(isDefined(targetUserId) ? { targetUserId } : {}),
       ...(isDefined(message) ? { message } : {}),
     });
   }

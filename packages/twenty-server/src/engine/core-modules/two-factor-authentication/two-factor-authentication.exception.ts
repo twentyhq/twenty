@@ -10,6 +10,9 @@ export enum TwoFactorAuthenticationExceptionCode {
   INVALID_OTP = 'INVALID_OTP',
   TWO_FACTOR_AUTHENTICATION_METHOD_ALREADY_PROVISIONED = 'TWO_FACTOR_AUTHENTICATION_METHOD_ALREADY_PROVISIONED',
   MALFORMED_DATABASE_OBJECT = 'MALFORMED_DATABASE_OBJECT',
+  RECOVERY_CODE_TARGET_NOT_ALLOWED = 'RECOVERY_CODE_TARGET_NOT_ALLOWED',
+  RECOVERY_CODE_ISSUANCE_CONFLICT = 'RECOVERY_CODE_ISSUANCE_CONFLICT',
+  STEP_UP_AUTHENTICATION_REQUIRED = 'STEP_UP_AUTHENTICATION_REQUIRED',
 }
 
 const getTwoFactorAuthenticationExceptionUserFriendlyMessage = (
@@ -26,6 +29,12 @@ const getTwoFactorAuthenticationExceptionUserFriendlyMessage = (
       return msg`Two-factor authentication is already set up.`;
     case TwoFactorAuthenticationExceptionCode.MALFORMED_DATABASE_OBJECT:
       return msg`An error occurred with two-factor authentication data.`;
+    case TwoFactorAuthenticationExceptionCode.RECOVERY_CODE_TARGET_NOT_ALLOWED:
+      return msg`You can't generate a recovery code for this member.`;
+    case TwoFactorAuthenticationExceptionCode.RECOVERY_CODE_ISSUANCE_CONFLICT:
+      return msg`Another recovery code was just generated for this member. Refresh the page to see it.`;
+    case TwoFactorAuthenticationExceptionCode.STEP_UP_AUTHENTICATION_REQUIRED:
+      return msg`Enter your two-factor authentication code to continue.`;
     default:
       assertUnreachable(code);
   }

@@ -1,5 +1,6 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 
+import { msg } from '@lingui/core/macro';
 import { authenticator } from 'otplib';
 import { TwoFactorAuthenticationStrategy } from 'twenty-shared/types';
 
@@ -15,6 +16,8 @@ import {
   ThrottlerExceptionCode,
 } from 'src/engine/core-modules/throttler/throttler.exception';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
+import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { getWorkspaceScopedRepositoryToken } from 'src/engine/twenty-orm/workspace-scoped-repository/get-workspace-scoped-repository-token.util';
 
@@ -25,6 +28,7 @@ import {
 } from './two-factor-authentication.exception';
 
 import { TwoFactorAuthenticationMethodEntity } from './entities/two-factor-authentication-method.entity';
+import { TwoFactorAuthenticationRecoveryCodeEntity } from './entities/two-factor-authentication-recovery-code.entity';
 import { OTPStatus } from './strategies/otp/otp.constants';
 import { buildTwoFactorAuthenticationOtpRateLimitKey } from './utils/build-two-factor-authentication-otp-rate-limit-key.util';
 
@@ -33,15 +37,19 @@ const TOTP_STEP_DURATION_MS = 30_000;
 const USER_ID = 'user-123';
 const WORKSPACE_ID = 'workspace-123';
 const METHOD_ID = '2fa-method-123';
+const USER_WORKSPACE_ID = 'user-workspace-123';
 
 describe('TwoFactorAuthenticationService', () => {
   let service: TwoFactorAuthenticationService;
   let repository: {
     findOne: jest.Mock;
+    exists: jest.Mock;
     upsert: jest.Mock;
     update: jest.Mock;
     delete: jest.Mock;
   };
+  let recoveryCodeRepository: { update: jest.Mock };
+  let twentyConfigService: { get: jest.Mock };
   let throttlerService: { atomicTokenBucketThrottleOrThrow: jest.Mock };
   let insertWorkspaceEvent: jest.Mock;
   let secret: string;
@@ -54,6 +62,7 @@ describe('TwoFactorAuthenticationService', () => {
       secret: 'enc:v2:encrypted-secret',
       status: OTPStatus.VERIFIED,
       strategy: TwoFactorAuthenticationStrategy.TOTP,
+      userWorkspaceId: USER_WORKSPACE_ID,
       userWorkspace: { userId: USER_ID, workspaceId: WORKSPACE_ID },
       ...overrides,
     }) as TwoFactorAuthenticationMethodEntity;
@@ -71,9 +80,24 @@ describe('TwoFactorAuthenticationService', () => {
           ),
           useValue: {
             findOne: jest.fn(),
+            exists: jest.fn(),
             upsert: jest.fn(),
             update: jest.fn(),
             delete: jest.fn(),
+          },
+        },
+        {
+          provide: getWorkspaceScopedRepositoryToken(
+            TwoFactorAuthenticationRecoveryCodeEntity,
+          ),
+          useValue: {
+            update: jest.fn().mockResolvedValue({ affected: 0 }),
+          },
+        },
+        {
+          provide: TwentyConfigService,
+          useValue: {
+            get: jest.fn().mockReturnValue(NodeEnvironment.TEST),
           },
         },
         {
@@ -105,6 +129,12 @@ describe('TwoFactorAuthenticationService', () => {
       getWorkspaceScopedRepositoryToken(TwoFactorAuthenticationMethodEntity),
     );
     throttlerService = module.get(ThrottlerService);
+    recoveryCodeRepository = module.get(
+      getWorkspaceScopedRepositoryToken(
+        TwoFactorAuthenticationRecoveryCodeEntity,
+      ),
+    );
+    twentyConfigService = module.get(TwentyConfigService);
   });
 
   afterEach(() => {
@@ -250,6 +280,138 @@ describe('TwoFactorAuthenticationService', () => {
       );
 
       expect(insertWorkspaceEvent).not.toHaveBeenCalled();
+    });
+
+    it('revokes pending recovery codes once the authenticator works again', async () => {
+      repository.findOne.mockResolvedValue(buildVerifiedMethod());
+      recoveryCodeRepository.update.mockResolvedValue({ affected: 1 });
+
+      await service.validateStrategy(
+        USER_ID,
+        authenticator.generate(secret),
+        WORKSPACE_ID,
+        TwoFactorAuthenticationStrategy.TOTP,
+      );
+
+      expect(recoveryCodeRepository.update).toHaveBeenCalledWith(
+        WORKSPACE_ID,
+        expect.objectContaining({ userWorkspaceId: USER_WORKSPACE_ID }),
+        { revokedAt: expect.any(Date) },
+      );
+      expect(insertWorkspaceEvent).toHaveBeenCalledWith(
+        TWO_FACTOR_AUTHENTICATION_EVENT,
+        expect.objectContaining({ action: 'recovery_code_revoked' }),
+      );
+    });
+
+    it('does not revoke recovery codes when the code is wrong', async () => {
+      repository.findOne.mockResolvedValue(buildVerifiedMethod());
+
+      const staleToken = authenticator
+        .clone({ epoch: Date.now() - 10 * TOTP_STEP_DURATION_MS })
+        .generate(secret);
+
+      await expect(
+        service.validateStrategy(
+          USER_ID,
+          staleToken,
+          WORKSPACE_ID,
+          TwoFactorAuthenticationStrategy.TOTP,
+        ),
+      ).rejects.toThrow(TwoFactorAuthenticationException);
+
+      expect(recoveryCodeRepository.update).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('assertFreshStepUpAuthenticationOrThrow', () => {
+    const stepUpMessages = {
+      otpRequiredMessage: msg`Enter your code.`,
+      twoFactorAuthenticationRequiredMessage: msg`Set up two-factor authentication first.`,
+    };
+
+    it('skips the check in development', async () => {
+      twentyConfigService.get.mockReturnValue(NodeEnvironment.DEVELOPMENT);
+
+      await service.assertFreshStepUpAuthenticationOrThrow({
+        userId: USER_ID,
+        workspaceId: WORKSPACE_ID,
+        ...stepUpMessages,
+      });
+
+      expect(repository.exists).not.toHaveBeenCalled();
+    });
+
+    it('requires a code', async () => {
+      await expect(
+        service.assertFreshStepUpAuthenticationOrThrow({
+          userId: USER_ID,
+          workspaceId: WORKSPACE_ID,
+          ...stepUpMessages,
+        }),
+      ).rejects.toMatchObject({
+        code: TwoFactorAuthenticationExceptionCode.STEP_UP_AUTHENTICATION_REQUIRED,
+        userFriendlyMessage: stepUpMessages.otpRequiredMessage,
+      });
+    });
+
+    it('requires a verified method in the current workspace', async () => {
+      repository.exists.mockResolvedValue(false);
+
+      await expect(
+        service.assertFreshStepUpAuthenticationOrThrow({
+          userId: USER_ID,
+          workspaceId: WORKSPACE_ID,
+          otp: '123456',
+          ...stepUpMessages,
+        }),
+      ).rejects.toMatchObject({
+        code: TwoFactorAuthenticationExceptionCode.STEP_UP_AUTHENTICATION_REQUIRED,
+        userFriendlyMessage:
+          stepUpMessages.twoFactorAuthenticationRequiredMessage,
+      });
+      expect(repository.exists).toHaveBeenCalledWith(WORKSPACE_ID, {
+        where: {
+          userWorkspace: { userId: USER_ID },
+          status: OTPStatus.VERIFIED,
+        },
+      });
+    });
+
+    it('verifies the code against the current workspace method', async () => {
+      repository.exists.mockResolvedValue(true);
+      repository.findOne.mockResolvedValue(buildVerifiedMethod());
+
+      await service.assertFreshStepUpAuthenticationOrThrow({
+        userId: USER_ID,
+        workspaceId: WORKSPACE_ID,
+        otp: authenticator.generate(secret),
+        ...stepUpMessages,
+      });
+
+      expect(
+        throttlerService.atomicTokenBucketThrottleOrThrow,
+      ).toHaveBeenCalled();
+    });
+
+    it('rejects a wrong code', async () => {
+      repository.exists.mockResolvedValue(true);
+      repository.findOne.mockResolvedValue(buildVerifiedMethod());
+
+      const staleToken = authenticator
+        .clone({ epoch: Date.now() - 10 * TOTP_STEP_DURATION_MS })
+        .generate(secret);
+
+      await expect(
+        service.assertFreshStepUpAuthenticationOrThrow({
+          userId: USER_ID,
+          workspaceId: WORKSPACE_ID,
+          otp: staleToken,
+          ...stepUpMessages,
+        }),
+      ).rejects.toMatchObject({
+        code: TwoFactorAuthenticationExceptionCode.INVALID_OTP,
+      });
     });
   });
 

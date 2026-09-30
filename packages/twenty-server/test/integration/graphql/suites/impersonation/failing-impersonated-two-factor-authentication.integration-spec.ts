@@ -1,4 +1,5 @@
 import { deleteTwoFactorAuthenticationMethod } from 'test/integration/graphql/suites/user-session/utils/delete-two-factor-authentication-method.util';
+import { generateTwoFactorAuthenticationRecoveryCode } from 'test/integration/graphql/utils/generate-two-factor-authentication-recovery-code.util';
 import { getAuthTokensFromLoginToken } from 'test/integration/graphql/utils/get-auth-tokens-from-login-token.util';
 import { getAuthTokensFromOtp } from 'test/integration/graphql/utils/get-auth-tokens-from-otp.util';
 import { impersonate } from 'test/integration/graphql/utils/impersonate.util';
@@ -89,6 +90,17 @@ describe('Impersonation - two-factor authentication mutations denial (integratio
     });
 
     expectImpersonationLoginTokenRejected(errors);
+  });
+
+  it('rejects generating a recovery code while impersonating', async () => {
+    const { errors } = await generateTwoFactorAuthenticationRecoveryCode({
+      userId: USER_DATA_SEED_IDS.JONY,
+      otp: '123456',
+      accessToken: impersonationAccessToken,
+      expectToFail: true,
+    });
+
+    expectImpersonationDenied(errors);
   });
 
   it('rejects initiating OTP provisioning while impersonating', async () => {

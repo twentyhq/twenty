@@ -2785,6 +2785,16 @@ type VerifyTwoFactorAuthenticationMethod {
   success: Boolean!
 }
 
+type TwoFactorAuthenticationRecoveryCode {
+  recoveryCode: String!
+  expiresAt: DateTime!
+}
+
+type TwoFactorAuthenticationRecoveryStatus {
+  hasVerifiedTwoFactorAuthenticationMethod: Boolean!
+  pendingRecoveryCodeExpiresAt: DateTime
+}
+
 type AuthorizeApp {
   redirectUrl: String!
 }
@@ -3915,6 +3925,7 @@ type Query {
   checkWorkspaceSubdomainAvailability(subdomain: String!): SubdomainAvailabilityDTO!
   getWorkspaceCreationDefaults: WorkspaceCreationDefaultsDTO!
   validatePasswordResetToken(passwordResetToken: String!): ValidatePasswordResetToken!
+  twoFactorAuthenticationRecoveryStatus(userId: UUID!): TwoFactorAuthenticationRecoveryStatus!
   currentUser: User!
   getSSOIdentityProviders: [FindAvailableSSOIDP!]!
   eventLogs(input: EventLogQueryInput!): EventLogQueryResult!
@@ -4309,6 +4320,8 @@ type Mutation {
   initiateOTPProvisioningForAuthenticatedUser: InitiateTwoFactorAuthenticationProvisioning!
   deleteTwoFactorAuthenticationMethod(twoFactorAuthenticationMethodId: UUID!): DeleteTwoFactorAuthenticationMethod!
   verifyTwoFactorAuthenticationMethodForAuthenticatedUser(otp: String!): VerifyTwoFactorAuthenticationMethod!
+  generateTwoFactorAuthenticationRecoveryCode(userId: UUID!, otp: String): TwoFactorAuthenticationRecoveryCode!
+  revokeTwoFactorAuthenticationRecoveryCode(userId: UUID!): Boolean!
   deleteUser: User!
   deleteUserFromWorkspace(workspaceMemberIdToDelete: String!): UserWorkspace!
   updateWorkspaceMemberSettings(input: UpdateWorkspaceMemberSettingsInput!): Boolean!
