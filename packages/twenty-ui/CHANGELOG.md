@@ -4,6 +4,7 @@
 
 ### Breaking Changes
 
+- `ProgressBar` no longer accepts `countdownDurationInMs`, `isCountdownPaused`, or `onCountdownComplete`. Notification countdowns belong to `Toast`. Its duration, hover pause, manual progress, and close behavior are preserved, and keyboard focus now also pauses the countdown. The desktop companion uses the shared Toast.
 - Removed `ClickToActionLink`. Use `Button variant="link"` from `twenty-ui/primitives/input`: pass `onClick` for actions or `href` for navigation. The link appearance preserves compact text styling while actions gain native button keyboard behavior and prop forwarding.
 - Removed `soon` and `soonLabel` from `Button`, `MainButton`, and `LightButton`. Compose a disabled button with `Pill` from `twenty-ui/primitives/data-display` and supply the upcoming-feature label from the application.
 - Removed `CircularProgressBar`. Use `Loader` from `twenty-ui/primitives/feedback` for indeterminate loading. The separately versioned Granola app will migrate when its `twenty-ui` dependency is upgraded.

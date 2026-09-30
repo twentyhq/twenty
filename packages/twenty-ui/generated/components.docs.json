@@ -173,27 +173,6 @@
         "description": "CSS class applied to the progress root."
       },
       {
-        "name": "countdownDurationInMs",
-        "type": "number",
-        "required": false,
-        "defaultValue": null,
-        "description": "Starts a visual animation from full to empty over this duration in milliseconds. Does not update `value`."
-      },
-      {
-        "name": "isCountdownPaused",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": "false",
-        "description": "Pauses the countdown animation without resetting its position."
-      },
-      {
-        "name": "onCountdownComplete",
-        "type": "(() => void)",
-        "required": false,
-        "defaultValue": null,
-        "description": "Called when the countdown animation ends."
-      },
-      {
         "name": "onGrowInComplete",
         "type": "(() => void)",
         "required": false,
@@ -212,7 +191,7 @@
         "type": "number",
         "required": true,
         "defaultValue": null,
-        "description": "Current progress from 0 to 100. Also supplies the accessible value during a countdown."
+        "description": "Current progress from 0 to 100."
       },
       {
         "name": "withBorderRadius",
@@ -6117,7 +6096,7 @@
         "type": "number",
         "required": false,
         "defaultValue": "6000",
-        "description": "Milliseconds before `onClose` is called. The countdown pauses while the\npointer is over the toast."
+        "description": "Milliseconds before `onClose` is called. The countdown pauses while the\npointer is over the toast or keyboard focus is inside it."
       },
       {
         "name": "icon",
