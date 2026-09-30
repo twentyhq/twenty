@@ -6,7 +6,8 @@ import { AppPath } from 'twenty-shared/types';
 
 import { AiChatPageThreadUrlSyncEffect } from '@/ai/components/AiChatPageThreadUrlSyncEffect';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
-import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
+import { setAgentChatThreadList } from '@/ai/testing/setAgentChatThreadList';
+import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import {
   jotaiStore,
   resetJotaiStore,
@@ -16,7 +17,7 @@ const switchThreadWithDraftMock = jest.fn((toThreadId: string) => {
   jotaiStore.set(currentAiChatThreadState.atom, toThreadId);
 });
 const switchToNewChatMock = jest.fn();
-const refreshAgentChatThreadsMock = jest.fn();
+const loadAgentChatThreadMock = jest.fn();
 
 jest.mock('@/ai/hooks/useSwitchToNewAiChat', () => ({
   useSwitchToNewAiChat: () => ({ switchToNewChat: switchToNewChatMock }),
@@ -24,7 +25,7 @@ jest.mock('@/ai/hooks/useSwitchToNewAiChat', () => ({
 
 jest.mock('@/ai/hooks/useRefreshAgentChatThreads', () => ({
   useRefreshAgentChatThreads: () => ({
-    refreshAgentChatThreads: refreshAgentChatThreadsMock,
+    loadAgentChatThread: loadAgentChatThreadMock,
   }),
 }));
 
@@ -36,6 +37,18 @@ jest.mock('@/ai/hooks/useSwitchAgentChatThreadWithDraft', () => ({
 
 const THREAD_A = '11111111-1111-4111-8111-111111111111';
 const THREAD_B = '22222222-2222-4222-8222-222222222222';
+
+const buildChat = (
+  id: string,
+  deletedAt: string | null = null,
+): AgentChatThreadRecord => ({
+  __typename: 'AgentChatThread',
+  id,
+  title: null,
+  deletedAt,
+  createdAt: '2026-09-01T00:00:00Z',
+  updatedAt: '2026-09-07T00:00:00Z',
+});
 
 let navigateToThread: ((threadId: string) => void) | undefined;
 
@@ -66,7 +79,7 @@ const renderEffectAt = (initialPath: string) =>
 describe('AiChatPageThreadUrlSyncEffect', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    refreshAgentChatThreadsMock.mockResolvedValue([]);
+    loadAgentChatThreadMock.mockResolvedValue(null);
     resetJotaiStore();
     navigateToThread = undefined;
   });
@@ -79,51 +92,54 @@ describe('AiChatPageThreadUrlSyncEffect', () => {
     expect(switchThreadWithDraftMock).toHaveBeenCalledWith(THREAD_A);
   });
 
-  it('recovers a missing chat only after refreshing the loaded thread list', async () => {
+  it('recovers a missing chat only once the thread list has loaded', async () => {
     renderEffectAt(`/chat/${THREAD_A}`);
 
     expect(switchToNewChatMock).not.toHaveBeenCalled();
-    expect(refreshAgentChatThreadsMock).not.toHaveBeenCalled();
+    expect(loadAgentChatThreadMock).not.toHaveBeenCalled();
 
     await act(async () => {
-      jotaiStore.set(metadataStoreState.atomFamily('agentChatThreads'), {
-        current: [],
-        draft: [],
-        status: 'up-to-date',
-      });
+      setAgentChatThreadList(jotaiStore, []);
     });
 
-    expect(refreshAgentChatThreadsMock).toHaveBeenCalledTimes(1);
+    expect(loadAgentChatThreadMock).toHaveBeenCalledWith(THREAD_A);
     expect(switchToNewChatMock).toHaveBeenCalledTimes(1);
   });
 
-  it('keeps a valid chat URL found by refreshing a stale thread list', async () => {
-    refreshAgentChatThreadsMock.mockResolvedValue([{ id: THREAD_A }]);
-    jotaiStore.set(metadataStoreState.atomFamily('agentChatThreads'), {
-      current: [{ id: THREAD_B }],
-      draft: [],
-      status: 'up-to-date',
+  it('keeps a chat URL that sits past the loaded pages', async () => {
+    loadAgentChatThreadMock.mockResolvedValue(buildChat(THREAD_A));
+    setAgentChatThreadList(jotaiStore, [buildChat(THREAD_B)], {
+      hasNextPage: true,
     });
 
     await act(async () => {
       renderEffectAt(`/chat/${THREAD_A}`);
     });
 
-    expect(refreshAgentChatThreadsMock).toHaveBeenCalledTimes(1);
+    expect(loadAgentChatThreadMock).toHaveBeenCalledWith(THREAD_A);
     expect(switchToNewChatMock).not.toHaveBeenCalled();
   });
 
-  it('keeps an archived chat URL when the thread exists in metadata', () => {
-    jotaiStore.set(metadataStoreState.atomFamily('agentChatThreads'), {
-      current: [{ id: THREAD_A, deletedAt: '2026-09-07T00:00:00Z' }],
-      draft: [],
-      status: 'up-to-date',
+  it('keeps the chat URL when the chat cannot be looked up', async () => {
+    loadAgentChatThreadMock.mockResolvedValue(undefined);
+    setAgentChatThreadList(jotaiStore, [buildChat(THREAD_B)]);
+
+    await act(async () => {
+      renderEffectAt(`/chat/${THREAD_A}`);
     });
+
+    expect(switchToNewChatMock).not.toHaveBeenCalled();
+  });
+
+  it('keeps a deleted chat URL when the chat is listed', () => {
+    setAgentChatThreadList(jotaiStore, [
+      buildChat(THREAD_A, '2026-09-07T00:00:00Z'),
+    ]);
 
     renderEffectAt(`/chat/${THREAD_A}`);
 
     expect(switchThreadWithDraftMock).toHaveBeenCalledWith(THREAD_A);
-    expect(refreshAgentChatThreadsMock).not.toHaveBeenCalled();
+    expect(loadAgentChatThreadMock).not.toHaveBeenCalled();
     expect(switchToNewChatMock).not.toHaveBeenCalled();
   });
 

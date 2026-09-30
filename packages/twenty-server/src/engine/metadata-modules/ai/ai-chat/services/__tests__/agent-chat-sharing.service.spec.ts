@@ -183,14 +183,6 @@ describe('Conversation common record access', () => {
     });
   });
 
-  it('lists soft deleted conversations so they can be restored', async () => {
-    const { service, repository } = buildService();
-    await service.getReadableThreadIds(args);
-    expect(repository.find).toHaveBeenCalledWith(
-      expect.objectContaining({ withDeleted: true }),
-    );
-  });
-
   it('restores a soft deleted conversation through the restore permission', async () => {
     const { service, query, repository } = buildService();
     const deletedThread = {
@@ -318,27 +310,8 @@ describe('Conversation common record access', () => {
     });
   });
 
-  it.each([MetadataReadability.SYSTEM, MetadataReadability.PRIVATE])(
-    'bounds the readable thread list before ranking for %s metadata',
-    async (readability) => {
-      const { service, repository, objectMetadata, sharing } = buildService();
-      objectMetadata.readability = readability;
-      await service.getReadableThreadIds(args);
-      expect(repository.find).toHaveBeenCalledWith(
-        expect.objectContaining({
-          take: 1000,
-          order: { updatedAt: 'DESC', id: 'DESC' },
-        }),
-      );
-      expect(sharing.getPermissionsForRecords).not.toHaveBeenCalled();
-    },
-  );
-
-  it('batches capabilities and lists only records admitted by the ordinary repository', async () => {
+  it('batches capabilities', async () => {
     const { service, sharing } = buildService();
-    await expect(service.getReadableThreadIds(args)).resolves.toEqual([
-      THREAD_ID,
-    ]);
     await service.getPermissionsForThreads({ ...args, threadIds: [THREAD_ID] });
     expect(sharing.getPermissionsForRecords).toHaveBeenCalledTimes(1);
   });
@@ -353,21 +326,4 @@ describe('Conversation common record access', () => {
       ).resolves.toBe(thread);
     },
   );
-
-  it('leaves workflow run conversations out of the chat list once threads can name a run', async () => {
-    const { service, repository, flatFieldMetadataMaps } = buildService();
-    await service.getReadableThreadIds(args);
-    expect(repository.find).toHaveBeenLastCalledWith(
-      expect.objectContaining({ where: undefined }),
-    );
-    flatFieldMetadataMaps.byUniversalIdentifier[
-      STANDARD_OBJECTS.agentChatThread.fields.workflowRun.universalIdentifier
-    ] = {};
-    await service.getReadableThreadIds(args);
-    expect(repository.find).toHaveBeenLastCalledWith(
-      expect.objectContaining({
-        where: { workflowRunId: expect.objectContaining({ _type: 'isNull' }) },
-      }),
-    );
-  });
 });

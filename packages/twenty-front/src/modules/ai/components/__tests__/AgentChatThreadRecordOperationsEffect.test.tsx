@@ -20,12 +20,16 @@ const OTHER_OBJECT_METADATA_ITEM = {
 const CHAT_ID = '20202020-0000-4000-8000-0000000000aa';
 
 const applyAgentChatThreadUpdate = jest.fn();
+const addAgentChatThread = jest.fn();
 const refreshAgentChatThreads = jest.fn();
 const leaveRemovedAiChatThread = jest.fn();
 const useListenToEventsForQuery = jest.fn();
 
 jest.mock('@/ai/hooks/useApplyAgentChatThreadUpdate', () => ({
-  useApplyAgentChatThreadUpdate: () => ({ applyAgentChatThreadUpdate }),
+  useApplyAgentChatThreadUpdate: () => ({
+    applyAgentChatThreadUpdate,
+    addAgentChatThread,
+  }),
 }));
 jest.mock('@/ai/hooks/useRefreshAgentChatThreads', () => ({
   useRefreshAgentChatThreads: () => ({ refreshAgentChatThreads }),
@@ -81,7 +85,7 @@ describe('AgentChatThreadRecordOperationsEffect', () => {
     );
   });
 
-  it('applies a rename to the listed chat, ignoring fields the list does not hold', () => {
+  it('applies renames and usage updates to the stored chat', () => {
     dispatchChatOperation({
       type: 'update-one',
       result: {
@@ -95,21 +99,27 @@ describe('AgentChatThreadRecordOperationsEffect', () => {
     expect(applyAgentChatThreadUpdate).toHaveBeenCalledWith({
       id: CHAT_ID,
       title: 'Renamed',
+      totalInputTokens: 12,
     });
   });
 
-  it('ignores updates that do not change the list', () => {
+  it('lists a created chat but leaves a workflow run conversation to its run', () => {
     dispatchChatOperation({
-      type: 'update-one',
-      result: {
-        updateInput: {
-          recordId: CHAT_ID,
-          updatedFields: [{ totalInputTokens: 12 }],
-        },
-      },
+      type: 'create-one',
+      createdRecord: { id: CHAT_ID, workflowRunId: null },
     });
 
-    expect(applyAgentChatThreadUpdate).not.toHaveBeenCalled();
+    expect(addAgentChatThread).toHaveBeenCalledWith({
+      id: CHAT_ID,
+      workflowRunId: null,
+    });
+
+    dispatchChatOperation({
+      type: 'create-one',
+      createdRecord: { id: 'run-conversation', workflowRunId: 'run' },
+    });
+
+    expect(addAgentChatThread).toHaveBeenCalledTimes(1);
   });
 
   it('marks deleted chats and clears the mark on restore', () => {

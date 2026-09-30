@@ -5,42 +5,29 @@ import { isDefined } from 'twenty-shared/utils';
 import { useApplyAgentChatThreadUpdate } from '@/ai/hooks/useApplyAgentChatThreadUpdate';
 import { useLeaveRemovedAiChatThread } from '@/ai/hooks/useLeaveRemovedAiChatThread';
 import { useRefreshAgentChatThreads } from '@/ai/hooks/useRefreshAgentChatThreads';
+import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { useListenToObjectRecordOperationBrowserEvent } from '@/browser-event/hooks/useListenToObjectRecordOperationBrowserEvent';
 import { type ObjectRecordOperationBrowserEventDetail } from '@/browser-event/types/ObjectRecordOperationBrowserEventDetail';
-import { type FlatAgentChatThread } from '@/metadata-store/types/FlatAgentChatThread';
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
 import { type ObjectRecordOperationUpdateInput } from '@/object-record/types/ObjectRecordOperationUpdateInput';
 import { useListenToEventsForQuery } from '@/sse-db-event/hooks/useListenToEventsForQuery';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
-
-const THREAD_LIST_FIELD_NAMES = ['title', 'deletedAt', 'updatedAt'] as const;
 
 const AGENT_CHAT_THREADS_OPERATION_SIGNATURE = {
   objectNameSingular: CoreObjectNameSingular.AgentChatThread,
   variables: {},
 };
 
-const toThreadListUpdate = ({
+const toThreadUpdate = ({
   recordId,
   updatedFields,
-}: ObjectRecordOperationUpdateInput) => {
-  const updatedValues = Object.assign({}, ...updatedFields) as Record<
-    string,
-    unknown
-  >;
-  const listValues = Object.fromEntries(
-    THREAD_LIST_FIELD_NAMES.filter(
-      (fieldName) => fieldName in updatedValues,
-    ).map((fieldName) => [fieldName, updatedValues[fieldName]]),
-  ) as Partial<FlatAgentChatThread>;
+}: ObjectRecordOperationUpdateInput): Partial<AgentChatThreadRecord> & {
+  id: string;
+} => ({
+  id: recordId,
+  ...(Object.assign({}, ...updatedFields) as Partial<AgentChatThreadRecord>),
+});
 
-  return Object.keys(listValues).length > 0
-    ? { id: recordId, ...listValues }
-    : undefined;
-};
-
-// Chats are renamed, deleted, restored and destroyed through the record API,
-// while the chat keeps its own list of conversations
 export const AgentChatThreadRecordOperationsEffect = () => {
   const chatObjectMetadataItem = useAtomFamilySelectorValue(
     objectMetadataItemFamilySelector,
@@ -49,7 +36,8 @@ export const AgentChatThreadRecordOperationsEffect = () => {
       objectNameType: 'singular',
     },
   );
-  const { applyAgentChatThreadUpdate } = useApplyAgentChatThreadUpdate();
+  const { applyAgentChatThreadUpdate, addAgentChatThread } =
+    useApplyAgentChatThreadUpdate();
   const { refreshAgentChatThreads } = useRefreshAgentChatThreads();
   const { leaveRemovedAiChatThread } = useLeaveRemovedAiChatThread();
   const isEnabled = isDefined(chatObjectMetadataItem);
@@ -63,9 +51,7 @@ export const AgentChatThreadRecordOperationsEffect = () => {
   const handleRecordOperation = useCallback(
     ({ operation }: ObjectRecordOperationBrowserEventDetail) => {
       const applyUpdates = (
-        updates: (Partial<FlatAgentChatThread> & {
-          id: string;
-        })[],
+        updates: (Partial<AgentChatThreadRecord> & { id: string })[],
       ) => {
         for (const update of updates) {
           applyAgentChatThreadUpdate(update);
@@ -73,6 +59,17 @@ export const AgentChatThreadRecordOperationsEffect = () => {
       };
 
       switch (operation.type) {
+        case 'create-one': {
+          const createdThread =
+            operation.createdRecord as AgentChatThreadRecord;
+
+          // A workflow run's conversation is announced to whoever reads the
+          // run, but it is listed with the run, not in the chat list
+          if (!isDefined(createdThread.workflowRunId)) {
+            addAgentChatThread(createdThread);
+          }
+          return;
+        }
         case 'update-one':
         case 'update-many': {
           const updateInputs =
@@ -80,7 +77,7 @@ export const AgentChatThreadRecordOperationsEffect = () => {
               ? [operation.result.updateInput]
               : operation.result.updateInputs;
 
-          applyUpdates(updateInputs.map(toThreadListUpdate).filter(isDefined));
+          applyUpdates(updateInputs.map(toThreadUpdate));
           return;
         }
         case 'delete-one':
@@ -107,14 +104,16 @@ export const AgentChatThreadRecordOperationsEffect = () => {
           return;
         }
         default:
-          void refreshAgentChatThreads().then((threads) => {
+          // Destroy and bulk create events carry no ids
+          void refreshAgentChatThreads().then(async (threads) => {
             if (isDefined(threads)) {
-              leaveRemovedAiChatThread();
+              await leaveRemovedAiChatThread();
             }
           });
       }
     },
     [
+      addAgentChatThread,
       applyAgentChatThreadUpdate,
       leaveRemovedAiChatThread,
       refreshAgentChatThreads,

@@ -58,7 +58,6 @@ const buildResolver = () => {
         new AiException('Thread not found', AiExceptionCode.THREAD_NOT_FOUND),
       ),
   };
-  const broadcaster = { broadcast: jest.fn() };
   const recordEvents = {
     emitThreadCreated: jest.fn(),
     emitThreadUpdated: jest.fn(),
@@ -71,7 +70,6 @@ const buildResolver = () => {
     {} as never,
     {} as never,
     {} as never,
-    broadcaster as never,
     sharing as never,
     recordEvents as never,
   );
@@ -120,7 +118,6 @@ const buildResolver = () => {
     streaming,
     events,
     redis,
-    broadcaster,
     recordEvents,
   };
 };
@@ -144,7 +141,6 @@ describe('Shared conversation API boundaries', () => {
         workspaceId: WORKSPACE_ID,
       }),
     ).rejects.toThrow('restore failed');
-    expect(context.broadcaster.broadcast).not.toHaveBeenCalled();
     expect(context.recordEvents.emitThreadUpdated).not.toHaveBeenCalled();
   });
 
@@ -238,7 +234,6 @@ describe('Shared conversation API boundaries', () => {
       }
       expect(context.threadRepository.update).not.toHaveBeenCalled();
       expect(context.threadRepository.delete).not.toHaveBeenCalled();
-      expect(context.broadcaster.broadcast).not.toHaveBeenCalled();
       expect(context.recordEvents.emitThreadUpdated).not.toHaveBeenCalled();
       expect(context.messages.delete).not.toHaveBeenCalled();
       expect(context.streaming.streamAgentChat).not.toHaveBeenCalled();

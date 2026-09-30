@@ -25,7 +25,6 @@ const METADATA_NAME_TO_ENTITY_KEY: Record<string, MetadataEntityKey> = {
   navigationMenuItem: 'navigationMenuItems',
   frontComponent: 'frontComponents',
   webhook: 'webhooks',
-  agentChatThread: 'agentChatThreads',
   application: 'applications',
 };
 

@@ -1,17 +1,23 @@
 import { getAgentChatUsageFromThread } from '@/ai/utils/getAgentChatUsageFromThread';
 
 const storedThread = {
+  __typename: 'AgentChatThread',
+  id: 'thread',
+  title: null,
+  deletedAt: null,
+  createdAt: '2026-09-01T00:00:00.000Z',
+  updatedAt: '2026-09-01T00:00:00.000Z',
   conversationSize: 120,
   contextWindowTokens: 1000,
   totalInputTokens: 250,
   totalOutputTokens: 30,
   totalCacheReadTokens: 80,
-  totalInputCredits: 0.125,
-  totalOutputCredits: 0.05,
+  totalInputCredits: '125000',
+  totalOutputCredits: 50000,
 };
 
 describe('getAgentChatUsageFromThread', () => {
-  it('restores cumulative usage without restoring the last message', () => {
+  it('restores cumulative usage in display credits without the last message', () => {
     expect(getAgentChatUsageFromThread(storedThread)).toEqual({
       conversationSize: 120,
       contextWindowTokens: 1000,
