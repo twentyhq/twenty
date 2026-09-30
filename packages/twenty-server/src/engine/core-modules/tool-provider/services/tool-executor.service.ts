@@ -9,6 +9,7 @@ import { type ObjectRecordGroupBy } from 'src/engine/api/graphql/workspace-query
 
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
 
+import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
 import { CreateManyRecordsService } from 'src/engine/core-modules/record-crud/services/create-many-records.service';
 import { CreateRecordService } from 'src/engine/core-modules/record-crud/services/create-record.service';
@@ -27,11 +28,15 @@ import { type ToolDescriptor } from 'src/engine/core-modules/tool-provider/types
 import { type ToolExecutionRef } from 'src/engine/core-modules/tool-provider/types/tool-execution-ref.type';
 import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
 import { buildRequiredToolAuthContext } from 'src/engine/core-modules/tool-provider/utils/build-required-tool-auth-context.util';
+import { formatValidationErrors } from 'src/engine/core-modules/tool-provider/utils/format-validation-errors.util';
+import { isToolExecutionRefusal } from 'src/engine/core-modules/tool-provider/utils/is-tool-execution-refusal.util';
 import { withResolvedToolAuthContext } from 'src/engine/core-modules/tool-provider/utils/with-resolved-tool-auth-context.util';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
+import { shouldCaptureException } from 'src/engine/utils/global-exception-handler.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 
 @Injectable()
 export class ToolExecutorService {
@@ -56,6 +61,7 @@ export class ToolExecutorService {
     private readonly userRepository: Repository<UserEntity>,
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
+    private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
 
   async dispatch(
@@ -63,20 +69,43 @@ export class ToolExecutorService {
     args: Record<string, unknown> | undefined,
     context: ToolProviderContext,
   ): Promise<ToolOutput> {
-    const safeArgs = args ?? {};
-    const executionContext = await (context.resolveExecutionContext?.() ??
-      context);
+    try {
+      const executionContext = await (context.resolveExecutionContext?.() ??
+        context);
 
-    return withResolvedToolAuthContext(
-      {
-        context: executionContext,
-        userRepository: this.userRepository,
-        userWorkspaceRepository: this.userWorkspaceRepository,
-        workspaceCacheService: this.workspaceCacheService,
-      },
-      (contextWithAuth) =>
-        this.dispatchByExecutionRef(descriptor, safeArgs, contextWithAuth),
-    );
+      return await withResolvedToolAuthContext(
+        {
+          context: executionContext,
+          userRepository: this.userRepository,
+          userWorkspaceRepository: this.userWorkspaceRepository,
+          workspaceCacheService: this.workspaceCacheService,
+        },
+        (contextWithAuth) =>
+          this.dispatchByExecutionRef(descriptor, args ?? {}, contextWithAuth),
+      );
+    } catch (error) {
+      const errorMessage =
+        error instanceof WorkspaceMigrationBuilderException
+          ? formatValidationErrors(error)
+          : String(error instanceof Error ? error.message : error);
+
+      this.logger.error(
+        `Error executing tool "${descriptor.name}": ${errorMessage}`,
+      );
+
+      if (!isToolExecutionRefusal(error) && shouldCaptureException(error)) {
+        this.exceptionHandlerService.captureExceptions([error], {
+          workspace: { id: context.workspaceId },
+          additionalData: { toolName: descriptor.name },
+        });
+      }
+
+      return {
+        success: false,
+        message: `Failed to execute ${descriptor.name}`,
+        error: errorMessage,
+      };
+    }
   }
 
   private async dispatchByExecutionRef(

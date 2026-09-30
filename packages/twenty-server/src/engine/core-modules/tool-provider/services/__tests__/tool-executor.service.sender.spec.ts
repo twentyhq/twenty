@@ -35,6 +35,7 @@ const build = () => {
     {} as never,
     {} as never,
     {} as never,
+    { captureExceptions: jest.fn() } as never,
   );
   const current = {
     workspaceId: 'workspace',
@@ -74,9 +75,11 @@ describe('Tool execution sender permissions', () => {
     resolveExecutionContext.mockRejectedValue(
       new Error('Sender access revoked'),
     );
-    await expect(service.dispatch(descriptor, {}, context)).rejects.toThrow(
-      'Sender access revoked',
-    );
+    await expect(service.dispatch(descriptor, {}, context)).resolves.toEqual({
+      success: false,
+      message: 'Failed to execute find_people',
+      error: 'Sender access revoked',
+    });
     expect(findRecords.execute).toHaveBeenCalledTimes(1);
   });
 });

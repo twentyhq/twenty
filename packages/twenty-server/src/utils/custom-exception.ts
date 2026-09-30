@@ -1,7 +1,7 @@
 import { type MessageDescriptor } from '@lingui/core';
 import { CustomError } from 'twenty-shared/utils';
 
-const CommonExceptionCode = {
+export const CommonExceptionCode = {
   INTERNAL_SERVER_ERROR: 'INTERNAL_SERVER_ERROR',
 } as const;
 
