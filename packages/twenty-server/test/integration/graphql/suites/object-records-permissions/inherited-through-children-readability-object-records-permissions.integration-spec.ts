@@ -51,6 +51,9 @@ const BOTH_PERSON_NOTE_TARGET_ID = randomUUID();
 const BOTH_COMPANY_NOTE_TARGET_ID = randomUUID();
 const MEMBER_NOTE_TARGET_ID = randomUUID();
 const COMPANY_NOTE_ATTACHMENT_ID = randomUUID();
+const TASK_ON_PERSON_ID = randomUUID();
+const TASK_ALONE_ID = randomUUID();
+const PERSON_TASK_TARGET_ID = randomUUID();
 const PERSON_NOTE_ATTACHMENT_ID = randomUUID();
 
 const NOTE_IDS = [
@@ -68,6 +71,7 @@ const NOTE_TARGET_IDS = [
   MEMBER_NOTE_TARGET_ID,
 ];
 const ATTACHMENT_IDS = [COMPANY_NOTE_ATTACHMENT_ID, PERSON_NOTE_ATTACHMENT_ID];
+const TASK_IDS = [TASK_ON_PERSON_ID, TASK_ALONE_ID];
 
 const collectIds = (edges: { node: { id: string } }[]): string[] =>
   edges.map((edge) => edge.node.id).sort();
@@ -93,6 +97,13 @@ const findNoteTargetsOperation = findManyOperationFactory({
   objectMetadataPluralName: 'noteTargets',
   gqlFields: 'id',
   filter: { id: { in: NOTE_TARGET_IDS } },
+});
+
+const findTasksOperation = findManyOperationFactory({
+  objectMetadataSingularName: 'task',
+  objectMetadataPluralName: 'tasks',
+  gqlFields: 'id',
+  filter: { id: { in: TASK_IDS } },
 });
 
 const findAttachmentsOperation = findManyOperationFactory({
@@ -163,6 +174,7 @@ describe('inheritedThroughChildrenReadabilityObjectRecordsPermissions', () => {
   let recordShareStorageService: RecordShareStorageService;
   let personObjectMetadataId: string;
   let noteObjectMetadataId: string;
+  let taskObjectMetadataId: string;
 
   const sourceId = randomUUID();
 
@@ -184,6 +196,11 @@ describe('inheritedThroughChildrenReadabilityObjectRecordsPermissions', () => {
     noteObjectMetadataId = (
       await objectMetadataRepository.findOneOrFail({
         where: { workspaceId: SEED_APPLE_WORKSPACE_ID, nameSingular: 'note' },
+      })
+    ).id;
+    taskObjectMetadataId = (
+      await objectMetadataRepository.findOneOrFail({
+        where: { workspaceId: SEED_APPLE_WORKSPACE_ID, nameSingular: 'task' },
       })
     ).id;
 
@@ -245,6 +262,22 @@ describe('inheritedThroughChildrenReadabilityObjectRecordsPermissions', () => {
         },
       },
       {
+        objectMetadataSingularName: 'task',
+        data: { id: TASK_ON_PERSON_ID, title: 'On the private person' },
+      },
+      {
+        objectMetadataSingularName: 'task',
+        data: { id: TASK_ALONE_ID, title: 'Attached to nothing' },
+      },
+      {
+        objectMetadataSingularName: 'taskTarget',
+        data: {
+          id: PERSON_TASK_TARGET_ID,
+          taskId: TASK_ON_PERSON_ID,
+          targetPersonId: PERSON_ID,
+        },
+      },
+      {
         objectMetadataSingularName: 'attachment',
         data: {
           id: COMPANY_NOTE_ATTACHMENT_ID,
@@ -291,6 +324,11 @@ describe('inheritedThroughChildrenReadabilityObjectRecordsPermissions', () => {
       objectMetadataId: noteObjectMetadataId,
       recordIds: NOTE_IDS,
     });
+    await recordShareStorageService.deleteByRecordIds({
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      objectMetadataId: taskObjectMetadataId,
+      recordIds: TASK_IDS,
+    });
     await setObjectReadability(
       personObjectMetadataId,
       MetadataReadability.OPEN,
@@ -309,6 +347,16 @@ describe('inheritedThroughChildrenReadabilityObjectRecordsPermissions', () => {
       objectMetadataSingularName: 'note',
       objectMetadataPluralName: 'notes',
       ids: NOTE_IDS,
+    });
+    await destroyRecords({
+      objectMetadataSingularName: 'taskTarget',
+      objectMetadataPluralName: 'taskTargets',
+      ids: [PERSON_TASK_TARGET_ID],
+    });
+    await destroyRecords({
+      objectMetadataSingularName: 'task',
+      objectMetadataPluralName: 'tasks',
+      ids: TASK_IDS,
     });
     await destroyRecords({
       objectMetadataSingularName: 'person',
@@ -353,6 +401,56 @@ describe('inheritedThroughChildrenReadabilityObjectRecordsPermissions', () => {
       expect(
         collectIds(attachmentsResponse.body.data.attachments.edges),
       ).toEqual([COMPANY_NOTE_ATTACHMENT_ID]);
+    });
+
+    it('should show the task attached to nothing and hide the one on the private person, to the query and the event gate alike', async () => {
+      const memberRole = await findOneRoleByLabel({ label: 'Member' });
+      const { rolesPermissions, flatObjectMetadataMaps } =
+        await getAppProviderByClassName<WorkspaceCacheService>(
+          'WorkspaceCacheService',
+        ).getOrRecompute(SEED_APPLE_WORKSPACE_ID, [
+          'rolesPermissions',
+          'flatObjectMetadataMaps',
+        ]);
+      const taskObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: taskObjectMetadataId,
+        flatEntityMaps: flatObjectMetadataMaps,
+      });
+
+      expect(taskObjectMetadata).toBeDefined();
+
+      const recordIdsAdmittedByEventGate =
+        await getAppProviderByClassName<RecordAccessPolicyService>(
+          'RecordAccessPolicyService',
+        )
+          .buildEventRecordAccessGate({
+            name: 'task.created',
+            workspaceId: SEED_APPLE_WORKSPACE_ID,
+            objectMetadata: taskObjectMetadata!,
+            events: TASK_IDS.map((id) => ({
+              recordId: id,
+              properties: { after: { id } },
+            })),
+          })
+          .resolveAdmittedRecordIds({
+            isSystemContext: false,
+            objectsPermissions: rolesPermissions[memberRole.id],
+            principalIds: [
+              EVERYONE_PRINCIPAL_ID,
+              WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+              memberRole.id,
+            ],
+            isOwningApplication: () => false,
+            resolveRowLevelPermissionRecordFilter: () => null,
+          });
+      const tasksResponse =
+        await makeGraphqlApiRequestWithMemberRole(findTasksOperation);
+
+      expect(tasksResponse.body.errors).toBeUndefined();
+      expect(collectIds(tasksResponse.body.data.tasks.edges)).toEqual([
+        TASK_ALONE_ID,
+      ]);
+      expect([...recordIdsAdmittedByEventGate]).toEqual([TASK_ALONE_ID]);
     });
 
     it('should let the member rename the notes on the open company or on nothing and refuse the one on the private person', async () => {

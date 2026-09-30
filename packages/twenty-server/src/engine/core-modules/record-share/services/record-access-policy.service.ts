@@ -6,7 +6,7 @@ import { type ObjectRecordEvent } from 'twenty-shared/database-events';
 import { type ObjectRecord } from 'twenty-shared/types';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import { isNonEmptyString } from '@sniptt/guards';
-import { In } from 'typeorm';
+import { In, MoreThanOrEqual } from 'typeorm';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
@@ -316,6 +316,7 @@ export class RecordAccessPolicyService {
 
   private async resolveSnapshotIdsReadableThroughChildren({
     workspaceId,
+    objectMetadata,
     snapshots,
     subject,
     depth,
@@ -361,46 +362,77 @@ export class RecordAccessPolicyService {
     );
 
     if (liveSnapshotIds.length > 0) {
-      const snapshotById = new Map(
-        snapshots.map((snapshot) => [snapshot.id, snapshot]),
+      const childRepository = this.workspaceOrmManager.getRepository(
+        childNameSingular,
+        { shouldBypassPermissionChecks: true },
       );
-      // Trashed rows are fetched too: one trashed along with the record still
-      // attaches it, as in the query gate
-      const childRows = await this.workspaceOrmManager
-        .getRepository(childNameSingular, {
-          shouldBypassPermissionChecks: true,
-        })
+      const childRows = await childRepository
         .createQueryBuilder()
-        .select(['id', parent.childJoinColumnName, 'deletedAt'])
+        .select(['id', parent.childJoinColumnName])
         .where({ [parent.childJoinColumnName]: In(liveSnapshotIds) })
-        .withDeleted()
         .getMany<ObjectRecord>({ noFormatting: true });
-      const liveChildRows = childRows.filter(
-        (childRow) => !isDefined(childRow.deletedAt),
-      );
       const readableChildIds = await this.selectReadableRecordIds({
         objectMetadata: parent.childFlatObjectMetadata,
-        recordIds: liveChildRows.map((childRow) => String(childRow.id)),
+        recordIds: childRows.map((childRow) => String(childRow.id)),
         subject,
         depth: depth + 1,
       });
 
       for (const childRow of childRows) {
         const snapshotId = String(childRow[parent.childJoinColumnName]);
-        const snapshot = snapshotById.get(snapshotId);
 
-        if (
-          isDefined(snapshot) &&
-          isChildRecordBoundAtDeletion({
-            childRecord: childRow,
-            record: snapshot,
-          })
-        ) {
-          attachedSnapshotIds.add(snapshotId);
-        }
+        attachedSnapshotIds.add(snapshotId);
 
         if (readableChildIds.has(String(childRow.id))) {
           readableSnapshotIds.add(snapshotId);
+        }
+      }
+
+      const trashedSnapshots = snapshots.filter(
+        (snapshot) =>
+          liveSnapshotIds.includes(snapshot.id) &&
+          isDefined(snapshot.deletedAt),
+      );
+
+      if (
+        isOpenWhenDetachedObject(objectMetadata) &&
+        trashedSnapshots.length > 0
+      ) {
+        const snapshotById = new Map(
+          trashedSnapshots.map((snapshot) => [snapshot.id, snapshot]),
+        );
+        const earliestDeletedAt = new Date(
+          Math.min(
+            ...trashedSnapshots.map((snapshot) =>
+              new Date(String(snapshot.deletedAt)).getTime(),
+            ),
+          ),
+        );
+        // A row trashed along with the record still attaches it, as in the
+        // query gate; rows trashed before any of these records cannot
+        const trashedChildRows = await childRepository
+          .createQueryBuilder()
+          .select(['id', parent.childJoinColumnName, 'deletedAt'])
+          .where({
+            [parent.childJoinColumnName]: In([...snapshotById.keys()]),
+            deletedAt: MoreThanOrEqual(earliestDeletedAt),
+          })
+          .withDeleted()
+          .getMany<ObjectRecord>({ noFormatting: true });
+
+        for (const childRow of trashedChildRows) {
+          const snapshotId = String(childRow[parent.childJoinColumnName]);
+          const snapshot = snapshotById.get(snapshotId);
+
+          if (
+            isDefined(snapshot) &&
+            isChildRecordBoundAtDeletion({
+              childRecord: childRow,
+              record: snapshot,
+            })
+          ) {
+            attachedSnapshotIds.add(snapshotId);
+          }
         }
       }
     }
