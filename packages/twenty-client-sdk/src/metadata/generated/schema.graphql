@@ -3455,7 +3455,6 @@ type AgentChatThread {
   createdAt: DateTime!
   updatedAt: DateTime!
   deletedAt: DateTime
-  lastMessageAt: DateTime
 }
 
 type AiSystemPromptSection {
@@ -3932,7 +3931,6 @@ type Query {
   appConnection(id: ID!): AppConnection!
   findWorkspaceAiStats: WorkspaceAiStats!
   aiChatUsage: AiChatUsage
-  chatThreads: [AgentChatThread!]!
   chatThread(id: UUID!): AgentChatThread!
   chatMessages(threadId: UUID!): [AgentMessage!]!
   chatStreamCatchupChunks(threadId: UUID!): ChatStreamCatchupChunks!
