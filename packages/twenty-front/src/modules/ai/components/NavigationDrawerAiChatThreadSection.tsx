@@ -1,14 +1,14 @@
 import { type ReactNode } from 'react';
 import { NavigationDrawerAiChatThreadItem } from '@/ai/components/NavigationDrawerAiChatThreadItem';
 import { CollapsibleNavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/CollapsibleNavigationDrawerSection';
-import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { type AgentChatThreadListItem } from '@/ai/types/AgentChatThreadListItem';
 
 export type NavigationDrawerAiChatThreadSectionProps = {
   sectionId: string;
   title: string;
-  threads: AgentChatThreadRecord[];
+  threads: AgentChatThreadListItem[];
   currentThreadId: string | null;
-  onThreadClick: (thread: AgentChatThreadRecord) => void;
+  onThreadClick: (thread: AgentChatThreadListItem) => void;
   rightIcon?: ReactNode;
   alwaysShowRightIcon?: boolean;
 };

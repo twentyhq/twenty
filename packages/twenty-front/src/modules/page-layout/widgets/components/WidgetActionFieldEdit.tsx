@@ -101,16 +101,14 @@ export const WidgetActionFieldEdit = ({
   } satisfies GenericFieldContextType;
 
   return (
-    <RecordFieldsScopeContextProvider value={{ scopeInstanceId: instanceId }}>
-      <RecordFieldComponentInstanceContext.Provider
-        value={{
-          instanceId: recordFieldInputInstanceId,
-        }}
-      >
-        <FieldContext.Provider value={fieldContextValue}>
-          <FieldWidgetEditAction />
-        </FieldContext.Provider>
-      </RecordFieldComponentInstanceContext.Provider>
-    </RecordFieldsScopeContextProvider>
+    <RecordFieldComponentInstanceContext.Provider
+      value={{
+        instanceId: recordFieldInputInstanceId,
+      }}
+    >
+      <FieldContext.Provider value={fieldContextValue}>
+        <FieldWidgetEditAction />
+      </FieldContext.Provider>
+    </RecordFieldComponentInstanceContext.Provider>
   );
 };

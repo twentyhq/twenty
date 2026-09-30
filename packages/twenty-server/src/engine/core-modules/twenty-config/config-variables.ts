@@ -2513,7 +2513,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
     description:
-      'Timeout in milliseconds for the search ILIKE fallback query per searchable object. Triggered only when the tsvector query returns 0 results on the first page (e.g. CJK input). When the timeout fires the fallback is skipped for that object.',
+      'Timeout in milliseconds for the search ILIKE fallback query per searchable object. Triggered only for input containing CJK characters when the tsvector query returns 0 results on the first page. When the timeout fires the fallback is skipped for that object.',
     type: ConfigVariableType.NUMBER,
     isEnvOnly: true,
   })

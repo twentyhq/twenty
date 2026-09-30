@@ -1,3 +1,4 @@
+import { MarkdownRenderer } from '@/ai/components/MarkdownRenderer';
 import { StyledAiChatContentContainer } from '@/ai/components/StyledAiChatContentContainer';
 import { styled } from '@linaria/react';
 
@@ -19,6 +20,8 @@ export const AiChatEmptyState = ({
   isCentered = false,
 }: AiChatEmptyStateProps) => {
   const shouldShowAiChatEmptyState = useShouldShowAiChatEmptyState();
+
+  MarkdownRenderer.preload();
 
   if (!shouldShowAiChatEmptyState) {
     return null;

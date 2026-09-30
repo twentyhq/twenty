@@ -59,10 +59,10 @@ describe('workflow manifest references', () => {
       },
     };
     const references = prepareWorkflowManifestReferences({
-      fromAllFlatEntityMaps: createEmptyAllFlatEntityMaps(),
       existingAllFlatEntityMaps: createEmptyAllFlatEntityMaps(),
       toAllUniversalFlatEntityMaps: proposed,
       ownerApplicationId: OWNER,
+      idByUniversalIdentifierByMetadataName: {},
     });
     expect(
       references.logicFunctionOutputSchemaByUniversalIdentifier?.get('action'),
@@ -75,55 +75,42 @@ describe('workflow manifest references', () => {
     });
   });
 
-  it('uses the IDs assigned to metadata in the same installation', () => {
+  it('uses preallocated IDs without assigning them to the definitions', () => {
     const proposed = proposedMaps();
     const references = prepareWorkflowManifestReferences({
-      fromAllFlatEntityMaps: createEmptyAllFlatEntityMaps(),
       existingAllFlatEntityMaps: createEmptyAllFlatEntityMaps(),
       toAllUniversalFlatEntityMaps: proposed,
       ownerApplicationId: OWNER,
+      idByUniversalIdentifierByMetadataName: {
+        logicFunction: { code: 'code-id', action: 'action-id' },
+        agent: { agent: 'agent-id' },
+        fieldMetadata: { field: 'field-id' },
+      },
     });
     expect(
       references.objectByUniversalIdentifier?.get('object')?.nameSingular,
     ).toBe('company');
     expect(references.fieldByUniversalIdentifier?.get('field')?.id).toBe(
-      proposed.flatFieldMetadataMaps.byUniversalIdentifier.field?.id,
+      'field-id',
     );
     expect(references.agentIdByUniversalIdentifier?.get('agent')).toBe(
-      proposed.flatAgentMaps.byUniversalIdentifier.agent?.id,
+      'agent-id',
     );
     expect(references.logicFunctionIdByUniversalIdentifier.has('code')).toBe(
       false,
     );
     expect(references.logicFunctionIdByUniversalIdentifier.get('action')).toBe(
+      'action-id',
+    );
+    expect(proposed.flatFieldMetadataMaps.byUniversalIdentifier.field?.id).toBe(
+      undefined,
+    );
+    expect(proposed.flatAgentMaps.byUniversalIdentifier.agent?.id).toBe(
+      undefined,
+    );
+    expect(
       proposed.flatLogicFunctionMaps.byUniversalIdentifier.action?.id,
-    );
-  });
-
-  it('reuses installed IDs when the application is updated', () => {
-    const installed = proposedMaps();
-    prepareWorkflowManifestReferences({
-      fromAllFlatEntityMaps: createEmptyAllFlatEntityMaps(),
-      existingAllFlatEntityMaps: createEmptyAllFlatEntityMaps(),
-      toAllUniversalFlatEntityMaps: installed,
-      ownerApplicationId: OWNER,
-    });
-    const updated = proposedMaps();
-    prepareWorkflowManifestReferences({
-      fromAllFlatEntityMaps: installed,
-      existingAllFlatEntityMaps: installed,
-      toAllUniversalFlatEntityMaps: updated,
-      ownerApplicationId: OWNER,
-    });
-    expect(updated.flatAgentMaps.byUniversalIdentifier.agent?.id).toBe(
-      installed.flatAgentMaps.byUniversalIdentifier.agent?.id,
-    );
-    expect(updated.flatFieldMetadataMaps.byUniversalIdentifier.field?.id).toBe(
-      installed.flatFieldMetadataMaps.byUniversalIdentifier.field?.id,
-    );
-    expect(updated.flatLogicFunctionMaps.byUniversalIdentifier.code?.id).toBe(
-      installed.flatLogicFunctionMaps.byUniversalIdentifier.code?.id,
-    );
+    ).toBe(undefined);
   });
 
   it('allows installed dependency metadata but excludes removed application metadata', () => {
@@ -134,10 +121,10 @@ describe('workflow manifest references', () => {
       applicationId: 'standard-application',
     };
     const references = prepareWorkflowManifestReferences({
-      fromAllFlatEntityMaps: installed,
       existingAllFlatEntityMaps: installed,
       toAllUniversalFlatEntityMaps: createEmptyAllFlatEntityMaps(),
       ownerApplicationId: OWNER,
+      idByUniversalIdentifierByMetadataName: {},
     });
     expect(references.objectByUniversalIdentifier?.has('standard')).toBe(true);
     expect(references.objectByUniversalIdentifier?.has('object')).toBe(false);
