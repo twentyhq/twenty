@@ -86,6 +86,30 @@ describe('canUpdateWorkflowRunStep', () => {
     ).toBe(true);
   });
 
+  it('refuses a change to the fields of a form step of an application-bound run', () => {
+    const textFieldTurnedIntoRecordPicker: WorkflowFormAction = {
+      ...FORM_STEP,
+      settings: {
+        ...FORM_STEP.settings,
+        input: [
+          {
+            ...FORM_STEP.settings.input[0],
+            type: 'RECORD',
+            settings: { objectName: 'opportunity' },
+            value: { id: 'opportunity-id' },
+          },
+        ],
+      },
+    };
+
+    expect(
+      canUpdateWorkflowRunStep({
+        workflowRun: buildWorkflowRun('installed-app-id'),
+        step: textFieldTurnedIntoRecordPicker,
+      }),
+    ).toBe(false);
+  });
+
   it('refuses any other change to the steps of an application-bound run', () => {
     const codeStepReplacingForm: WorkflowCodeAction = {
       ...FORM_STEP,
