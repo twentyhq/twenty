@@ -162,6 +162,13 @@ describe('application-owned core workflows', () => {
         appId: REFERENCE_APP_ID,
         roleId: REFERENCE_ROLE_ID,
         overrides: {
+          roles: [
+            {
+              universalIdentifier: REFERENCE_ROLE_ID,
+              label: 'Workflow referenced app role',
+              description: 'A test role',
+            },
+          ],
           objects: [
             buildDefaultObjectManifest({
               applicationUniversalIdentifier: REFERENCE_APP_ID,
