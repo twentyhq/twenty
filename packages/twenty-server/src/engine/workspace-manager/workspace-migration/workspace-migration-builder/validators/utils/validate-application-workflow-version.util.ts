@@ -11,7 +11,6 @@ import { CoreWorkflowMetadataExceptionCode } from 'src/engine/core-modules/workf
 import { type UniversalFlatWorkflowVersion } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-workflow-version.type';
 import { type MetadataUniversalFlatEntityAndRelatedFlatEntityMapsForValidation } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity-and-related-flat-entity-maps-for-validation.type';
 import { type FlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
-import { validateWorkflowVersionRecordFields } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-workflow-version-record-fields.util';
 
 export const validateApplicationWorkflowVersion = ({
   version,
@@ -78,10 +77,6 @@ export const validateApplicationWorkflowVersion = ({
         .map((issue) => issue.message),
     );
   }
-
-  messages.push(
-    ...validateWorkflowVersionRecordFields({ steps, ...relatedFlatEntityMaps }),
-  );
 
   return messages.map((message) => ({
     code: CoreWorkflowMetadataExceptionCode.INVALID_WORKFLOW_VERSION_DEFINITION,

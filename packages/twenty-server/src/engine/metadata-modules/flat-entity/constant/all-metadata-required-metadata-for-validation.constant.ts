@@ -139,7 +139,5 @@ export const ALL_METADATA_REQUIRED_METADATA_FOR_VALIDATION = {
   workflow: {},
   workflowVersion: {
     workflow: true,
-    objectMetadata: true,
-    fieldMetadata: true,
   },
 } as const satisfies MetadataRequiredForValidation;

@@ -5,6 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { fromWorkflowManifestToUniversalFlatWorkflowOrThrow } from 'src/engine/core-modules/application/application-manifest/converters/from-workflow-manifest-to-universal-flat-workflow-or-throw.util';
 import { prepareWorkflowManifestReferences } from 'src/engine/core-modules/application/application-manifest/utils/prepare-workflow-manifest-references.util';
+import { validateWorkflowManifestRecordFields } from 'src/engine/core-modules/application/application-manifest/utils/validate-workflow-manifest-record-fields.util';
 import {
   ApplicationException,
   ApplicationExceptionCode,
@@ -87,6 +88,7 @@ export const addWorkflowManifestsToFlatEntityMapsOrThrow = ({
       identifiers.add(version.universalIdentifier);
       versionIdentifiersByWorkflowId.set(version.coreWorkflowId, identifiers);
     }
+    const recordFieldErrors: string[] = [];
     for (const workflowManifest of workflows) {
       const existingWorkflow =
         fromAllFlatEntityMaps.flatWorkflowMaps.byUniversalIdentifier[
@@ -122,11 +124,27 @@ export const addWorkflowManifestsToFlatEntityMapsOrThrow = ({
         ...references,
         now,
       });
+      recordFieldErrors.push(
+        ...validateWorkflowManifestRecordFields({
+          steps: workflow.flatUniversalWorkflowVersion?.steps ?? [],
+          objectByUniversalIdentifier: references.objectByUniversalIdentifier,
+          fieldByUniversalIdentifier: references.fieldByUniversalIdentifier,
+        }),
+      );
       addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
         universalFlatEntity: workflow,
         universalFlatEntityMapsToMutate:
           toAllUniversalFlatEntityMaps.flatWorkflowMaps,
       });
+    }
+    if (recordFieldErrors.length > 0) {
+      throw new ApplicationException(
+        `Invalid application workflow definition: ${recordFieldErrors.join('; ')}`,
+        ApplicationExceptionCode.INVALID_INPUT,
+        {
+          userFriendlyMessage: msg`The application workflow definition is invalid.`,
+        },
+      );
     }
   }
 };

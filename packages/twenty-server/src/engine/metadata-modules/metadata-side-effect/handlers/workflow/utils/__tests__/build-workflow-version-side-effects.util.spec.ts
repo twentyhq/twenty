@@ -238,48 +238,6 @@ describe('managed workflow version validation', () => {
     expect(validate(version, maps).errors.length).toBeGreaterThan(1);
   });
 
-  it('returns record field and update selection errors together', () => {
-    const invalid = structuredClone(manifest);
-    invalid.version.steps = [
-      {
-        universalIdentifier: STEP_ID,
-        name: 'Update',
-        type: 'UPDATE_RECORD',
-        nextStepIds: [],
-        input: {
-          objectUniversalIdentifier: APPLICATION_ID,
-          objectRecordId: 'record',
-          objectRecord: { missing: true },
-          fieldsToUpdate: ['missing'],
-        },
-      },
-    ];
-    const workflow = fromWorkflowManifestToUniversalFlatWorkflowOrThrow({
-      manifest: invalid,
-      applicationUniversalIdentifier: APPLICATION_ID,
-      now: '2026-09-29T10:00:00.000Z',
-      logicFunctionIdByUniversalIdentifier: new Map(),
-      objectByUniversalIdentifier: new Map([
-        [APPLICATION_ID, { nameSingular: 'company' }],
-      ]),
-    });
-    const version = workflow.flatUniversalWorkflowVersion!;
-    const maps = persisted({ workflow, version });
-    maps.flatWorkflowVersionMaps =
-      createEmptyAllFlatEntityMaps().flatWorkflowVersionMaps;
-    maps.flatObjectMetadataMaps.byUniversalIdentifier[APPLICATION_ID] = {
-      universalIdentifier: APPLICATION_ID,
-      nameSingular: 'company',
-    } as AllFlatEntityMaps['flatObjectMetadataMaps']['byUniversalIdentifier'][string];
-    const errors = validate(version, maps).errors;
-    expect(errors.map(({ message }) => message)).toEqual(
-      expect.arrayContaining([
-        expect.stringContaining('unknown record field missing'),
-        expect.stringContaining('fieldsToUpdate'),
-      ]),
-    );
-  });
-
   it('validates a managed definition but leaves API definitions unchanged', () => {
     const definition = convert();
     const maps = persisted(definition);

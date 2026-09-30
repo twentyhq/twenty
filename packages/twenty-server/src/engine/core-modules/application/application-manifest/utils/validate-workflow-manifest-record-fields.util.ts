@@ -1,35 +1,41 @@
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { type MetadataUniversalFlatEntityAndRelatedFlatEntityMapsForValidation } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity-and-related-flat-entity-maps-for-validation.type';
+import {
+  type WorkflowManifestFieldReference,
+  type WorkflowManifestObjectReference,
+  type WorkflowManifestReferences,
+} from 'src/engine/core-modules/application/application-manifest/types/workflow-manifest-references.type';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { getMorphNameFromMorphFieldMetadataName } from 'src/engine/metadata-modules/flat-object-metadata/utils/get-morph-name-from-morph-field-metadata-name.util';
 
-export const validateWorkflowVersionRecordFields = ({
+export const validateWorkflowManifestRecordFields = ({
   steps,
-  flatObjectMetadataMaps,
-  flatFieldMetadataMaps,
+  objectByUniversalIdentifier = new Map<
+    string,
+    WorkflowManifestObjectReference
+  >(),
+  fieldByUniversalIdentifier = new Map<
+    string,
+    WorkflowManifestFieldReference
+  >(),
 }: {
   steps: WorkflowAction[];
 } & Pick<
-  MetadataUniversalFlatEntityAndRelatedFlatEntityMapsForValidation<'workflowVersion'>,
-  'flatObjectMetadataMaps' | 'flatFieldMetadataMaps'
+  WorkflowManifestReferences,
+  'objectByUniversalIdentifier' | 'fieldByUniversalIdentifier'
 >): string[] => {
   const errors: string[] = [];
   const fieldNamesByObjectName = new Map<string, Set<string>>();
   const fieldNamesByObjectIdentifier = new Map<string, Set<string>>();
-  for (const object of Object.values(
-    flatObjectMetadataMaps.byUniversalIdentifier,
-  ).filter(isDefined)) {
+  for (const [universalIdentifier, object] of objectByUniversalIdentifier) {
     const fieldNames = new Set<string>();
     fieldNamesByObjectName.set(object.nameSingular, fieldNames);
-    fieldNamesByObjectIdentifier.set(object.universalIdentifier, fieldNames);
+    fieldNamesByObjectIdentifier.set(universalIdentifier, fieldNames);
   }
-  for (const field of Object.values(
-    flatFieldMetadataMaps.byUniversalIdentifier,
-  ).filter(isDefined)) {
+  for (const field of fieldByUniversalIdentifier.values()) {
     const fieldNames = fieldNamesByObjectIdentifier.get(
-      field.objectMetadataUniversalIdentifier,
+      field.objectUniversalIdentifier,
     );
     if (!isDefined(fieldNames)) {
       continue;
@@ -48,9 +54,9 @@ export const validateWorkflowVersionRecordFields = ({
       const target = isDefined(
         field.relationTargetObjectMetadataUniversalIdentifier,
       )
-        ? flatObjectMetadataMaps.byUniversalIdentifier[
-            field.relationTargetObjectMetadataUniversalIdentifier
-          ]
+        ? objectByUniversalIdentifier.get(
+            field.relationTargetObjectMetadataUniversalIdentifier,
+          )
         : undefined;
       if (
         field.type === FieldMetadataType.MORPH_RELATION &&
