@@ -128,7 +128,7 @@ export const SettingsApplicationsDeveloperTab = () => {
             <SearchInput
               placeholder={t`Search an application`}
               value={myAppsSearchTerm}
-              onChange={setMyAppsSearchTerm}
+              onValueChange={setMyAppsSearchTerm}
             />
           </StyledSearchInputContainer>
           <Table>
