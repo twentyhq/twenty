@@ -1,6 +1,6 @@
 const URL_REGEX = /https?:\/\/[^\s<>[\]]+[^\s<>[\].,;:!?)]/g;
 
-export type LinkifyMatch = {
+type LinkifyMatch = {
   type: 'text' | 'link';
   content: string;
 };
