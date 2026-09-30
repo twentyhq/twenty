@@ -53,14 +53,9 @@ export const InviteTeam = () => {
     isSubmitting,
     isNavigating,
   } = useInviteTeam();
-  const onboardingCreditsProgress = useAtomStateValue(
+  const { inviteTeamButtonReward } = useAtomStateValue(
     onboardingCreditsProgressSelector,
   );
-  const inviteTeamButtonReward =
-    onboardingCreditsProgress?.inviteTeamButtonReward ?? {
-      creditsReward: 0,
-      isRewardPerItem: false,
-    };
   const emailInputToFocusRef = useRef<HTMLInputElement>(null);
   const transition = useOnboardingMotionTransition();
 

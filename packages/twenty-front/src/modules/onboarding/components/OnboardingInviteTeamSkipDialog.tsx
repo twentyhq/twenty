@@ -35,14 +35,9 @@ export const OnboardingInviteTeamSkipDialog = ({
   const onboardingInviteTeamValidEmails = useAtomStateValue(
     onboardingInviteTeamValidEmailsSelector,
   );
-  const onboardingCreditsProgress = useAtomStateValue(
+  const { inviteTeamButtonReward } = useAtomStateValue(
     onboardingCreditsProgressSelector,
   );
-  const inviteTeamButtonReward =
-    onboardingCreditsProgress?.inviteTeamButtonReward ?? {
-      creditsReward: 0,
-      isRewardPerItem: false,
-    };
 
   const hasInviteEmails = isNonEmptyArray(onboardingInviteTeamValidEmails);
 

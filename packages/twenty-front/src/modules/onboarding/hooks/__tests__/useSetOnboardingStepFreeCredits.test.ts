@@ -40,6 +40,19 @@ describe('useSetOnboardingStepFreeCredits', () => {
     localStorage.clear();
     resetJotaiStore();
     jotaiStore.set(currentWorkspaceState.atom, mockCurrentWorkspace);
+    jotaiStore.set(onboardingConfigState.atom, {
+      importContactsCreditsReward: 2,
+      inviteTeamCreditsRewardPerUser: 0.5,
+      installAppsCreditsReward: 1,
+      createProfileCreditsReward: 0.5,
+      upgradeCreditsReward: 4,
+      inviteTeamMaxInvites: 4,
+    });
+    jotaiStore.set(currentUserState.atom, {
+      ...mockedUserData,
+      isWorkspaceCreator: true,
+      onboardingStatus: OnboardingStatus.COMPLETED,
+    });
   });
 
   it('should keep the seen credits when a step earns more', () => {
@@ -208,14 +221,6 @@ describe('useSetOnboardingStepFreeCredits', () => {
   });
 
   it('should announce a new gain after credits counted but never stored were seen', () => {
-    jotaiStore.set(onboardingConfigState.atom, {
-      importContactsCreditsReward: 2,
-      inviteTeamCreditsRewardPerUser: 0.5,
-      installAppsCreditsReward: 1,
-      createProfileCreditsReward: 0.5,
-      upgradeCreditsReward: 0.5,
-      inviteTeamMaxInvites: 4,
-    });
     jotaiStore.set(currentUserState.atom, {
       ...mockedUserData,
       isWorkspaceCreator: true,
@@ -237,8 +242,7 @@ describe('useSetOnboardingStepFreeCredits', () => {
     });
 
     expect(
-      jotaiStore.get(onboardingCreditsProgressSelector.atom)
-        ?.newlyEarnedCredits,
+      jotaiStore.get(onboardingCreditsProgressSelector.atom).newlyEarnedCredits,
     ).toBe(1);
   });
 });

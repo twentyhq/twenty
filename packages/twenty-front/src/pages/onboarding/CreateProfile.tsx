@@ -187,8 +187,8 @@ export const CreateProfile = () => {
 
         setOnboardingStepFreeCredits(
           'createProfile',
-          store.get(onboardingCreditsProgressSelector.atom)?.rewardCreditsByStep
-            .createProfile ?? 0,
+          store.get(onboardingCreditsProgressSelector.atom).rewardCreditsByStep
+            .createProfile,
         );
         setNextOnboardingStatus({ stepHistoryEffect: 'recordAsReversible' });
         setIsNavigating(true);
@@ -327,7 +327,7 @@ export const CreateProfile = () => {
           <OnboardingRewardMainButton
             label={t`Continue`}
             creditsReward={
-              onboardingCreditsProgress?.rewardCreditsByStep.createProfile ?? 0
+              onboardingCreditsProgress.rewardCreditsByStep.createProfile
             }
             disabled={!isValid || isSubmitting || isNavigating}
             onClick={handleSubmit(onSubmit)}

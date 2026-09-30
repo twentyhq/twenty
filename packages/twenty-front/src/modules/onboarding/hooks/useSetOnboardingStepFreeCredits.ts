@@ -4,7 +4,6 @@ import { onboardingCreditsProgressSelector } from '@/onboarding/states/selectors
 import { type OnboardingCreditsStep } from '@/onboarding/types/OnboardingCreditsStep';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
-import { isDefined } from 'twenty-shared/utils';
 
 type SetOnboardingStepFreeCreditsOptions = {
   isQuiet?: boolean;
@@ -21,9 +20,9 @@ export const useSetOnboardingStepFreeCredits = () => {
       credits: number,
       { isQuiet = false }: SetOnboardingStepFreeCreditsOptions = {},
     ) => {
-      const earnedCredits = store.get(
+      const { earnedCredits } = store.get(
         onboardingCreditsProgressSelector.atom,
-      )?.earnedCredits;
+      );
 
       setOnboardingFreeCredits((current) => {
         const onboardingFreeCredits = { ...current, [step]: credits };
@@ -32,15 +31,15 @@ export const useSetOnboardingStepFreeCredits = () => {
           (total, creditsStep) => total + onboardingFreeCredits[creditsStep],
           0,
         );
-        const maxSeenCredits = isDefined(earnedCredits)
-          ? Math.min(storedCredits, earnedCredits + quietCreditsChange)
-          : storedCredits;
-
         return {
           ...onboardingFreeCredits,
-          seenCredits: Math.min(
-            Math.max(0, current.seenCredits + quietCreditsChange),
-            maxSeenCredits,
+          seenCredits: Math.max(
+            0,
+            Math.min(
+              current.seenCredits + quietCreditsChange,
+              storedCredits,
+              earnedCredits + quietCreditsChange,
+            ),
           ),
         };
       });

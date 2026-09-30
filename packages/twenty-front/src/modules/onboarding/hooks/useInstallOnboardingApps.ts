@@ -38,9 +38,9 @@ export const useInstallOnboardingApps = (
     }
     setIsCompleting(true);
 
-    const installAppsCreditsReward =
-      store.get(onboardingCreditsProgressSelector.atom)?.rewardCreditsByStep
-        .installApps ?? 0;
+    const installAppsCreditsReward = store.get(
+      onboardingCreditsProgressSelector.atom,
+    ).rewardCreditsByStep.installApps;
 
     setOnboardingStepFreeCredits(
       'installApps',

@@ -32,9 +32,9 @@ import {
 export const SyncEmails = () => {
   const { t } = useLingui();
   const { openDialog } = useDialog();
-  const importContactsCreditsReward =
-    useAtomStateValue(onboardingCreditsProgressSelector)?.rewardCreditsByStep
-      .importContacts ?? 0;
+  const importContactsCreditsReward = useAtomStateValue(
+    onboardingCreditsProgressSelector,
+  ).rewardCreditsByStep.importContacts;
   const { triggerApisOAuth } = useTriggerApisOAuth();
   const skipSyncEmailOnboardingStep = useSkipSyncEmailOnboardingStep();
   const setOnboardingStepFreeCredits = useSetOnboardingStepFreeCredits();

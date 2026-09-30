@@ -135,7 +135,7 @@ export const InstallAppsContent = ({ apps }: InstallAppsContentProps) => {
     onboardingCreditsProgressSelector,
   );
   const creditsReward =
-    onboardingCreditsProgress?.rewardCreditsByStep.installApps ?? 0;
+    onboardingCreditsProgress.rewardCreditsByStep.installApps;
 
   useOnboardingStepEnterHotkey({
     focusId: PageFocusId.InstallApps,

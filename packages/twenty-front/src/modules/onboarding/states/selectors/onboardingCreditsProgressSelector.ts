@@ -3,6 +3,7 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { billingState } from '@/client-config/states/billingState';
 import { onboardingConfigState } from '@/client-config/states/onboardingConfigState';
+import { ONBOARDING_CREDITS_PROGRESS_EMPTY_VALUE } from '@/onboarding/constants/OnboardingCreditsProgressEmptyValue';
 import { onboardingCreateProfileDraftState } from '@/onboarding/states/onboardingCreateProfileDraftState';
 import { currentWorkspaceOnboardingFreeCreditsSelector } from '@/onboarding/states/selectors/currentWorkspaceOnboardingFreeCreditsSelector';
 import { onboardingInviteTeamValidEmailsSelector } from '@/onboarding/states/selectors/onboardingInviteTeamValidEmailsSelector';
@@ -14,13 +15,13 @@ import { isDefined } from 'twenty-shared/utils';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const onboardingCreditsProgressSelector =
-  createAtomSelector<OnboardingCreditsProgress | null>({
+  createAtomSelector<OnboardingCreditsProgress>({
     key: 'onboardingCreditsProgressSelector',
     get: ({ get }) => {
       const onboardingConfig = get(onboardingConfigState);
 
       if (!isDefined(onboardingConfig)) {
-        return null;
+        return ONBOARDING_CREDITS_PROGRESS_EMPTY_VALUE;
       }
 
       const currentUser = get(currentUserState);

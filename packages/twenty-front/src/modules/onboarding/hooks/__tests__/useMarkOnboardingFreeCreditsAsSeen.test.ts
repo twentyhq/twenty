@@ -64,19 +64,19 @@ describe('useMarkOnboardingFreeCreditsAsSeen', () => {
 
     const result = renderMarkCreditsAsSeenHook();
 
-    expect(result.current.progress?.newlyEarnedCredits).toBe(0);
+    expect(result.current.progress.newlyEarnedCredits).toBe(0);
 
     act(() => {
       result.current.markCreditsAsSeen();
     });
 
-    expect(result.current.progress?.seenCredits).toBe(0);
+    expect(result.current.progress.seenCredits).toBe(0);
 
     act(() => {
       setOnboardingStatus(OnboardingStatus.APPS_INSTALLATION);
     });
 
-    expect(result.current.progress?.newlyEarnedCredits).toBe(2);
+    expect(result.current.progress.newlyEarnedCredits).toBe(2);
   });
 
   it('should mark the counted credits as seen', () => {
@@ -92,8 +92,8 @@ describe('useMarkOnboardingFreeCreditsAsSeen', () => {
       result.current.markCreditsAsSeen();
     });
 
-    expect(result.current.progress?.seenCredits).toBe(2);
-    expect(result.current.progress?.newlyEarnedCredits).toBe(0);
+    expect(result.current.progress.seenCredits).toBe(2);
+    expect(result.current.progress.newlyEarnedCredits).toBe(0);
   });
 
   it('should stop announcing the typed profile credits once they are seen', () => {
@@ -105,12 +105,12 @@ describe('useMarkOnboardingFreeCreditsAsSeen', () => {
 
     const result = renderMarkCreditsAsSeenHook();
 
-    expect(result.current.progress?.newlyEarnedCredits).toBe(0.5);
+    expect(result.current.progress.newlyEarnedCredits).toBe(0.5);
 
     act(() => {
       result.current.markCreditsAsSeen();
     });
 
-    expect(result.current.progress?.newlyEarnedCredits).toBe(0);
+    expect(result.current.progress.newlyEarnedCredits).toBe(0);
   });
 });

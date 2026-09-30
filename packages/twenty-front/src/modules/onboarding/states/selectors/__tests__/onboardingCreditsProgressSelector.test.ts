@@ -5,6 +5,7 @@ import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { onboardingConfigState } from '@/client-config/states/onboardingConfigState';
+import { ONBOARDING_CREDITS_PROGRESS_EMPTY_VALUE } from '@/onboarding/constants/OnboardingCreditsProgressEmptyValue';
 import { onboardingCreateProfileDraftState } from '@/onboarding/states/onboardingCreateProfileDraftState';
 import { onboardingInviteTeamEmailsDraftState } from '@/onboarding/states/onboardingInviteTeamEmailsDraftState';
 import { onboardingCreditsProgressSelector } from '@/onboarding/states/selectors/onboardingCreditsProgressSelector';
@@ -67,12 +68,14 @@ describe('onboardingCreditsProgressSelector', () => {
     localStorage.clear();
   });
 
-  it('should be null until the onboarding config loads', () => {
+  it('should earn nothing until the onboarding config loads', () => {
     const store = buildStore();
 
     store.set(onboardingConfigState.atom, null);
 
-    expect(store.get(onboardingCreditsProgressSelector.atom)).toBeNull();
+    expect(store.get(onboardingCreditsProgressSelector.atom)).toEqual(
+      ONBOARDING_CREDITS_PROGRESS_EMPTY_VALUE,
+    );
   });
 
   it.each(PROFILE_NAME_CASES)(
@@ -90,7 +93,7 @@ describe('onboardingCreditsProgressSelector', () => {
       );
 
       expect(
-        store.get(onboardingCreditsProgressSelector.atom)?.earnedCredits,
+        store.get(onboardingCreditsProgressSelector.atom).earnedCredits,
       ).toBe(earnedCredits);
     },
   );
@@ -106,7 +109,7 @@ describe('onboardingCreditsProgressSelector', () => {
     ]);
 
     expect(
-      store.get(onboardingCreditsProgressSelector.atom)?.inviteTeamButtonReward,
+      store.get(onboardingCreditsProgressSelector.atom).inviteTeamButtonReward,
     ).toEqual({ creditsReward: 1, isRewardPerItem: false });
   });
 });

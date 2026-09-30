@@ -1,7 +1,6 @@
 import { useSetCurrentWorkspaceOnboardingFreeCredits } from '@/onboarding/hooks/useSetCurrentWorkspaceOnboardingFreeCredits';
 import { onboardingCreditsProgressSelector } from '@/onboarding/states/selectors/onboardingCreditsProgressSelector';
 import { useStore } from 'jotai';
-import { isDefined } from 'twenty-shared/utils';
 
 export const useMarkOnboardingFreeCreditsAsSeen = () => {
   const store = useStore();
@@ -9,15 +8,11 @@ export const useMarkOnboardingFreeCreditsAsSeen = () => {
     useSetCurrentWorkspaceOnboardingFreeCredits();
 
   return () => {
-    const progress = store.get(onboardingCreditsProgressSelector.atom);
-
-    if (!isDefined(progress)) {
-      return;
-    }
+    const { earnedCredits } = store.get(onboardingCreditsProgressSelector.atom);
 
     setOnboardingFreeCredits((current) => ({
       ...current,
-      seenCredits: progress.earnedCredits,
+      seenCredits: earnedCredits,
     }));
   };
 };
