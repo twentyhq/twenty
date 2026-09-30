@@ -4,26 +4,18 @@ import {
   RestInputRequestParserExceptionCode,
 } from 'src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception';
 import { type AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request.type';
-import { isDiscoverableObject } from 'src/engine/core-modules/record-share/utils/resolve-discoverable-field-metadata-ids.util';
+import { isDiscoverableObject } from 'src/engine/core-modules/record-share/utils/is-discoverable-object.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type RecordReadScope } from 'src/engine/twenty-orm/types/record-read-scope.type';
 
 export const parseDiscoverRestRequest = (
   request: AuthenticatedRequest,
   flatObjectMetadata: FlatObjectMetadata,
-): RecordReadScope => {
+): RecordReadScope | undefined => {
   const { discover } = request.query;
 
-  if (discover === undefined || discover === 'false') {
-    return 'content';
-  }
-
-  if (discover !== 'true') {
-    throw new RestInputRequestParserException(
-      `'discover=${discover}' parameter invalid. Allowed values are true, false`,
-      RestInputRequestParserExceptionCode.INVALID_DISCOVER_QUERY_PARAM,
-      { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
-    );
+  if (discover === undefined) {
+    return undefined;
   }
 
   if (!isDiscoverableObject(flatObjectMetadata)) {
@@ -34,5 +26,13 @@ export const parseDiscoverRestRequest = (
     );
   }
 
-  return 'existence';
+  if (discover !== 'true' && discover !== 'false') {
+    throw new RestInputRequestParserException(
+      `'discover=${discover}' parameter invalid. Allowed values are true, false`,
+      RestInputRequestParserExceptionCode.INVALID_DISCOVER_QUERY_PARAM,
+      { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
+    );
+  }
+
+  return discover === 'true' ? 'existence' : 'content';
 };

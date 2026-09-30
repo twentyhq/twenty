@@ -55,7 +55,7 @@ export const buildChannelRecordShareBackfillQueries = (
            AND membership."deletedAt" IS NULL
          JOIN ${schemaName}."workspaceMember" member ON member."userId" = membership."userId"
            AND member."deletedAt" IS NULL
-         ON CONFLICT DO NOTHING`,
+         ON CONFLICT ("objectMetadataId", "recordId", "principalId", "rowCause", "sourceId") DO NOTHING`,
         `INSERT INTO ${schemaName}."recordShare" ${RECORD_SHARE_COLUMNS}
          SELECT metadata.id, channel_record."recordId", application."defaultRoleId",
            'ROLE', 'FULL', 'APPLICATION', channel.id
@@ -64,13 +64,13 @@ export const buildChannelRecordShareBackfillQueries = (
          JOIN core."application" application ON application.id = account."applicationId"
            AND application."deletedAt" IS NULL
          WHERE application."defaultRoleId" IS NOT NULL
-         ON CONFLICT DO NOTHING`,
+         ON CONFLICT ("objectMetadataId", "recordId", "principalId", "rowCause", "sourceId") DO NOTHING`,
         `INSERT INTO ${schemaName}."recordShare" ${RECORD_SHARE_COLUMNS}
          SELECT metadata.id, channel_record."recordId", '${EVERYONE_PRINCIPAL_ID}',
            'EVERYONE', 'READ', 'RULE', channel.id
          FROM ${channelRecords}
          WHERE channel.visibility = 'SHARE_EVERYTHING'
-         ON CONFLICT DO NOTHING`,
+         ON CONFLICT ("objectMetadataId", "recordId", "principalId", "rowCause", "sourceId") DO NOTHING`,
       ];
     },
   );

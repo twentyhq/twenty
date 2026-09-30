@@ -20,9 +20,9 @@ describe('parseDiscoverRestRequest', () => {
   );
 
   it('reads content when discover is absent or false', () => {
-    expect(parseDiscoverRestRequest(buildRequest({}), discoverableObject)).toBe(
-      'content',
-    );
+    expect(
+      parseDiscoverRestRequest(buildRequest({}), discoverableObject),
+    ).toBeUndefined();
     expect(
       parseDiscoverRestRequest(
         buildRequest({ discover: 'false' }),
@@ -50,11 +50,13 @@ describe('parseDiscoverRestRequest', () => {
   });
 
   it('rejects discover on an object whose records cannot be discovered', () => {
-    expect(() =>
-      parseDiscoverRestRequest(
-        buildRequest({ discover: 'true' }),
-        buildObjectMetadata(MetadataReadability.PRIVATE),
-      ),
-    ).toThrow("'discover' parameter is only available");
+    for (const discover of ['true', 'false']) {
+      expect(() =>
+        parseDiscoverRestRequest(
+          buildRequest({ discover }),
+          buildObjectMetadata(MetadataReadability.PRIVATE),
+        ),
+      ).toThrow("'discover' parameter is only available");
+    }
   });
 });

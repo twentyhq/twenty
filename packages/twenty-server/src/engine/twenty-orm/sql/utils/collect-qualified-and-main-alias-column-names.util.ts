@@ -1,5 +1,5 @@
 const STRING_LITERAL = /'(?:[^']|'')*'/g;
-const QUALIFIED_COLUMN_REFERENCE = /"(\w+)"\."(\w+)"/g;
+const QUALIFIED_COLUMN_REFERENCE = /(?<![\w"])"?([A-Za-z_]\w*)"?\."?(\w+)"?/g;
 const IDENTIFIER = /(?<![\w".:$])"?(\w+)"?(?![\w".(])/g;
 
 // Errs on the side of reporting: any identifier that could be one of the main

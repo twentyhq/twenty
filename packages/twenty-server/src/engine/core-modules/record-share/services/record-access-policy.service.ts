@@ -19,6 +19,7 @@ import {
   resolveEventRecordSnapshots,
 } from 'src/engine/core-modules/record-share/utils/resolve-event-record-snapshots.util';
 import { resolveRecordIdsSharedWithPrincipals } from 'src/engine/core-modules/record-share/utils/resolve-record-ids-shared-with-principals.util';
+import { resolveGatedReadability } from 'src/engine/core-modules/record-share/utils/resolve-gated-readability.util';
 import { resolveRecordShareGateKind } from 'src/engine/core-modules/record-share/utils/resolve-record-share-gate-kind.util';
 import { MAX_INHERITED_READABILITY_DEPTH } from 'src/engine/core-modules/record-share/constants/max-inherited-readability-depth.constant';
 import { resolveRequiredRecordShareAccessLevels } from 'src/engine/core-modules/record-share/utils/resolve-required-record-share-access-levels.util';
@@ -162,7 +163,7 @@ export class RecordAccessPolicyService {
   ): Promise<Set<string>> {
     const { objectMetadata, snapshots, subject } = evaluation;
     const gateKind = resolveRecordShareGateKind({
-      readability: objectMetadata.readability,
+      readability: resolveGatedReadability(objectMetadata),
       isOwningApplication: subject.isOwningApplication(objectMetadata),
     });
 

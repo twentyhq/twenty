@@ -33,6 +33,7 @@ import {
   buildProjection,
   buildSelectStatement,
   buildWhereExpression,
+  collectJoinedColumnProjections,
   collectStatementAliases,
   mapRowToEntity,
   normaliseColumnExpression,
@@ -739,6 +740,21 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
         })),
       distinctOnExpressions: this.distinctOnExpressions,
     });
+  }
+
+  getJoinedSelectedColumnNamesByAlias(): Record<string, string[]> {
+    const columnNamesByAlias: Record<string, string[]> = {};
+
+    for (const { joinAlias, columnName } of collectJoinedColumnProjections(
+      this.toSelectStatementState(),
+    )) {
+      columnNamesByAlias[joinAlias] = [
+        ...(columnNamesByAlias[joinAlias] ?? []),
+        columnName,
+      ];
+    }
+
+    return columnNamesByAlias;
   }
 
   // Columns the query filters, correlates or groups on, the projection aside.

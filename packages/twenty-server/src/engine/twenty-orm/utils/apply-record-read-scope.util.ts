@@ -4,8 +4,13 @@ import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-perm
 export const applyRecordReadScope = (
   rolePermissionConfig: RolePermissionConfig,
   readScope: RecordReadScope | undefined,
-): RolePermissionConfig =>
-  readScope !== 'existence' ||
-  'shouldBypassPermissionChecks' in rolePermissionConfig
-    ? rolePermissionConfig
-    : { ...rolePermissionConfig, readScope };
+): RolePermissionConfig => {
+  if (
+    readScope !== 'existence' ||
+    'shouldBypassPermissionChecks' in rolePermissionConfig
+  ) {
+    return rolePermissionConfig;
+  }
+
+  return { ...rolePermissionConfig, readScope };
+};
