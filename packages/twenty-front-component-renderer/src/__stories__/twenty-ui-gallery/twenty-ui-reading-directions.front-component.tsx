@@ -1,11 +1,4 @@
-import { useState } from 'react';
-
-import {
-  AvatarGroup,
-  Callout,
-  ColorSchemePicker,
-  JsonTree,
-} from 'twenty-ui/components';
+import { AvatarGroup, Callout, JsonTree } from 'twenty-ui/components';
 import { Avatar, Pill } from 'twenty-ui/primitives/data-display';
 import { Button, ButtonGroup } from 'twenty-ui/primitives/input';
 import { ListItem } from 'twenty-ui/primitives/navigation';
@@ -20,10 +13,6 @@ const DirectionalLayoutExample = ({
 }: {
   direction: 'ltr' | 'rtl';
 }) => {
-  const [colorScheme, setColorScheme] = useState<'Light' | 'Dark' | 'System'>(
-    'System',
-  );
-
   return (
     <TextDirectionProvider direction={direction}>
       <div
@@ -43,13 +32,6 @@ const DirectionalLayoutExample = ({
           variant="info"
           title="Account details"
           description="Review the information before continuing."
-        />
-        <ColorSchemePicker
-          value={colorScheme}
-          onChange={setColorScheme}
-          lightLabel="Light"
-          darkLabel="Dark"
-          systemLabel="System"
         />
         <ButtonGroup aria-label="Record actions">
           <Button>First action</Button>

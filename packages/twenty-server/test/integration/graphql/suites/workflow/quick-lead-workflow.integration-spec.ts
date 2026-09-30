@@ -1,5 +1,5 @@
 import request from 'supertest';
-import { answerAsk } from 'test/integration/graphql/suites/workflow/utils/answer-ask.util';
+import { answerToolCall } from 'test/integration/graphql/suites/workflow/utils/answer-tool-call.util';
 import {
   destroyWorkflowRun,
   getWorkflowRun,
@@ -270,8 +270,8 @@ describe('Quick Lead Workflow (e2e)', () => {
         companyDomain: `https://test-${testId}.example.com`,
       };
 
-      const submitFormResponse = await answerAsk({
-        ask: {
+      const submitFormResponse = await answerToolCall({
+        toolCall: {
           workflowRunId: testWorkflowRunId as string,
           stepId: FORM_STEP_ID,
         },
@@ -279,7 +279,7 @@ describe('Quick Lead Workflow (e2e)', () => {
       });
 
       expect(submitFormResponse.body.errors).toBeUndefined();
-      expect(submitFormResponse.body.data.answerAsk.streamId).toBeNull();
+      expect(submitFormResponse.body.data.answerToolCall.streamId).toBeNull();
 
       workflowRun = await waitForWorkflowCompletion(
         testWorkflowRunId as string,

@@ -3,7 +3,6 @@ import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/Enriche
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useIsRecordReadOnly } from '@/object-record/read-only/hooks/useIsRecordReadOnly';
 import { isRecordFieldReadOnly } from '@/object-record/read-only/utils/isRecordFieldReadOnly';
-import { RecordFieldsScopeContextProvider } from '@/object-record/record-field-list/contexts/RecordFieldsScopeContext';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
@@ -67,65 +66,63 @@ export const FieldWidgetDisplay = ({
   const handleMouseLeave = () => setFieldWidgetHover(false);
 
   return (
-    <RecordFieldsScopeContextProvider value={{ scopeInstanceId: instanceId }}>
-      <SidePanelProvider value={{ isInSidePanel }}>
-        <RecordFieldComponentInstanceContext.Provider
-          value={{
-            instanceId: getRecordFieldInputInstanceId({
+    <SidePanelProvider value={{ isInSidePanel }}>
+      <RecordFieldComponentInstanceContext.Provider
+        value={{
+          instanceId: getRecordFieldInputInstanceId({
+            recordId,
+            fieldName: fieldMetadataItem.name,
+            prefix: instanceId,
+          }),
+        }}
+      >
+        <StyledContainer>
+          <FieldContext.Provider
+            value={{
               recordId,
-              fieldName: fieldMetadataItem.name,
-              prefix: instanceId,
-            }),
-          }}
-        >
-          <StyledContainer>
-            <FieldContext.Provider
-              value={{
-                recordId,
-                maxWidth: 200,
-                isLabelIdentifier: false,
+              maxWidth: 200,
+              isLabelIdentifier: false,
+              fieldDefinition,
+              useUpdateRecord: useUpdateOneObjectRecordMutation,
+              isDisplayModeFixHeight: false,
+              isRecordFieldReadOnly: isRecordFieldReadOnly({
+                isRecordReadOnly,
+                objectPermissions:
+                  getObjectPermissionsFromMapByObjectMetadataId({
+                    objectPermissionsByObjectMetadataId,
+                    objectMetadataId: objectMetadataItem.id,
+                  }),
+                fieldMetadataItem,
                 fieldDefinition,
-                useUpdateRecord: useUpdateOneObjectRecordMutation,
-                isDisplayModeFixHeight: false,
-                isRecordFieldReadOnly: isRecordFieldReadOnly({
-                  isRecordReadOnly,
-                  objectPermissions:
-                    getObjectPermissionsFromMapByObjectMetadataId({
-                      objectPermissionsByObjectMetadataId,
-                      objectMetadataId: objectMetadataItem.id,
-                    }),
-                  fieldMetadataItem,
-                  fieldDefinition,
-                  objectPermissionsByObjectMetadataId,
-                }),
-                onMouseEnter: handleMouseEnter,
-                anchorId: getRecordFieldInputInstanceId({
-                  recordId,
-                  fieldName: fieldMetadataItem.name,
-                  prefix: instanceId,
-                }),
-              }}
-            >
-              <FieldWidgetInlineCell instanceIdPrefix={instanceId} />
-            </FieldContext.Provider>
-          </StyledContainer>
+                objectPermissionsByObjectMetadataId,
+              }),
+              onMouseEnter: handleMouseEnter,
+              anchorId: getRecordFieldInputInstanceId({
+                recordId,
+                fieldName: fieldMetadataItem.name,
+                prefix: instanceId,
+              }),
+            }}
+          >
+            <FieldWidgetInlineCell instanceIdPrefix={instanceId} />
+          </FieldContext.Provider>
+        </StyledContainer>
 
-          <FieldWidgetCellHoveredPortal
-            objectMetadataItem={objectMetadataItem}
-            fieldMetadataItem={fieldMetadataItem}
-            recordId={recordId}
-            instanceId={instanceId}
-            isHovered={fieldWidgetHover}
-            onMouseLeave={handleMouseLeave}
-          />
-          <FieldWidgetCellEditModePortal
-            objectMetadataItem={objectMetadataItem}
-            fieldMetadataItem={fieldMetadataItem}
-            recordId={recordId}
-            instanceId={instanceId}
-          />
-        </RecordFieldComponentInstanceContext.Provider>
-      </SidePanelProvider>
-    </RecordFieldsScopeContextProvider>
+        <FieldWidgetCellHoveredPortal
+          objectMetadataItem={objectMetadataItem}
+          fieldMetadataItem={fieldMetadataItem}
+          recordId={recordId}
+          instanceId={instanceId}
+          isHovered={fieldWidgetHover}
+          onMouseLeave={handleMouseLeave}
+        />
+        <FieldWidgetCellEditModePortal
+          objectMetadataItem={objectMetadataItem}
+          fieldMetadataItem={fieldMetadataItem}
+          recordId={recordId}
+          instanceId={instanceId}
+        />
+      </RecordFieldComponentInstanceContext.Provider>
+    </SidePanelProvider>
   );
 };

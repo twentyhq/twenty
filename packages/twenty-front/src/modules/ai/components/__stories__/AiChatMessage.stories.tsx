@@ -239,6 +239,37 @@ const mockThinkingStepsDone: ExtendedUIMessage = {
   },
 };
 
+const mockAnsweredForm: ExtendedUIMessage = {
+  id: 'msg-answered-form',
+  role: 'assistant',
+  parts: [
+    {
+      type: 'tool-request_form',
+      toolCallId: 'tool-request-form',
+      input: {
+        fields: [
+          { name: 'callDate', label: 'Call date', type: 'DATE' },
+          { name: 'summary', label: 'Summary', type: 'TEXT' },
+        ],
+      },
+      output: {
+        success: true,
+        result: {
+          status: 'answered',
+          values: {
+            callDate: '2026-09-29',
+            summary: 'Pipeline import first, SSO the week after.',
+          },
+        },
+      },
+      state: 'output-available',
+    },
+  ],
+  metadata: {
+    createdAt: new Date().toISOString(),
+  },
+};
+
 const allMockMessages = [
   mockUserMessage,
   mockAssistantWithCodeExecution,
@@ -248,6 +279,7 @@ const allMockMessages = [
   mockCodeExecutionError,
   mockThinkingStepsStreaming,
   mockThinkingStepsDone,
+  mockAnsweredForm,
 ];
 
 const AgentChatMessagesSetterEffect = ({
@@ -359,4 +391,8 @@ export const ThinkingStepsDoneExpanded: Story = {
 
     await userEvent.click(summaryButton);
   },
+};
+
+export const AnsweredForm: Story = {
+  render: () => <AiChatMessage messageId={mockAnsweredForm.id} />,
 };

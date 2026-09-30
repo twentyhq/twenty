@@ -120,10 +120,10 @@ const createSerializedEventConfig = (
   eventType: string,
 ): RemoteElementEventListenerDefinition => ({
   dispatchEvent(this: Element, eventData: SerializedEventData) {
-    applySerializedEventTargetProperties(
-      this as unknown as Record<string, unknown>,
+    applySerializedEventTargetProperties({
+      element: this as unknown as Record<string, unknown>,
       eventData,
-    );
+    });
 
     const event = new CustomEvent(eventType, {
       detail: eventData,
