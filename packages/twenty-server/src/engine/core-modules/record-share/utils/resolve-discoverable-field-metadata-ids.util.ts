@@ -1,25 +1,13 @@
 /* @license Enterprise */
 
-import { MetadataReadability } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
 import { DISCOVERABLE_SYSTEM_FIELD_NAMES } from 'src/engine/core-modules/record-share/constants/discoverable-system-field-names.constant';
+import { isDiscoverableObject } from 'src/engine/core-modules/record-share/utils/is-discoverable-object.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-
-// An inherited child that declares fields, such as a message of a thread, is
-// discovered along with its parent. Its parent's gate still decides the rows.
-export const isDiscoverableObject = (
-  flatObjectMetadata: Pick<
-    FlatObjectMetadata,
-    'readability' | 'discoverableFieldUniversalIdentifiers'
-  >,
-): boolean =>
-  flatObjectMetadata.readability === MetadataReadability.DISCOVERABLE ||
-  (flatObjectMetadata.readability === MetadataReadability.INHERITED &&
-    isDefined(flatObjectMetadata.discoverableFieldUniversalIdentifiers));
 
 // Undefined when the object takes no part in existence reads.
 export const resolveDiscoverableFieldMetadataIds = ({

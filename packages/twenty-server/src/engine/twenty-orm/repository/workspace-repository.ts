@@ -1846,6 +1846,15 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       queryBuilder,
       queryBuilder.getReferencedColumnNamesByAlias(),
     );
+
+    // An existence read opens a discoverable parent it joins, so the joined
+    // columns it projects are held to the discoverable fields too
+    if (this.options.readScope === 'existence') {
+      this.validateQueryIsPermitted(
+        queryBuilder,
+        queryBuilder.getJoinedSelectedColumnNamesByAlias(),
+      );
+    }
   }
 
   private validateQueryIsPermitted(
