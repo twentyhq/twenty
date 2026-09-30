@@ -1,6 +1,5 @@
 import { useJsonTreeContextOrThrow } from '@ui/components/data-display/JsonTree/internal/hooks/useJsonTreeContextOrThrow';
 import { type JsonNodeHighlighting } from '@ui/components/data-display/JsonTree/types/JsonNodeHighlighting';
-import { handleClickableElementKeyDown } from '@ui/primitives/accessibility/utils/handleClickableElementKeyDown';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 import { clsx } from 'clsx';
 
@@ -29,15 +28,13 @@ export const JsonNodeValue = ({
 
   if (isInteractive) {
     return (
-      <span
-        className={valueClassName}
-        role="button"
-        tabIndex={0}
+      <button
+        className={clsx(valueClassName, styles.button)}
+        type="button"
         onClick={handleClick}
-        onKeyDown={handleClickableElementKeyDown}
       >
         {valueAsString}
-      </span>
+      </button>
     );
   }
 
