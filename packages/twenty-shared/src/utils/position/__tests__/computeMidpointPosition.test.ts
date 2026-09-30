@@ -24,9 +24,9 @@ describe('computeMidpointPosition', () => {
   });
 
   it('should return the same position for equal inputs', () => {
-    expect(computeMidpointPosition(0.30000000000000004, 0.30000000000000004)).toBe(
-      0.30000000000000004,
-    );
+    expect(
+      computeMidpointPosition(0.30000000000000004, 0.30000000000000004),
+    ).toBe(0.30000000000000004);
   });
 
   it('should not overflow near the largest double', () => {
@@ -34,7 +34,9 @@ describe('computeMidpointPosition', () => {
     expect(computeMidpointPosition(Number.MAX_VALUE, Number.MAX_VALUE)).toBe(
       Number.MAX_VALUE,
     );
-    expect(computeMidpointPosition(-Number.MAX_VALUE, Number.MAX_VALUE)).toBe(0);
+    expect(computeMidpointPosition(-Number.MAX_VALUE, Number.MAX_VALUE)).toBe(
+      0,
+    );
   });
 
   it('should handle very small magnitudes', () => {
