@@ -89,8 +89,15 @@ export default meta;
 
 type Story = StoryObj<typeof MediaPermissionModalStory>;
 
-const findDialog = (canvasElement: HTMLElement) =>
-  within(canvasElement.ownerDocument.body).findByRole('dialog');
+const findDialog = async (canvasElement: HTMLElement) => {
+  const dialog = await within(canvasElement.ownerDocument.body).findByRole(
+    'dialog',
+  );
+
+  await waitFor(() => expect(dialog).toBeVisible());
+
+  return dialog;
+};
 
 export const GrantsWorkspaceWideAccess: Story = {
   play: async ({ canvasElement }) => {

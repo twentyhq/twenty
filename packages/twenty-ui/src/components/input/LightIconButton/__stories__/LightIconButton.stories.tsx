@@ -34,8 +34,8 @@ export const Default: Story = {
 };
 
 export const Documentation: Story = {
-  ...Default,
-  play: undefined,
+  decorators: Default.decorators,
+  args: Default.args,
 };
 
 export const Appearance: Story = {

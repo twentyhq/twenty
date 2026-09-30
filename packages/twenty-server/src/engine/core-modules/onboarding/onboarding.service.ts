@@ -7,14 +7,19 @@ import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { type DataSource, type QueryRunner, Repository } from 'typeorm';
 
 import { BillingCreditGrantType } from 'src/engine/core-modules/billing/enums/billing-credit-grant-type.enum';
+import { BillingCreditGrantService } from 'src/engine/core-modules/billing/services/billing-credit-grant.service';
 import { BillingCreditService } from 'src/engine/core-modules/billing/services/billing-credit.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
+import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { ONBOARDING_INSTALLABLE_APP_UNIVERSAL_IDENTIFIERS } from 'src/engine/core-modules/onboarding/constants/onboarding-installable-app-universal-identifiers';
+import { ONBOARDING_INVITE_TEAM_REWARD_LOCK_OPTIONS } from 'src/engine/core-modules/onboarding/constants/onboarding-invite-team-reward-lock-options';
+import { ONBOARDING_REWARD_IDEMPOTENCY_KEY_PREFIXES } from 'src/engine/core-modules/onboarding/constants/onboarding-reward-idempotency-key-prefixes';
 import { ACQUIRE_ONBOARDING_STEP_TRANSITION_LOCK_STATEMENT } from 'src/engine/core-modules/onboarding/constants/acquire-onboarding-step-transition-lock-statement';
+import { buildOnboardingInviteTeamRewardLockKey } from 'src/engine/core-modules/onboarding/utils/build-onboarding-invite-team-reward-lock-key.util';
 import { buildOnboardingStepTransitionLockName } from 'src/engine/core-modules/onboarding/utils/build-onboarding-step-transition-lock-name.util';
 import { OnboardingStatus } from 'src/engine/core-modules/onboarding/enums/onboarding-status.enum';
 import {
@@ -60,6 +65,8 @@ export class OnboardingService {
   constructor(
     private readonly billingService: BillingService,
     private readonly billingCreditService: BillingCreditService,
+    private readonly billingCreditGrantService: BillingCreditGrantService,
+    private readonly cacheLockService: CacheLockService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
     private readonly userVarsService: UserVarsService<OnboardingKeyValueTypeMap>,
     private readonly twentyConfigService: TwentyConfigService,
@@ -507,7 +514,10 @@ export class OnboardingService {
       return;
     }
 
-    await this.creditImportContactsRewardForFirstWorkspaceUser({ workspaceId });
+    await this.creditImportContactsRewardForWorkspaceCreator({
+      userId,
+      workspaceId,
+    });
   }
 
   async skipOnboardingConnectAccountStep({
@@ -544,16 +554,20 @@ export class OnboardingService {
     );
   }
 
-  private async isFirstWorkspaceUser({
+  private async isWorkspaceCreator({
+    userId,
     workspaceId,
   }: {
+    userId: string;
     workspaceId: string;
   }): Promise<boolean> {
-    const workspaceUserCount = await this.userWorkspaceRepository.countBy({
-      workspaceId,
+    const earliestUserWorkspace = await this.userWorkspaceRepository.findOne({
+      where: { workspaceId },
+      order: { createdAt: 'ASC' },
+      withDeleted: true,
     });
 
-    return workspaceUserCount === 1;
+    return earliestUserWorkspace?.userId === userId;
   }
 
   private async claimOnboardingConnectAccountStep(
@@ -578,17 +592,20 @@ export class OnboardingService {
     return isDefined(affectedRows) && affectedRows > 0;
   }
 
-  private async creditImportContactsRewardForFirstWorkspaceUser({
+  private async creditImportContactsRewardForWorkspaceCreator({
+    userId,
     workspaceId,
   }: {
+    userId: string;
     workspaceId: string;
   }) {
     try {
-      const isFirstWorkspaceUser = await this.isFirstWorkspaceUser({
+      const isWorkspaceCreator = await this.isWorkspaceCreator({
+        userId,
         workspaceId,
       });
 
-      if (!isFirstWorkspaceUser) {
+      if (!isWorkspaceCreator) {
         return;
       }
 
@@ -599,7 +616,7 @@ export class OnboardingService {
         ),
         type: BillingCreditGrantType.ONBOARDING_REWARD,
         reason: 'Onboarding reward: import contacts',
-        idempotencyKey: `onboarding-import-contacts:${workspaceId}`,
+        idempotencyKey: `${ONBOARDING_REWARD_IDEMPOTENCY_KEY_PREFIXES.importContacts}:${workspaceId}`,
       });
     } catch (error) {
       this.logger.error(
@@ -796,29 +813,75 @@ export class OnboardingService {
     return isDefined(affectedRows) && affectedRows > 0;
   }
 
-  async creditInstallAppsReward({
-    workspaceId,
-    rewardAppsCount,
-  }: {
-    workspaceId: string;
-    rewardAppsCount: number;
-  }) {
+  async creditInstallAppsReward({ workspaceId }: { workspaceId: string }) {
     try {
       await this.billingCreditService.grantCredits({
         workspaceId,
-        amountMicro:
-          this.twentyConfigService.get(
-            'ONBOARDING_INSTALL_APPS_CREDITS_REWARD_PER_APP',
-          ) * rewardAppsCount,
+        amountMicro: this.twentyConfigService.get(
+          'ONBOARDING_INSTALL_APPS_CREDITS_REWARD',
+        ),
         type: BillingCreditGrantType.ONBOARDING_REWARD,
-        reason: `Onboarding reward: install ${rewardAppsCount} app(s)`,
-        idempotencyKey: `onboarding-install-apps:${workspaceId}`,
+        reason: 'Onboarding reward: install apps',
+        idempotencyKey: `${ONBOARDING_REWARD_IDEMPOTENCY_KEY_PREFIXES.installApps}:${workspaceId}`,
       });
     } catch (error) {
       this.logger.error(
         `Failed to credit onboarding install-apps reward for workspace ${workspaceId}`,
         error,
       );
+    }
+  }
+
+  async creditInviteTeamReward({
+    workspaceId,
+    userId,
+  }: {
+    workspaceId: string;
+    userId: string;
+  }) {
+    const idempotencyKeyPrefix = `${ONBOARDING_REWARD_IDEMPOTENCY_KEY_PREFIXES.inviteTeam}:${workspaceId}:`;
+
+    try {
+      await this.cacheLockService.withLock(
+        async () => {
+          const rewardedTeammatesCount =
+            await this.billingCreditGrantService.countGrantsByIdempotencyKeyPrefix(
+              {
+                workspaceId,
+                type: BillingCreditGrantType.ONBOARDING_REWARD,
+                idempotencyKeyPrefix,
+              },
+            );
+
+          if (
+            rewardedTeammatesCount >=
+            this.twentyConfigService.get('ONBOARDING_INVITE_TEAM_MAX_INVITES')
+          ) {
+            return;
+          }
+
+          await this.billingCreditService.grantCredits({
+            workspaceId,
+            amountMicro: this.twentyConfigService.get(
+              'ONBOARDING_INVITE_TEAM_CREDITS_REWARD_PER_USER',
+            ),
+            type: BillingCreditGrantType.ONBOARDING_REWARD,
+            reason: 'Onboarding reward: invited teammate signed up',
+            idempotencyKey: `${idempotencyKeyPrefix}${userId}`,
+          });
+        },
+        buildOnboardingInviteTeamRewardLockKey(workspaceId),
+        ONBOARDING_INVITE_TEAM_REWARD_LOCK_OPTIONS,
+      );
+    } catch (error) {
+      this.logger.error(
+        `Failed to credit onboarding invite reward for workspace ${workspaceId}`,
+        error,
+      );
+
+      this.exceptionHandlerService.captureExceptions([error], {
+        workspace: { id: workspaceId },
+      });
     }
   }
 
@@ -901,7 +964,7 @@ export class OnboardingService {
         // workspace rather than the enriching user so that a re-run of the
         // enrichment, or a second member qualifying later, replays instead of
         // topping up a balance the workspace already received.
-        idempotencyKey: `onboarding-enrichment-qualified:${workspaceId}`,
+        idempotencyKey: `${ONBOARDING_REWARD_IDEMPOTENCY_KEY_PREFIXES.enrichmentQualification}:${workspaceId}`,
       });
     } catch (error) {
       this.logger.error(

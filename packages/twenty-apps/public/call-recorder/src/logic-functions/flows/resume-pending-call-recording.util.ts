@@ -80,9 +80,6 @@ export const resumePendingCallRecording = async ({
     return scheduleBot({ client, callRecording, calendarEvent });
   }
 
-  // Ambiguous attempts need a Recall bot lookup; doing one per event could
-  // burst past the shared list budget, so the recovery cron owns them and
-  // amortizes a single lookup across all ambiguous rows.
   return {
     status: 'deferred',
     reason: 'ambiguous prior attempt; the recovery cron will reconcile it',

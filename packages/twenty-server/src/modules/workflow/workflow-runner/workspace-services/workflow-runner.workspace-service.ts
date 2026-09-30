@@ -13,9 +13,12 @@ import {
   WorkflowVersionStepExceptionCode,
 } from 'src/modules/workflow/common/exceptions/workflow-version-step.exception';
 import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
-import { setAllIteratorsStepInfosAsStopped } from 'src/modules/workflow/common/utils/set-all-iterators-step-infos-as-stopped.util';
 import { workflowHasRunningSteps } from 'src/modules/workflow/common/utils/workflow-has-running-steps.util';
 import { WorkflowVersionStepOperationsWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step-operations.workspace-service';
+import {
+  type AnsweredToolPart,
+  WorkflowAgentConversationWorkspaceService,
+} from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/services/workflow-agent-conversation.workspace-service';
 import { isWorkflowFormAction } from 'src/modules/workflow/workflow-executor/workflow-actions/form/guards/is-workflow-form-action.guard';
 import {
   WorkflowRunException,
@@ -41,6 +44,7 @@ export class WorkflowRunnerWorkspaceService {
     private readonly workflowThrottlingWorkspaceService: WorkflowThrottlingWorkspaceService,
     private readonly coreWorkflowRunnerService: CoreWorkflowRunnerService,
     private readonly workflowVersionCoreSyncService: WorkflowVersionCoreSyncService,
+    private readonly workflowAgentConversationWorkspaceService: WorkflowAgentConversationWorkspaceService,
   ) {}
 
   async run({
@@ -98,6 +102,8 @@ export class WorkflowRunnerWorkspaceService {
     );
   }
 
+  // Called with the answer to the form step's Ask, whose claim the step
+  // transition takes: false when the form no longer waits for it.
   async submitFormStep({
     workspaceId,
     stepId,
@@ -107,8 +113,8 @@ export class WorkflowRunnerWorkspaceService {
     workspaceId: string;
     stepId: string;
     workflowRunId: string;
-    response: object;
-  }) {
+    response: Record<string, unknown>;
+  }): Promise<boolean> {
     const workflowRun =
       await this.workflowRunWorkspaceService.getWorkflowRunOrFail({
         workflowRunId,
@@ -145,21 +151,78 @@ export class WorkflowRunnerWorkspaceService {
         },
       );
 
-    await this.workflowRunWorkspaceService.updateWorkflowRunStepInfo({
-      stepId,
-      stepInfo: {
-        status: StepStatus.SUCCESS,
-        result: enrichedResponse,
-      },
-      workspaceId,
-      workflowRunId,
-    });
+    const hasCompletedStep =
+      await this.workflowRunWorkspaceService.updateStepInfoIfPending({
+        stepId,
+        stepInfo: {
+          status: StepStatus.SUCCESS,
+          result: enrichedResponse,
+        },
+        inputAskResponse: enrichedResponse,
+        workspaceId,
+        workflowRunId,
+      });
+
+    if (!hasCompletedStep) {
+      return false;
+    }
 
     await this.resume({
       workspaceId,
       workflowRunId,
       lastExecutedStepId: stepId,
     });
+
+    return true;
+  }
+
+  // The step stays PENDING until the resume job claims it in its
+  // conversation.
+  async resumeAnsweredAgentStep({
+    workspaceId,
+    workflowRunId,
+    stepId,
+    threadId,
+    toolPart,
+    toolResult,
+    answerText,
+    senderUserWorkspaceId,
+  }: {
+    workspaceId: string;
+    workflowRunId: string;
+    stepId: string;
+    threadId: string;
+    toolPart: AnsweredToolPart;
+    toolResult: Record<string, unknown>;
+    answerText: string;
+    senderUserWorkspaceId: string;
+  }): Promise<void> {
+    const { hasAwaitingToolCalls } =
+      await this.workflowAgentConversationWorkspaceService.recordAnswer({
+        workspaceId,
+        threadId,
+        toolPart,
+        toolResult,
+        answerText,
+        senderUserWorkspaceId,
+      });
+
+    // The agent paused on several calls and continues once all are
+    // answered. Two answers that both see none left each queue a resume,
+    // and the resume's claim on the step lets only one of them run it.
+    if (hasAwaitingToolCalls) {
+      return;
+    }
+
+    await this.messageQueueService.add<RunWorkflowJobData>(
+      RunWorkflowJob.name,
+      {
+        workspaceId,
+        workflowRunId,
+        stepToResume: { stepId, threadId },
+      },
+      buildRunWorkflowJobOptions(workflowRunId),
+    );
   }
 
   async stopWorkflowRun(workspaceId: string, workflowRunId: string) {
@@ -198,28 +261,24 @@ export class WorkflowRunnerWorkspaceService {
       const steps = workflowRun.state.flow.steps;
 
       if (workflowHasRunningSteps({ stepInfos, steps })) {
-        const stoppedIteratorStepInfos = setAllIteratorsStepInfosAsStopped({
-          stepInfos,
-          steps,
-        });
+        const isStopping =
+          await this.workflowRunWorkspaceService.markWorkflowRunAsStopping({
+            workflowRunId,
+            workspaceId,
+          });
 
-        const mergedStepInfos = {
-          ...stepInfos,
-          ...stoppedIteratorStepInfos,
-        };
+        if (isStopping) {
+          newStatus = WorkflowRunStatus.STOPPING;
+        } else {
+          // The run changed before the lock was taken, so report what it is now.
+          const currentWorkflowRun =
+            await this.workflowRunWorkspaceService.getWorkflowRunOrFail({
+              workflowRunId,
+              workspaceId,
+            });
 
-        await this.workflowRunWorkspaceService.updateWorkflowRun({
-          workflowRunId,
-          workspaceId,
-          partialUpdate: {
-            status: WorkflowRunStatus.STOPPING,
-            state: {
-              ...workflowRun.state,
-              stepInfos: mergedStepInfos,
-            },
-          },
-        });
-        newStatus = WorkflowRunStatus.STOPPING;
+          newStatus = currentWorkflowRun.status;
+        }
       } else {
         await this.workflowRunWorkspaceService.endWorkflowRun({
           workflowRunId,

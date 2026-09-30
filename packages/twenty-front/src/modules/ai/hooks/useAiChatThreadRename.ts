@@ -3,7 +3,9 @@ import { useState } from 'react';
 import { useRenameChatThread } from '@/ai/hooks/useRenameChatThread';
 import { type AgentChatThread } from '~/generated-metadata/graphql';
 
-export const useAiChatThreadRename = (thread: AgentChatThread) => {
+export const useAiChatThreadRename = (
+  thread: Pick<AgentChatThread, 'id' | 'title'>,
+) => {
   const { renameChatThread } = useRenameChatThread();
 
   const [isRenaming, setIsRenaming] = useState(false);

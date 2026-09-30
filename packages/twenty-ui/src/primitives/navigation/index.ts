@@ -8,9 +8,6 @@
  */
 
 export { ClickToActionLink } from './ClickToActionLink/ClickToActionLink';
-export { CAL_LINK } from './Link/constants/Cal';
-export { GITHUB_LINK } from './Link/constants/GithubLink';
-export { TWENTY_PRICING_LINK } from './Link/constants/TwentyPricingLink';
 export { ListItem } from './ListItem/ListItem';
 export type { ListItemColor } from './ListItem/types/ListItemColor';
 export type { ListItemDescriptionPlacement } from './ListItem/types/ListItemDescriptionPlacement';

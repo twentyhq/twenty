@@ -25,7 +25,7 @@ export const SettingsWorkspaceUnsubscribe = () => {
   const tabs = [
     {
       id: SETTINGS_UNSUBSCRIBE_TAB_IDS.UNSUBSCRIBERS,
-      title: t`Unsubscribers`,
+      title: t`Opt-outs`,
       Icon: IconForbid,
     },
     {

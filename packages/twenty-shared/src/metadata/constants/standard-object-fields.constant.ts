@@ -60,6 +60,9 @@ export const STANDARD_OBJECT_FIELDS = {
     activeStreamId: {
       universalIdentifier: 'bcead20f-75b3-45be-92b9-ea7ec4bddfcd',
     },
+    workflowRun: {
+      universalIdentifier: '2187f4c6-bff3-4b80-8585-c82965faf79b',
+    },
     pendingQuestionMessageId: {
       universalIdentifier: '51a9b421-7d90-4a59-9712-036ea9721e65',
     },
@@ -81,6 +84,7 @@ export const STANDARD_OBJECT_FIELDS = {
     recordTargets: {
       universalIdentifier: '5b37eceb-2992-4d27-9897-14af3e3ce9b2',
     },
+    inputAsks: { universalIdentifier: '0c2444ed-7f90-4984-9f56-a3fe16fa6296' },
   },
   agentChatThreadTarget: {
     ...buildStandardObjectBaseFields(
@@ -134,6 +138,9 @@ export const STANDARD_OBJECT_FIELDS = {
       STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.agentMessage,
     ),
     agentId: { universalIdentifier: '880a91ad-4ab1-4067-87f6-970a53aa2234' },
+    senderWorkspaceMember: {
+      universalIdentifier: '69bea8e1-451d-4c3c-9d34-505b5a67e06e',
+    },
     senderUserWorkspaceId: {
       universalIdentifier: 'f4184c3a-b85c-4cef-8181-b2fefdf98fda',
     },
@@ -1318,6 +1325,20 @@ export const STANDARD_OBJECT_FIELDS = {
       universalIdentifier: '534a2244-9feb-4d21-afd9-c9a20052b300',
     },
   },
+  shortLink: {
+    ...buildStandardObjectSystemFields(
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.shortLink,
+    ),
+    authoredTemplateUrl: {
+      universalIdentifier: '6f588340-ddff-4113-984b-c37c045d496c',
+    },
+    resolvedDestinationUrl: {
+      universalIdentifier: '5ba068eb-0594-4945-9183-7174a37a9406',
+    },
+    templateAndResolvedUrlHash: {
+      universalIdentifier: '175f7743-b027-4374-b577-6503679d00fc',
+    },
+  },
   task: {
     ...buildStandardObjectSystemFields(
       STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.task,
@@ -1466,6 +1487,9 @@ export const STANDARD_OBJECT_FIELDS = {
     coreWorkflowVersionId: {
       universalIdentifier: '58e3f476-425d-4c66-b391-779d0412e107',
     },
+    agentChatThreads: {
+      universalIdentifier: 'c664a2e7-ef64-4597-9cdf-ded3eae85ae4',
+    },
     timelineActivities: {
       universalIdentifier: getSystemRelationFieldUniversalIdentifier({
         applicationUniversalIdentifier:
@@ -1475,6 +1499,9 @@ export const STANDARD_OBJECT_FIELDS = {
         relationTargetObjectUniversalIdentifier:
           STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.timelineActivity,
       }),
+    },
+    inputAsks: {
+      universalIdentifier: 'f3b2f310-9aa4-40da-82bb-3388d26e7cde',
     },
   },
   workflowVersion: {
@@ -1557,6 +1584,9 @@ export const STANDARD_OBJECT_FIELDS = {
     timelineActivities: {
       universalIdentifier: '20202020-e15b-47b8-94fe-8200e3c66615',
     },
+    agentMessages: {
+      universalIdentifier: '211b2717-450a-4f5f-808f-39695c819319',
+    },
     agentChatThreads: {
       universalIdentifier: 'fbaf92a6-44ae-4b6d-9d10-2c15d84eaea1',
     },
@@ -1575,5 +1605,27 @@ export const STANDARD_OBJECT_FIELDS = {
     numberFormat: {
       universalIdentifier: '20202020-7f40-4e7f-b126-11c0eda6b141',
     },
+    inputAsks: {
+      universalIdentifier: '552a26c5-21fd-4e3a-ad0d-2f561c96b7d4',
+    },
+  },
+  inputAsk: {
+    ...buildStandardObjectSystemFields(
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.inputAsk,
+    ),
+    name: { universalIdentifier: 'f8d3b0ed-f134-420a-9194-ca0f96345642' },
+    status: { universalIdentifier: '919f0339-ee8e-4197-8b6a-b57bbd31035b' },
+    form: { universalIdentifier: 'b25c6916-71bc-435e-a547-ecb384083902' },
+    response: { universalIdentifier: '04906a36-ec59-4d3f-8da9-7ef6696ed326' },
+    assignee: { universalIdentifier: '410fabce-972b-40d3-8b11-3c0807ecab90' },
+    answeredAt: { universalIdentifier: '618f303d-123b-480f-9d40-64fcb0db2e01' },
+    workflowRun: {
+      universalIdentifier: 'cf2d5592-f51c-4dca-a6f2-cb4f7d1fcc80',
+    },
+    stepId: { universalIdentifier: '334c8abb-6ebe-4e08-a746-0098425ef421' },
+    toolCallId: {
+      universalIdentifier: 'f353edad-fe7e-4efc-ab0d-e21a0ee16262',
+    },
+    thread: { universalIdentifier: '21ee043a-d3d6-4545-8771-34aca316aeea' },
   },
 } satisfies Record<string, Record<string, { universalIdentifier: string }>>;

@@ -13,6 +13,8 @@ import { StyledOnboardingStepTitle } from '@/onboarding/components/StyledOnboard
 import { OnboardingCreditsRewardTag } from '@/onboarding/components/import-contacts/OnboardingCreditsRewardTag';
 import { OnboardingPlanCard } from '@/onboarding/components/upgrade-free-trial/OnboardingPlanCard';
 import { OnboardingTrialExtensionTag } from '@/onboarding/components/upgrade-free-trial/OnboardingTrialExtensionTag';
+import { CAL_LINK } from '@/onboarding/constants/CalLink';
+import { useSetOnboardingUpgradeTrialFreeCredits } from '@/onboarding/hooks/useSetOnboardingUpgradeTrialFreeCredits';
 import { isOnboardingCheckoutPendingState } from '@/onboarding/states/isOnboardingCheckoutPendingState';
 import { useBaseLicensedPriceByPlanKeyAndInterval } from '@/settings/billing/hooks/useBaseLicensedPriceByPlanKeyAndInterval';
 import { useHandleCheckoutSession } from '@/settings/billing/hooks/useHandleCheckoutSession';
@@ -30,7 +32,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { Info, MainButton } from 'twenty-ui/components';
 import { Loader } from 'twenty-ui/primitives/feedback';
 import { RadioGroup } from 'twenty-ui/primitives/input';
-import { CAL_LINK, ClickToActionLink } from 'twenty-ui/primitives/navigation';
+import { ClickToActionLink } from 'twenty-ui/primitives/navigation';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme';
 import {
   type Billing,
@@ -95,8 +97,11 @@ const UpgradeFreeTrialSubmitButton = ({
   const setIsOnboardingCheckoutPending = useSetAtomState(
     isOnboardingCheckoutPendingState,
   );
+  const setOnboardingUpgradeTrialFreeCredits =
+    useSetOnboardingUpgradeTrialFreeCredits();
 
   const handleSubmit = () => {
+    setOnboardingUpgradeTrialFreeCredits(true);
     setIsOnboardingCheckoutPending(true);
     void submit();
   };
@@ -156,8 +161,13 @@ const UpgradeFreeTrialContent = ({
   const setIsOnboardingCheckoutPending = useSetAtomState(
     isOnboardingCheckoutPendingState,
   );
+  const setOnboardingUpgradeTrialFreeCredits =
+    useSetOnboardingUpgradeTrialFreeCredits();
 
   const handleCheckoutSessionClick = () => {
+    setOnboardingUpgradeTrialFreeCredits(
+      billingCheckoutSession.requirePaymentMethod,
+    );
     setIsOnboardingCheckoutPending(true);
     void handleCheckoutSession();
   };
@@ -172,6 +182,7 @@ const UpgradeFreeTrialContent = ({
         interval: baseProductPrice.recurringInterval,
         requirePaymentMethod: withCreditCard,
       });
+      setOnboardingUpgradeTrialFreeCredits(withCreditCard);
     }
   };
 

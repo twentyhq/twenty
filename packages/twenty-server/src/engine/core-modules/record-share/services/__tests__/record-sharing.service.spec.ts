@@ -83,12 +83,10 @@ const buildService = () => {
     findByRecordIds: jest.fn().mockResolvedValue([grant]),
     setManualShare: jest.fn(),
   };
-  const feature = { isRecordSharingEnabled: jest.fn().mockResolvedValue(true) };
   const service = new RecordSharingService(
     manager as never,
     cache as never,
     shares as never,
-    feature as never,
   );
   return {
     service,
@@ -99,7 +97,6 @@ const buildService = () => {
     allowed,
     shares,
     scope,
-    feature,
   };
 };
 
@@ -314,12 +311,8 @@ describe('Generic record sharing', () => {
     expect(shares.setManualShare).not.toHaveBeenCalled();
   });
 
-  it('allows revocation with the flag disabled and a removed recipient', async () => {
-    const { service, feature, shares } = buildService();
-    feature.isRecordSharingEnabled.mockResolvedValue(false);
-    await expect(service.setShare(change)).rejects.toThrow(
-      'Sharing is unavailable',
-    );
+  it('allows revocation for a removed recipient', async () => {
+    const { service, shares } = buildService();
     await service.setShare({
       ...change,
       principal: { workspaceMemberId: ROLE_ID },

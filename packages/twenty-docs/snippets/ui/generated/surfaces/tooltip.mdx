@@ -180,6 +180,10 @@
   There's no need to specify this prop when the tooltip is uncontrolled (that is, when the `open` prop is not set).
 </ParamField>
 
+<ParamField body="withExitAnimation" type="boolean">
+  Fades and slides the popup out when it closes instead of hiding it at once.
+</ParamField>
+
 ### Tooltip.Root
 
 <ParamField body="Root.actionsRef" type="RefObject&lt;TooltipRootActions | null&gt;">
@@ -397,6 +401,10 @@
 
 <ParamField body="Popup.style" type="CSSProperties | ((state: TooltipPopupState) =&gt; CSSProperties | undefined)">
   Inline styles for the popup.
+</ParamField>
+
+<ParamField body="Popup.withExitAnimation" type="boolean" default="false">
+  Fades and slides the popup out when it closes instead of hiding it at once.
 </ParamField>
 
 ### Tooltip.Content

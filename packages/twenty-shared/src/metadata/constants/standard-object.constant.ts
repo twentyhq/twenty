@@ -1014,6 +1014,16 @@ export const STANDARD_OBJECTS = {
     },
     views: {},
   },
+  shortLink: {
+    universalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.shortLink,
+    fields: STANDARD_OBJECT_FIELDS.shortLink,
+    indexes: {
+      templateAndResolvedUrlHashUniqueIndex: {
+        universalIdentifier: 'b1330e3c-bd74-4bd1-a9dc-1ecefe41f199',
+      },
+    },
+    views: {},
+  },
   task: {
     universalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.task,
     fields: STANDARD_OBJECT_FIELDS.task,
@@ -1418,6 +1428,9 @@ export const STANDARD_OBJECTS = {
       workspaceMemberIndex: {
         universalIdentifier: '079f2dd7-6c11-4eae-be8a-cce2d1bee0fb',
       },
+      workflowRunIndex: {
+        universalIdentifier: 'cc9f8c37-a1ad-4d8d-8e27-894c2cf01a3b',
+      },
     },
   },
   agentChatThreadTarget: {
@@ -1477,6 +1490,9 @@ export const STANDARD_OBJECTS = {
       turnIndex: {
         universalIdentifier: 'dc46f804-a55f-4283-884e-9cb938741da3',
       },
+      senderWorkspaceMemberIndex: {
+        universalIdentifier: '8ecdac01-7bbe-411e-8461-6ff265c90759',
+      },
       hiddenKickoffIndex: {
         universalIdentifier: '1d423c31-007a-4fcd-8514-dcb1f7a8fa78',
       },
@@ -1530,6 +1546,32 @@ export const STANDARD_OBJECTS = {
       emailAddressTopicUniqueIndex: {
         universalIdentifier: 'a6c1f4dc-d925-49f9-8205-3e7f95545966',
       },
+    },
+  },
+  inputAsk: {
+    universalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.inputAsk,
+    fields: STANDARD_OBJECT_FIELDS.inputAsk,
+    indexes: {
+      assigneeStatusIndex: {
+        universalIdentifier: '255cba21-0107-4c31-b497-9c4081114da8',
+      },
+      workflowRunStepUniqueIndex: {
+        universalIdentifier: 'c6c2c67e-2f2e-4a1e-9c0b-1b3d5e7a9f41',
+      },
+      workflowRunStatusIndex: {
+        universalIdentifier: '77615052-0e81-4210-b259-37a9e939bb41',
+      },
+      threadToolCallUniqueIndex: {
+        universalIdentifier: '6a0ac44d-84f3-4bfa-8939-ce3d82f0d043',
+      },
+    },
+    views: {
+      allInputAsks: buildStandardObjectIndexView({
+        objectUniversalIdentifier:
+          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.inputAsk,
+        fields: STANDARD_OBJECT_FIELDS.inputAsk,
+        viewFieldNames: ['name', 'status', 'assignee', 'createdAt'],
+      }),
     },
   },
 } as const satisfies Record<

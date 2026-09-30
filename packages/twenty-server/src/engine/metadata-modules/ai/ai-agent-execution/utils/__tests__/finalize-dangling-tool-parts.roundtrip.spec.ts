@@ -1,7 +1,7 @@
 import { convertToModelMessages, type UIMessage } from 'ai';
 import { type ExtendedUIMessagePart } from 'twenty-shared/ai';
 
-import { type AgentMessagePartEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message-part.entity';
+import { AgentMessagePartWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message-part.workspace-entity';
 import { finalizeDanglingToolParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/finalize-dangling-tool-parts.util';
 import { mapDBPartToUIMessagePart } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/mapDBPartToUIMessagePart';
 import { mapUIMessagePartsToDBParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/mapUIMessagePartsToDBParts';
@@ -21,7 +21,9 @@ const persistAndReload = (
   parts: ExtendedUIMessagePart[],
 ): ExtendedUIMessagePart[] =>
   mapUIMessagePartsToDBParts(parts, 'message-1', 'workspace-1')
-    .map((dbPart) => mapDBPartToUIMessagePart(dbPart as AgentMessagePartEntity))
+    .map((dbPart) =>
+      mapDBPartToUIMessagePart(dbPart as AgentMessagePartWorkspaceEntity),
+    )
     .filter((part): part is ExtendedUIMessagePart => part !== null);
 
 const buildThread = (assistantParts: ExtendedUIMessagePart[]): UIMessage[] =>

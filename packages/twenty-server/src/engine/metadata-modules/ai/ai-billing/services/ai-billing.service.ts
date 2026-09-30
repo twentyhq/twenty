@@ -10,8 +10,9 @@ import { UsageRecorderService } from 'src/engine/core-modules/usage/services/usa
 import { type UsageSpenders } from 'src/engine/core-modules/usage/types/usage-spenders.type';
 import { NATIVE_WEB_SEARCH_COST_PER_CALL_DOLLARS } from 'src/engine/metadata-modules/ai/ai-billing/constants/native-web-search-cost-per-call-dollars';
 import { type BillingTokenUsage } from 'src/engine/metadata-modules/ai/ai-billing/types/billing-token-usage.type';
-import { computeCostBreakdown } from 'src/engine/metadata-modules/ai/ai-billing/utils/compute-cost-breakdown.util';
+import { computeStepCostBreakdown } from 'src/engine/metadata-modules/ai/ai-billing/utils/compute-step-cost-breakdown.util';
 import { convertDollarsToCreditsMicro } from 'src/engine/metadata-modules/ai/ai-billing/utils/convert-dollars-to-credits-micro.util';
+import { extractCacheCreationTokens } from 'src/engine/metadata-modules/ai/ai-billing/utils/extract-cache-creation-tokens.util';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { type AiModelCostConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-cost-config.type';
 import { type ModelId } from 'src/engine/metadata-modules/ai/ai-models/types/model-id.type';
@@ -85,17 +86,31 @@ export class AiBillingService {
     );
   }
 
+  calculateStepsCost(
+    modelId: ModelId,
+    steps: {
+      usage: BillingTokenUsage;
+      providerMetadata?: Record<string, Record<string, unknown> | undefined>;
+    }[],
+  ): number {
+    const model = this.getCostConfig(modelId);
+
+    return steps.reduce(
+      (costInDollars, step) =>
+        costInDollars +
+        computeStepCostBreakdown(model, {
+          usage: step.usage,
+          cacheCreationTokens: extractCacheCreationTokens(
+            step.providerMetadata,
+          ),
+        }).totalCostInDollars,
+      0,
+    );
+  }
+
   calculateCost(modelId: ModelId, billingInput: BillingUsageInput): number {
     const model = this.getCostConfig(modelId);
-    const { usage, cacheCreationTokens = 0 } = billingInput;
-
-    const breakdown = computeCostBreakdown(model, {
-      inputTokens: usage.inputTokens,
-      outputTokens: usage.outputTokens,
-      reasoningTokens: usage.outputTokenDetails?.reasoningTokens,
-      cachedInputTokens: usage.inputTokenDetails?.cacheReadTokens,
-      cacheCreationTokens,
-    });
+    const breakdown = computeStepCostBreakdown(model, billingInput);
 
     this.logger.log(
       `Cost for ${model.modelId}: $${breakdown.totalCostInDollars.toFixed(6)} ` +

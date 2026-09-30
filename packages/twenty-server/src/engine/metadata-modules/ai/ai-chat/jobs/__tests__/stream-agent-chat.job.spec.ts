@@ -5,6 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { StreamAgentChatJob } from 'src/engine/metadata-modules/ai/ai-chat/jobs/stream-agent-chat.job';
 import { type StreamAgentChatJobData } from 'src/engine/metadata-modules/ai/ai-chat/jobs/stream-agent-chat-job.types';
+import { type AiModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-config.type';
 import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
 
 type PublishedEvent = { type: string } & Record<string, unknown>;
@@ -28,35 +29,39 @@ const START_PARTS: ModelStreamPart[] = [
   { type: 'start-step', request: {}, warnings: [] },
 ];
 
+const buildFinishStepPart = (usage: LanguageModelUsage): ModelStreamPart => ({
+  type: 'finish-step',
+  response: {
+    id: 'response-id',
+    timestamp: new Date(0),
+    modelId: 'gpt-5.6-luna',
+  },
+  usage,
+  performance: {
+    effectiveOutputTokensPerSecond: 0,
+    outputTokensPerSecond: undefined,
+    inputTokensPerSecond: undefined,
+    effectiveTotalTokensPerSecond: 0,
+    stepTimeMs: 0,
+    responseTimeMs: 0,
+    timeToFirstOutputMs: 0,
+    toolExecutionMs: {},
+  },
+  finishReason: 'stop',
+  rawFinishReason: undefined,
+  providerMetadata: undefined,
+});
+
+const buildFinishPart = (totalUsage: LanguageModelUsage): ModelStreamPart => ({
+  type: 'finish',
+  finishReason: 'stop',
+  rawFinishReason: undefined,
+  totalUsage,
+});
+
 const FINISH_PARTS: ModelStreamPart[] = [
-  {
-    type: 'finish-step',
-    response: {
-      id: 'response-id',
-      timestamp: new Date(0),
-      modelId: 'gpt-5.6-luna',
-    },
-    usage: USAGE,
-    performance: {
-      effectiveOutputTokensPerSecond: 0,
-      outputTokensPerSecond: undefined,
-      inputTokensPerSecond: undefined,
-      effectiveTotalTokensPerSecond: 0,
-      stepTimeMs: 0,
-      responseTimeMs: 0,
-      timeToFirstOutputMs: 0,
-      toolExecutionMs: {},
-    },
-    finishReason: 'stop',
-    rawFinishReason: undefined,
-    providerMetadata: undefined,
-  },
-  {
-    type: 'finish',
-    finishReason: 'stop',
-    rawFinishReason: undefined,
-    totalUsage: USAGE,
-  },
+  buildFinishStepPart(USAGE),
+  buildFinishPart(USAGE),
 ];
 
 const TEXT_PARTS: ModelStreamPart[] = [
@@ -69,6 +74,14 @@ const TEXT_PARTS: ModelStreamPart[] = [
 
 const EMPTY_REPLY_PARTS: ModelStreamPart[] = [...START_PARTS, ...FINISH_PARTS];
 
+const QUESTIONS = [
+  {
+    header: 'Plan',
+    question: 'Which plan?',
+    options: [{ label: 'Pro' }, { label: 'Team' }],
+  },
+];
+
 const PENDING_QUESTION_PARTS: ModelStreamPart[] = [
   ...START_PARTS,
   {
@@ -80,14 +93,14 @@ const PENDING_QUESTION_PARTS: ModelStreamPart[] = [
     type: 'tool-call',
     toolCallId: 'tool-call-id',
     toolName: ASK_QUESTIONS_TOOL_NAME,
-    input: {},
+    input: { questions: QUESTIONS },
   },
   {
     type: 'tool-result',
     toolCallId: 'tool-call-id',
     toolName: ASK_QUESTIONS_TOOL_NAME,
-    input: {},
-    output: { result: { status: 'pending' } },
+    input: { questions: QUESTIONS },
+    output: { result: { questions: QUESTIONS, status: 'pending' } },
   },
   ...FINISH_PARTS,
 ];
@@ -159,16 +172,29 @@ describe('StreamAgentChatJob', () => {
     assistantPersistRejection,
     totalsUpdateAffected = 1,
     finalPublishRejection,
+    modelConfig = {
+      contextWindowTokens: 100000,
+      inputCostPerMillionTokens: 1,
+      outputCostPerMillionTokens: 2,
+    },
+    inputAskOpenRejection,
   }: {
+    inputAskOpenRejection?: Error;
     workspaceFound?: boolean;
     chatStream?: ReturnType<typeof createFakeChatStream>;
     streamChatRejection?: Error;
     assistantPersistRejection?: Error;
     totalsUpdateAffected?: number;
     finalPublishRejection?: Error;
+    modelConfig?: Partial<AiModelConfig>;
   } = {}) => {
     const publishedEvents: PublishedEvent[] = [];
 
+    const threadUsageQuery = jest.fn(async () =>
+      Array.from({ length: totalsUpdateAffected }, () => ({
+        id: 'thread-id',
+      })),
+    );
     const threadRepository = {
       findOne: jest.fn().mockResolvedValue({
         id: 'thread-id',
@@ -180,12 +206,7 @@ describe('StreamAgentChatJob', () => {
         work({
           storage: 'core',
           table: () => 'core."agentChatThread"',
-          manager: {
-            query: async () =>
-              Array.from({ length: totalsUpdateAffected }, () => ({
-                id: 'thread-id',
-              })),
-          },
+          manager: { query: threadUsageQuery },
         }),
       ),
     };
@@ -205,11 +226,7 @@ describe('StreamAgentChatJob', () => {
         ? jest.fn().mockRejectedValue(streamChatRejection)
         : jest.fn().mockResolvedValue({
             stream: chatStream,
-            modelConfig: {
-              contextWindowTokens: 100000,
-              inputCostPerMillionTokens: 1,
-              outputCostPerMillionTokens: 2,
-            },
+            modelConfig,
             hasNoMoreAvailableCredits: () => false,
           }),
     };
@@ -257,8 +274,15 @@ describe('StreamAgentChatJob', () => {
     };
     const actorService = {
       authorizeJob: jest.fn().mockResolvedValue({
+        authorization: { authContext: { workspaceMemberId: 'member' } },
         message: { id: 'user-message-id', turnId: 'turn-id' },
       }),
+    };
+    const inputAskWorkspaceService = {
+      open: inputAskOpenRejection
+        ? jest.fn().mockRejectedValue(inputAskOpenRejection)
+        : jest.fn().mockResolvedValue(undefined),
+      cancel: jest.fn().mockResolvedValue(true),
     };
     const job = new StreamAgentChatJob(
       threadRepository as never,
@@ -272,6 +296,7 @@ describe('StreamAgentChatJob', () => {
       metricsService as never,
       aiModelRegistryService as never,
       actorService as never,
+      inputAskWorkspaceService as never,
     );
 
     const turnCounts = (key: string) =>
@@ -285,12 +310,14 @@ describe('StreamAgentChatJob', () => {
       chatExecutionService,
       publishedEvents,
       threadRepository,
+      threadUsageQuery,
       agentChatService,
       eventPublisherService,
       agentChatStreamingService,
       cancelCallbacks,
       metricsService,
       aiModelRegistryService,
+      inputAskWorkspaceService,
       turnCounts,
     };
   };
@@ -399,6 +426,67 @@ describe('StreamAgentChatJob', () => {
       expect.any(Function),
     );
     expect(agentChatService.notifyThreadUsageUpdated).not.toHaveBeenCalled();
+  });
+
+  it('prices each step on its own, so steps under the long-context threshold never reach its rate together', async () => {
+    const stepUsage: LanguageModelUsage = {
+      inputTokens: 150_000,
+      inputTokenDetails: {
+        noCacheTokens: 150_000,
+        cacheReadTokens: 0,
+        cacheWriteTokens: 0,
+      },
+      outputTokens: 1_000,
+      outputTokenDetails: { textTokens: 1_000, reasoningTokens: 0 },
+      totalTokens: 151_000,
+    };
+    const turnUsage: LanguageModelUsage = {
+      inputTokens: 300_000,
+      inputTokenDetails: {
+        noCacheTokens: 300_000,
+        cacheReadTokens: 0,
+        cacheWriteTokens: 0,
+      },
+      outputTokens: 2_000,
+      outputTokenDetails: { textTokens: 2_000, reasoningTokens: 0 },
+      totalTokens: 302_000,
+    };
+    const { job, threadUsageQuery } = buildJob({
+      chatStream: createFakeChatStream({
+        parts: [
+          ...START_PARTS,
+          { type: 'text-start', id: 'text-1' },
+          { type: 'text-delta', id: 'text-1', text: 'Hello' },
+          { type: 'text-end', id: 'text-1' },
+          buildFinishStepPart(stepUsage),
+          { type: 'start-step', request: {}, warnings: [] },
+          buildFinishStepPart(stepUsage),
+          buildFinishPart(turnUsage),
+        ],
+      }),
+      modelConfig: {
+        contextWindowTokens: 1_000_000,
+        inputCostPerMillionTokens: 1,
+        outputCostPerMillionTokens: 2,
+        longContextCost: {
+          inputCostPerMillionTokens: 10,
+          outputCostPerMillionTokens: 20,
+          thresholdTokens: 200_000,
+        },
+      },
+    });
+
+    await job.handle(jobData);
+
+    const [, [, , inputTokens, outputTokens, inputCredits, outputCredits]] =
+      threadUsageQuery.mock.calls[0] as unknown as [string, number[]];
+
+    expect({ inputTokens, outputTokens, inputCredits, outputCredits }).toEqual({
+      inputTokens: 300_000,
+      outputTokens: 2_000,
+      inputCredits: 300_000,
+      outputCredits: 4_000,
+    });
   });
 
   it('applies thread totals when the claim is still held even if the message already exists from a checkpoint', async () => {
@@ -744,6 +832,105 @@ describe('StreamAgentChatJob', () => {
     expect(turnCounts('ai-chat/turn-failed')).toEqual([]);
   });
 
+  it('opens the Ask of a turn that paused on a question and leaves the queue waiting on it', async () => {
+    const { job, inputAskWorkspaceService, agentChatStreamingService } =
+      buildJob({
+        chatStream: createFakeChatStream({ parts: PENDING_QUESTION_PARTS }),
+      });
+
+    await job.handle(jobData);
+
+    expect(inputAskWorkspaceService.open).toHaveBeenCalledWith({
+      workspaceId: 'workspace-id',
+      inputAsk: {
+        name: 'Which plan?',
+        form: { kind: 'questions', questions: QUESTIONS },
+        threadId: 'thread-id',
+        toolCallId: 'tool-call-id',
+        assigneeId: 'member',
+      },
+    });
+    expect(
+      agentChatStreamingService.flushNextQueuedMessage,
+    ).not.toHaveBeenCalled();
+  });
+
+  it('opens no Ask for a turn that did not pause', async () => {
+    const { job, inputAskWorkspaceService } = buildJob();
+
+    await job.handle(jobData);
+
+    expect(inputAskWorkspaceService.open).not.toHaveBeenCalled();
+  });
+
+  it('fails the turn, leaving it retryable, when its Ask cannot be opened', async () => {
+    const { job, publishedEvents, threadRepository, turnCounts } = buildJob({
+      chatStream: createFakeChatStream({ parts: PENDING_QUESTION_PARTS }),
+      inputAskOpenRejection: new Error('Ask insert failed'),
+    });
+
+    await expect(job.handle(jobData)).rejects.toThrow('Ask insert failed');
+
+    expect(threadRepository.update).toHaveBeenCalledWith(
+      'workspace-id',
+      { id: 'thread-id', activeStreamId: 'stream-id' },
+      {
+        lastStreamError: expect.objectContaining({
+          message: 'Ask insert failed',
+        }),
+      },
+    );
+    expect(publishedEvents.map((event) => event.type)).toContain(
+      'stream-error',
+    );
+    expect(turnCounts('ai-chat/turn-completed')).toEqual([]);
+  });
+
+  it('cancels the Asks it opened when a later one of the turn cannot be opened', async () => {
+    const askQuestionsCallParts = (toolCallId: string): ModelStreamPart[] => [
+      {
+        type: 'tool-input-start',
+        id: toolCallId,
+        toolName: ASK_QUESTIONS_TOOL_NAME,
+      },
+      {
+        type: 'tool-call',
+        toolCallId,
+        toolName: ASK_QUESTIONS_TOOL_NAME,
+        input: { questions: QUESTIONS },
+      },
+      {
+        type: 'tool-result',
+        toolCallId,
+        toolName: ASK_QUESTIONS_TOOL_NAME,
+        input: { questions: QUESTIONS },
+        output: { result: { questions: QUESTIONS, status: 'pending' } },
+      },
+    ];
+    const { job, inputAskWorkspaceService } = buildJob({
+      chatStream: createFakeChatStream({
+        parts: [
+          ...START_PARTS,
+          ...askQuestionsCallParts('first-call-id'),
+          ...askQuestionsCallParts('second-call-id'),
+          ...FINISH_PARTS,
+        ],
+      }),
+    });
+
+    inputAskWorkspaceService.open
+      .mockResolvedValueOnce(undefined)
+      .mockRejectedValueOnce(new Error('Ask insert failed'));
+
+    await expect(job.handle(jobData)).rejects.toThrow('Ask insert failed');
+
+    expect(inputAskWorkspaceService.cancel).toHaveBeenCalledTimes(1);
+    expect(inputAskWorkspaceService.cancel).toHaveBeenCalledWith({
+      workspaceId: 'workspace-id',
+      match: { threadId: 'thread-id', toolCallId: 'first-call-id' },
+    });
+  });
+
   it('counts an aborted turn as cancelled rather than leaving it unaccounted', async () => {
     const { job, turnCounts } = buildJob({
       chatStream: createFakeChatStream({
@@ -763,6 +950,31 @@ describe('StreamAgentChatJob', () => {
       }),
     ]);
     expect(turnCounts('ai-chat/turn-completed')).toEqual([]);
+  });
+
+  it('adds the steps an aborted turn completed to the thread totals', async () => {
+    const { job, threadUsageQuery } = buildJob({
+      chatStream: createFakeChatStream({
+        parts: [
+          ...START_PARTS,
+          { type: 'text-start', id: 'text-1' },
+          { type: 'text-delta', id: 'text-1', text: 'Hello' },
+          { type: 'text-end', id: 'text-1' },
+          buildFinishStepPart(USAGE),
+        ],
+        isAborted: true,
+      }),
+    });
+
+    await job.handle(jobData);
+
+    const [, [, , inputTokens, outputTokens]] = threadUsageQuery.mock
+      .calls[0] as unknown as [string, number[]];
+
+    expect({ inputTokens, outputTokens }).toEqual({
+      inputTokens: 12,
+      outputTokens: 3,
+    });
   });
 
   it('counts a turn whose claim moved on as superseded', async () => {

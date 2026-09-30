@@ -12,6 +12,7 @@ import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AiChatThreadItemMenu } from '@/ai/components/AiChatThreadItemMenu';
+import { AiChatThreadRecordTargets } from '@/ai/components/AiChatThreadRecordTargets';
 import { AI_CHAT_THREAD_ACTIONS_SURFACE } from '@/ai/constants/AiChatThreadActionsSurface';
 import { useAiChatThreadRename } from '@/ai/hooks/useAiChatThreadRename';
 import { useSwitchToNewAiChat } from '@/ai/hooks/useSwitchToNewAiChat';
@@ -141,6 +142,10 @@ export const AiChatPageThreadHeader = ({
           </StyledTitleDisplay>
         )}
       </StyledTitle>
+      <AiChatThreadRecordTargets
+        threadId={thread.id}
+        instanceId="ai-chat-page-thread-record-targets"
+      />
       <StyledActions>
         <AiChatSharingDropdown threadId={thread.id} />
         {hasConversation && (
