@@ -77,7 +77,7 @@ describe('Front component built JS endpoint', () => {
   });
 
   it('should return 404 when the fingerprinted path carries a stale checksum', async () => {
-    await makeRestAPIRequest({
+    await makeRestApiRequest({
       method: 'get',
       path: `/front-components/${frontComponentId}/${STALE_COMPONENT_CHECKSUM}.js`,
       bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
@@ -90,7 +90,7 @@ describe('Front component built JS endpoint', () => {
   });
 
   it('should serve a non-fingerprinted cache key as the plain path', async () => {
-    await makeRestAPIRequest({
+    await makeRestApiRequest({
       method: 'get',
       path: `/front-components/${frontComponentId}/test-checksum-123.js`,
       bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,

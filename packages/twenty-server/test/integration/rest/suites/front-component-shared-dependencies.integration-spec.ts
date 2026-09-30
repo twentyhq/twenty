@@ -99,7 +99,7 @@ describe('Front component shared dependencies endpoint', () => {
     });
 
     it('should return 404 when the fingerprinted path carries a stale checksum', async () => {
-      await makeRestAPIRequest({
+      await makeRestApiRequest({
         method: 'get',
         path: `/front-component-shared-dependencies/${applicationId}/${STALE_SHARED_DEPENDENCIES_CHECKSUM}.js`,
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
@@ -114,7 +114,7 @@ describe('Front component shared dependencies endpoint', () => {
     });
 
     it('should serve a legacy md5 cache key as the plain path with no-store', async () => {
-      await makeRestAPIRequest({
+      await makeRestApiRequest({
         method: 'get',
         path: `/front-component-shared-dependencies/${applicationId}/${LEGACY_MD5_CACHE_KEY}.js`,
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
