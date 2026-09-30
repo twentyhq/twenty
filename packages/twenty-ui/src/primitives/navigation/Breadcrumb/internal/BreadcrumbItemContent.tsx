@@ -16,8 +16,8 @@ export const BreadcrumbItemContent = ({
   render,
   title,
   current,
-}: BreadcrumbItemContentProps) =>
-  useRender({
+}: BreadcrumbItemContentProps) => {
+  return useRender({
     defaultTagName: isDefined(href) ? 'a' : 'span',
     render,
     props: {
@@ -29,3 +29,4 @@ export const BreadcrumbItemContent = ({
       className: styles.content,
     },
   });
+};

@@ -13,8 +13,8 @@ export const Breadcrumb = ({
   ref,
   'aria-label': ariaLabel = 'Breadcrumb',
   ...props
-}: BreadcrumbProps) =>
-  useRender({
+}: BreadcrumbProps) => {
+  return useRender({
     defaultTagName: 'nav',
     render,
     ref,
@@ -41,3 +41,4 @@ export const Breadcrumb = ({
       ),
     },
   });
+};
