@@ -35,7 +35,7 @@ import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSe
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
-import { AnimatedExpandableContainer } from 'twenty-ui/primitives/layout';
+import { Collapsible } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { useDebouncedCallback } from 'use-debounce';
 
@@ -193,12 +193,11 @@ export const RecordBoardCard = () => {
               isDragging={isDraggingThisCard}
             >
               <RecordBoardCardHeader />
-              <AnimatedExpandableContainer
+              <Collapsible
                 isExpanded={recordBoardCardIsExpanded || !isCompactModeActive}
-                initial={false}
               >
                 <RecordBoardCardBody />
-              </AnimatedExpandableContainer>
+              </Collapsible>
             </RecordCard>
           </StyledCardContainer>
           {!isDragOverlay && (

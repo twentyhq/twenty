@@ -551,7 +551,7 @@ export const UsageOpen: Story = {
 
     await userEvent.click(await canvas.findByRole('tab', { name: 'Usage' }));
     await canvas.findByText('Jonas Weber');
-    await canvas.findByText('AI Chat');
+    await canvas.findByText('Chats');
     await canvas.findByText('0.0055 credits');
   },
 };

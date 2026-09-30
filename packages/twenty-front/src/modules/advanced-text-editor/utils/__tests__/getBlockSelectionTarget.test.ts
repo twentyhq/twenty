@@ -26,7 +26,7 @@ const createEditor = (content: object) =>
   });
 
 describe('getBlockSelectionTarget', () => {
-  it('should return null when the cursor is in plain content', () => {
+  it('should target the paragraph holding the cursor', () => {
     const editor = createEditor({
       type: 'doc',
       content: [
@@ -34,11 +34,11 @@ describe('getBlockSelectionTarget', () => {
       ],
     });
 
-    expect(getBlockSelectionTarget(editor)).toBeNull();
+    expect(getBlockSelectionTarget(editor)?.nodeType).toBe('paragraph');
     editor.destroy();
   });
 
-  it('should target the section containing the cursor', () => {
+  it('should target a node-selected section', () => {
     const editor = createEditor({
       type: 'doc',
       content: [
@@ -53,7 +53,7 @@ describe('getBlockSelectionTarget', () => {
     });
 
     editor.view.dispatch(
-      editor.state.tr.setSelection(TextSelection.create(editor.state.doc, 3)),
+      editor.state.tr.setSelection(NodeSelection.create(editor.state.doc, 0)),
     );
 
     const target = getBlockSelectionTarget(editor);

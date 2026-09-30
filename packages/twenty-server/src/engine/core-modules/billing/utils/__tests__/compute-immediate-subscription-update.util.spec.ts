@@ -10,7 +10,7 @@ const subscriptionUpdate = {
 } as const;
 
 const currentPrices = {
-  licensedPriceId: 'price_base_year',
+  baseProductPriceId: 'price_base_year',
   seats: 3,
   resourceCreditPriceId: 'price_credit_year',
 };
@@ -33,7 +33,7 @@ describe('computeImmediateSubscriptionUpdate', () => {
         currentPrices,
         toUpdatePrices: {
           ...currentPrices,
-          licensedPriceId: 'price_base_month',
+          baseProductPriceId: 'price_base_month',
         },
       }),
     ).toBe(subscriptionUpdate);
@@ -69,7 +69,7 @@ describe('computeImmediateSubscriptionUpdate', () => {
         currentPrices,
         toUpdatePrices: {
           ...currentPrices,
-          licensedPriceId: 'price_base_month',
+          baseProductPriceId: 'price_base_month',
           seats: 4,
         },
       }),

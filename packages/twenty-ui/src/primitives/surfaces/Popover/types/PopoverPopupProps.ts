@@ -17,6 +17,11 @@ export type PopoverPopupProps = PopoverPrimitive.Popup.Props & {
   /** Element or position the popup is anchored to. Defaults to the trigger. */
   anchor?: PopoverPrimitive.Positioner.Props['anchor'];
   /**
+   * Space in pixels kept between the popup and the edges of its collision
+   * boundary, for all sides or per side. Defaults to 5.
+   */
+  collisionPadding?: PopoverPrimitive.Positioner.Props['collisionPadding'];
+  /**
    * Element the popup is portaled into. Defaults to the theme's portal
    * container.
    */

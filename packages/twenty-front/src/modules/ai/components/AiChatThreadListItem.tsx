@@ -1,11 +1,13 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { Key } from 'ts-key-enum';
-import { IconArchive, IconSparkles } from 'twenty-ui/icon';
+import { isDefined } from 'twenty-shared/utils';
+import { IconSparkles, IconTrash } from 'twenty-ui/icon';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
-import { AiChatThreadItemMenu } from '@/ai/components/AiChatThreadItemMenu';
+import { AiChatThreadActionsDropdown } from '@/ai/components/AiChatThreadActionsDropdown';
 import { AI_CHAT_THREAD_ACTIONS_SURFACE } from '@/ai/constants/AiChatThreadActionsSurface';
+import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { type AiChatThreadActionsSurface } from '@/ai/types/AiChatThreadActionsSurface';
 import { useAiChatThreadClick } from '@/ai/hooks/useAiChatThreadClick';
 import { useAiChatThreadRename } from '@/ai/hooks/useAiChatThreadRename';
@@ -13,7 +15,6 @@ import { getAiChatThreadItemMenuDropdownId } from '@/ai/utils/getAiChatThreadIte
 import { TextInput } from '@/ui/input/components/TextInput';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { type AgentChatThread } from '~/generated-metadata/graphql';
 
 const StyledThreadItem = styled.div`
   align-items: center;
@@ -34,15 +35,15 @@ const StyledThreadItem = styled.div`
   }
 `;
 
-const StyledThreadIcon = styled.div<{ $isArchived: boolean }>`
+const StyledThreadIcon = styled.div<{ $isDeleted: boolean }>`
   align-items: center;
-  background: ${({ $isArchived }) =>
-    $isArchived
+  background: ${({ $isDeleted }) =>
+    $isDeleted
       ? themeCssVariables.background.transparent.lighter
       : themeCssVariables.background.transparent.blue};
   border-radius: ${themeCssVariables.border.radius.sm};
-  color: ${({ $isArchived }) =>
-    $isArchived
+  color: ${({ $isDeleted }) =>
+    $isDeleted
       ? themeCssVariables.font.color.tertiary
       : themeCssVariables.color.blue};
   display: flex;
@@ -81,7 +82,7 @@ const StyledMenuTrigger = styled.div<{ $isDropdownOpen: boolean }>`
 `;
 
 type AiChatThreadListItemProps = {
-  thread: AgentChatThread;
+  thread: AgentChatThreadRecord;
   surface?: AiChatThreadActionsSurface;
   onDetach?: () => void;
 };
@@ -106,8 +107,8 @@ export const AiChatThreadListItem = ({
     commitRename,
   } = useAiChatThreadRename(thread);
 
-  const isArchived = Boolean(thread.deletedAt);
-  const ThreadIcon = isArchived ? IconArchive : IconSparkles;
+  const isDeleted = isDefined(thread.deletedAt);
+  const ThreadIcon = isDeleted ? IconTrash : IconSparkles;
   const displayTitle = thread.title ?? t`Untitled`;
   const itemMenuDropdownId = getAiChatThreadItemMenuDropdownId({
     threadId: thread.id,
@@ -125,7 +126,7 @@ export const AiChatThreadListItem = ({
         }
       }}
     >
-      <StyledThreadIcon $isArchived={isArchived}>
+      <StyledThreadIcon $isDeleted={isDeleted}>
         <ThreadIcon size={theme.icon.size.md} color="currentColor" />
       </StyledThreadIcon>
       <StyledThreadContent>
@@ -161,10 +162,8 @@ export const AiChatThreadListItem = ({
         $isDropdownOpen={isDropdownOpen}
         onClick={(event) => event.stopPropagation()}
       >
-        <AiChatThreadItemMenu
-          threadId={thread.id}
-          threadTitle={displayTitle}
-          isArchived={isArchived}
+        <AiChatThreadActionsDropdown
+          thread={thread}
           surface={surface}
           onRenameRequested={startRename}
           onDetach={onDetach}

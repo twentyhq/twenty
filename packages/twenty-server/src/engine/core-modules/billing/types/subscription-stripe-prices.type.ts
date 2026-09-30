@@ -1,7 +1,7 @@
 /* @license Enterprise */
 
 export type SubscriptionStripePrices = {
-  licensedPriceId: string;
+  baseProductPriceId: string;
   seats: number;
   resourceCreditPriceId: string;
 };

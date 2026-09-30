@@ -16,7 +16,7 @@ export const computeImmediateSubscriptionUpdate = ({
   toUpdatePrices: SubscriptionStripePrices;
 }): SubscriptionUpdate | undefined => {
   if (
-    toUpdatePrices.licensedPriceId !== currentPrices.licensedPriceId ||
+    toUpdatePrices.baseProductPriceId !== currentPrices.baseProductPriceId ||
     toUpdatePrices.resourceCreditPriceId !== currentPrices.resourceCreditPriceId
   ) {
     return subscriptionUpdate;
