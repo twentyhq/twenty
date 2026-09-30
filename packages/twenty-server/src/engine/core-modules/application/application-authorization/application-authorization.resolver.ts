@@ -15,8 +15,7 @@ import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/re
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
-import { RequireUserSessionGuard } from 'src/engine/guards/require-user-session.guard';
-import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
+import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 
 // Scoped to this person within this workspace: an authorization grants an
 // application access to one workspace's data, so it is listed and revoked from
@@ -32,15 +31,23 @@ export class ApplicationAuthorizationResolver {
   ) {}
 
   @Query(() => [ApplicationAuthorizationDTO])
-  @UseGuards(UserAuthGuard, RequireUserSessionGuard, NoPermissionGuard)
+  @UseGuards(
+    AuthPrincipalGuard({
+      userSession: true,
+      apiKey: false,
+      oauthClient: false,
+      application: false,
+    }),
+    NoPermissionGuard,
+  )
   async currentUserApplicationAuthorizations(
     @AuthUser() user: AuthContextUser,
     @AuthWorkspace({ allowUndefined: true }) workspace:
       | WorkspaceEntity
       | undefined,
   ): Promise<ApplicationAuthorizationDTO[]> {
-    // UserAuthGuard admits workspace-agnostic credentials, which have no
-    // workspace to scope to. Nothing is in scope rather than everything.
+    // Workspace-agnostic sessions are admitted and have no workspace to
+    // scope to. Nothing is in scope rather than everything.
     if (!isDefined(workspace)) {
       return [];
     }
@@ -56,7 +63,15 @@ export class ApplicationAuthorizationResolver {
   }
 
   @Mutation(() => Boolean)
-  @UseGuards(UserAuthGuard, RequireUserSessionGuard, NoPermissionGuard)
+  @UseGuards(
+    AuthPrincipalGuard({
+      userSession: true,
+      apiKey: false,
+      oauthClient: false,
+      application: false,
+    }),
+    NoPermissionGuard,
+  )
   async revokeApplicationAuthorization(
     @AuthUser() user: AuthContextUser,
     @AuthWorkspace({ allowUndefined: true }) workspace:

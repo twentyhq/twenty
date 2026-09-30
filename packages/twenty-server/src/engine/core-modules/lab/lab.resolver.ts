@@ -14,7 +14,7 @@ import { UpdateLabPublicFeatureFlagInput } from 'src/engine/core-modules/lab/dto
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
-import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 
@@ -29,7 +29,19 @@ import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-module
 export class LabResolver {
   constructor(private featureFlagService: FeatureFlagService) {}
 
-  @UseGuards(WorkspaceAuthGuard)
+  @UseGuards(
+    AuthPrincipalGuard({
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: true,
+      oauthClient: true,
+      application: true,
+    }),
+  )
   @Mutation(() => FeatureFlagDTO)
   async updateLabPublicFeatureFlag(
     @Args('input') input: UpdateLabPublicFeatureFlagInput,
