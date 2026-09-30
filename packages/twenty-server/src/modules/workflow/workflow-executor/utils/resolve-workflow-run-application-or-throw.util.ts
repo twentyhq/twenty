@@ -7,7 +7,7 @@ import {
   WorkflowStepExecutorExceptionCode,
 } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
 
-export const resolveWorkflowRunApplication = <
+export const resolveWorkflowRunApplicationOrThrow = <
   TApplication extends Pick<
     FlatApplication,
     'name' | 'deletedAt' | 'defaultRoleId'

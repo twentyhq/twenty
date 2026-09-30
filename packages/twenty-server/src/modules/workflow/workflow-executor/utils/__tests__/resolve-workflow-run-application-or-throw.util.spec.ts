@@ -1,7 +1,7 @@
 import { FieldActorSource } from 'twenty-shared/types';
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
-import { resolveWorkflowRunApplication } from 'src/modules/workflow/workflow-executor/utils/resolve-workflow-run-application.util';
+import { resolveWorkflowRunApplicationOrThrow } from 'src/modules/workflow/workflow-executor/utils/resolve-workflow-run-application-or-throw.util';
 
 type TestApplication = Pick<
   FlatApplication,
@@ -24,7 +24,7 @@ const resolve = ({
   applicationId?: string;
   application?: TestApplication | null;
 }) =>
-  resolveWorkflowRunApplication({
+  resolveWorkflowRunApplicationOrThrow({
     workflowRun: {
       createdBy: {
         source: FieldActorSource.MANUAL,
@@ -36,7 +36,7 @@ const resolve = ({
     applicationsById: application ? { [application.id]: application } : {},
   });
 
-describe('resolveWorkflowRunApplication', () => {
+describe('resolveWorkflowRunApplicationOrThrow', () => {
   it('leaves a run that no application bounds unbound', () => {
     expect(resolve({})).toBeNull();
   });

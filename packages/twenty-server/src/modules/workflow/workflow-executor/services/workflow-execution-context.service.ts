@@ -26,7 +26,7 @@ import {
 import { type WorkflowRunInfo } from 'src/modules/workflow/workflow-executor/types/workflow-action-input.type';
 import { type WorkflowExecutionContext } from 'src/modules/workflow/workflow-executor/types/workflow-execution-context.type';
 import { assertStepTargetBelongsToRunApplication } from 'src/modules/workflow/workflow-executor/utils/assert-step-target-belongs-to-run-application.util';
-import { resolveWorkflowRunApplication } from 'src/modules/workflow/workflow-executor/utils/resolve-workflow-run-application.util';
+import { resolveWorkflowRunApplicationOrThrow } from 'src/modules/workflow/workflow-executor/utils/resolve-workflow-run-application-or-throw.util';
 import { WorkflowRunWorkspaceService as WorkflowRunService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 
 @Injectable()
@@ -156,7 +156,7 @@ export class WorkflowExecutionContextService {
         'flatApplicationMaps',
       ]);
 
-    return resolveWorkflowRunApplication({
+    return resolveWorkflowRunApplicationOrThrow({
       workflowRun,
       applicationsById: flatApplicationMaps.byId,
     });
