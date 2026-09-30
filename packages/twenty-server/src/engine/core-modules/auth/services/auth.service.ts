@@ -184,7 +184,6 @@ export class AuthService {
       }
     }
 
-
     if (!user.passwordHash) {
       throw new AuthException(
         'Incorrect login method',
@@ -206,11 +205,12 @@ export class AuthService {
         },
       );
     }
-        if (targetWorkspace) {
-          await this.checkAccessAndUseInvitationOrThrow(targetWorkspace, user);
-        }
 
     await this.checkIsEmailVerified(user.isEmailVerified);
+
+    if (targetWorkspace) {
+      await this.checkAccessAndUseInvitationOrThrow(targetWorkspace, user);
+    }
 
     return user;
   }
