@@ -18,15 +18,22 @@ export const buildWorkflowRunCreatedBy = ({
     isDefined(applicationId) &&
     !workspaceOwnedApplicationIds.includes(applicationId);
 
-  const applicationId = isInstalledApplicationId(workflowApplicationId)
-    ? workflowApplicationId
-    : isInstalledApplicationId(startingApplicationId)
-      ? startingApplicationId
-      : undefined;
+  if (isInstalledApplicationId(workflowApplicationId)) {
+    return {
+      ...source,
+      context: { ...source.context, applicationId: workflowApplicationId },
+    };
+  }
 
-  if (applicationId === startingApplicationId) {
+  if (
+    !isDefined(startingApplicationId) ||
+    isInstalledApplicationId(startingApplicationId)
+  ) {
     return source;
   }
 
-  return { ...source, context: { ...source.context, applicationId } };
+  return {
+    ...source,
+    context: { ...source.context, applicationId: undefined },
+  };
 };
