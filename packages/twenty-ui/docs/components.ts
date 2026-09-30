@@ -25,6 +25,7 @@ import { COMPONENT_STORYBOOK_LAYOUT_PROP_DESCRIPTIONS } from './componentStorybo
 import { COLLAPSIBLE_PROP_DESCRIPTIONS } from './collapsiblePropDescriptions';
 import { AVATAR_PROP_DESCRIPTIONS } from './avatarPropDescriptions';
 import { BANNER_PROP_DESCRIPTIONS } from './bannerPropDescriptions';
+import { BREADCRUMB_PROP_DESCRIPTIONS } from './breadcrumbPropDescriptions';
 import { BUTTON_GROUP_PROP_DESCRIPTIONS } from './buttonGroupPropDescriptions';
 import { BUTTON_PROP_DESCRIPTIONS } from './buttonPropDescriptions';
 import { CARD_CONTENT_PROP_DESCRIPTIONS } from './cardContentPropDescriptions';
@@ -253,6 +254,13 @@ export const DOCUMENTED_COMPONENTS = [
     source: 'primitives/input/Switch/Switch.tsx',
     entryPoint: 'twenty-ui/primitives/input',
     slug: 'input/switch',
+  },
+  {
+    name: 'Breadcrumb',
+    source: 'primitives/navigation/Breadcrumb/Breadcrumb.tsx',
+    entryPoint: 'twenty-ui/primitives/navigation',
+    slug: 'navigation/breadcrumb',
+    propDescriptions: BREADCRUMB_PROP_DESCRIPTIONS,
   },
   {
     name: 'ListItem',

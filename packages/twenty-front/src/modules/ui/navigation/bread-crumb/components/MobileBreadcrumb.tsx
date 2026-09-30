@@ -1,16 +1,16 @@
-import { t } from '@lingui/core/macro';
 import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
+import { type BreadcrumbProps } from '@/ui/navigation/bread-crumb/types/BreadcrumbProps';
+import { t } from '@lingui/core/macro';
+import { Trans } from '@lingui/react/macro';
 import { styled } from '@linaria/react';
 import { isNonEmptyString } from '@sniptt/guards';
-import { type ReactNode } from 'react';
 import { Link } from 'react-router-dom';
+import { isDefined } from 'twenty-shared/utils';
 import { IconChevronLeft } from 'twenty-ui/icon';
+import { Breadcrumb as BreadcrumbPrimitive } from 'twenty-ui/primitives/navigation';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
-export type MobileBreadcrumbProps = {
-  className?: string;
-  links: { children: string | ReactNode; href?: string }[];
-};
+type MobileBreadcrumbProps = BreadcrumbProps;
 
 const StyledWrapper = styled.nav`
   align-items: center;
@@ -25,18 +25,25 @@ const StyledWrapper = styled.nav`
 `;
 
 const StyledLinkContainer = styled.div`
+  min-width: 0;
+
   > a {
     color: inherit;
+    display: block;
     overflow: hidden;
     text-decoration: none;
     text-overflow: ellipsis;
     white-space: nowrap;
+
+    &:focus-visible {
+      outline: 2px solid ${themeCssVariables.color.blue};
+      outline-offset: -2px;
+    }
   }
 `;
 
 const StyledText = styled.span`
   color: inherit;
-  cursor: pointer;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -53,25 +60,41 @@ export const MobileBreadcrumb = ({
     return null;
   }
 
-  const previousLink = links[links.length - 2];
+  const previousLink = links.at(-2);
+
+  if (!isDefined(previousLink)) {
+    return (
+      <BreadcrumbPrimitive
+        aria-label={t`Breadcrumb`}
+        className={className}
+        links={links.map(({ children, href }) => ({
+          children,
+          href: isNonEmptyString(href) ? href : undefined,
+          render: isNonEmptyString(href) ? <Link to={href} /> : undefined,
+        }))}
+      />
+    );
+  }
 
   const text = isNonEmptyString(previousLink.children)
     ? previousLink.children
-    : '';
+    : undefined;
 
   return (
-    <StyledWrapper className={className}>
-      {previousLink?.href ? (
+    <StyledWrapper aria-label={t`Breadcrumb`} className={className}>
+      {isNonEmptyString(previousLink.href) ? (
         <>
-          <IconChevronLeft size={theme.icon.size.md} />
+          <IconChevronLeft size={theme.icon.size.md} aria-hidden />
           <StyledLinkContainer>
             <Link title={text} to={previousLink.href}>
-              {t`Back to ${text}`}
+              <Trans>
+                Back to <span>{previousLink.children}</span>
+              </Trans>
             </Link>
           </StyledLinkContainer>
         </>
       ) : (
-        <StyledText title={text}>{previousLink?.children}</StyledText>
+        <StyledText title={text}>{previousLink.children}</StyledText>
       )}
     </StyledWrapper>
   );
