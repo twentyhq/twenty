@@ -19,6 +19,7 @@ type GetOnboardingCreditsProgressArgs = {
   isPlanRequired: boolean;
   profileName: FullNameMetadata | null | undefined;
   inviteTeamValidEmailsCount: number;
+  upgradeTrialLostCredits?: number;
 };
 
 export const getOnboardingCreditsProgress = ({
@@ -29,6 +30,7 @@ export const getOnboardingCreditsProgress = ({
   isPlanRequired,
   profileName,
   inviteTeamValidEmailsCount,
+  upgradeTrialLostCredits = 0,
 }: GetOnboardingCreditsProgressArgs): OnboardingCreditsProgress => {
   const rewardCreditsByStep: Record<OnboardingCreditsStep, number> = {
     importContacts: isWorkspaceCreator
@@ -110,6 +112,7 @@ export const getOnboardingCreditsProgress = ({
   );
 
   const { seenCredits } = onboardingFreeCredits;
+  const newlyEarnedCredits = earnedCredits - seenCredits;
 
   const inviteTeamButtonReward =
     inviteTeamValidEmailsCount > 0
@@ -144,7 +147,8 @@ export const getOnboardingCreditsProgress = ({
         : null,
     currentStepCredits,
     seenCredits,
-    newlyEarnedCredits: earnedCredits - seenCredits,
+    newlyEarnedCredits,
+    lostCredits: newlyEarnedCredits > 0 ? 0 : upgradeTrialLostCredits,
     isFirstCreditsGain: seenCredits === 0,
     inviteTeamButtonReward,
   };
