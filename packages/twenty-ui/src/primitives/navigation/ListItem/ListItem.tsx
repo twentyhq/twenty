@@ -26,6 +26,7 @@ export const ListItem = ({
   actions,
   actionsVisibility = 'hover',
   hotkeys,
+  hotkeysJoinLabel,
   hasSubmenu = false,
   className,
   children,
@@ -94,7 +95,7 @@ export const ListItem = ({
           )}
           {isNonEmptyArray(hotkeys) && (
             <span className={styles.hotkeys}>
-              <MenuItemHotKeys hotKeys={hotkeys} />
+              <MenuItemHotKeys hotKeys={hotkeys} joinLabel={hotkeysJoinLabel} />
             </span>
           )}
           {isRenderableSlot(endIcon) && (

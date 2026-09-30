@@ -851,6 +851,36 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
+  agentMessages: createStandardRelationFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
+      fieldName: 'agentMessages',
+      label: i18nLabel(
+        msg({ message: `Chat messages`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `AI chat messages sent by the workspace member`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
+      icon: 'IconMessage',
+      isNullable: true,
+      isUIEditable: false,
+      targetObjectName: 'agentMessage',
+      targetFieldName: 'senderWorkspaceMember',
+      settings: {
+        relationType: RelationType.ONE_TO_MANY,
+      },
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
   agentChatThreads: createStandardRelationFieldFlatMetadata({
     objectName,
     workspaceId,
@@ -964,6 +994,36 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
         source: "'MANUAL'",
         name: "'System'",
         workspaceMemberId: null,
+      },
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
+  inputAsks: createStandardRelationFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
+      fieldName: 'inputAsks',
+      label: i18nLabel(
+        msg({ message: `Asks`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `What is waiting on this member`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
+      icon: 'IconHelpCircle',
+      isNullable: true,
+      isUIEditable: false,
+      targetObjectName: 'inputAsk',
+      targetFieldName: 'assignee',
+      settings: {
+        relationType: RelationType.ONE_TO_MANY,
       },
     },
     standardObjectMetadataRelatedEntityIds,

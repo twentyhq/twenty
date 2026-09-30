@@ -1,7 +1,7 @@
 import { type ExtendedUIMessagePart } from 'twenty-shared/ai';
 
 import { type AssistantMessageRenderItem } from '@/ai/utils/assistantMessageRenderItem';
-import { isAskQuestionsToolPart } from '@/ai/utils/isAskQuestionsToolPart';
+import { isPausingToolPart } from '@/ai/utils/isPausingToolPart';
 import { isThinkingStepPart } from '@/ai/utils/isThinkingStepPart';
 import { type ThinkingStepPart } from '@/ai/utils/thinkingStepPart';
 
@@ -30,7 +30,7 @@ export const groupContiguousThinkingStepParts = (
 
     if (
       isThinkingStepPart(part) &&
-      !isAskQuestionsToolPart(part) &&
+      !isPausingToolPart(part) &&
       !shouldRenderStandalone(part)
     ) {
       currentThinkingParts.push(part);

@@ -8,11 +8,9 @@ export type RecordShareGateKind = 'open' | 'deny' | 'private' | 'inherited';
 export const resolveRecordShareGateKind = ({
   readability,
   isOwningApplication,
-  isLegacyRecordAccessOpen = false,
 }: {
   readability: MetadataReadability;
   isOwningApplication: boolean;
-  isLegacyRecordAccessOpen?: boolean;
 }): RecordShareGateKind => {
   switch (readability) {
     case MetadataReadability.OPEN:
@@ -20,15 +18,11 @@ export const resolveRecordShareGateKind = ({
     case MetadataReadability.SYSTEM:
       return 'deny';
     case MetadataReadability.APPLICATION:
-      return isLegacyRecordAccessOpen || isOwningApplication ? 'open' : 'deny';
+      return isOwningApplication ? 'open' : 'deny';
     case MetadataReadability.PRIVATE:
-      return isLegacyRecordAccessOpen || isOwningApplication
-        ? 'open'
-        : 'private';
+      return isOwningApplication ? 'open' : 'private';
     case MetadataReadability.INHERITED:
-      return isLegacyRecordAccessOpen || isOwningApplication
-        ? 'open'
-        : 'inherited';
+      return isOwningApplication ? 'open' : 'inherited';
     default:
       assertUnreachable(readability);
   }

@@ -40,6 +40,12 @@ export class AiRestApiExceptionFilter implements ExceptionFilter {
           response,
           503, // Service Unavailable - the AI service is not configured
         );
+      case AiExceptionCode.TOOL_CALL_RESOLUTION_FORBIDDEN:
+        return this.httpExceptionHandlerService.handleError(
+          exception,
+          response,
+          403,
+        );
       case AiExceptionCode.AGENT_EXECUTION_FAILED:
       case AiExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_AGENTS:
       case AiExceptionCode.INVALID_AGENT_INPUT:

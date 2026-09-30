@@ -25,6 +25,7 @@ import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.s
 import { extractFileIdFromUrl } from 'src/engine/core-modules/file/files-field/utils/extract-file-id-from-url.util';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { WorkflowRunRecordShareService } from 'src/engine/core-modules/workflow/services/workflow-run-record-share.service';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
 import { WorkspaceDiscoverability } from 'src/engine/core-modules/workspace/types/workspace-discoverability.type';
@@ -69,6 +70,7 @@ export class UserWorkspaceService {
     private readonly onboardingService: OnboardingService,
     private readonly coreEntityCacheService: CoreEntityCacheService,
     private readonly twentyConfigService: TwentyConfigService,
+    private readonly workflowRunRecordShareService: WorkflowRunRecordShareService,
   ) {}
 
   async findById(id: string): Promise<UserWorkspaceEntity | null> {
@@ -361,8 +363,22 @@ export class UserWorkspaceService {
       // Access stays gated by the soft-deleted userWorkspace.
       await this.userWorkspaceRepository.softDelete({ id: userWorkspaceId });
     } else {
+      // The delete sets the creator of this member's workflows to null, which
+      // makes them workspace-visible in core, so their runs' grants have to
+      // follow or nobody could read those runs.
+      const createdCoreWorkflowIds =
+        await this.workflowRunRecordShareService.findCoreWorkflowIdsCreatedBy({
+          workspaceId,
+          userWorkspaceId,
+        });
+
       await this.roleTargetRepository.delete(workspaceId, { userWorkspaceId }); // TODO remove once userWorkspace foreign key is added on roleTarget
       await this.userWorkspaceRepository.delete({ id: userWorkspaceId });
+
+      await this.workflowRunRecordShareService.syncRunsOfCoreWorkflows({
+        workspaceId,
+        coreWorkflowIds: createdCoreWorkflowIds,
+      });
     }
   }
 

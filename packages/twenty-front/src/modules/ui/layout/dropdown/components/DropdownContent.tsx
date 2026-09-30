@@ -17,6 +17,8 @@ type DropdownContentProps = Pick<
   | 'align'
   | 'sideOffset'
   | 'alignOffset'
+  | 'anchor'
+  | 'collisionPadding'
   | 'width'
   | 'initialFocus'
   | 'finalFocus'
@@ -31,6 +33,8 @@ export const DropdownContent = ({
   align,
   sideOffset,
   alignOffset,
+  anchor,
+  collisionPadding,
   width,
   initialFocus,
   finalFocus,
@@ -49,6 +53,8 @@ export const DropdownContent = ({
       align={align}
       sideOffset={sideOffset}
       alignOffset={alignOffset}
+      anchor={anchor}
+      collisionPadding={collisionPadding}
       width={width}
       initialFocus={initialFocus}
       finalFocus={finalFocus}

@@ -21,6 +21,7 @@ Other rules:
 - Return a bulk summary with per-record results for multi-record actions, including counts for success, no match, and failed records.
 - Prefer idempotent behavior for jobs and repeated invocations.
 - Read secrets through the application-config helper, not raw `process.env`.
+- Twenty injects `TWENTY_API_URL`, `TWENTY_APP_ACCESS_TOKEN`, `TWENTY_APP_APPLICATION_ACCESS_TOKEN`, `TWENTY_API_KEY`, `TWENTY_FUNCTIONS_URL` and `APPLICATION_ID` into every run. Never declare an application or server variable with one of these names: the manifest is rejected on sync and publish.
 - Do not hide customer-impacting side effects behind UI-only actions.
 
 Soft cap: a `*.logic-function.ts` or `*.post-install.ts` file over 200 lines is a refactor signal.
@@ -75,6 +76,7 @@ When adding AI behavior:
 - Keep instructions grounded in available app data and tools.
 - State when the agent should ask for missing workspace or record context.
 - Avoid exposing raw IDs, timestamps, or nested API output to end users when a readable answer is possible.
+- A `defineAgent` `roleUniversalIdentifier` must reference a role the app defines, and the application role (`defineApplicationRole` or `defaultRoleUniversalIdentifier`) must cover every permission that agent role grants. The build and `yarn twenty apply` fail otherwise, listing the excess grants.
 
 ## Connection Providers
 

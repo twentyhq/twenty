@@ -2,7 +2,7 @@ import { styled } from '@linaria/react';
 import { useState } from 'react';
 import { Section } from 'twenty-ui/components';
 import { IconChevronDown } from 'twenty-ui/icon';
-import { AnimatedExpandableContainer } from 'twenty-ui/primitives/layout';
+import { Collapsible } from 'twenty-ui/primitives/layout';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 const StyledHeader = styled.header`
@@ -55,13 +55,7 @@ export const FieldsWidgetGroupContainer = ({
           />
         </StyledChevronWrapper>
       </StyledHeader>
-      <AnimatedExpandableContainer
-        isExpanded={isExpanded}
-        initial={false}
-        mode="fit-content"
-      >
-        {children}
-      </AnimatedExpandableContainer>
+      <Collapsible isExpanded={isExpanded}>{children}</Collapsible>
     </Section.Root>
   );
 };
