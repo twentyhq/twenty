@@ -609,7 +609,6 @@
                         "pages": [
                           "ui/primitives/typography/heading",
                           "ui/primitives/typography/text",
-                          "ui/primitives/typography/shortcut",
                           "ui/primitives/typography/overflowing-text-with-tooltip"
                         ]
                       }
