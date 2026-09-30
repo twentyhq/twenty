@@ -255,14 +255,26 @@ export class MessageChannelMetadataService {
     );
 
     if (
+      isDefined(previousMessageChannel) &&
       isDefined(data.visibility) &&
-      data.visibility !== previousMessageChannel?.visibility
+      data.visibility !== previousMessageChannel.visibility
     ) {
-      await this.channelRecordShareService.syncChannelRecordShares({
-        workspaceId,
-        source: MESSAGE_THREAD_CHANNEL_RECORD_SHARE_SOURCE,
-        channelId: id,
-      });
+      try {
+        await this.channelRecordShareService.syncChannelRecordShares({
+          workspaceId,
+          source: MESSAGE_THREAD_CHANNEL_RECORD_SHARE_SOURCE,
+          channelId: id,
+        });
+      } catch (error) {
+        // The channel and its grants live in different schemas, so a failed
+        // sync puts the visibility back rather than leave them disagreeing.
+        await this.repository.update(
+          { id, workspaceId },
+          { visibility: previousMessageChannel.visibility },
+        );
+
+        throw error;
+      }
     }
 
     return this.repository.findOneOrFail({ where: { id, workspaceId } });

@@ -180,14 +180,26 @@ export class CalendarChannelMetadataService {
     );
 
     if (
+      isDefined(previousCalendarChannel) &&
       isDefined(data.visibility) &&
-      data.visibility !== previousCalendarChannel?.visibility
+      data.visibility !== previousCalendarChannel.visibility
     ) {
-      await this.channelRecordShareService.syncChannelRecordShares({
-        workspaceId,
-        source: CALENDAR_EVENT_CHANNEL_RECORD_SHARE_SOURCE,
-        channelId: id,
-      });
+      try {
+        await this.channelRecordShareService.syncChannelRecordShares({
+          workspaceId,
+          source: CALENDAR_EVENT_CHANNEL_RECORD_SHARE_SOURCE,
+          channelId: id,
+        });
+      } catch (error) {
+        // The channel and its grants live in different schemas, so a failed
+        // sync puts the visibility back rather than leave them disagreeing.
+        await this.repository.update(
+          { id, workspaceId },
+          { visibility: previousCalendarChannel.visibility },
+        );
+
+        throw error;
+      }
     }
 
     return this.repository.findOneOrFail({ where: { id, workspaceId } });
