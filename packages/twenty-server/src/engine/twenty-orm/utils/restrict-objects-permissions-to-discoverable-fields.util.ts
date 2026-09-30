@@ -3,7 +3,6 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { resolveDiscoverableFieldMetadataIds } from 'src/engine/core-modules/record-share/utils/resolve-discoverable-field-metadata-ids.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
@@ -42,13 +41,10 @@ export const restrictObjectsPermissionsToDiscoverableFields = ({
 
     const restrictedFields = { ...objectPermissions.restrictedFields };
 
-    for (const flatFieldMetadata of getFlatFieldsFromFlatObjectMetadata(
-      flatObjectMetadata,
-      flatFieldMetadataMaps,
-    )) {
-      if (!discoverableFieldMetadataIds.has(flatFieldMetadata.id)) {
-        restrictedFields[flatFieldMetadata.id] = {
-          ...restrictedFields[flatFieldMetadata.id],
+    for (const fieldMetadataId of flatObjectMetadata.fieldIds) {
+      if (!discoverableFieldMetadataIds.has(fieldMetadataId)) {
+        restrictedFields[fieldMetadataId] = {
+          ...restrictedFields[fieldMetadataId],
           canRead: false,
         };
       }

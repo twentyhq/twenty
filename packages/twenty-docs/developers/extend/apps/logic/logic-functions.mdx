@@ -977,7 +977,7 @@ const { createCompany } = await client.mutation({
   },
 });
 
-// Only on an object whose readability is PRIVATE: choose who can read the created record
+// Only on an object whose readability is PRIVATE or DISCOVERABLE: choose who can read the created record
 const { createContract } = await client.mutation({
   createContract: {
     __args: {
