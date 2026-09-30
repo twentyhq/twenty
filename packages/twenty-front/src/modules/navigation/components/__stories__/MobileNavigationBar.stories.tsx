@@ -52,10 +52,34 @@ const meta: Meta<StoryArgs> = {
 export default meta;
 type Story = StoryObj<StoryArgs>;
 
-export const Default: Story = {};
+export const Default: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await expect(await canvas.findByRole('navigation')).toBeVisible();
+    await expect(canvas.getByRole('button', { name: 'Home' })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
+    await expect(
+      canvas.getByRole('button', { name: 'Search' }),
+    ).toHaveAttribute('aria-pressed', 'false');
+  },
+};
 
 export const Hidden: Story = {
   args: { routePath: '/chat/20202020-0687-4c41-b707-ed1bfca972a7' },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const navigation = await canvas.findByRole('navigation', { hidden: true });
+
+    await expect(navigation).not.toBeVisible();
+    await expect(navigation).toHaveAttribute('aria-hidden', 'true');
+
+    const home = canvas.getByLabelText('Home');
+    home.focus();
+    await expect(home).not.toHaveFocus();
+  },
 };
 
 export const HideAndReveal: Story = {
