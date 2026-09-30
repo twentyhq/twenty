@@ -250,9 +250,11 @@ export class TwoFactorAuthenticationRecoveryService {
   }
 
   async getRecoveryStatus({
+    actor,
     targetUserId,
     targetWorkspaceId,
   }: {
+    actor: RecoveryCodeActor;
     targetUserId: UserEntity['id'];
     targetWorkspaceId: WorkspaceEntity['id'];
   }): Promise<{
@@ -262,6 +264,11 @@ export class TwoFactorAuthenticationRecoveryService {
     const targetUserWorkspace = await this.getTargetUserWorkspaceOrThrow({
       targetUserId,
       targetWorkspaceId,
+    });
+
+    this.assertActorCanManageRecoveryCodesForTargetOrThrow({
+      actor,
+      targetUserWorkspace,
     });
 
     const hasVerifiedTwoFactorAuthenticationMethod =
