@@ -1,11 +1,14 @@
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
+import { AGENT_CHAT_INSTANCE_ID } from '@/ai/constants/AgentChatInstanceId';
 import { AGENT_CHAT_THREAD_LIST_RECORD_GQL_FIELDS } from '@/ai/constants/AgentChatThreadListRecordGqlFields';
 import { useRefreshAgentChatThreadPermissions } from '@/ai/hooks/useRefreshAgentChatThreadPermissions';
 import { agentChatThreadListState } from '@/ai/states/agentChatThreadListState';
 import { agentChatThreadRecordUpdateCountState } from '@/ai/states/agentChatThreadRecordUpdateCountState';
+import { agentChatUsageComponentFamilyState } from '@/ai/states/agentChatUsageComponentFamilyState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { buildAgentChatThreadListFilter } from '@/ai/utils/buildAgentChatThreadListFilter';
+import { getAgentChatUsageFromThread } from '@/ai/utils/getAgentChatUsageFromThread';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useApplyAgentChatThreadUpdate } from '@/ai/hooks/useApplyAgentChatThreadUpdate';
@@ -196,29 +199,57 @@ export const useRefreshAgentChatThreads = () => {
   // when the chat is not listed for this member, undefined when unknown
   const loadAgentChatThread = useCallback(
     async (threadId: string) => {
-      const page = await fetchAgentChatThreadsPage({
-        lastCursor: null,
-        threadIdFilter: { id: { eq: threadId } },
-      });
-      if (!isDefined(page)) {
-        return undefined;
+      for (let attempt = 0; attempt < 2; attempt++) {
+        const updateCountBeforeRequest = store.get(
+          agentChatThreadRecordUpdateCountState.atom,
+        );
+        const page = await fetchAgentChatThreadsPage({
+          lastCursor: null,
+          threadIdFilter: { id: { eq: threadId } },
+        });
+
+        if (!isDefined(page)) {
+          return undefined;
+        }
+
+        const thread = page.threads[0];
+
+        if (!isDefined(thread)) {
+          return null;
+        }
+
+        await refreshAgentChatThreadPermissions([thread.id]);
+
+        if (
+          store.get(agentChatThreadRecordUpdateCountState.atom) !==
+          updateCountBeforeRequest
+        ) {
+          continue;
+        }
+
+        addAgentChatThread(thread);
+
+        // The chat may have been selected before its record was loaded, so
+        // its usage could not be restored then
+        const usageAtom = agentChatUsageComponentFamilyState.atomFamily({
+          instanceId: AGENT_CHAT_INSTANCE_ID,
+          familyKey: { threadId: thread.id },
+        });
+
+        if (!isDefined(store.get(usageAtom))) {
+          store.set(usageAtom, getAgentChatUsageFromThread(thread));
+        }
+
+        return thread;
       }
 
-      const thread = page.threads[0];
-
-      if (!isDefined(thread)) {
-        return null;
-      }
-
-      await refreshAgentChatThreadPermissions([thread.id]);
-      addAgentChatThread(thread);
-
-      return thread;
+      return undefined;
     },
     [
       addAgentChatThread,
       fetchAgentChatThreadsPage,
       refreshAgentChatThreadPermissions,
+      store,
     ],
   );
 
