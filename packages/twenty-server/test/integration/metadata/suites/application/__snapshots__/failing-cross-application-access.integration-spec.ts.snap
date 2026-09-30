@@ -604,9 +604,9 @@ exports[`Application token access to another application should fail with an app
 {
   "extensions": {
     "code": "FORBIDDEN",
-    "userFriendlyMessage": "An error occurred.",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
   },
-  "message": "Forbidden resource",
+  "message": "This endpoint is not available to this caller",
 }
 `;
 

@@ -62,6 +62,7 @@ export const WorkflowCoreIndexPage = () => {
     coreWorkflows,
     hasNextPage,
     loading,
+    isInitialLoading,
     error,
     fetchNextPage,
     refetchLoadedCoreWorkflows,
@@ -88,7 +89,7 @@ export const WorkflowCoreIndexPage = () => {
   const hasError = isDefined(error);
 
   const isEmpty =
-    !loading &&
+    !isInitialLoading &&
     !hasError &&
     !hasNextPage &&
     displayedCoreWorkflows.length === 0;
@@ -160,7 +161,7 @@ export const WorkflowCoreIndexPage = () => {
               }
             />
           )}
-          {!hasError && !isEmpty && (
+          {!isInitialLoading && !hasError && !isEmpty && (
             <>
               <CoreObjectTable
                 tableId={tableId}

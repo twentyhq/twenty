@@ -12,7 +12,6 @@ import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 
 import { NumberFormat } from '@/localization/constants/NumberFormat';
 import { workspaceMemberFormatPreferencesState } from '@/localization/states/workspaceMemberFormatPreferencesState';
-import { RecordFieldsScopeContextProvider } from '@/object-record/record-field-list/contexts/RecordFieldsScopeContext';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { useCurrencyField } from '@/object-record/record-field/ui/meta-types/hooks/useCurrencyField';
 import { CurrencyFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/CurrencyFieldInput';
@@ -23,7 +22,6 @@ import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFi
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { CurrencyCode } from 'twenty-shared/constants';
-import { StorybookFieldInputDropdownFocusIdSetterEffect } from '~/testing/components/StorybookFieldInputDropdownFocusIdSetterEffect';
 
 const {
   FieldInputEventContextProviderWithJestMocks,
@@ -120,18 +118,13 @@ const CurrencyFieldInputWithContext = ({
           isRecordFieldReadOnly: false,
         }}
       >
-        <RecordFieldsScopeContextProvider
-          value={{ scopeInstanceId: RECORD_TABLE_CELL_INPUT_ID_PREFIX }}
-        >
-          <FieldInputEventContextProviderWithJestMocks>
-            {isReady && <StorybookFieldInputDropdownFocusIdSetterEffect />}
-            <CurrencyFieldValueSetterEffect
-              amountMicros={amountMicros}
-              numberFormat={numberFormat}
-            />
-            <CurrencyFieldInput />
-          </FieldInputEventContextProviderWithJestMocks>
-        </RecordFieldsScopeContextProvider>
+        <FieldInputEventContextProviderWithJestMocks>
+          <CurrencyFieldValueSetterEffect
+            amountMicros={amountMicros}
+            numberFormat={numberFormat}
+          />
+          <CurrencyFieldInput />
+        </FieldInputEventContextProviderWithJestMocks>
       </FieldContext.Provider>
       {isReady && <div data-testid="is-ready-marker" />}
       <div data-testid="data-field-input-click-outside-div" />

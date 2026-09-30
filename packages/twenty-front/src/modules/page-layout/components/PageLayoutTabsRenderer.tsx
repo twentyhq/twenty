@@ -141,7 +141,8 @@ export const PageLayoutTabsRenderer = () => {
   const workspaceSurface = useWorkspaceSurface();
   const { currentPageLayout } = useCurrentPageLayoutOrThrow();
 
-  const { layoutType, targetRecordIdentifier } = useLayoutRenderingContext();
+  const { layoutType, targetRecordIdentifier, isRecordIdentifierBarHidden } =
+    useLayoutRenderingContext();
 
   const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
 
@@ -202,6 +203,7 @@ export const PageLayoutTabsRenderer = () => {
   const shouldRenderRecordIdentifierBar =
     currentPageLayout.type === PageLayoutType.RECORD_PAGE &&
     isDefined(targetRecordIdentifier) &&
+    isRecordIdentifierBarHidden !== true &&
     workspaceSurface.type !== 'side-panel' &&
     !isMobile;
 
