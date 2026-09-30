@@ -649,7 +649,6 @@
                 "ui/components/animated-icon-crossfade",
                 "ui/components/avatar-group",
                 "ui/components/callout",
-                "ui/components/card-picker",
                 "ui/components/color-scheme-picker",
                 "ui/components/command-block",
                 "ui/components/info",

@@ -3,7 +3,6 @@ import { useState } from 'react';
 import {
   AvatarGroup,
   Callout,
-  CardPicker,
   ColorSchemePicker,
   JsonTree,
 } from '@ui/components';
@@ -11,6 +10,7 @@ import { Avatar, Pill } from '@ui/primitives/data-display';
 import {
   Button,
   ButtonGroup,
+  Radio,
   RadioGroup,
   SegmentedControl,
 } from '@ui/primitives/input';
@@ -56,7 +56,9 @@ export const DirectionalLayoutExample = ({
           systemLabel="System"
         />
         <RadioGroup aria-label="Plan" defaultValue="team">
-          <CardPicker value="team">Team plan</CardPicker>
+          <Radio variant="card" value="team">
+            Team plan
+          </Radio>
         </RadioGroup>
         <ButtonGroup aria-label="Record actions">
           <Button>First action</Button>

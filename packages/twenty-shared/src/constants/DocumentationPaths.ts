@@ -132,7 +132,6 @@ export const DOCUMENTATION_PATHS = {
     '/ui/components/animated-icon-crossfade',
   UI_COMPONENTS_AVATAR_GROUP: '/ui/components/avatar-group',
   UI_COMPONENTS_CALLOUT: '/ui/components/callout',
-  UI_COMPONENTS_CARD_PICKER: '/ui/components/card-picker',
   UI_COMPONENTS_CODE_EDITOR: '/ui/components/code-editor',
   UI_COMPONENTS_COLOR_SCHEME_PICKER: '/ui/components/color-scheme-picker',
   UI_COMPONENTS_COMMAND_BLOCK: '/ui/components/command-block',

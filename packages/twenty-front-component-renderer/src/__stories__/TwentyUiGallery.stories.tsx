@@ -45,8 +45,8 @@ import {
   tooltipEscapeDismissalTest,
   tooltipEscapeIgnoredTest,
 } from '@/__stories__/twenty-ui-gallery/utils/tooltipTests';
-import { cardPickerDroppedClickTest } from '@/__stories__/twenty-ui-gallery/utils/cardPickerDroppedClickTest';
-import { cardPickerTest } from '@/__stories__/twenty-ui-gallery/utils/cardPickerTest';
+import { radioCardDroppedClickTest } from '@/__stories__/twenty-ui-gallery/utils/radioCardDroppedClickTest';
+import { radioCardTest } from '@/__stories__/twenty-ui-gallery/utils/radioCardTest';
 import { checkboxTest } from '@/__stories__/twenty-ui-gallery/utils/checkboxTest';
 import { createFieldControlsTest } from '@/__stories__/twenty-ui-gallery/utils/createFieldControlsTest';
 import { radioGroupTest } from '@/__stories__/twenty-ui-gallery/utils/radioGroupTest';
@@ -416,15 +416,15 @@ export const RadioGroupPreact: Story = createGalleryStory({
   play: radioGroupTest,
 });
 
-export const CardPickerReact: Story = createGalleryStory({
+export const RadioCardReact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-radio-group',
   runtime: 'react',
-  play: cardPickerDroppedClickTest,
+  play: radioCardDroppedClickTest,
 });
-export const CardPickerPreact: Story = createGalleryStory({
+export const RadioCardPreact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-radio-group',
   runtime: 'preact',
-  play: cardPickerTest,
+  play: radioCardTest,
 });
 
 export const StatusControlsReact: Story = createGalleryStory({
