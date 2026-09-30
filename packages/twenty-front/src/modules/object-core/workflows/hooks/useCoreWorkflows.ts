@@ -1,6 +1,7 @@
 import { useCallback, useState } from 'react';
 
 import { useQuery } from '@apollo/client/react';
+import { isDefined } from 'twenty-shared/utils';
 
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { coreWorkflowsFilterSettingsState } from '@/object-core/workflows/states/coreWorkflowsFilterSettingsState';
@@ -170,6 +171,7 @@ export const useCoreWorkflows = ({
     fetchNextPage,
     refetchLoadedCoreWorkflows,
     loading,
+    isInitialLoading: loading && !isDefined(connection),
     error,
   };
 };

@@ -6836,9 +6836,6 @@ export default {
             "deletedAt": [
                 4
             ],
-            "lastMessageAt": [
-                4
-            ],
             "__typename": [
                 1
             ]
@@ -8239,9 +8236,6 @@ export default {
             ],
             "aiChatUsage": [
                 376
-            ],
-            "chatThreads": [
-                378
             ],
             "chatThread": [
                 378,
