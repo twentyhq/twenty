@@ -9,6 +9,8 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
+// An inherited child that declares fields, such as a message of a thread, is
+// discovered along with its parent. Its parent's gate still decides the rows.
 export const isDiscoverableObject = (
   flatObjectMetadata: Pick<
     FlatObjectMetadata,
@@ -16,7 +18,8 @@ export const isDiscoverableObject = (
   >,
 ): boolean =>
   flatObjectMetadata.readability === MetadataReadability.DISCOVERABLE ||
-  isDefined(flatObjectMetadata.discoverableFieldUniversalIdentifiers);
+  (flatObjectMetadata.readability === MetadataReadability.INHERITED &&
+    isDefined(flatObjectMetadata.discoverableFieldUniversalIdentifiers));
 
 // Undefined when the object takes no part in existence reads.
 export const resolveDiscoverableFieldMetadataIds = ({
