@@ -656,7 +656,6 @@
                 "ui/components/menu-picker",
                 "ui/components/navigation-bar",
                 "ui/components/notification-counter",
-                "ui/components/rounded-link",
                 "ui/components/search-input",
                 "ui/components/tinted-icon-tile"
               ]

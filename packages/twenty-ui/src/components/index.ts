@@ -85,6 +85,5 @@ export type { MenuItemSuggestionProps } from './navigation/MenuItemSuggestion/ty
 export { MenuPicker } from './navigation/MenuPicker/MenuPicker';
 export type { MenuPickerProps } from './navigation/MenuPicker/types/MenuPickerProps';
 export { NavigationBar } from './navigation/NavigationBar/NavigationBar';
-export { RoundedLink } from './navigation/RoundedLink/RoundedLink';
 export { TabButton } from './navigation/TabButton/TabButton';
 export type { TabButtonProps } from './navigation/TabButton/types/TabButtonProps';

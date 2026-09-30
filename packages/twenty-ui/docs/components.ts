@@ -16,7 +16,6 @@ import { MENU_ITEM_DRAGGABLE_PROP_DESCRIPTIONS } from './menuItemDraggablePropDe
 import { MENU_ITEM_SUGGESTION_PROP_DESCRIPTIONS } from './menuItemSuggestionPropDescriptions';
 import { MENU_PICKER_PROP_DESCRIPTIONS } from './menuPickerPropDescriptions';
 import { NAVIGATION_BAR_PROP_DESCRIPTIONS } from './navigationBarPropDescriptions';
-import { ROUNDED_LINK_PROP_DESCRIPTIONS } from './roundedLinkPropDescriptions';
 import { THEME_PROVIDER_PROP_DESCRIPTIONS } from './themeProviderPropDescriptions';
 import { ICON_PROP_DESCRIPTIONS } from './iconPropDescriptions';
 import { ICONS_PROVIDER_PROP_DESCRIPTIONS } from './iconsProviderPropDescriptions';
@@ -595,13 +594,6 @@ export const DOCUMENTED_COMPONENTS = [
     entryPoint: 'twenty-ui/components',
     slug: 'components/navigation-bar',
     propDescriptions: NAVIGATION_BAR_PROP_DESCRIPTIONS,
-  },
-  {
-    name: 'RoundedLink',
-    source: 'components/navigation/RoundedLink/RoundedLink.tsx',
-    entryPoint: 'twenty-ui/components',
-    slug: 'components/rounded-link',
-    propDescriptions: ROUNDED_LINK_PROP_DESCRIPTIONS,
   },
   {
     name: 'ThemeProvider',
