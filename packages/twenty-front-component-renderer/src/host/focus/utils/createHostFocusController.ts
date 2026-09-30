@@ -16,6 +16,11 @@ export const createHostFocusController = ({
 }): HostFocusController => {
   let pendingFocusRequest: PendingFocusRequest | null = null;
 
+  const clearPendingFocusRequest = (): void => {
+    pendingFocusRequest = null;
+    document.removeEventListener('focusin', clearPendingFocusRequest, true);
+  };
+
   const findRegisteredElement = (remoteElementId: string) =>
     geometryTracker.getRegisteredNode(remoteElementId) as
       | HTMLElement
@@ -32,7 +37,7 @@ export const createHostFocusController = ({
     element.focus(options);
 
     if (element.ownerDocument.activeElement === element) {
-      pendingFocusRequest = null;
+      clearPendingFocusRequest();
     }
   };
 
@@ -40,12 +45,13 @@ export const createHostFocusController = ({
     callFocusMethod: ({ remoteElementId, methodName, options }) => {
       if (methodName === 'focus') {
         pendingFocusRequest = { remoteElementId, options };
+        document.addEventListener('focusin', clearPendingFocusRequest, true);
         focusElement(pendingFocusRequest);
         return;
       }
 
       if (pendingFocusRequest?.remoteElementId === remoteElementId) {
-        pendingFocusRequest = null;
+        clearPendingFocusRequest();
       }
 
       const element = findRegisteredElement(remoteElementId);
@@ -59,8 +65,6 @@ export const createHostFocusController = ({
         focusElement(pendingFocusRequest);
       }
     },
-    reset: () => {
-      pendingFocusRequest = null;
-    },
+    reset: clearPendingFocusRequest,
   };
 };

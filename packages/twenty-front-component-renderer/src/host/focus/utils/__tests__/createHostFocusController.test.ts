@@ -57,6 +57,41 @@ describe('createHostFocusController', () => {
     expect(document.activeElement).toBe(document.body);
   });
 
+  it('should drop pending focus once the page focus moves to another element', () => {
+    const { geometryTracker, controller } = createFocusFixture();
+    const pendingButton = document.createElement('button');
+    const otherButton = document.createElement('button');
+
+    document.body.append(pendingButton, otherButton);
+    controller.callFocusMethod({
+      remoteElementId: 'pending-button',
+      methodName: 'focus',
+    });
+    otherButton.focus();
+    geometryTracker.registerNode('pending-button', pendingButton);
+    controller.retryPendingFocus();
+
+    expect(document.activeElement).toBe(otherButton);
+  });
+
+  it('should keep pending focus when the focused element is removed', () => {
+    const { geometryTracker, controller } = createFocusFixture();
+    const removedButton = document.createElement('button');
+    const pendingButton = document.createElement('button');
+
+    document.body.append(removedButton, pendingButton);
+    removedButton.focus();
+    controller.callFocusMethod({
+      remoteElementId: 'pending-button',
+      methodName: 'focus',
+    });
+    removedButton.remove();
+    geometryTracker.registerNode('pending-button', pendingButton);
+    controller.retryPendingFocus();
+
+    expect(document.activeElement).toBe(pendingButton);
+  });
+
   it('should clear pending focus on reset', () => {
     const { geometryTracker, controller } = createFocusFixture();
     const button = document.createElement('button');
