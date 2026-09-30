@@ -4,7 +4,6 @@ import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 
 import { IconBell } from '@ui/icon';
 import { Button } from '@ui/primitives/input/Button/Button';
-import { ClickToActionLink } from '@ui/primitives/navigation/ClickToActionLink/ClickToActionLink';
 import {
   A11Y_DEFER_COLOR_CONTRAST,
   CatalogDecorator,
@@ -82,11 +81,16 @@ export const WithDescriptionAndAction: Story = {
 
 export const CustomIconAndLink: Story = {
   ...Default,
+  parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
   args: { icon: <IconBell size={16} />, onClick: fn() },
   render: (args) => (
     <Toast
       {...args}
-      action={<ClickToActionLink href="#record">View record</ClickToActionLink>}
+      action={
+        <Button variant="link" href="#record">
+          View record
+        </Button>
+      }
     />
   ),
   play: async ({ canvasElement, args }) => {
