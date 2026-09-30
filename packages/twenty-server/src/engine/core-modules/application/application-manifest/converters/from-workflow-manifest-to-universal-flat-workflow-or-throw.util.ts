@@ -9,6 +9,7 @@ import {
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
 import {
+  getWorkflowVersionUniversalIdentifier,
   type WorkflowManifest,
   workflowManifestSchema,
 } from 'twenty-shared/application';
@@ -60,6 +61,10 @@ export const fromWorkflowManifestToUniversalFlatWorkflowOrThrow = ({
   }
   const workflowId = existingWorkflow?.id ?? v4();
   const versionId = existingVersion?.id ?? v4();
+  const versionUniversalIdentifier = getWorkflowVersionUniversalIdentifier({
+    applicationUniversalIdentifier,
+    workflowUniversalIdentifier: definition.universalIdentifier,
+  });
 
   const steps = definition.version.steps.map((step, index) =>
     fromWorkflowStepManifestToActionOrThrow({ step, index, references }),
@@ -85,17 +90,11 @@ export const fromWorkflowManifestToUniversalFlatWorkflowOrThrow = ({
     createdAt: existingWorkflow?.createdAt ?? now,
     updatedAt: now,
     versionDefinitionHash: createHash('sha256')
-      .update(
-        JSON.stringify({
-          universalIdentifier: definition.version.universalIdentifier,
-          trigger,
-          steps,
-        }),
-      )
+      .update(JSON.stringify({ trigger, steps }))
       .digest('hex'),
     flatUniversalWorkflowVersion: {
       id: versionId,
-      universalIdentifier: definition.version.universalIdentifier,
+      universalIdentifier: versionUniversalIdentifier,
       applicationUniversalIdentifier,
       coreWorkflowId: workflowId,
       workflowId: null,

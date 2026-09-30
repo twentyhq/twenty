@@ -16,7 +16,6 @@ const MANIFEST = buildBaseManifest({
         universalIdentifier: '33333333-3333-4333-8333-333333333333',
         name: 'Workflow',
         version: {
-          universalIdentifier: '44444444-4444-4444-8444-444444444444',
           trigger: {
             universalIdentifier: '55555555-5555-4555-8555-555555555555',
             type: 'MANUAL',
@@ -131,21 +130,6 @@ describe('application workflow manifest updates', () => {
           workflow.universalIdentifier
         ] as UniversalFlatWorkflow
       ).flatUniversalWorkflowVersion?.id,
-    );
-  });
-
-  it('rejects replacing an existing version identifier', () => {
-    const before = compute();
-    const workflows = structuredClone(MANIFEST.workflows ?? []);
-    const workflow = workflows[0];
-    if (!isDefined(workflow)) {
-      throw new Error('Expected workflow');
-    }
-    workflow.version.universalIdentifier =
-      '77777777-7777-4777-8777-777777777777';
-
-    expect(() => compute({ workflows, fromAllFlatEntityMaps: before })).toThrow(
-      'must keep the same version',
     );
   });
 

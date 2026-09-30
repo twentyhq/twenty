@@ -1,6 +1,9 @@
 import { msg } from '@lingui/core/macro';
 
-import { type WorkflowManifest } from 'twenty-shared/application';
+import {
+  getWorkflowVersionUniversalIdentifier,
+  type WorkflowManifest,
+} from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
 import { fromWorkflowManifestToUniversalFlatWorkflowOrThrow } from 'src/engine/core-modules/application/application-manifest/converters/from-workflow-manifest-to-universal-flat-workflow-or-throw.util';
@@ -78,19 +81,6 @@ export const addWorkflowManifestsToFlatEntityMapsOrThrow = ({
       ownerApplicationId: ownerFlatApplication.id,
       idByUniversalIdentifierByMetadataName,
     });
-    const versionIdentifiersByWorkflowId = new Map<string, Set<string>>();
-    for (const version of Object.values(
-      fromAllFlatEntityMaps.flatWorkflowVersionMaps.byUniversalIdentifier,
-    )) {
-      if (!isDefined(version) || !isDefined(version.coreWorkflowId)) {
-        continue;
-      }
-      const identifiers =
-        versionIdentifiersByWorkflowId.get(version.coreWorkflowId) ??
-        new Set<string>();
-      identifiers.add(version.universalIdentifier);
-      versionIdentifiersByWorkflowId.set(version.coreWorkflowId, identifiers);
-    }
     const recordFieldErrors: string[] = [];
     for (const workflowManifest of workflows) {
       const existingWorkflow =
@@ -99,26 +89,11 @@ export const addWorkflowManifestsToFlatEntityMapsOrThrow = ({
         ];
       const existingVersion =
         fromAllFlatEntityMaps.flatWorkflowVersionMaps.byUniversalIdentifier[
-          workflowManifest.version.universalIdentifier
+          getWorkflowVersionUniversalIdentifier({
+            applicationUniversalIdentifier,
+            workflowUniversalIdentifier: workflowManifest.universalIdentifier,
+          })
         ];
-      const existingVersionIdentifiers = isDefined(existingWorkflow)
-        ? versionIdentifiersByWorkflowId.get(existingWorkflow.id)
-        : undefined;
-      if (
-        isDefined(existingVersionIdentifiers) &&
-        (existingVersionIdentifiers.size !== 1 ||
-          !existingVersionIdentifiers.has(
-            workflowManifest.version.universalIdentifier,
-          ))
-      ) {
-        throw new ApplicationException(
-          'An application workflow must keep the same version universal identifier across updates',
-          ApplicationExceptionCode.INVALID_INPUT,
-          {
-            userFriendlyMessage: msg`Keep the same workflow version universal identifier when updating an application.`,
-          },
-        );
-      }
       const workflow = fromWorkflowManifestToUniversalFlatWorkflowOrThrow({
         manifest: workflowManifest,
         applicationUniversalIdentifier,

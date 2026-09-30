@@ -26,7 +26,6 @@ const REFERENCE_STEP_ID = randomUUID();
 const APP_ID = randomUUID();
 const ROLE_ID = randomUUID();
 const WORKFLOW_ID = randomUUID();
-const VERSION_ID = randomUUID();
 const STEP_ID = randomUUID();
 const RECORD_STEP_ID = randomUUID();
 const DELAY_STEP_ID = randomUUID();
@@ -53,7 +52,6 @@ const MANIFEST: Manifest = buildBaseManifest({
         universalIdentifier: WORKFLOW_ID,
         name: 'Application workflow',
         version: {
-          universalIdentifier: VERSION_ID,
           trigger: {
             universalIdentifier: randomUUID(),
             type: 'MANUAL',
@@ -93,7 +91,6 @@ const MANIFEST: Manifest = buildBaseManifest({
         universalIdentifier: REFERENCE_WORKFLOW_ID,
         name: 'Workflow referencing another app',
         version: {
-          universalIdentifier: randomUUID(),
           trigger: {
             universalIdentifier: randomUUID(),
             type: 'MANUAL',
@@ -334,20 +331,6 @@ describe('application-owned core workflows', () => {
     expect((await findRun(oldRunId)).state?.flow).toEqual(oldRun.state?.flow);
     const newRunId = await runVersion(updated.versionId);
     expect((await findRun(newRunId)).state?.flow?.steps).toEqual(updated.steps);
-
-    const conflicting = structuredClone(changed);
-    conflicting.workflows!.push({
-      ...conflicting.workflows![0],
-      universalIdentifier: randomUUID(),
-      name: 'Conflicting workflow',
-    });
-    const conflict = await syncApplication({
-      manifest: conflicting,
-      expectToFail: true,
-    });
-    expect(conflict.errors).toBeDefined();
-    expect(JSON.stringify(conflict.errors)).toContain('version identifier');
-    expect(await findDefinitions()).toEqual(updatedDefinitions);
 
     const missingWorkflow = { ...changed, workflows: [] };
     const additive = await syncApplication({
