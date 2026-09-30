@@ -26,7 +26,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
   The returned `{ id, path, size, createdAt, url }` is unchanged. `uploadFile` now requires a Twenty server that exposes the `createFileUpload` and `completeFileUpload` mutations.
 
-- **JSON fields are typed `unknown` in generated clients instead of `Record<string, unknown>`.** A JSON field can hold any JSON value, such as the array in a call recording's `transcript`, so arrays are now written without a cast. Reading a key off a selected JSON field now needs a type guard or a cast to the shape you store:
+- **JSON fields are typed `unknown` in generated clients instead of `Record<string, unknown>`.** A JSON field can hold an array as well as an object, such as the array in a call recording's `transcript`, so arrays are now written without a cast. Reading a key off a selected JSON field now needs a type guard or a cast to the shape you store:
 
   ```diff
   - data: { transcript: entries as unknown as Record<string, unknown> },
@@ -37,7 +37,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
   + const plan = settings?.plan;
   ```
 
-  Nothing changes at runtime. The new types apply once the client is regenerated with this SDK version.
+  Nothing changes at runtime. The server still rejects a bare number or boolean in a JSON field, and the type no longer catches that at compile time. The new types apply once the client is regenerated with this SDK version.
 
 ### Removed
 
