@@ -24,10 +24,9 @@ export { getIconTileColorShades } from './data-display/TintedIconTile/utils/getI
 export { Callout } from './feedback/Callout/Callout';
 export type { CalloutProps } from './feedback/Callout/types/CalloutProps';
 export type { CalloutVariant } from './feedback/Callout/types/CalloutVariant';
-export { Info } from './feedback/Info/Info';
-export type { InfoAccent } from './feedback/Info/types/InfoAccent';
-export type { InfoProps } from './feedback/Info/types/InfoProps';
 export { InlineBanner } from './feedback/InlineBanner/InlineBanner';
+export type { InlineBannerButtonProps } from './feedback/InlineBanner/types/InlineBannerButtonProps';
+export type { InlineBannerProps } from './feedback/InlineBanner/types/InlineBannerProps';
 export { useToast } from './feedback/Toast/hooks/useToast';
 export { Toast } from './feedback/Toast/Toast';
 export { ToastProvider } from './feedback/Toast/ToastProvider';

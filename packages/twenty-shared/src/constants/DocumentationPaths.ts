@@ -136,7 +136,6 @@ export const DOCUMENTATION_PATHS = {
   UI_COMPONENTS_COLOR_SCHEME_PICKER: '/ui/components/color-scheme-picker',
   UI_COMPONENTS_COMMAND_BLOCK: '/ui/components/command-block',
   UI_COMPONENTS_DROPDOWN: '/ui/components/dropdown',
-  UI_COMPONENTS_INFO: '/ui/components/info',
   UI_COMPONENTS_INLINE_BANNER: '/ui/components/inline-banner',
   UI_COMPONENTS_INPUT_ICON_BUTTON: '/ui/components/input/icon-button',
   UI_COMPONENTS_INPUT_LIGHT_BUTTON: '/ui/components/input/light-button',
