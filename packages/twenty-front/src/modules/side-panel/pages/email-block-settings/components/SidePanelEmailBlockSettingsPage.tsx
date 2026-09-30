@@ -21,20 +21,15 @@ import {
   EmailBoxSidesInput,
   type CssBoxSides,
 } from '@/side-panel/pages/email-block-settings/components/EmailBoxSidesInput';
-import { EmailPageStyleSection } from '@/side-panel/pages/email-block-settings/components/EmailPageStyleSection';
+import { StyledEmailSidePanelHint } from '@/side-panel/pages/email-block-settings/components/StyledEmailSidePanelHint';
 import { getEffectiveSectionStyleValue } from '@/side-panel/pages/email-block-settings/utils/getEffectiveSectionStyleValue';
+import { useSidePanelHistory } from '@/side-panel/hooks/useSidePanelHistory';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[4]};
-  padding: ${themeCssVariables.spacing[4]};
-`;
-
-const StyledHint = styled.div`
-  color: ${themeCssVariables.font.color.tertiary};
-  font-size: ${themeCssVariables.font.size.sm};
   padding: ${themeCssVariables.spacing[4]};
 `;
 
@@ -71,12 +66,15 @@ const BOX_FIELD_SIDE_PROPERTIES: Record<
 
 const EmailBlockSettingsContent = ({ editor }: { editor: Editor }) => {
   const { i18n, t } = useLingui();
+  const { goBackFromSidePanel } = useSidePanelHistory();
   const target = useLiveEditorState(editor, (currentEditor) =>
     getBlockSelectionTarget(currentEditor),
   );
 
   if (!isDefined(target)) {
-    return <EmailPageStyleSection editor={editor} />;
+    return (
+      <StyledEmailSidePanelHint>{t`Select a block to edit its style.`}</StyledEmailSidePanelHint>
+    );
   }
 
   const blockDefinition = ADVANCED_TEXT_EDITOR_BLOCK_CATALOG[target.nodeType];
@@ -84,9 +82,21 @@ const EmailBlockSettingsContent = ({ editor }: { editor: Editor }) => {
   const styles = getBlockStyle(target.attrs.style);
   const canvasTheme = resolveCanvasTheme(editor.state.doc.attrs.canvasTheme);
 
+  const inheritsCanvasTypography = (property: string) => {
+    switch (target.nodeType) {
+      case TIPTAP_NODE_TYPES.SECTION:
+      case TIPTAP_NODE_TYPES.PARAGRAPH:
+        return true;
+      case TIPTAP_NODE_TYPES.HEADING:
+        return property !== 'fontSize';
+      default:
+        return false;
+    }
+  };
+
   const displayedStyleValue = (property: string) =>
     styles[property] ??
-    (target.nodeType === TIPTAP_NODE_TYPES.SECTION
+    (inheritsCanvasTypography(property)
       ? getEffectiveSectionStyleValue(property, canvasTheme)
       : '');
 
@@ -119,6 +129,7 @@ const EmailBlockSettingsContent = ({ editor }: { editor: Editor }) => {
         return true;
       })
       .run();
+    goBackFromSidePanel();
   };
 
   const handleFieldChange = (
@@ -239,7 +250,7 @@ export const SidePanelEmailBlockSettingsPage = () => {
 
   if (!isDefined(activeEmailEditor) || activeEmailEditor.isDestroyed) {
     return (
-      <StyledHint>{t`Open an email editor to edit block settings.`}</StyledHint>
+      <StyledEmailSidePanelHint>{t`Open an email editor to edit block settings.`}</StyledEmailSidePanelHint>
     );
   }
 

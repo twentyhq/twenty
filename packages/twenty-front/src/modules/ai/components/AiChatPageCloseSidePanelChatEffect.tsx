@@ -1,12 +1,6 @@
 import { useStore } from 'jotai';
 import { useEffect } from 'react';
-import { matchPath } from 'react-router-dom';
-import {
-  AppPath,
-  CoreObjectNameSingular,
-  SidePanelPages,
-} from 'twenty-shared/types';
-
+import { isSidePanelItemShowingAiChat } from '@/ai/utils/isSidePanelItemShowingAiChat';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
@@ -21,20 +15,11 @@ export const AiChatPageCloseSidePanelChatEffect = () => {
       return;
     }
 
-    const currentSidePanelItem = store
-      .get(sidePanelNavigationStackState.atom)
-      .at(-1);
-
-    const isShowingChat =
-      currentSidePanelItem?.page === SidePanelPages.AskAI ||
-      (currentSidePanelItem?.page === SidePanelPages.RoutedPage &&
-        matchPath(
-          AppPath.RecordShowPage,
-          currentSidePanelItem.routedLocation.pathname,
-        )?.params.objectNameSingular ===
-          CoreObjectNameSingular.AgentChatThread);
-
-    if (isShowingChat) {
+    if (
+      isSidePanelItemShowingAiChat(
+        store.get(sidePanelNavigationStackState.atom).at(-1),
+      )
+    ) {
       void closeSidePanelMenu();
     }
   }, [store, closeSidePanelMenu]);

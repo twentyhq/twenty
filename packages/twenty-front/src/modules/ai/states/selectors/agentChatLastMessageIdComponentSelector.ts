@@ -1,3 +1,4 @@
+import { AgentMessageRole } from '@/ai/constants/AgentMessageRole';
 import { AgentChatComponentInstanceContext } from '@/ai/contexts/AgentChatComponentInstanceContext';
 import { agentChatMessagesComponentFamilyState } from '@/ai/states/agentChatMessagesComponentFamilyState';
 import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
@@ -17,6 +18,12 @@ export const agentChatLastMessageIdComponentSelector =
           familyKey: { threadId: currentThreadId },
         });
 
-        return messages.at(-1)?.id ?? null;
+        const lastMessage = messages.at(-1);
+
+        if (lastMessage?.role === AgentMessageRole.USER) {
+          return null;
+        }
+
+        return lastMessage?.id ?? null;
       },
   });
