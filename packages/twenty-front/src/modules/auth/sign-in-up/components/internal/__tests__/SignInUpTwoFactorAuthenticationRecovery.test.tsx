@@ -133,6 +133,7 @@ describe('SignInUpTwoFactorAuthenticationRecovery', () => {
     expect(jotaiStore.get(signInUpStepState.atom)).toBe(
       SignInUpStep.TwoFactorAuthenticationProvision,
     );
+    expect(jotaiStore.get(loginTokenState.atom)).toBe('login-token');
     expect(mockEnqueueToast).not.toHaveBeenCalled();
   });
 

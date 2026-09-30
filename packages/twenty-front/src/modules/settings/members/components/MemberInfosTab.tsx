@@ -88,6 +88,7 @@ export const MemberInfosTab = ({
 
       {isDefined(twoFactorAuthenticationRecoveryUserId) && (
         <MemberTwoFactorAuthenticationRecoverySection
+          key={twoFactorAuthenticationRecoveryUserId}
           userId={twoFactorAuthenticationRecoveryUserId}
           memberName={`${firstName} ${lastName}`.trim()}
         />

@@ -728,6 +728,28 @@ describe('Two-factor authentication recovery codes (integration)', () => {
       ).toMatch(/^[0-9A-Z]{5}(-[0-9A-Z]{5}){3}$/);
     });
 
+    it('is unavailable while the target workspace has the feature flag off', async () => {
+      await updateFeatureFlag({
+        featureFlag:
+          FeatureFlagKey.IS_TWO_FACTOR_AUTHENTICATION_RECOVERY_CODE_ENABLED,
+        value: false,
+        expectToFail: false,
+      });
+
+      try {
+        const { errors } = await generateAsServerAdmin(SEED_APPLE_WORKSPACE_ID);
+
+        expect(errors?.[0]?.extensions?.code).toBe('FORBIDDEN');
+      } finally {
+        await updateFeatureFlag({
+          featureFlag:
+            FeatureFlagKey.IS_TWO_FACTOR_AUTHENTICATION_RECOVERY_CODE_ENABLED,
+          value: true,
+          expectToFail: false,
+        });
+      }
+    });
+
     it('reaches members of other workspaces but still requires an authenticator to recover', async () => {
       const { errors } = await generateAsServerAdmin(
         SEED_YCOMBINATOR_WORKSPACE_ID,

@@ -2,12 +2,12 @@ import { getTwoFactorAuthenticationErrorToastOptions } from '@/auth/utils/getTwo
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { TwoFactorAuthenticationRecoveryCodeConfirmationDialog } from '@/settings/two-factor-authentication/components/TwoFactorAuthenticationRecoveryCodeConfirmationDialog';
 import { TwoFactorAuthenticationRecoveryCodeDisplay } from '@/settings/two-factor-authentication/components/TwoFactorAuthenticationRecoveryCodeDisplay';
+import { useGeneratedRecoveryCode } from '@/settings/two-factor-authentication/hooks/useGeneratedRecoveryCode';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { useMutation } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components';
 import { IconKey } from 'twenty-ui/icon';
@@ -33,14 +33,12 @@ export const SettingsAdminTwoFactorAuthenticationRecoveryCode = ({
   workspaceId,
   memberName,
 }: SettingsAdminTwoFactorAuthenticationRecoveryCodeProps) => {
-  const dialogId = `admin-two-factor-authentication-recovery-code-${workspaceId}`;
+  const dialogId = `admin-two-factor-authentication-recovery-code-${userId}-${workspaceId}`;
   const apolloAdminClient = useApolloAdminClient();
   const { openDialog } = useDialog();
   const { enqueueToast } = useToast();
-  const [generatedRecoveryCode, setGeneratedRecoveryCode] = useState<{
-    recoveryCode: string;
-    expiresAt: string;
-  } | null>(null);
+  const { generatedRecoveryCode, showGeneratedRecoveryCode } =
+    useGeneratedRecoveryCode();
 
   const [generateRecoveryCode] = useMutation(
     GenerateTwoFactorAuthenticationRecoveryCodeAsServerAdminDocument,
@@ -61,7 +59,7 @@ export const SettingsAdminTwoFactorAuthenticationRecoveryCode = ({
         result.data?.generateTwoFactorAuthenticationRecoveryCodeAsServerAdmin;
 
       if (isDefined(recoveryCode)) {
-        setGeneratedRecoveryCode(recoveryCode);
+        showGeneratedRecoveryCode(recoveryCode);
       }
     } catch (error) {
       enqueueToast(

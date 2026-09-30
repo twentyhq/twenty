@@ -1,12 +1,12 @@
 import { getTwoFactorAuthenticationErrorToastOptions } from '@/auth/utils/getTwoFactorAuthenticationErrorToastOptions';
 import { TwoFactorAuthenticationRecoveryCodeConfirmationDialog } from '@/settings/two-factor-authentication/components/TwoFactorAuthenticationRecoveryCodeConfirmationDialog';
 import { TwoFactorAuthenticationRecoveryCodeDisplay } from '@/settings/two-factor-authentication/components/TwoFactorAuthenticationRecoveryCodeDisplay';
+import { useGeneratedRecoveryCode } from '@/settings/two-factor-authentication/hooks/useGeneratedRecoveryCode';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { useMutation, useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { Section, useToast } from 'twenty-ui/components';
 import { Status } from 'twenty-ui/primitives/data-display';
@@ -18,9 +18,6 @@ import {
   TwoFactorAuthenticationRecoveryStatusDocument,
 } from '~/generated-metadata/graphql';
 import { beautifyExactDateTime } from '~/utils/date-utils';
-
-const GENERATE_RECOVERY_CODE_DIALOG_ID =
-  'member-two-factor-authentication-recovery-code-dialog';
 
 const StyledContent = styled.div`
   display: flex;
@@ -39,11 +36,6 @@ const StyledNotice = styled.div`
   font-size: ${themeCssVariables.font.size.sm};
 `;
 
-type GeneratedRecoveryCode = {
-  recoveryCode: string;
-  expiresAt: string;
-};
-
 type MemberTwoFactorAuthenticationRecoverySectionProps = {
   userId: string;
   memberName: string;
@@ -53,10 +45,14 @@ export const MemberTwoFactorAuthenticationRecoverySection = ({
   userId,
   memberName,
 }: MemberTwoFactorAuthenticationRecoverySectionProps) => {
+  const generateRecoveryCodeDialogId = `member-two-factor-authentication-recovery-code-dialog-${userId}`;
   const { openDialog } = useDialog();
   const { enqueueToast } = useToast();
-  const [generatedRecoveryCode, setGeneratedRecoveryCode] =
-    useState<GeneratedRecoveryCode | null>(null);
+  const {
+    generatedRecoveryCode,
+    showGeneratedRecoveryCode,
+    clearGeneratedRecoveryCode,
+  } = useGeneratedRecoveryCode();
 
   const { data, refetch } = useQuery(
     TwoFactorAuthenticationRecoveryStatusDocument,
@@ -86,7 +82,7 @@ export const MemberTwoFactorAuthenticationRecoverySection = ({
         result.data?.generateTwoFactorAuthenticationRecoveryCode;
 
       if (isDefined(recoveryCode)) {
-        setGeneratedRecoveryCode(recoveryCode);
+        showGeneratedRecoveryCode(recoveryCode);
       }
 
       await refetch();
@@ -103,7 +99,7 @@ export const MemberTwoFactorAuthenticationRecoverySection = ({
   const handleRevoke = async () => {
     try {
       await revokeRecoveryCode({ variables: { userId } });
-      setGeneratedRecoveryCode(null);
+      clearGeneratedRecoveryCode();
       await refetch();
       enqueueToast({
         variant: 'success',
@@ -141,7 +137,7 @@ export const MemberTwoFactorAuthenticationRecoverySection = ({
             <Button
               size="sm"
               variant="outline"
-              onClick={() => openDialog(GENERATE_RECOVERY_CODE_DIALOG_ID)}
+              onClick={() => openDialog(generateRecoveryCodeDialogId)}
             >{t`Generate recovery code`}</Button>
             {isDefined(pendingRecoveryCodeExpiresAt) && (
               <>
@@ -163,7 +159,7 @@ export const MemberTwoFactorAuthenticationRecoverySection = ({
         </StyledNotice>
       )}
       <TwoFactorAuthenticationRecoveryCodeConfirmationDialog
-        dialogId={GENERATE_RECOVERY_CODE_DIALOG_ID}
+        dialogId={generateRecoveryCodeDialogId}
         memberName={memberName}
         onConfirm={handleGenerate}
       />
