@@ -99,6 +99,11 @@ describe('AgentChatStreamingService.retryLastFailedTurn', () => {
           },
         }),
       } as never,
+      {
+        findPendingForThread: jest.fn().mockResolvedValue([]),
+        hasPendingForThread: jest.fn().mockResolvedValue(false),
+        cancel: jest.fn().mockResolvedValue(false),
+      } as never,
     );
 
     return { service, threadRepository, messageQueueService, agentChatService };

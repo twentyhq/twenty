@@ -16,7 +16,7 @@ const args = {
   workspaceMemberId: 'reader',
 };
 
-const buildService = (legacyOwnerFieldPresent = true) => {
+const buildService = () => {
   const query = jest.fn().mockResolvedValue([{ id: THREAD_ID }]);
   const thread: Record<string, unknown> = {
     id: THREAD_ID,
@@ -62,9 +62,7 @@ const buildService = (legacyOwnerFieldPresent = true) => {
     readability: MetadataReadability.PRIVATE,
   };
   const flatFieldMetadataMaps = {
-    byUniversalIdentifier: (legacyOwnerFieldPresent
-      ? { 'bf830886-b6dc-46e9-a229-eecbb0e66032': { id: 'legacy' } }
-      : {}) as Record<string, unknown>,
+    byUniversalIdentifier: {} as Record<string, unknown>,
   };
   const cache = {
     getOrRecompute: jest.fn().mockResolvedValue({
@@ -119,30 +117,25 @@ const buildService = (legacyOwnerFieldPresent = true) => {
 };
 
 describe('Conversation common record access', () => {
-  it.each([true, false])(
-    'creates threads before and after legacy owner contraction (legacy field: %s)',
-    async (legacyOwnerFieldPresent) => {
-      const { service, query } = buildService(legacyOwnerFieldPresent);
-      await expect(
-        service.createThread({
-          workspaceId: WORKSPACE_ID,
-          workspaceMemberId: 'reader',
-          id: THREAD_ID,
-        }),
-      ).resolves.toMatchObject({ id: THREAD_ID });
-      const [insert, parameters] = query.mock.calls[0];
-      expect(insert).toContain('"workspaceMemberId"');
-      expect(insert.includes('"userWorkspaceId"')).toBe(
-        legacyOwnerFieldPresent,
-      );
-      expect(parameters).toEqual([
-        THREAD_ID,
-        null,
-        'reader',
-        ...(legacyOwnerFieldPresent ? ['reader-membership'] : []),
-      ]);
-    },
-  );
+  it('creates threads owned by the member, with the legacy owner', async () => {
+    const { service, query } = buildService();
+    await expect(
+      service.createThread({
+        workspaceId: WORKSPACE_ID,
+        workspaceMemberId: 'reader',
+        id: THREAD_ID,
+      }),
+    ).resolves.toMatchObject({ id: THREAD_ID });
+    const [insert, parameters] = query.mock.calls[0];
+    expect(insert).toContain('"workspaceMemberId"');
+    expect(insert).toContain('"userWorkspaceId"');
+    expect(parameters).toEqual([
+      THREAD_ID,
+      null,
+      'reader',
+      'reader-membership',
+    ]);
+  });
 
   it('uses the common record policy for a non-owner reader', async () => {
     const { service, repository } = buildService();
@@ -153,7 +146,7 @@ describe('Conversation common record access', () => {
       recordIds: [THREAD_ID],
       operationType: 'select',
       updatedColumns: [],
-      withDeleted: false,
+      withDeleted: true,
     });
   });
 
@@ -186,8 +179,67 @@ describe('Conversation common record access', () => {
       recordIds: [THREAD_ID],
       operationType: 'update',
       updatedColumns: ['title'],
-      withDeleted: false,
+      withDeleted: true,
     });
+  });
+
+  it('restores a soft deleted conversation through the restore permission', async () => {
+    const { service, query, repository } = buildService();
+    const deletedThread = {
+      id: THREAD_ID,
+      workspaceMemberId: 'owner',
+      deletedAt: '2026-09-01T00:00:00.000Z',
+    };
+    query.mockImplementation(async (sql: string) =>
+      sql.includes('FOR UPDATE')
+        ? [deletedThread]
+        : sql.includes('restored_thread')
+          ? [{ ...deletedThread, deletedAt: null }]
+          : [],
+    );
+    await expect(service.restoreThreadWithAccess(args)).resolves.toEqual({
+      ...deletedThread,
+      deletedAt: null,
+    });
+    expect(repository.findRecordIdsAllowedForOperation).toHaveBeenCalledWith({
+      recordIds: [THREAD_ID],
+      operationType: 'restore',
+      updatedColumns: [],
+      withDeleted: true,
+    });
+    expect(
+      query.mock.calls.some(([sql]) => sql.includes('"deletedAt" = NULL')),
+    ).toBe(true);
+  });
+
+  it('leaves a conversation that is not deleted untouched on restore', async () => {
+    const { service, query } = buildService();
+    const liveThread = { id: THREAD_ID, workspaceMemberId: 'owner' };
+    query.mockImplementation(async (sql: string) =>
+      sql.includes('FOR UPDATE') ? [liveThread] : [],
+    );
+    await expect(service.restoreThreadWithAccess(args)).resolves.toEqual(
+      liveThread,
+    );
+    expect(
+      query.mock.calls.some(([sql]) => sql.includes('restored_thread')),
+    ).toBe(false);
+  });
+
+  it('refuses restore without the restore permission', async () => {
+    const { service, query, repository } = buildService();
+    query.mockImplementation(async (sql: string) =>
+      sql.includes('FOR UPDATE')
+        ? [{ id: THREAD_ID, deletedAt: '2026-09-01T00:00:00.000Z' }]
+        : [],
+    );
+    repository.findRecordIdsAllowedForOperation.mockResolvedValue([]);
+    await expect(service.restoreThreadWithAccess(args)).rejects.toMatchObject({
+      code: 'THREAD_NOT_FOUND',
+    });
+    expect(
+      query.mock.calls.some(([sql]) => sql.includes('restored_thread')),
+    ).toBe(false);
   });
 
   it('rechecks the authenticated subject and policy on every read', async () => {
@@ -254,61 +306,24 @@ describe('Conversation common record access', () => {
       authContext,
       objectMetadataId: 'object',
       recordIds: [THREAD_ID],
-      withDeleted: false,
+      withDeleted: true,
     });
   });
 
-  it.each([MetadataReadability.SYSTEM, MetadataReadability.PRIVATE])(
-    'bounds the readable thread list before ranking for %s metadata',
-    async (readability) => {
-      const { service, repository, objectMetadata, sharing } = buildService();
-      objectMetadata.readability = readability;
-      await service.getReadableThreadIds(args);
-      expect(repository.find).toHaveBeenCalledWith(
-        expect.objectContaining({
-          take: 1000,
-          order: { updatedAt: 'DESC', id: 'DESC' },
-        }),
-      );
-      expect(sharing.getPermissionsForRecords).not.toHaveBeenCalled();
-    },
-  );
-
-  it('batches capabilities and lists only records admitted by the ordinary repository', async () => {
+  it('batches capabilities', async () => {
     const { service, sharing } = buildService();
-    await expect(service.getReadableThreadIds(args)).resolves.toEqual([
-      THREAD_ID,
-    ]);
     await service.getPermissionsForThreads({ ...args, threadIds: [THREAD_ID] });
     expect(sharing.getPermissionsForRecords).toHaveBeenCalledTimes(1);
   });
 
   it.each(['update', 'delete', 'soft-delete', 'restore'] as const)(
-    'refuses %s on a workflow run conversation while still letting its readers read it',
+    'lets whoever may %s a workflow run conversation do so, like any other',
     async (operation) => {
       const { service, thread } = buildService();
       thread.workflowRunId = 'workflow-run';
-      await expect(service.getReadableThread(args)).resolves.toBeDefined();
       await expect(
         service.getThreadWithAccess({ ...args, operationType: operation }),
-      ).rejects.toMatchObject({ code: 'WORKFLOW_RUN_THREAD_READ_ONLY' });
+      ).resolves.toBe(thread);
     },
   );
-
-  it('leaves workflow run conversations out of the chat list once threads can name a run', async () => {
-    const { service, repository, flatFieldMetadataMaps } = buildService();
-    await service.getReadableThreadIds(args);
-    expect(repository.find).toHaveBeenLastCalledWith(
-      expect.objectContaining({ where: undefined }),
-    );
-    flatFieldMetadataMaps.byUniversalIdentifier[
-      STANDARD_OBJECTS.agentChatThread.fields.workflowRun.universalIdentifier
-    ] = {};
-    await service.getReadableThreadIds(args);
-    expect(repository.find).toHaveBeenLastCalledWith(
-      expect.objectContaining({
-        where: { workflowRunId: expect.objectContaining({ _type: 'isNull' }) },
-      }),
-    );
-  });
 });

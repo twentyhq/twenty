@@ -11,7 +11,6 @@ import { HttpTool } from 'src/engine/core-modules/tool/tools/http-tool/http-tool
 import { CreateWorkflowVersionStepInput } from 'src/engine/core-modules/workflow/dtos/create-workflow-version-step.input';
 import { DeleteWorkflowVersionStepInput } from 'src/engine/core-modules/workflow/dtos/delete-workflow-version-step.input';
 import { DuplicateWorkflowVersionStepInput } from 'src/engine/core-modules/workflow/dtos/duplicate-workflow-version-step.input';
-import { SubmitFormStepInput } from 'src/engine/core-modules/workflow/dtos/submit-form-step.input';
 import { TestHttpRequestInput } from 'src/engine/core-modules/workflow/dtos/test-http-request.input';
 import { TestHttpRequestDTO } from 'src/engine/core-modules/workflow/dtos/test-http-request.dto';
 import { UpdateWorkflowRunStepInput } from 'src/engine/core-modules/workflow/dtos/update-workflow-run-step.input';
@@ -26,22 +25,29 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
-import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
-import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
 import { ConnectedAccountHandleDTO } from 'src/engine/metadata-modules/connected-account/dtos/connected-account-handle.dto';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { CoreWorkflowAccessService } from 'src/engine/core-modules/workflow/services/core-workflow-access.service';
 import { WorkflowVersionStepWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step.workspace-service';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
-import { WorkflowRunnerWorkspaceService } from 'src/modules/workflow/workflow-runner/workspace-services/workflow-runner.workspace-service';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 
 @CoreResolver()
 @UsePipes(ResolverValidationPipe)
 @UseGuards(
-  WorkspaceAuthGuard,
-  UserAuthGuard,
+  AuthPrincipalGuard({
+    userSession: {
+      standard: true,
+      impersonated: true,
+      playground: true,
+      workspaceAgnostic: false,
+    },
+    apiKey: false,
+    oauthClient: { withUser: true, withoutUser: false },
+    application: { withUser: true, withoutUser: false },
+  }),
   SettingsPermissionGuard(PermissionFlagType.WORKFLOWS),
 )
 @UseFilters(
@@ -54,7 +60,6 @@ import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filt
 export class WorkflowVersionStepResolver {
   constructor(
     private readonly workflowVersionStepWorkspaceService: WorkflowVersionStepWorkspaceService,
-    private readonly workflowRunnerWorkspaceService: WorkflowRunnerWorkspaceService,
     private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
     private readonly httpTool: HttpTool,
     private readonly connectedAccountMetadataService: ConnectedAccountMetadataService,
@@ -175,22 +180,6 @@ export class WorkflowVersionStepResolver {
       workflowVersionId,
       stepIdToDelete: stepId,
     });
-  }
-
-  @Mutation(() => Boolean)
-  async submitFormStep(
-    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-    @Args('input')
-    { stepId, workflowRunId, response }: SubmitFormStepInput,
-  ) {
-    await this.workflowRunnerWorkspaceService.submitFormStep({
-      workspaceId,
-      stepId,
-      workflowRunId,
-      response,
-    });
-
-    return true;
   }
 
   @Mutation(() => WorkflowActionDTO)

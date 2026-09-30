@@ -1,4 +1,4 @@
-import { type AgentChatThread } from '~/generated-metadata/graphql';
+import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { groupThreadsByDate } from '@/ai/utils/groupThreadsByDate';
 
 describe('groupThreadsByDate', () => {
@@ -17,26 +17,13 @@ describe('groupThreadsByDate', () => {
   const eightDaysAgo = getDateDaysAgo(8);
   const fourteenDaysAgo = getDateDaysAgo(14);
 
-  const baseThread: Omit<
-    AgentChatThread,
-    'updatedAt' | 'id' | 'lastMessageAt'
-  > = {
+  const buildThread = (id: string, updatedAt: Date): AgentChatThreadRecord => ({
+    __typename: 'AgentChatThread',
+    id,
     title: 'Test Thread',
     createdAt: twoDaysAgo.toISOString(),
-    totalInputTokens: 0,
-    totalOutputTokens: 0,
-    totalCacheReadTokens: 0,
-    contextWindowTokens: null,
-    conversationSize: 0,
-    totalInputCredits: 0,
-    totalOutputCredits: 0,
-  };
-
-  const buildThread = (id: string, lastMessageAt: Date): AgentChatThread => ({
-    ...baseThread,
-    id,
-    lastMessageAt: lastMessageAt.toISOString(),
-    updatedAt: lastMessageAt.toISOString(),
+    deletedAt: null,
+    updatedAt: updatedAt.toISOString(),
   });
 
   it('groups threads into Today, Yesterday, Previous 7 days, and month sections', () => {
@@ -45,7 +32,7 @@ describe('groupThreadsByDate', () => {
       year: 'numeric',
     });
 
-    const threads: AgentChatThread[] = [
+    const threads: AgentChatThreadRecord[] = [
       buildThread('1', today),
       buildThread('2', yesterday),
       buildThread('3', twoDaysAgo),
@@ -83,15 +70,8 @@ describe('groupThreadsByDate', () => {
     expect(groupThreadsByDate([], today)).toEqual([]);
   });
 
-  it('falls back to updatedAt when lastMessageAt is null', () => {
-    const thread: AgentChatThread = {
-      ...baseThread,
-      id: '1',
-      lastMessageAt: null,
-      updatedAt: yesterday.toISOString(),
-    };
-
-    const [group] = groupThreadsByDate([thread], today);
+  it('groups a thread by its last update', () => {
+    const [group] = groupThreadsByDate([buildThread('1', yesterday)], today);
 
     expect(group.id).toBe('yesterday');
   });

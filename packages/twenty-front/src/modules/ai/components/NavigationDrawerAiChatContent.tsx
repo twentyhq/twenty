@@ -3,13 +3,13 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { AiChatThreadDeleteConfirmationModal } from '@/ai/components/AiChatThreadDeleteConfirmationModal';
 import { AiChatThreadFilterDropdown } from '@/ai/components/AiChatThreadFilterDropdown';
 import { AiChatSkeletonLoader } from '@/ai/components/internal/AiChatSkeletonLoader';
 import { NavigationDrawerAiChatThreadSection } from '@/ai/components/NavigationDrawerAiChatThreadSection';
 import { AGENT_CHAT_THREAD_GROUP_BY } from '@/ai/constants/AgentChatThreadGroupBy';
 import { AI_CHAT_THREAD_ACTIONS_SURFACE } from '@/ai/constants/AiChatThreadActionsSurface';
 import { useAiChatThreadClick } from '@/ai/hooks/useAiChatThreadClick';
+import { AgentChatThreadsFetchMoreTrigger } from '@/ai/components/AgentChatThreadsFetchMoreTrigger';
 import { useChatThreads } from '@/ai/hooks/useChatThreads';
 import { agentChatThreadGroupByState } from '@/ai/states/agentChatThreadGroupByState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
@@ -46,12 +46,6 @@ const StyledEmptyState = styled.div`
   justify-content: center;
 `;
 
-const StyledFetchMoreTrigger = styled.div`
-  height: 1px;
-  min-height: 1px;
-  width: 100%;
-`;
-
 const AI_CHAT_RECENTS_NAVIGATION_SECTION_ID = 'AiChatRecents';
 
 export const NavigationDrawerAiChatContent = () => {
@@ -64,7 +58,7 @@ export const NavigationDrawerAiChatContent = () => {
   });
   const agentChatThreadGroupBy = useAtomStateValue(agentChatThreadGroupByState);
 
-  const { threads, hasNextPage, loading, fetchMoreRef } = useChatThreads();
+  const { threads, loading } = useChatThreads();
 
   if (loading && threads.length === 0) {
     return (
@@ -115,11 +109,8 @@ export const NavigationDrawerAiChatContent = () => {
         {threads.length === 0 && isExpanded ? (
           <StyledEmptyState>{t`No chat`}</StyledEmptyState>
         ) : null}
-        {hasNextPage ? <StyledFetchMoreTrigger ref={fetchMoreRef} /> : null}
+        <AgentChatThreadsFetchMoreTrigger />
       </StyledThreadList>
-      <AiChatThreadDeleteConfirmationModal
-        surface={AI_CHAT_THREAD_ACTIONS_SURFACE.NAV_DRAWER}
-      />
     </StyledContainer>
   );
 };
