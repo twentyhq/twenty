@@ -81,25 +81,6 @@
   transform: translateX(-100%);
 }
 
-.countdown {
-  animation: progressBarCountdown
-    var(--progress-bar-countdown-duration, #{duration(normal)}) linear forwards;
-
-  &[data-paused] {
-    animation-play-state: paused;
-  }
-}
-
-@keyframes progressBarCountdown {
-  from {
-    width: 100%;
-  }
-
-  to {
-    width: 0;
-  }
-}
-
 @keyframes progressBarGrowIn {
   from {
     width: 0;

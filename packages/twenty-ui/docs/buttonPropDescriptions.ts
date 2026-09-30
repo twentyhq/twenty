@@ -13,8 +13,6 @@ export const BUTTON_PROP_DESCRIPTIONS = {
   startIcon: 'Decorative content displayed before the label.',
   endIcon: 'Decorative content displayed after the label.',
   hotkeys: 'Keyboard shortcut hints displayed on non-mobile screens.',
-  soon: 'Displays a coming-soon label and disables activation.',
-  soonLabel: 'Text for the coming-soon label.',
   href: 'Destination URL. Enables native link semantics instead of button semantics.',
   render:
     'Caller-supplied root element or renderer. Preserve a native button, or an anchor when `href` is set. Router integration belongs to the caller.',
