@@ -8,7 +8,14 @@ export const InlineBannerButton = ({
   title,
   Icon,
   hidden,
-  ...buttonProps
+  onClick,
+  href,
+  render,
+  target,
+  rel,
+  download,
+  disabled,
+  'aria-label': ariaLabel,
 }: InlineBannerButtonProps & { color: BannerColor }) => {
   if (hidden) {
     return null;
@@ -16,7 +23,14 @@ export const InlineBannerButton = ({
 
   return (
     <Button
-      {...buttonProps}
+      onClick={onClick}
+      href={href}
+      render={render}
+      target={target}
+      rel={rel}
+      download={download}
+      disabled={disabled}
+      aria-label={ariaLabel}
       size="sm"
       startIcon={isDefined(Icon) ? <Icon /> : undefined}
       variant="outline"
