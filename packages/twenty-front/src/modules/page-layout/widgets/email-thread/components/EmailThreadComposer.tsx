@@ -120,7 +120,7 @@ export const EmailThreadComposer = ({
           label: t`Send`,
           Icon: IconSend,
           isPrimaryCTA: true,
-          shortcut: { type: 'combination', keys: ['Mod', 'Enter'] },
+          shortcut: ['Mod', 'Enter'],
           onClick: handleSend,
           disabled: !canSendReply,
         },

@@ -25,10 +25,7 @@ type MenuStoryProps = MenuRootProps & { content?: MenuCatalogContent };
 
 const BASIC_ITEMS = (
   <>
-    <Menu.Item
-      startIcon={<IconCopy />}
-      shortcut={{ type: 'combination', keys: ['Mod', 'D'] }}
-    >
+    <Menu.Item startIcon={<IconCopy />} shortcut={['Mod', 'D']}>
       Duplicate
     </Menu.Item>
     <Menu.Item startIcon={<IconDownload />} description="CSV">

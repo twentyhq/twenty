@@ -175,7 +175,7 @@ const LIST_ITEM_CATALOG_SLOT_PROPS: Record<
   endIcon: { endIcon: <IconSettings /> },
   description: { description: 'Description' },
   endDescription: { description: '3 selected', descriptionPlacement: 'end' },
-  shortcut: { shortcut: { type: 'combination', keys: ['Mod', 'K'] } },
+  shortcut: { shortcut: ['Mod', 'K'] },
   actions: { actions: ACTIONS },
   submenu: { hasSubmenu: true },
 };

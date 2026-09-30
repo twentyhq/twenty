@@ -115,7 +115,7 @@ export const SidePanelComposeEmailPage = () => {
             key="send"
             size="sm"
             startIcon={<IconSend />}
-            shortcut={{ type: 'combination', keys: ['Mod', 'Enter'] }}
+            shortcut={['Mod', 'Enter']}
             onClick={composerState.handleSend}
             disabled={!canSend}
             variant="solid"

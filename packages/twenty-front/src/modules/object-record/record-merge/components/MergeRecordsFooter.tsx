@@ -52,11 +52,7 @@ export const MergeRecordsFooter = ({
         <Button
           size="md"
           startIcon={<IconArrowMerge />}
-          shortcut={
-            isMerging
-              ? undefined
-              : { type: 'combination', keys: ['Mod', 'Enter'] }
-          }
+          shortcut={isMerging ? undefined : ['Mod', 'Enter']}
           onClick={handleMergeRecords}
           disabled={isMerging}
           variant="solid"

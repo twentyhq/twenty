@@ -186,7 +186,7 @@ export const SettingsObjectSearchSection = ({
           <SettingsOptionCardContentSwitch
             Icon={IconEye}
             title={t`Global search`}
-            description={t`Show this object's records in the command menu (${formatShortcut({ shortcut: { type: 'combination', keys: ['Mod', 'K'] } })}).`}
+            description={t`Show this object's records in the command menu (${formatShortcut({ shortcut: ['Mod', 'K'] })}).`}
             checked={isSearchable}
             advancedMode
             onChange={handleToggleSearchable}

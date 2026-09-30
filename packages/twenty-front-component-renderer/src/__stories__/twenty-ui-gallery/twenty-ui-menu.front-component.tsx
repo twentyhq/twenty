@@ -15,7 +15,7 @@ const MenuExample = () => {
           <Menu.Group>
             <Menu.GroupLabel>Record</Menu.GroupLabel>
             <Menu.Item
-              shortcut={{ type: 'sequence', steps: [['G'], ['A']] }}
+              shortcut={[['G'], ['A']]}
               shortcutJoinLabel="followed by"
               onClick={() => setAction('duplicated')}
             >

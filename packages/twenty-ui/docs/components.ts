@@ -67,7 +67,7 @@ export const DOCUMENTED_COMPONENTS = [
     slug: 'typography/shortcut',
     propDescriptions: {
       shortcut:
-        'Explicit simultaneous combination or sequence of combinations.',
+        'Flat key array for a simultaneous combination, or nested key arrays for an ordered sequence of combinations.',
       platform:
         'Optional mac or other platform override. Defaults to server-safe device detection.',
       sequenceJoinLabel: 'Text between sequence steps. Defaults to then.',

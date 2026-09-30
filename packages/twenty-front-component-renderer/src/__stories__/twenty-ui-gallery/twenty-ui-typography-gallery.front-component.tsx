@@ -40,17 +40,11 @@ const TYPOGRAPHY_ENTRIES: GalleryEntry[] = [
     name: 'Shortcut',
     node: (
       <>
-        <Shortcut
-          shortcut={{ type: 'combination', keys: ['Mod', 'K'] }}
-          platform="mac"
-        />
-        <Shortcut
-          shortcut={{ type: 'sequence', steps: [['G'], ['P']] }}
-          sequenceJoinLabel="next"
-        />
+        <Shortcut shortcut={['Mod', 'K']} platform="mac" />
+        <Shortcut shortcut={[['G'], ['P']]} sequenceJoinLabel="next" />
         <Text>
           {formatShortcut({
-            shortcut: { type: 'combination', keys: ['Mod', 'K'] },
+            shortcut: ['Mod', 'K'],
             platform: 'other',
           })}
         </Text>

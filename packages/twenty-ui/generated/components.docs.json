@@ -30,7 +30,7 @@
         "type": "ShortcutDefinition",
         "required": true,
         "defaultValue": null,
-        "description": "Explicit simultaneous combination or sequence of combinations."
+        "description": "Flat key array for a simultaneous combination, or nested key arrays for an ordered sequence of combinations."
       },
       {
         "name": "variant",
@@ -975,7 +975,7 @@
         "type": "ShortcutDefinition",
         "required": false,
         "defaultValue": null,
-        "description": "Explicit shortcut combination or sequence displayed on non-mobile screens."
+        "description": "Flat key array for simultaneous keys, or nested key arrays for an ordered sequence. Displayed on non-mobile screens."
       },
       {
         "name": "shortcutJoinLabel",
@@ -1094,7 +1094,7 @@
         "type": "ShortcutDefinition",
         "required": false,
         "defaultValue": null,
-        "description": "Explicit shortcut combination or sequence displayed on non-mobile screens."
+        "description": "Flat key array for simultaneous keys, or nested key arrays for an ordered sequence. Displayed on non-mobile screens."
       },
       {
         "name": "shortcutJoinLabel",
@@ -1206,7 +1206,7 @@
         "type": "ShortcutDefinition",
         "required": false,
         "defaultValue": null,
-        "description": "Explicit shortcut combination or sequence displayed on non-mobile screens."
+        "description": "Flat key array for simultaneous keys, or nested key arrays for an ordered sequence. Displayed on non-mobile screens."
       },
       {
         "name": "shortcutJoinLabel",
@@ -8776,7 +8776,7 @@
         "type": "ShortcutDefinition",
         "required": false,
         "defaultValue": null,
-        "description": "Explicit shortcut combination or sequence. Register handlers in the application."
+        "description": "Flat key array for simultaneous keys, or nested key arrays for an ordered sequence. Register handlers in the application."
       },
       {
         "name": "shortcutJoinLabel",

@@ -12,7 +12,7 @@ const meta: Meta<typeof Shortcut> = {
   component: Shortcut,
   decorators: [ComponentDecorator],
   args: {
-    shortcut: { type: 'combination', keys: ['Mod', 'K'] },
+    shortcut: ['Mod', 'K'],
     platform: 'mac',
   },
 };
@@ -41,7 +41,7 @@ export const OtherPlatform: Story = {
 };
 
 export const Sequence: Story = {
-  args: { shortcut: { type: 'sequence', steps: [['G'], ['P']] } },
+  args: { shortcut: [['G'], ['P']] },
   play: async ({ canvasElement, args }) => {
     await expect(
       within(canvasElement).getByRole('img', { name: 'G then P' }),
@@ -51,13 +51,10 @@ export const Sequence: Story = {
 
 export const LocalizedSequence: Story = {
   args: {
-    shortcut: {
-      type: 'sequence',
-      steps: [
-        ['Control', 'K'],
-        ['Control', 'C'],
-      ],
-    },
+    shortcut: [
+      ['Control', 'K'],
+      ['Control', 'C'],
+    ],
     platform: 'other',
     sequenceJoinLabel: 'followed by',
     'aria-label': 'Control K followed by Control C',
@@ -72,19 +69,11 @@ export const LocalizedSequence: Story = {
 export const Presentations: Story = {
   render: () => (
     <>
-      <Button shortcut={{ type: 'combination', keys: ['Mod', 'Enter'] }}>
-        Save record
-      </Button>
-      <ListItem
-        shortcut={{ type: 'sequence', steps: [['G'], ['P']] }}
-        shortcutJoinLabel="next"
-      >
+      <Button shortcut={['Mod', 'Enter']}>Save record</Button>
+      <ListItem shortcut={[['G'], ['P']]} shortcutJoinLabel="next">
         Open people
       </ListItem>
-      <Shortcut
-        shortcut={{ type: 'combination', keys: ['Mod', 'K'] }}
-        variant="text"
-      />
+      <Shortcut shortcut={['Mod', 'K']} variant="text" />
     </>
   ),
   play: async ({ canvasElement }) => {
@@ -100,12 +89,9 @@ export const Mobile: Story = {
   beforeEach: () => overrideMediaQueryMatches({ [MOBILE_MEDIA_QUERY]: true }),
   render: () => (
     <>
-      <Shortcut
-        shortcut={{ type: 'combination', keys: ['H'] }}
-        visibility="desktop"
-      />
-      <Shortcut shortcut={{ type: 'combination', keys: ['V'] }} />
-      <Button shortcut={{ type: 'combination', keys: ['S'] }}>Save</Button>
+      <Shortcut shortcut={['H']} visibility="desktop" />
+      <Shortcut shortcut={['V']} />
+      <Button shortcut={['S']}>Save</Button>
     </>
   ),
   play: async ({ canvasElement }) => {
@@ -123,19 +109,11 @@ export const Mobile: Story = {
 export const Documentation: Story = {
   render: () => (
     <>
-      <Button shortcut={{ type: 'combination', keys: ['Mod', 'Enter'] }}>
-        Save record
-      </Button>
-      <ListItem
-        shortcut={{ type: 'sequence', steps: [['G'], ['P']] }}
-        shortcutJoinLabel="next"
-      >
+      <Button shortcut={['Mod', 'Enter']}>Save record</Button>
+      <ListItem shortcut={[['G'], ['P']]} shortcutJoinLabel="next">
         Open people
       </ListItem>
-      <Shortcut
-        shortcut={{ type: 'combination', keys: ['Mod', 'K'] }}
-        variant="text"
-      />
+      <Shortcut shortcut={['Mod', 'K']} variant="text" />
     </>
   ),
 };

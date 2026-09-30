@@ -44,11 +44,7 @@ export const CommandMenuItem = ({
       text={label}
       contextualText={description}
       contextualTextPosition={contextualTextPosition}
-      shortcut={
-        isDefined(hotKeys)
-          ? { type: 'sequence', steps: hotKeys.map((key) => [key]) }
-          : undefined
-      }
+      shortcut={isDefined(hotKeys) ? hotKeys.map((key) => [key]) : undefined}
       shortcutJoinLabel={t`then`}
       onClick={
         onClick || to

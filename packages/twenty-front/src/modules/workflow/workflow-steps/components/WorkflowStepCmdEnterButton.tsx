@@ -24,7 +24,7 @@ export const WorkflowStepCmdEnterButton = ({
       size="sm"
       onClick={onClick}
       disabled={disabled}
-      shortcut={{ type: 'combination', keys: ['Mod', 'Enter'] }}
+      shortcut={['Mod', 'Enter']}
       variant={disabled ? 'outline' : 'solid'}
       color="accent"
     >

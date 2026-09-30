@@ -75,10 +75,7 @@ export const ShortcutSetting = ({ state, isPending, command }: ActionProps) => {
             {capturing
               ? i18n._('Press shortcut…')
               : formatShortcut({
-                  shortcut: {
-                    type: 'combination',
-                    keys: state.settings.openShortcut.split('+'),
-                  },
+                  shortcut: state.settings.openShortcut.split('+'),
                   combinationSeparator: ' + ',
                 })}
           </Button>

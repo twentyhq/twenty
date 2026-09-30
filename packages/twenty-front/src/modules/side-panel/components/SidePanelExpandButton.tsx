@@ -34,7 +34,7 @@ const SidePanelExpandButtonContent = () => {
   const tooltipContent =
     expandTarget.disabledReason ??
     (expandTarget.hasExpandShortcut
-      ? `${expandTarget.label} | ${formatShortcut({ shortcut: { type: 'combination', keys: ['Mod', 'Enter'] } })}`
+      ? `${expandTarget.label} | ${formatShortcut({ shortcut: ['Mod', 'Enter'] })}`
       : expandTarget.label);
 
   return (

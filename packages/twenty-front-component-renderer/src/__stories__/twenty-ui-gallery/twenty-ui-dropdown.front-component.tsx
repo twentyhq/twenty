@@ -25,7 +25,7 @@ const DropdownExample = () => {
             <Dropdown.Section>
               <Dropdown.ActionItem
                 page="assignees"
-                shortcut={{ type: 'sequence', steps: [['G'], ['A']] }}
+                shortcut={[['G'], ['A']]}
                 shortcutJoinLabel="followed by"
               >
                 Assign person
@@ -48,10 +48,7 @@ const DropdownExample = () => {
                 <Dropdown.OptionItem
                   key={assignee}
                   selected={selection === assignee}
-                  shortcut={{
-                    type: 'sequence',
-                    steps: [['G'], [assignee.charAt(0)]],
-                  }}
+                  shortcut={[['G'], [assignee.charAt(0)]]}
                   shortcutJoinLabel="next"
                   onSelect={() => setSelection(assignee)}
                 >

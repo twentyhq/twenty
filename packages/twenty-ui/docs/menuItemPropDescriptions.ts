@@ -29,7 +29,7 @@ export const MENU_ITEM_PROP_DESCRIPTIONS = {
   focused: 'Applies focused appearance without moving DOM focus.',
   selected: 'Applies selected appearance without owning selection state.',
   shortcut:
-    'Explicit shortcut combination or sequence. Register handlers in the application.',
+    'Flat key array for simultaneous keys, or nested key arrays for an ordered sequence. Register handlers in the application.',
   shortcutJoinLabel:
     'Text between sequential shortcut steps. Defaults to `then`.',
   isSubMenuOpened: 'Applies the open treatment to the submenu chevron.',

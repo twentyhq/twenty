@@ -14,10 +14,7 @@ const ResponsiveHooks = () => {
     <>
       <Text>Mobile layout: {String(isMobile)}</Text>
       <Text>Touch input: {String(isTouchDevice)}</Text>
-      <Button
-        shortcut={{ type: 'combination', keys: ['S'] }}
-        onClick={() => setActivations(activations + 1)}
-      >
+      <Button shortcut={['S']} onClick={() => setActivations(activations + 1)}>
         Save record
       </Button>
       <Button onClick={() => setActivations(activations + 1)}>

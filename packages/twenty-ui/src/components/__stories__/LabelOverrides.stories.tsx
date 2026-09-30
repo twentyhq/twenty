@@ -53,18 +53,13 @@ export const CalloutDismissal: Story = {
 export const ShortcutLabels: Story = {
   render: () => (
     <>
-      <ListItem shortcut={{ type: 'sequence', steps: [['G'], ['D']] }}>
-        Default shortcut
-      </ListItem>
-      <ListItem
-        shortcut={{ type: 'sequence', steps: [['G'], ['S']] }}
-        shortcutJoinLabel="followed by"
-      >
+      <ListItem shortcut={[['G'], ['D']]}>Default shortcut</ListItem>
+      <ListItem shortcut={[['G'], ['S']]} shortcutJoinLabel="followed by">
         Supplied shortcut
       </ListItem>
       <MenuItem
         text="Legacy shortcut"
-        shortcut={{ type: 'sequence', steps: [['G'], ['L']] }}
+        shortcut={[['G'], ['L']]}
         shortcutJoinLabel="next"
       />
     </>
@@ -136,25 +131,17 @@ export const MenuShortcutLabels: Story = {
     <Menu.Root>
       <Menu.Trigger render={<Button>Open shortcuts</Button>} />
       <Menu.Popup aria-label="Shortcuts">
-        <Menu.Item shortcut={{ type: 'sequence', steps: [['G'], ['D']] }}>
-          Default
-        </Menu.Item>
-        <Menu.Item
-          shortcut={{ type: 'sequence', steps: [['G'], ['A']] }}
-          shortcutJoinLabel="followed by"
-        >
+        <Menu.Item shortcut={[['G'], ['D']]}>Default</Menu.Item>
+        <Menu.Item shortcut={[['G'], ['A']]} shortcutJoinLabel="followed by">
           Action
         </Menu.Item>
-        <Menu.CheckboxItem
-          shortcut={{ type: 'sequence', steps: [['G'], ['C']] }}
-          shortcutJoinLabel="next"
-        >
+        <Menu.CheckboxItem shortcut={[['G'], ['C']]} shortcutJoinLabel="next">
           Checkbox
         </Menu.CheckboxItem>
         <Menu.RadioGroup value="radio">
           <Menu.RadioItem
             value="radio"
-            shortcut={{ type: 'sequence', steps: [['G'], ['R']] }}
+            shortcut={[['G'], ['R']]}
             shortcutJoinLabel="afterwards"
           >
             Radio
@@ -162,7 +149,7 @@ export const MenuShortcutLabels: Story = {
         </Menu.RadioGroup>
         <Menu.SubmenuRoot>
           <Menu.SubmenuTrigger
-            shortcut={{ type: 'sequence', steps: [['G'], ['S']] }}
+            shortcut={[['G'], ['S']]}
             shortcutJoinLabel="and"
           >
             Submenu
@@ -214,27 +201,25 @@ export const DropdownLabels: Story = {
           />
           <Dropdown.Empty>No matching choices</Dropdown.Empty>
           <Dropdown.Loading>Fetching choices</Dropdown.Loading>
-          <Dropdown.ActionItem
-            shortcut={{ type: 'sequence', steps: [['G'], ['D']] }}
-          >
+          <Dropdown.ActionItem shortcut={[['G'], ['D']]}>
             Default shortcut
           </Dropdown.ActionItem>
           <Dropdown.ActionItem
-            shortcut={{ type: 'sequence', steps: [['G'], ['A']] }}
+            shortcut={[['G'], ['A']]}
             shortcutJoinLabel="followed by"
           >
             Action
           </Dropdown.ActionItem>
           <Dropdown.OptionItem
             selected={false}
-            shortcut={{ type: 'sequence', steps: [['G'], ['O']] }}
+            shortcut={[['G'], ['O']]}
             shortcutJoinLabel="next"
           >
             Option
           </Dropdown.OptionItem>
           <Dropdown.Submenu>
             <Dropdown.SubmenuTrigger
-              shortcut={{ type: 'sequence', steps: [['G'], ['S']] }}
+              shortcut={[['G'], ['S']]}
               shortcutJoinLabel="afterwards"
             >
               Submenu

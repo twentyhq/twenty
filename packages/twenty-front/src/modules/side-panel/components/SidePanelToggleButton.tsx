@@ -68,7 +68,7 @@ export const SidePanelToggleButton = () => {
   }
 
   const ariaLabel = t`Command Menu`;
-  const tooltipContent = t`Command menu | ${formatShortcut({ shortcut: { type: 'combination', keys: ['Mod', 'K'] } })}`;
+  const tooltipContent = t`Command menu | ${formatShortcut({ shortcut: ['Mod', 'K'] })}`;
 
   return (
     <StyledButtonWrapper alignToTop={alignWithSidePanelTopBar}>

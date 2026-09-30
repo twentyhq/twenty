@@ -1,3 +1,3 @@
 export type ShortcutDefinition =
-  | { type: 'combination'; keys: readonly string[] }
-  | { type: 'sequence'; steps: readonly (readonly string[])[] };
+  | readonly string[]
+  | readonly (readonly string[])[];

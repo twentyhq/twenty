@@ -11,7 +11,7 @@ describe('formatShortcut', () => {
   ] as const)('formats combinations on $platform', ({ platform, expected }) => {
     expect(
       formatShortcut({
-        shortcut: { type: 'combination', keys: ['Mod', 'Enter'] },
+        shortcut: ['Mod', 'Enter'],
         platform,
       }),
     ).toBe(expected);
@@ -20,13 +20,10 @@ describe('formatShortcut', () => {
   it('keeps combinations inside a localized sequence', () => {
     expect(
       formatShortcut({
-        shortcut: {
-          type: 'sequence',
-          steps: [
-            ['Control', 'K'],
-            ['Control', 'C'],
-          ],
-        },
+        shortcut: [
+          ['Control', 'K'],
+          ['Control', 'C'],
+        ],
         platform: 'other',
         sequenceJoinLabel: 'followed by',
       }),
@@ -41,16 +38,12 @@ describe('formatShortcut', () => {
     { userAgent: 'Linux', expected: 'Ctrl K' },
   ])('detects the platform from $userAgent', ({ userAgent, expected }) => {
     vi.stubGlobal('navigator', { userAgent });
-    expect(
-      formatShortcut({ shortcut: { type: 'combination', keys: ['Mod', 'K'] } }),
-    ).toBe(expected);
+    expect(formatShortcut({ shortcut: ['Mod', 'K'] })).toBe(expected);
   });
 
   it('formats safely without browser globals', () => {
     vi.stubGlobal('navigator', undefined);
-    expect(
-      formatShortcut({ shortcut: { type: 'combination', keys: ['Mod', '+'] } }),
-    ).toBe('Ctrl +');
+    expect(formatShortcut({ shortcut: ['Mod', '+'] })).toBe('Ctrl +');
   });
 
   it.each([
@@ -79,7 +72,7 @@ describe('formatShortcut', () => {
     ({ platform, keys, expected }) => {
       expect(
         formatShortcut({
-          shortcut: { type: 'combination', keys },
+          shortcut: keys,
           platform,
           combinationSeparator: ' + ',
         }),
@@ -90,11 +83,10 @@ describe('formatShortcut', () => {
   it('omits empty steps without adding separators', () => {
     expect(
       formatShortcut({
-        shortcut: { type: 'sequence', steps: [[], ['G'], [], ['P']] },
+        shortcut: [[], ['G'], [], ['P']],
       }),
     ).toBe('G then P');
-    expect(
-      formatShortcut({ shortcut: { type: 'combination', keys: [] } }),
-    ).toBe('');
+    expect(formatShortcut({ shortcut: [] })).toBe('');
+    expect(formatShortcut({ shortcut: [[], []] })).toBe('');
   });
 });

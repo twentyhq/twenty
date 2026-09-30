@@ -67,11 +67,7 @@ export const UpdateMultipleRecordsFooter = ({
           size="sm"
           startIcon={<IconBoxMultiple />}
           loading={isUpdating && !progressText}
-          shortcut={
-            isUpdating
-              ? undefined
-              : { type: 'combination', keys: ['Mod', 'Enter'] }
-          }
+          shortcut={isUpdating ? undefined : ['Mod', 'Enter']}
           onClick={onUpdate}
           disabled={isUpdating || isUpdateDisabled}
           variant="solid"

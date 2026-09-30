@@ -1,8 +1,9 @@
-import { isNonEmptyArray } from '@sniptt/guards';
+import { isNonEmptyArray, isString } from '@sniptt/guards';
 
 import { isDefined } from '@ui/utilities/utils/isDefined';
 import { getUserDevice } from '@ui/utilities/device/getUserDevice';
 
+import { type ShortcutDefinition } from '../types/ShortcutDefinition';
 import { type ShortcutFormatOptions } from '../types/ShortcutFormatOptions';
 
 const ACCESSIBLE_KEY_LABELS = new Map<string, string>([
@@ -20,6 +21,10 @@ const ACCESSIBLE_KEY_LABELS = new Map<string, string>([
   ['→', 'Arrow right'],
   ['esc', 'Escape'],
 ]);
+
+const isShortcutCombination = (
+  shortcut: ShortcutDefinition,
+): shortcut is readonly string[] => shortcut.every(isString);
 
 export const getShortcutPresentation = ({
   shortcut,
@@ -39,8 +44,7 @@ export const getShortcutPresentation = ({
     ['Alt', isMac ? '⌥' : 'Alt'],
     ['Enter', '⏎'],
   ]);
-  const steps =
-    shortcut.type === 'combination' ? [shortcut.keys] : shortcut.steps;
+  const steps = isShortcutCombination(shortcut) ? [shortcut] : shortcut;
   const groups = steps
     .filter(isNonEmptyArray)
     .map((keys) => keys.map((key) => keySymbols.get(key) ?? key));

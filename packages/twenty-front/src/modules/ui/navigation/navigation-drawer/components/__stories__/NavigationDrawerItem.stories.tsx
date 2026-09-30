@@ -111,7 +111,7 @@ export const NewPill: Story = {
           args={{
             label: 'Feature with Keyboard Shortcut',
             Icon: IconSearch,
-            modifier: { keyboard: { type: 'combination', keys: ['Mod', 'N'] } },
+            modifier: { keyboard: ['Mod', 'N'] },
           }}
         />
       </StyledContainer>
@@ -209,7 +209,7 @@ export const Catalog: CatalogStory<Story, typeof NavigationDrawerItem> = {
                 : adornmentName === 'Keyboard Keys'
                   ? {
                       modifier: {
-                        keyboard: { type: 'combination', keys: ['Mod', 'K'] },
+                        keyboard: ['Mod', 'K'],
                       },
                     }
                   : {},

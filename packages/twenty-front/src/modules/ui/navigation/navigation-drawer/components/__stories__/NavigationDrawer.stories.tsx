@@ -90,7 +90,7 @@ export const Default: Story = {
           <NavigationDrawerItem
             label="Search"
             Icon={IconSearch}
-            modifier={{ keyboard: { type: 'combination', keys: ['Mod', 'K'] } }}
+            modifier={{ keyboard: ['Mod', 'K'] }}
           />
           <NavigationDrawerItem
             label="Settings"

@@ -146,7 +146,7 @@ export const HotKeysCatalog: CatalogStory<Story, typeof MenuItem> = {
   args: {
     text: 'Menu item with shortcut',
     LeftIcon: IconBell,
-    shortcut: { type: 'combination', keys: ['Mod', 'K'] },
+    shortcut: ['Mod', 'K'],
   },
   argTypes: {
     className: { control: false },
@@ -165,10 +165,10 @@ export const HotKeysCatalog: CatalogStory<Story, typeof MenuItem> = {
               case 'no shortcut':
                 return { shortcut: undefined };
               case 'single key':
-                return { shortcut: { type: 'combination', keys: ['K'] } };
+                return { shortcut: ['K'] };
               case 'modifier + key':
                 return {
-                  shortcut: { type: 'combination', keys: ['Mod', 'K'] },
+                  shortcut: ['Mod', 'K'],
                 };
               default:
                 return {};

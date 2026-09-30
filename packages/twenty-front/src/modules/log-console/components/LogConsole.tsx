@@ -349,7 +349,7 @@ export const LogConsole = () => {
   };
 
   const toggleHotkeyLabel = formatShortcut({
-    shortcut: { type: 'combination', keys: ['Mod', 'J'] },
+    shortcut: ['Mod', 'J'],
   });
 
   const toggleHotkeyEffect = isLogConsoleAllowed ? (

@@ -14,7 +14,7 @@ export const BUTTON_PROP_DESCRIPTIONS = {
   endIcon: 'Decorative content displayed after the label.',
   shortcutJoinLabel: 'Localized text between sequence steps. Defaults to then.',
   shortcut:
-    'Explicit shortcut combination or sequence displayed on non-mobile screens.',
+    'Flat key array for simultaneous keys, or nested key arrays for an ordered sequence. Displayed on non-mobile screens.',
   href: 'Destination URL. Enables native link semantics instead of button semantics.',
   render:
     'Caller-supplied root element or renderer. Preserve a native button, or an anchor when `href` is set. Router integration belongs to the caller.',
