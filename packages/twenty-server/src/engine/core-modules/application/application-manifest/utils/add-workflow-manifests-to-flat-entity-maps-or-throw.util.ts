@@ -12,6 +12,7 @@ import {
 } from 'src/engine/core-modules/application/application.exception';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
+import { type IdByUniversalIdentifierByMetadataName } from 'src/engine/workspace-manager/workspace-migration/services/utils/enrich-create-workspace-migration-action-with-ids.util';
 import { addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/add-universal-flat-entity-to-universal-flat-entity-maps-through-mutation-or-throw.util';
 
 export const addWorkflowManifestsToFlatEntityMapsOrThrow = ({
@@ -20,6 +21,7 @@ export const addWorkflowManifestsToFlatEntityMapsOrThrow = ({
   fromAllFlatEntityMaps,
   toAllUniversalFlatEntityMaps,
   existingAllFlatEntityMaps,
+  idByUniversalIdentifierByMetadataName,
   isApplicationWorkflowsEnabled,
   inferDeletionFromMissingEntities,
   now,
@@ -29,6 +31,7 @@ export const addWorkflowManifestsToFlatEntityMapsOrThrow = ({
   fromAllFlatEntityMaps: AllFlatEntityMaps;
   toAllUniversalFlatEntityMaps: AllFlatEntityMaps;
   existingAllFlatEntityMaps: AllFlatEntityMaps;
+  idByUniversalIdentifierByMetadataName: IdByUniversalIdentifierByMetadataName;
   isApplicationWorkflowsEnabled: boolean | undefined;
   inferDeletionFromMissingEntities: boolean;
   now: string;
@@ -70,10 +73,10 @@ export const addWorkflowManifestsToFlatEntityMapsOrThrow = ({
 
   if (workflows.length > 0) {
     const references = prepareWorkflowManifestReferences({
-      fromAllFlatEntityMaps,
       toAllUniversalFlatEntityMaps,
       existingAllFlatEntityMaps,
       ownerApplicationId: ownerFlatApplication.id,
+      idByUniversalIdentifierByMetadataName,
     });
     const versionIdentifiersByWorkflowId = new Map<string, Set<string>>();
     for (const version of Object.values(

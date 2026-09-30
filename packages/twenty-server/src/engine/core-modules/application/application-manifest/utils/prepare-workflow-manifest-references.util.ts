@@ -2,7 +2,6 @@ import { inputSchemaToOutputSchema } from 'twenty-shared/logic-function';
 import { type BaseOutputSchemaV2 } from 'twenty-shared/workflow';
 import { computeAiAgentOutputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/utils/compute-ai-agent-output-schema.util';
 import { isDefined } from 'twenty-shared/utils';
-import { v4 } from 'uuid';
 
 import {
   type WorkflowManifestReferences,
@@ -10,17 +9,18 @@ import {
   type WorkflowManifestFieldReference,
 } from 'src/engine/core-modules/application/application-manifest/types/workflow-manifest-references.type';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
+import { type IdByUniversalIdentifierByMetadataName } from 'src/engine/workspace-manager/workspace-migration/services/utils/enrich-create-workspace-migration-action-with-ids.util';
 
 export const prepareWorkflowManifestReferences = ({
-  fromAllFlatEntityMaps,
   toAllUniversalFlatEntityMaps,
   existingAllFlatEntityMaps,
   ownerApplicationId,
+  idByUniversalIdentifierByMetadataName,
 }: {
-  fromAllFlatEntityMaps: AllFlatEntityMaps;
   toAllUniversalFlatEntityMaps: AllFlatEntityMaps;
   existingAllFlatEntityMaps: AllFlatEntityMaps;
   ownerApplicationId: string;
+  idByUniversalIdentifierByMetadataName: IdByUniversalIdentifierByMetadataName;
 }): WorkflowManifestReferences => {
   const logicFunctionOutputSchemaByUniversalIdentifier = new Map<
     string,
@@ -47,10 +47,6 @@ export const prepareWorkflowManifestReferences = ({
     if (!isDefined(logicFunction)) {
       continue;
     }
-    logicFunction.id =
-      fromAllFlatEntityMaps.flatLogicFunctionMaps.byUniversalIdentifier[
-        logicFunction.universalIdentifier
-      ]?.id ?? v4();
     const declaredOutputSchema =
       logicFunction.workflowActionTriggerSettings?.outputSchema;
     if (isDefined(declaredOutputSchema)) {
@@ -59,10 +55,17 @@ export const prepareWorkflowManifestReferences = ({
         inputSchemaToOutputSchema(declaredOutputSchema),
       );
     }
-    if (isDefined(logicFunction.workflowActionTriggerSettings)) {
+    const logicFunctionId =
+      idByUniversalIdentifierByMetadataName.logicFunction?.[
+        logicFunction.universalIdentifier
+      ];
+    if (
+      isDefined(logicFunction.workflowActionTriggerSettings) &&
+      isDefined(logicFunctionId)
+    ) {
       logicFunctionIdByUniversalIdentifier.set(
         logicFunction.universalIdentifier,
-        logicFunction.id,
+        logicFunctionId,
       );
     }
   }
@@ -72,11 +75,11 @@ export const prepareWorkflowManifestReferences = ({
     if (!isDefined(agent)) {
       continue;
     }
-    agent.id =
-      fromAllFlatEntityMaps.flatAgentMaps.byUniversalIdentifier[
-        agent.universalIdentifier
-      ]?.id ?? v4();
-    agentIdByUniversalIdentifier.set(agent.universalIdentifier, agent.id);
+    const agentId =
+      idByUniversalIdentifierByMetadataName.agent?.[agent.universalIdentifier];
+    if (isDefined(agentId)) {
+      agentIdByUniversalIdentifier.set(agent.universalIdentifier, agentId);
+    }
     agentOutputSchemaByUniversalIdentifier.set(
       agent.universalIdentifier,
       computeAiAgentOutputSchema(agent.responseFormat),
@@ -112,12 +115,16 @@ export const prepareWorkflowManifestReferences = ({
     if (!isDefined(field)) {
       continue;
     }
-    field.id =
-      fromAllFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier[
+    const fieldId =
+      idByUniversalIdentifierByMetadataName.fieldMetadata?.[
         field.universalIdentifier
-      ]?.id ?? v4();
+      ];
+    if (!isDefined(fieldId)) {
+      continue;
+    }
     fieldByUniversalIdentifier.set(field.universalIdentifier, {
       ...field,
+      id: fieldId,
       objectUniversalIdentifier: field.objectMetadataUniversalIdentifier,
     });
   }

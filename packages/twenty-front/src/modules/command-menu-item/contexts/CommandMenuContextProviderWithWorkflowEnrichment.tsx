@@ -41,18 +41,19 @@ export const CommandMenuContextProviderWithWorkflowEnrichment = ({
     ? coreWorkflowsWithCurrentVersions
     : workflowsWithCurrentVersions;
 
-  const isWorkflowDefinitionReadOnly =
-    isCore &&
-    (coreWorkflowsWithCurrentVersions.length !==
-      selectedWorkflowRecordIds.length ||
-      coreWorkflowsWithCurrentVersions.some((workflow) => {
-        const application = currentWorkspace?.installedApplications.find(
-          (installedApplication) =>
-            installedApplication.id === workflow.applicationId,
-        );
-
-        return isThirdPartyApplication({ application, currentWorkspace });
-      }));
+  const applicationManagedWorkflowIds = new Set(
+    coreWorkflowsWithCurrentVersions
+      .filter((workflow) =>
+        isThirdPartyApplication({
+          application: currentWorkspace?.installedApplications.find(
+            (installedApplication) =>
+              installedApplication.id === workflow.applicationId,
+          ),
+          currentWorkspace,
+        }),
+      )
+      .map((workflow) => workflow.id),
+  );
 
   const enrichedSelectedRecords = commandMenuContextApi.selectedRecords.map(
     (record) => {
@@ -71,13 +72,20 @@ export const CommandMenuContextProviderWithWorkflowEnrichment = ({
         statuses: workflowWithCurrentVersion.statuses,
         lastPublishedVersionId:
           workflowWithCurrentVersion.lastPublishedVersionId,
+        ...(applicationManagedWorkflowIds.has(record.id) && {
+          recordPermissions: {
+            ...record.recordPermissions,
+            canUpdate: false,
+            canSoftDelete: false,
+            canDelete: false,
+          },
+        }),
       };
     },
   );
 
   return (
     <CommandMenuContextProviderContent
-      isWorkflowDefinitionReadOnly={isWorkflowDefinitionReadOnly}
       displayType={displayType}
       containerType={containerType}
       commandMenuContextApi={{
