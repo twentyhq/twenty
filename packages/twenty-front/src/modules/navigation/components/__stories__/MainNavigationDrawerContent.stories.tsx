@@ -7,9 +7,9 @@ import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { AGENT_CHAT_INSTANCE_ID } from '@/ai/constants/AgentChatInstanceId';
 import { AgentChatComponentInstanceContext } from '@/ai/contexts/AgentChatComponentInstanceContext';
+import { setAgentChatThreadList } from '@/ai/testing/setAgentChatThreadList';
 import { setAgentChatThreadPermissions } from '@/ai/testing/setAgentChatThreadPermissions';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
-import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { MainNavigationDrawerContent } from '@/navigation/components/MainNavigationDrawerContent';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
@@ -17,23 +17,20 @@ import { PermissionFlagType } from '~/generated-metadata/graphql';
 import { IconsProviderDecorator } from '~/testing/decorators/IconsProviderDecorator';
 import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 
+const THREAD_PERMISSIONS = {
+  canRead: true,
+  canUpdate: true,
+  canDelete: true,
+  canSoftDelete: true,
+};
+
 const THREAD = {
-  permissions: {
-    canRead: true,
-    canUpdate: true,
-    canDelete: true,
-    canSoftDelete: true,
-  },
+  __typename: 'AgentChatThread',
   id: '3a36fc8c-c8e2-4f16-a283-24dc05e3704b',
   title: 'Pipeline summary',
+  deletedAt: null,
   createdAt: '2026-01-01T12:00:00.000Z',
   updatedAt: '2026-01-01T12:00:00.000Z',
-  conversationSize: 0,
-  totalCacheReadTokens: 0,
-  totalInputCredits: 0,
-  totalInputTokens: 0,
-  totalOutputCredits: 0,
-  totalOutputTokens: 0,
 };
 
 const ContentWithCollapseControl = () => {
@@ -61,17 +58,13 @@ const AiNavigationContent = () => {
       isImpersonating: false,
       twoFactorAuthenticationMethodSummary: null,
     });
-    initialStore.set(metadataStoreState.atomFamily('agentChatThreads'), {
-      current: [THREAD],
-      draft: [],
-      status: 'up-to-date',
-    });
+    setAgentChatThreadList(initialStore, [THREAD]);
     return initialStore;
   });
 
   // Persisted auth atoms must hydrate before capturing the permission snapshot.
   useEffect(() => {
-    setAgentChatThreadPermissions(store, THREAD.id, THREAD.permissions);
+    setAgentChatThreadPermissions(store, THREAD.id, THREAD_PERMISSIONS);
   }, [store]);
 
   return (

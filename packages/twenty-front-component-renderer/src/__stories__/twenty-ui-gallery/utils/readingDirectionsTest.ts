@@ -22,6 +22,16 @@ export const readingDirectionsTest: TwentyUiGalleryPlayFunction = async ({
       first.getBoundingClientRect().left > last.getBoundingClientRect().left,
     ).toBe(direction === 'rtl');
     expect(getComputedStyle(first).borderStartEndRadius).toBe('0px');
+    const upcoming = content.getByRole('button', {
+      name: 'Upcoming action Soon',
+    });
+    expect(upcoming).toBeDisabled();
+    const upcomingLabel = content.getByText('Soon');
+    expect(
+      upcomingLabel.getBoundingClientRect().left <
+        upcoming.getBoundingClientRect().left +
+          upcoming.getBoundingClientRect().width / 2,
+    ).toBe(direction === 'rtl');
     const title = content.getByText('Account details');
     const description = content.getByText(
       'Review the information before continuing.',

@@ -20,22 +20,33 @@ import { finalizeDanglingToolParts } from 'src/engine/metadata-modules/ai/ai-age
 import { mapAiStepsToUiMessageParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/map-ai-steps-to-ui-message-parts.util';
 import { mapDBPartsToUIMessageParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/mapDBPartsToUIMessageParts';
 import { mapUIMessagePartsToPersistedDBParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/map-ui-message-parts-to-persisted-db-parts.util';
-import { findPendingQuestionPart } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-pending-question-part.util';
+import { PAUSING_TOOLS } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/constants/pausing-tools.constant';
+import { findAwaitingPausingToolParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/find-awaiting-pausing-tool-parts.util';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { hasWorkflowRunThreadFields } from 'src/engine/metadata-modules/ai/ai-history/utils/has-workflow-run-thread-fields.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { InputAskWorkspaceService } from 'src/modules/input-ask/workspace-services/input-ask.workspace-service';
+import {
+  WorkflowStepExecutorException,
+  WorkflowStepExecutorExceptionCode,
+} from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
+import { type WorkflowPendingAsk } from 'src/modules/workflow/workflow-executor/types/workflow-pending-ask.type';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 
-type RecordedExecutionResult = {
+export type RecordedExecutionResult = {
   steps?: Pick<NonNullable<AgentExecutionResult['steps']>[number], 'content'>[];
   isPaused?: boolean;
 };
 
+export type AnsweredToolPart = {
+  id: string;
+  messageId: string;
+  turnId: string | null;
+};
+
 export type RecordedConversation = {
   threadId: string;
-  isAwaitingAnswer: boolean;
+  pendingAsks: WorkflowPendingAsk[];
 };
 
 // A conversation is recorded only for an execution of an agent step that asks
@@ -56,7 +67,6 @@ export class WorkflowAgentConversationWorkspaceService {
     private readonly messagePartRepository: AgentHistoryRepository<AgentMessagePartEntity>,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
-    private readonly inputAskWorkspaceService: InputAskWorkspaceService,
   ) {}
 
   async recordExecution({
@@ -105,9 +115,6 @@ export class WorkflowAgentConversationWorkspaceService {
       parts: [{ type: 'text', text: prompt }],
     });
 
-    // Linked to its step before its question is offered: an answer is matched
-    // to the step through this link, and one arriving before it would find
-    // no step waiting and close the question the step is about to wait on.
     await this.workflowRunWorkspaceService.setStepThreadId({
       stepId,
       threadId,
@@ -115,49 +122,41 @@ export class WorkflowAgentConversationWorkspaceService {
       workspaceId,
     });
 
-    const isAwaitingAnswer = await this.recordReply({
+    const pendingAsks = await this.recordReply({
       workspaceId,
-      workflowRunId,
-      stepId,
       threadId,
       turnId,
       agentId,
       executionResult,
     });
 
-    return { threadId, isAwaitingAnswer };
+    return { threadId, pendingAsks };
   }
 
   // Continues a conversation whose question has been answered: the answer is
   // already recorded as the last message, so only the agent's reply is added.
   async recordContinuation({
     workspaceId,
-    workflowRunId,
-    stepId,
     threadId,
     agentId,
     executionResult,
   }: {
     workspaceId: string;
-    workflowRunId: string;
-    stepId: string;
     threadId: string;
     agentId: string | null;
     executionResult: RecordedExecutionResult;
   }): Promise<RecordedConversation> {
     const turnId = await this.insertTurn({ workspaceId, threadId, agentId });
 
-    const isAwaitingAnswer = await this.recordReply({
+    const pendingAsks = await this.recordReply({
       workspaceId,
-      workflowRunId,
-      stepId,
       threadId,
       turnId,
       agentId,
       executionResult,
     });
 
-    return { threadId, isAwaitingAnswer };
+    return { threadId, pendingAsks };
   }
 
   async loadModelMessages({
@@ -187,30 +186,86 @@ export class WorkflowAgentConversationWorkspaceService {
     return convertToModelMessages(uiMessages);
   }
 
+  // Records a person's answer where the agent will read it on resuming: the
+  // call's result, then the answer as the person's message in the call's turn.
+  async recordAnswer({
+    workspaceId,
+    threadId,
+    toolPart,
+    toolResult,
+    answerText,
+    senderUserWorkspaceId,
+  }: {
+    workspaceId: string;
+    threadId: string;
+    toolPart: AnsweredToolPart;
+    toolResult: Record<string, unknown>;
+    answerText: string;
+    senderUserWorkspaceId: string;
+  }): Promise<{ hasAwaitingToolCalls: boolean }> {
+    if (!isDefined(toolPart.turnId)) {
+      throw new WorkflowStepExecutorException(
+        `Tool call message ${toolPart.messageId} has no turn in conversation ${threadId}`,
+        WorkflowStepExecutorExceptionCode.INTERNAL_ERROR,
+      );
+    }
+
+    await this.messagePartRepository.update(
+      workspaceId,
+      { id: toolPart.id },
+      { toolOutput: toolResult },
+    );
+
+    await this.insertMessage({
+      workspaceId,
+      threadId,
+      turnId: toolPart.turnId,
+      role: AgentMessageRole.USER,
+      agentId: null,
+      senderUserWorkspaceId,
+      parts: [{ type: 'text', text: answerText }],
+    });
+
+    // Read after this answer is written, so of answers recorded concurrently
+    // the last to write always sees the others.
+    const messageParts = await this.messagePartRepository.find(workspaceId, {
+      where: { messageId: toolPart.messageId },
+      select: ['toolName', 'toolOutput'],
+    });
+
+    return {
+      hasAwaitingToolCalls: messageParts.some(
+        (messagePart) =>
+          isDefined(messagePart.toolName) &&
+          PAUSING_TOOLS.get(messagePart.toolName)?.isAwaitingOutput(
+            messagePart.toolOutput,
+          ) === true,
+      ),
+    };
+  }
+
+  // The run opens the Ask when it parks the step, under the lock that
+  // transition takes; the conversation only says what it would be.
   private async recordReply({
     workspaceId,
-    workflowRunId,
-    stepId,
     threadId,
     turnId,
     agentId,
     executionResult,
   }: {
     workspaceId: string;
-    workflowRunId: string;
-    stepId: string;
     threadId: string;
     turnId: string;
     agentId: string | null;
     executionResult: RecordedExecutionResult;
-  }): Promise<boolean> {
+  }): Promise<WorkflowPendingAsk[]> {
     const replyParts = mapAiStepsToUiMessageParts(executionResult.steps ?? []);
 
     if (replyParts.length === 0) {
-      return false;
+      return [];
     }
 
-    const messageId = await this.insertMessage({
+    await this.insertMessage({
       workspaceId,
       threadId,
       turnId,
@@ -220,38 +275,25 @@ export class WorkflowAgentConversationWorkspaceService {
       parts: replyParts,
     });
 
-    const pendingQuestionPart = executionResult.isPaused
-      ? findPendingQuestionPart(replyParts)
-      : undefined;
-
-    if (!isDefined(pendingQuestionPart)) {
-      return false;
+    if (executionResult.isPaused !== true) {
+      return [];
     }
 
-    const questions = pendingQuestionPart.output?.result?.questions ?? [];
+    const pendingAsks: WorkflowPendingAsk[] = [];
 
-    // Opened before the marker: a question pending without its Ask is one
-    // nobody can find, while an Ask whose marker failed ends canceled with the
-    // run that step then fails.
-    await this.inputAskWorkspaceService.openForAgentQuestion({
-      workspaceId,
-      workflowRunId,
-      stepId,
-      threadId,
-      toolCallId: pendingQuestionPart.toolCallId,
-      name: questions[0]?.question ?? 'Question',
-      questions,
-    });
+    for (const { toolCallId, ask } of findAwaitingPausingToolParts(
+      replyParts,
+    )) {
+      // One call nobody can answer would keep the step waiting forever on
+      // the others, so the step fails as if none had been recorded.
+      if (!isDefined(ask)) {
+        return [];
+      }
 
-    // The same marker a chat question sets, so the answer flow can claim the
-    // question exactly once.
-    await this.threadRepository.update(
-      workspaceId,
-      { id: threadId },
-      { pendingQuestionMessageId: messageId },
-    );
+      pendingAsks.push({ ...ask, threadId, toolCallId });
+    }
 
-    return true;
+    return pendingAsks;
   }
 
   private async insertTurn({
