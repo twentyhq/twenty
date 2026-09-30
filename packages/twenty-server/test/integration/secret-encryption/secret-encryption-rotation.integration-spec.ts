@@ -149,10 +149,11 @@ describe('secret-encryption:rotate command (integration)', () => {
       'applicationVariableMaps',
     ]);
 
-    await runSecretEncryptionRotationCommand(
-      {},
-      { FALLBACK_ENCRYPTION_KEY: PREVIOUS_ENCRYPTION_KEY },
-    );
+    await runSecretEncryptionRotationCommand({
+      environmentOverrides: {
+        FALLBACK_ENCRYPTION_KEY: PREVIOUS_ENCRYPTION_KEY,
+      },
+    });
 
     await expect(
       getAppProviderByClassName<ApplicationVariableEntityService>(
