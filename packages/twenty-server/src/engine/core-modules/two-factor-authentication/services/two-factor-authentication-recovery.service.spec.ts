@@ -9,6 +9,7 @@ import {
   AppTokenType,
 } from 'src/engine/core-modules/app-token/app-token.entity';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import {
   ThrottlerException,
@@ -73,7 +74,6 @@ describe('TwoFactorAuthenticationRecoveryService', () => {
   let recoveryCodeRepository: {
     insert: jest.Mock;
     findOne: jest.Mock;
-    exists: jest.Mock;
   };
   let methodRepository: { exists: jest.Mock };
   let transactionalRepositories: {
@@ -90,6 +90,7 @@ describe('TwoFactorAuthenticationRecoveryService', () => {
   let userSessionService: { revokeAllSessionsForUser: jest.Mock };
   let throttlerService: { atomicTokenBucketThrottleOrThrow: jest.Mock };
   let emailService: { send: jest.Mock };
+  let featureFlagService: { isFeatureEnabled: jest.Mock };
 
   beforeEach(async () => {
     transactionalRepositories = {
@@ -122,7 +123,6 @@ describe('TwoFactorAuthenticationRecoveryService', () => {
           useValue: {
             insert: jest.fn(),
             findOne: jest.fn(),
-            exists: jest.fn().mockResolvedValue(true),
           },
         },
         {
@@ -186,6 +186,10 @@ describe('TwoFactorAuthenticationRecoveryService', () => {
                 : 'noreply@example.com',
           },
         },
+        {
+          provide: FeatureFlagService,
+          useValue: { isFeatureEnabled: jest.fn().mockResolvedValue(true) },
+        },
       ],
     }).compile();
 
@@ -203,6 +207,7 @@ describe('TwoFactorAuthenticationRecoveryService', () => {
     userSessionService = module.get(UserSessionService);
     throttlerService = module.get(ThrottlerService);
     emailService = module.get(EmailService);
+    featureFlagService = module.get(FeatureFlagService);
   });
 
   afterEach(() => {
@@ -394,7 +399,7 @@ describe('TwoFactorAuthenticationRecoveryService', () => {
       revokedAt: IsNull(),
     };
 
-    it('signs out the member, then consumes the code, removes the authenticator and revokes refresh tokens together', async () => {
+    it('consumes the code, removes the authenticator and revokes refresh tokens together, then signs out the member', async () => {
       await redeem();
 
       expect(
@@ -406,11 +411,6 @@ describe('TwoFactorAuthenticationRecoveryService', () => {
           }),
         }),
       );
-      expect(userSessionService.revokeAllSessionsForUser).toHaveBeenCalledWith({
-        userId: TARGET_USER_ID,
-        workspaceId: WORKSPACE_ID,
-        reason: UserSessionRevokedReason.TwoFactorAuthenticationReset,
-      });
       expect(
         transactionalRepositories.recoveryCode.update,
       ).toHaveBeenCalledWith(expect.objectContaining(redeemableCodeWhere), {
@@ -429,6 +429,17 @@ describe('TwoFactorAuthenticationRecoveryService', () => {
         },
         { revokedAt: expect.any(Date) },
       );
+      expect(userSessionService.revokeAllSessionsForUser).toHaveBeenCalledWith({
+        userId: TARGET_USER_ID,
+        workspaceId: WORKSPACE_ID,
+        reason: UserSessionRevokedReason.TwoFactorAuthenticationReset,
+      });
+      expect(
+        transactionalRepositories.recoveryCode.update.mock
+          .invocationCallOrder[0],
+      ).toBeLessThan(
+        userSessionService.revokeAllSessionsForUser.mock.invocationCallOrder[0],
+      );
       expect(
         twoFactorAuthenticationService.emitTwoFactorAuthenticationEvent,
       ).toHaveBeenCalledWith({
@@ -441,8 +452,10 @@ describe('TwoFactorAuthenticationRecoveryService', () => {
       );
     });
 
-    it('rejects an unknown, expired, used or revoked code without touching the member', async () => {
-      recoveryCodeRepository.exists.mockResolvedValue(false);
+    it('rejects an unknown, expired, used or revoked code without signing anyone out', async () => {
+      transactionalRepositories.recoveryCode.update.mockResolvedValue({
+        affected: 0,
+      });
 
       await expect(redeem()).rejects.toMatchObject({
         code: TwoFactorAuthenticationExceptionCode.INVALID_RECOVERY_CODE,
@@ -458,29 +471,18 @@ describe('TwoFactorAuthenticationRecoveryService', () => {
         userSessionService.revokeAllSessionsForUser,
       ).not.toHaveBeenCalled();
       expect(transactionalRepositories.method.delete).not.toHaveBeenCalled();
+      expect(emailService.send).not.toHaveBeenCalled();
     });
 
-    it('keeps the code usable when signing out the member fails', async () => {
-      userSessionService.revokeAllSessionsForUser.mockRejectedValue(
-        new Error('Redis down'),
-      );
-
-      await expect(redeem()).rejects.toThrow('Redis down');
-      expect(
-        transactionalRepositories.recoveryCode.update,
-      ).not.toHaveBeenCalled();
-    });
-
-    it('rejects a code that another request consumed first', async () => {
-      transactionalRepositories.recoveryCode.update.mockResolvedValue({
-        affected: 0,
-      });
+    it('refuses every code while the feature flag is off', async () => {
+      featureFlagService.isFeatureEnabled.mockResolvedValue(false);
 
       await expect(redeem()).rejects.toMatchObject({
         code: TwoFactorAuthenticationExceptionCode.INVALID_RECOVERY_CODE,
       });
-      expect(transactionalRepositories.method.delete).not.toHaveBeenCalled();
-      expect(emailService.send).not.toHaveBeenCalled();
+      expect(
+        transactionalRepositories.recoveryCode.update,
+      ).not.toHaveBeenCalled();
     });
 
     it('checks the rate limit before looking at the code', async () => {
@@ -492,7 +494,9 @@ describe('TwoFactorAuthenticationRecoveryService', () => {
       );
 
       await expect(redeem()).rejects.toThrow(ThrottlerException);
-      expect(recoveryCodeRepository.exists).not.toHaveBeenCalled();
+      expect(
+        transactionalRepositories.recoveryCode.update,
+      ).not.toHaveBeenCalled();
     });
   });
 
@@ -560,6 +564,7 @@ describe('TwoFactorAuthenticationRecoveryService', () => {
 
       await expect(
         service.getRecoveryStatus({
+          actor: ACTOR,
           targetUserId: TARGET_USER_ID,
           targetWorkspaceId: WORKSPACE_ID,
         }),
@@ -567,6 +572,23 @@ describe('TwoFactorAuthenticationRecoveryService', () => {
         hasVerifiedTwoFactorAuthenticationMethod: true,
         pendingRecoveryCodeExpiresAt: expiresAt,
       });
+    });
+
+    it('hides a server administrator status from an actor without those privileges', async () => {
+      userWorkspaceService.getUserWorkspaceForUser.mockResolvedValue(
+        buildTargetUserWorkspace({ canImpersonate: true }),
+      );
+
+      await expect(
+        service.getRecoveryStatus({
+          actor: ACTOR,
+          targetUserId: TARGET_USER_ID,
+          targetWorkspaceId: WORKSPACE_ID,
+        }),
+      ).rejects.toMatchObject({
+        code: TwoFactorAuthenticationExceptionCode.RECOVERY_CODE_TARGET_NOT_ALLOWED,
+      });
+      expect(recoveryCodeRepository.findOne).not.toHaveBeenCalled();
     });
   });
 });

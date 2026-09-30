@@ -10,7 +10,9 @@ import { getLoginTokenFromCredentialsQueryFactory } from 'test/integration/graph
 import { initiateOtpProvisioningForAuthenticatedUser } from 'test/integration/graphql/utils/initiate-otp-provisioning-for-authenticated-user.util';
 import { verifyTwoFactorAuthenticationMethod } from 'test/integration/graphql/utils/verify-two-factor-authentication-method.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { makeAdminPanelApiRequest } from 'test/integration/twenty-config/utils/make-admin-panel-api-request.util';
+import { FeatureFlagKey } from 'twenty-shared/types';
 
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { TWO_FACTOR_AUTHENTICATION_RECOVERY_CODE_REDEMPTION_RATE_LIMIT_MAX } from 'src/engine/core-modules/two-factor-authentication/constants/two-factor-authentication-recovery-code.constant';
@@ -265,6 +267,34 @@ describe('Two-factor authentication recovery codes (integration)', () => {
   });
 
   describe('issuing a code', () => {
+    it('is unavailable while the feature flag is off', async () => {
+      await updateFeatureFlag({
+        featureFlag:
+          FeatureFlagKey.IS_TWO_FACTOR_AUTHENTICATION_RECOVERY_CODE_ENABLED,
+        value: false,
+        expectToFail: false,
+      });
+
+      try {
+        const { errors } = await generateTwoFactorAuthenticationRecoveryCode({
+          userId: USER_DATA_SEED_IDS.JONY,
+          otp: await generateOtp(janeSecret),
+          accessToken: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+          expectToFail: true,
+        });
+
+        expect(errors?.[0]?.extensions?.code).toBe('FORBIDDEN');
+        expect(await selectPendingRecoveryCodes()).toHaveLength(0);
+      } finally {
+        await updateFeatureFlag({
+          featureFlag:
+            FeatureFlagKey.IS_TWO_FACTOR_AUTHENTICATION_RECOVERY_CODE_ENABLED,
+          value: true,
+          expectToFail: false,
+        });
+      }
+    });
+
     it('is refused to a member without the security permission', async () => {
       const { errors } = await generateTwoFactorAuthenticationRecoveryCode({
         userId: USER_DATA_SEED_IDS.JANE,
@@ -534,9 +564,11 @@ describe('Two-factor authentication recovery codes (integration)', () => {
       jonySecret = await enrollAuthenticator(APPLE_JONY_MEMBER_ACCESS_TOKEN);
     });
 
-    it('admits exactly one of two simultaneous redemptions', async () => {
+    it('admits exactly one of two simultaneous redemptions and keeps the winner signed in', async () => {
       const { recoveryCode } = await generateCodeForJony();
       const loginToken = await getJonyLoginToken();
+      const [{ now: raceStartedAt }] =
+        await global.testDataSource.query('SELECT now()');
 
       const responses = await Promise.all(
         [0, 1].map(() =>
@@ -551,6 +583,13 @@ describe('Two-factor authentication recovery codes (integration)', () => {
       expect(
         responses.filter(({ errors }) => errors === undefined),
       ).toHaveLength(1);
+
+      const activeSessionsFromRace = await global.testDataSource.query(
+        `SELECT "id" FROM core."userSession" WHERE "userId" = $1 AND "workspaceId" = $2 AND "revokedAt" IS NULL AND "createdAt" >= $3`,
+        [USER_DATA_SEED_IDS.JONY, SEED_APPLE_WORKSPACE_ID, raceStartedAt],
+      );
+
+      expect(activeSessionsFromRace).toHaveLength(1);
 
       jonySecret = await enrollAuthenticator(APPLE_JONY_MEMBER_ACCESS_TOKEN);
     });

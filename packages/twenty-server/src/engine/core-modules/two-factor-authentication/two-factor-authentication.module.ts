@@ -5,6 +5,7 @@ import { AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.enti
 import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
 import { WorkspaceDomainsModule } from 'src/engine/core-modules/domain/workspace-domains/workspace-domains.module';
 import { EventLogEmitterModule } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.module';
+import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { SecretEncryptionModule } from 'src/engine/core-modules/secret-encryption/secret-encryption.module';
 import { ThrottlerModule } from 'src/engine/core-modules/throttler/throttler.module';
@@ -31,6 +32,7 @@ import { TwoFactorAuthenticationRecoveryCodeEntity } from './entities/two-factor
     SecretEncryptionModule,
     ThrottlerModule,
     EventLogEmitterModule,
+    FeatureFlagModule,
     UserSessionModule,
     PermissionsModule,
     TypeOrmModule.forFeature([
