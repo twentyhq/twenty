@@ -105,7 +105,8 @@ describe('ToolCallAnswerService', () => {
     };
     const workflowRunnerWorkspaceService = {
       resumeAnsweredStep: jest.fn().mockResolvedValue(undefined),
-      resumeFormStep: jest.fn().mockResolvedValue(true),
+      completeFormStep: jest.fn().mockResolvedValue(true),
+      resume: jest.fn().mockResolvedValue(undefined),
     };
     const step = { id: 'step-id', type: 'AI_AGENT' };
     const workflowRunWorkspaceService = {
@@ -704,7 +705,7 @@ describe('ToolCallAnswerService', () => {
       await service.answerFormStep(formArguments);
 
       expect(
-        workflowRunnerWorkspaceService.resumeFormStep,
+        workflowRunnerWorkspaceService.completeFormStep,
       ).toHaveBeenCalledWith({
         workspaceId: workspace.id,
         workflowRunId: formArguments.workflowRunId,
@@ -713,6 +714,61 @@ describe('ToolCallAnswerService', () => {
         response: formArguments.response,
       });
       expect(agentChatService.findToolPart).not.toHaveBeenCalled();
+      expect(workflowRunnerWorkspaceService.resume).toHaveBeenCalledWith({
+        workspaceId: workspace.id,
+        workflowRunId: formArguments.workflowRunId,
+        lastExecutedStepId: formArguments.stepId,
+      });
+    });
+
+    it('fails the run after releasing the history fence if its accepted answer cannot be resumed', async () => {
+      const {
+        service,
+        workflowRunnerWorkspaceService,
+        workflowRunWorkspaceService,
+        agentHistoryWorkspaceStorageService,
+      } = buildFormService();
+      const queueError = new Error('Queue unavailable');
+      let isHistoryFenceHeld = false;
+
+      agentHistoryWorkspaceStorageService.run.mockImplementation(
+        async (_workspaceId, work) => {
+          isHistoryFenceHeld = true;
+
+          try {
+            return await work();
+          } finally {
+            isHistoryFenceHeld = false;
+          }
+        },
+      );
+      workflowRunnerWorkspaceService.completeFormStep.mockImplementation(
+        async () => {
+          expect(isHistoryFenceHeld).toBe(true);
+
+          return true;
+        },
+      );
+      workflowRunnerWorkspaceService.resume.mockImplementation(async () => {
+        expect(isHistoryFenceHeld).toBe(false);
+
+        throw queueError;
+      });
+      workflowRunWorkspaceService.endWorkflowRun.mockImplementation(
+        async () => {
+          expect(isHistoryFenceHeld).toBe(false);
+        },
+      );
+
+      await expect(service.answerFormStep(formArguments)).rejects.toBe(
+        queueError,
+      );
+      expect(workflowRunWorkspaceService.endWorkflowRun).toHaveBeenCalledWith({
+        workspaceId: workspace.id,
+        workflowRunId: formArguments.workflowRunId,
+        status: 'FAILED',
+        error: 'The run could not resume after its form was answered',
+      });
     });
 
     it('uses the conversation if the backfill finished before the submission acquired its lock', async () => {
@@ -751,8 +807,9 @@ describe('ToolCallAnswerService', () => {
         }),
       );
       expect(
-        workflowRunnerWorkspaceService.resumeFormStep,
+        workflowRunnerWorkspaceService.completeFormStep,
       ).not.toHaveBeenCalled();
+      expect(workflowRunnerWorkspaceService.resume).not.toHaveBeenCalled();
     });
 
     it('requires workflow permission before reading or answering the run', async () => {
@@ -767,7 +824,7 @@ describe('ToolCallAnswerService', () => {
       );
       expect(workflowRunWorkspaceService.getWorkflowRun).not.toHaveBeenCalled();
       expect(
-        workflowRunnerWorkspaceService.resumeFormStep,
+        workflowRunnerWorkspaceService.completeFormStep,
       ).not.toHaveBeenCalled();
     });
 
@@ -780,7 +837,7 @@ describe('ToolCallAnswerService', () => {
         { code: 'TOOL_CALL_NOT_FOUND' },
       );
       expect(
-        workflowRunnerWorkspaceService.resumeFormStep,
+        workflowRunnerWorkspaceService.completeFormStep,
       ).not.toHaveBeenCalled();
     });
 
@@ -820,7 +877,7 @@ describe('ToolCallAnswerService', () => {
         { code: 'TOOL_CALL_NOT_PENDING' },
       );
       expect(
-        workflowRunnerWorkspaceService.resumeFormStep,
+        workflowRunnerWorkspaceService.completeFormStep,
       ).not.toHaveBeenCalled();
     });
 
@@ -834,17 +891,23 @@ describe('ToolCallAnswerService', () => {
         }),
       ).rejects.toMatchObject({ code: 'INVALID_TOOL_CALL_OUTPUT' });
       expect(
-        workflowRunnerWorkspaceService.resumeFormStep,
+        workflowRunnerWorkspaceService.completeFormStep,
       ).not.toHaveBeenCalled();
     });
 
     it('rejects an answer when another submission or a conversation claimed the step', async () => {
-      const { service, workflowRunnerWorkspaceService } = buildFormService();
-      workflowRunnerWorkspaceService.resumeFormStep.mockResolvedValue(false);
+      const {
+        service,
+        workflowRunnerWorkspaceService,
+        workflowRunWorkspaceService,
+      } = buildFormService();
+      workflowRunnerWorkspaceService.completeFormStep.mockResolvedValue(false);
 
       await expect(service.answerFormStep(formArguments)).rejects.toMatchObject(
         { code: 'TOOL_CALL_NOT_PENDING' },
       );
+      expect(workflowRunnerWorkspaceService.resume).not.toHaveBeenCalled();
+      expect(workflowRunWorkspaceService.endWorkflowRun).not.toHaveBeenCalled();
     });
   });
 

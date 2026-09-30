@@ -354,6 +354,27 @@ export class ToolCallAnswerService {
         threadId: recordedThreadId,
         toolCallId: stepId,
       });
+
+      return;
+    }
+
+    // The answer is already committed. Release the history fence before resuming
+    // or failing the run, since failure closes its other waiting conversations.
+    try {
+      await this.workflowRunnerWorkspaceService.resume({
+        workspaceId: args.workspace.id,
+        workflowRunId,
+        lastExecutedStepId: stepId,
+      });
+    } catch (error) {
+      await this.workflowRunWorkspaceService.endWorkflowRun({
+        workspaceId: args.workspace.id,
+        workflowRunId,
+        status: WorkflowRunStatus.FAILED,
+        error: 'The run could not resume after its form was answered',
+      });
+
+      throw error;
     }
   }
 
@@ -400,7 +421,7 @@ export class ToolCallAnswerService {
     }
 
     const hasCompletedStep =
-      await this.workflowRunnerWorkspaceService.resumeFormStep({
+      await this.workflowRunnerWorkspaceService.completeFormStep({
         workspaceId: args.workspace.id,
         workflowRunId,
         step,

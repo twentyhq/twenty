@@ -126,16 +126,24 @@ export class WorkflowRunnerWorkspaceService {
       return;
     }
 
-    await this.resumeFormStep({
+    const hasCompletedStep = await this.completeFormStep({
       workspaceId,
       workflowRunId,
       step,
       expectedThreadId: threadId,
       response,
     });
+
+    if (hasCompletedStep) {
+      await this.resume({
+        workspaceId,
+        workflowRunId,
+        lastExecutedStepId: step.id,
+      });
+    }
   }
 
-  async resumeFormStep({
+  async completeFormStep({
     workspaceId,
     workflowRunId,
     step,
@@ -157,27 +165,16 @@ export class WorkflowRunnerWorkspaceService {
         },
       );
 
-    const hasCompletedStep =
-      await this.workflowRunWorkspaceService.updateStepInfoIfPending({
-        stepId: step.id,
-        stepInfo: {
-          status: StepStatus.SUCCESS,
-          result: enrichedResponse,
-        },
-        expectedThreadId,
-        workspaceId,
-        workflowRunId,
-      });
-
-    if (hasCompletedStep) {
-      await this.resume({
-        workspaceId,
-        workflowRunId,
-        lastExecutedStepId: step.id,
-      });
-    }
-
-    return hasCompletedStep;
+    return this.workflowRunWorkspaceService.updateStepInfoIfPending({
+      stepId: step.id,
+      stepInfo: {
+        status: StepStatus.SUCCESS,
+        result: enrichedResponse,
+      },
+      expectedThreadId,
+      workspaceId,
+      workflowRunId,
+    });
   }
 
   async stopWorkflowRun(workspaceId: string, workflowRunId: string) {

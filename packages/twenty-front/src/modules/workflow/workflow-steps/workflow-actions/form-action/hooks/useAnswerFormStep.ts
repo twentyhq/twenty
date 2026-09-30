@@ -7,7 +7,10 @@ import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient
 import { useFindOneRecordQuery } from '@/object-record/hooks/useFindOneRecordQuery';
 import { SUBMIT_FORM_STEP } from '@/workflow/graphql/mutations/submitFormStep';
 import { useWorkflowRun } from '@/workflow/hooks/useWorkflowRun';
-import { type MutationSubmitFormStepArgs } from '~/generated/graphql';
+import {
+  type SubmitFormStepMutation,
+  type SubmitFormStepMutationVariables,
+} from '~/generated/graphql';
 import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
 
 export const useAnswerFormStep = ({
@@ -52,8 +55,8 @@ export const useAnswerFormStep = ({
         await answerToolCall({ threadId, toolCallId: stepId, response });
       } else {
         await apolloCoreClient.mutate<
-          { submitFormStep: boolean },
-          MutationSubmitFormStepArgs
+          SubmitFormStepMutation,
+          SubmitFormStepMutationVariables
         >({
           mutation: SUBMIT_FORM_STEP,
           variables: { input: { workflowRunId, stepId, response } },

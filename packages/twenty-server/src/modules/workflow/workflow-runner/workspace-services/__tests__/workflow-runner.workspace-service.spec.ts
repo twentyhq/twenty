@@ -73,8 +73,8 @@ describe('WorkflowRunnerWorkspaceService', () => {
     jest.clearAllMocks();
   });
 
-  it('resumes a form without a conversation after recording its enriched result', async () => {
-    const completed = await service.resumeFormStep({
+  it('records the enriched result of a form without a conversation before scheduling its continuation', async () => {
+    const completed = await service.completeFormStep({
       workspaceId: WORKSPACE_ID,
       workflowRunId: WORKFLOW_RUN_ID,
       step: FORM_STEP,
@@ -94,7 +94,7 @@ describe('WorkflowRunnerWorkspaceService', () => {
         },
       }),
     );
-    expect(messageQueueService.add).toHaveBeenCalledTimes(1);
+    expect(messageQueueService.add).not.toHaveBeenCalled();
   });
 
   describe('resumeAnsweredStep', () => {
