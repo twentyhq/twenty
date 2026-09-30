@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
-import { Info } from 'twenty-ui/components';
+import { InlineBanner } from 'twenty-ui/components';
 
-const StyledFullWidthInfo = styled.div`
+const StyledFullWidthBanner = styled.div`
   & > * {
     max-width: 100%;
   }
@@ -12,7 +12,7 @@ type DpaNoticeProps = {
 };
 
 export const DpaNotice = ({ text }: DpaNoticeProps) => (
-  <StyledFullWidthInfo>
-    <Info accent="danger" text={text} />
-  </StyledFullWidthInfo>
+  <StyledFullWidthBanner>
+    <InlineBanner variant="compact" color="danger" message={text} />
+  </StyledFullWidthBanner>
 );
