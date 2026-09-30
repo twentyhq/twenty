@@ -35,42 +35,23 @@ export const AllUsers: Story = {
 };
 
 export const WorkspaceOnlyPlan: Story = {
-  args: { isIntraWorkspaceLimitEntitled: false },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    expect(canvas.queryByRole('button')).not.toBeInTheDocument();
-    expect(canvas.getByRole('link', { name: 'Upgrade' })).toHaveAttribute(
-      'href',
-      '/settings/billing/plans',
-    );
-  },
-};
-
-export const WorkspaceOnlyPlanWithUserSpender: Story = {
-  args: {
-    isIntraWorkspaceLimitEntitled: false,
-    spenderType: 'userWorkspace',
-    spenderId: '',
-    onChange: fn(),
-  },
-  parameters: { msw: graphqlMocks },
+  args: { isIntraWorkspaceLimitEntitled: false, onChange: fn() },
   play: async ({ canvasElement, args }) => {
     const body = within(canvasElement.ownerDocument.body);
 
     await userEvent.click(within(canvasElement).getByRole('button'));
     const popup = await body.findByRole('dialog', { name: 'Spender' });
 
+    expect(within(popup).getAllByLabelText('Organization')).toHaveLength(3);
+    await userEvent.click(within(popup).getByText('User'));
     expect(
-      within(popup).queryByRole('button', { name: 'User' }),
+      within(popup).queryByRole('button', { name: 'All users' }),
     ).not.toBeInTheDocument();
-    await userEvent.click(
-      within(popup).getByRole('button', { name: /Workspace/ }),
-    );
-    expect(args.onChange).toHaveBeenCalledWith({
-      spenderType: 'workspace',
-      spenderId: '',
-    });
+    expect(args.onChange).not.toHaveBeenCalled();
+    expect(
+      within(popup).getByRole('link', { name: 'Upgrade to Organization' }),
+    ).toHaveAttribute('href', '/settings/billing/plans');
+    await userEvent.keyboard('{Escape}');
   },
 };
 

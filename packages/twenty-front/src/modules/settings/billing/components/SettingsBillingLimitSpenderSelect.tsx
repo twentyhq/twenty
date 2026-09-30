@@ -8,16 +8,19 @@ import { USAGE_LIMIT_SPENDER_TYPE_POOL_LABELS } from '@/settings/billing/constan
 import { useUsageLimitSpenderOptions } from '@/settings/billing/hooks/useUsageLimitSpenderOptions';
 import { type UsageLimitSpenderType } from '@/settings/billing/types/UsageLimitSpenderType';
 import { getUsageLimitSpenderGroups } from '@/settings/billing/utils/getUsageLimitSpenderGroups';
-import { SettingsTextLink } from '@/settings/components/SettingsTextLink';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { getWorkspaceAvatarColorSeed } from '@/workspace/utils/getWorkspaceAvatarColorSeed';
 import { useLingui } from '@lingui/react/macro';
+import { Link } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { Dropdown } from 'twenty-ui/components';
+import { IconArrowUp } from 'twenty-ui/icon';
 import { Avatar } from 'twenty-ui/primitives/data-display';
+import { ListItem } from 'twenty-ui/primitives/navigation';
+import { OrganizationAdornment } from '~/pages/settings/enterprise/components/OrganizationAdornment';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 const SPENDER_DROPDOWN_ID = 'usage-limit-spender';
@@ -124,32 +127,13 @@ export const SettingsBillingLimitSpenderSelect = ({
 
   const workspaceGroup = groups.find((group) => group.id === 'workspace');
   const otherGroups = groups.filter((group) => group.id !== 'workspace');
-  const selectableSpenderGroups = isIntraWorkspaceLimitEntitled
-    ? otherGroups
-    : [];
-
   const isLockedByPlan =
     !isIntraWorkspaceLimitEntitled && otherGroups.length > 0;
-  const isSpenderLockedToWorkspace =
-    !isIntraWorkspaceLimitEntitled && spenderType === 'workspace';
 
   return (
     <SettingsBillingLimitNestedSelect
       dropdownId={SPENDER_DROPDOWN_ID}
       label={t`Spender`}
-      description={
-        isLockedByPlan ? (
-          <>
-            {t`Other spenders require the Organization plan.`}{' '}
-            <SettingsTextLink
-              variant="secondary"
-              to={getSettingsPath(SettingsPath.BillingPlans)}
-            >
-              {t`Upgrade`}
-            </SettingsTextLink>
-          </>
-        ) : undefined
-      }
       selectedLabel={getSelectedLabel()}
       selectedContextualText={
         spenderType === 'workspace' ? t`Workspace` : undefined
@@ -160,11 +144,11 @@ export const SettingsBillingLimitSpenderSelect = ({
           : undefined
       }
       SelectedAvatar={renderSelectedAvatar()}
-      isDisabled={isDisabled || isSpenderLockedToWorkspace}
+      isDisabled={isDisabled}
     >
       <Dropdown.Page id="root">
-        {isDefined(workspaceGroup) && (
-          <Dropdown.Section>
+        <Dropdown.Section>
+          {isDefined(workspaceGroup) && (
             <Dropdown.OptionItem
               selected={spenderType === 'workspace'}
               onSelect={() => handleSelect('workspace', '')}
@@ -181,14 +165,9 @@ export const SettingsBillingLimitSpenderSelect = ({
             >
               {workspaceName}
             </Dropdown.OptionItem>
-          </Dropdown.Section>
-        )}
-        {isDefined(workspaceGroup) && selectableSpenderGroups.length > 0 && (
-          <Dropdown.Separator />
-        )}
-        {selectableSpenderGroups.length > 0 && (
-          <Dropdown.Section>
-            {selectableSpenderGroups.map((group) => (
+          )}
+          {otherGroups.map((group) =>
+            isIntraWorkspaceLimitEntitled ? (
               <Dropdown.ActionItem
                 key={group.id}
                 page={group.spenderType}
@@ -196,23 +175,47 @@ export const SettingsBillingLimitSpenderSelect = ({
               >
                 {t(group.label)}
               </Dropdown.ActionItem>
-            ))}
-          </Dropdown.Section>
+            ) : (
+              <ListItem
+                key={group.id}
+                startIcon={<SelectOptionIcon Icon={group.Icon} />}
+                endIcon={<OrganizationAdornment iconOnly />}
+              >
+                {t(group.label)}
+              </ListItem>
+            ),
+          )}
+        </Dropdown.Section>
+        {isLockedByPlan && (
+          <>
+            <Dropdown.Separator />
+            <Dropdown.Section>
+              <Dropdown.ActionItem
+                render={
+                  <Link to={getSettingsPath(SettingsPath.BillingPlans)} />
+                }
+                startIcon={<IconArrowUp />}
+              >
+                {t`Upgrade to Organization`}
+              </Dropdown.ActionItem>
+            </Dropdown.Section>
+          </>
         )}
       </Dropdown.Page>
-      {selectableSpenderGroups.map((group) => (
-        <Dropdown.Page key={group.id} id={group.spenderType}>
-          <Dropdown.Back>
-            {t(USAGE_LIMIT_SPENDER_TYPE_LABELS[group.spenderType])}
-          </Dropdown.Back>
-          <SettingsBillingLimitSpenderOptionList
-            spenderType={group.spenderType}
-            selectedSpenderType={spenderType}
-            selectedSpenderId={spenderId}
-            onSelect={handleSelect}
-          />
-        </Dropdown.Page>
-      ))}
+      {isIntraWorkspaceLimitEntitled &&
+        otherGroups.map((group) => (
+          <Dropdown.Page key={group.id} id={group.spenderType}>
+            <Dropdown.Back>
+              {t(USAGE_LIMIT_SPENDER_TYPE_LABELS[group.spenderType])}
+            </Dropdown.Back>
+            <SettingsBillingLimitSpenderOptionList
+              spenderType={group.spenderType}
+              selectedSpenderType={spenderType}
+              selectedSpenderId={spenderId}
+              onSelect={handleSelect}
+            />
+          </Dropdown.Page>
+        ))}
     </SettingsBillingLimitNestedSelect>
   );
 };

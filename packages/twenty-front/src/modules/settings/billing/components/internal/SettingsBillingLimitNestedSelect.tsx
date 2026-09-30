@@ -1,11 +1,9 @@
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
-import { isDefined } from 'twenty-shared/utils';
 import { Dropdown } from 'twenty-ui/components';
 import { type IconComponent } from 'twenty-ui/icon';
 
 import { StyledSettingsBillingFieldLabel } from '@/settings/billing/components/internal/SettingsBillingFieldLabel';
-import { StyledSelectDescription } from '@/ui/input/components/internal/select/components/StyledSelectDescription';
 import { SelectControl } from '@/ui/input/components/SelectControl';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
@@ -17,7 +15,6 @@ const StyledContainer = styled.div`
 type SettingsBillingLimitNestedSelectProps = {
   dropdownId: string;
   label: string;
-  description?: ReactNode;
   selectedLabel: string;
   selectedContextualText?: string;
   SelectedIcon?: IconComponent;
@@ -29,7 +26,6 @@ type SettingsBillingLimitNestedSelectProps = {
 export const SettingsBillingLimitNestedSelect = ({
   dropdownId,
   label,
-  description,
   selectedLabel,
   selectedContextualText,
   SelectedIcon,
@@ -65,9 +61,6 @@ export const SettingsBillingLimitNestedSelect = ({
             {children}
           </DropdownContent>
         </DropdownRoot>
-      )}
-      {isDefined(description) && (
-        <StyledSelectDescription>{description}</StyledSelectDescription>
       )}
     </StyledContainer>
   );

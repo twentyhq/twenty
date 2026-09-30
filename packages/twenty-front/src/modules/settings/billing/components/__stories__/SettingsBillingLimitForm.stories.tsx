@@ -71,21 +71,6 @@ export const Filled: Story = {
   args: { values: FILLED_VALUES },
 };
 
-export const WorkspaceOnlyPlan: Story = {
-  args: {
-    definitions: { ...DEFINITIONS, isIntraWorkspaceLimitEntitled: false },
-    values: FILLED_VALUES,
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    expect(
-      canvas.queryByRole('button', { name: /Workspace · Workspace/ }),
-    ).not.toBeInTheDocument();
-    expect(canvas.getByRole('link', { name: 'Upgrade' })).toBeVisible();
-  },
-};
-
 export const WithConsumption: Story = {
   args: {
     values: FILLED_VALUES,

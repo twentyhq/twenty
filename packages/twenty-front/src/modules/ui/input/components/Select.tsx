@@ -9,7 +9,6 @@ import { useMemo, useRef, useState } from 'react';
 import { Dropdown } from 'twenty-ui/components';
 import { Tag } from 'twenty-ui/primitives/data-display';
 
-import { StyledSelectDescription } from '@/ui/input/components/internal/select/components/StyledSelectDescription';
 import { type SelectValue } from '@/ui/input/components/internal/select/types';
 import { getSelectDropdownInitialFocus } from '@/ui/input/components/internal/select/utils/getSelectDropdownInitialFocus';
 import { isFocusMovingWithinSelect } from '@/ui/input/components/internal/select/utils/isFocusMovingWithinSelect';
@@ -30,6 +29,11 @@ const StyledLabel = styled.span`
   font-size: ${themeCssVariables.font.size.xs};
   font-weight: ${themeCssVariables.font.weight.semiBold};
   margin-bottom: ${themeCssVariables.spacing[1]};
+`;
+
+const StyledDescription = styled.span`
+  color: ${themeCssVariables.font.color.light};
+  font-size: ${themeCssVariables.font.size.sm};
 `;
 
 export const Select = <TValue extends SelectValue>({
@@ -288,7 +292,7 @@ export const Select = <TValue extends SelectValue>({
         </DropdownRoot>
       )}
       {isNonEmptyString(description) && (
-        <StyledSelectDescription>{description}</StyledSelectDescription>
+        <StyledDescription>{description}</StyledDescription>
       )}
     </StyledContainer>
   );
