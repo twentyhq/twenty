@@ -9,6 +9,8 @@ import { type ChannelRecordShareSource } from 'src/modules/connected-account/cha
 
 const RECORD_SHARE_COLUMNS = `("objectMetadataId", "recordId", "principalId", "principalType", "accessLevel", "rowCause", "sourceId")`;
 
+const ON_CONFLICT_DO_NOTHING = `ON CONFLICT ("objectMetadataId", "recordId", "principalId", "rowCause", "sourceId") DO NOTHING`;
+
 // Every query takes the same parameters: $1 workspace id, $2 channel id,
 // $3 record object metadata id, $4 the record ids to sync or null for all of
 // the channel's records.
@@ -28,17 +30,29 @@ export const buildChannelRecordShareSyncQueries = ({
       AND channel."workspaceId" = $1
     JOIN core."connectedAccount" account ON account.id = channel."connectedAccountId"`;
 
-  // A deleted channel synced nothing, so every grant it wrote goes.
+  // A grant stays only while the channel still holds the record and would
+  // still write that grant: a deleted channel, a new account owner or a
+  // visibility change all drop the grants that no longer apply.
   const deleteStaleRecordShares = `DELETE FROM ${recordShareTable} share
     WHERE share."objectMetadataId" = $3
       AND share."sourceId" = $2
       AND ($4::uuid[] IS NULL OR share."recordId" = ANY($4::uuid[]))
       AND NOT EXISTS (
         SELECT 1 FROM (${channelRecordIdsQuery}) channel_record
-        JOIN ${channelTable} channel ON channel.id = $2
+        ${channelAccount}
+        LEFT JOIN core."userWorkspace" membership ON membership.id = account."userWorkspaceId"
+          AND membership."deletedAt" IS NULL
+        LEFT JOIN ${schemaName}."workspaceMember" member ON member."userId" = membership."userId"
+          AND member."deletedAt" IS NULL
+        LEFT JOIN core."application" application ON application.id = account."applicationId"
+          AND application."deletedAt" IS NULL
         WHERE channel_record."recordId" = share."recordId"
-          AND (share."rowCause" <> '${RecordShareRowCause.RULE}'
-            OR channel.visibility = '${source.shareEverythingVisibility}')
+          AND CASE share."rowCause"
+            WHEN '${RecordShareRowCause.OWNER}' THEN share."principalId" = member.id
+            WHEN '${RecordShareRowCause.APPLICATION}' THEN share."principalId" = application."defaultRoleId"
+            WHEN '${RecordShareRowCause.RULE}' THEN channel.visibility = '${source.shareEverythingVisibility}'
+            ELSE FALSE
+          END
       )`;
 
   const insertOwnerRecordShares = `INSERT INTO ${recordShareTable} ${RECORD_SHARE_COLUMNS}
@@ -50,7 +64,7 @@ export const buildChannelRecordShareSyncQueries = ({
       AND membership."deletedAt" IS NULL
     JOIN ${schemaName}."workspaceMember" member ON member."userId" = membership."userId"
       AND member."deletedAt" IS NULL
-    ON CONFLICT DO NOTHING`;
+    ${ON_CONFLICT_DO_NOTHING}`;
 
   const insertApplicationRecordShares = `INSERT INTO ${recordShareTable} ${RECORD_SHARE_COLUMNS}
     SELECT $3::uuid, record."recordId", application."defaultRoleId",
@@ -60,7 +74,7 @@ export const buildChannelRecordShareSyncQueries = ({
     JOIN core."application" application ON application.id = account."applicationId"
       AND application."deletedAt" IS NULL
     WHERE application."defaultRoleId" IS NOT NULL
-    ON CONFLICT DO NOTHING`;
+    ${ON_CONFLICT_DO_NOTHING}`;
 
   const insertRuleRecordShares = `INSERT INTO ${recordShareTable} ${RECORD_SHARE_COLUMNS}
     SELECT $3::uuid, record."recordId", '${EVERYONE_PRINCIPAL_ID}',
@@ -69,7 +83,7 @@ export const buildChannelRecordShareSyncQueries = ({
     JOIN ${channelTable} channel ON channel.id = $2
       AND channel."workspaceId" = $1
       AND channel.visibility = '${source.shareEverythingVisibility}'
-    ON CONFLICT DO NOTHING`;
+    ${ON_CONFLICT_DO_NOTHING}`;
 
   return {
     deleteStaleRecordShares,
