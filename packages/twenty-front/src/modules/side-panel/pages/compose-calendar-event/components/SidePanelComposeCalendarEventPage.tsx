@@ -16,7 +16,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { IconButton, useToast } from 'twenty-ui/components';
 import { IconCalendarEvent, IconTrash } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { getOsControlSymbol } from 'twenty-ui/utilities';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
@@ -115,7 +114,7 @@ export const SidePanelComposeCalendarEventPage = () => {
             key="create"
             size="sm"
             startIcon={<IconCalendarEvent />}
-            hotkeys={[getOsControlSymbol(), '⏎']}
+            shortcut={{ type: 'combination', keys: ['Mod', '⏎'] }}
             onClick={composerState.handleCreate}
             disabled={!composerState.canCreate}
             variant="solid"

@@ -1,3 +1,4 @@
+import { formatShortcut } from 'twenty-ui/primitives/typography';
 import { useUpdateOneFieldMetadataItem } from '@/object-metadata/hooks/useUpdateOneFieldMetadataItem';
 import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
@@ -185,7 +186,7 @@ export const SettingsObjectSearchSection = ({
           <SettingsOptionCardContentSwitch
             Icon={IconEye}
             title={t`Global search`}
-            description={t`Show this object's records in the command menu (⌘K).`}
+            description={t`Show this object's records in the command menu (${formatShortcut({ shortcut: { type: 'combination', keys: ['Mod', 'K'] } })}).`}
             checked={isSearchable}
             advancedMode
             onChange={handleToggleSearchable}

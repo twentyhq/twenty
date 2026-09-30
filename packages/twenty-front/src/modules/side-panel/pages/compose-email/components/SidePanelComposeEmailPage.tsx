@@ -17,7 +17,6 @@ import { t } from '@lingui/core/macro';
 import { IconPaperclip, IconSend, IconTrash } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { IconButton } from 'twenty-ui/components';
-import { getOsControlSymbol } from 'twenty-ui/utilities';
 
 import { useAttachEmailFiles } from '@/activities/emails/hooks/useAttachEmailFiles';
 
@@ -116,7 +115,7 @@ export const SidePanelComposeEmailPage = () => {
             key="send"
             size="sm"
             startIcon={<IconSend />}
-            hotkeys={[getOsControlSymbol(), '⏎']}
+            shortcut={{ type: 'combination', keys: ['Mod', '⏎'] }}
             onClick={composerState.handleSend}
             disabled={!canSend}
             variant="solid"

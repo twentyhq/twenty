@@ -1,25 +1,16 @@
-import {
-  type Shortcut,
-  ShortcutType,
-} from '@/keyboard-shortcut-menu/types/Shortcut';
+import { type Shortcut } from '@/keyboard-shortcut-menu/types/Shortcut';
 
 export const KEYBOARD_SHORTCUTS_TABLE: Shortcut[] = [
   {
     label: 'Move right',
-    type: ShortcutType.Table,
-    firstHotKey: '→',
-    areSimultaneous: true,
+    shortcuts: [{ type: 'combination', keys: ['→'] }],
   },
   {
     label: 'Move left',
-    type: ShortcutType.Table,
-    firstHotKey: '←',
-    areSimultaneous: true,
+    shortcuts: [{ type: 'combination', keys: ['←'] }],
   },
   {
     label: 'Clear selection',
-    type: ShortcutType.Table,
-    firstHotKey: 'esc',
-    areSimultaneous: true,
+    shortcuts: [{ type: 'combination', keys: ['esc'] }],
   },
 ];

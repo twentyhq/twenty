@@ -1,3 +1,4 @@
+import { formatShortcut } from 'twenty-ui/primitives/typography';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useReducedMotion } from 'framer-motion';
@@ -13,10 +14,7 @@ import {
   IconX,
 } from 'twenty-ui/icon';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
-import {
-  getOsControlSymbol,
-  getOsShortcutSeparator,
-} from 'twenty-ui/utilities';
+import {} from 'twenty-ui/utilities';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isClickHouseConfiguredState } from '@/client-config/states/isClickHouseConfiguredState';
@@ -351,9 +349,9 @@ export const LogConsole = () => {
     setIsLogConsoleFullScreen(false);
   };
 
-  const toggleHotkeyLabel = [getOsControlSymbol(), 'J'].join(
-    getOsShortcutSeparator(),
-  );
+  const toggleHotkeyLabel = formatShortcut({
+    shortcut: { type: 'combination', keys: ['Mod', 'J'] },
+  });
 
   const toggleHotkeyEffect = isLogConsoleAllowed ? (
     <LogConsoleToggleHotkeyEffect onToggle={toggleLogConsoleOpen} />

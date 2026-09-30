@@ -1,0 +1,50 @@
+---
+title: Shortcut
+description: Display simultaneous key combinations and sequential shortcuts.
+---
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import ShortcutReference from '/snippets/ui/generated/typography/shortcut.mdx';
+
+<StoryEmbed
+  storyId="ui-typography-shortcut--documentation"
+  title="Shortcut presentations"
+  height={200}
+/>
+
+Import `Shortcut` and `formatShortcut` from `twenty-ui/primitives/typography`. Both share the same model, symbols, and separators. Register shortcuts in your application.
+
+```tsx
+import { Shortcut, formatShortcut } from 'twenty-ui/primitives/typography';
+
+export const ShortcutExamples = () => (
+  <>
+    <Shortcut shortcut={{ type: 'combination', keys: ['Mod', 'K'] }} />
+    <Shortcut
+      shortcut={{ type: 'sequence', steps: [['G'], ['P']] }}
+      sequenceJoinLabel="then"
+    />
+  </>
+);
+
+const hint = formatShortcut({
+  shortcut: { type: 'combination', keys: ['Mod', 'Enter'] },
+});
+```
+
+A combination presses its keys together. A sequence presses each step in order, and each step can itself be a combination. `Mod` and `CommandOrControl` display Command on macOS and iOS, and Control elsewhere. Explicit `Command`, `Control`, `Alt`, and `Enter` keys also have display labels. Other strings are displayed as supplied. Device detection is safe without browser globals; `platform` optionally overrides it with `mac` or `other`.
+
+Use `sequenceJoinLabel` for localized join text. `combinationSeparator` can preserve a host convention such as `+`. The default text separator is empty on Apple devices and a space elsewhere. `variant` selects `keys`, `text`, or `button`. `visibility="desktop"` hides the hint at mobile viewport widths while `always` remains visible.
+
+Key symbols have readable accessible names. Supply `aria-label` or `aria-labelledby` for a localized name, or `aria-hidden` for a decorative hint. Buttons keep their action names and hide their decorative hints on mobile. Menu and list rows keep their hints visible.
+
+## Migration
+
+| Previous prop                              | Replacement                                                                |
+| ------------------------------------------ | -------------------------------------------------------------------------- |
+| Button `hotkeys={['⌘', 'K']}`              | `shortcut={{ type: 'combination', keys: ['Mod', 'K'] }}`                   |
+| ListItem or MenuItem `hotkeys` / `hotKeys` | Explicit `shortcut` combination or sequence                                |
+| `hotkeysJoinLabel` / `hotKeysJoinLabel`    | `shortcutJoinLabel` on Button, ListItem, MenuItem, Menu and Dropdown parts |
+| Manual tooltip key concatenation           | `formatShortcut({ shortcut })`                                             |
+
+<ShortcutReference />

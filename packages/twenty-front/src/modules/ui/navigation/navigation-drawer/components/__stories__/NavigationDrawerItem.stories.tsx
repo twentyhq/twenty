@@ -4,7 +4,6 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { IconSearch } from 'twenty-ui/icon';
 import { CatalogDecorator, type CatalogStory } from 'twenty-ui/testing';
-import { getOsControlSymbol } from 'twenty-ui/utilities';
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 
@@ -112,7 +111,7 @@ export const NewPill: Story = {
           args={{
             label: 'Feature with Keyboard Shortcut',
             Icon: IconSearch,
-            modifier: { keyboard: [getOsControlSymbol(), 'N'] },
+            modifier: { keyboard: { type: 'combination', keys: ['Mod', 'N'] } },
           }}
         />
       </StyledContainer>
@@ -210,7 +209,7 @@ export const Catalog: CatalogStory<Story, typeof NavigationDrawerItem> = {
                 : adornmentName === 'Keyboard Keys'
                   ? {
                       modifier: {
-                        keyboard: [getOsControlSymbol(), 'K'],
+                        keyboard: { type: 'combination', keys: ['Mod', 'K'] },
                       },
                     }
                   : {},

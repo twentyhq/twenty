@@ -36,7 +36,6 @@ import {
   IconUserCircle,
   IconUsers,
 } from 'twenty-ui/icon';
-import { getOsControlSymbol } from 'twenty-ui/utilities';
 
 import { NavigationDrawer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawer';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
@@ -91,7 +90,7 @@ export const Default: Story = {
           <NavigationDrawerItem
             label="Search"
             Icon={IconSearch}
-            modifier={{ keyboard: [`${getOsControlSymbol()}`, 'K'] }}
+            modifier={{ keyboard: { type: 'combination', keys: ['Mod', 'K'] } }}
           />
           <NavigationDrawerItem
             label="Settings"

@@ -14,14 +14,19 @@ const LabelOverrides = () => {
         isClosable
         closeLabel="Dismiss notice"
       />
-      <ListItem hotkeys={['G', 'D']}>Default shortcut</ListItem>
-      <ListItem hotkeys={['G', 'S']} hotkeysJoinLabel="followed by">
+      <ListItem shortcut={{ type: 'sequence', steps: [['G'], ['D']] }}>
+        Default shortcut
+      </ListItem>
+      <ListItem
+        shortcut={{ type: 'sequence', steps: [['G'], ['S']] }}
+        shortcutJoinLabel="followed by"
+      >
         Supplied shortcut
       </ListItem>
       <MenuItem
         text="Legacy shortcut"
-        hotKeys={['G', 'L']}
-        hotKeysJoinLabel="next"
+        shortcut={{ type: 'sequence', steps: [['G'], ['L']] }}
+        shortcutJoinLabel="next"
       />
     </TwentyUiGalleryCard>
   );

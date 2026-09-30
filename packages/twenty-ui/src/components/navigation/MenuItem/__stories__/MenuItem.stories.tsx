@@ -144,9 +144,9 @@ export const Catalog: CatalogStory<Story, typeof MenuItem> = {
 
 export const HotKeysCatalog: CatalogStory<Story, typeof MenuItem> = {
   args: {
-    text: 'Menu item with hotkeys',
+    text: 'Menu item with shortcut',
     LeftIcon: IconBell,
-    hotKeys: ['⌘', 'K'],
+    shortcut: { type: 'combination', keys: ['Mod', 'K'] },
   },
   argTypes: {
     className: { control: false },
@@ -159,23 +159,25 @@ export const HotKeysCatalog: CatalogStory<Story, typeof MenuItem> = {
       dimensions: [
         {
           name: 'hotKeyTypes',
-          values: ['no hotkeys', 'single key', 'modifier + key'],
+          values: ['no shortcut', 'single key', 'modifier + key'],
           props: (choice: string) => {
             switch (choice) {
-              case 'no hotkeys':
-                return { hotKeys: undefined };
+              case 'no shortcut':
+                return { shortcut: undefined };
               case 'single key':
-                return { hotKeys: ['K'] };
+                return { shortcut: { type: 'combination', keys: ['K'] } };
               case 'modifier + key':
-                return { hotKeys: ['⌘', 'K'] };
+                return {
+                  shortcut: { type: 'combination', keys: ['Mod', 'K'] },
+                };
               default:
                 return {};
             }
           },
           labels: (choice: string) => {
             switch (choice) {
-              case 'no hotkeys':
-                return 'No hotkeys';
+              case 'no shortcut':
+                return 'No shortcut';
               case 'single key':
                 return 'Single key (K)';
               case 'modifier + key':
