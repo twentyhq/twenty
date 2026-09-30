@@ -3,7 +3,7 @@ import { QueryRunner } from 'typeorm';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
-@RegisteredInstanceCommand('2.44.0', 1790703844042)
+@RegisteredInstanceCommand('2.44.0', 1790757005262)
 export class AddScopeToApplicationVariablesFastInstanceCommand
   implements FastInstanceCommand
 {
