@@ -334,6 +334,18 @@ export const STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS = {
       },
     },
   }),
+  agentChatThreadRecordPage: buildStandardObjectRecordPageLayout({
+    objectUniversalIdentifier:
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.agentChatThread,
+    tabs: {
+      chat: {
+        title: 'Chat',
+        widgets: {
+          chat: 'Chat',
+        },
+      },
+    },
+  }),
   blocklistRecordPage: buildStandardObjectRecordPageLayout({
     objectUniversalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.blocklist,
     tabs: {

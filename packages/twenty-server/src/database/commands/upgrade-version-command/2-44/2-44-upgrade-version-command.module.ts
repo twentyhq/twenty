@@ -19,6 +19,7 @@ import { GateConversationsWidgetOnFeatureFlagCommand } from 'src/database/comman
 import { MoveAgentChatThreadsToRecordModelCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790751626421-move-agent-chat-threads-to-record-model.command';
 import { AddChatRecordPageCommandMenuItemsCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790751626422-add-chat-record-page-command-menu-items.command';
 import { OpenAsksForPendingInputCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790714482317-open-asks-for-pending-input.command';
+import { AddChatRecordPageCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790756589463-add-chat-record-page.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/workspace-migration-runner.module';
 
@@ -46,6 +47,7 @@ import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/wor
     GateConversationsWidgetOnFeatureFlagCommand,
     MoveAgentChatThreadsToRecordModelCommand,
     AddChatRecordPageCommandMenuItemsCommand,
+    AddChatRecordPageCommand,
     OpenAsksForPendingInputCommand,
   ],
 })

@@ -127,7 +127,7 @@ Record formatting, routing, product illustrations, and feature-specific animatio
 
 - Run `npx nx generateBarrels twenty-ui` after changing public exports. Do not edit generated barrels by hand.
 - Edit token sources in `design-tokens`, then run `npx nx generateTokens twenty-ui`. Use `npx nx generate:check twenty-ui` to check that generated token files are current.
-- Run `npx nx check:ownership twenty-ui` after changing the public interface. When intentionally adding or removing a public React component, run `node --import tsx packages/twenty-ui/scripts/checkModuleOwnership.ts --write` from the repository root and review the `docs/module-ownership.json` diff. CI checks the snapshot and dependency boundaries without updating them.
+- Run `npx nx check:ownership twenty-ui` to validate exports, generated files, and dependency rules. After an intentional interface change, run `node --import tsx packages/twenty-ui/scripts/checkModuleOwnership.ts --write` and review the two inventory files in `docs/`.
 
 ### Documentation
 
