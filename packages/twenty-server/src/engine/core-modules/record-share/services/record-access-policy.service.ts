@@ -390,7 +390,7 @@ export class RecordAccessPolicyService {
 
       const trashedSnapshots = snapshots.filter(
         (snapshot) =>
-          liveSnapshotIds.includes(snapshot.id) &&
+          !capturedChildSnapshotsBySnapshotId.has(snapshot.id) &&
           isDefined(snapshot.deletedAt),
       );
 
