@@ -255,14 +255,22 @@ export class MessageChannelMetadataService {
     );
 
     if (
+      isDefined(previousMessageChannel) &&
       isDefined(data.visibility) &&
-      data.visibility !== previousMessageChannel?.visibility
+      data.visibility !== previousMessageChannel.visibility
     ) {
-      await this.channelRecordShareService.syncChannelRecordShares({
-        workspaceId,
-        source: MESSAGE_THREAD_CHANNEL_RECORD_SHARE_SOURCE,
-        channelId: id,
-      });
+      await this.channelRecordShareService.syncChannelRecordSharesAfterVisibilityChange(
+        {
+          workspaceId,
+          source: MESSAGE_THREAD_CHANNEL_RECORD_SHARE_SOURCE,
+          channelId: id,
+          revertVisibilityChange: () =>
+            this.repository.update(
+              { id, workspaceId },
+              { visibility: previousMessageChannel.visibility },
+            ),
+        },
+      );
     }
 
     return this.repository.findOneOrFail({ where: { id, workspaceId } });

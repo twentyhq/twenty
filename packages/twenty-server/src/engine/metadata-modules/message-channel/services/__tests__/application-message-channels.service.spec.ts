@@ -63,7 +63,7 @@ describe('ApplicationMessageChannelsService', () => {
     } as unknown as jest.Mocked<WorkspaceEventEmitter>;
 
     channelRecordShareService = {
-      syncChannelRecordShares: jest.fn(),
+      syncChannelRecordSharesAfterVisibilityChange: jest.fn(),
     } as unknown as jest.Mocked<ChannelRecordShareService>;
 
     const module: TestingModule = await Test.createTestingModule({
@@ -250,7 +250,7 @@ describe('ApplicationMessageChannelsService', () => {
         visibility: MessageChannelVisibility.METADATA,
       });
       expect(
-        channelRecordShareService.syncChannelRecordShares,
+        channelRecordShareService.syncChannelRecordSharesAfterVisibilityChange,
       ).not.toHaveBeenCalled();
 
       await service.update({
@@ -259,7 +259,10 @@ describe('ApplicationMessageChannelsService', () => {
         visibility: MessageChannelVisibility.SHARE_EVERYTHING,
       });
       expect(
-        channelRecordShareService.syncChannelRecordShares,
+        channelRecordShareService.syncChannelRecordSharesAfterVisibilityChange,
+      ).toHaveBeenCalledTimes(1);
+      expect(
+        channelRecordShareService.syncChannelRecordSharesAfterVisibilityChange,
       ).toHaveBeenCalledWith(
         expect.objectContaining({
           workspaceId: WORKSPACE_ID,

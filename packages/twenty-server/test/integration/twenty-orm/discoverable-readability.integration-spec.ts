@@ -257,6 +257,24 @@ describe('DISCOVERABLE readability (integration)', () => {
     ).rejects.toThrow('no permission to read field "title" on "note"');
   });
 
+  it('refuses an existence read that joins and selects another field', async () => {
+    await expect(
+      readAsJony((workspaceOrmManager) =>
+        workspaceOrmManager
+          .getRepositoryWithContextPermissions(
+            'noteTarget',
+            undefined,
+            'existence',
+          )
+          .createQueryBuilder('noteTarget')
+          .select(['id'])
+          .leftJoinAndSelect('noteTarget.note', 'note')
+          .where('noteTarget.id = :id', { id: NOTE_TARGET_ID })
+          .getMany(),
+      ),
+    ).rejects.toThrow(/no permission to read field "\w+" on "note"/);
+  });
+
   it('discovers a child that declares discoverable fields through its parent', async () => {
     expect(
       await discoverAsJony('noteTarget', ['id', 'noteId', 'targetPersonId']),

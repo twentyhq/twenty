@@ -11,7 +11,7 @@ import {
   type InheritedReadabilityParentCondition,
 } from 'src/engine/core-modules/record-share/utils/build-inherited-readability-condition.util';
 import { buildRecordShareCondition } from 'src/engine/core-modules/record-share/utils/build-record-share-condition.util';
-import { isDiscoverableObject } from 'src/engine/core-modules/record-share/utils/resolve-discoverable-field-metadata-ids.util';
+import { isDiscoverableObject } from 'src/engine/core-modules/record-share/utils/is-discoverable-object.util';
 import { resolveInheritedReadabilityParents } from 'src/engine/core-modules/record-share/utils/resolve-inherited-readability-parents.util';
 import { resolveRequiredRecordShareAccessLevels } from 'src/engine/core-modules/record-share/utils/resolve-required-record-share-access-levels.util';
 import {
@@ -136,7 +136,7 @@ const buildInheritedReadabilityGate = ({
   // only a child that is itself discoverable may rely on
   if (
     isDefined(joinParentRelationShape) &&
-    (context.subject.readScope !== 'existence' || isExistenceRead === true) &&
+    (context.subject.readScope !== 'existence' || isExistenceRead) &&
     parents.some(
       (parent) =>
         parent.kind === 'column' &&

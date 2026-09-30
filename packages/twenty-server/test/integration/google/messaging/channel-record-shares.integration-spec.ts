@@ -21,6 +21,7 @@ import { gmailMessage } from 'test/integration/google/mocks/gmail-message.util';
 import { setupGoogleMock } from 'test/integration/google/mocks/setup-google-mock.util';
 import { connectMessagingAccount } from 'test/integration/utils/connect-messaging-account.util';
 import { findRecordShares } from 'test/integration/utils/find-record-shares.util';
+import { insertRecordShare } from 'test/integration/utils/insert-record-share.util';
 import { updateMessageChannel } from 'test/integration/utils/query-messaging.util';
 import { runMessageChannelSync } from 'test/integration/utils/run-message-channel-sync.util';
 import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
@@ -114,6 +115,38 @@ describe('Message thread grants derived from channels (integration)', () => {
     expect(await findRecordShares(messageThreadId)).toEqual([
       ownerShare(WORKSPACE_MEMBER_DATA_SEED_IDS.JANE, janeChannel.channelId),
     ]);
+
+    await updateMessageChannel(janeChannel.channelId, {
+      visibility: MessageChannelVisibility.SHARE_EVERYTHING,
+    });
+
+    expect(await findRecordShares(messageThreadId)).toEqual([
+      ownerShare(WORKSPACE_MEMBER_DATA_SEED_IDS.JANE, janeChannel.channelId),
+      everyoneShare(janeChannel.channelId),
+    ]);
+  }, 60000);
+
+  it('rewrites grants the channel would no longer write as they are', async () => {
+    await updateMessageChannel(janeChannel.channelId, {
+      visibility: MessageChannelVisibility.METADATA,
+    });
+
+    await insertRecordShare({
+      objectNameSingular: 'messageThread',
+      recordId: messageThreadId,
+      share: ownerShare(
+        WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+        janeChannel.channelId,
+      ),
+    });
+    await insertRecordShare({
+      objectNameSingular: 'messageThread',
+      recordId: messageThreadId,
+      share: {
+        ...everyoneShare(janeChannel.channelId),
+        accessLevel: RecordShareAccessLevel.READ_WRITE,
+      },
+    });
 
     await updateMessageChannel(janeChannel.channelId, {
       visibility: MessageChannelVisibility.SHARE_EVERYTHING,

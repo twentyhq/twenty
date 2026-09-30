@@ -101,6 +101,20 @@ describe('resolveDiscoverableFieldMetadataIds', () => {
     ).toBeUndefined();
   });
 
+  it('ignores fields declared on an object that is neither discoverable nor inherited', () => {
+    expect(
+      resolveDiscoverableFieldMetadataIds({
+        flatObjectMetadata: buildObject({
+          readability: MetadataReadability.PRIVATE,
+          discoverableFieldUniversalIdentifiers: [
+            'target-person-field-universal-identifier',
+          ],
+        }),
+        flatFieldMetadataMaps,
+      }),
+    ).toBeUndefined();
+  });
+
   it('lets a DISCOVERABLE object be discovered by id, createdAt and createdBy alone', () => {
     expect(
       resolveDiscoverableFieldMetadataIds({
