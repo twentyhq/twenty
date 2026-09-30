@@ -79,22 +79,19 @@ export class WorkflowAgentConversationWorkspaceService {
     initiatorUserWorkspaceId: string | null;
     executionResult: RecordedExecutionResult;
   }): Promise<RecordedConversation | null> {
-    const { flatFieldMetadataMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatFieldMetadataMaps',
-      ]);
+    const conversation = await this.openConversation({
+      workspaceId,
+      workflowRunId,
+      stepId,
+      title,
+      agentId,
+    });
 
-    if (!hasWorkflowRunThreadFields(flatFieldMetadataMaps)) {
+    if (!isDefined(conversation)) {
       return null;
     }
 
-    const threadInsertResult = await this.threadRepository.insert(workspaceId, {
-      title,
-      workflowRunId,
-    });
-    const threadId = threadInsertResult.identifiers[0].id as string;
-
-    const turnId = await this.insertTurn({ workspaceId, threadId, agentId });
+    const { threadId, turnId } = conversation;
 
     await this.insertMessage({
       workspaceId,
@@ -104,13 +101,6 @@ export class WorkflowAgentConversationWorkspaceService {
       agentId: null,
       senderUserWorkspaceId: initiatorUserWorkspaceId,
       parts: [{ type: 'text', text: prompt }],
-    });
-
-    await this.workflowRunWorkspaceService.setStepThreadId({
-      stepId,
-      threadId,
-      workflowRunId,
-      workspaceId,
     });
 
     const isAwaitingAnswer = await this.recordReply({
@@ -139,26 +129,19 @@ export class WorkflowAgentConversationWorkspaceService {
     title: string;
     fields: RequestFormToolInput['fields'];
   }): Promise<void> {
-    const { flatFieldMetadataMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatFieldMetadataMaps',
-      ]);
+    const conversation = await this.openConversation({
+      workspaceId,
+      workflowRunId,
+      stepId,
+      title,
+      agentId: null,
+    });
 
-    if (!hasWorkflowRunThreadFields(flatFieldMetadataMaps)) {
+    if (!isDefined(conversation)) {
       return;
     }
 
-    const threadInsertResult = await this.threadRepository.insert(workspaceId, {
-      title,
-      workflowRunId,
-    });
-    const threadId = threadInsertResult.identifiers[0].id as string;
-
-    const turnId = await this.insertTurn({
-      workspaceId,
-      threadId,
-      agentId: null,
-    });
+    const { threadId, turnId } = conversation;
 
     const messageId = await this.insertMessage({
       workspaceId,
@@ -183,13 +166,6 @@ export class WorkflowAgentConversationWorkspaceService {
       { id: threadId },
       { pendingQuestionMessageId: messageId },
     );
-
-    await this.workflowRunWorkspaceService.setStepThreadId({
-      stepId,
-      threadId,
-      workflowRunId,
-      workspaceId,
-    });
   }
 
   // Continues a conversation whose question has been answered: the answer is
@@ -294,6 +270,47 @@ export class WorkflowAgentConversationWorkspaceService {
     );
 
     return true;
+  }
+
+  // Only a workspace whose conversations can name a run records one.
+  private async openConversation({
+    workspaceId,
+    workflowRunId,
+    stepId,
+    title,
+    agentId,
+  }: {
+    workspaceId: string;
+    workflowRunId: string;
+    stepId: string;
+    title: string;
+    agentId: string | null;
+  }): Promise<{ threadId: string; turnId: string } | null> {
+    const { flatFieldMetadataMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatFieldMetadataMaps',
+      ]);
+
+    if (!hasWorkflowRunThreadFields(flatFieldMetadataMaps)) {
+      return null;
+    }
+
+    const threadInsertResult = await this.threadRepository.insert(workspaceId, {
+      title,
+      workflowRunId,
+    });
+    const threadId = threadInsertResult.identifiers[0].id as string;
+
+    const turnId = await this.insertTurn({ workspaceId, threadId, agentId });
+
+    await this.workflowRunWorkspaceService.setStepThreadId({
+      stepId,
+      threadId,
+      workflowRunId,
+      workspaceId,
+    });
+
+    return { threadId, turnId };
   }
 
   private async insertTurn({

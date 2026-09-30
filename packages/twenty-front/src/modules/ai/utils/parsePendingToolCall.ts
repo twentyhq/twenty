@@ -13,9 +13,9 @@ import { isNonEmptyArray, isPlainObject } from 'twenty-shared/utils';
 
 import { type AgentChatPendingToolCall } from '@/ai/types/AgentChatPendingToolCall';
 
-// A call the agent paused on waits until its output says otherwise. Its input
-// is stored as JSON, so what a card renders is checked here rather than
-// trusted.
+// A call the agent paused on waits until its output says otherwise. The server
+// validated its input against the tool's schema when the call was made, so
+// only the shape each card needs is checked here.
 export const parsePendingToolCall = (
   part: ExtendedUIMessagePart,
 ): AgentChatPendingToolCall | null => {

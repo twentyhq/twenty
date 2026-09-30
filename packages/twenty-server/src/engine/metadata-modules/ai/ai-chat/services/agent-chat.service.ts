@@ -640,8 +640,8 @@ export class AgentChatService {
     return parts.filter(
       (part) =>
         isDefined(part.toolName) &&
-        PAUSING_TOOLS.get(part.toolName)?.isAwaitingOutput(part.toolOutput) ===
-          true,
+        (PAUSING_TOOLS.get(part.toolName)?.isAwaitingOutput(part.toolOutput) ??
+          false),
     );
   }
 
