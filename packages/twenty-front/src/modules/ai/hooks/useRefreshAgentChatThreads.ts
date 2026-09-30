@@ -2,6 +2,7 @@ import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceSta
 import { AGENT_CHAT_THREAD_LIST_RECORD_GQL_FIELDS } from '@/ai/constants/AgentChatThreadListRecordGqlFields';
 import { useRefreshAgentChatThreadPermissions } from '@/ai/hooks/useRefreshAgentChatThreadPermissions';
 import { agentChatThreadListState } from '@/ai/states/agentChatThreadListState';
+import { agentChatThreadRecordUpdateCountState } from '@/ai/states/agentChatThreadRecordUpdateCountState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { buildAgentChatThreadListFilter } from '@/ai/utils/buildAgentChatThreadListFilter';
@@ -110,6 +111,13 @@ export const useRefreshAgentChatThreads = () => {
 
       for (let attempt = 0; attempt < 2; attempt++) {
         const listBeforeRequest = store.get(agentChatThreadListState.atom);
+        const updateCountBeforeRequest = store.get(
+          agentChatThreadRecordUpdateCountState.atom,
+        );
+        const hasChangedSinceRequest = () =>
+          store.get(agentChatThreadListState.atom) !== listBeforeRequest ||
+          store.get(agentChatThreadRecordUpdateCountState.atom) !==
+            updateCountBeforeRequest;
 
         if (mode === 'fetch-more' && !listBeforeRequest?.hasNextPage) {
           return undefined;
@@ -128,7 +136,7 @@ export const useRefreshAgentChatThreads = () => {
 
         // Retry once rather than overwrite a record event applied while the
         // request was in flight
-        if (store.get(agentChatThreadListState.atom) !== listBeforeRequest) {
+        if (hasChangedSinceRequest()) {
           continue;
         }
 
@@ -140,10 +148,7 @@ export const useRefreshAgentChatThreads = () => {
             : []),
         ]);
 
-        if (
-          !isSameSession() ||
-          store.get(agentChatThreadListState.atom) !== listBeforeRequest
-        ) {
+        if (!isSameSession() || hasChangedSinceRequest()) {
           continue;
         }
 

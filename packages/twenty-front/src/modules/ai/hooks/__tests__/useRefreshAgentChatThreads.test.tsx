@@ -4,6 +4,7 @@ import { type ReactNode } from 'react';
 
 import { useRefreshAgentChatThreads } from '@/ai/hooks/useRefreshAgentChatThreads';
 import { agentChatThreadListState } from '@/ai/states/agentChatThreadListState';
+import { agentChatThreadRecordUpdateCountState } from '@/ai/states/agentChatThreadRecordUpdateCountState';
 import { agentChatThreadsSelector } from '@/ai/states/selectors/agentChatThreadsSelector';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 
@@ -204,6 +205,39 @@ describe('useRefreshAgentChatThreads', () => {
     expect(store.get(agentChatThreadListState.atom)?.threadIds).toEqual([
       'thread-1',
       'thread-2',
+    ]);
+  });
+
+  it('retries rather than overwrite a chat updated during the request', async () => {
+    const store = buildStore();
+    let resolveQuery: (value: ReturnType<typeof buildPage>) => void = () =>
+      undefined;
+
+    queryMock
+      .mockReturnValueOnce(
+        new Promise((resolve) => {
+          resolveQuery = resolve;
+        }),
+      )
+      .mockResolvedValueOnce(
+        buildPage([buildThread('thread-1', 'Renamed meanwhile')]),
+      );
+    const result = renderRefresh(store);
+
+    const refreshPromise = result.current.refreshAgentChatThreads();
+
+    act(() => {
+      store.set(agentChatThreadRecordUpdateCountState.atom, 1);
+    });
+
+    await act(async () => {
+      resolveQuery(buildPage([buildThread('thread-1', 'Stale title')]));
+      await refreshPromise;
+    });
+
+    expect(queryMock).toHaveBeenCalledTimes(2);
+    expect(store.get(agentChatThreadsSelector.atom)).toMatchObject([
+      { id: 'thread-1', title: 'Renamed meanwhile' },
     ]);
   });
 
