@@ -1,4 +1,9 @@
-import { Injectable, Logger, type OnModuleInit } from '@nestjs/common';
+import {
+  Injectable,
+  Logger,
+  type OnModuleInit,
+  type Type,
+} from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
 import { InjectDataSource } from '@nestjs/typeorm';
 
@@ -49,6 +54,11 @@ export class SecretEncryptionRotationRunnerService implements OnModuleInit {
     SecretEncryptionRotationHandler
   >();
 
+  private readonly entityBySiteName = new Map<
+    SecretEncryptionRotationSiteName,
+    Type<unknown>
+  >();
+
   constructor(
     private readonly environmentConfigDriver: EnvironmentConfigDriver,
     private readonly secretEncryptionService: SecretEncryptionService,
@@ -80,6 +90,7 @@ export class SecretEncryptionRotationRunnerService implements OnModuleInit {
             );
 
         this.handlersBySiteName.set(meta.siteName, handler);
+        this.entityBySiteName.set(meta.siteName, entry.entity);
       }
     }
 
@@ -130,47 +141,43 @@ export class SecretEncryptionRotationRunnerService implements OnModuleInit {
     const startedAt = performance.now();
     const results: SecretEncryptionRotationSiteResult[] = [];
 
-    try {
-      for (const [siteName, handler] of handlersToRun) {
-        const siteStartedAt = performance.now();
+    for (const [siteName, handler] of handlersToRun) {
+      const siteStartedAt = performance.now();
 
-        const remainingBefore = await handler.countRemaining({
-          siteName,
-          currentEncryptionKeyId,
-        });
+      const remainingBefore = await handler.countRemaining({
+        siteName,
+        currentEncryptionKeyId,
+      });
 
-        this.logger.log(
-          `[${siteName}] start: ${remainingBefore} row(s) need rotation`,
-        );
+      this.logger.log(
+        `[${siteName}] start: ${remainingBefore} row(s) need rotation`,
+      );
 
-        const { rotated, skipped, errors } = await handler.rotate({
-          siteName,
-          currentEncryptionKeyId,
-          batchSize: options.batchSize,
-          dryRun: options.dryRun,
-        });
+      const { rotated, skipped, errors } = await handler.rotate({
+        siteName,
+        currentEncryptionKeyId,
+        batchSize: options.batchSize,
+        dryRun: options.dryRun,
+      });
 
-        const durationMs = Math.round(performance.now() - siteStartedAt);
-        const result: SecretEncryptionRotationSiteResult = {
-          siteName,
-          remainingBefore,
-          rotated,
-          skipped,
-          errors,
-          durationMs,
-        };
+      const durationMs = Math.round(performance.now() - siteStartedAt);
+      const result: SecretEncryptionRotationSiteResult = {
+        siteName,
+        remainingBefore,
+        rotated,
+        skipped,
+        errors,
+        durationMs,
+      };
 
-        results.push(result);
+      results.push(result);
 
-        this.logger.log(
-          `[${siteName}] DONE in ${durationMs}ms — rotated=${rotated} skipped=${skipped} errors=${errors}`,
-        );
-      }
-    } finally {
+      this.logger.log(
+        `[${siteName}] DONE in ${durationMs}ms — rotated=${rotated} skipped=${skipped} errors=${errors}`,
+      );
+
       if (!options.dryRun) {
-        await this.flushWorkspaceCaches(
-          handlersToRun.map(([siteName]) => siteName),
-        );
+        await this.flushWorkspaceCaches(siteName);
       }
     }
 
@@ -215,23 +222,16 @@ export class SecretEncryptionRotationRunnerService implements OnModuleInit {
   }
 
   private async flushWorkspaceCaches(
-    siteNames: SecretEncryptionRotationSiteName[],
+    siteName: SecretEncryptionRotationSiteName,
   ): Promise<void> {
-    const cacheKeysToFlush = [
-      ...new Set(
-        Object.values(SECRET_ENCRYPTION_ROTATION_SITE_ENTRIES)
-          .filter((entry) =>
-            Object.values(entry.columnSiteNames).some((meta) =>
-              siteNames.includes(meta.siteName),
-            ),
-          )
-          .flatMap((entry) =>
-            this.workspaceCacheService.getCacheKeyNamesLoadingEntity(
-              entry.entity,
-            ),
-          ),
-      ),
-    ];
+    const entity = this.entityBySiteName.get(siteName);
+
+    if (!isDefined(entity)) {
+      return;
+    }
+
+    const cacheKeysToFlush =
+      this.workspaceCacheService.getCacheKeyNamesLoadingEntity(entity);
 
     if (cacheKeysToFlush.length === 0) {
       return;
@@ -249,7 +249,7 @@ export class SecretEncryptionRotationRunnerService implements OnModuleInit {
     }
 
     this.logger.log(
-      `[secret-encryption:rotate] flushed workspace cache keys ${cacheKeysToFlush.join(
+      `[${siteName}] flushed workspace cache keys ${cacheKeysToFlush.join(
         ', ',
       )} for ${workspaces.length} workspace(s)`,
     );
