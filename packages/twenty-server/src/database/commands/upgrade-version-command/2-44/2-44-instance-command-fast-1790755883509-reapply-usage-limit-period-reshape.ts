@@ -6,10 +6,16 @@ import { type FastInstanceCommand } from 'src/engine/core-modules/upgrade/interf
 @RegisteredInstanceCommand('2.44.0', 1790755883509)
 export class ReapplyUsageLimitPeriodReshapeFastInstanceCommand implements FastInstanceCommand {
   public async up(queryRunner: QueryRunner): Promise<void> {
-    const isPeriodReshapeMissing = await queryRunner.hasColumn(
-      'core.usageLimit',
-      'windowSeconds',
-    );
+    const [{ isPeriodReshapeMissing }]: { isPeriodReshapeMissing: boolean }[] =
+      await queryRunner.query(
+        `SELECT EXISTS (
+           SELECT 1 FROM pg_attribute
+           WHERE attrelid = to_regclass($1)
+             AND attname = $2
+             AND NOT attisdropped
+         ) AS "isPeriodReshapeMissing"`,
+        ['"core"."usageLimit"', 'windowSeconds'],
+      );
 
     if (!isPeriodReshapeMissing) {
       return;
