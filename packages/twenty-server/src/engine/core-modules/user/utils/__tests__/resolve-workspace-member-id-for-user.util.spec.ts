@@ -1,4 +1,4 @@
-import { resolveWorkspaceMemberIdForUser } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/resolve-workspace-member-id-for-user.util';
+import { resolveWorkspaceMemberIdForUser } from 'src/engine/core-modules/user/utils/resolve-workspace-member-id-for-user.util';
 
 const buildMaps = ({ deletedAt }: { deletedAt?: string } = {}) => ({
   byId: { 'workspace-member-1': { deletedAt: deletedAt ?? null } },
