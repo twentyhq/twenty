@@ -3,6 +3,8 @@
 const ALLOWED_INDEX_WHERE_CLAUSES = new Set([
   '"deletedAt" IS NULL',
   '"isHidden" = true AND "deletedAt" IS NULL',
+  '"deletedAt" IS NULL AND "toolCallId" IS NULL',
+  '"deletedAt" IS NULL AND "toolCallId" IS NOT NULL',
 ]);
 
 export const validateAndReturnIndexWhereClause = (

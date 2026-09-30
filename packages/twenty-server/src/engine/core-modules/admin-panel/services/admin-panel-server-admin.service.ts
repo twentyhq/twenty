@@ -15,6 +15,7 @@ import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/
 import { SERVER_ADMIN_ACCESS_CHANGED_EVENT } from 'src/engine/core-modules/event-logs/emit/events/workspace-event/server-admin/server-admin-access-changed';
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
+import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { TwoFactorAuthenticationService } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication.service';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
@@ -70,15 +71,19 @@ export class AdminPanelServerAdminService {
       throw new UserInputError('User not found.');
     }
 
-    await this.twoFactorAuthenticationService.assertFreshStepUpAuthenticationOrThrow(
-      {
-        userId: actor.id,
-        workspaceId: actorWorkspaceId,
-        otp,
-        otpRequiredMessage: msg`Enter your two-factor authentication code to manage server administrators.`,
-        twoFactorAuthenticationRequiredMessage: msg`Enable two-factor authentication in your current workspace to manage server administrators.`,
-      },
-    );
+    if (
+      this.twentyConfigService.get('NODE_ENV') !== NodeEnvironment.DEVELOPMENT
+    ) {
+      await this.twoFactorAuthenticationService.assertFreshStepUpAuthenticationOrThrow(
+        {
+          userId: actor.id,
+          workspaceId: actorWorkspaceId,
+          otp,
+          otpRequiredMessage: msg`Enter your two-factor authentication code to manage server administrators.`,
+          twoFactorAuthenticationRequiredMessage: msg`Enable two-factor authentication in your current workspace to manage server administrators.`,
+        },
+      );
+    }
 
     const nextCanAccessFullAdminPanel =
       canAccessFullAdminPanel ?? targetUser.canAccessFullAdminPanel;

@@ -6,26 +6,11 @@ import { type AskQuestionsToolResult } from 'twenty-shared/ai';
 import { IconHelpCircle } from 'twenty-ui/icon';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
+import {
+  StyledAiChatAskStatusContainer,
+  StyledAiChatAskStatusMessage,
+} from '@/ai/components/AiChatAskStyledComponents';
 import { ShimmeringText } from '@/ai/components/ShimmeringText';
-
-const StyledContainer = styled.div`
-  align-items: flex-start;
-  color: ${themeCssVariables.font.color.tertiary};
-  display: flex;
-  gap: ${themeCssVariables.spacing[1]};
-  padding: ${themeCssVariables.spacing[1]} 0;
-
-  svg {
-    flex-shrink: 0;
-    margin-top: 1px;
-  }
-`;
-
-const StyledMessage = styled.span`
-  color: ${themeCssVariables.font.color.tertiary};
-  font-size: ${themeCssVariables.font.size.md};
-  font-weight: ${themeCssVariables.font.weight.medium};
-`;
 
 const StyledAnswersCard = styled.div`
   background-color: ${themeCssVariables.background.transparent.lighter};
@@ -76,16 +61,16 @@ export const AiChatQuestionStatusRenderer = ({
     const label = t`Asking questions...`;
 
     return (
-      <StyledContainer>
+      <StyledAiChatAskStatusContainer>
         <IconHelpCircle size={theme.icon.size.sm} />
         {isStreaming ? (
           <ShimmeringText>
-            <StyledMessage>{label}</StyledMessage>
+            <StyledAiChatAskStatusMessage>{label}</StyledAiChatAskStatusMessage>
           </ShimmeringText>
         ) : (
-          <StyledMessage>{label}</StyledMessage>
+          <StyledAiChatAskStatusMessage>{label}</StyledAiChatAskStatusMessage>
         )}
-      </StyledContainer>
+      </StyledAiChatAskStatusContainer>
     );
   }
 
@@ -93,7 +78,7 @@ export const AiChatQuestionStatusRenderer = ({
 
   return (
     <StyledAnswersCard>
-      <StyledMessage>{t`Answers`}</StyledMessage>
+      <StyledAiChatAskStatusMessage>{t`Answers`}</StyledAiChatAskStatusMessage>
       {questions.map((question, index) => {
         const answer = answers.find(
           (candidate) => candidate.questionIndex === index,

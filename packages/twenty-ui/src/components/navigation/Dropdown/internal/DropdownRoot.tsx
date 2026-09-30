@@ -9,7 +9,9 @@ import { DropdownContext } from './DropdownContext';
 import { type DropdownFocusTarget } from './DropdownFocusTarget';
 import { type DropdownPageFocusRequest } from './DropdownPageFocusRequest';
 import { DropdownNestedRootEffect } from './DropdownNestedRootEffect';
+import { isDropdownDismissPrevented } from './isDropdownDismissPrevented';
 import { preventDismissingClickActivation } from './preventDismissingClickActivation';
+import { useRegisteredElementId } from './useRegisteredElementId';
 
 type PageHistoryEntry = { id?: string; trigger?: DropdownFocusTarget };
 
@@ -19,6 +21,8 @@ export const DropdownRoot = ({
   open: controlledOpen,
   defaultOpen = false,
   onOpenChange,
+  onEscapeKeyDown,
+  onInteractOutside,
   multiple = false,
   defaultPage = 'root',
   isSubmenu = false,
@@ -51,6 +55,8 @@ export const DropdownRoot = ({
   );
   const [focusOnOpen, setFocusOnOpen] = useState(true);
   const [searchTargetId, setSearchTargetId] = useState<string>();
+  const [triggerId, registerTrigger] = useRegisteredElementId();
+  const [titleId, registerTitle] = useRegisteredElementId();
 
   if (previousOpen !== open) {
     setPreviousOpen(open);
@@ -86,7 +92,7 @@ export const DropdownRoot = ({
     trigger,
   }: {
     id: string;
-    trigger: DropdownFocusTarget;
+    trigger?: DropdownFocusTarget;
   }) => {
     setPageFocusRequest({ pageId: id });
     setPageHistory((history) => [...history, { id, trigger }]);
@@ -138,6 +144,24 @@ export const DropdownRoot = ({
           return;
         }
 
+        const isEscapeDismissPrevented =
+          eventDetails.reason === 'escape-key' &&
+          isDropdownDismissPrevented({
+            onDismiss: onEscapeKeyDown,
+            event: eventDetails.event,
+          });
+        const isOutsideDismissPrevented =
+          isOutsideDismissal &&
+          isDropdownDismissPrevented({
+            onDismiss: onInteractOutside,
+            event: eventDetails.event,
+          });
+
+        if (isEscapeDismissPrevented || isOutsideDismissPrevented) {
+          eventDetails.cancel();
+          return;
+        }
+
         if (isOutsideDismissal) {
           preventDismissingClickActivation(eventDetails.event);
         }
@@ -177,6 +201,10 @@ export const DropdownRoot = ({
           registerOpenNestedRoot,
           searchTargetId,
           setSearchTargetId,
+          triggerId,
+          registerTrigger,
+          titleId,
+          registerTitle,
         }}
       >
         <DropdownNestedRootEffect

@@ -592,6 +592,24 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
       universalForeignKey: 'tsVectorFieldMetadataUniversalIdentifier',
     },
   },
+  validationRule: {
+    workspace: null,
+    application: null,
+    objectMetadata: {
+      metadataName: 'objectMetadata',
+      foreignKey: 'objectMetadataId',
+      inverseOneToManyProperty: null,
+      isNullable: false,
+      universalForeignKey: 'objectMetadataUniversalIdentifier',
+    },
+    errorFieldMetadata: {
+      metadataName: 'fieldMetadata',
+      foreignKey: 'errorFieldMetadataId',
+      inverseOneToManyProperty: null,
+      isNullable: true,
+      universalForeignKey: 'errorFieldMetadataUniversalIdentifier',
+    },
+  },
   workflow: {
     workspace: null,
     createdBy: null,

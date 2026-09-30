@@ -20,8 +20,6 @@ import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/
 import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
-import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import {
   TWO_FACTOR_AUTHENTICATION_OTP_RATE_LIMIT_MAX,
@@ -59,7 +57,6 @@ export class TwoFactorAuthenticationService {
     private readonly secretEncryptionService: SecretEncryptionService,
     private readonly throttlerService: ThrottlerService,
     private readonly eventLogEmitterService: EventLogEmitterService,
-    private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
   private async decryptStoredSecret({
@@ -311,12 +308,6 @@ export class TwoFactorAuthenticationService {
     otpRequiredMessage: MessageDescriptor;
     twoFactorAuthenticationRequiredMessage: MessageDescriptor;
   }): Promise<void> {
-    if (
-      this.twentyConfigService.get('NODE_ENV') === NodeEnvironment.DEVELOPMENT
-    ) {
-      return;
-    }
-
     if (!isNonEmptyString(otp)) {
       throw new TwoFactorAuthenticationException(
         'A two-factor authentication code is required for this action',

@@ -28,9 +28,11 @@ import { MemberInfosTab } from '@/settings/members/components/MemberInfosTab';
 import { MemberPermissionsTab } from '@/settings/members/components/MemberPermissionsTab';
 import { useWorkspaceMemberRoles } from '@/settings/members/hooks/useWorkspaceMemberRoles';
 import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useMutation } from '@apollo/client/react';
 import {
   DeleteUserWorkspaceDocument,
+  FeatureFlagKey,
   ImpersonateDocument,
   PermissionFlagType,
 } from '~/generated-metadata/graphql';
@@ -57,8 +59,13 @@ export const SettingsWorkspaceMember = () => {
   const isImpersonating = useAtomStateValue(isImpersonatingState);
   const canImpersonate =
     useHasPermissionFlag(PermissionFlagType.IMPERSONATE) && !isImpersonating;
+  const isTwoFactorAuthenticationRecoveryCodeEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_TWO_FACTOR_AUTHENTICATION_RECOVERY_CODE_ENABLED,
+  );
   const canManageTwoFactorAuthenticationRecovery =
-    useHasPermissionFlag(PermissionFlagType.SECURITY) && !isImpersonating;
+    useHasPermissionFlag(PermissionFlagType.SECURITY) &&
+    isTwoFactorAuthenticationRecoveryCodeEnabled &&
+    !isImpersonating;
 
   const {
     roles,

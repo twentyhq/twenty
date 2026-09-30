@@ -7,16 +7,18 @@ import { EditorContent } from '@tiptap/react';
 import { useLingui } from '@lingui/react/macro';
 import { themeCssVariables } from 'twenty-ui/theme';
 
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { AiChatInlineBanner } from '@/ai/components/AiChatInlineBanner';
 import { AiModelTierDropdown } from '@/ai/components/AiModelTierDropdown';
 import { AiChatEmptyState } from '@/ai/components/AiChatEmptyState';
-import { AiChatQuestionCard } from '@/ai/components/AiChatQuestionCard';
+import { AiChatPendingAskGate } from '@/ai/components/AiChatPendingAskGate';
 import { AIChatNoMoreBillingCreditsBanner } from '@/ai/components/AIChatNoMoreBillingCreditsBanner';
+import { AiChatUsageLimitReachedBanner } from '@/ai/components/AiChatUsageLimitReachedBanner';
 import { AiChatStandaloneError } from '@/ai/components/AiChatStandaloneError';
 import { AgentChatContextPreview } from '@/ai/components/internal/AgentChatContextPreview';
-import { AgentChatFileUploadButton } from '@/ai/components/internal/AgentChatFileUploadButton';
+import { AiChatAddMenu } from '@/ai/components/AiChatAddMenu';
 import { AiChatDictationButton } from '@/ai/dictation/components/AiChatDictationButton';
 import { AiChatDictationEffect } from '@/ai/dictation/components/AiChatDictationEffect';
 import { AiChatDictationHint } from '@/ai/dictation/components/AiChatDictationHint';
@@ -27,10 +29,13 @@ import { useAiChatEditor } from '@/ai/hooks/useAiChatEditor';
 import { useInsertDictatedText } from '@/ai/dictation/hooks/useInsertDictatedText';
 import { useIsAiChatComposerCentered } from '@/ai/hooks/useIsAiChatComposerCentered';
 import { useHasReachedAiChatCreditsCap } from '@/ai/hooks/useHasReachedAiChatCreditsCap';
-import { agentChatPendingQuestionComponentSelector } from '@/ai/states/selectors/agentChatPendingQuestionComponentSelector';
+import { useHasReachedAiChatUsageLimit } from '@/ai/hooks/useHasReachedAiChatUsageLimit';
+import { AGENT_CHAT_NEW_THREAD_DRAFT_KEY } from '@/ai/states/agentChatDraftsByThreadIdState';
+import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
+import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
 import { aiModelsState } from '@/client-config/states/aiModelsState';
 import { useIsMobile } from 'twenty-ui/utilities';
-import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const StyledInputArea = styled(StyledAiChatContentContainer)<{
@@ -150,6 +155,9 @@ const EditableAiChatEditorSection = () => {
   const isMobile = useIsMobile();
   const isComposerCentered = useIsAiChatComposerCentered();
   const hasReachedAiChatCreditsCap = useHasReachedAiChatCreditsCap();
+  const hasReachedAiChatUsageLimit = useHasReachedAiChatUsageLimit();
+  const shouldShowUsageLimitBanner =
+    !hasReachedAiChatCreditsCap && hasReachedAiChatUsageLimit;
   const aiModels = useAtomStateValue(aiModelsState);
   const hasNoEnabledModels = aiModels.length === 0;
 
@@ -158,8 +166,45 @@ const EditableAiChatEditorSection = () => {
   const insertDictatedText = useInsertDictatedText(editor);
   const [dictationInterimText, setDictationInterimText] = useState('');
 
-  const pendingQuestion = useAtomComponentSelectorValue(
-    agentChatPendingQuestionComponentSelector,
+  const agentChatDisplayedThread = useAtomStateValue(
+    agentChatDisplayedThreadState,
+  );
+  // A workspace the Ask object has not reached yet has nothing to wait on.
+  const inputAskObjectMetadataItem = useAtomFamilySelectorValue(
+    objectMetadataItemFamilySelector,
+    { objectName: CoreObjectNameSingular.InputAsk, objectNameType: 'singular' },
+  );
+  const pendingAskThreadId =
+    isDefined(inputAskObjectMetadataItem) &&
+    isDefined(agentChatDisplayedThread) &&
+    agentChatDisplayedThread !== AGENT_CHAT_NEW_THREAD_DRAFT_KEY
+      ? agentChatDisplayedThread
+      : null;
+
+  const composer = (
+    <StyledInputBox isMobile={isMobile}>
+      <StyledEditorWrapper isMobile={isMobile}>
+        <EditorContent editor={editor} />
+      </StyledEditorWrapper>
+      <AiChatDictationHint interimText={dictationInterimText} />
+      <StyledButtonsContainer>
+        <StyledLeftButtonsContainer>
+          <AiChatAddMenu editor={editor} />
+          <AiChatDictationButton />
+          <AiChatContextUsageButton />
+        </StyledLeftButtonsContainer>
+        <StyledRightButtonsContainer>
+          <AiModelTierDropdown
+            dropdownId="ai-chat-model-tier-dropdown"
+            disabled={hasNoEnabledModels}
+          />
+          <SendMessageButton
+            onSend={handleSendAndClear}
+            isDisabled={hasNoEnabledModels}
+          />
+        </StyledRightButtonsContainer>
+      </StyledButtonsContainer>
+    </StyledInputBox>
   );
 
   return (
@@ -180,32 +225,13 @@ const EditableAiChatEditorSection = () => {
           />
         )}
         {hasReachedAiChatCreditsCap && <AIChatNoMoreBillingCreditsBanner />}
-        {isDefined(pendingQuestion) ? (
-          <AiChatQuestionCard pendingQuestion={pendingQuestion} />
+        {shouldShowUsageLimitBanner && <AiChatUsageLimitReachedBanner />}
+        {isDefined(pendingAskThreadId) ? (
+          <AiChatPendingAskGate threadId={pendingAskThreadId}>
+            {composer}
+          </AiChatPendingAskGate>
         ) : (
-          <StyledInputBox isMobile={isMobile}>
-            <StyledEditorWrapper isMobile={isMobile}>
-              <EditorContent editor={editor} />
-            </StyledEditorWrapper>
-            <AiChatDictationHint interimText={dictationInterimText} />
-            <StyledButtonsContainer>
-              <StyledLeftButtonsContainer>
-                <AgentChatFileUploadButton />
-                <AiChatDictationButton />
-                <AiChatContextUsageButton />
-              </StyledLeftButtonsContainer>
-              <StyledRightButtonsContainer>
-                <AiModelTierDropdown
-                  dropdownId="ai-chat-model-tier-dropdown"
-                  disabled={hasNoEnabledModels}
-                />
-                <SendMessageButton
-                  onSend={handleSendAndClear}
-                  isDisabled={hasNoEnabledModels}
-                />
-              </StyledRightButtonsContainer>
-            </StyledButtonsContainer>
-          </StyledInputBox>
+          composer
         )}
       </StyledInputArea>
       <StyledComposerBottomSpacer

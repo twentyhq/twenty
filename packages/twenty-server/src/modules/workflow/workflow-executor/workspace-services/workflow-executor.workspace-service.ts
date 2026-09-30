@@ -8,6 +8,7 @@ import {
   StepStatus,
   WorkflowRunStepInfo,
   WorkflowRunStepInfos,
+  type WorkflowRunStepLog,
 } from 'twenty-shared/workflow';
 
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
@@ -33,7 +34,6 @@ import {
   type WorkflowBranchExecutorInput,
   type WorkflowExecutorInput,
 } from 'src/modules/workflow/workflow-executor/types/workflow-executor-input.type';
-import { getStepRetryAttempt } from 'src/modules/workflow/workflow-executor/utils/get-step-retry-attempt.util';
 import { getStepRetryDelayMs } from 'src/modules/workflow/workflow-executor/utils/get-step-retry-delay-ms.util';
 import { isUserFacingWorkflowExecutorError } from 'src/modules/workflow/workflow-executor/utils/is-user-facing-workflow-executor-error.util';
 import { stepHasRetryAttemptsLeft } from 'src/modules/workflow/workflow-executor/utils/step-has-retry-attempts-left.util';
@@ -83,6 +83,7 @@ export class WorkflowExecutorWorkspaceService {
     workspaceId,
     shouldComputeWorkflowRunStatus = true,
     executedStepsCount = 0,
+    resumedThreadId,
   }: WorkflowExecutorInput) {
     await Promise.all(
       stepIds.map(async (stepIdToExecute) => {
@@ -91,6 +92,7 @@ export class WorkflowExecutorWorkspaceService {
           workflowRunId,
           workspaceId,
           executedStepsCount,
+          resumedThreadId,
         });
       }),
     );
@@ -108,6 +110,7 @@ export class WorkflowExecutorWorkspaceService {
     workflowRunId,
     workspaceId,
     executedStepsCount,
+    resumedThreadId,
   }: WorkflowBranchExecutorInput): Promise<void> {
     const workflowRun =
       await this.workflowRunWorkspaceService.getWorkflowRunOrFail({
@@ -153,7 +156,9 @@ export class WorkflowExecutorWorkspaceService {
 
     let actionOutput: WorkflowActionOutput;
 
+    // A resumed step was claimed as started, which shouldExecuteStep refuses.
     if (
+      isDefined(resumedThreadId) ||
       shouldExecuteStep({
         step: stepToExecute,
         steps,
@@ -168,6 +173,10 @@ export class WorkflowExecutorWorkspaceService {
         workflowRunId,
         workspaceId,
         billingSpenders,
+        resumedThreadId,
+        previousStepLog: isDefined(resumedThreadId)
+          ? workflowRun.stepLogs?.[stepId]
+          : undefined,
       });
 
       if (isDefined(actionOutput.error) && !actionOutput.isUserError) {
@@ -179,7 +188,6 @@ export class WorkflowExecutorWorkspaceService {
         if (canRetryStep) {
           await this.scheduleStepRetry({
             stepId,
-            stepInfo: stepInfos[stepId],
             error: actionOutput.error,
             retryDelayMs: getStepRetryDelayMs({ stepInfo: stepInfos[stepId] }),
             workflowRunId,
@@ -230,10 +238,12 @@ export class WorkflowExecutorWorkspaceService {
     const isError =
       isDefined(actionOutput.error) && !actionOutput.shouldFailSafely;
 
+    // A resumed step's node run was charged when it first ran and paused.
     if (
       !isError &&
       !actionOutput.shouldFailSafely &&
-      !actionOutput.shouldSkipStepExecution
+      !actionOutput.shouldSkipStepExecution &&
+      !isDefined(resumedThreadId)
     ) {
       await this.sendWorkflowNodeRunEvent(workspaceId, billingSpenders);
     }
@@ -492,6 +502,7 @@ export class WorkflowExecutorWorkspaceService {
     await this.workflowRunWorkspaceService.updateWorkflowRunStepInfo({
       stepId,
       stepInfo,
+      pendingAsks: isPendingEvent ? actionOutput.pendingAsks : undefined,
       workflowRunId,
       workspaceId,
     });
@@ -509,6 +520,8 @@ export class WorkflowExecutorWorkspaceService {
     workflowRunId,
     workspaceId,
     billingSpenders,
+    resumedThreadId,
+    previousStepLog,
   }: {
     step: WorkflowAction;
     steps: WorkflowAction[];
@@ -516,6 +529,8 @@ export class WorkflowExecutorWorkspaceService {
     workflowRunId: string;
     workspaceId: string;
     billingSpenders: WorkflowBillingSpenders;
+    resumedThreadId?: string;
+    previousStepLog?: WorkflowRunStepLog;
   }) {
     const stepId = step.id;
 
@@ -532,10 +547,10 @@ export class WorkflowExecutorWorkspaceService {
     });
 
     try {
-      const nodeRunRefusal = await this.getNodeRunRefusal({
-        workspaceId,
-        billingSpenders,
-      });
+      // A resumed step's quota was checked when it first ran and paused.
+      const nodeRunRefusal = isDefined(resumedThreadId)
+        ? undefined
+        : await this.getNodeRunRefusal({ workspaceId, billingSpenders });
 
       if (isDefined(nodeRunRefusal)) {
         return nodeRunRefusal;
@@ -549,6 +564,8 @@ export class WorkflowExecutorWorkspaceService {
           workflowRunId,
           workspaceId,
         },
+        resumedThreadId,
+        previousStepLog,
       });
     } catch (error) {
       const isUserError = isUserFacingWorkflowExecutorError(error);
@@ -676,34 +693,20 @@ export class WorkflowExecutorWorkspaceService {
 
   private async scheduleStepRetry({
     stepId,
-    stepInfo,
     error,
     retryDelayMs,
     workflowRunId,
     workspaceId,
   }: {
     stepId: string;
-    stepInfo?: WorkflowRunStepInfo;
     error: string;
     retryDelayMs: number;
     workflowRunId: string;
     workspaceId: string;
   }) {
-    await this.workflowRunWorkspaceService.updateWorkflowRunStepInfos({
-      stepInfos: {
-        [stepId]: {
-          status: StepStatus.PENDING,
-          error,
-          history: [
-            ...(stepInfo?.history ?? []),
-            {
-              status: StepStatus.FAILED,
-              error,
-              retryAttempt: getStepRetryAttempt({ stepInfo }) + 1,
-            },
-          ],
-        },
-      },
+    await this.workflowRunWorkspaceService.moveStepToRetry({
+      stepId,
+      error,
       workflowRunId,
       workspaceId,
     });

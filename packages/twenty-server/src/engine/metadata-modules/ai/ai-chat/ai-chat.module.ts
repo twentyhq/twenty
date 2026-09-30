@@ -2,6 +2,7 @@ import { AgentChatActorService } from 'src/engine/metadata-modules/ai/ai-chat/se
 import { RecordShareModule } from 'src/engine/core-modules/record-share/record-share.module';
 import { AgentChatSharingService } from './services/agent-chat-sharing.service';
 import { AgentChatStreamStateModule } from 'src/engine/metadata-modules/ai/ai-chat/agent-chat-stream-state.module';
+import { AgentChatThreadLifecycleModule } from 'src/engine/metadata-modules/ai/ai-chat/agent-chat-thread-lifecycle.module';
 import { AgentHistoryModule } from 'src/engine/metadata-modules/ai/ai-history/ai-history.module';
 import { UsageLimitModule } from 'src/engine/core-modules/usage-limit/usage-limit.module';
 import { AiChatUsageService } from 'src/engine/metadata-modules/ai/ai-chat/services/ai-chat-usage.service';
@@ -12,6 +13,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { WorkspaceDomainsModule } from 'src/engine/core-modules/domain/workspace-domains/workspace-domains.module';
+import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileModule } from 'src/engine/core-modules/file/file.module';
 import { ThrottlerModule } from 'src/engine/core-modules/throttler/throttler.module';
@@ -41,15 +43,19 @@ import { AgentChatCancelSubscriberService } from './services/agent-chat-cancel-s
 import { AgentChatStreamingService } from './services/agent-chat-streaming.service';
 import { AgentChatService } from './services/agent-chat.service';
 import { AgentChatThreadTargetService } from './services/agent-chat-thread-target.service';
+import { AgentChatTurnPreflightService } from './services/agent-chat-turn-preflight.service';
 import { AgentTitleGenerationService } from './services/agent-title-generation.service';
 import { ChatExecutionService } from './services/chat-execution.service';
 import { MessagePruningService } from './services/message-pruning.service';
 import { SystemPromptBuilderService } from './services/system-prompt-builder.service';
 
+import { InputAskModule } from 'src/modules/input-ask/input-ask.module';
+
 @Module({
   imports: [
     RecordShareModule,
     AgentChatStreamStateModule,
+    AgentChatThreadLifecycleModule,
     AgentHistoryModule,
     UsageLimitModule,
     TypeOrmModule.forFeature([
@@ -60,6 +66,7 @@ import { SystemPromptBuilderService } from './services/system-prompt-builder.ser
     ]),
     AiAgentExecutionModule,
     BillingModule,
+    FeatureFlagModule,
     ThrottlerModule,
     FileModule,
     PermissionsModule,
@@ -74,6 +81,7 @@ import { SystemPromptBuilderService } from './services/system-prompt-builder.ser
     ToolProviderModule,
     DashboardToolsModule,
     WorkflowToolsModule,
+    InputAskModule,
   ],
   providers: [
     AgentChatActorService,
@@ -87,6 +95,7 @@ import { SystemPromptBuilderService } from './services/system-prompt-builder.ser
     AgentChatService,
     AgentChatThreadTargetService,
     AgentChatStreamingService,
+    AgentChatTurnPreflightService,
     WorkspaceSetupChatService,
     AgentTitleGenerationService,
     ChatExecutionService,
@@ -97,10 +106,12 @@ import { SystemPromptBuilderService } from './services/system-prompt-builder.ser
     provideWorkspaceScopedRepository(FileEntity),
   ],
   exports: [
+    AgentChatActorService,
     AgentChatSharingService,
     AgentChatService,
     AgentChatStreamingService,
     AgentChatThreadTargetService,
+    AgentChatTurnPreflightService,
     TypeOrmModule.forFeature([AgentChatThreadEntity]),
   ],
 })

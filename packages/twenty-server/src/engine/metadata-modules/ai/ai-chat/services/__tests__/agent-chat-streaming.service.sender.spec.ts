@@ -32,7 +32,9 @@ const build = () => {
     resolveMessage: jest.fn().mockResolvedValue({
       sender: { userWorkspaceId: 'participant-b', applicationId: null },
     }),
-    authorize: jest.fn().mockResolvedValue({}),
+    authorize: jest
+      .fn()
+      .mockResolvedValue({ authContext: { workspaceMemberId: 'member' } }),
   };
   const heartbeat = { markClaimed: jest.fn(), clear: jest.fn() };
   const service = new AgentChatStreamingService(
@@ -46,6 +48,10 @@ const build = () => {
     { incrementCounterBy: jest.fn() } as never,
     {} as never,
     actors as never,
+    {
+      findPendingForThread: jest.fn().mockResolvedValue([]),
+      hasPendingForThread: jest.fn().mockResolvedValue(false),
+    } as never,
   );
   return { service, threads, queue, chat, actors, heartbeat };
 };
@@ -56,7 +62,7 @@ describe('Sender-aware queue draining', () => {
     const { service, queue, chat } = build();
     await service.flushNextQueuedMessage(args);
     expect(chat.getMessagesForThread).toHaveBeenCalledWith(
-      expect.objectContaining({ userWorkspaceId: 'participant-b' }),
+      expect.objectContaining({ workspaceMemberId: 'member' }),
     );
     expect(queue.add).toHaveBeenCalledWith(
       expect.any(String),

@@ -5,7 +5,7 @@ import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migrati
 import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
-import { In, type EntityManager } from 'typeorm';
+import { In, type EntityManager, type FindOptionsWhere } from 'typeorm';
 import { RecordShareRowCause } from 'twenty-shared/types';
 
 import {
@@ -117,6 +117,26 @@ export class RecordShareStorageService {
     await manager.query(
       `DELETE FROM ${escapeIdentifier(getWorkspaceSchemaName(workspaceId))}.${escapeIdentifier(RECORD_SHARE_OBJECT_METADATA_NAME)} WHERE "objectMetadataId" = $1 AND "recordId" = ANY($2::uuid[])`,
       [objectMetadataId, recordIds],
+    );
+  }
+
+  // Each criterion is ANDed, and a row matching any of them is deleted.
+  async deleteMatching({
+    workspaceId,
+    criteria,
+    transactionScope,
+  }: {
+    workspaceId: string;
+    criteria: FindOptionsWhere<RecordShare>[];
+    transactionScope?: WorkspaceTransactionScope;
+  }): Promise<void> {
+    await this.withRepository(
+      { workspaceId, transactionScope },
+      async (repository) => {
+        for (const criterion of criteria) {
+          await repository.delete(criterion);
+        }
+      },
     );
   }
 

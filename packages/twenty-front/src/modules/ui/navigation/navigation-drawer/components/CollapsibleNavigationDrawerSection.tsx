@@ -4,7 +4,7 @@ import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
-import { AnimatedExpandableContainer } from 'twenty-ui/primitives/layout';
+import { Collapsible } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledItems = styled.div`
@@ -49,15 +49,13 @@ export const CollapsibleNavigationDrawerSection = ({
     <NavigationDrawerSection>
       {isNavigationDrawerExpanded &&
         (wrapTitle ? wrapTitle(titleNode) : titleNode)}
-      <AnimatedExpandableContainer
+      <Collapsible
         isExpanded={!isNavigationDrawerExpanded || isNavigationSectionOpen}
         dimension="height"
-        mode="fit-content"
         containAnimation
-        initial={false}
       >
         <StyledItems>{children}</StyledItems>
-      </AnimatedExpandableContainer>
+      </Collapsible>
     </NavigationDrawerSection>
   );
 };
