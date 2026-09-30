@@ -2,7 +2,6 @@ import { act, renderHook } from '@testing-library/react';
 
 import { useChatThreadsForRecord } from '@/ai/hooks/useChatThreadsForRecord';
 import { type AgentChatThreadTargetRecord } from '@/ai/types/AgentChatThreadTargetRecord';
-import { dispatchMetadataOperationBrowserEvent } from '@/browser-event/utils/dispatchMetadataOperationBrowserEvent';
 import { dispatchObjectRecordOperationBrowserEvent } from '@/browser-event/utils/dispatchObjectRecordOperationBrowserEvent';
 import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
@@ -20,6 +19,12 @@ const companyTargetField = getMockFieldMetadataItemOrThrow({
   objectMetadataItem: personObjectMetadataItem,
   fieldName: 'company',
 });
+const threadObjectMetadataItem = {
+  ...personObjectMetadataItem,
+  id: 'agent-chat-thread-metadata-id',
+  nameSingular: 'agentChatThread',
+  namePlural: 'agentChatThreads',
+};
 const threadTargetObjectMetadataItem = {
   ...personObjectMetadataItem,
   id: 'agent-chat-thread-target-metadata-id',
@@ -44,7 +49,7 @@ const buildLink = ({
     __typename: 'AgentChatThread',
     id: threadId,
     title,
-    archivedAt: null,
+    deletedAt: null,
     updatedAt: '2026-09-28T10:00:00.000Z',
   },
 });
@@ -76,7 +81,6 @@ const useFindManyRecords = jest.fn((_params: unknown) => ({
   refetch,
 }));
 const useListenToEventsForQuery = jest.fn();
-const modifyCache = jest.fn();
 
 jest.mock('@/object-record/hooks/useFindManyRecords', () => ({
   useFindManyRecords: (params: unknown) => useFindManyRecords(params),
@@ -87,16 +91,6 @@ jest.mock('@/sse-db-event/hooks/useListenToEventsForQuery', () => ({
     useListenToEventsForQuery(params),
 }));
 
-jest.mock('@/object-metadata/hooks/useApolloCoreClient', () => ({
-  useApolloCoreClient: () => ({
-    cache: {
-      modify: modifyCache,
-      identify: ({ __typename, id }: { __typename: string; id: string }) =>
-        `${__typename}:${id}`,
-    },
-  }),
-}));
-
 jest.mock('@/object-metadata/hooks/useObjectMetadataItems', () => ({
   useObjectMetadataItems: () => ({
     objectMetadataItems: [
@@ -104,6 +98,7 @@ jest.mock('@/object-metadata/hooks/useObjectMetadataItems', () => ({
       personObjectMetadataItem,
       opportunityObjectMetadataItem,
       threadTargetObjectMetadataItem,
+      threadObjectMetadataItem,
     ],
   }),
 }));
@@ -125,12 +120,12 @@ const renderChatThreadsForRecord = (targetObjectNameSingular = 'company') =>
 
 const dispatchThreadOperation = (
   operation: Parameters<
-    typeof dispatchMetadataOperationBrowserEvent
+    typeof dispatchObjectRecordOperationBrowserEvent
   >[0]['operation'],
 ) =>
   act(() => {
-    dispatchMetadataOperationBrowserEvent({
-      metadataName: 'agentChatThread',
+    dispatchObjectRecordOperationBrowserEvent({
+      objectMetadataItem: threadObjectMetadataItem,
       operation,
     });
   });
@@ -201,56 +196,37 @@ describe('useChatThreadsForRecord', () => {
     expect(refetch).toHaveBeenCalledTimes(1);
   });
 
-  it('updates a listed conversation renamed in the chat in place', () => {
+  it.each([
+    { type: 'delete-one', deletedRecordId: ONBOARDING_THREAD_ID },
+    {
+      type: 'restore-one',
+      restoredRecord: { id: ONBOARDING_THREAD_ID },
+    },
+    { type: 'destroy-one' },
+  ] as const)(
+    'reads the links again when a conversation is $type-d',
+    (operation) => {
+      renderChatThreadsForRecord();
+
+      dispatchThreadOperation(operation);
+
+      expect(refetch).toHaveBeenCalledTimes(1);
+    },
+  );
+
+  it('leaves renames to the record cache', () => {
     renderChatThreadsForRecord();
 
     dispatchThreadOperation({
-      type: 'update',
-      updatedRecord: {
-        id: RENEWAL_THREAD_ID,
-        title: 'Renewal call',
-        deletedAt: null,
-        updatedAt: '2026-09-29T10:00:00.000Z',
+      type: 'update-one',
+      result: {
+        updateInput: {
+          recordId: RENEWAL_THREAD_ID,
+          updatedFields: [{ title: 'Renewal call' }],
+        },
       },
     });
 
     expect(refetch).not.toHaveBeenCalled();
-    expect(modifyCache).toHaveBeenCalledWith(
-      expect.objectContaining({
-        id: `AgentChatThread:${RENEWAL_THREAD_ID}`,
-      }),
-    );
-
-    const { fields } = modifyCache.mock.calls[0][0];
-
-    expect(fields.title()).toBe('Renewal call');
-    expect(fields.archivedAt()).toBeNull();
-  });
-
-  it('reads the links again when a listed conversation is deleted', () => {
-    renderChatThreadsForRecord();
-
-    dispatchThreadOperation({
-      type: 'delete',
-      deletedRecordId: ONBOARDING_THREAD_ID,
-    });
-
-    expect(refetch).toHaveBeenCalledTimes(1);
-  });
-
-  it('ignores conversations that are not linked to the record', () => {
-    renderChatThreadsForRecord();
-
-    dispatchThreadOperation({
-      type: 'update',
-      updatedRecord: { id: '20202020-0000-4000-8000-0000000000cc' },
-    });
-    dispatchThreadOperation({
-      type: 'delete',
-      deletedRecordId: '20202020-0000-4000-8000-0000000000cc',
-    });
-
-    expect(refetch).not.toHaveBeenCalled();
-    expect(modifyCache).not.toHaveBeenCalled();
   });
 });

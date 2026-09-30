@@ -605,8 +605,7 @@
                   "label": "Navigation",
                   "pages": [
                     "ui/primitives/navigation/list-item",
-                    "ui/primitives/navigation/tabs",
-                    "ui/primitives/navigation/click-to-action-link"
+                    "ui/primitives/navigation/tabs"
                   ]
                 },
                 {

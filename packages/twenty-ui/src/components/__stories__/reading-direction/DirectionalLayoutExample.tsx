@@ -7,7 +7,7 @@ import {
   ColorSchemePicker,
   JsonTree,
 } from '@ui/components';
-import { Avatar } from '@ui/primitives/data-display';
+import { Avatar, Pill } from '@ui/primitives/data-display';
 import {
   Button,
   ButtonGroup,
@@ -62,8 +62,18 @@ export const DirectionalLayoutExample = ({
           <Button>First action</Button>
           <Button>Last action</Button>
         </ButtonGroup>
-        <Button soon style={{ width: 240 }}>
-          Upcoming action
+        <Button disabled style={{ width: 240 }}>
+          <Text
+            render={<span />}
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 'var(--t-spacing-1)',
+            }}
+          >
+            Upcoming action
+            <Pill label="Soon" />
+          </Text>
         </Button>
         <SegmentedControl
           aria-label="Billing"

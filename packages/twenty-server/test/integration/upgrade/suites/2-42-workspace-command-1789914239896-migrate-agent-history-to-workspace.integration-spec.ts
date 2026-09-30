@@ -2,6 +2,8 @@ import { type EnableCommonRecordSharingCommand } from 'src/database/commands/upg
 import { type AddWorkflowRunToChatThreadsCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790607161319-add-workflow-run-to-chat-threads.command';
 import { type OpenAgentChatThreadArchivedAtWritabilityCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790672076234-open-agent-chat-thread-archived-at-writability.command';
 import { type AddInputAskObjectCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790681093095-add-input-ask-object.command';
+import { type MoveAgentChatThreadsToRecordModelCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790751626421-move-agent-chat-threads-to-record-model.command';
+import { type AddChatRecordPageCommandMenuItemsCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790751626422-add-chat-record-page-command-menu-items.command';
 import { randomUUID } from 'node:crypto';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
@@ -265,6 +267,12 @@ describe('versioned agent history upgrade (integration)', () => {
       ),
       getAppProviderByClassName<AddInputAskObjectCommand>(
         'AddInputAskObjectCommand',
+      ),
+      getAppProviderByClassName<MoveAgentChatThreadsToRecordModelCommand>(
+        'MoveAgentChatThreadsToRecordModelCommand',
+      ),
+      getAppProviderByClassName<AddChatRecordPageCommandMenuItemsCommand>(
+        'AddChatRecordPageCommandMenuItemsCommand',
       ),
     ]) {
       await workspaceOrmManager.executeInWorkspaceContext(

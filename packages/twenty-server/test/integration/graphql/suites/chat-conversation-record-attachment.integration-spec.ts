@@ -2,6 +2,7 @@ import { randomUUID } from 'node:crypto';
 
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { destroyAgentChatThread } from 'test/integration/utils/destroy-agent-chat-thread.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
 import { type AgentChatActorService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-actor.service';
@@ -51,7 +52,7 @@ describe('Attaching a conversation to a record from a chat turn', () => {
   });
 
   afterAll(async () => {
-    await chat.hardDeleteThread({ workspaceId, workspaceMemberId, threadId });
+    await destroyAgentChatThread({ threadId });
   });
 
   // Built from the same authorization ChatExecutionService gives the turn.

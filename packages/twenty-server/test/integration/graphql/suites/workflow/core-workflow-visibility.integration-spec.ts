@@ -904,26 +904,48 @@ describe('core workflow visibility (e2e)', () => {
       ).not.toContain(threadId);
     });
 
-    it('lets the workflow creator rename it like any conversation they can write', async () => {
-      const rename = (title: string) =>
-        metadataRequestAs(
-          APPLE_JANE_ADMIN_ACCESS_TOKEN,
-          `
-            mutation RenameRunConversation($threadId: UUID!, $title: String!) {
-              renameChatThread(id: $threadId, title: $title) {
-                title
-              }
+    it('refuses to rename or delete it, even for the workflow creator', async () => {
+      const renameResponse = await graphqlRequestAs(
+        APPLE_JANE_ADMIN_ACCESS_TOKEN,
+        `
+          mutation RenameRunConversation($threadId: UUID!) {
+            updateAgentChatThread(id: $threadId, data: { title: "Renamed" }) {
+              id
             }
-          `,
-          { threadId, title },
-        );
+          }
+        `,
+        { threadId },
+      );
 
-      const renameResponse = await rename('Renamed');
+      expect(renameResponse.body.errors?.[0]?.extensions?.code).toBe(
+        'FORBIDDEN',
+      );
 
-      expect(renameResponse.body.errors).toBeUndefined();
-      expect(renameResponse.body.data.renameChatThread.title).toBe('Renamed');
+      const deleteResponse = await graphqlRequestAs(
+        APPLE_JANE_ADMIN_ACCESS_TOKEN,
+        `
+          mutation DeleteRunConversation($threadId: UUID!) {
+            deleteAgentChatThread(id: $threadId) {
+              id
+            }
+          }
+        `,
+        { threadId },
+      );
 
-      expect((await rename('Summarize the lead')).body.errors).toBeUndefined();
+      expect(deleteResponse.body.errors?.[0]?.extensions?.code).toBe(
+        'FORBIDDEN',
+      );
+
+      const [storedThread] = await global.testDataSource.query(
+        `SELECT title, "deletedAt" FROM "${getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID)}"."agentChatThread" WHERE id = $1`,
+        [threadId],
+      );
+
+      expect(storedThread).toEqual({
+        title: 'Summarize the lead',
+        deletedAt: null,
+      });
     });
 
     it('follows the workflow visibility for another member', async () => {

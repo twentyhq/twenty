@@ -1,4 +1,5 @@
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
+import { getAppPath } from 'twenty-shared/utils';
 import { getBasePathToShowPage } from '@/object-metadata/utils/getBasePathToShowPage';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 
@@ -19,6 +20,13 @@ export const getLinkToShowPage = (
         objectNameSingular: CoreObjectNameSingular.Note,
       }) + record.note?.id
     );
+  }
+
+  if (
+    objectNameSingular === CoreObjectNameSingular.AgentChatThread &&
+    record.id
+  ) {
+    return getAppPath(AppPath.AiChat, { threadId: record.id });
   }
 
   if (objectNameSingular === CoreObjectNameSingular.TaskTarget) {
