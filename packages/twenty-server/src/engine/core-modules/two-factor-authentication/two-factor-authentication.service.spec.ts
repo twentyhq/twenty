@@ -16,8 +16,6 @@ import {
   ThrottlerExceptionCode,
 } from 'src/engine/core-modules/throttler/throttler.exception';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
-import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { getWorkspaceScopedRepositoryToken } from 'src/engine/twenty-orm/workspace-scoped-repository/get-workspace-scoped-repository-token.util';
 
@@ -49,7 +47,6 @@ describe('TwoFactorAuthenticationService', () => {
     delete: jest.Mock;
   };
   let recoveryCodeRepository: { update: jest.Mock };
-  let twentyConfigService: { get: jest.Mock };
   let throttlerService: { atomicTokenBucketThrottleOrThrow: jest.Mock };
   let insertWorkspaceEvent: jest.Mock;
   let secret: string;
@@ -95,12 +92,6 @@ describe('TwoFactorAuthenticationService', () => {
           },
         },
         {
-          provide: TwentyConfigService,
-          useValue: {
-            get: jest.fn().mockReturnValue(NodeEnvironment.TEST),
-          },
-        },
-        {
           provide: UserWorkspaceService,
           useValue: { getUserWorkspaceForUserOrThrow: jest.fn() },
         },
@@ -134,7 +125,6 @@ describe('TwoFactorAuthenticationService', () => {
         TwoFactorAuthenticationRecoveryCodeEntity,
       ),
     );
-    twentyConfigService = module.get(TwentyConfigService);
   });
 
   afterEach(() => {
@@ -329,18 +319,6 @@ describe('TwoFactorAuthenticationService', () => {
       otpRequiredMessage: msg`Enter your code.`,
       twoFactorAuthenticationRequiredMessage: msg`Set up two-factor authentication first.`,
     };
-
-    it('skips the check in development', async () => {
-      twentyConfigService.get.mockReturnValue(NodeEnvironment.DEVELOPMENT);
-
-      await service.assertFreshStepUpAuthenticationOrThrow({
-        userId: USER_ID,
-        workspaceId: WORKSPACE_ID,
-        ...stepUpMessages,
-      });
-
-      expect(repository.exists).not.toHaveBeenCalled();
-    });
 
     it('requires a code', async () => {
       await expect(
