@@ -201,25 +201,41 @@ export class CoreWorkflowMutationWorkspaceService {
         steps: remappedSteps,
       });
     } catch (error) {
-      if (isDefined(duplicatedCoreWorkflowId)) {
-        try {
-          await this.deleteWorkflows({
-            workspaceId,
-            userWorkspaceId,
-            coreWorkflowIds: [duplicatedCoreWorkflowId],
-          });
-        } catch (cleanupError) {
-          this.logger.error(cleanupError);
-        }
-      }
-
-      await this.deleteClonedStepResources({
+      await this.rollbackDuplicatedWorkflow({
         workspaceId,
+        userWorkspaceId,
+        duplicatedCoreWorkflowId,
         clonedSteps: remappedSteps,
       });
 
       throw error;
     }
+  }
+
+  private async rollbackDuplicatedWorkflow({
+    workspaceId,
+    userWorkspaceId,
+    duplicatedCoreWorkflowId,
+    clonedSteps,
+  }: {
+    workspaceId: string;
+    userWorkspaceId: string | undefined;
+    duplicatedCoreWorkflowId: string | undefined;
+    clonedSteps: WorkflowAction[];
+  }): Promise<void> {
+    if (isDefined(duplicatedCoreWorkflowId)) {
+      try {
+        await this.deleteWorkflows({
+          workspaceId,
+          userWorkspaceId,
+          coreWorkflowIds: [duplicatedCoreWorkflowId],
+        });
+      } catch (cleanupError) {
+        this.logger.error(cleanupError);
+      }
+    }
+
+    await this.deleteClonedStepResources({ workspaceId, clonedSteps });
   }
 
   private async deleteClonedStepResources({

@@ -142,7 +142,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
           await this.aiAgentRoleService.deleteAgentOnlyRoleIfUnused({
             roleId: roleTarget.roleId,
             roleTargetId: roleTarget.id,
-            roleTargetApplicationId: roleTarget.applicationId,
+            agentAssignmentApplicationId: roleTarget.applicationId,
             workspaceId,
           });
         }
