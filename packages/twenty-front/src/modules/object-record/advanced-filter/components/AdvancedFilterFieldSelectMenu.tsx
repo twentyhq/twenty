@@ -1,36 +1,26 @@
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-
-import { objectFilterDropdownSearchInputComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSearchInputComponentState';
-
-import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
-import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
-import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
-import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
-
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { AdvancedFilterFieldSelectSearchInput } from '@/object-record/advanced-filter/components/AdvancedFilterFieldSelectSearchInput';
+import { isManyToOneRelationField } from '@/object-metadata/utils/isManyToOneRelationField';
 import { useAdvancedFilterFieldSelectDropdown } from '@/object-record/advanced-filter/hooks/useAdvancedFilterFieldSelectDropdown';
 import { useApplyAdvancedFilterSourceField } from '@/object-record/advanced-filter/hooks/useApplyAdvancedFilterSourceField';
+import { usePushFocusForLeafFieldValuePicker } from '@/object-record/advanced-filter/hooks/usePushFocusForLeafFieldValuePicker';
 import { AdvancedFilterContext } from '@/object-record/advanced-filter/states/context/AdvancedFilterContext';
-import { ObjectFilterDropdownFilterSelectMenuItem } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelectMenuItem';
 import { fieldMetadataItemIdUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemIdUsedInDropdownComponentState';
-import { objectFilterDropdownIsSelectingCompositeFieldComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownIsSelectingCompositeFieldComponentState';
-import { objectFilterDropdownIsSelectingRelationTargetFieldComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownIsSelectingRelationTargetFieldComponentState';
-import { objectFilterDropdownSubMenuFieldTypeComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSubMenuFieldTypeComponentState';
+import { objectFilterDropdownSearchInputComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSearchInputComponentState';
 import { isCompositeFilterableFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFilterableFieldType';
-import { isManyToOneRelationField } from '@/object-metadata/utils/isManyToOneRelationField';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
 import { useFilterableFieldMetadataItems } from '@/object-record/record-filter/hooks/useFilterableFieldMetadataItems';
-import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
-import { DropdownMenuSectionLabel } from '@/ui/layout/dropdown/components/DropdownMenuSectionLabel';
-import { usePushFocusForLeafFieldValuePicker } from '@/object-record/advanced-filter/hooks/usePushFocusForLeafFieldValuePicker';
-import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useLingui } from '@lingui/react/macro';
-import { useContext } from 'react';
-import { getFilterTypeFromFieldType } from 'twenty-shared/utils';
+import { Fragment, useContext } from 'react';
+import {
+  getFilterTypeFromFieldType,
+  isNonEmptyArray,
+} from 'twenty-shared/utils';
+import { Dropdown, useDropdownPage } from 'twenty-ui/components';
+import { useIcons } from 'twenty-ui/icon';
 
 type AdvancedFilterFieldSelectMenuProps = {
   recordFilterId: string;
@@ -39,205 +29,135 @@ type AdvancedFilterFieldSelectMenuProps = {
 export const AdvancedFilterFieldSelectMenu = ({
   recordFilterId,
 }: AdvancedFilterFieldSelectMenuProps) => {
-  const {
-    closeAdvancedFilterFieldSelectDropdown,
-    advancedFilterFieldSelectDropdownId,
-  } = useAdvancedFilterFieldSelectDropdown(recordFilterId);
-
-  const [objectFilterDropdownSearchInput] = useAtomComponentState(
-    objectFilterDropdownSearchInputComponentState,
-  );
-
+  const { closeAdvancedFilterFieldSelectDropdown } =
+    useAdvancedFilterFieldSelectDropdown(recordFilterId);
+  const { goToPage } = useDropdownPage();
+  const { getIcon } = useIcons();
+  const { t } = useLingui();
+  const [objectFilterDropdownSearchInput, setObjectFilterDropdownSearchInput] =
+    useAtomComponentState(objectFilterDropdownSearchInputComponentState);
   const { objectMetadataItem } = useContext(AdvancedFilterContext);
-
-  const { filterableFieldMetadataItems: filterableFieldMetadataItems } =
-    useFilterableFieldMetadataItems(objectMetadataItem.id);
-
+  const { filterableFieldMetadataItems } = useFilterableFieldMetadataItems(
+    objectMetadataItem.id,
+  );
   const visibleRecordFields = useAtomComponentSelectorValue(
     visibleRecordFieldsComponentSelector,
   );
-
   const visibleFieldMetadataItemIds = visibleRecordFields.map(
     (recordField) => recordField.fieldMetadataItemId,
   );
-
   const filteredSearchInputFieldMetadataItems =
     filterableFieldMetadataItems.filter((fieldMetadataItem) =>
       fieldMetadataItem.label
         .toLocaleLowerCase()
         .includes(objectFilterDropdownSearchInput.toLocaleLowerCase()),
     );
-
   const visibleFieldMetadataItems = filteredSearchInputFieldMetadataItems
-    .toSorted((a, b) => {
-      return (
-        visibleFieldMetadataItemIds.indexOf(a.id) -
-        visibleFieldMetadataItemIds.indexOf(b.id)
-      );
-    })
     .filter((fieldMetadataItem) =>
       visibleFieldMetadataItemIds.includes(fieldMetadataItem.id),
+    )
+    .toSorted(
+      (firstField, secondField) =>
+        visibleFieldMetadataItemIds.indexOf(firstField.id) -
+        visibleFieldMetadataItemIds.indexOf(secondField.id),
     );
-
-  const hiddenColumnsFieldMetadataItems = filteredSearchInputFieldMetadataItems
-    .sort((a, b) => a.label.localeCompare(b.label))
+  const hiddenFieldMetadataItems = filteredSearchInputFieldMetadataItems
     .filter(
       (fieldMetadataItem) =>
         !visibleFieldMetadataItemIds.includes(fieldMetadataItem.id),
+    )
+    .toSorted((firstField, secondField) =>
+      firstField.label.localeCompare(secondField.label),
     );
-
-  const { resetSelectedItem } = useSelectableList(
-    advancedFilterFieldSelectDropdownId,
-  );
-
   const { applyAdvancedFilterSourceField } =
     useApplyAdvancedFilterSourceField();
-
-  const [, setObjectFilterDropdownSubMenuFieldType] = useAtomComponentState(
-    objectFilterDropdownSubMenuFieldTypeComponentState,
-  );
-
-  const [, setObjectFilterDropdownIsSelectingCompositeField] =
-    useAtomComponentState(
-      objectFilterDropdownIsSelectingCompositeFieldComponentState,
-    );
-
-  const [, setObjectFilterDropdownIsSelectingRelationTargetField] =
-    useAtomComponentState(
-      objectFilterDropdownIsSelectingRelationTargetFieldComponentState,
-    );
-
   const setFieldMetadataItemIdUsedInDropdown = useSetAtomComponentState(
     fieldMetadataItemIdUsedInDropdownComponentState,
   );
-
   const { pushFocusForLeafFieldValuePicker } =
     usePushFocusForLeafFieldValuePicker();
 
   const handleFieldMetadataItemSelect = (
-    selectedFieldMetadataItem: FieldMetadataItem,
+    fieldMetadataItem: FieldMetadataItem,
   ) => {
-    resetSelectedItem();
-
-    const filterType = getFilterTypeFromFieldType(
-      selectedFieldMetadataItem.type,
-    );
-
-    const isRelationTraversalField = isManyToOneRelationField(
-      selectedFieldMetadataItem,
-    );
-
-    const compositeSubMenuFieldType =
-      !isRelationTraversalField && isCompositeFilterableFieldType(filterType)
-        ? filterType
-        : null;
-
-    // For sub-menu paths (composite or relation traversal) we only stage
-    // the source field in the dropdown state and open the sub-menu —
-    // upsertRecordFilter happens in the sub-menu's hook once the user
-    // makes the final choice. Otherwise navigating back from the sub-menu
-    // would leave an orphan partial filter in the chip list.
-    if (isRelationTraversalField) {
-      setFieldMetadataItemIdUsedInDropdown(selectedFieldMetadataItem.id);
-      setObjectFilterDropdownIsSelectingRelationTargetField(true);
+    if (isManyToOneRelationField(fieldMetadataItem)) {
+      setFieldMetadataItemIdUsedInDropdown(fieldMetadataItem.id);
+      goToPage('relation-target');
       return;
     }
 
-    if (compositeSubMenuFieldType !== null) {
-      setFieldMetadataItemIdUsedInDropdown(selectedFieldMetadataItem.id);
-      setObjectFilterDropdownSubMenuFieldType(compositeSubMenuFieldType);
-      setObjectFilterDropdownIsSelectingCompositeField(true);
+    if (
+      isCompositeFilterableFieldType(
+        getFilterTypeFromFieldType(fieldMetadataItem.type),
+      )
+    ) {
+      setFieldMetadataItemIdUsedInDropdown(fieldMetadataItem.id);
+      goToPage('composite');
       return;
     }
 
     applyAdvancedFilterSourceField({
-      sourceFieldMetadataItem: selectedFieldMetadataItem,
+      sourceFieldMetadataItem: fieldMetadataItem,
       recordFilterId,
     });
-
-    pushFocusForLeafFieldValuePicker(selectedFieldMetadataItem);
-
+    pushFocusForLeafFieldValuePicker(fieldMetadataItem);
     closeAdvancedFilterFieldSelectDropdown();
   };
 
-  const shouldShowVisibleFields = visibleFieldMetadataItems.length > 0;
-  const shouldShowHiddenFields = hiddenColumnsFieldMetadataItems.length > 0;
-
-  const shouldShowSeparator =
-    visibleFieldMetadataItems.length > 0 &&
-    hiddenColumnsFieldMetadataItems.length > 0;
-
-  const selectableItemIdArray = [
-    ...visibleFieldMetadataItems.map(
-      (fieldMetadataItem) => fieldMetadataItem.id,
-    ),
-    ...hiddenColumnsFieldMetadataItems.map(
-      (fieldMetadataItem) => fieldMetadataItem.id,
-    ),
-  ];
-
-  const { t } = useLingui();
+  const hasVisibleFields = isNonEmptyArray(visibleFieldMetadataItems);
+  const sections = [
+    {
+      id: 'visible',
+      label: t`Visible fields`,
+      fields: visibleFieldMetadataItems,
+    },
+    {
+      id: 'hidden',
+      label: hasVisibleFields ? t`Hidden fields` : undefined,
+      fields: hiddenFieldMetadataItems,
+    },
+  ].filter((section) => isNonEmptyArray(section.fields));
 
   return (
-    <LegacyDropdownContent
-      widthInPixels={GenericDropdownContentWidth.ExtraLarge}
-    >
-      <AdvancedFilterFieldSelectSearchInput />
-      <SelectableList
-        focusId={advancedFilterFieldSelectDropdownId}
-        selectableItemIdArray={selectableItemIdArray}
-        selectableListInstanceId={advancedFilterFieldSelectDropdownId}
-      >
-        {shouldShowVisibleFields && (
-          <>
-            <DropdownMenuSectionLabel label={t`Visible fields`} />
-            <DropdownMenuItemsContainer>
-              {visibleFieldMetadataItems.map(
-                (visibleFieldMetadataItem, index) => (
-                  <SelectableListItem
-                    itemId={visibleFieldMetadataItem.id}
-                    key={`visible-select-filter-${index}`}
-                    onEnter={() => {
-                      handleFieldMetadataItemSelect(visibleFieldMetadataItem);
-                    }}
-                  >
-                    <ObjectFilterDropdownFilterSelectMenuItem
-                      fieldMetadataItemToSelect={visibleFieldMetadataItem}
-                      onClick={handleFieldMetadataItemSelect}
-                    />
-                  </SelectableListItem>
-                ),
-              )}
-            </DropdownMenuItemsContainer>
-          </>
-        )}
-        {shouldShowSeparator && <DropdownMenuSeparator />}
-        {shouldShowHiddenFields && (
-          <>
-            {visibleFieldMetadataItems.length > 0 && (
-              <DropdownMenuSectionLabel label={t`Hidden fields`} />
-            )}
-            <DropdownMenuItemsContainer>
-              {hiddenColumnsFieldMetadataItems.map(
-                (hiddenFieldMetadataItem, index) => (
-                  <SelectableListItem
-                    itemId={hiddenFieldMetadataItem.id}
-                    key={`hidden-select-filter-${index}`}
-                    onEnter={() => {
-                      handleFieldMetadataItemSelect(hiddenFieldMetadataItem);
-                    }}
-                  >
-                    <ObjectFilterDropdownFilterSelectMenuItem
-                      fieldMetadataItemToSelect={hiddenFieldMetadataItem}
-                      onClick={handleFieldMetadataItemSelect}
-                    />
-                  </SelectableListItem>
-                ),
-              )}
-            </DropdownMenuItemsContainer>
-          </>
-        )}
-      </SelectableList>
-    </LegacyDropdownContent>
+    <>
+      <Dropdown.Search
+        value={objectFilterDropdownSearchInput}
+        placeholder={t`Search fields`}
+        aria-label={t`Search fields`}
+        onValueChange={setObjectFilterDropdownSearchInput}
+      />
+      {sections.map((section, index) => (
+        <Fragment key={section.id}>
+          {index > 0 && <Dropdown.Separator />}
+          <Dropdown.Section label={section.label}>
+            {section.fields.map((fieldMetadataItem) => (
+              <Dropdown.OptionItem
+                key={fieldMetadataItem.id}
+                selected={false}
+                indicator="none"
+                closeOnSelect={false}
+                onSelect={() =>
+                  handleFieldMetadataItemSelect(fieldMetadataItem)
+                }
+                startIcon={
+                  <SelectOptionIcon Icon={getIcon(fieldMetadataItem.icon)} />
+                }
+                hasSubmenu={
+                  isManyToOneRelationField(fieldMetadataItem) ||
+                  isCompositeFilterableFieldType(
+                    getFilterTypeFromFieldType(fieldMetadataItem.type),
+                  )
+                }
+              >
+                {fieldMetadataItem.label}
+              </Dropdown.OptionItem>
+            ))}
+          </Dropdown.Section>
+        </Fragment>
+      ))}
+      {!isNonEmptyArray(sections) && (
+        <Dropdown.Empty>{t`No fields found`}</Dropdown.Empty>
+      )}
+    </>
   );
 };

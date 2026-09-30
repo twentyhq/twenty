@@ -1,9 +1,7 @@
 import { AdvancedFilterCompositeSubFieldSelectMenu } from '@/object-record/advanced-filter/components/AdvancedFilterCompositeSubFieldSelectMenu';
 import { AdvancedFilterFieldSelectMenu } from '@/object-record/advanced-filter/components/AdvancedFilterFieldSelectMenu';
 import { AdvancedFilterRelationTargetFieldSelectMenu } from '@/object-record/advanced-filter/components/AdvancedFilterRelationTargetFieldSelectMenu';
-import { objectFilterDropdownIsSelectingCompositeFieldComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownIsSelectingCompositeFieldComponentState';
-import { objectFilterDropdownIsSelectingRelationTargetFieldComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownIsSelectingRelationTargetFieldComponentState';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { Dropdown } from 'twenty-ui/components';
 
 type AdvancedFilterFieldSelectDropdownContentProps = {
   recordFilterId: string;
@@ -11,32 +9,20 @@ type AdvancedFilterFieldSelectDropdownContentProps = {
 
 export const AdvancedFilterFieldSelectDropdownContent = ({
   recordFilterId,
-}: AdvancedFilterFieldSelectDropdownContentProps) => {
-  const objectFilterDropdownIsSelectingCompositeField =
-    useAtomComponentStateValue(
-      objectFilterDropdownIsSelectingCompositeFieldComponentState,
-    );
-
-  const objectFilterDropdownIsSelectingRelationTargetField =
-    useAtomComponentStateValue(
-      objectFilterDropdownIsSelectingRelationTargetFieldComponentState,
-    );
-
-  if (objectFilterDropdownIsSelectingRelationTargetField) {
-    return (
-      <AdvancedFilterRelationTargetFieldSelectMenu
-        recordFilterId={recordFilterId}
-      />
-    );
-  }
-
-  if (objectFilterDropdownIsSelectingCompositeField) {
-    return (
+}: AdvancedFilterFieldSelectDropdownContentProps) => (
+  <>
+    <Dropdown.Page id="root">
+      <AdvancedFilterFieldSelectMenu recordFilterId={recordFilterId} />
+    </Dropdown.Page>
+    <Dropdown.Page id="composite">
       <AdvancedFilterCompositeSubFieldSelectMenu
         recordFilterId={recordFilterId}
       />
-    );
-  }
-
-  return <AdvancedFilterFieldSelectMenu recordFilterId={recordFilterId} />;
-};
+    </Dropdown.Page>
+    <Dropdown.Page id="relation-target">
+      <AdvancedFilterRelationTargetFieldSelectMenu
+        recordFilterId={recordFilterId}
+      />
+    </Dropdown.Page>
+  </>
+);

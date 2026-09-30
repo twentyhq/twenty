@@ -1,32 +1,27 @@
 /* @license Enterprise */
 
 import { useLingui } from '@lingui/react/macro';
-import { getFilterTypeFromFieldType } from 'twenty-shared/utils';
+import {
+  getFilterTypeFromFieldType,
+  isNonEmptyArray,
+} from 'twenty-shared/utils';
+import { Dropdown, useDropdownPage } from 'twenty-ui/components';
+import { useIcons } from 'twenty-ui/icon';
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 
 import { CoreObjectNameSingular, FieldMetadataType } from 'twenty-shared/types';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { AdvancedFilterFieldSelectSearchInput } from '@/object-record/advanced-filter/components/AdvancedFilterFieldSelectSearchInput';
 import { useAdvancedFilterFieldSelectDropdown } from '@/object-record/advanced-filter/hooks/useAdvancedFilterFieldSelectDropdown';
 import { useApplyAdvancedFilterSourceField } from '@/object-record/advanced-filter/hooks/useApplyAdvancedFilterSourceField';
 import { usePushFocusForLeafFieldValuePicker } from '@/object-record/advanced-filter/hooks/usePushFocusForLeafFieldValuePicker';
 import { AdvancedFilterContext } from '@/object-record/advanced-filter/states/context/AdvancedFilterContext';
-import { ObjectFilterDropdownFilterSelectMenuItem } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelectMenuItem';
 import { fieldMetadataItemIdUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemIdUsedInDropdownComponentState';
-import { objectFilterDropdownIsSelectingCompositeFieldComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownIsSelectingCompositeFieldComponentState';
 import { objectFilterDropdownSearchInputComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSearchInputComponentState';
-import { objectFilterDropdownSubMenuFieldTypeComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSubMenuFieldTypeComponentState';
 import { isCompositeFilterableFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFilterableFieldType';
 import { useFilterableFieldMetadataItems } from '@/object-record/record-filter/hooks/useFilterableFieldMetadataItems';
 import { RECORD_LEVEL_PERMISSION_PREDICATE_FIELD_TYPES } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/constants/RecordLevelPermissionPredicateFieldTypes';
 import { getComparableWorkspaceMemberRelationFields } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/utils/getComparableWorkspaceMemberRelationFields';
-import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { DropdownMenuSectionLabel } from '@/ui/layout/dropdown/components/DropdownMenuSectionLabel';
-import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
-import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
-import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
-import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useContext } from 'react';
@@ -41,15 +36,16 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectF
     recordFilterId,
   }: SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectFieldMenuProps) => {
     const { t } = useLingui();
+    const { getIcon } = useIcons();
+    const { goToPage } = useDropdownPage();
 
-    const {
-      closeAdvancedFilterFieldSelectDropdown,
-      advancedFilterFieldSelectDropdownId,
-    } = useAdvancedFilterFieldSelectDropdown(recordFilterId);
+    const { closeAdvancedFilterFieldSelectDropdown } =
+      useAdvancedFilterFieldSelectDropdown(recordFilterId);
 
-    const [objectFilterDropdownSearchInput] = useAtomComponentState(
-      objectFilterDropdownSearchInputComponentState,
-    );
+    const [
+      objectFilterDropdownSearchInput,
+      setObjectFilterDropdownSearchInput,
+    ] = useAtomComponentState(objectFilterDropdownSearchInputComponentState);
 
     const { objectMetadataItem } = useContext(AdvancedFilterContext);
 
@@ -84,13 +80,13 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectF
         return true;
       }
 
-      return (
+      return isNonEmptyArray(
         getComparableWorkspaceMemberRelationFields({
           workspaceMemberFieldMetadataItems:
             workspaceMemberObjectMetadataItem?.fields ?? [],
           targetObjectMetadataId:
             fieldMetadataItem.relation?.targetObjectMetadata.id,
-        }).length > 0
+        }),
       );
     };
 
@@ -104,21 +100,8 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectF
       )
       .sort((a, b) => a.label.localeCompare(b.label));
 
-    const { resetSelectedItem } = useSelectableList(
-      advancedFilterFieldSelectDropdownId,
-    );
-
     const { applyAdvancedFilterSourceField } =
       useApplyAdvancedFilterSourceField();
-
-    const [, setObjectFilterDropdownSubMenuFieldType] = useAtomComponentState(
-      objectFilterDropdownSubMenuFieldTypeComponentState,
-    );
-
-    const [, setObjectFilterDropdownIsSelectingCompositeField] =
-      useAtomComponentState(
-        objectFilterDropdownIsSelectingCompositeFieldComponentState,
-      );
 
     const setFieldMetadataItemIdUsedInDropdown = useSetAtomComponentState(
       fieldMetadataItemIdUsedInDropdownComponentState,
@@ -130,16 +113,13 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectF
     const handleFieldSelect = (
       selectedFieldMetadataItem: FieldMetadataItem,
     ) => {
-      resetSelectedItem();
-
       const filterType = getFilterTypeFromFieldType(
         selectedFieldMetadataItem.type,
       );
 
       if (isCompositeFilterableFieldType(filterType)) {
-        setObjectFilterDropdownSubMenuFieldType(filterType);
         setFieldMetadataItemIdUsedInDropdown(selectedFieldMetadataItem.id);
-        setObjectFilterDropdownIsSelectingCompositeField(true);
+        goToPage('composite');
         return;
       }
 
@@ -153,38 +133,36 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectF
       closeAdvancedFilterFieldSelectDropdown();
     };
 
-    const selectableItemIdArray = filteredFieldMetadataItems.map(
-      (fieldMetadataItem) => fieldMetadataItem.id,
-    );
-
     return (
-      <LegacyDropdownContent
-        widthInPixels={GenericDropdownContentWidth.ExtraLarge}
-      >
-        <AdvancedFilterFieldSelectSearchInput />
-        <SelectableList
-          focusId={advancedFilterFieldSelectDropdownId}
-          selectableItemIdArray={selectableItemIdArray}
-          selectableListInstanceId={advancedFilterFieldSelectDropdownId}
-        >
-          <DropdownMenuSectionLabel label={t`Fields`} />
-          <DropdownMenuItemsContainer>
-            {filteredFieldMetadataItems.map((fieldMetadataItem) => (
-              <SelectableListItem
-                itemId={fieldMetadataItem.id}
-                key={fieldMetadataItem.id}
-                onEnter={() => {
-                  handleFieldSelect(fieldMetadataItem);
-                }}
-              >
-                <ObjectFilterDropdownFilterSelectMenuItem
-                  fieldMetadataItemToSelect={fieldMetadataItem}
-                  onClick={handleFieldSelect}
-                />
-              </SelectableListItem>
-            ))}
-          </DropdownMenuItemsContainer>
-        </SelectableList>
-      </LegacyDropdownContent>
+      <>
+        <Dropdown.Search
+          value={objectFilterDropdownSearchInput}
+          onValueChange={setObjectFilterDropdownSearchInput}
+          placeholder={t`Search fields`}
+          aria-label={t`Search fields`}
+        />
+        <Dropdown.Section label={t`Fields`}>
+          {filteredFieldMetadataItems.map((fieldMetadataItem) => (
+            <Dropdown.OptionItem
+              key={fieldMetadataItem.id}
+              selected={false}
+              indicator="none"
+              closeOnSelect={false}
+              hasSubmenu={isCompositeFilterableFieldType(
+                getFilterTypeFromFieldType(fieldMetadataItem.type),
+              )}
+              startIcon={
+                <SelectOptionIcon Icon={getIcon(fieldMetadataItem.icon)} />
+              }
+              onSelect={() => handleFieldSelect(fieldMetadataItem)}
+            >
+              {fieldMetadataItem.label}
+            </Dropdown.OptionItem>
+          ))}
+          {!isNonEmptyArray(filteredFieldMetadataItems) && (
+            <Dropdown.Empty>{t`No compatible fields`}</Dropdown.Empty>
+          )}
+        </Dropdown.Section>
+      </>
     );
   };
