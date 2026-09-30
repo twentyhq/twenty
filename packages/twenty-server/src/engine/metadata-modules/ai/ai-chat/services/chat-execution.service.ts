@@ -5,6 +5,7 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import {
   convertToModelMessages,
+  hasToolCall,
   type LanguageModelUsage,
   NoOutputGeneratedError,
   isStepCount,
@@ -89,7 +90,6 @@ import { hasSucceededWorkspaceSetupCompletion } from 'src/engine/metadata-module
 import { collectReferencedSkillIds } from 'src/engine/metadata-modules/ai/ai-chat/utils/collect-referenced-skill-ids.util';
 import { collectUploadedFileReferences } from 'src/engine/metadata-modules/ai/ai-chat/utils/collect-uploaded-file-references.util';
 import { extractCodeInterpreterFiles } from 'src/engine/metadata-modules/ai/ai-chat/utils/extract-code-interpreter-files.util';
-import { hasValidToolCall } from 'src/engine/metadata-modules/ai/ai-chat/utils/has-valid-tool-call.util';
 import { injectMessageTimestamps } from 'src/engine/metadata-modules/ai/ai-chat/utils/inject-message-timestamps.util';
 import {
   getCacheProviderOptions,
@@ -604,7 +604,7 @@ export class ChatExecutionService {
       stopWhen: (step) =>
         isStepCount(AGENT_CONFIG.MAX_STEPS)(step) ||
         endsOnPausingToolCall({ steps: step.steps }) ||
-        hasValidToolCall(COMPLETE_WORKSPACE_SETUP_TOOL_NAME)(step) ||
+        hasToolCall(COMPLETE_WORKSPACE_SETUP_TOOL_NAME)(step) ||
         hasNoMoreAvailableCredits,
       ...buildAiTelemetry({
         functionId: isWorkspaceSetupThread
