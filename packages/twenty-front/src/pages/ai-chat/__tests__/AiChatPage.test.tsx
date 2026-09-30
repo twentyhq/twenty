@@ -63,12 +63,18 @@ jest.mock('~/pages/object-record/RecordShowPage', () => ({
   RecordShowPageContent: ({
     parameters,
     headerActions,
+    headerTitleMode,
+    isRecordIdentifierBarHidden,
   }: {
     parameters: { objectNameSingular: string; objectRecordId: string };
     headerActions?: ReactNode;
+    headerTitleMode?: string;
+    isRecordIdentifierBarHidden?: boolean;
   }) => (
     <div>
       Record page {parameters.objectNameSingular} {parameters.objectRecordId}
+      {headerTitleMode === 'record-title' && <span>Title-only header</span>}
+      {isRecordIdentifierBarHidden === true && <span>No identifier bar</span>}
       {headerActions}
     </div>
   ),
@@ -126,6 +132,13 @@ describe('AiChatPage', () => {
       getByText(`Record page agentChatThread ${THREAD_ID}`),
     ).toBeInTheDocument();
     expect(queryByText('Chat header')).toBeNull();
+  });
+
+  it('shows a saved chat with its title as the only header', () => {
+    const { getByText } = renderAt(`/chat/${THREAD_ID}`);
+
+    expect(getByText('Title-only header')).toBeInTheDocument();
+    expect(getByText('No identifier bar')).toBeInTheDocument();
   });
 
   it('keeps the close button of a saved chat on mobile', () => {

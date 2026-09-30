@@ -12,6 +12,7 @@ import { PageLayoutRecordPageRenderer } from '@/object-record/record-show/compon
 import { RecordShowPageResourceEffect } from '@/object-record/record-show/components/RecordShowPageResourceEffect';
 import { RecordShowPageSSESubscribeEffect } from '@/object-record/record-show/components/RecordShowPageSSESubscribeEffect';
 import { computeRecordShowComponentInstanceId } from '@/object-record/record-show/utils/computeRecordShowComponentInstanceId';
+import { type RecordShowPageHeaderTitleMode } from '@/object-record/record-show/types/RecordShowPageHeaderTitleMode';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { SidePanelToggleButton } from '@/side-panel/components/SidePanelToggleButton';
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
@@ -28,6 +29,8 @@ type RecordShowPageShellProps = {
   loading: boolean;
   error?: ErrorLike;
   headerActions?: ReactNode;
+  headerTitleMode?: RecordShowPageHeaderTitleMode;
+  isRecordIdentifierBarHidden?: boolean;
 };
 
 export const RecordShowPageShell = ({
@@ -37,6 +40,8 @@ export const RecordShowPageShell = ({
   loading,
   error,
   headerActions,
+  headerTitleMode,
+  isRecordIdentifierBarHidden = false,
 }: RecordShowPageShellProps) => {
   const isInSidePanel = useWorkspaceSurface().type === 'side-panel';
   const isLayoutCustomizationModeEnabled = useAtomStateValue(
@@ -82,6 +87,7 @@ export const RecordShowPageShell = ({
             <RecordShowPageHeader
               objectNameSingular={objectNameSingular}
               objectRecordId={objectRecordId}
+              titleMode={headerTitleMode}
             >
               {!isInSidePanel && (
                 <>
@@ -105,6 +111,7 @@ export const RecordShowPageShell = ({
                 id: objectRecordId,
                 targetObjectNameSingular: objectNameSingular,
               }}
+              isRecordIdentifierBarHidden={isRecordIdentifierBarHidden}
             />
             <RecordShowPageSSESubscribeEffect
               objectNameSingular={objectNameSingular}

@@ -12,6 +12,7 @@ import { findCoreObjectShowPage } from '@/object-core/utils/findCoreObjectShowPa
 import { isWorkspaceWorkflowVersionRouteHidden } from '@/object-core/workflows/utils/isWorkspaceWorkflowVersionRouteHidden';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { RecordShowPageShell } from '@/object-record/record-show/components/RecordShowPageShell';
+import { type RecordShowPageHeaderTitleMode } from '@/object-record/record-show/types/RecordShowPageHeaderTitleMode';
 import { useRecordShowPage } from '@/object-record/record-show/hooks/useRecordShowPage';
 import { useRecordShowPageResource } from '@/object-record/record-show/hooks/useRecordShowPageResource';
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
@@ -25,9 +26,13 @@ type RecordShowPageParameters = {
 export const RecordShowPageContent = ({
   parameters,
   headerActions,
+  headerTitleMode,
+  isRecordIdentifierBarHidden,
 }: {
   parameters: RecordShowPageParameters;
   headerActions?: ReactNode;
+  headerTitleMode?: RecordShowPageHeaderTitleMode;
+  isRecordIdentifierBarHidden?: boolean;
 }) => {
   const { objectNameSingular, objectRecordId } = useRecordShowPage(
     parameters.objectNameSingular ?? '',
@@ -47,6 +52,8 @@ export const RecordShowPageContent = ({
       loading={loading}
       error={error}
       headerActions={headerActions}
+      headerTitleMode={headerTitleMode}
+      isRecordIdentifierBarHidden={isRecordIdentifierBarHidden}
     />
   );
 };
