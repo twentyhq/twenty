@@ -3029,7 +3029,6 @@ export interface AgentChatThread {
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
     deletedAt?: Scalars['DateTime']
-    lastMessageAt?: Scalars['DateTime']
     __typename: 'AgentChatThread'
 }
 
@@ -3446,7 +3445,6 @@ export interface Query {
     appConnection: AppConnection
     findWorkspaceAiStats: WorkspaceAiStats
     aiChatUsage?: AiChatUsage
-    chatThreads: AgentChatThread[]
     chatThread: AgentChatThread
     chatMessages: AgentMessage[]
     chatStreamCatchupChunks: ChatStreamCatchupChunks
@@ -6935,7 +6933,6 @@ export interface AgentChatThreadGenqlSelection{
     createdAt?: boolean | number
     updatedAt?: boolean | number
     deletedAt?: boolean | number
-    lastMessageAt?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -7375,7 +7372,6 @@ export interface QueryGenqlSelection{
     appConnection?: (AppConnectionGenqlSelection & { __args: {id: Scalars['ID']} })
     findWorkspaceAiStats?: WorkspaceAiStatsGenqlSelection
     aiChatUsage?: AiChatUsageGenqlSelection
-    chatThreads?: AgentChatThreadGenqlSelection
     chatThread?: (AgentChatThreadGenqlSelection & { __args: {id: Scalars['UUID']} })
     chatMessages?: (AgentMessageGenqlSelection & { __args: {threadId: Scalars['UUID']} })
     chatStreamCatchupChunks?: (ChatStreamCatchupChunksGenqlSelection & { __args: {threadId: Scalars['UUID']} })
