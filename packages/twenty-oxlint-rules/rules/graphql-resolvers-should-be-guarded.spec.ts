@@ -1,6 +1,5 @@
 import { RuleTester } from 'oxlint/plugins-dev';
 
-import { REPLACED_AUTH_GUARD_NAMES } from '../utils/typedTokenHelpers';
 import { rule, RULE_NAME } from './graphql-resolvers-should-be-guarded';
 
 const ACCEPT_EVERY_PRINCIPAL =
@@ -405,57 +404,6 @@ ruleTester.run(RULE_NAME, rule, {
       ],
       filename: 'test.tsx',
     },
-    ...REPLACED_AUTH_GUARD_NAMES.map((guardName) => ({
-      code: `
-        class TestResolver {
-          @Query()
-          @UseGuards(${guardName}, NoPermissionGuard)
-          testQuery() {}
-        }
-      `,
-      errors: [
-        { messageId: 'graphqlResolversShouldBeGuarded' },
-        { messageId: 'replacedByAuthPrincipalGuard', data: { guardName } },
-      ],
-      filename: 'test.tsx',
-    })),
-    {
-      code: `
-        @UseGuards(WorkspaceAuthGuard, NoPermissionGuard)
-        class TestResolver {
-          @Query()
-          testQuery() {}
-        }
-      `,
-      errors: [
-        {
-          messageId: 'replacedByAuthPrincipalGuard',
-          data: { guardName: 'WorkspaceAuthGuard' },
-        },
-        { messageId: 'graphqlResolversShouldBeGuarded' },
-      ],
-      filename: 'test.tsx',
-    },
-    {
-      code: `
-        class TestResolver {
-          @Mutation()
-          @UseGuards(
-            ${ACCEPT_USER_SESSIONS},
-            NoImpersonationGuard,
-            NoPermissionGuard,
-          )
-          testMutation() {}
-        }
-      `,
-      errors: [
-        {
-          messageId: 'replacedByAuthPrincipalGuard',
-          data: { guardName: 'NoImpersonationGuard' },
-        },
-      ],
-      filename: 'test.tsx',
-    },
     ...[
       'AuthPrincipalGuard(AUTH_PRINCIPAL_GUARD_CONFIG)',
       'AuthPrincipalGuard({ ...USER_SESSIONS_ONLY, apiKey: true })',
@@ -555,6 +503,23 @@ ruleTester.run(RULE_NAME, rule, {
           data: {
             principalVariants: 'userSession.standard, application.withoutUser',
           },
+        },
+      ],
+      filename: 'test.tsx',
+    },
+    {
+      code: `
+        @UseGuards(${ACCEPT_USER_SESSIONS}, NoPermissionGuard)
+        class TestResolver {
+          @Query()
+          @UseGuards(${ACCEPT_EVERY_PRINCIPAL})
+          testQuery() {}
+        }
+      `,
+      errors: [
+        {
+          messageId: 'authPrincipalGuardWiderThanClass',
+          data: { principalVariants: 'apiKey, oauthClient, application' },
         },
       ],
       filename: 'test.tsx',

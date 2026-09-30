@@ -11,22 +11,6 @@ const AUTH_PRINCIPAL_GUARD_NAME = 'AuthPrincipalGuard';
 // They put the principal on the request, which AuthPrincipalGuard then reads.
 export const AUTHENTICATING_GUARD_NAMES = ['JwtAuthGuard', 'McpAuthGuard'];
 
-export const REPLACED_AUTH_GUARD_NAMES = [
-  'WorkspaceAuthGuard',
-  'UserAuthGuard',
-  'RequireUserSessionGuard',
-  'RequireAccessTokenGuard',
-  'UserOrApplicationAuthGuard',
-  'NoImpersonationGuard',
-];
-
-const PRINCIPAL_VARIANTS_BY_KIND: Record<string, string[]> = {
-  userSession: ['standard', 'impersonated', 'playground', 'workspaceAgnostic'],
-  apiKey: [],
-  oauthClient: ['withUser', 'withoutUser'],
-  application: ['withUser', 'withoutUser'],
-};
-
 const getUseGuardsArgumentLists = (node: any): any[][] => {
   if (!node.decorators) {
     return [];
@@ -73,36 +57,59 @@ const isAuthPrincipalGuardWithInlineConfig = (node: any): boolean =>
   node.arguments.length === 1 &&
   isInlineAuthPrincipalGuardConfig(node.arguments[0]);
 
+const getPropertyName = (property: any): string =>
+  property.key.name ?? property.key.value;
+
 const getPropertyValue = (objectNode: any, propertyName: string): any =>
   objectNode.properties.find(
-    (property: any) =>
-      (property.key.name ?? property.key.value) === propertyName,
+    (property: any) => getPropertyName(property) === propertyName,
   )?.value;
 
-const isPrincipalVariantAccepted = (
-  kindConfig: any,
-  variant: string,
-): boolean =>
-  isTrueLiteral(kindConfig) ||
-  (kindConfig?.type === 'ObjectExpression' &&
-    isTrueLiteral(getPropertyValue(kindConfig, variant)));
+const isVariantsConfig = (kindConfig: any): boolean =>
+  kindConfig?.type === 'ObjectExpression';
 
-const getAcceptedPrincipalVariants = (authPrincipalGuard: any): string[] => {
-  const config = authPrincipalGuard.arguments[0];
+// Kinds and variants are read from the two configs rather than listed here,
+// so this cannot drift from AuthPrincipalGuardConfig.
+const getPrincipalsRefusedByClassGuard = (
+  methodGuard: any,
+  classGuard: any,
+): string[] => {
+  const classConfig = classGuard.arguments[0];
 
-  return Object.entries(PRINCIPAL_VARIANTS_BY_KIND).flatMap(
-    ([kind, variants]) => {
-      const kindConfig = getPropertyValue(config, kind);
+  return methodGuard.arguments[0].properties.flatMap((property: any) => {
+    const kind = getPropertyName(property);
+    const methodKindConfig = property.value;
+    const classKindConfig = getPropertyValue(classConfig, kind);
 
-      if (variants.length === 0) {
-        return isTrueLiteral(kindConfig) ? [kind] : [];
-      }
+    if (isTrueLiteral(classKindConfig)) {
+      return [];
+    }
 
-      return variants
-        .filter((variant) => isPrincipalVariantAccepted(kindConfig, variant))
-        .map((variant) => `${kind}.${variant}`);
-    },
-  );
+    if (isTrueLiteral(methodKindConfig)) {
+      return isVariantsConfig(classKindConfig)
+        ? classKindConfig.properties
+            .filter((variant: any) => !isTrueLiteral(variant.value))
+            .map((variant: any) => `${kind}.${getPropertyName(variant)}`)
+        : [kind];
+    }
+
+    if (!isVariantsConfig(methodKindConfig)) {
+      return [];
+    }
+
+    return methodKindConfig.properties
+      .filter(
+        (variant: any) =>
+          isTrueLiteral(variant.value) &&
+          !(
+            isVariantsConfig(classKindConfig) &&
+            isTrueLiteral(
+              getPropertyValue(classKindConfig, getPropertyName(variant)),
+            )
+          ),
+      )
+      .map((variant: any) => `${kind}.${getPropertyName(variant)}`);
+  });
 };
 
 const isPlacedFirst = (guardArguments: any[], index: number): boolean =>
@@ -140,13 +147,6 @@ export const typedTokenHelpers = {
         isAuthPrincipalGuardWithInlineConfig(arg),
     ),
 
-  getReplacedAuthGuards: (node: any): any[] =>
-    getUseGuardsArguments(node).filter(
-      (arg: any) =>
-        arg.type === 'Identifier' &&
-        REPLACED_AUTH_GUARD_NAMES.includes(arg.name),
-    ),
-
   getAuthPrincipalGuardsWithoutInlineConfig: (node: any): any[] =>
     getUseGuardsArguments(node).filter(
       (arg: any) =>
@@ -166,7 +166,7 @@ export const typedTokenHelpers = {
   getInlineAuthPrincipalGuards: (node: any): any[] =>
     getUseGuardsArguments(node).filter(isAuthPrincipalGuardWithInlineConfig),
 
-  getAcceptedPrincipalVariants,
+  getPrincipalsRefusedByClassGuard,
 
   nodeHasPermissionsGuard: (node: any): boolean => {
     if (!node.decorators) {

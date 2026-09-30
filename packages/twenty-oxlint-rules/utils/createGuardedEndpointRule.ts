@@ -9,7 +9,6 @@ type GuardedEndpointRuleOptions = {
   message: string;
 };
 
-const REPLACED_AUTH_GUARD_MESSAGE_ID = 'replacedByAuthPrincipalGuard';
 const AUTH_PRINCIPAL_GUARD_CONFIG_NOT_INLINE_MESSAGE_ID =
   'authPrincipalGuardConfigNotInline';
 const AUTH_PRINCIPAL_GUARD_WIDER_THAN_CLASS_MESSAGE_ID =
@@ -55,8 +54,6 @@ export const createGuardedEndpointRule = ({
       docs: { description },
       messages: {
         [messageId]: message,
-        [REPLACED_AUTH_GUARD_MESSAGE_ID]:
-          '{{ guardName }} was replaced by AuthPrincipalGuard: declare the principals this endpoint accepts with AuthPrincipalGuard({ ... }).',
         [AUTH_PRINCIPAL_GUARD_CONFIG_NOT_INLINE_MESSAGE_ID]:
           'AuthPrincipalGuard takes an inline object literal (no variable, no spread, no shorthand) so the principals an endpoint accepts can be read at the endpoint.',
         [AUTH_PRINCIPAL_GUARD_WIDER_THAN_CLASS_MESSAGE_ID]:
@@ -70,14 +67,6 @@ export const createGuardedEndpointRule = ({
     },
     create: (context) => {
       const reportAuthPrincipalGuardUsage = (node: any): void => {
-        for (const guard of typedTokenHelpers.getReplacedAuthGuards(node)) {
-          context.report({
-            node: guard,
-            messageId: REPLACED_AUTH_GUARD_MESSAGE_ID,
-            data: { guardName: guard.name },
-          });
-        }
-
         for (const guard of typedTokenHelpers.getAuthPrincipalGuardsWithoutInlineConfig(
           node,
         )) {
@@ -111,19 +100,19 @@ export const createGuardedEndpointRule = ({
           return;
         }
 
-        const isAcceptedByClass = (principalVariant: string): boolean =>
-          classGuards.every((classGuard: any) =>
-            typedTokenHelpers
-              .getAcceptedPrincipalVariants(classGuard)
-              .includes(principalVariant),
-          );
-
         for (const methodGuard of typedTokenHelpers.getInlineAuthPrincipalGuards(
           node,
         )) {
-          const principalVariantsRefusedByClass = typedTokenHelpers
-            .getAcceptedPrincipalVariants(methodGuard)
-            .filter((principalVariant) => !isAcceptedByClass(principalVariant));
+          const principalVariantsRefusedByClass = [
+            ...new Set<string>(
+              classGuards.flatMap((classGuard: any) =>
+                typedTokenHelpers.getPrincipalsRefusedByClassGuard(
+                  methodGuard,
+                  classGuard,
+                ),
+              ),
+            ),
+          ];
 
           if (principalVariantsRefusedByClass.length > 0) {
             context.report({

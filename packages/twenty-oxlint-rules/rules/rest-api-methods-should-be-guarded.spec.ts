@@ -1,9 +1,6 @@
 import { RuleTester } from 'oxlint/plugins-dev';
 
-import {
-  AUTHENTICATING_GUARD_NAMES,
-  REPLACED_AUTH_GUARD_NAMES,
-} from '../utils/typedTokenHelpers';
+import { AUTHENTICATING_GUARD_NAMES } from '../utils/typedTokenHelpers';
 import { rule, RULE_NAME } from './rest-api-methods-should-be-guarded';
 
 const ACCEPT_EVERY_PRINCIPAL =
@@ -398,54 +395,6 @@ ruleTester.run(RULE_NAME, rule, {
       errors: [
         {
           messageId: 'restApiMethodsShouldBeGuarded',
-        },
-      ],
-      filename: 'test.tsx',
-    },
-    ...REPLACED_AUTH_GUARD_NAMES.map((guardName) => ({
-      code: `
-        class TestController {
-          @Get()
-          @UseGuards(${guardName}, NoPermissionGuard)
-          testMethod() {}
-        }
-      `,
-      errors: [
-        { messageId: 'restApiMethodsShouldBeGuarded' },
-        { messageId: 'replacedByAuthPrincipalGuard', data: { guardName } },
-      ],
-      filename: 'test.tsx',
-    })),
-    {
-      code: `
-        @UseGuards(JwtAuthGuard, WorkspaceAuthGuard, NoPermissionGuard)
-        class TestController {
-          @Get()
-          testMethod() {}
-        }
-      `,
-      errors: [
-        {
-          messageId: 'replacedByAuthPrincipalGuard',
-          data: { guardName: 'WorkspaceAuthGuard' },
-        },
-        { messageId: 'restApiMethodsShouldBeGuarded' },
-      ],
-      filename: 'test.tsx',
-    },
-    {
-      code: `
-        @UseGuards(${ACCEPT_USER_SESSIONS}, NoPermissionGuard)
-        class TestController {
-          @Delete()
-          @UseGuards(RequireAccessTokenGuard)
-          deleteMethod() {}
-        }
-      `,
-      errors: [
-        {
-          messageId: 'replacedByAuthPrincipalGuard',
-          data: { guardName: 'RequireAccessTokenGuard' },
         },
       ],
       filename: 'test.tsx',
