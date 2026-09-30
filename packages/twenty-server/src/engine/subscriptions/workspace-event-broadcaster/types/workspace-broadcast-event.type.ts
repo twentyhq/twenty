@@ -12,8 +12,8 @@ export type WorkspaceBroadcastEvent = {
   };
   // Restricts delivery to streams whose authContext.userWorkspaceId is in this
   // list. Omit for workspace-wide events (shared metadata like views, objects,
-  // fields). Set for user-scoped entities (e.g. agentChatThread) so other users
-  // in the same workspace don't receive them.
+  // fields). Set for user-scoped entities so other users in the same
+  // workspace don't receive them.
   recipientUserWorkspaceIds?: string[];
   // Restricts delivery to streams whose user holds this settings permission
   // flag. Metadata events are workspace-wide by default; entities whose

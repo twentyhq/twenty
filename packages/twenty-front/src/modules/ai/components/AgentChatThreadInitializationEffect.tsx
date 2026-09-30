@@ -1,4 +1,4 @@
-import { useAtomValue, useStore } from 'jotai';
+import { useStore } from 'jotai';
 import { useEffect } from 'react';
 import {
   isDefined,
@@ -13,30 +13,45 @@ import {
   agentChatDraftsByThreadIdState,
 } from '@/ai/states/agentChatDraftsByThreadIdState';
 import { agentChatInputState } from '@/ai/states/agentChatInputState';
+import { agentChatThreadListState } from '@/ai/states/agentChatThreadListState';
 import { agentChatThreadsLoadingState } from '@/ai/states/agentChatThreadsLoadingState';
 import { agentChatUsageComponentFamilyState } from '@/ai/states/agentChatUsageComponentFamilyState';
+import { agentChatThreadsSelector } from '@/ai/states/selectors/agentChatThreadsSelector';
 import { agentChatVisibleThreadsSelector } from '@/ai/states/selectors/agentChatVisibleThreadsSelector';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { currentAiChatThreadTitleComponentFamilyState } from '@/ai/states/currentAiChatThreadTitleComponentFamilyState';
 import { hasInitializedAgentChatThreadsState } from '@/ai/states/hasInitializedAgentChatThreadsState';
 import { hasTriggeredCreateForDraftState } from '@/ai/states/hasTriggeredCreateForDraftState';
 import { sortChatThreadsByLastActivityDesc } from '@/ai/utils/sortChatThreadsByLastActivityDesc';
-import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
+import { metadataStoreStatusFamilySelector } from '@/metadata-store/states/metadataStoreStatusFamilySelector';
+import { useIsWorkspaceActivationStatusEqualsTo } from '@/workspace/hooks/useIsWorkspaceActivationStatusEqualsTo';
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import {
-  type AgentChatThread,
-  PermissionFlagType,
-} from '~/generated-metadata/graphql';
+import { PermissionFlagType } from '~/generated-metadata/graphql';
 
 const AGENT_CHAT_THREADS_REFRESH_RETRY_DELAY_MS = 3000;
 
 export const AgentChatThreadInitializationEffect = () => {
   const { refreshAgentChatThreads } = useRefreshAgentChatThreads();
   const hasAiPermission = useHasPermissionFlag(PermissionFlagType.AI);
+  // Chats are read through the record API, whose query is built from the
+  // chat object's fields
+  const areFieldMetadataItemsLoaded =
+    useAtomFamilySelectorValue(
+      metadataStoreStatusFamilySelector,
+      'fieldMetadataItems',
+    ) === 'up-to-date';
+
+  // The record API refuses a suspended workspace
+  const isWorkspaceSuspended = useIsWorkspaceActivationStatusEqualsTo(
+    WorkspaceActivationStatus.SUSPENDED,
+  );
+  const canLoadAgentChatThreads = hasAiPermission && !isWorkspaceSuspended;
 
   const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
   const setCurrentAiChatThread = useSetAtomState(currentAiChatThreadState);
@@ -54,14 +69,18 @@ export const AgentChatThreadInitializationEffect = () => {
   const agentChatVisibleThreads = useAtomStateValue(
     agentChatVisibleThreadsSelector,
   );
-  const storeEntry = useAtomValue(
-    metadataStoreState.atomFamily('agentChatThreads'),
-  );
+  const agentChatThreadList = useAtomStateValue(agentChatThreadListState);
+  const agentChatThreads = useAtomStateValue(agentChatThreadsSelector);
+  const areAgentChatThreadsLoaded = agentChatThreadList !== null;
   const [hasInitializedAgentChatThreads, setHasInitializedAgentChatThreads] =
     useAtomState(hasInitializedAgentChatThreadsState);
 
   useEffect(() => {
-    if (storeEntry.status !== 'empty' || !hasAiPermission) {
+    if (
+      areAgentChatThreadsLoaded ||
+      !canLoadAgentChatThreads ||
+      !areFieldMetadataItemsLoaded
+    ) {
       return;
     }
 
@@ -90,24 +109,33 @@ export const AgentChatThreadInitializationEffect = () => {
         window.clearTimeout(retryTimeoutId);
       }
     };
-  }, [storeEntry.status, hasAiPermission, refreshAgentChatThreads]);
+  }, [
+    areAgentChatThreadsLoaded,
+    areFieldMetadataItemsLoaded,
+    canLoadAgentChatThreads,
+    refreshAgentChatThreads,
+  ]);
 
   useEffect(() => {
     setAgentChatThreadsLoading(
-      storeEntry.status === 'empty' && hasAiPermission,
+      !areAgentChatThreadsLoaded && canLoadAgentChatThreads,
     );
-  }, [storeEntry.status, hasAiPermission, setAgentChatThreadsLoading]);
+  }, [
+    areAgentChatThreadsLoaded,
+    canLoadAgentChatThreads,
+    setAgentChatThreadsLoading,
+  ]);
 
   useEffect(() => {
     if (
       hasInitializedAgentChatThreads ||
-      (storeEntry.status === 'empty' && hasAiPermission)
+      (!areAgentChatThreadsLoaded && canLoadAgentChatThreads)
     ) {
       return;
     }
 
     if (isDefined(currentAiChatThread) && isValidUuid(currentAiChatThread)) {
-      const selectedThread = (storeEntry.current as AgentChatThread[]).find(
+      const selectedThread = agentChatThreads.find(
         ({ id }) => id === currentAiChatThread,
       );
       if (isDefined(selectedThread)) {
@@ -159,11 +187,11 @@ export const AgentChatThreadInitializationEffect = () => {
   }, [
     agentChatVisibleThreads,
     currentAiChatThread,
-    hasAiPermission,
+    canLoadAgentChatThreads,
     hasInitializedAgentChatThreads,
     setHasInitializedAgentChatThreads,
-    storeEntry.status,
-    storeEntry.current,
+    areAgentChatThreadsLoaded,
+    agentChatThreads,
     setCurrentAiChatThread,
     setAgentChatInput,
     store,
