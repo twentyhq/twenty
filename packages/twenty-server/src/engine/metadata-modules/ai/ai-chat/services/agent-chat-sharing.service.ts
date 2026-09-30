@@ -1,5 +1,4 @@
 import { lockAgentChatThread } from 'src/engine/metadata-modules/ai/ai-chat/utils/lock-agent-chat-thread.util';
-import { IsNull } from 'typeorm';
 import { type AgentHistoryStorageContext } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-workspace-storage.service';
 import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
 import { randomUUID } from 'node:crypto';
@@ -16,7 +15,6 @@ import { type RecordPermissionsDTO } from 'src/engine/core-modules/record-share/
 import { UserWorkspaceAuthContextService } from 'src/engine/core-modules/user-workspace/services/user-workspace-auth-context.service';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
-import { hasWorkflowRunThreadFields } from 'src/engine/metadata-modules/ai/ai-history/utils/has-workflow-run-thread-fields.util';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import {
   AiException,
@@ -26,8 +24,6 @@ import { PermissionsService } from 'src/engine/metadata-modules/permissions/perm
 import { type OperationType } from 'src/engine/twenty-orm/repository/permissions.utils';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-
-const MAX_CHAT_THREADS = 1000;
 
 type ThreadAccessArgs = {
   workspaceId: string;
@@ -104,33 +100,6 @@ export class AgentChatSharingService {
       recordIds: args.threadIds,
       withDeleted: true,
     });
-  }
-
-  async getReadableThreadIds(
-    args: Omit<ThreadAccessArgs, 'threadId'>,
-  ): Promise<string[]> {
-    const authContext = await this.getAuthContext(args);
-    const { flatFieldMetadataMaps } =
-      await this.workspaceCacheService.getOrRecompute(args.workspaceId, [
-        'flatFieldMetadataMaps',
-      ]);
-
-    return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-      const records = await this.workspaceOrmManager
-        .getRepositoryWithContextPermissions('agentChatThread')
-        .find({
-          // Anyone who reads a run reads its agent's conversations, so without
-          // this every run would crowd into every member's own chats.
-          where: hasWorkflowRunThreadFields(flatFieldMetadataMaps)
-            ? { workflowRunId: IsNull() }
-            : undefined,
-          select: { id: true },
-          withDeleted: true,
-          order: { updatedAt: 'DESC', id: 'DESC' },
-          take: MAX_CHAT_THREADS,
-        });
-      return records.map(({ id }) => id);
-    }, authContext);
   }
 
   async createThread(args: {

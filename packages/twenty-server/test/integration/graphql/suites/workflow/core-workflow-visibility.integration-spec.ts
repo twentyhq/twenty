@@ -7,6 +7,7 @@ import { WorkflowVisibility } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
+import { listChatThreadIds } from 'test/integration/utils/list-chat-thread-ids.util';
 import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
 import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
 import { updateWorkspaceMemberRole } from 'test/integration/metadata/suites/role/utils/update-workspace-member-role.util';
@@ -587,7 +588,7 @@ describe('core workflow visibility (e2e)', () => {
       expect(response.body.data?.runWorkflowVersion ?? null).toBeNull();
     });
 
-    // WorkflowTriggerResolver carries no class-level UserAuthGuard, so unlike
+    // WorkflowTriggerResolver's AuthPrincipalGuard accepts API keys, so unlike
     // the core workflow API an API key does reach this mutation, and the rule
     // has to hold for a caller that is a workspace rather than a person.
     it('refuses to activate it for an API key', async () => {
@@ -893,14 +894,8 @@ describe('core workflow visibility (e2e)', () => {
     });
 
     it('keeps it out of the chat list of someone who can read it', async () => {
-      const response = await metadataRequestAs(
-        APPLE_JANE_ADMIN_ACCESS_TOKEN,
-        'query ReadableThreads { chatThreads { id } }',
-      );
-
-      expect(response.body.errors).toBeUndefined();
       expect(
-        response.body.data.chatThreads.map(({ id }: { id: string }) => id),
+        await listChatThreadIds(APPLE_JANE_ADMIN_ACCESS_TOKEN),
       ).not.toContain(threadId);
     });
 

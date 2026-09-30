@@ -25,3 +25,16 @@ runComponentConformance({
   refInstanceOf: HTMLDivElement,
   ownClassName: groupStyles.root,
 });
+
+runComponentConformance({
+  name: 'Radio card',
+  element: (
+    <Radio variant="card" value="option">
+      Option
+    </Radio>
+  ),
+  wrapper: RadioGroupWrapper,
+  refInstanceOf: HTMLDivElement,
+  ownClassName: styles.card,
+  renderPropTagName: 'div',
+});

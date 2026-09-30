@@ -21,7 +21,6 @@ export const START_WORKSPACE_SETUP_CHAT = gql`
         totalInputCredits
         totalOutputCredits
         deletedAt
-        lastMessageAt
         createdAt
         updatedAt
       }
