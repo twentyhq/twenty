@@ -81,7 +81,7 @@ describe('computeEvenlySpacedPositions', () => {
     result.forEach((position, index) => {
       expect(position).toBeGreaterThan(result[index - 1] ?? startingPosition);
     });
-    expect(result.at(-1)).toBeLessThan(endingPosition);
+    expect(result[result.length - 1]).toBeLessThan(endingPosition);
   });
 
   it('should return an empty array when no positions are requested', () => {
