@@ -16,10 +16,8 @@ import {
   type RecordImportRowEdit,
   type RecordImportSession,
 } from 'src/engine/core-modules/record-import/types/record-import-session.type';
-import {
-  getRecordImportEditsCacheKey,
-  getRecordImportSessionCacheKey,
-} from 'src/engine/core-modules/record-import/utils/get-record-import-session-cache-key.util';
+import { getRecordImportEditsCacheKey } from 'src/engine/core-modules/record-import/utils/get-record-import-edits-cache-key.util';
+import { getRecordImportSessionCacheKey } from 'src/engine/core-modules/record-import/utils/get-record-import-session-cache-key.util';
 
 const MAX_UPDATE_ATTEMPTS = 5;
 

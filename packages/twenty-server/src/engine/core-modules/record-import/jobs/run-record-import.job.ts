@@ -26,7 +26,7 @@ export class RunRecordImportJob {
     });
 
     // The status transition in start is the only way in, so a duplicate or
-    // replayed job finds the session past IMPORTING and does nothing (LIFE-1)
+    // replayed job finds the session past IMPORTING and does nothing
     if (!isDefined(session) || session.status !== 'IMPORTING') {
       return;
     }

@@ -7,7 +7,7 @@ import {
 } from 'twenty-shared/utils';
 
 // Server counterpart of the browser's message texts, rendered in the
-// requester's locale by the job (DATA-2).
+// requester's locale by the job.
 export const getRecordImportValidationMessageDescriptor = ({
   code,
   fieldName,

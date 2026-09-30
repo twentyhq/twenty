@@ -11,6 +11,7 @@ import { setTimeout } from 'node:timers/promises';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { FileFolder } from 'twenty-shared/types';
 import {
+  type ImportedStructuredRow,
   isDefined,
   type SpreadsheetImportFieldDescriptor,
   type SpreadsheetImportRowErrors,
@@ -35,6 +36,7 @@ import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decora
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import {
+  RECORD_IMPORT_ERROR_ROWS_PER_PAGE,
   RECORD_IMPORT_LEASE_TTL_MS,
   RECORD_IMPORT_MAX_WORKBOOK_BYTES,
   RECORD_IMPORT_PREVIEW_ROW_COUNT,
@@ -55,6 +57,7 @@ import { getPagePositionsSkipping } from 'src/engine/core-modules/record-import/
 import { isValidRecordImportEditValue } from 'src/engine/core-modules/record-import/utils/is-valid-record-import-edit-value.util';
 import { type RecordImportRowEditInput } from 'src/engine/core-modules/record-import/dtos/record-import-session.input';
 import {
+  type RecordImportErrorRow,
   type RecordImportJobProgress,
   type RecordImportRow,
   type RecordImportRowEdit,
@@ -240,6 +243,7 @@ export class RecordImportWorkspaceService {
   }): Promise<RecordImportPreviewDTO> {
     const session = await this.findOwnedSessionOrThrow(authContext, id);
 
+    await this.assertCanImport(authContext, session.objectMetadataId);
     this.assertValidSheetName(session, sheetName);
 
     const { rows } = await this.readPreview(session, sheetName);
@@ -276,6 +280,7 @@ export class RecordImportWorkspaceService {
       (current) => ({
         ...current,
         status: 'PREPARING',
+        jobId: undefined,
         sheetName: sheetName ?? current.sheetNames[0],
         headerRowIndex,
         headerValues: undefined,
@@ -313,6 +318,8 @@ export class RecordImportWorkspaceService {
     id: string;
   }): Promise<RecordImportColumnSamplesDTO> {
     const session = await this.findOwnedSessionOrThrow(authContext, id);
+
+    await this.assertCanImport(authContext, session.objectMetadataId);
 
     if (!PREPARED_STATUSES.includes(session.status)) {
       throw new BadRequestException(t`The file is not ready yet.`);
@@ -354,6 +361,7 @@ export class RecordImportWorkspaceService {
       (current) => ({
         ...current,
         status: 'VALIDATING',
+        jobId: undefined,
         columns: parsedColumns,
         mappedFields: buildRecordImportMappedFields(
           parsedColumns,
@@ -367,7 +375,9 @@ export class RecordImportWorkspaceService {
       { shouldDeleteEdits: true },
     );
 
-    return this.toDTO(await this.enqueueValidation(validating));
+    return this.toDTO(
+      await this.enqueueValidation(validating, this.getValidatedRunId(session)),
+    );
   }
 
   async getRows({
@@ -389,25 +399,88 @@ export class RecordImportWorkspaceService {
       throw new BadRequestException(t`The rows are still being checked.`);
     }
 
+    const validationRunId = session.validationRunId ?? '';
     const context = await this.buildContext(session);
     const edits = await this.recordImportSessionService.findEdits(session);
+    const i18n = this.i18nService.getI18nInstance(session.locale);
+    const toRowDTO = (
+      row: RecordImportRow,
+      values: ImportedStructuredRow,
+      errors: SpreadsheetImportRowErrors<SpreadsheetImportValidationMessage>,
+    ): RecordImportRowDTO => ({
+      rowNumber: row.rowNumber,
+      values,
+      errors: Object.fromEntries(
+        Object.entries(errors).map(([fieldKey, { level, message }]) => [
+          fieldKey,
+          {
+            level,
+            message: i18n._(
+              getRecordImportValidationMessageDescriptor(message),
+            ),
+          },
+        ]),
+      ),
+    });
+
+    if (onlyErrors) {
+      const errorIndex = await this.recordImportStorageService.readErrorIndex(
+        session,
+        validationRunId,
+      );
+      const firstPageIndex = Math.floor(
+        offset / RECORD_IMPORT_ERROR_ROWS_PER_PAGE,
+      );
+      const lastPageIndex = Math.min(
+        errorIndex.pageCount - 1,
+        Math.floor((offset + limit - 1) / RECORD_IMPORT_ERROR_ROWS_PER_PAGE),
+      );
+      const errorRows: RecordImportErrorRow<
+        SpreadsheetImportRowErrors<SpreadsheetImportValidationMessage>
+      >[] = [];
+
+      for (
+        let pageIndex = firstPageIndex;
+        pageIndex <= lastPageIndex;
+        pageIndex++
+      ) {
+        errorRows.push(
+          ...(await this.recordImportStorageService.readErrorRowPage<
+            SpreadsheetImportRowErrors<SpreadsheetImportValidationMessage>
+          >(session, validationRunId, pageIndex)),
+        );
+      }
+
+      const pageRows = errorRows.slice(
+        offset - firstPageIndex * RECORD_IMPORT_ERROR_ROWS_PER_PAGE,
+        offset - firstPageIndex * RECORD_IMPORT_ERROR_ROWS_PER_PAGE + limit,
+      );
+      const structuredRows =
+        this.recordImportValidationWorkspaceService.normalizeRows(
+          session,
+          context,
+          pageRows,
+          edits,
+        );
+
+      return {
+        totalCount: errorIndex.rowCount,
+        rows: pageRows.map((row, rowIndex) =>
+          toRowDTO(row, structuredRows[rowIndex], row.errors),
+        ),
+      };
+    }
+
     const deletedPositions = [...edits.values()]
       .filter(({ isDeleted }) => isDeleted)
       .map(({ position }) => position)
       .sort((positionA, positionB) => positionA - positionB);
     const rowCount = (session.rowCount ?? 0) - deletedPositions.length;
-    const pageSize = limit;
-    const { errorRowPositions } = onlyErrors
-      ? await this.recordImportStorageService.readErrorIndex(session)
-      : { errorRowPositions: [] };
-    const positions = onlyErrors
-      ? errorRowPositions.slice(offset, offset + pageSize)
-      : getPagePositionsSkipping({
-          offset,
-          pageSize: Math.max(0, Math.min(pageSize, rowCount - offset)),
-          skippedPositions: deletedPositions,
-        });
-    const i18n = this.i18nService.getI18nInstance(session.locale);
+    const positions = getPagePositionsSkipping({
+      offset,
+      pageSize: Math.max(0, Math.min(limit, rowCount - offset)),
+      skippedPositions: deletedPositions,
+    });
     const rows: RecordImportRowDTO[] = [];
 
     // A page spans at most two chunks, each read once
@@ -420,7 +493,7 @@ export class RecordImportWorkspaceService {
         this.recordImportStorageService.readRowChunk(session, chunkIndex),
         this.recordImportStorageService.readErrorChunk<
           SpreadsheetImportRowErrors<SpreadsheetImportValidationMessage>
-        >(session, chunkIndex),
+        >(session, validationRunId, chunkIndex),
       ]);
       const structuredRows =
         this.recordImportValidationWorkspaceService.normalizeRows(
@@ -438,35 +511,22 @@ export class RecordImportWorkspaceService {
           continue;
         }
 
-        rows.push({
-          rowNumber: chunkRows[indexInChunk].rowNumber,
-          values: structuredRows[indexInChunk],
-          errors: Object.fromEntries(
-            Object.entries(chunkErrors.get(indexInChunk) ?? {}).map(
-              ([fieldKey, { level, message }]) => [
-                fieldKey,
-                {
-                  level,
-                  message: i18n._(
-                    getRecordImportValidationMessageDescriptor(message),
-                  ),
-                },
-              ],
-            ),
+        rows.push(
+          toRowDTO(
+            chunkRows[indexInChunk],
+            structuredRows[indexInChunk],
+            chunkErrors.get(indexInChunk) ?? {},
           ),
-        });
+        );
       }
     }
 
-    return {
-      totalCount: onlyErrors ? errorRowPositions.length : rowCount,
-      rows,
-    };
+    return { totalCount: rowCount, rows };
   }
 
   // Saves cell edits and row deletions made in the review grid, then
   // re-validates every row, since one edit can clear or create a duplicate
-  // elsewhere (EDIT-1 to EDIT-4)
+  // elsewhere
   async editRows({
     authContext,
     id,
@@ -509,6 +569,7 @@ export class RecordImportWorkspaceService {
       (current) => ({
         ...current,
         status: 'VALIDATING',
+        jobId: undefined,
         validationRunId: v4(),
         errorRowCount: undefined,
         deletedRowCount: deletedRowNumbers.size,
@@ -529,7 +590,9 @@ export class RecordImportWorkspaceService {
       );
     }
 
-    return this.toDTO(await this.enqueueValidation(saved));
+    return this.toDTO(
+      await this.enqueueValidation(saved, this.getValidatedRunId(session)),
+    );
   }
 
   async start({
@@ -582,6 +645,7 @@ export class RecordImportWorkspaceService {
         (current) => ({
           ...current,
           status: 'IMPORTING',
+          jobId: undefined,
           result: {
             totalRowCount:
               (current.rowCount ?? 0) - (current.deletedRowCount ?? 0),
@@ -627,7 +691,7 @@ export class RecordImportWorkspaceService {
     }
   }
 
-  // Stops a running import between batches (LIFE-6). A session that is not
+  // Stops a running import between batches. A session that is not
   // importing is discarded with its files instead.
   async cancel({
     authContext,
@@ -725,7 +789,7 @@ export class RecordImportWorkspaceService {
   }
 
   // Resolves the requester again and re-checks every permission, so a job
-  // or a late request never acts on access that was revoked (SEC-3, SEC-5).
+  // or a late request never acts on access that was revoked.
   async buildContext(
     session: RecordImportSession,
   ): Promise<RecordImportContext> {
@@ -826,8 +890,13 @@ export class RecordImportWorkspaceService {
     };
   }
 
+  private getValidatedRunId(session: RecordImportSession) {
+    return session.status === 'VALIDATED' ? session.validationRunId : undefined;
+  }
+
   private async enqueueValidation(
     validating: RecordImportSession,
+    previousValidationRunId: string | undefined,
   ): Promise<RecordImportSession> {
     const jobId = await this.messageQueueService.add(
       'ValidateRecordImportJob',
@@ -835,6 +904,7 @@ export class RecordImportWorkspaceService {
         workspaceId: validating.workspaceId,
         id: validating.id,
         validationRunId: validating.validationRunId,
+        previousValidationRunId,
       },
       // A waiting run of an older mapping or edit must not swallow this one:
       // it discards itself once it sees the newer validationRunId
@@ -853,8 +923,8 @@ export class RecordImportWorkspaceService {
   }
 
   // Edits come from the browser: rows must exist, keys must be mapped
-  // fields, option values must exist and cells respect the parser cap
-  // (EDIT-4). Values are merged into the row's earlier edit.
+  // fields, option values must exist and cells respect the parser cap.
+  // Values are merged into the row's earlier edit.
   private async buildRowEdits({
     session,
     edits,
@@ -871,7 +941,7 @@ export class RecordImportWorkspaceService {
     );
     const fieldByKey = new Map(fields.map((field) => [field.key, field]));
     const chunkCache = new Map<number, RecordImportRow[]>();
-    const chunkFirstRowNumbers = await this.getChunkFirstRowNumbers(session);
+    const chunkFirstRowNumbers = session.chunkFirstRowNumbers ?? [];
     const rowEdits = new Map<number, RecordImportRowEdit>();
 
     for (const edit of edits) {
@@ -916,33 +986,6 @@ export class RecordImportWorkspaceService {
     return [...rowEdits.values()];
   }
 
-  // Sessions prepared before chunkFirstRowNumbers was stored live up to the
-  // session TTL, so it is read back from the chunks for them
-  private async getChunkFirstRowNumbers(
-    session: RecordImportSession,
-  ): Promise<number[]> {
-    if (isDefined(session.chunkFirstRowNumbers)) {
-      return session.chunkFirstRowNumbers;
-    }
-
-    const chunkFirstRowNumbers: number[] = [];
-
-    for (
-      let chunkIndex = 0;
-      chunkIndex < (session.chunkCount ?? 0);
-      chunkIndex++
-    ) {
-      const [firstRow] = await this.recordImportStorageService.readRowChunk(
-        session,
-        chunkIndex,
-      );
-
-      chunkFirstRowNumbers.push(firstRow.rowNumber);
-    }
-
-    return chunkFirstRowNumbers;
-  }
-
   private async findRowPosition({
     session,
     rowNumber,
@@ -984,6 +1027,8 @@ export class RecordImportWorkspaceService {
   private async getLiveDTO(
     session: RecordImportSession,
   ): Promise<RecordImportDTO> {
+    // Every status change clears jobId until its own job is queued, so a
+    // finished job here never belongs to an earlier status
     if (
       !RUNNING_STATUSES.includes(session.status) ||
       !isDefined(session.jobId)
@@ -1005,7 +1050,7 @@ export class RecordImportWorkspaceService {
     }
 
     // The worker died without recording an outcome, e.g. on a restart: report
-    // what was written instead of retrying, which could duplicate rows (LIFE-2).
+    // what was written instead of retrying, which could duplicate rows.
     const interrupted = await this.recordImportSessionService.update(
       session,
       (current) => {
@@ -1105,7 +1150,7 @@ export class RecordImportWorkspaceService {
   }
 
   // IMPORT_CSV alone only hid the command menu item; the server now requires
-  // it together with write access to the target object (SEC-1).
+  // it together with write access to the target object.
   private async getObjectImportPermissionsOrThrow(
     requester: UserWorkspaceAuthContext,
     objectMetadataId: string,
@@ -1140,7 +1185,7 @@ export class RecordImportWorkspaceService {
         })
       : undefined;
 
-    // Knowing a session id is not enough to use it (SEC-3)
+    // Knowing a session id is not enough to use it
     if (
       !isDefined(session) ||
       !isUserAuthContext(authContext) ||

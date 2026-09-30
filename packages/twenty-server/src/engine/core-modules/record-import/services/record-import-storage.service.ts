@@ -1,8 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
+import { Readable } from 'node:stream';
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
+import { v4 } from 'uuid';
 
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { type FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
@@ -11,6 +13,7 @@ import { RecordImportException } from 'src/engine/core-modules/record-import/rec
 import {
   type RecordImportColumnSamples,
   type RecordImportErrorIndex,
+  type RecordImportErrorRow,
   type RecordImportRow,
   type RecordImportSession,
 } from 'src/engine/core-modules/record-import/types/record-import-session.type';
@@ -164,12 +167,13 @@ export class RecordImportStorageService {
 
   async writeErrorChunk(
     session: SessionKey,
+    validationRunId: string,
     chunkIndex: number,
     rowErrors: [number, unknown][],
   ): Promise<void> {
     await this.writeWorkingFile(
       session,
-      `${this.getWorkingFolderPath(session)}/errors/${chunkIndex}.json`,
+      `${this.getErrorFolderPath(session, validationRunId)}/${chunkIndex}.json`,
       JSON.stringify(rowErrors),
     );
   }
@@ -177,44 +181,160 @@ export class RecordImportStorageService {
   // Errors of the rows of a chunk that have any, by index in the chunk
   async readErrorChunk<TRowErrors>(
     session: SessionKey,
+    validationRunId: string,
     chunkIndex: number,
   ): Promise<Map<number, TRowErrors>> {
     return new Map(
       JSON.parse(
         await this.readWorkingFile(
           session,
-          `${this.getWorkingFolderPath(session)}/errors/${chunkIndex}.json`,
+          `${this.getErrorFolderPath(session, validationRunId)}/${chunkIndex}.json`,
         ),
       ),
     );
   }
 
+  async writeErrorRowPage(
+    session: SessionKey,
+    validationRunId: string,
+    pageIndex: number,
+    errorRows: RecordImportErrorRow<unknown>[],
+  ): Promise<void> {
+    await this.writeWorkingFile(
+      session,
+      `${this.getErrorFolderPath(session, validationRunId)}/rows/${pageIndex}.ndjson`,
+      errorRows.map((errorRow) => JSON.stringify(errorRow)).join('\n'),
+    );
+  }
+
+  async readErrorRowPage<TRowErrors>(
+    session: SessionKey,
+    validationRunId: string,
+    pageIndex: number,
+  ): Promise<RecordImportErrorRow<TRowErrors>[]> {
+    const content = await this.readWorkingFile(
+      session,
+      `${this.getErrorFolderPath(session, validationRunId)}/rows/${pageIndex}.ndjson`,
+    );
+
+    return content
+      .split('\n')
+      .filter((line) => line.length > 0)
+      .map((line) => JSON.parse(line) as RecordImportErrorRow<TRowErrors>);
+  }
+
   async writeErrorIndex(
     session: SessionKey,
+    validationRunId: string,
     errorIndex: RecordImportErrorIndex,
   ): Promise<void> {
     await this.writeWorkingFile(
       session,
-      `${this.getWorkingFolderPath(session)}/errors/index.json`,
+      `${this.getErrorFolderPath(session, validationRunId)}/index.json`,
       JSON.stringify(errorIndex),
     );
   }
 
-  async readErrorIndex(session: SessionKey): Promise<RecordImportErrorIndex> {
+  async readErrorIndex(
+    session: SessionKey,
+    validationRunId: string,
+  ): Promise<RecordImportErrorIndex> {
     return JSON.parse(
       await this.readWorkingFile(
         session,
-        `${this.getWorkingFolderPath(session)}/errors/index.json`,
+        `${this.getErrorFolderPath(session, validationRunId)}/index.json`,
       ),
     );
   }
 
-  writeReport(session: SessionKey, csv: string): Promise<FileEntity> {
-    return this.writeWorkingFile(
+  async deleteErrorFiles(
+    session: SessionKey,
+    validationRunId: string,
+  ): Promise<void> {
+    await this.fileStorageService
+      .deleteFolder({
+        workspaceId: session.workspaceId,
+        applicationUniversalIdentifier:
+          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+        fileFolder: FileFolder.RecordImport,
+        folderPath: this.getErrorFolderPath(session, validationRunId),
+      })
+      .catch((error) =>
+        this.logger.warn(
+          `Failed to delete errors of import ${session.id}: ${error.message}`,
+        ),
+      );
+  }
+
+  async writeReportPart(
+    session: SessionKey,
+    partIndex: number,
+    lines: string[],
+  ): Promise<void> {
+    await this.writeWorkingFile(
       session,
-      `${this.getWorkingFolderPath(session)}/report.csv`,
-      csv,
+      this.getReportPartPath(session, partIndex),
+      lines.join('\n') + '\n',
     );
+  }
+
+  // Streams the parts written during the import into one file, so the
+  // report is never held in memory whole
+  async writeReport(
+    session: SessionKey,
+    header: string,
+    partCount: number,
+  ): Promise<string> {
+    const resource = this.getResource(
+      session.workspaceId,
+      `${this.getWorkingFolderPath(session)}/report.csv`,
+    );
+    const file = await this.fileStorageService.createPendingFile({
+      ...resource,
+      fileId: v4(),
+      size: 0,
+      mimeType: 'application/octet-stream',
+      settings: { isTemporaryFile: true, toDelete: false },
+    });
+    let size = 0;
+    const storageService = this;
+
+    async function* content() {
+      const headerBuffer = Buffer.from(header, 'utf8');
+
+      size += headerBuffer.length;
+      yield headerBuffer;
+
+      for (let partIndex = 0; partIndex < partCount; partIndex++) {
+        const part = await streamToBuffer(
+          await storageService.fileStorageService.readFile(
+            storageService.getResource(
+              session.workspaceId,
+              storageService.getReportPartPath(session, partIndex),
+            ),
+          ),
+        );
+
+        size += part.length;
+        yield part;
+      }
+    }
+
+    await this.fileStorageService.writeFileStream({
+      ...resource,
+      stream: Readable.from(content()),
+      mimeType: 'text/csv',
+    });
+    await this.fileStorageService.markFileUploaded({
+      workspaceId: session.workspaceId,
+      applicationId: file.applicationId,
+      fileId: file.id,
+      chargedSize: 0,
+      size,
+      mimeType: 'text/csv',
+    });
+
+    return file.id;
   }
 
   async deleteWorkingFiles(session: SessionKey): Promise<void> {
@@ -281,6 +401,14 @@ export class RecordImportStorageService {
   // would also match the uploaded source "<id>.csv"
   private getWorkingFolderPath(session: SessionKey) {
     return `${session.id}-working`;
+  }
+
+  private getErrorFolderPath(session: SessionKey, validationRunId: string) {
+    return `${this.getWorkingFolderPath(session)}/errors/${validationRunId}`;
+  }
+
+  private getReportPartPath(session: SessionKey, partIndex: number) {
+    return `${this.getWorkingFolderPath(session)}/report/${partIndex}.csv`;
   }
 
   private getRowChunkPath(session: SessionKey, chunkIndex: number) {

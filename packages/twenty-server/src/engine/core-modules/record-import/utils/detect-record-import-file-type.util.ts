@@ -7,7 +7,7 @@ const COMPOUND_FILE_SIGNATURE = Buffer.from([
 const UTF_16_BOMS = [Buffer.from([0xff, 0xfe]), Buffer.from([0xfe, 0xff])];
 
 // Decided from the bytes only: a declared extension or MIME type is a client
-// claim (SEC-2).
+// claim.
 export const detectRecordImportFileType = (
   prefix: Buffer,
 ): RecordImportFileType | undefined => {

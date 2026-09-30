@@ -1,6 +1,6 @@
 // Runs in a worker thread with its own heap limit and a timeout, so a zip
-// bomb or a pathological workbook cannot exhaust or block the queue worker
-// (SEC-2). Kept as plain CommonJS source so it runs the same from ts sources
+// bomb or a pathological workbook cannot exhaust or block the queue worker.
+// Kept as plain CommonJS source so it runs the same from ts sources
 // and from the compiled build. Rows are sent in batches and each batch waits
 // for an acknowledgement, which bounds what is buffered on the main thread.
 export const RECORD_IMPORT_WORKBOOK_WORKER_SOURCE = `
@@ -48,7 +48,7 @@ const run = async () => {
   }
 
   // Blank rows are kept while reading so row numbers match the sheet, then
-  // dropped like the browser import does (DATA-8)
+  // dropped like the browser import does
   const firstRowIndex = worksheet['!ref']
     ? XLSX.utils.decode_range(worksheet['!ref']).s.r
     : 0;

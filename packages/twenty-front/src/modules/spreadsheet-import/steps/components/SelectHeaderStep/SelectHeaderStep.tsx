@@ -109,7 +109,7 @@ export const SelectHeaderStep = ({
         setPreviousStepState(currentStepState);
         nextStep();
       } catch (error) {
-        onError((error as Error).message);
+        onError(error instanceof Error ? error.message : String(error));
       }
     },
     [

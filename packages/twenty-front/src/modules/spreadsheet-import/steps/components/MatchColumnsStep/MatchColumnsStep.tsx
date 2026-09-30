@@ -19,7 +19,7 @@ import {
 import { setColumn } from '@/spreadsheet-import/utils/setColumn';
 import { setIgnoreColumn } from '@/spreadsheet-import/utils/setIgnoreColumn';
 import { setSubColumn } from '@/spreadsheet-import/utils/setSubColumn';
-import { SERVER_REVIEW_PAGE_SIZE } from '@/spreadsheet-import/steps/components/ServerReviewStep/ServerReviewStep';
+import { SPREADSHEET_IMPORT_SERVER_REVIEW_PAGE_SIZE } from '@/spreadsheet-import/constants/SpreadsheetImportServerReviewPageSize';
 import { useDialogManager } from '@/ui/feedback/dialog-manager/hooks/useDialogManager';
 
 import { DO_NOT_IMPORT_OPTION_KEY } from '@/spreadsheet-import/constants/DoNotImportOptionKey';
@@ -155,7 +155,7 @@ export const MatchColumnsStep = ({
             await serverImport.validateRows(columns);
           const initialPage = await serverImport.loadRows({
             offset: 0,
-            limit: SERVER_REVIEW_PAGE_SIZE,
+            limit: SPREADSHEET_IMPORT_SERVER_REVIEW_PAGE_SIZE,
             onlyErrors: false,
           });
           setCurrentStepState({
@@ -168,7 +168,7 @@ export const MatchColumnsStep = ({
           setPreviousStepState(currentStepState);
           nextStep();
         } catch (error) {
-          onError((error as Error).message);
+          onError(error instanceof Error ? error.message : String(error));
         } finally {
           setIsLoading(false);
         }

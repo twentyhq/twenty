@@ -2,6 +2,8 @@ import gql from 'graphql-tag';
 import supertest from 'supertest';
 import { setTimeout } from 'node:timers/promises';
 import { createFileUploadAndPutFile } from 'test/integration/graphql/utils/upload-file-with-direct-upload.util';
+import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
+import { deleteOneOperationFactory } from 'test/integration/graphql/utils/delete-one-operation-factory.util';
 import { destroyManyOperationFactory } from 'test/integration/graphql/utils/destroy-many-operation-factory.util';
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
@@ -184,6 +186,66 @@ describe('record import (integration)', () => {
     type: SpreadsheetColumnType.matched,
     value,
   });
+
+  const importRows = async (lines: string[], fieldKeys: string[]) => {
+    const { ready } = await createAndPrepare(Buffer.from(lines.join('\n')));
+    const mapped = await request<{ setRecordImportMapping: RecordImport }>(
+      setRecordImportMappingMutation,
+      {
+        id: ready.id,
+        version: ready.version,
+        columns: fieldKeys.map((fieldKey, index) => matched(index, fieldKey)),
+      },
+    );
+
+    expect(mapped.errors).toBeUndefined();
+
+    const validated = await waitForStatus(ready.id, ['VALIDATED']);
+    const started = await request<{ startRecordImport: RecordImport }>(
+      startRecordImportMutation,
+      { id: ready.id, version: validated.version },
+    );
+
+    expect(started.errors).toBeUndefined();
+
+    return waitForStatus(ready.id, ['COMPLETED', 'FAILED']);
+  };
+
+  const createCompany = async (data: Record<string, unknown>) => {
+    const response = await makeGraphqlApiRequest(
+      createOneOperationFactory({
+        objectMetadataSingularName: 'company',
+        gqlFields: 'id',
+        data,
+      }),
+    );
+
+    expect(response.body.errors).toBeUndefined();
+
+    return response.body.data.createCompany.id as string;
+  };
+
+  const findCompanies = async (ids: string[]) =>
+    (
+      await makeGraphqlApiRequest(
+        findManyOperationFactory({
+          objectMetadataSingularName: 'company',
+          objectMetadataPluralName: 'companies',
+          gqlFields: 'id name domainName { primaryLinkUrl }',
+          filter: { id: { in: ids } },
+        }),
+      )
+    ).body.data.companies.edges.map(
+      ({
+        node,
+      }: {
+        node: {
+          id: string;
+          name: string;
+          domainName: { primaryLinkUrl: string };
+        };
+      }) => node,
+    );
 
   beforeAll(async () => {
     await updateFeatureFlag({
@@ -580,6 +642,113 @@ describe('record import (integration)', () => {
       [3, '2'],
       [4, '3'],
     ]);
+  });
+
+  it('pages rows with errors across stored error pages', async () => {
+    const lines = ['Name,Employees'];
+
+    for (let index = 0; index < 2_400; index++) {
+      lines.push(
+        index % 2 === 0 ? `Invalid ${index},many` : `Valid ${index},${index}`,
+      );
+    }
+
+    const { ready } = await createAndPrepare(Buffer.from(lines.join('\n')));
+
+    await request<{ setRecordImportMapping: RecordImport }>(
+      setRecordImportMappingMutation,
+      {
+        id: ready.id,
+        version: ready.version,
+        columns: [matched(0, 'name'), matched(1, 'employees')],
+      },
+    );
+    await waitForStatus(ready.id, ['VALIDATED']);
+
+    const errorRows = await request<{
+      recordImportRows: { totalCount: number; rows: { rowNumber: number }[] };
+    }>(recordImportRowsQuery, {
+      id: ready.id,
+      offset: 995,
+      limit: 10,
+      onlyErrors: true,
+    });
+
+    // Every other row from row 2 has an error, so the 996th is row 1,992
+    // and the page spans the first two stored pages of 1,000 error rows
+    expect(errorRows.data.recordImportRows.totalCount).toBe(1_200);
+    expect(
+      errorRows.data.recordImportRows.rows.map(({ rowNumber }) => rowNumber),
+    ).toEqual([1992, 1994, 1996, 1998, 2000, 2002, 2004, 2006, 2008, 2010]);
+
+    await request(cancelRecordImportMutation, { id: ready.id });
+  });
+
+  it('restores a soft-deleted record matched by id with the imported values', async () => {
+    const deletedId = v4();
+
+    createdCompanyIds.push(deletedId);
+    await createCompany({ id: deletedId, name: 'Before delete' });
+    await makeGraphqlApiRequest(
+      deleteOneOperationFactory({
+        objectMetadataSingularName: 'company',
+        gqlFields: 'id',
+        recordId: deletedId,
+      }),
+    );
+
+    const completed = await importRows(
+      ['Id,Name', `${deletedId},Restored by import`],
+      ['id', 'name'],
+    );
+
+    expect(completed).toMatchObject({
+      status: 'COMPLETED',
+      importedRecordCount: 1,
+      failedRowCount: 0,
+    });
+    expect(await findCompanies([deletedId])).toMatchObject([
+      { id: deletedId, name: 'Restored by import' },
+    ]);
+  });
+
+  it('fails a row whose id and domain match two different records', async () => {
+    const [firstId, secondId] = [v4(), v4()];
+    const suffix = v4().slice(0, 8);
+    const firstDomain = `https://first-${suffix}.com`;
+    const secondDomain = `https://second-${suffix}.com`;
+
+    createdCompanyIds.push(firstId, secondId);
+    await createCompany({
+      id: firstId,
+      name: 'First',
+      domainName: { primaryLinkUrl: firstDomain },
+    });
+    await createCompany({
+      id: secondId,
+      name: 'Second',
+      domainName: { primaryLinkUrl: secondDomain },
+    });
+
+    const completed = await importRows(
+      ['Id,Name,Domain', `${firstId},Conflicting row,${secondDomain}`],
+      ['id', 'name', 'Link URL (domainName)'],
+    );
+
+    // Matching two records cannot be resolved, so the row fails and both
+    // records are left as they were
+    expect(completed).toMatchObject({
+      status: 'COMPLETED',
+      importedRecordCount: 0,
+      failedRowCount: 1,
+      hasReport: true,
+    });
+    expect(await findCompanies([firstId, secondId])).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ id: firstId, name: 'First' }),
+        expect.objectContaining({ id: secondId, name: 'Second' }),
+      ]),
+    );
   });
 
   it('reads Windows-1252 files saved by Excel', async () => {
