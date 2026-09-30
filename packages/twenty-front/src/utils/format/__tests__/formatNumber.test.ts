@@ -134,6 +134,12 @@ describe('formatNumber', () => {
       expect(formatNumber(-999960, { abbreviate: true, decimals: 1 })).toEqual(
         '-1M',
       );
+      expect(
+        formatNumber(999.9999995, { abbreviate: true, decimals: 6 }),
+      ).toEqual('1k');
+      expect(
+        formatNumber(999999999.5, { abbreviate: true, decimals: 6 }),
+      ).toEqual('1B');
     });
 
     it('should keep the current suffix just below the rounding boundary', () => {

@@ -62,9 +62,16 @@ export const formatNumber = (
     let suffix = '';
     let divisor = 1;
 
-    // Compare the rounded value so 999_999 shows as 1M instead of 1,000k
+    // Compare the rounded value so 999_999 shows as 1M instead of 1,000k.
+    // Round with toLocaleString, like the output below, since toFixed can
+    // round the same number differently.
     const reachesThousandOnceRounded = (unitDivisor: number) =>
-      Number((abs / unitDivisor).toFixed(options.decimals)) >= 1000;
+      Number(
+        (abs / unitDivisor).toLocaleString('en-US', {
+          maximumFractionDigits: options.decimals,
+          useGrouping: false,
+        }),
+      ) >= 1000;
 
     if (reachesThousandOnceRounded(1e6)) {
       suffix = 'B';
