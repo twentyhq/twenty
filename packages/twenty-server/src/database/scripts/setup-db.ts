@@ -2,7 +2,7 @@ import { rawDataSource } from 'src/database/typeorm/raw/raw.datasource';
 
 import { camelToSnakeCase, performQuery } from './setup-db-utils';
 
-rawDataSource
+void rawDataSource
   .initialize()
   .then(async () => {
     await performQuery(
@@ -90,9 +90,9 @@ $$;`,
     // oxlint-disable-next-line no-console
     console.error('Error during Data Source initialization:', err);
   })
-  .finally(() => {
+  .then(async () => {
     if (rawDataSource.isInitialized) {
-      void rawDataSource.destroy();
+      await rawDataSource.destroy();
     }
   });
 

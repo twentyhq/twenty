@@ -274,7 +274,7 @@ jobs:
       - name: Check merged coverage thresholds
         run: |
           mkdir -p front-unit-coverage
-          node packages/twenty-front/scripts/check-sharded-coverage.mjs front-unit-coverage packages/twenty-front/jest.config.mjs
+          node packages/twenty-front/scripts/check-sharded-coverage.mjs front-unit-coverage packages/twenty-front/jest.config.mjs 3
   front-build:
     needs: changed-files-check
     if: needs.changed-files-check.outputs.any_changed == 'true'

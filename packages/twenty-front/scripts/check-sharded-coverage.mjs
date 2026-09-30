@@ -89,12 +89,20 @@ const computeSummary = (mergedCoverage) => {
 const toPercentage = ({ total, covered }) =>
   total === 0 ? 100 : Math.floor((covered / total) * 10000) / 100;
 
-const [coverageDirectory, jestConfigPath] = process.argv.slice(2);
+const [coverageDirectory, jestConfigPath, expectedShardCount] =
+  process.argv.slice(2);
 const coverageFiles = findCoverageFiles(coverageDirectory);
 
 if (coverageFiles.length === 0) {
   console.log('No coverage reports found, skipping threshold check.');
   process.exit(0);
+}
+
+if (coverageFiles.length !== Number(expectedShardCount)) {
+  console.error(
+    `Expected ${expectedShardCount} shard coverage reports, found ${coverageFiles.length}.`,
+  );
+  process.exit(1);
 }
 
 const { default: jestConfig } = await import(
