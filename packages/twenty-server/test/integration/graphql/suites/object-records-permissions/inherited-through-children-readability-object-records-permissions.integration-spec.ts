@@ -415,6 +415,62 @@ describe('inheritedThroughChildrenReadabilityObjectRecordsPermissions', () => {
 
       await setRecordSharingEnabled(true);
     });
+
+    it('should not show a deleted note in the trash through a target detached before its deletion', async () => {
+      const noteOnBothFilter = { id: { eq: NOTE_ON_BOTH_ID } };
+
+      const detachResponse = await makeGraphqlApiRequest(
+        detachNoteOnBothFromCompanyOperation,
+      );
+      const deleteResponse = await makeGraphqlApiRequest(
+        deleteManyOperationFactory({
+          objectMetadataSingularName: 'note',
+          objectMetadataPluralName: 'notes',
+          gqlFields: 'id',
+          filter: noteOnBothFilter,
+        }),
+      );
+      const trashedNotesResponse = await makeGraphqlApiRequestWithMemberRole(
+        findManyOperationFactory({
+          objectMetadataSingularName: 'note',
+          objectMetadataPluralName: 'notes',
+          gqlFields: 'id',
+          filter: {
+            ...noteOnBothFilter,
+            not: { deletedAt: { is: 'NULL' } },
+          },
+        }),
+      );
+      const restoreNoteResponse = await makeGraphqlApiRequest(
+        restoreManyOperationFactory({
+          objectMetadataSingularName: 'note',
+          objectMetadataPluralName: 'notes',
+          gqlFields: 'id',
+          filter: noteOnBothFilter,
+        }),
+      );
+      const restoreTargetsResponse = await makeGraphqlApiRequest(
+        restoreManyOperationFactory({
+          objectMetadataSingularName: 'noteTarget',
+          objectMetadataPluralName: 'noteTargets',
+          gqlFields: 'id',
+          filter: {
+            id: {
+              in: [BOTH_PERSON_NOTE_TARGET_ID, BOTH_COMPANY_NOTE_TARGET_ID],
+            },
+          },
+        }),
+      );
+
+      expect(detachResponse.body.errors).toBeUndefined();
+      expect(deleteResponse.body.data.deleteNotes).toEqual([
+        { id: NOTE_ON_BOTH_ID },
+      ]);
+      expect(trashedNotesResponse.body.errors).toBeUndefined();
+      expect(trashedNotesResponse.body.data.notes.edges).toEqual([]);
+      expect(restoreNoteResponse.body.errors).toBeUndefined();
+      expect(restoreTargetsResponse.body.errors).toBeUndefined();
+    });
   });
 
   describe('with a READ share row on the person', () => {
@@ -495,10 +551,12 @@ describe('inheritedThroughChildrenReadabilityObjectRecordsPermissions', () => {
             name: 'note.created',
             workspaceId: SEED_APPLE_WORKSPACE_ID,
             objectMetadata: noteObjectMetadata!,
-            events: NOTE_IDS.map((id) => ({
-              recordId: id,
-              properties: { after: { id } },
-            })),
+            events: NOTE_IDS.filter((id) => id !== MEMBER_NOTE_ID).map(
+              (id) => ({
+                recordId: id,
+                properties: { after: { id } },
+              }),
+            ),
           })
           .resolveAdmittedRecordIds({
             isSystemContext: false,
@@ -735,7 +793,7 @@ describe('inheritedThroughChildrenReadabilityObjectRecordsPermissions', () => {
       expect([...readableThroughCapturedLinks]).toEqual([NOTE_ON_PERSON_ID]);
     });
 
-    it('should not show a deleted note in the trash through a target detached before its deletion', async () => {
+    it('should show a deleted note in the trash when its only target was detached before its deletion', async () => {
       const noteOnCompanyFilter = { id: { eq: NOTE_ON_COMPANY_ID } };
       const companyNoteTargetFilter = { id: { eq: COMPANY_NOTE_TARGET_ID } };
 
@@ -801,7 +859,9 @@ describe('inheritedThroughChildrenReadabilityObjectRecordsPermissions', () => {
         { id: NOTE_ON_COMPANY_ID },
       ]);
       expect(trashedNotesResponse.body.errors).toBeUndefined();
-      expect(trashedNotesResponse.body.data.notes.edges).toEqual([]);
+      expect(collectIds(trashedNotesResponse.body.data.notes.edges)).toEqual([
+        NOTE_ON_COMPANY_ID,
+      ]);
       expect(restoreNoteResponse.body.errors).toBeUndefined();
       expect(restoreTargetResponse.body.errors).toBeUndefined();
     });
