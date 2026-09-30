@@ -6,11 +6,9 @@ import { RecordTableContextProvider as RecordTableContextInternalProvider } from
 
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
-import { RecordFieldsScopeContextProvider } from '@/object-record/record-field-list/contexts/RecordFieldsScopeContext';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
 import { type RecordUpdateHookParams } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { useResolveOpenRecordIn } from '@/object-record/record-index/hooks/useResolveOpenRecordIn';
-import { RECORD_TABLE_CELL_INPUT_ID_PREFIX } from '@/object-record/record-table/constants/RecordTableCellInputIdPrefix';
 import { RECORD_TABLE_COLUMN_MIN_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnMinWidth';
 import { RecordTableUpdateContext } from '@/object-record/record-table/contexts/RecordTableUpdateContext';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
@@ -71,29 +69,25 @@ export const RecordTableContextProvider = ({
       : 'MOUSE_DOWN';
 
   return (
-    <RecordFieldsScopeContextProvider
-      value={{ scopeInstanceId: RECORD_TABLE_CELL_INPUT_ID_PREFIX }}
+    <RecordTableContextInternalProvider
+      value={{
+        viewBarId,
+        objectMetadataItem,
+        objectMetadataItems,
+        recordTableId,
+        objectNameSingular,
+        objectPermissions,
+        visibleRecordFields: visibleRecordFields.map((field) => ({
+          ...field,
+          size: Math.max(field.size, RECORD_TABLE_COLUMN_MIN_WIDTH),
+        })),
+        onRecordIdentifierClick,
+        triggerEvent,
+      }}
     >
-      <RecordTableContextInternalProvider
-        value={{
-          viewBarId,
-          objectMetadataItem,
-          objectMetadataItems,
-          recordTableId,
-          objectNameSingular,
-          objectPermissions,
-          visibleRecordFields: visibleRecordFields.map((field) => ({
-            ...field,
-            size: Math.max(field.size, RECORD_TABLE_COLUMN_MIN_WIDTH),
-          })),
-          onRecordIdentifierClick,
-          triggerEvent,
-        }}
-      >
-        <RecordTableUpdateContext.Provider value={updateRecord}>
-          {children}
-        </RecordTableUpdateContext.Provider>
-      </RecordTableContextInternalProvider>
-    </RecordFieldsScopeContextProvider>
+      <RecordTableUpdateContext.Provider value={updateRecord}>
+        {children}
+      </RecordTableUpdateContext.Provider>
+    </RecordTableContextInternalProvider>
   );
 };

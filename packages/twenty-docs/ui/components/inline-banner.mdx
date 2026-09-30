@@ -1,11 +1,12 @@
 ---
 title: InlineBanner
-description: A compact banner with a message, icon, and optional action.
+description: A compact banner with a message, icon, and optional button or link.
 ---
 
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 import InlineBannerReference from '/snippets/ui/generated/components/inline-banner.mdx';
 
-`InlineBanner` uses the secondary [Banner](/ui/primitives/feedback/banner) treatment. Its message truncates with a tooltip for the full text. Your application owns whether the banner is rendered.
+`InlineBanner` builds on [Banner](/ui/primitives/feedback/banner). Its standard appearance fills the available width and truncates the message. Keyboard focus, pointer hover, or touch reveals the full message in a tooltip. Your application owns whether the banner is rendered.
 
 ```tsx
 import { InlineBanner } from 'twenty-ui/components';
@@ -19,7 +20,35 @@ export const SyncBanner = ({ onRetry }: { onRetry: () => void }) => (
 );
 ```
 
-`button` accepts `title`, `onClick`, `disabled`, `hidden`, and an `Icon` component. `LeftIcon` changes the leading icon. `embedded` adjusts the banner for an embedded surface. Use a separate live-region wrapper when changes should be announced.
+<StoryEmbed
+  storyId="ui-feedback-inlinebanner--default"
+  title="Inline banner with an action"
+  height={280}
+/>
+
+Use `variant="compact"` for wrapping text, closer spacing, and a maximum content width of 512px. This appearance has no bottom margin. Both appearances support `color="blue"` and `color="danger"`.
+
+```tsx
+import { InlineBanner } from 'twenty-ui/components';
+
+export const ConnectionBanner = () => (
+  <InlineBanner
+    variant="compact"
+    message="Connect your account to sync contacts."
+    button={{ title: 'Connection settings', href: '/settings/accounts' }}
+  />
+);
+```
+
+<StoryEmbed
+  storyId="ui-feedback-inlinebanner--compact-link"
+  title="Compact banner with a destination link"
+  height={280}
+/>
+
+`button` accepts `title`, `onClick`, `disabled`, `hidden`, and an `Icon` component. Supply `href` for a native destination link, with optional `target`, `rel`, and `download`. Pair `href` with `render` for an application-owned router link. An action without `href` remains a native button. Use `aria-label` when the action has no visible title.
+
+`LeftIcon` changes the leading icon. `embedded` removes the standard banner's bottom margin. Use a separate live-region wrapper when changes should be announced.
 
 ## Props
 
