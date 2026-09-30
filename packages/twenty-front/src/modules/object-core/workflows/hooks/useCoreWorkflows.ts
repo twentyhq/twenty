@@ -172,6 +172,7 @@ export const useCoreWorkflows = ({
     refetchLoadedCoreWorkflows,
     loading,
     isInitialLoading: loading && !isDefined(connection),
+    isShowingPreviousResult: !isDefined(data) && isDefined(previousData),
     error,
   };
 };

@@ -63,6 +63,7 @@ export const WorkflowCoreIndexPage = () => {
     hasNextPage,
     loading,
     isInitialLoading,
+    isShowingPreviousResult,
     error,
     fetchNextPage,
     refetchLoadedCoreWorkflows,
@@ -85,6 +86,8 @@ export const WorkflowCoreIndexPage = () => {
   const hasAppliedFilters = (
     coreWorkflowsFilterSettings.stepFilters ?? []
   ).some(isUsableCoreWorkflowFilterRule);
+
+  const isNoMatchEmptyState = hasAppliedFilters || isShowingPreviousResult;
 
   const hasError = isDefined(error);
 
@@ -142,15 +145,15 @@ export const WorkflowCoreIndexPage = () => {
           {isEmpty && (
             <RecordIndexEmptyStateDisplay
               animatedPlaceholderType={
-                hasAppliedFilters ? 'noMatchRecord' : 'noRecord'
+                isNoMatchEmptyState ? 'noMatchRecord' : 'noRecord'
               }
               title={
-                hasAppliedFilters
+                isNoMatchEmptyState
                   ? t`No ${objectMetadataItem.labelPlural} found`
                   : t`Add your first ${objectMetadataItem.labelSingular}`
               }
               subTitle={
-                hasAppliedFilters
+                isNoMatchEmptyState
                   ? t`No ${objectMetadataItem.labelPlural} match your filters. Try removing some of them.`
                   : t`Create a ${objectMetadataItem.labelSingular} to automate your work.`
               }
