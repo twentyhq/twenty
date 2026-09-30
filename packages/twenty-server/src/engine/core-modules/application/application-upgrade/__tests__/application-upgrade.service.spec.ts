@@ -637,6 +637,28 @@ describe('ApplicationUpgradeService', () => {
       ).not.toHaveBeenCalled();
     });
 
+    it('returns nothing when the install never completed, like the upgrade gate', async () => {
+      applicationRepository.findOne.mockResolvedValue({
+        ...buildApplication({
+          workspaceId: OUTDATED_WORKSPACE_ID,
+          version: null,
+        }),
+        id: APPLICATION_ID,
+        applicationRegistration: appRegistration,
+      });
+
+      await expect(
+        service.getRoleGrantsAddedByLatestVersion({
+          applicationId: APPLICATION_ID,
+          workspaceId: OUTDATED_WORKSPACE_ID,
+        }),
+      ).resolves.toEqual([]);
+
+      expect(
+        applicationPackageFetcherService.resolvePackage,
+      ).not.toHaveBeenCalled();
+    });
+
     it('throws when the application is not installed in the workspace', async () => {
       applicationRepository.findOne.mockResolvedValue(null);
 

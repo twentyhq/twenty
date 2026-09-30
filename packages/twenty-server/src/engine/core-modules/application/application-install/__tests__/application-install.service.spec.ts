@@ -37,17 +37,39 @@ const installedApplication = {
   version: '1.0.0',
 } as ApplicationEntity;
 
+const manifest: Manifest = {
+  application: {
+    universalIdentifier: 'test-app',
+    displayName: 'Test app',
+    description: '',
+    defaultRoleUniversalIdentifier: 'test-app-default-role',
+    packageJsonChecksum: '',
+    yarnLockChecksum: '',
+  },
+  objects: [],
+  fields: [],
+  logicFunctions: [],
+  frontComponents: [],
+  permissionFlags: [],
+  roles: [],
+  skills: [],
+  agents: [],
+  publicAssets: [],
+  views: [],
+  viewFields: [],
+  navigationMenuItems: [],
+  pageLayouts: [],
+  pageLayoutTabs: [],
+  pageLayoutWidgets: [],
+  commandMenuItems: [],
+  timelineActivityTypes: [],
+  settingsMenuItems: [],
+};
+
 const buildResolvedPackage = (version: string) => ({
   extractedDir: '/tmp/extracted',
   cleanupDir: '/tmp/cleanup',
-  manifest: {
-    application: {
-      universalIdentifier: 'test-app',
-      displayName: 'Test app',
-    },
-    roles: [],
-    permissionFlags: [],
-  } as unknown as Manifest,
+  manifest,
   packageJson: { name: 'test-app', version },
 });
 
