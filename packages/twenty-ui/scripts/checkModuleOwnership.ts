@@ -45,7 +45,7 @@ const errors = shouldUpdateSnapshot
   ? []
   : getPublicExportErrors({
       actual: actualPublicExports,
-      expected: publicExports.entries,
+      expected: publicExports,
     });
 
 for (const layer of ['primitives', 'components'] as const) {
@@ -143,7 +143,7 @@ if (isNonEmptyArray(errors)) {
 if (shouldUpdateSnapshot) {
   writeFileSync(
     path.join(PACKAGE_ROOT, 'docs/public-exports.json'),
-    `${JSON.stringify({ ...publicExports, entries: actualPublicExports }, null, 2)}\n`,
+    `${JSON.stringify(actualPublicExports, null, 2)}\n`,
   );
   writeFileSync(
     path.join(PACKAGE_ROOT, 'docs/module-ownership.json'),

@@ -18,7 +18,7 @@ export const getPublicExportErrors = ({
     const expectedEntry = expected[entryPoint];
 
     if (!isDefined(actualEntry) || !isDefined(expectedEntry)) {
-      errors.push(`${entryPoint} has no matching public entry point decision`);
+      errors.push(`${entryPoint} does not match the public export inventory`);
       continue;
     }
 
@@ -36,7 +36,7 @@ export const getPublicExportErrors = ({
       ])) {
         if (actualEntry[kind][name] !== expectedEntry[kind][name]) {
           errors.push(
-            `${entryPoint} ${kind}: ${name} has no matching public export decision`,
+            `${entryPoint} ${kind}: ${name} does not match the public export inventory`,
           );
         }
       }

@@ -61,10 +61,10 @@ test('reports added, removed and reclassified support exports and changed source
   });
 
   assert.deepEqual(getPublicExportErrors({ actual, expected }).sort(), [
-    'utilities types: Result has no matching public export decision',
-    'utilities values: CONSTANT has no matching public export decision',
-    'utilities values: Result has no matching public export decision',
-    'utilities values: useExample has no matching public export decision',
+    'utilities types: Result does not match the public export inventory',
+    'utilities values: CONSTANT does not match the public export inventory',
+    'utilities values: Result does not match the public export inventory',
+    'utilities values: useExample does not match the public export inventory',
   ]);
 });
 
@@ -78,7 +78,7 @@ test('requires decisions for entry point and aggregate changes', () => {
 
   assert.deepEqual(getPublicExportErrors({ actual, expected }), [
     '. has changed aggregate exports',
-    'utilities has no matching public entry point decision',
+    'utilities does not match the public export inventory',
   ]);
 });
 
@@ -91,7 +91,7 @@ test('checks every member of an icon family including its public props type', ()
   });
 
   assert.deepEqual(getPublicExportErrors({ actual, expected }), [
-    'icon values: IconTwo has no matching public export decision',
+    'icon values: IconTwo does not match the public export inventory',
   ]);
 });
 
