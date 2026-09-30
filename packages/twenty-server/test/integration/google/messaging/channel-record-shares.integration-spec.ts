@@ -126,7 +126,11 @@ describe('Message thread grants derived from channels (integration)', () => {
     ]);
   }, 60000);
 
-  it('drops an owner grant the channel would no longer write', async () => {
+  it('rewrites grants the channel would no longer write as they are', async () => {
+    await updateMessageChannel(janeChannel.channelId, {
+      visibility: MessageChannelVisibility.METADATA,
+    });
+
     await insertRecordShare({
       objectNameSingular: 'messageThread',
       recordId: messageThreadId,
@@ -135,18 +139,23 @@ describe('Message thread grants derived from channels (integration)', () => {
         janeChannel.channelId,
       ),
     });
-
-    await updateMessageChannel(janeChannel.channelId, {
-      visibility: MessageChannelVisibility.METADATA,
+    await insertRecordShare({
+      objectNameSingular: 'messageThread',
+      recordId: messageThreadId,
+      share: {
+        ...everyoneShare(janeChannel.channelId),
+        accessLevel: RecordShareAccessLevel.READ_WRITE,
+      },
     });
-
-    expect(await findRecordShares(messageThreadId)).toEqual([
-      ownerShare(WORKSPACE_MEMBER_DATA_SEED_IDS.JANE, janeChannel.channelId),
-    ]);
 
     await updateMessageChannel(janeChannel.channelId, {
       visibility: MessageChannelVisibility.SHARE_EVERYTHING,
     });
+
+    expect(await findRecordShares(messageThreadId)).toEqual([
+      ownerShare(WORKSPACE_MEMBER_DATA_SEED_IDS.JANE, janeChannel.channelId),
+      everyoneShare(janeChannel.channelId),
+    ]);
   }, 60000);
 
   it('makes every member who synced the thread an owner', async () => {

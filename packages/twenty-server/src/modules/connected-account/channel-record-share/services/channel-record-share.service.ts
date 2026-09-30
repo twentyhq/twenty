@@ -46,6 +46,24 @@ export class ChannelRecordShareService {
     );
   }
 
+  // The channel and its grants live in different schemas, so a failed sync
+  // puts the previous visibility back rather than leave them disagreeing.
+  async syncChannelRecordSharesAfterVisibilityChange({
+    revertVisibilityChange,
+    ...args
+  }: SyncChannelRecordSharesArgs & {
+    workspaceId: string;
+    revertVisibilityChange: () => Promise<unknown>;
+  }): Promise<void> {
+    try {
+      await this.syncChannelRecordShares(args);
+    } catch (error) {
+      await revertVisibilityChange();
+
+      throw error;
+    }
+  }
+
   async syncChannelRecordSharesInTransaction({
     transactionScope,
     source,
