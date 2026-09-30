@@ -52,11 +52,16 @@ const NativeInputExample = () => {
 };
 
 type FilterPanelExampleProps = {
-  disabled?: boolean;
+  filterDisabled?: boolean;
+  searchDisabled?: boolean;
 };
 
-const FilterPanelExample = ({ disabled = false }: FilterPanelExampleProps) => {
+const FilterPanelExample = ({
+  filterDisabled = false,
+  searchDisabled = false,
+}: FilterPanelExampleProps) => {
   const [open, setOpen] = useState(false);
+  const [search, setSearch] = useState('');
   const triggerRef = useRef<HTMLButtonElement>(null);
 
   return (
@@ -70,7 +75,9 @@ const FilterPanelExample = ({ disabled = false }: FilterPanelExampleProps) => {
     >
       <SearchInput
         placeholder="Search people"
-        disabled
+        value={search}
+        onValueChange={setSearch}
+        disabled={searchDisabled}
         filterButtonAriaLabel="Filter people"
         filterDropdown={(filterButton) => (
           <Dropdown.Root type="panel" open={open} onOpenChange={setOpen}>
@@ -78,12 +85,14 @@ const FilterPanelExample = ({ disabled = false }: FilterPanelExampleProps) => {
               render={filterButton}
               ref={triggerRef}
               onClick={onTriggerClick}
-              disabled={disabled}
+              disabled={filterDisabled}
             />
             <Dropdown.Content>
               <Dropdown.Section>
                 <Field.Root>
-                  <Field.Label>Company</Field.Label>
+                  <Field.Label style={{ color: 'var(--t-font-color-primary)' }}>
+                    Company
+                  </Field.Label>
                   <Input />
                 </Field.Root>
               </Dropdown.Section>
@@ -149,7 +158,8 @@ export const FilterPanel: Story = {
     const input = canvas.getByRole('textbox', { name: 'Search people' });
     const trigger = canvas.getByRole('button', { name: 'Filter people' });
 
-    expect(input).toBeDisabled();
+    await userEvent.type(input, 'Ada');
+    expect(input).toHaveValue('Ada');
     await userEvent.click(
       canvas.getByRole('button', { name: 'Focus filters' }),
     );
@@ -160,9 +170,9 @@ export const FilterPanel: Story = {
     expect(onTriggerClick).toHaveBeenCalledOnce();
     expect(onParentClick).not.toHaveBeenCalled();
     expect(onSubmit).not.toHaveBeenCalled();
-    expect(
-      await body.findByRole('dialog', { name: 'Filter people' }),
-    ).toBeVisible();
+    await waitFor(() =>
+      expect(body.getByRole('dialog', { name: 'Filter people' })).toBeVisible(),
+    );
     const companyInput = body.getByRole('textbox', { name: 'Company' });
     await waitFor(() => expect(companyInput).toHaveFocus());
     await userEvent.type(companyInput, 'Acme');
@@ -173,11 +183,32 @@ export const FilterPanel: Story = {
       expect(body.queryByRole('dialog')).not.toBeInTheDocument(),
     );
     await waitFor(() => expect(trigger).toHaveFocus());
+    expect(input).toHaveValue('Ada');
+    await userEvent.type(input, ' Lovelace');
+    expect(input).toHaveValue('Ada Lovelace');
+  },
+};
+
+export const DisabledSearch: Story = {
+  render: () => <FilterPanelExample searchDisabled />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+
+    expect(
+      canvas.getByRole('textbox', { name: 'Search people' }),
+    ).toBeDisabled();
+    await userEvent.click(
+      canvas.getByRole('button', { name: 'Filter people' }),
+    );
+    await waitFor(() =>
+      expect(body.getByRole('dialog', { name: 'Filter people' })).toBeVisible(),
+    );
   },
 };
 
 export const DisabledFilter: Story = {
-  render: () => <FilterPanelExample disabled />,
+  render: () => <FilterPanelExample filterDisabled />,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const body = within(canvasElement.ownerDocument.body);
