@@ -2,7 +2,9 @@ import { Injectable } from '@nestjs/common';
 
 import {
   ObjectRecordCreateEvent,
+  ObjectRecordDeleteEvent,
   ObjectRecordDestroyEvent,
+  ObjectRecordRestoreEvent,
 } from 'twenty-shared/database-events';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
@@ -58,10 +60,15 @@ export class AgentChatThreadRecordEventService {
     workspaceId,
     threadBefore,
     threadAfter,
+    action = DatabaseEventAction.UPDATED,
   }: {
     workspaceId: string;
     threadBefore: AgentChatThreadWorkspaceEntity;
     threadAfter?: AgentChatThreadWorkspaceEntity;
+    action?:
+      | DatabaseEventAction.UPDATED
+      | DatabaseEventAction.DELETED
+      | DatabaseEventAction.RESTORED;
   }): Promise<void> {
     const storedThreadAfter =
       threadAfter ??
@@ -85,8 +92,14 @@ export class AgentChatThreadRecordEventService {
 
     this.workspaceEventEmitter.emitDatabaseBatchEvent({
       objectMetadataNameSingular: metadata.objectMetadata.nameSingular,
-      action: DatabaseEventAction.UPDATED,
-      events: [event],
+      action,
+      events: [
+        action === DatabaseEventAction.DELETED
+          ? Object.assign(new ObjectRecordDeleteEvent(), event)
+          : action === DatabaseEventAction.RESTORED
+            ? Object.assign(new ObjectRecordRestoreEvent(), event)
+            : event,
+      ],
       objectMetadata: metadata.objectMetadata,
       workspaceId,
     });

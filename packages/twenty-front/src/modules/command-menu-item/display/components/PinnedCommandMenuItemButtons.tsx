@@ -128,7 +128,8 @@ export const PinnedCommandMenuItemButtons = ({
                 EngineComponentKey.CREATE_NEW_RECORD ||
               item.engineComponentKey === EngineComponentKey.COMPOSE_CAMPAIGN ||
               item.engineComponentKey ===
-                EngineComponentKey.SEND_MESSAGE_CAMPAIGN
+                EngineComponentKey.SEND_MESSAGE_CAMPAIGN ||
+              item.engineComponentKey === EngineComponentKey.NEW_AI_CHAT
             }
           />
         </StyledCommandMenuItemContainer>

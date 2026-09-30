@@ -24,7 +24,7 @@ import { STOP_AGENT_CHAT_STREAM } from '@/ai/graphql/mutations/stopAgentChatStre
 import { useAgentChatModelId } from '@/ai/hooks/useAgentChatModelId';
 import { useAttachChatThreadToRecord } from '@/ai/hooks/useAttachChatThreadToRecord';
 import { useGetBrowsingContext } from '@/ai/hooks/useBrowsingContext';
-import { useOptimisticallyUnarchiveOnSend } from '@/ai/hooks/useOptimisticallyUnarchiveOnSend';
+import { useOptimisticallyRestoreOnSend } from '@/ai/hooks/useOptimisticallyRestoreOnSend';
 import { useProjectAiChatThreadToUrl } from '@/ai/hooks/useProjectAiChatThreadToUrl';
 import {
   AGENT_CHAT_NEW_THREAD_DRAFT_KEY,
@@ -58,7 +58,7 @@ export const useAgentChat = (
   const { modelIdForRequest } = useAgentChatModelId();
   const aiModels = useAtomStateValue(aiModelsState);
   const { getBrowsingContext } = useGetBrowsingContext();
-  const { applyOptimisticUnarchive } = useOptimisticallyUnarchiveOnSend();
+  const { applyOptimisticRestore } = useOptimisticallyRestoreOnSend();
   const { attachChatThreadToRecord } = useAttachChatThreadToRecord();
   const apolloClient = useApolloClient();
   const { enqueueToast } = useToast();
@@ -137,7 +137,7 @@ export const useAgentChat = (
       : null;
     const messageId = v4();
     const optimisticMessageCreatedAt = new Date().toISOString();
-    const rollbackOptimisticUnarchive = applyOptimisticUnarchive(
+    const rollbackOptimisticRestore = applyOptimisticRestore(
       threadId,
       optimisticMessageCreatedAt,
     );
@@ -240,7 +240,7 @@ export const useAgentChat = (
       const restoredDraftKey =
         draftKey === AGENT_CHAT_NEW_THREAD_DRAFT_KEY ? threadId : draftKey;
 
-      rollbackOptimisticUnarchive?.();
+      rollbackOptimisticRestore?.();
 
       setAgentChatInput(contentToSend);
       setAgentChatDraftsByThreadId((prev) => ({
@@ -291,7 +291,7 @@ export const useAgentChat = (
     enqueueToast,
     setCurrentAiChatThread,
     apolloClient,
-    applyOptimisticUnarchive,
+    applyOptimisticRestore,
     attachChatThreadToRecord,
   ]);
 
