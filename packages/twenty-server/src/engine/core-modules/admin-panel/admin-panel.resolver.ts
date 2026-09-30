@@ -255,7 +255,7 @@ export class AdminPanelResolver {
       userSession: {
         standard: true,
         impersonated: false,
-        playground: true,
+        playground: false,
         workspaceAgnostic: false,
       },
       apiKey: false,

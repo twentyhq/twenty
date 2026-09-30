@@ -25,7 +25,7 @@ describe('getTwoFactorAuthenticationErrorToastOptions', () => {
       expect.objectContaining({
         variant: 'error',
         children: 'Rate limit reached. Please try again later.',
-        dedupeKey: 'invalid-otp-dedupe-key',
+        dedupeKey: 'invalid-otp-dedupe-key-LIMIT_REACHED',
       }),
     );
   });
