@@ -67,10 +67,13 @@ const generateCommonPropertiesType = (
   });
 };
 
-const generateCommonEventsType = (
-  sourceFile: SourceFile,
-  events: readonly string[],
-): void => {
+const generateCommonEventsType = ({
+  sourceFile,
+  events,
+}: {
+  sourceFile: SourceFile;
+  events: readonly string[];
+}): void => {
   if (events.length === 0) {
     return;
   }
@@ -433,7 +436,7 @@ export const generateRemoteElements = (
   generateCommonPropertiesType(sourceFile, commonProperties);
 
   if (commonEventNames.size > 0) {
-    generateCommonEventsType(sourceFile, commonEvents);
+    generateCommonEventsType({ sourceFile, events: commonEvents });
   }
 
   if (shouldUseCommonHtmlPropertiesConfig) {
