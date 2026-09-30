@@ -238,6 +238,51 @@ type CreateStoryInput = {
   args?: Partial<Story['args']>;
 };
 
+const focusTrackingTest: Story['play'] = async ({ canvasElement }) => {
+  const canvas = within(canvasElement);
+
+  const firstTab = await canvas.findByTestId(
+    'focus-tracking-first-tab',
+    {},
+    { timeout: MOUNT_TIMEOUT },
+  );
+  const secondTab = canvas.getByTestId('focus-tracking-second-tab');
+  const status = canvas.getByTestId('focus-tracking-status');
+
+  await userEvent.click(firstTab);
+
+  await waitFor(
+    () => {
+      expect(status).toHaveAttribute('data-active-element', 'first-tab');
+      expect(status).toHaveAttribute(
+        'data-focus-handler-active-element',
+        'first-tab',
+      );
+    },
+    { timeout: INTERACTION_TIMEOUT },
+  );
+
+  await userEvent.click(secondTab);
+
+  await waitFor(
+    () => {
+      expect(status).toHaveAttribute('data-active-element', 'second-tab');
+    },
+    { timeout: INTERACTION_TIMEOUT },
+  );
+
+  secondTab.blur();
+
+  await waitFor(
+    () => {
+      expect(status).toHaveAttribute('data-active-element', 'none');
+    },
+    { timeout: INTERACTION_TIMEOUT },
+  );
+
+  expect(errorHandler).not.toHaveBeenCalled();
+};
+
 const createStory = ({
   name,
   play,
@@ -375,3 +420,13 @@ export const MatchMediaColorSchemeChange: Story = {
     expect(errorHandler).not.toHaveBeenCalled();
   },
 };
+
+export const FocusTrackingReact: Story = createStory({
+  name: 'focus-tracking-example',
+  play: focusTrackingTest,
+});
+export const FocusTrackingPreact: Story = createStory({
+  name: 'focus-tracking-example',
+  play: focusTrackingTest,
+  runtime: 'preact',
+});

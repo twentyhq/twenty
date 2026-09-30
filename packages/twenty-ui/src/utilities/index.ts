@@ -22,9 +22,6 @@ export { TOUCH_DEVICE_MEDIA_QUERY } from './responsive/constants/TouchDeviceMedi
 export { useIsMobile } from './responsive/hooks/useIsMobile';
 export { useIsTouchDevice } from './responsive/hooks/useIsTouchDevice';
 export { useMediaQuery } from './responsive/hooks/useMediaQuery';
-export type { ClickOutsideAttributes } from './types/ClickOutsideAttributes';
 export type { Nullable } from './types/Nullable';
 export { getSafeUrl } from './utils/getSafeUrl';
 export { isDefined } from './utils/isDefined';
-export type { LinkifyMatch } from './utils/linkifyText';
-export { linkifyText } from './utils/linkifyText';

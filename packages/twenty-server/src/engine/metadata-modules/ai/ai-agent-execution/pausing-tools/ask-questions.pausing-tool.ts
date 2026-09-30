@@ -102,19 +102,14 @@ const buildAnswerText = ({
     })
     .join('\n\n');
 
-// The result keeps the shape the tool part had before answers were resolved
-// through Asks, which the chat renderer, the admin panel and the seeded runs
-// all read.
+// The chat renderer, the admin panel and the seeded runs all read this result
+// shape.
 export const ASK_QUESTIONS_PAUSING_TOOL = definePausingTool<
   AskQuestionsToolInput,
   AskQuestionsToolOutput
 >({
   inputSchema: askQuestionsInputSchema,
   outputSchema: buildAskQuestionsOutputSchema,
-  buildAsk: ({ questions }) => ({
-    name: questions[0]?.question ?? '',
-    form: { kind: 'questions', questions },
-  }),
   complete: async ({ output: { answers }, input: { questions } }) => ({
     toolResult: {
       success: true,

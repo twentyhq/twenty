@@ -38,6 +38,7 @@ export type SerializedEventData = {
   clipboardText?: string;
   value?: string;
   checked?: boolean;
+  selectedOptionIndexes?: number[];
   scrollTop?: number;
   scrollLeft?: number;
   deltaX?: number;

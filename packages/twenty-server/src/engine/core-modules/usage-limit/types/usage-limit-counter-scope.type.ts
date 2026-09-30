@@ -10,4 +10,5 @@ export type UsageLimitCounterScope = Pick<
   | 'limitKind'
   | 'periodUnit'
   | 'meter'
+  | 'limitValue'
 >;

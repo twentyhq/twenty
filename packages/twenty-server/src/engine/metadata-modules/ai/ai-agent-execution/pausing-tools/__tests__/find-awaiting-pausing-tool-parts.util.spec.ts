@@ -28,22 +28,18 @@ const toolPart = ({
 const textPart = { type: 'text', text: 'hello' } as ExtendedUIMessagePart;
 
 describe('findAwaitingPausingToolParts', () => {
-  it('finds the pausing tool call still waiting on an output, with its Ask', () => {
+  it('finds the pausing tool call still waiting on an output', () => {
     expect(
       findAwaitingPausingToolParts([
         textPart,
         toolPart({ toolName: 'ask_questions', status: 'pending' }),
       ]),
     ).toEqual([
-      {
-        toolName: 'ask_questions',
-        toolCallId: 'call-1',
-        ask: { name: 'q', form: { kind: 'questions', questions: QUESTIONS } },
-      },
+      { toolName: 'ask_questions', toolCallId: 'call-1', isAnswerable: true },
     ]);
   });
 
-  it('finds a waiting call it cannot read, without an Ask', () => {
+  it('finds a waiting call it cannot read, as one nobody can answer', () => {
     expect(
       findAwaitingPausingToolParts([
         toolPart({
@@ -52,7 +48,9 @@ describe('findAwaitingPausingToolParts', () => {
           input: { questions: [] },
         }),
       ]),
-    ).toEqual([{ toolName: 'ask_questions', toolCallId: 'call-1', ask: null }]);
+    ).toEqual([
+      { toolName: 'ask_questions', toolCallId: 'call-1', isAnswerable: false },
+    ]);
   });
 
   it('finds every waiting call of a step, in the order they were made', () => {
