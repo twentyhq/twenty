@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { msg } from '@lingui/core/macro';
 import {
   type Manifest,
   type PageLayoutManifest,
@@ -597,6 +598,18 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
     for (const [key, applicationVariableManifest] of Object.entries(
       manifest.application.applicationVariables ?? {},
     )) {
+      const isUserVariable = applicationVariableManifest.scope === 'USER';
+
+      if (isUserVariable && 'value' in applicationVariableManifest) {
+        throw new ApplicationException(
+          `User application variable "${key}" cannot have a value`,
+          ApplicationExceptionCode.INVALID_INPUT,
+          {
+            userFriendlyMessage: msg`A user variable cannot have a value: each member sets their own.`,
+          },
+        );
+      }
+
       const type = applicationVariableManifest.type ?? FieldMetadataType.TEXT;
 
       const plaintextValue =
@@ -610,17 +623,13 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
       const isSecret = applicationVariableManifest.isSecret;
       const rawValue = isSecret ? '' : plaintextValue;
 
-      const isUserVariableWithoutValue =
-        applicationVariableManifest.scope === 'USER' &&
-        !('value' in applicationVariableManifest);
-
       addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
         universalFlatEntity:
           fromApplicationVariableManifestToUniversalFlatApplicationVariable({
             key,
             universalIdentifier:
               applicationVariableManifest.universalIdentifier,
-            encryptedValue: isUserVariableWithoutValue
+            encryptedValue: isUserVariable
               ? null
               : this.secretEncryptionService.encryptVersioned(
                   rawValue as PlaintextString,
