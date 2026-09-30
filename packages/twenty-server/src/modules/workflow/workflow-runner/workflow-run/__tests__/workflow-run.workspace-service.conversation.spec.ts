@@ -1,4 +1,5 @@
 import { StepStatus } from 'twenty-shared/workflow';
+import { IsNull } from 'typeorm';
 
 import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
@@ -183,7 +184,11 @@ describe('WorkflowRunWorkspaceService conversations', () => {
 
       expect(threadRepository.update).toHaveBeenCalledWith(
         'workspace-id',
-        { id: 'thread-id' },
+        {
+          id: 'thread-id',
+          pendingQuestionMessageId: 'message-id',
+          activeStreamId: IsNull(),
+        },
         { pendingQuestionMessageId: null },
       );
       expect(messagePartRepository.update).toHaveBeenCalledWith(
@@ -195,6 +200,17 @@ describe('WorkflowRunWorkspaceService conversations', () => {
           }),
         },
       );
+    });
+
+    it('leaves a conversation to the answer holding its claim', async () => {
+      const { service, threadRepository, messagePartRepository } =
+        buildService();
+
+      threadRepository.update.mockResolvedValue({ affected: 0 });
+
+      await endRun(service);
+
+      expect(messagePartRepository.update).not.toHaveBeenCalled();
     });
 
     it('still ends the run when its conversations cannot be closed', async () => {

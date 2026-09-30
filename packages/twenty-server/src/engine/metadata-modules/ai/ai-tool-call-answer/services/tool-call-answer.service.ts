@@ -162,7 +162,7 @@ export class ToolCallAnswerService {
 
     let step: WorkflowAction | null = null;
     let isLastAnswer: boolean;
-    let answerMessage: Awaited<ReturnType<AgentChatService['addMessage']>>;
+    let answerText: string;
 
     try {
       const awaitingToolParts =
@@ -183,6 +183,12 @@ export class ToolCallAnswerService {
         });
 
         if (!isDefined(step)) {
+          await this.agentChatService.closePendingToolCalls({
+            threadId,
+            messageId: toolPart.messageId,
+            workspaceId,
+          });
+
           throw this.notPending();
         }
       }
@@ -196,31 +202,18 @@ export class ToolCallAnswerService {
         }),
       });
 
-      await this.agentChatService.updateToolPartOutput({
-        partId: toolPart.id,
-        toolOutput: completion.toolResult,
-        workspaceId,
-      });
-
-      answerMessage = await this.agentChatService.addMessage({
-        threadId,
-        userWorkspaceId,
-        uiMessage: {
-          role: AgentMessageRole.USER,
-          parts: [{ type: 'text', text: completion.answerText }],
-        },
-        workspaceId,
-      });
-
       isLastAnswer = awaitingToolParts.length === 1;
 
-      if (isLastAnswer) {
-        await this.agentChatService.clearPendingToolCalls({
-          threadId,
-          messageId: toolPart.messageId,
-          workspaceId,
-        });
-      }
+      await this.agentChatService.recordToolCallAnswer({
+        threadId,
+        messageId: toolPart.messageId,
+        partId: toolPart.id,
+        toolOutput: completion.toolResult,
+        isLastAnswer,
+        workspaceId,
+      });
+
+      answerText = completion.answerText;
     } catch (error) {
       await this.agentChatStreamingService.releaseStreamClaim(
         threadId,
@@ -231,31 +224,43 @@ export class ToolCallAnswerService {
       throw error;
     }
 
-    await this.publishToolCallResolved({ threadId, toolCallId, workspaceId });
-
-    // A run resumes in its own executor, and a conversation still waiting on
-    // other calls resumes with the last of their answers.
-    if (isDefined(step) || !isLastAnswer) {
-      await this.agentChatStreamingService.releaseStreamClaim(
+    // The answer is recorded and cannot be given again, so from here a
+    // failure fails the turn or the run, which can then be retried.
+    try {
+      const answerMessage = await this.agentChatService.addMessage({
         threadId,
+        userWorkspaceId,
+        uiMessage: {
+          role: AgentMessageRole.USER,
+          parts: [{ type: 'text', text: answerText }],
+        },
         workspaceId,
-        streamId,
-      );
+      });
 
-      if (isLastAnswer && isDefined(workflowRunId) && isDefined(step)) {
-        await this.resumeWorkflowRunStep({
-          workspaceId,
-          workflowRunId,
-          step,
+      await this.publishToolCallResolved({ threadId, toolCallId, workspaceId });
+
+      // A run resumes in its own executor, and a conversation still waiting
+      // on other calls resumes with the last of their answers.
+      if (isDefined(step) || !isLastAnswer) {
+        await this.agentChatStreamingService.releaseStreamClaim(
           threadId,
-          response: validation.output,
-        });
+          workspaceId,
+          streamId,
+        );
+
+        if (isLastAnswer && isDefined(workflowRunId) && isDefined(step)) {
+          await this.workflowRunnerWorkspaceService.resumeAnsweredStep({
+            workspaceId,
+            workflowRunId,
+            step,
+            threadId,
+            response: validation.output,
+          });
+        }
+
+        return { streamId: null, turnId: answerMessage.turnId };
       }
 
-      return { streamId: null, turnId: answerMessage.turnId };
-    }
-
-    try {
       await this.agentChatStreamingService.enqueueResumeStream({
         threadId,
         userWorkspaceId,
@@ -266,39 +271,19 @@ export class ToolCallAnswerService {
         modelId: args.modelId,
         messageId: answerMessage.id,
       });
-    } catch (error) {
-      // The answer is recorded, so the turn fails and can be retried rather
-      // than wait on an answer nobody can give again.
-      const streamError = mapErrorToStreamError(error);
 
-      await this.agentChatStreamingService.releaseStreamClaim(
+      return { streamId, turnId: answerMessage.turnId };
+    } catch (error) {
+      await this.failAfterAnswer({
         threadId,
         workspaceId,
         streamId,
-        {
-          lastStreamError: {
-            ...streamError,
-            failedAt: new Date().toISOString(),
-          },
-        },
-      );
-
-      await this.eventPublisherService
-        .publish({
-          threadId,
-          workspaceId,
-          event: {
-            type: 'stream-error',
-            code: streamError.code,
-            message: streamError.message,
-          },
-        })
-        .catch(() => {});
+        workflowRunId,
+        error,
+      });
 
       throw error;
     }
-
-    return { streamId, turnId: answerMessage.turnId };
   }
 
   // Behind submitFormStep, kept for clients built before answerToolCall: a
@@ -346,30 +331,26 @@ export class ToolCallAnswerService {
     return this.answer({ ...args, toolCallId: questionsPart.toolCallId });
   }
 
-  // The answer is recorded and cannot be given again, so a resume that fails
-  // fails the run, which can then be retried.
-  private async resumeWorkflowRunStep({
-    workspaceId,
-    workflowRunId,
-    step,
+  private async failAfterAnswer({
     threadId,
-    response,
+    workspaceId,
+    streamId,
+    workflowRunId,
+    error,
   }: {
-    workspaceId: string;
-    workflowRunId: string;
-    step: WorkflowAction;
     threadId: string;
-    response: Record<string, unknown>;
+    workspaceId: string;
+    streamId: string;
+    workflowRunId: string | null;
+    error: unknown;
   }): Promise<void> {
-    try {
-      await this.workflowRunnerWorkspaceService.resumeAnsweredStep({
-        workspaceId,
-        workflowRunId,
-        step,
+    if (isDefined(workflowRunId)) {
+      await this.agentChatStreamingService.releaseStreamClaim(
         threadId,
-        response,
-      });
-    } catch (error) {
+        workspaceId,
+        streamId,
+      );
+
       await this.workflowRunWorkspaceService.endWorkflowRun({
         workflowRunId,
         workspaceId,
@@ -377,8 +358,34 @@ export class ToolCallAnswerService {
         error: 'The run could not resume after its question was answered',
       });
 
-      throw error;
+      return;
     }
+
+    const streamError = mapErrorToStreamError(error);
+
+    await this.agentChatStreamingService.releaseStreamClaim(
+      threadId,
+      workspaceId,
+      streamId,
+      {
+        lastStreamError: {
+          ...streamError,
+          failedAt: new Date().toISOString(),
+        },
+      },
+    );
+
+    await this.eventPublisherService
+      .publish({
+        threadId,
+        workspaceId,
+        event: {
+          type: 'stream-error',
+          code: streamError.code,
+          message: streamError.message,
+        },
+      })
+      .catch(() => {});
   }
 
   private async assertCanAnswerInChat({

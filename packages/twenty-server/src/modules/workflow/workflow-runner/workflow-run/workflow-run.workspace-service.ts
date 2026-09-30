@@ -673,8 +673,14 @@ export class WorkflowRunWorkspaceService {
     workflowRunId: string;
     workspaceId: string;
   }): Promise<void> {
+    // An answer holding a conversation's claim decides its calls: it closes
+    // them itself once it finds the run over.
     const waitingThreads = await this.threadRepository.find(workspaceId, {
-      where: { workflowRunId, pendingQuestionMessageId: Not(IsNull()) },
+      where: {
+        workflowRunId,
+        pendingQuestionMessageId: Not(IsNull()),
+        activeStreamId: IsNull(),
+      },
       select: ['id', 'pendingQuestionMessageId'],
     });
 
@@ -683,11 +689,15 @@ export class WorkflowRunWorkspaceService {
         continue;
       }
 
-      await this.threadRepository.update(
+      const { affected } = await this.threadRepository.update(
         workspaceId,
-        { id },
+        { id, pendingQuestionMessageId, activeStreamId: IsNull() },
         { pendingQuestionMessageId: null },
       );
+
+      if (affected === 0) {
+        continue;
+      }
 
       await skipAwaitingToolParts({
         messagePartRepository: this.messagePartRepository,

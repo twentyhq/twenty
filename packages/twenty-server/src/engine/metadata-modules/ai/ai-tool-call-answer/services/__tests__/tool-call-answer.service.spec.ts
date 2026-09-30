@@ -81,11 +81,11 @@ describe('ToolCallAnswerService', () => {
           ...(hasOtherAwaitingCalls ? [{ id: 'other-part-id' }] : []),
         ]),
       getWritableThread: jest.fn().mockResolvedValue(thread),
-      updateToolPartOutput: jest.fn().mockResolvedValue(undefined),
+      recordToolCallAnswer: jest.fn().mockResolvedValue(undefined),
       addMessage: jest
         .fn()
         .mockResolvedValue({ id: 'answer-message-id', turnId: 'answer-turn' }),
-      clearPendingToolCalls: jest.fn().mockResolvedValue(undefined),
+      closePendingToolCalls: jest.fn().mockResolvedValue(undefined),
     };
     const agentChatStreamingService = {
       reapDeadStream: jest.fn().mockResolvedValue(null),
@@ -230,8 +230,11 @@ describe('ToolCallAnswerService', () => {
         streamId: result.streamId,
         where: { pendingQuestionMessageId: 'question-message-id' },
       });
-      expect(agentChatService.updateToolPartOutput).toHaveBeenCalledWith({
+      expect(agentChatService.recordToolCallAnswer).toHaveBeenCalledWith({
+        threadId: 'thread-id',
+        messageId: 'question-message-id',
         partId: 'part-id',
+        isLastAnswer: true,
         workspaceId: 'workspace-id',
         toolOutput: expect.objectContaining({
           result: {
@@ -250,11 +253,6 @@ describe('ToolCallAnswerService', () => {
           },
         }),
       );
-      expect(agentChatService.clearPendingToolCalls).toHaveBeenCalledWith({
-        threadId: 'thread-id',
-        messageId: 'question-message-id',
-        workspaceId: 'workspace-id',
-      });
       expect(
         agentChatStreamingService.enqueueResumeStream,
       ).toHaveBeenCalledWith(
@@ -278,8 +276,9 @@ describe('ToolCallAnswerService', () => {
         streamId: null,
         turnId: 'answer-turn',
       });
-      expect(agentChatService.updateToolPartOutput).toHaveBeenCalled();
-      expect(agentChatService.clearPendingToolCalls).not.toHaveBeenCalled();
+      expect(agentChatService.recordToolCallAnswer).toHaveBeenCalledWith(
+        expect.objectContaining({ isLastAnswer: false }),
+      );
       expect(
         agentChatStreamingService.enqueueResumeStream,
       ).not.toHaveBeenCalled();
@@ -327,7 +326,7 @@ describe('ToolCallAnswerService', () => {
       await expect(service.answer(answerArguments)).rejects.toMatchObject({
         code: 'TOOL_CALL_NOT_PENDING',
       });
-      expect(agentChatService.updateToolPartOutput).not.toHaveBeenCalled();
+      expect(agentChatService.recordToolCallAnswer).not.toHaveBeenCalled();
     });
 
     it('releases the conversation it claimed when an earlier answer already closed the call', async () => {
@@ -346,7 +345,7 @@ describe('ToolCallAnswerService', () => {
         'workspace-id',
         claimedStreamId,
       );
-      expect(agentChatService.updateToolPartOutput).not.toHaveBeenCalled();
+      expect(agentChatService.recordToolCallAnswer).not.toHaveBeenCalled();
       expect(agentChatService.addMessage).not.toHaveBeenCalled();
     });
 
@@ -426,7 +425,7 @@ describe('ToolCallAnswerService', () => {
       ).toBeLessThan(
         toolRegistryService.resolveAndExecute.mock.invocationCallOrder[0],
       );
-      expect(agentChatService.updateToolPartOutput).toHaveBeenCalledWith(
+      expect(agentChatService.recordToolCallAnswer).toHaveBeenCalledWith(
         expect.objectContaining({
           toolOutput: expect.objectContaining({
             success: true,
@@ -450,7 +449,7 @@ describe('ToolCallAnswerService', () => {
       });
 
       expect(toolRegistryService.resolveAndExecute).not.toHaveBeenCalled();
-      expect(agentChatService.updateToolPartOutput).toHaveBeenCalledWith(
+      expect(agentChatService.recordToolCallAnswer).toHaveBeenCalledWith(
         expect.objectContaining({
           toolOutput: expect.objectContaining({
             result: expect.objectContaining({ status: 'discarded' }),
@@ -497,7 +496,9 @@ describe('ToolCallAnswerService', () => {
         permissionsService.userHasWorkspaceSettingPermission,
       ).toHaveBeenCalledWith(expect.objectContaining({ setting: 'WORKFLOWS' }));
       expect(agentChatService.getWritableThread).not.toHaveBeenCalled();
-      expect(agentChatService.clearPendingToolCalls).toHaveBeenCalled();
+      expect(agentChatService.recordToolCallAnswer).toHaveBeenCalledWith(
+        expect.objectContaining({ isLastAnswer: true }),
+      );
       expect(agentChatStreamingService.releaseStreamClaim).toHaveBeenCalled();
       expect(
         workflowRunnerWorkspaceService.resumeAnsweredStep,
@@ -524,7 +525,7 @@ describe('ToolCallAnswerService', () => {
       ).not.toHaveBeenCalled();
     });
 
-    it('refuses an answer the run no longer waits for, recording nothing', async () => {
+    it('refuses an answer the run no longer waits for, closing its calls instead', async () => {
       const {
         service,
         agentChatService,
@@ -539,8 +540,34 @@ describe('ToolCallAnswerService', () => {
       await expect(service.answer(answerArguments)).rejects.toMatchObject({
         code: 'TOOL_CALL_NOT_PENDING',
       });
-      expect(agentChatService.updateToolPartOutput).not.toHaveBeenCalled();
+      expect(agentChatService.recordToolCallAnswer).not.toHaveBeenCalled();
+      expect(agentChatService.closePendingToolCalls).toHaveBeenCalledWith({
+        threadId: 'thread-id',
+        messageId: 'question-message-id',
+        workspaceId: 'workspace-id',
+      });
       expect(agentChatStreamingService.releaseStreamClaim).toHaveBeenCalled();
+    });
+
+    it('fails the run when the answer is recorded but its message cannot be added', async () => {
+      const {
+        service,
+        agentChatService,
+        workflowRunnerWorkspaceService,
+        workflowRunWorkspaceService,
+      } = buildService({ thread: runThread });
+
+      agentChatService.addMessage.mockRejectedValue(new Error('Write failed'));
+
+      await expect(service.answer(answerArguments)).rejects.toThrow(
+        'Write failed',
+      );
+      expect(
+        workflowRunnerWorkspaceService.resumeAnsweredStep,
+      ).not.toHaveBeenCalled();
+      expect(workflowRunWorkspaceService.endWorkflowRun).toHaveBeenCalledWith(
+        expect.objectContaining({ status: 'FAILED' }),
+      );
     });
 
     it('fails the run when the answered step cannot resume', async () => {
@@ -683,7 +710,7 @@ describe('ToolCallAnswerService', () => {
         toolCallId: 'tool-call-id',
         workspaceId: 'workspace-id',
       });
-      expect(agentChatService.updateToolPartOutput).toHaveBeenCalled();
+      expect(agentChatService.recordToolCallAnswer).toHaveBeenCalled();
     });
   });
 });

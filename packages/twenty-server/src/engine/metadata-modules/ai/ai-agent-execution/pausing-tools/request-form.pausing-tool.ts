@@ -7,7 +7,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 
 import { definePausingTool } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/define-pausing-tool.util';
-import { requestFormInputSchema } from 'src/engine/metadata-modules/ai/ai-chat/tools/request-form.tool';
+import { requestFormCallSchema } from 'src/engine/metadata-modules/ai/ai-chat/tools/request-form.tool';
 
 type RequestFormToolOutput = Record<string, unknown>;
 
@@ -45,7 +45,7 @@ export const REQUEST_FORM_PAUSING_TOOL = definePausingTool<
   RequestFormToolInput,
   RequestFormToolOutput
 >({
-  inputSchema: requestFormInputSchema,
+  inputSchema: requestFormCallSchema,
   outputSchema: buildRequestFormOutputSchema,
   complete: async ({ output, input: { fields } }) => ({
     toolResult: {

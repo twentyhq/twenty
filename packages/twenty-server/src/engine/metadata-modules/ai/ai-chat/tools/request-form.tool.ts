@@ -8,17 +8,23 @@ import { z } from 'zod';
 
 export { REQUEST_FORM_TOOL_NAME };
 
+const requestFormFieldSchema = workflowFormFieldSchema.pick({
+  name: true,
+  label: true,
+  type: true,
+  placeholder: true,
+  settings: true,
+});
+
+// A form step issues this call with every field of its form, so a recorded
+// call is read without the limits an agent is held to.
+export const requestFormCallSchema = z.object({
+  fields: z.array(requestFormFieldSchema),
+});
+
 export const requestFormInputSchema = z.object({
   fields: z
-    .array(
-      workflowFormFieldSchema.pick({
-        name: true,
-        label: true,
-        type: true,
-        placeholder: true,
-        settings: true,
-      }),
-    )
+    .array(requestFormFieldSchema)
     .min(1)
     .max(10)
     .refine(

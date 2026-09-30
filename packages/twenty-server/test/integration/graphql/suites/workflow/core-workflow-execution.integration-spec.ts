@@ -908,10 +908,10 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
 
       await waitForStep(runId, form.id, 'PENDING');
 
-      const updateToolPartOutput = jest
+      const recordToolCallAnswer = jest
         .spyOn(
           getAppProviderByClassName<AgentChatService>('AgentChatService'),
-          'updateToolPartOutput',
+          'recordToolCallAnswer',
         )
         .mockRejectedValueOnce(new Error('Answer write failed'));
 
@@ -921,7 +921,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
         answer: 'Approved',
       });
 
-      updateToolPartOutput.mockRestore();
+      recordToolCallAnswer.mockRestore();
 
       expect(refused.body.errors).toBeDefined();
       expect((await getRun(runId)).state.stepInfos[form.id].status).toBe(
@@ -1526,16 +1526,16 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       mockAgent();
       const { runId, agent, threadId } = await startAskingRun();
 
-      const updateToolPartOutput = jest
+      const recordToolCallAnswer = jest
         .spyOn(
           getAppProviderByClassName<AgentChatService>('AgentChatService'),
-          'updateToolPartOutput',
+          'recordToolCallAnswer',
         )
         .mockRejectedValueOnce(new Error('Answer write failed'));
 
       const refused = await answer({ threadId });
 
-      updateToolPartOutput.mockRestore();
+      recordToolCallAnswer.mockRestore();
 
       expect(refused.body.errors).toBeDefined();
       expect((await getRun(runId)).state.stepInfos[agent.id]).toMatchObject({
