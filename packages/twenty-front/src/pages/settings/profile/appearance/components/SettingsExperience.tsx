@@ -5,12 +5,12 @@ import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLay
 import { FormatPreferencesSettings } from '@/settings/experience/components/FormatPreferencesSettings';
 import { OpenRecordInPreferencePicker } from '@/settings/experience/components/OpenRecordInPreferencePicker';
 import { UiScalePicker } from '@/settings/experience/components/UiScalePicker';
-import { useColorScheme } from '@/ui/theme/hooks/useColorScheme';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { ColorSchemePicker, Section } from 'twenty-ui/components';
+import { Section } from 'twenty-ui/components';
 import { themeCssVariables } from 'twenty-ui/theme';
+import { SettingsAppearance } from '~/pages/settings/profile/appearance/components/SettingsAppearance';
 import { LocalePicker } from '~/pages/settings/profile/appearance/components/LocalePicker';
 
 const StyledInterfaceControls = styled.div`
@@ -20,7 +20,6 @@ const StyledInterfaceControls = styled.div`
 `;
 
 export const SettingsExperience = () => {
-  const { colorScheme, setColorScheme } = useColorScheme();
   const { t } = useLingui();
 
   return (
@@ -35,16 +34,7 @@ export const SettingsExperience = () => {
       ]}
     >
       <SettingsPageContainer>
-        <Section.Root>
-          <Section.Header title={t`Appearance`} />
-          <ColorSchemePicker
-            value={colorScheme}
-            onChange={setColorScheme}
-            lightLabel={t`Light`}
-            darkLabel={t`Dark`}
-            systemLabel={t`System settings`}
-          />
-        </Section.Root>
+        <SettingsAppearance />
 
         <Section.Root>
           <Section.Header

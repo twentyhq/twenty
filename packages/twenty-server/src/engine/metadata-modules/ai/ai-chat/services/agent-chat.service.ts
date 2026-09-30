@@ -21,6 +21,8 @@ import {
 import { AgentMessageWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message.workspace-entity';
 import { AgentTurnWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-turn.workspace-entity';
 import { mapUIMessagePartsToPersistedDBParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/map-ui-message-parts-to-persisted-db-parts.util';
+import { PAUSING_TOOLS } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/constants/pausing-tools.constant';
+import { skipAwaitingToolParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/skip-awaiting-tool-parts.util';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import {
   AiException,
@@ -590,13 +592,13 @@ export class AgentChatService {
   }): Promise<
     | (Pick<
         AgentMessagePartWorkspaceEntity,
-        'id' | 'messageId' | 'toolName' | 'toolInput'
+        'id' | 'messageId' | 'toolName' | 'toolInput' | 'toolOutput'
       > & { turnId: string | null })
     | null
   > {
     const parts = await this.messagePartRepository.find(workspaceId, {
       where: { toolCallId },
-      select: ['id', 'messageId', 'toolName', 'toolInput'],
+      select: ['id', 'messageId', 'toolName', 'toolInput', 'toolOutput'],
     });
 
     if (!isNonEmptyArray(parts)) {
@@ -618,20 +620,89 @@ export class AgentChatService {
       : null;
   }
 
-  async updateToolPartOutput({
-    partId,
-    toolOutput,
+  async findAwaitingToolParts({
+    messageId,
     workspaceId,
   }: {
+    messageId: string;
+    workspaceId: string;
+  }): Promise<
+    Pick<
+      AgentMessagePartWorkspaceEntity,
+      'id' | 'toolName' | 'toolCallId' | 'toolInput'
+    >[]
+  > {
+    const parts = await this.messagePartRepository.find(workspaceId, {
+      where: { messageId },
+      select: ['id', 'toolName', 'toolCallId', 'toolInput', 'toolOutput'],
+    });
+
+    return parts.filter(
+      (part) =>
+        isDefined(part.toolName) &&
+        (PAUSING_TOOLS.get(part.toolName)?.isAwaitingOutput(part.toolOutput) ??
+          false),
+    );
+  }
+
+  // The answer and, once no call of the message still waits, the
+  // conversation no longer waiting on it are written together, so an answer
+  // never strands a conversation waiting on calls that are all answered.
+  async recordToolCallAnswer({
+    threadId,
+    messageId,
+    partId,
+    toolOutput,
+    isLastAnswer,
+    workspaceId,
+  }: {
+    threadId: string;
+    messageId: string;
     partId: string;
     toolOutput: Record<string, unknown>;
+    isLastAnswer: boolean;
     workspaceId: string;
   }): Promise<void> {
-    await this.messagePartRepository.update(
+    await this.messagePartRepository.query(
       workspaceId,
-      { id: partId },
-      { toolOutput },
+      async ({ manager, table }) => {
+        await manager.query(
+          `UPDATE ${table('agentMessagePart')} SET "toolOutput" = $2::jsonb, "updatedAt" = now() WHERE id = $1`,
+          [partId, JSON.stringify(toolOutput)],
+        );
+
+        if (isLastAnswer) {
+          await manager.query(
+            `UPDATE ${table('agentChatThread')} SET "pendingQuestionMessageId" = NULL, "updatedAt" = now() WHERE id = $1 AND "pendingQuestionMessageId" = $2`,
+            [threadId, messageId],
+          );
+        }
+      },
     );
+  }
+
+  // Calls nothing can answer anymore are closed, so the conversation no longer
+  // waits on them.
+  async closePendingToolCalls({
+    threadId,
+    messageId,
+    workspaceId,
+  }: {
+    threadId: string;
+    messageId: string;
+    workspaceId: string;
+  }): Promise<void> {
+    await this.threadRepository.update(
+      workspaceId,
+      { id: threadId, pendingQuestionMessageId: messageId },
+      { pendingQuestionMessageId: null },
+    );
+
+    await skipAwaitingToolParts({
+      messagePartRepository: this.messagePartRepository,
+      messageId,
+      workspaceId,
+    });
   }
 
   // Sending to a soft deleted conversation brings it back to the list

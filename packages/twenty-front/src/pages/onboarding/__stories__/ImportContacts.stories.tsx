@@ -18,16 +18,17 @@ const meta: Meta<typeof ImportContacts> = {
   component: ImportContacts,
   parameters: { layout: 'fullscreen' },
   args: {
-    creditsReward: 2,
     providerActions: [
       {
         label: 'Continue with Microsoft',
         Icon: IconMicrosoft,
+        creditsReward: 2,
         onClick: action('continue-with-microsoft'),
       },
       {
         label: 'Continue with Google',
         Icon: IconGoogle,
+        creditsReward: 2,
         onClick: action('continue-with-google'),
       },
     ],

@@ -11,24 +11,10 @@ export const labelOverridesTest: TwentyUiGalleryPlayFunction = async ({
   await expectFrontComponentMounted(canvas);
 
   expect(canvas.getByRole('button', { name: 'Close' })).toBeVisible();
-  for (const label of [
-    'Day appearance',
-    'Night appearance',
-    'Device appearance',
-  ]) {
-    expect(canvas.getByText(label)).toBeVisible();
-    expect(canvas.getByRole('button', { name: label })).toBeVisible();
-  }
   for (const label of ['then', 'followed by', 'next']) {
     expect(canvas.getByText(label)).toBeVisible();
   }
 
-  await userEvent.click(
-    canvas.getByRole('button', { name: 'Night appearance' }),
-  );
-  await waitFor(() =>
-    expect(canvas.getByRole('status')).toHaveTextContent('Appearance: Dark'),
-  );
   await userEvent.click(canvas.getByRole('button', { name: 'Dismiss notice' }));
   await waitFor(() =>
     expect(canvas.queryByText('Supplied notice')).not.toBeInTheDocument(),

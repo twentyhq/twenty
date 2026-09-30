@@ -137,14 +137,18 @@ export class CoreWorkflowMutationWorkspaceService {
       },
     );
 
-    const { coreWorkflow: sourceCoreWorkflow } =
-      await this.coreWorkflowIdResolutionService.resolveWorkspaceWorkflowIdOrThrow(
-        {
-          workspaceId,
-          userWorkspaceId,
-          coreWorkflowId: coreWorkflowIdToDuplicate,
-        },
+    const sourceCoreWorkflow = await this.coreWorkflowRepository.findOne(
+      workspaceId,
+      { where: { id: coreWorkflowIdToDuplicate } },
+    );
+
+    if (!isDefined(sourceCoreWorkflow)) {
+      throw new WorkflowQueryValidationException(
+        `Core workflow '${coreWorkflowIdToDuplicate}' not found`,
+        WorkflowQueryValidationExceptionCode.FORBIDDEN,
+        { userFriendlyMessage: msg`Workflow not found` },
       );
+    }
 
     const sourceVersion = await this.coreWorkflowVersionRepository.findOne(
       workspaceId,
@@ -182,6 +186,13 @@ export class CoreWorkflowMutationWorkspaceService {
       name: `${sourceCoreWorkflow.name ?? ''} (Duplicate)`,
       // duplicating a private workflow must not publish it to the workspace
       visibility: sourceCoreWorkflow.visibility,
+    }).catch(async (error: unknown) => {
+      await this.deleteClonedStepResources({
+        workspaceId,
+        clonedSteps: remappedSteps,
+      });
+
+      throw error;
     });
 
     try {
@@ -204,6 +215,24 @@ export class CoreWorkflowMutationWorkspaceService {
       }
 
       throw error;
+    }
+  }
+
+  private async deleteClonedStepResources({
+    workspaceId,
+    clonedSteps,
+  }: {
+    workspaceId: string;
+    clonedSteps: WorkflowAction[];
+  }): Promise<void> {
+    for (const step of clonedSteps) {
+      try {
+        await this.workflowVersionStepOperationsWorkspaceService.runWorkflowVersionStepDeletionSideEffects(
+          { step, workspaceId },
+        );
+      } catch (cleanupError) {
+        this.logger.error(cleanupError);
+      }
     }
   }
 
@@ -283,15 +312,24 @@ export class CoreWorkflowMutationWorkspaceService {
     }[] = [];
     const clonedStepIdBySourceStepId = new Map<string, string>();
 
-    for (const step of steps) {
-      const clonedStep =
-        await this.workflowVersionStepOperationsWorkspaceService.cloneStep({
-          step,
-          workspaceId,
-        });
+    try {
+      for (const step of steps) {
+        const clonedStep =
+          await this.workflowVersionStepOperationsWorkspaceService.cloneStep({
+            step,
+            workspaceId,
+          });
 
-      sourceToClonedPairs.push({ source: step, duplicated: clonedStep });
-      clonedStepIdBySourceStepId.set(step.id, clonedStep.id);
+        sourceToClonedPairs.push({ source: step, duplicated: clonedStep });
+        clonedStepIdBySourceStepId.set(step.id, clonedStep.id);
+      }
+    } catch (error) {
+      await this.deleteClonedStepResources({
+        workspaceId,
+        clonedSteps: sourceToClonedPairs.map(({ duplicated }) => duplicated),
+      });
+
+      throw error;
     }
 
     return remapDuplicatedStepDestinations({

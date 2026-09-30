@@ -37,15 +37,7 @@ const objectMetadataItems = getTestEnrichedObjectMetadataItemsMock();
 
 const renderEditorSectionOnNewChat = () => {
   const MetadataAndApolloWrapper = getJestMetadataAndApolloMocksWrapper({
-    objectMetadataItems: [
-      ...objectMetadataItems,
-      {
-        ...objectMetadataItems[0],
-        id: '20202020-1b2c-4d3e-8f4a-5b6c7d8e9f0a',
-        nameSingular: 'inputAsk',
-        namePlural: 'inputAsks',
-      },
-    ],
+    objectMetadataItems,
     onInitializeJotaiStore: (store) => {
       store.set(currentAiChatThreadState.atom, AGENT_CHAT_NEW_THREAD_DRAFT_KEY);
       store.set(

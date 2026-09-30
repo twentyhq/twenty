@@ -10,6 +10,7 @@ type ThreadUsageUpdate = {
   totalCacheCreationTokens: number;
   contextWindowTokens: number | null;
   conversationSize: number;
+  pendingQuestionMessageId: string | null;
 };
 
 export const updateAgentChatThreadUsage = async ({
@@ -39,7 +40,7 @@ export const updateAgentChatThreadUsage = async ({
         "totalCacheReadTokens" = "totalCacheReadTokens" + $7,
         "totalCacheCreationTokens" = "totalCacheCreationTokens" + $8,
         "contextWindowTokens" = $9, "conversationSize" = $10,
-        "lastStreamError" = NULL, "updatedAt" = now()
+        "pendingQuestionMessageId" = $11, "lastStreamError" = NULL, "updatedAt" = now()
       WHERE id = $1 AND "activeStreamId" = $2
       RETURNING id
     ) SELECT id FROM updated`,
@@ -54,6 +55,7 @@ export const updateAgentChatThreadUsage = async ({
         usage.totalCacheCreationTokens,
         usage.contextWindowTokens,
         usage.conversationSize,
+        usage.pendingQuestionMessageId,
       ],
     );
     return { affected: rows.length };

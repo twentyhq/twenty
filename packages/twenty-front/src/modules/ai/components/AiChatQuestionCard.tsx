@@ -32,7 +32,7 @@ import { AiModelTierDropdown } from '@/ai/components/AiModelTierDropdown';
 import { TextWithChatReferences } from '@/ai/components/TextWithChatReferences';
 import { AiChatContextUsageButton } from '@/ai/components/internal/AiChatContextUsageButton';
 import { AiChatQuestionOtherOption } from '@/ai/components/internal/AiChatQuestionOtherOption';
-import { useAnswerAgentChatAsk } from '@/ai/hooks/useAnswerAgentChatAsk';
+import { useAnswerAgentChatToolCall } from '@/ai/hooks/useAnswerAgentChatToolCall';
 import { type AgentChatPendingQuestion } from '@/ai/types/AgentChatPendingQuestion';
 import { aiModelsState } from '@/client-config/states/aiModelsState';
 import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
@@ -197,7 +197,7 @@ export const AiChatQuestionCard = ({
 }: AiChatQuestionCardProps) => {
   const { t } = useLingui();
   const theme = useTheme();
-  const { askId, toolCallId, questions } = pendingQuestion;
+  const { toolCallId, questions } = pendingQuestion;
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedByQuestion, setSelectedByQuestion] = useState<
@@ -211,7 +211,7 @@ export const AiChatQuestionCard = ({
   >({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const { answerAgentChatAsk } = useAnswerAgentChatAsk();
+  const { answerAgentChatToolCall } = useAnswerAgentChatToolCall();
 
   const aiModels = useAtomStateValue(aiModelsState);
   const hasNoEnabledModels = aiModels.length === 0;
@@ -243,8 +243,7 @@ export const AiChatQuestionCard = ({
 
     setIsSubmitting(true);
 
-    const isAnswered = await answerAgentChatAsk({
-      askId,
+    const isAnswered = await answerAgentChatToolCall({
       toolCallId,
       response: { answers },
       optimisticToolOutput: {
@@ -257,7 +256,7 @@ export const AiChatQuestionCard = ({
       },
     });
 
-    // The card goes once its Ask does, so it stays disabled until then.
+    // The card goes once its call is closed, so it stays disabled until then.
     if (!isAnswered) {
       setIsSubmitting(false);
     }
