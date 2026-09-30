@@ -62,7 +62,7 @@ export const InviteTeam = () => {
   const canRemoveEmailField = fields.length > 1;
 
   return (
-    <StyledOnboardingStepPage>
+    <StyledOnboardingStepPage data-testid="onboarding-invite-team-step">
       <StyledOnboardingStepHeading>
         <OnboardingStepAnimatedItem index={0}>
           <StyledOnboardingStepTitle>{t`Invite your team`}</StyledOnboardingStepTitle>

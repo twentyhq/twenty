@@ -98,6 +98,7 @@ export const OnboardingSkipDialog = ({
             <Button
               variant="ghost"
               fullWidth
+              data-testid="onboarding-skip-dialog-skip-anyway"
               onClick={() => {
                 closeDialog(dialogId);
                 onSkip();

@@ -58,7 +58,7 @@ export const ImportContacts = ({
   const { t } = useLingui();
 
   return (
-    <StyledOnboardingStep>
+    <StyledOnboardingStep data-testid="onboarding-sync-emails-step">
       <StyledOnboardingStepHeading>
         <OnboardingStepAnimatedItem index={0}>
           <StyledOnboardingStepTitle>{t`Import your contacts`}</StyledOnboardingStepTitle>

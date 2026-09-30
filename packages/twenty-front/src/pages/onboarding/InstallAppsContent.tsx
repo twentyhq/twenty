@@ -167,7 +167,7 @@ export const InstallAppsContent = ({ apps }: InstallAppsContentProps) => {
   };
 
   return (
-    <StyledOnboardingStepPage>
+    <StyledOnboardingStepPage data-testid="onboarding-install-apps-step">
       <StyledOnboardingStepHeading>
         <OnboardingStepAnimatedItem index={0}>
           <StyledOnboardingStepTitle>{t`Start with the essentials`}</StyledOnboardingStepTitle>

@@ -225,7 +225,7 @@ export const CreateProfile = () => {
   });
 
   return (
-    <StyledOnboardingStepPage>
+    <StyledOnboardingStepPage data-testid="onboarding-create-profile-step">
       <StyledOnboardingStepHeading>
         <OnboardingStepAnimatedItem index={0}>
           <StyledOnboardingStepTitle>{t`Create profile`}</StyledOnboardingStepTitle>
