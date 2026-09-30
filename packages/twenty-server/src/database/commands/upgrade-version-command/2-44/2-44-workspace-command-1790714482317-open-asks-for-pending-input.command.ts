@@ -3,7 +3,7 @@ import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { FieldActorSource } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { StepStatus, WorkflowActionType } from 'twenty-shared/workflow';
-import { IsNull, Not } from 'typeorm';
+import { IsNull, MoreThan, Not } from 'typeorm';
 
 import { AgentHistoryUpgradeStorageService } from 'src/database/commands/agent-history/agent-history-upgrade-storage.service';
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
@@ -28,6 +28,15 @@ import {
   WorkflowRunStatus,
   type WorkflowRunWorkspaceEntity,
 } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
+
+const WORKFLOW_RUN_BATCH_SIZE = 100;
+
+const MIN_UUID = '00000000-0000-0000-0000-000000000000';
+
+type PendingFormStepWorkflowRun = Pick<
+  WorkflowRunWorkspaceEntity,
+  'id' | 'state' | 'createdBy'
+>;
 
 type PendingQuestionThread = Pick<
   AgentChatThreadWorkspaceEntity,
@@ -258,53 +267,89 @@ export class OpenAsksForPendingInputCommand extends ProvisionedWorkspaceCommandR
         'workflowRun',
         { shouldBypassPermissionChecks: true },
       );
+
+    let openedCount = 0;
+    let cursor = MIN_UUID;
+
+    while (true) {
+      // Only a running run accepts a submission. Paged with only the columns
+      // read: a run's stepLogs can be large and a workspace can hold many runs
+      // stuck in RUNNING.
+      const workflowRuns: PendingFormStepWorkflowRun[] =
+        await workflowRunRepository.find({
+          where: { status: WorkflowRunStatus.RUNNING, id: MoreThan(cursor) },
+          select: [
+            'id',
+            'state',
+            'createdBySource',
+            'createdByWorkspaceMemberId',
+          ],
+          order: { id: 'ASC' },
+          take: WORKFLOW_RUN_BATCH_SIZE,
+        });
+
+      if (workflowRuns.length === 0) {
+        return openedCount;
+      }
+
+      cursor = workflowRuns[workflowRuns.length - 1].id;
+
+      for (const workflowRun of workflowRuns) {
+        openedCount += await this.openAsksForWorkflowRunFormSteps({
+          workflowRun,
+          isDryRun,
+        });
+      }
+    }
+  }
+
+  private async openAsksForWorkflowRunFormSteps({
+    workflowRun,
+    isDryRun,
+  }: {
+    workflowRun: PendingFormStepWorkflowRun;
+    isDryRun: boolean;
+  }): Promise<number> {
     const inputAskRepository =
       this.workspaceOrmManager.getRepository<InputAskWorkspaceEntity>(
         'inputAsk',
         { shouldBypassPermissionChecks: true },
       );
 
-    // Only a running run accepts a submission. Loaded whole: the ORM selects
-    // columns, and createdBy is a composite field spread over several.
-    const workflowRuns = await workflowRunRepository.find({
-      where: { status: WorkflowRunStatus.RUNNING },
-    });
+    const stepInfos = workflowRun.state?.stepInfos ?? {};
 
     let openedCount = 0;
 
-    for (const workflowRun of workflowRuns) {
-      const stepInfos = workflowRun.state?.stepInfos ?? {};
+    for (const step of workflowRun.state?.flow?.steps ?? []) {
+      if (
+        step.type !== WorkflowActionType.FORM ||
+        stepInfos[step.id]?.status !== StepStatus.PENDING ||
+        isDefined(stepInfos[step.id]?.error)
+      ) {
+        continue;
+      }
 
-      for (const step of workflowRun.state?.flow?.steps ?? []) {
-        if (
-          step.type !== WorkflowActionType.FORM ||
-          stepInfos[step.id]?.status !== StepStatus.PENDING ||
-          isDefined(stepInfos[step.id]?.error)
-        ) {
-          continue;
-        }
+      const existingInputAsk = await inputAskRepository.findOne({
+        where: {
+          workflowRunId: workflowRun.id,
+          stepId: step.id,
+          toolCallId: IsNull(),
+        },
+        select: { id: true },
+      });
 
-        const existingInputAsk = await inputAskRepository.findOne({
-          where: {
-            workflowRunId: workflowRun.id,
-            stepId: step.id,
-            toolCallId: IsNull(),
-          },
-          select: { id: true },
-        });
+      if (isDefined(existingInputAsk)) {
+        continue;
+      }
 
-        if (isDefined(existingInputAsk)) {
-          continue;
-        }
-
+      if (isDryRun) {
         openedCount++;
+        continue;
+      }
 
-        if (isDryRun) {
-          continue;
-        }
+      const lowestPosition = await inputAskRepository.minimum('position');
 
-        const lowestPosition = await inputAskRepository.minimum('position');
-
+      try {
         await inputAskRepository.insert({
           name: step.name,
           status: InputAskStatus.PENDING,
@@ -320,7 +365,19 @@ export class OpenAsksForPendingInputCommand extends ProvisionedWorkspaceCommandR
               : null,
           position: (lowestPosition ?? 0) - 1,
         });
+      } catch (error) {
+        // An Ask opened for the same step in the meantime is the one wanted.
+        if (
+          error instanceof TwentyOrmException &&
+          error.code === TwentyOrmExceptionCode.DUPLICATE_ENTRY_DETECTED
+        ) {
+          continue;
+        }
+
+        throw error;
       }
+
+      openedCount++;
     }
 
     return openedCount;
