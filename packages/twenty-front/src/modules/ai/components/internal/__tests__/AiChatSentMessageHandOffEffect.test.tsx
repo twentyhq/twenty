@@ -15,7 +15,7 @@ import {
 } from '@/ui/utilities/state/jotai/jotaiStore';
 
 const PENDING_HAND_OFF = {
-  composerTextRect: { left: 1, top: 2 } as DOMRect,
+  composerTextRect: { left: 1, top: 2 },
   messageId: null,
 };
 
