@@ -16,4 +16,8 @@ export type ParsedMediaQueryCondition =
       kind: 'keyword';
       featureName: string;
       value: string;
+    }
+  | {
+      kind: 'not-none';
+      featureName: string;
     };

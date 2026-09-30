@@ -130,7 +130,7 @@ describe('installMatchMediaPolyfill', () => {
     const { matchMedia, setEnvironment } = setupMatchMedia();
     setEnvironment({ componentWidth: 1024 });
 
-    expect(matchMedia('(hover: hover)').matches).toBe(false);
+    expect(matchMedia('(prefers-reduced-motion: reduce)').matches).toBe(false);
     expect(matchMedia('(min-width >= 600px)').matches).toBe(false);
     expect(matchMedia('garbage').matches).toBe(false);
     expect(matchMedia('not garbage').matches).toBe(true);
@@ -275,16 +275,46 @@ describe('installMatchMediaPolyfill', () => {
     const { matchMedia, setEnvironment } = setupMatchMedia();
     setEnvironment({ componentWidth: 1024 });
 
-    expect(matchMedia('not print and (hover: hover)').matches).toBe(true);
+    expect(
+      matchMedia('not print and (prefers-reduced-motion: reduce)').matches,
+    ).toBe(true);
     expect(matchMedia('not print and (min-width: calc(1px))').matches).toBe(
       true,
     );
-    expect(matchMedia('not all and (hover: hover)').matches).toBe(false);
     expect(
-      matchMedia('not all and (hover: hover) and (min-width: 2000px)').matches,
+      matchMedia('not all and (prefers-reduced-motion: reduce)').matches,
+    ).toBe(false);
+    expect(
+      matchMedia(
+        'not all and (prefers-reduced-motion: reduce) and (min-width: 2000px)',
+      ).matches,
     ).toBe(true);
-    expect(matchMedia('not (hover: hover)').matches).toBe(false);
-    expect(matchMedia('print and (hover: hover)').matches).toBe(false);
+    expect(matchMedia('not (prefers-reduced-motion: reduce)').matches).toBe(
+      false,
+    );
+    expect(
+      matchMedia('print and (prefers-reduced-motion: reduce)').matches,
+    ).toBe(false);
+  });
+
+  it('should evaluate hover and pointer from the host input', () => {
+    const { matchMedia, setEnvironment } = setupMatchMedia();
+    setEnvironment({ hover: 'none', pointer: 'coarse' });
+
+    expect(matchMedia('(hover: none) and (pointer: coarse)').matches).toBe(
+      true,
+    );
+    expect(matchMedia('(pointer: fine)').matches).toBe(false);
+    expect(matchMedia('(hover)').matches).toBe(false);
+    expect(matchMedia('(pointer)').matches).toBe(true);
+
+    setEnvironment({ hover: 'hover', pointer: 'fine' });
+
+    expect(matchMedia('(hover: none) and (pointer: coarse)').matches).toBe(
+      false,
+    );
+    expect(matchMedia('(hover: hover) and (pointer: fine)').matches).toBe(true);
+    expect(matchMedia('(any-pointer: coarse)').matches).toBe(false);
   });
 
   it('should evaluate absolute length units', () => {

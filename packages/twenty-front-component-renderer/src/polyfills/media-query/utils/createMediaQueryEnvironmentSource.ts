@@ -1,5 +1,6 @@
 import { fastDeepEqual } from 'twenty-shared/utils';
 
+import { DEFAULT_INPUT_MEDIA_FEATURES } from '@/constants/DefaultInputMediaFeatures';
 import { type WorkerGeometryStore } from '@/polyfills/geometry/types/WorkerGeometryStore';
 import { type MediaQueryEnvironment } from '@/polyfills/media-query/types/MediaQueryEnvironment';
 import { type MediaQueryEnvironmentSource } from '@/polyfills/media-query/types/MediaQueryEnvironmentSource';
@@ -24,6 +25,9 @@ export const createMediaQueryEnvironmentSource = ({
       componentWidth: viewportSnapshot?.rootContainerClientWidth ?? 0,
       componentHeight: viewportSnapshot?.rootContainerClientHeight ?? 0,
       devicePixelRatio: viewportSnapshot?.devicePixelRatio ?? 1,
+      hover: viewportSnapshot?.hover ?? DEFAULT_INPUT_MEDIA_FEATURES.hover,
+      pointer:
+        viewportSnapshot?.pointer ?? DEFAULT_INPUT_MEDIA_FEATURES.pointer,
       colorScheme: getColorScheme(),
     };
   };

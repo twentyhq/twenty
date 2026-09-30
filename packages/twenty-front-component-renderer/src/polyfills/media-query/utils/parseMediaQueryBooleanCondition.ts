@@ -8,7 +8,7 @@ export const parseMediaQueryBooleanCondition = (
   featureName: string,
 ): ParsedMediaQueryCondition[] | null => {
   if (MEDIA_QUERY_KEYWORD_FEATURES.has(featureName)) {
-    return [];
+    return [{ kind: 'not-none', featureName }];
   }
 
   const feature = parseMediaQueryBareNumericFeature(featureName);

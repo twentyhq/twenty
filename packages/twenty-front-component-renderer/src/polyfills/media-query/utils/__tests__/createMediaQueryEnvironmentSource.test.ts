@@ -94,6 +94,21 @@ describe('createMediaQueryEnvironmentSource', () => {
     );
   });
 
+  it('should read hover and pointer from the host viewport snapshot', () => {
+    const { environmentSource, pushViewportSnapshot } =
+      setupEnvironmentSource();
+    const environmentUpdateListener = jest.fn();
+
+    environmentSource.subscribeToEnvironmentUpdates(environmentUpdateListener);
+
+    pushViewportSnapshot({ hover: 'none', pointer: 'coarse' });
+
+    expect(environmentSource.readEnvironment()).toEqual(
+      createMediaQueryEnvironmentFixture({ hover: 'none', pointer: 'coarse' }),
+    );
+    expect(environmentUpdateListener).toHaveBeenCalledTimes(1);
+  });
+
   it('should not notify on scroll-only viewport updates', () => {
     const { environmentSource, pushViewportSnapshot } =
       setupEnvironmentSource();

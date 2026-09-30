@@ -1,10 +1,10 @@
 import { isFunction } from '@sniptt/guards';
 
-import { type DevicePixelRatioChangeObserver } from '@/host/geometry/types/DevicePixelRatioChangeObserver';
+import { type MediaEnvironmentChangeObserver } from '@/host/geometry/types/MediaEnvironmentChangeObserver';
 
 export const createDevicePixelRatioChangeObserver = (
   onDevicePixelRatioChange: () => void,
-): DevicePixelRatioChangeObserver => {
+): MediaEnvironmentChangeObserver => {
   let resolutionListenerAbortController: AbortController | null = null;
 
   const disconnect = (): void => {

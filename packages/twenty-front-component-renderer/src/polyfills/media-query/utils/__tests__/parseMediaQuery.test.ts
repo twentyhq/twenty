@@ -103,6 +103,17 @@ describe('parseMediaQuery', () => {
     ]);
   });
 
+  it('should parse hover and pointer values', () => {
+    expect(parseMediaQuery('(hover: hover)')?.conditions).toEqual([
+      { kind: 'keyword', featureName: 'hover', value: 'hover' },
+    ]);
+    expect(parseMediaQuery('(pointer: coarse)')?.conditions).toEqual([
+      { kind: 'keyword', featureName: 'pointer', value: 'coarse' },
+    ]);
+    expect(parseMediaQuery('(pointer: sideways)')).toBeNull();
+    expect(parseMediaQuery('(any-pointer: coarse)')).toBeNull();
+  });
+
   it('should parse orientation values', () => {
     expect(parseMediaQuery('(orientation: portrait)')?.conditions).toEqual([
       { kind: 'keyword', featureName: 'orientation', value: 'portrait' },
@@ -321,13 +332,20 @@ describe('parseMediaQuery', () => {
     expect(parseMediaQuery('(width)')?.conditions).toEqual([
       { kind: 'non-zero', source: 'componentWidth' },
     ]);
-    expect(parseMediaQuery('(orientation)')?.conditions).toEqual([]);
-    expect(parseMediaQuery('(prefers-color-scheme)')?.conditions).toEqual([]);
+    expect(parseMediaQuery('(orientation)')?.conditions).toEqual([
+      { kind: 'not-none', featureName: 'orientation' },
+    ]);
+    expect(parseMediaQuery('(prefers-color-scheme)')?.conditions).toEqual([
+      { kind: 'not-none', featureName: 'prefers-color-scheme' },
+    ]);
+    expect(parseMediaQuery('(hover)')?.conditions).toEqual([
+      { kind: 'not-none', featureName: 'hover' },
+    ]);
     expect(parseMediaQuery('(-webkit-device-pixel-ratio)')?.conditions).toEqual(
       [{ kind: 'non-zero', source: 'devicePixelRatio' }],
     );
     expect(parseMediaQuery('(min-width)')).toBeNull();
-    expect(parseMediaQuery('(hover)')).toBeNull();
+    expect(parseMediaQuery('(prefers-reduced-motion)')).toBeNull();
   });
 
   it('should reject non-CSS whitespace anywhere in a condition', () => {
@@ -338,13 +356,17 @@ describe('parseMediaQuery', () => {
   });
 
   it('should let the rest of a negated query decide when a condition is unknown', () => {
-    expect(parseMediaQuery('not print and (hover: hover)')).toEqual({
+    expect(
+      parseMediaQuery('not print and (prefers-reduced-motion: reduce)'),
+    ).toEqual({
       isNegated: true,
       matchesMediaType: false,
       conditions: [],
     });
     expect(
-      parseMediaQuery('not all and (hover: hover) and (min-width: 600px)'),
+      parseMediaQuery(
+        'not all and (prefers-reduced-motion: reduce) and (min-width: 600px)',
+      ),
     ).toEqual({
       isNegated: true,
       matchesMediaType: true,
@@ -357,7 +379,7 @@ describe('parseMediaQuery', () => {
         },
       ],
     });
-    expect(parseMediaQuery('not (hover: hover)')).toEqual({
+    expect(parseMediaQuery('not (prefers-reduced-motion: reduce)')).toEqual({
       isNegated: true,
       matchesMediaType: true,
       conditions: [],

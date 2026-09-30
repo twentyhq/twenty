@@ -17,6 +17,8 @@ const COMPARE_BY_OPERATOR: Record<
     environmentValue === conditionValue,
 };
 
+const NONE_KEYWORD_VALUE = 'none';
+
 type EvaluateParsedMediaQueryConditionInput = {
   condition: ParsedMediaQueryCondition;
   environment: MediaQueryEnvironment;
@@ -28,6 +30,14 @@ export const evaluateParsedMediaQueryCondition = ({
 }: EvaluateParsedMediaQueryConditionInput): boolean => {
   if (condition.kind === 'non-zero') {
     return environment[condition.source] !== 0;
+  }
+
+  if (condition.kind === 'not-none') {
+    return (
+      MEDIA_QUERY_KEYWORD_FEATURES.get(condition.featureName)?.readValue(
+        environment,
+      ) !== NONE_KEYWORD_VALUE
+    );
   }
 
   if (condition.kind === 'keyword') {

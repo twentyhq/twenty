@@ -21,4 +21,18 @@ export const MEDIA_QUERY_KEYWORD_FEATURES = new Map<
           : 'landscape',
     },
   ],
+  [
+    'hover',
+    {
+      values: new Set(['none', 'hover']),
+      readValue: (environment) => environment.hover,
+    },
+  ],
+  [
+    'pointer',
+    {
+      values: new Set(['none', 'coarse', 'fine']),
+      readValue: (environment) => environment.pointer,
+    },
+  ],
 ]);

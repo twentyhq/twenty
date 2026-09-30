@@ -1,24 +1,5 @@
+import { stubWindowMatchMedia } from '@/testing/stubWindowMatchMedia';
 import { createDevicePixelRatioChangeObserver } from '../createDevicePixelRatioChangeObserver';
-
-const setupMatchMedia = () => {
-  const createdMediaQueryLists: EventTarget[] = [];
-
-  const matchMedia = jest.fn((media: string) => {
-    const mediaQueryList = Object.assign(new EventTarget(), { media });
-
-    createdMediaQueryLists.push(mediaQueryList);
-
-    return mediaQueryList;
-  });
-
-  Object.defineProperty(window, 'matchMedia', {
-    value: matchMedia,
-    configurable: true,
-    writable: true,
-  });
-
-  return { matchMedia, createdMediaQueryLists };
-};
 
 const setDevicePixelRatio = (devicePixelRatio: number) => {
   Object.defineProperty(window, 'devicePixelRatio', {
@@ -38,7 +19,7 @@ describe('createDevicePixelRatioChangeObserver', () => {
   });
 
   it('should watch a resolution query for the current device pixel ratio', () => {
-    const { matchMedia } = setupMatchMedia();
+    const { matchMedia } = stubWindowMatchMedia();
     setDevicePixelRatio(2);
 
     createDevicePixelRatioChangeObserver(jest.fn()).observe();
@@ -47,7 +28,7 @@ describe('createDevicePixelRatioChangeObserver', () => {
   });
 
   it('should notify once per change and re-arm for the new ratio', () => {
-    const { matchMedia, createdMediaQueryLists } = setupMatchMedia();
+    const { matchMedia, createdMediaQueryLists } = stubWindowMatchMedia();
     const onDevicePixelRatioChange = jest.fn();
     setDevicePixelRatio(2);
 
@@ -71,7 +52,7 @@ describe('createDevicePixelRatioChangeObserver', () => {
   });
 
   it('should stop notifying once disconnected', () => {
-    const { createdMediaQueryLists } = setupMatchMedia();
+    const { createdMediaQueryLists } = stubWindowMatchMedia();
     const onDevicePixelRatioChange = jest.fn();
     const devicePixelRatioChangeObserver = createDevicePixelRatioChangeObserver(
       onDevicePixelRatioChange,

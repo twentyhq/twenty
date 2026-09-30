@@ -64,7 +64,7 @@ const MatchMediaComponent = () => {
     window.matchMedia(`(min-width: ${ownWidth + 1}px)`).matches,
   );
   const unknownQueryMatches = String(
-    window.matchMedia('(hover: hover)').matches,
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches,
   );
   const emptyQueryInListMatches = String(
     window.matchMedia(`(min-width: ${ownWidth + 1}px),`).matches,

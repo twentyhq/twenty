@@ -53,7 +53,7 @@ No stories are skipped or marked as expected-to-fail by the runner.
 | Menu, Select | Opening fails on viewport data and/or missing `nativeEvent.pointerType`. |
 | Switch | Activation attempts to construct an unavailable `PointerEvent`. |
 | Tooltip | `TooltipReact` opens on hover but remains open after Escape because React drops the handlers Base UI adds through `React.cloneElement`. |
-| Responsive hooks | The sandbox `window.matchMedia` answers for the widget's own box, so `useIsMobile` follows the widget width rather than the browser viewport: a widget 768px wide or narrower gets the mobile layout, and Button drops its hotkey hint, on any screen. `useIsTouchDevice` stays `false` because `hover` and `pointer` are not sandbox media features. The fixture asserts both at a 1024px and a 400px widget width. |
+| Responsive hooks | The sandbox `window.matchMedia` answers for the widget's own box, so `useIsMobile` follows the widget width rather than the browser viewport: a widget 768px wide or narrower gets the mobile layout, and Button drops its hotkey hint, on any screen. `useIsTouchDevice` follows the primary input of the host device, so it is `false` under the desktop Chromium that runs these stories. The fixture asserts both at a 1024px and a 400px widget width. |
 
 The worker DOM now provides `Element.matches`, `closest`, `querySelector` backed
 by `css-select`, and property accessors for boolean ARIA attributes so React and
