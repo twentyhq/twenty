@@ -1,4 +1,3 @@
-import { currentUserState } from '@/auth/states/currentUserState';
 import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadedState';
 import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
 import { isGoogleCalendarEnabledState } from '@/client-config/states/isGoogleCalendarEnabledState';
@@ -13,7 +12,7 @@ import { SyncEmailsAutoSkipEffect } from '@/onboarding/effect-components/SyncEma
 import { useOnboardingStepEnterHotkey } from '@/onboarding/hooks/useOnboardingStepEnterHotkey';
 import { useSetOnboardingStepFreeCredits } from '@/onboarding/hooks/useSetOnboardingStepFreeCredits';
 import { useSkipSyncEmailOnboardingStep } from '@/onboarding/hooks/useSkipSyncEmailOnboardingStep';
-import { onboardingRewardCreditsByStepSelector } from '@/onboarding/states/selectors/onboardingRewardCreditsByStepSelector';
+import { onboardingCreditsProgressSelector } from '@/onboarding/states/selectors/onboardingCreditsProgressSelector';
 import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTriggerApiOAuth';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { PageFocusId } from '@/types/PageFocusId';
@@ -33,9 +32,9 @@ import {
 export const SyncEmails = () => {
   const { t } = useLingui();
   const { openDialog } = useDialog();
-  const { importContacts: importContactsCreditsReward } = useAtomStateValue(
-    onboardingRewardCreditsByStepSelector,
-  );
+  const importContactsCreditsReward =
+    useAtomStateValue(onboardingCreditsProgressSelector)?.rewardCreditsByStep
+      .importContacts ?? 0;
   const { triggerApisOAuth } = useTriggerApisOAuth();
   const skipSyncEmailOnboardingStep = useSkipSyncEmailOnboardingStep();
   const setOnboardingStepFreeCredits = useSetOnboardingStepFreeCredits();
@@ -92,12 +91,14 @@ export const SyncEmails = () => {
       isEnabled: isMicrosoftProviderEnabled,
       label: t`Continue with Microsoft`,
       Icon: IconMicrosoft,
+      creditsReward: importContactsCreditsReward,
       onClick: () => connectWithProvider(ConnectedAccountProvider.MICROSOFT),
     },
     {
       isEnabled: isGoogleProviderEnabled,
       label: t`Continue with Google`,
       Icon: IconGoogle,
+      creditsReward: importContactsCreditsReward,
       onClick: () => connectWithProvider(ConnectedAccountProvider.GOOGLE),
     },
   ].filter((providerAction) => providerAction.isEnabled);
@@ -137,11 +138,7 @@ export const SyncEmails = () => {
 
   return (
     <>
-      <ImportContacts
-        providerActions={providerActions}
-        onSkip={handleSkip}
-        creditsReward={importContactsCreditsReward}
-      />
+      <ImportContacts providerActions={providerActions} onSkip={handleSkip} />
       <OnboardingSkipDialog
         dialogId={ONBOARDING_SKIP_DIALOG_IDS.syncEmails}
         visual={
@@ -157,7 +154,6 @@ export const SyncEmails = () => {
         title={t`Start with your whole network`}
         description={t`Twenty adds the people you email and meet, and keeps them up to date without manual data entry.`}
         actions={providerActions}
-        creditsReward={importContactsCreditsReward}
         onSkip={() => void handleSkipConfirm()}
       />
     </>

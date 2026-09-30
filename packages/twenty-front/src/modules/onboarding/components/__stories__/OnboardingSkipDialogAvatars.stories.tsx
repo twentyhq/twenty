@@ -38,7 +38,9 @@ export const WithEmptySeats: Story = {
     emptySeatsCount: 2,
   },
   play: async ({ canvasElement }) => {
-    await expect(await within(canvasElement).findByText('A')).toBeVisible();
+    const aliceAvatar = await within(canvasElement).findByText('A');
+
+    await waitFor(() => expect(aliceAvatar).toBeVisible());
     await expect(
       canvasElement.querySelectorAll('.tabler-icon-plus'),
     ).toHaveLength(2);

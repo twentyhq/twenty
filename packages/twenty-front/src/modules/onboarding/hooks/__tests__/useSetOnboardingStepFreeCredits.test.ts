@@ -4,9 +4,11 @@ import { createElement } from 'react';
 
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { onboardingConfigState } from '@/client-config/states/onboardingConfigState';
 import { ONBOARDING_FREE_CREDITS_DEFAULT_VALUE } from '@/onboarding/constants/OnboardingFreeCreditsDefaultValue';
 import { useSetOnboardingStepFreeCredits } from '@/onboarding/hooks/useSetOnboardingStepFreeCredits';
 import { onboardingFreeCreditsFamilyState } from '@/onboarding/states/onboardingFreeCreditsFamilyState';
+import { onboardingCreditsProgressSelector } from '@/onboarding/states/selectors/onboardingCreditsProgressSelector';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import {
   jotaiStore,
@@ -20,12 +22,6 @@ import {
 
 const Wrapper = ({ children }: { children: React.ReactNode }) =>
   createElement(JotaiProvider, { store: jotaiStore }, children);
-
-const setOnboardingStatus = (onboardingStatus: OnboardingStatus) =>
-  jotaiStore.set(currentUserState.atom, {
-    ...mockedUserData,
-    onboardingStatus,
-  });
 
 const renderSetStepFreeCreditsHook = () =>
   renderHook(
@@ -71,7 +67,6 @@ describe('useSetOnboardingStepFreeCredits', () => {
   });
 
   it('should count quiet credits as already seen', () => {
-    setOnboardingStatus(OnboardingStatus.PLAN_REQUIRED);
     jotaiStore.set(
       onboardingFreeCreditsFamilyState.atomFamily(mockCurrentWorkspace.id),
       {
@@ -100,7 +95,6 @@ describe('useSetOnboardingStepFreeCredits', () => {
   });
 
   it('should keep unseen credits when a quiet reward is removed', () => {
-    setOnboardingStatus(OnboardingStatus.PLAN_REQUIRED);
     jotaiStore.set(
       onboardingFreeCreditsFamilyState.atomFamily(mockCurrentWorkspace.id),
       {
@@ -134,31 +128,6 @@ describe('useSetOnboardingStepFreeCredits', () => {
     expect(result.current.onboardingFreeCredits).toEqual({
       ...ONBOARDING_FREE_CREDITS_DEFAULT_VALUE,
       importContacts: 2,
-      seenCredits: 0,
-    });
-  });
-
-  it('should not count quiet credits as seen before their step counts', () => {
-    setOnboardingStatus(OnboardingStatus.SYNC_EMAIL);
-    jotaiStore.set(
-      onboardingFreeCreditsFamilyState.atomFamily(mockCurrentWorkspace.id),
-      {
-        ...ONBOARDING_FREE_CREDITS_DEFAULT_VALUE,
-        seenCredits: 0,
-      },
-    );
-
-    const result = renderSetStepFreeCreditsHook();
-
-    act(() => {
-      result.current.setOnboardingStepFreeCredits('upgradeTrial', 2, {
-        isQuiet: true,
-      });
-    });
-
-    expect(result.current.onboardingFreeCredits).toEqual({
-      ...ONBOARDING_FREE_CREDITS_DEFAULT_VALUE,
-      upgradeTrial: 2,
       seenCredits: 0,
     });
   });
@@ -236,5 +205,40 @@ describe('useSetOnboardingStepFreeCredits', () => {
       importContacts: 2,
       seenCredits: 2,
     });
+  });
+
+  it('should announce a new gain after credits counted but never stored were seen', () => {
+    jotaiStore.set(onboardingConfigState.atom, {
+      importContactsCreditsReward: 2,
+      inviteTeamCreditsRewardPerUser: 0.5,
+      installAppsCreditsReward: 1,
+      createProfileCreditsReward: 0.5,
+      upgradeCreditsReward: 0.5,
+      inviteTeamMaxInvites: 4,
+    });
+    jotaiStore.set(currentUserState.atom, {
+      ...mockedUserData,
+      isWorkspaceCreator: true,
+      onboardingStatus: OnboardingStatus.APPS_INSTALLATION,
+    });
+    jotaiStore.set(
+      onboardingFreeCreditsFamilyState.atomFamily(mockCurrentWorkspace.id),
+      {
+        ...ONBOARDING_FREE_CREDITS_DEFAULT_VALUE,
+        importContacts: 2,
+        seenCredits: 2.5,
+      },
+    );
+
+    const result = renderSetStepFreeCreditsHook();
+
+    act(() => {
+      result.current.setOnboardingStepFreeCredits('installApps', 1);
+    });
+
+    expect(
+      jotaiStore.get(onboardingCreditsProgressSelector.atom)
+        ?.newlyEarnedCredits,
+    ).toBe(1);
   });
 });

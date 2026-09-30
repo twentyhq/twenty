@@ -49,13 +49,11 @@ const StyledButtons = styled.div`
 type ImportContactsProps = {
   providerActions: OnboardingRewardAction[];
   onSkip?: () => void;
-  creditsReward?: number;
 };
 
 export const ImportContacts = ({
   providerActions,
   onSkip,
-  creditsReward = 0,
 }: ImportContactsProps) => {
   const { t } = useLingui();
 
@@ -87,7 +85,8 @@ export const ImportContacts = ({
                 key={providerAction.label}
                 label={providerAction.label}
                 Icon={providerAction.Icon}
-                creditsReward={creditsReward}
+                creditsReward={providerAction.creditsReward}
+                isRewardPerItem={providerAction.isRewardPerItem}
                 onClick={providerAction.onClick}
               />
             ))}

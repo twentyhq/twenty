@@ -3,7 +3,7 @@ import { OnboardingSkipDialog } from '@/onboarding/components/OnboardingSkipDial
 import { OnboardingSkipDialogAvatars } from '@/onboarding/components/OnboardingSkipDialogAvatars';
 import { ONBOARDING_INVITE_TEAM_EMPTY_SEATS_COUNT } from '@/onboarding/constants/OnboardingInviteTeamEmptySeatsCount';
 import { ONBOARDING_SKIP_DIALOG_IDS } from '@/onboarding/constants/OnboardingSkipDialogIds';
-import { onboardingInviteTeamCreditsRewardSelector } from '@/onboarding/states/selectors/onboardingInviteTeamCreditsRewardSelector';
+import { onboardingCreditsProgressSelector } from '@/onboarding/states/selectors/onboardingCreditsProgressSelector';
 import { onboardingInviteTeamValidEmailsSelector } from '@/onboarding/states/selectors/onboardingInviteTeamValidEmailsSelector';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { plural } from '@lingui/core/macro';
@@ -35,9 +35,14 @@ export const OnboardingInviteTeamSkipDialog = ({
   const onboardingInviteTeamValidEmails = useAtomStateValue(
     onboardingInviteTeamValidEmailsSelector,
   );
-  const onboardingInviteTeamCreditsReward = useAtomStateValue(
-    onboardingInviteTeamCreditsRewardSelector,
+  const onboardingCreditsProgress = useAtomStateValue(
+    onboardingCreditsProgressSelector,
   );
+  const inviteTeamButtonReward =
+    onboardingCreditsProgress?.inviteTeamButtonReward ?? {
+      creditsReward: 0,
+      isRewardPerItem: false,
+    };
 
   const hasInviteEmails = isNonEmptyArray(onboardingInviteTeamValidEmails);
 
@@ -88,12 +93,15 @@ export const OnboardingInviteTeamSkipDialog = ({
                 one: 'Send invite',
                 other: 'Send # invites',
               }),
+              ...inviteTeamButtonReward,
               onClick: onInvite,
             }
-          : { label: t`Add teammates`, onClick: () => {} },
+          : {
+              label: t`Add teammates`,
+              ...inviteTeamButtonReward,
+              onClick: () => {},
+            },
       ]}
-      creditsReward={onboardingInviteTeamCreditsReward}
-      isRewardPerItem={!hasInviteEmails}
       finalFocus={finalFocus}
       onSkip={onSkip}
     />

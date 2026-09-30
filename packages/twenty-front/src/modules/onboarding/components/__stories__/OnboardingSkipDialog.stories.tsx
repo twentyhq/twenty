@@ -63,15 +63,16 @@ const meta: Meta<typeof OnboardingSkipDialogExample> = {
       {
         label: 'Continue with Microsoft',
         Icon: IconMicrosoft,
+        creditsReward: 2,
         onClick: fn(),
       },
       {
         label: 'Continue with Google',
         Icon: IconGoogle,
+        creditsReward: 2,
         onClick: fn(),
       },
     ],
-    creditsReward: 2,
     onSkip: fn(),
   },
 };
@@ -92,7 +93,16 @@ export const Default: Story = {
 };
 
 export const WithoutCreditsReward: Story = {
-  args: { creditsReward: 0 },
+  args: {
+    actions: [
+      {
+        label: 'Continue with Google',
+        Icon: IconGoogle,
+        creditsReward: 0,
+        onClick: fn(),
+      },
+    ],
+  },
   play: async ({ canvasElement }) => {
     const dialog = await openSkipDialog(canvasElement);
 
@@ -117,9 +127,14 @@ export const SkipAnyway: Story = {
 
 export const PerItemCreditsReward: Story = {
   args: {
-    actions: [{ label: 'Add teammates', onClick: fn() }],
-    creditsReward: 0.5,
-    isRewardPerItem: true,
+    actions: [
+      {
+        label: 'Add teammates',
+        creditsReward: 0.5,
+        isRewardPerItem: true,
+        onClick: fn(),
+      },
+    ],
   },
   play: async ({ canvasElement }) => {
     const dialog = await openSkipDialog(canvasElement);

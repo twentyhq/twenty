@@ -6,7 +6,12 @@ import { StyledOnboardingStepPage } from '@/onboarding/components/StyledOnboardi
 import { StyledOnboardingStepSubtitle } from '@/onboarding/components/StyledOnboardingStepSubtitle';
 import { StyledOnboardingStepTitle } from '@/onboarding/components/StyledOnboardingStepTitle';
 import { ONBOARDING_CONTENT_BLOCK_WIDTH } from '@/onboarding/constants/OnboardingContentBlockWidth';
+import { useInstallOnboardingApps } from '@/onboarding/hooks/useInstallOnboardingApps';
+import { useOnboardingStepEnterHotkey } from '@/onboarding/hooks/useOnboardingStepEnterHotkey';
+import { onboardingCreditsProgressSelector } from '@/onboarding/states/selectors/onboardingCreditsProgressSelector';
 import { type OnboardingInstallableApp } from '@/onboarding/types/OnboardingInstallableApp';
+import { PageFocusId } from '@/types/PageFocusId';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { plural } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
@@ -114,25 +119,30 @@ const StyledInstallButton = styled.div`
 
 type InstallAppsContentProps = {
   apps: (OnboardingInstallableApp & { logoUrl: string | null })[];
-  selectedUniversalIdentifiers: string[];
-  isCompleting: boolean;
-  creditsReward: number;
-  onToggleApp: (universalIdentifier: string) => void;
-  onInstall: () => void;
-  onSkip: () => void;
 };
 
-export const InstallAppsContent = ({
-  apps,
-  selectedUniversalIdentifiers,
-  isCompleting,
-  creditsReward,
-  onToggleApp,
-  onInstall,
-  onSkip,
-}: InstallAppsContentProps) => {
+export const InstallAppsContent = ({ apps }: InstallAppsContentProps) => {
   const { t } = useLingui();
   const theme = useTheme();
+  const {
+    selectedUniversalIdentifiers,
+    isCompleting,
+    toggleApp,
+    installSelectedAppsAndContinue,
+    skip,
+  } = useInstallOnboardingApps(apps.map((app) => app.universalIdentifier));
+  const onboardingCreditsProgress = useAtomStateValue(
+    onboardingCreditsProgressSelector,
+  );
+  const creditsReward =
+    onboardingCreditsProgress?.rewardCreditsByStep.installApps ?? 0;
+
+  useOnboardingStepEnterHotkey({
+    focusId: PageFocusId.InstallApps,
+    onEnter: () => {
+      void installSelectedAppsAndContinue();
+    },
+  });
 
   const hasApps = isNonEmptyArray(apps);
   const hasSelectedApps = isNonEmptyArray(selectedUniversalIdentifiers);
@@ -189,7 +199,7 @@ export const InstallAppsContent = ({
                   type="button"
                   aria-pressed={isSelected}
                   disabled={isCompleting}
-                  onClick={() => onToggleApp(app.universalIdentifier)}
+                  onClick={() => toggleApp(app.universalIdentifier)}
                 >
                   <StyledTileContent>
                     <Avatar
@@ -224,11 +234,11 @@ export const InstallAppsContent = ({
                 label={getInstallLabel()}
                 creditsReward={hasSelectedApps ? creditsReward : 0}
                 disabled={isCompleting}
-                onClick={onInstall}
+                onClick={installSelectedAppsAndContinue}
               />
             </StyledInstallButton>
           )}
-          <OnboardingSkipButton onClick={onSkip} disabled={isCompleting} />
+          <OnboardingSkipButton onClick={skip} disabled={isCompleting} />
         </StyledFooter>
       </OnboardingStepAnimatedItem>
     </StyledOnboardingStepPage>

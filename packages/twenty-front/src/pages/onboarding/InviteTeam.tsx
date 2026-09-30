@@ -10,8 +10,7 @@ import { ONBOARDING_CONTENT_BLOCK_WIDTH } from '@/onboarding/constants/Onboardin
 import { ONBOARDING_MOTION_SLIDE_OFFSET } from '@/onboarding/constants/OnboardingMotionSlideOffset';
 import { useInviteTeam } from '@/onboarding/hooks/useInviteTeam';
 import { useOnboardingMotionTransition } from '@/onboarding/hooks/useOnboardingMotionTransition';
-import { onboardingInviteTeamCreditsRewardSelector } from '@/onboarding/states/selectors/onboardingInviteTeamCreditsRewardSelector';
-import { onboardingInviteTeamValidEmailsSelector } from '@/onboarding/states/selectors/onboardingInviteTeamValidEmailsSelector';
+import { onboardingCreditsProgressSelector } from '@/onboarding/states/selectors/onboardingCreditsProgressSelector';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
@@ -19,7 +18,6 @@ import { useLingui } from '@lingui/react/macro';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useRef } from 'react';
 import { Controller } from 'react-hook-form';
-import { isNonEmptyArray } from 'twenty-shared/utils';
 import { IconX } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 
@@ -55,14 +53,16 @@ export const InviteTeam = () => {
     isSubmitting,
     isNavigating,
   } = useInviteTeam();
-  const transition = useOnboardingMotionTransition();
+  const onboardingCreditsProgress = useAtomStateValue(
+    onboardingCreditsProgressSelector,
+  );
+  const inviteTeamButtonReward =
+    onboardingCreditsProgress?.inviteTeamButtonReward ?? {
+      creditsReward: 0,
+      isRewardPerItem: false,
+    };
   const emailInputToFocusRef = useRef<HTMLInputElement>(null);
-  const onboardingInviteTeamValidEmails = useAtomStateValue(
-    onboardingInviteTeamValidEmailsSelector,
-  );
-  const onboardingInviteTeamCreditsReward = useAtomStateValue(
-    onboardingInviteTeamCreditsRewardSelector,
-  );
+  const transition = useOnboardingMotionTransition();
 
   const canRemoveEmailField = fields.length > 1;
 
@@ -130,9 +130,9 @@ export const InviteTeam = () => {
         <StyledFooter>
           <OnboardingRewardMainButton
             label={t`Invite`}
-            creditsReward={onboardingInviteTeamCreditsReward}
-            isRewardPerItem={!isNonEmptyArray(onboardingInviteTeamValidEmails)}
-            disabled={!isValid || isSubmitting || isNavigating}
+            creditsReward={inviteTeamButtonReward.creditsReward}
+            isRewardPerItem={inviteTeamButtonReward.isRewardPerItem}
+            disabled={!isValid}
             isLoading={isSubmitting || isNavigating}
             onClick={handleInvite}
           />

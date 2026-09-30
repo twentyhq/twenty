@@ -6,6 +6,7 @@ import { useOnboardingStepEnterHotkey } from '@/onboarding/hooks/useOnboardingSt
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
 import { useSetOnboardingStepFreeCredits } from '@/onboarding/hooks/useSetOnboardingStepFreeCredits';
 import { onboardingInviteTeamEmailsDraftState } from '@/onboarding/states/onboardingInviteTeamEmailsDraftState';
+import { onboardingInviteTeamValidEmailsSelector } from '@/onboarding/states/selectors/onboardingInviteTeamValidEmailsSelector';
 import { getInviteTeamCreditsReward } from '@/onboarding/utils/getInviteTeamCreditsReward';
 import { getValidInviteEmails } from '@/onboarding/utils/getValidInviteEmails';
 import { waitForCompanyEnrichmentSettlement } from '@/onboarding/utils/waitForCompanyEnrichmentSettlement';
@@ -13,7 +14,6 @@ import { PageFocusId } from '@/types/PageFocusId';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useCreateWorkspaceInvitation } from '@/workspace-invitation/hooks/useCreateWorkspaceInvitation';
-import { sanitizeEmailList } from '@/workspace/utils/sanitizeEmailList';
 import { useQuery } from '@apollo/client/react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useLingui } from '@lingui/react/macro';
@@ -37,7 +37,6 @@ export const useInviteTeam = () => {
   const { sendInvitation } = useCreateWorkspaceInvitation();
   const setNextOnboardingStatus = useSetNextOnboardingStatus();
   const setOnboardingStepFreeCredits = useSetOnboardingStepFreeCredits();
-  const onboardingConfig = useAtomStateValue(onboardingConfigState);
   const isBookCallOnboardingStepEnabled = useAtomStateValue(
     isBookCallOnboardingStepEnabledState,
   );
@@ -49,20 +48,8 @@ export const useInviteTeam = () => {
 
   const [isNavigating, setIsNavigating] = useState(false);
   const [emailIndexToFocus, setEmailIndexToFocus] = useState(0);
-  const onboardingInviteTeamEmailsDraft = useAtomStateValue(
-    onboardingInviteTeamEmailsDraftState,
-  );
-
-  const setInviteTeamFreeCredits = useCallback(
-    (invitedTeammatesCount: number) =>
-      setOnboardingStepFreeCredits(
-        'inviteTeam',
-        getInviteTeamCreditsReward({
-          invitedTeammatesCount,
-          onboardingConfig,
-        }),
-      ),
-    [onboardingConfig, setOnboardingStepFreeCredits],
+  const [initialEmailsDraft] = useState(() =>
+    store.get(onboardingInviteTeamEmailsDraftState.atom),
   );
 
   const {
@@ -77,8 +64,8 @@ export const useInviteTeam = () => {
   } = useForm<InviteTeamFormInput>({
     mode: 'onChange',
     defaultValues: {
-      emails: isDefined(onboardingInviteTeamEmailsDraft)
-        ? onboardingInviteTeamEmailsDraft.map((email) => ({ email }))
+      emails: isDefined(initialEmailsDraft)
+        ? initialEmailsDraft.map((email) => ({ email }))
         : [{ email: '' }, { email: '' }, { email: '' }],
     },
     resolver: zodResolver(validationSchema),
@@ -90,7 +77,7 @@ export const useInviteTeam = () => {
   });
 
   const [hasPrefilledSuggestions, setHasPrefilledSuggestions] = useState(
-    isDefined(onboardingInviteTeamEmailsDraft),
+    isDefined(initialEmailsDraft),
   );
 
   const { data: inviteSuggestionsData } = useQuery(
@@ -165,7 +152,7 @@ export const useInviteTeam = () => {
 
   const onSubmit: SubmitHandler<InviteTeamFormInput> = useCallback(
     async (data) => {
-      const emails = sanitizeEmailList(
+      const emails = getValidInviteEmails(
         data.emails.map((emailData) => emailData.email),
       );
 
@@ -189,7 +176,13 @@ export const useInviteTeam = () => {
           result.data?.sendInvitations.result.length ?? 0;
         const invitationErrors = result.data?.sendInvitations.errors ?? [];
 
-        setInviteTeamFreeCredits(sentInvitationsCount);
+        setOnboardingStepFreeCredits(
+          'inviteTeam',
+          getInviteTeamCreditsReward({
+            invitedTeammatesCount: sentInvitationsCount,
+            onboardingConfig: store.get(onboardingConfigState.atom),
+          }),
+        );
 
         if (
           sentInvitationsCount === 0 &&
@@ -231,7 +224,7 @@ export const useInviteTeam = () => {
       isCompanyEnrichmentEnabled,
       sendInvitation,
       setNextOnboardingStatus,
-      setInviteTeamFreeCredits,
+      setOnboardingStepFreeCredits,
       store,
       t,
     ],
@@ -257,11 +250,9 @@ export const useInviteTeam = () => {
       return;
     }
 
-    const hasInviteEmails = isNonEmptyArray(
-      getValidInviteEmails(getValues('emails').map(({ email }) => email)),
-    );
-
-    if (!hasInviteEmails) {
+    if (
+      !isNonEmptyArray(store.get(onboardingInviteTeamValidEmailsSelector.atom))
+    ) {
       void openSkipDialog();
       return;
     }

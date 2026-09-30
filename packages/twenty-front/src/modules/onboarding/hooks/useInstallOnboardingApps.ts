@@ -1,6 +1,6 @@
 import { useSetOnboardingStepFreeCredits } from '@/onboarding/hooks/useSetOnboardingStepFreeCredits';
 import { useTriggerInstallAppsOnboardingStep } from '@/onboarding/hooks/useTriggerInstallAppsOnboardingStep';
-import { onboardingRewardCreditsByStepSelector } from '@/onboarding/states/selectors/onboardingRewardCreditsByStepSelector';
+import { onboardingCreditsProgressSelector } from '@/onboarding/states/selectors/onboardingCreditsProgressSelector';
 import { useStore } from 'jotai';
 import { useState } from 'react';
 import { isNonEmptyArray } from 'twenty-shared/utils';
@@ -37,11 +37,14 @@ export const useInstallOnboardingApps = (
       return;
     }
     setIsCompleting(true);
+
+    const installAppsCreditsReward =
+      store.get(onboardingCreditsProgressSelector.atom)?.rewardCreditsByStep
+        .installApps ?? 0;
+
     setOnboardingStepFreeCredits(
       'installApps',
-      isNonEmptyArray(universalIdentifiers)
-        ? store.get(onboardingRewardCreditsByStepSelector.atom).installApps
-        : 0,
+      isNonEmptyArray(universalIdentifiers) ? installAppsCreditsReward : 0,
     );
 
     try {

@@ -34,8 +34,6 @@ type OnboardingSkipDialogProps = {
   title: string;
   description?: string;
   actions: OnboardingRewardAction[];
-  creditsReward: number;
-  isRewardPerItem?: boolean;
   finalFocus?: DialogPopupProps['finalFocus'];
   onSkip: () => void;
 };
@@ -46,8 +44,6 @@ export const OnboardingSkipDialog = ({
   title,
   description,
   actions,
-  creditsReward,
-  isRewardPerItem = false,
   finalFocus,
   onSkip,
 }: OnboardingSkipDialogProps) => {
@@ -94,8 +90,8 @@ export const OnboardingSkipDialog = ({
                 ref={index === 0 ? firstActionRef : undefined}
                 label={action.label}
                 Icon={action.Icon}
-                creditsReward={creditsReward}
-                isRewardPerItem={isRewardPerItem}
+                creditsReward={action.creditsReward}
+                isRewardPerItem={action.isRewardPerItem}
                 onClick={() => runAction(action)}
               />
             ))}

@@ -10,8 +10,6 @@ import { Loader } from 'twenty-ui/primitives/feedback';
 import { useTheme } from 'twenty-ui/theme';
 
 type OnboardingRewardMainButtonProps = OnboardingRewardAction & {
-  creditsReward: number;
-  isRewardPerItem?: boolean;
   disabled?: boolean;
   isLoading?: boolean;
   ref?: Ref<HTMLButtonElement>;
@@ -46,7 +44,7 @@ export const OnboardingRewardMainButton = ({
     <MainButton
       ref={ref}
       fullWidth
-      disabled={disabled}
+      disabled={disabled || isLoading}
       onClick={onClick}
       startIcon={getStartIcon()}
       endIcon={

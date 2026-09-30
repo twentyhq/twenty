@@ -21,7 +21,6 @@ import { mockCurrentWorkspace } from '~/testing/mock-data/users';
 const mockSendInvitation = jest.fn();
 const mockSetNextOnboardingStatus = jest.fn();
 const mockWaitForCompanyEnrichmentSettlement = jest.fn();
-const mockUseQuery = jest.fn();
 
 jest.mock('@/workspace-invitation/hooks/useCreateWorkspaceInvitation', () => ({
   useCreateWorkspaceInvitation: () => ({
@@ -39,7 +38,7 @@ jest.mock('@/onboarding/utils/waitForCompanyEnrichmentSettlement', () => ({
 }));
 
 jest.mock('@apollo/client/react', () => ({
-  useQuery: () => mockUseQuery(),
+  useQuery: () => ({ data: undefined, loading: false }),
 }));
 
 const mockEnqueueToast = jest.fn();
@@ -73,7 +72,6 @@ describe('useInviteTeam', () => {
     jest.clearAllMocks();
     mockSendInvitation.mockResolvedValue({});
     mockWaitForCompanyEnrichmentSettlement.mockResolvedValue(undefined);
-    mockUseQuery.mockReturnValue({ data: undefined, loading: false });
     jotaiStore.set(isBookCallOnboardingStepEnabledState.atom, true);
     jotaiStore.set(isCompanyEnrichmentEnabledState.atom, true);
   });
@@ -316,6 +314,38 @@ describe('useInviteTeam', () => {
     );
   });
 
+  it('should drop the invite credits on skip and keep the typed emails', async () => {
+    jotaiStore.set(onboardingInviteTeamEmailsDraftState.atom, [
+      'grace@example.com',
+      '',
+    ]);
+    jotaiStore.set(
+      onboardingFreeCreditsFamilyState.atomFamily(mockCurrentWorkspace.id),
+      {
+        ...jotaiStore.get(
+          onboardingFreeCreditsFamilyState.atomFamily(mockCurrentWorkspace.id),
+        ),
+        inviteTeam: 0.5,
+      },
+    );
+
+    const { result } = renderInviteTeam();
+
+    await act(async () => {
+      await result.current.handleSkip();
+    });
+
+    expect(
+      jotaiStore.get(
+        onboardingFreeCreditsFamilyState.atomFamily(mockCurrentWorkspace.id),
+      ).inviteTeam,
+    ).toBe(0);
+    expect(jotaiStore.get(onboardingInviteTeamEmailsDraftState.atom)).toEqual([
+      'grace@example.com',
+      '',
+    ]);
+  });
+
   it('should send the invitations once when inviting again while they are being sent', async () => {
     let resolveInvitation: (value: unknown) => void = () => {};
 
@@ -362,37 +392,5 @@ describe('useInviteTeam', () => {
     });
 
     expect(result.current.emailIndexToFocus).toBe(1);
-  });
-
-  it('should drop the invite credits on skip and keep the typed emails', async () => {
-    jotaiStore.set(onboardingInviteTeamEmailsDraftState.atom, [
-      'grace@example.com',
-      '',
-    ]);
-    jotaiStore.set(
-      onboardingFreeCreditsFamilyState.atomFamily(mockCurrentWorkspace.id),
-      {
-        ...jotaiStore.get(
-          onboardingFreeCreditsFamilyState.atomFamily(mockCurrentWorkspace.id),
-        ),
-        inviteTeam: 0.5,
-      },
-    );
-
-    const { result } = renderInviteTeam();
-
-    await act(async () => {
-      await result.current.handleSkip();
-    });
-
-    expect(
-      jotaiStore.get(
-        onboardingFreeCreditsFamilyState.atomFamily(mockCurrentWorkspace.id),
-      ).inviteTeam,
-    ).toBe(0);
-    expect(jotaiStore.get(onboardingInviteTeamEmailsDraftState.atom)).toEqual([
-      'grace@example.com',
-      '',
-    ]);
   });
 });

@@ -18,7 +18,8 @@ import { mockedOnboardingUserData } from '~/testing/mock-data/users';
 
 const CALL_RECORDER_UNIVERSAL_IDENTIFIER =
   '8da4b8b5-5edf-4880-b51f-ab6e679ec617';
-const ENRICHMENT_UNIVERSAL_IDENTIFIER = '4a1178c1-3535-4a47-b592-231d3216b36f';
+const PEOPLE_DATA_LABS_UNIVERSAL_IDENTIFIER =
+  '4a1178c1-3535-4a47-b592-231d3216b36f';
 const LAST_CONTACT_UNIVERSAL_IDENTIFIER =
   '66a504cc-0a75-410e-a43f-cdeae1db1522';
 
@@ -74,7 +75,10 @@ const meta: Meta<PageDecoratorArgs> = {
           CALL_RECORDER_UNIVERSAL_IDENTIFIER,
           'Call recorder',
         ),
-        buildMarketplaceApp(ENRICHMENT_UNIVERSAL_IDENTIFIER, 'Enrichment'),
+        buildMarketplaceApp(
+          PEOPLE_DATA_LABS_UNIVERSAL_IDENTIFIER,
+          'People Data Labs',
+        ),
         buildMarketplaceApp(LAST_CONTACT_UNIVERSAL_IDENTIFIER, 'Last contact'),
       ]),
     },
@@ -123,8 +127,8 @@ export const OnlyVettedApps: Story = {
           'Call recorder',
         ),
         buildMarketplaceApp(
-          ENRICHMENT_UNIVERSAL_IDENTIFIER,
-          'Enrichment',
+          PEOPLE_DATA_LABS_UNIVERSAL_IDENTIFIER,
+          'People Data Labs',
           false,
         ),
         buildMarketplaceApp(
@@ -163,7 +167,11 @@ export const MarketplaceUnavailable: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement.ownerDocument.body);
     await canvas.findByText('No apps are available to install right now');
-    expect(canvas.queryByText('Install')).toBeNull();
+    expect(
+      canvas.queryByRole('button', {
+        name: /^(Install|Continue without apps)/,
+      }),
+    ).toBeNull();
     await canvas.findByText('Skip');
   },
 };

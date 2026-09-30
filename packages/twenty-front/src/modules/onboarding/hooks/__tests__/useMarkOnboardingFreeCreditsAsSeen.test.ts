@@ -6,9 +6,11 @@ import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { onboardingConfigState } from '@/client-config/states/onboardingConfigState';
 import { ONBOARDING_FREE_CREDITS_DEFAULT_VALUE } from '@/onboarding/constants/OnboardingFreeCreditsDefaultValue';
-import { useOnboardingNewlyEarnedCredits } from '@/onboarding/hooks/useOnboardingNewlyEarnedCredits';
+import { useMarkOnboardingFreeCreditsAsSeen } from '@/onboarding/hooks/useMarkOnboardingFreeCreditsAsSeen';
 import { onboardingCreateProfileDraftState } from '@/onboarding/states/onboardingCreateProfileDraftState';
 import { onboardingFreeCreditsFamilyState } from '@/onboarding/states/onboardingFreeCreditsFamilyState';
+import { onboardingCreditsProgressSelector } from '@/onboarding/states/selectors/onboardingCreditsProgressSelector';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import {
   jotaiStore,
   resetJotaiStore,
@@ -29,11 +31,28 @@ const setOnboardingStatus = (onboardingStatus: OnboardingStatus) =>
     onboardingStatus,
   });
 
-describe('useOnboardingNewlyEarnedCredits', () => {
+const renderMarkCreditsAsSeenHook = () =>
+  renderHook(
+    () => ({
+      progress: useAtomStateValue(onboardingCreditsProgressSelector),
+      markCreditsAsSeen: useMarkOnboardingFreeCreditsAsSeen(),
+    }),
+    { wrapper: Wrapper },
+  ).result;
+
+describe('useMarkOnboardingFreeCreditsAsSeen', () => {
   beforeEach(() => {
     localStorage.clear();
     resetJotaiStore();
     jotaiStore.set(currentWorkspaceState.atom, mockCurrentWorkspace);
+    jotaiStore.set(onboardingConfigState.atom, {
+      importContactsCreditsReward: 2,
+      inviteTeamCreditsRewardPerUser: 0.5,
+      installAppsCreditsReward: 1,
+      createProfileCreditsReward: 0.5,
+      upgradeCreditsReward: 0.5,
+      inviteTeamMaxInvites: 4,
+    });
   });
 
   it('should hold the email reward back until the mailbox step is past', () => {
@@ -43,50 +62,55 @@ describe('useOnboardingNewlyEarnedCredits', () => {
       { ...ONBOARDING_FREE_CREDITS_DEFAULT_VALUE, importContacts: 2 },
     );
 
-    const { result } = renderHook(() => useOnboardingNewlyEarnedCredits(), {
-      wrapper: Wrapper,
-    });
+    const result = renderMarkCreditsAsSeenHook();
 
-    expect(result.current.newlyEarnedCredits).toBe(0);
+    expect(result.current.progress?.newlyEarnedCredits).toBe(0);
 
     act(() => {
       result.current.markCreditsAsSeen();
     });
 
-    expect(result.current.seenCredits).toBe(0);
+    expect(result.current.progress?.seenCredits).toBe(0);
 
     act(() => {
       setOnboardingStatus(OnboardingStatus.APPS_INSTALLATION);
     });
 
-    expect(result.current.newlyEarnedCredits).toBe(2);
+    expect(result.current.progress?.newlyEarnedCredits).toBe(2);
   });
 
-  it('should stop announcing the typed profile credits once they are seen', () => {
-    setOnboardingStatus(OnboardingStatus.PROFILE_CREATION);
-    jotaiStore.set(onboardingConfigState.atom, {
-      importContactsCreditsReward: 1,
-      inviteTeamCreditsRewardPerUser: 0.5,
-      installAppsCreditsReward: 0.5,
-      createProfileCreditsReward: 0.5,
-      upgradeCreditsReward: 2,
-      inviteTeamMaxInvites: 5,
-    });
-    jotaiStore.set(onboardingCreateProfileDraftState.atom, {
-      firstName: 'Tim',
-      lastName: 'Apple',
-    });
+  it('should mark the counted credits as seen', () => {
+    setOnboardingStatus(OnboardingStatus.APPS_INSTALLATION);
+    jotaiStore.set(
+      onboardingFreeCreditsFamilyState.atomFamily(mockCurrentWorkspace.id),
+      { ...ONBOARDING_FREE_CREDITS_DEFAULT_VALUE, importContacts: 2 },
+    );
 
-    const { result } = renderHook(() => useOnboardingNewlyEarnedCredits(), {
-      wrapper: Wrapper,
-    });
-
-    expect(result.current.newlyEarnedCredits).toBe(0.5);
+    const result = renderMarkCreditsAsSeenHook();
 
     act(() => {
       result.current.markCreditsAsSeen();
     });
 
-    expect(result.current.newlyEarnedCredits).toBe(0);
+    expect(result.current.progress?.seenCredits).toBe(2);
+    expect(result.current.progress?.newlyEarnedCredits).toBe(0);
+  });
+
+  it('should stop announcing the typed profile credits once they are seen', () => {
+    setOnboardingStatus(OnboardingStatus.PROFILE_CREATION);
+    jotaiStore.set(onboardingCreateProfileDraftState.atom, {
+      firstName: 'Tim',
+      lastName: 'Apple',
+    });
+
+    const result = renderMarkCreditsAsSeenHook();
+
+    expect(result.current.progress?.newlyEarnedCredits).toBe(0.5);
+
+    act(() => {
+      result.current.markCreditsAsSeen();
+    });
+
+    expect(result.current.progress?.newlyEarnedCredits).toBe(0);
   });
 });

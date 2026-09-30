@@ -1,11 +1,10 @@
-import { currentUserState } from '@/auth/states/currentUserState';
+import { ONBOARDING_CREDITS_STEPS } from '@/onboarding/constants/OnboardingCreditsSteps';
 import { useSetCurrentWorkspaceOnboardingFreeCredits } from '@/onboarding/hooks/useSetCurrentWorkspaceOnboardingFreeCredits';
+import { onboardingCreditsProgressSelector } from '@/onboarding/states/selectors/onboardingCreditsProgressSelector';
 import { type OnboardingCreditsStep } from '@/onboarding/types/OnboardingCreditsStep';
-import { type OnboardingFreeCredits } from '@/onboarding/types/OnboardingFreeCredits';
-import { getOnboardingCountedFreeCredits } from '@/onboarding/utils/getOnboardingCountedFreeCredits';
-import { getOnboardingEarnedCredits } from '@/onboarding/utils/getOnboardingEarnedCredits';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
 type SetOnboardingStepFreeCreditsOptions = {
   isQuiet?: boolean;
@@ -21,34 +20,31 @@ export const useSetOnboardingStepFreeCredits = () => {
       step: OnboardingCreditsStep,
       credits: number,
       { isQuiet = false }: SetOnboardingStepFreeCreditsOptions = {},
-    ) =>
+    ) => {
+      const earnedCredits = store.get(
+        onboardingCreditsProgressSelector.atom,
+      )?.earnedCredits;
+
       setOnboardingFreeCredits((current) => {
-        const onboardingStatus = store.get(
-          currentUserState.atom,
-        )?.onboardingStatus;
-        const getCountedEarnedCredits = (
-          onboardingFreeCredits: OnboardingFreeCredits,
-        ) =>
-          getOnboardingEarnedCredits(
-            getOnboardingCountedFreeCredits({
-              onboardingFreeCredits,
-              onboardingStatus,
-            }),
-          );
         const onboardingFreeCredits = { ...current, [step]: credits };
-        const quietCreditsChange = isQuiet
-          ? getCountedEarnedCredits(onboardingFreeCredits) -
-            getCountedEarnedCredits(current)
-          : 0;
+        const quietCreditsChange = isQuiet ? credits - current[step] : 0;
+        const storedCredits = ONBOARDING_CREDITS_STEPS.reduce(
+          (total, creditsStep) => total + onboardingFreeCredits[creditsStep],
+          0,
+        );
+        const maxSeenCredits = isDefined(earnedCredits)
+          ? Math.min(storedCredits, earnedCredits + quietCreditsChange)
+          : storedCredits;
 
         return {
           ...onboardingFreeCredits,
           seenCredits: Math.min(
             Math.max(0, current.seenCredits + quietCreditsChange),
-            getOnboardingEarnedCredits(onboardingFreeCredits),
+            maxSeenCredits,
           ),
         };
-      }),
+      });
+    },
     [setOnboardingFreeCredits, store],
   );
 };
