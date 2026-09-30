@@ -656,17 +656,13 @@ export class LogicFunctionExecutorService {
     // workspace's credits for the execution itself. Explicit chargeCredits
     // calls and AI token usage from within the function are billed separately
     // and stay untouched.
-    const {
-      invocationCreditsMicro,
-      durationCreditsMicro,
-      billedInvocationCount,
-      billedDurationMs,
-    } = computeLogicFunctionExecutionCreditsMicro({
-      durationMs: result.billedDurationMs,
-      isBillingExempt: isBillingExemptApplication(
-        flatApplication.universalIdentifier,
-      ),
-    });
+    const { invocationCreditsMicro, durationCreditsMicro, billedDurationMs } =
+      computeLogicFunctionExecutionCreditsMicro({
+        durationMs: result.billedDurationMs,
+        isBillingExempt: isBillingExemptApplication(
+          flatApplication.universalIdentifier,
+        ),
+      });
 
     const totalCreditsMicro = invocationCreditsMicro + durationCreditsMicro;
 
@@ -675,25 +671,21 @@ export class LogicFunctionExecutorService {
       applicationId: flatApplication.id,
     };
 
-    if (totalCreditsMicro > 0) {
-      await this.usageLimitQuotaService.consumeQuota({
-        workspaceId,
-        resourceType: UsageResourceType.LOGIC_FUNCTION,
-        operationType: UsageOperationType.CODE_EXECUTION,
-        spenders,
-        cost: {
-          creditsUsedMicro: totalCreditsMicro,
-          quantity: billedInvocationCount,
-        },
-      });
-    }
+    // Consumed even at zero credits: an exempt run still counts toward run-count limits.
+    await this.usageLimitQuotaService.consumeQuota({
+      workspaceId,
+      resourceType: UsageResourceType.LOGIC_FUNCTION,
+      operationType: UsageOperationType.CODE_EXECUTION,
+      spenders,
+      cost: { creditsUsedMicro: totalCreditsMicro, quantity: 1 },
+    });
 
     await this.usageRecorderService.record(workspaceId, [
       {
         resourceType: UsageResourceType.LOGIC_FUNCTION,
         operationType: UsageOperationType.CODE_EXECUTION,
         creditsUsedMicro: invocationCreditsMicro,
-        quantity: billedInvocationCount,
+        quantity: 1,
         unit: UsageUnit.INVOCATION,
         resourceId: flatLogicFunction.id,
         spenders,

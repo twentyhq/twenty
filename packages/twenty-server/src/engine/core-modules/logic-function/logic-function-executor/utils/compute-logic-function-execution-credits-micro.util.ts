@@ -12,14 +12,12 @@ export const computeLogicFunctionExecutionCreditsMicro = ({
 }): {
   invocationCreditsMicro: number;
   durationCreditsMicro: number;
-  billedInvocationCount: number;
   billedDurationMs: number;
 } => {
   if (isBillingExempt) {
     return {
       invocationCreditsMicro: 0,
       durationCreditsMicro: 0,
-      billedInvocationCount: 0,
       billedDurationMs: 0,
     };
   }
@@ -31,7 +29,6 @@ export const computeLogicFunctionExecutionCreditsMicro = ({
     durationCreditsMicro: Math.floor(
       billedDurationMs * LOGIC_FUNCTION_DURATION_CREDITS_MICRO_PER_MS,
     ),
-    billedInvocationCount: 1,
     billedDurationMs,
   };
 };
