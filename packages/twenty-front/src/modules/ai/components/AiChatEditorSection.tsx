@@ -186,7 +186,6 @@ const EditableAiChatEditorSection = () => {
     { objectName: CoreObjectNameSingular.InputAsk, objectNameType: 'singular' },
   );
   const pendingAskThreadId =
-    isDefined(inputAskObjectMetadataItem) &&
     isDefined(agentChatDisplayedThread) &&
     agentChatDisplayedThread !== AGENT_CHAT_NEW_THREAD_DRAFT_KEY
       ? agentChatDisplayedThread
@@ -248,7 +247,7 @@ const EditableAiChatEditorSection = () => {
         )}
         {hasReachedAiChatCreditsCap && <AIChatNoMoreBillingCreditsBanner />}
         {shouldShowUsageLimitBanner && <AiChatUsageLimitReachedBanner />}
-        {isDefined(pendingAskThreadId) ? (
+        {isDefined(inputAskObjectMetadataItem) ? (
           <AiChatPendingAskGate threadId={pendingAskThreadId}>
             {composer}
           </AiChatPendingAskGate>
