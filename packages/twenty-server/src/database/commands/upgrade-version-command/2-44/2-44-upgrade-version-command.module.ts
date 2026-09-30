@@ -21,6 +21,7 @@ import { AddChatRecordPageCommandMenuItemsCommand } from 'src/database/commands/
 import { OpenAsksForPendingInputCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790714482317-open-asks-for-pending-input.command';
 import { ConvertWorkflowEmailBodiesToEmailDocumentsCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790767557653-convert-workflow-email-bodies-to-email-documents.command';
 import { WorkflowVersionCoreModule } from 'src/engine/core-modules/workflow/workflow-version-core.module';
+import { AddChatRecordPageCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790756589463-add-chat-record-page.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/workspace-migration-runner.module';
 
@@ -49,6 +50,7 @@ import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/wor
     GateConversationsWidgetOnFeatureFlagCommand,
     MoveAgentChatThreadsToRecordModelCommand,
     AddChatRecordPageCommandMenuItemsCommand,
+    AddChatRecordPageCommand,
     OpenAsksForPendingInputCommand,
     ConvertWorkflowEmailBodiesToEmailDocumentsCommand,
   ],

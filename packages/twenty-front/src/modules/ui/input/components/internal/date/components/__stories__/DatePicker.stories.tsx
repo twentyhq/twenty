@@ -1,7 +1,7 @@
 import { DatePicker } from '@/ui/input/components/internal/date/components/DatePicker';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
-import { expect, userEvent, within } from 'storybook/test';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { type RelativeDateFilter } from 'twenty-shared/utils';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
@@ -16,9 +16,11 @@ const RELATIVE_DATE: RelativeDateFilter & { start: string; end: string } = {
 };
 
 const DatePickerStory = ({
+  instanceId = 'story-date-picker',
   isRelative,
   clearable,
 }: {
+  instanceId?: string;
   isRelative?: boolean;
   clearable?: boolean;
 }) => {
@@ -28,7 +30,7 @@ const DatePickerStory = ({
 
   return (
     <DatePicker
-      instanceId="story-date-picker"
+      instanceId={instanceId}
       plainDateString={plainDateString}
       onChange={setPlainDateString}
       clearable={clearable}
@@ -102,5 +104,29 @@ export const WithOpenYearSelect: Story = {
     for (const yearLabel of ['2022', '2024']) {
       expect(await body.findByText(yearLabel)).toBeInTheDocument();
     }
+  },
+};
+
+export const OpensOnlyItsOwnMonthSelect: Story = {
+  render: () => (
+    <>
+      <DatePickerStory instanceId="first-date-picker" />
+      <DatePickerStory instanceId="second-date-picker" />
+    </>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+    const [firstMonthSelect] = await canvas.findAllByText(
+      'January',
+      {},
+      { timeout: 10000 },
+    );
+
+    await userEvent.click(firstMonthSelect);
+
+    await waitFor(() => {
+      expect(body.getAllByRole('dialog', { name: 'January' })).toHaveLength(1);
+    });
   },
 };
