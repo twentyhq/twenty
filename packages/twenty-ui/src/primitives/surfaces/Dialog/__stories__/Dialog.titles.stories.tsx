@@ -43,7 +43,7 @@ export const TitleTypography: Story = {
 
     expect(title).toHaveAttribute('data-size', 'lg');
     expect(title).toHaveAttribute('data-color', 'primary');
-    expect(titleStyle.marginBlockEnd).toBe('16px');
+    expect(titleStyle.marginBlockEnd).toBe('0px');
     expect(titleStyle.textAlign).toBe('center');
     expect(dialog).toHaveAttribute('aria-labelledby', title.id);
   },
