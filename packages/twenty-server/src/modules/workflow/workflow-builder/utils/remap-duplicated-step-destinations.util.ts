@@ -1,7 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 import { WorkflowActionType } from 'twenty-shared/workflow';
 
-import { remapDuplicatedStepVariables } from 'src/modules/workflow/workflow-builder/utils/remap-duplicated-step-variables.util';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { type WorkflowTrigger } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 
@@ -12,19 +11,6 @@ const remapIds = (
   (stepIds ?? []).map(
     (stepId) => clonedStepIdBySourceStepId.get(stepId) ?? stepId,
   );
-
-const remapStepSettingsVariables = <TStep extends WorkflowAction>(
-  step: TStep,
-  clonedStepIdBySourceStepId: Map<string, string>,
-): TStep => {
-  return {
-    ...step,
-    settings: remapDuplicatedStepVariables(
-      step.settings,
-      clonedStepIdBySourceStepId,
-    ),
-  };
-};
 
 export const remapDuplicatedStepDestinations = <
   TTrigger extends WorkflowTrigger,
@@ -84,6 +70,6 @@ export const remapDuplicatedStepDestinations = <
       };
     }
 
-    return remapStepSettingsVariables(remappedStep, clonedStepIdBySourceStepId);
+    return remappedStep;
   }),
 });

@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { WorkflowVersionCoreModule } from 'src/engine/core-modules/workflow/workflow-version-core.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AiAgentRoleModule } from 'src/engine/metadata-modules/ai/ai-agent-role/ai-agent-role.module';
@@ -24,7 +23,6 @@ import { WorkflowVersionStepWorkspaceService } from 'src/modules/workflow/workfl
 
 @Module({
   imports: [
-    ApplicationModule,
     WorkflowSchemaModule,
     LogicFunctionModule,
     WorkflowCommonModule,

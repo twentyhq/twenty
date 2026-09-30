@@ -1,5 +1,3 @@
-import { useIsThirdPartyApplication } from '@/applications/hooks/useIsThirdPartyApplication';
-import { CoreWorkflowDuplicateButton } from '@/object-core/workflows/components/CoreWorkflowDuplicateButton';
 import { CoreWorkflowEditor } from '@/object-core/workflows/components/CoreWorkflowEditor';
 import { CoreObjectIdentifierBar } from '@/object-core/components/CoreObjectIdentifierBar';
 import { CoreWorkflowToWorkspaceRedirect } from '@/object-core/workflows/components/CoreWorkflowToWorkspaceRedirect';
@@ -58,9 +56,6 @@ const CoreWorkflowShowContent = ({
     useCoreWorkflowShowPageResource({
       coreWorkflowId,
     });
-  const isApplicationManaged = useIsThirdPartyApplication(
-    coreWorkflow?.applicationId,
-  );
   const versions = useCoreWorkflowVersions(coreWorkflowId);
   const { refetchCoreWorkflowVersions } = versions;
 
@@ -83,7 +78,7 @@ const CoreWorkflowShowContent = ({
   const selectedVersion = isDefined(requestedVersionId)
     ? versions.coreWorkflowVersions.find(({ id }) => id === requestedVersionId)
     : currentVersion;
-  const isReadOnly = isApplicationManaged || isDefined(requestedVersionId);
+  const isReadOnlyVersion = isDefined(requestedVersionId);
   const { renameWorkflow } = useRenameCoreWorkflow({
     coreWorkflowId,
     currentName: record?.name,
@@ -160,13 +155,7 @@ const CoreWorkflowShowContent = ({
             ]}
             actionButton={
               <>
-                {isApplicationManaged && isDefined(selectedVersion) && (
-                  <CoreWorkflowDuplicateButton
-                    coreWorkflowId={coreWorkflowId}
-                    coreWorkflowVersionId={selectedVersion.id}
-                  />
-                )}
-                {!isReadOnly && <RecordShowCommandMenu />}
+                {!isReadOnlyVersion && <RecordShowCommandMenu />}
                 <SidePanelToggleButton />
               </>
             }
@@ -179,14 +168,13 @@ const CoreWorkflowShowContent = ({
             name={record.name}
             namePlaceholder={t`Untitled`}
             onRename={renameWorkflow}
-            isReadOnly={isApplicationManaged}
           />
           {isDefined(selectedVersion) ? (
             <CoreWorkflowEditor
               key={selectedVersion.id}
               coreWorkflowId={coreWorkflowId}
               coreWorkflowVersionId={selectedVersion.id}
-              readonly={isReadOnly}
+              readonly={isReadOnlyVersion}
             />
           ) : (
             <WorkspaceRouteUnavailable>{t`Workflow version not found.`}</WorkspaceRouteUnavailable>

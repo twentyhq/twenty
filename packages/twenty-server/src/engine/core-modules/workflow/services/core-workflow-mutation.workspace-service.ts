@@ -179,63 +179,36 @@ export class CoreWorkflowMutationWorkspaceService {
         steps: sourceVersion.steps ?? [],
       });
 
-    let duplicatedCoreWorkflowId: string | undefined;
+    const duplicatedWorkflow = await this.createWorkflow({
+      workspaceId,
+      createdBy,
+      userWorkspaceId,
+      name: `${sourceCoreWorkflow.name ?? ''} (Duplicate)`,
+      // duplicating a private workflow must not publish it to the workspace
+      visibility: sourceCoreWorkflow.visibility,
+    });
 
     try {
-      const duplicatedWorkflow = await this.createWorkflow({
-        workspaceId,
-        createdBy,
-        userWorkspaceId,
-        name: `${sourceCoreWorkflow.name ?? ''} (Duplicate)`,
-        // duplicating a private workflow must not publish it to the workspace
-        visibility: sourceCoreWorkflow.visibility,
-      });
-
-      duplicatedCoreWorkflowId = duplicatedWorkflow.id;
-
       return await this.writeDuplicatedContentAndReturn({
         workspaceId,
         userWorkspaceId,
-        duplicatedCoreWorkflowId,
+        duplicatedCoreWorkflowId: duplicatedWorkflow.id,
         trigger: remappedTrigger,
         steps: remappedSteps,
       });
     } catch (error) {
-      await this.rollbackDuplicatedWorkflow({
-        workspaceId,
-        userWorkspaceId,
-        duplicatedCoreWorkflowId,
-        clonedSteps: remappedSteps,
-      });
-
-      throw error;
-    }
-  }
-
-  private async rollbackDuplicatedWorkflow({
-    workspaceId,
-    userWorkspaceId,
-    duplicatedCoreWorkflowId,
-    clonedSteps,
-  }: {
-    workspaceId: string;
-    userWorkspaceId: string | undefined;
-    duplicatedCoreWorkflowId: string | undefined;
-    clonedSteps: WorkflowAction[];
-  }): Promise<void> {
-    if (isDefined(duplicatedCoreWorkflowId)) {
       try {
         await this.deleteWorkflows({
           workspaceId,
           userWorkspaceId,
-          coreWorkflowIds: [duplicatedCoreWorkflowId],
+          coreWorkflowIds: [duplicatedWorkflow.id],
         });
       } catch (cleanupError) {
         this.logger.error(cleanupError);
       }
-    }
 
-    await this.deleteClonedStepResources({ workspaceId, clonedSteps });
+      throw error;
+    }
   }
 
   private async deleteClonedStepResources({
