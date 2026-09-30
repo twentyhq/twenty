@@ -323,7 +323,7 @@ describe('inheritedThroughChildrenReadabilityObjectRecordsPermissions', () => {
   });
 
   describe('without a share row on the person', () => {
-    it('should show the notes attached to the open company, their company targets and their attachments only', async () => {
+    it('should show the notes attached to the open company or to nothing, their company targets and their attachments only', async () => {
       const notesResponse =
         await makeGraphqlApiRequestWithMemberRole(findNotesOperation);
       const noteTargetsResponse = await makeGraphqlApiRequestWithMemberRole(
@@ -335,7 +335,7 @@ describe('inheritedThroughChildrenReadabilityObjectRecordsPermissions', () => {
 
       expect(notesResponse.body.errors).toBeUndefined();
       expect(collectIds(notesResponse.body.data.notes.edges)).toEqual(
-        [NOTE_ON_COMPANY_ID, NOTE_ON_BOTH_ID].sort(),
+        [NOTE_ON_COMPANY_ID, NOTE_ON_BOTH_ID, NOTE_ALONE_ID].sort(),
       );
 
       const noteOnBoth = notesResponse.body.data.notes.edges.find(
@@ -355,9 +355,12 @@ describe('inheritedThroughChildrenReadabilityObjectRecordsPermissions', () => {
       ).toEqual([COMPANY_NOTE_ATTACHMENT_ID]);
     });
 
-    it('should let the member rename the note on the open company and refuse the one on the private person', async () => {
+    it('should let the member rename the notes on the open company or on nothing and refuse the one on the private person', async () => {
       const companyNoteResponse = await makeGraphqlApiRequestWithMemberRole(
         renameNoteOperation(NOTE_ON_COMPANY_ID, 'Renamed on the open company'),
+      );
+      const aloneNoteResponse = await makeGraphqlApiRequestWithMemberRole(
+        renameNoteOperation(NOTE_ALONE_ID, 'Renamed on nothing'),
       );
       const personNoteResponse = await makeGraphqlApiRequestWithMemberRole(
         renameNoteOperation(NOTE_ON_PERSON_ID, 'Renamed on the private person'),
@@ -367,6 +370,11 @@ describe('inheritedThroughChildrenReadabilityObjectRecordsPermissions', () => {
       expect(companyNoteResponse.body.data.updateNote).toEqual({
         id: NOTE_ON_COMPANY_ID,
         title: 'Renamed on the open company',
+      });
+      expect(aloneNoteResponse.body.errors).toBeUndefined();
+      expect(aloneNoteResponse.body.data.updateNote).toEqual({
+        id: NOTE_ALONE_ID,
+        title: 'Renamed on nothing',
       });
       expect(personNoteResponse.body.data?.updateNote ?? null).toBeNull();
       expect(personNoteResponse.body.errors).toBeDefined();
@@ -427,7 +435,7 @@ describe('inheritedThroughChildrenReadabilityObjectRecordsPermissions', () => {
       });
     });
 
-    it('should show every attached note, target and attachment and keep the unattached note hidden', async () => {
+    it('should show every note, target and attachment', async () => {
       const notesResponse =
         await makeGraphqlApiRequestWithMemberRole(findNotesOperation);
       const noteTargetsResponse = await makeGraphqlApiRequestWithMemberRole(
@@ -439,7 +447,12 @@ describe('inheritedThroughChildrenReadabilityObjectRecordsPermissions', () => {
 
       expect(notesResponse.body.errors).toBeUndefined();
       expect(collectIds(notesResponse.body.data.notes.edges)).toEqual(
-        [NOTE_ON_PERSON_ID, NOTE_ON_COMPANY_ID, NOTE_ON_BOTH_ID].sort(),
+        [
+          NOTE_ON_PERSON_ID,
+          NOTE_ON_COMPANY_ID,
+          NOTE_ON_BOTH_ID,
+          NOTE_ALONE_ID,
+        ].sort(),
       );
       expect(noteTargetsResponse.body.errors).toBeUndefined();
       expect(
@@ -540,7 +553,7 @@ describe('inheritedThroughChildrenReadabilityObjectRecordsPermissions', () => {
 
       expect(notesResponse.body.errors).toBeUndefined();
       expect(collectIds(notesResponse.body.data.notes.edges)).toEqual(
-        [NOTE_ON_COMPANY_ID, NOTE_ON_BOTH_ID].sort(),
+        [NOTE_ON_COMPANY_ID, NOTE_ON_BOTH_ID, NOTE_ALONE_ID].sort(),
       );
       expect(noteTargetsResponse.body.errors).toBeUndefined();
       expect(
@@ -624,6 +637,7 @@ describe('inheritedThroughChildrenReadabilityObjectRecordsPermissions', () => {
           NOTE_ON_PERSON_ID,
           NOTE_ON_COMPANY_ID,
           NOTE_ON_BOTH_ID,
+          NOTE_ALONE_ID,
           MEMBER_NOTE_ID,
         ].sort(),
       );
@@ -669,13 +683,14 @@ describe('inheritedThroughChildrenReadabilityObjectRecordsPermissions', () => {
         deleteManyOperationFactory({
           objectMetadataSingularName: 'note',
           objectMetadataPluralName: 'notes',
-          gqlFields: 'id',
+          gqlFields: 'id deletedAt',
           filter: noteOnPersonFilter,
         }),
       );
+      const { deletedAt } = deleteResponse.body.data.deleteNotes[0];
       const deletedNoteEventProperties = {
         before: { id: NOTE_ON_PERSON_ID },
-        after: { id: NOTE_ON_PERSON_ID },
+        after: { id: NOTE_ON_PERSON_ID, deletedAt },
         updatedFields: ['deletedAt'],
         diff: {},
       };
@@ -710,7 +725,7 @@ describe('inheritedThroughChildrenReadabilityObjectRecordsPermissions', () => {
 
       expect(deleteResponse.body.errors).toBeUndefined();
       expect(deleteResponse.body.data.deleteNotes).toEqual([
-        { id: NOTE_ON_PERSON_ID },
+        { id: NOTE_ON_PERSON_ID, deletedAt: expect.any(String) },
       ]);
       expect(restoreResponse.body.errors).toBeUndefined();
       expect(restoreResponse.body.data.restoreNotes).toEqual([

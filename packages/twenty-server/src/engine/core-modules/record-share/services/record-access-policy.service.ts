@@ -27,8 +27,10 @@ import { type InheritedReadabilityColumnParent } from 'src/engine/core-modules/r
 import { type RowAccessPolicySubject } from 'src/engine/twenty-orm/types/row-access-policy.type';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { isObjectOperationPermitted } from 'src/engine/twenty-orm/utils/is-object-operation-permitted.util';
+import { isChildRecordBoundAtDeletion } from 'src/engine/twenty-orm/utils/is-child-record-bound-at-deletion.util';
 import { isRecordMatchingRLSRowLevelPermissionPredicate } from 'src/engine/twenty-orm/utils/is-record-matching-rls-row-level-permission-predicate.util';
 import { resolveInheritedReadabilityParents } from 'src/engine/core-modules/record-share/utils/resolve-inherited-readability-parents.util';
+import { isOpenWhenDetachedObject } from 'src/engine/core-modules/record-share/utils/is-open-when-detached-object.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
@@ -52,6 +54,11 @@ type SnapshotEvaluationInContext = SnapshotEvaluation & {
 };
 
 type FetchRecordShares = () => Promise<RecordShare[]>;
+
+type SnapshotIdsThroughParent = {
+  readableSnapshotIds: Set<string>;
+  attachedSnapshotIds: Set<string>;
+};
 
 @Injectable()
 export class RecordAccessPolicyService {
@@ -239,9 +246,10 @@ export class RecordAccessPolicyService {
       flatObjectMetadataMaps: maps.flatObjectMetadataMaps,
     });
     const readableSnapshotIds = new Set<string>();
+    const attachedSnapshotIds = new Set<string>();
 
     for (const parent of parents) {
-      const readableIds =
+      const snapshotIdsThroughParent =
         parent.kind === 'column'
           ? await this.resolveSnapshotIdsReadableThroughColumnParent({
               ...evaluation,
@@ -254,8 +262,20 @@ export class RecordAccessPolicyService {
               parent,
             });
 
-      for (const readableId of readableIds) {
+      for (const readableId of snapshotIdsThroughParent.readableSnapshotIds) {
         readableSnapshotIds.add(readableId);
+      }
+
+      for (const attachedId of snapshotIdsThroughParent.attachedSnapshotIds) {
+        attachedSnapshotIds.add(attachedId);
+      }
+    }
+
+    if (isOpenWhenDetachedObject(objectMetadata)) {
+      for (const snapshot of evaluation.snapshots) {
+        if (!attachedSnapshotIds.has(snapshot.id)) {
+          readableSnapshotIds.add(snapshot.id);
+        }
       }
     }
 
@@ -269,7 +289,7 @@ export class RecordAccessPolicyService {
     parent,
   }: SnapshotEvaluationInContext & {
     parent: InheritedReadabilityColumnParent;
-  }): Promise<Set<string>> {
+  }): Promise<SnapshotIdsThroughParent> {
     const parentIdBySnapshotId = new Map(
       snapshots.flatMap((snapshot) => {
         const parentId = snapshot[parent.joinColumnName];
@@ -284,11 +304,14 @@ export class RecordAccessPolicyService {
       depth: depth + 1,
     });
 
-    return new Set(
-      [...parentIdBySnapshotId]
-        .filter(([, parentId]) => readableParentIds.has(parentId))
-        .map(([snapshotId]) => snapshotId),
-    );
+    return {
+      readableSnapshotIds: new Set(
+        [...parentIdBySnapshotId]
+          .filter(([, parentId]) => readableParentIds.has(parentId))
+          .map(([snapshotId]) => snapshotId),
+      ),
+      attachedSnapshotIds: new Set(parentIdBySnapshotId.keys()),
+    };
   }
 
   private async resolveSnapshotIdsReadableThroughChildren({
@@ -300,7 +323,7 @@ export class RecordAccessPolicyService {
     parent,
   }: SnapshotEvaluationInContext & {
     parent: InheritedReadabilityChildrenParent;
-  }): Promise<Set<string>> {
+  }): Promise<SnapshotIdsThroughParent> {
     const childNameSingular = parent.childFlatObjectMetadata.nameSingular;
     const capturedChildSnapshotsBySnapshotId = new Map(
       snapshots.flatMap((snapshot) => {
@@ -329,26 +352,55 @@ export class RecordAccessPolicyService {
       .map((snapshot) => snapshot.id);
 
     const readableSnapshotIds = new Set<string>();
+    const attachedSnapshotIds = new Set(
+      [...capturedChildSnapshotsBySnapshotId]
+        .filter(
+          ([, capturedChildSnapshots]) => capturedChildSnapshots.length > 0,
+        )
+        .map(([snapshotId]) => snapshotId),
+    );
 
     if (liveSnapshotIds.length > 0) {
+      const snapshotById = new Map(
+        snapshots.map((snapshot) => [snapshot.id, snapshot]),
+      );
+      // Trashed rows are fetched too: one trashed along with the record still
+      // attaches it, as in the query gate
       const childRows = await this.workspaceOrmManager
         .getRepository(childNameSingular, {
           shouldBypassPermissionChecks: true,
         })
         .createQueryBuilder()
-        .select(['id', parent.childJoinColumnName])
+        .select(['id', parent.childJoinColumnName, 'deletedAt'])
         .where({ [parent.childJoinColumnName]: In(liveSnapshotIds) })
+        .withDeleted()
         .getMany<ObjectRecord>({ noFormatting: true });
+      const liveChildRows = childRows.filter(
+        (childRow) => !isDefined(childRow.deletedAt),
+      );
       const readableChildIds = await this.selectReadableRecordIds({
         objectMetadata: parent.childFlatObjectMetadata,
-        recordIds: childRows.map((childRow) => String(childRow.id)),
+        recordIds: liveChildRows.map((childRow) => String(childRow.id)),
         subject,
         depth: depth + 1,
       });
 
       for (const childRow of childRows) {
+        const snapshotId = String(childRow[parent.childJoinColumnName]);
+        const snapshot = snapshotById.get(snapshotId);
+
+        if (
+          isDefined(snapshot) &&
+          isChildRecordBoundAtDeletion({
+            childRecord: childRow,
+            record: snapshot,
+          })
+        ) {
+          attachedSnapshotIds.add(snapshotId);
+        }
+
         if (readableChildIds.has(String(childRow.id))) {
-          readableSnapshotIds.add(String(childRow[parent.childJoinColumnName]));
+          readableSnapshotIds.add(snapshotId);
         }
       }
     }
@@ -375,7 +427,7 @@ export class RecordAccessPolicyService {
       }
     }
 
-    return readableSnapshotIds;
+    return { readableSnapshotIds, attachedSnapshotIds };
   }
 
   private async resolveReadableSnapshotIds(
