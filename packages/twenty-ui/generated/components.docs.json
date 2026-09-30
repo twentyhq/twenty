@@ -8396,55 +8396,6 @@
     ]
   },
   {
-    "name": "ColorSchemePicker",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/color-scheme-picker",
-    "props": [
-      {
-        "name": "className",
-        "type": "string",
-        "required": false,
-        "defaultValue": null,
-        "description": "Class applied to the outer container."
-      },
-      {
-        "name": "darkLabel",
-        "type": "string",
-        "required": true,
-        "defaultValue": null,
-        "description": "Visible label and accessible name of the dark choice."
-      },
-      {
-        "name": "lightLabel",
-        "type": "string",
-        "required": true,
-        "defaultValue": null,
-        "description": "Visible label and accessible name of the light choice."
-      },
-      {
-        "name": "onChange",
-        "type": "(value: ColorScheme) => void",
-        "required": true,
-        "defaultValue": null,
-        "description": "Called with the newly selected color scheme."
-      },
-      {
-        "name": "systemLabel",
-        "type": "string",
-        "required": true,
-        "defaultValue": null,
-        "description": "Visible label and accessible name of the system choice."
-      },
-      {
-        "name": "value",
-        "type": "\"Dark\" | \"Light\" | \"System\"",
-        "required": true,
-        "defaultValue": null,
-        "description": "Selected scheme: Light, Dark, or System. The application resolves system to a concrete theme."
-      }
-    ]
-  },
-  {
     "name": "SearchInput",
     "entryPoint": "twenty-ui/components",
     "slug": "components/search-input",

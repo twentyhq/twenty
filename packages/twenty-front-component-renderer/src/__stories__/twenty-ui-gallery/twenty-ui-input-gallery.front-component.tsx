@@ -1,6 +1,5 @@
 import { defineFrontComponent } from 'twenty-sdk/define';
 import {
-  ColorSchemePicker,
   IconButton,
   LightButton,
   LightIconButton,
@@ -62,18 +61,6 @@ const INPUT_ENTRIES: GalleryEntry[] = [
   {
     name: 'CodeEditorHeader',
     node: <CodeEditorHeader title="Editor" />,
-  },
-  {
-    name: 'ColorSchemePicker',
-    node: (
-      <ColorSchemePicker
-        value="Light"
-        onChange={() => {}}
-        lightLabel="Light"
-        darkLabel="Dark"
-        systemLabel="System"
-      />
-    ),
   },
   {
     name: 'IconButton (elevated)',

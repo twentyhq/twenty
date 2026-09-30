@@ -27,7 +27,7 @@ requiring them to occur.
 | `twenty-ui-switch` | Switch (interaction coverage in addition to the original input gallery) |
 | `twenty-ui-tooltip` | Tooltip (convenience and compound APIs) |
 | `twenty-ui-responsive-hooks` | useIsMobile, useIsTouchDevice, Button hotkeys |
-| `twenty-ui-reading-directions` | Callout, ColorSchemePicker, ButtonGroup, Button, AvatarGroup, ListItem, JsonTree in LTR and RTL side by side (`TwentyUiReadingDirections.stories.tsx`) |
+| `twenty-ui-reading-directions` | Callout, ButtonGroup, Button, AvatarGroup, ListItem, JsonTree in LTR and RTL side by side (`TwentyUiReadingDirections.stories.tsx`) |
 
 The focused fixtures import public twenty-ui entry points and use
 `TwentyUiGalleryCard` for the light theme, mount marker, and `twenty-ui/style.css`.

@@ -133,7 +133,6 @@ export const DOCUMENTATION_PATHS = {
   UI_COMPONENTS_AVATAR_GROUP: '/ui/components/avatar-group',
   UI_COMPONENTS_CALLOUT: '/ui/components/callout',
   UI_COMPONENTS_CODE_EDITOR: '/ui/components/code-editor',
-  UI_COMPONENTS_COLOR_SCHEME_PICKER: '/ui/components/color-scheme-picker',
   UI_COMPONENTS_COMMAND_BLOCK: '/ui/components/command-block',
   UI_COMPONENTS_DROPDOWN: '/ui/components/dropdown',
   UI_COMPONENTS_INLINE_BANNER: '/ui/components/inline-banner',

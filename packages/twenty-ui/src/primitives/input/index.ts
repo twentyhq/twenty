@@ -54,6 +54,5 @@ export type { SwitchProps } from './Switch/types/SwitchProps';
 export type { SwitchSize } from './Switch/types/SwitchSize';
 export { Textarea } from './Textarea/Textarea';
 export type { TextareaProps } from './Textarea/types/TextareaProps';
-export type { ColorScheme } from './types/ColorScheme';
 export type { InputSize } from './types/InputSize';
 export type { SelectOption } from './types/SelectOption';
