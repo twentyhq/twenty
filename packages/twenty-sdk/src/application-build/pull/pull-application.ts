@@ -62,8 +62,11 @@ export const pullApplication = async (
     });
     const protectedIdentifiers = new Set<string>();
 
-    collectIdentifiers(manifest, protectedIdentifiers);
-    collectIdentifiers(applicationExport.coverage, protectedIdentifiers);
+    collectIdentifiers({ value: manifest, identifiers: protectedIdentifiers });
+    collectIdentifiers({
+      value: applicationExport.coverage,
+      identifiers: protectedIdentifiers,
+    });
 
     const frontComponentSourcePaths = scannedFiles
       .filter((file) => file.entityKey === ManifestEntityKey.FrontComponents)
@@ -76,7 +79,10 @@ export const pullApplication = async (
     });
     const coverageIdentifiers = new Set<string>();
 
-    collectIdentifiers(applicationExport.coverage, coverageIdentifiers);
+    collectIdentifiers({
+      value: applicationExport.coverage,
+      identifiers: coverageIdentifiers,
+    });
 
     const safePlan = preserveNestedPullEntities({
       manifest,

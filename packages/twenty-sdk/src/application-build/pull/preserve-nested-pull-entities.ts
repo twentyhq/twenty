@@ -24,7 +24,7 @@ export const preserveNestedPullEntities = ({
 }): { writes: PullWrite[]; skipped: SkippedPullEntity[] } => {
   const baseIdentifiers = new Set<string>();
 
-  collectIdentifiers(baseManifest, baseIdentifiers);
+  collectIdentifiers({ value: baseManifest, identifiers: baseIdentifiers });
 
   const localConfigByPath = new Map(
     scannedFiles.map((file) => [
@@ -47,14 +47,16 @@ export const preserveNestedPullEntities = ({
     const localIdentifiers = new Set<string>();
     const exportedIdentifiers = new Set<string>();
 
-    collectIdentifiers(
-      localConfigByPath.get(write.relativePath),
-      localIdentifiers,
-    );
-    collectIdentifiers(
-      exportedConfigByIdentifier.get(write.universalIdentifier.toLowerCase()),
-      exportedIdentifiers,
-    );
+    collectIdentifiers({
+      value: localConfigByPath.get(write.relativePath),
+      identifiers: localIdentifiers,
+    });
+    collectIdentifiers({
+      value: exportedConfigByIdentifier.get(
+        write.universalIdentifier.toLowerCase(),
+      ),
+      identifiers: exportedIdentifiers,
+    });
 
     const omittedIdentifier = [...localIdentifiers].find(
       (identifier) =>
