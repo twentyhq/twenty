@@ -74,9 +74,11 @@ export const AiChatTabMessageList = () => {
     >
       <Suspense
         fallback={
-          <StyledMessageListContent>
-            <MarkdownLoadingSkeleton />
-          </StyledMessageListContent>
+          <StyledScrollWrapperContainer>
+            <StyledMessageListContent>
+              <MarkdownLoadingSkeleton />
+            </StyledMessageListContent>
+          </StyledScrollWrapperContainer>
         }
       >
         <StyledScrollWrapperContainer>

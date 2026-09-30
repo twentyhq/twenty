@@ -28,7 +28,7 @@ type PendingInputAskRecord = ObjectRecord & {
 export const useAgentChatPendingAsks = ({
   threadId,
 }: {
-  threadId: string;
+  threadId: string | null;
 }): AgentChatPendingAsk[] => {
   const { objectMetadataItem: inputAskObjectMetadataItem } =
     useObjectMetadataItem({
@@ -37,7 +37,7 @@ export const useAgentChatPendingAsks = ({
 
   const filter = useMemo(
     () => ({
-      threadId: { eq: threadId },
+      threadId: { eq: threadId ?? '' },
       status: { in: ['PENDING'] },
     }),
     [threadId],
@@ -49,6 +49,7 @@ export const useAgentChatPendingAsks = ({
     orderBy: ORDER_BY_CREATION,
     recordGqlFields: { id: true, toolCallId: true, form: true },
     fetchPolicy: 'network-only',
+    skip: !isDefined(threadId),
   });
 
   const refetchPendingInputAsks = useCallback(async () => {
@@ -66,12 +67,14 @@ export const useAgentChatPendingAsks = ({
   useListenToEventsForQuery({
     queryId: `agent-chat-pending-input-ask-${threadId}`,
     operationSignature,
+    skip: !isDefined(threadId),
     onSseReconnected: refetchPendingInputAsks,
   });
 
   useListenToObjectRecordOperationBrowserEvent({
     onObjectRecordOperationBrowserEvent: refetchPendingInputAsks,
     objectMetadataItemId: inputAskObjectMetadataItem.id,
+    enabled: isDefined(threadId),
   });
 
   return useMemo(

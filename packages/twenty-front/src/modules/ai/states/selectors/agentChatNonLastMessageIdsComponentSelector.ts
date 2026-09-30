@@ -1,6 +1,7 @@
 import { AgentChatComponentInstanceContext } from '@/ai/contexts/AgentChatComponentInstanceContext';
 import { agentChatMessagesComponentFamilyState } from '@/ai/states/agentChatMessagesComponentFamilyState';
 import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
+import { agentChatLastMessageIdComponentSelector } from '@/ai/states/selectors/agentChatLastMessageIdComponentSelector';
 import { createAtomComponentSelector } from '@/ui/utilities/state/jotai/utils/createAtomComponentSelector';
 
 export const agentChatNonLastMessageIdsComponentSelector =
@@ -17,7 +18,13 @@ export const agentChatNonLastMessageIdsComponentSelector =
           familyKey: { threadId: currentThreadId },
         });
 
-        return messages.slice(0, -1).map((message) => message.id);
+        const lastMessageId = get(agentChatLastMessageIdComponentSelector, {
+          instanceId,
+        });
+
+        return messages
+          .filter((message) => message.id !== lastMessageId)
+          .map((message) => message.id);
       },
     areEqual: (previous, next) =>
       previous.length === next.length &&
