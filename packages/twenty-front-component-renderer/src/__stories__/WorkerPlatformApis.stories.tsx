@@ -1,9 +1,12 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { useState } from 'react';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import {
   errorHandler,
   FRONT_COMPONENT_STORY_DEFAULT_ARGS,
+  FRONT_COMPONENT_STORY_DEFAULT_EXECUTION_CONTEXT,
+  hostApiMocks,
   resetFrontComponentStoryMocks,
 } from '@/__stories__/shared/test-utils/createFrontComponentStoryMeta';
 import { expectJsonDataAttribute } from '@/__stories__/shared/test-utils/matchers/expectJsonDataAttribute';
@@ -101,22 +104,156 @@ const classListTest: Story['play'] = async ({ canvasElement }) => {
   expect(errorHandler).not.toHaveBeenCalled();
 };
 
+const createMatchMediaTest =
+  (expectedColorScheme: 'light' | 'dark'): Story['play'] =>
+  async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByTestId(
+      'match-media-component',
+      {},
+      { timeout: MOUNT_TIMEOUT },
+    );
+
+    await waitFor(
+      () => {
+        expect(
+          canvas.getByTestId('match-media-color-scheme'),
+        ).toHaveTextContent(`color scheme: ${expectedColorScheme}`);
+        expect(
+          canvas.getByTestId('match-media-own-width-value'),
+        ).not.toHaveTextContent('own width: 0');
+      },
+      { timeout: MOUNT_TIMEOUT },
+    );
+
+    expect(canvas.getByTestId('match-media-own-width')).toHaveTextContent(
+      'own width matches: true',
+    );
+    expect(
+      canvas.getByTestId('match-media-wider-than-own-width'),
+    ).toHaveTextContent('wider than own width matches: false');
+    expect(canvas.getByTestId('match-media-unknown-query')).toHaveTextContent(
+      'unknown query matches: false',
+    );
+    expect(
+      canvas.getByTestId('match-media-empty-query-in-list'),
+    ).toHaveTextContent('empty query in list matches: false');
+    expect(canvas.getByTestId('match-media-orientation')).toHaveTextContent(
+      'orientation matches: true',
+    );
+    expect(
+      canvas.getByTestId('match-media-color-scheme-change-count'),
+    ).toHaveTextContent('color scheme changes: 0');
+    expect(
+      canvas.getByTestId('match-media-wide-width-change-count'),
+    ).toHaveTextContent('wide width changes: 0');
+    expect(
+      canvas.getByTestId('match-media-portrait-orientation-change-count'),
+    ).toHaveTextContent('portrait orientation changes: 0');
+
+    const container = canvas.getByTestId('match-media-container');
+
+    for (const {
+      width,
+      height,
+      wideWidthChangeCount,
+      portraitOrientationChangeCount,
+    } of [
+      {
+        width: 700,
+        height: 300,
+        wideWidthChangeCount: 1,
+        portraitOrientationChangeCount: 1,
+      },
+      {
+        width: 700,
+        height: 900,
+        wideWidthChangeCount: 1,
+        portraitOrientationChangeCount: 2,
+      },
+      {
+        width: 400,
+        height: 600,
+        wideWidthChangeCount: 2,
+        portraitOrientationChangeCount: 2,
+      },
+    ]) {
+      container.style.width = `${width}px`;
+      container.style.height = `${height}px`;
+
+      await waitFor(
+        () => {
+          expect(
+            canvas.getByTestId('match-media-own-width-value'),
+          ).toHaveTextContent(`own width: ${width}`);
+          expect(
+            canvas.getByTestId('match-media-own-height-value'),
+          ).toHaveTextContent(`own height: ${height}`);
+          expect(canvas.getByTestId('match-media-own-width')).toHaveTextContent(
+            'own width matches: true',
+          );
+          expect(
+            canvas.getByTestId('match-media-wider-than-own-width'),
+          ).toHaveTextContent('wider than own width matches: false');
+          expect(
+            canvas.getByTestId('match-media-orientation'),
+          ).toHaveTextContent('orientation matches: true');
+          expect(
+            canvas.getByTestId('match-media-wide-width-change-count'),
+          ).toHaveTextContent(`wide width changes: ${wideWidthChangeCount}`);
+          expect(
+            canvas.getByTestId('match-media-portrait-orientation-change-count'),
+          ).toHaveTextContent(
+            `portrait orientation changes: ${portraitOrientationChangeCount}`,
+          );
+        },
+        { timeout: INTERACTION_TIMEOUT },
+      );
+    }
+
+    expect(
+      canvas.getByTestId('match-media-color-scheme-change-count'),
+    ).toHaveTextContent('color scheme changes: 0');
+
+    expect(errorHandler).not.toHaveBeenCalled();
+  };
+
+const MATCH_MEDIA_DECORATORS: Story['decorators'] = [
+  (Story) => (
+    <div
+      data-testid="match-media-container"
+      style={{ width: 400, height: 600 }}
+    >
+      <Story />
+    </div>
+  ),
+];
+
+type CreateStoryInput = {
+  name: string;
+  play: Story['play'];
+  decorators?: Story['decorators'];
+  runtime?: 'preact';
+  args?: Partial<Story['args']>;
+};
+
 const createStory = ({
   name,
   play,
+  decorators,
   runtime,
-}: {
-  name: string;
-  play: Story['play'];
-  runtime?: 'preact';
-}): Story => ({
+  args,
+}: CreateStoryInput): Story => ({
   args: {
     componentUrl: getBuiltStoryComponentPathForRender(
       `${name}.front-component`,
       runtime,
     ),
+    ...args,
   },
   play,
+  decorators,
 });
 
 export const MutationObserverReact: Story = createStory({
@@ -137,3 +274,104 @@ export const ClassListPreact: Story = createStory({
   play: classListTest,
   runtime: 'preact',
 });
+export const MatchMediaReact: Story = createStory({
+  name: 'match-media',
+  play: createMatchMediaTest('light'),
+  decorators: MATCH_MEDIA_DECORATORS,
+});
+export const MatchMediaPreact: Story = createStory({
+  name: 'match-media',
+  play: createMatchMediaTest('light'),
+  decorators: MATCH_MEDIA_DECORATORS,
+  runtime: 'preact',
+});
+export const MatchMediaDarkColorScheme: Story = createStory({
+  name: 'match-media',
+  play: createMatchMediaTest('dark'),
+  decorators: MATCH_MEDIA_DECORATORS,
+  args: {
+    colorScheme: 'dark',
+    executionContext: {
+      ...FRONT_COMPONENT_STORY_DEFAULT_EXECUTION_CONTEXT,
+      colorScheme: 'dark',
+    },
+  },
+});
+
+const MatchMediaColorSchemeToggle = () => {
+  const [colorScheme, setColorScheme] = useState<'light' | 'dark'>('light');
+
+  return (
+    <>
+      <button
+        type="button"
+        data-testid="match-media-toggle-color-scheme"
+        onClick={() =>
+          setColorScheme((currentColorScheme) =>
+            currentColorScheme === 'light' ? 'dark' : 'light',
+          )
+        }
+      >
+        Toggle color scheme
+      </button>
+      <FrontComponentRenderer
+        componentUrl={getBuiltStoryComponentPathForRender(
+          'match-media.front-component',
+        )}
+        applicationAccessToken={
+          FRONT_COMPONENT_STORY_DEFAULT_ARGS.applicationAccessToken
+        }
+        executionContext={{
+          ...FRONT_COMPONENT_STORY_DEFAULT_EXECUTION_CONTEXT,
+          colorScheme,
+        }}
+        frontComponentHostCommunicationApi={hostApiMocks}
+        onError={errorHandler}
+        colorScheme={colorScheme}
+      />
+    </>
+  );
+};
+
+export const MatchMediaColorSchemeChange: Story = {
+  render: () => <MatchMediaColorSchemeToggle />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByTestId(
+      'match-media-component',
+      {},
+      { timeout: MOUNT_TIMEOUT },
+    );
+
+    await waitFor(
+      () => {
+        expect(
+          canvas.getByTestId('match-media-color-scheme'),
+        ).toHaveTextContent('color scheme: light');
+      },
+      { timeout: MOUNT_TIMEOUT },
+    );
+    expect(
+      canvas.getByTestId('match-media-color-scheme-change-count'),
+    ).toHaveTextContent('color scheme changes: 0');
+
+    await userEvent.click(
+      canvas.getByTestId('match-media-toggle-color-scheme'),
+    );
+
+    await waitFor(
+      () => {
+        expect(
+          canvas.getByTestId('match-media-color-scheme'),
+        ).toHaveTextContent('color scheme: dark');
+        expect(
+          canvas.getByTestId('match-media-color-scheme-change-count'),
+        ).toHaveTextContent('color scheme changes: 1');
+      },
+      { timeout: MOUNT_TIMEOUT },
+    );
+
+    expect(errorHandler).not.toHaveBeenCalled();
+  },
+};

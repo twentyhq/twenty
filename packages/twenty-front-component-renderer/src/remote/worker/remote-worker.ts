@@ -23,8 +23,10 @@ import { installSelectorMethodsPolyfill } from '@/polyfills/selectors/utils/inst
 import { workerGeometryStore } from '@/polyfills/geometry/states/workerGeometryStore';
 import { installElementGeometryPolyfill } from '@/polyfills/geometry/utils/installElementGeometryPolyfill';
 import { installWindowGeometryPolyfill } from '@/polyfills/geometry/utils/installWindowGeometryPolyfill';
+import { mediaQueryEnvironmentSource } from '@/polyfills/media-query/states/mediaQueryEnvironmentSource';
 import { workerMediaBridge } from '@/polyfills/media/states/workerMediaBridge';
 import { installMediaCapturePolyfills } from '@/polyfills/media/utils/installMediaCapturePolyfills';
+import { installMatchMediaPolyfill } from '@/polyfills/media-query/utils/installMatchMediaPolyfill';
 import { frontComponentStorageBridges } from '@/polyfills/storage/states/frontComponentStorageBridges';
 import { toGlobalScopeRecord } from '@/polyfills/utils/toGlobalScopeRecord';
 import { installStorageBridge } from '@/polyfills/storage/utils/installStorageBridge';
@@ -93,6 +95,11 @@ installWindowGeometryPolyfill({
 
 installWindowAliasesPolyfill({
   globalScope: toGlobalScopeRecord(globalThis),
+});
+
+installMatchMediaPolyfill({
+  globalScope: toGlobalScopeRecord(globalThis),
+  environmentSource: mediaQueryEnvironmentSource,
 });
 
 installStorageBridge({
