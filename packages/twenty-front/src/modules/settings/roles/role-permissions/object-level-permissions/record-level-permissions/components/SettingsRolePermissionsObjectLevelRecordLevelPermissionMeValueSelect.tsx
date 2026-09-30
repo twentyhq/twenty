@@ -22,6 +22,7 @@ import { getCompositeSubFieldType } from '@/object-record/object-filter-dropdown
 import { getFieldMetadataTypeLabel } from '@/object-record/object-filter-dropdown/utils/getFieldMetadataTypeLabel';
 import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
+import { type RLSDynamicValue } from '@/object-record/record-filter/types/RecordFilter';
 import { SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS } from '@/settings/data-model/constants/SettingsCompositeFieldTypeConfigs';
 import { type CompositeFieldSubFieldName } from '@/settings/data-model/types/CompositeFieldSubFieldName';
 import { type CompositeFieldType } from '@/settings/data-model/types/CompositeFieldType';
@@ -32,10 +33,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 
 type SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelectProps =
   {
-    onSelect: (selection: {
-      workspaceMemberFieldMetadataId: string;
-      workspaceMemberSubFieldName?: string | null;
-    }) => void;
+    onSelect: (selection: RLSDynamicValue) => void;
     recordFilterId: string;
   };
 

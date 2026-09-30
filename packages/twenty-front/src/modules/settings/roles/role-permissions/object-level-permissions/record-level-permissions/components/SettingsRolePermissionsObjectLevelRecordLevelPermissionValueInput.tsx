@@ -22,10 +22,10 @@ import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/uti
 import { FormFieldInput } from '@/object-record/record-field/ui/components/FormFieldInput';
 import { FormMultiSelectFieldInput } from '@/object-record/record-field/ui/form-types/components/FormMultiSelectFieldInput';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
-import { type CompositeFieldType } from '@/settings/data-model/types/CompositeFieldType';
+import { type RLSDynamicValue } from '@/object-record/record-filter/types/RecordFilter';
+import { isValidSubFieldName } from '@/settings/data-model/utils/isValidSubFieldName';
 import { SettingsRolePermissionsObjectLevelRecordLevelPermissionVariablePicker } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionVariablePicker';
 import { RecordLevelPermissionVariablePickerContext } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/contexts/RecordLevelPermissionVariablePickerContext';
-import { type CompositeFieldSubFieldName } from '@/settings/data-model/types/CompositeFieldSubFieldName';
 import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
@@ -152,11 +152,12 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionValueInput =
 
         if (
           isDefined(dynamicValue.workspaceMemberSubFieldName) &&
+          isValidSubFieldName(dynamicValue.workspaceMemberSubFieldName) &&
           isCompositeFieldType(workspaceMemberField.type)
         ) {
           const subFieldLabel = getCompositeSubFieldLabel(
-            workspaceMemberField.type as CompositeFieldType,
-            dynamicValue.workspaceMemberSubFieldName as CompositeFieldSubFieldName,
+            workspaceMemberField.type,
+            dynamicValue.workspaceMemberSubFieldName,
           );
 
           return subFieldLabel ? `${baseLabel} / ${subFieldLabel}` : baseLabel;
@@ -174,10 +175,7 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionValueInput =
     const handleSelectDynamicValue = ({
       workspaceMemberFieldMetadataId,
       workspaceMemberSubFieldName,
-    }: {
-      workspaceMemberFieldMetadataId: string;
-      workspaceMemberSubFieldName?: string | null;
-    }) => {
+    }: RLSDynamicValue) => {
       if (!recordFilter) {
         return;
       }
