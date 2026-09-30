@@ -39,7 +39,4 @@ export class AgentChatThreadDTO {
 
   @Field(() => Date, { nullable: true })
   deletedAt: Date | null;
-
-  @Field(() => Date, { nullable: true })
-  lastMessageAt: Date | null;
 }

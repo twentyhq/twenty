@@ -6,7 +6,7 @@ import {
   ColorSchemePicker,
   JsonTree,
 } from 'twenty-ui/components';
-import { Avatar } from 'twenty-ui/primitives/data-display';
+import { Avatar, Pill } from 'twenty-ui/primitives/data-display';
 import { Button, ButtonGroup } from 'twenty-ui/primitives/input';
 import { ListItem } from 'twenty-ui/primitives/navigation';
 import { Text } from 'twenty-ui/primitives/typography';
@@ -55,8 +55,18 @@ const DirectionalLayoutExample = ({
           <Button>First action</Button>
           <Button>Last action</Button>
         </ButtonGroup>
-        <Button soon style={{ width: 240 }}>
-          Upcoming action
+        <Button disabled style={{ width: 240 }}>
+          <Text
+            render={<span />}
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 'var(--t-spacing-1)',
+            }}
+          >
+            Upcoming action
+            <Pill label="Soon" />
+          </Text>
         </Button>
         {(['left', 'right'] as const).map((overlap) => (
           <div

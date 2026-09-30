@@ -9,6 +9,7 @@ import { buttonControlsTest } from '@/__stories__/twenty-ui-gallery/utils/button
 import { responsiveHooksTest } from '@/__stories__/twenty-ui-gallery/utils/responsiveHooksTest';
 import { RESPONSIVE_HOOKS_WIDGET_SIZING } from '@/__stories__/twenty-ui-gallery/constants/RESPONSIVE_HOOKS_WIDGET_SIZING';
 import { dialogTest } from '@/__stories__/twenty-ui-gallery/utils/dialogTest';
+import { toastCountdownTest } from '@/__stories__/twenty-ui-gallery/utils/toastCountdownTest';
 import { dropdownSandboxFailureTest } from '@/__stories__/twenty-ui-gallery/utils/dropdownSandboxFailureTest';
 import { selectPreactTest } from '@/__stories__/twenty-ui-gallery/utils/selectPreactTest';
 import { type Meta } from '@storybook/react-vite';
@@ -335,6 +336,18 @@ export const ToastPreact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-toast',
   runtime: 'preact',
   play: toastTest,
+});
+
+export const ToastCountdownReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-toast-countdown',
+  runtime: 'react',
+  play: toastCountdownTest,
+});
+
+export const ToastCountdownPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-toast-countdown',
+  runtime: 'preact',
+  play: toastCountdownTest,
 });
 
 export const AlertDialogReact: Story = createGalleryStory({
