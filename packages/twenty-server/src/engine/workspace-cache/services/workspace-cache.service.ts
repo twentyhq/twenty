@@ -348,10 +348,10 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     await this.cacheStorage.runScript<number>({
       script: INVALIDATE_WORKSPACE_CACHE_SCRIPT,
       keys: this.buildCacheEntryKeys(workspaceId, cacheKeyNames),
-      args: [
-        String(this.twentyConfigService.get('CACHE_STORAGE_TTL') * 1000),
-        ...cacheKeyNames.map(() => JSON.stringify(crypto.randomUUID())),
-      ],
+      args: this.buildFreshHashScriptArgs({
+        cacheTtlMs: this.twentyConfigService.get('CACHE_STORAGE_TTL') * 1000,
+        cacheKeyNames,
+      }),
     });
     this.deleteFromLocalCache(workspaceId, cacheKeyNames);
     await this.memoizer.clearKeys(`${workspaceId}-`);
@@ -528,10 +528,7 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     const hashes = await this.cacheStorage.runScript<string[]>({
       script: CLAIM_WORKSPACE_CACHE_HASHES_SCRIPT,
       keys: this.buildCacheEntryKeys(workspaceId, cacheKeyNames),
-      args: [
-        String(cacheTtlMs),
-        ...cacheKeyNames.map(() => JSON.stringify(crypto.randomUUID())),
-      ],
+      args: this.buildFreshHashScriptArgs({ cacheTtlMs, cacheKeyNames }),
     });
     const rowsBatchLoader = new WorkspaceCacheRowsBatchLoader(
       this.coreDataSource,
@@ -716,6 +713,19 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
 
       return [`${baseKey}:hash`, `${baseKey}:data`];
     });
+  }
+
+  private buildFreshHashScriptArgs({
+    cacheTtlMs,
+    cacheKeyNames,
+  }: {
+    cacheTtlMs: number;
+    cacheKeyNames: WorkspaceCacheKeyName[];
+  }): string[] {
+    return [
+      String(cacheTtlMs),
+      ...cacheKeyNames.map(() => JSON.stringify(crypto.randomUUID())),
+    ];
   }
 
   private setInLocalCache(
