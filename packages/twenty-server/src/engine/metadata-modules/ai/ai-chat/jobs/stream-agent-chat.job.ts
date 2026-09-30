@@ -471,22 +471,26 @@ export class StreamAgentChatJob {
             });
           };
 
-          const { stream, modelConfig, hasNoMoreAvailableCredits } =
-            await this.chatExecutionService.streamChat({
-              workspace,
-              userWorkspaceId: data.userWorkspaceId,
-              threadId: data.threadId,
-              streamId: data.streamId,
-              turnId: data.existingTurnId,
-              messageId: data.messageId,
-              messages: data.messages,
-              browsingContext: data.browsingContext,
-              modelId: data.modelId,
-              onCodeExecutionUpdate,
-              onCompaction,
-              abortSignal,
-              conversationSizeTokens: data.conversationSizeTokens,
-            });
+          const {
+            stream,
+            modelConfig,
+            hasNoMoreAvailableCredits,
+            getStreamError,
+          } = await this.chatExecutionService.streamChat({
+            workspace,
+            userWorkspaceId: data.userWorkspaceId,
+            threadId: data.threadId,
+            streamId: data.streamId,
+            turnId: data.existingTurnId,
+            messageId: data.messageId,
+            messages: data.messages,
+            browsingContext: data.browsingContext,
+            modelId: data.modelId,
+            onCodeExecutionUpdate,
+            onCompaction,
+            abortSignal,
+            conversationSizeTokens: data.conversationSizeTokens,
+          });
 
           checkHasNoMoreAvailableCredits = hasNoMoreAvailableCredits;
 
@@ -503,11 +507,8 @@ export class StreamAgentChatJob {
           writer.merge(
             toUIMessageStream({
               stream: stream.stream,
-              onError: (error) => {
-                streamError = error;
-
-                return error instanceof Error ? error.message : String(error);
-              },
+              onError: (error) =>
+                error instanceof Error ? error.message : String(error),
               sendStart: true,
               generateMessageId: () => assistantMessageId,
               messageMetadata: ({ part }) => {
@@ -531,6 +532,7 @@ export class StreamAgentChatJob {
               onEnd: async ({ responseMessage, isAborted }) => {
                 // Rejecting here would race chunks still draining.
                 try {
+                  streamError ??= getStreamError();
                   isFinalizingPersist = true;
                   await persistChain;
                   await this.handleStreamFinish({
