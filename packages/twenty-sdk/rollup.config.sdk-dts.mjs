@@ -25,10 +25,7 @@ export default [
     plugins,
   },
   {
-    input:
-      process.env.TWENTY_SDK_PREVIEW === 'true'
-        ? 'src/sdk/define/preview.ts'
-        : 'src/sdk/define/index.ts',
+    input: 'src/sdk/define/index.ts',
     output: { file: 'dist/define/index.d.ts', format: 'es' },
     external,
     plugins,

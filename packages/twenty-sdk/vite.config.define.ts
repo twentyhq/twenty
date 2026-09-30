@@ -19,10 +19,7 @@ export default defineConfig(() => {
       outDir: 'dist/define',
       sourcemap: true,
       lib: {
-        entry:
-          process.env.TWENTY_SDK_PREVIEW === 'true'
-            ? 'src/sdk/define/preview.ts'
-            : 'src/sdk/define/index.ts',
+        entry: 'src/sdk/define/index.ts',
         name: 'twenty-sdk-define',
         formats: ['es', 'cjs'],
         fileName: (format) => `index.${format === 'es' ? 'mjs' : 'cjs'}`,
