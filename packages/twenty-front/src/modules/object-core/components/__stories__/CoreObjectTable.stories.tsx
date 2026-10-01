@@ -18,6 +18,7 @@ const columns: CoreObjectTableColumn<Item>[] = [
     fieldName: 'name',
     fieldLabel: msg`Name`,
     fieldType: 'string',
+    align: 'left',
     gridTrack: '1fr',
     renderCell: (item) => item.name,
   },
