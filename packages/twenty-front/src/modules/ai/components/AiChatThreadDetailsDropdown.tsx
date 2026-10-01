@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { type ReactNode, useMemo } from 'react';
+import { type ReactNode, useMemo, useRef } from 'react';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -43,106 +43,136 @@ const AI_CHAT_THREAD_DETAILS_PAGE = {
 } as const;
 
 const StyledDetails = styled.div`
-  column-gap: ${themeCssVariables.spacing[3]};
-  display: grid;
-  grid-template-columns: max-content minmax(0, 1fr);
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[2]};
   padding: ${themeCssVariables.spacing[2]};
-  row-gap: ${themeCssVariables.spacing[2]};
+`;
+
+const StyledRow = styled.div`
+  align-items: flex-start;
+  display: flex;
+  gap: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledLabel = styled.div`
   align-items: center;
   color: ${themeCssVariables.font.color.tertiary};
   display: flex;
+  flex-shrink: 0;
   font-size: ${themeCssVariables.font.size.sm};
   gap: ${themeCssVariables.spacing[1]};
-  min-height: 24px;
+  height: 24px;
+  width: 96px;
+`;
+
+const StyledLabelText = styled.span`
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 const StyledValue = styled.div`
   align-items: center;
   display: flex;
+  flex: 1;
   flex-wrap: wrap;
   gap: ${themeCssVariables.spacing[1]};
   min-height: 24px;
   min-width: 0;
 `;
 
+const StyledEmptyValue = styled.span`
+  color: ${themeCssVariables.font.color.light};
+  font-size: ${themeCssVariables.font.size.sm};
+`;
+
 type AiChatThreadDetailsRowProps = {
   Icon: IconComponent;
   label: string;
+  action?: ReactNode;
   children: ReactNode;
 };
 
 const AiChatThreadDetailsRow = ({
   Icon,
   label,
+  action,
   children,
 }: AiChatThreadDetailsRowProps) => {
   const theme = useTheme();
 
   return (
-    <>
+    <StyledRow>
       <StyledLabel>
         <Icon size={theme.icon.size.sm} />
-        {label}
+        <StyledLabelText>{label}</StyledLabelText>
       </StyledLabel>
       <StyledValue>{children}</StyledValue>
-    </>
+      {action}
+    </StyledRow>
   );
 };
 
-type AiChatThreadLinkedRecordsValueProps = {
+type AiChatThreadLinkedRecordChipsProps = {
   dropdownId: string;
   linkedRecords: FieldWidgetRelationRecord[];
-  canEditLinkedRecords: boolean;
 };
 
-const AiChatThreadLinkedRecordsValue = ({
+const AiChatThreadLinkedRecordChips = ({
   dropdownId,
   linkedRecords,
-  canEditLinkedRecords,
-}: AiChatThreadLinkedRecordsValueProps) => {
+}: AiChatThreadLinkedRecordChipsProps) => {
   const { t } = useLingui();
-  const { goToPage } = useDropdownPage();
   const { closeDropdown } = useCloseDropdown();
   const { isAiChatArtifactSurface } = useAiChatArtifactSurface();
   const { openRecordTarget } = useChatTargetNavigation();
-  const hasLinkedRecords = linkedRecords.length > 0;
+
+  if (linkedRecords.length === 0) {
+    return <StyledEmptyValue>{t`None`}</StyledEmptyValue>;
+  }
+
+  return linkedRecords.map(({ record, objectNameSingular }) => (
+    <RecordChip
+      key={`${objectNameSingular}-${record.id}`}
+      objectNameSingular={objectNameSingular}
+      record={record}
+      // Linked records open like the records the chat mentions
+      onClick={
+        isAiChatArtifactSurface
+          ? () => {
+              closeDropdown(dropdownId);
+              openRecordTarget({ recordId: record.id, objectNameSingular });
+            }
+          : undefined
+      }
+    />
+  ));
+};
+
+type AiChatThreadEditLinkedRecordsButtonProps = {
+  hasLinkedRecords: boolean;
+};
+
+const AiChatThreadEditLinkedRecordsButton = ({
+  hasLinkedRecords,
+}: AiChatThreadEditLinkedRecordsButtonProps) => {
+  const { t } = useLingui();
+  const { goToPage } = useDropdownPage();
   const editLabel = hasLinkedRecords
     ? t`Edit linked records`
     : t`Link to a record`;
   const EditIcon = hasLinkedRecords ? IconPencil : IconPlus;
 
   return (
-    <>
-      {linkedRecords.map(({ record, objectNameSingular }) => (
-        <RecordChip
-          key={`${objectNameSingular}-${record.id}`}
-          objectNameSingular={objectNameSingular}
-          record={record}
-          // Linked records open like the records the chat mentions
-          onClick={
-            isAiChatArtifactSurface
-              ? () => {
-                  closeDropdown(dropdownId);
-                  openRecordTarget({ recordId: record.id, objectNameSingular });
-                }
-              : undefined
-          }
-        />
-      ))}
-      {canEditLinkedRecords && (
-        <LightIconButton
-          aria-label={editLabel}
-          title={editLabel}
-          emphasis="subtle"
-          onClick={() => goToPage(AI_CHAT_THREAD_DETAILS_PAGE.LINKED_RECORDS)}
-        >
-          <EditIcon />
-        </LightIconButton>
-      )}
-    </>
+    <LightIconButton
+      aria-label={editLabel}
+      title={editLabel}
+      emphasis="subtle"
+      onClick={() => goToPage(AI_CHAT_THREAD_DETAILS_PAGE.LINKED_RECORDS)}
+    >
+      <EditIcon />
+    </LightIconButton>
   );
 };
 
@@ -181,6 +211,7 @@ export const AiChatThreadDetailsDropdown = ({
     memberIds: preview?.memberIds ?? [],
     workspaceMembers: currentWorkspaceMembers,
   });
+  const dropdownContentRef = useRef<HTMLDivElement>(null);
   const previewThreads = useMemo(
     () =>
       isDefined(thread)
@@ -208,6 +239,9 @@ export const AiChatThreadDetailsDropdown = ({
         }
       />
       <DropdownContent
+        ref={dropdownContentRef}
+        // The details are read first, so focus stays off the first chip
+        initialFocus={() => dropdownContentRef.current}
         align="start"
         width={GenericDropdownContentWidth.ExtraLarge}
         aria-label={t`Chat details`}
@@ -216,11 +250,20 @@ export const AiChatThreadDetailsDropdown = ({
         <Dropdown.Page id={AI_CHAT_THREAD_DETAILS_PAGE.DETAILS} type="panel">
           <StyledDetails>
             {areLinkedRecordsAvailable && (
-              <AiChatThreadDetailsRow Icon={IconLink} label={t`Linked to`}>
-                <AiChatThreadLinkedRecordsValue
+              <AiChatThreadDetailsRow
+                Icon={IconLink}
+                label={t`Linked to`}
+                action={
+                  canEditLinkedRecords && (
+                    <AiChatThreadEditLinkedRecordsButton
+                      hasLinkedRecords={linkedRecords.length > 0}
+                    />
+                  )
+                }
+              >
+                <AiChatThreadLinkedRecordChips
                   dropdownId={dropdownId}
                   linkedRecords={linkedRecords}
-                  canEditLinkedRecords={canEditLinkedRecords}
                 />
               </AiChatThreadDetailsRow>
             )}
