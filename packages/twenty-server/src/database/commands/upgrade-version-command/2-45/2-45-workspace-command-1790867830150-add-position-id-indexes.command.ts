@@ -318,6 +318,7 @@ export class AddPositionIdIndexesCommand extends ProvisionedWorkspaceCommandRunn
         queryRunner,
         schemaName,
         indexName,
+        concurrently: true,
       });
     }
   }
