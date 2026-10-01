@@ -52,8 +52,7 @@ export const createAttachConversationToRecordTool = ({
     const failureMessage = `Failed to attach this conversation to the ${objectNameSingular} record`;
 
     try {
-      // Resolved at call time, as registry tools are, so access withdrawn
-      // since the turn began is honored.
+      // resolved at call time so access withdrawn mid-turn is honored
       const { workspaceId, threadId, authContext } =
         await (toolContext.resolveExecutionContext?.() ?? toolContext);
 

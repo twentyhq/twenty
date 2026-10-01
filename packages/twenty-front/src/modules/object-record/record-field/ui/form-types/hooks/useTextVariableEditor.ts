@@ -65,8 +65,7 @@ export const useTextVariableEditor = ({
       onUpdate(editor);
     },
     editorProps: {
-      // Re-applied props replace Tiptap's default attributes, so the role
-      // has to be restated here or the editor loses it.
+      // Re-applied props replace Tiptap's default attributes, so the role must be restated.
       attributes: {
         role: 'textbox',
         ...(isDefined(ariaLabelledBy)

@@ -182,8 +182,7 @@ export const SettingsAdminNewAiProvider = () => {
       const accessKeyId = values.accessKeyId.trim();
       const secretAccessKey = values.secretAccessKey.trim();
 
-      // Half a key pair is a slip, not a mode: role auth ignores both fields,
-      // so accepting it would run under an identity nobody chose.
+      // Role auth ignores both fields, so half a key pair would run under an identity nobody chose
       if (isNonEmptyString(accessKeyId) !== isNonEmptyString(secretAccessKey)) {
         form.setError(
           isNonEmptyString(accessKeyId) ? 'secretAccessKey' : 'accessKeyId',

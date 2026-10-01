@@ -53,9 +53,7 @@ export const useRetryChatMessage = () => {
         },
       });
 
-      // Same ordering guard as useAgentChat: a credits-exhausted event from
-      // the stream this retry started may already have marked the thread error
-      // before this response resolves, and that exhaustion is newer truth.
+      // Same guard as useAgentChat: the stream may already have set a newer credits-exhausted error.
       if (!isAiChatCreditsExhaustedError(store.get(errorAtom))) {
         store.set(currentWorkspaceState.atom, markWorkspaceCreditsAvailable);
       }

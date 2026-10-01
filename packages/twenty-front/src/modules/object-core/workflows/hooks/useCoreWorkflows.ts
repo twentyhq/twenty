@@ -37,8 +37,7 @@ const ORDER_BY_FIELD_BY_FIELD_NAME: Record<string, CoreWorkflowOrderByField> = {
   updatedAt: CoreWorkflowOrderByField.UPDATED_AT,
 };
 
-// Two refreshes racing each other would otherwise append the same page twice,
-// and the ids are what make the merge idempotent.
+// Merging by id keeps racing refreshes from appending the same page twice.
 const mergeFetchedCoreWorkflowPage = (
   previousResult: GetCoreWorkflowsQuery,
   { fetchMoreResult }: { fetchMoreResult: GetCoreWorkflowsQuery },
@@ -135,9 +134,7 @@ export const useCoreWorkflows = ({
 
   const loadedCount = connection?.edges.length ?? 0;
 
-  // A plain refetch re-runs the first page and drops what fetchMore accumulated,
-  // so ask for as many rows as are displayed and page back up to them when that
-  // is more than one request may return.
+  // A plain refetch drops fetchMore pages, so re-request every displayed row.
   const refetchLoadedCoreWorkflows = useCallback(async () => {
     const targetCount = Math.max(loadedCount, CORE_WORKFLOWS_PAGE_SIZE);
 

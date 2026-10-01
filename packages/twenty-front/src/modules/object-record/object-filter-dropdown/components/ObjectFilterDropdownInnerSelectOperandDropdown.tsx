@@ -48,9 +48,7 @@ export const ObjectFilterDropdownInnerSelectOperandDropdown = () => {
 
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
 
-  // The target field may have been deleted from the workspace since the
-  // filter was saved — return null and let the parent skip rendering
-  // rather than throwing.
+  // The target field may have been deleted since the filter was saved.
   const relationTargetFieldMetadataItem = isDefined(
     relationTargetFieldMetadataIdUsedInDropdown,
   )

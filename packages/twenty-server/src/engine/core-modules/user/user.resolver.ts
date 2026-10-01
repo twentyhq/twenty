@@ -472,8 +472,7 @@ export class UserResolver {
     const workspaceMemberToDeleteIsAuthenticatedUser =
       workspaceMemberToDelete.userId === userId;
 
-    // Removing oneself deletes the account when it is the last workspace, so it
-    // is the person's to do rather than an application's.
+    // Removing oneself may delete the account, so only the person can do it, not an application.
     if (workspaceMemberToDeleteIsAuthenticatedUser && !isUserSession) {
       throw buildUserSessionRequiredError();
     }
@@ -710,8 +709,7 @@ export class UserResolver {
     return user.userWorkspaces;
   }
 
-  // Same rows as workspaces under the entity's own field name, so guarding only
-  // one of the two leaves the other answering.
+  // Same rows as the workspaces field under the entity's own name, so guarding only one leaves the other answering.
   @ResolveField(() => [UserWorkspaceEntity], {
     name: 'userWorkspaces',
     nullable: false,

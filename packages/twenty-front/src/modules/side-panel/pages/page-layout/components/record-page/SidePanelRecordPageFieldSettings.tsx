@@ -98,12 +98,7 @@ export const SidePanelRecordPageFieldSettings = () => {
     nestedRelationFieldMetadataId: currentNestedRelationFieldMetadataId,
   });
 
-  // A relation field widget in table display mode embeds a widget view scoped to
-  // the current record's related records; its source object is the relation
-  // target (or the nested relation target two hops away), not the record
-  // page's own object. A configured but unresolvable nested relation keeps
-  // the target undefined so the terminal view's settings stay hidden instead
-  // of being edited against the first hop's object.
+  // The embedded view lists the relation target, not the page's object; an unresolvable nested hop stays undefined to hide its settings
   const targetObjectMetadataId = isDefined(currentNestedRelationFieldMetadataId)
     ? resolvedNestedRelation?.nestedRelationTargetObjectMetadataItem.id
     : currentFieldMetadataItem?.relation?.targetObjectMetadata.id;

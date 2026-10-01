@@ -1,211 +1,95 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { useAdvancedFilterFieldSelectDropdown } from '@/object-record/advanced-filter/hooks/useAdvancedFilterFieldSelectDropdown';
 import { useApplyAdvancedFilterCompositeSubField } from '@/object-record/advanced-filter/hooks/useApplyAdvancedFilterCompositeSubField';
-import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
-import { objectFilterDropdownIsSelectingCompositeFieldComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownIsSelectingCompositeFieldComponentState';
-import { objectFilterDropdownSubMenuFieldTypeComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSubMenuFieldTypeComponentState';
 import { getCompositeSubFieldLabel } from '@/object-record/object-filter-dropdown/utils/getCompositeSubFieldLabel';
+import { isCompositeFilterableFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFilterableFieldType';
 import { ICON_NAME_BY_SUB_FIELD } from '@/object-record/record-filter/constants/IconNameBySubField';
 import { areCompositeTypeSubFieldsFilterable } from '@/object-record/record-filter/utils/areCompositeTypeSubFieldsFilterable';
 import { isCompositeTypeNonFilterableByAnySubField } from '@/object-record/record-filter/utils/isCompositeTypeNonFilterableByAnySubField';
 import { SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS } from '@/settings/data-model/constants/SettingsCompositeFieldTypeConfigs';
 import { type CompositeFieldSubFieldName } from '@/settings/data-model/types/CompositeFieldSubFieldName';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
-import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
-import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
-import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
-import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
-import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
-import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
-import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
-import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { t } from '@lingui/core/macro';
-import { isDefined } from 'twenty-shared/utils';
+import { getFilterTypeFromFieldType } from 'twenty-shared/utils';
+import { Dropdown } from 'twenty-ui/components';
+import { useIcons } from 'twenty-ui/icon';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
-import { IconChevronLeft, useIcons } from 'twenty-ui/icon';
-import { ListItem } from 'twenty-ui/primitives/navigation';
 
 type AdvancedFilterCompositeSubFieldSelectMenuProps = {
   recordFilterId: string;
+  fieldMetadataItem: FieldMetadataItem;
 };
 
 export const AdvancedFilterCompositeSubFieldSelectMenu = ({
   recordFilterId,
+  fieldMetadataItem,
 }: AdvancedFilterCompositeSubFieldSelectMenuProps) => {
   const { getIcon } = useIcons();
-
-  const fieldMetadataItemUsedInDropdown = useAtomComponentSelectorValue(
-    fieldMetadataItemUsedInDropdownComponentSelector,
-  );
-
-  const [, setObjectFilterDropdownIsSelectingCompositeField] =
-    useAtomComponentState(
-      objectFilterDropdownIsSelectingCompositeFieldComponentState,
-    );
-
-  const [
-    objectFilterDropdownSubMenuFieldType,
-    setObjectFilterDropdownSubMenuFieldType,
-  ] = useAtomComponentState(objectFilterDropdownSubMenuFieldTypeComponentState);
-
-  const { closeAdvancedFilterFieldSelectDropdown } =
-    useAdvancedFilterFieldSelectDropdown(recordFilterId);
-
   const { applyAdvancedFilterCompositeSubField } =
     useApplyAdvancedFilterCompositeSubField();
 
-  const handleSelectFilter = ({
-    fieldMetadataItem,
-    subFieldName,
-  }: {
-    fieldMetadataItem: FieldMetadataItem;
-    subFieldName?: CompositeFieldSubFieldName | null;
-  }) => {
-    applyAdvancedFilterCompositeSubField({
-      sourceFieldMetadataItem: fieldMetadataItem,
-      subFieldName: subFieldName ?? null,
-      recordFilterId,
-    });
+  const filterType = getFilterTypeFromFieldType(fieldMetadataItem.type);
 
-    closeAdvancedFilterFieldSelectDropdown();
-  };
-
-  const handleSubMenuBack = () => {
-    setObjectFilterDropdownSubMenuFieldType(null);
-    setObjectFilterDropdownIsSelectingCompositeField(false);
-  };
-
-  const { advancedFilterFieldSelectDropdownId } =
-    useAdvancedFilterFieldSelectDropdown(recordFilterId);
-
-  const selectedItemId = useAtomComponentStateValue(
-    selectedItemIdComponentState,
-    advancedFilterFieldSelectDropdownId,
-  );
-
-  if (!isDefined(objectFilterDropdownSubMenuFieldType)) {
+  if (!isCompositeFilterableFieldType(filterType)) {
     return null;
   }
 
+  const handleSelectFilter = (
+    subFieldName: CompositeFieldSubFieldName | null,
+  ) => {
+    applyAdvancedFilterCompositeSubField({
+      sourceFieldMetadataItem: fieldMetadataItem,
+      subFieldName,
+      recordFilterId,
+    });
+  };
+
   const subFieldNames = SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS[
-    objectFilterDropdownSubMenuFieldType
+    filterType
   ].subFields
     .filter((subField) => subField.isFilterable === true)
     .map((subField) => subField.subFieldName);
-
-  const subFieldsAreFilterable =
-    isDefined(fieldMetadataItemUsedInDropdown) &&
-    areCompositeTypeSubFieldsFilterable(fieldMetadataItemUsedInDropdown.type);
-
+  const subFieldsAreFilterable = areCompositeTypeSubFieldsFilterable(
+    fieldMetadataItem.type,
+  );
   const compositeFieldTypeIsFilterableByAnySubField =
-    isDefined(fieldMetadataItemUsedInDropdown) &&
-    !isCompositeTypeNonFilterableByAnySubField(
-      fieldMetadataItemUsedInDropdown.type,
-    );
-
-  const selectableItemIdArray = [
-    '-1',
-    ...subFieldNames.map((subFieldName) => subFieldName),
-  ];
-
-  const fieldLabel = fieldMetadataItemUsedInDropdown?.label;
+    !isCompositeTypeNonFilterableByAnySubField(fieldMetadataItem.type);
 
   return (
-    <LegacyDropdownContent
-      widthInPixels={GenericDropdownContentWidth.ExtraLarge}
-    >
-      <DropdownMenuHeader
-        StartComponent={
-          <DropdownMenuHeaderLeftComponent
-            onClick={handleSubMenuBack}
-            Icon={IconChevronLeft}
-          />
-        }
-      >
-        {fieldMetadataItemUsedInDropdown?.label}
-      </DropdownMenuHeader>
-      <DropdownMenuItemsContainer>
-        <SelectableList
-          focusId={advancedFilterFieldSelectDropdownId}
-          selectableItemIdArray={selectableItemIdArray}
-          selectableListInstanceId={advancedFilterFieldSelectDropdownId}
-        >
-          {compositeFieldTypeIsFilterableByAnySubField &&
-            isDefined(fieldMetadataItemUsedInDropdown) && (
-              <SelectableListItem
-                itemId="-1"
-                key={`select-filter-${-1}`}
-                onEnter={() => {
-                  handleSelectFilter({
-                    fieldMetadataItem: fieldMetadataItemUsedInDropdown,
-                  });
-                }}
-              >
-                <ListItem
-                  key={`select-filter-${-1}`}
-                  data-testid={`select-filter-${-1}`}
-                  focused={selectedItemId === '-1'}
-                  onClick={() => {
-                    handleSelectFilter({
-                      fieldMetadataItem: fieldMetadataItemUsedInDropdown,
-                    });
-                  }}
-                  startIcon={
-                    <SelectOptionIcon
-                      Icon={getIcon(fieldMetadataItemUsedInDropdown.icon)}
-                    />
-                  }
-                >
-                  <OverflowingTextWithTooltip
-                    text={t`Any ${fieldLabel ?? ''} field`}
-                  />
-                </ListItem>
-              </SelectableListItem>
-            )}
-          {subFieldsAreFilterable &&
-            isDefined(fieldMetadataItemUsedInDropdown) &&
-            subFieldNames.map((subFieldName, index) => (
-              <SelectableListItem
-                itemId={subFieldName}
-                key={`select-filter-${index}`}
-                onEnter={() => {
-                  handleSelectFilter({
-                    fieldMetadataItem: fieldMetadataItemUsedInDropdown,
-                    subFieldName,
-                  });
-                }}
-              >
-                <ListItem
-                  focused={selectedItemId === subFieldName}
-                  key={`select-filter-${index}`}
-                  data-testid={`select-filter-${index}`}
-                  onClick={() => {
-                    handleSelectFilter({
-                      fieldMetadataItem: fieldMetadataItemUsedInDropdown,
-                      subFieldName,
-                    });
-                  }}
-                  startIcon={
-                    <SelectOptionIcon
-                      Icon={getIcon(
-                        ICON_NAME_BY_SUB_FIELD[subFieldName] ??
-                          fieldMetadataItemUsedInDropdown.icon,
-                      )}
-                    />
-                  }
-                >
-                  {getCompositeSubFieldLabel(
-                    objectFilterDropdownSubMenuFieldType,
-                    subFieldName,
+    <>
+      <Dropdown.Back aria-label={t`${fieldMetadataItem.label}, back to fields`}>
+        {fieldMetadataItem.label}
+      </Dropdown.Back>
+      <Dropdown.Section>
+        {compositeFieldTypeIsFilterableByAnySubField && (
+          <Dropdown.ActionItem
+            onClick={() => handleSelectFilter(null)}
+            startIcon={
+              <SelectOptionIcon Icon={getIcon(fieldMetadataItem.icon)} />
+            }
+          >
+            <OverflowingTextWithTooltip
+              text={t`Any ${fieldMetadataItem.label} field`}
+            />
+          </Dropdown.ActionItem>
+        )}
+        {subFieldsAreFilterable &&
+          subFieldNames.map((subFieldName) => (
+            <Dropdown.ActionItem
+              key={subFieldName}
+              onClick={() => handleSelectFilter(subFieldName)}
+              startIcon={
+                <SelectOptionIcon
+                  Icon={getIcon(
+                    ICON_NAME_BY_SUB_FIELD[subFieldName] ??
+                      fieldMetadataItem.icon,
                   )}
-                </ListItem>
-              </SelectableListItem>
-            ))}
-        </SelectableList>
-      </DropdownMenuItemsContainer>
-    </LegacyDropdownContent>
+                />
+              }
+            >
+              {getCompositeSubFieldLabel(filterType, subFieldName)}
+            </Dropdown.ActionItem>
+          ))}
+      </Dropdown.Section>
+    </>
   );
 };

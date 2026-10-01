@@ -4,22 +4,9 @@ import { getSystemRelationFieldUniversalIdentifier } from '@/application/determi
 import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from '@/metadata/constants/standard-object-universal-identifiers.constant';
 import { buildStandardObjectSystemFields } from '@/metadata/utils/internal/build-standard-object-system-fields.util';
 
-// Important notice:
-// - Never ever mutate an existing universal identifier
-// - Deleting an existing universal identifier should be very rare
-// - System field universal identifiers (id, createdAt, updatedAt, deletedAt,
-//   createdBy, updatedBy, position, searchVector) are deterministically derived
-//   from the standard application universal identifier, the object universal
-//   identifier and the field name (buildStandardObjectSystemFields). The name
-//   field is a default field, not a system field, and keeps its hardcoded
-//   universal identifier.
-// - System relation field universal identifiers are deterministically derived
-//   from the object + the relation target object
-//   (getSystemRelationFieldUniversalIdentifier).
-//
-// Fields live in their own const so that both STANDARD_OBJECTS' `fields` and
-// its INDEX view (buildStandardObjectIndexView) can read the same field
-// universal identifiers.
+// Never mutate an existing universal identifier, and delete one only rarely.
+// System field ids come from buildStandardObjectSystemFields and getSystemRelationFieldUniversalIdentifier;
+// name is a default field, not a system one, and keeps its hardcoded id.
 export const STANDARD_OBJECT_FIELDS = {
   agentChatThread: {
     ...buildStandardObjectBaseFields(

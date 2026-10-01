@@ -56,10 +56,8 @@ type DeletionResult = {
   error?: string;
 };
 
-// All entities that extend WorkspaceRelatedEntity or SyncableEntity
-// Ordered by dependency: CHILDREN FIRST to minimize CASCADE overhead
+// Children first to minimize CASCADE overhead
 const WORKSPACE_RELATED_ENTITIES: EntityTarget<ObjectLiteral>[] = [
-  // Level 4: Deepest children - delete these first to avoid CASCADE overhead
   ViewFieldEntity,
   ViewFilterEntity,
   ViewGroupEntity,
@@ -73,20 +71,17 @@ const WORKSPACE_RELATED_ENTITIES: EntityTarget<ObjectLiteral>[] = [
   RowLevelPermissionPredicateEntity,
   PageLayoutWidgetEntity,
 
-  // Level 3: Mid-level children
   RowLevelPermissionPredicateGroupEntity,
   ViewEntity,
   IndexMetadataEntity,
   PageLayoutTabEntity,
 
-  // Level 2: Children that depend on core entities
   FieldMetadataEntity,
   PageLayoutEntity,
   PermissionFlagEntity,
   SkillEntity,
   LogicFunctionEntity,
 
-  // Level 1: Core entities with CASCADE deletes - delete after their children
   ObjectMetadataEntity,
   RoleEntity,
   AgentEntity,
@@ -94,7 +89,6 @@ const WORKSPACE_RELATED_ENTITIES: EntityTarget<ObjectLiteral>[] = [
   ApiKeyEntity,
   LogicFunctionLayerEntity,
 
-  // Level 0: Independent entities (no foreign keys to other workspace entities)
   ApplicationEntity,
   ApprovedAccessDomainEntity,
   BillingCustomerEntity,

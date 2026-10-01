@@ -99,9 +99,7 @@ export class ViewResolver {
     });
   }
 
-  // The object label is resolved against the object's own application, which is
-  // not necessarily the view's -- a workspace-custom view can point at a
-  // standard object.
+  // A workspace-custom view can point at a standard object, so the label resolves against the object's application
   private async resolveObjectLabelPlaceholderValues({
     view,
     context,

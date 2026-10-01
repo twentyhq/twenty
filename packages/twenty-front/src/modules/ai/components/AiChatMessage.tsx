@@ -50,8 +50,7 @@ const StyledMessageText = styled.div<{ isUser?: boolean }>`
     isUser ? `0 ${themeCssVariables.spacing[2]}` : '0'};
   white-space: normal;
   width: ${({ isUser }) => (isUser ? 'fit-content' : '100%')};
-  /* Pre-wrap within the whole container turns every newline between block
-     elements into extra spacing; keep normal flow and only pre-wrap code. */
+  /* Pre-wrap on the container turns newlines between blocks into spacing; only code pre-wraps. */
   word-wrap: break-word;
 
   code {

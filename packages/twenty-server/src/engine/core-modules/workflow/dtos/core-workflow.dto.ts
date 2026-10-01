@@ -37,8 +37,7 @@ export class CoreWorkflowDTO {
   @Field(() => WorkflowVisibility, { nullable: false })
   visibility: WorkflowVisibility;
 
-  // the reader's own id never leaves the server; the client only needs to know
-  // whether this reader is allowed to change who sees the workflow
+  // Exposed instead of the owner id, since the reader's own id never leaves the server.
   @Field(() => Boolean, { nullable: false })
   canChangeVisibility: boolean;
 

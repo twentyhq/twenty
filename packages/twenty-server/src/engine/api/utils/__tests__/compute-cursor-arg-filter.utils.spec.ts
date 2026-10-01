@@ -222,8 +222,7 @@ describe('computeCursorArgFilter', () => {
         isForwardPagination: true,
       });
 
-      // TEXT columns hold SQL NULL for rows written empty or without the
-      // field, so the trailing NULL block is part of the continuation
+      // Empty TEXT values are stored as SQL NULL, so the trailing NULL block continues the scan
       expect(result).toEqual([
         { or: [{ name: { gt: 'John' } }, { name: { isStrictly: 'NULL' } }] },
       ]);
@@ -749,8 +748,6 @@ describe('computeCursorArgFilter', () => {
   });
 
   describe('relation orderBy on a composite target field', () => {
-    // The web app sorts person-labeled relation columns exactly like this: one
-    // entry per ordered FULL_NAME property of the target's label identifier
     const relationCompositeOrderBy = [
       {
         company: { contactName: { firstName: OrderByDirection.AscNullsLast } },
@@ -774,9 +771,7 @@ describe('computeCursorArgFilter', () => {
         isForwardPagination: true,
       });
 
-      // The joined column is NULL both for rows without a related record and
-      // for related records holding an empty value: they all sort into the
-      // NULL block, which the exact nested check matches
+      // Missing related records and empty values both sort into the joined column's NULL block
       expect(result).toEqual([
         {
           or: [

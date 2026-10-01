@@ -47,8 +47,7 @@ describe('formatEmailAddress', () => {
 
     expect(reparsed).toHaveLength(2);
     expect(reparsed[0]?.address).toBe('a@example.com');
-    // addressparser collapses the escaped backslash: containment is the
-    // contract here, not byte fidelity of exotic display names.
+    // addressparser collapses the escaped backslash, so only containment is asserted.
     expect(reparsed[0]?.name).toBe('x"y');
     expect(reparsed[1]).toEqual({ address: 'b@example.com', name: '' });
   });

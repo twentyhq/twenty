@@ -33,10 +33,7 @@ const COMPANY_UNIVERSAL_IDENTIFIER =
 const COMPANY_NAME_FIELD_UNIVERSAL_IDENTIFIER =
   STANDARD_OBJECTS.company.fields.name.universalIdentifier;
 
-// The application declares a role that is strictly narrower than the admin who
-// holds the token: it may read but not update, and only sees companies whose
-// name contains "Intersection Visible". The admin has neither bound, so every
-// assertion below fails if the application's role is dropped.
+// Strictly narrower than the admin, so every assertion fails if the application's role is dropped.
 const buildApplicationManifest = (): Manifest =>
   buildBaseManifest({
     appId: TEST_APP_UNIVERSAL_IDENTIFIER,
@@ -157,8 +154,6 @@ describe('An application acting for a user is bound by both roles', () => {
     await createCompany(VISIBLE_COMPANY_ID, VISIBLE_COMPANY_NAME);
     await createCompany(HIDDEN_COMPANY_ID, HIDDEN_COMPANY_NAME);
 
-    // Minted with the admin token, so it carries that admin's userId and
-    // userWorkspaceId alongside the applicationId.
     const tokenPair = await generateAppleAdminApplicationTokenPair({
       applicationId,
     });

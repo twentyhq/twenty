@@ -33,8 +33,7 @@ type RecordShareRepository = WorkspaceRepository<RecordShare>;
 export class RecordShareStorageService {
   constructor(private readonly workspaceOrmManager: WorkspaceOrmManager) {}
 
-  // Authorization and grant changes must share the caller's transaction.
-  // OWNER and APPLICATION grants are managed by their respective producers.
+  // Must share the caller's transaction; OWNER and APPLICATION grants are managed by their producers.
   async setManualShare({
     workspaceId,
     share,
@@ -118,15 +117,13 @@ export class RecordShareStorageService {
     if (recordIds.length === 0) {
       return;
     }
-    // History transactions can span core and workspace tables and must reuse
-    // their existing connection rather than open a separate ORM transaction.
+    // History transactions span core and workspace tables, so they must reuse their connection.
     await manager.query(
       `DELETE FROM ${escapeIdentifier(getWorkspaceSchemaName(workspaceId))}.${escapeIdentifier(RECORD_SHARE_OBJECT_METADATA_NAME)} WHERE "objectMetadataId" = $1 AND "recordId" = ANY($2::uuid[])`,
       [objectMetadataId, recordIds],
     );
   }
 
-  // Each criterion is ANDed, and a row matching any of them is deleted.
   async deleteMatching({
     workspaceId,
     criteria,
