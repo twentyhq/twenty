@@ -8,7 +8,8 @@ import { AiChatSkeletonLoader } from '@/ai/components/internal/AiChatSkeletonLoa
 import { NavigationDrawerAiChatThreadSection } from '@/ai/components/NavigationDrawerAiChatThreadSection';
 import { NavigationDrawerAiChatTriageSection } from '@/ai/components/NavigationDrawerAiChatTriageSection';
 import { useAiChatThreadClick } from '@/ai/hooks/useAiChatThreadClick';
-import { useRecentChatThreads } from '@/ai/hooks/useRecentChatThreads';
+import { useChatThreads } from '@/ai/hooks/useChatThreads';
+import { agentChatRecentThreadsSelector } from '@/ai/states/selectors/agentChatRecentThreadsSelector';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { agentChatFavoriteThreadsSelector } from '@/ai/states/selectors/agentChatFavoriteThreadsSelector';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -47,7 +48,7 @@ export const NavigationDrawerAiChatContent = () => {
     resetNavigationStack: true,
   });
 
-  const { threads, loading } = useRecentChatThreads();
+  const { threads, loading } = useChatThreads(agentChatRecentThreadsSelector);
   const agentChatFavoriteThreads = useAtomStateValue(
     agentChatFavoriteThreadsSelector,
   );

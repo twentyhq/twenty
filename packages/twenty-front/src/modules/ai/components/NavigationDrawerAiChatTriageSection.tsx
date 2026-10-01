@@ -57,6 +57,7 @@ export const NavigationDrawerAiChatTriageSection = () => {
           Icon={AGENT_CHAT_THREAD_FILTER_STATUS_ICONS[filterStatus]}
           active={isOnInboxPage && agentChatThreadFilterStatus === filterStatus}
           onClick={() => handleTriageClick(filterStatus)}
+          triggerEvent="CLICK"
         />
       ))}
     </CollapsibleNavigationDrawerSection>

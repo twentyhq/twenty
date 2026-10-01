@@ -38,8 +38,8 @@ jest.mock('@/ai/states/selectors/agentChatFavoriteThreadsSelector', () => ({
   },
 }));
 
-jest.mock('@/ai/hooks/useRecentChatThreads', () => ({
-  useRecentChatThreads: () => ({ threads: mockThreads, loading: false }),
+jest.mock('@/ai/hooks/useChatThreads', () => ({
+  useChatThreads: () => ({ threads: mockThreads, loading: false }),
 }));
 
 jest.mock('@/ai/hooks/useAiChatThreadClick', () => ({

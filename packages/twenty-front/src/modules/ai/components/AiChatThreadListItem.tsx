@@ -65,7 +65,7 @@ const StyledThreadIcon = styled.div<{ $isDeleted: boolean }>`
 const StyledLeading = styled.div`
   display: flex;
   flex-shrink: 0;
-  width: ${themeCssVariables.spacing[8]};
+  width: ${themeCssVariables.spacing[12]};
 `;
 
 const StyledThreadContent = styled.div`

@@ -16,6 +16,7 @@ import { useChatThreads } from '@/ai/hooks/useChatThreads';
 import { useSwitchToNewAiChat } from '@/ai/hooks/useSwitchToNewAiChat';
 import { agentChatThreadFilterStatusState } from '@/ai/states/agentChatThreadFilterStatusState';
 import { agentChatThreadGroupByState } from '@/ai/states/agentChatThreadGroupByState';
+import { agentChatVisibleThreadsSelector } from '@/ai/states/selectors/agentChatVisibleThreadsSelector';
 import { AnimatedPlaceholder } from '@/ui/feedback/empty-state/components/AnimatedPlaceholder/AnimatedPlaceholder';
 import { EmptyState } from '@/ui/feedback/empty-state/components/EmptyState';
 import { PageCardHeader } from '@/ui/layout/page/components/PageCardHeader';
@@ -44,7 +45,7 @@ export const AiChatInboxPage = () => {
     agentChatThreadFilterStatusState,
   );
   const agentChatThreadGroupBy = useAtomStateValue(agentChatThreadGroupByState);
-  const { threads, loading } = useChatThreads();
+  const { threads, loading } = useChatThreads(agentChatVisibleThreadsSelector);
   const { switchToNewChat } = useSwitchToNewAiChat();
 
   const StatusIcon =

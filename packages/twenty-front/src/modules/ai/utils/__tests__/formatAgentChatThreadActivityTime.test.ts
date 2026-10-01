@@ -27,11 +27,10 @@ describe('formatAgentChatThreadActivityTime', () => {
       formatAgentChatThreadActivityTime(
         new Date(2026, 8, 12, 12, 0).toISOString(),
       ),
-    ).toBe(
-      new Intl.DateTimeFormat(undefined, {
-        month: 'short',
-        day: 'numeric',
-      }).format(new Date(2026, 8, 12)),
-    );
+    ).toBe('Sep 12');
+  });
+
+  it('shows nothing for an invalid date', () => {
+    expect(formatAgentChatThreadActivityTime('not a date')).toBe('');
   });
 });

@@ -68,6 +68,7 @@ const renderTriage = (path = '/') =>
 
 describe('NavigationDrawerAiChatTriageSection', () => {
   beforeEach(() => {
+    localStorage.clear();
     resetJotaiStore();
     navigate.mockClear();
 

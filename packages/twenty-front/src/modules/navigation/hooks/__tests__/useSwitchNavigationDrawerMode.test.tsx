@@ -167,19 +167,22 @@ describe('useSwitchNavigationDrawerMode', () => {
     expect(result.current.location.pathname).toBe('/inbox');
   });
 
-  it('stays on the chat page when it is already open', () => {
-    const { result } = renderSwitchNavigationDrawerMode({
-      pathname: AI_CHAT_PATH,
-    });
+  it.each([AI_CHAT_PATH, '/inbox'])(
+    'stays on %s when it is already open',
+    (pathname) => {
+      const { result } = renderSwitchNavigationDrawerMode({ pathname });
+      const initialLocationKey = result.current.location.key;
 
-    act(() =>
-      result.current.switchNavigationDrawerMode(
-        NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY,
-      ),
-    );
+      act(() =>
+        result.current.switchNavigationDrawerMode(
+          NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY,
+        ),
+      );
 
-    expect(result.current.location.pathname).toBe(AI_CHAT_PATH);
-  });
+      expect(result.current.location.pathname).toBe(pathname);
+      expect(result.current.location.key).toBe(initialLocationKey);
+    },
+  );
 
   it.each([false, true])(
     'preserves desktop sidebar expansion (%s) when opening settings and returning home',

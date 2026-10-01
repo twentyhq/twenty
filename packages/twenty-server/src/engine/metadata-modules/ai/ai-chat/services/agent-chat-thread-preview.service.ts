@@ -56,7 +56,7 @@ export class AgentChatThreadPreviewService {
          ), last_message AS (
            SELECT DISTINCT ON ("threadId") *
            FROM visible_message
-           ORDER BY "threadId", "createdAt" DESC
+           ORDER BY "threadId", "createdAt" DESC, id DESC
          ), last_text AS (
            SELECT DISTINCT ON (part."messageId") part."messageId", part."textContent"
            FROM ${table('agentMessagePart')} part

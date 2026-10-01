@@ -1,7 +1,8 @@
 import { AgentChatThreadsFetchMoreTrigger } from '@/ai/components/AgentChatThreadsFetchMoreTrigger';
 import { NavigationDrawerAiChatThreadSection } from '@/ai/components/NavigationDrawerAiChatThreadSection';
 import { useAiChatThreadClick } from '@/ai/hooks/useAiChatThreadClick';
-import { useRecentChatThreads } from '@/ai/hooks/useRecentChatThreads';
+import { useChatThreads } from '@/ai/hooks/useChatThreads';
+import { agentChatRecentThreadsSelector } from '@/ai/states/selectors/agentChatRecentThreadsSelector';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLingui } from '@lingui/react/macro';
@@ -15,7 +16,7 @@ export const MobileHomeAiChatSection = () => {
   const { handleThreadClick } = useAiChatThreadClick({
     resetNavigationStack: true,
   });
-  const { threads } = useRecentChatThreads();
+  const { threads } = useChatThreads(agentChatRecentThreadsSelector);
 
   // Earlier pages can hold only chats filtered out of this list, so an empty
   // list keeps fetching until it finds some or runs out

@@ -3,7 +3,10 @@ import { useStore } from 'jotai';
 import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-import { agentChatThreadPreviewsState } from '@/ai/states/agentChatThreadPreviewsState';
+import {
+  type AgentChatThreadPreviewEntry,
+  agentChatThreadPreviewsState,
+} from '@/ai/states/agentChatThreadPreviewsState';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { GetAgentChatThreadPreviewsDocument } from '~/generated-metadata/graphql';
 
@@ -45,6 +48,19 @@ export const AgentChatThreadPreviewsEffect = ({
       ),
     }));
 
+    const requestedLastActivityAts = new Map(
+      staleThreads.map(({ id, lastActivityAt }) => [
+        id,
+        lastActivityAt ?? null,
+      ]),
+    );
+    const isRequestCurrent = (
+      threadId: string,
+      entry: AgentChatThreadPreviewEntry | undefined,
+    ) =>
+      requestedLastActivityAts.has(threadId) &&
+      entry?.lastActivityAt === requestedLastActivityAts.get(threadId);
+
     void client
       .query({
         query: GetAgentChatThreadPreviewsDocument,
@@ -57,26 +73,37 @@ export const AgentChatThreadPreviewsEffect = ({
         store.set(agentChatThreadPreviewsState.atom, (currentPreviews) => ({
           ...currentPreviews,
           ...Object.fromEntries(
-            fetchedPreviews.map((preview) => [
-              preview.threadId,
-              {
-                lastActivityAt:
-                  currentPreviews[preview.threadId]?.lastActivityAt ?? null,
-                preview,
-              },
-            ]),
+            fetchedPreviews
+              .filter((preview) =>
+                isRequestCurrent(
+                  preview.threadId,
+                  currentPreviews[preview.threadId],
+                ),
+              )
+              .map((preview) => [
+                preview.threadId,
+                {
+                  lastActivityAt: requestedLastActivityAts.get(
+                    preview.threadId,
+                  ),
+                  preview,
+                },
+              ]),
           ),
         }));
       })
       .catch(() => {
-        // Forget the request so a later render asks again
         store.set(agentChatThreadPreviewsState.atom, (currentPreviews) =>
           Object.fromEntries(
-            Object.entries(currentPreviews).filter(
-              ([threadId, entry]) =>
-                isDefined(entry.preview) ||
-                !staleThreads.some(({ id }) => id === threadId),
-            ),
+            Object.entries(currentPreviews).flatMap(([threadId, entry]) => {
+              if (!isRequestCurrent(threadId, entry)) {
+                return [[threadId, entry]];
+              }
+
+              return isDefined(entry.preview)
+                ? [[threadId, { preview: entry.preview }]]
+                : [];
+            }),
           ),
         );
       });
