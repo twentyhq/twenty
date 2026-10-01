@@ -101,18 +101,27 @@ const buildRoleFilterExpression = (
   const recordFilter =
     subject.resolveRowLevelPermissionRecordFilter(flatObjectMetadata);
 
-  // A filter whose predicates all cancel out restricts nothing
-  if (
-    !isDefined(recordFilter) ||
-    renderRowLevelPermissionFilterToSql({
-      recordFilter,
-      tableAlias,
-      objectMetadata: flatObjectMetadata,
-      flatFieldMetadataMaps: environment.flatFieldMetadataMaps,
-    }) === null
-  ) {
+  if (!isDefined(recordFilter)) {
     return undefined;
   }
 
-  return { kind: 'roleFilter', tableAlias, flatObjectMetadata, recordFilter };
+  const condition = renderRowLevelPermissionFilterToSql({
+    recordFilter,
+    tableAlias,
+    objectMetadata: flatObjectMetadata,
+    flatFieldMetadataMaps: environment.flatFieldMetadataMaps,
+  });
+
+  // A filter whose predicates all cancel out restricts nothing
+  if (condition === null) {
+    return undefined;
+  }
+
+  return {
+    kind: 'roleFilter',
+    tableAlias,
+    flatObjectMetadata,
+    recordFilter,
+    condition,
+  };
 };

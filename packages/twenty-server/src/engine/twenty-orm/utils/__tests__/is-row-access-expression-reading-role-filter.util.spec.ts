@@ -19,6 +19,7 @@ const roleFilter: RowAccessExpression = {
   tableAlias: 'company',
   flatObjectMetadata: COMPANY_FLAT_OBJECT_MOCK,
   recordFilter: { name: { eq: 'Acme' } },
+  condition: { sql: 'TRUE', parameters: {} },
 };
 
 describe('isRowAccessExpressionReadingRoleFilter', () => {
