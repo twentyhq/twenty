@@ -9,7 +9,6 @@ import { z } from 'zod';
 
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
-import { isConnectedAccountUsableByActor } from 'src/engine/metadata-modules/connected-account/utils/is-connected-account-usable-by-actor.util';
 import { getMissingCreateEventScopes } from 'src/modules/calendar/calendar-event-creation-manager/utils/get-missing-create-event-scopes.util';
 import { isCalendarCreationSupportedProvider } from 'src/modules/calendar/calendar-event-creation-manager/utils/is-calendar-creation-supported-provider.util';
 import { isValidTimeZone } from 'src/modules/calendar/calendar-event-creation-manager/utils/is-valid-time-zone.util';
@@ -22,11 +21,6 @@ import { type ComposeCalendarEventParams } from 'src/modules/calendar/calendar-e
 // would schedule it at the wrong time. All-day boundaries are calendar dates.
 const offsetDateTimeSchema = z.string().datetime({ offset: true });
 const dateSchema = z.string().date();
-
-type ConnectedAccountCaller = {
-  userWorkspaceId?: string;
-  requireConnectedAccountUsableByCaller?: boolean;
-};
 
 type ResolvedCalendarAccount =
   | {
@@ -49,7 +43,6 @@ export class CalendarEventComposerService {
   async composeCalendarEvent(
     params: ComposeCalendarEventParams,
     workspaceId: string,
-    caller: ConnectedAccountCaller = {},
   ): Promise<CalendarEventComposerResult> {
     const normalizedInput = this.normalizeAndValidateInput(params);
 
@@ -60,7 +53,6 @@ export class CalendarEventComposerService {
     const resolution = await this.resolveCalendarAccount(
       params.connectedAccountId,
       workspaceId,
-      caller,
     );
 
     if ('error' in resolution) {
@@ -197,7 +189,6 @@ export class CalendarEventComposerService {
   private async resolveCalendarAccount(
     connectedAccountId: string | undefined,
     workspaceId: string,
-    caller: ConnectedAccountCaller,
   ): Promise<ResolvedCalendarAccount> {
     // A blank id (the workflow node's default) falls back to the default account.
     if (isNonEmptyString(connectedAccountId)) {
@@ -212,18 +203,6 @@ export class CalendarEventComposerService {
       if (!isDefined(connectedAccount)) {
         return {
           error: `No connected account found for id '${connectedAccountId}'`,
-        };
-      }
-
-      if (
-        caller.requireConnectedAccountUsableByCaller &&
-        !isConnectedAccountUsableByActor({
-          connectedAccount,
-          userWorkspaceId: caller.userWorkspaceId,
-        })
-      ) {
-        return {
-          error: `Connected account '${connectedAccountId}' is neither shared with the workspace nor owned by the member running this step`,
         };
       }
 
@@ -247,14 +226,13 @@ export class CalendarEventComposerService {
       return { connectedAccount, calendarChannel };
     }
 
-    return this.resolveDefaultCalendarAccount(workspaceId, caller);
+    return this.resolveDefaultCalendarAccount(workspaceId);
   }
 
   // Only sync-enabled channels are eligible: a created event is reconciled by the
   // provider sync, which skips channels whose sync is disabled.
   private async resolveDefaultCalendarAccount(
     workspaceId: string,
-    caller: ConnectedAccountCaller,
   ): Promise<ResolvedCalendarAccount> {
     const calendarChannels = await this.calendarChannelRepository.find({
       where: { workspaceId, isSyncEnabled: true },
@@ -266,14 +244,7 @@ export class CalendarEventComposerService {
       (channel) =>
         isDefined(channel.connectedAccount) &&
         !isDefined(channel.connectedAccount.archivedAt) &&
-        isCalendarCreationSupportedProvider(
-          channel.connectedAccount.provider,
-        ) &&
-        (!caller.requireConnectedAccountUsableByCaller ||
-          isConnectedAccountUsableByActor({
-            connectedAccount: channel.connectedAccount,
-            userWorkspaceId: caller.userWorkspaceId,
-          })),
+        isCalendarCreationSupportedProvider(channel.connectedAccount.provider),
     );
 
     if (!isDefined(calendarChannel)) {

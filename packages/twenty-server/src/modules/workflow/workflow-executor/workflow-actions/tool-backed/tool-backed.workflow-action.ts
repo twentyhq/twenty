@@ -48,7 +48,7 @@ export abstract class ToolBackedWorkflowAction<
 
   protected async postprocessInput(
     resolvedInput: TInput,
-    _toolExecutionContext: ToolExecutionContext,
+    _workspaceId: string,
   ): Promise<TInput> {
     return resolvedInput;
   }
@@ -81,17 +81,16 @@ export abstract class ToolBackedWorkflowAction<
     this.assertStep(step);
 
     const rawInput = step.settings.input as TInput;
-    const toolExecutionContext = await this.buildToolExecutionContext(runInfo);
     const preprocessed = await this.preprocessInput(rawInput, context);
     const resolvedInput = await this.postprocessInput(
       this.resolveInput(preprocessed, context),
-      toolExecutionContext,
+      runInfo.workspaceId,
     );
 
     const startedAt = Date.now();
     const toolOutput = await this.getTool().execute(
       resolvedInput,
-      toolExecutionContext,
+      await this.buildToolExecutionContext(runInfo),
     );
     const durationMs = Date.now() - startedAt;
 

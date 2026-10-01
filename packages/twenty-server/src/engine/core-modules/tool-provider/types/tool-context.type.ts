@@ -20,5 +20,4 @@ export type ToolContext = {
   threadId?: string;
   locale?: keyof typeof APP_LOCALES;
   onCodeExecutionUpdate?: CodeExecutionStreamEmitter;
-  requireConnectedAccountUsableByCaller?: boolean;
 };

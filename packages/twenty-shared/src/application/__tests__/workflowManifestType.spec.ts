@@ -121,3 +121,21 @@ describe('workflow manifest iterator cycles', () => {
     expect(workflowManifestSchema.safeParse(invalid).success).toBe(false);
   });
 });
+
+describe('workflow manifest step types', () => {
+  it.each(['SEND_EMAIL', 'DRAFT_EMAIL', 'CREATE_CALENDAR_EVENT'])(
+    'rejects %s steps',
+    (type) => {
+      const invalid = structuredClone(workflow);
+      Object.assign(getStep(invalid, 2), { type });
+      const result = workflowManifestSchema.safeParse(invalid);
+      expect(result.success).toBe(false);
+      expect(result.error?.issues[0]?.path).toEqual([
+        'version',
+        'steps',
+        2,
+        'type',
+      ]);
+    },
+  );
+});

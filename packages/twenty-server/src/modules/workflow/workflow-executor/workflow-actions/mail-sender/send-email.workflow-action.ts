@@ -8,7 +8,6 @@ import { SendEmailTool } from 'src/engine/core-modules/tool/tools/email-tool/sen
 import { type Tool } from 'src/engine/core-modules/tool/types/tool.type';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
-import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import {
   WorkflowStepExecutorException,
@@ -31,7 +30,6 @@ export class SendEmailWorkflowAction extends EmailWorkflowActionBase {
     @InjectRepository(UserWorkspaceEntity)
     userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     workflowExecutionContextService: WorkflowExecutionContextService,
-    permissionsService: PermissionsService,
   ) {
     super(
       SendEmailWorkflowAction.name,
@@ -40,7 +38,6 @@ export class SendEmailWorkflowAction extends EmailWorkflowActionBase {
       connectedAccountRepository,
       userWorkspaceRepository,
       workflowExecutionContextService,
-      permissionsService,
     );
   }
 

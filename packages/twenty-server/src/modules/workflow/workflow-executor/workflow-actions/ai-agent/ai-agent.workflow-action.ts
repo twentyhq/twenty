@@ -185,7 +185,6 @@ export class AiAgentWorkflowAction implements WorkflowAction {
             additionalRoleRestrictionIds: getRoleIdsFromRolePermissionConfig(
               executionContext.rolePermissionConfig,
             ),
-            requireConnectedAccountUsableByCaller: true,
           }
         : {}),
     });

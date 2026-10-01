@@ -1,14 +1,12 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
-import { PermissionFlagType } from 'twenty-shared/constants';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { WorkflowActionType } from 'twenty-shared/workflow';
 import { SendEmailTool } from 'src/engine/core-modules/tool/tools/email-tool/send-email-tool';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
-import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { WorkflowExecutionContextService } from 'src/modules/workflow/workflow-executor/services/workflow-execution-context.service';
 import { SendEmailWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/send-email.workflow-action';
 import { type WorkflowActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action-settings.type';
@@ -46,8 +44,6 @@ const MEMBER_ACCOUNT_ID = '20202020-5555-4555-8555-555555555555';
 describe('SendEmailWorkflowAction', () => {
   let action: SendEmailWorkflowAction;
   let mockSendEmailTool: jest.Mocked<Pick<SendEmailTool, 'execute'>>;
-  let getExecutionContext: jest.Mock;
-  let hasToolPermission: jest.Mock;
   let connectedAccountRepository: { find: jest.Mock };
   let userWorkspaceRepository: { findOne: jest.Mock };
   let workspaceMemberRepository: { findOne: jest.Mock };
@@ -61,10 +57,6 @@ describe('SendEmailWorkflowAction', () => {
         error: undefined,
       }),
     };
-    getExecutionContext = jest.fn().mockResolvedValue({
-      authContext: { type: 'application' },
-    });
-    hasToolPermission = jest.fn();
     connectedAccountRepository = { find: jest.fn() };
     userWorkspaceRepository = { findOne: jest.fn() };
     workspaceMemberRepository = { findOne: jest.fn() };
@@ -78,13 +70,11 @@ describe('SendEmailWorkflowAction', () => {
           useValue: { setStepLog: jest.fn() },
         },
         {
-          provide: PermissionsService,
-          useValue: { hasToolPermission },
-        },
-        {
           provide: WorkflowExecutionContextService,
           useValue: {
-            getExecutionContext,
+            getExecutionContext: jest
+              .fn()
+              .mockResolvedValue({ authContext: { type: 'application' } }),
           },
         },
         {
@@ -128,96 +118,6 @@ describe('SendEmailWorkflowAction', () => {
     JSON.parse(
       mockSendEmailTool.execute.mock.calls[0][0].body as string,
     ) as Record<string, unknown>;
-
-  describe('application execution permissions', () => {
-    const rolePermissionConfig = {
-      intersectionOf: ['member-role-id', 'application-role-id'],
-    };
-
-    beforeEach(() => {
-      getExecutionContext.mockResolvedValue({
-        application: { name: 'Installed app' },
-        rolePermissionConfig,
-        authContext: {
-          type: 'user',
-          user: { id: 'user-id' },
-          userWorkspaceId: USER_WORKSPACE_ID,
-        },
-      });
-    });
-
-    it('refuses email before calling the tool when the run lacks permission', async () => {
-      hasToolPermission.mockResolvedValue(false);
-
-      await expect(executeWithBody(undefined)).rejects.toThrow(
-        'is missing the SEND_EMAIL_TOOL permission',
-      );
-      expect(hasToolPermission).toHaveBeenCalledWith(
-        rolePermissionConfig,
-        'workspace-1',
-        PermissionFlagType.SEND_EMAIL_TOOL,
-      );
-      expect(mockSendEmailTool.execute).not.toHaveBeenCalled();
-    });
-
-    it('passes the member identity and account restriction to an allowed tool', async () => {
-      hasToolPermission.mockResolvedValue(true);
-
-      await executeWithBody(undefined);
-
-      expect(mockSendEmailTool.execute).toHaveBeenCalledWith(
-        expect.anything(),
-        {
-          workspaceId: 'workspace-1',
-          userId: 'user-id',
-          userWorkspaceId: USER_WORKSPACE_ID,
-          requireConnectedAccountUsableByCaller: true,
-        },
-      );
-    });
-
-    it('restricts automatic application runs to shared accounts without inventing a member', async () => {
-      getExecutionContext.mockResolvedValue({
-        application: { name: 'Installed app' },
-        rolePermissionConfig: { intersectionOf: ['application-role-id'] },
-        authContext: { type: 'application' },
-      });
-      hasToolPermission.mockResolvedValue(true);
-
-      await executeWithBody(undefined);
-
-      expect(mockSendEmailTool.execute).toHaveBeenCalledWith(
-        expect.anything(),
-        {
-          workspaceId: 'workspace-1',
-          requireConnectedAccountUsableByCaller: true,
-        },
-      );
-    });
-
-    it('preserves the workspace workflow identity without adding permission checks', async () => {
-      getExecutionContext.mockResolvedValue({
-        application: null,
-        authContext: {
-          type: 'user',
-          user: { id: 'user-id' },
-          userWorkspaceId: USER_WORKSPACE_ID,
-        },
-      });
-
-      await executeWithBody(undefined);
-
-      expect(hasToolPermission).not.toHaveBeenCalled();
-      expect(mockSendEmailTool.execute).toHaveBeenCalledWith(
-        expect.anything(),
-        {
-          workspaceId: 'workspace-1',
-          userId: 'user-id',
-          userWorkspaceId: USER_WORKSPACE_ID,
-        },
-      );
-    });
-  });
 
   describe('email body handling', () => {
     it('should prepare TipTap JSON for the shared email compiler', async () => {
@@ -457,49 +357,6 @@ describe('SendEmailWorkflowAction', () => {
 
       await executeWithSender(WORKSPACE_MEMBER_ID);
 
-      expect(mockSendEmailTool.execute).toHaveBeenCalledWith(
-        expect.objectContaining({ connectedAccountId: MEMBER_ACCOUNT_ID }),
-        expect.any(Object),
-      );
-    });
-
-    it('picks the first mailbox of the member that an application run may use', async () => {
-      getExecutionContext.mockResolvedValue({
-        application: { name: 'Installed app' },
-        rolePermissionConfig: {
-          intersectionOf: ['member-role-id', 'application-role-id'],
-        },
-        authContext: {
-          type: 'user',
-          user: { id: 'initiator-user-id' },
-          userWorkspaceId: 'initiator-user-workspace-id',
-        },
-      });
-      hasToolPermission.mockResolvedValue(true);
-      workspaceMemberRepository.findOne.mockResolvedValue({ userId: 'user-1' });
-      userWorkspaceRepository.findOne.mockResolvedValue({
-        id: USER_WORKSPACE_ID,
-      });
-      connectedAccountRepository.find.mockResolvedValue([
-        {
-          id: 'private-account-id',
-          provider: ConnectedAccountProvider.GOOGLE,
-          connectionParameters: null,
-          userWorkspaceId: USER_WORKSPACE_ID,
-          visibility: 'user',
-        },
-        {
-          id: MEMBER_ACCOUNT_ID,
-          provider: ConnectedAccountProvider.GOOGLE,
-          connectionParameters: null,
-          userWorkspaceId: USER_WORKSPACE_ID,
-          visibility: 'workspace',
-        },
-      ]);
-
-      await executeWithSender(WORKSPACE_MEMBER_ID);
-
-      expect(mockSendEmailTool.execute).toHaveBeenCalledTimes(1);
       expect(mockSendEmailTool.execute).toHaveBeenCalledWith(
         expect.objectContaining({ connectedAccountId: MEMBER_ACCOUNT_ID }),
         expect.any(Object),

@@ -34,6 +34,7 @@ import {
   type WorkflowBranchExecutorInput,
   type WorkflowExecutorInput,
 } from 'src/modules/workflow/workflow-executor/types/workflow-executor-input.type';
+import { assertStepTypeAvailableToRun } from 'src/modules/workflow/workflow-executor/utils/assert-step-type-available-to-run.util';
 import { getStepRetryDelayMs } from 'src/modules/workflow/workflow-executor/utils/get-step-retry-delay-ms.util';
 import { isUserFacingWorkflowExecutorError } from 'src/modules/workflow/workflow-executor/utils/is-user-facing-workflow-executor-error.util';
 import { stepHasRetryAttemptsLeft } from 'src/modules/workflow/workflow-executor/utils/step-has-retry-attempts-left.util';
@@ -173,6 +174,7 @@ export class WorkflowExecutorWorkspaceService {
         workflowRunId,
         workspaceId,
         billingSpenders,
+        runApplicationId: workflowRun.createdBy.context?.applicationId,
         resumedThreadId,
         previousStepLog: isDefined(resumedThreadId)
           ? workflowRun.stepLogs?.[stepId]
@@ -519,6 +521,7 @@ export class WorkflowExecutorWorkspaceService {
     workflowRunId,
     workspaceId,
     billingSpenders,
+    runApplicationId,
     resumedThreadId,
     previousStepLog,
   }: {
@@ -528,6 +531,7 @@ export class WorkflowExecutorWorkspaceService {
     workflowRunId: string;
     workspaceId: string;
     billingSpenders: WorkflowBillingSpenders;
+    runApplicationId?: string;
     resumedThreadId?: string;
     previousStepLog?: WorkflowRunStepLog;
   }) {
@@ -546,6 +550,8 @@ export class WorkflowExecutorWorkspaceService {
     });
 
     try {
+      assertStepTypeAvailableToRun({ stepType: step.type, runApplicationId });
+
       // A resumed step's quota was checked when it first ran and paused.
       const nodeRunRefusal = isDefined(resumedThreadId)
         ? undefined
