@@ -98,7 +98,6 @@ export class WorkflowExecutionContextService {
         workspaceId,
       );
 
-    // Use the application's role if set, otherwise fall back to admin role
     // In the future we should probably assign the Admin role to the Standard Application
     let roleId = application.defaultRoleId;
 

@@ -1,4 +1,3 @@
-// Recursively removes undefined values from an object
 // This is needed because workflows/tools may pass partial composite fields
 // with undefined sub-properties, but the validation layer expects either
 // a value or null (not undefined)
@@ -12,8 +11,6 @@ export const removeUndefinedFromRecord = <T extends Record<string, unknown>>(
       continue;
     }
 
-    // Recursively clean nested objects (composite fields like LINKS, ADDRESS, etc.)
-    // but preserve arrays as-is (they should be handled separately if needed)
     if (typeof value === 'object' && !Array.isArray(value) && value !== null) {
       const cleaned = removeUndefinedFromRecord(
         value as Record<string, unknown>,

@@ -25,7 +25,6 @@ describe('Relative Date Filter Utils', () => {
   const now = new Date('2024-01-15T12:00:00Z'); // Monday, January 15, 2024 at noon
 
   beforeEach(() => {
-    // Mock Date constructor to return a fixed date for consistent testing
     jest.useFakeTimers();
     jest.setSystemTime(now);
   });

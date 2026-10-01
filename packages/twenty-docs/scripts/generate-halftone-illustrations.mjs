@@ -1,11 +1,5 @@
-/**
- * Converts existing User Guide illustrations into halftone style.
- * Uses Playwright to run a canvas-based halftone filter in the browser.
- * No dev server needed.
- *
- * Usage:
- *   node packages/twenty-docs/scripts/generate-halftone-illustrations.mjs
- */
+// Usage: node packages/twenty-docs/scripts/generate-halftone-illustrations.mjs
+// Runs the halftone canvas filter in headless Playwright, so no dev server is needed.
 
 import { chromium } from 'playwright';
 import { writeFileSync, readFileSync, mkdirSync } from 'fs';
@@ -27,7 +21,6 @@ const ILLUSTRATIONS = [
   { name: 'permissions', source: 'user-guide/permissions/permissions.png' },
   { name: 'billing', source: 'user-guide/setup/pricing.png' },
   { name: 'settings', source: 'user-guide/setup/settings.png' },
-  // Developers section
   { name: 'dev-apps', source: 'user-guide/integrations/plug.png' },
   { name: 'dev-api', source: 'user-guide/api/api-overview.png' },
   { name: 'dev-self-host', source: 'user-guide/what-is-twenty/20.png' },
@@ -73,7 +66,6 @@ async function main() {
         const outW = width * scale;
         const outH = height * scale;
 
-        // Read source pixels
         const tmp = document.createElement('canvas');
         tmp.width = width;
         tmp.height = height;
@@ -81,7 +73,6 @@ async function main() {
         tmpCtx.drawImage(img, 0, 0);
         const px = tmpCtx.getImageData(0, 0, width, height).data;
 
-        // Output canvas
         const out = document.createElement('canvas');
         out.width = outW;
         out.height = outH;
