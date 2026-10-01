@@ -28,7 +28,7 @@ import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migrati
 // now decide who reads them: the members who synced them own them, and a
 // channel that shares everything grants everyone. Grants are written before
 // readability changes, so nobody loses access in between.
-@RegisteredWorkspaceCommand('2.45.0', 1790851932736)
+@RegisteredWorkspaceCommand('2.45.0', 1790864483267)
 @Command({
   name: 'upgrade:2-45:share-email-and-calendar-through-record-shares',
   description:
