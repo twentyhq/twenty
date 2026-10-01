@@ -19,12 +19,7 @@ import { IS_SECURE_DEPLOYMENT } from 'test/integration/graphql/suites/auth/user-
 import { USER_SESSION_COOKIE_NAME } from 'src/engine/core-modules/user-session/constants/user-session-cookie-name.constant';
 import { USER_SESSION_SECURE_COOKIE_NAME } from 'src/engine/core-modules/user-session/constants/user-session-secure-cookie-name.constant';
 
-// The secure/insecure cookie branch is decided by configuration, never by the
-// transport: isSecureDeployment() reads SERVER_URL, which is env-only. This
-// suite therefore needs the app booted with an https SERVER_URL, which
-// jest-integration-secure.config.ts guarantees; run it through
-// `nx run twenty-server:test:integration:secure`. It exercises the exact
-// production combination: __Host- name, Secure, and the SameSite=Lax default.
+// Needs an https SERVER_URL (env-only, read by isSecureDeployment()): run via `nx run twenty-server:test:integration:secure`.
 describe('session cookie on a production-like secure deployment (integration)', () => {
   let sessionToken: string;
 
@@ -58,8 +53,7 @@ describe('session cookie on a production-like secure deployment (integration)', 
 
     sessionToken = secureSessionCookie.sessionToken;
 
-    // A literal rather than a snapshot: snapshots written by this dedicated
-    // run would count as obsolete in the plain-http run.
+    // Not a snapshot: this dedicated run's snapshots would be obsolete in the plain-http run.
     expect(
       normalizeSessionCookieForSnapshot(secureSessionCookie.rawCookie),
     ).toBe(

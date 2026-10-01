@@ -7233,7 +7233,7 @@
             "type": "\"check\" | \"checkbox\" | \"none\"",
             "required": false,
             "defaultValue": null,
-            "description": "Selection indicator: a check icon after the content, a checkbox before it, or none. Defaults to `checkbox` when `multiple` is set, otherwise `check`."
+            "description": "Selection indicator: a check icon after the content, a checkbox before it, or none. Defaults to `checkbox` when `multiple` is set, otherwise `check`, and to `none` when `selected` is omitted."
           },
           {
             "name": "nativeButton",
@@ -7259,9 +7259,9 @@
           {
             "name": "selected",
             "type": "boolean",
-            "required": true,
+            "required": false,
             "defaultValue": null,
-            "description": "Whether the option is selected. Exposed as `aria-checked` in menus and `aria-pressed` in other dropdown types."
+            "description": "Whether the option is selected. Exposed as `aria-checked` in menus and `aria-pressed` in other dropdown types. Omit it for options that navigate or apply without a selection state."
           },
           {
             "name": "shortcut",

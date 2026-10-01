@@ -132,10 +132,7 @@ export class ApplicationManifestMigrationService {
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigrationFromTo(
         {
-          // inferDeletionFromMissingEntities is intentionally omitted (undefined)
-          // so this pared-down sync is purely additive — existing metadata for
-          // objects/fields/other logic functions that are absent from
-          // preInstallOnlyManifest are left untouched on upgrades.
+          // inferDeletionFromMissingEntities omitted so this pre-install sync is purely additive
           buildOptions: {
             isSystemBuild: false,
             applicationUniversalIdentifier:

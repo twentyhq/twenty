@@ -114,8 +114,7 @@ describe('getTabsRenderableForTargetObject', () => {
     expect(result.map((tab) => tab.id)).toEqual(['tab-4']);
   });
 
-  // Chats attach through a leg of agentChatThreadTarget, which only person,
-  // company, opportunity and custom objects have.
+  // Only person, company, opportunity and custom objects have an agentChatThreadTarget leg.
   it('keeps the chat threads tab only on objects that can hold chats', () => {
     const tabs = [
       createMockTab('chats-tab', [

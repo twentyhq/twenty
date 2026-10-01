@@ -43,8 +43,7 @@ describe('successful user sessions API (integration)', () => {
   };
 
   beforeAll(async () => {
-    // Two devices: the "other" one signs in first so the second sign-in does
-    // not supersede it (no cookie presented on either exchange).
+    // The other device signs in first so the second cookie-less sign-in does not supersede it.
     const otherDeviceResponse = await signInWithCookieCapture({
       originHeader: ALLOWED_ORIGIN,
     });
@@ -112,7 +111,6 @@ describe('successful user sessions API (integration)', () => {
   });
 
   it('should revoke every other session but keep the presented one alive', async () => {
-    // A fresh sign-in guarantees at least one other active session to revoke.
     await signInWithCookieCapture({ originHeader: ALLOWED_ORIGIN });
 
     const response = await postMetadataOperationWithHeaders(

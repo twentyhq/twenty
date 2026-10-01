@@ -50,8 +50,7 @@ const getObjectMetadataSelection = (universalIdentifiers: string[]) => ({
   },
 });
 
-// App code addresses manifest entities by their stable universal identifier;
-// the workspace row deliberately stores the installation-specific metadata ID.
+// Apps address manifest entities by universal identifier; the row stores the installation-specific metadata id
 export const createTimelineActivity = async ({
   timelineActivityTypeUniversalIdentifier,
   targetObjectUniversalIdentifier,

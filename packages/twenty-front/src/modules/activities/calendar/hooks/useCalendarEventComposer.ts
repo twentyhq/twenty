@@ -96,9 +96,7 @@ export const useCalendarEventComposer = ({
   const hasTooManyAttendees =
     sendInvitations && attendeeEmails.length > MAX_EMAIL_RECIPIENTS;
 
-  // Guests that match a person are related to the event server-side once
-  // participants are matched, so only the record the composer was opened from
-  // needs to be offered here.
+  // Matched guests are linked server-side, so only the record the composer was opened from is offered.
   const targetObjectMetadataItems = useCalendarEventTargetObjectMetadataItems();
   const contextObjectMetadataItem = targetObjectMetadataItems.find(
     ({ nameSingular }) =>
@@ -107,8 +105,7 @@ export const useCalendarEventComposer = ({
 
   const { record: contextRecord, loading: isContextRecordLoading } =
     useFindOneRecord({
-      // The composer can be opened from a record the junction cannot target; the
-      // query is skipped there, but the hook still needs a resolvable object.
+      // Fallback for records the junction can't target: the query is skipped but needs a resolvable object.
       objectNameSingular:
         contextObjectMetadataItem?.nameSingular ??
         CoreObjectNameSingular.Person,
@@ -187,8 +184,7 @@ export const useCalendarEventComposer = ({
     invalidAttendeeEmails.length === 0 &&
     !hasTooManyAttendees &&
     hasValidDateRange &&
-    // Creating before it resolves would silently drop the relation the composer
-    // was opened for.
+    // Creating before it resolves would drop the relation the composer was opened for.
     !(isDefined(contextObjectMetadataItem) && isContextRecordLoading) &&
     !isCreating &&
     !isCalendarEventComposerCreating;
@@ -259,10 +255,8 @@ export const useCalendarEventComposer = ({
         return;
       }
 
-      // The event already exists at this point, so a failure to link the
-      // related records must not keep the composer open: retrying would create
-      // a second event. A missing id means persistence failed, and the next
-      // provider sync then recreates the event without these links.
+      // The event exists by now, so a link failure must not keep the composer open: a retry would duplicate it.
+      // Without an id, persistence failed and the next provider sync recreates the event without these links.
       if (targets.length > 0) {
         let areTargetsLinked = false;
 
@@ -276,8 +270,7 @@ export const useCalendarEventComposer = ({
         }
 
         if (areTargetsLinked) {
-          // createCalendarEvent already refetched, but that ran before these
-          // links existed, so an event related only through them stays invisible.
+          // The earlier refetch ran before these links existed, so events related only through them were missing.
           await refetchTimelineCalendarEvents();
         } else {
           enqueueToast({

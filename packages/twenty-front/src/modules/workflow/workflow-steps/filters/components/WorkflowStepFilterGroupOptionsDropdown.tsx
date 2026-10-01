@@ -1,4 +1,4 @@
-import { DEFAULT_ADVANCED_FILTER_DROPDOWN_OFFSET } from '@/object-record/advanced-filter/constants/DefaultAdvancedFilterDropdownOffset';
+import { DEFAULT_ADVANCED_FILTER_DROPDOWN_SIDE_OFFSET } from '@/object-record/advanced-filter/constants/DefaultAdvancedFilterDropdownSideOffset';
 import { useRemoveStepFilterGroup } from '@/workflow/workflow-steps/filters/hooks/useRemoveStepFilterGroup';
 import { WorkflowStepFilterContext } from '@/workflow/workflow-steps/filters/states/context/WorkflowStepFilterContext';
 import { useContext } from 'react';
@@ -38,7 +38,7 @@ export const WorkflowStepFilterGroupOptionsDropdown = ({
       />
       <DropdownContent
         align="end"
-        sideOffset={DEFAULT_ADVANCED_FILTER_DROPDOWN_OFFSET.y}
+        sideOffset={DEFAULT_ADVANCED_FILTER_DROPDOWN_SIDE_OFFSET}
       >
         <Dropdown.Section>
           <Dropdown.ActionItem

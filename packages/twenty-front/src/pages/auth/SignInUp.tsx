@@ -145,9 +145,7 @@ export const SignInUp = () => {
       );
     }
 
-    // The workspace creation form is shared by both multi-workspace and
-    // single-workspace self-host, so it must render regardless of domain or
-    // workspace scope.
+    // Shared by multi-workspace and single-workspace self-host, so it renders regardless of domain or workspace scope
     if (signInUpStep === SignInUpStep.WorkspaceCreation) {
       return <SignInUpWorkspaceCreationForm />;
     }

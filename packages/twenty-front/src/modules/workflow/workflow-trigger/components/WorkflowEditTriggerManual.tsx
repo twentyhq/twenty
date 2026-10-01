@@ -109,7 +109,7 @@ export const WorkflowEditTriggerManual = ({
               }),
             });
           }}
-          dropdownOffset={{ y: 4 }}
+          dropdownSideOffset={4}
           dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
         />
 
@@ -144,7 +144,7 @@ export const WorkflowEditTriggerManual = ({
                 },
               });
             }}
-            dropdownOffset={{ y: 4 }}
+            dropdownSideOffset={4}
             dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
             withSearchInput
           />
@@ -215,7 +215,7 @@ export const WorkflowEditTriggerManual = ({
               },
             });
           }}
-          dropdownOffset={{ y: 4 }}
+          dropdownSideOffset={4}
           dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
         />
       </WorkflowStepBody>

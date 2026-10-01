@@ -7,8 +7,6 @@ type ToolCallLocation =
   | { workflowRunId: string; stepId: string }
   | { threadId: string; toolCallId: string };
 
-// A form step's call is named after the step, in the conversation its current
-// execution recorded.
 const findFormStepThreadId = async ({
   workflowRunId,
   stepId,
