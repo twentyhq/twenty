@@ -41,6 +41,21 @@ describe('findWebhooksMatchingEventName', () => {
     ).toEqual(['exact', 'anyObject', 'anyOperation', 'everything']);
   });
 
+  it('matches destroyed events with exact and wildcard operations but not deleted ones', () => {
+    expect(
+      findMatchingWebhookIds(
+        {
+          exact: ['company.destroyed'],
+          anyObject: ['*.destroyed'],
+          anyOperation: ['company.*'],
+          everything: ['*.*'],
+          deleted: ['company.deleted'],
+        },
+        'company.destroyed',
+      ),
+    ).toEqual(['exact', 'anyObject', 'anyOperation', 'everything']);
+  });
+
   it('only matches workflowRun.updated webhooks subscribed to it explicitly', () => {
     expect(
       findMatchingWebhookIds(

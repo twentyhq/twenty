@@ -177,6 +177,12 @@ export class OpenApiService {
             item.nameSingular,
           )
         ] = computeWebhooks(DatabaseEventAction.DELETED, item);
+        paths[
+          this.createWebhookEventName(
+            DatabaseEventAction.DESTROYED,
+            item.nameSingular,
+          )
+        ] = computeWebhooks(DatabaseEventAction.DESTROYED, item);
 
         return paths;
       },

@@ -34,6 +34,9 @@ Twenty sends webhooks for these event types:
 | **Record Created** | `person.created`, `company.created`, `note.created` |
 | **Record Updated** | `person.updated`, `company.updated`, `opportunity.updated` |
 | **Record Deleted** | `person.deleted`, `company.deleted` |
+| **Record Destroyed** | `person.destroyed`, `company.destroyed` |
+
+A **deleted** event means the record was moved to trash and can still be restored. A **destroyed** event means it was permanently removed: this happens when a record is deleted from trash, when the REST API is called with `DELETE /rest/<object>/<id>` (without `?soft_delete=true`), and for the records removed when merging duplicates. When merging, the surviving record also receives an **updated** event.
 
 All event types are sent to your webhook URL. Event filtering may be added in future releases.
 
@@ -59,7 +62,7 @@ Each webhook sends an HTTP POST with a JSON body:
 | Field | Description |
 |-------|-------------|
 | `event` | What happened (e.g., `person.created`) |
-| `data` | The full record that was created/updated/deleted |
+| `data` | The full record that was created/updated/deleted/destroyed |
 | `timestamp` | When the event occurred (UTC) |
 
 <Note>

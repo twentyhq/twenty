@@ -5,7 +5,11 @@ import { findOneOperationFactory } from 'test/integration/graphql/utils/find-one
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { mergeManyOperationFactory } from 'test/integration/graphql/utils/merge-many-operation-factory.util';
 import { deleteRecordsByIds } from 'test/integration/utils/delete-records-by-ids';
+import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { waitForTimelineActivities } from 'test/integration/utils/wait-for-timeline-activities.util';
+
+import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
+import { type WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 
 describe('companies merge resolvers (integration)', () => {
   let createdCompanyIds: string[] = [];
@@ -505,6 +509,87 @@ describe('companies merge resolvers (integration)', () => {
         );
 
       expect(remainingCompanyIds).toEqual([survivorCompanyId]);
+    });
+
+    it('should emit an update for the unchanged survivor and a destroy for the duplicate', async () => {
+      const createCompaniesOperation = createManyOperationFactory({
+        objectMetadataSingularName: 'company',
+        objectMetadataPluralName: 'companies',
+        gqlFields: COMPANY_GQL_FIELDS,
+        data: [{ name: 'Acme' }, { name: 'Acme' }],
+      });
+
+      const createCompaniesResponse = await makeGraphqlApiRequest(
+        createCompaniesOperation,
+      );
+
+      const survivorCompanyId =
+        createCompaniesResponse.body.data.createCompanies[0].id;
+      const duplicateCompanyId =
+        createCompaniesResponse.body.data.createCompanies[1].id;
+
+      createdCompanyIds.push(survivorCompanyId, duplicateCompanyId);
+
+      const createPeopleOperation = createManyOperationFactory({
+        objectMetadataSingularName: 'person',
+        objectMetadataPluralName: 'people',
+        gqlFields: `id`,
+        data: [
+          {
+            name: { firstName: 'Related', lastName: 'Contact' },
+            companyId: duplicateCompanyId,
+          },
+        ],
+      });
+
+      const createPeopleResponse = await makeGraphqlApiRequest(
+        createPeopleOperation,
+      );
+
+      createdPersonIds.push(createPeopleResponse.body.data.createPeople[0].id);
+
+      const workspaceEventEmitter =
+        getAppProviderByClassName<WorkspaceEventEmitter>(
+          'WorkspaceEventEmitter',
+        );
+      const emitEventSpy = jest.spyOn(
+        workspaceEventEmitter,
+        'emitDatabaseBatchEvent',
+      );
+
+      try {
+        const mergeResponse = await makeGraphqlApiRequest(
+          mergeManyOperationFactory({
+            objectMetadataPluralName: 'companies',
+            gqlFields: `id`,
+            ids: [survivorCompanyId, duplicateCompanyId],
+            conflictPriorityIndex: 0,
+          }),
+        );
+
+        expect(mergeResponse.body.errors).toBeUndefined();
+        expect(emitEventSpy).toHaveBeenCalledWith(
+          expect.objectContaining({
+            objectMetadataNameSingular: 'company',
+            action: DatabaseEventAction.UPDATED,
+            events: [
+              expect.objectContaining({
+                recordId: survivorCompanyId,
+                properties: expect.objectContaining({ updatedFields: [] }),
+              }),
+            ],
+          }),
+        );
+        expect(emitEventSpy).toHaveBeenCalledWith(
+          expect.objectContaining({
+            objectMetadataNameSingular: 'company',
+            action: DatabaseEventAction.DESTROYED,
+            events: [expect.objectContaining({ recordId: duplicateCompanyId })],
+          }),
+        );
+      } finally {
+        emitEventSpy.mockRestore();
+      }
     });
   });
 });

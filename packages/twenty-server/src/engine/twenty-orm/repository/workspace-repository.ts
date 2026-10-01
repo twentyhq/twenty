@@ -1596,6 +1596,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     kind: MutationKind;
     columnsToReturn: string[];
     data?: Partial<ObjectRecord>;
+    shouldEmitUnchangedUpdateEvent?: boolean;
   }): Promise<ObjectRecord[]> {
     if (args.kind !== 'update') {
       return this.performMutation(args);
@@ -1621,6 +1622,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     columnsToReturn,
     data,
     validateWrittenRecords,
+    shouldEmitUnchangedUpdateEvent,
   }: {
     selectQueryBuilder: WorkspaceSelectQueryBuilder;
     rowLevelPermissionsApplied: boolean;
@@ -1628,6 +1630,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     columnsToReturn: string[];
     data?: Partial<ObjectRecord>;
     validateWrittenRecords?: ValidateWrittenRecords;
+    shouldEmitUnchangedUpdateEvent?: boolean;
   }): Promise<ObjectRecord[]> {
     this.validateWriteIsPermitted({
       operationType: kind,
@@ -1763,6 +1766,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       recordsBefore,
       recordsAfter,
       inheritedReadabilityChildRecordsByRecordId,
+      shouldEmitUnchangedUpdateEvent,
     });
 
     return mutationResult.generatedMaps;
@@ -1924,6 +1928,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     recordsBefore,
     recordsAfter,
     inheritedReadabilityChildRecordsByRecordId,
+    shouldEmitUnchangedUpdateEvent,
   }: {
     kind: MutationKind;
     recordsBefore: ObjectRecord[];
@@ -1932,6 +1937,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       string,
       InheritedReadabilityChildRecords
     >;
+    shouldEmitUnchangedUpdateEvent?: boolean;
   }): void {
     if (this.options.shouldSkipEventEmission) {
       return;
@@ -1955,6 +1961,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
         recordsAfter: formattedAfter,
         authContext: this.options.authContext,
         inheritedReadabilityChildRecordsByRecordId,
+        shouldEmitUnchangedUpdateEvent,
       });
 
       if (isDefined(event)) {

@@ -83,4 +83,84 @@ describe('webhook mandatory visibility', () => {
     }
     await module.close();
   });
+
+  it('delivers destroyed events from the record snapshot taken before removal', async () => {
+    const add = jest.fn();
+    const objectMetadata = {
+      ...COMPANY_FLAT_OBJECT_MOCK,
+      readability: MetadataReadability.OPEN,
+    };
+    const maps = {
+      byUniversalIdentifier: {},
+      universalIdentifierById: {},
+      universalIdentifiersByApplicationId: {},
+    };
+    const getOrRecompute = jest.fn().mockResolvedValue({
+      flatObjectMetadataMaps: {
+        ...maps,
+        byUniversalIdentifier: {
+          [objectMetadata.universalIdentifier]: objectMetadata,
+        },
+        universalIdentifierById: {
+          [objectMetadata.id]: objectMetadata.universalIdentifier,
+        },
+      },
+      flatWebhookMaps: {
+        ...maps,
+        byUniversalIdentifier: {
+          webhook: {
+            id: 'webhook',
+            targetUrl: 'https://example.com/webhook',
+            operations: ['company.destroyed'],
+          },
+        },
+      },
+    });
+    const module = await Test.createTestingModule({
+      providers: [
+        CallWebhookJobsJob,
+        RecordAccessPolicyService,
+        {
+          provide: getQueueToken(MessageQueue.webhookQueue),
+          useValue: { add },
+        },
+        { provide: WorkspaceCacheService, useValue: { getOrRecompute } },
+        { provide: WorkspaceOrmManager, useValue: {} },
+        { provide: RecordShareStorageService, useValue: {} },
+        {
+          provide: WebhookRateLimitService,
+          useValue: {
+            admitWebhookEventsWithinRateLimit: async ({
+              webhookEvents,
+            }: {
+              webhookEvents: unknown[];
+            }) => webhookEvents,
+          },
+        },
+      ],
+    }).compile();
+
+    await module.get(CallWebhookJobsJob).handle({
+      name: 'company.destroyed',
+      workspaceId: objectMetadata.workspaceId,
+      objectMetadata,
+      events: [
+        {
+          recordId: 'destroyed-record',
+          properties: { before: { id: 'destroyed-record', name: 'Acme' } },
+        },
+      ],
+    });
+
+    expect(add).toHaveBeenCalledTimes(1);
+    expect(add.mock.calls[0][1]).toEqual([
+      expect.objectContaining({
+        eventName: 'company.destroyed',
+        webhookId: 'webhook',
+        record: { id: 'destroyed-record', name: 'Acme' },
+      }),
+    ]);
+
+    await module.close();
+  });
 });

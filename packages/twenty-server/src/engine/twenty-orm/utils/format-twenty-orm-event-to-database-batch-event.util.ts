@@ -42,6 +42,7 @@ export const formatTwentyOrmEventToDatabaseBatchEvent = <
   recordsAfter,
   recordsBefore,
   inheritedReadabilityChildRecordsByRecordId,
+  shouldEmitUnchangedUpdateEvent = false,
 }: {
   action: DatabaseEventAction;
   objectMetadataItem: FlatObjectMetadata;
@@ -54,6 +55,7 @@ export const formatTwentyOrmEventToDatabaseBatchEvent = <
     string,
     InheritedReadabilityChildRecords
   >;
+  shouldEmitUnchangedUpdateEvent?: boolean;
 }): DatabaseBatchEventInput<T, DatabaseEventAction> | undefined => {
   const objectMetadataNameSingular = objectMetadataItem.nameSingular;
 
@@ -152,7 +154,11 @@ export const formatTwentyOrmEventToDatabaseBatchEvent = <
             flatFieldMetadataMaps,
           );
 
-          if (updatedFields.length === 0) {
+          const isUnchangedUpdateEventRequested =
+            shouldEmitUnchangedUpdateEvent &&
+            action === DatabaseEventAction.UPDATED;
+
+          if (updatedFields.length === 0 && !isUnchangedUpdateEventRequested) {
             return;
           }
 

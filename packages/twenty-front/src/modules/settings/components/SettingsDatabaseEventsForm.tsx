@@ -4,7 +4,13 @@ import { useIsMobile } from 'twenty-ui/utilities';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { IconBox, IconNorthStar, IconPlus, IconTrash } from 'twenty-ui/icon';
+import {
+  IconBox,
+  IconNorthStar,
+  IconPlus,
+  IconTrash,
+  IconTrashX,
+} from 'twenty-ui/icon';
 import { type SelectOption } from 'twenty-ui/primitives/input';
 import { IconButton } from 'twenty-ui/components';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -66,6 +72,7 @@ export const SettingsDatabaseEventsForm = ({
         Icon: IconBox,
       },
       { label: t`Deleted`, value: 'deleted', Icon: IconTrash },
+      { label: t`Destroyed`, value: 'destroyed', Icon: IconTrashX },
     ];
   };
 

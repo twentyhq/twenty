@@ -246,6 +246,58 @@ describe('formatTwentyOrmEventToDatabaseBatchEvent', () => {
         });
       },
     );
+
+    it('should not emit an update event for records whose fields did not change', () => {
+      const result = formatTwentyOrmEventToDatabaseBatchEvent({
+        action: DatabaseEventAction.UPDATED,
+        objectMetadataItem: flatObjectMetadata,
+        flatFieldMetadataMaps,
+        workspaceId: mockWorkspaceId,
+        authContext: mockAuthContext,
+        recordsAfter: [{ id: 'record-1', name: 'John Doe' }],
+        recordsBefore: [{ id: 'record-1', name: 'John Doe' }],
+      });
+
+      expect(result).toBeUndefined();
+    });
+
+    it('should emit an update event for unchanged records when asked to', () => {
+      const result = formatTwentyOrmEventToDatabaseBatchEvent({
+        action: DatabaseEventAction.UPDATED,
+        objectMetadataItem: flatObjectMetadata,
+        flatFieldMetadataMaps,
+        workspaceId: mockWorkspaceId,
+        authContext: mockAuthContext,
+        recordsAfter: [{ id: 'record-1', name: 'John Doe' }],
+        recordsBefore: [{ id: 'record-1', name: 'John Doe' }],
+        shouldEmitUnchangedUpdateEvent: true,
+      });
+
+      const updateEvent = result?.events[0] as ObjectRecordUpdateEvent<{
+        id: string;
+        name: string;
+      }>;
+
+      expect(result?.events).toHaveLength(1);
+      expect(updateEvent.recordId).toBe('record-1');
+      expect(updateEvent.properties?.updatedFields).toEqual([]);
+      expect(updateEvent.properties?.diff).toEqual({});
+    });
+
+    it('should not emit a restore event for unchanged records even when unchanged update events are requested', () => {
+      const result = formatTwentyOrmEventToDatabaseBatchEvent({
+        action: DatabaseEventAction.RESTORED,
+        objectMetadataItem: flatObjectMetadata,
+        flatFieldMetadataMaps,
+        workspaceId: mockWorkspaceId,
+        authContext: mockAuthContext,
+        recordsAfter: [{ id: 'record-1', name: 'John Doe' }],
+        recordsBefore: [{ id: 'record-1', name: 'John Doe' }],
+        shouldEmitUnchangedUpdateEvent: true,
+      });
+
+      expect(result).toBeUndefined();
+    });
   });
 
   describe('DELETED and DESTROYED actions', () => {
