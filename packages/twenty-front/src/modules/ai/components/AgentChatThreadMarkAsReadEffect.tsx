@@ -1,12 +1,9 @@
 import { useStore } from 'jotai';
 import { useEffect, useState } from 'react';
 import { v4 } from 'uuid';
-import {
-  isAgentChatThreadUnread,
-  isDefined,
-  isValidUuid,
-} from 'twenty-shared/utils';
+import { isDefined, isValidUuid } from 'twenty-shared/utils';
 
+import { isAgentChatThreadUnread } from '@/ai/utils/isAgentChatThreadUnread';
 import { useAgentChatThreadParticipants } from '@/ai/hooks/useAgentChatThreadParticipants';
 import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
 import { agentChatThreadKeptUnreadIdState } from '@/ai/states/agentChatThreadKeptUnreadIdState';

@@ -1,8 +1,7 @@
-import {
-  type AgentChatThreadInboxScope,
-  type AgentChatThreadInboxState,
-} from '@/types/AgentChatThreadInboxState';
-import { isDefined } from '@/utils/validation/isDefined';
+import { isDefined } from 'twenty-shared/utils';
+
+import { type AgentChatThreadInboxScope } from '@/ai/types/AgentChatThreadInboxScope';
+import { type AgentChatThreadInboxState } from '@/ai/types/AgentChatThreadInboxState';
 
 // Activity and archiving have different writers and are compared rather than
 // folded into a status, so a message landing right after an archive brings the

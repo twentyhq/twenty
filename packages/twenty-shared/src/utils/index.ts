@@ -7,8 +7,6 @@
  *                              |___/
  */
 
-export { getAgentChatThreadInboxScope } from './agentChat/getAgentChatThreadInboxScope';
-export { isAgentChatThreadUnread } from './agentChat/isAgentChatThreadUnread';
 export { applyDiff } from './applyDiff';
 export { compareArraysOfObjectsByProperty } from './array/compareArraysOfObjectsByProperty';
 export { filterDuplicatesById } from './array/filterDuplicatesById';

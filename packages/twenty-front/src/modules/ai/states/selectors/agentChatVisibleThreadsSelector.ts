@@ -1,6 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
-import { type AgentChatThreadInboxScope } from 'twenty-shared/types';
 
+import { type AgentChatThreadInboxScope } from '@/ai/types/AgentChatThreadInboxScope';
 import { AGENT_CHAT_THREAD_FILTER_STATUS } from '@/ai/constants/AgentChatThreadFilterStatus';
 import { AGENT_CHAT_THREAD_LAST_ACTIVITY_FILTER_DAYS } from '@/ai/constants/AgentChatThreadLastActivityFilterDays';
 import { agentChatThreadFilterStatusState } from '@/ai/states/agentChatThreadFilterStatusState';

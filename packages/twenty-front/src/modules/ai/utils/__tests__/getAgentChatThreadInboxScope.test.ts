@@ -1,4 +1,4 @@
-import { getAgentChatThreadInboxScope } from '@/utils/agentChat/getAgentChatThreadInboxScope';
+import { getAgentChatThreadInboxScope } from '@/ai/utils/getAgentChatThreadInboxScope';
 
 const NOW = new Date('2026-10-01T12:00:00.000Z');
 

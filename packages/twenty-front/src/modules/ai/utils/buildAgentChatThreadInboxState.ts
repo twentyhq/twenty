@@ -1,8 +1,5 @@
-import {
-  type AgentChatThreadInboxState,
-  type AgentChatThreadParticipantState,
-} from 'twenty-shared/types';
-
+import { type AgentChatThreadInboxState } from '@/ai/types/AgentChatThreadInboxState';
+import { type AgentChatThreadParticipantState } from '@/ai/types/AgentChatThreadParticipantState';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 
 export const buildAgentChatThreadInboxState = (

@@ -1,4 +1,4 @@
-import { isAgentChatThreadUnread } from '@/utils/agentChat/isAgentChatThreadUnread';
+import { isAgentChatThreadUnread } from '@/ai/utils/isAgentChatThreadUnread';
 
 const participant = (lastReadAt: string | null) => ({
   lastReadAt,

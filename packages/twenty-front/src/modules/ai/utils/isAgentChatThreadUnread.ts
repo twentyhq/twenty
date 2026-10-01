@@ -1,5 +1,6 @@
-import { type AgentChatThreadInboxState } from '@/types/AgentChatThreadInboxState';
-import { isDefined } from '@/utils/validation/isDefined';
+import { isDefined } from 'twenty-shared/utils';
+
+import { type AgentChatThreadInboxState } from '@/ai/types/AgentChatThreadInboxState';
 
 export const isAgentChatThreadUnread = ({
   lastActivityAt,

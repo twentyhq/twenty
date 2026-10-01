@@ -1,6 +1,6 @@
-import { type AgentChatThreadParticipantState } from 'twenty-shared/types';
-
 import { type AgentChatThreadParticipantFieldsFragment } from '~/generated-metadata/graphql';
+
+import { type AgentChatThreadParticipantState } from '@/ai/types/AgentChatThreadParticipantState';
 
 export const toAgentChatThreadParticipantState = (
   participant: AgentChatThreadParticipantFieldsFragment,

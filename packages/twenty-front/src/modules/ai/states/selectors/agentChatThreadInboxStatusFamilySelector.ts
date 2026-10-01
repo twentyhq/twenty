@@ -1,9 +1,6 @@
-import {
-  getAgentChatThreadInboxScope,
-  isAgentChatThreadUnread,
-} from 'twenty-shared/utils';
-import { type AgentChatThreadInboxScope } from 'twenty-shared/types';
-
+import { getAgentChatThreadInboxScope } from '@/ai/utils/getAgentChatThreadInboxScope';
+import { isAgentChatThreadUnread } from '@/ai/utils/isAgentChatThreadUnread';
+import { type AgentChatThreadInboxScope } from '@/ai/types/AgentChatThreadInboxScope';
 import { agentChatThreadInboxNowState } from '@/ai/states/agentChatThreadInboxNowState';
 import { agentChatThreadKeptUnreadIdState } from '@/ai/states/agentChatThreadKeptUnreadIdState';
 import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
