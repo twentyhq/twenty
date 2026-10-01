@@ -81,7 +81,6 @@ export class BillingGaugeService implements OnModuleInit {
     try {
       const ageThreshold = new Date(Date.now() - WORKSPACE_AGE_THRESHOLD_MS);
 
-      // Find the most recently created workspace that is older than 1 minute
       const lastWorkspace = await this.workspaceRepository.findOne({
         where: {
           deletedAt: IsNull(),

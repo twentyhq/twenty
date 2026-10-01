@@ -604,6 +604,7 @@
                   "key": "uiNavigation",
                   "label": "Navigation",
                   "pages": [
+                    "ui/primitives/navigation/breadcrumb",
                     "ui/primitives/navigation/list-item",
                     "ui/primitives/navigation/tabs"
                   ]
@@ -655,7 +656,6 @@
                 "ui/components/json-tree",
                 "ui/components/menu-items",
                 "ui/components/menu-picker",
-                "ui/components/navigation-bar",
                 "ui/components/notification-counter",
                 "ui/components/search-input",
                 "ui/components/tinted-icon-tile"

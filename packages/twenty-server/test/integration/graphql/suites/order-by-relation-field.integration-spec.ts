@@ -32,7 +32,6 @@ const CASE_INSENSITIVE_TEST_PERSON_IDS = [
 
 describe('Order by relation field (e2e)', () => {
   beforeAll(async () => {
-    // Create test companies with distinct names for sorting verification
     const createCompanies = createManyOperationFactory({
       objectMetadataSingularName: 'company',
       objectMetadataPluralName: 'companies',
@@ -323,7 +322,6 @@ describe('Order by relation field (e2e)', () => {
 
     expect(Array.isArray(secondPageEdges)).toBe(true);
 
-    // Verify different records are returned (no overlap)
     const firstPageIds = firstPageEdges.map(
       (edge: { node: { id: string } }) => edge.node.id,
     );
@@ -814,7 +812,6 @@ describe('Order by relation field (e2e)', () => {
 
     expect(Array.isArray(edges)).toBe(true);
 
-    // Verify the filtered record is not in the results
     const resultIds = edges.map(
       (edge: { node: { id: string } }) => edge.node.id,
     );

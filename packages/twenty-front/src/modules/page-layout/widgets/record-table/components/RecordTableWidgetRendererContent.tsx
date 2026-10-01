@@ -75,8 +75,6 @@ export const RecordTableWidgetRendererContent = ({
     widgetView?.calendarLayout === ViewCalendarLayout.WEEK;
   const canEditCalendar =
     isCalendarLayout && !isPageLayoutInEditMode && isCalendarDayOrWeek;
-  // Read-only unless this is the explicitly allowed live day/week calendar.
-  // Object permissions still gate the drag.
   const calendarIsReadOnly = !canEditCalendar;
 
   // Keyed rather than chained so a layout added to RECORD_TABLE_WIDGET_LAYOUTS

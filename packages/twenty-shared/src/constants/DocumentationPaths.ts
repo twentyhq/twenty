@@ -144,7 +144,6 @@ export const DOCUMENTATION_PATHS = {
   UI_COMPONENTS_JSON_TREE: '/ui/components/json-tree',
   UI_COMPONENTS_MENU_ITEMS: '/ui/components/menu-items',
   UI_COMPONENTS_MENU_PICKER: '/ui/components/menu-picker',
-  UI_COMPONENTS_NAVIGATION_BAR: '/ui/components/navigation-bar',
   UI_COMPONENTS_NOTIFICATION_COUNTER: '/ui/components/notification-counter',
   UI_COMPONENTS_OVERVIEW: '/ui/components/overview',
   UI_COMPONENTS_SEARCH_INPUT: '/ui/components/search-input',
@@ -188,6 +187,7 @@ export const DOCUMENTATION_PATHS = {
   UI_PRIMITIVES_LAYOUT_RESIZE_HANDLE: '/ui/primitives/layout/resize-handle',
   UI_PRIMITIVES_LAYOUT_TEXT_DIRECTION_PROVIDER:
     '/ui/primitives/layout/text-direction-provider',
+  UI_PRIMITIVES_NAVIGATION_BREADCRUMB: '/ui/primitives/navigation/breadcrumb',
   UI_PRIMITIVES_NAVIGATION_LIST_ITEM: '/ui/primitives/navigation/list-item',
   UI_PRIMITIVES_NAVIGATION_TABS: '/ui/primitives/navigation/tabs',
   UI_PRIMITIVES_OVERVIEW: '/ui/primitives/overview',
