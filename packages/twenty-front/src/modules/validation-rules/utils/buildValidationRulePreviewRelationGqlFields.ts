@@ -1,7 +1,7 @@
 import { type ValidationRuleFieldDescriptor } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type RecordGqlFields } from '@/object-record/graphql/record-gql-fields/types/RecordGqlFields';
+import { type RecordGqlFields } from 'twenty-shared/types';
 
 export const buildValidationRulePreviewRelationGqlFields = ({
   bindingPaths,

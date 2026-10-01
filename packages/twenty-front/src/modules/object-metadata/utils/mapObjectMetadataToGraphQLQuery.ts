@@ -3,7 +3,7 @@ import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObject
 import { getRelationIdFieldNames } from '@/object-metadata/utils/getRelationIdFieldNames';
 import { mapFieldMetadataToGraphQLQuery } from '@/object-metadata/utils/mapFieldMetadataToGraphQLQuery';
 import { shouldFieldBeQueried } from '@/object-metadata/utils/shouldFieldBeQueried';
-import { type RecordGqlFields } from '@/object-record/graphql/record-gql-fields/types/RecordGqlFields';
+import { type RecordGqlFields } from 'twenty-shared/types';
 import { isRecordGqlFieldsNode } from '@/object-record/graphql/utils/isRecordGraphlFieldsNode';
 import {
   FieldMetadataType,

@@ -1,7 +1,10 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useCallback, useMemo } from 'react';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import {
+  CoreObjectNameSingular,
+  type RecordGqlFields,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { LightIconButton } from 'twenty-ui/components';
 import { IconPencil, IconPlus } from 'twenty-ui/icon';
@@ -68,7 +71,7 @@ export const AiChatThreadRecordTargets = ({
     ? objectMorphJunctionConfig
     : null;
 
-  const recordGqlFields = useMemo(
+  const recordGqlFields = useMemo<RecordGqlFields>(
     () => ({
       id: true,
       ...(isDefined(junctionConfig)

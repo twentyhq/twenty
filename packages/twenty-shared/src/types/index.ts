@@ -258,7 +258,7 @@ export type { PartialFieldMetadataItemOption } from './PartialFieldMetadataOptio
 export type { QueryCursorDirection } from './QueryCursorDirection';
 export { RecordFilterGroupLogicalOperator } from './RecordFilterGroupLogicalOperator';
 export type { RecordFilterValueDependencies } from './RecordFilterValueDependencies';
-export type { RecordGqlFieldsDeprecated } from './RecordGqlFieldsDeprecated';
+export type { RecordGqlFields } from './RecordGqlFields';
 export type {
   UUIDFilterValue,
   IsFilter,
@@ -293,7 +293,6 @@ export type {
   LeafObjectRecordFilter,
   RecordGqlOperationFilter,
 } from './RecordGqlOperationFilter';
-export type { RecordGqlOperationGqlRecordFields } from './RecordGqlOperationGqlRecordFields';
 export type { RecordGqlOperationOrderBy } from './RecordGqlOperationOrderBy';
 export type { RecordGqlOperationSignature } from './RecordGqlOperationSignature';
 export type { RecordGqlOperationVariables } from './RecordGqlOperationVariables';

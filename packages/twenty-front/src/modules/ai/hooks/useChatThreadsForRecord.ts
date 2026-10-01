@@ -2,6 +2,7 @@ import uniqBy from 'lodash.uniqby';
 import { useCallback, useMemo } from 'react';
 import {
   CoreObjectNameSingular,
+  type RecordGqlFields,
   type RecordGqlOperationOrderBy,
 } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
@@ -30,7 +31,7 @@ const CHAT_THREADS_FOR_RECORD_GQL_FIELDS = {
   id: true,
   threadId: true,
   thread: { id: true, title: true, deletedAt: true, updatedAt: true },
-};
+} satisfies RecordGqlFields;
 
 // A link's record event carries its columns but not its conversation, so a
 // new link is read back rather than taken from the event.

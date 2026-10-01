@@ -1,4 +1,4 @@
-import { type RecordGqlFields } from '@/object-record/graphql/record-gql-fields/types/RecordGqlFields';
+import { type RecordGqlFields } from 'twenty-shared/types';
 import {
   generateDepthRecordGqlFieldsFromObject,
   type GenerateDepthRecordGqlFields,
@@ -20,15 +20,10 @@ export const generateDepthRecordGqlFieldsFromRecord = ({
     objectMetadataItems,
     depth,
   });
-  const recordKeys = Object.keys(record);
 
-  return Object.keys(depthRecordGqlFields).reduce<RecordGqlFields>(
-    (acc, key) => {
-      return {
-        ...acc,
-        [key]: recordKeys.includes(key),
-      };
-    },
-    depthRecordGqlFields,
+  return Object.fromEntries(
+    Object.keys(depthRecordGqlFields)
+      .filter((key) => key in record)
+      .map((key) => [key, true]),
   );
 };
