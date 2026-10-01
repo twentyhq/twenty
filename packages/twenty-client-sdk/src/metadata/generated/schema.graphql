@@ -3924,13 +3924,6 @@ type Query {
   getToolInputSchema(toolName: String!): JSON
   webhooks: [Webhook!]!
   webhook(id: UUID!): Webhook
-  aiChatUsage: AiChatUsage
-  chatThread(id: UUID!): AgentChatThread!
-  chatMessages(threadId: UUID!): [AgentMessage!]!
-  chatStreamCatchupChunks(threadId: UUID!): ChatStreamCatchupChunks!
-  getAiSystemPromptPreview: AiSystemPromptPreview!
-  skills: [Skill!]!
-  skill(id: UUID!): Skill
   myMessageFolders(messageChannelId: UUID): [MessageFolder!]!
   myCalendarChannels(connectedAccountId: UUID): [CalendarChannel!]!
   getPermissionFlags: [PermissionFlag!]!
@@ -3940,6 +3933,13 @@ type Query {
   appConnections(filter: ListAppConnectionsInput): [AppConnection!]!
   appConnection(id: ID!): AppConnection!
   findWorkspaceAiStats: WorkspaceAiStats!
+  aiChatUsage: AiChatUsage
+  chatThread(id: UUID!): AgentChatThread!
+  chatMessages(threadId: UUID!): [AgentMessage!]!
+  chatStreamCatchupChunks(threadId: UUID!): ChatStreamCatchupChunks!
+  getAiSystemPromptPreview: AiSystemPromptPreview!
+  skills: [Skill!]!
+  skill(id: UUID!): Skill
   agentTurns(agentId: UUID!): [AgentTurn!]!
   validationRules(objectMetadataId: UUID!): [ValidationRule!]!
   timelineActivityTypes: [TimelineActivityType!]!
@@ -4287,6 +4287,14 @@ type Mutation {
   createWebhook(input: CreateWebhookInput!): Webhook!
   updateWebhook(input: UpdateWebhookInput!): Webhook!
   deleteWebhook(id: UUID!): Webhook!
+  updateMessageFolder(input: UpdateMessageFolderInput!): MessageFolder!
+  updateMessageFolders(input: UpdateMessageFoldersInput!): [MessageFolder!]!
+  updateCalendarChannel(input: UpdateCalendarChannelInput!): CalendarChannel!
+  setAppKeyValue(input: SetAppKeyValueInput!): AppKeyValue!
+  deleteAppKeyValue(key: String!, scope: AppKeyValueScope = WORKSPACE): Boolean!
+  enqueueJob(input: EnqueueJobInput!): EnqueueJobResult! @deprecated(reason: "Use enqueueJobs instead.")
+  enqueueJobs(input: EnqueueJobsInput!): EnqueueJobsResult!
+  reportAppConnectionAuthFailure(input: ReportAppConnectionAuthFailureInput!): Boolean!
   createChatThread: AgentChatThread!
   sendChatMessage(threadId: UUID!, text: String!, messageId: UUID!, browsingContext: JSON, modelId: String, fileAttachments: [FileAttachmentInput!]): SendChatMessageResult!
   retryChatMessage(threadId: UUID!, modelId: String): SendChatMessageResult!
@@ -4299,14 +4307,6 @@ type Mutation {
   deleteSkill(id: UUID!): Skill!
   activateSkill(id: UUID!): Skill!
   deactivateSkill(id: UUID!): Skill!
-  updateMessageFolder(input: UpdateMessageFolderInput!): MessageFolder!
-  updateMessageFolders(input: UpdateMessageFoldersInput!): [MessageFolder!]!
-  updateCalendarChannel(input: UpdateCalendarChannelInput!): CalendarChannel!
-  setAppKeyValue(input: SetAppKeyValueInput!): AppKeyValue!
-  deleteAppKeyValue(key: String!, scope: AppKeyValueScope = WORKSPACE): Boolean!
-  enqueueJob(input: EnqueueJobInput!): EnqueueJobResult! @deprecated(reason: "Use enqueueJobs instead.")
-  enqueueJobs(input: EnqueueJobsInput!): EnqueueJobsResult!
-  reportAppConnectionAuthFailure(input: ReportAppConnectionAuthFailureInput!): Boolean!
   evaluateAgentTurn(turnId: UUID!): AgentTurnEvaluation!
   runEvaluationInput(agentId: UUID!, input: String!): AgentTurn!
   createValidationRule(input: CreateValidationRuleInput!): ValidationRule!
@@ -5517,39 +5517,6 @@ input UpdateWebhookInputUpdates {
   secret: String
 }
 
-input FileAttachmentInput {
-  id: UUID!
-  filename: String!
-}
-
-input SendInboxMessageInput {
-  workspaceMemberId: UUID!
-  threadKey: String!
-  idempotencyKey: String!
-  title: String!
-  text: String!
-  request: JSON
-}
-
-input CreateSkillInput {
-  id: UUID
-  name: String!
-  label: String!
-  icon: String
-  description: String
-  content: String!
-}
-
-input UpdateSkillInput {
-  id: UUID!
-  name: String
-  label: String
-  icon: String
-  description: String
-  content: String
-  isActive: Boolean
-}
-
 input UpdateMessageFolderInput {
   id: UUID!
   update: UpdateMessageFolderInputUpdates!
@@ -5606,6 +5573,39 @@ input EnqueueJobItemInput {
 input ReportAppConnectionAuthFailureInput {
   id: ID!
   reason: String
+}
+
+input FileAttachmentInput {
+  id: UUID!
+  filename: String!
+}
+
+input SendInboxMessageInput {
+  workspaceMemberId: UUID!
+  threadKey: String!
+  idempotencyKey: String!
+  title: String!
+  text: String!
+  request: JSON
+}
+
+input CreateSkillInput {
+  id: UUID
+  name: String!
+  label: String!
+  icon: String
+  description: String
+  content: String!
+}
+
+input UpdateSkillInput {
+  id: UUID!
+  name: String
+  label: String
+  icon: String
+  description: String
+  content: String
+  isActive: Boolean
 }
 
 input CreateValidationRuleInput {

@@ -8159,51 +8159,6 @@ export default {
                     ]
                 }
             ],
-            "aiChatUsage": [
-                375
-            ],
-            "chatThread": [
-                377,
-                {
-                    "id": [
-                        3,
-                        "UUID!"
-                    ]
-                }
-            ],
-            "chatMessages": [
-                361,
-                {
-                    "threadId": [
-                        3,
-                        "UUID!"
-                    ]
-                }
-            ],
-            "chatStreamCatchupChunks": [
-                381,
-                {
-                    "threadId": [
-                        3,
-                        "UUID!"
-                    ]
-                }
-            ],
-            "getAiSystemPromptPreview": [
-                379
-            ],
-            "skills": [
-                376
-            ],
-            "skill": [
-                376,
-                {
-                    "id": [
-                        3,
-                        "UUID!"
-                    ]
-                }
-            ],
             "myMessageFolders": [
                 406,
                 {
@@ -8266,6 +8221,51 @@ export default {
             ],
             "findWorkspaceAiStats": [
                 396
+            ],
+            "aiChatUsage": [
+                375
+            ],
+            "chatThread": [
+                377,
+                {
+                    "id": [
+                        3,
+                        "UUID!"
+                    ]
+                }
+            ],
+            "chatMessages": [
+                361,
+                {
+                    "threadId": [
+                        3,
+                        "UUID!"
+                    ]
+                }
+            ],
+            "chatStreamCatchupChunks": [
+                381,
+                {
+                    "threadId": [
+                        3,
+                        "UUID!"
+                    ]
+                }
+            ],
+            "getAiSystemPromptPreview": [
+                379
+            ],
+            "skills": [
+                376
+            ],
+            "skill": [
+                376,
+                {
+                    "id": [
+                        3,
+                        "UUID!"
+                    ]
+                }
             ],
             "agentTurns": [
                 395,
@@ -10438,6 +10438,81 @@ export default {
                     ]
                 }
             ],
+            "updateMessageFolder": [
+                406,
+                {
+                    "input": [
+                        579,
+                        "UpdateMessageFolderInput!"
+                    ]
+                }
+            ],
+            "updateMessageFolders": [
+                406,
+                {
+                    "input": [
+                        581,
+                        "UpdateMessageFoldersInput!"
+                    ]
+                }
+            ],
+            "updateCalendarChannel": [
+                401,
+                {
+                    "input": [
+                        582,
+                        "UpdateCalendarChannelInput!"
+                    ]
+                }
+            ],
+            "setAppKeyValue": [
+                399,
+                {
+                    "input": [
+                        584,
+                        "SetAppKeyValueInput!"
+                    ]
+                }
+            ],
+            "deleteAppKeyValue": [
+                8,
+                {
+                    "key": [
+                        1,
+                        "String!"
+                    ],
+                    "scope": [
+                        400
+                    ]
+                }
+            ],
+            "enqueueJob": [
+                397,
+                {
+                    "input": [
+                        585,
+                        "EnqueueJobInput!"
+                    ]
+                }
+            ],
+            "enqueueJobs": [
+                398,
+                {
+                    "input": [
+                        586,
+                        "EnqueueJobsInput!"
+                    ]
+                }
+            ],
+            "reportAppConnectionAuthFailure": [
+                8,
+                {
+                    "input": [
+                        588,
+                        "ReportAppConnectionAuthFailureInput!"
+                    ]
+                }
+            ],
             "createChatThread": [
                 377
             ],
@@ -10463,7 +10538,7 @@ export default {
                         1
                     ],
                     "fileAttachments": [
-                        579,
+                        589,
                         "[FileAttachmentInput!]"
                     ]
                 }
@@ -10513,7 +10588,7 @@ export default {
                 384,
                 {
                     "input": [
-                        580,
+                        590,
                         "SendInboxMessageInput!"
                     ]
                 }
@@ -10522,7 +10597,7 @@ export default {
                 376,
                 {
                     "input": [
-                        581,
+                        591,
                         "CreateSkillInput!"
                     ]
                 }
@@ -10531,7 +10606,7 @@ export default {
                 376,
                 {
                     "input": [
-                        582,
+                        592,
                         "UpdateSkillInput!"
                     ]
                 }
@@ -10560,81 +10635,6 @@ export default {
                     "id": [
                         3,
                         "UUID!"
-                    ]
-                }
-            ],
-            "updateMessageFolder": [
-                406,
-                {
-                    "input": [
-                        583,
-                        "UpdateMessageFolderInput!"
-                    ]
-                }
-            ],
-            "updateMessageFolders": [
-                406,
-                {
-                    "input": [
-                        585,
-                        "UpdateMessageFoldersInput!"
-                    ]
-                }
-            ],
-            "updateCalendarChannel": [
-                401,
-                {
-                    "input": [
-                        586,
-                        "UpdateCalendarChannelInput!"
-                    ]
-                }
-            ],
-            "setAppKeyValue": [
-                399,
-                {
-                    "input": [
-                        588,
-                        "SetAppKeyValueInput!"
-                    ]
-                }
-            ],
-            "deleteAppKeyValue": [
-                8,
-                {
-                    "key": [
-                        1,
-                        "String!"
-                    ],
-                    "scope": [
-                        400
-                    ]
-                }
-            ],
-            "enqueueJob": [
-                397,
-                {
-                    "input": [
-                        589,
-                        "EnqueueJobInput!"
-                    ]
-                }
-            ],
-            "enqueueJobs": [
-                398,
-                {
-                    "input": [
-                        590,
-                        "EnqueueJobsInput!"
-                    ]
-                }
-            ],
-            "reportAppConnectionAuthFailure": [
-                8,
-                {
-                    "input": [
-                        592,
-                        "ReportAppConnectionAuthFailureInput!"
                     ]
                 }
             ],
@@ -13948,6 +13948,140 @@ export default {
                 1
             ]
         },
+        "UpdateMessageFolderInput": {
+            "id": [
+                3
+            ],
+            "update": [
+                580
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "UpdateMessageFolderInputUpdates": {
+            "isSynced": [
+                8
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "UpdateMessageFoldersInput": {
+            "ids": [
+                3
+            ],
+            "update": [
+                580
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "UpdateCalendarChannelInput": {
+            "id": [
+                3
+            ],
+            "update": [
+                583
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "UpdateCalendarChannelInputUpdates": {
+            "visibility": [
+                404
+            ],
+            "isContactAutoCreationEnabled": [
+                8
+            ],
+            "contactAutoCreationPolicy": [
+                405
+            ],
+            "isSyncEnabled": [
+                8
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "SetAppKeyValueInput": {
+            "key": [
+                1
+            ],
+            "value": [
+                9
+            ],
+            "scope": [
+                400
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "EnqueueJobInput": {
+            "logicFunctionUniversalIdentifier": [
+                1
+            ],
+            "payload": [
+                9
+            ],
+            "jobId": [
+                1
+            ],
+            "retryLimit": [
+                30
+            ],
+            "delayMs": [
+                30
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "EnqueueJobsInput": {
+            "logicFunctionUniversalIdentifier": [
+                1
+            ],
+            "payloads": [
+                9
+            ],
+            "jobs": [
+                587
+            ],
+            "retryLimit": [
+                30
+            ],
+            "delayMs": [
+                30
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "EnqueueJobItemInput": {
+            "payload": [
+                9
+            ],
+            "jobId": [
+                1
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "ReportAppConnectionAuthFailureInput": {
+            "id": [
+                170
+            ],
+            "reason": [
+                1
+            ],
+            "__typename": [
+                1
+            ]
+        },
         "FileAttachmentInput": {
             "id": [
                 3
@@ -14026,140 +14160,6 @@ export default {
             ],
             "isActive": [
                 8
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "UpdateMessageFolderInput": {
-            "id": [
-                3
-            ],
-            "update": [
-                584
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "UpdateMessageFolderInputUpdates": {
-            "isSynced": [
-                8
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "UpdateMessageFoldersInput": {
-            "ids": [
-                3
-            ],
-            "update": [
-                584
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "UpdateCalendarChannelInput": {
-            "id": [
-                3
-            ],
-            "update": [
-                587
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "UpdateCalendarChannelInputUpdates": {
-            "visibility": [
-                404
-            ],
-            "isContactAutoCreationEnabled": [
-                8
-            ],
-            "contactAutoCreationPolicy": [
-                405
-            ],
-            "isSyncEnabled": [
-                8
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "SetAppKeyValueInput": {
-            "key": [
-                1
-            ],
-            "value": [
-                9
-            ],
-            "scope": [
-                400
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "EnqueueJobInput": {
-            "logicFunctionUniversalIdentifier": [
-                1
-            ],
-            "payload": [
-                9
-            ],
-            "jobId": [
-                1
-            ],
-            "retryLimit": [
-                30
-            ],
-            "delayMs": [
-                30
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "EnqueueJobsInput": {
-            "logicFunctionUniversalIdentifier": [
-                1
-            ],
-            "payloads": [
-                9
-            ],
-            "jobs": [
-                591
-            ],
-            "retryLimit": [
-                30
-            ],
-            "delayMs": [
-                30
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "EnqueueJobItemInput": {
-            "payload": [
-                9
-            ],
-            "jobId": [
-                1
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "ReportAppConnectionAuthFailureInput": {
-            "id": [
-                170
-            ],
-            "reason": [
-                1
             ],
             "__typename": [
                 1

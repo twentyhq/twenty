@@ -199,8 +199,6 @@ export class AgentHistoryRepository<TRecord extends { id: string }> {
     });
   }
 
-  // Writes several history objects together, so a failed write leaves none
-  // of them behind.
   transaction<TResult>(
     workspaceId: string,
     work: (scope: AgentHistoryTransactionScope) => Promise<TResult>,
