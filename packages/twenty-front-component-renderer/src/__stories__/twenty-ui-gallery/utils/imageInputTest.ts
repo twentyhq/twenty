@@ -17,8 +17,18 @@ export const imageInputTest: TwentyUiGalleryPlayFunction = async ({
   await expect(
     input.getByText('Choose an image for your profile.'),
   ).toBeVisible();
-  await expect(input.getByRole('alert')).toHaveTextContent(
-    'Use an image smaller than 2 MB.',
+  await expect(input.queryByRole('alert')).not.toBeInTheDocument();
+  await userEvent.click(
+    canvas.getByRole('button', { name: 'Show upload error' }),
+  );
+  await expect(await input.findByRole('alert')).toHaveTextContent(
+    'The image could not be uploaded.',
+  );
+  await userEvent.click(
+    canvas.getByRole('button', { name: 'Clear upload error' }),
+  );
+  await waitFor(() =>
+    expect(input.queryByRole('alert')).not.toBeInTheDocument(),
   );
   await waitFor(() => {
     expect(input.getByRole('presentation')).toHaveProperty('naturalWidth', 40);
@@ -119,7 +129,7 @@ export const imageInputTest: TwentyUiGalleryPlayFunction = async ({
   );
   await waitFor(() => expect(actions).toHaveTextContent('Uploads: 1'));
   await expect(canvas.getByLabelText('Selected image')).toHaveTextContent(
-    'profile.png; image/png; readable: false',
+    'profile.png; image/png; 5 bytes',
   );
   await userEvent.upload(fileInput, []);
   await expect(actions).toHaveTextContent('Uploads: 1');

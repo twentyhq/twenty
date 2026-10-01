@@ -1,4 +1,3 @@
-import { isFunction } from '@sniptt/guards';
 import { useState } from 'react';
 import { defineFrontComponent } from 'twenty-sdk/define';
 import { ImageInput } from 'twenty-ui/components';
@@ -14,6 +13,7 @@ const ImageInputExample = () => {
   const [src, setSrc] = useState<string | undefined>(IMAGE_SOURCE);
   const [isUploading, setIsUploading] = useState(false);
   const [disabled, setDisabled] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | undefined>();
   const [uploads, setUploads] = useState(0);
   const [removals, setRemovals] = useState(0);
   const [aborts, setAborts] = useState(0);
@@ -27,15 +27,13 @@ const ImageInputExample = () => {
         isUploading={isUploading}
         disabled={disabled}
         helperText="Choose an image for your profile."
-        errorMessage="Use an image smaller than 2 MB."
+        errorMessage={errorMessage}
         uploadLabel="Choose profile image"
         removeLabel="Remove profile image"
         abortLabel="Cancel profile upload"
         onUpload={(file) => {
           setUploads((count) => count + 1);
-          setSelectedFile(
-            `${file.name}; ${file.type}; readable: ${isFunction(file.arrayBuffer)}`,
-          );
+          setSelectedFile(`${file.name}; ${file.type}; ${file.size} bytes`);
         }}
         onRemove={() => {
           setRemovals((count) => count + 1);
@@ -51,6 +49,14 @@ const ImageInputExample = () => {
         Show invalid image
       </Button>
       <Button onClick={() => setIsUploading(true)}>Start upload</Button>
+      <Button
+        onClick={() => setErrorMessage('The image could not be uploaded.')}
+      >
+        Show upload error
+      </Button>
+      <Button onClick={() => setErrorMessage(undefined)}>
+        Clear upload error
+      </Button>
       <Button onClick={() => setDisabled((value) => !value)}>
         {disabled ? 'Enable image input' : 'Disable image input'}
       </Button>
