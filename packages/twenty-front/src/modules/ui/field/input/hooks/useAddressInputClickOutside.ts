@@ -60,7 +60,7 @@ export const useAddressInputClickOutside = ({
     callback: (event) => {
       const pointerDown = store.get(pointerDownAtom);
       const wasDropdownOpenOnPointerDown =
-        pointerDown?.wasDropdownOpen === true &&
+        pointerDown?.wasDropdownOpen &&
         isClickFromPointerDown({
           clickTarget: event.target,
           pointerDownTarget: pointerDown.target,
