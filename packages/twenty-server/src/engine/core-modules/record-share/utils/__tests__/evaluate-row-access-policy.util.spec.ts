@@ -7,8 +7,8 @@ import { type RecordShareGrant } from 'src/engine/core-modules/record-share/type
 import {
   evaluateRowAccessPolicy,
   type RowAccessEvaluationContext,
-  type RowAccessRecord,
 } from 'src/engine/core-modules/record-share/utils/evaluate-row-access-policy.util';
+import { type RowAccessRecord } from 'src/engine/core-modules/record-share/types/row-access-record.type';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
@@ -91,6 +91,7 @@ const buildContext = (
       recordIds.includes(recordShare.recordId),
     ),
   ),
+  executeRawQuery: jest.fn(async () => []),
   resolveRecordIdsReadableThroughParents: jest.fn(
     async () => new Set<string>(),
   ),

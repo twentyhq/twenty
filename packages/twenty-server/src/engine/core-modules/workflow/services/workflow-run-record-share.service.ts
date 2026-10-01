@@ -5,7 +5,6 @@ import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import {
   RecordSharePrincipalType,
   RecordShareRowCause,
-  WorkflowVisibility,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type FindOptionsWhere, In, type Repository } from 'typeorm';
@@ -29,11 +28,12 @@ const WORKFLOW_RUN_BATCH_SIZE = 500;
 const CORE_WORKFLOW_LOCK_OPTIONS = { ttl: 30_000, maxRetries: 300 };
 
 type CoreWorkflowAccess = {
-  isWorkspaceVisible: boolean;
   creatorWorkspaceMemberId: string | null;
 };
 
-// runs carry their workflow's data, so their grants are derived from it and replaced wholesale to revoke what the old state granted
+// Who sees a run beyond its creator follows from its core workflow at read
+// time (WORKFLOW_RUN_OF_SHARED_WORKFLOW_SHARING_RULE); only the creator's grant
+// is stored, replaced wholesale when the workflow changes hands
 @Injectable()
 export class WorkflowRunRecordShareService {
   constructor(
@@ -108,7 +108,7 @@ export class WorkflowRunRecordShareService {
         await this.replaceShares({
           workspaceId,
           workflowRunIds: runIds,
-          access: { isWorkspaceVisible: true, creatorWorkspaceMemberId: null },
+          access: { creatorWorkspaceMemberId: null },
         });
         continue;
       }
@@ -205,7 +205,7 @@ export class WorkflowRunRecordShareService {
                   // grant, which would otherwise let that role read a private workflow's runs
                   { ...recordScope, sourceId: In(batch) },
                   { ...recordScope, rowCause: RecordShareRowCause.APPLICATION },
-                  // a grant to everyone means workspace-visible, which only the core workflow decides
+                  // the core workflow alone decides who else sees its runs
                   {
                     ...recordScope,
                     principalType: RecordSharePrincipalType.EVERYONE,
@@ -239,19 +239,16 @@ export class WorkflowRunRecordShareService {
       workspaceId,
       {
         where: { id: coreWorkflowId },
-        select: { id: true, visibility: true, createdByUserWorkspaceId: true },
+        select: { id: true, createdByUserWorkspaceId: true },
         withDeleted: true,
       },
     );
 
     if (!isDefined(coreWorkflow)) {
-      return { isWorkspaceVisible: true, creatorWorkspaceMemberId: null };
+      return { creatorWorkspaceMemberId: null };
     }
 
     return {
-      isWorkspaceVisible:
-        coreWorkflow.visibility === WorkflowVisibility.WORKSPACE ||
-        !isDefined(coreWorkflow.createdByUserWorkspaceId),
       creatorWorkspaceMemberId: isDefined(coreWorkflow.createdByUserWorkspaceId)
         ? await this.resolveWorkspaceMemberId({
             workspaceId,

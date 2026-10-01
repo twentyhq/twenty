@@ -3,6 +3,8 @@
 import { type ObjectRecord } from 'twenty-shared/types';
 import { assertUnreachable } from 'twenty-shared/utils';
 
+import { type ExecuteRawQuery } from 'src/engine/core-modules/record-share/types/record-sharing-rule.type';
+import { type RowAccessRecord } from 'src/engine/core-modules/record-share/types/row-access-record.type';
 import { type RecordShareGrant } from 'src/engine/core-modules/record-share/types/record-share-grant.type';
 import { resolveRecordIdsRestrictedForPrincipals } from 'src/engine/core-modules/record-share/utils/resolve-record-ids-restricted-for-principals.util';
 import { resolveRecordIdsSharedWithPrincipals } from 'src/engine/core-modules/record-share/utils/resolve-record-ids-shared-with-principals.util';
@@ -13,8 +15,6 @@ import {
   type RowAccessPolicy,
 } from 'src/engine/twenty-orm/types/row-access-policy.type';
 import { isRecordMatchingRLSRowLevelPermissionPredicate } from 'src/engine/twenty-orm/utils/is-record-matching-rls-row-level-permission-predicate.util';
-
-export type RowAccessRecord = { id: string } & Record<string, unknown>;
 
 type InheritedReadabilityExpression = Extract<
   RowAccessExpression,
@@ -28,6 +28,7 @@ export type RowAccessEvaluationContext<TRecord extends RowAccessRecord> = {
     objectMetadataId: string,
     recordIds: string[],
   ) => Promise<RecordShareGrant[]>;
+  executeRawQuery: ExecuteRawQuery;
   // Parents live in other tables, so whoever holds the records resolves them
   resolveRecordIdsReadableThroughParents: (args: {
     expression: InheritedReadabilityExpression;
@@ -155,6 +156,11 @@ export const evaluateRowAccessExpression = async <
 
       return new Set(recordIds.filter((id) => !restrictedRecordIds.has(id)));
     }
+    case 'sharingRule':
+      return expression.rule.resolveMatchingRecordIds({
+        records,
+        executeRawQuery: context.executeRawQuery,
+      });
     case 'inheritedReadability': {
       const sharedRecordIds = await evaluateRowAccessExpression({
         expression: { ...expression, kind: 'recordShared' },

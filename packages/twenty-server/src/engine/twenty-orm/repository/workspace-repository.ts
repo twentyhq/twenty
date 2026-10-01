@@ -52,9 +52,9 @@ import { type RecordShareGrant } from 'src/engine/core-modules/record-share/type
 import {
   evaluateRowAccessPolicy,
   type RowAccessEvaluationContext,
-  type RowAccessRecord,
 } from 'src/engine/core-modules/record-share/utils/evaluate-row-access-policy.util';
-import { isRowAccessExpressionReadingRoleFilter } from 'src/engine/twenty-orm/utils/is-row-access-expression-reading-role-filter.util';
+import { type RowAccessRecord } from 'src/engine/core-modules/record-share/types/row-access-record.type';
+import { isRowAccessExpressionReadingRecordValues } from 'src/engine/twenty-orm/utils/is-row-access-expression-reading-record-values.util';
 import { isRecordGrantBeyondRoleAllowed } from 'src/engine/core-modules/record-share/utils/is-record-grant-beyond-role-allowed.util';
 import { isObjectOperationPermitted } from 'src/engine/twenty-orm/utils/is-object-operation-permitted.util';
 import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
@@ -1935,11 +1935,9 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       operationType: 'update',
     });
 
-    // Without a role filter the policy reads nothing an update can change:
-    // shares are keyed by id and parents are checked on their own
     if (
       policy.kind !== 'gated' ||
-      !isRowAccessExpressionReadingRoleFilter(policy.expression)
+      !isRowAccessExpressionReadingRecordValues(policy.expression)
     ) {
       return;
     }
@@ -2007,6 +2005,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
           requestedRecordIdSet.has(recordShareGrant.recordId),
         );
       },
+      executeRawQuery: (sql, parameters) => this.executeRaw(sql, parameters),
       resolveRecordIdsReadableThroughParents: async ({ records }) =>
         new Set(records.map((record) => record.id)),
     };

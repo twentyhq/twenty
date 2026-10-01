@@ -117,7 +117,7 @@ export class WorkflowRunWorkspaceService {
         enqueuedAt: status === WorkflowRunStatus.ENQUEUED ? new Date() : null,
       });
 
-      // A run is a private system-written record, so nobody reads it until it carries its workflow's grants
+      // The creator of a private workflow reads its runs through this grant only
       await this.workflowRunRecordShareService.syncRuns({
         workspaceId,
         workflowRunIds: [id],

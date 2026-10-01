@@ -721,6 +721,18 @@ describe('core workflow visibility (e2e)', () => {
       ).toEqual([workflowRunId]);
     });
 
+    it('stores no grant to everyone, as the workflow visibility decides it', async () => {
+      const recordShares: { principalType: string }[] =
+        await global.testDataSource.query(
+          `SELECT "principalType" FROM "${getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID)}"."recordShare" WHERE "recordId" = $1`,
+          [workflowRunId],
+        );
+
+      expect(
+        recordShares.map(({ principalType }) => principalType),
+      ).not.toContain('EVERYONE');
+    });
+
     it('hides them from another member once the workflow is private', async () => {
       const response = await setVisibility(
         runsCoreWorkflowId,

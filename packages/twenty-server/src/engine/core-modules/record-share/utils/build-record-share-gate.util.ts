@@ -4,6 +4,7 @@ import { resolveRecordShareGateKind } from 'src/engine/core-modules/record-share
 import { type RecordShareAccessLevel } from 'twenty-shared/types';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 
+import { RECORD_SHARING_RULES } from 'src/engine/core-modules/record-share/constants/record-sharing-rules.constant';
 import { MAX_INHERITED_READABILITY_DEPTH } from 'src/engine/core-modules/record-share/constants/max-inherited-readability-depth.constant';
 import { type InheritedReadabilityParent } from 'src/engine/core-modules/record-share/types/inherited-readability-parent.type';
 import { isOpenWhenDetachedObject } from 'src/engine/core-modules/record-share/utils/is-open-when-detached-object.util';
@@ -12,6 +13,7 @@ import { shouldEnforceRecordShareExceptions } from 'src/engine/core-modules/reco
 import { resolveRequiredRecordShareAccessLevels } from 'src/engine/core-modules/record-share/utils/resolve-required-record-share-access-levels.util';
 import {
   type InheritedReadabilityParentExpression,
+  type RowAccessExpression,
   type RowAccessPolicy,
   type RowAccessPolicyContext,
   type RowAccessPolicyTarget,
@@ -91,14 +93,30 @@ const buildOwnRecordShareGate = (
     return { kind: 'open' };
   }
 
+  const recordShared: RowAccessExpression = {
+    kind: 'recordShared',
+    tableAlias: target.tableAlias,
+    objectMetadataId: target.flatObjectMetadata.id,
+    ...principals,
+  };
+  const sharingRules: RowAccessExpression[] = RECORD_SHARING_RULES.filter(
+    (rule) =>
+      rule.objectUniversalIdentifier ===
+        target.flatObjectMetadata.universalIdentifier &&
+      principals.principalIds.includes(rule.principalId) &&
+      principals.accessLevels.includes(rule.accessLevel),
+  ).map((rule) => ({
+    kind: 'sharingRule',
+    tableAlias: target.tableAlias,
+    rule,
+  }));
+
   return {
     kind: 'gated',
-    expression: {
-      kind: 'recordShared',
-      tableAlias: target.tableAlias,
-      objectMetadataId: target.flatObjectMetadata.id,
-      ...principals,
-    },
+    expression:
+      sharingRules.length === 0
+        ? recordShared
+        : { kind: 'or', operands: [recordShared, ...sharingRules] },
   };
 };
 

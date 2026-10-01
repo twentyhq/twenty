@@ -69,6 +69,8 @@ export const compileRowAccessExpression = (
         ...expression,
         recordShareTableExpression: environment.recordShareTableExpression,
       });
+    case 'sharingRule':
+      return expression.rule.buildCondition(expression.tableAlias);
     case 'inheritedReadability':
       return buildInheritedReadabilityCondition({
         tableAlias: expression.tableAlias,

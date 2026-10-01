@@ -3,8 +3,9 @@
 import { RecordShareAccessLevel } from 'twenty-shared/types';
 
 import { COMPANY_FLAT_OBJECT_MOCK } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/company-flat-object.mock';
+import { WORKFLOW_RUN_OF_SHARED_WORKFLOW_SHARING_RULE } from 'src/engine/core-modules/workflow/utils/workflow-run-of-shared-workflow-sharing-rule.util';
 import { type RowAccessExpression } from 'src/engine/twenty-orm/types/row-access-policy.type';
-import { isRowAccessExpressionReadingRoleFilter } from 'src/engine/twenty-orm/utils/is-row-access-expression-reading-role-filter.util';
+import { isRowAccessExpressionReadingRecordValues } from 'src/engine/twenty-orm/utils/is-row-access-expression-reading-record-values.util';
 
 const recordShared: RowAccessExpression = {
   kind: 'recordShared',
@@ -21,10 +22,10 @@ const roleFilter: RowAccessExpression = {
   recordFilter: { name: { eq: 'Acme' } },
 };
 
-describe('isRowAccessExpressionReadingRoleFilter', () => {
+describe('isRowAccessExpressionReadingRecordValues', () => {
   it('finds a role filter nested in and/or', () => {
     expect(
-      isRowAccessExpressionReadingRoleFilter({
+      isRowAccessExpressionReadingRecordValues({
         kind: 'or',
         operands: [{ kind: 'and', operands: [roleFilter] }, recordShared],
       }),
@@ -33,7 +34,7 @@ describe('isRowAccessExpressionReadingRoleFilter', () => {
 
   it('ignores expressions reading only shares', () => {
     expect(
-      isRowAccessExpressionReadingRoleFilter({
+      isRowAccessExpressionReadingRecordValues({
         kind: 'and',
         operands: [
           recordShared,
@@ -41,5 +42,21 @@ describe('isRowAccessExpressionReadingRoleFilter', () => {
         ],
       }),
     ).toBe(false);
+  });
+
+  it('counts a sharing rule, which reads the record values', () => {
+    expect(
+      isRowAccessExpressionReadingRecordValues({
+        kind: 'or',
+        operands: [
+          recordShared,
+          {
+            kind: 'sharingRule',
+            tableAlias: 'workflowRun',
+            rule: WORKFLOW_RUN_OF_SHARED_WORKFLOW_SHARING_RULE,
+          },
+        ],
+      }),
+    ).toBe(true);
   });
 });
