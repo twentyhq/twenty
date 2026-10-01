@@ -18,6 +18,14 @@ import { TextInput } from '@/ui/input/components/TextInput';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { StyledVisuallyHidden } from '@/ui/accessibility/components/StyledVisuallyHidden';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { agentChatThreadPreviewFamilySelector } from '@/ai/states/selectors/agentChatThreadPreviewFamilySelector';
+import { formatAgentChatThreadActivityTime } from '@/ai/utils/formatAgentChatThreadActivityTime';
+import { getAgentChatThreadLastActivityAt } from '@/ai/utils/getAgentChatThreadLastActivityAt';
+import { getAgentChatThreadPreviewText } from '@/ai/utils/getAgentChatThreadPreviewText';
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { WorkspaceMemberAvatarStack } from '@/workspace-member/components/WorkspaceMemberAvatarStack';
 
 const StyledThreadItem = styled.div`
   align-items: center;
@@ -54,8 +62,17 @@ const StyledThreadIcon = styled.div<{ $isDeleted: boolean }>`
   padding: ${themeCssVariables.spacing[1]};
 `;
 
+const StyledLeading = styled.div`
+  display: flex;
+  flex-shrink: 0;
+  width: ${themeCssVariables.spacing[8]};
+`;
+
 const StyledThreadContent = styled.div`
+  align-items: baseline;
+  display: flex;
   flex: 1;
+  gap: ${themeCssVariables.spacing[1]};
   min-width: 0;
 `;
 
@@ -64,12 +81,37 @@ const StyledThreadTitle = styled.div<{ $isUnread: boolean }>`
     $isUnread
       ? themeCssVariables.font.color.primary
       : themeCssVariables.font.color.secondary};
+  flex-shrink: 0;
   font-size: ${themeCssVariables.font.size.md};
   font-weight: ${({ $isUnread }) =>
     $isUnread ? themeCssVariables.font.weight.semiBold : 500};
+  max-width: 60%;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+`;
+
+const StyledThreadPreview = styled.div`
+  color: ${themeCssVariables.font.color.tertiary};
+  flex: 1;
+  font-size: ${themeCssVariables.font.size.md};
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+
+const StyledActivityTime = styled.div<{ $isDropdownOpen: boolean }>`
+  color: ${themeCssVariables.font.color.tertiary};
+  flex-shrink: 0;
+  font-size: ${themeCssVariables.font.size.sm};
+  padding-right: ${themeCssVariables.spacing[1]};
+  visibility: ${({ $isDropdownOpen }) =>
+    $isDropdownOpen ? 'hidden' : 'visible'};
+
+  ${StyledThreadItem}:hover & {
+    visibility: hidden;
+  }
 `;
 
 const StyledMenuTrigger = styled.div<{ $isDropdownOpen: boolean }>`
@@ -87,6 +129,8 @@ const StyledMenuTrigger = styled.div<{ $isDropdownOpen: boolean }>`
     pointer-events: auto;
   }
 `;
+
+const THREAD_MEMBERS_MAX_VISIBLE = 2;
 
 type AiChatThreadListItemProps = {
   thread: AgentChatThreadRecord;
@@ -117,6 +161,22 @@ export const AiChatThreadListItem = ({
     agentChatThreadInboxStatusFamilySelector,
     { threadId: thread.id, lastActivityAt: thread.lastActivityAt ?? null },
   );
+  const preview = useAtomFamilySelectorValue(
+    agentChatThreadPreviewFamilySelector,
+    thread.id,
+  );
+  const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
+  const currentWorkspaceMembers = useAtomStateValue(
+    currentWorkspaceMembersState,
+  );
+  const threadMembers = currentWorkspaceMembers.filter(({ id }) =>
+    preview?.memberIds.includes(id),
+  );
+  const previewText = getAgentChatThreadPreviewText({
+    preview,
+    workspaceMembers: currentWorkspaceMembers,
+    currentWorkspaceMemberId: currentWorkspaceMember?.id,
+  });
   const ThreadIcon = isDeleted ? IconTrash : IconSparkles;
   const displayTitle = thread.title ?? t`Untitled`;
   const itemMenuDropdownId = getAiChatThreadItemMenuDropdownId({
@@ -135,9 +195,19 @@ export const AiChatThreadListItem = ({
         }
       }}
     >
-      <StyledThreadIcon $isDeleted={isDeleted}>
-        <ThreadIcon size={theme.icon.size.md} color="currentColor" />
-      </StyledThreadIcon>
+      <StyledLeading>
+        {isDeleted || threadMembers.length === 0 ? (
+          <StyledThreadIcon $isDeleted={isDeleted}>
+            <ThreadIcon size={theme.icon.size.md} color="currentColor" />
+          </StyledThreadIcon>
+        ) : (
+          <WorkspaceMemberAvatarStack
+            workspaceMembers={threadMembers}
+            defaultAvatarName={t`Member`}
+            maxVisible={THREAD_MEMBERS_MAX_VISIBLE}
+          />
+        )}
+      </StyledLeading>
       <StyledThreadContent>
         {isRenaming ? (
           <TextInput
@@ -164,14 +234,26 @@ export const AiChatThreadListItem = ({
             aria-label={t`Rename chat`}
           />
         ) : (
-          <StyledThreadTitle $isUnread={!isDeleted && isUnread}>
-            {displayTitle}
-            {!isDeleted && isUnread && (
-              <StyledVisuallyHidden>{t`, unread`}</StyledVisuallyHidden>
+          <>
+            <StyledThreadTitle $isUnread={!isDeleted && isUnread}>
+              {displayTitle}
+              {!isDeleted && isUnread && (
+                <StyledVisuallyHidden>{t`, unread`}</StyledVisuallyHidden>
+              )}
+            </StyledThreadTitle>
+            {isDefined(previewText) && (
+              <StyledThreadPreview>· {previewText}</StyledThreadPreview>
             )}
-          </StyledThreadTitle>
+          </>
         )}
       </StyledThreadContent>
+      {!isRenaming && (
+        <StyledActivityTime $isDropdownOpen={isDropdownOpen}>
+          {formatAgentChatThreadActivityTime(
+            getAgentChatThreadLastActivityAt(thread),
+          )}
+        </StyledActivityTime>
+      )}
       <StyledMenuTrigger
         $isDropdownOpen={isDropdownOpen}
         onClick={(event) => event.stopPropagation()}

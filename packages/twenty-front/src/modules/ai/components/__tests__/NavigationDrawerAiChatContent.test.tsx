@@ -5,8 +5,6 @@ import { atom, Provider as JotaiProvider } from 'jotai';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
 import { NavigationDrawerAiChatContent } from '@/ai/components/NavigationDrawerAiChatContent';
-import { AGENT_CHAT_THREAD_GROUP_BY } from '@/ai/constants/AgentChatThreadGroupBy';
-import { agentChatThreadGroupByState } from '@/ai/states/agentChatThreadGroupByState';
 import { type AgentChatThreadListItem } from '@/ai/types/AgentChatThreadListItem';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import {
@@ -40,8 +38,8 @@ jest.mock('@/ai/states/selectors/agentChatFavoriteThreadsSelector', () => ({
   },
 }));
 
-jest.mock('@/ai/hooks/useChatThreads', () => ({
-  useChatThreads: () => ({ threads: mockThreads, loading: false }),
+jest.mock('@/ai/hooks/useRecentChatThreads', () => ({
+  useRecentChatThreads: () => ({ threads: mockThreads, loading: false }),
 }));
 
 jest.mock('@/ai/hooks/useAiChatThreadClick', () => ({
@@ -52,8 +50,8 @@ jest.mock('@/navigation/hooks/useIsNavigationDrawerContentExpanded', () => ({
   useIsNavigationDrawerContentExpanded: () => true,
 }));
 
-jest.mock('@/ai/components/AiChatThreadFilterDropdown', () => ({
-  AiChatThreadFilterDropdown: () => null,
+jest.mock('@/ai/components/NavigationDrawerAiChatTriageSection', () => ({
+  NavigationDrawerAiChatTriageSection: () => null,
 }));
 
 jest.mock('@/ai/components/AgentChatThreadsFetchMoreTrigger', () => ({
@@ -88,17 +86,13 @@ const renderContent = () =>
 describe('NavigationDrawerAiChatContent', () => {
   beforeEach(() => {
     resetJotaiStore();
-    jotaiStore.set(
-      agentChatThreadGroupByState.atom,
-      AGENT_CHAT_THREAD_GROUP_BY.NONE,
-    );
     mockThreads = [
       buildThread('chat-1', 'Pipeline review'),
       buildThread('chat-2', 'Quarterly plan'),
     ];
   });
 
-  it('lists favorite chats in their own section and keeps them out of Recents', () => {
+  it('lists favorite chats in their own section and keeps them out of Recent', () => {
     jotaiStore.set(mockFavoriteThreadsAtom, [
       { id: 'chat-2', title: 'Quarterly plan', deletedAt: null },
     ]);
@@ -106,7 +100,7 @@ describe('NavigationDrawerAiChatContent', () => {
     const { getByRole } = renderContent();
 
     const favorites = getByRole('region', { name: 'Favorites' });
-    const recents = getByRole('region', { name: 'Recents' });
+    const recents = getByRole('region', { name: 'Recent' });
 
     expect(within(favorites).getByText('Quarterly plan')).toBeInTheDocument();
     expect(within(recents).getByText('Pipeline review')).toBeInTheDocument();

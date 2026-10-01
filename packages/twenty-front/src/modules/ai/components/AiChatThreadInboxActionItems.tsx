@@ -3,11 +3,11 @@ import { type MouseEvent } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { Dropdown } from 'twenty-ui/components';
 import {
-  IconArchive,
+  IconCircleDashed,
   IconClock,
   IconEye,
   IconEyeOff,
-  IconInbox,
+  IconProgressCheck,
 } from 'twenty-ui/icon';
 
 import { useAgentChatThreadParticipants } from '@/ai/hooks/useAgentChatThreadParticipants';
@@ -87,17 +87,17 @@ export const AiChatThreadInboxActionItems = ({
       )}
       {scope === 'INBOX' ? (
         <Dropdown.ActionItem
-          startIcon={<IconArchive />}
+          startIcon={<IconProgressCheck />}
           onClick={runAction(() => archiveAgentChatThread(threadId))}
         >
-          {t`Archive`}
+          {t`Mark as done`}
         </Dropdown.ActionItem>
       ) : (
         <Dropdown.ActionItem
-          startIcon={<IconInbox />}
+          startIcon={<IconCircleDashed />}
           onClick={runAction(() => moveAgentChatThreadToInbox(threadId))}
         >
-          {t`Move to inbox`}
+          {t`Reopen`}
         </Dropdown.ActionItem>
       )}
       <Dropdown.Submenu>

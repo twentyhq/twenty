@@ -15,6 +15,7 @@ export enum AppPath {
   BookCall = '/book-call',
 
   AiChat = '/chat/:threadId?',
+  AiChatInbox = '/inbox',
   Index = '/',
   // Mobile only: the navigation menu is a page there rather than a drawer.
   Home = '/home',

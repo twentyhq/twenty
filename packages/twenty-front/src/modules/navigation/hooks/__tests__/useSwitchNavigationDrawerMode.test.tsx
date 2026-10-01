@@ -1,5 +1,4 @@
 import { useReturnFromExpandedAiChat } from '@/ai/hooks/useReturnFromExpandedAiChat';
-import { useSwitchToNewAiChat } from '@/ai/hooks/useSwitchToNewAiChat';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
 import { useSwitchNavigationDrawerMode } from '@/navigation/hooks/useSwitchNavigationDrawerMode';
 import { currentMobileNavigationDrawerState } from '@/navigation/states/currentMobileNavigationDrawerState';
@@ -15,7 +14,6 @@ import { type ReactNode } from 'react';
 import { MemoryRouter, useLocation } from 'react-router-dom';
 
 jest.mock('@/ai/hooks/useReturnFromExpandedAiChat');
-jest.mock('@/ai/hooks/useSwitchToNewAiChat');
 jest.mock('@/navigation/hooks/useDefaultHomePagePath');
 jest.mock('twenty-ui/utilities', () => ({
   ...jest.requireActual('twenty-ui/utilities'),
@@ -35,7 +33,6 @@ jest.mock('@/side-panel/hooks/useOpenAskAiPageInSidePanel', () => ({
 const DEFAULT_HOME_PAGE_PATH = '/objects/companies';
 const AI_CHAT_PATH = '/chat/20202020-0687-4c41-b707-ed1bfca972a7';
 
-const mockSwitchToNewChat = jest.fn();
 const mockReturnFromExpandedAiChat = jest.fn();
 
 const renderSwitchNavigationDrawerMode = ({
@@ -78,9 +75,6 @@ describe('useSwitchNavigationDrawerMode', () => {
     jest.clearAllMocks();
     localStorage.clear();
 
-    jest.mocked(useSwitchToNewAiChat).mockReturnValue({
-      switchToNewChat: mockSwitchToNewChat,
-    });
     jest
       .mocked(useReturnFromExpandedAiChat)
       .mockReturnValue(mockReturnFromExpandedAiChat);
@@ -142,7 +136,7 @@ describe('useSwitchNavigationDrawerMode', () => {
     );
   });
 
-  it('opens the chat page from the settings mode', () => {
+  it('opens the inbox from the settings mode', () => {
     const { result, store } = renderSwitchNavigationDrawerMode({
       pathname: '/settings/profile',
     });
@@ -153,13 +147,13 @@ describe('useSwitchNavigationDrawerMode', () => {
       ),
     );
 
-    expect(mockSwitchToNewChat).toHaveBeenCalled();
+    expect(result.current.location.pathname).toBe('/inbox');
     expect(store.get(navigationDrawerActiveTabState.atom)).toBe(
       NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY,
     );
   });
 
-  it('opens the chat page when the chat history is listed on another page', () => {
+  it('opens the inbox when the chat history is listed on another page', () => {
     const { result } = renderSwitchNavigationDrawerMode({
       pathname: '/objects/people',
     });
@@ -169,16 +163,11 @@ describe('useSwitchNavigationDrawerMode', () => {
         NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY,
       ),
     );
-    act(() =>
-      result.current.switchNavigationDrawerMode(
-        NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY,
-      ),
-    );
 
-    expect(mockSwitchToNewChat).toHaveBeenCalledTimes(2);
+    expect(result.current.location.pathname).toBe('/inbox');
   });
 
-  it('does not start a new chat when the chat page is already open', () => {
+  it('stays on the chat page when it is already open', () => {
     const { result } = renderSwitchNavigationDrawerMode({
       pathname: AI_CHAT_PATH,
     });
@@ -189,7 +178,7 @@ describe('useSwitchNavigationDrawerMode', () => {
       ),
     );
 
-    expect(mockSwitchToNewChat).not.toHaveBeenCalled();
+    expect(result.current.location.pathname).toBe(AI_CHAT_PATH);
   });
 
   it.each([false, true])(
@@ -247,11 +236,6 @@ describe('useSwitchNavigationDrawerMode', () => {
   );
 
   it('stays collapsed through Home → Settings → AI → Home', () => {
-    jest.mocked(useSwitchToNewAiChat).mockImplementation(
-      jest.requireActual<{
-        useSwitchToNewAiChat: typeof useSwitchToNewAiChat;
-      }>('@/ai/hooks/useSwitchToNewAiChat').useSwitchToNewAiChat,
-    );
     jest.mocked(useReturnFromExpandedAiChat).mockImplementation(
       jest.requireActual<{
         useReturnFromExpandedAiChat: typeof useReturnFromExpandedAiChat;
@@ -267,7 +251,7 @@ describe('useSwitchNavigationDrawerMode', () => {
 
     for (const [mode, pathname] of [
       [NAVIGATION_DRAWER_TABS.SETTINGS, '/settings/profile'],
-      [NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY, '/chat'],
+      [NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY, '/inbox'],
       [NAVIGATION_DRAWER_TABS.NAVIGATION_MENU, DEFAULT_HOME_PAGE_PATH],
     ] as const) {
       window.history.replaceState(null, '', result.current.location.pathname);

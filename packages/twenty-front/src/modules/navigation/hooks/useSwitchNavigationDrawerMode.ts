@@ -1,9 +1,8 @@
 import { useIsMobile } from 'twenty-ui/utilities';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { SettingsPath } from 'twenty-shared/types';
+import { AppPath, SettingsPath } from 'twenty-shared/types';
 
 import { useReturnFromExpandedAiChat } from '@/ai/hooks/useReturnFromExpandedAiChat';
-import { useSwitchToNewAiChat } from '@/ai/hooks/useSwitchToNewAiChat';
 import { getExpandedAiChatReturnLocation } from '@/ai/utils/getExpandedAiChatReturnLocation';
 import { useActiveNavigationDrawerMode } from '@/navigation/hooks/useActiveNavigationDrawerMode';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
@@ -23,6 +22,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { isAiChatPath } from '~/utils/isAiChatPath';
+import { isMatchingLocation } from '~/utils/isMatchingLocation';
 
 export const useSwitchNavigationDrawerMode = () => {
   const isMobile = useIsMobile();
@@ -34,6 +34,7 @@ export const useSwitchNavigationDrawerMode = () => {
   const isSettingsDrawer = useIsSettingsDrawer();
   const isSettingsPage = useIsSettingsPage();
   const isAiChatPage = isAiChatPath(location.pathname);
+  const isAiChatInboxPage = isMatchingLocation(location, AppPath.AiChatInbox);
 
   const navigationMemorizedUrl = useAtomStateValue(navigationMemorizedUrlState);
   const navigationDrawerExpandedMemorized = useAtomStateValue(
@@ -50,9 +51,6 @@ export const useSwitchNavigationDrawerMode = () => {
   );
 
   const { defaultHomePagePath } = useDefaultHomePagePath();
-  const { switchToNewChat } = useSwitchToNewAiChat({
-    shouldOpenInFullPage: true,
-  });
   const returnFromExpandedAiChat = useReturnFromExpandedAiChat({
     reopenSidePanel: false,
     destinationPath: getNavigationDrawerHomeDestination({
@@ -79,7 +77,7 @@ export const useSwitchNavigationDrawerMode = () => {
       return;
     }
 
-    if (isAiChatPage) {
+    if (isAiChatPage || isAiChatInboxPage) {
       returnFromExpandedAiChat();
     }
   };
@@ -87,10 +85,10 @@ export const useSwitchNavigationDrawerMode = () => {
   const switchToAiChat = () => {
     setCurrentMobileNavigationDrawer('main');
     setNavigationDrawerActiveTab(NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY);
-    switchToNewChat();
+    navigate(AppPath.AiChatInbox);
   };
 
-  // AI mode also lists chat history beside other pages, so only the chat page makes a click a no-op.
+  // AI mode also lists chat history beside other pages, so only the chat and inbox pages make a click a no-op.
   const switchNavigationDrawerMode = (mode: NavigationDrawerActiveTab) => {
     switch (mode) {
       case NAVIGATION_DRAWER_TABS.NAVIGATION_MENU:
@@ -102,7 +100,7 @@ export const useSwitchNavigationDrawerMode = () => {
         switchToNavigationMenu();
         break;
       case NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY:
-        if (isAiChatPage) {
+        if (isAiChatPage || isAiChatInboxPage) {
           return;
         }
         switchToAiChat();
