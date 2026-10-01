@@ -4,7 +4,6 @@ import { type QueryRunner } from 'typeorm';
 const tableName = 'featureFlag';
 
 const DEFAULT_SEEDED_FEATURE_FLAGS: Partial<Record<FeatureFlagKey, boolean>> = {
-  [FeatureFlagKey.IS_UNIQUE_INDEXES_ENABLED]: false,
   [FeatureFlagKey.IS_JUNCTION_RELATIONS_ENABLED]: true,
   [FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED]: true,
   [FeatureFlagKey.IS_AI_CHAT_SHARING_DROPDOWN_ENABLED]: false,
