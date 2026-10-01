@@ -127,6 +127,7 @@ export const SettingsDataModelFieldRelationFormCard = ({
           <SettingsDataModelFieldRelationJunctionForm
             objectNameSingular={objectNameSingular}
             existingFieldMetadataId={existingFieldMetadataId}
+            disabled={disabled}
           />
         </>
       }
