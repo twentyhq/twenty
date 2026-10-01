@@ -160,22 +160,31 @@ describe('evaluateRowAccessPolicy', () => {
     );
   });
 
-  it('admits through either operand of an or', async () => {
+  it('admits through either operand of an or, asking later operands only about records not yet admitted', async () => {
+    const context = buildContext();
+
     expect(
-      await evaluate({
-        kind: 'or',
-        operands: [
-          {
-            kind: 'and',
-            operands: [
-              activeFilter,
-              { kind: 'recordNotRestricted', ...shareTarget },
-            ],
-          },
-          { kind: 'recordShared', ...shareTarget },
-        ],
-      }),
+      await evaluate(
+        {
+          kind: 'or',
+          operands: [
+            {
+              kind: 'and',
+              operands: [
+                activeFilter,
+                { kind: 'recordNotRestricted', ...shareTarget },
+              ],
+            },
+            { kind: 'recordShared', ...shareTarget },
+          ],
+        },
+        context,
+      ),
     ).toEqual(new Set(['active-shared', 'archived-shared']));
+    expect(context.fetchRecordShares).toHaveBeenLastCalledWith(
+      flatObjectMetadata.id,
+      ['active-private', 'archived-shared'],
+    );
   });
 
   it('asks parents only about records not shared directly', async () => {

@@ -142,6 +142,16 @@ describe('isRecordMatchingRLSRowLevelPermissionPredicate', () => {
       },
     ),
     createMockFlatFieldMetadata('users-id', 'users', FieldMetadataType.ARRAY),
+    createMockFlatFieldMetadata(
+      'created-by-id',
+      'createdBy',
+      FieldMetadataType.ACTOR,
+    ),
+    createMockFlatFieldMetadata(
+      'emails-id',
+      'emails',
+      FieldMetadataType.EMAILS,
+    ),
   ];
 
   const flatObjectMetadata = createMockFlatObjectMetadata(
@@ -161,6 +171,15 @@ describe('isRecordMatchingRLSRowLevelPermissionPredicate', () => {
     },
     companyId: 'company-1',
     users: ['user-1', 'user-2'],
+    createdBy: {
+      source: 'MANUAL',
+      name: 'Jane Doe',
+      workspaceMemberId: 'member-1',
+    },
+    emails: {
+      primaryEmail: 'jane@acme.com',
+      additionalEmails: ['jane.doe@acme.com'],
+    },
     deletedAt: null,
     id: 'record-1',
     createdAt: new Date().toISOString(),
@@ -324,6 +343,52 @@ describe('isRecordMatchingRLSRowLevelPermissionPredicate', () => {
         flatFieldMetadataMaps,
       }),
     ).toBe(false);
+  });
+
+  it.each([
+    ['the creator', 'member-1', true],
+    ['another member', 'member-2', false],
+  ])(
+    'matches an actor on its workspace member, for %s',
+    (_, workspaceMemberId, expected) => {
+      expect(
+        isRecordMatchingRLSRowLevelPermissionPredicate({
+          record: baseRecord,
+          filter: {
+            createdBy: { workspaceMemberId: { eq: workspaceMemberId } },
+          },
+          flatObjectMetadata,
+          flatFieldMetadataMaps,
+        }),
+      ).toBe(expected);
+    },
+  );
+
+  it('treats a null actor source as no constraint', () => {
+    expect(
+      isRecordMatchingRLSRowLevelPermissionPredicate({
+        record: baseRecord,
+        filter: {
+          createdBy: { source: null, name: { eq: 'Jane Doe' } },
+        } as RecordGqlOperationFilter,
+        flatObjectMetadata,
+        flatFieldMetadataMaps,
+      }),
+    ).toBe(true);
+  });
+
+  it.each([
+    ['%jane.doe%', true],
+    ['%john%', false],
+  ])('matches additional emails like %s', (like, expected) => {
+    expect(
+      isRecordMatchingRLSRowLevelPermissionPredicate({
+        record: baseRecord,
+        filter: { emails: { additionalEmails: { like } } },
+        flatObjectMetadata,
+        flatFieldMetadataMaps,
+      }),
+    ).toBe(expected);
   });
 
   it('supports relation join column filters', () => {

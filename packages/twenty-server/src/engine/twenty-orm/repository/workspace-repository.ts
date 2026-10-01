@@ -2007,6 +2007,9 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
           requestedRecordIdSet.has(recordShareGrant.recordId),
         );
       },
+      // Writes check parents before and after through
+      // validateInheritedParentsAreWritableOrThrow, so this branch only has to
+      // leave the rest of the policy to decide
       resolveRecordIdsReadableThroughParents: async ({ records }) =>
         new Set(records.map((record) => record.id)),
     };
