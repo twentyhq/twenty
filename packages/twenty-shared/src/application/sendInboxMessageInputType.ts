@@ -1,4 +1,4 @@
-import { type SendInboxMessageRequest } from '@/application/sendInboxMessageRequestType';
+import { type SendInboxMessageToolCall } from '@/application/sendInboxMessageToolCallType';
 
 export type SendInboxMessageInput = {
   workspaceMemberId: string;
@@ -6,5 +6,5 @@ export type SendInboxMessageInput = {
   idempotencyKey: string;
   title: string;
   text: string;
-  request?: SendInboxMessageRequest;
+  toolCall?: SendInboxMessageToolCall;
 };

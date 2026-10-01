@@ -52,7 +52,7 @@ describe('Sending an inbox message as an application', () => {
     idempotencyKey: 'first-recording',
     title: 'Your first call recording is ready',
     text: 'Your first call was recorded: **Weekly sync**.',
-    request: { toolName: 'ask_questions', input: { questions: QUESTIONS } },
+    toolCall: { toolName: 'ask_questions', input: { questions: QUESTIONS } },
   };
   let application: ApplicationWithResources;
   let applicationToken: string;
@@ -196,10 +196,10 @@ describe('Sending an inbox message as an application', () => {
     expect(await readMessages(threadId)).toHaveLength(2);
   });
 
-  it('refuses another request while an earlier one waits on the member', async () => {
+  it('refuses another question while an earlier one waits on the member', async () => {
     const pendingQuestionMessageId = await readPendingQuestionMessageId();
     const response = await sendInboxMessage(applicationToken, {
-      idempotencyKey: 'second-request',
+      idempotencyKey: 'second-question',
     });
 
     expect(JSON.stringify(response.body.errors)).toContain(
@@ -213,7 +213,7 @@ describe('Sending an inbox message as an application', () => {
     const response = await sendInboxMessage(applicationToken, {
       idempotencyKey: 'transcript-ready',
       text: 'The transcript is ready too.',
-      request: null,
+      toolCall: null,
     });
 
     expect(response.body.errors).toBeUndefined();
@@ -222,10 +222,10 @@ describe('Sending an inbox message as an application', () => {
     expect(await readPendingQuestionMessageId()).toBe(pendingQuestionMessageId);
   });
 
-  it('keeps a single waiting request when two are sent at once', async () => {
+  it('keeps a single waiting question when two are sent at once', async () => {
     const threadKey = `inbox-thread-${uuidv4()}`;
     const responses = await Promise.all(
-      ['first-request', 'second-request'].map((idempotencyKey) =>
+      ['first-question', 'second-question'].map((idempotencyKey) =>
         sendInboxMessage(applicationToken, { threadKey, idempotencyKey }),
       ),
     );

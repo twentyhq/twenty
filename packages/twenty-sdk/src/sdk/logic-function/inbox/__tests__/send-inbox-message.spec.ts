@@ -41,7 +41,7 @@ describe('sendInboxMessage', () => {
       idempotencyKey: 'first-call-recording',
       title: 'Your first recording is ready',
       text: 'Your call was recorded.',
-      request: {
+      toolCall: {
         toolName: 'ask_questions' as const,
         input: {
           questions: [

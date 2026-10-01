@@ -6,6 +6,6 @@ export const workflowSendChatMessageActionSettingsSchema =
     input: z.object({
       workspaceMemberId: z.string(),
       title: z.string(),
-      message: z.string(),
+      text: z.string(),
     }),
   });

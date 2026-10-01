@@ -92,8 +92,8 @@ export const WorkflowEditActionSendChatMessage = ({
           placeholder={t`Enter the message to post`}
           multiline
           readonly={actionOptions.readonly}
-          defaultValue={formData.message}
-          onChange={(value) => handleFieldChange('message', value)}
+          defaultValue={formData.text}
+          onChange={(value) => handleFieldChange('text', value)}
           VariablePicker={WorkflowVariablePicker}
         />
       </WorkflowStepBody>

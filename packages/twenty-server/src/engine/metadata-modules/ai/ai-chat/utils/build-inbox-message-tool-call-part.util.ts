@@ -27,14 +27,14 @@ import {
 } from 'src/engine/metadata-modules/ai/ai.exception';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 
-type InboxMessageRequestPart = {
+type InboxMessageToolCallPart = {
   part: ExtendedUIMessagePart;
   isAwaitingAnswer: boolean;
 };
 
-const throwInvalidRequest = (reason: string): never => {
+const throwInvalidToolCall = (reason: string): never => {
   throw new AiException(
-    `Invalid inbox message request: ${reason}`,
+    `Invalid inbox message tool call: ${reason}`,
     AiExceptionCode.INVALID_AGENT_INPUT,
   );
 };
@@ -44,7 +44,7 @@ const parseInput = <TInput>(schema: z.ZodType<TInput>, input: unknown) => {
 
   return parseResult.success
     ? parseResult.data
-    : throwInvalidRequest(parseResult.error.message);
+    : throwInvalidToolCall(parseResult.error.message);
 };
 
 const parseOptionalRecord = (
@@ -57,7 +57,7 @@ const parseOptionalRecord = (
 
   return isPlainObject(value)
     ? value
-    : throwInvalidRequest(`${name} must be an object`);
+    : throwInvalidToolCall(`${name} must be an object`);
 };
 
 const buildToolPart = ({
@@ -116,57 +116,57 @@ const buildPausingToolPart = ({
       });
     }
     default:
-      return throwInvalidRequest(
+      return throwInvalidToolCall(
         `toolName must be ${ASK_QUESTIONS_TOOL_NAME}, ${REQUEST_FORM_TOOL_NAME} or ${PROPOSE_EMAIL_TOOL_NAME}`,
       );
   }
 };
 
-// A request is either a call the member answers, which pauses the
+// A tool call is either one the member answers, which pauses the
 // conversation, or one of the application's own tools, rendered by its front
 // component with the input and output the application gives. The caller
 // resolves that tool, scoped to the sending application.
-export const buildInboxMessageRequestPart = ({
-  request,
+export const buildInboxMessageToolCallPart = ({
+  toolCall,
   toolCallId,
   applicationTool,
 }: {
-  request: unknown;
+  toolCall: unknown;
   toolCallId: string;
   applicationTool?: FlatLogicFunction;
-}): InboxMessageRequestPart => {
-  if (!isPlainObject(request)) {
-    return throwInvalidRequest('request must be an object');
+}): InboxMessageToolCallPart => {
+  if (!isPlainObject(toolCall)) {
+    return throwInvalidToolCall('toolCall must be an object');
   }
 
-  if (!isNonEmptyString(request.logicFunctionUniversalIdentifier)) {
+  if (!isNonEmptyString(toolCall.logicFunctionUniversalIdentifier)) {
     return {
       part: buildPausingToolPart({
-        toolName: request.toolName,
+        toolName: toolCall.toolName,
         toolCallId,
-        input: request.input,
+        input: toolCall.input,
       }),
       isAwaitingAnswer: true,
     };
   }
 
-  if (isDefined(request.toolName)) {
-    return throwInvalidRequest(
+  if (isDefined(toolCall.toolName)) {
+    return throwInvalidToolCall(
       'set either toolName or logicFunctionUniversalIdentifier, not both',
     );
   }
 
-  const input = parseOptionalRecord('input', request.input);
-  const output = parseOptionalRecord('output', request.output);
+  const input = parseOptionalRecord('input', toolCall.input);
+  const output = parseOptionalRecord('output', toolCall.output);
 
   if (
     applicationTool?.universalIdentifier !==
-      request.logicFunctionUniversalIdentifier ||
+      toolCall.logicFunctionUniversalIdentifier ||
     !isDefined(
       applicationTool.toolTriggerSettings?.frontComponentUniversalIdentifier,
     )
   ) {
-    return throwInvalidRequest(
+    return throwInvalidToolCall(
       'logicFunctionUniversalIdentifier must name a tool of this application that has a front component',
     );
   }

@@ -6144,10 +6144,10 @@ export type SendEmailViaDomainOutput = {
 
 export type SendInboxMessageInput = {
   idempotencyKey: Scalars['String']['input'];
-  request?: InputMaybe<Scalars['JSON']['input']>;
   text: Scalars['String']['input'];
   threadKey: Scalars['String']['input'];
   title: Scalars['String']['input'];
+  toolCall?: InputMaybe<Scalars['JSON']['input']>;
   workspaceMemberId: Scalars['UUID']['input'];
 };
 

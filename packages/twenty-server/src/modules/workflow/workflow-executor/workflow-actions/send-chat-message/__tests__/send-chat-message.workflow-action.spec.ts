@@ -69,7 +69,7 @@ describe('SendChatMessageWorkflowAction', () => {
     const output = await execute({
       workspaceMemberId: '{{trigger.ownerId}}',
       title: 'New deal: {{trigger.name}}',
-      message: '**{{trigger.name}}** just signed.',
+      text: '**{{trigger.name}}** just signed.',
     });
 
     expect(output).toEqual({ result: { threadId: 'thread-id' } });
@@ -94,7 +94,7 @@ describe('SendChatMessageWorkflowAction', () => {
     const input = {
       workspaceMemberId: WORKSPACE_MEMBER_ID,
       title: 'Daily digest',
-      message: 'Same message every time',
+      text: 'Same message every time',
     };
     const steps = [
       createMockIteratorStep('iterator', [], ['step-1']),
@@ -129,7 +129,7 @@ describe('SendChatMessageWorkflowAction', () => {
     await execute({
       workspaceMemberId: WORKSPACE_MEMBER_ID,
       title: '',
-      message: 'Hello',
+      text: 'Hello',
     });
 
     expect(sendMessage).toHaveBeenCalledWith(
@@ -146,7 +146,7 @@ describe('SendChatMessageWorkflowAction', () => {
       execute({
         workspaceMemberId: WORKSPACE_MEMBER_ID,
         title: '',
-        message: 'Hello',
+        text: 'Hello',
       }),
     ).rejects.toMatchObject({
       code: WorkflowStepExecutorExceptionCode.INVALID_STEP_TYPE,
@@ -155,10 +155,10 @@ describe('SendChatMessageWorkflowAction', () => {
   });
 
   it.each([
-    ['no recipient', { workspaceMemberId: '', title: '', message: 'Hello' }],
+    ['no recipient', { workspaceMemberId: '', title: '', text: 'Hello' }],
     [
-      'no message',
-      { workspaceMemberId: WORKSPACE_MEMBER_ID, title: '', message: '' },
+      'no text',
+      { workspaceMemberId: WORKSPACE_MEMBER_ID, title: '', text: '' },
     ],
   ])('fails the step with %s', async (_, input) => {
     await expect(execute(input)).rejects.toMatchObject({

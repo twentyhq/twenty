@@ -1,4 +1,4 @@
-import { buildInboxMessageRequestPart } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-inbox-message-request-part.util';
+import { buildInboxMessageToolCallPart } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-inbox-message-tool-call-part.util';
 import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 
@@ -10,14 +10,14 @@ const SHARE_RECORDING_TOOL = {
   toolTriggerSettings: { frontComponentUniversalIdentifier: 'component-id' },
 } as FlatLogicFunction;
 
-const build = (request: unknown) =>
-  buildInboxMessageRequestPart({
-    request,
+const build = (toolCall: unknown) =>
+  buildInboxMessageToolCallPart({
+    toolCall,
     toolCallId: TOOL_CALL_ID,
     applicationTool: SHARE_RECORDING_TOOL,
   });
 
-describe('buildInboxMessageRequestPart', () => {
+describe('buildInboxMessageToolCallPart', () => {
   it('asks questions as a pending ask_questions call', () => {
     const questions = [
       {
@@ -98,7 +98,7 @@ describe('buildInboxMessageRequestPart', () => {
       'a tool of another application',
       { logicFunctionUniversalIdentifier: 'other-tool' },
     ],
-    ['a non-object request', 'ask_questions'],
+    ['a non-object tool call', 'ask_questions'],
     [
       'an application tool with a non-object input',
       { logicFunctionUniversalIdentifier: 'share-recording-tool', input: [] },
@@ -111,14 +111,14 @@ describe('buildInboxMessageRequestPart', () => {
       },
     ],
     [
-      'a request naming both a tool and an application tool',
+      'a tool call naming both a tool and an application tool',
       {
         toolName: 'ask_questions',
         logicFunctionUniversalIdentifier: 'share-recording-tool',
       },
     ],
-  ])('rejects %s', (_, request) => {
-    expect(() => build(request)).toThrow(
+  ])('rejects %s', (_, toolCall) => {
+    expect(() => build(toolCall)).toThrow(
       expect.objectContaining({ code: AiExceptionCode.INVALID_AGENT_INPUT }),
     );
   });

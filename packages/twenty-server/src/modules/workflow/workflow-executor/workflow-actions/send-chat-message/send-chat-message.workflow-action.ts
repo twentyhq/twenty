@@ -60,7 +60,7 @@ export class SendChatMessageWorkflowAction implements WorkflowAction {
       );
     }
 
-    const { workspaceMemberId, title, message } = resolveInput(
+    const { workspaceMemberId, title, text } = resolveInput(
       step.settings.input,
       context,
     ) as WorkflowSendChatMessageActionInput;
@@ -72,9 +72,9 @@ export class SendChatMessageWorkflowAction implements WorkflowAction {
       );
     }
 
-    if (!isNonEmptyString(message)) {
+    if (!isNonEmptyString(text)) {
       throw new WorkflowStepExecutorException(
-        'Message is required',
+        'Text is required',
         WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
       );
     }
@@ -106,7 +106,7 @@ export class SendChatMessageWorkflowAction implements WorkflowAction {
           context,
         }),
         title: isNonEmptyString(title) ? title : step.name,
-        text: message,
+        text,
       },
     });
 

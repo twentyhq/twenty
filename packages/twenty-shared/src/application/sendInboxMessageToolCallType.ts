@@ -2,7 +2,7 @@ import { type AskQuestionsToolInput } from '@/ai/types/AskQuestionsToolInput';
 import { type ProposedEmail } from '@/ai/types/ProposedEmail';
 import { type RequestFormToolInput } from '@/ai/types/RequestFormToolInput';
 
-export type SendInboxMessageRequest =
+export type SendInboxMessageToolCall =
   | {
       toolName: 'ask_questions';
       input: AskQuestionsToolInput;

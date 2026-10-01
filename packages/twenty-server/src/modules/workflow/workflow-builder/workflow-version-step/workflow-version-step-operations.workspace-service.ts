@@ -349,7 +349,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
               input: {
                 workspaceMemberId: '',
                 title: '',
-                message: '',
+                text: '',
               },
             },
           },

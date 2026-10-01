@@ -5586,7 +5586,7 @@ input SendInboxMessageInput {
   idempotencyKey: String!
   title: String!
   text: String!
-  request: JSON
+  toolCall: JSON
 }
 
 input CreateSkillInput {

@@ -35,7 +35,7 @@ describe('Send chat message workflow step', () => {
         input: {
           workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
           title,
-          message: 'You now own the **Acme renewal**.',
+          text: 'You now own the **Acme renewal**.',
         },
       });
     const threadId = stepResult?.threadId as string | undefined;

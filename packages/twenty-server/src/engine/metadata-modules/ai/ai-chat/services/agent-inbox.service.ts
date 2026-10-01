@@ -12,7 +12,7 @@ import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-agent-execut
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { type AgentInboxSender } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-inbox-sender.type';
 import { buildInboxMessageIds } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-inbox-message-ids.util';
-import { buildInboxMessageRequestPart } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-inbox-message-request-part.util';
+import { buildInboxMessageToolCallPart } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-inbox-message-tool-call-part.util';
 import { getAgentInboxSenderDetails } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-agent-inbox-sender-details.util';
 import { isUniqueViolationError } from 'src/engine/metadata-modules/ai/ai-chat/utils/is-unique-violation-error.util';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
@@ -68,14 +68,14 @@ export class AgentInboxService {
       return { threadId };
     }
 
-    const request = isDefined(input.request)
-      ? buildInboxMessageRequestPart({
-          request: input.request,
+    const toolCallPart = isDefined(input.toolCall)
+      ? buildInboxMessageToolCallPart({
+          toolCall: input.toolCall,
           toolCallId: `call_${messageId.replace(/-/g, '')}`,
           applicationTool: await this.findApplicationTool({
             workspaceId,
             applicationId: senderDetails.applicationId,
-            request: input.request,
+            toolCall: input.toolCall,
           }),
         })
       : undefined;
@@ -98,7 +98,7 @@ export class AgentInboxService {
       }),
     );
 
-    // Answering a request resolves who may answer from the user message of
+    // Answering a tool call resolves who may answer from the user message of
     // its turn, and models expect a conversation to open with one. It holds
     // no text from the sender, so nothing the sender wrote reads as the
     // member's request.
@@ -123,8 +123,8 @@ export class AgentInboxService {
 
     const parts: ExtendedUIMessagePart[] = [{ type: 'text', text: input.text }];
 
-    if (isDefined(request)) {
-      parts.push(request.part);
+    if (isDefined(toolCallPart)) {
+      parts.push(toolCallPart.part);
     }
 
     const isWritten = await this.ignoreDuplicate(() =>
@@ -137,7 +137,7 @@ export class AgentInboxService {
         agentId: null,
         senderUserWorkspaceId: null,
         senderApplicationId: senderDetails.applicationId,
-        isAwaitingAnswer: request?.isAwaitingAnswer,
+        isAwaitingAnswer: toolCallPart?.isAwaitingAnswer,
         parts,
       }),
     );
@@ -230,16 +230,16 @@ export class AgentInboxService {
   private async findApplicationTool({
     workspaceId,
     applicationId,
-    request,
+    toolCall,
   }: {
     workspaceId: string;
     applicationId: string | null;
-    request: unknown;
+    toolCall: unknown;
   }): Promise<FlatLogicFunction | undefined> {
     if (
       !isDefined(applicationId) ||
-      !isPlainObject(request) ||
-      !isNonEmptyString(request.logicFunctionUniversalIdentifier)
+      !isPlainObject(toolCall) ||
+      !isNonEmptyString(toolCall.logicFunctionUniversalIdentifier)
     ) {
       return undefined;
     }
@@ -250,7 +250,7 @@ export class AgentInboxService {
       ]);
     const logicFunction =
       flatLogicFunctionMaps.byUniversalIdentifier[
-        request.logicFunctionUniversalIdentifier
+        toolCall.logicFunctionUniversalIdentifier
       ];
 
     return logicFunction?.applicationId === applicationId &&
