@@ -22,6 +22,15 @@ import { normalizeSearchText } from '~/utils/normalizeSearchText';
 const VIEW_OBJECT_PAGE = 'view-object';
 
 type Step = NavigationMenuItemAddStep;
+
+const STEP_BY_PAGE: Partial<Record<string, Step>> = {
+  object: 'object',
+  view: 'view',
+  [VIEW_OBJECT_PAGE]: 'view',
+  record: 'record',
+  page: 'page',
+};
+
 type NavigationMenuItemAddDropdownContentProps = {
   dropdownId: string;
   section: NavigationMenuItemSection;
@@ -44,13 +53,8 @@ export const NavigationMenuItemAddDropdownContent = ({
   const setNavigationMenuItemIdToRename = useSetAtomState(
     navigationMenuItemIdToRenameState,
   );
-  const { page, goToPage } = useDropdownPage();
-  const step: Step =
-    page === 'object' || page === 'view' || page === 'record' || page === 'page'
-      ? page
-      : page === VIEW_OBJECT_PAGE
-        ? 'view'
-        : 'main';
+  const { page = 'root', goToPage } = useDropdownPage();
+  const step = STEP_BY_PAGE[page] ?? 'main';
   const [search, setSearch] = useState('');
   const isSearchingAllItems =
     step === 'main' && isNonEmptyString(search.trim());
@@ -170,7 +174,7 @@ export const NavigationMenuItemAddDropdownContent = ({
         folderId={folderId ?? null}
         index={insertionIndex}
       />
-      <Dropdown.Page id={page ?? 'root'} type="picker">
+      <Dropdown.Page id={page} type="picker">
         {step === 'main' ? (
           <Dropdown.Header>
             <Dropdown.Title>{titles[step]}</Dropdown.Title>
