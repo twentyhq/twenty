@@ -101,7 +101,7 @@ export class AgentConversationWriterService {
         await scope.insert('agentMessagePart', dbParts);
       }
 
-      if (isAwaitingAnswer !== true) {
+      if (!isAwaitingAnswer) {
         return;
       }
 
