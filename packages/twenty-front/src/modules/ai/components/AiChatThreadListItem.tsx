@@ -2,8 +2,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
-import { IconSparkles, IconTrash } from 'twenty-ui/icon';
-import { useTheme, themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AiChatThreadActionsDropdown } from '@/ai/components/AiChatThreadActionsDropdown';
 import { AI_CHAT_THREAD_ACTIONS_SURFACE } from '@/ai/constants/AiChatThreadActionsSurface';
@@ -20,6 +19,7 @@ import { VisibilityHidden } from 'twenty-ui/primitives/accessibility';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { agentChatThreadPreviewFamilySelector } from '@/ai/states/selectors/agentChatThreadPreviewFamilySelector';
 import { formatAgentChatThreadActivityTime } from '@/ai/utils/formatAgentChatThreadActivityTime';
+import { getAgentChatThreadMembers } from '@/ai/utils/getAgentChatThreadMembers';
 import { getAgentChatThreadLastActivityAt } from '@/ai/utils/getAgentChatThreadLastActivityAt';
 import { getAgentChatThreadPreviewText } from '@/ai/utils/getAgentChatThreadPreviewText';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
@@ -44,22 +44,6 @@ const StyledThreadItem = styled.div`
   &:hover {
     background: ${themeCssVariables.background.transparent.light};
   }
-`;
-
-const StyledThreadIcon = styled.div<{ $isDeleted: boolean }>`
-  align-items: center;
-  background: ${({ $isDeleted }) =>
-    $isDeleted
-      ? themeCssVariables.background.transparent.lighter
-      : themeCssVariables.background.transparent.blue};
-  border-radius: ${themeCssVariables.border.radius.sm};
-  color: ${({ $isDeleted }) =>
-    $isDeleted
-      ? themeCssVariables.font.color.tertiary
-      : themeCssVariables.color.blue};
-  display: flex;
-  justify-content: center;
-  padding: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledLeading = styled.div`
@@ -144,7 +128,6 @@ export const AiChatThreadListItem = ({
   surface = AI_CHAT_THREAD_ACTIONS_SURFACE.SIDE_PANEL,
   onDetach,
 }: AiChatThreadListItemProps) => {
-  const theme = useTheme();
   const { t } = useLingui();
   const { handleThreadClick } = useAiChatThreadClick({
     shouldOpenInFullPage: surface === AI_CHAT_THREAD_ACTIONS_SURFACE.INBOX_PAGE,
@@ -171,15 +154,16 @@ export const AiChatThreadListItem = ({
   const currentWorkspaceMembers = useAtomStateValue(
     currentWorkspaceMembersState,
   );
-  const threadMembers = currentWorkspaceMembers.filter(({ id }) =>
-    preview?.memberIds.includes(id),
-  );
+  const threadMembers = getAgentChatThreadMembers({
+    ownerWorkspaceMemberId: thread.workspaceMemberId,
+    memberIds: preview?.memberIds ?? [],
+    workspaceMembers: currentWorkspaceMembers,
+  });
   const previewText = getAgentChatThreadPreviewText({
     preview,
     workspaceMembers: currentWorkspaceMembers,
     currentWorkspaceMemberId: currentWorkspaceMember?.id,
   });
-  const ThreadIcon = isDeleted ? IconTrash : IconSparkles;
   const displayTitle = thread.title ?? t`Untitled`;
   const itemMenuDropdownId = getAiChatThreadItemMenuDropdownId({
     threadId: thread.id,
@@ -198,17 +182,11 @@ export const AiChatThreadListItem = ({
       }}
     >
       <StyledLeading>
-        {isDeleted || threadMembers.length === 0 ? (
-          <StyledThreadIcon $isDeleted={isDeleted}>
-            <ThreadIcon size={theme.icon.size.md} color="currentColor" />
-          </StyledThreadIcon>
-        ) : (
-          <WorkspaceMemberAvatarStack
-            workspaceMembers={threadMembers}
-            defaultAvatarName={t`Member`}
-            maxVisible={THREAD_MEMBERS_MAX_VISIBLE}
-          />
-        )}
+        <WorkspaceMemberAvatarStack
+          workspaceMembers={threadMembers}
+          defaultAvatarName={t`Member`}
+          maxVisible={THREAD_MEMBERS_MAX_VISIBLE}
+        />
       </StyledLeading>
       <StyledThreadContent>
         {isRenaming ? (
