@@ -4,6 +4,7 @@ import { useLocation } from 'react-router-dom';
 
 import { shouldContinueAiChatInSidePanelState } from '@/ai/states/shouldContinueAiChatInSidePanelState';
 import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
+import { isAiNavigationDrawerModeActive } from '@/navigation/utils/isAiNavigationDrawerModeActive';
 import { useOpenAskAiPageInSidePanel } from '@/side-panel/hooks/useOpenAskAiPageInSidePanel';
 import { isAiChatPath } from '~/utils/isAiChatPath';
 import { isSettingsPath } from '~/utils/isSettingsPath';
@@ -31,7 +32,12 @@ export const SidePanelAskAiHandoffEffect = ({
     store.set(shouldContinueAiChatInSidePanelState.atom, false);
     store.set(shouldOpenAiChatAfterOnboardingState.atom, false);
 
-    if (isSettingsPath(pathname)) {
+    // Leaving the chat page within the Inbox mode closes the chat rather
+    // than moving it to the side panel
+    if (
+      isSettingsPath(pathname) ||
+      isAiNavigationDrawerModeActive({ store, pathname })
+    ) {
       return;
     }
 

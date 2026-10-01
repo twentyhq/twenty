@@ -44,9 +44,7 @@ export const NavigationDrawerAiChatContent = () => {
   const isExpanded = useIsNavigationDrawerContentExpanded();
 
   const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
-  const { handleThreadClick } = useAiChatThreadClick({
-    shouldOpenInFullPage: true,
-  });
+  const { handleThreadClick } = useAiChatThreadClick();
 
   const { threads, loading } = useChatThreads(agentChatRecentThreadsSelector);
   const agentChatFavoriteThreads = useAtomStateValue(

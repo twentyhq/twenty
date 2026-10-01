@@ -129,9 +129,7 @@ export const AiChatThreadListItem = ({
   onDetach,
 }: AiChatThreadListItemProps) => {
   const { t } = useLingui();
-  const { handleThreadClick } = useAiChatThreadClick({
-    shouldOpenInFullPage: surface === AI_CHAT_THREAD_ACTIONS_SURFACE.INBOX_PAGE,
-  });
+  const { handleThreadClick } = useAiChatThreadClick();
   const {
     isRenaming,
     draftTitle,
