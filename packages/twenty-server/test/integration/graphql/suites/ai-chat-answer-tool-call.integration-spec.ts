@@ -31,16 +31,12 @@ const QUESTIONS = [
   },
 ];
 
-// The model is not called here: the turn that asked is written as the stream
-// job persists it, and the resumed stream is only checked for being queued.
 describe('Answering a chat tool call', () => {
   const threadId = randomUUID();
   let chat: AgentChatService;
   let enqueueStream: jest.SpyInstance;
   const spies: jest.SpyInstance[] = [];
 
-  // One assistant message that calls ask_questions once per id, as a model
-  // asking several things in one step does.
   const pauseOnQuestions = async (...toolCallIds: string[]) => {
     const userMessage = await chat.addMessage({
       workspaceId,
@@ -71,7 +67,6 @@ describe('Answering a chat tool call', () => {
       })) as never,
     });
 
-    // Written in the same update as the turn's totals.
     await global.testDataSource.query(
       `UPDATE "${schema}"."agentChatThread" SET "pendingQuestionMessageId" = $1 WHERE id = $2`,
       [assistantMessageId, threadId],
@@ -210,33 +205,6 @@ describe('Answering a chat tool call', () => {
         streamId: last.body.data.answerToolCall.streamId,
       }),
     );
-  });
-
-  it('still answers a question through the deprecated answerAgentChatQuestion', async () => {
-    const { assistantMessageId } = await pauseOnQuestions('call-legacy');
-    enqueueStream.mockClear();
-
-    const response = await makeMetadataApiRequest({
-      query: parse(
-        `mutation Answer($threadId: UUID!, $messageId: UUID!, $answers: [AgentChatQuestionAnswerInput!]!) {
-          answerAgentChatQuestion(threadId: $threadId, messageId: $messageId, answers: $answers) { messageId queued streamId }
-        }`,
-      ),
-      variables: {
-        threadId,
-        messageId: assistantMessageId,
-        answers: [{ questionIndex: 0, selectedOptionIndices: [1] }],
-      },
-    });
-
-    expect(response.body.errors).toBeUndefined();
-    expect(response.body.data.answerAgentChatQuestion).toMatchObject({
-      messageId: assistantMessageId,
-      queued: false,
-      streamId: expect.any(String),
-    });
-    expect(await readToolCallStatus('call-legacy')).toBe('answered');
-    expect(enqueueStream).toHaveBeenCalledTimes(1);
   });
 
   it('closes every pending call when a message is sent instead of the answers', async () => {

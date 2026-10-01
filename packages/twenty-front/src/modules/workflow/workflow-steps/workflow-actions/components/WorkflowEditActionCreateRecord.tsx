@@ -213,7 +213,7 @@ export const WorkflowEditActionCreateRecord = ({
             saveAction(newFormData);
           }}
           withSearchInput
-          dropdownOffset={{ y: 4 }}
+          dropdownSideOffset={4}
           dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
         />
 

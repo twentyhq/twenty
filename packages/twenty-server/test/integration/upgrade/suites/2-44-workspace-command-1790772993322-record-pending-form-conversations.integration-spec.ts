@@ -51,8 +51,7 @@ describe('2-44 workspace command 1790772993322 - RecordPendingFormConversationsC
     return state?.stepInfos?.[formStepId]?.threadId;
   };
 
-  // A form step waiting since before this release: pending, with no
-  // conversation recorded for it.
+  // A form step pending since before this release, with no recorded conversation.
   const forgetFormConversation = () =>
     inWorkspace(() =>
       repository('workflowRun').update(workflowRun.id, {

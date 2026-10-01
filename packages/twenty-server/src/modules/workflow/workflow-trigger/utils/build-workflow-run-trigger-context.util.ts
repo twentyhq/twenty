@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-shared/utils';
 import {
   WORKFLOW_TRIGGER_METADATA_KEY,
   WORKFLOW_TRIGGER_METADATA_WORKSPACE_MEMBER_ID_KEY,
@@ -10,9 +11,11 @@ import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-membe
 export const buildWorkflowRunTriggerContext = ({
   workspaceMember,
   payload,
+  startingApplicationId,
 }: {
   workspaceMember: Pick<WorkspaceMemberWorkspaceEntity, 'id' | 'name'>;
   payload?: object | null;
+  startingApplicationId?: string;
 }) => ({
   payload: {
     ...payload,
@@ -21,11 +24,16 @@ export const buildWorkflowRunTriggerContext = ({
       [WORKFLOW_TRIGGER_METADATA_WORKSPACE_MEMBER_ID_KEY]: workspaceMember.id,
     },
   },
-  createdBy: buildCreatedByFromFullNameMetadata({
-    fullNameMetadata: {
-      firstName: workspaceMember.name.firstName,
-      lastName: workspaceMember.name.lastName,
-    },
-    workspaceMemberId: workspaceMember.id,
-  }),
+  createdBy: {
+    ...buildCreatedByFromFullNameMetadata({
+      fullNameMetadata: {
+        firstName: workspaceMember.name.firstName,
+        lastName: workspaceMember.name.lastName,
+      },
+      workspaceMemberId: workspaceMember.id,
+    }),
+    ...(isDefined(startingApplicationId)
+      ? { context: { applicationId: startingApplicationId } }
+      : {}),
+  },
 });

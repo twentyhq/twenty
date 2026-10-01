@@ -72,8 +72,7 @@ describe('2-44 workspace command 1790607161319 - AddWorkflowRunToChatThreadsComm
     };
   };
 
-  // What a workspace that has not run the command yet looks like: no run link
-  // and threads PRIVATE, as 2.43 left them.
+  // Pre-upgrade state: no run link and threads PRIVATE, as 2.43 left them.
   const setPreUpgradeState = async () => {
     const migrationService =
       getAppProviderByClassName<WorkspaceMigrationValidateBuildAndRunService>(
@@ -125,9 +124,7 @@ describe('2-44 workspace command 1790607161319 - AddWorkflowRunToChatThreadsComm
         ],
       },
     });
-    // Run conversations only exist from 2.44 on; dropping their run link
-    // would leave them ownerless and unlinked, which no earlier version can
-    // hold (2.42's reverse copy, for one, requires an owner).
+    // Run conversations only exist from 2.44 on; no earlier version can hold them ownerless and unlinked.
     await global.testDataSource.query(
       `DELETE FROM "${getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID)}"."agentChatThread" WHERE "workflowRunId" IS NOT NULL`,
     );

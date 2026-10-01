@@ -13,9 +13,6 @@ import { AiChatTab } from '@/ai/components/AiChatTab';
 import { AI_CHAT_SURFACE } from '@/ai/constants/AiChatSurface';
 import { AiChatSurfaceContext } from '@/ai/contexts/AiChatSurfaceContext';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
-import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
-import { recordPageLayoutByObjectMetadataIdFamilySelector } from '@/page-layout/states/selectors/recordPageLayoutByObjectMetadataIdFamilySelector';
-import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { getDisplayedAiChatThreadId } from '@/ai/utils/getDisplayedAiChatThreadId';
 import { PageCardLayout } from '@/ui/layout/page/components/PageCardLayout';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -35,17 +32,6 @@ export const AiChatPage = () => {
   const { threadId } = useParams();
   const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
   const isMobile = useIsMobile();
-  const chatObjectMetadata = useAtomFamilySelectorValue(
-    objectMetadataItemFamilySelector,
-    {
-      objectName: CoreObjectNameSingular.AgentChatThread,
-      objectNameType: 'singular',
-    },
-  );
-  const chatRecordPageLayout = useAtomFamilySelectorValue(
-    recordPageLayoutByObjectMetadataIdFamilySelector,
-    { objectMetadataId: chatObjectMetadata?.id ?? '' },
-  );
   const displayedThreadId = getDisplayedAiChatThreadId({
     urlThreadId: threadId,
     currentAiChatThread,
@@ -56,20 +42,18 @@ export const AiChatPage = () => {
       <AiChatPageThreadUrlSyncEffect />
       <AiChatPageCloseSidePanelChatEffect />
       <AiChatPageContinueInSidePanelEffect />
-      {isDefined(displayedThreadId) && isDefined(chatRecordPageLayout) ? (
+      {isDefined(displayedThreadId) ? (
         <RecordShowPageContent
           parameters={{
             objectNameSingular: CoreObjectNameSingular.AgentChatThread,
             objectRecordId: displayedThreadId,
           }}
           headerActions={isMobile && <AiChatCloseButton />}
-          // The chat's title is all its header needs, and the conversation
-          // takes the whole page
           headerTitleMode="record-title"
           isRecordIdentifierBarHidden
         />
       ) : (
-        // Saved chats also use this surface until their record layout exists.
+        // A new chat has no record until its first message is sent
         <PageCardLayout header={<AiChatPageHeader />}>
           <StyledChatContainer>
             <AiChatSurfaceContext.Provider value={AI_CHAT_SURFACE.PAGE}>

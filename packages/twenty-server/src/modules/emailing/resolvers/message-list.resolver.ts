@@ -20,8 +20,7 @@ import { DuplicatedMessageListDTO } from 'src/modules/emailing/dtos/duplicated-m
 import { MessageListDuplicationService } from 'src/modules/emailing/services/message-list-duplication.service';
 import { MessageListGraphqlApiExceptionFilter } from 'src/modules/emailing/utils/message-list-graphql-api-exception.filter';
 
-// Object permissions on the list and its memberships are checked by the
-// service, so no settings permission is required here.
+// The service checks object permissions, so no settings permission is required
 @MetadataResolver()
 @UseFilters(
   MessageListGraphqlApiExceptionFilter,

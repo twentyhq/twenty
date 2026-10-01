@@ -53,9 +53,7 @@ export class AgentHistoryUpgradeStorageService extends AgentHistoryMigrationStat
           'AI history is being migrated. Please retry shortly.',
         );
       }
-      // History still in core belongs to a workspace whose 2.42 upgrade has
-      // not finished. Serving the empty workspace tables would hide it, and
-      // writing to them would be wiped when the copy resumes.
+      // History still in core means an unfinished 2.42 upgrade; workspace tables would hide it and writes would be wiped
       if (state.storage !== 'workspace') {
         throw new ServiceUnavailableException(
           'AI history is unavailable until this workspace finishes upgrading.',
@@ -90,8 +88,7 @@ export class AgentHistoryUpgradeStorageService extends AgentHistoryMigrationStat
     const runner = this.dataSource.createQueryRunner('master');
     try {
       await runner.connect();
-      // One MVCC snapshot sees both the route and its data before or after a
-      // cutover. Reports need no per-workspace locks or second pool.
+      // One MVCC snapshot sees the route and its data on one side of a cutover, with no per-workspace locks
       await runner.startTransaction('REPEATABLE READ');
       await runner.query('SET TRANSACTION READ ONLY');
       const states = await this.readStates(runner, workspaceIds);

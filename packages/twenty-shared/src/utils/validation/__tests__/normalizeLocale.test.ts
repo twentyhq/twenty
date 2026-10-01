@@ -29,7 +29,6 @@ describe('normalizeLocale', () => {
     // For example, 'pt' could map to either 'pt-PT' or 'pt-BR'
     // The implementation should map consistently to one of them
     expect(normalizeLocale('pt')).toBeTruthy();
-    // Verify it's one of the expected values
     expect(['pt-PT', 'pt-BR']).toContain(normalizeLocale('pt'));
   });
 
@@ -48,7 +47,6 @@ describe('normalizeLocale', () => {
 
   it('should handle SOURCE_LOCALE and its variants correctly', () => {
     expect(normalizeLocale(SOURCE_LOCALE)).toBe(SOURCE_LOCALE);
-    // If SOURCE_LOCALE is 'en', test 'en-US', 'en-GB', etc.
     if (SOURCE_LOCALE === 'en') {
       expect(normalizeLocale('en-US')).toBe(SOURCE_LOCALE);
       expect(normalizeLocale('en-GB')).toBe(SOURCE_LOCALE);

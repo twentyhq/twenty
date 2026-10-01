@@ -1,6 +1,9 @@
+import { breadcrumbTest } from '@/__stories__/twenty-ui-gallery/utils/breadcrumbTest';
+import { imageInputTest } from '@/__stories__/twenty-ui-gallery/utils/imageInputTest';
 import { jsonTreeTest } from '@/__stories__/twenty-ui-gallery/utils/jsonTreeTest';
 import { inlineBannerSandboxTest } from '@/__stories__/twenty-ui-gallery/utils/inlineBannerSandboxTest';
 import { themeTokenTest } from '@/__stories__/twenty-ui-gallery/utils/themeTokenTest';
+import { progressTest } from '@/__stories__/twenty-ui-gallery/utils/progressTest';
 import { inputTest } from '@/__stories__/twenty-ui-gallery/utils/inputTest';
 import { numberStepperTest } from '@/__stories__/twenty-ui-gallery/utils/numberStepperTest';
 import { numberStepperSandboxFailureTest } from '@/__stories__/twenty-ui-gallery/utils/numberStepperSandboxFailureTest';
@@ -90,6 +93,18 @@ export const FeedbackPreact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-feedback-gallery',
   runtime: 'preact',
   play: galleryRenderTest,
+});
+
+export const ProgressReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-progress',
+  runtime: 'react',
+  play: progressTest,
+});
+
+export const ProgressPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-progress',
+  runtime: 'preact',
+  play: progressTest,
 });
 
 export const IconReact: Story = createGalleryStory({
@@ -250,6 +265,18 @@ export const DisplayHelpersPreact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-display-helpers',
   runtime: 'preact',
   play: displayHelpersTest,
+});
+
+export const BreadcrumbReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-breadcrumb',
+  runtime: 'react',
+  play: breadcrumbTest,
+});
+
+export const BreadcrumbPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-breadcrumb',
+  runtime: 'preact',
+  play: breadcrumbTest,
 });
 
 export const ListItemReact: Story = createGalleryStory({
@@ -562,4 +589,16 @@ export const InlineBannerPreactFocusFailure: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-inline-banner',
   runtime: 'preact',
   play: inlineBannerSandboxTest,
+});
+
+export const ImageInputReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-image-input',
+  runtime: 'react',
+  play: imageInputTest,
+});
+
+export const ImageInputPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-image-input',
+  runtime: 'preact',
+  play: imageInputTest,
 });

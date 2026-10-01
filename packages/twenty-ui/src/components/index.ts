@@ -16,6 +16,8 @@ export type { JsonNodeHighlighting } from './data-display/JsonTree/types/JsonNod
 export type { JsonTreeEntry } from './data-display/JsonTree/types/JsonTreeEntry';
 export type { JsonTreeProps } from './data-display/JsonTree/types/JsonTreeProps';
 export type { ShouldExpandNodeInitiallyProps } from './data-display/JsonTree/types/ShouldExpandNodeInitiallyProps';
+export { MetricRow } from './data-display/MetricRow/MetricRow';
+export type { MetricRowProps } from './data-display/MetricRow/types/MetricRowProps';
 export { NotificationCounter } from './data-display/NotificationCounter/NotificationCounter';
 export { TintedIconTile } from './data-display/TintedIconTile/TintedIconTile';
 export type { TintedIconTileProps } from './data-display/TintedIconTile/types/TintedIconTileProps';
@@ -40,6 +42,8 @@ export type { ToasterProps } from './feedback/Toaster/types/ToasterProps';
 export { IconButton } from './input/IconButton/IconButton';
 export type { IconButtonProps } from './input/IconButton/types/IconButtonProps';
 export type { IconButtonSize } from './input/IconButton/types/IconButtonSize';
+export { ImageInput } from './input/ImageInput/ImageInput';
+export type { ImageInputProps } from './input/ImageInput/types/ImageInputProps';
 export { LightButton } from './input/LightButton/LightButton';
 export type { LightButtonProps } from './input/LightButton/types/LightButtonProps';
 export { LightIconButton } from './input/LightIconButton/LightIconButton';
@@ -84,6 +88,5 @@ export { MenuItemSuggestion } from './navigation/MenuItemSuggestion/MenuItemSugg
 export type { MenuItemSuggestionProps } from './navigation/MenuItemSuggestion/types/MenuItemSuggestionProps';
 export { MenuPicker } from './navigation/MenuPicker/MenuPicker';
 export type { MenuPickerProps } from './navigation/MenuPicker/types/MenuPickerProps';
-export { NavigationBar } from './navigation/NavigationBar/NavigationBar';
 export { TabButton } from './navigation/TabButton/TabButton';
 export type { TabButtonProps } from './navigation/TabButton/types/TabButtonProps';

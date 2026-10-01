@@ -159,8 +159,7 @@ const SuggestionMenuInner = <TItem,>(
     scrollableContainer.scrollTop = offsetTop - offsetHeight;
   }, [clampedSelectedIndex]);
 
-  // The preview is anchored to the selected row, so once the user scrolls that
-  // row out of the list it would float detached from the menu.
+  // The preview is anchored to the selected row, so it would float detached once that row scrolls out
   useLayoutEffect(() => {
     const scrollableContainer =
       listContainerRef.current?.firstElementChild ?? null;

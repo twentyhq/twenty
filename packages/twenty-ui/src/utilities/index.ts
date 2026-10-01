@@ -15,7 +15,6 @@ export {
 } from './color/utils/stringToThemeColorP3String';
 export { themeColorSchema } from './color/utils/themeColorSchema';
 export { getOsControlSymbol } from './device/getOsControlSymbol';
-export { getOsShortcutSeparator } from './device/getOsShortcutSeparator';
 export { getUserDevice } from './device/getUserDevice';
 export { MOBILE_MEDIA_QUERY } from './responsive/constants/MobileMediaQuery';
 export { TOUCH_DEVICE_MEDIA_QUERY } from './responsive/constants/TouchDeviceMediaQuery';

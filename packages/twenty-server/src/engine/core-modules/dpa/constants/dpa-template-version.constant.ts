@@ -1,6 +1,4 @@
-// Bump BOTH values whenever the rendered legal text changes — i.e. when the
-// verbatim template OR the resolved merge-field values (entities, addresses,
-// governing law, …) change — so a version always maps to one exact agreement.
+// Bump both whenever the rendered legal text changes (template or merge-field values).
 export const DPA_TEMPLATE_VERSION = '2026-08';
 
 export const DPA_LAST_UPDATED_LABEL = 'August 2026';
