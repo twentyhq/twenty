@@ -38,7 +38,6 @@ const sharing = {
   hasInheritedAccess: false,
   isOpenByDefault: false,
   generalAccessLevel: RecordShareAccessLevel.NONE,
-  isGeneralAccessDefault: true,
   sharingReach: ObjectSharingReach.WORKSPACE,
   roles: [{ id: 'sales-role', label: 'Sales' }],
   shares: [],
@@ -141,7 +140,6 @@ describe('Share record side panel', () => {
       sharing: {
         ...sharing,
         generalAccessLevel: RecordShareAccessLevel.READ,
-        isGeneralAccessDefault: false,
         shares: [
           {
             id: 'everyone',

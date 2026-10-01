@@ -13,7 +13,6 @@ export const RECORD_SHARING_FRAGMENT = gql`
     hasInheritedAccess
     isOpenByDefault
     generalAccessLevel
-    isGeneralAccessDefault
     sharingReach
     shares {
       id

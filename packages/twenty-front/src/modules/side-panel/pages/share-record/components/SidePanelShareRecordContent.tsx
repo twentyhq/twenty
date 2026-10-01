@@ -113,13 +113,6 @@ export const SidePanelShareRecordContent = ({
           ? { roleId: share.principalId }
           : { workspaceMemberId: share.principalId },
         isEditable: share.rowCause === RecordShareRowCause.MANUAL,
-        roleAccessNote: isDefined(sharing)
-          ? getRecordShareRoleAccessNote({
-              share,
-              sharingReach: sharing.sharingReach,
-              objectLabelPlural,
-            })
-          : undefined,
       };
     });
 
@@ -181,60 +174,61 @@ export const SidePanelShareRecordContent = ({
                 </SidePanelGroup>
                 <SidePanelGroup heading={t`People and roles with access`}>
                   {recipients.map(
-                    ({
-                      share,
-                      label,
-                      Icon,
-                      principal,
-                      isEditable,
-                      roleAccessNote,
-                    }) => (
-                      <Fragment key={share.id}>
-                        {isEditable ? (
-                          <SidePanelShareRecordDropdownItem
-                            itemId={share.id}
-                            label={label}
-                            Icon={Icon}
-                            description={getRecordShareAccessLevelLabel(
-                              share.accessLevel,
-                            )}
-                            disabled={saving}
-                          >
-                            <RecordSharingAccessLevelOptions
-                              value={share.accessLevel}
-                              onChange={(accessLevel) => {
-                                void setShare({
-                                  principal,
-                                  enabled: true,
-                                  accessLevel,
-                                });
-                              }}
-                              onRemove={() => {
-                                void setShare({ principal, enabled: false });
-                              }}
+                    ({ share, label, Icon, principal, isEditable }) => {
+                      const roleAccessNote = getRecordShareRoleAccessNote({
+                        share,
+                        sharingReach: sharing.sharingReach,
+                        objectLabelPlural,
+                      });
+
+                      return (
+                        <Fragment key={share.id}>
+                          {isEditable ? (
+                            <SidePanelShareRecordDropdownItem
+                              itemId={share.id}
+                              label={label}
+                              Icon={Icon}
+                              description={getRecordShareAccessLevelLabel(
+                                share.accessLevel,
+                              )}
+                              disabled={saving}
+                            >
+                              <RecordSharingAccessLevelOptions
+                                value={share.accessLevel}
+                                onChange={(accessLevel) => {
+                                  void setShare({
+                                    principal,
+                                    enabled: true,
+                                    accessLevel,
+                                  });
+                                }}
+                                onRemove={() => {
+                                  void setShare({ principal, enabled: false });
+                                }}
+                              />
+                            </SidePanelShareRecordDropdownItem>
+                          ) : (
+                            <CommandMenuItem
+                              id={share.id}
+                              label={label}
+                              Icon={Icon}
+                              description={
+                                share.rowCause === RecordShareRowCause.OWNER
+                                  ? t`Owner`
+                                  : t`Managed access`
+                              }
+                              contextualTextPosition="right"
+                              disabled
                             />
-                          </SidePanelShareRecordDropdownItem>
-                        ) : (
-                          <CommandMenuItem
-                            id={share.id}
-                            label={label}
-                            Icon={Icon}
-                            description={
-                              share.rowCause === RecordShareRowCause.OWNER
-                                ? t`Owner`
-                                : t`Managed access`
-                            }
-                            contextualTextPosition="right"
-                            disabled
-                          />
-                        )}
-                        {isDefined(roleAccessNote) && (
-                          <StyledRoleAccessNote>
-                            {roleAccessNote}
-                          </StyledRoleAccessNote>
-                        )}
-                      </Fragment>
-                    ),
+                          )}
+                          {isDefined(roleAccessNote) && (
+                            <StyledRoleAccessNote>
+                              {roleAccessNote}
+                            </StyledRoleAccessNote>
+                          )}
+                        </Fragment>
+                      );
+                    },
                   )}
                 </SidePanelGroup>
                 <StyledDescription>
