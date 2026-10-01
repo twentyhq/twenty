@@ -49,8 +49,7 @@ export const RecordTargetsInlineCell = ({
     objectMetadataItem,
   });
 
-  // Opening pushes the picker onto the focus stack, so closing has to pop it or
-  // the app keeps treating this dropdown as focused.
+  // Opening pushed the picker onto the focus stack, so closing must pop it.
   const closeEditMode = () => {
     setIsEditing(false);
 
@@ -80,8 +79,7 @@ export const RecordTargetsInlineCell = ({
       >
         <RecordInlineCell instanceIdPrefix={instanceIdPrefix} />
 
-        {/* RecordInlineCell only renders display mode; the field input lives in
-            an anchored portal that each container mounts for itself. */}
+        {/* RecordInlineCell only renders display mode; each container mounts its own input portal. */}
         {isEditing && (
           <RecordInlineCellAnchoredPortal
             fieldMetadataItem={junctionField}

@@ -113,8 +113,7 @@ export class AiAgentWorkflowAction implements WorkflowAction {
 
     const resolvedPrompt = resolveInput(prompt, context) as string;
 
-    // The conversation is a record of the step, not part of its outcome, so a
-    // failure to write it must not fail a step whose agent did its work.
+    // A record of the step, not its outcome, so a write failure must not fail the step
     const recordConversation = (
       executionResult: AgentExecutionResult,
     ): Promise<RecordedConversation | null> =>
@@ -184,9 +183,7 @@ export class AiAgentWorkflowAction implements WorkflowAction {
 
     const durationMs = Date.now() - startedAtMs;
 
-    // A conversation only exists to be answered in: an execution that never
-    // asks keeps its step log as its record, which saves a thread per
-    // execution for agents running in loops or on busy triggers.
+    // Only executions that ask get a conversation, saving a thread per execution for looping agents
     const recordedConversation =
       isDefined(resumedThreadId) || executionResult.isPaused === true
         ? await recordConversation(executionResult)
@@ -208,8 +205,7 @@ export class AiAgentWorkflowAction implements WorkflowAction {
     }
 
     if (executionResult.isPaused === true) {
-      // The conversation is where the question is answered, so without it the
-      // run would wait for an answer nobody can give.
+      // Without the conversation nobody could answer, so the run would wait forever
       if (recordedConversation?.isAwaitingAnswer !== true) {
         return {
           error: 'Agent asked a question that could not be recorded.',

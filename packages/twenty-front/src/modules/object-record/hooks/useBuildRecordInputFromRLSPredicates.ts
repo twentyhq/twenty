@@ -179,7 +179,6 @@ export const useBuildRecordInputFromRLSPredicates = ({
       }
     });
 
-    // Filters with rlsDynamicValue are already handled above
     const staticFilters = rlsPredicatesAsRecordFilters.filter(
       (filter) => !isDefined(filter.rlsDynamicValue),
     );

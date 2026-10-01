@@ -42,8 +42,7 @@ export const createMediaStreamTrackClass = ({
     constructor(key: symbol, init: WorkerMediaStreamTrackInit) {
       super();
 
-      // Real tracks only come from capture calls; direct construction is not
-      // meaningful, which is also what native implementations enforce.
+      // Native implementations also forbid direct construction.
       if (key !== constructionKey) {
         throw new TypeError('Illegal constructor');
       }
@@ -108,8 +107,7 @@ export const createMediaStreamTrackClass = ({
         return;
       }
 
-      // Native stop() flips readyState synchronously and fires no ended
-      // event: that event is reserved for externally caused endings.
+      // Native stop() flips readyState synchronously and fires no ended event.
       this.#readyState = 'ended';
 
       bridge.stopStreamTrack({ streamId: this.#streamId, trackId: this.id });

@@ -6,8 +6,7 @@ import { useCurrentSidePanelRoutedPath } from '@/side-panel/routing/hooks/useCur
 import { getRecordShowParamsFromPath } from '@/side-panel/routing/utils/getRecordShowParamsFromPath';
 import { type SidePanelExpandTarget } from '@/side-panel/types/SidePanelExpandTarget';
 
-// A record expands through its own hook rather than the generic routed one,
-// because it also carries the open tab across and clears a stale parent view.
+// Not the generic routed hook: a record also carries the open tab across and clears a stale parent view
 export const useExpandRecordSidePanelPage =
   (): SidePanelExpandTarget | null => {
     const { t } = useLingui();

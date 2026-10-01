@@ -57,10 +57,7 @@ const fetchObjectsPage = async (after: string | null): Promise<ObjectsPage> => {
   };
 };
 
-// An app declares its fields by universalIdentifier; the per-instance
-// fieldMetadataId the recording upload needs is resolved at runtime. The
-// metadata API cannot filter on universalIdentifier, so page through the
-// object list until the field turns up.
+// The metadata API can't filter on universalIdentifier, so page through objects until the field turns up.
 const fetchRecordingFieldMetadataId = async (): Promise<string | null> => {
   let cursor: string | null = null;
 
@@ -97,9 +94,6 @@ const getFileExtension = (mimeType: string): string =>
   MIME_TYPE_TO_FILE_EXTENSION[mimeType.split(';')[0].trim().toLowerCase()] ??
   'webm';
 
-// The recording engine is the standard web platform: getUserMedia and
-// MediaRecorder, polyfilled into the sandbox by the host. Errors surface as
-// DOMException names exactly like in a regular page.
 const mapMediaErrorNameToReason = (errorName: string): string => {
   switch (errorName) {
     case 'NotAllowedError':
@@ -162,17 +156,14 @@ const MediaNotes = () => {
     useState<ActiveRecording | null>(null);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [savedRecordId, setSavedRecordId] = useState<string | null>(null);
-  // Set only when attaching failed, so it doubles as the retry payload.
   const [failedAttach, setFailedAttach] = useState<PendingAttach | null>(null);
   const [isAttaching, setIsAttaching] = useState(false);
-  // Covers the stop-and-upload window: without it the record buttons come
-  // back while the previous recording is still uploading, and two flows race.
+  // Covers the stop-and-upload window: without it the record buttons return mid-upload and two flows race.
   const [isStopping, setIsStopping] = useState(false);
 
   const recordingSessionRef = useRef<RecordingSession | null>(null);
   const stopAndSaveRef = useRef<(() => void) | null>(null);
-  // Synchronous guard: a second click during the getUserMedia permission
-  // prompt would otherwise start a second capture.
+  // Synchronous guard against a second click during the getUserMedia permission prompt.
   const isStartingRef = useRef(false);
 
   useEffect(() => {
@@ -181,9 +172,6 @@ const MediaNotes = () => {
       .catch(() => setRecordingFieldMetadataId(null));
   }, []);
 
-  // The recording UX is the app's own: this timer is rendered and styled
-  // here, and the app also owns its duration ceiling — the host imposes
-  // none.
   useEffect(() => {
     if (activeRecording === null) {
       return;
@@ -206,9 +194,7 @@ const MediaNotes = () => {
     return () => clearInterval(elapsedInterval);
   }, [activeRecording]);
 
-  // Attaching the uploaded file to a record is what makes it permanent: until
-  // then it is a temporary file owned by the FILES field, so a failure here
-  // has to be recoverable rather than silent.
+  // Until attached the upload is a temporary file, so a failure here must be retryable.
   const attachToNewMediaNote = async (pendingAttach: PendingAttach) => {
     setFailedAttach(null);
     setIsAttaching(true);
@@ -240,9 +226,7 @@ const MediaNotes = () => {
   };
 
   const handleStartRecording = async (mediaType: 'audio' | 'video') => {
-    // Starting a new recording mid-attach would let the in-flight attach
-    // settle against a recording the UI has already replaced, offering a
-    // retry for the wrong file.
+    // An in-flight attach would settle against a replaced recording and offer a retry for the wrong file.
     if (
       recordingFieldMetadataId === null ||
       isAttaching ||
@@ -300,9 +284,7 @@ const MediaNotes = () => {
         recordingSession.errorName = errorEvent.error?.name ?? 'UnknownError';
       };
 
-      // A stop the app did not ask for means the recorder failed to start on
-      // the host or died mid-recording (it fires error then stop, like the
-      // native API): release the devices and surface the failure.
+      // An unrequested stop means the recorder failed on the host (error then stop, like the native API).
       mediaRecorder.addEventListener('stop', () => {
         if (recordingSession.isUserStopping || recordingSession.wasCancelled) {
           return;
@@ -325,9 +307,6 @@ const MediaNotes = () => {
         });
       });
 
-      // The host indicator's stop button (or a revoked device) surfaces as
-      // standard track ended events; the app reacts by discarding, without
-      // any bespoke callback from the host.
       for (const track of mediaStream.getTracks()) {
         track.onended = () => {
           if (recordingSession.wasCancelled) {
@@ -337,9 +316,7 @@ const MediaNotes = () => {
           recordingSession.wasCancelled = true;
           recordingSessionRef.current = null;
 
-          // One dead track ends the whole take: stop the recorder and the
-          // remaining tracks so nothing keeps capturing behind the
-          // cancelled state.
+          // One dead track ends the whole take.
           if (mediaRecorder.state !== 'inactive') {
             mediaRecorder.stop();
           }
@@ -365,8 +342,6 @@ const MediaNotes = () => {
         mediaRecorder,
       });
     } catch (error) {
-      // The recorder can fail after the devices were granted; do not leave
-      // them capturing behind a failure message.
       if (acquiredMediaStream !== null) {
         for (const track of acquiredMediaStream.getTracks()) {
           track.stop();
@@ -421,8 +396,7 @@ const MediaNotes = () => {
         return;
       }
 
-      // An errored recorder still resolves the stop, but with nothing worth
-      // uploading.
+      // An errored recorder still resolves the stop, with nothing worth uploading.
       if (recordingSession.errorName !== null || recordedBlob.size === 0) {
         setCaptureResult({
           status: 'failed',

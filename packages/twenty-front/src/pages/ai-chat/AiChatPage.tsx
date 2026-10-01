@@ -49,8 +49,6 @@ export const AiChatPage = () => {
             objectRecordId: displayedThreadId,
           }}
           headerActions={isMobile && <AiChatCloseButton />}
-          // The chat's title is all its header needs, and the conversation
-          // takes the whole page
           headerTitleMode="record-title"
           isRecordIdentifierBarHidden
         />

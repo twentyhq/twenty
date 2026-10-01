@@ -31,16 +31,12 @@ const QUESTIONS = [
   },
 ];
 
-// The model is not called here: the turn that asked is written as the stream
-// job persists it, and the resumed stream is only checked for being queued.
 describe('Answering a chat tool call', () => {
   const threadId = randomUUID();
   let chat: AgentChatService;
   let enqueueStream: jest.SpyInstance;
   const spies: jest.SpyInstance[] = [];
 
-  // One assistant message that calls ask_questions once per id, as a model
-  // asking several things in one step does.
   const pauseOnQuestions = async (...toolCallIds: string[]) => {
     const userMessage = await chat.addMessage({
       workspaceId,
@@ -71,7 +67,6 @@ describe('Answering a chat tool call', () => {
       })) as never,
     });
 
-    // Written in the same update as the turn's totals.
     await global.testDataSource.query(
       `UPDATE "${schema}"."agentChatThread" SET "pendingQuestionMessageId" = $1 WHERE id = $2`,
       [assistantMessageId, threadId],

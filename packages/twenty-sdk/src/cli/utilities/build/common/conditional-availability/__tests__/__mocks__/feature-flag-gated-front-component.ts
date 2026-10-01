@@ -9,6 +9,6 @@ export default defineCommandMenuItem({
   label: 'Feature Flag Gated',
   frontComponentUniversalIdentifier: 'feature-flag-gated',
   conditionalAvailabilityExpression:
-    featureFlags.IS_JUNCTION_RELATIONS_ENABLED &&
+    featureFlags.IS_EXAMPLE_FEATURE_ENABLED &&
     objectPermissions.canReadObjectRecords,
 });

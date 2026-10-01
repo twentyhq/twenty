@@ -9,8 +9,7 @@ export type CommonFindManyOutput = {
   aggregatedValues: Record<string, number> | undefined;
   totalCount: number | undefined;
   pageInfo: CommonPageInfo;
-  // Cursor values read from the scan's raw rows, so edge cursors carry the
-  // exact SQL sort values whatever the selection presents
+  // Read from raw rows, so cursors carry the exact SQL sort values whatever the selection presents
   orderByValuesByRecordId: OrderByValuesByRecordId;
   selectedFieldsResult: CommonSelectedFieldsResult;
 };

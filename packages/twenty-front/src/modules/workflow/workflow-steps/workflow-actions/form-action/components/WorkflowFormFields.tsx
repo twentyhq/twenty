@@ -13,8 +13,6 @@ type WorkflowFormFieldsProps = {
   onError?: (error: string | undefined) => void;
 };
 
-// The fields a person fills in to answer a form, whether a workflow form step
-// or an agent asked for it.
 export const WorkflowFormFields = ({
   fields,
   readonly,

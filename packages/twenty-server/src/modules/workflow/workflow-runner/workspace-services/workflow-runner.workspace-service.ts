@@ -105,9 +105,7 @@ export class WorkflowRunnerWorkspaceService {
     );
   }
 
-  // Called once every call a step's conversation waits on is answered: a
-  // form step completes with its answer, while an agent step stays PENDING
-  // until the resume job claims it and continues its conversation.
+  // A form step completes with its answer; an agent step stays PENDING until the resume job claims it
   async resumeAnsweredStep({
     workspaceId,
     workflowRunId,
@@ -273,8 +271,7 @@ export class WorkflowRunnerWorkspaceService {
       }
     }
 
-    // Release the cached not-started slot only after the stop has been
-    // persisted, so a persistence failure can't desync the throttle counter.
+    // Only after the stop is persisted, so a persistence failure can't desync the throttle counter
     if (wasNotStarted) {
       await this.workflowThrottlingWorkspaceService.decreaseWorkflowRunNotStartedCount(
         workspaceId,
@@ -361,8 +358,7 @@ export class WorkflowRunnerWorkspaceService {
         buildRunWorkflowJobOptions(workflowRunId),
       );
     } catch (error) {
-      // The job couldn't be enqueued: revert to the previous failed state so
-      // the run isn't left stuck as RUNNING without a worker job.
+      // Revert so the run isn't left RUNNING without a worker job
       await this.workflowRunWorkspaceService.updateWorkflowRun({
         workflowRunId,
         workspaceId,

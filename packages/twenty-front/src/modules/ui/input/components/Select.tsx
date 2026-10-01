@@ -55,7 +55,7 @@ export const Select = <TValue extends SelectValue>({
   needIconCheck,
   pinnedOption,
   callToActionButton,
-  dropdownOffset,
+  dropdownSideOffset = 0,
   hasRightElement,
   showContextualTextInControl = true,
   showIconInControl = true,
@@ -181,8 +181,7 @@ export const Select = <TValue extends SelectValue>({
             }
             width={dropdownWidthAuto ? 'var(--anchor-width)' : dropdownWidth}
             align="start"
-            sideOffset={dropdownOffset?.y ?? 0}
-            alignOffset={dropdownOffset?.x ?? 0}
+            sideOffset={dropdownSideOffset}
             aria-label={isNonEmptyString(label) ? label : undefined}
           >
             {withSearchInput === true && (

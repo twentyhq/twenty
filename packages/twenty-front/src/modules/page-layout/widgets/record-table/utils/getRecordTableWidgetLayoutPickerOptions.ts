@@ -22,9 +22,6 @@ type GetRecordTableWidgetLayoutPickerOptionsParams = {
   isCalendarAvailable: boolean;
 };
 
-// Kanban and calendar stay visible but disabled when the object has no field
-// to drive them, so the layout exists in the picker with the reason why it
-// can't be picked.
 export const getRecordTableWidgetLayoutPickerOptions = ({
   isKanbanAvailable,
   isCalendarAvailable,
@@ -59,8 +56,7 @@ export const getSelectableLayoutViewTypes = (
     .filter((layoutOption) => !layoutOption.isDisabled)
     .map((layoutOption) => layoutOption.viewType);
 
-// A layout that is disabled must not be applied even if its row is reached by
-// keyboard, so selection asks the same options the picker renders.
+// A disabled row can still be reached by keyboard, so selection checks the same options the picker renders.
 export const isSelectableLayout = (
   layoutOptions: RecordTableWidgetLayoutPickerOption[],
   viewType: RecordTableWidgetLayoutViewType,

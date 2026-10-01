@@ -54,8 +54,7 @@ import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filt
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
-// Keep @Parent() structurally typed so ResolverValidationPipe does not validate
-// FieldMetadataDTO date decorators on already-loaded parent records.
+// structural type so ResolverValidationPipe skips FieldMetadataDTO decorators on loaded parents
 type FieldMetadataStandardOverrideParent = Pick<
   FieldMetadataDTO,
   'label' | 'description' | 'icon' | 'overrides' | 'applicationId'
