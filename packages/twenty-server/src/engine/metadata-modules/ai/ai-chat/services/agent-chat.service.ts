@@ -770,7 +770,7 @@ export class AgentChatService {
   }
 
   hasThreadInboxState(workspaceId: string): Promise<boolean> {
-    return this.participantService.hasInboxState(workspaceId);
+    return this.sharingService.hasInboxState(workspaceId);
   }
 
   async recordThreadActivity({
@@ -803,7 +803,7 @@ export class AgentChatService {
       threadBefore: thread,
       threadAfter: {
         ...thread,
-        lastActivityAt: activity.lastActivityAt.toISOString(),
+        lastActivityAt: activity.lastActivityAt?.toISOString() ?? null,
         updatedAt: activity.updatedAt.toISOString(),
       },
     });

@@ -49,6 +49,15 @@ export class AgentChatSharingService {
     private readonly workspaceOrmManager: WorkspaceOrmManager,
   ) {}
 
+  async hasInboxState(workspaceId: string): Promise<boolean> {
+    const { flatObjectMetadataMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatObjectMetadataMaps',
+      ]);
+
+    return hasAgentChatThreadInboxState(flatObjectMetadataMaps);
+  }
+
   getReadableThread(args: ThreadAccessArgs) {
     return this.getThreadWithAccess({ ...args, operationType: 'select' });
   }
@@ -154,11 +163,7 @@ export class AgentChatSharingService {
   }): Promise<AgentChatThreadWorkspaceEntity> {
     const authContext = await this.getAuthContext(args);
     const objectMetadata = await this.getThreadObjectMetadata(args.workspaceId);
-    const { flatObjectMetadataMaps } =
-      await this.workspaceCacheService.getOrRecompute(args.workspaceId, [
-        'flatObjectMetadataMaps',
-      ]);
-    const hasInboxState = hasAgentChatThreadInboxState(flatObjectMetadataMaps);
+    const hasInboxState = await this.hasInboxState(args.workspaceId);
 
     await this.workspaceOrmManager.executeInWorkspaceContext(
       () =>
@@ -176,11 +181,8 @@ export class AgentChatSharingService {
       args.workspaceId,
       async ({ manager, table }) => {
         const records = await manager.query<AgentChatThreadWorkspaceEntity[]>(
-          hasInboxState
-            ? `INSERT INTO ${table('agentChatThread')} (id, title, "workspaceMemberId", "userWorkspaceId", "lastActivityAt")
-         VALUES ($1, $2, $3, $4, clock_timestamp()) RETURNING *`
-            : `INSERT INTO ${table('agentChatThread')} (id, title, "workspaceMemberId", "userWorkspaceId")
-         VALUES ($1, $2, $3, $4) RETURNING *`,
+          `INSERT INTO ${table('agentChatThread')} (id, title, "workspaceMemberId", "userWorkspaceId"${hasInboxState ? ', "lastActivityAt"' : ''})
+           VALUES ($1, $2, $3, $4${hasInboxState ? ', clock_timestamp()' : ''}) RETURNING *`,
           [
             args.id ?? randomUUID(),
             args.title ?? null,

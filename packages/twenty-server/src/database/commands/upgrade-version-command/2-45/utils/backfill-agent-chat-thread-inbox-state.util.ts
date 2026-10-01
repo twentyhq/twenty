@@ -1,5 +1,7 @@
 import { type EntityManager } from 'typeorm';
 
+import { buildAgentChatThreadReadersSql } from 'src/database/commands/upgrade-version-command/2-45/utils/build-agent-chat-thread-readers-sql.util';
+import { buildAgentChatThreadsMoveRecordedAtSql } from 'src/database/commands/upgrade-version-command/2-45/utils/build-agent-chat-threads-move-recorded-at-sql.util';
 import { getAgentChatThreadInboxBackfillTables } from 'src/database/commands/upgrade-version-command/2-45/utils/get-agent-chat-thread-inbox-backfill-tables.util';
 import { MOVE_AGENT_CHAT_THREADS_TO_RECORD_MODEL_UPGRADE_MIGRATION_NAME } from 'src/database/commands/upgrade-version-command/2-45/utils/move-agent-chat-threads-to-record-model-upgrade-migration-name.constant';
 
@@ -48,16 +50,11 @@ export const backfillAgentChatThreadInboxState = async ({
   const participants = await manager.query<{ threadId: string }[]>(
     `INSERT INTO ${tables.participant} ("threadId", "workspaceMemberId", "lastReadAt")
      SELECT thread.id, reader."workspaceMemberId", thread."lastActivityAt"
-     FROM (
-       SELECT thread.id AS "threadId", thread."workspaceMemberId"
-       FROM ${tables.thread} thread
-       WHERE thread."workspaceMemberId" IS NOT NULL
-       UNION
-       SELECT share."recordId", share."principalId"
-       FROM ${tables.recordShare} share
-       WHERE share."objectMetadataId" = $1
-         AND share."principalType" = 'WORKSPACE_MEMBER'
-         AND share."deletedAt" IS NULL
+     FROM (${buildAgentChatThreadReadersSql({
+       tables,
+       threadSource: tables.thread,
+       objectMetadataIdParameter: '$1',
+     })}
      ) reader
      JOIN ${tables.thread} thread ON thread.id = reader."threadId"
      JOIN ${tables.workspaceMember} member
@@ -77,25 +74,17 @@ export const backfillAgentChatThreadInboxState = async ({
        WHERE thread."archivedAt" IS NOT NULL
          AND thread."deletedAt" IS NOT NULL
          AND thread."workspaceMemberId" IS NOT NULL
-         AND thread."deletedAt" <= (
-           SELECT min(migration."createdAt")
-           FROM core."upgradeMigration" migration
-           WHERE migration."workspaceId" = $1
-             AND migration.name = $2
-             AND migration.status = 'completed'
-         )
+         AND thread."deletedAt" <= (${buildAgentChatThreadsMoveRecordedAtSql({
+           workspaceIdParameter: '$1',
+           migrationNameParameter: '$2',
+         })})
        RETURNING thread.id, thread."workspaceMemberId", thread."archivedAt", thread."lastActivityAt"
      ),
-     reader AS (
-       SELECT restored.id AS "threadId", restored."workspaceMemberId"
-       FROM restored
-       UNION
-       SELECT share."recordId", share."principalId"
-       FROM ${tables.recordShare} share
-       JOIN restored ON restored.id = share."recordId"
-       WHERE share."objectMetadataId" = $3
-         AND share."principalType" = 'WORKSPACE_MEMBER'
-         AND share."deletedAt" IS NULL
+     reader AS (${buildAgentChatThreadReadersSql({
+       tables,
+       threadSource: 'restored',
+       objectMetadataIdParameter: '$3',
+     })}
      )
      INSERT INTO ${tables.participant} AS participant ("threadId", "workspaceMemberId", "lastReadAt", "archivedAt")
      SELECT restored.id, reader."workspaceMemberId", restored."lastActivityAt",

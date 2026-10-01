@@ -1,5 +1,6 @@
 import { type EntityManager } from 'typeorm';
 
+import { buildAgentChatThreadsMoveRecordedAtSql } from 'src/database/commands/upgrade-version-command/2-45/utils/build-agent-chat-threads-move-recorded-at-sql.util';
 import { getAgentChatThreadInboxBackfillTables } from 'src/database/commands/upgrade-version-command/2-45/utils/get-agent-chat-thread-inbox-backfill-tables.util';
 import { MOVE_AGENT_CHAT_THREADS_TO_RECORD_MODEL_UPGRADE_MIGRATION_NAME } from 'src/database/commands/upgrade-version-command/2-45/utils/move-agent-chat-threads-to-record-model-upgrade-migration-name.constant';
 
@@ -18,11 +19,10 @@ export const moveRestoredArchivedChatThreadsBackToTrash = async ({
 
   const threads = await manager.query<{ id: string }[]>(
     `WITH move AS (
-       SELECT min(migration."createdAt") AS "recordedAt"
-       FROM core."upgradeMigration" migration
-       WHERE migration."workspaceId" = $1
-         AND migration.name = $2
-         AND migration.status = 'completed'
+       SELECT (${buildAgentChatThreadsMoveRecordedAtSql({
+         workspaceIdParameter: '$1',
+         migrationNameParameter: '$2',
+       })}) AS "recordedAt"
      ), moved AS (
        UPDATE ${tables.thread} thread
        SET "deletedAt" = move."recordedAt"

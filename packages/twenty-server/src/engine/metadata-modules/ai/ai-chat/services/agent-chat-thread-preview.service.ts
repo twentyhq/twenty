@@ -39,45 +39,46 @@ export class AgentChatThreadPreviewService {
 
     return this.threadRepository.query(workspaceId, ({ manager, table }) =>
       manager.query<AgentChatThreadPreviewDTO[]>(
-        `WITH thread AS (
-           SELECT id, "workspaceMemberId"
-           FROM ${table('agentChatThread')}
-           WHERE id = ANY($1)
-         ), visible_message AS (
-           SELECT message.id, message."threadId", message.role, message."createdAt",
-             CASE WHEN message.role = 'user'
-               THEN COALESCE(message."senderWorkspaceMemberId", thread."workspaceMemberId")
-             END AS "senderWorkspaceMemberId"
-           FROM ${table('agentMessage')} message
-           JOIN thread ON thread.id = message."threadId"
-           WHERE message."deletedAt" IS NULL
-             AND message."isHidden" = false
-             AND message.role IN ('user', 'assistant')
-         ), last_message AS (
-           SELECT DISTINCT ON ("threadId") *
-           FROM visible_message
-           ORDER BY "threadId", "createdAt" DESC, id DESC
-         ), last_text AS (
-           SELECT DISTINCT ON (part."messageId") part."messageId", part."textContent"
-           FROM ${table('agentMessagePart')} part
-           JOIN last_message ON last_message.id = part."messageId"
-           WHERE part.type = 'text' AND btrim(coalesce(part."textContent", '')) <> ''
-           ORDER BY part."messageId", part."orderIndex" DESC
-         ), member AS (
-           SELECT "threadId", array_agg(DISTINCT "senderWorkspaceMemberId") AS "memberIds"
-           FROM visible_message
-           WHERE "senderWorkspaceMemberId" IS NOT NULL
-           GROUP BY "threadId"
-         )
-         SELECT thread.id AS "threadId",
+        `SELECT thread.id AS "threadId",
            last_message.role AS "lastMessageRole",
            left(last_text."textContent", $2) AS "lastMessageText",
            last_message."senderWorkspaceMemberId" AS "lastMessageSenderWorkspaceMemberId",
            COALESCE(member."memberIds", ARRAY[]::uuid[]) AS "memberIds"
-         FROM thread
-         LEFT JOIN last_message ON last_message."threadId" = thread.id
-         LEFT JOIN last_text ON last_text."messageId" = last_message.id
-         LEFT JOIN member ON member."threadId" = thread.id`,
+         FROM ${table('agentChatThread')} thread
+         LEFT JOIN LATERAL (
+           SELECT message.id, message.role,
+             CASE WHEN message.role = 'user'
+               THEN COALESCE(message."senderWorkspaceMemberId", thread."workspaceMemberId")
+             END AS "senderWorkspaceMemberId"
+           FROM ${table('agentMessage')} message
+           WHERE message."threadId" = thread.id
+             AND message."deletedAt" IS NULL
+             AND message."isHidden" = false
+             AND message.role IN ('user', 'assistant')
+           ORDER BY message."createdAt" DESC, message.id DESC
+           LIMIT 1
+         ) last_message ON true
+         LEFT JOIN LATERAL (
+           SELECT part."textContent"
+           FROM ${table('agentMessagePart')} part
+           WHERE part."messageId" = last_message.id
+             AND part.type = 'text'
+             AND btrim(coalesce(part."textContent", '')) <> ''
+           ORDER BY part."orderIndex" DESC
+           LIMIT 1
+         ) last_text ON true
+         LEFT JOIN LATERAL (
+           SELECT array_remove(
+             array_agg(DISTINCT COALESCE(message."senderWorkspaceMemberId", thread."workspaceMemberId")),
+             NULL
+           ) AS "memberIds"
+           FROM ${table('agentMessage')} message
+           WHERE message."threadId" = thread.id
+             AND message."deletedAt" IS NULL
+             AND message."isHidden" = false
+             AND message.role = 'user'
+         ) member ON true
+         WHERE thread.id = ANY($1)`,
         [readableThreadIds, PREVIEW_TEXT_MAX_LENGTH],
       ),
     );
