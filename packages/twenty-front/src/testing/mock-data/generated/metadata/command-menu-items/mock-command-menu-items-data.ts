@@ -678,7 +678,7 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "isPinned": true,
     "payload": null,
     "hotKeys": null,
-    "conditionalAvailabilityExpression": null,
+    "conditionalAvailabilityExpression": "not featureFlags.IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED",
     "availabilityType": "RECORD_SELECTION",
     "availabilityObjectMetadataId": "dccf06e5-31d9-43fc-9612-30517caadf5f",
     "pageLayoutId": null,
