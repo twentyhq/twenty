@@ -14,13 +14,17 @@ import { ApplicationTargetGuard } from 'src/engine/guards/application-target.gua
 import { type WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 
 const WORKSPACE_ID = 'workspace-id';
-const OWN_LOGIC_FUNCTION_ID = 'own-logic-function-id';
-const OTHER_LOGIC_FUNCTION_ID = 'other-logic-function-id';
+const OWN_LOGIC_FUNCTION_ID = '3f1c2a64-8d0e-4b7a-9c35-6e2f1a0b4d71';
+const OTHER_LOGIC_FUNCTION_ID = '9b4e7d21-2c6f-4a85-b013-5d8e3f7a2c94';
+const UNKNOWN_LOGIC_FUNCTION_ID = 'c7a2e5f8-4b19-4d3e-8f60-1a9b2c3d4e05';
+const OTHER_APPLICATION_ID = '5e8d1c3b-7a2f-4e96-a4b0-8c1d2e3f4a56';
+const OTHER_UNIVERSAL_IDENTIFIER = 'd2b6f9a4-1e3c-4708-b5a2-9f0e1d2c3b47';
+const OTHER_REGISTRATION_ID = '81f3a7c5-6d2e-4b9a-a1c4-7e5f3d2b1a08';
 
 const CALLING_APPLICATION = {
-  id: 'calling-application-id',
-  universalIdentifier: 'calling-application-universal-identifier',
-  applicationRegistrationId: 'calling-application-registration-id',
+  id: '2a7d4c1e-9f3b-4e68-8d25-4b1a6c9e7f30',
+  universalIdentifier: 'e4c8b2d6-3a5f-4c17-9e2b-0d6a8f4c2e19',
+  applicationRegistrationId: '6b9f2e4a-8c1d-4f73-b6e5-2a7c9d1e3f82',
 } as FlatApplication;
 
 type LogicFunctionInput = { id: string; payload: object };
@@ -98,7 +102,7 @@ const buildFlatLogicFunctionMaps = () => ({
     'other-logic-function': {
       id: OTHER_LOGIC_FUNCTION_ID,
       universalIdentifier: 'other-logic-function',
-      applicationId: 'other-application-id',
+      applicationId: OTHER_APPLICATION_ID,
     },
   },
   universalIdentifierById: {
@@ -220,7 +224,7 @@ describe('ApplicationTargetGuard', () => {
       guard.canActivate(
         buildGraphqlContext({
           handler: TestResolver.prototype.runHealthCheck,
-          args: { applicationId: 'other-application-id' },
+          args: { applicationId: OTHER_APPLICATION_ID },
         }),
       ),
     ).resolves.toBe(true);
@@ -231,7 +235,7 @@ describe('ApplicationTargetGuard', () => {
       guard.canActivate(
         buildGraphqlContext({
           handler: TestResolver.prototype.exportApplication,
-          args: { universalIdentifier: 'other-universal-identifier' },
+          args: { universalIdentifier: OTHER_UNIVERSAL_IDENTIFIER },
           application: {
             ...CALLING_APPLICATION,
             sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY,
@@ -267,7 +271,7 @@ describe('ApplicationTargetGuard', () => {
     await expectForbidden(
       buildGraphqlContext({
         handler: TestResolver.prototype.runHealthCheck,
-        args: { applicationId: 'other-application-id' },
+        args: { applicationId: OTHER_APPLICATION_ID },
         application: CALLING_APPLICATION,
       }),
     );
@@ -289,7 +293,7 @@ describe('ApplicationTargetGuard', () => {
     await expectForbidden(
       buildGraphqlContext({
         handler: TestResolver.prototype.exportApplication,
-        args: { universalIdentifier: 'other-universal-identifier' },
+        args: { universalIdentifier: OTHER_UNIVERSAL_IDENTIFIER },
         application: CALLING_APPLICATION,
       }),
     );
@@ -317,7 +321,7 @@ describe('ApplicationTargetGuard', () => {
         handler: TestResolver.prototype.syncApplication,
         args: {
           manifest: {
-            application: { universalIdentifier: 'other-universal-identifier' },
+            application: { universalIdentifier: OTHER_UNIVERSAL_IDENTIFIER },
           },
         },
         application: CALLING_APPLICATION,
@@ -333,8 +337,9 @@ describe('ApplicationTargetGuard', () => {
         }),
       ),
     ).rejects.toMatchObject({
+      code: ApplicationExceptionCode.INVALID_INPUT,
       message:
-        'Missing application target "manifest.application.universalIdentifier"',
+        'Application target "manifest.application.universalIdentifier" must be a UUID',
     });
   });
 
@@ -352,7 +357,7 @@ describe('ApplicationTargetGuard', () => {
     await expectForbidden(
       buildGraphqlContext({
         handler: TestResolver.prototype.findRegistration,
-        args: { id: 'other-registration-id' },
+        args: { id: OTHER_REGISTRATION_ID },
         application: CALLING_APPLICATION,
       }),
     );
@@ -383,27 +388,34 @@ describe('ApplicationTargetGuard', () => {
       guard.canActivate(
         buildGraphqlContext({
           handler: TestResolver.prototype.executeLogicFunction,
-          args: { input: { id: 'unknown-logic-function-id', payload: {} } },
+          args: { input: { id: UNKNOWN_LOGIC_FUNCTION_ID, payload: {} } },
           application: CALLING_APPLICATION,
         }),
       ),
     ).resolves.toBe(true);
   });
 
-  it('should refuse an application caller when the target cannot be read', async () => {
-    await expect(
-      guard.canActivate(
-        buildGraphqlContext({
-          handler: TestResolver.prototype.executeLogicFunction,
-          args: {},
-          application: CALLING_APPLICATION,
-        }),
-      ),
-    ).rejects.toMatchObject({
-      code: ApplicationExceptionCode.FORBIDDEN,
-      message: 'Missing application target "input.id"',
-    });
-  });
+  it.each([
+    { title: 'missing', args: {} },
+    { title: 'empty', args: { input: { id: '', payload: {} } } },
+    { title: 'malformed', args: { input: { id: 'not-a-uuid', payload: {} } } },
+  ])(
+    'should refuse an application caller whose target is $title',
+    async ({ args }) => {
+      await expect(
+        guard.canActivate(
+          buildGraphqlContext({
+            handler: TestResolver.prototype.executeLogicFunction,
+            args,
+            application: CALLING_APPLICATION,
+          }),
+        ),
+      ).rejects.toMatchObject({
+        code: ApplicationExceptionCode.INVALID_INPUT,
+        message: 'Application target "input.id" must be a UUID',
+      });
+    },
+  );
 
   it('should read the target from a route parameter', async () => {
     await expect(
@@ -419,7 +431,7 @@ describe('ApplicationTargetGuard', () => {
     await expectForbidden(
       buildHttpContext({
         handler: TestResolver.prototype.getSdkModule,
-        params: { applicationId: 'other-application-id' },
+        params: { applicationId: OTHER_APPLICATION_ID },
         application: CALLING_APPLICATION,
       }),
     );

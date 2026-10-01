@@ -5,7 +5,6 @@ import {
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 
-import { isNonEmptyString } from '@sniptt/guards';
 import { type AllMetadataName } from 'twenty-shared/metadata';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 
@@ -17,10 +16,7 @@ import { APPLICATION_TARGET_METADATA_KEY } from 'src/engine/core-modules/applica
 import { type ApplicationTarget } from 'src/engine/core-modules/application/types/application-target.type';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { isOAuthOnlyApplication } from 'src/engine/core-modules/application/utils/is-oauth-only-application.util';
-import {
-  getApplicationTargetName,
-  readApplicationTargetValue,
-} from 'src/engine/core-modules/application/utils/read-application-target-value.util';
+import { readApplicationTargetIdOrThrow } from 'src/engine/core-modules/application/utils/read-application-target-id-or-throw.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type SyncableFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-from.type';
@@ -55,18 +51,11 @@ export class ApplicationTargetGuard implements CanActivate {
       return true;
     }
 
-    const targetValue = readApplicationTargetValue({
+    const targetValue = readApplicationTargetIdOrThrow({
       context,
       request,
       target,
     });
-
-    if (!isNonEmptyString(targetValue)) {
-      throw new ApplicationException(
-        `Missing application target "${getApplicationTargetName(target)}"`,
-        ApplicationExceptionCode.FORBIDDEN,
-      );
-    }
 
     switch (target.kind) {
       case 'applicationId':
