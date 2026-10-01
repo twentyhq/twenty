@@ -338,9 +338,6 @@ export class ToolExecutorService {
       );
     }
 
-    // Defense-in-depth: catalog and by-name lookups already filter by
-    // `isAvailable`, but re-verify at dispatch so the gate is enforced in
-    // one place regardless of how the descriptor reached us.
     if (!(await provider.isAvailable(context))) {
       return {
         success: false,

@@ -32,7 +32,6 @@ const FIELD_STRIP_WHEN_NULLISH = [
 
 const FIELD_STRIP_WHEN_FALSE = ['isLabelSyncedWithName'];
 
-// isUIEditable defaults to true, so only the non-default false value is informative
 const FIELD_STRIP_WHEN_TRUE = ['isUIEditable'];
 
 const RELATION_TYPE_DESCRIPTION =

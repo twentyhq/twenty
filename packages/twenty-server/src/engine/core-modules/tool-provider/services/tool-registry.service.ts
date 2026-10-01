@@ -387,8 +387,6 @@ export class ToolRegistryService {
     );
   }
 
-  // Eager loading tools by categories (MCP, workflow agent).
-  // These paths need full schemas, so generate with includeSchemas: true.
   async getToolsByCategories(
     context: ToolProviderContext,
     options: ToolRetrievalOptions = {},
