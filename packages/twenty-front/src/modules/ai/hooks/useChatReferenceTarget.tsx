@@ -215,21 +215,23 @@ export const useChatReferenceTarget = (
     switch (reference.kind) {
       case 'record':
         return () =>
-          openAiChatArtifact(({ resetNavigationStack }) =>
-            openRecordInSidePanel({
-              recordId: reference.recordId,
-              objectNameSingular: reference.objectNameSingular,
-              resetNavigationStack,
-            }),
-          );
+          openAiChatArtifact({
+            sidePanelPath: path,
+            openInSidePanel: () =>
+              openRecordInSidePanel({
+                recordId: reference.recordId,
+                objectNameSingular: reference.objectNameSingular,
+              }),
+          });
       // Application settings aren't routed in the side panel, so the chip navigates like a plain link.
       case 'app':
         return undefined;
       default:
         return () =>
-          openAiChatArtifact(({ resetNavigationStack }) =>
-            openRoutedPageInSidePanel({ path, resetNavigationStack }),
-          );
+          openAiChatArtifact({
+            sidePanelPath: path,
+            openInSidePanel: () => openRoutedPageInSidePanel({ path }),
+          });
     }
   };
 

@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { type FallbackProps } from 'react-error-boundary';
+import { MemoryRouter } from 'react-router-dom';
 
 import { SidePanelRoutedPage } from '@/side-panel/routing/components/SidePanelRoutedPage';
 
@@ -86,7 +87,9 @@ describe('SidePanelRoutedPage', () => {
   });
 
   it('contains route errors and resets the boundary for the next location', () => {
-    const { rerender } = render(<SidePanelRoutedPage />);
+    const { rerender } = render(<SidePanelRoutedPage />, {
+      wrapper: MemoryRouter,
+    });
 
     expect(screen.getByTestId('route-unavailable')).toBeInTheDocument();
 

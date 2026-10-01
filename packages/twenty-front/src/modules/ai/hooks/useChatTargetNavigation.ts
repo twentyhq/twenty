@@ -24,13 +24,14 @@ export const useChatTargetNavigation = () => {
     objectNameSingular: string;
   }) => {
     if (isAiChatArtifactSurface) {
-      openAiChatArtifact(({ resetNavigationStack }) =>
-        openRecordInSidePanel({
-          recordId,
+      openAiChatArtifact({
+        sidePanelPath: getAppPath(AppPath.RecordShowPage, {
           objectNameSingular,
-          resetNavigationStack,
+          objectRecordId: recordId,
         }),
-      );
+        openInSidePanel: () =>
+          openRecordInSidePanel({ recordId, objectNameSingular }),
+      });
 
       return;
     }
@@ -67,16 +68,16 @@ export const useChatTargetNavigation = () => {
     const recordIndexQueryParams = isDefined(viewId) ? { viewId } : undefined;
 
     if (isAiChatArtifactSurface) {
-      openAiChatArtifact(({ resetNavigationStack }) =>
-        openRoutedPageInSidePanel({
-          path: getAppPath(
-            AppPath.RecordIndexPage,
-            recordIndexParams,
-            recordIndexQueryParams,
-          ),
-          resetNavigationStack,
-        }),
+      const path = getAppPath(
+        AppPath.RecordIndexPage,
+        recordIndexParams,
+        recordIndexQueryParams,
       );
+
+      openAiChatArtifact({
+        sidePanelPath: path,
+        openInSidePanel: () => openRoutedPageInSidePanel({ path }),
+      });
 
       return;
     }

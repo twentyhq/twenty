@@ -11,6 +11,7 @@ type RecordShowPageHeaderProps = {
   objectNameSingular: string;
   objectRecordId: string;
   titleMode?: RecordShowPageHeaderTitleMode;
+  titleAccessory?: React.ReactNode;
   children?: React.ReactNode;
 };
 
@@ -24,6 +25,7 @@ const RecordShowPageMainHeader = ({
   objectNameSingular,
   objectRecordId,
   titleMode = 'breadcrumb',
+  titleAccessory,
   children,
 }: RecordShowPageMainHeaderProps) => {
   const { objectMetadataItem } = useRecordShowPagePagination(
@@ -38,10 +40,13 @@ const RecordShowPageMainHeader = ({
     return (
       <PageCardHeader
         title={
-          <RecordShowPageHeaderRecordTitle
-            objectNameSingular={objectNameSingular}
-            objectRecordId={objectRecordId}
-          />
+          <>
+            <RecordShowPageHeaderRecordTitle
+              objectNameSingular={objectNameSingular}
+              objectRecordId={objectRecordId}
+            />
+            {titleAccessory}
+          </>
         }
         actionButton={children}
       />
@@ -66,15 +71,19 @@ const RecordShowPageMainHeader = ({
 const RecordShowPagePanelHeader = ({
   objectNameSingular,
   objectRecordId,
+  titleAccessory,
 }: RecordShowPagePanelHeaderProps) => (
   <PageCardHeader
     title={
-      <RecordIdentifierBarTitle
-        objectNameSingular={objectNameSingular}
-        objectRecordId={objectRecordId}
-        variant="side-panel"
-        recordLinkSurface="main"
-      />
+      <>
+        <RecordIdentifierBarTitle
+          objectNameSingular={objectNameSingular}
+          objectRecordId={objectRecordId}
+          variant="side-panel"
+          recordLinkSurface="main"
+        />
+        {titleAccessory}
+      </>
     }
   />
 );
@@ -83,6 +92,7 @@ export const RecordShowPageHeader = ({
   objectNameSingular,
   objectRecordId,
   titleMode,
+  titleAccessory,
   children,
 }: RecordShowPageHeaderProps) => {
   const workspaceSurface = useWorkspaceSurface();
@@ -91,12 +101,14 @@ export const RecordShowPageHeader = ({
     <RecordShowPagePanelHeader
       objectNameSingular={objectNameSingular}
       objectRecordId={objectRecordId}
+      titleAccessory={titleAccessory}
     />
   ) : (
     <RecordShowPageMainHeader
       objectNameSingular={objectNameSingular}
       objectRecordId={objectRecordId}
       titleMode={titleMode}
+      titleAccessory={titleAccessory}
     >
       {children}
     </RecordShowPageMainHeader>

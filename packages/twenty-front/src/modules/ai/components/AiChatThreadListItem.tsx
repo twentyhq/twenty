@@ -1,6 +1,7 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { Key } from 'ts-key-enum';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 
@@ -8,7 +9,6 @@ import { AiChatThreadActionsDropdown } from '@/ai/components/AiChatThreadActions
 import { AI_CHAT_THREAD_ACTIONS_SURFACE } from '@/ai/constants/AiChatThreadActionsSurface';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { type AiChatThreadActionsSurface } from '@/ai/types/AiChatThreadActionsSurface';
-import { useAiChatThreadClick } from '@/ai/hooks/useAiChatThreadClick';
 import { useAiChatThreadRename } from '@/ai/hooks/useAiChatThreadRename';
 import { agentChatThreadInboxStatusFamilySelector } from '@/ai/states/selectors/agentChatThreadInboxStatusFamilySelector';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
@@ -25,6 +25,7 @@ import { getAgentChatThreadPreviewText } from '@/ai/utils/getAgentChatThreadPrev
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { WorkspaceMemberAvatarStack } from '@/workspace-member/components/WorkspaceMemberAvatarStack';
 
 const StyledThreadItem = styled.div`
@@ -131,7 +132,7 @@ export const AiChatThreadListItem = ({
   onDetach,
 }: AiChatThreadListItemProps) => {
   const { t } = useLingui();
-  const { handleThreadClick } = useAiChatThreadClick();
+  const { openRecordInSidePanel } = useOpenRecordInSidePanel();
   const {
     isRenaming,
     draftTitle,
@@ -177,7 +178,14 @@ export const AiChatThreadListItem = ({
     <StyledThreadItem
       onClick={() => {
         if (!isRenaming) {
-          handleThreadClick(thread);
+          openRecordInSidePanel({
+            recordId: thread.id,
+            objectNameSingular: CoreObjectNameSingular.AgentChatThread,
+            // The inbox lists chats like an index view, so a click replaces
+            // the panel instead of stacking on it
+            resetNavigationStack:
+              surface === AI_CHAT_THREAD_ACTIONS_SURFACE.INBOX_PAGE,
+          });
         }
       }}
     >

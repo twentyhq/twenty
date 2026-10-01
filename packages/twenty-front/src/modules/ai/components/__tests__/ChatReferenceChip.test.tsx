@@ -275,7 +275,6 @@ describe('ChatReferenceChip', () => {
 
       expect(openRoutedPageInSidePanelMock).toHaveBeenCalledWith({
         path: href,
-        resetNavigationStack: false,
       });
       expect(screen.getByTestId('location-probe')).toHaveTextContent('/chat');
     },
@@ -292,7 +291,6 @@ describe('ChatReferenceChip', () => {
     expect(openRecordInSidePanelMock).toHaveBeenCalledWith({
       recordId: RECORD_ID,
       objectNameSingular: 'company',
-      resetNavigationStack: false,
     });
   });
 
@@ -304,13 +302,11 @@ describe('ChatReferenceChip', () => {
 
     clickChip('Acme');
 
-    expect(openRecordInSidePanelMock).toHaveBeenCalledWith({
-      recordId: RECORD_ID,
-      objectNameSingular: 'company',
-      resetNavigationStack: true,
-    });
+    expect(openRecordInSidePanelMock).not.toHaveBeenCalled();
     expect(screen.getByTestId('location-probe')).toHaveTextContent(
-      `/chat/${THREAD_ID}`,
+      `/chat/${THREAD_ID}?panel=${encodeURIComponent(
+        `/object/company/${RECORD_ID}`,
+      )}`,
     );
   });
 

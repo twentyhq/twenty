@@ -83,6 +83,7 @@ describe('useNavigateToAiChatPage', () => {
 
     expect(closeSidePanelMenuMock).toHaveBeenCalled();
     expect(navigateMock).toHaveBeenCalledWith('/chat', {
+      surface: 'main',
       state: { returnLocation: '/objects/people' },
     });
   });
@@ -99,8 +100,30 @@ describe('useNavigateToAiChatPage', () => {
     });
 
     expect(navigateMock).toHaveBeenCalledWith('/chat', {
+      surface: 'main',
       state: { returnLocation: '/objects/people?viewId=42' },
     });
+  });
+
+  it('should open a side panel page next to the chat in the same navigation', () => {
+    const { result } = renderHook(() => useNavigateToAiChatPage(), {
+      wrapper: Wrapper,
+    });
+
+    act(() => {
+      result.current.navigateToAiChatPage({
+        threadId: '20202020-0000-4000-8000-000000000001',
+        sidePanelPath: '/object/company/20202020-0000-4000-8000-000000000002',
+      });
+    });
+
+    expect(closeSidePanelMenuMock).not.toHaveBeenCalled();
+    expect(navigateMock).toHaveBeenCalledWith(
+      `/chat/20202020-0000-4000-8000-000000000001?panel=${encodeURIComponent(
+        '/object/company/20202020-0000-4000-8000-000000000002',
+      )}`,
+      expect.objectContaining({ surface: 'main' }),
+    );
   });
 
   it('should open an existing thread', () => {

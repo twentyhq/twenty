@@ -4,6 +4,7 @@ import { useStore } from 'jotai';
 
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
+import { SIDE_PANEL_PATH_SEARCH_PARAM } from '@/side-panel/routing/constants/SidePanelPathSearchParam';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { isCurrentPathAiChatPage } from '~/utils/isCurrentPathAiChatPage';
 
@@ -14,10 +15,11 @@ export const useNavigateToAiChatPage = () => {
 
   const navigateToAiChatPage = ({
     threadId,
-    shouldCloseSidePanel = true,
+    sidePanelPath,
   }: {
     threadId?: string | null;
-    shouldCloseSidePanel?: boolean;
+    // Opened in the side panel next to the chat, in the same navigation
+    sidePanelPath?: string;
   } = {}) => {
     if (
       store.get(isLayoutCustomizationModeEnabledState.atom) ||
@@ -26,7 +28,7 @@ export const useNavigateToAiChatPage = () => {
       return;
     }
 
-    if (shouldCloseSidePanel) {
+    if (!isDefined(sidePanelPath)) {
       void closeSidePanelMenu();
     }
 
@@ -36,8 +38,12 @@ export const useNavigateToAiChatPage = () => {
         threadId:
           isDefined(threadId) && isValidUuid(threadId) ? threadId : null,
       },
-      undefined,
+      isDefined(sidePanelPath)
+        ? { [SIDE_PANEL_PATH_SEARCH_PARAM]: sidePanelPath }
+        : undefined,
       {
+        // The chat page is a main page, even when a side panel page asks for it
+        surface: 'main',
         state: {
           // Read from the window rather than useLocation so that opening a new
           // chat does not require a router context from every caller of

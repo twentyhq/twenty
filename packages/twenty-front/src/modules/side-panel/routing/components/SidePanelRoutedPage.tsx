@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { useLocation } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 import { Trans } from '@lingui/react/macro';
 
@@ -9,6 +10,7 @@ import { AppErrorBoundary } from '@/error-handler/components/AppErrorBoundary';
 import { SidePanelRouteNavigatorProvider } from '@/side-panel/routing/components/SidePanelRouteNavigatorProvider';
 import { useCurrentSidePanelRoutedLocation } from '@/side-panel/routing/hooks/useCurrentSidePanelRoutedPath';
 import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/contexts/SidePanelPageComponentInstanceContext';
+import { MainSurfaceLocationContext } from '@/ui/layout/contexts/MainSurfaceLocationContext';
 import { WorkspaceSurfaceContext } from '@/ui/layout/contexts/WorkspaceSurfaceContext';
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { useComponentInstanceStateContext } from '@/ui/utilities/state/component-state/hooks/useComponentInstanceStateContext';
@@ -20,6 +22,7 @@ const SidePanelRouteErrorFallback = () => (
 );
 
 export const SidePanelRoutedPage = () => {
+  const mainSurfaceLocation = useLocation();
   const location = useCurrentSidePanelRoutedLocation();
   const sidePanelPageInstanceId = useComponentInstanceStateContext(
     SidePanelPageComponentInstanceContext,
@@ -41,20 +44,24 @@ export const SidePanelRoutedPage = () => {
 
   return (
     <WorkspaceSurfaceContext.Provider value={routedWorkspaceSurface}>
-      <ContextStoreComponentInstanceContext.Provider value={contextStoreValue}>
-        <AppErrorBoundary
-          key={location.key}
-          FallbackComponent={SidePanelRouteErrorFallback}
-          resetOnLocationChange={false}
+      <MainSurfaceLocationContext.Provider value={mainSurfaceLocation}>
+        <ContextStoreComponentInstanceContext.Provider
+          value={contextStoreValue}
         >
-          <SidePanelRouteNavigatorProvider>
-            <WorkspaceRoutes
-              location={location}
-              fallback={<WorkspaceRouteUnavailable />}
-            />
-          </SidePanelRouteNavigatorProvider>
-        </AppErrorBoundary>
-      </ContextStoreComponentInstanceContext.Provider>
+          <AppErrorBoundary
+            key={location.key}
+            FallbackComponent={SidePanelRouteErrorFallback}
+            resetOnLocationChange={false}
+          >
+            <SidePanelRouteNavigatorProvider>
+              <WorkspaceRoutes
+                location={location}
+                fallback={<WorkspaceRouteUnavailable />}
+              />
+            </SidePanelRouteNavigatorProvider>
+          </AppErrorBoundary>
+        </ContextStoreComponentInstanceContext.Provider>
+      </MainSurfaceLocationContext.Provider>
     </WorkspaceSurfaceContext.Provider>
   );
 };

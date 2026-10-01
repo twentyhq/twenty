@@ -5,6 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { useIsMobile } from 'twenty-ui/utilities';
 
 import { AiChatCloseButton } from '@/ai/components/AiChatCloseButton';
+import { AiChatThreadDetailsDropdown } from '@/ai/components/AiChatThreadDetailsDropdown';
 import { AiChatPageCloseSidePanelChatEffect } from '@/ai/components/AiChatPageCloseSidePanelChatEffect';
 import { AiChatPageContinueInSidePanelEffect } from '@/ai/components/AiChatPageContinueInSidePanelEffect';
 import { AiChatPageHeader } from '@/ai/components/AiChatPageHeader';
@@ -49,6 +50,9 @@ export const AiChatPage = () => {
             objectRecordId: displayedThreadId,
           }}
           headerActions={isMobile && <AiChatCloseButton />}
+          headerTitleAccessory={
+            <AiChatThreadDetailsDropdown threadId={displayedThreadId} />
+          }
           headerTitleMode="record-title"
           isRecordIdentifierBarHidden
         />

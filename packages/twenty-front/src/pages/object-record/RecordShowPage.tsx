@@ -7,6 +7,7 @@ import {
 } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
 
+import { AiChatThreadDetailsDropdown } from '@/ai/components/AiChatThreadDetailsDropdown';
 import { WorkspaceRouteUnavailable } from '@/app/routing/components/WorkspaceRouteUnavailable';
 import { findCoreObjectShowPage } from '@/object-core/utils/findCoreObjectShowPage';
 import { isWorkspaceWorkflowVersionRouteHidden } from '@/object-core/workflows/utils/isWorkspaceWorkflowVersionRouteHidden';
@@ -26,11 +27,13 @@ type RecordShowPageParameters = {
 export const RecordShowPageContent = ({
   parameters,
   headerActions,
+  headerTitleAccessory,
   headerTitleMode,
   isRecordIdentifierBarHidden,
 }: {
   parameters: RecordShowPageParameters;
   headerActions?: ReactNode;
+  headerTitleAccessory?: ReactNode;
   headerTitleMode?: RecordShowPageHeaderTitleMode;
   isRecordIdentifierBarHidden?: boolean;
 }) => {
@@ -52,6 +55,7 @@ export const RecordShowPageContent = ({
       loading={loading}
       error={error}
       headerActions={headerActions}
+      headerTitleAccessory={headerTitleAccessory}
       headerTitleMode={headerTitleMode}
       isRecordIdentifierBarHidden={isRecordIdentifierBarHidden}
     />
@@ -78,18 +82,28 @@ export const RecordShowPage = () => {
     return <WorkspaceRouteUnavailable />;
   }
 
-  // A chat's record page is the chat page, on its own route
   if (
-    !isInSidePanel &&
     parameters.objectNameSingular === CoreObjectNameSingular.AgentChatThread &&
     isDefined(parameters.objectRecordId)
   ) {
+    // A chat's record page is the chat page, on its own route
+    if (!isInSidePanel) {
+      return (
+        <Navigate
+          replace
+          to={getAppPath(AppPath.AiChat, {
+            threadId: parameters.objectRecordId,
+          })}
+        />
+      );
+    }
+
     return (
-      <Navigate
-        replace
-        to={getAppPath(AppPath.AiChat, {
-          threadId: parameters.objectRecordId,
-        })}
+      <RecordShowPageContent
+        parameters={parameters}
+        headerTitleAccessory={
+          <AiChatThreadDetailsDropdown threadId={parameters.objectRecordId} />
+        }
       />
     );
   }

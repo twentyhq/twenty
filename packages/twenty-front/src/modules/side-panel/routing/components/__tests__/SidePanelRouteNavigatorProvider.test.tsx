@@ -118,6 +118,15 @@ const PanelNavigationProbe = () => {
       >
         main settings
       </button>
+      <button
+        onClick={() =>
+          navigate('/home?panel=%2Fobject%2Fcompany%2Frecord-1', {
+            surface: 'main',
+          })
+        }
+      >
+        main with panel
+      </button>
       <button onClick={() => navigate(-1)}>back</button>
       {shouldRedirect && (
         <Navigate
@@ -287,6 +296,18 @@ describe('SidePanelRouteNavigatorProvider', () => {
     expect(openRoutedPageInSidePanelMock).not.toHaveBeenCalled();
     expect(screen.getByTestId('parent-location')).toHaveTextContent(
       '/object/company/record-1',
+    );
+  });
+
+  it('keeps the panel open when the main location names its side panel page', () => {
+    renderNavigationProbe();
+
+    fireEvent.click(screen.getByRole('button', { name: 'main with panel' }));
+
+    expect(closeSidePanelMenuMock).not.toHaveBeenCalled();
+    expect(openRoutedPageInSidePanelMock).not.toHaveBeenCalled();
+    expect(screen.getByTestId('parent-location')).toHaveTextContent(
+      '/home?panel=%2Fobject%2Fcompany%2Frecord-1',
     );
   });
 
