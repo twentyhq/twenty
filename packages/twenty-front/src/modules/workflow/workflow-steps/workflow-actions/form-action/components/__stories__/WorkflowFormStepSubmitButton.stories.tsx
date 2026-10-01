@@ -47,10 +47,10 @@ const FormSubmission = () => {
 };
 
 const createHandlers = ({
-  threadId,
+  threadId = THREAD_ID,
   errorCode,
 }: {
-  threadId?: string;
+  threadId?: string | null;
   errorCode?: string;
 } = {}) => [
   graphql.query('FindOneWorkflowRun', () =>
@@ -74,7 +74,7 @@ const createHandlers = ({
       },
     }),
   ),
-  graphql.mutation(threadId ? 'AnswerToolCall' : 'SubmitFormStep', () =>
+  graphql.mutation('AnswerToolCall', () =>
     HttpResponse.json(
       errorCode
         ? {
@@ -89,14 +89,12 @@ const createHandlers = ({
             ],
           }
         : {
-            data: threadId
-              ? {
-                  answerToolCall: {
-                    __typename: 'AnswerToolCallResult',
-                    streamId: null,
-                  },
-                }
-              : { submitFormStep: true },
+            data: {
+              answerToolCall: {
+                __typename: 'AnswerToolCallResult',
+                streamId: null,
+              },
+            },
           },
     ),
   ),
@@ -125,7 +123,7 @@ const meta: Meta<typeof FormSubmission> = {
 export default meta;
 type Story = StoryObj<typeof FormSubmission>;
 
-export const WithoutConversation: Story = {
+export const Submitted: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -136,29 +134,29 @@ export const WithoutConversation: Story = {
   },
 };
 
-export const WithConversation: Story = {
-  parameters: { msw: { handlers: createHandlers({ threadId: THREAD_ID }) } },
-  play: WithoutConversation.play,
+const expectNoLongerPending: Story['play'] = async ({ canvasElement }) => {
+  const canvas = within(canvasElement);
+
+  await userEvent.click(await canvas.findByRole('button', { name: /Submit/ }));
+  expect(
+    await within(document.body).findByText(
+      'This form no longer waits for an answer',
+    ),
+  ).toBeVisible();
+  expect(canvas.queryByText('Form submitted')).not.toBeInTheDocument();
+  expect(canvas.getByRole('button', { name: /Submit/ })).toBeEnabled();
+};
+
+export const WithoutConversation: Story = {
+  parameters: { msw: { handlers: createHandlers({ threadId: null }) } },
+  play: expectNoLongerPending,
 };
 
 export const NoLongerPending: Story = {
   parameters: {
     msw: { handlers: createHandlers({ errorCode: 'TOOL_CALL_NOT_PENDING' }) },
   },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    await userEvent.click(
-      await canvas.findByRole('button', { name: /Submit/ }),
-    );
-    expect(
-      await within(document.body).findByText(
-        'This form no longer waits for an answer',
-      ),
-    ).toBeVisible();
-    expect(canvas.queryByText('Form submitted')).not.toBeInTheDocument();
-    expect(canvas.getByRole('button', { name: /Submit/ })).toBeEnabled();
-  },
+  play: expectNoLongerPending,
 };
 
 export const SubmissionError: Story = {

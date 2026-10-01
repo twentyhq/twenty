@@ -45,8 +45,8 @@ import { AgentHistoryMigrationStateService } from 'src/database/commands/agent-h
 import { AgentHistoryMigrationService } from 'src/database/commands/agent-history/agent-history-migration.service';
 import { AGENT_HISTORY_TABLES } from 'src/database/commands/agent-history/agent-history-tables.constant';
 import { AGENT_HISTORY_TEST_SCHEMA } from 'src/database/commands/agent-history/__tests__/agent-history-test-schema.constant';
-import { AgentHistoryStorageService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-storage.service';
-import { AGENT_HISTORY_STORAGE_KEY } from 'src/engine/metadata-modules/ai/ai-history/constants/agent-history-storage-key.constant';
+import { AgentHistoryUpgradeStorageService } from 'src/database/commands/agent-history/agent-history-upgrade-storage.service';
+import { AGENT_HISTORY_MIGRATION_STORAGE_KEY } from 'src/database/commands/agent-history/agent-history-migration-storage-key.constant';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 
 const DATABASE_URL = process.env.AGENT_HISTORY_TEST_DATABASE_URL;
@@ -67,7 +67,7 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       entities: [],
       synchronize: false,
     });
-    const storage = new AgentHistoryStorageService(dataSource);
+    const storage = new AgentHistoryUpgradeStorageService(dataSource);
     const workspaceStorage = new AgentHistoryWorkspaceStorageService(
       dataSource,
     );
@@ -112,7 +112,6 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         ).idByNameSingular,
         featureFlagsMap: {} as Record<FeatureFlagKey, boolean>,
         billingEntitlements: {},
-        isRecordSharingEnabled: false,
         userWorkspaceRoleMap: {},
         apiKeyRoleMap: {},
         eventEmitterService: { emitDatabaseBatchEvent },
@@ -701,7 +700,7 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
     it('serializes competing migration runners', async () => {
       const runner = dataSource.createQueryRunner();
       await runner.connect();
-      const key = `${AGENT_HISTORY_STORAGE_KEY}:runner:${WORKSPACE_ID}`;
+      const key = `${AGENT_HISTORY_MIGRATION_STORAGE_KEY}:runner:${WORKSPACE_ID}`;
       await runner.query('SELECT pg_advisory_lock(hashtextextended($1, 0))', [
         key,
       ]);

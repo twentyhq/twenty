@@ -105,16 +105,11 @@ describe('ToolCallAnswerService', () => {
     };
     const workflowRunnerWorkspaceService = {
       resumeAnsweredStep: jest.fn().mockResolvedValue(undefined),
-      completeFormStep: jest.fn().mockResolvedValue(true),
-      resume: jest.fn().mockResolvedValue(undefined),
     };
     const step = { id: 'step-id', type: 'AI_AGENT' };
     const workflowRunWorkspaceService = {
       findStepAwaitingAnswer: jest.fn().mockResolvedValue(step),
       endWorkflowRun: jest.fn().mockResolvedValue(undefined),
-      getWorkflowRun: jest.fn().mockResolvedValue({
-        state: { stepInfos: { 'step-id': { threadId: 'thread-id' } } },
-      }),
     };
     const permissionsService = {
       userHasWorkspaceSettingPermission: jest
@@ -143,10 +138,6 @@ describe('ToolCallAnswerService', () => {
         message: 'Email sent successfully to tim@apple.dev',
         result: { messageId: 'sent-message-id' },
       }),
-    };
-
-    const agentHistoryWorkspaceStorageService = {
-      run: jest.fn().mockImplementation((_workspaceId, work) => work()),
     };
 
     const service = new ToolCallAnswerService(
@@ -178,12 +169,10 @@ describe('ToolCallAnswerService', () => {
         }),
       } as never,
       toolRegistryService as never,
-      agentHistoryWorkspaceStorageService as never,
     );
 
     return {
       service,
-      agentHistoryWorkspaceStorageService,
       step,
       agentChatService,
       agentChatStreamingService,
@@ -666,301 +655,6 @@ describe('ToolCallAnswerService', () => {
           workflowRunnerWorkspaceService.resumeAnsweredStep,
         ).not.toHaveBeenCalled();
       });
-    });
-  });
-
-  describe('form submissions without a conversation', () => {
-    const formArguments = {
-      workflowRunId: 'workflow-run-id',
-      stepId: 'step-id',
-      response: { discount: '20%' },
-      userWorkspaceId: 'user-workspace-id',
-      workspaceMemberId: 'member-id',
-      workspace,
-    };
-    const formStep = {
-      id: 'step-id',
-      type: 'FORM',
-      settings: { input: FORM_FIELDS },
-    };
-    const pendingRun = {
-      status: 'RUNNING',
-      state: {
-        stepInfos: { 'step-id': { status: 'PENDING' } },
-        flow: { steps: [formStep] },
-      },
-    };
-    const buildFormService = (options: BuildOptions = {}) => {
-      const result = buildService(options);
-      result.workflowRunWorkspaceService.getWorkflowRun.mockResolvedValue(
-        pendingRun,
-      );
-      return result;
-    };
-
-    it('validates and resumes a form that has no conversation yet', async () => {
-      const { service, workflowRunnerWorkspaceService, agentChatService } =
-        buildFormService();
-
-      await service.answerFormStep(formArguments);
-
-      expect(
-        workflowRunnerWorkspaceService.completeFormStep,
-      ).toHaveBeenCalledWith({
-        workspaceId: workspace.id,
-        workflowRunId: formArguments.workflowRunId,
-        step: formStep,
-        expectedThreadId: null,
-        response: formArguments.response,
-      });
-      expect(agentChatService.findToolPart).not.toHaveBeenCalled();
-      expect(workflowRunnerWorkspaceService.resume).toHaveBeenCalledWith({
-        workspaceId: workspace.id,
-        workflowRunId: formArguments.workflowRunId,
-        lastExecutedStepId: formArguments.stepId,
-      });
-    });
-
-    it('fails the run after releasing the history fence if its accepted answer cannot be resumed', async () => {
-      const {
-        service,
-        workflowRunnerWorkspaceService,
-        workflowRunWorkspaceService,
-        agentHistoryWorkspaceStorageService,
-      } = buildFormService();
-      const queueError = new Error('Queue unavailable');
-      let isHistoryFenceHeld = false;
-
-      agentHistoryWorkspaceStorageService.run.mockImplementation(
-        async (_workspaceId, work) => {
-          isHistoryFenceHeld = true;
-
-          try {
-            return await work();
-          } finally {
-            isHistoryFenceHeld = false;
-          }
-        },
-      );
-      workflowRunnerWorkspaceService.completeFormStep.mockImplementation(
-        async () => {
-          expect(isHistoryFenceHeld).toBe(true);
-
-          return true;
-        },
-      );
-      workflowRunnerWorkspaceService.resume.mockImplementation(async () => {
-        expect(isHistoryFenceHeld).toBe(false);
-
-        throw queueError;
-      });
-      workflowRunWorkspaceService.endWorkflowRun.mockImplementation(
-        async () => {
-          expect(isHistoryFenceHeld).toBe(false);
-        },
-      );
-
-      await expect(service.answerFormStep(formArguments)).rejects.toBe(
-        queueError,
-      );
-      expect(workflowRunWorkspaceService.endWorkflowRun).toHaveBeenCalledWith({
-        workspaceId: workspace.id,
-        workflowRunId: formArguments.workflowRunId,
-        status: 'FAILED',
-        error: 'The run could not resume after its form was answered',
-      });
-    });
-
-    it('uses the conversation if the backfill finished before the submission acquired its lock', async () => {
-      const {
-        service,
-        workflowRunWorkspaceService,
-        workflowRunnerWorkspaceService,
-        agentHistoryWorkspaceStorageService,
-      } = buildFormService();
-      workflowRunWorkspaceService.getWorkflowRun
-        .mockResolvedValueOnce(pendingRun)
-        .mockResolvedValueOnce({
-          ...pendingRun,
-          state: {
-            ...pendingRun.state,
-            stepInfos: {
-              'step-id': { status: 'PENDING', threadId: 'backfilled-thread' },
-            },
-          },
-        });
-      const answer = jest
-        .spyOn(service, 'answer')
-        .mockResolvedValue({ streamId: null, turnId: null });
-
-      await service.answerFormStep(formArguments);
-
-      expect(agentHistoryWorkspaceStorageService.run).toHaveBeenCalledWith(
-        workspace.id,
-        expect.any(Function),
-        { lockMode: 'exclusive' },
-      );
-      expect(answer).toHaveBeenCalledWith(
-        expect.objectContaining({
-          threadId: 'backfilled-thread',
-          toolCallId: 'step-id',
-        }),
-      );
-      expect(
-        workflowRunnerWorkspaceService.completeFormStep,
-      ).not.toHaveBeenCalled();
-      expect(workflowRunnerWorkspaceService.resume).not.toHaveBeenCalled();
-    });
-
-    it('requires workflow permission before reading or answering the run', async () => {
-      const {
-        service,
-        workflowRunWorkspaceService,
-        workflowRunnerWorkspaceService,
-      } = buildFormService({ hasPermission: false });
-
-      await expect(service.answerFormStep(formArguments)).rejects.toMatchObject(
-        { code: 'TOOL_CALL_RESOLUTION_FORBIDDEN' },
-      );
-      expect(workflowRunWorkspaceService.getWorkflowRun).not.toHaveBeenCalled();
-      expect(
-        workflowRunnerWorkspaceService.completeFormStep,
-      ).not.toHaveBeenCalled();
-    });
-
-    it('requires access to the specific run', async () => {
-      const { service, workflowRunRepository, workflowRunnerWorkspaceService } =
-        buildFormService();
-      workflowRunRepository.findOne.mockResolvedValue(null);
-
-      await expect(service.answerFormStep(formArguments)).rejects.toMatchObject(
-        { code: 'TOOL_CALL_NOT_FOUND' },
-      );
-      expect(
-        workflowRunnerWorkspaceService.completeFormStep,
-      ).not.toHaveBeenCalled();
-    });
-
-    it.each([
-      { ...pendingRun, status: 'STOPPED' },
-      {
-        ...pendingRun,
-        state: {
-          ...pendingRun.state,
-          stepInfos: { 'step-id': { status: 'SUCCESS' } },
-        },
-      },
-      {
-        ...pendingRun,
-        state: {
-          ...pendingRun.state,
-          stepInfos: { 'step-id': { status: 'PENDING', error: 'failed' } },
-        },
-      },
-      {
-        ...pendingRun,
-        state: {
-          ...pendingRun.state,
-          flow: { steps: [{ ...formStep, type: 'AI_AGENT' }] },
-        },
-      },
-      { ...pendingRun, state: { ...pendingRun.state, flow: { steps: [] } } },
-    ])('rejects a run without an answerable form: %j', async (run) => {
-      const {
-        service,
-        workflowRunWorkspaceService,
-        workflowRunnerWorkspaceService,
-      } = buildFormService();
-      workflowRunWorkspaceService.getWorkflowRun.mockResolvedValue(run);
-
-      await expect(service.answerFormStep(formArguments)).rejects.toMatchObject(
-        { code: 'TOOL_CALL_NOT_PENDING' },
-      );
-      expect(
-        workflowRunnerWorkspaceService.completeFormStep,
-      ).not.toHaveBeenCalled();
-    });
-
-    it('validates answers with the same schema as conversation forms', async () => {
-      const { service, workflowRunnerWorkspaceService } = buildFormService();
-
-      await expect(
-        service.answerFormStep({
-          ...formArguments,
-          response: { unknownField: 'value' },
-        }),
-      ).rejects.toMatchObject({ code: 'INVALID_TOOL_CALL_OUTPUT' });
-      expect(
-        workflowRunnerWorkspaceService.completeFormStep,
-      ).not.toHaveBeenCalled();
-    });
-
-    it('rejects an answer when another submission or a conversation claimed the step', async () => {
-      const {
-        service,
-        workflowRunnerWorkspaceService,
-        workflowRunWorkspaceService,
-      } = buildFormService();
-      workflowRunnerWorkspaceService.completeFormStep.mockResolvedValue(false);
-
-      await expect(service.answerFormStep(formArguments)).rejects.toMatchObject(
-        { code: 'TOOL_CALL_NOT_PENDING' },
-      );
-      expect(workflowRunnerWorkspaceService.resume).not.toHaveBeenCalled();
-      expect(workflowRunWorkspaceService.endWorkflowRun).not.toHaveBeenCalled();
-    });
-  });
-
-  describe('the deprecated entry points', () => {
-    it('answers a form step through the call named after it in its conversation', async () => {
-      const { service, agentChatService } = buildService({
-        thread: { ...waitingThread, workflowRunId: 'workflow-run-id' },
-        toolPart: {
-          ...questionPart,
-          toolName: 'request_form',
-          toolInput: { fields: FORM_FIELDS },
-          toolOutput: { result: { status: 'pending' } },
-        },
-      });
-
-      await service.answerFormStep({
-        workflowRunId: 'workflow-run-id',
-        stepId: 'step-id',
-        response: { discount: '20%' },
-        userWorkspaceId: 'user-workspace-id',
-        workspaceMemberId: 'member-id',
-        workspace,
-      });
-
-      expect(agentChatService.findToolPart).toHaveBeenCalledWith({
-        threadId: 'thread-id',
-        toolCallId: 'step-id',
-        workspaceId: 'workspace-id',
-      });
-    });
-
-    it('answers the questions a message asked', async () => {
-      const { service, agentChatService } = buildService();
-
-      agentChatService.findAwaitingToolParts.mockResolvedValueOnce([
-        { ...questionPart, toolCallId: 'tool-call-id' },
-      ]);
-
-      await service.answerQuestionsOfMessage({
-        threadId: 'thread-id',
-        messageId: 'question-message-id',
-        response: { answers: ANSWERS },
-        userWorkspaceId: 'user-workspace-id',
-        workspaceMemberId: 'member-id',
-        workspace,
-      });
-
-      expect(agentChatService.findToolPart).toHaveBeenCalledWith({
-        threadId: 'thread-id',
-        toolCallId: 'tool-call-id',
-        workspaceId: 'workspace-id',
-      });
-      expect(agentChatService.recordToolCallAnswer).toHaveBeenCalled();
     });
   });
 });

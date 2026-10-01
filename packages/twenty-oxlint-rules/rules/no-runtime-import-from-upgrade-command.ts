@@ -2,8 +2,10 @@ import { defineRule } from '@oxlint/plugins';
 
 export const RULE_NAME = 'no-runtime-import-from-upgrade-command';
 
-const UPGRADE_COMMAND_IMPORT_PREFIX =
-  'src/database/commands/upgrade-version-command/';
+const UPGRADE_COMMAND_IMPORT_PREFIXES = [
+  'src/database/commands/upgrade-version-command/',
+  'src/database/commands/agent-history/',
+];
 
 const ALLOWED_IMPORT_REGEX = /-upgrade-command-name\.constants?$/;
 
@@ -20,7 +22,7 @@ const isExemptFile = (filename: string): boolean =>
   EXEMPT_FILE_REGEXES.some((regex) => regex.test(filename));
 
 const isForbiddenImportSource = (source: string): boolean =>
-  source.startsWith(UPGRADE_COMMAND_IMPORT_PREFIX) &&
+  UPGRADE_COMMAND_IMPORT_PREFIXES.some((prefix) => source.startsWith(prefix)) &&
   !ALLOWED_IMPORT_REGEX.test(source);
 
 export const rule = defineRule({

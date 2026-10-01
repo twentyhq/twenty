@@ -160,61 +160,20 @@ describe('WorkflowRunWorkspaceService conversations', () => {
         'the step holds another conversation',
         { stepInfo: { status: StepStatus.PENDING, threadId: 'other-thread' } },
       ],
+      [
+        'the step failed while waiting',
+        {
+          stepInfo: {
+            status: StepStatus.PENDING,
+            threadId: 'thread-id',
+            error: 'boom',
+          },
+        },
+      ],
     ])('claims nothing when %s', async (_description, overrides) => {
       const { service, updateWorkflowRun } = buildService(overrides);
 
       expect(await claimInConversation(service)).toBe(false);
-      expect(updateWorkflowRun).not.toHaveBeenCalled();
-    });
-  });
-
-  describe('form steps without a conversation', () => {
-    const completeForm = (service: WorkflowRunWorkspaceService) =>
-      service.updateStepInfoIfPending({
-        stepId: 'step-id',
-        stepInfo: { status: StepStatus.SUCCESS, result: { name: 'Tim' } },
-        expectedThreadId: null,
-        workflowRunId: 'workflow-run-id',
-        workspaceId: 'workspace-id',
-      });
-
-    it('completes a pending form exactly once', async () => {
-      const { service, updateWorkflowRun } = buildService({
-        stepInfo: { status: StepStatus.PENDING },
-      });
-      updateWorkflowRun.mockImplementation(async ({ partialUpdate }) => {
-        jest.spyOn(service, 'getWorkflowRunOrFail').mockResolvedValue({
-          id: 'workflow-run-id',
-          status: WorkflowRunStatus.RUNNING,
-          state: partialUpdate.state,
-        } as never);
-      });
-
-      expect(await completeForm(service)).toBe(true);
-      expect(await completeForm(service)).toBe(false);
-      expect(updateWorkflowRun).toHaveBeenCalledTimes(1);
-    });
-
-    it.each([
-      [
-        'a conversation was added',
-        { stepInfo: { status: StepStatus.PENDING, threadId: 'new-thread' } },
-      ],
-      [
-        'the run stopped',
-        {
-          status: WorkflowRunStatus.STOPPED,
-          stepInfo: { status: StepStatus.PENDING },
-        },
-      ],
-      [
-        'the form failed',
-        { stepInfo: { status: StepStatus.PENDING, error: 'failed' } },
-      ],
-    ])('does not complete when %s', async (_description, overrides) => {
-      const { service, updateWorkflowRun } = buildService(overrides);
-
-      expect(await completeForm(service)).toBe(false);
       expect(updateWorkflowRun).not.toHaveBeenCalled();
     });
   });

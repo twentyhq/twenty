@@ -1,10 +1,10 @@
 import { type DataSource, type QueryRunner } from 'typeorm';
 import { ServiceUnavailableException } from '@nestjs/common';
 
-import { AgentHistoryStorageService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-storage.service';
+import { AgentHistoryUpgradeStorageService } from 'src/database/commands/agent-history/agent-history-upgrade-storage.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 
-describe('AgentHistoryStorageService', () => {
+describe('AgentHistoryUpgradeStorageService', () => {
   const workspaceId = '20202020-1111-4111-8111-111111111111';
   const runner = {
     hasSchema: jest.fn(),
@@ -17,7 +17,7 @@ describe('AgentHistoryStorageService', () => {
     manager: {},
     isTransactionActive: true,
   };
-  const service = new AgentHistoryStorageService({
+  const service = new AgentHistoryUpgradeStorageService({
     createQueryRunner: () => runner,
   } as unknown as DataSource);
 
