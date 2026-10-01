@@ -1,3 +1,4 @@
+import { AddApplicationWorkflowSideEffectsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-45/2-45-instance-command-fast-1790853315722-add-application-workflow-side-effects';
 // Auto-edited by generate:instance-command — do not edit manually
 
 import { AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand } from 'src/database/commands/upgrade-version-command/1-21/1-21-instance-command-fast-1775129420309-add-view-field-group-id-index-on-view-field';
@@ -437,5 +438,6 @@ export const INSTANCE_COMMANDS = [
   ReapplyUsageLimitPeriodReshapeFastInstanceCommand,
   AddChatWidgetTypeFastInstanceCommand,
   DropLegacyCampaignSendingCoreTablesFastInstanceCommand,
+  AddApplicationWorkflowSideEffectsFastInstanceCommand,
   AddDiscoverableReadabilityFastInstanceCommand,
 ];
