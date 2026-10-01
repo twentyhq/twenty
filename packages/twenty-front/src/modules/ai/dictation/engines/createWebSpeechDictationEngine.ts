@@ -139,7 +139,7 @@ export const createWebSpeechDictationEngine = ({
         emitter.emit({ type: 'final', text: finalText });
       }
 
-      // Emitted even when empty: the settling result carries no interim for its utterance.
+      // Emitted even when empty: the settling result carries no interim, so the hint would keep showing settled words.
       emitter.emit({ type: 'interim', text: interimText });
     };
 
@@ -239,7 +239,7 @@ export const createWebSpeechDictationEngine = ({
 
     stop: stopRecognition,
 
-    // abort() ends the session without delivering a result, unlike stop().
+    // abort(), unlike stop(), delivers no result, so a half-heard utterance can't land in the draft after a send.
     cancel: () => {
       requestSessionEnd('abort');
     },

@@ -62,7 +62,7 @@ export class OAuthDiscoveryController {
     };
   }
 
-  // RFC 9728 §3.2: `resource` must equal the identifier the well-known suffix was inserted into
+  // RFC 9728 §3.2: `resource` must equal the identifier the well-known suffix was inserted into; strict clients reject a mismatch
   @Get('oauth-protected-resource')
   @UseGuards(PublicEndpointGuard, NoPermissionGuard)
   getProtectedResourceMetadataRoot(@Req() request: Request) {

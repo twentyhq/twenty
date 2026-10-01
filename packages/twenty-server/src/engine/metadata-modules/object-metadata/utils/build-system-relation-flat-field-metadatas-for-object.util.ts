@@ -24,7 +24,7 @@ type DefaultRelationStandardObjectNameSingular =
 type OptionalDefaultRelationStandardObjectNameSingular =
   (typeof OPTIONAL_DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS)[number];
 
-// Partial: a backfill passes only the target it provisions
+// A pair is built per target passed: object creation passes the defaults, a backfill only the target it provisions
 export type StandardTargetFlatObjectMetadataByNameSingular = Partial<
   Record<
     | DefaultRelationStandardObjectNameSingular

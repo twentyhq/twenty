@@ -456,7 +456,7 @@ export class TimelineActivityService {
         },
       );
 
-    // This enrichment read can race the transaction that created the linked record
+    // The junction event is the fact; this enrichment read can race the transaction that created the linked record
     return eventsWithJunctionRecord.map(({ event, target, sourceRecordId }) => {
       const sourceRecord = sourceRecordsByRecordId.get(sourceRecordId);
 

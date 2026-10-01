@@ -235,7 +235,7 @@ export const RichTextFieldEditor = ({
       | { blocknote?: string | null }
       | undefined;
 
-    // Only after capturing the pre-edit body: an earlier optimistic persist would blind the attachment diff.
+    // Only after capturing the pre-edit body: persisting rewrites the record, so the diff would miss removed attachments.
     updateDraft({ blocknote: newStringifiedBody });
 
     await syncAttachments(newStringifiedBody, oldFieldValue?.blocknote);

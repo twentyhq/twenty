@@ -38,7 +38,8 @@ const toEvaluationQuestion = (
         criteria: buildChoiceCriteria(question),
       };
     case 'score':
-      // The editor seeds description with '', so this cannot be a nullish fallback
+      // A level's position is its score, so editor order is the rubric. The editor seeds description with '',
+      // so the name fallback cannot be nullish
       return {
         type: 'score',
         instructions: question.instructions,

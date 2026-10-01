@@ -74,7 +74,7 @@ export const useSaveRecordTableWidgetViews = () => {
           continue;
         }
 
-        // Every widget gets a draft on entering edit mode; only touched ones need an upsert.
+        // Every view-backed widget gets a draft on entering edit mode; only touched ones need an upsert.
         if (
           isDeeplyEqual(
             recordTableWidgetViewPersisted[widget.id],

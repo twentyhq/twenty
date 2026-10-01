@@ -15,7 +15,8 @@ import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
-// Application tokens are stateless JWTs, so this row is the only record of an authorization to list or revoke
+// One row per user authorization_code exchange: tokens are stateless JWTs, so this is the only record to list or revoke.
+// client_credentials involves no user and has no row.
 @Entity({ name: 'applicationAuthorization', schema: 'core' })
 @Index(
   'IDX_APPLICATION_AUTHORIZATION_USER_APPLICATION_UNIQUE',
@@ -35,7 +36,7 @@ export class ApplicationAuthorizationEntity {
   })
   user: Relation<UserEntity>;
 
-  // No index of its own: it leads the unique index declared on the class
+  // No index of its own: it leads the class's unique index, which serves the per-user listing and the cascade delete
   @Column({ type: 'uuid' })
   userId: string;
 
@@ -65,7 +66,7 @@ export class ApplicationAuthorizationEntity {
   @Column({ type: 'uuid' })
   applicationId: string;
 
-  // Member removal soft-deletes, so this rarely cascades: the refresh path rechecks membership
+  // Cascades only on hard delete; member removal soft-deletes, so the refresh path rechecks membership
   @ManyToOne(() => UserWorkspaceEntity, {
     onDelete: 'CASCADE',
   })
@@ -79,7 +80,7 @@ export class ApplicationAuthorizationEntity {
   @Column({ type: 'uuid' })
   userWorkspaceId: string;
 
-  // Null on rows backfilled from refresh tokens predating this table, which carry no scope claim
+  // As granted at the last exchange, i.e. what the user consented to; null on rows backfilled from pre-table refresh tokens (no scope claim)
   @Column({ type: 'text', array: true, nullable: true })
   scopes: string[] | null;
 

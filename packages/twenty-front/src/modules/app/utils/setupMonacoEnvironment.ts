@@ -6,6 +6,7 @@ import JsonWorker from 'monaco-editor/esm/vs/language/json/json.worker.js?worker
 import TypeScriptWorker from 'monaco-editor/esm/vs/language/typescript/ts.worker.js?worker';
 import GraphqlWorker from 'monaco-graphql/esm/graphql.worker.js?worker';
 
+// One global shared by every editor on the page, so it is set up once for the whole app.
 // Every label must be mapped: an unmapped one falls back to the generic worker and its language features silently die.
 const monacoEnvironment: Environment = {
   getWorker: (_workerId, label) => {

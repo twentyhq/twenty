@@ -57,6 +57,7 @@ type TimelineActivitySeedData = Pick<
   | 'targetCompanyId'
   | 'targetOpportunityId'
 > & {
+  // serialized (JSON or ISO strings) for raw insertion
   timelineActivityTypeSnapshot: string;
   properties: string;
   createdAt: string;

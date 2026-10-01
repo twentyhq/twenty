@@ -130,7 +130,8 @@ export const computeWhereConditionParts = ({
           ? { [`${key}${secondParamSuffix}`]: nullEquivalentFieldValue }
           : {},
       };
-    // Keyset cursors must mirror SQL scan order, where only real NULLs sort into the NULL block
+    // Keyset cursors must mirror SQL scan order, where only real NULLs sort into the NULL block, so the
+    // empty-value widening of 'is' and 'eq' would skip or duplicate rows at the block boundaries
     case 'isStrictly':
       return {
         sql: `${fieldReference} IS ${value === 'NULL' ? 'NULL' : 'NOT NULL'}`,

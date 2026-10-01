@@ -31,7 +31,7 @@ export const aiProviderModelConfigSchema = z
     supportsReasoning: z.boolean().optional(),
     // unset means the provider default only
     efforts: z.array(z.enum(AI_MODEL_EFFORTS)).nonempty().optional(),
-    // contractual per route, so undefined means unasserted rather than false
+    // contractual per route, so undefined means unasserted rather than false; per model since one Bedrock provider serves eu.* and global.*
     dataResidency: z.enum(DATA_RESIDENCY_KEYS).optional(),
     zeroDataRetention: z.boolean().optional(),
     benchmark: aiModelBenchmarkSchema.optional(),
@@ -51,7 +51,7 @@ export const aiProviderModelConfigSchema = z
     (model) =>
       model.kind !== 'transcription' || model.costPerMinute !== undefined,
     {
-      // an omitted price bills nothing while the provider still charges
+      // an omitted price bills nothing while the provider still charges, so a free model states 0
       message: 'costPerMinute is required for transcription models',
       path: ['costPerMinute'],
     },
@@ -78,7 +78,7 @@ export const aiProviderModelConfigSchema = z
       (model.inputCostPerMillionTokens !== undefined &&
         model.outputCostPerMillionTokens !== undefined),
     {
-      // same rule as transcription models
+      // same rule as transcription models: an omitted price bills nothing, so free output states 0
       message:
         'inputCostPerMillionTokens and outputCostPerMillionTokens are required for evaluation models',
       path: ['inputCostPerMillionTokens'],

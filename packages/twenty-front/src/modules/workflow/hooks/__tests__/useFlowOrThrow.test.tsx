@@ -41,7 +41,7 @@ const buildWrapper =
   );
 
 describe('useFlowOrThrow', () => {
-  // The side panel step editor reuses the main diagram's visualizer instance id to read its flow
+  // The side panel step editor reuses the main diagram's visualizer instance id; per-surface ids would read another atom and crash on step click
   it('reads a flow written on the main surface from a side panel sharing the instance id', () => {
     const store = createStore();
     const flow = {

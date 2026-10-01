@@ -1,4 +1,4 @@
-// The breakpoint is width-based, so only coarse pointers (which can swipe) lose the scrollbar
+// A width breakpoint also matches narrow desktop windows, where a mouse cannot swipe, so only coarse pointers lose the scrollbar
 export const SCROLLABLE_TAB_ROW_CSS = `
   overflow-y: hidden;
 

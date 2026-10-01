@@ -58,7 +58,8 @@ const resolveClosingPeriodStart = ({
     return subscriptionCurrentPeriodStart;
   }
 
-  // Calendar arithmetic is wrong for month-end anchors (Jan 31 to Feb 28 comes back as Jan 28).
+  // Recorded when the subscription advanced, so exact for any anchor; calendar arithmetic turns a Jan 31 start into Jan 28,
+  // widening the usage window and dragging expired grants into the carry-forward.
   if (
     isDefined(subscriptionPreviousPeriodStart) &&
     subscriptionPreviousPeriodStart.getTime() < boundary.getTime()

@@ -4,13 +4,13 @@ import {
   type Experimental_EvaluationQuestion,
 } from 'ai';
 
-// aliases keep the SDK's experimental prefix out of engine code
+// aliases, not copies: an SDK spec change breaks the build here; they keep the experimental prefix out of engine code
 
 export type AiEvaluationModel = Experimental_EvaluationModel;
 
 export type AiEvaluationModelQuestion = Experimental_EvaluationQuestion;
 
-// distributes over the question union
+// distributes over the question union, so this is every answer shape, not one
 export type AiEvaluationModelAnswer =
   Experimental_EvaluationAnswer<Experimental_EvaluationQuestion>;
 

@@ -166,7 +166,7 @@ describe('MCP tool execution (integration)', () => {
         format: 'uuid',
       });
 
-      // The data-arg-processor only accepts the join-column form for write operations
+      // Morph relations must be exposed as `${name}Id` UUIDs: the data-arg-processor only accepts that form for writes
       expect(resolveProperty(properties?.targetCompanyId)).toMatchObject({
         type: 'string',
         format: 'uuid',

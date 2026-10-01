@@ -9,6 +9,7 @@ type GetTimelineActivityRecordGqlFieldsParams = Pick<
 >;
 
 // Cached linked labels predate permission checks, so only the authorized live record identifier may render.
+// Morph relations are skipped because each morph target is resolved by its own query.
 export const getTimelineActivityRecordGqlFields = ({
   objectMetadataItems,
   fields,

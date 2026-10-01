@@ -9,7 +9,7 @@ import { WorkflowRunRecordShareService } from 'src/engine/core-modules/workflow/
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
-// standalone because its callers (run creation, visibility, member removal) already depend on each other
+// Its own module because its callers (run creation, visibility changes, member removal) already depend on each other
 @Module({
   imports: [
     TypeOrmModule.forFeature([WorkflowEntity, UserWorkspaceEntity]),

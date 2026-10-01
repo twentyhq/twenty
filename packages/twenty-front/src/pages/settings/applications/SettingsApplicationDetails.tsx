@@ -195,7 +195,7 @@ export const SettingsApplicationDetails = () => {
 
   const tabs: SingleTabProps[] = [
     { id: GENERAL_TAB_ID, title: t`General`, Icon: IconSettings },
-    // A custom settings tab lays out the application variables itself
+    // A custom settings tab lays out the application variables itself, so this tab would duplicate them
     ...(hasVariablesTab
       ? [{ id: VARIABLES_TAB_ID, title: t`Variables`, Icon: IconVariable }]
       : []),

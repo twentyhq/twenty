@@ -11,7 +11,7 @@ export const isValidJunctionTargetField = ({
   fieldMetadataItem: FieldMetadataItem;
   sourceFieldMetadataId?: string;
 }): boolean => {
-  // Keep aligned with the server's validateJunctionTargetSettings.
+  // Keep relation direction and source-group exclusion aligned with the server's validateJunctionTargetSettings.
   const relations = getFieldRelations(fieldMetadataItem);
 
   return (

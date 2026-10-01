@@ -120,7 +120,7 @@ describe('mostlyEmptyFieldMetadataIds', () => {
       await fetchMostlyEmptyFieldMetadataIds(testObjectMetadataId),
     ).toEqual([]);
 
-    // name is the label identifier and system fields are excluded.
+    // Past the gate, only the untouched custom text field hits: name is the label identifier and system fields are excluded.
     await insertProbeRecords(100);
     await analyzeProbeTable();
 

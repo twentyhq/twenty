@@ -3,7 +3,8 @@ import { utf8ToBytes } from '@noble/hashes/utils';
 
 import { isDefined } from '../utils/validation/isDefined';
 
-// Server, SDK and the sandboxed front-component worker must emit Lingui's ids byte for byte, so this stays pure JS.
+// Server, SDK and the sandboxed front-component worker must emit Lingui's ids byte for byte (drift silently untranslates),
+// so this is the single implementation, in pure JS.
 const UNIT_SEPARATOR = String.fromCharCode(0x1f);
 
 // The cap bounds a workspace that mints unusual labels.

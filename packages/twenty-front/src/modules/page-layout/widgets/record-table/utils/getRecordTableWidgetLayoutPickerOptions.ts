@@ -56,7 +56,7 @@ export const getSelectableLayoutViewTypes = (
     .filter((layoutOption) => !layoutOption.isDisabled)
     .map((layoutOption) => layoutOption.viewType);
 
-// A disabled row can still be reached by keyboard.
+// A disabled row can still be reached by keyboard, so selection checks the same options the picker renders.
 export const isSelectableLayout = (
   layoutOptions: RecordTableWidgetLayoutPickerOption[],
   viewType: RecordTableWidgetLayoutViewType,

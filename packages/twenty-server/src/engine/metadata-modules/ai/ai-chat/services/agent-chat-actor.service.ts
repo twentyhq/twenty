@@ -72,7 +72,7 @@ export class AgentChatActorService {
         AiExceptionCode.MESSAGE_NOT_FOUND,
       );
     }
-    // never fall back to the worker's caller or the participant whose turn drained the queue
+    // only pre-attribution messages inherit the thread's member; never the worker's caller or the participant whose turn drained the queue
     let userWorkspaceId = message.senderUserWorkspaceId;
     if (!isDefined(userWorkspaceId)) {
       const thread = await this.threads.findOneOrFail(workspaceId, {

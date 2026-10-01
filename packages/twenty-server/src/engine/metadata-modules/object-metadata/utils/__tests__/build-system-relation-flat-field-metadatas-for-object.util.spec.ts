@@ -44,7 +44,7 @@ const DEFAULT_TARGETS = {
 };
 
 describe('buildSystemRelationFlatFieldMetadatasForObject', () => {
-  // The committed 2-38 backfill depends on this output staying unchanged
+  // The committed 2-38 backfill passes only the default targets, so their output must not change when later targets exist
   it('mints exactly the default pairs when the chat target is not passed', () => {
     const bundles = buildSystemRelationFlatFieldMetadatasForObject({
       sourceFlatObjectMetadata: petFlatObjectMetadata,

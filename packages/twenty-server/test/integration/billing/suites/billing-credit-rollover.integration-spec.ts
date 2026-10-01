@@ -226,7 +226,7 @@ describe('Billing credit rollover (integration)', () => {
     ).toBeNull();
   });
 
-  // Once advanced, calendar arithmetic clamps Feb 28 back to Jan 28 and the closing period swallows three days
+  // A 31st anchor runs Jan 31 to Feb 28; once advanced, calendar arithmetic clamps Feb 28 back to Jan 28 and swallows three days
   describe('a month-end anchor whose subscription already advanced', () => {
     const MONTH_END_BOUNDARY = new Date('2026-02-28T00:00:00.000Z');
     const TRUE_CLOSING_PERIOD_START = new Date('2026-01-31T00:00:00.000Z');

@@ -82,7 +82,8 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: false,
       universalProperty: undefined,
     },
-    // not a column: compared so validators see the change, but the runner drops it before the UPDATE
+    // not a column: compared so validators see the change, but the runner drops it before the UPDATE; the
+    // actual change rides on the side-effect index create/delete
     isUnique: {
       toCompare: true,
       toStringify: false,

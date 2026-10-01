@@ -1,7 +1,8 @@
 import { APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import { normalizeLocale } from 'twenty-shared/utils';
 
-// Web Speech recognises one language per session and can't detect it; navigator.language is the browser UI's.
+// Web Speech can't detect the language and a wrong one yields confident nonsense, not an error, so the
+// member's locale wins over navigator.language, which is the browser UI's.
 export const getDictationLanguage = (
   workspaceMemberLocale?: string | null,
 ): string => {

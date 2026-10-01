@@ -273,7 +273,7 @@ export class ApolloFactory implements ApolloManager {
         }
       });
 
-      // Third-party links (apollo-link-rest, apollo-upload-client) reference their own @apollo/client ApolloLink type.
+      // Cast because third-party links (apollo-link-rest, apollo-upload-client) reference their own ApolloLink type.
       const links = [
         errorLink,
         authLink,

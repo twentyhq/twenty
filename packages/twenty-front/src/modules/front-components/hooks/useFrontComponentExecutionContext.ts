@@ -496,7 +496,7 @@ export const useFrontComponentExecutionContext = ({
 
   const hostUploadFile: FrontComponentHostCommunicationApi['uploadFile'] =
     async (file, params) => {
-      // Sandboxed input: a file uploaded outside a FILES field could never be attached and would leak.
+      // Sandboxed input; fieldMetadataId is mandatory since a file uploaded outside a FILES field could never be attached and would leak.
       if (
         !(file instanceof Blob) ||
         file.size === 0 ||

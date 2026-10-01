@@ -4,7 +4,8 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { DEFAULT_WORKSPACE_AUTO_LOGIN_WINDOW } from 'src/engine/core-modules/auth/constants/default-workspace-auto-login-window.constant';
 
-// A workspace can't clear a cookie it doesn't own, so an agnostic session outlives a subdomain sign-out
+// A workspace can't clear a cookie it doesn't own, so an agnostic session outlives a subdomain sign-out and,
+// converted into workspace access without a bound, would hand the workspace back
 const DEFAULT_WORKSPACE_AUTO_LOGIN_WINDOW_MS = ms(
   DEFAULT_WORKSPACE_AUTO_LOGIN_WINDOW,
 );
@@ -31,7 +32,7 @@ export const canCredentialAutoLoginIntoWorkspaces = ({
 
   const parsedWindowMs = ms(autoLoginWindow);
 
-  // Zero is usable: it deliberately turns the bridge off
+  // An unparseable or negative window would drop the boundary or lock everyone out; zero deliberately turns the bridge off
   const isUsableWindow =
     Number.isFinite(parsedWindowMs) && (parsedWindowMs as number) >= 0;
 

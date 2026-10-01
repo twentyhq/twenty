@@ -62,7 +62,8 @@ export const RecordTableRecordGroupSectionAddNew = () => {
     return null;
   }
 
-  // Linking through a junction never creates a record of the table's object.
+  // Linking through a junction creates no record of the table's object, so its creatability check doesn't apply;
+  // the group filter keeps the linked row in the group it was added from.
   if (isDefined(junctionCreateThrough)) {
     return (
       <RecordTableWidgetJunctionAddNewRow

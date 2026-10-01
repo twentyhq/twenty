@@ -158,7 +158,7 @@ const MediaNotes = () => {
   const [savedRecordId, setSavedRecordId] = useState<string | null>(null);
   const [failedAttach, setFailedAttach] = useState<PendingAttach | null>(null);
   const [isAttaching, setIsAttaching] = useState(false);
-  // Without it the record buttons return mid-upload and two flows race.
+  // Covers the stop-and-upload window: without it the record buttons return mid-upload and two flows race.
   const [isStopping, setIsStopping] = useState(false);
 
   const recordingSessionRef = useRef<RecordingSession | null>(null);

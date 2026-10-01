@@ -16,7 +16,8 @@ const INGEST_APP_MESSAGES_MUTATION = `
   }
 `;
 
-// At most 100 messages per call: one call is one transaction within one logic-function timeout
+// Threading, dedup and privacy are handled server-side. At most 100 messages per call (one transaction
+// within one logic-function timeout), so page provider backfills
 export const ingestMessages = async ({
   messageChannelId,
   messages,

@@ -44,7 +44,8 @@ const CORRECT_CASING: Record<string, string> = {
   Yaml: 'YAML',
 };
 
-// `}` is a boundary so `${fieldName}Id`, a code identifier rather than a word, is left alone
+// `}` is a boundary so `${fieldName}Id`, a code identifier rather than a word, is left alone.
+// The trailing guard rejects `Identity` and `Urls` alike; `Urls` only matches because the map lists it.
 const MISCASED_ACRONYM_REGEX = new RegExp(
   `(?<![A-Za-z}])(${Object.keys(CORRECT_CASING).join('|')})(?![a-z])`,
   'g',

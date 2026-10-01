@@ -124,7 +124,7 @@ describe('aiProviderModelConfigSchema', () => {
     ).toEqual(['supportedQuestionTypes']);
   });
 
-  // an omitted price bills nothing while the provider still charges
+  // free output needs an explicit 0: an omitted price bills nothing while the provider still charges
   it('rejects an evaluation model that omits a token cost', () => {
     expect(
       issuePaths({

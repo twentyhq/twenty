@@ -46,7 +46,8 @@ export class ApplicationAuthorizationService {
     );
   }
 
-  // Scopes and consent time stay null: pre-table refresh tokens carry neither, and today's declared scopes prove nothing
+  // Scopes and consent time stay null: pre-table refresh tokens carry neither, and today's declared scopes prove nothing.
+  // Insert-only, so it never overwrites a row written by a real consent.
   async backfillAuthorizationFromRefreshToken({
     userId,
     workspaceId,

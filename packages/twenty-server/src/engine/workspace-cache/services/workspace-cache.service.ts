@@ -64,7 +64,7 @@ const LOCAL_CACHE_SWEEP_INTERVAL_MS = 60 * 1000;
 const PACKING_INTERVAL_MS = 500;
 const PACKING_PONDERATION_BUDGET = 64;
 const MIN_IDLE_BEFORE_PACKING_MS = 60 * 1000;
-// ORM graphs are ~5 MB each
+// Per-cache-key entry caps; ORM graphs are ~5 MB each
 const MAX_LOCAL_ENTRIES_BY_KEY_NAME = new Map<string, number>([
   ['ORMEntityMetadatas', 128],
   ['flatFieldMetadataMaps', 256],

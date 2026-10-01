@@ -56,7 +56,7 @@ export const RecordPageSidePanelCommandMenuDropdown = () => {
       containerWidth: availableWidth,
     });
 
-  // A widget owning the footer hides the pinned buttons and leaves their measurements stale.
+  // A widget owning the footer hides the pinned buttons and leaves their measurements stale, so list every pinned item here.
   const hasPinnedWidgetCommandMenuItems =
     sidePanelWidgetFooterCommandMenuItems.some(
       (commandMenuItem) => commandMenuItem.isPinned !== false,

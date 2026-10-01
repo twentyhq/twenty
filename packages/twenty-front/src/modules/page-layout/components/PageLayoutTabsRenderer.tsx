@@ -92,7 +92,7 @@ const StyledTabsAndDashboardContainer = styled.div`
   }
 `;
 
-// display: none, not a hidden <Activity>, which skips the effects Apollo fetches from.
+// display: none, not a hidden <Activity>, which skips the effects Apollo fetches from (see pageLayoutTabPrerenderContract.test).
 const StyledTabContentDisplay = styled.div<{ isActiveTab: boolean }>`
   display: ${({ isActiveTab }) => (isActiveTab ? 'contents' : 'none')};
 `;

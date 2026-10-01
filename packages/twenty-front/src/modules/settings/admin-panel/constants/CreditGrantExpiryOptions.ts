@@ -1,7 +1,7 @@
 import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 
-// The server rounds the chosen day up to its billing period end, as credits settle per period.
+// Null (default) keeps credits until used up; the server rounds a chosen day up to its billing period end, as credits settle per period.
 export const CREDIT_GRANT_EXPIRY_OPTIONS: {
   value: number | null;
   label: MessageDescriptor;

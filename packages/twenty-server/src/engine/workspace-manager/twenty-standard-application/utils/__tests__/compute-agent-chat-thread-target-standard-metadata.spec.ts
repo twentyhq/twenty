@@ -66,6 +66,7 @@ const LEGS = [
 ] as const;
 
 describe('agent chat thread target workspace metadata', () => {
+  // One shared morphId is what default-relation tooling extends to custom objects;
   // CASCADE is the only thing that removes a destroyed record's links
   it.each(LEGS)(
     'attaches to a $objectName through its own leg of the target morph',

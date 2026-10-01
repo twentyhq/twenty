@@ -122,7 +122,7 @@ describe('validateWorkflowClassifyStep', () => {
     ).toEqual([]);
   });
 
-  // The variable resolver reads a dot as structure
+  // The variable resolver reads a dot as structure, so a dotted answer name could never be referenced
   it('should refuse an answer name that is not a valid variable key', () => {
     expect(
       codesFor({

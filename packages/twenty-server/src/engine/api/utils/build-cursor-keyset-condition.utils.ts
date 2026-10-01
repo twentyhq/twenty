@@ -28,7 +28,7 @@ export function buildCursorKeysetCondition({
   isEqualityCondition,
   canFieldHoldNullValue,
   buildLeafCondition,
-  // Not 'is': its empty-value widening does not mirror the SQL scan order
+  // Strict operators, not 'is' or 'eq': their empty-value widening does not mirror the SQL scan order
   buildNullCheckCondition = (isNull) =>
     buildLeafCondition({ isStrictly: isNull ? 'NULL' : 'NOT_NULL' }),
 }: BuildCursorKeysetConditionParams): Record<string, unknown> | null {

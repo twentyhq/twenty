@@ -199,7 +199,7 @@ export class AgentChatSharingService {
   }): Promise<TResult> {
     const authContext = await this.getAuthContext(args);
     const objectMetadata = await this.getThreadObjectMetadata(args.workspaceId);
-    // preload the workspace context before reserving a core connection
+    // preloaded before reserving a core connection; sharing changes and domain writes then serialize on the same grant/record locks
     return this.workspaceOrmManager.executeInWorkspaceContext(
       () =>
         this.threadRepository.query(args.workspaceId, async (context) => {

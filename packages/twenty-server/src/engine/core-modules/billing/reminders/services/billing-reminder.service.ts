@@ -183,7 +183,8 @@ export class BillingReminderService {
       return false;
     }
 
-    // Unsynced payment-method flag: card trials are longer, so trial length tells them apart
+    // Unsynced payment-method flag: card trials are longer, so trial length tells them apart. createdAt covers a
+    // missing trialStart, else a card trial could be told "no card will be charged" right before it is charged
     const withoutCardTrialDurationDays = this.twentyConfigService.get(
       'BILLING_FREE_TRIAL_WITHOUT_CREDIT_CARD_DURATION_IN_DAYS',
     );

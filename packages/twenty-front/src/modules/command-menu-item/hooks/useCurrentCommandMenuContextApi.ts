@@ -89,7 +89,7 @@ export const useCurrentCommandMenuContextApi = (): CommandMenuContextApi => {
     },
   );
 
-  // Records shared below the role's access level carry their own per-record permissions
+  // Records shared below the role's access level carry their own permissions, which availability expressions read per record
   const selectedRecords = storedSelectedRecords.map((record) =>
     isDefined(recordPermissionsByRecordId[record.id])
       ? { ...record, recordPermissions: recordPermissionsByRecordId[record.id] }

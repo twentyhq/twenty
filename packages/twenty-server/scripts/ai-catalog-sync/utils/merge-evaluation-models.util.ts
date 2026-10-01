@@ -1,6 +1,7 @@
 import { type GeneratedCatalog } from '../types/generated-catalog.type';
 
-// models.dev has no evaluation models; merged per model so a vendor keeps the language models the sync fetched
+// models.dev has no evaluation models, so they are hand-maintained and merged per model so a vendor keeps the
+// language models the sync fetched
 export const mergeEvaluationModels = ({
   catalog,
   evaluationModels,

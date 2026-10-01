@@ -201,7 +201,8 @@ export class WorkflowRunRecordShareService {
                 workspaceId,
                 transactionScope,
                 criteria: [
-                  // the APPLICATION creator-role grant would otherwise let that role read a private workflow's runs
+                  // grants written on the run's own behalf: those derived here, and the APPLICATION creator-role
+                  // grant, which would otherwise let that role read a private workflow's runs
                   { ...recordScope, sourceId: In(batch) },
                   { ...recordScope, rowCause: RecordShareRowCause.APPLICATION },
                   // a grant to everyone means workspace-visible, which only the core workflow decides

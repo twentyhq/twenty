@@ -8,7 +8,8 @@ type GetNavigationDrawerHomeDestinationParams = {
   defaultHomePagePath: string;
 };
 
-// A memorized url can point into another mode when modes were chained (e.g. settings opened from chat).
+// A memorized url can point into another mode when modes were chained (e.g. settings opened from chat), and
+// going back there would leave the switcher on the mode the user just asked to leave.
 export const getNavigationDrawerHomeDestination = ({
   memorizedUrl,
   defaultHomePagePath,

@@ -43,7 +43,7 @@ export type MediaSessionHostFunctions = {
     streamId: string;
     trackId: string;
   }) => Promise<void>;
-  // Must reach the real track, or an app could believe it muted a device still capturing.
+  // Applied to the real track: a worker-local flag would let an app believe it muted a device still capturing.
   mediaSetTrackEnabled: (params: {
     streamId: string;
     trackId: string;

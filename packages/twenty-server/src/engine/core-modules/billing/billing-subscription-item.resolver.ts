@@ -67,7 +67,7 @@ export class BillingSubscriptionItemResolver {
     return Number.isFinite(creditAmount) ? creditAmount : null;
   }
 
-  // currentWorkspace preloads product prices; other callers load the subscription without relations
+  // currentWorkspace preloads product prices so app boot resolves in memory; other callers load no relations and need the query
   private async findItemPrice(
     billingSubscriptionItem: BillingSubscriptionItemEntity,
   ): Promise<BillingPriceEntity | null> {

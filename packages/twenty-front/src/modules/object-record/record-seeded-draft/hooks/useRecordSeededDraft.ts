@@ -19,6 +19,7 @@ type ScheduledPersist<TDraft> = {
 };
 
 // Remote changes reach a pristine draft at once; a dirty draft wins on its debounced persist (last write wins).
+// Our own persists echo back equal to the draft and only mark it pristine, never disrupting typing.
 // Editors that debounce their own serialization call markDirty on raw changes so the gap never reads as pristine.
 export const useRecordSeededDraft = <TDraft extends object>({
   upstreamDraft,
@@ -35,6 +36,7 @@ export const useRecordSeededDraft = <TDraft extends object>({
   const [hasUncommittedEdit, setHasUncommittedEdit] = useState(false);
 
   // Cancelling the timer during render is unsafe, so each persist carries its reset generation and is dropped once stale.
+  // A counter rather than the key, so going A to B back to A still drops A's first pending persist.
   const persistDebounced = useDebouncedCallback(
     ({
       draftToPersist,

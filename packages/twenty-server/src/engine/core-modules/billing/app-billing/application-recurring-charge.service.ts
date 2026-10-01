@@ -18,7 +18,8 @@ import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
-// Recorded through the app-charge usage path so they appear in Usage by App and on the credit meter
+// Manifest-declared flat and per-seat fees, raised once per billing period through the app-charge usage path
+// so they appear in Usage by App and on the credit meter
 @Injectable()
 export class ApplicationRecurringChargeService {
   private readonly logger = new Logger(ApplicationRecurringChargeService.name);
@@ -53,7 +54,7 @@ export class ApplicationRecurringChargeService {
 
     this.reportRejectedCharges(workspaceId, malformedCharges);
 
-    // The already-charged lookup costs a ClickHouse query per workspace per day
+    // Bail before the already-charged lookup, which costs a ClickHouse query per workspace per day
     if (declaredCharges.length === 0) {
       return 0;
     }
@@ -111,7 +112,7 @@ export class ApplicationRecurringChargeService {
     return events.length;
   }
 
-  // Otherwise an installed app going unbilled is invisible to everyone
+  // Logged as errors: otherwise an installed app going unbilled is invisible to everyone
   private reportRejectedCharges(
     workspaceId: string,
     rejectedCharges: RejectedRecurringCharge[],

@@ -29,7 +29,7 @@ export const moveWidgetToTabInDraft = (
 
   const destinationTab = draft.tabs.find((tab) => tab.id === destinationTabId);
 
-  // Vertical-list positions would reindex a grid tab's widgets and clobber their placement.
+  // Widgets carry vertical-list positions, so moving one into a grid tab would reindex its widgets and clobber their placement.
   if (
     !isDefined(destinationTab) ||
     destinationTab.layoutMode !== PageLayoutTabLayoutMode.VERTICAL_LIST

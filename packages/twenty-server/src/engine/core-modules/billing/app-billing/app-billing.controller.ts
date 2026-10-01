@@ -70,7 +70,7 @@ export class AppBillingController {
     private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
-  // Never returns a balance: an app has no business reading what the workspace pays
+  // Lets an app check credits before starting work; returns a verdict, never a balance an app has no business reading
   @Get('credits')
   async credits(@Req() request: Request): Promise<CreditAvailability> {
     if (!isDefined(request.application) || !isDefined(request.workspace)) {

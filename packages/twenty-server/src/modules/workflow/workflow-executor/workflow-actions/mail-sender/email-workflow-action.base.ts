@@ -100,7 +100,8 @@ export abstract class EmailWorkflowActionBase extends ToolBackedWorkflowAction<W
     return { ...resolvedInput, connectedAccountId };
   }
 
-  // The sender is a connected account id or, from a workflow variable, a workspace member id
+  // The sender is a connected account id or, from a workflow variable, a workspace member id; a member id resolves
+  // to that member's first connected account, anything else is returned unchanged
   protected async resolveSenderConnectedAccountId(
     senderId: string,
     workspaceId: string,

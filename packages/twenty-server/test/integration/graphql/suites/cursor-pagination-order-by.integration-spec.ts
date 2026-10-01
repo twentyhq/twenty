@@ -513,7 +513,8 @@ describe('Cursor pagination with duplicate sort values', () => {
   });
 });
 
-// Empty TEXT values are stored as SQL NULL but returned as '' by the API.
+// Empty TEXT values are stored as SQL NULL but returned as '' by the API: the scan's NULL block holds every empty row,
+// and cursors carry the raw SQL values so the continuation follows the scan.
 describe('Cursor pagination ordered by a TEXT field with empty values', () => {
   const namedCompanyIds = {
     ALPHA: '20202020-eeee-4000-8000-000000000001',

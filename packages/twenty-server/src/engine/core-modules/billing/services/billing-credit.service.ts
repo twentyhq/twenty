@@ -28,7 +28,7 @@ type GrantCreditsParams = {
   grantedByUserId?: string | null;
   idempotencyKey?: string | null;
   effectiveAt?: Date;
-  // Intent rather than a date, so aligning onto a period end happens here whoever the caller is
+  // Only for time-boxed grants (unset: spendable until a transition settles them); a day count so period-end alignment happens here for every caller
   expiresInDays?: number | null;
   sourceGrantId?: string | null;
 };
@@ -73,7 +73,7 @@ export class BillingCreditService {
 
     const effectiveAt = params.effectiveAt ?? new Date();
 
-    // A replay answers with the first write: the subscription that anchored its expiry may be gone
+    // A replay answers with the first write instead of re-deriving the expiry: its anchoring subscription may be gone
     const knownGrant = await this.findGrantByIdempotencyKey(params);
 
     const grant = isDefined(knownGrant)
@@ -89,7 +89,7 @@ export class BillingCreditService {
           }),
         });
 
-    // Another attempt won the key after the check above, so only a second read can see its row
+    // Returns the existing row, not null; reread when the check above was empty, as another attempt won the key in between
     if (!isDefined(grant)) {
       const alreadyWrittenGrant =
         knownGrant ?? (await this.findGrantByIdempotencyKey(params));

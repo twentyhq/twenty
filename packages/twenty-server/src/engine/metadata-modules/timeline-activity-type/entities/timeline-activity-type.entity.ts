@@ -57,7 +57,7 @@ export class TimelineActivityTypeEntity
   @Column({ nullable: false, type: 'varchar' })
   label: string;
 
-  // Null leaves the type to explicit writers addressing its identifier
+  // The verb automatic audit writers resolve the type by; null leaves it to explicit writers addressing its identifier
   @Column({ nullable: true, type: 'varchar' })
   action: TimelineActivityAction | null;
 
@@ -95,7 +95,7 @@ export class TimelineActivityTypeEntity
   @Column({ nullable: true, type: 'uuid', array: true })
   triggerFieldUniversalIdentifiers: string[] | null;
 
-  // Null anchors linked activities at the event write time
+  // Source field holding the moment linked activities anchor at (email receivedAt, event startsAt); null keeps the write time
   @WasIntroducedInUpgrade({
     upgradeCommandName:
       ADD_TIMELINE_ACTIVITY_HAPPENS_AT_FIELD_UPGRADE_COMMAND_NAME,

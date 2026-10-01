@@ -17,7 +17,7 @@ export const FrontComponentMediaSessionEffect = ({
 
     return () => {
       mediaSessionHost.disconnectEventTransport();
-      // The worker that could stop these devices dies with the renderer.
+      // The worker that could stop these devices dies with the renderer, so stop them here or they keep capturing.
       mediaSessionHost.stopAllSessions();
     };
   }, [thread, mediaSessionHost]);

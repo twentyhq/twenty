@@ -615,7 +615,7 @@ export class ApplicationRegistrationService {
     return this.findOneByIdGlobal(id);
   }
 
-  // Kept apart from the payload so the workspace-scoped update cannot set them
+  // Instance-wide flags are kept apart from the payload so the workspace-scoped update cannot set them
   private async applyUpdate({
     id,
     update,
@@ -744,7 +744,7 @@ export class ApplicationRegistrationService {
         const updatePayload =
           updateFields as QueryDeepPartialEntity<ApplicationRegistrationEntity>;
 
-        // Partial update so columns written by flows outside this lock are not clobbered
+        // One transaction keeps the row and its variable schemas on the same manifest; partial so columns written outside this lock survive
         await this.applicationRegistrationRepository.manager.transaction(
           async (entityManager) => {
             await entityManager

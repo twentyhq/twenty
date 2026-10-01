@@ -11,7 +11,7 @@ export const METADATA_LABEL_PLACEHOLDER_NAMES = [
 export type MetadataLabelPlaceholderName =
   (typeof METADATA_LABEL_PLACEHOLDER_NAMES)[number];
 
-// objectLabel follows the record selection, which only the client knows.
+// The subset an object metadata can fill; objectLabel is left out as it follows the record selection, which only the client knows.
 export const OBJECT_METADATA_LABEL_PLACEHOLDER_NAMES = [
   'objectLabelSingular',
   'objectLabelPlural',

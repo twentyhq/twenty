@@ -129,7 +129,8 @@ type WorkspaceRepositoryOptions<TEntity extends ObjectLiteral> = {
   executor: QueryExecutor;
   objectRecordsPermissions: ObjectsPermissions;
   shouldBypassPermissionChecks: boolean;
-  // Also skips the snapshot SELECT: webhooks, workflow triggers and timeline activities will NOT fire
+  // Suppresses database events and their snapshot SELECT, for bulk system writes only: webhooks, workflow triggers
+  // and timeline activities will NOT fire
   shouldSkipEventEmission: boolean;
   tableShapeByObjectMetadataId: (
     objectMetadataId: string,
@@ -1453,6 +1454,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       .withDeleted();
   }
 
+  // Re-parenting or creating under a parent is a write on that parent, so the destination must grant READ_WRITE
   // Inheriting records are checked before and after any write, since creating, changing, deleting or restoring the row changes what they expose
   private async validateInheritedParentsAreWritableOrThrow({
     writtenRecords,

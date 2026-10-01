@@ -88,7 +88,7 @@ export class ClientAiModelConfig {
   @Field(() => Number, { nullable: true })
   costPerTask?: number;
 
-  // Reasoning levels a pin may name as `modelId@effort`.
+  // Reasoning levels a pin may name as `modelId@effort`; empty when the model takes none, unset on a variant naming its own.
   @Field(() => [String], { nullable: true })
   efforts?: string[];
 

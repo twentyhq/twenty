@@ -23,7 +23,8 @@ export const getWorkspaceSurfaceScopedComponentInstanceId = ({
   return `${componentInstanceId}-${surfaceInstanceId}`;
 };
 
-// Only where an id is created: Dropdown, Modal, SelectableList, TabList and ScrollWrapper use ids verbatim
+// Only where an id is created for something mounted once per workspace surface; Dropdown, Modal, SelectableList,
+// TabList and ScrollWrapper use ids verbatim, so every reader of the returned id shares its state
 export const useWorkspaceSurfaceScopedComponentInstanceId = (
   componentInstanceId: string,
 ) => {

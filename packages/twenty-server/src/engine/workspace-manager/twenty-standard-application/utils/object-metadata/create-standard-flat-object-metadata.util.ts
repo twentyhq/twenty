@@ -53,7 +53,7 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         isAuditLogged: false,
         isUIEditable: true,
         isUICreatable: false,
-        // No parent outside a workflow run, so it reads through its own grants like a PRIVATE record
+        // Read by whoever reads its workflow run; with no run it reads only through its own grants, like a PRIVATE record
         readability: MetadataReadability.INHERITED,
         readabilityParentFieldMetadataNames: ['workflowRun'],
         writability: MetadataWritability.OPEN,
@@ -98,7 +98,8 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         isAuditLogged: false,
         isUIEditable: false,
         isUICreatable: false,
-        // Inherits from the thread, not the record, so a link stays as private as the conversation
+        // Inherits from the thread, not the record, so a link stays as private as the conversation. It stays
+        // writable because record merges re-point its legs under the caller, as for noteTarget
         readability: MetadataReadability.INHERITED,
         readabilityParentFieldMetadataNames: ['thread'],
         labelIdentifierFieldMetadataName: 'id',

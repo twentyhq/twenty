@@ -182,7 +182,8 @@ export class AgentAsyncExecutorService {
     });
   }
 
-  // open-ended agents have broad access, so preloading would ship every schema
+  // open-ended agents have broad access, so preloading would ship every schema: expose a compact catalog plus
+  // learn_tools / execute_tool instead, scoped by composed role permissions rather than explicit grants only
   private async buildLazyRegistryTools({
     agent,
     agentRoleId,
@@ -232,7 +233,7 @@ export class AgentAsyncExecutorService {
         !excludedToolNames.has(entry.name),
     );
 
-    // checked at call time so a tool added after the catalog was built stays unreachable (recursion guard)
+    // meta-tools are limited to the shown catalog, checked at call time so a tool added later stays unreachable (recursion guard)
     const allowedToolNames = new Set(catalog.map((entry) => entry.name));
     const isToolAllowed = (toolName: string): boolean =>
       allowedToolNames.has(toolName);
@@ -269,7 +270,7 @@ export class AgentAsyncExecutorService {
   }: {
     agent: AgentEntity | null;
     messages: RunAgentMessage[];
-    // carries tool calls and results, which plain run messages cannot
+    // a continued conversation, with the tool calls and results plain run messages cannot carry
     priorModelMessages?: ModelMessage[];
     pausingTools?: ToolSet;
     baseSystemPrompt: string;
@@ -585,7 +586,7 @@ export class AgentAsyncExecutorService {
         cacheCreationTokens,
         nativeWebSearchCallCount,
         hasNoMoreAvailableCredits,
-        // out of credits fails the execution even if it asked something
+        // out of credits fails the execution even if it asked something, so it is never left waiting for an answer
         isPaused: endsOnPausingTool && !hasNoMoreAvailableCredits,
         steps: executionSteps,
         modelId: resolvedModelId,

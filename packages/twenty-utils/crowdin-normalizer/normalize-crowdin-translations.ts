@@ -190,7 +190,7 @@ async function repairOne(
   finding: NormalizationFinding,
 ): Promise<boolean> {
   try {
-    // Deleting without a replacement falls back to English until Crowdin retranslates.
+    // An empty fix means unsalvageable: deleting without a replacement falls back to English until Crowdin retranslates.
     if (finding.fixedText !== '') {
       await addTranslation(context, {
         stringId: finding.stringId,

@@ -17,7 +17,8 @@ export const MobileNavigationBarScrollEffect = () => {
     isMobileNavigationBarVisibleState,
   );
 
-  // Capture phase sees every container's scrolls; re-subscribing on navigation resets the accumulated direction.
+  // Capture phase sees every container's scrolls. Re-subscribing on navigation and side panel toggles resets the
+  // accumulated direction, otherwise the next small scroll in the new view would cross the threshold on its own.
   useEffect(() => {
     setIsMobileNavigationBarVisible(true);
 

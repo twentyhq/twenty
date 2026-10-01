@@ -220,7 +220,7 @@ const buildThreadConnectedAccountHandlers = (connectedAccount: {
   ),
 ];
 
-// The minimal metadata mocks ship no page layouts.
+// The minimal metadata mocks ship no page layouts, so this seeds one holding the email thread widget.
 const SeedEmailThreadPageLayoutEffect = () => {
   const { replaceDraft, applyChanges } = useUpdateMetadataStoreDraft();
   const isMinimalMetadataReady = useAtomStateValue(isMinimalMetadataReadyState);

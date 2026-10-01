@@ -61,7 +61,7 @@ import { getChatModelId } from 'src/engine/metadata-modules/ai/ai-models/utils/g
 
 export { STREAM_AGENT_CHAT_JOB_NAME, type StreamAgentChatJobData };
 
-// deterministic per stream so a retried job skips persistence while each resume persists its own message
+// assistantMessageId derives from streamId, so a retried job skips persistence while each resume persists its own message
 const ASSISTANT_MESSAGE_ID_NAMESPACE = '0b9c2a3d-4e5f-4a1b-8c2d-3e4f5a6b7c8d';
 
 @Processor({ queueName: MessageQueue.aiStreamQueue, scope: Scope.REQUEST })
@@ -71,7 +71,7 @@ export class StreamAgentChatJob {
   // keeps the catch in handle() from counting a turn the stream already classified
   private hasRecordedTurnOutcome = false;
 
-  // a queued message drained while paused would bypass the pending answer
+  // set once the turn pauses on a person: a queued message drained then would bypass the pending answer
   private isAwaitingInput = false;
 
   constructor(

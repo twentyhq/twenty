@@ -52,7 +52,8 @@ const getToolCatalog = async (
 
 const READ_ONLY_TOOL_NAME_PATTERN = /^(find_|list_|get_|search_)/;
 
-// Exact wording is pinned by the unknown-tools control test below, so drift fails loudly
+// Dispatch failures come from execute_tool gating or the registry, not the tool itself; their exact wording is
+// pinned by the unknown-tools control test below, so drift fails loudly
 const DISPATCH_FAILURE_MESSAGE_PATTERN =
   /^Tool ".+" (not found|is not available)$/;
 

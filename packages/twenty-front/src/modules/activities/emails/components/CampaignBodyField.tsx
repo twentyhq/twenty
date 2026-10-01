@@ -21,7 +21,7 @@ const StyledContainer = styled.div`
 
 type CampaignBodyFieldProps = {
   campaign: MessageCampaign;
-  // The canvas width is a per-campaign design setting the envelope block lines up with.
+  // Exposes the editor so the envelope block can follow the per-campaign canvas width.
   onEditorReady?: (editor: Editor | null) => void;
 };
 

@@ -68,7 +68,7 @@ export class AdminPanelBillingService {
     clientOperationId: string;
     grantedByUserId: string;
   }): Promise<AdminPanelWorkspaceCreditGrantDTO> {
-    // The mutation is reachable directly, not only through the admin panel picker
+    // The mutation is reachable directly, not only through the admin panel picker; see ADMIN_GRANTABLE_CREDIT_GRANT_TYPES for the exclusions
     if (!ADMIN_GRANTABLE_CREDIT_GRANT_TYPES.includes(type)) {
       throw new BillingException(
         `Cannot grant credits of type ${type} by hand`,

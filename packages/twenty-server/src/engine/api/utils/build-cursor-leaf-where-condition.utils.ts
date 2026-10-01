@@ -1,6 +1,7 @@
 import { buildCursorKeysetCondition } from 'src/engine/api/utils/build-cursor-keyset-condition.utils';
 import { type OrderByLeaf } from 'src/engine/api/utils/resolve-order-by-leaves.utils';
 
+// Any nullable column can hold NULL whatever its type (empty text is stored as NULL).
 // Composite sub-columns and joined columns have no nullability metadata; a needless IS NULL branch matches nothing
 const checkIfLeafCanHoldNullValue = (leaf: OrderByLeaf): boolean =>
   leaf.kind === 'scalar' ? leaf.fieldMetadata.isNullable !== false : true;

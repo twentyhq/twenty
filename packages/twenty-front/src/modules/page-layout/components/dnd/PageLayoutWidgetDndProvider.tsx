@@ -11,7 +11,8 @@ type PageLayoutWidgetDndProviderProps = {
   children: ReactNode;
 };
 
-// Mounted in view mode too so toggling edit mode doesn't remount the layout (scroll, widget state).
+// Mounted in view mode too so toggling edit mode doesn't remount the layout (scroll, widget state);
+// it is inert there since sortables are disabled and the terminal drop target is detached.
 export const PageLayoutWidgetDndProvider = ({
   children,
 }: PageLayoutWidgetDndProviderProps) => {

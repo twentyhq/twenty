@@ -709,7 +709,7 @@ export class UserResolver {
     return user.userWorkspaces;
   }
 
-  // Same rows as workspaces, so guarding only one of the two leaves the other answering.
+  // Same rows as the workspaces field under the entity's own name, so guarding only one leaves the other answering.
   @ResolveField(() => [UserWorkspaceEntity], {
     name: 'userWorkspaces',
     nullable: false,

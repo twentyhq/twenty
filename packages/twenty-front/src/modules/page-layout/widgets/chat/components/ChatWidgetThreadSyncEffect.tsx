@@ -8,7 +8,7 @@ type ChatWidgetThreadSyncEffectProps = {
   threadId: string;
 };
 
-// Once per record, so a later switch (e.g. a new chat) is left alone
+// Points the chat at the record's thread once per record, so a later switch (e.g. a new chat) is left alone
 export const ChatWidgetThreadSyncEffect = ({
   threadId,
 }: ChatWidgetThreadSyncEffectProps) => {

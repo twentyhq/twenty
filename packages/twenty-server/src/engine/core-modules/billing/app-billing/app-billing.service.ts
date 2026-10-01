@@ -23,6 +23,7 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 type AppChargeableOperationType =
   (typeof UsageOperationType)[UsageOperationTypeValue];
 
+// Apps send a quantity, never a unit, so the platform names what it counts.
 // Keyed on the app-facing vocabulary so a new USAGE_OPERATION_TYPES value fails to compile until it has a unit
 const USAGE_UNIT_BY_OPERATION_TYPE: Record<
   AppChargeableOperationType,
@@ -37,7 +38,7 @@ const USAGE_UNIT_BY_OPERATION_TYPE: Record<
   [UsageOperationType.EMAIL_SEND]: UsageUnit.INVOCATION,
 };
 
-// From the token, never the body, so an app can't charge another workspace or pose as another app
+// workspaceId and applicationId come from the token, never the body, so an app can't charge another workspace or pose as another app
 @Injectable()
 export class AppBillingService {
   private readonly logger = new Logger(AppBillingService.name);
@@ -134,7 +135,7 @@ export class AppBillingService {
     );
     // Undefined until the upgrade that adds the column has run.
     const billableOperations = application?.billing?.operations ?? {};
-    // Own-property only: `constructor` or `__proto__` would resolve to inherited values
+    // Own-property only: `constructor` or `__proto__` would resolve to inherited values and charge under no category
     const billableOperation = Object.prototype.hasOwnProperty.call(
       billableOperations,
       charge.operation,
@@ -148,7 +149,8 @@ export class AppBillingService {
       );
     }
 
-    // jsonb is untrusted: a platform-only value like SUBSCRIPTION would bypass ChargeDto's @IsIn
+    // jsonb is untrusted: an unknown value would record a row with no category or unit,
+    // and a platform-only value like SUBSCRIPTION would bypass ChargeDto's @IsIn
     if (!isUsageOperationTypeValue(billableOperation.operationType)) {
       throw new BadRequestException(
         `Billable operation "${charge.operation}" declares an unknown operationType.`,

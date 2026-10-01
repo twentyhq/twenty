@@ -10,7 +10,8 @@ const DELETE_APP_MESSAGE_CHANNEL_MUTATION = `
   }
 `;
 
-// Also deletes ingested messages and emptied threads; set `isSyncEnabled` to false to keep the history
+// Also deletes the channel's ingested messages and emptied threads; call from onDisconnect to retire a channel with its credential.
+// To stop ingesting but keep the history, set `isSyncEnabled` to false instead.
 export const deleteMessageChannel = async (
   id: string,
 ): Promise<AppMessageChannel> => {

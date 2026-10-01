@@ -22,7 +22,7 @@ const DEFAULT_OUTPUT_PATH = join(
 );
 const PUBLIC_REGISTRY = 'https://registry.npmjs.org';
 
-// Stated explicitly: resolution runs outside the repo with YARN_* stripped, so no gate is inherited.
+// Matches the monorepo's npmMinimalAgeGate; stated explicitly since resolution runs outside the repo with YARN_* stripped.
 const RELEASE_MINIMAL_AGE_GATE = '3d';
 
 type Options = {

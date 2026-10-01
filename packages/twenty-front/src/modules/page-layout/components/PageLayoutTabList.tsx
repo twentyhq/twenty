@@ -245,7 +245,7 @@ export const PageLayoutTabList = ({
     closeDropdown(dropdownId);
   }, [closeDropdown, dropdownId]);
 
-  // The dragging flag keeps the overflow dropdown open for drops into it.
+  // The dragging flag suppresses click-outside so the overflow dropdown survives drops into it; a drop on the more button reopens it.
   useDragDropMonitor({
     onDragStart: (event) => {
       const sourceData = event.operation.source?.data as

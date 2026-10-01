@@ -38,7 +38,8 @@ export type RecordedConversation = {
   isAwaitingAnswer: boolean;
 };
 
-// One conversation per execution, so a loop iteration or retry never reads or continues another's messages
+// One conversation per execution, so a loop iteration or retry never reads or continues another's messages.
+// It has no owner: it belongs to the run and is readable by whoever can read the run.
 @Injectable()
 export class WorkflowAgentConversationWorkspaceService {
   constructor(

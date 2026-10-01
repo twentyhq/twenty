@@ -18,7 +18,8 @@ import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isRecordMatchingFilter } from '@/object-record/record-filter/utils/isRecordMatchingFilter';
 import { parseApolloStoreFieldName } from '~/utils/parseApolloStoreFieldName';
 
-// TODO: match every cached list's filter by default once RecordTable keeps a created row in local state.
+// TODO: new records join every cached list regardless of its variables unless shouldMatchRootQueryFilter;
+// make matching the default once RecordTable keeps a created row in local state.
 type TriggerCreateRecordsOptimisticEffectArgs = {
   cache: ApolloCache;
   objectMetadataItem: EnrichedObjectMetadataItem;

@@ -17,7 +17,7 @@ export const useCustomAiProviderAccess = () => {
 
   const access = data?.getCustomAiProviderAccess;
 
-  // Assume access only while loading, so the section never flashes locked.
+  // Assume access only while loading, so the section never flashes locked; with no answer, creation stays closed.
   const hasAccess = access?.hasAccess ?? loading;
 
   const tooltipContent = !isDefined(access)

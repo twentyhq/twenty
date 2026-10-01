@@ -1,4 +1,5 @@
-// Node builtins and source paths only, so a private-spec repo can run it from a sparse checkout without an install
+// See README.md. This file and its imports use node builtins and source paths only, so a private-spec repo can
+// run them from a sparse checkout without an install
 
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';

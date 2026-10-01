@@ -359,10 +359,10 @@ export class UserWorkspaceService {
     softDelete?: boolean;
   }): Promise<void> {
     if (softDelete) {
-      // roleTarget has no deletedAt column, so access stays gated by the soft-deleted userWorkspace.
+      // roleTarget has no deletedAt column, so its rows stay and access is gated by the soft-deleted userWorkspace.
       await this.userWorkspaceRepository.softDelete({ id: userWorkspaceId });
     } else {
-      // The delete nulls the creator of this member's workflows, making them visible, so their runs' grants must follow.
+      // The delete nulls the creator of this member's workflows, making them workspace-visible, so their runs' grants must follow.
       const createdCoreWorkflowIds =
         await this.workflowRunRecordShareService.findCoreWorkflowIdsCreatedBy({
           workspaceId,
@@ -394,7 +394,7 @@ export class UserWorkspaceService {
       },
     });
 
-    // HIDDEN workspaces are never advertised in the root-domain picker, even to their own members.
+    // HIDDEN workspaces are never advertised in the root-domain picker, even to members: they sign in from the workspace URL.
     const alreadyMemberWorkspaces = user
       ? user.userWorkspaces
           .map(({ workspace }) => ({ workspace }))

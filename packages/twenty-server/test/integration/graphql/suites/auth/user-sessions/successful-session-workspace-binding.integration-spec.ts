@@ -17,7 +17,8 @@ import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-s
 import { UserSessionEntity } from 'src/engine/core-modules/user-session/user-session.entity';
 import { hashUserSessionToken } from 'src/engine/core-modules/user-session/utils/hash-user-session-token.util';
 
-// Tim is seeded in both apple and yc: same user, same credentials, one session per workspace.
+// Tim is seeded in both apple and yc, so each session must reach only the workspace its exchange selected,
+// whatever the request sends: the context is rebuilt from the session row alone.
 describe('successful session workspace binding (integration)', () => {
   let appleSessionToken: string;
   let ycSessionToken: string;

@@ -22,7 +22,8 @@ describe('buildAppMessageHeaderMessageId', () => {
     );
   });
 
-  // providers scope ids per conversation or account, so two members can both send "1"
+  // providers scope ids per conversation or account, so two members can both send "1"; merging them would
+  // discard one body and attach the other member's channel to it
   it('separates two members whose provider reuses the same external id', () => {
     expect(
       buildAppMessageHeaderMessageId({

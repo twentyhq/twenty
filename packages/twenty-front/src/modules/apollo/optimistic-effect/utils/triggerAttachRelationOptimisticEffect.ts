@@ -162,7 +162,7 @@ export const triggerAttachRelationOptimisticEffect = ({
   });
 };
 
-// A target fetched without the relation field can't be modified in cache, but its lists only need the source.
+// A target fetched without the relation field can't be modified in cache, but its lists only need it attached to the source.
 const buildRelationValueFromSourceRecord = ({
   sourceObjectNameSingular,
   sourceRecord,

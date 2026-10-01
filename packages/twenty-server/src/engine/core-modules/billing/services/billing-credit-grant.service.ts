@@ -68,7 +68,7 @@ export class BillingCreditGrantService {
 
     const repository = this.getRepository(entityManager);
 
-    // Not a caught unique violation: inside the rollover transaction it would abort every earlier write
+    // orIgnore drops duplicates: a caught unique violation would abort every earlier write in the rollover transaction
     const { raw } = await repository
       .createQueryBuilder()
       .insert()
@@ -94,7 +94,7 @@ export class BillingCreditGrantService {
       return null;
     }
 
-    // The raw row skips the bigint transformer and holds amountMicro as a string
+    // Read back: the raw row skips the bigint transformer and holds amountMicro as a string
     return repository.findOne(workspaceId, { where: { id: grantId } });
   }
 
@@ -185,7 +185,8 @@ export class BillingCreditGrantService {
     });
   }
 
-  // Calendar arithmetic can't recover the period start: month-end anchors clamp (Feb 28 minus a month is Jan 28)
+  // The previous transition expired its grants at its period end, so the ledger holds the period start;
+  // calendar arithmetic can't recover it, as month-end anchors clamp (Feb 28 minus a month is Jan 28)
   async findPeriodStartBefore({
     workspaceId,
     boundary,
@@ -202,7 +203,7 @@ export class BillingCreditGrantService {
     return row?.expiresAt ?? null;
   }
 
-  // Matched by predicate, not id, so a grant created mid-transition is settled too
+  // Settles every grant the closing period could spend so only the carry-forward rows stay live; by predicate, not id, to cover mid-transition grants
   async closeGrantsAtPeriodEnd(
     {
       workspaceId,

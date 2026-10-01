@@ -2,7 +2,9 @@ import { isNonEmptyString } from '@sniptt/guards';
 
 import { isDefined } from '@/utils/validation/isDefined';
 
-// Reproduces Handlebars' `{{{ json <path> }}}` lookup quirks on purpose: in-flight workflows were authored against them.
+// Resolves one `{{ path }}` token without Handlebars, which is CommonJS and cannot be tree-shaken from browser bundles.
+// Reproduces its `{{{ json <path> }}}` quirks on purpose since in-flight workflows rely on them: own properties only,
+// extra params ignored, values JSON round-tripped (Dates become ISO strings, NaN and functions drop).
 const TOKEN_PATTERN = /^\{\{([^{}]*)\}\}$/;
 const NUMBER_LITERAL_PATTERN = /^-?\d+(\.\d+)?$/;
 const WHOLE_CONTEXT_PATHS = ['.', 'this', '@root'];

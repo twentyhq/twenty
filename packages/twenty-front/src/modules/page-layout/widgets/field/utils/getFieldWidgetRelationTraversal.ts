@@ -74,7 +74,7 @@ export const getFieldWidgetRelationTraversal = ({
   const lastHopFieldMetadataItem =
     nestedRelationFieldMetadataItem ?? sourceFieldMetadataItem;
 
-  // A many-to-one first hop is supplied as the filter's current record, so the filter stays direct.
+  // Only a one-to-many first hop needs traversal; a many-to-one first hop is supplied as the filter's current record, so the filter stays direct.
   const shouldTraverseFirstHop =
     isDefined(nestedRelationFieldMetadataItem) &&
     isDefined(sourceFieldMetadataItem) &&

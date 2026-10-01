@@ -36,6 +36,7 @@ export class SsoService {
   private readonly featureLookUpKey = BillingEntitlementKey.SSO;
 
   // openid-client resolves this hook on the Issuer class, issuer and client instances, so all three get it.
+  // It deep-merges the result with its own per-request options, so only the agent is returned.
   private readonly oidcHttpOptions = (url: URL) => ({
     agent: this.secureHttpClientService.getSsrfSafeAgent(url),
   });

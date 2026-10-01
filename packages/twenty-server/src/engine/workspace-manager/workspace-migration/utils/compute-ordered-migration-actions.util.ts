@@ -85,7 +85,8 @@ export const computeOrderedMigrationActions = (
     ...aggregatedOrchestratorActionsReport.skill.create,
     ...aggregatedOrchestratorActionsReport.skill.update,
 
-    // Menu items CASCADE on frontComponentId, so a repointed item would be lost if its old component were deleted first
+    // Menu items CASCADE on frontComponentId, so a repointed item would be lost if its old component were deleted first:
+    // dropped items go first, then new components, then item repoints, and unreferenced components last
     ...aggregatedOrchestratorActionsReport.commandMenuItem.delete,
     ...aggregatedOrchestratorActionsReport.settingsMenuItem.delete,
 

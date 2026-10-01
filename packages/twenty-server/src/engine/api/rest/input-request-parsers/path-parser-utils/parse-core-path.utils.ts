@@ -12,7 +12,7 @@ export const parseCorePath = (
     .split('/')
     .filter(Boolean);
 
-  // PATCH only: other methods' wildcard routes would read the id as a target (DELETE would destroy it)
+  // /{object}/{id}/restore is PATCH only: other methods' wildcard routes would read the id as a target (DELETE would destroy it)
   const isRestoreRequest =
     request.method === 'PATCH' &&
     queryAction[queryAction.length - 1] === 'restore';

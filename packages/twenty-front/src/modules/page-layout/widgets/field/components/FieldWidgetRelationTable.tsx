@@ -86,7 +86,8 @@ export const FieldWidgetRelationTable = ({
     ],
   );
 
-  // Morph junctions and views saved on the junction object keep listing the junction records.
+  // A junction widget lists the records behind the junction, except morph junctions and views saved on the
+  // junction object, which keep listing the junction records.
   const junctionTargetObjectMetadataId =
     isDefined(junctionConfig) && !junctionConfig.isMorphRelation
       ? junctionConfig.targetFields[0]?.relation?.targetObjectMetadata.id
@@ -180,7 +181,7 @@ export const FieldWidgetRelationTable = ({
     recordId,
   ]);
 
-  // A many-to-one first hop scopes the view directly by the intermediate record's join column.
+  // A many-to-one first hop scopes the view directly by the intermediate record, read from the current record's join column.
   const isManyToOneNestedChain =
     isDefined(nestedRelationFieldMetadataId) &&
     relationType === RelationType.MANY_TO_ONE;

@@ -256,6 +256,7 @@ export const useCalendarEventComposer = ({
       }
 
       // The event exists by now, so a link failure must not keep the composer open: a retry would duplicate it.
+      // Without an id, persistence failed and the next provider sync recreates the event without these links.
       if (targets.length > 0) {
         let areTargetsLinked = false;
 
@@ -269,7 +270,7 @@ export const useCalendarEventComposer = ({
         }
 
         if (areTargetsLinked) {
-          // The earlier refetch ran before these links existed.
+          // The earlier refetch ran before these links existed, so events related only through them were missing.
           await refetchTimelineCalendarEvents();
         } else {
           enqueueToast({

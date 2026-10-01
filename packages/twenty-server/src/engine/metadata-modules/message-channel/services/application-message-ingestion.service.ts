@@ -86,6 +86,7 @@ export class ApplicationMessageIngestionService {
     );
 
     // save reads before writing and headerMessageId has no unique index, so concurrent redeliveries would duplicate
+    // locked per channel, the narrowest scope since dedup never spans channels
     const savedMessages = await this.cacheLockService.withLock(
       () =>
         this.saveMessagesService.saveMessagesAndEnqueueContactCreation(

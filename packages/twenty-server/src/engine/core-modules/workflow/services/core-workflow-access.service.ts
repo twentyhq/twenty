@@ -15,7 +15,8 @@ import {
   WorkflowQueryValidationExceptionCode,
 } from 'src/modules/workflow/common/exceptions/workflow-query-validation.exception';
 
-// Versions carry the whole definition, so they answer to the same rule, with one deny to audit.
+// Versions carry the whole definition, so they answer to the workflow's rule; both asserts live here so a private
+// workflow has one deny to audit.
 @Injectable()
 export class CoreWorkflowAccessService {
   constructor(

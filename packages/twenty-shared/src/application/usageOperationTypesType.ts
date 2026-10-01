@@ -1,4 +1,5 @@
-// The omitted types are raised by the platform itself, and API_REQUEST rows feed the API rate limit.
+// The UsageOperationType subset an app may bill under; the omitted ones are raised by the platform itself,
+// and API_REQUEST rows feed the API rate limit.
 export const USAGE_OPERATION_TYPES = [
   'AI_CHAT_TOKEN',
   'AI_WORKFLOW_TOKEN',

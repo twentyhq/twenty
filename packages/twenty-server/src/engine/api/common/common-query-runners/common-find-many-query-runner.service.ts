@@ -158,7 +158,7 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
       }),
-      // Cursor encoding reads sort values off the records, even unrequested ones (issue #24333)
+      // Selected even when unrequested: cursor encoding reads the sort values off the records (issue #24333)
       ...buildOrderByColumnsToSelect({
         orderBy: args.orderBy,
         flatObjectMetadata,

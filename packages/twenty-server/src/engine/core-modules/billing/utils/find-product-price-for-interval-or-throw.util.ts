@@ -14,6 +14,7 @@ type IntervalPrice = {
 };
 
 // Switching interval is not a sale, so this resolves what is billable on the current product rather than what is sellable.
+// isLegacy only breaks a tie between two active prices at the same interval.
 export const findProductPriceForIntervalOrThrow = <
   TPrice extends IntervalPrice,
 >(

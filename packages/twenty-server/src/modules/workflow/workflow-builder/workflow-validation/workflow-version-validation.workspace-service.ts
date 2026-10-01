@@ -30,7 +30,8 @@ export class WorkflowVersionValidationWorkspaceService {
     private readonly workflowMetadataReadService: WorkflowMetadataReadService,
   ) {}
 
-  // Legacy versions written before the write-time gate can still hold malformed content
+  // Legacy versions written before the write-time gate can still hold malformed content, so both malformed and
+  // non-activable issues are refused
   async assertWorkflowVersionIsActivableOrThrow({
     workspaceId,
     trigger,

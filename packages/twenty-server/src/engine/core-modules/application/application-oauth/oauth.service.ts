@@ -36,7 +36,7 @@ export class OAuthService {
     private readonly appTokenRepository: Repository<AppTokenEntity>,
     @InjectWorkspaceScopedRepository(ApplicationEntity)
     private readonly applicationRepository: WorkspaceScopedRepository<ApplicationEntity>,
-    // Client-credentials counts a registration's installs across every workspace
+    // Client-credentials counts a registration's installs across every workspace to enforce exactly one, so there is no workspace to scope by
     // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(ApplicationEntity)
     private readonly unscopedApplicationRepository: Repository<ApplicationEntity>,

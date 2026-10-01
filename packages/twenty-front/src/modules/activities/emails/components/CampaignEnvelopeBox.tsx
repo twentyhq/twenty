@@ -4,7 +4,7 @@ import { themeCssVariables } from 'twenty-ui/theme';
 
 import { ComposerFieldRow } from '@/activities/components/ComposerFieldRow';
 
-// Widest campaign row label ("Unsubscribe topic").
+// Widest campaign row label ("Unsubscribe topic"), so every value starts on the same column.
 const CAMPAIGN_ENVELOPE_LABEL_MIN_WIDTH = '116px';
 
 const StyledContainer = styled.div`

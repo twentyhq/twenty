@@ -14,7 +14,7 @@ export type SkippedStoredAiCatalogEntry = {
 
 const storedCatalogSchema = z.record(z.string(), z.unknown());
 
-// models are validated one by one below
+// the provider is read without its models, which are validated one by one below
 const storedProviderSchema = aiProviderConfigSchema.extend({
   models: z.array(z.unknown()).optional(),
 });

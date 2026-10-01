@@ -135,7 +135,8 @@ export class ApplyMessagesVisibilityRestrictionsService {
             }
           }
 
-          // Email connections carry no applicationId, so this only matches channels the calling application created
+          // Same bypass as above, via the application owning the connection; email connections carry no
+          // applicationId, so this only matches channels the calling application created
           if (isDefined(applicationId)) {
             const connectedAccounts =
               await this.connectedAccountRepository.find({

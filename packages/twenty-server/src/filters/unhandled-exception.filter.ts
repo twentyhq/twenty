@@ -20,7 +20,7 @@ export class UnhandledExceptionFilter implements ExceptionFilter {
     }
 
     // TODO: Check if needed, remove otherwise.
-    // Overwriting a reflected origin with * would make the browser reject a credentialed request
+    // Only when the CORS middleware never ran: overwriting a reflected origin with * would make the browser reject a credentialed request
     if (!response.getHeader('Access-Control-Allow-Origin')) {
       response.header('Access-Control-Allow-Origin', '*');
       response.header(

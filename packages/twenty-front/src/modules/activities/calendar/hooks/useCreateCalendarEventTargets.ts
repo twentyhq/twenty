@@ -15,7 +15,8 @@ export const useCreateCalendarEventTargets = () => {
 
   const { createManyRecords: createCalendarEventTargetRecords } =
     useCreateManyRecords({
-      // Workspaces predating the junction have no calendarEventTarget object, and resolving one throws.
+      // Workspaces predating the junction have no calendarEventTarget object and resolving one throws;
+      // the CalendarEvent fallback is never written to, since there is no junction config.
       objectNameSingular:
         junctionConfig?.junctionObjectMetadata.nameSingular ??
         CoreObjectNameSingular.CalendarEvent,

@@ -41,7 +41,8 @@ const buildWrapper =
     </WorkspaceSurfaceContext.Provider>
   );
 
-// A side panel may provide the main surface's id to share its state, so ids must come back unchanged
+// Ids must come back unchanged: a side panel may provide the main surface's id to share its state,
+// and DOM anchors are looked up by the exact string the provider used
 describe('useAvailableComponentInstanceIdOrThrow', () => {
   it.each(['main', 'side-panel'] as const)(
     'returns the context id verbatim on a %s surface',

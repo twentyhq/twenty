@@ -4,7 +4,8 @@ import { render, screen, waitFor } from '@testing-library/react';
 import { Activity } from 'react';
 import { of } from 'rxjs';
 
-// Guards what CSS-hidden prerendering relies on: useQuery fetches under display: none, not under a hidden <Activity>.
+// Guards what CSS-hidden prerendering relies on: useQuery fetches under display: none, not under a hidden <Activity>,
+// and revealing the tab neither refetches nor flashes a loading state.
 const PRERENDER_PROBE_QUERY = gql`
   query PrerenderProbe {
     probe

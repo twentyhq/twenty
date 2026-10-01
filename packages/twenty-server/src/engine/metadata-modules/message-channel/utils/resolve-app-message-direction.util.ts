@@ -13,7 +13,7 @@ export const resolveAppMessageDirection = ({
     (participant) => participant.role === MessageParticipantRole.FROM,
   );
 
-  // providers may spell the same account with different casing across payloads
+  // case-insensitive like the email path: a provider casing the account differently across APIs would make every sent message incoming
   return sender?.handle.toLowerCase() === channelHandle.toLowerCase()
     ? MessageDirection.OUTGOING
     : MessageDirection.INCOMING;

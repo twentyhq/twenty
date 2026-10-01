@@ -164,7 +164,7 @@ export class FieldMetadataEntity<
   })
   writability: MetadataWritability;
 
-  // no @WasRemovedInUpgrade yet: previous-release pods still SELECT it mid rolling deploy (core-team-issues#2542)
+  // superseded by isUIEditable; no @WasRemovedInUpgrade yet: previous-release pods still SELECT it mid rolling deploy (core-team-issues#2542)
   @Column({ type: 'boolean', default: false })
   isUIReadOnly: WasRemovedInUpgrade<boolean>;
 

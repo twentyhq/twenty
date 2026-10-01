@@ -14,7 +14,7 @@ import { ALLOWED_ORIGIN } from 'test/integration/graphql/suites/auth/user-sessio
 
 type UserSessionApiEntry = { id: string; isCurrent: boolean };
 
-// Tim is seeded in both apple and yc: one person, two workspaces.
+// Tim is seeded in both apple and yc, proving a workspace can neither list nor revoke his sessions in the other.
 describe('workspace-scoped user sessions API (integration)', () => {
   let appleCookieHeader: string;
   let ycCookieHeader: string;

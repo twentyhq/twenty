@@ -59,7 +59,7 @@ export const useMobileNavigationBarItems = (): {
     isNavigationDrawerExpandedState,
   );
 
-  // Expansion state is shared with the desktop drawer.
+  // Expansion state is shared with the desktop drawer, so a tap outside settings must not collapse it.
   const closeSettingsDrawer = () => {
     if (!isSettingsDrawer) {
       return;

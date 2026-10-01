@@ -206,7 +206,7 @@ export class BillingSubscriptionService {
         { default_payment_method: stripePaymentMethodId },
       );
 
-    // The persisted status can lag Stripe when this event precedes the subscription update
+    // The persisted status can lag Stripe when this event precedes the subscription update, so the live one decides
     if (
       [SubscriptionStatus.PastDue, SubscriptionStatus.Unpaid].includes(
         getSubscriptionStatus(stripeSubscription.status),

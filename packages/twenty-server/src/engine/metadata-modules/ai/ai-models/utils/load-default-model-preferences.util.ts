@@ -1,5 +1,5 @@
 // TODO: derive default model preferences from the catalog instead of hardcoding ids
-// every supported provider needs an entry, or a single-provider instance resolves the tier to nothing
+// each tier takes the first model whose provider has a key, so every supported provider needs an entry or a single-provider instance resolves the tier to nothing
 import { type AiModelTier } from 'twenty-shared/ai';
 
 // efforts match the benchmarked effort and let one family back neighbouring tiers

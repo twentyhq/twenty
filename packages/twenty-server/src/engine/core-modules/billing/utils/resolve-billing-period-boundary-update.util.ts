@@ -13,7 +13,8 @@ type BillingPeriodBoundaryUpdate = {
   currentPeriodEnd?: Date;
 };
 
-// Stripe only reports the current window, so the boundary a period moves off must be captured here or is lost.
+// Stripe only reports the current window, so the boundary a period moves off must be captured here or is lost;
+// the rollover bounds the usage it settles with it, so every subscription write resolves period fields through this.
 export const resolveBillingPeriodBoundaryUpdate = ({
   incomingPeriodStart,
   storedSubscription,

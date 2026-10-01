@@ -101,7 +101,7 @@ export class GraphqlQueryParser {
         return true;
       }
 
-      // Only and/or/not are transparent: nested composite or relation deletedAt belongs to another entity
+      // Only and/or/not are transparent: nested composite or relation deletedAt belongs to another entity and must not widen the root query
       if (
         (key === 'and' || key === 'or' || key === 'not') &&
         typeof value === 'object' &&

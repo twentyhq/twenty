@@ -50,7 +50,7 @@ export const buildLookupCandidates = ({
   const resolved = resolveRollingAlias(modelName, siblingModels);
 
   if (isDefined(resolved)) {
-    // Undated spellings are other releases: bare `mistral-large` is the Feb '24 model and once published a stale score as current
+    // Only the resolved release, not the bare name: undated `mistral-large` is the Feb '24 model and once published a stale score as current
     return [...new Set([...candidates, resolved])];
   }
 

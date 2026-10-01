@@ -19,7 +19,7 @@ import { IS_SECURE_DEPLOYMENT } from 'test/integration/graphql/suites/auth/user-
 import { USER_SESSION_COOKIE_NAME } from 'src/engine/core-modules/user-session/constants/user-session-cookie-name.constant';
 import { USER_SESSION_SECURE_COOKIE_NAME } from 'src/engine/core-modules/user-session/constants/user-session-secure-cookie-name.constant';
 
-// isSecureDeployment() reads the env-only SERVER_URL: run via `nx run twenty-server:test:integration:secure`.
+// Needs an https SERVER_URL (env-only, read by isSecureDeployment()): run via `nx run twenty-server:test:integration:secure`.
 describe('session cookie on a production-like secure deployment (integration)', () => {
   let sessionToken: string;
 

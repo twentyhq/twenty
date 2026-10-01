@@ -22,7 +22,7 @@ export const buildRowAccessPolicy = ({
   }
 
   const context = { subject, environment };
-  // Otherwise a child could become writable through a SYSTEM parent
+  // Inherited writes also need the parent's writability, or a child could become writable through a SYSTEM parent
   if (
     target.operationType !== 'select' &&
     !isMetadataWritePermitted({

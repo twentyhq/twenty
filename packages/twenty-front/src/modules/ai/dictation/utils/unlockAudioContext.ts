@@ -35,7 +35,7 @@ export const unlockAudioContext = async (): Promise<void> => {
   } catch {
     // A failed unlock only lowers the odds of a clean start.
   } finally {
-    // Closed even when resume() rejects, which is routine here: browsers allow only a few live contexts.
+    // Closed in finally: resume() routinely rejects here (the gesture can expire during warm-up), and browsers allow only a few live contexts.
     if (isDefined(audioContext)) {
       await closeQuietly(audioContext);
     }

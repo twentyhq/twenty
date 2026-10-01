@@ -2,7 +2,8 @@ import { useComponentInstanceStateContext } from '@/ui/utilities/state/component
 import { type ComponentInstanceStateContext } from '@/ui/utilities/state/component-state/types/ComponentInstanceStateContext';
 import { isNonEmptyString } from '@sniptt/guards';
 
-// Never rewritten here: some state is deliberately shared across surfaces, and ids are looked up verbatim as DOM anchors
+// Callers make the id unique where they create it; it is never rewritten here, since some state is deliberately
+// shared across surfaces and ids are looked up verbatim as DOM anchors
 export const useAvailableComponentInstanceIdOrThrow = <
   T extends { instanceId: string },
 >(

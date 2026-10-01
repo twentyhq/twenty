@@ -115,7 +115,8 @@ type DocumentViewerProps = {
   documentExtension?: string;
 };
 
-// MS Office Online only fetches public URLs, and its failure is undetectable (no postMessage, CORS, cross-origin).
+// MS Office Online only fetches public URLs and its failure is undetectable (no postMessage, CORS, cross-origin),
+// so localhost and private IPs are caught by URL; other private hosts get Microsoft's error page but can still download.
 // See https://github.com/twentyhq/twenty/issues/16900
 const isPrivateUrl = (url: string): boolean => {
   try {

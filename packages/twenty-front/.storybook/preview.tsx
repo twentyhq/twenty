@@ -96,7 +96,7 @@ initialize(
   remoteImageMockHandlers,
 );
 
-// Date-aware components need a real IANA timeZone, not UserContext's default `{}`.
+// Date-aware components need a real IANA timeZone, not UserContext's default `{}`; nest a UserContext.Provider to override.
 const STORYBOOK_DEFAULT_USER_CONTEXT = {
   dateFormat: DateFormat.DAY_FIRST,
   timeFormat: TimeFormat.HOUR_24,

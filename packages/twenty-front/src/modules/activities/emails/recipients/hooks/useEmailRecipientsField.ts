@@ -18,6 +18,7 @@ type ChipFlash = {
 };
 
 // Keyed by recipient, not position: a drag can reorder the field underneath the selection.
+// anchorKey starts a shift-extended range and focusKey is the keyboard cursor chip, like a text selection.
 type ChipSelection = {
   anchorKey: string;
   focusKey: string;
@@ -230,7 +231,7 @@ export const useEmailRecipientsField = ({
         return null;
       }
 
-      // Otherwise Enter and shift+arrow would act on a chip that is no longer selected.
+      // Move the anchor and cursor off the removed chip, or Enter and shift+arrow would act on an unselected chip.
       const fallbackKey = nextKeys[nextKeys.length - 1];
 
       return {

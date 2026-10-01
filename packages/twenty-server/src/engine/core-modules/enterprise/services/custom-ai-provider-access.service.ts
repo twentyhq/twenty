@@ -57,7 +57,7 @@ export class CustomAiProviderAccessService {
     }
   }
 
-  // The inference path cannot wait on a seat count, so it reads the last verdict and refreshes in the background.
+  // The inference path cannot wait on a seat count, so it reads the last verdict and refreshes in the background once stale.
   getCachedHasAccess(): boolean {
     if (this.isVerdictStale()) {
       this.computeAccess().catch((error) => {

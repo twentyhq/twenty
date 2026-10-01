@@ -36,7 +36,7 @@ export type OrderByLeaf = {
   | { kind: 'composite'; compositeProperty: CompositeProperty }
   | {
       kind: 'relation';
-      // Only resolved when flatObjectMetadataMaps is provided
+      // Only resolved when flatObjectMetadataMaps is provided; the keyset condition builder needs it for NULL semantics
       targetFieldMetadata?: OrmFlatFieldMetadata;
       targetCompositeProperty?: CompositeProperty;
     }
@@ -182,7 +182,9 @@ const resolveRelationLeaf = ({
   };
 };
 
+// Single walk shared by SQL ordering, column selection, cursors and keyset conditions, so they cannot drift apart
 // Duplicates keep their first occurrence, so a caller-provided id ordering wins over the appended tie-breaker
+// Lenient mode skips invalid entries, for re-walks of an already-validated orderBy (e.g. nested connections)
 export const resolveOrderByLeaves = ({
   orderBy,
   flatObjectMetadata,

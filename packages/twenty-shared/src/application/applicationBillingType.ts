@@ -27,6 +27,7 @@ export type RecurringCharge = {
 };
 
 // 1 USD = 1_000_000 micro-credits; these bound what the platform debits on an app's unvalidated declaration.
+// PER_UNIT bounds the declared rate (multiplied by member count for WORKSPACE_MEMBER), PER_PERIOD the total.
 export const MAX_RECURRING_CHARGE_MICRO_CREDITS_PER_UNIT = 100_000_000;
 export const MAX_RECURRING_CHARGE_MICRO_CREDITS_PER_PERIOD = 1_000_000_000;
 

@@ -18,10 +18,10 @@ import { MessageParticipantRole } from 'twenty-shared/types';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
-// stored as a SELECT on messageParticipant, so this is the first surface exposing it to GraphQL
+// the role is a SELECT on messageParticipant, so this is the first surface exposing it as a GraphQL enum
 registerEnumType(MessageParticipantRole, { name: 'MessageParticipantRole' });
 
-// one request runs in a single transaction and logic-function timeout
+// one request runs in a single transaction and logic-function timeout, so provider backfills must page
 export const INGEST_APP_MESSAGES_MAX_BATCH_SIZE = 100;
 
 // above a long plain-text message, well below what would strain a full batch's transaction
@@ -46,7 +46,7 @@ export class AppMessageParticipantInput {
   @MaxLength(255)
   displayName?: string;
 
-  // a non-email handle cannot be matched to a Person, so the caller links it here
+  // a non-email handle cannot be matched to a Person, so the caller links it here or the thread reaches no record page
   @Field(() => UUIDScalarType, { nullable: true })
   @IsOptional()
   @IsUUID()

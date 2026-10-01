@@ -44,7 +44,7 @@ export const useCurrentResourceCredit = () => {
   return {
     currentResourceCreditSubscriptionItem,
     currentResourceCreditBillingPrice,
-    // An archived package is gone from listPlans but still billed.
+    // Subscription item first: an archived package is gone from listPlans but still billed.
     currentResourceCreditUnitAmount:
       currentResourceCreditSubscriptionItem?.unitAmount ??
       currentResourceCreditBillingPrice?.unitAmount,

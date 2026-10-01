@@ -131,7 +131,8 @@ export class BillingSubscriptionEntity extends WorkspaceRelatedEntity {
   })
   currentPeriodStart: Date;
 
-  // Stripe only reports the current window, so the previous boundary is unrecoverable once it advances
+  // Stripe only reports the current window, so the previous boundary is unrecoverable once it advances;
+  // written whenever the period moves, and read by the rollover to bound the usage it settles
   @Column({ nullable: true, type: 'timestamptz' })
   previousPeriodStart: Date | null;
 

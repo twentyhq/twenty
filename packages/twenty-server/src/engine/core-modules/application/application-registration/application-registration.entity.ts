@@ -131,7 +131,7 @@ export class ApplicationRegistrationEntity {
   ])
   isVetted: boolean;
 
-  // Existing workspaces are backfilled by the `install-pre-installed-apps` command
+  // Auto-installed on new workspaces; existing ones are backfilled by the `install-pre-installed-apps` command
   @Field(() => Boolean)
   @Column({ type: 'boolean', default: false })
   isPreInstalled: boolean;

@@ -150,7 +150,7 @@ export const AiChatEmailApprovalCard = ({
     const isAnswered = await answerAgentChatToolCall({
       toolCallId,
       response,
-      // Only a discard is known before the server answers.
+      // Only a discard is certain before the server answers: sending or saving can still fail.
       optimisticToolOutput:
         decision === 'discard'
           ? {

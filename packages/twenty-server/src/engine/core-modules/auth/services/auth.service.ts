@@ -546,7 +546,8 @@ export class AuthService {
       );
     }
 
-    // RFC 8252 §7.3: native apps may use any loopback port (e.g. the seeded CLI registration)
+    // RFC 8252 §7.3: native apps may use any loopback port, so a registration without redirect URIs
+    // (e.g. the seeded CLI one) accepts any loopback redirect URI
     const hasRegisteredRedirectUris =
       applicationRegistration.oAuthRedirectUris.length > 0;
 

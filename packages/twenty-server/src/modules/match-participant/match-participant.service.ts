@@ -97,7 +97,8 @@ export class MatchParticipantService<
     // Targets derive from personId only, so a workspaceMemberOnly rematch cannot change them
     const shouldReconcileTargets = matchWith !== 'workspaceMemberOnly';
 
-    // Matching non-email handles as emails would null out the caller-supplied personId
+    // Sources with non-email handles only reconcile targets: matching them as emails would null out the
+    // caller-supplied personId
     if (matchWith === 'targetsOnly') {
       await this.participantTargetReconciliationService.reconcileParticipantTargets(
         {

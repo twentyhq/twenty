@@ -70,7 +70,7 @@ export const mapUIMessagePartsToDBParts = (
             state: part.data.state,
           };
         case 'data-code-execution':
-          // the final result is captured in the tool part
+          // streamed only: the final result is captured in the tool part
           return null;
         case 'data-thread-title':
           // Thread title is a transient notification for the client

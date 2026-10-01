@@ -1,7 +1,7 @@
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 
-// Pickers list system objects under an "Advanced" section, away from business objects.
+// System objects are technical tables that would confuse non-technical users, so pickers list them under "Advanced".
 export const isAdvancedRelationTargetObjectMetadata = (
   objectMetadataItem: Pick<
     EnrichedObjectMetadataItem,

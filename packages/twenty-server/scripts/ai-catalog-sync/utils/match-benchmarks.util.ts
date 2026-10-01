@@ -68,7 +68,7 @@ export const matchBenchmarks = ({
     Record<AiModelEffort, BenchmarkOverlayReading>
   > = {};
 
-  // The ceiling was measured at another effort and would overstate this one
+  // An effort without its own row stays blank: the ceiling was measured at another effort and would overstate it
   for (const effort of efforts ?? []) {
     const effortRecord = lookup(
       benchmarkIndex,

@@ -17,6 +17,7 @@ export const useBillingSubscriptionCost = () => {
   const seats = baseProductSubscriptionItem?.quantity;
 
   // Subscription prices, not the catalog: superseded prices keep billing the workspaces on them.
+  // Per-seat is per subscription interval (a full year for yearly), so subtotals match the charge.
   const perSeatAmountCents = baseProductSubscriptionItem?.unitAmount;
 
   const seatsSubtotalCents =

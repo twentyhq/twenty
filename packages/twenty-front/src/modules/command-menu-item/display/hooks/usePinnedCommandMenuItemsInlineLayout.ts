@@ -15,7 +15,7 @@ type ElementDimensions = {
 type UsePinnedCommandMenuItemsInlineLayoutParams = {
   pinnedCommandMenuItems: CommandMenuItemFieldsFragment[];
   layoutKey: PinnedCommandMenuItemsLayoutKey;
-  // Overrides the self-measured container width.
+  // Overrides the self-measured width when an ancestor already knows the space the inline buttons may take.
   containerWidth?: number;
 };
 

@@ -1,7 +1,7 @@
 import { WidgetType } from '~/generated-metadata/graphql';
 
-// Applications are trusted, so warming FRONT_COMPONENT and IFRAME on hover is wanted.
-// GRAPH and RECORD_TABLE measure their container, which is zero-sized while hidden.
+// Prerendered tabs mount while hidden, so only widgets that behave under display: none qualify; apps are trusted, so warming FRONT_COMPONENT and IFRAME is wanted.
+// Excluded: GRAPH and RECORD_TABLE measure their container, which is zero-sized while hidden.
 export const PRERENDERABLE_PAGE_LAYOUT_WIDGET_TYPES: WidgetType[] = [
   WidgetType.FIELDS,
   WidgetType.TIMELINE,

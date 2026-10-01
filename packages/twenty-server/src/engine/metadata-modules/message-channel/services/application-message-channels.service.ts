@@ -29,7 +29,8 @@ import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/worksp
 type ApplicationScope = {
   applicationId: string;
   workspaceId: string;
-  // owning the app does not grant access to another member's private connection; null for cron, webhooks and install hooks
+  // the person who triggered the run, since owning the app does not grant access to another member's private connection;
+  // null for cron, webhooks and install hooks
   requestUserWorkspaceId: string | null;
 };
 

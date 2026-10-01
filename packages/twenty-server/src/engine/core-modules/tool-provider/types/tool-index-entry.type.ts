@@ -12,6 +12,6 @@ export type ToolIndexEntry = {
   operation?: string;
   icon?: string;
   widgetName?: ToolWidgetName;
-  // Rendered instead of widgetName.
+  // App-supplied front component that renders this tool's calls instead of widgetName.
   frontComponentId?: string;
 };

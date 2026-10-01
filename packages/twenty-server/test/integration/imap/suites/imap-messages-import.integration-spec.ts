@@ -162,7 +162,7 @@ describe('IMAP messages import (integration)', () => {
     expect(await findImportedMessageSubjects([subject])).toEqual([subject]);
   }, 300000);
 
-  // Some servers scope HIGHESTMODSEQ to the account; Dovecot cannot, so the state is written directly.
+  // Servers scoping HIGHESTMODSEQ to the account leave a stored MODSEQ above the folder's next message; Dovecot can't, so it is written directly.
   it('imports new mail when the stored MODSEQ is ahead of the mailbox', async () => {
     await runMessageChannelSync(messageChannelId);
 

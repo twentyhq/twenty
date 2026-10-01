@@ -2,7 +2,7 @@ import { registerEnumType } from '@nestjs/graphql';
 
 import { type AiModelTier as SharedAiModelTier } from 'twenty-shared/ai';
 
-// keys equal values so GraphQL names match the twenty-shared tier literals
+// GraphQL needs a runtime enum; keys equal values so GraphQL names match the twenty-shared tier literals
 export enum AiModelTier {
   extraFast = 'extraFast',
   fast = 'fast',

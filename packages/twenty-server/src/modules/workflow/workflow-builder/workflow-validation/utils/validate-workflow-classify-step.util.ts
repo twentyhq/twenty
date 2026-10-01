@@ -113,7 +113,8 @@ export const validateWorkflowClassifyStep = (
       continue;
     }
 
-    // Answers are keyed by name, so a repeat would overwrite the earlier one
+    // Answers are keyed by name, so a repeat would overwrite the earlier one.
+    // Checked even when the question has other problems, so a step gets every reason in one pass
     if (seenNames.has(question.name)) {
       issues.push({
         severity: 'error',

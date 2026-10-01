@@ -27,7 +27,8 @@ export interface LocalDriverOptions {
   storagePath: string;
 }
 
-// Local storage has no ETag, so identity comes from the stat fields a rewrite changes.
+// Local storage has no ETag, so identity comes from the stat fields a rewrite changes; only enough to catch a swap
+// between an inspection and a move.
 const buildStatChecksum = (stats: Stats): string =>
   `${stats.ino}-${stats.size}-${stats.mtimeMs}`;
 

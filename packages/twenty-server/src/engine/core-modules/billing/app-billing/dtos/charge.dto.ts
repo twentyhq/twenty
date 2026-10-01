@@ -17,7 +17,7 @@ import {
 } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
-// $1000: a compromised or buggy app can't drain credits in one request
+// $1000 in micro-credits, so a compromised or buggy app can't drain credits in one request
 const MAX_CREDITS_USED_MICRO_PER_CHARGE = 1_000_000_000;
 const MAX_QUANTITY_PER_CHARGE = 10_000;
 
@@ -46,7 +46,7 @@ export class ChargeDto {
   @IsString()
   resourceContext?: string;
 
-  // Webhook and cron runs carry no triggering person on the token
+  // Webhook and cron runs carry no triggering person on the token, so the app names who the spend belongs to
   @IsOptional()
   @IsUUID()
   userWorkspaceId?: string;

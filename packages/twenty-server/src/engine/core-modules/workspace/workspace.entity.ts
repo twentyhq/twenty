@@ -359,12 +359,13 @@ export class WorkspaceEntity {
   @Column({ type: 'boolean', nullable: false, default: true })
   isAutoModelSelectionEnabled: boolean;
 
-  // kept when auto selection is re-enabled so turning it off again restores the pins
+  // only read while auto selection is off; kept when it is re-enabled so turning it off again restores the pins
   @Field(() => GraphQLJSON, { nullable: false })
   @Column({ type: 'jsonb', nullable: false, default: {} })
   aiModelIdByTier: Partial<Record<AiModelTier, string>>;
 
-  // null means whatever the instance offers, so a workspace picks up a provider once one is configured
+  // model a Classify step uses when it names none; null means whatever the instance offers, so a workspace
+  // picks up an evaluation provider once one is configured
   @Field(() => String, { nullable: true })
   @Column({ type: 'text', nullable: true })
   aiEvaluationModelId: string | null;

@@ -596,7 +596,7 @@ export class AgentChatStreamingService {
       select: ['id', 'deletedAt', 'pendingQuestionMessageId'],
     });
 
-    // queued messages follow the answer rather than replace it
+    // queued messages wait behind a pending tool call: they follow the answer rather than replace it
     if (
       !threadStatus ||
       threadStatus.deletedAt ||
@@ -764,6 +764,8 @@ export class AgentChatStreamingService {
     }
   }
 
+  // a message sent while the agent waits on a person closes its pending calls as skipped, so the model sees why
+  // clearing the marker is the claim, which an answer holding the stream keeps
   // workflow-run calls gate the run, so a chat message never closes them
   private async settlePendingToolCallsBeforeSending({
     thread,

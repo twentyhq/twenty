@@ -422,7 +422,8 @@ export class ApplicationSyncService {
       },
     );
 
-    // Unlike manifest omission, uninstall also removes dependents owned by other applications
+    // Unlike manifest omission, uninstall also removes engine-owned and workspace-local metadata, so expand the deletions
+    // to dependents owned by other applications
     const allFlatEntityOperationRecordByMetadataName: AllFlatEntityOperationRecordByMetadataName =
       Object.fromEntries(
         Object.values(ALL_METADATA_NAME).map((metadataName) => [

@@ -2,14 +2,14 @@ import { type AggregateOperations } from '@/object-record/record-table/constants
 import { createContext } from 'react';
 import { type RecordGqlOperationFilter } from 'twenty-shared/types';
 
-// The created record's join column must point at a first-hop record (e.g. Company → People → Opportunities).
+// Creating in a nested relation widget first picks a first-hop record for the join column (e.g. Company → People → Opportunities).
 export type RecordTableWidgetNestedRelationCreateThrough = {
   relationObjectMetadataNameSingular: string;
   relationRecordsFilter: RecordGqlOperationFilter;
   nestedRelationJoinColumnName: string;
 };
 
-// Adding means picking an existing target and creating the junction record linking it.
+// Adding to a junction widget picks an existing target and creates the junction record linking it, not a new target.
 export type RecordTableWidgetJunctionCreateThrough = {
   junctionObjectMetadataId: string;
   junctionObjectMetadataNameSingular: string;

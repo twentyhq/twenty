@@ -12,7 +12,8 @@ export type LogicFunctionHandler<TPayload = any> = (
   context: LogicFunctionExecutionContext,
 ) => any | Promise<any>;
 
-// The resolver is the only authorization point: the URL carries nothing but its universalIdentifier
+// The resolver runs in the owner workspace and is the only authorization point: the URL carries just its universalIdentifier.
+// A dispatch result enqueues the target; a Response answers synchronously, for providers needing a handshake reply.
 export type ServerRouteResolverResult =
   | ServerRouteDispatchResult
   | LogicFunctionHttpResponse;

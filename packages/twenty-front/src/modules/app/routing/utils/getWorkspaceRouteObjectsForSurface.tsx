@@ -43,7 +43,8 @@ const getWorkspaceRouteObjects = (
     ];
   });
 
-// The side panel remounts per location, so its context store provider lives inside the routed tree.
+// One context store provider per surface: the main one sits above its routes, while the side panel
+// remounts per location, so its provider lives inside the routed tree.
 export const getWorkspaceRouteObjectsForSurface = (
   routeObjects: WorkspaceRouteObject[],
   surface: WorkspaceSurfaceType,

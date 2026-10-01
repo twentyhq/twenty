@@ -52,7 +52,8 @@ describe('fetchArtificialAnalysisBenchmarks', () => {
   ])(
     'keeps the highest-scoring configuration whatever the order (%s)',
     async (_label, bestFirst) => {
-      // Picking by how populated a row is once compared Sonnet 4.6 at low effort to Sonnet 5 at max
+      // A model's rows differ only by reasoning effort; picking the most populated one once scored
+      // Sonnet 4.6 at low effort against Sonnet 5 at max, and the gap read as capability
       const lowEffort = {
         slug: 'claude-sonnet-4-6',
         name: 'Claude Sonnet 4.6 (Non-reasoning, Low Effort)',

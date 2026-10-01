@@ -81,7 +81,7 @@ export const useResizeTableHeader = () => {
   const isRecordTableCheckboxColumnHidden =
     useIsRecordTableCheckboxColumnHidden(recordTableId);
 
-  // Captured once per drag: reading computed style on every move forces a style recalc.
+  // Captured once per drag: zoom cannot change mid-drag, and reading computed style per move forces a recalc.
   const [dragUiZoom, setDragUiZoom] = useState(1);
 
   const handleResizeHandlerStart = useCallback<PointerEventListener>(

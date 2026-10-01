@@ -1,4 +1,5 @@
-// Only what may reach the Lambda runtime; build-time define* factories stay in twenty-sdk/define
+// Only what may reach the Lambda runtime; build-time define* factories stay in twenty-sdk/define.
+// Logic functions import types from here, never directly from twenty-shared/*.
 
 export type {
   LogicFunctionConfig,

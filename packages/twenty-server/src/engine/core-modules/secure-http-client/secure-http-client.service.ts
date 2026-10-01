@@ -32,7 +32,8 @@ export class SecureHttpClientService {
 
   constructor(private readonly twentyConfigService: TwentyConfigService) {}
 
-  // Enforced at connection level by validating resolved IPs, which also covers redirects.
+  // SSRF protection is enforced at connection level by validating resolved IPs, which also covers redirects.
+  // With a context, outbound requests are logged with workspace/user info for GuardDuty correlation.
   getHttpClient(
     config?: SecureHttpClientConfig,
     context?: OutboundRequestContext,

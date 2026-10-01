@@ -1110,7 +1110,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
     conditionalAvailabilityExpression:
       'numberOfSelectedRecords == 1 and noneDefined(selectedRecords, "deletedAt") and objectPermissions.canUpdateObjectRecords and featureFlags.IS_MESSAGE_CAMPAIGN_ENABLED',
-    // Only sent campaigns get re-run, so drafts keep the button in the menu
+    // Pinned only on sent campaigns, the ones people re-run; drafts keep it in the menu
     conditionalPinnedExpression:
       'everyEquals(selectedRecords, "status", "SENT")',
     availabilityObjectMetadataUniversalIdentifier:

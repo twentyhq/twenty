@@ -29,7 +29,7 @@ export class ProviderConfigService {
     // never resolve {{VAR}} templates in custom providers, to prevent config variable exfiltration
     const catalog = this.resolveTemplates(rawCatalog);
 
-    // also restores catalog providers that a same-named custom entry shadowed
+    // dropping custom entries, rather than filtering the merged map, also restores catalog providers a same-named custom entry shadowed
     if (!includeCustomProviders) {
       return catalog;
     }

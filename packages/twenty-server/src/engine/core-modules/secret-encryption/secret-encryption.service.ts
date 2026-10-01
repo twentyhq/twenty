@@ -43,7 +43,8 @@ export class SecretEncryptionService {
     return encryptAesCtr({ plaintext: value, rawKey: primary });
   }
 
-  // CTR has no integrity tag, so a wrong key yields garbage instead of throwing.
+  // CTR has no integrity tag, so a wrong key yields garbage instead of throwing:
+  // migrate a caller to enc:v2 before rotating the key its rows use.
   public decrypt(value: string): string {
     if (!isDefined(value)) {
       return value;

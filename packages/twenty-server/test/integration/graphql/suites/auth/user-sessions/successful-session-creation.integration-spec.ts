@@ -42,7 +42,8 @@ describe('successful user session creation on auth exchanges (integration)', () 
     firstSessionToken = sessionCookie.sessionToken;
     firstSessionCookieHeader = sessionCookie.cookieHeader;
 
-    // The absences matter: no Domain keeps the cookie host-only, off sibling workspace subdomains.
+    // Insecure boot only (plain http: no Secure, no __Host-); secure-deployment/suites/secure-session-cookie.integration-spec.ts
+    // pins the secure shape. The absences matter: no Domain keeps the cookie host-only, off sibling workspace subdomains.
     if (!IS_SECURE_DEPLOYMENT) {
       expect(
         normalizeSessionCookieForSnapshot(sessionCookie.rawCookie),

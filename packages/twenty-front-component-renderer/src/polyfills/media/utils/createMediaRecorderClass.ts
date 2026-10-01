@@ -219,7 +219,7 @@ export const createMediaRecorderClass = ({
           }
 
           if (result.status === 'failed') {
-            // Native recorders fire error then stop on a failed start.
+            // Native recorders fire error then stop on a failed start, so waiting on stop never hangs.
             this.#state = 'inactive';
             this.#hasPendingStopRequest = false;
             this.dispatchEvent(

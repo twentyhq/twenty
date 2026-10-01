@@ -34,7 +34,7 @@ const buildNestedRelationValidationException = ({
   );
 };
 
-// Junction fields are also ONE_TO_MANY but render through a dedicated junction path
+// Junction fields are also ONE_TO_MANY but render through a dedicated junction path, so they are not valid nested hops
 const isPlainOneToManyRelationFlatFieldMetadata = (
   field: FlatFieldMetadata,
 ): boolean =>

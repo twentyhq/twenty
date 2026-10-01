@@ -48,7 +48,7 @@ const StyledHeaderActions = styled.div`
   align-items: center;
   display: flex;
   flex-shrink: 0;
-  // Cancels out in layout; lets overflow:hidden leave room for LightIconButton's 3px focus ring.
+  // Padding and negative margin cancel out in layout; they only let overflow:hidden keep LightIconButton's 3px focus ring.
   margin: calc(-1 * ${themeCssVariables.spacing[1]});
   max-width: 0;
   min-width: 0;

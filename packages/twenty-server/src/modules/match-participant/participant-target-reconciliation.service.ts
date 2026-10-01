@@ -274,7 +274,8 @@ export class ParticipantTargetReconciliationService {
       return;
     }
 
-    // Target junction objects exist only after the upgrade metadata sync; the following backfill covers the gap
+    // Target junction objects exist only after the upgrade metadata sync; no-op until then so imports keep
+    // succeeding, and the following backfill covers the gap
     if (
       !isDefined(getWorkspaceContext().objectIdByNameSingular[targetObjectName])
     ) {

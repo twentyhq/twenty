@@ -476,7 +476,8 @@ export class WorkspaceService {
   }
 
   async activateWorkspace(user: AuthContextUser, workspace: WorkspaceEntity) {
-    // update bumps updatedAt, so a reclaimed stale lock is immediately fresh again
+    // a workspace stuck in ONGOING_CREATION is reclaimed only once its lock is stale, so a live activation is never interrupted;
+    // row locking serializes reclaims and update bumps updatedAt, so a reclaimed lock is immediately fresh again
     let activationLockResult = await this.workspaceRepository.update(
       {
         id: workspace.id,

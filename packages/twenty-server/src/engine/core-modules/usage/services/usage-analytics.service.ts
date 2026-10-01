@@ -66,7 +66,7 @@ type GroupByField = (typeof ALLOWED_GROUP_BY_FIELDS)[number];
 
 const BREAKDOWN_QUERY_LIMIT = 50;
 
-// Both sides of the comparison use this, so the SQL and the matched array cannot spell the pair differently.
+// Scopes a declared operation to its application; both sides of the comparison use it so they cannot spell the pair differently.
 const DECLARED_OPERATION_KEY_SEPARATOR = ':';
 
 @Injectable()

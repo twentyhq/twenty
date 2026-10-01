@@ -5,7 +5,8 @@ import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from '@/metadata/constants/stan
 import { buildStandardObjectSystemFields } from '@/metadata/utils/internal/build-standard-object-system-fields.util';
 
 // Never mutate an existing universal identifier, and delete one only rarely.
-// System and system-relation field ids are derived by their builders, not listed here.
+// System field ids come from buildStandardObjectSystemFields and getSystemRelationFieldUniversalIdentifier;
+// name is a default field, not a system one, and keeps its hardcoded id.
 export const STANDARD_OBJECT_FIELDS = {
   agentChatThread: {
     ...buildStandardObjectBaseFields(

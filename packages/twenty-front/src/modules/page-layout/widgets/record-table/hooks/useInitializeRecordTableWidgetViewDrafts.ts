@@ -10,7 +10,8 @@ import { viewsSelector } from '@/views/states/selectors/viewsSelector';
 import { useStore } from 'jotai';
 import { useEffect } from 'react';
 
-// The draft is every widget view setting's write target, including the side panel's, which can't seed it.
+// The draft is every widget view setting's write target, so it must exist before any runs, including in the side
+// panel, which mounts outside this layout tree and can't seed it.
 export const useInitializeRecordTableWidgetViewDrafts = () => {
   const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
 

@@ -90,7 +90,8 @@ export class MessageChannelResolver {
       return buildPublicConnectedAccount(account);
     }
 
-    // app connections have no member owner, so reachability is delegated to the app-facing predicate
+    // app connections have no member owner, so reachability is delegated to the app-facing predicate, which also
+    // stops one member reaching another's private connection through the app
     if (
       isDefined(application) &&
       messageChannel.type === MessageChannelType.APP

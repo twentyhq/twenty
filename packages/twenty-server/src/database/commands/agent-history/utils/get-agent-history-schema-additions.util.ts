@@ -67,7 +67,8 @@ export const getAgentHistorySchemaAdditions = ({
     readability: MetadataReadability.SYSTEM,
     writability: MetadataWritability.SYSTEM,
   }));
-  // Objects added later (e.g. agentChatThreadTarget) get both relation legs from their own command
+  // Objects added later (e.g. agentChatThreadTarget) get both relation legs from their own command; a leg emitted
+  // here before that object exists would have no other side and fail validation
   const existsOnceProvisioned = (objectUniversalIdentifier: string) =>
     objectIdentifiers.has(objectUniversalIdentifier) ||
     isDefined(

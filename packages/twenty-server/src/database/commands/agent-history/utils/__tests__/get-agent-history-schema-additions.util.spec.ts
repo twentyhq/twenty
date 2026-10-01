@@ -165,7 +165,7 @@ describe('getAgentHistorySchemaAdditions', () => {
     const targetIdentifier =
       STANDARD_OBJECTS.agentChatThreadTarget.universalIdentifier;
 
-    // The target is provisioned later in the upgrade by its own command
+    // The target is provisioned later in the upgrade by its own command, so nothing here may reference it yet
     expect(
       additions.fields
         .filter(

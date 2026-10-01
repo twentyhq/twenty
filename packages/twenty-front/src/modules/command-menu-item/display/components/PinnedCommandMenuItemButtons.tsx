@@ -49,7 +49,7 @@ const StyledItemsContainer = styled.div<{ shouldReverse: boolean }>`
 export const PinnedCommandMenuItemButtons = ({
   containerWidth,
 }: {
-  // When set, the row shrinks to fit instead of stretching to measure free space.
+  // When set, the row shrinks to fit instead of stretching to measure free space, keeping sibling actions adjacent.
   containerWidth?: number;
 }) => {
   const theme = useTheme();
@@ -59,7 +59,7 @@ export const PinnedCommandMenuItemButtons = ({
   const isSidePanelFooter =
     containerType === CommandMenuItemContainerType.SidePanelFooter;
 
-  // Header actions stay icon-only so the title keeps its room on mobile.
+  // Headers keep their title even on mobile, so their actions stay icon-only; only the footer has a full row for a label.
   const shouldLabelSingleCommandMenuItem = isSidePanelFooter;
 
   const pinnedCommandMenuItems = useMemo(

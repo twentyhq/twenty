@@ -416,7 +416,8 @@ export class UserSessionService {
     });
   }
 
-  // A session belongs to the workspace its exchange selected; workspace-agnostic ones belong to no list.
+  // A session belongs to the workspace its exchange selected, so other workspaces' sessions stay out;
+  // workspace-agnostic ones belong to no list.
   async findActiveSessionsForUserWorkspace({
     userId,
     workspaceId,

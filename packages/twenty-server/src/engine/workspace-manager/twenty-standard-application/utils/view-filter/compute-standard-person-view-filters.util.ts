@@ -10,7 +10,7 @@ export const computeStandardPersonViewFilters = (
   args: Omit<CreateStandardViewFilterArgs<'person'>, 'context'>,
 ): Record<string, FlatViewFilter> => {
   return {
-    // Seeded the way the layout editor seeds junction relation table widgets
+    // Scopes the members table to people listed on the displayed list record, as the layout editor seeds junction widgets
     messageListRecordPageMembersListMembershipsListIsCurrentRecord:
       createStandardViewFilterFlatMetadata({
         ...args,

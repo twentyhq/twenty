@@ -56,7 +56,8 @@ export const triggerUpdateRootQueriesOptimisticEffect = ({
             objectMetadataItems,
           });
 
-        // Counted from edges, not the filter: one change can reach a list several times (update, then cascaded detach).
+        // Counted from edges, not the filter: one change can reach a list several times (update, then cascaded detach),
+        // so only an edge actually added or removed moves the count.
         let rootQueryNextEdges = [
           ...(readField<RecordGqlRefEdge[]>('edges', rootQueryConnection) ??
             []),

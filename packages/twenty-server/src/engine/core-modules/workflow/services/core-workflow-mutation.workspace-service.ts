@@ -907,7 +907,8 @@ export class CoreWorkflowMutationWorkspaceService {
       },
     );
 
-    // ownership is checked in the UPDATE's WHERE, not a prior read, so two concurrent claims of an ownerless workflow cannot both win
+    // ownership is checked in the UPDATE's WHERE, not a prior read, so two concurrent claims of an ownerless workflow cannot both win;
+    // a workspace-visible workflow is already editable by every member, so claiming one grants no new access
     const claimResult =
       await this.workflowRunRecordShareService.updateAccessThenSyncRuns({
         workspaceId,

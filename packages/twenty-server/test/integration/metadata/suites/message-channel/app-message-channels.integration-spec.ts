@@ -717,7 +717,7 @@ describe('app message channels API (e2e)', () => {
           buildMessage({
             externalId: 'sent-by-the-channel-owner',
             threadExternalId,
-            // Spelled the way a provider that upper-cases its profile API returns it.
+            // The channel's own handle, spelled the way a provider that upper-cases its profile API returns it.
             senderHandle: CHANNEL_HANDLE.toUpperCase(),
           }),
           buildMessage({

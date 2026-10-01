@@ -58,7 +58,7 @@ export class DefaultAiCatalogService implements OnModuleInit {
 
       this.logger.error(`Failed to load AI catalog from storage: ${message}`);
       this.exceptionHandlerService.captureExceptions([error]);
-      // the built-in catalog may name routes this deployment must not serve (data residency)
+      // serve nothing rather than the built-in catalog, which may name routes this deployment must not serve (data residency)
       this.catalog = {};
     }
   }

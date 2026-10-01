@@ -251,7 +251,7 @@ describe('Custom object renaming', () => {
     const relationFieldMetadataId =
       timelineActivityRelation.relationFieldMetadataId;
 
-    // Must be rejected for engine-owned fields rather than silently create relation fields and indexes.
+    // morphRelationsUpdatePayload isn't an editable property, so engine-owned fields must reject it rather than silently create relation fields and indexes.
     const { errors } = await updateOneFieldMetadata({
       expectToFail: true,
       input: {

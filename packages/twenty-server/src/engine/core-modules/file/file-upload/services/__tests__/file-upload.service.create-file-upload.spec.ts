@@ -41,7 +41,7 @@ describe('FileUploadService.createFileUpload', () => {
   );
 
   it('should not refuse an SVG within the limit', async () => {
-    // The empty mocks make reaching a collaborator surface as a TypeError.
+    // Passing the size guard reaches a collaborator, which the empty mocks surface as a TypeError.
     await expect(
       createUpload('logo.svg', MAX_SANITIZABLE_SVG_BYTES),
     ).rejects.not.toMatchObject({

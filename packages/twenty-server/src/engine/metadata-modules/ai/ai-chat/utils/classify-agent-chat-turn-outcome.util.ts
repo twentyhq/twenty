@@ -30,7 +30,8 @@ export const classifyAgentChatTurnOutcome = ({
   };
 };
 
-// failures keep their phase so an out-of-credits turn during a claim handover keeps its billing signal
+// a lost stream claim overrides completion, but failures keep their phase so an out-of-credits turn
+// during a claim handover keeps its billing signal
 export const resolveSupersededTurnOutcome = (
   outcome: AgentChatTurnOutcome,
 ): AgentChatTurnOutcome =>

@@ -118,7 +118,8 @@ const StyledRowDragOverlayCSSBridge = styled.div`
   }
 `;
 
-// Clipped to the scroll wrapper so the preview doesn't overhang overlays; the counter chip sits outside.
+// Clipped to the scroll wrapper so the preview doesn't overhang overlays; the counter chip sits outside
+// because it pokes past the row's top-left corner.
 const StyledRowClipContainer = styled.div`
   overflow: hidden;
 `;

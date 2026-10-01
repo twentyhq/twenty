@@ -104,7 +104,8 @@ export class AiModelRegistryService {
     private readonly customAiProviderAccessService: CustomAiProviderAccessService,
   ) {}
 
-  // seats are not in the config hash, so the custom-provider entitlement is compared alongside it
+  // rebuilt lazily when the LLM config hash changes; seats are not in that hash, so the custom-provider entitlement
+  // is compared too and an instance past the threshold loses its custom models on the next read
   private ensureFresh(): void {
     const configHash = this.configGroupHashService.computeHash(
       ConfigVariablesGroup.LLM,
@@ -388,7 +389,8 @@ export class AiModelRegistryService {
   }): void {
     const { supportedQuestionTypes } = modelDef;
 
-    // custom providers merged at runtime bypass the schema
+    // custom providers merged at runtime bypass the schema, and a model without question types would accept
+    // every node and fail at the provider
     if (!isNonEmptyArray(supportedQuestionTypes)) {
       this.logger.error(
         `Skipping evaluation model "${compositeId}": supportedQuestionTypes is required`,
@@ -452,7 +454,8 @@ export class AiModelRegistryService {
     return Array.from(this.evaluationRegistry.values());
   }
 
-  // skips admin-disabled models so withdrawing the only one sends unpinned steps to the language fallback
+  // first in provider config order; skips admin-disabled models so withdrawing the only one sends unpinned
+  // steps to the language fallback
   getDefaultEvaluationModel(): RegisteredAiEvaluationModel | undefined {
     return this.getAvailableEvaluationModels().find(
       (model) =>

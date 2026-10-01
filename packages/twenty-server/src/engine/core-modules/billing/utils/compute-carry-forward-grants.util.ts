@@ -116,7 +116,7 @@ export const computeCarryForwardGrants = ({
         ]
       : [];
 
-  // Only exact because every deadline is a period end, as alignGrantExpiryToPeriodEnd guarantees.
+  // A lapsed grant keeps its waterfall place but loses its remainder; exact only because every deadline is a period end (alignGrantExpiryToPeriodEnd).
   const preservedGrants: CarryForwardGrantOutput[] = unspentBuckets
     .filter(
       (bucket) =>

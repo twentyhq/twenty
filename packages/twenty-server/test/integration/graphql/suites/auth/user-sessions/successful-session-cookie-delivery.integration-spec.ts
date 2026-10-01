@@ -11,6 +11,7 @@ import { ALLOWED_ORIGIN } from 'test/integration/graphql/suites/auth/user-sessio
 import { setupDatabaseConfigOverrideForSuite } from 'test/integration/graphql/suites/auth/user-sessions/utils/setup-database-config-override.util';
 
 // SameSite=None forces Secure, the only secure-deployment trigger reachable while SERVER_URL is http in .env.test.
+// The https production case is covered by secure-deployment/suites/secure-session-cookie.integration-spec.ts.
 describe('successful session cookie delivery on a secure deployment (integration)', () => {
   setupDatabaseConfigOverrideForSuite('AUTH_COOKIE_SAME_SITE', 'none');
 

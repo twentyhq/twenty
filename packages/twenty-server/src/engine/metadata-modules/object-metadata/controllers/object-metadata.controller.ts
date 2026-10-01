@@ -310,7 +310,7 @@ export class ObjectMetadataController {
     return grouped;
   }
 
-  // one resolution call per kind so a page costs a fixed number of catalog reads
+  // labels resolve for the caller's locale via the GraphQL read path's resolver, one call per kind so a page costs a fixed number of catalog reads
   private async toObjectWithFieldsDtos({
     objects,
     fieldsByObjectId,

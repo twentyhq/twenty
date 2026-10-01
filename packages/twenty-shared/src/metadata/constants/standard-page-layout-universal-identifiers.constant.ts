@@ -2,7 +2,7 @@ import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from '@/metadata/constants/stan
 import { buildStandardObjectRecordPageLayout } from '@/metadata/utils/internal/build-standard-object-record-page-layout.util';
 
 // Never mutate an existing universal identifier, and delete one only rarely.
-// Ids derive from titles, which MUST match the server's standard page-layout configs.
+// buildStandardObjectRecordPageLayout derives ids from titles, which MUST match the server's standard page-layout configs.
 
 export const STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS = {
   myFirstDashboard: {

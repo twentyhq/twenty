@@ -206,7 +206,8 @@ export class WorkflowRunWorkspaceService {
 
     await this.updateWorkflowRun({ workflowRunId, workspaceId, partialUpdate });
 
-    // Best effort: a failure only leaves a call that looks waiting
+    // An ended run cannot consume answers, so close the calls its conversations wait on.
+    // Best effort: a failure only leaves a call that looks waiting.
     if (
       Object.values(workflowRunToUpdate.state?.stepInfos ?? {}).some(
         (stepInfo) => isDefined(stepInfo?.threadId),
@@ -414,6 +415,7 @@ export class WorkflowRunWorkspaceService {
 
   // Shares the step-info write lock so of two concurrent callers the second finds the step no longer PENDING.
   // A stop is refused: endWorkflowRun fails a pending step, or leaves it PENDING with nothing to resume.
+  // expectedThreadId must still be the step's: a retry or another loop iteration replaces it.
   @WithLock('workflowRunId')
   async updateStepInfoIfPending({
     stepId,

@@ -4,7 +4,7 @@ import { buildStandardObjectIndexView } from '@/metadata/utils/internal/build-st
 import { buildStandardObjectRecordPageFieldsView } from '@/metadata/utils/internal/build-standard-object-record-page-fields-view.util';
 
 // Never mutate an existing universal identifier, and delete one only rarely.
-// FIELDS_WIDGET view field group names MUST match the server's standard view-field-group builders.
+// Group names passed to buildStandardObjectRecordPageFieldsView MUST match the server's standard view-field-group builders.
 export const STANDARD_OBJECTS = {
   attachment: {
     universalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.attachment,

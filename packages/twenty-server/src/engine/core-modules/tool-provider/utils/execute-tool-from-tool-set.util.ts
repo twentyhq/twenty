@@ -18,7 +18,7 @@ export const executeToolFromToolSet = async (
     );
   }
 
-  // ToolSet widens execute to a union no argument satisfies.
+  // ToolSet widens execute to a union no argument satisfies; these tools take no per-tool context.
   const execute = tool.execute as ToolExecuteFunction<
     Record<string, unknown>,
     ToolOutput,

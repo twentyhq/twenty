@@ -392,7 +392,7 @@ export abstract class CommonBaseQueryRunnerService<
     };
   }
 
-  // Root reads and nested-relation loading must hit the same replica or primary
+  // The repository already uses the replica only on read-only runners, so root reads and nested-relation loading agree
   protected getReadRepository({
     repository,
   }: Pick<

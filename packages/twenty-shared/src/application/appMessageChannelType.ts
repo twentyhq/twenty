@@ -6,7 +6,8 @@ export type AppMessageChannel = {
   handle: string;
   // Falls back to `handle` in the UI when null.
   displayName: string | null;
-  // The connection owner always reads their own messages in full, whatever this is set to.
+  // What other members may read: METADATA = participants and dates, SUBJECT adds the subject, SHARE_EVERYTHING the body.
+  // The connection owner always reads their own messages in full.
   visibility: MessageChannelVisibility;
   connectedAccountId: string;
   // False rejects ingestion without deleting the channel; existing messages stay readable.

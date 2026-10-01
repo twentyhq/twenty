@@ -204,6 +204,7 @@ const StyledTable = styled.div<{
 
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     // clip, not hidden: hidden makes the cell a scroll container the sticky anchor would stick to.
+    // The clip margin keeps the scroll shadow, which paints outside the box.
     div.header-cell.${getRecordTableColumnFieldWidthClassName(0)},
       div.table-cell.${getRecordTableColumnFieldWidthClassName(0)},
       div.footer-cell.${getRecordTableColumnFieldWidthClassName(0)},
@@ -212,7 +213,8 @@ const StyledTable = styled.div<{
       overflow-clip-margin: 4px;
     }
 
-    // Zero-width sticky anchor: wider, sticky's containing-block constraint drags it along with the cell.
+    // Pins the content at the table's left edge so the name holds still and truncates from the right.
+    // Must stay zero-width, or sticky's containing-block constraint drags it along with the cell.
     div.table-cell.${getRecordTableColumnFieldWidthClassName(0)}
       > .${RECORD_TABLE_CELL_CONTENT_CLASS_NAME},
       div.table-cell-0-0

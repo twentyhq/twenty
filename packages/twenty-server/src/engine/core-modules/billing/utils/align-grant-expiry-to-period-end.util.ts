@@ -5,7 +5,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
 import { shiftUtcMonths } from 'src/engine/core-modules/billing/utils/shift-utc-months.util';
 
-// Must cover the longest accepted validity on the shortest interval (13 monthly periods for a year)
+// Must cover the longest accepted validity on the shortest interval (13 monthly periods for a year);
+// exceeding it returns a date short of the one asked for, so raise both together
 const MAX_PERIODS_AHEAD = 24;
 
 // Stripe clamps the anchor day to short months, so the later day of the two boundaries recovers it

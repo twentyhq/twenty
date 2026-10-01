@@ -253,7 +253,7 @@ export class WorkspaceSetupChatService {
     userLocale: string | null;
     workspaceId: string;
   }): Promise<string> {
-    // the UI uses the member locale; the user locale stays at its signup default
+    // follow the member locale the UI uses; the user locale stays at its signup default
     const workspaceMemberLocale = await this.findWorkspaceMemberLocale({
       userId,
       workspaceId,

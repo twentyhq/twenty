@@ -1,6 +1,7 @@
 import { type TextDirection } from '@/translations/types/TextDirection';
 
-// Beyond the shipped Arabic and Hebrew, so enabling another RTL locale in Crowdin does not lay the app out backwards.
+// RTL languages by ISO 639-1 subtag, beyond the shipped Arabic and Hebrew so enabling another in Crowdin
+// does not lay the app out backwards.
 const RIGHT_TO_LEFT_LANGUAGES = [
   'ar',
   'dv',

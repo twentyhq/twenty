@@ -406,7 +406,7 @@ export class RecordAccessPolicyService {
             ),
           ),
         );
-        // Rows trashed along with the record still attach it, as in the query gate.
+        // Rows trashed along with the record still attach it, as in the query gate; rows trashed earlier do not.
         const trashedChildRows = await childRepository
           .createQueryBuilder()
           .select(['id', parent.childJoinColumnName, 'deletedAt'])

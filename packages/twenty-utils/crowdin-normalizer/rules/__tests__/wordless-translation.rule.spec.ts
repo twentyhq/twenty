@@ -41,7 +41,8 @@ describe('WORDLESS_TRANSLATION_RULE', () => {
     expect(detect('{count}', '{count}')).toBe(false);
   });
 
-  // A ~200k-string dry run found no bare {count} translations but two valid Finnish symbol renderings.
+  // A ~200k-string dry run found no bare {count} translations but two valid Finnish symbol renderings;
+  // deleting a good translation is worse than keeping a thin one, so the rule reads the whole string.
   it('keeps a translation that renders a connector word as a symbol', () => {
     expect(detect('{0} / {1}', '{0} of {1}')).toBe(false);
     expect(detect(' /{intervalLabel}', ' per {intervalLabel}')).toBe(false);

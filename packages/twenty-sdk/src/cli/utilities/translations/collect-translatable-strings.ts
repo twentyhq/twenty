@@ -7,7 +7,7 @@ import {
 
 import { type MessageDescriptor } from '@/sdk/front-component/translations/message';
 
-// Properties come from the shared registry so the SDK cannot drift from what the server resolves
+// Manifest collection per metadata entity; the properties come from the shared registry so the SDK cannot drift from the server
 const MANIFEST_KEY_BY_METADATA_NAME = {
   objectMetadata: 'objects',
   fieldMetadata: 'fields',

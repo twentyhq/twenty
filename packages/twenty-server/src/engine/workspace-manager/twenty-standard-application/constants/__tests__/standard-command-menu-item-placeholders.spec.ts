@@ -22,7 +22,7 @@ const AUTHORED_METADATA_LABELS = [
 ];
 
 describe('authored metadata label placeholders', () => {
-  // Lingui silently drops ICU arguments it is not given
+  // Lingui silently drops ICU arguments it is not given, so an undeclared placeholder vanishes from translated labels
   it('only uses names the placeholder vocabulary declares', () => {
     const usedNames = new Set(
       AUTHORED_METADATA_LABELS.flatMap((label) =>

@@ -13,12 +13,13 @@ const CREATE_APP_MESSAGE_CHANNEL_MUTATION = `
 `;
 
 export type CreateMessageChannelInput = {
-  // An app connection id; the channel speaks through this credential and inherits who may see it
+  // An app connection id (from getConnection/listConnections); the channel speaks through it and inherits who may see it
   connectedAccountId: string;
   // The account's provider identity; inbound participants matching it are treated as the account itself
   handle: string;
   displayName?: string;
-  // Required: only the app knows how private its messages are ('METADATA' for personal, 'SHARE_EVERYTHING' for shared)
+  // Required: decides whether one member's conversations are readable by the whole workspace, and only the app
+  // knows how private its messages are ('METADATA' for personal inboxes, 'SHARE_EVERYTHING' for shared ones)
   visibility: MessageChannelVisibility;
 };
 

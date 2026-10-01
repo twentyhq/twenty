@@ -4,7 +4,7 @@ const fromLong = (ipl: number): string => {
   return `${ipl >>> 24}.${(ipl >> 16) & 255}.${(ipl >> 8) & 255}.${ipl & 255}`;
 };
 
-// Every IPv4 encoding (octal, hex, bare integer) must normalize, or it slips past the range check.
+// Every IPv4 encoding (octal, hex, bare integer) must normalize, or it slips past the range check. -1 means invalid.
 const normalizeToLong = (addr: string): number => {
   const parts = addr.split('.').map((part) => {
     if (part.startsWith('0x') || part.startsWith('0X')) {

@@ -10,7 +10,7 @@ import {
 } from 'src/engine/metadata-modules/command-menu-item/utils/build-navigation-placeholder-values.util';
 import { type EffectiveEntityI18nContext } from 'src/engine/metadata-modules/overrides/types/effective-entity-i18n-context.type';
 
-// only NAVIGATION items carry their target object; other placeholders are filled by the client
+// only NAVIGATION items carry their target object, so the server fills theirs; other placeholders are filled by the client
 export const interpolateNavigationCommandMenuItemField = ({
   commandMenuItem,
   resolvedValue,

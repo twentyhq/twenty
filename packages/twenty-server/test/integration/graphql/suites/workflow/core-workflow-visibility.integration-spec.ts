@@ -266,7 +266,8 @@ describe('core workflow visibility (e2e)', () => {
   let workflowsRoleId: string;
 
   beforeAll(async () => {
-    // The workflow API requires the WORKFLOWS settings permission, which the seeded Member role lacks.
+    // The workflow API requires the WORKFLOWS settings permission, which the seeded Member role lacks,
+    // so the second member gets it and only visibility can block them.
     const memberRole = await findOneRoleByLabel({ label: 'Member' });
 
     originalMemberRoleId = memberRole.id;
@@ -393,7 +394,8 @@ describe('core workflow visibility (e2e)', () => {
     });
   });
 
-  // Pre-visibility workflows and those whose creator left (owner FK is ON DELETE SET NULL) have no owner.
+  // Pre-visibility workflows and those whose creator left (owner FK is ON DELETE SET NULL) have no owner,
+  // and without a claim nobody could reach them while they still run.
   describe('an ownerless workflow', () => {
     let ownerlessWorkspaceWorkflowId: string;
     let ownerlessCoreWorkflowId: string;
@@ -769,7 +771,7 @@ describe('core workflow visibility (e2e)', () => {
     });
   });
 
-  // An agent step's conversation has no grants of its own: it is read through its run.
+  // An agent step's conversation has no grants of its own: it is read through its run, so follows the workflow's visibility.
   describe('the conversation an agent step records on a run', () => {
     let conversationCoreWorkflowId: string;
     let conversationWorkspaceWorkflowId: string;
