@@ -6,7 +6,7 @@ import {
 } from '@dnd-kit/abstract/modifiers';
 import { type UseSortableInput, useSortable } from '@dnd-kit/react/sortable';
 import { styled } from '@linaria/react';
-import { type ReactNode, useCallback } from 'react';
+import { type ReactNode, useCallback, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 
@@ -15,6 +15,7 @@ import { DRAG_SOURCE_OPACITY } from '@/ui/utilities/drag-and-drop/constants/Drag
 import { DragDropItemSortableHandleRefContext } from '@/ui/utilities/drag-and-drop/context/DragDropItemSortableHandleRefContext';
 import { type DragDropItemDropTargetOrientation } from '@/ui/utilities/drag-and-drop/types/DragDropItemDropTargetOrientation';
 import { preventNativeDragStart } from '@/ui/utilities/drag-and-drop/utils/preventNativeDragStart';
+import { getOwnDndKitAccessibilityAttributes } from '@/ui/utilities/drag-and-drop/utils/getOwnDndKitAccessibilityAttributes';
 import { removeDndKitAccessibilityAttributes } from '@/ui/utilities/drag-and-drop/utils/removeDndKitAccessibilityAttributes';
 
 const SORTABLE_COLLISION_PRIORITY = 3;
@@ -122,28 +123,49 @@ export const DragDropItemSortableCell = ({
     feedback: 'clone',
   });
 
+  const [ownAccessibilityAttributesByElement] = useState(
+    () => new WeakMap<Element, Set<string>>(),
+  );
+
   // A disabled sortable stays unregistered so dnd-kit cannot mark its
   // activator, and everything inside it, as a disabled button.
-  const setSortableRef = useCallback(
-    (element: HTMLDivElement | null) => {
-      ref(disabled ? null : element);
+  const connectToDndKit = useCallback(
+    (element: Element | null, connect: (element: Element | null) => void) => {
+      if (!disabled) {
+        if (
+          isDefined(element) &&
+          !ownAccessibilityAttributesByElement.has(element)
+        ) {
+          ownAccessibilityAttributesByElement.set(
+            element,
+            getOwnDndKitAccessibilityAttributes(element),
+          );
+        }
+        connect(element);
+        return;
+      }
 
-      if (disabled && isDefined(element)) {
-        removeDndKitAccessibilityAttributes(element);
+      connect(null);
+
+      const ownAttributes = isDefined(element)
+        ? ownAccessibilityAttributesByElement.get(element)
+        : undefined;
+
+      if (isDefined(element) && isDefined(ownAttributes)) {
+        removeDndKitAccessibilityAttributes({ element, ownAttributes });
       }
     },
-    [disabled, ref],
+    [disabled, ownAccessibilityAttributesByElement],
+  );
+
+  const setSortableRef = useCallback(
+    (element: Element | null) => connectToDndKit(element, ref),
+    [connectToDndKit, ref],
   );
 
   const setSortableHandleRef = useCallback(
-    (element: Element | null) => {
-      handleRef(disabled ? null : element);
-
-      if (disabled && isDefined(element)) {
-        removeDndKitAccessibilityAttributes(element);
-      }
-    },
-    [disabled, handleRef],
+    (element: Element | null) => connectToDndKit(element, handleRef),
+    [connectToDndKit, handleRef],
   );
 
   return (

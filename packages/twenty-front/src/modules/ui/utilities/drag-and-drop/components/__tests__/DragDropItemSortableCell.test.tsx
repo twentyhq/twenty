@@ -1,8 +1,50 @@
 import { DragDropItemSortableCell } from '@/ui/utilities/drag-and-drop/components/DragDropItemSortableCell';
 import { DragDropItemSortableHandle } from '@/ui/utilities/drag-and-drop/components/DragDropItemSortableHandle';
+import { DragDropItemSortableHandleRefContext } from '@/ui/utilities/drag-and-drop/context/DragDropItemSortableHandleRefContext';
 import { type DragDropEvents, DragDropProvider } from '@dnd-kit/react';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { useContext } from 'react';
+
+const TabHandle = ({ disabled }: { disabled: boolean }) => {
+  const handleRef = useContext(DragDropItemSortableHandleRefContext);
+
+  return (
+    <button
+      ref={handleRef}
+      type="button"
+      role="tab"
+      tabIndex={-1}
+      aria-disabled={disabled || undefined}
+    >
+      Overview
+    </button>
+  );
+};
+
+const renderTab = (disabled: boolean) => (
+  <DragDropProvider>
+    <DragDropItemSortableCell
+      id="tab-id"
+      index={0}
+      group="tab-list"
+      disabled={disabled}
+    >
+      <TabHandle disabled={disabled} />
+    </DragDropItemSortableCell>
+  </DragDropProvider>
+);
+
+const expectOwnTabSemantics = (disabled: boolean) => {
+  const tab = screen.getByRole('tab', { name: 'Overview' });
+  expect(tab).toHaveAttribute('tabindex', '-1');
+  if (disabled) {
+    expect(tab).toHaveAttribute('aria-disabled', 'true');
+  } else {
+    expect(tab).not.toHaveAttribute('aria-disabled', 'true');
+  }
+  return tab;
+};
 
 const renderContent = ({
   disabled,
@@ -158,5 +200,30 @@ describe('DragDropItemSortableCell', () => {
       'aria-disabled',
     );
     expectAccessibleContent();
+  });
+
+  it('keeps the semantics a handle renders itself when dragging is disabled', async () => {
+    const { rerender } = render(renderTab(true));
+    expect(expectOwnTabSemantics(true)).not.toHaveAttribute(
+      'aria-roledescription',
+    );
+
+    rerender(renderTab(false));
+    await waitFor(() => {
+      expect(expectOwnTabSemantics(false)).toHaveAttribute(
+        'aria-roledescription',
+        'draggable',
+      );
+    });
+
+    rerender(renderTab(true));
+    await waitFor(() => {
+      expect(expectOwnTabSemantics(true)).not.toHaveAttribute(
+        'aria-roledescription',
+      );
+    });
+    const tab = screen.getByRole('tab', { name: 'Overview' });
+    expect(tab).not.toHaveAttribute('aria-describedby');
+    expect(tab).not.toHaveAttribute('aria-pressed');
   });
 });
