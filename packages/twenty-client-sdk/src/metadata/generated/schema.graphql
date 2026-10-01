@@ -1775,6 +1775,7 @@ type RecordSharingGrantDTO {
 }
 
 enum RecordShareAccessLevel {
+  NONE
   READ
   READ_WRITE
   FULL
@@ -1790,6 +1791,9 @@ type RecordSharingDTO {
   permissions: RecordPermissionsDTO!
   isEnabled: Boolean!
   hasInheritedAccess: Boolean!
+  isOpenByDefault: Boolean!
+  generalAccessLevel: RecordShareAccessLevel
+  isGeneralAccessDefault: Boolean!
   roles: [RecordSharingRoleDTO!]!
   shares: [RecordSharingGrantDTO!]!
 }
@@ -2086,6 +2090,8 @@ enum FeatureFlagKey {
   IS_LOGS_SETTINGS_SECTION_ENABLED
   IS_CONVERSATIONS_TAB_ENABLED
   IS_VALIDATION_RULES_ENABLED
+  IS_RECORD_LEVEL_SHARING_ENABLED
+  IS_WORKFLOW_SEND_CHAT_MESSAGE_ENABLED
 }
 
 type WorkspaceUrls {
@@ -2805,6 +2811,8 @@ type UpsertRowLevelPermissionPredicatesResult {
 type LogicFunctionLogs {
   """Execution Logs"""
   logs: String!
+  name: String
+  universalIdentifier: UUID
 }
 
 type DeleteTwoFactorAuthenticationMethod {
@@ -3504,6 +3512,10 @@ type SendChatMessageResult {
 type AgentChatEvent {
   threadId: String!
   event: JSON!
+}
+
+type SendInboxMessageResult {
+  threadId: UUID!
 }
 
 type StartWorkspaceSetupChatResult {
@@ -4315,6 +4327,7 @@ type Mutation {
   stopAgentChatStream(threadId: UUID!): Boolean!
   deleteQueuedChatMessage(messageId: UUID!): Boolean!
   startWorkspaceSetupChat(companyContext: JSON, personContext: JSON): StartWorkspaceSetupChatResult!
+  sendInboxMessage(input: SendInboxMessageInput!): SendInboxMessageResult!
   createSkill(input: CreateSkillInput!): Skill!
   updateSkill(input: UpdateSkillInput!): Skill!
   deleteSkill(id: UUID!): Skill!
@@ -5591,6 +5604,15 @@ input ReportAppConnectionAuthFailureInput {
 input FileAttachmentInput {
   id: UUID!
   filename: String!
+}
+
+input SendInboxMessageInput {
+  workspaceMemberId: UUID!
+  threadKey: String!
+  idempotencyKey: String!
+  title: String!
+  text: String!
+  toolCall: JSON
 }
 
 input CreateSkillInput {

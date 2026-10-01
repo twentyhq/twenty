@@ -7,7 +7,7 @@ import {
 } from 'twenty-shared/application';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
-import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { ApplicationLookupService } from 'src/engine/core-modules/application/application-lookup/application-lookup.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
@@ -39,7 +39,7 @@ export class AgentRunService {
   constructor(
     private readonly agentActorContextService: AgentActorContextService,
     private readonly agentAsyncExecutorService: AgentAsyncExecutorService,
-    private readonly applicationService: ApplicationService,
+    private readonly applicationLookupService: ApplicationLookupService,
     @InjectWorkspaceScopedRepository(AgentEntity)
     private readonly agentRepository: WorkspaceScopedRepository<AgentEntity>,
   ) {}
@@ -93,7 +93,7 @@ export class AgentRunService {
       );
     }
 
-    const application = await this.applicationService.findById({
+    const application = await this.applicationLookupService.findById({
       id: agent.applicationId,
       workspaceId: workspace.id,
     });

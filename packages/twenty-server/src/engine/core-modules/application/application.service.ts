@@ -12,6 +12,7 @@ import { ApplicationRegistrationEntity } from 'src/engine/core-modules/applicati
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { ApplicationVariableEntity } from 'src/engine/core-modules/application/application-variable/application-variable.entity';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import { ApplicationLookupService } from 'src/engine/core-modules/application/application-lookup/application-lookup.service';
 import {
   ApplicationException,
   ApplicationExceptionCode,
@@ -66,6 +67,7 @@ export class ApplicationService {
     @InjectWorkspaceScopedRepository(ApplicationVariableEntity)
     private readonly applicationVariableRepository: WorkspaceScopedRepository<ApplicationVariableEntity>,
     private readonly workspaceEventBroadcaster: WorkspaceEventBroadcaster,
+    private readonly applicationLookupService: ApplicationLookupService,
   ) {}
 
   async findApplicationRoleId(
@@ -268,18 +270,6 @@ export class ApplicationService {
     return application;
   }
 
-  async findById({
-    id,
-    workspaceId,
-  }: {
-    id: string;
-    workspaceId: string;
-  }): Promise<ApplicationEntity | null> {
-    return this.applicationRepository.findOne(workspaceId, {
-      where: { id },
-    });
-  }
-
   async findPrimaryPublicDomainName({
     applicationId,
     workspaceId,
@@ -293,20 +283,6 @@ export class ApplicationService {
     });
 
     return application?.primaryPublicDomain?.domain ?? null;
-  }
-
-  async findByUniversalIdentifier({
-    universalIdentifier,
-    workspaceId,
-  }: {
-    universalIdentifier: string;
-    workspaceId: string;
-  }) {
-    return this.applicationRepository.findOne(workspaceId, {
-      where: {
-        universalIdentifier,
-      },
-    });
   }
 
   async countInstalledWorkspacesForApplication(
@@ -415,10 +391,11 @@ export class ApplicationService {
     },
     queryRunner?: QueryRunner,
   ) {
-    const existingApplication = await this.findByUniversalIdentifier({
-      universalIdentifier: TWENTY_STANDARD_APPLICATION.universalIdentifier,
-      workspaceId,
-    });
+    const existingApplication =
+      await this.applicationLookupService.findByUniversalIdentifier({
+        universalIdentifier: TWENTY_STANDARD_APPLICATION.universalIdentifier,
+        workspaceId,
+      });
 
     if (isDefined(existingApplication)) {
       return existingApplication;
@@ -705,10 +682,11 @@ export class ApplicationService {
   }
 
   async delete(universalIdentifier: string, workspaceId: string) {
-    const application = await this.findByUniversalIdentifier({
-      universalIdentifier,
-      workspaceId,
-    });
+    const application =
+      await this.applicationLookupService.findByUniversalIdentifier({
+        universalIdentifier,
+        workspaceId,
+      });
 
     if (!isDefined(application)) {
       throw new ApplicationException(
