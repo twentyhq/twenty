@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.7.0
+
+- Keep the app's fields off the record timeline. Every field the app defines is rewritten whenever an email or meeting syncs, and each write used to add an `updated Last contact` entry to the person, company or opportunity timeline, burying everything else. All 23 fields now declare `isAuditLogged: false`, so their values still update but no timeline activity is recorded for them. Entries written before this version stay on the timeline.
+
 ## 1.6.0
 
 - Run the backfill inside the post-install function instead of enqueuing one job per record batch. The batch jobs ran on the logic function queue, which runs many jobs at once, so their API calls competed for the same rate limit. Post-install hooks run on the application lifecycle queue, one at a time, and the backfill now pages through people, then opportunities, then companies, one batch after the other, within a single 900-second run. Upgrading from 1.5.0 or earlier runs it once. The per-batch logic functions and the `LAST_CONTACT_BACKFILL_SLEEP_MS` server variable are removed.
