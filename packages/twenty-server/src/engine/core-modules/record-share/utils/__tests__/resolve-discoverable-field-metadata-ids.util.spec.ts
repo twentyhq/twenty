@@ -127,6 +127,22 @@ describe('resolveDiscoverableFieldMetadataIds', () => {
     ).toEqual(new Set(['id-field', 'created-at-field', 'created-by-field']));
   });
 
+  it('adds a declared regular field and leaves undeclared fields out', () => {
+    expect(
+      resolveDiscoverableFieldMetadataIds({
+        flatObjectMetadata: buildObject({
+          readability: MetadataReadability.DISCOVERABLE,
+          discoverableFieldUniversalIdentifiers: [
+            'subject-field-universal-identifier',
+          ],
+        }),
+        flatFieldMetadataMaps,
+      }),
+    ).toEqual(
+      new Set(['id-field', 'created-at-field', 'created-by-field', 'subject-field']),
+    );
+  });
+
   it('adds the declared fields and every target of a declared morph relation', () => {
     expect(
       resolveDiscoverableFieldMetadataIds({
