@@ -6,6 +6,7 @@ import { shouldContinueAiChatInSidePanelState } from '@/ai/states/shouldContinue
 import { SidePanelAskAiHandoffEffect } from '@/side-panel/components/SidePanelAskAiHandoffEffect';
 
 const openAskAiPage = jest.fn();
+const onContinueChatFromFullWidth = jest.fn();
 
 jest.mock('@/side-panel/hooks/useOpenAskAiPageInSidePanel', () => ({
   useOpenAskAiPageInSidePanel: () => ({ openAskAiPage }),
@@ -19,7 +20,9 @@ const leaveChatPageFor = (pathname: string) => {
   render(
     <Provider store={store}>
       <MemoryRouter initialEntries={[pathname]}>
-        <SidePanelAskAiHandoffEffect onContinueChatFromFullWidth={jest.fn()} />
+        <SidePanelAskAiHandoffEffect
+          onContinueChatFromFullWidth={onContinueChatFromFullWidth}
+        />
       </MemoryRouter>
     </Provider>,
   );
@@ -30,12 +33,14 @@ const leaveChatPageFor = (pathname: string) => {
 describe('SidePanelAskAiHandoffEffect', () => {
   beforeEach(() => {
     openAskAiPage.mockClear();
+    onContinueChatFromFullWidth.mockClear();
   });
 
   it('continues the chat in the side panel when leaving it for a record', () => {
     leaveChatPageFor('/objects/companies');
 
     expect(openAskAiPage).toHaveBeenCalledWith({ resetNavigationStack: true });
+    expect(onContinueChatFromFullWidth).toHaveBeenCalled();
   });
 
   it.each(['/inbox', '/settings/profile'])(
@@ -44,6 +49,7 @@ describe('SidePanelAskAiHandoffEffect', () => {
       const store = leaveChatPageFor(pathname);
 
       expect(openAskAiPage).not.toHaveBeenCalled();
+      expect(onContinueChatFromFullWidth).not.toHaveBeenCalled();
       expect(store.get(shouldContinueAiChatInSidePanelState.atom)).toBe(false);
     },
   );

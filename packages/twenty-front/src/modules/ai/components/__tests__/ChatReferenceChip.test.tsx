@@ -7,10 +7,10 @@ import { isDefined } from 'twenty-shared/utils';
 import { ChatReferenceChip } from '@/ai/components/ChatReferenceChip';
 import { TextWithChatReferences } from '@/ai/components/TextWithChatReferences';
 import { ChatReferenceNavigationEnabledContext } from '@/ai/contexts/ChatReferenceNavigationEnabledContext';
+import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { type ChatReferenceIdentity } from '@/ai/types/ChatReferenceIdentity';
 import { type ChatReferenceMatch } from '@/ai/types/ChatReferenceMatch';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 import { type ViewWithRelations } from '@/views/types/ViewWithRelations';
 import {

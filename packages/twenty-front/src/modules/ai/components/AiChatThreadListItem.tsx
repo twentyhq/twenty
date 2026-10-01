@@ -68,7 +68,9 @@ const StyledThreadTitle = styled.div<{ $isUnread: boolean }>`
   flex-shrink: 0;
   font-size: ${themeCssVariables.font.size.md};
   font-weight: ${({ $isUnread }) =>
-    $isUnread ? themeCssVariables.font.weight.semiBold : 500};
+    $isUnread
+      ? themeCssVariables.font.weight.semiBold
+      : themeCssVariables.font.weight.medium};
   max-width: 60%;
   overflow: hidden;
   text-overflow: ellipsis;
