@@ -34,21 +34,25 @@ export class AgentConversationWriterService {
     workspaceId,
     threadId,
     agentId,
+    id,
   }: {
     workspaceId: string;
     threadId: string;
     agentId: string | null;
+    id?: string;
   }): Promise<string> {
     const turnInsertResult = await this.turnRepository.insert(workspaceId, {
+      ...(isDefined(id) ? { id } : {}),
       threadId,
       agentId,
     });
 
-    return turnInsertResult.identifiers[0].id as string;
+    return (id ?? turnInsertResult.identifiers[0].id) as string;
   }
 
   async insertMessage({
     workspaceId,
+    id,
     threadId,
     turnId,
     role,
@@ -56,9 +60,11 @@ export class AgentConversationWriterService {
     senderUserWorkspaceId,
     senderApplicationId,
     isHidden,
+    processedAt,
     parts,
   }: {
     workspaceId: string;
+    id?: string;
     threadId: string;
     turnId: string;
     role: AgentMessageRole;
@@ -66,9 +72,10 @@ export class AgentConversationWriterService {
     senderUserWorkspaceId: string | null;
     senderApplicationId?: string | null;
     isHidden?: boolean;
+    processedAt?: Date;
     parts: ExtendedUIMessagePart[];
   }): Promise<string> {
-    const messageId = randomUUID();
+    const messageId = id ?? randomUUID();
 
     await this.messageRepository.insert(workspaceId, {
       id: messageId,
@@ -76,7 +83,7 @@ export class AgentConversationWriterService {
       turnId,
       role,
       agentId,
-      processedAt: new Date().toISOString(),
+      processedAt: (processedAt ?? new Date()).toISOString(),
       ...(isDefined(senderUserWorkspaceId) ? { senderUserWorkspaceId } : {}),
       ...(isDefined(senderApplicationId) ? { senderApplicationId } : {}),
       ...(isDefined(isHidden) ? { isHidden } : {}),

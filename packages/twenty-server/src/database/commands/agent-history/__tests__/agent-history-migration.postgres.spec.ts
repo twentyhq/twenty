@@ -4,6 +4,7 @@ import { AgentHistoryWorkspaceStorageService } from 'src/engine/metadata-modules
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { withWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
+import { AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
 import { AgentChatActorService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-actor.service';
 import { AgentTurnWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-turn.workspace-entity';
 import { AgentMessagePartWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message-part.workspace-entity';
@@ -172,20 +173,24 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       }
     };
 
+    const turns = new AgentHistoryRepository<AgentTurnWorkspaceEntity>(
+      'agentTurn',
+      storage,
+      orm,
+    );
+    const messageParts =
+      new AgentHistoryRepository<AgentMessagePartWorkspaceEntity>(
+        'agentMessagePart',
+        storage,
+        orm,
+      );
+
     const createChatService = (messageRepository: typeof messages) =>
       new AgentChatService(
         threads,
-        new AgentHistoryRepository<AgentTurnWorkspaceEntity>(
-          'agentTurn',
-          storage,
-          orm,
-        ),
+        turns,
         messageRepository,
-        new AgentHistoryRepository<AgentMessagePartWorkspaceEntity>(
-          'agentMessagePart',
-          storage,
-          orm,
-        ),
+        messageParts,
         {} as never,
         {} as never,
         {
@@ -203,6 +208,12 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
           getPermissions: jest.fn().mockResolvedValue({ canRead: true }),
         } as never,
         { emitThreadUpdated: jest.fn().mockResolvedValue(undefined) } as never,
+        new AgentConversationWriterService(
+          threads as never,
+          turns as never,
+          messageRepository as never,
+          messageParts as never,
+        ),
       );
 
     const createActorService = (messageRepository: typeof messages) =>

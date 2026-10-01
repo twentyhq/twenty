@@ -32,6 +32,7 @@ import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { AiChatFileAttachment } from 'src/engine/metadata-modules/ai/ai-chat/types/ai-chat-file-attachment.type';
 import { AgentChatThreadRecordEventService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-record-event.service';
+import { AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
 import { AgentTitleGenerationService } from './agent-title-generation.service';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 
@@ -53,6 +54,7 @@ export class AgentChatService {
     private readonly titleGenerationService: AgentTitleGenerationService,
     private readonly sharingService: AgentChatSharingService,
     private readonly threadRecordEventService: AgentChatThreadRecordEventService,
+    private readonly conversationWriterService: AgentConversationWriterService,
   ) {}
 
   async createThread({
@@ -162,49 +164,32 @@ export class AgentChatService {
     processedAt?: Date;
     userWorkspaceId?: string;
   }) {
-    let actualTurnId = turnId;
-
-    if (!actualTurnId) {
-      const turnInsertResult = await this.turnRepository.insert(workspaceId, {
+    const actualTurnId =
+      turnId ??
+      (await this.conversationWriterService.insertTurn({
+        workspaceId,
         threadId,
         agentId: agentId ?? null,
-      });
+      }));
 
-      actualTurnId = turnInsertResult.identifiers[0].id as string;
-    }
+    const senderValues = this.getMessageSenderValues({
+      workspaceId,
+      userWorkspaceId,
+    });
+    const resolvedProcessedAt = processedAt ?? new Date();
 
-    const messageValues = {
-      ...(id ? { id } : {}),
+    const savedMessageId = await this.conversationWriterService.insertMessage({
+      workspaceId,
+      id,
       threadId,
       turnId: actualTurnId,
       role: uiMessage.role as AgentMessageRole,
       agentId: agentId ?? null,
-      processedAt: (processedAt ?? new Date()).toISOString(),
-      ...this.getMessageSenderValues({ workspaceId, userWorkspaceId }),
-      ...(isDefined(isHidden) ? { isHidden } : {}),
-    };
-
-    const insertResult = await this.messageRepository.insert(
-      workspaceId,
-      messageValues,
-    );
-
-    const savedMessageId = (id ?? insertResult.identifiers[0].id) as string;
-
-    if (uiMessage.parts && uiMessage.parts.length > 0) {
-      const dbParts = mapUIMessagePartsToPersistedDBParts(
-        uiMessage.parts,
-        savedMessageId,
-        workspaceId,
-      );
-
-      if (dbParts.length > 0) {
-        await this.messagePartRepository.insert(
-          workspaceId,
-          dbParts as QueryDeepPartialEntity<AgentMessagePartWorkspaceEntity>[],
-        );
-      }
-    }
+      ...senderValues,
+      isHidden,
+      processedAt: resolvedProcessedAt,
+      parts: uiMessage.parts ?? [],
+    });
 
     return {
       id: savedMessageId,
@@ -212,9 +197,8 @@ export class AgentChatService {
       turnId: actualTurnId,
       role: uiMessage.role as AgentMessageRole,
       agentId: agentId ?? null,
-      processedAt: messageValues.processedAt,
-      senderUserWorkspaceId: messageValues.senderUserWorkspaceId,
-      senderApplicationId: messageValues.senderApplicationId,
+      processedAt: resolvedProcessedAt.toISOString(),
+      ...senderValues,
     };
   }
 
@@ -553,12 +537,11 @@ export class AgentChatService {
     threadId: string;
     workspaceId: string;
   }): Promise<string | null> {
-    const turnInsertResult = await this.turnRepository.insert(workspaceId, {
+    const savedTurnId = await this.conversationWriterService.insertTurn({
+      workspaceId,
       threadId,
       agentId: null,
     });
-
-    const savedTurnId = turnInsertResult.identifiers[0].id as string;
 
     const result = await this.messageRepository.update(
       workspaceId,

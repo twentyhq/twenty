@@ -3,6 +3,7 @@ import {
   AgentMessageStatus,
 } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
+import { AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
 
 const WORKSPACE_ID = 'workspace-id';
 const THREAD_ID = 'thread-id';
@@ -14,9 +15,7 @@ const buildService = ({ existingHiddenMessage = null as unknown } = {}) => {
   };
   const messageRepository = {
     findOne: jest.fn().mockResolvedValue(existingHiddenMessage),
-    insert: jest
-      .fn()
-      .mockResolvedValue({ identifiers: [{ id: 'kickoff-message-id' }] }),
+    insert: jest.fn().mockResolvedValue({}),
     delete: jest.fn().mockResolvedValue({ affected: 1 }),
   };
   const turnRepository = {
@@ -38,6 +37,12 @@ const buildService = ({ existingHiddenMessage = null as unknown } = {}) => {
       getReadableThread: jest.fn().mockResolvedValue({ id: THREAD_ID }),
     } as never,
     {} as never,
+    new AgentConversationWriterService(
+      threadRepository as never,
+      turnRepository as never,
+      messageRepository as never,
+      messagePartRepository as never,
+    ),
   );
 
   return { service, messageRepository, turnRepository, messagePartRepository };
@@ -96,7 +101,7 @@ describe('AgentChatService ensureHiddenKickoffMessage', () => {
     ]);
 
     expect(result).toEqual({
-      id: 'kickoff-message-id',
+      id: insertedMessage.id,
       turnId: 'kickoff-turn-id',
     });
   });
@@ -136,7 +141,7 @@ describe('AgentChatService ensureHiddenKickoffMessage', () => {
       id: 'partial-turn-id',
     });
     expect(result).toEqual({
-      id: 'kickoff-message-id',
+      id: messageRepository.insert.mock.calls[0][1].id,
       turnId: 'kickoff-turn-id',
     });
   });
@@ -157,7 +162,7 @@ describe('AgentChatService ensureHiddenKickoffMessage', () => {
     });
     expect(turnRepository.delete).not.toHaveBeenCalled();
     expect(result).toEqual({
-      id: 'kickoff-message-id',
+      id: messageRepository.insert.mock.calls[0][1].id,
       turnId: 'kickoff-turn-id',
     });
   });
