@@ -3,11 +3,13 @@ import { type UsageConsumptionRow } from 'src/engine/core-modules/usage/types/us
 import { computeQuotaConsumed } from 'src/engine/core-modules/usage-limit/utils/compute-quota-consumed.util';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
+import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 
 const buildRow = (
   overrides: Partial<UsageConsumptionRow>,
 ): UsageConsumptionRow => ({
   operationType: UsageOperationType.AI_CHAT_TOKEN,
+  unit: UsageUnit.TOKEN,
   userWorkspaceId: 'user-1',
   apiKeyId: '',
   applicationId: '',
