@@ -55,6 +55,7 @@ import { buildRowLevelPermissionRecordFilter } from 'src/engine/twenty-orm/utils
 import { computePermissionIntersection } from 'src/engine/twenty-orm/utils/compute-permission-intersection.util';
 import { type RowAccessPolicySubject } from 'src/engine/twenty-orm/types/row-access-policy.type';
 import { isRecordMatchingRLSRowLevelPermissionPredicate } from 'src/engine/twenty-orm/utils/is-record-matching-rls-row-level-permission-predicate.util';
+import { canRolesAccessAllRecords } from 'src/engine/core-modules/record-share/utils/can-roles-access-all-records.util';
 import { resolveRoleIdsForUser } from 'src/engine/twenty-orm/utils/resolve-role-ids-for-user.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
@@ -66,6 +67,7 @@ type StreamPermissionsContext = {
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   userWorkspaceRoleMap: UserWorkspaceRoleMap;
   rolesPermissions: ObjectsPermissionsByRoleId;
+  roleIdsWithAllRecordsAccess: string[];
   flatApplicationMaps: FlatApplicationCacheMaps;
   isRecordSharingEnabled: boolean;
 };
@@ -556,6 +558,11 @@ export class ObjectRecordEventPublisher {
         subscriberAuthContext.workspaceMemberId,
         ...roleIds,
       ].filter(isDefined),
+      canAccessAllRecords: canRolesAccessAllRecords({
+        roleIds,
+        roleIdsWithAllRecordsAccess:
+          permissionsContext.roleIdsWithAllRecordsAccess,
+      }),
       isOwningApplication: (objectMetadata) =>
         isDefined(objectMetadata.applicationId) &&
         subscriberAuthContext.applicationId === objectMetadata.applicationId,
@@ -688,6 +695,7 @@ export class ObjectRecordEventPublisher {
       flatFieldMetadataMaps,
       userWorkspaceRoleMap,
       rolesPermissions,
+      roleIdsWithAllRecordsAccess,
       flatApplicationMaps,
       featureFlagsMap,
     } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
@@ -696,6 +704,7 @@ export class ObjectRecordEventPublisher {
       'flatFieldMetadataMaps',
       'userWorkspaceRoleMap',
       'rolesPermissions',
+      'roleIdsWithAllRecordsAccess',
       'flatApplicationMaps',
       'featureFlagsMap',
     ]);
@@ -706,6 +715,7 @@ export class ObjectRecordEventPublisher {
       flatFieldMetadataMaps,
       userWorkspaceRoleMap,
       rolesPermissions,
+      roleIdsWithAllRecordsAccess,
       flatApplicationMaps,
       isRecordSharingEnabled:
         featureFlagsMap[FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED] ??

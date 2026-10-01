@@ -22,6 +22,7 @@ export type RowAccessPolicySubject = {
   isSystemContext: boolean;
   objectsPermissions: ObjectsPermissions | undefined;
   principalIds: string[] | undefined;
+  canAccessAllRecords: boolean;
   isOwningApplication: (objectMetadata: FlatObjectMetadata) => boolean;
   resolveRowLevelPermissionRecordFilter: (
     objectMetadata: FlatObjectMetadata,

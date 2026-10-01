@@ -350,6 +350,7 @@ describe('A restricted record on an object open by default', () => {
             WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
             memberRole.id,
           ],
+          canAccessAllRecords: false,
           isOwningApplication: () => false,
           resolveRowLevelPermissionRecordFilter: () => null,
         });

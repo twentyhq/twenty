@@ -226,6 +226,7 @@ describe('ObjectRecordEventPublisher', () => {
       idByUniversalIdentifier: {},
     },
     featureFlagsMap: overrides.featureFlagsMap ?? {},
+    roleIdsWithAllRecordsAccess: [],
   });
 
   const createCacheMock = (

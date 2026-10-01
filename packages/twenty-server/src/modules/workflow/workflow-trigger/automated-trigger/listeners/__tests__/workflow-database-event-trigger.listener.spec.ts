@@ -444,6 +444,7 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
                 },
                 flatRoleMaps: { byUniversalIdentifier: {} },
                 rolesPermissions: {},
+                roleIdsWithAllRecordsAccess: [],
                 flatRowLevelPermissionPredicateMaps:
                   createEmptyFlatEntityMaps(),
                 flatRowLevelPermissionPredicateGroupMaps:
@@ -516,6 +517,7 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
                 },
                 flatRoleMaps: { byUniversalIdentifier: {} },
                 rolesPermissions: {},
+                roleIdsWithAllRecordsAccess: [],
                 flatRowLevelPermissionPredicateMaps:
                   createEmptyFlatEntityMaps(),
                 flatRowLevelPermissionPredicateGroupMaps:

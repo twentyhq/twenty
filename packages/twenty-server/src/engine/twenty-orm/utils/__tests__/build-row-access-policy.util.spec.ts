@@ -67,6 +67,7 @@ const readEverything: RowAccessPolicySubject = {
   isSystemContext: false,
   objectsPermissions: undefined,
   principalIds: ['member-1'],
+  canAccessAllRecords: false,
   isOwningApplication: () => false,
   resolveRowLevelPermissionRecordFilter: () => null,
 };
@@ -176,6 +177,25 @@ describe('buildRowAccessPolicy', () => {
     expect(policy.condition.sql).toMatch(
       /^\(NOT EXISTS \(SELECT 1 FROM "workspace"."recordShare" AS "recordShareRestriction_[0-9a-f]{10}"/,
     );
+  });
+
+  it('lifts the restrictions of an OPEN object for a subject with access to all records', () => {
+    expect(
+      buildRowAccessPolicy({
+        subject: { ...readEverything, canAccessAllRecords: true },
+        environment: { ...environment, isRecordSharingEnabled: true },
+        tableAlias: 'note',
+        flatObjectMetadata: note,
+        operationType: 'select',
+        depth: 0,
+      }),
+    ).toEqual({ kind: 'open' });
+  });
+
+  it('keeps PRIVATE records gated for a subject with access to all records', () => {
+    expect(
+      gatedSql({ ...readEverything, canAccessAllRecords: true }, person),
+    ).toContain('recordShare');
   });
 
   it('keeps an OPEN system object open when record sharing is enabled', () => {
