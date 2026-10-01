@@ -101,6 +101,24 @@ describe('buildInboxMessageRequestPart', () => {
       { logicFunctionUniversalIdentifier: 'other-tool' },
     ],
     ['a non-object request', 'ask_questions'],
+    [
+      'an application tool with a non-object input',
+      { logicFunctionUniversalIdentifier: 'share-recording-tool', input: [] },
+    ],
+    [
+      'an application tool with a non-object output',
+      {
+        logicFunctionUniversalIdentifier: 'share-recording-tool',
+        output: 'done',
+      },
+    ],
+    [
+      'a request naming both a tool and an application tool',
+      {
+        toolName: 'ask_questions',
+        logicFunctionUniversalIdentifier: 'share-recording-tool',
+      },
+    ],
   ])('rejects %s', (_, request) => {
     expect(() => build(request)).toThrow(
       expect.objectContaining({ code: AiExceptionCode.INVALID_AGENT_INPUT }),

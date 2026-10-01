@@ -218,6 +218,35 @@ describe('Sending an inbox message as an application', () => {
     expect(await readPendingQuestionMessageId()).toBe(pendingQuestionMessageId);
   });
 
+  it('keeps a single waiting request when two are sent at once', async () => {
+    const threadKey = `inbox-thread-${uuidv4()}`;
+    const responses = await Promise.all(
+      ['first-request', 'second-request'].map((idempotencyKey) =>
+        sendInboxMessage(applicationToken, { threadKey, idempotencyKey }),
+      ),
+    );
+    const sentResponses = responses.filter(
+      (response) => response.body.errors === undefined,
+    );
+    const concurrentThreadId =
+      sentResponses[0]?.body.data.sendInboxMessage.threadId;
+
+    try {
+      expect(sentResponses).toHaveLength(1);
+      expect(
+        JSON.stringify(
+          responses.find((response) => response.body.errors !== undefined)?.body
+            .errors,
+        ),
+      ).toContain('THREAD_AWAITING_ANSWER');
+      expect(await readMessages(concurrentThreadId)).toHaveLength(2);
+    } finally {
+      if (concurrentThreadId !== undefined) {
+        await destroyAgentChatThread({ threadId: concurrentThreadId });
+      }
+    }
+  });
+
   it('lets the member answer the question and resumes the chat', async () => {
     const pendingQuestionMessageId = await readPendingQuestionMessageId();
     const response = await answerToolCall({

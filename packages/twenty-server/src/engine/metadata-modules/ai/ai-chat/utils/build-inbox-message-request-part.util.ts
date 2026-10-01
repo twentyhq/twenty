@@ -47,6 +47,19 @@ const parseInput = <TInput>(schema: z.ZodType<TInput>, input: unknown) => {
     : throwInvalidRequest(parseResult.error.message);
 };
 
+const parseOptionalRecord = (
+  name: string,
+  value: unknown,
+): Record<string, unknown> => {
+  if (!isDefined(value)) {
+    return {};
+  }
+
+  return isPlainObject(value)
+    ? value
+    : throwInvalidRequest(`${name} must be an object`);
+};
+
 const buildToolPart = ({
   toolName,
   toolCallId,
@@ -138,6 +151,15 @@ export const buildInboxMessageRequestPart = ({
     };
   }
 
+  if (isDefined(request.toolName)) {
+    return throwInvalidRequest(
+      'set either toolName or logicFunctionUniversalIdentifier, not both',
+    );
+  }
+
+  const input = parseOptionalRecord('input', request.input);
+  const output = parseOptionalRecord('output', request.output);
+
   const logicFunction = findApplicationTool(
     request.logicFunctionUniversalIdentifier,
   );
@@ -156,8 +178,8 @@ export const buildInboxMessageRequestPart = ({
     part: buildToolPart({
       toolName: buildLogicFunctionToolName(logicFunction.name),
       toolCallId,
-      input: request.input ?? {},
-      output: request.output ?? {},
+      input,
+      output,
     }),
     isAwaitingAnswer: false,
   };

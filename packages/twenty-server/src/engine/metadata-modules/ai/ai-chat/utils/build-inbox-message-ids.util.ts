@@ -25,7 +25,7 @@ export const buildInboxMessageIds = ({
     INBOX_MESSAGE_ID_NAMESPACE,
   );
   const messageId = v5(
-    `${threadId}:${idempotencyKey}`,
+    `${threadId}:message:${idempotencyKey}`,
     INBOX_MESSAGE_ID_NAMESPACE,
   );
 

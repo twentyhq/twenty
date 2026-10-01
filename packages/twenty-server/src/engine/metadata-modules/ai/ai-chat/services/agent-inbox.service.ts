@@ -6,13 +6,14 @@ import {
   type SendInboxMessageResult,
 } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
+import { IsNull } from 'typeorm';
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
-import { type AgentTurnEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-turn.entity';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { buildInboxMessageIds } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-inbox-message-ids.util';
 import { buildInboxMessageRequestPart } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-inbox-message-request-part.util';
+import { isUniqueViolationError } from 'src/engine/metadata-modules/ai/ai-chat/utils/is-unique-violation-error.util';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
@@ -29,8 +30,6 @@ export class AgentInboxService {
   constructor(
     @InjectAgentHistoryRepository('agentChatThread')
     private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
-    @InjectAgentHistoryRepository('agentTurn')
-    private readonly turnRepository: AgentHistoryRepository<AgentTurnEntity>,
     @InjectAgentHistoryRepository('agentMessage')
     private readonly messageRepository: AgentHistoryRepository<AgentMessageWorkspaceEntity>,
     private readonly agentChatService: AgentChatService,
@@ -69,9 +68,7 @@ export class AgentInboxService {
         })
       : undefined;
 
-    const existingThread = await this.threadRepository.findOne(workspaceId, {
-      where: { id: threadId },
-    });
+    const existingThread = await this.findThread({ workspaceId, threadId });
 
     // A member who deleted the conversation has dismissed it.
     if (isDefined(existingThread?.deletedAt)) {
@@ -80,10 +77,10 @@ export class AgentInboxService {
 
     const thread =
       existingThread ??
-      (await this.agentChatService.createThread({
+      (await this.createThread({
         workspaceId,
+        threadId,
         workspaceMemberId: input.workspaceMemberId,
-        id: threadId,
         title: input.title,
       }));
 
@@ -91,38 +88,25 @@ export class AgentInboxService {
       return { threadId };
     }
 
-    // Only one request waits on the member at a time: a second would leave
-    // the first one unanswerable.
-    if (
-      request?.isAwaitingAnswer === true &&
-      isDefined(thread.pendingQuestionMessageId) &&
-      thread.pendingQuestionMessageId !== messageId
-    ) {
-      throw new AiException(
-        'The conversation is waiting for an answer to an earlier request',
-        AiExceptionCode.THREAD_AWAITING_ANSWER,
-      );
+    if (request?.isAwaitingAnswer) {
+      await this.claimPendingRequest({ workspaceId, threadId, messageId });
     }
 
-    const existingTurn = await this.turnRepository.findOne(workspaceId, {
-      where: { id: turnId },
-    });
-
-    if (!isDefined(existingTurn)) {
-      await this.conversationWriterService.insertTurn({
+    await this.ignoreDuplicate(() =>
+      this.conversationWriterService.insertTurn({
         workspaceId,
         id: turnId,
         threadId,
         agentId: null,
-      });
-    }
+      }),
+    );
 
-    if (!(await this.messageExists({ workspaceId, id: openingMessageId }))) {
-      // Answering a request resolves who may answer from the user message of
-      // its turn, and models expect a conversation to open with one. It holds
-      // no application text, so nothing the application wrote reads as the
-      // member's request.
-      await this.conversationWriterService.insertMessage({
+    // Answering a request resolves who may answer from the user message of
+    // its turn, and models expect a conversation to open with one. It holds
+    // no application text, so nothing the application wrote reads as the
+    // member's request.
+    await this.ignoreDuplicate(() =>
+      this.conversationWriterService.insertMessage({
         workspaceId,
         id: openingMessageId,
         threadId,
@@ -137,16 +121,8 @@ export class AgentInboxService {
             text: `The "${application.name}" application started this conversation. Its messages follow.`,
           },
         ],
-      });
-    }
-
-    if (request?.isAwaitingAnswer === true) {
-      await this.conversationWriterService.markAwaitingAnswer({
-        workspaceId,
-        threadId,
-        messageId,
-      });
-    }
+      }),
+    );
 
     const parts: ExtendedUIMessagePart[] = [{ type: 'text', text: input.text }];
 
@@ -154,25 +130,123 @@ export class AgentInboxService {
       parts.push(request.part);
     }
 
-    await this.conversationWriterService.insertMessage({
-      workspaceId,
-      id: messageId,
-      threadId,
-      turnId,
-      role: AgentMessageRole.ASSISTANT,
-      agentId: null,
-      senderUserWorkspaceId: null,
-      senderApplicationId: application.id,
-      parts,
-    });
+    const isWritten = await this.ignoreDuplicate(() =>
+      this.conversationWriterService.insertMessage({
+        workspaceId,
+        id: messageId,
+        threadId,
+        turnId,
+        role: AgentMessageRole.ASSISTANT,
+        agentId: null,
+        senderUserWorkspaceId: null,
+        senderApplicationId: application.id,
+        parts,
+      }),
+    );
 
-    await this.agentChatService.notifyThreadActivityUpdated({
-      threadId,
-      workspaceMemberId: input.workspaceMemberId,
-      workspaceId,
-    });
+    if (isWritten) {
+      await this.agentChatService.notifyThreadActivityUpdated({
+        threadId,
+        workspaceMemberId: input.workspaceMemberId,
+        workspaceId,
+      });
+    }
 
     return { threadId };
+  }
+
+  private findThread({
+    workspaceId,
+    threadId,
+  }: {
+    workspaceId: string;
+    threadId: string;
+  }) {
+    return this.threadRepository.findOne(workspaceId, {
+      where: { id: threadId },
+    });
+  }
+
+  private async createThread({
+    workspaceId,
+    threadId,
+    workspaceMemberId,
+    title,
+  }: {
+    workspaceId: string;
+    threadId: string;
+    workspaceMemberId: string;
+    title: string;
+  }): Promise<AgentChatThreadWorkspaceEntity> {
+    try {
+      return await this.agentChatService.createThread({
+        workspaceId,
+        workspaceMemberId,
+        id: threadId,
+        title,
+      });
+    } catch (error) {
+      const concurrentlyCreatedThread = isUniqueViolationError(error)
+        ? await this.findThread({ workspaceId, threadId })
+        : null;
+
+      if (!isDefined(concurrentlyCreatedThread)) {
+        throw error;
+      }
+
+      return concurrentlyCreatedThread;
+    }
+  }
+
+  // Only one request waits on the member at a time: a second would leave
+  // the first one unanswerable. The slot is taken in a single conditional
+  // write so concurrent sends cannot both take it.
+  private async claimPendingRequest({
+    workspaceId,
+    threadId,
+    messageId,
+  }: {
+    workspaceId: string;
+    threadId: string;
+    messageId: string;
+  }): Promise<void> {
+    const { affected } = await this.threadRepository.update(
+      workspaceId,
+      { id: threadId, pendingQuestionMessageId: IsNull() },
+      { pendingQuestionMessageId: messageId },
+    );
+
+    if (affected > 0) {
+      return;
+    }
+
+    const thread = await this.threadRepository.findOne(workspaceId, {
+      where: { id: threadId },
+      select: ['id', 'pendingQuestionMessageId'],
+    });
+
+    if (thread?.pendingQuestionMessageId !== messageId) {
+      throw new AiException(
+        'The conversation is waiting for an answer to an earlier request',
+        AiExceptionCode.THREAD_AWAITING_ANSWER,
+      );
+    }
+  }
+
+  // Every id is derived from the keys, so a row that already exists was
+  // written by a concurrent send of the same conversation.
+  private async ignoreDuplicate(write: () => Promise<unknown>) {
+    try {
+      await write();
+
+      return true;
+    } catch (error) {
+      if (isUniqueViolationError(error)) {
+        return false;
+      }
+
+      throw error;
+    }
   }
 
   private async messageExists({

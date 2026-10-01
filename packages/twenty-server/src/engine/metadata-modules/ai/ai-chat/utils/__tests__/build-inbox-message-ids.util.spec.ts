@@ -29,6 +29,17 @@ describe('buildInboxMessageIds', () => {
     expect(second.messageId).not.toBe(first.messageId);
   });
 
+  it.each(['opening', 'turn'])(
+    'keeps the message apart from the opener and turn for the key %s',
+    (idempotencyKey) => {
+      const ids = Object.values(
+        buildInboxMessageIds({ ...INPUT, idempotencyKey }),
+      );
+
+      expect(new Set(ids).size).toBe(ids.length);
+    },
+  );
+
   it.each([
     { applicationId: 'other-application-id' },
     { workspaceMemberId: 'other-workspace-member-id' },

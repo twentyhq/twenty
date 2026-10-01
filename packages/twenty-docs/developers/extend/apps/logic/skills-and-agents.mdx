@@ -282,8 +282,9 @@ Key points:
   - one of your app's own tools, by `logicFunctionUniversalIdentifier`, rendered
     by its front component with the `input` and `output` you pass. It does not
     pause the conversation.
-- Only one request waits on the member at a time: sending another one before
-  they answer fails with `THREAD_AWAITING_ANSWER`.
+- Only one call the member answers can wait in a conversation at a time:
+  sending another before they answer fails with `THREAD_AWAITING_ANSWER`. Plain
+  messages and app tool requests are still accepted.
 - A conversation the member deleted is not recreated, and nothing is added to it.
 - The member must have the `AI` permission, and your app's
   [default role](/developers/extend/apps/config/roles) must grant
