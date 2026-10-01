@@ -654,6 +654,284 @@ describe('ObjectRecordEventPublisher', () => {
       ).not.toHaveBeenCalled();
     });
 
+    it('should isolate failing queries and deliver events to valid queries on the same stream', async () => {
+      (
+        isRecordMatchingRLSRowLevelPermissionPredicate as jest.Mock
+      ).mockImplementation(
+        ({ filter }: { filter: Record<string, unknown> }) => {
+          if ('failingField' in filter) {
+            throw new TypeError('e.split is not a function');
+          }
+
+          return true;
+        },
+      );
+
+      const streamDataWithMultipleQueries: EventStreamData = {
+        ...mockStreamData,
+        queries: {
+          'query-failing': {
+            objectNameSingular: 'company',
+            variables: {
+              filter: {
+                failingField: { gte: {} },
+              } as unknown as RecordGqlOperationFilter,
+            },
+          },
+          'query-valid': {
+            objectNameSingular: 'company',
+            variables: {
+              filter: { name: { eq: 'Test Company' } },
+            },
+          },
+        },
+      };
+
+      mockEventStreamService.getStreamsData.mockResolvedValue(
+        new Map([[streamChannelId, streamDataWithMultipleQueries]]) as Map<
+          string,
+          EventStreamData | undefined
+        >,
+      );
+
+      const eventBatch: WorkspaceEventBatch<MockObjectRecordEvent> = {
+        name: 'company.created',
+        workspaceId,
+        objectMetadata: companyObjectMetadata,
+        events: [createMockEvent()],
+      };
+
+      await expect(
+        service.publish(eventBatch as WorkspaceEventBatch<never>),
+      ).resolves.not.toThrow();
+
+      expect(
+        mockSubscriptionService.publishToEventStream,
+      ).toHaveBeenCalledTimes(1);
+      const publishCall = (
+        mockSubscriptionService.publishToEventStream as jest.Mock
+      ).mock.calls[0][0];
+      expect(
+        publishCall.payload.objectRecordEventsWithQueryIds[0].queryIds,
+      ).toContain('query-valid');
+    });
+
+    it('should evaluate before state when after state predicate throws on an update event', async () => {
+      const recordBefore = { id: 'record-1', name: 'Open Company' };
+      const recordAfter = { id: 'record-1', name: 'Malformed Company' };
+
+      (
+        isRecordMatchingRLSRowLevelPermissionPredicate as jest.Mock
+      ).mockImplementation(({ record }: { record: { name?: string } }) => {
+        if (record.name === 'Malformed Company') {
+          throw new TypeError('e.split is not a function');
+        }
+
+        return record.name === 'Open Company';
+      });
+
+      const streamDataWithFilter: EventStreamData = {
+        ...mockStreamData,
+        queries: {
+          'query-1': {
+            objectNameSingular: 'company',
+            variables: {
+              filter: { name: { eq: 'Open Company' } },
+            },
+          },
+        },
+      };
+
+      mockEventStreamService.getStreamsData.mockResolvedValue(
+        new Map([[streamChannelId, streamDataWithFilter]]) as Map<
+          string,
+          EventStreamData | undefined
+        >,
+      );
+
+      const eventBatch: WorkspaceEventBatch<MockObjectRecordEvent> = {
+        name: 'company.updated',
+        workspaceId,
+        objectMetadata: companyObjectMetadata,
+        events: [
+          createMockEvent({
+            properties: {
+              before: recordBefore,
+              after: recordAfter,
+            },
+          }),
+        ],
+      };
+
+      await expect(
+        service.publish(eventBatch as WorkspaceEventBatch<never>),
+      ).resolves.not.toThrow();
+
+      expect(
+        mockSubscriptionService.publishToEventStream,
+      ).toHaveBeenCalledTimes(1);
+      const publishCall = (
+        mockSubscriptionService.publishToEventStream as jest.Mock
+      ).mock.calls[0][0];
+      expect(
+        publishCall.payload.objectRecordEventsWithQueryIds[0].queryIds,
+      ).toContain('query-1');
+    });
+
+    it('should isolate throwing subscriber RLS filter and not block unaffected streams', async () => {
+      (buildRowLevelPermissionRecordFilter as jest.Mock).mockReturnValue({
+        malformedRLS: true,
+      });
+
+      let rlsEvaluations = 0;
+      (
+        isRecordMatchingRLSRowLevelPermissionPredicate as jest.Mock
+      ).mockImplementation(
+        ({ filter }: { filter: Record<string, unknown> }) => {
+          if ('malformedRLS' in filter) {
+            rlsEvaluations++;
+            if (rlsEvaluations === 2) {
+              throw new TypeError('e.split is not a function');
+            }
+          }
+
+          return true;
+        },
+      );
+
+      const streamChannelId1 = 'stream-channel-1';
+      const streamChannelId2 = 'stream-channel-2';
+
+      mockEventStreamService.getActiveStreamIds.mockResolvedValue([
+        streamChannelId1,
+        streamChannelId2,
+      ]);
+
+      const streamData1: EventStreamData = {
+        ...mockStreamData,
+        queries: {
+          'query-stream-1': {
+            objectNameSingular: 'company',
+            variables: {},
+          },
+        },
+      };
+
+      const streamData2: EventStreamData = {
+        ...mockStreamData,
+        queries: {
+          'query-stream-2': {
+            objectNameSingular: 'company',
+            variables: {},
+          },
+        },
+      };
+
+      mockEventStreamService.getStreamsData.mockResolvedValue(
+        new Map([
+          [streamChannelId1, streamData1],
+          [streamChannelId2, streamData2],
+        ]) as Map<string, EventStreamData | undefined>,
+      );
+
+      const eventBatch: WorkspaceEventBatch<MockObjectRecordEvent> = {
+        name: 'company.created',
+        workspaceId,
+        objectMetadata: companyObjectMetadata,
+        events: [createMockEvent()],
+      };
+
+      await expect(
+        service.publish(eventBatch as WorkspaceEventBatch<never>),
+      ).resolves.not.toThrow();
+
+      expect(
+        mockSubscriptionService.publishToEventStream,
+      ).toHaveBeenCalledTimes(1);
+      const publishCall = (
+        mockSubscriptionService.publishToEventStream as jest.Mock
+      ).mock.calls[0][0];
+      expect(publishCall.eventStreamChannelId).toBe(streamChannelId2);
+      expect(
+        publishCall.payload.objectRecordEventsWithQueryIds[0].queryIds,
+      ).toContain('query-stream-2');
+    });
+
+    it('should continue processing remaining streams on stream failure and propagate rejection', async () => {
+      const streamChannelId1 = 'failing-stream-channel-1';
+      const streamChannelId2 = 'succeeding-stream-channel-2';
+
+      mockEventStreamService.getActiveStreamIds.mockResolvedValue([
+        streamChannelId1,
+        streamChannelId2,
+      ]);
+
+      const streamData1: EventStreamData = {
+        ...mockStreamData,
+        queries: {
+          'query-stream-1': {
+            objectNameSingular: 'company',
+            variables: {},
+          },
+        },
+      };
+
+      const streamData2: EventStreamData = {
+        ...mockStreamData,
+        queries: {
+          'query-stream-2': {
+            objectNameSingular: 'company',
+            variables: {},
+          },
+        },
+      };
+
+      mockEventStreamService.getStreamsData.mockResolvedValue(
+        new Map([
+          [streamChannelId1, streamData1],
+          [streamChannelId2, streamData2],
+        ]) as Map<string, EventStreamData | undefined>,
+      );
+
+      const stream1Error = new Error('Redis publish failed on stream 1');
+      mockSubscriptionService.publishToEventStream.mockImplementation(
+        ({ eventStreamChannelId }: { eventStreamChannelId: string }) => {
+          if (eventStreamChannelId === streamChannelId1) {
+            return Promise.reject(stream1Error);
+          }
+
+          return Promise.resolve();
+        },
+      );
+
+      const eventBatch: WorkspaceEventBatch<MockObjectRecordEvent> = {
+        name: 'company.created',
+        workspaceId,
+        objectMetadata: companyObjectMetadata,
+        events: [createMockEvent()],
+      };
+
+      await expect(
+        service.publish(eventBatch as WorkspaceEventBatch<never>),
+      ).rejects.toThrow(stream1Error);
+
+      expect(
+        mockSubscriptionService.publishToEventStream,
+      ).toHaveBeenCalledTimes(2);
+
+      const stream2Call = (
+        mockSubscriptionService.publishToEventStream as jest.Mock
+      ).mock.calls.find(
+        ([callArg]: [{ eventStreamChannelId: string }]) =>
+          callArg.eventStreamChannelId === streamChannelId2,
+      )[0];
+
+      expect(stream2Call).toBeDefined();
+      expect(
+        stream2Call.payload.objectRecordEventsWithQueryIds[0].queryIds,
+      ).toContain('query-stream-2');
+    });
+
     it('should publish update events when only the BEFORE state matches the filter (record leaving the view)', async () => {
       (
         isRecordMatchingRLSRowLevelPermissionPredicate as jest.Mock

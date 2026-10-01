@@ -1,6 +1,25 @@
 import { type DateFilter } from '@/types';
 import { isDefined } from '@/utils';
-import { isAfter, isBefore, isEqual, parseISO } from 'date-fns';
+import { isNonEmptyString } from '@sniptt/guards';
+import { isAfter, isBefore, isEqual, isValid, parseISO } from 'date-fns';
+
+const safeParseDate = (value: unknown): Date | null => {
+  if (value instanceof Date) {
+    return isValid(value) ? value : null;
+  }
+
+  if (isNonEmptyString(value) && value.trim().length > 0) {
+    try {
+      const parsedDate = parseISO(value);
+
+      return isValid(parsedDate) ? parsedDate : null;
+    } catch {
+      return null;
+    }
+  }
+
+  return null;
+};
 
 export const isMatchingDateFilter = ({
   dateFilter,
@@ -13,42 +32,77 @@ export const isMatchingDateFilter = ({
     return dateFilter.is === 'NULL';
   }
 
-  const valueDate = value instanceof Date ? value : parseISO(value);
+  if (dateFilter.is === 'NULL') {
+    return false;
+  }
+
+  const hasComparison =
+    dateFilter.eq !== undefined ||
+    dateFilter.neq !== undefined ||
+    dateFilter.in !== undefined ||
+    dateFilter.gt !== undefined ||
+    dateFilter.gte !== undefined ||
+    dateFilter.lt !== undefined ||
+    dateFilter.lte !== undefined;
+
+  if (!hasComparison && dateFilter.is !== undefined) {
+    return dateFilter.is === 'NOT_NULL' ? value !== null : value === null;
+  }
+
+  const valueDate = safeParseDate(value);
+
+  if (!valueDate) {
+    return false;
+  }
 
   switch (true) {
     case dateFilter.eq !== undefined: {
-      return isEqual(valueDate, parseISO(dateFilter.eq));
+      const filterDate = safeParseDate(dateFilter.eq);
+
+      return filterDate ? isEqual(valueDate, filterDate) : false;
     }
     case dateFilter.neq !== undefined: {
-      return !isEqual(valueDate, parseISO(dateFilter.neq));
+      const filterDate = safeParseDate(dateFilter.neq);
+
+      return filterDate ? !isEqual(valueDate, filterDate) : false;
     }
     case dateFilter.in !== undefined: {
-      return dateFilter.in.some((filterValue) =>
-        isEqual(valueDate, parseISO(filterValue)),
-      );
-    }
-    case dateFilter.is !== undefined: {
-      if (dateFilter.is === 'NULL') {
-        return value === null;
-      } else {
-        return value !== null;
+      if (!Array.isArray(dateFilter.in)) {
+        return false;
       }
+
+      return dateFilter.in.some((filterValue) => {
+        const filterDate = safeParseDate(filterValue);
+
+        return filterDate ? isEqual(valueDate, filterDate) : false;
+      });
     }
     case dateFilter.gt !== undefined: {
-      return isAfter(valueDate, parseISO(dateFilter.gt));
+      const filterDate = safeParseDate(dateFilter.gt);
+
+      return filterDate ? isAfter(valueDate, filterDate) : false;
     }
     case dateFilter.gte !== undefined: {
-      const filterDate = parseISO(dateFilter.gte);
+      const filterDate = safeParseDate(dateFilter.gte);
 
-      return isAfter(valueDate, filterDate) || isEqual(valueDate, filterDate);
+      return filterDate
+        ? isAfter(valueDate, filterDate) || isEqual(valueDate, filterDate)
+        : false;
     }
     case dateFilter.lt !== undefined: {
-      return isBefore(valueDate, parseISO(dateFilter.lt));
+      const filterDate = safeParseDate(dateFilter.lt);
+
+      return filterDate ? isBefore(valueDate, filterDate) : false;
     }
     case dateFilter.lte !== undefined: {
-      const filterDate = parseISO(dateFilter.lte);
+      const filterDate = safeParseDate(dateFilter.lte);
 
-      return isBefore(valueDate, filterDate) || isEqual(valueDate, filterDate);
+      return filterDate
+        ? isBefore(valueDate, filterDate) || isEqual(valueDate, filterDate)
+        : false;
+    }
+    case dateFilter.is !== undefined: {
+      return dateFilter.is === 'NOT_NULL' ? value !== null : value === null;
     }
     default: {
       throw new Error(
