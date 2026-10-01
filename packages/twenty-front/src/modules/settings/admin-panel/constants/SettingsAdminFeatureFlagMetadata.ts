@@ -78,4 +78,8 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Partial<
     label: msg`Validation rules`,
     description: msg`Let admins add conditions a record must meet to be saved, checked on every write.`,
   },
+  [FeatureFlagKey.IS_WORKFLOW_SEND_CHAT_MESSAGE_ENABLED]: {
+    label: msg`Workflow chat messages`,
+    description: msg`Add a workflow step that posts a message in a member's AI chat.`,
+  },
 };

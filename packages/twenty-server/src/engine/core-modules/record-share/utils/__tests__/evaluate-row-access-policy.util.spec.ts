@@ -56,6 +56,7 @@ const activeFilter: RowAccessExpression = {
   tableAlias: 'company',
   flatObjectMetadata,
   recordFilter: { status: { eq: 'active' } },
+  condition: { sql: 'TRUE', parameters: {} },
 };
 
 const records: RowAccessRecord[] = [

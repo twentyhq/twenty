@@ -26,10 +26,13 @@ export type RowAccessExpression =
       tableAlias: string;
       flatObjectMetadata: FlatObjectMetadata;
       recordFilter: RecordGqlOperationFilter;
+      condition: SqlCondition;
     }
-  | ({ kind: 'recordShared' } & RecordShareExpressionTarget)
-  // A grant naming the subject; compiled so it can be ORed with an indexed filter
-  | ({ kind: 'namedGrant' } & RecordShareExpressionTarget)
+  | ({
+      kind: 'recordShared';
+      // Compiled as a grant list read once, so it can be ORed with an indexed filter
+      isUncorrelated?: boolean;
+    } & RecordShareExpressionTarget)
   | ({ kind: 'recordNotRestricted' } & RecordShareExpressionTarget)
   | {
       kind: 'sharingRule';
@@ -94,7 +97,6 @@ export type RowAccessPolicyEnvironment = {
 };
 
 export type RowAccessCompilationEnvironment = {
-  flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   recordShareTableExpression: string;
   resolveTableExpression: (objectMetadataId: string) => string;
 };

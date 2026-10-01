@@ -2,23 +2,18 @@
 
 import { Injectable } from '@nestjs/common';
 
-import {
-  RecordSharePrincipalType,
-  RecordShareRowCause,
-} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { In } from 'typeorm';
 
 import { isRecordShareExceptionObject } from 'src/engine/core-modules/record-share/utils/is-record-share-exception-object.util';
 import { RecordShareStorageService } from 'src/engine/core-modules/record-share/services/record-share-storage.service';
 import { type UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
-import { MemberCustodianService } from 'src/engine/metadata-modules/user-role/services/member-custodian.service';
+import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @Injectable()
 export class RecordShareOwnershipTransferService {
   constructor(
-    private readonly memberCustodianService: MemberCustodianService,
+    private readonly userRoleService: UserRoleService,
     private readonly recordShareStorageService: RecordShareStorageService,
     private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
@@ -47,25 +42,6 @@ export class RecordShareOwnershipTransferService {
       removedUserWorkspace,
       actingUserWorkspaceId,
     });
-
-    if (!isDefined(toWorkspaceMemberId)) {
-      await this.recordShareStorageService.deleteMatching({
-        workspaceId,
-        criteria: [
-          {
-            objectMetadataId: In(objectMetadataIds),
-            principalType: RecordSharePrincipalType.WORKSPACE_MEMBER,
-            principalId: removedWorkspaceMemberId,
-            rowCause: In([
-              RecordShareRowCause.OWNER,
-              RecordShareRowCause.MANUAL,
-            ]),
-          },
-        ],
-      });
-
-      return;
-    }
 
     await this.recordShareStorageService.transferMemberGrants({
       workspaceId,
@@ -99,7 +75,7 @@ export class RecordShareOwnershipTransferService {
     actingUserWorkspaceId?: string;
   }): Promise<string | undefined> {
     const custodianUserWorkspace =
-      await this.memberCustodianService.resolveCustodianUserWorkspace({
+      await this.userRoleService.resolveCustodianUserWorkspace({
         removedUserWorkspace,
         actingUserWorkspaceId,
       });
