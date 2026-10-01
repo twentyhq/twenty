@@ -4,12 +4,12 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
-import { MemberCustodianService } from 'src/engine/metadata-modules/user-role/services/member-custodian.service';
+import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 
 @Injectable()
 export class ConnectedAccountOwnershipTransferService {
   constructor(
-    private readonly memberCustodianService: MemberCustodianService,
+    private readonly userRoleService: UserRoleService,
     private readonly connectedAccountMetadataService: ConnectedAccountMetadataService,
   ) {}
 
@@ -25,7 +25,7 @@ export class ConnectedAccountOwnershipTransferService {
     actingUserWorkspaceId?: string;
   }) {
     const custodianUserWorkspace =
-      await this.memberCustodianService.resolveCustodianUserWorkspace({
+      await this.userRoleService.resolveCustodianUserWorkspace({
         removedUserWorkspace,
         actingUserWorkspaceId,
       });
