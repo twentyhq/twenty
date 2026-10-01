@@ -13,7 +13,10 @@ import { attachApplicationTarget } from 'src/engine/core-modules/application/uti
 export const ApplicationTargetArg =
   <TInput = never>(
     argName: string,
-    target: ApplicationTargetKind & { idKey?: StringPathOf<TInput> },
+    target: ApplicationTargetKind & {
+      idKey?: StringPathOf<TInput>;
+      requireApplicationRegistrationOwnership: boolean;
+    },
     argsOptions?: ArgsOptions,
   ): ParameterDecorator =>
   (prototype, propertyKey, parameterIndex) => {

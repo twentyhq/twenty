@@ -54,6 +54,7 @@ const environment: RowAccessPolicyEnvironment = {
   recordShareTableExpression: '"workspace"."recordShare"',
   resolveTableExpression: (objectMetadataId) =>
     `"workspace"."${objectMetadataId}"`,
+  isRecordSharingEnabled: false,
 };
 
 const readEverything: RowAccessPolicySubject = {
@@ -148,6 +149,53 @@ describe('buildRowAccessPolicy', () => {
 
   it('opens an OPEN object to a subject without predicate', () => {
     expect(build(readEverything, note)).toEqual({ kind: 'open' });
+  });
+
+  it('gates an OPEN object on its restrictions once record sharing is enabled', () => {
+    const company = buildObject({
+      id: 'company',
+      readability: MetadataReadability.OPEN,
+    });
+    const policy = buildRowAccessPolicy({
+      subject: readEverything,
+      environment: { ...environment, isRecordSharingEnabled: true },
+      tableAlias: 'company',
+      flatObjectMetadata: company,
+      operationType: 'select',
+      depth: 0,
+    });
+
+    expect(policy.kind).toBe('gated');
+    if (policy.kind !== 'gated') throw new Error('Expected an exception gate');
+    expect(policy.condition.sql).toMatch(
+      /^\(NOT EXISTS \(SELECT 1 FROM "workspace"."recordShare" AS "recordShareRestriction_[0-9a-f]{10}"/,
+    );
+  });
+
+  it('keeps an OPEN system object open when record sharing is enabled', () => {
+    expect(
+      buildRowAccessPolicy({
+        subject: readEverything,
+        environment: { ...environment, isRecordSharingEnabled: true },
+        tableAlias: 'note',
+        flatObjectMetadata: { ...note, isSystem: true },
+        operationType: 'select',
+        depth: 0,
+      }),
+    ).toEqual({ kind: 'open' });
+  });
+
+  it('leaves an OPEN object open to inserts when record sharing is enabled', () => {
+    expect(
+      buildRowAccessPolicy({
+        subject: readEverything,
+        environment: { ...environment, isRecordSharingEnabled: true },
+        tableAlias: 'note',
+        flatObjectMetadata: note,
+        operationType: 'insert',
+        depth: 0,
+      }),
+    ).toEqual({ kind: 'open' });
   });
 
   it('denies an object the subject has no permission on', () => {

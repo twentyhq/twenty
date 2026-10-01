@@ -32,6 +32,8 @@ jest.mock('@/object-metadata/hooks/useObjectMetadataItem', () => ({
   useObjectMetadataItem: () => ({
     objectMetadataItem: {
       id: '20202020-9e2b-4f2b-8f47-61b41565859a',
+      labelSingular: 'Workflow',
+      labelPlural: 'Workflows',
     },
   }),
 }));
@@ -91,6 +93,13 @@ describe('useCoreObjectsCommands', () => {
     expect(result.current.shouldDisplayCoreWorkflowFiltersCommand).toBe(true);
   });
 
+  it('labels the selection section with the selected workflow count', () => {
+    const { result } = renderCommands();
+    expect(result.current.coreSelectionSectionContext).toEqual({
+      label: '1 Workflow',
+    });
+  });
+
   it('does not expose core deletion without the workflow permission', () => {
     mockHasPermission.mockReturnValue(false);
     const { result } = renderCommands();
@@ -106,7 +115,8 @@ describe('useCoreObjectsCommands', () => {
   it('keeps core commands hidden with the flag off', () => {
     mockIsCoreEnabled.mockReturnValue(false);
     const { result } = renderCommands();
-    expect(result.current.coreViewCommandIds).toEqual([]);
+    expect(result.current.coreObjectCommandIds).toEqual([]);
     expect(result.current.coreSelectionCommandIds).toEqual([]);
+    expect(result.current.coreSelectionSectionContext).toBeUndefined();
   });
 });
