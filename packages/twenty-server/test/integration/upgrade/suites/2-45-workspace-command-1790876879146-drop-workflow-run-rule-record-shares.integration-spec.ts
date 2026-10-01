@@ -109,11 +109,14 @@ describe('2-45 workspace command 1790876879146 - DropWorkflowRunRuleRecordShares
   it('drops those grants on the way up, and only on a real run', async () => {
     await run('down');
 
+    const ruleRecordIds = await findRuleRecordIds();
     const otherShares = await findOtherWorkflowRunShares();
+
+    expect(ruleRecordIds.length).toBeGreaterThan(0);
 
     await run('up', { dryRun: true });
 
-    expect((await findRuleRecordIds()).length).toBeGreaterThan(0);
+    expect(await findRuleRecordIds()).toEqual(ruleRecordIds);
 
     await run('up');
 
