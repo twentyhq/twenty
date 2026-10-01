@@ -339,19 +339,6 @@ export class ApplicationInstallService {
       sourceType: appRegistration.sourceType,
     });
 
-    if (isVersionUpgrade && !hasNeverCompletedInstall) {
-      await this.assertRoleGrantsApproved({
-        applicationId: application.id,
-        workspaceId: params.workspaceId,
-        manifest: resolvedPackage.manifest,
-        hasUserApprovedRoleGrants: hasUserApprovedRoleGrantsForVersion({
-          hasUserApprovedRoleGrants: params.hasUserApprovedRoleGrants,
-          approvedVersion: params.version,
-          resolvedVersion: newVersion,
-        }),
-      });
-    }
-
     const incomingVersion = resolvedPackage.packageJson.version;
 
     // Rollback is scoped to the work after the application row exists: reaching
@@ -379,6 +366,19 @@ export class ApplicationInstallService {
             ],
           );
         }
+      }
+
+      if (isVersionUpgrade && !hasNeverCompletedInstall) {
+        await this.assertRoleGrantsApproved({
+          applicationId: application.id,
+          workspaceId: params.workspaceId,
+          manifest: resolvedPackage.manifest,
+          hasUserApprovedRoleGrants: hasUserApprovedRoleGrantsForVersion({
+            hasUserApprovedRoleGrants: params.hasUserApprovedRoleGrants,
+            approvedVersion: params.version,
+            resolvedVersion: newVersion,
+          }),
+        });
       }
 
       if (isVersionUpgrade && shouldApplyApprovedCapabilities) {
@@ -480,9 +480,11 @@ export class ApplicationInstallService {
 
       return true;
     } catch (error) {
-      this.logger.error(
-        `Failed to install app ${appRegistration.universalIdentifier}: ${error}`,
-      );
+      if (!isUpgradeRoleGrantsApprovalError(error)) {
+        this.logger.error(
+          `Failed to install app ${appRegistration.universalIdentifier}: ${error}`,
+        );
+      }
 
       if (!isVersionUpgrade || hasNeverCompletedInstall) {
         // Rollback of a failed fresh install: the app never finished
