@@ -34,7 +34,7 @@ import {
   buildSelectStatement,
   buildWhereExpression,
   collectStatementAliases,
-  mapRowToEntity,
+  createRowToEntityMapper,
   normaliseColumnExpression,
   quoteColumn,
   quoteQualifiedAliasReferences,
@@ -565,7 +565,9 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
   ): T[] {
     const columnNameByResultAlias = this.buildColumnNameByResultAlias();
 
-    return rows.map((row) => mapRowToEntity<T>(row, columnNameByResultAlias));
+    const mapRowToEntity = createRowToEntityMapper<T>(columnNameByResultAlias);
+
+    return rows.map(mapRowToEntity);
   }
 
   async getMany<T extends ObjectLiteral>(options?: {
