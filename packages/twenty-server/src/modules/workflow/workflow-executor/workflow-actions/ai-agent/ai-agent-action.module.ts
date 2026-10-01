@@ -8,7 +8,7 @@ import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/ag
 import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
-import { WorkflowExecutionContextModule } from 'src/modules/workflow/workflow-executor/services/workflow-execution-context.module';
+import { WorkflowExecutionContextService } from 'src/modules/workflow/workflow-executor/services/workflow-execution-context.service';
 import { WorkflowAgentConversationModule } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/workflow-agent-conversation.module';
 import { WorkflowRunModule } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.module';
 
@@ -16,7 +16,6 @@ import { AiAgentWorkflowAction } from './ai-agent.workflow-action';
 
 @Module({
   imports: [
-    WorkflowExecutionContextModule,
     ApplicationModule,
     AiAgentExecutionModule,
     TypeOrmModule.forFeature([AgentEntity]),
@@ -27,6 +26,7 @@ import { AiAgentWorkflowAction } from './ai-agent.workflow-action';
     WorkflowAgentConversationModule,
   ],
   providers: [
+    WorkflowExecutionContextService,
     AiAgentWorkflowAction,
     provideWorkspaceScopedRepository(AgentEntity),
   ],

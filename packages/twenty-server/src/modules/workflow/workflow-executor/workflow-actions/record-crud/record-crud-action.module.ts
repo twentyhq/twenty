@@ -6,7 +6,7 @@ import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user
 import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
 import { WorkflowCommonModule } from 'src/modules/workflow/common/workflow-common.module';
-import { WorkflowExecutionContextModule } from 'src/modules/workflow/workflow-executor/services/workflow-execution-context.module';
+import { WorkflowExecutionContextService } from 'src/modules/workflow/workflow-executor/services/workflow-execution-context.service';
 import { CreateRecordWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/create-record.workflow-action';
 import { DeleteRecordWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/delete-record.workflow-action';
 import { FindRecordsWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/find-records.workflow-action';
@@ -17,7 +17,6 @@ import { WorkflowRunModule } from 'src/modules/workflow/workflow-runner/workflow
 
 @Module({
   imports: [
-    WorkflowExecutionContextModule,
     ApplicationModule,
     RecordCrudModule,
     WorkflowRunModule,
@@ -27,6 +26,7 @@ import { WorkflowRunModule } from 'src/modules/workflow/workflow-runner/workflow
     WorkflowCommonModule,
   ],
   providers: [
+    WorkflowExecutionContextService,
     CreateRecordWorkflowAction,
     UpsertRecordWorkflowAction,
     UpdateRecordWorkflowAction,

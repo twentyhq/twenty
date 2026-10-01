@@ -5,13 +5,12 @@ import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user
 import { AiEvaluationModule } from 'src/engine/metadata-modules/ai/ai-evaluation/ai-evaluation.module';
 import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
-import { WorkflowExecutionContextModule } from 'src/modules/workflow/workflow-executor/services/workflow-execution-context.module';
+import { WorkflowExecutionContextService } from 'src/modules/workflow/workflow-executor/services/workflow-execution-context.service';
 import { ClassifyWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/classify/classify.workflow-action';
 import { WorkflowRunModule } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.module';
 
 @Module({
   imports: [
-    WorkflowExecutionContextModule,
     AiEvaluationModule,
     WorkflowRunModule,
     UserWorkspaceModule,
@@ -19,7 +18,7 @@ import { WorkflowRunModule } from 'src/modules/workflow/workflow-runner/workflow
     RoleModule,
     ApplicationModule,
   ],
-  providers: [ClassifyWorkflowAction],
+  providers: [WorkflowExecutionContextService, ClassifyWorkflowAction],
   exports: [ClassifyWorkflowAction],
 })
 export class ClassifyActionModule {}

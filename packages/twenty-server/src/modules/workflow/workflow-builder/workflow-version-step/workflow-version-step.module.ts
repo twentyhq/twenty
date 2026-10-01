@@ -20,7 +20,6 @@ import { WorkflowVersionStepHelpersWorkspaceService } from 'src/modules/workflow
 import { WorkflowVersionStepOperationsWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step-operations.workspace-service';
 import { WorkflowVersionStepUpdateWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step-update.workspace-service';
 import { WorkflowVersionStepWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step.workspace-service';
-import { RecordCrudModule } from 'src/engine/core-modules/record-crud/record-crud.module';
 
 @Module({
   imports: [
@@ -38,7 +37,6 @@ import { RecordCrudModule } from 'src/engine/core-modules/record-crud/record-cru
     ]),
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     WorkflowVersionCoreModule,
-    RecordCrudModule,
   ],
   providers: [
     WorkflowVersionStepWorkspaceService,

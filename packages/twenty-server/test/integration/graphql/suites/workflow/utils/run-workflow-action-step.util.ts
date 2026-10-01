@@ -13,7 +13,6 @@ type WorkflowActionStepType =
   | 'SEND_EMAIL'
   | 'DRAFT_EMAIL'
   | 'CREATE_CALENDAR_EVENT'
-  | 'CREATE_RECORD'
   | 'UPDATE_RECORD'
   | 'CODE';
 
@@ -186,13 +185,11 @@ export const runWorkflowActionStep = async ({
   stepType,
   input,
   payload,
-  runToken,
 }: {
   name: string;
   stepType: WorkflowActionStepType;
   input: Record<string, unknown>;
   payload?: object;
-  runToken?: string;
 }): Promise<WorkflowActionStepRun> => {
   const workflowId = await createWorkflow(name);
 
@@ -218,11 +215,7 @@ export const runWorkflowActionStep = async ({
 
     await updateWorkflowVersionStepInput({ workflowVersionId, step, input });
 
-    workflowRunId = await runWorkflowVersion({
-      workflowVersionId,
-      payload,
-      token: runToken,
-    });
+    workflowRunId = await runWorkflowVersion({ workflowVersionId, payload });
 
     const workflowRun = await waitForWorkflowCompletion(workflowRunId);
     const stepInfo = workflowRun?.state?.stepInfos?.[step.id];

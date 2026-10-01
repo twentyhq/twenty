@@ -10,7 +10,6 @@ export enum WorkflowStepExecutorExceptionCode {
   INVALID_STEP_TYPE = 'INVALID_STEP_TYPE',
   INVALID_STEP_INPUT = 'INVALID_STEP_INPUT',
   STEP_NOT_FOUND = 'STEP_NOT_FOUND',
-  FORBIDDEN = 'FORBIDDEN',
   INTERNAL_ERROR = 'INTERNAL_ERROR',
 }
 
@@ -26,8 +25,6 @@ const getWorkflowStepExecutorExceptionUserFriendlyMessage = (
       return msg`Workflow step not found.`;
     case WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT:
       return msg`Invalid workflow step input.`;
-    case WorkflowStepExecutorExceptionCode.FORBIDDEN:
-      return msg`This workflow step is not allowed with the permissions of the workflow.`;
     case WorkflowStepExecutorExceptionCode.INTERNAL_ERROR:
       return STANDARD_ERROR_MESSAGE;
     default:
