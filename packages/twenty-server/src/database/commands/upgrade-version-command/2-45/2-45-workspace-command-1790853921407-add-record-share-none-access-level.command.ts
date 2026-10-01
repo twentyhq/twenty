@@ -64,7 +64,21 @@ export class AddRecordShareNoneAccessLevelCommand extends ProvisionedWorkspaceCo
         direction,
       });
 
-    if (fieldMetadataOperations.flatEntityToUpdate.length === 0) {
+    const isOptionInSync =
+      fieldMetadataOperations.flatEntityToUpdate.length === 0;
+    const recordShareObjectMetadata =
+      flatObjectMetadataMaps.byUniversalIdentifier[
+        STANDARD_OBJECTS.recordShare.universalIdentifier
+      ];
+    const recordShareTable = isDefined(recordShareObjectMetadata)
+      ? `${escapeIdentifier(getWorkspaceSchemaName(workspaceId))}.${escapeIdentifier(computeObjectTargetTable(recordShareObjectMetadata))}`
+      : undefined;
+
+    // A rollback retried after the option went away can still find restrictions
+    if (
+      isOptionInSync &&
+      (direction === 'up' || !isDefined(recordShareTable))
+    ) {
       return;
     }
 
@@ -76,21 +90,16 @@ export class AddRecordShareNoneAccessLevelCommand extends ProvisionedWorkspaceCo
       return;
     }
 
-    const recordShareObjectMetadata =
-      flatObjectMetadataMaps.byUniversalIdentifier[
-        STANDARD_OBJECTS.recordShare.universalIdentifier
-      ];
-
-    const recordShareTable = isDefined(recordShareObjectMetadata)
-      ? `${escapeIdentifier(getWorkspaceSchemaName(workspaceId))}.${escapeIdentifier(computeObjectTargetTable(recordShareObjectMetadata))}`
-      : undefined;
-
     // Postgres cannot drop an enum value still in use, and a restriction
     // without the gate that reads it means nothing once rolled back
     const deletedRestrictions =
       direction === 'down' && isDefined(recordShareTable)
         ? await this.deleteRestrictions(recordShareTable)
         : [];
+
+    if (isOptionInSync) {
+      return;
+    }
 
     try {
       const result =
@@ -133,7 +142,7 @@ export class AddRecordShareNoneAccessLevelCommand extends ProvisionedWorkspaceCo
   ): Promise<Record<string, unknown>[]> {
     const [rows]: [{ restriction: Record<string, unknown> }[], number] =
       await this.dataSource.query(
-        `DELETE FROM ${recordShareTable} AS "recordShare" WHERE "accessLevel" = $1 RETURNING to_jsonb("recordShare") - 'searchVector' AS "restriction"`,
+        `DELETE FROM ${recordShareTable} AS "recordShare" WHERE "accessLevel"::text = $1 RETURNING to_jsonb("recordShare") - 'searchVector' AS "restriction"`,
         [RecordShareAccessLevel.NONE],
       );
 
@@ -150,7 +159,9 @@ export class AddRecordShareNoneAccessLevelCommand extends ProvisionedWorkspaceCo
       return;
     }
 
-    const columns = Object.keys(restrictions[0]).map(escapeIdentifier).join(', ');
+    const columns = Object.keys(restrictions[0])
+      .map(escapeIdentifier)
+      .join(', ');
 
     await this.dataSource.query(
       `INSERT INTO ${recordShareTable} (${columns}) SELECT ${columns} FROM jsonb_populate_recordset(NULL::${recordShareTable}, $1::jsonb)`,
