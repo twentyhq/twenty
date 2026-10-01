@@ -293,6 +293,7 @@ type Object {
   openRecordIn: ObjectOpenRecordIn!
   readability: MetadataReadability!
   readabilityParentFieldUniversalIdentifiers: [UUID!]
+  sharingReach: ObjectSharingReach!
   writability: MetadataWritability!
   applicationId: UUID!
   createdAt: DateTime!
@@ -332,6 +333,11 @@ enum MetadataReadability {
   INHERITED
   APPLICATION
   SYSTEM
+}
+
+enum ObjectSharingReach {
+  ROLE_ACCESS
+  WORKSPACE
 }
 
 enum MetadataWritability {
@@ -1772,6 +1778,8 @@ type RecordSharingGrantDTO {
   principalId: UUID!
   accessLevel: RecordShareAccessLevel!
   rowCause: String!
+  canRoleRead: Boolean
+  canRoleUpdate: Boolean
 }
 
 enum RecordShareAccessLevel {
@@ -1794,6 +1802,7 @@ type RecordSharingDTO {
   isOpenByDefault: Boolean!
   generalAccessLevel: RecordShareAccessLevel
   isGeneralAccessDefault: Boolean!
+  sharingReach: ObjectSharingReach!
   roles: [RecordSharingRoleDTO!]!
   shares: [RecordSharingGrantDTO!]!
 }
@@ -4924,6 +4933,7 @@ input UpdateObjectPayload {
   isSearchable: Boolean
   openRecordIn: ObjectOpenRecordIn
   readability: MetadataReadability
+  sharingReach: ObjectSharingReach
   translations: [MetadataTranslationOverrideInput!]
 }
 
