@@ -1,24 +1,18 @@
-import { readdirSync } from 'fs';
-import { join } from 'path';
-import { fileURLToPath } from 'url';
+/// <reference types="vite/client" />
 import { describe, expect, it } from 'vitest';
 
-const FIELDS_DIRECTORY = fileURLToPath(new URL('../fields', import.meta.url));
-
-const FIELD_FILE_NAMES = readdirSync(FIELDS_DIRECTORY).filter((fileName) =>
-  fileName.endsWith('.field.ts'),
-);
+const FIELD_MODULES = import.meta.glob<{
+  default: { success: boolean; config: { isAuditLogged?: boolean } };
+}>(['../fields/**/*.ts', '!../fields/**/__tests__/**'], { eager: true });
 
 describe('fields', () => {
   it('finds the field definitions', () => {
-    expect(FIELD_FILE_NAMES.length).toBeGreaterThan(0);
+    expect(Object.keys(FIELD_MODULES).length).toBeGreaterThan(0);
   });
 
-  it.each(FIELD_FILE_NAMES)(
+  it.each(Object.entries(FIELD_MODULES))(
     'keeps %s off the record timeline',
-    async (fileName) => {
-      const { default: field } = await import(join(FIELDS_DIRECTORY, fileName));
-
+    (_path, { default: field }) => {
       expect(field.success).toBe(true);
       expect(field.config.isAuditLogged).toBe(false);
     },
