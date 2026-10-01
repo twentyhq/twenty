@@ -28,6 +28,8 @@ export type RowAccessExpression =
       recordFilter: RecordGqlOperationFilter;
     }
   | ({ kind: 'recordShared' } & RecordShareExpressionTarget)
+  // A grant naming the subject; compiled so it can be ORed with an indexed filter
+  | ({ kind: 'namedGrant' } & RecordShareExpressionTarget)
   | ({ kind: 'recordNotRestricted' } & RecordShareExpressionTarget)
   | { kind: 'sharingRule'; tableAlias: string; rule: RecordSharingRule }
   | ({

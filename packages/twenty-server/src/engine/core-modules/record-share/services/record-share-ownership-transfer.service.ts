@@ -9,6 +9,7 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
+import { isRecordShareExceptionObject } from 'src/engine/core-modules/record-share/utils/is-record-share-exception-object.util';
 import { RecordShareStorageService } from 'src/engine/core-modules/record-share/services/record-share-storage.service';
 import { type UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { MemberCustodianService } from 'src/engine/metadata-modules/user-role/services/member-custodian.service';
@@ -35,6 +36,13 @@ export class RecordShareOwnershipTransferService {
     actingUserWorkspaceId?: string;
   }): Promise<void> {
     const { workspaceId } = removedUserWorkspace;
+    const objectMetadataIds =
+      await this.findTransferableObjectMetadataIds(workspaceId);
+
+    if (objectMetadataIds.length === 0) {
+      return;
+    }
+
     const toWorkspaceMemberId = await this.resolveCustodianWorkspaceMemberId({
       removedUserWorkspace,
       actingUserWorkspaceId,
@@ -45,6 +53,7 @@ export class RecordShareOwnershipTransferService {
         workspaceId,
         criteria: [
           {
+            objectMetadataId: In(objectMetadataIds),
             principalType: RecordSharePrincipalType.WORKSPACE_MEMBER,
             principalId: removedWorkspaceMemberId,
             rowCause: In([
@@ -60,9 +69,26 @@ export class RecordShareOwnershipTransferService {
 
     await this.recordShareStorageService.transferMemberGrants({
       workspaceId,
+      objectMetadataIds,
       fromWorkspaceMemberId: removedWorkspaceMemberId,
       toWorkspaceMemberId,
     });
+  }
+
+  // Only records that access to all records already reaches change hands:
+  // private objects such as chats and workflow runs stay with their creator
+  private async findTransferableObjectMetadataIds(
+    workspaceId: string,
+  ): Promise<string[]> {
+    const { flatObjectMetadataMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatObjectMetadataMaps',
+      ]);
+
+    return Object.values(flatObjectMetadataMaps.byUniversalIdentifier)
+      .filter(isDefined)
+      .filter(isRecordShareExceptionObject)
+      .map((flatObjectMetadata) => flatObjectMetadata.id);
   }
 
   private async resolveCustodianWorkspaceMemberId({
