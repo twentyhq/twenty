@@ -133,6 +133,7 @@ export { combineFilters } from './filter/utils/combineFilters';
 export { compareSelectOptionValues } from './filter/utils/compareSelectOptionValues';
 export { COMPOSITE_FIELD_FILTER_OPERANDS_MAP } from './filter/utils/compositeFieldFilterOperandsMap';
 export { convertViewFilterOperandToCoreOperand } from './filter/utils/convert-view-filter-operand-to-core-operand.util';
+export { convertJsonValueToPostgresJsonbText } from './filter/utils/convertJsonValueToPostgresJsonbText';
 export { convertLikePatternToRegexOrThrow } from './filter/utils/convertLikePatternToRegexOrThrow';
 export { convertViewFilterValueToString } from './filter/utils/convertViewFilterValueToString';
 export { createAnyFieldRecordFilterBaseProperties } from './filter/utils/createAnyFieldRecordFilterBaseProperties';

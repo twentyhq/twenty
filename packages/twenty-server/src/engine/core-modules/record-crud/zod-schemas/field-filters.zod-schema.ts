@@ -16,6 +16,7 @@ import {
   NullCheckEnum,
   NumberFilterSchema,
   PhonesFilterSchema,
+  RawJsonFilterSchema,
   RichTextFilterSchema,
   TextFilterSchema,
   UuidFilterSchema,
@@ -150,7 +151,7 @@ export const generateFieldFilterZodSchema = (
 
     case FieldMetadataType.RAW_JSON:
     case FieldMetadataType.FILES:
-      return DefaultFilterSchema;
+      return RawJsonFilterSchema;
 
     default:
       return DefaultFilterSchema;

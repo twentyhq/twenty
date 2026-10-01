@@ -49,6 +49,17 @@ describe('generateFieldFilterZodSchema', () => {
     });
   });
 
+  describe('RAW_JSON', () => {
+    it('exposes only the operators the query layer accepts', () => {
+      const schema = generateFieldFilterZodSchema(
+        fieldOfType(FieldMetadataType.RAW_JSON),
+      );
+
+      expect(schema!.parse({ ilike: '%acme%' })).toEqual({ ilike: '%acme%' });
+      expect(schema!.parse({ eq: 'acme', neq: 'acme' })).toEqual({});
+    });
+  });
+
   describe('MORPH_RELATION', () => {
     // Regression: morph relations (e.g. noteTarget.targetPerson) are filtered
     // by their join column (`${name}Id`). Without a dedicated case they hit the
