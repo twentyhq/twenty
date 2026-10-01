@@ -30,23 +30,26 @@ export const useFindSelectedWorkflowRunCoreWorkflowIds = () => {
         isDefined(selectedRecord?.coreWorkflowId) &&
         isDefined(selectedRecord?.coreWorkflowVersionId)
       ) {
-        return selectedRecord;
+        return {
+          coreWorkflowId: selectedRecord.coreWorkflowId,
+          coreWorkflowVersionId: selectedRecord.coreWorkflowVersionId,
+        };
       }
 
       if (!isDefined(selectedRecord?.id)) {
         return {};
       }
 
-      let workflowRun: CoreWorkflowIds = {};
+      let coreWorkflowIds: CoreWorkflowIds = {};
 
       await findWorkflowRun({
         objectRecordId: selectedRecord.id,
-        onCompleted: (record) => {
-          workflowRun = record;
+        onCompleted: ({ coreWorkflowId, coreWorkflowVersionId }) => {
+          coreWorkflowIds = { coreWorkflowId, coreWorkflowVersionId };
         },
       });
 
-      return workflowRun;
+      return coreWorkflowIds;
     };
 
   return { findSelectedWorkflowRunCoreWorkflowIds };
