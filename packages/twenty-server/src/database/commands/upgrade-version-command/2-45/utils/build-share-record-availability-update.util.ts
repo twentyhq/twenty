@@ -4,9 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-
-const SHARE_RECORD_UNIVERSAL_IDENTIFIER =
-  'b9336f9f-d10c-42c0-b7cd-40c94ae235ef';
+import { STANDARD_COMMAND_MENU_ITEMS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant';
 
 const CHAT_ONLY_SHARE_RECORD_EXPRESSION =
   'numberOfSelectedRecords == 1 and featureFlags.IS_AI_CHAT_SHARING_DROPDOWN_ENABLED and noneDefined(selectedRecords, "deletedAt")';
@@ -32,7 +30,7 @@ export const buildShareRecordAvailabilityUpdate = ({
 }): FlatCommandMenuItem[] => {
   const shareRecord =
     flatCommandMenuItemsByUniversalIdentifier[
-      SHARE_RECORD_UNIVERSAL_IDENTIFIER
+      STANDARD_COMMAND_MENU_ITEMS.shareRecord.universalIdentifier
     ];
 
   if (!isDefined(shareRecord)) {
