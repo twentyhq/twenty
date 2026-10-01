@@ -996,6 +996,11 @@ describe('StreamAgentChatJob', () => {
 
     await job.handle(jobData);
 
+    expect(agentChatService.recordThreadActivity).toHaveBeenCalledWith({
+      workspaceId: jobData.workspaceId,
+      threadId: jobData.threadId,
+    });
+
     expect(turnCounts('ai-chat/turn-cancelled')).toEqual([
       expect.objectContaining({
         attributes: { model: 'openai/gpt-5.6-luna', reason: 'superseded' },

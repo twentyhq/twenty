@@ -299,8 +299,13 @@ describe('Chat thread participant state through the authenticated API', () => {
 
   it('brings a thread back for its members on activity no member wrote', async () => {
     const threadId = await createTestThread();
+    const archived = await runThreadMutation(
+      'archiveAgentChatThread',
+      threadId,
+    );
 
-    await runThreadMutation('archiveAgentChatThread', threadId);
+    expect(archived.body.errors).toBeUndefined();
+    expect(archived.body.data.archiveAgentChatThread.archivedAt).not.toBeNull();
 
     await getAppProviderByClassName<AgentChatService>(
       'AgentChatService',
