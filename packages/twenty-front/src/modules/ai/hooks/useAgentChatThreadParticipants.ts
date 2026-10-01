@@ -235,7 +235,7 @@ export const useAgentChatThreadParticipants = () => {
   );
 
   const snoozeAgentChatThread = useCallback(
-    (threadId: string, snoozedUntil: Date) =>
+    ({ threadId, snoozedUntil }: { threadId: string; snoozedUntil: Date }) =>
       updateParticipant({
         mutation: SnoozeAgentChatThreadDocument,
         variables: { threadId, snoozedUntil: snoozedUntil.toISOString() },
@@ -260,7 +260,7 @@ export const useAgentChatThreadParticipants = () => {
   // Mirrors what the server records when the member sends a message, so the
   // thread moves to the top of their inbox without waiting for the event
   const applyLocalMemberActivity = useCallback(
-    (threadId: string, activityAt: string) => {
+    ({ threadId, activityAt }: { threadId: string; activityAt: string }) => {
       const previousThread = store.get(
         agentChatThreadRecordFamilySelector.selectorFamily(threadId),
       );

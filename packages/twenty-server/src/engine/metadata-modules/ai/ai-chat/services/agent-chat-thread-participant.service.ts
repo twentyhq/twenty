@@ -214,7 +214,7 @@ export class AgentChatThreadParticipantService {
     threadId,
   }: ParticipantArgs): Promise<ThreadActivityTimestamps> {
     if (!(await this.sharingService.hasInboxState(workspaceId))) {
-      const activity = await this.touchThread(workspaceId, threadId);
+      const activity = await this.touchThread({ workspaceId, threadId });
 
       if (!isDefined(activity)) {
         throw new AiException(
@@ -269,7 +269,7 @@ export class AgentChatThreadParticipantService {
     'workspaceMemberId'
   >): Promise<ThreadActivityTimestamps | null> {
     if (!(await this.sharingService.hasInboxState(workspaceId))) {
-      return this.touchThread(workspaceId, threadId);
+      return this.touchThread({ workspaceId, threadId });
     }
 
     const rows = await this.threadRepository.query(
@@ -291,10 +291,10 @@ export class AgentChatThreadParticipantService {
   }
 
   // Before the 2.45 upgrade only updatedAt exists to order chats by
-  private async touchThread(
-    workspaceId: string,
-    threadId: string,
-  ): Promise<ThreadActivityTimestamps | null> {
+  private async touchThread({
+    workspaceId,
+    threadId,
+  }: Omit<ParticipantArgs, 'workspaceMemberId'>): Promise<ThreadActivityTimestamps | null> {
     const rows = await this.threadRepository.query(
       workspaceId,
       ({ manager, table }) =>

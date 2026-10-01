@@ -58,7 +58,7 @@ const StyledLabel = styled.div`
   flex-shrink: 0;
   font-size: ${themeCssVariables.font.size.sm};
   gap: ${themeCssVariables.spacing[1]};
-  height: 24px;
+  height: ${themeCssVariables.spacing[6]};
   width: 96px;
 `;
 
@@ -74,7 +74,7 @@ const StyledValue = styled.div`
   flex: 1;
   flex-wrap: wrap;
   gap: ${themeCssVariables.spacing[1]};
-  min-height: 24px;
+  min-height: ${themeCssVariables.spacing[6]};
   min-width: 0;
 `;
 

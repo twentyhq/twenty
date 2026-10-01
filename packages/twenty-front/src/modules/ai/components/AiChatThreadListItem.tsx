@@ -45,7 +45,7 @@ const StyledThreadItem = styled.div<{ $isSelected: boolean }>`
 const StyledLeading = styled.div`
   display: flex;
   flex-shrink: 0;
-  padding-top: 2px;
+  padding-top: ${themeCssVariables.spacing['0.5']};
   width: ${themeCssVariables.spacing[10]};
 `;
 
@@ -53,7 +53,7 @@ const StyledThreadContent = styled.div`
   display: flex;
   flex: 1;
   flex-direction: column;
-  gap: 2px;
+  gap: ${themeCssVariables.spacing['0.5']};
   min-width: 0;
 `;
 
@@ -144,10 +144,11 @@ export const AiChatThreadListItem = ({
     commitRename,
   } = useAiChatThreadRename(thread);
 
-  const { isUnread, snoozedUntil } = useAtomFamilySelectorValue(
-    agentChatThreadInboxStatusFamilySelector,
-    { threadId: thread.id, lastActivityAt: thread.lastActivityAt ?? null },
-  );
+  const { isUnread, snoozedUntil, doneAt, snoozeEndedAt } =
+    useAtomFamilySelectorValue(agentChatThreadInboxStatusFamilySelector, {
+      threadId: thread.id,
+      lastActivityAt: thread.lastActivityAt ?? null,
+    });
   const preview = useAtomFamilySelectorValue(
     agentChatThreadPreviewFamilySelector,
     thread.id,
@@ -227,9 +228,13 @@ export const AiChatThreadListItem = ({
             <StyledActivityTime $isDropdownOpen={isDropdownOpen}>
               {isDefined(snoozedUntil)
                 ? t`Until ${AGENT_CHAT_THREAD_SNOOZE_TIME_FORMAT.format(new Date(snoozedUntil))}`
-                : formatAgentChatThreadActivityTime(
-                    getAgentChatThreadLastActivityAt(thread),
-                  )}
+                : isDefined(snoozeEndedAt)
+                  ? t`Snooze ended`
+                  : isDefined(doneAt)
+                    ? t`Done ${formatAgentChatThreadActivityTime(doneAt)}`
+                    : formatAgentChatThreadActivityTime(
+                        getAgentChatThreadLastActivityAt(thread),
+                      )}
             </StyledActivityTime>
           </StyledThreadHeading>
         )}

@@ -1,10 +1,10 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { IconClock } from 'twenty-ui/icon';
+import { IconClock, IconProgressCheck } from 'twenty-ui/icon';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
-import { AGENT_CHAT_THREAD_SNOOZE_TIME_FORMAT } from '@/ai/constants/AgentChatThreadSnoozeTimeFormat';
+import { AGENT_CHAT_THREAD_INBOX_EVENT_TIME_FORMAT } from '@/ai/constants/AgentChatThreadInboxEventTimeFormat';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { agentChatThreadInboxStatusFamilySelector } from '@/ai/states/selectors/agentChatThreadInboxStatusFamilySelector';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
@@ -19,27 +19,44 @@ const StyledNotice = styled.div`
   justify-content: center;
 `;
 
-export const AiChatThreadSnoozedNotice = () => {
+const formatEventTime = (date: string) =>
+  AGENT_CHAT_THREAD_INBOX_EVENT_TIME_FORMAT.format(new Date(date));
+
+// Ends the conversation with where the chat stands in the member's inbox
+export const AiChatThreadInboxStateNotice = () => {
   const { t } = useLingui();
   const theme = useTheme();
   const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
-  const { snoozedUntil } = useAtomFamilySelectorValue(
+  const { snoozedUntil, doneAt, snoozeEndedAt } = useAtomFamilySelectorValue(
     agentChatThreadInboxStatusFamilySelector,
     { threadId: currentAiChatThread ?? '', lastActivityAt: null },
   );
 
-  if (!isDefined(snoozedUntil)) {
+  const notice = isDefined(snoozedUntil)
+    ? {
+        Icon: IconClock,
+        text: t`Snoozed until ${formatEventTime(snoozedUntil)}`,
+      }
+    : isDefined(snoozeEndedAt)
+      ? {
+          Icon: IconClock,
+          text: t`Snooze ended ${formatEventTime(snoozeEndedAt)}`,
+        }
+      : isDefined(doneAt)
+        ? {
+            Icon: IconProgressCheck,
+            text: t`Marked as done ${formatEventTime(doneAt)}`,
+          }
+        : null;
+
+  if (!isDefined(notice)) {
     return null;
   }
 
-  const snoozedUntilLabel = AGENT_CHAT_THREAD_SNOOZE_TIME_FORMAT.format(
-    new Date(snoozedUntil),
-  );
-
   return (
     <StyledNotice>
-      <IconClock size={theme.icon.size.sm} />
-      {t`Snoozed until ${snoozedUntilLabel}`}
+      <notice.Icon size={theme.icon.size.sm} />
+      {notice.text}
     </StyledNotice>
   );
 };

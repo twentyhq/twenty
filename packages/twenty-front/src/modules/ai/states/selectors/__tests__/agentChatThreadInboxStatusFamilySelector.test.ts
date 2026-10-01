@@ -18,7 +18,7 @@ const buildStore = ({
 
   setAgentChatThreadList(
     store,
-    ['read', 'unread', 'archived', 'snoozed'].map(
+    ['read', 'unread', 'archived', 'snoozed', 'snoozeEnded'].map(
       (id) =>
         ({
           __typename: 'AgentChatThread',
@@ -47,6 +47,11 @@ const buildStore = ({
       archivedAt: '2026-10-01T11:00:00.000Z',
       snoozedUntil: '2026-10-02T09:00:00.000Z',
     },
+    snoozeEnded: {
+      lastReadAt: LAST_ACTIVITY_AT,
+      archivedAt: '2026-10-01T11:00:00.000Z',
+      snoozedUntil: '2026-10-01T11:30:00.000Z',
+    },
   });
   store.set(
     hasLoadedAgentChatThreadParticipantsState.atom,
@@ -72,21 +77,36 @@ describe('agentChatThreadInboxStatusFamilySelector', () => {
       scope: 'INBOX',
       isUnread: false,
       snoozedUntil: null,
+      doneAt: null,
+      snoozeEndedAt: null,
     });
     expect(getInboxStatus('unread')).toEqual({
       scope: 'INBOX',
       isUnread: true,
       snoozedUntil: null,
+      doneAt: null,
+      snoozeEndedAt: null,
     });
     expect(getInboxStatus('archived')).toEqual({
       scope: 'ARCHIVED',
       isUnread: false,
       snoozedUntil: null,
+      doneAt: '2026-10-01T11:00:00.000Z',
+      snoozeEndedAt: null,
     });
     expect(getInboxStatus('snoozed')).toEqual({
       scope: 'SNOOZED',
       isUnread: false,
       snoozedUntil: '2026-10-02T09:00:00.000Z',
+      doneAt: null,
+      snoozeEndedAt: null,
+    });
+    expect(getInboxStatus('snoozeEnded')).toEqual({
+      scope: 'INBOX',
+      isUnread: false,
+      snoozedUntil: null,
+      doneAt: null,
+      snoozeEndedAt: '2026-10-01T11:30:00.000Z',
     });
   });
 
@@ -100,6 +120,12 @@ describe('agentChatThreadInboxStatusFamilySelector', () => {
           lastActivityAt: null,
         }),
       ),
-    ).toEqual({ scope: 'INBOX', isUnread: false, snoozedUntil: null });
+    ).toEqual({
+      scope: 'INBOX',
+      isUnread: false,
+      snoozedUntil: null,
+      doneAt: null,
+      snoozeEndedAt: null,
+    });
   });
 });

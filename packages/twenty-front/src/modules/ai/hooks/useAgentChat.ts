@@ -144,10 +144,10 @@ export const useAgentChat = (
       threadId,
       optimisticMessageCreatedAt,
     );
-    const rollbackLocalMemberActivity = applyLocalMemberActivity(
+    const rollbackLocalMemberActivity = applyLocalMemberActivity({
       threadId,
-      optimisticMessageCreatedAt,
-    );
+      activityAt: optimisticMessageCreatedAt,
+    });
 
     const optimisticUserMessage: ExtendedUIMessage = {
       id: messageId,

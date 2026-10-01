@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { isNonEmptyArray } from 'twenty-shared/utils';
 import { useDebounce } from 'use-debounce';
 
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
@@ -16,7 +17,7 @@ export const useAiChatRecordSearch = (
       ({ nameSingular }) => nameSingular,
     ),
     searchInput: debouncedSearch,
-    skip: objectMetadataItems.length === 0,
+    skip: !isNonEmptyArray(objectMetadataItems),
   });
   const areSearchRecordsStale = loading || debouncedSearch !== trimmedSearch;
 

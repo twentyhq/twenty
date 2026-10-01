@@ -60,10 +60,10 @@ describe('SidePanelSnoozeAiChatPage', () => {
     fireEvent.click(screen.getByText('This evening'));
 
     expect(closeSidePanelMenu).toHaveBeenCalled();
-    expect(snoozeAgentChatThread).toHaveBeenCalledWith(
-      'thread-1',
-      new Date(2026, 9, 1, 18, 0),
-    );
+    expect(snoozeAgentChatThread).toHaveBeenCalledWith({
+      threadId: 'thread-1',
+      snoozedUntil: new Date(2026, 9, 1, 18, 0),
+    });
   });
 
   it('refreshes the options instead of snoozing into the past', () => {

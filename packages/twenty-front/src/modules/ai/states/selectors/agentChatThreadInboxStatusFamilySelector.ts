@@ -1,3 +1,5 @@
+import { isDefined } from 'twenty-shared/utils';
+
 import { getAgentChatThreadInboxScope } from '@/ai/utils/getAgentChatThreadInboxScope';
 import { isAgentChatThreadUnread } from '@/ai/utils/isAgentChatThreadUnread';
 import { type AgentChatThreadInboxStatus } from '@/ai/types/AgentChatThreadInboxStatus';
@@ -9,6 +11,9 @@ import { hasLoadedAgentChatThreadParticipantsState } from '@/ai/states/hasLoaded
 import { agentChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
 import { createAtomFamilySelector } from '@/ui/utilities/state/jotai/utils/createAtomFamilySelector';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
+
+const isAfter = (date: string | null, reference: string) =>
+  isDefined(date) && new Date(date).getTime() > new Date(reference).getTime();
 
 type AgentChatThreadInboxStatusFamilyKey = {
   threadId: string;
@@ -54,6 +59,16 @@ export const agentChatThreadInboxStatusFamilySelector =
             }),
           snoozedUntil:
             scope === 'SNOOZED' ? (participant?.snoozedUntil ?? null) : null,
+          doneAt:
+            scope === 'ARCHIVED' ? (participant?.archivedAt ?? null) : null,
+          // Still archived but back in the inbox without newer activity: the
+          // snooze ran out
+          snoozeEndedAt:
+            scope === 'INBOX' &&
+            isDefined(participant?.archivedAt) &&
+            !isAfter(threadLastActivityAt, participant.archivedAt)
+              ? (participant.snoozedUntil ?? null)
+              : null,
         };
       },
     areEqual: isDeeplyEqual,

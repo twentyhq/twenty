@@ -17,6 +17,7 @@ const AI_CHAT_INBOX_COMMAND_MENU_ITEM_NAMES = [
   'markAiChatAsUnread',
   'markAiChatAsDone',
   'reopenAiChat',
+  'unsnoozeAiChat',
   'snoozeAiChat',
 ] as const;
 
@@ -24,7 +25,7 @@ const AI_CHAT_INBOX_COMMAND_MENU_ITEM_NAMES = [
 @Command({
   name: 'upgrade:2-45:add-ai-chat-inbox-command-menu-items',
   description:
-    'Add the Mark as read, Mark as unread, Mark as done, Reopen and Snooze commands to chats',
+    'Add the Mark as read, Mark as unread, Mark as done, Reopen, Unsnooze and Snooze commands to chats',
 })
 export class AddAiChatInboxCommandMenuItemsCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(

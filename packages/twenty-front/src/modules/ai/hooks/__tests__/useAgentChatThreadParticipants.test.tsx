@@ -120,10 +120,10 @@ describe('useAgentChatThreadParticipants', () => {
     const { result, store } = renderParticipants();
 
     await act(async () => {
-      await result.current.snoozeAgentChatThread(
-        THREAD_ID,
-        new Date('2026-10-02T09:00:00.000Z'),
-      );
+      await result.current.snoozeAgentChatThread({
+        threadId: THREAD_ID,
+        snoozedUntil: new Date('2026-10-02T09:00:00.000Z'),
+      });
     });
 
     expect(store.get(agentChatThreadParticipantsState.atom)[THREAD_ID]).toEqual(
@@ -147,7 +147,10 @@ describe('useAgentChatThreadParticipants', () => {
     let rollback: () => void = () => undefined;
 
     act(() => {
-      rollback = result.current.applyLocalMemberActivity(THREAD_ID, sentAt);
+      rollback = result.current.applyLocalMemberActivity({
+        threadId: THREAD_ID,
+        activityAt: sentAt,
+      });
     });
 
     expect(

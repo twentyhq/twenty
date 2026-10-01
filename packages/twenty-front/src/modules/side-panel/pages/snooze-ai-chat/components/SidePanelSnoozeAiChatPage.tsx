@@ -42,7 +42,10 @@ export const SidePanelSnoozeAiChatPage = () => {
     }
 
     void closeSidePanelMenu();
-    void snoozeAgentChatThread(snoozeAiChatThreadId, option.date);
+    void snoozeAgentChatThread({
+      threadId: snoozeAiChatThreadId,
+      snoozedUntil: option.date,
+    });
   };
 
   return (
