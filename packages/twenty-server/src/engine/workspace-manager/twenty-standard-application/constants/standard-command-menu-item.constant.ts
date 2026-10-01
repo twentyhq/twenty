@@ -690,8 +690,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
       msg({ message: `See Version`, context: 'commandMenuItem.shortLabel' }),
     ),
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
-    conditionalAvailabilityExpression:
-      'not featureFlags.IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED',
+    conditionalAvailabilityExpression: null,
     availabilityObjectMetadataUniversalIdentifier:
       STANDARD_OBJECTS.workflowRun.universalIdentifier,
     frontComponentUniversalIdentifier: null,
