@@ -3,7 +3,6 @@ import { graphql, HttpResponse } from 'msw';
 import { useState } from 'react';
 import { expect, userEvent, within } from 'storybook/test';
 import { Toaster } from 'twenty-ui/components';
-import { isDefined } from 'twenty-shared/utils';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { useWorkflowRun } from '@/workflow/hooks/useWorkflowRun';
@@ -47,13 +46,7 @@ const FormSubmission = () => {
   );
 };
 
-const createHandlers = ({
-  threadId = THREAD_ID,
-  errorCode,
-}: {
-  threadId?: string | null;
-  errorCode?: string;
-} = {}) => [
+const createHandlers = ({ errorCode }: { errorCode?: string } = {}) => [
   graphql.query('FindOneWorkflowRun', () =>
     HttpResponse.json({
       data: {
@@ -70,10 +63,7 @@ const createHandlers = ({
           state: {
             ...oneSucceededWorkflowRunQueryResult.workflowRun.state,
             stepInfos: {
-              [STEP_ID]: {
-                status: 'PENDING',
-                ...(isDefined(threadId) ? { threadId } : {}),
-              },
+              [STEP_ID]: { status: 'PENDING', threadId: THREAD_ID },
             },
           },
         },
@@ -140,29 +130,24 @@ export const Submitted: Story = {
   },
 };
 
-const expectNoLongerPending: Story['play'] = async ({ canvasElement }) => {
-  const canvas = within(canvasElement);
-
-  await userEvent.click(await canvas.findByRole('button', { name: /Submit/ }));
-  expect(
-    await within(document.body).findByText(
-      'This form no longer waits for an answer',
-    ),
-  ).toBeVisible();
-  expect(canvas.queryByText('Form submitted')).not.toBeInTheDocument();
-  expect(canvas.getByRole('button', { name: /Submit/ })).toBeEnabled();
-};
-
-export const WithoutConversation: Story = {
-  parameters: { msw: { handlers: createHandlers({ threadId: null }) } },
-  play: expectNoLongerPending,
-};
-
 export const NoLongerPending: Story = {
   parameters: {
     msw: { handlers: createHandlers({ errorCode: 'TOOL_CALL_NOT_PENDING' }) },
   },
-  play: expectNoLongerPending,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await userEvent.click(
+      await canvas.findByRole('button', { name: /Submit/ }),
+    );
+    expect(
+      await within(document.body).findByText(
+        'This form no longer waits for an answer',
+      ),
+    ).toBeVisible();
+    expect(canvas.queryByText('Form submitted')).not.toBeInTheDocument();
+    expect(canvas.getByRole('button', { name: /Submit/ })).toBeEnabled();
+  },
 };
 
 export const SubmissionError: Story = {
