@@ -195,6 +195,18 @@ describe('Object access overview', () => {
     });
   });
 
+  it('should report an unknown object as not found', async () => {
+    const response = await makeMetadataApiRequest(
+      {
+        query: OBJECT_ACCESS_OVERVIEW_QUERY,
+        variables: { objectMetadataId: randomUUID() },
+      },
+      APPLE_JANE_ADMIN_ACCESS_TOKEN,
+    );
+
+    expect(response.body.errors?.[0]?.extensions?.code).toBe('NOT_FOUND');
+  });
+
   it('should be refused to members who cannot manage the data model', async () => {
     const response = await requestObjectAccessOverview(
       APPLE_PHIL_GUEST_ACCESS_TOKEN,

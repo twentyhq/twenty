@@ -3,6 +3,7 @@
 import {
   BadRequestException,
   InternalServerErrorException,
+  NotFoundException,
 } from '@nestjs/common';
 
 import { assertUnreachable } from 'twenty-shared/utils';
@@ -20,6 +21,8 @@ export const recordShareRestApiExceptionHandler = (
       throw new BadRequestException(error.message);
     case RecordShareExceptionCode.TRANSACTION_SCOPE_WORKSPACE_MISMATCH:
       throw new InternalServerErrorException(error.message);
+    case RecordShareExceptionCode.OBJECT_NOT_FOUND:
+      throw new NotFoundException(error.message);
     default: {
       return assertUnreachable(error.code);
     }

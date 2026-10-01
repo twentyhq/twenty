@@ -8,6 +8,7 @@ import { CustomException } from 'src/utils/custom-exception';
 export enum RecordShareExceptionCode {
   INVALID_SHARE_WITH = 'INVALID_SHARE_WITH',
   TRANSACTION_SCOPE_WORKSPACE_MISMATCH = 'TRANSACTION_SCOPE_WORKSPACE_MISMATCH',
+  OBJECT_NOT_FOUND = 'OBJECT_NOT_FOUND',
 }
 
 export class RecordShareException extends CustomException<RecordShareExceptionCode> {

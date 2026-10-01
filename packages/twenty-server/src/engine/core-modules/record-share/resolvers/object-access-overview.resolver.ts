@@ -7,8 +7,10 @@ import { PermissionFlagType } from 'twenty-shared/constants';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { RecordShareException } from 'src/engine/core-modules/record-share/record-share.exception';
 import { ObjectAccessOverviewDTO } from 'src/engine/core-modules/record-share/dtos/object-access-overview.dto';
 import { ObjectAccessOverviewService } from 'src/engine/core-modules/record-share/services/object-access-overview.service';
+import { recordShareGraphqlApiExceptionHandler } from 'src/engine/core-modules/record-share/utils/record-share-graphql-api-exception-handler.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
@@ -35,14 +37,21 @@ export class ObjectAccessOverviewResolver {
   ) {}
 
   @Query(() => ObjectAccessOverviewDTO)
-  objectAccessOverview(
+  async objectAccessOverview(
     @Args('objectMetadataId', { type: () => UUIDScalarType })
     objectMetadataId: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<ObjectAccessOverviewDTO> {
-    return this.objectAccessOverviewService.getObjectAccessOverview({
-      workspaceId,
-      objectMetadataId,
-    });
+    try {
+      return await this.objectAccessOverviewService.getObjectAccessOverview({
+        workspaceId,
+        objectMetadataId,
+      });
+    } catch (error) {
+      if (error instanceof RecordShareException) {
+        recordShareGraphqlApiExceptionHandler(error);
+      }
+      throw error;
+    }
   }
 }

@@ -4,7 +4,10 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { NotFoundError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import {
+  RecordShareException,
+  RecordShareExceptionCode,
+} from 'src/engine/core-modules/record-share/record-share.exception';
 import { type ObjectAccessOverviewDTO } from 'src/engine/core-modules/record-share/dtos/object-access-overview.dto';
 import { RecordShareStorageService } from 'src/engine/core-modules/record-share/services/record-share-storage.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -42,7 +45,10 @@ export class ObjectAccessOverviewService {
     });
 
     if (!isDefined(objectMetadata)) {
-      throw new NotFoundError('Object not found');
+      throw new RecordShareException(
+        'Object not found',
+        RecordShareExceptionCode.OBJECT_NOT_FOUND,
+      );
     }
 
     const roles = Object.values(flatRoleMaps.byUniversalIdentifier)
