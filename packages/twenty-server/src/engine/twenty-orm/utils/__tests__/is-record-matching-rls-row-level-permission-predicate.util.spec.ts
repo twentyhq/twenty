@@ -391,6 +391,20 @@ describe('isRecordMatchingRLSRowLevelPermissionPredicate', () => {
     ).toBe(expected);
   });
 
+  it('never lets a null JSON sub-field match a like pattern', () => {
+    expect(
+      isRecordMatchingRLSRowLevelPermissionPredicate({
+        record: {
+          ...baseRecord,
+          emails: { primaryEmail: 'jane@acme.com', additionalEmails: null },
+        },
+        filter: { emails: { additionalEmails: { like: '%null%' } } },
+        flatObjectMetadata,
+        flatFieldMetadataMaps,
+      }),
+    ).toBe(false);
+  });
+
   it('supports relation join column filters', () => {
     const result = isRecordMatchingRLSRowLevelPermissionPredicate({
       record: baseRecord,

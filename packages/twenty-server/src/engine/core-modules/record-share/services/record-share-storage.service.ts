@@ -160,13 +160,19 @@ export class RecordShareStorageService {
 
   async transferMemberGrants({
     workspaceId,
+    objectMetadataIds,
     fromWorkspaceMemberId,
     toWorkspaceMemberId,
   }: {
     workspaceId: string;
+    objectMetadataIds: string[];
     fromWorkspaceMemberId: string;
     toWorkspaceMemberId: string;
   }): Promise<void> {
+    if (objectMetadataIds.length === 0) {
+      return;
+    }
+
     const transferableRowCauses = In([
       RecordShareRowCause.OWNER,
       RecordShareRowCause.MANUAL,
@@ -179,6 +185,7 @@ export class RecordShareStorageService {
             { workspaceId, transactionScope },
             async (repository) => {
               const fromMember = {
+                objectMetadataId: In(objectMetadataIds),
                 principalType: RecordSharePrincipalType.WORKSPACE_MEMBER,
                 principalId: fromWorkspaceMemberId,
                 rowCause: transferableRowCauses,

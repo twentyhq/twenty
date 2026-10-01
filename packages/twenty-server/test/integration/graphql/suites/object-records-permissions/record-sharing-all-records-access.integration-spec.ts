@@ -14,6 +14,7 @@ import { createOneOperationFactory } from 'test/integration/graphql/utils/create
 import { destroyManyOperationFactory } from 'test/integration/graphql/utils/destroy-many-operation-factory.util';
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
 import { upsertPermissionFlags } from 'test/integration/metadata/suites/role-permission-flag/utils/upsert-permission-flags.util';
 import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
 import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
@@ -327,6 +328,31 @@ describe('Access to all records and ownership transfer', () => {
       token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
     });
 
+    const { objects } = await findManyObjectMetadata({
+      expectToFail: false,
+      input: { filter: {}, paging: { first: 1000 } },
+      gqlFields: 'id nameSingular',
+    });
+    const chatThreadObjectMetadataId = objects.find(
+      (object) => object.nameSingular === 'agentChatThread',
+    )!.id;
+    const privateChatThreadId = randomUUID();
+
+    await shares.insertMany({
+      workspaceId,
+      recordShares: [
+        {
+          objectMetadataId: chatThreadObjectMetadataId,
+          recordId: privateChatThreadId,
+          principalType: RecordSharePrincipalType.WORKSPACE_MEMBER,
+          principalId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
+          accessLevel: RecordShareAccessLevel.FULL,
+          rowCause: RecordShareRowCause.OWNER,
+          sourceId: privateChatThreadId,
+        },
+      ],
+    });
+
     await getAppProviderByClassName<RecordShareOwnershipTransferService>(
       'RecordShareOwnershipTransferService',
     ).transferRecordSharesToCustodian({
@@ -358,5 +384,20 @@ describe('Access to all records and ownership transfer', () => {
         },
       ]),
     );
+
+    const chatThreadShares = await shares.findByRecordIds({
+      workspaceId,
+      objectMetadataId: chatThreadObjectMetadataId,
+      recordIds: [privateChatThreadId],
+    });
+
+    await shares.deleteByRecordIds({
+      workspaceId,
+      objectMetadataId: chatThreadObjectMetadataId,
+      recordIds: [privateChatThreadId],
+    });
+    expect(chatThreadShares.map(({ principalId }) => principalId)).toEqual([
+      WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
+    ]);
   });
 });

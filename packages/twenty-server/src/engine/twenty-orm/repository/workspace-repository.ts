@@ -2263,7 +2263,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     return new Set(admittedRecords.map((record) => String(record.id)));
   }
 
-  compileRowAccessExpression(expression: RowAccessExpression): SqlCondition {
+  private compileRowAccessExpression(expression: RowAccessExpression): SqlCondition {
     return compileRowAccessExpression(
       expression,
       this.resolveRowAccessPolicyEnvironment(),
