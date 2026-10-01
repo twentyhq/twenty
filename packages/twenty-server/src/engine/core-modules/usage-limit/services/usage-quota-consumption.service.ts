@@ -15,7 +15,6 @@ import { type UsageQuotaScopeConsumption } from 'src/engine/core-modules/usage-l
 import { type UsageQuotaWithConsumption } from 'src/engine/core-modules/usage-limit/types/usage-quota-with-consumption.type';
 import { type UsageLimitEntity } from 'src/engine/core-modules/usage-limit/usage-limit.entity';
 import { buildCustomQuota } from 'src/engine/core-modules/usage-limit/utils/build-custom-quota.util';
-import { computeQuotaConsumed } from 'src/engine/core-modules/usage-limit/utils/compute-quota-consumed.util';
 import { getPeriodAnchor } from 'src/engine/core-modules/usage-limit/utils/get-period-anchor.util';
 import { isAnchoredPeriodUnit } from 'src/engine/core-modules/usage-limit/utils/is-anchored-period-unit.util';
 import { isQuotaMeter } from 'src/engine/core-modules/usage-limit/utils/is-quota-meter.util';
@@ -80,27 +79,22 @@ export class UsageQuotaConsumptionService {
       return null;
     }
 
-    const consumptionScope = {
-      operationType: scope.operationType,
-      spenderType: scope.spenderType,
-      spenderId: normalizeSpenderId(scope.spenderId ?? ''),
-      meter,
-    };
-
     try {
-      const rows = await this.usageAnalyticsService.getConsumptionRowsForScope({
-        workspaceId,
-        resourceType: scope.resourceType,
-        periodStart: period.periodStart,
-        periodEnd: period.periodEnd,
-        periodAnchor: getPeriodAnchor(periodUnit),
-        operationType: consumptionScope.operationType,
-        spenderType: consumptionScope.spenderType,
-        spenderId: consumptionScope.spenderId,
-      });
+      const totals =
+        await this.usageAnalyticsService.getConsumptionTotalsForScope({
+          workspaceId,
+          resourceType: scope.resourceType,
+          operationType: scope.operationType,
+          unit: null,
+          spenderType: scope.spenderType,
+          spenderId: normalizeSpenderId(scope.spenderId ?? ''),
+          periodStart: period.periodStart,
+          periodEnd: period.periodEnd,
+          periodAnchor: getPeriodAnchor(periodUnit),
+        });
 
       return {
-        consumedValue: computeQuotaConsumed({ rows, scope: consumptionScope }),
+        consumedValue: Number(totals[meter]),
         periodStart: period.periodStart,
         periodEnd: period.periodEnd,
       };
