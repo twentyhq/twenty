@@ -7,12 +7,13 @@ export const createInputEventClass = (
     readonly data: string | null;
     readonly isComposing: boolean;
     readonly inputType: string;
-    readonly dataTransfer = null;
+    readonly dataTransfer: DataTransfer | null;
 
     constructor(type: string, eventInit: InputEventInit = {}) {
       super(type, eventInit);
 
       this.data = eventInit.data ?? null;
+      this.dataTransfer = eventInit.dataTransfer ?? null;
       this.isComposing = eventInit.isComposing ?? false;
       this.inputType = eventInit.inputType ?? '';
     }
