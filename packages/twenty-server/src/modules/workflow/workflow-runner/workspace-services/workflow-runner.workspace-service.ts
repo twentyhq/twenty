@@ -135,36 +135,6 @@ export class WorkflowRunnerWorkspaceService {
       return;
     }
 
-    const hasCompletedStep = await this.completeFormStep({
-      workspaceId,
-      workflowRunId,
-      step,
-      expectedThreadId: threadId,
-      response,
-    });
-
-    if (hasCompletedStep) {
-      await this.resume({
-        workspaceId,
-        workflowRunId,
-        lastExecutedStepId: step.id,
-      });
-    }
-  }
-
-  async completeFormStep({
-    workspaceId,
-    workflowRunId,
-    step,
-    expectedThreadId,
-    response,
-  }: {
-    workspaceId: string;
-    workflowRunId: string;
-    step: WorkflowFormAction;
-    expectedThreadId: string | null;
-    response: Record<string, unknown>;
-  }): Promise<boolean> {
     const enrichedResponse =
       await this.workflowVersionStepOperationsWorkspaceService.enrichFormStepResponse(
         {
@@ -179,16 +149,25 @@ export class WorkflowRunnerWorkspaceService {
         },
       );
 
-    return this.workflowRunWorkspaceService.updateStepInfoIfPending({
-      stepId: step.id,
-      stepInfo: {
-        status: StepStatus.SUCCESS,
-        result: enrichedResponse,
-      },
-      expectedThreadId,
-      workspaceId,
-      workflowRunId,
-    });
+    const hasCompletedStep =
+      await this.workflowRunWorkspaceService.updateStepInfoIfPending({
+        stepId: step.id,
+        stepInfo: {
+          status: StepStatus.SUCCESS,
+          result: enrichedResponse,
+        },
+        expectedThreadId: threadId,
+        workspaceId,
+        workflowRunId,
+      });
+
+    if (hasCompletedStep) {
+      await this.resume({
+        workspaceId,
+        workflowRunId,
+        lastExecutedStepId: step.id,
+      });
+    }
   }
 
   private async findFormRecordReadContext({

@@ -186,9 +186,9 @@ export class CoreWorkflowVersionWriteService {
       steps,
     });
 
-    // main compared the previous content inside the UPDATE itself to catch two
-    // people editing the same draft. The runner cannot express that condition,
-    // so the comparison and the write it guards are serialized on this lock.
+    // The runner cannot compare the previous content inside its UPDATE to catch
+    // two people editing the same draft, so the comparison and the write it
+    // guards are serialized on this lock.
     await this.withCoreWorkflowVersionEditLock(
       coreWorkflowVersionId,
       async () => {

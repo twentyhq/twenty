@@ -1,3 +1,4 @@
+import { formatShortcut } from 'twenty-ui/primitives/typography';
 import { SIDE_PANEL_TOP_BAR_HEIGHT_MOBILE } from '@/side-panel/constants/SidePanelTopBarHeightMobile';
 import { COMMAND_MENU_SIDE_PANEL_PAGES } from '@/side-panel/constants/CommandMenuSidePanelPages';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
@@ -14,7 +15,7 @@ import { SidePanelPages } from 'twenty-shared/types';
 import { IconDotsVertical } from 'twenty-ui/icon';
 import { IconButton } from 'twenty-ui/components';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
-import { getOsControlSymbol, useIsMobile } from 'twenty-ui/utilities';
+import { useIsMobile } from 'twenty-ui/utilities';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledButtonWrapper = styled.div<{ alignToTop: boolean }>`
@@ -67,7 +68,7 @@ export const SidePanelToggleButton = () => {
   }
 
   const ariaLabel = t`Command Menu`;
-  const tooltipContent = t`Command menu | ${getOsControlSymbol()}K`;
+  const tooltipContent = t`Command menu | ${formatShortcut({ shortcut: ['Mod', 'K'] })}`;
 
   return (
     <StyledButtonWrapper alignToTop={alignWithSidePanelTopBar}>

@@ -7,21 +7,6 @@ import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/m
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 import { ToolCategory } from 'twenty-shared/ai';
 
-/**
- * Contract tests for the MCP tool catalog.
- *
- * 1. Catalog contract: every category advertised by get_tool_catalog must be
- *    dispatchable end to end through execute_tool. Dispatchable means the
- *    registry resolves and executes the tool: a structured business failure
- *    (e.g. a search tool rejecting empty arguments) still proves dispatch,
- *    only "not found" / "not available" outputs do not. Scales automatically:
- *    a newly registered provider is covered the moment it appears in the
- *    catalog, with no new test code.
- * 2. Permission gating: the catalog is role-dependent. An API key bound to a
- *    role without settings permissions must not see settings-gated tools
- *    (e.g. the ROLE category), while an admin-bound key must.
- */
-
 const baseUrl = `http://localhost:${APP_PORT}`;
 
 const postMcp = (body: object, bearer: string, path = '/mcp') =>

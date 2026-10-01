@@ -223,7 +223,7 @@ describe('getTabsWithVisibleWidgets', () => {
       });
 
       expect(result).toHaveLength(1);
-      expect(result[0].widgets).toHaveLength(2); // All widgets kept in edit mode
+      expect(result[0].widgets).toHaveLength(2);
       expect(result[0].widgets[0].id).toBe('widget-1');
       expect(result[0].widgets[1].id).toBe('widget-2');
     });
@@ -267,8 +267,8 @@ describe('getTabsWithVisibleWidgets', () => {
       });
 
       expect(result).toHaveLength(2);
-      expect(result[0].widgets).toHaveLength(1); // Kept in edit mode
-      expect(result[1].widgets).toHaveLength(1); // Kept in edit mode
+      expect(result[0].widgets).toHaveLength(1);
+      expect(result[1].widgets).toHaveLength(1);
     });
   });
 

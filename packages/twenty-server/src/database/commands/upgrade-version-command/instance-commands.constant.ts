@@ -1,4 +1,4 @@
-import { AddApplicationWorkflowSideEffectsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-45/2-45-instance-command-fast-1790806019009-add-application-workflow-side-effects';
+import { AddApplicationWorkflowSideEffectsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-45/2-45-instance-command-fast-1790853315722-add-application-workflow-side-effects';
 // Auto-edited by generate:instance-command — do not edit manually
 
 import { AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand } from 'src/database/commands/upgrade-version-command/1-21/1-21-instance-command-fast-1775129420309-add-view-field-group-id-index-on-view-field';
@@ -217,6 +217,7 @@ import { AddChatThreadsWidgetTypeFastInstanceCommand } from 'src/database/comman
 import { AddValidationRuleTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-instance-command-fast-1790624264147-add-validation-rule-table';
 import { ReapplyUsageLimitPeriodReshapeFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-instance-command-fast-1790755883509-reapply-usage-limit-period-reshape';
 import { AddChatWidgetTypeFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-instance-command-fast-1790756560653-add-chat-widget-type';
+import { DropLegacyCampaignSendingCoreTablesFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-45/2-45-instance-command-fast-1790842027068-drop-legacy-campaign-sending-core-tables';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -435,5 +436,6 @@ export const INSTANCE_COMMANDS = [
   AddValidationRuleTableFastInstanceCommand,
   ReapplyUsageLimitPeriodReshapeFastInstanceCommand,
   AddChatWidgetTypeFastInstanceCommand,
+  DropLegacyCampaignSendingCoreTablesFastInstanceCommand,
   AddApplicationWorkflowSideEffectsFastInstanceCommand,
 ];

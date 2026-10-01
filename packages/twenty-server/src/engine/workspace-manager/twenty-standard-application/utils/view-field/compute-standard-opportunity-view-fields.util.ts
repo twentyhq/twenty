@@ -158,8 +158,6 @@ export const computeStandardOpportunityViewFields = (
       },
     }),
 
-    // opportunityRecordPageFields view fields
-    // Deal group
     opportunityRecordPageFieldsAmount: createStandardViewFieldFlatMetadata({
       ...args,
       objectName: 'opportunity',

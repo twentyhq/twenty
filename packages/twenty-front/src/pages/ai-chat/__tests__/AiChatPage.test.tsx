@@ -45,25 +45,6 @@ jest.mock('@/ai/components/AiChatPageCloseSidePanelChatEffect', () => ({
 }));
 
 let mockIsMobile = false;
-let mockHasChatLayout = true;
-let mockHasChatObject = true;
-
-jest.mock(
-  '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue',
-  () => ({
-    useAtomFamilySelectorValue: (
-      _selector: unknown,
-      parameters: Record<string, unknown>,
-    ) =>
-      'objectMetadataId' in parameters
-        ? mockHasChatLayout && parameters.objectMetadataId
-          ? { id: 'chat-layout-id' }
-          : undefined
-        : mockHasChatObject
-          ? { id: 'chat-object-id' }
-          : null,
-  }),
-);
 
 jest.mock('twenty-ui/utilities', () => ({
   ...jest.requireActual('twenty-ui/utilities'),
@@ -118,8 +99,6 @@ describe('AiChatPage', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockIsMobile = false;
-    mockHasChatLayout = true;
-    mockHasChatObject = true;
     sessionStorage.clear();
     resetJotaiStore();
   });
@@ -131,20 +110,6 @@ describe('AiChatPage', () => {
       const { getByText, getByTestId, queryByText } = renderAt('/chat');
 
       expect(getByText('Chat header')).toBeInTheDocument();
-      expect(getByTestId('ai-chat-tab')).toHaveTextContent('page');
-      expect(queryByText(/Record page/)).toBeNull();
-    },
-  );
-
-  it.each(['object', 'layout'])(
-    'keeps a saved chat usable without its %s metadata',
-    (missingMetadata) => {
-      mockHasChatObject = missingMetadata !== 'object';
-      mockHasChatLayout = missingMetadata !== 'layout';
-      jotaiStore.set(currentAiChatThreadState.atom, THREAD_ID);
-
-      const { getByTestId, queryByText } = renderAt(`/chat/${THREAD_ID}`);
-
       expect(getByTestId('ai-chat-tab')).toHaveTextContent('page');
       expect(queryByText(/Record page/)).toBeNull();
     },

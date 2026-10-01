@@ -218,7 +218,6 @@ export class MessageChannelResolver {
       isDefined(input.update.excludeGroupEmails) &&
       input.update.excludeGroupEmails !== messageChannel.excludeGroupEmails
     ) {
-      // Service expects WorkspaceEntity type but only reads .id
       await this.messagingProcessGroupEmailActionsService.markMessageChannelAsPendingGroupEmailsAction(
         messageChannel as unknown as MessageChannelEntity,
         workspace.id,

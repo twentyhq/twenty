@@ -1,4 +1,3 @@
-import { assertAgentMessageSenderFields } from 'src/engine/metadata-modules/ai/ai-history/utils/assert-agent-message-sender-fields.util';
 import { addAgentMessageSenderWorkspaceMember } from 'src/engine/metadata-modules/ai/ai-history/utils/add-agent-message-sender-workspace-member.util';
 import { hydrateAgentHistoryFiles } from 'src/engine/metadata-modules/ai/ai-history/utils/hydrate-agent-history-files.util';
 import { removeAgentHistoryFileRelations } from 'src/engine/metadata-modules/ai/ai-history/utils/remove-agent-history-file-relations.util';
@@ -142,7 +141,6 @@ export class AgentHistoryRepository<TRecord extends { id: string }> {
     values: QueryDeepPartialEntity<TRecord> | QueryDeepPartialEntity<TRecord>[],
   ) {
     return this.run(workspaceId, async (repository, context) => {
-      if (this.name === 'agentMessage') assertAgentMessageSenderFields();
       return repository.insert(
         await this.addSenderRelation(values, workspaceId, context),
       );
@@ -154,7 +152,6 @@ export class AgentHistoryRepository<TRecord extends { id: string }> {
     values: QueryDeepPartialEntity<TRecord>,
   ): Promise<TRecord> {
     return this.run(workspaceId, async (repository, context) => {
-      if (this.name === 'agentMessage') assertAgentMessageSenderFields();
       const result = await repository.insert(
         await this.addSenderRelation(values, workspaceId, context),
       );
@@ -221,7 +218,6 @@ export class AgentHistoryRepository<TRecord extends { id: string }> {
     conflictPaths: string[],
   ) {
     return this.run(workspaceId, async (repository, context) => {
-      if (this.name === 'agentMessage') assertAgentMessageSenderFields();
       // Workspace upsert selects before inserting. Serialize concurrent stream
       // checkpoints for the same identity so both cannot take the insert path.
       const valuesByField: ObjectLiteral = values;

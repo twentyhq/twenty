@@ -1292,7 +1292,6 @@ export class ApplicationRegistrationService {
       params.applicationRegistrationId,
     );
 
-    // Only unclaimed registrations (no owner workspace) can be claimed.
     if (isDefined(registration.ownerWorkspaceId)) {
       throw new ApplicationRegistrationException(
         'Application registration is already owned by a workspace',
