@@ -10,6 +10,7 @@ import { ThemeProvider } from '@ui/theme/ThemeProvider';
 
 import { ExpandableList } from '../ExpandableList';
 import { EXPANDABLE_LIST_STORY_ITEMS } from './EXPANDABLE_LIST_STORY_ITEMS';
+import { ExpandableListControlledFocusExample } from './ExpandableListControlledFocusExample';
 import { ExpandableListMutableTag } from './ExpandableListMutableTag';
 import { ExpandableListResizeExample } from './ExpandableListResizeExample';
 import { expectExpandableListPopupGeometry } from './expectExpandableListPopupGeometry';
@@ -247,6 +248,31 @@ export const InlineItemFocus: Story = {
     await userEvent.tab();
     expect(trigger).toHaveFocus();
     await waitFor(() => expect(trigger).toHaveStyle({ opacity: '1' }));
+  },
+};
+
+export const ControlledCountWhileFocused: Story = {
+  render: () => <ExpandableListControlledFocusExample />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const toggle = canvas.getByRole('button', { name: 'Toggle count' });
+
+    await userEvent.tab();
+    expect(toggle).toHaveFocus();
+    expect(
+      canvas.queryByRole('button', { name: 'Show all items' }),
+    ).not.toBeInTheDocument();
+    await userEvent.keyboard('{Enter}');
+    const trigger = await canvas.findByRole('button', {
+      name: 'Show all items',
+    });
+    await waitFor(() => expect(trigger).toHaveStyle({ opacity: '1' }));
+    expect(toggle).toHaveFocus();
+    await userEvent.keyboard('{Enter}');
+    expect(
+      canvas.queryByRole('button', { name: 'Show all items' }),
+    ).not.toBeInTheDocument();
+    expect(toggle).toHaveFocus();
   },
 };
 

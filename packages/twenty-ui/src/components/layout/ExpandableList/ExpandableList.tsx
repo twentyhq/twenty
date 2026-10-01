@@ -28,8 +28,8 @@ export const ExpandableList = ({
   const [focusedItemCountVisibility, setFocusedItemCountVisibility] =
     useState<boolean>();
   const isCountVisible =
-    focusedItemCountVisibility ??
     showOverflowCount ??
+    focusedItemCountVisibility ??
     (isHovered || hasFocus || isOpen);
   const inlineItemCount =
     isDefined(maxInlineCount) && Number.isFinite(maxInlineCount)
