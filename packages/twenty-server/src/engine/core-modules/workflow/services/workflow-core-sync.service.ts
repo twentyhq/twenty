@@ -209,6 +209,8 @@ export class WorkflowCoreSyncService {
       const flatWorkflow: UniversalFlatWorkflow = {
         universalIdentifier: coreRow.universalIdentifier,
         name: coreRow.name,
+        versionDefinitionHash:
+          existingFlatWorkflow?.versionDefinitionHash ?? null,
         workspaceWorkflowId: coreRow.workspaceWorkflowId,
         lastPublishedVersionId: coreRow.lastPublishedVersionId,
         lastPublishedCoreWorkflowVersionId:

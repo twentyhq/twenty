@@ -139,6 +139,16 @@ export class CoreWorkflowVersionWriteService {
       );
     }
 
+    if (isDefined(coreWorkflowVersion.coreWorkflowId)) {
+      await this.coreWorkflowAccessService.assertCoreWorkflowsAreEditableOrThrow(
+        {
+          workspaceId,
+          userWorkspaceId,
+          coreWorkflowIds: [coreWorkflowVersion.coreWorkflowId],
+        },
+      );
+    }
+
     if (coreWorkflowVersion.status !== CoreWorkflowVersionStatus.DRAFT) {
       throw new WorkflowQueryValidationException(
         `Core workflow version '${coreWorkflowVersionId}' is not a draft`,
@@ -376,6 +386,7 @@ export class CoreWorkflowVersionWriteService {
               triggers: isDefined(trigger) ? [trigger] : null,
               steps: steps ?? null,
               status: CoreWorkflowVersionStatus.DRAFT,
+              isSystemSideEffect: false,
               workspaceWorkflowVersionId,
               applicationUniversalIdentifier:
                 workspaceCustomFlatApplication.universalIdentifier,

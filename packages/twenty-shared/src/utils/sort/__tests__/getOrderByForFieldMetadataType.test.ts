@@ -1,12 +1,13 @@
-import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { getOrderByForFieldMetadataType } from '@/object-metadata/utils/getOrderByForFieldMetadataType';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
+import {
+  getOrderByForFieldMetadataType,
+  type OrderByFieldMetadata,
+} from '@/utils/sort/getOrderByForFieldMetadataType';
+import { FieldMetadataType } from '@/types';
 
 const buildField = (
-  overrides: Pick<FieldMetadataItem, 'type' | 'name'> &
-    Partial<Pick<FieldMetadataItem, 'id' | 'settings'>>,
-): Pick<FieldMetadataItem, 'id' | 'name' | 'type' | 'settings'> => ({
-  id: 'field-id',
+  overrides: Pick<OrderByFieldMetadata, 'type' | 'name'> &
+    Partial<Pick<OrderByFieldMetadata, 'settings'>>,
+): OrderByFieldMetadata => ({
   ...overrides,
 });
 
