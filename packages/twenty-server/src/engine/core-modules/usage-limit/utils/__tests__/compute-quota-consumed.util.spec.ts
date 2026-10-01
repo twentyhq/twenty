@@ -136,4 +136,47 @@ describe('computeQuotaConsumed', () => {
       }),
     ).toBe(40);
   });
+
+  describe('when one run records an INVOCATION row and a MILLISECOND row', () => {
+    const logicFunctionRunRows = [
+      buildRow({
+        operationType: UsageOperationType.CODE_EXECUTION,
+        unit: UsageUnit.INVOCATION,
+        logicFunctionId: 'logic-function-1',
+        creditsUsedMicro: '3000',
+        quantity: '1',
+      }),
+      buildRow({
+        operationType: UsageOperationType.CODE_EXECUTION,
+        unit: UsageUnit.MILLISECOND,
+        logicFunctionId: 'logic-function-1',
+        creditsUsedMicro: '150',
+        quantity: '1500',
+      }),
+    ];
+
+    const logicFunctionScope = buildCounter({
+      operationType: UsageOperationType.CODE_EXECUTION,
+      spenderType: 'logicFunction',
+      spenderId: 'logic-function-1',
+    });
+
+    it('sums the credits of both units', () => {
+      expect(
+        computeQuotaConsumed({
+          rows: logicFunctionRunRows,
+          scope: logicFunctionScope,
+        }),
+      ).toBe(3150);
+    });
+
+    it('sums the quantity of both units', () => {
+      expect(
+        computeQuotaConsumed({
+          rows: logicFunctionRunRows,
+          scope: { ...logicFunctionScope, meter: 'quantity' },
+        }),
+      ).toBe(1501);
+    });
+  });
 });
