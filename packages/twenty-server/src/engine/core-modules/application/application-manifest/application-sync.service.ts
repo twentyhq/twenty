@@ -20,6 +20,7 @@ import {
   ApplicationException,
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
+import { ApplicationLookupService } from 'src/engine/core-modules/application/application-lookup/application-lookup.service';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { ApplicationState } from 'src/engine/core-modules/application/enums/application-state.enum';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
@@ -45,6 +46,7 @@ export class ApplicationSyncService {
 
   constructor(
     private readonly applicationService: ApplicationService,
+    private readonly applicationLookupService: ApplicationLookupService,
     private readonly applicationManifestMigrationService: ApplicationManifestMigrationService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly workspaceCacheService: WorkspaceCacheService,
@@ -146,7 +148,7 @@ export class ApplicationSyncService {
     manifest: Manifest;
   }): Promise<FlatApplication> {
     const installedApplication =
-      await this.applicationService.findByUniversalIdentifier({
+      await this.applicationLookupService.findByUniversalIdentifier({
         universalIdentifier: manifest.application.universalIdentifier,
         workspaceId,
       });
