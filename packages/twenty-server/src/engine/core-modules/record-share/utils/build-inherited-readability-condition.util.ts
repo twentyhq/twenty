@@ -74,8 +74,7 @@ export const buildInheritedReadabilityCondition = ({
   const parameters: ObjectLiteral = {};
   const quotedTableAlias = escapeIdentifier(tableAlias);
 
-  // The share rows on the record itself, its creator's among them, grant
-  // access on their own, as they do on a PRIVATE record
+  // The record's own share rows, its creator's included, grant access on their own, as on a PRIVATE record.
   const ownRecordShareCondition = buildRecordShareCondition({
     tableAlias,
     recordShareTableExpression,

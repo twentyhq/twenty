@@ -4,8 +4,6 @@ import { PAUSING_TOOLS } from 'src/engine/metadata-modules/ai/ai-agent-execution
 import { type AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { type AgentMessagePartWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message-part.workspace-entity';
 
-// Closes the calls a message still waits on once nothing will answer them, so
-// the model and the conversation both show they went unanswered.
 export const skipAwaitingToolParts = async ({
   messagePartRepository,
   messageId,

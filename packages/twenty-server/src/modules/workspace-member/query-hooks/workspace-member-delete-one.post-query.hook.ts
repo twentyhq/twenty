@@ -118,8 +118,7 @@ export class WorkspaceMemberDeleteOnePostQueryHook implements WorkspacePostQuery
       workspaceId: workspace.id,
     });
 
-    // Runs after the membership is gone so a failed removal keeps the history
-    // and threads created during the removal are still cleaned up.
+    // After the membership is gone, so a failed removal keeps the history and racing threads are cleaned too
     await this.agentChatThreadRepository.delete(workspace.id, {
       workspaceMemberId: workspaceMember.id,
     });

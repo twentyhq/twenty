@@ -54,7 +54,8 @@ export class WorkspaceRoleIdsWithAllRecordsAccessCacheService extends WorkspaceC
             (rolePermissionFlag) =>
               allRecordsPermissionFlagIds.has(
                 rolePermissionFlag.permissionFlagId,
-              ),
+              ) ||
+              rolePermissionFlag.flag === PermissionFlagType.ACCESS_ALL_RECORDS,
           ),
       )
       .map((role) => role.id);

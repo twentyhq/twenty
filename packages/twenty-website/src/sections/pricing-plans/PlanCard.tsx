@@ -57,9 +57,7 @@ const CardHeaderInfo = styled.div`
   }
 `;
 
-// The title and price guard against long localized strings: they ellipsis
-// (or, for the price line, hold one line) on desktop where the two cards
-// share the row width. Ported from the old card.
+// Guards long localized strings where the two cards share the row on desktop.
 const titleClassName = css`
   overflow: hidden;
   text-overflow: ellipsis;

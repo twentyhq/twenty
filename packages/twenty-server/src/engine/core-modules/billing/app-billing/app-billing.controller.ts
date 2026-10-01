@@ -33,8 +33,7 @@ import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 
-// Belt-and-suspenders on top of LogicFunctionExecutorService's execution
-// throttle: application-access tokens are JWTs usable outside the runtime.
+// On top of the executor's throttle: application-access tokens are JWTs usable outside the runtime
 const APP_BILLING_CHARGE_THROTTLE_LIMIT = 1000;
 const APP_BILLING_CHARGE_THROTTLE_TTL_MS = 60_000;
 
@@ -71,10 +70,7 @@ export class AppBillingController {
     private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
-  // Lets an app ask the question the platform already asks before AI, workflow
-  // and email work, so it can stop up front instead of failing partway through
-  // on a downstream call it did not write. Returns the verdict and a reason,
-  // never a balance: an app has no business reading what the workspace pays.
+  // Lets an app check credits before starting work; returns a verdict, never a balance an app has no business reading
   @Get('credits')
   async credits(@Req() request: Request): Promise<CreditAvailability> {
     if (!isDefined(request.application) || !isDefined(request.workspace)) {
@@ -113,14 +109,12 @@ export class AppBillingController {
     @Req() request: Request,
     @Body() charge: ChargeDto,
   ): Promise<void> {
-    // Billing disabled: no listener consumes the event — fail fast so apps
-    // don't silently discard charges on Community instances.
+    // Without billing no listener consumes the event, so fail fast rather than silently drop charges
     if (!this.twentyConfigService.get('IS_BILLING_ENABLED')) {
       throw new NotFoundException();
     }
 
-    // Reject user-access / api-key tokens — only application-access tokens
-    // populate `request.application`.
+    // Only application-access tokens populate `request.application`
     if (!isDefined(request.application) || !isDefined(request.workspace)) {
       throw new ForbiddenException(
         'App billing endpoint requires an APPLICATION_ACCESS token.',

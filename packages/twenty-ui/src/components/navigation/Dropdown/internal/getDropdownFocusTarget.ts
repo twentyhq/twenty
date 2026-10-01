@@ -80,8 +80,13 @@ export const getDropdownFocusTarget = ({
     return search;
   }
 
+  if (edge === 'last') {
+    return items[items.length - 1] ?? firstFormControl ?? content;
+  }
+
   return (
-    (edge === 'last' ? items[items.length - 1] : items[0]) ??
+    items.find((item) => !item.hasAttribute('data-dropdown-back')) ??
+    items[0] ??
     firstFormControl ??
     content
   );

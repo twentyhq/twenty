@@ -1,6 +1,7 @@
 import { randomUUID } from 'node:crypto';
 
 import { parse } from 'graphql';
+import { PermissionFlagType } from 'twenty-shared/constants';
 import {
   FeatureFlagKey,
   FieldMetadataType,
@@ -13,6 +14,11 @@ import { createOneOperationFactory } from 'test/integration/graphql/utils/create
 import { destroyManyOperationFactory } from 'test/integration/graphql/utils/destroy-many-operation-factory.util';
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { upsertPermissionFlags } from 'test/integration/metadata/suites/role-permission-flag/utils/upsert-permission-flags.util';
+import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
+import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
+import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
+import { updateWorkspaceMemberRole } from 'test/integration/metadata/suites/role/utils/update-workspace-member-role.util';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
@@ -236,6 +242,53 @@ describe('Access to all records and ownership transfer', () => {
     expect(await findRecordIds(APPLE_PHIL_GUEST_ACCESS_TOKEN)).toEqual([
       RESTRICTED_RECORD_ID,
     ]);
+  });
+
+  it('should show restricted records to any role given the permission', async () => {
+    const guestRoleId = (await findOneRoleByLabel({ label: 'Guest' })).id;
+    const { data } = await createOneRole({
+      expectToFail: false,
+      input: {
+        label: 'All records auditor',
+        canUpdateAllSettings: false,
+        canAccessAllTools: false,
+        canReadAllObjectRecords: true,
+        canUpdateAllObjectRecords: false,
+        canSoftDeleteAllObjectRecords: false,
+        canDestroyAllObjectRecords: false,
+      },
+    });
+    const auditorRoleId = data.createOneRole.id;
+    const assignRoleToPhil = (roleId: string) =>
+      updateWorkspaceMemberRole({
+        expectToFail: false,
+        input: {
+          workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
+          roleId,
+        },
+      });
+
+    try {
+      await assignRoleToPhil(auditorRoleId);
+      expect(await findRecordIds(APPLE_PHIL_GUEST_ACCESS_TOKEN)).toEqual([]);
+
+      await upsertPermissionFlags({
+        expectToFail: false,
+        input: {
+          roleId: auditorRoleId,
+          permissionFlagKeys: [PermissionFlagType.ACCESS_ALL_RECORDS],
+        },
+      });
+      expect(await findRecordIds(APPLE_PHIL_GUEST_ACCESS_TOKEN)).toEqual(
+        [RESTRICTED_RECORD_ID, SHARED_RECORD_ID].sort(),
+      );
+    } finally {
+      await assignRoleToPhil(guestRoleId);
+      await deleteOneRole({
+        expectToFail: false,
+        input: { idToDelete: auditorRoleId },
+      });
+    }
   });
 
   it('should lift restrictions for everyone while record sharing is off', async () => {

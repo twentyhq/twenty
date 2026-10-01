@@ -7,8 +7,6 @@ import {
 import { type AiEvaluationModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-evaluation-model-config.type';
 import { type AiEvaluationModelQuestion } from 'src/engine/metadata-modules/ai/ai-models/types/ai-evaluation-model.type';
 
-// A choice menu and a score rubric are capped differently, so each question
-// type is measured against the limit that applies to it.
 const getCriteriaLimit = ({
   question,
   modelConfig,
@@ -34,8 +32,6 @@ const getCriteriaLimit = ({
   }
 };
 
-// Capabilities are declared in the catalog rather than inferred, so a request a
-// model cannot serve is refused before any network call is made.
 export const assertEvaluationQuestionsAreSupported = ({
   questions,
   modelConfig,

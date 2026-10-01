@@ -15,9 +15,8 @@ export const useCreateCalendarEventTargets = () => {
 
   const { createManyRecords: createCalendarEventTargetRecords } =
     useCreateManyRecords({
-      // Workspaces that predate the junction have no calendarEventTarget object
-      // and resolving one throws, so this falls back to the calendar event
-      // itself; without a junction config nothing is ever written.
+      // Workspaces predating the junction have no calendarEventTarget object and resolving one throws;
+      // the CalendarEvent fallback is never written to, since there is no junction config.
       objectNameSingular:
         junctionConfig?.junctionObjectMetadata.nameSingular ??
         CoreObjectNameSingular.CalendarEvent,
@@ -60,9 +59,7 @@ export const useCreateCalendarEventTargets = () => {
         return;
       }
 
-      // Participant matching already linked the guests it resolved, including
-      // the record the composer was opened from, so these rows can collide with
-      // the junction's unique indexes. Upsert resolves against them.
+      // Participant matching may already have linked these, colliding with the junction's unique indexes.
       await createCalendarEventTargetRecords({ recordsToCreate, upsert: true });
     },
     [createCalendarEventTargetRecords, junctionConfig, objectMetadataItems],

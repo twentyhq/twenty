@@ -17,8 +17,7 @@ import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/a
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 
-// Chat history writes skip record events, so record subscribers only hear of
-// them from here
+// chat history writes skip record events, so subscribers only hear of them from here
 @Injectable()
 export class AgentChatThreadRecordEventService {
   constructor(

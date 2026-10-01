@@ -66,8 +66,7 @@ export const PageChangeEffect = () => {
   const pageChangeEffectNavigateLocation =
     usePageChangeEffectNavigateLocation();
 
-  //TODO: refactor useResetTableRowSelection hook to not throw when the argument `recordTableId` is an empty string
-  // - replace CoreObjectNamePlural.Person
+  // TODO: make useResetTableRowSelection accept an empty recordTableId, then drop CoreObjectNamePlural.Person
   const objectNamePlural =
     matchPath(AppPath.RecordIndexPage, location.pathname)?.params
       .objectNamePlural ?? CoreObjectNamePlural.Person;

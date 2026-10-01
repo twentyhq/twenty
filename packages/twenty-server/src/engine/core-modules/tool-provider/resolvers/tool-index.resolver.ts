@@ -94,8 +94,7 @@ export class ToolIndexResolver {
     });
   }
 
-  // Resolves the inputSchema for a single tool on demand (avoids computing
-  // schemas for every tool in the workspace when listing the tool index).
+  // On demand, so listing the tool index does not compute every tool's schema.
   @Query(() => graphqlTypeJson, { nullable: true })
   @UseGuards(NoPermissionGuard)
   async getToolInputSchema(

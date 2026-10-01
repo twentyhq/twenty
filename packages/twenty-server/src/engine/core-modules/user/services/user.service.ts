@@ -414,8 +414,7 @@ export class UserService {
       workspaceId,
     });
 
-    // Runs after the membership is gone so a failed removal keeps the history
-    // and threads created during the removal are still cleaned up.
+    // After the membership is gone, so a failed removal keeps the history and threads created meanwhile are cleaned.
     await this.agentChatThreadRepository.delete(workspaceId, {
       workspaceMemberId: workspaceMember.id,
     });

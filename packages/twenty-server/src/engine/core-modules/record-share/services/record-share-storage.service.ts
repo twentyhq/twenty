@@ -4,10 +4,11 @@ import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/ge
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 import { Injectable } from '@nestjs/common';
 
-import groupBy from 'lodash.groupby';
+import chunk from 'lodash.chunk';
 
+import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
-import { In, type EntityManager, type FindOptionsWhere } from 'typeorm';
+import { In, Not, type EntityManager, type FindOptionsWhere } from 'typeorm';
 import {
   RecordShareAccessLevel,
   RecordSharePrincipalType,
@@ -33,8 +34,7 @@ type RecordShareRepository = WorkspaceRepository<RecordShare>;
 export class RecordShareStorageService {
   constructor(private readonly workspaceOrmManager: WorkspaceOrmManager) {}
 
-  // Authorization and grant changes must share the caller's transaction.
-  // OWNER and APPLICATION grants are managed by their respective producers.
+  // Must share the caller's transaction; OWNER and APPLICATION grants are managed by their producers.
   async setManualShare({
     workspaceId,
     share,
@@ -118,15 +118,13 @@ export class RecordShareStorageService {
     if (recordIds.length === 0) {
       return;
     }
-    // History transactions can span core and workspace tables and must reuse
-    // their existing connection rather than open a separate ORM transaction.
+    // History transactions span core and workspace tables, so they must reuse their connection.
     await manager.query(
       `DELETE FROM ${escapeIdentifier(getWorkspaceSchemaName(workspaceId))}.${escapeIdentifier(RECORD_SHARE_OBJECT_METADATA_NAME)} WHERE "objectMetadataId" = $1 AND "recordId" = ANY($2::uuid[])`,
       [objectMetadataId, recordIds],
     );
   }
 
-  // Each criterion is ANDed, and a row matching any of them is deleted.
   async deleteMatching({
     workspaceId,
     criteria,
@@ -160,8 +158,6 @@ export class RecordShareStorageService {
     );
   }
 
-  // Hands the grants a member held over to another member: full access moves
-  // to them, any lower grant goes with the member
   async transferMemberGrants({
     workspaceId,
     fromWorkspaceMemberId,
@@ -194,11 +190,12 @@ export class RecordShareStorageService {
                 },
               });
 
-              for (const [objectMetadataId, grants] of Object.entries(
-                groupBy(fullGrants, (grant) => grant.objectMetadataId),
+              for (const fullGrantsChunk of chunk(
+                fullGrants,
+                QUERY_MAX_RECORDS,
               )) {
                 await repository.insert(
-                  grants.map((grant) => ({
+                  fullGrantsChunk.map((grant) => ({
                     objectMetadataId: grant.objectMetadataId,
                     recordId: grant.recordId,
                     principalType: grant.principalType,
@@ -209,14 +206,34 @@ export class RecordShareStorageService {
                   })),
                   { onConflictDoNothing: true },
                 );
-                await repository.update(
-                  {
-                    objectMetadataId,
-                    recordId: In(grants.map((grant) => grant.recordId)),
+              }
+
+              // The insert skips the rows the custodian already holds on
+              // these records, which are raised to full access instead
+              const fullGrantKeys = new Set(
+                fullGrants.map(buildRecordShareRowKey),
+              );
+              const custodianGrantIdsToRaise = (
+                await repository.find({
+                  where: {
                     principalType: RecordSharePrincipalType.WORKSPACE_MEMBER,
                     principalId: toWorkspaceMemberId,
                     rowCause: transferableRowCauses,
+                    accessLevel: Not(RecordShareAccessLevel.FULL),
                   },
+                })
+              )
+                .filter((grant) =>
+                  fullGrantKeys.has(buildRecordShareRowKey(grant)),
+                )
+                .map((grant) => grant.id);
+
+              for (const grantIdsChunk of chunk(
+                custodianGrantIdsToRaise,
+                QUERY_MAX_RECORDS,
+              )) {
+                await repository.update(
+                  { id: In(grantIdsChunk) },
                   { accessLevel: RecordShareAccessLevel.FULL },
                 );
               }
@@ -293,3 +310,8 @@ export class RecordShareStorageService {
     );
   }
 }
+
+const buildRecordShareRowKey = (
+  recordShare: Pick<RecordShare, 'objectMetadataId' | 'recordId' | 'rowCause'>,
+) =>
+  `${recordShare.objectMetadataId}:${recordShare.recordId}:${recordShare.rowCause}`;

@@ -351,9 +351,6 @@ export class AdminPanelResolver {
         }),
       );
 
-    // Listed alongside language models rather than on a page of their own: an
-    // administrator enables and disables them the same way, and the table says
-    // which kind each one is.
     const evaluationModels = this.aiModelRegistryService
       .getAllEvaluationModelsWithStatus()
       .map(({ modelConfig, isAvailable, isAdminEnabled }) => ({
@@ -374,8 +371,7 @@ export class AdminPanelResolver {
 
     return {
       models: [...languageModels, ...evaluationModels],
-      // The model the tier actually runs on here, not the head of the chain: a
-      // chain can start with a provider this instance holds no key for.
+      // Not the chain head: it can start with a provider this instance holds no key for
       defaultModelByTier: AI_MODEL_TIERS.map((tier) => ({
         tier,
         modelId:

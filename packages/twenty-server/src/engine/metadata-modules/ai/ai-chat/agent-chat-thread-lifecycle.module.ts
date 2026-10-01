@@ -6,8 +6,7 @@ import { AgentChatThreadRecordEventService } from 'src/engine/metadata-modules/a
 import { AgentHistoryModule } from 'src/engine/metadata-modules/ai/ai-history/ai-history.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
-// Separate from AiChatModule so the record API's query hooks avoid its tool and
-// workflow dependencies
+// separate from AiChatModule so the record API's query hooks avoid its tool and workflow dependencies
 @Module({
   imports: [AgentHistoryModule, WorkspaceCacheModule],
   providers: [

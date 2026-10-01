@@ -41,8 +41,7 @@ export const agentChatFavoriteThreadsSelector = createAtomSelector<
           return [];
         }
 
-        // The loaded chat carries its latest title and deletion, which the
-        // favorite's identifier does not follow
+        // The loaded chat carries its latest title and deletion, which the favorite's identifier doesn't follow.
         const loadedThread = get(
           recordStoreFamilyState,
           item.targetRecordId,

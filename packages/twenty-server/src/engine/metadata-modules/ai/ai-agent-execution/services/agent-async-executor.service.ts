@@ -95,10 +95,7 @@ const EMPTY_USAGE: LanguageModelUsage = {
   },
 };
 
-// Agent execution uses registry tools plus native model tools. The caller
-// supplies the base system prompt describing its execution context (workflow
-// step, programmatic run). Workflow registry tools are intentionally excluded
-// to avoid circular dependencies and recursive workflow execution.
+// workflow registry tools are excluded to avoid circular dependencies and recursive workflow execution
 @Injectable()
 export class AgentAsyncExecutorService {
   private readonly logger = new Logger(AgentAsyncExecutorService.name);
@@ -145,8 +142,7 @@ export class AgentAsyncExecutorService {
     return {};
   }
 
-  // Workflow agent nodes run a scoped task: pre-load the full schemas of the
-  // few explicitly-granted objects so the model skips the learn_tools round trip.
+  // preloading the few granted object schemas saves the model a learn_tools round trip
   private async buildPreloadedRegistryTools({
     agent,
     agentRoleId,
@@ -186,10 +182,8 @@ export class AgentAsyncExecutorService {
     });
   }
 
-  // Open-ended agents (runAgent / Slack) need broad object access, which would
-  // make pre-loading ship every schema. Expose a compact catalog plus the
-  // learn_tools / execute_tool meta-tools instead, using composed role
-  // permissions rather than explicit grants only.
+  // open-ended agents have broad access, so preloading would ship every schema: expose a compact catalog plus
+  // learn_tools / execute_tool instead, scoped by composed role permissions rather than explicit grants only
   private async buildLazyRegistryTools({
     agent,
     agentRoleId,
@@ -239,9 +233,7 @@ export class AgentAsyncExecutorService {
         !excludedToolNames.has(entry.name),
     );
 
-    // Restrict the meta-tools to the shown catalog. Enforced at call time, so a
-    // tool that appears after the catalog was built still can't be reached,
-    // preserving the recursion guard.
+    // meta-tools are limited to the shown catalog, checked at call time so a tool added later stays unreachable (recursion guard)
     const allowedToolNames = new Set(catalog.map((entry) => entry.name));
     const isToolAllowed = (toolName: string): boolean =>
       allowedToolNames.has(toolName);
@@ -278,11 +270,8 @@ export class AgentAsyncExecutorService {
   }: {
     agent: AgentEntity | null;
     messages: RunAgentMessage[];
-    // A conversation being continued, with its tool calls and results, which
-    // plain run messages cannot carry.
+    // a continued conversation, with the tool calls and results plain run messages cannot carry
     priorModelMessages?: ModelMessage[];
-    // Tools whose call ends the execution so that the caller can wait for
-    // something outside it, such as a person answering.
     pausingTools?: ToolSet;
     baseSystemPrompt: string;
     actorContext?: ActorMetadata;
@@ -356,8 +345,6 @@ export class AgentAsyncExecutorService {
 
         let registryTools: ToolSet = {};
 
-        // Registry tools are scoped exclusively by the agent permission-tab
-        // role. No role means no registry tools.
         if (isDefined(agentRoleId)) {
           if (toolLoadingStrategy === 'lazy') {
             const lazyToolset = await this.buildLazyRegistryTools({
@@ -524,7 +511,6 @@ export class AgentAsyncExecutorService {
         offeredToolNames,
       });
 
-      // An execution stopped on a pausing tool has no final answer to structure.
       if (isDefined(agentSchema) && !endsOnPausingTool) {
         const structuredResult = await generateText({
           instructions: STRUCTURED_OUTPUT_SYSTEM_PROMPT,
@@ -600,8 +586,7 @@ export class AgentAsyncExecutorService {
         cacheCreationTokens,
         nativeWebSearchCallCount,
         hasNoMoreAvailableCredits,
-        // An execution out of credits fails even if it asked something, so it
-        // must not be left waiting for an answer.
+        // out of credits fails the execution even if it asked something, so it is never left waiting for an answer
         isPaused: endsOnPausingTool && !hasNoMoreAvailableCredits,
         steps: executionSteps,
         modelId: resolvedModelId,
@@ -621,8 +606,7 @@ export class AgentAsyncExecutorService {
         resolvedModelId ??
         agent?.modelId ??
         AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID;
-      // Nothing was generated when execution failed before a model resolved,
-      // and pricing an unresolved id would throw over the original error.
+      // pricing an unresolved model id would throw over the original error
       const costInDollars = isDefined(resolvedModelId)
         ? this.aiBillingService.calculateStepsCost(
             resolvedModelId,
