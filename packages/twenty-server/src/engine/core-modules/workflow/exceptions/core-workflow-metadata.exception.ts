@@ -4,6 +4,7 @@ import { assertUnreachable } from 'twenty-shared/utils';
 import { CustomException } from 'src/utils/custom-exception';
 
 export enum CoreWorkflowMetadataExceptionCode {
+  INVALID_WORKFLOW_VERSION_DEFINITION = 'INVALID_WORKFLOW_VERSION_DEFINITION',
   WORKFLOW_NOT_FOUND = 'WORKFLOW_NOT_FOUND',
   WORKFLOW_ALREADY_EXISTS = 'WORKFLOW_ALREADY_EXISTS',
   WORKFLOW_VERSION_NOT_FOUND = 'WORKFLOW_VERSION_NOT_FOUND',
@@ -15,6 +16,8 @@ const getCoreWorkflowMetadataExceptionUserFriendlyMessage = (
   code: CoreWorkflowMetadataExceptionCode,
 ) => {
   switch (code) {
+    case CoreWorkflowMetadataExceptionCode.INVALID_WORKFLOW_VERSION_DEFINITION:
+      return msg`The application workflow definition is invalid.`;
     case CoreWorkflowMetadataExceptionCode.WORKFLOW_NOT_FOUND:
       return msg`Workflow not found.`;
     case CoreWorkflowMetadataExceptionCode.WORKFLOW_ALREADY_EXISTS:

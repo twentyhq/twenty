@@ -16,6 +16,7 @@ const USER_FACING_STEP_EXECUTOR_EXCEPTION_CODES = [
   WorkflowStepExecutorExceptionCode.INVALID_STEP_TYPE,
   WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
   WorkflowStepExecutorExceptionCode.STEP_NOT_FOUND,
+  WorkflowStepExecutorExceptionCode.FORBIDDEN,
 ];
 
 // Author misconfigurations: no retry produces a model, and reporting them as system errors buries real ones.
