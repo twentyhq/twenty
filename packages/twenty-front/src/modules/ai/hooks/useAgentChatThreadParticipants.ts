@@ -3,18 +3,17 @@ import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { type AgentChatThreadParticipantState } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { useToast } from 'twenty-ui/components';
 
-import { useAgentChatThreadParticipantSync } from '@/ai/hooks/useAgentChatThreadParticipantSync';
 import { useApplyAgentChatThreadUpdate } from '@/ai/hooks/useApplyAgentChatThreadUpdate';
 import { agentChatThreadKeptUnreadIdState } from '@/ai/states/agentChatThreadKeptUnreadIdState';
-import { agentChatThreadParticipantSyncState } from '@/ai/states/agentChatThreadParticipantSyncState';
 import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
 import { agentChatThreadUnreadSinceState } from '@/ai/states/agentChatThreadUnreadSinceState';
 import { agentChatViewedThreadIdState } from '@/ai/states/agentChatViewedThreadIdState';
 import { agentChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
 import { hasLoadedAgentChatThreadParticipantsState } from '@/ai/states/hasLoadedAgentChatThreadParticipantsState';
-import { AGENT_CHAT_THREAD_PARTICIPANT_EMPTY_SYNC } from '@/ai/constants/AgentChatThreadParticipantEmptySync';
 import { toAgentChatThreadParticipantState } from '@/ai/utils/toAgentChatThreadParticipantState';
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import {
   ArchiveAgentChatThreadDocument,
   GetMyAgentChatThreadParticipantsDocument,
@@ -26,17 +25,33 @@ import {
 
 const noop = () => {};
 
+const EMPTY_PARTICIPANT_STATE: AgentChatThreadParticipantState = {
+  lastReadAt: null,
+  archivedAt: null,
+  snoozedUntil: null,
+};
+
 export const useAgentChatThreadParticipants = () => {
   const client = useApolloClient();
   const store = useStore();
   const { applyAgentChatThreadUpdate } = useApplyAgentChatThreadUpdate();
-  const { setParticipantState, getSync, bumpVersion, updateParticipant } =
-    useAgentChatThreadParticipantSync();
+  const { enqueueToast } = useToast();
+
+  const setParticipantState = useCallback(
+    (threadId: string, state: AgentChatThreadParticipantState | undefined) => {
+      store.set(agentChatThreadParticipantsState.atom, (participants) => {
+        const { [threadId]: _previousState, ...otherParticipants } =
+          participants;
+
+        return isDefined(state)
+          ? { ...otherParticipants, [threadId]: state }
+          : otherParticipants;
+      });
+    },
+    [store],
+  );
 
   const refreshAgentChatThreadParticipants = useCallback(async () => {
-    const syncsBeforeRequest = store.get(
-      agentChatThreadParticipantSyncState.atom,
-    );
     const result = await client
       .query({
         query: GetMyAgentChatThreadParticipantsDocument,
@@ -48,46 +63,57 @@ export const useAgentChatThreadParticipants = () => {
       return;
     }
 
-    const fetchedParticipants: Record<string, AgentChatThreadParticipantState> =
+    store.set(hasLoadedAgentChatThreadParticipantsState.atom, true);
+    store.set(
+      agentChatThreadParticipantsState.atom,
       Object.fromEntries(
         result.data.myAgentChatThreadParticipants.map((participant) => [
           participant.threadId,
           toAgentChatThreadParticipantState(participant),
         ]),
-      );
-    const localParticipants = store.get(agentChatThreadParticipantsState.atom);
-    const hasLocalChange = (threadId: string) => {
-      const sync = getSync(threadId);
-
-      return (
-        sync.pendingRequestCount > 0 ||
-        sync.version !==
-          (
-            syncsBeforeRequest[threadId] ??
-            AGENT_CHAT_THREAD_PARTICIPANT_EMPTY_SYNC
-          ).version
-      );
-    };
-
-    const mergedParticipants = Object.fromEntries(
-      [
-        ...new Set([
-          ...Object.keys(fetchedParticipants),
-          ...Object.keys(localParticipants),
-        ]),
-      ]
-        .map((threadId) => [
-          threadId,
-          hasLocalChange(threadId)
-            ? localParticipants[threadId]
-            : fetchedParticipants[threadId],
-        ])
-        .filter(([, participant]) => isDefined(participant)),
+      ),
     );
+  }, [client, store]);
 
-    store.set(hasLoadedAgentChatThreadParticipantsState.atom, true);
-    store.set(agentChatThreadParticipantsState.atom, mergedParticipants);
-  }, [client, getSync, store]);
+  // The change shows right away; if the server refuses it, the member's
+  // state is reloaded from the server
+  const updateParticipant = useCallback(
+    async ({
+      threadId,
+      optimisticState,
+      mutate,
+      applyLocalState,
+    }: {
+      threadId: string;
+      optimisticState: Partial<AgentChatThreadParticipantState>;
+      mutate: () => Promise<unknown>;
+      applyLocalState?: () => () => void;
+    }) => {
+      const previousState = store.get(agentChatThreadParticipantsState.atom)[
+        threadId
+      ];
+
+      setParticipantState(threadId, {
+        ...(previousState ?? EMPTY_PARTICIPANT_STATE),
+        ...optimisticState,
+      });
+      const rollbackLocalState = applyLocalState?.();
+
+      try {
+        await mutate();
+      } catch (error) {
+        rollbackLocalState?.();
+        enqueueToast(getToastOptionsFromError({ error }));
+        await refreshAgentChatThreadParticipants();
+      }
+    },
+    [
+      enqueueToast,
+      refreshAgentChatThreadParticipants,
+      setParticipantState,
+      store,
+    ],
+  );
 
   const setKeptUnreadThreadId = useCallback(
     (threadId: string | null) => {
@@ -124,13 +150,11 @@ export const useAgentChatThreadParticipants = () => {
         threadId,
         optimisticState: { lastReadAt: thread?.lastActivityAt ?? null },
         applyLocalState: () => releaseKeptUnreadThread(threadId) ?? noop,
-        mutate: async () =>
-          (
-            await client.mutate({
-              mutation: MarkAgentChatThreadAsReadDocument,
-              variables: { threadId },
-            })
-          ).data?.markAgentChatThreadAsRead,
+        mutate: () =>
+          client.mutate({
+            mutation: MarkAgentChatThreadAsReadDocument,
+            variables: { threadId },
+          }),
       });
     },
     [client, releaseKeptUnreadThread, store, updateParticipant],
@@ -176,13 +200,11 @@ export const useAgentChatThreadParticipants = () => {
         threadId,
         optimisticState: { lastReadAt: null },
         applyLocalState: () => keepViewedThreadUnread(threadId),
-        mutate: async () =>
-          (
-            await client.mutate({
-              mutation: MarkAgentChatThreadAsUnreadDocument,
-              variables: { threadId },
-            })
-          ).data?.markAgentChatThreadAsUnread,
+        mutate: () =>
+          client.mutate({
+            mutation: MarkAgentChatThreadAsUnreadDocument,
+            variables: { threadId },
+          }),
       }),
     [client, keepViewedThreadUnread, updateParticipant],
   );
@@ -195,13 +217,11 @@ export const useAgentChatThreadParticipants = () => {
           archivedAt: new Date().toISOString(),
           snoozedUntil: null,
         },
-        mutate: async () =>
-          (
-            await client.mutate({
-              mutation: ArchiveAgentChatThreadDocument,
-              variables: { threadId },
-            })
-          ).data?.archiveAgentChatThread,
+        mutate: () =>
+          client.mutate({
+            mutation: ArchiveAgentChatThreadDocument,
+            variables: { threadId },
+          }),
       }),
     [client, updateParticipant],
   );
@@ -214,16 +234,14 @@ export const useAgentChatThreadParticipants = () => {
           archivedAt: new Date().toISOString(),
           snoozedUntil: snoozedUntil.toISOString(),
         },
-        mutate: async () =>
-          (
-            await client.mutate({
-              mutation: SnoozeAgentChatThreadDocument,
-              variables: {
-                threadId,
-                snoozedUntil: snoozedUntil.toISOString(),
-              },
-            })
-          ).data?.snoozeAgentChatThread,
+        mutate: () =>
+          client.mutate({
+            mutation: SnoozeAgentChatThreadDocument,
+            variables: {
+              threadId,
+              snoozedUntil: snoozedUntil.toISOString(),
+            },
+          }),
       }),
     [client, updateParticipant],
   );
@@ -233,13 +251,11 @@ export const useAgentChatThreadParticipants = () => {
       updateParticipant({
         threadId,
         optimisticState: { archivedAt: null, snoozedUntil: null },
-        mutate: async () =>
-          (
-            await client.mutate({
-              mutation: MoveAgentChatThreadToInboxDocument,
-              variables: { threadId },
-            })
-          ).data?.moveAgentChatThreadToInbox,
+        mutate: () =>
+          client.mutate({
+            mutation: MoveAgentChatThreadToInboxDocument,
+            variables: { threadId },
+          }),
       }),
     [client, updateParticipant],
   );
@@ -267,7 +283,6 @@ export const useAgentChatThreadParticipants = () => {
         });
       }
       const rollbackKeptUnreadThread = releaseKeptUnreadThread(threadId);
-      const version = bumpVersion(threadId);
 
       applyAgentChatThreadUpdate({ id: threadId, lastActivityAt: activityAt });
       setParticipantState(threadId, {
@@ -283,9 +298,7 @@ export const useAgentChatThreadParticipants = () => {
         });
         rollbackKeptUnreadThread?.();
 
-        if (getSync(threadId).version === version) {
-          setParticipantState(threadId, previousState);
-        }
+        setParticipantState(threadId, previousState);
 
         if (
           store.get(agentChatThreadUnreadSinceState.atom)?.threadId === threadId
@@ -296,8 +309,6 @@ export const useAgentChatThreadParticipants = () => {
     },
     [
       applyAgentChatThreadUpdate,
-      bumpVersion,
-      getSync,
       releaseKeptUnreadThread,
       setParticipantState,
       store,

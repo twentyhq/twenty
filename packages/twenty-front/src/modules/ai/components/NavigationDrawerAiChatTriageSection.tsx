@@ -6,7 +6,7 @@ import { AGENT_CHAT_THREAD_FILTER_STATUS } from '@/ai/constants/AgentChatThreadF
 import { AGENT_CHAT_THREAD_FILTER_STATUS_ICONS } from '@/ai/constants/AgentChatThreadFilterStatusIcons';
 import { AGENT_CHAT_THREAD_FILTER_STATUS_LABELS } from '@/ai/constants/AgentChatThreadFilterStatusLabels';
 import { agentChatThreadFilterStatusState } from '@/ai/states/agentChatThreadFilterStatusState';
-import { agentChatOpenUnreadThreadCountSelector } from '@/ai/states/selectors/agentChatOpenUnreadThreadCountSelector';
+import { agentChatOpenThreadsSummarySelector } from '@/ai/states/selectors/agentChatOpenThreadsSummarySelector';
 import { type AgentChatThreadFilterStatus } from '@/ai/types/AgentChatThreadFilterStatus';
 import { CollapsibleNavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/CollapsibleNavigationDrawerSection';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
@@ -29,8 +29,8 @@ export const NavigationDrawerAiChatTriageSection = () => {
   const navigate = useNavigateApp();
   const [agentChatThreadFilterStatus, setAgentChatThreadFilterStatus] =
     useAtomState(agentChatThreadFilterStatusState);
-  const agentChatOpenUnreadThreadCount = useAtomStateValue(
-    agentChatOpenUnreadThreadCountSelector,
+  const { openThreadCount, hasUnreadOpenThread } = useAtomStateValue(
+    agentChatOpenThreadsSummarySelector,
   );
   const isOnInboxPage = isMatchingLocation(location, AppPath.AiChatInbox);
 
@@ -44,22 +44,29 @@ export const NavigationDrawerAiChatTriageSection = () => {
       sectionId={AI_CHAT_TRIAGE_NAVIGATION_SECTION_ID}
       label={t`Triage`}
     >
-      {TRIAGE_FILTER_STATUSES.map((filterStatus) => (
-        <NavigationDrawerItem
-          key={filterStatus}
-          label={t(AGENT_CHAT_THREAD_FILTER_STATUS_LABELS[filterStatus])}
-          secondaryLabel={
-            filterStatus === AGENT_CHAT_THREAD_FILTER_STATUS.ACTIVE &&
-            agentChatOpenUnreadThreadCount > 0
-              ? `${agentChatOpenUnreadThreadCount}`
-              : undefined
-          }
-          Icon={AGENT_CHAT_THREAD_FILTER_STATUS_ICONS[filterStatus]}
-          active={isOnInboxPage && agentChatThreadFilterStatus === filterStatus}
-          onClick={() => handleTriageClick(filterStatus)}
-          triggerEvent="CLICK"
-        />
-      ))}
+      {TRIAGE_FILTER_STATUSES.map((filterStatus) => {
+        const isOpenStatus =
+          filterStatus === AGENT_CHAT_THREAD_FILTER_STATUS.ACTIVE;
+
+        return (
+          <NavigationDrawerItem
+            key={filterStatus}
+            label={t(AGENT_CHAT_THREAD_FILTER_STATUS_LABELS[filterStatus])}
+            secondaryLabel={
+              isOpenStatus && openThreadCount > 0
+                ? `${openThreadCount}`
+                : undefined
+            }
+            isUnread={isOpenStatus && hasUnreadOpenThread}
+            Icon={AGENT_CHAT_THREAD_FILTER_STATUS_ICONS[filterStatus]}
+            active={
+              isOnInboxPage && agentChatThreadFilterStatus === filterStatus
+            }
+            onClick={() => handleTriageClick(filterStatus)}
+            triggerEvent="CLICK"
+          />
+        );
+      })}
     </CollapsibleNavigationDrawerSection>
   );
 };

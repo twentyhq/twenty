@@ -90,32 +90,33 @@ describe('useAgentChatThreadParticipants', () => {
     );
   });
 
-  it('keeps the state the server recorded for an archive', async () => {
-    const archivedAt = '2026-10-01T11:00:00.000Z';
-
-    mutate.mockResolvedValue({
-      data: {
-        archiveAgentChatThread: {
-          threadId: THREAD_ID,
-          lastReadAt: null,
-          archivedAt,
-          snoozedUntil: null,
-        },
-      },
-    });
+  it('keeps an archive the server accepted', async () => {
+    mutate.mockResolvedValue({ data: {} });
     const { result, store } = renderParticipants();
 
     await act(async () => {
       await result.current.archiveAgentChatThread(THREAD_ID);
     });
 
-    expect(store.get(agentChatThreadParticipantsState.atom)[THREAD_ID]).toEqual(
-      { lastReadAt: null, archivedAt, snoozedUntil: null },
-    );
+    expect(
+      store.get(agentChatThreadParticipantsState.atom)[THREAD_ID]?.archivedAt,
+    ).toEqual(expect.any(String));
   });
 
-  it('restores the previous state and reports a refused snooze', async () => {
+  it('reloads the server state and reports a refused snooze', async () => {
     mutate.mockRejectedValue(new Error('Snooze time must be in the future'));
+    query.mockResolvedValue({
+      data: {
+        myAgentChatThreadParticipants: [
+          {
+            threadId: THREAD_ID,
+            lastReadAt: LAST_ACTIVITY_AT,
+            archivedAt: null,
+            snoozedUntil: null,
+          },
+        ],
+      },
+    });
     const { result, store } = renderParticipants();
 
     await act(async () => {
@@ -125,9 +126,9 @@ describe('useAgentChatThreadParticipants', () => {
       );
     });
 
-    expect(
-      store.get(agentChatThreadParticipantsState.atom)[THREAD_ID],
-    ).toBeUndefined();
+    expect(store.get(agentChatThreadParticipantsState.atom)[THREAD_ID]).toEqual(
+      { lastReadAt: LAST_ACTIVITY_AT, archivedAt: null, snoozedUntil: null },
+    );
     expect(enqueueToast).toHaveBeenCalled();
   });
 
@@ -168,7 +169,6 @@ describe('useAgentChatThreadParticipants', () => {
 
   it('ignores a late answer to an action the member has since replaced', async () => {
     let resolveArchive: (value: unknown) => void = () => undefined;
-    const archivedAt = '2026-10-01T11:00:00.000Z';
 
     mutate
       .mockReturnValueOnce(
@@ -176,16 +176,7 @@ describe('useAgentChatThreadParticipants', () => {
           resolveArchive = resolve;
         }),
       )
-      .mockResolvedValueOnce({
-        data: {
-          moveAgentChatThreadToInbox: {
-            threadId: THREAD_ID,
-            lastReadAt: null,
-            archivedAt: null,
-            snoozedUntil: null,
-          },
-        },
-      });
+      .mockResolvedValueOnce({ data: {} });
     const { result, store } = renderParticipants();
 
     let archive: Promise<void> = Promise.resolve();
@@ -197,62 +188,13 @@ describe('useAgentChatThreadParticipants', () => {
       await result.current.moveAgentChatThreadToInbox(THREAD_ID);
     });
     await act(async () => {
-      resolveArchive({
-        data: {
-          archiveAgentChatThread: {
-            threadId: THREAD_ID,
-            lastReadAt: null,
-            archivedAt,
-            snoozedUntil: null,
-          },
-        },
-      });
+      resolveArchive({ data: {} });
       await archive;
     });
 
     expect(
       store.get(agentChatThreadParticipantsState.atom)[THREAD_ID]?.archivedAt,
     ).toBeNull();
-  });
-
-  it('keeps a local change made while the member state was loading', async () => {
-    let resolveQuery: (value: unknown) => void = () => undefined;
-
-    query.mockReturnValue(
-      new Promise((resolve) => {
-        resolveQuery = resolve;
-      }),
-    );
-    mutate.mockReturnValue(new Promise(() => undefined));
-    const { result, store } = renderParticipants();
-
-    let refresh: Promise<void> = Promise.resolve();
-
-    act(() => {
-      refresh = result.current.refreshAgentChatThreadParticipants();
-    });
-    act(() => {
-      void result.current.archiveAgentChatThread(THREAD_ID);
-    });
-    await act(async () => {
-      resolveQuery({
-        data: {
-          myAgentChatThreadParticipants: [
-            {
-              threadId: THREAD_ID,
-              lastReadAt: null,
-              archivedAt: null,
-              snoozedUntil: null,
-            },
-          ],
-        },
-      });
-      await refresh;
-    });
-
-    expect(
-      store.get(agentChatThreadParticipantsState.atom)[THREAD_ID]?.archivedAt,
-    ).not.toBeNull();
   });
 
   it('keeps the thread on screen unread when the member marks it unread', async () => {

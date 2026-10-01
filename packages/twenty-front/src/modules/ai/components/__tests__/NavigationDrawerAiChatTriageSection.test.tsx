@@ -11,6 +11,7 @@ import { NavigationDrawerAiChatTriageSection } from '@/ai/components/NavigationD
 import { AGENT_CHAT_THREAD_FILTER_STATUS } from '@/ai/constants/AgentChatThreadFilterStatus';
 import { agentChatThreadFilterStatusState } from '@/ai/states/agentChatThreadFilterStatusState';
 import { agentChatThreadListState } from '@/ai/states/agentChatThreadListState';
+import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
 import { hasLoadedAgentChatThreadParticipantsState } from '@/ai/states/hasLoadedAgentChatThreadParticipantsState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import {
@@ -34,11 +35,13 @@ jest.mock(
     NavigationDrawerItem: ({
       label,
       secondaryLabel,
+      isUnread,
       active,
       onClick,
     }: {
       label: string;
       secondaryLabel?: string;
+      isUnread?: boolean;
       active?: boolean;
       onClick?: () => void;
     }) => (
@@ -47,7 +50,9 @@ jest.mock(
         aria-current={active ? 'page' : undefined}
         onClick={onClick}
       >
-        {secondaryLabel ? `${label} · ${secondaryLabel}` : label}
+        {label}
+        {isUnread ? ', unread' : ''}
+        {secondaryLabel ? ` · ${secondaryLabel}` : ''}
       </button>
     ),
   }),
@@ -88,12 +93,34 @@ describe('NavigationDrawerAiChatTriageSection', () => {
     jotaiStore.set(hasLoadedAgentChatThreadParticipantsState.atom, true);
   });
 
-  it('counts the unread chats in Open', () => {
+  const markThreadAsRead = (threadId: string) =>
+    jotaiStore.set(agentChatThreadParticipantsState.atom, (participants) => ({
+      ...participants,
+      [threadId]: {
+        lastReadAt: '2026-10-01T10:00:00.000Z',
+        archivedAt: null,
+        snoozedUntil: null,
+      },
+    }));
+
+  it('counts every open chat and flags Open when one is unread', () => {
+    markThreadAsRead('thread-1');
+
+    renderTriage();
+
+    expect(
+      screen.getByRole('button', { name: 'Open, unread · 2' }),
+    ).toBeVisible();
+    expect(screen.getByRole('button', { name: 'Snoozed' })).toBeVisible();
+    expect(screen.getByRole('button', { name: 'Done' })).toBeVisible();
+  });
+
+  it('shows Open as read when every open chat is read', () => {
+    THREAD_IDS.forEach(markThreadAsRead);
+
     renderTriage();
 
     expect(screen.getByRole('button', { name: 'Open · 2' })).toBeVisible();
-    expect(screen.getByRole('button', { name: 'Snoozed' })).toBeVisible();
-    expect(screen.getByRole('button', { name: 'Done' })).toBeVisible();
   });
 
   it('opens the inbox on the chosen status', async () => {
