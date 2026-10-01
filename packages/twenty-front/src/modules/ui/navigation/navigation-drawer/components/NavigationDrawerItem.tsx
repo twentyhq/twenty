@@ -164,6 +164,18 @@ const StyledIcon = styled.div`
   flex-shrink: 0;
   justify-content: center;
   margin-right: ${themeCssVariables.spacing[2]};
+  position: relative;
+`;
+
+// A collapsed drawer hides the label, so an unread item is marked on its icon
+const StyledCollapsedUnreadDot = styled.span`
+  background: ${themeCssVariables.color.blue};
+  border-radius: 50%;
+  height: 6px;
+  position: absolute;
+  right: -2px;
+  top: -2px;
+  width: 6px;
 `;
 
 const StyledRightOptionsContainer = styled.div`
@@ -351,6 +363,7 @@ export const NavigationDrawerItem = ({
                         : 'currentColor'
                     }
                   />
+                  {isUnread && !isExpanded && <StyledCollapsedUnreadDot />}
                 </StyledIcon>
               )
             )}
