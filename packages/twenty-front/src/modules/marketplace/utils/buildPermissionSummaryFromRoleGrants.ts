@@ -2,7 +2,6 @@ import { type PermissionSummaryItem } from '@/marketplace/utils/buildPermissionS
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { t } from '@lingui/core/macro';
-import uniqBy from 'lodash.uniqby';
 import { SystemPermissionFlag } from 'twenty-shared/constants';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import {
@@ -154,5 +153,5 @@ export const buildPermissionSummaryFromRoleGrants = ({
     }
   };
 
-  return uniqBy(grants.map(toSummaryItem), 'label');
+  return grants.map(toSummaryItem);
 };

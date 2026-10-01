@@ -91,7 +91,7 @@ describe('buildPermissionSummaryFromRoleGrants', () => {
     ).toEqual(['Send emails via connected accounts']);
   });
 
-  it('falls back to generic labels, listed once, for objects and flags the workspace does not have yet', () => {
+  it('keeps one row per grant when objects and flags fall back to generic labels', () => {
     expect(
       getLabels([
         buildGrant({
@@ -110,6 +110,7 @@ describe('buildPermissionSummaryFromRoleGrants', () => {
         }),
       ]),
     ).toEqual([
+      'Read records of an object added by this version',
       'Read records of an object added by this version',
       'Use a permission added by this version',
     ]);

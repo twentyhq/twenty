@@ -141,8 +141,8 @@ export const SettingsApplicationPermissionValidationModal = ({
                   <StyledPermissionsTitle>
                     {permissionsTitle}
                   </StyledPermissionsTitle>
-                  {permissionItems.map((item) => (
-                    <StyledPermissionRow key={item.label}>
+                  {permissionItems.map((item, index) => (
+                    <StyledPermissionRow key={`${item.label}-${index}`}>
                       <StyledPermissionIcon>
                         <item.Icon size={16} />
                       </StyledPermissionIcon>

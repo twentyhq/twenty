@@ -39,6 +39,7 @@ type SettingsApplicationDetailGeneralTabProps = {
   requiresPermissionApproval: boolean;
   onUpgrade: () => void;
   isUpgrading: boolean;
+  isUpgradeDisabled: boolean;
   onUninstall: () => void;
   isUninstalling: boolean;
 };
@@ -54,6 +55,7 @@ export const SettingsApplicationDetailGeneralTab = ({
   requiresPermissionApproval,
   onUpgrade,
   isUpgrading,
+  isUpgradeDisabled,
   onUninstall,
   isUninstalling,
 }: SettingsApplicationDetailGeneralTabProps) => {
@@ -91,7 +93,7 @@ export const SettingsApplicationDetailGeneralTab = ({
             variant="outline"
             size="sm"
             onClick={onUpgrade}
-            disabled={isUpgrading}
+            disabled={isUpgradeDisabled}
           >
             {isUpgrading
               ? t`Upgrading...`

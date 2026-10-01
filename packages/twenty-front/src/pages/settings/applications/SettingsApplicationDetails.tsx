@@ -148,11 +148,15 @@ export const SettingsApplicationDetails = () => {
   const canManageApplications = useHasPermissionFlag(
     PermissionFlagType.APPLICATIONS,
   );
-  const { permissionSummaryItems, refetchPermissionSummary } =
-    useApplicationUpgradePermissionSummary({
-      applicationId,
-      skip: !hasUpdate || !canManageApplications,
-    });
+  const {
+    permissionSummaryItems,
+    isPermissionSummaryReady,
+    hasPermissionSummaryError,
+    refetchPermissionSummary,
+  } = useApplicationUpgradePermissionSummary({
+    applicationId,
+    skip: !hasUpdate || !canManageApplications,
+  });
   const requiresPermissionApproval = permissionSummaryItems.length > 0;
   const { openDialog } = useDialog();
 
@@ -170,7 +174,7 @@ export const SettingsApplicationDetails = () => {
   };
 
   const handleUpgrade = async () => {
-    if (isUpgrading) {
+    if (isUpgrading || !isPermissionSummaryReady) {
       return;
     }
 
@@ -294,6 +298,7 @@ export const SettingsApplicationDetails = () => {
             requiresPermissionApproval={requiresPermissionApproval}
             onUpgrade={handleUpgrade}
             isUpgrading={isUpgrading}
+            isUpgradeDisabled={isUpgrading || !isPermissionSummaryReady}
             onUninstall={uninstall}
             isUninstalling={isUninstalling}
           />
@@ -390,6 +395,17 @@ export const SettingsApplicationDetails = () => {
               title={healthBanner.title}
               description={healthBanner.description}
               action={healthBannerButton}
+            />
+          )}
+          {hasPermissionSummaryError && (
+            <InlineBanner
+              color="danger"
+              LeftIcon={IconAlertTriangle}
+              message={t`Could not load the permissions requested by version ${latestAvailableVersion ?? ''}.`}
+              button={{
+                title: t`Retry`,
+                onClick: () => void refetchPermissionSummary().catch(() => {}),
+              }}
             />
           )}
           {requiresPermissionApproval && (

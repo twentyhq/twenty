@@ -5,6 +5,7 @@ import { useSettingsRolePermissionFlagConfig } from '@/settings/roles/role-permi
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useQuery } from '@apollo/client/react';
 import { useMemo } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import { FindApplicationUpgradeRoleGrantsDocument } from '~/generated-metadata/graphql';
 
 export const useApplicationUpgradePermissionSummary = ({
@@ -14,11 +15,14 @@ export const useApplicationUpgradePermissionSummary = ({
   applicationId: string;
   skip: boolean;
 }) => {
-  const { data, refetch } = useQuery(FindApplicationUpgradeRoleGrantsDocument, {
-    variables: { applicationId },
-    skip,
-    fetchPolicy: 'network-only',
-  });
+  const { data, loading, error, refetch } = useQuery(
+    FindApplicationUpgradeRoleGrantsDocument,
+    {
+      variables: { applicationId },
+      skip,
+      fetchPolicy: 'network-only',
+    },
+  );
 
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
   const settingsPermissionFlags = useSettingsRolePermissionFlagConfig();
@@ -36,6 +40,8 @@ export const useApplicationUpgradePermissionSummary = ({
 
   return {
     permissionSummaryItems: skip ? [] : permissionSummaryItems,
+    isPermissionSummaryReady: skip || (!loading && !isDefined(error)),
+    hasPermissionSummaryError: !skip && isDefined(error),
     refetchPermissionSummary: refetch,
   };
 };
