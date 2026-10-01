@@ -25,7 +25,10 @@ import { IconClockHour8, IconHistory, IconTrash } from 'twenty-ui/icon';
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { useDebouncedCallback } from 'use-debounce';
-import { UpdateWorkspaceDocument } from '~/generated-metadata/graphql';
+import {
+  BillingEntitlementKey,
+  UpdateWorkspaceDocument,
+} from '~/generated-metadata/graphql';
 import { OrganizationAdornment } from '~/pages/settings/enterprise/components/OrganizationAdornment';
 
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
@@ -141,6 +144,11 @@ export const SettingsSecuritySettings = () => {
   const hasEnterpriseAccess =
     currentWorkspace?.hasValidEnterpriseValidityToken === true;
   const isEventLogsEnabled = hasEnterpriseAccess && isClickHouseConfigured;
+  const hasSsoEntitlement =
+    currentWorkspace?.billingEntitlements?.some(
+      (entitlement) =>
+        entitlement.key === BillingEntitlementKey.SSO && entitlement.value,
+    ) === true;
 
   return (
     <>
@@ -153,7 +161,15 @@ export const SettingsSecuritySettings = () => {
               description={t`Configure an SSO connection`}
               adornment={<OrganizationAdornment />}
             />
-            <SettingsSsoIdentitiesProvidersListCard />
+            {hasSsoEntitlement ? (
+              <SettingsSsoIdentitiesProvidersListCard />
+            ) : (
+              <SettingsEnterpriseFeatureGateCard
+                title={t`Organization feature`}
+                description={t`Upgrade to Organization to configure SSO.`}
+                buttonTitle={t`Activate`}
+              />
+            )}
           </Section.Root>
         </StyledSectionContainer>
 

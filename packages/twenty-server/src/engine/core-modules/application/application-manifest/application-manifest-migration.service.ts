@@ -63,9 +63,6 @@ export class ApplicationManifestMigrationService {
       );
     }
 
-    // Will be sync with inferDeletionFromMissingEntities: false to produces a purely
-    // additive migration that registers the pre-install logic function without
-    // touching any previously-synced metadata (important on upgrades).
     const preInstallOnlyManifest: Manifest = {
       application: manifest.application,
       objects: [],

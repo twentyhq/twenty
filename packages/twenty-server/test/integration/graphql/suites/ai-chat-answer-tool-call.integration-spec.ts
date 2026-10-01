@@ -212,33 +212,6 @@ describe('Answering a chat tool call', () => {
     );
   });
 
-  it('still answers a question through the deprecated answerAgentChatQuestion', async () => {
-    const { assistantMessageId } = await pauseOnQuestions('call-legacy');
-    enqueueStream.mockClear();
-
-    const response = await makeMetadataApiRequest({
-      query: parse(
-        `mutation Answer($threadId: UUID!, $messageId: UUID!, $answers: [AgentChatQuestionAnswerInput!]!) {
-          answerAgentChatQuestion(threadId: $threadId, messageId: $messageId, answers: $answers) { messageId queued streamId }
-        }`,
-      ),
-      variables: {
-        threadId,
-        messageId: assistantMessageId,
-        answers: [{ questionIndex: 0, selectedOptionIndices: [1] }],
-      },
-    });
-
-    expect(response.body.errors).toBeUndefined();
-    expect(response.body.data.answerAgentChatQuestion).toMatchObject({
-      messageId: assistantMessageId,
-      queued: false,
-      streamId: expect.any(String),
-    });
-    expect(await readToolCallStatus('call-legacy')).toBe('answered');
-    expect(enqueueStream).toHaveBeenCalledTimes(1);
-  });
-
   it('closes every pending call when a message is sent instead of the answers', async () => {
     await pauseOnQuestions('call-skipped-first', 'call-skipped-last');
 

@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 
 import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
+import { RestrictExportRecordsToIndexPageCommand } from 'src/database/commands/upgrade-version-command/2-45/2-45-workspace-command-1790837443029-restrict-export-records-to-index-page.command';
 import { ShareEmailAndCalendarThroughRecordSharesCommand } from 'src/database/commands/upgrade-version-command/2-45/2-45-workspace-command-1790840223721-share-email-and-calendar-through-record-shares.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
@@ -13,6 +14,9 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     WorkspaceIteratorModule,
     WorkspaceMigrationModule,
   ],
-  providers: [ShareEmailAndCalendarThroughRecordSharesCommand],
+  providers: [
+    RestrictExportRecordsToIndexPageCommand,
+    ShareEmailAndCalendarThroughRecordSharesCommand,
+  ],
 })
 export class V2_45_UpgradeVersionCommandModule {}

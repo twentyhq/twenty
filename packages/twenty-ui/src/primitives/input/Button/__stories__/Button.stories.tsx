@@ -182,7 +182,7 @@ export const Icons: Story = {
   args: {
     startIcon: <IconPlus />,
     endIcon: <IconArrowRight />,
-    hotkeys: ['⌘', '⏎'],
+    shortcut: ['Mod', 'Enter'],
   },
 };
 export const Truncation: Story = {

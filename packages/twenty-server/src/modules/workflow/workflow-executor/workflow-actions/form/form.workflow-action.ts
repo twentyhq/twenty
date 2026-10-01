@@ -35,8 +35,6 @@ export class FormWorkflowAction implements WorkflowAction {
       );
     }
 
-    // A workspace 2.44 has not reached yet cannot record the conversation, and
-    // its upgrade records one for every form still waiting.
     await this.workflowAgentConversationService.recordFormRequest({
       workspaceId: runInfo.workspaceId,
       workflowRunId: runInfo.workflowRunId,

@@ -4,7 +4,6 @@ export type SearchProps = {
   sizePx?: number;
 };
 
-// A magnifier on currentColor — the consumer sets the ink via color.
 export function Search({ sizePx = 16 }: SearchProps) {
   return (
     <svg

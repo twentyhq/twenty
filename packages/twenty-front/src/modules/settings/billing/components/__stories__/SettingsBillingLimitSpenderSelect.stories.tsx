@@ -1,15 +1,15 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
-import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { SettingsBillingLimitSpenderSelect } from '@/settings/billing/components/SettingsBillingLimitSpenderSelect';
+import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockedApiKeys } from '~/testing/mock-data/generated/metadata/api-keys/mock-api-keys-data';
 
 const meta: Meta<typeof SettingsBillingLimitSpenderSelect> = {
   title: 'Modules/Settings/Billing/SettingsBillingLimitSpenderSelect',
   component: SettingsBillingLimitSpenderSelect,
-  decorators: [ComponentDecorator],
+  decorators: [ComponentWithRouterDecorator],
   args: {
     allowedSpenderTypes: [
       'workspace',
@@ -35,22 +35,22 @@ export const AllUsers: Story = {
 };
 
 export const WorkspaceOnlyPlan: Story = {
-  args: { isIntraWorkspaceLimitEntitled: false },
-  play: async ({ canvasElement }) => {
+  args: { isIntraWorkspaceLimitEntitled: false, onChange: fn() },
+  play: async ({ canvasElement, args }) => {
     const body = within(canvasElement.ownerDocument.body);
 
     await userEvent.click(within(canvasElement).getByRole('button'));
     const popup = await body.findByRole('dialog', { name: 'Spender' });
 
-    expect(
-      within(popup).getByRole('button', { name: /User.*Organization plan/ }),
-    ).toHaveAttribute('aria-disabled', 'true');
-    await userEvent.click(
-      within(popup).getByRole('button', { name: /User.*Organization plan/ }),
-    );
+    expect(within(popup).getAllByLabelText('Organization')).toHaveLength(3);
+    await userEvent.click(within(popup).getByText('User'));
     expect(
       within(popup).queryByRole('button', { name: 'All users' }),
     ).not.toBeInTheDocument();
+    expect(args.onChange).not.toHaveBeenCalled();
+    expect(
+      within(popup).getByRole('link', { name: 'Upgrade to Organization' }),
+    ).toHaveAttribute('href', '/settings/billing/plans');
     await userEvent.keyboard('{Escape}');
   },
 };
