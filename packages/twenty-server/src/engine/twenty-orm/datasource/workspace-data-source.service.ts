@@ -62,7 +62,7 @@ export class WorkspaceDataSourceService
     });
 
     this.databasePoolMetricsService.registerPool({
-      poolName: DatabasePoolName.WorkspaceV2Primary,
+      poolName: DatabasePoolName.WorkspacePrimary,
       pool: this.primaryPool,
     });
 
@@ -77,7 +77,7 @@ export class WorkspaceDataSourceService
       });
 
       this.databasePoolMetricsService.registerPool({
-        poolName: DatabasePoolName.WorkspaceV2Replica,
+        poolName: DatabasePoolName.WorkspaceReplica,
         pool: this.replicaPool,
       });
     }
@@ -161,10 +161,10 @@ export class WorkspaceDataSourceService
 
   async onApplicationShutdown(): Promise<void> {
     this.databasePoolMetricsService.unregisterPool(
-      DatabasePoolName.WorkspaceV2Primary,
+      DatabasePoolName.WorkspacePrimary,
     );
     this.databasePoolMetricsService.unregisterPool(
-      DatabasePoolName.WorkspaceV2Replica,
+      DatabasePoolName.WorkspaceReplica,
     );
 
     await this.primaryPool?.end();
