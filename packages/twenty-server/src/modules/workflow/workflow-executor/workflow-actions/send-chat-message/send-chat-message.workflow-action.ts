@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { FeatureFlagKey } from 'twenty-shared/types';
@@ -7,8 +7,7 @@ import { isDefined, isValidUuid, resolveInput } from 'twenty-shared/utils';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
-import { AGENT_INBOX_SERVICE_TOKEN } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-inbox-service.token';
-import type { AgentInboxService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-inbox.service';
+import { AgentInboxService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-inbox.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
@@ -27,7 +26,6 @@ import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runne
 @Injectable()
 export class SendChatMessageWorkflowAction implements WorkflowAction {
   constructor(
-    @Inject(AGENT_INBOX_SERVICE_TOKEN)
     private readonly agentInboxService: AgentInboxService,
     private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,

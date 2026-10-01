@@ -32,6 +32,7 @@ import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { AiChatFileAttachment } from 'src/engine/metadata-modules/ai/ai-chat/types/ai-chat-file-attachment.type';
 import { AgentChatThreadRecordEventService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-record-event.service';
+import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
 import { AgentTitleGenerationService } from './agent-title-generation.service';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
@@ -55,70 +56,23 @@ export class AgentChatService {
     private readonly sharingService: AgentChatSharingService,
     private readonly threadRecordEventService: AgentChatThreadRecordEventService,
     private readonly conversationWriterService: AgentConversationWriterService,
+    private readonly threadService: AgentChatThreadService,
   ) {}
 
-  async createThread({
-    workspaceMemberId,
-    workspaceId,
-    id,
-    title,
-  }: {
-    workspaceMemberId: string;
-    workspaceId: string;
-    id?: string;
-    title?: string;
-  }) {
-    const savedThread = await this.sharingService.createThread({
-      workspaceId,
-      workspaceMemberId,
-      id,
-      title,
-    });
-
-    await this.threadRecordEventService.emitThreadCreated({
-      workspaceId,
-      threadId: savedThread.id,
-    });
-
-    return savedThread;
+  createThread(args: Parameters<AgentChatThreadService['createThread']>[0]) {
+    return this.threadService.createThread(args);
   }
 
-  async findWritableThread({
-    threadId,
-    workspaceMemberId,
-    workspaceId,
-  }: {
-    threadId: string;
-    workspaceMemberId: string;
-    workspaceId: string;
-  }) {
-    try {
-      return await this.sharingService.getThreadWithAccess({
-        threadId,
-        workspaceMemberId,
-        workspaceId,
-        operationType: 'update',
-      });
-    } catch (error) {
-      if (
-        error instanceof AiException &&
-        error.code === AiExceptionCode.THREAD_NOT_FOUND
-      ) {
-        return null;
-      }
-      throw error;
-    }
+  findWritableThread(
+    args: Parameters<AgentChatThreadService['findWritableThread']>[0],
+  ) {
+    return this.threadService.findWritableThread(args);
   }
 
-  async getWritableThread(args: {
-    threadId: string;
-    workspaceMemberId: string;
-    workspaceId: string;
-  }) {
-    return this.sharingService.getThreadWithAccess({
-      ...args,
-      operationType: 'update',
-    });
+  getWritableThread(
+    args: Parameters<AgentChatThreadService['getWritableThread']>[0],
+  ) {
+    return this.threadService.getWritableThread(args);
   }
 
   private getMessageSenderValues({
@@ -713,35 +667,10 @@ export class AgentChatService {
     return thread;
   }
 
-  async notifyThreadActivityUpdated({
-    threadId,
-    workspaceMemberId,
-    workspaceId,
-  }: {
-    threadId: string;
-    workspaceMemberId: string;
-    workspaceId: string;
-  }): Promise<void> {
-    const thread = await this.getWritableThread({
-      threadId,
-      workspaceMemberId,
-      workspaceId,
-    });
-
-    const threadAfter = { ...thread, updatedAt: new Date().toISOString() };
-
-    // conversations sort by last change, so bump on send rather than at turn end
-    await this.threadRepository.update(
-      workspaceId,
-      { id: threadId },
-      { updatedAt: threadAfter.updatedAt },
-    );
-
-    await this.threadRecordEventService.emitThreadUpdated({
-      workspaceId,
-      threadBefore: thread,
-      threadAfter,
-    });
+  notifyThreadActivityUpdated(
+    args: Parameters<AgentChatThreadService['notifyThreadActivityUpdated']>[0],
+  ) {
+    return this.threadService.notifyThreadActivityUpdated(args);
   }
 
   async notifyThreadUsageUpdated({

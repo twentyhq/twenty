@@ -9,7 +9,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { IsNull } from 'typeorm';
 
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
-import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
+import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { type AgentInboxSender } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-inbox-sender.type';
 import { buildInboxMessageIds } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-inbox-message-ids.util';
 import { buildInboxMessageRequestPart } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-inbox-message-request-part.util';
@@ -33,7 +33,7 @@ export class AgentInboxService {
     private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
     @InjectAgentHistoryRepository('agentMessage')
     private readonly messageRepository: AgentHistoryRepository<AgentMessageWorkspaceEntity>,
-    private readonly agentChatService: AgentChatService,
+    private readonly threadService: AgentChatThreadService,
     private readonly conversationWriterService: AgentConversationWriterService,
     private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
@@ -147,7 +147,7 @@ export class AgentInboxService {
     );
 
     if (isWritten) {
-      await this.agentChatService.notifyThreadActivityUpdated({
+      await this.threadService.notifyThreadActivityUpdated({
         threadId,
         workspaceMemberId: input.workspaceMemberId,
         workspaceId,
@@ -181,7 +181,7 @@ export class AgentInboxService {
     title: string;
   }): Promise<AgentChatThreadWorkspaceEntity> {
     try {
-      return await this.agentChatService.createThread({
+      return await this.threadService.createThread({
         workspaceId,
         workspaceMemberId,
         id: threadId,

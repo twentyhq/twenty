@@ -1,4 +1,5 @@
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
+import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 
 const WORKSPACE_ID = 'workspace-id';
 const THREAD_ID = 'thread-id';
@@ -9,6 +10,10 @@ const buildService = () => {
     findOne: jest.fn().mockResolvedValue({ id: THREAD_ID }),
   };
   const messageRepository = { find: jest.fn().mockResolvedValue([]) };
+  const sharingService = {
+    getThreadWithAccess: jest.fn().mockResolvedValue({ id: THREAD_ID }),
+    getReadableThread: jest.fn().mockResolvedValue({ id: THREAD_ID }),
+  };
 
   const service = new AgentChatService(
     threadRepository as never,
@@ -17,12 +22,14 @@ const buildService = () => {
     {} as never,
     {} as never,
     {} as never,
-    {
-      getThreadWithAccess: jest.fn().mockResolvedValue({ id: THREAD_ID }),
-      getReadableThread: jest.fn().mockResolvedValue({ id: THREAD_ID }),
-    } as never,
+    sharingService as never,
     {} as never,
     {} as never,
+    new AgentChatThreadService(
+      threadRepository as never,
+      sharingService as never,
+      {} as never,
+    ),
   );
 
   return { service, messageRepository };
