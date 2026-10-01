@@ -3,7 +3,7 @@ import { useLingui } from '@lingui/react/macro';
 import { useCallback, useMemo } from 'react';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { LightIconButton } from 'twenty-ui/components';
+import { ExpandableList, LightIconButton } from 'twenty-ui/components';
 import { IconPencil, IconPlus } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 
@@ -27,7 +27,6 @@ import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useFieldWidgetJunctionRelationRecords } from '@/page-layout/widgets/field/hooks/useFieldWidgetJunctionRelationRecords';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
 import { useListenToEventsForQuery } from '@/sse-db-event/hooks/useListenToEventsForQuery';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
@@ -213,7 +212,7 @@ export const AiChatThreadRecordTargets = ({
     <StyledContainer>
       {hasTargetRecords && (
         <StyledRecordChips>
-          <ExpandableList isChipCountDisplayed>
+          <ExpandableList overflowLabel={t`Show all items`} showOverflowCount>
             {targetRecords.map(({ record, objectNameSingular }) => (
               <RecordChip
                 key={`${objectNameSingular}-${record.id}`}

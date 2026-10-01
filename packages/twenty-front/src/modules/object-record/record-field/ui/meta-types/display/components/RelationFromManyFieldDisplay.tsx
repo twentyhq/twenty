@@ -1,3 +1,4 @@
+import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
 
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
@@ -10,11 +11,13 @@ import { extractTargetRecordsFromJunction } from '@/object-record/record-field/u
 import { isUsableJunctionConfig } from '@/object-record/record-field/ui/utils/junction/isUsableJunctionConfig';
 import { resolveJunctionConfig } from '@/object-record/record-field/ui/utils/junction/resolveJunctionConfig';
 
-import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
+import { ExpandableList } from 'twenty-ui/components';
 import { isArray } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 export const RelationFromManyFieldDisplay = () => {
+  const { t } = useLingui();
+
   const { fieldValue, fieldDefinition, generateRecordChipData } =
     useRelationFromManyFieldDisplay();
   const { isFocused } = useFieldFocus();
@@ -87,7 +90,8 @@ export const RelationFromManyFieldDisplay = () => {
 
     return (
       <ExpandableList
-        isChipCountDisplayed={isFocused}
+        overflowLabel={t`Show all items`}
+        showOverflowCount={isFocused}
         maxInlineCount={MAX_RELATION_CHIPS_DISPLAYED_INLINE}
       >
         {targetRecordsWithMetadata.map(({ record, objectMetadata }) => (
@@ -105,7 +109,8 @@ export const RelationFromManyFieldDisplay = () => {
 
   return (
     <ExpandableList
-      isChipCountDisplayed={isFocused}
+      overflowLabel={t`Show all items`}
+      showOverflowCount={isFocused}
       maxInlineCount={MAX_RELATION_CHIPS_DISPLAYED_INLINE}
     >
       {fieldValue.filter(isDefined).map((record) => {

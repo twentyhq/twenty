@@ -7,7 +7,7 @@ import { type RecordPickerPickableMorphItem } from '@/object-record/record-picke
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
+import { ExpandableList } from 'twenty-ui/components';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useId } from 'react';
@@ -91,7 +91,9 @@ export const CalendarEventComposerTargetsInput = ({
       clickableComponent={
         <StyledClickableContainer>
           {chips.length > 0 ? (
-            <ExpandableList isChipCountDisplayed>{chips}</ExpandableList>
+            <ExpandableList overflowLabel={t`Show all items`} showOverflowCount>
+              {chips}
+            </ExpandableList>
           ) : (
             <StyledPlaceholder>{t`Add a related record`}</StyledPlaceholder>
           )}

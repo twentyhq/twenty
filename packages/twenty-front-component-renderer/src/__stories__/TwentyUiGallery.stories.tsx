@@ -1,4 +1,7 @@
 import { breadcrumbTest } from '@/__stories__/twenty-ui-gallery/utils/breadcrumbTest';
+import { expandableListEventIsolationTest } from '@/__stories__/twenty-ui-gallery/utils/expandableListEventIsolationTest';
+import { expandableListGeometryTest } from '@/__stories__/twenty-ui-gallery/utils/expandableListGeometryTest';
+import { expandableListTest } from '@/__stories__/twenty-ui-gallery/utils/expandableListTest';
 import { jsonTreeTest } from '@/__stories__/twenty-ui-gallery/utils/jsonTreeTest';
 import { inlineBannerSandboxTest } from '@/__stories__/twenty-ui-gallery/utils/inlineBannerSandboxTest';
 import { themeTokenTest } from '@/__stories__/twenty-ui-gallery/utils/themeTokenTest';
@@ -549,4 +552,40 @@ export const InlineBannerPreactFocusFailure: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-inline-banner',
   runtime: 'preact',
   play: inlineBannerSandboxTest,
+});
+
+export const ExpandableListReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-expandable-list',
+  runtime: 'react',
+  play: expandableListTest,
+});
+
+export const ExpandableListPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-expandable-list',
+  runtime: 'preact',
+  play: expandableListTest,
+});
+
+export const ExpandableListGeometryReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-expandable-list',
+  runtime: 'react',
+  play: expandableListGeometryTest,
+});
+
+export const ExpandableListGeometryPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-expandable-list',
+  runtime: 'preact',
+  play: expandableListGeometryTest,
+});
+
+export const ExpandableListEventIsolationReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-expandable-list',
+  runtime: 'react',
+  play: expandableListEventIsolationTest,
+});
+
+export const ExpandableListEventIsolationPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-expandable-list',
+  runtime: 'preact',
+  play: expandableListEventIsolationTest,
 });

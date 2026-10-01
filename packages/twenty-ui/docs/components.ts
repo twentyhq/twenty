@@ -1,3 +1,4 @@
+import { EXPANDABLE_LIST_PROP_DESCRIPTIONS } from './expandableListPropDescriptions';
 import { AVATAR_GROUP_PROP_DESCRIPTIONS } from './avatarGroupPropDescriptions';
 import { COMMAND_BLOCK_PROP_DESCRIPTIONS } from './commandBlockPropDescriptions';
 import { JSON_TREE_PROP_DESCRIPTIONS } from './jsonTreePropDescriptions';
@@ -467,6 +468,13 @@ export const DOCUMENTED_COMPONENTS = [
         nativeButton: 'true when render is omitted; false otherwise',
       },
     },
+  },
+  {
+    name: 'ExpandableList',
+    source: 'components/layout/ExpandableList/ExpandableList.tsx',
+    entryPoint: 'twenty-ui/components',
+    slug: 'components/expandable-list',
+    propDescriptions: EXPANDABLE_LIST_PROP_DESCRIPTIONS,
   },
   {
     name: 'Section',

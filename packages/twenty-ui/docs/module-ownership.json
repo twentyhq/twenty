@@ -49,6 +49,7 @@
     "CodeEditorHeader",
     "CommandBlock",
     "Dropdown",
+    "ExpandableList",
     "IconButton",
     "InlineBanner",
     "JsonTree",

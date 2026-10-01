@@ -1,0 +1,54 @@
+---
+title: ExpandableList
+description: Fit a row of items into the available space and reveal the complete list in a popup.
+---
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import ExpandableListReference from '/snippets/ui/generated/components/expandable-list.mdx';
+
+`ExpandableList` measures its available width, keeps the fitting items in a compact row, and offers a `+N` button for the remaining items. It updates when the container or item content changes.
+
+Supply the complete ordered list as keyed elements. Your application owns each item's content, actions, and data.
+
+```tsx
+import { ExpandableList } from 'twenty-ui/components';
+import { Tag } from 'twenty-ui/primitives/data-display';
+
+const TEAMS = ['Design', 'Engineering', 'Support', 'Operations'];
+
+export const TeamList = () => (
+  <ExpandableList
+    style={{ width: 220 }}
+    showOverflowCount
+    overflowLabel="Show all teams"
+  >
+    {TEAMS.map((team) => (
+      <Tag key={team} color="blue">{team}</Tag>
+    ))}
+  </ExpandableList>
+);
+```
+
+<StoryEmbed
+  storyId="ui-components-expandablelist--documentation"
+  title="Expandable list example"
+  height={280}
+/>
+
+## Count visibility
+
+The overflow button appears on pointer hover or keyboard focus by default. Set `showOverflowCount` to `true` to keep it visible whenever items overflow. Set it to `false` only when the surrounding interface provides another way to access the complete list.
+
+## Limit inline mounting
+
+Use `maxInlineCount` when rendering a large collection or expensive item content. This caps only the compact row. The popup receives the complete list, including items beyond the cap. It does not fetch missing items or virtualize the popup.
+
+## Popup behavior
+
+Enter, Space, and pointer activation open a non-modal popup with the complete list. Escape closes it and restores focus to the overflow button. An outside interaction also closes it. The popup uses the surrounding theme and supports ordinary content, links, and buttons without turning them into menu items.
+
+Overflow-trigger and popup interactions do not activate a clickable field host. Each list owns its measurement and popup state independently. Native `div` attributes, styles, class names, and refs apply to the compact row.
+
+## Props
+
+<ExpandableListReference />

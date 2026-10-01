@@ -1,15 +1,18 @@
+import { useLingui } from '@lingui/react/macro';
 import { RecordChip } from '@/object-record/components/RecordChip';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { useFieldFocus } from '@/object-record/record-field/ui/hooks/useFieldFocus';
 import { MAX_RELATION_CHIPS_DISPLAYED_INLINE } from '@/object-record/record-field/ui/meta-types/display/constants/MaxRelationChipsDisplayedInline';
 import { useMorphRelationFromManyFieldDisplay } from '@/object-record/record-field/ui/meta-types/hooks/useMorphRelationFromManyFieldDisplay';
 
-import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
+import { ExpandableList } from 'twenty-ui/components';
 import { useContext } from 'react';
 import { type ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 export const MorphRelationOneToManyFieldDisplay = () => {
+  const { t } = useLingui();
+
   const { morphValuesWithObjectNameSingular } =
     useMorphRelationFromManyFieldDisplay();
   const { isFocused } = useFieldFocus();
@@ -41,7 +44,8 @@ export const MorphRelationOneToManyFieldDisplay = () => {
 
   return (
     <ExpandableList
-      isChipCountDisplayed={isFocused}
+      overflowLabel={t`Show all items`}
+      showOverflowCount={isFocused}
       maxInlineCount={MAX_RELATION_CHIPS_DISPLAYED_INLINE}
     >
       {flattenMorphValuesWithObjectNameSingular

@@ -7769,6 +7769,41 @@
     ]
   },
   {
+    "name": "ExpandableList",
+    "entryPoint": "twenty-ui/components",
+    "slug": "components/expandable-list",
+    "props": [
+      {
+        "name": "children",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>>[]",
+        "required": true,
+        "defaultValue": null,
+        "description": "Complete ordered list of elements, each with a stable key."
+      },
+      {
+        "name": "maxInlineCount",
+        "type": "number",
+        "required": false,
+        "defaultValue": null,
+        "description": "Maximum number of items mounted in the compact row. The popup still contains every item."
+      },
+      {
+        "name": "overflowLabel",
+        "type": "string",
+        "required": false,
+        "defaultValue": "Show all items",
+        "description": "Accessible label for the overflow button and popup. Defaults to Show all items."
+      },
+      {
+        "name": "showOverflowCount",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": null,
+        "description": "Shows the overflow count on hover and keyboard focus by default. Use true to show it whenever items overflow, or false to omit the trigger."
+      }
+    ]
+  },
+  {
     "name": "Section",
     "entryPoint": "twenty-ui/components",
     "slug": "components/section",
