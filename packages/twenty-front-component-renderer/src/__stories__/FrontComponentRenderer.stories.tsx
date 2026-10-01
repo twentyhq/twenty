@@ -3,6 +3,7 @@ import { type ComponentProps, useCallback, useState } from 'react';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 
 import { FrontComponentRenderer } from '@/host/components/FrontComponentRenderer';
+import { FRONT_COMPONENT_SOURCE_CHECKSUM_MISMATCH_ERROR_CODE } from '@/host/component-source/constants/FrontComponentSourceChecksumMismatchErrorCode';
 import checksumFixtures from '@/__stories__/example-sources-built/checksum-fixtures.json';
 import { getBuiltStoryComponentPathForRender } from '@/__stories__/utils/getBuiltStoryComponentPathForRender';
 import { getFingerprintedStoryComponentUrl } from '@/__stories__/utils/getFingerprintedStoryComponentUrl';
@@ -27,10 +28,12 @@ type ChecksumRecoveryHarnessProps = Pick<
   | 'frontComponentHostCommunicationApi'
   | 'colorScheme'
 > & {
+  initialComponentUrl: string;
   isNewerBuildKnownToHost: boolean;
 };
 
 const ChecksumRecoveryHarness = ({
+  initialComponentUrl,
   isNewerBuildKnownToHost,
   onError,
   applicationAccessToken,
@@ -38,7 +41,7 @@ const ChecksumRecoveryHarness = ({
   frontComponentHostCommunicationApi,
   colorScheme,
 }: ChecksumRecoveryHarnessProps) => {
-  const [componentUrl, setComponentUrl] = useState(STALE_COMPONENT_URL);
+  const [componentUrl, setComponentUrl] = useState(initialComponentUrl);
 
   const checkForNewerComponentSource = useCallback(async () => {
     setComponentUrl(MATCHING_COMPONENT_URL);
@@ -201,7 +204,7 @@ export const ChecksumMismatch: Story = {
     await waitFor(() => {
       expect(errorHandler).toHaveBeenCalledWith(
         expect.objectContaining({
-          code: 'FRONT_COMPONENT_SOURCE_CHECKSUM_MISMATCH',
+          code: FRONT_COMPONENT_SOURCE_CHECKSUM_MISMATCH_ERROR_CODE,
         }),
       );
     });
@@ -216,6 +219,7 @@ export const ChecksumRecovery: Story = {
     componentUrl: STALE_COMPONENT_URL,
   },
   render: ({
+    componentUrl,
     onError,
     applicationAccessToken,
     executionContext,
@@ -223,6 +227,7 @@ export const ChecksumRecovery: Story = {
     colorScheme,
   }) => (
     <ChecksumRecoveryHarness
+      initialComponentUrl={componentUrl}
       isNewerBuildKnownToHost={false}
       onError={onError}
       applicationAccessToken={applicationAccessToken}
@@ -256,6 +261,7 @@ export const OutdatedChecksumSilentRecovery: Story = {
     componentUrl: STALE_COMPONENT_URL,
   },
   render: ({
+    componentUrl,
     onError,
     applicationAccessToken,
     executionContext,
@@ -263,6 +269,7 @@ export const OutdatedChecksumSilentRecovery: Story = {
     colorScheme,
   }) => (
     <ChecksumRecoveryHarness
+      initialComponentUrl={componentUrl}
       isNewerBuildKnownToHost
       onError={onError}
       applicationAccessToken={applicationAccessToken}
