@@ -13,6 +13,7 @@ const DEFAULT_SEEDED_FEATURE_FLAGS: Partial<Record<FeatureFlagKey, boolean>> = {
   [FeatureFlagKey.IS_CONVERSATIONS_TAB_ENABLED]: true,
   [FeatureFlagKey.IS_VALIDATION_RULES_ENABLED]: true,
   [FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED]: false,
+  [FeatureFlagKey.IS_WORKFLOW_SEND_CHAT_MESSAGE_ENABLED]: true,
 };
 
 type SeedFeatureFlagsArgs = {

@@ -214,29 +214,16 @@ export class AgentChatThreadParticipantService {
     threadId,
   }: ParticipantArgs): Promise<ThreadActivityTimestamps> {
     if (!(await this.sharingService.hasInboxState(workspaceId))) {
-      const rows = await this.threadRepository.query(
-        workspaceId,
-        ({ manager, table }) =>
-          manager.query<ThreadActivityTimestamps[]>(
-            `WITH thread AS (
-               UPDATE ${table('agentChatThread')}
-               SET "updatedAt" = now()
-               WHERE id = $1
-               RETURNING NULL::timestamptz AS "lastActivityAt", "updatedAt"
-             )
-             SELECT "lastActivityAt", "updatedAt" FROM thread`,
-            [threadId],
-          ),
-      );
+      const activity = await this.touchThread(workspaceId, threadId);
 
-      if (rows.length !== 1) {
+      if (!isDefined(activity)) {
         throw new AiException(
           'Thread not found',
           AiExceptionCode.THREAD_NOT_FOUND,
         );
       }
 
-      return rows[0];
+      return activity;
     }
 
     const participantTable = getAgentChatThreadParticipantTable(workspaceId);
@@ -274,9 +261,6 @@ export class AgentChatThreadParticipantService {
     return rows[0];
   }
 
-  // Activity no member wrote, such as an agent reply saved after its stream
-  // lost the thread to a newer one. Callers check hasInboxState first, since
-  // lastActivityAt only exists once the workspace has upgraded
   async recordThreadActivity({
     workspaceId,
     threadId,
@@ -284,6 +268,10 @@ export class AgentChatThreadParticipantService {
     ParticipantArgs,
     'workspaceMemberId'
   >): Promise<ThreadActivityTimestamps | null> {
+    if (!(await this.sharingService.hasInboxState(workspaceId))) {
+      return this.touchThread(workspaceId, threadId);
+    }
+
     const rows = await this.threadRepository.query(
       workspaceId,
       ({ manager, table }) =>
@@ -293,6 +281,29 @@ export class AgentChatThreadParticipantService {
              SET "lastActivityAt" = clock_timestamp(), "updatedAt" = now()
              WHERE id = $1
              RETURNING "lastActivityAt", "updatedAt"
+           )
+           SELECT "lastActivityAt", "updatedAt" FROM thread`,
+          [threadId],
+        ),
+    );
+
+    return rows[0] ?? null;
+  }
+
+  // Before the 2.45 upgrade only updatedAt exists to order chats by
+  private async touchThread(
+    workspaceId: string,
+    threadId: string,
+  ): Promise<ThreadActivityTimestamps | null> {
+    const rows = await this.threadRepository.query(
+      workspaceId,
+      ({ manager, table }) =>
+        manager.query<ThreadActivityTimestamps[]>(
+          `WITH thread AS (
+             UPDATE ${table('agentChatThread')}
+             SET "updatedAt" = now()
+             WHERE id = $1
+             RETURNING NULL::timestamptz AS "lastActivityAt", "updatedAt"
            )
            SELECT "lastActivityAt", "updatedAt" FROM thread`,
           [threadId],

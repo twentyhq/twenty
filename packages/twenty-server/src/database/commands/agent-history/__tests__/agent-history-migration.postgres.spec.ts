@@ -4,6 +4,9 @@ import { AgentHistoryWorkspaceStorageService } from 'src/engine/metadata-modules
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { withWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
+import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
+import { AgentHistoryTransactionService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-transaction.service';
+import { AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
 import { AgentChatActorService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-actor.service';
 import { AgentTurnWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-turn.workspace-entity';
 import { AgentMessagePartWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message-part.workspace-entity';
@@ -147,6 +150,8 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
           ),
         getRepository:
           workspaceDataSource.getRepository.bind(workspaceDataSource),
+        runInWorkspaceTransaction:
+          workspaceDataSource.transaction.bind(workspaceDataSource),
       };
     };
     const orm = createOrm();
@@ -172,43 +177,60 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       }
     };
 
+    const turns = new AgentHistoryRepository<AgentTurnWorkspaceEntity>(
+      'agentTurn',
+      storage,
+      orm,
+    );
+    const messageParts =
+      new AgentHistoryRepository<AgentMessagePartWorkspaceEntity>(
+        'agentMessagePart',
+        storage,
+        orm,
+      );
+
+    const chatSharing = {
+      getThreadWithAccess: ({
+        workspaceId,
+        threadId,
+      }: {
+        workspaceId: string;
+        threadId: string;
+      }) => threads.findOne(workspaceId, { where: { id: threadId } }),
+      getAuthContext: jest.fn().mockResolvedValue({
+        userWorkspaceId: OWNER_ID,
+        workspaceMemberId: MEMBER_ID,
+      }),
+      getPermissions: jest.fn().mockResolvedValue({ canRead: true }),
+    };
+    const chatRecordEvents = {
+      emitThreadUpdated: jest.fn().mockResolvedValue(undefined),
+    };
     const createChatService = (messageRepository: typeof messages) =>
       new AgentChatService(
         threads,
-        new AgentHistoryRepository<AgentTurnWorkspaceEntity>(
-          'agentTurn',
-          storage,
-          orm,
-        ),
+        turns,
         messageRepository,
-        new AgentHistoryRepository<AgentMessagePartWorkspaceEntity>(
-          'agentMessagePart',
-          storage,
-          orm,
+        messageParts,
+        {} as never,
+        {} as never,
+        chatSharing as never,
+        chatRecordEvents as never,
+        new AgentConversationWriterService(
+          turns as never,
+          new AgentHistoryTransactionService(workspaceStorage, orm as never),
         ),
-        {} as never,
-        {} as never,
-        {
-          getThreadWithAccess: ({
-            workspaceId,
-            threadId,
-          }: {
-            workspaceId: string;
-            threadId: string;
-          }) => threads.findOne(workspaceId, { where: { id: threadId } }),
-          getAuthContext: jest.fn().mockResolvedValue({
-            userWorkspaceId: OWNER_ID,
-            workspaceMemberId: MEMBER_ID,
-          }),
-          getPermissions: jest.fn().mockResolvedValue({ canRead: true }),
-        } as never,
-        { emitThreadUpdated: jest.fn().mockResolvedValue(undefined) } as never,
-        {
-          recordMemberActivity: jest.fn().mockResolvedValue({
-            lastActivityAt: new Date(),
-            updatedAt: new Date(),
-          }),
-        } as never,
+        new AgentChatThreadService(
+          threads as never,
+          chatSharing as never,
+          chatRecordEvents as never,
+          {
+            recordMemberActivity: jest.fn().mockResolvedValue({
+              lastActivityAt: new Date(),
+              updatedAt: new Date(),
+            }),
+          } as never,
+        ),
       );
 
     const createActorService = (messageRepository: typeof messages) =>

@@ -38,6 +38,7 @@ export const aiGraphqlApiExceptionHandler = (error: Error) => {
       case AiExceptionCode.NO_FAILED_TURN_TO_RETRY:
       case AiExceptionCode.THREAD_AWAITING_WORKFLOW_INPUT:
       case AiExceptionCode.CHAT_THREAD_INBOX_STATE_UNAVAILABLE:
+      case AiExceptionCode.THREAD_AWAITING_ANSWER:
         throw new ConflictError(error);
       case AiExceptionCode.AGENT_IS_STANDARD:
       case AiExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_AGENTS:
