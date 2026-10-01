@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { getUrlHostnameOrThrow, isValidUrl } from 'twenty-shared/utils';
-import { RoundedLink } from 'twenty-ui/components';
+import { RoundedLink } from '@/ui/navigation/link/components/RoundedLink/RoundedLink';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
 
 import { TableCell } from '@/ui/layout/table/components/TableCell';

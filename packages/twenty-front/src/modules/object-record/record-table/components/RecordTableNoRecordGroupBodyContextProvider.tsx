@@ -1,12 +1,10 @@
+import { type OpenTableCellArgs } from '@/object-record/record-table/types/OpenTableCellArgs';
 import { RecordTableBodyContextProvider } from '@/object-record/record-table/contexts/RecordTableBodyContext';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useRecordTableMoveFocusedCell } from '@/object-record/record-table/hooks/useRecordTableMoveFocusedCell';
 import { useCloseRecordTableCellNoGroup } from '@/object-record/record-table/record-table-cell/hooks/internal/useCloseRecordTableCellNoGroup';
 import { useMoveHoverToCurrentCell } from '@/object-record/record-table/record-table-cell/hooks/useMoveHoverToCurrentCell';
-import {
-  type OpenTableCellArgs,
-  useOpenRecordTableCell,
-} from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCell';
+import { useOpenRecordTableCell } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCell';
 import { useTriggerCommandMenuDropdown } from '@/object-record/record-table/record-table-cell/hooks/useTriggerCommandMenuDropdown';
 import { hasUserSelectedAllRowsComponentState } from '@/object-record/record-table/record-table-row/states/hasUserSelectedAllRowsFamilyState';
 import { type MoveFocusDirection } from '@/object-record/record-table/types/MoveFocusDirection';

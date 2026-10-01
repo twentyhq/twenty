@@ -11,20 +11,34 @@
  *   npx nx generate:ui twenty-docs
  */}
 
-<ParamField body="button" type="{ title?: string | undefined; onClick?: (() =&gt; void) | undefined; hidden?: boolean | undefined; disabled?: boolean | undefined; Icon?: IconComponent | undefined; }">
-  Optional action with title, onClick, hidden, disabled, and Icon fields.
+<ParamField body="button" type="InlineBannerButtonProps">
+  Optional button or destination link. All fields are optional:
+
+  - `title` (`string`): visible action label.
+  - `onClick` (`(event: BaseUIEvent<React.MouseEvent<HTMLButtonElement>>) => void`): activation handler, including keyboard activation.
+  - `href` (`string`): destination URL; selects native link semantics.
+  - `render` (`ReactElement | ((props: HTMLProps, state: { disabled: boolean }) => ReactElement)`): custom root element or renderer. Preserve an anchor when `href` is set, or a native button otherwise. `HTMLProps` includes native element attributes and its ref.
+  - `target` (`string`): link browsing context, such as `_blank`.
+  - `rel` (`string`): link relationship, such as `noopener noreferrer`.
+  - `download` (native anchor attribute): use `true` to download the destination or a `string` to suggest a filename.
+  - `disabled` (`boolean`): prevents activation.
+  - `hidden` (`boolean`): omits the action from the banner.
+  - `aria-label` (`string`): accessible action name, needed when no visible title is supplied.
+  - `Icon` (`IconComponent`): decorative icon component displayed before the title.
+
+  Action and link fields use the corresponding [Button props](/ui/primitives/input/button). `BaseUIEvent` extends the React event with `preventBaseUIHandler()` and `baseUIHandlerPrevented`.
 </ParamField>
 
 <ParamField body="className" type="string">
   Class applied to the banner.
 </ParamField>
 
-<ParamField body="color" type="&quot;blue&quot; | &quot;danger&quot;">
+<ParamField body="color" type="&quot;blue&quot; | &quot;danger&quot;" default="blue">
   Banner palette color. An omitted color uses Banner’s default.
 </ParamField>
 
 <ParamField body="embedded" type="boolean" default="false">
-  Uses the embedded banner appearance.
+  Removes the bottom margin from standard banners. Compact banners have no bottom margin.
 </ParamField>
 
 <ParamField body="LeftIcon" type="IconComponent">
@@ -32,5 +46,9 @@
 </ParamField>
 
 <ParamField body="message" type="string" required>
-  Message, truncated with its full text available in a tooltip.
+  Message text. Standard banners truncate with a focusable tooltip; compact banners wrap.
+</ParamField>
+
+<ParamField body="variant" type="&quot;compact&quot; | &quot;standard&quot;" default="standard">
+  Standard full-width banner or compact wrapping message with a 512px maximum content width.
 </ParamField>

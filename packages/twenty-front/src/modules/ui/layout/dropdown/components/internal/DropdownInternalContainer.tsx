@@ -1,4 +1,4 @@
-import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
+import { StyledOverlayPortalLayer } from '@/ui/layout/overlay/components/StyledOverlayPortalLayer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 
 import { activeDropdownFocusIdState } from '@/ui/layout/dropdown/states/activeDropdownFocusIdState';
@@ -25,16 +25,6 @@ import { useContext, useEffect } from 'react';
 import { type Keys } from 'react-hotkeys-hook';
 import { Key } from 'ts-key-enum';
 
-export const StyledDropdownContentContainer = styled.div<{
-  isDropdownInModal?: boolean;
-}>`
-  display: flex;
-  z-index: ${({ isDropdownInModal }) =>
-    isDropdownInModal
-      ? RootStackingContextZIndices.DropdownPortalAboveModal
-      : RootStackingContextZIndices.DropdownPortalBelowModal};
-`;
-
 const StyledDropdownInsideContainer = styled.div`
   display: flex;
 
@@ -43,7 +33,7 @@ const StyledDropdownInsideContainer = styled.div`
   width: 100%;
 `;
 
-export type DropdownInternalContainerProps = {
+type DropdownInternalContainerProps = {
   dropdownId: string;
   dropdownPlacement: Placement;
   floatingUiRefs: UseFloatingReturn['refs'];
@@ -155,14 +145,14 @@ export const DropdownInternalContainer = ({
       )}
 
       <FloatingPortal>
-        <StyledDropdownContentContainer
+        <StyledOverlayPortalLayer
           data-floating-ui-viewport
           ref={floatingUiRefs.setFloating}
           style={dropdownMenuStyles}
           role="listbox"
           id={`${dropdownId}-options`}
           data-click-outside-id={excludedClickOutsideId}
-          isDropdownInModal={isDropdownInModal}
+          isAboveModal={isDropdownInModal}
         >
           <OverlayContainer>
             <StyledDropdownInsideContainer
@@ -173,7 +163,7 @@ export const DropdownInternalContainer = ({
               {dropdownComponents}
             </StyledDropdownInsideContainer>
           </OverlayContainer>
-        </StyledDropdownContentContainer>
+        </StyledOverlayPortalLayer>
       </FloatingPortal>
     </>
   );

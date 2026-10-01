@@ -46,6 +46,7 @@ const RECORD_PAGE_LAYOUT_WIDGET_TYPES = [
   WidgetType.MESSAGE_CAMPAIGN_BODY,
   WidgetType.MESSAGE_CAMPAIGN_DETAILS,
   WidgetType.CHAT_THREADS,
+  WidgetType.CHAT,
 ];
 
 const WIDGET_TYPE_TO_CONFIGURATION_TYPE: Partial<
@@ -76,6 +77,7 @@ const WIDGET_TYPE_TO_CONFIGURATION_TYPE: Partial<
   [WidgetType.MESSAGE_CAMPAIGN_DETAILS]:
     WidgetConfigurationType.MESSAGE_CAMPAIGN_DETAILS,
   [WidgetType.CHAT_THREADS]: WidgetConfigurationType.CHAT_THREADS,
+  [WidgetType.CHAT]: WidgetConfigurationType.CHAT,
 };
 
 const RECORD_PAGE_FIELDS_VIEW_NAME_BY_OBJECT: Partial<

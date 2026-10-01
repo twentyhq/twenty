@@ -1,70 +1,61 @@
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
-import { act, render, screen } from '@testing-library/react';
-import { Provider as JotaiProvider } from 'jotai';
-import { type ReactNode } from 'react';
-import { MemoryRouter } from 'react-router-dom';
-import { SOURCE_LOCALE } from 'twenty-shared/translations';
-
-import { AiChatPageHeader } from '@/ai/components/AiChatPageHeader';
-import { AGENT_CHAT_NEW_THREAD_DRAFT_KEY } from '@/ai/states/agentChatDraftsByThreadIdState';
+import { render, screen } from '@testing-library/react';
+import { Provider } from 'jotai';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
+import { agentChatThreadListState } from '@/ai/states/agentChatThreadListState';
+import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import {
   jotaiStore,
   resetJotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
+import { type ReactNode } from 'react';
+import { SOURCE_LOCALE } from 'twenty-shared/translations';
+
+import { AiChatPageHeader } from '@/ai/components/AiChatPageHeader';
 import { messages } from '~/locales/generated/en';
 
 i18n.load({ [SOURCE_LOCALE]: messages });
 i18n.activate(SOURCE_LOCALE);
 
-jest.mock('@/ai/components/AiChatPageThreadHeader', () => ({
-  AiChatPageThreadHeader: ({ threadId }: { threadId: string }) => (
-    <div>Chat record header {threadId}</div>
-  ),
-}));
 jest.mock('@/ui/layout/page/components/PageCardHeader', () => ({
   PageCardHeader: ({ title }: { title: ReactNode }) => <div>{title}</div>,
 }));
 
-const THREAD_ID = '6f1c2b0e-7a4d-4e8b-9c3f-2d5a1b8e7c60';
-const OTHER_THREAD_ID = '0b9e8d7c-6a5f-4e3d-8c2b-1a0f9e8d7c6b';
-
-const Wrapper = ({ children }: { children: ReactNode }) => (
-  <JotaiProvider store={jotaiStore}>
-    <I18nProvider i18n={i18n}>
-      <MemoryRouter>{children}</MemoryRouter>
-    </I18nProvider>
-  </JotaiProvider>
-);
-
 describe('AiChatPageHeader', () => {
-  beforeEach(() => {
-    resetJotaiStore();
+  beforeEach(() => resetJotaiStore());
+
+  it('keeps the saved conversation title on the default chat surface', () => {
+    jotaiStore.set(currentAiChatThreadState.atom, 'thread-id');
+    jotaiStore.set(agentChatThreadListState.atom, {
+      threadIds: ['thread-id'],
+      hasNextPage: false,
+      endCursor: null,
+    });
+    jotaiStore.set(recordStoreFamilyState.atomFamily('thread-id'), {
+      id: 'thread-id',
+      __typename: 'AgentChatThread',
+      title: 'Existing conversation',
+    });
+
+    render(
+      <Provider store={jotaiStore}>
+        <I18nProvider i18n={i18n}>
+          <AiChatPageHeader />
+        </I18nProvider>
+      </Provider>,
+    );
+
+    expect(screen.getByText('Existing conversation')).toBeVisible();
   });
 
-  it.each([null, AGENT_CHAT_NEW_THREAD_DRAFT_KEY])(
-    'titles the page New chat without a chat record (%s)',
-    (threadId) => {
-      jotaiStore.set(currentAiChatThreadState.atom, threadId);
-      render(<AiChatPageHeader />, { wrapper: Wrapper });
+  it('titles the page of a chat that has no record yet', () => {
+    render(
+      <I18nProvider i18n={i18n}>
+        <AiChatPageHeader />
+      </I18nProvider>,
+    );
 
-      expect(screen.getByText('New chat')).toBeVisible();
-      expect(screen.queryByText(/Chat record header/)).toBeNull();
-    },
-  );
-
-  it('shows the record header of the current chat and follows chat switches', () => {
-    jotaiStore.set(currentAiChatThreadState.atom, THREAD_ID);
-    render(<AiChatPageHeader />, { wrapper: Wrapper });
-
-    expect(screen.getByText(`Chat record header ${THREAD_ID}`)).toBeVisible();
-    expect(screen.queryByText('New chat')).toBeNull();
-
-    act(() => jotaiStore.set(currentAiChatThreadState.atom, OTHER_THREAD_ID));
-
-    expect(
-      screen.getByText(`Chat record header ${OTHER_THREAD_ID}`),
-    ).toBeVisible();
+    expect(screen.getByText('New chat')).toBeVisible();
   });
 });

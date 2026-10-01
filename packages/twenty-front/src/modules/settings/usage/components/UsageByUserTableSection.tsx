@@ -94,7 +94,7 @@ export const UsageByUserTableSection = ({
         <SearchInput
           placeholder={t`Search for a user...`}
           value={searchTerm}
-          onChange={setSearchTerm}
+          onValueChange={setSearchTerm}
         />
       </StyledSearchInputContainer>
       <Table>
