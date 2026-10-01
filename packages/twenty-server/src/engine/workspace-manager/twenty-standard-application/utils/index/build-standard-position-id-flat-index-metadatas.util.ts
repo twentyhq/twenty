@@ -1,3 +1,4 @@
+import groupBy from 'lodash.groupby';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
@@ -20,9 +21,12 @@ export const buildStandardPositionIdFlatIndexMetadatas = ({
   CreateStandardIndexArgs,
   'context' | 'objectName'
 >): FlatIndexMetadata[] => {
-  const universalFlatFieldMetadatas = Object.values(
-    flatFieldMetadataMaps.byUniversalIdentifier,
-  ).filter(isDefined);
+  const universalFlatFieldMetadatasByObject = groupBy(
+    Object.values(flatFieldMetadataMaps.byUniversalIdentifier).filter(
+      isDefined,
+    ),
+    (flatFieldMetadata) => flatFieldMetadata.objectMetadataUniversalIdentifier,
+  );
 
   return (Object.keys(STANDARD_OBJECTS) as AllStandardObjectName[]).flatMap(
     (objectName) => {
@@ -37,11 +41,10 @@ export const buildStandardPositionIdFlatIndexMetadatas = ({
 
       const universalFlatIndexMetadata = buildPositionIdIndexForObject({
         flatObjectMetadata,
-        objectFlatFieldMetadatas: universalFlatFieldMetadatas.filter(
-          (flatFieldMetadata) =>
-            flatFieldMetadata.objectMetadataUniversalIdentifier ===
-            flatObjectMetadata.universalIdentifier,
-        ),
+        objectFlatFieldMetadatas:
+          universalFlatFieldMetadatasByObject[
+            flatObjectMetadata.universalIdentifier
+          ] ?? [],
         now,
       });
 
