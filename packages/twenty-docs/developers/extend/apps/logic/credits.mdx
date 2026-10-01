@@ -126,7 +126,7 @@ Notes:
 
 ## Checking before you spend
 
-A workspace can run out of credits. When that happens your function is refused before your code starts, and the platform's own work stops too: `runAgent` returns an error instead of running, and the other AI entry points refuse outright. `sendInboxMessage` runs no model and is not charged, so it still delivers; the member's reply is charged like any chat turn. Uninstall and disconnect hooks are the exception and always run, so an app can still be removed cleanly. An execution that does get through can still fail late, on a platform call it did not write, if the workspace runs out mid-run.
+A workspace can run out of credits. When that happens your function is refused before your code starts, and the platform's own work stops too: `runAgent` returns an error instead of running, and the other AI entry points refuse outright. `sendInboxMessage` runs no model and adds no AI charge of its own, though the function calling it is refused like any other; the member's reply is charged like any chat turn. Uninstall and disconnect hooks are the exception and always run, so an app can still be removed cleanly. An execution that does get through can still fail late, on a platform call it did not write, if the workspace runs out mid-run.
 
 Ask first:
 
