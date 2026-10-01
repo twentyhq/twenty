@@ -2,7 +2,7 @@ import { getAppProviderByClassName } from 'test/integration/utils/get-app-provid
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 
 import { type OpenShareRecordToEveryObjectCommand } from 'src/database/commands/upgrade-version-command/2-45/2-45-workspace-command-1790876759146-open-share-record-to-every-object.command';
-import { ALL_OBJECTS_SHARE_RECORD_EXPRESSION } from 'src/database/commands/upgrade-version-command/2-45/utils/build-share-record-availability-update.util';
+import { CHAT_OR_RECORD_SHARING_FLAG_EXPRESSION } from 'src/database/commands/upgrade-version-command/2-45/utils/build-chat-share-record-availability-updates.util';
 import { type UpgradeCommandRegistryService } from 'src/engine/core-modules/upgrade/services/upgrade-command-registry.service';
 import { CommandMenuItemEntity } from 'src/engine/metadata-modules/command-menu-item/entities/command-menu-item.entity';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -13,6 +13,8 @@ import { STANDARD_COMMAND_MENU_ITEMS } from 'src/engine/workspace-manager/twenty
 const workspaceId = SEED_APPLE_WORKSPACE_ID;
 const { universalIdentifier: SHARE_RECORD_UNIVERSAL_IDENTIFIER } =
   STANDARD_COMMAND_MENU_ITEMS.shareRecord;
+const { universalIdentifier: SHARE_ANY_RECORD_UNIVERSAL_IDENTIFIER } =
+  STANDARD_COMMAND_MENU_ITEMS.shareAnyRecord;
 
 describe('2-45 workspace command 1790876759146 - OpenShareRecordToEveryObjectCommand (integration)', () => {
   let command: OpenShareRecordToEveryObjectCommand;
@@ -33,15 +35,26 @@ describe('2-45 workspace command 1790876759146 - OpenShareRecordToEveryObjectCom
       buildSystemAuthContext(workspaceId),
     );
 
-  const findShareRecord = () =>
-    getCoreRepository<CommandMenuItemEntity>(
+  const findShareItems = async () => {
+    const repository = getCoreRepository<CommandMenuItemEntity>(
       CommandMenuItemEntity,
-    ).findOneOrFail({
-      where: {
-        universalIdentifier: SHARE_RECORD_UNIVERSAL_IDENTIFIER,
-        workspaceId,
-      },
-    });
+    );
+
+    return {
+      shareRecord: await repository.findOneOrFail({
+        where: {
+          universalIdentifier: SHARE_RECORD_UNIVERSAL_IDENTIFIER,
+          workspaceId,
+        },
+      }),
+      shareAnyRecord: await repository.findOne({
+        where: {
+          universalIdentifier: SHARE_ANY_RECORD_UNIVERSAL_IDENTIFIER,
+          workspaceId,
+        },
+      }),
+    };
+  };
 
   beforeAll(() => {
     command = getAppProviderByClassName<OpenShareRecordToEveryObjectCommand>(
@@ -68,33 +81,39 @@ describe('2-45 workspace command 1790876759146 - OpenShareRecordToEveryObjectCom
     );
   });
 
-  it('scopes the Share command back to conversations on the way down', async () => {
+  it('removes the unpinned item and narrows the chat item on the way down', async () => {
     await run('down');
 
-    const shareRecord = await findShareRecord();
+    const { shareRecord, shareAnyRecord } = await findShareItems();
 
-    expect(shareRecord.availabilityObjectMetadataId).not.toBeNull();
+    expect(shareAnyRecord).toBeNull();
     expect(shareRecord.conditionalAvailabilityExpression).not.toBe(
-      ALL_OBJECTS_SHARE_RECORD_EXPRESSION,
+      CHAT_OR_RECORD_SHARING_FLAG_EXPRESSION,
     );
+    expect(shareRecord.isPinned).toBe(true);
   });
 
-  it('keeps the conversation-only item on a dry run', async () => {
+  it('changes nothing on a dry run', async () => {
     await run('down');
     await run('up', { dryRun: true });
 
-    expect(
-      (await findShareRecord()).availabilityObjectMetadataId,
-    ).not.toBeNull();
+    expect((await findShareItems()).shareAnyRecord).toBeNull();
   });
 
-  it('offers the Share command on every object on the way up', async () => {
+  it('adds the unpinned item for every object and keeps the chat item pinned on the way up', async () => {
     await run('down');
     await run('up');
 
-    expect(await findShareRecord()).toMatchObject({
+    const { shareRecord, shareAnyRecord } = await findShareItems();
+
+    expect(shareAnyRecord).toMatchObject({
+      isPinned: false,
       availabilityObjectMetadataId: null,
-      conditionalAvailabilityExpression: ALL_OBJECTS_SHARE_RECORD_EXPRESSION,
     });
+    expect(shareRecord).toMatchObject({
+      isPinned: true,
+      conditionalAvailabilityExpression: CHAT_OR_RECORD_SHARING_FLAG_EXPRESSION,
+    });
+    expect(shareRecord.availabilityObjectMetadataId).not.toBeNull();
   });
 });

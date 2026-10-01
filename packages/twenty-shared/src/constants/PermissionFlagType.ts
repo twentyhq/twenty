@@ -13,7 +13,6 @@ export enum PermissionFlagType {
   LAYOUTS = 'LAYOUTS',
   BILLING = 'BILLING',
   AI_SETTINGS = 'AI_SETTINGS',
-  ACCESS_ALL_RECORDS = 'ACCESS_ALL_RECORDS',
 
   AI = 'AI',
   VIEWS = 'VIEWS',

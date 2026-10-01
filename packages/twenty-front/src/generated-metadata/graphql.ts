@@ -5042,7 +5042,6 @@ export type PermissionFlag = {
 };
 
 export enum PermissionFlagType {
-  ACCESS_ALL_RECORDS = 'ACCESS_ALL_RECORDS',
   AI = 'AI',
   AI_SETTINGS = 'AI_SETTINGS',
   API_KEYS_AND_WEBHOOKS = 'API_KEYS_AND_WEBHOOKS',
