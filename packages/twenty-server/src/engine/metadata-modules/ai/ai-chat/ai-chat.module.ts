@@ -39,6 +39,7 @@ import { AgentChatResolver } from './resolvers/agent-chat.resolver';
 import { AgentChatSubscriptionResolver } from './resolvers/agent-chat-subscription.resolver';
 import { WorkspaceSetupChatResolver } from './resolvers/workspace-setup-chat.resolver';
 import { WorkspaceSetupChatService } from './services/workspace-setup-chat.service';
+import { WorkspaceSetupSnapshotService } from 'src/engine/metadata-modules/ai/ai-chat/services/workspace-setup-snapshot.service';
 import { AgentChatCancelSubscriberService } from './services/agent-chat-cancel-subscriber.service';
 import { AgentChatStreamingService } from './services/agent-chat-streaming.service';
 import { AgentChatService } from './services/agent-chat.service';
@@ -94,6 +95,7 @@ import { SystemPromptBuilderService } from './services/system-prompt-builder.ser
     AgentChatStreamingService,
     AgentChatTurnPreflightService,
     WorkspaceSetupChatService,
+    WorkspaceSetupSnapshotService,
     AgentTitleGenerationService,
     ChatExecutionService,
     MessagePruningService,

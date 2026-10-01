@@ -19,8 +19,11 @@ import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/a
 import { WorkspaceSetupChatOutcome } from 'src/engine/metadata-modules/ai/ai-chat/enums/workspace-setup-chat-outcome.enum';
 import { AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-streaming.service';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
+import { WorkspaceSetupSnapshotService } from 'src/engine/metadata-modules/ai/ai-chat/services/workspace-setup-snapshot.service';
+import { type WorkspaceSetupSnapshot } from 'src/engine/metadata-modules/ai/ai-chat/types/workspace-setup-snapshot.type';
 import { buildWorkspaceSetupChatThreadId } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-workspace-setup-chat-thread-id.util';
 import { buildWorkspaceSetupKickoffMessageText } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-workspace-setup-kickoff-message-text.util';
+import { getWorkspaceSetupPromptVariant } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-workspace-setup-prompt-variant.util';
 import { tagAiChatStreamScope } from 'src/engine/metadata-modules/ai/ai-chat/utils/tag-ai-chat-stream-scope.util';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
@@ -55,6 +58,7 @@ export class WorkspaceSetupChatService {
     private readonly agentChatService: AgentChatService,
     private readonly agentChatStreamingService: AgentChatStreamingService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
+    private readonly workspaceSetupSnapshotService: WorkspaceSetupSnapshotService,
   ) {}
 
   async startWorkspaceSetupChat({
@@ -153,7 +157,15 @@ export class WorkspaceSetupChatService {
       return { outcome: WorkspaceSetupChatOutcome.UNAVAILABLE, thread: null };
     }
 
-    const locale = await localePromise;
+    const [locale, workspaceSnapshot] = await Promise.all([
+      localePromise,
+      getWorkspaceSetupPromptVariant(workspace.id) === 'alternative'
+        ? this.findWorkspaceSnapshot({
+            workspaceId: workspace.id,
+            userWorkspaceId,
+          })
+        : null,
+    ]);
 
     thread ??= await this.createThreadWithDeterministicId({
       threadId,
@@ -176,6 +188,7 @@ export class WorkspaceSetupChatService {
             workspaceSubdomain: workspace.subdomain,
             userEmail,
           },
+          workspaceSnapshot,
           locale,
         }),
         modelId: AUTO_SELECT_MODEL_ID_BY_TIER.fast,
@@ -193,6 +206,29 @@ export class WorkspaceSetupChatService {
     });
 
     return { outcome: WorkspaceSetupChatOutcome.STARTED, thread };
+  }
+
+  private async findWorkspaceSnapshot({
+    workspaceId,
+    userWorkspaceId,
+  }: {
+    workspaceId: string;
+    userWorkspaceId: string;
+  }): Promise<WorkspaceSetupSnapshot | null> {
+    try {
+      return await this.workspaceSetupSnapshotService.getSnapshot({
+        workspaceId,
+        userWorkspaceId,
+      });
+    } catch (error) {
+      this.logger.warn(
+        `Failed to read the workspace setup snapshot for workspace ${workspaceId}: ${
+          error instanceof Error ? error.message : String(error)
+        }`,
+      );
+
+      return null;
+    }
   }
 
   private async createThreadWithDeterministicId({

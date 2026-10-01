@@ -1,5 +1,6 @@
 import { injectChatMessageSenders } from 'src/engine/metadata-modules/ai/ai-chat/utils/inject-chat-message-senders.util';
 import { AgentChatActorService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-actor.service';
+import { WorkspaceSetupSnapshotService } from 'src/engine/metadata-modules/ai/ai-chat/services/workspace-setup-snapshot.service';
 import { type ToolContext } from 'src/engine/core-modules/tool-provider/types/tool-context.type';
 import { Injectable, Logger } from '@nestjs/common';
 
@@ -86,8 +87,13 @@ import {
   COMPLETE_WORKSPACE_SETUP_TOOL_NAME,
   createCompleteWorkspaceSetupTool,
 } from 'src/engine/metadata-modules/ai/ai-chat/tools/complete-workspace-setup.tool';
+import {
+  GET_WORKSPACE_SNAPSHOT_TOOL_NAME,
+  createGetWorkspaceSnapshotTool,
+} from 'src/engine/metadata-modules/ai/ai-chat/tools/get-workspace-snapshot.tool';
 import { type ExtractedFile } from 'src/engine/metadata-modules/ai/ai-chat/types/extracted-file.type';
 import { buildWorkspaceSetupChatThreadId } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-workspace-setup-chat-thread-id.util';
+import { getWorkspaceSetupPromptVariant } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-workspace-setup-prompt-variant.util';
 import { buildFullSystemPrompt } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-full-system-prompt.util';
 import { hasNoAssistantMessage } from 'src/engine/metadata-modules/ai/ai-chat/utils/has-no-assistant-message.util';
 import { hasSucceededWorkspaceSetupCompletion } from 'src/engine/metadata-modules/ai/ai-chat/utils/has-succeeded-workspace-setup-completion.util';
@@ -158,6 +164,7 @@ export class ChatExecutionService {
     private readonly chatActorService: AgentChatActorService,
     private readonly agentChatThreadTargetService: AgentChatThreadTargetService,
     private readonly featureFlagService: FeatureFlagService,
+    private readonly workspaceSetupSnapshotService: WorkspaceSetupSnapshotService,
   ) {}
 
   async streamChat({
@@ -295,6 +302,10 @@ export class ChatExecutionService {
     const isWorkspaceSetupKickoffTurn =
       isWorkspaceSetupThread && hasNoAssistantMessage(messages);
 
+    const canReadWorkspaceSnapshot =
+      isWorkspaceSetupThread &&
+      getWorkspaceSetupPromptVariant(workspace.id) === 'alternative';
+
     tagAiChatExecutionScope({
       isWorkspaceSetupThread,
       modelId: registeredModel.modelId,
@@ -322,6 +333,7 @@ export class ChatExecutionService {
       REQUEST_FORM_TOOL_NAME,
       ...(canProposeEmail ? [PROPOSE_EMAIL_TOOL_NAME] : []),
       ...(isWorkspaceSetupThread ? [COMPLETE_WORKSPACE_SETUP_TOOL_NAME] : []),
+      ...(canReadWorkspaceSnapshot ? [GET_WORKSPACE_SNAPSHOT_TOOL_NAME] : []),
       ...(canAttachConversationToRecords
         ? [ATTACH_CONVERSATION_TO_RECORD_TOOL_NAME]
         : []),
@@ -345,6 +357,17 @@ export class ChatExecutionService {
         ? {
             [COMPLETE_WORKSPACE_SETUP_TOOL_NAME]:
               createCompleteWorkspaceSetupTool(),
+          }
+        : {}),
+      ...(canReadWorkspaceSnapshot
+        ? {
+            [GET_WORKSPACE_SNAPSHOT_TOOL_NAME]: createGetWorkspaceSnapshotTool(
+              () =>
+                this.workspaceSetupSnapshotService.getSnapshot({
+                  workspaceId: workspace.id,
+                  userWorkspaceId,
+                }),
+            ),
           }
         : {}),
       ...(canAttachConversationToRecords

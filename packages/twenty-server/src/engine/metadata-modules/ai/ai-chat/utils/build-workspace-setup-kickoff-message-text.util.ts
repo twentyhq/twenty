@@ -4,10 +4,12 @@ import {
   type WorkspacePersonEnrichment,
 } from 'twenty-shared/workspace';
 
+import { type WorkspaceSetupSnapshot } from 'src/engine/metadata-modules/ai/ai-chat/types/workspace-setup-snapshot.type';
 import { type WorkspaceSetupWorkspaceContext } from 'src/engine/metadata-modules/ai/ai-chat/types/workspace-setup-workspace-context.type';
 import { buildCompanyContextMessageText } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-company-context-message-text.util';
 import { buildPersonContextMessageText } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-person-context-message-text.util';
 import { buildWorkspaceContextMessageText } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-workspace-context-message-text.util';
+import { buildWorkspaceSnapshotMessageText } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-workspace-snapshot-message-text.util';
 import { getEnglishLanguageNameFromLocale } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-english-language-name-from-locale.util';
 
 const NO_COMPANY_CONTEXT_LINE =
@@ -20,11 +22,13 @@ export const buildWorkspaceSetupKickoffMessageText = ({
   companyEnrichment,
   personEnrichment,
   workspaceContext,
+  workspaceSnapshot = null,
   locale,
 }: {
   companyEnrichment: WorkspaceCompanyEnrichment | null;
   personEnrichment: WorkspacePersonEnrichment | null;
   workspaceContext: WorkspaceSetupWorkspaceContext;
+  workspaceSnapshot?: WorkspaceSetupSnapshot | null;
   locale: string;
 }): string => {
   const companyContextSection = isDefined(companyEnrichment)
@@ -35,8 +39,11 @@ export const buildWorkspaceSetupKickoffMessageText = ({
     ? buildPersonContextMessageText(personEnrichment)
     : NO_PERSON_CONTEXT_LINE;
 
-  const workspaceContextSection =
-    buildWorkspaceContextMessageText(workspaceContext);
+  const workspaceContextSection = isDefined(workspaceSnapshot)
+    ? `${buildWorkspaceContextMessageText(workspaceContext)}
+
+${buildWorkspaceSnapshotMessageText(workspaceSnapshot)}`
+    : buildWorkspaceContextMessageText(workspaceContext);
 
   const userLanguageName = getEnglishLanguageNameFromLocale(locale);
 
