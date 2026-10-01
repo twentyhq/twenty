@@ -9,6 +9,7 @@ import { TOAST_PROVIDER_PROP_DESCRIPTIONS } from './toastProviderPropDescription
 import { TOASTER_PROP_DESCRIPTIONS } from './toasterPropDescriptions';
 import { RADIO_PROP_DESCRIPTIONS } from './radioPropDescriptions';
 import { SEARCH_INPUT_PROP_DESCRIPTIONS } from './searchInputPropDescriptions';
+import { NUMBER_INPUT_PROP_DESCRIPTIONS } from './numberInputPropDescriptions';
 import { ANIMATED_ICON_CROSSFADE_PROP_DESCRIPTIONS } from './animatedIconCrossfadePropDescriptions';
 import { MENU_ITEM_PROP_DESCRIPTIONS } from './menuItemPropDescriptions';
 import { MENU_ITEM_AVATAR_PROP_DESCRIPTIONS } from './menuItemAvatarPropDescriptions';
@@ -210,6 +211,19 @@ export const DOCUMENTED_COMPONENTS = [
     source: 'primitives/input/InputGroup/InputGroup.tsx',
     entryPoint: 'twenty-ui/primitives/input',
     slug: 'input/input-group',
+  },
+  {
+    name: 'NumberInput',
+    source: 'primitives/input/NumberInput/NumberInput.tsx',
+    entryPoint: 'twenty-ui/primitives/input',
+    slug: 'input/number-input',
+    propDescriptions: NUMBER_INPUT_PROP_DESCRIPTIONS,
+    propDefaults: {
+      step: '1',
+      showButtons: 'true',
+      decrementLabel: 'Decrease value',
+      incrementLabel: 'Increase value',
+    },
   },
   {
     name: 'Textarea',

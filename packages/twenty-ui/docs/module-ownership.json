@@ -19,6 +19,7 @@
     "ListItem",
     "Loader",
     "Menu",
+    "NumberInput",
     "OverflowingTextWithTooltip",
     "Pill",
     "Popover",

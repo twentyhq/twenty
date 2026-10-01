@@ -1,0 +1,136 @@
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { createStore, Provider as JotaiProvider } from 'jotai';
+import { useState } from 'react';
+
+import { SettingsOptionCardContentCounter } from '@/settings/components/SettingsOptions/SettingsOptionCardContentCounter';
+import { focusStackState } from '@/ui/utilities/focus/states/focusStackState';
+import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
+
+const RetentionCounter = ({
+  onChange,
+}: {
+  onChange: (value: number) => void;
+}) => {
+  const [value, setValue] = useState(90);
+
+  return (
+    <SettingsOptionCardContentCounter
+      title="Log retention"
+      description="Number of days to retain audit logs"
+      value={value}
+      onChange={(nextValue) => {
+        onChange(nextValue);
+        setValue(nextValue);
+      }}
+      minValue={30}
+      maxValue={1095}
+      showButtons={false}
+    />
+  );
+};
+
+it('associates settings copy and preserves the minimum when clearing once', async () => {
+  const onChange = jest.fn();
+  const user = userEvent.setup();
+
+  render(
+    <JotaiProvider store={createStore()}>
+      <RetentionCounter onChange={onChange} />
+    </JotaiProvider>,
+  );
+
+  const input = screen.getByRole('textbox', { name: 'Log retention' });
+
+  expect(input).toHaveAccessibleDescription(
+    'Number of days to retain audit logs',
+  );
+
+  await user.clear(input);
+  await user.tab();
+
+  expect(onChange).toHaveBeenCalledTimes(1);
+  expect(onChange).toHaveBeenCalledWith(30);
+  expect(input).toHaveValue('30');
+});
+
+it('restores an already saved minimum without persisting another change', async () => {
+  const onChange = jest.fn();
+  const user = userEvent.setup();
+
+  render(
+    <JotaiProvider store={createStore()}>
+      <SettingsOptionCardContentCounter
+        title="Log retention"
+        value={30}
+        onChange={onChange}
+        minValue={30}
+        maxValue={1095}
+        showButtons={false}
+      />
+    </JotaiProvider>,
+  );
+
+  const input = screen.getByRole('textbox', { name: 'Log retention' });
+
+  await user.clear(input);
+  await user.tab();
+
+  expect(input).toHaveValue('30');
+  expect(onChange).not.toHaveBeenCalled();
+});
+
+it('isolates input focus and restores global hotkeys when Escape blurs it', async () => {
+  const store = createStore();
+  const onChange = jest.fn();
+  const user = userEvent.setup();
+
+  render(
+    <JotaiProvider store={store}>
+      <SettingsOptionCardContentCounter
+        title="Timeout"
+        value={45}
+        onChange={onChange}
+        minValue={1}
+        maxValue={900}
+        showButtons={false}
+      />
+      <SettingsOptionCardContentCounter
+        title="Maximum values"
+        value={3}
+        onChange={onChange}
+        minValue={1}
+        showButtons={false}
+      />
+    </JotaiProvider>,
+  );
+
+  const timeoutInput = screen.getByRole('textbox', { name: 'Timeout' });
+  const maximumValuesInput = screen.getByRole('textbox', {
+    name: 'Maximum values',
+  });
+
+  await user.click(timeoutInput);
+
+  const timeoutFocusItem = store.get(focusStackState.atom).at(-1);
+
+  expect(timeoutFocusItem).toMatchObject({
+    componentInstance: { componentType: FocusComponentType.TEXT_INPUT },
+    globalHotkeysConfig: {
+      enableGlobalHotkeysConflictingWithKeyboard: false,
+    },
+  });
+
+  await user.click(maximumValuesInput);
+
+  expect(store.get(focusStackState.atom)).toHaveLength(1);
+  expect(store.get(focusStackState.atom).at(-1)?.focusId).not.toBe(
+    timeoutFocusItem?.focusId,
+  );
+
+  await user.keyboard('{Escape}');
+
+  expect(maximumValuesInput).not.toHaveFocus();
+  expect(store.get(focusStackState.atom)).toHaveLength(0);
+  expect(onChange).not.toHaveBeenCalled();
+});

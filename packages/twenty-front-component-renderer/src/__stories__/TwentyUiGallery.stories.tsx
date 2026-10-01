@@ -2,6 +2,8 @@ import { jsonTreeTest } from '@/__stories__/twenty-ui-gallery/utils/jsonTreeTest
 import { inlineBannerSandboxTest } from '@/__stories__/twenty-ui-gallery/utils/inlineBannerSandboxTest';
 import { themeTokenTest } from '@/__stories__/twenty-ui-gallery/utils/themeTokenTest';
 import { inputTest } from '@/__stories__/twenty-ui-gallery/utils/inputTest';
+import { numberInputTest } from '@/__stories__/twenty-ui-gallery/utils/numberInputTest';
+import { numberInputSandboxFailureTest } from '@/__stories__/twenty-ui-gallery/utils/numberInputSandboxFailureTest';
 import { settingsRowTest } from '@/__stories__/twenty-ui-gallery/utils/settingsRowTest';
 import { resizeHandleTest } from '@/__stories__/twenty-ui-gallery/utils/resizeHandleTest';
 import { createListItemSandboxFailureTest } from '@/__stories__/twenty-ui-gallery/utils/createListItemSandboxFailureTest';
@@ -110,6 +112,30 @@ export const InputPreact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-input-gallery',
   runtime: 'preact',
   play: inputTest,
+});
+
+export const NumberInputReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-number-input',
+  runtime: 'react',
+  play: numberInputTest,
+});
+
+export const NumberInputPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-number-input',
+  runtime: 'preact',
+  play: numberInputTest,
+});
+
+export const NumberInputInteractionGapsReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-number-input',
+  runtime: 'react',
+  play: numberInputSandboxFailureTest,
+});
+
+export const NumberInputInteractionGapsPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-number-input',
+  runtime: 'preact',
+  play: numberInputSandboxFailureTest,
 });
 
 export const JsonVisualizerReact: Story = createGalleryStory({

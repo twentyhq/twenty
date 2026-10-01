@@ -1,0 +1,71 @@
+---
+title: NumberInput
+description: Edit a number with optional bounds and increment or decrement buttons.
+---
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import NumberInputReference from '/snippets/ui/generated/input/number-input.mdx';
+
+`NumberInput` combines a compact numeric text field with decrement and increment buttons. It owns numeric editing, bounds, and step interactions. Your application chooses the limits and handles persistence.
+
+<StoryEmbed
+  storyId="ui-input-numberinput--default"
+  title="NumberInput example"
+  height={180}
+/>
+
+## Controlled value
+
+Pass a number or `null` through `value` and update it in `onValueChange`. The callback receives the next numeric value and event details. Use `defaultValue` instead when the field should own its value.
+
+```tsx
+import { useState } from 'react';
+import { Field, NumberInput } from 'twenty-ui/primitives/input';
+
+export const QuantityInput = () => {
+  const [quantity, setQuantity] = useState<number | null>(3);
+
+  return (
+    <Field.Root>
+      <Field.Label>Quantity</Field.Label>
+      <NumberInput
+        name="quantity"
+        value={quantity}
+        onValueChange={setQuantity}
+        min={0}
+        max={10}
+        step={1}
+      />
+      <Field.Description>Choose up to ten items.</Field.Description>
+    </Field.Root>
+  );
+};
+```
+
+Clearing the field reports `null`. Incomplete text such as `-` or `+` remains editable without reporting an invalid number until it is replaced or stepped. Parseable numeric edits report the bounded value; the displayed draft is normalized on blur. Receiving the same numeric value again does not call `onValueChange` again.
+
+## Bounds and interaction
+
+`min` and `max` are inclusive. Increment and decrement buttons stop at the matching bound. Arrow Up and Arrow Down adjust the focused input by `step`, which defaults to `1`. Home and End select the corresponding bound when provided. The same step applies when Shift or Alt is held. Displayed values support up to 15 fraction digits; use a positive step within that precision for decimal adjustments.
+
+`step` controls adjustments; it does not round typed values to a step. Setting both `min` and `step` also enables native step validation. Set `showButtons={false}` for text editing with the same keyboard behavior.
+
+Each button has a default accessible name. Use `decrementLabel` and `incrementLabel` to provide contextual or translated names. Give the input a visible `Field.Label`, `aria-label`, or `aria-labelledby`.
+
+## Forms and focus
+
+Use `name` to include the numeric value in a form. `form` associates it with a form elsewhere in the document. The adjustment buttons use `type="button"`, so adjusting a value does not submit the form. `required` participates in native validation.
+
+Use a controlled `value` when your application needs to reset the field. A native form reset does not reset the numeric state.
+
+`disabled` prevents changes and excludes the value from form submission. `readOnly` prevents changes while keeping the input focusable and its value available to the form.
+
+Native input attributes and handlers, `className`, `style`, and `ref` apply to the visible input. For example, call `ref.current?.focus()` to focus the field. Combine the input with `Field.Description` and `Field.Error` for guidance and validation messages.
+
+## Front component renderer
+
+The React and Preact renderer sandboxes support keyboard adjustments, bounds, and form values. Pointer stepping and text editing are currently blocked by missing input selection and native event support in the renderer. These limitations do not affect normal React rendering.
+
+## Props
+
+<NumberInputReference />

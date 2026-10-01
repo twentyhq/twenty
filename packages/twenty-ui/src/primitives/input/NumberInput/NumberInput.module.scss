@@ -1,0 +1,27 @@
+.root {
+  align-items: center;
+  display: inline-flex;
+  gap: var(--t-spacing-1);
+}
+
+.input {
+  box-sizing: border-box;
+  font-weight: var(--t-font-weight-medium);
+  inline-size: var(--t-spacing-16);
+  text-align: center;
+}
+
+.button {
+  @include square-button;
+
+  --tw-button-size: var(--t-spacing-6);
+}
+
+.icon {
+  display: flex;
+
+  > svg {
+    block-size: calc(var(--t-icon-size-md) * 1px);
+    inline-size: calc(var(--t-icon-size-md) * 1px);
+  }
+}

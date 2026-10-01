@@ -7,6 +7,7 @@ import {
   StyledSettingsCardTitle,
 } from '@/settings/components/SettingsOptions/SettingsCardContentBase';
 import { SettingsOptionIconCustomizer } from '@/settings/components/SettingsOptions/SettingsOptionIconCustomizer';
+import { useId } from 'react';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { type IconComponent } from 'twenty-ui/icon';
 
@@ -33,6 +34,9 @@ export const SettingsOptionCardContentCounter = ({
   maxValue,
   showButtons = true,
 }: SettingsOptionCardContentCounterProps) => {
+  const titleId = useId();
+  const descriptionId = useId();
+
   return (
     <StyledSettingsCardContent disabled={disabled}>
       {Icon && (
@@ -41,14 +45,16 @@ export const SettingsOptionCardContentCounter = ({
         </StyledSettingsCardIcon>
       )}
       <StyledSettingsCardTextContainer>
-        <StyledSettingsCardTitle>{title}</StyledSettingsCardTitle>
+        <StyledSettingsCardTitle id={titleId}>{title}</StyledSettingsCardTitle>
         {description && (
-          <StyledSettingsCardDescription>
+          <StyledSettingsCardDescription id={descriptionId}>
             <OverflowingTextWithTooltip text={description} />
           </StyledSettingsCardDescription>
         )}
       </StyledSettingsCardTextContainer>
       <SettingsCounter
+        aria-labelledby={titleId}
+        aria-describedby={description ? descriptionId : undefined}
         value={value}
         onChange={onChange}
         minValue={minValue}

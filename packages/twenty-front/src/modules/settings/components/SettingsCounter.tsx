@@ -1,10 +1,13 @@
-import { t } from '@lingui/core/macro';
-import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
+import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
+import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
+import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
+import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { styled } from '@linaria/react';
-import { IconMinus, IconPlus } from 'twenty-ui/icon';
-import { IconButton } from 'twenty-ui/components';
+import { t } from '@lingui/core/macro';
+import { useId, useRef } from 'react';
+import { Key } from 'ts-key-enum';
+import { NumberInput } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
-import { castAsNumberOrNull } from '~/utils/cast-as-number-or-null';
 
 type SettingsCounterProps = {
   value: number;
@@ -13,28 +16,18 @@ type SettingsCounterProps = {
   maxValue?: number;
   disabled?: boolean;
   showButtons?: boolean;
+  'aria-labelledby': string;
+  'aria-describedby'?: string;
 };
 
 const StyledCounterContainer = styled.div<{ showButtons: boolean }>`
   align-items: center;
   display: flex;
-  gap: ${themeCssVariables.spacing[1]};
   margin-left: auto;
   width: ${({ showButtons }) =>
     showButtons
       ? themeCssVariables.spacing[30]
       : themeCssVariables.spacing[16]};
-`;
-
-const StyledTextInputContainer = styled.div`
-  width: ${themeCssVariables.spacing[16]};
-
-  > * input {
-    font-weight: ${themeCssVariables.font.weight.medium};
-    height: ${themeCssVariables.spacing[6]};
-    text-align: center;
-    width: ${themeCssVariables.spacing[16]};
-  }
 `;
 
 export const SettingsCounter = ({
@@ -44,71 +37,73 @@ export const SettingsCounter = ({
   maxValue,
   disabled = false,
   showButtons = true,
+  'aria-labelledby': ariaLabelledBy,
+  'aria-describedby': ariaDescribedBy,
 }: SettingsCounterProps) => {
-  const handleIncrementCounter = () => {
-    if (maxValue === undefined || value < maxValue) {
-      onChange(value + 1);
-    }
+  const instanceId = useId();
+  const inputRef = useRef<HTMLInputElement>(null);
+  const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
+  const { removeFocusItemFromFocusStackById } =
+    useRemoveFocusItemFromFocusStackById();
+
+  const handleFocus = () => {
+    pushFocusItemToFocusStack({
+      focusId: instanceId,
+      component: {
+        type: FocusComponentType.TEXT_INPUT,
+        instanceId,
+      },
+      globalHotkeysConfig: {
+        enableGlobalHotkeysConflictingWithKeyboard: false,
+      },
+    });
   };
 
-  const handleDecrementCounter = () => {
-    if (value > minValue) {
-      onChange(value - 1);
-    }
+  const handleBlur = () => {
+    removeFocusItemFromFocusStackById({ focusId: instanceId });
   };
 
-  const handleTextInputChange = (value: string) => {
-    const castedNumber = castAsNumberOrNull(value);
-    if (castedNumber === null) {
-      onChange(minValue);
+  const handleEscape = () => {
+    inputRef.current?.blur();
+  };
+
+  useHotkeysOnFocusedElement({
+    keys: [Key.Escape],
+    callback: handleEscape,
+    focusId: instanceId,
+    dependencies: [handleEscape],
+    options: {
+      preventDefault: false,
+    },
+  });
+
+  const handleValueChange = (nextValue: number | null) => {
+    const nextSettingsValue = nextValue ?? minValue;
+
+    if (nextSettingsValue === value) {
       return;
     }
 
-    if (castedNumber < minValue) {
-      return;
-    }
-
-    if (maxValue !== undefined && castedNumber > maxValue) {
-      onChange(maxValue);
-      return;
-    }
-    onChange(castedNumber);
+    onChange(nextSettingsValue);
   };
 
   return (
     <StyledCounterContainer showButtons={showButtons}>
-      {showButtons && (
-        <IconButton
-          aria-label={t`Decrease value`}
-          size="sm"
-          variant="outline"
-          onClick={handleDecrementCounter}
-          disabled={disabled}
-        >
-          <IconMinus />
-        </IconButton>
-      )}
-      <StyledTextInputContainer>
-        <SettingsTextInput
-          instanceId="settings-counter-input"
-          name="counter"
-          fullWidth
-          value={value.toString()}
-          onChange={handleTextInputChange}
-          disabled={disabled}
-        />
-      </StyledTextInputContainer>
-      {showButtons && (
-        <IconButton
-          aria-label={t`Increase value`}
-          size="sm"
-          variant="outline"
-          onClick={handleIncrementCounter}
-          disabled={disabled}
-        >
-          <IconPlus />
-        </IconButton>
-      )}
+      <NumberInput
+        ref={inputRef}
+        aria-labelledby={ariaLabelledBy}
+        aria-describedby={ariaDescribedBy}
+        value={value}
+        onValueChange={handleValueChange}
+        min={minValue}
+        max={maxValue}
+        disabled={disabled}
+        showButtons={showButtons}
+        decrementLabel={t`Decrease value`}
+        incrementLabel={t`Increase value`}
+        onFocus={handleFocus}
+        onBlur={handleBlur}
+      />
     </StyledCounterContainer>
   );
 };
