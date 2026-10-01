@@ -77,6 +77,11 @@ describe('SidePanelFrontComponentPage', () => {
       expectedContent: 'front-component-id:company:record-1,record-2',
     },
     {
+      description: 'selected records without an object name',
+      recordContext: { selectedRecordIds: ['record-1', 'record-2'] },
+      expectedContent: 'front-component-id:no object:record-1,record-2',
+    },
+    {
       description: 'the object when no record is selected',
       recordContext: { objectNameSingular: 'company' },
       expectedContent: 'front-component-id:company:no records',

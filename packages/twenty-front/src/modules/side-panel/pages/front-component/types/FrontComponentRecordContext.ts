@@ -1,4 +1,4 @@
 export type FrontComponentRecordContext = {
-  objectNameSingular: string;
+  objectNameSingular?: string;
   selectedRecordIds?: string[];
 };

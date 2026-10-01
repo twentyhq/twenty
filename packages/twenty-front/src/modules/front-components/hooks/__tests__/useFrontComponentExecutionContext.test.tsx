@@ -859,6 +859,7 @@ describe('useFrontComponentExecutionContext', () => {
         );
       });
 
+      expect(mockOpenFrontComponentInSidePanel).toHaveBeenCalledTimes(1);
       expect(mockOpenFrontComponentInSidePanel).toHaveBeenCalledWith({
         frontComponentId: 'fc-1',
         pageTitle: 'My Component',
@@ -867,6 +868,35 @@ describe('useFrontComponentExecutionContext', () => {
         recordContext: {
           selectedRecordIds: ['lead-1', 'lead-2'],
           objectNameSingular: 'lead',
+        },
+      });
+    });
+
+    it('should retain selected ids without an object name', async () => {
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+      });
+
+      await act(async () => {
+        await result.current.frontComponentHostCommunicationApi.openSidePanelPage(
+          {
+            page: SidePanelPages.ViewFrontComponent,
+            frontComponentId: 'fc-1',
+            pageTitle: 'My Component',
+            selectedRecordIds: ['lead-1', 'lead-2'],
+          },
+        );
+      });
+
+      expect(mockOpenFrontComponentInSidePanel).toHaveBeenCalledTimes(1);
+      expect(mockOpenFrontComponentInSidePanel).toHaveBeenCalledWith({
+        frontComponentId: 'fc-1',
+        pageTitle: 'My Component',
+        pageIcon: 'icon-undefined',
+        resetNavigationStack: undefined,
+        recordContext: {
+          objectNameSingular: undefined,
+          selectedRecordIds: ['lead-1', 'lead-2'],
         },
       });
     });
