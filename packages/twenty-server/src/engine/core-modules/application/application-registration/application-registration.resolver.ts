@@ -177,7 +177,7 @@ export class ApplicationRegistrationResolver {
   async findOneApplicationRegistration(
     @ApplicationTargetArg('id', {
       kind: 'applicationRegistrationId',
-      requireApplicationRegistrationOwnership: false,
+      requireApplicationRegistrationOwnership: true,
     })
     applicationRegistrationId: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -206,7 +206,7 @@ export class ApplicationRegistrationResolver {
   async findApplicationRegistrationStats(
     @ApplicationTargetArg('id', {
       kind: 'applicationRegistrationId',
-      requireApplicationRegistrationOwnership: false,
+      requireApplicationRegistrationOwnership: true,
     })
     applicationRegistrationId: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -263,7 +263,7 @@ export class ApplicationRegistrationResolver {
     @ApplicationTargetArg<UpdateApplicationRegistrationInput>('input', {
       kind: 'applicationRegistrationId',
       idKey: 'id',
-      requireApplicationRegistrationOwnership: false,
+      requireApplicationRegistrationOwnership: true,
     })
     input: UpdateApplicationRegistrationInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -289,7 +289,7 @@ export class ApplicationRegistrationResolver {
   async deleteApplicationRegistration(
     @ApplicationTargetArg('id', {
       kind: 'applicationRegistrationId',
-      requireApplicationRegistrationOwnership: false,
+      requireApplicationRegistrationOwnership: true,
     })
     applicationRegistrationId: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -319,7 +319,7 @@ export class ApplicationRegistrationResolver {
   async rotateApplicationRegistrationClientSecret(
     @ApplicationTargetArg('id', {
       kind: 'applicationRegistrationId',
-      requireApplicationRegistrationOwnership: false,
+      requireApplicationRegistrationOwnership: true,
     })
     applicationRegistrationId: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -351,7 +351,7 @@ export class ApplicationRegistrationResolver {
   async findApplicationRegistrationVariables(
     @ApplicationTargetArg('applicationRegistrationId', {
       kind: 'applicationRegistrationId',
-      requireApplicationRegistrationOwnership: false,
+      requireApplicationRegistrationOwnership: true,
     })
     applicationRegistrationId: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -486,7 +486,7 @@ export class ApplicationRegistrationResolver {
   async applicationRegistrationTarballUrl(
     @ApplicationTargetArg('id', {
       kind: 'applicationRegistrationId',
-      requireApplicationRegistrationOwnership: false,
+      requireApplicationRegistrationOwnership: true,
     })
     applicationRegistrationId: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,

@@ -80,7 +80,7 @@ export class ApplicationDevelopmentResolver {
     @ApplicationTargetArgs<ExportApplicationInput>({
       kind: 'applicationUniversalIdentifier',
       idKey: 'universalIdentifier',
-      requireApplicationRegistrationOwnership: false,
+      requireApplicationRegistrationOwnership: true,
     })
     { universalIdentifier }: ExportApplicationInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -96,7 +96,7 @@ export class ApplicationDevelopmentResolver {
     @ApplicationTargetArgs<ApplicationInput>({
       kind: 'applicationUniversalIdentifier',
       idKey: 'manifest.application.universalIdentifier',
-      requireApplicationRegistrationOwnership: false,
+      requireApplicationRegistrationOwnership: true,
     })
     { manifest, dryRun, inferDeletionFromMissingEntities }: ApplicationInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,

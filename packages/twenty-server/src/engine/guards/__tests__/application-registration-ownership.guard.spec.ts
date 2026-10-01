@@ -3,6 +3,10 @@ import { GUARDS_METADATA } from '@nestjs/common/constants';
 import { Reflector } from '@nestjs/core';
 import { GqlExecutionContext } from '@nestjs/graphql';
 
+import {
+  ApplicationRegistrationException,
+  ApplicationRegistrationExceptionCode,
+} from 'src/engine/core-modules/application/application-registration/application-registration.exception';
 import { type ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import {
   ApplicationException,
@@ -107,6 +111,7 @@ describe('ApplicationRegistrationOwnershipGuard', () => {
   const applicationRegistrationService = {
     findOneOwnedByWorkspaceOrThrow: jest.fn(),
     findOneByIdOwnedByWorkspaceOrThrow: jest.fn(),
+    findOneById: jest.fn(),
   };
 
   const buildContext = ({
@@ -286,18 +291,37 @@ describe('ApplicationRegistrationOwnershipGuard', () => {
   });
 
   describe('applicationRegistrationId', () => {
-    it('should check the targeted registration', async () => {
+    it('should look the targeted registration up within the owner workspace', async () => {
       const context = buildContext({
         handler: TestResolver.prototype.updateRegistration,
         args: { id: 'targeted-registration-id' },
       });
 
       await expect(guard.canActivate(context)).resolves.toBe(true);
+      expect(applicationRegistrationService.findOneById).toHaveBeenCalledWith({
+        applicationRegistrationId: 'targeted-registration-id',
+        ownerWorkspaceId: WORKSPACE_ID,
+      });
       expect(
         applicationRegistrationService.findOneByIdOwnedByWorkspaceOrThrow,
-      ).toHaveBeenCalledWith({
-        applicationRegistrationId: 'targeted-registration-id',
-        workspaceId: WORKSPACE_ID,
+      ).not.toHaveBeenCalled();
+    });
+
+    it('should propagate the not found refusal for a registration the workspace does not own', async () => {
+      applicationRegistrationService.findOneById.mockRejectedValueOnce(
+        new ApplicationRegistrationException(
+          'Application registration with id foreign-registration-id not found',
+          ApplicationRegistrationExceptionCode.APPLICATION_REGISTRATION_NOT_FOUND,
+        ),
+      );
+
+      const context = buildContext({
+        handler: TestResolver.prototype.updateRegistration,
+        args: { id: 'foreign-registration-id' },
+      });
+
+      await expect(guard.canActivate(context)).rejects.toMatchObject({
+        code: ApplicationRegistrationExceptionCode.APPLICATION_REGISTRATION_NOT_FOUND,
       });
     });
   });
