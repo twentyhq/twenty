@@ -13,7 +13,10 @@ import { CommandMenuItemContainerType } from '@/command-menu-item/types/CommandM
 import { useCoreObjectsCommands } from '@/object-core/commands/hooks/useCoreObjectsCommands';
 import { coreWorkflowsFilterSettingsState } from '@/object-core/workflows/states/coreWorkflowsFilterSettingsState';
 import { coreWorkflowsSelectionState } from '@/object-core/workflows/states/coreWorkflowsSelectionState';
+import { sortedFieldByTableFamilyState } from '@/ui/layout/table/states/sortedFieldByTableFamilyState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+
+const TABLE_ID = 'core-workflows-table';
 
 i18n.load({ [SOURCE_LOCALE]: messages });
 i18n.activate(SOURCE_LOCALE);
@@ -71,6 +74,8 @@ const renderCommands = () => {
   act(() =>
     jotaiStore.set(coreWorkflowsSelectionState.atom, {
       filterSettings: jotaiStore.get(coreWorkflowsFilterSettingsState.atom),
+      tableId: TABLE_ID,
+      sort: null,
       rowIds: ['8c9a3708-5674-4e1b-a9b9-4f0dacb26c15'],
     }),
   );
@@ -83,12 +88,29 @@ describe('useCoreObjectsCommands', () => {
     mockHasPermission.mockReturnValue(true);
     mockCanSoftDeleteWorkflow.mockReturnValue(true);
     jotaiStore.set(coreWorkflowsFilterSettingsState.atom, {});
+    jotaiStore.set(
+      sortedFieldByTableFamilyState.atomFamily({ tableId: TABLE_ID }),
+      null,
+    );
   });
 
   it('exposes selected workflow commands inside the command-menu route', () => {
     const { result } = renderCommands();
     expect(result.current.shouldDisplayCoreWorkflowsDeleteCommand).toBe(true);
     expect(result.current.shouldDisplayCoreWorkflowFiltersCommand).toBe(true);
+  });
+
+  it('does not expose core deletion once the selected table is re-sorted', () => {
+    const { result } = renderCommands();
+
+    act(() =>
+      jotaiStore.set(
+        sortedFieldByTableFamilyState.atomFamily({ tableId: TABLE_ID }),
+        { fieldName: 'name', direction: 'desc' },
+      ),
+    );
+
+    expect(result.current.shouldDisplayCoreWorkflowsDeleteCommand).toBe(false);
   });
 
   it('does not expose core deletion without the workflow permission', () => {

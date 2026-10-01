@@ -14,6 +14,8 @@ import { getSelectedCoreWorkflowRowIds } from '@/object-core/workflows/utils/get
 import { invalidateCoreWorkflowQueries } from '@/object-core/workflows/utils/invalidateCoreWorkflowQueries';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { sortedFieldByTableFamilyState } from '@/ui/layout/table/states/sortedFieldByTableFamilyState';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
@@ -40,6 +42,11 @@ export const useDeleteSelectedCoreWorkflows = () => {
     coreWorkflowsFilterSettingsState,
   );
 
+  const sortedFieldByTable = useAtomFamilyStateValue(
+    sortedFieldByTableFamilyState,
+    { tableId: coreWorkflowsSelection.tableId },
+  );
+
   const { removeNavigationMenuItemsByTargetRecordIds } =
     useRemoveNavigationMenuItemByTargetRecordId();
 
@@ -53,6 +60,7 @@ export const useDeleteSelectedCoreWorkflows = () => {
   const selectedCoreWorkflowIds = getSelectedCoreWorkflowRowIds({
     selection: coreWorkflowsSelection,
     currentFilterSettings: coreWorkflowsFilterSettings,
+    currentSort: sortedFieldByTable,
   });
 
   const deleteSelectedCoreWorkflows = async (

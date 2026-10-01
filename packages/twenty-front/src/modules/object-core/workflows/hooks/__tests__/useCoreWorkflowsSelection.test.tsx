@@ -8,9 +8,12 @@ import {
   coreWorkflowsSelectionState,
 } from '@/object-core/workflows/states/coreWorkflowsSelectionState';
 import { type CoreWorkflow } from '@/object-core/workflows/types/CoreWorkflow';
+import { sortedFieldByTableFamilyState } from '@/ui/layout/table/states/sortedFieldByTableFamilyState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 
 type CoreWorkflowRow = Pick<CoreWorkflow, 'id' | 'workspaceWorkflowId'>;
+
+const TABLE_ID = 'core-workflows-table';
 
 const coreWorkflows: CoreWorkflowRow[] = [
   { id: 'core-1', workspaceWorkflowId: 'workspace-1' },
@@ -25,7 +28,7 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => (
 const renderSelection = () =>
   renderHook(
     (props: { coreWorkflows: CoreWorkflowRow[] }) =>
-      useCoreWorkflowsSelection(props),
+      useCoreWorkflowsSelection({ ...props, tableId: TABLE_ID }),
     { wrapper: Wrapper, initialProps: { coreWorkflows } },
   );
 
@@ -36,6 +39,10 @@ describe('useCoreWorkflowsSelection', () => {
       EMPTY_CORE_WORKFLOWS_SELECTION,
     );
     jotaiStore.set(coreWorkflowsFilterSettingsState.atom, {});
+    jotaiStore.set(
+      sortedFieldByTableFamilyState.atomFamily({ tableId: TABLE_ID }),
+      null,
+    );
   });
 
   it('should expose the selected rows through the shared selection state', () => {
@@ -108,6 +115,31 @@ describe('useCoreWorkflowsSelection', () => {
     });
 
     expect(result.current.selectedRowIds).toEqual([]);
+  });
+
+  it('should drop the selection when the table is re-sorted', () => {
+    const { result } = renderSelection();
+
+    act(() => {
+      result.current.toggleRow('core-1');
+    });
+
+    act(() => {
+      jotaiStore.set(
+        sortedFieldByTableFamilyState.atomFamily({ tableId: TABLE_ID }),
+        { fieldName: 'name', direction: 'desc' },
+      );
+    });
+
+    expect(result.current.selectedRowIds).toEqual([]);
+
+    act(() => {
+      result.current.toggleRow('core-2');
+    });
+
+    expect(jotaiStore.get(coreWorkflowsSelectionState.atom).rowIds).toEqual([
+      'core-2',
+    ]);
   });
 
   it('should deselect a row that is toggled twice', () => {

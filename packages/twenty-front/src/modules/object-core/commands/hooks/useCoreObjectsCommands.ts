@@ -18,6 +18,8 @@ import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPe
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
+import { sortedFieldByTableFamilyState } from '@/ui/layout/table/states/sortedFieldByTableFamilyState';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
@@ -45,10 +47,15 @@ export const useCoreObjectsCommands = () => {
   const coreWorkflowsFilterSettings = useAtomStateValue(
     coreWorkflowsFilterSettingsState,
   );
+  const sortedFieldByTable = useAtomFamilyStateValue(
+    sortedFieldByTableFamilyState,
+    { tableId: coreWorkflowsSelection.tableId },
+  );
 
   const selectedCoreWorkflowIds = getSelectedCoreWorkflowRowIds({
     selection: coreWorkflowsSelection,
     currentFilterSettings: coreWorkflowsFilterSettings,
+    currentSort: sortedFieldByTable,
   });
 
   const isOnCoreWorkflowsIndex =
