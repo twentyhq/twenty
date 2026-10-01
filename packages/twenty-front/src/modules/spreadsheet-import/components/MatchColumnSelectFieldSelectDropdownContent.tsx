@@ -104,7 +104,6 @@ export const MatchColumnSelectFieldSelectDropdownContent = ({
                 key={option.value}
                 onSelect={() => onSelectSuggestedOption(option)}
                 selected={selectedValue?.value === option.value}
-                disabled={option.disabled}
                 description={option.fieldMetadataTypeLabel}
                 startIcon={<SelectOptionIcon Icon={option.Icon} />}
               >

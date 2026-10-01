@@ -56,10 +56,11 @@ type Story = StoryObj<typeof WorkflowStepFilterFieldSelect>;
 
 export const Default: Story = {
   play: async ({ canvasElement }) => {
+    onFilterSettingsUpdate.mockClear();
     const canvas = within(canvasElement);
     const body = within(canvasElement.ownerDocument.body);
     const trigger = await canvas.findByRole('button', {
-      name: 'Select a field',
+      name: 'Select a field from a previous step',
     });
 
     await userEvent.click(trigger);
@@ -94,7 +95,9 @@ export const Readonly: Story = {
       await canvas.findByText('Select a field from a previous step'),
     ).toBeVisible();
     await expect(
-      canvas.queryByRole('button', { name: 'Select a field' }),
+      canvas.queryByRole('button', {
+        name: 'Select a field from a previous step',
+      }),
     ).not.toBeInTheDocument();
   },
 };

@@ -10,8 +10,9 @@ import {
 import { getWorkflowVariableSelectionFromSearchResult } from '@/workflow/workflow-variables/utils/getWorkflowVariableSelectionFromSearchResult';
 import { searchWorkflowVariables } from '@/workflow/workflow-variables/utils/searchWorkflowVariables';
 import { t } from '@lingui/core/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { isNonEmptyArray } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/icon';
 import { Dropdown } from 'twenty-ui/components';
 
@@ -87,7 +88,9 @@ export const WorkflowVariablesDropdownSteps = ({
             closeOnSelect={false}
             startIcon={
               <SelectOptionIcon
-                Icon={isDefined(item.icon) ? getIcon(item.icon) : undefined}
+                Icon={
+                  isNonEmptyString(item.icon) ? getIcon(item.icon) : undefined
+                }
               />
             }
           >

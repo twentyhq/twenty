@@ -3,6 +3,7 @@ import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilte
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { Dropdown } from 'twenty-ui/components';
+import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 
 type WorkflowObjectDropdownContentProps = {
   onOptionClick: (value: string) => void;
@@ -14,15 +15,16 @@ export const WorkflowObjectDropdownContent = ({
   const { t } = useLingui();
   const [searchInputValue, setSearchInputValue] = useState('');
   const { objectMetadataItems } = useFilteredObjectMetadataItems();
-  const searchInputLowerCase = searchInputValue.toLowerCase();
-  const filteredObjects = objectMetadataItems.filter((objectMetadataItem) => {
-    const matchesSearch = [
+  const filteredObjects = filterBySearchQuery({
+    items: objectMetadataItems.filter(
+      (objectMetadataItem) => objectMetadataItem.isActive,
+    ),
+    searchQuery: searchInputValue,
+    getSearchableValues: (objectMetadataItem) => [
       objectMetadataItem.nameSingular,
       objectMetadataItem.labelSingular,
       objectMetadataItem.labelPlural,
-    ].some((value) => value.toLowerCase().includes(searchInputLowerCase));
-
-    return objectMetadataItem.isActive && matchesSearch;
+    ],
   });
   const sortedObjects = [
     ...filteredObjects.filter(

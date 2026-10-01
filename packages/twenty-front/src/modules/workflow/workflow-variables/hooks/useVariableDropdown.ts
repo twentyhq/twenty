@@ -14,6 +14,7 @@ import { type WorkflowVariableSearchResult } from '@/workflow/workflow-variables
 import { type WorkflowVariableSelection } from '@/workflow/workflow-variables/types/WorkflowVariableSelection';
 import { getVariableTemplateFromPath } from '@/workflow/workflow-variables/utils/getVariableTemplateFromPath';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useState } from 'react';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -75,6 +76,7 @@ export const useVariableDropdown = ({
   const [searchInputValue, setSearchInputValue] = useState('');
 
   const { openWorkflowEditStepInSidePanel } = useSidePanelWorkflowNavigation();
+  const { closeDropdown } = useCloseDropdown();
 
   const workflowVisualizerWorkflowId = useAtomComponentStateValue(
     workflowVisualizerWorkflowIdComponentState,
@@ -167,6 +169,7 @@ export const useVariableDropdown = ({
             }
           : undefined,
       });
+      closeDropdown();
     };
 
     if (isLinkOutputSchema(currentSubStep)) {

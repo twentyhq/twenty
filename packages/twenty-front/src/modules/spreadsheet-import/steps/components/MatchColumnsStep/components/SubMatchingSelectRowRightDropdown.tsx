@@ -38,7 +38,8 @@ export const SubMatchingSelectRowRightDropdown = ({
   onSubChange,
   placeholder,
 }: SubMatchingSelectRowRightDropdownProps) => {
-  const dropdownId = `sub-matching-select-dropdown-${option.entry}`;
+  const entry = option.entry ?? '';
+  const dropdownId = `sub-matching-select-dropdown-${column.index}-${entry}`;
 
   const { t } = useLingui();
 
@@ -49,24 +50,20 @@ export const SubMatchingSelectRowRightDropdown = ({
   );
 
   const handleSelect = (selectedOption: SelectOption) => {
-    onSubChange(selectedOption.value, column.index, option.entry ?? '');
+    onSubChange(selectedOption.value, column.index, entry);
   };
 
   return (
     <StyledDropdownContainer>
       <DropdownRoot dropdownId={dropdownId} type="picker">
-        <Dropdown.Trigger
-          render={<div />}
-          nativeButton={false}
-          aria-label={t`Match ${option.entry}`}
-        >
+        <Dropdown.Trigger render={<div />} nativeButton={false}>
           <SubMatchingSelectDropdownButton
             column={column}
             option={option}
             placeholder={placeholder}
           />
         </Dropdown.Trigger>
-        <DropdownContent align="start">
+        <DropdownContent align="start" aria-label={t`Match ${entry}`}>
           <SubMatchingSelectInput
             selectedOption={value}
             options={options}

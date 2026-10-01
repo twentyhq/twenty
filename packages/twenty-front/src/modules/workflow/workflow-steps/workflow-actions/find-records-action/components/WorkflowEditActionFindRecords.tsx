@@ -20,19 +20,14 @@ import { RecordFiltersComponentInstanceContext } from '@/object-record/record-fi
 import { RecordIndexContextProvider } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useRecordIndexFieldMetadataDerivedStates } from '@/object-record/record-index/hooks/useRecordIndexFieldMetadataDerivedStates';
 import { type RecordSort } from '@/object-record/record-sort/types/RecordSort';
-import { SelectControl } from '@/ui/input/components/SelectControl';
 import { InputLabel } from '@/ui/input/components/internal/InputLabel/InputLabel';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
-import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
-import { Dropdown } from 'twenty-ui/components';
 import { type WorkflowFindRecordsAction } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
 import { WorkflowFindRecordsFilters } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowFindRecordsFilters';
 import { WorkflowFindRecordsFiltersEffect } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowFindRecordsFiltersEffect';
 import { WorkflowFindRecordsSorts } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowFindRecordsSorts';
-import { WorkflowObjectDropdownContent } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowObjectDropdownContent';
+import { WorkflowObjectSelect } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowObjectSelect';
 import { type FindRecordsActionFilter } from '@/workflow/workflow-steps/workflow-actions/find-records-action/types/FindRecordsActionFilter';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { isStandaloneVariableString } from 'twenty-shared/workflow';
@@ -193,29 +188,13 @@ export const WorkflowEditActionFindRecords = ({
       <WorkflowStepBody>
         <StyledRecordTypeSelectContainer fullWidth>
           <StyledLabel>{t`Object`}</StyledLabel>
-          {isFormDisabled ? (
-            <SelectControl isDisabled selectedOption={selectedOption} />
-          ) : (
-            <DropdownRoot dropdownId={dropdownId} type="picker">
-              <Dropdown.Trigger
-                render={<div />}
-                nativeButton={false}
-                aria-label={t`Object`}
-              >
-                <SelectControl selectedOption={selectedOption} />
-              </Dropdown.Trigger>
-              <DropdownContent
-                width={GenericDropdownContentWidth.ExtraLarge}
-                align="start"
-                sideOffset={4}
-                aria-label={t`Object`}
-              >
-                <WorkflowObjectDropdownContent
-                  onOptionClick={handleOptionClick}
-                />
-              </DropdownContent>
-            </DropdownRoot>
-          )}
+          <WorkflowObjectSelect
+            dropdownId={dropdownId}
+            label={t`Object`}
+            selectedOption={selectedOption}
+            disabled={isFormDisabled}
+            onSelect={handleOptionClick}
+          />
         </StyledRecordTypeSelectContainer>
 
         <HorizontalSeparator noMargin />

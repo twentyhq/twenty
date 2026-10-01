@@ -13,6 +13,7 @@ import { getStepItemIcon } from '@/workflow/workflow-variables/utils/getStepItem
 import { getVariableTemplateFromPath } from '@/workflow/workflow-variables/utils/getVariableTemplateFromPath';
 import { getWorkflowVariableRecordObjectDisplay } from '@/workflow/workflow-variables/utils/getWorkflowVariableRecordObjectDisplay';
 import { useLingui } from '@lingui/react/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { type StepFilter } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { IconChevronLeft, useIcons } from 'twenty-ui/icon';
@@ -180,7 +181,7 @@ export const WorkflowDropdownStepOutputItems = ({
                   startIcon={
                     <SelectOptionIcon
                       Icon={
-                        isDefined(subStep.icon)
+                        isNonEmptyString(subStep.icon)
                           ? getIcon(subStep.icon)
                           : getIcon(
                               getStepItemIcon({

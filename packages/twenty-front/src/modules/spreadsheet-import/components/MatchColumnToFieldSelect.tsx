@@ -20,7 +20,7 @@ import { themeCssVariables } from 'twenty-ui/theme';
 
 type MatchColumnToFieldSelectProps = {
   columnIndex: string;
-  onChange: (value: ReadonlyDeep<SelectOption> | null) => void;
+  onChange: (value: ReadonlyDeep<SelectOption>) => void;
   value?: ReadonlyDeep<SelectOption>;
   options: readonly Readonly<SpreadsheetImportFieldOption>[];
   suggestedOptions: readonly ReadonlyDeep<SelectOption>[];
@@ -92,7 +92,6 @@ export const MatchColumnToFieldSelect = ({
       <Dropdown.Trigger
         render={<StyledMenuItemContainer />}
         nativeButton={false}
-        aria-label={t`Select matching field`}
       >
         <MenuItem
           LeftIcon={value?.Icon}
@@ -104,6 +103,7 @@ export const MatchColumnToFieldSelect = ({
       <DropdownContent
         align="start"
         width={GenericDropdownContentWidth.ExtraLarge}
+        aria-label={t`Select matching field`}
       >
         <Dropdown.Page id="root">
           <MatchColumnSelectFieldSelectDropdownContent

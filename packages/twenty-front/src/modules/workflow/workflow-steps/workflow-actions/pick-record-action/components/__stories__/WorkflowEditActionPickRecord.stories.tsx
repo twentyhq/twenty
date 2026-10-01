@@ -2,6 +2,7 @@ import { type WorkflowPickRecordAction } from '@/workflow/types/Workflow';
 import { WorkflowEditActionPickRecord } from '@/workflow/workflow-steps/workflow-actions/pick-record-action/components/WorkflowEditActionPickRecord';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, fn, screen, userEvent, waitFor, within } from 'storybook/test';
+import { isDefined } from 'twenty-shared/utils';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
@@ -72,7 +73,7 @@ export const ObjectAndLoadBalanceSelection: Story = {
     );
 
     expect(await canvas.findByText('Balance by')).toBeVisible();
-    await userEvent.click(canvas.getByRole('button', { name: 'Object' }));
+    await userEvent.click(canvas.getByRole('button', { name: 'Companies' }));
     await userEvent.type(
       await screen.findByRole('searchbox', { name: 'Search objects' }),
       'person',
@@ -100,7 +101,15 @@ export const ObjectAndLoadBalanceSelection: Story = {
       { timeout: 3000 },
     );
 
-    await userEvent.click(canvas.getByRole('button', { name: 'Balance by' }));
+    const balanceByField = canvas.getByText('Balance by').parentElement;
+
+    if (!isDefined(balanceByField)) {
+      throw new Error('The balance by field is missing');
+    }
+
+    await userEvent.click(
+      within(balanceByField).getByRole('button', { name: 'People' }),
+    );
     await userEvent.type(
       await screen.findByRole('searchbox', { name: 'Search objects' }),
       'company',

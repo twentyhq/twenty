@@ -1,12 +1,7 @@
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useObjectMetadataSelectHelpers } from '@/object-metadata/hooks/useObjectMetadataSelectHelpers';
 import { type FieldMultiSelectValue } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { SelectControl } from '@/ui/input/components/SelectControl';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
-import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
-import { WorkflowObjectDropdownContent } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowObjectDropdownContent';
-import { Dropdown } from 'twenty-ui/components';
+import { WorkflowObjectSelect } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowObjectSelect';
 import { WorkflowFieldsMultiSelect } from '@/workflow/components/WorkflowEditUpdateEventFieldsMultiSelect';
 import { type WorkflowDatabaseEventTrigger } from '@/workflow/types/Workflow';
 import { splitWorkflowTriggerEventName } from '@/workflow/utils/splitWorkflowTriggerEventName';
@@ -128,29 +123,13 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
       <WorkflowStepBody>
         <StyledRecordTypeSelectContainer fullWidth>
           <StyledLabel>{t`Record Type`}</StyledLabel>
-          {triggerOptions.readonly ? (
-            <SelectControl isDisabled selectedOption={selectedOption} />
-          ) : (
-            <DropdownRoot dropdownId={dropdownId} type="picker">
-              <Dropdown.Trigger
-                render={<div />}
-                nativeButton={false}
-                aria-label={t`Record Type`}
-              >
-                <SelectControl selectedOption={selectedOption} />
-              </Dropdown.Trigger>
-              <DropdownContent
-                width={GenericDropdownContentWidth.ExtraLarge}
-                align="start"
-                sideOffset={4}
-                aria-label={t`Record Type`}
-              >
-                <WorkflowObjectDropdownContent
-                  onOptionClick={handleOptionClick}
-                />
-              </DropdownContent>
-            </DropdownRoot>
-          )}
+          <WorkflowObjectSelect
+            dropdownId={dropdownId}
+            label={t`Record Type`}
+            selectedOption={selectedOption}
+            disabled={triggerOptions.readonly === true}
+            onSelect={handleOptionClick}
+          />
         </StyledRecordTypeSelectContainer>
         {isDefined(selectedObjectMetadataItem) && isFieldFilteringSupported && (
           <WorkflowFieldsMultiSelect

@@ -48,7 +48,7 @@ export const SelectRecordTypeWithKeyboard: Story = {
     const canvas = within(canvasElement);
 
     await userEvent.click(
-      await canvas.findByRole('button', { name: 'Record Type' }),
+      await canvas.findByRole('button', { name: 'People' }),
     );
     await userEvent.type(
       await screen.findByRole('searchbox', { name: 'Search objects' }),
@@ -76,7 +76,7 @@ export const ReadOnly: Story = {
     await userEvent.click(await canvas.findByText('People'));
 
     expect(
-      canvas.queryByRole('button', { name: 'Record Type' }),
+      canvas.queryByRole('button', { name: 'People' }),
     ).not.toBeInTheDocument();
     expect(
       screen.queryByRole('dialog', { name: 'Record Type' }),

@@ -15,6 +15,7 @@ import {
   type WorkflowVariableSpecialItem,
 } from '@/workflow/workflow-variables/utils/getWorkflowVariableSpecialItems';
 import { useLingui } from '@lingui/react/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { IconChevronLeft, useIcons } from 'twenty-ui/icon';
 import { Dropdown, LightIconButton } from 'twenty-ui/components';
@@ -194,7 +195,7 @@ export const WorkflowVariablesDropdownStepItems = ({
                   startIcon={
                     <SelectOptionIcon
                       Icon={
-                        isDefined(subStep.icon)
+                        isNonEmptyString(subStep.icon)
                           ? getIcon(subStep.icon)
                           : getIcon(
                               getStepItemIcon({

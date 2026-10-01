@@ -74,7 +74,6 @@ export const WorkflowVariablesDropdown = ({
     StepOutputSchemaV2 | undefined
   >(initialStep);
   const [selectedPath, setSelectedPath] = useState<string[]>([]);
-  const [hasRestoredFocus, setHasRestoredFocus] = useState(false);
 
   const handleStepSelect = ({
     stepId,
@@ -84,17 +83,6 @@ export const WorkflowVariablesDropdown = ({
     setSelectedStep(
       availableVariablesInWorkflowStep.find((step) => step.id === stepId),
     );
-  };
-
-  const handleSubItemSelect = (subItem: string) => {
-    onVariableSelect(subItem);
-    const focusedElement = document.activeElement;
-    const isFocusOutsideDropdown =
-      isDefined(focusedElement) &&
-      focusedElement !== document.body &&
-      !isDefined(focusedElement.closest('[data-dropdown-content]'));
-
-    setHasRestoredFocus(isFocusOutsideDropdown);
   };
 
   const handleBack = () => {
@@ -127,8 +115,7 @@ export const WorkflowVariablesDropdown = ({
       dropdownId={dropdownId}
       type="picker"
       onOpenChange={(open) => {
-        if (open) {
-          setHasRestoredFocus(false);
+        if (!open) {
           return;
         }
 
@@ -147,14 +134,13 @@ export const WorkflowVariablesDropdown = ({
         align="end"
         sideOffset={4}
         width={GenericDropdownContentWidth.ExtraLarge}
-        finalFocus={hasRestoredFocus ? false : undefined}
       >
         {!isDefined(selectedStep) ? (
           <WorkflowVariablesDropdownSteps
             steps={availableVariablesInWorkflowStep}
             onSelect={handleStepSelect}
             onVariableSelect={({ rawVariableName }) =>
-              handleSubItemSelect(rawVariableName)
+              onVariableSelect(rawVariableName)
             }
             shouldDisplayRecordObjects={shouldDisplayRecordObjects}
             objectNameSingularsToSelect={objectNameSingularsToSelect}
@@ -163,7 +149,7 @@ export const WorkflowVariablesDropdown = ({
           <WorkflowVariablesDropdownStepItems
             step={selectedStep}
             initialPath={selectedPath}
-            onSelect={handleSubItemSelect}
+            onSelect={onVariableSelect}
             onBack={handleBack}
             shouldDisplayRecordObjects={shouldDisplayRecordObjects}
             objectNameSingularsToSelect={objectNameSingularsToSelect}

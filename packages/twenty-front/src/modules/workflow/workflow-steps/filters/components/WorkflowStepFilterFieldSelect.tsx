@@ -185,7 +185,7 @@ export const WorkflowStepFilterFieldSelect = ({
         dropdownId={dropdownId}
         type="picker"
         onOpenChange={(open) => {
-          if (open) {
+          if (!open) {
             return;
           }
 
@@ -193,11 +193,7 @@ export const WorkflowStepFilterFieldSelect = ({
           setSelectedPath([]);
         }}
       >
-        <Dropdown.Trigger
-          aria-label={t`Select a field`}
-          nativeButton={false}
-          render={<div />}
-        >
+        <Dropdown.Trigger nativeButton={false} render={<div />}>
           <SelectControl
             selectedOption={{
               label,
@@ -207,7 +203,6 @@ export const WorkflowStepFilterFieldSelect = ({
               iconThemeColor,
             }}
             textAccent={isSelectedFieldNotFound ? 'placeholder' : 'default'}
-            isDisabled={readonly}
           />
         </Dropdown.Trigger>
         <DropdownContent

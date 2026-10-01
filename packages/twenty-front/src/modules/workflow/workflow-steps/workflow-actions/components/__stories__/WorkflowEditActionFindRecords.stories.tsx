@@ -68,7 +68,7 @@ export const Default: Story = {
     const canvas = within(canvasElement);
 
     await userEvent.click(
-      await canvas.findByRole('button', { name: 'Object' }),
+      await canvas.findByRole('button', { name: 'People' }),
     );
 
     const dropdown = within(
@@ -98,7 +98,7 @@ export const Default: Story = {
       ).not.toBeInTheDocument();
     });
 
-    await userEvent.click(canvas.getByRole('button', { name: 'Object' }));
+    await userEvent.click(canvas.getByRole('button', { name: 'People' }));
 
     expect(
       await screen.findByRole('searchbox', { name: 'Search objects' }),

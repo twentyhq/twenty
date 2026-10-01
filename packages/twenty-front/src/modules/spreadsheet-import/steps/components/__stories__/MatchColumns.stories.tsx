@@ -143,9 +143,15 @@ const meta: Meta<typeof MatchColumnsExample> = {
   decorators: [ToastDecorator, IconsProviderDecorator],
   args: { onClose: fn() },
   beforeEach: () => {
+    jotaiStore.set(matchColumnsState.atom, []);
     jotaiStore.set(suggestedFieldsByColumnHeaderState.atom, {
       company: [fields[0]],
     });
+
+    return () => {
+      jotaiStore.set(matchColumnsState.atom, []);
+      jotaiStore.set(suggestedFieldsByColumnHeaderState.atom, {});
+    };
   },
 };
 
@@ -171,7 +177,7 @@ export const CompositeFieldAndBack: Story = {
     );
     const dialog = await body.findByRole('dialog', { name: 'Import data' });
     const trigger = within(dialog).getAllByRole('button', {
-      name: 'Select matching field',
+      name: 'Select column...',
     })[1];
     await userEvent.click(trigger);
     const popup = await body.findByRole('dialog', {
@@ -223,7 +229,7 @@ export const SuggestionsIgnoreAndCancel: Story = {
     );
     const dialog = await body.findByRole('dialog', { name: 'Import data' });
     const trigger = within(dialog).getAllByRole('button', {
-      name: 'Select matching field',
+      name: 'Select column...',
     })[0];
     await userEvent.click(trigger);
     const popup = await body.findByRole('dialog', {
@@ -242,8 +248,25 @@ export const SuggestionsIgnoreAndCancel: Story = {
     expect(trigger).toHaveTextContent('Name');
 
     await userEvent.click(trigger);
+    const reopenedPopup = await body.findByRole('dialog', {
+      name: 'Select matching field',
+    });
+    const reopenedSuggestedSection =
+      within(reopenedPopup).getByText('Suggested').parentElement;
+
+    if (!isDefined(reopenedSuggestedSection)) {
+      throw new Error('The suggested field section is missing');
+    }
+
+    expect(
+      within(reopenedSuggestedSection).getByRole('button', {
+        name: 'Name Text',
+      }),
+    ).toBeEnabled();
     await userEvent.click(
-      await body.findByRole('button', { name: 'Cancel field selection' }),
+      within(reopenedPopup).getByRole('button', {
+        name: 'Cancel field selection',
+      }),
     );
     await waitFor(() =>
       expect(
@@ -290,7 +313,7 @@ export const SubMatchingSearchSkipsUnmatchedSelection: Story = {
     const dialog = await body.findByRole('dialog', { name: 'Import data' });
     await userEvent.click(within(dialog).getByText('Match Team (0 Unmatched)'));
     const trigger = await within(dialog).findByRole('button', {
-      name: 'Match Red',
+      name: 'Team Two',
     });
     await userEvent.click(trigger);
     const popup = await body.findByRole('dialog', { name: 'Match Red' });
@@ -320,7 +343,7 @@ export const UnsupportedFieldsAreExcluded: Story = {
     );
     const dialog = await body.findByRole('dialog', { name: 'Import data' });
     const trigger = within(dialog).getAllByRole('button', {
-      name: 'Select matching field',
+      name: 'Select column...',
     })[0];
     await userEvent.click(trigger);
     const popup = await body.findByRole('dialog', {

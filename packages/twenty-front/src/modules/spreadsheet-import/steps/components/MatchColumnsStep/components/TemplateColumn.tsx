@@ -11,7 +11,6 @@ import { spreadsheetImportBuildFieldOptions } from '@/spreadsheet-import/utils/s
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLingui } from '@lingui/react/macro';
 import { IconForbid } from 'twenty-ui/icon';
-import { isDefined } from 'twenty-shared/utils';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -76,11 +75,7 @@ export const TemplateColumn = ({
       <MatchColumnToFieldSelect
         placeholder={t`Select column...`}
         value={isIgnored ? ignoreValue : selectValue}
-        onChange={(value) => {
-          if (isDefined(value)) {
-            onChange(value.value, column.index);
-          }
-        }}
+        onChange={(value) => onChange(value.value, column.index)}
         options={selectOptions}
         suggestedOptions={suggestedFieldOptions}
         columnIndex={column.index.toString()}
