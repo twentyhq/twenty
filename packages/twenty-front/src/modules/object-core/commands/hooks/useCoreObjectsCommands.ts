@@ -5,12 +5,10 @@ import {
   CoreObjectNameSingular,
   FeatureFlagKey,
 } from 'twenty-shared/types';
-import {
-  isNonEmptyArray,
-  resolveObjectMetadataLabel,
-} from 'twenty-shared/utils';
+import { isNonEmptyArray } from 'twenty-shared/utils';
 
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
+import { getSelectedRecordsCountLabel } from '@/command-menu-item/utils/getSelectedRecordsCountLabel';
 import { CORE_WORKFLOWS_DELETE_COMMAND_ID } from '@/object-core/commands/constants/CoreWorkflowsDeleteCommandId';
 import { CORE_WORKFLOW_FILTERS_COMMAND_ID } from '@/object-core/commands/constants/CoreWorkflowFiltersCommandId';
 import { coreWorkflowsFilterSettingsState } from '@/object-core/workflows/states/coreWorkflowsFilterSettingsState';
@@ -96,12 +94,10 @@ export const useCoreObjectsCommands = () => {
   const coreSelectionSectionContext =
     isOnCoreWorkflowsIndex && isNonEmptyArray(selectedCoreWorkflowIds)
       ? {
-          label: `${selectedCoreWorkflowIds.length} ${resolveObjectMetadataLabel(
-            {
-              objectMetadataItem: workflowObjectMetadataItem,
-              numberOfSelectedRecords: selectedCoreWorkflowIds.length,
-            },
-          )}`,
+          label: getSelectedRecordsCountLabel({
+            objectMetadataItem: workflowObjectMetadataItem,
+            numberOfSelectedRecords: selectedCoreWorkflowIds.length,
+          }),
         }
       : undefined;
 

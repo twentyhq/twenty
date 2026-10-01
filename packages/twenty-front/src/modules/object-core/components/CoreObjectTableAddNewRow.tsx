@@ -15,11 +15,11 @@ const StyledAddNewRow = styled.button`
   font-size: ${themeCssVariables.font.size.md};
   gap: ${themeCssVariables.spacing[1]};
   height: ${themeCssVariables.spacing[8]};
-  padding: 0 ${themeCssVariables.spacing[2]} 0
-    calc(
-      ${CORE_OBJECT_TABLE_CHECKBOX_COLUMN_GRID_TRACK} +
-        ${themeCssVariables.spacing[2]}
-    );
+  padding: 0 ${themeCssVariables.spacing[2]};
+  padding-inline-start: calc(
+    ${CORE_OBJECT_TABLE_CHECKBOX_COLUMN_GRID_TRACK} +
+      ${themeCssVariables.spacing[2]}
+  );
   width: 100%;
 
   &:not(:disabled) {
