@@ -46,7 +46,9 @@ export const AiChatInboxPage = () => {
   );
   const agentChatThreadGroupBy = useAtomStateValue(agentChatThreadGroupByState);
   const { threads, loading } = useChatThreads(agentChatVisibleThreadsSelector);
-  const { switchToNewChat } = useSwitchToNewAiChat();
+  const { switchToNewChat } = useSwitchToNewAiChat({
+    shouldOpenInFullPage: true,
+  });
 
   const StatusIcon =
     AGENT_CHAT_THREAD_FILTER_STATUS_ICONS[agentChatThreadFilterStatus];
