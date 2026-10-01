@@ -19,6 +19,14 @@ export const expandableListEventIsolationFailureTest: TwentyUiGalleryPlayFunctio
     const popup = await page.findByRole('dialog', { name: 'Show all targets' });
     const lastTarget = within(popup).getByRole('button', { name: 'Delta' });
     await waitFor(() => expect(lastTarget).toBeVisible());
+    await waitFor(() =>
+      expect(
+        Number(canvas.getByLabelText('Host activations').textContent),
+      ).toBeGreaterThan(0),
+    );
+    const hostActivationsBeforeSelection = Number(
+      canvas.getByLabelText('Host activations').textContent,
+    );
 
     await userEvent.click(lastTarget);
     await waitFor(() =>
@@ -29,7 +37,7 @@ export const expandableListEventIsolationFailureTest: TwentyUiGalleryPlayFunctio
     await waitFor(() =>
       expect(
         Number(canvas.getByLabelText('Host activations').textContent),
-      ).toBeGreaterThan(0),
+      ).toBe(hostActivationsBeforeSelection),
     );
     await expectSandboxErrors({
       requiredErrors: [SANDBOX_ERROR_PATTERNS.NATIVE_EVENT_DEFAULT_PREVENTED],
