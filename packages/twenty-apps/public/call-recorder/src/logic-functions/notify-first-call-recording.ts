@@ -8,10 +8,8 @@ import {
 
 import { NOTIFY_FIRST_CALL_RECORDING_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
-import {
-  notifyFirstCallRecording,
-  type NotifyFirstCallRecordingResult,
-} from 'src/logic-functions/flows/notify-first-call-recording.util';
+import { notifyFirstCallRecording } from 'src/logic-functions/flows/notify-first-call-recording.util';
+import { type NotifyFirstCallRecordingResult } from 'src/logic-functions/types/notify-first-call-recording-result.type';
 import { buildRetryableStepFailure } from 'src/logic-functions/utils/build-step-failure.util';
 
 type CallRecordingDatabaseEvent = DatabaseEventPayload<

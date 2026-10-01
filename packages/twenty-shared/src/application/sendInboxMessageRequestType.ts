@@ -11,16 +11,3 @@ export type SendInboxMessageRequest =
       input?: Record<string, unknown>;
       output?: Record<string, unknown>;
     };
-
-export type SendInboxMessageInput = {
-  workspaceMemberId: string;
-  threadKey: string;
-  idempotencyKey: string;
-  title: string;
-  text: string;
-  request?: SendInboxMessageRequest;
-};
-
-export type SendInboxMessageResult = {
-  threadId: string;
-};

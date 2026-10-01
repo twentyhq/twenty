@@ -2,7 +2,7 @@ import { v5 } from 'uuid';
 
 import { INBOX_MESSAGE_ID_NAMESPACE } from 'src/engine/metadata-modules/ai/ai-chat/constants/inbox-message-id-namespace.constant';
 
-export type InboxMessageIds = {
+type InboxMessageIds = {
   threadId: string;
   turnId: string;
   openingMessageId: string;

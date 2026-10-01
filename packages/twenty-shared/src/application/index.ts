@@ -204,11 +204,9 @@ export type {
   RunAgentInput,
   RunAgentResult,
 } from './runAgentType';
-export type {
-  SendInboxMessageRequest,
-  SendInboxMessageInput,
-  SendInboxMessageResult,
-} from './sendInboxMessageType';
+export type { SendInboxMessageInput } from './sendInboxMessageInputType';
+export type { SendInboxMessageRequest } from './sendInboxMessageRequestType';
+export type { SendInboxMessageResult } from './sendInboxMessageResultType';
 export type { ServerVariables } from './server-variables.type';
 export type { ServerRouteDispatchResult } from './serverRouteDispatchResultType';
 export type { ServerRouteTriggerSettings } from './serverRouteTriggerSettingsType';

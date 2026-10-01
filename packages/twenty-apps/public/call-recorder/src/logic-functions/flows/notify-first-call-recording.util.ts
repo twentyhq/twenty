@@ -4,15 +4,12 @@ import { sendInboxMessage } from 'twenty-sdk/logic-function';
 
 import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
 import { findCallRecordingForFirstRecordingNotification } from 'src/logic-functions/data/find-call-recording-for-first-recording-notification.util';
+import { type NotifyFirstCallRecordingResult } from 'src/logic-functions/types/notify-first-call-recording-result.type';
 import { buildStepFailure } from 'src/logic-functions/utils/build-step-failure.util';
 
 // The same keys for every recording make the server keep one message per
 // member, so only the first recording reaches them.
 const FIRST_CALL_RECORDING_KEY = 'first-call-recording';
-
-export type NotifyFirstCallRecordingResult =
-  | { outcome: 'not-completed' }
-  | { outcome: 'notified'; notifiedWorkspaceMemberIds: string[] };
 
 export const notifyFirstCallRecording = async (
   client: CoreApiClient,
