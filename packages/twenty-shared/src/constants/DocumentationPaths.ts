@@ -200,6 +200,7 @@ export const DOCUMENTATION_PATHS = {
   UI_PRIMITIVES_TYPOGRAPHY_HEADING: '/ui/primitives/typography/heading',
   UI_PRIMITIVES_TYPOGRAPHY_OVERFLOWING_TEXT_WITH_TOOLTIP:
     '/ui/primitives/typography/overflowing-text-with-tooltip',
+  UI_PRIMITIVES_TYPOGRAPHY_SHORTCUT: '/ui/primitives/typography/shortcut',
   UI_PRIMITIVES_TYPOGRAPHY_TEXT: '/ui/primitives/typography/text',
   UI_SSR: '/ui/ssr',
   UI_TESTING: '/ui/testing',
