@@ -1,9 +1,8 @@
 import { styled } from '@linaria/react';
 import { NodeViewWrapper, type NodeViewProps } from '@tiptap/react';
 import { useIcons } from 'twenty-ui/icon';
+import { Chip } from 'twenty-ui/primitives/data-display';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
-
-import { BaseChip } from '@/ui/input/components/BaseChip';
 
 const StyledWrapper = styled.span`
   display: inline-block;
@@ -24,11 +23,13 @@ export const SettingsValidationRuleFieldChip = ({
 
   return (
     <NodeViewWrapper as={StyledWrapper}>
-      <BaseChip
-        label={String(node.attrs.label)}
+      <Chip
+        variant="soft"
         title={String(node.attrs.path)}
-        leftIcon={<Icon size={theme.icon.size.sm} />}
-      />
+        startElement={<Icon size={theme.icon.size.sm} />}
+      >
+        {String(node.attrs.label)}
+      </Chip>
     </NodeViewWrapper>
   );
 };

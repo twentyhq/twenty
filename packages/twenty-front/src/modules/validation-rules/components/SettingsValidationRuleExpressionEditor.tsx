@@ -13,6 +13,7 @@ import {
   compileValidationRuleExpression,
   isDefined,
 } from 'twenty-shared/utils';
+import { Card } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { FORM_FIELD_PLACEHOLDER_STYLES } from '@/ui/input/constants/FormFieldPlaceholderStyles';
@@ -35,7 +36,7 @@ import { insertValidationRuleHelperItem } from '@/validation-rules/utils/insertV
 
 const SingleParagraphDocument = Document.extend({ content: 'paragraph' });
 
-const StyledContainer = styled.div`
+const StyledEditorContent = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[2]};
@@ -273,13 +274,17 @@ export const SettingsValidationRuleExpressionEditor = ({
       : null;
 
   return (
-    <StyledContainer>
-      <StyledEditor hasError={isDefined(errorMessage)}>
-        <EditorContent editor={editor} />
-      </StyledEditor>
-      {isDefined(errorMessage) && (
-        <StyledError role="alert">{errorMessage}</StyledError>
-      )}
+    <>
+      <Card.Content divider>
+        <StyledEditorContent>
+          <StyledEditor hasError={isDefined(errorMessage)}>
+            <EditorContent editor={editor} />
+          </StyledEditor>
+          {isDefined(errorMessage) && (
+            <StyledError role="alert">{errorMessage}</StyledError>
+          )}
+        </StyledEditorContent>
+      </Card.Content>
       <SettingsValidationRuleHelperPanel
         items={helperContext.items}
         highlightedIndex={highlightedIndex}
@@ -287,6 +292,6 @@ export const SettingsValidationRuleExpressionEditor = ({
         onHighlight={setHighlightedIndex}
         onSelect={insertHelperItem}
       />
-    </StyledContainer>
+    </>
   );
 };
