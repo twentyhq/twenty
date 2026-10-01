@@ -7,12 +7,11 @@ import {
   MenuItemSuggestion,
   MenuPicker,
   NavigationBar,
-  RoundedLink,
 } from 'twenty-ui/components';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { IconHome, IconUser } from 'twenty-ui/icon';
 import { ColorSample, Tag } from 'twenty-ui/primitives/data-display';
-import { ClickToActionLink, ListItem } from 'twenty-ui/primitives/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { ThemeProvider } from 'twenty-ui/theme';
 import {
   ComponentGallery,
@@ -20,10 +19,6 @@ import {
 } from '../shared/front-components/component-gallery';
 
 const NAVIGATION_ENTRIES: GalleryEntry[] = [
-  {
-    name: 'ClickToActionLink',
-    node: <ClickToActionLink href="#">Click me</ClickToActionLink>,
-  },
   {
     name: 'MenuItem',
     node: <MenuItem text="Menu item" LeftIcon={IconUser} />,
@@ -175,10 +170,6 @@ const NAVIGATION_ENTRIES: GalleryEntry[] = [
         ]}
       />
     ),
-  },
-  {
-    name: 'RoundedLink',
-    node: <RoundedLink href="https://twenty.com" label="Rounded link" />,
   },
 ];
 

@@ -61,6 +61,13 @@
         "description": "CSS class applied to the pill."
       },
       {
+        "name": "color",
+        "type": "\"inherit\" | \"tertiary\"",
+        "required": false,
+        "defaultValue": "tertiary",
+        "description": "Text color. `inherit` takes the parent color and font weight on a tinted background."
+      },
+      {
         "name": "Icon",
         "type": "IconComponent",
         "required": false,
@@ -73,6 +80,13 @@
         "required": false,
         "defaultValue": null,
         "description": "Short text displayed inside the pill."
+      },
+      {
+        "name": "size",
+        "type": "\"md\" | \"sm\"",
+        "required": false,
+        "defaultValue": "sm",
+        "description": "Pill size. `md` uses a larger font, height and icon."
       }
     ]
   },
@@ -108,34 +122,6 @@
         "required": false,
         "defaultValue": "primary",
         "description": "Primary solid treatment or secondary translucent treatment."
-      }
-    ]
-  },
-  {
-    "name": "CircularProgressBar",
-    "entryPoint": "twenty-ui/primitives/feedback",
-    "slug": "feedback/circular-progress-bar",
-    "props": [
-      {
-        "name": "barColor",
-        "type": "string",
-        "required": false,
-        "defaultValue": "currentColor",
-        "description": "CSS stroke color. Defaults to the inherited text color."
-      },
-      {
-        "name": "barWidth",
-        "type": "number",
-        "required": false,
-        "defaultValue": "5",
-        "description": "Stroke width in pixels. Keep it smaller than half of `size`."
-      },
-      {
-        "name": "size",
-        "type": "number",
-        "required": false,
-        "defaultValue": "50",
-        "description": "Width and height of the spinner in pixels."
       }
     ]
   },
@@ -187,32 +173,25 @@
         "description": "CSS class applied to the progress root."
       },
       {
-        "name": "countdownDurationInMs",
-        "type": "number",
-        "required": false,
-        "defaultValue": null,
-        "description": "Starts a visual animation from full to empty over this duration in milliseconds. Does not update `value`."
-      },
-      {
-        "name": "isCountdownPaused",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": "false",
-        "description": "Pauses the countdown animation without resetting its position."
-      },
-      {
-        "name": "onCountdownComplete",
+        "name": "onGrowInComplete",
         "type": "(() => void)",
         "required": false,
         "defaultValue": null,
-        "description": "Called when the countdown animation ends."
+        "description": "Called when the grow-in animation ends."
+      },
+      {
+        "name": "size",
+        "type": "\"md\" | \"sm\"",
+        "required": false,
+        "defaultValue": "md",
+        "description": "Bar height: `sm` (6px) or `md` (8px)."
       },
       {
         "name": "value",
         "type": "number",
         "required": true,
         "defaultValue": null,
-        "description": "Current progress from 0 to 100. Also supplies the accessible value during a countdown."
+        "description": "Current progress from 0 to 100."
       },
       {
         "name": "withBorderRadius",
@@ -220,6 +199,34 @@
         "required": false,
         "defaultValue": "false",
         "description": "Rounds the track and indicator corners."
+      },
+      {
+        "name": "withGlint",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Sweeps a highlight across the filled bar each time the value changes."
+      },
+      {
+        "name": "withGrowIn",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Grows the bar in from zero width when it mounts."
+      },
+      {
+        "name": "withMinimumFillWidth",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "true",
+        "description": "Keeps a small visible fill for any value above zero."
+      },
+      {
+        "name": "withSpringFill",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Animates value changes with a spring that slightly overshoots the target."
       }
     ]
   },
@@ -518,55 +525,6 @@
     ]
   },
   {
-    "name": "ClickToActionLink",
-    "entryPoint": "twenty-ui/primitives/navigation",
-    "slug": "navigation/click-to-action-link",
-    "props": [
-      {
-        "name": "children",
-        "type": "ReactNode",
-        "required": false,
-        "defaultValue": null,
-        "description": "Visible link text or content. Use a descriptive destination label."
-      },
-      {
-        "name": "className",
-        "type": "string",
-        "required": false,
-        "defaultValue": null,
-        "description": "CSS class applied to the anchor."
-      },
-      {
-        "name": "href",
-        "type": "string",
-        "required": false,
-        "defaultValue": null,
-        "description": "Destination URL for native link navigation."
-      },
-      {
-        "name": "onClick",
-        "type": "MouseEventHandler<HTMLAnchorElement>",
-        "required": false,
-        "defaultValue": null,
-        "description": "Click handler called when the link is activated."
-      },
-      {
-        "name": "rel",
-        "type": "string",
-        "required": false,
-        "defaultValue": null,
-        "description": "Relationship to the destination, such as `noopener noreferrer` for a new tab."
-      },
-      {
-        "name": "target",
-        "type": "HTMLAttributeAnchorTarget",
-        "required": false,
-        "defaultValue": null,
-        "description": "Browsing context in which to open the destination."
-      }
-    ]
-  },
-  {
     "name": "OverflowingTextWithTooltip",
     "entryPoint": "twenty-ui/primitives/typography",
     "slug": "typography/overflowing-text-with-tooltip",
@@ -762,10 +720,10 @@
       },
       {
         "name": "variant",
-        "type": "\"ghost\" | \"outline\" | \"soft\" | \"solid\"",
+        "type": "\"ghost\" | \"link\" | \"outline\" | \"soft\" | \"solid\"",
         "required": false,
         "defaultValue": "ghost",
-        "description": "Visual treatment of the button surface."
+        "description": "Visual treatment of the button surface. `link` uses compact text styling without a filled surface or border; `href` still determines link semantics."
       }
     ]
   },
@@ -888,10 +846,10 @@
       },
       {
         "name": "variant",
-        "type": "\"ghost\" | \"outline\" | \"soft\" | \"solid\"",
+        "type": "\"ghost\" | \"link\" | \"outline\" | \"soft\" | \"solid\"",
         "required": false,
         "defaultValue": null,
-        "description": "Visual treatment of the button surface."
+        "description": "Visual treatment of the button surface. `link` uses compact text styling without a filled surface or border; `href` still determines link semantics."
       }
     ]
   },
@@ -975,21 +933,7 @@
         "type": "\"md\" | \"sm\"",
         "required": false,
         "defaultValue": null,
-        "description": "Button height: `sm` (24px) or `md` (32px)."
-      },
-      {
-        "name": "soon",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": null,
-        "description": "Displays a coming-soon label and disables activation."
-      },
-      {
-        "name": "soonLabel",
-        "type": "string",
-        "required": false,
-        "defaultValue": null,
-        "description": "Text for the coming-soon label."
+        "description": "Button height: `sm` (24px) or `md` (32px). The `link` variant uses its content height at either size."
       },
       {
         "name": "startIcon",
@@ -1007,10 +951,10 @@
       },
       {
         "name": "variant",
-        "type": "\"ghost\" | \"outline\" | \"soft\" | \"solid\"",
+        "type": "\"ghost\" | \"link\" | \"outline\" | \"soft\" | \"solid\"",
         "required": false,
         "defaultValue": "solid",
-        "description": "Visual treatment of the button surface."
+        "description": "Visual treatment of the button surface. `link` uses compact text styling without a filled surface or border; `href` still determines link semantics."
       }
     ]
   },
@@ -1101,21 +1045,7 @@
         "type": "\"md\" | \"sm\"",
         "required": false,
         "defaultValue": "sm",
-        "description": "Button height: `sm` (24px) or `md` (32px)."
-      },
-      {
-        "name": "soon",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": null,
-        "description": "Displays a coming-soon label and disables activation."
-      },
-      {
-        "name": "soonLabel",
-        "type": "string",
-        "required": false,
-        "defaultValue": null,
-        "description": "Text for the coming-soon label."
+        "description": "Button height: `sm` (24px) or `md` (32px). The `link` variant uses its content height at either size."
       },
       {
         "name": "startIcon",
@@ -1133,10 +1063,10 @@
       },
       {
         "name": "variant",
-        "type": "\"ghost\" | \"outline\" | \"soft\" | \"solid\"",
+        "type": "\"ghost\" | \"link\" | \"outline\" | \"soft\" | \"solid\"",
         "required": false,
         "defaultValue": "ghost",
-        "description": "Visual treatment of the button surface."
+        "description": "Visual treatment of the button surface. `link` uses compact text styling without a filled surface or border; `href` still determines link semantics."
       }
     ]
   },
@@ -1220,21 +1150,7 @@
         "type": "\"md\" | \"sm\"",
         "required": false,
         "defaultValue": "md",
-        "description": "Button height: `sm` (24px) or `md` (32px)."
-      },
-      {
-        "name": "soon",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": "false",
-        "description": "Displays a coming-soon label and disables activation."
-      },
-      {
-        "name": "soonLabel",
-        "type": "string",
-        "required": false,
-        "defaultValue": null,
-        "description": "Text for the coming-soon label."
+        "description": "Button height: `sm` (24px) or `md` (32px). The `link` variant uses its content height at either size."
       },
       {
         "name": "startIcon",
@@ -1252,10 +1168,10 @@
       },
       {
         "name": "variant",
-        "type": "\"ghost\" | \"outline\" | \"soft\" | \"solid\"",
+        "type": "\"ghost\" | \"link\" | \"outline\" | \"soft\" | \"solid\"",
         "required": false,
         "defaultValue": "outline",
-        "description": "Visual treatment of the button surface."
+        "description": "Visual treatment of the button surface. `link` uses compact text styling without a filled surface or border; `href` still determines link semantics."
       }
     ]
   },
@@ -1301,7 +1217,7 @@
       },
       {
         "name": "variant",
-        "type": "\"ghost\" | \"outline\" | \"soft\" | \"solid\"",
+        "type": "\"ghost\" | \"link\" | \"outline\" | \"soft\" | \"solid\"",
         "required": false,
         "defaultValue": null,
         "description": "Shared surface treatment that overrides the variant of buttons in the group."
@@ -1863,6 +1779,13 @@
     "slug": "input/radio",
     "props": [
       {
+        "name": "children",
+        "type": "ReactNode",
+        "required": false,
+        "defaultValue": null,
+        "description": "Option content. Card options wrap it in a padded full-width content area."
+      },
+      {
         "name": "className",
         "type": "string | ((state: RadioRootState) => string | undefined)",
         "required": false,
@@ -1931,6 +1854,13 @@
         "required": true,
         "defaultValue": null,
         "description": "The unique identifying value of the radio in a group."
+      },
+      {
+        "name": "variant",
+        "type": "\"card\" | \"default\"",
+        "required": false,
+        "defaultValue": "default",
+        "description": "Presentation of the option: a standard radio or a full-width card. Defaults to default."
       }
     ]
   },
@@ -3698,7 +3628,7 @@
           },
           {
             "name": "size",
-            "type": "\"fullscreen\" | \"lg\" | \"md\" | \"sm\" | \"xl\"",
+            "type": "\"compact\" | \"fullscreen\" | \"lg\" | \"md\" | \"sm\" | \"xl\"",
             "required": false,
             "defaultValue": "md",
             "description": "Width of the dialog, or `fullscreen` to fill the viewport."
@@ -5362,6 +5292,13 @@
             "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
           },
           {
+            "name": "collisionPadding",
+            "type": "Padding",
+            "required": false,
+            "defaultValue": null,
+            "description": "Space in pixels kept between the popup and the edges of its collision\nboundary, for all sides or per side. Defaults to 5."
+          },
+          {
             "name": "container",
             "type": "HTMLElement | ShadowRoot | RefObject<HTMLElement | ShadowRoot | null> | null",
             "required": false,
@@ -5748,6 +5685,13 @@
         "required": false,
         "defaultValue": null,
         "description": "ID of the trigger that the tooltip is associated with.\nThis is useful in conjunction with the `open` prop to create a controlled tooltip.\nThere's no need to specify this prop when the tooltip is uncontrolled (that is, when the `open` prop is not set)."
+      },
+      {
+        "name": "withExitAnimation",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": null,
+        "description": "Fades and slides the popup out when it closes instead of hiding it at once."
       }
     ],
     "parts": [
@@ -6057,6 +6001,13 @@
             "required": false,
             "defaultValue": null,
             "description": "Inline styles for the popup."
+          },
+          {
+            "name": "withExitAnimation",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Fades and slides the popup out when it closes instead of hiding it at once."
           }
         ]
       },
@@ -6159,7 +6110,7 @@
         "type": "number",
         "required": false,
         "defaultValue": "6000",
-        "description": "Milliseconds before `onClose` is called. The countdown pauses while the\npointer is over the toast."
+        "description": "Milliseconds before `onClose` is called. The countdown pauses while the\npointer is over the toast or keyboard focus is inside it."
       },
       {
         "name": "icon",
@@ -6321,6 +6272,13 @@
         "required": false,
         "defaultValue": null,
         "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+      },
+      {
+        "name": "ring",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Surrounds the avatar with a background-colored ring so overlapping avatars stay distinct."
       },
       {
         "name": "shape",
@@ -6796,6 +6754,20 @@
             "description": "Allows selecting several options. Options then keep the popup open and show a checkbox by default."
           },
           {
+            "name": "onEscapeKeyDown",
+            "type": "((event: DropdownDismissEvent) => void)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Called when Escape is about to close the popup. Call `event.preventDefault()` to keep it open."
+          },
+          {
+            "name": "onInteractOutside",
+            "type": "((event: DropdownDismissEvent) => void)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Called when a press outside the popup, or Tab out of it, is about to close it. `event.target` is the element pressed outside, or `null` after Tab. Call `event.preventDefault()` to keep it open."
+          },
+          {
             "name": "onOpenChange",
             "type": "((open: boolean) => void)",
             "required": false,
@@ -6923,6 +6895,13 @@
             "required": false,
             "defaultValue": null,
             "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+          },
+          {
+            "name": "collisionPadding",
+            "type": "Padding",
+            "required": false,
+            "defaultValue": null,
+            "description": "Space in pixels kept between the popup and the edges of its collision\nboundary, for all sides or per side. Defaults to 5."
           },
           {
             "name": "container",
@@ -8312,65 +8291,16 @@
     ]
   },
   {
-    "name": "Info",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/info",
-    "props": [
-      {
-        "name": "accent",
-        "type": "\"blue\" | \"danger\"",
-        "required": false,
-        "defaultValue": "blue",
-        "description": "Information or danger styling."
-      },
-      {
-        "name": "buttonTitle",
-        "type": "string",
-        "required": false,
-        "defaultValue": null,
-        "description": "Visible label for the optional action. Requires href or onClick."
-      },
-      {
-        "name": "href",
-        "type": "string",
-        "required": false,
-        "defaultValue": null,
-        "description": "Action destination. Takes precedence over onClick."
-      },
-      {
-        "name": "onClick",
-        "type": "((event: MouseEvent<HTMLButtonElement, MouseEvent>) => void)",
-        "required": false,
-        "defaultValue": null,
-        "description": "Action callback when href is absent."
-      },
-      {
-        "name": "render",
-        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, ButtonState>",
-        "required": false,
-        "defaultValue": null,
-        "description": "Custom render element for the link action, forwarded to Button when href is supplied."
-      },
-      {
-        "name": "text",
-        "type": "string",
-        "required": true,
-        "defaultValue": null,
-        "description": "Message displayed beside the information icon."
-      }
-    ]
-  },
-  {
     "name": "InlineBanner",
     "entryPoint": "twenty-ui/components",
     "slug": "components/inline-banner",
     "props": [
       {
         "name": "button",
-        "type": "{ title?: string | undefined; onClick?: (() => void) | undefined; hidden?: boolean | undefined; disabled?: boolean | undefined; Icon?: IconComponent | undefined; }",
+        "type": "InlineBannerButtonProps",
         "required": false,
         "defaultValue": null,
-        "description": "Optional action with title, onClick, hidden, disabled, and Icon fields."
+        "description": "Optional button or destination link. All fields are optional:\n\n- `title` (`string`): visible action label.\n- `onClick` (`(event: BaseUIEvent<React.MouseEvent<HTMLButtonElement>>) => void`): activation handler, including keyboard activation.\n- `href` (`string`): destination URL; selects native link semantics.\n- `render` (`ReactElement | ((props: HTMLProps, state: { disabled: boolean }) => ReactElement)`): custom root element or renderer. Preserve an anchor when `href` is set, or a native button otherwise. `HTMLProps` includes native element attributes and its ref.\n- `target` (`string`): link browsing context, such as `_blank`.\n- `rel` (`string`): link relationship, such as `noopener noreferrer`.\n- `download` (native anchor attribute): use `true` to download the destination or a `string` to suggest a filename.\n- `disabled` (`boolean`): prevents activation.\n- `hidden` (`boolean`): omits the action from the banner.\n- `aria-label` (`string`): accessible action name, needed when no visible title is supplied.\n- `Icon` (`IconComponent`): decorative icon component displayed before the title.\n\nAction and link fields use the corresponding [Button props](/ui/primitives/input/button). `BaseUIEvent` extends the React event with `preventBaseUIHandler()` and `baseUIHandlerPrevented`."
       },
       {
         "name": "className",
@@ -8383,7 +8313,7 @@
         "name": "color",
         "type": "\"blue\" | \"danger\"",
         "required": false,
-        "defaultValue": null,
+        "defaultValue": "blue",
         "description": "Banner palette color. An omitted color uses Banner’s default."
       },
       {
@@ -8391,7 +8321,7 @@
         "type": "boolean",
         "required": false,
         "defaultValue": "false",
-        "description": "Uses the embedded banner appearance."
+        "description": "Removes the bottom margin from standard banners. Compact banners have no bottom margin."
       },
       {
         "name": "LeftIcon",
@@ -8405,7 +8335,14 @@
         "type": "string",
         "required": true,
         "defaultValue": null,
-        "description": "Message, truncated with its full text available in a tooltip."
+        "description": "Message text. Standard banners truncate with a focusable tooltip; compact banners wrap."
+      },
+      {
+        "name": "variant",
+        "type": "\"compact\" | \"standard\"",
+        "required": false,
+        "defaultValue": "standard",
+        "description": "Standard full-width banner or compact wrapping message with a 512px maximum content width."
       }
     ]
   },
@@ -8459,139 +8396,6 @@
     ]
   },
   {
-    "name": "CardPicker",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/card-picker",
-    "props": [
-      {
-        "name": "children",
-        "type": "ReactNode",
-        "required": false,
-        "defaultValue": null,
-        "description": "Card content inside the radio control."
-      },
-      {
-        "name": "className",
-        "type": "string | ((state: RadioRootState) => string | undefined)",
-        "required": false,
-        "defaultValue": null,
-        "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
-      },
-      {
-        "name": "disabled",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": null,
-        "description": "Whether the component should ignore user interaction."
-      },
-      {
-        "name": "inputRef",
-        "type": "Ref<HTMLInputElement>",
-        "required": false,
-        "defaultValue": null,
-        "description": "A ref to access the hidden input element."
-      },
-      {
-        "name": "nativeButton",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": "false",
-        "description": "Whether the component renders a native `<button>` element when replacing it\nvia the `render` prop.\nSet to `true` if the rendered element is a native button."
-      },
-      {
-        "name": "readOnly",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": null,
-        "description": "Whether the user should be unable to select the radio button."
-      },
-      {
-        "name": "render",
-        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, RadioRootState>",
-        "required": false,
-        "defaultValue": null,
-        "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
-      },
-      {
-        "name": "required",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": null,
-        "description": "Whether the user must choose a value before submitting a form."
-      },
-      {
-        "name": "size",
-        "type": "\"md\" | \"sm\"",
-        "required": false,
-        "defaultValue": null,
-        "description": "Visual size of the radio."
-      },
-      {
-        "name": "style",
-        "type": "CSSProperties | ((state: RadioRootState) => CSSProperties | undefined)",
-        "required": false,
-        "defaultValue": null,
-        "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
-      },
-      {
-        "name": "value",
-        "type": "TValue",
-        "required": true,
-        "defaultValue": null,
-        "description": "The unique identifying value of the radio in a group."
-      }
-    ]
-  },
-  {
-    "name": "ColorSchemePicker",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/color-scheme-picker",
-    "props": [
-      {
-        "name": "className",
-        "type": "string",
-        "required": false,
-        "defaultValue": null,
-        "description": "Class applied to the outer container."
-      },
-      {
-        "name": "darkLabel",
-        "type": "string",
-        "required": true,
-        "defaultValue": null,
-        "description": "Visible label and accessible name of the dark choice."
-      },
-      {
-        "name": "lightLabel",
-        "type": "string",
-        "required": true,
-        "defaultValue": null,
-        "description": "Visible label and accessible name of the light choice."
-      },
-      {
-        "name": "onChange",
-        "type": "(value: ColorScheme) => void",
-        "required": true,
-        "defaultValue": null,
-        "description": "Called with the newly selected color scheme."
-      },
-      {
-        "name": "systemLabel",
-        "type": "string",
-        "required": true,
-        "defaultValue": null,
-        "description": "Visible label and accessible name of the system choice."
-      },
-      {
-        "name": "value",
-        "type": "\"Dark\" | \"Light\" | \"System\"",
-        "required": true,
-        "defaultValue": null,
-        "description": "Selected scheme: Light, Dark, or System. The application resolves system to a concrete theme."
-      }
-    ]
-  },
-  {
     "name": "SearchInput",
     "entryPoint": "twenty-ui/components",
     "slug": "components/search-input",
@@ -8619,10 +8423,17 @@
       },
       {
         "name": "className",
-        "type": "string",
+        "type": "string | ((state: InputState) => string | undefined)",
         "required": false,
         "defaultValue": null,
-        "description": "Class applied to the wrapper."
+        "description": "Class applied to the input."
+      },
+      {
+        "name": "defaultValue",
+        "type": "string | number | readonly string[]",
+        "required": false,
+        "defaultValue": null,
+        "description": "The default value of the input. Use when uncontrolled."
       },
       {
         "name": "disabled",
@@ -8654,10 +8465,17 @@
       },
       {
         "name": "onChange",
-        "type": "(value: string) => void",
-        "required": true,
+        "type": "((event: BaseUIEvent<ChangeEvent<HTMLInputElement, HTMLInputElement>>) => void)",
+        "required": false,
         "defaultValue": null,
-        "description": "Called with the new text, not a DOM change event. The application owns filtering."
+        "description": "Native input change event handler."
+      },
+      {
+        "name": "onValueChange",
+        "type": "((value: string, eventDetails: { reason: \"none\"; event: Event; cancel: () => void; allowPropagation: () => void; isCanceled: boolean; isPropagationAllowed: boolean; trigger: Element | undefined; }) => void)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Called with the new text. The application owns filtering."
       },
       {
         "name": "placeholder",
@@ -8667,9 +8485,37 @@
         "description": "Hint shown when the input is empty. Also used as the accessible name if no explicit label is supplied."
       },
       {
+        "name": "ref",
+        "type": "Ref<HTMLInputElement>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Ref to the native input element."
+      },
+      {
+        "name": "render",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, InputState>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+      },
+      {
+        "name": "size",
+        "type": "\"md\" | \"sm\"",
+        "required": false,
+        "defaultValue": "md",
+        "description": "Visual size of the input group and optional filter button."
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties | ((state: InputState) => CSSProperties | undefined)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+      },
+      {
         "name": "value",
-        "type": "string",
-        "required": true,
+        "type": "string | number | readonly string[]",
+        "required": false,
         "defaultValue": null,
         "description": "Current search text."
       }
@@ -9274,48 +9120,6 @@
         "required": true,
         "defaultValue": null,
         "description": "Navigation items with a unique name, accessible label, Icon component, and onClick callback."
-      }
-    ]
-  },
-  {
-    "name": "RoundedLink",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/rounded-link",
-    "props": [
-      {
-        "name": "className",
-        "type": "string",
-        "required": false,
-        "defaultValue": null,
-        "description": "Class applied to the link."
-      },
-      {
-        "name": "color",
-        "type": "\"primary\" | \"secondary\"",
-        "required": false,
-        "defaultValue": "primary",
-        "description": "Label text color: primary or secondary."
-      },
-      {
-        "name": "href",
-        "type": "string",
-        "required": true,
-        "defaultValue": null,
-        "description": "Destination URL, normalized by the safe-URL helper. Opens in a new tab."
-      },
-      {
-        "name": "label",
-        "type": "string",
-        "required": false,
-        "defaultValue": null,
-        "description": "Visible link text. An absent or empty label renders nothing."
-      },
-      {
-        "name": "onClick",
-        "type": "((event: MouseEvent<HTMLElement, MouseEvent>) => void)",
-        "required": false,
-        "defaultValue": null,
-        "description": "Click callback after propagation is stopped."
       }
     ]
   },

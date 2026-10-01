@@ -1,8 +1,10 @@
 import { useLingui } from '@lingui/react/macro';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
+import { useAiChatSentMessageHandOff } from '@/ai/hooks/useAiChatSentMessageHandOff';
 import { useIsCurrentAiChatThreadReadOnly } from '@/ai/hooks/useIsCurrentAiChatThreadReadOnly';
 import { styled } from '@linaria/react';
+import { type ReactNode } from 'react';
 
 import { AgentChatFilePreview } from '@/ai/components/internal/AgentChatFilePreview';
 import { AgentMessageRole } from '@/ai/constants/AgentMessageRole';
@@ -147,6 +149,24 @@ const StyledFilesContainer = styled.div`
   margin-top: ${themeCssVariables.spacing[2]};
 `;
 
+type AiChatUserMessageTextProps = {
+  messageId: string;
+  children: ReactNode;
+};
+
+const AiChatUserMessageText = ({
+  messageId,
+  children,
+}: AiChatUserMessageTextProps) => {
+  const sentMessageHandOffRef = useAiChatSentMessageHandOff(messageId);
+
+  return (
+    <StyledMessageText isUser ref={sentMessageHandOffRef}>
+      {children}
+    </StyledMessageText>
+  );
+};
+
 type AiChatMessageProps = {
   messageId: string;
   isLastMessageStreaming?: boolean;
@@ -194,6 +214,13 @@ export const AiChatMessage = ({
   const shouldShowError = isDefined(error) && isLastAssistantMessage;
 
   const fileParts = agentChatMessage.parts.filter(isExtendedFileUIPart);
+  const messageContent = (
+    <AiChatAssistantMessageRenderer
+      isLastMessageStreaming={isLastMessageStreaming}
+      messageParts={agentChatMessage.parts}
+      hasError={shouldShowError}
+    />
+  );
 
   return (
     <StyledMessageBubble isUser={isUser}>
@@ -201,13 +228,13 @@ export const AiChatMessage = ({
         <StyledSender>{senderLabel}</StyledSender>
       )}
       <StyledMessageContainer isUser={isUser}>
-        <StyledMessageText isUser={isUser}>
-          <AiChatAssistantMessageRenderer
-            isLastMessageStreaming={isLastMessageStreaming}
-            messageParts={agentChatMessage.parts}
-            hasError={shouldShowError}
-          />
-        </StyledMessageText>
+        {isUser ? (
+          <AiChatUserMessageText messageId={messageId}>
+            {messageContent}
+          </AiChatUserMessageText>
+        ) : (
+          <StyledMessageText>{messageContent}</StyledMessageText>
+        )}
         {fileParts.length > 0 && (
           <StyledFilesContainer>
             {fileParts.map((file) => (

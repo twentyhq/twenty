@@ -171,7 +171,7 @@ export const SettingsObjectFieldTable = ({
         <SearchInput
           placeholder={t`Search a field...`}
           value={searchTerm}
-          onChange={setSearchTerm}
+          onValueChange={setSearchTerm}
           filterDropdown={(filterButton) => (
             <DropdownRoot
               dropdownId="settings-fields-filter-dropdown"

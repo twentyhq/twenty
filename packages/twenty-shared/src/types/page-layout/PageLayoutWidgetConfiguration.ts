@@ -203,6 +203,10 @@ export type ChatThreadsConfiguration = {
   configurationType: 'CHAT_THREADS';
 };
 
+export type ChatConfiguration = {
+  configurationType: 'CHAT';
+};
+
 export type PageLayoutWidgetConfiguration =
   | AggregateChartConfiguration
   | PieChartConfiguration
@@ -231,4 +235,5 @@ export type PageLayoutWidgetConfiguration =
   | MessageCampaignDetailsConfiguration
   | CallRecordingSummaryConfiguration
   | CallRecordingTranscriptConfiguration
-  | ChatThreadsConfiguration;
+  | ChatThreadsConfiguration
+  | ChatConfiguration;

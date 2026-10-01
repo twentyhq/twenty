@@ -231,8 +231,6 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         ),
         {} as never,
         {} as never,
-        { broadcast: jest.fn().mockResolvedValue(undefined) } as never,
-        {} as never,
         {
           getThreadWithAccess: ({
             workspaceId,
@@ -247,6 +245,7 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
           }),
           getPermissions: jest.fn().mockResolvedValue({ canRead: true }),
         } as never,
+        { emitThreadUpdated: jest.fn().mockResolvedValue(undefined) } as never,
       );
 
     const createActorService = (messageRepository: typeof messages) =>

@@ -87,7 +87,7 @@ export const buildAgentChatThreadStandardFlatFieldMetadatas = (
         ),
         icon: 'IconText',
         isSystem: true,
-        isUIEditable: false,
+        isUIEditable: true,
         isNullable: true,
       },
     }),
@@ -562,31 +562,6 @@ export const buildAgentChatThreadStandardFlatFieldMetadatas = (
           onDelete: RelationOnDeleteAction.CASCADE,
           joinColumnName: 'workflowRunId',
         },
-      },
-    }),
-    writability: MetadataWritability.SYSTEM,
-    isAuditLogged: false,
-  },
-  workflowStepId: {
-    ...createStandardFieldFlatMetadata({
-      ...args,
-      context: {
-        fieldName: 'workflowStepId',
-        type: FieldMetadataType.TEXT,
-        label: i18nLabel(
-          msg({ message: 'Workflow Step ID', context: 'fieldMetadata.label' }),
-        ),
-        description: i18nLabel(
-          msg({
-            message:
-              'Agent step of the workflow run that held this conversation',
-            context: 'fieldMetadata.description',
-          }),
-        ),
-        icon: 'IconId',
-        isSystem: true,
-        isUIEditable: false,
-        isNullable: true,
       },
     }),
     writability: MetadataWritability.SYSTEM,

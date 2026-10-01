@@ -14,7 +14,7 @@ export const ConfigVariableSearchInput = ({
     <SearchInput
       placeholder={t`Search config variables`}
       value={value}
-      onChange={onChange}
+      onValueChange={onChange}
     />
   );
 };

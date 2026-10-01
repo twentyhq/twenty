@@ -14,6 +14,7 @@ import {
   type WorkflowDelayAction,
   type WorkflowFormAction,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+import { answerToolCall } from 'test/integration/graphql/suites/workflow/utils/answer-tool-call.util';
 import { updateWorkflowVersionTrigger } from 'test/integration/graphql/suites/workflow/utils/update-workflow-version-trigger.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
@@ -324,26 +325,13 @@ describe('Parallel branch leaf resume workflow (e2e)', () => {
       'NOT_STARTED',
     );
 
-    const submitFormResponse = await client
-      .post('/graphql')
-      .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
-      .send({
-        query: `
-          mutation SubmitFormStep($input: SubmitFormStepInput!) {
-            submitFormStep(input: $input)
-          }
-        `,
-        variables: {
-          input: {
-            stepId: formStepId,
-            workflowRunId: createdWorkflowRunId,
-            response: { answer: 'Submitted from integration test' },
-          },
-        },
-      });
+    const submitFormResponse = await answerToolCall({
+      toolCall: { workflowRunId: createdWorkflowRunId, stepId: formStepId! },
+      response: { answer: 'Submitted from integration test' },
+    });
 
     expect(submitFormResponse.body.errors).toBeUndefined();
-    expect(submitFormResponse.body.data.submitFormStep).toBe(true);
+    expect(submitFormResponse.body.data.answerToolCall.streamId).toBeNull();
 
     await (
       await global.workflowTestServices.runJob()

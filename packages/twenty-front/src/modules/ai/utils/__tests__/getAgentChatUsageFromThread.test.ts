@@ -6,12 +6,12 @@ const storedThread = {
   totalInputTokens: 250,
   totalOutputTokens: 30,
   totalCacheReadTokens: 80,
-  totalInputCredits: 0.125,
-  totalOutputCredits: 0.05,
+  totalInputCredits: '125000',
+  totalOutputCredits: 50000,
 };
 
 describe('getAgentChatUsageFromThread', () => {
-  it('restores cumulative usage without restoring the last message', () => {
+  it('restores cumulative usage in display credits without the last message', () => {
     expect(getAgentChatUsageFromThread(storedThread)).toEqual({
       conversationSize: 120,
       contextWindowTokens: 1000,

@@ -5,6 +5,7 @@ import {
   HttpCode,
   HttpStatus,
   Post,
+  Query,
   Res,
   UseFilters,
   UseGuards,
@@ -32,13 +33,23 @@ import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-worksp
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
-import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { WorkspaceNotSuspendedGuard } from 'src/engine/guards/workspace-not-suspended.guard';
 
 @Controller(ApiPath.Mcp)
 @UseGuards(
   McpAuthGuard,
-  WorkspaceAuthGuard,
+  AuthPrincipalGuard({
+    userSession: {
+      standard: true,
+      impersonated: true,
+      playground: true,
+      workspaceAgnostic: false,
+    },
+    apiKey: true,
+    oauthClient: true,
+    application: true,
+  }),
   WorkspaceNotSuspendedGuard,
   NoPermissionGuard,
 )
@@ -66,6 +77,7 @@ export class McpCoreController {
     application: FlatApplication | undefined,
     @Headers('accept') acceptHeader: string | undefined,
     @Res({ passthrough: true }) res: Response,
+    @Query('mode') mode?: string,
   ) {
     const authContext = {
       workspace,
@@ -73,6 +85,7 @@ export class McpCoreController {
       userWorkspaceId,
       apiKey,
       application,
+      isDirectMode: mode === 'direct',
     };
 
     // JSON-RPC notifications (no id) expect no response body regardless of Accept

@@ -24,10 +24,9 @@ export { getIconTileColorShades } from './data-display/TintedIconTile/utils/getI
 export { Callout } from './feedback/Callout/Callout';
 export type { CalloutProps } from './feedback/Callout/types/CalloutProps';
 export type { CalloutVariant } from './feedback/Callout/types/CalloutVariant';
-export { Info } from './feedback/Info/Info';
-export type { InfoAccent } from './feedback/Info/types/InfoAccent';
-export type { InfoProps } from './feedback/Info/types/InfoProps';
 export { InlineBanner } from './feedback/InlineBanner/InlineBanner';
+export type { InlineBannerButtonProps } from './feedback/InlineBanner/types/InlineBannerButtonProps';
+export type { InlineBannerProps } from './feedback/InlineBanner/types/InlineBannerProps';
 export { useToast } from './feedback/Toast/hooks/useToast';
 export { Toast } from './feedback/Toast/Toast';
 export { ToastProvider } from './feedback/Toast/ToastProvider';
@@ -38,10 +37,6 @@ export type { ToastProviderProps } from './feedback/Toast/types/ToastProviderPro
 export type { ToastVariant } from './feedback/Toast/types/ToastVariant';
 export { Toaster } from './feedback/Toaster/Toaster';
 export type { ToasterProps } from './feedback/Toaster/types/ToasterProps';
-export { CardPicker } from './input/CardPicker/CardPicker';
-export type { CardPickerProps } from './input/CardPicker/types/CardPickerProps';
-export { ColorSchemePicker } from './input/ColorSchemePicker/ColorSchemePicker';
-export type { ColorSchemePickerProps } from './input/ColorSchemePicker/types/ColorSchemePickerProps';
 export { IconButton } from './input/IconButton/IconButton';
 export type { IconButtonProps } from './input/IconButton/types/IconButtonProps';
 export type { IconButtonSize } from './input/IconButton/types/IconButtonSize';
@@ -63,6 +58,7 @@ export { useDropdownPage } from './navigation/Dropdown/hooks/useDropdownPage';
 export type { DropdownActionItemProps } from './navigation/Dropdown/types/DropdownActionItemProps';
 export type { DropdownCloseProps } from './navigation/Dropdown/types/DropdownCloseProps';
 export type { DropdownContentProps } from './navigation/Dropdown/types/DropdownContentProps';
+export type { DropdownDismissEvent } from './navigation/Dropdown/types/DropdownDismissEvent';
 export type { DropdownHeaderProps } from './navigation/Dropdown/types/DropdownHeaderProps';
 export type { DropdownOptionItemProps } from './navigation/Dropdown/types/DropdownOptionItemProps';
 export type { DropdownPageProps } from './navigation/Dropdown/types/DropdownPageProps';
@@ -89,6 +85,5 @@ export type { MenuItemSuggestionProps } from './navigation/MenuItemSuggestion/ty
 export { MenuPicker } from './navigation/MenuPicker/MenuPicker';
 export type { MenuPickerProps } from './navigation/MenuPicker/types/MenuPickerProps';
 export { NavigationBar } from './navigation/NavigationBar/NavigationBar';
-export { RoundedLink } from './navigation/RoundedLink/RoundedLink';
 export { TabButton } from './navigation/TabButton/TabButton';
 export type { TabButtonProps } from './navigation/TabButton/types/TabButtonProps';

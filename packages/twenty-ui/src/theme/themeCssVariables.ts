@@ -19,6 +19,9 @@ export const themeCssVariables = {
       sm: {
         width: 'var(--t-modal-size-sm-width)',
       },
+      compact: {
+        width: 'var(--t-modal-size-compact-width)',
+      },
       md: {
         width: 'var(--t-modal-size-md-width)',
       },

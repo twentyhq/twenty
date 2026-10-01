@@ -14,6 +14,7 @@ export const PopoverPopup = ({
   alignOffset,
   arrow = false,
   anchor,
+  collisionPadding,
   container,
   keepMounted,
   className,
@@ -35,6 +36,7 @@ export const PopoverPopup = ({
         sideOffset={sideOffset}
         alignOffset={alignOffset}
         anchor={anchor}
+        collisionPadding={collisionPadding}
         className={styles.positioner}
       >
         <PopoverPrimitive.Popup

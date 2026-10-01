@@ -27,6 +27,7 @@ export const buildLimitQuotaCounter = ({
     meter: limit.meter,
     periodUnit: limit.periodUnit,
     periodStart: period.periodStart,
+    limitValue: limit.limitValue,
   }),
   limitValue: limit.limitValue,
   meter: limit.meter,

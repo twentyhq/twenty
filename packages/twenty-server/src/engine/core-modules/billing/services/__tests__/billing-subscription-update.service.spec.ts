@@ -11,7 +11,6 @@ import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/bill
 import { SubscriptionUpdateType } from 'src/engine/core-modules/billing/types/billing-subscription-update.type';
 import { BillingPriceService } from 'src/engine/core-modules/billing/services/billing-price.service';
 import { BillingProductService } from 'src/engine/core-modules/billing/services/billing-product.service';
-import { BillingSubscriptionPhaseService } from 'src/engine/core-modules/billing/services/billing-subscription-phase.service';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { BillingSubscriptionUpdateService } from 'src/engine/core-modules/billing/services/billing-subscription-update.service';
 import { StripeInvoiceService } from 'src/engine/core-modules/billing/stripe/services/stripe-invoice.service';
@@ -66,19 +65,17 @@ const buildPrice = ({
     billingProduct: product,
   }) as unknown as BillingPriceEntity;
 
-const licensedMonth = buildPrice({
+const baseProductMonth = buildPrice({
   stripePriceId: 'price_base_month',
   interval: SubscriptionInterval.Month,
   product: baseProduct,
 });
-const licensedYear = buildPrice({
+const baseProductYear = buildPrice({
   stripePriceId: 'price_base_year',
   interval: SubscriptionInterval.Year,
   product: baseProduct,
 });
 
-// The resource-credit product carries one price per credit package. This is the
-// shape that made the single-price-per-interval guard throw in production.
 const creditMonthPackages = [50, 100, 200].map((creditAmount) =>
   buildPrice({
     stripePriceId: `price_credits_month_${creditAmount}`,
@@ -97,15 +94,13 @@ const creditYearPackages = [600, 1200, 2400].map((creditAmount) =>
 );
 
 const allPrices = [
-  licensedMonth,
-  licensedYear,
+  baseProductMonth,
+  baseProductYear,
   ...creditMonthPackages,
   ...creditYearPackages,
 ];
 
-// The interval lookup for the base product reads the prices off the product it
-// is given, so the fixture products carry their own prices.
-baseProduct.billingPrices.push(licensedMonth, licensedYear);
+baseProduct.billingPrices.push(baseProductMonth, baseProductYear);
 resourceCreditProduct.billingPrices.push(
   ...creditMonthPackages,
   ...creditYearPackages,
@@ -147,9 +142,6 @@ describe('BillingSubscriptionUpdateService interval switch', () => {
         BillingSubscriptionUpdateService,
         {
           provide: BillingPriceService,
-          // The real service, so the package scaling runs rather than a canned
-          // answer: a mocked helper would pass even if the caller stopped
-          // scaling across the interval change.
           useValue: new BillingPriceService(
             noop as never,
             billingPriceRepository as never,
@@ -168,7 +160,6 @@ describe('BillingSubscriptionUpdateService interval switch', () => {
         { provide: StripeSubscriptionService, useValue: noop },
         { provide: StripeInvoiceService, useValue: noop },
         { provide: StripeSubscriptionScheduleService, useValue: noop },
-        { provide: BillingSubscriptionPhaseService, useValue: noop },
         { provide: BillingSubscriptionService, useValue: noop },
         { provide: WorkspaceOrmManager, useValue: noop },
       ],
@@ -186,14 +177,14 @@ describe('BillingSubscriptionUpdateService interval switch', () => {
         newInterval: SubscriptionInterval.Year,
       },
       {
-        licensedPriceId: 'price_base_month',
+        baseProductPriceId: 'price_base_month',
         resourceCreditPriceId: 'price_credits_month_100',
         seats: 3,
       } as never,
     );
 
     expect(result.resourceCreditPriceId).toBe('price_credits_year_1200');
-    expect(result.licensedPriceId).toBe('price_base_year');
+    expect(result.baseProductPriceId).toBe('price_base_year');
   });
 
   it('moves a yearly package back to the monthly package worth a twelfth of it', async () => {
@@ -203,20 +194,17 @@ describe('BillingSubscriptionUpdateService interval switch', () => {
         newInterval: SubscriptionInterval.Month,
       },
       {
-        licensedPriceId: 'price_base_year',
+        baseProductPriceId: 'price_base_year',
         resourceCreditPriceId: 'price_credits_year_1200',
         seats: 3,
       } as never,
     );
 
     expect(result.resourceCreditPriceId).toBe('price_credits_month_100');
-    expect(result.licensedPriceId).toBe('price_base_month');
+    expect(result.baseProductPriceId).toBe('price_base_month');
   });
 
   it('switches interval on a product holding several packages at that interval', async () => {
-    // The regression this pins: resolving the resource-credit item as "the one
-    // billable price at the interval" throws here, because the product
-    // legitimately holds three.
     expect(
       resourceCreditProduct.billingPrices.filter(
         (price) => price.interval === SubscriptionInterval.Year,
@@ -230,7 +218,7 @@ describe('BillingSubscriptionUpdateService interval switch', () => {
           newInterval: SubscriptionInterval.Year,
         },
         {
-          licensedPriceId: 'price_base_month',
+          baseProductPriceId: 'price_base_month',
           resourceCreditPriceId: 'price_credits_month_100',
           seats: 1,
         } as never,
@@ -240,7 +228,7 @@ describe('BillingSubscriptionUpdateService interval switch', () => {
 
   it('leaves the prices untouched when the interval already matches', async () => {
     const currentPrices = {
-      licensedPriceId: 'price_base_month',
+      baseProductPriceId: 'price_base_month',
       resourceCreditPriceId: 'price_credits_month_100',
       seats: 2,
     };

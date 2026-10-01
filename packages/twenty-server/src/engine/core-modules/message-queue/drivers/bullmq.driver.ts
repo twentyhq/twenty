@@ -187,20 +187,13 @@ export class BullMQDriver
   ): Promise<void> {
     const queue = this.queueMap[queueName];
 
-    try {
-      if (isDefined(globalConcurrency)) {
-        await queue.setGlobalConcurrency(globalConcurrency);
+    if (isDefined(globalConcurrency)) {
+      await queue.setGlobalConcurrency(globalConcurrency);
 
-        return;
-      }
-
-      await queue.removeGlobalConcurrency();
-    } catch (error) {
-      this.logger.error(
-        `Failed to write global concurrency for queue ${queueName}`,
-        error,
-      );
+      return;
     }
+
+    await queue.removeGlobalConcurrency();
   }
 
   work<T>(

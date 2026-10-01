@@ -4,12 +4,10 @@ import { JSON_TREE_PROP_DESCRIPTIONS } from './jsonTreePropDescriptions';
 import { NOTIFICATION_COUNTER_PROP_DESCRIPTIONS } from './notificationCounterPropDescriptions';
 import { TINTED_ICON_TILE_PROP_DESCRIPTIONS } from './tintedIconTilePropDescriptions';
 import { CALLOUT_PROP_DESCRIPTIONS } from './calloutPropDescriptions';
-import { INFO_PROP_DESCRIPTIONS } from './infoPropDescriptions';
 import { INLINE_BANNER_PROP_DESCRIPTIONS } from './inlineBannerPropDescriptions';
 import { TOAST_PROVIDER_PROP_DESCRIPTIONS } from './toastProviderPropDescriptions';
 import { TOASTER_PROP_DESCRIPTIONS } from './toasterPropDescriptions';
-import { CARD_PICKER_PROP_DESCRIPTIONS } from './cardPickerPropDescriptions';
-import { COLOR_SCHEME_PICKER_PROP_DESCRIPTIONS } from './colorSchemePickerPropDescriptions';
+import { RADIO_PROP_DESCRIPTIONS } from './radioPropDescriptions';
 import { SEARCH_INPUT_PROP_DESCRIPTIONS } from './searchInputPropDescriptions';
 import { ANIMATED_ICON_CROSSFADE_PROP_DESCRIPTIONS } from './animatedIconCrossfadePropDescriptions';
 import { MENU_ITEM_PROP_DESCRIPTIONS } from './menuItemPropDescriptions';
@@ -18,7 +16,6 @@ import { MENU_ITEM_DRAGGABLE_PROP_DESCRIPTIONS } from './menuItemDraggablePropDe
 import { MENU_ITEM_SUGGESTION_PROP_DESCRIPTIONS } from './menuItemSuggestionPropDescriptions';
 import { MENU_PICKER_PROP_DESCRIPTIONS } from './menuPickerPropDescriptions';
 import { NAVIGATION_BAR_PROP_DESCRIPTIONS } from './navigationBarPropDescriptions';
-import { ROUNDED_LINK_PROP_DESCRIPTIONS } from './roundedLinkPropDescriptions';
 import { THEME_PROVIDER_PROP_DESCRIPTIONS } from './themeProviderPropDescriptions';
 import { ICON_PROP_DESCRIPTIONS } from './iconPropDescriptions';
 import { ICONS_PROVIDER_PROP_DESCRIPTIONS } from './iconsProviderPropDescriptions';
@@ -35,8 +32,6 @@ import { CARD_FOOTER_PROP_DESCRIPTIONS } from './cardFooterPropDescriptions';
 import { CARD_HEADER_PROP_DESCRIPTIONS } from './cardHeaderPropDescriptions';
 import { CARD_PROP_DESCRIPTIONS } from './cardPropDescriptions';
 import { CHIP_PROP_DESCRIPTIONS } from './chipPropDescriptions';
-import { CIRCULAR_PROGRESS_BAR_PROP_DESCRIPTIONS } from './circularProgressBarPropDescriptions';
-import { CLICK_TO_ACTION_LINK_PROP_DESCRIPTIONS } from './clickToActionLinkPropDescriptions';
 import { CODE_EDITOR_HEADER_PROP_DESCRIPTIONS } from './codeEditorHeaderPropDescriptions';
 import { CODE_EDITOR_PROP_DESCRIPTIONS } from './codeEditorPropDescriptions';
 import { COLOR_SAMPLE_PROP_DESCRIPTIONS } from './colorSamplePropDescriptions';
@@ -94,13 +89,6 @@ export const DOCUMENTED_COMPONENTS = [
     propDescriptions: BANNER_PROP_DESCRIPTIONS,
   },
   {
-    name: 'CircularProgressBar',
-    source: 'primitives/feedback/CircularProgressBar/CircularProgressBar.tsx',
-    entryPoint: 'twenty-ui/primitives/feedback',
-    slug: 'feedback/circular-progress-bar',
-    propDescriptions: CIRCULAR_PROGRESS_BAR_PROP_DESCRIPTIONS,
-  },
-  {
     name: 'Loader',
     source: 'primitives/feedback/Loader/Loader.tsx',
     entryPoint: 'twenty-ui/primitives/feedback',
@@ -149,13 +137,6 @@ export const DOCUMENTED_COMPONENTS = [
     entryPoint: 'twenty-ui/primitives/layout',
     slug: 'layout/text-direction-provider',
     propDescriptions: TEXT_DIRECTION_PROVIDER_PROP_DESCRIPTIONS,
-  },
-  {
-    name: 'ClickToActionLink',
-    source: 'primitives/navigation/ClickToActionLink/ClickToActionLink.tsx',
-    entryPoint: 'twenty-ui/primitives/navigation',
-    slug: 'navigation/click-to-action-link',
-    propDescriptions: CLICK_TO_ACTION_LINK_PROP_DESCRIPTIONS,
   },
   {
     name: 'OverflowingTextWithTooltip',
@@ -247,6 +228,7 @@ export const DOCUMENTED_COMPONENTS = [
     source: 'primitives/input/Radio/Radio.tsx',
     entryPoint: 'twenty-ui/primitives/input',
     slug: 'input/radio',
+    propDescriptions: RADIO_PROP_DESCRIPTIONS,
   },
   {
     name: 'RadioGroup',
@@ -537,13 +519,6 @@ export const DOCUMENTED_COMPONENTS = [
     propDescriptions: CALLOUT_PROP_DESCRIPTIONS,
   },
   {
-    name: 'Info',
-    source: 'components/feedback/Info/Info.tsx',
-    entryPoint: 'twenty-ui/components',
-    slug: 'components/info',
-    propDescriptions: INFO_PROP_DESCRIPTIONS,
-  },
-  {
     name: 'InlineBanner',
     source: 'components/feedback/InlineBanner/InlineBanner.tsx',
     entryPoint: 'twenty-ui/components',
@@ -563,20 +538,6 @@ export const DOCUMENTED_COMPONENTS = [
     entryPoint: 'twenty-ui/components',
     slug: 'components/toaster',
     propDescriptions: TOASTER_PROP_DESCRIPTIONS,
-  },
-  {
-    name: 'CardPicker',
-    source: 'components/input/CardPicker/CardPicker.tsx',
-    entryPoint: 'twenty-ui/components',
-    slug: 'components/card-picker',
-    propDescriptions: CARD_PICKER_PROP_DESCRIPTIONS,
-  },
-  {
-    name: 'ColorSchemePicker',
-    source: 'components/input/ColorSchemePicker/ColorSchemePicker.tsx',
-    entryPoint: 'twenty-ui/components',
-    slug: 'components/color-scheme-picker',
-    propDescriptions: COLOR_SCHEME_PICKER_PROP_DESCRIPTIONS,
   },
   {
     name: 'SearchInput',
@@ -633,13 +594,6 @@ export const DOCUMENTED_COMPONENTS = [
     entryPoint: 'twenty-ui/components',
     slug: 'components/navigation-bar',
     propDescriptions: NAVIGATION_BAR_PROP_DESCRIPTIONS,
-  },
-  {
-    name: 'RoundedLink',
-    source: 'components/navigation/RoundedLink/RoundedLink.tsx',
-    entryPoint: 'twenty-ui/components',
-    slug: 'components/rounded-link',
-    propDescriptions: ROUNDED_LINK_PROP_DESCRIPTIONS,
   },
   {
     name: 'ThemeProvider',
