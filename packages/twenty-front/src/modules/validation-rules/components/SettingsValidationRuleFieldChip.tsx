@@ -1,35 +1,39 @@
 import { styled } from '@linaria/react';
-import { NodeViewWrapper, type NodeViewProps } from '@tiptap/react';
 import { useIcons } from 'twenty-ui/icon';
 import { Chip } from 'twenty-ui/primitives/data-display';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
+import { type ValidationRuleFieldNodeAttributes } from '@/validation-rules/types/ValidationRuleFieldNodeAttributes';
+
 const StyledWrapper = styled.span`
   display: inline-block;
+  font-family: ${themeCssVariables.font.family};
   padding-inline: ${themeCssVariables.spacing[0.5]};
   vertical-align: middle;
   white-space: nowrap;
 `;
 
-type SettingsValidationRuleFieldChipProps = NodeViewProps;
+type SettingsValidationRuleFieldChipProps = ValidationRuleFieldNodeAttributes;
 
 export const SettingsValidationRuleFieldChip = ({
-  node,
+  path,
+  label,
+  iconName,
 }: SettingsValidationRuleFieldChipProps) => {
   const theme = useTheme();
   const { getIcon } = useIcons();
 
-  const Icon = getIcon(String(node.attrs.iconName));
+  const Icon = getIcon(iconName);
 
   return (
-    <NodeViewWrapper as={StyledWrapper}>
+    <StyledWrapper>
       <Chip
         variant="soft"
-        title={String(node.attrs.path)}
+        title={path}
         startElement={<Icon size={theme.icon.size.sm} />}
       >
-        {String(node.attrs.label)}
+        {label}
       </Chip>
-    </NodeViewWrapper>
+    </StyledWrapper>
   );
 };

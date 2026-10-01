@@ -5,12 +5,10 @@ import { Section } from 'twenty-ui/components';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { SettingsDataModelPreviewFormCard } from '@/settings/data-model/components/SettingsDataModelPreviewFormCard';
 import { Select } from '@/ui/input/components/Select';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
-import { SettingsValidationRuleExpressionEditor } from '@/validation-rules/components/SettingsValidationRuleExpressionEditor';
+import { SettingsValidationRuleConditionCard } from '@/validation-rules/components/SettingsValidationRuleConditionCard';
 import { SettingsValidationRuleNameForm } from '@/validation-rules/components/SettingsValidationRuleNameForm';
-import { SettingsValidationRulePreview } from '@/validation-rules/components/SettingsValidationRulePreview';
 import { type ValidationRuleEditorField } from '@/validation-rules/types/ValidationRuleEditorField';
 import { type ValidationRuleFormValues } from '@/validation-rules/types/ValidationRuleFormValues';
 
@@ -61,23 +59,14 @@ export const SettingsValidationRuleForm = ({
           title={t`Condition`}
           description={t`Must be true to save. A write that makes it false is rejected.`}
         />
-        <SettingsDataModelPreviewFormCard
-          preview={
-            <SettingsValidationRulePreview
-              objectMetadataItem={objectMetadataItem}
-              fields={fields}
-              editorFields={editorFields}
-              expression={values.expression}
-              message={values.message}
-            />
-          }
-          form={
-            <SettingsValidationRuleExpressionEditor
-              value={values.expression}
-              fields={fields}
-              editorFields={editorFields}
-              onChange={(expression) => onChange({ ...values, expression })}
-            />
+        <SettingsValidationRuleConditionCard
+          objectMetadataItem={objectMetadataItem}
+          fields={fields}
+          editorFields={editorFields}
+          expression={values.expression}
+          message={values.message}
+          onExpressionChange={(expression) =>
+            onChange({ ...values, expression })
           }
         />
       </Section.Root>

@@ -2,12 +2,14 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { MenuItem } from 'twenty-ui/components';
+import { useIcons } from 'twenty-ui/icon';
+import { Shortcut } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { SettingsValidationRuleHelperDetails } from '@/validation-rules/components/SettingsValidationRuleHelperDetails';
-import { SettingsValidationRuleHelperItemIcon } from '@/validation-rules/components/SettingsValidationRuleHelperItemIcon';
 import { type ValidationRuleEditorField } from '@/validation-rules/types/ValidationRuleEditorField';
 import { type ValidationRuleHelperItem } from '@/validation-rules/types/ValidationRuleHelperItem';
+import { getValidationRuleHelperItemIcon } from '@/validation-rules/utils/getValidationRuleHelperItemIcon';
 
 const StyledPanel = styled.div`
   display: grid;
@@ -38,6 +40,7 @@ const getItemKey = (item: ValidationRuleHelperItem) =>
 type SettingsValidationRuleHelperPanelProps = {
   items: ValidationRuleHelperItem[];
   highlightedIndex: number;
+  isEnterHintVisible: boolean;
   editorFields: ValidationRuleEditorField[];
   onHighlight: (index: number) => void;
   onSelect: (item: ValidationRuleHelperItem) => void;
@@ -46,11 +49,13 @@ type SettingsValidationRuleHelperPanelProps = {
 export const SettingsValidationRuleHelperPanel = ({
   items,
   highlightedIndex,
+  isEnterHintVisible,
   editorFields,
   onHighlight,
   onSelect,
 }: SettingsValidationRuleHelperPanelProps) => {
   const { t } = useLingui();
+  const { getIcon } = useIcons();
 
   const highlightedItem = items[highlightedIndex];
 
@@ -77,18 +82,18 @@ export const SettingsValidationRuleHelperPanel = ({
               onMouseDown={(event) => event.preventDefault()}
             >
               <MenuItem
-                LeftComponent={
-                  <SettingsValidationRuleHelperItemIcon item={item} />
-                }
+                LeftIcon={getValidationRuleHelperItemIcon({ item, getIcon })}
                 text={
                   item.kind === 'field'
                     ? item.field.label
                     : item.definition.name
                 }
-                contextualText={
-                  item.kind === 'field' ? item.field.path : undefined
+                RightComponent={
+                  isHighlighted &&
+                  isEnterHintVisible && (
+                    <Shortcut shortcut={['Enter']} variant="text" />
+                  )
                 }
-                contextualTextPosition="right"
                 focused={isHighlighted}
                 onMouseEnter={() => onHighlight(index)}
                 onClick={() => onSelect(item)}
