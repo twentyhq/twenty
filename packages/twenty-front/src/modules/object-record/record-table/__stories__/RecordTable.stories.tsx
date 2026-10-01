@@ -1,4 +1,5 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { graphql, HttpResponse } from 'msw';
 
 import { RecordTableWithWrappers } from '@/object-record/record-table/components/RecordTableWithWrappers';
 import { expect, fireEvent, userEvent, waitFor, within } from 'storybook/test';
@@ -13,6 +14,7 @@ import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockedCompanyRecords } from '~/testing/mock-data/generated/data/companies/mock-companies-data';
 import { mockedViews } from '~/testing/mock-data/generated/metadata/views/mock-views-data';
+import { mockedWorkspaceMemberRecords } from '~/testing/mock-data/generated/data/workspaceMembers/mock-workspaceMembers-data';
 import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 import { sleep } from '~/utils/sleep';
@@ -228,6 +230,24 @@ export const ScrolledBottom: Story = {
 };
 
 export const MultiSelectPickerAnchorsToTableCell: Story = {
+  parameters: {
+    msw: {
+      handlers: [
+        ...graphqlMocks.handlers,
+        graphql.query('FindOneWorkspaceMember', ({ variables }) =>
+          HttpResponse.json({
+            data: {
+              workspaceMember:
+                mockedWorkspaceMemberRecords.find(
+                  (workspaceMemberRecord) =>
+                    workspaceMemberRecord.id === variables.objectRecordId,
+                ) ?? null,
+            },
+          }),
+        ),
+      ],
+    },
+  },
   beforeEach: () => {
     const originalViewFields = companyView.viewFields;
     const originalWorkPolicy = mockedCompanyRecords[0].workPolicy;

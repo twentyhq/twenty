@@ -138,6 +138,7 @@
     "react-textarea-autosize": "^8.4.1",
     "remark-gfm": "^4.0.1",
     "rxjs": "^7.2.0",
+    "tabbable": "^6.0.1",
     "temporal-polyfill": "^0.3.0",
     "transliteration": "^2.3.5",
     "ts-key-enum": "^2.0.12",

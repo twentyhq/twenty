@@ -187,7 +187,7 @@ export const ItemLimit: Story = {
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
     const body = within(canvasElement.ownerDocument.body);
-    await userEvent.click(canvas.getByRole('button', { name: 'Items' }));
+    await userEvent.click(await canvas.findByRole('button', { name: 'Items' }));
     await userEvent.click(
       await body.findByRole('button', { name: 'Add item' }),
     );
@@ -212,7 +212,7 @@ export const EscapeDismissesOneLayer: Story = {
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
     const body = within(canvasElement.ownerDocument.body);
-    await userEvent.click(canvas.getByRole('button', { name: 'Items' }));
+    await userEvent.click(await canvas.findByRole('button', { name: 'Items' }));
 
     const panel = await body.findByRole('dialog', { name: 'Items' });
     const menuTrigger = within(panel).getByRole('button', {

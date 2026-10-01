@@ -142,7 +142,7 @@ export const ToggleAndDismiss: Story = {
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
     const body = within(canvasElement.ownerDocument.body);
-    const trigger = canvas.getByRole('button', { name: 'Work Policy' });
+    const trigger = await canvas.findByRole('button', { name: 'Work Policy' });
 
     await userEvent.click(trigger);
     const popup = await body.findByRole('dialog', { name: 'Work Policy' });
@@ -181,6 +181,7 @@ export const OutsideInputThenTab: Story = {
   decorators: [
     (Story) => (
       <>
+        <Input aria-label="Previous input" />
         <Story />
         <Input aria-label="Outside input" />
       </>
@@ -189,7 +190,9 @@ export const OutsideInputThenTab: Story = {
   play: async ({ canvasElement }) => {
     const body = within(canvasElement.ownerDocument.body);
 
-    await userEvent.click(body.getByRole('button', { name: 'Work Policy' }));
+    await userEvent.click(
+      await body.findByRole('button', { name: 'Work Policy' }),
+    );
     const popup = await body.findByRole('dialog', { name: 'Work Policy' });
     await userEvent.click(body.getByRole('textbox', { name: 'Outside input' }));
     expect(popup).toBeVisible();
@@ -200,6 +203,20 @@ export const OutsideInputThenTab: Story = {
       expect(body.queryByRole('dialog')).not.toBeInTheDocument();
       expect(
         body.getByRole('textbox', { name: 'Outside input' }),
+      ).toHaveFocus();
+    });
+
+    await userEvent.click(body.getByRole('button', { name: 'Work Policy' }));
+    const reopenedPopup = await body.findByRole('dialog', {
+      name: 'Work Policy',
+    });
+    await userEvent.click(within(reopenedPopup).getByRole('searchbox'));
+    await userEvent.tab({ shift: true });
+
+    await waitFor(() => {
+      expect(body.queryByRole('dialog')).not.toBeInTheDocument();
+      expect(
+        body.getByRole('textbox', { name: 'Previous input' }),
       ).toHaveFocus();
     });
   },

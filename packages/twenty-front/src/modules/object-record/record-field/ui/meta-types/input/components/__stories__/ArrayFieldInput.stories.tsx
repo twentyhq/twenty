@@ -104,6 +104,7 @@ const ArrayInputWithContext = ({
 const meta: Meta<typeof ArrayInputWithContext> = {
   title: 'UI/Input/ArrayFieldInput',
   component: ArrayInputWithContext,
+  parameters: { mockingDate: null },
   decorators: [],
 };
 

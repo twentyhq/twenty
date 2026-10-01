@@ -50618,6 +50618,7 @@ __metadata:
     rxjs: "npm:^7.2.0"
     storybook-addon-mock-date: "npm:2.0.0"
     storybook-addon-pseudo-states: "npm:^10.3.3"
+    tabbable: "npm:^6.0.1"
     temporal-polyfill: "npm:^0.3.0"
     transliteration: "npm:^2.3.5"
     ts-jest: "npm:^29.1.1"
