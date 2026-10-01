@@ -2143,11 +2143,13 @@ export enum FeatureFlagKey {
   IS_LOGS_SETTINGS_SECTION_ENABLED = 'IS_LOGS_SETTINGS_SECTION_ENABLED',
   IS_MESSAGE_CAMPAIGN_ENABLED = 'IS_MESSAGE_CAMPAIGN_ENABLED',
   IS_RECORD_CREATION_FORM_ENABLED = 'IS_RECORD_CREATION_FORM_ENABLED',
+  IS_RECORD_LEVEL_SHARING_ENABLED = 'IS_RECORD_LEVEL_SHARING_ENABLED',
   IS_REST_METADATA_API_NEW_FORMAT_DIRECT = 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT',
   IS_TWO_FACTOR_AUTHENTICATION_RECOVERY_CODE_ENABLED = 'IS_TWO_FACTOR_AUTHENTICATION_RECOVERY_CODE_ENABLED',
   IS_VALIDATION_RULES_ENABLED = 'IS_VALIDATION_RULES_ENABLED',
   IS_WEBHOOK_RATE_LIMIT_ENABLED = 'IS_WEBHOOK_RATE_LIMIT_ENABLED',
-  IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED = 'IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED'
+  IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED = 'IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED',
+  IS_WORKFLOW_SEND_CHAT_MESSAGE_ENABLED = 'IS_WORKFLOW_SEND_CHAT_MESSAGE_ENABLED'
 }
 
 export type Field = {
@@ -2714,6 +2716,8 @@ export type LogicFunctionLogs = {
   __typename?: 'LogicFunctionLogs';
   /** Execution Logs */
   logs: Scalars['String']['output'];
+  name?: Maybe<Scalars['String']['output']>;
+  universalIdentifier?: Maybe<Scalars['UUID']['output']>;
 };
 
 export type LogicFunctionLogsInput = {
@@ -3226,6 +3230,7 @@ export type Mutation = {
   saveImapSmtpCaldavAccount: ImapSmtpCaldavConnectionSuccess;
   sendChatMessage: SendChatMessageResult;
   sendEmail: SendEmailOutput;
+  sendInboxMessage: SendInboxMessageResult;
   sendInvitations: SendInvitations;
   sendMessageCampaign: SendMessageCampaignOutputDto;
   sendMessageCampaignTest: SendEmailViaDomainOutput;
@@ -4168,6 +4173,11 @@ export type MutationSendChatMessageArgs = {
 
 export type MutationSendEmailArgs = {
   input: SendEmailInput;
+};
+
+
+export type MutationSendInboxMessageArgs = {
+  input: SendInboxMessageInput;
 };
 
 
@@ -5861,6 +5871,7 @@ export type RecordPermissionsTargetInput = {
 
 export enum RecordShareAccessLevel {
   FULL = 'FULL',
+  NONE = 'NONE',
   READ = 'READ',
   READ_WRITE = 'READ_WRITE'
 }
@@ -5873,8 +5884,11 @@ export type RecordSharePrincipalInput = {
 
 export type RecordSharingDto = {
   __typename?: 'RecordSharingDTO';
+  generalAccessLevel?: Maybe<RecordShareAccessLevel>;
   hasInheritedAccess: Scalars['Boolean']['output'];
   isEnabled: Scalars['Boolean']['output'];
+  isGeneralAccessDefault: Scalars['Boolean']['output'];
+  isOpenByDefault: Scalars['Boolean']['output'];
   permissions: RecordPermissionsDto;
   roles: Array<RecordSharingRoleDto>;
   shares: Array<RecordSharingGrantDto>;
@@ -6162,6 +6176,20 @@ export type SendEmailOutput = {
 export type SendEmailViaDomainOutput = {
   __typename?: 'SendEmailViaDomainOutput';
   messageId: Scalars['String']['output'];
+};
+
+export type SendInboxMessageInput = {
+  idempotencyKey: Scalars['String']['input'];
+  text: Scalars['String']['input'];
+  threadKey: Scalars['String']['input'];
+  title: Scalars['String']['input'];
+  toolCall?: InputMaybe<Scalars['JSON']['input']>;
+  workspaceMemberId: Scalars['UUID']['input'];
+};
+
+export type SendInboxMessageResult = {
+  __typename?: 'SendInboxMessageResult';
+  threadId: Scalars['UUID']['output'];
 };
 
 export type SendInvitations = {

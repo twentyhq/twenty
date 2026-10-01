@@ -1390,7 +1390,7 @@ export interface RecordSharingGrantDTO {
     __typename: 'RecordSharingGrantDTO'
 }
 
-export type RecordShareAccessLevel = 'READ' | 'READ_WRITE' | 'FULL'
+export type RecordShareAccessLevel = 'NONE' | 'READ' | 'READ_WRITE' | 'FULL'
 
 export interface RecordSharingRoleDTO {
     id: Scalars['UUID']
@@ -1403,6 +1403,9 @@ export interface RecordSharingDTO {
     permissions: RecordPermissionsDTO
     isEnabled: Scalars['Boolean']
     hasInheritedAccess: Scalars['Boolean']
+    isOpenByDefault: Scalars['Boolean']
+    generalAccessLevel?: RecordShareAccessLevel
+    isGeneralAccessDefault: Scalars['Boolean']
     roles: RecordSharingRoleDTO[]
     shares: RecordSharingGrantDTO[]
     __typename: 'RecordSharingDTO'
@@ -1683,7 +1686,7 @@ export interface FeatureFlag {
     __typename: 'FeatureFlag'
 }
 
-export type FeatureFlagKey = 'IS_APPLICATION_WORKFLOWS_ENABLED' | 'IS_ASYNC_CSV_EXPORT_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_JSON_FILTER_ENABLED' | 'IS_MESSAGE_CAMPAIGN_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED' | 'IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED' | 'IS_AI_CHAT_SHARING_DROPDOWN_ENABLED' | 'IS_INITIAL_OBJECT_VIEW_ENABLED' | 'IS_WEBHOOK_RATE_LIMIT_ENABLED' | 'IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED' | 'IS_EXECUTION_QUOTA_ENABLED' | 'IS_RECORD_CREATION_FORM_ENABLED' | 'IS_LOGS_SETTINGS_SECTION_ENABLED' | 'IS_CONVERSATIONS_TAB_ENABLED' | 'IS_VALIDATION_RULES_ENABLED' | 'IS_TWO_FACTOR_AUTHENTICATION_RECOVERY_CODE_ENABLED'
+export type FeatureFlagKey = 'IS_APPLICATION_WORKFLOWS_ENABLED' | 'IS_ASYNC_CSV_EXPORT_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_JSON_FILTER_ENABLED' | 'IS_MESSAGE_CAMPAIGN_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED' | 'IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED' | 'IS_AI_CHAT_SHARING_DROPDOWN_ENABLED' | 'IS_INITIAL_OBJECT_VIEW_ENABLED' | 'IS_WEBHOOK_RATE_LIMIT_ENABLED' | 'IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED' | 'IS_EXECUTION_QUOTA_ENABLED' | 'IS_RECORD_CREATION_FORM_ENABLED' | 'IS_LOGS_SETTINGS_SECTION_ENABLED' | 'IS_CONVERSATIONS_TAB_ENABLED' | 'IS_VALIDATION_RULES_ENABLED' | 'IS_RECORD_LEVEL_SHARING_ENABLED' | 'IS_WORKFLOW_SEND_CHAT_MESSAGE_ENABLED'
 
 export interface WorkspaceUrls {
     customUrl?: Scalars['String']
@@ -1925,12 +1928,6 @@ export interface ClientConfig {
     enterpriseInstanceType: Scalars['String']
     maintenance?: ClientConfigMaintenanceMode
     __typename: 'ClientConfig'
-}
-
-export interface TwoFactorAuthenticationRecoveryCode {
-    recoveryCode: Scalars['String']
-    expiresAt: Scalars['DateTime']
-    __typename: 'TwoFactorAuthenticationRecoveryCode'
 }
 
 export interface ClaimableApplicationRegistration {
@@ -2379,6 +2376,8 @@ export interface UpsertRowLevelPermissionPredicatesResult {
 export interface LogicFunctionLogs {
     /** Execution Logs */
     logs: Scalars['String']
+    name?: Scalars['String']
+    universalIdentifier?: Scalars['UUID']
     __typename: 'LogicFunctionLogs'
 }
 
@@ -2396,12 +2395,6 @@ export interface InitiateTwoFactorAuthenticationProvisioning {
 export interface VerifyTwoFactorAuthenticationMethod {
     success: Scalars['Boolean']
     __typename: 'VerifyTwoFactorAuthenticationMethod'
-}
-
-export interface TwoFactorAuthenticationRecoveryStatus {
-    hasVerifiedTwoFactorAuthenticationMethod: Scalars['Boolean']
-    pendingRecoveryCodeExpiresAt?: Scalars['DateTime']
-    __typename: 'TwoFactorAuthenticationRecoveryStatus'
 }
 
 export interface AuthorizeApp {
@@ -3088,6 +3081,11 @@ export interface AgentChatEvent {
     __typename: 'AgentChatEvent'
 }
 
+export interface SendInboxMessageResult {
+    threadId: Scalars['UUID']
+    __typename: 'SendInboxMessageResult'
+}
+
 export interface StartWorkspaceSetupChatResult {
     outcome: WorkspaceSetupChatOutcome
     thread?: AgentChatThread
@@ -3479,7 +3477,6 @@ export interface Query {
     checkWorkspaceSubdomainAvailability: SubdomainAvailabilityDTO
     getWorkspaceCreationDefaults: WorkspaceCreationDefaultsDTO
     validatePasswordResetToken: ValidatePasswordResetToken
-    twoFactorAuthenticationRecoveryStatus: TwoFactorAuthenticationRecoveryStatus
     currentUser: User
     getSSOIdentityProviders: FindAvailableSSOIDP[]
     eventLogs: EventLogQueryResult
@@ -3703,6 +3700,7 @@ export interface Mutation {
     stopAgentChatStream: Scalars['Boolean']
     deleteQueuedChatMessage: Scalars['Boolean']
     startWorkspaceSetupChat: StartWorkspaceSetupChatResult
+    sendInboxMessage: SendInboxMessageResult
     createSkill: Skill
     updateSkill: Skill
     deleteSkill: Skill
@@ -3721,7 +3719,6 @@ export interface Mutation {
     verifyEmailAndGetLoginToken: VerifyEmailAndGetLoginToken
     verifyEmailAndGetWorkspaceAgnosticToken: AvailableWorkspacesAndAccessTokens
     getAuthTokensFromOTP: AuthTokens
-    getAuthTokensFromTwoFactorAuthenticationRecoveryCode: AuthTokens
     signUp: AvailableWorkspacesAndAccessTokens
     signUpInWorkspace: SignUp
     signUpInNewWorkspace: SignUp
@@ -3743,8 +3740,6 @@ export interface Mutation {
     initiateOTPProvisioningForAuthenticatedUser: InitiateTwoFactorAuthenticationProvisioning
     deleteTwoFactorAuthenticationMethod: DeleteTwoFactorAuthenticationMethod
     verifyTwoFactorAuthenticationMethodForAuthenticatedUser: VerifyTwoFactorAuthenticationMethod
-    generateTwoFactorAuthenticationRecoveryCode: TwoFactorAuthenticationRecoveryCode
-    revokeTwoFactorAuthenticationRecoveryCode: Scalars['Boolean']
     deleteUser: User
     deleteUserFromWorkspace: UserWorkspace
     updateWorkspaceMemberSettings: Scalars['Boolean']
@@ -5232,6 +5227,9 @@ export interface RecordSharingDTOGenqlSelection{
     permissions?: RecordPermissionsDTOGenqlSelection
     isEnabled?: boolean | number
     hasInheritedAccess?: boolean | number
+    isOpenByDefault?: boolean | number
+    generalAccessLevel?: boolean | number
+    isGeneralAccessDefault?: boolean | number
     roles?: RecordSharingRoleDTOGenqlSelection
     shares?: RecordSharingGrantDTOGenqlSelection
     __typename?: boolean | number
@@ -5782,13 +5780,6 @@ export interface ClientConfigGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface TwoFactorAuthenticationRecoveryCodeGenqlSelection{
-    recoveryCode?: boolean | number
-    expiresAt?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
 export interface ClaimableApplicationRegistrationGenqlSelection{
     id?: boolean | number
     universalIdentifier?: boolean | number
@@ -6259,6 +6250,8 @@ export interface UpsertRowLevelPermissionPredicatesResultGenqlSelection{
 export interface LogicFunctionLogsGenqlSelection{
     /** Execution Logs */
     logs?: boolean | number
+    name?: boolean | number
+    universalIdentifier?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -6278,13 +6271,6 @@ export interface InitiateTwoFactorAuthenticationProvisioningGenqlSelection{
 
 export interface VerifyTwoFactorAuthenticationMethodGenqlSelection{
     success?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface TwoFactorAuthenticationRecoveryStatusGenqlSelection{
-    hasVerifiedTwoFactorAuthenticationMethod?: boolean | number
-    pendingRecoveryCodeExpiresAt?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -7022,6 +7008,12 @@ export interface AgentChatEventGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface SendInboxMessageResultGenqlSelection{
+    threadId?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface StartWorkspaceSetupChatResultGenqlSelection{
     outcome?: boolean | number
     thread?: AgentChatThreadGenqlSelection
@@ -7429,7 +7421,6 @@ export interface QueryGenqlSelection{
     checkWorkspaceSubdomainAvailability?: (SubdomainAvailabilityDTOGenqlSelection & { __args: {subdomain: Scalars['String']} })
     getWorkspaceCreationDefaults?: WorkspaceCreationDefaultsDTOGenqlSelection
     validatePasswordResetToken?: (ValidatePasswordResetTokenGenqlSelection & { __args: {passwordResetToken: Scalars['String']} })
-    twoFactorAuthenticationRecoveryStatus?: (TwoFactorAuthenticationRecoveryStatusGenqlSelection & { __args: {userId: Scalars['UUID']} })
     currentUser?: UserGenqlSelection
     getSSOIdentityProviders?: FindAvailableSSOIDPGenqlSelection
     eventLogs?: (EventLogQueryResultGenqlSelection & { __args: {input: EventLogQueryInput} })
@@ -7694,6 +7685,7 @@ export interface MutationGenqlSelection{
     stopAgentChatStream?: { __args: {threadId: Scalars['UUID']} }
     deleteQueuedChatMessage?: { __args: {messageId: Scalars['UUID']} }
     startWorkspaceSetupChat?: (StartWorkspaceSetupChatResultGenqlSelection & { __args?: {companyContext?: (Scalars['JSON'] | null), personContext?: (Scalars['JSON'] | null)} })
+    sendInboxMessage?: (SendInboxMessageResultGenqlSelection & { __args: {input: SendInboxMessageInput} })
     createSkill?: (SkillGenqlSelection & { __args: {input: CreateSkillInput} })
     updateSkill?: (SkillGenqlSelection & { __args: {input: UpdateSkillInput} })
     deleteSkill?: (SkillGenqlSelection & { __args: {id: Scalars['UUID']} })
@@ -7712,7 +7704,6 @@ export interface MutationGenqlSelection{
     verifyEmailAndGetLoginToken?: (VerifyEmailAndGetLoginTokenGenqlSelection & { __args: {emailVerificationToken: Scalars['String'], email: Scalars['String'], captchaToken?: (Scalars['String'] | null), origin: Scalars['String']} })
     verifyEmailAndGetWorkspaceAgnosticToken?: (AvailableWorkspacesAndAccessTokensGenqlSelection & { __args: {emailVerificationToken: Scalars['String'], email: Scalars['String'], captchaToken?: (Scalars['String'] | null)} })
     getAuthTokensFromOTP?: (AuthTokensGenqlSelection & { __args: {otp: Scalars['String'], loginToken: Scalars['String'], captchaToken?: (Scalars['String'] | null), origin: Scalars['String']} })
-    getAuthTokensFromTwoFactorAuthenticationRecoveryCode?: (AuthTokensGenqlSelection & { __args: {recoveryCode: Scalars['String'], loginToken: Scalars['String'], captchaToken?: (Scalars['String'] | null), origin: Scalars['String']} })
     signUp?: (AvailableWorkspacesAndAccessTokensGenqlSelection & { __args: {email: Scalars['String'], password: Scalars['String'], captchaToken?: (Scalars['String'] | null), locale?: (Scalars['String'] | null), verifyEmailRedirectPath?: (Scalars['String'] | null)} })
     signUpInWorkspace?: (SignUpGenqlSelection & { __args: {email: Scalars['String'], password: Scalars['String'], workspaceId?: (Scalars['UUID'] | null), workspaceInviteHash?: (Scalars['String'] | null), workspacePersonalInviteToken?: (Scalars['String'] | null), captchaToken?: (Scalars['String'] | null), locale?: (Scalars['String'] | null), verifyEmailRedirectPath?: (Scalars['String'] | null)} })
     signUpInNewWorkspace?: (SignUpGenqlSelection & { __args?: {input?: (SignUpInNewWorkspaceInput | null)} })
@@ -7734,8 +7725,6 @@ export interface MutationGenqlSelection{
     initiateOTPProvisioningForAuthenticatedUser?: InitiateTwoFactorAuthenticationProvisioningGenqlSelection
     deleteTwoFactorAuthenticationMethod?: (DeleteTwoFactorAuthenticationMethodGenqlSelection & { __args: {twoFactorAuthenticationMethodId: Scalars['UUID']} })
     verifyTwoFactorAuthenticationMethodForAuthenticatedUser?: (VerifyTwoFactorAuthenticationMethodGenqlSelection & { __args: {otp: Scalars['String']} })
-    generateTwoFactorAuthenticationRecoveryCode?: (TwoFactorAuthenticationRecoveryCodeGenqlSelection & { __args: {userId: Scalars['UUID'], otp?: (Scalars['String'] | null)} })
-    revokeTwoFactorAuthenticationRecoveryCode?: { __args: {userId: Scalars['UUID']} }
     deleteUser?: UserGenqlSelection
     deleteUserFromWorkspace?: (UserWorkspaceGenqlSelection & { __args: {workspaceMemberIdToDelete: Scalars['String']} })
     updateWorkspaceMemberSettings?: { __args: {input: UpdateWorkspaceMemberSettingsInput} }
@@ -8171,6 +8160,8 @@ export interface EnqueueJobItemInput {payload?: (Scalars['JSON'] | null),jobId?:
 export interface ReportAppConnectionAuthFailureInput {id: Scalars['ID'],reason?: (Scalars['String'] | null)}
 
 export interface FileAttachmentInput {id: Scalars['UUID'],filename: Scalars['String']}
+
+export interface SendInboxMessageInput {workspaceMemberId: Scalars['UUID'],threadKey: Scalars['String'],idempotencyKey: Scalars['String'],title: Scalars['String'],text: Scalars['String'],toolCall?: (Scalars['JSON'] | null)}
 
 export interface CreateSkillInput {id?: (Scalars['UUID'] | null),name: Scalars['String'],label: Scalars['String'],icon?: (Scalars['String'] | null),description?: (Scalars['String'] | null),content: Scalars['String']}
 
@@ -9499,14 +9490,6 @@ export interface CreateRecordExportInput {objectMetadataId: Scalars['UUID'],fiel
     
 
 
-    const TwoFactorAuthenticationRecoveryCode_possibleTypes: string[] = ['TwoFactorAuthenticationRecoveryCode']
-    export const isTwoFactorAuthenticationRecoveryCode = (obj?: { __typename?: any } | null): obj is TwoFactorAuthenticationRecoveryCode => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isTwoFactorAuthenticationRecoveryCode"')
-      return TwoFactorAuthenticationRecoveryCode_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
     const ClaimableApplicationRegistration_possibleTypes: string[] = ['ClaimableApplicationRegistration']
     export const isClaimableApplicationRegistration = (obj?: { __typename?: any } | null): obj is ClaimableApplicationRegistration => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isClaimableApplicationRegistration"')
@@ -9887,14 +9870,6 @@ export interface CreateRecordExportInput {objectMetadataId: Scalars['UUID'],fiel
     export const isVerifyTwoFactorAuthenticationMethod = (obj?: { __typename?: any } | null): obj is VerifyTwoFactorAuthenticationMethod => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isVerifyTwoFactorAuthenticationMethod"')
       return VerifyTwoFactorAuthenticationMethod_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const TwoFactorAuthenticationRecoveryStatus_possibleTypes: string[] = ['TwoFactorAuthenticationRecoveryStatus']
-    export const isTwoFactorAuthenticationRecoveryStatus = (obj?: { __typename?: any } | null): obj is TwoFactorAuthenticationRecoveryStatus => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isTwoFactorAuthenticationRecoveryStatus"')
-      return TwoFactorAuthenticationRecoveryStatus_possibleTypes.includes(obj.__typename)
     }
     
 
@@ -10527,6 +10502,14 @@ export interface CreateRecordExportInput {objectMetadataId: Scalars['UUID'],fiel
     export const isAgentChatEvent = (obj?: { __typename?: any } | null): obj is AgentChatEvent => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isAgentChatEvent"')
       return AgentChatEvent_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const SendInboxMessageResult_possibleTypes: string[] = ['SendInboxMessageResult']
+    export const isSendInboxMessageResult = (obj?: { __typename?: any } | null): obj is SendInboxMessageResult => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isSendInboxMessageResult"')
+      return SendInboxMessageResult_possibleTypes.includes(obj.__typename)
     }
     
 
@@ -11284,6 +11267,7 @@ export const enumNavigationMenuItemType = {
 }
 
 export const enumRecordShareAccessLevel = {
+   NONE: 'NONE' as const,
    READ: 'READ' as const,
    READ_WRITE: 'READ_WRITE' as const,
    FULL: 'FULL' as const
@@ -11338,7 +11322,8 @@ export const enumFeatureFlagKey = {
    IS_LOGS_SETTINGS_SECTION_ENABLED: 'IS_LOGS_SETTINGS_SECTION_ENABLED' as const,
    IS_CONVERSATIONS_TAB_ENABLED: 'IS_CONVERSATIONS_TAB_ENABLED' as const,
    IS_VALIDATION_RULES_ENABLED: 'IS_VALIDATION_RULES_ENABLED' as const,
-   IS_TWO_FACTOR_AUTHENTICATION_RECOVERY_CODE_ENABLED: 'IS_TWO_FACTOR_AUTHENTICATION_RECOVERY_CODE_ENABLED' as const
+   IS_RECORD_LEVEL_SHARING_ENABLED: 'IS_RECORD_LEVEL_SHARING_ENABLED' as const,
+   IS_WORKFLOW_SEND_CHAT_MESSAGE_ENABLED: 'IS_WORKFLOW_SEND_CHAT_MESSAGE_ENABLED' as const
 }
 
 export const enumIdentityProviderType = {

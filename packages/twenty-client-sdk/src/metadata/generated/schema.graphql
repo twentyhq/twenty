@@ -1775,6 +1775,7 @@ type RecordSharingGrantDTO {
 }
 
 enum RecordShareAccessLevel {
+  NONE
   READ
   READ_WRITE
   FULL
@@ -1790,6 +1791,9 @@ type RecordSharingDTO {
   permissions: RecordPermissionsDTO!
   isEnabled: Boolean!
   hasInheritedAccess: Boolean!
+  isOpenByDefault: Boolean!
+  generalAccessLevel: RecordShareAccessLevel
+  isGeneralAccessDefault: Boolean!
   roles: [RecordSharingRoleDTO!]!
   shares: [RecordSharingGrantDTO!]!
 }
@@ -2086,7 +2090,8 @@ enum FeatureFlagKey {
   IS_LOGS_SETTINGS_SECTION_ENABLED
   IS_CONVERSATIONS_TAB_ENABLED
   IS_VALIDATION_RULES_ENABLED
-  IS_TWO_FACTOR_AUTHENTICATION_RECOVERY_CODE_ENABLED
+  IS_RECORD_LEVEL_SHARING_ENABLED
+  IS_WORKFLOW_SEND_CHAT_MESSAGE_ENABLED
 }
 
 type WorkspaceUrls {
@@ -2325,11 +2330,6 @@ type ClientConfig {
   isOnboardingAiChatEnabled: Boolean!
   enterpriseInstanceType: String!
   maintenance: ClientConfigMaintenanceMode
-}
-
-type TwoFactorAuthenticationRecoveryCode {
-  recoveryCode: String!
-  expiresAt: DateTime!
 }
 
 type ClaimableApplicationRegistration {
@@ -2793,6 +2793,8 @@ type UpsertRowLevelPermissionPredicatesResult {
 type LogicFunctionLogs {
   """Execution Logs"""
   logs: String!
+  name: String
+  universalIdentifier: UUID
 }
 
 type DeleteTwoFactorAuthenticationMethod {
@@ -2806,11 +2808,6 @@ type InitiateTwoFactorAuthenticationProvisioning {
 
 type VerifyTwoFactorAuthenticationMethod {
   success: Boolean!
-}
-
-type TwoFactorAuthenticationRecoveryStatus {
-  hasVerifiedTwoFactorAuthenticationMethod: Boolean!
-  pendingRecoveryCodeExpiresAt: DateTime
 }
 
 type AuthorizeApp {
@@ -3499,6 +3496,10 @@ type AgentChatEvent {
   event: JSON!
 }
 
+type SendInboxMessageResult {
+  threadId: UUID!
+}
+
 type StartWorkspaceSetupChatResult {
   outcome: WorkspaceSetupChatOutcome!
   thread: AgentChatThread
@@ -3957,7 +3958,6 @@ type Query {
   checkWorkspaceSubdomainAvailability(subdomain: String!): SubdomainAvailabilityDTO!
   getWorkspaceCreationDefaults: WorkspaceCreationDefaultsDTO!
   validatePasswordResetToken(passwordResetToken: String!): ValidatePasswordResetToken!
-  twoFactorAuthenticationRecoveryStatus(userId: UUID!): TwoFactorAuthenticationRecoveryStatus!
   currentUser: User!
   getSSOIdentityProviders: [FindAvailableSSOIDP!]!
   eventLogs(input: EventLogQueryInput!): EventLogQueryResult!
@@ -4308,6 +4308,7 @@ type Mutation {
   stopAgentChatStream(threadId: UUID!): Boolean!
   deleteQueuedChatMessage(messageId: UUID!): Boolean!
   startWorkspaceSetupChat(companyContext: JSON, personContext: JSON): StartWorkspaceSetupChatResult!
+  sendInboxMessage(input: SendInboxMessageInput!): SendInboxMessageResult!
   createSkill(input: CreateSkillInput!): Skill!
   updateSkill(input: UpdateSkillInput!): Skill!
   deleteSkill(id: UUID!): Skill!
@@ -4326,7 +4327,6 @@ type Mutation {
   verifyEmailAndGetLoginToken(emailVerificationToken: String!, email: String!, captchaToken: String, origin: String!): VerifyEmailAndGetLoginToken!
   verifyEmailAndGetWorkspaceAgnosticToken(emailVerificationToken: String!, email: String!, captchaToken: String): AvailableWorkspacesAndAccessTokens!
   getAuthTokensFromOTP(otp: String!, loginToken: String!, captchaToken: String, origin: String!): AuthTokens!
-  getAuthTokensFromTwoFactorAuthenticationRecoveryCode(recoveryCode: String!, loginToken: String!, captchaToken: String, origin: String!): AuthTokens!
   signUp(email: String!, password: String!, captchaToken: String, locale: String, verifyEmailRedirectPath: String): AvailableWorkspacesAndAccessTokens!
   signUpInWorkspace(email: String!, password: String!, workspaceId: UUID, workspaceInviteHash: String, workspacePersonalInviteToken: String, captchaToken: String, locale: String, verifyEmailRedirectPath: String): SignUp!
   signUpInNewWorkspace(input: SignUpInNewWorkspaceInput): SignUp!
@@ -4347,8 +4347,6 @@ type Mutation {
   initiateOTPProvisioningForAuthenticatedUser: InitiateTwoFactorAuthenticationProvisioning!
   deleteTwoFactorAuthenticationMethod(twoFactorAuthenticationMethodId: UUID!): DeleteTwoFactorAuthenticationMethod!
   verifyTwoFactorAuthenticationMethodForAuthenticatedUser(otp: String!): VerifyTwoFactorAuthenticationMethod!
-  generateTwoFactorAuthenticationRecoveryCode(userId: UUID!, otp: String): TwoFactorAuthenticationRecoveryCode!
-  revokeTwoFactorAuthenticationRecoveryCode(userId: UUID!): Boolean!
   deleteUser: User!
   deleteUserFromWorkspace(workspaceMemberIdToDelete: String!): UserWorkspace!
   updateWorkspaceMemberSettings(input: UpdateWorkspaceMemberSettingsInput!): Boolean!
@@ -5587,6 +5585,15 @@ input ReportAppConnectionAuthFailureInput {
 input FileAttachmentInput {
   id: UUID!
   filename: String!
+}
+
+input SendInboxMessageInput {
+  workspaceMemberId: UUID!
+  threadKey: String!
+  idempotencyKey: String!
+  title: String!
+  text: String!
+  toolCall: JSON
 }
 
 input CreateSkillInput {

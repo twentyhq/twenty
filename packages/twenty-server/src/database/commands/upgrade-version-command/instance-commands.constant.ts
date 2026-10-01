@@ -218,7 +218,7 @@ import { AddValidationRuleTableFastInstanceCommand } from 'src/database/commands
 import { ReapplyUsageLimitPeriodReshapeFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-instance-command-fast-1790755883509-reapply-usage-limit-period-reshape';
 import { AddChatWidgetTypeFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-instance-command-fast-1790756560653-add-chat-widget-type';
 import { DropLegacyCampaignSendingCoreTablesFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-45/2-45-instance-command-fast-1790842027068-drop-legacy-campaign-sending-core-tables';
-import { AddTwoFactorAuthenticationRecoveryCodeFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-45/2-45-instance-command-fast-1790862570805-add-two-factor-authentication-recovery-code';
+import { AddTwoFactorAuthenticationRecoveryCodeFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-45/2-45-instance-command-fast-1790887449994-add-two-factor-authentication-recovery-code';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,

@@ -4,12 +4,14 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { GqlExecutionContext } from '@nestjs/graphql';
 
-import { isNonEmptyString, isObject } from '@sniptt/guards';
+import { isNonEmptyString } from '@sniptt/guards';
 import { type AllMetadataName } from 'twenty-shared/metadata';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 
+import { ApplicationLookupService } from 'src/engine/core-modules/application/application-lookup/application-lookup.service';
+import { ApplicationRegistrationLookupService } from 'src/engine/core-modules/application/application-registration/application-registration-lookup/application-registration-lookup.service';
+import { type ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import {
   ApplicationException,
   ApplicationExceptionCode,
@@ -18,6 +20,7 @@ import { APPLICATION_TARGET_METADATA_KEY } from 'src/engine/core-modules/applica
 import { type ApplicationTarget } from 'src/engine/core-modules/application/types/application-target.type';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { isOAuthOnlyApplication } from 'src/engine/core-modules/application/utils/is-oauth-only-application.util';
+import { readApplicationTargetIdOrThrow } from 'src/engine/core-modules/application/utils/read-application-target-id-or-throw.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type SyncableFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-from.type';
@@ -27,11 +30,15 @@ import { getRequest } from 'src/utils/extract-request';
 
 // Sessions and API keys keep workspace-wide reach behind their permission
 // flags; an application token only reaches the target it names when that
-// target is its own application.
+// target is its own application. Registration ownership runs for every
+// principal: it is what stops another workspace from swapping an app's code
+// to read its server variables.
 @Injectable()
 export class ApplicationTargetGuard implements CanActivate {
   constructor(
     private readonly reflector: Reflector,
+    private readonly applicationLookupService: ApplicationLookupService,
+    private readonly applicationRegistrationLookupService: ApplicationRegistrationLookupService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
   ) {}
 
@@ -40,126 +47,243 @@ export class ApplicationTargetGuard implements CanActivate {
       APPLICATION_TARGET_METADATA_KEY,
       context.getHandler(),
     );
+
+    if (!isDefined(target)) {
+      return true;
+    }
+
     const request = getRequest(context);
     const callingApplication: FlatApplication | undefined =
       request?.application;
+    const confinedApplication =
+      isDefined(callingApplication) &&
+      !isOAuthOnlyApplication(callingApplication)
+        ? callingApplication
+        : undefined;
 
     if (
-      !isDefined(target) ||
-      !isDefined(callingApplication) ||
-      isOAuthOnlyApplication(callingApplication)
+      !isDefined(confinedApplication) &&
+      !target.requireApplicationRegistrationOwnership
     ) {
       return true;
     }
 
-    const targetValue = this.readTargetValue({ context, request, target });
+    const targetId = readApplicationTargetIdOrThrow({
+      context,
+      request,
+      target,
+    });
 
-    if (!isNonEmptyString(targetValue)) {
+    if (isDefined(confinedApplication)) {
+      await this.assertReachableByApplicationOrThrow({
+        target,
+        targetId,
+        callingApplication: confinedApplication,
+        workspaceId: request.workspace.id,
+      });
+    }
+
+    if (target.requireApplicationRegistrationOwnership) {
+      await this.assertRegistrationOwnedOrThrow({
+        target,
+        targetId,
+        workspaceId: request?.workspace?.id,
+      });
+    }
+
+    return true;
+  }
+
+  private async assertReachableByApplicationOrThrow({
+    target,
+    targetId,
+    callingApplication,
+    workspaceId,
+  }: {
+    target: ApplicationTarget;
+    targetId: string;
+    callingApplication: FlatApplication;
+    workspaceId: string;
+  }): Promise<void> {
+    switch (target.kind) {
+      case 'applicationId':
+        return this.assertOwnTargetOrThrow(
+          targetId === callingApplication.id,
+          'An application token can only target its own application',
+        );
+      case 'applicationUniversalIdentifier':
+        return this.assertOwnTargetOrThrow(
+          targetId === callingApplication.universalIdentifier,
+          'An application token can only target its own application',
+        );
+      case 'applicationRegistrationId':
+        return this.assertOwnTargetOrThrow(
+          targetId === callingApplication.applicationRegistrationId,
+          'An application token can only reach its own application registration',
+        );
+      case 'applicationOwnedEntity': {
+        const flatEntity = await this.findFlatEntity({
+          metadataName: target.metadataName,
+          entityId: targetId,
+          workspaceId,
+        });
+
+        // Unknown ids pass so the resolver keeps answering NOT_FOUND
+        return this.assertOwnTargetOrThrow(
+          !isDefined(flatEntity) ||
+            flatEntity.applicationId === callingApplication.id,
+          'An application token can only reach its own application',
+        );
+      }
+      default:
+        return assertUnreachable(target);
+    }
+  }
+
+  private assertOwnTargetOrThrow(isOwnTarget: boolean, message: string): void {
+    if (!isOwnTarget) {
       throw new ApplicationException(
-        `Missing application target "${this.getTargetName(target)}"`,
+        message,
+        ApplicationExceptionCode.FORBIDDEN,
+      );
+    }
+  }
+
+  private async assertRegistrationOwnedOrThrow({
+    target,
+    targetId,
+    workspaceId,
+  }: {
+    target: ApplicationTarget;
+    targetId: string;
+    workspaceId: string | undefined;
+  }): Promise<void> {
+    if (!isNonEmptyString(workspaceId)) {
+      throw new ApplicationException(
+        'Missing workspace for the application registration ownership check',
         ApplicationExceptionCode.FORBIDDEN,
       );
     }
 
     switch (target.kind) {
-      case 'applicationId':
-        return this.assertOrThrow(
-          targetValue === callingApplication.id,
-          'An application token can only target its own application',
-        );
-      case 'applicationUniversalIdentifier':
-        return this.assertOrThrow(
-          targetValue === callingApplication.universalIdentifier,
-          'An application token can only target its own application',
-        );
       case 'applicationRegistrationId':
-        return this.assertOrThrow(
-          targetValue === callingApplication.applicationRegistrationId,
-          'An application token can only reach its own application registration',
-        );
-      case 'applicationOwnedEntity':
-        return this.assertOrThrow(
-          await this.isOwnedByCallingApplication({
-            metadataName: target.metadataName,
-            entityId: targetValue,
-            callingApplication,
-            workspaceId: request.workspace.id,
-          }),
-          'An application token can only reach its own application',
-        );
-      default:
-        return assertUnreachable(target);
-    }
-  }
+        // Same owner-scoped lookup as the registration endpoints, so a foreign
+        // id stays NOT_FOUND instead of confirming the registration exists
+        await this.applicationRegistrationLookupService.findOneByIdOrThrow({
+          applicationRegistrationId: targetId,
+          ownerWorkspaceId: workspaceId,
+        });
 
-  private readTargetValue({
-    context,
-    request,
-    target,
-  }: {
-    context: ExecutionContext;
-    request: { params?: Record<string, unknown> };
-    target: ApplicationTarget;
-  }): unknown {
-    switch (target.source) {
-      case 'graphqlArg': {
-        const argValue =
-          GqlExecutionContext.create(context).getArgs()[target.argName];
+        return;
+      case 'applicationUniversalIdentifier': {
+        const application =
+          await this.applicationLookupService.findByUniversalIdentifier({
+            universalIdentifier: targetId,
+            workspaceId,
+          });
 
-        return isDefined(target.idKey)
-          ? this.readPath(argValue, target.idKey)
-          : argValue;
+        return this.assertApplicationRegistrationOwnedOrThrow({
+          application: {
+            applicationRegistrationId:
+              application?.applicationRegistrationId ?? null,
+            universalIdentifier: targetId,
+          },
+          workspaceId,
+        });
       }
-      case 'graphqlArgs':
-        return this.readPath(
-          GqlExecutionContext.create(context).getArgs(),
-          target.idKey,
-        );
-      case 'routeParam':
-        return request.params?.[target.argName];
+      case 'applicationId':
+        return this.assertApplicationRegistrationOwnedOrThrow({
+          application: await this.findApplicationOrThrow({
+            applicationId: targetId,
+            workspaceId,
+          }),
+          workspaceId,
+        });
+      case 'applicationOwnedEntity': {
+        const flatEntity = await this.findFlatEntity({
+          metadataName: target.metadataName,
+          entityId: targetId,
+          workspaceId,
+        });
+
+        if (!isDefined(flatEntity)) {
+          throw new ApplicationException(
+            `${target.metadataName} "${targetId}" not found in workspace.`,
+            ApplicationExceptionCode.ENTITY_NOT_FOUND,
+          );
+        }
+
+        return this.assertApplicationRegistrationOwnedOrThrow({
+          application: await this.findApplicationOrThrow({
+            applicationId: flatEntity.applicationId,
+            workspaceId,
+          }),
+          workspaceId,
+        });
+      }
       default:
         return assertUnreachable(target);
     }
   }
 
-  private readPath(value: unknown, path: string): unknown {
-    return path
-      .split('.')
-      .reduce<unknown>(
-        (currentValue, key) =>
-          isObject(currentValue)
-            ? (currentValue as Record<string, unknown>)[key]
-            : undefined,
-        value,
+  // The executor injects server variables from the linked registration
+  private async assertApplicationRegistrationOwnedOrThrow({
+    application: { applicationRegistrationId, universalIdentifier },
+    workspaceId,
+  }: {
+    application: Pick<
+      ApplicationEntity,
+      'applicationRegistrationId' | 'universalIdentifier'
+    >;
+    workspaceId: string;
+  }): Promise<void> {
+    if (isDefined(applicationRegistrationId)) {
+      await this.applicationRegistrationLookupService.findOneByIdOwnedByWorkspaceOrThrow(
+        { applicationRegistrationId, workspaceId },
       );
-  }
 
-  private getTargetName(target: ApplicationTarget): string {
-    switch (target.source) {
-      case 'graphqlArg':
-        return isDefined(target.idKey)
-          ? `${target.argName}.${target.idKey}`
-          : target.argName;
-      case 'graphqlArgs':
-        return target.idKey;
-      case 'routeParam':
-        return target.argName;
-      default:
-        return assertUnreachable(target);
+      return;
     }
+
+    await this.applicationRegistrationLookupService.findOneOwnedByWorkspaceOrThrow(
+      {
+        universalIdentifier,
+        workspaceId,
+      },
+    );
   }
 
-  private async isOwnedByCallingApplication({
+  private async findApplicationOrThrow({
+    applicationId,
+    workspaceId,
+  }: {
+    applicationId: string;
+    workspaceId: string;
+  }): Promise<ApplicationEntity> {
+    const application = await this.applicationLookupService.findById({
+      id: applicationId,
+      workspaceId,
+    });
+
+    if (!isDefined(application)) {
+      throw new ApplicationException(
+        'Application not found in workspace.',
+        ApplicationExceptionCode.APPLICATION_NOT_FOUND,
+      );
+    }
+
+    return application;
+  }
+
+  private async findFlatEntity({
     metadataName,
     entityId,
-    callingApplication,
     workspaceId,
   }: {
     metadataName: AllMetadataName;
     entityId: string;
-    callingApplication: FlatApplication;
     workspaceId: string;
-  }): Promise<boolean> {
+  }): Promise<SyncableFlatEntity | undefined> {
     const flatMapsKey = getMetadataFlatEntityMapsKey(metadataName);
 
     const flatEntityMapsByKey =
@@ -170,26 +294,9 @@ export class ApplicationTargetGuard implements CanActivate {
     const flatEntityMaps: FlatEntityMaps<SyncableFlatEntity> =
       flatEntityMapsByKey[flatMapsKey];
 
-    const flatEntity = findFlatEntityByIdInFlatEntityMaps({
+    return findFlatEntityByIdInFlatEntityMaps({
       flatEntityId: entityId,
       flatEntityMaps,
     });
-
-    // Unknown ids pass so the resolver keeps answering NOT_FOUND
-    return (
-      !isDefined(flatEntity) ||
-      flatEntity.applicationId === callingApplication.id
-    );
-  }
-
-  private assertOrThrow(isOwnTarget: boolean, message: string): true {
-    if (!isOwnTarget) {
-      throw new ApplicationException(
-        message,
-        ApplicationExceptionCode.FORBIDDEN,
-      );
-    }
-
-    return true;
   }
 }

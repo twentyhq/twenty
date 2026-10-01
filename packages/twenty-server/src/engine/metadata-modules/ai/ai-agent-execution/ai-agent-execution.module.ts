@@ -2,7 +2,7 @@ import { AgentMessageResolver } from 'src/engine/metadata-modules/ai/ai-agent-ex
 import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
+import { ApplicationLookupModule } from 'src/engine/core-modules/application/application-lookup/application-lookup.module';
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { WorkspaceDomainsModule } from 'src/engine/core-modules/domain/workspace-domains/workspace-domains.module';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
@@ -37,7 +37,7 @@ import { RunAgentAttachmentService } from './services/run-agent-attachment.servi
     AiBillingModule,
     AiModelsModule,
     AiAgentModule,
-    ApplicationModule,
+    ApplicationLookupModule,
     BillingModule,
     FileUrlModule,
     WorkspaceDomainsModule,
