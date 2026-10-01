@@ -8,7 +8,6 @@ import { INLINE_BANNER_PROP_DESCRIPTIONS } from './inlineBannerPropDescriptions'
 import { TOAST_PROVIDER_PROP_DESCRIPTIONS } from './toastProviderPropDescriptions';
 import { TOASTER_PROP_DESCRIPTIONS } from './toasterPropDescriptions';
 import { RADIO_PROP_DESCRIPTIONS } from './radioPropDescriptions';
-import { COLOR_SCHEME_PICKER_PROP_DESCRIPTIONS } from './colorSchemePickerPropDescriptions';
 import { SEARCH_INPUT_PROP_DESCRIPTIONS } from './searchInputPropDescriptions';
 import { ANIMATED_ICON_CROSSFADE_PROP_DESCRIPTIONS } from './animatedIconCrossfadePropDescriptions';
 import { MENU_ITEM_PROP_DESCRIPTIONS } from './menuItemPropDescriptions';
@@ -17,7 +16,6 @@ import { MENU_ITEM_DRAGGABLE_PROP_DESCRIPTIONS } from './menuItemDraggablePropDe
 import { MENU_ITEM_SUGGESTION_PROP_DESCRIPTIONS } from './menuItemSuggestionPropDescriptions';
 import { MENU_PICKER_PROP_DESCRIPTIONS } from './menuPickerPropDescriptions';
 import { NAVIGATION_BAR_PROP_DESCRIPTIONS } from './navigationBarPropDescriptions';
-import { ROUNDED_LINK_PROP_DESCRIPTIONS } from './roundedLinkPropDescriptions';
 import { THEME_PROVIDER_PROP_DESCRIPTIONS } from './themeProviderPropDescriptions';
 import { ICON_PROP_DESCRIPTIONS } from './iconPropDescriptions';
 import { ICONS_PROVIDER_PROP_DESCRIPTIONS } from './iconsProviderPropDescriptions';
@@ -62,6 +60,24 @@ import { TOOLTIP_PROP_DESCRIPTIONS } from './tooltipPropDescriptions';
 import { VISIBILITY_HIDDEN_PROP_DESCRIPTIONS } from './visibilityHiddenPropDescriptions';
 
 export const DOCUMENTED_COMPONENTS = [
+  {
+    name: 'Shortcut',
+    source: 'primitives/typography/Shortcut/Shortcut.tsx',
+    entryPoint: 'twenty-ui/primitives/typography',
+    slug: 'typography/shortcut',
+    propDescriptions: {
+      shortcut:
+        'Flat key array for a simultaneous combination, or nested key arrays for an ordered sequence of combinations.',
+      platform:
+        'Optional mac or other platform override. Defaults to server-safe device detection.',
+      sequenceJoinLabel: 'Text between sequence steps. Defaults to then.',
+      combinationSeparator:
+        'Optional separator between simultaneous keys. Defaults to no separator on Apple devices and a space elsewhere.',
+      variant: 'Keycaps, inline text, or a separated button hint.',
+      visibility:
+        'Always visible by default. Desktop hints hide on mobile viewports.',
+    },
+  },
   {
     name: 'VisibilityHidden',
     source: 'primitives/accessibility/components/VisibilityHidden.tsx',
@@ -262,8 +278,8 @@ export const DOCUMENTED_COMPONENTS = [
     entryPoint: 'twenty-ui/primitives/navigation',
     slug: 'navigation/list-item',
     propDescriptions: {
-      hotkeysJoinLabel:
-        'Text between shortcut keys. Defaults to `then`; pass an empty string to omit it.',
+      shortcutJoinLabel:
+        'Text between sequential shortcut steps. Defaults to `then`; pass an empty string to omit it.',
       actionsVisibility:
         'When trailing actions are visible: on hover and focus, or always.',
     },
@@ -316,16 +332,20 @@ export const DOCUMENTED_COMPONENTS = [
     slug: 'surfaces/menu',
     partPropDescriptions: {
       Item: {
-        hotkeysJoinLabel: 'Text between shortcut keys. Defaults to `then`.',
+        shortcutJoinLabel:
+          'Text between sequential shortcut steps. Defaults to `then`.',
       },
       CheckboxItem: {
-        hotkeysJoinLabel: 'Text between shortcut keys. Defaults to `then`.',
+        shortcutJoinLabel:
+          'Text between sequential shortcut steps. Defaults to `then`.',
       },
       RadioItem: {
-        hotkeysJoinLabel: 'Text between shortcut keys. Defaults to `then`.',
+        shortcutJoinLabel:
+          'Text between sequential shortcut steps. Defaults to `then`.',
       },
       SubmenuTrigger: {
-        hotkeysJoinLabel: 'Text between shortcut keys. Defaults to `then`.',
+        shortcutJoinLabel:
+          'Text between sequential shortcut steps. Defaults to `then`.',
         onClick: 'The click handler for the submenu trigger.',
       },
     },
@@ -542,13 +562,6 @@ export const DOCUMENTED_COMPONENTS = [
     propDescriptions: TOASTER_PROP_DESCRIPTIONS,
   },
   {
-    name: 'ColorSchemePicker',
-    source: 'components/input/ColorSchemePicker/ColorSchemePicker.tsx',
-    entryPoint: 'twenty-ui/components',
-    slug: 'components/color-scheme-picker',
-    propDescriptions: COLOR_SCHEME_PICKER_PROP_DESCRIPTIONS,
-  },
-  {
     name: 'SearchInput',
     source: 'components/input/SearchInput/SearchInput.tsx',
     entryPoint: 'twenty-ui/components',
@@ -603,13 +616,6 @@ export const DOCUMENTED_COMPONENTS = [
     entryPoint: 'twenty-ui/components',
     slug: 'components/navigation-bar',
     propDescriptions: NAVIGATION_BAR_PROP_DESCRIPTIONS,
-  },
-  {
-    name: 'RoundedLink',
-    source: 'components/navigation/RoundedLink/RoundedLink.tsx',
-    entryPoint: 'twenty-ui/components',
-    slug: 'components/rounded-link',
-    propDescriptions: ROUNDED_LINK_PROP_DESCRIPTIONS,
   },
   {
     name: 'ThemeProvider',

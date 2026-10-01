@@ -30,13 +30,6 @@ describe('ASK_QUESTIONS_PAUSING_TOOL', () => {
     expect(ASK_QUESTIONS_PAUSING_TOOL.parseCall(undefined)).toBeNull();
   });
 
-  it('asks the first question as the Ask name and keeps every question as its form', () => {
-    expect(parseCall().buildAsk()).toEqual({
-      name: 'Which plan?',
-      form: { kind: 'questions', questions: QUESTIONS },
-    });
-  });
-
   const NO_TOOLS = { executeTool: jest.fn() };
 
   it('turns an accepted answer into the answered result and the answer message', async () => {

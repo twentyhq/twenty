@@ -68,7 +68,7 @@ export const SettingsApplicationsTable = ({
         <SearchInput
           placeholder={t`Search an application`}
           value={searchTerm}
-          onChange={setSearchTerm}
+          onValueChange={setSearchTerm}
         />
       </StyledSearchInputContainer>
       <Table>

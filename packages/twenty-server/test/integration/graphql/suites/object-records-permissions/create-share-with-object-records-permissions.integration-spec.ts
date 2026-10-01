@@ -16,13 +16,11 @@ import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { setObjectReadability } from 'test/integration/metadata/suites/object-metadata/utils/set-object-readability.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
-import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { deleteRecordsByIds } from 'test/integration/utils/delete-records-by-ids';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 import { EVERYONE_PRINCIPAL_ID } from 'twenty-shared/constants';
 import {
-  FeatureFlagKey,
   FieldMetadataType,
   MetadataReadability,
   RecordShareAccessLevel,
@@ -141,13 +139,6 @@ const apiKeyRoleRowFor = (recordId: string, roleId: string) => ({
   sourceId: recordId,
 });
 
-const setRecordSharingEnabled = (value: boolean) =>
-  updateFeatureFlag({
-    featureFlag: FeatureFlagKey.IS_RECORD_SHARING_ENABLED,
-    value,
-    expectToFail: false,
-  });
-
 describe('createShareWithObjectRecordsPermissions', () => {
   let recordShareStorageService: RecordShareStorageService;
   let objectMetadataId: string;
@@ -231,8 +222,6 @@ describe('createShareWithObjectRecordsPermissions', () => {
   });
 
   afterAll(async () => {
-    await setRecordSharingEnabled(false);
-
     const recordShareIds = (
       await Promise.all(createdRecordIds.map(findRecordShares))
     )
@@ -265,10 +254,9 @@ describe('createShareWithObjectRecordsPermissions', () => {
     });
   });
 
-  describe('PRIVATE readability with record sharing enabled', () => {
+  describe('PRIVATE readability', () => {
     beforeAll(async () => {
       await setObjectReadability(objectMetadataId, MetadataReadability.PRIVATE);
-      await setRecordSharingEnabled(true);
     });
 
     it('should give the creating member a FULL owner row when no shareWith is passed', async () => {
@@ -669,7 +657,7 @@ describe('createShareWithObjectRecordsPermissions', () => {
   });
 
   describe.each([MetadataReadability.SYSTEM, MetadataReadability.PRIVATE])(
-    'PRIVATE creates with the flag off and conversation readability %s',
+    'PRIVATE creates with conversation readability %s',
     (conversationReadability) => {
       let conversationObjectMetadata: ObjectMetadataEntity;
 
@@ -691,7 +679,6 @@ describe('createShareWithObjectRecordsPermissions', () => {
           objectMetadataId,
           MetadataReadability.PRIVATE,
         );
-        await setRecordSharingEnabled(false);
       });
 
       afterAll(async () => {
@@ -701,7 +688,7 @@ describe('createShareWithObjectRecordsPermissions', () => {
         );
       });
 
-      it('requires an explicit API sharing target regardless of rollout state', async () => {
+      it('requires an explicit API sharing target', async () => {
         const recordId = trackRecordId();
         const response = await makeGraphqlApiRequestWithApiKey(
           createOneOperation({
@@ -715,11 +702,11 @@ describe('createShareWithObjectRecordsPermissions', () => {
         expect(await findRecordShares(recordId)).toEqual([]);
       });
 
-      it('keeps new member records private regardless of rollout state', async () => {
+      it('keeps new member records private', async () => {
         const recordId = trackRecordId();
         const response = await makeGraphqlApiRequest(
           createOneOperation({
-            data: { id: recordId, name: 'Member create with flag off' },
+            data: { id: recordId, name: 'Member create' },
           }),
         );
         expect(response.body.errors).toBeUndefined();

@@ -23,8 +23,12 @@
   Focuses the input when mounted.
 </ParamField>
 
-<ParamField body="className" type="string">
-  Class applied to the wrapper.
+<ParamField body="className" type="string | ((state: InputState) =&gt; string | undefined)">
+  Class applied to the input.
+</ParamField>
+
+<ParamField body="defaultValue" type="string | number | readonly string[]">
+  The default value of the input. Use when uncontrolled.
 </ParamField>
 
 <ParamField body="disabled" type="boolean">
@@ -43,14 +47,38 @@
   Input ID, generated when omitted.
 </ParamField>
 
-<ParamField body="onChange" type="(value: string) =&gt; void" required>
-  Called with the new text, not a DOM change event. The application owns filtering.
+<ParamField body="onChange" type="((event: BaseUIEvent&lt;ChangeEvent&lt;HTMLInputElement, HTMLInputElement&gt;&gt;) =&gt; void)">
+  Native input change event handler.
+</ParamField>
+
+<ParamField body="onValueChange" type="((value: string, eventDetails: { reason: &quot;none&quot;; event: Event; cancel: () =&gt; void; allowPropagation: () =&gt; void; isCanceled: boolean; isPropagationAllowed: boolean; trigger: Element | undefined; }) =&gt; void)">
+  Called with the new text. The application owns filtering.
 </ParamField>
 
 <ParamField body="placeholder" type="string">
   Hint shown when the input is empty. Also used as the accessible name if no explicit label is supplied.
 </ParamField>
 
-<ParamField body="value" type="string" required>
+<ParamField body="ref" type="Ref&lt;HTMLInputElement&gt;">
+  Ref to the native input element.
+</ParamField>
+
+<ParamField body="render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, InputState&gt;">
+  Allows you to replace the component's HTML element
+  with a different tag, or compose it with another component.
+
+  Accepts a `ReactElement` or a function that returns the element to render.
+</ParamField>
+
+<ParamField body="size" type="&quot;md&quot; | &quot;sm&quot;" default="md">
+  Visual size of the input group and optional filter button.
+</ParamField>
+
+<ParamField body="style" type="CSSProperties | ((state: InputState) =&gt; CSSProperties | undefined)">
+  Style applied to the element, or a function that
+  returns a style object based on the component's state.
+</ParamField>
+
+<ParamField body="value" type="string | number | readonly string[]">
   Current search text.
 </ParamField>

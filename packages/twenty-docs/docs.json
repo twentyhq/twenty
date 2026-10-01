@@ -609,6 +609,7 @@
                         "pages": [
                           "ui/primitives/typography/heading",
                           "ui/primitives/typography/text",
+                          "ui/primitives/typography/shortcut",
                           "ui/primitives/typography/overflowing-text-with-tooltip"
                         ]
                       }
@@ -631,7 +632,6 @@
                       "ui/components/animated-icon-crossfade",
                       "ui/components/avatar-group",
                       "ui/components/callout",
-                      "ui/components/color-scheme-picker",
                       "ui/components/command-block",
                       "ui/components/inline-banner",
                       "ui/components/json-tree",
@@ -639,7 +639,6 @@
                       "ui/components/menu-picker",
                       "ui/components/navigation-bar",
                       "ui/components/notification-counter",
-                      "ui/components/rounded-link",
                       "ui/components/search-input",
                       "ui/components/tinted-icon-tile"
                     ]

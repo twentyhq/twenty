@@ -28,9 +28,6 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "id": {
         "universalIdentifier": "59b74693-2b88-5eb9-82ef-23b1e75c2b78",
       },
-      "inputAsks": {
-        "universalIdentifier": "0c2444ed-7f90-4984-9f56-a3fe16fa6296",
-      },
       "lastStreamError": {
         "universalIdentifier": "2e389238-ba5c-4951-83d4-b14f94592c5c",
       },
@@ -1516,98 +1513,6 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
           },
           "updatedAt": {
             "universalIdentifier": "d37846b6-01a9-54f9-ab44-43a39375974d",
-          },
-        },
-      },
-    },
-  },
-  "inputAsk": {
-    "fields": {
-      "answeredAt": {
-        "universalIdentifier": "618f303d-123b-480f-9d40-64fcb0db2e01",
-      },
-      "assignee": {
-        "universalIdentifier": "410fabce-972b-40d3-8b11-3c0807ecab90",
-      },
-      "createdAt": {
-        "universalIdentifier": "f0a4adf8-233b-5cfe-855b-25102b196115",
-      },
-      "createdBy": {
-        "universalIdentifier": "1dc3c6fb-1f79-508d-9371-e4b3c43436a5",
-      },
-      "deletedAt": {
-        "universalIdentifier": "32027c67-cdff-5425-873d-b2346e4d9af0",
-      },
-      "form": {
-        "universalIdentifier": "b25c6916-71bc-435e-a547-ecb384083902",
-      },
-      "id": {
-        "universalIdentifier": "3e4b9815-e24e-5548-be38-b82d39e190bd",
-      },
-      "name": {
-        "universalIdentifier": "f8d3b0ed-f134-420a-9194-ca0f96345642",
-      },
-      "position": {
-        "universalIdentifier": "b7e7866d-da15-5753-9bde-43d025a38a86",
-      },
-      "response": {
-        "universalIdentifier": "04906a36-ec59-4d3f-8da9-7ef6696ed326",
-      },
-      "searchVector": {
-        "universalIdentifier": "3eed9577-932b-5c7a-bde5-99ab561f8745",
-      },
-      "status": {
-        "universalIdentifier": "919f0339-ee8e-4197-8b6a-b57bbd31035b",
-      },
-      "stepId": {
-        "universalIdentifier": "334c8abb-6ebe-4e08-a746-0098425ef421",
-      },
-      "thread": {
-        "universalIdentifier": "21ee043a-d3d6-4545-8771-34aca316aeea",
-      },
-      "toolCallId": {
-        "universalIdentifier": "f353edad-fe7e-4efc-ab0d-e21a0ee16262",
-      },
-      "updatedAt": {
-        "universalIdentifier": "168d4eef-366c-59a4-b22a-3b3e2c2fc272",
-      },
-      "updatedBy": {
-        "universalIdentifier": "ca3e2f7a-6c4c-5fbc-b8ed-e3cf6ddabfe7",
-      },
-      "workflowRun": {
-        "universalIdentifier": "cf2d5592-f51c-4dca-a6f2-cb4f7d1fcc80",
-      },
-    },
-    "indexes": {
-      "assigneeStatusIndex": {
-        "universalIdentifier": "255cba21-0107-4c31-b497-9c4081114da8",
-      },
-      "threadToolCallUniqueIndex": {
-        "universalIdentifier": "6a0ac44d-84f3-4bfa-8939-ce3d82f0d043",
-      },
-      "workflowRunStatusIndex": {
-        "universalIdentifier": "77615052-0e81-4210-b259-37a9e939bb41",
-      },
-      "workflowRunStepUniqueIndex": {
-        "universalIdentifier": "c6c2c67e-2f2e-4a1e-9c0b-1b3d5e7a9f41",
-      },
-    },
-    "universalIdentifier": "c9069340-a894-4f33-9da3-3b9631d3144c",
-    "views": {
-      "allInputAsks": {
-        "universalIdentifier": "f6b9409d-bb52-5ce9-96a1-0d999d446d1d",
-        "viewFields": {
-          "assignee": {
-            "universalIdentifier": "caf0c3da-7e07-5635-a5e7-06b5b6015ea7",
-          },
-          "createdAt": {
-            "universalIdentifier": "f1f8cced-7d32-5fc7-9ed5-faa9440ce25d",
-          },
-          "name": {
-            "universalIdentifier": "07d46858-2d00-59fd-ba96-45dffced339b",
-          },
-          "status": {
-            "universalIdentifier": "028d2903-6f4d-59fe-9766-6b0f90aaf9b4",
           },
         },
       },
@@ -3932,9 +3837,6 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "id": {
         "universalIdentifier": "e8f6e894-4003-5cb1-a1c1-7ed5b3e4200c",
       },
-      "inputAsks": {
-        "universalIdentifier": "f3b2f310-9aa4-40da-82bb-3388d26e7cde",
-      },
       "name": {
         "universalIdentifier": "20202020-b840-4253-aef9-4e5013694587",
       },
@@ -4219,9 +4121,6 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       },
       "id": {
         "universalIdentifier": "d77dff76-dcfd-52a3-b352-832898b28b9d",
-      },
-      "inputAsks": {
-        "universalIdentifier": "552a26c5-21fd-4e3a-ad0d-2f561c96b7d4",
       },
       "jobTitle": {
         "universalIdentifier": "20202020-4dd4-4619-826e-08f6c06b374d",

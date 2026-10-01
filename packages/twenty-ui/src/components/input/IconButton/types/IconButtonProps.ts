@@ -12,7 +12,8 @@ export type IconButtonProps = Omit<
   | 'children'
   | 'startIcon'
   | 'endIcon'
-  | 'hotkeys'
+  | 'shortcut'
+  | 'shortcutJoinLabel'
   | 'fullWidth'
 > & {
   size?: IconButtonSize;
