@@ -47,43 +47,45 @@ const FINALE_SCATTER_AMOUNT = 0.06;
 const SOFTWARE_RENDERER_PATTERN =
   /swiftshader|llvmpipe|software|basic render driver/i;
 
-const compileProgram = (
+// Reading COMPILE_STATUS or LINK_STATUS makes the main thread wait until the
+// GPU process has compiled the program, which takes hundreds of milliseconds
+// on a cold shader cache, right while the first onboarding step animates in.
+// Compilation is only started here: the renderer checks for completion without
+// blocking, and reads LINK_STATUS once the answer is already available.
+const startProgramCompilation = (
   gl: WebGL2RenderingContext,
   vertexSource: string,
   fragmentSource: string,
 ) => {
-  const compileShader = (shaderType: number, source: string) => {
-    const shader = gl.createShader(shaderType);
-    if (!isDefined(shader)) {
-      return null;
-    }
-    gl.shaderSource(shader, source);
-    gl.compileShader(shader);
-    if (gl.getShaderParameter(shader, gl.COMPILE_STATUS) !== true) {
-      gl.deleteShader(shader);
-      return null;
-    }
-    return shader;
-  };
-
-  const vertexShader = compileShader(gl.VERTEX_SHADER, vertexSource);
-  const fragmentShader = compileShader(gl.FRAGMENT_SHADER, fragmentSource);
   const program = gl.createProgram();
+  const vertexShader = gl.createShader(gl.VERTEX_SHADER);
+  const fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
   if (
+    !isDefined(program) ||
     !isDefined(vertexShader) ||
-    !isDefined(fragmentShader) ||
-    !isDefined(program)
+    !isDefined(fragmentShader)
   ) {
     return null;
   }
 
+  gl.shaderSource(vertexShader, vertexSource);
+  gl.compileShader(vertexShader);
+  gl.shaderSource(fragmentShader, fragmentSource);
+  gl.compileShader(fragmentShader);
   gl.attachShader(program, vertexShader);
   gl.attachShader(program, fragmentShader);
   gl.linkProgram(program);
+  // Shaders stay alive while attached, so they can be flagged for deletion
+  // before the link finishes.
   gl.deleteShader(vertexShader);
   gl.deleteShader(fragmentShader);
 
-  return gl.getProgramParameter(program, gl.LINK_STATUS) ? program : null;
+  return program;
+};
+
+type Programs = {
+  sceneProgram: WebGLProgram;
+  halftoneProgram: WebGLProgram;
 };
 
 type MeshResources = {
@@ -165,6 +167,8 @@ export const createOnboardingConstructionSiteRenderer = ({
     return null;
   }
 
+  // Lets the renderer ask whether compilation is done without waiting for it.
+  const parallelShaderCompile = gl.getExtension('KHR_parallel_shader_compile');
   const debugRendererInfo = gl.getExtension('WEBGL_debug_renderer_info');
   const shouldReduceMotion =
     prefersReducedMotion ||
@@ -207,25 +211,49 @@ export const createOnboardingConstructionSiteRenderer = ({
   let elapsedSeconds = 0;
   let lastFrameTimeMs: number | null = null;
   let isDestroyed = false;
+  let pendingPrograms: Programs | null = null;
+  let programsAnimationFrameHandle: number | null = null;
 
-  const createResources = (): GlResources | null => {
-    const sceneProgram = compileProgram(
+  const startPrograms = (): Programs | null => {
+    const sceneProgram = startProgramCompilation(
       gl,
       ONBOARDING_CONSTRUCTION_SITE_SHADERS.sceneVertex,
       ONBOARDING_CONSTRUCTION_SITE_SHADERS.sceneFragment,
     );
-    const halftoneProgram = compileProgram(
+    const halftoneProgram = startProgramCompilation(
       gl,
       ONBOARDING_CONSTRUCTION_SITE_SHADERS.fullScreenVertex,
       ONBOARDING_CONSTRUCTION_SITE_SHADERS.halftoneFragment,
     );
+    if (!isDefined(sceneProgram) || !isDefined(halftoneProgram)) {
+      gl.deleteProgram(sceneProgram);
+      gl.deleteProgram(halftoneProgram);
+      return null;
+    }
+    return { sceneProgram, halftoneProgram };
+  };
+
+  // Without the extension there is no way to ask without waiting, so the
+  // program is reported ready and the LINK_STATUS read in createResources
+  // blocks until it is.
+  const isProgramCompiled = (program: WebGLProgram) =>
+    !isDefined(parallelShaderCompile) ||
+    gl.getProgramParameter(
+      program,
+      parallelShaderCompile.COMPLETION_STATUS_KHR,
+    );
+
+  const createResources = ({
+    sceneProgram,
+    halftoneProgram,
+  }: Programs): GlResources | null => {
     const sceneTexture = gl.createTexture();
     const sceneDepthBuffer = gl.createRenderbuffer();
     const sceneFramebuffer = gl.createFramebuffer();
     const emptyVertexArray = gl.createVertexArray();
     if (
-      !isDefined(sceneProgram) ||
-      !isDefined(halftoneProgram) ||
+      !gl.getProgramParameter(sceneProgram, gl.LINK_STATUS) ||
+      !gl.getProgramParameter(halftoneProgram, gl.LINK_STATUS) ||
       !isDefined(sceneTexture) ||
       !isDefined(sceneDepthBuffer) ||
       !isDefined(sceneFramebuffer) ||
@@ -343,6 +371,30 @@ export const createOnboardingConstructionSiteRenderer = ({
       sceneFramebuffer,
       emptyVertexArray,
     };
+  };
+
+  // Polled once per frame so the page keeps animating while the GPU process
+  // compiles, then builds the resources and draws the stage requested meanwhile.
+  const createResourcesOnceProgramsAreCompiled = () => {
+    programsAnimationFrameHandle = null;
+    if (isDestroyed || !isDefined(pendingPrograms) || gl.isContextLost()) {
+      return;
+    }
+
+    if (
+      !isProgramCompiled(pendingPrograms.sceneProgram) ||
+      !isProgramCompiled(pendingPrograms.halftoneProgram)
+    ) {
+      programsAnimationFrameHandle = requestAnimationFrame(
+        createResourcesOnceProgramsAreCompiled,
+      );
+      return;
+    }
+
+    resources = createResources(pendingPrograms);
+    pendingPrograms = null;
+    allocateSceneTarget();
+    requestRender();
   };
 
   const allocateSceneTarget = () => {
@@ -571,7 +623,12 @@ export const createOnboardingConstructionSiteRenderer = ({
 
   const tick = (nowMs: number) => {
     animationFrameHandle = null;
-    if (isDestroyed || cssWidth < 1 || cssHeight < 1) {
+    // The timeline only advances once something can be drawn: otherwise the
+    // first build-up would play out, unseen, while the shaders still compile
+    // or while the context is lost. createResourcesOnceProgramsAreCompiled
+    // restarts the loop once the resources exist.
+    if (isDestroyed || !isDefined(resources) || cssWidth < 1 || cssHeight < 1) {
+      lastFrameTimeMs = null;
       return;
     }
 
@@ -621,22 +678,24 @@ export const createOnboardingConstructionSiteRenderer = ({
   const handleContextLost = (event: Event) => {
     event.preventDefault();
     resources = null;
+    pendingPrograms = null;
   };
 
+  // Programs do not survive a lost context, so compilation starts over.
   const handleContextRestored = () => {
-    resources = createResources();
-    allocateSceneTarget();
-    requestRender();
+    pendingPrograms = startPrograms();
+    createResourcesOnceProgramsAreCompiled();
   };
 
-  resources = createResources();
-  if (!isDefined(resources)) {
+  pendingPrograms = startPrograms();
+  if (!isDefined(pendingPrograms)) {
     return null;
   }
 
   canvas.addEventListener('webglcontextlost', handleContextLost);
   canvas.addEventListener('webglcontextrestored', handleContextRestored);
   resize();
+  createResourcesOnceProgramsAreCompiled();
 
   return {
     setStage: ({ stageIndex }) => {
@@ -664,8 +723,17 @@ export const createOnboardingConstructionSiteRenderer = ({
       if (isDefined(animationFrameHandle)) {
         cancelAnimationFrame(animationFrameHandle);
       }
+      if (isDefined(programsAnimationFrameHandle)) {
+        cancelAnimationFrame(programsAnimationFrameHandle);
+      }
       canvas.removeEventListener('webglcontextlost', handleContextLost);
       canvas.removeEventListener('webglcontextrestored', handleContextRestored);
+      // Unmounting before compilation finishes would otherwise leak them.
+      if (isDefined(pendingPrograms)) {
+        gl.deleteProgram(pendingPrograms.sceneProgram);
+        gl.deleteProgram(pendingPrograms.halftoneProgram);
+        pendingPrograms = null;
+      }
       if (isDefined(resources)) {
         deleteResources(gl, resources);
         resources = null;
