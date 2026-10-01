@@ -42,6 +42,7 @@
     "@envelop/core": "4.0.3",
     "@faker-js/faker": "10.5.0",
     "@file-type/pdf": "^0.3.0",
+    "@google-cloud/storage": "8.2.0",
     "@graphql-tools/schema": "10.0.4",
     "@graphql-tools/utils": "9.2.1",
     "@graphql-yoga/nestjs": "2.1.0",

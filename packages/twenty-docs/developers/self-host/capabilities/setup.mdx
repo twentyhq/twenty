@@ -33,7 +33,7 @@ IS_CONFIG_VARIABLES_IN_DB_ENABLED=true  # default
 **What you can configure through the admin panel:**
 - **Authentication** - Google/Microsoft OAuth, password settings
 - **Email** - SMTP settings, templates, verification
-- **Storage** - S3 configuration, local storage paths
+- **Storage** - S3 and Google Cloud Storage configuration, local storage paths
 - **Integrations** - Gmail, Google Calendar, Microsoft services
 - **Workflow & Rate Limiting** - Execution limits, API throttling
 - **And much more...**
@@ -332,6 +332,63 @@ By default, Twenty stores uploaded files on the local filesystem. For production
 Set `STORAGE_TYPE=S_3` and configure the `STORAGE_S3_*` variables through the admin panel or `.env`. See the [config-variables.ts reference](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/twenty-config/config-variables.ts) for the full list of S3 variables.
 
 When using S3 with CORS-dependent features (e.g. in-browser file downloads), make sure your bucket allows your Twenty frontend origin in its CORS configuration.
+
+## Google Cloud Storage
+
+Twenty can store files in a Google Cloud Storage bucket natively, without an HMAC key. The driver authenticates with [Application Default Credentials](https://cloud.google.com/docs/authentication/application-default-credentials): the service account attached to Cloud Run, GKE or Compute Engine, or the key file in `GOOGLE_APPLICATION_CREDENTIALS` elsewhere.
+
+```bash
+STORAGE_TYPE=GCS
+STORAGE_GCS_BUCKET_NAME=my-twenty-bucket
+# Optional, resolved from the credentials when omitted
+STORAGE_GCS_PROJECT_ID=my-project
+```
+
+Grant the runtime service account `roles/storage.objectUser` on the bucket:
+
+```bash
+gcloud storage buckets add-iam-policy-binding gs://my-twenty-bucket \
+  --member="serviceAccount:twenty@my-project.iam.gserviceaccount.com" \
+  --role="roles/storage.objectUser"
+```
+
+Object names match the paths the local driver writes under `STORAGE_LOCAL_PATH`. If you were running `STORAGE_TYPE=local` on a bucket mounted with Cloud Storage FUSE at the bucket root, you can switch to `STORAGE_TYPE=GCS` on the same bucket and remove the volume mount; existing files keep working.
+
+<Warning>
+Don't run `STORAGE_TYPE=local` on a Cloud Storage FUSE mount. A FUSE rename is a copy followed by a delete, so the file's inode and modification time change, and the local driver then rejects every upload with `Object at ... changed since it was inspected`.
+</Warning>
+
+### Signed URLs
+
+Set `STORAGE_GCS_PRESIGNED_URL_ENABLED=true` to redirect downloads to V4 signed URLs and to send direct uploads straight to the bucket instead of through the server. `STORAGE_S3_PRESIGNED_URL_EXPIRES_IN` sets their lifetime for both the S3 and the GCS drivers.
+
+Signing with Application Default Credentials calls the IAM `signBlob` API, so the runtime service account needs `roles/iam.serviceAccountTokenCreator` on itself:
+
+```bash
+gcloud iam service-accounts add-iam-policy-binding \
+  twenty@my-project.iam.gserviceaccount.com \
+  --member="serviceAccount:twenty@my-project.iam.gserviceaccount.com" \
+  --role="roles/iam.serviceAccountTokenCreator"
+```
+
+Browsers upload with `PUT`, so the bucket needs a CORS policy that allows your Twenty frontend origin:
+
+```json
+[
+  {
+    "origin": ["https://twenty.example.com"],
+    "method": ["GET", "PUT"],
+    "responseHeader": ["Content-Type"],
+    "maxAgeSeconds": 3600
+  }
+]
+```
+
+```bash
+gcloud storage buckets update gs://my-twenty-bucket --cors-file=cors.json
+```
+
+Signed GCS URLs can't override the `Cache-Control` response header, so Twenty stores it as the object's `Cache-Control` metadata before signing. If the object's metadata can't be updated at that moment, Twenty serves the file through the server instead.
 
 ## Logic Functions & Code Interpreter
 

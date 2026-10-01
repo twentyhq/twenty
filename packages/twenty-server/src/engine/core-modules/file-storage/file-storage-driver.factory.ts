@@ -5,6 +5,7 @@ import { fromNodeProviderChain } from '@aws-sdk/credential-providers';
 import { type StorageDriver } from 'src/engine/core-modules/file-storage/drivers/interfaces/storage-driver.interface';
 import { StorageDriverType } from 'src/engine/core-modules/file-storage/interfaces/file-storage.interface';
 
+import { GcsDriver } from 'src/engine/core-modules/file-storage/drivers/gcs.driver';
 import { LocalDriver } from 'src/engine/core-modules/file-storage/drivers/local.driver';
 import { S3Driver } from 'src/engine/core-modules/file-storage/drivers/s3.driver';
 import { ValidatedStorageDriver } from 'src/engine/core-modules/file-storage/drivers/validated-storage.driver';
@@ -38,6 +39,14 @@ export class FileStorageDriverFactory extends DriverFactoryBase<StorageDriver> {
       );
 
       return `s3|${storageConfigHash}`;
+    }
+
+    if (storageType === StorageDriverType.GCS) {
+      const storageConfigHash = this.configGroupHashService.computeHash(
+        ConfigVariablesGroup.STORAGE_CONFIG,
+      );
+
+      return `gcs|${storageConfigHash}`;
     }
 
     throw new Error(`Unsupported storage type: ${storageType}`);
@@ -84,6 +93,18 @@ export class FileStorageDriverFactory extends DriverFactoryBase<StorageDriver> {
             : fromNodeProviderChain({ clientConfig: { region } }),
           forcePathStyle: true,
           region: region ?? '',
+        });
+        break;
+      }
+
+      case StorageDriverType.GCS: {
+        rawDriver = new GcsDriver({
+          bucketName: this.twentyConfigService.get('STORAGE_GCS_BUCKET_NAME'),
+          projectId:
+            this.twentyConfigService.get('STORAGE_GCS_PROJECT_ID') || undefined,
+          presignEnabled: this.twentyConfigService.get(
+            'STORAGE_GCS_PRESIGNED_URL_ENABLED',
+          ),
         });
         break;
       }
