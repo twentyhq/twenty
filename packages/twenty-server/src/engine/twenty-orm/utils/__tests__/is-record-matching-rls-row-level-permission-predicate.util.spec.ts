@@ -91,7 +91,7 @@ describe('isRecordMatchingRLSRowLevelPermissionPredicate', () => {
       viewFieldIds: [],
       viewFilterIds: [],
       kanbanAggregateOperationViewIds: [],
-      calendarViewIds: [],
+      startFieldViewIds: [],
       mainGroupByFieldMetadataViewIds: [],
       applicationId: null,
       settings,

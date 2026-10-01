@@ -24,7 +24,7 @@ describe('getAllSelectableFields', () => {
       viewFieldIds: [],
       viewFilterIds: [],
       kanbanAggregateOperationViewIds: [],
-      calendarViewIds: [],
+      startFieldViewIds: [],
       applicationId: null,
       label: overrides.name,
       ...overrides,

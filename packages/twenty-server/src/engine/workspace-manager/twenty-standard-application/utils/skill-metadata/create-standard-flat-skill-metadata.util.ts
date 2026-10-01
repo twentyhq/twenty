@@ -401,7 +401,7 @@ STEP 8: For each new custom object, repeat ALL of the following sub-steps before
     - If the object has a SELECT field (e.g. status, stage, priority, type), create a **KANBAN** view grouped by that SELECT field with a relevant name like "By Status", "Pipeline", "By Priority".
       - Set kanbanAggregateOperation to COUNT so each column shows the number of records.
       - If there is a CURRENCY or NUMERIC field, also set kanbanAggregateOperationFieldName to that field for a SUM aggregate view.
-    - If the object has a DATE or DATE_TIME field (e.g. dueDate, closedAt, scheduledAt), create a **CALENDAR** view and pass both \`calendarFieldName\` (that field name) and \`calendarLayout\` ("DAY", "WEEK", or "MONTH") with a relevant name like "Calendar", "Schedule", "Timeline".
+    - If the object has a DATE or DATE_TIME field (e.g. dueDate, closedAt, scheduledAt), create a **CALENDAR** view and pass both \`startFieldName\` (that field name) and \`calendarLayout\` ("DAY", "WEEK", or "MONTH") with a relevant name like "Calendar", "Schedule", "Timeline".
     - Create a **TABLE** view with a meaningful group (mainGroupByFieldName set to a SELECT field) with a name like "By Type", "By Stage", "Grouped", or similar.
   - Use create_many_view_fields to add all relevant field columns to this view (using decimal positions between 0 and 1)
   - Add filters and sorts to this view:
@@ -1303,7 +1303,7 @@ One call builds or reconfigures an entire view:
 - Omit \`id\` to CREATE (requires \`objectNameSingular\`); provide \`id\` to UPDATE an existing view.
 - Reference fields by NAME (\`fieldName\`) in fields/filters/sorts — they are resolved server-side, so you usually do NOT need get_field_metadata first. You may pass \`fieldMetadataId\` instead when you already have the UUID.
 - \`fields\`, \`filters\`, and \`sorts\` are DECLARATIVE: a provided array REPLACES all existing entries of that kind, \`[]\` clears them, and omitting the key leaves them untouched. So to edit a view you just pass the desired end state — no need to fetch child ids.
-- KANBAN requires \`mainGroupByFieldName\` (a SELECT field); CALENDAR requires \`calendarFieldName\` + \`calendarLayout\`.
+- KANBAN requires \`mainGroupByFieldName\` (a SELECT field); CALENDAR requires \`startFieldName\` + \`calendarLayout\`.
 
 Example: { "objectNameSingular": "opportunity", "type": "KANBAN", "name": "Pipeline", "mainGroupByFieldName": "stage", "kanbanAggregateOperation": "SUM", "kanbanAggregateOperationFieldName": "amount", "fields": [{ "fieldName": "name" }, { "fieldName": "amount" }, { "fieldName": "stage" }], "sorts": [{ "fieldName": "amount", "direction": "DESC" }] }
 
@@ -1324,7 +1324,7 @@ Example: { "objectNameSingular": "opportunity", "type": "KANBAN", "name": "Pipel
 
 3. **Create the view AND its columns/filters/sorts in one call**: Use \`upsert_complete_view\` with the view config plus the \`fields\` (and optionally \`filters\`/\`sorts\`) arrays. Reference fields by name.
    - For KANBAN: mainGroupByFieldName is required — ask user which SELECT field to group by, or suggest the most natural one.
-   - For CALENDAR: provide both \`calendarFieldName\` (a DATE/DATE_TIME field name) and \`calendarLayout\` ("DAY", "WEEK", or "MONTH").
+   - For CALENDAR: provide both \`startFieldName\` (a DATE/DATE_TIME field name) and \`calendarLayout\` ("DAY", "WEEK", or "MONTH").
    - For TABLE: No special configuration needed beyond the fields list.
 
 4. **Navigate**: Use navigate_app to show the user their new view.

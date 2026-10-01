@@ -117,11 +117,10 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
     "flatFieldMetadatas": [
       {
         "applicationUniversalIdentifier": Any<String>,
-        "calendarEndViewUniversalIdentifiers": [],
-        "calendarViewUniversalIdentifiers": [],
         "createdAt": Any<String>,
         "defaultValue": null,
         "description": "new field description",
+        "endFieldViewUniversalIdentifiers": [],
         "fieldPermissionUniversalIdentifiers": [],
         "icon": "IconRelationOneToMany",
         "isActive": true,
@@ -144,6 +143,7 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
         "relationTargetFieldMetadataUniversalIdentifier": Any<String>,
         "relationTargetObjectMetadataUniversalIdentifier": Any<String>,
         "searchFieldMetadataUniversalIdentifiers": [],
+        "startFieldViewUniversalIdentifiers": [],
         "type": "MORPH_RELATION",
         "universalIdentifier": Any<String>,
         "universalSettings": {
@@ -157,11 +157,10 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
       },
       {
         "applicationUniversalIdentifier": Any<String>,
-        "calendarEndViewUniversalIdentifiers": [],
-        "calendarViewUniversalIdentifiers": [],
         "createdAt": Any<String>,
         "defaultValue": null,
         "description": "new field description",
+        "endFieldViewUniversalIdentifiers": [],
         "fieldPermissionUniversalIdentifiers": [],
         "icon": "IconPet",
         "isActive": true,
@@ -184,6 +183,7 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
         "relationTargetFieldMetadataUniversalIdentifier": Any<String>,
         "relationTargetObjectMetadataUniversalIdentifier": Any<String>,
         "searchFieldMetadataUniversalIdentifiers": [],
+        "startFieldViewUniversalIdentifiers": [],
         "type": "RELATION",
         "universalIdentifier": Any<String>,
         "universalSettings": {
@@ -199,11 +199,10 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
       },
       {
         "applicationUniversalIdentifier": Any<String>,
-        "calendarEndViewUniversalIdentifiers": [],
-        "calendarViewUniversalIdentifiers": [],
         "createdAt": Any<String>,
         "defaultValue": null,
         "description": "new field description",
+        "endFieldViewUniversalIdentifiers": [],
         "fieldPermissionUniversalIdentifiers": [],
         "icon": "IconRelationOneToMany",
         "isActive": true,
@@ -226,6 +225,7 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
         "relationTargetFieldMetadataUniversalIdentifier": Any<String>,
         "relationTargetObjectMetadataUniversalIdentifier": Any<String>,
         "searchFieldMetadataUniversalIdentifiers": [],
+        "startFieldViewUniversalIdentifiers": [],
         "type": "MORPH_RELATION",
         "universalIdentifier": Any<String>,
         "universalSettings": {
@@ -239,11 +239,10 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
       },
       {
         "applicationUniversalIdentifier": Any<String>,
-        "calendarEndViewUniversalIdentifiers": [],
-        "calendarViewUniversalIdentifiers": [],
         "createdAt": Any<String>,
         "defaultValue": null,
         "description": "new field description",
+        "endFieldViewUniversalIdentifiers": [],
         "fieldPermissionUniversalIdentifiers": [],
         "icon": "IconBuilding",
         "isActive": true,
@@ -266,6 +265,7 @@ exports[`fromCreateFieldInputToFlatFieldMetadatasToCreate MORPH_RELATION test su
         "relationTargetFieldMetadataUniversalIdentifier": Any<String>,
         "relationTargetObjectMetadataUniversalIdentifier": Any<String>,
         "searchFieldMetadataUniversalIdentifiers": [],
+        "startFieldViewUniversalIdentifiers": [],
         "type": "RELATION",
         "universalIdentifier": Any<String>,
         "universalSettings": {

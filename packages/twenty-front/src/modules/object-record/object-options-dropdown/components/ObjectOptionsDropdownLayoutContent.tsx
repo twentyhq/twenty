@@ -67,9 +67,9 @@ export const ObjectOptionsDropdownLayoutContent = () => {
     recordIndexGroupFieldMetadataItemComponentState,
   );
 
-  const calendarFieldMetadata = currentView?.calendarFieldMetadataId
+  const startFieldMetadata = currentView?.startFieldMetadataId
     ? objectMetadataItem.fields.find(
-        (field) => field.id === currentView.calendarFieldMetadataId,
+        (field) => field.id === currentView.startFieldMetadataId,
       )
     : undefined;
 
@@ -268,7 +268,7 @@ export const ObjectOptionsDropdownLayoutContent = () => {
                     focused={selectedItemId === 'CalendarDateField'}
                     onClick={() => onContentChange('calendarFields')}
                     startIcon={<IconCalendar />}
-                    description={calendarFieldMetadata?.label}
+                    description={startFieldMetadata?.label}
                     descriptionPlacement="end"
                     hasSubmenu
                   >{t`Date field`}</ListItem>

@@ -31,8 +31,8 @@ export type View = {
   shouldHideEmptyGroups: boolean;
   kanbanColumnWidth?: number | null;
   groupLoadLimit?: number | null;
-  calendarFieldMetadataId?: string | null;
-  calendarEndFieldMetadataId?: string | null;
+  startFieldMetadataId?: string | null;
+  endFieldMetadataId?: string | null;
   calendarLayout?: ViewCalendarLayout | null;
   position: number;
   icon: string;

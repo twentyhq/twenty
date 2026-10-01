@@ -42,7 +42,7 @@ describe('resetUniversalFlatEntityForeignKeyAggregators', () => {
     expect(result).toMatchObject({
       viewFieldUniversalIdentifiers: [],
       viewFilterUniversalIdentifiers: [],
-      calendarViewUniversalIdentifiers: [],
+      startFieldViewUniversalIdentifiers: [],
       kanbanAggregateOperationViewUniversalIdentifiers: [],
       mainGroupByFieldMetadataViewUniversalIdentifiers: [],
     });

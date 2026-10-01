@@ -411,16 +411,16 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: undefined,
       isOverridable: true,
     },
-    calendarFieldMetadataId: {
+    startFieldMetadataId: {
       toCompare: true,
       toStringify: false,
-      universalProperty: 'calendarFieldMetadataUniversalIdentifier',
+      universalProperty: 'startFieldMetadataUniversalIdentifier',
       isOverridable: true,
     },
-    calendarEndFieldMetadataId: {
+    endFieldMetadataId: {
       toCompare: true,
       toStringify: false,
-      universalProperty: 'calendarEndFieldMetadataUniversalIdentifier',
+      universalProperty: 'endFieldMetadataUniversalIdentifier',
       isOverridable: true,
     },
     visibility: {

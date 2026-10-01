@@ -62,8 +62,8 @@ describe('deleteUniversalFlatEntityFromUniversalFlatEntityAndRelatedEntityMapsTh
       applicationUniversalIdentifier,
       viewFieldUniversalIdentifiers: [],
       viewFilterUniversalIdentifiers: [],
-      calendarViewUniversalIdentifiers: [viewUniversalIdentifier],
-      calendarEndViewUniversalIdentifiers: [viewUniversalIdentifier],
+      startFieldViewUniversalIdentifiers: [viewUniversalIdentifier],
+      endFieldViewUniversalIdentifiers: [viewUniversalIdentifier],
       mainGroupByFieldMetadataViewUniversalIdentifiers: [],
       kanbanAggregateOperationViewUniversalIdentifiers: [],
       createdAt: '2024-01-01T00:00:00.000Z',
@@ -95,10 +95,8 @@ describe('deleteUniversalFlatEntityFromUniversalFlatEntityAndRelatedEntityMapsTh
       viewFilterUniversalIdentifiers: [],
       viewGroupUniversalIdentifiers: [],
       applicationUniversalIdentifier,
-      calendarFieldMetadataUniversalIdentifier:
-        fieldMetadataUniversalIdentifier,
-      calendarEndFieldMetadataUniversalIdentifier:
-        fieldMetadataUniversalIdentifier,
+      startFieldMetadataUniversalIdentifier: fieldMetadataUniversalIdentifier,
+      endFieldMetadataUniversalIdentifier: fieldMetadataUniversalIdentifier,
       createdAt: '2024-01-01T00:00:00.000Z',
       updatedAt: '2024-01-01T00:00:00.000Z',
       name: 'Test View',
@@ -187,8 +185,8 @@ describe('deleteUniversalFlatEntityFromUniversalFlatEntityAndRelatedEntityMapsTh
     });
 
     expect(updatedFieldMetadata).toMatchObject({
-      calendarViewUniversalIdentifiers: [],
-      calendarEndViewUniversalIdentifiers: [],
+      startFieldViewUniversalIdentifiers: [],
+      endFieldViewUniversalIdentifiers: [],
     });
   });
 });

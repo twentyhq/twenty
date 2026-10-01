@@ -415,7 +415,7 @@ describe('ViewToolsFactory', () => {
         ).rejects.toThrow('KANBAN views require mainGroupByFieldName');
       });
 
-      it('should throw when CALENDAR view missing calendarFieldName', async () => {
+      it('should throw when CALENDAR view missing startFieldName', async () => {
         const tools = viewToolsFactory.generateWriteTools(
           mockWorkspaceId,
           mockUserWorkspaceId,
@@ -428,7 +428,7 @@ describe('ViewToolsFactory', () => {
             type: ViewType.CALENDAR,
             calendarLayout: ViewCalendarLayout.WEEK,
           }),
-        ).rejects.toThrow('CALENDAR views require calendarFieldName');
+        ).rejects.toThrow('CALENDAR views require startFieldName');
       });
 
       it('should throw when CALENDAR view missing calendarLayout', async () => {
@@ -442,7 +442,7 @@ describe('ViewToolsFactory', () => {
             name: 'Calendar View',
             objectNameSingular: mockObjectNameSingular,
             type: ViewType.CALENDAR,
-            calendarFieldName: 'dueAt',
+            startFieldName: 'dueAt',
           }),
         ).rejects.toThrow('CALENDAR views require calendarLayout');
       });
@@ -496,7 +496,7 @@ describe('ViewToolsFactory', () => {
           icon: 'IconCalendar',
           type: ViewType.CALENDAR,
           calendarLayout: ViewCalendarLayout.WEEK,
-          calendarFieldName: 'dueAt',
+          startFieldName: 'dueAt',
         });
 
         expect(viewService.createOne).toHaveBeenCalledWith({
@@ -507,7 +507,7 @@ describe('ViewToolsFactory', () => {
             type: ViewType.CALENDAR,
             visibility: ViewVisibility.WORKSPACE,
             calendarLayout: ViewCalendarLayout.WEEK,
-            calendarFieldMetadataId: mockCalendarFieldMetadataId,
+            startFieldMetadataId: mockCalendarFieldMetadataId,
           },
           workspaceId: mockWorkspaceId,
           createdByUserWorkspaceId: mockUserWorkspaceId,
@@ -802,7 +802,7 @@ describe('ViewToolsFactory', () => {
         viewService.findById.mockResolvedValue(existingView as any);
         completeViewUpsertService.upsertCompleteView.mockResolvedValue({
           ...existingView,
-          calendarEndFieldMetadataId: mockCalendarEndFieldMetadataId,
+          endFieldMetadataId: mockCalendarEndFieldMetadataId,
         } as any);
 
         const tools = viewToolsFactory.generateWriteTools(
@@ -812,7 +812,7 @@ describe('ViewToolsFactory', () => {
 
         await callExecute(tools['upsert_complete_view'], {
           id: mockViewId,
-          calendarEndFieldName: 'endsAt',
+          endFieldName: 'endsAt',
         });
 
         expect(
@@ -821,7 +821,7 @@ describe('ViewToolsFactory', () => {
           expect.objectContaining({
             existingViewId: mockViewId,
             objectMetadataId: mockObjectMetadataId,
-            calendarEndFieldMetadataId: mockCalendarEndFieldMetadataId,
+            endFieldMetadataId: mockCalendarEndFieldMetadataId,
           }),
         );
       });

@@ -66,8 +66,8 @@ describe('addUniversalFlatEntityToUniversalFlatEntityAndRelatedEntityMapsThrough
       applicationUniversalIdentifier,
       viewFieldUniversalIdentifiers: [],
       viewFilterUniversalIdentifiers: [],
-      calendarViewUniversalIdentifiers: [],
-      calendarEndViewUniversalIdentifiers: [],
+      startFieldViewUniversalIdentifiers: [],
+      endFieldViewUniversalIdentifiers: [],
       mainGroupByFieldMetadataViewUniversalIdentifiers: [],
       kanbanAggregateOperationViewUniversalIdentifiers: [],
       createdAt: '2024-01-01T00:00:00.000Z',
@@ -99,10 +99,8 @@ describe('addUniversalFlatEntityToUniversalFlatEntityAndRelatedEntityMapsThrough
       viewFilterUniversalIdentifiers: [],
       viewGroupUniversalIdentifiers: [],
       applicationUniversalIdentifier,
-      calendarFieldMetadataUniversalIdentifier:
-        fieldMetadataUniversalIdentifier,
-      calendarEndFieldMetadataUniversalIdentifier:
-        fieldMetadataUniversalIdentifier,
+      startFieldMetadataUniversalIdentifier: fieldMetadataUniversalIdentifier,
+      endFieldMetadataUniversalIdentifier: fieldMetadataUniversalIdentifier,
       createdAt: '2024-01-01T00:00:00.000Z',
       updatedAt: '2024-01-01T00:00:00.000Z',
       name: 'Test View',
@@ -178,8 +176,8 @@ describe('addUniversalFlatEntityToUniversalFlatEntityAndRelatedEntityMapsThrough
     });
 
     expect(updatedFieldMetadata).toMatchObject({
-      calendarViewUniversalIdentifiers: [viewUniversalIdentifier],
-      calendarEndViewUniversalIdentifiers: [viewUniversalIdentifier],
+      startFieldViewUniversalIdentifiers: [viewUniversalIdentifier],
+      endFieldViewUniversalIdentifiers: [viewUniversalIdentifier],
     });
   });
 
@@ -198,7 +196,7 @@ describe('addUniversalFlatEntityToUniversalFlatEntityAndRelatedEntityMapsThrough
       viewFilterUniversalIdentifiers: [],
       viewGroupUniversalIdentifiers: [],
       applicationUniversalIdentifier,
-      calendarFieldMetadataUniversalIdentifier: null,
+      startFieldMetadataUniversalIdentifier: null,
       createdAt: '2024-01-01T00:00:00.000Z',
       updatedAt: '2024-01-01T00:00:00.000Z',
       name: 'Test View',

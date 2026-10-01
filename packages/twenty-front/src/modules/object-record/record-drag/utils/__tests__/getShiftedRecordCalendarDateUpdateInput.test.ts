@@ -13,7 +13,7 @@ describe('getShiftedRecordCalendarDateUpdateInput', () => {
     expect(
       getShiftedRecordCalendarDateUpdateInput({
         record: buildRecord({ startDate: '2026-07-08' }),
-        calendarFieldName: 'startDate',
+        startFieldName: 'startDate',
         dayOffset: 3,
         fallbackStartDate: '2026-07-20',
       }),
@@ -24,7 +24,7 @@ describe('getShiftedRecordCalendarDateUpdateInput', () => {
     expect(
       getShiftedRecordCalendarDateUpdateInput({
         record: buildRecord({ startDate: '2026-07-08', endDate: '2026-07-10' }),
-        calendarFieldName: 'startDate',
+        startFieldName: 'startDate',
         dayOffset: 1,
         fallbackStartDate: '2026-07-20',
       }),
@@ -35,7 +35,7 @@ describe('getShiftedRecordCalendarDateUpdateInput', () => {
     expect(
       getShiftedRecordCalendarDateUpdateInput({
         record: buildRecord({}),
-        calendarFieldName: 'startDate',
+        startFieldName: 'startDate',
         dayOffset: 1,
         fallbackStartDate: '2026-07-20',
       }),
@@ -46,7 +46,7 @@ describe('getShiftedRecordCalendarDateUpdateInput', () => {
     expect(
       getShiftedRecordCalendarDateUpdateInput({
         record: buildRecord({ startDate: 'not-a-date', endDate: '2026-07-10' }),
-        calendarFieldName: 'startDate',
+        startFieldName: 'startDate',
         dayOffset: 1,
         fallbackStartDate: '2026-07-20',
       }),

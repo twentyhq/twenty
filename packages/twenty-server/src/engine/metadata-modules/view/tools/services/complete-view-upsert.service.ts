@@ -71,8 +71,8 @@ export class CompleteViewUpsertService {
     kanbanAggregateOperation,
     kanbanAggregateOperationFieldMetadataId,
     calendarLayout,
-    calendarFieldMetadataId,
-    calendarEndFieldMetadataId,
+    startFieldMetadataId,
+    endFieldMetadataId,
     fields,
     filters,
     sorts,
@@ -89,8 +89,8 @@ export class CompleteViewUpsertService {
     kanbanAggregateOperation?: AggregateOperations;
     kanbanAggregateOperationFieldMetadataId?: string;
     calendarLayout?: ViewCalendarLayout;
-    calendarFieldMetadataId?: string;
-    calendarEndFieldMetadataId?: string;
+    startFieldMetadataId?: string;
+    endFieldMetadataId?: string;
     fields?: CompleteViewFieldSpec[];
     filters?: CompleteViewFilterSpec[];
     sorts?: CompleteViewSortSpec[];
@@ -140,7 +140,7 @@ export class CompleteViewUpsertService {
           existingViewId,
           name,
           icon,
-          calendarEndFieldMetadataId,
+          endFieldMetadataId,
           userWorkspaceId,
           applicationUniversalIdentifier,
           flatViewMaps,
@@ -157,8 +157,8 @@ export class CompleteViewUpsertService {
           kanbanAggregateOperation,
           kanbanAggregateOperationFieldMetadataId,
           calendarLayout,
-          calendarFieldMetadataId,
-          calendarEndFieldMetadataId,
+          startFieldMetadataId,
+          endFieldMetadataId,
           userWorkspaceId,
           flatApplication: workspaceCustomFlatApplication,
           flatFieldMetadataMaps,
@@ -254,8 +254,8 @@ export class CompleteViewUpsertService {
     kanbanAggregateOperation,
     kanbanAggregateOperationFieldMetadataId,
     calendarLayout,
-    calendarFieldMetadataId,
-    calendarEndFieldMetadataId,
+    startFieldMetadataId,
+    endFieldMetadataId,
     userWorkspaceId,
     flatApplication,
     flatFieldMetadataMaps,
@@ -270,8 +270,8 @@ export class CompleteViewUpsertService {
     kanbanAggregateOperation?: AggregateOperations;
     kanbanAggregateOperationFieldMetadataId?: string;
     calendarLayout?: ViewCalendarLayout;
-    calendarFieldMetadataId?: string;
-    calendarEndFieldMetadataId?: string;
+    startFieldMetadataId?: string;
+    endFieldMetadataId?: string;
     userWorkspaceId?: string;
     flatApplication: FlatApplication;
     flatFieldMetadataMaps: AllFlatEntityMaps['flatFieldMetadataMaps'];
@@ -296,8 +296,8 @@ export class CompleteViewUpsertService {
           kanbanAggregateOperation,
           kanbanAggregateOperationFieldMetadataId,
           calendarLayout,
-          calendarFieldMetadataId,
-          calendarEndFieldMetadataId,
+          startFieldMetadataId,
+          endFieldMetadataId,
         },
         createdByUserWorkspaceId: userWorkspaceId,
         flatApplication,
@@ -329,7 +329,7 @@ export class CompleteViewUpsertService {
     existingViewId,
     name,
     icon,
-    calendarEndFieldMetadataId,
+    endFieldMetadataId,
     userWorkspaceId,
     applicationUniversalIdentifier,
     flatViewMaps,
@@ -339,7 +339,7 @@ export class CompleteViewUpsertService {
     existingViewId: string;
     name?: string;
     icon?: string;
-    calendarEndFieldMetadataId?: string;
+    endFieldMetadataId?: string;
     userWorkspaceId?: string;
     applicationUniversalIdentifier: string;
     flatViewMaps: AllFlatEntityMaps['flatViewMaps'];
@@ -349,7 +349,7 @@ export class CompleteViewUpsertService {
     if (
       !isDefined(name) &&
       !isDefined(icon) &&
-      !isDefined(calendarEndFieldMetadataId)
+      !isDefined(endFieldMetadataId)
     ) {
       return { viewId: existingViewId };
     }
@@ -360,7 +360,7 @@ export class CompleteViewUpsertService {
           id: existingViewId,
           name,
           icon,
-          calendarEndFieldMetadataId,
+          endFieldMetadataId,
         },
         flatViewMaps,
         flatViewGroupMaps,

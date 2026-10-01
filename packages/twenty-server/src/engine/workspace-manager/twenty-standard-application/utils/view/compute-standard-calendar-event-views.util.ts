@@ -21,7 +21,7 @@ export const computeStandardCalendarEventViews = (
         key: ViewKey.INDEX,
         position: 0,
         icon: 'IconTable',
-        calendarFieldName: 'startsAt',
+        startFieldName: 'startsAt',
       },
     }),
     calendarEventRecordPageFields: createStandardViewFlatMetadata({

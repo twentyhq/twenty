@@ -114,17 +114,17 @@ const CreateViewInputSchema = z.object({
     .describe(
       'Calendar layout (required for CALENDAR views, e.g., "DAY", "WEEK", "MONTH")',
     ),
-  calendarFieldName: z
+  startFieldName: z
     .string()
     .optional()
     .describe(
       'Date field name to use for the calendar (required for CALENDAR views, must be a DATE or DATE_TIME field, e.g., "createdAt", "dueAt")',
     ),
-  calendarEndFieldName: z
+  endFieldName: z
     .string()
     .optional()
     .describe(
-      'Optional end date field name for the calendar. It must have the same DATE or DATE_TIME type as calendarFieldName.',
+      'Optional end date field name for the calendar. It must have the same DATE or DATE_TIME type as startFieldName.',
     ),
   fieldNames: z
     .array(z.string())
@@ -259,17 +259,17 @@ const UpsertCompleteViewInputSchema = z.object({
     ])
     .optional()
     .describe('Calendar layout (required for CALENDAR).'),
-  calendarFieldName: z
+  startFieldName: z
     .string()
     .optional()
     .describe(
       'Date field name for the calendar (required for CALENDAR, must be DATE or DATE_TIME).',
     ),
-  calendarEndFieldName: z
+  endFieldName: z
     .string()
     .optional()
     .describe(
-      'Optional end date field name for the calendar. It must match the type of calendarFieldName.',
+      'Optional end date field name for the calendar. It must match the type of startFieldName.',
     ),
   fields: z
     .array(UpsertCompleteViewFieldSchema)
@@ -298,8 +298,8 @@ type UpsertCompleteViewIdentifiers = {
   objectMetadataId: string;
   mainGroupByFieldMetadataId?: string;
   kanbanAggregateOperationFieldMetadataId?: string;
-  calendarFieldMetadataId?: string;
-  calendarEndFieldMetadataId?: string;
+  startFieldMetadataId?: string;
+  endFieldMetadataId?: string;
 };
 
 @Injectable()
@@ -475,8 +475,8 @@ export class ViewToolsFactory {
       mainGroupByFieldName?: string;
       kanbanAggregateOperationFieldName?: string;
       calendarLayout?: ViewCalendarLayout;
-      calendarFieldName?: string;
-      calendarEndFieldName?: string;
+      startFieldName?: string;
+      endFieldName?: string;
     };
     workspaceId: string;
     userWorkspaceId?: string;
@@ -498,20 +498,18 @@ export class ViewToolsFactory {
         throw new Error('You can only update your own unlisted views');
       }
 
-      const calendarEndFieldMetadataId = isDefined(
-        parameters.calendarEndFieldName,
-      )
+      const endFieldMetadataId = isDefined(parameters.endFieldName)
         ? await this.resolveCalendarFieldMetadataId(
             workspaceId,
             existingView.objectMetadataId,
-            parameters.calendarEndFieldName,
+            parameters.endFieldName,
           )
         : undefined;
 
       return {
         existingViewId: existingView.id,
         objectMetadataId: existingView.objectMetadataId,
-        calendarEndFieldMetadataId,
+        endFieldMetadataId,
       };
     }
 
@@ -536,9 +534,9 @@ export class ViewToolsFactory {
     }
 
     if (parameters.type === ViewType.CALENDAR) {
-      if (!isDefined(parameters.calendarFieldName)) {
+      if (!isDefined(parameters.startFieldName)) {
         throw new Error(
-          'CALENDAR views require calendarFieldName (a DATE or DATE_TIME field name).',
+          'CALENDAR views require startFieldName (a DATE or DATE_TIME field name).',
         );
       }
 
@@ -569,21 +567,19 @@ export class ViewToolsFactory {
         )
       : undefined;
 
-    const calendarFieldMetadataId = isDefined(parameters.calendarFieldName)
+    const startFieldMetadataId = isDefined(parameters.startFieldName)
       ? await this.resolveCalendarFieldMetadataId(
           workspaceId,
           objectMetadataId,
-          parameters.calendarFieldName,
+          parameters.startFieldName,
         )
       : undefined;
 
-    const calendarEndFieldMetadataId = isDefined(
-      parameters.calendarEndFieldName,
-    )
+    const endFieldMetadataId = isDefined(parameters.endFieldName)
       ? await this.resolveCalendarFieldMetadataId(
           workspaceId,
           objectMetadataId,
-          parameters.calendarEndFieldName,
+          parameters.endFieldName,
         )
       : undefined;
 
@@ -591,8 +587,8 @@ export class ViewToolsFactory {
       objectMetadataId,
       mainGroupByFieldMetadataId,
       kanbanAggregateOperationFieldMetadataId,
-      calendarFieldMetadataId,
-      calendarEndFieldMetadataId,
+      startFieldMetadataId,
+      endFieldMetadataId,
     };
   }
 
@@ -674,7 +670,7 @@ DECLARATIVE CHILDREN (replace semantics): fields, filters, and sorts each descri
 - Omitting the key leaves existing entries untouched.
 This means you never need to fetch child ids to edit a view — just pass the desired end state. For surgical single-entry edits, the granular tools (create_view_filter, update_view_sort, etc.) remain available.
 
-VIEW TYPES: TABLE (default), LIST, KANBAN (requires mainGroupByFieldName, a SELECT field), CALENDAR (requires calendarFieldName + calendarLayout).`,
+VIEW TYPES: TABLE (default), LIST, KANBAN (requires mainGroupByFieldName, a SELECT field), CALENDAR (requires startFieldName + calendarLayout).`,
         inputSchema: UpsertCompleteViewInputSchema,
         execute: async (parameters: {
           id?: string;
@@ -687,8 +683,8 @@ VIEW TYPES: TABLE (default), LIST, KANBAN (requires mainGroupByFieldName, a SELE
           kanbanAggregateOperation?: AggregateOperations;
           kanbanAggregateOperationFieldName?: string;
           calendarLayout?: ViewCalendarLayout;
-          calendarFieldName?: string;
-          calendarEndFieldName?: string;
+          startFieldName?: string;
+          endFieldName?: string;
           fields?: Array<
             FieldReference & { isVisible?: boolean; size?: number }
           >;
@@ -707,8 +703,8 @@ VIEW TYPES: TABLE (default), LIST, KANBAN (requires mainGroupByFieldName, a SELE
               objectMetadataId,
               mainGroupByFieldMetadataId,
               kanbanAggregateOperationFieldMetadataId,
-              calendarFieldMetadataId,
-              calendarEndFieldMetadataId,
+              startFieldMetadataId,
+              endFieldMetadataId,
             } = await this.resolveUpsertCompleteViewIdentifiersOrThrow({
               parameters,
               workspaceId,
@@ -771,8 +767,8 @@ VIEW TYPES: TABLE (default), LIST, KANBAN (requires mainGroupByFieldName, a SELE
                 kanbanAggregateOperation: parameters.kanbanAggregateOperation,
                 kanbanAggregateOperationFieldMetadataId,
                 calendarLayout: parameters.calendarLayout,
-                calendarFieldMetadataId,
-                calendarEndFieldMetadataId,
+                startFieldMetadataId,
+                endFieldMetadataId,
                 fields,
                 filters,
                 sorts,
@@ -799,7 +795,7 @@ VIEW TYPES: TABLE (default), LIST, KANBAN (requires mainGroupByFieldName, a SELE
       },
       create_view: {
         description:
-          'Create a new view for an object. Views define how records are displayed. For KANBAN views, mainGroupByFieldName is required and must be a SELECT field (e.g., "stage", "status"). For CALENDAR views, calendarFieldName and calendarLayout are required.',
+          'Create a new view for an object. Views define how records are displayed. For KANBAN views, mainGroupByFieldName is required and must be a SELECT field (e.g., "stage", "status"). For CALENDAR views, startFieldName and calendarLayout are required.',
         inputSchema: CreateViewInputSchema,
         execute: async (parameters: {
           name: string;
@@ -811,8 +807,8 @@ VIEW TYPES: TABLE (default), LIST, KANBAN (requires mainGroupByFieldName, a SELE
           kanbanAggregateOperation?: string;
           kanbanAggregateOperationFieldName?: string;
           calendarLayout?: ViewCalendarLayout;
-          calendarFieldName?: string;
-          calendarEndFieldName?: string;
+          startFieldName?: string;
+          endFieldName?: string;
           fieldNames?: string[];
         }) => {
           try {
@@ -831,9 +827,9 @@ VIEW TYPES: TABLE (default), LIST, KANBAN (requires mainGroupByFieldName, a SELE
             }
 
             if (parameters.type === ViewType.CALENDAR) {
-              if (!parameters.calendarFieldName) {
+              if (!parameters.startFieldName) {
                 throw new Error(
-                  'CALENDAR views require calendarFieldName. Provide a DATE or DATE_TIME field name (e.g., "dueAt", "createdAt").',
+                  'CALENDAR views require startFieldName. Provide a DATE or DATE_TIME field name (e.g., "dueAt", "createdAt").',
                 );
               }
 
@@ -846,8 +842,8 @@ VIEW TYPES: TABLE (default), LIST, KANBAN (requires mainGroupByFieldName, a SELE
 
             let mainGroupByFieldMetadataId: string | undefined;
             let kanbanAggregateOperationFieldMetadataId: string | undefined;
-            let calendarFieldMetadataId: string | undefined;
-            let calendarEndFieldMetadataId: string | undefined;
+            let startFieldMetadataId: string | undefined;
+            let endFieldMetadataId: string | undefined;
 
             if (parameters.mainGroupByFieldName) {
               mainGroupByFieldMetadataId =
@@ -867,22 +863,20 @@ VIEW TYPES: TABLE (default), LIST, KANBAN (requires mainGroupByFieldName, a SELE
                 );
             }
 
-            if (parameters.calendarFieldName) {
-              calendarFieldMetadataId =
-                await this.resolveCalendarFieldMetadataId(
-                  workspaceId,
-                  objectMetadataId,
-                  parameters.calendarFieldName,
-                );
+            if (parameters.startFieldName) {
+              startFieldMetadataId = await this.resolveCalendarFieldMetadataId(
+                workspaceId,
+                objectMetadataId,
+                parameters.startFieldName,
+              );
             }
 
-            if (parameters.calendarEndFieldName) {
-              calendarEndFieldMetadataId =
-                await this.resolveCalendarFieldMetadataId(
-                  workspaceId,
-                  objectMetadataId,
-                  parameters.calendarEndFieldName,
-                );
+            if (parameters.endFieldName) {
+              endFieldMetadataId = await this.resolveCalendarFieldMetadataId(
+                workspaceId,
+                objectMetadataId,
+                parameters.endFieldName,
+              );
             }
 
             const view = await this.viewService.createOne({
@@ -897,8 +891,8 @@ VIEW TYPES: TABLE (default), LIST, KANBAN (requires mainGroupByFieldName, a SELE
                   parameters.kanbanAggregateOperation as AggregateOperations,
                 kanbanAggregateOperationFieldMetadataId,
                 calendarLayout: parameters.calendarLayout,
-                calendarFieldMetadataId,
-                calendarEndFieldMetadataId,
+                startFieldMetadataId,
+                endFieldMetadataId,
               },
               workspaceId,
               createdByUserWorkspaceId: userWorkspaceId,

@@ -8,8 +8,8 @@ import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-
 const VIEW_FIELD_REFERENCE_PROPERTIES = [
   'mainGroupByFieldMetadataUniversalIdentifier',
   'kanbanAggregateOperationFieldMetadataUniversalIdentifier',
-  'calendarFieldMetadataUniversalIdentifier',
-  'calendarEndFieldMetadataUniversalIdentifier',
+  'startFieldMetadataUniversalIdentifier',
+  'endFieldMetadataUniversalIdentifier',
 ] as const satisfies readonly (keyof FlatView)[];
 
 export const getUnsupportedViewReason = ({

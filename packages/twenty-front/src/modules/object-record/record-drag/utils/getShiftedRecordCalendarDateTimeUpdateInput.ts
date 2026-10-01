@@ -3,7 +3,7 @@ import { getShiftedRecordCalendarDateTime } from '@/object-record/record-drag/ut
 
 type GetShiftedRecordCalendarDateTimeUpdateInputArgs = {
   record: ObjectRecord;
-  calendarFieldName: string;
+  startFieldName: string;
   dayOffset: number;
   timeZone: string;
   fallbackStartDateTime: string;
@@ -11,19 +11,18 @@ type GetShiftedRecordCalendarDateTimeUpdateInputArgs = {
 
 export const getShiftedRecordCalendarDateTimeUpdateInput = ({
   record,
-  calendarFieldName,
+  startFieldName,
   dayOffset,
   timeZone,
   fallbackStartDateTime,
 }: GetShiftedRecordCalendarDateTimeUpdateInputArgs): Partial<ObjectRecord> => {
   const shiftedDateTime = getShiftedRecordCalendarDateTime({
     dayOffset,
-    startDateTime: record[calendarFieldName],
+    startDateTime: record[startFieldName],
     timeZone,
   });
 
   return {
-    [calendarFieldName]:
-      shiftedDateTime?.startDateTime ?? fallbackStartDateTime,
+    [startFieldName]: shiftedDateTime?.startDateTime ?? fallbackStartDateTime,
   };
 };

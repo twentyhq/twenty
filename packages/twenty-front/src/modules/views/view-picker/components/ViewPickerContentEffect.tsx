@@ -97,16 +97,16 @@ export const ViewPickerContentEffect = () => {
       setViewPickerInputName(referenceView.name);
       setViewPickerType(referenceView.type);
 
-      const calendarFieldMetadataId =
-        isDefined(referenceView.calendarFieldMetadataId) &&
+      const startFieldMetadataId =
+        isDefined(referenceView.startFieldMetadataId) &&
         availableFieldsForCalendar.some(
           (fieldMetadataItem) =>
-            fieldMetadataItem.id === referenceView.calendarFieldMetadataId,
+            fieldMetadataItem.id === referenceView.startFieldMetadataId,
         )
-          ? referenceView.calendarFieldMetadataId
+          ? referenceView.startFieldMetadataId
           : (availableFieldsForCalendar[0]?.id ?? '');
 
-      setViewPickerCalendarFieldMetadataId(calendarFieldMetadataId);
+      setViewPickerCalendarFieldMetadataId(startFieldMetadataId);
     }
   }, [
     referenceView,

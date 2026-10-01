@@ -26,8 +26,8 @@ describe('validateFlatViewCalendarFields', () => {
       type: ViewType.CALENDAR_WIDGET,
       objectMetadataUniversalIdentifier: 'object',
       calendarLayout,
-      calendarFieldMetadataUniversalIdentifier: 'calendar-field',
-      calendarEndFieldMetadataUniversalIdentifier: null,
+      startFieldMetadataUniversalIdentifier: 'calendar-field',
+      endFieldMetadataUniversalIdentifier: null,
     } as UniversalFlatView;
 
     expect(

@@ -21,8 +21,8 @@ describe('buildUpsertViewWidgetViewSettingsInput', () => {
       kanbanAggregateOperationFieldMetadataId: null,
       kanbanColumnWidth: null,
       calendarLayout: null,
-      calendarFieldMetadataId: null,
-      calendarEndFieldMetadataId: null,
+      startFieldMetadataId: null,
+      endFieldMetadataId: null,
     });
   });
 
@@ -32,7 +32,7 @@ describe('buildUpsertViewWidgetViewSettingsInput', () => {
         type: ViewType.CALENDAR_WIDGET,
         shouldHideEmptyGroups: true,
         calendarLayout: ViewCalendarLayout.MONTH,
-        calendarFieldMetadataId: 'calendar-field-id',
+        startFieldMetadataId: 'calendar-field-id',
         mainGroupByFieldMetadataId: 'group-by-id',
       }),
     );
@@ -40,7 +40,7 @@ describe('buildUpsertViewWidgetViewSettingsInput', () => {
     expect(input.type).toBe(ViewType.CALENDAR_WIDGET);
     expect(input.shouldHideEmptyGroups).toBe(true);
     expect(input.calendarLayout).toBe(ViewCalendarLayout.MONTH);
-    expect(input.calendarFieldMetadataId).toBe('calendar-field-id');
+    expect(input.startFieldMetadataId).toBe('calendar-field-id');
     expect(input.mainGroupByFieldMetadataId).toBe('group-by-id');
   });
 });

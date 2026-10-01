@@ -119,11 +119,29 @@ export class CreateViewInput {
   @IsOptional()
   @IsUUID()
   @Field(() => UUIDScalarType, { nullable: true })
-  calendarFieldMetadataId?: string;
+  startFieldMetadataId?: string;
 
   @IsOptional()
   @IsUUID()
   @Field(() => UUIDScalarType, { nullable: true })
+  endFieldMetadataId?: string;
+
+  // TODO: remove once API clients have moved to startFieldMetadataId (2.46).
+  @IsOptional()
+  @IsUUID()
+  @Field(() => UUIDScalarType, {
+    nullable: true,
+    deprecationReason: 'Use startFieldMetadataId',
+  })
+  calendarFieldMetadataId?: string;
+
+  // TODO: remove once API clients have moved to endFieldMetadataId (2.46).
+  @IsOptional()
+  @IsUUID()
+  @Field(() => UUIDScalarType, {
+    nullable: true,
+    deprecationReason: 'Use endFieldMetadataId',
+  })
   calendarEndFieldMetadataId?: string;
 
   @IsOptional()

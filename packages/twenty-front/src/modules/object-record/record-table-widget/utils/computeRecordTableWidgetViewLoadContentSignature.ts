@@ -41,8 +41,8 @@ export const computeRecordTableWidgetViewLoadContentSignature = (
       kanbanAggregateOperationFieldMetadataId:
         view.kanbanAggregateOperationFieldMetadataId,
       calendarLayout: view.calendarLayout,
-      calendarFieldMetadataId: view.calendarFieldMetadataId,
-      calendarEndFieldMetadataId: view.calendarEndFieldMetadataId,
+      startFieldMetadataId: view.startFieldMetadataId,
+      endFieldMetadataId: view.endFieldMetadataId,
     },
     groups: [...(view.viewGroups ?? [])]
       .sort((groupA, groupB) => groupA.position - groupB.position)

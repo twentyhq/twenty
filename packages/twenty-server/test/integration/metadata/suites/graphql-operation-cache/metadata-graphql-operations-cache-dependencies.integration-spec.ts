@@ -161,8 +161,8 @@ const FIND_ALL_VIEWS_QUERY = gql`
       kanbanColumnWidth
       groupLoadLimit
       anyFieldFilterValue
-      calendarFieldMetadataId
-      calendarEndFieldMetadataId
+      startFieldMetadataId
+      endFieldMetadataId
       calendarLayout
       visibility
       createdByUserWorkspaceId

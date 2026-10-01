@@ -66,10 +66,8 @@ export const fromFieldMetadataEntityToFlatFieldMetadata = (
     ...relationUniversalIdentifiers,
     kanbanAggregateOperationViewIds:
       fieldMetadataEntity.kanbanAggregateOperationViews.map(({ id }) => id),
-    calendarViewIds: fieldMetadataEntity.calendarViews.map(({ id }) => id),
-    calendarEndViewIds: fieldMetadataEntity.calendarEndViews.map(
-      ({ id }) => id,
-    ),
+    startFieldViewIds: fieldMetadataEntity.startFieldViews.map(({ id }) => id),
+    endFieldViewIds: fieldMetadataEntity.endFieldViews.map(({ id }) => id),
     mainGroupByFieldMetadataViewIds:
       fieldMetadataEntity.mainGroupByFieldMetadataViews?.map(({ id }) => id) ??
       [],
@@ -87,13 +85,12 @@ export const fromFieldMetadataEntityToFlatFieldMetadata = (
       fieldMetadataEntity.kanbanAggregateOperationViews.map(
         ({ universalIdentifier }) => universalIdentifier,
       ),
-    calendarViewUniversalIdentifiers: fieldMetadataEntity.calendarViews.map(
+    startFieldViewUniversalIdentifiers: fieldMetadataEntity.startFieldViews.map(
       ({ universalIdentifier }) => universalIdentifier,
     ),
-    calendarEndViewUniversalIdentifiers:
-      fieldMetadataEntity.calendarEndViews.map(
-        ({ universalIdentifier }) => universalIdentifier,
-      ),
+    endFieldViewUniversalIdentifiers: fieldMetadataEntity.endFieldViews.map(
+      ({ universalIdentifier }) => universalIdentifier,
+    ),
     mainGroupByFieldMetadataViewUniversalIdentifiers:
       fieldMetadataEntity.mainGroupByFieldMetadataViews?.map(
         ({ universalIdentifier }) => universalIdentifier,

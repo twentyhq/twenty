@@ -58,11 +58,11 @@ export const useProcessCalendarCardDrop = () => {
       const destinationPlainDate = Temporal.PlainDate.from(destinationDate);
       const sourcePlainDate = Temporal.PlainDate.from(sourceDate);
 
-      const calendarFieldMetadata = objectMetadataItem.fields.find(
+      const startFieldMetadata = objectMetadataItem.fields.find(
         (field) => field.id === recordIndexCalendarFieldMetadataId,
       );
 
-      if (!calendarFieldMetadata) return;
+      if (!startFieldMetadata) return;
 
       const destinationRecordIdsIncludingDraggedRecord = store.get(
         calendarDayRecordIdsSelector({
@@ -139,16 +139,16 @@ export const useProcessCalendarCardDrop = () => {
           continue;
         }
         const updateOneRecordInput =
-          calendarFieldMetadata.type === FieldMetadataType.DATE
+          startFieldMetadata.type === FieldMetadataType.DATE
             ? getShiftedRecordCalendarDateUpdateInput({
                 record: recordToShift,
-                calendarFieldName: calendarFieldMetadata.name,
+                startFieldName: startFieldMetadata.name,
                 dayOffset,
                 fallbackStartDate: destinationPlainDate.toString(),
               })
             : getShiftedRecordCalendarDateTimeUpdateInput({
                 record: recordToShift,
-                calendarFieldName: calendarFieldMetadata.name,
+                startFieldName: startFieldMetadata.name,
                 dayOffset,
                 timeZone: userTimezone,
                 fallbackStartDateTime: destinationPlainDate

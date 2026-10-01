@@ -19,8 +19,8 @@ export const getFlatFieldMetadataMock = <T extends FieldMetadataType>(
   const createdAt = '2024-01-01T00:00:00.000Z';
 
   return {
-    calendarViewIds: [],
-    calendarEndViewIds: [],
+    startFieldViewIds: [],
+    endFieldViewIds: [],
     viewFilterIds: [],
     kanbanAggregateOperationViewIds: [],
     viewFieldIds: [],
@@ -60,8 +60,8 @@ export const getFlatFieldMetadataMock = <T extends FieldMetadataType>(
     viewFieldUniversalIdentifiers: [],
     fieldPermissionUniversalIdentifiers: [],
     kanbanAggregateOperationViewUniversalIdentifiers: [],
-    calendarViewUniversalIdentifiers: [],
-    calendarEndViewUniversalIdentifiers: [],
+    startFieldViewUniversalIdentifiers: [],
+    endFieldViewUniversalIdentifiers: [],
     mainGroupByFieldMetadataViewUniversalIdentifiers: [],
     viewSortIds: [],
     viewSortUniversalIdentifiers: [],

@@ -130,32 +130,32 @@ export const fromUpdateViewInputToFlatViewToUpdateOrThrow = ({
       kanbanAggregateOperationFieldMetadataUniversalIdentifier;
   }
 
-  if (updatedEditableProperties.calendarFieldMetadataId !== undefined) {
-    const { calendarFieldMetadataUniversalIdentifier } =
+  if (updatedEditableProperties.startFieldMetadataId !== undefined) {
+    const { startFieldMetadataUniversalIdentifier } =
       resolveEntityRelationUniversalIdentifiers({
         metadataName: 'view',
         foreignKeyValues: {
-          calendarFieldMetadataId: mergedRecord.calendarFieldMetadataId,
+          startFieldMetadataId: mergedRecord.startFieldMetadataId,
         },
         flatEntityMaps: { flatFieldMetadataMaps },
       });
 
-    flatViewToUpdate.calendarFieldMetadataUniversalIdentifier =
-      calendarFieldMetadataUniversalIdentifier;
+    flatViewToUpdate.startFieldMetadataUniversalIdentifier =
+      startFieldMetadataUniversalIdentifier;
   }
 
-  if (updatedEditableProperties.calendarEndFieldMetadataId !== undefined) {
-    const { calendarEndFieldMetadataUniversalIdentifier } =
+  if (updatedEditableProperties.endFieldMetadataId !== undefined) {
+    const { endFieldMetadataUniversalIdentifier } =
       resolveEntityRelationUniversalIdentifiers({
         metadataName: 'view',
         foreignKeyValues: {
-          calendarEndFieldMetadataId: mergedRecord.calendarEndFieldMetadataId,
+          endFieldMetadataId: mergedRecord.endFieldMetadataId,
         },
         flatEntityMaps: { flatFieldMetadataMaps },
       });
 
-    flatViewToUpdate.calendarEndFieldMetadataUniversalIdentifier =
-      calendarEndFieldMetadataUniversalIdentifier;
+    flatViewToUpdate.endFieldMetadataUniversalIdentifier =
+      endFieldMetadataUniversalIdentifier;
   }
 
   if (updatedEditableProperties.mainGroupByFieldMetadataId !== undefined) {

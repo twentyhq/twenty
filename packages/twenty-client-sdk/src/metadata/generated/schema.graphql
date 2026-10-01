@@ -788,8 +788,8 @@ type View {
   shouldHideEmptyGroups: Boolean!
   kanbanColumnWidth: Int
   groupLoadLimit: Int
-  calendarFieldMetadataId: UUID
-  calendarEndFieldMetadataId: UUID
+  startFieldMetadataId: UUID
+  endFieldMetadataId: UUID
   workspaceId: UUID!
   anyFieldFilterValue: String
   calendarLayout: ViewCalendarLayout
@@ -805,6 +805,8 @@ type View {
   visibility: ViewVisibility!
   createdByUserWorkspaceId: UUID
   isActive: Boolean!
+  calendarFieldMetadataId: UUID @deprecated(reason: "Use startFieldMetadataId")
+  calendarEndFieldMetadataId: UUID @deprecated(reason: "Use endFieldMetadataId")
 }
 
 enum ViewType {
@@ -4536,8 +4538,10 @@ input CreateViewInput {
   kanbanAggregateOperationFieldMetadataId: UUID
   anyFieldFilterValue: String
   calendarLayout: ViewCalendarLayout
-  calendarFieldMetadataId: UUID
-  calendarEndFieldMetadataId: UUID
+  startFieldMetadataId: UUID
+  endFieldMetadataId: UUID
+  calendarFieldMetadataId: UUID @deprecated(reason: "Use startFieldMetadataId")
+  calendarEndFieldMetadataId: UUID @deprecated(reason: "Use endFieldMetadataId")
   mainGroupByFieldMetadataId: UUID
   visibility: ViewVisibility
 }
@@ -4558,8 +4562,10 @@ input UpdateViewInput {
   kanbanAggregateOperationFieldMetadataId: UUID
   anyFieldFilterValue: String
   calendarLayout: ViewCalendarLayout
-  calendarFieldMetadataId: UUID
-  calendarEndFieldMetadataId: UUID
+  startFieldMetadataId: UUID
+  endFieldMetadataId: UUID
+  calendarFieldMetadataId: UUID @deprecated(reason: "Use startFieldMetadataId")
+  calendarEndFieldMetadataId: UUID @deprecated(reason: "Use endFieldMetadataId")
   visibility: ViewVisibility
   mainGroupByFieldMetadataId: UUID
   shouldHideEmptyGroups: Boolean
@@ -4605,8 +4611,10 @@ input UpsertViewWidgetViewSettingsInput {
   kanbanAggregateOperationFieldMetadataId: UUID
   kanbanColumnWidth: Int
   calendarLayout: ViewCalendarLayout
-  calendarFieldMetadataId: UUID
-  calendarEndFieldMetadataId: UUID
+  startFieldMetadataId: UUID
+  endFieldMetadataId: UUID
+  calendarFieldMetadataId: UUID @deprecated(reason: "Use startFieldMetadataId")
+  calendarEndFieldMetadataId: UUID @deprecated(reason: "Use endFieldMetadataId")
 }
 
 input UpsertViewWidgetViewFieldInput {

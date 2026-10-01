@@ -11,8 +11,8 @@ const getFlatView = (id: string): FlatView =>
     id,
     universalIdentifier: `${id}-universal-identifier`,
     applicationId: 'application-id',
-    calendarEndFieldMetadataId: 'calendar-end-field-id',
-    calendarEndFieldMetadataUniversalIdentifier:
+    endFieldMetadataId: 'calendar-end-field-id',
+    endFieldMetadataUniversalIdentifier:
       'calendar-end-field-universal-identifier',
   }) as FlatView;
 
@@ -30,7 +30,7 @@ describe('handleFieldMetadataDeactivationSideEffects', () => {
       objectMetadataId: 'object-id',
       universalIdentifier: 'calendar-end-field-universal-identifier',
       type: FieldMetadataType.DATE_TIME,
-      calendarEndViewIds: [view.id],
+      endFieldViewIds: [view.id],
     });
 
     const result = handleFieldMetadataDeactivationSideEffects({
@@ -50,8 +50,8 @@ describe('handleFieldMetadataDeactivationSideEffects', () => {
     expect(result.flatViewsToUpdate).toEqual([
       expect.objectContaining({
         id: view.id,
-        calendarEndFieldMetadataId: null,
-        calendarEndFieldMetadataUniversalIdentifier: null,
+        endFieldMetadataId: null,
+        endFieldMetadataUniversalIdentifier: null,
       }),
     ]);
   });
@@ -63,8 +63,8 @@ describe('handleFieldMetadataDeactivationSideEffects', () => {
       objectMetadataId: 'object-id',
       universalIdentifier: 'calendar-field-universal-identifier',
       type: FieldMetadataType.DATE,
-      calendarViewIds: [view.id],
-      calendarEndViewIds: [view.id],
+      startFieldViewIds: [view.id],
+      endFieldViewIds: [view.id],
     });
 
     const result = handleFieldMetadataDeactivationSideEffects({

@@ -342,7 +342,7 @@ export const useLoadRecordIndexStates = () => {
               recordIndexCalendarFieldMetadataIdComponentState.atomFamily({
                 instanceId: recordCalendarInstanceId,
               }),
-              view.calendarFieldMetadataId ?? null,
+              view.startFieldMetadataId ?? null,
             );
             batchSet(
               recordIndexCalendarLayoutComponentState.atomFamily({

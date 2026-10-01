@@ -121,8 +121,8 @@ describe('fromViewManifestToUniversalFlatView', () => {
       result.kanbanAggregateOperationFieldMetadataUniversalIdentifier,
     ).toBeNull();
     expect(result.calendarLayout).toBeNull();
-    expect(result.calendarFieldMetadataUniversalIdentifier).toBeNull();
-    expect(result.calendarEndFieldMetadataUniversalIdentifier).toBeNull();
+    expect(result.startFieldMetadataUniversalIdentifier).toBeNull();
+    expect(result.endFieldMetadataUniversalIdentifier).toBeNull();
     expect(result.anyFieldFilterValue).toBeNull();
   });
 
@@ -134,18 +134,18 @@ describe('fromViewManifestToUniversalFlatView', () => {
         objectUniversalIdentifier: 'object-uuid-1',
         type: ViewType.CALENDAR,
         calendarLayout: ViewCalendarLayout.WEEK,
-        calendarFieldMetadataUniversalIdentifier: 'field-uuid-date',
-        calendarEndFieldMetadataUniversalIdentifier: 'field-uuid-end-date',
+        startFieldMetadataUniversalIdentifier: 'field-uuid-date',
+        endFieldMetadataUniversalIdentifier: 'field-uuid-end-date',
       },
       applicationUniversalIdentifier,
       now,
     });
 
     expect(result.calendarLayout).toBe(ViewCalendarLayout.WEEK);
-    expect(result.calendarFieldMetadataUniversalIdentifier).toBe(
+    expect(result.startFieldMetadataUniversalIdentifier).toBe(
       'field-uuid-date',
     );
-    expect(result.calendarEndFieldMetadataUniversalIdentifier).toBe(
+    expect(result.endFieldMetadataUniversalIdentifier).toBe(
       'field-uuid-end-date',
     );
   });

@@ -33,7 +33,7 @@ describe('buildColumnsToSelect', () => {
       viewFieldIds: [],
       viewFilterIds: [],
       kanbanAggregateOperationViewIds: [],
-      calendarViewIds: [],
+      startFieldViewIds: [],
       applicationId: null,
       label: overrides.name,
       isActive: true,

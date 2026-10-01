@@ -23,12 +23,12 @@ const VIEW_WITH_CALENDAR_FIELDS = `
   position
   isCompact
   calendarLayout
-  calendarFieldMetadataId
+  startFieldMetadataId
 `;
 
 type TestSetup = {
   objectMetadataId: string;
-  calendarFieldMetadataId: string;
+  startFieldMetadataId: string;
   nonCalendarFieldMetadataId: string;
   viewWithCalendarId: string;
   viewWithoutCalendarId: string;
@@ -91,7 +91,7 @@ describe('calendar-field-deactivation-deletes-views', () => {
 
     const {
       data: {
-        createOneField: { id: calendarFieldMetadataId },
+        createOneField: { id: startFieldMetadataId },
       },
     } = await createOneFieldMetadata({
       expectToFail: false,
@@ -126,7 +126,7 @@ describe('calendar-field-deactivation-deletes-views', () => {
         name: generateRecordName('Calendar View With Date Field'),
         objectMetadataId,
         type: ViewType.CALENDAR,
-        calendarFieldMetadataId,
+        startFieldMetadataId,
         calendarLayout: ViewCalendarLayout.WEEK,
         icon: 'IconCalendar',
       },
@@ -149,7 +149,7 @@ describe('calendar-field-deactivation-deletes-views', () => {
 
     testSetup = {
       objectMetadataId,
-      calendarFieldMetadataId,
+      startFieldMetadataId,
       nonCalendarFieldMetadataId,
       viewWithCalendarId: viewWithCalendar.id,
       viewWithoutCalendarId: viewWithoutCalendar.id,
@@ -172,7 +172,7 @@ describe('calendar-field-deactivation-deletes-views', () => {
     });
   });
 
-  it('should delete view when field used as calendarFieldMetadataId is deactivated', async () => {
+  it('should delete view when field used as startFieldMetadataId is deactivated', async () => {
     const initialViewWithCalendar = await verifyViewExists(
       testSetup.viewWithCalendarId,
       true,
@@ -180,18 +180,18 @@ describe('calendar-field-deactivation-deletes-views', () => {
 
     await verifyViewExists(testSetup.viewWithoutCalendarId, true);
 
-    expect(initialViewWithCalendar.calendarFieldMetadataId).toBe(
-      testSetup.calendarFieldMetadataId,
+    expect(initialViewWithCalendar.startFieldMetadataId).toBe(
+      testSetup.startFieldMetadataId,
     );
     expect(initialViewWithCalendar.calendarLayout).toBe('WEEK');
 
-    await deactivateFieldAndVerify(testSetup.calendarFieldMetadataId);
+    await deactivateFieldAndVerify(testSetup.startFieldMetadataId);
 
     await verifyViewExists(testSetup.viewWithCalendarId, false);
     await verifyViewExists(testSetup.viewWithoutCalendarId, true);
   });
 
-  it('should not delete view when field not used as calendarFieldMetadataId is deactivated', async () => {
+  it('should not delete view when field not used as startFieldMetadataId is deactivated', async () => {
     await verifyViewExists(testSetup.viewWithCalendarId, true);
     await verifyViewExists(testSetup.viewWithoutCalendarId, true);
 
@@ -201,7 +201,7 @@ describe('calendar-field-deactivation-deletes-views', () => {
     await verifyViewExists(testSetup.viewWithoutCalendarId, true);
   });
 
-  it('should delete multiple views when they all use the same field as calendarFieldMetadataId', async () => {
+  it('should delete multiple views when they all use the same field as startFieldMetadataId', async () => {
     const {
       data: { createView: secondViewWithCalendar },
     } = await createOneView({
@@ -209,7 +209,7 @@ describe('calendar-field-deactivation-deletes-views', () => {
         name: generateRecordName('Second Calendar View'),
         objectMetadataId: testSetup.objectMetadataId,
         type: ViewType.CALENDAR,
-        calendarFieldMetadataId: testSetup.calendarFieldMetadataId,
+        startFieldMetadataId: testSetup.startFieldMetadataId,
         calendarLayout: ViewCalendarLayout.MONTH,
         icon: 'IconCalendar',
       },
@@ -221,7 +221,7 @@ describe('calendar-field-deactivation-deletes-views', () => {
     await verifyViewExists(secondViewWithCalendar.id, true);
     await verifyViewExists(testSetup.viewWithoutCalendarId, true);
 
-    await deactivateFieldAndVerify(testSetup.calendarFieldMetadataId);
+    await deactivateFieldAndVerify(testSetup.startFieldMetadataId);
 
     await verifyViewExists(testSetup.viewWithCalendarId, false);
     await verifyViewExists(secondViewWithCalendar.id, false);
@@ -236,7 +236,7 @@ describe('calendar-field-deactivation-deletes-views', () => {
         name: generateRecordName('Calendar View With Day Layout'),
         objectMetadataId: testSetup.objectMetadataId,
         type: ViewType.CALENDAR,
-        calendarFieldMetadataId: testSetup.calendarFieldMetadataId,
+        startFieldMetadataId: testSetup.startFieldMetadataId,
         calendarLayout: ViewCalendarLayout.DAY,
         icon: 'IconCalendar',
       },
@@ -251,7 +251,7 @@ describe('calendar-field-deactivation-deletes-views', () => {
         name: generateRecordName('Calendar View With Month Layout'),
         objectMetadataId: testSetup.objectMetadataId,
         type: ViewType.CALENDAR,
-        calendarFieldMetadataId: testSetup.calendarFieldMetadataId,
+        startFieldMetadataId: testSetup.startFieldMetadataId,
         calendarLayout: ViewCalendarLayout.MONTH,
         icon: 'IconCalendar',
       },
@@ -264,7 +264,7 @@ describe('calendar-field-deactivation-deletes-views', () => {
     await verifyViewExists(viewWithMonthLayout.id, true);
     await verifyViewExists(testSetup.viewWithoutCalendarId, true);
 
-    await deactivateFieldAndVerify(testSetup.calendarFieldMetadataId);
+    await deactivateFieldAndVerify(testSetup.startFieldMetadataId);
 
     await verifyViewExists(testSetup.viewWithCalendarId, false);
     await verifyViewExists(viewWithDayLayout.id, false);
@@ -299,7 +299,7 @@ describe('calendar-field-deactivation-deletes-views', () => {
     await verifyViewExists(testSetup.viewWithoutCalendarId, true);
     await verifyViewExists(kanbanViewWithSameObject.id, true);
 
-    await deactivateFieldAndVerify(testSetup.calendarFieldMetadataId);
+    await deactivateFieldAndVerify(testSetup.startFieldMetadataId);
 
     await verifyViewExists(testSetup.viewWithCalendarId, false);
     await verifyViewExists(testSetup.viewWithoutCalendarId, true);

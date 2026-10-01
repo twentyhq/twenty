@@ -113,7 +113,7 @@ export const useRecordTableWidgetLayoutCallbacks = ({
 
       if (targetViewType === ViewType.CALENDAR_WIDGET) {
         const hasCalendarField = isDefined(
-          widgetViewDraft.view.calendarFieldMetadataId,
+          widgetViewDraft.view.startFieldMetadataId,
         );
 
         if (!hasCalendarField && !isDefined(defaultCalendarFieldMetadataItem)) {
@@ -127,8 +127,8 @@ export const useRecordTableWidgetLayoutCallbacks = ({
             type: targetViewType,
             calendarLayout:
               widgetViewDraft.view.calendarLayout ?? ViewCalendarLayout.MONTH,
-            calendarFieldMetadataId: hasCalendarField
-              ? widgetViewDraft.view.calendarFieldMetadataId
+            startFieldMetadataId: hasCalendarField
+              ? widgetViewDraft.view.startFieldMetadataId
               : defaultCalendarFieldMetadataItem?.id,
           },
         };
@@ -149,8 +149,8 @@ export const useRecordTableWidgetLayoutCallbacks = ({
       ...widgetViewDraft,
       view: {
         ...widgetViewDraft.view,
-        calendarFieldMetadataId: fieldMetadataItem.id,
-        calendarEndFieldMetadataId: null,
+        startFieldMetadataId: fieldMetadataItem.id,
+        endFieldMetadataId: null,
         calendarLayout:
           widgetViewDraft.view.calendarLayout ?? ViewCalendarLayout.MONTH,
       },

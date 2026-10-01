@@ -856,7 +856,7 @@ export const EXPECTED_MANIFEST: Manifest = {
       universalIdentifier: 'b1a2b3c4-0004-4a7b-8c9d-0e1f2a3b4c5d',
     },
     {
-      calendarFieldMetadataUniversalIdentifier:
+      startFieldMetadataUniversalIdentifier:
         'e06abe72-5b44-4e7f-93be-afc185a3c433',
       calendarLayout: ViewCalendarLayout.MONTH,
       fields: [

@@ -18,7 +18,7 @@ export default defineView({
   icon: 'IconCalendarEvent',
   position: 2,
   calendarLayout: ViewCalendarLayout.MONTH,
-  calendarFieldMetadataUniversalIdentifier:
+  startFieldMetadataUniversalIdentifier:
     DELIVERED_AT_FIELD_UNIVERSAL_IDENTIFIER,
   fields: [
     {

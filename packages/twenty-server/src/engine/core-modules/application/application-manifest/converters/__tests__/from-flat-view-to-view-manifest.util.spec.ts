@@ -44,6 +44,8 @@ const VIEW_MANIFEST: Required<
   Omit<
     ViewManifest,
     | 'key'
+    | 'calendarFieldMetadataUniversalIdentifier'
+    | 'calendarEndFieldMetadataUniversalIdentifier'
     | 'fields'
     | 'filters'
     | 'filterGroups'
@@ -69,8 +71,8 @@ const VIEW_MANIFEST: Required<
   kanbanAggregateOperation: AggregateOperations.SUM,
   kanbanAggregateOperationFieldMetadataUniversalIdentifier: AMOUNT_FIELD_UID,
   calendarLayout: ViewCalendarLayout.WEEK,
-  calendarFieldMetadataUniversalIdentifier: START_DATE_FIELD_UID,
-  calendarEndFieldMetadataUniversalIdentifier: END_DATE_FIELD_UID,
+  startFieldMetadataUniversalIdentifier: START_DATE_FIELD_UID,
+  endFieldMetadataUniversalIdentifier: END_DATE_FIELD_UID,
 };
 
 const MINIMAL_VIEW_MANIFEST: ViewManifest = {
@@ -124,8 +126,8 @@ const NULLABLE_VIEW_MANIFEST_PROPERTIES: (keyof ViewManifest)[] = [
   'kanbanAggregateOperation',
   'kanbanAggregateOperationFieldMetadataUniversalIdentifier',
   'calendarLayout',
-  'calendarFieldMetadataUniversalIdentifier',
-  'calendarEndFieldMetadataUniversalIdentifier',
+  'startFieldMetadataUniversalIdentifier',
+  'endFieldMetadataUniversalIdentifier',
 ];
 
 const VIEW_CHILD_COLLECTION_PROPERTIES_OTHER_THAN_FIELDS: (keyof ViewManifest)[] =
@@ -169,8 +171,8 @@ describe('fromFlatViewToViewManifest', () => {
       kanbanAggregateOperation: null,
       kanbanAggregateOperationFieldMetadataUniversalIdentifier: null,
       calendarLayout: ViewCalendarLayout.MONTH,
-      calendarFieldMetadataUniversalIdentifier: START_DATE_FIELD_UID,
-      calendarEndFieldMetadataUniversalIdentifier: null,
+      startFieldMetadataUniversalIdentifier: START_DATE_FIELD_UID,
+      endFieldMetadataUniversalIdentifier: null,
       mainGroupByFieldMetadataUniversalIdentifier: null,
       shouldHideEmptyGroups: false,
       groupLoadLimit: DEFAULT_VIEW_GROUP_LOAD_LIMIT,

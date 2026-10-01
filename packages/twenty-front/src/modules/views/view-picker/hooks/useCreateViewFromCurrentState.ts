@@ -67,7 +67,7 @@ export const useCreateViewFromCurrentState = () => {
     const mainGroupByFieldMetadataId = store.get(
       viewPickerMainGroupByFieldMetadataIdCallbackState,
     );
-    const calendarFieldMetadataId = store.get(
+    const startFieldMetadataId = store.get(
       viewPickerCalendarFieldMetadataIdCallbackState,
     );
 
@@ -87,8 +87,8 @@ export const useCreateViewFromCurrentState = () => {
         type,
         mainGroupByFieldMetadataId:
           type === ViewType.KANBAN ? mainGroupByFieldMetadataId : null,
-        calendarFieldMetadataId,
-        calendarEndFieldMetadataId: null,
+        startFieldMetadataId,
+        endFieldMetadataId: null,
         visibility,
       },
       shouldCopyFiltersAndSortsAndAggregate,

@@ -177,8 +177,8 @@ describe('ObjectOptionsDropdownCalendarFieldsContent', () => {
 
       expect(mockSetCalendarField).toHaveBeenCalledWith(id);
       expect(mockUpdateCurrentView).toHaveBeenCalledWith({
-        calendarFieldMetadataId: id,
-        calendarEndFieldMetadataId: null,
+        startFieldMetadataId: id,
+        endFieldMetadataId: null,
       });
       expect(mockCloseDropdown).toHaveBeenCalled();
     },

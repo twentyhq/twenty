@@ -174,19 +174,19 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
     workspace: null,
     createdBy: null,
     application: null,
-    calendarFieldMetadata: {
+    startFieldMetadata: {
       metadataName: 'fieldMetadata',
-      foreignKey: 'calendarFieldMetadataId',
-      inverseOneToManyProperty: 'calendarViews',
+      foreignKey: 'startFieldMetadataId',
+      inverseOneToManyProperty: 'startFieldViews',
       isNullable: true,
-      universalForeignKey: 'calendarFieldMetadataUniversalIdentifier',
+      universalForeignKey: 'startFieldMetadataUniversalIdentifier',
     },
-    calendarEndFieldMetadata: {
+    endFieldMetadata: {
       metadataName: 'fieldMetadata',
-      foreignKey: 'calendarEndFieldMetadataId',
-      inverseOneToManyProperty: 'calendarEndViews',
+      foreignKey: 'endFieldMetadataId',
+      inverseOneToManyProperty: 'endFieldViews',
       isNullable: true,
-      universalForeignKey: 'calendarEndFieldMetadataUniversalIdentifier',
+      universalForeignKey: 'endFieldMetadataUniversalIdentifier',
     },
     kanbanAggregateOperationFieldMetadata: {
       metadataName: 'fieldMetadata',

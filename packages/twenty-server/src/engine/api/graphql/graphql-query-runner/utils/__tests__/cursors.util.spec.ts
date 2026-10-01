@@ -33,7 +33,7 @@ const buildMockField = (
     viewFieldIds: [],
     viewFilterIds: [],
     kanbanAggregateOperationViewIds: [],
-    calendarViewIds: [],
+    startFieldViewIds: [],
     applicationId: null,
   }) as unknown as FlatFieldMetadata;
 

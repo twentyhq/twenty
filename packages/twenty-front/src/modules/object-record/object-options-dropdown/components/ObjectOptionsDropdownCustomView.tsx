@@ -73,7 +73,7 @@ export const ObjectOptionsDropdownCustomView = ({
     recordIndexCalendarFieldMetadataIdComponentState,
   );
 
-  const calendarFieldMetadata = recordIndexCalendarFieldMetadataId
+  const startFieldMetadata = recordIndexCalendarFieldMetadataId
     ? objectMetadataItem.fields.find(
         (field) => field.id === recordIndexCalendarFieldMetadataId,
       )
@@ -198,7 +198,7 @@ export const ObjectOptionsDropdownCustomView = ({
                     description={
                       isDefaultView
                         ? t`Not available on Default View`
-                        : calendarFieldMetadata?.label
+                        : startFieldMetadata?.label
                     }
                     descriptionPlacement="end"
                     hasSubmenu

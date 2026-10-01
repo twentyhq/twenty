@@ -162,8 +162,8 @@ const VIEW_MANIFEST: ViewManifest = {
   kanbanAggregateOperation: AggregateOperations.SUM,
   kanbanAggregateOperationFieldMetadataUniversalIdentifier: FIELD_UID,
   calendarLayout: ViewCalendarLayout.WEEK,
-  calendarFieldMetadataUniversalIdentifier: FIELD_UID,
-  calendarEndFieldMetadataUniversalIdentifier: FIELD_UID,
+  startFieldMetadataUniversalIdentifier: FIELD_UID,
+  endFieldMetadataUniversalIdentifier: FIELD_UID,
 };
 
 const VIEW_CHILD_CONVERSION_CONTEXT = {

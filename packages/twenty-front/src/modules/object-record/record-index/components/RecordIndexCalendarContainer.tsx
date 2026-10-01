@@ -9,10 +9,7 @@ export const RecordIndexCalendarContainer = () => {
 
   const { currentView } = useGetCurrentViewOnly();
 
-  if (
-    !isDefined(currentView) ||
-    !isDefined(currentView.calendarFieldMetadataId)
-  ) {
+  if (!isDefined(currentView) || !isDefined(currentView.startFieldMetadataId)) {
     return null;
   }
 

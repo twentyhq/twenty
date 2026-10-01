@@ -103,10 +103,8 @@ export const useCreatePendingRecordTableWidgetViews = () => {
                 view.kanbanAggregateOperationFieldMetadataId ?? undefined,
               kanbanColumnWidth: view.kanbanColumnWidth ?? undefined,
               calendarLayout: view.calendarLayout ?? undefined,
-              calendarFieldMetadataId:
-                view.calendarFieldMetadataId ?? undefined,
-              calendarEndFieldMetadataId:
-                view.calendarEndFieldMetadataId ?? undefined,
+              startFieldMetadataId: view.startFieldMetadataId ?? undefined,
+              endFieldMetadataId: view.endFieldMetadataId ?? undefined,
             },
           },
           view.objectMetadataId,

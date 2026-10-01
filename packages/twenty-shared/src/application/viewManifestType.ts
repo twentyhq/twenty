@@ -89,7 +89,17 @@ export type ViewManifest = SyncableEntityOptions & {
   kanbanAggregateOperation?: AggregateOperations;
   kanbanAggregateOperationFieldMetadataUniversalIdentifier?: string;
   calendarLayout?: ViewCalendarLayout;
+  startFieldMetadataUniversalIdentifier?: string;
+  endFieldMetadataUniversalIdentifier?: string;
+  /**
+   * @deprecated Use startFieldMetadataUniversalIdentifier. Still read so
+   * manifests built by older SDK versions keep installing.
+   */
   calendarFieldMetadataUniversalIdentifier?: string;
+  /**
+   * @deprecated Use endFieldMetadataUniversalIdentifier. Still read so
+   * manifests built by older SDK versions keep installing.
+   */
   calendarEndFieldMetadataUniversalIdentifier?: string;
   fields?: ViewFieldManifest[];
   filters?: ViewFilterManifest[];

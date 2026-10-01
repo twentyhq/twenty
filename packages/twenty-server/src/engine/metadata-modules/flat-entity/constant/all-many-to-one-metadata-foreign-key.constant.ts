@@ -98,11 +98,11 @@ export const ALL_MANY_TO_ONE_METADATA_FOREIGN_KEY = {
     workspace: null,
     createdBy: null,
     application: null,
-    calendarFieldMetadata: {
-      foreignKey: 'calendarFieldMetadataId',
+    startFieldMetadata: {
+      foreignKey: 'startFieldMetadataId',
     },
-    calendarEndFieldMetadata: {
-      foreignKey: 'calendarEndFieldMetadataId',
+    endFieldMetadata: {
+      foreignKey: 'endFieldMetadataId',
     },
     kanbanAggregateOperationFieldMetadata: {
       foreignKey: 'kanbanAggregateOperationFieldMetadataId',

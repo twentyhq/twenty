@@ -33,7 +33,7 @@ export const ObjectOptionsDropdownCalendarFieldsContent = () => {
     setRecordIndexCalendarFieldMetadataId,
   ] = useAtomComponentState(recordIndexCalendarFieldMetadataIdComponentState);
 
-  const calendarFieldMetadata = recordIndexCalendarFieldMetadataId
+  const startFieldMetadata = recordIndexCalendarFieldMetadataId
     ? objectMetadataItem.fields.find(
         (field) => field.id === recordIndexCalendarFieldMetadataId,
       )
@@ -50,8 +50,8 @@ export const ObjectOptionsDropdownCalendarFieldsContent = () => {
 
     try {
       await updateCurrentView({
-        calendarFieldMetadataId: fieldMetadataItem.id,
-        calendarEndFieldMetadataId: null,
+        startFieldMetadataId: fieldMetadataItem.id,
+        endFieldMetadataId: null,
       });
     } catch (error) {
       setRecordIndexCalendarFieldMetadataId(recordIndexCalendarFieldMetadataId);
@@ -85,8 +85,8 @@ export const ObjectOptionsDropdownCalendarFieldsContent = () => {
             key={fieldMetadataItem.id}
             onClick={() => handleCalendarFieldChange(fieldMetadataItem)}
             role="option"
-            aria-selected={fieldMetadataItem.id === calendarFieldMetadata?.id}
-            selected={fieldMetadataItem.id === calendarFieldMetadata?.id}
+            aria-selected={fieldMetadataItem.id === startFieldMetadata?.id}
+            selected={fieldMetadataItem.id === startFieldMetadata?.id}
             indicator="check"
             startIcon={
               <SelectOptionIcon Icon={getIcon(fieldMetadataItem.icon)} />

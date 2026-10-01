@@ -75,10 +75,28 @@ export class UpsertViewWidgetViewSettingsInput {
   @IsOptional()
   @IsUUID()
   @Field(() => UUIDScalarType, { nullable: true })
-  calendarFieldMetadataId?: string | null;
+  startFieldMetadataId?: string | null;
 
   @IsOptional()
   @IsUUID()
   @Field(() => UUIDScalarType, { nullable: true })
+  endFieldMetadataId?: string | null;
+
+  // TODO: remove once API clients have moved to startFieldMetadataId (2.46).
+  @IsOptional()
+  @IsUUID()
+  @Field(() => UUIDScalarType, {
+    nullable: true,
+    deprecationReason: 'Use startFieldMetadataId',
+  })
+  calendarFieldMetadataId?: string | null;
+
+  // TODO: remove once API clients have moved to endFieldMetadataId (2.46).
+  @IsOptional()
+  @IsUUID()
+  @Field(() => UUIDScalarType, {
+    nullable: true,
+    deprecationReason: 'Use endFieldMetadataId',
+  })
   calendarEndFieldMetadataId?: string | null;
 }

@@ -24,11 +24,13 @@ import {
 } from 'twenty-shared/types';
 
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
+import { WasRenamedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-renamed-in-upgrade.decorator';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { ADD_IS_SYSTEM_SIDE_EFFECT_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-15/is-system-side-effect-upgrade-command-name.constant';
 import { ADD_VIEW_KANBAN_COLUMN_WIDTH_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-15/add-view-kanban-column-width-upgrade-command-name.constant';
 import { ADD_CALENDAR_END_FIELD_METADATA_ID_TO_VIEW_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-22/add-calendar-end-field-metadata-id-to-view-upgrade-command-name.constant';
 import { ADD_VIEW_GROUP_LOAD_LIMIT_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-42/add-view-group-load-limit-upgrade-command-name.constant';
+import { RENAME_VIEW_CALENDAR_FIELDS_TO_START_AND_END_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-45/rename-view-calendar-fields-to-start-and-end-upgrade-command-name.constant';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { NavigationMenuItemEntity } from 'src/engine/metadata-modules/navigation-menu-item/entities/navigation-menu-item.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -52,8 +54,8 @@ export type ViewOverrides = {
   kanbanAggregateOperationFieldMetadataId?: SerializedRelation | null;
   anyFieldFilterValue?: string | null;
   calendarLayout?: ViewCalendarLayout | null;
-  calendarFieldMetadataId?: SerializedRelation | null;
-  calendarEndFieldMetadataId?: SerializedRelation | null;
+  startFieldMetadataId?: SerializedRelation | null;
+  endFieldMetadataId?: SerializedRelation | null;
   visibility?: ViewVisibility;
   mainGroupByFieldMetadataId?: SerializedRelation | null;
   shouldHideEmptyGroups?: boolean;
@@ -69,8 +71,8 @@ export type ViewOverrides = {
   'workspaceId',
 ])
 @Index('IDX_VIEW_VISIBILITY', ['visibility'])
-@Index('IDX_VIEW_CALENDAR_FIELD_METADATA', ['calendarFieldMetadataId'])
-@Index('IDX_VIEW_CALENDAR_END_FIELD_METADATA', ['calendarEndFieldMetadataId'])
+@Index('IDX_VIEW_START_FIELD_METADATA', ['startFieldMetadataId'])
+@Index('IDX_VIEW_END_FIELD_METADATA', ['endFieldMetadataId'])
 @Index('IDX_VIEW_KANBAN_FIELD_METADATA', [
   'kanbanAggregateOperationFieldMetadataId',
 ])
@@ -78,7 +80,7 @@ export type ViewOverrides = {
 @Index('IDX_VIEW_CREATED_BY_USER_WORKSPACE', ['createdByUserWorkspaceId'])
 @Check(
   'CHK_VIEW_CALENDAR_INTEGRITY',
-  `("type" NOT IN ('CALENDAR', 'CALENDAR_WIDGET') OR ("calendarLayout" IS NOT NULL AND "calendarFieldMetadataId" IS NOT NULL))`,
+  `("type" NOT IN ('CALENDAR', 'CALENDAR_WIDGET') OR ("calendarLayout" IS NOT NULL AND "startFieldMetadataId" IS NOT NULL))`,
 )
 export class ViewEntity
   extends OverridableEntity<ViewOverrides>
@@ -166,37 +168,51 @@ export class ViewEntity
   })
   calendarLayout: ViewCalendarLayout | null;
 
+  @WasRenamedInUpgrade([
+    {
+      previousName: 'calendarFieldMetadataId',
+      upgradeCommandName:
+        RENAME_VIEW_CALENDAR_FIELDS_TO_START_AND_END_UPGRADE_COMMAND_NAME,
+    },
+  ])
   @Column({ nullable: true, type: 'uuid' })
-  calendarFieldMetadataId: string | null;
+  startFieldMetadataId: string | null;
 
   @ManyToOne(
     () => FieldMetadataEntity,
-    (fieldMetadata) => fieldMetadata.calendarViews,
+    (fieldMetadata) => fieldMetadata.startFieldViews,
     {
       onDelete: 'CASCADE',
       nullable: true,
     },
   )
-  @JoinColumn({ name: 'calendarFieldMetadataId' })
-  calendarFieldMetadata: Relation<FieldMetadataEntity> | null;
+  @JoinColumn({ name: 'startFieldMetadataId' })
+  startFieldMetadata: Relation<FieldMetadataEntity> | null;
 
   @WasIntroducedInUpgrade({
     upgradeCommandName:
       ADD_CALENDAR_END_FIELD_METADATA_ID_TO_VIEW_UPGRADE_COMMAND_NAME,
   })
+  @WasRenamedInUpgrade([
+    {
+      previousName: 'calendarEndFieldMetadataId',
+      upgradeCommandName:
+        RENAME_VIEW_CALENDAR_FIELDS_TO_START_AND_END_UPGRADE_COMMAND_NAME,
+    },
+  ])
   @Column({ nullable: true, type: 'uuid' })
-  calendarEndFieldMetadataId: string | null;
+  endFieldMetadataId: string | null;
 
   @ManyToOne(
     () => FieldMetadataEntity,
-    (fieldMetadata) => fieldMetadata.calendarEndViews,
+    (fieldMetadata) => fieldMetadata.endFieldViews,
     {
       onDelete: 'SET NULL',
       nullable: true,
     },
   )
-  @JoinColumn({ name: 'calendarEndFieldMetadataId' })
-  calendarEndFieldMetadata: Relation<FieldMetadataEntity> | null;
+  @JoinColumn({ name: 'endFieldMetadataId' })
+  endFieldMetadata: Relation<FieldMetadataEntity> | null;
 
   @Column({ nullable: true, type: 'uuid' })
   mainGroupByFieldMetadataId: string | null;

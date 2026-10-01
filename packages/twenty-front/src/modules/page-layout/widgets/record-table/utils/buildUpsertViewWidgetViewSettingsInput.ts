@@ -12,6 +12,6 @@ export const buildUpsertViewWidgetViewSettingsInput = (
     view.kanbanAggregateOperationFieldMetadataId ?? null,
   kanbanColumnWidth: view.kanbanColumnWidth ?? null,
   calendarLayout: view.calendarLayout ?? null,
-  calendarFieldMetadataId: view.calendarFieldMetadataId ?? null,
-  calendarEndFieldMetadataId: view.calendarEndFieldMetadataId ?? null,
+  startFieldMetadataId: view.startFieldMetadataId ?? null,
+  endFieldMetadataId: view.endFieldMetadataId ?? null,
 });

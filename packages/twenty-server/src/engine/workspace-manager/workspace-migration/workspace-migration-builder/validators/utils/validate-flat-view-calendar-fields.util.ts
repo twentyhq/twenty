@@ -29,7 +29,7 @@ export const validateFlatViewCalendarFields = ({
     });
   }
 
-  if (!isDefined(flatView.calendarFieldMetadataUniversalIdentifier)) {
+  if (!isDefined(flatView.startFieldMetadataUniversalIdentifier)) {
     errors.push({
       code: ViewExceptionCode.INVALID_VIEW_DATA,
       message: t`Calendar view must have a calendar field`,
@@ -39,12 +39,12 @@ export const validateFlatViewCalendarFields = ({
     return errors;
   }
 
-  const calendarFieldMetadata = findFlatEntityByUniversalIdentifier({
-    universalIdentifier: flatView.calendarFieldMetadataUniversalIdentifier,
+  const startFieldMetadata = findFlatEntityByUniversalIdentifier({
+    universalIdentifier: flatView.startFieldMetadataUniversalIdentifier,
     flatEntityMaps: flatFieldMetadataMaps,
   });
 
-  if (!isDefined(calendarFieldMetadata)) {
+  if (!isDefined(startFieldMetadata)) {
     errors.push({
       code: ViewExceptionCode.INVALID_VIEW_DATA,
       message: t`Calendar field metadata not found`,
@@ -55,7 +55,7 @@ export const validateFlatViewCalendarFields = ({
   }
 
   if (
-    calendarFieldMetadata.objectMetadataUniversalIdentifier !==
+    startFieldMetadata.objectMetadataUniversalIdentifier !==
     flatView.objectMetadataUniversalIdentifier
   ) {
     errors.push({
@@ -66,8 +66,8 @@ export const validateFlatViewCalendarFields = ({
   }
 
   const calendarFieldIsDateKind =
-    calendarFieldMetadata.type === FieldMetadataType.DATE ||
-    calendarFieldMetadata.type === FieldMetadataType.DATE_TIME;
+    startFieldMetadata.type === FieldMetadataType.DATE ||
+    startFieldMetadata.type === FieldMetadataType.DATE_TIME;
 
   if (!calendarFieldIsDateKind) {
     errors.push({
@@ -77,13 +77,13 @@ export const validateFlatViewCalendarFields = ({
     });
   }
 
-  if (!isDefined(flatView.calendarEndFieldMetadataUniversalIdentifier)) {
+  if (!isDefined(flatView.endFieldMetadataUniversalIdentifier)) {
     return errors;
   }
 
   if (
-    flatView.calendarEndFieldMetadataUniversalIdentifier ===
-    flatView.calendarFieldMetadataUniversalIdentifier
+    flatView.endFieldMetadataUniversalIdentifier ===
+    flatView.startFieldMetadataUniversalIdentifier
   ) {
     errors.push({
       code: ViewExceptionCode.INVALID_VIEW_DATA,
@@ -94,12 +94,12 @@ export const validateFlatViewCalendarFields = ({
     return errors;
   }
 
-  const calendarEndFieldMetadata = findFlatEntityByUniversalIdentifier({
-    universalIdentifier: flatView.calendarEndFieldMetadataUniversalIdentifier,
+  const endFieldMetadata = findFlatEntityByUniversalIdentifier({
+    universalIdentifier: flatView.endFieldMetadataUniversalIdentifier,
     flatEntityMaps: flatFieldMetadataMaps,
   });
 
-  if (!isDefined(calendarEndFieldMetadata)) {
+  if (!isDefined(endFieldMetadata)) {
     errors.push({
       code: ViewExceptionCode.INVALID_VIEW_DATA,
       message: t`Calendar end field metadata not found`,
@@ -110,7 +110,7 @@ export const validateFlatViewCalendarFields = ({
   }
 
   if (
-    calendarEndFieldMetadata.objectMetadataUniversalIdentifier !==
+    endFieldMetadata.objectMetadataUniversalIdentifier !==
     flatView.objectMetadataUniversalIdentifier
   ) {
     errors.push({
@@ -121,8 +121,8 @@ export const validateFlatViewCalendarFields = ({
   }
 
   const calendarEndFieldIsDateKind =
-    calendarEndFieldMetadata.type === FieldMetadataType.DATE ||
-    calendarEndFieldMetadata.type === FieldMetadataType.DATE_TIME;
+    endFieldMetadata.type === FieldMetadataType.DATE ||
+    endFieldMetadata.type === FieldMetadataType.DATE_TIME;
 
   if (!calendarEndFieldIsDateKind) {
     errors.push({
@@ -132,7 +132,7 @@ export const validateFlatViewCalendarFields = ({
     });
   } else if (
     calendarFieldIsDateKind &&
-    calendarEndFieldMetadata.type !== calendarFieldMetadata.type
+    endFieldMetadata.type !== startFieldMetadata.type
   ) {
     errors.push({
       code: ViewExceptionCode.INVALID_VIEW_DATA,

@@ -3,11 +3,10 @@
 exports[`deleteFlatEntityForeignKeyAggregators should strip raw workspace-scoped properties from a flat field metadata 1`] = `
 {
   "applicationUniversalIdentifier": "application-universal-identifier",
-  "calendarEndViewUniversalIdentifiers": [],
-  "calendarViewUniversalIdentifiers": [],
   "createdAt": "2024-01-01T00:00:00.000Z",
   "defaultValue": null,
   "description": "default flat field metadata description",
+  "endFieldViewUniversalIdentifiers": [],
   "fieldPermissionUniversalIdentifiers": [],
   "icon": "icon",
   "isActive": true,
@@ -30,6 +29,7 @@ exports[`deleteFlatEntityForeignKeyAggregators should strip raw workspace-scoped
   "relationTargetFieldMetadataUniversalIdentifier": null,
   "relationTargetObjectMetadataUniversalIdentifier": null,
   "searchFieldMetadataUniversalIdentifiers": [],
+  "startFieldViewUniversalIdentifiers": [],
   "type": "TEXT",
   "universalIdentifier": "field-universal-identifier",
   "universalSettings": null,

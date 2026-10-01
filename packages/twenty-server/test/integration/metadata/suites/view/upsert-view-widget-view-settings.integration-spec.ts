@@ -31,8 +31,8 @@ const VIEW_SETTINGS_GQL_FIELDS = `
   kanbanAggregateOperation
   kanbanAggregateOperationFieldMetadataId
   calendarLayout
-  calendarFieldMetadataId
-  calendarEndFieldMetadataId
+  startFieldMetadataId
+  endFieldMetadataId
 `;
 
 describe('upsertViewWidget view settings', () => {
@@ -291,7 +291,7 @@ describe('upsertViewWidget view settings', () => {
           view: {
             type: ViewType.CALENDAR_WIDGET,
             calendarLayout,
-            calendarFieldMetadataId: dateFieldMetadataId,
+            startFieldMetadataId: dateFieldMetadataId,
             mainGroupByFieldMetadataId: null,
           },
         },
@@ -311,7 +311,7 @@ describe('upsertViewWidget view settings', () => {
         view: {
           type: ViewType.CALENDAR_WIDGET,
           calendarLayout: ViewCalendarLayout.MONTH,
-          calendarFieldMetadataId: dateFieldMetadataId,
+          startFieldMetadataId: dateFieldMetadataId,
           mainGroupByFieldMetadataId: null,
         },
       },
@@ -320,7 +320,7 @@ describe('upsertViewWidget view settings', () => {
 
     expect(data.upsertViewWidget.type).toBe(ViewType.CALENDAR_WIDGET);
     expect(data.upsertViewWidget.calendarLayout).toBe(ViewCalendarLayout.MONTH);
-    expect(data.upsertViewWidget.calendarFieldMetadataId).toBe(
+    expect(data.upsertViewWidget.startFieldMetadataId).toBe(
       dateFieldMetadataId,
     );
 
@@ -465,7 +465,7 @@ describe('upsertViewWidget view settings', () => {
           view: {
             type: ViewType.CALENDAR_WIDGET,
             calendarLayout: ViewCalendarLayout.MONTH,
-            calendarFieldMetadataId: dateFieldMetadataId,
+            startFieldMetadataId: dateFieldMetadataId,
             mainGroupByFieldMetadataId: null,
           },
         },
@@ -473,7 +473,7 @@ describe('upsertViewWidget view settings', () => {
       });
 
       expect(data.upsertViewWidget.type).toBe(ViewType.CALENDAR_WIDGET);
-      expect(data.upsertViewWidget.calendarFieldMetadataId).toBe(
+      expect(data.upsertViewWidget.startFieldMetadataId).toBe(
         dateFieldMetadataId,
       );
     });

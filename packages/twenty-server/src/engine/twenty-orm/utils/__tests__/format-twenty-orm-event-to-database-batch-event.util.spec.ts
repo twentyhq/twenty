@@ -39,7 +39,7 @@ describe('formatTwentyOrmEventToDatabaseBatchEvent', () => {
       viewFilterIds: [],
       viewGroupIds: [],
       kanbanAggregateOperationViewIds: [],
-      calendarViewIds: [],
+      startFieldViewIds: [],
       applicationId: null,
       label: overrides.name,
       ...overrides,

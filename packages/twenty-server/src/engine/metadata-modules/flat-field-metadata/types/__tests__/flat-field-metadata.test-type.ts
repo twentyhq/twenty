@@ -25,8 +25,8 @@ type OneToManyRelationIdArrays = {
   viewFieldIds: string[];
   viewFilterIds: string[];
   kanbanAggregateOperationViewIds: string[];
-  calendarViewIds: string[];
-  calendarEndViewIds: string[];
+  startFieldViewIds: string[];
+  endFieldViewIds: string[];
   mainGroupByFieldMetadataViewIds: string[];
 };
 

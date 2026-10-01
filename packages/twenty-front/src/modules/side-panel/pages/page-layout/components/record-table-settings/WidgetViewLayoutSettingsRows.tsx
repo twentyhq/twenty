@@ -72,7 +72,7 @@ export const WidgetViewLayoutSettingsRows = ({
   const { Icon: CurrentLayoutIcon, label: currentLayoutLabel } =
     RECORD_TABLE_WIDGET_LAYOUT_OPTIONS[currentLayoutViewType];
 
-  const calendarFieldMetadataId = widgetView?.calendarFieldMetadataId ?? null;
+  const startFieldMetadataId = widgetView?.startFieldMetadataId ?? null;
 
   const currentCalendarLayout =
     widgetView?.calendarLayout ?? ViewCalendarLayout.MONTH;
@@ -97,9 +97,9 @@ export const WidgetViewLayoutSettingsRows = ({
       )?.label ?? t`None`)
     : t`None`;
 
-  const calendarFieldLabel = isDefined(calendarFieldMetadataId)
+  const calendarFieldLabel = isDefined(startFieldMetadataId)
     ? (objectMetadataItem?.fields.find(
-        (fieldMetadataItem) => fieldMetadataItem.id === calendarFieldMetadataId,
+        (fieldMetadataItem) => fieldMetadataItem.id === startFieldMetadataId,
       )?.label ?? t`None`)
     : t`None`;
 
@@ -144,7 +144,7 @@ export const WidgetViewLayoutSettingsRows = ({
                   pageLayoutId={pageLayoutId}
                   widgetId={widgetId}
                   objectMetadataId={objectMetadataId}
-                  currentCalendarFieldMetadataId={calendarFieldMetadataId}
+                  currentCalendarFieldMetadataId={startFieldMetadataId}
                 />
               </LegacyDropdownContent>
             }

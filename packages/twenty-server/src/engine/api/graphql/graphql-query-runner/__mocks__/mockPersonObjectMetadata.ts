@@ -32,7 +32,7 @@ const mockFieldMetadatas: FlatFieldMetadata[] = [
     viewFieldIds: [],
     viewFilterIds: [],
     kanbanAggregateOperationViewIds: [],
-    calendarViewIds: [],
+    startFieldViewIds: [],
     applicationId: null,
   } as unknown as FlatFieldMetadata,
   {
@@ -53,7 +53,7 @@ const mockFieldMetadatas: FlatFieldMetadata[] = [
     viewFieldIds: [],
     viewFilterIds: [],
     kanbanAggregateOperationViewIds: [],
-    calendarViewIds: [],
+    startFieldViewIds: [],
     applicationId: null,
   } as unknown as FlatFieldMetadata,
   {
@@ -75,7 +75,7 @@ const mockFieldMetadatas: FlatFieldMetadata[] = [
     viewFieldIds: [],
     viewFilterIds: [],
     kanbanAggregateOperationViewIds: [],
-    calendarViewIds: [],
+    startFieldViewIds: [],
     applicationId: null,
   } as unknown as FlatFieldMetadata,
   {
@@ -93,7 +93,7 @@ const mockFieldMetadatas: FlatFieldMetadata[] = [
     viewFieldIds: [],
     viewFilterIds: [],
     kanbanAggregateOperationViewIds: [],
-    calendarViewIds: [],
+    startFieldViewIds: [],
     applicationId: null,
   } as unknown as FlatFieldMetadata,
 ];

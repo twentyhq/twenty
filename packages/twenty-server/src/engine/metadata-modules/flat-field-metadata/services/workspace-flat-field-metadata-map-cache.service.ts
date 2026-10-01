@@ -44,8 +44,8 @@ const FLAT_FIELD_METADATA_ROWS_REQUIREMENT = {
     columns: ['id', 'universalIdentifier'],
     groupBy: [
       'kanbanAggregateOperationFieldMetadataId',
-      'calendarFieldMetadataId',
-      'calendarEndFieldMetadataId',
+      'startFieldMetadataId',
+      'endFieldMetadataId',
       'mainGroupByFieldMetadataId',
     ],
   },
@@ -127,11 +127,10 @@ export class WorkspaceFlatFieldMetadataMapCacheService extends MetadataFlatEntit
             views.byKanbanAggregateOperationFieldMetadataId.get(
               fieldMetadataEntity.id,
             ) || [],
-          calendarViews:
-            views.byCalendarFieldMetadataId.get(fieldMetadataEntity.id) || [],
-          calendarEndViews:
-            views.byCalendarEndFieldMetadataId.get(fieldMetadataEntity.id) ||
-            [],
+          startFieldViews:
+            views.byStartFieldMetadataId.get(fieldMetadataEntity.id) || [],
+          endFieldViews:
+            views.byEndFieldMetadataId.get(fieldMetadataEntity.id) || [],
           mainGroupByFieldMetadataViews:
             views.byMainGroupByFieldMetadataId.get(fieldMetadataEntity.id) ||
             [],

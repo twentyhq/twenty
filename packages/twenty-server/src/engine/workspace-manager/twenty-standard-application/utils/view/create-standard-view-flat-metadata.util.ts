@@ -29,8 +29,8 @@ export type CreateStandardViewOptions<O extends AllStandardObjectName> = {
   kanbanAggregateOperation?: AggregateOperations | null;
   kanbanAggregateOperationFieldName?: AllStandardObjectFieldName<O>;
   mainGroupByFieldName?: AllStandardObjectFieldName<O>;
-  calendarFieldName?: AllStandardObjectFieldName<O>;
-  calendarEndFieldName?: AllStandardObjectFieldName<O>;
+  startFieldName?: AllStandardObjectFieldName<O>;
+  endFieldName?: AllStandardObjectFieldName<O>;
 };
 
 export type CreateStandardViewArgs<
@@ -58,8 +58,8 @@ export const createStandardViewFlatMetadata = <
     kanbanAggregateOperation = null,
     kanbanAggregateOperationFieldName,
     mainGroupByFieldName,
-    calendarFieldName,
-    calendarEndFieldName,
+    startFieldName,
+    endFieldName,
   },
   standardObjectMetadataRelatedEntityIds,
   twentyStandardApplicationId,
@@ -92,16 +92,13 @@ export const createStandardViewFlatMetadata = <
       ].id
     : null;
 
-  const calendarFieldMetadataId = calendarFieldName
-    ? standardObjectMetadataRelatedEntityIds[objectName].fields[
-        calendarFieldName
-      ].id
+  const startFieldMetadataId = startFieldName
+    ? standardObjectMetadataRelatedEntityIds[objectName].fields[startFieldName]
+        .id
     : null;
 
-  const calendarEndFieldMetadataId = calendarEndFieldName
-    ? standardObjectMetadataRelatedEntityIds[objectName].fields[
-        calendarEndFieldName
-      ].id
+  const endFieldMetadataId = endFieldName
+    ? standardObjectMetadataRelatedEntityIds[objectName].fields[endFieldName].id
     : null;
 
   const kanbanAggregateOperationFieldMetadataUniversalIdentifier =
@@ -117,20 +114,19 @@ export const createStandardViewFlatMetadata = <
         .universalIdentifier
     : null;
 
-  const calendarFieldMetadataUniversalIdentifier = calendarFieldName
+  const startFieldMetadataUniversalIdentifier = startFieldName
     ? // @ts-expect-error ignore
-      STANDARD_OBJECTS[objectName].fields[calendarFieldName].universalIdentifier
+      STANDARD_OBJECTS[objectName].fields[startFieldName].universalIdentifier
     : null;
 
-  const calendarEndFieldMetadataUniversalIdentifier = calendarEndFieldName
+  const endFieldMetadataUniversalIdentifier = endFieldName
     ? // @ts-expect-error ignore
-      STANDARD_OBJECTS[objectName].fields[calendarEndFieldName]
-        .universalIdentifier
+      STANDARD_OBJECTS[objectName].fields[endFieldName].universalIdentifier
     : null;
 
   return {
-    calendarFieldMetadataUniversalIdentifier,
-    calendarEndFieldMetadataUniversalIdentifier,
+    startFieldMetadataUniversalIdentifier,
+    endFieldMetadataUniversalIdentifier,
     kanbanAggregateOperationFieldMetadataUniversalIdentifier,
     mainGroupByFieldMetadataUniversalIdentifier,
     objectMetadataUniversalIdentifier,
@@ -156,8 +152,8 @@ export const createStandardViewFlatMetadata = <
     kanbanColumnWidth: null,
     groupLoadLimit: DEFAULT_VIEW_GROUP_LOAD_LIMIT,
     calendarLayout: null,
-    calendarFieldMetadataId,
-    calendarEndFieldMetadataId,
+    startFieldMetadataId,
+    endFieldMetadataId,
     anyFieldFilterValue: null,
     visibility: ViewVisibility.WORKSPACE,
     createdByUserWorkspaceId: null,

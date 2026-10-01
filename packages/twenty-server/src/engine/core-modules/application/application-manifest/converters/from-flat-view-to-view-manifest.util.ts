@@ -68,16 +68,16 @@ export const fromFlatViewToViewManifest = ({
   ...(isDefined(flatView.calendarLayout)
     ? { calendarLayout: flatView.calendarLayout }
     : {}),
-  ...(isDefined(flatView.calendarFieldMetadataUniversalIdentifier)
+  ...(isDefined(flatView.startFieldMetadataUniversalIdentifier)
     ? {
-        calendarFieldMetadataUniversalIdentifier:
-          flatView.calendarFieldMetadataUniversalIdentifier,
+        startFieldMetadataUniversalIdentifier:
+          flatView.startFieldMetadataUniversalIdentifier,
       }
     : {}),
-  ...(isDefined(flatView.calendarEndFieldMetadataUniversalIdentifier)
+  ...(isDefined(flatView.endFieldMetadataUniversalIdentifier)
     ? {
-        calendarEndFieldMetadataUniversalIdentifier:
-          flatView.calendarEndFieldMetadataUniversalIdentifier,
+        endFieldMetadataUniversalIdentifier:
+          flatView.endFieldMetadataUniversalIdentifier,
       }
     : {}),
   ...withoutEmptyCollections(children),

@@ -91,7 +91,7 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
             throw new Error('No date fields for calendar');
           }
 
-          const calendarFieldMetadataId = availableFieldsForCalendar[0].id;
+          const startFieldMetadataId = availableFieldsForCalendar[0].id;
 
           setRecordIndexViewType(viewType);
 
@@ -99,8 +99,8 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
             {
               ...currentView,
               type: viewType,
-              calendarFieldMetadataId,
-              calendarEndFieldMetadataId: null,
+              startFieldMetadataId,
+              endFieldMetadataId: null,
               calendarLayout: ViewCalendarLayout.MONTH,
             },
             objectMetadataItem,
@@ -110,9 +110,8 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
             updateCurrentViewParams.icon = viewTypeIconKeyMapping(viewType);
           }
           updateCurrentViewParams.calendarLayout = ViewCalendarLayout.MONTH;
-          updateCurrentViewParams.calendarFieldMetadataId =
-            calendarFieldMetadataId;
-          updateCurrentViewParams.calendarEndFieldMetadataId = null;
+          updateCurrentViewParams.startFieldMetadataId = startFieldMetadataId;
+          updateCurrentViewParams.endFieldMetadataId = null;
           updateCurrentViewParams.mainGroupByFieldMetadataId = null;
           return await updateCurrentView(updateCurrentViewParams);
         }

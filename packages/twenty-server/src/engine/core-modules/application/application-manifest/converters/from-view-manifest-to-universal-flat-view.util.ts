@@ -65,10 +65,14 @@ export const fromViewManifestToUniversalFlatView = ({
       viewManifest.kanbanAggregateOperationFieldMetadataUniversalIdentifier ??
       null,
     calendarLayout: viewManifest.calendarLayout ?? null,
-    calendarFieldMetadataUniversalIdentifier:
-      viewManifest.calendarFieldMetadataUniversalIdentifier ?? null,
-    calendarEndFieldMetadataUniversalIdentifier:
-      viewManifest.calendarEndFieldMetadataUniversalIdentifier ?? null,
+    startFieldMetadataUniversalIdentifier:
+      viewManifest.startFieldMetadataUniversalIdentifier ??
+      viewManifest.calendarFieldMetadataUniversalIdentifier ??
+      null,
+    endFieldMetadataUniversalIdentifier:
+      viewManifest.endFieldMetadataUniversalIdentifier ??
+      viewManifest.calendarEndFieldMetadataUniversalIdentifier ??
+      null,
     mainGroupByFieldMetadataUniversalIdentifier:
       viewManifest.mainGroupByFieldMetadataUniversalIdentifier ?? null,
     shouldHideEmptyGroups: viewManifest.shouldHideEmptyGroups ?? false,

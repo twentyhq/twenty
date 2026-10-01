@@ -1,0 +1,2 @@
+export const RENAME_VIEW_CALENDAR_FIELDS_TO_START_AND_END_UPGRADE_COMMAND_NAME =
+  '2.45.0_RenameViewCalendarFieldsToStartAndEndFastInstanceCommand_1790829838873';

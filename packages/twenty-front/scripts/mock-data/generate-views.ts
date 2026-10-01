@@ -18,7 +18,8 @@ const FIND_ALL_VIEWS_QUERY = `
       mainGroupByFieldMetadataId
       shouldHideEmptyGroups
       anyFieldFilterValue
-      calendarFieldMetadataId
+      startFieldMetadataId
+      endFieldMetadataId
       calendarLayout
       visibility
       createdByUserWorkspaceId

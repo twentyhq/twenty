@@ -73,8 +73,8 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
         name,
         icon,
         mainGroupByFieldMetadataId,
-        calendarFieldMetadataId,
-        calendarEndFieldMetadataId,
+        startFieldMetadataId,
+        endFieldMetadataId,
         type,
         visibility,
       }: Partial<
@@ -84,8 +84,8 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
           | 'name'
           | 'icon'
           | 'mainGroupByFieldMetadataId'
-          | 'calendarFieldMetadataId'
-          | 'calendarEndFieldMetadataId'
+          | 'startFieldMetadataId'
+          | 'endFieldMetadataId'
           | 'type'
           | 'visibility'
         >
@@ -141,14 +141,10 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
               viewType === ViewType.CALENDAR
                 ? ViewCalendarLayout.MONTH
                 : undefined,
-            calendarFieldMetadataId:
-              viewType === ViewType.CALENDAR
-                ? calendarFieldMetadataId
-                : undefined,
-            calendarEndFieldMetadataId:
-              viewType === ViewType.CALENDAR
-                ? calendarEndFieldMetadataId
-                : undefined,
+            startFieldMetadataId:
+              viewType === ViewType.CALENDAR ? startFieldMetadataId : undefined,
+            endFieldMetadataId:
+              viewType === ViewType.CALENDAR ? endFieldMetadataId : undefined,
             visibility,
           },
         },

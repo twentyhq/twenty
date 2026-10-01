@@ -96,10 +96,10 @@ export class ViewDTO {
   groupLoadLimit?: number | null;
 
   @Field(() => UUIDScalarType, { nullable: true })
-  calendarFieldMetadataId?: string | null;
+  startFieldMetadataId?: string | null;
 
   @Field(() => UUIDScalarType, { nullable: true })
-  calendarEndFieldMetadataId?: string | null;
+  endFieldMetadataId?: string | null;
 
   @Field(() => UUIDScalarType, { nullable: false })
   workspaceId: string;

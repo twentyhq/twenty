@@ -1530,10 +1530,10 @@ export default {
             "groupLoadLimit": [
                 30
             ],
-            "calendarFieldMetadataId": [
+            "startFieldMetadataId": [
                 3
             ],
-            "calendarEndFieldMetadataId": [
+            "endFieldMetadataId": [
                 3
             ],
             "workspaceId": [
@@ -1580,6 +1580,12 @@ export default {
             ],
             "isActive": [
                 8
+            ],
+            "calendarFieldMetadataId": [
+                3
+            ],
+            "calendarEndFieldMetadataId": [
+                3
             ],
             "__typename": [
                 1
@@ -11804,6 +11810,12 @@ export default {
             "calendarLayout": [
                 69
             ],
+            "startFieldMetadataId": [
+                3
+            ],
+            "endFieldMetadataId": [
+                3
+            ],
             "calendarFieldMetadataId": [
                 3
             ],
@@ -11853,6 +11865,12 @@ export default {
             ],
             "calendarLayout": [
                 69
+            ],
+            "startFieldMetadataId": [
+                3
+            ],
+            "endFieldMetadataId": [
+                3
             ],
             "calendarFieldMetadataId": [
                 3
@@ -11926,6 +11944,12 @@ export default {
             ],
             "calendarLayout": [
                 69
+            ],
+            "startFieldMetadataId": [
+                3
+            ],
+            "endFieldMetadataId": [
+                3
             ],
             "calendarFieldMetadataId": [
                 3

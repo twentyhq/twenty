@@ -166,7 +166,7 @@ export const SidePanelDashboardRecordTableSettings = () => {
   const isWidgetContentEditingSupported =
     isRecordTableWidgetContentEditingSupported(widgetView?.type);
 
-  const calendarFieldMetadataId = widgetView?.calendarFieldMetadataId ?? null;
+  const startFieldMetadataId = widgetView?.startFieldMetadataId ?? null;
 
   const currentCalendarLayout =
     widgetView?.calendarLayout ?? ViewCalendarLayout.MONTH;
@@ -191,9 +191,9 @@ export const SidePanelDashboardRecordTableSettings = () => {
       )?.label ?? t`None`)
     : t`None`;
 
-  const calendarFieldLabel = isDefined(calendarFieldMetadataId)
+  const calendarFieldLabel = isDefined(startFieldMetadataId)
     ? (objectMetadataItem?.fields.find(
-        (fieldMetadataItem) => fieldMetadataItem.id === calendarFieldMetadataId,
+        (fieldMetadataItem) => fieldMetadataItem.id === startFieldMetadataId,
       )?.label ?? t`None`)
     : t`None`;
 
@@ -351,7 +351,7 @@ export const SidePanelDashboardRecordTableSettings = () => {
                                 widgetInEditMode.objectMetadataId!
                               }
                               currentCalendarFieldMetadataId={
-                                calendarFieldMetadataId
+                                startFieldMetadataId
                               }
                             />
                           </LegacyDropdownContent>

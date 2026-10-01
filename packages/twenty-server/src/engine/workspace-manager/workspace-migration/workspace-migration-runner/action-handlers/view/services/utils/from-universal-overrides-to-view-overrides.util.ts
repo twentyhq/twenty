@@ -12,8 +12,8 @@ type UniversalViewOverrides =
 
 const VIEW_OVERRIDES_UNIVERSAL_FIELD_METADATA_PROPERTIES = [
   'kanbanAggregateOperationFieldMetadataUniversalIdentifier',
-  'calendarFieldMetadataUniversalIdentifier',
-  'calendarEndFieldMetadataUniversalIdentifier',
+  'startFieldMetadataUniversalIdentifier',
+  'endFieldMetadataUniversalIdentifier',
   'mainGroupByFieldMetadataUniversalIdentifier',
 ] as const;
 
@@ -37,8 +37,8 @@ const fromUniversalOverridesToViewOverridesEntry = ({
 }): ViewOverrides => {
   const {
     kanbanAggregateOperationFieldMetadataUniversalIdentifier: _kanban,
-    calendarFieldMetadataUniversalIdentifier: _calendar,
-    calendarEndFieldMetadataUniversalIdentifier: _calendarEnd,
+    startFieldMetadataUniversalIdentifier: _calendar,
+    endFieldMetadataUniversalIdentifier: _calendarEnd,
     mainGroupByFieldMetadataUniversalIdentifier: _mainGroupBy,
     ...scalarOverrides
   } = universalOverrides;

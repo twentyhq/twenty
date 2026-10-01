@@ -65,17 +65,17 @@ export const ALL_ONE_TO_MANY_METADATA_RELATIONS = {
       universalFlatEntityForeignKeyAggregator:
         'kanbanAggregateOperationViewUniversalIdentifiers',
     },
-    calendarViews: {
+    startFieldViews: {
       metadataName: 'view',
-      flatEntityForeignKeyAggregator: 'calendarViewIds',
+      flatEntityForeignKeyAggregator: 'startFieldViewIds',
       universalFlatEntityForeignKeyAggregator:
-        'calendarViewUniversalIdentifiers',
+        'startFieldViewUniversalIdentifiers',
     },
-    calendarEndViews: {
+    endFieldViews: {
       metadataName: 'view',
-      flatEntityForeignKeyAggregator: 'calendarEndViewIds',
+      flatEntityForeignKeyAggregator: 'endFieldViewIds',
       universalFlatEntityForeignKeyAggregator:
-        'calendarEndViewUniversalIdentifiers',
+        'endFieldViewUniversalIdentifiers',
     },
     mainGroupByFieldMetadataViews: {
       metadataName: 'view',

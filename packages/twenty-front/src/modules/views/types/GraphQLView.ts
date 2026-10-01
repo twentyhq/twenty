@@ -33,8 +33,8 @@ export type GraphQLView = {
   icon: string;
   anyFieldFilterValue?: string | null;
   calendarLayout?: ViewCalendarLayout | null;
-  calendarFieldMetadataId?: string | null;
-  calendarEndFieldMetadataId?: string | null;
+  startFieldMetadataId?: string | null;
+  endFieldMetadataId?: string | null;
   visibility: ViewVisibility;
   createdByUserWorkspaceId?: string | null;
 };

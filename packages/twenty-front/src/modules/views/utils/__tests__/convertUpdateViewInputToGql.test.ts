@@ -2,10 +2,8 @@ import { convertUpdateViewInputToGql } from '@/views/utils/convertUpdateViewInpu
 
 describe('convertUpdateViewInputToGql', () => {
   it('includes a null calendar end field so it can be cleared', () => {
-    expect(
-      convertUpdateViewInputToGql({ calendarEndFieldMetadataId: null }),
-    ).toEqual({
-      calendarEndFieldMetadataId: null,
+    expect(convertUpdateViewInputToGql({ endFieldMetadataId: null })).toEqual({
+      endFieldMetadataId: null,
       id: undefined,
     });
   });

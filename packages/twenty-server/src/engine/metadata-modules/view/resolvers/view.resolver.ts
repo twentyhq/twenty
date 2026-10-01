@@ -29,6 +29,8 @@ import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { buildViewNameObjectLabels } from 'src/engine/metadata-modules/view/utils/build-view-name-object-labels.util';
+import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { resolveDeprecatedViewDateFieldInput } from 'src/engine/metadata-modules/view/utils/resolve-deprecated-view-date-field-input.util';
 import { resolveViewName } from 'src/engine/metadata-modules/view/utils/resolve-view-name.util';
 import { ViewFieldGroupDTO } from 'src/engine/metadata-modules/view-field-group/dtos/view-field-group.dto';
 import { ViewFieldDTO } from 'src/engine/metadata-modules/view-field/dtos/view-field.dto';
@@ -192,12 +194,11 @@ export class ViewResolver {
     @AuthUserWorkspaceId({ allowUndefined: true })
     userWorkspaceId: string | undefined,
   ): Promise<ViewDTO> {
-    const visibility = input.visibility ?? ViewVisibility.WORKSPACE;
-
-    input.visibility = visibility;
-
     return await this.viewService.createOne({
-      createViewInput: input,
+      createViewInput: {
+        ...resolveDeprecatedViewDateFieldInput(input),
+        visibility: input.visibility ?? ViewVisibility.WORKSPACE,
+      },
       workspaceId: workspace.id,
       createdByUserWorkspaceId: userWorkspaceId,
     });
@@ -213,7 +214,7 @@ export class ViewResolver {
     userWorkspaceId: string | undefined,
   ): Promise<ViewDTO> {
     return await this.viewService.updateOne({
-      updateViewInput: { ...input, id },
+      updateViewInput: { ...resolveDeprecatedViewDateFieldInput(input), id },
       workspaceId: workspace.id,
       userWorkspaceId,
     });
@@ -255,9 +256,32 @@ export class ViewResolver {
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<ViewEntity> {
     return await this.viewWidgetUpsertService.upsertViewWidget({
-      input,
+      input: {
+        ...input,
+        view: isDefined(input.view)
+          ? resolveDeprecatedViewDateFieldInput(input.view)
+          : undefined,
+      },
       workspaceId,
     });
+  }
+
+  // TODO: remove once API clients have moved to startFieldMetadataId (2.46).
+  @ResolveField(() => UUIDScalarType, {
+    nullable: true,
+    deprecationReason: 'Use startFieldMetadataId',
+  })
+  calendarFieldMetadataId(@Parent() view: ViewDTO): string | null {
+    return view.startFieldMetadataId ?? null;
+  }
+
+  // TODO: remove once API clients have moved to endFieldMetadataId (2.46).
+  @ResolveField(() => UUIDScalarType, {
+    nullable: true,
+    deprecationReason: 'Use endFieldMetadataId',
+  })
+  calendarEndFieldMetadataId(@Parent() view: ViewDTO): string | null {
+    return view.endFieldMetadataId ?? null;
   }
 
   @ResolveField(() => [ViewFieldDTO])

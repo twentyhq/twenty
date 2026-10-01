@@ -22,7 +22,7 @@ export const calendarDayRecordIdsComponentFamilySelector =
     get:
       ({ instanceId, familyKey: { day, timeZone } }) =>
       ({ get }) => {
-        const calendarFieldMetadataId = get(
+        const startFieldMetadataId = get(
           recordIndexCalendarFieldMetadataIdComponentState,
           { instanceId },
         );
@@ -32,7 +32,7 @@ export const calendarDayRecordIdsComponentFamilySelector =
           (objectMetadataItem) =>
             objectMetadataItem.fields.some(
               (fieldMetadataItem) =>
-                fieldMetadataItem.id === calendarFieldMetadataId,
+                fieldMetadataItem.id === startFieldMetadataId,
             ),
         );
 
@@ -41,8 +41,7 @@ export const calendarDayRecordIdsComponentFamilySelector =
         }
 
         const fieldMetadataItem = objectMetadataItem.fields.find(
-          (fieldMetadataItem) =>
-            fieldMetadataItem.id === calendarFieldMetadataId,
+          (fieldMetadataItem) => fieldMetadataItem.id === startFieldMetadataId,
         );
 
         if (!isDefined(fieldMetadataItem)) {
