@@ -3,6 +3,7 @@ import {
   MetadataReadability,
   MetadataWritability,
   ObjectSharingReach,
+  RecordShareAccessLevel,
 } from 'twenty-shared/types';
 
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
@@ -240,6 +241,18 @@ describe('buildRowAccessPolicy', () => {
         'member-1',
         'role-1',
       ]);
+    });
+
+    it('narrows edits of a subject without object permission to the records named for editing', () => {
+      const policy = buildForCompany(withoutObjectPermission, 'update');
+
+      if (policy.kind !== 'gated') throw new Error('Expected a grant gate');
+      expect(Object.values(policy.condition.parameters)).toEqual(
+        expect.arrayContaining([
+          ['role-2', 'member-1', 'role-1'],
+          [RecordShareAccessLevel.READ_WRITE, RecordShareAccessLevel.FULL],
+        ]),
+      );
     });
 
     it('never lets general access reach beyond the role', () => {

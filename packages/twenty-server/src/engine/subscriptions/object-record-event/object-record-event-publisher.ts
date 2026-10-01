@@ -6,6 +6,7 @@ import {
 } from 'twenty-shared/constants';
 import { type ObjectRecordEvent } from 'twenty-shared/database-events';
 import {
+  FeatureFlagKey,
   Nullable,
   ObjectRecord,
   type ObjectsPermissions,
@@ -38,6 +39,7 @@ import { type FlatRowLevelPermissionPredicateGroupMaps } from 'src/engine/metada
 import { type FlatRowLevelPermissionPredicateMaps } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-maps.type';
 import { RecordAccessPolicyService } from 'src/engine/core-modules/record-share/services/record-access-policy.service';
 import { type EventRecordAccessGate } from 'src/engine/core-modules/record-share/types/event-record-access-gate.type';
+import { isRecordGrantBeyondRoleAllowed } from 'src/engine/core-modules/record-share/utils/is-record-grant-beyond-role-allowed.util';
 import { omitInheritedReadabilityChildRecords } from 'src/engine/core-modules/record-share/utils/omit-inherited-readability-child-records.util';
 import { omitRestrictedFieldsFromEvent } from 'src/engine/core-modules/record-share/utils/omit-restricted-fields-from-event.util';
 import { EventStreamService } from 'src/engine/subscriptions/event-stream.service';
@@ -65,6 +67,7 @@ type StreamPermissionsContext = {
   userWorkspaceRoleMap: UserWorkspaceRoleMap;
   rolesPermissions: ObjectsPermissionsByRoleId;
   flatApplicationMaps: FlatApplicationCacheMaps;
+  isRecordSharingEnabled: boolean;
 };
 
 @Injectable()
@@ -184,8 +187,15 @@ export class ObjectRecordEventPublisher {
 
     const objectPermissions =
       objectsPermissions[workspaceEventBatch.objectMetadata.id];
+    // The access gate then admits only the records named for the subscriber
+    // beyond their role and row filter
+    const isGrantBeyondRoleAllowed = isRecordGrantBeyondRoleAllowed({
+      flatObjectMetadata: workspaceEventBatch.objectMetadata,
+      operationType: 'select',
+      isRecordSharingEnabled: permissionsContext.isRecordSharingEnabled,
+    });
 
-    if (!objectPermissions?.canReadObjectRecords) {
+    if (!objectPermissions?.canReadObjectRecords && !isGrantBeyondRoleAllowed) {
       return;
     }
 
@@ -214,13 +224,15 @@ export class ObjectRecordEventPublisher {
       }),
     };
 
-    const subscriberRLSFilter = this.buildSubscriberRLSFilter(
-      subscriberAuthContext,
-      roleIds,
-      workspaceEventBatch.objectMetadata,
-      permissionsContext,
-      flatWorkspaceMemberMaps,
-    );
+    const subscriberRLSFilter = isGrantBeyondRoleAllowed
+      ? null
+      : this.buildSubscriberRLSFilter(
+          subscriberAuthContext,
+          roleIds,
+          workspaceEventBatch.objectMetadata,
+          permissionsContext,
+          flatWorkspaceMemberMaps,
+        );
 
     const admittedRecordIds =
       await eventRecordAccessGate.resolveAdmittedRecordIds(
@@ -233,7 +245,7 @@ export class ObjectRecordEventPublisher {
         }),
       );
 
-    const restrictedFields = objectPermissions.restrictedFields;
+    const restrictedFields = objectPermissions?.restrictedFields ?? {};
 
     for (const event of workspaceEventBatch.events) {
       const { action } = parseEventNameOrThrow(workspaceEventBatch.name);
@@ -679,6 +691,7 @@ export class ObjectRecordEventPublisher {
       userWorkspaceRoleMap,
       rolesPermissions,
       flatApplicationMaps,
+      featureFlagsMap,
     } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
       'flatRowLevelPermissionPredicateMaps',
       'flatRowLevelPermissionPredicateGroupMaps',
@@ -686,6 +699,7 @@ export class ObjectRecordEventPublisher {
       'userWorkspaceRoleMap',
       'rolesPermissions',
       'flatApplicationMaps',
+      'featureFlagsMap',
     ]);
 
     return {
@@ -695,6 +709,9 @@ export class ObjectRecordEventPublisher {
       userWorkspaceRoleMap,
       rolesPermissions,
       flatApplicationMaps,
+      isRecordSharingEnabled:
+        featureFlagsMap[FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED] ??
+        false,
     };
   }
 }

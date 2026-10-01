@@ -64,6 +64,8 @@ describe('isRecordGrantBeyondRoleAllowed', () => {
     { readability: MetadataReadability.SYSTEM, isSystem: false },
     { readability: MetadataReadability.APPLICATION, isSystem: false },
     { readability: MetadataReadability.OPEN, isSystem: true },
+    { readability: MetadataReadability.PRIVATE, isSystem: true },
+    { readability: MetadataReadability.INHERITED, isSystem: true },
   ])(
     'should never reach an object whose records cannot be shared (%o)',
     (object) => {
@@ -77,16 +79,16 @@ describe('isRecordGrantBeyondRoleAllowed', () => {
     },
   );
 
-  it('should reach a private object', () => {
-    expect(
-      isRecordGrantBeyondRoleAllowed({
-        flatObjectMetadata: {
-          ...OPEN_OBJECT,
-          readability: MetadataReadability.PRIVATE,
-        },
-        operationType: 'update',
-        isRecordSharingEnabled: true,
-      }),
-    ).toBe(true);
-  });
+  it.each([MetadataReadability.PRIVATE, MetadataReadability.INHERITED])(
+    'should reach a %s object',
+    (readability) => {
+      expect(
+        isRecordGrantBeyondRoleAllowed({
+          flatObjectMetadata: { ...OPEN_OBJECT, readability },
+          operationType: 'update',
+          isRecordSharingEnabled: true,
+        }),
+      ).toBe(true);
+    },
+  );
 });

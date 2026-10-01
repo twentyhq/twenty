@@ -27,6 +27,7 @@ export const isRecordGrantBeyondRoleAllowed = ({
   isRecordSharingEnabled: boolean;
 }): boolean =>
   isRecordSharingEnabled &&
+  !flatObjectMetadata.isSystem &&
   flatObjectMetadata.sharingReach === ObjectSharingReach.WORKSPACE &&
   OPERATION_TYPES_GRANTABLE_BEYOND_ROLE.includes(operationType) &&
   isRecordShareableObject({ flatObjectMetadata, isRecordSharingEnabled });
