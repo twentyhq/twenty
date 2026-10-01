@@ -151,6 +151,36 @@ describe('convertTipTapBlocksToMarkdown', () => {
     expect(convertTipTapBlocksToMarkdown(blocknoteBody)).toBeUndefined();
   });
 
+  it('should leave a blocknote body with a divider alone', () => {
+    const blocknoteBody = JSON.stringify([
+      {
+        id: 'b1',
+        type: 'paragraph',
+        props: {},
+        children: [],
+        content: [
+          { type: 'text', text: 'Some ', styles: {} },
+          { type: 'text', text: 'bold', styles: { bold: true } },
+        ],
+      },
+      {
+        id: 'b2',
+        type: 'divider',
+        props: {},
+        children: [],
+      },
+      {
+        id: 'b3',
+        type: 'paragraph',
+        props: {},
+        children: [],
+        content: [{ type: 'text', text: 'More text', styles: {} }],
+      },
+    ]);
+
+    expect(convertTipTapBlocksToMarkdown(blocknoteBody)).toBeUndefined();
+  });
+
   it('should leave a blocknote table alone, whose content is not an array', () => {
     const blocknoteBody = JSON.stringify([
       {

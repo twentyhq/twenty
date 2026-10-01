@@ -23,6 +23,16 @@ export const isTipTapNode = (value: unknown): value is TipTapNode => {
     return false;
   }
 
+  // BlockNote blocks always carry a top-level `id`, which TipTap nodes never
+  // have. Without this guard BlockNote JSON is mistaken for TipTap content:
+  // e.g. a BlockNote divider (`type: 'divider'`) collides with
+  // TIPTAP_NODE_TYPES.DIVIDER and sends the document through a lossy markdown
+  // round-trip that strips BlockNote `styles` (bold, italic, ...).
+  // See https://github.com/twentyhq/twenty/issues/26865
+  if (typeof value.id === 'string') {
+    return false;
+  }
+
   return (
     typeof value.type === 'string' &&
     (value.attrs === undefined || isRecord(value.attrs)) &&
