@@ -68,6 +68,8 @@ import {
   ApplicationRegistrationException,
   ApplicationRegistrationExceptionCode,
 } from 'src/engine/core-modules/application/application-registration/application-registration.exception';
+import { ApplicationTargetGuard } from 'src/engine/guards/application-target.guard';
+import { ApplicationRegistrationOwnershipGuard } from 'src/engine/guards/application-registration-ownership.guard';
 
 @UsePipes(ResolverValidationPipe)
 @MetadataResolver(() => ApplicationRegistrationEntity)
@@ -110,6 +112,7 @@ export class ApplicationRegistrationResolver {
       application: true,
     }),
     NoPermissionGuard,
+    ApplicationTargetGuard,
   )
   @Query(() => ApplicationRegistrationEntity, { nullable: true })
   async findApplicationRegistrationByUniversalIdentifier(
@@ -173,6 +176,8 @@ export class ApplicationRegistrationResolver {
       application: true,
     }),
     SettingsPermissionGuard(PermissionFlagType.API_KEYS_AND_WEBHOOKS),
+    ApplicationTargetGuard,
+    ApplicationRegistrationOwnershipGuard,
   )
   @Query(() => ApplicationRegistrationEntity)
   async findOneApplicationRegistration(
@@ -202,6 +207,8 @@ export class ApplicationRegistrationResolver {
       application: true,
     }),
     SettingsPermissionGuard(PermissionFlagType.API_KEYS_AND_WEBHOOKS),
+    ApplicationTargetGuard,
+    ApplicationRegistrationOwnershipGuard,
   )
   @Query(() => ApplicationRegistrationStatsDTO)
   async findApplicationRegistrationStats(
@@ -258,6 +265,8 @@ export class ApplicationRegistrationResolver {
       application: true,
     }),
     SettingsPermissionGuard(PermissionFlagType.API_KEYS_AND_WEBHOOKS),
+    ApplicationTargetGuard,
+    ApplicationRegistrationOwnershipGuard,
   )
   @Mutation(() => ApplicationRegistrationEntity)
   async updateApplicationRegistration(
@@ -285,6 +294,8 @@ export class ApplicationRegistrationResolver {
       application: true,
     }),
     SettingsPermissionGuard(PermissionFlagType.API_KEYS_AND_WEBHOOKS),
+    ApplicationTargetGuard,
+    ApplicationRegistrationOwnershipGuard,
   )
   @Mutation(() => Boolean)
   async deleteApplicationRegistration(
@@ -315,6 +326,8 @@ export class ApplicationRegistrationResolver {
     }),
     SettingsPermissionGuard(PermissionFlagType.API_KEYS_AND_WEBHOOKS),
     SettingsPermissionGuard(PermissionFlagType.ROLES),
+    ApplicationTargetGuard,
+    ApplicationRegistrationOwnershipGuard,
   )
   @Mutation(() => RotateClientSecretDTO)
   async rotateApplicationRegistrationClientSecret(
@@ -347,6 +360,8 @@ export class ApplicationRegistrationResolver {
       application: true,
     }),
     SettingsPermissionGuard(PermissionFlagType.API_KEYS_AND_WEBHOOKS),
+    ApplicationTargetGuard,
+    ApplicationRegistrationOwnershipGuard,
   )
   @Query(() => [ApplicationRegistrationVariableDTO])
   async findApplicationRegistrationVariables(
@@ -482,6 +497,8 @@ export class ApplicationRegistrationResolver {
       application: true,
     }),
     SettingsPermissionGuard(PermissionFlagType.API_KEYS_AND_WEBHOOKS),
+    ApplicationTargetGuard,
+    ApplicationRegistrationOwnershipGuard,
   )
   @Query(() => String, { nullable: true })
   async applicationRegistrationTarballUrl(
@@ -580,6 +597,7 @@ export class ApplicationRegistrationResolver {
       application: true,
     }),
     SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
+    ApplicationTargetGuard,
   )
   @Query(() => String)
   async githubClaimAuthorizationUrl(
@@ -623,6 +641,8 @@ export class ApplicationRegistrationResolver {
       application: false,
     }),
     SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
+    ApplicationTargetGuard,
+    ApplicationRegistrationOwnershipGuard,
   )
   @Mutation(() => ApplicationRegistrationEntity)
   async transferApplicationRegistrationOwnership(

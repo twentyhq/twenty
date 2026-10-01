@@ -52,6 +52,7 @@ import { SubscriptionChannel } from 'src/engine/subscriptions/enums/subscription
 import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
 import { wrapAsyncIteratorWithLifecycle } from 'src/engine/subscriptions/utils/wrap-async-iterator-with-lifecycle';
 import { EventLogLiveService } from 'src/engine/core-modules/event-logs/live/event-log-live.service';
+import { ApplicationTargetGuard } from 'src/engine/guards/application-target.guard';
 
 @UseGuards(
   AuthPrincipalGuard({
@@ -86,6 +87,7 @@ export class LogicFunctionResolver {
   ) {}
 
   @Query(() => LogicFunctionDTO)
+  @UseGuards(ApplicationTargetGuard)
   async findOneLogicFunction(
     @ApplicationTargetArg<LogicFunctionIdInput>('input', {
       kind: 'applicationOwnedEntity',
@@ -240,7 +242,10 @@ export class LogicFunctionResolver {
   }
 
   @Mutation(() => LogicFunctionExecutionResultDTO)
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.WORKFLOWS))
+  @UseGuards(
+    SettingsPermissionGuard(PermissionFlagType.WORKFLOWS),
+    ApplicationTargetGuard,
+  )
   async executeOneLogicFunction(
     @ApplicationTargetArg<ExecuteOneLogicFunctionInput>('input', {
       kind: 'applicationOwnedEntity',
@@ -267,7 +272,10 @@ export class LogicFunctionResolver {
   }
 
   @Query(() => String, { nullable: true })
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.WORKFLOWS))
+  @UseGuards(
+    SettingsPermissionGuard(PermissionFlagType.WORKFLOWS),
+    ApplicationTargetGuard,
+  )
   async getLogicFunctionSourceCode(
     @ApplicationTargetArg<LogicFunctionIdInput>('input', {
       kind: 'applicationOwnedEntity',
@@ -289,7 +297,10 @@ export class LogicFunctionResolver {
   }
 
   @Mutation(() => Boolean)
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.WORKFLOWS))
+  @UseGuards(
+    SettingsPermissionGuard(PermissionFlagType.WORKFLOWS),
+    ApplicationTargetGuard,
+  )
   async updateOneLogicFunction(
     @ApplicationTargetArg<UpdateLogicFunctionFromSourceInput>('input', {
       kind: 'applicationOwnedEntity',

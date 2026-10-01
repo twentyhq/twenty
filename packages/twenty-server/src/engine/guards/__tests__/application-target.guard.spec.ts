@@ -4,6 +4,7 @@ import { Reflector } from '@nestjs/core';
 import { GqlExecutionContext } from '@nestjs/graphql';
 
 import { ApplicationExceptionCode } from 'src/engine/core-modules/application/application.exception';
+import { APPLICATION_TARGET_METADATA_KEY } from 'src/engine/core-modules/application/constants/application-target-metadata-key.constant';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { ApplicationTargetArg } from 'src/engine/decorators/auth/application-target-arg.decorator';
@@ -169,15 +170,27 @@ describe('ApplicationTargetGuard', () => {
     } as unknown as WorkspaceManyOrAllFlatEntityMapsCacheService);
   });
 
-  it('should attach the guard to every decorated handler', () => {
+  it('should record the target without attaching any guard', () => {
+    expect(
+      Reflect.getMetadata(
+        APPLICATION_TARGET_METADATA_KEY,
+        TestResolver.prototype.executeLogicFunction,
+      ),
+    ).toMatchObject({
+      kind: 'applicationOwnedEntity',
+      metadataName: 'logicFunction',
+    });
     expect(
       Reflect.getMetadata(
         GUARDS_METADATA,
         TestResolver.prototype.executeLogicFunction,
       ),
-    ).toEqual([ApplicationTargetGuard]);
+    ).toBeUndefined();
     expect(
-      Reflect.getMetadata(GUARDS_METADATA, TestResolver.prototype.undecorated),
+      Reflect.getMetadata(
+        APPLICATION_TARGET_METADATA_KEY,
+        TestResolver.prototype.undecorated,
+      ),
     ).toBeUndefined();
   });
 

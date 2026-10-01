@@ -30,6 +30,7 @@ import { AllowSuspendedWorkspace } from 'src/engine/decorators/auth/allow-suspen
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { ApplicationTargetGuard } from 'src/engine/guards/application-target.guard';
 
 @Controller(`${ApiPath.Rest}/sdk-client`)
 @AllowSuspendedWorkspace()
@@ -71,7 +72,7 @@ export class SdkClientController {
   }
 
   @Get([':applicationId/:moduleName', ':applicationId/:moduleName/:checksum'])
-  @UseGuards(NoPermissionGuard)
+  @UseGuards(NoPermissionGuard, ApplicationTargetGuard)
   async getSdkModule(
     @Res() res: Response,
     @ApplicationTargetParam('applicationId', {

@@ -27,6 +27,7 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { ApplicationTargetGuard } from 'src/engine/guards/application-target.guard';
 
 @UseGuards(
   AuthPrincipalGuard({
@@ -52,6 +53,7 @@ export class ApplicationResolver {
   ) {}
 
   @Query(() => SdkClientChecksumsDTO, { nullable: true })
+  @UseGuards(ApplicationTargetGuard)
   async applicationSdkClientChecksums(
     @ApplicationTargetArg(
       'applicationId',
@@ -82,6 +84,7 @@ export class ApplicationResolver {
   // temporarily stopped and behaving in a degraded way. Kept as a dedicated
   // query so listing applications does not trigger one Redis read per app.
   @Query(() => Boolean)
+  @UseGuards(ApplicationTargetGuard)
   async isApplicationStopped(
     @ApplicationTargetArg('applicationUniversalIdentifier', {
       kind: 'applicationUniversalIdentifier',

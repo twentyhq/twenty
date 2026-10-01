@@ -12,6 +12,7 @@ import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
+import { ApplicationTargetGuard } from 'src/engine/guards/application-target.guard';
 
 @MetadataResolver()
 @UseFilters(ApplicationExceptionFilter, AuthGraphqlApiExceptionFilter)
@@ -35,7 +36,10 @@ export class ApplicationUpgradeResolver {
   ) {}
 
   @Mutation(() => Boolean)
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.APPLICATIONS))
+  @UseGuards(
+    SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
+    ApplicationTargetGuard,
+  )
   async upgradeApplication(
     @ApplicationTargetArg('appRegistrationId', {
       kind: 'applicationRegistrationId',

@@ -16,6 +16,7 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { ApplicationTargetGuard } from 'src/engine/guards/application-target.guard';
 
 @MetadataResolver()
 @UseFilters(ApplicationExceptionFilter)
@@ -40,6 +41,7 @@ export class ApplicationSchemaResolver {
   ) {}
 
   @Query(() => String)
+  @UseGuards(ApplicationTargetGuard)
   async applicationCoreGraphqlSchema(
     @ApplicationTargetArg('applicationUniversalIdentifier', {
       kind: 'applicationUniversalIdentifier',

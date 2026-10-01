@@ -39,6 +39,7 @@ import { AllowSuspendedWorkspace } from 'src/engine/decorators/auth/allow-suspen
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
+import { ApplicationTargetGuard } from 'src/engine/guards/application-target.guard';
 
 @UsePipes(ResolverValidationPipe)
 @MetadataResolver()
@@ -111,7 +112,10 @@ export class ApplicationInstallResolver {
   @Mutation(() => Boolean, {
     deprecationReason: 'Use installApplication instead',
   })
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.APPLICATIONS))
+  @UseGuards(
+    SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
+    ApplicationTargetGuard,
+  )
   async installMarketplaceApp(
     @ApplicationTargetArg('universalIdentifier', {
       kind: 'applicationUniversalIdentifier',
@@ -132,7 +136,10 @@ export class ApplicationInstallResolver {
   }
 
   @Mutation(() => ApplicationDTO)
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.APPLICATIONS))
+  @UseGuards(
+    SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
+    ApplicationTargetGuard,
+  )
   async installApplication(
     @ApplicationTargetArg('universalIdentifier', {
       kind: 'applicationUniversalIdentifier',
@@ -156,7 +163,10 @@ export class ApplicationInstallResolver {
   }
 
   @Mutation(() => TriggerInstallApplicationJobResultDTO)
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.APPLICATIONS))
+  @UseGuards(
+    SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
+    ApplicationTargetGuard,
+  )
   async triggerInstallApplicationJob(
     @ApplicationTargetArg<TriggerInstallApplicationJobInput>('input', {
       kind: 'applicationUniversalIdentifier',
@@ -173,7 +183,10 @@ export class ApplicationInstallResolver {
   }
 
   @Mutation(() => TriggerUninstallApplicationJobResultDTO)
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.APPLICATIONS))
+  @UseGuards(
+    SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
+    ApplicationTargetGuard,
+  )
   async triggerUninstallApplicationJob(
     @ApplicationTargetArg<TriggerUninstallApplicationJobInput>('input', {
       kind: 'applicationUniversalIdentifier',
@@ -190,7 +203,10 @@ export class ApplicationInstallResolver {
   }
 
   @Query(() => JobStatusDTO, { nullable: true })
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.APPLICATIONS))
+  @UseGuards(
+    SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
+    ApplicationTargetGuard,
+  )
   async findInstallApplicationJobStatus(
     @ApplicationTargetArg('universalIdentifier', {
       kind: 'applicationUniversalIdentifier',
@@ -206,7 +222,10 @@ export class ApplicationInstallResolver {
   }
 
   @Query(() => JobStatusDTO, { nullable: true })
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.APPLICATIONS))
+  @UseGuards(
+    SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
+    ApplicationTargetGuard,
+  )
   async findUninstallApplicationJobStatus(
     @ApplicationTargetArg('universalIdentifier', {
       kind: 'applicationUniversalIdentifier',
@@ -239,7 +258,10 @@ export class ApplicationInstallResolver {
   }
 
   @Mutation(() => ApplicationDTO)
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.APPLICATIONS))
+  @UseGuards(
+    SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
+    ApplicationTargetGuard,
+  )
   async updateApplication(
     @ApplicationTargetArg(
       'id',
@@ -264,7 +286,10 @@ export class ApplicationInstallResolver {
   }
 
   @Mutation(() => Boolean)
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.APPLICATIONS))
+  @UseGuards(
+    SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
+    ApplicationTargetGuard,
+  )
   async uninstallApplication(
     @ApplicationTargetArgs<UninstallApplicationInput>({
       kind: 'applicationUniversalIdentifier',

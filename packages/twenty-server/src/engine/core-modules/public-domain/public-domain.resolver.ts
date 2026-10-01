@@ -28,6 +28,7 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
+import { ApplicationTargetGuard } from 'src/engine/guards/application-target.guard';
 
 @UseGuards(
   AuthPrincipalGuard({
@@ -67,6 +68,7 @@ export class PublicDomainResolver {
   }
 
   @Mutation(() => PublicDomainDTO)
+  @UseGuards(ApplicationTargetGuard)
   async createPublicDomain(
     @ApplicationTargetArgs<CreatePublicDomainInput>({
       kind: 'applicationId',

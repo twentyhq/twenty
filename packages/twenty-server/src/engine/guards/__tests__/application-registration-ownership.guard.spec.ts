@@ -1,5 +1,4 @@
 import { type ExecutionContext } from '@nestjs/common';
-import { GUARDS_METADATA } from '@nestjs/common/constants';
 import { Reflector } from '@nestjs/core';
 import { GqlExecutionContext } from '@nestjs/graphql';
 
@@ -16,7 +15,6 @@ import { type ApplicationService } from 'src/engine/core-modules/application/app
 import { ApplicationTargetArg } from 'src/engine/decorators/auth/application-target-arg.decorator';
 import { ApplicationTargetArgs } from 'src/engine/decorators/auth/application-target-args.decorator';
 import { ApplicationRegistrationOwnershipGuard } from 'src/engine/guards/application-registration-ownership.guard';
-import { ApplicationTargetGuard } from 'src/engine/guards/application-target.guard';
 import { type WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 
 const WORKSPACE_ID = 'workspace-id';
@@ -162,18 +160,6 @@ describe('ApplicationRegistrationOwnershipGuard', () => {
         }),
       } as unknown as WorkspaceManyOrAllFlatEntityMapsCacheService,
     );
-  });
-
-  it('should attach the ownership guard only when ownership is required', () => {
-    expect(
-      Reflect.getMetadata(GUARDS_METADATA, TestResolver.prototype.ownedUpload),
-    ).toEqual([ApplicationTargetGuard, ApplicationRegistrationOwnershipGuard]);
-    expect(
-      Reflect.getMetadata(
-        GUARDS_METADATA,
-        TestResolver.prototype.nonOwnershipUpload,
-      ),
-    ).toEqual([ApplicationTargetGuard]);
   });
 
   it('should skip the check when the handler does not require ownership', async () => {
