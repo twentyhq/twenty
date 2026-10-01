@@ -145,15 +145,19 @@ it('persists each pointer and keyboard adjustment once', async () => {
     </JotaiProvider>,
   );
 
+  const input = screen.getByRole('textbox', { name: 'Log retention' });
+
   await user.click(screen.getByRole('button', { name: 'Increase value' }));
 
+  expect(input).toHaveValue('91');
   expect(onChange).toHaveBeenCalledTimes(1);
   expect(onChange).toHaveBeenLastCalledWith(91);
 
-  await user.click(screen.getByRole('textbox', { name: 'Log retention' }));
+  await user.click(input);
   await user.keyboard('{ArrowDown}');
   await user.tab();
 
+  expect(input).toHaveValue('90');
   expect(onChange).toHaveBeenCalledTimes(2);
   expect(onChange).toHaveBeenLastCalledWith(90);
 });
