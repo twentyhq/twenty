@@ -3,10 +3,9 @@ import { clsx } from 'clsx';
 import { useContext } from 'react';
 
 import { Loader } from '@ui/primitives/feedback/Loader/Loader';
-import { ButtonHotkeys } from '@ui/primitives/input/Button/internal/ButtonHotKeys';
+import { Shortcut } from '@ui/primitives/typography/Shortcut/Shortcut';
 import { ButtonGroupContext } from '@ui/primitives/input/ButtonGroup/internal/ButtonGroupContext';
 import { mergeClassNames } from '@ui/utilities/internal/mergeClassNames';
-import { useIsMobile } from '@ui/utilities';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import styles from './Button.module.scss';
@@ -21,7 +20,8 @@ export const Button = ({
   elevated = false,
   startIcon,
   endIcon,
-  hotkeys,
+  shortcut,
+  shortcutJoinLabel,
   disabled = false,
   href,
   render,
@@ -33,7 +33,6 @@ export const Button = ({
   const resolvedVariant = buttonGroup?.variant ?? variant;
   const resolvedColor = buttonGroup?.color ?? color;
   const resolvedSize = buttonGroup?.size ?? size;
-  const isMobile = useIsMobile();
   const isLink = isDefined(href);
   const linkProps = isLink ? { href } : undefined;
 
@@ -68,7 +67,15 @@ export const Button = ({
             {endIcon}
           </span>
         )}
-        {isDefined(hotkeys) && !isMobile && <ButtonHotkeys hotkeys={hotkeys} />}
+        {isDefined(shortcut) && (
+          <Shortcut
+            shortcut={shortcut}
+            sequenceJoinLabel={shortcutJoinLabel}
+            variant="button"
+            visibility="desktop"
+            aria-hidden
+          />
+        )}
       </span>
       {loading && (
         <span className={styles.loader} aria-hidden>

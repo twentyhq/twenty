@@ -31,4 +31,5 @@ export default defineField({
     joinColumnName: 'lastMeetingId',
   },
   isUIEditable: false,
+  isAuditLogged: false,
 });
