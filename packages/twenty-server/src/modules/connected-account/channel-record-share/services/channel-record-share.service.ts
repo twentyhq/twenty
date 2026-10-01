@@ -1,5 +1,9 @@
 import { Injectable } from '@nestjs/common';
 
+import {
+  type CalendarChannelVisibility,
+  type MessageChannelVisibility,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
@@ -46,19 +50,17 @@ export class ChannelRecordShareService {
     );
   }
 
-  // The channel and its grants live in different schemas, so a failed sync
-  // puts the previous visibility back rather than leave them disagreeing. The
-  // whole change runs under the channel's sync lock, so the rollback cannot
-  // undo a change made in the meantime.
+  // The channel row lives in core and its grants in the workspace schema, so
+  // the visibility is written inside the grants transaction to commit or roll
+  // back with them.
   async changeChannelVisibility({
     workspaceId,
     source,
     channelId,
-    applyVisibilityChange,
+    visibility,
   }: Omit<SyncChannelRecordSharesArgs, 'recordIds'> & {
     workspaceId: string;
-    // Returns how to revert the change, or nothing when visibility is unchanged.
-    applyVisibilityChange: () => Promise<(() => Promise<unknown>) | undefined>;
+    visibility: MessageChannelVisibility | CalendarChannelVisibility;
   }): Promise<void> {
     await this.workspaceOrmManager.executeInWorkspaceContext(
       () =>
@@ -66,23 +68,23 @@ export class ChannelRecordShareService {
           async (transactionScope) => {
             await this.lockChannel({ transactionScope, channelId });
 
-            const revertVisibilityChange = await applyVisibilityChange();
+            const changedChannels = await transactionScope.executeRawQuery(
+              `UPDATE core."${source.channelTableName}"
+                SET visibility = $3, "updatedAt" = now()
+                WHERE id = $1 AND "workspaceId" = $2 AND visibility IS DISTINCT FROM $3
+                RETURNING id`,
+              [channelId, workspaceId, visibility],
+            );
 
-            if (!isDefined(revertVisibilityChange)) {
+            if (changedChannels.length === 0) {
               return;
             }
 
-            try {
-              await this.syncChannelRecordSharesInTransaction({
-                transactionScope,
-                source,
-                channelId,
-              });
-            } catch (error) {
-              await revertVisibilityChange();
-
-              throw error;
-            }
+            await this.syncChannelRecordSharesInTransaction({
+              transactionScope,
+              source,
+              channelId,
+            });
           },
         ),
       buildSystemAuthContext(workspaceId),

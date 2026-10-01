@@ -170,45 +170,24 @@ export class CalendarChannelMetadataService {
     workspaceId: string;
     data: Partial<CalendarChannelEntity>;
   }): Promise<CalendarChannelDTO> {
-    if (!isDefined(data.visibility)) {
-      await this.repository.update(
-        { id, workspaceId },
-        data as Record<string, unknown>,
-      );
+    const { visibility, ...otherFields } = data;
 
-      return this.repository.findOneOrFail({ where: { id, workspaceId } });
+    // Written first so that a failed grant sync leaves the channel untouched
+    if (isDefined(visibility)) {
+      await this.channelRecordShareService.changeChannelVisibility({
+        workspaceId,
+        source: CALENDAR_EVENT_CHANNEL_RECORD_SHARE_SOURCE,
+        channelId: id,
+        visibility,
+      });
     }
 
-    const visibility = data.visibility;
-
-    await this.channelRecordShareService.changeChannelVisibility({
-      workspaceId,
-      source: CALENDAR_EVENT_CHANNEL_RECORD_SHARE_SOURCE,
-      channelId: id,
-      applyVisibilityChange: async () => {
-        const previousCalendarChannel = await this.repository.findOne({
-          where: { id, workspaceId },
-        });
-
-        await this.repository.update(
-          { id, workspaceId },
-          data as Record<string, unknown>,
-        );
-
-        if (
-          !isDefined(previousCalendarChannel) ||
-          previousCalendarChannel.visibility === visibility
-        ) {
-          return undefined;
-        }
-
-        return () =>
-          this.repository.update(
-            { id, workspaceId },
-            { visibility: previousCalendarChannel.visibility },
-          );
-      },
-    });
+    if (Object.keys(otherFields).length > 0) {
+      await this.repository.update(
+        { id, workspaceId },
+        otherFields as Record<string, unknown>,
+      );
+    }
 
     return this.repository.findOneOrFail({ where: { id, workspaceId } });
   }
