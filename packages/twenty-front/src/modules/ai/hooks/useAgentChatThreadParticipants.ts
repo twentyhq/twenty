@@ -7,6 +7,8 @@ import { useToast } from 'twenty-ui/components';
 
 import { useApplyAgentChatThreadUpdate } from '@/ai/hooks/useApplyAgentChatThreadUpdate';
 import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
+import { agentChatThreadUnreadSinceState } from '@/ai/states/agentChatThreadUnreadSinceState';
+import { hasLoadedAgentChatThreadParticipantsState } from '@/ai/states/hasLoadedAgentChatThreadParticipantsState';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
@@ -66,6 +68,7 @@ export const useAgentChatThreadParticipants = () => {
       return;
     }
 
+    store.set(hasLoadedAgentChatThreadParticipantsState.atom, true);
     store.set(
       agentChatThreadParticipantsState.atom,
       Object.fromEntries(
@@ -218,6 +221,15 @@ export const useAgentChatThreadParticipants = () => {
         threadId
       ];
 
+      // Writing in a thread catches the member up, so its unread line goes
+      const unreadSince = store.get(agentChatThreadUnreadSinceState.atom);
+
+      if (unreadSince?.threadId === threadId) {
+        store.set(agentChatThreadUnreadSinceState.atom, {
+          ...unreadSince,
+          isUnread: false,
+        });
+      }
       applyAgentChatThreadUpdate({ id: threadId, lastActivityAt: activityAt });
       setParticipantState(threadId, {
         lastReadAt: activityAt,
