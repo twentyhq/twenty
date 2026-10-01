@@ -1,4 +1,5 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { fn } from 'storybook/test';
 
 import { A11Y_DEFER_COLOR_CONTRAST, ComponentDecorator } from '@ui/testing';
 
@@ -8,7 +9,7 @@ import { IMAGE_INPUT_PREVIEW_URL } from './imageInputPreviewUrl';
 const meta: Meta<typeof ImageInput> = {
   title: 'UI/Input/ImageInput',
   component: ImageInput,
-  args: { onUpload: () => {}, onRemove: () => {} },
+  args: { onUpload: fn(), onRemove: fn() },
   decorators: [ComponentDecorator],
   parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
 };
@@ -34,7 +35,7 @@ export const Disabled: Story = {
 };
 
 export const Uploading: Story = {
-  args: { isUploading: true, onAbort: () => {} },
+  args: { isUploading: true, onAbort: fn() },
 };
 
 export const WithError: Story = {
@@ -51,7 +52,8 @@ export const Dark: Story = {
 
 export const RightToLeft: Story = {
   args: {
-    ...WithHelperText.args,
+    src: IMAGE_INPUT_PREVIEW_URL,
+    helperText: 'Choose a square image for your workspace.',
     dir: 'rtl',
   },
 };

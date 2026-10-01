@@ -45,9 +45,8 @@ export const NativeButtonsInForm: Story = {
   ),
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
-    const [previewButton, uploadButton] = canvas.getAllByRole('button', {
-      name: 'Upload',
-    });
+    const previewButton = canvas.getByRole('presentation').closest('button');
+    const uploadButton = canvas.getByText('Upload').closest('button');
     if (!isDefined(previewButton) || !isDefined(uploadButton)) {
       throw new Error('The image selector must provide both upload buttons.');
     }
@@ -206,12 +205,18 @@ export const LabelsAndError: Story = {
 };
 
 export const PreviewFallbackAndRecovery: Story = {
-  render: () => <ImageInputPreviewChangesExample />,
+  render: (args) => <ImageInputPreviewChangesExample {...args} />,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    const [previewButton] = canvas.getAllByRole('button', { name: 'Upload' });
+    const previewButton = canvas.getByRole('presentation').closest('button');
+
+    if (!isDefined(previewButton)) {
+      throw new Error('The image preview must provide an upload button.');
+    }
 
     await expect(await canvas.findByRole('presentation')).toBeVisible();
+    await expect(previewButton).toBeEnabled();
+    await expect(canvas.getByRole('button', { name: 'Remove' })).toBeEnabled();
     await userEvent.click(
       canvas.getByRole('button', { name: 'Break preview' }),
     );
