@@ -201,9 +201,6 @@ type SeededWorkflow = {
   step: WorkflowAction;
 };
 
-// Seeds workflow runs waiting on a person, and runs whose wait is over, so
-// the run view, the paused conversations and every kind of card can be tried
-// without calling a model.
 @Injectable()
 export class DevSeederWorkflowPendingInputWorkspaceService {
   constructor(
@@ -382,8 +379,6 @@ export class DevSeederWorkflowPendingInputWorkspaceService {
     }
   }
 
-  // Parks the run's step the way the executor parks a step that waits on a
-  // person, once its conversation is recorded.
   private async seedPausedRun({
     workspaceId,
     workflowRunId,
@@ -431,8 +426,6 @@ export class DevSeederWorkflowPendingInputWorkspaceService {
     });
   }
 
-  // Records the answer in the form's conversation as answering it would,
-  // without resuming the run.
   private async recordFormAnswer({
     workspaceId,
     workflowRunId,

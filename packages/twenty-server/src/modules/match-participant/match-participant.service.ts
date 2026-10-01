@@ -94,14 +94,11 @@ export class MatchParticipantService<
     matchWith = 'workspaceMemberAndPerson',
     transactionScope,
   }: MatchParticipantsArgs<ParticipantWorkspaceEntity>) {
-    // Desired targets derive from personId only, so a workspaceMemberOnly
-    // rematch can never change them; skip the recompute in that case.
+    // Targets derive from personId only, so a workspaceMemberOnly rematch cannot change them
     const shouldReconcileTargets = matchWith !== 'workspaceMemberOnly';
 
-    // A source whose handles are not email addresses has no matching to do:
-    // looking every handle up as an email would find nothing and write
-    // personId back to null, erasing the identities the caller supplied. The
-    // targets still have to be built, so reconcile and stop there.
+    // Sources with non-email handles only reconcile targets: matching them as emails would null out the
+    // caller-supplied personId
     if (matchWith === 'targetsOnly') {
       await this.participantTargetReconciliationService.reconcileParticipantTargets(
         {

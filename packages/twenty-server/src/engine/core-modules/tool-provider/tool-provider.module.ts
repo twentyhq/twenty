@@ -43,15 +43,8 @@ import { EmailingModule } from 'src/modules/emailing/emailing.module';
 import { ToolIndexResolver } from './resolvers/tool-index.resolver';
 import { ToolRegistryService } from './services/tool-registry.service';
 
-// NOTE: This module does NOT import WorkflowToolsModule or DashboardToolsModule
-// directly: their service graphs transitively reach AiAgentExecutionModule which
-// forwardRef's back into ToolProviderModule. Those two @Global() modules provide
-// a service token that their respective providers consume via @Optional()
-// @Inject, breaking the cycle.
-//
-// Webhook and NavigationMenuItem do NOT have that cycle, so we import their
-// entity modules directly and the providers inject the services the normal way
-// (same pattern as views/objects/metadata).
+// Workflow and Dashboard tools modules reach AiAgentExecutionModule, which forwardRefs back here,
+// so their @Global() modules provide tokens consumed via @Optional() @Inject instead of being imported.
 
 @Module({
   imports: [
@@ -94,10 +87,7 @@ import { ToolRegistryService } from './services/tool-registry.service';
     WebhookToolProvider,
     WorkflowToolProvider,
     {
-      // TOOL_PROVIDERS contains only providers implementing ToolProvider
-      // (registry tools with descriptors). The native tool binder is a
-      // parallel concept and is exported for surfaces that bind SDK-native
-      // tools directly into their model ToolSet.
+      // Only ToolProvider implementations; the native tool binder is exported separately.
       provide: TOOL_PROVIDERS,
       useFactory: (
         actionProvider: ActionToolProvider,

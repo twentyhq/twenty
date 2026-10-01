@@ -90,8 +90,6 @@ export class UpdateRecordService {
         };
       }
 
-      // Clean undefined values from the record data (including nested composite fields)
-      // This prevents validation errors for partial composite field inputs
       const cleanedRecord = removeUndefinedFromRecord(filteredObjectRecord);
 
       const { results: updatedRecord } =

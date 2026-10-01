@@ -34,9 +34,6 @@ export class UserRoleService {
     private readonly roleValidationService: RoleValidationService,
   ) {}
 
-  // Resolves a workspace member to its user workspace and assigns the role,
-  // enforcing the self-role-change and assignability rules for every surface
-  // (GraphQL, AI tools, future REST/CLI).
   public async assignRoleToWorkspaceMember({
     workspaceId,
     workspaceMemberId,
@@ -70,8 +67,7 @@ export class UserRoleService {
       );
     }
 
-    // Checked before role validation so a self-assignment fails with the
-    // self-role error even when the supplied role does not exist.
+    // Before role validation so a self-assignment reports the self-role error even for an unknown role
     this.validateNotSelfAssignmentOrThrow({
       userWorkspaceIds: [userWorkspace.id],
       actingUserWorkspaceId,

@@ -1,9 +1,7 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type RecordGqlOperationFilter } from 'twenty-shared/types';
 
-// Deleted chats stay listed so they can be restored. Anyone who reads a
-// workflow run reads its agent's conversations, which belong to the run
-// rather than to the chat list
+// Deleted chats stay listed for restore; workflow run conversations belong to the run, not the list.
 export const buildAgentChatThreadListFilter = (
   chatObjectMetadataItem: Pick<EnrichedObjectMetadataItem, 'fields'>,
 ): RecordGqlOperationFilter => {

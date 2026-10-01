@@ -16,10 +16,6 @@ export const useCaptcha = () => {
   const isSiteKeyDefined = isDefined(captcha?.siteKey);
   const isTokenAvailable = isDefined(captchaToken);
 
-  // Captcha is ready when:
-  // - Client config is loaded
-  // - And either captcha is not configured with a site key (no captcha required)
-  // - Or, when configured, a captcha token is available
   const isCaptchaReady =
     isClientConfigLoaded && (!isSiteKeyDefined || isTokenAvailable);
 

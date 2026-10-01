@@ -1,17 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
-// A locale file is authored by hand, so its shape is optimized for reading:
-// context-free messages sit at the top level, and contextual messages are
-// grouped under their context so a translator sees the role ('Invoice' under
-// objectMetadata.labelSingular is an object name, not a field label).
-//
-// {
-//   "Saved {count} cards": "{count} cartes enregistrées",
-//   "objectMetadata.labelSingular": { "Invoice": "Facture" }
-// }
-//
-// A string value is a translation, an object value is a context group -- which
-// is also how the two are told apart when reading.
+// Hand-authored: messages at the top level, contextual ones grouped under their context (string = translation, object = group)
 export type LocaleCatalogEntry = {
   message: string;
   context?: string;

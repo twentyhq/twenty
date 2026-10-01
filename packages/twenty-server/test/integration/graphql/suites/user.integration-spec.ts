@@ -68,7 +68,6 @@ describe('deleteUser', () => {
   });
 
   it('should soft delete user and remove workspace relations when deleting a user in their only workspace', async () => {
-    // 1.  Arrange
     // Enable public invite link to allow sign up without personal token
     const enablePublicInviteLinkMutation = {
       query: `

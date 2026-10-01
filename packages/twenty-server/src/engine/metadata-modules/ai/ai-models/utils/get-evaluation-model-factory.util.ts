@@ -4,9 +4,7 @@ type EvaluationCapableProvider = {
   evaluationModel: (modelId: string) => AiEvaluationModel;
 };
 
-// Duck-typed rather than keyed by npm package: any provider exposing the SDK's
-// evaluation factory qualifies, so a gateway proxying several evaluation models
-// needs no entry here.
+// duck-typed so a gateway proxying evaluation models needs no entry here
 const hasEvaluationFactory = (
   provider: unknown,
 ): provider is EvaluationCapableProvider =>

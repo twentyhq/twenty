@@ -3,9 +3,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { flattenLocaleCatalog } from '@/cli/utilities/translations/locale-catalog-format';
 
-// Authoring files are keyed readable (context groups + plain messages) for
-// translators; runtime lookups are by message id, so every consumer compiles
-// through here.
+// Authoring files are keyed readably for translators; runtime lookups are by message id
 export const compileCatalogToMessageIds = ({
   catalog,
   onCollision,

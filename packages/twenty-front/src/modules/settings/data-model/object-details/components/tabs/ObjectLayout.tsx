@@ -68,8 +68,7 @@ export const ObjectLayout = ({ objectMetadataItem }: ObjectLayoutProps) => {
       return;
     }
 
-    // Customizing a layout takes over the whole page, so it is the main outlet
-    // that has to move even when this settings page is hosted in the panel.
+    // Customizing a layout takes over the whole page, so it targets the main outlet even from the panel
     navigateApp(
       AppPath.RecordShowPage,
       {

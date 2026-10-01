@@ -39,8 +39,6 @@ export const useAnswerFormStep = ({
       fetchPolicy: 'network-only',
     });
 
-  // A form step's call is named after the step, in the conversation its
-  // current execution recorded.
   const answerFormStep = async (
     response: Record<string, unknown>,
   ): Promise<boolean> => {

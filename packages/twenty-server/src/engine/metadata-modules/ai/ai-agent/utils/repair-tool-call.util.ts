@@ -44,7 +44,6 @@ export const repairToolCall = async ({
   model: LanguageModel;
   billingContext?: RepairToolCallBillingContext;
 }): Promise<ToolCall | null> => {
-  // Don't attempt to fix invalid tool names
   if (NoSuchToolError.isInstance(error)) {
     return null;
   }
