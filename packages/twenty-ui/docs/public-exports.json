@@ -30,7 +30,6 @@
       "MenuItemDraggable": "components/navigation/MenuItemDraggable/MenuItemDraggable",
       "MenuItemSuggestion": "components/navigation/MenuItemSuggestion/MenuItemSuggestion",
       "MenuPicker": "components/navigation/MenuPicker/MenuPicker",
-      "NavigationBar": "components/navigation/NavigationBar/NavigationBar",
       "NotificationCounter": "components/data-display/NotificationCounter/NotificationCounter",
       "SearchInput": "components/input/SearchInput/SearchInput",
       "Section": "components/layout/Section/Section",

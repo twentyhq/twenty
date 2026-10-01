@@ -6,7 +6,6 @@ import {
   MenuItemDraggable,
   MenuItemSuggestion,
   MenuPicker,
-  NavigationBar,
 } from 'twenty-ui/components';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { IconHome, IconUser } from 'twenty-ui/icon';
@@ -171,17 +170,6 @@ const NAVIGATION_ENTRIES: GalleryEntry[] = [
   {
     name: 'MenuPicker',
     node: <MenuPicker id="picker-1" icon={IconHome} label="Picker" />,
-  },
-  {
-    name: 'NavigationBar',
-    node: (
-      <NavigationBar
-        activeItemName="home"
-        items={[
-          { name: 'home', label: 'Home', Icon: IconHome, onClick: () => {} },
-        ]}
-      />
-    ),
   },
 ];
 

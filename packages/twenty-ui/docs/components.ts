@@ -15,7 +15,6 @@ import { MENU_ITEM_AVATAR_PROP_DESCRIPTIONS } from './menuItemAvatarPropDescript
 import { MENU_ITEM_DRAGGABLE_PROP_DESCRIPTIONS } from './menuItemDraggablePropDescriptions';
 import { MENU_ITEM_SUGGESTION_PROP_DESCRIPTIONS } from './menuItemSuggestionPropDescriptions';
 import { MENU_PICKER_PROP_DESCRIPTIONS } from './menuPickerPropDescriptions';
-import { NAVIGATION_BAR_PROP_DESCRIPTIONS } from './navigationBarPropDescriptions';
 import { THEME_PROVIDER_PROP_DESCRIPTIONS } from './themeProviderPropDescriptions';
 import { ICON_PROP_DESCRIPTIONS } from './iconPropDescriptions';
 import { ICONS_PROVIDER_PROP_DESCRIPTIONS } from './iconsProviderPropDescriptions';
@@ -617,13 +616,6 @@ export const DOCUMENTED_COMPONENTS = [
     entryPoint: 'twenty-ui/components',
     slug: 'components/menu-picker',
     propDescriptions: MENU_PICKER_PROP_DESCRIPTIONS,
-  },
-  {
-    name: 'NavigationBar',
-    source: 'components/navigation/NavigationBar/NavigationBar.tsx',
-    entryPoint: 'twenty-ui/components',
-    slug: 'components/navigation-bar',
-    propDescriptions: NAVIGATION_BAR_PROP_DESCRIPTIONS,
   },
   {
     name: 'ThemeProvider',
