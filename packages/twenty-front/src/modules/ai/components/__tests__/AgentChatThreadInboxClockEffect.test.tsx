@@ -33,6 +33,7 @@ const renderClock = (
 
 describe('AgentChatThreadInboxClockEffect', () => {
   beforeEach(() => {
+    localStorage.clear();
     jest.useFakeTimers().setSystemTime(NOW);
   });
 
