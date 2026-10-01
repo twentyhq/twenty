@@ -53,6 +53,7 @@ export const useCoreWorkflowsSelection = <
   return {
     displayedCoreWorkflows: coreWorkflows,
     selectedRowIds,
+    selectedRowCount: selectionRowIds.length,
     toggleRow,
     selectRows,
   };

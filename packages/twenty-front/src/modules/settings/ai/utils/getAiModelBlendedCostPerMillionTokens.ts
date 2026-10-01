@@ -2,8 +2,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type ClientAiModelConfig } from '~/generated-metadata/graphql';
 
-// The 3:1 input to output split Artificial Analysis uses for its blended price,
-// so the number lines up with what a reader will find on their site.
+// Artificial Analysis's 3:1 input/output blend, so the number matches their site.
 const INPUT_WEIGHT = 3;
 const OUTPUT_WEIGHT = 1;
 

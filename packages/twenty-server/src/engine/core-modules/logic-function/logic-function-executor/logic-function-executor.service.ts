@@ -153,8 +153,7 @@ export class LogicFunctionExecutorService {
         logicFunctionId,
       });
 
-    // Checked before the shared workspace throttle so a flood from a stopped
-    // application cannot exhaust the token bucket of the other applications.
+    // Before the shared workspace throttle so a stopped app's flood cannot drain other apps' token bucket.
     await this.assertApplicationNotStopped(flatApplication);
 
     await this.throttleExecution(workspaceId);
@@ -443,8 +442,7 @@ export class LogicFunctionExecutorService {
     userWorkspaceId?: string;
     workspaceDeletionRequestTimestamp?: string;
   }) {
-    // Two tokens so a handler can choose per call which access it acts with,
-    // rather than the whole run being locked to one of them.
+    // Two tokens so a handler can choose per call which access it acts with.
     const hasTriggeringPerson = isDefined(userId) && isDefined(userWorkspaceId);
 
     const [applicationAccessToken, delegatedAccessToken] = await Promise.all([
@@ -490,8 +488,7 @@ export class LogicFunctionExecutorService {
       ...serverVariables,
       ...workspaceVariables,
       [DEFAULT_API_URL_NAME]: baseUrl ?? '',
-      // Falls back to the application when nobody triggered the run, so a cron
-      // schedule or an install hook keeps working without asking for anything.
+      // Falls back to the application so cron schedules and install hooks work with nobody triggering.
       [DEFAULT_APP_ACCESS_TOKEN_NAME]: (
         delegatedAccessToken ?? applicationAccessToken
       ).token,
@@ -651,11 +648,7 @@ export class LogicFunctionExecutorService {
         functionName: flatLogicFunction.name,
       });
 
-    // Billing-exempt apps (first-party maintenance apps whose per-record
-    // triggers fire during mailbox/calendar import) do not consume the
-    // workspace's credits for the execution itself. Explicit chargeCredits
-    // calls and AI token usage from within the function are billed separately
-    // and stay untouched.
+    // Billing-exempt apps skip the invocation charge; their explicit chargeCredits and AI usage are still billed.
     const { invocationCreditsMicro, durationCreditsMicro, billedDurationMs } =
       computeLogicFunctionExecutionCreditsMicro({
         durationMs: result.billedDurationMs,

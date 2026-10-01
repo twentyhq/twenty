@@ -65,8 +65,7 @@ export const RouteContextStoreProviderEffect = ({
       return;
     }
 
-    // The sidebar links each object to the view last opened on it, so writing
-    // this from the panel would move where the left side takes you next.
+    // The sidebar links each object to its last opened view; the side panel must not move it.
     if (!isMainSurface) {
       return;
     }

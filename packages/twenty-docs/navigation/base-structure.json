@@ -568,7 +568,8 @@
                   "pages": [
                     "ui/primitives/feedback/banner",
                     "ui/primitives/feedback/loader",
-                    "ui/primitives/feedback/progress-bar"
+                    "ui/primitives/feedback/progress-bar",
+                    "ui/primitives/feedback/progress-ring"
                   ]
                 },
                 {
@@ -656,7 +657,7 @@
                 "ui/components/json-tree",
                 "ui/components/menu-items",
                 "ui/components/menu-picker",
-                "ui/components/navigation-bar",
+                "ui/components/metric-row",
                 "ui/components/notification-counter",
                 "ui/components/search-input",
                 "ui/components/tinted-icon-tile"

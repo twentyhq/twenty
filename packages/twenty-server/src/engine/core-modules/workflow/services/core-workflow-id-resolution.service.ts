@@ -54,8 +54,7 @@ export class CoreWorkflowIdResolutionService {
     return resolved;
   }
 
-  // Everything that reaches a workflow by id comes through here, so this is
-  // where a workflow private to someone else stops being resolvable at all.
+  // Every by-id access goes through here, so this is where a private workflow stops resolving.
   async resolveWorkspaceVersionIdIfCoreVersionExists({
     workspaceId,
     userWorkspaceId,
@@ -84,6 +83,16 @@ export class CoreWorkflowIdResolutionService {
         coreWorkflowVersionIds: [coreWorkflowVersion.id],
       },
     );
+
+    if (isDefined(coreWorkflowVersion.coreWorkflowId)) {
+      await this.coreWorkflowAccessService.assertCoreWorkflowsAreEditableOrThrow(
+        {
+          workspaceId,
+          userWorkspaceId,
+          coreWorkflowIds: [coreWorkflowVersion.coreWorkflowId],
+        },
+      );
+    }
 
     const workspaceWorkflowVersionId =
       coreWorkflowVersion.workspaceWorkflowVersionId;
@@ -131,9 +140,11 @@ export class CoreWorkflowIdResolutionService {
       );
     }
 
-    await this.coreWorkflowAccessService.assertCoreWorkflowsAreAccessibleOrThrow(
-      { workspaceId, userWorkspaceId, coreWorkflowIds: [coreWorkflow.id] },
-    );
+    await this.coreWorkflowAccessService.assertCoreWorkflowsAreEditableOrThrow({
+      workspaceId,
+      userWorkspaceId,
+      coreWorkflowIds: [coreWorkflow.id],
+    });
 
     const workspaceWorkflowId = coreWorkflow.workspaceWorkflowId;
 

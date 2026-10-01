@@ -32,11 +32,8 @@ export class SecureHttpClientService {
 
   constructor(private readonly twentyConfigService: TwentyConfigService) {}
 
-  // Returns an SSRF-protected HTTP client for external requests.
-  // Protection is enforced at the connection level via custom agents
-  // that validate resolved IPs, which covers redirects automatically.
-  // When context is provided, outbound requests are logged with
-  // workspace/user info for GuardDuty correlation.
+  // SSRF protection is enforced at connection level by validating resolved IPs, which also covers redirects.
+  // With a context, outbound requests are logged with workspace/user info for GuardDuty correlation.
   getHttpClient(
     config?: SecureHttpClientConfig,
     context?: OutboundRequestContext,
@@ -102,8 +99,7 @@ export class SecureHttpClientService {
     return client;
   }
 
-  // Returns a plain HTTP client for requests to trusted internal URLs
-  // (e.g., the server's own API endpoints). Not SSRF-protected.
+  // Not SSRF-protected: trusted internal URLs only.
   getInternalHttpClient(config?: CreateAxiosDefaults): AxiosInstance {
     return axios.create(config);
   }
@@ -116,8 +112,7 @@ export class SecureHttpClientService {
     return buildAxiosFetch(this.getHttpClient()) as typeof globalThis.fetch;
   }
 
-  // For libraries that own their HTTP stack and only accept an agent
-  // (openid-client). Undefined means no restriction.
+  // For libraries that only accept an agent (openid-client); undefined means no restriction.
   getSsrfSafeAgent(url: URL): http.Agent | undefined {
     const allowedInternalHosts = this.getAllowedInternalHosts();
 
@@ -142,8 +137,7 @@ export class SecureHttpClientService {
   }
 
   private getAllowedInternalHosts(): string[] {
-    // OUTBOUND_HTTP_SAFE_MODE_ENABLED is deprecated but still honoured so
-    // self-hosted setups that turned it off keep working after upgrading.
+    // Deprecated but still honoured so self-hosted setups that disabled it keep working.
     if (
       this.twentyConfigService.get('OUTBOUND_HTTP_SAFE_MODE_ENABLED') === false
     ) {

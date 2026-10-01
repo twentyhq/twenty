@@ -110,7 +110,7 @@ export const WorkflowEditTriggerWebhookForm = ({
               { computeOutputSchema: false },
             );
           }}
-          dropdownOffset={{ y: 4 }}
+          dropdownSideOffset={4}
           dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
         />
         {trigger.settings.httpMethod === 'POST' && (

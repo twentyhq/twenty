@@ -115,8 +115,7 @@ export const RecordTableBodyDragDropContextProvider = ({
       return;
     }
 
-    // Row targets and end drop zones mark the gap before them; convert that
-    // gap into the index the dragged row will occupy after the move.
+    // Drop targets mark the gap before them; convert it to the dragged row's final index.
     const destinationIndex = getDestinationIndex({
       dropTargetIndex: resolvedDrop.dropTargetIndex,
       sourceIndex: sourceData.index,
