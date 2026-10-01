@@ -4,6 +4,7 @@ import { type FeatureFlagService } from 'src/engine/core-modules/feature-flag/se
 import { type AgentInboxService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-inbox.service';
 import { type WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { WorkflowStepExecutorExceptionCode } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
+import { createMockIteratorStep } from 'src/modules/workflow/workflow-executor/utils/create-mock-workflow-steps.util';
 import { SendChatMessageWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/send-chat-message/send-chat-message.workflow-action';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { type WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
@@ -82,11 +83,46 @@ describe('SendChatMessageWorkflowAction', () => {
       input: {
         workspaceMemberId: WORKSPACE_MEMBER_ID,
         threadKey: WORKFLOW_RUN_ID,
-        idempotencyKey: expect.stringMatching(/^step-1:/),
+        idempotencyKey: 'step-1',
         title: 'New deal: Acme',
         text: '**Acme** just signed.',
       },
     });
+  });
+
+  it('sends each iteration once, even when two iterations say the same thing', async () => {
+    const input = {
+      workspaceMemberId: WORKSPACE_MEMBER_ID,
+      title: 'Daily digest',
+      message: 'Same message every time',
+    };
+    const steps = [
+      createMockIteratorStep('iterator', [], ['step-1']),
+      { ...buildStep(input), nextStepIds: ['iterator'] } as WorkflowAction,
+    ];
+    const runIteration = (currentItemIndex: number) =>
+      action.execute({
+        currentStepId: 'step-1',
+        steps,
+        context: {
+          iterator: { currentItemIndex, hasProcessedAllItems: false },
+        },
+        runInfo: { workflowRunId: WORKFLOW_RUN_ID, workspaceId: WORKSPACE_ID },
+      });
+
+    await runIteration(0);
+    await runIteration(0);
+    await runIteration(1);
+
+    const idempotencyKeys = sendMessage.mock.calls.map(
+      ([{ input: sentInput }]) => sentInput.idempotencyKey,
+    );
+
+    expect(idempotencyKeys).toEqual([
+      'step-1:iterator=0',
+      'step-1:iterator=0',
+      'step-1:iterator=1',
+    ]);
   });
 
   it('titles the conversation with the step name when no title is set', async () => {

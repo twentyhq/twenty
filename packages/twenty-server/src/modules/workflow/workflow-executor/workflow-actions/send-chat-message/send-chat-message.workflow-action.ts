@@ -17,10 +17,10 @@ import {
 } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
 import { type WorkflowActionInput } from 'src/modules/workflow/workflow-executor/types/workflow-action-input.type';
 import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executor/types/workflow-action-output.type';
+import { buildStepExecutionKey } from 'src/modules/workflow/workflow-executor/utils/build-step-execution-key.util';
 import { findStepOrThrow } from 'src/modules/workflow/workflow-executor/utils/find-step-or-throw.util';
 import { isWorkflowSendChatMessageAction } from 'src/modules/workflow/workflow-executor/workflow-actions/send-chat-message/guards/is-workflow-send-chat-message-action.guard';
 import { type WorkflowSendChatMessageActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/send-chat-message/types/workflow-send-chat-message-action-input.type';
-import { buildSendChatMessageIdempotencyKey } from 'src/modules/workflow/workflow-executor/workflow-actions/send-chat-message/utils/build-send-chat-message-idempotency-key.util';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 
 @Injectable()
@@ -100,10 +100,10 @@ export class SendChatMessageWorkflowAction implements WorkflowAction {
       input: {
         workspaceMemberId,
         threadKey: runInfo.workflowRunId,
-        idempotencyKey: buildSendChatMessageIdempotencyKey({
+        idempotencyKey: buildStepExecutionKey({
           stepId: currentStepId,
-          title,
-          message,
+          steps,
+          context,
         }),
         title: isNonEmptyString(title) ? title : step.name,
         text: message,
