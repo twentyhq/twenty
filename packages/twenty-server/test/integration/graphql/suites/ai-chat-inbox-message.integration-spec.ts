@@ -15,6 +15,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { type MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
+import { buildInboxMessageIds } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-inbox-message-ids.util';
 import { type AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -301,12 +302,12 @@ describe('Sending an inbox message as an application', () => {
       failMessagePartsSpy.mockRestore();
     }
 
-    const failedThreadId = (
-      await global.testDataSource.query(
-        `SELECT id FROM "${schema}"."agentChatThread" WHERE title = $1 ORDER BY "createdAt" DESC LIMIT 1`,
-        [input.title],
-      )
-    )[0]?.id as string;
+    const { threadId: failedThreadId } = buildInboxMessageIds({
+      senderKey: application.id,
+      workspaceMemberId: input.workspaceMemberId,
+      threadKey,
+      idempotencyKey: input.idempotencyKey,
+    });
 
     try {
       expect(failedResponse.body.errors).toBeDefined();
