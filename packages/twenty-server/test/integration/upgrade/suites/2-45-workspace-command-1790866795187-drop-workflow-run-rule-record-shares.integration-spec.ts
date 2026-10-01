@@ -1,3 +1,4 @@
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
 import { type DropWorkflowRunRuleRecordSharesCommand } from 'src/database/commands/upgrade-version-command/2-45/2-45-workspace-command-1790866795187-drop-workflow-run-rule-record-shares.command';
@@ -31,15 +32,26 @@ describe('2-45 workspace command 1790866795187 - DropWorkflowRunRuleRecordShares
 
   const countRuleRecordShares = async () => {
     const [{ count }] = await globalThis.testDataSource.query(
-      `SELECT COUNT(*)::int AS count FROM "${schemaName}"."recordShare" WHERE "rowCause" = 'RULE' AND "principalType" = 'EVERYONE'`,
+      `SELECT COUNT(*)::int AS count
+       FROM "${schemaName}"."recordShare" share
+       JOIN core."objectMetadata" metadata ON metadata.id = share."objectMetadataId"
+       WHERE metadata."universalIdentifier" = $1
+         AND share."rowCause" = 'RULE'
+         AND share."principalType" = 'EVERYONE'`,
+      [STANDARD_OBJECTS.workflowRun.universalIdentifier],
     );
 
     return count as number;
   };
 
-  const countWorkflowRuns = async () => {
+  const countRunsOfSharedWorkflows = async () => {
     const [{ count }] = await globalThis.testDataSource.query(
-      `SELECT COUNT(*)::int AS count FROM "${schemaName}"."workflowRun"`,
+      `SELECT COUNT(*)::int AS count
+       FROM "${schemaName}"."workflowRun" run
+       LEFT JOIN core."workflow" core_workflow ON core_workflow.id = run."coreWorkflowId"
+       WHERE core_workflow.id IS NULL
+         OR core_workflow."visibility" = 'WORKSPACE'
+         OR core_workflow."createdByUserWorkspaceId" IS NULL`,
     );
 
     return count as number;
@@ -70,12 +82,14 @@ describe('2-45 workspace command 1790866795187 - DropWorkflowRunRuleRecordShares
     );
   });
 
-  it('restores a grant to everyone on each run of a shared workflow on the way down', async () => {
-    expect(await countWorkflowRuns()).toBeGreaterThan(0);
+  it('restores a grant to everyone on each run of a workspace-visible workflow on the way down', async () => {
+    expect(await countRunsOfSharedWorkflows()).toBeGreaterThan(0);
 
     await run('down');
 
-    expect(await countRuleRecordShares()).toBe(await countWorkflowRuns());
+    expect(await countRuleRecordShares()).toBe(
+      await countRunsOfSharedWorkflows(),
+    );
   });
 
   it('drops those grants on the way up, and only on a real run', async () => {

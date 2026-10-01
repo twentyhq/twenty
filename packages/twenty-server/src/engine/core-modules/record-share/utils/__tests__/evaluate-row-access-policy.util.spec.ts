@@ -4,6 +4,7 @@ import { EVERYONE_PRINCIPAL_ID } from 'twenty-shared/constants';
 import { FieldMetadataType, RecordShareAccessLevel } from 'twenty-shared/types';
 
 import { type RecordShareGrant } from 'src/engine/core-modules/record-share/types/record-share-grant.type';
+import { type RecordSharingRule } from 'src/engine/core-modules/record-share/types/record-sharing-rule.type';
 import {
   evaluateRowAccessPolicy,
   type RowAccessEvaluationContext,
@@ -186,6 +187,37 @@ describe('evaluateRowAccessPolicy', () => {
       flatObjectMetadata.id,
       ['active-private', 'archived-shared'],
     );
+  });
+
+  it('admits the records a sharing rule resolves, querying through the context', async () => {
+    const executeRawQuery = jest.fn(async () => [{ id: 'active-private' }]);
+    const rule: RecordSharingRule = {
+      objectUniversalIdentifier: flatObjectMetadata.universalIdentifier,
+      principalId: EVERYONE_PRINCIPAL_ID,
+      accessLevel: RecordShareAccessLevel.READ,
+      buildCondition: () => ({ sql: 'TRUE', parameters: {} }),
+      resolveMatchingRecordIds: async ({ records, executeRawQuery }) => {
+        const matchingIds = new Set(
+          (await executeRawQuery('SELECT "id"', {})).map((row) =>
+            String(row.id),
+          ),
+        );
+
+        return new Set(
+          records
+            .filter((record) => matchingIds.has(record.id))
+            .map((record) => record.id),
+        );
+      },
+    };
+
+    expect(
+      await evaluate(
+        { kind: 'sharingRule', tableAlias: 'company', rule },
+        buildContext({ executeRawQuery }),
+      ),
+    ).toEqual(new Set(['active-private']));
+    expect(executeRawQuery).toHaveBeenCalledTimes(1);
   });
 
   it('asks parents only about records not shared directly', async () => {

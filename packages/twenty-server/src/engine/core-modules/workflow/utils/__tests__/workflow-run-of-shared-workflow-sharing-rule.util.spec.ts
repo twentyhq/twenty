@@ -25,9 +25,10 @@ describe('WORKFLOW_RUN_OF_SHARED_WORKFLOW_SHARING_RULE', () => {
         },
       ),
     ).toEqual(new Set(['run-of-shared', 'run-without-workflow']));
-    expect(executeRawQuery).toHaveBeenCalledWith(expect.any(String), {
-      coreWorkflowIds: ['private-workflow', 'shared-workflow'],
-    });
+    expect(executeRawQuery).toHaveBeenCalledWith(
+      `SELECT "id" FROM core."workflow" AS "coreWorkflow" WHERE "coreWorkflow"."id" = ANY(:coreWorkflowIds) AND "coreWorkflow"."visibility" <> 'WORKSPACE' AND "coreWorkflow"."createdByUserWorkspaceId" IS NOT NULL`,
+      { coreWorkflowIds: ['private-workflow', 'shared-workflow'] },
+    );
   });
 
   it('skips the lookup when no run has a core workflow', async () => {
