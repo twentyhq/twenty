@@ -60,11 +60,13 @@ export const Small: Story = {
   },
 };
 
+const WITH_VALUE_ARGS = {
+  children: '75 of 100 files',
+  'aria-valuetext': '75 of 100 files imported',
+};
+
 export const WithValue: Story = {
-  args: {
-    children: '75 of 100 files',
-    'aria-valuetext': '75 of 100 files imported',
-  },
+  args: WITH_VALUE_ARGS,
 };
 
 const BOUNDARY_VALUES = [
@@ -149,14 +151,14 @@ export const Controlled: Story = {
 };
 
 export const CatalogDark: Story = {
-  ...WithValue,
+  args: WITH_VALUE_ARGS,
   tags: ['!autodocs'],
   globals: { colorScheme: 'dark' },
 };
 
 export const RightToLeft: Story = {
   args: {
-    ...WithValue.args,
+    ...WITH_VALUE_ARGS,
     dir: 'rtl',
     children: (
       <Text render={<bdi />} dir="ltr">
