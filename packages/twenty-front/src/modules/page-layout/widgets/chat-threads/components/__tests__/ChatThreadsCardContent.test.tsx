@@ -34,8 +34,6 @@ const renderContent = ({
   );
 
 describe('ChatThreadsCardContent', () => {
-  // Every state below renders with no threads in hand, which is exactly when
-  // the card could claim "No conversations" without knowing that to be true.
   it('does not claim the record has no conversations while loading', () => {
     renderContent({ loading: true });
 

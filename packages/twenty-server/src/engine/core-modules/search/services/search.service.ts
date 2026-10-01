@@ -195,8 +195,7 @@ export class SearchService {
     });
   }
 
-  // The simple text search configuration does not segment continuous CJK text,
-  // so substring matching is needed when the full-text search misses.
+  // The simple text search config does not segment CJK, so fall back to substring matching.
   async buildSearchQueryAndGetRecordsWithFallback<
     Entity extends ObjectLiteral,
   >({
@@ -366,7 +365,7 @@ export class SearchService {
       .addOrderBy('id', 'ASC', 'NULLS FIRST')
       .setParameter('searchTerms', searchTerms)
       .setParameter('searchTermsOr', searchTermsOr)
-      .take(limit + 1) // We take one more to check if hasNextPage is true
+      .take(limit + 1)
       .getRawMany<ObjectRecord & { tsRank: number; tsRankCD: number }>();
   }
 

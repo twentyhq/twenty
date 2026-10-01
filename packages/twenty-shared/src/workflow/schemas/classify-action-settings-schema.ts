@@ -4,16 +4,10 @@ import { AI_EVALUATION_QUESTION_TYPES } from '@/ai/constants/ai-evaluation-quest
 
 import { baseWorkflowActionSettingsSchema } from './base-workflow-action-settings-schema';
 
-// An answer name is one segment of a variable path — {{stepId.answers.<name>}}.
-// A dot, brace or space in it would be read as structure by the variable
-// resolver, so the output the picker advertises would never resolve.
+// A dot, brace or space would be read as variable-path structure, so the answer would never resolve.
 export const CLASSIFY_ANSWER_NAME_PATTERN = /^[a-zA-Z0-9_-]{1,64}$/;
 
-// A choice option's name keys its probability, so it is a path segment too:
-// {{stepId.answers.<name>.probabilities.<option>}}. It stays free text because
-// the model reads it as the label it is, and a segment with spaces or brackets
-// survives the round trip through escapePathSegment. A dot does not: nothing
-// escapes it, so the resolver would walk it as two keys.
+// Option names are path segments too; escapePathSegment handles spaces and brackets but not dots.
 export const CLASSIFY_OPTION_NAME_FORBIDDEN_CHARACTER = '.';
 
 export const workflowClassifyCriterionSchema = z.object({

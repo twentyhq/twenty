@@ -51,8 +51,7 @@ export const SettingsAgentSkillsTab = () => {
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const installedApplications = currentWorkspace?.installedApplications;
 
-  // not memoized: getApplicationDisplayName translates the standard and custom
-  // labels, so a cached label would survive a locale change
+  // not memoized: the label is translated, so a cached one would survive a locale change
   const skillTableItems = (data?.skills ?? []).map((skill) => {
     const application = installedApplications?.find(
       (installedApplication) => installedApplication.id === skill.applicationId,

@@ -209,12 +209,9 @@ export class GraphqlQueryFilterFieldParser {
       this.depth + 1,
     );
 
-    // A join on a to-many relation would duplicate root rows, which the
-    // find-many runner rejects, so the related rows are matched through a
-    // correlated EXISTS instead.
+    // A to-many join would duplicate root rows, which the find-many runner rejects, so match through a correlated EXISTS
     if (isToManyRelation) {
-      // The EXISTS is correlated with the root alias, so a to-many filter
-      // reached through a joined to-one relation would match the wrong rows.
+      // The EXISTS is correlated with the root alias, so through a joined to-one it would match the wrong rows
       if (parentAlias !== outerQueryBuilder.alias) {
         throw new GraphqlQueryRunnerException(
           `To-many relation filter on "${fieldMetadata.name}" must apply to the root object`,

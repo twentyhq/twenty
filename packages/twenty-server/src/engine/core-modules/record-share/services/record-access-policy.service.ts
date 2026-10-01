@@ -69,9 +69,7 @@ export class RecordAccessPolicyService {
     private readonly recordShareStorageService: RecordShareStorageService,
   ) {}
 
-  // A subject receives the records a query would return it: its role must read
-  // the object and the row-level filter must hold on the event snapshot before
-  // the share gate of the object is consulted.
+  // Mirrors the query gate: role read, then the row-level filter on the event snapshot, then the share gate.
   buildEventRecordAccessGate({
     workspaceId,
     objectMetadata,
@@ -409,8 +407,7 @@ export class RecordAccessPolicyService {
             ),
           ),
         );
-        // A row trashed along with the record still attaches it, as in the
-        // query gate; rows trashed before any of these records cannot
+        // Rows trashed along with the record still attach it, as in the query gate; rows trashed earlier do not.
         const trashedChildRows = await childRepository
           .createQueryBuilder()
           .select(['id', parent.childJoinColumnName, 'deletedAt'])

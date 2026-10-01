@@ -105,7 +105,7 @@ export const SettingsLogicFunctionHttpTriggerSection = ({
             value={value.httpMethod as HTTPMethod}
             options={HTTP_METHOD_OPTIONS}
             onChange={(newMethod) => updateField('httpMethod', newMethod)}
-            dropdownOffset={{ y: 4 }}
+            dropdownSideOffset={4}
             dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
           />
           <SettingsTextInput

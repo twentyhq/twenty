@@ -54,9 +54,7 @@ export class WorkflowEntity extends SyncableEntity {
   @Column({ type: 'uuid', nullable: true })
   lastPublishedCoreWorkflowVersionId: string | null;
 
-  // Enforced where ids are resolved rather than at each endpoint, so a workflow
-  // private to someone else stops resolving at all and its versions and steps
-  // are unreachable too. See CoreWorkflowIdResolutionService.
+  // Enforced where ids resolve (CoreWorkflowIdResolutionService), so a private workflow's versions and steps are unreachable too.
   @WasIntroducedInUpgrade({
     upgradeCommandName: ADD_WORKFLOW_VISIBILITY_UPGRADE_COMMAND_NAME,
   })

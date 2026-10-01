@@ -17,8 +17,7 @@ export const lockAgentChatThread = async ({
   objectMetadataId: string;
   threadId: string;
 }): Promise<AgentChatThreadWorkspaceEntity> => {
-  // Match generic sharing's lock order so concurrent revocations and domain
-  // writes cannot authorize against different grant/record snapshots.
+  // generic sharing's lock order, so revocations and writes cannot authorize against different snapshots
   await manager.query('SELECT pg_advisory_xact_lock(hashtextextended($1, 0))', [
     buildRecordShareLockKey({
       workspaceId,

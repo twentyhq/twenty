@@ -91,7 +91,6 @@ const buildExecutionBlocks = (
   return blocks;
 };
 
-// Pure: no I/O or clock access — everything time-dependent is passed in via context.
 export const resolveDpa = (context: DpaResolveContext): ResolvedDpa => {
   const config = getDpaRegionConfig(context.region);
 

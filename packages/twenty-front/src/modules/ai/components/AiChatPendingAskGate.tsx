@@ -24,8 +24,7 @@ type AiChatPendingAskGateProps = {
   children: ReactNode;
 };
 
-// The agent continues once every call it paused on is answered, so the
-// cards come one at a time, oldest first, each taking the composer's place.
+// The agent resumes once every paused call is answered, so cards come one at a time, oldest first.
 export const AiChatPendingAskGate = ({
   children,
 }: AiChatPendingAskGateProps) => {

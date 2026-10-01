@@ -135,8 +135,7 @@ installStorageBridge({
 
 installClipboardPolyfill({
   globalScope: toGlobalScopeRecord(globalThis),
-  // Resolved lazily: the host communication api is populated after worker
-  // boot, so the polyfill must not capture the function at install time.
+  // Resolved lazily: the host communication api is populated after worker boot.
   copyToClipboard: (text) => {
     const copyToClipboardFunction =
       frontComponentHostCommunicationApi.copyToClipboard;

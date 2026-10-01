@@ -207,8 +207,7 @@ export class ProcessNestedRelationsHelper {
 
     const targetObjectNameSingular = targetObjectMetadata.nameSingular;
 
-    // A joined relation to such records reads as empty, so a nested one does
-    // too rather than failing the parent's read
+    // A joined relation to such records reads as empty, so a nested one does too instead of failing the parent
     if (targetObjectRepository.isReadDeniedByReadability()) {
       this.assignRelationResults({
         parentRecords: parentObjectRecords,

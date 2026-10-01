@@ -12,9 +12,7 @@ import { IconButton } from 'twenty-ui/components';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { isAiChatPath } from '~/utils/isAiChatPath';
 
-// The bar floats over the page, so the container has to let taps through to
-// whatever is scrolling underneath it. flex-start rather than left so the bar
-// follows the writing direction in RTL locales.
+// Lets taps reach the page scrolling underneath; flex-start follows the writing direction.
 const StyledFloatingContainer = styled.div`
   bottom: 0;
   display: flex;
@@ -100,8 +98,7 @@ export const MobileNavigationBar = () => {
   );
   const { items, activeItemName } = useMobileNavigationBarItems();
 
-  // The chat page keeps the keyboard up most of the time, which leaves no room
-  // for the bar, and it carries its own close button to leave by.
+  // The chat page keeps the keyboard up and carries its own close button.
   const isHidden =
     isSidePanelOpened ||
     !isMobileNavigationBarVisible ||

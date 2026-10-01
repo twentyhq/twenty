@@ -70,8 +70,7 @@ export class ObjectMetadataDTO {
   @Field()
   isUICreatable: boolean;
 
-  // Deprecated alias kept for one release: stays exposed (and filterable via
-  // ObjectFilter) so external API consumers are not broken.
+  // Deprecated alias kept for one release so external API consumers are not broken
   @Field({
     deprecationReason: 'Use isUIEditable',
   })
