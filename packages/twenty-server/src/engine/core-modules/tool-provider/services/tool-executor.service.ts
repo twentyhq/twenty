@@ -87,10 +87,6 @@ export class ToolExecutorService {
       if (shouldCapture) {
         this.exceptionHandlerService.captureExceptions([error], {
           workspace: { id: context.workspaceId },
-          tags: {
-            toolName: descriptor.name,
-            'twenty.workspace.id': context.workspaceId,
-          },
         });
       }
 

@@ -363,7 +363,6 @@ export class ToolRegistryService {
       if (shouldCapture) {
         this.exceptionHandlerService.captureExceptions([error], {
           workspace: { id: context.workspaceId },
-          tags: { toolName, 'twenty.workspace.id': context.workspaceId },
         });
       }
 

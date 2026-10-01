@@ -41,10 +41,6 @@ export class ExceptionHandlerSentryDriver implements ExceptionHandlerDriverInter
         scope.setExtra('additionalData', options.additionalData);
       }
 
-      if (options?.tags) {
-        scope.setTags(options.tags);
-      }
-
       if (options?.user) {
         scope.setUser({
           id: options.user.id,
