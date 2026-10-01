@@ -23,7 +23,10 @@ import { type ComposeCalendarEventParams } from 'src/modules/calendar/calendar-e
 const offsetDateTimeSchema = z.string().datetime({ offset: true });
 const dateSchema = z.string().date();
 
-type ConnectedAccountActor = { userWorkspaceId?: string };
+type ConnectedAccountCaller = {
+  userWorkspaceId?: string;
+  requireConnectedAccountUsableByCaller?: boolean;
+};
 
 type ResolvedCalendarAccount =
   | {
@@ -46,7 +49,7 @@ export class CalendarEventComposerService {
   async composeCalendarEvent(
     params: ComposeCalendarEventParams,
     workspaceId: string,
-    restrictToActor?: ConnectedAccountActor,
+    caller: ConnectedAccountCaller = {},
   ): Promise<CalendarEventComposerResult> {
     const normalizedInput = this.normalizeAndValidateInput(params);
 
@@ -57,7 +60,7 @@ export class CalendarEventComposerService {
     const resolution = await this.resolveCalendarAccount(
       params.connectedAccountId,
       workspaceId,
-      restrictToActor,
+      caller,
     );
 
     if ('error' in resolution) {
@@ -194,7 +197,7 @@ export class CalendarEventComposerService {
   private async resolveCalendarAccount(
     connectedAccountId: string | undefined,
     workspaceId: string,
-    restrictToActor?: ConnectedAccountActor,
+    caller: ConnectedAccountCaller,
   ): Promise<ResolvedCalendarAccount> {
     // A blank id (the workflow node's default) falls back to the default account.
     if (isNonEmptyString(connectedAccountId)) {
@@ -213,14 +216,14 @@ export class CalendarEventComposerService {
       }
 
       if (
-        isDefined(restrictToActor) &&
+        caller.requireConnectedAccountUsableByCaller &&
         !isConnectedAccountUsableByActor({
           connectedAccount,
-          userWorkspaceId: restrictToActor.userWorkspaceId,
+          userWorkspaceId: caller.userWorkspaceId,
         })
       ) {
         return {
-          error: `Connected account '${connectedAccountId}' is private to another member`,
+          error: `Connected account '${connectedAccountId}' is neither shared with the workspace nor owned by the member running this step`,
         };
       }
 
@@ -244,14 +247,14 @@ export class CalendarEventComposerService {
       return { connectedAccount, calendarChannel };
     }
 
-    return this.resolveDefaultCalendarAccount(workspaceId, restrictToActor);
+    return this.resolveDefaultCalendarAccount(workspaceId, caller);
   }
 
   // Only sync-enabled channels are eligible: a created event is reconciled by the
   // provider sync, which skips channels whose sync is disabled.
   private async resolveDefaultCalendarAccount(
     workspaceId: string,
-    restrictToActor?: ConnectedAccountActor,
+    caller: ConnectedAccountCaller,
   ): Promise<ResolvedCalendarAccount> {
     const calendarChannels = await this.calendarChannelRepository.find({
       where: { workspaceId, isSyncEnabled: true },
@@ -266,10 +269,10 @@ export class CalendarEventComposerService {
         isCalendarCreationSupportedProvider(
           channel.connectedAccount.provider,
         ) &&
-        (!isDefined(restrictToActor) ||
+        (!caller.requireConnectedAccountUsableByCaller ||
           isConnectedAccountUsableByActor({
             connectedAccount: channel.connectedAccount,
-            userWorkspaceId: restrictToActor.userWorkspaceId,
+            userWorkspaceId: caller.userWorkspaceId,
           })),
     );
 

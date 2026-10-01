@@ -105,7 +105,7 @@ export class EmailComposerService {
         !isConnectedAccountUsableByActor({ connectedAccount, userWorkspaceId })
       ) {
         throw new EmailToolException(
-          `Connected account '${connectedAccountId}' is private to another member`,
+          `Connected account '${connectedAccountId}' is neither shared with the workspace nor owned by the member running this step`,
           EmailToolExceptionCode.CONNECTED_ACCOUNT_NOT_USABLE_BY_CALLER,
         );
       }

@@ -40,7 +40,7 @@ const getEmailToolExceptionUserFriendlyMessage = (
     case EmailToolExceptionCode.CONNECTED_ACCOUNT_NOT_EMAIL_CAPABLE:
       return msg`This connected account cannot be used for this action.`;
     case EmailToolExceptionCode.CONNECTED_ACCOUNT_NOT_USABLE_BY_CALLER:
-      return msg`This connected account is private to another member.`;
+      return msg`This connected account is neither shared with the workspace nor yours.`;
     default:
       assertUnreachable(code);
   }

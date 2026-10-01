@@ -529,7 +529,7 @@ describe('application workflow execution permissions', () => {
     expect(workflowRun.status).toBe('FAILED');
     expect(
       workflowRun.state.stepInfos[emailStep.universalIdentifier].error,
-    ).toContain('is private to another member');
+    ).toContain('is neither shared with the workspace');
   }, 120000);
 
   it('runs the application function for the member who started the run', async () => {
