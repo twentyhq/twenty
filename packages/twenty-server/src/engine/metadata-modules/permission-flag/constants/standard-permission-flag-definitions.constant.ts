@@ -94,11 +94,6 @@ const STANDARD_PERMISSION_FLAG_METADATA: Record<
     description: 'Create and configure AI agents',
     icon: 'IconSparkles',
   },
-  [PermissionFlagType.ACCESS_ALL_RECORDS]: {
-    label: 'All records',
-    description: 'See records restricted by sharing',
-    icon: 'IconAddressBook',
-  },
   [PermissionFlagType.AI]: {
     label: 'Ask AI',
     description: 'Chat with AI agents and use AI features',
