@@ -16,8 +16,7 @@ export const AiChatErrorRenderer = ({
   error,
   onRetry,
 }: AiChatErrorRendererProps) => {
-  // Handled by AIChatNoMoreBillingCreditsBanner, which useHasReachedAiChatCreditsCap
-  // keeps mounted for exactly this error so nothing is swallowed here
+  // Rendered by AIChatNoMoreBillingCreditsBanner, which stays mounted for this error.
   if (isAiChatCreditsExhaustedError(error)) {
     return null;
   }

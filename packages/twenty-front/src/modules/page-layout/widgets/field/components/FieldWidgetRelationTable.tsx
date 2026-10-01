@@ -72,8 +72,6 @@ export const FieldWidgetRelationTable = ({
 
   const { view: persistedView } = useViewById(viewId ?? null);
 
-  // Memoized so the derived picker parameters below keep a stable identity
-  // and do not churn the widget provider's context value on every render.
   const resolvedNestedRelation = useMemo(
     () =>
       resolveFieldWidgetNestedRelation({
@@ -88,10 +86,8 @@ export const FieldWidgetRelationTable = ({
     ],
   );
 
-  // A junction widget lists the records behind the junction, like the card
-  // and field display modes. A morph junction has no single object to list,
-  // and a view saved on the junction object predates junction traversal, so
-  // both keep listing the junction records their view was built for.
+  // A junction widget lists the records behind the junction, except morph junctions and views saved on the
+  // junction object, which keep listing the junction records.
   const junctionTargetObjectMetadataId =
     isDefined(junctionConfig) && !junctionConfig.isMorphRelation
       ? junctionConfig.targetFields[0]?.relation?.targetObjectMetadata.id
@@ -108,12 +104,7 @@ export const FieldWidgetRelationTable = ({
     isDefined(junctionTableObjectMetadataId) &&
     junctionTableObjectMetadataId === junctionTargetObjectMetadataId;
 
-  // A widget with a broken nested relation (deleted or deactivated second hop)
-  // resolves to no object and so renders nothing, rather than falling back to
-  // the first hop's records and silently showing a different object than the
-  // widget title claims. Likewise a persisted view listing yet another object
-  // belongs to a previous relation chain and must not be rendered under this
-  // one.
+  // A broken chain or a view of another object renders nothing, not records the title doesn't claim.
   const directTableObjectMetadataId =
     junctionTableObjectMetadataId ?? relationObjectMetadataId;
 
@@ -190,9 +181,7 @@ export const FieldWidgetRelationTable = ({
     recordId,
   ]);
 
-  // A many-to-one first hop points at a single intermediate record, so the
-  // terminal view is scoped directly by it: the intermediate becomes the
-  // filter's current record, read from the current record's join column.
+  // A many-to-one first hop scopes the view directly by the intermediate record, read from the current record's join column.
   const isManyToOneNestedChain =
     isDefined(nestedRelationFieldMetadataId) &&
     relationType === RelationType.MANY_TO_ONE;

@@ -96,7 +96,6 @@ export class AdminPanelGlobalChatThreadsService {
     await this.historyStorage.runReadOnlyReport(
       workspaces.map((workspace) => workspace.id),
       async ({ manager, partitions }) => {
-        // Bound each statement's size and keep only the global page candidates.
         for (
           let offsetIndex = 0;
           offsetIndex < partitions.length;

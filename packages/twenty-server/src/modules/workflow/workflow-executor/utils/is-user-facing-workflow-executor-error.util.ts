@@ -18,11 +18,8 @@ const USER_FACING_STEP_EXECUTOR_EXCEPTION_CODES = [
   WorkflowStepExecutorExceptionCode.STEP_NOT_FOUND,
 ];
 
-// A step asking for a model the instance does not serve, or asking it something
-// it cannot answer, is a configuration the author has to change: no retry will
-// produce a model, and reporting it as a system error buries real ones.
-// API_KEY_NOT_CONFIGURED is the one an instance with no provider at all raises,
-// from getDefaultModelForTier under the auto-select fallback.
+// Author misconfigurations: no retry produces a model, and reporting them as system errors buries real ones.
+// API_KEY_NOT_CONFIGURED is what an instance with no provider raises via getDefaultModelForTier.
 const USER_FACING_AI_EXCEPTION_CODES = [
   AiExceptionCode.API_KEY_NOT_CONFIGURED,
   AiExceptionCode.EVALUATION_MODEL_NOT_FOUND,

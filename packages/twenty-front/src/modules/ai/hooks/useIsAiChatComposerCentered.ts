@@ -8,8 +8,7 @@ import { useShouldShowAiChatEmptyState } from '@/ai/hooks/useShouldShowAiChatEmp
 
 export const useIsAiChatComposerCentered = () => {
   const aiChatSurface = useContext(AiChatSurfaceContext);
-  // A preamble is its own choreographed intro (onboarding); centering the
-  // composer would fight with it.
+  // A preamble (onboarding) is its own intro; centering would fight it.
   const messageListPreamble = useContext(AiChatMessageListPreambleContext);
   const shouldShowAiChatEmptyState = useShouldShowAiChatEmptyState();
 

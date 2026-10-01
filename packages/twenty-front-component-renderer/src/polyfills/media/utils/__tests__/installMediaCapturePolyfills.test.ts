@@ -182,8 +182,7 @@ describe('installMediaCapturePolyfills', () => {
 
     expect(mediaRecorder.state).toBe('recording');
 
-    // The start acknowledgement crosses several await boundaries; a
-    // macrotask drains them all.
+    // A macrotask drains the start acknowledgement's await boundaries.
     await new Promise((resolve) => setTimeout(resolve, 0));
 
     expect(startHandler).toHaveBeenCalledTimes(1);
@@ -235,14 +234,11 @@ describe('installMediaCapturePolyfills', () => {
     await new Promise((resolve) => setTimeout(resolve, 0));
 
     mediaRecorder.stop();
-    // Restart before the previous host stop event has arrived.
     mediaRecorder.start();
     await new Promise((resolve) => setTimeout(resolve, 0));
 
     expect(mediaRecorder.state).toBe('recording');
 
-    // The late stop event of the previous recording must not end the new
-    // one.
     bridge.dispatchEvents({
       events: [{ type: 'recorder-stop', recorderId: 'recorder-0' }],
     });
@@ -285,8 +281,7 @@ describe('installMediaCapturePolyfills', () => {
 
     expect(errorHandler).toHaveBeenCalledTimes(1);
     expect(errorHandler.mock.calls[0][0].error.name).toBe('NotReadableError');
-    // The stop event follows the error, like a native recorder, so callers
-    // waiting on it never hang.
+    // Native recorders fire stop after error, so callers waiting on it never hang.
     expect(stopHandler).toHaveBeenCalledTimes(1);
     expect(mediaRecorder.state).toBe('inactive');
   });
