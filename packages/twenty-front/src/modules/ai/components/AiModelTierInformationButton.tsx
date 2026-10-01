@@ -27,12 +27,12 @@ import {
   IconInfoCircle,
 } from 'twenty-ui/icon';
 import { HorizontalSeparator } from 'twenty-ui/primitives/layout';
+import { MetricRow } from 'twenty-ui/components';
 import { themeCssVariables, useThemeContainer } from 'twenty-ui/theme';
 
 import { type ResolvedAiModelTier } from '@/ai/types/ResolvedAiModelTier';
 import { getAiModelEffortLabel } from '@/ai/utils/getAiModelEffortLabel';
 import { getAiModelModeDescription } from '@/settings/ai/utils/getAiModelModeDescription';
-import { UsageProgressRow } from '@/ui/feedback/progress-ring/components/UsageProgressRow';
 import { StyledInformationCard } from '@/ui/layout/information-card/components/StyledInformationCard';
 import { formatNumber } from '~/utils/format/formatNumber';
 
@@ -179,24 +179,16 @@ export const AiModelTierInformationButton = ({
             {...getFloatingProps()}
           >
             {rows.map(({ label, Icon, value }) => (
-              <UsageProgressRow
-                key={label}
-                Icon={Icon}
-                label={label}
-                value={null}
-                valueLabel={value}
-              />
+              <MetricRow key={label} startIcon={Icon} value={value}>
+                {label}
+              </MetricRow>
             ))}
             <HorizontalSeparator noMargin />
             <StyledHeading>{t`Vs Balanced mode`}</StyledHeading>
             {comparisons.map(({ label, Icon, value }) => (
-              <UsageProgressRow
-                key={label}
-                Icon={Icon}
-                label={label}
-                value={null}
-                valueLabel={value}
-              />
+              <MetricRow key={label} startIcon={Icon} value={value}>
+                {label}
+              </MetricRow>
             ))}
             {model?.isBenchmarkInherited === true && (
               <StyledNote>{t`Not measured at this effort yet, so these are the base model's readings.`}</StyledNote>

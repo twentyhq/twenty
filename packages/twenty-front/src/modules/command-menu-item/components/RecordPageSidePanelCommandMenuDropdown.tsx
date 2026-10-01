@@ -49,8 +49,6 @@ export const RecordPageSidePanelCommandMenuDropdown = () => {
 
   const availableWidth = useSidePanelFooterPinnedItemsAvailableWidth();
 
-  // Pinned items are buttons in the footer, so the dropdown only repeats the
-  // ones the footer could not fit next to this dropdown's own footprint.
   const { pinnedOverflowCommandMenuItems } =
     usePinnedCommandMenuItemsInlineLayout({
       pinnedCommandMenuItems,
@@ -58,8 +56,7 @@ export const RecordPageSidePanelCommandMenuDropdown = () => {
       containerWidth: availableWidth,
     });
 
-  // A widget owning the footer suppresses those buttons entirely, and leaves
-  // the footer measurements stale, so every pinned item belongs here instead.
+  // A widget owning the footer hides the pinned buttons and leaves their measurements stale, so list every pinned item here.
   const hasPinnedWidgetCommandMenuItems =
     sidePanelWidgetFooterCommandMenuItems.some(
       (commandMenuItem) => commandMenuItem.isPinned !== false,

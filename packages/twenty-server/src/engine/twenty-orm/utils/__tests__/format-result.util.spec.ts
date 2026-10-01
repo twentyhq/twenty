@@ -125,9 +125,7 @@ describe('formatResult', () => {
     expect(firstInvocationMetadataLookupCount).toBeGreaterThan(0);
     expect(firstInvocationMetadataLookupCount).toBeLessThanOrEqual(4);
 
-    // Field maps derived from a metadata snapshot are memoized by object
-    // identity, so a second invocation only re-runs the lookups when it receives
-    // fresh snapshot objects
+    // Field maps are memoized by snapshot identity, so only fresh snapshot objects re-run the lookups
     const rebuiltFlatFieldMetadataMaps = buildFlatEntityMaps([
       companyNameFieldMetadata,
       companyPeopleFieldMetadata,

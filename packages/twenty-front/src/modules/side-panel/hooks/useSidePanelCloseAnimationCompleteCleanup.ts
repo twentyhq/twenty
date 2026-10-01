@@ -40,8 +40,7 @@ export const useSidePanelCloseAnimationCompleteCleanup = () => {
     (options?: { emitSidePanelCloseEvent?: boolean }) => {
       closeDropdown(SIDE_PANEL_CONTEXT_CHIP_GROUPS_DROPDOWN_ID);
 
-      // Snapshot values before any mutations (Jotai store.get is live and
-      // reflects the latest state, so we capture before mutating).
+      // store.get is live, so snapshot before mutating
       const currentNavigationStack = store.get(
         sidePanelNavigationStackState.atom,
       );

@@ -42,8 +42,7 @@ export const copyBaseApplicationProject = async ({
   await updatePackageJson({ appName, appDirectory });
 };
 
-// npm strips dotfiles/dotdirs (.gitignore, .github/) from published packages,
-// so we store them without the leading dot and rename after copying.
+// npm strips dotfiles from published packages, so they're stored without the dot and renamed after copying.
 const renameDotfiles = async ({ appDirectory }: { appDirectory: string }) => {
   const renames = [
     { from: 'gitignore', to: '.gitignore' },
@@ -60,8 +59,7 @@ const renameDotfiles = async ({ appDirectory }: { appDirectory: string }) => {
   }
 };
 
-// AGENTS.md is the cross-tool standard; Claude Code prefers CLAUDE.md and only
-// falls back to AGENTS.md, so we mirror the file to keep a single source of truth.
+// Claude Code prefers CLAUDE.md over the AGENTS.md standard, so mirror it.
 const mirrorAgentsToClaude = async ({
   appDirectory,
 }: {
@@ -120,10 +118,7 @@ const updatePackageJson = async ({
 }) => {
   const packageJson = await fs.readJson(join(appDirectory, 'package.json'));
 
-  // The template yarn.lock keeps its placeholder workspace name: the only entry
-  // naming the project is the workspace root, which the scaffolder's `yarn install`
-  // rewrites from package.json without re-resolving a single dependency. Renaming
-  // it here would move the entry out of sort order and break `--immutable`.
+  // yarn.lock keeps its placeholder name: `yarn install` rewrites the root entry, and renaming here breaks `--immutable`.
   packageJson.name = appName;
 
   for (const packageName of TEMPLATE_FIRST_PARTY_PACKAGES) {

@@ -202,7 +202,6 @@ describe('Quick Lead Workflow (e2e)', () => {
     let createdPersonId: string | null = null;
 
     afterAll(async () => {
-      // Clean up created records in reverse order of creation
       if (createdPersonId) {
         await client
           .post('/graphql')

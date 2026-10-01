@@ -13,10 +13,8 @@ type IntervalPrice = {
   metadata?: { isLegacy?: string | null } | null;
 };
 
-// Switching interval is not a sale: a workspace on superseded packaging is
-// changing interval on the product it already has, so this resolves what is
-// billable on that product rather than what is sellable. isLegacy only breaks a
-// tie between two live prices at the same interval.
+// Switching interval is not a sale, so this resolves what is billable on the current product rather than what is sellable.
+// isLegacy only breaks a tie between two active prices at the same interval.
 export const findProductPriceForIntervalOrThrow = <
   TPrice extends IntervalPrice,
 >(

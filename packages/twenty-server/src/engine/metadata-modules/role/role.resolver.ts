@@ -222,8 +222,7 @@ export class RoleResolver {
     return deletedRole.id;
   }
 
-  // API-key callers have no user workspace; lockout protection only applies to
-  // human actors, so they resolve to no acting roles.
+  // Lockout protection only applies to human actors; API-key callers have no user workspace
   private async getActingRoleIds({
     workspaceId,
     actingUserWorkspaceId,

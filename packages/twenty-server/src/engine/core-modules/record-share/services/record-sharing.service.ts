@@ -272,8 +272,7 @@ export class RecordSharingService {
         ),
       args.authContext,
     );
-    // A writer may revoke the grant that allowed their own access. The saved
-    // mutation must still succeed, returning a redacted state after revocation.
+    // A writer may revoke their own access; the mutation must still succeed with a redacted state.
     const permissions = await this.getPermissions(args);
     if (!permissions.canRead) {
       return {

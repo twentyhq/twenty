@@ -3,8 +3,7 @@ import { type AllMetadataName } from 'twenty-shared/metadata';
 import { type MetadataEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-entity.type';
 import { type ExtractJsonbProperties } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/extract-jsonb-properties.type';
 
-// Not strictly typed: every jsonb property that may contain a serialized
-// relation has to be referenced here by hand.
+// Not strictly typed: every jsonb property holding a serialized relation must be listed by hand
 export const ALL_JSONB_PROPERTIES_WITH_SERIALIZED_RELATION_BY_METADATA_NAME = {
   fieldMetadata: {
     settings: 'settings',

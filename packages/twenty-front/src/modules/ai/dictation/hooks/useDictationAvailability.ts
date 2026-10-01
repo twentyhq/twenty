@@ -10,8 +10,6 @@ export const useDictationAvailability = (): boolean => {
     hasWebSpeechProvenSilentState,
   );
 
-  // Every field the surface reports is fixed for the life of the page; the
-  // remembered failure is the only part of availability that moves.
   const isSurfaceCapable = useMemo(
     () => resolveDictationAvailability(readDictationSurface()),
     [],

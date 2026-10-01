@@ -274,8 +274,7 @@ export class WorkspaceRolesPermissionsCacheService extends WorkspaceCacheProvide
   private getRolePermissionFlagUniversalIdentifier(
     rolePermissionFlag: RolePermissionFlagEntity,
   ): string {
-    // The `permissionFlag` relation is stripped during upgrades until the 2.6.0
-    // cursor (@WasIntroducedInUpgrade), so fall back to the legacy `flag` column.
+    // The permissionFlag relation is stripped until the 2.6.0 upgrade cursor, so fall back to the legacy flag column
     return (
       rolePermissionFlag.permissionFlag?.universalIdentifier ??
       SystemPermissionFlag[rolePermissionFlag.flag as PermissionFlagType]

@@ -14,10 +14,6 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Partial<
     label: msg`Async CSV export`,
     description: msg`Generate CSV exports in the background with progress and automatic downloads.`,
   },
-  [FeatureFlagKey.IS_UNIQUE_INDEXES_ENABLED]: {
-    label: msg`Unique indexes`,
-    description: msg`Allow unique indexes to prevent duplicate field values.`,
-  },
   [FeatureFlagKey.IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED]: {
     label: msg`Configurable search fields`,
     description: msg`Choose which fields are used when searching for records.`,
@@ -37,6 +33,10 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Partial<
   [FeatureFlagKey.IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED]: {
     label: msg`Prebuilt logic functions`,
     description: msg`Run logic functions from prebuilt application bundles.`,
+  },
+  [FeatureFlagKey.IS_APPLICATION_WORKFLOWS_ENABLED]: {
+    label: msg`Application workflows`,
+    description: msg`Allow applications to install workflows and start new workflow runs.`,
   },
   [FeatureFlagKey.IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED]: {
     label: msg`Workflow index page`,
