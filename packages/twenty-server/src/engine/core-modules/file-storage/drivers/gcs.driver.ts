@@ -55,16 +55,41 @@ export class GcsDriver implements StorageDriver {
     filePath: string;
     byteRange?: ByteRange;
   }): Promise<Readable> {
-    // A read stream only reports a missing object once consumed, but callers expect FILE_NOT_FOUND up front.
-    const generation = await this.getGenerationOrThrow(params.filePath);
-
-    return this.bucket
-      .file(params.filePath, { generation })
+    const stream = this.bucket
+      .file(params.filePath)
       .createReadStream(
         isDefined(params.byteRange)
           ? { start: params.byteRange.startByte, end: params.byteRange.endByte }
           : undefined,
       );
+
+    await this.waitForSuccessfulResponseOrThrow(stream);
+
+    return stream;
+  }
+
+  // The request only starts once the stream is read, but callers expect FILE_NOT_FOUND before they consume it.
+  private async waitForSuccessfulResponseOrThrow(
+    stream: Readable,
+  ): Promise<void> {
+    // Keeps a later error from crashing the process before the caller attaches its own listener.
+    stream.on('error', () => {});
+
+    await new Promise<void>((resolve, reject) => {
+      stream.once('response', (response: { statusCode?: number }) => {
+        if (isDefined(response.statusCode) && response.statusCode < 400) {
+          resolve();
+        }
+      });
+      stream.once('error', (error) => {
+        reject(
+          isApiErrorWithStatus(error, 404)
+            ? buildFileNotFoundException()
+            : error,
+        );
+      });
+      stream.read(0);
+    });
   }
 
   async readFilePrefix(params: {
@@ -376,16 +401,6 @@ export class GcsDriver implements StorageDriver {
 
   private toFolderPrefix(folderPath: string): string {
     return folderPath.endsWith('/') ? folderPath : `${folderPath}/`;
-  }
-
-  private async getGenerationOrThrow(filePath: string): Promise<string> {
-    const metadata = await this.getFileMetadata({ filePath });
-
-    if (!isDefined(metadata?.checksum)) {
-      throw buildFileNotFoundException();
-    }
-
-    return metadata.checksum;
   }
 
   private async copyObjectOrThrow({

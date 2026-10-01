@@ -1,9 +1,36 @@
 import { ApiError, Storage } from '@google-cloud/storage';
 
-import { Readable } from 'stream';
+import { PassThrough, type Readable } from 'stream';
 
 import { GcsDriver } from 'src/engine/core-modules/file-storage/drivers/gcs.driver';
 import { FileStorageExceptionCode } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
+
+// Mirrors the library: the request starts on the first read, then emits `response` and either data or an error.
+const mockBuildReadStream = (outcome: { statusCode: number } | Error) => {
+  const stream = new PassThrough();
+  let hasRequested = false;
+
+  stream._read = () => {
+    if (hasRequested) {
+      return;
+    }
+
+    hasRequested = true;
+
+    if (outcome instanceof Error) {
+      stream.emit('response', { statusCode: 404 });
+      stream.emit('error', outcome);
+
+      return;
+    }
+
+    stream.emit('response', outcome);
+    stream.push(Buffer.from('content'));
+    stream.push(null);
+  };
+
+  return stream;
+};
 
 type MockFile = ReturnType<typeof mockBuildFile>;
 
@@ -13,7 +40,9 @@ const mockBuildFile = (
 ) => ({
   name,
   options,
-  createReadStream: jest.fn(() => Readable.from([Buffer.from('content')])),
+  createReadStream: jest.fn(
+    (): Readable => mockBuildReadStream({ statusCode: 200 }),
+  ),
   download: jest.fn(),
   save: jest.fn(),
   createWriteStream: jest.fn(),
@@ -67,6 +96,10 @@ describe('GcsDriver', () => {
     mockConfigureFile = () => {};
   });
 
+  afterEach(() => {
+    jest.setSystemTime(jest.getRealSystemTime());
+  });
+
   it('should authenticate through Application Default Credentials', () => {
     new GcsDriver({ bucketName: 'test-bucket', projectId: 'test-project' });
 
@@ -74,31 +107,25 @@ describe('GcsDriver', () => {
   });
 
   describe('readFile', () => {
-    it('should read only the requested byte range of the inspected generation', async () => {
-      mockConfigureFile = (file) => {
-        file.getMetadata.mockResolvedValue([{ size: '42', generation: '7' }]);
-      };
-
-      await createDriver().readFile({
+    it('should read only the requested byte range', async () => {
+      const stream = await createDriver().readFile({
         filePath: 'recordings/video.mp4',
         byteRange: { startByte: 100, endByte: 199 },
       });
 
-      const [streamedFile] = mockFiles.filter(
-        (file) => file.createReadStream.mock.calls.length > 0,
-      );
-
-      expect(streamedFile.name).toBe('recordings/video.mp4');
-      expect(streamedFile.options).toEqual({ generation: '7' });
-      expect(streamedFile.createReadStream).toHaveBeenCalledWith({
+      expect(mockFiles[0].name).toBe('recordings/video.mp4');
+      expect(mockFiles[0].createReadStream).toHaveBeenCalledWith({
         start: 100,
         end: 199,
       });
+      expect((stream.read() as Buffer).toString()).toBe('content');
     });
 
-    it('should reject a missing object with FILE_NOT_FOUND before streaming', async () => {
+    it('should reject a missing object with FILE_NOT_FOUND before the caller consumes it', async () => {
       mockConfigureFile = (file) => {
-        file.getMetadata.mockRejectedValue(buildApiError(404));
+        file.createReadStream.mockImplementation(() =>
+          mockBuildReadStream(buildApiError(404)),
+        );
       };
 
       await expect(
@@ -106,12 +133,18 @@ describe('GcsDriver', () => {
       ).rejects.toMatchObject({
         code: FileStorageExceptionCode.FILE_NOT_FOUND,
       });
+    });
 
-      expect(
-        mockFiles.every(
-          (file) => file.createReadStream.mock.calls.length === 0,
-        ),
-      ).toBe(true);
+    it('should not report a storage failure as a missing object', async () => {
+      mockConfigureFile = (file) => {
+        file.createReadStream.mockImplementation(() =>
+          mockBuildReadStream(buildApiError(503)),
+        );
+      };
+
+      await expect(
+        createDriver().readFile({ filePath: 'attachments/file.pdf' }),
+      ).rejects.toMatchObject({ code: 503 });
     });
   });
 
