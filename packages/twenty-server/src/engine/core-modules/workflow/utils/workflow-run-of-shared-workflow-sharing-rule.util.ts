@@ -18,15 +18,19 @@ export const WORKFLOW_RUN_OF_SHARED_WORKFLOW_SHARING_RULE: RecordSharingRule = {
   objectUniversalIdentifier: STANDARD_OBJECTS.workflowRun.universalIdentifier,
   principalId: EVERYONE_PRINCIPAL_ID,
   accessLevel: RecordShareAccessLevel.FULL,
-  buildCondition: (tableAlias) => {
+  buildCondition: ({ tableAlias, workspaceId }) => {
     const coreWorkflowAlias = escapeIdentifier(`${tableAlias}_coreWorkflow`);
 
     return {
-      sql: `NOT EXISTS (SELECT 1 FROM core."workflow" AS ${coreWorkflowAlias} WHERE ${coreWorkflowAlias}."id" = ${escapeIdentifier(tableAlias)}."coreWorkflowId" AND ${buildPrivateCoreWorkflowCondition(coreWorkflowAlias)})`,
-      parameters: {},
+      sql: `NOT EXISTS (SELECT 1 FROM core."workflow" AS ${coreWorkflowAlias} WHERE ${coreWorkflowAlias}."id" = ${escapeIdentifier(tableAlias)}."coreWorkflowId" AND ${coreWorkflowAlias}."workspaceId" = :sharingRuleWorkspaceId AND ${buildPrivateCoreWorkflowCondition(coreWorkflowAlias)})`,
+      parameters: { sharingRuleWorkspaceId: workspaceId },
     };
   },
-  resolveMatchingRecordIds: async ({ records, executeRawQuery }) => {
+  resolveMatchingRecordIds: async ({
+    records,
+    workspaceId,
+    executeRawQuery,
+  }) => {
     const coreWorkflowIds = [
       ...new Set(
         records.map((record) => record.coreWorkflowId).filter(isNonEmptyString),
@@ -38,8 +42,8 @@ export const WORKFLOW_RUN_OF_SHARED_WORKFLOW_SHARING_RULE: RecordSharingRule = {
         : new Set(
             (
               await executeRawQuery(
-                `SELECT "id" FROM core."workflow" AS "coreWorkflow" WHERE "coreWorkflow"."id" = ANY(:coreWorkflowIds) AND ${buildPrivateCoreWorkflowCondition('"coreWorkflow"')}`,
-                { coreWorkflowIds },
+                `SELECT "id" FROM core."workflow" AS "coreWorkflow" WHERE "coreWorkflow"."id" = ANY(:coreWorkflowIds) AND "coreWorkflow"."workspaceId" = :workspaceId AND ${buildPrivateCoreWorkflowCondition('"coreWorkflow"')}`,
+                { coreWorkflowIds, workspaceId },
               )
             ).map((row) => String(row.id)),
           );

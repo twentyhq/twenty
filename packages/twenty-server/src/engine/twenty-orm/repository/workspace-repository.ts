@@ -1459,6 +1459,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       tableShape: this.options.tableShape,
       executor: this.options.executor,
       objectRecordsPermissions: this.options.objectRecordsPermissions,
+      isRecordSharingEnabled: this.isRecordSharingEnabled,
       tableShapeByObjectMetadataId: this.options.tableShapeByObjectMetadataId,
       onBeforeExecute: () => undefined,
       formatResult: (records) => this.formatResult(records),
@@ -2263,11 +2264,13 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     return new Set(admittedRecords.map((record) => String(record.id)));
   }
 
-  private compileRowAccessExpression(expression: RowAccessExpression): SqlCondition {
-    return compileRowAccessExpression(
+  private compileRowAccessExpression(
+    expression: RowAccessExpression,
+  ): SqlCondition {
+    return compileRowAccessExpression({
       expression,
-      this.resolveRowAccessPolicyEnvironment(),
-    );
+      environment: this.resolveRowAccessPolicyEnvironment(),
+    });
   }
 
   // Whether the role alone permits the operation, regardless of any record

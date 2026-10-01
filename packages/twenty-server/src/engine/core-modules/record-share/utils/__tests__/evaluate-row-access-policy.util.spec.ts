@@ -213,7 +213,12 @@ describe('evaluateRowAccessPolicy', () => {
 
     expect(
       await evaluate(
-        { kind: 'sharingRule', tableAlias: 'company', rule },
+        {
+          kind: 'sharingRule',
+          tableAlias: 'company',
+          workspaceId: 'workspace-id',
+          rule,
+        },
         buildContext({ executeRawQuery }),
       ),
     ).toEqual(new Set(['active-private']));

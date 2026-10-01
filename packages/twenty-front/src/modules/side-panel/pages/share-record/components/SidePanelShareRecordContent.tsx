@@ -250,7 +250,7 @@ export const SidePanelShareRecordContent = ({
             ) : (
               <StyledDescription>
                 {sharing.isOpenByDefault
-                  ? t`Only the creator of this record, people with full access to it and admins can change who has access.`
+                  ? t`Only the creator of this record, people with full access to it and people with access to all records can change who has access.`
                   : t`Only the creator of this record and people with full access to it can change who has access.`}
               </StyledDescription>
             ))

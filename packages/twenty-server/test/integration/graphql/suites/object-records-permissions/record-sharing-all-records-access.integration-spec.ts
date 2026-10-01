@@ -353,51 +353,56 @@ describe('Access to all records and ownership transfer', () => {
       ],
     });
 
-    await getAppProviderByClassName<RecordShareOwnershipTransferService>(
-      'RecordShareOwnershipTransferService',
-    ).transferRecordSharesToCustodian({
-      removedUserWorkspace: await getCoreRepository<UserWorkspaceEntity>(
-        UserWorkspaceEntity,
-      ).findOneByOrFail({ id: USER_WORKSPACE_DATA_SEED_IDS.PHIL }),
-      removedWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
-      actingUserWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
-    });
+    try {
+      await getAppProviderByClassName<RecordShareOwnershipTransferService>(
+        'RecordShareOwnershipTransferService',
+      ).transferRecordSharesToCustodian({
+        removedUserWorkspace: await getCoreRepository<UserWorkspaceEntity>(
+          UserWorkspaceEntity,
+        ).findOneByOrFail({ id: USER_WORKSPACE_DATA_SEED_IDS.PHIL }),
+        removedWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
+        actingUserWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
+      });
 
-    expect(await findMemberGrants(WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL)).toEqual(
-      [],
-    );
-    expect(await findMemberGrants(WORKSPACE_MEMBER_DATA_SEED_IDS.JANE)).toEqual(
-      [
+      expect(
+        await findMemberGrants(WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL),
+      ).toEqual([]);
+      expect(
+        await findMemberGrants(WORKSPACE_MEMBER_DATA_SEED_IDS.JANE),
+      ).toEqual([
         {
           recordId: SHARED_RECORD_ID,
           accessLevel: RecordShareAccessLevel.FULL,
           rowCause: RecordShareRowCause.MANUAL,
         },
-      ],
-    );
-    expect(await findMemberGrants(WORKSPACE_MEMBER_DATA_SEED_IDS.JONY)).toEqual(
-      expect.arrayContaining([
-        {
-          recordId: RESTRICTED_RECORD_ID,
-          accessLevel: RecordShareAccessLevel.FULL,
-          rowCause: RecordShareRowCause.OWNER,
-        },
-      ]),
-    );
+      ]);
+      expect(
+        await findMemberGrants(WORKSPACE_MEMBER_DATA_SEED_IDS.JONY),
+      ).toEqual(
+        expect.arrayContaining([
+          {
+            recordId: RESTRICTED_RECORD_ID,
+            accessLevel: RecordShareAccessLevel.FULL,
+            rowCause: RecordShareRowCause.OWNER,
+          },
+        ]),
+      );
 
-    const chatThreadShares = await shares.findByRecordIds({
-      workspaceId,
-      objectMetadataId: chatThreadObjectMetadataId,
-      recordIds: [privateChatThreadId],
-    });
+      const chatThreadShares = await shares.findByRecordIds({
+        workspaceId,
+        objectMetadataId: chatThreadObjectMetadataId,
+        recordIds: [privateChatThreadId],
+      });
 
-    await shares.deleteByRecordIds({
-      workspaceId,
-      objectMetadataId: chatThreadObjectMetadataId,
-      recordIds: [privateChatThreadId],
-    });
-    expect(chatThreadShares.map(({ principalId }) => principalId)).toEqual([
-      WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
-    ]);
+      expect(chatThreadShares.map(({ principalId }) => principalId)).toEqual([
+        WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
+      ]);
+    } finally {
+      await shares.deleteByRecordIds({
+        workspaceId,
+        objectMetadataId: chatThreadObjectMetadataId,
+        recordIds: [privateChatThreadId],
+      });
+    }
   });
 });

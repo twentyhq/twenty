@@ -7,7 +7,7 @@ import {
 import { type QueryExecutor } from 'src/engine/twenty-orm/executor/types/query-executor.type';
 import {
   buildColumnNameByResultAlias,
-  mapRowToEntity,
+  createRowToEntityMapper,
   type WhereClause,
 } from 'src/engine/twenty-orm/sql/utils/build-select-statement.util';
 import { compileNamedParameters } from 'src/engine/twenty-orm/sql/utils/compile-named-parameters.util';
@@ -103,9 +103,8 @@ export class WorkspaceMutationQueryBuilder {
       this.alias,
       this.returningColumns,
     );
-    const entities = rows.map((row) =>
-      mapRowToEntity(row, columnNameByResultAlias),
-    );
+    const mapRowToEntity = createRowToEntityMapper(columnNameByResultAlias);
+    const entities = rows.map(mapRowToEntity);
 
     return {
       generatedMaps: this.context.formatResult(entities),

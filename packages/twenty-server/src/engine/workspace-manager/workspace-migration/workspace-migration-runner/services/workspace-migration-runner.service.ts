@@ -76,7 +76,8 @@ export class WorkspaceMigrationRunnerService {
     const shouldInvalidateRolesPermissionsCache =
       flatMapsKeysSet.has('flatObjectPermissionMaps') ||
       flatMapsKeysSet.has('flatFieldPermissionMaps') ||
-      flatMapsKeysSet.has('flatRolePermissionFlagMaps');
+      flatMapsKeysSet.has('flatRolePermissionFlagMaps') ||
+      flatMapsKeysSet.has('flatPermissionFlagMaps');
 
     if (shouldInvalidateRoleMapCache || shouldInvalidateRolesPermissionsCache) {
       legacyCacheKeyNames.push(
