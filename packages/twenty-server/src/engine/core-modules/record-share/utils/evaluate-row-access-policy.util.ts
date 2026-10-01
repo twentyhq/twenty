@@ -165,7 +165,13 @@ const evaluateRowAccessExpression = async <TRecord extends RowAccessRecord>({
     }
     case 'inheritedReadability': {
       const sharedRecordIds = await evaluateRowAccessExpression({
-        expression: { ...expression, kind: 'recordShared' },
+        expression: {
+          kind: 'recordShared',
+          tableAlias: expression.tableAlias,
+          objectMetadataId: expression.objectMetadataId,
+          principalIds: expression.principalIds,
+          accessLevels: expression.accessLevels,
+        },
         records,
         context,
       });
