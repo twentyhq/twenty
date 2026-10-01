@@ -57,10 +57,6 @@ export const PROPOSE_EMAIL_PAUSING_TOOL = definePausingTool<
 >({
   inputSchema: proposeEmailInputSchema,
   outputSchema: () => proposeEmailOutputSchema,
-  buildAsk: (email) => ({
-    name: email.subject.trim(),
-    form: { kind: 'emailApproval', email },
-  }),
   complete: async ({ output: { decision, email }, input, context }) => {
     // The person may edit what is sent, not which account sends it: the card
     // offers no choice of account, so one in the answer is not theirs to pick.

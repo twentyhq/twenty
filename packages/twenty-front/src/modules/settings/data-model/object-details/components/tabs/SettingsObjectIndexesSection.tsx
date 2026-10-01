@@ -167,7 +167,7 @@ export const SettingsObjectIndexesSection = ({
       <SearchInput
         placeholder={t`Search an index...`}
         value={searchTerm}
-        onChange={setSearchTerm}
+        onValueChange={setSearchTerm}
         filterDropdown={(filterButton) => (
           <DropdownRoot
             dropdownId={HIDE_SYSTEM_INDEXES_DROPDOWN_ID}

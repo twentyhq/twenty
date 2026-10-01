@@ -1,5 +1,54 @@
 [
   {
+    "name": "Shortcut",
+    "entryPoint": "twenty-ui/primitives/typography",
+    "slug": "typography/shortcut",
+    "props": [
+      {
+        "name": "combinationSeparator",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Optional separator between simultaneous keys. Defaults to no separator on Apple devices and a space elsewhere."
+      },
+      {
+        "name": "platform",
+        "type": "\"mac\" | \"other\"",
+        "required": false,
+        "defaultValue": null,
+        "description": "Optional mac or other platform override. Defaults to server-safe device detection."
+      },
+      {
+        "name": "sequenceJoinLabel",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Text between sequence steps. Defaults to then."
+      },
+      {
+        "name": "shortcut",
+        "type": "ShortcutDefinition",
+        "required": true,
+        "defaultValue": null,
+        "description": "Flat key array for a simultaneous combination, or nested key arrays for an ordered sequence of combinations."
+      },
+      {
+        "name": "variant",
+        "type": "\"button\" | \"keys\" | \"text\"",
+        "required": false,
+        "defaultValue": "keys",
+        "description": "Keycaps, inline text, or a separated button hint."
+      },
+      {
+        "name": "visibility",
+        "type": "\"always\" | \"desktop\"",
+        "required": false,
+        "defaultValue": "always",
+        "description": "Always visible by default. Desktop hints hide on mobile viewports."
+      }
+    ]
+  },
+  {
     "name": "VisibilityHidden",
     "entryPoint": "twenty-ui/primitives/accessibility",
     "slug": "accessibility/visibility-hidden",
@@ -901,13 +950,6 @@
         "description": "Expands the button to fill its container width."
       },
       {
-        "name": "hotkeys",
-        "type": "string[]",
-        "required": false,
-        "defaultValue": null,
-        "description": "Keyboard shortcut hints displayed on non-mobile screens."
-      },
-      {
         "name": "href",
         "type": "string",
         "required": false,
@@ -927,6 +969,20 @@
         "required": false,
         "defaultValue": null,
         "description": "Caller-supplied root element or renderer. Preserve a native button, or an anchor when `href` is set. Router integration belongs to the caller."
+      },
+      {
+        "name": "shortcut",
+        "type": "ShortcutDefinition",
+        "required": false,
+        "defaultValue": null,
+        "description": "Flat key array for simultaneous keys, or nested key arrays for an ordered sequence. Displayed on non-mobile screens."
+      },
+      {
+        "name": "shortcutJoinLabel",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Localized text between sequence steps. Defaults to then."
       },
       {
         "name": "size",
@@ -1013,13 +1069,6 @@
         "description": "Expands the button to fill its container width."
       },
       {
-        "name": "hotkeys",
-        "type": "string[]",
-        "required": false,
-        "defaultValue": null,
-        "description": "Keyboard shortcut hints displayed on non-mobile screens."
-      },
-      {
         "name": "href",
         "type": "string",
         "required": false,
@@ -1039,6 +1088,20 @@
         "required": false,
         "defaultValue": null,
         "description": "Caller-supplied root element or renderer. Preserve a native button, or an anchor when `href` is set. Router integration belongs to the caller."
+      },
+      {
+        "name": "shortcut",
+        "type": "ShortcutDefinition",
+        "required": false,
+        "defaultValue": null,
+        "description": "Flat key array for simultaneous keys, or nested key arrays for an ordered sequence. Displayed on non-mobile screens."
+      },
+      {
+        "name": "shortcutJoinLabel",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Localized text between sequence steps. Defaults to then."
       },
       {
         "name": "size",
@@ -1118,13 +1181,6 @@
         "description": "Expands the button to fill its container width."
       },
       {
-        "name": "hotkeys",
-        "type": "string[]",
-        "required": false,
-        "defaultValue": null,
-        "description": "Keyboard shortcut hints displayed on non-mobile screens."
-      },
-      {
         "name": "href",
         "type": "string",
         "required": false,
@@ -1144,6 +1200,20 @@
         "required": false,
         "defaultValue": null,
         "description": "Caller-supplied root element or renderer. Preserve a native button, or an anchor when `href` is set. Router integration belongs to the caller."
+      },
+      {
+        "name": "shortcut",
+        "type": "ShortcutDefinition",
+        "required": false,
+        "defaultValue": null,
+        "description": "Flat key array for simultaneous keys, or nested key arrays for an ordered sequence. Displayed on non-mobile screens."
+      },
+      {
+        "name": "shortcutJoinLabel",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Localized text between sequence steps. Defaults to then."
       },
       {
         "name": "size",
@@ -3046,20 +3116,6 @@
         "description": "Shows a chevron indicating that the item opens a submenu."
       },
       {
-        "name": "hotkeys",
-        "type": "string[]",
-        "required": false,
-        "defaultValue": null,
-        "description": "Keyboard shortcut keys displayed at the end of the row. Registering the\nshortcut is up to the application."
-      },
-      {
-        "name": "hotkeysJoinLabel",
-        "type": "string",
-        "required": false,
-        "defaultValue": null,
-        "description": "Text between shortcut keys. Defaults to `then`; pass an empty string to omit it."
-      },
-      {
         "name": "indicator",
         "type": "\"check\" | \"checkbox\" | \"none\"",
         "required": false,
@@ -3079,6 +3135,20 @@
         "required": false,
         "defaultValue": "false",
         "description": "Whether the item is selected. Shows the check or checkbox indicator when\n`indicator` is set."
+      },
+      {
+        "name": "shortcut",
+        "type": "ShortcutDefinition",
+        "required": false,
+        "defaultValue": null,
+        "description": "Keyboard shortcut keys displayed at the end of the row. Registering the\nshortcut is up to the application."
+      },
+      {
+        "name": "shortcutJoinLabel",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Text between sequential shortcut steps. Defaults to `then`; pass an empty string to omit it."
       },
       {
         "name": "startIcon",
@@ -4431,20 +4501,6 @@
             "description": "Icon rendered after the content."
           },
           {
-            "name": "hotkeys",
-            "type": "string[]",
-            "required": false,
-            "defaultValue": null,
-            "description": "Keyboard shortcut keys displayed at the end of the row. Registering the\nshortcut is up to the application."
-          },
-          {
-            "name": "hotkeysJoinLabel",
-            "type": "string",
-            "required": false,
-            "defaultValue": null,
-            "description": "Text between shortcut keys. Defaults to `then`."
-          },
-          {
             "name": "label",
             "type": "string",
             "required": false,
@@ -4471,6 +4527,20 @@
             "required": false,
             "defaultValue": null,
             "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+          },
+          {
+            "name": "shortcut",
+            "type": "ShortcutDefinition",
+            "required": false,
+            "defaultValue": null,
+            "description": "Keyboard shortcut keys displayed at the end of the row. Registering the\nshortcut is up to the application."
+          },
+          {
+            "name": "shortcutJoinLabel",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "Text between sequential shortcut steps. Defaults to `then`."
           },
           {
             "name": "startIcon",
@@ -4555,20 +4625,6 @@
             "description": "Icon rendered after the content."
           },
           {
-            "name": "hotkeys",
-            "type": "string[]",
-            "required": false,
-            "defaultValue": null,
-            "description": "Keyboard shortcut keys displayed at the end of the row. Registering the\nshortcut is up to the application."
-          },
-          {
-            "name": "hotkeysJoinLabel",
-            "type": "string",
-            "required": false,
-            "defaultValue": null,
-            "description": "Text between shortcut keys. Defaults to `then`."
-          },
-          {
             "name": "label",
             "type": "string",
             "required": false,
@@ -4602,6 +4658,20 @@
             "required": false,
             "defaultValue": null,
             "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+          },
+          {
+            "name": "shortcut",
+            "type": "ShortcutDefinition",
+            "required": false,
+            "defaultValue": null,
+            "description": "Keyboard shortcut keys displayed at the end of the row. Registering the\nshortcut is up to the application."
+          },
+          {
+            "name": "shortcutJoinLabel",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "Text between sequential shortcut steps. Defaults to `then`."
           },
           {
             "name": "startIcon",
@@ -4733,20 +4803,6 @@
             "description": "Icon rendered after the content."
           },
           {
-            "name": "hotkeys",
-            "type": "string[]",
-            "required": false,
-            "defaultValue": null,
-            "description": "Keyboard shortcut keys displayed at the end of the row. Registering the\nshortcut is up to the application."
-          },
-          {
-            "name": "hotkeysJoinLabel",
-            "type": "string",
-            "required": false,
-            "defaultValue": null,
-            "description": "Text between shortcut keys. Defaults to `then`."
-          },
-          {
             "name": "label",
             "type": "string",
             "required": false,
@@ -4773,6 +4829,20 @@
             "required": false,
             "defaultValue": null,
             "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+          },
+          {
+            "name": "shortcut",
+            "type": "ShortcutDefinition",
+            "required": false,
+            "defaultValue": null,
+            "description": "Keyboard shortcut keys displayed at the end of the row. Registering the\nshortcut is up to the application."
+          },
+          {
+            "name": "shortcutJoinLabel",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "Text between sequential shortcut steps. Defaults to `then`."
           },
           {
             "name": "startIcon",
@@ -5031,20 +5101,6 @@
             "description": "Icon rendered after the content."
           },
           {
-            "name": "hotkeys",
-            "type": "string[]",
-            "required": false,
-            "defaultValue": null,
-            "description": "Keyboard shortcut keys displayed at the end of the row. Registering the\nshortcut is up to the application."
-          },
-          {
-            "name": "hotkeysJoinLabel",
-            "type": "string",
-            "required": false,
-            "defaultValue": null,
-            "description": "Text between shortcut keys. Defaults to `then`."
-          },
-          {
             "name": "label",
             "type": "string",
             "required": false,
@@ -5078,6 +5134,20 @@
             "required": false,
             "defaultValue": null,
             "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+          },
+          {
+            "name": "shortcut",
+            "type": "ShortcutDefinition",
+            "required": false,
+            "defaultValue": null,
+            "description": "Keyboard shortcut keys displayed at the end of the row. Registering the\nshortcut is up to the application."
+          },
+          {
+            "name": "shortcutJoinLabel",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "Text between sequential shortcut steps. Defaults to `then`."
           },
           {
             "name": "startIcon",
@@ -7028,20 +7098,6 @@
             "description": "Shows a chevron indicating that the item opens a submenu."
           },
           {
-            "name": "hotkeys",
-            "type": "string[]",
-            "required": false,
-            "defaultValue": null,
-            "description": "Keyboard shortcut keys displayed at the end of the row. Registering the\nshortcut is up to the application."
-          },
-          {
-            "name": "hotkeysJoinLabel",
-            "type": "string",
-            "required": false,
-            "defaultValue": null,
-            "description": "Text between shortcut keys. Defaults to `then`."
-          },
-          {
             "name": "nativeButton",
             "type": "boolean",
             "required": false,
@@ -7061,6 +7117,20 @@
             "required": false,
             "defaultValue": null,
             "description": "Element rendered as the row instead of a native button. Custom components must forward the supplied props and ref."
+          },
+          {
+            "name": "shortcut",
+            "type": "ShortcutDefinition",
+            "required": false,
+            "defaultValue": null,
+            "description": "Keyboard shortcut keys displayed at the end of the row. Registering the\nshortcut is up to the application."
+          },
+          {
+            "name": "shortcutJoinLabel",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "Text between sequential shortcut steps. Defaults to `then`."
           },
           {
             "name": "startIcon",
@@ -7138,20 +7208,6 @@
             "description": "Shows a chevron indicating that the item opens a submenu."
           },
           {
-            "name": "hotkeys",
-            "type": "string[]",
-            "required": false,
-            "defaultValue": null,
-            "description": "Keyboard shortcut keys displayed at the end of the row. Registering the\nshortcut is up to the application."
-          },
-          {
-            "name": "hotkeysJoinLabel",
-            "type": "string",
-            "required": false,
-            "defaultValue": null,
-            "description": "Text between shortcut keys. Defaults to `then`."
-          },
-          {
             "name": "indicator",
             "type": "\"check\" | \"checkbox\" | \"none\"",
             "required": false,
@@ -7185,6 +7241,20 @@
             "required": true,
             "defaultValue": null,
             "description": "Whether the option is selected. Exposed as `aria-checked` in menus and `aria-pressed` in other dropdown types."
+          },
+          {
+            "name": "shortcut",
+            "type": "ShortcutDefinition",
+            "required": false,
+            "defaultValue": null,
+            "description": "Keyboard shortcut keys displayed at the end of the row. Registering the\nshortcut is up to the application."
+          },
+          {
+            "name": "shortcutJoinLabel",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "Text between sequential shortcut steps. Defaults to `then`."
           },
           {
             "name": "startIcon",
@@ -7399,20 +7469,6 @@
             "description": "Shows a chevron indicating that the item opens a submenu."
           },
           {
-            "name": "hotkeys",
-            "type": "string[]",
-            "required": false,
-            "defaultValue": null,
-            "description": "Keyboard shortcut keys displayed at the end of the row. Registering the\nshortcut is up to the application."
-          },
-          {
-            "name": "hotkeysJoinLabel",
-            "type": "string",
-            "required": false,
-            "defaultValue": null,
-            "description": "Text between shortcut keys. Defaults to `then`."
-          },
-          {
             "name": "nativeButton",
             "type": "boolean",
             "required": false,
@@ -7425,6 +7481,20 @@
             "required": false,
             "defaultValue": null,
             "description": "Element rendered as the row instead of a native button. Custom components must forward the supplied props and ref."
+          },
+          {
+            "name": "shortcut",
+            "type": "ShortcutDefinition",
+            "required": false,
+            "defaultValue": null,
+            "description": "Keyboard shortcut keys displayed at the end of the row. Registering the\nshortcut is up to the application."
+          },
+          {
+            "name": "shortcutJoinLabel",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "Text between sequential shortcut steps. Defaults to `then`."
           },
           {
             "name": "startIcon",
@@ -7556,20 +7626,6 @@
             "description": "Shows a chevron indicating that the item opens a submenu."
           },
           {
-            "name": "hotkeys",
-            "type": "string[]",
-            "required": false,
-            "defaultValue": null,
-            "description": "Keyboard shortcut keys displayed at the end of the row. Registering the\nshortcut is up to the application."
-          },
-          {
-            "name": "hotkeysJoinLabel",
-            "type": "string",
-            "required": false,
-            "defaultValue": null,
-            "description": "Text between shortcut keys. Defaults to `then`."
-          },
-          {
             "name": "nativeButton",
             "type": "boolean",
             "required": false,
@@ -7589,6 +7645,20 @@
             "required": false,
             "defaultValue": null,
             "description": "Element rendered as the row instead of a native button. Custom components must forward the supplied props and ref."
+          },
+          {
+            "name": "shortcut",
+            "type": "ShortcutDefinition",
+            "required": false,
+            "defaultValue": null,
+            "description": "Keyboard shortcut keys displayed at the end of the row. Registering the\nshortcut is up to the application."
+          },
+          {
+            "name": "shortcutJoinLabel",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "Text between sequential shortcut steps. Defaults to `then`."
           },
           {
             "name": "startIcon",
@@ -8396,55 +8466,6 @@
     ]
   },
   {
-    "name": "ColorSchemePicker",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/color-scheme-picker",
-    "props": [
-      {
-        "name": "className",
-        "type": "string",
-        "required": false,
-        "defaultValue": null,
-        "description": "Class applied to the outer container."
-      },
-      {
-        "name": "darkLabel",
-        "type": "string",
-        "required": true,
-        "defaultValue": null,
-        "description": "Visible label and accessible name of the dark choice."
-      },
-      {
-        "name": "lightLabel",
-        "type": "string",
-        "required": true,
-        "defaultValue": null,
-        "description": "Visible label and accessible name of the light choice."
-      },
-      {
-        "name": "onChange",
-        "type": "(value: ColorScheme) => void",
-        "required": true,
-        "defaultValue": null,
-        "description": "Called with the newly selected color scheme."
-      },
-      {
-        "name": "systemLabel",
-        "type": "string",
-        "required": true,
-        "defaultValue": null,
-        "description": "Visible label and accessible name of the system choice."
-      },
-      {
-        "name": "value",
-        "type": "\"Dark\" | \"Light\" | \"System\"",
-        "required": true,
-        "defaultValue": null,
-        "description": "Selected scheme: Light, Dark, or System. The application resolves system to a concrete theme."
-      }
-    ]
-  },
-  {
     "name": "SearchInput",
     "entryPoint": "twenty-ui/components",
     "slug": "components/search-input",
@@ -8472,10 +8493,17 @@
       },
       {
         "name": "className",
-        "type": "string",
+        "type": "string | ((state: InputState) => string | undefined)",
         "required": false,
         "defaultValue": null,
-        "description": "Class applied to the wrapper."
+        "description": "Class applied to the input."
+      },
+      {
+        "name": "defaultValue",
+        "type": "string | number | readonly string[]",
+        "required": false,
+        "defaultValue": null,
+        "description": "The default value of the input. Use when uncontrolled."
       },
       {
         "name": "disabled",
@@ -8507,10 +8535,17 @@
       },
       {
         "name": "onChange",
-        "type": "(value: string) => void",
-        "required": true,
+        "type": "((event: BaseUIEvent<ChangeEvent<HTMLInputElement, HTMLInputElement>>) => void)",
+        "required": false,
         "defaultValue": null,
-        "description": "Called with the new text, not a DOM change event. The application owns filtering."
+        "description": "Native input change event handler."
+      },
+      {
+        "name": "onValueChange",
+        "type": "((value: string, eventDetails: { reason: \"none\"; event: Event; cancel: () => void; allowPropagation: () => void; isCanceled: boolean; isPropagationAllowed: boolean; trigger: Element | undefined; }) => void)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Called with the new text. The application owns filtering."
       },
       {
         "name": "placeholder",
@@ -8520,9 +8555,37 @@
         "description": "Hint shown when the input is empty. Also used as the accessible name if no explicit label is supplied."
       },
       {
+        "name": "ref",
+        "type": "Ref<HTMLInputElement>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Ref to the native input element."
+      },
+      {
+        "name": "render",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, InputState>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+      },
+      {
+        "name": "size",
+        "type": "\"md\" | \"sm\"",
+        "required": false,
+        "defaultValue": "md",
+        "description": "Visual size of the input group and optional filter button."
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties | ((state: InputState) => CSSProperties | undefined)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+      },
+      {
         "name": "value",
-        "type": "string",
-        "required": true,
+        "type": "string | number | readonly string[]",
+        "required": false,
         "defaultValue": null,
         "description": "Current search text."
       }
@@ -8618,20 +8681,6 @@
         "description": "Shows a submenu chevron; does not create a submenu."
       },
       {
-        "name": "hotKeys",
-        "type": "Nullable<string[]>",
-        "required": false,
-        "defaultValue": null,
-        "description": "Visible shortcut hints. Register handlers in the application."
-      },
-      {
-        "name": "hotKeysJoinLabel",
-        "type": "string",
-        "required": false,
-        "defaultValue": null,
-        "description": "Text between shortcut keys. Defaults to `then`."
-      },
-      {
         "name": "iconButtons",
         "type": "ReactNode",
         "required": false,
@@ -8721,6 +8770,20 @@
         "required": false,
         "defaultValue": "false",
         "description": "Applies selected appearance without owning selection state."
+      },
+      {
+        "name": "shortcut",
+        "type": "ShortcutDefinition",
+        "required": false,
+        "defaultValue": null,
+        "description": "Flat key array for simultaneous keys, or nested key arrays for an ordered sequence. Register handlers in the application."
+      },
+      {
+        "name": "shortcutJoinLabel",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Text between sequential shortcut steps. Defaults to `then`."
       },
       {
         "name": "testId",
@@ -9127,48 +9190,6 @@
         "required": true,
         "defaultValue": null,
         "description": "Navigation items with a unique name, accessible label, Icon component, and onClick callback."
-      }
-    ]
-  },
-  {
-    "name": "RoundedLink",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/rounded-link",
-    "props": [
-      {
-        "name": "className",
-        "type": "string",
-        "required": false,
-        "defaultValue": null,
-        "description": "Class applied to the link."
-      },
-      {
-        "name": "color",
-        "type": "\"primary\" | \"secondary\"",
-        "required": false,
-        "defaultValue": "primary",
-        "description": "Label text color: primary or secondary."
-      },
-      {
-        "name": "href",
-        "type": "string",
-        "required": true,
-        "defaultValue": null,
-        "description": "Destination URL, normalized by the safe-URL helper. Opens in a new tab."
-      },
-      {
-        "name": "label",
-        "type": "string",
-        "required": false,
-        "defaultValue": null,
-        "description": "Visible link text. An absent or empty label renders nothing."
-      },
-      {
-        "name": "onClick",
-        "type": "((event: MouseEvent<HTMLElement, MouseEvent>) => void)",
-        "required": false,
-        "defaultValue": null,
-        "description": "Click callback after propagation is stopped."
       }
     ]
   },

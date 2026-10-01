@@ -133,7 +133,6 @@ export const DOCUMENTATION_PATHS = {
   UI_COMPONENTS_AVATAR_GROUP: '/ui/components/avatar-group',
   UI_COMPONENTS_CALLOUT: '/ui/components/callout',
   UI_COMPONENTS_CODE_EDITOR: '/ui/components/code-editor',
-  UI_COMPONENTS_COLOR_SCHEME_PICKER: '/ui/components/color-scheme-picker',
   UI_COMPONENTS_COMMAND_BLOCK: '/ui/components/command-block',
   UI_COMPONENTS_DROPDOWN: '/ui/components/dropdown',
   UI_COMPONENTS_INLINE_BANNER: '/ui/components/inline-banner',
@@ -148,7 +147,6 @@ export const DOCUMENTATION_PATHS = {
   UI_COMPONENTS_NAVIGATION_BAR: '/ui/components/navigation-bar',
   UI_COMPONENTS_NOTIFICATION_COUNTER: '/ui/components/notification-counter',
   UI_COMPONENTS_OVERVIEW: '/ui/components/overview',
-  UI_COMPONENTS_ROUNDED_LINK: '/ui/components/rounded-link',
   UI_COMPONENTS_SEARCH_INPUT: '/ui/components/search-input',
   UI_COMPONENTS_SECTION: '/ui/components/section',
   UI_COMPONENTS_SETTINGS_ROW: '/ui/components/settings-row',
@@ -202,6 +200,7 @@ export const DOCUMENTATION_PATHS = {
   UI_PRIMITIVES_TYPOGRAPHY_HEADING: '/ui/primitives/typography/heading',
   UI_PRIMITIVES_TYPOGRAPHY_OVERFLOWING_TEXT_WITH_TOOLTIP:
     '/ui/primitives/typography/overflowing-text-with-tooltip',
+  UI_PRIMITIVES_TYPOGRAPHY_SHORTCUT: '/ui/primitives/typography/shortcut',
   UI_PRIMITIVES_TYPOGRAPHY_TEXT: '/ui/primitives/typography/text',
   UI_SSR: '/ui/ssr',
   UI_TESTING: '/ui/testing',
