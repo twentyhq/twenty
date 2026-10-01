@@ -19,8 +19,16 @@
   Initial size when the handle owns its state.
 </ParamField>
 
+<ParamField body="direction" type="&quot;normal&quot; | &quot;reverse&quot;">
+  Physical increasing direction. Omit to follow the horizontal text direction; use `normal` or `reverse` for a fixed physical edge.
+</ParamField>
+
 <ParamField body="disabled" type="boolean" default="false">
   Disables resizing and removes the handle from the tab order.
+</ParamField>
+
+<ParamField body="dragThreshold" type="number" default="0">
+  Physical pointer distance required before resizing starts. Movement below the threshold remains a click.
 </ParamField>
 
 <ParamField body="max" type="number" default="500">
@@ -31,8 +39,24 @@
   Minimum allowed size.
 </ParamField>
 
+<ParamField body="onActivate" type="(() =&gt; void)">
+  Called for a click without dragging, Enter, or Space.
+</ParamField>
+
+<ParamField body="onResizeEnd" type="((details: { cancelled: boolean; value: number; }) =&gt; void)">
+  Called after a started drag ends, with its latest live value and whether it was cancelled. Cancellation keeps the live value until the caller changes it.
+</ParamField>
+
+<ParamField body="onResizeStart" type="((value: number) =&gt; void)">
+  Called once with the first bounded drag value after the threshold is crossed.
+</ParamField>
+
 <ParamField body="onValueChange" type="((value: number) =&gt; void)">
   Called with the bounded size after pointer or keyboard interaction.
+</ParamField>
+
+<ParamField body="onValueCommit" type="((value: number) =&gt; void)">
+  Called with the final size after a successful drag or an effective keyboard size change. Cancellation does not commit.
 </ParamField>
 
 <ParamField body="render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, {}&gt;">
@@ -40,6 +64,10 @@
   with a different tag, or compose it with another component.
 
   Accepts a `ReactElement` or a function that returns the element to render.
+</ParamField>
+
+<ParamField body="scale" type="number | (() =&gt; number)" default="1">
+  Pointer scale or resolver sampled at pointer down. Movement is divided by this positive scale; keyboard steps are unchanged.
 </ParamField>
 
 <ParamField body="step" type="number" default="10">

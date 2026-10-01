@@ -11,9 +11,16 @@ import { type ResizeHandleProps } from './types/ResizeHandleProps';
 
 export const ResizeHandle = ({
   axis = 'y',
+  direction,
+  scale = 1,
+  dragThreshold = 0,
   value: controlledValue,
   defaultValue = RESIZE_HANDLE_DEFAULTS.value,
   onValueChange,
+  onValueCommit,
+  onResizeStart,
+  onResizeEnd,
+  onActivate,
   min = RESIZE_HANDLE_DEFAULTS.min,
   max = RESIZE_HANDLE_DEFAULTS.max,
   step = RESIZE_HANDLE_DEFAULTS.step,
@@ -40,6 +47,13 @@ export const ResizeHandle = ({
   };
   const interactionProps = useResizeHandleInteraction({
     axis,
+    direction,
+    scale,
+    dragThreshold,
+    onValueCommit,
+    onResizeStart,
+    onResizeEnd,
+    onActivate,
     value: boundedValue,
     onValueChange: handleValueChange,
     min,

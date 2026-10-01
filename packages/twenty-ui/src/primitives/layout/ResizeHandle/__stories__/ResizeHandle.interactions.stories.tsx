@@ -5,6 +5,7 @@ import { expect, fireEvent, fn, userEvent, within } from 'storybook/test';
 import { ComponentDecorator } from '@ui/testing';
 
 import { ResizeHandle } from '../ResizeHandle';
+import { type ResizeHandleProps } from '../types/ResizeHandleProps';
 
 import { ControlledResizeHandle } from './ControlledResizeHandle';
 import { withMockPointerCapture } from './withMockPointerCapture';
@@ -13,7 +14,7 @@ const meta = {
   title: 'UI/Layout/ResizeHandle/Interactions',
   component: ResizeHandle,
   decorators: [ComponentDecorator],
-  args: { onValueChange: fn() },
+  args: { onValueChange: fn(), onValueCommit: fn(), onResizeEnd: fn() },
 } satisfies Meta<typeof ResizeHandle>;
 
 export default meta;
@@ -29,6 +30,8 @@ export const Keyboard: Story = {
     await userEvent.keyboard('{ArrowDown}{ArrowDown}{ArrowDown}');
     await expect(handle).toHaveAttribute('aria-valuenow', '120');
     await expect(args.onValueChange).toHaveBeenCalledTimes(2);
+    await expect(args.onValueCommit).toHaveBeenCalledTimes(2);
+    await expect(args.onValueCommit).toHaveBeenLastCalledWith(120);
     await expect(args.onValueChange).toHaveBeenNthCalledWith(1, 115);
     await expect(args.onValueChange).toHaveBeenNthCalledWith(2, 120);
 
@@ -95,9 +98,11 @@ export const PointerDrag: Story = {
 
 const playPointerEnd = async ({
   canvasElement,
+  args,
   eventName,
 }: {
   canvasElement: HTMLElement;
+  args: ResizeHandleProps;
   eventName: 'pointerUp' | 'pointerCancel' | 'lostPointerCapture';
 }) => {
   const handle = within(canvasElement).getByRole('separator');
@@ -112,10 +117,18 @@ const playPointerEnd = async ({
         coords: { y: 10 },
       });
       await pointer.pointer({ target: handle, coords: { y: 60 } });
-      await fireEvent[eventName](handle, { pointerId: 1 });
+      await fireEvent[eventName](handle, { pointerId: 1, clientY: 60 });
       await pointer.pointer({ target: handle, coords: { y: 100 } });
       await expect(handle).toHaveAttribute('aria-valuenow', '200');
       await expect(handle.releasePointerCapture).toHaveBeenCalledWith(1);
+      await expect(args.onValueCommit).toHaveBeenCalledTimes(
+        eventName === 'pointerUp' ? 1 : 0,
+      );
+      await expect(args.onResizeEnd).toHaveBeenCalledTimes(1);
+      await expect(args.onResizeEnd).toHaveBeenCalledWith({
+        cancelled: eventName !== 'pointerUp',
+        value: 200,
+      });
 
       await pointer.pointer({ target: handle, keys: '[/MouseLeft]' });
       await pointer.pointer({
@@ -131,18 +144,18 @@ const playPointerEnd = async ({
 };
 
 export const PointerRelease: Story = {
-  play: ({ canvasElement }) =>
-    playPointerEnd({ canvasElement, eventName: 'pointerUp' }),
+  play: ({ canvasElement, args }) =>
+    playPointerEnd({ canvasElement, args, eventName: 'pointerUp' }),
 };
 
 export const PointerCancel: Story = {
-  play: ({ canvasElement }) =>
-    playPointerEnd({ canvasElement, eventName: 'pointerCancel' }),
+  play: ({ canvasElement, args }) =>
+    playPointerEnd({ canvasElement, args, eventName: 'pointerCancel' }),
 };
 
 export const LostPointerCapture: Story = {
-  play: ({ canvasElement }) =>
-    playPointerEnd({ canvasElement, eventName: 'lostPointerCapture' }),
+  play: ({ canvasElement, args }) =>
+    playPointerEnd({ canvasElement, args, eventName: 'lostPointerCapture' }),
 };
 
 export const Disabled: Story = {

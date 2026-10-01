@@ -658,6 +658,7 @@
                       {
                         "group": "Layout",
                         "pages": [
+                          "ui/components/resizable-panel",
                           "ui/components/layout/section",
                           "ui/components/layout/overflowing-list",
                           "ui/components/layout/animated-icon-crossfade"

@@ -1,6 +1,12 @@
 {
   ".": {
-    "reExports": ["components", "icon", "primitives", "theme", "utilities"],
+    "reExports": [
+      "components",
+      "icon",
+      "primitives",
+      "theme",
+      "utilities"
+    ],
     "values": {},
     "types": {}
   },
@@ -113,12 +119,14 @@
     "values": {
       "AnimatedIconCrossfade": "components/layout/AnimatedIconCrossfade/AnimatedIconCrossfade",
       "OverflowingList": "components/layout/OverflowingList/OverflowingList",
-      "Section": "components/layout/Section/Section"
+      "Section": "components/layout/Section/Section",
+      "ResizablePanel": "components/layout/ResizablePanel/ResizablePanel"
     },
     "types": {
       "OverflowingListProps": "components/layout/OverflowingList/types/OverflowingListProps",
       "SectionHeaderProps": "components/layout/Section/types/SectionHeaderProps",
-      "SectionRootProps": "components/layout/Section/types/SectionRootProps"
+      "SectionRootProps": "components/layout/Section/types/SectionRootProps",
+      "ResizablePanelProps": "components/layout/ResizablePanel/types/ResizablePanelProps"
     }
   },
   "components/navigation": {

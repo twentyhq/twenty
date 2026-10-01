@@ -69,7 +69,7 @@ export const resizeHandleTest: TwentyUiGalleryPlayFunction = async (
         expect(handle).toHaveAttribute('aria-valuenow', '180');
         expect(canvas.getByText('180 pixels')).toBeVisible();
       });
-      await fireEvent[endEvent](handle, { pointerId: 1 });
+      await fireEvent[endEvent](handle, { pointerId: 1, clientY: 80 });
       await pointer.pointer({ target: handle, coords: { y: 0 } });
       await pointer.pointer({ target: handle, keys: '[/MouseLeft]' });
       await userEvent.keyboard('{ArrowDown}');

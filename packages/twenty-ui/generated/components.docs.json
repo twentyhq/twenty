@@ -898,11 +898,25 @@
         "description": "Initial size when the handle owns its state."
       },
       {
+        "name": "direction",
+        "type": "\"normal\" | \"reverse\"",
+        "required": false,
+        "defaultValue": null,
+        "description": "Physical increasing direction. Omit to follow the horizontal text direction; use `normal` or `reverse` for a fixed physical edge."
+      },
+      {
         "name": "disabled",
         "type": "boolean",
         "required": false,
         "defaultValue": "false",
         "description": "Disables resizing and removes the handle from the tab order."
+      },
+      {
+        "name": "dragThreshold",
+        "type": "number",
+        "required": false,
+        "defaultValue": "0",
+        "description": "Physical pointer distance required before resizing starts. Movement below the threshold remains a click."
       },
       {
         "name": "max",
@@ -919,6 +933,27 @@
         "description": "Minimum allowed size."
       },
       {
+        "name": "onActivate",
+        "type": "(() => void)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Called for a click without dragging, Enter, or Space."
+      },
+      {
+        "name": "onResizeEnd",
+        "type": "((details: { cancelled: boolean; value: number; }) => void)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Called after a started drag ends, with its latest live value and whether it was cancelled. Cancellation keeps the live value until the caller changes it."
+      },
+      {
+        "name": "onResizeStart",
+        "type": "((value: number) => void)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Called once with the first bounded drag value after the threshold is crossed."
+      },
+      {
         "name": "onValueChange",
         "type": "((value: number) => void)",
         "required": false,
@@ -926,11 +961,25 @@
         "description": "Called with the bounded size after pointer or keyboard interaction."
       },
       {
+        "name": "onValueCommit",
+        "type": "((value: number) => void)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Called with the final size after a successful drag or an effective keyboard size change. Cancellation does not commit."
+      },
+      {
         "name": "render",
         "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
         "required": false,
         "defaultValue": null,
         "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+      },
+      {
+        "name": "scale",
+        "type": "number | (() => number)",
+        "required": false,
+        "defaultValue": "1",
+        "description": "Pointer scale or resolver sampled at pointer down. Movement is divided by this positive scale; keyboard steps are unchanged."
       },
       {
         "name": "step",
@@ -9006,6 +9055,132 @@
         "required": false,
         "defaultValue": null,
         "description": "Shows the overflow count on hover and keyboard focus by default. Use true to show it whenever items overflow, or false to omit the trigger. An open popup stays open until it is dismissed."
+      }
+    ]
+  },
+  {
+    "name": "ResizablePanel",
+    "entryPoint": "twenty-ui/components",
+    "slug": "components/resizable-panel",
+    "props": [
+      {
+        "name": "defaultSize",
+        "type": "number",
+        "required": false,
+        "defaultValue": "min",
+        "description": "Initial committed size when uncontrolled. Defaults to min."
+      },
+      {
+        "name": "disabled",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Prevents resizing and collapse and removes the separator from the tab order."
+      },
+      {
+        "name": "gapSize",
+        "type": "number",
+        "required": false,
+        "defaultValue": "0",
+        "description": "Space occupied by the gap variant, in CSS pixels."
+      },
+      {
+        "name": "max",
+        "type": "number",
+        "required": true,
+        "defaultValue": null,
+        "description": "Maximum allowed size."
+      },
+      {
+        "name": "min",
+        "type": "number",
+        "required": true,
+        "defaultValue": null,
+        "description": "Minimum allowed size."
+      },
+      {
+        "name": "onCollapse",
+        "type": "(() => void)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Requests collapse on a click without dragging or on Enter or Space. The application controls panel visibility."
+      },
+      {
+        "name": "onResizeEnd",
+        "type": "((details: { cancelled: boolean; value: number; }) => void)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Reports whether the pointer drag was cancelled and its final or restored size."
+      },
+      {
+        "name": "onResizeStart",
+        "type": "((value: number) => void)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Reports the first candidate size when a pointer drag passes the movement threshold."
+      },
+      {
+        "name": "onSizeChange",
+        "type": "((size: number) => void)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Reports live size updates and the restored starting size after cancellation. Apply this size to the panel layout."
+      },
+      {
+        "name": "onSizeCommit",
+        "type": "((size: number) => void)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Reports the final size after a successful drag or a keyboard size change. Save controlled sizes here."
+      },
+      {
+        "name": "render",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+      },
+      {
+        "name": "scale",
+        "type": "number | (() => number)",
+        "required": false,
+        "defaultValue": "1",
+        "description": "Positive CSS zoom or scale factor, or a function evaluated at pointer down. Pointer distance is divided by this value."
+      },
+      {
+        "name": "showHandle",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "true",
+        "description": "Shows the grip on the edge variant. Does not disable interaction."
+      },
+      {
+        "name": "side",
+        "type": "\"bottom\" | \"left\" | \"right\" | \"top\"",
+        "required": true,
+        "defaultValue": null,
+        "description": "Physical panel edge. Left and top reverse the size change; right and bottom follow pointer movement."
+      },
+      {
+        "name": "size",
+        "type": "number",
+        "required": false,
+        "defaultValue": null,
+        "description": "Controlled committed size. The panel maintains a separate live size during a drag."
+      },
+      {
+        "name": "step",
+        "type": "number",
+        "required": false,
+        "defaultValue": "10",
+        "description": "Keyboard arrow increment in size units. Pointer movement is not snapped."
+      },
+      {
+        "name": "variant",
+        "type": "\"edge\" | \"gap\"",
+        "required": false,
+        "defaultValue": "edge",
+        "description": "An absolute edge inside a positioned panel, or a gap in the surrounding layout."
       }
     ]
   },

@@ -17,6 +17,7 @@ import { numberStepperSandboxFailureTest } from '@/__stories__/twenty-ui-gallery
 import { settingsRowTest } from '@/__stories__/twenty-ui-gallery/utils/settingsRowTest';
 import { resizeHandleTest } from '@/__stories__/twenty-ui-gallery/utils/resizeHandleTest';
 import { listItemTest } from '@/__stories__/twenty-ui-gallery/utils/listItemTest';
+import { resizablePanelTest } from '@/__stories__/twenty-ui-gallery/utils/resizablePanelTest';
 import { pickerListItemsTest } from '@/__stories__/twenty-ui-gallery/utils/pickerListItemsTest';
 import { iconButtonElevatedTest } from '@/__stories__/twenty-ui-gallery/utils/iconButtonElevatedTest';
 import { buttonControlsTest } from '@/__stories__/twenty-ui-gallery/utils/buttonControlsTest';
@@ -173,6 +174,18 @@ export const LayoutPreact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-layout-gallery',
   runtime: 'preact',
   play: resizeHandleTest,
+});
+
+export const ResizablePanelReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-resizable-panel',
+  runtime: 'react',
+  play: resizablePanelTest,
+});
+
+export const ResizablePanelPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-resizable-panel',
+  runtime: 'preact',
+  play: resizablePanelTest,
 });
 
 export const NavigationReact: Story = createGalleryStory({

@@ -1,0 +1,1 @@
+export const RESIZABLE_PANEL_DRAG_THRESHOLD = 5;

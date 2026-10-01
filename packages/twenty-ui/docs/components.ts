@@ -56,6 +56,7 @@ import { OVERFLOWING_TEXT_WITH_TOOLTIP_PROP_DESCRIPTIONS } from './overflowingTe
 import { PILL_PROP_DESCRIPTIONS } from './pillPropDescriptions';
 import { PROGRESS_BAR_PROP_DESCRIPTIONS } from './progressBarPropDescriptions';
 import { RESIZE_HANDLE_PROP_DESCRIPTIONS } from './resizeHandlePropDescriptions';
+import { RESIZABLE_PANEL_PROP_DESCRIPTIONS } from './resizablePanelPropDescriptions';
 import { SECTION_HEADER_PROP_DESCRIPTIONS } from './sectionHeaderPropDescriptions';
 import { SECTION_ROOT_PROP_DESCRIPTIONS } from './sectionRootPropDescriptions';
 import { SEGMENTED_CONTROL_PROP_DESCRIPTIONS } from './segmentedControlPropDescriptions';
@@ -546,6 +547,22 @@ export const DOCUMENTED_COMPONENTS = [
     entryPoint: 'twenty-ui/components/layout',
     slug: 'components/layout/overflowing-list',
     propDescriptions: OVERFLOWING_LIST_PROP_DESCRIPTIONS,
+  },
+  {
+    name: 'ResizablePanel',
+    source: 'components/layout/ResizablePanel/ResizablePanel.tsx',
+    entryPoint: 'twenty-ui/components',
+    slug: 'components/resizable-panel',
+    propDescriptions: RESIZABLE_PANEL_PROP_DESCRIPTIONS,
+    propDefaults: {
+      defaultSize: 'min',
+      disabled: 'false',
+      gapSize: '0',
+      showHandle: 'true',
+      variant: 'edge',
+      step: '10',
+      scale: '1',
+    },
   },
   {
     name: 'Section',

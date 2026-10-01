@@ -90,6 +90,20 @@ Arrow keys use `step`, which defaults to `10`. Home moves to `min`, and End move
 
 The separator orientation describes the dividing edge: horizontal for height resizing and vertical for width resizing.
 
+## Physical directions and zoom
+
+Set `direction="normal"` or `direction="reverse"` when increasing size must follow a fixed physical direction, regardless of text direction. Normal increases with rightward or downward movement. Reverse increases with leftward or upward movement. Omit `direction` to retain the text-direction behavior described above.
+
+`scale` accepts a positive zoom factor or a function returning one. The handle samples it at pointer down and divides pointer movement by that value. Keyboard steps remain unchanged. Use [ResizablePanel](/ui/components/resizable-panel) for a positioned panel edge or gap with committed sizes and cancellation rollback.
+
+## Gesture lifecycle
+
+`onValueChange` reports live values. `onValueCommit` reports the final value after a successful pointer drag or an effective keyboard change. Home, End and arrow keys commit immediately when they change the size.
+
+`onResizeStart` receives the first bounded candidate after the pointer passes `dragThreshold`. The threshold defaults to zero and is measured in physical pixels. `onResizeEnd` receives `{ cancelled, value }` for a started drag. Escape, pointer cancellation, lost pointer capture, disabling the handle and unmounting it cancel the gesture without committing. Cancellation does not restore an earlier value; callers can restore a controlled value if their workflow requires rollback.
+
+Supply `onActivate` to handle a click without dragging, Enter or Space. Crossing the threshold prevents the following pointer click from activating, even when the pointer returns to its starting position. Native event handlers can prevent the default interaction.
+
 ## Custom handle
 
 `children` replaces the visible grip; it does not replace the separator behavior. `render` can replace the root element. Custom wrappers must [forward the supplied props and ref](/ui/primitives/overview#custom-components) so focus, pointer capture, keyboard handlers, and accessibility attributes reach the same element.

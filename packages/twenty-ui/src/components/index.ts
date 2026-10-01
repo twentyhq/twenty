@@ -13,3 +13,5 @@ export * from './input';
 export * from './layout';
 export * from './navigation';
 export * from './settings';
+export { ResizablePanel } from './layout/ResizablePanel/ResizablePanel';
+export type { ResizablePanelProps } from './layout/ResizablePanel/types/ResizablePanelProps';

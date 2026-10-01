@@ -1,17 +1,19 @@
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { MockedProvider } from '@apollo/client/testing/react';
-import { render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Provider as JotaiProvider } from 'jotai';
 import { Suspense } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { ToastProvider } from 'twenty-ui/components/feedback';
+import { type ResizablePanelProps } from 'twenty-ui/components';
 
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isClickHouseConfiguredState } from '@/client-config/states/isClickHouseConfiguredState';
 import { LogConsole } from '@/log-console/components/LogConsole';
+import { isLogConsoleFullScreenState } from '@/log-console/states/isLogConsoleFullScreenState';
 import { logConsoleDisplayModeState } from '@/log-console/states/logConsoleDisplayModeState';
 import { useSetAdvancedMode } from '@/navigation/hooks/useSetAdvancedMode';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
@@ -28,6 +30,16 @@ import {
   mockCurrentWorkspace,
   mockedUserData,
 } from '~/testing/mock-data/users';
+
+let capturedResizablePanelProps: ResizablePanelProps | undefined;
+
+jest.mock('twenty-ui/components', () => ({
+  ...jest.requireActual('twenty-ui/components'),
+  ResizablePanel: (props: ResizablePanelProps) => {
+    capturedResizablePanelProps = props;
+    return null;
+  },
+}));
 
 jest.mock('@/log-console/components/LogConsoleResults', () => ({
   LogConsoleResults: () => <div>Log results</div>,
@@ -89,6 +101,65 @@ const renderWithLogsFeatureFlag = (isLogsFeatureFlagEnabled: boolean) => {
 };
 
 describe('LogConsole', () => {
+  beforeEach(() => {
+    capturedResizablePanelProps = undefined;
+  });
+
+  it('restores the collapsed console when its opening drag is cancelled', () => {
+    renderWithLogsFeatureFlag(true);
+    act(() => {
+      jotaiStore.set(isAdvancedModeEnabledState.atom, true);
+      jotaiStore.set(logConsoleDisplayModeState.atom, 'collapsed');
+    });
+    act(() => capturedResizablePanelProps?.onResizeStart?.(100));
+
+    expect(jotaiStore.get(logConsoleDisplayModeState.atom)).toBe('open');
+
+    act(() =>
+      capturedResizablePanelProps?.onResizeEnd?.({
+        cancelled: true,
+        value: 100,
+      }),
+    );
+
+    expect(jotaiStore.get(logConsoleDisplayModeState.atom)).toBe('collapsed');
+  });
+
+  it('keeps an explicitly closed console closed when its drag is cancelled', () => {
+    renderWithLogsFeatureFlag(true);
+    act(() => {
+      jotaiStore.set(isAdvancedModeEnabledState.atom, true);
+      jotaiStore.set(logConsoleDisplayModeState.atom, 'collapsed');
+    });
+    act(() => capturedResizablePanelProps?.onResizeStart?.(100));
+    const onResizeEnd = capturedResizablePanelProps?.onResizeEnd;
+
+    expect(jotaiStore.get(logConsoleDisplayModeState.atom)).toBe('open');
+
+    act(() => jotaiStore.set(logConsoleDisplayModeState.atom, 'closed'));
+    act(() => onResizeEnd?.({ cancelled: true, value: 100 }));
+
+    expect(jotaiStore.get(logConsoleDisplayModeState.atom)).toBe('closed');
+  });
+
+  it('keeps the console open in full screen when its drag is cancelled', () => {
+    renderWithLogsFeatureFlag(true);
+    act(() => {
+      jotaiStore.set(isAdvancedModeEnabledState.atom, true);
+      jotaiStore.set(logConsoleDisplayModeState.atom, 'collapsed');
+    });
+    act(() => capturedResizablePanelProps?.onResizeStart?.(100));
+    const onResizeEnd = capturedResizablePanelProps?.onResizeEnd;
+
+    expect(jotaiStore.get(logConsoleDisplayModeState.atom)).toBe('open');
+
+    act(() => jotaiStore.set(isLogConsoleFullScreenState.atom, true));
+    act(() => onResizeEnd?.({ cancelled: true, value: 100 }));
+
+    expect(jotaiStore.get(logConsoleDisplayModeState.atom)).toBe('open');
+    expect(jotaiStore.get(isLogConsoleFullScreenState.atom)).toBe(true);
+  });
+
   it('opens when developer mode is turned on', async () => {
     renderWithLogsFeatureFlag(true);
 

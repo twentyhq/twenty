@@ -1,99 +1,102 @@
 import { useDirection } from '@base-ui/react/direction-provider';
 import { clamp } from '@base-ui/utils/clamp';
-import { type KeyboardEvent, type PointerEvent, useRef } from 'react';
+import { type KeyboardEvent } from 'react';
 
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
-type ResizeGesture = {
-  pointerId: number;
-  startPosition: number;
-  startValue: number;
-};
+import { type ResizeHandleProps } from '../types/ResizeHandleProps';
 
-type UseResizeHandleInteractionArgs = {
-  axis: 'x' | 'y';
-  value: number;
-  onValueChange: (value: number) => void;
-  min: number;
-  max: number;
-  step: number;
-  disabled: boolean;
-};
+import { useResizeHandlePointerInteraction } from './useResizeHandlePointerInteraction';
+
+type UseResizeHandleInteractionArgs = Required<
+  Pick<
+    ResizeHandleProps,
+    'axis' | 'value' | 'min' | 'max' | 'step' | 'disabled'
+  >
+> &
+  Pick<
+    ResizeHandleProps,
+    | 'direction'
+    | 'onValueCommit'
+    | 'onResizeStart'
+    | 'onResizeEnd'
+    | 'onActivate'
+  > & {
+    onValueChange: (value: number) => void;
+    scale: number | (() => number);
+    dragThreshold: number;
+  };
 
 export const useResizeHandleInteraction = ({
   axis,
+  direction,
   value,
   onValueChange,
+  onValueCommit,
+  onResizeStart,
+  onResizeEnd,
+  onActivate,
+  scale,
+  dragThreshold,
   min,
   max,
   step,
   disabled,
 }: UseResizeHandleInteractionArgs) => {
-  const direction = useDirection();
-  const isHorizontalRtl = axis === 'x' && direction === 'rtl';
-  const gestureRef = useRef<ResizeGesture | null>(null);
-
-  const handlePointerDown = (event: PointerEvent<HTMLDivElement>) => {
-    if (
-      disabled ||
-      event.defaultPrevented ||
-      event.button !== 0 ||
-      isDefined(gestureRef.current)
-    ) {
-      return;
-    }
-
-    event.preventDefault();
-    event.currentTarget.focus?.();
-    event.currentTarget.setPointerCapture?.(event.pointerId);
-    gestureRef.current = {
-      pointerId: event.pointerId,
-      startPosition: axis === 'y' ? event.clientY : event.clientX,
-      startValue: value,
-    };
-  };
-
-  const handlePointerMove = (event: PointerEvent<HTMLDivElement>) => {
-    const gesture = gestureRef.current;
-
-    if (
-      disabled ||
-      event.defaultPrevented ||
-      !isDefined(gesture) ||
-      gesture.pointerId !== event.pointerId
-    ) {
-      return;
-    }
-
-    const position = axis === 'y' ? event.clientY : event.clientX;
-    const delta =
-      (position - gesture.startPosition) * (isHorizontalRtl ? -1 : 1);
-    const nextValue = clamp(gesture.startValue + delta, min, max);
-
-    onValueChange(nextValue);
-  };
-
-  const handlePointerEnd = (event: PointerEvent<HTMLDivElement>) => {
-    if (gestureRef.current?.pointerId !== event.pointerId) {
-      return;
-    }
-
-    gestureRef.current = null;
-
-    if (event.currentTarget.hasPointerCapture?.(event.pointerId)) {
-      event.currentTarget.releasePointerCapture?.(event.pointerId);
-    }
-  };
+  const textDirection = useDirection();
+  const isReversed = isDefined(direction)
+    ? direction === 'reverse'
+    : axis === 'x' && textDirection === 'rtl';
+  const { cancelResize, isPointerActive, ...pointerInteractionProps } =
+    useResizeHandlePointerInteraction({
+      axis,
+      isReversed,
+      value,
+      onValueChange,
+      onValueCommit,
+      onResizeStart,
+      onResizeEnd,
+      onActivate,
+      scale,
+      dragThreshold,
+      min,
+      max,
+      disabled,
+    });
 
   const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
-    if (disabled || event.defaultPrevented) {
+    if (event.defaultPrevented) {
       return;
     }
 
-    const increaseKey =
-      axis === 'y' ? 'ArrowDown' : isHorizontalRtl ? 'ArrowLeft' : 'ArrowRight';
-    const decreaseKey =
-      axis === 'y' ? 'ArrowUp' : isHorizontalRtl ? 'ArrowRight' : 'ArrowLeft';
+    if (event.key === 'Escape' && cancelResize()) {
+      event.preventDefault();
+      event.stopPropagation();
+
+      return;
+    }
+
+    if (disabled || isPointerActive()) {
+      return;
+    }
+
+    const isActivationKey = event.key === 'Enter' || event.key === ' ';
+
+    if (isActivationKey && isDefined(onActivate)) {
+      event.preventDefault();
+      event.stopPropagation();
+
+      if (!event.repeat) {
+        onActivate();
+      }
+
+      return;
+    }
+
+    const forwardKey = axis === 'y' ? 'ArrowDown' : 'ArrowRight';
+    const backwardKey = axis === 'y' ? 'ArrowUp' : 'ArrowLeft';
+    const increaseKey = isReversed ? backwardKey : forwardKey;
+    const decreaseKey = isReversed ? forwardKey : backwardKey;
     const valueByKey = new Map([
       [increaseKey, value + step],
       [decreaseKey, value - step],
@@ -108,15 +111,16 @@ export const useResizeHandleInteraction = ({
 
     event.preventDefault();
     event.stopPropagation();
-    onValueChange(clamp(nextValue, min, max));
+
+    const boundedValue = clamp(nextValue, min, max);
+
+    if (boundedValue === value) {
+      return;
+    }
+
+    onValueChange(boundedValue);
+    onValueCommit?.(boundedValue);
   };
 
-  return {
-    onPointerDown: handlePointerDown,
-    onPointerMove: handlePointerMove,
-    onPointerUp: handlePointerEnd,
-    onPointerCancel: handlePointerEnd,
-    onLostPointerCapture: handlePointerEnd,
-    onKeyDown: handleKeyDown,
-  };
+  return { ...pointerInteractionProps, onKeyDown: handleKeyDown };
 };
