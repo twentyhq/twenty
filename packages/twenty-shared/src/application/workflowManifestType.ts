@@ -12,7 +12,6 @@ export const workflowManifestSchema = z
     universalIdentifier: z.uuid(),
     name: z.string().min(1),
     version: z.strictObject({
-      universalIdentifier: z.uuid(),
       trigger: z.strictObject({
         universalIdentifier: z.uuid(),
         type: z.literal('MANUAL'),
@@ -25,7 +24,6 @@ export const workflowManifestSchema = z
     const { steps, trigger } = workflow.version;
     const identities = [
       workflow.universalIdentifier,
-      workflow.version.universalIdentifier,
       trigger.universalIdentifier,
       ...steps.map((step) => step.universalIdentifier),
     ];
@@ -34,7 +32,7 @@ export const workflowManifestSchema = z
       context.addIssue({
         code: 'custom',
         message:
-          'Workflow, version, trigger and steps must have distinct universal identifiers',
+          'Workflow, trigger and steps must have distinct universal identifiers',
       });
     }
 

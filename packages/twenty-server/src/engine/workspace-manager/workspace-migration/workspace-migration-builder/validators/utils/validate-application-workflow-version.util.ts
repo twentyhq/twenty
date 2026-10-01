@@ -9,15 +9,12 @@ import {
 
 import { CoreWorkflowMetadataExceptionCode } from 'src/engine/core-modules/workflow/exceptions/core-workflow-metadata.exception';
 import { type UniversalFlatWorkflowVersion } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-workflow-version.type';
-import { type MetadataUniversalFlatEntityAndRelatedFlatEntityMapsForValidation } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity-and-related-flat-entity-maps-for-validation.type';
 import { type FlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 
 export const validateApplicationWorkflowVersion = ({
   version,
-  relatedFlatEntityMaps,
 }: {
   version: UniversalFlatWorkflowVersion;
-  relatedFlatEntityMaps: MetadataUniversalFlatEntityAndRelatedFlatEntityMapsForValidation<'workflowVersion'>;
 }): FlatEntityValidationError[] => {
   if (!version.isSystemSideEffect) {
     return [];
@@ -26,20 +23,6 @@ export const validateApplicationWorkflowVersion = ({
   const trigger = version.triggers?.[0];
   const steps = version.steps ?? [];
   const messages: string[] = [];
-  const workflow = Object.values(
-    relatedFlatEntityMaps.flatWorkflowMaps.byUniversalIdentifier,
-  ).find(
-    (candidate) =>
-      isDefined(candidate) &&
-      'id' in candidate &&
-      candidate.id === version.coreWorkflowId,
-  );
-
-  if (!isDefined(workflow)) {
-    messages.push(
-      'The application workflow version must belong to an existing workflow',
-    );
-  }
 
   if (
     !isDefined(trigger) ||
@@ -49,7 +32,6 @@ export const validateApplicationWorkflowVersion = ({
     messages.push('Application workflows require one manual trigger');
   } else {
     const identities = [
-      workflow?.universalIdentifier,
       version.universalIdentifier,
       'universalIdentifier' in trigger
         ? trigger.universalIdentifier
@@ -58,7 +40,7 @@ export const validateApplicationWorkflowVersion = ({
     ].filter(isDefined);
     if (new Set(identities).size !== identities.length) {
       messages.push(
-        'Workflow, version, trigger and steps must have distinct universal identifiers',
+        'Version, trigger and steps must have distinct universal identifiers',
       );
     }
     const content = { trigger, steps };

@@ -8396,55 +8396,6 @@
     ]
   },
   {
-    "name": "ColorSchemePicker",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/color-scheme-picker",
-    "props": [
-      {
-        "name": "className",
-        "type": "string",
-        "required": false,
-        "defaultValue": null,
-        "description": "Class applied to the outer container."
-      },
-      {
-        "name": "darkLabel",
-        "type": "string",
-        "required": true,
-        "defaultValue": null,
-        "description": "Visible label and accessible name of the dark choice."
-      },
-      {
-        "name": "lightLabel",
-        "type": "string",
-        "required": true,
-        "defaultValue": null,
-        "description": "Visible label and accessible name of the light choice."
-      },
-      {
-        "name": "onChange",
-        "type": "(value: ColorScheme) => void",
-        "required": true,
-        "defaultValue": null,
-        "description": "Called with the newly selected color scheme."
-      },
-      {
-        "name": "systemLabel",
-        "type": "string",
-        "required": true,
-        "defaultValue": null,
-        "description": "Visible label and accessible name of the system choice."
-      },
-      {
-        "name": "value",
-        "type": "\"Dark\" | \"Light\" | \"System\"",
-        "required": true,
-        "defaultValue": null,
-        "description": "Selected scheme: Light, Dark, or System. The application resolves system to a concrete theme."
-      }
-    ]
-  },
-  {
     "name": "SearchInput",
     "entryPoint": "twenty-ui/components",
     "slug": "components/search-input",
@@ -8472,10 +8423,17 @@
       },
       {
         "name": "className",
-        "type": "string",
+        "type": "string | ((state: InputState) => string | undefined)",
         "required": false,
         "defaultValue": null,
-        "description": "Class applied to the wrapper."
+        "description": "Class applied to the input."
+      },
+      {
+        "name": "defaultValue",
+        "type": "string | number | readonly string[]",
+        "required": false,
+        "defaultValue": null,
+        "description": "The default value of the input. Use when uncontrolled."
       },
       {
         "name": "disabled",
@@ -8507,10 +8465,17 @@
       },
       {
         "name": "onChange",
-        "type": "(value: string) => void",
-        "required": true,
+        "type": "((event: BaseUIEvent<ChangeEvent<HTMLInputElement, HTMLInputElement>>) => void)",
+        "required": false,
         "defaultValue": null,
-        "description": "Called with the new text, not a DOM change event. The application owns filtering."
+        "description": "Native input change event handler."
+      },
+      {
+        "name": "onValueChange",
+        "type": "((value: string, eventDetails: { reason: \"none\"; event: Event; cancel: () => void; allowPropagation: () => void; isCanceled: boolean; isPropagationAllowed: boolean; trigger: Element | undefined; }) => void)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Called with the new text. The application owns filtering."
       },
       {
         "name": "placeholder",
@@ -8520,9 +8485,37 @@
         "description": "Hint shown when the input is empty. Also used as the accessible name if no explicit label is supplied."
       },
       {
+        "name": "ref",
+        "type": "Ref<HTMLInputElement>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Ref to the native input element."
+      },
+      {
+        "name": "render",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, InputState>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+      },
+      {
+        "name": "size",
+        "type": "\"md\" | \"sm\"",
+        "required": false,
+        "defaultValue": "md",
+        "description": "Visual size of the input group and optional filter button."
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties | ((state: InputState) => CSSProperties | undefined)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+      },
+      {
         "name": "value",
-        "type": "string",
-        "required": true,
+        "type": "string | number | readonly string[]",
+        "required": false,
         "defaultValue": null,
         "description": "Current search text."
       }
@@ -9127,48 +9120,6 @@
         "required": true,
         "defaultValue": null,
         "description": "Navigation items with a unique name, accessible label, Icon component, and onClick callback."
-      }
-    ]
-  },
-  {
-    "name": "RoundedLink",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/rounded-link",
-    "props": [
-      {
-        "name": "className",
-        "type": "string",
-        "required": false,
-        "defaultValue": null,
-        "description": "Class applied to the link."
-      },
-      {
-        "name": "color",
-        "type": "\"primary\" | \"secondary\"",
-        "required": false,
-        "defaultValue": "primary",
-        "description": "Label text color: primary or secondary."
-      },
-      {
-        "name": "href",
-        "type": "string",
-        "required": true,
-        "defaultValue": null,
-        "description": "Destination URL, normalized by the safe-URL helper. Opens in a new tab."
-      },
-      {
-        "name": "label",
-        "type": "string",
-        "required": false,
-        "defaultValue": null,
-        "description": "Visible link text. An absent or empty label renders nothing."
-      },
-      {
-        "name": "onClick",
-        "type": "((event: MouseEvent<HTMLElement, MouseEvent>) => void)",
-        "required": false,
-        "defaultValue": null,
-        "description": "Click callback after propagation is stopped."
       }
     ]
   },

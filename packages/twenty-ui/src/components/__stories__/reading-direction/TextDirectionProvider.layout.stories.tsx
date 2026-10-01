@@ -55,17 +55,13 @@ export const LeftToRight: Story = {
         upcoming.getBoundingClientRect().left +
           upcoming.getBoundingClientRect().width / 2,
     ).toBe(isRightToLeft);
-    const light = canvas.getByRole('button', { name: 'Light' });
-    const dark = canvas.getByRole('button', { name: 'Dark' });
+    const team = canvas.getByRole('radio', { name: 'Team plan' });
+    const personal = canvas.getByRole('radio', { name: 'Personal plan' });
     expect(
-      light.getBoundingClientRect().left > dark.getBoundingClientRect().left,
+      team.getBoundingClientRect().left > personal.getBoundingClientRect().left,
     ).toBe(isRightToLeft);
-    expect(
-      Math.abs(
-        light.getBoundingClientRect().left - dark.getBoundingClientRect().left,
-      ),
-    ).toBeGreaterThan(light.getBoundingClientRect().width);
-    await userEvent.click(dark);
+    await userEvent.click(personal);
+    await expect(personal).toBeChecked();
     for (const overlap of ['left', 'right']) {
       const group = canvas.getByTestId(`avatars-${overlap}`).firstElementChild!;
       const groupBox = group.getBoundingClientRect();

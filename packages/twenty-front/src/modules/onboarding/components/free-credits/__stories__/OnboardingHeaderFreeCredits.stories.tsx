@@ -14,6 +14,7 @@ import { workspaceMemberFormatPreferencesState } from '@/localization/states/wor
 import { OnboardingHeaderFreeCredits } from '@/onboarding/components/free-credits/OnboardingHeaderFreeCredits';
 import { ONBOARDING_FREE_CREDITS_DEFAULT_VALUE } from '@/onboarding/constants/OnboardingFreeCreditsDefaultValue';
 import { onboardingFreeCreditsFamilyState } from '@/onboarding/states/onboardingFreeCreditsFamilyState';
+import { onboardingUpgradeTrialLostCreditsState } from '@/onboarding/states/onboardingUpgradeTrialLostCreditsState';
 import { type OnboardingFreeCredits } from '@/onboarding/types/OnboardingFreeCredits';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { OnboardingStatus } from '~/generated-metadata/graphql';
@@ -57,6 +58,7 @@ const seedOnboardingFreeCredits = ({
       ...onboardingFreeCredits,
     },
   );
+  jotaiStore.set(onboardingUpgradeTrialLostCreditsState.atom, 0);
 };
 
 const findVisibleTooltip = async (canvasElement: HTMLElement, text: string) => {
@@ -193,6 +195,38 @@ export const NewlyEarned: Story = {
     await waitFor(() =>
       expect(within(canvasElement).queryByText('+1')).not.toBeInTheDocument(),
     );
+  },
+};
+
+export const LostUpgradeCredits: Story = {
+  beforeEach: () => {
+    seedOnboardingFreeCredits({
+      onboardingStatus: OnboardingStatus.PLAN_REQUIRED,
+      onboardingFreeCredits: {
+        importContacts: 1,
+        upgradeTrial: 2,
+        seenCredits: 3,
+      },
+    });
+  },
+  play: async ({ canvasElement }) => {
+    await within(canvasElement).findByRole('button', {
+      name: /free credits/,
+    });
+
+    jotaiStore.set(
+      onboardingFreeCreditsFamilyState.atomFamily(mockCurrentWorkspace.id),
+      (onboardingFreeCredits) => ({
+        ...onboardingFreeCredits,
+        upgradeTrial: 0,
+        seenCredits: 1,
+      }),
+    );
+    jotaiStore.set(onboardingUpgradeTrialLostCreditsState.atom, 2);
+
+    await expect(
+      await within(canvasElement).findByText('−2'),
+    ).toBeInTheDocument();
   },
 };
 

@@ -4356,7 +4356,7 @@ type Mutation {
   startChannelSync(connectedAccountId: UUID!): ChannelSyncSuccess!
   saveImapSmtpCaldavAccount(handle: String!, connectionParameters: EmailAccountConnectionParameters!, id: UUID): ImapSmtpCaldavConnectionSuccess!
   updateLabPublicFeatureFlag(input: UpdateLabPublicFeatureFlagInput!): FeatureFlag!
-  answerAgentChatQuestion(threadId: UUID!, messageId: UUID!, answers: [AgentChatQuestionAnswerInput!]!, modelId: String, fileAttachments: [FileAttachmentInput!]): SendChatMessageResult! @deprecated(reason: "Use answerAsk with the question's Ask")
+  answerAgentChatQuestion(threadId: UUID!, messageId: UUID!, answers: [AgentChatQuestionAnswerInput!]!, modelId: String, fileAttachments: [FileAttachmentInput!]): SendChatMessageResult! @deprecated(reason: "Use answerToolCall with the questions tool call")
   createPublicDomain(domain: String!, applicationId: String!): PublicDomain!
   deletePublicDomain(domain: String!): Boolean!
   checkPublicDomainValidRecords(domain: String!): DomainValidRecords

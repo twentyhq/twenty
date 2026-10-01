@@ -1,8 +1,13 @@
+import { WorkflowActionType } from 'twenty-shared/workflow';
+
 import { type MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { type WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
 import { type WorkflowVersionStepOperationsWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step-operations.workspace-service';
 import { type WorkflowExecutionContextService } from 'src/modules/workflow/workflow-executor/services/workflow-execution-context.service';
-import { type WorkflowAgentConversationWorkspaceService } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/services/workflow-agent-conversation.workspace-service';
+import {
+  type WorkflowAction,
+  type WorkflowFormAction,
+} from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { RUN_WORKFLOW_JOB_NAME } from 'src/modules/workflow/workflow-runner/constants/run-workflow-job-name';
 import { type CoreWorkflowRunnerService } from 'src/modules/workflow/workflow-runner/services/core-workflow-runner.service';
 import { type WorkflowThrottlingWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run-queue/workspace-services/workflow-throttling.workspace-service';
@@ -12,59 +17,92 @@ import { WorkflowRunnerWorkspaceService } from 'src/modules/workflow/workflow-ru
 const WORKSPACE_ID = 'workspace-id';
 const WORKFLOW_RUN_ID = 'workflow-run-id';
 const THREAD_ID = 'thread-id';
-const TOOL_PART = {
-  id: 'part-id',
-  messageId: 'question-message-id',
-  turnId: 'question-turn-id',
+
+const AGENT_STEP = {
+  id: 'agent-step-id',
+  type: WorkflowActionType.AI_AGENT,
+} as WorkflowAction;
+
+const FORM_STEP: WorkflowFormAction = {
+  id: 'form-step-id',
+  name: 'Form',
+  valid: true,
+  type: WorkflowActionType.FORM,
+  settings: {
+    input: [],
+    outputSchema: {},
+    errorHandlingOptions: {
+      retryOnFailure: { value: 0 },
+      continueOnFailure: { value: false },
+    },
+  },
 };
 
 describe('WorkflowRunnerWorkspaceService', () => {
   const messageQueueService = { add: jest.fn() };
-  const workflowAgentConversationWorkspaceService = {
-    recordAnswer: jest.fn().mockResolvedValue({ hasAwaitingToolCalls: false }),
+  const workflowRunWorkspaceService = {
+    updateStepInfoIfPending: jest.fn().mockResolvedValue(true),
+  };
+  const workflowVersionStepOperationsWorkspaceService = {
+    enrichFormStepResponse: jest
+      .fn()
+      .mockImplementation(async ({ response }) => ({
+        ...response,
+        enriched: true,
+      })),
   };
 
   const service = new WorkflowRunnerWorkspaceService(
-    {} as WorkflowRunWorkspaceService,
+    workflowRunWorkspaceService as unknown as WorkflowRunWorkspaceService,
     messageQueueService as unknown as MessageQueueService,
-    {} as WorkflowVersionStepOperationsWorkspaceService,
+    workflowVersionStepOperationsWorkspaceService as unknown as WorkflowVersionStepOperationsWorkspaceService,
     {} as WorkflowThrottlingWorkspaceService,
     {} as CoreWorkflowRunnerService,
     {} as WorkflowVersionCoreSyncService,
-    workflowAgentConversationWorkspaceService as unknown as WorkflowAgentConversationWorkspaceService,
     {} as WorkflowExecutionContextService,
   );
 
-  const resumeAnsweredAgentStep = () =>
-    service.resumeAnsweredAgentStep({
+  const resumeAnsweredStep = (step: WorkflowAction) =>
+    service.resumeAnsweredStep({
       workspaceId: WORKSPACE_ID,
       workflowRunId: WORKFLOW_RUN_ID,
-      stepId: 'agent-step-id',
+      step,
       threadId: THREAD_ID,
-      toolPart: TOOL_PART,
-      toolResult: { success: true },
-      answerText: 'Send it',
-      senderUserWorkspaceId: 'user-workspace-id',
+      response: { discount: 15 },
     });
 
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  describe('resumeAnsweredAgentStep', () => {
-    it('records the answer, then schedules an explicit resume of the step in its conversation', async () => {
-      await resumeAnsweredAgentStep();
+  it('records the enriched result of a form without a conversation before scheduling its continuation', async () => {
+    const completed = await service.completeFormStep({
+      workspaceId: WORKSPACE_ID,
+      workflowRunId: WORKFLOW_RUN_ID,
+      step: FORM_STEP,
+      expectedThreadId: null,
+      response: { discount: 15 },
+    });
 
-      expect(
-        workflowAgentConversationWorkspaceService.recordAnswer,
-      ).toHaveBeenCalledWith({
-        workspaceId: WORKSPACE_ID,
-        threadId: THREAD_ID,
-        toolPart: TOOL_PART,
-        toolResult: { success: true },
-        answerText: 'Send it',
-        senderUserWorkspaceId: 'user-workspace-id',
-      });
+    expect(completed).toBe(true);
+    expect(
+      workflowRunWorkspaceService.updateStepInfoIfPending,
+    ).toHaveBeenCalledWith(
+      expect.objectContaining({
+        expectedThreadId: null,
+        stepInfo: {
+          status: 'SUCCESS',
+          result: { discount: 15, enriched: true },
+        },
+      }),
+    );
+    expect(messageQueueService.add).not.toHaveBeenCalled();
+  });
+
+  describe('resumeAnsweredStep', () => {
+    it('schedules an explicit resume of an agent step in its conversation', async () => {
+      await resumeAnsweredStep(AGENT_STEP);
+
       expect(messageQueueService.add).toHaveBeenCalledWith(
         RUN_WORKFLOW_JOB_NAME,
         {
@@ -75,29 +113,43 @@ describe('WorkflowRunnerWorkspaceService', () => {
         expect.objectContaining({ id: WORKFLOW_RUN_ID }),
       );
       expect(
-        workflowAgentConversationWorkspaceService.recordAnswer.mock
-          .invocationCallOrder[0],
-      ).toBeLessThan(messageQueueService.add.mock.invocationCallOrder[0]);
+        workflowRunWorkspaceService.updateStepInfoIfPending,
+      ).not.toHaveBeenCalled();
     });
 
-    it('schedules nothing while another call of the step still waits on its answer', async () => {
-      workflowAgentConversationWorkspaceService.recordAnswer.mockResolvedValueOnce(
-        { hasAwaitingToolCalls: true },
+    it('completes a form step with its enriched answer, then resumes the run after it', async () => {
+      await resumeAnsweredStep(FORM_STEP);
+
+      expect(
+        workflowRunWorkspaceService.updateStepInfoIfPending,
+      ).toHaveBeenCalledWith({
+        stepId: 'form-step-id',
+        stepInfo: {
+          status: 'SUCCESS',
+          result: { discount: 15, enriched: true },
+        },
+        expectedThreadId: THREAD_ID,
+        workspaceId: WORKSPACE_ID,
+        workflowRunId: WORKFLOW_RUN_ID,
+      });
+      expect(messageQueueService.add).toHaveBeenCalledWith(
+        RUN_WORKFLOW_JOB_NAME,
+        {
+          workspaceId: WORKSPACE_ID,
+          workflowRunId: WORKFLOW_RUN_ID,
+          lastExecutedStepId: 'form-step-id',
+        },
+        expect.objectContaining({ id: WORKFLOW_RUN_ID }),
       );
-
-      await resumeAnsweredAgentStep();
-
-      expect(messageQueueService.add).not.toHaveBeenCalled();
     });
 
-    it('schedules nothing when the answer cannot be recorded', async () => {
-      workflowAgentConversationWorkspaceService.recordAnswer.mockRejectedValueOnce(
-        new Error('History unavailable'),
+    it('resumes nothing when the form step no longer waits on this conversation', async () => {
+      workflowRunWorkspaceService.updateStepInfoIfPending.mockResolvedValueOnce(
+        false,
       );
 
-      await expect(resumeAnsweredAgentStep()).rejects.toThrow(
-        'History unavailable',
-      );
+      await resumeAnsweredStep(FORM_STEP);
+
       expect(messageQueueService.add).not.toHaveBeenCalled();
     });
   });

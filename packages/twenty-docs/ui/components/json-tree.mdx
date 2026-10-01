@@ -26,6 +26,8 @@ Each entry has an `id`, `label`, and JSON `value`. Use entries when display labe
 
 `getNodeHighlighting(keyPath)` returns `blue`, `red`, `partial-blue`, or `undefined`. `onNodeValueClick` receives the displayed text: leaf values as strings, and the matching empty label for empty strings, arrays, and objects. The tree displays data and does not edit it.
 
+When `onNodeValueClick` is provided, values are native buttons named by their displayed text. Tab moves focus to a value; Enter, Space, or a pointer click activates it. Without the callback, values remain non-interactive text. Value buttons do not submit enclosing forms.
+
 ## Props
 
 <JsonTreeReference />
