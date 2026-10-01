@@ -1,8 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { randomUUID } from 'node:crypto';
-
-import { isNonEmptyString } from '@sniptt/guards';
 import {
   ASK_QUESTIONS_TOOL_NAME,
   type AskQuestionItem,
@@ -16,26 +13,40 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
+import { type AgentTurnEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-turn.entity';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import {
   askQuestionsInputSchema,
   buildAskQuestionsPendingOutput,
 } from 'src/engine/metadata-modules/ai/ai-chat/tools/ask-questions.tool';
+import { buildInboxMessageIds } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-inbox-message-ids.util';
+import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
+import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
+import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
+import { type AgentMessageWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message.workspace-entity';
 import {
   AiException,
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
 
-// An application starts a conversation in a workspace member's chats: its
-// message comes first, and its questions are answered like any agent's.
 @Injectable()
 export class AgentInboxService {
   constructor(
+    @InjectAgentHistoryRepository('agentChatThread')
+    private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
+    @InjectAgentHistoryRepository('agentTurn')
+    private readonly turnRepository: AgentHistoryRepository<AgentTurnEntity>,
+    @InjectAgentHistoryRepository('agentMessage')
+    private readonly messageRepository: AgentHistoryRepository<AgentMessageWorkspaceEntity>,
     private readonly agentChatService: AgentChatService,
     private readonly conversationWriterService: AgentConversationWriterService,
   ) {}
 
+  // Every record of the conversation has an id derived from the idempotency
+  // key, so a retry or a concurrent send completes the same conversation
+  // instead of starting another one. The application's message is written
+  // last: once it exists, the conversation is complete.
   async sendMessage({
     workspaceId,
     application,
@@ -48,44 +59,83 @@ export class AgentInboxService {
     const questions = isDefined(input.questions)
       ? this.parseQuestions(input.questions)
       : undefined;
+    const { threadId, turnId, openingMessageId, messageId } =
+      buildInboxMessageIds({
+        applicationId: application.id,
+        workspaceMemberId: input.workspaceMemberId,
+        idempotencyKey: input.idempotencyKey,
+      });
 
-    const thread = await this.agentChatService.createThread({
-      workspaceId,
-      workspaceMemberId: input.workspaceMemberId,
-      title: input.title,
+    const existingThread = await this.threadRepository.findOne(workspaceId, {
+      where: { id: threadId },
     });
 
-    const turnId = await this.conversationWriterService.insertTurn({
-      workspaceId,
-      threadId: thread.id,
-      agentId: null,
+    // A member who deleted the conversation has dismissed it.
+    if (isDefined(existingThread?.deletedAt)) {
+      return { threadId };
+    }
+
+    const thread =
+      existingThread ??
+      (await this.agentChatService.createThread({
+        workspaceId,
+        workspaceMemberId: input.workspaceMemberId,
+        id: threadId,
+        title: input.title,
+      }));
+
+    if (await this.messageExists({ workspaceId, id: messageId })) {
+      return { threadId };
+    }
+
+    const existingTurn = await this.turnRepository.findOne(workspaceId, {
+      where: { id: turnId },
     });
 
-    // Answering a question resolves who may answer from the user message of
-    // its turn, and models expect a conversation to open with one, so the
-    // turn starts with a hidden message from the member it is addressed to.
+    if (!isDefined(existingTurn)) {
+      await this.conversationWriterService.insertTurn({
+        workspaceId,
+        id: turnId,
+        threadId,
+        agentId: null,
+      });
+    }
+
+    if (!(await this.messageExists({ workspaceId, id: openingMessageId }))) {
+      // Answering a question resolves who may answer from the user message of
+      // its turn, and models expect a conversation to open with one. It holds
+      // no application text, so nothing the application wrote reads as the
+      // member's request.
+      await this.conversationWriterService.insertMessage({
+        workspaceId,
+        id: openingMessageId,
+        threadId,
+        turnId,
+        role: AgentMessageRole.USER,
+        agentId: null,
+        senderUserWorkspaceId: thread.userWorkspaceId,
+        isHidden: true,
+        parts: [
+          {
+            type: 'text',
+            text: `The "${application.name}" application started this conversation with the message that follows.`,
+          },
+        ],
+      });
+    }
+
+    if (isDefined(questions)) {
+      await this.conversationWriterService.markAwaitingAnswer({
+        workspaceId,
+        threadId,
+        messageId,
+      });
+    }
+
     await this.conversationWriterService.insertMessage({
       workspaceId,
-      threadId: thread.id,
-      turnId,
-      role: AgentMessageRole.USER,
-      agentId: null,
-      senderUserWorkspaceId: thread.userWorkspaceId,
-      isHidden: true,
-      parts: [
-        {
-          type: 'text',
-          text: this.buildOpeningContext({
-            applicationName: application.name,
-            context: input.context,
-          }),
-        },
-      ],
-    });
-
-    const messageId = await this.conversationWriterService.insertMessage({
-      workspaceId,
-      threadId: thread.id,
+      id: messageId,
+      threadId,
       turnId,
       role: AgentMessageRole.ASSISTANT,
       agentId: null,
@@ -94,44 +144,39 @@ export class AgentInboxService {
       parts: [
         { type: 'text', text: input.text },
         ...(isDefined(questions)
-          ? [
-              {
-                type: `tool-${ASK_QUESTIONS_TOOL_NAME}`,
-                toolCallId: randomUUID(),
-                state: 'output-available',
-                input: { questions },
-                output: buildAskQuestionsPendingOutput({ questions }),
-              } as ExtendedUIMessagePart,
-            ]
+          ? [this.buildAskQuestionsPart(questions)]
           : []),
       ],
     });
 
-    if (isDefined(questions)) {
-      await this.conversationWriterService.markAwaitingAnswer({
-        workspaceId,
-        threadId: thread.id,
-        messageId,
-      });
-    }
-
-    return { threadId: thread.id };
+    return { threadId };
   }
 
-  // The member never sees this message: it tells the model who started the
-  // conversation and what it is about, for when the member replies.
-  private buildOpeningContext({
-    applicationName,
-    context,
+  private async messageExists({
+    workspaceId,
+    id,
   }: {
-    applicationName: string;
-    context?: string;
-  }): string {
-    const opening = `The "${applicationName}" application started this conversation with the message that follows.`;
+    workspaceId: string;
+    id: string;
+  }): Promise<boolean> {
+    return isDefined(
+      await this.messageRepository.findOne(workspaceId, {
+        where: { id },
+        select: ['id'],
+      }),
+    );
+  }
 
-    return isNonEmptyString(context)
-      ? `${opening}\n\nContext from the application:\n${context}`
-      : opening;
+  private buildAskQuestionsPart(
+    questions: AskQuestionItem[],
+  ): ExtendedUIMessagePart {
+    return {
+      type: `tool-${ASK_QUESTIONS_TOOL_NAME}`,
+      toolCallId: `call_${ASK_QUESTIONS_TOOL_NAME}`,
+      state: 'output-available',
+      input: { questions },
+      output: buildAskQuestionsPendingOutput({ questions }),
+    };
   }
 
   private parseQuestions(questions: unknown): AskQuestionItem[] {

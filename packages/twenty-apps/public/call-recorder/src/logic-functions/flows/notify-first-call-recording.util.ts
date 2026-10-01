@@ -1,18 +1,17 @@
 import { type CoreApiClient } from 'twenty-client-sdk/core';
-import { kv, sendInboxMessage } from 'twenty-sdk/logic-function';
+import { sendInboxMessage } from 'twenty-sdk/logic-function';
 
 import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
-import { FIRST_CALL_RECORDING_NOTIFIED_KEY_PREFIX } from 'src/logic-functions/constants/first-call-recording-notified-key-prefix';
 import { findCallRecordingForFirstRecordingNotification } from 'src/logic-functions/data/find-call-recording-for-first-recording-notification.util';
 import { buildStepFailure } from 'src/logic-functions/utils/build-step-failure.util';
 
+// The same key for every recording makes the server keep one conversation
+// per member, so only the first recording reaches them.
+const FIRST_CALL_RECORDING_IDEMPOTENCY_KEY = 'first-call-recording';
+
 export type NotifyFirstCallRecordingResult =
   | { outcome: 'not-completed' }
-  | {
-      outcome: 'notified';
-      notifiedWorkspaceMemberIds: string[];
-      failedWorkspaceMemberIds: string[];
-    };
+  | { outcome: 'notified'; notifiedWorkspaceMemberIds: string[] };
 
 export const notifyFirstCallRecording = async (
   client: CoreApiClient,
@@ -31,12 +30,9 @@ export const notifyFirstCallRecording = async (
   const workspaceMemberIds = [
     ...new Set(
       [...callRecording.attendees]
-        .sort((first, second) =>
-          first.isOrganizer === second.isOrganizer
-            ? 0
-            : first.isOrganizer
-              ? -1
-              : 1,
+        .sort(
+          (first, second) =>
+            Number(second.isOrganizer) - Number(first.isOrganizer),
         )
         .map(({ workspaceMemberId }) => workspaceMemberId),
     ),
@@ -46,23 +42,12 @@ export const notifyFirstCallRecording = async (
   const failedWorkspaceMemberIds: string[] = [];
 
   for (const workspaceMemberId of workspaceMemberIds) {
-    const notifiedKey = `${FIRST_CALL_RECORDING_NOTIFIED_KEY_PREFIX}${workspaceMemberId}`;
-
-    if ((await kv.get(notifiedKey)) !== null) {
-      continue;
-    }
-
     try {
-      const { threadId } = await sendInboxMessage({
+      await sendInboxMessage({
         workspaceMemberId,
+        idempotencyKey: FIRST_CALL_RECORDING_IDEMPOTENCY_KEY,
         title: 'Your first call recording is ready',
         text: `Your first call was recorded: **${title}**. The video, transcript and summary are on the meeting page.`,
-        context: [
-          `Call recording id: ${callRecording.id}`,
-          `Calendar event id: ${callRecording.calendarEventId ?? 'unknown'}`,
-          `Meeting title: ${title}`,
-          'If the member wants to share the recording, read the call recording summary and the calendar event participants, then propose a recap email to the attendees.',
-        ].join('\n'),
         questions: [
           {
             header: 'Share',
@@ -80,11 +65,8 @@ export const notifyFirstCallRecording = async (
         ],
       });
 
-      await kv.set(notifiedKey, threadId);
       notifiedWorkspaceMemberIds.push(workspaceMemberId);
     } catch (error) {
-      // A member without access to AI chats cannot receive the message; the
-      // others still should, and a redelivery must not message them twice.
       buildStepFailure(
         `first recording notification for workspace member ${workspaceMemberId}`,
         error,
@@ -93,9 +75,12 @@ export const notifyFirstCallRecording = async (
     }
   }
 
-  return {
-    outcome: 'notified',
-    notifiedWorkspaceMemberIds,
-    failedWorkspaceMemberIds,
-  };
+  // Sends are idempotent, so a redelivery only completes the failed ones.
+  if (failedWorkspaceMemberIds.length > 0) {
+    throw new Error(
+      `Could not notify workspace members ${failedWorkspaceMemberIds.join(', ')}`,
+    );
+  }
+
+  return { outcome: 'notified', notifiedWorkspaceMemberIds };
 };

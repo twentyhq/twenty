@@ -8151,7 +8151,7 @@ export interface ReportAppConnectionAuthFailureInput {id: Scalars['ID'],reason?:
 
 export interface FileAttachmentInput {id: Scalars['UUID'],filename: Scalars['String']}
 
-export interface SendInboxMessageInput {workspaceMemberId: Scalars['UUID'],title: Scalars['String'],text: Scalars['String'],context?: (Scalars['String'] | null),questions?: (Scalars['JSON'] | null)}
+export interface SendInboxMessageInput {workspaceMemberId: Scalars['UUID'],idempotencyKey: Scalars['String'],title: Scalars['String'],text: Scalars['String'],questions?: (Scalars['JSON'] | null)}
 
 export interface CreateSkillInput {id?: (Scalars['UUID'] | null),name: Scalars['String'],label: Scalars['String'],icon?: (Scalars['String'] | null),description?: (Scalars['String'] | null),content: Scalars['String']}
 

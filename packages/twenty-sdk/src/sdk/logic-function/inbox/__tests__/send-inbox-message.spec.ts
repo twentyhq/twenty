@@ -37,6 +37,7 @@ describe('sendInboxMessage', () => {
 
     const input = {
       workspaceMemberId: 'member-1',
+      idempotencyKey: 'first-call-recording',
       title: 'Your first recording is ready',
       text: 'Your call was recorded.',
       questions: [
@@ -81,6 +82,7 @@ describe('sendInboxMessage', () => {
     await expect(
       sendInboxMessage({
         workspaceMemberId: 'member-1',
+        idempotencyKey: 'key',
         title: 'Title',
         text: 'Text',
       }),

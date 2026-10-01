@@ -1,6 +1,11 @@
 import { isNull, isUndefined } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
+import { TWENTY_PAGE_SIZE } from 'src/logic-functions/constants/twenty-page-size';
+import {
+  fetchAllNodes,
+  type ConnectionPage,
+} from 'src/logic-functions/data/fetch-all-nodes.util';
 import { getString } from 'src/logic-functions/utils/get-string.util';
 
 type CallRecordingAttendee = {
@@ -8,18 +13,15 @@ type CallRecordingAttendee = {
   isOrganizer: boolean;
 };
 
-type CalendarEventParticipantEdge = {
-  node?: {
-    workspaceMemberId?: string | null;
-    isOrganizer?: boolean | null;
-  } | null;
+type CalendarEventParticipantNode = {
+  workspaceMemberId?: string | null;
+  isOrganizer?: boolean | null;
 };
 
 type CallRecordingForFirstRecordingNotification = {
   id: string;
   title: string | undefined;
   status: string | undefined;
-  calendarEventId: string | undefined;
   attendees: CallRecordingAttendee[];
 };
 
@@ -38,17 +40,7 @@ export const findCallRecordingForFirstRecordingNotification = async (
           id: true,
           title: true,
           status: true,
-          calendarEvent: {
-            id: true,
-            calendarEventParticipants: {
-              edges: {
-                node: {
-                  workspaceMemberId: true,
-                  isOrganizer: true,
-                },
-              },
-            },
-          },
+          calendarEventId: true,
         },
       },
     },
@@ -60,23 +52,52 @@ export const findCallRecordingForFirstRecordingNotification = async (
     return undefined;
   }
 
-  const participantEdges: CalendarEventParticipantEdge[] =
-    node.calendarEvent?.calendarEventParticipants?.edges ?? [];
+  const calendarEventId = getString(node.calendarEventId);
+
+  const participants = isUndefined(calendarEventId)
+    ? []
+    : await fetchAllNodes<CalendarEventParticipantNode>(async (afterCursor) => {
+        const participantsResult = await client.query({
+          calendarEventParticipants: {
+            __args: {
+              filter: {
+                calendarEventId: { eq: calendarEventId },
+                workspaceMemberId: { is: 'NOT_NULL' },
+              },
+              first: TWENTY_PAGE_SIZE,
+              ...(isUndefined(afterCursor) ? {} : { after: afterCursor }),
+            },
+            pageInfo: {
+              hasNextPage: true,
+              endCursor: true,
+            },
+            edges: {
+              node: {
+                workspaceMemberId: true,
+                isOrganizer: true,
+              },
+            },
+          },
+        });
+
+        return participantsResult.calendarEventParticipants as
+          | ConnectionPage<CalendarEventParticipantNode>
+          | undefined;
+      });
 
   return {
     id: node.id,
     title: getString(node.title),
     status: getString(node.status),
-    calendarEventId: getString(node.calendarEvent?.id),
-    attendees: participantEdges.flatMap(({ node: participant }) => {
-      const workspaceMemberId = getString(participant?.workspaceMemberId);
+    attendees: participants.flatMap((participant) => {
+      const workspaceMemberId = getString(participant.workspaceMemberId);
 
       return isUndefined(workspaceMemberId)
         ? []
         : [
             {
               workspaceMemberId,
-              isOrganizer: participant?.isOrganizer === true,
+              isOrganizer: participant.isOrganizer ?? false,
             },
           ];
     }),

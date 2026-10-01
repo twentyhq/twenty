@@ -238,4 +238,42 @@ name a member at all.
 </Warning>
 
 </Accordion>
+<Accordion title="sendInboxMessage" description="Start a conversation in a member's chats">
+
+`sendInboxMessage()` opens a chat for a workspace member whose first message
+comes from your app. It can end on questions the member answers from the
+chat, after which the conversation continues with Twenty's assistant.
+
+```ts src/logic-functions/notify-first-recording.ts
+import { sendInboxMessage } from 'twenty-sdk/logic-function';
+
+const { threadId } = await sendInboxMessage({
+  workspaceMemberId,
+  idempotencyKey: 'first-call-recording',
+  title: 'Your first call recording is ready',
+  text: 'Your first call was recorded: **Weekly sync**.',
+  questions: [
+    {
+      header: 'Share',
+      question: 'Do you want to share it with the other attendees?',
+      options: [{ label: 'Draft a recap email' }, { label: 'Not now' }],
+    },
+  ],
+});
+```
+
+Key points:
+- `idempotencyKey` identifies the conversation for this app and member.
+  Sending again with the same key returns the same `threadId` and writes
+  nothing new, so retries and concurrent runs never duplicate a conversation.
+  Use a distinct key for each conversation you want to start.
+- `questions` (optional) takes 1 to 4 multiple-choice questions with 2 to 4
+  options each. The member can also type a free-form answer.
+- The member must have the `AI` permission, and your app's
+  [default role](/developers/extend/apps/config/roles) must grant
+  `SystemPermissionFlag.AI`.
+- A conversation the member deleted is not recreated: sending again returns its
+  `threadId`.
+
+</Accordion>
 </AccordionGroup>

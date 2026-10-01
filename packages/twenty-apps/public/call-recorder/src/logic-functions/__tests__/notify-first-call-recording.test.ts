@@ -4,8 +4,6 @@ import { notifyFirstCallRecordingHandler } from 'src/logic-functions/notify-firs
 
 const queryMock = vi.hoisted(() => vi.fn());
 const sendInboxMessageMock = vi.hoisted(() => vi.fn());
-const kvGetMock = vi.hoisted(() => vi.fn());
-const kvSetMock = vi.hoisted(() => vi.fn());
 
 vi.mock('twenty-client-sdk/core', () => ({
   CoreApiClient: class {
@@ -16,7 +14,6 @@ vi.mock('twenty-client-sdk/core', () => ({
 vi.mock('twenty-sdk/logic-function', async (importOriginal) => ({
   ...(await importOriginal<object>()),
   sendInboxMessage: sendInboxMessageMock,
-  kv: { get: kvGetMock, set: kvSetMock },
 }));
 
 type HandlerEvent = Parameters<typeof notifyFirstCallRecordingHandler>[0];
@@ -43,39 +40,36 @@ const mockCallRecording = ({
   participants = [
     { workspaceMemberId: 'member-attendee', isOrganizer: false },
     { workspaceMemberId: 'member-organizer', isOrganizer: true },
-    { workspaceMemberId: null, isOrganizer: false },
   ],
 }: {
   status?: string;
-  participants?: { workspaceMemberId: string | null; isOrganizer: boolean }[];
+  participants?: { workspaceMemberId: string; isOrganizer: boolean }[];
 } = {}) =>
-  queryMock.mockResolvedValue({
-    callRecordings: {
-      edges: [
-        {
-          node: {
-            id: 'call-recording-1',
-            title: 'Weekly sync',
-            status,
-            calendarEvent: {
-              id: 'calendar-event-1',
-              calendarEventParticipants: {
-                edges: participants.map((participant) => ({
-                  node: participant,
-                })),
-              },
+  queryMock
+    .mockResolvedValueOnce({
+      callRecordings: {
+        edges: [
+          {
+            node: {
+              id: 'call-recording-1',
+              title: 'Weekly sync',
+              status,
+              calendarEventId: 'calendar-event-1',
             },
           },
-        },
-      ],
-    },
-  });
+        ],
+      },
+    })
+    .mockResolvedValueOnce({
+      calendarEventParticipants: {
+        pageInfo: { hasNextPage: false, endCursor: null },
+        edges: participants.map((participant) => ({ node: participant })),
+      },
+    });
 
 describe('notify-first-call-recording logic function', () => {
   beforeEach(() => {
-    vi.clearAllMocks();
-    kvGetMock.mockResolvedValue(null);
-    kvSetMock.mockResolvedValue(undefined);
+    vi.resetAllMocks();
     sendInboxMessageMock.mockImplementation(async ({ workspaceMemberId }) => ({
       threadId: `thread-for-${workspaceMemberId}`,
     }));
@@ -90,15 +84,14 @@ describe('notify-first-call-recording logic function', () => {
       callRecordingId: 'call-recording-1',
       outcome: 'notified',
       notifiedWorkspaceMemberIds: ['member-organizer', 'member-attendee'],
-      failedWorkspaceMemberIds: [],
     });
     expect(sendInboxMessageMock).toHaveBeenCalledTimes(2);
     expect(sendInboxMessageMock.mock.calls[0][0]).toEqual(
       expect.objectContaining({
         workspaceMemberId: 'member-organizer',
+        idempotencyKey: 'first-call-recording',
         title: 'Your first call recording is ready',
         text: expect.stringContaining('Weekly sync'),
-        context: expect.stringContaining('call-recording-1'),
         questions: [
           expect.objectContaining({
             options: [
@@ -109,30 +102,19 @@ describe('notify-first-call-recording logic function', () => {
         ],
       }),
     );
-    expect(kvSetMock).toHaveBeenCalledWith(
-      'first-call-recording-notified:member-organizer',
-      'thread-for-member-organizer',
-    );
-  });
-
-  it('does not message a member twice', async () => {
-    mockCallRecording();
-    kvGetMock.mockImplementation(async (key: string) =>
-      key.endsWith('member-organizer') ? 'earlier-thread' : null,
-    );
-
-    const result = await notifyFirstCallRecordingHandler(buildEvent());
-
-    expect(sendInboxMessageMock).toHaveBeenCalledTimes(1);
-    expect(sendInboxMessageMock.mock.calls[0][0].workspaceMemberId).toBe(
-      'member-attendee',
-    );
-    expect(result).toMatchObject({
-      notifiedWorkspaceMemberIds: ['member-attendee'],
+    expect(queryMock.mock.calls[1][0]).toMatchObject({
+      calendarEventParticipants: {
+        __args: {
+          filter: {
+            calendarEventId: { eq: 'calendar-event-1' },
+            workspaceMemberId: { is: 'NOT_NULL' },
+          },
+        },
+      },
     });
   });
 
-  it('keeps notifying the other attendees when one cannot be messaged', async () => {
+  it('notifies the other attendees, then fails retryably when one could not be messaged', async () => {
     mockCallRecording();
     sendInboxMessageMock.mockImplementation(async ({ workspaceMemberId }) => {
       if (workspaceMemberId === 'member-organizer') {
@@ -142,13 +124,13 @@ describe('notify-first-call-recording logic function', () => {
       return { threadId: 'thread-for-attendee' };
     });
 
-    const result = await notifyFirstCallRecordingHandler(buildEvent());
-
-    expect(result).toMatchObject({
-      notifiedWorkspaceMemberIds: ['member-attendee'],
-      failedWorkspaceMemberIds: ['member-organizer'],
+    await expect(
+      notifyFirstCallRecordingHandler(buildEvent()),
+    ).rejects.toMatchObject({
+      name: 'RetryableLogicFunctionError',
+      message: expect.stringContaining('member-organizer'),
     });
-    expect(kvSetMock).toHaveBeenCalledTimes(1);
+    expect(sendInboxMessageMock).toHaveBeenCalledTimes(2);
   });
 
   it('skips a status change to anything but completed without fetching', async () => {

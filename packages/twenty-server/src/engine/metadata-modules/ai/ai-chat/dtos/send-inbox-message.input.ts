@@ -15,17 +15,17 @@ export class SendInboxMessageInputDTO {
   @IsString()
   @IsNotEmpty()
   @Field()
+  idempotencyKey: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @Field()
   title: string;
 
   @IsString()
   @IsNotEmpty()
   @Field()
   text: string;
-
-  @IsOptional()
-  @IsString()
-  @Field({ nullable: true })
-  context?: string;
 
   @IsOptional()
   @Field(() => GraphQLJSON, { nullable: true })

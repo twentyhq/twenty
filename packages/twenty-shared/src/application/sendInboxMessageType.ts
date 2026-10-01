@@ -2,9 +2,9 @@ import { type AskQuestionItem } from '@/ai/types/AskQuestionItem';
 
 export type SendInboxMessageInput = {
   workspaceMemberId: string;
+  idempotencyKey: string;
   title: string;
   text: string;
-  context?: string;
   questions?: AskQuestionItem[];
 };
 

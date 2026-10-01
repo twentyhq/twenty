@@ -6143,7 +6143,7 @@ export type SendEmailViaDomainOutput = {
 };
 
 export type SendInboxMessageInput = {
-  context?: InputMaybe<Scalars['String']['input']>;
+  idempotencyKey: Scalars['String']['input'];
   questions?: InputMaybe<Scalars['JSON']['input']>;
   text: Scalars['String']['input'];
   title: Scalars['String']['input'];
