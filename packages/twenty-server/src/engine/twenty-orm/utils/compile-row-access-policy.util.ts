@@ -11,6 +11,10 @@ import {
   type RowAccessCompilationEnvironment,
   type SqlCondition,
 } from 'src/engine/twenty-orm/types/row-access-policy.type';
+import {
+  TwentyOrmException,
+  TwentyOrmExceptionCode,
+} from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { combineSqlConditions } from 'src/engine/twenty-orm/utils/combine-sql-conditions.util';
 import { renderRowLevelPermissionFilterToSql } from 'src/engine/twenty-orm/utils/render-row-level-permission-filter-to-sql.util';
 
@@ -62,8 +66,9 @@ export const compileRowAccessExpression = ({
 
       // The builder only emits filters that render to a condition
       if (condition === null) {
-        throw new Error(
+        throw new TwentyOrmException(
           `Row-level filter of ${expression.flatObjectMetadata.nameSingular} rendered no condition`,
+          TwentyOrmExceptionCode.MALFORMED_METADATA,
         );
       }
 
