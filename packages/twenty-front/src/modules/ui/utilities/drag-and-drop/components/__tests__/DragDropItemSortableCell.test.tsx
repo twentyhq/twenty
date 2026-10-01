@@ -1,79 +1,106 @@
 import { DragDropItemSortableCell } from '@/ui/utilities/drag-and-drop/components/DragDropItemSortableCell';
+import { DragDropItemSortableHandle } from '@/ui/utilities/drag-and-drop/components/DragDropItemSortableHandle';
 import { DragDropProvider } from '@dnd-kit/react';
 import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 
-// Playwright resolves a click on a non-interactive element to its closest
-// button-like ancestor before deciding whether the click target is enabled,
-// so a sortable wrapper that advertises itself as a disabled button makes
-// every element inside it unclickable for automation.
-const CLICK_TARGET_ANCESTOR_SELECTOR =
-  'button, [role=button], [role=checkbox], [role=radio]';
+const renderContent = (disabled: boolean, withHandle = false) => (
+  <DragDropProvider>
+    <DragDropItemSortableCell
+      id="widget-id"
+      index={0}
+      group="tab-id"
+      disabled={disabled}
+    >
+      {withHandle && (
+        <DragDropItemSortableHandle disabled={disabled}>
+          Move widget
+        </DragDropItemSortableHandle>
+      )}
+      <input aria-label="Message" />
+      <button type="button">Send</button>
+    </DragDropItemSortableCell>
+  </DragDropProvider>
+);
 
-const renderSortableCell = ({ disabled }: { disabled: boolean }) =>
-  render(
-    <DragDropProvider>
-      <DragDropItemSortableCell
-        id="widget-id"
-        index={0}
-        group="tab-id"
-        disabled={disabled}
-      >
-        <div data-testid="widget-content">Emails</div>
-      </DragDropItemSortableCell>
-    </DragDropProvider>,
-  );
+const getSortableRoot = () => screen.getByRole('textbox').parentElement;
 
-const getSortableRoot = () =>
-  screen.getByTestId('widget-content').parentElement;
+const expectAccessibleContent = () => {
+  for (const element of [
+    screen.getByRole('textbox', { name: 'Message' }),
+    screen.getByRole('button', { name: 'Send' }),
+  ]) {
+    expect(element.closest('[aria-disabled="true"]')).toBeNull();
+  }
+  expect(getSortableRoot()).not.toHaveAttribute('role', 'button');
+  expect(getSortableRoot()).not.toHaveAttribute('tabindex', '0');
+  expect(getSortableRoot()).not.toHaveAttribute('aria-roledescription');
+  expect(getSortableRoot()).not.toHaveAttribute('aria-describedby');
+};
 
 describe('DragDropItemSortableCell', () => {
-  it('keeps content clickable when dragging is disabled', async () => {
-    renderSortableCell({ disabled: true });
+  it('keeps inputs and buttons accessible when dragging is disabled', async () => {
+    const user = userEvent.setup();
+    render(renderContent(true));
 
-    await waitFor(() => {
-      expect(getSortableRoot()).toHaveAttribute('aria-disabled', 'true');
-    });
-
-    expect(
-      screen
-        .getByTestId('widget-content')
-        .closest(CLICK_TARGET_ANCESTOR_SELECTOR),
-    ).toBeNull();
-    expect(getSortableRoot()).not.toHaveAttribute('tabindex', '0');
+    await user.tab();
+    expect(screen.getByRole('textbox')).toHaveFocus();
+    await user.keyboard('Hello');
+    await user.tab();
+    expect(screen.getByRole('button', { name: 'Send' })).toHaveFocus();
+    expect(screen.getByRole('textbox')).toHaveValue('Hello');
+    expectAccessibleContent();
   });
 
-  it('exposes the sortable root as a button when dragging is enabled', async () => {
-    renderSortableCell({ disabled: false });
+  it('exposes keyboard drag affordances when dragging is enabled', async () => {
+    const user = userEvent.setup();
+    render(renderContent(false));
 
     await waitFor(() => {
       expect(getSortableRoot()).toHaveAttribute('role', 'button');
+      expect(getSortableRoot()).toHaveAttribute('tabindex', '0');
+      expect(getSortableRoot()).toHaveAttribute('aria-disabled', 'false');
     });
+    await user.tab();
+    expect(getSortableRoot()).toHaveFocus();
   });
 
-  it('restores the drag affordances when dragging is enabled again', async () => {
-    const { rerender } = renderSortableCell({ disabled: true });
+  it('preserves the editor when dragging is repeatedly enabled and disabled', async () => {
+    const user = userEvent.setup();
+    const { rerender } = render(renderContent(true));
+    const editor = screen.getByRole('textbox');
+    await user.tab();
+    await user.keyboard('Unsaved message');
 
+    for (let transition = 0; transition < 2; transition++) {
+      rerender(renderContent(false));
+      await waitFor(() => {
+        expect(getSortableRoot()).toHaveAttribute('role', 'button');
+        expect(getSortableRoot()).toHaveAttribute('aria-disabled', 'false');
+      });
+      rerender(renderContent(true));
+      await user.tab();
+      expectAccessibleContent();
+      expect(screen.getByRole('textbox')).toBe(editor);
+      expect(editor).toHaveValue('Unsaved message');
+    }
+  });
+
+  it('keeps disabled state on an explicit handle away from the editor', async () => {
+    const user = userEvent.setup();
+    const { rerender } = render(renderContent(false, true));
     await waitFor(() => {
-      expect(getSortableRoot()).toHaveAttribute('aria-disabled', 'true');
+      expect(
+        screen.getByRole('button', { name: 'Move widget' }),
+      ).toHaveAttribute('aria-disabled', 'false');
     });
-
-    rerender(
-      <DragDropProvider>
-        <DragDropItemSortableCell
-          id="widget-id"
-          index={0}
-          group="tab-id"
-          disabled={false}
-        >
-          <div data-testid="widget-content">Emails</div>
-        </DragDropItemSortableCell>
-      </DragDropProvider>,
-    );
-
+    rerender(renderContent(true, true));
     await waitFor(() => {
-      expect(getSortableRoot()).toHaveAttribute('role', 'button');
+      expect(
+        screen.getByRole('button', { name: 'Move widget' }),
+      ).toHaveAttribute('aria-disabled', 'true');
     });
-    expect(getSortableRoot()).toHaveAttribute('tabindex', '0');
-    expect(getSortableRoot()).toHaveAttribute('aria-disabled', 'false');
+    await user.type(screen.getByRole('textbox'), 'Hello');
+    expectAccessibleContent();
   });
 });

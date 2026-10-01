@@ -6,7 +6,7 @@ import {
 } from '@dnd-kit/abstract/modifiers';
 import { type UseSortableInput, useSortable } from '@dnd-kit/react/sortable';
 import { styled } from '@linaria/react';
-import { type ReactNode } from 'react';
+import { type ReactNode, useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 
@@ -121,20 +121,37 @@ export const DragDropItemSortableCell = ({
     feedback: 'clone',
   });
 
+  const setSortableRef = useCallback(
+    (element: HTMLDivElement | null) => {
+      ref(disabled ? null : element);
+
+      // Disabled dragging must not disable the widget's interactive content.
+      // dnd-kit leaves its accessibility attributes behind when detached.
+      if (disabled && isDefined(element)) {
+        for (const attribute of [
+          'role',
+          'tabindex',
+          'aria-disabled',
+          'aria-roledescription',
+          'aria-describedby',
+          'aria-pressed',
+          'aria-grabbed',
+        ]) {
+          element.removeAttribute(attribute);
+        }
+      }
+    },
+    [disabled, ref],
+  );
+
   return (
     <DragDropItemSortableHandleRefContext.Provider value={handleRef}>
       <StyledSortableRoot
-        ref={ref}
+        ref={setSortableRef}
         $disabled={disabled}
         $fill={fill}
         $isDragSourceFaded={fadeSourceWhileDragging && isDragSource}
         $isDraggingHighlighted={highlightWhileDragging && isDragging}
-        // dnd-kit's accessibility plugin stamps role="button" and tabindex on
-        // any registered draggable that declares neither, so a disabled cell
-        // would join the tab order and make pointer automation resolve clicks
-        // on its content to a disabled button. Declaring both opts out.
-        role={disabled ? 'none' : undefined}
-        tabIndex={disabled ? -1 : undefined}
         onDragStart={
           disabled && allowNativeDragWhenDisabled
             ? undefined
