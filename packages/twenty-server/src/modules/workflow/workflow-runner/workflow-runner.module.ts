@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 
+import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { WorkflowCommonModule } from 'src/modules/workflow/common/workflow-common.module';
@@ -13,9 +14,11 @@ import { WorkflowRunnerWorkspaceService } from 'src/modules/workflow/workflow-ru
 import { CoreWorkflowRunnerService } from 'src/modules/workflow/workflow-runner/services/core-workflow-runner.service';
 import { WorkflowCoreModule } from 'src/engine/core-modules/workflow/workflow-core.module';
 import { WorkflowVersionCoreModule } from 'src/engine/core-modules/workflow/workflow-version-core.module';
+import { WorkflowExecutionContextModule } from 'src/modules/workflow/workflow-executor/services/workflow-execution-context.module';
 
 @Module({
   imports: [
+    ApplicationModule,
     WorkflowCommonModule,
     WorkflowExecutorModule,
     BillingModule,
@@ -26,6 +29,7 @@ import { WorkflowVersionCoreModule } from 'src/engine/core-modules/workflow/work
     CodeStepBuildModule,
     WorkflowCoreModule,
     WorkflowVersionCoreModule,
+    WorkflowExecutionContextModule,
   ],
   providers: [
     WorkflowRunnerWorkspaceService,
