@@ -47,21 +47,47 @@ export class ChannelRecordShareService {
   }
 
   // The channel and its grants live in different schemas, so a failed sync
-  // puts the previous visibility back rather than leave them disagreeing.
-  async syncChannelRecordSharesAfterVisibilityChange({
-    revertVisibilityChange,
-    ...args
-  }: SyncChannelRecordSharesArgs & {
+  // puts the previous visibility back rather than leave them disagreeing. The
+  // whole change runs under the channel's sync lock, so the rollback cannot
+  // undo a change made in the meantime.
+  async changeChannelVisibility({
+    workspaceId,
+    source,
+    channelId,
+    applyVisibilityChange,
+  }: Omit<SyncChannelRecordSharesArgs, 'recordIds'> & {
     workspaceId: string;
-    revertVisibilityChange: () => Promise<unknown>;
+    // Returns how to revert the change, or nothing when visibility is unchanged.
+    applyVisibilityChange: () => Promise<(() => Promise<unknown>) | undefined>;
   }): Promise<void> {
-    try {
-      await this.syncChannelRecordShares(args);
-    } catch (error) {
-      await revertVisibilityChange();
+    await this.workspaceOrmManager.executeInWorkspaceContext(
+      () =>
+        this.workspaceOrmManager.runInWorkspaceTransaction(
+          async (transactionScope) => {
+            await this.lockChannel({ transactionScope, channelId });
 
-      throw error;
-    }
+            const revertVisibilityChange = await applyVisibilityChange();
+
+            if (!isDefined(revertVisibilityChange)) {
+              return;
+            }
+
+            try {
+              await this.syncChannelRecordSharesInTransaction({
+                transactionScope,
+                source,
+                channelId,
+              });
+            } catch (error) {
+              await revertVisibilityChange();
+
+              throw error;
+            }
+          },
+        ),
+      buildSystemAuthContext(workspaceId),
+      { lite: true },
+    );
   }
 
   async syncChannelRecordSharesInTransaction({
@@ -90,13 +116,7 @@ export class ChannelRecordShareService {
       return;
     }
 
-    // Serializes with every other sync of the channel until commit, so a
-    // visibility change cannot interleave with an import computed from the
-    // previous visibility.
-    await transactionScope.executeRawQuery(
-      'SELECT pg_advisory_xact_lock(hashtextextended($1, 0))',
-      [`channel-record-share:${workspaceId}:${channelId}`],
-    );
+    await this.lockChannel({ transactionScope, channelId });
 
     const { deleteStaleRecordShares, insertRecordShares } =
       buildChannelRecordShareSyncQueries({
@@ -118,5 +138,21 @@ export class ChannelRecordShareService {
         parameters,
       );
     }
+  }
+
+  // Serializes with every other sync of the channel until commit, so a
+  // visibility change cannot interleave with an import computed from the
+  // previous visibility.
+  private async lockChannel({
+    transactionScope,
+    channelId,
+  }: {
+    transactionScope: WorkspaceTransactionScope;
+    channelId: string;
+  }): Promise<void> {
+    await transactionScope.executeRawQuery(
+      'SELECT pg_advisory_xact_lock(hashtextextended($1, 0))',
+      [`channel-record-share:${transactionScope.workspaceId}:${channelId}`],
+    );
   }
 }

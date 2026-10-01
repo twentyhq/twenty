@@ -196,25 +196,37 @@ export class ApplicationMessageChannelsService {
       return messageChannel;
     }
 
-    await this.messageChannelRepository.update({ id, workspaceId }, data);
+    if (!isDefined(visibility)) {
+      await this.messageChannelRepository.update({ id, workspaceId }, data);
 
-    if (
-      isDefined(data.visibility) &&
-      data.visibility !== messageChannel.visibility
-    ) {
-      await this.channelRecordShareService.syncChannelRecordSharesAfterVisibilityChange(
-        {
-          workspaceId,
-          source: MESSAGE_THREAD_CHANNEL_RECORD_SHARE_SOURCE,
-          channelId: id,
-          revertVisibilityChange: () =>
-            this.messageChannelRepository.update(
-              { id, workspaceId },
-              { visibility: messageChannel.visibility },
-            ),
-        },
-      );
+      return this.messageChannelRepository.findOneOrFail({
+        where: { id, workspaceId },
+      });
     }
+
+    await this.channelRecordShareService.changeChannelVisibility({
+      workspaceId,
+      source: MESSAGE_THREAD_CHANNEL_RECORD_SHARE_SOURCE,
+      channelId: id,
+      applyVisibilityChange: async () => {
+        const previousMessageChannel =
+          await this.messageChannelRepository.findOneOrFail({
+            where: { id, workspaceId },
+          });
+
+        await this.messageChannelRepository.update({ id, workspaceId }, data);
+
+        if (previousMessageChannel.visibility === visibility) {
+          return undefined;
+        }
+
+        return () =>
+          this.messageChannelRepository.update(
+            { id, workspaceId },
+            { visibility: previousMessageChannel.visibility },
+          );
+      },
+    });
 
     return this.messageChannelRepository.findOneOrFail({
       where: { id, workspaceId },
