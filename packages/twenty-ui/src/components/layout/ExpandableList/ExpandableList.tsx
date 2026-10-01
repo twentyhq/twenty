@@ -1,6 +1,6 @@
 import { useMergedRefs } from '@base-ui/utils/useMergedRefs';
 import { clsx } from 'clsx';
-import { useLayoutEffect, useState } from 'react';
+import { useState } from 'react';
 
 import { Popover } from '@ui/primitives/surfaces/Popover/Popover';
 import { isDefined } from '@ui/utilities/utils/isDefined';
@@ -47,11 +47,9 @@ export const ExpandableList = ({
   const hiddenItemCount = children.length - visibleItemCount;
   const canExpand = showOverflowCount !== false && hasOverflow;
 
-  useLayoutEffect(() => {
-    if (!canExpand) {
-      setIsOpen(false);
-    }
-  }, [canExpand]);
+  if (isOpen && !canExpand) {
+    setIsOpen(false);
+  }
 
   return (
     <Popover.Root open={isOpen && canExpand} onOpenChange={setIsOpen}>
