@@ -4,11 +4,13 @@ import { formatPlainDateRange } from '@/localization/utils/formatPlainDateRange'
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { RecordTimelineRow } from '@/object-record/record-timeline/components/RecordTimelineRow';
 import { RecordTimelineTopBar } from '@/object-record/record-timeline/components/RecordTimelineTopBar';
+import { RECORD_TIMELINE_FIRST_DAY_GRID_COLUMN } from '@/object-record/record-timeline/constants/RecordTimelineFirstDayGridColumn';
 import { RECORD_TIMELINE_MIN_DAY_WIDTH_BY_ZOOM } from '@/object-record/record-timeline/constants/RecordTimelineMinDayWidthByZoom';
 import { RECORD_TIMELINE_NAME_COLUMN_WIDTH } from '@/object-record/record-timeline/constants/RecordTimelineNameColumnWidth';
 import { useRecordTimelineRecords } from '@/object-record/record-timeline/hooks/useRecordTimelineRecords';
 import { type RecordTimelineZoom } from '@/object-record/record-timeline/types/RecordTimelineZoom';
 import { getRecordTimelineBarPosition } from '@/object-record/record-timeline/utils/getRecordTimelineBarPosition';
+import { getRecordTimelineHeaderCells } from '@/object-record/record-timeline/utils/getRecordTimelineHeaderCells';
 import { getRecordTimelineWindow } from '@/object-record/record-timeline/utils/getRecordTimelineWindow';
 import { parseRecordTimelineDate } from '@/object-record/record-timeline/utils/parseRecordTimelineDate';
 import { shiftRecordTimelineAnchorDate } from '@/object-record/record-timeline/utils/shiftRecordTimelineAnchorDate';
@@ -21,7 +23,6 @@ import { useState } from 'react';
 import { Temporal } from 'temporal-polyfill';
 import {
   isDefined,
-  isSamePlainDate,
   turnPlainDateToShiftedDateInSystemTimeZone,
 } from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/primitives/input';
@@ -58,7 +59,7 @@ const StyledHeaderNameCell = styled.div`
   position: sticky;
 `;
 
-const StyledDayCell = styled.div<{ isToday: boolean }>`
+const StyledHeaderCell = styled.div<{ gridColumn: string; isToday: boolean }>`
   color: ${({ isToday }) =>
     isToday
       ? themeCssVariables.color.blue
@@ -66,6 +67,7 @@ const StyledDayCell = styled.div<{ isToday: boolean }>`
   font-size: ${themeCssVariables.font.size.sm};
   font-weight: ${({ isToday }) =>
     isToday ? themeCssVariables.font.weight.medium : 'inherit'};
+  grid-column: ${({ gridColumn }) => gridColumn};
   overflow: hidden;
   padding: ${themeCssVariables.spacing[1]} 0;
   text-align: center;
@@ -125,16 +127,18 @@ export const RecordTimeline = ({
       locale: dateLocale.localeCatalog,
     });
 
-  const getDayLabel = (day: Temporal.PlainDate) => {
+  const getHeaderCellLabel = (firstDayOfCell: Temporal.PlainDate) => {
     switch (zoom) {
       case 'WEEK':
-        return formatDay(day, 'EEE d');
+        return formatDay(firstDayOfCell, 'EEE d');
       case 'MONTH':
-        return formatDay(day, 'd');
+        return formatDay(firstDayOfCell, 'd');
       case 'QUARTER':
-        return day.day === 1 ? formatDay(day, 'MMM') : '';
+        return formatDay(firstDayOfCell, 'MMMM');
     }
   };
+
+  const headerCells = getRecordTimelineHeaderCells({ days, zoom });
 
   const periodLabel =
     zoom === 'MONTH'
@@ -198,13 +202,17 @@ export const RecordTimeline = ({
       <StyledScrollArea>
         <StyledHeaderRow gridTemplateColumns={gridTemplateColumns}>
           <StyledHeaderNameCell />
-          {days.map((day) => (
-            <StyledDayCell
-              key={day.toString()}
-              isToday={isSamePlainDate(day, today)}
+          {headerCells.map((headerCell) => (
+            <StyledHeaderCell
+              key={headerCell.firstDay.toString()}
+              gridColumn={`${headerCell.startDayIndex + RECORD_TIMELINE_FIRST_DAY_GRID_COLUMN} / span ${headerCell.daySpan}`}
+              isToday={
+                Temporal.PlainDate.compare(headerCell.firstDay, today) <= 0 &&
+                Temporal.PlainDate.compare(today, headerCell.lastDay) <= 0
+              }
             >
-              {getDayLabel(day)}
-            </StyledDayCell>
+              {getHeaderCellLabel(headerCell.firstDay)}
+            </StyledHeaderCell>
           ))}
         </StyledHeaderRow>
         {rows.map(({ record, barPosition }) => (
