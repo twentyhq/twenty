@@ -18,7 +18,7 @@ const ExpandableListExample = () => {
 
   return (
     <TwentyUiGalleryCard title="Expandable list">
-      <ThemeProvider colorScheme="dark" applyToRoot={false}>
+      <ThemeProvider colorScheme="light" applyToRoot={false}>
         <div
           onClick={() => setHostActivations((count) => count + 1)}
           style={{ width: 300 }}

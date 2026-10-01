@@ -1,4 +1,5 @@
 import { expect, userEvent, waitFor, within } from 'storybook/test';
+import { THEME_LIGHT } from 'twenty-ui/theme';
 
 import { SANDBOX_ERROR_PATTERNS } from '@/__stories__/twenty-ui-gallery/constants/SANDBOX_ERROR_PATTERNS';
 import { expectSandboxErrors } from '@/__stories__/twenty-ui-gallery/utils/expectSandboxErrors';
@@ -30,6 +31,14 @@ export const expandableListSandboxFailureTest: TwentyUiGalleryPlayFunction =
       const targetsPopup = await page.findByRole('dialog', {
         name: 'Show all targets',
       });
+      const portalScope = targetsTrigger.closest<HTMLDivElement>('.light');
+      await expect(canvasElement).toContainElement(portalScope);
+      await expect(portalScope).toContainElement(targetsPopup);
+      await waitFor(() =>
+        expect(getComputedStyle(targetsPopup).color).toBe(
+          THEME_LIGHT.font.color.primary,
+        ),
+      );
       const targets = within(targetsPopup);
       for (const name of ['Alpha', 'Bravo', 'Charlie', 'Delta']) {
         await waitFor(() =>
