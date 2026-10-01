@@ -90,6 +90,7 @@ export const useDropdownKeyboardNavigation = ({
       currentIndex,
       search,
       isSearch,
+      isRightToLeft,
     });
 
     if (isDefined(nextItem)) {

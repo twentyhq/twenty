@@ -1,6 +1,7 @@
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { createStore, Provider as JotaiProvider } from 'jotai';
 
 import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
@@ -403,5 +404,75 @@ describe('SidePanelTopBar', () => {
     expect(
       screen.queryByRole('button', { name: 'Close side panel' }),
     ).not.toBeInTheDocument();
+  });
+
+  it('opens history on right click and keeps the back button usable', async () => {
+    const user = userEvent.setup();
+    mockContextChips = [
+      { Icons: [], text: 'Companies' },
+      { Icons: [], text: 'Search' },
+    ];
+    const { store } = renderSidePanelCommandMenu(
+      createSidePanelTopBarStore({
+        sidePanelNavigationStack: [
+          {
+            page: SidePanelPages.CommandMenuDisplay,
+            pageTitle: 'Command Menu',
+            pageIcon: IconDotsVertical,
+            pageId: 'command-menu',
+          },
+          {
+            page: SidePanelPages.SearchRecords,
+            pageTitle: 'Search',
+            pageIcon: IconDotsVertical,
+            pageId: 'search-records',
+          },
+        ],
+      }),
+    );
+    const backButton = screen.getByRole('button', { name: 'Back' });
+
+    expect(screen.queryByRole('menu')).not.toBeInTheDocument();
+
+    await user.pointer({ target: backButton, keys: '[MouseRight]' });
+
+    expect(
+      await screen.findByRole('menu', { name: 'Navigation history' }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole('menuitem', { name: 'Companies' })).toBeVisible();
+
+    await user.click(backButton);
+
+    expect(store.get(sidePanelNavigationStackState.atom)).toHaveLength(1);
+  });
+
+  it('does not open history on right click without context chips', async () => {
+    const user = userEvent.setup();
+
+    renderSidePanelCommandMenu(
+      createSidePanelTopBarStore({
+        sidePanelNavigationStack: [
+          {
+            page: SidePanelPages.CommandMenuDisplay,
+            pageTitle: 'Command Menu',
+            pageIcon: IconDotsVertical,
+            pageId: 'command-menu',
+          },
+          {
+            page: SidePanelPages.SearchRecords,
+            pageTitle: 'Search',
+            pageIcon: IconDotsVertical,
+            pageId: 'search-records',
+          },
+        ],
+      }),
+    );
+
+    await user.pointer({
+      target: screen.getByRole('button', { name: 'Back' }),
+      keys: '[MouseRight]',
+    });
+
+    expect(screen.queryByRole('menu')).not.toBeInTheDocument();
   });
 });

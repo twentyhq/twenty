@@ -3,7 +3,7 @@ import {
   type Meta,
   type StoryObj,
 } from '@storybook/react-vite';
-import { expect, within } from 'storybook/test';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { SidePanelTopBar } from '@/side-panel/components/SidePanelTopBar';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
@@ -79,5 +79,53 @@ export const Subpage: Story = {
     expect(
       await canvas.findByRole('button', { name: 'Close side panel' }),
     ).toBeVisible();
+  },
+};
+
+export const HistoryNavigation: Story = {
+  decorators: [
+    createSidePanelDecorator([
+      ROOT_PAGE,
+      SUBPAGE,
+      {
+        page: SidePanelPages.SearchRecords,
+        pageTitle: 'Search',
+        pageIcon: IconDotsVertical,
+        pageId: 'search-records',
+      },
+    ]),
+  ],
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+    const backButton = await canvas.findByRole('button', { name: 'Back' });
+
+    await userEvent.pointer({ target: backButton, keys: '[MouseRight]' });
+
+    const history = await body.findByRole('menu', {
+      name: 'Navigation history',
+    });
+
+    await userEvent.click(
+      within(history).getByRole('menuitem', { name: 'Edit' }),
+    );
+
+    await waitFor(() => {
+      expect(body.queryByRole('menu')).not.toBeInTheDocument();
+      expect(jotaiStore.get(sidePanelNavigationStackState.atom)).toHaveLength(
+        2,
+      );
+    });
+
+    await userEvent.pointer({ target: backButton, keys: '[MouseRight]' });
+    await body.findByRole('menu', { name: 'Navigation history' });
+    await userEvent.click(backButton);
+
+    await waitFor(() => {
+      expect(jotaiStore.get(sidePanelNavigationStackState.atom)).toHaveLength(
+        1,
+      );
+      expect(body.queryByRole('menu')).not.toBeInTheDocument();
+    });
   },
 };

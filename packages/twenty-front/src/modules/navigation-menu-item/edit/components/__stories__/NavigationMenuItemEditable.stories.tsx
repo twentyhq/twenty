@@ -1,10 +1,21 @@
+import { objectColorsDraftState } from '@/layout-customization/states/objectColorsDraftState';
+import { getObjectColorWithFallback } from '@/object-metadata/utils/getObjectColorWithFallback';
+import { objectMetadataItemsWithFieldsSelector } from '@/object-metadata/states/objectMetadataItemsWithFieldsSelector';
+import { isDefined } from 'twenty-shared/utils';
+import { DEFAULT_COLOR_LABELS } from 'twenty-ui/components';
+import { Button } from 'twenty-ui/primitives/input';
+import { PermissionFlagType } from '~/generated-metadata/graphql';
+import { mockedUserData } from '~/testing/mock-data/users';
+import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
+import { mockedViews } from '~/testing/mock-data/generated/metadata/views/mock-views-data';
+import { setTestViewsInMetadataStore } from '~/testing/utils/setTestViewsInMetadataStore';
 import { navigationMenuItemIdToRenameState } from '@/navigation-menu-item/common/states/navigationMenuItemIdToRenameState';
 import { selectedNavigationMenuItemIdInEditModeState } from '@/navigation-menu-item/common/states/selectedNavigationMenuItemIdInEditModeState';
 import { Fragment } from 'react';
 import { NavigationSections } from '@/navigation-menu-item/common/constants/NavigationSections.constants';
 import { NavigationItemDropTarget } from '@/navigation-menu-item/display/dnd/components/NavigationItemDropTarget';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { expect, userEvent, waitFor, within } from 'storybook/test';
+import { expect, fireEvent, userEvent, waitFor, within } from 'storybook/test';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import { IconLink } from 'twenty-ui/icon';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
@@ -57,6 +68,7 @@ const EditableNavigation = () => {
         sectionId={NavigationSections.WORKSPACE}
         compact
       />
+      <Button>Outside</Button>
     </>
   );
 };
@@ -77,6 +89,7 @@ const meta: Meta<typeof NavigationMenuItemEditable> = {
     jotaiStore.set(isLayoutCustomizationModeEnabledState.atom, true);
     jotaiStore.set(navigationMenuItemsDraftState.atom, ITEMS);
     jotaiStore.set(isNavigationDrawerExpandedState.atom, true);
+    jotaiStore.set(objectColorsDraftState.atom, {});
   },
   render: () => <EditableNavigation />,
 };
@@ -97,7 +110,15 @@ export const EditLink: Story = {
     );
     const url = await body.findByDisplayValue('https://example.com');
     await userEvent.clear(url);
-    await userEvent.type(url, 'https://twenty.com/docs{Enter}');
+    await userEvent.type(url, 'https://twenty.com/docs');
+    fireEvent.keyDown(url, { key: 'Enter', code: 'Enter', isComposing: true });
+    await expect(url).toBeVisible();
+    await expect(
+      jotaiStore
+        .get(navigationMenuItemsDraftState.atom)
+        ?.find((item) => item.id === 'docs')?.link,
+    ).toBe('https://example.com');
+    await userEvent.keyboard('{Enter}');
     await userEvent.click(
       (await canvas.findAllByRole('button', { name: 'Edit link' }))[0],
     );
@@ -202,9 +223,7 @@ export const EditFolderInPlace: Story = {
     await userEvent.type(await canvas.findByRole('textbox'), 'Discard{Escape}');
     await expect(await canvas.findByText('Work')).toBeVisible();
     await userEvent.click(
-      await canvas.findByLabelText('Choose icon and color', {
-        selector: 'button',
-      }),
+      await canvas.findByRole('button', { name: 'Choose icon and color' }),
     );
     await expect(
       await body.findByRole('button', { name: 'Icon123' }),
@@ -244,5 +263,165 @@ export const TooltipsStayOutOfActionMenus: Story = {
       await user.keyboard('{Escape}');
       await expect(body.queryByRole('tooltip')).not.toBeInTheDocument();
     }
+  },
+};
+
+export const ReturnsToActionsFromAddPages: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+    const docs = await canvas.findByText('Docs');
+
+    await userEvent.pointer({ target: docs, keys: '[MouseRight]' });
+    await userEvent.click(await body.findByText('Add menu item after'));
+    await userEvent.click(await body.findByRole('button', { name: 'Object' }));
+    await userEvent.type(
+      await body.findByPlaceholderText('Search...'),
+      'company',
+    );
+    await userEvent.click(await body.findByRole('button', { name: 'Object' }));
+    await expect(await body.findByPlaceholderText('Search...')).toHaveValue('');
+    const companyView = mockedViews.find(
+      (view) => view.name === 'All Companies',
+    );
+
+    if (!isDefined(companyView)) {
+      throw new Error('Company view is required for this story');
+    }
+
+    setTestViewsInMetadataStore(jotaiStore, [
+      ...mockedViews,
+      {
+        ...companyView,
+        id: 'company-custom-view',
+        name: 'Company pipeline',
+        key: null,
+      },
+    ]);
+    await userEvent.click(await body.findByRole('button', { name: 'View' }));
+    await userEvent.click(
+      await body.findByRole('button', { name: 'Companies' }),
+    );
+    await userEvent.pointer({ target: docs, keys: '[MouseRight]' });
+    await expect(
+      await body.findByRole('menuitem', { name: 'Move down' }),
+    ).toBeVisible();
+    await expect(
+      canvas.queryByText('Select a menu item'),
+    ).not.toBeInTheDocument();
+    await userEvent.keyboard('{Escape}');
+
+    await userEvent.pointer({ target: docs, keys: '[MouseRight]' });
+    await expect(
+      await body.findByRole('menuitem', { name: 'Move down' }),
+    ).toBeVisible();
+    await userEvent.keyboard('{Escape}');
+    await expect(
+      jotaiStore.get(selectedNavigationMenuItemIdInEditModeState.atom),
+    ).toBeNull();
+  },
+};
+
+export const InvalidLinkStaysOpenUntilSaved: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+
+    await userEvent.click(
+      (await canvas.findAllByRole('button', { name: 'Edit link' }))[0],
+    );
+    const url = await body.findByPlaceholderText('URL');
+    await userEvent.clear(url);
+    await userEvent.type(url, 'https://{Enter}');
+    await expect(await body.findByRole('alert')).toHaveTextContent(
+      'Enter a valid URL',
+    );
+    await userEvent.click(canvas.getByRole('button', { name: 'Outside' }));
+    await expect(await body.findByPlaceholderText('URL')).toBeVisible();
+    await expect(await body.findByRole('alert')).toBeVisible();
+    await userEvent.clear(url);
+    await userEvent.type(url, 'https://twenty.com/docs');
+    await userEvent.click(canvas.getByRole('button', { name: 'Outside' }));
+    await waitFor(() =>
+      expect(body.queryByPlaceholderText('URL')).not.toBeInTheDocument(),
+    );
+    await userEvent.click(
+      (await canvas.findAllByRole('button', { name: 'Edit link' }))[0],
+    );
+    await expect(
+      await body.findByDisplayValue('https://twenty.com/docs'),
+    ).toBeVisible();
+    await userEvent.keyboard('{Escape}');
+    await expect(
+      jotaiStore.get(selectedNavigationMenuItemIdInEditModeState.atom),
+    ).toBeNull();
+  },
+};
+
+export const ObjectColorDraftReturnsToPersistedValue: Story = {
+  parameters: {
+    currentUserWorkspace: {
+      ...mockedUserData.currentUserWorkspace,
+      permissionFlags: [PermissionFlagType.DATA_MODEL],
+    },
+  },
+  beforeEach: () => {
+    const company = getTestEnrichedObjectMetadataItemsMock().find(
+      (object) => object.nameSingular === 'company',
+    );
+
+    if (!isDefined(company)) {
+      throw new Error('Company metadata is required for this story');
+    }
+
+    jotaiStore.set(navigationMenuItemsDraftState.atom, [
+      {
+        ...ITEMS[0],
+        id: 'company',
+        type: NavigationMenuItemType.OBJECT,
+        name: 'Companies',
+        targetObjectMetadataId: company.id,
+      },
+    ]);
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+    const colorTrigger = await canvas.findByRole('button', {
+      name: 'Change object color',
+    });
+    const company = jotaiStore
+      .get(objectMetadataItemsWithFieldsSelector.atom)
+      .find((object) => object.nameSingular === 'company');
+
+    if (!isDefined(company)) {
+      throw new Error('Company metadata is required for this story');
+    }
+
+    const persistedColor = getObjectColorWithFallback(company);
+    const changedColor = persistedColor === 'red' ? 'blue' : 'red';
+    await userEvent.click(colorTrigger);
+    await userEvent.click(
+      await body.findByRole('button', {
+        name: DEFAULT_COLOR_LABELS[changedColor],
+      }),
+    );
+    await expect(jotaiStore.get(objectColorsDraftState.atom)[company.id]).toBe(
+      changedColor,
+    );
+    await waitFor(() =>
+      expect(
+        body.queryByPlaceholderText('Search colors...'),
+      ).not.toBeInTheDocument(),
+    );
+    await userEvent.click(colorTrigger);
+    await userEvent.click(
+      await body.findByRole('button', {
+        name: DEFAULT_COLOR_LABELS[persistedColor],
+      }),
+    );
+    await expect(
+      jotaiStore.get(objectColorsDraftState.atom),
+    ).not.toHaveProperty(company.id);
   },
 };

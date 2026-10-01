@@ -7848,6 +7848,13 @@
         "name": "Section",
         "props": [
           {
+            "name": "columns",
+            "type": "number",
+            "required": false,
+            "defaultValue": null,
+            "description": "Number of grid columns. Sets the grid layout and enables horizontal arrow navigation and vertical movement by row."
+          },
+          {
             "name": "label",
             "type": "ReactNode",
             "required": false,

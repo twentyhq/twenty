@@ -80,6 +80,8 @@ export const DROPDOWN_PART_PROP_DESCRIPTIONS = {
       'Delay in milliseconds before a submenu opened on hover closes. Requires `openOnHover`. Defaults to `0`.',
   } satisfies Partial<Record<keyof DropdownSubmenuTriggerProps, string>>,
   Section: {
+    columns:
+      'Number of grid columns. Sets the grid layout and enables horizontal arrow navigation and vertical movement by row.',
     label:
       'Heading displayed above the rows. It also names the group for assistive technologies.',
     scrollable:

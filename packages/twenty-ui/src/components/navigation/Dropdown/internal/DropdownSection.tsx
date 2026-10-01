@@ -10,6 +10,8 @@ import { type DropdownSectionProps } from '../types/DropdownSectionProps';
 export const DropdownSection = ({
   label,
   scrollable,
+  columns,
+  style,
   className,
   children,
   ...props
@@ -17,9 +19,18 @@ export const DropdownSection = ({
   <MenuGroup
     {...props}
     data-scrollable={scrollable || undefined}
+    data-dropdown-columns={columns}
+    style={{
+      ...style,
+      ...(isDefined(columns) && {
+        gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))`,
+      }),
+    }}
     className={clsx(styles.section, className)}
   >
-    {isDefined(label) && <MenuGroupLabel>{label}</MenuGroupLabel>}
+    {isDefined(label) && (
+      <MenuGroupLabel data-dropdown-section-label="">{label}</MenuGroupLabel>
+    )}
     {children}
   </MenuGroup>
 );
