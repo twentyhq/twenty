@@ -2,7 +2,6 @@ import {
   Controller,
   Get,
   Logger,
-  Param,
   Res,
   UseFilters,
   UseGuards,
@@ -14,7 +13,6 @@ import { Response } from 'express';
 import { ApiPath, FileFolder } from 'twenty-shared/types';
 
 import { ApplicationRestApiExceptionFilter } from 'src/engine/core-modules/application/application-rest-api-exception.filter';
-import { extractChecksumFromCacheKey } from 'src/engine/core-modules/file/utils/extract-checksum-from-cache-key.utils';
 import {
   FileStorageException,
   FileStorageExceptionCode,
@@ -63,13 +61,11 @@ export class FrontComponentController {
     })
     frontComponentId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @Param('cacheKey') cacheKey?: string,
   ) {
     const fileResponse = await this.frontComponentService
       .getBuiltComponentPresignedUrlOrStream({
         frontComponentId,
         workspaceId: workspace.id,
-        requestedChecksum: extractChecksumFromCacheKey(cacheKey),
       })
       .catch((error) => {
         if (error instanceof FrontComponentException) {

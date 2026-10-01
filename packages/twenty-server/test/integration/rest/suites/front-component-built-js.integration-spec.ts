@@ -1,5 +1,3 @@
-import { createHash } from 'crypto';
-
 import { createFrontComponent } from 'test/integration/metadata/suites/front-component/utils/create-front-component.util';
 import { deleteFrontComponent } from 'test/integration/metadata/suites/front-component/utils/delete-front-component.util';
 import { seedBuiltFrontComponentFile } from 'test/integration/metadata/suites/front-component/utils/seed-built-front-component-file.util';
@@ -7,11 +5,6 @@ import { makeRestApiRequest } from 'test/integration/rest/utils/make-rest-api-re
 import { expectOneNotInternalServerErrorHttpResponseSnapshot } from 'test/integration/utils/expect-one-not-internal-server-error-http-response-snapshot.util';
 
 const BUILT_COMPONENT_PATH = 'src/front-components/test-endpoint.mjs';
-const BUILT_COMPONENT_CONTENT = 'dummy built component content';
-const BUILT_COMPONENT_CHECKSUM = createHash('sha256')
-  .update(BUILT_COMPONENT_CONTENT)
-  .digest('hex');
-const STALE_COMPONENT_CHECKSUM = 'b'.repeat(64);
 
 describe('Front component built JS endpoint', () => {
   let frontComponentId: string;
@@ -31,7 +24,7 @@ describe('Front component built JS endpoint', () => {
         componentName: 'TestBuiltJsEndpoint',
         sourceComponentPath: 'src/front-components/test-endpoint.tsx',
         builtComponentPath: BUILT_COMPONENT_PATH,
-        builtComponentChecksum: BUILT_COMPONENT_CHECKSUM,
+        builtComponentChecksum: 'test-checksum-123',
       },
     });
 
@@ -58,46 +51,21 @@ describe('Front component built JS endpoint', () => {
       .expect(200)
       .expect('Content-Type', /application\/javascript/)
       .expect((res) => {
-        expect(res.text).toBe(BUILT_COMPONENT_CONTENT);
+        expect(res.text).toBe('dummy built component content');
       });
   });
 
   it('should serve the built JS from the checksum-fingerprinted path with an immutable cache header', async () => {
     await makeRestApiRequest({
       method: 'get',
-      path: `/front-components/${frontComponentId}/${BUILT_COMPONENT_CHECKSUM}.js`,
+      path: `/front-components/${frontComponentId}/test-checksum-123.js`,
       bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
     })
       .expect(200)
       .expect('Content-Type', /application\/javascript/)
       .expect('Cache-Control', 'private, max-age=86400, immutable')
       .expect((res) => {
-        expect(res.text).toBe(BUILT_COMPONENT_CONTENT);
-      });
-  });
-
-  it('should return 404 when the fingerprinted path carries a stale checksum', async () => {
-    await makeRestApiRequest({
-      method: 'get',
-      path: `/front-components/${frontComponentId}/${STALE_COMPONENT_CHECKSUM}.js`,
-      bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
-    })
-      .expect(404)
-      .expect((res) => {
-        expect(res.body.code).toBe('FRONT_COMPONENT_NOT_FOUND');
-        expect(res.body.messages[0]).toContain(STALE_COMPONENT_CHECKSUM);
-      });
-  });
-
-  it('should serve a non-fingerprinted cache key as the plain path', async () => {
-    await makeRestApiRequest({
-      method: 'get',
-      path: `/front-components/${frontComponentId}/test-checksum-123.js`,
-      bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
-    })
-      .expect(200)
-      .expect((res) => {
-        expect(res.text).toBe(BUILT_COMPONENT_CONTENT);
+        expect(res.text).toBe('dummy built component content');
       });
   });
 
