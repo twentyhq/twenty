@@ -158,6 +158,7 @@ export const SettingsApplicationDetails = () => {
     skip: !hasUpdate || !canManageApplications,
   });
   const requiresPermissionApproval = permissionSummaryItems.length > 0;
+  const isUpgradeDisabled = isUpgrading || !isPermissionSummaryReady;
   const { openDialog } = useDialog();
 
   const upgradeToLatestVersion = async (hasUserApprovedRoleGrants: boolean) => {
@@ -174,7 +175,7 @@ export const SettingsApplicationDetails = () => {
   };
 
   const handleUpgrade = async () => {
-    if (isUpgrading || !isPermissionSummaryReady) {
+    if (isUpgradeDisabled) {
       return;
     }
 
@@ -297,7 +298,7 @@ export const SettingsApplicationDetails = () => {
             requiresPermissionApproval={requiresPermissionApproval}
             onUpgrade={handleUpgrade}
             isUpgrading={isUpgrading}
-            isUpgradeDisabled={isUpgrading || !isPermissionSummaryReady}
+            isUpgradeDisabled={isUpgradeDisabled}
             onUninstall={uninstall}
             isUninstalling={isUninstalling}
           />
@@ -415,7 +416,7 @@ export const SettingsApplicationDetails = () => {
               button={{
                 title: t`Review`,
                 onClick: handleUpgrade,
-                disabled: isUpgrading || !isPermissionSummaryReady,
+                disabled: isUpgradeDisabled,
               }}
             />
           )}
