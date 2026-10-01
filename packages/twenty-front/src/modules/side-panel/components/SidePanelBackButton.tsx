@@ -3,6 +3,7 @@ import { useSidePanelContextChips } from '@/side-panel/hooks/useSidePanelContext
 import { useSidePanelHistory } from '@/side-panel/hooks/useSidePanelHistory';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
+import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { t } from '@lingui/core/macro';
 import { Children, useRef, type MouseEvent } from 'react';
@@ -19,7 +20,14 @@ export const SidePanelBackButton = () => {
 
   const { openDropdown } = useOpenDropdown();
 
+  const { closeDropdown } = useCloseDropdown();
+
   const backButtonRef = useRef<HTMLButtonElement>(null);
+
+  const handleBackButtonClick = () => {
+    closeDropdown(SIDE_PANEL_NAVIGATION_HISTORY_DROPDOWN_ID);
+    goBackFromSidePanel();
+  };
 
   const handleBackButtonContextMenu = (
     event: MouseEvent<HTMLButtonElement>,
@@ -51,7 +59,7 @@ export const SidePanelBackButton = () => {
         ref={backButtonRef}
         size="sm"
         variant="ghost"
-        onClick={goBackFromSidePanel}
+        onClick={handleBackButtonClick}
         onContextMenu={handleBackButtonContextMenu}
         aria-label={t`Back`}
       >

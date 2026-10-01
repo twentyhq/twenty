@@ -93,6 +93,12 @@ export const HistoryNavigation: Story = {
         pageIcon: IconDotsVertical,
         pageId: 'search-records',
       },
+      {
+        page: SidePanelPages.CommandMenuEdit,
+        pageTitle: 'Fields',
+        pageIcon: IconDotsVertical,
+        pageId: 'command-menu-edit-fields',
+      },
     ]),
   ],
   play: async ({ canvasElement }) => {
@@ -107,8 +113,26 @@ export const HistoryNavigation: Story = {
     });
 
     await userEvent.click(
-      within(history).getByRole('menuitem', { name: 'Edit' }),
+      within(history).getByRole('menuitem', { name: 'Search' }),
     );
+
+    await waitFor(() => {
+      expect(body.queryByRole('menu')).not.toBeInTheDocument();
+      expect(jotaiStore.get(sidePanelNavigationStackState.atom)).toHaveLength(
+        3,
+      );
+    });
+
+    await userEvent.pointer({ target: backButton, keys: '[MouseRight]' });
+
+    const reopenedHistory = await body.findByRole('menu', {
+      name: 'Navigation history',
+    });
+
+    expect(
+      within(reopenedHistory).getByRole('menuitem', { name: 'Edit' }),
+    ).toBeInTheDocument();
+    await userEvent.click(backButton);
 
     await waitFor(() => {
       expect(body.queryByRole('menu')).not.toBeInTheDocument();
@@ -116,6 +140,7 @@ export const HistoryNavigation: Story = {
         2,
       );
     });
+    expect(backButton).toBeVisible();
 
     await userEvent.pointer({ target: backButton, keys: '[MouseRight]' });
     expect(body.queryByRole('menu')).not.toBeInTheDocument();

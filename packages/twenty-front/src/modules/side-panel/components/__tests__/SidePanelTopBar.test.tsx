@@ -505,4 +505,47 @@ describe('SidePanelTopBar', () => {
     expect(isNativeContextMenuAllowed).toBe(true);
     expect(screen.queryByRole('menu')).not.toBeInTheDocument();
   });
+
+  it('closes history when going back with it open', async () => {
+    const user = userEvent.setup();
+    mockContextChips = [
+      { Icons: [], text: 'Search' },
+      { Icons: [], text: 'Edit' },
+    ];
+    const { store } = renderSidePanelCommandMenu(
+      createSidePanelTopBarStore({
+        sidePanelNavigationStack: [
+          {
+            page: SidePanelPages.CommandMenuDisplay,
+            pageTitle: 'Command Menu',
+            pageIcon: IconDotsVertical,
+            pageId: 'command-menu',
+          },
+          {
+            page: SidePanelPages.SearchRecords,
+            pageTitle: 'Search',
+            pageIcon: IconDotsVertical,
+            pageId: 'search-records',
+          },
+          {
+            page: SidePanelPages.CommandMenuEdit,
+            pageTitle: 'Edit',
+            pageIcon: IconDotsVertical,
+            pageId: 'command-menu-edit',
+          },
+        ],
+      }),
+    );
+    const backButton = screen.getByRole('button', { name: 'Back' });
+
+    await user.pointer({ target: backButton, keys: '[MouseRight]' });
+    await screen.findByRole('menu', { name: 'Navigation history' });
+    await user.click(backButton);
+
+    expect(store.get(sidePanelNavigationStackState.atom)).toHaveLength(2);
+    await waitFor(() =>
+      expect(screen.queryByRole('menu')).not.toBeInTheDocument(),
+    );
+    expect(screen.getByRole('button', { name: 'Back' })).toBeInTheDocument();
+  });
 });
