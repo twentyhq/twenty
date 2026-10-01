@@ -144,7 +144,6 @@ export const DOCUMENTATION_PATHS = {
   UI_COMPONENTS_JSON_TREE: '/ui/components/json-tree',
   UI_COMPONENTS_MENU_ITEMS: '/ui/components/menu-items',
   UI_COMPONENTS_MENU_PICKER: '/ui/components/menu-picker',
-  UI_COMPONENTS_NAVIGATION_BAR: '/ui/components/navigation-bar',
   UI_COMPONENTS_NOTIFICATION_COUNTER: '/ui/components/notification-counter',
   UI_COMPONENTS_OVERVIEW: '/ui/components/overview',
   UI_COMPONENTS_SEARCH_INPUT: '/ui/components/search-input',

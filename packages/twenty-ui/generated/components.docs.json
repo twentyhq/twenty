@@ -9187,34 +9187,6 @@
     ]
   },
   {
-    "name": "NavigationBar",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/navigation-bar",
-    "props": [
-      {
-        "name": "activeItemName",
-        "type": "string",
-        "required": true,
-        "defaultValue": null,
-        "description": "Name of the item to highlight. The application owns navigation."
-      },
-      {
-        "name": "isHidden",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": "false",
-        "description": "Hides the bar visually and from the accessibility tree."
-      },
-      {
-        "name": "items",
-        "type": "{ name: string; label: string; Icon: IconComponent; onClick: () => void; }[]",
-        "required": true,
-        "defaultValue": null,
-        "description": "Navigation items with a unique name, accessible label, Icon component, and onClick callback."
-      }
-    ]
-  },
-  {
     "name": "ThemeProvider",
     "entryPoint": "twenty-ui/theme",
     "slug": "theme/theme-provider",
