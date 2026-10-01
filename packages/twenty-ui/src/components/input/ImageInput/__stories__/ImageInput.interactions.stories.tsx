@@ -6,7 +6,7 @@ import { A11Y_DEFER_COLOR_CONTRAST, ComponentDecorator } from '@ui/testing';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import { ImageInput } from '../ImageInput';
-import { IMAGE_INPUT_PREVIEW_URL } from './IMAGE_INPUT_PREVIEW_URL';
+import { IMAGE_INPUT_PREVIEW_URL } from './imageInputPreviewUrl';
 import { ImageInputPreviewChangesExample } from './ImageInputPreviewChangesExample';
 
 const getFileInput = (canvasElement: HTMLElement) => {

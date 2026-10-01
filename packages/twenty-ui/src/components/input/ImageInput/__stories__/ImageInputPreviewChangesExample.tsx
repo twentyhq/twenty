@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Button } from '@ui/primitives/input/Button/Button';
 
 import { ImageInput } from '../ImageInput';
-import { IMAGE_INPUT_PREVIEW_URL } from './IMAGE_INPUT_PREVIEW_URL';
+import { IMAGE_INPUT_PREVIEW_URL } from './imageInputPreviewUrl';
 
 const INVALID_IMAGE_URL = 'data:image/png;base64,invalid';
 

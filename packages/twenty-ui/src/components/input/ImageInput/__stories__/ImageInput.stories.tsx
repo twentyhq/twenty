@@ -3,7 +3,7 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { A11Y_DEFER_COLOR_CONTRAST, ComponentDecorator } from '@ui/testing';
 
 import { ImageInput } from '../ImageInput';
-import { IMAGE_INPUT_PREVIEW_URL } from './IMAGE_INPUT_PREVIEW_URL';
+import { IMAGE_INPUT_PREVIEW_URL } from './imageInputPreviewUrl';
 
 const meta: Meta<typeof ImageInput> = {
   title: 'UI/Input/ImageInput',
