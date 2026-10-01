@@ -1,11 +1,19 @@
 import { DragDropItemSortableCell } from '@/ui/utilities/drag-and-drop/components/DragDropItemSortableCell';
 import { DragDropItemSortableHandle } from '@/ui/utilities/drag-and-drop/components/DragDropItemSortableHandle';
-import { DragDropProvider } from '@dnd-kit/react';
+import { type DragDropEvents, DragDropProvider } from '@dnd-kit/react';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-const renderContent = (disabled: boolean, withHandle = false) => (
-  <DragDropProvider>
+const renderContent = ({
+  disabled,
+  withHandle = false,
+  onBeforeDragStart,
+}: {
+  disabled: boolean;
+  withHandle?: boolean;
+  onBeforeDragStart?: DragDropEvents['beforedragstart'];
+}) => (
+  <DragDropProvider onBeforeDragStart={onBeforeDragStart}>
     <DragDropItemSortableCell
       id="widget-id"
       index={0}
@@ -14,7 +22,7 @@ const renderContent = (disabled: boolean, withHandle = false) => (
     >
       {withHandle && (
         <DragDropItemSortableHandle disabled={disabled}>
-          Move widget
+          Widget title
         </DragDropItemSortableHandle>
       )}
       <input aria-label="Message" />
@@ -39,9 +47,26 @@ const expectAccessibleContent = () => {
 };
 
 describe('DragDropItemSortableCell', () => {
+  // jsdom lacks the Web Animations API that dnd-kit's keyboard sensor queries
+  // before activating a drag.
+  beforeAll(() => {
+    for (const target of [document, Element.prototype]) {
+      Object.defineProperty(target, 'getAnimations', {
+        configurable: true,
+        value: () => [],
+      });
+    }
+  });
+
+  afterAll(() => {
+    for (const target of [document, Element.prototype]) {
+      Reflect.deleteProperty(target, 'getAnimations');
+    }
+  });
+
   it('keeps inputs and buttons accessible when dragging is disabled', async () => {
     const user = userEvent.setup();
-    render(renderContent(true));
+    render(renderContent({ disabled: true }));
 
     await user.tab();
     expect(screen.getByRole('textbox')).toHaveFocus();
@@ -54,7 +79,7 @@ describe('DragDropItemSortableCell', () => {
 
   it('exposes keyboard drag affordances when dragging is enabled', async () => {
     const user = userEvent.setup();
-    render(renderContent(false));
+    render(renderContent({ disabled: false }));
 
     await waitFor(() => {
       expect(getSortableRoot()).toHaveAttribute('role', 'button');
@@ -67,18 +92,18 @@ describe('DragDropItemSortableCell', () => {
 
   it('preserves the editor when dragging is repeatedly enabled and disabled', async () => {
     const user = userEvent.setup();
-    const { rerender } = render(renderContent(true));
+    const { rerender } = render(renderContent({ disabled: true }));
     const editor = screen.getByRole('textbox');
     await user.tab();
     await user.keyboard('Unsaved message');
 
     for (let transition = 0; transition < 2; transition++) {
-      rerender(renderContent(false));
+      rerender(renderContent({ disabled: false }));
       await waitFor(() => {
         expect(getSortableRoot()).toHaveAttribute('role', 'button');
         expect(getSortableRoot()).toHaveAttribute('aria-disabled', 'false');
       });
-      rerender(renderContent(true));
+      rerender(renderContent({ disabled: true }));
       await user.tab();
       expectAccessibleContent();
       expect(screen.getByRole('textbox')).toBe(editor);
@@ -86,21 +111,52 @@ describe('DragDropItemSortableCell', () => {
     }
   });
 
-  it('keeps disabled state on an explicit handle away from the editor', async () => {
+  it('starts a keyboard drag after dragging is enabled again', async () => {
     const user = userEvent.setup();
-    const { rerender } = render(renderContent(false, true));
+    const handleDragActivation = jest.fn();
+    // Cancelling right after activation keeps the drag out of jsdom's missing
+    // layout observers.
+    const onBeforeDragStart: DragDropEvents['beforedragstart'] = (event) => {
+      handleDragActivation();
+      event.preventDefault();
+    };
+    const { rerender } = render(
+      renderContent({ disabled: true, onBeforeDragStart }),
+    );
+
+    rerender(renderContent({ disabled: false, onBeforeDragStart }));
+    await waitFor(() => {
+      expect(getSortableRoot()).toHaveAttribute('tabindex', '0');
+    });
+    await user.tab();
+    expect(getSortableRoot()).toHaveFocus();
+    await user.keyboard(' ');
+
+    await waitFor(() => {
+      expect(handleDragActivation).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  it('removes drag affordances from an explicit handle when dragging is disabled', async () => {
+    const user = userEvent.setup();
+    const { rerender } = render(
+      renderContent({ disabled: false, withHandle: true }),
+    );
     await waitFor(() => {
       expect(
-        screen.getByRole('button', { name: 'Move widget' }),
+        screen.getByRole('button', { name: 'Widget title' }),
       ).toHaveAttribute('aria-disabled', 'false');
     });
-    rerender(renderContent(true, true));
-    await waitFor(() => {
-      expect(
-        screen.getByRole('button', { name: 'Move widget' }),
-      ).toHaveAttribute('aria-disabled', 'true');
-    });
-    await user.type(screen.getByRole('textbox'), 'Hello');
+    expect(getSortableRoot()).not.toHaveAttribute('role', 'button');
+
+    rerender(renderContent({ disabled: true, withHandle: true }));
+    await user.tab();
+
+    expect(screen.getByRole('textbox')).toHaveFocus();
+    expect(screen.queryByRole('button', { name: 'Widget title' })).toBeNull();
+    expect(screen.getByText('Widget title')).not.toHaveAttribute(
+      'aria-disabled',
+    );
     expectAccessibleContent();
   });
 });

@@ -15,6 +15,7 @@ import { DRAG_SOURCE_OPACITY } from '@/ui/utilities/drag-and-drop/constants/Drag
 import { DragDropItemSortableHandleRefContext } from '@/ui/utilities/drag-and-drop/context/DragDropItemSortableHandleRefContext';
 import { type DragDropItemDropTargetOrientation } from '@/ui/utilities/drag-and-drop/types/DragDropItemDropTargetOrientation';
 import { preventNativeDragStart } from '@/ui/utilities/drag-and-drop/utils/preventNativeDragStart';
+import { removeDndKitAccessibilityAttributes } from '@/ui/utilities/drag-and-drop/utils/removeDndKitAccessibilityAttributes';
 
 const SORTABLE_COLLISION_PRIORITY = 3;
 
@@ -121,31 +122,32 @@ export const DragDropItemSortableCell = ({
     feedback: 'clone',
   });
 
+  // A disabled sortable stays unregistered so dnd-kit cannot mark its
+  // activator, and everything inside it, as a disabled button.
   const setSortableRef = useCallback(
     (element: HTMLDivElement | null) => {
       ref(disabled ? null : element);
 
-      // Disabled dragging must not disable the widget's interactive content.
-      // dnd-kit leaves its accessibility attributes behind when detached.
       if (disabled && isDefined(element)) {
-        for (const attribute of [
-          'role',
-          'tabindex',
-          'aria-disabled',
-          'aria-roledescription',
-          'aria-describedby',
-          'aria-pressed',
-          'aria-grabbed',
-        ]) {
-          element.removeAttribute(attribute);
-        }
+        removeDndKitAccessibilityAttributes(element);
       }
     },
     [disabled, ref],
   );
 
+  const setSortableHandleRef = useCallback(
+    (element: Element | null) => {
+      handleRef(disabled ? null : element);
+
+      if (disabled && isDefined(element)) {
+        removeDndKitAccessibilityAttributes(element);
+      }
+    },
+    [disabled, handleRef],
+  );
+
   return (
-    <DragDropItemSortableHandleRefContext.Provider value={handleRef}>
+    <DragDropItemSortableHandleRefContext.Provider value={setSortableHandleRef}>
       <StyledSortableRoot
         ref={setSortableRef}
         $disabled={disabled}
