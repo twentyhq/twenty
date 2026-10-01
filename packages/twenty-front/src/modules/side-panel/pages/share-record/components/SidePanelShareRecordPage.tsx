@@ -23,6 +23,7 @@ const SidePanelShareRecordPageContent = ({
     <>
       <RecordSharingRefreshEffect refetch={sharingState.refetch} />
       <SidePanelShareRecordContent
+        objectLabelPlural={objectMetadataItem.labelPlural}
         recordUrl={
           new URL(
             getLinkToShowPage(objectMetadataItem.nameSingular, {

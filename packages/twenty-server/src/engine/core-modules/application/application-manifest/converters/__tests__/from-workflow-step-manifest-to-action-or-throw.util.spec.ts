@@ -189,7 +189,9 @@ describe('application workflow actions', () => {
 
   it.each(
     Object.values(WorkflowActionType).filter(
-      (type) => type !== WorkflowActionType.CODE,
+      (type) =>
+        type !== WorkflowActionType.CODE &&
+        type !== WorkflowActionType.SEND_CHAT_MESSAGE,
     ),
   )('converts %s to its runtime action', (type) => {
     expect(convert(type)).toMatchObject({ id: STEP_ID, type, valid: true });

@@ -49,6 +49,7 @@ type Assertions = [
       | 'readability'
       | 'readabilityParentFieldUniversalIdentifiers'
       | 'discoverableFieldUniversalIdentifiers'
+      | 'sharingReach'
     >
   >,
 ];

@@ -31,18 +31,31 @@ import {
   validateOperationIsPermittedOrThrow,
 } from 'src/engine/twenty-orm/repository/permissions.utils';
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
+import { canRolesAccessAllRecords } from 'src/engine/core-modules/record-share/utils/can-roles-access-all-records.util';
 import { type InheritedReadabilityChildRecords } from 'src/engine/core-modules/record-share/types/inherited-readability-child-records.type';
 import { type InheritedReadabilityChildrenParent } from 'src/engine/core-modules/record-share/types/inherited-readability-children-parent.type';
 import { type InheritedReadabilityColumnParent } from 'src/engine/core-modules/record-share/types/inherited-readability-column-parent.type';
 import { type InheritedReadabilityParent } from 'src/engine/core-modules/record-share/types/inherited-readability-parent.type';
 import { type InheritedReadabilityParentLink } from 'src/engine/core-modules/record-share/types/inherited-readability-parent-link.type';
 import {
+  type RowAccessExpression,
   type RowAccessPolicy,
+  type RowAccessCompilationEnvironment,
   type RowAccessPolicyEnvironment,
   type RowAccessPolicySubject,
+  type SqlCondition,
 } from 'src/engine/twenty-orm/types/row-access-policy.type';
+import { compileRowAccessExpression } from 'src/engine/twenty-orm/utils/compile-row-access-policy.util';
 import { resolveRecordShareGateKind } from 'src/engine/core-modules/record-share/utils/resolve-record-share-gate-kind.util';
 import { buildRowAccessPolicy } from 'src/engine/twenty-orm/utils/build-row-access-policy.util';
+import { type RecordShareGrant } from 'src/engine/core-modules/record-share/types/record-share-grant.type';
+import {
+  evaluateRowAccessPolicy,
+  type RowAccessEvaluationContext,
+  type RowAccessRecord,
+} from 'src/engine/core-modules/record-share/utils/evaluate-row-access-policy.util';
+import { isRowAccessExpressionReadingRoleFilter } from 'src/engine/twenty-orm/utils/is-row-access-expression-reading-role-filter.util';
+import { isRecordGrantBeyondRoleAllowed } from 'src/engine/core-modules/record-share/utils/is-record-grant-beyond-role-allowed.util';
 import { isObjectOperationPermitted } from 'src/engine/twenty-orm/utils/is-object-operation-permitted.util';
 import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
@@ -54,6 +67,7 @@ import {
 import { isChildRecordBoundAtDeletion } from 'src/engine/twenty-orm/utils/is-child-record-bound-at-deletion.util';
 import { isOwningApplicationAuthContext } from 'src/engine/twenty-orm/utils/is-owning-application-auth-context.util';
 import { resolvePrincipalIdsFromAuthContext } from 'src/engine/twenty-orm/utils/resolve-principal-ids-from-auth-context.util';
+import { resolveRoleIdsFromAuthContext } from 'src/engine/twenty-orm/utils/resolve-role-ids-from-auth-context.util';
 import { resolveInheritedReadabilityChildLinks } from 'src/engine/core-modules/record-share/utils/resolve-inherited-readability-child-links.util';
 import { resolveInheritedReadabilityParents } from 'src/engine/core-modules/record-share/utils/resolve-inherited-readability-parents.util';
 import { resolveRowLevelPermissionRecordFilter } from 'src/engine/twenty-orm/utils/resolve-row-level-permission-record-filter.util';
@@ -186,6 +200,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
         tableShape: this.options.tableShape,
         executor: this.options.executor,
         objectRecordsPermissions: this.options.objectRecordsPermissions,
+        isRecordSharingEnabled: this.isRecordSharingEnabled,
         tableShapeByObjectMetadataId: this.options.tableShapeByObjectMetadataId,
         onBeforeExecute: (queryBuilder) => this.onBeforeExecute(queryBuilder),
         formatResult: (records) => this.formatResult(records),
@@ -1053,9 +1068,13 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       updatedColumns: insertedColumns,
     });
 
-    this.validateRLSPredicatesForWrittenRecords(
-      this.formatResult<ObjectRecord[]>(formattedRecords),
-    );
+    validateRLSPredicatesForRecords({
+      records: this.formatResult<ObjectRecord[]>(formattedRecords),
+      objectMetadata: this.options.flatObjectMetadata,
+      internalContext: this.options.internalContext,
+      authContext: this.options.authContext,
+      shouldBypassPermissionChecks: this.options.shouldBypassPermissionChecks,
+    });
 
     await this.validateInheritedParentsAreWritableOrThrow({
       writtenRecords: formattedRecords,
@@ -1197,25 +1216,30 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       ),
     });
 
-    for (const [index, input] of writableInputs.entries()) {
-      const { id: _id, ...setColumns } = this.formatWriteData(
-        dataByInputIndex[index],
-      );
+    const setColumnsByInputIndex = writtenRecords.map(
+      ({ id: _id, ...setColumns }) => setColumns,
+    );
 
+    for (const setColumns of setColumnsByInputIndex) {
       this.validateWriteIsPermitted({
         operationType: 'update',
         columnsToReturn,
         updatedColumns: Object.keys(setColumns),
       });
+    }
 
+    await this.validateRLSPredicatesForUpdatedRecords(
+      setColumnsByInputIndex.flatMap((setColumns, index) =>
+        rawBeforeByInputIndex[index].map((rawRecordBefore) => ({
+          rawRecordBefore,
+          setColumns,
+        })),
+      ),
+    );
+
+    for (const [index, input] of writableInputs.entries()) {
+      const setColumns = setColumnsByInputIndex[index];
       const rawBeforeForInput = rawBeforeByInputIndex[index];
-
-      this.validateRLSPredicatesForWrittenRecords(
-        this.formatResult<ObjectRecord[]>(
-          rawBeforeForInput.map((record) => ({ ...record, ...setColumns })),
-        ),
-        'Updated record does not satisfy row-level security constraints of your current role',
-      );
 
       const selectQueryBuilder = this.createQueryBuilder().where({
         id: input.id,
@@ -1441,6 +1465,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       tableShape: this.options.tableShape,
       executor: this.options.executor,
       objectRecordsPermissions: this.options.objectRecordsPermissions,
+      isRecordSharingEnabled: this.isRecordSharingEnabled,
       tableShapeByObjectMetadataId: this.options.tableShapeByObjectMetadataId,
       onBeforeExecute: () => undefined,
       formatResult: (records) => this.formatResult(records),
@@ -1688,11 +1713,11 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     }
 
     if (kind === 'update' && isDefined(setColumns)) {
-      this.validateRLSPredicatesForWrittenRecords(
-        this.formatResult<ObjectRecord[]>(
-          recordsBefore.map((record) => ({ ...record, ...setColumns })),
-        ),
-        'Updated record does not satisfy row-level security constraints of your current role',
+      await this.validateRLSPredicatesForUpdatedRecords(
+        recordsBefore.map((rawRecordBefore) => ({
+          rawRecordBefore,
+          setColumns,
+        })),
       );
     }
 
@@ -1896,21 +1921,125 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       allFieldsSelected: false,
       updatedColumns,
       authContext: this.options.authContext,
+      isRecordSharingEnabled: this.isRecordSharingEnabled,
     });
   }
 
-  private validateRLSPredicatesForWrittenRecords(
-    records: ObjectRecord[],
-    errorMessage?: string,
-  ): void {
-    validateRLSPredicatesForRecords({
-      records,
-      objectMetadata: this.options.flatObjectMetadata,
-      internalContext: this.options.internalContext,
-      authContext: this.options.authContext,
-      shouldBypassPermissionChecks: this.options.shouldBypassPermissionChecks,
-      ...(isDefined(errorMessage) ? { errorMessage } : {}),
+  // An update must not move a record out of the update policy. Records it
+  // did not admit before are left to the update query, which skips them
+  private async validateRLSPredicatesForUpdatedRecords(
+    updates: {
+      rawRecordBefore: ObjectRecord;
+      setColumns: Record<string, unknown>;
+    }[],
+  ): Promise<void> {
+    if (this.options.shouldBypassPermissionChecks) {
+      return;
+    }
+
+    const policy = this.buildRowAccessPolicy({
+      subject: this.resolveRowAccessPolicySubject(),
+      operationType: 'update',
     });
+
+    // Without a role filter the policy reads nothing an update can change:
+    // shares are keyed by id and parents are checked on their own
+    if (
+      policy.kind !== 'gated' ||
+      !isRowAccessExpressionReadingRoleFilter(policy.expression)
+    ) {
+      return;
+    }
+
+    const context = this.buildWriteRowAccessEvaluationContext(
+      updates.map(({ rawRecordBefore }) => String(rawRecordBefore.id)),
+    );
+    const evaluate = (records: ObjectRecord[]) =>
+      evaluateRowAccessPolicy({
+        policy,
+        records: this.formatResult<ObjectRecord[]>(records).filter(
+          (record): record is RowAccessRecord => isNonEmptyString(record.id),
+        ),
+        context,
+      });
+
+    const admittedRecordIdsBefore = await evaluate(
+      updates.map(({ rawRecordBefore }) => rawRecordBefore),
+    );
+    const admittedRecordIdsAfter = await evaluate(
+      updates
+        .filter(({ rawRecordBefore }) =>
+          admittedRecordIdsBefore.has(String(rawRecordBefore.id)),
+        )
+        .map(({ rawRecordBefore, setColumns }) => ({
+          ...rawRecordBefore,
+          ...setColumns,
+        })),
+    );
+
+    if (
+      [...admittedRecordIdsBefore].some((id) => !admittedRecordIdsAfter.has(id))
+    ) {
+      throw new TwentyOrmException(
+        'Updated record does not satisfy row-level security constraints of your current role',
+        TwentyOrmExceptionCode.RLS_VALIDATION_FAILED,
+      );
+    }
+  }
+
+  private buildWriteRowAccessEvaluationContext(
+    recordIds: string[],
+  ): RowAccessEvaluationContext<RowAccessRecord> {
+    const recordShareGrantsByObjectMetadataId = new Map<
+      string,
+      Promise<RecordShareGrant[]>
+    >();
+
+    return {
+      flatFieldMetadataMaps: this.options.internalContext.flatFieldMetadataMaps,
+      shouldIgnoreSoftDeleteDefaultFilter: false,
+      fetchRecordShares: async ({
+        objectMetadataId,
+        recordIds: requestedRecordIds,
+      }) => {
+        const recordShareGrants =
+          recordShareGrantsByObjectMetadataId.get(objectMetadataId) ??
+          this.findRecordShareGrants({ objectMetadataId, recordIds });
+
+        recordShareGrantsByObjectMetadataId.set(
+          objectMetadataId,
+          recordShareGrants,
+        );
+
+        const requestedRecordIdSet = new Set(requestedRecordIds);
+
+        return (await recordShareGrants).filter((recordShareGrant) =>
+          requestedRecordIdSet.has(recordShareGrant.recordId),
+        );
+      },
+      // Writes check parents before and after through
+      // validateInheritedParentsAreWritableOrThrow, so this branch only has to
+      // leave the rest of the policy to decide
+      resolveRecordIdsReadableThroughParents: async ({ records }) =>
+        new Set(records.map((record) => record.id)),
+    };
+  }
+
+  private async findRecordShareGrants({
+    objectMetadataId,
+    recordIds,
+  }: {
+    objectMetadataId: string;
+    recordIds: string[];
+  }): Promise<RecordShareGrant[]> {
+    if (recordIds.length === 0) {
+      return [];
+    }
+
+    return this.executeRaw<RecordShareGrant>(
+      `SELECT "recordId", "principalId", "accessLevel" FROM ${this.resolveRowAccessPolicyEnvironment().recordShareTableExpression} WHERE "objectMetadataId" = :objectMetadataId AND "recordId" = ANY(:recordIds) AND "deletedAt" IS NULL`,
+      { objectMetadataId, recordIds },
+    );
   }
 
   private emitMutationEvent({
@@ -2011,6 +2140,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
           this.options.internalContext.flatFieldMetadataMaps,
         objectIdByNameSingular:
           this.options.internalContext.objectIdByNameSingular,
+        isRecordSharingEnabled: this.isRecordSharingEnabled,
         selectedColumns: columnNames,
         allFieldsSelected: false,
         updatedColumns: [],
@@ -2068,7 +2198,12 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
 
     if (
       alias === queryBuilder.alias &&
-      !this.isObjectOperationPermitted({ flatObjectMetadata, operationType })
+      !this.isObjectOperationPermitted({ flatObjectMetadata, operationType }) &&
+      !isRecordGrantBeyondRoleAllowed({
+        flatObjectMetadata,
+        operationType,
+        isRecordSharingEnabled: this.isRecordSharingEnabled,
+      })
     ) {
       throw new PermissionsException(
         PermissionsExceptionMessage.PERMISSION_DENIED,
@@ -2099,12 +2234,69 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
 
         return;
       case 'gated':
-        this.addConditionForAlias({ queryBuilder, alias, ...policy.condition });
+        this.addConditionForAlias({
+          queryBuilder,
+          alias,
+          ...this.compileRowAccessExpression(policy.expression),
+        });
 
         return;
       default:
         assertUnreachable(policy);
     }
+  }
+
+  // Records already in hand, deleted ones included, filtered by a policy;
+  // the alias must be the one the policy was built with
+  async findRecordIdsAdmittedByRowAccessPolicy({
+    recordIds,
+    policy,
+    tableAlias = this.options.tableShape.nameSingular,
+  }: {
+    recordIds: string[];
+    policy: RowAccessPolicy;
+    tableAlias?: string;
+  }): Promise<Set<string>> {
+    if (recordIds.length === 0 || policy.kind === 'denied') {
+      return new Set();
+    }
+
+    if (policy.kind === 'open') {
+      return new Set(recordIds);
+    }
+
+    const condition = this.compileRowAccessExpression(policy.expression);
+    const admittedRecords = await this.buildBypassingEventSelectQueryBuilder(
+      tableAlias,
+    )
+      .where({ id: In(recordIds) })
+      .withDeleted()
+      .select(['id'])
+      .andWhere(condition.sql, condition.parameters)
+      .getMany<ObjectRecord>({ noFormatting: true });
+
+    return new Set(admittedRecords.map((record) => String(record.id)));
+  }
+
+  private compileRowAccessExpression(
+    expression: RowAccessExpression,
+  ): SqlCondition {
+    return compileRowAccessExpression({
+      expression,
+      environment: this.resolveRowAccessPolicyEnvironment(),
+    });
+  }
+
+  // Whether the role alone permits the operation, regardless of any record
+  // grant that may reach beyond it
+  isObjectOperationPermittedByRole(operationType: OperationType): boolean {
+    return (
+      this.options.shouldBypassPermissionChecks ||
+      this.isObjectOperationPermitted({
+        flatObjectMetadata: this.options.flatObjectMetadata,
+        operationType,
+      })
+    );
   }
 
   private isObjectOperationPermitted({
@@ -2155,13 +2347,20 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
   }
 
   private resolveRowAccessPolicySubject(): RowAccessPolicySubject {
+    const roleMaps = {
+      authContext: this.options.authContext,
+      userWorkspaceRoleMap: this.options.internalContext.userWorkspaceRoleMap,
+      apiKeyRoleMap: this.options.internalContext.apiKeyRoleMap,
+    };
+
     return {
       isSystemContext: this.options.authContext?.type === 'system',
       objectsPermissions: this.options.objectRecordsPermissions,
-      principalIds: resolvePrincipalIdsFromAuthContext({
-        authContext: this.options.authContext,
-        userWorkspaceRoleMap: this.options.internalContext.userWorkspaceRoleMap,
-        apiKeyRoleMap: this.options.internalContext.apiKeyRoleMap,
+      principalIds: resolvePrincipalIdsFromAuthContext(roleMaps),
+      canAccessAllRecords: canRolesAccessAllRecords({
+        roleIds: resolveRoleIdsFromAuthContext(roleMaps),
+        roleIdsWithAllRecordsAccess:
+          this.options.internalContext.roleIdsWithAllRecordsAccess,
       }),
       readScope: this.options.readScope,
       isOwningApplication: (objectMetadata) =>
@@ -2178,7 +2377,8 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     };
   }
 
-  private resolveRowAccessPolicyEnvironment(): RowAccessPolicyEnvironment {
+  private resolveRowAccessPolicyEnvironment(): RowAccessPolicyEnvironment &
+    RowAccessCompilationEnvironment {
     return {
       flatFieldMetadataMaps: this.options.internalContext.flatFieldMetadataMaps,
       flatObjectMetadataMaps:
@@ -2188,11 +2388,16 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       ),
       resolveTableExpression: (objectMetadataId) =>
         this.getTableExpression(objectMetadataId),
-      isRecordSharingEnabled:
-        this.options.internalContext.featureFlagsMap[
-          FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED
-        ] ?? false,
+      isRecordSharingEnabled: this.isRecordSharingEnabled,
     };
+  }
+
+  private get isRecordSharingEnabled(): boolean {
+    return (
+      this.options.internalContext.featureFlagsMap[
+        FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED
+      ] ?? false
+    );
   }
 
   private resolveInheritedReadabilityParents(
