@@ -25,14 +25,15 @@ export const WorkspaceLogoUploader = () => {
     if (isUndefinedOrNull(file)) {
       return;
     }
-    if (!currentWorkspace?.id) {
-      throw new Error('Workspace id not found');
-    }
 
     setIsUploading(true);
     setErrorMessage(null);
 
     try {
+      if (!currentWorkspace?.id) {
+        throw new Error('Workspace id not found');
+      }
+
       const uploadedLogo = await uploadWorkspaceLogo(file);
 
       setCurrentWorkspace({
@@ -50,14 +51,14 @@ export const WorkspaceLogoUploader = () => {
   };
 
   const onRemove = async () => {
-    if (!currentWorkspace?.id) {
-      throw new Error('Workspace id not found');
-    }
-
     setIsRemoving(true);
     setErrorMessage(null);
 
     try {
+      if (!currentWorkspace?.id) {
+        throw new Error('Workspace id not found');
+      }
+
       await updateWorkspace({
         variables: {
           input: {
