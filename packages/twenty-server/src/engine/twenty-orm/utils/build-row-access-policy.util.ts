@@ -1,7 +1,9 @@
 import { isMetadataWritePermitted } from 'src/engine/twenty-orm/utils/is-metadata-write-permitted.util';
 import { isDefined } from 'twenty-shared/utils';
 
+import { buildNamedRecordGrantCondition } from 'src/engine/core-modules/record-share/utils/build-named-record-grant-condition.util';
 import { buildRecordShareGate } from 'src/engine/core-modules/record-share/utils/build-record-share-gate.util';
+import { isRecordGrantBeyondRoleAllowed } from 'src/engine/core-modules/record-share/utils/is-record-grant-beyond-role-allowed.util';
 import {
   type RowAccessPolicy,
   type RowAccessPolicyContext,
@@ -36,6 +38,14 @@ export const buildRowAccessPolicy = ({
     return { kind: 'denied' };
   }
 
+  const namedRecordGrantCondition = isRecordGrantBeyondRoleAllowed({
+    flatObjectMetadata: target.flatObjectMetadata,
+    operationType: target.operationType,
+    isRecordSharingEnabled: environment.isRecordSharingEnabled,
+  })
+    ? buildNamedRecordGrantCondition(context, target)
+    : undefined;
+
   if (
     isDefined(subject.objectsPermissions) &&
     !isObjectOperationPermitted({
@@ -44,7 +54,9 @@ export const buildRowAccessPolicy = ({
       objectsPermissions: subject.objectsPermissions,
     })
   ) {
-    return { kind: 'denied' };
+    return isDefined(namedRecordGrantCondition)
+      ? { kind: 'gated', condition: namedRecordGrantCondition }
+      : { kind: 'denied' };
   }
 
   const recordShareGate = buildRecordShareGate({
@@ -58,13 +70,26 @@ export const buildRowAccessPolicy = ({
     return { kind: 'denied' };
   }
 
+  const rolePredicate = buildRolePredicate(context, target);
   const conditions = [
-    buildRolePredicate(context, target),
+    rolePredicate,
     recordShareGate.kind === 'gated' ? recordShareGate.condition : undefined,
   ].filter(isDefined);
 
   if (conditions.length === 0) {
     return { kind: 'open' };
+  }
+
+  // The share gate already admits named grants, so only a role predicate
+  // keeps one out and needs the grant as an alternative
+  if (isDefined(rolePredicate) && isDefined(namedRecordGrantCondition)) {
+    return {
+      kind: 'gated',
+      condition: combineSqlConditions(
+        [combineSqlConditions(conditions), namedRecordGrantCondition],
+        'OR',
+      ),
+    };
   }
 
   return { kind: 'gated', condition: combineSqlConditions(conditions) };

@@ -203,7 +203,7 @@ describe('A restricted record on an object open by default', () => {
       APPLE_JONY_MEMBER_ACCESS_TOKEN,
     );
 
-    expect(response.body.data?.company ?? null).toBeNull();
+    expect(response.body.errors?.[0]?.extensions?.code).toBe('NOT_FOUND');
   });
 
   it('should leave it out of group counts', async () => {
@@ -449,5 +449,14 @@ describe('A restricted record on an object open by default', () => {
     );
 
     expect(collectIds(notes.body.data.notes.edges)).toEqual([NOTE_ID]);
+
+    await setShare(
+      { workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY },
+      false,
+    );
+
+    expect((await findCompanyIds(APPLE_JONY_MEMBER_ACCESS_TOKEN)).ids).toEqual([
+      OPEN_COMPANY_ID,
+    ]);
   });
 });

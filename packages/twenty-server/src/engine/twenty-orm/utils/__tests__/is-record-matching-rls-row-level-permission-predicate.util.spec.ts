@@ -3,8 +3,9 @@ import {
   MetadataReadability,
   MetadataWritability,
   ObjectOpenRecordIn,
-  type RecordGqlOperationFilter,
   type ObjectRecord,
+  ObjectSharingReach,
+  type RecordGqlOperationFilter,
 } from 'twenty-shared/types';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -53,6 +54,7 @@ describe('isRecordMatchingRLSRowLevelPermissionPredicate', () => {
     writability: MetadataWritability.OPEN,
     readability: MetadataReadability.OPEN,
     readabilityParentFieldUniversalIdentifiers: null,
+    sharingReach: ObjectSharingReach.WORKSPACE,
     openRecordIn: ObjectOpenRecordIn.USER_CHOICE,
     labelIdentifierFieldMetadataId: null,
     imageIdentifierFieldMetadataId: null,

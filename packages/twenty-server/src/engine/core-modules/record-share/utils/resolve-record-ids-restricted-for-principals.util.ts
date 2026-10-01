@@ -18,7 +18,9 @@ export const resolveRecordIdsRestrictedForPrincipals = ({
 }): Set<string> => {
   const liftedRecordIds = resolveRecordIdsSharedWithPrincipals({
     recordShares,
-    principalIds,
+    principalIds: principalIds.filter(
+      (principalId) => principalId !== EVERYONE_PRINCIPAL_ID,
+    ),
     accessLevels,
   });
 

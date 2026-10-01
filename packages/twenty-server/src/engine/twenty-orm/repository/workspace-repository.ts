@@ -43,6 +43,8 @@ import {
 } from 'src/engine/twenty-orm/types/row-access-policy.type';
 import { resolveRecordShareGateKind } from 'src/engine/core-modules/record-share/utils/resolve-record-share-gate-kind.util';
 import { buildRowAccessPolicy } from 'src/engine/twenty-orm/utils/build-row-access-policy.util';
+import { buildNamedRecordGrantCondition } from 'src/engine/core-modules/record-share/utils/build-named-record-grant-condition.util';
+import { isRecordGrantBeyondRoleAllowed } from 'src/engine/core-modules/record-share/utils/is-record-grant-beyond-role-allowed.util';
 import { isObjectOperationPermitted } from 'src/engine/twenty-orm/utils/is-object-operation-permitted.util';
 import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
@@ -184,6 +186,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
         tableShape: this.options.tableShape,
         executor: this.options.executor,
         objectRecordsPermissions: this.options.objectRecordsPermissions,
+        isRecordSharingEnabled: this.isRecordSharingEnabled,
         tableShapeByObjectMetadataId: this.options.tableShapeByObjectMetadataId,
         onBeforeExecute: (queryBuilder) => this.onBeforeExecute(queryBuilder),
         formatResult: (records) => this.formatResult(records),
@@ -1195,25 +1198,32 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       ),
     });
 
-    for (const [index, input] of writableInputs.entries()) {
-      const { id: _id, ...setColumns } = this.formatWriteData(
-        dataByInputIndex[index],
-      );
+    const setColumnsByInputIndex = writtenRecords.map(
+      ({ id: _id, ...setColumns }) => setColumns,
+    );
 
+    for (const setColumns of setColumnsByInputIndex) {
       this.validateWriteIsPermitted({
         operationType: 'update',
         columnsToReturn,
         updatedColumns: Object.keys(setColumns),
       });
+    }
 
-      const rawBeforeForInput = rawBeforeByInputIndex[index];
-
-      this.validateRLSPredicatesForWrittenRecords(
-        this.formatResult<ObjectRecord[]>(
-          rawBeforeForInput.map((record) => ({ ...record, ...setColumns })),
+    await this.validateRLSPredicatesForUpdatedRecords(
+      this.formatResult<ObjectRecord[]>(
+        setColumnsByInputIndex.flatMap((setColumns, index) =>
+          rawBeforeByInputIndex[index].map((record) => ({
+            ...record,
+            ...setColumns,
+          })),
         ),
-        'Updated record does not satisfy row-level security constraints of your current role',
-      );
+      ),
+    );
+
+    for (const [index, input] of writableInputs.entries()) {
+      const setColumns = setColumnsByInputIndex[index];
+      const rawBeforeForInput = rawBeforeByInputIndex[index];
 
       const selectQueryBuilder = this.createQueryBuilder().where({
         id: input.id,
@@ -1439,6 +1449,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       tableShape: this.options.tableShape,
       executor: this.options.executor,
       objectRecordsPermissions: this.options.objectRecordsPermissions,
+      isRecordSharingEnabled: this.isRecordSharingEnabled,
       tableShapeByObjectMetadataId: this.options.tableShapeByObjectMetadataId,
       onBeforeExecute: () => undefined,
       formatResult: (records) => this.formatResult(records),
@@ -1686,11 +1697,10 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     }
 
     if (kind === 'update' && isDefined(setColumns)) {
-      this.validateRLSPredicatesForWrittenRecords(
+      await this.validateRLSPredicatesForUpdatedRecords(
         this.formatResult<ObjectRecord[]>(
           recordsBefore.map((record) => ({ ...record, ...setColumns })),
         ),
-        'Updated record does not satisfy row-level security constraints of your current role',
       );
     }
 
@@ -1894,7 +1904,73 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       allFieldsSelected: false,
       updatedColumns,
       authContext: this.options.authContext,
+      isRecordSharingEnabled: this.isRecordSharingEnabled,
     });
+  }
+
+  // A record shared by name for editing stays editable whatever the row
+  // filter of the role says, as the row access policy let it through
+  private async validateRLSPredicatesForUpdatedRecords(
+    records: ObjectRecord[],
+  ): Promise<void> {
+    const recordIdsGrantedForUpdate =
+      await this.findRecordIdsGrantedForUpdateByName(
+        records.map((record) => record.id).filter(isDefined),
+      );
+
+    this.validateRLSPredicatesForWrittenRecords(
+      records.filter(
+        (record) =>
+          !isDefined(record.id) || !recordIdsGrantedForUpdate.has(record.id),
+      ),
+      'Updated record does not satisfy row-level security constraints of your current role',
+    );
+  }
+
+  private async findRecordIdsGrantedForUpdateByName(
+    recordIds: string[],
+  ): Promise<Set<string>> {
+    if (
+      this.options.shouldBypassPermissionChecks ||
+      recordIds.length === 0 ||
+      !isRecordGrantBeyondRoleAllowed({
+        flatObjectMetadata: this.options.flatObjectMetadata,
+        operationType: 'update',
+        isRecordSharingEnabled: this.isRecordSharingEnabled,
+      })
+    ) {
+      return new Set();
+    }
+
+    const tableAlias = this.options.tableShape.nameSingular;
+    const namedRecordGrantCondition = buildNamedRecordGrantCondition(
+      {
+        subject: this.resolveRowAccessPolicySubject(),
+        environment: this.resolveRowAccessPolicyEnvironment(),
+      },
+      {
+        tableAlias,
+        flatObjectMetadata: this.options.flatObjectMetadata,
+        operationType: 'update',
+        depth: 0,
+      },
+    );
+
+    if (!isDefined(namedRecordGrantCondition)) {
+      return new Set();
+    }
+
+    const grantedRecords = await this.buildIdsEventSnapshotQueryBuilder(
+      recordIds,
+    )
+      .select(['id'])
+      .andWhere(
+        namedRecordGrantCondition.sql,
+        namedRecordGrantCondition.parameters,
+      )
+      .getMany<ObjectRecord>({ noFormatting: true });
+
+    return new Set(grantedRecords.map((record) => String(record.id)));
   }
 
   private validateRLSPredicatesForWrittenRecords(
@@ -1991,6 +2067,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
           this.options.internalContext.flatFieldMetadataMaps,
         objectIdByNameSingular:
           this.options.internalContext.objectIdByNameSingular,
+        isRecordSharingEnabled: this.isRecordSharingEnabled,
         selectedColumns: columnNames,
         allFieldsSelected: false,
         updatedColumns: [],
@@ -2048,7 +2125,12 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
 
     if (
       alias === queryBuilder.alias &&
-      !this.isObjectOperationPermitted({ flatObjectMetadata, operationType })
+      !this.isObjectOperationPermitted({ flatObjectMetadata, operationType }) &&
+      !isRecordGrantBeyondRoleAllowed({
+        flatObjectMetadata,
+        operationType,
+        isRecordSharingEnabled: this.isRecordSharingEnabled,
+      })
     ) {
       throw new PermissionsException(
         PermissionsExceptionMessage.PERMISSION_DENIED,
@@ -2085,6 +2167,18 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       default:
         assertUnreachable(policy);
     }
+  }
+
+  // Whether the role alone permits the operation, regardless of any record
+  // grant that may reach beyond it
+  isObjectOperationPermittedByRole(operationType: OperationType): boolean {
+    return (
+      this.options.shouldBypassPermissionChecks ||
+      this.isObjectOperationPermitted({
+        flatObjectMetadata: this.options.flatObjectMetadata,
+        operationType,
+      })
+    );
   }
 
   private isObjectOperationPermitted({
@@ -2167,11 +2261,16 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       ),
       resolveTableExpression: (objectMetadataId) =>
         this.getTableExpression(objectMetadataId),
-      isRecordSharingEnabled:
-        this.options.internalContext.featureFlagsMap[
-          FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED
-        ] ?? false,
+      isRecordSharingEnabled: this.isRecordSharingEnabled,
     };
+  }
+
+  private get isRecordSharingEnabled(): boolean {
+    return (
+      this.options.internalContext.featureFlagsMap[
+        FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED
+      ] ?? false
+    );
   }
 
   private resolveInheritedReadabilityParents(
