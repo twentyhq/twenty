@@ -88,6 +88,16 @@ export class RecordShareOwnershipTransferService {
         ['flatWorkspaceMemberMaps'],
       );
 
-    return flatWorkspaceMemberMaps.idByUserId[custodianUserWorkspace.userId];
+    // The cache keeps soft-deleted members, so idByUserId may point at one
+    const custodianWorkspaceMember = Object.values(
+      flatWorkspaceMemberMaps.byId,
+    ).find(
+      (workspaceMember) =>
+        isDefined(workspaceMember) &&
+        workspaceMember.userId === custodianUserWorkspace.userId &&
+        !isDefined(workspaceMember.deletedAt),
+    );
+
+    return custodianWorkspaceMember?.id;
   }
 }

@@ -67,8 +67,10 @@ const environment: RowAccessPolicyEnvironment &
 };
 
 const buildCompiledRowAccessPolicy = (
-  args: Parameters<typeof buildRowAccessPolicy>[0],
-) => compileRowAccessPolicy(buildRowAccessPolicy(args), environment);
+  args: Parameters<typeof buildRowAccessPolicy>[0] & {
+    environment: typeof environment;
+  },
+) => compileRowAccessPolicy(buildRowAccessPolicy(args), args.environment);
 
 const readEverything: RowAccessPolicySubject = {
   isSystemContext: false,
