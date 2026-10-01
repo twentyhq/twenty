@@ -56,7 +56,12 @@ import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scope
 
 type RecoveryCodeActor = Pick<
   AuthContextUser,
-  'id' | 'firstName' | 'lastName' | 'canImpersonate' | 'canAccessFullAdminPanel'
+  | 'id'
+  | 'email'
+  | 'firstName'
+  | 'lastName'
+  | 'canImpersonate'
+  | 'canAccessFullAdminPanel'
 >;
 
 @Injectable()
@@ -459,7 +464,8 @@ export class TwoFactorAuthenticationRecoveryService {
       subject: msg`A two-factor authentication recovery code was generated for you`,
       buildEmailTemplate: () =>
         TwoFactorAuthenticationRecoveryCodeIssuedEmail({
-          actorName: `${actor.firstName} ${actor.lastName}`.trim(),
+          actorName:
+            `${actor.firstName} ${actor.lastName}`.trim() || actor.email,
           workspaceDisplayName: targetUserWorkspace.workspace.displayName ?? '',
           expiresAt,
           locale,

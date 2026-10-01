@@ -36,6 +36,7 @@ const TARGET_USER_WORKSPACE_ID = 'target-user-workspace-id';
 
 const ACTOR = {
   id: 'actor-user-id',
+  email: 'admin@example.com',
   firstName: 'Jane',
   lastName: 'Admin',
   canImpersonate: false,
@@ -247,6 +248,20 @@ describe('TwoFactorAuthenticationRecoveryService', () => {
       expect(
         JSON.stringify((renderEmail as jest.Mock).mock.calls[0][0].props),
       ).not.toContain(recoveryCode);
+    });
+
+    it('names the admin by email in the notification when they have no name', async () => {
+      await service.generateRecoveryCode({
+        actor: { ...ACTOR, firstName: '', lastName: '' },
+        actorWorkspaceId: WORKSPACE_ID,
+        otp: '123456',
+        targetUserId: TARGET_USER_ID,
+        targetWorkspaceId: WORKSPACE_ID,
+      });
+
+      expect(
+        JSON.stringify((renderEmail as jest.Mock).mock.calls[0][0].props),
+      ).toContain('admin@example.com');
     });
 
     it('refuses a target with server admin privileges the actor lacks', async () => {
