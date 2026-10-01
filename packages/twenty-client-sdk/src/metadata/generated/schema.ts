@@ -1274,40 +1274,13 @@ export interface UsageLimit {
     __typename: 'UsageLimit'
 }
 
-export interface ApplicationConnectionProviderOAuthConfig {
-    scopes: Scalars['String'][]
-    isClientCredentialsConfigured: Scalars['Boolean']
-    __typename: 'ApplicationConnectionProviderOAuthConfig'
-}
-
-export interface ApplicationConnectionProvider {
+export interface ApprovedAccessDomain {
     id: Scalars['UUID']
-    applicationId: Scalars['String']
-    type: Scalars['String']
-    name: Scalars['String']
-    displayName: Scalars['String']
-    oauth?: ApplicationConnectionProviderOAuthConfig
-    logoUrl?: Scalars['String']
-    __typename: 'ApplicationConnectionProvider'
+    domain: Scalars['String']
+    isValidated: Scalars['Boolean']
+    createdAt: Scalars['DateTime']
+    __typename: 'ApprovedAccessDomain'
 }
-
-export interface LogicFunctionExecutionResult {
-    /** Execution result in JSON format */
-    data?: Scalars['JSON']
-    /** Execution Logs */
-    logs: Scalars['String']
-    /** Execution duration in milliseconds */
-    duration: Scalars['Float']
-    /** Execution status */
-    status: LogicFunctionExecutionStatus
-    /** Execution error in JSON format */
-    error?: Scalars['JSON']
-    __typename: 'LogicFunctionExecutionResult'
-}
-
-
-/** Status of the logic function execution */
-export type LogicFunctionExecutionStatus = 'IDLE' | 'SUCCESS' | 'ERROR'
 
 export interface EnterpriseLicenseInfoDTO {
     isValid: Scalars['Boolean']
@@ -1540,6 +1513,61 @@ export interface BillingUpdate {
     __typename: 'BillingUpdate'
 }
 
+export interface InviteSuggestion {
+    email: Scalars['String']
+    displayName?: Scalars['String']
+    __typename: 'InviteSuggestion'
+}
+
+export interface OnboardingStepNavigation {
+    /** Onboarding status the user landed on */
+    onboardingStatus?: OnboardingStatus
+    /** Step the user can go back to from there, if any */
+    previousOnboardingStatus?: OnboardingStatus
+    __typename: 'OnboardingStepNavigation'
+}
+
+export interface OnboardingStepSuccess {
+    /** Boolean that confirms query was dispatched */
+    success: Scalars['Boolean']
+    __typename: 'OnboardingStepSuccess'
+}
+
+export interface ApplicationConnectionProviderOAuthConfig {
+    scopes: Scalars['String'][]
+    isClientCredentialsConfigured: Scalars['Boolean']
+    __typename: 'ApplicationConnectionProviderOAuthConfig'
+}
+
+export interface ApplicationConnectionProvider {
+    id: Scalars['UUID']
+    applicationId: Scalars['String']
+    type: Scalars['String']
+    name: Scalars['String']
+    displayName: Scalars['String']
+    oauth?: ApplicationConnectionProviderOAuthConfig
+    logoUrl?: Scalars['String']
+    __typename: 'ApplicationConnectionProvider'
+}
+
+export interface LogicFunctionExecutionResult {
+    /** Execution result in JSON format */
+    data?: Scalars['JSON']
+    /** Execution Logs */
+    logs: Scalars['String']
+    /** Execution duration in milliseconds */
+    duration: Scalars['Float']
+    /** Execution status */
+    status: LogicFunctionExecutionStatus
+    /** Execution error in JSON format */
+    error?: Scalars['JSON']
+    __typename: 'LogicFunctionExecutionResult'
+}
+
+
+/** Status of the logic function execution */
+export type LogicFunctionExecutionStatus = 'IDLE' | 'SUCCESS' | 'ERROR'
+
 export interface UsageBreakdownItem {
     key: Scalars['String']
     label?: Scalars['String']
@@ -1569,34 +1597,6 @@ export interface UsageAnalytics {
     periodEnd: Scalars['DateTime']
     userDailyUsage?: UsageUserDaily
     __typename: 'UsageAnalytics'
-}
-
-export interface ApprovedAccessDomain {
-    id: Scalars['UUID']
-    domain: Scalars['String']
-    isValidated: Scalars['Boolean']
-    createdAt: Scalars['DateTime']
-    __typename: 'ApprovedAccessDomain'
-}
-
-export interface InviteSuggestion {
-    email: Scalars['String']
-    displayName?: Scalars['String']
-    __typename: 'InviteSuggestion'
-}
-
-export interface OnboardingStepNavigation {
-    /** Onboarding status the user landed on */
-    onboardingStatus?: OnboardingStatus
-    /** Step the user can go back to from there, if any */
-    previousOnboardingStatus?: OnboardingStatus
-    __typename: 'OnboardingStepNavigation'
-}
-
-export interface OnboardingStepSuccess {
-    /** Boolean that confirms query was dispatched */
-    success: Scalars['Boolean']
-    __typename: 'OnboardingStepSuccess'
 }
 
 export interface WorkspaceInvitation {
@@ -5084,36 +5084,11 @@ export interface UsageLimitGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface ApplicationConnectionProviderOAuthConfigGenqlSelection{
-    scopes?: boolean | number
-    isClientCredentialsConfigured?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface ApplicationConnectionProviderGenqlSelection{
+export interface ApprovedAccessDomainGenqlSelection{
     id?: boolean | number
-    applicationId?: boolean | number
-    type?: boolean | number
-    name?: boolean | number
-    displayName?: boolean | number
-    oauth?: ApplicationConnectionProviderOAuthConfigGenqlSelection
-    logoUrl?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface LogicFunctionExecutionResultGenqlSelection{
-    /** Execution result in JSON format */
-    data?: boolean | number
-    /** Execution Logs */
-    logs?: boolean | number
-    /** Execution duration in milliseconds */
-    duration?: boolean | number
-    /** Execution status */
-    status?: boolean | number
-    /** Execution error in JSON format */
-    error?: boolean | number
+    domain?: boolean | number
+    isValidated?: boolean | number
+    createdAt?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -5356,6 +5331,63 @@ export interface BillingUpdateGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface InviteSuggestionGenqlSelection{
+    email?: boolean | number
+    displayName?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface OnboardingStepNavigationGenqlSelection{
+    /** Onboarding status the user landed on */
+    onboardingStatus?: boolean | number
+    /** Step the user can go back to from there, if any */
+    previousOnboardingStatus?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface OnboardingStepSuccessGenqlSelection{
+    /** Boolean that confirms query was dispatched */
+    success?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface ApplicationConnectionProviderOAuthConfigGenqlSelection{
+    scopes?: boolean | number
+    isClientCredentialsConfigured?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface ApplicationConnectionProviderGenqlSelection{
+    id?: boolean | number
+    applicationId?: boolean | number
+    type?: boolean | number
+    name?: boolean | number
+    displayName?: boolean | number
+    oauth?: ApplicationConnectionProviderOAuthConfigGenqlSelection
+    logoUrl?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface LogicFunctionExecutionResultGenqlSelection{
+    /** Execution result in JSON format */
+    data?: boolean | number
+    /** Execution Logs */
+    logs?: boolean | number
+    /** Execution duration in milliseconds */
+    duration?: boolean | number
+    /** Execution status */
+    status?: boolean | number
+    /** Execution error in JSON format */
+    error?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface UsageBreakdownItemGenqlSelection{
     key?: boolean | number
     label?: boolean | number
@@ -5387,38 +5419,6 @@ export interface UsageAnalyticsGenqlSelection{
     periodStart?: boolean | number
     periodEnd?: boolean | number
     userDailyUsage?: UsageUserDailyGenqlSelection
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface ApprovedAccessDomainGenqlSelection{
-    id?: boolean | number
-    domain?: boolean | number
-    isValidated?: boolean | number
-    createdAt?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface InviteSuggestionGenqlSelection{
-    email?: boolean | number
-    displayName?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface OnboardingStepNavigationGenqlSelection{
-    /** Onboarding status the user landed on */
-    onboardingStatus?: boolean | number
-    /** Step the user can go back to from there, if any */
-    previousOnboardingStatus?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface OnboardingStepSuccessGenqlSelection{
-    /** Boolean that confirms query was dispatched */
-    success?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -8955,26 +8955,10 @@ export interface CreateRecordExportInput {objectMetadataId: Scalars['UUID'],fiel
     
 
 
-    const ApplicationConnectionProviderOAuthConfig_possibleTypes: string[] = ['ApplicationConnectionProviderOAuthConfig']
-    export const isApplicationConnectionProviderOAuthConfig = (obj?: { __typename?: any } | null): obj is ApplicationConnectionProviderOAuthConfig => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationConnectionProviderOAuthConfig"')
-      return ApplicationConnectionProviderOAuthConfig_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const ApplicationConnectionProvider_possibleTypes: string[] = ['ApplicationConnectionProvider']
-    export const isApplicationConnectionProvider = (obj?: { __typename?: any } | null): obj is ApplicationConnectionProvider => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationConnectionProvider"')
-      return ApplicationConnectionProvider_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const LogicFunctionExecutionResult_possibleTypes: string[] = ['LogicFunctionExecutionResult']
-    export const isLogicFunctionExecutionResult = (obj?: { __typename?: any } | null): obj is LogicFunctionExecutionResult => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isLogicFunctionExecutionResult"')
-      return LogicFunctionExecutionResult_possibleTypes.includes(obj.__typename)
+    const ApprovedAccessDomain_possibleTypes: string[] = ['ApprovedAccessDomain']
+    export const isApprovedAccessDomain = (obj?: { __typename?: any } | null): obj is ApprovedAccessDomain => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isApprovedAccessDomain"')
+      return ApprovedAccessDomain_possibleTypes.includes(obj.__typename)
     }
     
 
@@ -9163,6 +9147,54 @@ export interface CreateRecordExportInput {objectMetadataId: Scalars['UUID'],fiel
     
 
 
+    const InviteSuggestion_possibleTypes: string[] = ['InviteSuggestion']
+    export const isInviteSuggestion = (obj?: { __typename?: any } | null): obj is InviteSuggestion => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isInviteSuggestion"')
+      return InviteSuggestion_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const OnboardingStepNavigation_possibleTypes: string[] = ['OnboardingStepNavigation']
+    export const isOnboardingStepNavigation = (obj?: { __typename?: any } | null): obj is OnboardingStepNavigation => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isOnboardingStepNavigation"')
+      return OnboardingStepNavigation_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const OnboardingStepSuccess_possibleTypes: string[] = ['OnboardingStepSuccess']
+    export const isOnboardingStepSuccess = (obj?: { __typename?: any } | null): obj is OnboardingStepSuccess => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isOnboardingStepSuccess"')
+      return OnboardingStepSuccess_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const ApplicationConnectionProviderOAuthConfig_possibleTypes: string[] = ['ApplicationConnectionProviderOAuthConfig']
+    export const isApplicationConnectionProviderOAuthConfig = (obj?: { __typename?: any } | null): obj is ApplicationConnectionProviderOAuthConfig => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationConnectionProviderOAuthConfig"')
+      return ApplicationConnectionProviderOAuthConfig_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const ApplicationConnectionProvider_possibleTypes: string[] = ['ApplicationConnectionProvider']
+    export const isApplicationConnectionProvider = (obj?: { __typename?: any } | null): obj is ApplicationConnectionProvider => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationConnectionProvider"')
+      return ApplicationConnectionProvider_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const LogicFunctionExecutionResult_possibleTypes: string[] = ['LogicFunctionExecutionResult']
+    export const isLogicFunctionExecutionResult = (obj?: { __typename?: any } | null): obj is LogicFunctionExecutionResult => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isLogicFunctionExecutionResult"')
+      return LogicFunctionExecutionResult_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const UsageBreakdownItem_possibleTypes: string[] = ['UsageBreakdownItem']
     export const isUsageBreakdownItem = (obj?: { __typename?: any } | null): obj is UsageBreakdownItem => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isUsageBreakdownItem"')
@@ -9191,38 +9223,6 @@ export interface CreateRecordExportInput {objectMetadataId: Scalars['UUID'],fiel
     export const isUsageAnalytics = (obj?: { __typename?: any } | null): obj is UsageAnalytics => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isUsageAnalytics"')
       return UsageAnalytics_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const ApprovedAccessDomain_possibleTypes: string[] = ['ApprovedAccessDomain']
-    export const isApprovedAccessDomain = (obj?: { __typename?: any } | null): obj is ApprovedAccessDomain => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isApprovedAccessDomain"')
-      return ApprovedAccessDomain_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const InviteSuggestion_possibleTypes: string[] = ['InviteSuggestion']
-    export const isInviteSuggestion = (obj?: { __typename?: any } | null): obj is InviteSuggestion => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isInviteSuggestion"')
-      return InviteSuggestion_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const OnboardingStepNavigation_possibleTypes: string[] = ['OnboardingStepNavigation']
-    export const isOnboardingStepNavigation = (obj?: { __typename?: any } | null): obj is OnboardingStepNavigation => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isOnboardingStepNavigation"')
-      return OnboardingStepNavigation_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const OnboardingStepSuccess_possibleTypes: string[] = ['OnboardingStepSuccess']
-    export const isOnboardingStepSuccess = (obj?: { __typename?: any } | null): obj is OnboardingStepSuccess => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isOnboardingStepSuccess"')
-      return OnboardingStepSuccess_possibleTypes.includes(obj.__typename)
     }
     
 
@@ -11221,12 +11221,6 @@ export const enumUsageOperationType = {
    SUBSCRIPTION: 'SUBSCRIPTION' as const
 }
 
-export const enumLogicFunctionExecutionStatus = {
-   IDLE: 'IDLE' as const,
-   SUCCESS: 'SUCCESS' as const,
-   ERROR: 'ERROR' as const
-}
-
 export const enumNavigationMenuItemType = {
    VIEW: 'VIEW' as const,
    FOLDER: 'FOLDER' as const,
@@ -11265,6 +11259,12 @@ export const enumDatabaseEventAction = {
    DESTROYED: 'DESTROYED' as const,
    RESTORED: 'RESTORED' as const,
    UPSERTED: 'UPSERTED' as const
+}
+
+export const enumLogicFunctionExecutionStatus = {
+   IDLE: 'IDLE' as const,
+   SUCCESS: 'SUCCESS' as const,
+   ERROR: 'ERROR' as const
 }
 
 export const enumEmailConnectionSecurity = {
