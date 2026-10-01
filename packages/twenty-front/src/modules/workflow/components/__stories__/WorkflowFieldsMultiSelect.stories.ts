@@ -1,4 +1,4 @@
-import { ObjectOpenRecordIn } from 'twenty-shared/types';
+import { ObjectOpenRecordIn, ObjectSharingReach } from 'twenty-shared/types';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { WorkflowFieldsMultiSelect } from '@/workflow/components/WorkflowEditUpdateEventFieldsMultiSelect';
 import type { Meta, StoryObj } from '@storybook/react-vite';
@@ -78,6 +78,7 @@ const mockObjectMetadataItem: EnrichedObjectMetadataItem = {
   isUICreatable: true,
   writability: MetadataWritability.OPEN,
   openRecordIn: ObjectOpenRecordIn.USER_CHOICE,
+  sharingReach: ObjectSharingReach.WORKSPACE,
   isActive: true,
   createdAt: '',
   updatedAt: '',

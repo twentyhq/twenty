@@ -951,10 +951,10 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
       msg({ message: `Share`, context: 'commandMenuItem.shortLabel' }),
     ),
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
+    // Conversations keep the sharing they had before record-level sharing
     conditionalAvailabilityExpression:
-      'numberOfSelectedRecords == 1 and featureFlags.IS_AI_CHAT_SHARING_DROPDOWN_ENABLED and noneDefined(selectedRecords, "deletedAt")',
-    availabilityObjectMetadataUniversalIdentifier:
-      STANDARD_OBJECTS.agentChatThread.universalIdentifier,
+      'numberOfSelectedRecords == 1 and noneDefined(selectedRecords, "deletedAt") and ((featureFlags.IS_RECORD_LEVEL_SHARING_ENABLED and not objectMetadataItem.isSystem) or (objectMetadataItem.nameSingular == "agentChatThread" and (featureFlags.IS_AI_CHAT_SHARING_DROPDOWN_ENABLED or featureFlags.IS_RECORD_LEVEL_SHARING_ENABLED)))',
+    availabilityObjectMetadataUniversalIdentifier: null,
     frontComponentUniversalIdentifier: null,
     engineComponentKey: EngineComponentKey.SHARE_RECORD,
     hotKeys: null,

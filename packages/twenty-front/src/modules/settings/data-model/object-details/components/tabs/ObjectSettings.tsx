@@ -8,6 +8,7 @@ import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObje
 import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsWrapper';
 import { SettingsUpdateDataModelObjectAboutForm } from '@/settings/data-model/object-details/components/SettingsUpdateDataModelObjectAboutForm';
 import { SettingsObjectIndexesSection } from '@/settings/data-model/object-details/components/tabs/SettingsObjectIndexesSection';
+import { ObjectSharingReachPicker } from '@/settings/data-model/object-details/components/tabs/ObjectSharingReachPicker';
 import { SettingsObjectSearchSection } from '@/settings/data-model/object-details/components/tabs/SettingsObjectSearchSection';
 import { SettingsObjectValidationRulesSection } from '@/settings/data-model/object-details/components/tabs/SettingsObjectValidationRulesSection';
 import { SettingsDataModelObjectSettingsFormCard } from '@/settings/data-model/objects/forms/components/SettingsDataModelObjectSettingsFormCard';
@@ -99,6 +100,9 @@ export const ObjectSettings = ({
   const isValidationRulesEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_VALIDATION_RULES_ENABLED,
   );
+  const isRecordLevelSharingEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED,
+  );
 
   const handleDisable = async () => {
     const result = await updateOneObjectMetadataItem({
@@ -185,6 +189,20 @@ export const ObjectSettings = ({
             </Section.Root>
           </StyledFormSectionContainer>
         )}
+      {isRecordLevelSharingEnabled && !objectMetadataItem.isSystem && (
+        <StyledFormSectionContainer>
+          <Section.Root>
+            <Section.Header
+              title={t`Record sharing`}
+              description={t`Who a record of ${objectLabel} can be shared with. Roles still decide what people see by default.`}
+            />
+            <ObjectSharingReachPicker
+              objectMetadataItem={objectMetadataItem}
+              isReadOnly={isReadOnly}
+            />
+          </Section.Root>
+        </StyledFormSectionContainer>
+      )}
       <AdvancedSettingsWrapper>
         <StyledFormSectionContainer>
           <Section.Root>

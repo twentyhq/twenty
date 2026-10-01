@@ -7,54 +7,75 @@ import { RECORD_SHARE_ACCESS_LEVEL_OPTIONS } from '@/object-record/record-sharin
 import { type useRecordSharing } from '@/object-record/record-sharing/hooks/useRecordSharing';
 import { getRecordShareAccessLevelLabel } from '@/object-record/record-sharing/utils/getRecordShareAccessLevelLabel';
 import { SidePanelShareRecordDropdownItem } from '@/side-panel/pages/share-record/components/SidePanelShareRecordDropdownItem';
-import { type RecordSharingGrantDto } from '~/generated-metadata/graphql';
+import { RecordShareAccessLevel } from '~/generated-metadata/graphql';
 
 type SidePanelShareRecordGeneralAccessItemProps = {
   itemId: string;
-  everyoneManualShare: RecordSharingGrantDto | undefined;
-  hasWorkspaceAccess: boolean;
+  generalAccessLevel: RecordShareAccessLevel | null | undefined;
+  isOpenByDefault: boolean;
+  hasManagedWorkspaceAccess: boolean;
+  objectLabelPlural: string;
   saving: boolean;
   setShare: ReturnType<typeof useRecordSharing>['setShare'];
 };
 
 export const SidePanelShareRecordGeneralAccessItem = ({
   itemId,
-  everyoneManualShare,
-  hasWorkspaceAccess,
+  generalAccessLevel,
+  isOpenByDefault,
+  hasManagedWorkspaceAccess,
+  objectLabelPlural,
   saving,
   setShare,
 }: SidePanelShareRecordGeneralAccessItemProps) => {
   const { t } = useLingui();
+  const isRestricted =
+    !isDefined(generalAccessLevel) ||
+    generalAccessLevel === RecordShareAccessLevel.NONE;
+  const hasWorkspaceAccess = !isRestricted || hasManagedWorkspaceAccess;
+  const defaultAccessLevel = isOpenByDefault
+    ? RecordShareAccessLevel.READ_WRITE
+    : RecordShareAccessLevel.NONE;
+  const withDefaultMarker = (
+    label: string,
+    accessLevel: RecordShareAccessLevel,
+  ) => (accessLevel === defaultAccessLevel ? t`${label} (default)` : label);
 
   return (
     <SidePanelShareRecordDropdownItem
       itemId={itemId}
-      label={hasWorkspaceAccess ? t`Everyone in the workspace` : t`Restricted`}
+      label={
+        hasWorkspaceAccess
+          ? t`Everyone with access to ${objectLabelPlural}`
+          : t`Restricted`
+      }
       Icon={hasWorkspaceAccess ? IconUsers : IconLock}
       description={
-        isDefined(everyoneManualShare)
-          ? getRecordShareAccessLevelLabel(everyoneManualShare.accessLevel)
-          : undefined
+        isRestricted
+          ? undefined
+          : getRecordShareAccessLevelLabel(generalAccessLevel)
       }
       disabled={saving}
-      width={240}
+      width={280}
     >
       <Dropdown.Section>
         <Dropdown.OptionItem
-          selected={!hasWorkspaceAccess}
-          disabled={!isDefined(everyoneManualShare) || saving}
+          selected={isRestricted}
+          disabled={isRestricted || saving}
           onSelect={() => {
             void setShare({ principal: { everyone: true }, enabled: false });
           }}
-        >{t`Restricted`}</Dropdown.OptionItem>
+        >
+          {withDefaultMarker(t`Restricted`, RecordShareAccessLevel.NONE)}
+        </Dropdown.OptionItem>
       </Dropdown.Section>
       <Dropdown.Separator />
-      <Dropdown.Section label={t`Everyone in the workspace`}>
+      <Dropdown.Section label={t`Everyone with access to ${objectLabelPlural}`}>
         {RECORD_SHARE_ACCESS_LEVEL_OPTIONS.map((option) => (
           <Dropdown.OptionItem
             key={option.value}
-            selected={everyoneManualShare?.accessLevel === option.value}
-            disabled={saving}
+            selected={generalAccessLevel === option.value}
+            disabled={generalAccessLevel === option.value || saving}
             onSelect={() => {
               void setShare({
                 principal: { everyone: true },
@@ -63,7 +84,7 @@ export const SidePanelShareRecordGeneralAccessItem = ({
               });
             }}
           >
-            {t(option.label)}
+            {withDefaultMarker(t(option.label), option.value)}
           </Dropdown.OptionItem>
         ))}
       </Dropdown.Section>

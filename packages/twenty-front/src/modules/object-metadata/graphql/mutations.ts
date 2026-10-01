@@ -20,6 +20,7 @@ export const CREATE_ONE_OBJECT_METADATA_ITEM = gql`
       writability
       isSearchable
       openRecordIn
+      sharingReach
       shortcut
       duplicateCriteria
       createdAt
@@ -214,6 +215,7 @@ export const UPDATE_ONE_OBJECT_METADATA_ITEM = gql`
       isActive
       isSearchable
       openRecordIn
+      sharingReach
       createdAt
       updatedAt
       labelIdentifierFieldMetadataId
@@ -238,6 +240,7 @@ export const DELETE_ONE_OBJECT_METADATA_ITEM = gql`
       isActive
       isSearchable
       openRecordIn
+      sharingReach
       createdAt
       updatedAt
       labelIdentifierFieldMetadataId
