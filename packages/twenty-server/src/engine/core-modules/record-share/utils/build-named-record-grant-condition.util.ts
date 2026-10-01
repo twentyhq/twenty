@@ -2,7 +2,7 @@
 
 import { isNonEmptyArray } from 'twenty-shared/utils';
 
-import { buildRecordIdsSharedWithPrincipalsCondition } from 'src/engine/core-modules/record-share/utils/build-record-ids-shared-with-principals-condition.util';
+import { buildRecordShareCondition } from 'src/engine/core-modules/record-share/utils/build-record-share-condition.util';
 import { resolveNamedPrincipalIds } from 'src/engine/core-modules/record-share/utils/resolve-named-principal-ids.util';
 import { resolveRequiredRecordShareAccessLevels } from 'src/engine/core-modules/record-share/utils/resolve-required-record-share-access-levels.util';
 import {
@@ -22,11 +22,12 @@ export const buildNamedRecordGrantCondition = (
     return undefined;
   }
 
-  return buildRecordIdsSharedWithPrincipalsCondition({
+  return buildRecordShareCondition({
     tableAlias,
     recordShareTableExpression: environment.recordShareTableExpression,
     objectMetadataId: flatObjectMetadata.id,
     principalIds,
     accessLevels,
+    isUncorrelated: true,
   });
 };
