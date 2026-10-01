@@ -147,7 +147,11 @@ const FrontComponentRendererContent = ({
   });
 
   const { checkForNewerFrontComponentSource } =
-    useCheckForNewerFrontComponentSource({ frontComponentId });
+    useCheckForNewerFrontComponentSource({
+      frontComponentId,
+      builtComponentChecksum: frontComponent.builtComponentChecksum,
+      frontComponentSharedDependenciesChecksum,
+    });
 
   const handleError = useCallback(
     (error?: Error) => {

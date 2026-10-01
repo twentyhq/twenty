@@ -1,3 +1,4 @@
+import { type FrontComponentChecksums } from '@/front-components/types/FrontComponentChecksums';
 import { hasFrontComponentChecksumChanged } from '@/front-components/utils/hasFrontComponentChecksumChanged';
 import { useApolloClient } from '@apollo/client/react';
 import { useCallback } from 'react';
@@ -6,23 +7,19 @@ import {
   type FindOneFrontComponentQuery,
 } from '~/generated-metadata/graphql';
 
-type UseCheckForNewerFrontComponentSourceArgs = {
+type UseCheckForNewerFrontComponentSourceArgs = FrontComponentChecksums & {
   frontComponentId: string;
 };
 
 export const useCheckForNewerFrontComponentSource = ({
   frontComponentId,
+  builtComponentChecksum,
+  frontComponentSharedDependenciesChecksum,
 }: UseCheckForNewerFrontComponentSourceArgs) => {
   const apolloClient = useApolloClient();
 
   const checkForNewerFrontComponentSource =
     useCallback(async (): Promise<boolean> => {
-      const cachedFrontComponent =
-        apolloClient.cache.readQuery<FindOneFrontComponentQuery>({
-          query: FindOneFrontComponentDocument,
-          variables: { id: frontComponentId },
-        })?.frontComponent;
-
       const { data } = await apolloClient.query<FindOneFrontComponentQuery>({
         query: FindOneFrontComponentDocument,
         variables: { id: frontComponentId },
@@ -30,10 +27,18 @@ export const useCheckForNewerFrontComponentSource = ({
       });
 
       return hasFrontComponentChecksumChanged({
-        previousFrontComponent: cachedFrontComponent,
+        previousFrontComponent: {
+          builtComponentChecksum,
+          frontComponentSharedDependenciesChecksum,
+        },
         nextFrontComponent: data?.frontComponent,
       });
-    }, [apolloClient, frontComponentId]);
+    }, [
+      apolloClient,
+      frontComponentId,
+      builtComponentChecksum,
+      frontComponentSharedDependenciesChecksum,
+    ]);
 
   return { checkForNewerFrontComponentSource };
 };

@@ -1,8 +1,10 @@
 import { hasFrontComponentChecksumChanged } from '@/front-components/utils/hasFrontComponentChecksumChanged';
 
+const SHARED_DEPENDENCIES_CHECKSUM = 'shared-dependencies-checksum';
+
 const frontComponent = {
   builtComponentChecksum: 'component-checksum',
-  frontComponentSharedDependenciesChecksum: 'shared-dependencies-checksum',
+  frontComponentSharedDependenciesChecksum: SHARED_DEPENDENCIES_CHECKSUM,
 };
 
 describe('hasFrontComponentChecksumChanged', () => {
@@ -27,27 +29,52 @@ describe('hasFrontComponentChecksumChanged', () => {
     ).toBe(true);
   });
 
-  it('returns true when the shared dependencies checksum changed', () => {
+  it.each([
+    ['is added', null, SHARED_DEPENDENCIES_CHECKSUM],
+    ['is removed', SHARED_DEPENDENCIES_CHECKSUM, null],
+    [
+      'is replaced',
+      SHARED_DEPENDENCIES_CHECKSUM,
+      'newer-shared-dependencies-checksum',
+    ],
+  ])(
+    'returns true when the shared dependencies checksum %s',
+    (_label, previousChecksum, nextChecksum) => {
+      expect(
+        hasFrontComponentChecksumChanged({
+          previousFrontComponent: {
+            ...frontComponent,
+            frontComponentSharedDependenciesChecksum: previousChecksum,
+          },
+          nextFrontComponent: {
+            ...frontComponent,
+            frontComponentSharedDependenciesChecksum: nextChecksum,
+          },
+        }),
+      ).toBe(true);
+    },
+  );
+
+  it('treats a missing and a null shared dependencies checksum as equal', () => {
     expect(
       hasFrontComponentChecksumChanged({
         previousFrontComponent: {
+          builtComponentChecksum: frontComponent.builtComponentChecksum,
+        },
+        nextFrontComponent: {
           ...frontComponent,
           frontComponentSharedDependenciesChecksum: null,
         },
-        nextFrontComponent: frontComponent,
       }),
-    ).toBe(true);
+    ).toBe(false);
   });
 
-  it.each([
-    ['the previous front component is missing', undefined, frontComponent],
-    ['the next front component is missing', frontComponent, null],
-  ])(
-    'returns false when %s',
-    (_label, previousFrontComponent, nextFrontComponent) => {
+  it.each([null, undefined])(
+    'returns false when the next front component is %s',
+    (nextFrontComponent) => {
       expect(
         hasFrontComponentChecksumChanged({
-          previousFrontComponent,
+          previousFrontComponent: frontComponent,
           nextFrontComponent,
         }),
       ).toBe(false);
