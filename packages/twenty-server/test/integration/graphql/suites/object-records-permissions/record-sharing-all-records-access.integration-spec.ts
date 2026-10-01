@@ -1,7 +1,6 @@
 import { randomUUID } from 'node:crypto';
 
 import { parse } from 'graphql';
-import { PermissionFlagType } from 'twenty-shared/constants';
 import {
   FeatureFlagKey,
   FieldMetadataType,
@@ -15,10 +14,10 @@ import { destroyManyOperationFactory } from 'test/integration/graphql/utils/dest
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
-import { upsertPermissionFlags } from 'test/integration/metadata/suites/role-permission-flag/utils/upsert-permission-flags.util';
 import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
 import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
 import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
+import { updateOneRole } from 'test/integration/metadata/suites/role/utils/update-one-role.util';
 import { updateWorkspaceMemberRole } from 'test/integration/metadata/suites/role/utils/update-workspace-member-role.util';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
@@ -245,12 +244,12 @@ describe('Access to all records and ownership transfer', () => {
     ]);
   });
 
-  it('should show restricted records to any role given the permission', async () => {
+  it('should show restricted records to any role that can update all settings', async () => {
     const guestRoleId = (await findOneRoleByLabel({ label: 'Guest' })).id;
     const { data } = await createOneRole({
       expectToFail: false,
       input: {
-        label: `All records auditor ${randomUUID()}`,
+        label: `Restricted records auditor ${randomUUID()}`,
         canUpdateAllSettings: false,
         canAccessAllTools: false,
         canReadAllObjectRecords: true,
@@ -273,11 +272,11 @@ describe('Access to all records and ownership transfer', () => {
       await assignRoleToPhil(auditorRoleId);
       expect(await findRecordIds(APPLE_PHIL_GUEST_ACCESS_TOKEN)).toEqual([]);
 
-      await upsertPermissionFlags({
+      await updateOneRole({
         expectToFail: false,
         input: {
-          roleId: auditorRoleId,
-          permissionFlagKeys: [PermissionFlagType.ACCESS_ALL_RECORDS],
+          idToUpdate: auditorRoleId,
+          updatePayload: { canUpdateAllSettings: true },
         },
       });
       expect(await findRecordIds(APPLE_PHIL_GUEST_ACCESS_TOKEN)).toEqual(
