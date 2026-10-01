@@ -3,7 +3,7 @@ import {
   GraphQLSchemaBuilderModule,
   GraphQLSchemaFactory,
 } from '@nestjs/graphql';
-import { printType, validateSchema } from 'graphql';
+import { parse, printType, validate, validateSchema } from 'graphql';
 import { isDefined } from 'twenty-shared/utils';
 
 import { LogicFunctionResolver } from 'src/engine/metadata-modules/logic-function/logic-function.resolver';
@@ -38,6 +38,17 @@ it('exposes the function name and universal identifier on logic function logs', 
     expect(
       String(schema.getSubscriptionType()?.getFields().logicFunctionLogs?.type),
     ).toBe('LogicFunctionLogs!');
+
+    for (const selection of ['logs', 'logs name universalIdentifier']) {
+      expect(
+        validate(
+          schema,
+          parse(
+            `subscription { logicFunctionLogs(input: {}) { ${selection} } }`,
+          ),
+        ),
+      ).toEqual([]);
+    }
   } finally {
     await application.close();
   }
