@@ -39,6 +39,7 @@ export class ApplicationUpgradeResolver {
   async upgradeApplication(
     @ApplicationTargetArg('appRegistrationId', {
       kind: 'applicationRegistrationId',
+      requireApplicationRegistrationOwnership: false,
     })
     appRegistrationId: string,
     @Args('targetVersion') targetVersion: string,

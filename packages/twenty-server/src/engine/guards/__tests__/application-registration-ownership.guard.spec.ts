@@ -50,6 +50,7 @@ class TestResolver {
     @ApplicationTargetArgs<UploadInput>({
       kind: 'applicationUniversalIdentifier',
       idKey: 'applicationUniversalIdentifier',
+      requireApplicationRegistrationOwnership: false,
     })
     _input: UploadInput,
   ) {}

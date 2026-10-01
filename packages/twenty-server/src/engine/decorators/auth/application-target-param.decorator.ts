@@ -8,7 +8,7 @@ export const ApplicationTargetParam =
   (
     paramName: string,
     target: ApplicationTargetKind & {
-      requireApplicationRegistrationOwnership?: boolean;
+      requireApplicationRegistrationOwnership: boolean;
     },
   ): ParameterDecorator =>
   (prototype, propertyKey, parameterIndex) => {

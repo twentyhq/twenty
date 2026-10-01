@@ -67,7 +67,7 @@ export class ConnectedAccountResolver {
   async applicationConnectedAccounts(
     @ApplicationTargetArg(
       'applicationId',
-      { kind: 'applicationId' },
+      { kind: 'applicationId', requireApplicationRegistrationOwnership: false },
       { type: () => UUIDScalarType },
     )
     applicationId: string,

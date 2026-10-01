@@ -70,6 +70,7 @@ export class FrontComponentController {
     @ApplicationTargetParam('frontComponentId', {
       kind: 'applicationOwnedEntity',
       metadataName: 'frontComponent',
+      requireApplicationRegistrationOwnership: false,
     })
     frontComponentId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,

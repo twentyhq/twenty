@@ -74,7 +74,10 @@ export class SdkClientController {
   @UseGuards(NoPermissionGuard)
   async getSdkModule(
     @Res() res: Response,
-    @ApplicationTargetParam('applicationId', { kind: 'applicationId' })
+    @ApplicationTargetParam('applicationId', {
+      kind: 'applicationId',
+      requireApplicationRegistrationOwnership: false,
+    })
     applicationId: string,
     @Param('moduleName') moduleName: SdkModuleName,
     @AuthWorkspace() workspace: WorkspaceEntity,

@@ -63,7 +63,10 @@ export class FrontComponentSharedDependenciesController {
   @UseGuards(NoPermissionGuard)
   async getBuiltSharedDependencies(
     @Res() res: Response,
-    @ApplicationTargetParam('applicationId', { kind: 'applicationId' })
+    @ApplicationTargetParam('applicationId', {
+      kind: 'applicationId',
+      requireApplicationRegistrationOwnership: false,
+    })
     applicationId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Param('cacheKey') cacheKey?: string,

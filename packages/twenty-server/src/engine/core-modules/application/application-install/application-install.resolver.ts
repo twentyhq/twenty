@@ -115,6 +115,7 @@ export class ApplicationInstallResolver {
   async installMarketplaceApp(
     @ApplicationTargetArg('universalIdentifier', {
       kind: 'applicationUniversalIdentifier',
+      requireApplicationRegistrationOwnership: false,
     })
     universalIdentifier: string,
     @Args('version', { type: () => String, nullable: true })
@@ -135,6 +136,7 @@ export class ApplicationInstallResolver {
   async installApplication(
     @ApplicationTargetArg('universalIdentifier', {
       kind: 'applicationUniversalIdentifier',
+      requireApplicationRegistrationOwnership: false,
     })
     universalIdentifier: string,
     @Args('version', { type: () => String, nullable: true })
@@ -159,6 +161,7 @@ export class ApplicationInstallResolver {
     @ApplicationTargetArg<TriggerInstallApplicationJobInput>('input', {
       kind: 'applicationUniversalIdentifier',
       idKey: 'universalIdentifier',
+      requireApplicationRegistrationOwnership: false,
     })
     { universalIdentifier }: TriggerInstallApplicationJobInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -175,6 +178,7 @@ export class ApplicationInstallResolver {
     @ApplicationTargetArg<TriggerUninstallApplicationJobInput>('input', {
       kind: 'applicationUniversalIdentifier',
       idKey: 'universalIdentifier',
+      requireApplicationRegistrationOwnership: false,
     })
     { universalIdentifier }: TriggerUninstallApplicationJobInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -231,7 +235,7 @@ export class ApplicationInstallResolver {
   async updateApplication(
     @ApplicationTargetArg(
       'id',
-      { kind: 'applicationId' },
+      { kind: 'applicationId', requireApplicationRegistrationOwnership: false },
       { type: () => UUIDScalarType },
     )
     id: string,
@@ -257,6 +261,7 @@ export class ApplicationInstallResolver {
     @ApplicationTargetArgs<UninstallApplicationInput>({
       kind: 'applicationUniversalIdentifier',
       idKey: 'universalIdentifier',
+      requireApplicationRegistrationOwnership: false,
     })
     { universalIdentifier }: UninstallApplicationInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,

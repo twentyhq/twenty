@@ -91,6 +91,7 @@ export class LogicFunctionResolver {
       kind: 'applicationOwnedEntity',
       metadataName: 'logicFunction',
       idKey: 'id',
+      requireApplicationRegistrationOwnership: false,
     })
     { id }: LogicFunctionIdInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -245,6 +246,7 @@ export class LogicFunctionResolver {
       kind: 'applicationOwnedEntity',
       metadataName: 'logicFunction',
       idKey: 'id',
+      requireApplicationRegistrationOwnership: false,
     })
     { id, payload }: ExecuteOneLogicFunctionInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -271,6 +273,7 @@ export class LogicFunctionResolver {
       kind: 'applicationOwnedEntity',
       metadataName: 'logicFunction',
       idKey: 'id',
+      requireApplicationRegistrationOwnership: false,
     })
     { id }: LogicFunctionIdInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -292,6 +295,7 @@ export class LogicFunctionResolver {
       kind: 'applicationOwnedEntity',
       metadataName: 'logicFunction',
       idKey: 'id',
+      requireApplicationRegistrationOwnership: false,
     })
     updateLogicFunctionFromSourceInput: UpdateLogicFunctionFromSourceInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,

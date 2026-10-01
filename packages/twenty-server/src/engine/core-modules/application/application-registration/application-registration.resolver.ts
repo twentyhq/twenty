@@ -114,6 +114,7 @@ export class ApplicationRegistrationResolver {
   async findApplicationRegistrationByUniversalIdentifier(
     @ApplicationTargetArg('universalIdentifier', {
       kind: 'applicationUniversalIdentifier',
+      requireApplicationRegistrationOwnership: false,
     })
     universalIdentifier: string,
   ): Promise<ApplicationRegistrationEntity | null> {
@@ -174,7 +175,10 @@ export class ApplicationRegistrationResolver {
   )
   @Query(() => ApplicationRegistrationEntity)
   async findOneApplicationRegistration(
-    @ApplicationTargetArg('id', { kind: 'applicationRegistrationId' })
+    @ApplicationTargetArg('id', {
+      kind: 'applicationRegistrationId',
+      requireApplicationRegistrationOwnership: false,
+    })
     applicationRegistrationId: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<ApplicationRegistrationEntity> {
@@ -200,7 +204,10 @@ export class ApplicationRegistrationResolver {
   )
   @Query(() => ApplicationRegistrationStatsDTO)
   async findApplicationRegistrationStats(
-    @ApplicationTargetArg('id', { kind: 'applicationRegistrationId' })
+    @ApplicationTargetArg('id', {
+      kind: 'applicationRegistrationId',
+      requireApplicationRegistrationOwnership: false,
+    })
     applicationRegistrationId: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<ApplicationRegistrationStatsDTO> {
@@ -256,6 +263,7 @@ export class ApplicationRegistrationResolver {
     @ApplicationTargetArg<UpdateApplicationRegistrationInput>('input', {
       kind: 'applicationRegistrationId',
       idKey: 'id',
+      requireApplicationRegistrationOwnership: false,
     })
     input: UpdateApplicationRegistrationInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -279,7 +287,10 @@ export class ApplicationRegistrationResolver {
   )
   @Mutation(() => Boolean)
   async deleteApplicationRegistration(
-    @ApplicationTargetArg('id', { kind: 'applicationRegistrationId' })
+    @ApplicationTargetArg('id', {
+      kind: 'applicationRegistrationId',
+      requireApplicationRegistrationOwnership: false,
+    })
     applicationRegistrationId: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<boolean> {
@@ -306,7 +317,10 @@ export class ApplicationRegistrationResolver {
   )
   @Mutation(() => RotateClientSecretDTO)
   async rotateApplicationRegistrationClientSecret(
-    @ApplicationTargetArg('id', { kind: 'applicationRegistrationId' })
+    @ApplicationTargetArg('id', {
+      kind: 'applicationRegistrationId',
+      requireApplicationRegistrationOwnership: false,
+    })
     applicationRegistrationId: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<RotateClientSecretDTO> {
@@ -337,6 +351,7 @@ export class ApplicationRegistrationResolver {
   async findApplicationRegistrationVariables(
     @ApplicationTargetArg('applicationRegistrationId', {
       kind: 'applicationRegistrationId',
+      requireApplicationRegistrationOwnership: false,
     })
     applicationRegistrationId: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -469,7 +484,10 @@ export class ApplicationRegistrationResolver {
   )
   @Query(() => String, { nullable: true })
   async applicationRegistrationTarballUrl(
-    @ApplicationTargetArg('id', { kind: 'applicationRegistrationId' })
+    @ApplicationTargetArg('id', {
+      kind: 'applicationRegistrationId',
+      requireApplicationRegistrationOwnership: false,
+    })
     applicationRegistrationId: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<string | null> {

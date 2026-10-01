@@ -46,10 +46,7 @@ export class ApplicationRegistrationOwnershipGuard implements CanActivate {
       context.getHandler(),
     );
 
-    if (
-      !isDefined(target) ||
-      target.requireApplicationRegistrationOwnership !== true
-    ) {
+    if (!isDefined(target) || !target.requireApplicationRegistrationOwnership) {
       return true;
     }
 

@@ -66,7 +66,11 @@ export class SkillResolver {
   async skill(
     @ApplicationTargetArg(
       'id',
-      { kind: 'applicationOwnedEntity', metadataName: 'skill' },
+      {
+        kind: 'applicationOwnedEntity',
+        metadataName: 'skill',
+        requireApplicationRegistrationOwnership: false,
+      },
       { type: () => UUIDScalarType },
     )
     id: string,

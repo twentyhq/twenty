@@ -41,7 +41,7 @@ export class ApplicationHealthResolver {
   async runApplicationHealthCheck(
     @ApplicationTargetArg(
       'applicationId',
-      { kind: 'applicationId' },
+      { kind: 'applicationId', requireApplicationRegistrationOwnership: false },
       { type: () => UUIDScalarType },
     )
     applicationId: string,

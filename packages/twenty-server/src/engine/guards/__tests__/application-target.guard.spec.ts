@@ -33,7 +33,10 @@ type SyncInput = {
 
 class TestResolver {
   runHealthCheck(
-    @ApplicationTargetArg('applicationId', { kind: 'applicationId' })
+    @ApplicationTargetArg('applicationId', {
+      kind: 'applicationId',
+      requireApplicationRegistrationOwnership: false,
+    })
     _applicationId: string,
   ) {}
 
@@ -41,6 +44,7 @@ class TestResolver {
     @ApplicationTargetArgs<ExportInput>({
       kind: 'applicationUniversalIdentifier',
       idKey: 'universalIdentifier',
+      requireApplicationRegistrationOwnership: false,
     })
     _input: ExportInput,
   ) {}
@@ -49,12 +53,16 @@ class TestResolver {
     @ApplicationTargetArgs<SyncInput>({
       kind: 'applicationUniversalIdentifier',
       idKey: 'manifest.application.universalIdentifier',
+      requireApplicationRegistrationOwnership: false,
     })
     _input: SyncInput,
   ) {}
 
   findRegistration(
-    @ApplicationTargetArg('id', { kind: 'applicationRegistrationId' })
+    @ApplicationTargetArg('id', {
+      kind: 'applicationRegistrationId',
+      requireApplicationRegistrationOwnership: false,
+    })
     _id: string,
   ) {}
 
@@ -63,12 +71,16 @@ class TestResolver {
       kind: 'applicationOwnedEntity',
       metadataName: 'logicFunction',
       idKey: 'id',
+      requireApplicationRegistrationOwnership: false,
     })
     _input: LogicFunctionInput,
   ) {}
 
   getSdkModule(
-    @ApplicationTargetParam('applicationId', { kind: 'applicationId' })
+    @ApplicationTargetParam('applicationId', {
+      kind: 'applicationId',
+      requireApplicationRegistrationOwnership: false,
+    })
     _applicationId: string,
   ) {}
 
@@ -173,9 +185,15 @@ describe('ApplicationTargetGuard', () => {
     expect(() => {
       class DoubleTargetResolver {
         find(
-          @ApplicationTargetArg('applicationId', { kind: 'applicationId' })
+          @ApplicationTargetArg('applicationId', {
+            kind: 'applicationId',
+            requireApplicationRegistrationOwnership: false,
+          })
           _applicationId: string,
-          @ApplicationTargetArg('id', { kind: 'applicationRegistrationId' })
+          @ApplicationTargetArg('id', {
+            kind: 'applicationRegistrationId',
+            requireApplicationRegistrationOwnership: false,
+          })
           _id: string,
         ) {}
       }
