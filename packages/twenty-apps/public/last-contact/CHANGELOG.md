@@ -2,7 +2,7 @@
 
 ## 1.7.0
 
-- Keep the app's fields off the record timeline. Every field the app defines is rewritten whenever an email or meeting syncs, and each write used to add an `updated Last contact` entry to the person, company or opportunity timeline, burying everything else. All 23 fields now declare `isAuditLogged: false`, so their values still update but no timeline activity is recorded for them. Entries written before this version stay on the timeline.
+- Keep the app's fields off the record timeline. The app's fields are frequently rewritten during email and meeting syncs, and each write used to add an `updated Last contact` entry to the person, company or opportunity timeline, burying everything else. All 23 fields now declare `isAuditLogged: false`, so their values still update but no timeline activity is recorded for them. Entries written before this version stay on the timeline.
 
 ## 1.6.0
 
