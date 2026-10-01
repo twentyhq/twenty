@@ -1992,7 +1992,10 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     return {
       flatFieldMetadataMaps: this.options.internalContext.flatFieldMetadataMaps,
       shouldIgnoreSoftDeleteDefaultFilter: false,
-      fetchRecordShares: async (objectMetadataId, requestedRecordIds) => {
+      fetchRecordShares: async ({
+        objectMetadataId,
+        recordIds: requestedRecordIds,
+      }) => {
         const recordShareGrants =
           recordShareGrantsByObjectMetadataId.get(objectMetadataId) ??
           this.findRecordShareGrants({ objectMetadataId, recordIds });
