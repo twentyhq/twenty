@@ -52,8 +52,7 @@ describe('ai-model-benchmarks.json integrity', () => {
   });
 
   it('should agree with the benchmark merged into the catalog', () => {
-    // The overlay is empty until the sync runs with an API key configured, so
-    // this checks the two artifacts cannot drift rather than pinning a count.
+    // the overlay is empty until the sync runs with an API key, so check drift rather than a count
     SCORED_CATALOG_MODELS.forEach((model) => {
       const entry = OVERLAY_MODELS[model.name];
 

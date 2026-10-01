@@ -5,9 +5,7 @@ import {
 } from '@/ai/states/agentChatPrepromptState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
-// Staging a preprompt is always these two steps: sending reads the draft rather
-// than the editor, so the draft has to be written before AgentChatPrepromptEffect
-// picks the preprompt up.
+// Sending reads the draft, not the editor, so it's written before AgentChatPrepromptEffect picks it up.
 export const useStageAiChatPreprompt = () => {
   const setAgentChatDraftsByThreadId = useSetAtomState(
     agentChatDraftsByThreadIdState,

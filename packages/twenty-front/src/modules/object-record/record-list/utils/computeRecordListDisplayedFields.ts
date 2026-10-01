@@ -7,9 +7,7 @@ import { type RecordListDisplayedFields } from '@/object-record/record-list/type
 const ROW_HORIZONTAL_PADDING_WIDTH = 12;
 const ROW_ITEM_GAP_WIDTH = 12;
 
-// Takes the width a row actually renders in, not the list container's own
-// width: a field told it may be wider than its slot is cut rather than
-// ellipsised.
+// Takes the row's rendered width, not the container's: an oversized field is cut, not ellipsised.
 export const computeRecordListDisplayedFields = ({
   rowWidth,
   populatedFieldCount,

@@ -64,8 +64,6 @@ export const APPLE_AGENT_CHAT_CONVERSATION_SEEDS: AgentChatConversationSeed[] =
     },
   ];
 
-// Conversations paused on, or already past, a question, an email or a form for Tim's
-// team to decide on.
 export const AGENT_CHAT_PENDING_INPUT_THREAD_DATA_SEED_IDS = {
   PENDING_QUESTIONS: '20202020-0000-4000-8000-000000000015',
   PENDING_EMAIL_APPROVAL: '20202020-0000-4000-8000-000000000016',

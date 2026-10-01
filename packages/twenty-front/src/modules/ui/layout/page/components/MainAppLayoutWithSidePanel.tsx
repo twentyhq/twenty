@@ -21,8 +21,6 @@ const StyledRow = styled.div`
     min-height: auto;
     min-width: auto;
 
-    // Only the main content (first child) is printed; the side panel and its
-    // resize chrome that follow it are hidden.
     > *:not(:first-child) {
       display: none;
     }

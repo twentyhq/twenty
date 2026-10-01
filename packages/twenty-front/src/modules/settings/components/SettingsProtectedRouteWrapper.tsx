@@ -35,9 +35,7 @@ export const SettingsProtectedRouteWrapper = ({
     return null;
   }
 
-  // TODO: this should be part of PageChangeEffect as otherwise we will have multiple sources of redirection that can:
-  // - conflict (race conditions)
-  // - degrade performance as we will redirect multiple times
+  // TODO: move into PageChangeEffect to avoid conflicting and repeated redirects
   if ((requiredFeatureFlag && !requiredFeatureFlagEnabled) || !hasPermission) {
     if (workspaceSurface.type === 'side-panel') {
       return (

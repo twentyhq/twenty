@@ -80,8 +80,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     const isGatedThroughRecordShares =
       this.isGatedThroughRecordShares(queryRunnerContext);
 
-    // An inherited record is reachable through its parent, so shareWith stays
-    // optional there and is checked only when given
+    // An inherited record is reachable through its parent, so shareWith is optional there
     if (requiresShareWithValidation || isNonEmptyArray(args.shareWith)) {
       await this.shareWithService.validateShareWithOrThrow({
         authContext: queryRunnerContext.authContext,

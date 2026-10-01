@@ -359,13 +359,10 @@ export class UserWorkspaceService {
     softDelete?: boolean;
   }): Promise<void> {
     if (softDelete) {
-      // roleTarget has no deletedAt column, so its rows cannot be soft deleted.
-      // Access stays gated by the soft-deleted userWorkspace.
+      // roleTarget has no deletedAt column, so its rows stay and access is gated by the soft-deleted userWorkspace.
       await this.userWorkspaceRepository.softDelete({ id: userWorkspaceId });
     } else {
-      // The delete sets the creator of this member's workflows to null, which
-      // makes them workspace-visible in core, so their runs' grants have to
-      // follow or nobody could read those runs.
+      // The delete nulls the creator of this member's workflows, making them workspace-visible, so their runs' grants must follow.
       const createdCoreWorkflowIds =
         await this.workflowRunRecordShareService.findCoreWorkflowIdsCreatedBy({
           workspaceId,
@@ -397,8 +394,7 @@ export class UserWorkspaceService {
       },
     });
 
-    // HIDDEN workspaces are never advertised in the root-domain picker, even to
-    // their own members — they must sign in from the workspace URL directly.
+    // HIDDEN workspaces are never advertised in the root-domain picker, even to members: they sign in from the workspace URL.
     const alreadyMemberWorkspaces = user
       ? user.userWorkspaces
           .map(({ workspace }) => ({ workspace }))
@@ -429,8 +425,7 @@ export class UserWorkspaceService {
     const workspacesFromApprovedAccessDomainIds =
       workspacesFromApprovedAccessDomain.map(({ workspace }) => workspace.id);
 
-    // HIDDEN removes the picker convenience only; invited users can still join
-    // through the direct invitation link, which carries its own token.
+    // HIDDEN only removes the picker; invitation links carry their own token.
     const workspacesFromInvitations = (
       await this.workspaceInvitationService.findInvitationsByEmail(email)
     )

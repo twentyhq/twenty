@@ -20,8 +20,7 @@ export const useRedeemSsoExchangeToken = () => {
 
   const redeemSsoExchangeToken = useCallback(
     async (ssoExchangeToken: string) => {
-      // Keeps PageChangeEffect from consuming returnToPath while the server
-      // swaps the session cookie
+      // Keeps PageChangeEffect from consuming returnToPath while the server swaps the session cookie
       setIsAppEffectRedirectEnabled(false);
 
       try {
