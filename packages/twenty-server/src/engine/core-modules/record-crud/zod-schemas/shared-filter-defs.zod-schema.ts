@@ -78,6 +78,17 @@ export const DefaultFilterSchema = z
   })
   .optional();
 
+export const RawJsonFilterSchema = z
+  .object({
+    like: z.string().optional().describe('LIKE on the JSON text (% wildcard)'),
+    ilike: z
+      .string()
+      .optional()
+      .describe('ILIKE on the JSON text (% wildcard, case-insensitive)'),
+    is: NullCheckEnum.optional(),
+  })
+  .optional();
+
 export const ArrayFieldFilterSchema = z
   .object({
     containsIlike: z
