@@ -1,12 +1,7 @@
+import { type NodeWithOwnerDocument } from '@/polyfills/dom/types/NodeWithOwnerDocument';
 import { toGlobalScopeRecord } from '@/polyfills/utils/toGlobalScopeRecord';
 
-type NodeWithOwnerDocument = {
-  ownerDocument?: { defaultView?: object | null } | null;
-};
-
 export const resolveOwnerWindowOfNode = (
-  node: object,
+  node: NodeWithOwnerDocument,
 ): Record<string, unknown> =>
-  toGlobalScopeRecord(
-    (node as NodeWithOwnerDocument).ownerDocument?.defaultView ?? globalThis,
-  );
+  toGlobalScopeRecord(node.ownerDocument?.defaultView ?? globalThis);

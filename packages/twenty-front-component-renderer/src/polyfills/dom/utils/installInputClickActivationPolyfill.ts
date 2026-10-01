@@ -1,10 +1,13 @@
+import { type NodeWithOwnerDocument } from '@/polyfills/dom/types/NodeWithOwnerDocument';
 import { resolveInputClickActivationType } from '@/polyfills/dom/utils/resolveInputClickActivationType';
 import { runCheckboxClickActivation } from '@/polyfills/dom/utils/runCheckboxClickActivation';
 import { runRadioButtonClickActivation } from '@/polyfills/dom/utils/runRadioButtonClickActivation';
 import { isHostOriginatedEvent } from '@/polyfills/events/utils/isHostOriginatedEvent';
 import { type SelectorElementLike } from '@/polyfills/selectors/types/SelectorElementLike';
 
-type ActivatableInputElement = EventTarget & SelectorElementLike;
+type ActivatableInputElement = EventTarget &
+  SelectorElementLike &
+  NodeWithOwnerDocument;
 
 export const installInputClickActivationPolyfill = (
   inputElementPrototype: EventTarget,
