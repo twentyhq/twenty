@@ -21,15 +21,20 @@ import { type TargetRecordIdentifier } from '@/ui/layout/contexts/TargetRecordId
 // browsable list, so it asks for one page and never pages further.
 const CHAT_THREADS_FOR_RECORD_PAGE_SIZE = 20;
 
-// Every turn updates its thread, so this ranks by the latest activity.
 const CHAT_THREADS_FOR_RECORD_ORDER_BY: RecordGqlOperationOrderBy = [
-  { thread: { updatedAt: 'DescNullsLast' } },
+  { thread: { lastActivityAt: 'DescNullsLast' } },
 ];
 
 const CHAT_THREADS_FOR_RECORD_GQL_FIELDS = {
   id: true,
   threadId: true,
-  thread: { id: true, title: true, deletedAt: true, updatedAt: true },
+  thread: {
+    id: true,
+    title: true,
+    deletedAt: true,
+    updatedAt: true,
+    lastActivityAt: true,
+  },
 };
 
 // A link's record event carries its columns but not its conversation, so a

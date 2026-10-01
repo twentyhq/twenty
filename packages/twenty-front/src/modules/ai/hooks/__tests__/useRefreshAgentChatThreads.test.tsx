@@ -43,6 +43,14 @@ jest.mock('@/ai/hooks/useRefreshAgentChatThreadPermissions', () => ({
   }),
 }));
 
+const refreshAgentChatThreadParticipants = jest.fn();
+
+jest.mock('@/ai/hooks/useAgentChatThreadParticipants', () => ({
+  useAgentChatThreadParticipants: () => ({
+    refreshAgentChatThreadParticipants,
+  }),
+}));
+
 const buildThread = (id: string, title: string): AgentChatThreadRecord => ({
   __typename: 'AgentChatThread',
   id,
@@ -99,7 +107,7 @@ describe('useRefreshAgentChatThreads', () => {
     expect(result.current.refreshAgentChatThreads).toBe(refresh);
   });
 
-  it('loads the most recently updated chats through the record API', async () => {
+  it('loads the most recently active chats and the member read state', async () => {
     const store = buildStore();
     const thread = buildThread('thread-1', 'Loaded thread');
     queryMock.mockResolvedValue(buildPage([thread], { hasNextPage: true }));
@@ -112,12 +120,13 @@ describe('useRefreshAgentChatThreads', () => {
     expect(queryMock).toHaveBeenCalledWith(
       expect.objectContaining({
         variables: expect.objectContaining({
-          orderBy: [{ updatedAt: 'DescNullsLast' }],
+          orderBy: [{ lastActivityAt: 'DescNullsLast' }],
           lastCursor: null,
         }),
         fetchPolicy: 'network-only',
       }),
     );
+    expect(refreshAgentChatThreadParticipants).toHaveBeenCalled();
     expect(store.get(agentChatThreadListState.atom)).toEqual({
       threadIds: ['thread-1'],
       hasNextPage: true,

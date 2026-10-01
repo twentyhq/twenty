@@ -146,7 +146,7 @@ describe('useChatThreadsForRecord', () => {
         objectNameSingular: 'agentChatThreadTarget',
         skip: false,
         filter: LINKS_FILTER,
-        orderBy: [{ thread: { updatedAt: 'DescNullsLast' } }],
+        orderBy: [{ thread: { lastActivityAt: 'DescNullsLast' } }],
       }),
     );
     expect(useListenToEventsForQuery).toHaveBeenCalledWith(

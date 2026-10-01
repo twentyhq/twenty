@@ -9,6 +9,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { Dropdown, LightIconButton } from 'twenty-ui/components';
 import { IconDotsVertical, IconPencil, IconUnlink } from 'twenty-ui/icon';
 
+import { AiChatThreadInboxActionItems } from '@/ai/components/AiChatThreadInboxActionItems';
 import { useRefreshAgentChatThreadPermissions } from '@/ai/hooks/useRefreshAgentChatThreadPermissions';
 import { agentChatThreadPermissionsFamilySelector } from '@/ai/states/selectors/agentChatThreadPermissionsFamilySelector';
 import { type AiChatThreadActionsSurface } from '@/ai/types/AiChatThreadActionsSurface';
@@ -178,6 +179,9 @@ export const AiChatThreadActionsDropdown = ({
                 >
                   {t`Rename`}
                 </Dropdown.ActionItem>
+              )}
+              {!isDeleted && (
+                <AiChatThreadInboxActionItems threadId={thread.id} />
               )}
               <CommandMenuContextProvider
                 displayType="dropdownItem"

@@ -52,6 +52,7 @@ export type NavigationDrawerItemProps = {
   preventCollapseOnMobile?: boolean;
   isSelectedInEditMode?: boolean;
   variant?: 'default' | 'tertiary' | 'placeholder';
+  isUnread?: boolean;
 };
 
 type StyledItemProps = Pick<
@@ -166,6 +167,11 @@ const StyledItemLabel = styled.span`
   font-weight: ${themeCssVariables.font.weight.medium};
 `;
 
+const StyledUnreadItemLabel = styled.span`
+  color: ${themeCssVariables.font.color.primary};
+  font-weight: ${themeCssVariables.font.weight.semiBold};
+`;
+
 const StyledItemSecondaryLabel = styled.span`
   color: ${themeCssVariables.font.color.light};
   font-weight: ${themeCssVariables.font.weight.regular};
@@ -258,6 +264,7 @@ export const NavigationDrawerItem = ({
   preventCollapseOnMobile = false,
   isSelectedInEditMode = false,
   variant = 'default',
+  isUnread = false,
 }: NavigationDrawerItemProps) => {
   const theme = useTheme();
   const editingContent = useContext(NavigationDrawerItemEditingContext);
@@ -400,7 +407,11 @@ export const NavigationDrawerItem = ({
                 <OverflowingTextWithTooltip
                   text={
                     <>
-                      <StyledItemLabel>{label}</StyledItemLabel>
+                      {isUnread ? (
+                        <StyledUnreadItemLabel>{label}</StyledUnreadItemLabel>
+                      ) : (
+                        <StyledItemLabel>{label}</StyledItemLabel>
+                      )}
                       {secondaryLabel && (
                         <StyledItemSecondaryLabel>
                           {' · '}

@@ -11,6 +11,8 @@ import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { type AiChatThreadActionsSurface } from '@/ai/types/AiChatThreadActionsSurface';
 import { useAiChatThreadClick } from '@/ai/hooks/useAiChatThreadClick';
 import { useAiChatThreadRename } from '@/ai/hooks/useAiChatThreadRename';
+import { agentChatThreadInboxStatusFamilySelector } from '@/ai/states/selectors/agentChatThreadInboxStatusFamilySelector';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { getAiChatThreadItemMenuDropdownId } from '@/ai/utils/getAiChatThreadItemMenuDropdownId';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
@@ -56,10 +58,14 @@ const StyledThreadContent = styled.div`
   min-width: 0;
 `;
 
-const StyledThreadTitle = styled.div`
-  color: ${themeCssVariables.font.color.secondary};
+const StyledThreadTitle = styled.div<{ $isUnread: boolean }>`
+  color: ${({ $isUnread }) =>
+    $isUnread
+      ? themeCssVariables.font.color.primary
+      : themeCssVariables.font.color.secondary};
   font-size: ${themeCssVariables.font.size.md};
-  font-weight: 500;
+  font-weight: ${({ $isUnread }) =>
+    $isUnread ? themeCssVariables.font.weight.semiBold : 500};
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -108,6 +114,10 @@ export const AiChatThreadListItem = ({
   } = useAiChatThreadRename(thread);
 
   const isDeleted = isDefined(thread.deletedAt);
+  const { isUnread } = useAtomFamilySelectorValue(
+    agentChatThreadInboxStatusFamilySelector,
+    thread.id,
+  );
   const ThreadIcon = isDeleted ? IconTrash : IconSparkles;
   const displayTitle = thread.title ?? t`Untitled`;
   const itemMenuDropdownId = getAiChatThreadItemMenuDropdownId({
@@ -155,7 +165,9 @@ export const AiChatThreadListItem = ({
             aria-label={t`Rename chat`}
           />
         ) : (
-          <StyledThreadTitle>{displayTitle}</StyledThreadTitle>
+          <StyledThreadTitle $isUnread={!isDeleted && isUnread}>
+            {displayTitle}
+          </StyledThreadTitle>
         )}
       </StyledThreadContent>
       <StyledMenuTrigger
