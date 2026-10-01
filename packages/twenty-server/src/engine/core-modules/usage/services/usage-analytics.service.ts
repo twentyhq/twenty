@@ -11,6 +11,7 @@ import { formatDateTimeForClickHouse } from 'src/database/clickhouse/utils/forma
 import { type SpenderType } from 'src/engine/core-modules/usage-limit/types/spender-type.type';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
+import { type UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 import { type UsageConsumptionRow } from 'src/engine/core-modules/usage/types/usage-consumption-row.type';
 import { type UsageConsumptionTotals } from 'src/engine/core-modules/usage/types/usage-consumption-totals.type';
 import { type UsagePeriodAnchor } from 'src/engine/core-modules/usage/types/usage-period-anchor.type';
@@ -90,15 +91,15 @@ export class UsageAnalyticsService {
 
     // Grouped again so the shape matches the consumption_by_scope projection, which is picked only on a full key match.
     return this.clickHouseService.selectOrThrow<UsageConsumptionRow>(
-      `SELECT operationType, userWorkspaceId, apiKeyId, applicationId, agentId,
-              workflowId, logicFunctionId,
+      `SELECT operationType, unit, userWorkspaceId, apiKeyId, applicationId,
+              agentId, workflowId, logicFunctionId,
               sum(creditsUsedMicro) AS creditsUsedMicro,
               sum(quantity) AS quantity
        FROM usageEvent
        WHERE workspaceId = {workspaceId:String}
          AND resourceType = {resourceType:String}
          ${periodClause}
-       GROUP BY operationType, userWorkspaceId, apiKeyId, applicationId,
+       GROUP BY operationType, unit, userWorkspaceId, apiKeyId, applicationId,
                 agentId, workflowId, logicFunctionId`,
       {
         workspaceId,
@@ -113,6 +114,7 @@ export class UsageAnalyticsService {
     workspaceId,
     resourceType,
     operationType,
+    unit,
     spenderType,
     spenderId,
     periodStart,
@@ -122,6 +124,7 @@ export class UsageAnalyticsService {
     workspaceId: string;
     resourceType: UsageResourceType;
     operationType: UsageOperationType;
+    unit: UsageUnit | null;
     spenderType: SpenderType;
     spenderId: string | null;
     periodStart: Date;
@@ -130,6 +133,7 @@ export class UsageAnalyticsService {
   }): Promise<UsageConsumptionTotals> {
     const scopeFilter = buildUsageScopeFilter({
       operationType,
+      unit,
       spenderType,
       spenderId,
     });
