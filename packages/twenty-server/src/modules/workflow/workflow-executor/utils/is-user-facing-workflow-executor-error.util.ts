@@ -16,6 +16,7 @@ const USER_FACING_STEP_EXECUTOR_EXCEPTION_CODES = [
   WorkflowStepExecutorExceptionCode.INVALID_STEP_TYPE,
   WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
   WorkflowStepExecutorExceptionCode.STEP_NOT_FOUND,
+  WorkflowStepExecutorExceptionCode.FORBIDDEN,
 ];
 
 // A step asking for a model the instance does not serve, or asking it something

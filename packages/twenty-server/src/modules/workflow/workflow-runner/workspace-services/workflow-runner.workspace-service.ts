@@ -3,14 +3,25 @@ import { Injectable } from '@nestjs/common';
 import { type ActorMetadata } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { StepStatus } from 'twenty-shared/workflow';
+import { msg } from '@lingui/core/macro';
 
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { workflowHasRunningSteps } from 'src/modules/workflow/common/utils/workflow-has-running-steps.util';
+import {
+  WorkflowVersionStepException,
+  WorkflowVersionStepExceptionCode,
+} from 'src/modules/workflow/common/exceptions/workflow-version-step.exception';
 import { WorkflowVersionStepOperationsWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step-operations.workspace-service';
-import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+import { WorkflowStepExecutorException } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
+import { WorkflowExecutionContextService } from 'src/modules/workflow/workflow-executor/services/workflow-execution-context.service';
+import { type WorkflowExecutionContext } from 'src/modules/workflow/workflow-executor/types/workflow-execution-context.type';
+import {
+  type WorkflowFormAction,
+  type WorkflowAction,
+} from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { isWorkflowFormAction } from 'src/modules/workflow/workflow-executor/workflow-actions/form/guards/is-workflow-form-action.guard';
 import {
   WorkflowRunException,
@@ -36,6 +47,7 @@ export class WorkflowRunnerWorkspaceService {
     private readonly workflowThrottlingWorkspaceService: WorkflowThrottlingWorkspaceService,
     private readonly coreWorkflowRunnerService: CoreWorkflowRunnerService,
     private readonly workflowVersionCoreSyncService: WorkflowVersionCoreSyncService,
+    private readonly workflowExecutionContextService: WorkflowExecutionContextService,
   ) {}
 
   async run({
@@ -129,6 +141,11 @@ export class WorkflowRunnerWorkspaceService {
           workspaceId,
           step,
           response,
+          recordReadContext: await this.findFormRecordReadContext({
+            workspaceId,
+            workflowRunId,
+            step,
+          }),
         },
       );
 
@@ -151,6 +168,45 @@ export class WorkflowRunnerWorkspaceService {
         lastExecutedStepId: step.id,
       });
     }
+  }
+
+  private async findFormRecordReadContext({
+    workspaceId,
+    workflowRunId,
+    step,
+  }: {
+    workspaceId: string;
+    workflowRunId: string;
+    step: WorkflowFormAction;
+  }): Promise<WorkflowExecutionContext | undefined> {
+    if (!step.settings.input.some((field) => field.type === 'RECORD')) {
+      return undefined;
+    }
+
+    const workflowRun =
+      await this.workflowRunWorkspaceService.getWorkflowRunOrFail({
+        workflowRunId,
+        workspaceId,
+      });
+
+    const applicationBoundExecutionContext =
+      await this.workflowExecutionContextService
+        .getApplicationBoundExecutionContext({ workflowRun, workspaceId })
+        .catch((error: unknown) => {
+          if (error instanceof WorkflowStepExecutorException) {
+            throw new WorkflowVersionStepException(
+              error.message,
+              WorkflowVersionStepExceptionCode.INVALID_REQUEST,
+              {
+                userFriendlyMessage: msg`The permissions of this run no longer allow submitting this form.`,
+              },
+            );
+          }
+
+          throw error;
+        });
+
+    return applicationBoundExecutionContext ?? undefined;
   }
 
   async stopWorkflowRun(workspaceId: string, workflowRunId: string) {
