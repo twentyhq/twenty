@@ -82,6 +82,10 @@ export type ViewOverrides = {
   'CHK_VIEW_CALENDAR_INTEGRITY',
   `("type" NOT IN ('CALENDAR', 'CALENDAR_WIDGET') OR ("calendarLayout" IS NOT NULL AND "startFieldMetadataId" IS NOT NULL))`,
 )
+@Check(
+  'CHK_VIEW_TIMELINE_INTEGRITY',
+  `("type" != 'TIMELINE' OR "startFieldMetadataId" IS NOT NULL)`,
+)
 export class ViewEntity
   extends OverridableEntity<ViewOverrides>
   implements Required<ViewEntity>

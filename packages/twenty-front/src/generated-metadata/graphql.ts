@@ -7540,7 +7540,8 @@ export enum ViewType {
   LIST = 'LIST',
   LIST_WIDGET = 'LIST_WIDGET',
   TABLE = 'TABLE',
-  TABLE_WIDGET = 'TABLE_WIDGET'
+  TABLE_WIDGET = 'TABLE_WIDGET',
+  TIMELINE = 'TIMELINE'
 }
 
 export enum ViewVisibility {

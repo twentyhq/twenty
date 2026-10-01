@@ -119,6 +119,7 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
         case ViewType.KANBAN_WIDGET:
         case ViewType.LIST_WIDGET:
         case ViewType.CALENDAR_WIDGET:
+        case ViewType.TIMELINE:
         case ViewType.FIELDS_WIDGET: {
           return;
         }

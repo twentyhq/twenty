@@ -16,6 +16,7 @@ const VIEW_TYPE_TO_CONTEXT_STORE_VIEW_TYPE: Record<
   [ViewType.LIST_WIDGET]: ContextStoreViewType.Table,
   [ViewType.CALENDAR]: ContextStoreViewType.Calendar,
   [ViewType.CALENDAR_WIDGET]: ContextStoreViewType.Calendar,
+  [ViewType.TIMELINE]: ContextStoreViewType.Timeline,
 };
 
 export const getContextStoreViewType = (

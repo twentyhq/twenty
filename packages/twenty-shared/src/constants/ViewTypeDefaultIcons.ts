@@ -12,4 +12,5 @@ export const VIEW_TYPE_DEFAULT_ICONS = {
   [ViewType.KANBAN_WIDGET]: 'IconLayoutKanban',
   [ViewType.LIST_WIDGET]: 'IconList',
   [ViewType.CALENDAR_WIDGET]: 'IconCalendar',
+  [ViewType.TIMELINE]: 'IconTimeline',
 } as const satisfies Record<ViewTypeValue, string>;

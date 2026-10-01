@@ -217,6 +217,8 @@ import { AddValidationRuleTableFastInstanceCommand } from 'src/database/commands
 import { ReapplyUsageLimitPeriodReshapeFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-instance-command-fast-1790755883509-reapply-usage-limit-period-reshape';
 import { AddChatWidgetTypeFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-instance-command-fast-1790756560653-add-chat-widget-type';
 import { RenameViewCalendarFieldsToStartAndEndFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-45/2-45-instance-command-fast-1790829838873-rename-view-calendar-fields-to-start-and-end';
+import { AddTimelineViewTypeFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-45/2-45-instance-command-fast-1790829838874-add-timeline-view-type';
+import { AddTimelineViewIntegrityConstraintFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-45/2-45-instance-command-fast-1790829838875-add-timeline-view-integrity-constraint';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -436,4 +438,6 @@ export const INSTANCE_COMMANDS = [
   ReapplyUsageLimitPeriodReshapeFastInstanceCommand,
   AddChatWidgetTypeFastInstanceCommand,
   RenameViewCalendarFieldsToStartAndEndFastInstanceCommand,
+  AddTimelineViewTypeFastInstanceCommand,
+  AddTimelineViewIntegrityConstraintFastInstanceCommand,
 ];

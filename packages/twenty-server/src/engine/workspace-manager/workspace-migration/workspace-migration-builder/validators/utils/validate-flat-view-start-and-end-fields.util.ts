@@ -8,20 +8,22 @@ import { type AllUniversalFlatEntityMaps } from 'src/engine/workspace-manager/wo
 import { type UniversalFlatView } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view.type';
 import { type FlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 
-export const validateFlatViewCalendarFields = ({
+export const validateFlatViewStartAndEndFields = ({
   flatView,
   flatFieldMetadataMaps,
 }: {
   flatView: UniversalFlatView;
   flatFieldMetadataMaps: AllUniversalFlatEntityMaps['flatFieldMetadataMaps'];
 }): FlatEntityValidationError[] => {
-  if (getViewLayoutFromViewType(flatView.type) !== ViewType.CALENDAR) {
+  const viewLayout = getViewLayoutFromViewType(flatView.type);
+
+  if (viewLayout !== ViewType.CALENDAR && viewLayout !== ViewType.TIMELINE) {
     return [];
   }
 
   const errors: FlatEntityValidationError[] = [];
 
-  if (!isDefined(flatView.calendarLayout)) {
+  if (viewLayout === ViewType.CALENDAR && !isDefined(flatView.calendarLayout)) {
     errors.push({
       code: ViewExceptionCode.INVALID_VIEW_DATA,
       message: t`Calendar view must have a calendar layout`,
@@ -32,8 +34,8 @@ export const validateFlatViewCalendarFields = ({
   if (!isDefined(flatView.startFieldMetadataUniversalIdentifier)) {
     errors.push({
       code: ViewExceptionCode.INVALID_VIEW_DATA,
-      message: t`Calendar view must have a calendar field`,
-      userFriendlyMessage: msg`Calendar view must have a calendar field`,
+      message: t`Calendar and timeline views must have a start date field`,
+      userFriendlyMessage: msg`Calendar and timeline views must have a start date field`,
     });
 
     return errors;
@@ -47,8 +49,8 @@ export const validateFlatViewCalendarFields = ({
   if (!isDefined(startFieldMetadata)) {
     errors.push({
       code: ViewExceptionCode.INVALID_VIEW_DATA,
-      message: t`Calendar field metadata not found`,
-      userFriendlyMessage: msg`Calendar field not found`,
+      message: t`Start date field metadata not found`,
+      userFriendlyMessage: msg`Start date field not found`,
     });
 
     return errors;
@@ -60,20 +62,20 @@ export const validateFlatViewCalendarFields = ({
   ) {
     errors.push({
       code: ViewExceptionCode.INVALID_VIEW_DATA,
-      message: t`Calendar field must belong to the view object`,
-      userFriendlyMessage: msg`Calendar field must belong to the view object`,
+      message: t`Start date field must belong to the view object`,
+      userFriendlyMessage: msg`Start date field must belong to the view object`,
     });
   }
 
-  const calendarFieldIsDateKind =
+  const startFieldIsDateKind =
     startFieldMetadata.type === FieldMetadataType.DATE ||
     startFieldMetadata.type === FieldMetadataType.DATE_TIME;
 
-  if (!calendarFieldIsDateKind) {
+  if (!startFieldIsDateKind) {
     errors.push({
       code: ViewExceptionCode.INVALID_VIEW_DATA,
-      message: t`Calendar field must be a date or date time field`,
-      userFriendlyMessage: msg`Calendar field must be a date or date time field`,
+      message: t`Start date field must be a date or date time field`,
+      userFriendlyMessage: msg`Start date field must be a date or date time field`,
     });
   }
 
@@ -87,8 +89,8 @@ export const validateFlatViewCalendarFields = ({
   ) {
     errors.push({
       code: ViewExceptionCode.INVALID_VIEW_DATA,
-      message: t`Calendar start and end fields must be different`,
-      userFriendlyMessage: msg`Calendar start and end fields must be different`,
+      message: t`Start and end date fields must be different`,
+      userFriendlyMessage: msg`Start and end date fields must be different`,
     });
 
     return errors;
@@ -102,8 +104,8 @@ export const validateFlatViewCalendarFields = ({
   if (!isDefined(endFieldMetadata)) {
     errors.push({
       code: ViewExceptionCode.INVALID_VIEW_DATA,
-      message: t`Calendar end field metadata not found`,
-      userFriendlyMessage: msg`Calendar end field not found`,
+      message: t`End date field metadata not found`,
+      userFriendlyMessage: msg`End date field not found`,
     });
 
     return errors;
@@ -115,29 +117,29 @@ export const validateFlatViewCalendarFields = ({
   ) {
     errors.push({
       code: ViewExceptionCode.INVALID_VIEW_DATA,
-      message: t`Calendar end field must belong to the view object`,
-      userFriendlyMessage: msg`Calendar end field must belong to the view object`,
+      message: t`End date field must belong to the view object`,
+      userFriendlyMessage: msg`End date field must belong to the view object`,
     });
   }
 
-  const calendarEndFieldIsDateKind =
+  const endFieldIsDateKind =
     endFieldMetadata.type === FieldMetadataType.DATE ||
     endFieldMetadata.type === FieldMetadataType.DATE_TIME;
 
-  if (!calendarEndFieldIsDateKind) {
+  if (!endFieldIsDateKind) {
     errors.push({
       code: ViewExceptionCode.INVALID_VIEW_DATA,
-      message: t`Calendar end field must be a date or date time field`,
-      userFriendlyMessage: msg`Calendar end field must be a date or date time field`,
+      message: t`End date field must be a date or date time field`,
+      userFriendlyMessage: msg`End date field must be a date or date time field`,
     });
   } else if (
-    calendarFieldIsDateKind &&
+    startFieldIsDateKind &&
     endFieldMetadata.type !== startFieldMetadata.type
   ) {
     errors.push({
       code: ViewExceptionCode.INVALID_VIEW_DATA,
-      message: t`Calendar start and end fields must have the same type`,
-      userFriendlyMessage: msg`Calendar start and end fields must have the same type`,
+      message: t`Start and end date fields must have the same type`,
+      userFriendlyMessage: msg`Start and end date fields must have the same type`,
     });
   }
 

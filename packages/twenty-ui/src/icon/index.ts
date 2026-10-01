@@ -474,6 +474,7 @@ export {
   IconTextWrap,
   IconTimeDuration30,
   IconTimeDuration60,
+  IconTimeline,
   IconTimelineEvent,
   IconTool,
   IconTransform,

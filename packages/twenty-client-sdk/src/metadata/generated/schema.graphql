@@ -819,6 +819,7 @@ enum ViewType {
   KANBAN_WIDGET
   LIST_WIDGET
   CALENDAR_WIDGET
+  TIMELINE
 }
 
 enum ViewKey {

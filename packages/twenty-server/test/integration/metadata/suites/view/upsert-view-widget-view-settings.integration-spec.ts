@@ -264,7 +264,7 @@ describe('upsertViewWidget view settings', () => {
     );
   });
 
-  it('should reject switching to CALENDAR_WIDGET without a calendar field', async () => {
+  it('should reject switching to CALENDAR_WIDGET without a start date field', async () => {
     const { errors } = await upsertViewWidget({
       expectToFail: true,
       input: {
@@ -277,7 +277,7 @@ describe('upsertViewWidget view settings', () => {
     });
 
     expect(JSON.stringify(errors)).toContain(
-      'Calendar view must have a calendar field',
+      'Calendar and timeline views must have a start date field',
     );
   });
 

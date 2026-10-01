@@ -12,6 +12,7 @@ const VIEW_TYPE_TO_LAYOUT_MAPPING: Record<ViewTypeValue, ViewTypeValue> = {
   [ViewType.KANBAN_WIDGET]: ViewType.KANBAN,
   [ViewType.LIST_WIDGET]: ViewType.LIST,
   [ViewType.CALENDAR_WIDGET]: ViewType.CALENDAR,
+  [ViewType.TIMELINE]: ViewType.TIMELINE,
 };
 
 export const getViewLayoutFromViewType = (

@@ -43,7 +43,7 @@ export default defineView({
 
 | Property | Values | Description |
 |----------|--------|-------------|
-| `type` | `ViewType.TABLE` (default), `ViewType.LIST`, `ViewType.KANBAN`, `ViewType.CALENDAR` | How records are laid out. (`FIELDS_WIDGET`, `TABLE_WIDGET`, `KANBAN_WIDGET`, `LIST_WIDGET`, and `CALENDAR_WIDGET` also exist but are used internally by page-layout widgets.) |
+| `type` | `ViewType.TABLE` (default), `ViewType.LIST`, `ViewType.KANBAN`, `ViewType.CALENDAR`, `ViewType.TIMELINE` | How records are laid out. (`FIELDS_WIDGET`, `TABLE_WIDGET`, `KANBAN_WIDGET`, `LIST_WIDGET`, and `CALENDAR_WIDGET` also exist but are used internally by page-layout widgets.) |
 | `visibility` | `ViewVisibility.WORKSPACE` (default), `ViewVisibility.UNLISTED` | Whether the view is listed for the whole workspace or hidden from pickers. |
 | `openRecordIn` | deprecated | No longer read: where records open is now a property of the [object](/developers/extend/apps/data/objects) (`openRecordIn` on `defineObject()`), falling back to each member's own preference. |
 | `sorts` | `{ fieldMetadataUniversalIdentifier, direction: ViewSortDirection.ASC \| DESC }[]` | Default sort order. |
@@ -51,7 +51,8 @@ export default defineView({
 | `mainGroupByFieldMetadataUniversalIdentifier` + `shouldHideEmptyGroups` | — | Group records (e.g. kanban columns) by a field. |
 | `groupLoadLimit` | `8` (default), `25`, `50`, `100` | Records loaded per group before "Load more", on grouped table and list views. Kanban boards page on their own size and ignore it. |
 | `kanbanAggregateOperation`, `kanbanAggregateOperationFieldMetadataUniversalIdentifier`, `kanbanColumnWidth` | `AggregateOperations.*` | Kanban column aggregates and sizing. |
-| `calendarLayout`, `startFieldMetadataUniversalIdentifier`, `endFieldMetadataUniversalIdentifier` | `ViewCalendarLayout.DAY` / `WEEK` / `MONTH` | Calendar views: layout, the date field that positions records, and an optional end date field. Manifests using the former `calendarFieldMetadataUniversalIdentifier` / `calendarEndFieldMetadataUniversalIdentifier` keys are still accepted. |
+| `calendarLayout` | `ViewCalendarLayout.DAY` / `WEEK` / `MONTH` | Calendar views only: the period shown. |
+| `startFieldMetadataUniversalIdentifier`, `endFieldMetadataUniversalIdentifier` | Field universal identifiers | Calendar and timeline views: the date field that positions records (required) and an optional end date field of the same type. On a timeline, records without an end date show as one-day bars. Manifests using the former `calendarFieldMetadataUniversalIdentifier` / `calendarEndFieldMetadataUniversalIdentifier` keys are still accepted. |
 
 All enums above are exported from `twenty-sdk/define`.
 
