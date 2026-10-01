@@ -1,181 +1,115 @@
-import { AddSelectOptionMenuItem } from '@/settings/data-model/fields/forms/select/components/AddSelectOptionMenuItem';
-import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
-import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
-import { SelectableListComponentInstanceContext } from '@/ui/layout/selectable-list/states/contexts/SelectableListComponentInstanceContext';
-import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
-import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
-import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { t } from '@lingui/core/macro';
-import { createElement, useEffect, useMemo, useRef, useState } from 'react';
-import { isDefined } from 'twenty-shared/utils';
-import { type TagColor, Tag } from 'twenty-ui/primitives/data-display';
+import { isNonEmptyString } from '@sniptt/guards';
+import { createElement, useState } from 'react';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { Dropdown } from 'twenty-ui/components';
+import { IconPlus } from 'twenty-ui/icon';
+import { Tag } from 'twenty-ui/primitives/data-display';
 import { type SelectOption } from 'twenty-ui/primitives/input';
-import { ListItem } from 'twenty-ui/primitives/navigation';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
-interface SelectInputProps {
+type SelectInputProps = {
   onOptionSelected: (selectedOption: SelectOption) => void;
   options: SelectOption[];
-  onCancel?: () => void;
   defaultOption?: SelectOption;
-  onFilterChange?: (filteredOptions: SelectOption[]) => void;
   onClear?: () => void;
   clearLabel?: string;
-  focusId: string;
   onAddSelectOption?: (optionName: string) => void;
-}
+};
 
 export const SelectInput = ({
   onOptionSelected,
   onClear,
   clearLabel,
   options,
-  onCancel,
   defaultOption,
-  onFilterChange,
   onAddSelectOption,
 }: SelectInputProps) => {
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  const selectableListInstanceId = useAvailableComponentInstanceIdOrThrow(
-    SelectableListComponentInstanceContext,
-  );
-
-  const selectedItemId = useAtomComponentStateValue(
-    selectedItemIdComponentState,
-    selectableListInstanceId,
-  );
-
   const [searchFilter, setSearchFilter] = useState('');
-  const [selectedOption, setSelectedOption] = useState<
-    SelectOption | undefined
-  >(defaultOption);
-
-  const optionsToSelect = useMemo(() => {
-    const searchTerm = normalizeSearchText(searchFilter);
-    return options.filter((option) => {
-      return (
-        option.value !== selectedOption?.value &&
-        normalizeSearchText(option.label).includes(searchTerm)
-      );
-    });
-  }, [options, searchFilter, selectedOption?.value]);
-
-  const optionsInDropDown = useMemo(
-    () =>
-      selectedOption ? [selectedOption, ...optionsToSelect] : optionsToSelect,
-    [optionsToSelect, selectedOption],
+  const searchTerm = normalizeSearchText(searchFilter);
+  const filteredOptions = options.filter((option) =>
+    normalizeSearchText(option.label).includes(searchTerm),
   );
-
-  const handleOptionChange = (option: SelectOption) => {
-    setSelectedOption(option);
-    onOptionSelected(option);
-  };
-
-  const handleClearOption = () => {
-    setSelectedOption(undefined);
-    onClear?.();
-  };
-
-  useEffect(() => {
-    onFilterChange?.(optionsInDropDown);
-  }, [onFilterChange, optionsInDropDown]);
-
-  useListenClickOutside({
-    refs: [containerRef],
-    callback: (event) => {
-      event.stopImmediatePropagation();
-      event.preventDefault();
-      const weAreNotInAnHTMLInput = !(
-        event.target instanceof HTMLInputElement &&
-        event.target.tagName === 'INPUT'
-      );
-      if (weAreNotInAnHTMLInput && isDefined(onCancel)) {
-        onCancel();
-      }
-    },
-    listenerId: 'select-input',
-  });
+  const selectedOption = filteredOptions.find(
+    (option) => option.value === defaultOption?.value,
+  );
+  const optionsInDropdown = isDefined(selectedOption)
+    ? [
+        selectedOption,
+        ...filteredOptions.filter(
+          (option) => option.value !== selectedOption.value,
+        ),
+      ]
+    : filteredOptions;
+  const emptyLabel = t`No ${clearLabel}`;
+  const shouldShowClearOption =
+    isDefined(onClear) &&
+    isNonEmptyString(clearLabel) &&
+    normalizeSearchText(emptyLabel).includes(searchTerm);
+  const trimmedSearchFilter = searchFilter.trim();
+  const shouldShowAddOption =
+    isDefined(onAddSelectOption) &&
+    isNonEmptyString(trimmedSearchFilter) &&
+    !isNonEmptyArray(filteredOptions);
 
   return (
-    <LegacyDropdownContent ref={containerRef} selectDisabled>
-      <DropdownMenuSearchInput
+    <>
+      <Dropdown.Search
         value={searchFilter}
-        onChange={(e) => setSearchFilter(e.target.value)}
-        autoFocus
+        onValueChange={setSearchFilter}
+        placeholder={t`Search`}
+        aria-label={t`Search`}
       />
-      <DropdownMenuSeparator />
-      <DropdownMenuItemsContainer hasMaxHeight>
-        {onClear && clearLabel && (
-          <SelectableListItem
-            itemId={t`No ${clearLabel}`}
-            onEnter={handleClearOption}
+      <Dropdown.Separator />
+      <Dropdown.Section scrollable>
+        {shouldShowClearOption && (
+          <Dropdown.OptionItem
+            onSelect={onClear}
+            selected={!isDefined(defaultOption)}
+            closeOnSelect={false}
           >
-            <ListItem
-              key={t`No ${clearLabel}`}
-              onClick={handleClearOption}
-              focused={selectedItemId === t`No ${clearLabel}`}
-              role="option"
-              aria-selected={false}
-              selected={false}
-              indicator="check"
-            >
-              <Tag
-                color={'transparent'}
-                borderStyle="dashed"
-                variant={'outline'}
-              >{t`No ${clearLabel}`}</Tag>
-            </ListItem>
-          </SelectableListItem>
+            <Tag color="transparent" borderStyle="dashed" variant="outline">
+              {emptyLabel}
+            </Tag>
+          </Dropdown.OptionItem>
         )}
-        {optionsInDropDown.map((option) => {
-          return (
-            <SelectableListItem
-              key={option.value}
-              itemId={option.value}
-              onEnter={() => handleOptionChange(option)}
+        {optionsInDropdown.map((option) => (
+          <Dropdown.OptionItem
+            key={option.value}
+            onSelect={() => onOptionSelected(option)}
+            selected={defaultOption?.value === option.value}
+            closeOnSelect={false}
+          >
+            <Tag
+              color={option.color ?? 'transparent'}
+              borderStyle="dashed"
+              variant="soft"
+              startIcon={
+                isDefined(option.Icon) ? createElement(option.Icon) : undefined
+              }
             >
-              <ListItem
-                key={option.value}
-                onClick={() => handleOptionChange(option)}
-                focused={selectedItemId === option.value}
-                role="option"
-                aria-selected={selectedOption?.value === option.value}
-                selected={selectedOption?.value === option.value}
-                indicator="check"
-              >
-                <Tag
-                  color={(option.color as TagColor) ?? 'transparent'}
-                  borderStyle="dashed"
-                  variant={'soft'}
-                  startIcon={
-                    isDefined(option.Icon)
-                      ? createElement(option.Icon)
-                      : undefined
-                  }
-                >
-                  {option.label}
-                </Tag>
-              </ListItem>
-            </SelectableListItem>
-          );
-        })}
-      </DropdownMenuItemsContainer>
-      {onAddSelectOption && searchFilter && optionsToSelect.length === 0 && (
+              {option.label}
+            </Tag>
+          </Dropdown.OptionItem>
+        ))}
+        {!shouldShowClearOption && !isNonEmptyArray(optionsInDropdown) && (
+          <Dropdown.Empty>{t`No option found`}</Dropdown.Empty>
+        )}
+      </Dropdown.Section>
+      {shouldShowAddOption && (
         <>
-          <DropdownMenuSeparator />
-          <DropdownMenuItemsContainer scrollable={false}>
-            <AddSelectOptionMenuItem
-              name={searchFilter}
-              onAddSelectOption={onAddSelectOption}
-            />
-          </DropdownMenuItemsContainer>
+          <Dropdown.Separator />
+          <Dropdown.Section>
+            <Dropdown.ActionItem
+              onClick={() => onAddSelectOption(trimmedSearchFilter)}
+              closeOnClick={false}
+              startIcon={<IconPlus />}
+            >
+              {t`Add "${trimmedSearchFilter}" to options`}
+            </Dropdown.ActionItem>
+          </Dropdown.Section>
         </>
       )}
-    </LegacyDropdownContent>
+    </>
   );
 };

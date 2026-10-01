@@ -1,13 +1,15 @@
+import { Key } from 'ts-key-enum';
+import { isDefined } from 'twenty-shared/utils';
+import { FieldInputAnchorContext } from '@/object-record/record-field/ui/contexts/FieldInputAnchorContext';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { Dropdown } from 'twenty-ui/components';
 import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
 import { useAddSelectOption } from '@/object-record/record-field/ui/meta-types/hooks/useAddSelectOption';
 import { useCanAddSelectOption } from '@/object-record/record-field/ui/meta-types/hooks/useCanAddSelectOption';
 import { useFilteredSelectOptionsFromRLSPredicates } from '@/object-record/record-field/ui/meta-types/hooks/useFilteredSelectOptionsFromRLSPredicates';
 import { useMultiSelectField } from '@/object-record/record-field/ui/meta-types/hooks/useMultiSelectField';
-import { SELECT_FIELD_INPUT_SELECTABLE_LIST_COMPONENT_INSTANCE_ID } from '@/object-record/record-field/ui/meta-types/input/constants/SelectFieldInputSelectableListComponentInstanceId';
-import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { type FieldMultiSelectValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { MultiSelectInput } from '@/ui/field/input/components/MultiSelectInput';
-import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useContext } from 'react';
 
 export const MultiSelectFieldInput = () => {
@@ -19,7 +21,9 @@ export const MultiSelectFieldInput = () => {
     fieldDefinition.fieldMetadataId,
   );
 
-  const { onSubmit } = useContext(FieldInputEventContext);
+  const { onSubmit, onEnter, onTab, onShiftTab } = useContext(
+    FieldInputEventContext,
+  );
 
   const { filteredOptions: selectOptions } =
     useFilteredSelectOptionsFromRLSPredicates({
@@ -33,25 +37,68 @@ export const MultiSelectFieldInput = () => {
     setDraftValue(newDraftValue);
   };
 
-  const instanceId = useAvailableComponentInstanceIdOrThrow(
-    RecordFieldComponentInstanceContext,
-  );
+  const { anchorRef, align, sideOffset, alignOffset, collisionPadding } =
+    useContext(FieldInputAnchorContext);
 
   const handleCancel = () => {
     onSubmit?.({ newValue: draftValue });
   };
 
   return (
-    <MultiSelectInput
-      selectableListComponentInstanceId={
-        SELECT_FIELD_INPUT_SELECTABLE_LIST_COMPONENT_INSTANCE_ID
-      }
-      focusId={instanceId}
-      options={selectOptions}
-      onCancel={handleCancel}
-      onOptionSelected={handleOptionSelected}
-      values={draftValue}
-      onAddSelectOption={canAddSelectOption ? addSelectOption : undefined}
-    />
+    <Dropdown.Root
+      type="picker"
+      multiple
+      open
+      onOpenChange={(open) => {
+        if (!open) {
+          handleCancel();
+        }
+      }}
+      onInteractOutside={(event) => {
+        if (event.target instanceof HTMLInputElement) {
+          event.preventDefault();
+        }
+      }}
+    >
+      <DropdownContent
+        anchor={anchorRef}
+        align={align}
+        sideOffset={sideOffset}
+        alignOffset={alignOffset}
+        collisionPadding={collisionPadding}
+        aria-label={fieldDefinition.label}
+        finalFocus={false}
+        onKeyDown={(event) => {
+          if (event.key !== Key.Tab) {
+            return;
+          }
+
+          const handleTab = event.shiftKey ? onShiftTab : onTab;
+
+          if (isDefined(handleTab)) {
+            event.preventDefault();
+            handleTab({ newValue: draftValue });
+            return;
+          }
+
+          handleCancel();
+        }}
+      >
+        <MultiSelectInput
+          onEnter={() => {
+            if (isDefined(onEnter)) {
+              onEnter({ newValue: draftValue });
+              return;
+            }
+
+            handleCancel();
+          }}
+          options={selectOptions}
+          onOptionSelected={handleOptionSelected}
+          values={draftValue}
+          onAddSelectOption={canAddSelectOption ? addSelectOption : undefined}
+        />
+      </DropdownContent>
+    </Dropdown.Root>
   );
 };

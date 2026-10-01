@@ -1,4 +1,3 @@
-import { ListItem } from 'twenty-ui/primitives/navigation';
 import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
 import { FormFieldInputInnerContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputInnerContainer';
 import { FormFieldInputRowContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputRowContainer';
@@ -11,10 +10,8 @@ import { type FieldArrayValue } from '@/object-record/record-field/ui/types/Fiel
 import { ArrayDisplay } from '@/ui/field/display/components/ArrayDisplay';
 import { StyledTextInput } from '@/ui/field/input/components/TextInput';
 import { Field } from 'twenty-ui/primitives/input';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
@@ -26,16 +23,11 @@ import { isStandaloneVariableString } from 'twenty-shared/workflow';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
-import {
-  type FocusEvent,
-  type KeyboardEvent,
-  useId,
-  useRef,
-  useState,
-} from 'react';
+import { type FocusEvent, type KeyboardEvent, useId, useState } from 'react';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/icon';
+import { Dropdown } from 'twenty-ui/components';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { toSpliced } from '~/utils/array/toSpliced';
 
@@ -139,8 +131,6 @@ export const FormArrayFieldInput = ({
   const [isInputDisplayed, setIsInputDisplayed] = useState(false);
   const [itemToEditIndex, setItemToEditIndex] = useState(-1);
   const isAddingNewItem = itemToEditIndex === -1;
-
-  const containerRef = useRef<HTMLDivElement>(null);
 
   const dropdownId = `dropdown-${instanceId}`;
   const isDropdownOpen = useAtomComponentStateValue(
@@ -393,63 +383,65 @@ export const FormArrayFieldInput = ({
                 />
               </StyledInputContainer>
             ) : (
-              <Dropdown
-                dropdownId={dropdownId}
-                dropdownPlacement="bottom-start"
-                dropdownOffset={{
-                  y: parseSpacingValueAsNumber(theme.spacing[1]),
-                }}
-                clickableComponent={
-                  <StyledDisplayModeContainer data-open={isDropdownOpen}>
-                    <ArrayDisplay value={draftValue.value} />
-                  </StyledDisplayModeContainer>
-                }
-                clickableComponentWidth="100%"
-                dropdownComponents={
-                  <LegacyDropdownContent ref={containerRef}>
-                    <DropdownMenuItemsContainer hasMaxHeight>
-                      {draftValue.type === 'static' &&
-                        draftValue.value.map((value, index) => (
-                          <ArrayFieldMenuItem
-                            key={index}
-                            dropdownId={`array-field-input-${instanceId}-${index}`}
-                            value={value}
-                            onEdit={() => {
-                              handleEditItem(index);
-                            }}
-                            onDelete={() => {
-                              handleDeleteItem(index);
-                            }}
-                          />
-                        ))}
-                    </DropdownMenuItemsContainer>
+              <DropdownRoot dropdownId={dropdownId} type="panel">
+                <Dropdown.Trigger
+                  render={
+                    <StyledDisplayModeContainer data-open={isDropdownOpen} />
+                  }
+                  nativeButton={false}
+                  aria-label={label ?? t`Items`}
+                >
+                  <ArrayDisplay value={draftValue.value} />
+                </Dropdown.Trigger>
+                <DropdownContent
+                  side="bottom"
+                  align="start"
+                  sideOffset={parseSpacingValueAsNumber(theme.spacing[1])}
+                  aria-label={label ?? t`Items`}
+                >
+                  <Dropdown.Section scrollable>
+                    {draftValue.type === 'static' &&
+                      draftValue.value.map((value, index) => (
+                        <ArrayFieldMenuItem
+                          key={index}
+                          dropdownId={`array-field-input-${instanceId}-${index}`}
+                          value={value}
+                          onEdit={() => {
+                            handleEditItem(index);
+                          }}
+                          onDelete={() => {
+                            handleDeleteItem(index);
+                          }}
+                        />
+                      ))}
+                  </Dropdown.Section>
 
-                    <DropdownMenuSeparator />
+                  <Dropdown.Separator />
 
-                    {isInputDisplayed ? (
-                      <MultiItemBaseInput
-                        instanceId={newItemInputInstanceId}
-                        autoFocus
-                        placeholder={placeholder}
-                        value={inputValue}
-                        onFocus={handleNewItemInputFocus}
-                        onBlur={handleNewItemInputBlur}
-                        onEscape={handleNewItemInputEscape}
-                        onChange={handleNewItemInputChange}
-                        onEnter={handleNewItemInputSubmit}
-                        hasItem
-                      />
-                    ) : !isLimitReached ? (
-                      <DropdownMenuItemsContainer>
-                        <ListItem
-                          onClick={handleAddItemButtonClick}
-                          startIcon={<IconPlus />}
-                        >{t`Add item`}</ListItem>
-                      </DropdownMenuItemsContainer>
-                    ) : null}
-                  </LegacyDropdownContent>
-                }
-              />
+                  {isInputDisplayed ? (
+                    <MultiItemBaseInput
+                      instanceId={newItemInputInstanceId}
+                      autoFocus
+                      placeholder={placeholder}
+                      value={inputValue}
+                      onFocus={handleNewItemInputFocus}
+                      onBlur={handleNewItemInputBlur}
+                      onEscape={handleNewItemInputEscape}
+                      onChange={handleNewItemInputChange}
+                      onEnter={handleNewItemInputSubmit}
+                      hasItem
+                    />
+                  ) : !isLimitReached ? (
+                    <Dropdown.Section>
+                      <Dropdown.ActionItem
+                        onClick={handleAddItemButtonClick}
+                        startIcon={<IconPlus />}
+                        closeOnClick={false}
+                      >{t`Add item`}</Dropdown.ActionItem>
+                    </Dropdown.Section>
+                  ) : null}
+                </DropdownContent>
+              </DropdownRoot>
             )
           ) : (
             <VariableChipStandalone

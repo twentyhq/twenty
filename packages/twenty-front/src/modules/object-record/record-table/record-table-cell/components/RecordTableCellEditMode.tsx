@@ -1,3 +1,7 @@
+import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
+import { FieldInputAnchorContext } from '@/object-record/record-field/ui/contexts/FieldInputAnchorContext';
+import { getFieldInputAnchorPosition } from '@/object-record/record-field/ui/utils/getFieldInputAnchorPosition';
+import { isFieldInputRenderedAsDropdown } from '@/object-record/record-field/ui/utils/isFieldInputRenderedAsDropdown';
 import { getFloatingReferenceScale } from '@/ui/layout/overlay/utils/getFloatingReferenceScale';
 import { useIsFieldInputOnly } from '@/object-record/record-field/ui/hooks/useIsFieldInputOnly';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
@@ -21,6 +25,9 @@ import {
   type MiddlewareState,
 } from '@floating-ui/react';
 import { useContext, type ReactElement } from 'react';
+
+const TABLE_FIELD_INPUT_SIDE_OFFSET = -33;
+const TABLE_FIELD_INPUT_ALIGN_OFFSET = -3;
 
 const StyledEditableCellEditModeContainer = styled.div<{
   isFieldInputOnly: boolean;
@@ -76,6 +83,9 @@ export const RecordTableCellEditMode = ({
     },
   };
 
+  const { fieldDefinition } = useContext(FieldContext);
+  const isDropdownFieldInput = isFieldInputRenderedAsDropdown(fieldDefinition);
+
   const { refs, floatingStyles } = useFloating({
     placement: 'bottom-start',
     strategy: 'fixed',
@@ -85,8 +95,8 @@ export const RecordTableCellEditMode = ({
         const referenceScale = getFloatingReferenceScale(state);
 
         return {
-          mainAxis: -33 * referenceScale,
-          crossAxis: -3 * referenceScale,
+          mainAxis: TABLE_FIELD_INPUT_SIDE_OFFSET * referenceScale,
+          crossAxis: TABLE_FIELD_INPUT_ALIGN_OFFSET * referenceScale,
         };
       }),
       setFieldInputLayoutDirectionMiddleware,
@@ -115,6 +125,17 @@ export const RecordTableCellEditMode = ({
         >
           {children}
         </StyledInputModeOnlyContainer>
+      ) : isDropdownFieldInput ? (
+        <FieldInputAnchorContext.Provider
+          value={getFieldInputAnchorPosition({
+            anchorRef: refs.domReference,
+            sideOffset: TABLE_FIELD_INPUT_SIDE_OFFSET,
+            alignOffset: TABLE_FIELD_INPUT_ALIGN_OFFSET,
+            collisionPadding: 0,
+          })}
+        >
+          {children}
+        </FieldInputAnchorContext.Provider>
       ) : (
         <FloatingPortal>
           <StyledOverlayPortalLayer

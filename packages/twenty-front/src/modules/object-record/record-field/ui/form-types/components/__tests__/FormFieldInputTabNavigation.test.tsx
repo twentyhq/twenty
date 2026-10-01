@@ -74,3 +74,28 @@ it('tabs through a links field and past its empty secondary links', async () => 
   await user.tab({ shift: true });
   expect(document.activeElement).toHaveAttribute('contenteditable', 'true');
 });
+
+it('includes a populated array field trigger in the tab order', async () => {
+  const user = userEvent.setup();
+  render(
+    <>
+      <button>Before</button>
+      <FormArrayFieldInput
+        label="Items"
+        defaultValue={['First item']}
+        onChange={() => {}}
+      />
+      <button>After</button>
+    </>,
+    { wrapper: I18nWrapper },
+  );
+
+  await user.click(screen.getByRole('button', { name: 'Before' }));
+  await user.tab();
+
+  expect(screen.getByRole('button', { name: 'Items' })).toHaveFocus();
+
+  await user.tab();
+
+  expect(screen.getByRole('button', { name: 'After' })).toHaveFocus();
+});

@@ -226,3 +226,67 @@ export const ScrolledBottom: Story = {
     await canvas.findByText(mockedCompanyRecords[1].name);
   },
 };
+
+export const MultiSelectPickerAnchorsToTableCell: Story = {
+  beforeEach: () => {
+    const originalViewFields = companyView.viewFields;
+    const originalWorkPolicy = mockedCompanyRecords[0].workPolicy;
+    const workPolicyField = getMockFieldMetadataItemOrThrow({
+      objectMetadataItem: getMockObjectMetadataItemOrThrow('company'),
+      fieldName: 'workPolicy',
+    });
+
+    companyView.viewFields = [
+      ...originalViewFields.map((viewField) => ({
+        ...viewField,
+        position: viewField.position === 0 ? 0 : viewField.position + 1,
+      })),
+      {
+        ...originalViewFields[0],
+        id: 'work-policy-anchor-story-field',
+        fieldMetadataId: workPolicyField.id,
+        position: 1,
+      },
+    ];
+    mockedCompanyRecords[0].workPolicy = ['ON_SITE'];
+
+    return () => {
+      companyView.viewFields = originalViewFields;
+      mockedCompanyRecords[0].workPolicy = originalWorkPolicy;
+    };
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+
+    await canvas.findByText(mockedCompanyRecords[0].name);
+    await userEvent.click((await canvas.findAllByText('On-Site'))[0]);
+
+    const picker = await body.findByRole('dialog', { name: 'Work Policy' });
+    const anchor = canvas.getByTestId('editable-cell-edit-mode-container');
+
+    await waitFor(() => {
+      const anchorBounds = anchor.getBoundingClientRect();
+      const pickerBounds = picker.getBoundingClientRect();
+
+      expect(
+        Math.abs(pickerBounds.left - (anchorBounds.left - 3)),
+      ).toBeLessThan(2);
+      expect(
+        Math.abs(pickerBounds.top - (anchorBounds.bottom - 33)),
+      ).toBeLessThan(2);
+    });
+
+    const search = within(picker).getByRole('searchbox', { name: 'Search' });
+
+    await userEvent.type(search, 'Remote');
+    await userEvent.keyboard('{Enter}');
+
+    await expect(
+      within(picker).getByRole('button', { name: 'Remote Work' }),
+    ).toHaveAttribute('aria-pressed', 'true');
+    await expect(picker).toBeVisible();
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() => expect(picker).not.toBeInTheDocument());
+  },
+};

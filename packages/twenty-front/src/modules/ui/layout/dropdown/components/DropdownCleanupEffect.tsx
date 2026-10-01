@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 
@@ -11,7 +11,21 @@ export const DropdownCleanupEffect = ({
 }: DropdownCleanupEffectProps) => {
   const { closeDropdown } = useCloseDropdown();
 
-  useEffect(() => () => closeDropdown(dropdownId), [closeDropdown, dropdownId]);
+  const mountedDropdownIdRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    mountedDropdownIdRef.current = dropdownId;
+
+    return () => {
+      mountedDropdownIdRef.current = null;
+
+      queueMicrotask(() => {
+        if (mountedDropdownIdRef.current !== dropdownId) {
+          closeDropdown(dropdownId);
+        }
+      });
+    };
+  }, [closeDropdown, dropdownId]);
 
   return null;
 };

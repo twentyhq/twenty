@@ -1,14 +1,16 @@
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
+import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { t } from '@lingui/core/macro';
 import { type MouseEvent } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { LightIconButton } from 'twenty-ui/components';
+import { Dropdown, LightIconButton } from 'twenty-ui/components';
 import { IconDotsVertical } from 'twenty-ui/icon';
 import { ListItem } from 'twenty-ui/primitives/navigation';
 import { useTheme } from 'twenty-ui/theme';
 import { type MenuItemWithOptionDropdownProps } from './types/MenuItemWithOptionDropdownProps';
 
-// TODO: refactor this
 export const MenuItemWithOptionDropdown = ({
   accent = 'default',
   className,
@@ -23,16 +25,21 @@ export const MenuItemWithOptionDropdown = ({
   testId,
   text,
   hasSubMenu = false,
-  dropdownPlacement = 'bottom-end',
+  dropdownSide = 'bottom',
+  dropdownAlign = 'end',
   selected = false,
 }: MenuItemWithOptionDropdownProps) => {
   const theme = useTheme();
+  const isDropdownOpen = useAtomComponentStateValue(
+    isDropdownOpenComponentState,
+    dropdownId,
+  );
   const handleMenuItemClick = (event: MouseEvent<HTMLDivElement>) => {
-    if (!onClick) return;
+    if (!isDefined(onClick)) return;
     event.preventDefault();
     event.stopPropagation();
 
-    onClick?.(event);
+    onClick(event);
   };
 
   return (
@@ -44,25 +51,29 @@ export const MenuItemWithOptionDropdown = ({
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
       focused={selected}
-      startIcon={LeftIcon && <LeftIcon size={theme.icon.size.md} />}
+      startIcon={isDefined(LeftIcon) && <LeftIcon size={theme.icon.size.md} />}
       hasSubmenu={hasSubMenu}
-      actionsVisibility={isIconDisplayedOnHoverOnly ? 'hover' : 'always'}
+      actionsVisibility={
+        isIconDisplayedOnHoverOnly && !isDropdownOpen ? 'hover' : 'always'
+      }
       actions={
         <div className="hoverable-buttons">
-          <Dropdown
-            clickableComponent={
-              <LightIconButton
-                size="sm"
-                emphasis="subtle"
-                aria-label={t`More options`}
-              >
-                {isDefined(RightIcon) ? <RightIcon /> : <IconDotsVertical />}
-              </LightIconButton>
-            }
-            dropdownPlacement={dropdownPlacement}
-            dropdownComponents={dropdownContent}
-            dropdownId={dropdownId}
-          />
+          <DropdownRoot dropdownId={dropdownId} type="menu">
+            <Dropdown.Trigger
+              render={
+                <LightIconButton
+                  size="sm"
+                  emphasis="subtle"
+                  aria-label={t`More options`}
+                />
+              }
+            >
+              {isDefined(RightIcon) ? <RightIcon /> : <IconDotsVertical />}
+            </Dropdown.Trigger>
+            <DropdownContent side={dropdownSide} align={dropdownAlign}>
+              {dropdownContent}
+            </DropdownContent>
+          </DropdownRoot>
         </div>
       }
     >

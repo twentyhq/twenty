@@ -1,6 +1,5 @@
-import { type Placement } from '@floating-ui/react';
-import { type MouseEvent, type ReactNode } from 'react';
-import { type MenuItemAccent } from 'twenty-ui/components';
+import { type ComponentProps, type MouseEvent, type ReactNode } from 'react';
+import { type Dropdown, type MenuItemAccent } from 'twenty-ui/components';
 import { type IconComponent } from 'twenty-ui/icon';
 
 export type MenuItemWithOptionDropdownProps = {
@@ -18,6 +17,7 @@ export type MenuItemWithOptionDropdownProps = {
   testId?: string;
   text: ReactNode;
   hasSubMenu?: boolean;
-  dropdownPlacement?: Placement;
+  dropdownSide?: ComponentProps<typeof Dropdown.Content>['side'];
+  dropdownAlign?: ComponentProps<typeof Dropdown.Content>['align'];
   selected?: boolean;
 };

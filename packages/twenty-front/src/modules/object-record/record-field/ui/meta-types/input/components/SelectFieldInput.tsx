@@ -1,19 +1,16 @@
-import { t } from '@lingui/core/macro';
+import { Key } from 'ts-key-enum';
+import { isDefined } from 'twenty-shared/utils';
+import { FieldInputAnchorContext } from '@/object-record/record-field/ui/contexts/FieldInputAnchorContext';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { Dropdown } from 'twenty-ui/components';
 import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
 import { useClearField } from '@/object-record/record-field/ui/hooks/useClearField';
 import { useAddSelectOption } from '@/object-record/record-field/ui/meta-types/hooks/useAddSelectOption';
 import { useCanAddSelectOption } from '@/object-record/record-field/ui/meta-types/hooks/useCanAddSelectOption';
 import { useFilteredSelectOptionsFromRLSPredicates } from '@/object-record/record-field/ui/meta-types/hooks/useFilteredSelectOptionsFromRLSPredicates';
 import { useSelectField } from '@/object-record/record-field/ui/meta-types/hooks/useSelectField';
-import { SELECT_FIELD_INPUT_SELECTABLE_LIST_COMPONENT_INSTANCE_ID } from '@/object-record/record-field/ui/meta-types/input/constants/SelectFieldInputSelectableListComponentInstanceId';
-import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
-import { SelectInput } from '@/ui/field/input/components/SelectInput';
-import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
-import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
-import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useContext, useState } from 'react';
-import { Key } from 'ts-key-enum';
-import { isDefined } from 'twenty-shared/utils';
+import { SelectInput } from '@/ui/input/components/SelectInput';
+import { useContext } from 'react';
 import { type SelectOption } from 'twenty-ui/primitives/input';
 
 export const SelectFieldInput = () => {
@@ -25,7 +22,9 @@ export const SelectFieldInput = () => {
     fieldDefinition.fieldMetadataId,
   );
 
-  const { onCancel, onSubmit } = useContext(FieldInputEventContext);
+  const { onCancel, onSubmit, onTab, onShiftTab } = useContext(
+    FieldInputEventContext,
+  );
 
   const { filteredOptions: selectOptions, canSelectEmpty } =
     useFilteredSelectOptionsFromRLSPredicates({
@@ -35,15 +34,9 @@ export const SelectFieldInput = () => {
       options: fieldDefinition.metadata.options,
     });
 
-  const instanceId = useAvailableComponentInstanceIdOrThrow(
-    RecordFieldComponentInstanceContext,
-  );
+  const { anchorRef, align, sideOffset, alignOffset, collisionPadding } =
+    useContext(FieldInputAnchorContext);
 
-  const [filteredOptions, setFilteredOptions] = useState<SelectOption[]>([]);
-
-  const { resetSelectedItem } = useSelectableList(
-    SELECT_FIELD_INPUT_SELECTABLE_LIST_COMPONENT_INSTANCE_ID,
-  );
   const clearField = useClearField();
 
   const selectedOption = selectOptions.find(
@@ -56,53 +49,60 @@ export const SelectFieldInput = () => {
 
   const handleSubmit = (option: SelectOption) => {
     onSubmit?.({ newValue: option.value });
-
-    resetSelectedItem();
   };
 
-  useHotkeysOnFocusedElement({
-    keys: [Key.Escape],
-    callback: () => {
-      onCancel?.();
-      resetSelectedItem();
-    },
-    focusId: instanceId,
-    dependencies: [onCancel, resetSelectedItem],
-  });
-
-  const fieldLabel = fieldDefinition.label;
-  const optionIds = [
-    t`No ${fieldLabel}`,
-    ...filteredOptions.map((option) => option.value),
-  ];
-
   return (
-    <SelectInput
-      selectableListComponentInstanceId={
-        SELECT_FIELD_INPUT_SELECTABLE_LIST_COMPONENT_INSTANCE_ID
-      }
-      selectableItemIdArray={optionIds}
-      focusId={instanceId}
-      onEnter={(itemId) => {
-        const option = filteredOptions.find(
-          (option) => option.value === itemId,
-        );
-        if (isDefined(option)) {
-          handleSubmit(option);
+    <Dropdown.Root
+      type="picker"
+      open
+      onOpenChange={(open) => {
+        if (!open) {
+          onCancel?.();
         }
       }}
-      onOptionSelected={handleSubmit}
-      options={selectOptions}
-      onCancel={onCancel}
-      defaultOption={selectedOption}
-      onFilterChange={setFilteredOptions}
-      onClear={
-        fieldDefinition.metadata.isNullable && canSelectEmpty
-          ? handleClearField
-          : undefined
-      }
-      clearLabel={fieldDefinition.label}
-      onAddSelectOption={canAddSelectOption ? addSelectOption : undefined}
-    />
+      onInteractOutside={(event) => {
+        if (event.target instanceof HTMLInputElement) {
+          event.preventDefault();
+        }
+      }}
+    >
+      <DropdownContent
+        anchor={anchorRef}
+        align={align}
+        sideOffset={sideOffset}
+        alignOffset={alignOffset}
+        collisionPadding={collisionPadding}
+        aria-label={fieldDefinition.label}
+        finalFocus={false}
+        onKeyDown={(event) => {
+          if (event.key !== Key.Tab) {
+            return;
+          }
+
+          const handleTab = event.shiftKey ? onShiftTab : onTab;
+
+          if (isDefined(handleTab)) {
+            event.preventDefault();
+            handleTab({ newValue: fieldValue });
+            return;
+          }
+
+          onCancel?.();
+        }}
+      >
+        <SelectInput
+          onOptionSelected={handleSubmit}
+          options={selectOptions}
+          defaultOption={selectedOption}
+          onClear={
+            fieldDefinition.metadata.isNullable && canSelectEmpty
+              ? handleClearField
+              : undefined
+          }
+          clearLabel={fieldDefinition.label}
+          onAddSelectOption={canAddSelectOption ? addSelectOption : undefined}
+        />
+      </DropdownContent>
+    </Dropdown.Root>
   );
 };

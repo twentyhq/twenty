@@ -14,8 +14,11 @@ import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentTyp
 import { ArrayFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/ArrayFieldInput';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
-const { FieldInputEventContextProviderWithJestMocks } =
-  getFieldInputEventContextProviderWithJestMocks();
+const {
+  FieldInputEventContextProviderWithJestMocks,
+  handleEscapeMocked,
+  handleClickoutsideMocked,
+} = getFieldInputEventContextProviderWithJestMocks();
 
 const ArrayValueSetterEffect = ({ value }: { value: string[] }) => {
   const { setFieldValue, setDraftValue } = useArrayField();
@@ -142,5 +145,54 @@ export const TrimInput: Story = {
       const tag2Elements = canvas.queryAllByText('tag2');
       expect(tag2Elements).toHaveLength(2);
     });
+  },
+};
+
+export const SearchAndEditItem: Story = {
+  args: {
+    value: ['tag1', 'tag2', 'tag3', 'tag4'],
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+    const searchInput = await canvas.findByPlaceholderText('Search');
+
+    await userEvent.type(searchInput, 'tag3');
+    await waitFor(() => {
+      expect(canvas.queryByText('tag1')).not.toBeInTheDocument();
+    });
+
+    const item = await canvas.findByText('tag3');
+
+    await userEvent.click(item);
+    expect(body.queryByRole('menu')).not.toBeInTheDocument();
+
+    const optionsButton = await canvas.findByRole('button', {
+      name: 'More options',
+    });
+
+    await userEvent.click(optionsButton);
+    expect(optionsButton).toBeVisible();
+    await body.findByRole('menuitem', { name: 'Edit' });
+    await userEvent.keyboard('{Escape}');
+
+    await waitFor(() => {
+      expect(body.queryByRole('menu')).not.toBeInTheDocument();
+    });
+    expect(handleEscapeMocked).not.toHaveBeenCalled();
+    expect(handleClickoutsideMocked).not.toHaveBeenCalled();
+    expect(optionsButton).toHaveFocus();
+
+    await userEvent.click(optionsButton);
+    await userEvent.click(await body.findByRole('menuitem', { name: 'Edit' }));
+
+    const input = await canvas.findByPlaceholderText('Enter value');
+
+    expect(input).toHaveValue('tag3');
+    await userEvent.clear(input);
+    await userEvent.type(input, 'tag3-edited{Enter}');
+
+    expect(await canvas.findByText('tag3-edited')).toBeVisible();
+    expect(handleClickoutsideMocked).not.toHaveBeenCalled();
   },
 };

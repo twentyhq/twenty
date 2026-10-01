@@ -1,11 +1,10 @@
 import { styled } from '@linaria/react';
-import {
-  forwardRef,
-  useRef,
-  type InputHTMLAttributes,
-  type ReactNode,
-} from 'react';
-import { useRegisterInputEvents } from '@/object-record/record-field/ui/meta-types/input/hooks/useRegisterInputEvents';
+import { useRef, type KeyboardEvent, type Ref } from 'react';
+import { type MultiItemBaseInputProps } from '@/object-record/record-field/ui/meta-types/input/types/MultiItemBaseInputProps';
+import { isKeyboardEventComposing } from '@/ui/utilities/hotkey/utils/isKeyboardEventComposing';
+import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
+import { Key } from 'ts-key-enum';
+import { isNonEmptyString } from '@sniptt/guards';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { isDefined } from 'twenty-shared/utils';
 import { useCombinedRefs } from '~/hooks/useCombinedRefs';
@@ -73,104 +72,102 @@ const StyledErrorDiv = styled.div`
   padding: 0 ${themeCssVariables.spacing[2]};
 `;
 
-type HTMLInputProps = InputHTMLAttributes<HTMLInputElement>;
+export const MultiItemBaseInput = ({
+  autoFocus,
+  className,
+  value,
+  placeholder,
+  onChange,
+  onClickOutside,
+  onEnter,
+  onEscape,
+  onShiftTab,
+  onTab,
+  onFocus,
+  onBlur,
+  rightComponent,
+  renderInput,
+  error = '',
+  hasError = false,
+  hasItem,
+  instanceId,
+  ref,
+}: MultiItemBaseInputProps & { ref?: Ref<HTMLInputElement> }) => {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const combinedRef = useCombinedRefs(ref, inputRef);
 
-export type MultiItemBaseInputProps = Pick<
-  HTMLInputProps,
-  'autoFocus' | 'className' | 'value' | 'placeholder' | 'onFocus' | 'onBlur'
-> & {
-  onClickOutside?: () => void;
-  onEnter?: () => void;
-  onEscape?: () => void;
-  onShiftTab?: () => void;
-  onTab?: () => void;
-  rightComponent?: ReactNode;
-  renderInput?: (props: {
-    value: HTMLInputProps['value'];
-    onChange: (value: string) => void;
-    autoFocus: HTMLInputProps['autoFocus'];
-    placeholder: HTMLInputProps['placeholder'];
-    hasError?: boolean;
-  }) => React.ReactNode;
-  error?: string | null;
-  hasError?: boolean;
-  hasItem: boolean;
-  onChange: (value: string) => void;
-  instanceId: string;
+  useListenClickOutside({
+    refs: [inputRef],
+    callback: () => onClickOutside?.(),
+    listenerId: instanceId,
+    enabled: isDefined(onClickOutside),
+  });
+
+  const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+    const hasUnsupportedModifier =
+      event.altKey ||
+      event.ctrlKey ||
+      event.metaKey ||
+      (event.shiftKey && event.key !== Key.Tab);
+
+    if (isKeyboardEventComposing(event.nativeEvent) || hasUnsupportedModifier) {
+      return;
+    }
+
+    const handler =
+      event.key === Key.Enter
+        ? onEnter
+        : event.key === Key.Escape
+          ? onEscape
+          : event.key === Key.Tab
+            ? event.shiftKey
+              ? onShiftTab
+              : onTab
+            : undefined;
+
+    if (!isDefined(handler)) {
+      return;
+    }
+
+    event.preventDefault();
+    event.stopPropagation();
+    handler();
+  };
+
+  return (
+    <>
+      <StyledInputContainer className={className}>
+        {isDefined(renderInput) ? (
+          renderInput({
+            value,
+            onChange,
+            autoFocus,
+            placeholder,
+            hasError,
+            onKeyDown: handleKeyDown,
+            onFocus,
+            onBlur,
+          })
+        ) : (
+          <StyledInput
+            hasError={hasError}
+            autoFocus={autoFocus}
+            value={value}
+            placeholder={placeholder}
+            onChange={(event) => onChange(event.target.value)}
+            ref={combinedRef}
+            withRightComponent={isDefined(rightComponent)}
+            hasItem={hasItem}
+            onFocus={onFocus}
+            onBlur={onBlur}
+            onKeyDown={handleKeyDown}
+          />
+        )}
+        {isDefined(rightComponent) && (
+          <StyledRightContainer>{rightComponent}</StyledRightContainer>
+        )}
+      </StyledInputContainer>
+      {isNonEmptyString(error) && <StyledErrorDiv>{error}</StyledErrorDiv>}
+    </>
+  );
 };
-
-export const MultiItemBaseInput = forwardRef<
-  HTMLInputElement,
-  MultiItemBaseInputProps
->(
-  (
-    {
-      autoFocus,
-      className,
-      value,
-      placeholder,
-      onChange,
-      onClickOutside,
-      onEnter = () => {},
-      onEscape = () => {},
-      onShiftTab,
-      onTab,
-      onFocus,
-      onBlur,
-      rightComponent,
-      renderInput,
-      error = '',
-      hasError = false,
-      hasItem,
-      instanceId,
-    },
-    ref,
-  ) => {
-    const inputRef = useRef<HTMLInputElement>(null);
-    const combinedRef = useCombinedRefs(ref, inputRef);
-
-    useRegisterInputEvents({
-      focusId: instanceId,
-      inputRef,
-      inputValue: value,
-      onEnter,
-      onEscape,
-      onClickOutside,
-      onTab,
-      onShiftTab,
-    });
-
-    return (
-      <>
-        <StyledInputContainer className={className}>
-          {renderInput ? (
-            renderInput({
-              value,
-              onChange,
-              autoFocus,
-              placeholder,
-              hasError,
-            })
-          ) : (
-            <StyledInput
-              hasError={hasError}
-              autoFocus={autoFocus}
-              value={value}
-              placeholder={placeholder}
-              onChange={(event) => onChange(event.target.value)}
-              ref={combinedRef}
-              withRightComponent={isDefined(rightComponent)}
-              hasItem={hasItem}
-              onFocus={onFocus}
-              onBlur={onBlur}
-            />
-          )}
-          {isDefined(rightComponent) && (
-            <StyledRightContainer>{rightComponent}</StyledRightContainer>
-          )}
-        </StyledInputContainer>
-        {error && <StyledErrorDiv>{error}</StyledErrorDiv>}
-      </>
-    );
-  },
-);

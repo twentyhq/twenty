@@ -1,13 +1,14 @@
 import { FormMultiSelectFieldInput } from '@/object-record/record-field/ui/form-types/components/FormMultiSelectFieldInput';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { expect, fn, userEvent, within } from 'storybook/test';
+import { Input } from 'twenty-ui/primitives/input';
+import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
 import { MOCKED_STEP_ID } from '~/testing/mock-data/workflow';
 
 const meta: Meta<typeof FormMultiSelectFieldInput> = {
   title: 'UI/Data/Field/Form/Input/FormMultiSelectFieldInput',
   component: FormMultiSelectFieldInput,
-  args: {},
+  args: { onChange: fn() },
   argTypes: {},
   decorators: [WorkflowStepDecorator],
 };
@@ -133,5 +134,73 @@ export const DisabledWithVariable: Story = {
 
     const searchInputInModal = canvas.queryByPlaceholderText('Search');
     expect(searchInputInModal).not.toBeInTheDocument();
+  },
+};
+
+export const ToggleAndDismiss: Story = {
+  args: Default.args,
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+    const trigger = canvas.getByRole('button', { name: 'Work Policy' });
+
+    await userEvent.click(trigger);
+    const popup = await body.findByRole('dialog', { name: 'Work Policy' });
+    const picker = within(popup);
+
+    await userEvent.type(picker.getByRole('searchbox'), 'Policy 3{Enter}');
+    await waitFor(() => {
+      expect(args.onChange).toHaveBeenCalledWith([
+        'WORK_POLICY_3',
+        'WORK_POLICY_1',
+        'WORK_POLICY_2',
+      ]);
+    });
+    expect(popup).toBeVisible();
+
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() => {
+      expect(body.queryByRole('dialog')).not.toBeInTheDocument();
+    });
+    expect(trigger).toHaveFocus();
+    await userEvent.keyboard('{Enter}');
+    expect(
+      await body.findByRole('dialog', { name: 'Work Policy' }),
+    ).toBeVisible();
+    expect(body.getByRole('searchbox')).toHaveValue('');
+    expect(
+      within(body.getByRole('dialog')).getByRole('button', {
+        name: 'Work Policy 3',
+      }),
+    ).toHaveAttribute('aria-pressed', 'true');
+  },
+};
+
+export const OutsideInputThenTab: Story = {
+  args: Default.args,
+  decorators: [
+    (Story) => (
+      <>
+        <Story />
+        <Input aria-label="Outside input" />
+      </>
+    ),
+  ],
+  play: async ({ canvasElement }) => {
+    const body = within(canvasElement.ownerDocument.body);
+
+    await userEvent.click(body.getByRole('button', { name: 'Work Policy' }));
+    const popup = await body.findByRole('dialog', { name: 'Work Policy' });
+    await userEvent.click(body.getByRole('textbox', { name: 'Outside input' }));
+    expect(popup).toBeVisible();
+    await userEvent.click(within(popup).getByRole('searchbox'));
+    await userEvent.tab();
+
+    await waitFor(() => {
+      expect(body.queryByRole('dialog')).not.toBeInTheDocument();
+      expect(
+        body.getByRole('textbox', { name: 'Outside input' }),
+      ).toHaveFocus();
+    });
   },
 };

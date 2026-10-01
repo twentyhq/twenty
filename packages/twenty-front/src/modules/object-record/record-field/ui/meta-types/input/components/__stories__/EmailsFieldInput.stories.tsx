@@ -17,8 +17,10 @@ import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 
 const updateRecord = fn();
 
-const { FieldInputEventContextProviderWithJestMocks } =
-  getFieldInputEventContextProviderWithJestMocks();
+const {
+  FieldInputEventContextProviderWithJestMocks,
+  handleClickoutsideMocked,
+} = getFieldInputEventContextProviderWithJestMocks();
 
 const EmailValueSetterEffect = ({ value }: { value: FieldEmailsValue }) => {
   const { setFieldValue, setDraftValue } = useEmailsField();
@@ -164,20 +166,53 @@ export const CanNotSetPrimaryLinkAsPrimaryLink: Story = {
     await userEvent.hover(primaryEmail);
 
     const openDropdownButtons = await canvas.findAllByRole('button', {
+      name: 'More options',
       expanded: false,
     });
     await userEvent.click(openDropdownButtons[0]);
 
     const editOption = await within(
       canvasElement.ownerDocument.body,
-    ).findByText('Edit');
+    ).findByRole('menuitem', { name: 'Edit' });
 
     expect(editOption).toBeVisible();
 
     const setPrimaryOption = within(
       canvasElement.ownerDocument.body,
-    ).queryByText('Set as Primary');
+    ).queryByRole('menuitem', { name: 'Set as Primary' });
 
     expect(setPrimaryOption).not.toBeInTheDocument();
+  },
+};
+
+export const InvalidEmailKeepsEditorOpen: Story = {
+  args: {
+    value: {
+      primaryEmail: '',
+      additionalEmails: [],
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const input = await canvas.findByPlaceholderText('Email');
+
+    await userEvent.type(input, 'invalid-email');
+    await userEvent.click(canvasElement.ownerDocument.body);
+
+    expect(handleClickoutsideMocked).not.toHaveBeenCalled();
+    expect(input).toBeVisible();
+    expect(input).toHaveValue('invalid-email');
+
+    await userEvent.clear(input);
+    await userEvent.type(input, 'valid@example.com');
+    await userEvent.click(canvasElement.ownerDocument.body);
+
+    expect(handleClickoutsideMocked).toHaveBeenCalledWith({
+      newValue: {
+        primaryEmail: 'valid@example.com',
+        additionalEmails: [],
+      },
+      event: expect.anything(),
+    });
   },
 };

@@ -1,37 +1,48 @@
 import { FormArrayFieldInput } from '@/object-record/record-field/ui/form-types/components/FormArrayFieldInput';
 import { FormLinksFieldInput } from '@/object-record/record-field/ui/form-types/components/FormLinksFieldInput';
+import { focusStackState } from '@/ui/utilities/focus/states/focusStackState';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { createStore, Provider } from 'jotai';
-import { type ReactNode } from 'react';
+import { type ReactNode, StrictMode } from 'react';
 
 const renderWithProviders = (children: ReactNode) => {
   const store = createStore();
 
-  return render(children, {
+  const renderResult = render(children, {
     wrapper: ({ children: wrappedChildren }) => (
       <I18nProvider i18n={i18n}>
-        <Provider store={store}>{wrappedChildren}</Provider>
+        <Provider store={store}>
+          <StrictMode>{wrappedChildren}</StrictMode>
+        </Provider>
       </I18nProvider>
     ),
   });
+
+  return { ...renderResult, store };
 };
 
 const renderArrayField = ({
   defaultValue = [],
-}: { defaultValue?: string[] } = {}) => {
+  maxItemCount,
+}: { defaultValue?: string[]; maxItemCount?: number } = {}) => {
   const onChange = jest.fn();
-  renderWithProviders(
+  const { store } = renderWithProviders(
     <>
       <button>Before</button>
-      <FormArrayFieldInput defaultValue={defaultValue} onChange={onChange} />
+      <FormArrayFieldInput
+        label="Items"
+        defaultValue={defaultValue}
+        onChange={onChange}
+        maxItemCount={maxItemCount}
+      />
       <button>After</button>
     </>,
   );
 
-  return { onChange };
+  return { onChange, store };
 };
 
 it.each([
@@ -55,7 +66,7 @@ it.each([
   },
 );
 
-it('trims the first item added with Enter', async () => {
+it('trims the first item and opens its panel before mounting under StrictMode', async () => {
   const user = userEvent.setup();
   const { onChange } = renderArrayField();
   const itemInput = screen.getByPlaceholderText('Enter an item');
@@ -66,6 +77,113 @@ it('trims the first item added with Enter', async () => {
 
   expect(onChange).toHaveBeenCalledTimes(1);
   expect(onChange).toHaveBeenCalledWith(['Draft item']);
+  const panel = await screen.findByRole('dialog', { name: 'Items' });
+  expect(panel).toBeVisible();
+  await waitFor(() =>
+    expect(
+      within(panel).getByRole('button', { name: 'More options' }),
+    ).toHaveFocus(),
+  );
+});
+
+it('edits an item through its nested menu while keeping the array panel open', async () => {
+  const user = userEvent.setup();
+  const { onChange } = renderArrayField({ defaultValue: ['First item'] });
+  await user.click(screen.getByRole('button', { name: 'Items' }));
+
+  const panel = await screen.findByRole('dialog', { name: 'Items' });
+  await user.click(within(panel).getByText('First item'));
+
+  expect(screen.queryByRole('menu')).not.toBeInTheDocument();
+
+  await user.click(within(panel).getByRole('button', { name: 'More options' }));
+  await user.click(await screen.findByRole('menuitem', { name: 'Edit' }));
+
+  expect(panel).toBeVisible();
+
+  const input = within(panel).getByRole('textbox');
+  expect(input).toHaveValue('First item');
+  await waitFor(() => expect(input).toHaveFocus());
+  await user.clear(input);
+  await user.type(input, 'Updated item{Enter}');
+
+  expect(onChange).toHaveBeenLastCalledWith(['Updated item']);
+  expect(panel).toBeVisible();
+  expect(within(panel).queryByRole('textbox')).not.toBeInTheDocument();
+});
+
+it('dismisses one nested layer at a time and clears its focus entries', async () => {
+  const user = userEvent.setup();
+  const { store } = renderArrayField({ defaultValue: ['First item'] });
+  await user.click(screen.getByRole('button', { name: 'Items' }));
+
+  const panel = await screen.findByRole('dialog', { name: 'Items' });
+  const menuTrigger = within(panel).getByRole('button', {
+    name: 'More options',
+  });
+  const parentFocusStack = store.get(focusStackState.atom);
+
+  await user.click(menuTrigger);
+  await user.keyboard('{Escape}');
+
+  await waitFor(() =>
+    expect(screen.queryByRole('menu')).not.toBeInTheDocument(),
+  );
+  expect(panel).toBeVisible();
+  expect(store.get(focusStackState.atom)).toEqual(parentFocusStack);
+  await waitFor(() => expect(menuTrigger).toHaveFocus());
+
+  await user.keyboard('{Escape}');
+
+  await waitFor(() =>
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument(),
+  );
+  expect(store.get(focusStackState.atom)).toEqual([]);
+});
+
+it('clears the uncommitted new item when Escape closes its panel', async () => {
+  const user = userEvent.setup();
+  const { onChange } = renderArrayField({ defaultValue: ['First item'] });
+  const trigger = screen.getByRole('button', { name: 'Items' });
+  await user.click(trigger);
+  await user.click(await screen.findByRole('button', { name: 'Add item' }));
+  await user.type(screen.getByRole('textbox'), 'Uncommitted{Escape}');
+
+  await waitFor(() =>
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument(),
+  );
+  expect(onChange).not.toHaveBeenCalled();
+
+  await user.click(trigger);
+  await user.click(await screen.findByRole('button', { name: 'Add item' }));
+
+  expect(screen.getByRole('textbox')).toHaveValue('');
+});
+
+it('enforces the item limit and allows adding again after deleting an item', async () => {
+  const user = userEvent.setup();
+  const { onChange } = renderArrayField({
+    defaultValue: ['First item'],
+    maxItemCount: 2,
+  });
+  await user.click(screen.getByRole('button', { name: 'Items' }));
+  await user.click(await screen.findByRole('button', { name: 'Add item' }));
+  await user.type(screen.getByRole('textbox'), 'Second item{Enter}');
+
+  expect(onChange).toHaveBeenLastCalledWith(['First item', 'Second item']);
+  expect(
+    screen.queryByRole('button', { name: 'Add item' }),
+  ).not.toBeInTheDocument();
+
+  const panel = screen.getByRole('dialog', { name: 'Items' });
+  await user.click(
+    within(panel).getAllByRole('button', { name: 'More options' })[1],
+  );
+  await user.click(await screen.findByRole('menuitem', { name: 'Delete' }));
+
+  expect(onChange).toHaveBeenLastCalledWith(['First item']);
+  expect(panel).toBeVisible();
+  expect(within(panel).getByRole('button', { name: 'Add item' })).toBeVisible();
 });
 
 it('adds the typed first item when focus moves to another element', async () => {
