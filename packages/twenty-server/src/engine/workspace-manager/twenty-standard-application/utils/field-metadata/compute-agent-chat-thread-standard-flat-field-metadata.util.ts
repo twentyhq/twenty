@@ -64,9 +64,7 @@ export const buildAgentChatThreadStandardFlatFieldMetadatas = (
         icon: 'IconId',
         isSystem: true,
         isUIEditable: false,
-        // A workflow run's conversation has no owner: it is read through the
-        // run. The column goes away with the owner contract step
-        // (twentyhq/core-team-issues#2925).
+        // Nullable for workflow run conversations until the owner contract step (twentyhq/core-team-issues#2925)
         isNullable: true,
       },
     }),
@@ -519,9 +517,7 @@ export const buildAgentChatThreadStandardFlatFieldMetadatas = (
         ),
         icon: 'IconUsers',
         isUIEditable: false,
-        // Stays optional for a workflow run's conversation, which is read
-        // through its run rather than owned. Every other thread gets an owner
-        // with the owner contract step (twentyhq/core-team-issues#2925).
+        // Nullable for workflow run conversations until the owner contract step (twentyhq/core-team-issues#2925)
         isNullable: true,
         targetObjectName: 'workspaceMember',
         targetFieldName: 'agentChatThreads',

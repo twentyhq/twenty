@@ -5,8 +5,7 @@ import {
 
 import { AgentMessagePartWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message-part.workspace-entity';
 
-// A parallel mapping for GraphQL DTOs exists in the frontend at:
-// packages/twenty-front/src/modules/ai/utils/mapDBPartToUIMessagePart.ts
+// keep in sync with twenty-front/src/modules/ai/utils/mapDBPartToUIMessagePart.ts
 
 export const mapDBPartToUIMessagePart = (
   part: AgentMessagePartWorkspaceEntity,

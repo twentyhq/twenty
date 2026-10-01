@@ -34,8 +34,7 @@ const buildNestedRelationValidationException = ({
   );
 };
 
-// Junction relation fields also carry ONE_TO_MANY metadata but are rendered
-// through a dedicated junction path, so they are not valid nested hops.
+// Junction fields are also ONE_TO_MANY but render through a dedicated junction path
 const isPlainOneToManyRelationFlatFieldMetadata = (
   field: FlatFieldMetadata,
 ): boolean =>
@@ -43,9 +42,7 @@ const isPlainOneToManyRelationFlatFieldMetadata = (
   field.settings.relationType === RelationType.ONE_TO_MANY &&
   !isNonEmptyString(field.settings.junctionTargetFieldId);
 
-// The first hop can also be many-to-one: the widget then scopes the terminal
-// view directly by the single intermediate record the current record points
-// at, instead of traversing the relation.
+// A many-to-one first hop scopes the terminal view by the single record it points at
 const isPlainRelationFlatFieldMetadata = (field: FlatFieldMetadata): boolean =>
   isFlatFieldMetadataOfType(field, FieldMetadataType.RELATION) &&
   (field.settings.relationType === RelationType.ONE_TO_MANY ||
@@ -87,8 +84,7 @@ export const validateFieldConfigurationNestedRelationOrThrow = ({
       widgetTitle,
     });
 
-  // A nested widget lists the second hop through an embedded view, so any
-  // inline display mode would render the first hop's relation field instead.
+  // Inline display modes would render the first hop's relation field instead of the nested view
   if (fieldDisplayMode !== FieldDisplayMode.TABLE) {
     throw invalidNestedRelation(
       `nestedRelationFieldMetadataId requires fieldDisplayMode "${FieldDisplayMode.TABLE}", got "${fieldDisplayMode}".`,

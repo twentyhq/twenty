@@ -26,8 +26,7 @@ export class BillingSubscriptionItemResolver {
 
   constructor(
     private readonly billingUsageService: BillingUsageService,
-    // Field resolver: the workspace is discovered from the parent item's
-    // subscription row, so it cannot be an input here.
+    // Field resolver: the workspace comes from the parent item's subscription row
     // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(BillingSubscriptionEntity)
     private readonly billingSubscriptionRepository: Repository<BillingSubscriptionEntity>,
@@ -35,9 +34,7 @@ export class BillingSubscriptionItemResolver {
     private readonly billingPriceRepository: Repository<BillingPriceEntity>,
   ) {}
 
-  // What this item is actually charged and grants, which is not what the plan
-  // catalog says once pricing changes: superseded prices keep billing the
-  // workspaces already on them, and are dropped from the catalog once archived.
+  // Not the catalog: superseded prices keep billing existing workspaces and leave the catalog once archived
   @ResolveField(() => Number, { nullable: true })
   async unitAmount(
     @Parent() billingSubscriptionItem: BillingSubscriptionItemEntity,
@@ -70,9 +67,7 @@ export class BillingSubscriptionItemResolver {
     return Number.isFinite(creditAmount) ? creditAmount : null;
   }
 
-  // currentWorkspace loads the item's product with its prices, so the common
-  // path resolves in memory rather than one query per item on app boot. Other
-  // callers load the subscription without relations and still need the read.
+  // currentWorkspace preloads product prices; other callers load the subscription without relations
   private async findItemPrice(
     billingSubscriptionItem: BillingSubscriptionItemEntity,
   ): Promise<BillingPriceEntity | null> {
@@ -90,10 +85,7 @@ export class BillingSubscriptionItemResolver {
     );
   }
 
-  // Derived from the live credit balance instead of read from the stored
-  // column: a persisted flag that every balance-mutating path must remember to
-  // sync drifts as soon as one path misses, and a workspace stuck with a stale
-  // flag gets refused with no banner explaining why.
+  // Derived from the live balance: a stored flag drifts as soon as one balance-mutating path misses it
   @ResolveField(() => Boolean)
   async hasReachedCurrentPeriodCap(
     @Parent() billingSubscriptionItem: BillingSubscriptionItemEntity,
@@ -105,11 +97,7 @@ export class BillingSubscriptionItemResolver {
       return false;
     }
 
-    // This field rides on the currentWorkspace query, which is app boot: a
-    // billing read failure (stale period right after a rollover, ClickHouse or
-    // Redis unavailable) must degrade to "no banner", never fail the query.
-    // Failing open matches the usage gate, whose availability checks also fail
-    // open so telemetry never blocks a paying customer.
+    // Rides on currentWorkspace (app boot): a billing read failure must degrade to no banner, never fail the query
     try {
       const billingSubscription =
         await this.billingSubscriptionRepository.findOne({

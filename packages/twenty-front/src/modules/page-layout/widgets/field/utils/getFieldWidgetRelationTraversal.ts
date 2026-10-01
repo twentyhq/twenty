@@ -26,11 +26,7 @@ const EMPTY_TRAVERSAL: FieldWidgetRelationTraversal = {
   relationTargetFieldMetadataId: null,
 };
 
-// A junction relation lists the records behind the junction, like the card
-// and field display modes do, so the embedded view targets the junction
-// target object and scopes it back through the junction: the target's inverse
-// field, traversed to the junction field pointing at the current record. A
-// morph junction has no single object to list, so it gets no embedded view.
+// Lists the junction's target records, scoped back through the junction; morph junctions get no view.
 const getFieldWidgetJunctionTraversal = (
   junctionConfig: FieldWidgetJunctionConfig,
 ): FieldWidgetRelationTraversal => {
@@ -56,10 +52,7 @@ const getFieldWidgetJunctionTraversal = (
   };
 };
 
-// The widget's embedded view lists records of the last hop's target object,
-// scoped back to the current record through that hop's inverse relation. A
-// nested widget scopes one relation further out, which the seeded view filter
-// expresses as relationTargetFieldMetadataId: the first hop's inverse.
+// A nested widget scopes one relation further out via relationTargetFieldMetadataId (the first hop's inverse).
 export const getFieldWidgetRelationTraversal = ({
   sourceFieldMetadataItem,
   nestedRelationFieldMetadataItem,
@@ -81,11 +74,7 @@ export const getFieldWidgetRelationTraversal = ({
   const lastHopFieldMetadataItem =
     nestedRelationFieldMetadataItem ?? sourceFieldMetadataItem;
 
-  // Only a one-to-many first hop needs the traversal: its intermediate
-  // records carry the join column pointing back at the current record. A
-  // many-to-one first hop points at a single intermediate record, which the
-  // widget supplies as the filter's current record, so the seeded filter
-  // stays a direct one.
+  // A many-to-one first hop is supplied as the filter's current record, so the filter stays direct.
   const shouldTraverseFirstHop =
     isDefined(nestedRelationFieldMetadataItem) &&
     isDefined(sourceFieldMetadataItem) &&

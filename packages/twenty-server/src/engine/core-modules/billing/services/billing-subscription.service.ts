@@ -54,8 +54,7 @@ export class BillingSubscriptionService {
     private readonly billingPriceService: BillingPriceService,
     @InjectWorkspaceScopedRepository(BillingSubscriptionEntity)
     private readonly billingSubscriptionRepository: WorkspaceScopedRepository<BillingSubscriptionEntity>,
-    // Stripe webhooks resolve by stripeCustomerId before any workspaceId
-    // is known. Used only when the criteria has no workspaceId.
+    // Stripe webhooks resolve by stripeCustomerId before any workspaceId is known
     // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(BillingSubscriptionEntity)
     private readonly billingSubscriptionRepositoryUnscoped: Repository<BillingSubscriptionEntity>,
@@ -162,9 +161,7 @@ export class BillingSubscriptionService {
         ? data.object.customer
         : data.object.customer?.id;
 
-    // The Stripe account receives every setup intent, including ones that are
-    // not tied to a workspace subscription. Those can never be recovered, and
-    // failing would only have Stripe redeliver them
+    // Setup intents unrelated to a subscription can't be recovered; failing only makes Stripe redeliver
     if (!isDefined(stripeCustomerId)) {
       this.logger.warn(
         `Ignoring successful setup intent ${data.object.id} without customer`,
@@ -209,9 +206,7 @@ export class BillingSubscriptionService {
         { default_payment_method: stripePaymentMethodId },
       );
 
-    // The persisted status can lag behind Stripe when this event lands before
-    // the subscription update one, so the live status decides whether an
-    // overdue invoice has to be retried
+    // The persisted status can lag Stripe when this event precedes the subscription update
     if (
       [SubscriptionStatus.PastDue, SubscriptionStatus.Unpaid].includes(
         getSubscriptionStatus(stripeSubscription.status),

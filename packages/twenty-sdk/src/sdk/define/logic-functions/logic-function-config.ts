@@ -6,17 +6,13 @@ import {
 import { type LogicFunctionExecutionContext } from 'twenty-shared/logic-function';
 import { type LogicFunctionHttpResponse } from 'twenty-shared/types';
 
-// TPayload defaults to any so handlers that declare a concrete payload type
-// stay assignable; the second parameter is what authors need to discover.
+// TPayload defaults to any so handlers declaring a concrete payload type stay assignable
 export type LogicFunctionHandler<TPayload = any> = (
   payload: TPayload,
   context: LogicFunctionExecutionContext,
 ) => any | Promise<any>;
 
-// A resolver attached to `serverRouteTriggerSettings` runs in the owner workspace and is the single
-// point of authorization: the URL only carries the resolver's universalIdentifier. Returning a
-// dispatch result enqueues the target, returning a `Response` answers the caller synchronously
-// instead, for providers whose webhook URL requires a handshake reply.
+// The resolver is the only authorization point: the URL carries nothing but its universalIdentifier
 export type ServerRouteResolverResult =
   | ServerRouteDispatchResult
   | LogicFunctionHttpResponse;

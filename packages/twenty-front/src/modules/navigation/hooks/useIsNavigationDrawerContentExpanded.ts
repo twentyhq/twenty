@@ -1,10 +1,7 @@
 import { useNavigationDrawerExpanded } from '@/navigation/hooks/useNavigationDrawerExpanded';
 import { useIsMobile } from 'twenty-ui/utilities';
 
-// Whether the navigation content renders its full width rather than the icon
-// rail. Mobile has no rail: the content is either a full-width drawer or the
-// home page, so it always renders expanded there. Use this for the content,
-// and useNavigationDrawerExpanded for the drawer container itself.
+// Mobile has no icon rail, so the content always renders expanded there.
 export const useIsNavigationDrawerContentExpanded = () => {
   const isMobile = useIsMobile();
   const isNavigationDrawerExpanded = useNavigationDrawerExpanded();

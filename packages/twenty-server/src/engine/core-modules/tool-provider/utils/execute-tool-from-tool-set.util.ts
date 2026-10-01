@@ -3,10 +3,7 @@ import { type ToolCategory } from 'twenty-shared/ai';
 
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 
-// Invokes a tool from a factory-generated ToolSet by name. Used by providers
-// whose tools are produced as opaque AI-SDK ToolSet closures (view, metadata,
-// workflow, dashboard, view-field) and which therefore cannot dispatch by
-// executionRef alone.
+// For providers whose tools are opaque AI-SDK ToolSet closures and so cannot dispatch by executionRef.
 export const executeToolFromToolSet = async (
   toolSet: ToolSet,
   toolName: string,
@@ -21,8 +18,7 @@ export const executeToolFromToolSet = async (
     );
   }
 
-  // ToolSet widens execute to a union no argument satisfies; these tools are
-  // dispatched by name and take no per-tool context.
+  // ToolSet widens execute to a union no argument satisfies.
   const execute = tool.execute as ToolExecuteFunction<
     Record<string, unknown>,
     ToolOutput,

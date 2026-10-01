@@ -41,11 +41,7 @@ const buildWrapper =
     </WorkspaceSurfaceContext.Provider>
   );
 
-// Surface isolation is opted into where an id is created, at the provider.
-// These hooks must hand back exactly what they were given on every surface:
-// a side panel may deliberately provide the same id as the main surface to
-// share state with it, and ids are also rendered into DOM anchors that get
-// looked up by the exact string the provider used.
+// A side panel may provide the main surface's id to share its state, so ids must come back unchanged
 describe('useAvailableComponentInstanceIdOrThrow', () => {
   it.each(['main', 'side-panel'] as const)(
     'returns the context id verbatim on a %s surface',

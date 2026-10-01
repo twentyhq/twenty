@@ -100,11 +100,7 @@ export abstract class EmailWorkflowActionBase extends ToolBackedWorkflowAction<W
     return { ...resolvedInput, connectedAccountId };
   }
 
-  // The sender configured on an email step is either a connected account id
-  // (static pick) or a workspace member id (from a resolved workflow variable).
-  // When it is a workspace member id, resolve that member's first connected
-  // account; otherwise return it unchanged so the regular connected account
-  // flow applies. Only meaningful inside workflow email actions.
+  // The sender is a connected account id or, from a workflow variable, a workspace member id
   protected async resolveSenderConnectedAccountId(
     senderId: string,
     workspaceId: string,

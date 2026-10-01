@@ -47,9 +47,7 @@ export class DefaultAiCatalogService implements OnModuleInit {
         this.reportSkippedEntries(catalogPath, skipped);
       }
 
-      // A stored catalog carries the credentials, labels and prices of one
-      // deployment, not the efforts and benchmarks the sync measures, so it
-      // lists the models and the built-in catalog describes the ones it knows.
+      // stored catalogs lack the efforts and benchmarks the sync measures, so inherit them from the built-in one
       this.catalog = inheritCatalogReadings({
         catalog: this.builtInCatalog,
         providers: normalizeAiProviders(providers),
@@ -60,9 +58,7 @@ export class DefaultAiCatalogService implements OnModuleInit {
 
       this.logger.error(`Failed to load AI catalog from storage: ${message}`);
       this.exceptionHandlerService.captureExceptions([error]);
-      // The stored catalog lists exactly the routes this deployment serves,
-      // while the built-in one can name routes it must not, such as ones
-      // outside its data residency, so an unreadable file serves nothing.
+      // the built-in catalog may name routes this deployment must not serve (data residency)
       this.catalog = {};
     }
   }

@@ -85,8 +85,6 @@ describe('Generated client wrapper auth behavior', () => {
   });
 
   it('should act as the application when nobody triggered the run', async () => {
-    // The runtime points TWENTY_APP_ACCESS_TOKEN at the application in a cron
-    // schedule or install hook, so the default client keeps working there.
     process.env.TWENTY_APP_ACCESS_TOKEN = 'application-token';
     process.env.TWENTY_APP_APPLICATION_ACCESS_TOKEN = 'application-token';
 

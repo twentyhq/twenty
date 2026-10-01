@@ -139,9 +139,7 @@ describe('Custom object renaming', () => {
       const relationFieldMetadataId = relationFieldMetadata?.id;
 
       expect(relationFieldMetadataId).not.toBeUndefined();
-      // Reverse system relation fields carry the engine-derived label
-      // (capitalized source object nameSingular), except attachment targets
-      // which share their morph group label
+      // Attachment targets share their morph group label instead of the engine-derived one.
       expect(relationFieldMetadata?.label).toBe(
         relation === 'attachment'
           ? 'Attached to'
@@ -187,9 +185,6 @@ describe('Custom object renaming', () => {
     expect(data.updateOneObject.labelSingular).toBe(HOUSE_LABEL_SINGULAR);
     expect(data.updateOneObject.labelPlural).toBe(HOUSE_LABEL_PLURAL);
 
-    // The reverse morph fields on the standard objects must be renamed in place
-    // (name and engine-derived label follow the new object name) while keeping
-    // their universal identifier stable, so the rename stays lossless.
     const expectedReverseFieldName = `target${capitalize(HOUSE_NAME_SINGULAR)}`;
     const expectedReverseFieldLabel = capitalize(HOUSE_NAME_SINGULAR);
     const fields = await makeMetadataApiRequest(fieldsGraphqlOperation);
@@ -256,9 +251,7 @@ describe('Custom object renaming', () => {
     const relationFieldMetadataId =
       timelineActivityRelation.relationFieldMetadataId;
 
-    // morphRelationsUpdatePayload is not an editable property, so it must be
-    // rejected explicitly for engine-owned fields instead of silently creating
-    // relation fields and indexes on them
+    // Must be rejected for engine-owned fields rather than silently create relation fields and indexes.
     const { errors } = await updateOneFieldMetadata({
       expectToFail: true,
       input: {

@@ -28,9 +28,7 @@ const readCookieValue = (
   return undefined;
 };
 
-// The plain name is only read on deployments that cannot set a __Host- cookie
-// at all (plain http). Accepting it on an https deployment would let a
-// sibling subdomain toss a session in and fixate the visitor.
+// Plain name only on plain http: on https a sibling subdomain could plant one and fixate the visitor.
 export const extractUserSessionTokenFromRequestCookie = (
   request: Request,
   {

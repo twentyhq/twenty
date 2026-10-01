@@ -10,9 +10,7 @@ export const computeStandardPersonViewFilters = (
   args: Omit<CreateStandardViewFilterArgs<'person'>, 'context'>,
 ): Record<string, FlatViewFilter> => {
   return {
-    // Scopes the embedded members table to the people whose list membership
-    // points at the list record page displaying it, the way the layout editor
-    // seeds junction relation table widgets.
+    // Seeded the way the layout editor seeds junction relation table widgets
     messageListRecordPageMembersListMembershipsListIsCurrentRecord:
       createStandardViewFilterFlatMetadata({
         ...args,

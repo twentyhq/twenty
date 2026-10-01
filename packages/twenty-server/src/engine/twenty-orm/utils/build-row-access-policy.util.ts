@@ -22,8 +22,7 @@ export const buildRowAccessPolicy = ({
   }
 
   const context = { subject, environment };
-  // Inherited write access must respect the parent's writability as well as
-  // its grants; otherwise a child can become writable through a SYSTEM parent.
+  // Otherwise a child could become writable through a SYSTEM parent
   if (
     target.operationType !== 'select' &&
     !isMetadataWritePermitted({

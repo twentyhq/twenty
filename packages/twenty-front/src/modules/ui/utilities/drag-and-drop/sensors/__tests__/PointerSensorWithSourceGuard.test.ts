@@ -80,8 +80,7 @@ describe('PointerSensorWithSourceGuard', () => {
 
     const sensor = new TestablePointerSensorWithSourceGuard(manager);
 
-    // An already-aborted controller makes the base handleStart return before
-    // pointer capture, which jsdom does not implement.
+    // An aborted controller returns before pointer capture, which jsdom does not implement
     const abortedController = new AbortController();
     abortedController.abort();
     const startSpy = jest

@@ -30,9 +30,7 @@ export class SecretEncryptionService {
     private readonly environmentConfigDriver: EnvironmentConfigDriver,
   ) {}
 
-  // Legacy CTR pair (`encrypt` / `decrypt`) is intentionally left unbranded.
-  // Its callers predate the enc:v2 envelope and never went through the
-  // branded API; retrofitting them is tracked as a separate follow-up.
+  // TODO: migrate legacy CTR callers to the branded enc:v2 envelope.
   public encrypt(value: string): string {
     if (!isDefined(value)) {
       return value;
@@ -45,9 +43,7 @@ export class SecretEncryptionService {
     return encryptAesCtr({ plaintext: value, rawKey: primary });
   }
 
-  // Legacy CTR has no integrity tag, so a wrong key produces an arbitrary
-  // byte sequence rather than throwing. Rotation of these rows requires
-  // migrating the consumer to the versioned envelope first.
+  // CTR has no integrity tag, so a wrong key yields garbage instead of throwing.
   public decrypt(value: string): string {
     if (!isDefined(value)) {
       return value;
@@ -75,8 +71,6 @@ export class SecretEncryptionService {
   }
 
   public maskDecryptedValue(decryptedValue: string, mask: string): string {
-    // Visible-char count caps at 5 and at one-tenth of the secret length, so
-    // short secrets reveal nothing and longer secrets reveal a stable prefix.
     const visibleCharsCount = Math.min(
       5,
       Math.floor(decryptedValue.length / 10),

@@ -21,8 +21,7 @@ const StyledContainer = styled.div`
 
 type CampaignBodyFieldProps = {
   campaign: MessageCampaign;
-  // Lets the composer follow the canvas: its width is a per-campaign design
-  // setting, and the envelope block above lines up with it.
+  // The canvas width is a per-campaign design setting the envelope block lines up with.
   onEditorReady?: (editor: Editor | null) => void;
 };
 

@@ -6,10 +6,7 @@ import { EmailingDomainStatus } from 'src/engine/core-modules/emailing-domain/dr
 
 const SENDING_RECORD_LABELS = ['SPF', 'DKIM'];
 
-// A domain with receiving enabled reports partially_verified while its MX
-// record is pending even though sending is fully set up, so outbound
-// readiness is derived from the sending records rather than the aggregate
-// domain status.
+// Receiving-enabled domains report partially_verified while MX is pending, so readiness comes from the sending records.
 export const mapResendSendingStatus = (
   domain: ResendDomain,
 ): EmailingDomainStatus => {

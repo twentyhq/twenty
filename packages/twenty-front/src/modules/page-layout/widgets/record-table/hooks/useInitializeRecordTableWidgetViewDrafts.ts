@@ -10,12 +10,7 @@ import { viewsSelector } from '@/views/states/selectors/viewsSelector';
 import { useStore } from 'jotai';
 import { useEffect } from 'react';
 
-// Seeds the editable view snapshot of every widget backed by a persisted
-// view as soon as the layout is in edit mode, and again whenever a widget
-// gains a view (e.g. a field widget configured to table display) or views
-// finish loading. The draft is the write target of all widget view settings,
-// so it must exist before any of them run — including the ones in the side
-// panel, which mounts outside this layout tree and cannot seed it itself.
+// The draft is every widget view setting's write target, including the side panel's, which can't seed it.
 export const useInitializeRecordTableWidgetViewDrafts = () => {
   const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
 
@@ -52,8 +47,7 @@ export const useInitializeRecordTableWidgetViewDrafts = () => {
       return;
     }
 
-    // Spread order lets entries added elsewhere in the meantime win over the
-    // freshly built snapshots.
+    // Entries added elsewhere meanwhile win over the fresh snapshots.
     store.set(recordTableWidgetViewDraftState, (previousSnapshots) => ({
       ...missingSnapshotsByWidgetId,
       ...previousSnapshots,

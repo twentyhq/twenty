@@ -68,9 +68,7 @@ export class AdminPanelBillingService {
     clientOperationId: string;
     grantedByUserId: string;
   }): Promise<AdminPanelWorkspaceCreditGrantDTO> {
-    // Enforced server side because the mutation is reachable directly, not only
-    // through the admin panel's picker. See ADMIN_GRANTABLE_CREDIT_GRANT_TYPES
-    // for why these two are excluded.
+    // The mutation is reachable directly, not only through the admin panel picker
     if (!ADMIN_GRANTABLE_CREDIT_GRANT_TYPES.includes(type)) {
       throw new BillingException(
         `Cannot grant credits of type ${type} by hand`,
@@ -86,8 +84,7 @@ export class AdminPanelBillingService {
       'BILLING_MAX_ADMIN_CREDIT_GRANT_MICRO',
     );
 
-    // The field is micro-denominated, so a slipped decimal is four orders of
-    // magnitude. Bound what a single grant can hand out.
+    // A slipped decimal on a micro-denominated amount is four orders of magnitude
     if (amountMicro > maxAmountMicro) {
       throw new BillingException(
         `Cannot grant ${toDisplayCredits(amountMicro)} credits at once, the maximum is ${toDisplayCredits(maxAmountMicro)}`,
@@ -107,9 +104,6 @@ export class AdminPanelBillingService {
       grantedByUserId,
     });
 
-    // Answered with the grant either way, whether this attempt wrote it or a
-    // previous one did, so nothing is left but the instance that has no ledger
-    // to write to at all.
     if (!isDefined(grant)) {
       throw new BillingException(
         `Could not grant credits to workspace ${workspaceId}, billing is disabled on this instance`,
@@ -183,8 +177,7 @@ export class AdminPanelBillingService {
       this.getWorkspaceCreditGrants(workspaceId),
     ]);
 
-    // A workspace can hold granted credits before it has a customer or a
-    // subscription, and the admin panel still has to show and manage them.
+    // Granted credits can exist before a customer or subscription does
     if (!customer && !subscription && creditGrants.length === 0) {
       return null;
     }
@@ -307,7 +300,6 @@ export class AdminPanelBillingService {
   }
 }
 
-// Namespaced so an operation id can never collide with the carry-forward or
-// backfill keys, which live in the same unique index.
+// Namespaced to never collide with carry-forward or backfill keys in the same unique index
 const buildAdminGrantIdempotencyKey = (clientOperationId: string): string =>
   `admin-grant:${clientOperationId}`;

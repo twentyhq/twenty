@@ -63,8 +63,7 @@ export const FilesFieldInput = () => {
       if (isDefined(nextValue)) {
         setDraftValue(nextValue);
 
-        // This input renders nothing without files, so it has to be closed once
-        // the last one is gone, the value itself being persisted by onSubmit
+        // This input renders nothing without files; onSubmit has already persisted the value.
         if (nextValue.length === 0) {
           onEnter?.({ newValue: nextValue, skipPersist: true });
         }

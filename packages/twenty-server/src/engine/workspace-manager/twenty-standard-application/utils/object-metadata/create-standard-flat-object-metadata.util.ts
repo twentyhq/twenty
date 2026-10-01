@@ -53,9 +53,7 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         isAuditLogged: false,
         isUIEditable: true,
         isUICreatable: false,
-        // A conversation outside a workflow run has no parent and is read only
-        // through its own grants, as a PRIVATE record is. One held by a run's
-        // agent step is read by whoever reads the run.
+        // No parent outside a workflow run, so it reads through its own grants like a PRIVATE record
         readability: MetadataReadability.INHERITED,
         readabilityParentFieldMetadataNames: ['workflowRun'],
         writability: MetadataWritability.OPEN,
@@ -100,10 +98,7 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         isAuditLogged: false,
         isUIEditable: false,
         isUICreatable: false,
-        // A link is exactly as private as the conversation it files, as a
-        // messageThreadTarget is for its thread, so it inherits from the thread
-        // rather than from the record. It stays writable because merging
-        // records re-points its legs under the caller, as for noteTarget.
+        // Inherits from the thread, not the record, so a link stays as private as the conversation
         readability: MetadataReadability.INHERITED,
         readabilityParentFieldMetadataNames: ['thread'],
         labelIdentifierFieldMetadataName: 'id',
@@ -1647,9 +1642,7 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         isSystem: true,
         isAuditLogged: false,
         isUICreatable: false,
-        // A run carries its workflow's inputs and outputs, so it is exactly as
-        // private as its core workflow; WorkflowRunRecordShareService writes
-        // the grants.
+        // As private as its core workflow; WorkflowRunRecordShareService writes the grants
         readability: MetadataReadability.PRIVATE,
         labelIdentifierFieldMetadataName: 'name',
       },

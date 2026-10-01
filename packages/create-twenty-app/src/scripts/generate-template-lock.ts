@@ -1,17 +1,5 @@
-// Generates the yarn.lock shipped inside the scaffold template.
-//
-// Without it, a generated project resolves every dependency from scratch on its
-// first install, which fails outright when the user's package manager enforces a
-// minimum release age (Yarn's npmMinimalAgeGate, pnpm's minimumReleaseAge, npm's
-// min-release-age): the first-party packages are only minutes old at that point,
-// and an exact pin leaves the resolver no older candidate to fall back to. A
-// lockfile removes the resolution step entirely, so the gate never applies — and
-// unlike loosening the pins or disabling the gate, it leaves the user's policy
-// in force for every dependency they add later.
-//
-// Run this AFTER `nx build create-twenty-app` and AFTER the libraries are live on
-// the registry, then publish; the publish workflow in twentyhq/twenty-infra runs
-// it in that order.
+// Ships a yarn.lock in the template so the first install skips resolution, which minimum-release-age gates
+// reject for minutes-old first-party packages. Run after `nx build create-twenty-app` and once the libraries are live.
 import { execFileSync } from 'child_process';
 import * as fs from 'fs-extra';
 import { tmpdir } from 'os';
@@ -34,9 +22,7 @@ const DEFAULT_OUTPUT_PATH = join(
 );
 const PUBLIC_REGISTRY = 'https://registry.npmjs.org';
 
-// Matches the monorepo's own npmMinimalAgeGate. Stated explicitly because nothing
-// is inherited here: the lockfile is resolved in a temp directory outside the
-// repo, with YARN_* stripped, so the effective gate would otherwise be zero.
+// Stated explicitly: resolution runs outside the repo with YARN_* stripped, so no gate is inherited.
 const RELEASE_MINIMAL_AGE_GATE = '3d';
 
 type Options = {
@@ -62,9 +48,7 @@ const parseOptions = (argv: string[]): Options => {
   };
 };
 
-// The generated project runs the Yarn its package.json pins. Generating the
-// lockfile with a different Yarn can produce a lockfile that release pins reject
-// with YN0028 on the user's first CI run, so refuse to guess.
+// A lockfile generated with another Yarn can be rejected with YN0028 by the project's pinned Yarn.
 const resolveYarnBinary = (templatePackageManager: string) => {
   const yarnrc = fs.readFileSync(join(REPO_ROOT, '.yarnrc.yml'), 'utf8');
   const yarnPath = /^yarnPath:\s*(.+)$/m.exec(yarnrc)?.[1]?.trim();
@@ -110,17 +94,11 @@ const buildYarnrc = ({
     'enableTelemetry: false',
     'enableScripts: false',
     `npmRegistryServer: "${registry}"`,
-    // Yarn refuses plain HTTP unless the host is whitelisted by name, so take it
-    // from the registry rather than assuming localhost.
+    // Yarn refuses plain HTTP unless the host is whitelisted by name.
     ...(protocol === 'http:'
       ? ['unsafeHttpWhitelist:', `  - ${hostname}`]
       : []),
-    // Scaffolded projects install this lockfile without re-resolving, which is
-    // exactly what lets them satisfy a consumer's age gate -- and equally what
-    // stops that gate from ever inspecting these versions. This resolution is
-    // therefore the only point at which an age gate applies to the tree a
-    // generated project receives, so hold one here, and waive it for nothing
-    // beyond the exact first-party versions this release is publishing.
+    // The shipped lockfile bypasses consumers' age gates, so this resolution is the only place one applies.
     `npmMinimalAgeGate: ${RELEASE_MINIMAL_AGE_GATE}`,
     'npmPreapprovedPackages:',
     ...TEMPLATE_FIRST_PARTY_PACKAGES.map((name) => `  - "${name}@${version}"`),
@@ -137,8 +115,7 @@ const assertResolvedWithIntegrity = ({
   packageName: string;
   version: string;
 }) => {
-  // Entry keys merge when several descriptors share one resolution
-  // ("pkg@npm:1.0.0, pkg@npm:^1.0.0":), so match the resolution line instead.
+  // Entry keys merge when descriptors share a resolution, so match the resolution line instead.
   const resolution = `resolution: "${packageName}@npm:${version}"`;
   const resolutionIndex = lockfile.indexOf(resolution);
 
@@ -161,9 +138,7 @@ const assertResolvedWithIntegrity = ({
   }
 };
 
-// A registry serving tarballs from non-conventional URLs makes Yarn pin each
-// entry to that exact host via __archiveUrl, which would not resolve for anyone
-// else. Only the public registry produces a lockfile we can ship.
+// Non-conventional tarball URLs make Yarn pin entries to that host via __archiveUrl, unresolvable for others.
 const assertNoRegistryPinning = ({
   lockfile,
   registry,
@@ -172,9 +147,7 @@ const assertNoRegistryPinning = ({
   registry: string;
 }) => {
   if (registry !== PUBLIC_REGISTRY) {
-    // The release workflow always regenerates against the public registry right
-    // before publishing, so a lockfile built here is only ever local scaffolding.
-    // Say so out loud rather than passing silently.
+    // Only warn: the release workflow always regenerates against the public registry before publishing.
     console.warn(
       `Generated against ${registry}, not ${PUBLIC_REGISTRY}: this lockfile is for local testing and must not be published.`,
     );
@@ -209,8 +182,7 @@ const generateTemplateLock = async ({
       buildYarnrc({ registry, version }),
     );
 
-    // YARN_* variables outrank the .yarnrc.yml written above, so a registry or
-    // gate exported by the surrounding CI job would silently change the result.
+    // YARN_* variables outrank .yarnrc.yml, so a CI job's exports would change the result.
     const environment = Object.fromEntries(
       Object.entries(process.env).filter(([key]) => !key.startsWith('YARN_')),
     );

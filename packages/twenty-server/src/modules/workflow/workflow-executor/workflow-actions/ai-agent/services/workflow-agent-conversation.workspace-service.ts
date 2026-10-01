@@ -38,11 +38,7 @@ export type RecordedConversation = {
   isAwaitingAnswer: boolean;
 };
 
-// A conversation is recorded only for an execution of a step that waits on a
-// person, a form or an agent that asks, and continued when that execution
-// resumes. Each gets its own, so a loop iteration or a retry never reads or
-// continues another one's messages. The conversation has no owner: it belongs
-// to the run and is readable by whoever can read the run.
+// One conversation per execution, so a loop iteration or retry never reads or continues another's messages
 @Injectable()
 export class WorkflowAgentConversationWorkspaceService {
   constructor(
@@ -105,8 +101,7 @@ export class WorkflowAgentConversationWorkspaceService {
     return { threadId, isAwaitingAnswer };
   }
 
-  // A form step asks for its fields the way an agent would, so it is answered
-  // like any call that waits on a person. The call is named after the step.
+  // A form step is answered like any call that waits on a person
   async recordFormRequest({
     workspaceId,
     workflowRunId,
@@ -153,8 +148,7 @@ export class WorkflowAgentConversationWorkspaceService {
     );
   }
 
-  // Continues a conversation whose question has been answered: the answer is
-  // already recorded as the last message, so only the agent's reply is added.
+  // The answer is already the last message, so only the agent's reply is added
   async recordContinuation({
     workspaceId,
     threadId,
@@ -206,9 +200,7 @@ export class WorkflowAgentConversationWorkspaceService {
     return convertToModelMessages(uiMessages);
   }
 
-  // A paused reply marks its conversation as waiting on its calls, all of
-  // which have to be answerable: one call nobody can answer would keep the
-  // step waiting forever on the others, so the step fails instead.
+  // One unanswerable call would keep the step waiting forever, so the step fails instead
   private async recordReply({
     workspaceId,
     threadId,

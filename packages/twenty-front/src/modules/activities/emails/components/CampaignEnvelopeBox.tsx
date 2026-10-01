@@ -4,8 +4,7 @@ import { themeCssVariables } from 'twenty-ui/theme';
 
 import { ComposerFieldRow } from '@/activities/components/ComposerFieldRow';
 
-// Widest label the campaign rows use ("Unsubscribe topic"), so every value
-// starts on the same column.
+// Widest campaign row label ("Unsubscribe topic").
 const CAMPAIGN_ENVELOPE_LABEL_MIN_WIDTH = '116px';
 
 const StyledContainer = styled.div`
@@ -17,8 +16,6 @@ const StyledContainer = styled.div`
   width: 100%;
 `;
 
-// Tracks the body page below rather than the window, so the two read as one
-// centred column.
 const StyledColumn = styled.div<{ $width: string }>`
   display: flex;
   flex-direction: column;
@@ -45,8 +42,6 @@ type CampaignEnvelopeBoxProps = {
   onBlur?: () => void;
 };
 
-// The shell both campaign headers share, so the draft and the sent view line up
-// on the same column and cannot drift apart.
 export const CampaignEnvelopeBox = ({
   width,
   children,
@@ -61,8 +56,6 @@ export const CampaignEnvelopeBox = ({
   </StyledContainer>
 );
 
-// Every envelope row shares one label width, so the draft and the sent view
-// cannot line their values up differently.
 type CampaignEnvelopeRowProps = {
   label: string;
   children: ReactNode;

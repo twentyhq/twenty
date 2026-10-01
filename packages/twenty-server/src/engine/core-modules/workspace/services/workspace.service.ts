@@ -111,10 +111,7 @@ import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-
 import { DEFAULT_FEATURE_FLAGS } from 'src/engine/workspace-manager/workspace-migration/constant/default-feature-flags';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-// A workspace stuck in ONGOING_CREATION for longer than this is treated as a
-// crashed activation (the process died before the catch block could reset it to
-// PENDING_CREATION) and may be retried. It is far longer than a real activation
-// takes, so a genuinely in-progress activation is never reclaimed.
+// far longer than a real activation, so an older ONGOING_CREATION is a crashed attempt that may be reclaimed
 const WORKSPACE_ACTIVATION_STALE_LOCK_TIMEOUT_MS = 5 * 60 * 1000;
 const WORKSPACE_APPLICATION_UNINSTALL_RETRY_LIMIT = 3;
 
@@ -195,9 +192,7 @@ export class WorkspaceService {
     private readonly applicationUninstallService: ApplicationUninstallService,
   ) {}
 
-  // Pins are stored as given, so a stale or mistyped id must be refused here
-  // rather than silently falling back to the tier default at run time. A pin
-  // that is already stored is left alone so the others stay editable.
+  // reject unknown new pins now rather than silently falling back at run time; stored pins stay so the form remains editable
   private validateAiModelIdByTier({
     aiModelIdByTier,
     storedAiModelIdByTier,
@@ -247,10 +242,7 @@ export class WorkspaceService {
     }
   }
 
-  // Same contract as a tier pin: stored as given, so an id that names nothing
-  // this instance can run must be refused here rather than stored and silently
-  // ignored at run time. A pin already stored is left alone so the rest of the
-  // form stays editable after an administrator withdraws the model.
+  // same contract as validateAiModelIdByTier
   private validateAiEvaluationModelId({
     aiEvaluationModelId,
     storedAiEvaluationModelId,
@@ -484,13 +476,7 @@ export class WorkspaceService {
   }
 
   async activateWorkspace(user: AuthContextUser, workspace: WorkspaceEntity) {
-    // Acquire the activation lock by atomically moving the workspace to
-    // ONGOING_CREATION. First try the normal case (PENDING_CREATION). If nothing
-    // matches, the workspace may be stuck in ONGOING_CREATION from a prior
-    // attempt that was killed before the catch block could reset it — reclaim it,
-    // but only once the lock is stale, so a genuinely concurrent activation is
-    // never interrupted. Postgres row locking serializes concurrent reclaims, and
-    // repository.update bumps updatedAt, so a reclaimed lock is immediately fresh.
+    // update bumps updatedAt, so a reclaimed stale lock is immediately fresh again
     let activationLockResult = await this.workspaceRepository.update(
       {
         id: workspace.id,
@@ -513,10 +499,7 @@ export class WorkspaceService {
     }
 
     if ((activationLockResult.affected ?? 0) === 0) {
-      // Activation is idempotent for the terminal state: if a prior attempt
-      // already completed (e.g. the client lost the response and retried),
-      // return the active workspace instead of failing. Otherwise another
-      // activation is genuinely in progress and must not be interrupted.
+      // a client retrying after a lost response gets the already-active workspace
       const existingWorkspace = await this.workspaceRepository.findOneBy({
         id: workspace.id,
       });
@@ -919,8 +902,7 @@ export class WorkspaceService {
     }
   }
 
-  // FieldMetadataEntity has a self-referencing FK (relationTargetFieldMetadataId)
-  // Related fields must be deleted together to avoid constraint violations
+  // relationTargetFieldMetadataId is a self-referencing FK, so related fields must share a chunk
   private async getFieldMetadataIdChunks(
     workspaceId: string,
   ): Promise<string[][]> {

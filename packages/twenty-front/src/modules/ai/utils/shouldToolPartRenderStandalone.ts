@@ -10,13 +10,11 @@ export const shouldToolPartRenderStandalone = (
     return false;
   }
 
-  // A record widget draws what the call returned, so it has nothing to show
-  // before the call has run.
+  // A record widget draws the call's output.
   if (widget.kind === 'builtin') {
     return toolPart.state === 'output-available';
   }
 
-  // An app widget owns the whole call, approval and failure included, so it
-  // mounts as soon as the input it renders has settled.
+  // An app widget owns the whole call, approval and failure included.
   return toolPart.state !== 'input-streaming';
 };

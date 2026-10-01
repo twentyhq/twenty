@@ -58,8 +58,7 @@ type MultiItemFieldInputProps<T> = {
   maxItemCount?: number;
 };
 
-// Todo: the API of this component does not look healthy: we have renderInput, renderItem, formatInput, ...
-// This should be refactored with a hook instead that exposes those events in a context around this component and its children.
+// TODO: replace renderInput/renderItem/formatInput with a hook exposing them through context.
 export const MultiItemFieldInput = <T,>({
   items,
   onChange,

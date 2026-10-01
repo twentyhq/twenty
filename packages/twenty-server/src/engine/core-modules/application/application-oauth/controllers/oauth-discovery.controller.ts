@@ -24,10 +24,7 @@ export class OAuthDiscoveryController {
   @UseGuards(PublicEndpointGuard, NoPermissionGuard)
   async getAuthorizationServerMetadata(@Req() request: Request) {
     const issuer = getRequestBaseUrl(request);
-    // /authorize is served by the frontend; SERVER_URL (API-only) has no such
-    // route, so we route the client to the default frontend base URL in that
-    // case. All other hosts (app.twenty.com, workspace subdomains, custom
-    // domains) serve both frontend and API.
+    // The API-only SERVER_URL has no frontend /authorize route
     const authorizeBase = this.isApiHost(request)
       ? cleanServerUrl(this.domainServerConfigService.getBaseUrl().toString())
       : issuer;
@@ -59,19 +56,13 @@ export class OAuthDiscoveryController {
       token_endpoint_auth_methods_supported: ['client_secret_post', 'none'],
       revocation_endpoint_auth_methods_supported: ['client_secret_post'],
       introspection_endpoint_auth_methods_supported: ['client_secret_post'],
-      // RFC 9207: advertise `iss` in authorization responses to defend against
-      // OAuth mix-up attacks. Required by OAuth 2.1 security BCP.
+      // RFC 9207: advertise `iss` to defend against OAuth mix-up attacks
       authorization_response_iss_parameter_supported: true,
       cli_client_id: cliRegistration.oAuthClientId,
     };
   }
 
-  // RFC 9728 §3.2: the `resource` value MUST equal the resource identifier
-  // into which the well-known path suffix was inserted. So the root form maps
-  // to the origin as-a-resource, and the /mcp-suffixed form maps to
-  // <origin>/mcp. Strict clients probing the path-aware variant will reject
-  // mismatching metadata.
-
+  // RFC 9728 §3.2: `resource` must equal the identifier the well-known suffix was inserted into
   @Get('oauth-protected-resource')
   @UseGuards(PublicEndpointGuard, NoPermissionGuard)
   getProtectedResourceMetadataRoot(@Req() request: Request) {

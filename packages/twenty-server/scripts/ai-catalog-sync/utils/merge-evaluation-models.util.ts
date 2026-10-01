@@ -1,13 +1,6 @@
 import { type GeneratedCatalog } from '../types/generated-catalog.type';
 
-// models.dev describes language models only — it has no notion of an evaluation
-// model, and the sync filters on tool calling besides — so these are
-// hand-maintained and folded into the catalog here, before anything is written
-// or projected.
-//
-// Merged per model rather than per vendor: a vendor that ships both kinds keeps
-// the language models the sync just fetched, which is what lets an evaluation
-// model from an existing provider need nothing but an entry in the source file.
+// models.dev has no evaluation models; merged per model so a vendor keeps the language models the sync fetched
 export const mergeEvaluationModels = ({
   catalog,
   evaluationModels,

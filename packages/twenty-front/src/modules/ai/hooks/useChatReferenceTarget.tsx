@@ -218,8 +218,7 @@ export const useChatReferenceTarget = (
             recordId: reference.recordId,
             objectNameSingular: reference.objectNameSingular,
           });
-      // The application settings page is not routed on the side panel, so
-      // its chip keeps navigating the way a plain link does.
+      // Application settings aren't routed in the side panel.
       case 'app':
         return undefined;
       default:

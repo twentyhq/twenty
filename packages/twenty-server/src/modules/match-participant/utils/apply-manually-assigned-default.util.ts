@@ -1,8 +1,4 @@
-// API writes to target junctions are user attachments. The field default
-// covers plain inserts, but an upsert that matches an existing row (an
-// automatic row, or an exclusion tombstone being restored) only applies the
-// caller's input, so the manual provenance has to ride the input itself or
-// reconciliation will reap the row as obsolete automatic state.
+// An upsert matching an existing row only applies the input, so manual provenance must ride it or reconciliation reaps the row
 export const applyManuallyAssignedDefault = <
   TRecord extends { isManuallyAssigned?: boolean; [key: string]: unknown },
 >(

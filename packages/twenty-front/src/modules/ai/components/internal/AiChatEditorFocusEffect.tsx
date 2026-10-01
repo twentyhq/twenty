@@ -17,9 +17,7 @@ export const AiChatEditorFocusEffect = ({
   );
 
   useLayoutEffect(() => {
-    // An editor destroyed while its replacement mounts is still defined here,
-    // and reading its commands throws. Leaving the request set hands the focus
-    // to the live editor instead.
+    // A destroyed editor is still defined while its replacement mounts; keeping the request hands focus to the live one.
     if (!shouldFocusChatEditor || !isDefined(editor) || editor.isDestroyed) {
       return;
     }

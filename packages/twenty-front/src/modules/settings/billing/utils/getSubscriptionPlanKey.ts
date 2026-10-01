@@ -15,9 +15,7 @@ type SubscriptionWithPlan = {
     | null;
 };
 
-// The product the subscription sits on, not subscription.metadata.plan: that
-// copy is written at checkout and by immediate plan switches, and is never
-// updated when a scheduled switch takes effect.
+// Not subscription.metadata.plan: scheduled plan switches never update it.
 export const getSubscriptionPlanKey = (
   billingSubscription: SubscriptionWithPlan | null | undefined,
 ): BillingPlanKey | undefined =>

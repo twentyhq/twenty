@@ -129,8 +129,7 @@ export type UploadedFrontComponentFile = {
 };
 
 export type UploadFileParams = {
-  // Uploads target a FILES field so the file can be attached to a record;
-  // anything else would strand it as a temporary orphan.
+  // Only FILES fields attach to a record; anything else would strand the file as a temporary orphan
   fieldMetadataId: string;
   fileName?: string;
 };

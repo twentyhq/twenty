@@ -8,10 +8,7 @@ const ROLLING_SUFFIX = /-(latest|preview|exp)$/;
 const fingerprint = (model: ModelsDevModel): string =>
   JSON.stringify([model.cost ?? {}, model.limit ?? {}]);
 
-// `mistral-large-latest` is never benchmarked under that name, so it is
-// resolved to the dated release it currently points at by matching price and
-// limits against its non-rolling siblings. Re-resolves on its own when the
-// provider repoints the alias.
+// Rolling aliases are never benchmarked by name, so resolve the dated release they point at by price and limits
 const resolveRollingAlias = (
   modelName: string,
   siblingModels: Record<string, ModelsDevModel>,
@@ -31,9 +28,7 @@ const resolveRollingAlias = (
         !ROLLING_SUFFIX.test(siblingName) &&
         fingerprint(sibling) === target,
     )
-    // Falling back to the name keeps this deterministic when a provider dates
-    // neither twin, and for the date-stamped ids providers actually use it
-    // still lands on the newer one.
+    // Name fallback keeps this deterministic when a provider dates neither twin
     .sort(
       ([nameA, a], [nameB, b]) =>
         (b.release_date ?? '').localeCompare(a.release_date ?? '') ||
@@ -55,15 +50,10 @@ export const buildLookupCandidates = ({
   const resolved = resolveRollingAlias(modelName, siblingModels);
 
   if (isDefined(resolved)) {
-    // Once the release an alias points at is known, only a row naming that
-    // release will do. Every undated spelling is some other release the
-    // publisher happens to have measured: `mistral-large` on the leaderboard is
-    // the Feb '24 model, and standing in for `mistral-large-2512` it published a
-    // two-year-old score as current.
+    // Undated spellings are other releases: bare `mistral-large` is the Feb '24 model and once published a stale score as current
     return [...new Set([...candidates, resolved])];
   }
 
-  // No dated release to point at, so the bare name is the only thing left and
-  // whichever release the publisher measured is the best answer available.
+  // No dated release to point at, so whichever release the publisher measured is the best answer
   return [...new Set([...candidates, modelName.replace(ROLLING_SUFFIX, '')])];
 };

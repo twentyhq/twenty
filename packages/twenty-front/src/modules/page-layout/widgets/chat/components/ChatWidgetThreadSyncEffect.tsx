@@ -8,8 +8,7 @@ type ChatWidgetThreadSyncEffectProps = {
   threadId: string;
 };
 
-// The chat runs on the current thread, so the widget points it at its record
-// once per record; a later switch, such as starting a new chat, is left alone
+// Once per record, so a later switch (e.g. a new chat) is left alone
 export const ChatWidgetThreadSyncEffect = ({
   threadId,
 }: ChatWidgetThreadSyncEffectProps) => {

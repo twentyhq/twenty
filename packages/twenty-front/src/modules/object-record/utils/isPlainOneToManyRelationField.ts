@@ -2,9 +2,7 @@ import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataIte
 import { isOneToManyRelationField } from '@/object-metadata/utils/isOneToManyRelationField';
 import { isConfiguredJunctionRelationField } from '@/object-record/record-field/ui/utils/junction/isConfiguredJunctionRelationField';
 
-// Junction relation fields also carry ONE_TO_MANY metadata but render through
-// a dedicated junction path, mirroring the backend's
-// isPlainOneToManyRelationFlatFieldMetadata.
+// Junction relation fields also carry ONE_TO_MANY metadata; mirrors isPlainOneToManyRelationFlatFieldMetadata.
 export const isPlainOneToManyRelationField = (
   fieldMetadataItem: FieldMetadataItem,
 ): fieldMetadataItem is FieldMetadataItem & {

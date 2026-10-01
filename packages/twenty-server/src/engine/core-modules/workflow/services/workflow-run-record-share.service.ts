@@ -33,10 +33,7 @@ type CoreWorkflowAccess = {
   creatorWorkspaceMemberId: string | null;
 };
 
-// A run carries its workflow's inputs and outputs, so it is exactly as private
-// as its core workflow. Its grants are derived from that workflow rather than
-// set by hand, which is why the whole derived set is replaced: a visibility
-// change or a new creator must also take away what the old state granted.
+// runs carry their workflow's data, so their grants are derived from it and replaced wholesale to revoke what the old state granted
 @Injectable()
 export class WorkflowRunRecordShareService {
   constructor(
@@ -50,8 +47,7 @@ export class WorkflowRunRecordShareService {
     private readonly cacheLockService: CacheLockService,
   ) {}
 
-  // Held across both steps so that a run created meanwhile cannot be granted
-  // from the state this change replaces.
+  // lock held across both steps so a run created meanwhile is not granted from the replaced state
   async updateAccessThenSyncRuns<TResult>({
     workspaceId,
     coreWorkflowId,
@@ -205,15 +201,10 @@ export class WorkflowRunRecordShareService {
                 workspaceId,
                 transactionScope,
                 criteria: [
-                  // Grants written on the run's own behalf rather than by a
-                  // person sharing it: the ones derived here, and the creator
-                  // role an application's create writes, which would otherwise
-                  // keep everyone holding that role reading a private
-                  // workflow's runs.
+                  // the APPLICATION creator-role grant would otherwise let that role read a private workflow's runs
                   { ...recordScope, sourceId: In(batch) },
                   { ...recordScope, rowCause: RecordShareRowCause.APPLICATION },
-                  // Whatever wrote it, a grant to everyone on a run means
-                  // workspace-visible, which only the core workflow decides.
+                  // a grant to everyone means workspace-visible, which only the core workflow decides
                   {
                     ...recordScope,
                     principalType: RecordSharePrincipalType.EVERYONE,

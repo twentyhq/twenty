@@ -519,8 +519,7 @@ describe('Admin panel global chat threads (integration)', () => {
       ]);
     });
 
-    // A workflow run's conversation belongs to no member, and a null owner
-    // must not null out a non-null field and fail the whole list.
+    // Workflow-run conversations belong to no member.
     it('lists a thread without an owner', async () => {
       const ownerlessThreadId = randomUUID();
 

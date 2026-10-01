@@ -17,13 +17,7 @@ export const MobileNavigationBarScrollEffect = () => {
     isMobileNavigationBarVisibleState,
   );
 
-  // The app has many independent scroll containers, so rather than wiring each
-  // of them up we listen on the capture phase, where every scroll event passes
-  // through the document on its way down.
-  //
-  // Re-subscribing on navigation and on side panel transitions is what resets
-  // the tracking. The accumulated direction of the previous view must not carry
-  // over, or the next small scroll would cross the threshold on its own.
+  // Capture phase sees every container's scrolls; re-subscribing on navigation resets the accumulated direction.
   useEffect(() => {
     setIsMobileNavigationBarVisible(true);
 

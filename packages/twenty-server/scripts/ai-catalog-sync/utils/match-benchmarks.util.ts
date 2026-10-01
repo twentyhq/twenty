@@ -28,8 +28,7 @@ const lookup = (
   return undefined;
 };
 
-// The publisher lists plenty of models it has measured nothing about, and a row
-// of pure aliases says nothing worth carrying into either artifact.
+// A row of pure aliases says nothing worth carrying into either artifact
 const hasMeasurement = (record: BenchmarkRecord): boolean =>
   [
     record.intelligenceIndex,
@@ -69,8 +68,7 @@ export const matchBenchmarks = ({
     Record<AiModelEffort, BenchmarkOverlayReading>
   > = {};
 
-  // A declared effort without a row of its own stays blank: the ceiling was
-  // measured at another effort and would overstate it.
+  // The ceiling was measured at another effort and would overstate this one
   for (const effort of efforts ?? []) {
     const effortRecord = lookup(
       benchmarkIndex,

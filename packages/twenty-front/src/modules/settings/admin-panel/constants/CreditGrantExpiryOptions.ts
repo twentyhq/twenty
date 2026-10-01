@@ -1,10 +1,7 @@
 import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 
-// Null is the default: credits stay spendable until they are used up. The
-// bounded choices exist for deliberately time-boxed handouts. The server rounds
-// the chosen day up to the end of the billing period it falls in, because
-// credits are only ever spent and settled a period at a time.
+// The server rounds the chosen day up to its billing period end, as credits settle per period.
 export const CREDIT_GRANT_EXPIRY_OPTIONS: {
   value: number | null;
   label: MessageDescriptor;

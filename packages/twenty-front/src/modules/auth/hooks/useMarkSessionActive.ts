@@ -5,9 +5,7 @@ import { isCookieAuthActiveState } from '@/auth/states/isCookieAuthActiveState';
 import { isPendingServerSignOutState } from '@/auth/states/isPendingServerSignOutState';
 import { rotateSessionGeneration } from '@/auth/utils/rotateSessionGeneration';
 
-// The auth mutations set the session cookie server-side, which the client
-// cannot read, so every flow that authenticates has to record that a session
-// now exists. Missing this leaves useIsLogged false on an authenticated client.
+// The session cookie is httpOnly, so every auth flow must record that a session now exists.
 export const useMarkSessionActive = () => {
   const store = useStore();
 

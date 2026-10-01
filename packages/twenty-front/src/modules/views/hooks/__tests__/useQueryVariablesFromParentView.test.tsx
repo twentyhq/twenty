@@ -11,8 +11,7 @@ import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectM
 
 const WORKFLOW_RECORD_ID = '20202020-1c25-4d02-bf25-6aeccf7ea419';
 
-// The hook reads the context store of the surface it renders on, which under
-// this wrapper is the instance getJestMetadataAndApolloMocksWrapper binds.
+// The instance getJestMetadataAndApolloMocksWrapper binds
 const CONTEXT_STORE_INSTANCE_ID = 'instanceId';
 
 const workflowVersionObjectMetadataItem =

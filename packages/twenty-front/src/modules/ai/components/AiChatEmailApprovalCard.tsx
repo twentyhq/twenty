@@ -99,8 +99,7 @@ export const AiChatEmailApprovalCard = ({
   const [bcc, setBcc] = useState(() =>
     parseEmailRecipients(email.recipients.bcc),
   );
-  // Shown from the start when the draft has any, and kept once opened, so
-  // removing the last recipient does not take the field away.
+  // Kept once shown, so removing the last recipient doesn't hide the field.
   const [isCcShown, setIsCcShown] = useState(cc.length > 0);
   const [isBccShown, setIsBccShown] = useState(bcc.length > 0);
   const [subject, setSubject] = useState(email.subject);
@@ -110,9 +109,7 @@ export const AiChatEmailApprovalCard = ({
 
   const isAnswering = pendingDecision !== null;
 
-  // Typing in the card must not trigger the page's keyboard shortcuts. Focus
-  // events bubble up from every field, and from the buttons between them,
-  // which are left out since a button removed on click may never blur.
+  // Blocks page shortcuts while typing; buttons are excluded since one removed on click may never blur.
   const handleFieldFocus = (event: FocusEvent) => {
     if (
       !(event.target instanceof HTMLInputElement) &&
@@ -153,8 +150,7 @@ export const AiChatEmailApprovalCard = ({
     const isAnswered = await answerAgentChatToolCall({
       toolCallId,
       response,
-      // Only a discard is known before the server answers: sending or saving
-      // can still fail.
+      // Only a discard is known before the server answers.
       optimisticToolOutput:
         decision === 'discard'
           ? {

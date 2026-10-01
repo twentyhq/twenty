@@ -3,14 +3,10 @@ import { utf8ToBytes } from '@noble/hashes/utils';
 
 import { isDefined } from '../utils/validation/isDefined';
 
-// Lingui's generated-id scheme (catalogs are emitted with `printLinguiId: true`).
-// Server, SDK and front-component runtime must produce byte-identical ids --
-// drift silently untranslates -- so there is exactly one implementation, in
-// pure JS so the sandboxed front-component worker can call it too.
+// Server, SDK and the sandboxed front-component worker must emit Lingui's ids byte for byte, so this stays pure JS.
 const UNIT_SEPARATOR = String.fromCharCode(0x1f);
 
-// The same few thousand source strings recur across requests; the cap bounds
-// a workspace that mints unusual labels.
+// The cap bounds a workspace that mints unusual labels.
 const MAX_CACHED_MESSAGE_IDS = 50_000;
 
 const messageIdByCacheKey = new Map<string, string>();

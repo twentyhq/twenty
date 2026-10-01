@@ -1,8 +1,4 @@
-// Projects the canonical catalog through a deployment spec. See README.md.
-//
-// This entry point and the files it imports resolve through node builtins and
-// source paths only, so a repository holding a private spec can run them
-// straight from a sparse checkout without installing the monorepo.
+// Node builtins and source paths only, so a private-spec repo can run it from a sparse checkout without an install
 
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
@@ -25,8 +21,7 @@ const DEFAULT_CATALOG_PATH = resolve(
   'ai-models.json',
 );
 
-// A flag whose value is missing would otherwise swallow the next flag and write
-// the catalog to a file named after it.
+// A missing value would otherwise swallow the next flag and write the catalog to a file named after it
 const readArgument = (flag: string): string | undefined => {
   const index = process.argv.indexOf(flag);
 

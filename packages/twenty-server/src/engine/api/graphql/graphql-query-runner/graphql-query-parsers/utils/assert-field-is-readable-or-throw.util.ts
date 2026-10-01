@@ -6,8 +6,7 @@ import {
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 
-// Filtering or ordering by a non-readable field would leak its values (orderBy
-// additionally embeds them into pagination cursors)
+// Filtering or ordering by a field leaks its values (orderBy embeds them into cursors)
 export const assertFieldIsReadableOrThrow = ({
   objectsPermissions,
   objectMetadataId,

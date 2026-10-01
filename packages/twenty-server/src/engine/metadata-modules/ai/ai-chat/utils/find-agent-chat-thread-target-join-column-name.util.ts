@@ -8,10 +8,7 @@ import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
-// A thread reaches its record through the target's morph leg for that object,
-// the same way noteTarget does. No leg means the object cannot hold chats: it
-// is a standard object other than person, company and opportunity, or the
-// workspace has no agentChatThreadTarget yet.
+// no leg for standard objects other than person, company and opportunity, or before agentChatThreadTarget is provisioned
 export const findAgentChatThreadTargetJoinColumnName = ({
   flatObjectMetadataMaps,
   flatFieldMetadataMaps,

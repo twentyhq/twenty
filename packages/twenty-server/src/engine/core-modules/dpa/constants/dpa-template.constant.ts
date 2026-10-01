@@ -1,6 +1,4 @@
-// Generated from the source DPA template (Twenty DPA — Universal Template.docx).
-// Legal wording changes must be reviewed and accompanied by a template-version bump.
-// Merge fields use {{DOUBLE_BRACES}} and are resolved at render time.
+// Generated from Twenty DPA Universal Template.docx; wording changes need legal review and a version bump.
 
 import { type DpaTemplateBlock } from 'src/engine/core-modules/dpa/types/dpa.type';
 

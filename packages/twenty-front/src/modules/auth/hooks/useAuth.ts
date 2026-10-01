@@ -119,8 +119,7 @@ export const useAuth = () => {
   const navigate = useNavigate();
 
   const clearSession = useCallback(() => {
-    // The assign below is the only navigation: keep the redirect effect from
-    // racing it to the sign-in page once the session is cleared.
+    // Keep the redirect effect from racing this navigation to the sign-in page.
     store.set(isAppEffectRedirectEnabledState.atom, false);
     sessionStorage.clear();
     store.set(isCookieAuthActiveState.atom, false);
@@ -142,9 +141,7 @@ export const useAuth = () => {
       const availableWorkspacesCount =
         countAvailableWorkspaces(availableWorkspaces);
 
-      // The in-app "Create Workspace" entry point redirects here with this
-      // signal so an existing user with workspaces lands on the creation form
-      // instead of the workspace selection step.
+      // Set by the in-app "Create Workspace" entry point to skip workspace selection.
       const wantsToCreateNewWorkspace =
         new URLSearchParams(window.location.search).get('action') ===
         'create-new-workspace';

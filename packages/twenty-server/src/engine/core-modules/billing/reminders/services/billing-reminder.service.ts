@@ -32,7 +32,7 @@ import { UserService } from 'src/engine/core-modules/user/services/user.service'
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
-// Reminders the cron can send. A given trial gets exactly one of "ending" / "converting".
+// A given trial gets exactly one of "ending" / "converting"
 type BillingReminderEmail =
   | { type: 'trial-ending'; trialEndsAt: Date }
   | { type: 'trial-converting'; trialEndsAt: Date; interval: 'month' | 'year' }
@@ -183,11 +183,7 @@ export class BillingReminderService {
       return false;
     }
 
-    // Fallback when the payment-method flag isn't synced yet: a with-credit-card trial
-    // is longer than a no-credit-card one, so the trial duration disambiguates. Fall back
-    // to createdAt when trialStart is missing so this still holds during sync gaps —
-    // otherwise a real card-on-file trial could be misread as no-card and wrongly told
-    // "no card will be charged" right before it is actually charged.
+    // Unsynced payment-method flag: card trials are longer, so trial length tells them apart
     const withoutCardTrialDurationDays = this.twentyConfigService.get(
       'BILLING_FREE_TRIAL_WITHOUT_CREDIT_CARD_DURATION_IN_DAYS',
     );

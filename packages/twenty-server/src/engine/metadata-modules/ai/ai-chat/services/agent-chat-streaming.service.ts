@@ -596,8 +596,7 @@ export class AgentChatStreamingService {
       select: ['id', 'deletedAt', 'pendingQuestionMessageId'],
     });
 
-    // Queued messages wait behind a pending tool call: they are the
-    // conversation after the answer, not a replacement for it.
+    // queued messages follow the answer rather than replace it
     if (
       !threadStatus ||
       threadStatus.deletedAt ||
@@ -631,8 +630,7 @@ export class AgentChatStreamingService {
         userWorkspaceId = sender.userWorkspaceId;
         break;
       } catch (error) {
-        // A rolling upgrade can temporarily leave a worker with an older access
-        // policy. Preserve the request until a worker can authorize it.
+        // during a rolling upgrade a worker may run an older access policy, so keep the request for another worker
         if (
           error instanceof AiException &&
           error.code === AiExceptionCode.THREAD_NOT_FOUND
@@ -766,11 +764,7 @@ export class AgentChatStreamingService {
     }
   }
 
-  // A message sent while the agent waits on a person moves the conversation
-  // past its pending calls, which are closed as skipped so the model sees why
-  // they went unanswered. Clearing the marker is the claim, and an answer
-  // holding the stream keeps it. A workflow run's calls gate the run, so a
-  // chat message never closes them.
+  // workflow-run calls gate the run, so a chat message never closes them
   private async settlePendingToolCallsBeforeSending({
     thread,
     workspaceId,
@@ -853,8 +847,7 @@ export class AgentChatStreamingService {
           where: { id: threadId },
         })
       : undefined;
-    // A hidden row without parts is an interrupted seed attempt: it carries no context and
-    // would otherwise reach the model as an empty user message.
+    // a hidden row without parts is an interrupted seed and would reach the model as an empty message
     const filteredMessages = allMessages.filter(
       (message) =>
         message.status !== AgentMessageStatus.QUEUED &&
@@ -887,8 +880,7 @@ export class AgentChatStreamingService {
             return part;
           }),
         ),
-        // The hidden context seed gets no createdAt so injectMessageTimestamps skips it: its
-        // insert time is meaningless and later than the first real message it sorts before.
+        // no createdAt so injectMessageTimestamps skips the seed, whose insert time postdates the first real message
         ...(message.isHidden
           ? {}
           : {

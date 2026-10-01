@@ -33,8 +33,7 @@ export const WidgetActionChatThreadCreate = () => {
     return null;
   }
 
-  // The mention files the new conversation under the record on its first
-  // send, unless the member deletes it before sending.
+  // The mention files the new conversation under the record on first send.
   const handleClick = () =>
     openAskAiPageWithPreprompt({
       serializedDocument: serializeMentionTagAsAdvancedTextEditorDocument({

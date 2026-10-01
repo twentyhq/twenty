@@ -40,8 +40,7 @@ export class AiModelPreferencesService {
     );
   }
 
-  // The chosen model moves to the front of the chain; the rest of the chain is
-  // kept so an instance losing that provider's key still resolves the tier.
+  // the rest of the chain is kept so losing that provider's key still resolves the tier
   async setDefaultModel(tier: AiModelTier, modelId: string): Promise<void> {
     const current = this.getDefaultModelIdsForTier(tier);
 

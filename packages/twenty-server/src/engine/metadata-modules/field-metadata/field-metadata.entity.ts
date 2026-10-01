@@ -44,8 +44,7 @@ import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-enti
 import { type AuthoredOverrides } from 'src/engine/metadata-modules/overrides/types/authored-overrides.type';
 import { JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
 
-// Reference case for the type tests in types/__tests__/field-metadata-entity.test-type.ts:
-// modifying relations or properties may require updating their expectations for typecheck to pass.
+// changes here may require updating types/__tests__/field-metadata-entity.test-type.ts
 @Entity('fieldMetadata')
 @Index('IDX_FIELD_METADATA_APPLICATION_ID', ['applicationId'])
 @Check(
@@ -165,21 +164,14 @@ export class FieldMetadataEntity<
   })
   writability: MetadataWritability;
 
-  // Superseded by isUIEditable. Intentionally NOT @WasRemovedInUpgrade: dropping
-  // it in 2.13 would break the previous release's pods mid rolling-deploy, since
-  // they still SELECT it. The WasRemovedInUpgrade<T> type is kept so callers may
-  // omit it; the decorator + physical drop are deferred (core-team-issues#2542).
+  // no @WasRemovedInUpgrade yet: previous-release pods still SELECT it mid rolling deploy (core-team-issues#2542)
   @Column({ type: 'boolean', default: false })
   isUIReadOnly: WasRemovedInUpgrade<boolean>;
 
   @Column({ nullable: true, default: true, type: 'boolean' })
   isNullable: boolean | null;
 
-  // Derived at flat-entity cache build time from the existence of a
-  // single-field UNIQUE IndexMetadata covering this field — never persisted
-  // on this entity. Kept on the type so flat-entity consumers continue to
-  // read field.isUnique without per-call derivation; the PG column was
-  // dropped by 1798300000000-drop-field-metadata-is-unique-column.ts.
+  // not persisted: derived from single-field UNIQUE IndexMetadata when the flat cache is built
   isUnique: boolean | null;
 
   isSearchable: boolean;

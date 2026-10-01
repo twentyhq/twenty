@@ -57,8 +57,7 @@ export class TimelineActivityTypeEntity
   @Column({ nullable: false, type: 'varchar' })
   label: string;
 
-  // The verb used by automatic audit writers to resolve a type. Null leaves
-  // the type available only to explicit writers addressing its identifier.
+  // Null leaves the type to explicit writers addressing its identifier
   @Column({ nullable: true, type: 'varchar' })
   action: TimelineActivityAction | null;
 
@@ -76,14 +75,11 @@ export class TimelineActivityTypeEntity
     upgradeCommandName:
       REFACTOR_TIMELINE_ACTIVITY_TYPE_RENDERING_UPGRADE_COMMAND_NAME,
   })
-  // Native renderers reserve identifiers in this namespace so snapshots use
-  // the same live-first resolution path as application front components.
+  // Native renderers reserve identifiers here so snapshots resolve live-first like application front components
   @Column({ nullable: true, type: 'uuid' })
   frontComponentUniversalIdentifier: string | null;
 
-  // The object whose records this entry is about, as a soft reference rather
-  // than a relation: it is resolved through the flat maps at write time to pick
-  // the type for an event, and null means any object.
+  // Soft reference resolved through the flat maps at write time; null means any object
   @Column({ nullable: true, type: 'uuid' })
   objectUniversalIdentifier: string | null;
 
@@ -99,9 +95,7 @@ export class TimelineActivityTypeEntity
   @Column({ nullable: true, type: 'uuid', array: true })
   triggerFieldUniversalIdentifiers: string[] | null;
 
-  // The source object field carrying the moment linked activities anchor at
-  // (an email's receivedAt, a calendar event's startsAt). Null keeps the
-  // event write time.
+  // Null anchors linked activities at the event write time
   @WasIntroducedInUpgrade({
     upgradeCommandName:
       ADD_TIMELINE_ACTIVITY_HAPPENS_AT_FIELD_UPGRADE_COMMAND_NAME,

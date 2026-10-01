@@ -23,12 +23,7 @@ export const getWorkspaceSurfaceScopedComponentInstanceId = ({
   return `${componentInstanceId}-${surfaceInstanceId}`;
 };
 
-// Only for the place that creates an id for something the same page instance
-// can mount once per workspace surface (a record index, a page layout, a
-// settings tab bar). The id it returns is then passed around and used verbatim:
-// Dropdown, Modal, SelectableList, TabList and ScrollWrapper never rewrite the
-// id they are given, so a reader holding the same id always reads the same
-// state.
+// Only where an id is created: Dropdown, Modal, SelectableList, TabList and ScrollWrapper use ids verbatim
 export const useWorkspaceSurfaceScopedComponentInstanceId = (
   componentInstanceId: string,
 ) => {

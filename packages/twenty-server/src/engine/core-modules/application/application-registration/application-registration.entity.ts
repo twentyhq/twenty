@@ -85,8 +85,7 @@ export class ApplicationRegistrationEntity {
   @JoinColumn({ name: 'createdByUserId' })
   createdByUser: Relation<UserEntity> | null;
 
-  // Ownership (who can edit). Null for catalog-synced marketplace apps that
-  // have no explicit owner — these are managed via the Admin Panel.
+  // Null for catalog-synced marketplace apps, managed from the Admin Panel
   @Field(() => UUIDScalarType, { nullable: true })
   @Column({ name: 'workspaceId', nullable: true, type: 'uuid' })
   ownerWorkspaceId: string | null;
@@ -132,8 +131,7 @@ export class ApplicationRegistrationEntity {
   ])
   isVetted: boolean;
 
-  // Auto-installed on every new workspace; existing workspaces are
-  // backfilled by the `install-pre-installed-apps` CLI command.
+  // Existing workspaces are backfilled by the `install-pre-installed-apps` command
   @Field(() => Boolean)
   @Column({ type: 'boolean', default: false })
   isPreInstalled: boolean;
@@ -194,8 +192,7 @@ export class ApplicationRegistrationEntity {
   })
   aboutDescription: string | null;
 
-  // Free text: app pricing is tiered, per-minute, per-match with minimums, so
-  // a single rate cannot express it. Shown on the marketplace listing.
+  // Free text: tiered, per-minute or per-match pricing cannot fit a single rate
   @Column({ nullable: true, type: 'text' })
   @WasIntroducedInUpgrade({
     upgradeCommandName:

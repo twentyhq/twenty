@@ -12,11 +12,7 @@ export const parseCorePath = (
     .split('/')
     .filter(Boolean);
 
-  // Restore is the only action on a single record, so /{object}/{id}/restore
-  // is the one path with a third segment. It is mounted on PATCH alone;
-  // allowing the segment on other methods would let a restore-shaped path
-  // through their wildcard routes, where DELETE would read the id as a
-  // destroy target.
+  // PATCH only: other methods' wildcard routes would read the id as a target (DELETE would destroy it)
   const isRestoreRequest =
     request.method === 'PATCH' &&
     queryAction[queryAction.length - 1] === 'restore';

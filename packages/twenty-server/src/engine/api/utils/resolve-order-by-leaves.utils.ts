@@ -26,10 +26,7 @@ import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 export type OrderByLeaf = {
-  // Path of the ordered value from the record root, e.g. ['closeDate'],
-  // ['name', 'firstName'], ['company', 'name'] or ['company', 'name',
-  // 'firstName']. It is at once the cursor value path and the filter nesting
-  // of the keyset conditions.
+  // Both the cursor value path and the keyset filter nesting, e.g. ['company', 'name', 'firstName']
   path: string[];
   direction: OrderByDirection;
   fieldMetadata: OrmFlatFieldMetadata;
@@ -39,8 +36,7 @@ export type OrderByLeaf = {
   | { kind: 'composite'; compositeProperty: CompositeProperty }
   | {
       kind: 'relation';
-      // Resolved against the target object when flatObjectMetadataMaps is
-      // provided; the keyset condition builder relies on it for NULL semantics
+      // Only resolved when flatObjectMetadataMaps is provided
       targetFieldMetadata?: OrmFlatFieldMetadata;
       targetCompositeProperty?: CompositeProperty;
     }
@@ -66,9 +62,6 @@ const throwInvalidOrderByInput = (message: string): never => {
   );
 };
 
-// Flattens the nested value of a relation orderBy entry into its leaf paths,
-// e.g. { name: 'AscNullsLast' } -> [['name']] and, for a composite target
-// field, { name: { firstName: 'AscNullsLast' } } -> [['name', 'firstName']].
 const flattenNestedOrderByValue = (
   value: Record<string, unknown>,
 ): Array<{ path: string[]; direction: OrderByDirection }> =>
@@ -84,10 +77,7 @@ const flattenNestedOrderByValue = (
       : [];
   });
 
-// Resolves one flattened relation orderBy path (e.g. ['company', 'name'] or
-// ['pointOfContact', 'name', 'firstName']) against the relation's target
-// object. Without the object metadata maps the leaf stays unresolved, which is
-// enough for consumers that ignore relation leaves (e.g. column selection).
+// Without flatObjectMetadataMaps the leaf stays unresolved, enough for consumers ignoring relation leaves
 const resolveRelationLeaf = ({
   fieldMetadata,
   path,
@@ -192,16 +182,7 @@ const resolveRelationLeaf = ({
   };
 };
 
-// Single source of truth for walking an orderBy: every entry is flattened into
-// ordered leaves that carry their own direction, and the SQL order parser
-// compiles its clauses from these leaves, so the SQL ordering, column
-// selection, cursor encoding, cursor validation and keyset conditions all
-// consume the same list and cannot drift apart. Duplicated leaves keep their
-// first occurrence, which lets callers append the id tie-breaker untouched: a
-// caller-provided id ordering wins over the appended default.
-// Strict validation rejects unknown or malformed entries; the lenient mode
-// skips them instead, for callers that re-walk an already-validated orderBy
-// against another object (e.g. nested connections).
+// Duplicates keep their first occurrence, so a caller-provided id ordering wins over the appended tie-breaker
 export const resolveOrderByLeaves = ({
   orderBy,
   flatObjectMetadata,
@@ -212,13 +193,10 @@ export const resolveOrderByLeaves = ({
 }: {
   orderBy: ObjectRecordOrderBy | undefined;
   flatObjectMetadata: FlatObjectMetadata;
-  // Needed to resolve relation leaves against their target object; without it
-  // they stay unresolved, which lenient callers tolerate
   flatObjectMetadataMaps?: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   strictValidation?: boolean;
-  // Sort values embed into cursors, so ordering by a field the role cannot
-  // read is rejected like filtering by one is
+  // Sort values embed into cursors, so ordering by an unreadable field is rejected
   objectsPermissions?: ObjectsPermissions;
 }): OrderByLeaf[] => {
   if (!isDefined(orderBy) || !isNonEmptyArray(orderBy)) {
@@ -286,8 +264,6 @@ export const resolveOrderByLeaves = ({
 
         const flattenedRelationPaths = flattenNestedOrderByValue(orderByValue);
 
-        // An entry whose nested values are no directions at all would
-        // otherwise order by nothing without telling the caller
         if (flattenedRelationPaths.length === 0 && strictValidation) {
           throwInvalidOrderByInput(
             `Relation field "${fieldName}" requires nested field ordering (e.g., { ${fieldName}: { fieldName: 'AscNullsFirst' } })`,
@@ -382,9 +358,6 @@ export const resolveOrderByLeaves = ({
   return leaves;
 };
 
-// Rebuilds the canonical orderBy the SQL order parser consumes, one entry per
-// leaf, so the scan order and the keyset conditions derive from the same
-// deduplicated list.
 export const buildOrderByFromLeaves = (
   leaves: OrderByLeaf[],
 ): ObjectRecordOrderBy =>
@@ -396,8 +369,7 @@ export const buildOrderByFromLeaves = (
       ) as ObjectRecordOrderBy[number],
   );
 
-// Reads the leaf's value out of a decoded cursor. Composite values of legacy
-// cursors were carried under dotted keys (e.g. "name.firstName").
+// Legacy cursors carried composite values under dotted keys (e.g. "name.firstName")
 export const getCursorValueForLeaf = (
   cursor: Record<string, unknown>,
   leaf: OrderByLeaf,

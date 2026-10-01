@@ -90,12 +90,7 @@ export class MessageChannelResolver {
       return buildPublicConnectedAccount(account);
     }
 
-    // An app channel's connection belongs to the application, not to a member,
-    // so there is no userWorkspaceId to resolve it through on a cron, webhook
-    // or install hook. Reachability is delegated rather than re-derived: the
-    // same predicate the app-facing channel API gates on also decides this,
-    // including the boundary that stops one member reaching another's private
-    // connection through the app.
+    // app connections have no member owner, so reachability is delegated to the app-facing predicate
     if (
       isDefined(application) &&
       messageChannel.type === MessageChannelType.APP
@@ -171,11 +166,7 @@ export class MessageChannelResolver {
         applicationId: application?.id,
       });
 
-    // An app channel's settings belong to the app that created it: its
-    // visibility is the app's statement about how private its provider's
-    // messages are, and the mailbox fields on this input (folder import
-    // policy, group-email exclusions, contact auto-creation) have no meaning
-    // for it. Mutations go through updateAppMessageChannel instead.
+    // app channel settings belong to the creating app and go through updateAppMessageChannel
     if (messageChannel.type === MessageChannelType.APP) {
       throw new MessageChannelException(
         `Message channel ${input.id} is owned by an application and cannot be updated through this endpoint`,

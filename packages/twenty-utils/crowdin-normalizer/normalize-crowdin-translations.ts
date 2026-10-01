@@ -48,9 +48,7 @@ function parseProjectIdOrThrow(): number {
 
 const CATALOG_FORMATS: CatalogFormat[] = ['po', 'mdx'];
 
-// Selecting by format rather than by name means a new rule protects every
-// project holding that format, instead of only the workflow someone remembered
-// to edit. --rules stays for narrowing a run to one rule by hand.
+// Selected by format so a new rule covers every project with that format, not just one workflow.
 function selectRulesOrThrow(): NormalizationRule[] {
   const requestedFormat = getArgumentValue('format');
   const requestedNames = (getArgumentValue('rules') ?? '')
@@ -192,8 +190,7 @@ async function repairOne(
   finding: NormalizationFinding,
 ): Promise<boolean> {
   try {
-    // An empty repair means the translation could not be salvaged: deleting it
-    // without a replacement falls back to English until Crowdin retranslates.
+    // Deleting without a replacement falls back to English until Crowdin retranslates.
     if (finding.fixedText !== '') {
       await addTranslation(context, {
         stringId: finding.stringId,

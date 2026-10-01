@@ -14,10 +14,7 @@ type Storage = AgentHistoryMigrationState['storage'];
 
 @Injectable()
 export class AgentHistoryMigrationValidationService {
-  // agentChatThreadTarget rows point at the workspace-schema thread table. A
-  // rollback leaves that store in place, but the next forward migration clears
-  // it, cascading the links away with no way to rebuild them from core. Refuse
-  // instead of losing them silently.
+  // A rollback keeps the workspace thread store, but the next forward migration clears it and cascades these links away
   async assertNoThreadTargets({
     runner,
     workspaceId,
@@ -36,10 +33,7 @@ export class AgentHistoryMigrationValidationService {
       return;
     }
 
-    // A custom object leg is set to null when its record is destroyed, as on
-    // noteTarget, so such a row links nothing and there is no record left to
-    // detach it from. Every leg's column is target<Object>Id, whatever the
-    // object, which finds the legs without reading the metadata.
+    // A destroyed custom record nulls its leg, and every leg column is target<Object>Id, found without reading metadata
     const rows: { id: string }[] = await runner.query(
       `SELECT target.id FROM ${table} target
        WHERE target."deletedAt" IS NULL

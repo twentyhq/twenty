@@ -1,7 +1,6 @@
 import { type ModelsDevData } from 'src/engine/metadata-modules/ai/ai-models/types/models-dev-data.type';
 
-// A 200 carrying an empty or reshaped payload would otherwise generate an
-// empty catalog, and the sync PR automerges over the real one.
+// A 200 with an empty or reshaped payload would produce an empty catalog, and the sync PR automerges
 export const assertPayloadIsUsable = ({
   data,
   vendors,

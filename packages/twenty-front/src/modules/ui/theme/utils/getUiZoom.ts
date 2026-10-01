@@ -1,6 +1,4 @@
-// Pointer coordinates arrive in visual-viewport pixels while layout runs in
-// design pixels under the root zoom rule, so pointer deltas are divided by
-// the effective zoom before entering stored sizes.
+// Pointer coordinates are in visual-viewport pixels while layout uses design pixels under the root zoom
 export const getUiZoom = (): number => {
   if (typeof document === 'undefined') {
     return 1;

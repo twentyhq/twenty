@@ -52,9 +52,7 @@ describe('fetchArtificialAnalysisBenchmarks', () => {
   ])(
     'keeps the highest-scoring configuration whatever the order (%s)',
     async (_label, bestFirst) => {
-      // The rows for one model are the same model at different reasoning
-      // efforts. Picking by how populated a row is scored Sonnet 4.6 at low
-      // effort against Sonnet 5 at max, and the gap read as capability.
+      // Picking by how populated a row is once compared Sonnet 4.6 at low effort to Sonnet 5 at max
       const lowEffort = {
         slug: 'claude-sonnet-4-6',
         name: 'Claude Sonnet 4.6 (Non-reasoning, Low Effort)',
@@ -78,8 +76,7 @@ describe('fetchArtificialAnalysisBenchmarks', () => {
       );
 
       expect(record?.intelligenceIndex).toBe(36.2);
-      // The whole row travels together, so speed and cost describe the same
-      // configuration the index was measured in.
+      // The whole row travels together, so speed and cost match the index's configuration
       expect(record?.outputTokensPerSecond).toBe(80);
       expect(record?.costPerTask).toBeUndefined();
     },
@@ -199,8 +196,7 @@ describe('fetchArtificialAnalysisBenchmarks', () => {
 
     const index = await fetchArtificialAnalysisBenchmarks('key');
 
-    // The bare key still carries the ceiling, so nothing a consumer reads today
-    // changes.
+    // The bare key still carries the ceiling, so nothing a consumer reads today changes
     expect(index.get('gpt56sol')?.intelligenceIndex).toBe(47.1);
     expect(index.get('gpt56sol')?.effort).toBe('max');
     expect(index.get('gpt56sol@max')?.intelligenceIndex).toBe(47.1);

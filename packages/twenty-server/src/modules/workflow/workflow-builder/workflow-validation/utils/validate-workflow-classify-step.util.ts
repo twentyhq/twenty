@@ -9,8 +9,7 @@ import {
 
 import { type WorkflowClassifyAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
-// A blank question reaches the provider as an empty instruction and fails the
-// run, so the gap is reported while the workflow can still be edited.
+// A blank question reaches the provider as an empty instruction and fails the run
 const getQuestionProblem = (
   question: WorkflowClassifyQuestion,
 ): string | undefined => {
@@ -42,9 +41,7 @@ const getQuestionProblem = (
     return `has an unnamed option for "${question.name}"`;
   }
 
-  // Only for a choice: its options key the probability map, so an option named
-  // this way advertises a variable the resolver reads as two keys. Score levels
-  // are keyed by index, so their labels stay free.
+  // Choice options key the probability map, so a dotted option advertises a variable read as two keys
   if (question.type === 'choice') {
     const unreachableOption = question.criteria.find((criterion) =>
       criterion.name.includes(CLASSIFY_OPTION_NAME_FORBIDDEN_CHARACTER),
@@ -55,8 +52,7 @@ const getQuestionProblem = (
     }
   }
 
-  // Only for a choice: its options key a map, so a repeat drops one before the
-  // model ever sees it. Score levels are positional and keep their count.
+  // Choice options key a map, so a repeat is dropped before the model sees it
   if (question.type === 'choice') {
     const optionNames = question.criteria.map((criterion) => criterion.name);
     const duplicateName = optionNames.find(
@@ -112,15 +108,12 @@ export const validateWorkflowClassifyStep = (
       });
     }
 
-    // An unnamed question is already reported above, and tracking the blank
-    // would make a second one look like a duplicate of it.
+    // Already reported above; tracking the blank would flag a second one as a duplicate
     if (!isNonEmptyString(question.name)) {
       continue;
     }
 
-    // Answers are keyed by name, so a repeat would overwrite the earlier one.
-    // Checked whatever else is wrong with the question: a step gets every
-    // reason it cannot activate in one pass, rather than one per fix.
+    // Answers are keyed by name, so a repeat would overwrite the earlier one
     if (seenNames.has(question.name)) {
       issues.push({
         severity: 'error',

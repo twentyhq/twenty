@@ -21,16 +21,8 @@ import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system
 import { MessagingSaveMessagesAndEnqueueContactCreationService } from 'src/modules/messaging/message-import-manager/services/messaging-save-messages-and-enqueue-contact-creation.service';
 import { type MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message.type';
 
-// A full batch is 100 messages in one transaction, so the hold has to outlast
-// that comfortably: a lease that expires mid-save would let the next delivery
-// in and reintroduce exactly the duplicate this prevents. Waiting up to the
-// same order of time is better than failing a webhook that would have
-// succeeded a second later.
-//
-// The wait deliberately outlasts the lease. `withLock` does not renew, so a
-// holder that dies leaves the key behind until Redis expires it; a window
-// shorter than the lease would make every waiter give up just before the
-// lock became free, turning one crash into a batch of avoidable failures.
+// the lease must outlast a full batch save, or the next delivery gets in and duplicates
+// withLock does not renew, so waiters must outlast the lease left behind by a crashed holder
 const INGESTION_LOCK_TTL_MS = 60_000;
 const INGESTION_LOCK_RETRY_INTERVAL_MS = 500;
 
@@ -44,9 +36,7 @@ const INGESTION_LOCK_OPTIONS = {
 type IngestArgs = {
   applicationId: string;
   workspaceId: string;
-  // Ingestion resolves the channel through the same gate the channel API
-  // uses, so a run triggered by one member cannot write into another
-  // member's private channel.
+  // same gate as the channel API so one member's run cannot write into another's private channel
   requestUserWorkspaceId: string | null;
   messageChannelId: string;
   messages: AppMessageInput[];
@@ -95,20 +85,12 @@ export class ApplicationMessageIngestionService {
       }),
     );
 
-    // The save path decides what to insert by reading first and writing after,
-    // and no unique index backs headerMessageId — so two deliveries of the same
-    // provider message, arriving together, would both see nothing and both
-    // insert, handing the app two different Twenty ids for one message. A
-    // provider redelivers constantly, so this is the common case, not the edge.
-    // Serialising per channel is the narrowest scope that closes it: dedup
-    // never spans channels, and one channel's deliveries are naturally
-    // sequential, so contention is a redelivery racing its original.
+    // save reads before writing and headerMessageId has no unique index, so concurrent redeliveries would duplicate
     const savedMessages = await this.cacheLockService.withLock(
       () =>
         this.saveMessagesService.saveMessagesAndEnqueueContactCreation(
           messagesToSave,
-          // The save path only reads folder and contact-creation settings off
-          // the channel, both inert here, plus its id.
+          // the save path only reads inert settings and the id off the channel
           messageChannel,
           connectedAccount,
           workspaceId,
@@ -129,9 +111,7 @@ export class ApplicationMessageIngestionService {
       messageExternalIdToMessageThreadIdMap,
     } = savedMessages;
 
-    // Dropping a row here would report success while returning fewer messages
-    // than were sent, leaving the app with nothing to retry against — the
-    // silent version of the "did not persist" failure above.
+    // never drop a row: the app would see success with nothing to retry
     return {
       messages: messagesToSave.map((message) => {
         const messageId = messageExternalIdsAndIdsMap.get(message.externalId);
@@ -173,8 +153,6 @@ export class ApplicationMessageIngestionService {
       subject: message.subject ?? null,
       text: message.text,
       receivedAt: message.receivedAt,
-      // Apps ingest what the provider already delivered; there is no
-      // provider-side draft to mirror.
       isDraft: false,
       externalId: message.externalId,
       messageThreadExternalId: message.threadExternalId,
@@ -193,9 +171,7 @@ export class ApplicationMessageIngestionService {
     };
   }
 
-  // A participant pointing at a record that is not there, or belongs to
-  // another workspace, would insert a dangling link that quietly never
-  // renders. Checked up front so the app gets told, rather than at the FK.
+  // checked up front so the app gets an error rather than a dangling link that never renders
   private async assertReferencedIdentitiesExist({
     messages,
     workspaceId,
@@ -271,9 +247,7 @@ export class ApplicationMessageIngestionService {
     }
   }
 
-  // Direction, the thread's sender column and the timeline preview all read
-  // the FROM participant, so a message without exactly one is rejected rather
-  // than silently rendering as an empty conversation.
+  // direction, thread sender and timeline preview all read the single FROM participant
   private assertEachMessageHasOneSender(messages: AppMessageInput[]): void {
     for (const message of messages) {
       const senderCount = message.participants.filter(
@@ -289,8 +263,7 @@ export class ApplicationMessageIngestionService {
     }
   }
 
-  // Two entries sharing an externalId would race each other inside the save
-  // transaction, which keys its accumulator on exactly that value.
+  // the save transaction keys its accumulator on externalId
   private assertExternalIdsAreUnique(messages: AppMessageInput[]): void {
     const externalIds = new Set<string>();
 

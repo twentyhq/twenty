@@ -79,15 +79,12 @@ export class AiModelRegistryService {
   private readonly logger = new Logger(AiModelRegistryService.name);
   private modelRegistry: Map<string, RegisteredAiModel> = new Map();
   private modelConfigCache: Map<string, AiModelConfig> = new Map();
-  // Kept out of modelRegistry and modelConfigCache so transcription models can
-  // never surface in the chat model picker or reach token costing.
+  // separate so transcription models never reach the chat picker or token costing
   private transcriptionRegistry: Map<string, RegisteredAiTranscriptionModel> =
     new Map();
   private transcriptionConfigCache: Map<string, AiTranscriptionModelConfig> =
     new Map();
-  // Kept apart for the same reason as transcription: an evaluation model has no
-  // context window and cannot answer a chat turn, so it must never surface in
-  // the model picker or reach language-model costing.
+  // separate for the same reason: evaluation models cannot answer a chat turn
   private evaluationRegistry: Map<string, RegisteredAiEvaluationModel> =
     new Map();
   private evaluationConfigCache: Map<string, AiEvaluationModelConfig> =
@@ -107,12 +104,7 @@ export class AiModelRegistryService {
     private readonly customAiProviderAccessService: CustomAiProviderAccessService,
   ) {}
 
-  // The registry is rebuilt lazily whenever the LLM-group config hash changes,
-  // so any mutation to an LLM-tagged config variable is picked up automatically
-  // on the next read — no explicit refresh from callers needed. Seats are not
-  // part of that hash, so the custom-provider entitlement is compared alongside
-  // it: an instance that grows past the threshold loses its custom models on the
-  // next read rather than waiting for an unrelated config change.
+  // seats are not in the config hash, so the custom-provider entitlement is compared alongside it
   private ensureFresh(): void {
     const configHash = this.configGroupHashService.computeHash(
       ConfigVariablesGroup.LLM,
@@ -223,8 +215,7 @@ export class AiModelRegistryService {
   }
 
   private registerSupportedVariants(): void {
-    // The client catalog must resolve every selectable effort before a pin is
-    // saved, not only variants that have already been used by the server.
+    // the client must resolve every selectable effort before a pin is saved
     for (const modelConfig of Array.from(this.modelConfigCache.values())) {
       for (const effort of getAvailableEfforts(modelConfig)) {
         this.registerVariant(`${modelConfig.modelId}@${effort}`);
@@ -232,8 +223,6 @@ export class AiModelRegistryService {
     }
   }
 
-  // Any effort the catalog declares for a model is reachable by id, whether it
-  // sits in a chain, a workspace pin or an agent. An undeclared one never is.
   private registerVariant(variantId: string): void {
     const variant = this.resolveConfiguredVariant(variantId);
 
@@ -248,8 +237,7 @@ export class AiModelRegistryService {
       modelId: variantId,
       label: `${baseConfig.label} (${AI_MODEL_EFFORT_LABELS[effort]})`,
       effort,
-      // A reading describes the effort it was taken at, so the variant gets
-      // the one taken at its effort or none, never the base model's ceiling.
+      // a reading is only valid at its own effort, never inherit the base model's
       benchmark: baseConfig.benchmarkByEffort?.[effort],
     });
 
@@ -309,8 +297,7 @@ export class AiModelRegistryService {
     modelDef: AiProviderModelConfig;
     sdkInstance: AiSdkProviderInstance | undefined;
   }): void {
-    // An omitted price bills nothing while the provider still charges, so the
-    // model is refused rather than run for free. An explicit 0 is allowed.
+    // an omitted price would bill nothing while the provider charges; an explicit 0 is allowed
     if (!isDefined(modelDef.costPerMinute)) {
       this.logger.error(
         `Skipping transcription model "${compositeId}": costPerMinute is required`,
@@ -366,8 +353,6 @@ export class AiModelRegistryService {
     return Array.from(this.transcriptionRegistry.values());
   }
 
-  // Registration order follows the provider config, so the first entry is the
-  // one an operator listed first.
   getDefaultTranscriptionModel(): RegisteredAiTranscriptionModel | undefined {
     return this.getAvailableTranscriptionModels().find(
       (model) =>
@@ -383,9 +368,7 @@ export class AiModelRegistryService {
     return this.transcriptionConfigCache.get(modelId);
   }
 
-  // Deliberately the same rule as getDefaultTranscriptionModel: a registry
-  // holding only deprecated models would otherwise advertise cloud dictation
-  // that every request without an explicit model id then fails to resolve.
+  // same rule as getDefaultTranscriptionModel, or a deprecated-only registry would advertise unresolvable dictation
   hasTranscriptionModel(): boolean {
     return isDefined(this.getDefaultTranscriptionModel());
   }
@@ -405,9 +388,7 @@ export class AiModelRegistryService {
   }): void {
     const { supportedQuestionTypes } = modelDef;
 
-    // The schema already requires these, but a custom provider merged in at
-    // runtime reaches here too, and a model with no declared question types
-    // would accept every node and fail at the provider instead.
+    // custom providers merged at runtime bypass the schema
     if (!isNonEmptyArray(supportedQuestionTypes)) {
       this.logger.error(
         `Skipping evaluation model "${compositeId}": supportedQuestionTypes is required`,
@@ -471,11 +452,7 @@ export class AiModelRegistryService {
     return Array.from(this.evaluationRegistry.values());
   }
 
-  // Registration order follows the provider config, so the first entry is the
-  // one an operator listed first. Admin-disabled models are skipped the way
-  // getFirstAvailableModelFromList skips them for language tiers: withdrawing
-  // the only evaluation model has to send unpinned steps to the language
-  // fallback, not keep running them on the model that was withdrawn.
+  // skips admin-disabled models so withdrawing the only one sends unpinned steps to the language fallback
   getDefaultEvaluationModel(): RegisteredAiEvaluationModel | undefined {
     return this.getAvailableEvaluationModels().find(
       (model) =>
@@ -515,8 +492,7 @@ export class AiModelRegistryService {
       modelFamily:
         modelDef.modelFamily ??
         inferModelFamily(providerConfig.name ?? '', modelDef.name),
-      // The provider value is only a fallback: one Bedrock provider serves both
-      // eu.* and global.* models, which do not route to the same place.
+      // one Bedrock provider serves both eu.* and global.* models, so the model value wins
       dataResidency: modelDef.dataResidency ?? providerConfig.dataResidency,
       zeroDataRetention: modelDef.zeroDataRetention,
       inputCostPerMillionTokens: modelDef.inputCostPerMillionTokens ?? 0,
@@ -576,12 +552,7 @@ export class AiModelRegistryService {
     return undefined;
   }
 
-  // A rung whose chain names nothing available borrows the nearest rung's
-  // chain, so an instance with two models lands on the neighbouring tier
-  // rather than on whatever the catalog happens to list first. The last
-  // resort is any model the admin still allows, a current one before a
-  // deprecated one: a chain that names only disabled models must not hand a
-  // disabled one to the client.
+  // borrow the nearest tier's chain before falling back to any allowed model, never a disabled one
   findDefaultModelForTier(tier: AiModelTier): RegisteredAiModel | undefined {
     for (const candidateTier of getAiModelTiersByDistance(tier)) {
       const model = this.getFirstAvailableModelFromList(
@@ -615,9 +586,7 @@ export class AiModelRegistryService {
     return model;
   }
 
-  // A pin only applies while the pinned model still resolves and is not
-  // disabled, so a workspace never loses a tier because a provider key went
-  // away or an admin disabled the model after it was pinned.
+  // a pin applies only while its model resolves and is enabled, so a tier never goes dark
   private resolveModelForTier(
     tier: AiModelTier,
     workspaceSettings?: WorkspaceAiModelSettings,
@@ -691,9 +660,7 @@ export class AiModelRegistryService {
     );
   }
 
-  // A model that disappeared because the instance outgrew the complimentary
-  // threshold looks exactly like a typo from the caller's side, so the reason is
-  // spelled out rather than leaving an operator to guess at a missing model.
+  // a model dropped past the complimentary threshold would otherwise look like a typo
   private buildModelNotFoundMessage(modelId: string): string {
     const message = `Model with ID ${modelId} not found`;
 
@@ -746,9 +713,7 @@ export class AiModelRegistryService {
     );
   }
 
-  // Catalog membership rather than registration: an instance can name a
-  // model before it holds the provider key, and a key added later makes the
-  // stored id work without touching the agent.
+  // catalog membership, not registration: a provider key added later makes the stored id work
   validateModelAvailability(modelId: string): void {
     if (!this.isModelAdminAllowed(modelId)) {
       throw new AiException(
@@ -800,9 +765,7 @@ export class AiModelRegistryService {
       });
   }
 
-  // Evaluation models are cached apart from language models so nothing that
-  // resolves a chat or an agent can reach them, which also keeps them out of
-  // getAllModelsWithStatus. The admin panel lists both, so it asks separately.
+  // evaluation models are cached apart, so the admin panel asks for them separately
   getAllEvaluationModelsWithStatus(): Array<{
     modelConfig: AiEvaluationModelConfig;
     isAvailable: boolean;
@@ -853,8 +816,7 @@ export class AiModelRegistryService {
     }
   }
 
-  // Enabling and disabling reaches every kind, unlike a tier default, which
-  // only a language model can serve.
+  // covers every model kind, unlike tier defaults which only language models serve
   private validateModelIsKnown(modelId: string): void {
     this.ensureFresh();
 

@@ -134,10 +134,7 @@ export const sanitizeOutboundEmailHtml = async (
     }),
   });
 
-  // DOMPurify intentionally removes document types and comments. Restore the
-  // inert doctype so email clients stay in standards mode; conditional comments
-  // remain stripped because preserving arbitrary commented markup would create
-  // a sanitizer bypass for raw HTML blocks and legacy bodies.
+  // Restore the doctype DOMPurify strips (standards mode); conditional comments stay stripped to avoid a sanitizer bypass.
   return preamble.doctype === undefined
     ? sanitizedHtml
     : `${preamble.doctype}${sanitizedHtml}`;

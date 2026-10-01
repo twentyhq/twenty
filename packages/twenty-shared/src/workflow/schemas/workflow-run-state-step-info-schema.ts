@@ -6,8 +6,7 @@ export const workflowRunStateStepInfoSchema = z.object({
   error: z.any().optional(),
   status: workflowRunStepStatusSchema,
   retryAttempt: z.number().optional(),
-  // The conversation an agent step held on this execution, kept per history
-  // entry so each loop iteration's conversation stays reachable.
+  // Kept per history entry so each loop iteration's conversation stays reachable.
   threadId: z.string().optional(),
   get history() {
     return z

@@ -57,11 +57,11 @@ type TimelineActivitySeedData = Pick<
   | 'targetCompanyId'
   | 'targetOpportunityId'
 > & {
-  timelineActivityTypeSnapshot: string; // JSON stringified for raw insertion
-  properties: string; // JSON stringified for raw insertion
-  createdAt: string; // ISO string for raw insertion
-  updatedAt: string; // ISO string for raw insertion
-  happensAt: string; // ISO string for raw insertion
+  timelineActivityTypeSnapshot: string;
+  properties: string;
+  createdAt: string;
+  updatedAt: string;
+  happensAt: string;
 };
 
 type ActivityTargetInfo = {

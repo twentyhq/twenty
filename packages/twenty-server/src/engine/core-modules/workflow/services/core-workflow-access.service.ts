@@ -15,9 +15,7 @@ import {
   WorkflowQueryValidationExceptionCode,
 } from 'src/modules/workflow/common/exceptions/workflow-query-validation.exception';
 
-// A workflow's versions carry its whole definition, so reaching one by id has
-// to answer to the same rule as reaching the workflow. Both asserts live here
-// so a private workflow has one deny to audit rather than one per entry point.
+// Versions carry the whole definition, so they answer to the same rule, with one deny to audit.
 @Injectable()
 export class CoreWorkflowAccessService {
   constructor(
@@ -51,8 +49,7 @@ export class CoreWorkflowAccessService {
         `Core workflow '${inaccessibleCoreWorkflow.id}' is private to another member`,
         WorkflowQueryValidationExceptionCode.FORBIDDEN,
         {
-          // the same message a missing workflow gets, so a private one does not
-          // announce that it exists
+          // Same message as a missing workflow, so a private one does not announce that it exists.
           userFriendlyMessage: msg`Workflow not found`,
         },
       );
@@ -95,8 +92,7 @@ export class CoreWorkflowAccessService {
     });
   }
 
-  // The legacy resolvers are keyed by the workspace mirror's ids rather than
-  // the core ones, so they need the same rule reached from the other side.
+  // Legacy resolvers use the workspace mirror's ids, so the same rule is reached from that side.
   async assertWorkspaceWorkflowVersionsAreAccessibleOrThrow({
     workspaceId,
     userWorkspaceId,
@@ -156,8 +152,7 @@ export class CoreWorkflowAccessService {
     });
   }
 
-  // The command menu lists every member's manual triggers in one read, so the
-  // rule has to come back as a filter rather than a deny.
+  // The command menu lists every member's manual triggers in one read, so the rule comes back as a filter.
   async findInaccessibleWorkspaceWorkflowVersionIds({
     workspaceId,
     userWorkspaceId,
@@ -267,8 +262,7 @@ export class CoreWorkflowAccessService {
       },
     });
 
-    // An id nobody owns keeps behaving exactly as it did before, so an unknown
-    // or already deleted workflow is still a no-op rather than a refusal.
+    // Unknown or deleted ids stay a no-op rather than a refusal.
     return coreWorkflows.filter(
       (coreWorkflow) =>
         coreWorkflow.visibility === WorkflowVisibility.PRIVATE &&

@@ -15,15 +15,8 @@ import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
-// One row per user who has completed an OAuth authorization_code exchange for
-// an application. Application tokens are stateless JWTs carrying the user as a
-// claim, so without this row the server has no record that the authorization
-// happened and nothing to list or revoke. Only authorization_code issues a
-// refresh token; client_credentials returns an access token alone and involves
-// no user, so it has no row here.
+// Application tokens are stateless JWTs, so this row is the only record of an authorization to list or revoke
 @Entity({ name: 'applicationAuthorization', schema: 'core' })
-// Re-authorizing the same application updates this row rather than adding a
-// second one, so a user never accumulates duplicate entries for one app.
 @Index(
   'IDX_APPLICATION_AUTHORIZATION_USER_APPLICATION_UNIQUE',
   ['userId', 'applicationId'],
@@ -42,8 +35,7 @@ export class ApplicationAuthorizationEntity {
   })
   user: Relation<UserEntity>;
 
-  // No index of its own: it leads the unique index declared on the class, which
-  // already serves both the per-user listing and the cascade delete.
+  // No index of its own: it leads the unique index declared on the class
   @Column({ type: 'uuid' })
   userId: string;
 
@@ -60,9 +52,6 @@ export class ApplicationAuthorizationEntity {
   @Column({ type: 'uuid' })
   workspaceId: string;
 
-  // Uninstalling deletes the application row, which already invalidates every
-  // token issued for it. Cascading here stops the grants outliving the install
-  // they describe.
   @ManyToOne(() => ApplicationEntity, {
     onDelete: 'CASCADE',
   })
@@ -76,9 +65,7 @@ export class ApplicationAuthorizationEntity {
   @Column({ type: 'uuid' })
   applicationId: string;
 
-  // Cascades only on a hard delete. Removing a member soft-deletes the
-  // membership instead, which leaves this row intact, so the refresh path
-  // rechecks the membership rather than trusting the grant to have gone.
+  // Member removal soft-deletes, so this rarely cascades: the refresh path rechecks membership
   @ManyToOne(() => UserWorkspaceEntity, {
     onDelete: 'CASCADE',
   })
@@ -92,11 +79,7 @@ export class ApplicationAuthorizationEntity {
   @Column({ type: 'uuid' })
   userWorkspaceId: string;
 
-  // Scopes as granted at the last exchange, which is what the user consented to
-  // and therefore what the revocation screen should show them. Null on a row
-  // reconstructed from a refresh token that predates this table: those tokens
-  // carry no scope claim, and what the application declares today is not
-  // evidence of what the user agreed to back then.
+  // Null on rows backfilled from refresh tokens predating this table, which carry no scope claim
   @Column({ type: 'text', array: true, nullable: true })
   scopes: string[] | null;
 
@@ -104,13 +87,11 @@ export class ApplicationAuthorizationEntity {
   @Column({ type: 'timestamptz', nullable: true })
   lastAuthorizedAt: Date | null;
 
-  // Touched on refresh. Refreshes happen at most once per access-token TTL, so
-  // this needs no write throttling of its own.
+  // Touched on refresh, at most once per access-token TTL, so no write throttling needed
   @Column({ type: 'timestamptz' })
   lastUsedAt: Date;
 
-  // Kept forever once set: a revoked row is what tells a still-signed refresh
-  // token apart from one issued before authorizations were recorded.
+  // Revoked rows are kept: they tell a revoked refresh token apart from one predating this table
   @Column({ type: 'timestamptz', nullable: true })
   revokedAt: Date | null;
 

@@ -392,9 +392,7 @@ export abstract class CommonBaseQueryRunnerService<
     };
   }
 
-  // useReplica follows isReadOnly so reads on read-only runners hit the replica
-  // and everything else the primary, keeping root read and nested-relation
-  // loading consistent.
+  // Root reads and nested-relation loading must hit the same replica or primary
   protected getReadRepository({
     repository,
   }: Pick<

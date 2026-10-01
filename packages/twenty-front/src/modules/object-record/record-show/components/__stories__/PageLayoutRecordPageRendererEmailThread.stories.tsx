@@ -220,8 +220,7 @@ const buildThreadConnectedAccountHandlers = (connectedAccount: {
   ),
 ];
 
-// The mocked minimal metadata ships no page layouts, so the record page has no
-// layout to render until this seeds one holding the email thread widget.
+// The minimal metadata mocks ship no page layouts.
 const SeedEmailThreadPageLayoutEffect = () => {
   const { replaceDraft, applyChanges } = useUpdateMetadataStoreDraft();
   const isMinimalMetadataReady = useAtomStateValue(isMinimalMetadataReadyState);
@@ -312,8 +311,7 @@ export const ReplyOpensComposerInSidePanel: Story = {
 
     await userEvent.click(replyButton);
 
-    // The render loop this guards against killed the widget subtree, so the
-    // composer never survived past its first frame.
+    // Guards against a render loop that killed the widget subtree.
     await expect(
       await canvas.findByRole('button', { name: /send/i }, { timeout: 20000 }),
     ).toBeVisible();

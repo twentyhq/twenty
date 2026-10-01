@@ -274,10 +274,7 @@ export class ParticipantTargetReconciliationService {
       return;
     }
 
-    // Existing workspaces only gain the target junction objects once the
-    // upgrade metadata sync has run; until then reconciliation must no-op so
-    // message and calendar imports keep succeeding. The backfill that follows
-    // the sync covers rows imported during that window.
+    // Target junction objects exist only after the upgrade metadata sync; the following backfill covers the gap
     if (
       !isDefined(getWorkspaceContext().objectIdByNameSingular[targetObjectName])
     ) {
@@ -316,8 +313,7 @@ export class ParticipantTargetReconciliationService {
       existingTargets,
     });
 
-    // Targets per parent are unbounded, so write batches are re-chunked to
-    // stay under the ORM's per-call record cap.
+    // Targets per parent are unbounded, so re-chunk under the ORM's per-call record cap
     for (const targetsToCreateChunk of chunk(
       operations.targetsToCreate,
       QUERY_MAX_RECORDS,
@@ -394,8 +390,7 @@ export class ParticipantTargetReconciliationService {
       where: { id: In(personIds) },
       select: { id: true, companyId: true },
     });
-    // find() excludes soft-deleted people, so this set keeps desired targets
-    // aligned with the backfill, which only joins live people.
+    // find() excludes soft-deleted people, matching the backfill which joins live people only
     const livePersonIds = new Set(people.map(({ id }) => id));
     const companyIdByPersonId = new Map(
       people.map(({ id, companyId }) => [id, companyId]),

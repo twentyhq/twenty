@@ -369,9 +369,7 @@ const getPersonTimelineDiffFieldNames = async (
 const TIMELINE_POLL_TIMEOUT_MS = 30_000;
 const TIMELINE_POLL_INTERVAL_MS = 500;
 
-// Timeline activities are written asynchronously by the worker, so an empty
-// timeline alone proves nothing; a later write to a regular field gives the
-// check something it has to wait for.
+// Timeline activities are written async by the worker; a later field write gives the check something to wait for.
 const waitForPersonTimelineDiffFieldName = async (
   client: CoreApiClient,
   { personId, fieldName }: { personId: string; fieldName: string },

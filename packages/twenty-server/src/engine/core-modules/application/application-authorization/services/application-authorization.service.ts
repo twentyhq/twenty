@@ -13,8 +13,6 @@ export class ApplicationAuthorizationService {
     private readonly applicationAuthorizationRepository: Repository<ApplicationAuthorizationEntity>,
   ) {}
 
-  // Re-authorizing an application the user previously revoked reinstates the
-  // same row: they have just consented again, so the revocation is spent.
   async recordAuthorization({
     userId,
     workspaceId,
@@ -48,11 +46,7 @@ export class ApplicationAuthorizationService {
     );
   }
 
-  // Stands in for the consent event that happened before this table existed.
-  // The refresh token proves the authorization took place but carries no scope
-  // claim and no timestamp for it, so both are left null instead of being
-  // guessed from what the application declares today. Insert-only, so it can
-  // never overwrite a row written by a real consent.
+  // Scopes and consent time stay null: pre-table refresh tokens carry neither, and today's declared scopes prove nothing
   async backfillAuthorizationFromRefreshToken({
     userId,
     workspaceId,
@@ -81,8 +75,7 @@ export class ApplicationAuthorizationService {
       .execute();
   }
 
-  // Returns revoked rows too: the caller has to tell "never authorized" apart
-  // from "authorized then revoked", which are opposite answers.
+  // Includes revoked rows: callers must tell "never authorized" from "revoked"
   async findByUserAndApplication({
     userId,
     applicationId,
@@ -96,12 +89,7 @@ export class ApplicationAuthorizationService {
     });
   }
 
-  // Inner join, so an application that has been soft-deleted takes its
-  // authorizations off the list rather than surfacing them with nothing to
-  // name them.
-  // Scoped to one workspace: an authorization grants an application access to
-  // this workspace's data, so it is this workspace's to list and revoke. The
-  // same person's grants elsewhere are not visible from here.
+  // Inner join drops authorizations of soft-deleted applications
   async findActiveAuthorizationsForUserWorkspace({
     userId,
     workspaceId,
@@ -128,9 +116,7 @@ export class ApplicationAuthorizationService {
     );
   }
 
-  // Scoped in the UPDATE itself rather than read-then-write, so one user can
-  // never revoke another user's authorization, or their own in another
-  // workspace, by guessing an id.
+  // Scoped in the UPDATE itself so a guessed id cannot revoke someone else's authorization
   async revokeAuthorizationByIdForUserWorkspace({
     authorizationId,
     userId,
@@ -157,9 +143,7 @@ export class ApplicationAuthorizationService {
     return await this.revokeMatching({ userId, applicationId });
   }
 
-  // Returns whether this call was the one that revoked it, so a repeated
-  // revocation reports false rather than moving revokedAt forward. The union
-  // rules out an empty criteria object, which would revoke every row.
+  // The union rules out empty criteria, which would revoke every row
   private async revokeMatching(
     criteria:
       | { id: string; userId: string; workspaceId: string }

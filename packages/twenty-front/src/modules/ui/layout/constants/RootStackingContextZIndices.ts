@@ -1,5 +1,3 @@
-// Every stacking context created on top of the document's root one gets its z-index here, so it no longer has to be
-// guessed from the dev console: https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_positioned_layout/Stacking_context
 // TODO: add the other remaining components that can appear in the root stacking context
 export enum RootStackingContextZIndices {
   LogConsole = 20,

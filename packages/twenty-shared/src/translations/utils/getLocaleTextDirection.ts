@@ -1,8 +1,6 @@
 import { type TextDirection } from '@/translations/types/TextDirection';
 
-// Scripts written right to left, by ISO 639-1 language subtag. Twenty ships
-// Arabic and Hebrew today; the rest are listed so that ticking one of them in
-// Crowdin does not silently lay the app out backwards.
+// Beyond the shipped Arabic and Hebrew, so enabling another RTL locale in Crowdin does not lay the app out backwards.
 const RIGHT_TO_LEFT_LANGUAGES = [
   'ar',
   'dv',

@@ -30,9 +30,7 @@ export class WorkflowVersionValidationWorkspaceService {
     private readonly workflowMetadataReadService: WorkflowMetadataReadService,
   ) {}
 
-  // Malformed content is rejected at the write chokepoint, but legacy versions
-  // written before that gate can still hold some, so activation refuses both
-  // the malformed and the non-activable codes.
+  // Legacy versions written before the write-time gate can still hold malformed content
   async assertWorkflowVersionIsActivableOrThrow({
     workspaceId,
     trigger,

@@ -9,8 +9,7 @@ import { AgentChatThreadLifecycleService } from 'src/engine/metadata-modules/ai/
 import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 
-// Destroys reach here from both the record API and the chat mutations, and a
-// destroy hook only sees the selected columns of a row that is already gone
+// a listener rather than a destroy hook: destroys come from both the record API and chat mutations
 @Injectable()
 export class AgentChatThreadLifecycleListener {
   constructor(

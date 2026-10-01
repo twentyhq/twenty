@@ -75,9 +75,7 @@ export const parseChatReferenceBody = (
   const segments = body.split(':');
   const [kindPrefix, ...identityAndLabel] = segments;
 
-  // A recognised prefix followed by an identity of the wrong shape is a
-  // retired or malformed marker, not a record of an object bearing that
-  // name, so it must not fall through to the unprefixed record form.
+  // A known prefix with a malformed identity is a retired marker, not a record of an object with that name.
   if (isChatReferenceKind(kindPrefix)) {
     return parseSegments({ kind: kindPrefix, segments: identityAndLabel });
   }

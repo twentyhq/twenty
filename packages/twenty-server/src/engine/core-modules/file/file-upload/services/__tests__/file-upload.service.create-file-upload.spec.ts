@@ -41,8 +41,7 @@ describe('FileUploadService.createFileUpload', () => {
   );
 
   it('should not refuse an SVG within the limit', async () => {
-    // Reaching a collaborator means the guard let it through, which is what
-    // this asserts: the empty mocks make that surface as a TypeError.
+    // The empty mocks make reaching a collaborator surface as a TypeError.
     await expect(
       createUpload('logo.svg', MAX_SANITIZABLE_SVG_BYTES),
     ).rejects.not.toMatchObject({

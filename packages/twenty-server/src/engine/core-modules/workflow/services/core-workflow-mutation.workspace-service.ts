@@ -767,8 +767,7 @@ export class CoreWorkflowMutationWorkspaceService {
       flatEntityMaps: flatWorkflowVersionMaps,
     });
 
-    // The mirror goes first: the other order committed the core delete before the
-    // assert could veto it, which destroyed the version's triggers and steps.
+    // mirror first so the assert can veto before the core delete commits
     await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       await this.workspaceOrmManager.runInWorkspaceTransaction(
         async (transactionScope) => {
@@ -891,7 +890,6 @@ export class CoreWorkflowMutationWorkspaceService {
     }, buildSystemAuthContext(workspaceId));
   }
 
-  // Owning a workflow means being a person, so this one keeps a strict reader
   async updateWorkflowVisibility({
     workspaceId,
     userWorkspaceId,
@@ -909,12 +907,7 @@ export class CoreWorkflowMutationWorkspaceService {
       },
     );
 
-    // Workflows that predate this column have no owner, and the first member to
-    // set a visibility claims one. The ownership test is the UPDATE's own WHERE
-    // rather than a preceding read, so two members claiming at the same moment
-    // cannot both pass it and have the later write silently take the workflow.
-    // A workspace-visible workflow is already editable and deletable by every
-    // member, so claiming one grants no access the claimer did not have.
+    // ownership is checked in the UPDATE's WHERE, not a prior read, so two concurrent claims of an ownerless workflow cannot both win
     const claimResult =
       await this.workflowRunRecordShareService.updateAccessThenSyncRuns({
         workspaceId,

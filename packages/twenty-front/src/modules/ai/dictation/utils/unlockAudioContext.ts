@@ -5,8 +5,7 @@ type AudioContextWindow = {
   webkitAudioContext?: typeof AudioContext;
 };
 
-// close() rejects on a context that never finished opening, and releasing one
-// is never worth failing a start over.
+// close() rejects on a context that never finished opening.
 const closeQuietly = async (audioContext: AudioContext): Promise<void> => {
   try {
     await audioContext.close();
@@ -15,10 +14,7 @@ const closeQuietly = async (audioContext: AudioContext): Promise<void> => {
   }
 };
 
-// iOS suspends any AudioContext created outside a user gesture, and a suspended
-// context blocks the capture path speech recognition runs on. Failures are
-// swallowed: this improves the odds of a clean start and is never the reason to
-// refuse one.
+// iOS suspends AudioContexts created outside a gesture, which blocks speech capture.
 export const unlockAudioContext = async (): Promise<void> => {
   const audioContextWindow = window as unknown as AudioContextWindow;
   const AudioContextConstructor =
@@ -37,14 +33,9 @@ export const unlockAudioContext = async (): Promise<void> => {
       await audioContext.resume();
     }
   } catch {
-    // See above: a failed unlock costs the odds of a clean start, nothing more.
+    // A failed unlock only lowers the odds of a clean start.
   } finally {
-    // Closed here rather than after resume(), because resume() rejecting is
-    // exactly when the context would otherwise be leaked — and a rejection is
-    // expected on the surface this exists for, where the gesture that permits
-    // it can have expired during the microphone warm-up. A browser allows only
-    // a handful of live contexts, each holding an audio render thread, so
-    // leaking one per press would starve the capture path this is unlocking.
+    // Closed even when resume() rejects, which is routine here: browsers allow only a few live contexts.
     if (isDefined(audioContext)) {
       await closeQuietly(audioContext);
     }

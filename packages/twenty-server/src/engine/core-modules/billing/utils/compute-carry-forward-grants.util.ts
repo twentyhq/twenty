@@ -42,9 +42,7 @@ const hasLapsedBy = ({
 }): boolean =>
   isDefined(expiresAt) && expiresAt.getTime() <= boundary.getTime();
 
-// Capped credits are spent first so that deliberately granted credits
-// (compensation, partnership, onboarding rewards) survive the period and carry
-// over at their full value instead of being clipped by the rollover cap.
+// Capped credits are spent first so deliberate grants carry over in full instead of being clipped by the rollover cap.
 const compareSpendingOrder = (a: CreditBucket, b: CreditBucket): number => {
   const [isACapped, isBCapped] = [isCappedType(a.type), isCappedType(b.type)];
 
@@ -58,10 +56,7 @@ const compareSpendingOrder = (a: CreditBucket, b: CreditBucket): number => {
     return byCreatedAt;
   }
 
-  // Grants written in the same transaction share a timestamp, and the order
-  // decides which grant id ends up on which carry-forward row. That id is part
-  // of the replay key, so without a stable tie-break a redelivery could write
-  // a second set of rows for the same credits.
+  // Grant id is part of the replay key, so same-timestamp grants need a stable order or a redelivery writes duplicate rows.
   return (a.grantId ?? '').localeCompare(b.grantId ?? '');
 };
 
@@ -76,8 +71,6 @@ export const computeCarryForwardGrants = ({
   liveGrants: CarryForwardGrantInput[];
   usageMicro: number;
   rolloverCapMicro: number;
-  // Where the closing period ends, which decides whether a time-boxed grant is
-  // still alive on the other side of it.
   boundary: Date;
 }): CarryForwardGrantOutput[] => {
   const allowanceBucket: CreditBucket = {
@@ -123,11 +116,7 @@ export const computeCarryForwardGrants = ({
         ]
       : [];
 
-  // A lapsed grant keeps its place in the waterfall above and only loses its
-  // remainder: carrying that would hand back credits the deadline took away.
-  // The waterfall spends a whole period at once with no event times, so this is
-  // only exact because every deadline is a period end, which is the invariant
-  // alignGrantExpiryToPeriodEnd holds at the point an expiry is set.
+  // Only exact because every deadline is a period end, as alignGrantExpiryToPeriodEnd guarantees.
   const preservedGrants: CarryForwardGrantOutput[] = unspentBuckets
     .filter(
       (bucket) =>
@@ -139,8 +128,6 @@ export const computeCarryForwardGrants = ({
       type: bucket.type,
       amountMicro: Math.floor(bucket.amountMicro),
       sourceGrantId: bucket.grantId,
-      // The successor inherits the deadline rather than outliving it, so a
-      // time-boxed grant does not become permanent by crossing a renewal.
       expiresAt: bucket.expiresAt,
     }));
 

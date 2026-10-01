@@ -28,9 +28,7 @@ const findIndex = (
       .universalIdentifier
   ];
 
-// Postgres only uses a composite btree for a predicate that matches its leading
-// columns, so which columns an index carries and in what order is part of the
-// contract the read and write paths depend on, not an implementation detail.
+// Postgres uses a composite btree only for predicates matching its leading columns, so column order is contract
 const getIndexedFieldUniversalIdentifiers = (
   indexName: keyof typeof STANDARD_OBJECTS.agentChatThreadTarget.indexes,
 ) =>
@@ -68,9 +66,7 @@ const LEGS = [
 ] as const;
 
 describe('agent chat thread target workspace metadata', () => {
-  // One morph id makes the legs a single polymorphic target, which is what the
-  // default-relation tooling extends for custom objects. CASCADE is the only
-  // thing that removes a destroyed record's links.
+  // CASCADE is the only thing that removes a destroyed record's links
   it.each(LEGS)(
     'attaches to a $objectName through its own leg of the target morph',
     ({ objectName, leg, joinColumnName }) => {
@@ -111,7 +107,6 @@ describe('agent chat thread target workspace metadata', () => {
     },
   );
 
-  // A second attach of the same thread to the same record must not add a row.
   it.each(LEGS)(
     'keeps one live link per thread and $objectName',
     ({ leg, uniqueIndexName }) => {

@@ -222,8 +222,7 @@ export class FieldPermissionService {
             : current.canUpdateFieldValue;
 
         if (!isDefined(effectiveCanRead) && !isDefined(effectiveCanUpdate)) {
-          // The mirror pass only owns rows it could have written itself, so a row
-          // another application declared is left alone rather than silently dropped
+          // The mirror pass only owns rows it could have written itself; another application's row is left alone
           const isForeignMirroredRow =
             mirroredFieldKeys.has(key) &&
             !inputFieldKeys.has(key) &&
@@ -509,8 +508,7 @@ export class FieldPermissionService {
         continue;
       }
 
-      // A cleared source row is dropped from desiredMap by the bothNull gate above,
-      // so the mirror has to be told to clear explicitly or it survives as an orphan
+      // The bothNull gate drops a cleared source row from desiredMap, so the mirror must be cleared explicitly or it orphans
       const sourceIsCleared =
         !isDefined(fieldPermission.canReadFieldValue) &&
         !isDefined(fieldPermission.canUpdateFieldValue);

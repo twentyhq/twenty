@@ -17,12 +17,7 @@ type ChipFlash = {
   nonce: number;
 };
 
-// The selection is stored as recipient keys rather than array positions: a drag
-// can reorder the field underneath it, and positions would then point at
-// whichever chips happen to have moved into those slots.
-// anchorKey is where a shift-extended range starts and focusKey is the chip the
-// keyboard cursor sits on, so shift+arrow can grow and shrink the same range
-// the way a text selection does.
+// Keyed by recipient, not position: a drag can reorder the field underneath the selection.
 type ChipSelection = {
   anchorKey: string;
   focusKey: string;
@@ -178,9 +173,7 @@ export const useEmailRecipientsField = ({
       recipients.filter((_recipient, index) => !removedIndices.has(index)),
     );
 
-    // Selection collapses onto the chip just before the removed run, matching
-    // how a text cursor lands after deleting a selection. That chip sits before
-    // the lowest removed index, so it always survives the removal.
+    // Collapses onto the chip before the removed run, like a text cursor; it always survives the removal.
     const indexBeforeRemoved = Math.min(...selectedChipIndices) - 1;
     const keyBeforeRemoved = recipientKeys[indexBeforeRemoved];
 
@@ -224,8 +217,6 @@ export const useEmailRecipientsField = ({
       const isAlreadySelected = previousSelection.keys.includes(chipKey);
 
       if (!isAlreadySelected) {
-        // Adding re-anchors on the clicked chip so a following shift+click
-        // ranges from where the user last pointed.
         return {
           anchorKey: chipKey,
           focusKey: chipKey,
@@ -239,8 +230,7 @@ export const useEmailRecipientsField = ({
         return null;
       }
 
-      // Removing must not leave the anchor or the cursor on a chip that is no
-      // longer selected, or Enter and shift+arrow would act on it.
+      // Otherwise Enter and shift+arrow would act on a chip that is no longer selected.
       const fallbackKey = nextKeys[nextKeys.length - 1];
 
       return {
@@ -290,8 +280,6 @@ export const useEmailRecipientsField = ({
     }
 
     if (selectionFocusIndex === null || selectionAnchorIndex === null) {
-      // Shift+Left out of the text input starts a selection on the last chip;
-      // shift+Right has nowhere to go.
       if (direction === 1) {
         return null;
       }
@@ -301,8 +289,7 @@ export const useEmailRecipientsField = ({
       return lastIndex;
     }
 
-    // Unlike a plain arrow, extending past the last chip keeps the selection
-    // rather than dropping the caret back into the input.
+    // Unlike a plain arrow, extending past the last chip keeps the selection.
     const nextFocusIndex = Math.min(
       Math.max(selectionFocusIndex + direction, 0),
       recipients.length - 1,

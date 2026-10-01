@@ -81,8 +81,7 @@ export class UserSessionService {
       throw new Error('Cannot issue a user session without an HTTP response');
     }
 
-    // Cannot live in the CSRF middleware, which cannot know a request is about
-    // to issue a cookie.
+    // Not in the CSRF middleware, which cannot know a request is about to issue a cookie.
     if (!this.isRequestAllowedToReceiveSessionCookie(request)) {
       this.logger.warn(
         `Refused to issue a session cookie to origin ${request.headers.origin}`,
@@ -132,8 +131,7 @@ export class UserSessionService {
         }
       }
 
-      // Create the replacement before touching the presented session. If the
-      // insert fails, the browser keeps its last working credential.
+      // Create the replacement first so a failed insert leaves the browser its working credential.
       const { sessionToken, session } = await this.createSession(sessionInput);
 
       this.userSessionCookieService.attachSessionTokenToResponse(
@@ -147,9 +145,7 @@ export class UserSessionService {
       }
 
       if (sessionInput.isImpersonating === true) {
-        // The one sign-in that must not revoke what it replaces: parking the
-        // impersonator's session lets stopImpersonation hand back the credential
-        // they already held.
+        // Parked rather than revoked, so stopImpersonation can hand the impersonator's credential back.
         this.userSessionCookieService.attachImpersonatorSessionTokenToResponse(
           response,
           presentedSessionToken,
@@ -164,8 +160,7 @@ export class UserSessionService {
           UserSessionRevokedReason.Superseded,
         );
       } catch (error) {
-        // The replacement session and cookie are already valid. A cleanup
-        // failure must not turn that successful handoff into another logout.
+        // The handoff already succeeded; a cleanup failure must not turn it into another logout.
         this.logger.error(
           `Failed to revoke the superseded session: ${
             error instanceof Error ? error.message : String(error)
@@ -183,8 +178,7 @@ export class UserSessionService {
     }
   }
 
-  // No Origin means no browser to plant a cookie in, so scripted sign-ins keep
-  // working. Browsers always send one on the unsafe requests these arrive as.
+  // No Origin means no browser to plant a cookie in; browsers always send one on these unsafe requests.
   private isRequestAllowedToReceiveSessionCookie(request: Request): boolean {
     const origin = request.headers.origin;
 
@@ -397,9 +391,7 @@ export class UserSessionService {
     };
   }
 
-  // A revocation racing the write above may have had its cache delete land
-  // first, resurrecting the session for a full TTL. Re-checking afterwards
-  // closes it: anything committing later deletes what we just wrote.
+  // A racing revocation's cache delete may land first and resurrect the session for a TTL; re-checking closes that.
   private async assertNotRevokedAfterCaching(
     sessionId: string,
     tokenHash: string,
@@ -424,10 +416,7 @@ export class UserSessionService {
     });
   }
 
-  // Scoped to one workspace: a session belongs to the workspace its exchange
-  // selected, and the same person's membership of another workspace is not that
-  // workspace's business. Sessions with no workspace are the workspace-agnostic
-  // ones minted on the default subdomain, which belong to no workspace's list.
+  // A session belongs to the workspace its exchange selected; workspace-agnostic ones belong to no list.
   async findActiveSessionsForUserWorkspace({
     userId,
     workspaceId,
@@ -490,8 +479,7 @@ export class UserSessionService {
     return await this.revokeSessionEntity(session, reason);
   }
 
-  // workspaceId narrows this to one workspace, which is what the settings panel
-  // wants. Account-wide callers (password change) leave it out on purpose.
+  // Account-wide callers (password change) omit workspaceId on purpose.
   async revokeAllSessionsForUser({
     userId,
     workspaceId,
@@ -503,9 +491,7 @@ export class UserSessionService {
     reason: UserSessionRevokedReason;
     exceptSessionId?: string;
   }): Promise<number> {
-    // Applying the predicate in the UPDATE rather than to ids read beforehand
-    // narrows but does not close the window: a sign-in committing after this
-    // statement's snapshot survives, which would need a generation counter.
+    // Narrows but does not close the race: a sign-in committing after this snapshot survives.
     const revokingQuery = this.userSessionRepository
       .createQueryBuilder()
       .update(UserSessionEntity)
@@ -592,8 +578,7 @@ export class UserSessionService {
       return;
     }
 
-    // Outside the catch: a storage failure here leaves a usable refresh token
-    // behind, so it must surface rather than report success.
+    // Outside the catch: a storage failure leaves a usable refresh token behind, so it must surface.
     await this.appTokenRepository.update(
       {
         id: payload.jti,
@@ -650,8 +635,7 @@ export class UserSessionService {
     return ms(this.twentyConfigService.get('SESSION_IDLE_TIMEOUT'));
   }
 
-  // Must stay well inside the idle timeout, or a continuously active user goes
-  // idle between two touches.
+  // Must stay well inside the idle timeout, or a continuously active user goes idle between touches.
   private getTouchIntervalMs(): number {
     return Math.min(
       USER_SESSION_MAX_TOUCH_INTERVAL_MS,

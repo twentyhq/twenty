@@ -310,10 +310,7 @@ export class ObjectMetadataController {
     return grouped;
   }
 
-  // REST returns the same labels the app renders: resolved for the caller's
-  // locale, through the one resolver the GraphQL read path uses. Objects and
-  // every field across them resolve in one call each, so a page costs a fixed
-  // number of catalog reads rather than one per row.
+  // one resolution call per kind so a page costs a fixed number of catalog reads
   private async toObjectWithFieldsDtos({
     objects,
     fieldsByObjectId,

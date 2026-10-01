@@ -11,9 +11,7 @@ export const resolveTranslatableProperties = ({
   i18nContext,
 }: {
   metadataName: TranslatableMetadataName;
-  // The registry decides which properties to read, so the entity is indexed by
-  // name: callers range from TypeORM classes to plain DTOs, some without an
-  // overrides column at all.
+  // callers range from TypeORM classes to plain DTOs, some without an overrides column
   entity: Record<string, unknown>;
   i18nContext: EffectiveEntityI18nContext;
 }): Record<string, string> =>

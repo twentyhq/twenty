@@ -2,10 +2,7 @@ import { DragDropItemSortableCell } from '@/ui/utilities/drag-and-drop/component
 import { DragDropProvider } from '@dnd-kit/react';
 import { render, screen, waitFor } from '@testing-library/react';
 
-// Playwright resolves a click on a non-interactive element to its closest
-// button-like ancestor before deciding whether the click target is enabled,
-// so a sortable wrapper that advertises itself as a disabled button makes
-// every element inside it unclickable for automation.
+// Playwright resolves clicks to the closest button-like ancestor, so a disabled-button wrapper makes its content unclickable
 const CLICK_TARGET_ANCESTOR_SELECTOR =
   'button, [role=button], [role=checkbox], [role=radio]';
 

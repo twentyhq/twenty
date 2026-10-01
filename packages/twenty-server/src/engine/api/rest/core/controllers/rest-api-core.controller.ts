@@ -161,9 +161,7 @@ export class RestApiCoreController {
     res.status(200).send(result);
   }
 
-  // This endpoint is not documented in the OpenAPI schema.
-  // We keep it to avoid a breaking change since it initially used PUT instead
-  // of PATCH, and because the PUT verb is often used as a PATCH.
+  // Undocumented legacy alias of PATCH, kept to avoid a breaking change
   @Put('*path')
   async handleApiPut(
     @Req() request: AuthenticatedRequest,
