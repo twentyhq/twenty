@@ -47,11 +47,6 @@ const FINALE_SCATTER_AMOUNT = 0.06;
 const SOFTWARE_RENDERER_PATTERN =
   /swiftshader|llvmpipe|software|basic render driver/i;
 
-// Reading COMPILE_STATUS or LINK_STATUS makes the main thread wait until the
-// GPU process has compiled the program, which takes hundreds of milliseconds
-// on a cold shader cache, right while the first onboarding step animates in.
-// Compilation is only started here: the renderer checks for completion without
-// blocking, and reads LINK_STATUS once the answer is already available.
 const startProgramCompilation = (
   gl: WebGL2RenderingContext,
   vertexSource: string,
@@ -75,8 +70,6 @@ const startProgramCompilation = (
   gl.attachShader(program, vertexShader);
   gl.attachShader(program, fragmentShader);
   gl.linkProgram(program);
-  // Shaders stay alive while attached, so they can be flagged for deletion
-  // before the link finishes.
   gl.deleteShader(vertexShader);
   gl.deleteShader(fragmentShader);
 
@@ -167,7 +160,6 @@ export const createOnboardingConstructionSiteRenderer = ({
     return null;
   }
 
-  // Lets the renderer ask whether compilation is done without waiting for it.
   const parallelShaderCompile = gl.getExtension('KHR_parallel_shader_compile');
   const debugRendererInfo = gl.getExtension('WEBGL_debug_renderer_info');
   const shouldReduceMotion =
@@ -233,9 +225,6 @@ export const createOnboardingConstructionSiteRenderer = ({
     return { sceneProgram, halftoneProgram };
   };
 
-  // Without the extension there is no way to ask without waiting, so the
-  // program is reported ready and the LINK_STATUS read in createResources
-  // blocks until it is.
   const isProgramCompiled = (program: WebGLProgram) =>
     !isDefined(parallelShaderCompile) ||
     gl.getProgramParameter(
@@ -373,8 +362,6 @@ export const createOnboardingConstructionSiteRenderer = ({
     };
   };
 
-  // Polled once per frame so the page keeps animating while the GPU process
-  // compiles, then builds the resources and draws the stage requested meanwhile.
   const createResourcesOnceProgramsAreCompiled = () => {
     programsAnimationFrameHandle = null;
     if (isDestroyed || !isDefined(pendingPrograms) || gl.isContextLost()) {
@@ -395,9 +382,6 @@ export const createOnboardingConstructionSiteRenderer = ({
     pendingPrograms = null;
     resources = createResources(programs);
     if (!isDefined(resources)) {
-      // A failed link or allocation leaves nothing to draw with: the canvas
-      // stays transparent, as it does without WebGL2. The programs are freed
-      // now since no resources reference them.
       gl.deleteProgram(programs.sceneProgram);
       gl.deleteProgram(programs.halftoneProgram);
       return;
@@ -633,10 +617,6 @@ export const createOnboardingConstructionSiteRenderer = ({
 
   const tick = (nowMs: number) => {
     animationFrameHandle = null;
-    // The timeline only advances once something can be drawn: otherwise the
-    // first build-up would play out, unseen, while the shaders still compile
-    // or while the context is lost. createResourcesOnceProgramsAreCompiled
-    // restarts the loop once the resources exist.
     if (isDestroyed || !isDefined(resources) || cssWidth < 1 || cssHeight < 1) {
       lastFrameTimeMs = null;
       return;
@@ -691,7 +671,6 @@ export const createOnboardingConstructionSiteRenderer = ({
     pendingPrograms = null;
   };
 
-  // Programs do not survive a lost context, so compilation starts over.
   const handleContextRestored = () => {
     pendingPrograms = startPrograms();
     createResourcesOnceProgramsAreCompiled();
@@ -738,7 +717,6 @@ export const createOnboardingConstructionSiteRenderer = ({
       }
       canvas.removeEventListener('webglcontextlost', handleContextLost);
       canvas.removeEventListener('webglcontextrestored', handleContextRestored);
-      // Unmounting before compilation finishes would otherwise leak them.
       if (isDefined(pendingPrograms)) {
         gl.deleteProgram(pendingPrograms.sceneProgram);
         gl.deleteProgram(pendingPrograms.halftoneProgram);
