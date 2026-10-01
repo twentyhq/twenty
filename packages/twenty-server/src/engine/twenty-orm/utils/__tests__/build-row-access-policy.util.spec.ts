@@ -483,7 +483,7 @@ describe('buildRowAccessPolicy', () => {
     });
 
     it('keeps writes gated on share rows in an existence read', () => {
-      const policy = buildRowAccessPolicy({
+      const policy = buildCompiledRowAccessPolicy({
         subject: readExistence,
         environment,
         tableAlias: 'person',
@@ -510,7 +510,7 @@ describe('buildRowAccessPolicy', () => {
     });
 
     it('does not open a child that declares no discoverable fields when joined from its discovered parent', () => {
-      const policy = buildRowAccessPolicy({
+      const policy = buildCompiledRowAccessPolicy({
         subject: readExistence,
         environment,
         tableAlias: 'attachment',
