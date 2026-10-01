@@ -213,6 +213,9 @@ import { AddUsageLimitInstanceOverrideFastInstanceCommand } from 'src/database/c
 import { EnforceWorkflowVersionCoreParentSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-instance-command-slow-1790323148754-enforce-workflow-version-core-parent';
 import { AddCoreForeignKeyIndexesSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-instance-command-slow-1790343790126-add-core-foreign-key-indexes';
 import { AddChatThreadsWidgetTypeFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-instance-command-fast-1790621229217-add-chat-threads-widget-type';
+import { AddValidationRuleTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-instance-command-fast-1790624264147-add-validation-rule-table';
+import { ReapplyUsageLimitPeriodReshapeFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-instance-command-fast-1790755883509-reapply-usage-limit-period-reshape';
+import { AddChatWidgetTypeFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-instance-command-fast-1790756560653-add-chat-widget-type';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -428,4 +431,7 @@ export const INSTANCE_COMMANDS = [
   EnforceWorkflowVersionCoreParentSlowInstanceCommand,
   AddCoreForeignKeyIndexesSlowInstanceCommand,
   AddChatThreadsWidgetTypeFastInstanceCommand,
+  AddValidationRuleTableFastInstanceCommand,
+  ReapplyUsageLimitPeriodReshapeFastInstanceCommand,
+  AddChatWidgetTypeFastInstanceCommand,
 ];

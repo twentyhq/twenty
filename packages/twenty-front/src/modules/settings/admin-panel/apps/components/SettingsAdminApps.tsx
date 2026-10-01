@@ -210,7 +210,7 @@ export const SettingsAdminApps = () => {
         <SearchInput
           placeholder={t`Search registrations...`}
           value={searchQuery}
-          onChange={setSearchQuery}
+          onValueChange={setSearchQuery}
           filterDropdown={(filterButton) => (
             <DropdownRoot
               dropdownId="settings-admin-apps-filter-dropdown"

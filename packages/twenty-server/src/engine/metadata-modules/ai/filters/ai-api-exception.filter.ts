@@ -40,7 +40,7 @@ export class AiRestApiExceptionFilter implements ExceptionFilter {
           response,
           503, // Service Unavailable - the AI service is not configured
         );
-      case AiExceptionCode.WORKFLOW_RUN_THREAD_READ_ONLY:
+      case AiExceptionCode.TOOL_CALL_RESOLUTION_FORBIDDEN:
         return this.httpExceptionHandlerService.handleError(
           exception,
           response,

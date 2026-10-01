@@ -3,6 +3,14 @@ import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspac
 import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
 import { AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-streaming.service';
 
+const QUESTIONS = [
+  {
+    header: 'Plan',
+    question: 'Which plan?',
+    options: [{ label: 'Pro' }, { label: 'Team' }],
+  },
+];
+
 describe('AgentChatStreamingService claim & reap', () => {
   const workspace = { id: 'workspace-id' } as WorkspaceEntity;
 
@@ -12,7 +20,6 @@ describe('AgentChatStreamingService claim & reap', () => {
     conversationSize: 0,
     activeStreamId: null,
     lastStreamError: null,
-    pendingQuestionMessageId: null,
   };
 
   const buildService = ({
@@ -20,6 +27,14 @@ describe('AgentChatStreamingService claim & reap', () => {
     claimAffected = 1,
     queuedMessages = [] as unknown[],
     heartbeatAlive = true,
+  }: {
+    thread?: typeof idleThread & {
+      pendingQuestionMessageId?: string;
+      workflowRunId?: string;
+    };
+    claimAffected?: number;
+    queuedMessages?: unknown[];
+    heartbeatAlive?: boolean;
   } = {}) => {
     const publishedEvents: Array<{ type: string }> = [];
     const threadRepository = {
@@ -44,6 +59,17 @@ describe('AgentChatStreamingService claim & reap', () => {
       queueMessage: jest.fn().mockResolvedValue({ id: 'queued-message-id' }),
       promoteQueuedMessage: jest.fn().mockResolvedValue('turn-id'),
       deleteQueuedMessage: jest.fn().mockResolvedValue(true),
+    };
+    const messagePartRepository = {
+      find: jest.fn().mockResolvedValue([
+        {
+          id: 'part-id',
+          toolName: 'ask_questions',
+          toolInput: { questions: QUESTIONS },
+          toolOutput: { result: { questions: QUESTIONS, status: 'pending' } },
+        },
+      ]),
+      update: jest.fn().mockResolvedValue({ affected: 1 }),
     };
     const eventPublisherService = {
       publish: jest.fn().mockImplementation(({ event }) => {
@@ -89,10 +115,12 @@ describe('AgentChatStreamingService claim & reap', () => {
           },
         }),
       } as never,
+      messagePartRepository as never,
     );
 
     return {
       service,
+      messagePartRepository,
       threadRepository,
       messageQueueService,
       agentChatService,
@@ -207,6 +235,78 @@ describe('AgentChatStreamingService claim & reap', () => {
       );
     });
 
+    const waitingThread = {
+      ...idleThread,
+      pendingQuestionMessageId: 'question-message-id',
+    };
+
+    it('stops waiting and closes the pending call as skipped before streaming', async () => {
+      const {
+        service,
+        threadRepository,
+        messagePartRepository,
+        messageQueueService,
+      } = buildService({ thread: waitingThread });
+
+      const result = await service.streamAgentChat(sendArguments);
+
+      expect(result.queued).toBe(false);
+      expect(threadRepository.update).toHaveBeenCalledWith(
+        'workspace-id',
+        {
+          id: 'thread-id',
+          pendingQuestionMessageId: 'question-message-id',
+          activeStreamId: expect.anything(),
+        },
+        { pendingQuestionMessageId: null },
+      );
+      expect(messagePartRepository.update).toHaveBeenCalledWith(
+        'workspace-id',
+        { id: 'part-id' },
+        {
+          toolOutput: expect.objectContaining({
+            result: { questions: QUESTIONS, status: 'skipped' },
+          }),
+        },
+      );
+      expect(
+        messagePartRepository.update.mock.invocationCallOrder[0],
+      ).toBeLessThan(messageQueueService.add.mock.invocationCallOrder[0]);
+    });
+
+    it('leaves the call as it is when an answer holds the conversation', async () => {
+      const { service, threadRepository, messagePartRepository } = buildService(
+        { thread: waitingThread },
+      );
+
+      threadRepository.update.mockResolvedValueOnce({ affected: 0 });
+
+      await service.streamAgentChat(sendArguments);
+
+      expect(messagePartRepository.update).not.toHaveBeenCalled();
+    });
+
+    it('refuses a message while its workflow run waits on the conversation', async () => {
+      const {
+        service,
+        messagePartRepository,
+        agentChatService,
+        messageQueueService,
+      } = buildService({
+        thread: { ...waitingThread, workflowRunId: 'workflow-run-id' },
+      });
+
+      await expect(
+        service.streamAgentChat(sendArguments),
+      ).rejects.toMatchObject({
+        code: AiExceptionCode.THREAD_AWAITING_WORKFLOW_INPUT,
+      });
+      expect(messagePartRepository.update).not.toHaveBeenCalled();
+      expect(agentChatService.addMessage).not.toHaveBeenCalled();
+      expect(agentChatService.queueMessage).not.toHaveBeenCalled();
+      expect(messageQueueService.add).not.toHaveBeenCalled();
+    });
+
     it('releases the claim when enqueueing the job fails', async () => {
       const {
         service,
@@ -227,6 +327,51 @@ describe('AgentChatStreamingService claim & reap', () => {
         { activeStreamId: null },
       );
       expect(streamHeartbeatService.clear).toHaveBeenCalled();
+    });
+  });
+
+  describe('flushNextQueuedMessage', () => {
+    const queuedMessages = [
+      {
+        id: 'queued-message-id',
+        parts: [{ type: 'text', textContent: 'next' }],
+      },
+    ];
+
+    it('keeps queued messages waiting behind a pending call', async () => {
+      const { service, agentChatService, messageQueueService } = buildService({
+        queuedMessages,
+        thread: {
+          ...idleThread,
+          pendingQuestionMessageId: 'question-message-id',
+        },
+      });
+
+      await service.flushNextQueuedMessage({
+        threadId: 'thread-id',
+        workspaceId: 'workspace-id',
+        hasTitle: true,
+      });
+
+      expect(agentChatService.promoteQueuedMessage).not.toHaveBeenCalled();
+      expect(messageQueueService.add).not.toHaveBeenCalled();
+    });
+
+    it('promotes the next queued message once nothing is pending', async () => {
+      const { service, agentChatService, messageQueueService } = buildService({
+        queuedMessages,
+      });
+
+      await service.flushNextQueuedMessage({
+        threadId: 'thread-id',
+        workspaceId: 'workspace-id',
+        hasTitle: true,
+      });
+
+      expect(agentChatService.promoteQueuedMessage).toHaveBeenCalledWith(
+        expect.objectContaining({ messageId: 'queued-message-id' }),
+      );
+      expect(messageQueueService.add).toHaveBeenCalled();
     });
   });
 

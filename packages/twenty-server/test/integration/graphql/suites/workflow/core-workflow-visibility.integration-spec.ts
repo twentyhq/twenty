@@ -6,6 +6,7 @@ import { WorkflowVisibility } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
+import { listChatThreadIds } from 'test/integration/utils/list-chat-thread-ids.util';
 import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
 import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
 import { updateWorkspaceMemberRole } from 'test/integration/metadata/suites/role/utils/update-workspace-member-role.util';
@@ -586,7 +587,7 @@ describe('core workflow visibility (e2e)', () => {
       expect(response.body.data?.runWorkflowVersion ?? null).toBeNull();
     });
 
-    // WorkflowTriggerResolver carries no class-level UserAuthGuard, so unlike
+    // WorkflowTriggerResolver's AuthPrincipalGuard accepts API keys, so unlike
     // the core workflow API an API key does reach this mutation, and the rule
     // has to hold for a caller that is a workspace rather than a person.
     it('refuses to activate it for an API key', async () => {
@@ -832,7 +833,7 @@ describe('core workflow visibility (e2e)', () => {
           'WorkflowAgentConversationWorkspaceService',
         );
 
-      const recordedThreadId = await conversationService.recordExecution({
+      const recordedConversation = await conversationService.recordExecution({
         workspaceId: SEED_APPLE_WORKSPACE_ID,
         workflowRunId,
         stepId: 'trigger',
@@ -847,8 +848,8 @@ describe('core workflow visibility (e2e)', () => {
         },
       });
 
-      expect(recordedThreadId).not.toBeNull();
-      threadId = recordedThreadId!;
+      expect(recordedConversation).not.toBeNull();
+      threadId = recordedConversation!.threadId;
     });
 
     afterAll(async () => {
@@ -892,23 +893,17 @@ describe('core workflow visibility (e2e)', () => {
     });
 
     it('keeps it out of the chat list of someone who can read it', async () => {
-      const response = await metadataRequestAs(
-        APPLE_JANE_ADMIN_ACCESS_TOKEN,
-        'query ReadableThreads { chatThreads { id } }',
-      );
-
-      expect(response.body.errors).toBeUndefined();
       expect(
-        response.body.data.chatThreads.map(({ id }: { id: string }) => id),
+        await listChatThreadIds(APPLE_JANE_ADMIN_ACCESS_TOKEN),
       ).not.toContain(threadId);
     });
 
-    it('refuses to rename it or add to it, even for the workflow creator', async () => {
-      const renameResponse = await metadataRequestAs(
+    it('refuses to rename or delete it, even for the workflow creator', async () => {
+      const renameResponse = await graphqlRequestAs(
         APPLE_JANE_ADMIN_ACCESS_TOKEN,
         `
           mutation RenameRunConversation($threadId: UUID!) {
-            renameChatThread(id: $threadId, title: "Renamed") {
+            updateAgentChatThread(id: $threadId, data: { title: "Renamed" }) {
               id
             }
           }
@@ -920,11 +915,11 @@ describe('core workflow visibility (e2e)', () => {
         'FORBIDDEN',
       );
 
-      const archiveResponse = await metadataRequestAs(
+      const deleteResponse = await graphqlRequestAs(
         APPLE_JANE_ADMIN_ACCESS_TOKEN,
         `
-          mutation ArchiveRunConversation($threadId: UUID!) {
-            archiveChatThread(id: $threadId) {
+          mutation DeleteRunConversation($threadId: UUID!) {
+            deleteAgentChatThread(id: $threadId) {
               id
             }
           }
@@ -932,9 +927,19 @@ describe('core workflow visibility (e2e)', () => {
         { threadId },
       );
 
-      expect(archiveResponse.body.errors?.[0]?.extensions?.code).toBe(
+      expect(deleteResponse.body.errors?.[0]?.extensions?.code).toBe(
         'FORBIDDEN',
       );
+
+      const [storedThread] = await global.testDataSource.query(
+        `SELECT title, "deletedAt" FROM "${getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID)}"."agentChatThread" WHERE id = $1`,
+        [threadId],
+      );
+
+      expect(storedThread).toEqual({
+        title: 'Summarize the lead',
+        deletedAt: null,
+      });
     });
 
     it('follows the workflow visibility for another member', async () => {

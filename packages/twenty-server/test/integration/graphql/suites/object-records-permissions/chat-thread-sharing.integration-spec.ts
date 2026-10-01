@@ -1,6 +1,14 @@
+import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
+import { deleteOneOperationFactory } from 'test/integration/graphql/utils/delete-one-operation-factory.util';
+import { destroyOneOperationFactory } from 'test/integration/graphql/utils/destroy-one-operation-factory.util';
+import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
 import { findOneOperationFactory } from 'test/integration/graphql/utils/find-one-operation-factory.util';
+import { restoreOneOperationFactory } from 'test/integration/graphql/utils/restore-one-operation-factory.util';
+import { updateOneOperationFactory } from 'test/integration/graphql/utils/update-one-operation-factory.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { setManualRecordShare } from 'test/integration/utils/set-manual-record-share.util';
+import { destroyAgentChatThread } from 'test/integration/utils/destroy-agent-chat-thread.util';
+import { listChatThreadIds } from 'test/integration/utils/list-chat-thread-ids.util';
 import { type AgentChatActorService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-actor.service';
 import { buildWorkspaceSetupChatThreadId } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-workspace-setup-chat-thread-id.util';
 import { type RecordShareStorageService } from 'src/engine/core-modules/record-share/services/record-share-storage.service';
@@ -11,15 +19,19 @@ import { type AgentHistoryStorageService } from 'src/engine/metadata-modules/ai/
 import { type WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { randomUUID } from 'node:crypto';
 import { parse } from 'graphql';
+import { EVERYONE_PRINCIPAL_ID } from 'twenty-shared/constants';
+import { type ObjectRecordDestroyEvent } from 'twenty-shared/database-events';
 import {
   FeatureFlagKey,
   RecordShareAccessLevel,
   RecordSharePrincipalType,
+  RecordShareRowCause,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
+import { type WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { type AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
@@ -29,6 +41,10 @@ import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
+import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
+import { type RecordAccessPolicyService } from 'src/engine/core-modules/record-share/services/record-access-policy.service';
+import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
+import { computeEventName } from 'src/engine/workspace-event-emitter/utils/compute-event-name';
 
 // Avoid loading the migration runner's ESM file dependencies inside Jest. The
 // command below receives the real migration service from the running test app.
@@ -61,6 +77,68 @@ const readThread = async (
     { query: READ_THREAD, variables: { id, objectMetadataId } },
     token,
   );
+};
+// Chats are renamed, soft deleted, restored and destroyed through the record
+// API like any other record
+const updateThreadRecord = (
+  threadId: string,
+  data: Record<string, unknown>,
+  token: string = APPLE_JANE_ADMIN_ACCESS_TOKEN,
+) =>
+  makeGraphqlApiRequest(
+    updateOneOperationFactory({
+      objectMetadataSingularName: 'agentChatThread',
+      gqlFields: 'id title deletedAt',
+      recordId: threadId,
+      data,
+    }),
+    token,
+  );
+const softDeleteThreadRecord = (
+  threadId: string,
+  token: string = APPLE_JANE_ADMIN_ACCESS_TOKEN,
+) =>
+  makeGraphqlApiRequest(
+    deleteOneOperationFactory({
+      objectMetadataSingularName: 'agentChatThread',
+      gqlFields: 'id deletedAt',
+      recordId: threadId,
+    }),
+    token,
+  );
+const restoreThreadRecord = (
+  threadId: string,
+  token: string = APPLE_JANE_ADMIN_ACCESS_TOKEN,
+) =>
+  makeGraphqlApiRequest(
+    restoreOneOperationFactory({
+      objectMetadataSingularName: 'agentChatThread',
+      gqlFields: 'id deletedAt',
+      recordId: threadId,
+    }),
+    token,
+  );
+const destroyThreadRecord = (
+  threadId: string,
+  token: string = APPLE_JANE_ADMIN_ACCESS_TOKEN,
+) =>
+  makeGraphqlApiRequest(
+    destroyOneOperationFactory({
+      objectMetadataSingularName: 'agentChatThread',
+      gqlFields: 'id',
+      recordId: threadId,
+    }),
+    token,
+  );
+const readStoredThreadState = async (threadId: string) => {
+  const rows: {
+    title: string | null;
+    deletedAt: Date | null;
+  }[] = await global.testDataSource.query(
+    `SELECT title, "deletedAt" FROM ${getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID)}."agentChatThread" WHERE id = $1`,
+    [threadId],
+  );
+  return rows[0] ?? null;
 };
 const SET_SHARE =
   parse(`mutation SetThreadShare($target: RecordSharingTargetInput!, $principal: RecordSharePrincipalInput!, $enabled: Boolean!, $accessLevel: RecordShareAccessLevel) {
@@ -120,16 +198,8 @@ describe('Conversation sharing through the authenticated API', () => {
         title: 'Private sharing regression',
       });
       const read = () => readThread(threadId, APPLE_JONY_MEMBER_ACCESS_TOKEN);
-      const listedThreadIds = async () => {
-        const response = await makeMetadataApiRequest(
-          { query: parse('query ReadableThreads { chatThreads { id } }') },
-          APPLE_JONY_MEMBER_ACCESS_TOKEN,
-        );
-        expect(response.body.errors).toBeUndefined();
-        return response.body.data.chatThreads.map(
-          ({ id }: { id: string }) => id,
-        );
-      };
+      const listedThreadIds = () =>
+        listChatThreadIds(APPLE_JONY_MEMBER_ACCESS_TOKEN);
       const changeShare = (enabled: boolean) =>
         makeMetadataApiRequest({
           query: SET_SHARE,
@@ -194,16 +264,25 @@ describe('Conversation sharing through the authenticated API', () => {
           shares: [],
           roles: [],
         });
-        const rename = await makeMetadataApiRequest(
-          {
-            query: parse(
-              `mutation RenameSharedThread($id: UUID!) { renameChatThread(id: $id, title: "Unauthorized rename") { id } }`,
-            ),
-            variables: { id: threadId },
-          },
-          APPLE_JONY_MEMBER_ACCESS_TOKEN,
+        const storedBeforeViewerWrites = await readStoredThreadState(threadId);
+        const viewerWrites = [
+          await updateThreadRecord(
+            threadId,
+            { title: 'Unauthorized rename' },
+            APPLE_JONY_MEMBER_ACCESS_TOKEN,
+          ),
+          await softDeleteThreadRecord(
+            threadId,
+            APPLE_JONY_MEMBER_ACCESS_TOKEN,
+          ),
+          await destroyThreadRecord(threadId, APPLE_JONY_MEMBER_ACCESS_TOKEN),
+        ];
+        for (const viewerWrite of viewerWrites) {
+          expect(viewerWrite.body.errors[0].extensions.code).toBe('NOT_FOUND');
+        }
+        expect(await readStoredThreadState(threadId)).toEqual(
+          storedBeforeViewerWrites,
         );
-        expect(rename.body.errors[0].extensions.code).toBe('NOT_FOUND');
         const stop = await makeMetadataApiRequest(
           {
             query: parse(
@@ -228,7 +307,7 @@ describe('Conversation sharing through the authenticated API', () => {
         expect(await listedThreadIds()).not.toContain(threadId);
         expect((await read()).body.errors[0].extensions.code).toBe('NOT_FOUND');
       } finally {
-        await chatService.hardDeleteThread({ ...owner, threadId });
+        await destroyAgentChatThread({ threadId });
         await updateFeatureFlag({
           featureFlag: FeatureFlagKey.IS_RECORD_SHARING_ENABLED,
           value: previousEnabled,
@@ -314,16 +393,23 @@ describe('Conversation sharing through the authenticated API', () => {
             canSoftDelete: false,
           },
         });
-        const rename = await makeMetadataApiRequest(
-          {
-            query: parse(
-              'mutation($id: UUID!) { renameChatThread(id: $id, title: "Edited together") { title } }',
-            ),
-            variables: { id: threadId },
-          },
+        const rename = await updateThreadRecord(
+          threadId,
+          { title: 'Edited together' },
           APPLE_JONY_MEMBER_ACCESS_TOKEN,
         );
         expect(rename.body.errors).toBeUndefined();
+        expect(rename.body.data.updateAgentChatThread.title).toBe(
+          'Edited together',
+        );
+        const editorSoftDelete = await softDeleteThreadRecord(
+          threadId,
+          APPLE_JONY_MEMBER_ACCESS_TOKEN,
+        );
+        expect(editorSoftDelete.body.errors[0].extensions.code).toBe(
+          'NOT_FOUND',
+        );
+        expect((await readStoredThreadState(threadId))?.deletedAt).toBeNull();
         const stop = await makeMetadataApiRequest(
           {
             query: parse(
@@ -421,7 +507,7 @@ describe('Conversation sharing through the authenticated API', () => {
           downgraded.body.data.recordPermissions[0].permissions.canUpdate,
         ).toBe(false);
       } finally {
-        await chat.hardDeleteThread({ ...owner, threadId });
+        await destroyAgentChatThread({ threadId });
         await updateFeatureFlag({
           featureFlag: FeatureFlagKey.IS_RECORD_SHARING_ENABLED,
           value: previousEnabled,
@@ -431,7 +517,7 @@ describe('Conversation sharing through the authenticated API', () => {
     },
   );
 
-  it('retains ownership through upgrade rollback and retry, including flag-off and archived history', async () => {
+  it('retains ownership through upgrade rollback and retry, including flag-off and soft deleted history', async () => {
     const cache = getAppProviderByClassName<WorkspaceCacheService>(
       'WorkspaceCacheService',
     );
@@ -486,27 +572,28 @@ describe('Conversation sharing through the authenticated API', () => {
         canDelete: true,
         canSoftDelete: true,
       });
-      const archived = await chatService.archiveThread(owner);
-      const retriedArchives = await Promise.all([
-        chatService.archiveThread(owner),
-        chatService.archiveThread(owner),
-      ]);
-      for (const retried of retriedArchives) {
-        expect(retried.archivedAt).toEqual(archived.archivedAt);
-        expect(retried.updatedAt).toEqual(archived.updatedAt);
-      }
-      expect(new Date(archived.archivedAt!).toISOString()).toMatch(
-        /^\d{4}-\d{2}-\d{2}T/,
-      );
-      expect((await chatService.getWritableThread(owner)).archivedAt).toEqual(
-        archived.archivedAt,
-      );
+      const softDeleted = await softDeleteThreadRecord(owner.threadId);
+      expect(softDeleted.body.errors).toBeUndefined();
+      const { deletedAt } = softDeleted.body.data.deleteAgentChatThread;
+      expect(new Date(deletedAt).toISOString()).toMatch(/^\d{4}-\d{2}-\d{2}T/);
       expect(
-        (await chatService.getThreadsForMember(owner)).some(
-          ({ id }) => id === owner.threadId,
-        ),
-      ).toBe(true);
-      await chatService.unarchiveThread(owner);
+        (await chatService.getWritableThread(owner)).deletedAt,
+      ).not.toBeNull();
+      expect(await listChatThreadIds(APPLE_JANE_ADMIN_ACCESS_TOKEN)).toContain(
+        owner.threadId,
+      );
+      expect((await readThread(owner.threadId)).body.errors).toBeUndefined();
+      const restoredTwice = await Promise.all([
+        chatService.restoreThread(owner),
+        chatService.restoreThread(owner),
+      ]);
+      for (const restored of restoredTwice) {
+        expect(restored.deletedAt).toBeNull();
+        expect(restored.updatedAt).toEqual(restoredTwice[0].updatedAt);
+      }
+      expect(
+        (await readStoredThreadState(owner.threadId))?.deletedAt,
+      ).toBeNull();
       expect((await readThread(owner.threadId)).body.errors).toBeUndefined();
     } finally {
       await command.up(options);
@@ -515,7 +602,7 @@ describe('Conversation sharing through the authenticated API', () => {
       await getAppProviderByClassName<AddWorkflowRunToChatThreadsCommand>(
         'AddWorkflowRunToChatThreadsCommand',
       ).up(options);
-      await chatService.hardDeleteThread(owner);
+      await destroyAgentChatThread({ threadId: owner.threadId });
 
       await updateFeatureFlag({
         featureFlag: FeatureFlagKey.IS_RECORD_SHARING_ENABLED,
@@ -563,12 +650,13 @@ describe('Conversation sharing through the authenticated API', () => {
     };
     try {
       await setManualRecordShare({ workspaceId, share, enabled: true });
-      expect(
-        await chat.updateThreadTitle({
-          ...writer,
-          title: 'Collaborative rename',
-        }),
-      ).toMatchObject({
+      const collaborativeRename = await updateThreadRecord(
+        owner.threadId,
+        { title: 'Collaborative rename' },
+        APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      );
+      expect(collaborativeRename.body.errors).toBeUndefined();
+      expect(await chat.getWritableThread(owner)).toMatchObject({
         title: 'Collaborative rename',
         workspaceMemberId: owner.workspaceMemberId,
       });
@@ -584,14 +672,17 @@ describe('Conversation sharing through the authenticated API', () => {
         id: owner.threadId,
       });
       await setManualRecordShare({ workspaceId, share, enabled: false });
-      await expect(
-        chat.updateThreadTitle({ ...writer, title: 'Revoked rename' }),
-      ).rejects.toMatchObject({ code: 'THREAD_NOT_FOUND' });
+      const revokedRename = await updateThreadRecord(
+        owner.threadId,
+        { title: 'Revoked rename' },
+        APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      );
+      expect(revokedRename.body.errors[0].extensions.code).toBe('NOT_FOUND');
       expect(await chat.getWritableThread(owner)).toMatchObject({
         title: 'Collaborative rename',
       });
     } finally {
-      await chat.hardDeleteThread(owner);
+      await destroyAgentChatThread({ threadId: owner.threadId });
     }
   });
 
@@ -659,7 +750,406 @@ describe('Conversation sharing through the authenticated API', () => {
         },
       ]);
     } finally {
-      await chat.hardDeleteThread(owner);
+      await destroyAgentChatThread({ threadId: owner.threadId });
     }
   });
+});
+
+describe('Conversations through the record API', () => {
+  const schema = getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID);
+  const readStoredThread = async (threadId: string) => {
+    const rows: {
+      workspaceMemberId: string | null;
+      title: string | null;
+      deletedAt: Date | null;
+      archivedAt: Date | null;
+      activeStreamId: string | null;
+    }[] = await global.testDataSource.query(
+      `SELECT "workspaceMemberId", title, "deletedAt", "archivedAt", "activeStreamId" FROM ${schema}."agentChatThread" WHERE id = $1`,
+      [threadId],
+    );
+    return rows[0] ?? null;
+  };
+  const readShares = (threadId: string) =>
+    global.testDataSource.query(
+      `SELECT "principalId", "principalType", "accessLevel", "rowCause" FROM ${schema}."recordShare" WHERE "recordId" = $1`,
+      [threadId],
+    );
+  let previousRecordSharingEnabled = false;
+
+  beforeAll(async () => {
+    const cache = getAppProviderByClassName<WorkspaceCacheService>(
+      'WorkspaceCacheService',
+    );
+    const { featureFlagsMap } = await cache.getOrRecompute(
+      SEED_APPLE_WORKSPACE_ID,
+      ['featureFlagsMap'],
+    );
+    previousRecordSharingEnabled =
+      featureFlagsMap[FeatureFlagKey.IS_RECORD_SHARING_ENABLED] === true;
+    await updateFeatureFlag({
+      featureFlag: FeatureFlagKey.IS_RECORD_SHARING_ENABLED,
+      value: true,
+      expectToFail: false,
+    });
+  });
+
+  afterAll(async () => {
+    await updateFeatureFlag({
+      featureFlag: FeatureFlagKey.IS_RECORD_SHARING_ENABLED,
+      value: previousRecordSharingEnabled,
+      expectToFail: false,
+    });
+  });
+
+  it('reads a conversation with its relations even though its messages stay out of the API', async () => {
+    const chat =
+      getAppProviderByClassName<AgentChatService>('AgentChatService');
+    const threadId = randomUUID();
+
+    await chat.createThread({
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+      id: threadId,
+      title: 'Conversation with hidden messages',
+    });
+
+    try {
+      const response = await makeGraphqlApiRequest(
+        findOneOperationFactory({
+          objectMetadataSingularName: 'agentChatThread',
+          gqlFields:
+            'id title messages { edges { node { id } } } turns { edges { node { id } } }',
+          filter: { id: { eq: threadId } },
+        }),
+      );
+
+      expect(response.body.errors).toBeUndefined();
+      expect(response.body.data.agentChatThread).toEqual({
+        id: threadId,
+        title: 'Conversation with hidden messages',
+        messages: { edges: [] },
+        turns: { edges: [] },
+      });
+    } finally {
+      await destroyAgentChatThread({ threadId });
+    }
+  });
+
+  it('creates, renames, soft deletes, restores and destroys a conversation only for its owner', async () => {
+    const created = await makeGraphqlApiRequest(
+      createOneOperationFactory({
+        objectMetadataSingularName: 'agentChatThread',
+        gqlFields: 'id title',
+        data: { title: 'Record API conversation' },
+      }),
+    );
+    expect(created.body.errors).toBeUndefined();
+    const threadId: string = created.body.data.createAgentChatThread.id;
+
+    try {
+      expect(await readStoredThread(threadId)).toMatchObject({
+        workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+        title: 'Record API conversation',
+      });
+      expect(await readShares(threadId)).toEqual([
+        {
+          principalId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+          principalType: RecordSharePrincipalType.WORKSPACE_MEMBER,
+          accessLevel: RecordShareAccessLevel.FULL,
+          rowCause: RecordShareRowCause.OWNER,
+        },
+      ]);
+
+      const ownerView = await makeGraphqlApiRequest(
+        findOneOperationFactory({
+          objectMetadataSingularName: 'agentChatThread',
+          gqlFields: 'id title',
+          filter: { id: { eq: threadId } },
+        }),
+      );
+      expect(ownerView.body.errors).toBeUndefined();
+      expect(ownerView.body.data.agentChatThread).toEqual({
+        id: threadId,
+        title: 'Record API conversation',
+      });
+
+      const outsiderList = await makeGraphqlApiRequest(
+        findManyOperationFactory({
+          objectMetadataSingularName: 'agentChatThread',
+          objectMetadataPluralName: 'agentChatThreads',
+          gqlFields: 'id',
+          filter: { id: { eq: threadId } },
+        }),
+        APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      );
+      expect(
+        outsiderList.body.data?.agentChatThreads?.edges ?? [],
+      ).toHaveLength(0);
+      const outsiderView = await makeGraphqlApiRequest(
+        findOneOperationFactory({
+          objectMetadataSingularName: 'agentChatThread',
+          gqlFields: 'id',
+          filter: { id: { eq: threadId } },
+        }),
+        APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      );
+      expect(outsiderView.body.data?.agentChatThread ?? null).toBeNull();
+      const outsiderRename = await updateThreadRecord(
+        threadId,
+        { title: 'Unauthorized rename' },
+        APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      );
+      expect(outsiderRename.body.errors).toBeDefined();
+
+      const renamed = await updateThreadRecord(threadId, {
+        title: 'Renamed through the record API',
+      });
+      expect(renamed.body.errors).toBeUndefined();
+      expect(renamed.body.data.updateAgentChatThread.title).toBe(
+        'Renamed through the record API',
+      );
+
+      // Archive is soft delete now; the legacy column is no longer writable
+      const legacyArchive = await updateThreadRecord(threadId, {
+        archivedAt: new Date().toISOString(),
+      });
+      expect(legacyArchive.body.errors[0].extensions.code).toBe('FORBIDDEN');
+      expect((await readStoredThread(threadId))?.archivedAt).toBeNull();
+
+      const outsiderSoftDelete = await softDeleteThreadRecord(
+        threadId,
+        APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      );
+      expect(outsiderSoftDelete.body.errors[0].extensions.code).toBe(
+        'NOT_FOUND',
+      );
+      expect((await readStoredThread(threadId))?.deletedAt).toBeNull();
+
+      // Stands in for a running turn, which soft deleting has to stop.
+      await global.testDataSource.query(
+        `UPDATE ${schema}."agentChatThread" SET "activeStreamId" = 'record-api-stream' WHERE id = $1`,
+        [threadId],
+      );
+      const softDeleted = await softDeleteThreadRecord(threadId);
+      expect(softDeleted.body.errors).toBeUndefined();
+      expect(
+        softDeleted.body.data.deleteAgentChatThread.deletedAt,
+      ).not.toBeNull();
+      const softDeletedThread = await readStoredThread(threadId);
+      expect(softDeletedThread?.deletedAt).not.toBeNull();
+      expect(softDeletedThread?.archivedAt).toBeNull();
+      expect(softDeletedThread?.activeStreamId).toBeNull();
+
+      const outsiderRestore = await restoreThreadRecord(
+        threadId,
+        APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      );
+      expect(outsiderRestore.body.errors[0].extensions.code).toBe('NOT_FOUND');
+      expect((await readStoredThread(threadId))?.deletedAt).not.toBeNull();
+
+      const restored = await restoreThreadRecord(threadId);
+      expect(restored.body.errors).toBeUndefined();
+      expect(restored.body.data.restoreAgentChatThread.deletedAt).toBeNull();
+      expect((await readStoredThread(threadId))?.deletedAt).toBeNull();
+
+      const outsiderDestroy = await destroyThreadRecord(
+        threadId,
+        APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      );
+      expect(outsiderDestroy.body.errors).toBeDefined();
+      expect(await readStoredThread(threadId)).not.toBeNull();
+
+      const destroyed = await destroyThreadRecord(threadId);
+      expect(destroyed.body.errors).toBeUndefined();
+      expect(await readStoredThread(threadId)).toBeNull();
+      expect(await readShares(threadId)).toHaveLength(1);
+    } finally {
+      await global.testDataSource.query(
+        `DELETE FROM ${schema}."agentChatThread" WHERE id = $1`,
+        [threadId],
+      );
+      await global.testDataSource.query(
+        `DELETE FROM ${schema}."recordShare" WHERE "recordId" = $1`,
+        [threadId],
+      );
+    }
+  });
+
+  // The application exposes its events through WorkspaceEventEmitter, so the
+  // destroy batch is captured there, as delivered to its subscribers.
+  const waitForDestroyedThread = (threadId: string) => {
+    const workspaceEventEmitter =
+      getAppProviderByClassName<WorkspaceEventEmitter>('WorkspaceEventEmitter');
+    const emitDatabaseBatchEvent =
+      workspaceEventEmitter.emitDatabaseBatchEvent.bind(workspaceEventEmitter);
+
+    return new Promise<WorkspaceEventBatch<ObjectRecordDestroyEvent>>(
+      (resolve, reject) => {
+        const emitSpy = jest
+          .spyOn(workspaceEventEmitter, 'emitDatabaseBatchEvent')
+          .mockImplementation((databaseBatchEventInput) => {
+            emitDatabaseBatchEvent(databaseBatchEventInput);
+
+            if (
+              databaseBatchEventInput?.objectMetadataNameSingular !==
+                'agentChatThread' ||
+              databaseBatchEventInput.action !== DatabaseEventAction.DESTROYED
+            ) {
+              return;
+            }
+
+            const events =
+              databaseBatchEventInput.events as ObjectRecordDestroyEvent[];
+
+            if (events.some((event) => event.recordId === threadId)) {
+              clearTimeout(timeout);
+              emitSpy.mockRestore();
+              resolve({
+                name: computeEventName(
+                  'agentChatThread',
+                  DatabaseEventAction.DESTROYED,
+                ),
+                workspaceId: databaseBatchEventInput.workspaceId,
+                objectMetadata: databaseBatchEventInput.objectMetadata,
+                events,
+              });
+            }
+          });
+        const timeout = setTimeout(() => {
+          emitSpy.mockRestore();
+          reject(new Error(`No destroy event for conversation ${threadId}`));
+        }, 10_000);
+      },
+    );
+  };
+
+  const isAdmittedByDestroyEvent = async ({
+    batch,
+    threadId,
+    userWorkspaceId,
+    workspaceMemberId,
+  }: {
+    batch: WorkspaceEventBatch<ObjectRecordDestroyEvent>;
+    threadId: string;
+    userWorkspaceId: string;
+    workspaceMemberId: string;
+  }) => {
+    const { userWorkspaceRoleMap, rolesPermissions } =
+      await getAppProviderByClassName<WorkspaceCacheService>(
+        'WorkspaceCacheService',
+      ).getOrRecompute(SEED_APPLE_WORKSPACE_ID, [
+        'userWorkspaceRoleMap',
+        'rolesPermissions',
+      ]);
+    const roleId = userWorkspaceRoleMap[userWorkspaceId];
+
+    if (!isDefined(roleId)) {
+      throw new Error(`Seeded role of ${userWorkspaceId} is missing`);
+    }
+
+    const admittedRecordIds =
+      await getAppProviderByClassName<RecordAccessPolicyService>(
+        'RecordAccessPolicyService',
+      )
+        .buildEventRecordAccessGate(batch)
+        .resolveAdmittedRecordIds({
+          isSystemContext: false,
+          objectsPermissions: rolesPermissions[roleId],
+          principalIds: [EVERYONE_PRINCIPAL_ID, workspaceMemberId, roleId],
+          isOwningApplication: () => false,
+          resolveRowLevelPermissionRecordFilter: () => null,
+        });
+
+    return admittedRecordIds.has(threadId);
+  };
+
+  it.each([false, true])(
+    'delivers the destroy of a conversation to its owner and grantees only (soft deleted first: %s)',
+    async (isSoftDeletedFirst) => {
+      const threadId = randomUUID();
+      const owner = {
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
+        workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+      };
+      const chatService =
+        getAppProviderByClassName<AgentChatService>('AgentChatService');
+      const { flatObjectMetadataMaps } =
+        await getAppProviderByClassName<WorkspaceCacheService>(
+          'WorkspaceCacheService',
+        ).getOrRecompute(SEED_APPLE_WORKSPACE_ID, ['flatObjectMetadataMaps']);
+
+      await chatService.createThread({
+        ...owner,
+        id: threadId,
+        title: 'Destroyed conversation audience',
+      });
+
+      try {
+        await setManualRecordShare({
+          workspaceId: SEED_APPLE_WORKSPACE_ID,
+          enabled: true,
+          share: {
+            objectMetadataId:
+              flatObjectMetadataMaps.byUniversalIdentifier[
+                STANDARD_OBJECTS.agentChatThread.universalIdentifier
+              ]!.id,
+            recordId: threadId,
+            sourceId: threadId,
+            principalId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+            principalType: RecordSharePrincipalType.WORKSPACE_MEMBER,
+            accessLevel: RecordShareAccessLevel.READ,
+          },
+        });
+
+        if (isSoftDeletedFirst) {
+          expect(
+            (await softDeleteThreadRecord(threadId)).body.errors,
+          ).toBeUndefined();
+        }
+
+        const destroyedEvent = waitForDestroyedThread(threadId);
+        const destroyed = await destroyThreadRecord(threadId);
+        expect(destroyed.body.errors).toBeUndefined();
+
+        const batch = await destroyedEvent;
+
+        expect(await readStoredThread(threadId)).toBeNull();
+        expect(
+          await isAdmittedByDestroyEvent({
+            batch,
+            threadId,
+            userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
+            workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+          }),
+        ).toBe(true);
+        expect(
+          await isAdmittedByDestroyEvent({
+            batch,
+            threadId,
+            userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JONY,
+            workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+          }),
+        ).toBe(true);
+        expect(
+          await isAdmittedByDestroyEvent({
+            batch,
+            threadId,
+            userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.PHIL,
+            workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
+          }),
+        ).toBe(false);
+      } finally {
+        await global.testDataSource.query(
+          `DELETE FROM ${schema}."agentChatThread" WHERE id = $1`,
+          [threadId],
+        );
+        await global.testDataSource.query(
+          `DELETE FROM ${schema}."recordShare" WHERE "recordId" = $1`,
+          [threadId],
+        );
+      }
+    },
+  );
 });

@@ -1,7 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
 import { getSafeUrl } from '@ui/utilities/utils/getSafeUrl';
-import { linkifyText } from '@ui/utilities/utils/linkifyText';
+import { linkifyText } from './linkifyText';
 
 import styles from './LinkifiedText.module.scss';
 

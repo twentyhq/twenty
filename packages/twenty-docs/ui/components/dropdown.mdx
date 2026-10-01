@@ -45,7 +45,7 @@ Dropdown.Root
         └── Dropdown.OptionItem
 ```
 
-`Content` includes the portal and positioner. Use `width`, `side`, `align`, `sideOffset`, and `alignOffset` to control placement. `Section` groups rows with shared spacing, and `Separator` divides sections. A `scrollable` Section caps its height and scrolls; nest labelled sections inside it to scroll them as one list. Rows use [ListItem](/ui/primitives/navigation/list-item) for their appearance.
+`Content` includes the portal and positioner. Use `width`, `side`, `align`, `sideOffset`, and `alignOffset` to control placement, and `collisionPadding` to keep the popup further from the edges of the viewport before it shifts or flips (5 pixels by default). `Section` groups rows with shared spacing, and `Separator` divides sections. A `scrollable` Section caps its height and scrolls; nest labelled sections inside it to scroll them as one list. Rows use [ListItem](/ui/primitives/navigation/list-item) for their appearance.
 
 ```tsx
 import { Dropdown } from 'twenty-ui/components';
@@ -228,6 +228,81 @@ Use `type="panel"` for form inputs. Input interaction keeps the panel open; a sa
 />
 
 Escape dismisses the popup and restores focus to its trigger. Outside interaction also dismisses it, and the click that dismisses it doesn't activate what it lands on. Keys pressed inside the popup stay inside it, except Ctrl or Cmd shortcuts the dropdown doesn't handle, so page-level shortcuts keep working. `Content` accepts focus and portal options from Popover, including an explicit return-focus target for editor workflows.
+
+## Dismissal
+
+Escape, a press outside the popup and Tab out of it close the dropdown. Pass `onEscapeKeyDown` or `onInteractOutside` to `Root` to react before it closes, and call `event.preventDefault()` to keep it open. `event.target` is the element pressed outside, or `null` when focus leaves with Tab. A prevented outside press still reaches the element it lands on.
+
+```tsx
+import { Dropdown } from 'twenty-ui/components';
+import { Button } from 'twenty-ui/primitives/input';
+
+export const ViewSettings = ({ isEditing }: { isEditing: boolean }) => (
+  <Dropdown.Root
+    type="panel"
+    onInteractOutside={(event) => {
+      if (isEditing) {
+        event.preventDefault();
+      }
+    }}
+  >
+    <Dropdown.Trigger render={<Button>View settings</Button>} />
+    <Dropdown.Content>
+      <Dropdown.ActionItem>Save view</Dropdown.ActionItem>
+    </Dropdown.Content>
+  </Dropdown.Root>
+);
+```
+
+## Anchoring without a trigger
+
+A root can open without a `Trigger`, for example as a context menu. Control it with `open` and `onOpenChange`, and pass `anchor` to `Content`: an element, a ref, or a virtual element that returns a rectangle in viewport coordinates. Give `Content` an `aria-label`, since there is no trigger to name it after. On close, focus returns to the element that was focused when the popup opened.
+
+<StoryEmbed
+  storyId="ui-components-dropdown--context-menu-documentation"
+  title="Context menu anchored to the pointer"
+  height={300}
+/>
+
+```tsx
+import { useState } from 'react';
+import { Dropdown } from 'twenty-ui/components';
+
+export const RecordContextMenu = ({ recordName }: { recordName: string }) => {
+  const [open, setOpen] = useState(false);
+  const [point, setPoint] = useState({ x: 0, y: 0 });
+
+  return (
+    <>
+      <p
+        onContextMenu={(event) => {
+          event.preventDefault();
+          setPoint({ x: event.clientX, y: event.clientY });
+          setOpen(true);
+        }}
+      >
+        {recordName}
+      </p>
+      <Dropdown.Root type="menu" open={open} onOpenChange={setOpen}>
+        <Dropdown.Content
+          aria-label="Record actions"
+          anchor={{
+            getBoundingClientRect: () => new DOMRect(point.x, point.y, 0, 0),
+          }}
+        >
+          <Dropdown.ActionItem>Duplicate</Dropdown.ActionItem>
+        </Dropdown.Content>
+      </Dropdown.Root>
+    </>
+  );
+};
+```
+
+Right-clicking elsewhere while the menu is open moves it to the new point.
+
+## Labels
+
+Each part owns its text: supply `Search.placeholder` and native accessible names, `Close` accessible attributes, and children for `Back`, `Loading`, and `Empty`. `Back` defaults to `Back`; loading and empty states have no built-in message. Item parts accept `hotkeysJoinLabel` to replace the default `then` between shortcut keys. Native `aria-labelledby` takes precedence over `aria-label`.
 
 ## Props
 

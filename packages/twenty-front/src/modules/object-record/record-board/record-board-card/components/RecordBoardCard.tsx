@@ -13,7 +13,6 @@ import { RecordBoardCardCellHoveredPortal } from '@/object-record/record-board/r
 import { RecordBoardCardBody } from '@/object-record/record-board/record-board-card/components/RecordBoardCardBody';
 import { RecordBoardCardHeader } from '@/object-record/record-board/record-board-card/components/RecordBoardCardHeader';
 import { RECORD_BOARD_CARD_CLICK_OUTSIDE_ID } from '@/object-record/record-board/record-board-card/constants/RecordBoardCardClickOutsideId';
-import { RECORD_BOARD_CARD_INPUT_ID_PREFIX } from '@/object-record/record-board/record-board-card/constants/RecordBoardCardInputIdPrefix';
 import { RecordBoardCardComponentInstanceContext } from '@/object-record/record-board/record-board-card/states/contexts/RecordBoardCardComponentInstanceContext';
 import { recordBoardCardIsExpandedComponentState } from '@/object-record/record-board/record-board-card/states/recordBoardCardIsExpandedComponentState';
 import { RecordBoardComponentInstanceContext } from '@/object-record/record-board/states/contexts/RecordBoardComponentInstanceContext';
@@ -22,7 +21,6 @@ import { RecordDragMultiDragStack } from '@/object-record/record-drag/components
 import { isRecordIdPrimaryDragMultipleComponentFamilyState } from '@/object-record/record-drag/states/isRecordIdPrimaryDragMultipleComponentFamilyState';
 import { isRecordIdSecondaryDragMultipleComponentFamilyState } from '@/object-record/record-drag/states/isRecordIdSecondaryDragMultipleComponentFamilyState';
 import { primaryDraggedRecordIdComponentState } from '@/object-record/record-drag/states/primaryDraggedRecordIdComponentState';
-import { RecordFieldsScopeContextProvider } from '@/object-record/record-field-list/contexts/RecordFieldsScopeContext';
 import { useOpenRecordFromIndexView } from '@/object-record/record-index/hooks/useOpenRecordFromIndexView';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { useDisableDragSelectOnPointerDown } from '@/ui/utilities/drag-select/hooks/useDisableDragSelectOnPointerDown';
@@ -35,7 +33,7 @@ import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSe
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
-import { AnimatedExpandableContainer } from 'twenty-ui/primitives/layout';
+import { Collapsible } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { useDebouncedCallback } from 'use-debounce';
 
@@ -168,47 +166,42 @@ export const RecordBoardCard = () => {
         instanceId: `record-board-card-${recordId}`,
       }}
     >
-      <RecordFieldsScopeContextProvider
-        value={{ scopeInstanceId: RECORD_BOARD_CARD_INPUT_ID_PREFIX }}
+      <StyledBoardCardWrapper
+        data-click-outside-id={RECORD_BOARD_CARD_CLICK_OUTSIDE_ID}
+        onContextMenu={handleContextMenuOpen}
+        onPointerCancel={handlePointerCancel}
+        onPointerDown={handlePointerDown}
+        onPointerUp={handlePointerUp}
       >
-        <StyledBoardCardWrapper
-          data-click-outside-id={RECORD_BOARD_CARD_CLICK_OUTSIDE_ID}
-          onContextMenu={handleContextMenuOpen}
-          onPointerCancel={handlePointerCancel}
-          onPointerDown={handlePointerDown}
-          onPointerUp={handlePointerUp}
+        <StyledCardContainer
+          isPrimaryMultiDrag={isDragOverlay && isRecordIdPrimaryDragMultiple}
         >
-          <StyledCardContainer
-            isPrimaryMultiDrag={isDragOverlay && isRecordIdPrimaryDragMultiple}
-          >
-            {isDragOverlay && isRecordIdPrimaryDragMultiple && (
-              <RecordDragMultiDragStack />
-            )}
-            <RecordCard
-              data-selected={isRecordBoardCardSelected}
-              data-focused={isRecordBoardCardFocused}
-              data-active={isRecordBoardCardActive}
-              onMouseLeave={onMouseLeaveBoard}
-              onClick={handleCardClick}
-              isDragging={isDraggingThisCard}
-            >
-              <RecordBoardCardHeader />
-              <AnimatedExpandableContainer
-                isExpanded={recordBoardCardIsExpanded || !isCompactModeActive}
-                initial={false}
-              >
-                <RecordBoardCardBody />
-              </AnimatedExpandableContainer>
-            </RecordCard>
-          </StyledCardContainer>
-          {!isDragOverlay && (
-            <>
-              <RecordBoardCardCellHoveredPortal />
-              <RecordBoardCardCellEditModePortal />
-            </>
+          {isDragOverlay && isRecordIdPrimaryDragMultiple && (
+            <RecordDragMultiDragStack />
           )}
-        </StyledBoardCardWrapper>
-      </RecordFieldsScopeContextProvider>
+          <RecordCard
+            data-selected={isRecordBoardCardSelected}
+            data-focused={isRecordBoardCardFocused}
+            data-active={isRecordBoardCardActive}
+            onMouseLeave={onMouseLeaveBoard}
+            onClick={handleCardClick}
+            isDragging={isDraggingThisCard}
+          >
+            <RecordBoardCardHeader />
+            <Collapsible
+              isExpanded={recordBoardCardIsExpanded || !isCompactModeActive}
+            >
+              <RecordBoardCardBody />
+            </Collapsible>
+          </RecordCard>
+        </StyledCardContainer>
+        {!isDragOverlay && (
+          <>
+            <RecordBoardCardCellHoveredPortal />
+            <RecordBoardCardCellEditModePortal />
+          </>
+        )}
+      </StyledBoardCardWrapper>
     </RecordBoardCardComponentInstanceContext.Provider>
   );
 };

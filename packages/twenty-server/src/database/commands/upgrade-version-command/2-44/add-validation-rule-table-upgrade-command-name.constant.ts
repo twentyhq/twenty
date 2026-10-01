@@ -1,0 +1,2 @@
+export const ADD_VALIDATION_RULE_TABLE_UPGRADE_COMMAND_NAME =
+  '2.44.0_AddValidationRuleTableFastInstanceCommand_1790624264147';

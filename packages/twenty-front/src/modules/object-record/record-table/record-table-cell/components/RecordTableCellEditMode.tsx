@@ -6,7 +6,7 @@ import { recordFieldInputLayoutDirectionComponentState } from '@/object-record/r
 import { recordFieldInputLayoutDirectionLoadingComponentState } from '@/object-record/record-field/ui/states/recordFieldInputLayoutDirectionLoadingComponentState';
 import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
 import { useFocusRecordTableCell } from '@/object-record/record-table/record-table-cell/hooks/useFocusRecordTableCell';
-import { StyledDropdownContentContainer } from '@/ui/layout/dropdown/components/internal/DropdownInternalContainer';
+import { StyledOverlayPortalLayer } from '@/ui/layout/overlay/components/StyledOverlayPortalLayer';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -41,7 +41,7 @@ const StyledInputModeOnlyContainer = styled.div`
   width: 100%;
 `;
 
-export type RecordTableCellEditModeProps = {
+type RecordTableCellEditModeProps = {
   children: ReactElement;
 };
 
@@ -117,7 +117,7 @@ export const RecordTableCellEditMode = ({
         </StyledInputModeOnlyContainer>
       ) : (
         <FloatingPortal>
-          <StyledDropdownContentContainer
+          <StyledOverlayPortalLayer
             data-floating-ui-viewport
             ref={refs.setFloating}
             style={floatingStyles}
@@ -128,7 +128,7 @@ export const RecordTableCellEditMode = ({
             >
               {children}
             </OverlayContainer>
-          </StyledDropdownContentContainer>
+          </StyledOverlayPortalLayer>
         </FloatingPortal>
       )}
     </StyledEditableCellEditModeContainer>

@@ -63,9 +63,6 @@ export const STANDARD_OBJECT_FIELDS = {
     workflowRun: {
       universalIdentifier: '2187f4c6-bff3-4b80-8585-c82965faf79b',
     },
-    workflowStepId: {
-      universalIdentifier: 'ba4091ef-dfa2-4a99-bfb3-322ef9a745ab',
-    },
     pendingQuestionMessageId: {
       universalIdentifier: '51a9b421-7d90-4a59-9712-036ea9721e65',
     },

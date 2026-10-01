@@ -240,6 +240,7 @@ export type {
   WorkflowVersionConfiguration,
   WorkflowRunConfiguration,
   ChatThreadsConfiguration,
+  ChatConfiguration,
   PageLayoutWidgetConfiguration,
 } from './page-layout/PageLayoutWidgetConfiguration';
 export type {
@@ -331,6 +332,12 @@ export type { SupportedViewGroupLoadLimit } from './SupportedViewGroupLoadLimit'
 export type { TagColor } from './TagColor';
 export { TwoFactorAuthenticationStrategy } from './TwoFactorAuthenticationStrategy';
 export { UpgradeHealthEnum } from './UpgradeHealthEnum';
+export type { ValidationRuleBindings } from './ValidationRuleBindings';
+export type { ValidationRuleCompilationResult } from './ValidationRuleCompilationResult';
+export type { ValidationRuleEvaluationResult } from './ValidationRuleEvaluationResult';
+export type { ValidationRuleExpressionToken } from './ValidationRuleExpressionToken';
+export type { ValidationRuleFieldDescriptor } from './ValidationRuleFieldDescriptor';
+export type { ValidationRuleFunctionName } from './ValidationRuleFunctionName';
 export { IsValidGraphQLEnumName } from './validators/is-valid-graphql-enum-name.validator';
 export { ViewCalendarLayout } from './ViewCalendarLayout';
 export { ViewFilterGroupLogicalOperator } from './ViewFilterGroupLogicalOperator';
