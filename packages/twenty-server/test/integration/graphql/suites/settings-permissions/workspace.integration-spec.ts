@@ -634,7 +634,8 @@ describe('workspace permissions', () => {
               `,
           variables: {
             input: {
-              publicFeatureFlag: FeatureFlagKey.IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED,
+              publicFeatureFlag:
+                FeatureFlagKey.IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED,
               value: true,
             },
           },
