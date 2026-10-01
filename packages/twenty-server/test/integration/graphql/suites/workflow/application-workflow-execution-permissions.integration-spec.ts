@@ -10,7 +10,10 @@ import { syncApplication } from 'test/integration/metadata/suites/application/ut
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { generateApplicationTokenPair } from 'test/integration/utils/generate-application-token-pair.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
-import { type Manifest } from 'twenty-shared/application';
+import {
+  getWorkflowVersionUniversalIdentifier,
+  type Manifest,
+} from 'twenty-shared/application';
 import { SystemPermissionFlag } from 'twenty-shared/constants';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { FeatureFlagKey } from 'twenty-shared/types';
@@ -59,10 +62,14 @@ const buildTestWorkflow = (
   steps: WorkflowStepManifestWithoutEdges[],
 ): TestWorkflow => {
   const stepIds = steps.map(() => randomUUID());
+  const universalIdentifier = randomUUID();
 
   return {
-    universalIdentifier: randomUUID(),
-    versionUniversalIdentifier: randomUUID(),
+    universalIdentifier,
+    versionUniversalIdentifier: getWorkflowVersionUniversalIdentifier({
+      applicationUniversalIdentifier: APP_ID,
+      workflowUniversalIdentifier: universalIdentifier,
+    }),
     steps: steps.map(
       (step, index) =>
         ({
@@ -245,7 +252,6 @@ const buildManifest = ({
         universalIdentifier: workflow.universalIdentifier,
         name: `${RUN_PREFIX} ${index}`,
         version: {
-          universalIdentifier: workflow.versionUniversalIdentifier,
           trigger: {
             universalIdentifier: randomUUID(),
             type: 'MANUAL',
