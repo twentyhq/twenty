@@ -68,18 +68,25 @@ describe('agentChatThreadInboxStatusFamilySelector', () => {
         }),
       );
 
-    expect(getInboxStatus('read')).toEqual({ scope: 'INBOX', isUnread: false });
+    expect(getInboxStatus('read')).toEqual({
+      scope: 'INBOX',
+      isUnread: false,
+      snoozedUntil: null,
+    });
     expect(getInboxStatus('unread')).toEqual({
       scope: 'INBOX',
       isUnread: true,
+      snoozedUntil: null,
     });
     expect(getInboxStatus('archived')).toEqual({
       scope: 'ARCHIVED',
       isUnread: false,
+      snoozedUntil: null,
     });
     expect(getInboxStatus('snoozed')).toEqual({
       scope: 'SNOOZED',
       isUnread: false,
+      snoozedUntil: '2026-10-02T09:00:00.000Z',
     });
   });
 
@@ -93,6 +100,6 @@ describe('agentChatThreadInboxStatusFamilySelector', () => {
           lastActivityAt: null,
         }),
       ),
-    ).toEqual({ scope: 'INBOX', isUnread: false });
+    ).toEqual({ scope: 'INBOX', isUnread: false, snoozedUntil: null });
   });
 });

@@ -33,6 +33,9 @@ jest.mock('@/ai/components/AiChatNonLastMessageIdsList', () => ({
 jest.mock('@/ai/components/AiChatLastMessageWithStreamingState', () => ({
   AiChatLastMessageWithStreamingState: () => null,
 }));
+jest.mock('@/ai/components/AiChatThreadSnoozedNotice', () => ({
+  AiChatThreadSnoozedNotice: () => null,
+}));
 jest.mock('@/ai/components/AiChatErrorUnderMessageList', () => ({
   AiChatErrorUnderMessageList: () => null,
 }));

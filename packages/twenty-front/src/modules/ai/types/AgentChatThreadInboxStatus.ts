@@ -3,4 +3,5 @@ import { type AgentChatThreadInboxScope } from '@/ai/types/AgentChatThreadInboxS
 export type AgentChatThreadInboxStatus = {
   scope: AgentChatThreadInboxScope;
   isUnread: boolean;
+  snoozedUntil: string | null;
 };

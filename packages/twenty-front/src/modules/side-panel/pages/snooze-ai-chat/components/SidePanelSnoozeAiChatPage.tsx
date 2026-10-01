@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconClock } from 'twenty-ui/icon';
 
+import { AGENT_CHAT_THREAD_SNOOZE_TIME_FORMAT } from '@/ai/constants/AgentChatThreadSnoozeTimeFormat';
 import { useAgentChatThreadParticipants } from '@/ai/hooks/useAgentChatThreadParticipants';
 import {
   type AgentChatThreadSnoozeOption,
@@ -14,12 +15,6 @@ import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { snoozeAiChatThreadIdComponentState } from '@/side-panel/pages/snooze-ai-chat/states/snoozeAiChatThreadIdComponentState';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-
-const SNOOZE_TIME_FORMAT = new Intl.DateTimeFormat(undefined, {
-  weekday: 'short',
-  hour: 'numeric',
-  minute: '2-digit',
-});
 
 export const SidePanelSnoozeAiChatPage = () => {
   const { t } = useLingui();
@@ -62,7 +57,9 @@ export const SidePanelSnoozeAiChatPage = () => {
             id={option.key}
             Icon={IconClock}
             label={t(option.label)}
-            description={SNOOZE_TIME_FORMAT.format(option.date)}
+            description={AGENT_CHAT_THREAD_SNOOZE_TIME_FORMAT.format(
+              option.date,
+            )}
             onClick={() => handleSnooze(option)}
           />
         </SelectableListItem>

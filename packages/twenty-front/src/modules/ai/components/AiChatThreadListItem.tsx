@@ -5,6 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AiChatThreadActionsDropdown } from '@/ai/components/AiChatThreadActionsDropdown';
+import { AGENT_CHAT_THREAD_SNOOZE_TIME_FORMAT } from '@/ai/constants/AgentChatThreadSnoozeTimeFormat';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { type AiChatThreadActionsSurface } from '@/ai/types/AiChatThreadActionsSurface';
 import { useAgentChatThreadMembers } from '@/ai/hooks/useAgentChatThreadMembers';
@@ -143,7 +144,7 @@ export const AiChatThreadListItem = ({
     commitRename,
   } = useAiChatThreadRename(thread);
 
-  const { isUnread } = useAtomFamilySelectorValue(
+  const { isUnread, snoozedUntil } = useAtomFamilySelectorValue(
     agentChatThreadInboxStatusFamilySelector,
     { threadId: thread.id, lastActivityAt: thread.lastActivityAt ?? null },
   );
@@ -224,9 +225,11 @@ export const AiChatThreadListItem = ({
               )}
             </StyledThreadTitle>
             <StyledActivityTime $isDropdownOpen={isDropdownOpen}>
-              {formatAgentChatThreadActivityTime(
-                getAgentChatThreadLastActivityAt(thread),
-              )}
+              {isDefined(snoozedUntil)
+                ? t`Until ${AGENT_CHAT_THREAD_SNOOZE_TIME_FORMAT.format(new Date(snoozedUntil))}`
+                : formatAgentChatThreadActivityTime(
+                    getAgentChatThreadLastActivityAt(thread),
+                  )}
             </StyledActivityTime>
           </StyledThreadHeading>
         )}
