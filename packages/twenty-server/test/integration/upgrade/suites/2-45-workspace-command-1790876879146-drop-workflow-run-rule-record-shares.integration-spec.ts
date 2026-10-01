@@ -30,32 +30,43 @@ describe('2-45 workspace command 1790876879146 - DropWorkflowRunRuleRecordShares
       buildSystemAuthContext(workspaceId),
     );
 
-  const countRuleRecordShares = async () => {
-    const [{ count }] = await globalThis.testDataSource.query(
-      `SELECT COUNT(*)::int AS count
+  const findWorkflowRunShares = async (): Promise<
+    { recordId: string; rowCause: string; principalType: string }[]
+  > =>
+    globalThis.testDataSource.query(
+      `SELECT share."recordId", share."rowCause", share."principalType"
        FROM "${schemaName}"."recordShare" share
        JOIN core."objectMetadata" metadata ON metadata.id = share."objectMetadataId"
        WHERE metadata."universalIdentifier" = $1
-         AND share."rowCause" = 'RULE'
-         AND share."principalType" = 'EVERYONE'`,
+       ORDER BY share."recordId", share."rowCause", share."principalId"`,
       [STANDARD_OBJECTS.workflowRun.universalIdentifier],
     );
 
-    return count as number;
-  };
+  const findRuleRecordIds = async () =>
+    (await findWorkflowRunShares())
+      .filter(
+        ({ rowCause, principalType }) =>
+          rowCause === 'RULE' && principalType === 'EVERYONE',
+      )
+      .map(({ recordId }) => recordId);
 
-  const countRunsOfSharedWorkflows = async () => {
-    const [{ count }] = await globalThis.testDataSource.query(
-      `SELECT COUNT(*)::int AS count
-       FROM "${schemaName}"."workflowRun" run
-       LEFT JOIN core."workflow" core_workflow ON core_workflow.id = run."coreWorkflowId"
-       WHERE core_workflow.id IS NULL
-         OR core_workflow."visibility" = 'WORKSPACE'
-         OR core_workflow."createdByUserWorkspaceId" IS NULL`,
+  const findOtherWorkflowRunShares = async () =>
+    (await findWorkflowRunShares()).filter(
+      ({ rowCause }) => rowCause !== 'RULE',
     );
 
-    return count as number;
-  };
+  const findRunIdsOfSharedWorkflows = async () =>
+    (
+      await globalThis.testDataSource.query(
+        `SELECT run.id
+         FROM "${schemaName}"."workflowRun" run
+         LEFT JOIN core."workflow" core_workflow ON core_workflow.id = run."coreWorkflowId"
+         WHERE core_workflow.id IS NULL
+           OR core_workflow."visibility" = 'WORKSPACE'
+           OR core_workflow."createdByUserWorkspaceId" IS NULL
+         ORDER BY run.id`,
+      )
+    ).map(({ id }: { id: string }) => id);
 
   beforeAll(() => {
     command = getAppProviderByClassName<DropWorkflowRunRuleRecordSharesCommand>(
@@ -83,23 +94,30 @@ describe('2-45 workspace command 1790876879146 - DropWorkflowRunRuleRecordShares
   });
 
   it('restores a grant to everyone on each run of a workspace-visible workflow on the way down', async () => {
-    expect(await countRunsOfSharedWorkflows()).toBeGreaterThan(0);
+    await run('up');
+
+    const runIds = await findRunIdsOfSharedWorkflows();
+
+    expect(runIds.length).toBeGreaterThan(0);
+    expect(await findRuleRecordIds()).toEqual([]);
 
     await run('down');
 
-    expect(await countRuleRecordShares()).toBe(
-      await countRunsOfSharedWorkflows(),
-    );
+    expect(await findRuleRecordIds()).toEqual(runIds);
   });
 
   it('drops those grants on the way up, and only on a real run', async () => {
     await run('down');
+
+    const otherShares = await findOtherWorkflowRunShares();
+
     await run('up', { dryRun: true });
 
-    expect(await countRuleRecordShares()).toBeGreaterThan(0);
+    expect((await findRuleRecordIds()).length).toBeGreaterThan(0);
 
     await run('up');
 
-    expect(await countRuleRecordShares()).toBe(0);
+    expect(await findRuleRecordIds()).toEqual([]);
+    expect(await findOtherWorkflowRunShares()).toEqual(otherShares);
   });
 });
