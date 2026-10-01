@@ -4,7 +4,10 @@ const collect = (expressions: string[]) =>
   collectQualifiedAndMainAliasColumnNames({
     expressions,
     mainAlias: 'messageThread',
-    mainAliasColumnNames: ['id', 'subject', 'createdAt', 'text'],
+    columnNamesByAlias: {
+      messageThread: ['id', 'subject', 'createdAt', 'text'],
+      messages: ['id', 'text'],
+    },
     aliases: ['messageThread', 'messages'],
   });
 
@@ -38,6 +41,15 @@ describe('collectQualifiedAndMainAliasColumnNames', () => {
   });
 
   it('ignores identifiers that are not columns of the main alias', () => {
-    expect(collect(['"messages" IS NOT NULL AND unknown = 1'])).toEqual({});
+    expect(collect(['unknown = 1 AND other IS NOT NULL'])).toEqual({});
+  });
+
+  it('counts a whole-row reference as every column of its alias', () => {
+    expect(collect(['to_jsonb("messageThread") @> :payload'])).toEqual({
+      messageThread: ['id', 'subject', 'createdAt', 'text'],
+    });
+    expect(collect(['row_to_json(messages.*)::text ILIKE :text'])).toEqual({
+      messages: ['id', 'text'],
+    });
   });
 });

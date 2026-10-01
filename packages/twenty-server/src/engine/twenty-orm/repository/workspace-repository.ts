@@ -1968,12 +1968,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
   }
 
   private onBeforeExecute(queryBuilder: WorkspaceSelectQueryBuilder): void {
-    // Filters are checked before the row-level predicates join them, as those
-    // reference columns of their own
-    if (
-      this.options.readScope === 'existence' &&
-      !queryBuilder.isRowLevelPermissionApplied(queryBuilder.alias)
-    ) {
+    if (this.options.readScope === 'existence') {
       this.validateQueryIsPermitted(
         queryBuilder,
         queryBuilder.getFilterReferencedColumnNamesByAlias(),
@@ -2259,7 +2254,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     parameters: ObjectLiteral;
   }): void {
     if (alias === queryBuilder.alias) {
-      queryBuilder.andWhere(sql, parameters);
+      queryBuilder.andWhereRowAccessPredicate(sql, parameters);
 
       return;
     }

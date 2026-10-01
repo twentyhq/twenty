@@ -15,6 +15,7 @@ import { type WorkspaceTableShape } from 'src/engine/twenty-orm/table-shape/type
 export type WhereClause = {
   operator: 'and' | 'or';
   sql: string;
+  isRowAccessPredicate?: boolean;
 };
 
 export type JoinClause = {

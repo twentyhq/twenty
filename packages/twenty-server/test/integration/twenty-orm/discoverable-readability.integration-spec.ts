@@ -10,6 +10,7 @@ import {
   RecordSharePrincipalType,
   RecordShareRowCause,
 } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type UserWorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type RecordShareStorageService } from 'src/engine/core-modules/record-share/services/record-share-storage.service';
@@ -61,9 +62,27 @@ const setDiscoverableFields = async (
     { discoverableFieldUniversalIdentifiers },
   );
 
-  await getAppProviderByClassName<WorkspaceCacheService>(
-    'WorkspaceCacheService',
-  ).invalidateAndRecompute(SEED_APPLE_WORKSPACE_ID, ['flatObjectMetadataMaps']);
+  const workspaceCacheService =
+    getAppProviderByClassName<WorkspaceCacheService>('WorkspaceCacheService');
+
+  await workspaceCacheService.invalidateAndRecompute(SEED_APPLE_WORKSPACE_ID, [
+    'flatObjectMetadataMaps',
+  ]);
+
+  const { flatObjectMetadataMaps } = await workspaceCacheService.getOrRecompute(
+    SEED_APPLE_WORKSPACE_ID,
+    ['flatObjectMetadataMaps'],
+  );
+
+  const universalIdentifier =
+    flatObjectMetadataMaps.universalIdentifierById[objectMetadataId];
+
+  expect(
+    isDefined(universalIdentifier)
+      ? (flatObjectMetadataMaps.byUniversalIdentifier[universalIdentifier]
+          ?.discoverableFieldUniversalIdentifiers ?? null)
+      : undefined,
+  ).toEqual(discoverableFieldUniversalIdentifiers);
 };
 
 const readAsJony = <TResult>(
@@ -191,29 +210,60 @@ describe('DISCOVERABLE readability (integration)', () => {
     ]);
   });
 
+  // Every step runs whatever the others do, so a failed one cannot leave the
+  // shared seed workspace with a discoverable note
   afterAll(async () => {
-    await setDiscoverableFields(
-      noteTargetObjectMetadata.id,
-      noteTargetObjectMetadata.discoverableFieldUniversalIdentifiers,
-    );
-    await setObjectReadability(
-      noteObjectMetadata.id,
-      noteObjectMetadata.readability,
-    );
+    const cleanupSteps: (() => Promise<unknown>)[] = [
+      ...(isDefined(noteTargetObjectMetadata)
+        ? [
+            () =>
+              setDiscoverableFields(
+                noteTargetObjectMetadata.id,
+                noteTargetObjectMetadata.discoverableFieldUniversalIdentifiers,
+              ),
+          ]
+        : []),
+      ...(isDefined(noteObjectMetadata)
+        ? [
+            () =>
+              setObjectReadability(
+                noteObjectMetadata.id,
+                noteObjectMetadata.readability,
+              ),
+          ]
+        : []),
+      ...(
+        [
+          ['attachment', 'attachments', [ATTACHMENT_ID]],
+          ['noteTarget', 'noteTargets', [NOTE_TARGET_ID]],
+          ['note', 'notes', [NOTE_ID]],
+          ['person', 'people', [PERSON_ID]],
+        ] as const
+      ).map(([singular, plural, ids]) => async () => {
+        const response = await makeGraphqlApiRequest(
+          destroyManyOperationFactory({
+            objectMetadataSingularName: singular,
+            objectMetadataPluralName: plural,
+            gqlFields: 'id',
+            filter: { id: { in: [...ids] } },
+          }),
+        );
 
-    for (const [singular, plural, ids] of [
-      ['attachment', 'attachments', [ATTACHMENT_ID]],
-      ['noteTarget', 'noteTargets', [NOTE_TARGET_ID]],
-      ['note', 'notes', [NOTE_ID]],
-      ['person', 'people', [PERSON_ID]],
-    ] as const) {
-      await makeGraphqlApiRequest(
-        destroyManyOperationFactory({
-          objectMetadataSingularName: singular,
-          objectMetadataPluralName: plural,
-          gqlFields: 'id',
-          filter: { id: { in: [...ids] } },
-        }),
+        expect(response.body.errors).toBeUndefined();
+      }),
+    ];
+
+    const cleanupErrors: unknown[] = [];
+
+    for (const cleanupStep of cleanupSteps) {
+      await cleanupStep().catch((error: unknown) => {
+        cleanupErrors.push(error);
+      });
+    }
+
+    if (cleanupErrors.length > 0) {
+      throw new Error(
+        `Cleanup failed: ${cleanupErrors.map((error) => String(error)).join('; ')}`,
       );
     }
   });
@@ -245,6 +295,39 @@ describe('DISCOVERABLE readability (integration)', () => {
           .getMany(),
       ),
     ).rejects.toThrow('no permission to read field "title" on "note"');
+  });
+
+  it('refuses a filter on another field added after a first execution', async () => {
+    await expect(
+      readAsJony(async (workspaceOrmManager) => {
+        const queryBuilder = workspaceOrmManager
+          .getRepositoryWithContextPermissions('note', undefined, 'existence')
+          .createQueryBuilder('note')
+          .select(['id'])
+          .where('note.id = :id', { id: NOTE_ID });
+
+        await queryBuilder.getMany();
+
+        return queryBuilder
+          .andWhere('note.title = :title', { title: NOTE_TITLE })
+          .getMany();
+      }),
+    ).rejects.toThrow('no permission to read field "title" on "note"');
+  });
+
+  it('refuses a whole-row reference in a filter', async () => {
+    await expect(
+      readAsJony((workspaceOrmManager) =>
+        workspaceOrmManager
+          .getRepositoryWithContextPermissions('note', undefined, 'existence')
+          .createQueryBuilder('note')
+          .select(['id'])
+          .where('to_jsonb("note")::text ILIKE :title', {
+            title: `%${NOTE_TITLE}%`,
+          })
+          .getMany(),
+      ),
+    ).rejects.toThrow(/no permission to read field "\w+" on "note"/);
   });
 
   it('refuses an existence read that orders by another field', async () => {
