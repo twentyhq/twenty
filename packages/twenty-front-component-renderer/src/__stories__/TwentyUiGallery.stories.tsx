@@ -1,7 +1,7 @@
-import { progressTest } from '@/__stories__/twenty-ui-gallery/utils/progressTest';
 import { jsonTreeTest } from '@/__stories__/twenty-ui-gallery/utils/jsonTreeTest';
 import { inlineBannerSandboxTest } from '@/__stories__/twenty-ui-gallery/utils/inlineBannerSandboxTest';
 import { themeTokenTest } from '@/__stories__/twenty-ui-gallery/utils/themeTokenTest';
+import { progressTest } from '@/__stories__/twenty-ui-gallery/utils/progressTest';
 import { inputTest } from '@/__stories__/twenty-ui-gallery/utils/inputTest';
 import { settingsRowTest } from '@/__stories__/twenty-ui-gallery/utils/settingsRowTest';
 import { resizeHandleTest } from '@/__stories__/twenty-ui-gallery/utils/resizeHandleTest';
@@ -89,6 +89,18 @@ export const FeedbackPreact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-feedback-gallery',
   runtime: 'preact',
   play: galleryRenderTest,
+});
+
+export const ProgressReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-progress',
+  runtime: 'react',
+  play: progressTest,
+});
+
+export const ProgressPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-progress',
+  runtime: 'preact',
+  play: progressTest,
 });
 
 export const IconReact: Story = createGalleryStory({
@@ -537,16 +549,4 @@ export const InlineBannerPreactFocusFailure: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-inline-banner',
   runtime: 'preact',
   play: inlineBannerSandboxTest,
-});
-
-export const ProgressReact: Story = createGalleryStory({
-  frontComponentBundleName: 'twenty-ui-progress',
-  runtime: 'react',
-  play: progressTest,
-});
-
-export const ProgressPreact: Story = createGalleryStory({
-  frontComponentBundleName: 'twenty-ui-progress',
-  runtime: 'preact',
-  play: progressTest,
 });
