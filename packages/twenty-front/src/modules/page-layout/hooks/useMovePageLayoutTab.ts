@@ -19,9 +19,7 @@ export const useMovePageLayoutTab = (pageLayoutIdFromProps?: string) => {
 
   const store = useStore();
 
-  // Deleting a tab only deactivates it in the draft, so an inactive tab must
-  // not become the neighbour a move swaps positions with: that would leave the
-  // rendered order untouched.
+  // Deleted tabs are only deactivated in the draft; swapping with one would leave the rendered order unchanged.
   const swapWithNeighborTab = useCallback(
     (tabId: string, offset: -1 | 1) => {
       store.set(pageLayoutDraftState, (prev) => {

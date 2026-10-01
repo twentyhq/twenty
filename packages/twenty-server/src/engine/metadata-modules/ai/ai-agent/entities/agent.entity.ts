@@ -50,7 +50,7 @@ export class AgentEntity
   })
   modelId: ModelId;
 
-  // Should not be nullable
+  // TODO: make non-nullable
   @Column({ nullable: true, type: 'jsonb', default: { type: 'text' } })
   responseFormat: JsonbProperty<AgentResponseFormat>;
 

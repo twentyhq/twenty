@@ -20,8 +20,7 @@ export const usePaymentMethodFlow = (modalInstanceId: string) => {
   const { isBillingPortalSessionDisabled, openBillingPortal } =
     useBillingPortalSession(getSettingsPath(SettingsPath.Billing));
 
-  // Adding the first payment method is the only flow the in-product form can
-  // handle, everything else needs the billing portal
+  // The in-product form only handles adding the first payment method; the rest needs the billing portal
   const shouldAddPaymentMethodInProduct =
     hasPermissionToManageBilling && billingHasPaymentMethod === false;
 

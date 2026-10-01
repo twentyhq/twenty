@@ -46,9 +46,6 @@ export const RECORD_TABLE_WIDGET_LAYOUT_OPTIONS = {
   }
 >;
 
-// A widget view backed by a record table renders as a table unless its type
-// names another layout, so anything else — including a missing view — reads as
-// TABLE_WIDGET.
 export const getRecordTableWidgetLayoutViewType = (
   viewType: ViewType | null | undefined,
 ): RecordTableWidgetLayoutViewType =>
@@ -56,8 +53,7 @@ export const getRecordTableWidgetLayoutViewType = (
     (layoutViewType) => layoutViewType === viewType,
   ) ?? ViewType.TABLE_WIDGET;
 
-// The layouts a record table widget can render, as opposed to the widget view
-// types above: a widget backed by a plain LIST view still renders as a list.
+// Layouts the widget can render, unlike the widget view types above: a plain LIST view still renders as a list.
 export const RECORD_TABLE_WIDGET_LAYOUTS = [
   ViewType.TABLE,
   ViewType.KANBAN,
@@ -81,7 +77,6 @@ export const isRecordTableWidgetContentEditingSupported = (
 ) => {
   const layout = getRecordTableWidgetLayout(viewType);
 
-  // List is intrinsically read-only. Calendar editing needs layout-specific
-  // rules before it can share this setting and is deferred to a follow-up PR.
+  // List is read-only by nature. TODO: let calendar share this setting once it has layout-specific editing rules.
   return layout === ViewType.TABLE || layout === ViewType.KANBAN;
 };

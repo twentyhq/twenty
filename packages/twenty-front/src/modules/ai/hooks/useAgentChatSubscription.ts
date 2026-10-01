@@ -44,10 +44,7 @@ import { markWorkspaceCreditsExhausted } from '@/workspace/utils/updateWorkspace
 const THROTTLE_MS = 100;
 const PERMISSIONS_REFRESH_INTERVAL_MS = 30_000;
 
-// readUIMessageStream requires initialization chunks (start, start-step,
-// text-start) before content chunks. When reconnecting to a thread mid-stream,
-// those chunks were already sent before we subscribed. This adapter injects
-// synthetic initialization chunks so the reader can process mid-stream content.
+// readUIMessageStream needs start chunks that a mid-stream reconnect missed, so inject synthetic ones.
 const createMidStreamAdapter = () => {
   let hasSeenStart = false;
   const knownTextPartIds = new Set<string>();
@@ -393,8 +390,7 @@ export const useAgentChatSubscription = (threadId: string | null) => {
         }
 
         case 'keepalive': {
-          // The initial/reconnect heartbeat also loads access for shared links.
-          // Reuse this lifecycle to reflect edit downgrades without polling the list.
+          // The reconnect heartbeat also reloads shared link access, catching edit downgrades without polling.
           if (
             !isDefined(lastPermissionsRefreshAt) ||
             Date.now() - lastPermissionsRefreshAt >=

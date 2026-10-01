@@ -92,8 +92,7 @@ export class FieldMetadataController {
     private readonly applicationTranslationCatalogService: ApplicationTranslationCatalogService,
   ) {}
 
-  // REST returns the same labels the app renders: resolved for the caller's
-  // locale, through the one resolver the GraphQL read path uses.
+  // same locale-resolved labels as the GraphQL read path
   private async toPresentedFieldDtos({
     fields,
     derivedFieldMetadataIds,

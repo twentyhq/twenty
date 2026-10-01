@@ -16,8 +16,7 @@ export class AgentHistorySchemaService {
   ) {}
 
   async prepare(workspaceId: string, dryRun: boolean): Promise<void> {
-    // The migration builder mutates its optimistic maps, even on dry runs.
-    // Keep those changes out of the live metadata cache until DDL succeeds.
+    // The migration builder mutates its optimistic maps even on dry runs, so keep them out of the cache until DDL succeeds
     const existing = structuredClone(
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatObjectMetadataMaps',
@@ -45,8 +44,7 @@ export class AgentHistorySchemaService {
     if (objects.length + fields.length + indexes.length === 0) {
       return;
     }
-    // Standard definitions use the same from/to path as standard application
-    // synchronization; custom-object side effects must not expand this schema.
+    // Same from/to path as standard application sync; custom-object side effects must not expand this schema
     const result =
       await this.migrations.validateBuildAndRunWorkspaceMigrationFromTo({
         workspaceId,

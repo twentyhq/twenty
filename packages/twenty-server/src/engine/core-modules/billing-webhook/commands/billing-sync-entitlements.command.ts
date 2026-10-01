@@ -18,11 +18,7 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
-// Entitlements otherwise only ever arrive through the
-// entitlements.active_entitlement_summary.updated webhook. Stripe stops
-// retrying a failed delivery after a few days and a missing row reads as
-// denied, so without a reconciliation pass a dropped event silently removes a
-// paid feature until the customer's subscription happens to change again.
+// Stripe stops retrying failed webhooks and a missing entitlement reads as denied, so dropped events need reconciling
 @Command({
   name: 'billing:sync-entitlements',
   description: 'Reconcile billing entitlements with Stripe for all workspaces',
@@ -47,8 +43,6 @@ export class BillingSyncEntitlementsCommand extends WorkspaceCommandRunner {
     options,
     index,
   }: RunOnWorkspaceArgs): Promise<void> {
-    // The Stripe client is only built when billing is enabled, so there is
-    // nothing to reconcile against on a self-hosted instance.
     if (!this.twentyConfigService.get('IS_BILLING_ENABLED')) {
       if (index === 0) {
         this.logger.log(

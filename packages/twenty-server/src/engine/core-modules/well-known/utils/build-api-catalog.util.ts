@@ -4,8 +4,7 @@ import { ApiPath } from 'twenty-shared/types';
 const API_DOCS_URL = `${DOCUMENTATION_BASE_URL}/developers/extend/api`;
 const MCP_DOCS_URL = `${DOCUMENTATION_BASE_URL}/user-guide/ai/capabilities/mcp`;
 
-// service-desc points at each host's live OpenAPI, which is generated per
-// workspace and so includes that workspace's custom objects.
+// Points at each host's live OpenAPI, generated per workspace with its custom objects.
 export const buildApiCatalog = (baseUrl: string) => ({
   linkset: [
     {

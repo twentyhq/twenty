@@ -72,8 +72,7 @@ export class AgentChatActorService {
         AiExceptionCode.MESSAGE_NOT_FOUND,
       );
     }
-    // Only pre-attribution messages inherit the original participant. Never use
-    // a worker's caller or the participant whose preceding turn drained the queue.
+    // only pre-attribution messages inherit the thread's member; never the worker's caller or the participant whose turn drained the queue
     let userWorkspaceId = message.senderUserWorkspaceId;
     if (!isDefined(userWorkspaceId)) {
       const thread = await this.threads.findOneOrFail(workspaceId, {
@@ -157,8 +156,7 @@ export class AgentChatActorService {
     return { authContext, rolePermissionConfig, roleId };
   }
 
-  // The call belongs to the turn that made it, so it is resolved from the
-  // application context that turn was sent from and not from another one.
+  // resolved from the application context of the turn that made the call
   async authorizeToolCallResolution({
     workspaceId,
     threadId,

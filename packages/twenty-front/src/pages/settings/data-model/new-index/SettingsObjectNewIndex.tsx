@@ -34,8 +34,7 @@ const isFieldIndexable = (field: FieldMetadataItem): boolean => {
   if (field.isSystem === true) return false;
   if (field.isActive !== true) return false;
 
-  // Only MANY_TO_ONE relations have a join column on this side; ONE_TO_MANY
-  // and MANY_TO_MANY have nothing concrete to index.
+  // Only MANY_TO_ONE relations have a join column on this side to index
   const relationType =
     field.relation?.type ?? field.morphRelations?.[0]?.type ?? null;
 

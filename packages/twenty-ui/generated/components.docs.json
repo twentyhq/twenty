@@ -1,5 +1,152 @@
 [
   {
+    "name": "ProgressRing",
+    "entryPoint": "twenty-ui/primitives/feedback",
+    "slug": "feedback/progress-ring",
+    "props": [
+      {
+        "name": "aria-label",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Accessible name identifying the measured operation."
+      },
+      {
+        "name": "aria-labelledby",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "ID of the visible label that names the measured operation."
+      },
+      {
+        "name": "aria-valuetext",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Human-readable progress value when a percentage alone is insufficient."
+      },
+      {
+        "name": "barColor",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "CSS color of the filled arc. Defaults to the blue theme color."
+      },
+      {
+        "name": "children",
+        "type": "ReactNode",
+        "required": false,
+        "defaultValue": null,
+        "description": "Optional preformatted value displayed before the ring."
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "CSS class applied to the progress root."
+      },
+      {
+        "name": "render",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Replaces the root element while preserving progress semantics."
+      },
+      {
+        "name": "size",
+        "type": "\"md\" | \"sm\"",
+        "required": false,
+        "defaultValue": "md",
+        "description": "Ring diameter: sm (14px) or md (16px). Defaults to md."
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false,
+        "defaultValue": null,
+        "description": "Inline styles applied to the progress root."
+      },
+      {
+        "name": "value",
+        "type": "number",
+        "required": true,
+        "defaultValue": null,
+        "description": "Controlled progress from 0 to 100. Out-of-range values are bounded and NaN renders as zero."
+      }
+    ]
+  },
+  {
+    "name": "MetricRow",
+    "entryPoint": "twenty-ui/components",
+    "slug": "components/metric-row",
+    "props": [
+      {
+        "name": "children",
+        "type": "string",
+        "required": true,
+        "defaultValue": null,
+        "description": "Required nonempty text label that also names the optional progress ring."
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "CSS class applied to the row root."
+      },
+      {
+        "name": "progress",
+        "type": "number",
+        "required": false,
+        "defaultValue": null,
+        "description": "Optional controlled progress from 0 to 100. Omitting it displays the value without a ring."
+      },
+      {
+        "name": "progressColor",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "CSS color of the filled arc when progress is provided."
+      },
+      {
+        "name": "progressValueText",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Accessible value text for the progress ring. Overrides the string value fallback; supply it when formatted content needs more context than a percentage."
+      },
+      {
+        "name": "render",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Replaces the row root element while preserving its contents."
+      },
+      {
+        "name": "startIcon",
+        "type": "IconComponent",
+        "required": false,
+        "defaultValue": null,
+        "description": "Decorative icon before the label, rendered at 14px."
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false,
+        "defaultValue": null,
+        "description": "Inline styles applied to the row root."
+      },
+      {
+        "name": "value",
+        "type": "ReactNode",
+        "required": true,
+        "defaultValue": null,
+        "description": "Preformatted value displayed at the end of the row. String values also supply the progress ring accessible value text."
+      }
+    ]
+  },
+  {
     "name": "Shortcut",
     "entryPoint": "twenty-ui/primitives/typography",
     "slug": "typography/shortcut",
@@ -7233,7 +7380,7 @@
             "type": "\"check\" | \"checkbox\" | \"none\"",
             "required": false,
             "defaultValue": null,
-            "description": "Selection indicator: a check icon after the content, a checkbox before it, or none. Defaults to `checkbox` when `multiple` is set, otherwise `check`."
+            "description": "Selection indicator: a check icon after the content, a checkbox before it, or none. Defaults to `checkbox` when `multiple` is set, otherwise `check`, and to `none` when `selected` is omitted."
           },
           {
             "name": "nativeButton",
@@ -7259,9 +7406,9 @@
           {
             "name": "selected",
             "type": "boolean",
-            "required": true,
+            "required": false,
             "defaultValue": null,
-            "description": "Whether the option is selected. Exposed as `aria-checked` in menus and `aria-pressed` in other dropdown types."
+            "description": "Whether the option is selected. Exposed as `aria-checked` in menus and `aria-pressed` in other dropdown types. Omit it for options that navigate or apply without a selection state."
           },
           {
             "name": "shortcut",
@@ -9218,34 +9365,6 @@
         "required": false,
         "defaultValue": "5",
         "description": "Distance between the button and tooltip in pixels."
-      }
-    ]
-  },
-  {
-    "name": "NavigationBar",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/navigation-bar",
-    "props": [
-      {
-        "name": "activeItemName",
-        "type": "string",
-        "required": true,
-        "defaultValue": null,
-        "description": "Name of the item to highlight. The application owns navigation."
-      },
-      {
-        "name": "isHidden",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": "false",
-        "description": "Hides the bar visually and from the accessibility tree."
-      },
-      {
-        "name": "items",
-        "type": "{ name: string; label: string; Icon: IconComponent; onClick: () => void; }[]",
-        "required": true,
-        "defaultValue": null,
-        "description": "Navigation items with a unique name, accessible label, Icon component, and onClick callback."
       }
     ]
   },

@@ -211,10 +211,7 @@ export const useAgentChat = (
         },
       });
 
-      // The stream this send started can exhaust the balance and publish
-      // credits-exhausted before this response resolves; that event marks the
-      // thread error, so its presence means the exhaustion is newer information
-      // than the gate pass this response proves.
+      // The stream may already have set a newer credits-exhausted error; don't clear it.
       if (!isAiChatCreditsExhaustedError(store.get(errorAtom))) {
         store.set(currentWorkspaceState.atom, markWorkspaceCreditsAvailable);
       }
@@ -223,8 +220,7 @@ export const useAgentChat = (
         store.set(lastSentBrowsingContextAtom, browsingContext);
       }
 
-      // Filed once the message is in: a failed send restores the draft with
-      // its mentions, so the retry files it instead.
+      // Filed after the send: a failed send restores the draft, so the retry files it.
       getConversationTargetsFromSerializedDocument(
         serializedContentToSend,
       ).forEach((conversationTarget) => {

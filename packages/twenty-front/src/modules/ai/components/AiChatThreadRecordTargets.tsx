@@ -40,8 +40,6 @@ const StyledContainer = styled.div`
   min-width: 0;
 `;
 
-// Lets the list shrink in a narrow header, where it folds the chips that no
-// longer fit into a count.
 const StyledRecordChips = styled.div`
   min-width: 0;
 `;
@@ -93,8 +91,7 @@ export const AiChatThreadRecordTargets = ({
     skip: isThreadQuerySkipped,
   });
 
-  // The chat model files the conversation through its own tool on the server,
-  // so its links are read again whenever one is written.
+  // The chat model links conversations through its own server tool, so links are reread on any write.
   const linksOperationSignature = useMemo(
     () => ({
       objectNameSingular: CoreObjectNameSingular.AgentChatThreadTarget,

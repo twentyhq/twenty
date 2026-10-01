@@ -29,8 +29,7 @@ export type WebsiteRouteFamilyId = never;
 export type SitemapChangeFrequency =
   MetadataRoute.Sitemap[number]['changeFrequency'];
 
-// A static page. Sitemap, robots, hreflang, and metadata derive from this
-// record, so a page's SEO surface lives in one place.
+// Sitemap, robots, hreflang and metadata all derive from this record.
 export type WebsiteRoute = {
   changeFrequency: SitemapChangeFrequency;
   description: MessageDescriptor;
@@ -44,9 +43,7 @@ export type WebsiteRoute = {
   title: MessageDescriptor;
 };
 
-// One slug under a dynamic family, produced by the family's enumerator from
-// its content source (markdown, CMS). Strings are content, not catalog
-// messages — they arrive already written per entry.
+// Strings are content, not catalog messages: they arrive already written per entry.
 export type WebsiteRouteFamilyEntry = {
   description: string;
   lastModified?: Date;
@@ -55,9 +52,7 @@ export type WebsiteRouteFamilyEntry = {
   title: string;
 };
 
-// A dynamic route family (e.g. /articles/[slug]). The enumerator is the
-// single source for generateStaticParams, the sitemap, and per-entry
-// metadata.
+// The enumerator feeds generateStaticParams, the sitemap and per-entry metadata.
 export type WebsiteRouteFamily = {
   basePath: string;
   changeFrequency: SitemapChangeFrequency;
