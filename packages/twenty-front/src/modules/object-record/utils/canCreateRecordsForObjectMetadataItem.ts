@@ -10,15 +10,8 @@ type CanCreateRecordsForObjectMetadataItemParams = {
   >;
 };
 
-// Single predicate for every generic "create a record" UI affordance.
-// Creatability is driven by isUICreatable: isSystem only controls Data-Model
-// visibility, so a system object can still be user-creatable (e.g. marketing
-// message lists kept out of the Data Model), while a non-OPEN writability
-// rules the user session out regardless of the affordance flags.
-// Creation requires effective editability because today's inline creation UX
-// creates a blank record that the user must then be able to edit.
-// There is no CREATE permission yet, so canUpdateObjectRecords (checked
-// through isObjectMetadataReadOnly) acts as a proxy.
+// isSystem only controls Data Model visibility; isUICreatable and OPEN writability govern creation.
+// No CREATE permission exists yet, so canUpdateObjectRecords is the proxy (inline creation edits a blank record).
 export const canCreateRecordsForObjectMetadataItem = ({
   objectPermissions,
   objectMetadataItem,

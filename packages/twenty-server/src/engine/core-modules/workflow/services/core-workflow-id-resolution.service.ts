@@ -54,8 +54,7 @@ export class CoreWorkflowIdResolutionService {
     return resolved;
   }
 
-  // Everything that reaches a workflow by id comes through here, so this is
-  // where a workflow private to someone else stops being resolvable at all.
+  // Every by-id access goes through here, so this is where a private workflow stops resolving.
   async resolveWorkspaceVersionIdIfCoreVersionExists({
     workspaceId,
     userWorkspaceId,

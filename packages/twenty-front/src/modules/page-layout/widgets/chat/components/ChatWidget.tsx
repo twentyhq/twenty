@@ -34,8 +34,7 @@ const StyledRecordTargets = styled.div`
 export const ChatWidget = () => {
   const targetRecord = useTargetRecord();
   const isInSidePanel = useWorkspaceSurface().type === 'side-panel';
-  // Checked once, so leaving for the chat page later does not pull this chat
-  // into it
+  // Checked once so leaving for the chat page later does not pull this chat into it
   const [isOpenedBesideChatPage] = useState(
     () => isInSidePanel && isCurrentPathAiChatPage(),
   );

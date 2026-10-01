@@ -18,8 +18,7 @@ type AiTelemetryCallOptions = {
   runtimeContext: Record<string, string>;
 };
 
-// Identifiers travel as runtime context and are opted into telemetry one by
-// one, which is how a telemetry integration receives per-call attributes.
+// telemetry integrations only receive per-call attributes opted in from runtime context
 export const buildAiTelemetry = ({
   functionId,
   ...identifiers

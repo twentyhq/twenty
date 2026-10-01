@@ -27,9 +27,8 @@ export interface LocalDriverOptions {
   storagePath: string;
 }
 
-// Local storage has no ETag, so identity comes from the stat fields that a
-// rewrite changes. Enough to catch a swap between an inspection and a move,
-// which is all callers use it for.
+// Local storage has no ETag, so identity comes from the stat fields a rewrite changes; only enough to catch a swap
+// between an inspection and a move.
 const buildStatChecksum = (stats: Stats): string =>
   `${stats.ino}-${stats.size}-${stats.mtimeMs}`;
 
@@ -134,8 +133,6 @@ export class LocalDriver implements StorageDriver {
     }
   }
 
-  // Resolves the on-disk path for a write, creating the parent folder and
-  // enforcing storage containment + symlink rejection.
   private async resolveWritableRealPathOrThrow(
     filePath: string,
   ): Promise<string> {
@@ -188,19 +185,14 @@ export class LocalDriver implements StorageDriver {
       params.filePath,
     );
 
-    // Writing through to the destination would mutate the object other callers
-    // are already reading, in place and under a stable inode. Promotion
-    // identifies the version it validated by inode, so publishing each write as
-    // a new one is what keeps that identity meaningful. The temporary name
-    // does not carry the original filename: path validation allows filenames
-    // up to the filesystem's own limit, so appending to one could not fit.
+    // Publish each write as a new inode: promotion identifies the validated version by inode.
+    // The temporary name omits the filename, which may already be at the filesystem length limit.
     const partialFilePath = join(dirname(realFilePath), `.${v4()}.part`);
 
     try {
       await pipeline(params.stream, createWriteStream(partialFilePath));
       await fs.rename(partialFilePath, realFilePath);
     } catch (error) {
-      // Remove the partial file so a failed upload can be retried cleanly
       await fs.rm(partialFilePath, { force: true });
 
       throw error;
@@ -358,12 +350,7 @@ export class LocalDriver implements StorageDriver {
     }
   }
 
-  // Checking the source and then renaming it leaves a window in which a client
-  // still holding an upload target can publish over the path, so the rename
-  // would promote bytes that were never inspected. Claiming the source under a
-  // private name first makes the checked object and the moved object the same
-  // one: whatever a concurrent upload publishes afterwards lands on the
-  // original path and is no longer reachable from here.
+  // Claim the source under a private name first so a concurrent upload cannot get promoted uninspected.
   private async movePreconditionedOnChecksum({
     fromPath,
     toPath,
@@ -385,11 +372,7 @@ export class LocalDriver implements StorageDriver {
 
       await this.renameOrThrow({ fromPath: claimedPath, toPath });
     } catch (error) {
-      // Put it back so the caller's retry and the cleanup sweep still find it
-      // at the path they know: the claim name is private to this call and
-      // nothing would look for it again. A concurrent upload may have
-      // published there in the meantime, but that path is bound for deletion
-      // either way.
+      // Restore it so the caller's retry and the cleanup sweep still find it; the claim name is private.
       await fs.rename(claimedPath, fromPath).catch(() => {
         this.logger.error(
           `Could not restore "${path.basename(fromPath)}" after a failed promotion`,
@@ -446,8 +429,6 @@ export class LocalDriver implements StorageDriver {
     return null;
   }
 
-  // Local storage has no external endpoint to upload to: the caller falls
-  // back to the server-side streaming upload endpoint.
   async getPresignedUploadUrl(): Promise<string | null> {
     return null;
   }

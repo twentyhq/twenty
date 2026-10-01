@@ -116,8 +116,7 @@ export class AgentTurnResolver {
     @AuthWorkspaceMemberId() workspaceMemberId: string,
     @AuthUserWorkspaceId() userWorkspaceId: string,
   ): Promise<AgentTurnWorkspaceEntity> {
-    // Defense in depth: the job also re-fetches the agent through a
-    // workspace-scoped repository.
+    // defense in depth: the job also re-fetches the agent workspace-scoped
     await this.agentService.findOneAgentById({
       id: agentId,
       workspaceId: workspace.id,

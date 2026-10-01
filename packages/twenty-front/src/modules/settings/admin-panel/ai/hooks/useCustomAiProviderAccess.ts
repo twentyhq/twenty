@@ -17,9 +17,7 @@ export const useCustomAiProviderAccess = () => {
 
   const access = data?.getCustomAiProviderAccess;
 
-  // Only assume access while the query is in flight, so the section never
-  // flashes its locked state; once it settles without an answer the creation
-  // paths stay closed rather than failing at the mutation.
+  // Assume access only while loading, so the section never flashes locked; with no answer, creation stays closed.
   const hasAccess = access?.hasAccess ?? loading;
 
   const tooltipContent = !isDefined(access)
@@ -32,8 +30,6 @@ export const useCustomAiProviderAccess = () => {
     ? t`Custom providers are complimentary up to ${access.seatThreshold} seats. This instance has ${access.seatCount}. Upgrade to add more.`
     : t`This instance's plan could not be verified. Reload the page to try again.`;
 
-  // The seat count and threshold stay internal: every caller wants the copy
-  // built from them, not the numbers.
   return {
     hasAccess,
     tooltipContent,

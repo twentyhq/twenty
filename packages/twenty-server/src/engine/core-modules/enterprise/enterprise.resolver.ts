@@ -21,8 +21,6 @@ import { BillingDisabledGuard } from 'src/engine/guards/billing-disabled.guard';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 
-// Server-binding rejections that should surface as an activation failure with
-// their own user-facing message (rather than being silently swallowed).
 const SERVER_BINDING_REJECTION_CODES: EnterpriseExceptionCode[] = [
   EnterpriseExceptionCode.ENTERPRISE_KEY_BOUND_TO_ANOTHER_SERVER,
   EnterpriseExceptionCode.ENTERPRISE_MISSING_SERVER_ID,
@@ -52,9 +50,6 @@ const SERVER_BINDING_REJECTION_CODES: EnterpriseExceptionCode[] = [
 export class EnterpriseResolver {
   constructor(private readonly enterprisePlanService: EnterprisePlanService) {}
 
-  // Turn a server-binding rejection from the last refresh into a user-facing
-  // error, so activation and manual refresh surface the real reason instead of
-  // silently failing.
   private throwIfServerBindingRejected(): void {
     const rejectionCode =
       this.enterprisePlanService.getLastRefreshRejectionCode();

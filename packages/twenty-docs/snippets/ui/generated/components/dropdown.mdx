@@ -281,7 +281,7 @@
 </ParamField>
 
 <ParamField body="OptionItem.indicator" type="&quot;check&quot; | &quot;checkbox&quot; | &quot;none&quot;">
-  Selection indicator: a check icon after the content, a checkbox before it, or none. Defaults to `checkbox` when `multiple` is set, otherwise `check`.
+  Selection indicator: a check icon after the content, a checkbox before it, or none. Defaults to `checkbox` when `multiple` is set, otherwise `check`, and to `none` when `selected` is omitted.
 </ParamField>
 
 <ParamField body="OptionItem.nativeButton" type="boolean" default="true when render is omitted; false otherwise">
@@ -298,8 +298,8 @@
   Element rendered as the row instead of a native button. Custom components must forward the supplied props and ref.
 </ParamField>
 
-<ParamField body="OptionItem.selected" type="boolean" required>
-  Whether the option is selected. Exposed as `aria-checked` in menus and `aria-pressed` in other dropdown types.
+<ParamField body="OptionItem.selected" type="boolean">
+  Whether the option is selected. Exposed as `aria-checked` in menus and `aria-pressed` in other dropdown types. Omit it for options that navigate or apply without a selection state.
 </ParamField>
 
 <ParamField body="OptionItem.shortcut" type="ShortcutDefinition">

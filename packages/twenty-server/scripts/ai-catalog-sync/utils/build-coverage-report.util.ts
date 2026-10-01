@@ -3,10 +3,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { type CoverageReport } from '../types/coverage-report.type';
 import { type GeneratedCatalog } from '../types/generated-catalog.type';
 
-// Models whose job is not general reasoning (speech, image, embeddings,
-// computer use, deep research). A capability index for them would be
-// meaningless, so they are excluded from the coverage denominator rather than
-// counted as gaps.
+// Non-reasoning models (speech, image, embeddings...) have no meaningful capability index, so they are not counted as gaps
 const SPECIALIZED_MODEL_PATTERN =
   /realtime|voxtral|tts|audio|-live|computer-use|deep-research|-image|pixtral|codestral|embed/;
 

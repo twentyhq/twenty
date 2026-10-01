@@ -234,7 +234,6 @@ describe('Order by relation field (e2e)', () => {
       if (edge.node.company === null) {
         seenNull = true;
       } else if (seenNull) {
-        // If we already saw a null, subsequent non-nulls mean order is wrong
         throw new Error('Records with null company should appear at the end');
       }
     }
@@ -395,7 +394,6 @@ describe('Order by relation field (e2e)', () => {
     expect(collectedIds).toHaveLength(TEST_PERSON_IDS.length);
     expect(new Set(collectedIds).size).toBe(TEST_PERSON_IDS.length);
 
-    // Company names must be globally non-decreasing across pages, nulls last
     const companyNames = collectedCompanyNames.filter(
       (name): name is string => name !== null,
     );
@@ -501,12 +499,10 @@ describe('Order by relation field (e2e)', () => {
       before = connection.pageInfo.startCursor;
     }
 
-    // Everything before the last record, in the same order as the forward scan
     expect(backwardIds).toEqual(forwardIds.slice(0, -1));
   });
 
-  // Cursors read the relation orderBy values from the ordering join itself,
-  // so pagination must not depend on the selection set (issue #24333)
+  // Regression for #24333: cursors must not depend on the selected fields.
   it('should paginate exhaustively without the ordered relation field selected', async () => {
     const collectedIds: string[] = [];
     let after: string | undefined = undefined;
@@ -561,8 +557,7 @@ describe('Order by relation field (e2e)', () => {
       after = connection.pageInfo.endCursor;
     }
 
-    // Companies sort Alpha < Beta < Gamma with id tie-breaks, then the
-    // missing-relation block in id order: exactly the seeded id order
+    // The fixture ids are seeded in the expected sort order.
     expect(collectedIds).toEqual(TEST_PERSON_IDS);
   });
 
@@ -762,9 +757,7 @@ describe('Order by relation field (e2e)', () => {
   });
 
   it('should work with filter + relation orderBy + scalar orderBy with minimal fields selected', async () => {
-    // This test reproduces a bug where TypeORM's DISTINCT subquery failed
-    // when orderBy included columns not in the SELECT clause.
-    // The bug manifested as: "column distinctAlias.person_position does not exist"
+    // Regression: TypeORM's DISTINCT subquery failed when orderBy used columns missing from SELECT.
     const queryData = {
       query: gql`
         query People(
@@ -790,9 +783,8 @@ describe('Order by relation field (e2e)', () => {
         }
       `,
       variables: {
-        // Filter excludes one record - key to triggering the DISTINCT subquery path
+        // Excluding a record triggers the DISTINCT subquery path.
         filter: { id: { neq: TEST_PERSON_IDS[0] } },
-        // Multiple orderBy: relation field + scalar field (position not in SELECT)
         orderBy: [
           { company: { name: 'DescNullsLast' } },
           { position: 'AscNullsFirst' },
@@ -803,7 +795,6 @@ describe('Order by relation field (e2e)', () => {
 
     const response = await makeGraphqlApiRequest(queryData);
 
-    // Should succeed without "column distinctAlias.person_position does not exist" error
     expect(response.body.errors).toBeUndefined();
     expect(response.body.data).toBeDefined();
     expect(response.body.data.people).toBeDefined();
@@ -836,17 +827,13 @@ const COMPOSITE_TEST_OPPORTUNITY_IDS = [
   '20202020-dddd-4000-8000-000000000006',
 ];
 
-// The web app sorts a relation column by the target's label identifier; for a
-// person target that is the FULL_NAME composite, sent as one orderBy entry per
-// property: [{ pointOfContact: { name: { firstName } } }, { ...lastName... }]
+// Mirrors how the web app sorts a relation column whose label identifier is a FULL_NAME composite.
 describe('Order by a composite field through a relation (e2e)', () => {
   const orderBy = [
     { pointOfContact: { name: { firstName: 'AscNullsLast' } } },
     { pointOfContact: { name: { lastName: 'AscNullsLast' } } },
   ];
 
-  // Opportunities ordered by their contact's (firstName, lastName), the two
-  // Adas separated by lastName, then the two without a contact in id order
   const expectedOpportunityIds = COMPOSITE_TEST_OPPORTUNITY_IDS;
 
   beforeAll(async () => {
@@ -1015,7 +1002,6 @@ describe('Order by a composite field through a relation (e2e)', () => {
       before = connection.pageInfo.startCursor;
     }
 
-    // Everything before the last record, in forward order
     expect(collectedIds).toEqual(expectedOpportunityIds.slice(0, -1));
   });
 });
