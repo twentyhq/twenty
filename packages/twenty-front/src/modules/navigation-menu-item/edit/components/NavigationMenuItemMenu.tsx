@@ -2,7 +2,7 @@ import { NavigationMenuItemMenuModeEffect } from '@/navigation-menu-item/edit/ef
 import { type ComponentProps, type ReactElement, type ReactNode } from 'react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { Dropdown } from 'twenty-ui/components';
+import { Dropdown, type DropdownType } from 'twenty-ui/components';
 import { useTheme } from 'twenty-ui/theme';
 
 import { navigationMenuItemInsertionAnchorState } from '@/navigation-menu-item/common/states/navigationMenuItemInsertionAnchorState';
@@ -17,6 +17,25 @@ import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/Gene
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+
+const DROPDOWN_TYPE_BY_MENU_MODE: Record<
+  NavigationMenuItemMenuMode['type'],
+  DropdownType
+> = {
+  actions: 'menu',
+  edit: 'panel',
+  add: 'picker',
+};
+
+const CONTENT_SIDE_BY_MENU_MODE: Partial<
+  Record<
+    NavigationMenuItemMenuMode['type'],
+    ComponentProps<typeof DropdownContent>['side']
+  >
+> = {
+  edit: 'top',
+  add: 'right',
+};
 
 type NavigationMenuItemMenuProps = {
   dropdownId: string;
@@ -76,7 +95,7 @@ export const NavigationMenuItemMenu = ({
   return (
     <DropdownRoot
       dropdownId={dropdownId}
-      type={isAdding ? 'picker' : isEditing ? 'panel' : 'menu'}
+      type={DROPDOWN_TYPE_BY_MENU_MODE[mode.type]}
       onOpenChange={(open) => {
         if (open) {
           onOpen?.();
@@ -120,7 +139,7 @@ export const NavigationMenuItemMenu = ({
       {isDefined(trigger) && <Dropdown.Trigger render={trigger} />}
       {children}
       <DropdownContent
-        side={isAdding ? 'right' : isEditing ? 'top' : side}
+        side={CONTENT_SIDE_BY_MENU_MODE[mode.type] ?? side}
         align="start"
         sideOffset={isEditing ? theme.spacingMultiplicator : undefined}
         anchor={
