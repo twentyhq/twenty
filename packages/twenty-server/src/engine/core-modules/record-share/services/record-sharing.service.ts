@@ -573,9 +573,7 @@ export class RecordSharingService {
     workspaceId: string;
     objectMetadataId: string;
     shares: TShare[];
-  }): Promise<
-    (TShare & { canRoleRead: boolean | null; canRoleUpdate: boolean | null })[]
-  > {
+  }): Promise<(TShare & RoleObjectAccess)[]> {
     const accesses = await this.resolveRoleObjectAccessByShare({
       workspaceId,
       objectMetadataId,
