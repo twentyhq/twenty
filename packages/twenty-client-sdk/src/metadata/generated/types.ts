@@ -11250,30 +11250,6 @@ export default {
                     ]
                 }
             ],
-            "answerAgentChatQuestion": [
-                382,
-                {
-                    "threadId": [
-                        3,
-                        "UUID!"
-                    ],
-                    "messageId": [
-                        3,
-                        "UUID!"
-                    ],
-                    "answers": [
-                        609,
-                        "[AgentChatQuestionAnswerInput!]!"
-                    ],
-                    "modelId": [
-                        1
-                    ],
-                    "fileAttachments": [
-                        588,
-                        "[FileAttachmentInput!]"
-                    ]
-                }
-            ],
             "createPublicDomain": [
                 325,
                 {
@@ -11362,7 +11338,7 @@ export default {
                         "String!"
                     ],
                     "files": [
-                        610,
+                        609,
                         "[ApplicationFileUploadRequestInput!]!"
                     ]
                 }
@@ -14463,20 +14439,6 @@ export default {
                 1
             ]
         },
-        "AgentChatQuestionAnswerInput": {
-            "questionIndex": [
-                30
-            ],
-            "selectedOptionIndices": [
-                30
-            ],
-            "freeText": [
-                1
-            ],
-            "__typename": [
-                1
-            ]
-        },
         "ApplicationFileUploadRequestInput": {
             "fileFolder": [
                 320
@@ -14505,7 +14467,7 @@ export default {
                 286,
                 {
                     "input": [
-                        612,
+                        611,
                         "LogicFunctionLogsInput!"
                     ]
                 }
@@ -14536,7 +14498,7 @@ export default {
                 391,
                 {
                     "input": [
-                        613,
+                        612,
                         "CreateRecordExportInput!"
                     ]
                 }

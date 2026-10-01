@@ -27,7 +27,8 @@ const DROPDOWN_ROOT_PROP_DESCRIPTIONS = {
 } satisfies Partial<Record<keyof DropdownRootProps, string>>;
 
 const DROPDOWN_ITEM_PROP_DESCRIPTIONS = {
-  hotkeysJoinLabel: 'Text between shortcut keys. Defaults to `then`.',
+  shortcutJoinLabel:
+    'Text between sequential shortcut steps. Defaults to `then`.',
   className: 'CSS class applied to the row.',
   style: 'Inline styles applied to the row.',
   render:

@@ -41,7 +41,6 @@ import { getPageLayoutIdForLocation } from '~/modules/app/utils/getPageLayoutIdF
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
 
 // TODO: break down into smaller functions and / or hooks
-//  - moved usePageChangeEffectNavigateLocation into dedicated hook
 export const PageChangeEffect = () => {
   const store = useStore();
   const navigate = useNavigate();

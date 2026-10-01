@@ -42,7 +42,6 @@ registerEnumType(SsoIdentityProviderStatus, {
 @Entity({ name: 'workspaceSSOIdentityProvider', schema: 'core' })
 @ObjectType('WorkspaceSSOIdentityProvider')
 export class WorkspaceSsoIdentityProviderEntity extends WorkspaceRelatedEntity {
-  // COMMON
   @Field(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')
   id: string;

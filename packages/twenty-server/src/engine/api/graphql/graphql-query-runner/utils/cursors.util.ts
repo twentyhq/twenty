@@ -82,7 +82,6 @@ export const encodeCursor = <T extends ObjectRecord = ObjectRecord>({
       continue;
     }
 
-    // Write it back under the same path
     let container = orderByValues;
 
     for (const key of leaf.path.slice(0, -1)) {

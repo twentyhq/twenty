@@ -44,11 +44,8 @@ export class UpsertRecordService {
         );
       }
 
-      // Clean undefined values from the record data (including nested composite fields)
-      // This prevents validation errors for partial composite field inputs
       const cleanedRecord = removeUndefinedFromRecord(objectRecord);
 
-      // Use Common API with upsert flag - it handles conflict detection automatically
       const { results: upsertedRecord } =
         await this.commonCreateOneRunner.execute(
           {

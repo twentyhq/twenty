@@ -209,7 +209,8 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
       msg({ message: `Export`, context: 'commandMenuItem.shortLabel' }),
     ),
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
-    conditionalAvailabilityExpression: 'permissionFlags.EXPORT_CSV',
+    conditionalAvailabilityExpression:
+      'pageType == "INDEX_PAGE" and permissionFlags.EXPORT_CSV',
     availabilityObjectMetadataUniversalIdentifier: null,
     frontComponentUniversalIdentifier: null,
     engineComponentKey: EngineComponentKey.EXPORT_RECORDS,
