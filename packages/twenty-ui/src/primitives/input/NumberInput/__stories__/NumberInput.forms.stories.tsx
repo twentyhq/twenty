@@ -169,3 +169,22 @@ export const OutOfRangeValidation: Story = {
     );
   },
 };
+
+export const DisabledSubmission: Story = {
+  args: { disabled: true },
+  render: (args) => <NumberInputFormExample {...args} />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await expect(
+      canvas.getByRole('textbox', { name: 'Quantity' }),
+    ).toBeDisabled();
+    await userEvent.click(
+      canvas.getByRole('button', { name: 'Save quantity' }),
+    );
+    await expect(canvas.getByLabelText('Saved quantity')).toBeEmptyDOMElement();
+    await expect(canvas.getByLabelText('Submission count')).toHaveTextContent(
+      '1',
+    );
+  },
+};

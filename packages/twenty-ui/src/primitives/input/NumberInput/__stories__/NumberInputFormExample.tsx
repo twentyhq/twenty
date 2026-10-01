@@ -23,7 +23,7 @@ export const NumberInputFormExample = ({
         onSubmit={(event) => {
           event.preventDefault();
           setSavedQuantity(
-            String(new FormData(event.currentTarget).get('quantity')),
+            String(new FormData(event.currentTarget).get('quantity') ?? ''),
           );
           setSubmissionCount((count) => count + 1);
         }}
