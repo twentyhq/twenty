@@ -91,6 +91,9 @@ export const CoreObjectTable = <TItem,>({
               align={column.align}
               initialSort={initialSort}
               Icon={column.FieldIcon}
+              onSort={
+                isSelectable ? () => selection.onToggleAllRows([]) : undefined
+              }
             />
           ) : (
             <TableHeader key={column.fieldName} align={column.align}>

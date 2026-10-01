@@ -1,28 +1,24 @@
 import { useEffect } from 'react';
 
-import { useSelectedCoreWorkflowRowIds } from '@/object-core/workflows/hooks/useSelectedCoreWorkflowRowIds';
 import { coreWorkflowsFilterSettingsState } from '@/object-core/workflows/states/coreWorkflowsFilterSettingsState';
 import {
   EMPTY_CORE_WORKFLOWS_SELECTION,
   coreWorkflowsSelectionState,
 } from '@/object-core/workflows/states/coreWorkflowsSelectionState';
 import { type CoreWorkflow } from '@/object-core/workflows/types/CoreWorkflow';
+import { getSelectedCoreWorkflowRowIds } from '@/object-core/workflows/utils/getSelectedCoreWorkflowRowIds';
 import { toggleRowIdInSelection } from '@/object-core/utils/toggleRowIdInSelection';
-import { sortedFieldByTableFamilyState } from '@/ui/layout/table/states/sortedFieldByTableFamilyState';
-import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
 export const useCoreWorkflowsSelection = <
   TCoreWorkflow extends Pick<CoreWorkflow, 'id'>,
 >({
   coreWorkflows,
-  tableId,
 }: {
   coreWorkflows: TCoreWorkflow[];
-  tableId: string;
 }) => {
-  const setCoreWorkflowsSelection = useSetAtomState(
+  const [coreWorkflowsSelection, setCoreWorkflowsSelection] = useAtomState(
     coreWorkflowsSelectionState,
   );
 
@@ -30,17 +26,15 @@ export const useCoreWorkflowsSelection = <
     coreWorkflowsFilterSettingsState,
   );
 
-  const sortedFieldByTable = useAtomFamilyStateValue(
-    sortedFieldByTableFamilyState,
-    { tableId },
-  );
-
   useEffect(
     () => () => setCoreWorkflowsSelection(EMPTY_CORE_WORKFLOWS_SELECTION),
     [setCoreWorkflowsSelection],
   );
 
-  const selectionRowIds = useSelectedCoreWorkflowRowIds();
+  const selectionRowIds = getSelectedCoreWorkflowRowIds({
+    selection: coreWorkflowsSelection,
+    currentFilterSettings: coreWorkflowsFilterSettings,
+  });
   const selectedRowIds = selectionRowIds.filter((id) =>
     coreWorkflows.some((workflow) => workflow.id === id),
   );
@@ -48,8 +42,6 @@ export const useCoreWorkflowsSelection = <
   const selectRows = (rowIds: string[]) =>
     setCoreWorkflowsSelection({
       filterSettings: coreWorkflowsFilterSettings,
-      tableId,
-      sort: sortedFieldByTable,
       rowIds,
     });
 
@@ -61,6 +53,7 @@ export const useCoreWorkflowsSelection = <
   return {
     displayedCoreWorkflows: coreWorkflows,
     selectedRowIds,
+    selectedRowCount: selectionRowIds.length,
     toggleRow,
     selectRows,
   };

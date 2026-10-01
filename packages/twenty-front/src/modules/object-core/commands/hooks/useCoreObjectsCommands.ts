@@ -10,7 +10,9 @@ import { isNonEmptyArray } from 'twenty-shared/utils';
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
 import { CORE_WORKFLOWS_DELETE_COMMAND_ID } from '@/object-core/commands/constants/CoreWorkflowsDeleteCommandId';
 import { CORE_WORKFLOW_FILTERS_COMMAND_ID } from '@/object-core/commands/constants/CoreWorkflowFiltersCommandId';
-import { useSelectedCoreWorkflowRowIds } from '@/object-core/workflows/hooks/useSelectedCoreWorkflowRowIds';
+import { coreWorkflowsFilterSettingsState } from '@/object-core/workflows/states/coreWorkflowsFilterSettingsState';
+import { coreWorkflowsSelectionState } from '@/object-core/workflows/states/coreWorkflowsSelectionState';
+import { getSelectedCoreWorkflowRowIds } from '@/object-core/workflows/utils/getSelectedCoreWorkflowRowIds';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
@@ -39,7 +41,15 @@ export const useCoreObjectsCommands = () => {
     workflowObjectMetadataItem.id,
   );
 
-  const selectedCoreWorkflowIds = useSelectedCoreWorkflowRowIds();
+  const coreWorkflowsSelection = useAtomStateValue(coreWorkflowsSelectionState);
+  const coreWorkflowsFilterSettings = useAtomStateValue(
+    coreWorkflowsFilterSettingsState,
+  );
+
+  const selectedCoreWorkflowIds = getSelectedCoreWorkflowRowIds({
+    selection: coreWorkflowsSelection,
+    currentFilterSettings: coreWorkflowsFilterSettings,
+  });
 
   const isOnCoreWorkflowsIndex =
     isWorkflowCoreIndexPageEnabled &&
