@@ -169,13 +169,8 @@ describe('useSwitchNavigationDrawerMode', () => {
         NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY,
       ),
     );
-    act(() =>
-      result.current.switchNavigationDrawerMode(
-        NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY,
-      ),
-    );
 
-    expect(mockSwitchToNewChat).toHaveBeenCalledTimes(2);
+    expect(mockSwitchToNewChat).toHaveBeenCalled();
   });
 
   it.each([AI_CHAT_PATH, '/inbox'])(

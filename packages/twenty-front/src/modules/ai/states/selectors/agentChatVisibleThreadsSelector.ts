@@ -67,7 +67,7 @@ export const agentChatVisibleThreadsSelector = createAtomSelector<
     return get(agentChatThreadsSelector).filter(
       (thread) =>
         isInFilterStatus(thread) &&
-        (cutoffMs === null ||
+        (!isDefined(cutoffMs) ||
           new Date(getAgentChatThreadLastActivityAt(thread)).getTime() >=
             cutoffMs),
     );

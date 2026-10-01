@@ -71,7 +71,7 @@ export const agentChatFirstUnreadMessageIdComponentSelector =
           }
 
           return (
-            lastReadAtMs === null ||
+            !isDefined(lastReadAtMs) ||
             new Date(createdAt).getTime() > lastReadAtMs
           );
         });
