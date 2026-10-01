@@ -24,10 +24,10 @@ import { ViewPickerSaveButtonContainer } from '@/views/view-picker/components/Vi
 import { ViewPickerSelectContainer } from '@/views/view-picker/components/ViewPickerSelectContainer';
 import { VIEW_PICKER_TYPE_SELECT_OPTIONS } from '@/views/view-picker/constants/ViewPickerTypeSelectOptions';
 import { useCreateViewFromCurrentState } from '@/views/view-picker/hooks/useCreateViewFromCurrentState';
-import { useGetAvailableFieldsForCalendar } from '@/views/view-picker/hooks/useGetAvailableFieldsForCalendar';
+import { useGetAvailableDateFields } from '@/views/view-picker/hooks/useGetAvailableDateFields';
 import { useGetAvailableFieldsToGroupRecordsBy } from '@/views/view-picker/hooks/useGetAvailableFieldsToGroupRecordsBy';
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
-import { viewPickerCalendarFieldMetadataIdComponentState } from '@/views/view-picker/states/viewPickerCalendarFieldMetadataIdComponentState';
+import { viewPickerStartFieldMetadataIdComponentState } from '@/views/view-picker/states/viewPickerStartFieldMetadataIdComponentState';
 import { viewPickerInputNameComponentState } from '@/views/view-picker/states/viewPickerInputNameComponentState';
 import { viewPickerIsDirtyComponentState } from '@/views/view-picker/states/viewPickerIsDirtyComponentState';
 import { viewPickerIsPersistingComponentState } from '@/views/view-picker/states/viewPickerIsPersistingComponentState';
@@ -81,10 +81,8 @@ export const ViewPickerContentCreateMode = () => {
     setViewPickerMainGroupByFieldMetadataId,
   ] = useAtomComponentState(viewPickerMainGroupByFieldMetadataIdComponentState);
 
-  const [
-    viewPickerCalendarFieldMetadataId,
-    setViewPickerCalendarFieldMetadataId,
-  ] = useAtomComponentState(viewPickerCalendarFieldMetadataIdComponentState);
+  const [viewPickerStartFieldMetadataId, setViewPickerStartFieldMetadataId] =
+    useAtomComponentState(viewPickerStartFieldMetadataIdComponentState);
 
   const [viewPickerType, setViewPickerType] = useAtomComponentState(
     viewPickerTypeComponentState,
@@ -95,7 +93,7 @@ export const ViewPickerContentCreateMode = () => {
   const { availableFieldsForGrouping } =
     useGetAvailableFieldsToGroupRecordsBy();
 
-  const { availableFieldsForCalendar } = useGetAvailableFieldsForCalendar();
+  const { availableDateFields } = useGetAvailableDateFields();
 
   useHotkeysOnFocusedElement({
     keys: [Key.Enter],
@@ -119,7 +117,7 @@ export const ViewPickerContentCreateMode = () => {
       createViewFromCurrentState,
       viewPickerType,
       availableFieldsForGrouping,
-      availableFieldsForCalendar,
+      availableDateFields,
     ],
   });
 
@@ -232,14 +230,14 @@ export const ViewPickerContentCreateMode = () => {
               <Select
                 label={t`Date field`}
                 fullWidth
-                value={viewPickerCalendarFieldMetadataId}
+                value={viewPickerStartFieldMetadataId}
                 onChange={(value) => {
                   setViewPickerIsDirty(true);
-                  setViewPickerCalendarFieldMetadataId(value);
+                  setViewPickerStartFieldMetadataId(value);
                 }}
                 options={
-                  availableFieldsForCalendar.length > 0
-                    ? availableFieldsForCalendar.map((field) => ({
+                  availableDateFields.length > 0
+                    ? availableDateFields.map((field) => ({
                         value: field.id,
                         label: field.label,
                       }))
@@ -248,7 +246,7 @@ export const ViewPickerContentCreateMode = () => {
                 dropdownId={`${dropdownId}-calendar-field`}
               />
             </ViewPickerSelectContainer>
-            {availableFieldsForCalendar.length === 0 && (
+            {availableDateFields.length === 0 && (
               <StyledFieldAvailableContainer>
                 <Trans>
                   Set up a Date field on {objectLabel} to create a Calendar

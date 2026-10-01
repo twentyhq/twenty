@@ -2,7 +2,7 @@ import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { setTestObjectMetadataItemsInMetadataStore } from '~/testing/utils/setTestObjectMetadataItemsInMetadataStore';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { viewObjectMetadataIdComponentState } from '@/views/states/viewObjectMetadataIdComponentState';
-import { useGetAvailableFieldsForCalendar } from '@/views/view-picker/hooks/useGetAvailableFieldsForCalendar';
+import { useGetAvailableDateFields } from '@/views/view-picker/hooks/useGetAvailableDateFields';
 import { renderHook } from '@testing-library/react';
 import { type ReactNode } from 'react';
 import { Provider as JotaiProvider } from 'jotai';
@@ -43,7 +43,7 @@ const createWrapper = (objectMetadataItems: any[]) => {
   };
 };
 
-describe('useGetAvailableFieldsForCalendar', () => {
+describe('useGetAvailableDateFields', () => {
   it('should return only DATE and DATE_TIME fields', () => {
     const fields = [
       {
@@ -75,12 +75,12 @@ describe('useGetAvailableFieldsForCalendar', () => {
     const objectMetadataItems = [createMockObjectMetadataItem(fields)];
     const wrapper = createWrapper(objectMetadataItems);
 
-    const { result } = renderHook(() => useGetAvailableFieldsForCalendar(), {
+    const { result } = renderHook(() => useGetAvailableDateFields(), {
       wrapper,
     });
 
-    expect(result.current.availableFieldsForCalendar).toHaveLength(2);
-    expect(result.current.availableFieldsForCalendar).toMatchObject([
+    expect(result.current.availableDateFields).toHaveLength(2);
+    expect(result.current.availableDateFields).toMatchObject([
       {
         id: '1',
         type: FieldMetadataType.DATE,
@@ -135,12 +135,12 @@ describe('useGetAvailableFieldsForCalendar', () => {
     const objectMetadataItems = [createMockObjectMetadataItem(fields)];
     const wrapper = createWrapper(objectMetadataItems);
 
-    const { result } = renderHook(() => useGetAvailableFieldsForCalendar(), {
+    const { result } = renderHook(() => useGetAvailableDateFields(), {
       wrapper,
     });
 
     expect(
-      result.current.availableFieldsForCalendar.map((field) => field.name),
+      result.current.availableDateFields.map((field) => field.name),
     ).toEqual(['dueAt', 'createdAt', 'updatedAt']);
   });
 
@@ -157,7 +157,7 @@ describe('useGetAvailableFieldsForCalendar', () => {
     const objectMetadataItems = [createMockObjectMetadataItem(fields)];
     const wrapper = createWrapper(objectMetadataItems);
 
-    const { result } = renderHook(() => useGetAvailableFieldsForCalendar(), {
+    const { result } = renderHook(() => useGetAvailableDateFields(), {
       wrapper,
     });
 

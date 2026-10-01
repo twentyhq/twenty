@@ -3,7 +3,7 @@ import { useChangeView } from '@/views/hooks/useChangeView';
 import { useCreateViewFromCurrentView } from '@/views/hooks/useCreateViewFromCurrentView';
 import { ViewType } from '@/views/types/ViewType';
 import { useCloseAndResetViewPicker } from '@/views/view-picker/hooks/useCloseAndResetViewPicker';
-import { viewPickerCalendarFieldMetadataIdComponentState } from '@/views/view-picker/states/viewPickerCalendarFieldMetadataIdComponentState';
+import { viewPickerStartFieldMetadataIdComponentState } from '@/views/view-picker/states/viewPickerStartFieldMetadataIdComponentState';
 import { viewPickerInputNameComponentState } from '@/views/view-picker/states/viewPickerInputNameComponentState';
 import { viewPickerIsDirtyComponentState } from '@/views/view-picker/states/viewPickerIsDirtyComponentState';
 import { viewPickerIsPersistingComponentState } from '@/views/view-picker/states/viewPickerIsPersistingComponentState';
@@ -35,9 +35,9 @@ export const useCreateViewFromCurrentState = () => {
       viewPickerMainGroupByFieldMetadataIdComponentState,
     );
 
-  const viewPickerCalendarFieldMetadataIdCallbackState =
+  const viewPickerStartFieldMetadataIdCallbackState =
     useAtomComponentStateCallbackState(
-      viewPickerCalendarFieldMetadataIdComponentState,
+      viewPickerStartFieldMetadataIdComponentState,
     );
 
   const viewPickerIsPersistingCallbackState =
@@ -68,7 +68,7 @@ export const useCreateViewFromCurrentState = () => {
       viewPickerMainGroupByFieldMetadataIdCallbackState,
     );
     const startFieldMetadataId = store.get(
-      viewPickerCalendarFieldMetadataIdCallbackState,
+      viewPickerStartFieldMetadataIdCallbackState,
     );
 
     const viewPickerMode = store.get(viewPickerModeCallbackState);
@@ -107,7 +107,7 @@ export const useCreateViewFromCurrentState = () => {
     viewPickerIsDirtyCallbackState,
     viewPickerIsPersistingCallbackState,
     viewPickerMainGroupByFieldMetadataIdCallbackState,
-    viewPickerCalendarFieldMetadataIdCallbackState,
+    viewPickerStartFieldMetadataIdCallbackState,
     viewPickerSelectedIconCallbackState,
     viewPickerTypeCallbackState,
     viewPickerModeCallbackState,

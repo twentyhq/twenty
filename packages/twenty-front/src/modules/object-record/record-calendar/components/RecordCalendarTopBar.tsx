@@ -3,7 +3,7 @@ import { RecordCalendarComponentInstanceContext } from '@/object-record/record-c
 import { isRecordCalendarReadOnlyComponentState } from '@/object-record/record-calendar/states/isRecordCalendarReadOnlyComponentState';
 import { recordCalendarSelectedDateComponentState } from '@/object-record/record-calendar/states/recordCalendarSelectedDateComponentState';
 import { useRecordCalendarDaysRange } from '@/object-record/record-calendar/hooks/useRecordCalendarDaysRange';
-import { formatRecordCalendarWeekRange } from '@/object-record/record-calendar/utils/formatRecordCalendarWeekRange';
+import { formatPlainDateRange } from '@/localization/utils/formatPlainDateRange';
 import { recordIndexCalendarLayoutComponentState } from '@/object-record/record-index/states/recordIndexCalendarLayoutComponentState';
 import { WidgetComponentInstanceContext } from '@/page-layout/widgets/states/contexts/WidgetComponentInstanceContext';
 import { DatePickerWithoutCalendar } from '@/ui/input/components/internal/date/components/DatePickerWithoutCalendar';
@@ -140,9 +140,9 @@ export const RecordCalendarTopBar = () => {
           dateStyle: 'full',
         })
       : recordIndexCalendarLayout === ViewCalendarLayout.WEEK
-        ? formatRecordCalendarWeekRange({
-            firstDayOfWeek,
-            lastDayOfWeek,
+        ? formatPlainDateRange({
+            firstDay: firstDayOfWeek,
+            lastDay: lastDayOfWeek,
             locale: dateLocale.localeCatalog,
           })
         : format(

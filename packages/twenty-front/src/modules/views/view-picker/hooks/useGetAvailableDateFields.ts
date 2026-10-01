@@ -12,7 +12,7 @@ import { FieldMetadataType, SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
-export const useGetAvailableFieldsForCalendar = () => {
+export const useGetAvailableDateFields = () => {
   const viewObjectMetadataId = useAtomComponentStateValue(
     viewObjectMetadataIdComponentState,
   );
@@ -26,7 +26,7 @@ export const useGetAvailableFieldsForCalendar = () => {
     (objectMetadata) => objectMetadata.id === viewObjectMetadataId,
   );
 
-  const availableFieldsForCalendar =
+  const availableDateFields =
     objectMetadataItem?.readableFields.filter(
       isFieldMetadataItemAvailableAsCalendarField,
     ) ?? [];
@@ -58,7 +58,7 @@ export const useGetAvailableFieldsForCalendar = () => {
   ]);
 
   return {
-    availableFieldsForCalendar,
+    availableDateFields,
     navigateToDateFieldSettings,
   };
 };

@@ -8,10 +8,10 @@ import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSe
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { viewsFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/viewsFromObjectMetadataItemFamilySelector';
 import { viewTypeIconKeyMapping } from '@/views/types/ViewType';
-import { useGetAvailableFieldsForCalendar } from '@/views/view-picker/hooks/useGetAvailableFieldsForCalendar';
+import { useGetAvailableDateFields } from '@/views/view-picker/hooks/useGetAvailableDateFields';
 import { useGetAvailableFieldsToGroupRecordsBy } from '@/views/view-picker/hooks/useGetAvailableFieldsToGroupRecordsBy';
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
-import { viewPickerCalendarFieldMetadataIdComponentState } from '@/views/view-picker/states/viewPickerCalendarFieldMetadataIdComponentState';
+import { viewPickerStartFieldMetadataIdComponentState } from '@/views/view-picker/states/viewPickerStartFieldMetadataIdComponentState';
 import { viewPickerInputNameComponentState } from '@/views/view-picker/states/viewPickerInputNameComponentState';
 import { viewPickerIsDirtyComponentState } from '@/views/view-picker/states/viewPickerIsDirtyComponentState';
 import { viewPickerIsPersistingComponentState } from '@/views/view-picker/states/viewPickerIsPersistingComponentState';
@@ -43,8 +43,8 @@ export const ViewPickerContentEffect = () => {
     setViewPickerMainGroupByFieldMetadataId,
   ] = useAtomComponentState(viewPickerMainGroupByFieldMetadataIdComponentState);
 
-  const setViewPickerCalendarFieldMetadataId = useSetAtomComponentState(
-    viewPickerCalendarFieldMetadataIdComponentState,
+  const setViewPickerStartFieldMetadataId = useSetAtomComponentState(
+    viewPickerStartFieldMetadataIdComponentState,
   );
 
   const [viewPickerType, setViewPickerType] = useAtomComponentState(
@@ -75,7 +75,7 @@ export const ViewPickerContentEffect = () => {
 
   const { availableFieldsForGrouping } =
     useGetAvailableFieldsToGroupRecordsBy();
-  const { availableFieldsForCalendar } = useGetAvailableFieldsForCalendar();
+  const { availableDateFields } = useGetAvailableDateFields();
   const hasViewPermission = useHasPermissionFlag(PermissionFlagType.VIEWS);
 
   useEffect(() => {
@@ -99,28 +99,28 @@ export const ViewPickerContentEffect = () => {
 
       const startFieldMetadataId =
         isDefined(referenceView.startFieldMetadataId) &&
-        availableFieldsForCalendar.some(
+        availableDateFields.some(
           (fieldMetadataItem) =>
             fieldMetadataItem.id === referenceView.startFieldMetadataId,
         )
           ? referenceView.startFieldMetadataId
-          : (availableFieldsForCalendar[0]?.id ?? '');
+          : (availableDateFields[0]?.id ?? '');
 
-      setViewPickerCalendarFieldMetadataId(startFieldMetadataId);
+      setViewPickerStartFieldMetadataId(startFieldMetadataId);
     }
   }, [
     referenceView,
     setViewPickerInputName,
     setViewPickerSelectedIcon,
     setViewPickerType,
-    setViewPickerCalendarFieldMetadataId,
+    setViewPickerStartFieldMetadataId,
     setViewPickerVisibility,
     viewPickerIsPersisting,
     viewPickerIsDirty,
     viewPickerMode,
     viewPickerType,
     hasViewPermission,
-    availableFieldsForCalendar,
+    availableDateFields,
   ]);
 
   useEffect(() => {

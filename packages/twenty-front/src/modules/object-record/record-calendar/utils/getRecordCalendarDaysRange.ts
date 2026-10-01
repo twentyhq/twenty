@@ -1,3 +1,4 @@
+import { getPlainDateStartOfWeek } from '@/localization/utils/getPlainDateStartOfWeek';
 import { type Temporal } from 'temporal-polyfill';
 import { ViewCalendarLayout } from '~/generated-metadata/graphql';
 
@@ -15,11 +16,12 @@ export const getRecordCalendarDaysRange = ({
   const periodStart = isMonthLayout
     ? selectedDate.with({ day: 1 })
     : selectedDate;
-  const daysSinceStartOfWeek =
-    ((periodStart.dayOfWeek % 7) - weekStartsOnDayIndex + 7) % 7;
-  const firstDay = isDayLayout
-    ? selectedDate
-    : periodStart.subtract({ days: daysSinceStartOfWeek });
+  const startOfFirstWeek = getPlainDateStartOfWeek({
+    day: periodStart,
+    weekStartsOnDayIndex,
+  });
+  const daysSinceStartOfWeek = startOfFirstWeek.until(periodStart).days;
+  const firstDay = isDayLayout ? selectedDate : startOfFirstWeek;
   const daysPerRow = isDayLayout ? 1 : 7;
   const rowCount = isMonthLayout
     ? Math.ceil((daysSinceStartOfWeek + selectedDate.daysInMonth) / 7)

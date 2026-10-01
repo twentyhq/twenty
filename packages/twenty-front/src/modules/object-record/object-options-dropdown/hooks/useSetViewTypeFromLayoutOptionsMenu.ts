@@ -9,7 +9,7 @@ import { useUpdateCurrentView } from '@/views/hooks/useUpdateCurrentView';
 import { viewsSelector } from '@/views/states/selectors/viewsSelector';
 import { type GraphQLView } from '@/views/types/GraphQLView';
 import { ViewType, viewTypeIconKeyMapping } from '@/views/types/ViewType';
-import { useGetAvailableFieldsForCalendar } from '@/views/view-picker/hooks/useGetAvailableFieldsForCalendar';
+import { useGetAvailableDateFields } from '@/views/view-picker/hooks/useGetAvailableDateFields';
 import { useGetAvailableFieldsToGroupRecordsBy } from '@/views/view-picker/hooks/useGetAvailableFieldsToGroupRecordsBy';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
@@ -27,7 +27,7 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
 
   const { loadRecordIndexStates } = useLoadRecordIndexStates();
 
-  const { availableFieldsForCalendar } = useGetAvailableFieldsForCalendar();
+  const { availableDateFields } = useGetAvailableDateFields();
 
   const contextStoreInstanceId = useContextStoreInstanceId();
 
@@ -87,11 +87,11 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
           return;
         }
         case ViewType.CALENDAR: {
-          if (availableFieldsForCalendar.length === 0) {
+          if (availableDateFields.length === 0) {
             throw new Error('No date fields for calendar');
           }
 
-          const startFieldMetadataId = availableFieldsForCalendar[0].id;
+          const startFieldMetadataId = availableDateFields[0].id;
 
           setRecordIndexViewType(viewType);
 
@@ -132,7 +132,7 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
       setRecordIndexViewType,
       store,
       updateCurrentView,
-      availableFieldsForCalendar,
+      availableDateFields,
       loadRecordIndexStates,
       objectMetadataItem,
       contextStoreInstanceId,

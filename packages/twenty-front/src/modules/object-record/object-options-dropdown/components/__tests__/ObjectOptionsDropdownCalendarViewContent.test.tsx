@@ -13,9 +13,9 @@ const mockCalendarFields = [
 ];
 const mockSetCalendarField = jest.fn();
 
-jest.mock('@/views/view-picker/hooks/useGetAvailableFieldsForCalendar', () => ({
-  useGetAvailableFieldsForCalendar: () => ({
-    availableFieldsForCalendar: mockCalendarFields,
+jest.mock('@/views/view-picker/hooks/useGetAvailableDateFields', () => ({
+  useGetAvailableDateFields: () => ({
+    availableDateFields: mockCalendarFields,
     navigateToDateFieldSettings: jest.fn(),
   }),
 }));

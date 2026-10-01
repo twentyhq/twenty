@@ -2,10 +2,10 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { ViewType } from '@/views/types/ViewType';
 import { useCreateViewFromCurrentState } from '@/views/view-picker/hooks/useCreateViewFromCurrentState';
 import { useDestroyViewFromCurrentState } from '@/views/view-picker/hooks/useDestroyViewFromCurrentState';
-import { useGetAvailableFieldsForCalendar } from '@/views/view-picker/hooks/useGetAvailableFieldsForCalendar';
+import { useGetAvailableDateFields } from '@/views/view-picker/hooks/useGetAvailableDateFields';
 import { useGetAvailableFieldsToGroupRecordsBy } from '@/views/view-picker/hooks/useGetAvailableFieldsToGroupRecordsBy';
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
-import { viewPickerCalendarFieldMetadataIdComponentState } from '@/views/view-picker/states/viewPickerCalendarFieldMetadataIdComponentState';
+import { viewPickerStartFieldMetadataIdComponentState } from '@/views/view-picker/states/viewPickerStartFieldMetadataIdComponentState';
 import { viewPickerIsPersistingComponentState } from '@/views/view-picker/states/viewPickerIsPersistingComponentState';
 import { viewPickerMainGroupByFieldMetadataIdComponentState } from '@/views/view-picker/states/viewPickerMainGroupByFieldMetadataIdComponentState';
 import { viewPickerTypeComponentState } from '@/views/view-picker/states/viewPickerTypeComponentState';
@@ -16,8 +16,8 @@ export const ViewPickerCreateButton = () => {
   const { t } = useLingui();
   const { availableFieldsForGrouping, navigateToSelectSettings } =
     useGetAvailableFieldsToGroupRecordsBy();
-  const { availableFieldsForCalendar, navigateToDateFieldSettings } =
-    useGetAvailableFieldsForCalendar();
+  const { availableDateFields, navigateToDateFieldSettings } =
+    useGetAvailableDateFields();
 
   const { viewPickerMode } = useViewPickerMode();
   const viewPickerType = useAtomComponentStateValue(
@@ -29,8 +29,8 @@ export const ViewPickerCreateButton = () => {
   const viewPickerMainGroupByFieldMetadataId = useAtomComponentStateValue(
     viewPickerMainGroupByFieldMetadataIdComponentState,
   );
-  const viewPickerCalendarFieldMetadataId = useAtomComponentStateValue(
-    viewPickerCalendarFieldMetadataIdComponentState,
+  const viewPickerStartFieldMetadataId = useAtomComponentStateValue(
+    viewPickerStartFieldMetadataIdComponentState,
   );
 
   const { createViewFromCurrentState } = useCreateViewFromCurrentState();
@@ -70,7 +70,7 @@ export const ViewPickerCreateButton = () => {
 
   if (
     viewPickerType === ViewType.CALENDAR &&
-    availableFieldsForCalendar.length === 0
+    availableDateFields.length === 0
   ) {
     return (
       <Button
@@ -98,7 +98,7 @@ export const ViewPickerCreateButton = () => {
           (viewPickerType === ViewType.KANBAN &&
             viewPickerMainGroupByFieldMetadataId === '') ||
           (viewPickerType === ViewType.CALENDAR &&
-            viewPickerCalendarFieldMetadataId === '')
+            viewPickerStartFieldMetadataId === '')
         }
         variant="solid"
         color="accent"

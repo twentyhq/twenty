@@ -21,7 +21,7 @@ import {
   ViewType,
   viewTypeIconMapping,
 } from '@/views/types/ViewType';
-import { useGetAvailableFieldsForCalendar } from '@/views/view-picker/hooks/useGetAvailableFieldsForCalendar';
+import { useGetAvailableDateFields } from '@/views/view-picker/hooks/useGetAvailableDateFields';
 import { useGetAvailableFieldsToGroupRecordsBy } from '@/views/view-picker/hooks/useGetAvailableFieldsToGroupRecordsBy';
 import { useLingui } from '@lingui/react/macro';
 import { useCallback } from 'react';
@@ -76,8 +76,8 @@ export const ObjectOptionsDropdownLayoutContent = () => {
   const { setAndPersistViewType } = useSetViewTypeFromLayoutOptionsMenu();
   const { availableFieldsForGrouping, navigateToSelectSettings } =
     useGetAvailableFieldsToGroupRecordsBy();
-  const { availableFieldsForCalendar, navigateToDateFieldSettings } =
-    useGetAvailableFieldsForCalendar();
+  const { availableDateFields, navigateToDateFieldSettings } =
+    useGetAvailableDateFields();
   const { closeDropdown } = useCloseDropdown();
 
   const handleSelectKanbanViewType = async () => {
@@ -98,7 +98,7 @@ export const ObjectOptionsDropdownLayoutContent = () => {
     if (isDefaultView) {
       return;
     }
-    if (availableFieldsForCalendar.length === 0) {
+    if (availableDateFields.length === 0) {
       navigateToDateFieldSettings();
       closeDropdown(dropdownId);
       return;
