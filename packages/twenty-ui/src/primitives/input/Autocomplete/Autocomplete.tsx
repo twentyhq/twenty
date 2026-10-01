@@ -7,7 +7,7 @@ import { AutocompleteItem } from './internal/AutocompleteItem';
 import { AutocompleteList } from './internal/AutocompleteList';
 import { AutocompletePopup } from './internal/AutocompletePopup';
 
-export const Autocomplete = {
+const createAutocomplete = () => ({
   Root: AutocompletePrimitive.Root,
   InputGroup: AutocompleteInputGroup,
   Input: AutocompleteInput,
@@ -15,4 +15,6 @@ export const Autocomplete = {
   List: AutocompleteList,
   Item: AutocompleteItem,
   Empty: AutocompleteEmpty,
-};
+});
+
+export const Autocomplete = /* @__PURE__ */ createAutocomplete();
