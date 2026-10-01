@@ -3,6 +3,7 @@ import { WorkflowActionType } from 'twenty-shared/workflow';
 import { type MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { type WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
 import { type WorkflowVersionStepOperationsWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step-operations.workspace-service';
+import { type WorkflowExecutionContextService } from 'src/modules/workflow/workflow-executor/services/workflow-execution-context.service';
 import {
   type WorkflowAction,
   type WorkflowFormAction,
@@ -58,6 +59,7 @@ describe('WorkflowRunnerWorkspaceService', () => {
     {} as WorkflowThrottlingWorkspaceService,
     {} as CoreWorkflowRunnerService,
     {} as WorkflowVersionCoreSyncService,
+    {} as WorkflowExecutionContextService,
   );
 
   const resumeAnsweredStep = (step: WorkflowAction) =>

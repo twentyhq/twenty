@@ -7,6 +7,7 @@ import { CoreResolver } from 'src/engine/api/graphql/graphql-config/decorators/c
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { RunWorkflowVersionInput } from 'src/engine/core-modules/workflow/dtos/run-workflow-version.input';
@@ -15,6 +16,7 @@ import { WorkflowRunDTO } from 'src/engine/core-modules/workflow/dtos/workflow-r
 import { WorkflowTriggerGraphqlApiExceptionFilter } from 'src/engine/core-modules/workflow/filters/workflow-trigger-graphql-api-exception.filter';
 import { WorkflowVersionValidationGraphqlApiExceptionFilter } from 'src/engine/core-modules/workflow/filters/workflow-version-validation-graphql-api-exception.filter';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -121,6 +123,8 @@ export class WorkflowTriggerResolver {
     userWorkspaceId: string | undefined,
     @AuthUser() user: AuthContextUser,
     @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthApplication({ allowUndefined: true })
+    callerApplication: FlatApplication | undefined,
     @Args('input')
     { workflowVersionId, workflowRunId, payload }: RunWorkflowVersionInput,
   ) {
@@ -150,7 +154,11 @@ export class WorkflowTriggerResolver {
       }, authContext);
 
     const { payload: triggerPayload, createdBy } =
-      buildWorkflowRunTriggerContext({ workspaceMember, payload });
+      buildWorkflowRunTriggerContext({
+        workspaceMember,
+        payload,
+        startingApplicationId: callerApplication?.id,
+      });
 
     return this.workflowTriggerWorkspaceService.runWorkflowVersion({
       workflowVersionId,
