@@ -246,6 +246,7 @@ describe('StreamAgentChatJob', () => {
       generateTitleIfNeeded: jest.fn().mockResolvedValue(null),
       notifyThreadUsageUpdated: jest.fn().mockResolvedValue(undefined),
       hasThreadInboxState: jest.fn().mockResolvedValue(true),
+      recordThreadActivity: jest.fn().mockResolvedValue(undefined),
     };
     const chatExecutionService = {
       streamChat: streamChatRejection
@@ -966,10 +967,16 @@ describe('StreamAgentChatJob', () => {
   });
 
   it('counts a turn whose claim moved on as superseded', async () => {
-    const { job, turnCounts } = buildJob({ totalsUpdateAffected: 0 });
+    const { job, turnCounts, agentChatService } = buildJob({
+      totalsUpdateAffected: 0,
+    });
 
     await job.handle(jobData);
 
+    expect(agentChatService.recordThreadActivity).toHaveBeenCalledWith({
+      workspaceId: jobData.workspaceId,
+      threadId: jobData.threadId,
+    });
     expect(turnCounts('ai-chat/turn-cancelled')).toEqual([
       expect.objectContaining({
         attributes: { model: 'openai/gpt-5.6-luna', reason: 'superseded' },

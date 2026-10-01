@@ -3,7 +3,10 @@ import { createStore, Provider } from 'jotai';
 import { type ReactNode } from 'react';
 
 import { useAgentChatThreadParticipants } from '@/ai/hooks/useAgentChatThreadParticipants';
+import { agentChatThreadKeptUnreadIdState } from '@/ai/states/agentChatThreadKeptUnreadIdState';
 import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
+import { agentChatThreadUnreadSinceState } from '@/ai/states/agentChatThreadUnreadSinceState';
+import { agentChatViewedThreadIdState } from '@/ai/states/agentChatViewedThreadIdState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 
 const THREAD_ID = '20202020-0000-4000-8000-0000000000aa';
@@ -161,5 +164,119 @@ describe('useAgentChatThreadParticipants', () => {
     expect(
       store.get(agentChatThreadParticipantsState.atom)[THREAD_ID],
     ).toMatchObject({ archivedAt: '2026-10-01T11:00:00.000Z' });
+  });
+
+  it('ignores a late answer to an action the member has since replaced', async () => {
+    let resolveArchive: (value: unknown) => void = () => undefined;
+    const archivedAt = '2026-10-01T11:00:00.000Z';
+
+    mutate
+      .mockReturnValueOnce(
+        new Promise((resolve) => {
+          resolveArchive = resolve;
+        }),
+      )
+      .mockResolvedValueOnce({
+        data: {
+          moveAgentChatThreadToInbox: {
+            threadId: THREAD_ID,
+            lastReadAt: null,
+            archivedAt: null,
+            snoozedUntil: null,
+          },
+        },
+      });
+    const { result, store } = renderParticipants();
+
+    let archive: Promise<void> = Promise.resolve();
+
+    act(() => {
+      archive = result.current.archiveAgentChatThread(THREAD_ID);
+    });
+    await act(async () => {
+      await result.current.moveAgentChatThreadToInbox(THREAD_ID);
+    });
+    await act(async () => {
+      resolveArchive({
+        data: {
+          archiveAgentChatThread: {
+            threadId: THREAD_ID,
+            lastReadAt: null,
+            archivedAt,
+            snoozedUntil: null,
+          },
+        },
+      });
+      await archive;
+    });
+
+    expect(
+      store.get(agentChatThreadParticipantsState.atom)[THREAD_ID]?.archivedAt,
+    ).toBeNull();
+  });
+
+  it('keeps a local change made while the member state was loading', async () => {
+    let resolveQuery: (value: unknown) => void = () => undefined;
+
+    query.mockReturnValue(
+      new Promise((resolve) => {
+        resolveQuery = resolve;
+      }),
+    );
+    mutate.mockReturnValue(new Promise(() => undefined));
+    const { result, store } = renderParticipants();
+
+    let refresh: Promise<void> = Promise.resolve();
+
+    act(() => {
+      refresh = result.current.refreshAgentChatThreadParticipants();
+    });
+    act(() => {
+      void result.current.archiveAgentChatThread(THREAD_ID);
+    });
+    await act(async () => {
+      resolveQuery({
+        data: {
+          myAgentChatThreadParticipants: [
+            {
+              threadId: THREAD_ID,
+              lastReadAt: null,
+              archivedAt: null,
+              snoozedUntil: null,
+            },
+          ],
+        },
+      });
+      await refresh;
+    });
+
+    expect(
+      store.get(agentChatThreadParticipantsState.atom)[THREAD_ID]?.archivedAt,
+    ).not.toBeNull();
+  });
+
+  it('keeps the thread on screen unread when the member marks it unread', async () => {
+    mutate.mockReturnValue(new Promise(() => undefined));
+    const { result, store } = renderParticipants();
+
+    store.set(agentChatViewedThreadIdState.atom, THREAD_ID);
+    store.set(agentChatThreadUnreadSinceState.atom, {
+      threadId: THREAD_ID,
+      visitId: 'visit',
+      isUnread: false,
+      lastReadAt: LAST_ACTIVITY_AT,
+    });
+
+    act(() => {
+      void result.current.markAgentChatThreadAsUnread(THREAD_ID);
+    });
+
+    expect(store.get(agentChatThreadKeptUnreadIdState.atom)).toBe(THREAD_ID);
+    expect(store.get(agentChatThreadUnreadSinceState.atom)).toEqual({
+      threadId: THREAD_ID,
+      visitId: 'visit',
+      isUnread: true,
+      lastReadAt: null,
+    });
   });
 });

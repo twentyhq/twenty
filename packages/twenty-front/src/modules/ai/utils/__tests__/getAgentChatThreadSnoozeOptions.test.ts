@@ -58,4 +58,34 @@ describe('getAgentChatThreadSnoozeOptions', () => {
       'nextWeek',
     ]);
   });
+
+  it('should round later today down when rounding up would leave the day', () => {
+    // Thursday 8:30 pm
+    const now = new Date(2026, 8, 3, 20, 30);
+
+    const options = getAgentChatThreadSnoozeOptions(now);
+
+    expect(options.map((option) => option.key)).toEqual([
+      'laterToday',
+      'tomorrow',
+      'nextWeek',
+    ]);
+    expect(options[0].date).toEqual(new Date(2026, 8, 3, 23, 0));
+  });
+
+  it('should offer next week on a Sunday', () => {
+    // Sunday 3:40 pm
+    const now = new Date(2026, 8, 6, 15, 40);
+
+    const options = getAgentChatThreadSnoozeOptions(now);
+
+    expect(options.map((option) => option.key)).toEqual([
+      'thisEvening',
+      'laterToday',
+      'tomorrow',
+      'nextWeek',
+    ]);
+    expect(options[2].date).toEqual(new Date(2026, 8, 7, 9, 0));
+    expect(options[3].date).toEqual(new Date(2026, 8, 14, 9, 0));
+  });
 });

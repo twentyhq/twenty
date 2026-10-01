@@ -17,6 +17,7 @@ export const seedAgentChatThreadInboxState = async ({
          SELECT max(message."createdAt")
          FROM ${table('agentMessage')} message
          WHERE message."threadId" = thread.id
+           AND message."deletedAt" IS NULL
            AND message."isHidden" = false
            AND message.role IN ('user', 'assistant')
        ),

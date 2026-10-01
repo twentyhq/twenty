@@ -6,10 +6,8 @@ import { AgentHistoryUpgradeStorageService } from 'src/database/commands/agent-h
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
-import {
-  backfillAgentChatThreadInboxState,
-  moveRestoredArchivedChatThreadsBackToTrash,
-} from 'src/database/commands/upgrade-version-command/2-45/utils/backfill-agent-chat-thread-inbox-state.util';
+import { backfillAgentChatThreadInboxState } from 'src/database/commands/upgrade-version-command/2-45/utils/backfill-agent-chat-thread-inbox-state.util';
+import { moveRestoredArchivedChatThreadsBackToTrash } from 'src/database/commands/upgrade-version-command/2-45/utils/move-restored-archived-chat-threads-back-to-trash.util';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
@@ -58,7 +56,7 @@ export class BackfillAgentChatThreadInboxStateCommand extends ProvisionedWorkspa
       );
 
     this.logger.log(
-      `Workspace ${workspaceId}: backfilled last activity on ${threadCount} chat(s), created ${participantCount} participant(s), archived ${archivedThreadCount} chat(s) for their owner`,
+      `Workspace ${workspaceId}: backfilled last activity on ${threadCount} chat(s), created ${participantCount} participant(s), restored ${archivedThreadCount} chat(s) to their members' archive`,
     );
   }
 

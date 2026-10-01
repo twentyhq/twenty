@@ -1,5 +1,6 @@
 import { useLingui } from '@lingui/react/macro';
 import { type MouseEvent } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import { Dropdown } from 'twenty-ui/components';
 import {
   IconArchive,
@@ -11,11 +12,15 @@ import {
 
 import { useAgentChatThreadParticipants } from '@/ai/hooks/useAgentChatThreadParticipants';
 import { agentChatThreadInboxStatusFamilySelector } from '@/ai/states/selectors/agentChatThreadInboxStatusFamilySelector';
-import { getAgentChatThreadSnoozeOptions } from '@/ai/utils/getAgentChatThreadSnoozeOptions';
+import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import {
+  type AgentChatThreadSnoozeOption,
+  getAgentChatThreadSnoozeOptions,
+} from '@/ai/utils/getAgentChatThreadSnoozeOptions';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 
 type AiChatThreadInboxActionItemsProps = {
-  threadId: string;
+  thread: Pick<AgentChatThreadRecord, 'id' | 'lastActivityAt'>;
 };
 
 const formatSnoozeTime = (date: Date) =>
@@ -26,12 +31,13 @@ const formatSnoozeTime = (date: Date) =>
   }).format(date);
 
 export const AiChatThreadInboxActionItems = ({
-  threadId,
+  thread,
 }: AiChatThreadInboxActionItemsProps) => {
   const { t } = useLingui();
+  const threadId = thread.id;
   const { scope, isUnread } = useAtomFamilySelectorValue(
     agentChatThreadInboxStatusFamilySelector,
-    threadId,
+    { threadId, lastActivityAt: thread.lastActivityAt ?? null },
   );
   const {
     markAgentChatThreadAsRead,
@@ -47,6 +53,20 @@ export const AiChatThreadInboxActionItems = ({
   };
 
   const snoozeOptions = getAgentChatThreadSnoozeOptions(new Date());
+
+  // The menu can stay open past an option's time, so the time is taken again
+  // on click
+  const snoozeUntilOption = async (
+    optionKey: AgentChatThreadSnoozeOption['key'],
+  ) => {
+    const option = getAgentChatThreadSnoozeOptions(new Date()).find(
+      ({ key }) => key === optionKey,
+    );
+
+    if (isDefined(option)) {
+      await snoozeAgentChatThread(threadId, option.date);
+    }
+  };
 
   return (
     <>
@@ -94,9 +114,7 @@ export const AiChatThreadInboxActionItems = ({
                 key={option.key}
                 description={formatSnoozeTime(option.date)}
                 descriptionPlacement="end"
-                onClick={runAction(() =>
-                  snoozeAgentChatThread(threadId, option.date),
-                )}
+                onClick={runAction(() => snoozeUntilOption(option.key))}
               >
                 {t(option.label)}
               </Dropdown.ActionItem>

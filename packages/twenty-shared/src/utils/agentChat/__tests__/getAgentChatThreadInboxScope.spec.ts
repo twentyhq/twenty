@@ -117,4 +117,19 @@ describe('getAgentChatThreadInboxScope', () => {
       ),
     ).toBe('INBOX');
   });
+
+  it('brings a snoozed thread back at the exact snooze time', () => {
+    expect(
+      getAgentChatThreadInboxScope(
+        {
+          lastActivityAt: '2026-10-01T10:00:00.000Z',
+          participant: participant({
+            archivedAt: '2026-10-01T11:00:00.000Z',
+            snoozedUntil: NOW.toISOString(),
+          }),
+        },
+        NOW,
+      ),
+    ).toBe('INBOX');
+  });
 });

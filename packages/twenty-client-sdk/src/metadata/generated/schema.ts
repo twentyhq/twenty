@@ -3070,6 +3070,14 @@ export interface SendChatMessageResult {
     __typename: 'SendChatMessageResult'
 }
 
+export interface AgentChatThreadParticipant {
+    threadId: Scalars['UUID']
+    lastReadAt?: Scalars['DateTime']
+    archivedAt?: Scalars['DateTime']
+    snoozedUntil?: Scalars['DateTime']
+    __typename: 'AgentChatThreadParticipant'
+}
+
 export interface AgentChatEvent {
     threadId: Scalars['String']
     event: Scalars['JSON']
@@ -3454,6 +3462,7 @@ export interface Query {
     chatMessages: AgentMessage[]
     chatStreamCatchupChunks: ChatStreamCatchupChunks
     getAiSystemPromptPreview: AiSystemPromptPreview
+    myAgentChatThreadParticipants: AgentChatThreadParticipant[]
     skills: Skill[]
     skill?: Skill
     agentTurns: AgentTurn[]
@@ -3689,6 +3698,11 @@ export interface Mutation {
     retryChatMessage: SendChatMessageResult
     stopAgentChatStream: Scalars['Boolean']
     deleteQueuedChatMessage: Scalars['Boolean']
+    markAgentChatThreadAsRead: AgentChatThreadParticipant
+    markAgentChatThreadAsUnread: AgentChatThreadParticipant
+    archiveAgentChatThread: AgentChatThreadParticipant
+    snoozeAgentChatThread: AgentChatThreadParticipant
+    moveAgentChatThreadToInbox: AgentChatThreadParticipant
     startWorkspaceSetupChat: StartWorkspaceSetupChatResult
     createSkill: Skill
     updateSkill: Skill
@@ -6985,6 +6999,15 @@ export interface SendChatMessageResultGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface AgentChatThreadParticipantGenqlSelection{
+    threadId?: boolean | number
+    lastReadAt?: boolean | number
+    archivedAt?: boolean | number
+    snoozedUntil?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface AgentChatEventGenqlSelection{
     threadId?: boolean | number
     event?: boolean | number
@@ -7386,6 +7409,7 @@ export interface QueryGenqlSelection{
     chatMessages?: (AgentMessageGenqlSelection & { __args: {threadId: Scalars['UUID']} })
     chatStreamCatchupChunks?: (ChatStreamCatchupChunksGenqlSelection & { __args: {threadId: Scalars['UUID']} })
     getAiSystemPromptPreview?: AiSystemPromptPreviewGenqlSelection
+    myAgentChatThreadParticipants?: AgentChatThreadParticipantGenqlSelection
     skills?: SkillGenqlSelection
     skill?: (SkillGenqlSelection & { __args: {id: Scalars['UUID']} })
     agentTurns?: (AgentTurnGenqlSelection & { __args: {agentId: Scalars['UUID']} })
@@ -7662,6 +7686,11 @@ export interface MutationGenqlSelection{
     retryChatMessage?: (SendChatMessageResultGenqlSelection & { __args: {threadId: Scalars['UUID'], modelId?: (Scalars['String'] | null)} })
     stopAgentChatStream?: { __args: {threadId: Scalars['UUID']} }
     deleteQueuedChatMessage?: { __args: {messageId: Scalars['UUID']} }
+    markAgentChatThreadAsRead?: (AgentChatThreadParticipantGenqlSelection & { __args: {threadId: Scalars['UUID']} })
+    markAgentChatThreadAsUnread?: (AgentChatThreadParticipantGenqlSelection & { __args: {threadId: Scalars['UUID']} })
+    archiveAgentChatThread?: (AgentChatThreadParticipantGenqlSelection & { __args: {threadId: Scalars['UUID']} })
+    snoozeAgentChatThread?: (AgentChatThreadParticipantGenqlSelection & { __args: {threadId: Scalars['UUID'], snoozedUntil: Scalars['DateTime']} })
+    moveAgentChatThreadToInbox?: (AgentChatThreadParticipantGenqlSelection & { __args: {threadId: Scalars['UUID']} })
     startWorkspaceSetupChat?: (StartWorkspaceSetupChatResultGenqlSelection & { __args?: {companyContext?: (Scalars['JSON'] | null), personContext?: (Scalars['JSON'] | null)} })
     createSkill?: (SkillGenqlSelection & { __args: {input: CreateSkillInput} })
     updateSkill?: (SkillGenqlSelection & { __args: {input: UpdateSkillInput} })
@@ -10469,6 +10498,14 @@ export interface CreateRecordExportInput {objectMetadataId: Scalars['UUID'],fiel
     export const isSendChatMessageResult = (obj?: { __typename?: any } | null): obj is SendChatMessageResult => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isSendChatMessageResult"')
       return SendChatMessageResult_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const AgentChatThreadParticipant_possibleTypes: string[] = ['AgentChatThreadParticipant']
+    export const isAgentChatThreadParticipant = (obj?: { __typename?: any } | null): obj is AgentChatThreadParticipant => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isAgentChatThreadParticipant"')
+      return AgentChatThreadParticipant_possibleTypes.includes(obj.__typename)
     }
     
 

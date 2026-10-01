@@ -16,6 +16,7 @@ import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/use
 import { getAiChatThreadItemMenuDropdownId } from '@/ai/utils/getAiChatThreadItemMenuDropdownId';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
+import { StyledVisuallyHidden } from '@/ui/accessibility/components/StyledVisuallyHidden';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
 const StyledThreadItem = styled.div`
@@ -116,7 +117,7 @@ export const AiChatThreadListItem = ({
   const isDeleted = isDefined(thread.deletedAt);
   const { isUnread } = useAtomFamilySelectorValue(
     agentChatThreadInboxStatusFamilySelector,
-    thread.id,
+    { threadId: thread.id, lastActivityAt: thread.lastActivityAt ?? null },
   );
   const ThreadIcon = isDeleted ? IconTrash : IconSparkles;
   const displayTitle = thread.title ?? t`Untitled`;
@@ -167,6 +168,9 @@ export const AiChatThreadListItem = ({
         ) : (
           <StyledThreadTitle $isUnread={!isDeleted && isUnread}>
             {displayTitle}
+            {!isDeleted && isUnread && (
+              <StyledVisuallyHidden>{t`, unread`}</StyledVisuallyHidden>
+            )}
           </StyledThreadTitle>
         )}
       </StyledThreadContent>

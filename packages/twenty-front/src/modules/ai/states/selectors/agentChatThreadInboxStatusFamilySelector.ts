@@ -5,8 +5,10 @@ import {
 import { type AgentChatThreadInboxScope } from 'twenty-shared/types';
 
 import { agentChatThreadInboxNowState } from '@/ai/states/agentChatThreadInboxNowState';
+import { agentChatThreadKeptUnreadIdState } from '@/ai/states/agentChatThreadKeptUnreadIdState';
 import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
 import { agentChatViewedThreadIdState } from '@/ai/states/agentChatViewedThreadIdState';
+import { hasLoadedAgentChatThreadParticipantsState } from '@/ai/states/hasLoadedAgentChatThreadParticipantsState';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { buildAgentChatThreadInboxState } from '@/ai/utils/buildAgentChatThreadInboxState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
@@ -17,26 +19,45 @@ type AgentChatThreadInboxStatus = {
   isUnread: boolean;
 };
 
+type AgentChatThreadInboxStatusFamilyKey = {
+  threadId: string;
+  lastActivityAt: string | null;
+};
+
+// The key carries the activity time the caller fetched, for threads the chat
+// list has not loaded into the record store, such as those on a record page
 export const agentChatThreadInboxStatusFamilySelector =
-  createAtomFamilySelector<AgentChatThreadInboxStatus, string>({
+  createAtomFamilySelector<
+    AgentChatThreadInboxStatus,
+    AgentChatThreadInboxStatusFamilyKey
+  >({
     key: 'agentChatThreadInboxStatusFamilySelector',
     get:
-      (threadId) =>
+      ({ threadId, lastActivityAt }) =>
       ({ get }) => {
+        const storedThread = get(recordStoreFamilyState, threadId) as
+          | AgentChatThreadRecord
+          | null
+          | undefined;
         const inboxState = buildAgentChatThreadInboxState(
-          get(recordStoreFamilyState, threadId) as AgentChatThreadRecord | null,
+          { lastActivityAt: storedThread?.lastActivityAt ?? lastActivityAt },
           get(agentChatThreadParticipantsState)[threadId],
         );
+        const isViewed =
+          get(agentChatViewedThreadIdState) === threadId &&
+          get(agentChatThreadKeptUnreadIdState) !== threadId;
 
         return {
           scope: getAgentChatThreadInboxScope(
             inboxState,
             new Date(get(agentChatThreadInboxNowState)),
           ),
+          // Without its participant rows every thread would read as unread.
           // The thread on screen is being read, so it never shows as unread
           // while its read mark is on its way
           isUnread:
-            get(agentChatViewedThreadIdState) !== threadId &&
+            get(hasLoadedAgentChatThreadParticipantsState) &&
+            !isViewed &&
             isAgentChatThreadUnread(inboxState),
         };
       },

@@ -1,5 +1,5 @@
 import { useStore } from 'jotai';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { v4 } from 'uuid';
 import {
   isAgentChatThreadUnread,
@@ -8,11 +8,12 @@ import {
 } from 'twenty-shared/utils';
 
 import { useAgentChatThreadParticipants } from '@/ai/hooks/useAgentChatThreadParticipants';
+import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
+import { agentChatThreadKeptUnreadIdState } from '@/ai/states/agentChatThreadKeptUnreadIdState';
 import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
 import { agentChatThreadUnreadSinceState } from '@/ai/states/agentChatThreadUnreadSinceState';
 import { hasLoadedAgentChatThreadParticipantsState } from '@/ai/states/hasLoadedAgentChatThreadParticipantsState';
 import { agentChatViewedThreadIdState } from '@/ai/states/agentChatViewedThreadIdState';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { buildAgentChatThreadInboxState } from '@/ai/utils/buildAgentChatThreadInboxState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
@@ -26,10 +27,14 @@ const isDocumentVisible = () => document.visibilityState === 'visible';
 // the unread line keeps the position the member opened it at
 export const AgentChatThreadMarkAsReadEffect = () => {
   const store = useStore();
-  const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
+  // The displayed thread rather than the selected one, which can still be
+  // loading or fail to load
+  const agentChatDisplayedThread = useAtomStateValue(
+    agentChatDisplayedThreadState,
+  );
   const threadId =
-    isDefined(currentAiChatThread) && isValidUuid(currentAiChatThread)
-      ? currentAiChatThread
+    isDefined(agentChatDisplayedThread) && isValidUuid(agentChatDisplayedThread)
+      ? agentChatDisplayedThread
       : null;
   const thread = useAtomFamilyStateValue(
     recordStoreFamilyState,
@@ -42,7 +47,7 @@ export const AgentChatThreadMarkAsReadEffect = () => {
   );
   const { markAgentChatThreadAsRead } = useAgentChatThreadParticipants();
   const hasActivity = isDefined(lastActivityAt);
-  const visitIdRef = useRef(v4());
+  const [visitId] = useState(() => v4());
 
   useEffect(() => {
     const handleVisibilityChange = () => setIsVisible(isDocumentVisible());
@@ -67,6 +72,18 @@ export const AgentChatThreadMarkAsReadEffect = () => {
     };
   }, [isVisible, store, threadId]);
 
+  useEffect(() => {
+    if (!isDefined(threadId)) {
+      return;
+    }
+
+    return () => {
+      if (store.get(agentChatThreadKeptUnreadIdState.atom) === threadId) {
+        store.set(agentChatThreadKeptUnreadIdState.atom, null);
+      }
+    };
+  }, [store, threadId]);
+
   // Runs before the read mark below, so it sees where the member left off.
   // Kept for the rest of the visit, as this effect can run again once the
   // thread is already marked read; a later visit mounts a new effect and
@@ -78,8 +95,7 @@ export const AgentChatThreadMarkAsReadEffect = () => {
       !isDefined(threadId) ||
       !hasLoadedAgentChatThreadParticipants ||
       !hasActivity ||
-      (unreadSince?.threadId === threadId &&
-        unreadSince.visitId === visitIdRef.current)
+      (unreadSince?.threadId === threadId && unreadSince.visitId === visitId)
     ) {
       return;
     }
@@ -90,7 +106,7 @@ export const AgentChatThreadMarkAsReadEffect = () => {
 
     store.set(agentChatThreadUnreadSinceState.atom, {
       threadId,
-      visitId: visitIdRef.current,
+      visitId,
       isUnread: isAgentChatThreadUnread(
         buildAgentChatThreadInboxState(
           store.get(recordStoreFamilyState.atomFamily(threadId)) as
@@ -102,14 +118,21 @@ export const AgentChatThreadMarkAsReadEffect = () => {
       ),
       lastReadAt: participant?.lastReadAt ?? null,
     });
-  }, [hasActivity, hasLoadedAgentChatThreadParticipants, store, threadId]);
+  }, [
+    hasActivity,
+    hasLoadedAgentChatThreadParticipants,
+    store,
+    threadId,
+    visitId,
+  ]);
 
   useEffect(() => {
     if (
       !isDefined(threadId) ||
       !isVisible ||
       !hasLoadedAgentChatThreadParticipants ||
-      !isDefined(lastActivityAt)
+      !isDefined(lastActivityAt) ||
+      store.get(agentChatThreadKeptUnreadIdState.atom) === threadId
     ) {
       return;
     }

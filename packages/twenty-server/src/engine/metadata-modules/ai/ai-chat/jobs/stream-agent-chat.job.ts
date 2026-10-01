@@ -895,6 +895,12 @@ export class StreamAgentChatJob {
     });
 
     if (!totalsUpdate.affected) {
+      // The reply is saved even though a newer stream owns the thread
+      await this.agentChatService.recordThreadActivity({
+        workspaceId,
+        threadId,
+      });
+
       return resolveSupersededTurnOutcome(outcome);
     }
 

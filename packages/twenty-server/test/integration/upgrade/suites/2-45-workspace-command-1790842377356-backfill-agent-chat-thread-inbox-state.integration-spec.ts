@@ -206,18 +206,20 @@ describe('2-45 workspace commands - agent chat thread inbox state (integration)'
       ['flatObjectMetadataMaps'],
     );
 
-    await global.testDataSource.query(
-      `INSERT INTO ${SCHEMA}."recordShare" ("objectMetadataId", "recordId", "principalId", "principalType", "accessLevel", "rowCause", "sourceId")
-       VALUES ($1, $2, $3, 'WORKSPACE_MEMBER', 'READ', 'MANUAL', $4)`,
-      [
-        flatObjectMetadataMaps.byUniversalIdentifier[
-          STANDARD_OBJECTS.agentChatThread.universalIdentifier
-        ]!.id,
-        sharedThreadId,
-        WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
-        WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
-      ],
-    );
+    for (const threadId of [sharedThreadId, legacyArchivedThreadId]) {
+      await global.testDataSource.query(
+        `INSERT INTO ${SCHEMA}."recordShare" ("objectMetadataId", "recordId", "principalId", "principalType", "accessLevel", "rowCause", "sourceId")
+         VALUES ($1, $2, $3, 'WORKSPACE_MEMBER', 'READ', 'MANUAL', $4)`,
+        [
+          flatObjectMetadataMaps.byUniversalIdentifier[
+            STANDARD_OBJECTS.agentChatThread.universalIdentifier
+          ]!.id,
+          threadId,
+          WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+          WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+        ],
+      );
+    }
 
     await runCommand(objectCommand, 'up');
     await runCommand(backfillCommand, 'up');
@@ -225,6 +227,7 @@ describe('2-45 workspace commands - agent chat thread inbox state (integration)'
 
   afterAll(async () => {
     await runCommand(objectCommand, 'up');
+    await runCommand(backfillCommand, 'up');
     await global.testDataSource.query(
       `DELETE FROM core."upgradeMigration" WHERE name = $1 AND attempt = 99 AND "workspaceId" = $2`,
       [MOVE_MIGRATION_NAME, SEED_APPLE_WORKSPACE_ID],
@@ -291,14 +294,29 @@ describe('2-45 workspace commands - agent chat thread inbox state (integration)'
     expect(sharedThreadReaders).toHaveLength(2);
   });
 
-  it('turns chats 2.44 archived into the trash back into archives for their owner', async () => {
+  it('turns chats 2.44 archived into the trash back into archives for everyone who could read them', async () => {
     const threads = await readThreads();
-    const owner = (await readParticipants()).find(
-      ({ threadId }) => threadId === legacyArchivedThreadId,
-    );
+    const readers = (await readParticipants())
+      .filter(({ threadId }) => threadId === legacyArchivedThreadId)
+      .map(({ workspaceMemberId, archivedAt }) => ({
+        workspaceMemberId,
+        archivedAt,
+      }));
 
     expect(threads[legacyArchivedThreadId].deletedAt).toBeNull();
-    expect(owner?.archivedAt).toEqual(ARCHIVED_AT);
+    expect(readers).toEqual(
+      expect.arrayContaining([
+        {
+          workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+          archivedAt: ARCHIVED_AT,
+        },
+        {
+          workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+          archivedAt: ARCHIVED_AT,
+        },
+      ]),
+    );
+    expect(readers).toHaveLength(2);
     expect(threads[deletedThreadId].deletedAt).toEqual(ARCHIVED_AT);
   });
 

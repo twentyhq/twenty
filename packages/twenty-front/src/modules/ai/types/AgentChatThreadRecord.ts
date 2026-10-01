@@ -6,6 +6,7 @@ export type AgentChatThreadRecord = ObjectRecord & {
   createdAt: string;
   updatedAt: string;
   lastActivityAt?: string | null;
+  workspaceMemberId?: string | null;
   totalInputTokens?: number;
   totalOutputTokens?: number;
   totalCacheReadTokens?: number;

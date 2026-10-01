@@ -1,6 +1,7 @@
 import {
   getAgentChatThreadInboxScope,
   isAgentChatThreadUnread,
+  isDefined,
 } from 'twenty-shared/utils';
 
 import { AGENT_CHAT_THREAD_FILTER_STATUS } from '@/ai/constants/AgentChatThreadFilterStatus';
@@ -9,6 +10,7 @@ import { agentChatThreadFilterStatusState } from '@/ai/states/agentChatThreadFil
 import { agentChatThreadInboxNowState } from '@/ai/states/agentChatThreadInboxNowState';
 import { agentChatThreadLastActivityFilterState } from '@/ai/states/agentChatThreadLastActivityFilterState';
 import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
+import { hasLoadedAgentChatThreadParticipantsState } from '@/ai/states/hasLoadedAgentChatThreadParticipantsState';
 import { agentChatThreadsSelector } from '@/ai/states/selectors/agentChatThreadsSelector';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { buildAgentChatThreadInboxState } from '@/ai/utils/buildAgentChatThreadInboxState';
@@ -26,6 +28,9 @@ export const agentChatVisibleThreadsSelector = createAtomSelector<
     const filterStatus = get(agentChatThreadFilterStatusState);
     const lastActivityFilter = get(agentChatThreadLastActivityFilterState);
     const participants = get(agentChatThreadParticipantsState);
+    const hasLoadedParticipants = get(
+      hasLoadedAgentChatThreadParticipantsState,
+    );
     const now = get(agentChatThreadInboxNowState);
     const lastActivityDays =
       AGENT_CHAT_THREAD_LAST_ACTIVITY_FILTER_DAYS[lastActivityFilter];
@@ -47,24 +52,34 @@ export const agentChatVisibleThreadsSelector = createAtomSelector<
 
       switch (filterStatus) {
         case AGENT_CHAT_THREAD_FILTER_STATUS.ACTIVE:
-          if (thread.deletedAt || inboxScope !== 'INBOX') return false;
+          if (isDefined(thread.deletedAt) || inboxScope !== 'INBOX') {
+            return false;
+          }
           break;
         case AGENT_CHAT_THREAD_FILTER_STATUS.UNREAD:
           if (
-            thread.deletedAt ||
+            isDefined(thread.deletedAt) ||
             inboxScope !== 'INBOX' ||
+            !hasLoadedParticipants ||
             !isAgentChatThreadUnread(inboxState)
-          )
+          ) {
             return false;
+          }
           break;
         case AGENT_CHAT_THREAD_FILTER_STATUS.SNOOZED:
-          if (thread.deletedAt || inboxScope !== 'SNOOZED') return false;
+          if (isDefined(thread.deletedAt) || inboxScope !== 'SNOOZED') {
+            return false;
+          }
           break;
         case AGENT_CHAT_THREAD_FILTER_STATUS.ARCHIVED:
-          if (thread.deletedAt || inboxScope !== 'ARCHIVED') return false;
+          if (isDefined(thread.deletedAt) || inboxScope !== 'ARCHIVED') {
+            return false;
+          }
           break;
         case AGENT_CHAT_THREAD_FILTER_STATUS.DELETED:
-          if (!thread.deletedAt) return false;
+          if (!isDefined(thread.deletedAt)) {
+            return false;
+          }
           break;
         case AGENT_CHAT_THREAD_FILTER_STATUS.ALL:
           break;
@@ -74,7 +89,9 @@ export const agentChatVisibleThreadsSelector = createAtomSelector<
         const lastActivityMs = new Date(
           getAgentChatThreadLastActivityAt(thread),
         ).getTime();
-        if (lastActivityMs < cutoffMs) return false;
+        if (lastActivityMs < cutoffMs) {
+          return false;
+        }
       }
 
       return true;

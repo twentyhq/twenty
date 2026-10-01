@@ -5,6 +5,7 @@ export const AGENT_CHAT_THREAD_LIST_RECORD_GQL_FIELDS = {
   createdAt: true,
   updatedAt: true,
   lastActivityAt: true,
+  workspaceMemberId: true,
   totalInputTokens: true,
   totalOutputTokens: true,
   totalCacheReadTokens: true,

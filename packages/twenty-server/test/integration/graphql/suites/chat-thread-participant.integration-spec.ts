@@ -78,25 +78,64 @@ const readLastActivityAt = async (threadId: string): Promise<Date> => {
   return row.lastActivityAt;
 };
 
-describe('Chat thread participant state through the authenticated API', () => {
+const createThread = async (): Promise<string> => {
   const threadId = randomUUID();
 
-  beforeAll(async () => {
-    await getAppProviderByClassName<AgentChatService>(
-      'AgentChatService',
-    ).createThread({
-      workspaceId: SEED_APPLE_WORKSPACE_ID,
-      workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
-      id: threadId,
-      title: 'Participant state',
-    });
+  await getAppProviderByClassName<AgentChatService>(
+    'AgentChatService',
+  ).createThread({
+    workspaceId: SEED_APPLE_WORKSPACE_ID,
+    workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+    id: threadId,
+    title: 'Participant state',
   });
 
-  afterAll(async () => {
-    await destroyAgentChatThread({ threadId });
+  return threadId;
+};
+
+const setShareWithJony = async (threadId: string, enabled: boolean) => {
+  const { flatObjectMetadataMaps } =
+    await getAppProviderByClassName<WorkspaceCacheService>(
+      'WorkspaceCacheService',
+    ).getOrRecompute(SEED_APPLE_WORKSPACE_ID, ['flatObjectMetadataMaps']);
+
+  await setManualRecordShare({
+    workspaceId: SEED_APPLE_WORKSPACE_ID,
+    share: {
+      objectMetadataId:
+        flatObjectMetadataMaps.byUniversalIdentifier[
+          STANDARD_OBJECTS.agentChatThread.universalIdentifier
+        ]!.id,
+      recordId: threadId,
+      principalId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+      principalType: RecordSharePrincipalType.WORKSPACE_MEMBER,
+      accessLevel: RecordShareAccessLevel.READ,
+      sourceId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+    },
+    enabled,
+  });
+};
+
+describe('Chat thread participant state through the authenticated API', () => {
+  const createdThreadIds: string[] = [];
+
+  const createTestThread = async () => {
+    const threadId = await createThread();
+
+    createdThreadIds.push(threadId);
+
+    return threadId;
+  };
+
+  afterEach(async () => {
+    for (const threadId of createdThreadIds.splice(0)) {
+      await setShareWithJony(threadId, false);
+      await destroyAgentChatThread({ threadId });
+    }
   });
 
   it('starts the owner with the new thread read and in the inbox', async () => {
+    const threadId = await createTestThread();
     const participant = await findMyParticipant(threadId);
     const lastActivityAt = await readLastActivityAt(threadId);
 
@@ -110,6 +149,7 @@ describe('Chat thread participant state through the authenticated API', () => {
   });
 
   it('refuses a member who cannot read the thread', async () => {
+    const threadId = await createTestThread();
     const response = await runThreadMutation(
       'markAgentChatThreadAsRead',
       threadId,
@@ -123,29 +163,9 @@ describe('Chat thread participant state through the authenticated API', () => {
   });
 
   it('keeps a shared member state apart from the owner state', async () => {
-    const cache = getAppProviderByClassName<WorkspaceCacheService>(
-      'WorkspaceCacheService',
-    );
-    const { flatObjectMetadataMaps } = await cache.getOrRecompute(
-      SEED_APPLE_WORKSPACE_ID,
-      ['flatObjectMetadataMaps'],
-    );
+    const threadId = await createTestThread();
 
-    await setManualRecordShare({
-      workspaceId: SEED_APPLE_WORKSPACE_ID,
-      share: {
-        objectMetadataId:
-          flatObjectMetadataMaps.byUniversalIdentifier[
-            STANDARD_OBJECTS.agentChatThread.universalIdentifier
-          ]!.id,
-        recordId: threadId,
-        principalId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
-        principalType: RecordSharePrincipalType.WORKSPACE_MEMBER,
-        accessLevel: RecordShareAccessLevel.READ,
-        sourceId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
-      },
-      enabled: true,
-    });
+    await setShareWithJony(threadId, true);
 
     // A thread shared with a member they never opened has no state yet,
     // which reads as unread
@@ -167,6 +187,7 @@ describe('Chat thread participant state through the authenticated API', () => {
   });
 
   it('never moves the read cursor past the latest activity or back', async () => {
+    const threadId = await createTestThread();
     const lastActivityAt = await readLastActivityAt(threadId);
 
     const unread = await runThreadMutation(
@@ -200,6 +221,7 @@ describe('Chat thread participant state through the authenticated API', () => {
   });
 
   it('snoozes only into the future and moves the thread back to the inbox', async () => {
+    const threadId = await createTestThread();
     const pastSnooze = await makeMetadataApiRequest({
       query: SNOOZE,
       variables: {
@@ -234,6 +256,14 @@ describe('Chat thread participant state through the authenticated API', () => {
   });
 
   it('brings the thread back and marks it read for the member who writes in it', async () => {
+    const threadId = await createTestThread();
+
+    await setShareWithJony(threadId, true);
+    await runThreadMutation(
+      'archiveAgentChatThread',
+      threadId,
+      APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    );
     await runThreadMutation('archiveAgentChatThread', threadId);
     await runThreadMutation('markAgentChatThreadAsUnread', threadId);
 
@@ -268,6 +298,15 @@ describe('Chat thread participant state through the authenticated API', () => {
   });
 
   it("only lists the caller's own rows", async () => {
+    const threadId = await createTestThread();
+
+    await setShareWithJony(threadId, true);
+    await runThreadMutation(
+      'archiveAgentChatThread',
+      threadId,
+      APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    );
+
     const response = await makeMetadataApiRequest(
       { query: MY_PARTICIPANTS },
       APPLE_JONY_MEMBER_ACCESS_TOKEN,
@@ -287,29 +326,20 @@ describe('Chat thread participant state through the authenticated API', () => {
   });
 
   it('stops listing a thread once the member loses access to it', async () => {
-    const cache = getAppProviderByClassName<WorkspaceCacheService>(
-      'WorkspaceCacheService',
-    );
-    const { flatObjectMetadataMaps } = await cache.getOrRecompute(
-      SEED_APPLE_WORKSPACE_ID,
-      ['flatObjectMetadataMaps'],
+    const threadId = await createTestThread();
+
+    await setShareWithJony(threadId, true);
+    await runThreadMutation(
+      'archiveAgentChatThread',
+      threadId,
+      APPLE_JONY_MEMBER_ACCESS_TOKEN,
     );
 
-    await setManualRecordShare({
-      workspaceId: SEED_APPLE_WORKSPACE_ID,
-      share: {
-        objectMetadataId:
-          flatObjectMetadataMaps.byUniversalIdentifier[
-            STANDARD_OBJECTS.agentChatThread.universalIdentifier
-          ]!.id,
-        recordId: threadId,
-        principalId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
-        principalType: RecordSharePrincipalType.WORKSPACE_MEMBER,
-        accessLevel: RecordShareAccessLevel.READ,
-        sourceId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
-      },
-      enabled: false,
-    });
+    expect(
+      await findMyParticipant(threadId, APPLE_JONY_MEMBER_ACCESS_TOKEN),
+    ).toBeDefined();
+
+    await setShareWithJony(threadId, false);
 
     expect(
       await findMyParticipant(threadId, APPLE_JONY_MEMBER_ACCESS_TOKEN),

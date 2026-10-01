@@ -779,6 +779,13 @@ export class AgentChatService {
     return this.participantService.hasInboxState(workspaceId);
   }
 
+  recordThreadActivity(args: {
+    workspaceId: string;
+    threadId: string;
+  }): Promise<void> {
+    return this.participantService.recordThreadActivity(args);
+  }
+
   async notifyThreadUsageUpdated({
     threadBefore,
     workspaceMemberId,

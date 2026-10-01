@@ -3484,6 +3484,13 @@ type SendChatMessageResult {
   streamId: String
 }
 
+type AgentChatThreadParticipant {
+  threadId: UUID!
+  lastReadAt: DateTime
+  archivedAt: DateTime
+  snoozedUntil: DateTime
+}
+
 type AgentChatEvent {
   threadId: String!
   event: JSON!
@@ -3934,6 +3941,7 @@ type Query {
   chatMessages(threadId: UUID!): [AgentMessage!]!
   chatStreamCatchupChunks(threadId: UUID!): ChatStreamCatchupChunks!
   getAiSystemPromptPreview: AiSystemPromptPreview!
+  myAgentChatThreadParticipants: [AgentChatThreadParticipant!]!
   skills: [Skill!]!
   skill(id: UUID!): Skill
   agentTurns(agentId: UUID!): [AgentTurn!]!
@@ -4296,6 +4304,11 @@ type Mutation {
   retryChatMessage(threadId: UUID!, modelId: String): SendChatMessageResult!
   stopAgentChatStream(threadId: UUID!): Boolean!
   deleteQueuedChatMessage(messageId: UUID!): Boolean!
+  markAgentChatThreadAsRead(threadId: UUID!): AgentChatThreadParticipant!
+  markAgentChatThreadAsUnread(threadId: UUID!): AgentChatThreadParticipant!
+  archiveAgentChatThread(threadId: UUID!): AgentChatThreadParticipant!
+  snoozeAgentChatThread(threadId: UUID!, snoozedUntil: DateTime!): AgentChatThreadParticipant!
+  moveAgentChatThreadToInbox(threadId: UUID!): AgentChatThreadParticipant!
   startWorkspaceSetupChat(companyContext: JSON, personContext: JSON): StartWorkspaceSetupChatResult!
   createSkill(input: CreateSkillInput!): Skill!
   updateSkill(input: UpdateSkillInput!): Skill!

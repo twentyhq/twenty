@@ -5,7 +5,9 @@ import { AgentChatComponentInstanceContext } from '@/ai/contexts/AgentChatCompon
 import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
 import { agentChatMessagesComponentFamilyState } from '@/ai/states/agentChatMessagesComponentFamilyState';
 import { agentChatThreadUnreadSinceState } from '@/ai/states/agentChatThreadUnreadSinceState';
+import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { createAtomComponentSelector } from '@/ui/utilities/state/jotai/utils/createAtomComponentSelector';
 
 // The member's own messages are never new to them; a message without a sender
@@ -28,9 +30,16 @@ export const agentChatFirstUnreadMessageIdComponentSelector =
           return null;
         }
 
-        const currentUserWorkspaceId = get(
-          currentWorkspaceMemberState,
-        )?.userWorkspaceId;
+        const currentWorkspaceMember = get(currentWorkspaceMemberState);
+        const threadOwnerWorkspaceMemberId = (
+          get(recordStoreFamilyState, threadId) as
+            | AgentChatThreadRecord
+            | null
+            | undefined
+        )?.workspaceMemberId;
+        const isSenderlessMessageOwn =
+          !isDefined(threadOwnerWorkspaceMemberId) ||
+          threadOwnerWorkspaceMemberId === currentWorkspaceMember?.id;
         const lastReadAtMs = isDefined(unreadSince.lastReadAt)
           ? new Date(unreadSince.lastReadAt).getTime()
           : null;
@@ -54,10 +63,12 @@ export const agentChatFirstUnreadMessageIdComponentSelector =
             const senderUserWorkspaceId =
               message.metadata?.senderUserWorkspaceId;
 
-            if (
-              !isDefined(senderUserWorkspaceId) ||
-              senderUserWorkspaceId === currentUserWorkspaceId
-            ) {
+            const isOwnMessage = isDefined(senderUserWorkspaceId)
+              ? senderUserWorkspaceId ===
+                currentWorkspaceMember?.userWorkspaceId
+              : isSenderlessMessageOwn;
+
+            if (isOwnMessage) {
               return false;
             }
           }

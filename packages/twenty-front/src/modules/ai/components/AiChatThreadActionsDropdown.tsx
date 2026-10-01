@@ -36,7 +36,12 @@ import {
 } from '~/generated-metadata/graphql';
 
 type AiChatThreadActionsDropdownProps = {
-  thread: { id: string; title?: string | null; deletedAt?: string | null };
+  thread: {
+    id: string;
+    title?: string | null;
+    deletedAt?: string | null;
+    lastActivityAt?: string | null;
+  };
   surface: AiChatThreadActionsSurface;
   onRenameRequested: () => void;
   onDetach?: () => void;
@@ -180,9 +185,7 @@ export const AiChatThreadActionsDropdown = ({
                   {t`Rename`}
                 </Dropdown.ActionItem>
               )}
-              {!isDeleted && (
-                <AiChatThreadInboxActionItems threadId={thread.id} />
-              )}
+              {!isDeleted && <AiChatThreadInboxActionItems thread={thread} />}
               <CommandMenuContextProvider
                 displayType="dropdownItem"
                 containerType={CommandMenuItemContainerType.IndexPageDropdown}

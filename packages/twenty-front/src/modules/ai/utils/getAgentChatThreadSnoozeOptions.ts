@@ -29,12 +29,17 @@ export const getAgentChatThreadSnoozeOptions = (
   now: Date,
 ): AgentChatThreadSnoozeOption[] => {
   const thisEvening = atHour(now, EVENING_HOUR);
-  // Rounded up to a round hour, the way a person would say it.
-  const laterToday = startOfHour(
+  // Rounded to a round hour, the way a person would say it: up, unless that
+  // would push it into tomorrow
+  const laterTodayRoundedUp = startOfHour(
     addHours(now, LATER_TODAY_HOURS + (getMinutes(now) > 0 ? 1 : 0)),
   );
+  const laterToday = isSameDay(laterTodayRoundedUp, now)
+    ? laterTodayRoundedUp
+    : startOfHour(addHours(now, LATER_TODAY_HOURS));
   const tomorrow = atHour(addDays(now, 1), MORNING_HOUR);
-  const nextWeek = atHour(nextMonday(now), MORNING_HOUR);
+  // From Sunday, next Monday is tomorrow, so next week starts the Monday after
+  const nextWeek = atHour(nextMonday(addDays(now, 1)), MORNING_HOUR);
 
   const candidates: AgentChatThreadSnoozeOption[] = [
     { key: 'thisEvening', label: msg`This evening`, date: thisEvening },

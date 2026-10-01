@@ -39,7 +39,7 @@ export const NavigationDrawerAiChatThreadItem = ({
   const isDeleted = Boolean(thread.deletedAt);
   const { isUnread } = useAtomFamilySelectorValue(
     agentChatThreadInboxStatusFamilySelector,
-    thread.id,
+    { threadId: thread.id, lastActivityAt: thread.lastActivityAt ?? null },
   );
   const displayLabel = thread.title || t`New chat`;
   const isDropdownOpen = useAtomComponentStateValue(

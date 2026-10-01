@@ -11,6 +11,7 @@ import {
 } from '@/ai/states/agentChatThreadUnreadSinceState';
 import { agentChatFirstUnreadMessageIdComponentSelector } from '@/ai/states/selectors/agentChatFirstUnreadMessageIdComponentSelector';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import {
   jotaiStore,
@@ -21,6 +22,7 @@ const INSTANCE_ID = 'agentChatFirstUnreadMessageIdTest';
 const THREAD_ID = 'thread';
 const ME = 'my-user-workspace-id';
 const TEAMMATE = 'teammate-user-workspace-id';
+const MY_WORKSPACE_MEMBER_ID = 'my-workspace-member-id';
 
 const buildMessage = (
   id: string,
@@ -81,6 +83,7 @@ describe('agentChatFirstUnreadMessageIdComponentSelector', () => {
     resetJotaiStore();
     jotaiStore.set(agentChatDisplayedThreadState.atom, THREAD_ID);
     jotaiStore.set(currentWorkspaceMemberState.atom, {
+      id: MY_WORKSPACE_MEMBER_ID,
       userWorkspaceId: ME,
     } as never);
   });
@@ -149,5 +152,27 @@ describe('agentChatFirstUnreadMessageIdComponentSelector', () => {
         ],
       ),
     ).toBeNull();
+  });
+
+  it('treats messages without a sender as the owner of a thread shared with the member', () => {
+    jotaiStore.set(recordStoreFamilyState.atomFamily(THREAD_ID), {
+      id: THREAD_ID,
+      __typename: 'AgentChatThread',
+      workspaceMemberId: 'owner-workspace-member-id',
+    });
+
+    expect(
+      getFirstUnreadMessageId(
+        {
+          threadId: THREAD_ID,
+          isUnread: true,
+          lastReadAt: null,
+        },
+        [
+          buildMessage('legacy', 'user', '2026-10-01T10:06:00.000Z'),
+          buildMessage('reply', 'assistant', '2026-10-01T10:08:00.000Z'),
+        ],
+      ),
+    ).toBe('legacy');
   });
 });

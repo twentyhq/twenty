@@ -202,6 +202,26 @@ export class AgentChatThreadParticipantService {
     return rows[0];
   }
 
+  // Activity no member wrote, such as an agent reply saved after its stream
+  // lost the thread to a newer one
+  async recordThreadActivity({
+    workspaceId,
+    threadId,
+  }: Omit<ParticipantArgs, 'workspaceMemberId'>): Promise<void> {
+    if (!(await this.hasInboxState(workspaceId))) {
+      return;
+    }
+
+    await this.threadRepository.query(workspaceId, ({ manager, table }) =>
+      manager.query(
+        `UPDATE ${table('agentChatThread')}
+         SET "lastActivityAt" = clock_timestamp(), "updatedAt" = now()
+         WHERE id = $1`,
+        [threadId],
+      ),
+    );
+  }
+
   private async touchThread({
     workspaceId,
     threadId,
