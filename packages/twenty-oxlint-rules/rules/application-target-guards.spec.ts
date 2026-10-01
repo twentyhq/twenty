@@ -16,7 +16,7 @@ ruleTester.run(RULE_NAME, rule, {
       code: `
         class TestResolver {
           @Query()
-          @UseGuards(${PRINCIPAL_GUARD}, SettingsPermissionGuard(PermissionFlagType.APPLICATIONS), ApplicationTargetGuard, ApplicationRegistrationOwnershipGuard)
+          @UseGuards(${PRINCIPAL_GUARD}, SettingsPermissionGuard(PermissionFlagType.APPLICATIONS), ApplicationTargetGuard)
           testQuery(${targetArg('true')}) {}
         }
       `,
@@ -79,33 +79,11 @@ ruleTester.run(RULE_NAME, rule, {
         class TestResolver {
           @Query()
           @UseGuards(${PRINCIPAL_GUARD}, NoPermissionGuard)
-          testQuery(${targetArg('false')}) {}
-        }
-      `,
-      filename: 'test.ts',
-      errors: [{ messageId: 'missingTargetGuards' }],
-    },
-    {
-      code: `
-        class TestResolver {
-          @Query()
-          @UseGuards(${PRINCIPAL_GUARD}, NoPermissionGuard, ApplicationTargetGuard)
           testQuery(${targetArg('true')}) {}
         }
       `,
       filename: 'test.ts',
-      errors: [{ messageId: 'missingTargetGuards' }],
-    },
-    {
-      code: `
-        class TestResolver {
-          @Query()
-          @UseGuards(${PRINCIPAL_GUARD}, NoPermissionGuard, ApplicationTargetGuard, ApplicationRegistrationOwnershipGuard)
-          testQuery(${targetArg('false')}) {}
-        }
-      `,
-      filename: 'test.ts',
-      errors: [{ messageId: 'ownershipGuardWithoutFlag' }],
+      errors: [{ messageId: 'missingTargetGuard' }],
     },
     {
       code: `
@@ -116,18 +94,7 @@ ruleTester.run(RULE_NAME, rule, {
         }
       `,
       filename: 'test.ts',
-      errors: [{ messageId: 'targetGuardsNotLast' }],
-    },
-    {
-      code: `
-        class TestResolver {
-          @Query()
-          @UseGuards(${PRINCIPAL_GUARD}, NoPermissionGuard, ApplicationRegistrationOwnershipGuard, ApplicationTargetGuard)
-          testQuery(${targetArg('true')}) {}
-        }
-      `,
-      filename: 'test.ts',
-      errors: [{ messageId: 'targetGuardsNotLast' }],
+      errors: [{ messageId: 'targetGuardNotLast' }],
     },
     {
       code: `
@@ -139,7 +106,18 @@ ruleTester.run(RULE_NAME, rule, {
         }
       `,
       filename: 'test.ts',
-      errors: [{ messageId: 'targetGuardsNotLast' }],
+      errors: [{ messageId: 'targetGuardNotLast' }],
+    },
+    {
+      code: `
+        class TestResolver {
+          @Query()
+          @UseGuards(${PRINCIPAL_GUARD}, ApplicationTargetGuard, ApplicationTargetGuard)
+          testQuery(${targetArg('true')}) {}
+        }
+      `,
+      filename: 'test.ts',
+      errors: [{ messageId: 'targetGuardNotLast' }],
     },
     {
       code: `
@@ -152,7 +130,7 @@ ruleTester.run(RULE_NAME, rule, {
       filename: 'test.ts',
       errors: [
         { messageId: 'targetGuardOnClass' },
-        { messageId: 'missingTargetGuards' },
+        { messageId: 'missingTargetGuard' },
       ],
     },
     {
