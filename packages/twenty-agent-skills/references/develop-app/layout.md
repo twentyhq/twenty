@@ -60,7 +60,7 @@ To add an entry to an app's settings menu, declare it with `defineSettingsMenuIt
 
 The menu item points at the component, not the reverse, so one component can back several items. Declare as many as the app needs. Each renders as a tab on the app's page under Settings > Apps, after the built-in General tab, in `position` order.
 
-`scope` is `WORKSPACE` (configured once for the whole workspace, the default) or `USER` (configured by each member for themselves). Only `WORKSPACE` items render today — a `USER` item is persisted and synced but nothing displays it until its placement under the member's own settings lands, so say so rather than declaring one for a settings entry an app needs visible now. Members cannot save their own value of an application variable yet, even one declared with `scope: 'USER'`, so a `USER` item storing something per person must persist it through the app's own objects.
+`scope` is `WORKSPACE` (configured once for the whole workspace, the default) or `USER` (configured by each member for themselves). Only `WORKSPACE` items render today — a `USER` item is persisted and synced but nothing displays it until its placement under the member's own settings lands, so say so rather than declaring one for a settings entry an app needs visible now. To store something per person, a `USER` item should use an application variable declared with `scope: 'USER'`, read with `myApplicationVariables` and saved with `updateMyApplicationVariable`; a variable without that scope holds one value shared by the whole workspace.
 
 Items sort by ascending `position`, which is a decimal so an item can be slotted between two existing ones. Two items of one app cannot share a position in the same scope, and `General` is reserved for the built-in item.
 

@@ -1267,6 +1267,26 @@ export interface EnterpriseSubscriptionStatusDTO {
     __typename: 'EnterpriseSubscriptionStatusDTO'
 }
 
+export interface ApplicationVariableUserValue {
+    key: Scalars['String']
+    label: Scalars['String']
+    description: Scalars['String']
+    type: Scalars['String']
+    options?: Scalars['JSON']
+    isSecret: Scalars['Boolean']
+    isRequired: Scalars['Boolean']
+    isDeprecated: Scalars['Boolean']
+    value: Scalars['String']
+    __typename: 'ApplicationVariableUserValue'
+}
+
+export interface WorkspaceMemberApplicationVariables {
+    userWorkspaceId: Scalars['UUID']
+    workspaceMemberId: Scalars['UUID']
+    variables: ApplicationVariableUserValue[]
+    __typename: 'WorkspaceMemberApplicationVariables'
+}
+
 export interface UsageQuotaDefinition {
     resourceType: UsageResourceType
     limitKind: Scalars['String']
@@ -3393,6 +3413,8 @@ export interface Query {
     commandMenuItem?: CommandMenuItem
     frontComponents: FrontComponent[]
     frontComponent?: FrontComponent
+    myApplicationVariables: ApplicationVariableUserValue[]
+    applicationVariableUserValues: WorkspaceMemberApplicationVariables[]
     billingPortalSession: BillingSession
     listPlans: BillingPlan[]
     getResourceCreditUsage: BillingResourceCreditUsage[]
@@ -3578,6 +3600,7 @@ export interface Mutation {
     updateFrontComponent: FrontComponent
     deleteFrontComponent: FrontComponent
     updateOneApplicationVariable: Scalars['Boolean']
+    updateMyApplicationVariable: Scalars['Boolean']
     checkoutSession: BillingSession
     createSubscriptionPaymentIntent: BillingPaymentIntent
     createBillingPaymentMethodSetupIntent: BillingPaymentIntent
@@ -5075,6 +5098,28 @@ export interface EnterpriseSubscriptionStatusDTOGenqlSelection{
     cancelAt?: boolean | number
     currentPeriodEnd?: boolean | number
     isCancellationScheduled?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface ApplicationVariableUserValueGenqlSelection{
+    key?: boolean | number
+    label?: boolean | number
+    description?: boolean | number
+    type?: boolean | number
+    options?: boolean | number
+    isSecret?: boolean | number
+    isRequired?: boolean | number
+    isDeprecated?: boolean | number
+    value?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface WorkspaceMemberApplicationVariablesGenqlSelection{
+    userWorkspaceId?: boolean | number
+    workspaceMemberId?: boolean | number
+    variables?: ApplicationVariableUserValueGenqlSelection
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -7322,6 +7367,8 @@ export interface QueryGenqlSelection{
     commandMenuItem?: (CommandMenuItemGenqlSelection & { __args: {id: Scalars['UUID']} })
     frontComponents?: FrontComponentGenqlSelection
     frontComponent?: (FrontComponentGenqlSelection & { __args: {id: Scalars['UUID']} })
+    myApplicationVariables?: (ApplicationVariableUserValueGenqlSelection & { __args: {applicationUniversalIdentifier: Scalars['String']} })
+    applicationVariableUserValues?: WorkspaceMemberApplicationVariablesGenqlSelection
     billingPortalSession?: (BillingSessionGenqlSelection & { __args?: {returnUrlPath?: (Scalars['String'] | null), forPaymentMethodUpdate?: (Scalars['Boolean'] | null)} })
     listPlans?: BillingPlanGenqlSelection
     getResourceCreditUsage?: BillingResourceCreditUsageGenqlSelection
@@ -7554,6 +7601,7 @@ export interface MutationGenqlSelection{
     updateFrontComponent?: (FrontComponentGenqlSelection & { __args: {input: UpdateFrontComponentInput} })
     deleteFrontComponent?: (FrontComponentGenqlSelection & { __args: {id: Scalars['UUID']} })
     updateOneApplicationVariable?: { __args: {key: Scalars['String'], value: Scalars['String'], applicationId?: (Scalars['UUID'] | null)} }
+    updateMyApplicationVariable?: { __args: {applicationUniversalIdentifier: Scalars['String'], key: Scalars['String'], value: Scalars['String']} }
     checkoutSession?: (BillingSessionGenqlSelection & { __args: {recurringInterval: SubscriptionInterval, plan: BillingPlanKey, requirePaymentMethod: Scalars['Boolean'], successUrlPath?: (Scalars['String'] | null)} })
     createSubscriptionPaymentIntent?: (BillingPaymentIntentGenqlSelection & { __args: {recurringInterval: SubscriptionInterval, plan: BillingPlanKey, requirePaymentMethod: Scalars['Boolean'], successUrlPath?: (Scalars['String'] | null), idempotencyKey: Scalars['String']} })
     createBillingPaymentMethodSetupIntent?: BillingPaymentIntentGenqlSelection
@@ -8959,6 +9007,22 @@ export interface CreateRecordExportInput {objectMetadataId: Scalars['UUID'],fiel
     export const isEnterpriseSubscriptionStatusDTO = (obj?: { __typename?: any } | null): obj is EnterpriseSubscriptionStatusDTO => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isEnterpriseSubscriptionStatusDTO"')
       return EnterpriseSubscriptionStatusDTO_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const ApplicationVariableUserValue_possibleTypes: string[] = ['ApplicationVariableUserValue']
+    export const isApplicationVariableUserValue = (obj?: { __typename?: any } | null): obj is ApplicationVariableUserValue => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationVariableUserValue"')
+      return ApplicationVariableUserValue_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const WorkspaceMemberApplicationVariables_possibleTypes: string[] = ['WorkspaceMemberApplicationVariables']
+    export const isWorkspaceMemberApplicationVariables = (obj?: { __typename?: any } | null): obj is WorkspaceMemberApplicationVariables => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isWorkspaceMemberApplicationVariables"')
+      return WorkspaceMemberApplicationVariables_possibleTypes.includes(obj.__typename)
     }
     
 

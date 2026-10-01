@@ -1628,6 +1628,24 @@ type EnterpriseSubscriptionStatusDTO {
   isCancellationScheduled: Boolean!
 }
 
+type ApplicationVariableUserValue {
+  key: String!
+  label: String!
+  description: String!
+  type: String!
+  options: JSON
+  isSecret: Boolean!
+  isRequired: Boolean!
+  isDeprecated: Boolean!
+  value: String!
+}
+
+type WorkspaceMemberApplicationVariables {
+  userWorkspaceId: UUID!
+  workspaceMemberId: UUID!
+  variables: [ApplicationVariableUserValue!]!
+}
+
 type UsageQuotaDefinition {
   resourceType: UsageResourceType!
   limitKind: String!
@@ -3868,6 +3886,8 @@ type Query {
   commandMenuItem(id: UUID!): CommandMenuItem
   frontComponents: [FrontComponent!]!
   frontComponent(id: UUID!): FrontComponent
+  myApplicationVariables(applicationUniversalIdentifier: String!): [ApplicationVariableUserValue!]!
+  applicationVariableUserValues: [WorkspaceMemberApplicationVariables!]!
   billingPortalSession(returnUrlPath: String, forPaymentMethodUpdate: Boolean): BillingSession!
   listPlans: [BillingPlan!]!
   getResourceCreditUsage: [BillingResourceCreditUsage!]!
@@ -4192,6 +4212,7 @@ type Mutation {
   updateFrontComponent(input: UpdateFrontComponentInput!): FrontComponent!
   deleteFrontComponent(id: UUID!): FrontComponent!
   updateOneApplicationVariable(key: String!, value: String!, applicationId: UUID): Boolean!
+  updateMyApplicationVariable(applicationUniversalIdentifier: String!, key: String!, value: String!): Boolean!
   checkoutSession(recurringInterval: SubscriptionInterval!, plan: BillingPlanKey! = PRO, requirePaymentMethod: Boolean! = true, successUrlPath: String): BillingSession!
   createSubscriptionPaymentIntent(recurringInterval: SubscriptionInterval!, plan: BillingPlanKey! = PRO, requirePaymentMethod: Boolean! = true, successUrlPath: String, idempotencyKey: String!): BillingPaymentIntent!
   createBillingPaymentMethodSetupIntent: BillingPaymentIntent!

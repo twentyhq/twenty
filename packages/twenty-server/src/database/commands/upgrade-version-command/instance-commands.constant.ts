@@ -217,6 +217,7 @@ import { AddValidationRuleTableFastInstanceCommand } from 'src/database/commands
 import { ReapplyUsageLimitPeriodReshapeFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-instance-command-fast-1790755883509-reapply-usage-limit-period-reshape';
 import { AddChatWidgetTypeFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-instance-command-fast-1790756560653-add-chat-widget-type';
 import { AddScopeToApplicationVariablesFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-instance-command-fast-1790757005262-add-scope-to-application-variables';
+import { AddApplicationVariableUserValueFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-instance-command-fast-1790757537176-add-application-variable-user-value';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -436,4 +437,5 @@ export const INSTANCE_COMMANDS = [
   ReapplyUsageLimitPeriodReshapeFastInstanceCommand,
   AddChatWidgetTypeFastInstanceCommand,
   AddScopeToApplicationVariablesFastInstanceCommand,
+  AddApplicationVariableUserValueFastInstanceCommand,
 ];
