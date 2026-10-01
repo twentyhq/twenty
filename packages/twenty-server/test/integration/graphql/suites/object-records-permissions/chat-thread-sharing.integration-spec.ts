@@ -981,6 +981,7 @@ describe('Conversations through the record API', () => {
           isSystemContext: false,
           objectsPermissions: rolesPermissions[roleId],
           principalIds: [EVERYONE_PRINCIPAL_ID, workspaceMemberId, roleId],
+          canAccessAllRecords: false,
           isOwningApplication: () => false,
           resolveRowLevelPermissionRecordFilter: () => null,
         });
