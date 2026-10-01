@@ -7,11 +7,11 @@ import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 import { getSettingsFieldTypeConfig } from '@/settings/data-model/utils/getSettingsFieldTypeConfig';
 import { isFieldTypeSupportedInSettings } from '@/settings/data-model/utils/isFieldTypeSupportedInSettings';
 import { SettingsValidationRuleExpressionText } from '@/validation-rules/components/SettingsValidationRuleExpressionText';
-import { SettingsValidationRuleHelperItemIcon } from '@/validation-rules/components/SettingsValidationRuleHelperItemIcon';
 import { type ValidationRuleEditorField } from '@/validation-rules/types/ValidationRuleEditorField';
 import { type ValidationRuleHelperItem } from '@/validation-rules/types/ValidationRuleHelperItem';
 import { computeValidationRuleHelperItemExamples } from '@/validation-rules/utils/computeValidationRuleHelperItemExamples';
 import { getValidationRuleEditorFieldChipLabel } from '@/validation-rules/utils/getValidationRuleEditorFieldChipLabel';
+import { getValidationRuleHelperItemIcon } from '@/validation-rules/utils/getValidationRuleHelperItemIcon';
 
 const StyledDetails = styled.div`
   display: flex;
@@ -73,10 +73,20 @@ export const SettingsValidationRuleHelperDetails = ({
   const theme = useTheme();
   const { getIcon } = useIcons();
 
+  const ItemIcon = getValidationRuleHelperItemIcon({ item, getIcon });
+
   const examples = computeValidationRuleHelperItemExamples({
     item,
     fields: editorFields,
   });
+
+  const itemIcon = (
+    <ItemIcon
+      size={theme.icon.size.md}
+      stroke={theme.icon.stroke.sm}
+      color={theme.font.color.tertiary}
+    />
+  );
 
   const renderSummary = () => {
     switch (item.kind) {
@@ -90,7 +100,7 @@ export const SettingsValidationRuleHelperDetails = ({
         return (
           <>
             <StyledTitle>
-              <SettingsValidationRuleHelperItemIcon item={item} />
+              {itemIcon}
               {getValidationRuleEditorFieldChipLabel(item.field)}
             </StyledTitle>
             <StyledMeta>
@@ -115,7 +125,7 @@ export const SettingsValidationRuleHelperDetails = ({
         return (
           <>
             <StyledTitle>
-              <SettingsValidationRuleHelperItemIcon item={item} />
+              {itemIcon}
               <StyledSignature>{item.definition.signature}</StyledSignature>
             </StyledTitle>
             <StyledMeta>
