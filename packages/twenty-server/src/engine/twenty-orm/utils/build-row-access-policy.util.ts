@@ -1,16 +1,15 @@
 import { isMetadataWritePermitted } from 'src/engine/twenty-orm/utils/is-metadata-write-permitted.util';
 import { isDefined } from 'twenty-shared/utils';
 
-import { buildNamedRecordGrantCondition } from 'src/engine/core-modules/record-share/utils/build-named-record-grant-condition.util';
+import { buildNamedRecordGrantExpression } from 'src/engine/core-modules/record-share/utils/build-named-record-grant-expression.util';
 import { buildRecordShareGate } from 'src/engine/core-modules/record-share/utils/build-record-share-gate.util';
 import { isRecordGrantBeyondRoleAllowed } from 'src/engine/core-modules/record-share/utils/is-record-grant-beyond-role-allowed.util';
 import {
+  type RowAccessExpression,
   type RowAccessPolicy,
   type RowAccessPolicyContext,
   type RowAccessPolicyTarget,
-  type SqlCondition,
 } from 'src/engine/twenty-orm/types/row-access-policy.type';
-import { combineSqlConditions } from 'src/engine/twenty-orm/utils/combine-sql-conditions.util';
 import { isObjectOperationPermitted } from 'src/engine/twenty-orm/utils/is-object-operation-permitted.util';
 import { renderRowLevelPermissionFilterToSql } from 'src/engine/twenty-orm/utils/render-row-level-permission-filter-to-sql.util';
 
@@ -39,12 +38,12 @@ export const buildRowAccessPolicy = ({
     return { kind: 'denied' };
   }
 
-  const namedRecordGrantCondition = isRecordGrantBeyondRoleAllowed({
+  const namedRecordGrant = isRecordGrantBeyondRoleAllowed({
     flatObjectMetadata: target.flatObjectMetadata,
     operationType: target.operationType,
     isRecordSharingEnabled: environment.isRecordSharingEnabled,
   })
-    ? buildNamedRecordGrantCondition(context, target)
+    ? buildNamedRecordGrantExpression(context, target)
     : undefined;
 
   if (
@@ -55,8 +54,8 @@ export const buildRowAccessPolicy = ({
       objectsPermissions: subject.objectsPermissions,
     })
   ) {
-    return isDefined(namedRecordGrantCondition)
-      ? { kind: 'gated', condition: namedRecordGrantCondition }
+    return isDefined(namedRecordGrant)
+      ? { kind: 'gated', expression: namedRecordGrant }
       : { kind: 'denied' };
   }
 
@@ -71,48 +70,50 @@ export const buildRowAccessPolicy = ({
     return { kind: 'denied' };
   }
 
-  const rolePredicate = buildRolePredicate(context, target);
-  const conditions = [
-    rolePredicate,
-    recordShareGate.kind === 'gated' ? recordShareGate.condition : undefined,
+  const roleFilter = buildRoleFilterExpression(context, target);
+  const operands = [
+    roleFilter,
+    recordShareGate.kind === 'gated' ? recordShareGate.expression : undefined,
   ].filter(isDefined);
 
-  if (conditions.length === 0) {
+  if (operands.length === 0) {
     return { kind: 'open' };
   }
 
-  // The share gate already admits named grants, so only a role predicate
-  // keeps one out and needs the grant as an alternative
-  if (isDefined(rolePredicate) && isDefined(namedRecordGrantCondition)) {
+  // The share gate already admits named grants, so only a role filter keeps
+  // one out and needs the grant as an alternative
+  if (isDefined(roleFilter) && isDefined(namedRecordGrant)) {
     return {
       kind: 'gated',
-      condition: combineSqlConditions(
-        [combineSqlConditions(conditions), namedRecordGrantCondition],
-        'OR',
-      ),
+      expression: {
+        kind: 'or',
+        operands: [{ kind: 'and', operands }, namedRecordGrant],
+      },
     };
   }
 
-  return { kind: 'gated', condition: combineSqlConditions(conditions) };
+  return { kind: 'gated', expression: { kind: 'and', operands } };
 };
 
-const buildRolePredicate = (
+const buildRoleFilterExpression = (
   { subject, environment }: RowAccessPolicyContext,
   { tableAlias, flatObjectMetadata }: RowAccessPolicyTarget,
-): SqlCondition | undefined => {
+): RowAccessExpression | undefined => {
   const recordFilter =
     subject.resolveRowLevelPermissionRecordFilter(flatObjectMetadata);
 
-  if (!isDefined(recordFilter)) {
-    return undefined;
-  }
-
-  return (
+  // A filter whose predicates all cancel out restricts nothing
+  if (
+    !isDefined(recordFilter) ||
     renderRowLevelPermissionFilterToSql({
       recordFilter,
       tableAlias,
       objectMetadata: flatObjectMetadata,
       flatFieldMetadataMaps: environment.flatFieldMetadataMaps,
-    }) ?? undefined
-  );
+    }) === null
+  ) {
+    return undefined;
+  }
+
+  return { kind: 'roleFilter', tableAlias, flatObjectMetadata, recordFilter };
 };

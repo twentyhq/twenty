@@ -288,24 +288,42 @@ describe('isRecordMatchingRLSRowLevelPermissionPredicate', () => {
     expect(result).toBe(false);
   });
 
-  it('matches composite address filters using at least one sub-field', () => {
-    const result = isRecordMatchingRLSRowLevelPermissionPredicate({
-      record: baseRecord,
-      filter: {
-        address: {
-          addressStreet1: {
-            eq: 'Main Street',
+  it.each([
+    ['London', false],
+    ['Paris', true],
+  ])(
+    'requires every composite sub-field to match, as SQL does (city %s)',
+    (addressCity, expected) => {
+      expect(
+        isRecordMatchingRLSRowLevelPermissionPredicate({
+          record: baseRecord,
+          filter: {
+            address: {
+              addressStreet1: { eq: 'Main Street' },
+              addressCity: { eq: addressCity },
+            },
           },
-          addressCity: {
-            eq: 'London',
-          },
-        },
-      },
-      flatObjectMetadata,
-      flatFieldMetadataMaps,
-    });
+          flatObjectMetadata,
+          flatFieldMetadataMaps,
+        }),
+      ).toBe(expected);
+    },
+  );
 
-    expect(result).toBe(true);
+  it('never matches a composite sub-field it cannot read', () => {
+    expect(
+      isRecordMatchingRLSRowLevelPermissionPredicate({
+        record: baseRecord,
+        filter: {
+          address: {
+            addressCity: { eq: 'Paris' },
+            addressLat: { eq: 48.85 },
+          },
+        } as RecordGqlOperationFilter,
+        flatObjectMetadata,
+        flatFieldMetadataMaps,
+      }),
+    ).toBe(false);
   });
 
   it('supports relation join column filters', () => {

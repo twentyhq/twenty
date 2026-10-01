@@ -3,6 +3,7 @@ import { type ObjectLiteral } from 'typeorm';
 import {
   type ObjectsPermissions,
   type RecordGqlOperationFilter,
+  type RecordShareAccessLevel,
 } from 'twenty-shared/types';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -13,7 +14,55 @@ import { type WorkspaceRelationShape } from 'src/engine/twenty-orm/table-shape/t
 
 export type SqlCondition = { sql: string; parameters: ObjectLiteral };
 
+// One description of who may access which rows, compiled to SQL for queries
+// and evaluated on records in memory for writes and events, so both always
+// decide the same way
+export type RowAccessExpression =
+  | { kind: 'and'; operands: RowAccessExpression[] }
+  | { kind: 'or'; operands: RowAccessExpression[] }
+  | {
+      kind: 'roleFilter';
+      tableAlias: string;
+      flatObjectMetadata: FlatObjectMetadata;
+      recordFilter: RecordGqlOperationFilter;
+    }
+  | ({ kind: 'recordShared' } & RecordShareExpressionTarget)
+  | ({ kind: 'recordNotRestricted' } & RecordShareExpressionTarget)
+  | ({
+      kind: 'inheritedReadability';
+      parents: InheritedReadabilityParentExpression[];
+      isOpenWhenDetached: boolean;
+    } & RecordShareExpressionTarget);
+
+export type RecordShareExpressionTarget = {
+  tableAlias: string;
+  objectMetadataId: string;
+  principalIds: string[];
+  accessLevels: RecordShareAccessLevel[];
+};
+
+export type InheritedReadabilityParentExpression =
+  | {
+      kind: 'column';
+      joinColumnName: string;
+      parentTableAlias: string;
+      parentFlatObjectMetadata: FlatObjectMetadata;
+      policy: RowAccessPolicy;
+    }
+  | {
+      kind: 'children';
+      childTableAlias: string;
+      childJoinColumnName: string;
+      childFlatObjectMetadata: FlatObjectMetadata;
+      policy: RowAccessPolicy;
+    };
+
 export type RowAccessPolicy =
+  | { kind: 'open' }
+  | { kind: 'denied' }
+  | { kind: 'gated'; expression: RowAccessExpression };
+
+export type CompiledRowAccessPolicy =
   | { kind: 'open' }
   | { kind: 'denied' }
   | { kind: 'gated'; condition: SqlCondition };
@@ -32,9 +81,13 @@ export type RowAccessPolicySubject = {
 export type RowAccessPolicyEnvironment = {
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
+  isRecordSharingEnabled: boolean;
+};
+
+export type RowAccessCompilationEnvironment = {
+  flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   recordShareTableExpression: string;
   resolveTableExpression: (objectMetadataId: string) => string;
-  isRecordSharingEnabled: boolean;
 };
 
 export type RowAccessPolicyContext = {

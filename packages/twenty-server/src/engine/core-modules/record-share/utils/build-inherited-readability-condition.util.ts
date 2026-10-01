@@ -4,7 +4,7 @@ import { type RecordShareAccessLevel } from 'twenty-shared/types';
 import { type ObjectLiteral } from 'typeorm';
 
 import {
-  type RowAccessPolicy,
+  type CompiledRowAccessPolicy,
   type SqlCondition,
 } from 'src/engine/twenty-orm/types/row-access-policy.type';
 import { buildRecordShareCondition } from 'src/engine/core-modules/record-share/utils/build-record-share-condition.util';
@@ -16,14 +16,14 @@ export type InheritedReadabilityParentCondition =
       joinColumnName: string;
       parentTableAlias: string;
       parentTableExpression: string;
-      policy: RowAccessPolicy;
+      policy: CompiledRowAccessPolicy;
     }
   | {
       kind: 'children';
       childTableAlias: string;
       childTableExpression: string;
       childJoinColumnName: string;
-      policy: RowAccessPolicy;
+      policy: CompiledRowAccessPolicy;
     };
 
 const buildChildLinkBoundCondition = ({
