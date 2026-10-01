@@ -21,6 +21,15 @@ describe('hasUserApprovedRoleGrantsForVersion', () => {
     ).toBe(false);
   });
 
+  it('does not approve when no approval was given, even for the resolved version', () => {
+    expect(
+      hasUserApprovedRoleGrantsForVersion({
+        approvedVersion: '2.0.0',
+        resolvedVersion: '2.0.0',
+      }),
+    ).toBe(false);
+  });
+
   it('does not apply an approval given without a version', () => {
     expect(
       hasUserApprovedRoleGrantsForVersion({
