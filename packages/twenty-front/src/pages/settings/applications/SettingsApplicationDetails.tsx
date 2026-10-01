@@ -170,7 +170,7 @@ export const SettingsApplicationDetails = () => {
       targetVersion: latestAvailableVersion,
       hasUserApprovedRoleGrants,
     });
-    await refetchPermissionSummary();
+    await refetchPermissionSummary().catch(() => {});
   };
 
   const handleUpgrade = async () => {
