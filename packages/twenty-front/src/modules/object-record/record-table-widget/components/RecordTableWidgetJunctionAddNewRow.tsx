@@ -5,11 +5,13 @@ import { RecordTableWidgetRelationPickerDropdownContent } from '@/object-record/
 import { type RecordTableWidgetJunctionCreateThrough } from '@/object-record/record-table-widget/contexts/RecordTableWidgetContext';
 import { useCreateJunctionRecordFromTableWidget } from '@/object-record/record-table-widget/hooks/useCreateJunctionRecordFromTableWidget';
 import { RecordTableActionRow } from '@/object-record/record-table/record-table-row/components/RecordTableActionRow';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { t } from '@lingui/core/macro';
 import { type RecordGqlOperationFilter } from 'twenty-shared/types';
 import { useToast } from 'twenty-ui/components/feedback';
+import { Dropdown } from 'twenty-ui/components/navigation';
 import { IconPlus } from 'twenty-ui/icon';
 import { logError } from '~/utils/logError';
 
@@ -59,14 +61,20 @@ export const RecordTableWidgetJunctionAddNewRow = ({
   };
 
   return (
-    <Dropdown
-      dropdownId={dropdownId}
-      dropdownPlacement="bottom-start"
-      clickableComponentWidth="100%"
-      clickableComponent={
+    <DropdownRoot dropdownId={dropdownId} type="picker">
+      <Dropdown.Trigger
+        render={<div />}
+        nativeButton={false}
+        style={{ width: '100%' }}
+        onKeyDown={(event) => {
+          if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+            event.stopPropagation();
+          }
+        }}
+      >
         <RecordTableActionRow LeftIcon={IconPlus} text={t`Add New`} />
-      }
-      dropdownComponents={
+      </Dropdown.Trigger>
+      <DropdownContent align="start" width={200}>
         <RecordTableWidgetRelationPickerDropdownContent
           objectNameSingular={
             junctionCreateThrough.targetObjectMetadataNameSingular
@@ -74,7 +82,7 @@ export const RecordTableWidgetJunctionAddNewRow = ({
           recordsFilter={targetRecordsFilter}
           onRelationRecordSelected={handleTargetRecordSelected}
         />
-      }
-    />
+      </DropdownContent>
+    </DropdownRoot>
   );
 };

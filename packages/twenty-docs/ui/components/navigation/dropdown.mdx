@@ -68,6 +68,12 @@ export const RecordActions = ({ onDuplicate }: { onDuplicate: () => void }) => (
 
 Pass custom trigger elements through `render` so the trigger remains one interactive element. Custom components must forward the supplied props and ref. `ActionItem` also accepts `render` for links.
 
+## Item actions
+
+`ActionItem` and `OptionItem` accept `actions` for trailing controls, such as a tab's edit button. Set `actionsVisibility="always"` to keep them visible; the default is `"hover"`. Secondary controls render beside the primary row control and activate independently. The `render` prop and ref still apply to the primary control, so it can also serve as a drag handle.
+
+Use `tabIndex={-1}` for a pointer-only secondary action that has a separate keyboard alternative. Keyboard navigation continues to focus and activate the primary control.
+
 ## Headers
 
 `Header` lays out a row at the top of the popup. Put a `Title` in it to name the popup after the title instead of the trigger. `Close` closes the popup the same way an outside press does. It renders an icon button with an X by default, so give it an `aria-label`, or pass `render` and children for another control. Other controls, such as a button that returns to a previous step, can sit in the same row. Use `Dropdown.Back` when navigating the root's page history.

@@ -5,21 +5,16 @@ import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldM
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { type ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
-import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
-import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink/UndecoratedLink';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useLingui } from '@lingui/react/macro';
 import { useCallback, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
+import { getSettingsPath, isNonEmptyArray } from 'twenty-shared/utils';
+import { Dropdown } from 'twenty-ui/components';
 import { IconSettings, useIcons } from 'twenty-ui/icon';
-import { ListItem } from 'twenty-ui/primitives/navigation';
 
 export const RecordTableHeaderPlusButtonContent = () => {
   const { t } = useLingui();
@@ -77,27 +72,27 @@ export const RecordTableHeaderPlusButtonContent = () => {
     });
   };
 
-  const hasAvailableFields = availableFieldMetadataItemsToShow.length > 0;
+  const hasAvailableFields = isNonEmptyArray(availableFieldMetadataItemsToShow);
 
   return (
-    <LegacyDropdownContent>
+    <>
       {hasAvailableFields && (
         <>
-          <DropdownMenuSearchInput
-            autoFocus
+          <Dropdown.Search
             value={searchInput}
             placeholder={t`Search fields`}
-            onChange={(event) => setSearchInput(event.target.value)}
+            aria-label={t`Search fields`}
+            onValueChange={setSearchInput}
           />
-          <DropdownMenuSeparator />
+          <Dropdown.Separator />
         </>
       )}
-      <DropdownMenuItemsContainer>
-        {filteredFieldMetadataItems.length > 0 ? (
+      <Dropdown.Section>
+        {isNonEmptyArray(filteredFieldMetadataItems) ? (
           filteredFieldMetadataItems.map((fieldMetadataItem) => (
-            <ListItem
+            <Dropdown.OptionItem
               key={fieldMetadataItem.id}
-              onClick={() =>
+              onSelect={() =>
                 handleFieldMetadataItemMenuItemClick(fieldMetadataItem)
               }
               startIcon={
@@ -105,32 +100,34 @@ export const RecordTableHeaderPlusButtonContent = () => {
               }
             >
               {fieldMetadataItem.label}
-            </ListItem>
+            </Dropdown.OptionItem>
           ))
         ) : (
-          <ListItem disabled>
+          <Dropdown.Empty>
             {hasAvailableFields
               ? t`No results`
               : t`All fields are already visible`}
-          </ListItem>
+          </Dropdown.Empty>
         )}
-      </DropdownMenuItemsContainer>
-      <DropdownMenuSeparator />
-      <DropdownMenuItemsContainer scrollable={false}>
-        <UndecoratedLink
-          fullWidth
-          to={getSettingsPath(SettingsPath.ObjectDetail, {
-            objectNamePlural: objectMetadataItem.namePlural,
-          })}
+      </Dropdown.Section>
+      <Dropdown.Separator />
+      <Dropdown.Section scrollable={false}>
+        <Dropdown.ActionItem
+          role="link"
+          render={
+            <Link
+              to={getSettingsPath(SettingsPath.ObjectDetail, {
+                objectNamePlural: objectMetadataItem.namePlural,
+              })}
+            />
+          }
           onClick={() => {
+            closeDropdown();
             setNavigationMemorizedUrl(location.pathname + location.search);
           }}
-        >
-          <ListItem
-            startIcon={<IconSettings />}
-          >{t`Customize fields`}</ListItem>
-        </UndecoratedLink>
-      </DropdownMenuItemsContainer>
-    </LegacyDropdownContent>
+          startIcon={<IconSettings />}
+        >{t`Customize fields`}</Dropdown.ActionItem>
+      </Dropdown.Section>
+    </>
   );
 };

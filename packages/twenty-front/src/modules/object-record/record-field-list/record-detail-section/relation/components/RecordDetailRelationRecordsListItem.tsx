@@ -16,9 +16,8 @@ import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getForeignKeyNameFromRelationFieldName } from '@/object-record/utils/getForeignKeyNameFromRelationFieldName';
 import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -35,6 +34,7 @@ import {
   computeMorphRelationGqlFieldName,
 } from 'twenty-shared/utils';
 import { LightIconButton } from 'twenty-ui/components/input';
+import { Dropdown } from 'twenty-ui/components/navigation';
 import {
   IconChevronDown,
   IconDotsVertical,
@@ -43,7 +43,6 @@ import {
   type IconComponent,
 } from 'twenty-ui/icon';
 import { Collapsible } from 'twenty-ui/primitives/layout';
-import { ListItem } from 'twenty-ui/primitives/navigation';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 
 const StyledClickableZone = styled.div`
@@ -230,37 +229,35 @@ export const RecordDetailRelationRecordsListItem = ({
           </LightIconButton>
         </StyledClickableZone>
         {!parentIsRecordFieldReadOnly && (
-          <Dropdown
-            dropdownId={dropdownInstanceId}
-            dropdownPlacement="right-start"
-            clickableComponent={
-              <LightIconButton
-                className="displayOnHover"
-                emphasis="subtle"
-                aria-label={t`More options`}
-              >
-                <IconDotsVertical />
-              </LightIconButton>
-            }
-            dropdownComponents={
-              <LegacyDropdownContent>
-                <DropdownMenuItemsContainer>
-                  <ListItem
-                    startIcon={<IconUnlink />}
-                    onClick={handleDetach}
-                  >{t`Detach`}</ListItem>
-                  {!isAccountOwnerRelation &&
-                    relationObjectPermissions.canSoftDeleteObjectRecords && (
-                      <ListItem
-                        startIcon={<IconTrash />}
-                        color="danger"
-                        onClick={handleDelete}
-                      >{t`Delete`}</ListItem>
-                    )}
-                </DropdownMenuItemsContainer>
-              </LegacyDropdownContent>
-            }
-          />
+          <DropdownRoot dropdownId={dropdownInstanceId} type="menu">
+            <Dropdown.Trigger
+              render={
+                <LightIconButton
+                  className="displayOnHover"
+                  emphasis="subtle"
+                  aria-label={t`More options`}
+                >
+                  <IconDotsVertical />
+                </LightIconButton>
+              }
+            />
+            <DropdownContent side="right" align="start" width={200}>
+              <Dropdown.Section>
+                <Dropdown.ActionItem
+                  startIcon={<IconUnlink />}
+                  onClick={handleDetach}
+                >{t`Detach`}</Dropdown.ActionItem>
+                {!isAccountOwnerRelation &&
+                  relationObjectPermissions.canSoftDeleteObjectRecords && (
+                    <Dropdown.ActionItem
+                      startIcon={<IconTrash />}
+                      color="danger"
+                      onClick={handleDelete}
+                    >{t`Delete`}</Dropdown.ActionItem>
+                  )}
+              </Dropdown.Section>
+            </DropdownContent>
+          </DropdownRoot>
         )}
       </RecordDetailRecordsListItemContainer>
       <Collapsible containAnimation={false} isExpanded={isExpanded}>

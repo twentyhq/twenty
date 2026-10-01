@@ -13,6 +13,10 @@ import {
   makeTab,
 } from '@/page-layout/testing/pageLayoutDraftFixtures';
 import { getTabListInstanceIdFromPageLayoutId } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutId';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
+import { Dropdown } from 'twenty-ui/components';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
@@ -29,7 +33,6 @@ const TAB_LIST_ID = getTabListInstanceIdFromPageLayoutId(
   PAGE_LAYOUT_TEST_INSTANCE_ID,
 );
 const mockNavigatePageLayoutSidePanel = jest.fn();
-const mockCloseDropdown = jest.fn();
 const mockSelectTab = jest.fn();
 
 jest.mock(
@@ -40,16 +43,6 @@ jest.mock(
     }),
   }),
 );
-
-jest.mock('@/ui/layout/dropdown/hooks/useCloseDropdown', () => ({
-  useCloseDropdown: () => ({ closeDropdown: mockCloseDropdown }),
-}));
-
-jest.mock('@/ui/layout/dropdown/components/Dropdown', () => ({
-  Dropdown: ({ dropdownComponents }: { dropdownComponents: ReactNode }) => (
-    <>{dropdownComponents}</>
-  ),
-}));
 
 jest.mock(
   '@/ui/utilities/drag-and-drop/components/DragDropItemSortableCell',
@@ -79,10 +72,14 @@ const TabSettingsControls = () => {
 
   return (
     <>
-      <PageLayoutTabListNewTabDropdownContent
-        onCreate={addTabStrategy.onCreate}
-        dropdownId="new-tab"
-      />
+      <DropdownRoot dropdownId="new-tab" type="menu">
+        <Dropdown.Trigger>New tab</Dropdown.Trigger>
+        <DropdownContent>
+          <PageLayoutTabListNewTabDropdownContent
+            onCreate={addTabStrategy.onCreate}
+          />
+        </DropdownContent>
+      </DropdownRoot>
       <PageLayoutTabListReorderableOverflowDropdown
         dropdownId="more-tabs"
         hiddenTabs={[{ id: 'hidden-tab', title: 'Hidden tab' }]}
@@ -91,7 +88,6 @@ const TabSettingsControls = () => {
         activeTabId="active-tab"
         onSelect={mockSelectTab}
         visibleTabCount={1}
-        onClose={mockCloseDropdown}
         pageLayoutType={PageLayoutType.RECORD_PAGE}
       />
     </>
@@ -149,10 +145,20 @@ describe('tab settings navigation during a closing panel', () => {
       const user = userEvent.setup({ skipHover: true });
 
       if (action === 'overflow') {
-        const tab = screen.getByRole('option', { name: 'Hidden tab' });
-        await user.hover(tab);
-        await user.click(within(tab).getByRole('button'));
+        await user.click(screen.getByRole('button', { name: /More/ }));
+        const tab = await screen.findByRole('button', { name: 'Hidden tab' });
+        const tabRow = tab.parentElement;
+
+        if (!isDefined(tabRow)) {
+          throw new Error('Hidden tab row not found');
+        }
+
+        await user.hover(tabRow);
+        await user.click(
+          within(tabRow).getByRole('button', { name: 'Edit tab icon' }),
+        );
       } else {
+        await user.click(screen.getByRole('button', { name: 'New tab' }));
         await user.click(
           screen.getByText(action === 'create' ? 'Empty tab' : 'Disabled tab'),
         );
@@ -176,7 +182,13 @@ describe('tab settings navigation during a closing panel', () => {
           sidePanelPage: SidePanelPages.PageLayoutTabSettings,
         }),
       );
-      expect(mockCloseDropdown).toHaveBeenCalledTimes(1);
+      expect(
+        store.get(
+          isDropdownOpenComponentState.atomFamily({
+            instanceId: action === 'overflow' ? 'more-tabs' : 'new-tab',
+          }),
+        ),
+      ).toBe(false);
       expect(mockSelectTab).not.toHaveBeenCalled();
       if (action === 'create') {
         expect(mockNavigatePageLayoutSidePanel).toHaveBeenCalledWith(

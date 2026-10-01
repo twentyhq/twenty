@@ -110,3 +110,19 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
+.itemWithActions {
+  gap: var(--t-spacing-2);
+
+  &:focus-within {
+    background: var(--t-background-transparent-light);
+  }
+}
+
+.itemWithActions .itemWithActionsPrimary[data-dropdown-item] {
+  background: transparent;
+  color: inherit;
+  flex: 1;
+  min-inline-size: 0;
+  padding-inline: 0;
+}

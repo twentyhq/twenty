@@ -8262,6 +8262,20 @@
         "name": "ActionItem",
         "props": [
           {
+            "name": "actions",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Trailing controls rendered beside the primary row control. Secondary actions activate independently of the row."
+          },
+          {
+            "name": "actionsVisibility",
+            "type": "\"always\" | \"hover\"",
+            "required": false,
+            "defaultValue": null,
+            "description": "Whether trailing actions appear on hover or remain visible. Defaults to `hover`."
+          },
+          {
             "name": "className",
             "type": "string",
             "required": false,
@@ -8371,6 +8385,20 @@
       {
         "name": "OptionItem",
         "props": [
+          {
+            "name": "actions",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Trailing controls rendered beside the primary row control. Secondary actions activate independently of the row."
+          },
+          {
+            "name": "actionsVisibility",
+            "type": "\"always\" | \"hover\"",
+            "required": false,
+            "defaultValue": null,
+            "description": "Whether trailing actions appear on hover or remain visible. Defaults to `hover`."
+          },
           {
             "name": "className",
             "type": "string",
@@ -8639,6 +8667,20 @@
       {
         "name": "Back",
         "props": [
+          {
+            "name": "actions",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Trailing controls rendered beside the primary row control. Secondary actions activate independently of the row."
+          },
+          {
+            "name": "actionsVisibility",
+            "type": "\"always\" | \"hover\"",
+            "required": false,
+            "defaultValue": null,
+            "description": "Whether trailing actions appear on hover or remain visible. Defaults to `hover`."
+          },
           {
             "name": "className",
             "type": "string",
