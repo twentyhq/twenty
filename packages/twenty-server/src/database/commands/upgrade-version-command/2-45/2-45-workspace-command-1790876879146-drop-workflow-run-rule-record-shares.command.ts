@@ -79,7 +79,7 @@ export class DropWorkflowRunRuleRecordSharesCommand extends ProvisionedWorkspace
     await this.dataSource.query(
       `INSERT INTO ${this.buildRecordShareTable(workspaceId)}
          ("objectMetadataId", "recordId", "principalId", "principalType", "accessLevel", "rowCause", "sourceId")
-       SELECT metadata.id, run.id, '${EVERYONE_PRINCIPAL_ID}', 'EVERYONE', 'FULL', 'RULE', run.id
+       SELECT metadata.id, run.id, $3::uuid, 'EVERYONE', 'FULL', 'RULE', run.id
        FROM ${schemaName}."workflowRun" run
        JOIN core."objectMetadata" metadata ON metadata."workspaceId" = $1 AND metadata."universalIdentifier" = $2
        LEFT JOIN core."workflow" core_workflow ON core_workflow.id = run."coreWorkflowId"
@@ -88,7 +88,11 @@ export class DropWorkflowRunRuleRecordSharesCommand extends ProvisionedWorkspace
          OR core_workflow."visibility" = 'WORKSPACE'
          OR core_workflow."createdByUserWorkspaceId" IS NULL
        ON CONFLICT DO NOTHING`,
-      [workspaceId, STANDARD_OBJECTS.workflowRun.universalIdentifier],
+      [
+        workspaceId,
+        STANDARD_OBJECTS.workflowRun.universalIdentifier,
+        EVERYONE_PRINCIPAL_ID,
+      ],
     );
   }
 
