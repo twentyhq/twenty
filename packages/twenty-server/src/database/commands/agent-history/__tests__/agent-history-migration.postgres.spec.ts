@@ -162,48 +162,6 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       orm,
     );
 
-    const prepareLegacyMessages = async (
-      missingFields: ('senderUserWorkspaceId' | 'senderApplicationId')[] = [
-        'senderUserWorkspaceId',
-        'senderApplicationId',
-      ],
-    ) => {
-      await migration.migrate({
-        workspaceId: WORKSPACE_ID,
-        target: 'workspace',
-      });
-      const legacyMetadata = structuredClone(metadata);
-      const messageObject =
-        legacyMetadata.flatObjectMetadataMaps.byUniversalIdentifier[
-          STANDARD_OBJECTS.agentMessage.universalIdentifier
-        ]!;
-      for (const name of missingFields) {
-        const identifier =
-          STANDARD_OBJECTS.agentMessage.fields[name].universalIdentifier;
-        const field =
-          legacyMetadata.flatFieldMetadataMaps.byUniversalIdentifier[
-            identifier
-          ]!;
-        delete legacyMetadata.flatFieldMetadataMaps.byUniversalIdentifier[
-          identifier
-        ];
-        delete legacyMetadata.flatFieldMetadataMaps.universalIdentifierById[
-          field.id
-        ];
-        messageObject.fieldIds = messageObject.fieldIds.filter(
-          (id) => id !== field.id,
-        );
-        await dataSource.query(
-          `ALTER TABLE "${SCHEMA}"."agentMessage" DROP COLUMN "${name}"`,
-        );
-      }
-      return new AgentHistoryRepository<AgentMessageWorkspaceEntity>(
-        'agentMessage',
-        storage,
-        createOrm(legacyMetadata),
-      );
-    };
-
     const readRoute = async () => {
       const runner = dataSource.createQueryRunner();
       try {
@@ -929,47 +887,11 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       ).toMatchObject({ status: AgentMessageStatus.SENT });
     });
 
-    it.each([
-      { senderUserWorkspaceId: OWNER_ID, senderApplicationId: null },
-      { senderUserWorkspaceId: THREAD_ID, senderApplicationId: null },
-      { senderUserWorkspaceId: OWNER_ID, senderApplicationId: TURN_ID },
-    ])(
-      'requires expanded metadata before accepting sender writes: %o',
-      async (sender) => {
-        const legacyMessages = await prepareLegacyMessages();
-        const count = await legacyMessages.count(WORKSPACE_ID);
-        await expect(
-          legacyMessages.insert(WORKSPACE_ID, [
-            {
-              threadId: THREAD_ID,
-              role: AgentMessageRole.USER,
-              senderUserWorkspaceId: OWNER_ID,
-              senderApplicationId: null,
-            },
-            { threadId: THREAD_ID, role: AgentMessageRole.USER, ...sender },
-          ]),
-        ).rejects.toThrow(
-          'Complete upgrade:2-43:attribute-chat-message-senders',
-        );
-        expect(await legacyMessages.count(WORKSPACE_ID)).toBe(count);
-      },
-    );
-
-    it('rejects incomplete sender expansion and persists full attribution after upgrade', async () => {
-      const legacyMessages = await prepareLegacyMessages([
-        'senderApplicationId',
-      ]);
-      await expect(
-        legacyMessages.insertAndReturnOne(WORKSPACE_ID, {
-          threadId: THREAD_ID,
-          role: AgentMessageRole.USER,
-          senderUserWorkspaceId: TURN_ID,
-          senderApplicationId: null,
-        }),
-      ).rejects.toThrow('Complete upgrade:2-43:attribute-chat-message-senders');
-      await dataSource.query(
-        `ALTER TABLE "${SCHEMA}"."agentMessage" ADD COLUMN "senderApplicationId" uuid`,
-      );
+    it('persists full sender and application attribution', async () => {
+      await migration.migrate({
+        workspaceId: WORKSPACE_ID,
+        target: 'workspace',
+      });
       const upgraded = await messages.insertAndReturnOne(WORKSPACE_ID, {
         threadId: THREAD_ID,
         role: AgentMessageRole.USER,
