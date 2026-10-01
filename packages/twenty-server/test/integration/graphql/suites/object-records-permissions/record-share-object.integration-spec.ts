@@ -15,11 +15,9 @@ import { randomUUID } from 'node:crypto';
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
-import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 import {
-  FeatureFlagKey,
   RecordShareAccessLevel,
   RecordSharePrincipalType,
   RecordShareRowCause,
@@ -67,11 +65,6 @@ describe('recordShare object', () => {
   });
 
   afterAll(async () => {
-    await updateFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_RECORD_SHARING_ENABLED,
-      value: false,
-      expectToFail: false,
-    });
     await recordShareStorageService.deleteBySourceId({
       workspaceId: SEED_APPLE_WORKSPACE_ID,
       sourceId,
@@ -236,27 +229,18 @@ describe('recordShare object', () => {
     }
   });
 
-  it.each([false, true])(
-    'refuses reads through the GraphQL API even for an admin when record sharing is %s',
-    async (isRecordSharingEnabled) => {
-      await updateFeatureFlag({
-        featureFlag: FeatureFlagKey.IS_RECORD_SHARING_ENABLED,
-        value: isRecordSharingEnabled,
-        expectToFail: false,
-      });
+  it('refuses reads through the GraphQL API even for an admin', async () => {
+    const response = await makeGraphqlApiRequest(
+      findManyOperationFactory({
+        objectMetadataSingularName: 'recordShare',
+        objectMetadataPluralName: 'recordShares',
+        gqlFields: 'id',
+      }),
+    );
 
-      const response = await makeGraphqlApiRequest(
-        findManyOperationFactory({
-          objectMetadataSingularName: 'recordShare',
-          objectMetadataPluralName: 'recordShares',
-          gqlFields: 'id',
-        }),
-      );
-
-      expect(response.body.errors).toBeDefined();
-      expect(response.body.errors[0].message).toContain('not readable');
-    },
-  );
+    expect(response.body.errors).toBeDefined();
+    expect(response.body.errors[0].message).toContain('not readable');
+  });
 
   it('refuses creation through the GraphQL API even for an admin', async () => {
     const response = await makeGraphqlApiRequest(

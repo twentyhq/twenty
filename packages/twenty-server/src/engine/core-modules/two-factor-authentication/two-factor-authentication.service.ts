@@ -11,10 +11,16 @@ import {
 import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/encrypted-string.type';
 import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
+import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
+import {
+  TWO_FACTOR_AUTHENTICATION_OTP_RATE_LIMIT_MAX,
+  TWO_FACTOR_AUTHENTICATION_OTP_RATE_LIMIT_WINDOW_MS,
+} from 'src/engine/core-modules/two-factor-authentication/constants/two-factor-authentication-otp-rate-limit.constant';
 import { TwoFactorAuthenticationMethodEntity } from 'src/engine/core-modules/two-factor-authentication/entities/two-factor-authentication-method.entity';
 import { TOTP_DEFAULT_CONFIGURATION } from 'src/engine/core-modules/two-factor-authentication/strategies/otp/totp/constants/totp.strategy.constants';
 import { TotpStrategy } from 'src/engine/core-modules/two-factor-authentication/strategies/otp/totp/totp.strategy';
+import { buildTwoFactorAuthenticationOtpRateLimitKey } from 'src/engine/core-modules/two-factor-authentication/utils/build-two-factor-authentication-otp-rate-limit-key.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
@@ -38,6 +44,7 @@ export class TwoFactorAuthenticationService {
     private readonly twoFactorAuthenticationMethodRepository: WorkspaceScopedRepository<TwoFactorAuthenticationMethodEntity>,
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly secretEncryptionService: SecretEncryptionService,
+    private readonly throttlerService: ThrottlerService,
   ) {}
 
   private async decryptStoredSecret({
@@ -153,6 +160,12 @@ export class TwoFactorAuthenticationService {
     workspaceId: WorkspaceEntity['id'],
     twoFactorAuthenticationStrategy: TwoFactorAuthenticationStrategy,
   ) {
+    await this.throttlerService.atomicTokenBucketThrottleOrThrow({
+      key: buildTwoFactorAuthenticationOtpRateLimitKey({ userId, workspaceId }),
+      maxTokens: TWO_FACTOR_AUTHENTICATION_OTP_RATE_LIMIT_MAX,
+      timeWindow: TWO_FACTOR_AUTHENTICATION_OTP_RATE_LIMIT_WINDOW_MS,
+    });
+
     const userTwoFactorAuthenticationMethod =
       await this.twoFactorAuthenticationMethodRepository.findOne(workspaceId, {
         where: {

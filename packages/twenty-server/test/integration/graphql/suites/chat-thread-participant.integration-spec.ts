@@ -3,13 +3,11 @@ import { randomUUID } from 'node:crypto';
 import { parse } from 'graphql';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import {
-  FeatureFlagKey,
   RecordShareAccessLevel,
   RecordSharePrincipalType,
 } from 'twenty-shared/types';
 
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
-import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { destroyAgentChatThread } from 'test/integration/utils/destroy-agent-chat-thread.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { setManualRecordShare } from 'test/integration/utils/set-manual-record-share.util';
@@ -82,26 +80,8 @@ const readLastActivityAt = async (threadId: string): Promise<Date> => {
 
 describe('Chat thread participant state through the authenticated API', () => {
   const threadId = randomUUID();
-  let previousRecordSharingEnabled = false;
 
   beforeAll(async () => {
-    const cache = getAppProviderByClassName<WorkspaceCacheService>(
-      'WorkspaceCacheService',
-    );
-    const { featureFlagsMap } = await cache.getOrRecompute(
-      SEED_APPLE_WORKSPACE_ID,
-      ['featureFlagsMap'],
-    );
-
-    previousRecordSharingEnabled =
-      featureFlagsMap[FeatureFlagKey.IS_RECORD_SHARING_ENABLED] === true;
-
-    await updateFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_RECORD_SHARING_ENABLED,
-      value: true,
-      expectToFail: false,
-    });
-
     await getAppProviderByClassName<AgentChatService>(
       'AgentChatService',
     ).createThread({
@@ -114,11 +94,6 @@ describe('Chat thread participant state through the authenticated API', () => {
 
   afterAll(async () => {
     await destroyAgentChatThread({ threadId });
-    await updateFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_RECORD_SHARING_ENABLED,
-      value: previousRecordSharingEnabled,
-      expectToFail: false,
-    });
   });
 
   it('starts the owner with the new thread read and in the inbox', async () => {

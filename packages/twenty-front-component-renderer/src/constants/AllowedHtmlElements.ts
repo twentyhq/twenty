@@ -271,7 +271,6 @@ export const ALLOWED_HTML_ELEMENTS: AllowedHtmlElement[] = [
     },
   },
 
-  // Semantic inline text
   { tag: 'html-b', name: 'HtmlB', properties: {} },
   { tag: 'html-i', name: 'HtmlI', properties: {} },
   { tag: 'html-u', name: 'HtmlU', properties: {} },
@@ -295,7 +294,6 @@ export const ALLOWED_HTML_ELEMENTS: AllowedHtmlElement[] = [
     },
   },
 
-  // Edited/annotated text
   {
     tag: 'html-del',
     name: 'HtmlDel',
@@ -327,17 +325,14 @@ export const ALLOWED_HTML_ELEMENTS: AllowedHtmlElement[] = [
     },
   },
 
-  // Ruby annotations
   { tag: 'html-ruby', name: 'HtmlRuby', properties: {} },
   { tag: 'html-rt', name: 'HtmlRt', properties: {} },
   { tag: 'html-rp', name: 'HtmlRp', properties: {} },
 
-  // Description lists
   { tag: 'html-dl', name: 'HtmlDl', properties: {} },
   { tag: 'html-dt', name: 'HtmlDt', properties: {} },
   { tag: 'html-dd', name: 'HtmlDd', properties: {} },
 
-  // Structural/semantic
   { tag: 'html-figure', name: 'HtmlFigure', properties: {} },
   { tag: 'html-figcaption', name: 'HtmlFigcaption', properties: {} },
   {
@@ -361,7 +356,6 @@ export const ALLOWED_HTML_ELEMENTS: AllowedHtmlElement[] = [
   { tag: 'html-hgroup', name: 'HtmlHgroup', properties: {} },
   { tag: 'html-search', name: 'HtmlSearch', properties: {} },
 
-  // Table additions
   { tag: 'html-caption', name: 'HtmlCaption', properties: {} },
   {
     tag: 'html-colgroup',
@@ -378,7 +372,6 @@ export const ALLOWED_HTML_ELEMENTS: AllowedHtmlElement[] = [
     },
   },
 
-  // Form additions
   {
     tag: 'html-fieldset',
     name: 'HtmlFieldset',
@@ -426,7 +419,6 @@ export const ALLOWED_HTML_ELEMENTS: AllowedHtmlElement[] = [
   },
   { tag: 'html-datalist', name: 'HtmlDatalist', properties: {} },
 
-  // Media additions
   { tag: 'html-picture', name: 'HtmlPicture', properties: {} },
   {
     tag: 'html-track',
@@ -440,11 +432,9 @@ export const ALLOWED_HTML_ELEMENTS: AllowedHtmlElement[] = [
     },
   },
 
-  // Miscellaneous
   { tag: 'html-wbr', name: 'HtmlWbr', properties: {} },
   { tag: 'html-menu', name: 'HtmlMenu', properties: {} },
 
-  // SVG container/structural
   {
     tag: 'html-svg',
     name: 'HtmlSvg',
@@ -499,7 +489,6 @@ export const ALLOWED_HTML_ELEMENTS: AllowedHtmlElement[] = [
     },
   },
 
-  // SVG shapes
   {
     tag: 'html-circle',
     name: 'HtmlCircle',
@@ -570,7 +559,6 @@ export const ALLOWED_HTML_ELEMENTS: AllowedHtmlElement[] = [
     },
   },
 
-  // SVG text
   {
     tag: 'html-text',
     name: 'HtmlText',
@@ -596,7 +584,6 @@ export const ALLOWED_HTML_ELEMENTS: AllowedHtmlElement[] = [
     },
   },
 
-  // SVG gradients/patterns
   {
     tag: 'html-lineargradient',
     name: 'HtmlLinearGradient',
@@ -646,7 +633,6 @@ export const ALLOWED_HTML_ELEMENTS: AllowedHtmlElement[] = [
     },
   },
 
-  // SVG other
   {
     tag: 'html-image',
     name: 'HtmlImage',

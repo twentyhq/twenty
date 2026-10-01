@@ -110,8 +110,6 @@ export const NoVariables: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    // Should not render anything when there are no variables
-    // With no variables, there should be no input fields
     const inputs = canvas.queryAllByRole('textbox');
     expect(inputs).toHaveLength(0);
   },

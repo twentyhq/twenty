@@ -98,7 +98,6 @@ export class ApplicationRegistrationVariableService {
     return this.toObfuscatedDTO(entity);
   }
 
-  // Syncs variable schemas from manifest: creates missing, updates metadata, removes stale
   async syncVariableSchemas(
     applicationRegistrationId: string,
     serverVariables: ServerVariables,

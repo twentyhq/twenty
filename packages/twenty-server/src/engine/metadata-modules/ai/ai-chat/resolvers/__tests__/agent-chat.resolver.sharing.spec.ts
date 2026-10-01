@@ -91,7 +91,6 @@ const buildResolver = () => {
     threadRepository as never,
     redis as never,
     {} as never,
-    {} as never,
     recordEvents as never,
   );
   const resolver = new AgentChatResolver(

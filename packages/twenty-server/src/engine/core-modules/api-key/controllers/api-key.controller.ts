@@ -31,10 +31,7 @@ import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.g
 import { PermissionsRestApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-rest-api-exception.filter';
 import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
 
-/**
- * rest/apiKeys is deprecated, use rest/metadata/apiKeys instead
- * rest/apiKeys will be removed in the future
- */
+// rest/apiKeys is deprecated in favor of rest/metadata/apiKeys and will be removed
 @Controller([`${ApiPath.Rest}/apiKeys`, `${ApiPath.Rest}/metadata/apiKeys`])
 @UseGuards(
   JwtAuthGuard,

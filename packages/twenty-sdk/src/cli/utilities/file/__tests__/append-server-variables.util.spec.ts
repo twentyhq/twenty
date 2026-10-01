@@ -60,7 +60,6 @@ export default defineApplication({
 
     expect(updated).toContain('LINEAR_CLIENT_ID');
     expect(updated).toContain('LINEAR_CLIENT_SECRET');
-    // Existing entry survives.
     expect(updated).toContain('EXISTING_VAR');
     // New entries land inside the existing block, not in a new one.
     expect(updated.match(/serverVariables\s*:\s*\{/g)?.length).toBe(1);
@@ -91,7 +90,6 @@ export default defineApplication({
     expect(updated).toContain('serverVariables: {');
     expect(updated).toContain('LINEAR_CLIENT_ID');
     expect(updated).toContain('LINEAR_CLIENT_SECRET');
-    // The defineApplication() closing should still be there.
     expect(updated).toMatch(/\}\)\s*;?\s*$/);
   });
 

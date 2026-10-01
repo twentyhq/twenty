@@ -58,12 +58,6 @@ export type AgentChatEvent = {
   threadId: Scalars['String']['output'];
 };
 
-export type AgentChatQuestionAnswerInput = {
-  freeText?: InputMaybe<Scalars['String']['input']>;
-  questionIndex: Scalars['Int']['input'];
-  selectedOptionIndices: Array<Scalars['Int']['input']>;
-};
-
 export type AgentChatThread = {
   __typename?: 'AgentChatThread';
   contextWindowTokens?: Maybe<Scalars['Int']['output']>;
@@ -2157,7 +2151,6 @@ export enum FeatureFlagKey {
   IS_LOGS_SETTINGS_SECTION_ENABLED = 'IS_LOGS_SETTINGS_SECTION_ENABLED',
   IS_MESSAGE_CAMPAIGN_ENABLED = 'IS_MESSAGE_CAMPAIGN_ENABLED',
   IS_RECORD_CREATION_FORM_ENABLED = 'IS_RECORD_CREATION_FORM_ENABLED',
-  IS_RECORD_SHARING_ENABLED = 'IS_RECORD_SHARING_ENABLED',
   IS_REST_METADATA_API_NEW_FORMAT_DIRECT = 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT',
   IS_UNIQUE_INDEXES_ENABLED = 'IS_UNIQUE_INDEXES_ENABLED',
   IS_VALIDATION_RULES_ENABLED = 'IS_VALIDATION_RULES_ENABLED',
@@ -3068,8 +3061,6 @@ export type Mutation = {
   activateSkill: Skill;
   activateWorkspace: Workspace;
   addQueryToEventStream: Scalars['Boolean']['output'];
-  /** @deprecated Use answerToolCall with the questions tool call */
-  answerAgentChatQuestion: SendChatMessageResult;
   archiveAgentChatThread: AgentChatThreadParticipant;
   assignRoleToAgent: Scalars['Boolean']['output'];
   assignRoleToApiKey: Scalars['Boolean']['output'];
@@ -3357,15 +3348,6 @@ export type MutationActivateWorkspaceArgs = {
 
 export type MutationAddQueryToEventStreamArgs = {
   input: AddQuerySubscriptionInput;
-};
-
-
-export type MutationAnswerAgentChatQuestionArgs = {
-  answers: Array<AgentChatQuestionAnswerInput>;
-  fileAttachments?: InputMaybe<Array<FileAttachmentInput>>;
-  messageId: Scalars['UUID']['input'];
-  modelId?: InputMaybe<Scalars['String']['input']>;
-  threadId: Scalars['UUID']['input'];
 };
 
 
@@ -7938,8 +7920,6 @@ export type FindManyTimelineActivityTypesQueryVariables = Exact<{ [key: string]:
 
 export type FindManyTimelineActivityTypesQuery = { __typename?: 'Query', timelineActivityTypes: Array<{ __typename?: 'TimelineActivityType', id: string, applicationId?: string | null, universalIdentifier: string, name: string, label: string, icon?: string | null, frontComponentUniversalIdentifier?: string | null, isActive: boolean, emit?: { __typename?: 'TimelineActivityTypeEmit', on: string, objectUniversalIdentifier?: string | null } | null }> };
 
-export type AgentChatThreadFieldsFragment = { __typename?: 'AgentChatThread', id: string, title?: string | null, totalCacheReadTokens: number, totalInputTokens: number, totalOutputTokens: number, contextWindowTokens?: number | null, conversationSize: number, totalInputCredits: number, totalOutputCredits: number, deletedAt?: string | null, createdAt: string, updatedAt: string };
-
 export type AgentChatThreadParticipantFieldsFragment = { __typename?: 'AgentChatThreadParticipant', threadId: string, lastReadAt?: string | null, archivedAt?: string | null, snoozedUntil?: string | null };
 
 export type AgentFieldsFragment = { __typename?: 'Agent', id: string, name: string, label: string, description?: string | null, icon?: string | null, prompt: string, modelId: string, responseFormat?: any | null, roleId?: string | null, isCustom: boolean, modelConfiguration?: any | null, evaluationInputs: Array<string>, applicationId?: string | null, createdAt: string, updatedAt: string };
@@ -10548,7 +10528,6 @@ export type FindManyMarketplaceAppsForToolTableQueryVariables = Exact<{ [key: st
 
 export type FindManyMarketplaceAppsForToolTableQuery = { __typename?: 'Query', findManyMarketplaceApps: Array<{ __typename?: 'MarketplaceApp', id: string, logoUrl?: string | null }> };
 
-export const AgentChatThreadFieldsFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AgentChatThreadFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"AgentChatThread"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"totalCacheReadTokens"}},{"kind":"Field","name":{"kind":"Name","value":"totalInputTokens"}},{"kind":"Field","name":{"kind":"Name","value":"totalOutputTokens"}},{"kind":"Field","name":{"kind":"Name","value":"contextWindowTokens"}},{"kind":"Field","name":{"kind":"Name","value":"conversationSize"}},{"kind":"Field","name":{"kind":"Name","value":"totalInputCredits"}},{"kind":"Field","name":{"kind":"Name","value":"totalOutputCredits"}},{"kind":"Field","name":{"kind":"Name","value":"deletedAt"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]} as unknown as DocumentNode<AgentChatThreadFieldsFragment, unknown>;
 export const AgentChatThreadParticipantFieldsFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AgentChatThreadParticipantFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"AgentChatThreadParticipant"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"threadId"}},{"kind":"Field","name":{"kind":"Name","value":"lastReadAt"}},{"kind":"Field","name":{"kind":"Name","value":"archivedAt"}},{"kind":"Field","name":{"kind":"Name","value":"snoozedUntil"}}]}}]} as unknown as DocumentNode<AgentChatThreadParticipantFieldsFragment, unknown>;
 export const SkillFieldsFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"SkillFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Skill"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"content"}},{"kind":"Field","name":{"kind":"Name","value":"isCustom"}},{"kind":"Field","name":{"kind":"Name","value":"isSystem"}},{"kind":"Field","name":{"kind":"Name","value":"isActive"}},{"kind":"Field","name":{"kind":"Name","value":"applicationId"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]} as unknown as DocumentNode<SkillFieldsFragment, unknown>;
 export const AgentFieldsFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"AgentFields"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Agent"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"prompt"}},{"kind":"Field","name":{"kind":"Name","value":"modelId"}},{"kind":"Field","name":{"kind":"Name","value":"responseFormat"}},{"kind":"Field","name":{"kind":"Name","value":"roleId"}},{"kind":"Field","name":{"kind":"Name","value":"isCustom"}},{"kind":"Field","name":{"kind":"Name","value":"modelConfiguration"}},{"kind":"Field","name":{"kind":"Name","value":"evaluationInputs"}},{"kind":"Field","name":{"kind":"Name","value":"applicationId"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]} as unknown as DocumentNode<AgentFieldsFragment, unknown>;
