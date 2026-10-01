@@ -104,7 +104,8 @@ export const CommandMenuContextProviderContent = ({
     const hasSelectedRecords =
       commandMenuContextApi.numberOfSelectedRecords > 0;
     const commandMenuItemsToDisplay = isInPreviewMode
-      ? (commandMenuItemsDraft ?? commandMenuItems)
+      ? (commandMenuItemsDraft?.filter((item) => item.isActive) ??
+        commandMenuItems)
       : commandMenuItems;
 
     const contextCommandMenuItems = commandMenuItemsToDisplay

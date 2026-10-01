@@ -6,6 +6,10 @@ type CreationArgs = Parameters<
   FlatCommandMenuItemValidatorService['validateFlatCommandMenuItemCreation']
 >[0];
 
+type UpdateArgs = Parameters<
+  FlatCommandMenuItemValidatorService['validateFlatCommandMenuItemUpdate']
+>[0];
+
 const buildCommand = (
   overrides: Partial<CreationArgs['flatEntityToValidate']> = {},
 ) => ({
@@ -82,9 +86,83 @@ describe('workflow command menu validation', () => {
           byUniversalIdentifier: { [command.universalIdentifier]: command },
         },
       },
-    } as Parameters<
-      FlatCommandMenuItemValidatorService['validateFlatCommandMenuItemUpdate']
-    >[0];
+    } as UpdateArgs;
     expect(service.validateFlatCommandMenuItemUpdate(args).errors).toEqual([]);
+  });
+});
+
+describe('navigation command menu activation validation', () => {
+  const service = new FlatCommandMenuItemValidatorService();
+
+  const buildUpdateArgs = ({
+    isObjectActive,
+    flatEntityUpdate,
+  }: {
+    isObjectActive: boolean;
+    flatEntityUpdate: UpdateArgs['flatEntityUpdate'];
+  }) => {
+    const objectMetadata = {
+      id: 'object-id',
+      universalIdentifier: 'object-identifier',
+      applicationUniversalIdentifier: '11111111-1111-4111-8111-111111111111',
+      nameSingular: 'person',
+      shortcut: null,
+      isActive: isObjectActive,
+      universalOverrides: null,
+    };
+    const command = buildObjectNavigationUniversalFlatCommandMenuItem({
+      objectMetadata: { ...objectMetadata, isActive: false },
+      applicationUniversalIdentifier: '11111111-1111-4111-8111-111111111111',
+      position: 0,
+      now: '2026-09-16T00:00:00Z',
+    });
+
+    return {
+      universalIdentifier: command.universalIdentifier,
+      flatEntityUpdate,
+      optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
+        flatObjectMetadataMaps: {
+          byUniversalIdentifier: {
+            [objectMetadata.universalIdentifier]: objectMetadata,
+          },
+        },
+        flatCommandMenuItemMaps: {
+          byUniversalIdentifier: { [command.universalIdentifier]: command },
+        },
+      },
+    } as unknown as UpdateArgs;
+  };
+
+  it('rejects showing a navigation command whose object is inactive', () => {
+    expect(
+      service.validateFlatCommandMenuItemUpdate(
+        buildUpdateArgs({
+          isObjectActive: false,
+          flatEntityUpdate: { isActive: true },
+        }),
+      ).errors,
+    ).toHaveLength(1);
+  });
+
+  it('allows showing a navigation command whose object is active', () => {
+    expect(
+      service.validateFlatCommandMenuItemUpdate(
+        buildUpdateArgs({
+          isObjectActive: true,
+          flatEntityUpdate: { isActive: true },
+        }),
+      ).errors,
+    ).toEqual([]);
+  });
+
+  it('allows other updates on a navigation command whose object is inactive', () => {
+    expect(
+      service.validateFlatCommandMenuItemUpdate(
+        buildUpdateArgs({
+          isObjectActive: false,
+          flatEntityUpdate: { label: 'Renamed' },
+        }),
+      ).errors,
+    ).toEqual([]);
   });
 });

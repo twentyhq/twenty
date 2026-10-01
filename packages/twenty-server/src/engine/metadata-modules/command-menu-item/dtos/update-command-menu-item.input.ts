@@ -46,6 +46,11 @@ export class UpdateCommandMenuItemInput {
   @Field({ nullable: true })
   isPinned?: boolean;
 
+  @IsBoolean()
+  @IsOptional()
+  @Field({ nullable: true })
+  isActive?: boolean;
+
   @IsEnum(CommandMenuItemAvailabilityType)
   @IsOptional()
   @Field(() => CommandMenuItemAvailabilityType, { nullable: true })
