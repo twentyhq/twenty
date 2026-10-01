@@ -1,6 +1,6 @@
 import { getAgentChatThreadInboxScope } from '@/ai/utils/getAgentChatThreadInboxScope';
 import { isAgentChatThreadUnread } from '@/ai/utils/isAgentChatThreadUnread';
-import { type AgentChatThreadInboxScope } from '@/ai/types/AgentChatThreadInboxScope';
+import { type AgentChatThreadInboxStatus } from '@/ai/types/AgentChatThreadInboxStatus';
 import { agentChatThreadInboxNowState } from '@/ai/states/agentChatThreadInboxNowState';
 import { agentChatThreadKeptUnreadIdState } from '@/ai/states/agentChatThreadKeptUnreadIdState';
 import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
@@ -9,11 +9,6 @@ import { hasLoadedAgentChatThreadParticipantsState } from '@/ai/states/hasLoaded
 import { buildAgentChatThreadInboxState } from '@/ai/utils/buildAgentChatThreadInboxState';
 import { agentChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
 import { createAtomFamilySelector } from '@/ui/utilities/state/jotai/utils/createAtomFamilySelector';
-
-type AgentChatThreadInboxStatus = {
-  scope: AgentChatThreadInboxScope;
-  isUnread: boolean;
-};
 
 type AgentChatThreadInboxStatusFamilyKey = {
   threadId: string;

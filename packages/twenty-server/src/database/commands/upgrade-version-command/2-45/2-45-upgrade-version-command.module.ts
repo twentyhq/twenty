@@ -7,6 +7,7 @@ import { GateWorkflowCommandsOnRecordUpdatePermissionCommand } from 'src/databas
 import { RemoveSeeVersionWorkflowRunCommandMenuItemCommand } from 'src/database/commands/upgrade-version-command/2-45/2-45-workspace-command-1790860694324-remove-see-version-workflow-run-command-menu-item.command';
 import { AddAgentChatThreadParticipantObjectCommand } from 'src/database/commands/upgrade-version-command/2-45/2-45-workspace-command-1790861454223-add-agent-chat-thread-participant-object.command';
 import { BackfillAgentChatThreadInboxStateCommand } from 'src/database/commands/upgrade-version-command/2-45/2-45-workspace-command-1790861454224-backfill-agent-chat-thread-inbox-state.command';
+import { AddAiChatInboxCommandMenuItemsCommand } from 'src/database/commands/upgrade-version-command/2-45/2-45-workspace-command-1790869489858-add-ai-chat-inbox-command-menu-items.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
@@ -25,6 +26,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     RemoveSeeVersionWorkflowRunCommandMenuItemCommand,
     AddAgentChatThreadParticipantObjectCommand,
     BackfillAgentChatThreadInboxStateCommand,
+    AddAiChatInboxCommandMenuItemsCommand,
   ],
 })
 export class V2_45_UpgradeVersionCommandModule {}

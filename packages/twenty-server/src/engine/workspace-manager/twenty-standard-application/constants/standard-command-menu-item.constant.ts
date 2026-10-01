@@ -940,6 +940,106 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     engineComponentKey: EngineComponentKey.SHARE_RECORD,
     hotKeys: null,
   },
+  markAiChatAsRead: {
+    universalIdentifier: '094d0b1f-91db-4e9a-ae8e-eed425b788b4',
+    label: i18nLabel(
+      msg({ message: `Mark as read`, context: 'commandMenuItem.label' }),
+    ),
+    icon: 'IconEye',
+    isPinned: false,
+    position: 73,
+    shortLabel: i18nLabel(
+      msg({ message: `Mark as read`, context: 'commandMenuItem.shortLabel' }),
+    ),
+    availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
+    conditionalAvailabilityExpression:
+      'numberOfSelectedRecords == 1 and permissionFlags.AI and noneDefined(selectedRecords, "deletedAt") and every(selectedRecords, "inboxStatus.isUnread")',
+    availabilityObjectMetadataUniversalIdentifier:
+      STANDARD_OBJECTS.agentChatThread.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.MARK_AI_CHAT_AS_READ,
+    hotKeys: null,
+  },
+  markAiChatAsUnread: {
+    universalIdentifier: '3a7762aa-2090-4113-85a6-f41295b9aed6',
+    label: i18nLabel(
+      msg({ message: `Mark as unread`, context: 'commandMenuItem.label' }),
+    ),
+    icon: 'IconEyeOff',
+    isPinned: false,
+    position: 74,
+    shortLabel: i18nLabel(
+      msg({ message: `Mark as unread`, context: 'commandMenuItem.shortLabel' }),
+    ),
+    availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
+    conditionalAvailabilityExpression:
+      'numberOfSelectedRecords == 1 and permissionFlags.AI and noneDefined(selectedRecords, "deletedAt") and everyEquals(selectedRecords, "inboxStatus.isUnread", false)',
+    availabilityObjectMetadataUniversalIdentifier:
+      STANDARD_OBJECTS.agentChatThread.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.MARK_AI_CHAT_AS_UNREAD,
+    hotKeys: null,
+  },
+  markAiChatAsDone: {
+    universalIdentifier: 'be18e927-4873-496d-bc12-b767b995653f',
+    label: i18nLabel(
+      msg({ message: `Mark as done`, context: 'commandMenuItem.label' }),
+    ),
+    icon: 'IconProgressCheck',
+    isPinned: true,
+    position: 75,
+    shortLabel: i18nLabel(
+      msg({ message: `Done`, context: 'commandMenuItem.shortLabel' }),
+    ),
+    availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
+    conditionalAvailabilityExpression:
+      'numberOfSelectedRecords == 1 and permissionFlags.AI and noneDefined(selectedRecords, "deletedAt") and everyEquals(selectedRecords, "inboxStatus.scope", "INBOX")',
+    availabilityObjectMetadataUniversalIdentifier:
+      STANDARD_OBJECTS.agentChatThread.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.MARK_AI_CHAT_AS_DONE,
+    hotKeys: null,
+  },
+  reopenAiChat: {
+    universalIdentifier: 'c3166829-0e0e-4821-9851-de5cf18945f3',
+    label: i18nLabel(
+      msg({ message: `Reopen`, context: 'commandMenuItem.label' }),
+    ),
+    icon: 'IconCircleDashed',
+    isPinned: true,
+    position: 76,
+    shortLabel: i18nLabel(
+      msg({ message: `Reopen`, context: 'commandMenuItem.shortLabel' }),
+    ),
+    availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
+    conditionalAvailabilityExpression:
+      'numberOfSelectedRecords == 1 and permissionFlags.AI and noneDefined(selectedRecords, "deletedAt") and everyDefined(selectedRecords, "inboxStatus") and noneEquals(selectedRecords, "inboxStatus.scope", "INBOX")',
+    availabilityObjectMetadataUniversalIdentifier:
+      STANDARD_OBJECTS.agentChatThread.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.REOPEN_AI_CHAT,
+    hotKeys: null,
+  },
+  snoozeAiChat: {
+    universalIdentifier: '9fbb747d-2e09-4822-a1e5-6792d0a28fb7',
+    label: i18nLabel(
+      msg({ message: `Snooze`, context: 'commandMenuItem.label' }),
+    ),
+    icon: 'IconClock',
+    isPinned: false,
+    position: 77,
+    shortLabel: i18nLabel(
+      msg({ message: `Snooze`, context: 'commandMenuItem.shortLabel' }),
+    ),
+    availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
+    conditionalAvailabilityExpression:
+      'numberOfSelectedRecords == 1 and permissionFlags.AI and noneDefined(selectedRecords, "deletedAt") and everyDefined(selectedRecords, "inboxStatus")',
+    availabilityObjectMetadataUniversalIdentifier:
+      STANDARD_OBJECTS.agentChatThread.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.SNOOZE_AI_CHAT,
+    hotKeys: null,
+  },
   replyToEmailThread: {
     universalIdentifier: '8f015cbd-c764-434e-a6c6-bb7581b4be44',
     label: i18nLabel(

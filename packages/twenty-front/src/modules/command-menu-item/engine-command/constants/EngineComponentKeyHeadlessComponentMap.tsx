@@ -34,6 +34,11 @@ import { DuplicateMessageListSingleRecordCommand } from '@/command-menu-item/eng
 import { EditDashboardSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/dashboard/components/EditDashboardSingleRecordCommand';
 import { SaveDashboardSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/dashboard/components/SaveDashboardSingleRecordCommand';
 import { ReplyToEmailThreadCommand } from '@/command-menu-item/engine-command/record/single-record/message-thread/components/ReplyToEmailThreadCommand';
+import { MarkAiChatAsReadSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/agent-chat-thread/components/MarkAiChatAsReadSingleRecordCommand';
+import { MarkAiChatAsUnreadSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/agent-chat-thread/components/MarkAiChatAsUnreadSingleRecordCommand';
+import { MarkAiChatAsDoneSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/agent-chat-thread/components/MarkAiChatAsDoneSingleRecordCommand';
+import { ReopenAiChatSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/agent-chat-thread/components/ReopenAiChatSingleRecordCommand';
+import { SnoozeAiChatSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/agent-chat-thread/components/SnoozeAiChatSingleRecordCommand';
 import { NewAiChatSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/agent-chat-thread/components/NewAiChatSingleRecordCommand';
 import { ShareRecordCommand } from '@/command-menu-item/engine-command/record/components/ShareRecordCommand';
 import { SeeVersionWorkflowRunSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/workflow-runs/components/SeeVersionWorkflowRunSingleRecordCommand';
@@ -261,6 +266,17 @@ export const ENGINE_COMPONENT_KEY_COMPONENT_MAP: Record<
   [EngineComponentKey.REPLY_TO_EMAIL_THREAD]: <ReplyToEmailThreadCommand />,
   [EngineComponentKey.NEW_AI_CHAT]: <NewAiChatSingleRecordCommand />,
   [EngineComponentKey.SHARE_RECORD]: <ShareRecordCommand />,
+  [EngineComponentKey.MARK_AI_CHAT_AS_READ]: (
+    <MarkAiChatAsReadSingleRecordCommand />
+  ),
+  [EngineComponentKey.MARK_AI_CHAT_AS_UNREAD]: (
+    <MarkAiChatAsUnreadSingleRecordCommand />
+  ),
+  [EngineComponentKey.MARK_AI_CHAT_AS_DONE]: (
+    <MarkAiChatAsDoneSingleRecordCommand />
+  ),
+  [EngineComponentKey.REOPEN_AI_CHAT]: <ReopenAiChatSingleRecordCommand />,
+  [EngineComponentKey.SNOOZE_AI_CHAT]: <SnoozeAiChatSingleRecordCommand />,
   [EngineComponentKey.COMPOSE_EMAIL]: <ComposeEmailCommand />,
   [EngineComponentKey.COMPOSE_CAMPAIGN]: <ComposeCampaignCommand />,
   [EngineComponentKey.SEND_MESSAGE_CAMPAIGN]: (

@@ -1,3 +1,4 @@
+import { agentChatThreadInboxStatusesFamilySelector } from '@/ai/states/selectors/agentChatThreadInboxStatusesFamilySelector';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -29,6 +30,7 @@ import { isNonEmptyArray } from '@sniptt/guards';
 import { useAtomValue, useStore } from 'jotai';
 import {
   ContextStorePageType,
+  CoreObjectNameSingular,
   type CommandMenuContextApi,
 } from 'twenty-shared/types';
 import { isDefined, resolveObjectMetadataLabel } from 'twenty-shared/utils';
@@ -89,12 +91,30 @@ export const useCurrentCommandMenuContextApi = (): CommandMenuContextApi => {
     },
   );
 
-  // Records shared below the role's access level carry their own permissions, which availability expressions read per record
-  const selectedRecords = storedSelectedRecords.map((record) =>
-    isDefined(recordPermissionsByRecordId[record.id])
-      ? { ...record, recordPermissions: recordPermissionsByRecordId[record.id] }
-      : record,
+  // A chat's read and done state belongs to the member, not to the record,
+  // so the inbox commands read it from here
+  const agentChatThreadInboxStatuses = useAtomFamilySelectorValue(
+    agentChatThreadInboxStatusesFamilySelector,
+    objectMetadataItem?.nameSingular === CoreObjectNameSingular.AgentChatThread
+      ? (recordIds ?? [])
+      : [],
   );
+
+  // Records shared below the role's access level carry their own permissions, which availability expressions read per record
+  const selectedRecords = storedSelectedRecords.map((record) => {
+    const recordWithPermissions = isDefined(
+      recordPermissionsByRecordId[record.id],
+    )
+      ? { ...record, recordPermissions: recordPermissionsByRecordId[record.id] }
+      : record;
+
+    return isDefined(agentChatThreadInboxStatuses[record.id])
+      ? {
+          ...recordWithPermissions,
+          inboxStatus: agentChatThreadInboxStatuses[record.id],
+        }
+      : recordWithPermissions;
+  });
 
   const currentPageLayoutId = useAtomStateValue(currentPageLayoutIdState);
 
