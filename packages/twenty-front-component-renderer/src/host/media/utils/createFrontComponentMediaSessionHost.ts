@@ -127,12 +127,10 @@ export const createFrontComponentMediaSessionHost = ({
   let isMediaPolicyRequestPending = false;
   let liveCaptureSessionCount = 0;
   let transport: MediaSessionEventTransport | null = null;
-  // Bumped by stopAllSessions so a getUserMedia still pending at teardown
-  // cannot register a stream nobody owns anymore.
+  // Bumped on teardown so a pending getUserMedia can't register an orphaned stream.
   let teardownGeneration = 0;
   let cancelPendingStart: (() => void) | null = null;
-  // Recorder chunks must survive the window before the worker transport is
-  // connected, so events buffer instead of dropping.
+  // Buffered so recorder chunks survive until the worker transport connects.
   let bufferedEvents: MediaSessionEvent[] = [];
 
   const pushEvents = (events: MediaSessionEvent[]): void => {
@@ -399,8 +397,7 @@ export const createFrontComponentMediaSessionHost = ({
     liveCaptureSessionCount += 1;
 
     for (const track of mediaStream.getTracks()) {
-      // Fires for external endings (device unplugged, permission revoked),
-      // not for stop() calls: those are reported to the worker explicitly.
+      // Fires only for external endings; stop() calls are reported to the worker explicitly.
       track.addEventListener('ended', () => {
         pushEvents([{ type: 'track-ended', streamId, trackId: track.id }]);
         refreshStreamSessionLiveness(streamId);
@@ -600,8 +597,7 @@ export const createFrontComponentMediaSessionHost = ({
         }
 
         track.stop();
-        // stop() fires no native ended event, so the worker is told
-        // explicitly that its tracks are gone.
+        // stop() fires no native ended event, so the worker is told explicitly.
         endedTrackEvents.push({
           type: 'track-ended',
           streamId: streamSession.streamId,

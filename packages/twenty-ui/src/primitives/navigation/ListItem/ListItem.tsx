@@ -6,9 +6,9 @@ import { type MouseEvent } from 'react';
 import { IconCheck, IconChevronRight } from '@ui/icon';
 import { Shortcut } from '@ui/primitives/typography/Shortcut/Shortcut';
 import { OverflowingTextWithTooltip } from '@ui/primitives/typography/OverflowingTextWithTooltip/OverflowingTextWithTooltip';
+import { isRenderableSlot } from '@ui/utilities/internal/isRenderableSlot';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
-import { isRenderableSlot } from './internal/isRenderableSlot';
 import { ListItemCheckboxIndicator } from './internal/ListItemCheckboxIndicator';
 import styles from './ListItem.module.scss';
 import { type ListItemProps } from './types/ListItemProps';

@@ -137,8 +137,7 @@ export class ApplicationRegistrationService {
   constructor(
     @InjectRepository(ApplicationRegistrationEntity)
     private readonly applicationRegistrationRepository: Repository<ApplicationRegistrationEntity>,
-    // Registration-owner stats: version distribution and the installed-workspace
-    // list are aggregates over every workspace that installed it.
+    // Stats aggregate over every workspace that installed the app
     // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(ApplicationEntity)
     private readonly applicationRepository: Repository<ApplicationEntity>,
@@ -236,8 +235,7 @@ export class ApplicationRegistrationService {
     }
   }
 
-  // Best-effort: a queue outage must not fail the publish flow that
-  // triggered the upgrade.
+  // Best-effort: a queue outage must not fail the publish flow
   async enqueueAutoUpgradeApplications(
     applicationRegistrationId: string,
   ): Promise<void> {
@@ -362,8 +360,7 @@ export class ApplicationRegistrationService {
       );
     }
 
-    // Configuration status is computed from variables and installs, not stored
-    // on the registration, so this filter paginates in memory.
+    // Configuration status is computed, not stored, so this filter paginates in memory
     if (isDefined(isConfigured)) {
       const allRegistrations = await queryBuilder.getMany();
 
@@ -466,7 +463,6 @@ export class ApplicationRegistrationService {
     return applicationRegistration;
   }
 
-  // Global lookup — used by OAuth flow (no workspace scoping)
   async findOneByClientId(
     clientId: string,
   ): Promise<ApplicationRegistrationEntity | null> {
@@ -475,7 +471,6 @@ export class ApplicationRegistrationService {
     });
   }
 
-  // Global lookup — used by OAuth authorize page (no workspace scoping)
   async findPublicByClientId(
     clientId: string,
   ): Promise<PublicApplicationRegistrationDTO | null> {
@@ -620,8 +615,7 @@ export class ApplicationRegistrationService {
     return this.findOneByIdGlobal(id);
   }
 
-  // Instance-wide flags travel apart from the payload so the
-  // workspace-scoped update has no way to set them.
+  // Instance-wide flags are kept apart from the payload so the workspace-scoped update cannot set them
   private async applyUpdate({
     id,
     update,
@@ -750,9 +744,7 @@ export class ApplicationRegistrationService {
         const updatePayload =
           updateFields as QueryDeepPartialEntity<ApplicationRegistrationEntity>;
 
-        // Partial update in one transaction: the row and its variable schemas
-        // stay on the same manifest without clobbering columns written by
-        // flows outside this lock.
+        // One transaction keeps the row and its variable schemas on the same manifest; partial so columns written outside this lock survive
         await this.applicationRegistrationRepository.manager.transaction(
           async (entityManager) => {
             await entityManager
@@ -798,8 +790,7 @@ export class ApplicationRegistrationService {
       ownerWorkspaceId,
     });
 
-    // Stored assets (logo, gallery images) go with the registration; deleting
-    // them first also removes the bytes, which the row FK cascade cannot do.
+    // Deleted explicitly: the FK cascade removes rows, not stored bytes
     try {
       await this.serverFileStorageService.deleteByApplicationRegistrationId(
         applicationRegistrationId,
@@ -1177,8 +1168,7 @@ export class ApplicationRegistrationService {
     };
   }
 
-  // Installed workspaces are only exposed in the admin panel, which views apps
-  // across all workspaces, so ownership is not enforced.
+  // Admin panel only, which views apps across all workspaces, so ownership is not enforced
   async getInstalledWorkspacesGlobal(
     applicationRegistrationId: string,
     limit: number,
@@ -1299,8 +1289,7 @@ export class ApplicationRegistrationService {
       );
     }
 
-    // Claim atomically: only update while still unowned so concurrent
-    // claimers can't overwrite each other (first-claimant-wins).
+    // Conditional update so concurrent claimers cannot overwrite each other
     const updateResult = await this.applicationRegistrationRepository.update(
       { id: registration.id, ownerWorkspaceId: IsNull() },
       { ownerWorkspaceId: params.claimingWorkspaceId },

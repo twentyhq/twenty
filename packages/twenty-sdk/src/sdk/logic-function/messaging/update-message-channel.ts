@@ -16,11 +16,9 @@ export type UpdateMessageChannelInput = {
   id: string;
   // Omitted leaves the current label untouched; null clears it.
   displayName?: string | null;
-  // Changing this changes who can read every message already ingested into
-  // the channel, not just the ones that follow.
+  // Changes who can read every message already ingested, not just the ones that follow
   visibility?: MessageChannelVisibility;
-  // False pauses ingestion without deleting the history; ingesting into a
-  // paused channel is rejected.
+  // False pauses ingestion (further ingests are rejected) without deleting the history
   isSyncEnabled?: boolean;
 };
 

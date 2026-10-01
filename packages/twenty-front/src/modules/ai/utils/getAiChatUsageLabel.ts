@@ -8,12 +8,14 @@ export const getAiChatUsageLabel = ({
   hasUsage,
   daysUntilReset,
   creditPercentage,
+  unavailableConsumptionLabel = '—',
 }: {
   loading: boolean;
   hasError: boolean;
   hasUsage: boolean;
   daysUntilReset: number | null;
   creditPercentage: number | null;
+  unavailableConsumptionLabel?: string;
 }): string => {
   if (loading) {
     return t`Loading…`;
@@ -28,7 +30,7 @@ export const getAiChatUsageLabel = ({
   }
 
   if (!isDefined(creditPercentage)) {
-    return '—';
+    return unavailableConsumptionLabel;
   }
 
   const percentage = formatNumber(creditPercentage, { decimals: 1 });

@@ -243,6 +243,35 @@ export const SelectionReturnsToPreviousPage: Story = {
   },
 };
 
+export const PageWithoutSearchFocusesFirstOption: Story = {
+  render: () => (
+    <Dropdown.Root type="picker">
+      <Dropdown.Trigger>Filters</Dropdown.Trigger>
+      <Dropdown.Content aria-label="Filters">
+        <Dropdown.Page id="root">
+          <Dropdown.ActionItem page="status">Status</Dropdown.ActionItem>
+        </Dropdown.Page>
+        <Dropdown.Page id="status">
+          <Dropdown.Back>Back to filters</Dropdown.Back>
+          <StatusOptions />
+        </Dropdown.Page>
+      </Dropdown.Content>
+    </Dropdown.Root>
+  ),
+  play: async ({ canvasElement }) => {
+    const body = within(canvasElement.ownerDocument.body);
+
+    await openFilters(canvasElement);
+    await userEvent.click(await body.findByRole('button', { name: 'Status' }));
+    await waitFor(() =>
+      expect(body.getByRole('button', { name: 'Active' })).toHaveFocus(),
+    );
+    await userEvent.keyboard('{Enter}');
+
+    expect(onStatusChange).toHaveBeenCalledWith('Active');
+  },
+};
+
 export const ProgrammaticNavigation: Story = {
   render: () => (
     <Dropdown.Root type="menu">

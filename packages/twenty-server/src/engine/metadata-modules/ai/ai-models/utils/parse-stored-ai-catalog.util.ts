@@ -14,7 +14,7 @@ export type SkippedStoredAiCatalogEntry = {
 
 const storedCatalogSchema = z.record(z.string(), z.unknown());
 
-// Models are read one by one below, so a provider is read without them first.
+// the provider is read without its models, which are validated one by one below
 const storedProviderSchema = aiProviderConfigSchema.extend({
   models: z.array(z.unknown()).optional(),
 });
@@ -46,9 +46,7 @@ const describeModelEntry = ({
     : `${providerKey}.models[${index}]`;
 };
 
-// The stored catalog ships with every deploy and can be newer than the server
-// reading it, so an entry this version cannot read is dropped on its own
-// rather than taking every other provider down with it.
+// the stored catalog can be newer than this server, so unreadable entries are dropped individually
 export const parseStoredAiCatalog = (
   raw: unknown,
 ): {

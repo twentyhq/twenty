@@ -141,8 +141,7 @@ export const ENGINE_COMPONENT_KEY_COMPONENT_MAP: Record<
     <CancelDashboardSingleRecordCommand />
   ),
   [EngineComponentKey.NAVIGATION]: <NavigationEngineCommand />,
-  // TODO: Remove these keys once we have ran the migration command `upgrade:1-21:refactor-navigation-commands`
-  // These keys are kept for backward compatibility during migration
+  // TODO: remove these keys once `upgrade:1-21:refactor-navigation-commands` has run
   [EngineComponentKey.GO_TO_PEOPLE]: (
     <HeadlessNavigateEngineCommand
       to={AppPath.RecordIndexPage}

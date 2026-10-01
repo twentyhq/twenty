@@ -18,8 +18,7 @@ type IsOneToManyRelationFieldReadOnlyDueToTargetUpdatePermissionParams = {
   objectPermissionsByObjectMetadataId: ObjectPermissionsByObjectMetadataId;
 };
 
-// Attaching or detaching writes the join column owned by the inverse many-to-one
-// field, so a field-level restriction there blocks the edit too.
+// Attaching or detaching writes the inverse many-to-one's join column, so its field restriction applies.
 const isTargetRecordUpdateBlocked = ({
   objectPermissionsByObjectMetadataId,
   targetObjectMetadataId,
@@ -45,8 +44,6 @@ const isTargetRecordUpdateBlocked = ({
   );
 };
 
-// One-to-many edits persist by updating the related (or junction) record, not the
-// source row — require canUpdate on that object metadata.
 export const isOneToManyRelationFieldReadOnlyDueToTargetUpdatePermission = ({
   fieldDefinition,
   objectPermissionsByObjectMetadataId,
