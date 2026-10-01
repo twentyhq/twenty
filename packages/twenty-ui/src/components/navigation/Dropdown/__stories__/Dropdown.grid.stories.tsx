@@ -161,3 +161,70 @@ export const SubmenuGrid: Story = {
     expect(onSelect).not.toHaveBeenCalled();
   },
 };
+
+export const PanelSubmenuGrid: Story = {
+  render: () => (
+    <Dropdown.Root type="menu">
+      <Dropdown.Trigger>Insert</Dropdown.Trigger>
+      <Dropdown.Content aria-label="Insert">
+        <Dropdown.Submenu type="panel">
+          <Dropdown.SubmenuTrigger>Icons</Dropdown.SubmenuTrigger>
+          <Dropdown.Content aria-label="Icon shortcuts">
+            <Dropdown.Section columns={3} aria-label="Icons">
+              {Array.from({ length: 3 }, (_, index) => (
+                <Dropdown.OptionItem
+                  key={index}
+                  selected={false}
+                  indicator="none"
+                  nativeButton
+                  aria-label={`Calendar ${index + 1}`}
+                  render={
+                    <LightIconButton
+                      size="md"
+                      aria-label={`Calendar ${index + 1}`}
+                    >
+                      <IconCalendar />
+                    </LightIconButton>
+                  }
+                  onSelect={() => onSelect(index)}
+                />
+              ))}
+            </Dropdown.Section>
+          </Dropdown.Content>
+        </Dropdown.Submenu>
+      </Dropdown.Content>
+    </Dropdown.Root>
+  ),
+  play: async ({ canvasElement }) => {
+    const body = within(canvasElement.ownerDocument.body);
+
+    await userEvent.tab();
+    await userEvent.keyboard('{ArrowDown}');
+    const submenuTrigger = await body.findByRole('menuitem', {
+      name: 'Icons',
+    });
+
+    await waitFor(() => expect(submenuTrigger).toHaveFocus());
+    await userEvent.keyboard('{ArrowRight}');
+    const submenu = await body.findByRole('dialog', {
+      name: 'Icon shortcuts',
+    });
+
+    await waitFor(() => expect(submenu).toBeVisible());
+    await waitFor(() =>
+      expect(
+        within(submenu).getByRole('button', { name: 'Calendar 1' }),
+      ).toHaveFocus(),
+    );
+    await userEvent.tab();
+    expect(
+      within(submenu).getByRole('button', { name: 'Calendar 2' }),
+    ).toHaveFocus();
+    await userEvent.keyboard('{ArrowLeft}');
+    await waitFor(() =>
+      expect(body.queryByRole('dialog')).not.toBeInTheDocument(),
+    );
+    await waitFor(() => expect(submenuTrigger).toHaveFocus());
+    expect(onSelect).not.toHaveBeenCalled();
+  },
+};

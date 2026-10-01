@@ -47,15 +47,16 @@ export const useDropdownKeyboardNavigation = ({
     const backwardKey = isRightToLeft ? 'ArrowRight' : 'ArrowLeft';
     const isSubmenuBackwardKey =
       isSubmenu && !isEditable && event.key === backwardKey;
-    const backwardGridItem = isSubmenuBackwardKey
-      ? getNextDropdownGridItem({
-          key: event.key,
-          items: getDropdownItems(content),
-          currentItem: target,
-          search: null,
-          isRightToLeft,
-        })
-      : undefined;
+    const backwardGridItem =
+      isSubmenuBackwardKey && type !== 'panel'
+        ? getNextDropdownGridItem({
+            key: event.key,
+            items: getDropdownItems(content),
+            currentItem: target,
+            search: null,
+            isRightToLeft,
+          })
+        : undefined;
     const canMoveBackwardInGrid =
       isDefined(backwardGridItem) && backwardGridItem !== target;
 
