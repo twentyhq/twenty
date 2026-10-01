@@ -474,6 +474,7 @@ describe('ObjectRecordEventPublisher', () => {
         ],
       } as WorkspaceEventBatch<never>);
 
+      expect(mockSubscriptionService.publishToEventStream).toHaveBeenCalled();
       const publishCall = (
         mockSubscriptionService.publishToEventStream as jest.Mock
       ).mock.calls[0][0];

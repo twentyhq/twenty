@@ -6,7 +6,6 @@ import { type ObjectRecordEvent } from 'twenty-shared/database-events';
 import { FeatureFlagKey, type ObjectRecord } from 'twenty-shared/types';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import { isNonEmptyString } from '@sniptt/guards';
-import { EVERYONE_PRINCIPAL_ID } from 'twenty-shared/constants';
 import { In, MoreThanOrEqual } from 'typeorm';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -19,6 +18,7 @@ import {
   type EventRecordSnapshot,
   resolveEventRecordSnapshots,
 } from 'src/engine/core-modules/record-share/utils/resolve-event-record-snapshots.util';
+import { resolveNamedPrincipalIds } from 'src/engine/core-modules/record-share/utils/resolve-named-principal-ids.util';
 import { resolveRecordIdsRestrictedForPrincipals } from 'src/engine/core-modules/record-share/utils/resolve-record-ids-restricted-for-principals.util';
 import { resolveRecordIdsSharedWithPrincipals } from 'src/engine/core-modules/record-share/utils/resolve-record-ids-shared-with-principals.util';
 import { isRecordGrantBeyondRoleAllowed } from 'src/engine/core-modules/record-share/utils/is-record-grant-beyond-role-allowed.util';
@@ -72,9 +72,7 @@ export class RecordAccessPolicyService {
     private readonly recordShareStorageService: RecordShareStorageService,
   ) {}
 
-  // A subject receives the records a query would return it: its role must read
-  // the object and the row-level filter must hold on the event snapshot before
-  // the share gate of the object is consulted.
+  // Mirrors the query gate: role read, then the row-level filter on the event snapshot, then the share gate.
   buildEventRecordAccessGate({
     workspaceId,
     objectMetadata,
@@ -226,9 +224,7 @@ export class RecordAccessPolicyService {
     }: Omit<SnapshotEvaluation, 'depth'>,
     fetchRecordShares: FetchRecordShares,
   ): Promise<Set<string>> {
-    const namedPrincipalIds = (subject.principalIds ?? []).filter(
-      (principalId) => principalId !== EVERYONE_PRINCIPAL_ID,
-    );
+    const namedPrincipalIds = resolveNamedPrincipalIds(subject);
 
     if (
       snapshots.length === 0 ||
@@ -507,8 +503,7 @@ export class RecordAccessPolicyService {
             ),
           ),
         );
-        // A row trashed along with the record still attaches it, as in the
-        // query gate; rows trashed before any of these records cannot
+        // Rows trashed along with the record still attach it, as in the query gate; rows trashed earlier do not.
         const trashedChildRows = await childRepository
           .createQueryBuilder()
           .select(['id', parent.childJoinColumnName, 'deletedAt'])

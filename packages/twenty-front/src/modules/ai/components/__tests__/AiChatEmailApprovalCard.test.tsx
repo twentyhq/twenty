@@ -51,7 +51,6 @@ describe('AiChatEmailApprovalCard', () => {
       },
       optimisticToolOutput: undefined,
     });
-    // Nothing else can be decided while the answer is on its way.
     expect(
       screen.getByRole('button', { name: 'Save as draft' }),
     ).toBeDisabled();

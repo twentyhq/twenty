@@ -63,8 +63,6 @@ const buildSendChatMessageMock = (
 const readPersistedDrafts = () =>
   JSON.parse(localStorage.getItem(DRAFTS_STORAGE_KEY) ?? '{}');
 
-// The composer subscribes to the drafts, which reads them back from local
-// storage.
 const renderAgentChat = ({
   persistedDrafts,
   sendChatMessageOutcomes,
@@ -80,7 +78,6 @@ const renderAgentChat = ({
     },
   });
 
-  // Set once the wrapper has reset the session's storage.
   localStorage.setItem(DRAFTS_STORAGE_KEY, JSON.stringify(persistedDrafts));
 
   const Wrapper = ({ children }: { children: ReactNode }) => (

@@ -97,8 +97,7 @@ export const SingleRecordPickerMenuItems = ({
       selectableListInstanceId={selectableListComponentInstanceId}
       selectableItemIdArray={selectableItemIds}
       focusId={focusId}
-      // The empty option leads the list, so preselecting it would make Enter
-      // detach the relation instead of picking a record.
+      // The empty option leads, so preselecting it would make Enter detach the relation.
       shouldPreselectFirstItem={!isDefined(emptyLabel)}
     >
       {emptyLabel && (

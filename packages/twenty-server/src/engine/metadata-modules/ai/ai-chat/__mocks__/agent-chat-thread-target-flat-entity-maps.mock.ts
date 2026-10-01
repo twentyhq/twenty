@@ -23,8 +23,7 @@ for (const flatFieldMetadata of Object.values(
   ]);
 }
 
-// The standard application computes its objects with empty fieldIds, which the
-// workspace cache fills in, and the target's legs are found through them.
+// standard objects come with empty fieldIds that the workspace cache fills in
 export const AGENT_CHAT_THREAD_TARGET_FLAT_ENTITY_MAPS_MOCK: Pick<
   AllFlatEntityMaps,
   'flatObjectMetadataMaps' | 'flatFieldMetadataMaps'

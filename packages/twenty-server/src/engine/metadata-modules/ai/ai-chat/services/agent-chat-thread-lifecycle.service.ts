@@ -61,8 +61,7 @@ export class AgentChatThreadLifecycleService {
       );
   }
 
-  // Awaited by the soft delete paths so the stream is stopped before they
-  // respond
+  // awaited so the stream stops before the soft delete responds
   async stopDeletedThreads({
     workspaceId,
     threadIds,
@@ -88,8 +87,7 @@ export class AgentChatThreadLifecycleService {
     }
   }
 
-  // A run's conversation is the record of what its agent step did, so the
-  // record API may read it but not edit, delete or destroy it
+  // a run's conversation records what its agent step did, so the record API may only read it
   async assertThreadIsNotWorkflowRunThread({
     workspaceId,
     threadId,
@@ -109,8 +107,7 @@ export class AgentChatThreadLifecycleService {
     }
   }
 
-  // The owner field is not writable through the record API. Owned and
-  // workflow-run threads are skipped so an upsert cannot reassign them
+  // owned and workflow-run threads are skipped so an upsert cannot reassign them
   async assignCreatedThreadsToCreator({
     authContext,
     threadIds,

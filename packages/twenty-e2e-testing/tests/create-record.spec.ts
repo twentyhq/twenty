@@ -71,7 +71,6 @@ test('Create and update record', async ({ page }) => {
 
   const randomEmail = `testuser_${Math.random().toString(36).substring(2, 10)}@example.com`;
 
-  // Fill the record creation form in the side panel
   const firstNameInput = page.locator('[contenteditable]').filter({
     has: page.locator('p[data-placeholder="F‌‌irst name"]'),
   });
@@ -96,7 +95,6 @@ test('Create and update record', async ({ page }) => {
 
   await page.getByTestId('record-creation-form-create-button').click();
 
-  // The created record opens in the side panel
   const recordFieldList = page.getByTestId('record-fields-widget');
   await expect(recordFieldList).toBeVisible({ timeout: 15_000 });
   await expect(recordFieldList.getByText(randomEmail)).toBeVisible({
@@ -146,7 +144,6 @@ test('Create and update record', async ({ page }) => {
     .first()
     .click({ force: true });
 
-  // Open full record page to get person ID
   await page.getByRole('button', { name: 'Expand record' }).click();
   await page.waitForURL(/\/object\/person\//);
   const newPersonId = page.url().match(/\/object\/person\/([a-f0-9-]+)/)?.[1];

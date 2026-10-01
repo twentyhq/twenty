@@ -59,7 +59,6 @@ const ALL_PERMISSION_FLAGS = [
   PermissionFlagType.AI_SETTINGS,
 ];
 
-// The skill chip reads its icon from the skill catalog
 const skillsApolloMock = {
   request: { query: FindManySkillsForSuggestionDocument },
   result: {
