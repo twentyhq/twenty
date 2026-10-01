@@ -50,6 +50,10 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Partial<
     label: msg`Record sharing`,
     description: msg`Let people restrict and share individual records.`,
   },
+  [FeatureFlagKey.IS_OBJECT_ACCESS_VIEW_ENABLED]: {
+    label: msg`Object access view`,
+    description: msg`Show who can see and edit each object in its settings.`,
+  },
   [FeatureFlagKey.IS_WEBHOOK_RATE_LIMIT_ENABLED]: {
     label: msg`Webhook rate limits`,
     description: msg`Limit the rate of outgoing webhook deliveries.`,

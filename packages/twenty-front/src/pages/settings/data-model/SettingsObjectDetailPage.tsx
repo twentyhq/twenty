@@ -6,6 +6,7 @@ import { WorkspaceRouteUnavailable } from '@/app/routing/components/WorkspaceRou
 import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { ObjectAccess } from '@/settings/data-model/object-details/components/tabs/ObjectAccess';
 import { ObjectFields } from '@/settings/data-model/object-details/components/tabs/ObjectFields';
 import { ObjectLayout } from '@/settings/data-model/object-details/components/tabs/ObjectLayout';
 import { ObjectSettings } from '@/settings/data-model/object-details/components/tabs/ObjectSettings';
@@ -26,15 +27,18 @@ import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTab
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useLingui } from '@lingui/react/macro';
 import { getAppPath, getSettingsPath, isDefined } from 'twenty-shared/utils';
 import {
   IconArrowUpRight,
   IconAppWindow,
   IconListDetails,
+  IconLock,
   IconPlus,
   IconSettings,
 } from 'twenty-ui/icon';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { SETTINGS_OBJECT_DETAIL_TABS } from '~/pages/settings/data-model/constants/SettingsObjectDetailTabs';
 import { updatedObjectNamePluralState } from '~/pages/settings/data-model/states/updatedObjectNamePluralState';
@@ -79,6 +83,10 @@ export const SettingsObjectDetailPage = () => {
     ) ?? SETTINGS_OBJECT_DETAIL_TABS.TABS_IDS.FIELDS;
 
   const [isDeleting, setIsDeleting] = useState(false);
+
+  const isObjectAccessViewEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_OBJECT_ACCESS_VIEW_ENABLED,
+  );
 
   useEffect(() => {
     if (objectNamePlural === updatedObjectNamePlural)
@@ -126,6 +134,15 @@ export const SettingsObjectDetailPage = () => {
         objectMetadataItem.isRemote ||
         objectMetadataItem.nameSingular === CoreObjectNameSingular.Dashboard,
     },
+    {
+      id: SETTINGS_OBJECT_DETAIL_TABS.TABS_IDS.ACCESS,
+      title: t`Access`,
+      Icon: IconLock,
+      hide:
+        !isObjectAccessViewEnabled ||
+        objectMetadataItem.isRemote ||
+        objectMetadataItem.isSystem,
+    },
   ];
 
   const renderActiveTabContent = () => {
@@ -142,6 +159,8 @@ export const SettingsObjectDetailPage = () => {
         );
       case SETTINGS_OBJECT_DETAIL_TABS.TABS_IDS.LAYOUT:
         return <ObjectLayout objectMetadataItem={objectMetadataItem} />;
+      case SETTINGS_OBJECT_DETAIL_TABS.TABS_IDS.ACCESS:
+        return <ObjectAccess objectMetadataItem={objectMetadataItem} />;
       default:
         return <></>;
     }

@@ -2142,6 +2142,7 @@ export enum FeatureFlagKey {
   IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED = 'IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED',
   IS_LOGS_SETTINGS_SECTION_ENABLED = 'IS_LOGS_SETTINGS_SECTION_ENABLED',
   IS_MESSAGE_CAMPAIGN_ENABLED = 'IS_MESSAGE_CAMPAIGN_ENABLED',
+  IS_OBJECT_ACCESS_VIEW_ENABLED = 'IS_OBJECT_ACCESS_VIEW_ENABLED',
   IS_RECORD_CREATION_FORM_ENABLED = 'IS_RECORD_CREATION_FORM_ENABLED',
   IS_RECORD_LEVEL_SHARING_ENABLED = 'IS_RECORD_LEVEL_SHARING_ENABLED',
   IS_REST_METADATA_API_NEW_FORMAT_DIRECT = 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT',
@@ -4725,6 +4726,27 @@ export type ObjectIndexMetadatasArgs = {
   paging?: CursorPaging;
 };
 
+export type ObjectAccessOverviewDto = {
+  __typename?: 'ObjectAccessOverviewDTO';
+  objectMetadataId: Scalars['UUID']['output'];
+  restrictedRecordCount: Scalars['Int']['output'];
+  roles: Array<ObjectAccessOverviewRoleDto>;
+  sharedRecordCount: Scalars['Int']['output'];
+};
+
+export type ObjectAccessOverviewRoleDto = {
+  __typename?: 'ObjectAccessOverviewRoleDTO';
+  canAccessAllRecords: Scalars['Boolean']['output'];
+  canDestroy: Scalars['Boolean']['output'];
+  canRead: Scalars['Boolean']['output'];
+  canSoftDelete: Scalars['Boolean']['output'];
+  canUpdate: Scalars['Boolean']['output'];
+  hasRowFilter: Scalars['Boolean']['output'];
+  icon?: Maybe<Scalars['String']['output']>;
+  id: Scalars['UUID']['output'];
+  label: Scalars['String']['output'];
+};
+
 export type ObjectConnection = {
   __typename?: 'ObjectConnection';
   /** Array of edges. */
@@ -5286,6 +5308,7 @@ export type Query = {
   navigationMenuItem?: Maybe<NavigationMenuItem>;
   navigationMenuItems: Array<NavigationMenuItem>;
   object: Object;
+  objectAccessOverview: ObjectAccessOverviewDto;
   objectRecordCounts: Array<ObjectRecordCount>;
   objects: ObjectConnection;
   pieChartData: PieChartData;
@@ -5733,6 +5756,11 @@ export type QueryNavigationMenuItemArgs = {
 
 export type QueryObjectArgs = {
   id: Scalars['UUID']['input'];
+};
+
+
+export type QueryObjectAccessOverviewArgs = {
+  objectMetadataId: Scalars['UUID']['input'];
 };
 
 
@@ -9705,6 +9733,13 @@ export type UsageQuotasWithConsumptionQueryVariables = Exact<{ [key: string]: ne
 
 export type UsageQuotasWithConsumptionQuery = { __typename?: 'Query', usageQuotasWithConsumption: Array<{ __typename?: 'UsageQuotaWithConsumption', id: string, resourceType: UsageResourceType, operationType: UsageOperationType, spenderType: string, spenderId?: string | null, spenderLabel?: string | null, periodUnit: string, meter: string, limitValue: any, isEnforced: boolean, consumedValue?: any | null, remainingValue?: any | null, periodStart?: string | null, periodEnd?: string | null }> };
 
+export type GetObjectAccessOverviewQueryVariables = Exact<{
+  objectMetadataId: Scalars['UUID']['input'];
+}>;
+
+
+export type GetObjectAccessOverviewQuery = { __typename?: 'Query', objectAccessOverview: { __typename?: 'ObjectAccessOverviewDTO', objectMetadataId: string, restrictedRecordCount: number, sharedRecordCount: number, roles: Array<{ __typename?: 'ObjectAccessOverviewRoleDTO', id: string, label: string, icon?: string | null, canRead: boolean, canUpdate: boolean, canSoftDelete: boolean, canDestroy: boolean, hasRowFilter: boolean, canAccessAllRecords: boolean }> } };
+
 export type ApiKeyFragmentFragment = { __typename?: 'ApiKey', id: string, name: string, expiresAt: string, revokedAt?: string | null, role: { __typename?: 'Role', id: string, label: string, icon?: string | null } };
 
 export type WebhookFragmentFragment = { __typename?: 'Webhook', id: string, targetUrl: string, operations: Array<string>, description?: string | null, secret: string };
@@ -10719,6 +10754,7 @@ export const ListPlansDocument = {"kind":"Document","definitions":[{"kind":"Oper
 export const UsageQuotaDefinitionsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"UsageQuotaDefinitions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"usageQuotaDefinitions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"definitions"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"resourceType"}},{"kind":"Field","name":{"kind":"Name","value":"allowedOperationTypes"}},{"kind":"Field","name":{"kind":"Name","value":"allowedSpenderTypes"}},{"kind":"Field","name":{"kind":"Name","value":"allowedMeters"}}]}},{"kind":"Field","name":{"kind":"Name","value":"isIntraWorkspaceLimitEntitled"}},{"kind":"Field","name":{"kind":"Name","value":"hasAllowancePeriod"}}]}}]}}]} as unknown as DocumentNode<UsageQuotaDefinitionsQuery, UsageQuotaDefinitionsQueryVariables>;
 export const UsageQuotaScopeConsumptionDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"UsageQuotaScopeConsumption"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UsageQuotaScopeInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"usageQuotaScopeConsumption"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"consumedValue"}},{"kind":"Field","name":{"kind":"Name","value":"periodStart"}},{"kind":"Field","name":{"kind":"Name","value":"periodEnd"}}]}}]}}]} as unknown as DocumentNode<UsageQuotaScopeConsumptionQuery, UsageQuotaScopeConsumptionQueryVariables>;
 export const UsageQuotasWithConsumptionDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"UsageQuotasWithConsumption"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"usageQuotasWithConsumption"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"resourceType"}},{"kind":"Field","name":{"kind":"Name","value":"operationType"}},{"kind":"Field","name":{"kind":"Name","value":"spenderType"}},{"kind":"Field","name":{"kind":"Name","value":"spenderId"}},{"kind":"Field","name":{"kind":"Name","value":"spenderLabel"}},{"kind":"Field","name":{"kind":"Name","value":"periodUnit"}},{"kind":"Field","name":{"kind":"Name","value":"meter"}},{"kind":"Field","name":{"kind":"Name","value":"limitValue"}},{"kind":"Field","name":{"kind":"Name","value":"isEnforced"}},{"kind":"Field","name":{"kind":"Name","value":"consumedValue"}},{"kind":"Field","name":{"kind":"Name","value":"remainingValue"}},{"kind":"Field","name":{"kind":"Name","value":"periodStart"}},{"kind":"Field","name":{"kind":"Name","value":"periodEnd"}}]}}]}}]} as unknown as DocumentNode<UsageQuotasWithConsumptionQuery, UsageQuotasWithConsumptionQueryVariables>;
+export const GetObjectAccessOverviewDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetObjectAccessOverview"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"objectMetadataId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"objectAccessOverview"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"objectMetadataId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"objectMetadataId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"objectMetadataId"}},{"kind":"Field","name":{"kind":"Name","value":"restrictedRecordCount"}},{"kind":"Field","name":{"kind":"Name","value":"sharedRecordCount"}},{"kind":"Field","name":{"kind":"Name","value":"roles"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}},{"kind":"Field","name":{"kind":"Name","value":"canRead"}},{"kind":"Field","name":{"kind":"Name","value":"canUpdate"}},{"kind":"Field","name":{"kind":"Name","value":"canSoftDelete"}},{"kind":"Field","name":{"kind":"Name","value":"canDestroy"}},{"kind":"Field","name":{"kind":"Name","value":"hasRowFilter"}},{"kind":"Field","name":{"kind":"Name","value":"canAccessAllRecords"}}]}}]}}]}}]} as unknown as DocumentNode<GetObjectAccessOverviewQuery, GetObjectAccessOverviewQueryVariables>;
 export const AssignRoleToApiKeyDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"AssignRoleToApiKey"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"apiKeyId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"roleId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"assignRoleToApiKey"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"apiKeyId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"apiKeyId"}}},{"kind":"Argument","name":{"kind":"Name","value":"roleId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"roleId"}}}]}]}}]} as unknown as DocumentNode<AssignRoleToApiKeyMutation, AssignRoleToApiKeyMutationVariables>;
 export const CreateApiKeyDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateApiKey"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateApiKeyInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createApiKey"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ApiKeyFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ApiKeyFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ApiKey"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"expiresAt"}},{"kind":"Field","name":{"kind":"Name","value":"revokedAt"}},{"kind":"Field","name":{"kind":"Name","value":"role"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"label"}},{"kind":"Field","name":{"kind":"Name","value":"icon"}}]}}]}}]} as unknown as DocumentNode<CreateApiKeyMutation, CreateApiKeyMutationVariables>;
 export const CreateWebhookDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateWebhook"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateWebhookInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createWebhook"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"WebhookFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"WebhookFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Webhook"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"targetUrl"}},{"kind":"Field","name":{"kind":"Name","value":"operations"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"secret"}}]}}]} as unknown as DocumentNode<CreateWebhookMutation, CreateWebhookMutationVariables>;

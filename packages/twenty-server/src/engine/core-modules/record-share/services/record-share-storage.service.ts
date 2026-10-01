@@ -282,6 +282,42 @@ export class RecordShareStorageService {
     );
   }
 
+  async countRestrictedAndSharedRecords({
+    workspaceId,
+    objectMetadataId,
+  }: {
+    workspaceId: string;
+    objectMetadataId: string;
+  }): Promise<{ restrictedRecordCount: number; sharedRecordCount: number }> {
+    const counts = await this.withRepository({ workspaceId }, (repository) =>
+      repository
+        .createQueryBuilder('recordShare')
+        .select(
+          'COUNT(DISTINCT "recordShare"."recordId") FILTER (WHERE "recordShare"."principalType" = :everyonePrincipalType AND "recordShare"."accessLevel" = :noneAccessLevel)',
+          'restrictedRecordCount',
+        )
+        .addSelect(
+          'COUNT(DISTINCT "recordShare"."recordId") FILTER (WHERE "recordShare"."rowCause" = :manualRowCause AND "recordShare"."principalType" <> :everyonePrincipalType)',
+          'sharedRecordCount',
+        )
+        .where('"recordShare"."objectMetadataId" = :objectMetadataId', {
+          objectMetadataId,
+          everyonePrincipalType: RecordSharePrincipalType.EVERYONE,
+          noneAccessLevel: RecordShareAccessLevel.NONE,
+          manualRowCause: RecordShareRowCause.MANUAL,
+        })
+        .getRawOne<{
+          restrictedRecordCount: string;
+          sharedRecordCount: string;
+        }>(),
+    );
+
+    return {
+      restrictedRecordCount: Number(counts?.restrictedRecordCount ?? 0),
+      sharedRecordCount: Number(counts?.sharedRecordCount ?? 0),
+    };
+  }
+
   private async withRepository<TResult>(
     {
       workspaceId,

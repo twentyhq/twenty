@@ -103,6 +103,9 @@ export const ObjectSettings = ({
   const isRecordLevelSharingEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED,
   );
+  const isObjectAccessViewEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_OBJECT_ACCESS_VIEW_ENABLED,
+  );
 
   const handleDisable = async () => {
     const result = await updateOneObjectMetadataItem({
@@ -189,20 +192,22 @@ export const ObjectSettings = ({
             </Section.Root>
           </StyledFormSectionContainer>
         )}
-      {isRecordLevelSharingEnabled && !objectMetadataItem.isSystem && (
-        <StyledFormSectionContainer>
-          <Section.Root>
-            <Section.Header
-              title={t`Record sharing`}
-              description={t`Who a record of ${objectLabel} can be shared with. Roles still decide what people see by default.`}
-            />
-            <ObjectSharingReachPicker
-              objectMetadataItem={objectMetadataItem}
-              isReadOnly={isReadOnly}
-            />
-          </Section.Root>
-        </StyledFormSectionContainer>
-      )}
+      {isRecordLevelSharingEnabled &&
+        !isObjectAccessViewEnabled &&
+        !objectMetadataItem.isSystem && (
+          <StyledFormSectionContainer>
+            <Section.Root>
+              <Section.Header
+                title={t`Record sharing`}
+                description={t`Who a record of ${objectLabel} can be shared with. Roles still decide what people see by default.`}
+              />
+              <ObjectSharingReachPicker
+                objectMetadataItem={objectMetadataItem}
+                isReadOnly={isReadOnly}
+              />
+            </Section.Root>
+          </StyledFormSectionContainer>
+        )}
       <AdvancedSettingsWrapper>
         <StyledFormSectionContainer>
           <Section.Root>

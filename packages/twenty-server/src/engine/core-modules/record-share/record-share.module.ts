@@ -1,14 +1,17 @@
 /* @license Enterprise */
 
+import { ObjectAccessOverviewResolver } from 'src/engine/core-modules/record-share/resolvers/object-access-overview.resolver';
 import { RecordSharingResolver } from 'src/engine/core-modules/record-share/resolvers/record-sharing.resolver';
 import { RecordSharingService } from 'src/engine/core-modules/record-share/services/record-sharing.service';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { ObjectAccessOverviewService } from 'src/engine/core-modules/record-share/services/object-access-overview.service';
 import { RecordAccessPolicyService } from 'src/engine/core-modules/record-share/services/record-access-policy.service';
 import { RecordShareStorageModule } from 'src/engine/core-modules/record-share/record-share-storage.module';
 import { ShareWithService } from 'src/engine/core-modules/record-share/services/share-with.service';
+import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { TwentyOrmModule } from 'src/engine/twenty-orm/twenty-orm.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
@@ -17,6 +20,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     TwentyOrmModule,
     WorkspaceCacheModule,
     RecordShareStorageModule,
+    PermissionsModule,
     TypeOrmModule.forFeature([UserWorkspaceEntity]),
   ],
   providers: [
@@ -24,6 +28,8 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     RecordAccessPolicyService,
     RecordSharingService,
     RecordSharingResolver,
+    ObjectAccessOverviewService,
+    ObjectAccessOverviewResolver,
   ],
   exports: [
     RecordShareStorageModule,
