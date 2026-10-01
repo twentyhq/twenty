@@ -657,6 +657,7 @@
                 "ui/components/menu-items",
                 "ui/components/menu-picker",
                 "ui/components/notification-counter",
+                "ui/components/image-input",
                 "ui/components/search-input",
                 "ui/components/tinted-icon-tile"
               ]

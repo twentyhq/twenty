@@ -1,6 +1,6 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { ImageInput } from '@/ui/input/components/ImageInput';
+import { SettingsImageInput } from '@/settings/components/SettingsImageInput';
 import { useUploadWorkspaceLogo } from '@/workspace/hooks/useUploadWorkspaceLogo';
 import { useMutation } from '@apollo/client/react';
 import { UpdateWorkspaceDocument } from '~/generated-metadata/graphql';
@@ -49,7 +49,7 @@ export const WorkspaceLogoUploader = () => {
   };
 
   return (
-    <ImageInput
+    <SettingsImageInput
       picture={currentWorkspace?.logo}
       onUpload={onUpload}
       onRemove={onRemove}

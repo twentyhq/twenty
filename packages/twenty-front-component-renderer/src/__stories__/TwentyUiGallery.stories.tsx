@@ -1,4 +1,5 @@
 import { breadcrumbTest } from '@/__stories__/twenty-ui-gallery/utils/breadcrumbTest';
+import { imageInputTest } from '@/__stories__/twenty-ui-gallery/utils/imageInputTest';
 import { jsonTreeTest } from '@/__stories__/twenty-ui-gallery/utils/jsonTreeTest';
 import { inlineBannerSandboxTest } from '@/__stories__/twenty-ui-gallery/utils/inlineBannerSandboxTest';
 import { themeTokenTest } from '@/__stories__/twenty-ui-gallery/utils/themeTokenTest';
@@ -549,4 +550,16 @@ export const InlineBannerPreactFocusFailure: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-inline-banner',
   runtime: 'preact',
   play: inlineBannerSandboxTest,
+});
+
+export const ImageInputReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-image-input',
+  runtime: 'react',
+  play: imageInputTest,
+});
+
+export const ImageInputPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-image-input',
+  runtime: 'preact',
+  play: imageInputTest,
 });

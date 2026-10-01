@@ -1,0 +1,72 @@
+---
+title: ImageInput
+description: Image selection, preview, and upload actions with application-owned storage.
+---
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import ImageInputReference from '/snippets/ui/generated/components/image-input.mdx';
+
+`ImageInput` combines an image preview, a native file picker, and upload, remove, or abort actions. Pass a resolved image URL as `src`. Your application validates files, uploads them, saves the resulting URL, and supplies instructions and errors.
+
+<StoryEmbed
+  storyId="ui-input-imageinput--with-helper-text"
+  title="Image input with an existing image"
+  height={180}
+/>
+
+```tsx
+import { ImageInput, type ImageInputProps } from 'twenty-ui/components';
+
+export const WorkspaceImage = ({
+  src,
+  onUpload,
+  onRemove,
+}: Pick<ImageInputProps, 'src' | 'onUpload' | 'onRemove'>) => (
+  <ImageInput
+    src={src}
+    onUpload={onUpload}
+    onRemove={onRemove}
+    helperText="Choose a square image for your workspace."
+  />
+);
+```
+
+## Selection and preview
+
+The preview and Upload button open the same native file picker. `onUpload` receives the selected `File`. Canceling or returning an empty selection leaves the current image unchanged. The file input clears after selection so the same file can be selected again.
+
+Native file selection and usable `File` contents are not supported in the current front-component sandbox. React and Preact renderer coverage includes previews, action callbacks, and state. Use an ordinary React host for the complete native selection flow.
+
+The `accept` prop defaults to `image/*` and filters the file picker. Validate allowed formats, dimensions, and size in your application. This callback-driven selector does not retain a file for native form submission. Its action buttons use `type="button"`, so they do not submit a surrounding form.
+
+An empty or failed image shows a placeholder. Changing `src` retries the preview, including after an earlier image failed to load. Removal calls `onRemove`; update `src` after your application removes the image.
+
+## Uploading and disabled states
+
+`isUploading` marks the root busy and disables selection and removal. Supply `onAbort` to replace Upload with Abort during an upload. Abort works before the first image URL exists. The application owns cancellation and sets `isUploading` back to `false` when the upload ends.
+
+`disabled` disables every action. Selection requires `onUpload`. Removal requires both `onRemove` and a nonempty `src`.
+
+<StoryEmbed
+  storyId="ui-input-imageinput--uploading"
+  title="Image upload with an abort action"
+  height={180}
+/>
+
+## Labels, instructions, and errors
+
+Supply localized `uploadLabel`, `removeLabel`, and `abortLabel` strings. They default to `Upload`, `Remove`, and `Abort`. The upload label also names the preview button and file picker.
+
+`helperText` and `errorMessage` belong to the application. Both describe the selection controls, and errors are announced as alerts. There are no built-in file limits or product instructions.
+
+<StoryEmbed
+  storyId="ui-input-imageinput--with-error"
+  title="Image input with instructions and an error"
+  height={200}
+/>
+
+Native div attributes, `className`, `style`, and `ref` apply to the root. Use `render` for root composition and keep that root non-interactive, since the module already contains buttons. Use `dir="rtl"` for right-to-left layout.
+
+## Props
+
+<ImageInputReference />

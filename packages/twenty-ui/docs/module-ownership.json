@@ -50,6 +50,7 @@
     "CommandBlock",
     "Dropdown",
     "IconButton",
+    "ImageInput",
     "InlineBanner",
     "JsonTree",
     "LightButton",

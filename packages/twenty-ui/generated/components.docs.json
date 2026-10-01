@@ -8487,6 +8487,125 @@
     ]
   },
   {
+    "name": "ImageInput",
+    "entryPoint": "twenty-ui/components",
+    "slug": "components/image-input",
+    "props": [
+      {
+        "name": "abortLabel",
+        "type": "string",
+        "required": false,
+        "defaultValue": "Abort",
+        "description": "Label for the Abort action."
+      },
+      {
+        "name": "accept",
+        "type": "string",
+        "required": false,
+        "defaultValue": "image/*",
+        "description": "Native file picker filter. Defaults to image/*. The application validates the selected file."
+      },
+      {
+        "name": "className",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Class applied to the root element."
+      },
+      {
+        "name": "disabled",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Disables file selection, removal, and abort actions."
+      },
+      {
+        "name": "errorMessage",
+        "type": "string | null",
+        "required": false,
+        "defaultValue": null,
+        "description": "Application error, displayed as an alert and associated with the selection controls."
+      },
+      {
+        "name": "helperText",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Application instructions, associated with the selection controls."
+      },
+      {
+        "name": "isUploading",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Marks the module busy and disables selection and removal. Shows Abort when onAbort is supplied."
+      },
+      {
+        "name": "onAbort",
+        "type": "(() => void)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Shows an abort action while uploading. It can cancel the first upload before a src exists."
+      },
+      {
+        "name": "onRemove",
+        "type": "(() => void)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Requests removal of the current image. Removal is disabled without this callback or a nonempty src."
+      },
+      {
+        "name": "onUpload",
+        "type": "((file: File) => void)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Receives the selected File. Empty and canceled selections do not call it. Selection is disabled when omitted."
+      },
+      {
+        "name": "ref",
+        "type": "Ref<HTMLDivElement>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Ref to the root element."
+      },
+      {
+        "name": "removeLabel",
+        "type": "string",
+        "required": false,
+        "defaultValue": "Remove",
+        "description": "Label for the Remove action."
+      },
+      {
+        "name": "render",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Custom root element or render function. Keep a non-interactive root."
+      },
+      {
+        "name": "src",
+        "type": "string | null",
+        "required": false,
+        "defaultValue": null,
+        "description": "Resolved image URL. Empty or failed images show the image placeholder."
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties",
+        "required": false,
+        "defaultValue": null,
+        "description": "Inline style applied to the root element."
+      },
+      {
+        "name": "uploadLabel",
+        "type": "string",
+        "required": false,
+        "defaultValue": "Upload",
+        "description": "Label for the preview, file selector, and Upload action."
+      }
+    ]
+  },
+  {
     "name": "SearchInput",
     "entryPoint": "twenty-ui/components",
     "slug": "components/search-input",

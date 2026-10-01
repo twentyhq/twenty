@@ -40,6 +40,8 @@ export type { ToasterProps } from './feedback/Toaster/types/ToasterProps';
 export { IconButton } from './input/IconButton/IconButton';
 export type { IconButtonProps } from './input/IconButton/types/IconButtonProps';
 export type { IconButtonSize } from './input/IconButton/types/IconButtonSize';
+export { ImageInput } from './input/ImageInput/ImageInput';
+export type { ImageInputProps } from './input/ImageInput/types/ImageInputProps';
 export { LightButton } from './input/LightButton/LightButton';
 export type { LightButtonProps } from './input/LightButton/types/LightButtonProps';
 export { LightIconButton } from './input/LightIconButton/LightIconButton';

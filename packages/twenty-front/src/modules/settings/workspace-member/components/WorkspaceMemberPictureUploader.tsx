@@ -5,7 +5,7 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { useUploadWorkspaceMemberProfilePicture } from '@/settings/members/hooks/useUploadWorkspaceMemberProfilePicture';
 import { useCanEditProfileField } from '@/settings/profile/hooks/useCanEditProfileField';
 import { useUpdateWorkspaceMemberSettings } from '@/settings/profile/hooks/useUpdateWorkspaceMemberSettings';
-import { ImageInput } from '@/ui/input/components/ImageInput';
+import { SettingsImageInput } from '@/settings/components/SettingsImageInput';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { FileFolder } from 'twenty-shared/types';
@@ -140,7 +140,7 @@ export const WorkspaceMemberPictureUploader = ({
     avatarUrl ?? (isEditingSelf ? currentWorkspaceMember?.avatarUrl : null);
 
   return (
-    <ImageInput
+    <SettingsImageInput
       picture={displayAvatarUrl}
       onUpload={handleUpload}
       onRemove={handleRemove}
