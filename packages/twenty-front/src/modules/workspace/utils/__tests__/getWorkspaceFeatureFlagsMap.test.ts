@@ -12,11 +12,11 @@ describe('getWorkspaceFeatureFlagsMap', () => {
     expect(
       getWorkspaceFeatureFlagsMap([
         { key: FeatureFlagKey.IS_CONVERSATIONS_TAB_ENABLED, value: true },
-        { key: FeatureFlagKey.IS_JSON_FILTER_ENABLED, value: false },
+        { key: FeatureFlagKey.IS_UNIQUE_INDEXES_ENABLED, value: false },
       ]),
     ).toEqual({
       IS_CONVERSATIONS_TAB_ENABLED: true,
-      IS_JSON_FILTER_ENABLED: false,
+      IS_UNIQUE_INDEXES_ENABLED: false,
     });
   });
 });
