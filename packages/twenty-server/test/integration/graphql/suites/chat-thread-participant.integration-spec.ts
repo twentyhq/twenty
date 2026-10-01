@@ -297,6 +297,26 @@ describe('Chat thread participant state through the authenticated API', () => {
     expect(member!.lastReadAt).toBeNull();
   });
 
+  it('brings a thread back for its members on activity no member wrote', async () => {
+    const threadId = await createTestThread();
+
+    await runThreadMutation('archiveAgentChatThread', threadId);
+
+    await getAppProviderByClassName<AgentChatService>(
+      'AgentChatService',
+    ).recordThreadActivity({ workspaceId: SEED_APPLE_WORKSPACE_ID, threadId });
+
+    const owner = await findMyParticipant(threadId);
+    const lastActivityAt = await readLastActivityAt(threadId);
+
+    expect(new Date(owner!.archivedAt!).getTime()).toBeLessThan(
+      lastActivityAt.getTime(),
+    );
+    expect(new Date(owner!.lastReadAt!).getTime()).toBeLessThan(
+      lastActivityAt.getTime(),
+    );
+  });
+
   it("only lists the caller's own rows", async () => {
     const threadId = await createTestThread();
 

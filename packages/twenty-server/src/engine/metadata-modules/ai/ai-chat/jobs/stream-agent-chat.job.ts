@@ -882,11 +882,15 @@ export class StreamAgentChatJob {
     });
 
     if (!totalsUpdate.affected) {
-      // The reply is saved even though a newer stream owns the thread
-      await this.agentChatService.recordThreadActivity({
-        workspaceId,
-        threadId,
-      });
+      // The reply is saved even though a newer stream owns the thread. That
+      // activity is best-effort and must not turn the saved reply into an error
+      await this.agentChatService
+        .recordThreadActivity({ workspaceId, threadId })
+        .catch((error: unknown) =>
+          this.logger.warn(
+            `Could not record reply activity on thread ${threadId}: ${error instanceof Error ? error.message : String(error)}`,
+          ),
+        );
 
       return resolveSupersededTurnOutcome(outcome);
     }

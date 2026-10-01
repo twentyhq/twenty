@@ -985,6 +985,25 @@ describe('StreamAgentChatJob', () => {
     expect(turnCounts('ai-chat/turn-completed')).toEqual([]);
   });
 
+  it('keeps a superseded reply when recording its activity fails', async () => {
+    const { job, turnCounts, agentChatService } = buildJob({
+      totalsUpdateAffected: 0,
+    });
+
+    agentChatService.recordThreadActivity.mockRejectedValue(
+      new Error('database unavailable'),
+    );
+
+    await job.handle(jobData);
+
+    expect(turnCounts('ai-chat/turn-cancelled')).toEqual([
+      expect.objectContaining({
+        attributes: { model: 'openai/gpt-5.6-luna', reason: 'superseded' },
+      }),
+    ]);
+    expect(turnCounts('ai-chat/turn-failed')).toEqual([]);
+  });
+
   it('counts an empty reply as a no_text failure exactly once', async () => {
     const { job, turnCounts } = buildJob({
       chatStream: createFakeChatStream({

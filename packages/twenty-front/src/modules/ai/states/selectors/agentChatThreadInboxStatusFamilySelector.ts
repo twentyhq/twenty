@@ -9,9 +9,8 @@ import { agentChatThreadKeptUnreadIdState } from '@/ai/states/agentChatThreadKep
 import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
 import { agentChatViewedThreadIdState } from '@/ai/states/agentChatViewedThreadIdState';
 import { hasLoadedAgentChatThreadParticipantsState } from '@/ai/states/hasLoadedAgentChatThreadParticipantsState';
-import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { buildAgentChatThreadInboxState } from '@/ai/utils/buildAgentChatThreadInboxState';
-import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { agentChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
 import { createAtomFamilySelector } from '@/ui/utilities/state/jotai/utils/createAtomFamilySelector';
 
 type AgentChatThreadInboxStatus = {
@@ -35,10 +34,7 @@ export const agentChatThreadInboxStatusFamilySelector =
     get:
       ({ threadId, lastActivityAt }) =>
       ({ get }) => {
-        const storedThread = get(recordStoreFamilyState, threadId) as
-          | AgentChatThreadRecord
-          | null
-          | undefined;
+        const storedThread = get(agentChatThreadRecordFamilySelector, threadId);
         const inboxState = buildAgentChatThreadInboxState(
           { lastActivityAt: storedThread?.lastActivityAt ?? lastActivityAt },
           get(agentChatThreadParticipantsState)[threadId],

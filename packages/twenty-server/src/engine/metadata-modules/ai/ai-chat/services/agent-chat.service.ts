@@ -773,11 +773,40 @@ export class AgentChatService {
     return this.participantService.hasInboxState(workspaceId);
   }
 
-  recordThreadActivity(args: {
+  async recordThreadActivity({
+    workspaceId,
+    threadId,
+  }: {
     workspaceId: string;
     threadId: string;
   }): Promise<void> {
-    return this.participantService.recordThreadActivity(args);
+    const thread = await this.threadRepository.findOne(workspaceId, {
+      where: { id: threadId },
+    });
+
+    if (!isDefined(thread)) {
+      return;
+    }
+
+    const activity = await this.participantService.recordThreadActivity({
+      workspaceId,
+      threadId,
+    });
+
+    if (!isDefined(activity)) {
+      return;
+    }
+
+    // Open chat lists reorder and bring the chat back from these events
+    await this.threadRecordEventService.emitThreadUpdated({
+      workspaceId,
+      threadBefore: thread,
+      threadAfter: {
+        ...thread,
+        lastActivityAt: activity.lastActivityAt.toISOString(),
+        updatedAt: activity.updatedAt.toISOString(),
+      },
+    });
   }
 
   async notifyThreadUsageUpdated({

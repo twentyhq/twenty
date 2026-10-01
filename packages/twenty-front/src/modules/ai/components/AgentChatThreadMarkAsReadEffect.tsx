@@ -14,10 +14,9 @@ import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadPar
 import { agentChatThreadUnreadSinceState } from '@/ai/states/agentChatThreadUnreadSinceState';
 import { hasLoadedAgentChatThreadParticipantsState } from '@/ai/states/hasLoadedAgentChatThreadParticipantsState';
 import { agentChatViewedThreadIdState } from '@/ai/states/agentChatViewedThreadIdState';
-import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { buildAgentChatThreadInboxState } from '@/ai/utils/buildAgentChatThreadInboxState';
-import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { agentChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const isDocumentVisible = () => document.visibilityState === 'visible';
@@ -36,10 +35,10 @@ export const AgentChatThreadMarkAsReadEffect = () => {
     isDefined(agentChatDisplayedThread) && isValidUuid(agentChatDisplayedThread)
       ? agentChatDisplayedThread
       : null;
-  const thread = useAtomFamilyStateValue(
-    recordStoreFamilyState,
+  const thread = useAtomFamilySelectorValue(
+    agentChatThreadRecordFamilySelector,
     threadId ?? '',
-  ) as AgentChatThreadRecord | null | undefined;
+  );
   const lastActivityAt = thread?.lastActivityAt ?? null;
   const [isVisible, setIsVisible] = useState(isDocumentVisible);
   const hasLoadedAgentChatThreadParticipants = useAtomStateValue(
@@ -109,10 +108,9 @@ export const AgentChatThreadMarkAsReadEffect = () => {
       visitId,
       isUnread: isAgentChatThreadUnread(
         buildAgentChatThreadInboxState(
-          store.get(recordStoreFamilyState.atomFamily(threadId)) as
-            | AgentChatThreadRecord
-            | null
-            | undefined,
+          store.get(
+            agentChatThreadRecordFamilySelector.selectorFamily(threadId),
+          ),
           participant,
         ),
       ),

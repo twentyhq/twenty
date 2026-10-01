@@ -207,19 +207,30 @@ export class AgentChatThreadParticipantService {
   async recordThreadActivity({
     workspaceId,
     threadId,
-  }: Omit<ParticipantArgs, 'workspaceMemberId'>): Promise<void> {
+  }: Omit<ParticipantArgs, 'workspaceMemberId'>): Promise<{
+    lastActivityAt: Date;
+    updatedAt: Date;
+  } | null> {
     if (!(await this.hasInboxState(workspaceId))) {
-      return;
+      return null;
     }
 
-    await this.threadRepository.query(workspaceId, ({ manager, table }) =>
-      manager.query(
-        `UPDATE ${table('agentChatThread')}
-         SET "lastActivityAt" = clock_timestamp(), "updatedAt" = now()
-         WHERE id = $1`,
-        [threadId],
-      ),
+    const rows = await this.threadRepository.query(
+      workspaceId,
+      ({ manager, table }) =>
+        manager.query<{ lastActivityAt: Date; updatedAt: Date }[]>(
+          `WITH thread AS (
+             UPDATE ${table('agentChatThread')}
+             SET "lastActivityAt" = clock_timestamp(), "updatedAt" = now()
+             WHERE id = $1
+             RETURNING "lastActivityAt", "updatedAt"
+           )
+           SELECT "lastActivityAt", "updatedAt" FROM thread`,
+          [threadId],
+        ),
     );
+
+    return rows[0] ?? null;
   }
 
   private async touchThread({
