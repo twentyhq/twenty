@@ -135,7 +135,7 @@ export const DOCUMENTATION_PATHS = {
   UI_COMPONENTS_CODE_EDITOR: '/ui/components/code-editor',
   UI_COMPONENTS_COMMAND_BLOCK: '/ui/components/command-block',
   UI_COMPONENTS_DROPDOWN: '/ui/components/dropdown',
-  UI_COMPONENTS_EXPANDABLE_LIST: '/ui/components/expandable-list',
+  UI_COMPONENTS_OVERFLOWING_LIST: '/ui/components/overflowing-list',
   UI_COMPONENTS_INLINE_BANNER: '/ui/components/inline-banner',
   UI_COMPONENTS_INPUT_ICON_BUTTON: '/ui/components/input/icon-button',
   UI_COMPONENTS_INPUT_LIGHT_BUTTON: '/ui/components/input/light-button',

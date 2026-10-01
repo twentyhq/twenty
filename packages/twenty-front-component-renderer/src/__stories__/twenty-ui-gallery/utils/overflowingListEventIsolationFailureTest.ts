@@ -5,7 +5,7 @@ import { expectSandboxErrors } from '@/__stories__/twenty-ui-gallery/utils/expec
 import { expectFrontComponentMounted } from '@/__stories__/shared/test-utils/matchers/expectFrontComponentMounted';
 import { type TwentyUiGalleryPlayFunction } from '@/__stories__/twenty-ui-gallery/types/TwentyUiGalleryPlayFunction';
 
-export const expandableListEventIsolationFailureTest: TwentyUiGalleryPlayFunction =
+export const overflowingListEventIsolationFailureTest: TwentyUiGalleryPlayFunction =
   async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const page = within(canvasElement.ownerDocument.body);

@@ -7,7 +7,7 @@ import { withKnownHostEventErrors } from '@/__stories__/twenty-ui-gallery/utils/
 import { expectFrontComponentMounted } from '@/__stories__/shared/test-utils/matchers/expectFrontComponentMounted';
 import { type TwentyUiGalleryPlayFunction } from '@/__stories__/twenty-ui-gallery/types/TwentyUiGalleryPlayFunction';
 
-export const expandableListSandboxFailureTest: TwentyUiGalleryPlayFunction =
+export const overflowingListSandboxFailureTest: TwentyUiGalleryPlayFunction =
   async ({ canvasElement }) =>
     withKnownHostEventErrors(async () => {
       const canvas = within(canvasElement);

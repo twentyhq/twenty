@@ -10,7 +10,7 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useToggleDropdown } from '@/ui/layout/dropdown/hooks/useToggleDropdown';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { ExpandableList, IconButton } from 'twenty-ui/components';
+import { OverflowingList, IconButton } from 'twenty-ui/components';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { type MouseEvent, useId, useState } from 'react';
@@ -111,9 +111,12 @@ export const CalendarEventComposerTargetsInput = ({
       >
         {hasChips ? (
           <>
-            <ExpandableList overflowLabel={t`Show all items`} showOverflowCount>
+            <OverflowingList
+              overflowLabel={t`Show all items`}
+              showOverflowCount
+            >
               {chips}
-            </ExpandableList>
+            </OverflowingList>
             <IconButton
               type="button"
               size="sm"

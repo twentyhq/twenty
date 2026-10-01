@@ -9,21 +9,21 @@ import { A11Y_DEFER_COLOR_CONTRAST, ComponentDecorator } from '@ui/testing';
 import { ThemeProvider } from '@ui/theme/ThemeProvider';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
-import { ExpandableList } from '../ExpandableList';
-import { EXPANDABLE_LIST_STORY_ITEMS } from './EXPANDABLE_LIST_STORY_ITEMS';
-import { ExpandableListControlledFocusExample } from './ExpandableListControlledFocusExample';
-import { ExpandableListMutableTag } from './ExpandableListMutableTag';
-import { ExpandableListResizeExample } from './ExpandableListResizeExample';
-import { expectExpandableListPopupGeometry } from './expectExpandableListPopupGeometry';
+import { OverflowingList } from '../OverflowingList';
+import { OVERFLOWING_LIST_STORY_ITEMS } from './OVERFLOWING_LIST_STORY_ITEMS';
+import { OverflowingListControlledFocusExample } from './OverflowingListControlledFocusExample';
+import { OverflowingListMutableTag } from './OverflowingListMutableTag';
+import { OverflowingListResizeExample } from './OverflowingListResizeExample';
+import { expectOverflowingListPopupGeometry } from './expectOverflowingListPopupGeometry';
 
 const onHostClick = fn();
 const onHostMouseDown = fn();
 const onHostKeyDown = fn();
 const onItemClick = fn();
 
-const meta: Meta<typeof ExpandableList> = {
-  title: 'UI/Components/ExpandableList/Interactions',
-  component: ExpandableList,
+const meta: Meta<typeof OverflowingList> = {
+  title: 'UI/Components/OverflowingList/Interactions',
+  component: OverflowingList,
   tags: ['!autodocs'],
   decorators: [ComponentDecorator],
   parameters: {
@@ -31,7 +31,7 @@ const meta: Meta<typeof ExpandableList> = {
     a11y: A11Y_DEFER_COLOR_CONTRAST,
   },
   args: {
-    children: EXPANDABLE_LIST_STORY_ITEMS,
+    children: OVERFLOWING_LIST_STORY_ITEMS,
     showOverflowCount: true,
     style: { width: 180, alignSelf: 'center' },
   },
@@ -44,7 +44,7 @@ const meta: Meta<typeof ExpandableList> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof ExpandableList>;
+type Story = StoryObj<typeof OverflowingList>;
 
 export const Keyboard: Story = {
   play: async ({ canvasElement, step }) => {
@@ -64,7 +64,7 @@ export const Keyboard: Story = {
           name: 'Show all items',
         });
         await waitFor(() => expect(dialog).toHaveFocus());
-        await expectExpandableListPopupGeometry({ trigger, dialog });
+        await expectOverflowingListPopupGeometry({ trigger, dialog });
         expect(trigger).toHaveAttribute('aria-expanded', 'true');
         expect(trigger).toHaveAttribute('aria-controls', dialog.id);
         expect(canvasElement).not.toContainElement(dialog);
@@ -84,7 +84,7 @@ export const CompleteListWithInlineCap: Story = {
   args: { maxInlineCount: 1 },
   render: (args) => (
     <>
-      <ExpandableList {...args} />
+      <OverflowingList {...args} />
       <Button>Outside the list</Button>
     </>
   ),
@@ -119,7 +119,7 @@ export const CompleteListWithInlineCap: Story = {
 };
 
 export const ResizeAndContentUpdates: Story = {
-  render: () => <ExpandableListResizeExample />,
+  render: () => <OverflowingListResizeExample />,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const body = within(canvasElement.ownerDocument.body);
@@ -254,7 +254,7 @@ export const InlineItemFocus: Story = {
 };
 
 export const ControlledCountWhileFocused: Story = {
-  render: () => <ExpandableListControlledFocusExample />,
+  render: () => <OverflowingListControlledFocusExample />,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const toggle = canvas.getByRole('button', { name: 'Toggle count' });
@@ -279,7 +279,7 @@ export const ControlledCountWhileFocused: Story = {
 };
 
 export const OpenPopupOutlivesHiddenCount: Story = {
-  render: () => <ExpandableListControlledFocusExample />,
+  render: () => <OverflowingListControlledFocusExample />,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const body = within(canvasElement.ownerDocument.body);
@@ -354,13 +354,13 @@ export const ClickableFieldHost: Story = {
       onMouseDown={onHostMouseDown}
       onKeyDown={onHostKeyDown}
     >
-      <ExpandableList {...args}>
+      <OverflowingList {...args}>
         {['First item', 'Second item', 'Third item'].map((label) => (
           <Button key={label} onClick={onItemClick} style={{ width: 100 }}>
             {label}
           </Button>
         ))}
-      </ExpandableList>
+      </OverflowingList>
     </div>
   ),
   play: async ({ canvasElement }) => {
@@ -396,8 +396,8 @@ export const ClickableFieldHost: Story = {
 export const IndependentInstances: Story = {
   render: (args) => (
     <>
-      <ExpandableList {...args} overflowLabel="Show company tags" />
-      <ExpandableList {...args} overflowLabel="Show person tags" />
+      <OverflowingList {...args} overflowLabel="Show company tags" />
+      <OverflowingList {...args} overflowLabel="Show person tags" />
     </>
   ),
   play: async ({ canvasElement }) => {
@@ -443,7 +443,7 @@ export const ScopedThemeAndDirection: Story = {
           style={{ width: 360, height: 220, padding: 16 }}
         >
           <TextDirectionProvider direction="rtl">
-            <ExpandableList {...args} dir="rtl" />
+            <OverflowingList {...args} dir="rtl" />
           </TextDirectionProvider>
         </Card.Root>
       </ThemeProvider>
@@ -461,7 +461,7 @@ export const ScopedThemeAndDirection: Story = {
     });
 
     await waitFor(() => expect(dialog).toBeVisible());
-    await expectExpandableListPopupGeometry({
+    await expectOverflowingListPopupGeometry({
       trigger: within(scope).getByRole('button', { name: /Show all items$/ }),
       dialog,
     });
@@ -501,7 +501,7 @@ export const ZoomedInstances: Story = {
     <>
       {[0.75, 1.25].map((zoom) => (
         <div key={zoom} style={{ zoom }}>
-          <ExpandableList
+          <OverflowingList
             {...args}
             overflowLabel={`Show tags at ${zoom} scale`}
           />
@@ -527,7 +527,7 @@ export const ZoomedInstances: Story = {
         name: `Show tags at ${zoom} scale`,
       });
       await waitFor(() => expect(dialog).toBeVisible());
-      await expectExpandableListPopupGeometry({ trigger, dialog });
+      await expectOverflowingListPopupGeometry({ trigger, dialog });
       await userEvent.keyboard('{Escape}');
       await waitFor(() =>
         expect(body.queryByRole('dialog')).not.toBeInTheDocument(),
@@ -540,7 +540,7 @@ export const DescendantContentUpdates: Story = {
   args: {
     style: { width: 200 },
     children: [
-      <ExpandableListMutableTag key="customer" />,
+      <OverflowingListMutableTag key="customer" />,
       <Tag key="partner" color="green" preventShrink>
         Partner
       </Tag>,

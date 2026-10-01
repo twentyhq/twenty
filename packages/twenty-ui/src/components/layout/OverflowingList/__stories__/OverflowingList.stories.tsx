@@ -4,26 +4,26 @@ import { Section } from '@ui/components/layout/Section/Section';
 import { Text } from '@ui/primitives/typography/Text/Text';
 import { A11Y_DEFER_COLOR_CONTRAST, ComponentDecorator } from '@ui/testing';
 
-import { ExpandableList } from '../ExpandableList';
-import { EXPANDABLE_LIST_STORY_ITEMS } from './EXPANDABLE_LIST_STORY_ITEMS';
+import { OverflowingList } from '../OverflowingList';
+import { OVERFLOWING_LIST_STORY_ITEMS } from './OVERFLOWING_LIST_STORY_ITEMS';
 
-const meta: Meta<typeof ExpandableList> = {
-  title: 'UI/Components/ExpandableList',
-  component: ExpandableList,
+const meta: Meta<typeof OverflowingList> = {
+  title: 'UI/Components/OverflowingList',
+  component: OverflowingList,
   decorators: [ComponentDecorator],
   parameters: {
     container: { width: 260, height: 200 },
     a11y: A11Y_DEFER_COLOR_CONTRAST,
   },
   args: {
-    children: EXPANDABLE_LIST_STORY_ITEMS,
+    children: OVERFLOWING_LIST_STORY_ITEMS,
     showOverflowCount: true,
     style: { width: 180 },
   },
 };
 
 export default meta;
-type Story = StoryObj<typeof ExpandableList>;
+type Story = StoryObj<typeof OverflowingList>;
 
 export const Default: Story = {};
 
@@ -32,7 +32,7 @@ export const Documentation: Story = {
     <Section.Root>
       <Section.Header title="Company tags" />
       <Text>Open the count to see every tag.</Text>
-      <ExpandableList {...args} overflowLabel="Show all company tags" />
+      <OverflowingList {...args} overflowLabel="Show all company tags" />
     </Section.Root>
   ),
 };

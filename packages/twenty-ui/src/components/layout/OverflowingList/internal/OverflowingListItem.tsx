@@ -1,21 +1,21 @@
 import { type ReactElement } from 'react';
 
-import styles from '../ExpandableList.module.scss';
+import styles from '../OverflowingList.module.scss';
 import { useFocusedElementUnmountRef } from './useFocusedElementUnmountRef';
 
-type ExpandableListItemProps = {
+type OverflowingListItemProps = {
   children: ReactElement;
   isHidden: boolean;
   isLastVisible: boolean;
   onFocusedItemUnmount: () => void;
 };
 
-export const ExpandableListItem = ({
+export const OverflowingListItem = ({
   children,
   isHidden,
   isLastVisible,
   onFocusedItemUnmount,
-}: ExpandableListItemProps) => {
+}: OverflowingListItemProps) => {
   const resetFocusWhenFocusedItemUnmounts =
     useFocusedElementUnmountRef(onFocusedItemUnmount);
 

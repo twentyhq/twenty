@@ -1,23 +1,23 @@
 ---
-title: ExpandableList
+title: OverflowingList
 description: Fit a row of items into the available space and reveal the complete list in a popup.
 ---
 
 import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
-import ExpandableListReference from '/snippets/ui/generated/components/expandable-list.mdx';
+import OverflowingListReference from '/snippets/ui/generated/components/overflowing-list.mdx';
 
-`ExpandableList` measures its available width, keeps the fitting items in a compact row, and offers a `+N` button for the remaining items. It updates when the container or item content changes.
+`OverflowingList` measures its available width, keeps the fitting items in a compact row, and offers a `+N` button for the remaining items. It updates when the container or item content changes.
 
 Supply the complete ordered list as keyed elements. Your application owns each item's content, actions, and data.
 
 ```tsx
-import { ExpandableList } from 'twenty-ui/components';
+import { OverflowingList } from 'twenty-ui/components';
 import { Tag } from 'twenty-ui/primitives/data-display';
 
 const TEAMS = ['Design', 'Engineering', 'Support', 'Operations'];
 
 export const TeamList = () => (
-  <ExpandableList
+  <OverflowingList
     style={{ width: 220 }}
     showOverflowCount
     overflowLabel="Show all teams"
@@ -25,13 +25,13 @@ export const TeamList = () => (
     {TEAMS.map((team) => (
       <Tag key={team} color="blue">{team}</Tag>
     ))}
-  </ExpandableList>
+  </OverflowingList>
 );
 ```
 
 <StoryEmbed
-  storyId="ui-components-expandablelist--documentation"
-  title="Expandable list example"
+  storyId="ui-components-overflowinglist--documentation"
+  title="Overflowing list example"
   height={280}
 />
 
@@ -51,4 +51,4 @@ Overflow-trigger and popup interactions do not activate a clickable field host. 
 
 ## Props
 
-<ExpandableListReference />
+<OverflowingListReference />

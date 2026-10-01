@@ -2,13 +2,13 @@ import { useState } from 'react';
 
 import { Button } from '@ui/primitives/input/Button/Button';
 
-import { ExpandableList } from '../ExpandableList';
+import { OverflowingList } from '../OverflowingList';
 
-export const ExpandableListControlledFocusExample = () => {
+export const OverflowingListControlledFocusExample = () => {
   const [showOverflowCount, setShowOverflowCount] = useState(false);
 
   return (
-    <ExpandableList
+    <OverflowingList
       showOverflowCount={showOverflowCount}
       style={{ width: 168 }}
     >
@@ -26,6 +26,6 @@ export const ExpandableListControlledFocusExample = () => {
       <Button key="third-item" style={{ width: 80 }}>
         Third item
       </Button>
-    </ExpandableList>
+    </OverflowingList>
   );
 };

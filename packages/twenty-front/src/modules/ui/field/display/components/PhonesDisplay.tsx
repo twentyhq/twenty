@@ -1,7 +1,7 @@
 import { useLingui } from '@lingui/react/macro';
 import { createPhonesFromFieldValue } from '@/object-record/record-field/ui/meta-types/input/utils/phonesUtils';
 import { type FieldPhonesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { ExpandableList } from 'twenty-ui/components';
+import { OverflowingList } from 'twenty-ui/components';
 import { styled } from '@linaria/react';
 import { parsePhoneNumber } from 'libphonenumber-js';
 import React, { useMemo } from 'react';
@@ -53,7 +53,7 @@ export const PhonesDisplay = ({
   };
 
   return isFocused ? (
-    <ExpandableList overflowLabel={t`Show all items`} showOverflowCount>
+    <OverflowingList overflowLabel={t`Show all items`} showOverflowCount>
       {phones.map(({ number, callingCode }, index) => {
         const { parsedPhone, invalidPhone } =
           parsePhoneNumberOrReturnInvalidValue(callingCode + number);
@@ -71,7 +71,7 @@ export const PhonesDisplay = ({
           />
         );
       })}
-    </ExpandableList>
+    </OverflowingList>
   ) : (
     <StyledContainer>
       {phones.map(({ number, callingCode }, index) => {

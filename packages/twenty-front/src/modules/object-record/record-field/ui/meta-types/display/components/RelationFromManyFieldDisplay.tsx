@@ -11,7 +11,7 @@ import { extractTargetRecordsFromJunction } from '@/object-record/record-field/u
 import { isUsableJunctionConfig } from '@/object-record/record-field/ui/utils/junction/isUsableJunctionConfig';
 import { resolveJunctionConfig } from '@/object-record/record-field/ui/utils/junction/resolveJunctionConfig';
 
-import { ExpandableList } from 'twenty-ui/components';
+import { OverflowingList } from 'twenty-ui/components';
 import { isArray } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -89,7 +89,7 @@ export const RelationFromManyFieldDisplay = () => {
     }
 
     return (
-      <ExpandableList
+      <OverflowingList
         overflowLabel={t`Show all items`}
         showOverflowCount={isFocused}
         maxInlineCount={MAX_RELATION_CHIPS_DISPLAYED_INLINE}
@@ -103,12 +103,12 @@ export const RelationFromManyFieldDisplay = () => {
             triggerEvent={triggerEvent}
           />
         ))}
-      </ExpandableList>
+      </OverflowingList>
     );
   }
 
   return (
-    <ExpandableList
+    <OverflowingList
       overflowLabel={t`Show all items`}
       showOverflowCount={isFocused}
       maxInlineCount={MAX_RELATION_CHIPS_DISPLAYED_INLINE}
@@ -125,6 +125,6 @@ export const RelationFromManyFieldDisplay = () => {
           />
         );
       })}
-    </ExpandableList>
+    </OverflowingList>
   );
 };

@@ -7916,9 +7916,9 @@
     ]
   },
   {
-    "name": "ExpandableList",
+    "name": "OverflowingList",
     "entryPoint": "twenty-ui/components",
-    "slug": "components/expandable-list",
+    "slug": "components/overflowing-list",
     "props": [
       {
         "name": "children",

@@ -4,15 +4,15 @@ import { Section } from '@ui/components/layout/Section/Section';
 import { Tag } from '@ui/primitives/data-display/Tag/Tag';
 import { Button } from '@ui/primitives/input/Button/Button';
 
-import { ExpandableList } from '../ExpandableList';
+import { OverflowingList } from '../OverflowingList';
 
-export const ExpandableListResizeExample = () => {
+export const OverflowingListResizeExample = () => {
   const [isNarrow, setIsNarrow] = useState(false);
   const [hasLongLabels, setHasLongLabels] = useState(false);
 
   return (
     <Section.Root>
-      <ExpandableList
+      <OverflowingList
         aria-label="Resizable tags"
         showOverflowCount
         style={{ width: isNarrow ? 100 : 360 }}
@@ -22,7 +22,7 @@ export const ExpandableListResizeExample = () => {
             {hasLongLabels ? `${label} with a longer label` : label}
           </Tag>
         ))}
-      </ExpandableList>
+      </OverflowingList>
       <Button onClick={() => setIsNarrow(!isNarrow)}>
         {isNarrow ? 'Widen list' : 'Narrow list'}
       </Button>

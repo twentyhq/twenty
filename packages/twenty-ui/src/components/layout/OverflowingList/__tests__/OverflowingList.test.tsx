@@ -1,16 +1,16 @@
 import { runComponentConformance } from '@test-utilities/conformance/runComponentConformance';
 
-import { ExpandableList } from '../ExpandableList';
+import { OverflowingList } from '../OverflowingList';
 
 runComponentConformance({
-  name: 'ExpandableList',
+  name: 'OverflowingList',
   element: (
-    <ExpandableList>
+    <OverflowingList>
       {[
         <span key="first">First item</span>,
         <span key="second">Second item</span>,
       ]}
-    </ExpandableList>
+    </OverflowingList>
   ),
   refInstanceOf: HTMLDivElement,
   skip: ['renderProp'],

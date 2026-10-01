@@ -72,7 +72,7 @@
   }
 }
 
-.popup[data-expandable-list-popup] {
+.popup[data-overflowing-list-popup] {
   flex-direction: row;
   flex-wrap: wrap;
   inline-size: max(220px, var(--anchor-width));

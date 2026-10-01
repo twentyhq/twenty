@@ -2,7 +2,7 @@ import { expect, waitFor } from 'storybook/test';
 
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
-export const expectExpandableListPopupGeometry = async ({
+export const expectOverflowingListPopupGeometry = async ({
   trigger,
   dialog,
 }: {

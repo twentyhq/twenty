@@ -1,6 +1,6 @@
 import { type ComponentPropsWithRef, type ReactElement } from 'react';
 
-export type ExpandableListProps = Omit<
+export type OverflowingListProps = Omit<
   ComponentPropsWithRef<'div'>,
   'children'
 > & {

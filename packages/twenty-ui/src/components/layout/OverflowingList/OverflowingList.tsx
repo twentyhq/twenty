@@ -5,11 +5,11 @@ import { type SyntheticEvent, useCallback, useState } from 'react';
 import { Popover } from '@ui/primitives/surfaces/Popover/Popover';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
-import styles from './ExpandableList.module.scss';
-import { ExpandableListItem } from './internal/ExpandableListItem';
-import { useExpandableListLayout } from './internal/useExpandableListLayout';
+import styles from './OverflowingList.module.scss';
+import { OverflowingListItem } from './internal/OverflowingListItem';
+import { useOverflowingListLayout } from './internal/useOverflowingListLayout';
 import { useFocusedElementUnmountRef } from './internal/useFocusedElementUnmountRef';
-import { type ExpandableListProps } from './types/ExpandableListProps';
+import { type OverflowingListProps } from './types/OverflowingListProps';
 
 const stopPropagation = (event: SyntheticEvent) => event.stopPropagation();
 
@@ -21,7 +21,7 @@ const STOP_PROPAGATION_PROPS = {
   onKeyUp: stopPropagation,
 };
 
-export const ExpandableList = ({
+export const OverflowingList = ({
   children,
   showOverflowCount,
   maxInlineCount,
@@ -33,7 +33,7 @@ export const ExpandableList = ({
   onBlurCapture,
   ref,
   ...props
-}: ExpandableListProps) => {
+}: OverflowingListProps) => {
   const [isHovered, setIsHovered] = useState(false);
   const [hasFocus, setHasFocus] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
@@ -48,7 +48,7 @@ export const ExpandableList = ({
       ? Math.min(children.length, Math.max(0, Math.floor(maxInlineCount)))
       : children.length;
   const { containerRef, itemsRef, triggerRef, visibleItemCount, hasOverflow } =
-    useExpandableListLayout({
+    useOverflowingListLayout({
       itemCount: children.length,
       inlineItemCount,
       reserveCountSpace: isCountVisible,
@@ -111,7 +111,7 @@ export const ExpandableList = ({
       >
         <div ref={itemsRef} className={styles.items}>
           {children.slice(0, inlineItemCount).map((child, index) => (
-            <ExpandableListItem
+            <OverflowingListItem
               key={child.key ?? index}
               isHidden={index >= displayedItemCount}
               isLastVisible={
@@ -120,7 +120,7 @@ export const ExpandableList = ({
               onFocusedItemUnmount={resetFocusState}
             >
               {child}
-            </ExpandableListItem>
+            </OverflowingListItem>
           ))}
         </div>
         {canExpand && (
@@ -142,7 +142,7 @@ export const ExpandableList = ({
           alignOffset={-7}
           aria-label={overflowLabel}
           className={styles.popup}
-          data-expandable-list-popup=""
+          data-overflowing-list-popup=""
           {...STOP_PROPAGATION_PROPS}
         >
           {children}

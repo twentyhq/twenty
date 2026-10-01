@@ -1,7 +1,7 @@
 import { useLingui } from '@lingui/react/macro';
 import { useFieldFocus } from '@/object-record/record-field/ui/hooks/useFieldFocus';
 import { useMultiSelectFieldDisplay } from '@/object-record/record-field/ui/meta-types/hooks/useMultiSelectFieldDisplay';
-import { ExpandableList } from 'twenty-ui/components';
+import { OverflowingList } from 'twenty-ui/components';
 import { Tag } from 'twenty-ui/primitives/data-display';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -21,7 +21,7 @@ export const MultiSelectFieldDisplay = () => {
   if (!isDefined(selectedOptions)) return null;
 
   return (
-    <ExpandableList
+    <OverflowingList
       overflowLabel={t`Show all items`}
       showOverflowCount={isFocused}
     >
@@ -30,6 +30,6 @@ export const MultiSelectFieldDisplay = () => {
           {selectedOption.label}
         </Tag>
       ))}
-    </ExpandableList>
+    </OverflowingList>
   );
 };

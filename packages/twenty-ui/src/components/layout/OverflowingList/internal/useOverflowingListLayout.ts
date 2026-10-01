@@ -7,7 +7,7 @@ import { measureItemWidths } from './measureItemWidths';
 
 const FALLBACK_MEASUREMENT_INTERVAL_MS = 100;
 
-export const useExpandableListLayout = ({
+export const useOverflowingListLayout = ({
   itemCount,
   inlineItemCount,
   reserveCountSpace,

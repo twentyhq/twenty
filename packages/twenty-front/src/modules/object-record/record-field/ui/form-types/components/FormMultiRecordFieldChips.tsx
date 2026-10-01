@@ -3,7 +3,7 @@ import { FormFieldPlaceholder } from '@/object-record/record-field/ui/form-types
 import { VariableChipStandalone } from '@/object-record/record-field/ui/form-types/components/VariableChipStandalone';
 import { type FormMultiRecordPickerDraftValue } from '@/object-record/record-field/ui/form-types/utils/getFormMultiRecordPickerDraftValue';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { ExpandableList } from 'twenty-ui/components';
+import { OverflowingList } from 'twenty-ui/components';
 import { isStandaloneVariableString } from 'twenty-shared/workflow';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
@@ -81,12 +81,12 @@ export const FormMultiRecordFieldChips = ({
 
   return (
     <StyledChipsContainer>
-      <ExpandableList
+      <OverflowingList
         overflowLabel={t`Show all items`}
         showOverflowCount={true}
       >
         {chips}
-      </ExpandableList>
+      </OverflowingList>
     </StyledChipsContainer>
   );
 };

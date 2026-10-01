@@ -5,7 +5,7 @@ import { useFieldFocus } from '@/object-record/record-field/ui/hooks/useFieldFoc
 import { MAX_RELATION_CHIPS_DISPLAYED_INLINE } from '@/object-record/record-field/ui/meta-types/display/constants/MaxRelationChipsDisplayedInline';
 import { useMorphRelationFromManyFieldDisplay } from '@/object-record/record-field/ui/meta-types/hooks/useMorphRelationFromManyFieldDisplay';
 
-import { ExpandableList } from 'twenty-ui/components';
+import { OverflowingList } from 'twenty-ui/components';
 import { useContext } from 'react';
 import { type ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -43,7 +43,7 @@ export const MorphRelationOneToManyFieldDisplay = () => {
     );
 
   return (
-    <ExpandableList
+    <OverflowingList
       overflowLabel={t`Show all items`}
       showOverflowCount={isFocused}
       maxInlineCount={MAX_RELATION_CHIPS_DISPLAYED_INLINE}
@@ -61,6 +61,6 @@ export const MorphRelationOneToManyFieldDisplay = () => {
             />
           );
         })}
-    </ExpandableList>
+    </OverflowingList>
   );
 };

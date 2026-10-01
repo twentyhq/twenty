@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 import { Tag } from '@ui/primitives/data-display/Tag/Tag';
 
-export const ExpandableListMutableTag = () => {
+export const OverflowingListMutableTag = () => {
   const [hasLongLabel, setHasLongLabel] = useState(false);
 
   return (

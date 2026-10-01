@@ -1,6 +1,6 @@
 import { Tag } from '@ui/primitives/data-display/Tag/Tag';
 
-export const EXPANDABLE_LIST_STORY_ITEMS = [
+export const OVERFLOWING_LIST_STORY_ITEMS = [
   'Customer',
   'Partner',
   'Priority',

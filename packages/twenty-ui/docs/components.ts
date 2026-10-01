@@ -1,4 +1,4 @@
-import { EXPANDABLE_LIST_PROP_DESCRIPTIONS } from './expandableListPropDescriptions';
+import { OVERFLOWING_LIST_PROP_DESCRIPTIONS } from './overflowingListPropDescriptions';
 import { METRIC_ROW_PROP_DESCRIPTIONS } from './metricRowPropDescriptions';
 import { PROGRESS_RING_PROP_DESCRIPTIONS } from './progressRingPropDescriptions';
 import { AVATAR_GROUP_PROP_DESCRIPTIONS } from './avatarGroupPropDescriptions';
@@ -485,11 +485,11 @@ export const DOCUMENTED_COMPONENTS = [
     },
   },
   {
-    name: 'ExpandableList',
-    source: 'components/layout/ExpandableList/ExpandableList.tsx',
+    name: 'OverflowingList',
+    source: 'components/layout/OverflowingList/OverflowingList.tsx',
     entryPoint: 'twenty-ui/components',
-    slug: 'components/expandable-list',
-    propDescriptions: EXPANDABLE_LIST_PROP_DESCRIPTIONS,
+    slug: 'components/overflowing-list',
+    propDescriptions: OVERFLOWING_LIST_PROP_DESCRIPTIONS,
   },
   {
     name: 'Section',

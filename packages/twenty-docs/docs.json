@@ -626,7 +626,7 @@
                       "ui/components/input/icon-button",
                       "ui/components/input/light-icon-button",
                       "ui/components/section",
-                      "ui/components/expandable-list",
+                      "ui/components/overflowing-list",
                       "ui/components/settings-row",
                       "ui/components/dropdown",
                       "ui/components/tab-button",

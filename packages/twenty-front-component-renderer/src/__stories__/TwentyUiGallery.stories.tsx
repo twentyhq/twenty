@@ -1,7 +1,7 @@
 import { breadcrumbTest } from '@/__stories__/twenty-ui-gallery/utils/breadcrumbTest';
-import { expandableListEventIsolationFailureTest } from '@/__stories__/twenty-ui-gallery/utils/expandableListEventIsolationFailureTest';
-import { expandableListGeometryTest } from '@/__stories__/twenty-ui-gallery/utils/expandableListGeometryTest';
-import { expandableListSandboxFailureTest } from '@/__stories__/twenty-ui-gallery/utils/expandableListSandboxFailureTest';
+import { overflowingListEventIsolationFailureTest } from '@/__stories__/twenty-ui-gallery/utils/overflowingListEventIsolationFailureTest';
+import { overflowingListGeometryTest } from '@/__stories__/twenty-ui-gallery/utils/overflowingListGeometryTest';
+import { overflowingListSandboxFailureTest } from '@/__stories__/twenty-ui-gallery/utils/overflowingListSandboxFailureTest';
 import { jsonTreeTest } from '@/__stories__/twenty-ui-gallery/utils/jsonTreeTest';
 import { inlineBannerSandboxTest } from '@/__stories__/twenty-ui-gallery/utils/inlineBannerSandboxTest';
 import { themeTokenTest } from '@/__stories__/twenty-ui-gallery/utils/themeTokenTest';
@@ -567,40 +567,40 @@ export const InlineBannerPreactFocusFailure: Story = createGalleryStory({
   play: inlineBannerSandboxTest,
 });
 
-export const ExpandableListReactPopupFailure: Story = createGalleryStory({
-  frontComponentBundleName: 'twenty-ui-expandable-list',
+export const OverflowingListReactPopupFailure: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-overflowing-list',
   runtime: 'react',
-  play: expandableListSandboxFailureTest,
+  play: overflowingListSandboxFailureTest,
 });
 
-export const ExpandableListPreactPopupFailure: Story = createGalleryStory({
-  frontComponentBundleName: 'twenty-ui-expandable-list',
+export const OverflowingListPreactPopupFailure: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-overflowing-list',
   runtime: 'preact',
-  play: expandableListSandboxFailureTest,
+  play: overflowingListSandboxFailureTest,
 });
 
-export const ExpandableListGeometryReact: Story = createGalleryStory({
-  frontComponentBundleName: 'twenty-ui-expandable-list',
+export const OverflowingListGeometryReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-overflowing-list',
   runtime: 'react',
-  play: expandableListGeometryTest,
+  play: overflowingListGeometryTest,
 });
 
-export const ExpandableListGeometryPreact: Story = createGalleryStory({
-  frontComponentBundleName: 'twenty-ui-expandable-list',
+export const OverflowingListGeometryPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-overflowing-list',
   runtime: 'preact',
-  play: expandableListGeometryTest,
+  play: overflowingListGeometryTest,
 });
 
-export const ExpandableListEventIsolationReactFailure: Story =
+export const OverflowingListEventIsolationReactFailure: Story =
   createGalleryStory({
-    frontComponentBundleName: 'twenty-ui-expandable-list',
+    frontComponentBundleName: 'twenty-ui-overflowing-list',
     runtime: 'react',
-    play: expandableListEventIsolationFailureTest,
+    play: overflowingListEventIsolationFailureTest,
   });
 
-export const ExpandableListEventIsolationPreactFailure: Story =
+export const OverflowingListEventIsolationPreactFailure: Story =
   createGalleryStory({
-    frontComponentBundleName: 'twenty-ui-expandable-list',
+    frontComponentBundleName: 'twenty-ui-overflowing-list',
     runtime: 'preact',
-    play: expandableListEventIsolationFailureTest,
+    play: overflowingListEventIsolationFailureTest,
   });

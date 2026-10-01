@@ -5,7 +5,7 @@ import { type FieldFilesValue } from '@/object-record/record-field/ui/types/Fiel
 import { FileChip } from '@/ui/field/display/components/FileChip';
 import { UploadFileChip } from '@/ui/field/display/components/UploadFileChip';
 import { filePreviewState } from '@/ui/field/display/states/filePreviewState';
-import { ExpandableList } from 'twenty-ui/components';
+import { OverflowingList } from 'twenty-ui/components';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { isDefined } from 'twenty-shared/utils';
@@ -51,7 +51,7 @@ export const FilesDisplay = ({
   }
 
   return (
-    <ExpandableList overflowLabel={t`Show all items`}>
+    <OverflowingList overflowLabel={t`Show all items`}>
       {value.map((file) => (
         <FileChip
           key={file.fileId}
@@ -60,6 +60,6 @@ export const FilesDisplay = ({
           forceDisableClick={forceDisableClick}
         />
       ))}
-    </ExpandableList>
+    </OverflowingList>
   );
 };

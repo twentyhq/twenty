@@ -3,7 +3,7 @@ import { useLingui } from '@lingui/react/macro';
 import { useCallback, useMemo } from 'react';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { ExpandableList, LightIconButton } from 'twenty-ui/components';
+import { OverflowingList, LightIconButton } from 'twenty-ui/components';
 import { IconPencil, IconPlus } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 
@@ -209,7 +209,7 @@ export const AiChatThreadRecordTargets = ({
     <StyledContainer>
       {hasTargetRecords && (
         <StyledRecordChips>
-          <ExpandableList overflowLabel={t`Show all items`} showOverflowCount>
+          <OverflowingList overflowLabel={t`Show all items`} showOverflowCount>
             {targetRecords.map(({ record, objectNameSingular }) => (
               <RecordChip
                 key={`${objectNameSingular}-${record.id}`}
@@ -217,7 +217,7 @@ export const AiChatThreadRecordTargets = ({
                 record={record}
               />
             ))}
-          </ExpandableList>
+          </OverflowingList>
         </StyledRecordChips>
       )}
       {canEditRecordTargets && (

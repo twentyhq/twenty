@@ -4,7 +4,7 @@ import React, { useMemo } from 'react';
 import { getFieldLinkDefinedLinks } from '@/object-record/record-field/ui/meta-types/input/utils/getFieldLinkDefinedLinks';
 import { type FieldLinksValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { SocialLink } from '@/ui/field/display/components/SocialLink/SocialLink';
-import { ExpandableList } from 'twenty-ui/components';
+import { OverflowingList } from 'twenty-ui/components';
 import {
   getAbsoluteUrlOrThrow,
   getUrlHostnameOrThrow,
@@ -47,7 +47,7 @@ export const LinksDisplay = ({ value, onLinkClick }: LinksDisplayProps) => {
   }, [value]);
 
   return (
-    <ExpandableList overflowLabel={t`Show all items`}>
+    <OverflowingList overflowLabel={t`Show all items`}>
       {links.map(({ url, label, displayLabel, type }, index) =>
         isSocialLinkType(type) ? (
           <SocialLink
@@ -66,6 +66,6 @@ export const LinksDisplay = ({ value, onLinkClick }: LinksDisplayProps) => {
           />
         ),
       )}
-    </ExpandableList>
+    </OverflowingList>
   );
 };
