@@ -35,7 +35,7 @@ export const resolveRoleObjectAccess = ({
   const objectPermissions = roleObjectsPermissions[objectMetadataId];
 
   return {
-    canRoleRead: objectPermissions?.canReadObjectRecords === true,
-    canRoleUpdate: objectPermissions?.canUpdateObjectRecords === true,
+    canRoleRead: objectPermissions?.canReadObjectRecords ?? false,
+    canRoleUpdate: objectPermissions?.canUpdateObjectRecords ?? false,
   };
 };
