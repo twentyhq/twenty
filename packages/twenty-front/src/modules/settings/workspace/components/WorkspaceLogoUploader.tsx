@@ -31,7 +31,7 @@ export const WorkspaceLogoUploader = () => {
 
     try {
       if (!currentWorkspace?.id) {
-        throw new Error('Workspace id not found');
+        throw new Error(t`Failed to upload picture`);
       }
 
       const uploadedLogo = await uploadWorkspaceLogo(file);
@@ -56,7 +56,7 @@ export const WorkspaceLogoUploader = () => {
 
     try {
       if (!currentWorkspace?.id) {
-        throw new Error('Workspace id not found');
+        throw new Error(t`Failed to remove picture`);
       }
 
       await updateWorkspace({
