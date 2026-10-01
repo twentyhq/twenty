@@ -506,8 +506,6 @@ export class WorkspaceMigrationRunnerService {
         );
       }
 
-      // Everything below needs its own core pool connection: holding this one
-      // while waiting deadlocks the pool when it is full of failing migrations
       await queryRunner.release();
 
       await this.logBlockingDbActivity();
