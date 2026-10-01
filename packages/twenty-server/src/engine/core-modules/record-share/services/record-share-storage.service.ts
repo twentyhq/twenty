@@ -213,20 +213,32 @@ export class RecordShareStorageService {
               const fullGrantKeys = new Set(
                 fullGrants.map(buildRecordShareRowKey),
               );
-              const custodianGrantIdsToRaise = (
-                await repository.find({
+              const custodianGrantIdsToRaise: string[] = [];
+
+              for (const fullGrantsChunk of chunk(
+                fullGrants,
+                QUERY_MAX_RECORDS,
+              )) {
+                const custodianGrants = await repository.find({
                   where: {
                     principalType: RecordSharePrincipalType.WORKSPACE_MEMBER,
                     principalId: toWorkspaceMemberId,
+                    recordId: In(
+                      fullGrantsChunk.map((fullGrant) => fullGrant.recordId),
+                    ),
                     rowCause: transferableRowCauses,
                     accessLevel: Not(RecordShareAccessLevel.FULL),
                   },
-                })
-              )
-                .filter((grant) =>
-                  fullGrantKeys.has(buildRecordShareRowKey(grant)),
-                )
-                .map((grant) => grant.id);
+                });
+
+                custodianGrantIdsToRaise.push(
+                  ...custodianGrants
+                    .filter((grant) =>
+                      fullGrantKeys.has(buildRecordShareRowKey(grant)),
+                    )
+                    .map((grant) => grant.id),
+                );
+              }
 
               for (const grantIdsChunk of chunk(
                 custodianGrantIdsToRaise,
