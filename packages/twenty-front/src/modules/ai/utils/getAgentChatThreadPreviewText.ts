@@ -41,11 +41,14 @@ export const getAgentChatThreadPreviewText = ({
   }
 
   const sender = workspaceMembers.find(({ id }) => id === senderId);
-  const senderName = !isDefined(sender)
-    ? t`Former member`
-    : isNonEmptyString(sender.name.firstName)
-      ? sender.name.firstName
-      : sender.userEmail;
+
+  if (!isDefined(sender)) {
+    return t`Former member: ${text}`;
+  }
+
+  const senderName = isNonEmptyString(sender.name.firstName)
+    ? sender.name.firstName
+    : sender.userEmail;
 
   return t`${senderName}: ${text}`;
 };

@@ -168,6 +168,24 @@ export const AiChatThreadListItem = ({
     currentWorkspaceMemberId: currentWorkspaceMember?.id,
   });
   const displayTitle = thread.title ?? t`Untitled`;
+
+  const getActivityTimeLabel = () => {
+    if (isDefined(snoozedUntil)) {
+      return t`Until ${AGENT_CHAT_THREAD_SNOOZE_TIME_FORMAT.format(new Date(snoozedUntil))}`;
+    }
+
+    if (isDefined(snoozeEndedAt)) {
+      return t`Snooze ended`;
+    }
+
+    if (isDefined(doneAt)) {
+      return t`Done ${formatAgentChatThreadActivityTime(doneAt)}`;
+    }
+
+    return formatAgentChatThreadActivityTime(
+      getAgentChatThreadLastActivityAt(thread),
+    );
+  };
   const itemMenuDropdownId = getAiChatThreadItemMenuDropdownId({
     threadId: thread.id,
     surface,
@@ -226,15 +244,7 @@ export const AiChatThreadListItem = ({
               )}
             </StyledThreadTitle>
             <StyledActivityTime $isDropdownOpen={isDropdownOpen}>
-              {isDefined(snoozedUntil)
-                ? t`Until ${AGENT_CHAT_THREAD_SNOOZE_TIME_FORMAT.format(new Date(snoozedUntil))}`
-                : isDefined(snoozeEndedAt)
-                  ? t`Snooze ended`
-                  : isDefined(doneAt)
-                    ? t`Done ${formatAgentChatThreadActivityTime(doneAt)}`
-                    : formatAgentChatThreadActivityTime(
-                        getAgentChatThreadLastActivityAt(thread),
-                      )}
+              {getActivityTimeLabel()}
             </StyledActivityTime>
           </StyledThreadHeading>
         )}

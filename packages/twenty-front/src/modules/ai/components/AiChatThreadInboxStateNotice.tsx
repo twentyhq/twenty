@@ -32,22 +32,32 @@ export const AiChatThreadInboxStateNotice = () => {
     { threadId: currentAiChatThread ?? '', lastActivityAt: null },
   );
 
-  const notice = isDefined(snoozedUntil)
-    ? {
+  const getNotice = () => {
+    if (isDefined(snoozedUntil)) {
+      return {
         Icon: IconClock,
         text: t`Snoozed until ${formatEventTime(snoozedUntil)}`,
-      }
-    : isDefined(snoozeEndedAt)
-      ? {
-          Icon: IconClock,
-          text: t`Snooze ended ${formatEventTime(snoozeEndedAt)}`,
-        }
-      : isDefined(doneAt)
-        ? {
-            Icon: IconProgressCheck,
-            text: t`Marked as done ${formatEventTime(doneAt)}`,
-          }
-        : null;
+      };
+    }
+
+    if (isDefined(snoozeEndedAt)) {
+      return {
+        Icon: IconClock,
+        text: t`Snooze ended ${formatEventTime(snoozeEndedAt)}`,
+      };
+    }
+
+    if (isDefined(doneAt)) {
+      return {
+        Icon: IconProgressCheck,
+        text: t`Marked as done ${formatEventTime(doneAt)}`,
+      };
+    }
+
+    return null;
+  };
+
+  const notice = getNotice();
 
   if (!isDefined(notice)) {
     return null;

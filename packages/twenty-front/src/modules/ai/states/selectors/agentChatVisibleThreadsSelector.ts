@@ -33,11 +33,9 @@ export const agentChatVisibleThreadsSelector = createAtomSelector<
       AGENT_CHAT_THREAD_LAST_ACTIVITY_FILTER_DAYS[
         get(agentChatThreadLastActivityFilterState)
       ];
-    const cutoffMs =
-      lastActivityDays !== null
-        ? get(agentChatThreadInboxNowState) -
-          lastActivityDays * millisecondsInDay
-        : null;
+    const cutoffMs = isDefined(lastActivityDays)
+      ? get(agentChatThreadInboxNowState) - lastActivityDays * millisecondsInDay
+      : null;
     const requiredScope = INBOX_SCOPE_BY_FILTER_STATUS[filterStatus];
 
     const isInFilterStatus = (thread: AgentChatThreadRecord) => {

@@ -294,7 +294,10 @@ export class AgentChatThreadParticipantService {
   private async touchThread({
     workspaceId,
     threadId,
-  }: Omit<ParticipantArgs, 'workspaceMemberId'>): Promise<ThreadActivityTimestamps | null> {
+  }: Omit<
+    ParticipantArgs,
+    'workspaceMemberId'
+  >): Promise<ThreadActivityTimestamps | null> {
     const rows = await this.threadRepository.query(
       workspaceId,
       ({ manager, table }) =>
