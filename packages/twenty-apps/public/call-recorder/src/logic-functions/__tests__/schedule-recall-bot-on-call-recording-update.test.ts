@@ -43,9 +43,7 @@ type HandlerEvent = Parameters<
   typeof scheduleRecallBotOnCallRecordingUpdateHandler
 >[0];
 
-const buildUpdateEvent = (
-  overrides: Partial<HandlerEvent> = {},
-): HandlerEvent =>
+const buildUpdateEvent = (overrides: Partial<HandlerEvent> = {}): HandlerEvent =>
   ({
     name: 'callRecording.updated',
     recordId: 'call-recording-1',
@@ -169,8 +167,9 @@ describe('scheduleRecallBotOnCallRecordingUpdateHandler', () => {
   it('schedules a bot when an update clears the bot id of a requested recording', async () => {
     stubPendingCallRecordingQueries();
 
-    const result =
-      await scheduleRecallBotOnCallRecordingUpdateHandler(buildUpdateEvent());
+    const result = await scheduleRecallBotOnCallRecordingUpdateHandler(
+      buildUpdateEvent(),
+    );
 
     expect(result).toEqual({
       callRecordingId: 'call-recording-1',
@@ -329,8 +328,9 @@ describe('scheduleRecallBotOnCallRecordingUpdateHandler', () => {
       ]),
     }));
 
-    const result =
-      await scheduleRecallBotOnCallRecordingUpdateHandler(buildUpdateEvent());
+    const result = await scheduleRecallBotOnCallRecordingUpdateHandler(
+      buildUpdateEvent(),
+    );
 
     expect(result).toEqual({
       callRecordingId: 'call-recording-1',
@@ -385,8 +385,9 @@ describe('scheduleRecallBotOnCallRecordingUpdateHandler', () => {
       ]),
     }));
 
-    const result =
-      await scheduleRecallBotOnCallRecordingUpdateHandler(buildUpdateEvent());
+    const result = await scheduleRecallBotOnCallRecordingUpdateHandler(
+      buildUpdateEvent(),
+    );
 
     expect(result).toEqual({
       callRecordingId: 'call-recording-1',
