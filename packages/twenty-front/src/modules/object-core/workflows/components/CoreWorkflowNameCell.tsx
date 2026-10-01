@@ -1,9 +1,8 @@
 import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { useIcons } from 'twenty-ui/icon';
-import { stringToThemeColor } from 'twenty-ui/utilities';
 
 import { CoreObjectNameCell } from '@/object-core/components/cells/CoreObjectNameCell';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { getAvatarShape } from '@/object-metadata/utils/getAvatarShape';
 
 type CoreWorkflowNameCellProps = {
   name: string | null | undefined;
@@ -17,13 +16,12 @@ export const CoreWorkflowNameCell = ({
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular: CoreObjectNameSingular.Workflow,
   });
-  const { getIcon } = useIcons();
 
   return (
     <CoreObjectNameCell
       name={name}
-      Icon={getIcon(objectMetadataItem.icon)}
-      iconColor={stringToThemeColor(workflowId)}
+      avatarColorSeed={workflowId}
+      avatarShape={getAvatarShape(objectMetadataItem)}
     />
   );
 };
