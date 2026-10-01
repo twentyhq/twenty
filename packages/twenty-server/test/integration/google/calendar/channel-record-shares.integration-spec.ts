@@ -89,7 +89,11 @@ describe('Calendar event grants derived from channels (integration)', () => {
 
     await runCalendarSync(janeChannel.calendarChannelId);
 
-    [calendarEventId] = await findCalendarEventIds();
+    const calendarEventIds = await findCalendarEventIds();
+
+    expect(calendarEventIds).toHaveLength(1);
+
+    [calendarEventId] = calendarEventIds;
   }, 120000);
 
   afterAll(async () => {
