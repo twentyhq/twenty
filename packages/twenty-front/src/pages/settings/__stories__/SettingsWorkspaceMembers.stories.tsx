@@ -5,8 +5,6 @@ import {
   type PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
-// TEMP_DISABLED_TEST: Removed unused import due to commented test
-// import { sleep } from '~/utils/sleep';
 
 import { SettingsWorkspaceMembers } from '~/pages/settings/members/SettingsWorkspaceMembers';
 

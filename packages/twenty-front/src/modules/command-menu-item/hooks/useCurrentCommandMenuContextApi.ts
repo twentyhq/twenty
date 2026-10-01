@@ -14,9 +14,11 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { hasAnySoftDeleteFilterOnViewComponentSelector } from '@/object-record/record-filter/states/hasAnySoftDeleteFilterOnView';
+import { recordPermissionsByRecordIdFamilySelector } from '@/object-record/record-sharing/states/recordPermissionsByRecordIdFamilySelector';
 import { recordStoreRecordsSelector } from '@/object-record/record-store/states/selectors/recordStoreRecordsSelector';
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
 import { currentPageLayoutIdState } from '@/page-layout/states/currentPageLayoutIdState';
+import { getWorkspaceFeatureFlagsMap } from '@/workspace/utils/getWorkspaceFeatureFlagsMap';
 import { isDashboardInEditModeComponentState } from '@/page-layout/states/isDashboardInEditModeComponentState';
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
@@ -74,9 +76,25 @@ export const useCurrentCommandMenuContextApi = (): CommandMenuContextApi => {
           ),
         );
 
-  const selectedRecords = useAtomFamilySelectorValue(
+  const storedSelectedRecords = useAtomFamilySelectorValue(
     recordStoreRecordsSelector,
     { recordIds: recordIds ?? [] },
+  );
+
+  const recordPermissionsByRecordId = useAtomFamilySelectorValue(
+    recordPermissionsByRecordIdFamilySelector,
+    {
+      objectMetadataId: objectMetadataItem?.id ?? '',
+      recordIds: recordIds ?? [],
+    },
+  );
+
+  // Records shared at a lower access level than the role grants carry their
+  // own permissions, which availability expressions read per record
+  const selectedRecords = storedSelectedRecords.map((record) =>
+    isDefined(recordPermissionsByRecordId[record.id])
+      ? { ...record, recordPermissions: recordPermissionsByRecordId[record.id] }
+      : record,
   );
 
   const currentPageLayoutId = useAtomStateValue(currentPageLayoutIdState);
@@ -142,11 +160,9 @@ export const useCurrentCommandMenuContextApi = (): CommandMenuContextApi => {
 
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
-  const featureFlags: Record<string, boolean> = {};
-
-  for (const flag of currentWorkspace?.featureFlags ?? []) {
-    featureFlags[flag.key] = flag.value === true;
-  }
+  const featureFlags = getWorkspaceFeatureFlagsMap(
+    currentWorkspace?.featureFlags,
+  );
 
   const currentUserWorkspace = useAtomStateValue(currentUserWorkspaceState);
 

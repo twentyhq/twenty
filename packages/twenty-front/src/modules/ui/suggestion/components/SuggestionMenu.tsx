@@ -5,7 +5,6 @@ import {
   shift,
   useFloating,
 } from '@floating-ui/react';
-import { css } from '@linaria/core';
 import { motion } from 'framer-motion';
 import {
   forwardRef,
@@ -17,23 +16,12 @@ import {
 } from 'react';
 
 import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
-import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { OverlayMenuList } from '@/ui/layout/overlay/components/OverlayMenuList';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
+import { SuggestionItemPreviewTooltip } from '@/ui/suggestion/components/SuggestionItemPreviewTooltip';
 import type { SuggestionMenuProps } from '@/ui/suggestion/types/SuggestionMenuProps';
 import { getSuggestionMenuItemAnchorId } from '@/ui/suggestion/utils/getSuggestionMenuItemAnchorId';
 import { useIsMobile } from 'twenty-ui/utilities';
-import { Tooltip } from 'twenty-ui/primitives/surfaces';
-import { themeCssVariables } from 'twenty-ui/theme';
-
-// The preview card brings its own surface, so the tooltip only contributes
-// the shadow. Tooltips render at 0.9 opacity, which would make it translucent.
-const previewTooltipClass = css`
-  background: transparent !important;
-  border-radius: ${themeCssVariables.border.radius.md} !important;
-  box-shadow: ${themeCssVariables.boxShadow.strong} !important;
-  padding: 0 !important;
-`;
 
 type SuggestionMenuInnerProps<TItem> = SuggestionMenuProps<TItem>;
 
@@ -214,40 +202,33 @@ const SuggestionMenuInner = <TItem,>(
           zIndex: RootStackingContextZIndices.DropdownPortalAboveModal,
         }}
       >
-        <LegacyDropdownContent ref={listContainerRef}>
-          <DropdownMenuItemsContainer hasMaxHeight>
-            {items.map((item, index) => {
-              const isSelected = index === clampedSelectedIndex;
+        <OverlayMenuList ref={listContainerRef}>
+          {items.map((item, index) => {
+            const isSelected = index === clampedSelectedIndex;
 
-              return (
-                <div
-                  key={getItemKey(item)}
-                  id={getSuggestionMenuItemAnchorId(getItemKey(item))}
-                  ref={isSelected ? activeItemRef : null}
-                  onMouseDown={(event) => {
-                    event.preventDefault();
-                  }}
-                >
-                  {renderItem(item, isSelected)}
-                </div>
-              );
-            })}
-          </DropdownMenuItemsContainer>
-        </LegacyDropdownContent>
+            return (
+              <div
+                key={getItemKey(item)}
+                id={getSuggestionMenuItemAnchorId(getItemKey(item))}
+                ref={isSelected ? activeItemRef : null}
+                onMouseDown={(event) => {
+                  event.preventDefault();
+                }}
+              >
+                {renderItem(item, isSelected)}
+              </div>
+            );
+          })}
+        </OverlayMenuList>
       </OverlayContainer>
       {shouldDisplayPreview && (
-        <Tooltip.Root key={getItemKey(selectedItem)} open>
-          <Tooltip.Popup
-            anchor={activeItemRef}
-            side="right"
-            align="start"
-            sideOffset={16}
-            className={previewTooltipClass}
-            maxWidth={`${selectedItemPreview.width}px`}
-          >
-            {selectedItemPreview.render(selectedItem)}
-          </Tooltip.Popup>
-        </Tooltip.Root>
+        <SuggestionItemPreviewTooltip
+          key={getItemKey(selectedItem)}
+          anchor={activeItemRef}
+          width={selectedItemPreview.width}
+        >
+          {selectedItemPreview.render(selectedItem)}
+        </SuggestionItemPreviewTooltip>
       )}
     </motion.div>
   );

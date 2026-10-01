@@ -64,7 +64,10 @@ export const buildAgentChatThreadStandardFlatFieldMetadatas = (
         icon: 'IconId',
         isSystem: true,
         isUIEditable: false,
-        isNullable: false,
+        // A workflow run's conversation has no owner: it is read through the
+        // run. The column goes away with the owner contract step
+        // (twentyhq/core-team-issues#2925).
+        isNullable: true,
       },
     }),
     writability: MetadataWritability.SYSTEM,
@@ -84,7 +87,7 @@ export const buildAgentChatThreadStandardFlatFieldMetadatas = (
         ),
         icon: 'IconText',
         isSystem: true,
-        isUIEditable: false,
+        isUIEditable: true,
         isNullable: true,
       },
     }),
@@ -516,8 +519,9 @@ export const buildAgentChatThreadStandardFlatFieldMetadatas = (
         ),
         icon: 'IconUsers',
         isUIEditable: false,
-        // Becomes required with the owner contract step
-        // (twentyhq/core-team-issues#2925).
+        // Stays optional for a workflow run's conversation, which is read
+        // through its run rather than owned. Every other thread gets an owner
+        // with the owner contract step (twentyhq/core-team-issues#2925).
         isNullable: true,
         targetObjectName: 'workspaceMember',
         targetFieldName: 'agentChatThreads',
@@ -526,6 +530,37 @@ export const buildAgentChatThreadStandardFlatFieldMetadatas = (
           relationType: RelationType.MANY_TO_ONE,
           onDelete: RelationOnDeleteAction.CASCADE,
           joinColumnName: 'workspaceMemberId',
+        },
+      },
+    }),
+    writability: MetadataWritability.SYSTEM,
+    isAuditLogged: false,
+  },
+  workflowRun: {
+    ...createStandardRelationFieldFlatMetadata({
+      ...args,
+      context: {
+        fieldName: 'workflowRun',
+        type: FieldMetadataType.RELATION,
+        label: i18nLabel(
+          msg({ message: 'Workflow Run', context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: 'Workflow run whose agent step held this conversation',
+            context: 'fieldMetadata.description',
+          }),
+        ),
+        icon: 'IconHistoryToggle',
+        isUIEditable: false,
+        isNullable: true,
+        targetObjectName: 'workflowRun',
+        targetFieldName: 'agentChatThreads',
+        morphId: null,
+        settings: {
+          relationType: RelationType.MANY_TO_ONE,
+          onDelete: RelationOnDeleteAction.CASCADE,
+          joinColumnName: 'workflowRunId',
         },
       },
     }),

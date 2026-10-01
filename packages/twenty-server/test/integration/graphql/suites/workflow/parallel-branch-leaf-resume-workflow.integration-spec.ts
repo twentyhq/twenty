@@ -6,6 +6,7 @@ import {
 import { FieldMetadataType } from 'twenty-shared/types';
 import { v4 } from 'uuid';
 
+import { type WorkflowRunRecordShareService } from 'src/engine/core-modules/workflow/services/workflow-run-record-share.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import {
@@ -13,7 +14,9 @@ import {
   type WorkflowDelayAction,
   type WorkflowFormAction,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+import { answerToolCall } from 'test/integration/graphql/suites/workflow/utils/answer-tool-call.util';
 import { updateWorkflowVersionTrigger } from 'test/integration/graphql/suites/workflow/utils/update-workflow-version-trigger.util';
+import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
 const client = request(`http://localhost:${APP_PORT}`);
 
@@ -295,6 +298,14 @@ describe('Parallel branch leaf resume workflow (e2e)', () => {
         JSON.stringify(state),
       ],
     );
+    // Runs are private, and a direct insert skips the grants that creating a
+    // run writes, so the run would be unreadable through the record API.
+    await getAppProviderByClassName<WorkflowRunRecordShareService>(
+      'WorkflowRunRecordShareService',
+    ).syncRuns({
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      workflowRunIds: [createdWorkflowRunId],
+    });
 
     await (
       await global.workflowTestServices.runJob()
@@ -314,26 +325,13 @@ describe('Parallel branch leaf resume workflow (e2e)', () => {
       'NOT_STARTED',
     );
 
-    const submitFormResponse = await client
-      .post('/graphql')
-      .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
-      .send({
-        query: `
-          mutation SubmitFormStep($input: SubmitFormStepInput!) {
-            submitFormStep(input: $input)
-          }
-        `,
-        variables: {
-          input: {
-            stepId: formStepId,
-            workflowRunId: createdWorkflowRunId,
-            response: { answer: 'Submitted from integration test' },
-          },
-        },
-      });
+    const submitFormResponse = await answerToolCall({
+      toolCall: { workflowRunId: createdWorkflowRunId, stepId: formStepId! },
+      response: { answer: 'Submitted from integration test' },
+    });
 
     expect(submitFormResponse.body.errors).toBeUndefined();
-    expect(submitFormResponse.body.data.submitFormStep).toBe(true);
+    expect(submitFormResponse.body.data.answerToolCall.streamId).toBeNull();
 
     await (
       await global.workflowTestServices.runJob()

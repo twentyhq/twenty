@@ -30,7 +30,7 @@ const readFirstParam = (expression: string): string | undefined => {
   let param = '';
 
   for (let index = 0; index < expression.length; ++index) {
-    const character = expression[index];
+    const character = expression.charAt(index);
 
     if (character === '[') {
       const closingIndex = expression.indexOf(']', index + 1);
@@ -153,7 +153,7 @@ export const evalFromContext = (
     return undefined;
   }
 
-  const expression = tokenMatch[1].trim();
+  const expression = tokenMatch[1]?.trim();
 
   if (!isNonEmptyString(expression)) {
     return undefined;
@@ -225,15 +225,16 @@ export const evalFromContext = (
     return undefined;
   }
 
-  if (segments.length === 0) {
+  const firstSegment = segments[0];
+  const lastSegment = segments[segments.length - 1];
+
+  if (!isDefined(firstSegment) || !isDefined(lastSegment)) {
     return toJsonValue(context);
   }
 
   // A number or a keyword read as a value rather than a key, so a path ending in
   // one never resolved. Mid-path they are ordinary keys: `arr.0` is undefined
   // but `arr.0.length` is not, and `[0]` works in either position
-  const lastSegment = segments[segments.length - 1];
-
   if (
     !lastSegment.isLiteralSegment &&
     (NUMBER_LITERAL_PATTERN.test(lastSegment.value) ||
@@ -246,8 +247,8 @@ export const evalFromContext = (
   // only for a bare path: under `@root.` it stayed an ordinary empty-string key
   if (
     contextPrefix !== '@root.' &&
-    segments[0].isLiteralSegment &&
-    segments[0].value === ''
+    firstSegment.isLiteralSegment &&
+    firstSegment.value === ''
   ) {
     return toJsonValue(context);
   }

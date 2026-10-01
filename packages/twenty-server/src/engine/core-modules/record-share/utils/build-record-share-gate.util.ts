@@ -11,6 +11,7 @@ import {
   type InheritedReadabilityParentCondition,
 } from 'src/engine/core-modules/record-share/utils/build-inherited-readability-condition.util';
 import { buildRecordShareCondition } from 'src/engine/core-modules/record-share/utils/build-record-share-condition.util';
+import { isOpenWhenDetachedObject } from 'src/engine/core-modules/record-share/utils/is-open-when-detached-object.util';
 import { resolveInheritedReadabilityParents } from 'src/engine/core-modules/record-share/utils/resolve-inherited-readability-parents.util';
 import { resolveRequiredRecordShareAccessLevels } from 'src/engine/core-modules/record-share/utils/resolve-required-record-share-access-levels.util';
 import {
@@ -39,7 +40,6 @@ export const buildRecordShareGate = ({
   const gateKind = resolveRecordShareGateKind({
     readability: target.flatObjectMetadata.readability,
     isOwningApplication,
-    isLegacyRecordAccessOpen: context.environment.isLegacyRecordAccessOpen,
   });
   switch (gateKind) {
     case 'open':
@@ -130,8 +130,12 @@ const buildInheritedReadabilityGate = ({
     return { kind: 'open' };
   }
 
+  const isOpenWhenDetached = isOpenWhenDetachedObject(flatObjectMetadata);
+
   if (parents.length === 0) {
-    return buildOwnRecordShareGate(context, target);
+    return isOpenWhenDetached
+      ? { kind: 'open' }
+      : buildOwnRecordShareGate(context, target);
   }
 
   const principals = resolveRecordSharePrincipals(context, target);
@@ -156,6 +160,7 @@ const buildInheritedReadabilityGate = ({
       recordShareTableExpression:
         context.environment.recordShareTableExpression,
       ...principals,
+      isOpenWhenDetached,
     }),
   };
 };

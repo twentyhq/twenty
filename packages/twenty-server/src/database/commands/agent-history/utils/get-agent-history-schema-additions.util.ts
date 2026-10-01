@@ -1,7 +1,4 @@
-import {
-  STANDARD_OBJECT_FIELDS,
-  STANDARD_OBJECTS,
-} from 'twenty-shared/metadata';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { MetadataReadability, MetadataWritability } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
@@ -12,15 +9,6 @@ type AgentHistorySchemaMaps = Pick<
   AllFlatEntityMaps,
   'flatObjectMetadataMaps' | 'flatFieldMetadataMaps' | 'flatIndexMaps'
 >;
-
-// agentChatThreadTarget is provisioned by its own command, which owns both legs
-// of its relation to agentChatThread: `thread` on the target and
-// `recordTargets` on the thread. This migration does not create that object, so
-// emitting either leg here would fail validation.
-const FIELD_UNIVERSAL_IDENTIFIERS_PROVISIONED_ELSEWHERE = new Set([
-  STANDARD_OBJECT_FIELDS.agentChatThread.recordTargets.universalIdentifier,
-  STANDARD_OBJECT_FIELDS.agentChatThreadTarget.thread.universalIdentifier,
-]);
 
 export const getAgentHistorySchemaAdditions = ({
   existing,
@@ -44,7 +32,10 @@ export const getAgentHistorySchemaAdditions = ({
       ((current.readability === MetadataReadability.SYSTEM &&
         current.writability === MetadataWritability.SYSTEM) ||
         (identifier === STANDARD_OBJECTS.agentChatThread.universalIdentifier &&
-          current.readability === MetadataReadability.PRIVATE &&
+          // INHERITED once threads can belong to a workflow run; a thread
+          // without one still reads only through its own grants.
+          (current.readability === MetadataReadability.PRIVATE ||
+            current.readability === MetadataReadability.INHERITED) &&
           current.writability === MetadataWritability.OPEN));
     if (
       isDefined(current) &&
@@ -78,6 +69,17 @@ export const getAgentHistorySchemaAdditions = ({
     readability: MetadataReadability.SYSTEM,
     writability: MetadataWritability.SYSTEM,
   }));
+  // Objects standard metadata adds after this migration (e.g.
+  // agentChatThreadTarget) are created, with both legs of their relation to
+  // history, by their own command; a leg emitted here before that object
+  // exists would have no other side and fail validation.
+  const existsOnceProvisioned = (objectUniversalIdentifier: string) =>
+    objectIdentifiers.has(objectUniversalIdentifier) ||
+    isDefined(
+      existing.flatObjectMetadataMaps.byUniversalIdentifier[
+        objectUniversalIdentifier
+      ],
+    );
   // Relations from other standard objects into history objects (e.g. the
   // attachment morph target) must be provisioned with the history objects,
   // otherwise only the history-side half of the relation gets created.
@@ -92,9 +94,11 @@ export const getAgentHistorySchemaAdditions = ({
             objectIdentifiers.has(
               field.relationTargetObjectMetadataUniversalIdentifier,
             ))) &&
-        !FIELD_UNIVERSAL_IDENTIFIERS_PROVISIONED_ELSEWHERE.has(
-          field.universalIdentifier,
-        ),
+        existsOnceProvisioned(field.objectMetadataUniversalIdentifier) &&
+        (!isDefined(field.relationTargetObjectMetadataUniversalIdentifier) ||
+          existsOnceProvisioned(
+            field.relationTargetObjectMetadataUniversalIdentifier,
+          )),
     );
   const fields = historyFields.filter(
     (field) =>

@@ -1,9 +1,8 @@
 import { AGENT_CHAT_INSTANCE_ID } from '@/ai/constants/AgentChatInstanceId';
 import { agentChatUsageComponentFamilyState } from '@/ai/states/agentChatUsageComponentFamilyState';
 import { getAgentChatUsageFromThread } from '@/ai/utils/getAgentChatUsageFromThread';
-import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
+import { agentChatThreadsSelector } from '@/ai/states/selectors/agentChatThreadsSelector';
 import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
-import { type AgentChatThread } from '~/generated-metadata/graphql';
 import { agentChatDraftsByThreadIdState } from '@/ai/states/agentChatDraftsByThreadIdState';
 import { agentChatInputState } from '@/ai/states/agentChatInputState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
@@ -31,10 +30,9 @@ export const useSwitchAgentChatThreadWithDraft = () => {
       setCurrentAiChatThread(toThreadId);
 
       if (!isSameThread) {
-        const threads = store.get(
-          metadataStoreState.atomFamily('agentChatThreads'),
-        ).current as AgentChatThread[];
-        const thread = threads.find(({ id }) => id === toThreadId);
+        const thread = store
+          .get(agentChatThreadsSelector.atom)
+          .find(({ id }) => id === toThreadId);
         store.set(
           usageFamilyCallback({ threadId: toThreadId }),
           isDefined(thread) ? getAgentChatUsageFromThread(thread) : null,

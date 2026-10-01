@@ -6,7 +6,7 @@ import { useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { FormProvider } from 'react-hook-form';
-import { ClickToActionLink } from 'twenty-ui/primitives/navigation';
+import { Button } from 'twenty-ui/primitives/input';
 
 import { StyledOnboardingContentContainer } from '@/auth/components/StyledOnboardingContentContainer';
 import { SignInUpWithCredentials } from '@/auth/sign-in-up/components/internal/SignInUpWithCredentials';
@@ -25,6 +25,7 @@ import { OnboardingStepAnimatedItem } from '@/onboarding/components/OnboardingSt
 import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { getWorkspaceAvatarColorSeed } from '@/workspace/utils/getWorkspaceAvatarColorSeed';
 import { isNonEmptyString } from '@sniptt/guards';
 import { IconChevronRight, IconPlus } from 'twenty-ui/icon';
 import { Avatar } from 'twenty-ui/primitives/data-display';
@@ -179,6 +180,9 @@ export const SignInUpGlobalScopeForm = () => {
                     <StyledWorkspaceContent>
                       <Avatar
                         name={availableWorkspace.displayName || ''}
+                        colorSeed={getWorkspaceAvatarColorSeed(
+                          availableWorkspace.displayName,
+                        )}
                         src={getAbsoluteImageUrl(
                           availableWorkspace.logo ?? DEFAULT_WORKSPACE_LOGO,
                         )}
@@ -256,11 +260,12 @@ export const SignInUpGlobalScopeForm = () => {
           </FormProvider>
           {signInUpStep === SignInUpStep.Password && (
             <StyledForgotPasswordLinkContainer>
-              <ClickToActionLink
+              <Button
+                variant="link"
                 onClick={handleResetPassword(form.getValues('email'))}
               >
                 <Trans>Forgot your password?</Trans>
-              </ClickToActionLink>
+              </Button>
             </StyledForgotPasswordLinkContainer>
           )}
         </StyledOnboardingContentContainer>

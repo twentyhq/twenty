@@ -98,6 +98,12 @@ export const STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS = {
           emails: 'Emails',
         },
       },
+      conversations: {
+        title: 'Conversations',
+        widgets: {
+          conversations: 'Conversations',
+        },
+      },
       calendar: {
         title: 'Calendar',
         widgets: {
@@ -146,6 +152,12 @@ export const STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS = {
         title: 'Emails',
         widgets: {
           emails: 'Emails',
+        },
+      },
+      conversations: {
+        title: 'Conversations',
+        widgets: {
+          conversations: 'Conversations',
         },
       },
       calendar: {
@@ -197,6 +209,12 @@ export const STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS = {
         title: 'Emails',
         widgets: {
           emails: 'Emails',
+        },
+      },
+      conversations: {
+        title: 'Conversations',
+        widgets: {
+          conversations: 'Conversations',
         },
       },
       calendar: {
@@ -312,6 +330,18 @@ export const STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS = {
         title: 'Flow',
         widgets: {
           workflowRun: 'Flow',
+        },
+      },
+    },
+  }),
+  agentChatThreadRecordPage: buildStandardObjectRecordPageLayout({
+    objectUniversalIdentifier:
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.agentChatThread,
+    tabs: {
+      chat: {
+        title: 'Chat',
+        widgets: {
+          chat: 'Chat',
         },
       },
     },

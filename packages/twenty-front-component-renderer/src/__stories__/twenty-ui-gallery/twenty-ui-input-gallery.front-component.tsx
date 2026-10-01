@@ -1,7 +1,5 @@
 import { defineFrontComponent } from 'twenty-sdk/define';
 import {
-  CardPicker,
-  ColorSchemePicker,
   IconButton,
   LightButton,
   LightIconButton,
@@ -41,10 +39,12 @@ const INPUT_ENTRIES: GalleryEntry[] = [
     ),
   },
   {
-    name: 'CardPicker',
+    name: 'Radio (card)',
     node: (
       <RadioGroup defaultValue="card" aria-label="Card selection">
-        <CardPicker value="card">Card</CardPicker>
+        <Radio variant="card" value="card">
+          Card
+        </Radio>
       </RadioGroup>
     ),
   },
@@ -61,18 +61,6 @@ const INPUT_ENTRIES: GalleryEntry[] = [
   {
     name: 'CodeEditorHeader',
     node: <CodeEditorHeader title="Editor" />,
-  },
-  {
-    name: 'ColorSchemePicker',
-    node: (
-      <ColorSchemePicker
-        value="Light"
-        onChange={() => {}}
-        lightLabel="Light"
-        darkLabel="Dark"
-        systemLabel="System"
-      />
-    ),
   },
   {
     name: 'IconButton (elevated)',
@@ -136,7 +124,7 @@ const INPUT_ENTRIES: GalleryEntry[] = [
   },
   {
     name: 'SearchInput',
-    node: <SearchInput value="" onChange={() => {}} placeholder="Search" />,
+    node: <SearchInput defaultValue="" placeholder="Search" />,
   },
   {
     name: 'SegmentedControl',

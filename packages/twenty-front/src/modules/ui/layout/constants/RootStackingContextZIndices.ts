@@ -1,18 +1,8 @@
-/**
- * Please read this article to understand why we use this enum : https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_positioned_layout/Stacking_context
- *
- * It is important to keep track of the stacking contexts that are created on top of the root stacking context of the document.
- *
- * Right now we have to guess it by looking into the developer console
- *
- * This way we can avoid hazardous fidgeting with z-index CSS properties
- *   and having to look down the tree in the developer console to see which component is in the root stacking context or not
- *
- * Using an enum enforces a single z-index for each component in the root stacking context
- *
- * TODO: add the other remaining components that can appear in the root stacking context
- */
+// Every stacking context created on top of the document's root one gets its z-index here, so it no longer has to be
+// guessed from the dev console: https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_positioned_layout/Stacking_context
+// TODO: add the other remaining components that can appear in the root stacking context
 export enum RootStackingContextZIndices {
+  LogConsole = 20,
   SidePanel = 21,
   SidePanelButton = 22,
   MobileNavigationBar = 23,

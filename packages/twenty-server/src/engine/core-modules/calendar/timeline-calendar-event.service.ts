@@ -185,7 +185,6 @@ export class TimelineCalendarEventService {
             })
           : [];
 
-      // Resolve current user's userWorkspaceId (workspaceMember → userId → userWorkspace)
       const workspaceMemberRepo =
         this.workspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
           'workspaceMember',

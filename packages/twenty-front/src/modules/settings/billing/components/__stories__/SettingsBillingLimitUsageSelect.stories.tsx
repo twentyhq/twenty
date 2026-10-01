@@ -1,4 +1,5 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { SettingsBillingLimitUsageSelect } from '@/settings/billing/components/SettingsBillingLimitUsageSelect';
@@ -54,5 +55,49 @@ export const AllOperations: Story = {
   args: {
     resourceType: UsageResourceType.AI,
     operationType: UsageOperationType.ALL,
+  },
+};
+
+export const NavigateAndSelect: Story = {
+  args: {
+    resourceType: UsageResourceType.AI,
+    operationType: UsageOperationType.AI_CHAT_TOKEN,
+    onChange: fn(),
+  },
+  play: async ({ canvasElement, args }) => {
+    const body = within(canvasElement.ownerDocument.body);
+    const trigger = within(canvasElement).getByRole('button');
+
+    await userEvent.click(trigger);
+    const popup = await body.findByRole('dialog', { name: 'Usage' });
+
+    await userEvent.click(within(popup).getByRole('button', { name: 'AI' }));
+    expect(
+      await within(popup).findByRole('button', {
+        name: 'Chats',
+        pressed: true,
+      }),
+    ).toBeVisible();
+    await userEvent.click(within(popup).getByRole('button', { name: 'AI' }));
+    await waitFor(() =>
+      expect(within(popup).getByRole('button', { name: 'AI' })).toHaveFocus(),
+    );
+
+    await userEvent.keyboard('{Enter}');
+    await userEvent.click(
+      await within(popup).findByRole('button', { name: 'Web Search' }),
+    );
+    await waitFor(() => expect(popup).not.toBeInTheDocument());
+    expect(args.onChange).toHaveBeenCalledWith({
+      resourceType: UsageResourceType.AI,
+      operationType: UsageOperationType.WEB_SEARCH,
+    });
+
+    await userEvent.click(trigger);
+    expect(await body.findByRole('button', { name: 'AI' })).toBeVisible();
+    expect(
+      body.queryByRole('button', { name: 'Web Search' }),
+    ).not.toBeInTheDocument();
+    await userEvent.keyboard('{Escape}');
   },
 };

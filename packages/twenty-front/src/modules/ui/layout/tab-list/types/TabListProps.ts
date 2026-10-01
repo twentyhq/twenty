@@ -10,6 +10,7 @@ export type TabListProps = {
   className?: string;
   componentInstanceId: string;
   onChangeTab?: (tabId: string) => void;
+  onClickTab?: (tabId: string) => void;
   rightComponent?: ReactNode;
   centerTabs?: boolean;
 };

@@ -212,6 +212,7 @@ export class UsageLimitQuotaService implements OnModuleInit {
               meter: usageLimit.meter,
               periodUnit: usageLimit.periodUnit,
               periodStart: period.periodStart,
+              limitValue: usageLimit.limitValue,
             }),
           ]
         : []),

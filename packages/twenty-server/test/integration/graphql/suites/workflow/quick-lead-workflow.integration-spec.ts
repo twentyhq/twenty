@@ -1,4 +1,5 @@
 import request from 'supertest';
+import { answerToolCall } from 'test/integration/graphql/suites/workflow/utils/answer-tool-call.util';
 import {
   destroyWorkflowRun,
   getWorkflowRun,
@@ -246,9 +247,12 @@ describe('Quick Lead Workflow (e2e)', () => {
 
       expect(testWorkflowRunId).toBeDefined();
 
-      let workflowRun = await waitForWorkflowRunStatus(
+      await waitForWorkflowRunStatus(testWorkflowRunId as string, 'RUNNING');
+
+      let workflowRun = await waitForWorkflowRunStepStatus(
         testWorkflowRunId as string,
-        'RUNNING',
+        FORM_STEP_ID,
+        'PENDING',
       );
 
       expect(workflowRun?.status).toBe('RUNNING');
@@ -266,26 +270,16 @@ describe('Quick Lead Workflow (e2e)', () => {
         companyDomain: `https://test-${testId}.example.com`,
       };
 
-      const submitFormResponse = await client
-        .post('/graphql')
-        .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
-        .send({
-          query: `
-            mutation SubmitFormStep($input: SubmitFormStepInput!) {
-              submitFormStep(input: $input)
-            }
-          `,
-          variables: {
-            input: {
-              stepId: FORM_STEP_ID,
-              workflowRunId: testWorkflowRunId,
-              response: testFormData,
-            },
-          },
-        });
+      const submitFormResponse = await answerToolCall({
+        toolCall: {
+          workflowRunId: testWorkflowRunId as string,
+          stepId: FORM_STEP_ID,
+        },
+        response: testFormData,
+      });
 
       expect(submitFormResponse.body.errors).toBeUndefined();
-      expect(submitFormResponse.body.data.submitFormStep).toBe(true);
+      expect(submitFormResponse.body.data.answerToolCall.streamId).toBeNull();
 
       workflowRun = await waitForWorkflowCompletion(
         testWorkflowRunId as string,

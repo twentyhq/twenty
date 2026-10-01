@@ -38,6 +38,7 @@ export const buildIntraWorkspaceLimitCounterKeys = ({
           meter: limit.meter,
           periodUnit: limit.periodUnit,
           periodStart: period.periodStart,
+          limitValue: limit.limitValue,
         }),
       ];
     });

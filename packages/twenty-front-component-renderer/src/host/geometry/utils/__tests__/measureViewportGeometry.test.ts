@@ -1,6 +1,20 @@
+import { stubWindowMatchMedia } from '@/testing/stubWindowMatchMedia';
 import { measureViewportGeometry } from '../measureViewportGeometry';
 
 describe('measureViewportGeometry', () => {
+  afterEach(() => {
+    delete (window as { matchMedia?: unknown }).matchMedia;
+  });
+
+  it('should read the primary input media features', () => {
+    stubWindowMatchMedia(['(pointer: coarse)']);
+
+    const viewport = measureViewportGeometry(null);
+
+    expect(viewport.hover).toBe('none');
+    expect(viewport.pointer).toBe('coarse');
+  });
+
   it('should read the window fields', () => {
     const viewport = measureViewportGeometry(null);
 

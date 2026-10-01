@@ -9,6 +9,7 @@ import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsW
 import { SettingsUpdateDataModelObjectAboutForm } from '@/settings/data-model/object-details/components/SettingsUpdateDataModelObjectAboutForm';
 import { SettingsObjectIndexesSection } from '@/settings/data-model/object-details/components/tabs/SettingsObjectIndexesSection';
 import { SettingsObjectSearchSection } from '@/settings/data-model/object-details/components/tabs/SettingsObjectSearchSection';
+import { SettingsObjectValidationRulesSection } from '@/settings/data-model/object-details/components/tabs/SettingsObjectValidationRulesSection';
 import { SettingsDataModelObjectSettingsFormCard } from '@/settings/data-model/objects/forms/components/SettingsDataModelObjectSettingsFormCard';
 import {
   type SettingsDataModelObjectAboutFormValues,
@@ -18,6 +19,7 @@ import { SettingsTranslationsCard } from '@/settings/translations/components/Set
 import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
@@ -28,6 +30,7 @@ import { Section, useToast } from 'twenty-ui/components';
 import { IconArchive, IconTrash } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 type ObjectSettingsProps = {
@@ -92,6 +95,10 @@ export const ObjectSettings = ({
 
   const isReadOnly =
     isObjectMetadataReadOnly({ objectMetadataItem }) || isDDLLocked;
+
+  const isValidationRulesEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_VALIDATION_RULES_ENABLED,
+  );
 
   const handleDisable = async () => {
     const result = await updateOneObjectMetadataItem({
@@ -162,6 +169,22 @@ export const ObjectSettings = ({
           />
         </Section.Root>
       </StyledFormSectionContainer>
+      {isValidationRulesEnabled &&
+        !objectMetadataItem.isRemote &&
+        !objectMetadataItem.isSystem && (
+          <StyledFormSectionContainer>
+            <Section.Root>
+              <Section.Header
+                title={t`Validation rules`}
+                description={t`A record saves only when every active rule is true. Rules run on every write: forms, API, imports and workflows.`}
+              />
+              <SettingsObjectValidationRulesSection
+                objectMetadataItem={objectMetadataItem}
+                isReadOnly={isReadOnly}
+              />
+            </Section.Root>
+          </StyledFormSectionContainer>
+        )}
       <AdvancedSettingsWrapper>
         <StyledFormSectionContainer>
           <Section.Root>

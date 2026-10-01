@@ -6,6 +6,7 @@ import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationVariableEntityExceptionCode } from 'src/engine/core-modules/application/application-variable/application-variable.exception';
+import { ENGINE_INJECTED_ENV_VARIABLE_NAMES } from 'src/engine/core-modules/logic-function/logic-function-executor/constants/engine-injected-env-variable-names.constant';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
@@ -36,6 +37,16 @@ export class FlatApplicationVariableValidatorService {
         code: ApplicationVariableEntityExceptionCode.INVALID_APPLICATION_VARIABLE_INPUT,
         message: t`Application variable key is required`,
         userFriendlyMessage: msg`Application variable key is required`,
+      });
+    }
+
+    if (ENGINE_INJECTED_ENV_VARIABLE_NAMES.has(flatApplicationVariable.key)) {
+      const key = flatApplicationVariable.key;
+
+      validationResult.errors.push({
+        code: ApplicationVariableEntityExceptionCode.INVALID_APPLICATION_VARIABLE_INPUT,
+        message: t`Application variable key ${key} is reserved`,
+        userFriendlyMessage: msg`Application variable key ${key} is reserved`,
       });
     }
 
@@ -95,6 +106,7 @@ export class FlatApplicationVariableValidatorService {
 
   public validateFlatApplicationVariableUpdate({
     universalIdentifier,
+    flatEntityUpdate,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatApplicationVariableMaps: optimisticFlatApplicationVariableMaps,
     },
@@ -119,6 +131,19 @@ export class FlatApplicationVariableValidatorService {
         code: ApplicationVariableEntityExceptionCode.APPLICATION_VARIABLE_NOT_FOUND,
         message: t`Application variable not found`,
         userFriendlyMessage: msg`Application variable not found`,
+      });
+    }
+
+    const keyUpdate = flatEntityUpdate.key;
+
+    if (
+      isDefined(keyUpdate) &&
+      ENGINE_INJECTED_ENV_VARIABLE_NAMES.has(keyUpdate)
+    ) {
+      validationResult.errors.push({
+        code: ApplicationVariableEntityExceptionCode.INVALID_APPLICATION_VARIABLE_INPUT,
+        message: t`Application variable key ${keyUpdate} is reserved`,
+        userFriendlyMessage: msg`Application variable key ${keyUpdate} is reserved`,
       });
     }
 

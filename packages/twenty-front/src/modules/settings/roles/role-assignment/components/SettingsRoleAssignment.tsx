@@ -133,6 +133,7 @@ export const SettingsRoleAssignment = ({
               id: member.id,
               name: member.name,
               userEmail: member.userEmail,
+              userId: member.userId,
               avatarUrl: member.avatarUrl,
             },
           });

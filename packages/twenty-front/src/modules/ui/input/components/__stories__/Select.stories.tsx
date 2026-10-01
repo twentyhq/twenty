@@ -201,6 +201,22 @@ export const SingleTabStopAndLabelledPopup: Story = {
   },
 };
 
+export const DropdownWidthAutoMatchesTrigger: Story = {
+  args: { fullWidth: true, dropdownWidthAuto: true },
+  parameters: { container: { width: 500 } },
+  play: async ({ canvasElement }) => {
+    const trigger = within(canvasElement).getByRole('button');
+    await userEvent.click(trigger);
+    const body = within(canvasElement.ownerDocument.body);
+    const popup = await body.findByRole('dialog');
+    await waitFor(() =>
+      expect(popup.getBoundingClientRect().width).toBe(
+        trigger.getBoundingClientRect().width,
+      ),
+    );
+  },
+};
+
 const onParentClick = fn();
 const onParentClickOutside = fn();
 const onExcludedClickOutside = fn();
@@ -267,10 +283,14 @@ export const ParentAndClickOutsideContainment: Story = {
     expect(onExcludedClickOutside).not.toHaveBeenCalled();
     await userEvent.click(trigger);
     await body.findByRole('dialog');
-    await userEvent.click(canvas.getByRole('button', { name: 'Outside' }));
+    const outsideButton = canvas.getByRole('button', { name: 'Outside' });
+    await userEvent.click(outsideButton);
     await waitFor(() =>
       expect(body.queryByRole('dialog')).not.toBeInTheDocument(),
     );
+    expect(onParentClickOutside).not.toHaveBeenCalled();
+    expect(onExcludedClickOutside).not.toHaveBeenCalled();
+    await userEvent.click(outsideButton);
     expect(onParentClickOutside).toHaveBeenCalledTimes(1);
     expect(onExcludedClickOutside).toHaveBeenCalledTimes(1);
   },

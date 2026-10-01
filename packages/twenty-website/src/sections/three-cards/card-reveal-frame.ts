@@ -18,8 +18,6 @@ const STAGGER = 0.25;
 const easeOutQuint = (value: number) => 1 - (1 - value) ** 5;
 
 export const cardReveal = {
-  // Progress runs while the grid's top edge travels from the viewport
-  // bottom to 20% of the viewport height.
   progressForGridTop(gridTopPx: number, viewportHeightPx: number): number {
     const startEdge = viewportHeightPx;
     const endEdge = viewportHeightPx * END_EDGE_RATIO;

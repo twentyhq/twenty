@@ -1,24 +1,19 @@
 import { lockAgentChatThread } from 'src/engine/metadata-modules/ai/ai-chat/utils/lock-agent-chat-thread.util';
-import { In } from 'typeorm';
-import { mapAgentHistoryFieldNameToWorkspace } from 'src/engine/metadata-modules/ai/ai-history/utils/map-agent-history-field-name-to-workspace.util';
-import { type AgentHistoryStorageContext } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-storage.service';
-import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
+import { type AgentHistoryStorageContext } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-workspace-storage.service';
 import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
 import { randomUUID } from 'node:crypto';
-import { backfillChatThreadOwnerGrants } from 'src/engine/metadata-modules/ai/ai-chat/utils/backfill-chat-thread-owner-grants.util';
-import { normalizeAgentHistoryRecord } from 'src/engine/metadata-modules/ai/ai-history/utils/normalize-agent-history-record.util';
+import { backfillWorkspaceChatThreadOwnerGrants } from 'src/engine/metadata-modules/ai/ai-chat/utils/backfill-workspace-chat-thread-owner-grants.util';
 import { Injectable } from '@nestjs/common';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-import { MetadataReadability } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { RecordShareStorageService } from 'src/engine/core-modules/record-share/services/record-share-storage.service';
 import { RecordSharingService } from 'src/engine/core-modules/record-share/services/record-sharing.service';
 import { type RecordPermissionsDTO } from 'src/engine/core-modules/record-share/dtos/record-permissions.dto';
 import { UserWorkspaceAuthContextService } from 'src/engine/core-modules/user-workspace/services/user-workspace-auth-context.service';
-import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
+import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import {
@@ -30,11 +25,9 @@ import { type OperationType } from 'src/engine/twenty-orm/repository/permissions
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
-const MAX_CHAT_THREADS = 1000;
-
 type ThreadAccessArgs = {
   workspaceId: string;
-  userWorkspaceId: string;
+  workspaceMemberId: string;
   threadId: string;
 };
 
@@ -42,7 +35,7 @@ type ThreadAccessArgs = {
 export class AgentChatSharingService {
   constructor(
     @InjectAgentHistoryRepository('agentChatThread')
-    private readonly threadRepository: AgentHistoryRepository<AgentChatThreadEntity>,
+    private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
     private readonly userAuthContextService: UserWorkspaceAuthContextService,
     private readonly recordShareStorageService: RecordShareStorageService,
     private readonly workspaceCacheService: WorkspaceCacheService,
@@ -70,15 +63,6 @@ export class AgentChatSharingService {
     if (!isDefined(thread)) {
       return this.throwNotFound();
     }
-    const objectMetadata = await this.getThreadObjectMetadata(args.workspaceId);
-    // Old core history remains owner-only until the workspace upgrade installs
-    // ownership grants and switches the metadata to the common private policy.
-    if (objectMetadata.readability === MetadataReadability.SYSTEM) {
-      if (thread.userWorkspaceId !== args.userWorkspaceId) {
-        return this.throwNotFound();
-      }
-      return thread;
-    }
     const allowedIds = await this.workspaceOrmManager.executeInWorkspaceContext(
       () =>
         this.workspaceOrmManager
@@ -87,7 +71,7 @@ export class AgentChatSharingService {
             recordIds: [args.threadId],
             operationType,
             updatedColumns,
-            withDeleted: false,
+            withDeleted: true,
           }),
       authContext,
     );
@@ -110,101 +94,46 @@ export class AgentChatSharingService {
   ) {
     const authContext = await this.getAuthContext(args);
     const objectMetadata = await this.getThreadObjectMetadata(args.workspaceId);
-    if (objectMetadata.readability === MetadataReadability.SYSTEM) {
-      const ownedThreads = await this.threadRepository.find(args.workspaceId, {
-        where: {
-          id: In(args.threadIds),
-          userWorkspaceId: args.userWorkspaceId,
-        },
-        select: ['id'],
-      });
-      const ownedThreadIds = new Set(ownedThreads.map(({ id }) => id));
-      return new Map(
-        args.threadIds.map((threadId) => {
-          const isOwner = ownedThreadIds.has(threadId);
-          return [
-            threadId,
-            {
-              canRead: isOwner,
-              canUpdate: isOwner,
-              canDelete: isOwner,
-              canSoftDelete: isOwner,
-            },
-          ] as const;
-        }),
-      );
-    }
     return this.recordSharingService.getPermissionsForRecords({
       authContext,
       objectMetadataId: objectMetadata.id,
       recordIds: args.threadIds,
-      withDeleted: false,
+      withDeleted: true,
     });
-  }
-
-  async getReadableThreadIds(
-    args: Omit<ThreadAccessArgs, 'threadId'>,
-  ): Promise<string[]> {
-    const authContext = await this.getAuthContext(args);
-    const objectMetadata = await this.getThreadObjectMetadata(args.workspaceId);
-    if (objectMetadata.readability === MetadataReadability.SYSTEM) {
-      return (
-        await this.threadRepository.find(args.workspaceId, {
-          where: { userWorkspaceId: args.userWorkspaceId },
-          select: ['id'],
-          order: { updatedAt: 'DESC', id: 'DESC' },
-          take: MAX_CHAT_THREADS,
-        })
-      ).map(({ id }) => id);
-    }
-    return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-      const records = await this.workspaceOrmManager
-        .getRepositoryWithContextPermissions('agentChatThread')
-        .find({
-          select: { id: true },
-          withDeleted: false,
-          order: { updatedAt: 'DESC', id: 'DESC' },
-          take: MAX_CHAT_THREADS,
-        });
-      return records.map(({ id }) => id);
-    }, authContext);
   }
 
   async createThread(args: {
     workspaceId: string;
-    userWorkspaceId: string;
+    workspaceMemberId: string;
     id?: string;
     title?: string;
-  }): Promise<AgentChatThreadEntity> {
+  }): Promise<AgentChatThreadWorkspaceEntity> {
     const authContext = await this.getAuthContext(args);
     const objectMetadata = await this.getThreadObjectMetadata(args.workspaceId);
-    const writesWorkspaceMember = await this.hasWorkspaceMemberOwnerField(
-      args.workspaceId,
+
+    await this.workspaceOrmManager.executeInWorkspaceContext(
+      () =>
+        this.workspaceOrmManager
+          .getRepositoryWithContextPermissions('agentChatThread')
+          .validateWriteIsPermitted({
+            operationType: 'insert',
+            columnsToReturn: ['id'],
+            updatedColumns: isDefined(args.title) ? ['title'] : [],
+          }),
+      authContext,
     );
-    if (objectMetadata.readability !== MetadataReadability.SYSTEM) {
-      await this.workspaceOrmManager.executeInWorkspaceContext(
-        () =>
-          this.workspaceOrmManager
-            .getRepositoryWithContextPermissions('agentChatThread')
-            .validateWriteIsPermitted({
-              operationType: 'insert',
-              columnsToReturn: ['id'],
-              updatedColumns: isDefined(args.title) ? ['title'] : [],
-            }),
-        authContext,
-      );
-    }
+
     return this.threadRepository.query(
       args.workspaceId,
       async ({ manager, table }) => {
-        const records = await manager.query<AgentChatThreadEntity[]>(
-          `INSERT INTO ${table('agentChatThread')} (id, title, "userWorkspaceId"${writesWorkspaceMember ? ', "workspaceMemberId"' : ''})
-         VALUES ($1, $2, $3${writesWorkspaceMember ? ', $4' : ''}) RETURNING *`,
+        const records = await manager.query<AgentChatThreadWorkspaceEntity[]>(
+          `INSERT INTO ${table('agentChatThread')} (id, title, "workspaceMemberId", "userWorkspaceId")
+         VALUES ($1, $2, $3, $4) RETURNING *`,
           [
             args.id ?? randomUUID(),
             args.title ?? null,
-            args.userWorkspaceId,
-            ...(writesWorkspaceMember ? [authContext.workspaceMemberId] : []),
+            authContext.workspaceMemberId,
+            authContext.userWorkspaceId,
           ],
         );
         const record = records[0];
@@ -214,7 +143,7 @@ export class AgentChatSharingService {
           recordIds: [record.id],
           manager,
         });
-        const ownerGrantCount = await backfillChatThreadOwnerGrants({
+        const ownerGrantCount = await backfillWorkspaceChatThreadOwnerGrants({
           manager,
           workspaceId: args.workspaceId,
           threadTableExpression: table('agentChatThread'),
@@ -226,75 +155,31 @@ export class AgentChatSharingService {
             AiExceptionCode.THREAD_NOT_FOUND,
           );
         }
-        return normalizeAgentHistoryRecord({
-          record,
-          workspaceId: args.workspaceId,
-          objectName: 'agentChatThread',
-        }) as AgentChatThreadEntity;
+        return record;
       },
     );
   }
 
-  async updateThreadWithAccess({
-    operationType,
-    changes,
-    ...args
-  }: ThreadAccessArgs & {
-    operationType: 'update' | 'soft-delete' | 'restore';
-    changes:
-      | { title: string }
-      | { deletedAt: Date | null; activeStreamId?: null };
-  }): Promise<AgentChatThreadEntity> {
+  async restoreThreadWithAccess(
+    args: ThreadAccessArgs,
+  ): Promise<AgentChatThreadWorkspaceEntity> {
     return this.mutateThreadWithAccess({
       ...args,
-      operationType,
-      updatedColumns: operationType === 'update' ? Object.keys(changes) : [],
+      operationType: 'restore',
+      updatedColumns: [],
       mutate: async ({ manager, table }, thread) => {
-        if (operationType === 'soft-delete' && isDefined(thread.deletedAt)) {
+        if (!isDefined(thread.deletedAt)) {
           return thread;
         }
-        const entries = Object.entries(changes).map(
-          ([fieldName, value]) =>
-            [
-              mapAgentHistoryFieldNameToWorkspace('agentChatThread', fieldName),
-              value,
-            ] as const,
-        );
-        const records = await manager.query<AgentChatThreadEntity[]>(
-          `WITH updated_thread AS (UPDATE ${table('agentChatThread')} SET ${entries.map(([key], index) => `${escapeIdentifier(key)} = $${index + 2}`).join(', ')}, "updatedAt" = NOW() WHERE id = $1 RETURNING *) SELECT * FROM updated_thread`,
-          [args.threadId, ...entries.map(([, value]) => value)],
+        const records = await manager.query<AgentChatThreadWorkspaceEntity[]>(
+          `WITH restored_thread AS (UPDATE ${table('agentChatThread')} SET "deletedAt" = NULL, "updatedAt" = NOW() WHERE id = $1 RETURNING *) SELECT * FROM restored_thread`,
+          [args.threadId],
         );
         const record = records[0];
         if (!isDefined(record)) {
           return this.throwNotFound();
         }
-        return normalizeAgentHistoryRecord({
-          record,
-          workspaceId: args.workspaceId,
-          objectName: 'agentChatThread',
-        }) as AgentChatThreadEntity;
-      },
-    });
-  }
-
-  async deleteThreadWithShares(args: ThreadAccessArgs): Promise<boolean> {
-    const objectMetadata = await this.getThreadObjectMetadata(args.workspaceId);
-    return this.mutateThreadWithAccess({
-      ...args,
-      operationType: 'delete',
-      updatedColumns: [],
-      mutate: async ({ manager, table }) => {
-        const deleted = await manager.query<{ id: string }[]>(
-          `WITH deleted_thread AS (DELETE FROM ${table('agentChatThread')} WHERE id = $1 RETURNING id) SELECT id FROM deleted_thread`,
-          [args.threadId],
-        );
-        await this.recordShareStorageService.deleteByRecordIdsInTransaction({
-          workspaceId: args.workspaceId,
-          objectMetadataId: objectMetadata.id,
-          recordIds: [args.threadId],
-          manager,
-        });
-        return deleted.length === 1;
+        return record;
       },
     });
   }
@@ -309,7 +194,7 @@ export class AgentChatSharingService {
     updatedColumns: string[];
     mutate: (
       context: AgentHistoryStorageContext,
-      thread: AgentChatThreadEntity,
+      thread: AgentChatThreadWorkspaceEntity,
     ) => Promise<TResult>;
   }): Promise<TResult> {
     const authContext = await this.getAuthContext(args);
@@ -325,34 +210,27 @@ export class AgentChatSharingService {
             objectMetadataId: objectMetadata.id,
             threadId: args.threadId,
           });
-          if (
-            objectMetadata.readability === MetadataReadability.SYSTEM &&
-            thread.userWorkspaceId !== args.userWorkspaceId
-          ) {
+          const allowedIds = await this.workspaceOrmManager
+            .getRepositoryWithContextPermissions('agentChatThread')
+            .findRecordIdsAllowedForOperation({
+              recordIds: [args.threadId],
+              operationType,
+              updatedColumns,
+              withDeleted: true,
+            });
+          if (allowedIds.length !== 1) {
             return this.throwNotFound();
           }
-          if (objectMetadata.readability !== MetadataReadability.SYSTEM) {
-            const allowedIds = await this.workspaceOrmManager
-              .getRepositoryWithContextPermissions('agentChatThread')
-              .findRecordIdsAllowedForOperation({
-                recordIds: [args.threadId],
-                operationType,
-                updatedColumns,
-                withDeleted: false,
-              });
-            if (allowedIds.length !== 1) {
-              return this.throwNotFound();
-            }
-          }
+
           return mutate(context, thread);
         }),
       authContext,
     );
   }
 
-  private async getAuthContext(args: Omit<ThreadAccessArgs, 'threadId'>) {
+  async getAuthContext(args: Omit<ThreadAccessArgs, 'threadId'>) {
     const authContext = await this.userAuthContextService
-      .resolve(args)
+      .resolveWorkspaceMember(args)
       .catch((error: unknown) => {
         if (error instanceof AuthException) {
           return this.throwNotFound();
@@ -361,7 +239,8 @@ export class AgentChatSharingService {
       });
     if (
       !(await this.permissionsService.userHasWorkspaceSettingPermission({
-        ...args,
+        workspaceId: args.workspaceId,
+        userWorkspaceId: authContext.userWorkspaceId,
         setting: PermissionFlagType.AI,
         applicationId: authContext.application?.id,
       }))
@@ -369,25 +248,6 @@ export class AgentChatSharingService {
       return this.throwNotFound();
     }
     return authContext;
-  }
-
-  // TRANSITION(2.43 -> 2.44): workspaces gain the workspaceMember owner when
-  // the 2.43 link-chat-threads-to-workspace-members command reaches them, and
-  // this server can run before it does. Remove with the owner cleanup tracked
-  // in twentyhq/core-team-issues#2925.
-  private async hasWorkspaceMemberOwnerField(
-    workspaceId: string,
-  ): Promise<boolean> {
-    const { flatFieldMetadataMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatFieldMetadataMaps',
-      ]);
-    return isDefined(
-      flatFieldMetadataMaps.byUniversalIdentifier[
-        STANDARD_OBJECTS.agentChatThread.fields.workspaceMember
-          .universalIdentifier
-      ],
-    );
   }
 
   private async getThreadObjectMetadata(workspaceId: string) {

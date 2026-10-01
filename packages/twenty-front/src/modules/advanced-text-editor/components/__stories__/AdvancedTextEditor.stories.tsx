@@ -61,9 +61,7 @@ const EditorWrapper = ({
         url: `https://via.placeholder.com/400x200?text=${encodeURIComponent(file.name)}`,
       };
     },
-    onImageUploadError: (_error: Error, _file: File) => {
-      // Handle image upload error
-    },
+    onImageUploadError: (_error: Error, _file: File) => {},
   });
 
   if (!editor) {
@@ -524,5 +522,28 @@ export const TurnIntoHeading: Story = {
     await expect(canvasElement.ownerDocument.getSelection()?.toString()).toBe(
       'World',
     );
+  },
+};
+
+export const SlashMenuKeepsEditorFocus: Story = {
+  play: async ({ canvasElement }) => {
+    const body = within(canvasElement.ownerDocument.body);
+    const editor = await within(canvasElement).findByRole('textbox');
+    await userEvent.click(editor);
+    await userEvent.keyboard('/heading');
+    await body.findByText('Heading 1');
+    await expect(editor).toHaveFocus();
+    await userEvent.keyboard('{ArrowDown}{Enter}');
+    await waitFor(() => {
+      expect(body.queryByText('Heading 2')).not.toBeInTheDocument();
+    });
+    await expect(editor).toHaveFocus();
+    await userEvent.keyboard('Heading from slash menu');
+    await expect(
+      within(editor).getByRole('heading', {
+        level: 2,
+        name: 'Heading from slash menu',
+      }),
+    ).toBeVisible();
   },
 };

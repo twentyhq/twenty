@@ -3,5 +3,8 @@ declare const classNames: {
   readonly embedded: 'embedded';
   readonly bannerContent: 'bannerContent';
   readonly bannerText: 'bannerText';
+  readonly compact: 'compact';
+  readonly compactBlue: 'compactBlue';
+  readonly compactDanger: 'compactDanger';
 };
 export default classNames;
