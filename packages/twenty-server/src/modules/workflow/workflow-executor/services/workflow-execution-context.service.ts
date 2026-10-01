@@ -75,7 +75,7 @@ export class WorkflowExecutionContextService {
   }: {
     application: FlatApplication | null;
     workspaceId: string;
-    targetApplicationId: string | null;
+    targetApplicationId: string;
     targetLabel: string;
   }): Promise<void> {
     if (!isDefined(application) || targetApplicationId === application.id) {

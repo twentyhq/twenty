@@ -2,7 +2,7 @@ import { assertStepTargetBelongsToRunApplication } from 'src/modules/workflow/wo
 
 const RUN_APPLICATION = { id: 'installed-app-id', name: 'Installed app' };
 
-const assertTarget = (targetApplicationId: string | null) =>
+const assertTarget = (targetApplicationId: string) =>
   assertStepTargetBelongsToRunApplication({
     application: RUN_APPLICATION,
     targetApplicationId,

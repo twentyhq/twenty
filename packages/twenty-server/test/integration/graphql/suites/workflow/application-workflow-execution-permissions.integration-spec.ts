@@ -526,9 +526,12 @@ describe('application workflow execution permissions', () => {
     );
 
     expect(ownApplicationStart.body.errors).toBeUndefined();
-    await waitForRunToEnd(
+
+    const ownApplicationRun = await waitForRunToEnd(
       ownApplicationStart.body.data.runCoreWorkflowVersion.workflowRunId,
     );
+
+    expect(ownApplicationRun.status).toBe('COMPLETED');
   }, 120000);
 
   it('keeps the application bound when its token starts a workspace workflow', async () => {

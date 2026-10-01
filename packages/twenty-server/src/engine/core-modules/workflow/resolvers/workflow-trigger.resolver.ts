@@ -13,6 +13,7 @@ import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filt
 import { RunWorkflowVersionInput } from 'src/engine/core-modules/workflow/dtos/run-workflow-version.input';
 import { RunWorkflowVersionDTO } from 'src/engine/core-modules/workflow/dtos/run-workflow-version.dto';
 import { WorkflowRunDTO } from 'src/engine/core-modules/workflow/dtos/workflow-run.dto';
+import { WorkflowQueryValidationGraphqlApiExceptionFilter } from 'src/engine/core-modules/workflow/filters/workflow-query-validation-graphql-api-exception.filter';
 import { WorkflowTriggerGraphqlApiExceptionFilter } from 'src/engine/core-modules/workflow/filters/workflow-trigger-graphql-api-exception.filter';
 import { WorkflowVersionValidationGraphqlApiExceptionFilter } from 'src/engine/core-modules/workflow/filters/workflow-version-validation-graphql-api-exception.filter';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -48,6 +49,7 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
 @UsePipes(ResolverValidationPipe)
 @UseFilters(
   WorkflowTriggerGraphqlApiExceptionFilter,
+  WorkflowQueryValidationGraphqlApiExceptionFilter,
   WorkflowVersionValidationGraphqlApiExceptionFilter,
   PermissionsGraphqlApiExceptionFilter,
   PreventNestToAutoLogGraphqlErrorsFilter,
@@ -132,6 +134,14 @@ export class WorkflowTriggerResolver {
       {
         workspaceId: workspace.id,
         userWorkspaceId,
+        workspaceWorkflowVersionIds: [workflowVersionId],
+      },
+    );
+
+    await this.coreWorkflowAccessService.assertWorkspaceWorkflowVersionsAreStartableByApplicationOrThrow(
+      {
+        workspaceId: workspace.id,
+        callerApplicationId: callerApplication?.id,
         workspaceWorkflowVersionIds: [workflowVersionId],
       },
     );

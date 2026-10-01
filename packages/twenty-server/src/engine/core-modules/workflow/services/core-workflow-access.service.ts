@@ -135,6 +135,37 @@ export class CoreWorkflowAccessService {
     }
   }
 
+  async assertWorkspaceWorkflowVersionsAreStartableByApplicationOrThrow({
+    workspaceId,
+    callerApplicationId,
+    workspaceWorkflowVersionIds,
+  }: {
+    workspaceId: string;
+    callerApplicationId: string | undefined;
+    workspaceWorkflowVersionIds: string[];
+  }): Promise<void> {
+    if (
+      !isDefined(callerApplicationId) ||
+      workspaceWorkflowVersionIds.length === 0
+    ) {
+      return;
+    }
+
+    const coreWorkflowVersions = await this.coreWorkflowVersionRepository.find(
+      workspaceId,
+      {
+        where: { workspaceWorkflowVersionId: In(workspaceWorkflowVersionIds) },
+        select: { id: true },
+      },
+    );
+
+    await this.assertCoreWorkflowVersionsAreStartableByApplicationOrThrow({
+      workspaceId,
+      callerApplicationId,
+      coreWorkflowVersionIds: coreWorkflowVersions.map(({ id }) => id),
+    });
+  }
+
   async assertCoreWorkflowsAreAccessibleOrThrow({
     workspaceId,
     userWorkspaceId,

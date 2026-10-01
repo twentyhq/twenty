@@ -1,5 +1,3 @@
-import { isDefined } from 'twenty-shared/utils';
-
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import {
   WorkflowStepExecutorException,
@@ -13,14 +11,13 @@ export const assertStepTargetBelongsToRunApplication = ({
   targetLabel,
 }: {
   application: Pick<FlatApplication, 'id' | 'name'>;
-  targetApplicationId: string | null;
+  targetApplicationId: string;
   workspaceOwnedApplicationIds: string[];
   targetLabel: string;
 }): void => {
   if (
     targetApplicationId === application.id ||
-    (isDefined(targetApplicationId) &&
-      workspaceOwnedApplicationIds.includes(targetApplicationId))
+    workspaceOwnedApplicationIds.includes(targetApplicationId)
   ) {
     return;
   }
