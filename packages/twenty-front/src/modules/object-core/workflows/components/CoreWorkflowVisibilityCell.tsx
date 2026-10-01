@@ -43,6 +43,7 @@ export const CoreWorkflowVisibilityCell = ({
         <visibilityOption.Icon
           size={theme.icon.size.sm}
           stroke={theme.icon.stroke.sm}
+          aria-hidden
         />
       </StyledIconContainer>
       <OverflowingTextWithTooltip text={t(visibilityOption.label)} />
