@@ -10,10 +10,7 @@ import { MessageQueueService } from 'src/engine/core-modules/message-queue/servi
 import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { workflowHasRunningSteps } from 'src/modules/workflow/common/utils/workflow-has-running-steps.util';
 import { WorkflowVersionStepOperationsWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step-operations.workspace-service';
-import {
-  type WorkflowFormAction,
-  type WorkflowAction,
-} from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { isWorkflowFormAction } from 'src/modules/workflow/workflow-executor/workflow-actions/form/guards/is-workflow-form-action.guard';
 import {
   WorkflowRunException,
@@ -126,36 +123,6 @@ export class WorkflowRunnerWorkspaceService {
       return;
     }
 
-    const hasCompletedStep = await this.completeFormStep({
-      workspaceId,
-      workflowRunId,
-      step,
-      expectedThreadId: threadId,
-      response,
-    });
-
-    if (hasCompletedStep) {
-      await this.resume({
-        workspaceId,
-        workflowRunId,
-        lastExecutedStepId: step.id,
-      });
-    }
-  }
-
-  async completeFormStep({
-    workspaceId,
-    workflowRunId,
-    step,
-    expectedThreadId,
-    response,
-  }: {
-    workspaceId: string;
-    workflowRunId: string;
-    step: WorkflowFormAction;
-    expectedThreadId: string | null;
-    response: Record<string, unknown>;
-  }): Promise<boolean> {
     const enrichedResponse =
       await this.workflowVersionStepOperationsWorkspaceService.enrichFormStepResponse(
         {
@@ -165,16 +132,25 @@ export class WorkflowRunnerWorkspaceService {
         },
       );
 
-    return this.workflowRunWorkspaceService.updateStepInfoIfPending({
-      stepId: step.id,
-      stepInfo: {
-        status: StepStatus.SUCCESS,
-        result: enrichedResponse,
-      },
-      expectedThreadId,
-      workspaceId,
-      workflowRunId,
-    });
+    const hasCompletedStep =
+      await this.workflowRunWorkspaceService.updateStepInfoIfPending({
+        stepId: step.id,
+        stepInfo: {
+          status: StepStatus.SUCCESS,
+          result: enrichedResponse,
+        },
+        expectedThreadId: threadId,
+        workspaceId,
+        workflowRunId,
+      });
+
+    if (hasCompletedStep) {
+      await this.resume({
+        workspaceId,
+        workflowRunId,
+        lastExecutedStepId: step.id,
+      });
+    }
   }
 
   async stopWorkflowRun(workspaceId: string, workflowRunId: string) {

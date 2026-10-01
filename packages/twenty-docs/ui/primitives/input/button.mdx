@@ -69,7 +69,7 @@ export const CreateRecord = () => (
 );
 ```
 
-Choose `solid`, `outline`, `soft`, `ghost`, or `link` independently of the `neutral`, `accent`, `danger`, or `success` color. Sizes are `sm` and `md`; the defaults are `outline`, `neutral`, and `md`. `fullWidth` fills the available width. `startIcon` and `endIcon` accept elements and are decorative. `elevated` adds a shadow and backdrop blur. Neutral outline buttons also gain a bordered surface with matching text and interaction colors. Other variants and semantic colors keep their existing palette. It defaults to `false` and does not change size or position. `hotkeys` displays keyboard hints on larger screens; bind the shortcuts in your application.
+Choose `solid`, `outline`, `soft`, `ghost`, or `link` independently of the `neutral`, `accent`, `danger`, or `success` color. Sizes are `sm` and `md`; the defaults are `outline`, `neutral`, and `md`. `fullWidth` fills the available width. `startIcon` and `endIcon` accept elements and are decorative. `elevated` adds a shadow and backdrop blur. Neutral outline buttons also gain a bordered surface with matching text and interaction colors. Other variants and semantic colors keep their existing palette. It defaults to `false` and does not change size or position. `shortcut` displays keyboard hints on larger screens; bind the shortcuts in your application.
 
 `link` uses compact text with no border or filled background. It follows its content height at either size, with a smaller font and narrower padding. Its neutral color uses stronger text on hover. The appearance does not determine semantics: use `onClick` for actions and `href` for navigation.
 
@@ -183,3 +183,5 @@ export const LogOut = ({ onLogOut }: LogOutProps) => (
 ## Props
 
 <ButtonReference />
+
+Pass `shortcut={['Mod', 'Enter']}` for simultaneous keys or `shortcut={[['G'], ['P']]}` for successive presses. See [Shortcut](/ui/primitives/typography/shortcut) for nested combinations and the shared string formatter.

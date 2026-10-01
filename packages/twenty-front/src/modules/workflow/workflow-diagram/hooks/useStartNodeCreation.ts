@@ -35,10 +35,7 @@ export const useStartNodeCreation = () => {
     sidePanelNavigationStackState,
   );
 
-  /**
-   * This function is used in a context where dependencies shouldn't change much.
-   * That's why its wrapped in a `useCallback` hook. Removing memoization might break the app unexpectedly.
-   */
+  // Callers depend on a stable reference, so removing the useCallback can break them.
   const startNodeCreation = useCallback(
     ({
       parentStepId,

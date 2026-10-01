@@ -81,8 +81,6 @@ const Rule = styled.div`
   width: 100%;
 `;
 
-// The halftone model (target/spaceship/money) renders here with the
-// visual-runtime wave.
 const VisualShell = styled.div`
   background-color: ${color('black')};
   border-radius: ${radius(2)};
