@@ -89,19 +89,25 @@ describe('notify-first-call-recording logic function', () => {
     expect(sendInboxMessageMock.mock.calls[0][0]).toEqual(
       expect.objectContaining({
         workspaceMemberId: 'member-organizer',
+        threadKey: 'first-call-recording',
         idempotencyKey: 'first-call-recording',
         title: 'Your first call recording is ready',
         text: expect.stringContaining(
           '[[record:calendarEvent:calendar-event-1:Weekly sync]]',
         ),
-        questions: [
-          expect.objectContaining({
-            options: [
-              expect.objectContaining({ label: 'Draft a recap email' }),
-              { label: 'Not now' },
+        request: {
+          toolName: 'ask_questions',
+          input: {
+            questions: [
+              expect.objectContaining({
+                options: [
+                  expect.objectContaining({ label: 'Draft a recap email' }),
+                  { label: 'Not now' },
+                ],
+              }),
             ],
-          }),
-        ],
+          },
+        },
       }),
     );
     expect(queryMock.mock.calls[1][0]).toMatchObject({

@@ -14097,6 +14097,9 @@ export default {
             "workspaceMemberId": [
                 3
             ],
+            "threadKey": [
+                1
+            ],
             "idempotencyKey": [
                 1
             ],
@@ -14106,7 +14109,7 @@ export default {
             "text": [
                 1
             ],
-            "questions": [
+            "request": [
                 9
             ],
             "__typename": [

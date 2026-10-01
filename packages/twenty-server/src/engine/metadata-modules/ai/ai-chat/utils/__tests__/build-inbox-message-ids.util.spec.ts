@@ -3,25 +3,37 @@ import { buildInboxMessageIds } from 'src/engine/metadata-modules/ai/ai-chat/uti
 const INPUT = {
   applicationId: 'application-id',
   workspaceMemberId: 'workspace-member-id',
+  threadKey: 'first-call-recording',
   idempotencyKey: 'first-call-recording',
 };
 
 describe('buildInboxMessageIds', () => {
-  it('returns the same ids for the same application, member and key', () => {
+  it('returns the same ids for the same application, member and keys', () => {
     expect(buildInboxMessageIds(INPUT)).toEqual(buildInboxMessageIds(INPUT));
   });
 
-  it('returns distinct ids for each record of one conversation', () => {
+  it('returns distinct ids for each record of one message', () => {
     const ids = Object.values(buildInboxMessageIds(INPUT));
 
     expect(new Set(ids).size).toBe(ids.length);
   });
 
+  it('keeps the thread, turn and opener and changes the message for another idempotency key', () => {
+    const first = buildInboxMessageIds(INPUT);
+    const second = buildInboxMessageIds({
+      ...INPUT,
+      idempotencyKey: 'second-message',
+    });
+
+    expect(second).toEqual({ ...first, messageId: expect.any(String) });
+    expect(second.messageId).not.toBe(first.messageId);
+  });
+
   it.each([
     { applicationId: 'other-application-id' },
     { workspaceMemberId: 'other-workspace-member-id' },
-    { idempotencyKey: 'other-key' },
-  ])('returns another conversation when %o differs', (override) => {
+    { threadKey: 'other-thread' },
+  ])('returns another thread when %o differs', (override) => {
     expect(buildInboxMessageIds({ ...INPUT, ...override }).threadId).not.toBe(
       buildInboxMessageIds(INPUT).threadId,
     );

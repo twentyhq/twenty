@@ -42,13 +42,13 @@ const QUESTIONS = [
 // The model is not called here: the resumed stream is only checked for being
 // queued.
 describe('Sending an inbox message as an application', () => {
-  const idempotencyKey = `inbox-message-${uuidv4()}`;
   const input = {
     workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
-    idempotencyKey,
+    threadKey: `inbox-thread-${uuidv4()}`,
+    idempotencyKey: 'first-recording',
     title: 'Your first call recording is ready',
     text: 'Your first call was recorded: **Weekly sync**.',
-    questions: QUESTIONS,
+    request: { toolName: 'ask_questions', input: { questions: QUESTIONS } },
   };
   let application: ApplicationWithResources;
   let applicationToken: string;
@@ -56,11 +56,25 @@ describe('Sending an inbox message as an application', () => {
   let enqueueStream: jest.SpyInstance;
   const spies: jest.SpyInstance[] = [];
 
-  const sendInboxMessage = (token: string) =>
+  const sendInboxMessage = (
+    token: string,
+    overrides: Record<string, unknown> = {},
+  ) =>
     makeMetadataApiRequest(
-      { query: SEND_INBOX_MESSAGE, variables: { input } },
+      {
+        query: SEND_INBOX_MESSAGE,
+        variables: { input: { ...input, ...overrides } },
+      },
       token,
     );
+
+  const readPendingQuestionMessageId = async () =>
+    (
+      await global.testDataSource.query(
+        `SELECT "pendingQuestionMessageId" FROM "${schema}"."agentChatThread" WHERE id = $1`,
+        [threadId],
+      )
+    )[0].pendingQuestionMessageId as string | null;
 
   const readMessages = (id: string) =>
     global.testDataSource.query(
@@ -178,9 +192,39 @@ describe('Sending an inbox message as an application', () => {
     expect(await readMessages(threadId)).toHaveLength(2);
   });
 
+  it('refuses another request while an earlier one waits on the member', async () => {
+    const pendingQuestionMessageId = await readPendingQuestionMessageId();
+    const response = await sendInboxMessage(applicationToken, {
+      idempotencyKey: 'second-request',
+    });
+
+    expect(JSON.stringify(response.body.errors)).toContain(
+      'THREAD_AWAITING_ANSWER',
+    );
+    expect(await readPendingQuestionMessageId()).toBe(pendingQuestionMessageId);
+  });
+
+  it('posts a follow-up message in the same conversation', async () => {
+    const pendingQuestionMessageId = await readPendingQuestionMessageId();
+    const response = await sendInboxMessage(applicationToken, {
+      idempotencyKey: 'transcript-ready',
+      text: 'The transcript is ready too.',
+      request: null,
+    });
+
+    expect(response.body.errors).toBeUndefined();
+    expect(response.body.data.sendInboxMessage.threadId).toBe(threadId);
+    expect(await readMessages(threadId)).toHaveLength(3);
+    expect(await readPendingQuestionMessageId()).toBe(pendingQuestionMessageId);
+  });
+
   it('lets the member answer the question and resumes the chat', async () => {
+    const pendingQuestionMessageId = await readPendingQuestionMessageId();
     const response = await answerToolCall({
-      toolCall: { threadId, toolCallId: 'call_ask_questions' },
+      toolCall: {
+        threadId,
+        toolCallId: `call_${pendingQuestionMessageId!.replace(/-/g, '')}`,
+      },
       response: {
         answers: [{ questionIndex: 0, selectedOptionIndices: [0] }],
       },

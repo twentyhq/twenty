@@ -5582,10 +5582,11 @@ input FileAttachmentInput {
 
 input SendInboxMessageInput {
   workspaceMemberId: UUID!
+  threadKey: String!
   idempotencyKey: String!
   title: String!
   text: String!
-  questions: JSON
+  request: JSON
 }
 
 input CreateSkillInput {

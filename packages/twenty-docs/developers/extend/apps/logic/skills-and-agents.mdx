@@ -238,42 +238,56 @@ name a member at all.
 </Warning>
 
 </Accordion>
-<Accordion title="sendInboxMessage" description="Start a conversation in a member's chats">
+<Accordion title="sendInboxMessage" description="Start or continue a conversation in a member's chats">
 
-`sendInboxMessage()` opens a chat for a workspace member whose first message
-comes from your app. It can end on questions the member answers from the
-chat, after which the conversation continues with Twenty's assistant.
+`sendInboxMessage()` posts a message from your app in a workspace member's
+chats. It can end on a request the member answers from the chat, after which
+the conversation continues with Twenty's assistant.
 
 ```ts src/logic-functions/notify-first-recording.ts
 import { sendInboxMessage } from 'twenty-sdk/logic-function';
 
 const { threadId } = await sendInboxMessage({
   workspaceMemberId,
+  threadKey: 'first-call-recording',
   idempotencyKey: 'first-call-recording',
   title: 'Your first call recording is ready',
   text: 'Your first call was recorded: **Weekly sync**.',
-  questions: [
-    {
-      header: 'Share',
-      question: 'Do you want to share it with the other attendees?',
-      options: [{ label: 'Draft a recap email' }, { label: 'Not now' }],
+  request: {
+    toolName: 'ask_questions',
+    input: {
+      questions: [
+        {
+          header: 'Share',
+          question: 'Do you want to share it with the other attendees?',
+          options: [{ label: 'Draft a recap email' }, { label: 'Not now' }],
+        },
+      ],
     },
-  ],
+  },
 });
 ```
 
 Key points:
-- `idempotencyKey` identifies the conversation for this app and member.
-  Sending again with the same key returns the same `threadId` and writes
-  nothing new, so retries and concurrent runs never duplicate a conversation.
-  Use a distinct key for each conversation you want to start.
-- `questions` (optional) takes 1 to 4 multiple-choice questions with 2 to 4
-  options each. The member can also type a free-form answer.
+- `threadKey` picks the conversation for this app and member. A new key starts
+  a conversation titled `title`; a key you used before adds the message to that
+  conversation.
+- `idempotencyKey` identifies the message within the conversation. Sending
+  again with the same keys writes nothing new, so retries and concurrent runs
+  never duplicate a message.
+- `request` (optional) ends the message on one of:
+  - a call the member answers, which pauses the conversation: `ask_questions`
+    (1 to 4 multiple-choice questions), `request_form` (fields to fill in) or
+    `propose_email` (an email to review, then send, save or discard);
+  - one of your app's own tools, by `logicFunctionUniversalIdentifier`, rendered
+    by its front component with the `input` and `output` you pass. It does not
+    pause the conversation.
+- Only one request waits on the member at a time: sending another one before
+  they answer fails with `THREAD_AWAITING_ANSWER`.
+- A conversation the member deleted is not recreated, and nothing is added to it.
 - The member must have the `AI` permission, and your app's
   [default role](/developers/extend/apps/config/roles) must grant
   `SystemPermissionFlag.AI`.
-- A conversation the member deleted is not recreated: sending again returns its
-  `threadId`.
 
 </Accordion>
 </AccordionGroup>

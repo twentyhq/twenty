@@ -6,9 +6,9 @@ import { CallRecordingStatus } from 'src/logic-functions/constants/call-recordin
 import { findCallRecordingForFirstRecordingNotification } from 'src/logic-functions/data/find-call-recording-for-first-recording-notification.util';
 import { buildStepFailure } from 'src/logic-functions/utils/build-step-failure.util';
 
-// The same key for every recording makes the server keep one conversation
-// per member, so only the first recording reaches them.
-const FIRST_CALL_RECORDING_IDEMPOTENCY_KEY = 'first-call-recording';
+// The same keys for every recording make the server keep one message per
+// member, so only the first recording reaches them.
+const FIRST_CALL_RECORDING_KEY = 'first-call-recording';
 
 export type NotifyFirstCallRecordingResult =
   | { outcome: 'not-completed' }
@@ -51,24 +51,30 @@ export const notifyFirstCallRecording = async (
     try {
       await sendInboxMessage({
         workspaceMemberId,
-        idempotencyKey: FIRST_CALL_RECORDING_IDEMPOTENCY_KEY,
+        threadKey: FIRST_CALL_RECORDING_KEY,
+        idempotencyKey: FIRST_CALL_RECORDING_KEY,
         title: 'Your first call recording is ready',
         text: `Your first call was recorded: ${meeting}. The video, transcript and summary are on the meeting page.`,
-        questions: [
-          {
-            header: 'Share',
-            question: 'Do you want to share it with the other attendees?',
-            options: [
+        request: {
+          toolName: 'ask_questions',
+          input: {
+            questions: [
               {
-                label: 'Draft a recap email',
-                description:
-                  'An email to the attendees with the meeting summary, for you to review before it is sent',
-                isRecommended: true,
+                header: 'Share',
+                question: 'Do you want to share it with the other attendees?',
+                options: [
+                  {
+                    label: 'Draft a recap email',
+                    description:
+                      'An email to the attendees with the meeting summary, for you to review before it is sent',
+                    isRecommended: true,
+                  },
+                  { label: 'Not now' },
+                ],
               },
-              { label: 'Not now' },
             ],
           },
-        ],
+        },
       });
 
       notifiedWorkspaceMemberIds.push(workspaceMemberId);

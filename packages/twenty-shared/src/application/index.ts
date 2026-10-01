@@ -205,6 +205,7 @@ export type {
   RunAgentResult,
 } from './runAgentType';
 export type {
+  SendInboxMessageRequest,
   SendInboxMessageInput,
   SendInboxMessageResult,
 } from './sendInboxMessageType';
