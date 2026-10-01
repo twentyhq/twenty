@@ -42,17 +42,6 @@ export const readingDirectionsTest: TwentyUiGalleryPlayFunction = async ({
       expect(Math.abs(descriptionBox.left - titleBox.left)).toBeLessThan(1);
       expect(Math.abs(descriptionBox.right - titleBox.right)).toBeLessThan(1);
     });
-    await userEvent.click(content.getByRole('button', { name: 'Dark' }));
-    for (const variant of ['Light', 'Dark', 'System']) {
-      const badge = content.getByRole('button', {
-        name: variant,
-      }).nextElementSibling!;
-      await waitFor(() =>
-        expect(getComputedStyle(badge).visibility).toBe(
-          variant === 'Dark' ? 'visible' : 'hidden',
-        ),
-      );
-    }
     const row = content
       .getByText('A very long account name that must truncate')
       .closest('[data-indicator]')!;

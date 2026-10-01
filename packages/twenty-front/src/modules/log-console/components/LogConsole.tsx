@@ -51,6 +51,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { checkIfBillingEntitlementIsEnabledOnWorkspace } from '@/workspace/utils/checkIfBillingEntitlementIsEnabledOnWorkspace';
 import { BillingEntitlementKey } from '~/generated-metadata/graphql';
 
 const LOG_CONSOLE_HEIGHT_CSS_VARIABLE = '--log-console-height';
@@ -380,12 +381,10 @@ export const LogConsole = () => {
   const panelHeight =
     !isExiting && displayedLayout.isFullScreen ? '100%' : spacerHeight;
 
-  const hasAuditLogsEntitlement =
-    currentWorkspace?.billingEntitlements?.some(
-      (entitlement) =>
-        entitlement.key === BillingEntitlementKey.AUDIT_LOGS &&
-        entitlement.value,
-    ) ?? false;
+  const hasAuditLogsEntitlement = checkIfBillingEntitlementIsEnabledOnWorkspace(
+    BillingEntitlementKey.AUDIT_LOGS,
+    currentWorkspace,
+  );
 
   const isSourceLocked = (source: LogConsoleSource) =>
     source.requiresAuditLogs && !hasAuditLogsEntitlement;

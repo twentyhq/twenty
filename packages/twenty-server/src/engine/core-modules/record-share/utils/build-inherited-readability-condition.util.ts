@@ -35,6 +35,25 @@ const buildChildLinkBoundCondition = ({
 }): string =>
   `(${quotedChildTableAlias}."deletedAt" IS NULL OR (${quotedTableAlias}."deletedAt" IS NOT NULL AND ${quotedChildTableAlias}."deletedAt" >= ${quotedTableAlias}."deletedAt"))`;
 
+const buildDetachedCondition = ({
+  quotedTableAlias,
+  parents,
+}: {
+  quotedTableAlias: string;
+  parents: InheritedReadabilityParentCondition[];
+}): string =>
+  `(${parents
+    .map((parent) => {
+      if (parent.kind === 'column') {
+        return `${quotedTableAlias}.${escapeIdentifier(parent.joinColumnName)} IS NULL`;
+      }
+
+      const quotedChildTableAlias = escapeIdentifier(parent.childTableAlias);
+
+      return `NOT EXISTS (SELECT 1 FROM ${parent.childTableExpression} AS ${quotedChildTableAlias} WHERE ${quotedChildTableAlias}.${escapeIdentifier(parent.childJoinColumnName)} = ${quotedTableAlias}."id" AND ${buildChildLinkBoundCondition({ quotedTableAlias, quotedChildTableAlias })})`;
+    })
+    .join(' AND ')})`;
+
 export const buildInheritedReadabilityCondition = ({
   tableAlias,
   objectMetadataId,
@@ -42,6 +61,7 @@ export const buildInheritedReadabilityCondition = ({
   recordShareTableExpression,
   principalIds,
   accessLevels,
+  isOpenWhenDetached = false,
 }: {
   tableAlias: string;
   objectMetadataId: string;
@@ -49,6 +69,7 @@ export const buildInheritedReadabilityCondition = ({
   recordShareTableExpression: string;
   principalIds: string[];
   accessLevels: RecordShareAccessLevel[];
+  isOpenWhenDetached?: boolean;
 }): SqlCondition => {
   const parameters: ObjectLiteral = {};
   const quotedTableAlias = escapeIdentifier(tableAlias);
@@ -106,8 +127,14 @@ export const buildInheritedReadabilityCondition = ({
     ];
   });
 
+  // Every link counts towards being attached, a denied parent's included
+  const detachedConditions =
+    isOpenWhenDetached && parents.length > 0
+      ? [buildDetachedCondition({ quotedTableAlias, parents })]
+      : [];
+
   return {
-    sql: `(${[ownRecordShareCondition.sql, ...parentConditions].join(' OR ')})`,
+    sql: `(${[ownRecordShareCondition.sql, ...parentConditions, ...detachedConditions].join(' OR ')})`,
     parameters,
   };
 };
