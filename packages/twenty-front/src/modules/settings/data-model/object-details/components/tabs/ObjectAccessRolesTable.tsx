@@ -30,15 +30,6 @@ const StyledRowFilterCell = styled.div`
   gap: ${themeCssVariables.spacing[1]};
 `;
 
-const StyledTableRowContainer = styled.div`
-  > * {
-    &:hover {
-      background: ${themeCssVariables.background.transparent.light};
-      cursor: pointer;
-    }
-  }
-`;
-
 export const ObjectAccessRolesTable = ({
   roles,
 }: ObjectAccessRolesTableProps) => {
@@ -67,61 +58,53 @@ export const ObjectAccessRolesTable = ({
         const RoleIcon = getIcon(role.icon ?? 'IconUser');
 
         return (
-          <StyledTableRowContainer key={role.id}>
-            <TableRow
-              gridAutoColumns={GRID_AUTO_COLUMNS}
-              to={getSettingsPath(SettingsPath.RoleDetail, {
-                roleId: role.id,
-              })}
-            >
-              <TableCell>
-                <StyledNameCell>
-                  <RoleIcon
-                    size={theme.icon.size.md}
+          <TableRow
+            key={role.id}
+            gridAutoColumns={GRID_AUTO_COLUMNS}
+            to={getSettingsPath(SettingsPath.RoleDetail, {
+              roleId: role.id,
+            })}
+          >
+            <TableCell>
+              <StyledNameCell>
+                <RoleIcon
+                  size={theme.icon.size.md}
+                  stroke={theme.icon.stroke.sm}
+                />
+                {role.label}
+              </StyledNameCell>
+            </TableCell>
+            {[role.canRead, role.canUpdate, role.canSoftDelete].map(
+              (isAllowed, index) => (
+                <TableCell
+                  key={index}
+                  align="center"
+                  color={themeCssVariables.font.color.tertiary}
+                >
+                  {renderAllowed(isAllowed)}
+                </TableCell>
+              ),
+            )}
+            <TableCell color={themeCssVariables.font.color.tertiary}>
+              {role.hasRowFilter ? (
+                <StyledRowFilterCell>
+                  <IconFilter
+                    size={theme.icon.size.sm}
                     stroke={theme.icon.stroke.sm}
                   />
-                  {role.label}
-                </StyledNameCell>
-              </TableCell>
-              <TableCell
-                align="center"
-                color={themeCssVariables.font.color.tertiary}
-              >
-                {renderAllowed(role.canRead)}
-              </TableCell>
-              <TableCell
-                align="center"
-                color={themeCssVariables.font.color.tertiary}
-              >
-                {renderAllowed(role.canUpdate)}
-              </TableCell>
-              <TableCell
-                align="center"
-                color={themeCssVariables.font.color.tertiary}
-              >
-                {renderAllowed(role.canSoftDelete)}
-              </TableCell>
-              <TableCell color={themeCssVariables.font.color.tertiary}>
-                {role.hasRowFilter ? (
-                  <StyledRowFilterCell>
-                    <IconFilter
-                      size={theme.icon.size.sm}
-                      stroke={theme.icon.stroke.sm}
-                    />
-                    {t`Some records`}
-                  </StyledRowFilterCell>
-                ) : (
-                  '-'
-                )}
-              </TableCell>
-              <TableCell
-                align="center"
-                color={themeCssVariables.font.color.tertiary}
-              >
-                {renderAllowed(role.canAccessAllRecords)}
-              </TableCell>
-            </TableRow>
-          </StyledTableRowContainer>
+                  {t`Some records`}
+                </StyledRowFilterCell>
+              ) : (
+                '-'
+              )}
+            </TableCell>
+            <TableCell
+              align="center"
+              color={themeCssVariables.font.color.tertiary}
+            >
+              {renderAllowed(role.canAccessAllRecords)}
+            </TableCell>
+          </TableRow>
         );
       })}
     </Table>

@@ -1,6 +1,7 @@
 import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
 import { useLingui } from '@lingui/react/macro';
+import { useQuery } from '@apollo/client/react';
 import { Section } from 'twenty-ui/components';
 import { themeCssVariables } from 'twenty-ui/theme';
 
@@ -8,14 +9,15 @@ import { isDDLLockedState } from '@/client-config/states/isDDLLockedState';
 import { useGetIsMetadataItemCustom } from '@/object-metadata/hooks/useGetIsMetadataItemCustom';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
+import { isShareableObjectMetadataItem } from '@/object-record/record-sharing/utils/isShareableObjectMetadataItem';
 import { ObjectAccessRolesTable } from '@/settings/data-model/object-details/components/tabs/ObjectAccessRolesTable';
 import { ObjectReadabilityPicker } from '@/settings/data-model/object-details/components/tabs/ObjectReadabilityPicker';
 import { ObjectSharingReachPicker } from '@/settings/data-model/object-details/components/tabs/ObjectSharingReachPicker';
-import { useObjectAccessOverview } from '@/settings/data-model/object-details/hooks/useObjectAccessOverview';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import {
   FeatureFlagKey,
+  GetObjectAccessOverviewDocument,
   MetadataReadability,
 } from '~/generated-metadata/graphql';
 
@@ -41,9 +43,11 @@ export const ObjectAccess = ({ objectMetadataItem }: ObjectAccessProps) => {
   const isRecordLevelSharingEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED,
   );
-  const { objectAccessOverview, error } = useObjectAccessOverview({
-    objectMetadataId: objectMetadataItem.id,
+  const { data, error } = useQuery(GetObjectAccessOverviewDocument, {
+    variables: { objectMetadataId: objectMetadataItem.id },
+    fetchPolicy: 'cache-and-network',
   });
+  const objectAccessOverview = data?.objectAccessOverview;
 
   const isReadOnly =
     isObjectMetadataReadOnly({ objectMetadataItem }) || isDDLLocked;
@@ -51,6 +55,9 @@ export const ObjectAccess = ({ objectMetadataItem }: ObjectAccessProps) => {
   const objectLabel = objectMetadataItem.labelPlural;
   const isOpenByDefault =
     objectMetadataItem.readability === MetadataReadability.OPEN;
+  const isReadabilityPickable =
+    isOpenByDefault ||
+    objectMetadataItem.readability === MetadataReadability.PRIVATE;
 
   return (
     <StyledContentContainer>
@@ -66,49 +73,50 @@ export const ObjectAccess = ({ objectMetadataItem }: ObjectAccessProps) => {
           <ObjectAccessRolesTable roles={objectAccessOverview.roles} />
         )}
       </Section.Root>
-      {isRecordLevelSharingEnabled && (
-        <>
-          {objectMetadataItem.readability !== MetadataReadability.INHERITED && (
+      {isRecordLevelSharingEnabled &&
+        isShareableObjectMetadataItem(objectMetadataItem) && (
+          <>
+            {isReadabilityPickable && (
+              <Section.Root>
+                <Section.Header
+                  title={t`New records`}
+                  description={t`Who sees a record of ${objectLabel} when it is created.`}
+                />
+                <ObjectReadabilityPicker
+                  objectMetadataItem={objectMetadataItem}
+                  isReadOnly={isReadOnly || !isReadabilityEditable}
+                />
+              </Section.Root>
+            )}
             <Section.Root>
               <Section.Header
-                title={t`New records`}
-                description={t`Who sees a record of ${objectLabel} when it is created.`}
+                title={t`Sharing`}
+                description={t`Who a record of ${objectLabel} can be shared with.`}
               />
-              <ObjectReadabilityPicker
+              <ObjectSharingReachPicker
                 objectMetadataItem={objectMetadataItem}
-                isReadOnly={isReadOnly || !isReadabilityEditable}
+                isReadOnly={isReadOnly}
               />
             </Section.Root>
-          )}
-          <Section.Root>
-            <Section.Header
-              title={t`Sharing`}
-              description={t`Who a record of ${objectLabel} can be shared with.`}
-            />
-            <ObjectSharingReachPicker
-              objectMetadataItem={objectMetadataItem}
-              isReadOnly={isReadOnly}
-            />
-          </Section.Root>
-          {isDefined(objectAccessOverview) && (
-            <Section.Root>
-              <Section.Header
-                title={t`Today`}
-                description={
-                  isOpenByDefault
-                    ? t`Records whose access differs from what roles give.`
-                    : t`New records are private to their creator until shared.`
-                }
-              />
-              <StyledSummary>
-                {isOpenByDefault
-                  ? t`${objectAccessOverview.restrictedRecordCount} restricted, ${objectAccessOverview.sharedRecordCount} shared with specific people`
-                  : t`${objectAccessOverview.sharedRecordCount} shared with specific people`}
-              </StyledSummary>
-            </Section.Root>
-          )}
-        </>
-      )}
+            {isDefined(objectAccessOverview) && (
+              <Section.Root>
+                <Section.Header
+                  title={t`Today`}
+                  description={
+                    isOpenByDefault
+                      ? t`Records whose access differs from what roles give.`
+                      : t`New records are private to their creator until shared.`
+                  }
+                />
+                <StyledSummary>
+                  {isOpenByDefault
+                    ? t`${objectAccessOverview.restrictedRecordCount} restricted, ${objectAccessOverview.sharedRecordCount} shared with specific people`
+                    : t`${objectAccessOverview.sharedRecordCount} shared with specific people`}
+                </StyledSummary>
+              </Section.Root>
+            )}
+          </>
+        )}
     </StyledContentContainer>
   );
 };
