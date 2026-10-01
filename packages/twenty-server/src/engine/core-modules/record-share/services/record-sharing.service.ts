@@ -136,7 +136,10 @@ export class RecordSharingService {
     const canChangeSharing =
       permissions.canUpdate &&
       viewerAccessLevel === RecordShareAccessLevel.FULL &&
-      (await this.isUpdatePermittedByRole(args, objectMetadata));
+      (await this.isUpdatePermittedByRole({
+        authContext: args.authContext,
+        objectMetadata,
+      }));
     const { flatRoleMaps } = canChangeSharing
       ? await this.workspaceCacheService.getOrRecompute(
           args.authContext.workspace.id,
@@ -486,10 +489,12 @@ export class RecordSharingService {
     });
   }
 
-  private isUpdatePermittedByRole(
-    { authContext }: RecordSharingArgs,
-    objectMetadata: FlatObjectMetadata,
-  ): Promise<boolean> {
+  private isUpdatePermittedByRole({
+    authContext,
+    objectMetadata,
+  }: Pick<RecordSharingArgs, 'authContext'> & {
+    objectMetadata: Pick<FlatObjectMetadata, 'nameSingular'>;
+  }): Promise<boolean> {
     return this.workspaceOrmManager.executeInWorkspaceContext(
       () =>
         this.workspaceOrmManager
