@@ -43,8 +43,9 @@ async function checkServer(apiUrl: string) {
 function writeConfig(apiUrl: string, apiKey: string) {
   const payload = JSON.stringify(
     {
+      version: 1,
       remotes: {
-        local: { apiUrl, apiKey, accessToken: apiKey },
+        local: { apiUrl, apiKey, twentyCLIAccessToken: apiKey },
       },
       defaultRemote: 'local',
     },
@@ -98,3 +99,4 @@ export async function teardown() {
     removeConfig();
   }
 }
+
