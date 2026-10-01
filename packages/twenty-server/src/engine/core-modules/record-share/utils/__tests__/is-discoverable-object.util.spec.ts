@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import { MetadataReadability } from 'twenty-shared/types';
 
 import { isDiscoverableObject } from 'src/engine/core-modules/record-share/utils/is-discoverable-object.util';
