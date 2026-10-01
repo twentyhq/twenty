@@ -85,28 +85,65 @@ const hasOnlyReadableSubFields = (
       readableSubFieldNames.includes(subFieldName),
   );
 
-const isMatchingOptionalStringFilter = (
-  stringFilter: StringFilter | null | undefined,
-  value: string,
-): boolean =>
-  !isDefined(stringFilter) || isMatchingStringFilter({ stringFilter, value });
-
-// A null JSON column matches nothing in SQL but an IS NULL check, while its
-// serialized form would match patterns like '%null%' in memory
-const isMatchingOptionalRawJsonFilter = (
-  rawJsonFilter: RawJsonFilter | null | undefined,
-  value: string | null | undefined,
+// An absent or empty sub-field filter is no constraint, and a null sub-field
+// only matches IS NULL, as in SQL
+const isMatchingOptionalSubFieldFilter = <
+  TSubFieldFilter extends { is?: IsFilter },
+  TValue,
+>(
+  subFieldFilter: TSubFieldFilter | null | undefined,
+  value: TValue | null | undefined,
+  isMatching: (subFieldFilter: TSubFieldFilter, value: TValue) => boolean,
 ): boolean => {
-  if (!isDefined(rawJsonFilter)) {
+  if (!isDefined(subFieldFilter) || Object.keys(subFieldFilter).length === 0) {
     return true;
   }
 
   if (!isDefined(value)) {
-    return rawJsonFilter.is === 'NULL';
+    return subFieldFilter.is === 'NULL';
   }
 
-  return isMatchingRawJsonFilter({ rawJsonFilter, value });
+  return isMatching(subFieldFilter, value);
 };
+
+const isMatchingOptionalStringFilter = (
+  stringFilter: StringFilter | null | undefined,
+  value: string | null | undefined,
+): boolean =>
+  isMatchingOptionalSubFieldFilter(
+    stringFilter,
+    value,
+    (filter, definedValue) =>
+      isMatchingStringFilter({ stringFilter: filter, value: definedValue }),
+  );
+
+const isMatchingOptionalRawJsonFilter = (
+  rawJsonFilter: RawJsonFilter | null | undefined,
+  value: string | null | undefined,
+): boolean =>
+  isMatchingOptionalSubFieldFilter(
+    rawJsonFilter,
+    value,
+    (filter, definedValue) =>
+      isMatchingRawJsonFilter({ rawJsonFilter: filter, value: definedValue }),
+  );
+
+const isMatchingOptionalFloatFilter = (
+  floatFilter: FloatFilter | null | undefined,
+  value: number | null | undefined,
+): boolean =>
+  isMatchingOptionalSubFieldFilter(floatFilter, value, (filter, definedValue) =>
+    isMatchingFloatFilter({ floatFilter: filter, value: definedValue }),
+  );
+
+const SUB_FIELD_MATCHED_COMPOSITE_FIELD_TYPES: FieldMetadataType[] = [
+  FieldMetadataType.FULL_NAME,
+  FieldMetadataType.ADDRESS,
+  FieldMetadataType.LINKS,
+  FieldMetadataType.ACTOR,
+  FieldMetadataType.EMAILS,
+  FieldMetadataType.PHONES,
+];
 
 export const isRecordMatchingRLSRowLevelPermissionPredicate = ({
   record,
@@ -257,7 +294,14 @@ export const isRecordMatchingRLSRowLevelPermissionPredicate = ({
       );
     }
 
-    const recordFieldValue = record[filterKey];
+    // A null composite has null sub-fields, which IS NULL sub-field filters match
+    const recordFieldValue =
+      record[filterKey] ??
+      (SUB_FIELD_MATCHED_COMPOSITE_FIELD_TYPES.includes(
+        objectMetadataField.type,
+      )
+        ? {}
+        : undefined);
 
     if (!isDefined(recordFieldValue)) {
       if (isObject(filterValue)) {
@@ -314,16 +358,14 @@ export const isRecordMatchingRLSRowLevelPermissionPredicate = ({
 
         return (
           hasOnlyReadableSubFields(fullNameFilter, ['firstName', 'lastName']) &&
-          (fullNameFilter.firstName === undefined ||
-            isMatchingStringFilter({
-              stringFilter: fullNameFilter.firstName,
-              value: recordFieldValue.firstName,
-            })) &&
-          (fullNameFilter.lastName === undefined ||
-            isMatchingStringFilter({
-              stringFilter: fullNameFilter.lastName,
-              value: recordFieldValue.lastName,
-            }))
+          isMatchingOptionalStringFilter(
+            fullNameFilter.firstName,
+            recordFieldValue.firstName,
+          ) &&
+          isMatchingOptionalStringFilter(
+            fullNameFilter.lastName,
+            recordFieldValue.lastName,
+          )
         );
       }
       case FieldMetadataType.ADDRESS: {
@@ -353,16 +395,14 @@ export const isRecordMatchingRLSRowLevelPermissionPredicate = ({
           addressStringSubFieldNames.every((subFieldName) =>
             isMatchingOptionalStringFilter(
               addressFilter[subFieldName],
-              recordFieldValue?.[subFieldName],
+              recordFieldValue[subFieldName],
             ),
           ) &&
-          addressCoordinateSubFieldNames.every(
-            (subFieldName) =>
-              !isDefined(addressFilter[subFieldName]) ||
-              isMatchingFloatFilter({
-                floatFilter: addressFilter[subFieldName],
-                value: recordFieldValue?.[subFieldName] ?? null,
-              }),
+          addressCoordinateSubFieldNames.every((subFieldName) =>
+            isMatchingOptionalFloatFilter(
+              addressFilter[subFieldName],
+              recordFieldValue[subFieldName],
+            ),
           )
         );
       }
@@ -377,15 +417,15 @@ export const isRecordMatchingRLSRowLevelPermissionPredicate = ({
           ]) &&
           isMatchingOptionalStringFilter(
             linksFilter.primaryLinkLabel,
-            recordFieldValue?.primaryLinkLabel,
+            recordFieldValue.primaryLinkLabel,
           ) &&
           isMatchingOptionalStringFilter(
             linksFilter.primaryLinkUrl,
-            recordFieldValue?.primaryLinkUrl,
+            recordFieldValue.primaryLinkUrl,
           ) &&
           isMatchingOptionalRawJsonFilter(
             linksFilter.secondaryLinks,
-            recordFieldValue?.secondaryLinks,
+            recordFieldValue.secondaryLinks,
           )
         );
       }
@@ -436,22 +476,24 @@ export const isRecordMatchingRLSRowLevelPermissionPredicate = ({
           ]) &&
           isMatchingOptionalRawJsonFilter(
             actorFilter.context,
-            recordFieldValue?.context,
+            recordFieldValue.context,
           ) &&
-          (!isDefined(actorFilter.source) ||
-            isMatchingSelectFilter({
-              selectFilter: actorFilter.source,
-              value: recordFieldValue?.source ?? null,
-            })) &&
+          isMatchingOptionalSubFieldFilter(
+            actorFilter.source,
+            recordFieldValue.source,
+            (selectFilter, value: string) =>
+              isMatchingSelectFilter({ selectFilter, value }),
+          ) &&
           isMatchingOptionalStringFilter(
             actorFilter.name,
-            recordFieldValue?.name,
+            recordFieldValue.name,
           ) &&
-          (!isDefined(actorFilter.workspaceMemberId) ||
-            isMatchingUUIDFilter({
-              uuidFilter: actorFilter.workspaceMemberId,
-              value: recordFieldValue?.workspaceMemberId ?? null,
-            }))
+          isMatchingOptionalSubFieldFilter(
+            actorFilter.workspaceMemberId,
+            recordFieldValue.workspaceMemberId,
+            (uuidFilter, value: string) =>
+              isMatchingUUIDFilter({ uuidFilter, value }),
+          )
         );
       }
       case FieldMetadataType.EMAILS: {
@@ -464,11 +506,11 @@ export const isRecordMatchingRLSRowLevelPermissionPredicate = ({
           ]) &&
           isMatchingOptionalStringFilter(
             emailsFilter.primaryEmail,
-            recordFieldValue?.primaryEmail,
+            recordFieldValue.primaryEmail,
           ) &&
           isMatchingOptionalRawJsonFilter(
             emailsFilter.additionalEmails,
-            recordFieldValue?.additionalEmails,
+            recordFieldValue.additionalEmails,
           )
         );
       }
@@ -491,12 +533,12 @@ export const isRecordMatchingRLSRowLevelPermissionPredicate = ({
           phonesStringSubFieldNames.every((subFieldName) =>
             isMatchingOptionalStringFilter(
               phonesFilter[subFieldName],
-              recordFieldValue?.[subFieldName],
+              recordFieldValue[subFieldName],
             ),
           ) &&
           isMatchingOptionalRawJsonFilter(
             phonesFilter.additionalPhones,
-            recordFieldValue?.additionalPhones,
+            recordFieldValue.additionalPhones,
           )
         );
       }
@@ -516,7 +558,7 @@ export const isRecordMatchingRLSRowLevelPermissionPredicate = ({
 
         return isMatchingUUIDFilter({
           uuidFilter: filterValue as UUIDFilter,
-          value: recordFieldValue?.id ?? null,
+          value: recordFieldValue.id ?? null,
         });
       }
       case FieldMetadataType.TS_VECTOR: {

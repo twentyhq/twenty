@@ -8,12 +8,13 @@ import {
   ALL_OBJECTS_SHARE_RECORD_EXPRESSION,
   buildShareRecordAvailabilityUpdate,
 } from 'src/database/commands/upgrade-version-command/2-45/utils/build-share-record-availability-update.util';
+import { STANDARD_COMMAND_MENU_ITEMS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 
 const NOW = '2026-10-01T12:00:00.000Z';
 const SHARE_RECORD_UNIVERSAL_IDENTIFIER =
-  'b9336f9f-d10c-42c0-b7cd-40c94ae235ef';
+  STANDARD_COMMAND_MENU_ITEMS.shareRecord.universalIdentifier;
 const CHAT_ONLY_EXPRESSION =
   'numberOfSelectedRecords == 1 and featureFlags.IS_AI_CHAT_SHARING_DROPDOWN_ENABLED and noneDefined(selectedRecords, "deletedAt")';
 
