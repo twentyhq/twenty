@@ -126,7 +126,7 @@ export const buildPermissionSummaryFromRoleGrants = ({
 
         return {
           Icon: IconFilter,
-          label: t`Access ${objectLabel} beyond their row-level restrictions`,
+          label: t`Change row-level access restrictions for ${objectLabel}`,
         };
       }
       case ApplicationUpgradeRoleGrantType.PERMISSION_FLAG: {

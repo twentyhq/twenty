@@ -75,7 +75,7 @@ describe('buildPermissionSummaryFromRoleGrants', () => {
     ).toEqual([
       'Delete Companies',
       'See Salary on Companies',
-      'Access Companies beyond their row-level restrictions',
+      'Change row-level access restrictions for Companies',
     ]);
   });
 
