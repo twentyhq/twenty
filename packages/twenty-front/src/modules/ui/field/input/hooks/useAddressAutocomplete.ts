@@ -30,12 +30,17 @@ export const useAddressAutocomplete = (
   }, [closePlaceAutocomplete]);
 
   const autoFillInputsFromPlaceDetails = useCallback(
-    async (
-      placeId: string,
-      token: string,
-      addressStreet1?: string,
-      internalValue?: FieldAddressDraftValue,
-    ) => {
+    async ({
+      placeId,
+      token,
+      addressStreet1,
+      internalValue,
+    }: {
+      placeId: string;
+      token: string;
+      addressStreet1?: string;
+      internalValue?: FieldAddressDraftValue;
+    }) => {
       const placeData = await getPlaceDetailsData(placeId, token);
       const countryName = findCountryNameByCountryCode(placeData?.country);
 

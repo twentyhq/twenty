@@ -1,0 +1,146 @@
+---
+title: Autocomplete
+description: Suggest values while the user types and keeps focus in the input.
+---
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import AutocompleteReference from '/snippets/ui/generated/input/autocomplete.mdx';
+
+Use `Autocomplete` for suggestions attached to a text input. The input keeps its caret and keyboard focus while arrow keys highlight suggestions. Use [Select](/ui/primitives/input/select) when the user must choose a value from a fixed list.
+
+<StoryEmbed
+  storyId="ui-input-autocomplete--documentation"
+  title="Autocomplete example"
+  height={360}
+/>
+
+## Anatomy
+
+Keep the input and popup inside a mounted `Autocomplete.Root`. `InputGroup` optionally groups the input with adjacent content and anchors the popup to that group.
+
+```text
+Autocomplete.Root
+├── Autocomplete.InputGroup
+│   └── Autocomplete.Input
+└── Autocomplete.Popup
+    ├── Autocomplete.Empty
+    └── Autocomplete.List
+        └── Autocomplete.Item
+```
+
+| Part         | Purpose                                                         |
+| ------------ | --------------------------------------------------------------- |
+| `Root`       | Owns the input value, filtering, highlights, and open state.    |
+| `InputGroup` | Groups the input with adjacent controls or chips.               |
+| `Input`      | Renders the combobox input and retains keyboard focus.          |
+| `Popup`      | Portals and positions the suggestions.                          |
+| `List`       | Renders the listbox and its filtered items.                     |
+| `Item`       | Renders a suggestion and handles pointer or keyboard selection. |
+| `Empty`      | Announces when no matching items are available.                 |
+
+## Local suggestions
+
+Pass `items` to `Root` and render them through `List` so filtering updates the visible suggestions. `autoHighlight="always"` highlights the first result whenever the list opens.
+
+```tsx
+import { Autocomplete } from 'twenty-ui/primitives/input';
+
+const CITIES = ['Paris', 'London', 'Lisbon'];
+
+export const CityInput = () => (
+  <Autocomplete.Root items={CITIES} autoHighlight="always">
+    <Autocomplete.Input aria-label="City" placeholder="Search cities" />
+    <Autocomplete.Popup>
+      <Autocomplete.Empty>No matching cities</Autocomplete.Empty>
+      <Autocomplete.List>
+        {(city: string) => (
+          <Autocomplete.Item key={city} value={city}>
+            {city}
+          </Autocomplete.Item>
+        )}
+      </Autocomplete.List>
+    </Autocomplete.Popup>
+  </Autocomplete.Root>
+);
+```
+
+`value` and `onValueChange` control the input text. Use `defaultValue` for an uncontrolled initial value. `Item.onClick` handles both pointer selection and Enter from the input. For object items, provide `itemToStringValue` to determine their input text.
+
+## Server suggestions
+
+Pass `filter={null}` when a server already filters the results. Keep `Root` mounted and control `open` independently so results can arrive while the input remains focused. A loading state can stay outside `List`; render `Empty` when the completed response has no results.
+
+```tsx
+import { Autocomplete } from 'twenty-ui/primitives/input';
+
+type LocationSuggestionsProps = {
+  query: string;
+  locations: string[];
+  open: boolean;
+  onQueryChange: (query: string) => void;
+  onOpenChange: (open: boolean) => void;
+  onSelect: (location: string) => void;
+};
+
+export const LocationSuggestions = ({
+  query,
+  locations,
+  open,
+  onQueryChange,
+  onOpenChange,
+  onSelect,
+}: LocationSuggestionsProps) => (
+  <Autocomplete.Root
+    items={locations}
+    value={query}
+    open={open}
+    filter={null}
+    autoHighlight="always"
+    onValueChange={(value, details) => {
+      if (details.reason !== 'escape-key') {
+        onQueryChange(value);
+      }
+    }}
+    onOpenChange={(nextOpen, details) => {
+      if (details.reason !== 'input-change') {
+        onOpenChange(nextOpen);
+      }
+    }}
+  >
+    <Autocomplete.Input aria-label="Location" />
+    <Autocomplete.Popup>
+      <Autocomplete.Empty>No matching locations</Autocomplete.Empty>
+      <Autocomplete.List>
+        {(location: string) => (
+          <Autocomplete.Item
+            key={location}
+            value={location}
+            onClick={() => onSelect(location)}
+          >
+            {location}
+          </Autocomplete.Item>
+        )}
+      </Autocomplete.List>
+    </Autocomplete.Popup>
+  </Autocomplete.Root>
+);
+```
+
+The parent owns debounce, request cancellation, and stale response protection. In this example, typing does not open the list until the parent supplies its results and sets `open`. Escape closes the list and preserves the query.
+
+## Input composition and placement
+
+`Input` accepts `size="sm"` or `size="md"` and uses the same styles as [Input](/ui/primitives/input/input). Use its `render` prop to compose an existing input. That input must forward its ref, native input attributes, and event handlers to the actual input element so keyboard navigation and accessible state remain connected.
+
+`InputGroup` provides layout and an anchor without adding input borders. It can contain chips or render an existing wrapper. Use [InputGroup](/ui/primitives/input/input-group) through its `render` prop when the whole group needs input styling.
+
+`Popup` defaults to `side="bottom"`, `align="start"`, and `sideOffset={8}`. It uses the anchor's width as its minimum width and the [theme's portal container](/ui/theming#scope-an-override) unless you provide `container`. Set `width` to override the anchor width with a fixed popup width. Customize placement with `side`, `align`, offsets, `collisionPadding`, or `anchor`.
+
+Use `Item.startIcon`, `Item.endIcon`, and `Item.description` for supporting content. Arrow keys change the highlighted item without moving DOM focus from the input; Enter chooses that item and Escape dismisses the popup. Give the input an accessible label or compose it with [Field](/ui/primitives/input/field).
+
+## Props
+
+The reference is generated from the public component types. Parts that render an element also accept its native attributes and event handlers.
+
+<AutocompleteReference />

@@ -122,12 +122,12 @@ describe('useAddressAutocomplete', () => {
     };
 
     await act(async () => {
-      await result.current.autoFillInputsFromPlaceDetails(
-        'place123',
-        'token123',
-        '123 Main St',
+      await result.current.autoFillInputsFromPlaceDetails({
+        placeId: 'place123',
+        token: 'token123',
+        addressStreet1: '123 Main St',
         internalValue,
-      );
+      });
     });
 
     expect(mockOnChange).toHaveBeenCalledWith({
@@ -157,11 +157,11 @@ describe('useAddressAutocomplete', () => {
     const { result } = renderHook(() => useAddressAutocomplete(mockOnChange));
 
     await act(async () => {
-      await result.current.autoFillInputsFromPlaceDetails(
-        'place123',
-        'token123',
-        '123 Main St, Springfield, IL 62704, USA',
-        {
+      await result.current.autoFillInputsFromPlaceDetails({
+        placeId: 'place123',
+        token: 'token123',
+        addressStreet1: '123 Main St, Springfield, IL 62704, USA',
+        internalValue: {
           addressStreet1: '',
           addressStreet2: null,
           addressCity: null,
@@ -171,7 +171,7 @@ describe('useAddressAutocomplete', () => {
           addressLat: null,
           addressLng: null,
         },
-      );
+      });
     });
 
     expect(mockOnChange).toHaveBeenCalledWith(
@@ -208,12 +208,12 @@ describe('useAddressAutocomplete', () => {
     };
 
     await act(async () => {
-      await result.current.autoFillInputsFromPlaceDetails(
-        'place123',
-        'token123',
-        '123 Main St',
+      await result.current.autoFillInputsFromPlaceDetails({
+        placeId: 'place123',
+        token: 'token123',
+        addressStreet1: '123 Main St',
         internalValue,
-      );
+      });
     });
 
     expect(mockOnChange).toHaveBeenCalledWith({
@@ -236,10 +236,10 @@ describe('useAddressAutocomplete', () => {
     const { result } = renderHook(() => useAddressAutocomplete(mockOnChange));
 
     await act(async () => {
-      await result.current.autoFillInputsFromPlaceDetails(
-        'place123',
-        'token123',
-      );
+      await result.current.autoFillInputsFromPlaceDetails({
+        placeId: 'place123',
+        token: 'token123',
+      });
     });
 
     expect(mockCloseDropdown).toHaveBeenCalled();
@@ -263,10 +263,10 @@ describe('useAddressAutocomplete', () => {
     expect(result.current.tokenForPlaceApi).not.toBeNull();
 
     await act(async () => {
-      await result.current.autoFillInputsFromPlaceDetails(
-        'place123',
-        'token123',
-      );
+      await result.current.autoFillInputsFromPlaceDetails({
+        placeId: 'place123',
+        token: 'token123',
+      });
     });
 
     expect(result.current.tokenForPlaceApi).toBeNull();
@@ -305,10 +305,10 @@ describe('useAddressAutocomplete', () => {
     const { result } = renderHook(() => useAddressAutocomplete(mockOnChange));
 
     await act(async () => {
-      await result.current.autoFillInputsFromPlaceDetails(
-        'place123',
-        'token123',
-      );
+      await result.current.autoFillInputsFromPlaceDetails({
+        placeId: 'place123',
+        token: 'token123',
+      });
     });
 
     expect(mockFindCountryNameByCountryCode).toHaveBeenCalledWith('US');

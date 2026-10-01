@@ -1,8 +1,10 @@
 import { StyledComposerTextInput } from '@/activities/components/ComposerTextInput';
 import { PlaceAutocompleteSelect } from '@/geo-map/components/PlaceAutocompleteSelect';
 import { usePlaceAutocomplete } from '@/geo-map/hooks/usePlaceAutocomplete';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { AutocompleteRoot } from '@/ui/input/components/AutocompleteRoot';
+import { Autocomplete } from 'twenty-ui/primitives/input';
 import { isDefined } from 'twenty-shared/utils';
+import { createElement } from 'react';
 
 const CALENDAR_EVENT_LOCATION_AUTOCOMPLETE_DROPDOWN_ID =
   'calendar-event-location-autocomplete-dropdown';
@@ -46,29 +48,50 @@ export const CalendarEventLocationInput = ({
   };
 
   return (
-    <Dropdown
+    <AutocompleteRoot
       dropdownId={CALENDAR_EVENT_LOCATION_AUTOCOMPLETE_DROPDOWN_ID}
-      dropdownPlacement="bottom-start"
-      clickableComponentWidth="100%"
-      disableClickForClickableComponent
-      onClickOutside={closePlaceAutocomplete}
-      clickableComponent={
-        <StyledComposerTextInput
-          type="text"
-          autoComplete="off"
-          aria-label={ariaLabel}
-          placeholder={placeholder}
-          value={value}
-          onChange={(event) => handleLocationChange(event.target.value)}
-        />
-      }
-      dropdownComponents={
-        <PlaceAutocompleteSelect
-          list={placeAutocompleteData}
-          onChange={handlePlaceSelection}
-          dropdownId={CALENDAR_EVENT_LOCATION_AUTOCOMPLETE_DROPDOWN_ID}
-        />
-      }
-    />
+      items={placeAutocompleteData}
+      itemToStringValue={(place) => place.text}
+      filter={null}
+      autoHighlight="always"
+      value={value}
+      onValueChange={(location, details) => {
+        if (
+          details.reason === 'escape-key' ||
+          details.reason === 'item-press'
+        ) {
+          return;
+        }
+
+        handleLocationChange(location);
+      }}
+      onOpenChange={(open, details) => {
+        if (open && details.reason === 'input-change') {
+          details.cancel();
+          return;
+        }
+
+        if (!open) {
+          closePlaceAutocomplete();
+        }
+      }}
+    >
+      <Autocomplete.Input
+        aria-label={ariaLabel}
+        placeholder={placeholder}
+        render={(inputProps) =>
+          createElement(StyledComposerTextInput, {
+            ...inputProps,
+            className: undefined,
+            type: 'text',
+            autoComplete: 'off',
+          })
+        }
+      />
+      <PlaceAutocompleteSelect
+        list={placeAutocompleteData}
+        onChange={handlePlaceSelection}
+      />
+    </AutocompleteRoot>
   );
 };

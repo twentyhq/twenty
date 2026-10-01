@@ -1,6 +1,7 @@
 {
   "primitives": [
     "AlertDialog",
+    "Autocomplete",
     "Avatar",
     "Banner",
     "Breadcrumb",
