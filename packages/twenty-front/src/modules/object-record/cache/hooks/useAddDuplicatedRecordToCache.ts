@@ -10,7 +10,6 @@ import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { type ApolloCache } from '@apollo/client';
 import { isDefined } from 'twenty-shared/utils';
 
-// Makes a server created copy show up in lists and the record store without a refetch.
 export const useAddDuplicatedRecordToCache = ({
   objectNameSingular,
 }: {
@@ -41,8 +40,7 @@ export const useAddDuplicatedRecordToCache = ({
     };
 
     createOneRecordInCache(createdRecord);
-    // The optimistic effect only reaches the record store through relations,
-    // and a duplicate response carries none.
+    // The optimistic effect only reaches the record store through relations, which a duplicate response lacks.
     upsertRecordsInStore({ partialRecords: [createdRecord] });
 
     const recordNode = getRecordNodeFromRecord({

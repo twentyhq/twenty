@@ -11,8 +11,6 @@ describe('mapSpeechRecognitionError', () => {
     expect(mapSpeechRecognitionError(error)).toBe(expected);
   });
 
-  // Both are ordinary endings rather than failures: one is the user pressing
-  // stop, the other is a quiet room.
   it.each(['aborted', 'no-speech'])('treats %s as a normal ending', (error) => {
     expect(mapSpeechRecognitionError(error)).toBeUndefined();
   });

@@ -3,7 +3,12 @@ import { useLingui } from '@lingui/react/macro';
 
 import { useUnsubscribeTopics } from '@/activities/emails/hooks/useUnsubscribeTopics';
 import { Section } from 'twenty-ui/components';
-import { Button, Checkbox } from 'twenty-ui/primitives/input';
+import {
+  Button,
+  Checkbox,
+  Radio,
+  RadioGroup,
+} from 'twenty-ui/primitives/input';
 import { HorizontalSeparator } from 'twenty-ui/primitives/layout';
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -52,6 +57,23 @@ const StyledTopicRow = styled.div`
   gap: ${themeCssVariables.spacing[2]};
 `;
 
+const StyledTrackingSection = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[2]};
+  text-align: left;
+`;
+
+const StyledTrackingTitle = styled.span`
+  color: ${themeCssVariables.font.color.primary};
+  font-weight: ${themeCssVariables.font.weight.medium};
+`;
+
+const StyledTrackingHint = styled.span`
+  color: ${themeCssVariables.font.color.secondary};
+  font-size: ${themeCssVariables.font.size.sm};
+`;
+
 export const SettingsUnsubscribePreview = () => {
   const { t } = useLingui();
   const { unsubscribeTopics, loading } = useUnsubscribeTopics();
@@ -66,11 +88,7 @@ export const SettingsUnsubscribePreview = () => {
     <Section.Root>
       <Section.Header
         title={t`Unsubscribe page`}
-        description={
-          hasPublicTopics
-            ? t`Preview of the page recipients see when they unsubscribe`
-            : t`Recipients can only unsubscribe from everything. Add a public topic to let them choose what they keep receiving.`
-        }
+        description={t`Preview of the page recipients see when they unsubscribe`}
       />
       <StyledViewport>
         {!loading && (
@@ -78,45 +96,56 @@ export const SettingsUnsubscribePreview = () => {
             <StyledHeader>
               <Section.Header
                 title={t`Do you want to unsubscribe?`}
-                description={
-                  hasPublicTopics
-                    ? t`Confirm your preferences:`
-                    : t`You will stop receiving these emails.`
-                }
+                description={t`Confirm your preferences:`}
               />
             </StyledHeader>
-            {hasPublicTopics ? (
-              <>
-                <StyledTopics>
-                  {publicTopics.map((topic) => (
-                    <StyledTopicRow key={topic.id}>
-                      <Checkbox
-                        checked
-                        onCheckedChange={() => {}}
-                        aria-label={topic.name ?? t`Untitled topic`}
-                      />
-                      {topic.name ?? t`Untitled topic`}
-                    </StyledTopicRow>
-                  ))}
-                </StyledTopics>
-                <Button
-                  fullWidth
-                  variant="solid"
-                  color="accent"
-                >{t`Update`}</Button>
-                <HorizontalSeparator text={t`Or`} noMargin />
-                <Button
-                  fullWidth
-                  variant="outline"
-                >{t`Unsubscribe all`}</Button>
-              </>
-            ) : (
-              <Button
-                fullWidth
-                variant="solid"
-                color="accent"
-              >{t`Unsubscribe`}</Button>
+            {hasPublicTopics && (
+              <StyledTopics>
+                {publicTopics.map((topic) => (
+                  <StyledTopicRow key={topic.id}>
+                    <Checkbox
+                      checked
+                      onCheckedChange={() => {}}
+                      aria-label={topic.name ?? t`Untitled topic`}
+                    />
+                    {topic.name ?? t`Untitled topic`}
+                  </StyledTopicRow>
+                ))}
+              </StyledTopics>
             )}
+            <StyledTrackingSection>
+              <StyledTrackingTitle>{t`Email tracking`}</StyledTrackingTitle>
+              <StyledTrackingHint>
+                {t`This sender records which links you click in its emails. You can opt out for this email address.`}
+              </StyledTrackingHint>
+              <RadioGroup
+                value="TRACKED"
+                onValueChange={() => {}}
+                aria-label={t`Email tracking`}
+              >
+                <StyledTopicRow>
+                  <Radio
+                    value="TRACKED"
+                    aria-label={t`Keep tracking my clicks`}
+                  />
+                  {t`Keep tracking my clicks`}
+                </StyledTopicRow>
+                <StyledTopicRow>
+                  <Radio
+                    value="OPTED_OUT"
+                    aria-label={t`Opt out of click tracking`}
+                  />
+                  {t`Opt out of click tracking`}
+                </StyledTopicRow>
+              </RadioGroup>
+            </StyledTrackingSection>
+            <Button fullWidth variant="solid" color="accent">
+              {t`Update`}
+            </Button>
+            <HorizontalSeparator text={t`Or`} noMargin />
+            <Button fullWidth variant="outline">
+              {t`Unsubscribe all`}
+            </Button>
           </StyledCard>
         )}
       </StyledViewport>

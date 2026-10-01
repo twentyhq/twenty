@@ -103,6 +103,7 @@ export class ImapClientProvider {
         pass: imapParams.password,
       },
       logger: false,
+      disableIMAP4rev2: true,
       tls: {
         rejectUnauthorized: false,
       },

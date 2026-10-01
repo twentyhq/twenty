@@ -176,9 +176,7 @@ export class CoreWorkflowVersionWriteService {
       steps,
     });
 
-    // main compared the previous content inside the UPDATE itself to catch two
-    // people editing the same draft. The runner cannot express that condition,
-    // so the comparison and the write it guards are serialized on this lock.
+    // the runner cannot compare previous content inside its UPDATE, so concurrent draft edits serialize on this lock
     await this.withCoreWorkflowVersionEditLock(
       coreWorkflowVersionId,
       async () => {
@@ -257,6 +255,13 @@ export class CoreWorkflowVersionWriteService {
             },
           );
         }, buildSystemAuthContext(workspaceId));
+
+        if (isDefined(flatWorkflowVersion.coreWorkflowId)) {
+          await this.coreDataSource.query(
+            `UPDATE core."workflow" SET "updatedAt" = now() WHERE "workspaceId" = $1 AND "id" = $2`,
+            [workspaceId, flatWorkflowVersion.coreWorkflowId],
+          );
+        }
       },
     );
 
@@ -278,8 +283,7 @@ export class CoreWorkflowVersionWriteService {
 
     try {
       await queryRunner.connect();
-      // Transaction scoped, so the lock is released by the commit below and by
-      // any failure that rolls back, including a connection that dies holding it.
+      // xact-scoped lock so commit, rollback or a dropped connection all release it
       await queryRunner.startTransaction();
 
       const [lockResult] = (await queryRunner.query(

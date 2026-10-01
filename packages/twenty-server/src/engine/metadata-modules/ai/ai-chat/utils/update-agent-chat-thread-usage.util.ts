@@ -1,18 +1,17 @@
-import { type AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
+import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { type AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 
-type ThreadUsageUpdate = Pick<
-  AgentChatThreadEntity,
-  | 'totalInputTokens'
-  | 'totalOutputTokens'
-  | 'totalInputCredits'
-  | 'totalOutputCredits'
-  | 'totalCacheReadTokens'
-  | 'totalCacheCreationTokens'
-  | 'contextWindowTokens'
-  | 'conversationSize'
-  | 'pendingQuestionMessageId'
->;
+type ThreadUsageUpdate = {
+  totalInputTokens: number;
+  totalOutputTokens: number;
+  totalInputCredits: number;
+  totalOutputCredits: number;
+  totalCacheReadTokens: number;
+  totalCacheCreationTokens: number;
+  contextWindowTokens: number | null;
+  conversationSize: number;
+  pendingQuestionMessageId: string | null;
+};
 
 export const updateAgentChatThreadUsage = async ({
   repository,
@@ -21,15 +20,14 @@ export const updateAgentChatThreadUsage = async ({
   streamId,
   usage,
 }: {
-  repository: AgentHistoryRepository<AgentChatThreadEntity>;
+  repository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>;
   workspaceId: string;
   threadId: string;
   streamId: string;
   usage: ThreadUsageUpdate;
 }): Promise<{ affected: number }> =>
   repository.query(workspaceId, async ({ manager, table }) => {
-    // Keep arithmetic in PostgreSQL and ownership in the same UPDATE. DTO numbers
-    // must never be read back and added to exact NUMERIC totals in JavaScript.
+    // sum in Postgres: JS numbers must never be added to exact NUMERIC totals
     const rows = await manager.query<{ id: string }[]>(
       `
     WITH updated AS (

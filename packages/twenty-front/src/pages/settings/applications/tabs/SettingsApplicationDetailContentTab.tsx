@@ -225,7 +225,7 @@ export const SettingsApplicationDetailContentTab = ({
         <SearchInput
           placeholder={t`Search...`}
           value={searchTerm}
-          onChange={setSearchTerm}
+          onValueChange={setSearchTerm}
         />
       </Section.Root>
 

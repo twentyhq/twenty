@@ -27,7 +27,7 @@ type OnboardingLayoutProps = {
   children: ReactNode;
   onBack?: () => void;
   isBackDisabled?: boolean;
-  freeCredits?: number;
+  headerRightComponent?: ReactNode;
   backgroundComponent?: ReactNode;
 };
 
@@ -35,7 +35,7 @@ export const OnboardingLayout = ({
   children,
   onBack,
   isBackDisabled,
-  freeCredits,
+  headerRightComponent,
   backgroundComponent,
 }: OnboardingLayoutProps) => {
   const isBackgroundComponentVisible = useMediaQuery(
@@ -50,7 +50,7 @@ export const OnboardingLayout = ({
       <OnboardingHeader
         onBack={onBack}
         isBackDisabled={isBackDisabled}
-        freeCredits={freeCredits}
+        rightComponent={headerRightComponent}
       />
       {children}
     </StyledBackground>

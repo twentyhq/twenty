@@ -1,6 +1,6 @@
 {
   "name": "twenty-ui",
-  "version": "2.44.0",
+  "version": "2.45.0",
   "description": "Twenty's shared React UI component library.",
   "license": "MIT",
   "repository": {
@@ -53,6 +53,7 @@
     "esbuild": "^0.28.1",
     "glob": "^11.1.0",
     "jsdom": "^30.0.1",
+    "lightningcss": "^1.32.0",
     "monaco-editor": "0.52.2",
     "prettier": "^3.1.1",
     "react": "^19.2.0",
@@ -92,7 +93,6 @@
   "files": [
     "dist",
     "LICENSE",
-    "CHANGELOG.md",
     "!dist/individual",
     "!dist/individual/**",
     "!dist/**/*.map"

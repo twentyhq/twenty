@@ -207,6 +207,25 @@ export class ProcessNestedRelationsHelper {
 
     const targetObjectNameSingular = targetObjectMetadata.nameSingular;
 
+    // A joined relation to such records reads as empty, so a nested one does too instead of failing the parent
+    if (targetObjectRepository.isReadDeniedByReadability()) {
+      this.assignRelationResults({
+        parentRecords: parentObjectRecords,
+        parentObjectRecordsAggregatedValues,
+        relationResults: [],
+        relationAggregatedFieldsResult: {},
+        sourceFieldName,
+        joinField: 'id',
+        joinColumnName: computeMorphOrRelationFieldJoinColumnName({
+          name: sourceFieldName,
+        }),
+        relationType,
+        selectedFields,
+      });
+
+      return;
+    }
+
     let targetObjectQueryBuilder = targetObjectRepository.createQueryBuilder(
       targetObjectNameSingular,
     );

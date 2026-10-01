@@ -10,6 +10,8 @@ import { Dropdown } from 'twenty-ui/components';
 import { Tag } from 'twenty-ui/primitives/data-display';
 
 import { type SelectValue } from '@/ui/input/components/internal/select/types';
+import { getSelectDropdownInitialFocus } from '@/ui/input/components/internal/select/utils/getSelectDropdownInitialFocus';
+import { isFocusMovingWithinSelect } from '@/ui/input/components/internal/select/utils/isFocusMovingWithinSelect';
 import { isSelectOptionMatchingSearch } from '@/ui/input/components/internal/select/utils/isSelectOptionMatchingSearch';
 import { SelectControl } from '@/ui/input/components/SelectControl';
 import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
@@ -53,7 +55,7 @@ export const Select = <TValue extends SelectValue>({
   needIconCheck,
   pinnedOption,
   callToActionButton,
-  dropdownOffset,
+  dropdownSideOffset = 0,
   hasRightElement,
   showContextualTextInControl = true,
   showIconInControl = true,
@@ -61,7 +63,6 @@ export const Select = <TValue extends SelectValue>({
   renderAsTag = false,
 }: SelectProps<TValue>) => {
   const dropdownContentRef = useRef<HTMLDivElement>(null);
-  const selectContainerRef = useRef<HTMLDivElement>(null);
 
   const [searchInputValue, setSearchInputValue] = useState('');
 
@@ -113,11 +114,6 @@ export const Select = <TValue extends SelectValue>({
       normalizedSearchInputValue,
     });
 
-  const dropDownMenuWidth =
-    dropdownWidthAuto && selectContainerRef.current?.clientWidth
-      ? selectContainerRef.current?.clientWidth
-      : dropdownWidth;
-
   const controlSelectedOption = useMemo(() => {
     if (!isDefined(selectedOption)) {
       return selectedOption;
@@ -141,19 +137,17 @@ export const Select = <TValue extends SelectValue>({
       className={className}
       fullWidth={fullWidth}
       onBlur={(event) => {
-        const nextFocus = event.relatedTarget;
-        const isFocusWithinSelect =
-          nextFocus instanceof Node &&
-          (event.currentTarget.contains(nextFocus) ||
-            dropdownContentRef.current?.contains(nextFocus));
-
-        if (isFocusWithinSelect) {
+        if (
+          isFocusMovingWithinSelect({
+            event,
+            dropdownContent: dropdownContentRef.current,
+          })
+        ) {
           return;
         }
 
         onBlur?.();
       }}
-      ref={selectContainerRef}
     >
       {isNonEmptyString(label) && <StyledLabel>{label}</StyledLabel>}
       {isDisabled ? (
@@ -183,18 +177,11 @@ export const Select = <TValue extends SelectValue>({
               withSearchInput
                 ? undefined
                 : () =>
-                    dropdownContentRef.current?.querySelector<HTMLElement>(
-                      '[data-dropdown-item][aria-pressed="true"]:not([aria-disabled="true"])',
-                    ) ??
-                    dropdownContentRef.current?.querySelector<HTMLElement>(
-                      '[data-dropdown-item]:not([aria-disabled="true"])',
-                    ) ??
-                    true
+                    getSelectDropdownInitialFocus(dropdownContentRef.current)
             }
-            width={dropDownMenuWidth}
+            width={dropdownWidthAuto ? 'var(--anchor-width)' : dropdownWidth}
             align="start"
-            sideOffset={dropdownOffset?.y ?? 0}
-            alignOffset={dropdownOffset?.x ?? 0}
+            sideOffset={dropdownSideOffset}
             aria-label={isNonEmptyString(label) ? label : undefined}
           >
             {withSearchInput === true && (

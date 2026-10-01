@@ -25,9 +25,7 @@ import {
 } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 
-// node-postgres parses a `date` column into a JS Date (which serializes with a
-// time component). Workspace DATE fields are date-only, so parse them as the raw
-// 'YYYY-MM-DD' string Postgres returns, matching the v1 TypeORM datasource.
+// Workspace DATE fields are date-only: keep Postgres's raw 'YYYY-MM-DD' instead of a JS Date, like the v1 datasource
 const DATE_ONLY_POOL_TYPES: PoolConfig['types'] = {
   getTypeParser: ((oid: number, format?: unknown) =>
     oid === types.builtins.DATE
@@ -119,10 +117,10 @@ export class WorkspaceDataSourceService
         workspaceContext.flatRowLevelPermissionPredicateMaps,
       flatRowLevelPermissionPredicateGroupMaps:
         workspaceContext.flatRowLevelPermissionPredicateGroupMaps,
+      flatValidationRuleMaps: workspaceContext.flatValidationRuleMaps,
       objectIdByNameSingular: workspaceContext.objectIdByNameSingular,
       featureFlagsMap: workspaceContext.featureFlagsMap,
       billingEntitlements: workspaceContext.billingEntitlements,
-      isLegacyRecordAccessOpen: workspaceContext.isLegacyRecordAccessOpen,
       userWorkspaceRoleMap: workspaceContext.userWorkspaceRoleMap,
       apiKeyRoleMap: workspaceContext.apiKeyRoleMap,
       eventEmitterService: this.workspaceEventEmitter,

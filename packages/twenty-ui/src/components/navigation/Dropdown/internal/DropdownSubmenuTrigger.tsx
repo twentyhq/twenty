@@ -1,3 +1,5 @@
+import { useDirection } from '@base-ui/react/direction-provider';
+import { useMergedRefs } from '@base-ui/utils/useMergedRefs';
 import { useId } from 'react';
 
 import { ListItem } from '@ui/primitives/navigation/ListItem/ListItem';
@@ -8,6 +10,7 @@ import { type DropdownSubmenuTriggerProps } from '../types/DropdownSubmenuTrigge
 import { getDropdownFocusTarget } from './getDropdownFocusTarget';
 import { useDropdownContext } from './useDropdownContext';
 import { useDropdownItemFocus } from './useDropdownItemFocus';
+import { useRegisterDropdownLabelElement } from './useRegisterDropdownLabelElement';
 
 export const DropdownSubmenuTrigger = ({
   color,
@@ -15,7 +18,8 @@ export const DropdownSubmenuTrigger = ({
   endIcon,
   description,
   descriptionPlacement,
-  hotkeys,
+  shortcut,
+  shortcutJoinLabel,
   hasSubmenu = true,
   children,
   render,
@@ -25,9 +29,11 @@ export const DropdownSubmenuTrigger = ({
   onKeyDown,
   onFocus,
   id,
+  ref,
   ...props
 }: DropdownSubmenuTriggerProps) => {
-  const { type, parentType, open, setOpen, setFocusOnOpen } =
+  const direction = useDirection();
+  const { type, parentType, open, setOpen, setFocusOnOpen, registerTrigger } =
     useDropdownContext();
   const generatedId = useId();
   const itemId = id ?? generatedId;
@@ -35,10 +41,14 @@ export const DropdownSubmenuTrigger = ({
     id: itemId,
     isSubmenuTrigger: true,
   });
+  const registerTriggerElement =
+    useRegisterDropdownLabelElement(registerTrigger);
+  const mergedRef = useMergedRefs(ref, registerTriggerElement);
 
   return (
     <Popover.Trigger
       {...props}
+      ref={mergedRef}
       id={itemId}
       disabled={disabled}
       nativeButton={nativeButton}
@@ -58,8 +68,7 @@ export const DropdownSubmenuTrigger = ({
           return;
         }
 
-        const isRightToLeft =
-          getComputedStyle(event.currentTarget).direction === 'rtl';
+        const isRightToLeft = direction === 'rtl';
         const forwardKey = isRightToLeft ? 'ArrowLeft' : 'ArrowRight';
 
         if (event.key === forwardKey) {
@@ -89,7 +98,8 @@ export const DropdownSubmenuTrigger = ({
           endIcon={endIcon}
           description={description}
           descriptionPlacement={descriptionPlacement}
-          hotkeys={hotkeys}
+          shortcut={shortcut}
+          shortcutJoinLabel={shortcutJoinLabel}
           hasSubmenu={hasSubmenu}
         >
           {children}

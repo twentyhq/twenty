@@ -1,6 +1,5 @@
-import { AiChatThreadDeleteConfirmationModal } from '@/ai/components/AiChatThreadDeleteConfirmationModal';
+import { AgentChatThreadsFetchMoreTrigger } from '@/ai/components/AgentChatThreadsFetchMoreTrigger';
 import { NavigationDrawerAiChatThreadSection } from '@/ai/components/NavigationDrawerAiChatThreadSection';
-import { AI_CHAT_THREAD_ACTIONS_SURFACE } from '@/ai/constants/AiChatThreadActionsSurface';
 import { useAiChatThreadClick } from '@/ai/hooks/useAiChatThreadClick';
 import { useChatThreads } from '@/ai/hooks/useChatThreads';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
@@ -31,9 +30,7 @@ export const MobileHomeAiChatSection = () => {
         currentThreadId={currentAiChatThread}
         onThreadClick={handleThreadClick}
       />
-      <AiChatThreadDeleteConfirmationModal
-        surface={AI_CHAT_THREAD_ACTIONS_SURFACE.NAV_DRAWER}
-      />
+      <AgentChatThreadsFetchMoreTrigger />
     </>
   );
 };

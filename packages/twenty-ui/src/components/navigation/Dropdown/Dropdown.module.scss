@@ -24,6 +24,10 @@
   }
 }
 
+.section[data-scrollable] > .section {
+  padding: 0;
+}
+
 .separator[data-dropdown-separator] {
   margin-inline: 0;
 }
@@ -42,10 +46,10 @@
   font-weight: var(--t-font-weight-medium);
   min-block-size: 33px;
   padding-inline: var(--t-spacing-2);
+}
 
-  &:dir(rtl) svg {
-    transform: rotate(180deg);
-  }
+.backIcon:dir(rtl) {
+  transform: scaleX(-1);
 }
 
 .searchContainer {
@@ -82,10 +86,6 @@
   gap: var(--t-spacing-1);
   min-block-size: 33px;
   padding-inline: var(--t-spacing-2);
-
-  &:dir(rtl) svg {
-    transform: rotate(180deg);
-  }
 }
 
 .title {

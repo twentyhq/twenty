@@ -15,10 +15,7 @@ const buildAppleOrigin = (): string => {
   return origin.origin;
 };
 
-// The app listens on localhost while the seeded workspace resolves from the
-// apple subdomain. Without a matching Host the server sees a cross-origin
-// request and refuses to issue the cookie, which is the behaviour under test
-// everywhere except here.
+// Without a Host matching the apple subdomain the server sees a cross-origin request and refuses the cookie.
 const asWorkspaceRequest = (
   agent: request.Test,
   originOverride?: string,
@@ -45,9 +42,7 @@ const SIGN_OUT_MUTATION = `
   }
 `;
 
-// A workspace object rather than currentUser: workspace types only exist in the
-// schema once a workspace is bound, so a request that is allowed to continue
-// unauthenticated fails with "Cannot query field" instead of an auth error.
+// Not currentUser: workspace types only exist once a workspace is bound, so a pass-through fails with "Cannot query field".
 const FIND_COMPANIES_QUERY = `
   query FindCompanies {
     companies(first: 1) {
@@ -187,8 +182,6 @@ describe('Cookie sessions (integration)', () => {
     expect(response.body.error).toBe('CSRF_ORIGIN_MISMATCH');
   });
 
-  // Mints its own session rather than consuming the shared one, so revoking it
-  // cannot break the tests above whatever order they run in.
   it('should stop authenticating the cookie once signed out', async () => {
     const disposableSessionCookie = await signInAndGetSessionCookie();
 
@@ -243,8 +236,7 @@ describe('Cookie sessions (integration)', () => {
         graphQLError.extensions?.code,
     );
 
-    // The client only signs out on an auth code. A missing workspace schema
-    // surfaces as "Cannot query field", which it cannot act on.
+    // The client only signs out on an auth code.
     expect(messages.join(' ')).not.toContain('Cannot query field');
     expect(codes.some((code: string) => AUTH_ERROR_CODES.includes(code))).toBe(
       true,

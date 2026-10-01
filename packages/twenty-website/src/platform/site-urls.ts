@@ -1,5 +1,4 @@
-// Every external destination the site links to, in one place. Sections and
-// data files never inline these.
+// Sections and data files never inline external URLs.
 export const SITE_URLS: Record<
   | 'appWelcome'
   | 'calBooking'

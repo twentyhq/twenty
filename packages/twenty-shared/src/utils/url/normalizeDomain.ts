@@ -26,11 +26,13 @@ const toPunycodeHost = (host: string): string => {
 };
 
 export const normalizeDomain = (rawDomain: string): string => {
+  const [pathlessDomain = ''] = rawDomain
+    .trim()
+    .replace(SCHEME_PREFIX_REGEX, '')
+    .split(PATH_SEPARATOR_REGEX);
+
   const host = stripWwwPrefixesAndTrailingDots(
-    rawDomain
-      .trim()
-      .replace(SCHEME_PREFIX_REGEX, '')
-      .split(PATH_SEPARATOR_REGEX)[0]
+    pathlessDomain
       .replace(USER_INFO_PREFIX_REGEX, '')
       .replace(PORT_SUFFIX_REGEX, '')
       .toLowerCase(),

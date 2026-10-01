@@ -10,10 +10,7 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 
 import { type UserWorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import {
-  NotFoundError,
-  UserInputError,
-} from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import { NotFoundError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { type RecordPermissionsDTO } from 'src/engine/core-modules/record-share/dtos/record-permissions.dto';
 import {
   type RecordSharingDTO,
@@ -21,7 +18,6 @@ import {
   type RecordSharePrincipalInput,
 } from 'src/engine/core-modules/record-share/dtos/record-sharing.dto';
 import { RecordShareStorageService } from 'src/engine/core-modules/record-share/services/record-share-storage.service';
-import { RecordSharingFeatureService } from 'src/engine/core-modules/record-share/services/record-sharing-feature.service';
 import { resolveShareWithPrincipalOrThrow } from 'src/engine/core-modules/record-share/utils/resolve-share-with-principal-or-throw.util';
 import { validateShareWithPrincipalsOrThrow } from 'src/engine/core-modules/record-share/utils/validate-share-with-principals-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -45,7 +41,6 @@ export class RecordSharingService {
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly recordShareStorageService: RecordShareStorageService,
-    private readonly featureService: RecordSharingFeatureService,
   ) {}
 
   async getPermissions(args: RecordSharingArgs): Promise<RecordPermissionsDTO> {
@@ -116,11 +111,7 @@ export class RecordSharingService {
     objectMetadata: FlatObjectMetadata;
     permissions: RecordPermissionsDTO;
   }): Promise<RecordSharingDTO> {
-    const isEnabled =
-      this.isShareable(objectMetadata) &&
-      (await this.featureService.isRecordSharingEnabled(
-        args.authContext.workspace.id,
-      ));
+    const isEnabled = this.isShareable(objectMetadata);
     const { shares, viewerAccessLevel } = await this.getRecordShares(args);
     const canChangeSharing =
       permissions.canUpdate &&
@@ -210,13 +201,6 @@ export class RecordSharingService {
               throw new NotFoundError('Record not found');
             }
             if (args.enabled) {
-              if (
-                !(await this.featureService.isRecordSharingEnabled(workspaceId))
-              ) {
-                throw new UserInputError(
-                  'Sharing is unavailable for this workspace',
-                );
-              }
               const maps = await this.workspaceCacheService.getOrRecompute(
                 workspaceId,
                 ['flatWorkspaceMemberMaps', 'flatRoleMaps'],
@@ -241,8 +225,7 @@ export class RecordSharingService {
         ),
       args.authContext,
     );
-    // A writer may revoke the grant that allowed their own access. The saved
-    // mutation must still succeed, returning a redacted state after revocation.
+    // A writer may revoke their own access; the mutation must still succeed with a redacted state.
     const permissions = await this.getPermissions(args);
     if (!permissions.canRead) {
       return {

@@ -5,7 +5,7 @@ import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migrati
 import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
-import { In, type EntityManager } from 'typeorm';
+import { In, type EntityManager, type FindOptionsWhere } from 'typeorm';
 import { RecordShareRowCause } from 'twenty-shared/types';
 
 import {
@@ -27,8 +27,7 @@ type RecordShareRepository = WorkspaceRepository<RecordShare>;
 export class RecordShareStorageService {
   constructor(private readonly workspaceOrmManager: WorkspaceOrmManager) {}
 
-  // Authorization and grant changes must share the caller's transaction.
-  // OWNER and APPLICATION grants are managed by their respective producers.
+  // Must share the caller's transaction; OWNER and APPLICATION grants are managed by their producers.
   async setManualShare({
     workspaceId,
     share,
@@ -112,11 +111,29 @@ export class RecordShareStorageService {
     if (recordIds.length === 0) {
       return;
     }
-    // History transactions can span core and workspace tables and must reuse
-    // their existing connection rather than open a separate ORM transaction.
+    // History transactions span core and workspace tables, so they must reuse their connection.
     await manager.query(
       `DELETE FROM ${escapeIdentifier(getWorkspaceSchemaName(workspaceId))}.${escapeIdentifier(RECORD_SHARE_OBJECT_METADATA_NAME)} WHERE "objectMetadataId" = $1 AND "recordId" = ANY($2::uuid[])`,
       [objectMetadataId, recordIds],
+    );
+  }
+
+  async deleteMatching({
+    workspaceId,
+    criteria,
+    transactionScope,
+  }: {
+    workspaceId: string;
+    criteria: FindOptionsWhere<RecordShare>[];
+    transactionScope?: WorkspaceTransactionScope;
+  }): Promise<void> {
+    await this.withRepository(
+      { workspaceId, transactionScope },
+      async (repository) => {
+        for (const criterion of criteria) {
+          await repository.delete(criterion);
+        }
+      },
     );
   }
 

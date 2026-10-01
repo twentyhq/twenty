@@ -11,7 +11,6 @@ import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migrati
 import { randomUUID } from 'node:crypto';
 import { parse } from 'graphql';
 import {
-  FeatureFlagKey,
   FieldMetadataType,
   MetadataReadability,
   MetadataWritability,
@@ -33,7 +32,6 @@ import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { upsertObjectPermissions } from 'test/integration/metadata/suites/object-permission/utils/upsert-object-permissions.util';
 import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
-import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
 import { type RecordSharePrincipalInput } from 'src/engine/core-modules/record-share/dtos/record-sharing.dto';
@@ -54,17 +52,10 @@ const READ_SHARING = parse(
 const SET_SHARE = parse(
   `mutation SetShare($target: RecordSharingTargetInput!, $principal: RecordSharePrincipalInput!, $enabled: Boolean!, $accessLevel: RecordShareAccessLevel) { setRecordShare(target: $target, principal: $principal, enabled: $enabled, accessLevel: $accessLevel) { ${fields} } }`,
 );
-const setFlag = (value: boolean) =>
-  updateFeatureFlag({
-    featureFlag: FeatureFlagKey.IS_RECORD_SHARING_ENABLED,
-    value,
-    expectToFail: false,
-  });
 
 describe('Generic sharing API on an ordinary private object', () => {
   let objectMetadataId: string;
   let memberRoleId: string;
-  let originalFlag: boolean;
   let shares: RecordShareStorageService;
   const target = () => ({ objectMetadataId, recordId: RECORD_ID });
   const grant = async (
@@ -162,13 +153,6 @@ describe('Generic sharing API on an ordinary private object', () => {
     shares = getAppProviderByClassName<RecordShareStorageService>(
       'RecordShareStorageService',
     );
-    const cache = getAppProviderByClassName<WorkspaceCacheService>(
-      'WorkspaceCacheService',
-    );
-    originalFlag =
-      (await cache.getOrRecompute(workspaceId, ['featureFlagsMap']))
-        .featureFlagsMap[FeatureFlagKey.IS_RECORD_SHARING_ENABLED] === true;
-    await setFlag(true);
     const { data } = await createOneObjectMetadata({
       input: {
         nameSingular: OBJECT_NAME,
@@ -205,7 +189,6 @@ describe('Generic sharing API on an ordinary private object', () => {
   });
 
   beforeEach(async () => {
-    await setFlag(true);
     await shares.deleteByRecordIds({
       workspaceId,
       objectMetadataId,
@@ -250,17 +233,15 @@ describe('Generic sharing API on an ordinary private object', () => {
       expectToFail: false,
     });
     await deleteOneObjectMetadata({ input: { idToDelete: objectMetadataId } });
-    await setFlag(originalFlag);
   });
 
-  it('keeps flag-off creates private after activation', async () => {
-    await setFlag(false);
+  it('keeps creates private', async () => {
     const recordId = randomUUID();
     const created = await makeGraphqlApiRequest(
       createOneOperationFactory({
         objectMetadataSingularName: OBJECT_NAME,
         gqlFields: 'id',
-        data: { id: recordId, name: 'Private with sharing UI disabled' },
+        data: { id: recordId, name: 'Private create' },
       }),
     );
     expect(created.body.errors).toBeUndefined();
@@ -278,7 +259,7 @@ describe('Generic sharing API on an ordinary private object', () => {
         (await readSettings(APPLE_JANE_ADMIN_ACCESS_TOKEN)).body.data
           .recordSharing,
       ).toMatchObject({
-        isEnabled: false,
+        isEnabled: true,
         permissions: { canRead: true, canUpdate: true },
         shares: [
           expect.objectContaining({
@@ -297,7 +278,6 @@ describe('Generic sharing API on an ordinary private object', () => {
           filter: { id: { eq: recordId } },
         }),
       );
-      await setFlag(true);
     }
   });
 
@@ -627,13 +607,12 @@ describe('Generic sharing API on an ordinary private object', () => {
     }
   });
 
-  it('preserves saved grants while the sharing UI is disabled', async () => {
+  it('enforces saved grants', async () => {
     await grant(RecordShareAccessLevel.READ);
-    await setFlag(false);
     expect((await read()).body.data[OBJECT_PLURAL].edges).toHaveLength(1);
     expect(
       (await settings(APPLE_JANE_ADMIN_ACCESS_TOKEN)).body.data.recordSharing,
-    ).toMatchObject({ isEnabled: false, permissions: { canUpdate: true } });
+    ).toMatchObject({ isEnabled: true, permissions: { canUpdate: true } });
     await grant(RecordShareAccessLevel.READ, RecordShareRowCause.APPLICATION);
     expect((await read()).body.data[OBJECT_PLURAL].edges).toHaveLength(1);
     expect(

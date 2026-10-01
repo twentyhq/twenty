@@ -3,22 +3,8 @@ import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from '@/metadata/constants/stan
 import { buildStandardObjectIndexView } from '@/metadata/utils/internal/build-standard-object-index-view.util';
 import { buildStandardObjectRecordPageFieldsView } from '@/metadata/utils/internal/build-standard-object-record-page-fields-view.util';
 
-// Important notice:
-// - Never ever mutate an existing universal identifier
-// - Deleting an existing universal identifier should be very rare
-// - Field universal identifiers live in STANDARD_OBJECT_FIELDS (see
-//   standard-object-fields.constant.ts), so both an object's `fields` and its
-//   INDEX view can read the same values.
-// - INDEX view universal identifiers (the "All {objectLabelPlural}" table view
-//   keyed on ViewKey.INDEX) and their view-field universal identifiers are
-//   deterministically derived by buildStandardObjectIndexView
-//   (getSystemViewUniversalIdentifier for the view,
-//   getSystemViewFieldUniversalIdentifier for each view field).
-// - FIELDS_WIDGET record-page view universal identifiers (keyed on
-//   SYSTEM_VIEW_KEYS.FIELDS_WIDGET), their view fields and their view field groups are
-//   deterministically derived by buildStandardObjectRecordPageFieldsView; the group
-//   names passed there MUST match the ones the server standard view-field-group
-//   builders assign.
+// Never mutate an existing universal identifier, and delete one only rarely.
+// Group names passed to buildStandardObjectRecordPageFieldsView MUST match the server's standard view-field-group builders.
 export const STANDARD_OBJECTS = {
   attachment: {
     universalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.attachment,
@@ -1014,6 +1000,16 @@ export const STANDARD_OBJECTS = {
     },
     views: {},
   },
+  shortLink: {
+    universalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.shortLink,
+    fields: STANDARD_OBJECT_FIELDS.shortLink,
+    indexes: {
+      templateAndResolvedUrlHashUniqueIndex: {
+        universalIdentifier: 'b1330e3c-bd74-4bd1-a9dc-1ecefe41f199',
+      },
+    },
+    views: {},
+  },
   task: {
     universalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.task,
     fields: STANDARD_OBJECT_FIELDS.task,
@@ -1418,6 +1414,9 @@ export const STANDARD_OBJECTS = {
       workspaceMemberIndex: {
         universalIdentifier: '079f2dd7-6c11-4eae-be8a-cce2d1bee0fb',
       },
+      workflowRunIndex: {
+        universalIdentifier: 'cc9f8c37-a1ad-4d8d-8e27-894c2cf01a3b',
+      },
     },
   },
   agentChatThreadTarget: {
@@ -1476,6 +1475,9 @@ export const STANDARD_OBJECTS = {
       },
       turnIndex: {
         universalIdentifier: 'dc46f804-a55f-4283-884e-9cb938741da3',
+      },
+      senderWorkspaceMemberIndex: {
+        universalIdentifier: '8ecdac01-7bbe-411e-8461-6ff265c90759',
       },
       hiddenKickoffIndex: {
         universalIdentifier: '1d423c31-007a-4fcd-8514-dcb1f7a8fa78',

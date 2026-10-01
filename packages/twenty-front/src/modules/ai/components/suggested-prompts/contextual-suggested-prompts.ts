@@ -59,8 +59,7 @@ export const RECORD_PAGE_SUGGESTED_PROMPTS: SuggestedPrompt[] = [
   },
 ];
 
-// Only objects whose record page deserves its own wording need an entry: everything
-// else, custom objects included, falls back to RECORD_PAGE_SUGGESTED_PROMPTS.
+// Objects without an entry, custom ones included, fall back to RECORD_PAGE_SUGGESTED_PROMPTS.
 export const RECORD_PAGE_SUGGESTED_PROMPTS_BY_OBJECT_NAME_SINGULAR: Record<
   string,
   SuggestedPrompt[]

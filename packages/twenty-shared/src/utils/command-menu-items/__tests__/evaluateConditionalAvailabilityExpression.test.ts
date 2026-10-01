@@ -600,4 +600,54 @@ describe('evaluateConditionalAvailabilityExpression', () => {
       ).toBe(false);
     });
   });
+
+  describe('per-record permissions', () => {
+    const DELETE_RECORDS_EXPRESSION =
+      'numberOfSelectedRecords >= 1 and (isSelectAll or noneEquals(selectedRecords, "recordPermissions.canSoftDelete", false))';
+
+    it('hides deletion of a record shared without delete access', () => {
+      const context = buildContext({
+        numberOfSelectedRecords: 1,
+        selectedRecords: [
+          { id: 'chat-1', recordPermissions: { canSoftDelete: false } },
+        ],
+      });
+
+      expect(
+        evaluateConditionalAvailabilityExpression(
+          DELETE_RECORDS_EXPRESSION,
+          context,
+        ),
+      ).toBe(false);
+    });
+
+    it('falls back to object permissions when record permissions are unknown', () => {
+      const context = buildContext({
+        numberOfSelectedRecords: 1,
+        selectedRecords: [{ id: 'company-1' }],
+      });
+
+      expect(
+        evaluateConditionalAvailabilityExpression(
+          DELETE_RECORDS_EXPRESSION,
+          context,
+        ),
+      ).toBe(true);
+    });
+
+    it('keeps deletion available when every record is selected', () => {
+      const context = buildContext({
+        numberOfSelectedRecords: 40,
+        isSelectAll: true,
+        selectedRecords: [],
+      });
+
+      expect(
+        evaluateConditionalAvailabilityExpression(
+          DELETE_RECORDS_EXPRESSION,
+          context,
+        ),
+      ).toBe(true);
+    });
+  });
 });

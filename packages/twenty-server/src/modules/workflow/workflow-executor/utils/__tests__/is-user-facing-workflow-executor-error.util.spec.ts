@@ -11,6 +11,10 @@ import {
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
 import {
+  LogicFunctionException,
+  LogicFunctionExceptionCode,
+} from 'src/engine/metadata-modules/logic-function/logic-function.exception';
+import {
   WorkflowStepExecutorException,
   WorkflowStepExecutorExceptionCode,
 } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
@@ -63,11 +67,7 @@ describe('isUserFacingWorkflowExecutorError', () => {
     expect(isUserFacingWorkflowExecutorError(error)).toBe(false);
   });
 
-  // No retry conjures a model, and reporting these as system errors buries the
-  // real ones, so a misconfigured classification step is the author's to fix.
   it.each([
-    // What an instance with no provider configured at all raises, through
-    // getDefaultModelForTier under the auto-select fallback.
     AiExceptionCode.API_KEY_NOT_CONFIGURED,
     AiExceptionCode.EVALUATION_MODEL_NOT_FOUND,
     AiExceptionCode.EVALUATION_QUESTION_UNSUPPORTED,
@@ -82,6 +82,24 @@ describe('isUserFacingWorkflowExecutorError', () => {
     const error = new AiException(
       'Agent execution failed',
       AiExceptionCode.AGENT_EXECUTION_FAILED,
+    );
+
+    expect(isUserFacingWorkflowExecutorError(error)).toBe(false);
+  });
+
+  it('returns true for a code step pointing at a function it may not run', () => {
+    const error = new LogicFunctionException(
+      'Forbidden',
+      LogicFunctionExceptionCode.LOGIC_FUNCTION_FORBIDDEN,
+    );
+
+    expect(isUserFacingWorkflowExecutorError(error)).toBe(true);
+  });
+
+  it('returns false for a logic function failure the user cannot resolve', () => {
+    const error = new LogicFunctionException(
+      'Not ready',
+      LogicFunctionExceptionCode.LOGIC_FUNCTION_NOT_READY,
     );
 
     expect(isUserFacingWorkflowExecutorError(error)).toBe(false);

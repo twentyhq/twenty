@@ -20,6 +20,7 @@ export type TooltipPopupProps = TooltipPrimitive.Popup.Props &
     side?: TooltipSide;
     align?: TooltipAlign;
     arrow?: boolean;
+    withExitAnimation?: boolean;
     maxWidth?: CSSProperties['maxWidth'];
     container?: TooltipPrimitive.Portal.Props['container'];
     keepMounted?: boolean;

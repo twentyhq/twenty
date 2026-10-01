@@ -37,8 +37,7 @@ const SettingsRestPlayground = lazy(() =>
   ),
 );
 
-// TODO: remove these legacy /api-webhooks redirects after 2026-08-04, once
-// users have had time to update their bookmarks to the new API settings routes.
+// TODO: remove these legacy /api-webhooks redirects after 2026-08-04.
 const LEGACY_API_WEBHOOKS_SETTINGS_PATHS = {
   ApiWebhooks: 'api-webhooks',
   NewApiKey: 'api-webhooks/apis/new',
@@ -530,6 +529,22 @@ const SettingsObjectNewIndex = lazy(() =>
   ),
 );
 
+const SettingsObjectNewValidationRule = lazy(() =>
+  import('~/pages/settings/data-model/validation-rules/SettingsObjectNewValidationRule').then(
+    (module) => ({
+      default: module.SettingsObjectNewValidationRule,
+    }),
+  ),
+);
+
+const SettingsObjectValidationRuleEdit = lazy(() =>
+  import('~/pages/settings/data-model/validation-rules/SettingsObjectValidationRuleEdit').then(
+    (module) => ({
+      default: module.SettingsObjectValidationRuleEdit,
+    }),
+  ),
+);
+
 const SettingsObjectFieldEdit = lazy(() =>
   import('~/pages/settings/data-model/SettingsObjectFieldEdit').then(
     (module) => ({
@@ -957,6 +972,16 @@ const createSettingsRouteElements = ({
       <Route
         path={SettingsPath.ObjectNewIndex}
         element={<SettingsObjectNewIndex />}
+        handle={MAIN_AND_SIDE_PANEL_SETTINGS_ROUTE_HANDLE}
+      />
+      <Route
+        path={SettingsPath.ObjectNewValidationRule}
+        element={<SettingsObjectNewValidationRule />}
+        handle={MAIN_AND_SIDE_PANEL_SETTINGS_ROUTE_HANDLE}
+      />
+      <Route
+        path={SettingsPath.ObjectValidationRuleEdit}
+        element={<SettingsObjectValidationRuleEdit />}
         handle={MAIN_AND_SIDE_PANEL_SETTINGS_ROUTE_HANDLE}
       />
       <Route

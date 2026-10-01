@@ -30,6 +30,7 @@ import { CoreWorkflowListService } from 'src/engine/core-modules/workflow/servic
 import { CoreWorkflowVersionWriteService } from 'src/engine/core-modules/workflow/services/core-workflow-version-write.service';
 import { assertExactlyOneMirrorRowWasWritten } from 'src/engine/core-modules/workflow/utils/assert-exactly-one-mirror-row-was-written.util';
 import { CoreWorkflowAccessService } from 'src/engine/core-modules/workflow/services/core-workflow-access.service';
+import { WorkflowRunRecordShareService } from 'src/engine/core-modules/workflow/services/workflow-run-record-share.service';
 import { WorkflowCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-core-sync.service';
 import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -75,6 +76,7 @@ export class CoreWorkflowMutationWorkspaceService {
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly applicationService: ApplicationService,
+    private readonly workflowRunRecordShareService: WorkflowRunRecordShareService,
   ) {}
 
   private async runCoreWorkflowMigration({
@@ -135,14 +137,18 @@ export class CoreWorkflowMutationWorkspaceService {
       },
     );
 
-    const { coreWorkflow: sourceCoreWorkflow } =
-      await this.coreWorkflowIdResolutionService.resolveWorkspaceWorkflowIdOrThrow(
-        {
-          workspaceId,
-          userWorkspaceId,
-          coreWorkflowId: coreWorkflowIdToDuplicate,
-        },
+    const sourceCoreWorkflow = await this.coreWorkflowRepository.findOne(
+      workspaceId,
+      { where: { id: coreWorkflowIdToDuplicate } },
+    );
+
+    if (!isDefined(sourceCoreWorkflow)) {
+      throw new WorkflowQueryValidationException(
+        `Core workflow '${coreWorkflowIdToDuplicate}' not found`,
+        WorkflowQueryValidationExceptionCode.FORBIDDEN,
+        { userFriendlyMessage: msg`Workflow not found` },
       );
+    }
 
     const sourceVersion = await this.coreWorkflowVersionRepository.findOne(
       workspaceId,
@@ -180,6 +186,13 @@ export class CoreWorkflowMutationWorkspaceService {
       name: `${sourceCoreWorkflow.name ?? ''} (Duplicate)`,
       // duplicating a private workflow must not publish it to the workspace
       visibility: sourceCoreWorkflow.visibility,
+    }).catch(async (error: unknown) => {
+      await this.deleteClonedStepResources({
+        workspaceId,
+        clonedSteps: remappedSteps,
+      });
+
+      throw error;
     });
 
     try {
@@ -202,6 +215,24 @@ export class CoreWorkflowMutationWorkspaceService {
       }
 
       throw error;
+    }
+  }
+
+  private async deleteClonedStepResources({
+    workspaceId,
+    clonedSteps,
+  }: {
+    workspaceId: string;
+    clonedSteps: WorkflowAction[];
+  }): Promise<void> {
+    for (const step of clonedSteps) {
+      try {
+        await this.workflowVersionStepOperationsWorkspaceService.runWorkflowVersionStepDeletionSideEffects(
+          { step, workspaceId },
+        );
+      } catch (cleanupError) {
+        this.logger.error(cleanupError);
+      }
     }
   }
 
@@ -281,15 +312,24 @@ export class CoreWorkflowMutationWorkspaceService {
     }[] = [];
     const clonedStepIdBySourceStepId = new Map<string, string>();
 
-    for (const step of steps) {
-      const clonedStep =
-        await this.workflowVersionStepOperationsWorkspaceService.cloneStep({
-          step,
-          workspaceId,
-        });
+    try {
+      for (const step of steps) {
+        const clonedStep =
+          await this.workflowVersionStepOperationsWorkspaceService.cloneStep({
+            step,
+            workspaceId,
+          });
 
-      sourceToClonedPairs.push({ source: step, duplicated: clonedStep });
-      clonedStepIdBySourceStepId.set(step.id, clonedStep.id);
+        sourceToClonedPairs.push({ source: step, duplicated: clonedStep });
+        clonedStepIdBySourceStepId.set(step.id, clonedStep.id);
+      }
+    } catch (error) {
+      await this.deleteClonedStepResources({
+        workspaceId,
+        clonedSteps: sourceToClonedPairs.map(({ duplicated }) => duplicated),
+      });
+
+      throw error;
     }
 
     return remapDuplicatedStepDestinations({
@@ -727,8 +767,7 @@ export class CoreWorkflowMutationWorkspaceService {
       flatEntityMaps: flatWorkflowVersionMaps,
     });
 
-    // The mirror goes first: the other order committed the core delete before the
-    // assert could veto it, which destroyed the version's triggers and steps.
+    // mirror first so the assert can veto before the core delete commits
     await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       await this.workspaceOrmManager.runInWorkspaceTransaction(
         async (transactionScope) => {
@@ -851,7 +890,6 @@ export class CoreWorkflowMutationWorkspaceService {
     }, buildSystemAuthContext(workspaceId));
   }
 
-  // Owning a workflow means being a person, so this one keeps a strict reader
   async updateWorkflowVisibility({
     workspaceId,
     userWorkspaceId,
@@ -869,20 +907,22 @@ export class CoreWorkflowMutationWorkspaceService {
       },
     );
 
-    // Workflows that predate this column have no owner, and the first member to
-    // set a visibility claims one. The ownership test is the UPDATE's own WHERE
-    // rather than a preceding read, so two members claiming at the same moment
-    // cannot both pass it and have the later write silently take the workflow.
-    // A workspace-visible workflow is already editable and deletable by every
-    // member, so claiming one grants no access the claimer did not have.
-    const claimResult = await this.coreWorkflowRepository.update(
-      workspaceId,
-      {
-        id: coreWorkflowId,
-        createdByUserWorkspaceId: Or(IsNull(), Equal(userWorkspaceId)),
-      },
-      { visibility, createdByUserWorkspaceId: userWorkspaceId },
-    );
+    // ownership is checked in the UPDATE's WHERE, not a prior read, so two concurrent claims of an ownerless workflow cannot both win;
+    // a workspace-visible workflow is already editable by every member, so claiming one grants no new access
+    const claimResult =
+      await this.workflowRunRecordShareService.updateAccessThenSyncRuns({
+        workspaceId,
+        coreWorkflowId,
+        updateAccess: () =>
+          this.coreWorkflowRepository.update(
+            workspaceId,
+            {
+              id: coreWorkflowId,
+              createdByUserWorkspaceId: Or(IsNull(), Equal(userWorkspaceId)),
+            },
+            { visibility, createdByUserWorkspaceId: userWorkspaceId },
+          ),
+      });
 
     if (claimResult.affected === 0) {
       const coreWorkflowExists = await this.coreWorkflowRepository.exists(

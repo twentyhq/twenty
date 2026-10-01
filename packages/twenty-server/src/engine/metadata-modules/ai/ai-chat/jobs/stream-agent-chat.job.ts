@@ -28,14 +28,15 @@ import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service'
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { computeCostBreakdown } from 'src/engine/metadata-modules/ai/ai-billing/utils/compute-cost-breakdown.util';
+import { computeStepCostBreakdown } from 'src/engine/metadata-modules/ai/ai-billing/utils/compute-step-cost-breakdown.util';
 import { convertDollarsToCreditsMicro } from 'src/engine/metadata-modules/ai/ai-billing/utils/convert-dollars-to-credits-micro.util';
 import { extractCacheCreationTokens } from 'src/engine/metadata-modules/ai/ai-billing/utils/extract-cache-creation-tokens.util';
 import {
   AiException,
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
-import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
+import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
+import { findAwaitingPausingToolParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/find-awaiting-pausing-tool-parts.util';
 import { AgentChatCancelSubscriberService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-cancel-subscriber.service';
 import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
 import { AgentChatStreamHeartbeatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-heartbeat.service';
@@ -47,7 +48,6 @@ import {
   classifyAgentChatTurnOutcome,
   resolveSupersededTurnOutcome,
 } from 'src/engine/metadata-modules/ai/ai-chat/utils/classify-agent-chat-turn-outcome.util';
-import { findPendingQuestionPart } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-pending-question-part.util';
 import { AGENT_CHAT_CHECKPOINT_INTERVAL_MS } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-checkpoint-interval-ms.constant';
 import { getCancelChannel } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-cancel-channel.util';
 import { mapErrorToStreamError } from 'src/engine/metadata-modules/ai/ai-chat/utils/map-error-to-stream-error.util';
@@ -61,23 +61,22 @@ import { getChatModelId } from 'src/engine/metadata-modules/ai/ai-models/utils/g
 
 export { STREAM_AGENT_CHAT_JOB_NAME, type StreamAgentChatJobData };
 
-// Derive assistantMessageId deterministically from streamId so assistant-message
-// persistence is idempotent per stream: a retried job for the stream is skipped,
-// while each distinct resume in a turn persists its own message.
+// assistantMessageId derives from streamId, so a retried job skips persistence while each resume persists its own message
 const ASSISTANT_MESSAGE_ID_NAMESPACE = '0b9c2a3d-4e5f-4a1b-8c2d-3e4f5a6b7c8d';
 
 @Processor({ queueName: MessageQueue.aiStreamQueue, scope: Scope.REQUEST })
 export class StreamAgentChatJob {
   private readonly logger = new Logger(StreamAgentChatJob.name);
 
-  // The processor is REQUEST-scoped, so this is per job. A publish failure
-  // after the stream already classified its outcome reaches the catch in
-  // handle(), which would otherwise count the same turn a second time.
+  // keeps the catch in handle() from counting a turn the stream already classified
   private hasRecordedTurnOutcome = false;
+
+  // set once the turn pauses on a person: a queued message drained then would bypass the pending answer
+  private isAwaitingInput = false;
 
   constructor(
     @InjectAgentHistoryRepository('agentChatThread')
-    private readonly threadRepository: AgentHistoryRepository<AgentChatThreadEntity>,
+    private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     private readonly agentChatService: AgentChatService,
@@ -162,7 +161,7 @@ export class StreamAgentChatJob {
         );
       }
 
-      const { message } = await this.actorService.authorizeJob({
+      const { message, authorization } = await this.actorService.authorizeJob({
         workspaceId: data.workspaceId,
         threadId: data.threadId,
         messageId: data.messageId,
@@ -176,7 +175,12 @@ export class StreamAgentChatJob {
         );
       }
       await this.executeStream(
-        { ...data, messageId: message.id, existingTurnId: message.turnId },
+        {
+          ...data,
+          messageId: message.id,
+          existingTurnId: message.turnId,
+          workspaceMemberId: authorization.authContext.workspaceMemberId,
+        },
         workspace,
         abortController.signal,
         turnModelId,
@@ -245,7 +249,7 @@ export class StreamAgentChatJob {
         )
         .catch(() => {});
 
-      if (!abortController.signal.aborted) {
+      if (!abortController.signal.aborted && !this.isAwaitingInput) {
         await this.agentChatStreamingService
           .flushNextQueuedMessage({
             threadId: data.threadId,
@@ -261,10 +265,7 @@ export class StreamAgentChatJob {
     }
   }
 
-  // The turn-started counter fires before the model is resolved downstream, so
-  // resolve it here too: auto-select ids such as `default-fast-model` would
-  // otherwise label the start of a turn differently from its outcome, and every
-  // per-model rate is computed across the two.
+  // resolve auto-select ids here so turn-start and outcome metrics carry the same model label
   private resolveTurnModelId(
     requestedModelId: string | undefined,
     workspace: WorkspaceEntity | null,
@@ -334,7 +335,10 @@ export class StreamAgentChatJob {
   }
 
   private async executeStream(
-    data: StreamAgentChatJobData & { existingTurnId: string },
+    data: StreamAgentChatJobData & {
+      existingTurnId: string;
+      workspaceMemberId: string;
+    },
     workspace: WorkspaceEntity,
     abortSignal: AbortSignal,
     turnModelId: string,
@@ -343,7 +347,7 @@ export class StreamAgentChatJob {
       ? Promise.resolve(null)
       : this.agentChatService
           .generateTitleIfNeeded({
-            userWorkspaceId: data.userWorkspaceId,
+            workspaceMemberId: data.workspaceMemberId,
             threadId: data.threadId,
             messageContent: data.lastUserMessageText,
             workspaceId: data.workspaceId,
@@ -369,7 +373,7 @@ export class StreamAgentChatJob {
     turnModelId,
   }: {
     workspace: WorkspaceEntity;
-    data: StreamAgentChatJobData;
+    data: StreamAgentChatJobData & { workspaceMemberId: string };
     turnId: string;
     titlePromise: Promise<string | null>;
     abortSignal: AbortSignal;
@@ -410,9 +414,7 @@ export class StreamAgentChatJob {
         return persistChain;
       };
 
-      // onEnd fires before the uiStream is fully drained. We use this
-      // promise to coordinate: the IIFE waits for DB persist to complete
-      // before publishing message-persisted (after all chunks).
+      // onEnd fires before the uiStream drains, so message-persisted waits on this
       let resolveStreamFinished: () => void;
       const streamFinishedPromise = new Promise<void>((res) => {
         resolveStreamFinished = res;
@@ -454,22 +456,26 @@ export class StreamAgentChatJob {
             });
           };
 
-          const { stream, modelConfig, hasNoMoreAvailableCredits } =
-            await this.chatExecutionService.streamChat({
-              workspace,
-              userWorkspaceId: data.userWorkspaceId,
-              threadId: data.threadId,
-              streamId: data.streamId,
-              turnId: data.existingTurnId,
-              messageId: data.messageId,
-              messages: data.messages,
-              browsingContext: data.browsingContext,
-              modelId: data.modelId,
-              onCodeExecutionUpdate,
-              onCompaction,
-              abortSignal,
-              conversationSizeTokens: data.conversationSizeTokens,
-            });
+          const {
+            stream,
+            modelConfig,
+            hasNoMoreAvailableCredits,
+            getStreamError,
+          } = await this.chatExecutionService.streamChat({
+            workspace,
+            userWorkspaceId: data.userWorkspaceId,
+            threadId: data.threadId,
+            streamId: data.streamId,
+            turnId: data.existingTurnId,
+            messageId: data.messageId,
+            messages: data.messages,
+            browsingContext: data.browsingContext,
+            modelId: data.modelId,
+            onCodeExecutionUpdate,
+            onCompaction,
+            abortSignal,
+            conversationSizeTokens: data.conversationSizeTokens,
+          });
 
           checkHasNoMoreAvailableCredits = hasNoMoreAvailableCredits;
 
@@ -486,17 +492,15 @@ export class StreamAgentChatJob {
           writer.merge(
             toUIMessageStream({
               stream: stream.stream,
-              onError: (error) => {
-                streamError = error;
-
-                return error instanceof Error ? error.message : String(error);
-              },
+              onError: (error) =>
+                error instanceof Error ? error.message : String(error),
               sendStart: true,
               generateMessageId: () => assistantMessageId,
               messageMetadata: ({ part }) => {
                 return this.computeMessageMetadata({
                   part,
                   modelConfig,
+                  streamUsage,
                   lastStepConversationSize,
                   totalCacheCreationTokens,
                   onUpdateUsage: (usage) => {
@@ -513,6 +517,7 @@ export class StreamAgentChatJob {
               onEnd: async ({ responseMessage, isAborted }) => {
                 // Rejecting here would race chunks still draining.
                 try {
+                  streamError ??= getStreamError();
                   isFinalizingPersist = true;
                   await persistChain;
                   await this.handleStreamFinish({
@@ -524,7 +529,7 @@ export class StreamAgentChatJob {
                     outOfCredits: checkHasNoMoreAvailableCredits(),
                     threadId: data.threadId,
                     workspaceId: data.workspaceId,
-                    userWorkspaceId: data.userWorkspaceId,
+                    workspaceMemberId: data.workspaceMemberId,
                     streamUsage,
                     lastStepConversationSize,
                     totalCacheCreationTokens,
@@ -588,12 +593,11 @@ export class StreamAgentChatJob {
             });
           }
         } catch {
-          // best-effort; the authoritative persist runs onFinish
+          // best-effort; the authoritative persist runs onEnd
         }
       })();
 
-      // Publish all chunks first, then signal completion. This guarantees
-      // message-persisted arrives after every stream-chunk on the client.
+      // message-persisted must reach the client after every stream-chunk
       void (async () => {
         try {
           for await (const chunk of publishStream) {
@@ -645,6 +649,7 @@ export class StreamAgentChatJob {
   private computeMessageMetadata({
     part,
     modelConfig,
+    streamUsage,
     lastStepConversationSize,
     totalCacheCreationTokens,
     onUpdateUsage,
@@ -655,9 +660,6 @@ export class StreamAgentChatJob {
       type: string;
       usage?: {
         inputTokens?: number;
-      };
-      totalUsage?: {
-        inputTokens?: number;
         outputTokens?: number;
         inputTokenDetails?: { cacheReadTokens?: number };
         outputTokenDetails?: { reasoningTokens?: number };
@@ -665,6 +667,13 @@ export class StreamAgentChatJob {
       providerMetadata?: Record<string, Record<string, unknown> | undefined>;
     };
     modelConfig: AiModelConfig;
+    streamUsage: {
+      inputTokens: number;
+      outputTokens: number;
+      inputCredits: number;
+      outputCredits: number;
+      cacheReadTokens: number;
+    };
     lastStepConversationSize: number;
     totalCacheCreationTokens: number;
     onUpdateUsage: (usage: {
@@ -678,47 +687,44 @@ export class StreamAgentChatJob {
     onUpdateCacheCreationTokens: (tokens: number) => void;
   }) {
     if (part.type === 'finish-step') {
-      const stepInput = part.usage?.inputTokens ?? 0;
-      const stepCacheCreation = extractCacheCreationTokens(
+      const stepCacheCreationTokens = extractCacheCreationTokens(
         part.providerMetadata,
       );
+      const stepBreakdown = computeStepCostBreakdown(modelConfig, {
+        usage: part.usage,
+        cacheCreationTokens: stepCacheCreationTokens,
+      });
 
-      onUpdateCacheCreationTokens(totalCacheCreationTokens + stepCacheCreation);
-      onUpdateConversationSize(stepInput);
+      onUpdateUsage({
+        inputTokens:
+          streamUsage.inputTokens + stepBreakdown.tokenCounts.totalInputTokens,
+        outputTokens:
+          streamUsage.outputTokens + (part.usage?.outputTokens ?? 0),
+        inputCredits:
+          streamUsage.inputCredits +
+          convertDollarsToCreditsMicro(stepBreakdown.inputCostInDollars),
+        outputCredits:
+          streamUsage.outputCredits +
+          convertDollarsToCreditsMicro(stepBreakdown.outputCostInDollars),
+        cacheReadTokens:
+          streamUsage.cacheReadTokens +
+          stepBreakdown.tokenCounts.cachedInputTokens,
+      });
+      onUpdateCacheCreationTokens(
+        totalCacheCreationTokens + stepCacheCreationTokens,
+      );
+      onUpdateConversationSize(part.usage?.inputTokens ?? 0);
     }
 
     if (part.type === 'finish') {
-      const breakdown = computeCostBreakdown(modelConfig, {
-        inputTokens: part.totalUsage?.inputTokens,
-        outputTokens: part.totalUsage?.outputTokens,
-        cachedInputTokens: part.totalUsage?.inputTokenDetails?.cacheReadTokens,
-        reasoningTokens: part.totalUsage?.outputTokenDetails?.reasoningTokens,
-        cacheCreationTokens: totalCacheCreationTokens,
-      });
-
-      const inputCredits = convertDollarsToCreditsMicro(
-        breakdown.inputCostInDollars,
-      );
-      const outputCredits = convertDollarsToCreditsMicro(
-        breakdown.outputCostInDollars,
-      );
-
-      onUpdateUsage({
-        inputTokens: breakdown.tokenCounts.totalInputTokens,
-        outputTokens: part.totalUsage?.outputTokens ?? 0,
-        inputCredits,
-        outputCredits,
-        cacheReadTokens: breakdown.tokenCounts.cachedInputTokens,
-      });
-
       return {
         createdAt: new Date().toISOString(),
         usage: {
-          inputTokens: breakdown.tokenCounts.totalInputTokens,
-          outputTokens: part.totalUsage?.outputTokens ?? 0,
-          cachedInputTokens: breakdown.tokenCounts.cachedInputTokens,
-          inputCredits: toDisplayCredits(inputCredits),
-          outputCredits: toDisplayCredits(outputCredits),
+          inputTokens: streamUsage.inputTokens,
+          outputTokens: streamUsage.outputTokens,
+          cachedInputTokens: streamUsage.cacheReadTokens,
+          inputCredits: toDisplayCredits(streamUsage.inputCredits),
+          outputCredits: toDisplayCredits(streamUsage.outputCredits),
           conversationSize: lastStepConversationSize,
         },
         model: {
@@ -739,7 +745,7 @@ export class StreamAgentChatJob {
     outOfCredits: boolean;
     threadId: string;
     workspaceId: string;
-    userWorkspaceId: string;
+    workspaceMemberId: string;
     streamUsage: {
       inputTokens: number;
       outputTokens: number;
@@ -760,8 +766,7 @@ export class StreamAgentChatJob {
     }
   }
 
-  // Returns null when the stream errored: that turn is accounted for by the
-  // catch in handle(), and counting it here too would double it.
+  // null on stream error: the catch in handle() already counts that turn
   private async persistStreamFinish({
     assistantMessageId,
     streamId,
@@ -771,7 +776,7 @@ export class StreamAgentChatJob {
     outOfCredits,
     threadId,
     workspaceId,
-    userWorkspaceId,
+    workspaceMemberId,
     streamUsage,
     lastStepConversationSize,
     totalCacheCreationTokens,
@@ -787,7 +792,7 @@ export class StreamAgentChatJob {
     outOfCredits: boolean;
     threadId: string;
     workspaceId: string;
-    userWorkspaceId: string;
+    workspaceMemberId: string;
     streamUsage: {
       inputTokens: number;
       outputTokens: number;
@@ -805,9 +810,13 @@ export class StreamAgentChatJob {
       (part) => part.type === 'text' && isNonEmptyString(part.text),
     );
 
-    const pendingQuestionPart = findPendingQuestionPart(responseMessage.parts);
+    const awaitingParts = findAwaitingPausingToolParts(responseMessage.parts);
+    // without an answerable call nothing can resume the turn, so fail rather than wait forever
+    const isAwaitingAnswer =
+      awaitingParts.length > 0 &&
+      awaitingParts.every(({ isAnswerable }) => isAnswerable);
 
-    if ((isAborted || !hasText) && !isDefined(pendingQuestionPart)) {
+    if ((isAborted || !hasText) && awaitingParts.length === 0) {
       this.logAssistantTurnWithoutText({
         responseMessage,
         isAborted,
@@ -828,7 +837,7 @@ export class StreamAgentChatJob {
     const outcome = classifyAgentChatTurnOutcome({
       hasText,
       isAborted,
-      isAwaitingUserAnswer: isDefined(pendingQuestionPart),
+      isAwaitingUserAnswer: awaitingParts.length > 0,
       outOfCredits,
     });
 
@@ -836,12 +845,11 @@ export class StreamAgentChatJob {
       return outcome;
     }
 
-    const threadStatus = await this.threadRepository.findOne(workspaceId, {
+    const threadBeforeUsage = await this.threadRepository.findOne(workspaceId, {
       where: { id: threadId },
-      select: ['id', 'deletedAt'],
     });
 
-    if (!threadStatus || threadStatus.deletedAt) {
+    if (!threadBeforeUsage || threadBeforeUsage.deletedAt) {
       return resolveSupersededTurnOutcome(outcome);
     }
 
@@ -867,9 +875,7 @@ export class StreamAgentChatJob {
         totalCacheCreationTokens,
         contextWindowTokens: modelConfig.contextWindowTokens,
         conversationSize: lastStepConversationSize,
-        pendingQuestionMessageId: isDefined(pendingQuestionPart)
-          ? assistantMessageId
-          : null,
+        pendingQuestionMessageId: isAwaitingAnswer ? assistantMessageId : null,
       },
     });
 
@@ -877,9 +883,18 @@ export class StreamAgentChatJob {
       return resolveSupersededTurnOutcome(outcome);
     }
 
+    if (awaitingParts.length > 0 && !isAwaitingAnswer) {
+      throw new AiException(
+        'A call waiting on the user could not be read',
+        AiExceptionCode.INVALID_TOOL_CALL_OUTPUT,
+      );
+    }
+
+    this.isAwaitingInput = isAwaitingAnswer;
+
     await this.agentChatService.notifyThreadUsageUpdated({
-      threadId,
-      userWorkspaceId,
+      threadBefore: threadBeforeUsage,
+      workspaceMemberId,
       workspaceId,
     });
 

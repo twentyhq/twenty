@@ -3,7 +3,7 @@ import { ADVANCED_SETTINGS_ANIMATION_DURATION } from '@/settings/constants/Advan
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
-import { AnimatedExpandableContainer } from 'twenty-ui/primitives/layout';
+import { Collapsible } from 'twenty-ui/primitives/layout';
 
 const StyledContainer = styled.div`
   display: contents;
@@ -39,11 +39,10 @@ export const AdvancedSettingsWrapper = ({
 
   return (
     <StyledContainer>
-      <AnimatedExpandableContainer
+      <Collapsible
         isExpanded={isAdvancedModeEnabled}
         dimension={animationDimension}
         animationDurations={ADVANCED_SETTINGS_ANIMATION_DURATION}
-        mode="scroll-height"
         containAnimation={false}
       >
         <AdvancedSettingsContentWrapperWithDot
@@ -52,7 +51,7 @@ export const AdvancedSettingsWrapper = ({
         >
           <StyledContent>{children}</StyledContent>
         </AdvancedSettingsContentWrapperWithDot>
-      </AnimatedExpandableContainer>
+      </Collapsible>
     </StyledContainer>
   );
 };

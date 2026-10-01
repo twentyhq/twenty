@@ -10,8 +10,7 @@ import { getLocalSdkLayerPath } from 'src/engine/core-modules/logic-function/log
 import { HANDLER_NAME_REGEX } from 'src/engine/metadata-modules/logic-function/constants/handler.contant';
 
 export class LocalChildProcessRunnerService {
-  // Symlinks everything from the deps layer except twenty-client-sdk,
-  // which comes from the SDK layer (workspace-specific generated client).
+  // twenty-client-sdk comes from the SDK layer (workspace-specific generated client), not the deps layer.
   async assembleNodeModules({
     sourceTemporaryDir,
     flatApplication,

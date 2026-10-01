@@ -1,13 +1,9 @@
 import { type NormalizationRule } from '../types/normalization-rule.type';
 
-// \w is ASCII-only in JavaScript even under the u flag, and every message this
-// rule exists for is Arabic, Japanese or Hebrew.
+// \w is ASCII-only even under the u flag, and this rule targets Arabic, Japanese and Hebrew.
 const ESCAPED_CHARACTER_REGEX = /\\([\p{L}\p{N}])/gu;
 
-// Enough of the message to rule out a Windows path or a regex, where a handful
-// of backslashes sit among ordinary text. The corruption escapes every
-// character it touches, so the ratio separates the two cleanly: `\ا\ل\إ` scores
-// 1, `C:\Users\name\file` scores 0.2.
+// The corruption escapes every character (`\ا\ل\إ` scores 1), a Windows path only a few (about 0.2).
 const MINIMUM_ESCAPED_SHARE = 0.8;
 const MINIMUM_ESCAPED_CHARACTERS = 3;
 
@@ -19,10 +15,7 @@ function unescapedCharacterCount(text: string): number {
   return [...text.replaceAll('\\', '')].length;
 }
 
-// An import once wrote the Arabic and Japanese UI with a backslash before every
-// letter - `\ا\ل\إ\ع\د\ا\د\ا\ت` for Settings, `\ダ\ー\ク` for Dark - which ships
-// to the reader verbatim. The letters are intact, so wordless-translation sees
-// a real translation and leaves it alone.
+// An import once escaped every letter of the Arabic and Japanese UI; wordless-translation misses it as the letters remain.
 function hasEscapedEveryCharacter(text: string): boolean {
   const escaped = escapedCharacterCount(text);
   const unescaped = unescapedCharacterCount(text);

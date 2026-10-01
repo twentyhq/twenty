@@ -1,3 +1,4 @@
+import { useApplyAgentChatThreadUpdate } from '@/ai/hooks/useApplyAgentChatThreadUpdate';
 import { useRefreshAgentChatThreadPermissions } from '@/ai/hooks/useRefreshAgentChatThreadPermissions';
 import { useMutation } from '@apollo/client/react';
 import { useStore } from 'jotai';
@@ -10,8 +11,6 @@ import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { currentAiChatThreadTitleComponentFamilyState } from '@/ai/states/currentAiChatThreadTitleComponentFamilyState';
 import { hasInitializedAgentChatThreadsState } from '@/ai/states/hasInitializedAgentChatThreadsState';
 import { skipMessagesSkeletonUntilLoadedState } from '@/ai/states/skipMessagesSkeletonUntilLoadedState';
-import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
-import { type FlatAgentChatThread } from '@/metadata-store/types/FlatAgentChatThread';
 import { WORKSPACE_SETUP_CHAT_ENRICHMENT_MAX_WAIT_MS } from '@/onboarding/constants/WorkspaceSetupChatEnrichmentMaxWaitMs';
 import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 import { companyEnrichmentState } from '@/onboarding/states/companyEnrichmentState';
@@ -31,7 +30,7 @@ export const WorkspaceSetupChatKickoffEffect = () => {
   const store = useStore();
   const { refreshAgentChatThreadPermissions } =
     useRefreshAgentChatThreadPermissions();
-  const { addToDraft, applyChanges } = useUpdateMetadataStoreDraft();
+  const { addAgentChatThread } = useApplyAgentChatThreadUpdate();
   const isCompanyEnrichmentFetchInFlight = useAtomStateValue(
     isCompanyEnrichmentFetchInFlightState,
   );
@@ -89,23 +88,13 @@ export const WorkspaceSetupChatKickoffEffect = () => {
           return;
         }
 
-        const workspaceSetupThread: FlatAgentChatThread = {
+        addAgentChatThread({
           id: thread.id,
-
           title: thread.title ?? null,
           createdAt: thread.createdAt,
           updatedAt: thread.updatedAt,
-          conversationSize: thread.conversationSize,
-          contextWindowTokens: thread.contextWindowTokens ?? null,
-          totalCacheReadTokens: thread.totalCacheReadTokens,
-          totalInputTokens: thread.totalInputTokens,
-          totalOutputTokens: thread.totalOutputTokens,
-          totalInputCredits: thread.totalInputCredits,
-          totalOutputCredits: thread.totalOutputCredits,
-        };
-
-        addToDraft({ key: 'agentChatThreads', items: [workspaceSetupThread] });
-        applyChanges();
+          deletedAt: null,
+        });
         void refreshAgentChatThreadPermissions([thread.id]);
 
         store.set(
@@ -141,8 +130,7 @@ export const WorkspaceSetupChatKickoffEffect = () => {
     startWorkspaceSetupChatMutation,
     refreshAgentChatThreadPermissions,
     store,
-    addToDraft,
-    applyChanges,
+    addAgentChatThread,
     isCompanyEnrichmentFetchInFlight,
     hasWaitedForCompanyEnrichment,
   ]);
