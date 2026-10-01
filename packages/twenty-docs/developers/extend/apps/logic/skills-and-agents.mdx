@@ -238,4 +238,57 @@ name a member at all.
 </Warning>
 
 </Accordion>
+<Accordion title="sendInboxMessage" description="Start or continue a conversation in a member's chats">
+
+`sendInboxMessage()` posts a message from your app in a workspace member's
+chats. It can end on a tool call the member answers from the chat, after which
+the conversation continues with Twenty's assistant.
+
+```ts src/logic-functions/notify-first-recording.ts
+import { sendInboxMessage } from 'twenty-sdk/logic-function';
+
+const { threadId } = await sendInboxMessage({
+  workspaceMemberId,
+  threadKey: 'first-call-recording',
+  idempotencyKey: 'first-call-recording',
+  title: 'Your first call recording is ready',
+  text: 'Your first call was recorded: **Weekly sync**.',
+  toolCall: {
+    toolName: 'ask_questions',
+    input: {
+      questions: [
+        {
+          header: 'Share',
+          question: 'Do you want to share it with the other attendees?',
+          options: [{ label: 'Draft a recap email' }, { label: 'Not now' }],
+        },
+      ],
+    },
+  },
+});
+```
+
+Key points:
+- `threadKey` picks the conversation for this app and member. A new key starts
+  a conversation titled `title`; a key you used before adds the message to that
+  conversation.
+- `idempotencyKey` identifies the message within the conversation. Sending
+  again with the same keys writes nothing new, so retries and concurrent runs
+  never duplicate a message.
+- `toolCall` (optional) ends the message on one of:
+  - a call the member answers, which pauses the conversation: `ask_questions`
+    (1 to 4 multiple-choice questions), `request_form` (fields to fill in) or
+    `propose_email` (an email to review, then send, save or discard);
+  - one of your app's own tools, by `logicFunctionUniversalIdentifier`, rendered
+    by its front component with the `input` and `output` you pass. It does not
+    pause the conversation.
+- Only one call the member answers can wait in a conversation at a time:
+  sending another before they answer fails with `THREAD_AWAITING_ANSWER`. Plain
+  messages and app tool calls are still accepted.
+- A conversation the member deleted is not recreated, and nothing is added to it.
+- The member must have the `AI` permission, and your app's
+  [default role](/developers/extend/apps/config/roles) must grant
+  `SystemPermissionFlag.AI`.
+
+</Accordion>
 </AccordionGroup>

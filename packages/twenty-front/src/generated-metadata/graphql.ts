@@ -2147,7 +2147,8 @@ export enum FeatureFlagKey {
   IS_REST_METADATA_API_NEW_FORMAT_DIRECT = 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT',
   IS_VALIDATION_RULES_ENABLED = 'IS_VALIDATION_RULES_ENABLED',
   IS_WEBHOOK_RATE_LIMIT_ENABLED = 'IS_WEBHOOK_RATE_LIMIT_ENABLED',
-  IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED = 'IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED'
+  IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED = 'IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED',
+  IS_WORKFLOW_SEND_CHAT_MESSAGE_ENABLED = 'IS_WORKFLOW_SEND_CHAT_MESSAGE_ENABLED'
 }
 
 export type Field = {
@@ -3225,6 +3226,7 @@ export type Mutation = {
   saveImapSmtpCaldavAccount: ImapSmtpCaldavConnectionSuccess;
   sendChatMessage: SendChatMessageResult;
   sendEmail: SendEmailOutput;
+  sendInboxMessage: SendInboxMessageResult;
   sendInvitations: SendInvitations;
   sendMessageCampaign: SendMessageCampaignOutputDto;
   sendMessageCampaignTest: SendEmailViaDomainOutput;
@@ -4148,6 +4150,11 @@ export type MutationSendChatMessageArgs = {
 
 export type MutationSendEmailArgs = {
   input: SendEmailInput;
+};
+
+
+export type MutationSendInboxMessageArgs = {
+  input: SendInboxMessageInput;
 };
 
 
@@ -6140,6 +6147,20 @@ export type SendEmailOutput = {
 export type SendEmailViaDomainOutput = {
   __typename?: 'SendEmailViaDomainOutput';
   messageId: Scalars['String']['output'];
+};
+
+export type SendInboxMessageInput = {
+  idempotencyKey: Scalars['String']['input'];
+  text: Scalars['String']['input'];
+  threadKey: Scalars['String']['input'];
+  title: Scalars['String']['input'];
+  toolCall?: InputMaybe<Scalars['JSON']['input']>;
+  workspaceMemberId: Scalars['UUID']['input'];
+};
+
+export type SendInboxMessageResult = {
+  __typename?: 'SendInboxMessageResult';
+  threadId: Scalars['UUID']['output'];
 };
 
 export type SendInvitations = {
