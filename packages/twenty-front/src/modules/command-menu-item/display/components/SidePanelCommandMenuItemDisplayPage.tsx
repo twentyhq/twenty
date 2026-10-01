@@ -161,7 +161,10 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
 
   const getSectionExtraItemIds = (section: CommandMenuItemSection) => {
     if (section === 'THIS_OBJECT') {
-      return coreObjectCommandIds;
+      return [
+        ...coreObjectCommandIds,
+        ...getSectionAppActions(section).map((item) => item.id),
+      ];
     }
 
     if (section === 'SELECTION') {
