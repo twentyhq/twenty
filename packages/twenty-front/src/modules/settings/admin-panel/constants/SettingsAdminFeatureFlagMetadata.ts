@@ -34,6 +34,10 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Partial<
     label: msg`Prebuilt logic functions`,
     description: msg`Run logic functions from prebuilt application bundles.`,
   },
+  [FeatureFlagKey.IS_APPLICATION_WORKFLOWS_ENABLED]: {
+    label: msg`Application workflows`,
+    description: msg`Allow applications to install workflows and start new workflow runs.`,
+  },
   [FeatureFlagKey.IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED]: {
     label: msg`Workflow index page`,
     description: msg`Use the dedicated workflow index page to browse workflows and their versions.`,
