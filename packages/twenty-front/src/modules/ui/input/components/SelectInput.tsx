@@ -41,7 +41,7 @@ export const SelectInput = ({
         ),
       ]
     : filteredOptions;
-  const emptyLabel = t`No ${clearLabel}`;
+  const emptyLabel = isNonEmptyString(clearLabel) ? t`No ${clearLabel}` : '';
   const shouldShowClearOption =
     isDefined(onClear) &&
     isNonEmptyString(clearLabel) &&

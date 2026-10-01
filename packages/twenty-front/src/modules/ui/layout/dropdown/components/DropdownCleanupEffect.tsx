@@ -1,4 +1,5 @@
-import { useEffect, useRef } from 'react';
+import { atom, useStore } from 'jotai';
+import { useEffect, useState } from 'react';
 
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 
@@ -11,21 +12,22 @@ export const DropdownCleanupEffect = ({
 }: DropdownCleanupEffectProps) => {
   const { closeDropdown } = useCloseDropdown();
 
-  const mountedDropdownIdRef = useRef<string | null>(null);
+  const store = useStore();
+  const [mountedDropdownIdAtom] = useState(() => atom<string | null>(null));
 
   useEffect(() => {
-    mountedDropdownIdRef.current = dropdownId;
+    store.set(mountedDropdownIdAtom, dropdownId);
 
     return () => {
-      mountedDropdownIdRef.current = null;
+      store.set(mountedDropdownIdAtom, null);
 
       queueMicrotask(() => {
-        if (mountedDropdownIdRef.current !== dropdownId) {
+        if (store.get(mountedDropdownIdAtom) !== dropdownId) {
           closeDropdown(dropdownId);
         }
       });
     };
-  }, [closeDropdown, dropdownId]);
+  }, [closeDropdown, dropdownId, mountedDropdownIdAtom, store]);
 
   return null;
 };

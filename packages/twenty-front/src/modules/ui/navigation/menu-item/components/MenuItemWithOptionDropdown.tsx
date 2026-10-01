@@ -65,11 +65,11 @@ export const MenuItemWithOptionDropdown = ({
                   size="sm"
                   emphasis="subtle"
                   aria-label={t`More options`}
-                />
+                >
+                  {isDefined(RightIcon) ? <RightIcon /> : <IconDotsVertical />}
+                </LightIconButton>
               }
-            >
-              {isDefined(RightIcon) ? <RightIcon /> : <IconDotsVertical />}
-            </Dropdown.Trigger>
+            />
             <DropdownContent side={dropdownSide} align={dropdownAlign}>
               {dropdownContent}
             </DropdownContent>
