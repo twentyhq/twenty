@@ -2264,11 +2264,13 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     return new Set(admittedRecords.map((record) => String(record.id)));
   }
 
-  private compileRowAccessExpression(expression: RowAccessExpression): SqlCondition {
-    return compileRowAccessExpression(
+  private compileRowAccessExpression(
+    expression: RowAccessExpression,
+  ): SqlCondition {
+    return compileRowAccessExpression({
       expression,
-      this.resolveRowAccessPolicyEnvironment(),
-    );
+      environment: this.resolveRowAccessPolicyEnvironment(),
+    });
   }
 
   // Whether the role alone permits the operation, regardless of any record

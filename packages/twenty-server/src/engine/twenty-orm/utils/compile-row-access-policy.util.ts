@@ -14,32 +14,41 @@ import {
 import { combineSqlConditions } from 'src/engine/twenty-orm/utils/combine-sql-conditions.util';
 import { renderRowLevelPermissionFilterToSql } from 'src/engine/twenty-orm/utils/render-row-level-permission-filter-to-sql.util';
 
-export const compileRowAccessPolicy = (
-  policy: RowAccessPolicy,
-  environment: RowAccessCompilationEnvironment,
-): CompiledRowAccessPolicy =>
+export const compileRowAccessPolicy = ({
+  policy,
+  environment,
+}: {
+  policy: RowAccessPolicy;
+  environment: RowAccessCompilationEnvironment;
+}): CompiledRowAccessPolicy =>
   policy.kind === 'gated'
     ? {
         kind: 'gated',
-        condition: compileRowAccessExpression(policy.expression, environment),
+        condition: compileRowAccessExpression({
+          expression: policy.expression,
+          environment,
+        }),
       }
     : policy;
 
-export const compileRowAccessExpression = (
-  expression: RowAccessExpression,
-  environment: RowAccessCompilationEnvironment,
-): SqlCondition => {
+export const compileRowAccessExpression = ({
+  expression,
+  environment,
+}: {
+  expression: RowAccessExpression;
+  environment: RowAccessCompilationEnvironment;
+}): SqlCondition => {
   switch (expression.kind) {
     case 'and':
       return combineSqlConditions(
         expression.operands.map((operand) =>
-          compileRowAccessExpression(operand, environment),
+          compileRowAccessExpression({ expression: operand, environment }),
         ),
       );
     case 'or':
       return combineSqlConditions(
         expression.operands.map((operand) =>
-          compileRowAccessExpression(operand, environment),
+          compileRowAccessExpression({ expression: operand, environment }),
         ),
         'OR',
       );
@@ -92,7 +101,10 @@ export const compileRowAccessExpression = (
                 parentTableExpression: environment.resolveTableExpression(
                   parent.parentFlatObjectMetadata.id,
                 ),
-                policy: compileRowAccessPolicy(parent.policy, environment),
+                policy: compileRowAccessPolicy({
+                  policy: parent.policy,
+                  environment,
+                }),
               }
             : {
                 kind: 'children',
@@ -101,7 +113,10 @@ export const compileRowAccessExpression = (
                 childTableExpression: environment.resolveTableExpression(
                   parent.childFlatObjectMetadata.id,
                 ),
-                policy: compileRowAccessPolicy(parent.policy, environment),
+                policy: compileRowAccessPolicy({
+                  policy: parent.policy,
+                  environment,
+                }),
               },
         ),
       });
