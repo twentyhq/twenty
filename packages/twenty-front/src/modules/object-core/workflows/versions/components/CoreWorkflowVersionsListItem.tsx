@@ -1,47 +1,16 @@
-import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { themeCssVariables } from 'twenty-ui/theme';
-import { Tag } from 'twenty-ui/primitives/data-display';
+import { IconVersions } from 'twenty-ui/icon';
 
-import { CORE_WORKFLOW_VERSION_STATUS_TAG_PROPS } from '@/object-core/workflows/versions/constants/CoreWorkflowVersionStatusTagProps';
+import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
+import { CORE_WORKFLOW_VERSION_STATUS_LABELS } from '@/object-core/workflows/versions/constants/CoreWorkflowVersionStatusLabels';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { type CoreWorkflowVersionStatus } from '~/generated/graphql';
-
-const StyledRow = styled.div<{ isSelectable: boolean }>`
-  align-items: center;
-  border-radius: ${themeCssVariables.border.radius.sm};
-  cursor: ${({ isSelectable }) => (isSelectable ? 'pointer' : 'default')};
-  display: flex;
-  gap: ${themeCssVariables.spacing[2]};
-  justify-content: space-between;
-  opacity: ${({ isSelectable }) => (isSelectable ? 1 : 0.5)};
-  padding: ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[2]};
-
-  &:hover {
-    background-color: ${({ isSelectable }) =>
-      isSelectable
-        ? themeCssVariables.background.transparent.light
-        : 'transparent'};
-  }
-`;
-
-const StyledLabel = styled.span`
-  color: ${themeCssVariables.font.color.primary};
-  font-size: ${themeCssVariables.font.size.md};
-`;
-
-const StyledDate = styled.span`
-  color: ${themeCssVariables.font.color.tertiary};
-  font-size: ${themeCssVariables.font.size.md};
-  margin-right: auto;
-`;
 
 type CoreWorkflowVersionsListItemProps = {
   id: string;
   label: string;
   createdAt: string;
   status: CoreWorkflowVersionStatus;
-  isSelectable: boolean;
   onSelect: () => void;
 };
 
@@ -50,28 +19,23 @@ export const CoreWorkflowVersionsListItem = ({
   label,
   createdAt,
   status,
-  isSelectable,
   onSelect,
 }: CoreWorkflowVersionsListItemProps) => {
   const { t } = useLingui();
-  const tagProps = CORE_WORKFLOW_VERSION_STATUS_TAG_PROPS[status];
 
   return (
     <SelectableListItem itemId={id} onEnter={onSelect}>
-      <StyledRow
-        isSelectable={isSelectable}
-        onClick={isSelectable ? onSelect : undefined}
-      >
-        <StyledLabel>{label}</StyledLabel>
-        <StyledDate>
-          {new Date(createdAt).toLocaleDateString(undefined, {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-          })}
-        </StyledDate>
-        <Tag color={tagProps.color}>{t(tagProps.label)}</Tag>
-      </StyledRow>
+      <CommandMenuItem
+        id={id}
+        Icon={IconVersions}
+        label={new Date(createdAt).toLocaleDateString(undefined, {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+        })}
+        description={`${label}, ${t(CORE_WORKFLOW_VERSION_STATUS_LABELS[status])}`}
+        onClick={onSelect}
+      />
     </SelectableListItem>
   );
 };
