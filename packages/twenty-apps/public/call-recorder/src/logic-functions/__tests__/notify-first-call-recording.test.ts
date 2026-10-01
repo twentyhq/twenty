@@ -91,7 +91,9 @@ describe('notify-first-call-recording logic function', () => {
         workspaceMemberId: 'member-organizer',
         idempotencyKey: 'first-call-recording',
         title: 'Your first call recording is ready',
-        text: expect.stringContaining('Weekly sync'),
+        text: expect.stringContaining(
+          '[[record:calendarEvent:calendar-event-1:Weekly sync]]',
+        ),
         questions: [
           expect.objectContaining({
             options: [

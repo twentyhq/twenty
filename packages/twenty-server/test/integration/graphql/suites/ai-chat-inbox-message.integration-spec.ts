@@ -52,7 +52,7 @@ describe('Sending an inbox message as an application', () => {
   };
   let application: ApplicationWithResources;
   let applicationToken: string;
-  let threadId: string | undefined;
+  let threadId: string;
   let enqueueStream: jest.SpyInstance;
   const spies: jest.SpyInstance[] = [];
 
@@ -106,6 +106,16 @@ describe('Sending an inbox message as an application', () => {
       )
       .mockResolvedValue(undefined as never);
     spies.push(enqueueStream);
+
+    const response = await sendInboxMessage(applicationToken);
+
+    if (response.body.errors !== undefined) {
+      throw new Error(
+        `Could not send the inbox message: ${JSON.stringify(response.body.errors)}`,
+      );
+    }
+
+    threadId = response.body.data.sendInboxMessage.threadId;
   });
 
   afterAll(async () => {
@@ -133,11 +143,6 @@ describe('Sending an inbox message as an application', () => {
   });
 
   it('opens a conversation for the member that starts with the application message', async () => {
-    const response = await sendInboxMessage(applicationToken);
-
-    expect(response.body.errors).toBeUndefined();
-    threadId = response.body.data.sendInboxMessage.threadId as string;
-
     const [thread] = await global.testDataSource.query(
       `SELECT title, "workspaceMemberId", "pendingQuestionMessageId"
        FROM "${schema}"."agentChatThread" WHERE id = $1`,
@@ -170,12 +175,12 @@ describe('Sending an inbox message as an application', () => {
 
     expect(response.body.errors).toBeUndefined();
     expect(response.body.data.sendInboxMessage.threadId).toBe(threadId);
-    expect(await readMessages(threadId!)).toHaveLength(2);
+    expect(await readMessages(threadId)).toHaveLength(2);
   });
 
   it('lets the member answer the question and resumes the chat', async () => {
     const response = await answerToolCall({
-      toolCall: { threadId: threadId!, toolCallId: 'call_ask_questions' },
+      toolCall: { threadId, toolCallId: 'call_ask_questions' },
       response: {
         answers: [{ questionIndex: 0, selectedOptionIndices: [0] }],
       },

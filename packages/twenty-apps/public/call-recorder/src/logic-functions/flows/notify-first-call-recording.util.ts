@@ -1,3 +1,4 @@
+import { isUndefined } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { sendInboxMessage } from 'twenty-sdk/logic-function';
 
@@ -27,6 +28,11 @@ export const notifyFirstCallRecording = async (
   }
 
   const title = callRecording.title ?? 'your meeting';
+  // A record chip links the meeting for the member and gives the assistant
+  // its id when they ask for a recap. Brackets would end the chip early.
+  const meeting = isUndefined(callRecording.calendarEventId)
+    ? `**${title}**`
+    : `[[record:calendarEvent:${callRecording.calendarEventId}:${title.replace(/[[\]\n]/g, ' ')}]]`;
   const workspaceMemberIds = [
     ...new Set(
       [...callRecording.attendees]
@@ -47,7 +53,7 @@ export const notifyFirstCallRecording = async (
         workspaceMemberId,
         idempotencyKey: FIRST_CALL_RECORDING_IDEMPOTENCY_KEY,
         title: 'Your first call recording is ready',
-        text: `Your first call was recorded: **${title}**. The video, transcript and summary are on the meeting page.`,
+        text: `Your first call was recorded: ${meeting}. The video, transcript and summary are on the meeting page.`,
         questions: [
           {
             header: 'Share',

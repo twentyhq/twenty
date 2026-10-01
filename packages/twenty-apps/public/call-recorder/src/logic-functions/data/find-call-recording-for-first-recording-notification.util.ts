@@ -22,8 +22,13 @@ type CallRecordingForFirstRecordingNotification = {
   id: string;
   title: string | undefined;
   status: string | undefined;
+  calendarEventId: string | undefined;
   attendees: CallRecordingAttendee[];
 };
+
+// Bounds the attendee lookup to 2,000 participants so a cursor that never
+// advances cannot keep the function querying until it times out.
+const MAX_PARTICIPANT_PAGES = 20;
 
 export const findCallRecordingForFirstRecordingNotification = async (
   client: CoreApiClient,
@@ -54,41 +59,49 @@ export const findCallRecordingForFirstRecordingNotification = async (
 
   const calendarEventId = getString(node.calendarEventId);
 
+  let participantPageCount = 0;
+
   const participants = isUndefined(calendarEventId)
     ? []
-    : await fetchAllNodes<CalendarEventParticipantNode>(async (afterCursor) => {
-        const participantsResult = await client.query({
-          calendarEventParticipants: {
-            __args: {
-              filter: {
-                calendarEventId: { eq: calendarEventId },
-                workspaceMemberId: { is: 'NOT_NULL' },
-              },
-              first: TWENTY_PAGE_SIZE,
-              ...(isUndefined(afterCursor) ? {} : { after: afterCursor }),
-            },
-            pageInfo: {
-              hasNextPage: true,
-              endCursor: true,
-            },
-            edges: {
-              node: {
-                workspaceMemberId: true,
-                isOrganizer: true,
-              },
-            },
-          },
-        });
+    : await fetchAllNodes<CalendarEventParticipantNode>(
+        async (afterCursor) => {
+          participantPageCount += 1;
 
-        return participantsResult.calendarEventParticipants as
-          | ConnectionPage<CalendarEventParticipantNode>
-          | undefined;
-      });
+          const participantsResult = await client.query({
+            calendarEventParticipants: {
+              __args: {
+                filter: {
+                  calendarEventId: { eq: calendarEventId },
+                  workspaceMemberId: { is: 'NOT_NULL' },
+                },
+                first: TWENTY_PAGE_SIZE,
+                ...(isUndefined(afterCursor) ? {} : { after: afterCursor }),
+              },
+              pageInfo: {
+                hasNextPage: true,
+                endCursor: true,
+              },
+              edges: {
+                node: {
+                  workspaceMemberId: true,
+                  isOrganizer: true,
+                },
+              },
+            },
+          });
+
+          return participantsResult.calendarEventParticipants as
+            | ConnectionPage<CalendarEventParticipantNode>
+            | undefined;
+        },
+        () => participantPageCount < MAX_PARTICIPANT_PAGES,
+      );
 
   return {
     id: node.id,
     title: getString(node.title),
     status: getString(node.status),
+    calendarEventId,
     attendees: participants.flatMap((participant) => {
       const workspaceMemberId = getString(participant.workspaceMemberId);
 
