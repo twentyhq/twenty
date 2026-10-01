@@ -29,12 +29,8 @@ import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { getRequest } from 'src/utils/extract-request';
 
-// Authoring endpoints (file uploads, sync) may only touch an application whose
-// registration the calling workspace owns. That ownership is what keeps a
-// non-owner from replacing an app's code and reaching the registration's server
-// variables at execution time. Unlike ApplicationTargetGuard, which confines
-// application tokens to their own app, this runs for every principal, since a
-// session or API key in another workspace must be refused just the same.
+// Runs for every principal: owning the registration is what stops another
+// workspace from swapping an app's code to read its server variables.
 @Injectable()
 export class ApplicationRegistrationOwnershipGuard implements CanActivate {
   constructor(
@@ -188,9 +184,7 @@ export class ApplicationRegistrationOwnershipGuard implements CanActivate {
     return application;
   }
 
-  // The executor injects server variables from the registration the
-  // application row links to, so that link decides ownership. A row without a
-  // link falls back to the registration matching its universal identifier.
+  // The executor injects server variables from the linked registration
   private async assertApplicationOwnedOrThrow({
     application: { applicationRegistrationId, universalIdentifier },
     workspaceId,
