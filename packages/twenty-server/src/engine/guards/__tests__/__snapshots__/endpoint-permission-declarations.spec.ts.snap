@@ -1,0 +1,3399 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`endpoint permission declarations should match every AuthPrincipalGuard and application target declaration 1`] = `
+{
+  "src/engine/api/mcp/controllers/mcp-core.controller.ts": {
+    "McpCoreController": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/api/rest/core/controllers/rest-api-core.controller.ts": {
+    "RestApiCoreController": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/core-modules/admin-panel/admin-panel-ai-provider.resolver.ts": {
+    "AdminPanelAiProviderResolver": {
+      "authPrincipalGuard": {
+        "apiKey": false,
+        "application": false,
+        "oauthClient": false,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/core-modules/admin-panel/admin-panel-usage-limit.resolver.ts": {
+    "AdminPanelUsageLimitResolver": {
+      "authPrincipalGuard": {
+        "apiKey": false,
+        "application": false,
+        "oauthClient": false,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/core-modules/admin-panel/admin-panel.resolver.ts": {
+    "AdminPanelResolver": {
+      "authPrincipalGuard": {
+        "apiKey": false,
+        "application": false,
+        "oauthClient": false,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+    "AdminPanelResolver.getServerAdmins": {
+      "authPrincipalGuard": {
+        "apiKey": false,
+        "application": false,
+        "oauthClient": false,
+        "userSession": {
+          "impersonated": false,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+    "AdminPanelResolver.updateServerAdminAccess": {
+      "authPrincipalGuard": {
+        "apiKey": false,
+        "application": false,
+        "oauthClient": false,
+        "userSession": {
+          "impersonated": false,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/core-modules/api-key/api-key.resolver.ts": {
+    "ApiKeyResolver": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+    "ApiKeyResolver.assignRoleToApiKey": {
+      "authPrincipalGuard": {
+        "apiKey": false,
+        "application": false,
+        "oauthClient": false,
+        "userSession": {
+          "impersonated": true,
+          "playground": false,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+    "ApiKeyResolver.createApiKey": {
+      "authPrincipalGuard": {
+        "apiKey": false,
+        "application": false,
+        "oauthClient": false,
+        "userSession": {
+          "impersonated": true,
+          "playground": false,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+    "ApiKeyResolver.revokeApiKey": {
+      "authPrincipalGuard": {
+        "apiKey": false,
+        "application": false,
+        "oauthClient": false,
+        "userSession": {
+          "impersonated": true,
+          "playground": false,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+    "ApiKeyResolver.updateApiKey": {
+      "authPrincipalGuard": {
+        "apiKey": false,
+        "application": false,
+        "oauthClient": false,
+        "userSession": {
+          "impersonated": true,
+          "playground": false,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/core-modules/api-key/controllers/api-key.controller.ts": {
+    "ApiKeyController": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+    "ApiKeyController.create": {
+      "authPrincipalGuard": {
+        "apiKey": false,
+        "application": false,
+        "oauthClient": false,
+        "userSession": {
+          "impersonated": true,
+          "playground": false,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+    "ApiKeyController.remove": {
+      "authPrincipalGuard": {
+        "apiKey": false,
+        "application": false,
+        "oauthClient": false,
+        "userSession": {
+          "impersonated": true,
+          "playground": false,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+    "ApiKeyController.update": {
+      "authPrincipalGuard": {
+        "apiKey": false,
+        "application": false,
+        "oauthClient": false,
+        "userSession": {
+          "impersonated": true,
+          "playground": false,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/core-modules/application/application-authorization/application-authorization.resolver.ts": {
+    "ApplicationAuthorizationResolver": {
+      "authPrincipalGuard": {
+        "apiKey": false,
+        "application": false,
+        "oauthClient": false,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/core-modules/application/application-development/application-development.resolver.ts": {
+    "ApplicationDevelopmentResolver": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+    "ApplicationDevelopmentResolver.completeApplicationFileUploads": {
+      "applicationTarget": {
+        "decorator": "ApplicationTargetArgs",
+        "idKey": "applicationUniversalIdentifier",
+        "kind": "applicationUniversalIdentifier",
+        "requireApplicationRegistrationOwnership": true,
+      },
+    },
+    "ApplicationDevelopmentResolver.createApplicationFileUploads": {
+      "applicationTarget": {
+        "decorator": "ApplicationTargetArgs",
+        "idKey": "applicationUniversalIdentifier",
+        "kind": "applicationUniversalIdentifier",
+        "requireApplicationRegistrationOwnership": true,
+      },
+    },
+    "ApplicationDevelopmentResolver.createDevelopmentApplication": {
+      "applicationTarget": {
+        "decorator": "ApplicationTargetArgs",
+        "idKey": "universalIdentifier",
+        "kind": "applicationUniversalIdentifier",
+        "requireApplicationRegistrationOwnership": true,
+      },
+    },
+    "ApplicationDevelopmentResolver.exportApplication": {
+      "applicationTarget": {
+        "decorator": "ApplicationTargetArgs",
+        "idKey": "universalIdentifier",
+        "kind": "applicationUniversalIdentifier",
+        "requireApplicationRegistrationOwnership": true,
+      },
+    },
+    "ApplicationDevelopmentResolver.syncApplication": {
+      "applicationTarget": {
+        "decorator": "ApplicationTargetArgs",
+        "idKey": "manifest.application.universalIdentifier",
+        "kind": "applicationUniversalIdentifier",
+        "requireApplicationRegistrationOwnership": true,
+      },
+    },
+    "ApplicationDevelopmentResolver.uploadApplicationFile": {
+      "applicationTarget": {
+        "decorator": "ApplicationTargetArgs",
+        "idKey": "applicationUniversalIdentifier",
+        "kind": "applicationUniversalIdentifier",
+        "requireApplicationRegistrationOwnership": true,
+      },
+    },
+  },
+  "src/engine/core-modules/application/application-development/application-schema.resolver.ts": {
+    "ApplicationSchemaResolver": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+    "ApplicationSchemaResolver.applicationCoreGraphqlSchema": {
+      "applicationTarget": {
+        "argName": "applicationUniversalIdentifier",
+        "decorator": "ApplicationTargetArg",
+        "kind": "applicationUniversalIdentifier",
+        "requireApplicationRegistrationOwnership": false,
+      },
+    },
+  },
+  "src/engine/core-modules/application/application-health/application-health.resolver.ts": {
+    "ApplicationHealthResolver": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+    "ApplicationHealthResolver.runApplicationHealthCheck": {
+      "applicationTarget": {
+        "argName": "applicationId",
+        "decorator": "ApplicationTargetArg",
+        "kind": "applicationId",
+        "requireApplicationRegistrationOwnership": false,
+      },
+    },
+  },
+  "src/engine/core-modules/application/application-install/application-capability.resolver.ts": {
+    "ApplicationCapabilityResolver": {
+      "authPrincipalGuard": {
+        "apiKey": false,
+        "application": false,
+        "oauthClient": false,
+        "userSession": {
+          "impersonated": true,
+          "playground": false,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/core-modules/application/application-install/application-install.resolver.ts": {
+    "ApplicationInstallResolver": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+    "ApplicationInstallResolver.findInstallApplicationJobStatus": {
+      "applicationTarget": {
+        "argName": "universalIdentifier",
+        "decorator": "ApplicationTargetArg",
+        "kind": "applicationUniversalIdentifier",
+        "requireApplicationRegistrationOwnership": false,
+      },
+    },
+    "ApplicationInstallResolver.findUninstallApplicationJobStatus": {
+      "applicationTarget": {
+        "argName": "universalIdentifier",
+        "decorator": "ApplicationTargetArg",
+        "kind": "applicationUniversalIdentifier",
+        "requireApplicationRegistrationOwnership": false,
+      },
+    },
+    "ApplicationInstallResolver.installApplication": {
+      "applicationTarget": {
+        "argName": "universalIdentifier",
+        "decorator": "ApplicationTargetArg",
+        "kind": "applicationUniversalIdentifier",
+        "requireApplicationRegistrationOwnership": false,
+      },
+    },
+    "ApplicationInstallResolver.installMarketplaceApp": {
+      "applicationTarget": {
+        "argName": "universalIdentifier",
+        "decorator": "ApplicationTargetArg",
+        "kind": "applicationUniversalIdentifier",
+        "requireApplicationRegistrationOwnership": false,
+      },
+    },
+    "ApplicationInstallResolver.triggerInstallApplicationJob": {
+      "applicationTarget": {
+        "argName": "input",
+        "decorator": "ApplicationTargetArg",
+        "idKey": "universalIdentifier",
+        "kind": "applicationUniversalIdentifier",
+        "requireApplicationRegistrationOwnership": false,
+      },
+    },
+    "ApplicationInstallResolver.triggerUninstallApplicationJob": {
+      "applicationTarget": {
+        "argName": "input",
+        "decorator": "ApplicationTargetArg",
+        "idKey": "universalIdentifier",
+        "kind": "applicationUniversalIdentifier",
+        "requireApplicationRegistrationOwnership": false,
+      },
+    },
+    "ApplicationInstallResolver.uninstallApplication": {
+      "applicationTarget": {
+        "decorator": "ApplicationTargetArgs",
+        "idKey": "universalIdentifier",
+        "kind": "applicationUniversalIdentifier",
+        "requireApplicationRegistrationOwnership": false,
+      },
+    },
+    "ApplicationInstallResolver.updateApplication": {
+      "applicationTarget": {
+        "argName": "id",
+        "decorator": "ApplicationTargetArg",
+        "kind": "applicationId",
+        "requireApplicationRegistrationOwnership": false,
+      },
+    },
+  },
+  "src/engine/core-modules/application/application-job/application-job.resolver.ts": {
+    "ApplicationJobResolver": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/core-modules/application/application-key-value/application-key-value.resolver.ts": {
+    "ApplicationKeyValueResolver": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/core-modules/application/application-marketplace/marketplace.resolver.ts": {
+    "MarketplaceResolver": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/core-modules/application/application-oauth/application-oauth.resolver.ts": {
+    "ApplicationOAuthResolver": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+    "ApplicationOAuthResolver.renewApplicationToken": {
+      "authPrincipalGuard": {
+        "apiKey": false,
+        "application": false,
+        "oauthClient": false,
+        "userSession": {
+          "impersonated": true,
+          "playground": false,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/core-modules/application/application-registration/application-registration.resolver.ts": {
+    "ApplicationRegistrationResolver.applicationRegistrationTarballUrl": {
+      "applicationTarget": {
+        "argName": "id",
+        "decorator": "ApplicationTargetArg",
+        "kind": "applicationRegistrationId",
+        "requireApplicationRegistrationOwnership": true,
+      },
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+    "ApplicationRegistrationResolver.claimApplicationRegistrationOwnership": {
+      "authPrincipalGuard": {
+        "apiKey": false,
+        "application": false,
+        "oauthClient": false,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+    "ApplicationRegistrationResolver.completeAppTarballUpload": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+    "ApplicationRegistrationResolver.createApplicationRegistration": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+    "ApplicationRegistrationResolver.deleteApplicationRegistration": {
+      "applicationTarget": {
+        "argName": "id",
+        "decorator": "ApplicationTargetArg",
+        "kind": "applicationRegistrationId",
+        "requireApplicationRegistrationOwnership": true,
+      },
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+    "ApplicationRegistrationResolver.findApplicationRegistrationByUniversalIdentifier": {
+      "applicationTarget": {
+        "argName": "universalIdentifier",
+        "decorator": "ApplicationTargetArg",
+        "kind": "applicationUniversalIdentifier",
+        "requireApplicationRegistrationOwnership": false,
+      },
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+    "ApplicationRegistrationResolver.findApplicationRegistrationStats": {
+      "applicationTarget": {
+        "argName": "id",
+        "decorator": "ApplicationTargetArg",
+        "kind": "applicationRegistrationId",
+        "requireApplicationRegistrationOwnership": true,
+      },
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+    "ApplicationRegistrationResolver.findApplicationRegistrationVariables": {
+      "applicationTarget": {
+        "argName": "applicationRegistrationId",
+        "decorator": "ApplicationTargetArg",
+        "kind": "applicationRegistrationId",
+        "requireApplicationRegistrationOwnership": true,
+      },
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+    "ApplicationRegistrationResolver.findClaimableApplicationRegistration": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+    "ApplicationRegistrationResolver.findManyApplicationRegistrations": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+    "ApplicationRegistrationResolver.findOneApplicationRegistration": {
+      "applicationTarget": {
+        "argName": "id",
+        "decorator": "ApplicationTargetArg",
+        "kind": "applicationRegistrationId",
+        "requireApplicationRegistrationOwnership": true,
+      },
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+    "ApplicationRegistrationResolver.githubClaimAuthorizationUrl": {
+      "applicationTarget": {
+        "decorator": "ApplicationTargetArgs",
+        "idKey": "applicationRegistrationId",
+        "kind": "applicationRegistrationId",
+        "requireApplicationRegistrationOwnership": false,
+      },
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+    "ApplicationRegistrationResolver.rotateApplicationRegistrationClientSecret": {
+      "applicationTarget": {
+        "argName": "id",
+        "decorator": "ApplicationTargetArg",
+        "kind": "applicationRegistrationId",
+        "requireApplicationRegistrationOwnership": true,
+      },
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+    "ApplicationRegistrationResolver.transferApplicationRegistrationOwnership": {
+      "applicationTarget": {
+        "decorator": "ApplicationTargetArgs",
+        "idKey": "applicationRegistrationId",
+        "kind": "applicationRegistrationId",
+        "requireApplicationRegistrationOwnership": true,
+      },
+      "authPrincipalGuard": {
+        "apiKey": false,
+        "application": false,
+        "oauthClient": false,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+    "ApplicationRegistrationResolver.updateApplicationRegistration": {
+      "applicationTarget": {
+        "argName": "input",
+        "decorator": "ApplicationTargetArg",
+        "idKey": "id",
+        "kind": "applicationRegistrationId",
+        "requireApplicationRegistrationOwnership": true,
+      },
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+    "ApplicationRegistrationResolver.updateApplicationRegistrationVariable": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+    "ApplicationRegistrationResolver.uploadAppTarball": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/core-modules/application/application-upgrade/application-upgrade.resolver.ts": {
+    "ApplicationUpgradeResolver": {
+      "authPrincipalGuard": {
+        "apiKey": false,
+        "application": {
+          "withUser": true,
+          "withoutUser": false,
+        },
+        "oauthClient": {
+          "withUser": true,
+          "withoutUser": false,
+        },
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+    "ApplicationUpgradeResolver.upgradeApplication": {
+      "applicationTarget": {
+        "argName": "appRegistrationId",
+        "decorator": "ApplicationTargetArg",
+        "kind": "applicationRegistrationId",
+        "requireApplicationRegistrationOwnership": false,
+      },
+    },
+  },
+  "src/engine/core-modules/application/application-variable/application-variable.resolver.ts": {
+    "ApplicationVariableEntityResolver": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/core-modules/application/application.resolver.ts": {
+    "ApplicationResolver": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+    "ApplicationResolver.applicationSdkClientChecksums": {
+      "applicationTarget": {
+        "argName": "applicationId",
+        "decorator": "ApplicationTargetArg",
+        "kind": "applicationId",
+        "requireApplicationRegistrationOwnership": false,
+      },
+    },
+    "ApplicationResolver.isApplicationStopped": {
+      "applicationTarget": {
+        "argName": "applicationUniversalIdentifier",
+        "decorator": "ApplicationTargetArg",
+        "kind": "applicationUniversalIdentifier",
+        "requireApplicationRegistrationOwnership": false,
+      },
+    },
+  },
+  "src/engine/core-modules/application/connection-provider/application-connection-provider.resolver.ts": {
+    "ApplicationConnectionProviderResolver": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+    "ApplicationConnectionProviderResolver.applicationConnectionProviders": {
+      "applicationTarget": {
+        "argName": "applicationId",
+        "decorator": "ApplicationTargetArg",
+        "kind": "applicationId",
+        "requireApplicationRegistrationOwnership": false,
+      },
+    },
+  },
+  "src/engine/core-modules/application/connection-provider/connections/application-connections.controller.ts": {
+    "ApplicationConnectionsController": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/core-modules/application/connection-provider/connections/application-connections.resolver.ts": {
+    "ApplicationConnectionsResolver": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/core-modules/application/front-component-shared-dependencies/front-component-shared-dependencies.controller.ts": {
+    "FrontComponentSharedDependenciesController": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+    "FrontComponentSharedDependenciesController.getBuiltSharedDependencies": {
+      "applicationTarget": {
+        "decorator": "ApplicationTargetParam",
+        "kind": "applicationId",
+        "paramName": "applicationId",
+        "requireApplicationRegistrationOwnership": false,
+      },
+    },
+  },
+  "src/engine/core-modules/approved-access-domain/approved-access-domain.resolver.ts": {
+    "ApprovedAccessDomainResolver": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/core-modules/auth/auth.resolver.ts": {
+    "AuthResolver.authorizeApp": {
+      "authPrincipalGuard": {
+        "apiKey": false,
+        "application": false,
+        "oauthClient": false,
+        "userSession": true,
+      },
+    },
+    "AuthResolver.checkWorkspaceSubdomainAvailability": {
+      "authPrincipalGuard": {
+        "apiKey": false,
+        "application": {
+          "withUser": true,
+          "withoutUser": false,
+        },
+        "oauthClient": {
+          "withUser": true,
+          "withoutUser": false,
+        },
+        "userSession": true,
+      },
+    },
+    "AuthResolver.completeNewWorkspaceLogoUpload": {
+      "authPrincipalGuard": {
+        "apiKey": false,
+        "application": {
+          "withUser": true,
+          "withoutUser": false,
+        },
+        "oauthClient": {
+          "withUser": true,
+          "withoutUser": false,
+        },
+        "userSession": true,
+      },
+    },
+    "AuthResolver.createNewWorkspaceLogoUpload": {
+      "authPrincipalGuard": {
+        "apiKey": false,
+        "application": {
+          "withUser": true,
+          "withoutUser": false,
+        },
+        "oauthClient": {
+          "withUser": true,
+          "withoutUser": false,
+        },
+        "userSession": true,
+      },
+    },
+    "AuthResolver.generateApiKeyToken": {
+      "authPrincipalGuard": {
+        "apiKey": false,
+        "application": false,
+        "oauthClient": false,
+        "userSession": {
+          "impersonated": true,
+          "playground": false,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+    "AuthResolver.generatePlaygroundToken": {
+      "authPrincipalGuard": {
+        "apiKey": false,
+        "application": false,
+        "oauthClient": false,
+        "userSession": {
+          "impersonated": true,
+          "playground": false,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+    "AuthResolver.generateTransientToken": {
+      "authPrincipalGuard": {
+        "apiKey": false,
+        "application": false,
+        "oauthClient": false,
+        "userSession": true,
+      },
+    },
+    "AuthResolver.getWorkspaceCreationDefaults": {
+      "authPrincipalGuard": {
+        "apiKey": false,
+        "application": {
+          "withUser": true,
+          "withoutUser": false,
+        },
+        "oauthClient": {
+          "withUser": true,
+          "withoutUser": false,
+        },
+        "userSession": true,
+      },
+    },
+    "AuthResolver.signUpInNewWorkspace": {
+      "authPrincipalGuard": {
+        "apiKey": false,
+        "application": false,
+        "oauthClient": false,
+        "userSession": true,
+      },
+    },
+    "AuthResolver.uploadNewWorkspaceLogo": {
+      "authPrincipalGuard": {
+        "apiKey": false,
+        "application": {
+          "withUser": true,
+          "withoutUser": false,
+        },
+        "oauthClient": {
+          "withUser": true,
+          "withoutUser": false,
+        },
+        "userSession": true,
+      },
+    },
+  },
+  "src/engine/core-modules/billing/app-billing/app-billing.controller.ts": {
+    "AppBillingController": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/core-modules/billing/billing.resolver.ts": {
+    "BillingResolver.billingPortalSession": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+    "BillingResolver.cancelSwitchBillingInterval": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+    "BillingResolver.cancelSwitchBillingPlan": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+    "BillingResolver.cancelSwitchResourceCreditPrice": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+    "BillingResolver.checkoutSession": {
+      "authPrincipalGuard": {
+        "apiKey": false,
+        "application": {
+          "withUser": true,
+          "withoutUser": false,
+        },
+        "oauthClient": {
+          "withUser": true,
+          "withoutUser": false,
+        },
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+    "BillingResolver.createBillingPaymentMethodSetupIntent": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+    "BillingResolver.createSubscriptionPaymentIntent": {
+      "authPrincipalGuard": {
+        "apiKey": false,
+        "application": {
+          "withUser": true,
+          "withoutUser": false,
+        },
+        "oauthClient": {
+          "withUser": true,
+          "withoutUser": false,
+        },
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+    "BillingResolver.endSubscriptionTrialPeriod": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+    "BillingResolver.getResourceCreditUsage": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+    "BillingResolver.listPlans": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+    "BillingResolver.setResourceCreditSubscriptionPrice": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+    "BillingResolver.switchBillingPlan": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+    "BillingResolver.switchSubscriptionInterval": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/core-modules/calendar/timeline-calendar-event.resolver.ts": {
+    "TimelineCalendarEventResolver": {
+      "authPrincipalGuard": {
+        "apiKey": false,
+        "application": false,
+        "oauthClient": false,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/core-modules/client-config/client-config.resolver.ts": {
+    "ClientConfigResolver": {
+      "authPrincipalGuard": {
+        "apiKey": false,
+        "application": false,
+        "oauthClient": false,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/core-modules/company-enrichment/resolvers/company-enrichment.resolver.ts": {
+    "CompanyEnrichmentResolver": {
+      "authPrincipalGuard": {
+        "apiKey": false,
+        "application": false,
+        "oauthClient": false,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/core-modules/dpa/dpa.resolver.ts": {
+    "DpaResolver": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/core-modules/emailing-domain/emailing-domain.resolver.ts": {
+    "EmailingDomainResolver": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/core-modules/enterprise/enterprise.resolver.ts": {
+    "EnterpriseResolver": {
+      "authPrincipalGuard": {
+        "apiKey": false,
+        "application": false,
+        "oauthClient": false,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/core-modules/event-logs/emit/event-log-emitter.resolver.ts": {
+    "EventLogEmitterResolver.createObjectEvent": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/core-modules/event-logs/event-logs-live.resolver.ts": {
+    "EventLogsLiveResolver.eventLogsLive": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/core-modules/event-logs/event-logs.resolver.ts": {
+    "EventLogsResolver.eventLogs": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/core-modules/file/controllers/file.controller.ts": {
+    "FileController.downloadRecordExport": {
+      "authPrincipalGuard": {
+        "apiKey": false,
+        "application": {
+          "withUser": true,
+          "withoutUser": false,
+        },
+        "oauthClient": {
+          "withUser": true,
+          "withoutUser": false,
+        },
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/core-modules/file/file-core-picture/resolvers/file-core-picture.resolver.ts": {
+    "FileCorePictureResolver": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/core-modules/file/file-upload/resolvers/file-upload.resolver.ts": {
+    "FileUploadResolver": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/core-modules/file/files-field/resolvers/files-field.resolver.ts": {
+    "FilesFieldResolver": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/core-modules/geo-map/resolver/geo-map.resolver.ts": {
+    "GeoMapResolver": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/core-modules/imap-smtp-caldav-connection/imap-smtp-caldav-connection.resolver.ts": {
+    "ImapSmtpCaldavResolver": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/core-modules/impersonation/impersonation.resolver.ts": {
+    "ImpersonationResolver.impersonate": {
+      "authPrincipalGuard": {
+        "apiKey": false,
+        "application": false,
+        "oauthClient": false,
+        "userSession": {
+          "impersonated": false,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+    "ImpersonationResolver.stopImpersonation": {
+      "authPrincipalGuard": {
+        "apiKey": false,
+        "application": false,
+        "oauthClient": false,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/core-modules/lab/lab.resolver.ts": {
+    "LabResolver": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/core-modules/messaging/timeline-messaging.resolver.ts": {
+    "TimelineMessagingResolver": {
+      "authPrincipalGuard": {
+        "apiKey": false,
+        "application": false,
+        "oauthClient": false,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/core-modules/onboarding/onboarding.resolver.ts": {
+    "OnboardingResolver": {
+      "authPrincipalGuard": {
+        "apiKey": false,
+        "application": false,
+        "oauthClient": false,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/core-modules/public-domain/public-domain.resolver.ts": {
+    "PublicDomainResolver": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+    "PublicDomainResolver.createPublicDomain": {
+      "applicationTarget": {
+        "decorator": "ApplicationTargetArgs",
+        "idKey": "applicationId",
+        "kind": "applicationId",
+        "requireApplicationRegistrationOwnership": false,
+      },
+    },
+  },
+  "src/engine/core-modules/record-export/record-export.resolver.ts": {
+    "RecordExportResolver": {
+      "authPrincipalGuard": {
+        "apiKey": false,
+        "application": {
+          "withUser": true,
+          "withoutUser": false,
+        },
+        "oauthClient": {
+          "withUser": true,
+          "withoutUser": false,
+        },
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/core-modules/record-share/resolvers/record-sharing.resolver.ts": {
+    "RecordSharingResolver": {
+      "authPrincipalGuard": {
+        "apiKey": false,
+        "application": {
+          "withUser": true,
+          "withoutUser": false,
+        },
+        "oauthClient": {
+          "withUser": true,
+          "withoutUser": false,
+        },
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/core-modules/sdk-client/controllers/sdk-client.controller.ts": {
+    "SdkClientController": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+    "SdkClientController.getSdkModule": {
+      "applicationTarget": {
+        "decorator": "ApplicationTargetParam",
+        "kind": "applicationId",
+        "paramName": "applicationId",
+        "requireApplicationRegistrationOwnership": false,
+      },
+    },
+  },
+  "src/engine/core-modules/search/search.resolver.ts": {
+    "SearchResolver": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/core-modules/sso/sso.resolver.ts": {
+    "SsoResolver": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/core-modules/tool-provider/resolvers/tool-index.resolver.ts": {
+    "ToolIndexResolver": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/core-modules/two-factor-authentication/two-factor-authentication.resolver.ts": {
+    "TwoFactorAuthenticationResolver.deleteTwoFactorAuthenticationMethod": {
+      "authPrincipalGuard": {
+        "apiKey": false,
+        "application": false,
+        "oauthClient": false,
+        "userSession": {
+          "impersonated": false,
+          "playground": false,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+    "TwoFactorAuthenticationResolver.initiateOTPProvisioningForAuthenticatedUser": {
+      "authPrincipalGuard": {
+        "apiKey": false,
+        "application": false,
+        "oauthClient": false,
+        "userSession": {
+          "impersonated": false,
+          "playground": false,
+          "standard": true,
+          "workspaceAgnostic": true,
+        },
+      },
+    },
+    "TwoFactorAuthenticationResolver.verifyTwoFactorAuthenticationMethodForAuthenticatedUser": {
+      "authPrincipalGuard": {
+        "apiKey": false,
+        "application": false,
+        "oauthClient": false,
+        "userSession": {
+          "impersonated": false,
+          "playground": false,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/core-modules/usage-limit/usage-limit.resolver.ts": {
+    "UsageLimitResolver": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/core-modules/usage/usage.resolver.ts": {
+    "UsageResolver.getUsageAnalytics": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/core-modules/user-session/user-session.resolver.ts": {
+    "UserSessionResolver": {
+      "authPrincipalGuard": {
+        "apiKey": false,
+        "application": false,
+        "oauthClient": false,
+        "userSession": true,
+      },
+    },
+  },
+  "src/engine/core-modules/user/user.resolver.ts": {
+    "UserResolver.currentUser": {
+      "authPrincipalGuard": {
+        "apiKey": false,
+        "application": {
+          "withUser": true,
+          "withoutUser": false,
+        },
+        "oauthClient": {
+          "withUser": true,
+          "withoutUser": false,
+        },
+        "userSession": true,
+      },
+    },
+    "UserResolver.deleteUser": {
+      "authPrincipalGuard": {
+        "apiKey": false,
+        "application": false,
+        "oauthClient": false,
+        "userSession": true,
+      },
+    },
+    "UserResolver.deleteUserFromWorkspace": {
+      "authPrincipalGuard": {
+        "apiKey": false,
+        "application": {
+          "withUser": true,
+          "withoutUser": false,
+        },
+        "oauthClient": {
+          "withUser": true,
+          "withoutUser": false,
+        },
+        "userSession": true,
+      },
+    },
+    "UserResolver.updateUserEmail": {
+      "authPrincipalGuard": {
+        "apiKey": false,
+        "application": false,
+        "oauthClient": false,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+    "UserResolver.updateWorkspaceMemberSettings": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/core-modules/workflow/resolvers/core-workflow-version-mutation.resolver.ts": {
+    "CoreWorkflowVersionMutationResolver": {
+      "authPrincipalGuard": {
+        "apiKey": false,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+    "CoreWorkflowVersionMutationResolver.runCoreWorkflowVersion": {
+      "authPrincipalGuard": {
+        "apiKey": false,
+        "application": {
+          "withUser": true,
+          "withoutUser": false,
+        },
+        "oauthClient": {
+          "withUser": true,
+          "withoutUser": false,
+        },
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/core-modules/workflow/resolvers/core-workflow.resolver.ts": {
+    "CoreWorkflowResolver": {
+      "authPrincipalGuard": {
+        "apiKey": false,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/core-modules/workflow/resolvers/workflow-builder.resolver.ts": {
+    "WorkflowBuilderResolver": {
+      "authPrincipalGuard": {
+        "apiKey": false,
+        "application": {
+          "withUser": true,
+          "withoutUser": false,
+        },
+        "oauthClient": {
+          "withUser": true,
+          "withoutUser": false,
+        },
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/core-modules/workflow/resolvers/workflow-trigger.resolver.ts": {
+    "WorkflowTriggerResolver": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+    "WorkflowTriggerResolver.runWorkflowVersion": {
+      "authPrincipalGuard": {
+        "apiKey": false,
+        "application": {
+          "withUser": true,
+          "withoutUser": false,
+        },
+        "oauthClient": {
+          "withUser": true,
+          "withoutUser": false,
+        },
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/core-modules/workflow/resolvers/workflow-version-edge.resolver.ts": {
+    "WorkflowVersionEdgeResolver": {
+      "authPrincipalGuard": {
+        "apiKey": false,
+        "application": {
+          "withUser": true,
+          "withoutUser": false,
+        },
+        "oauthClient": {
+          "withUser": true,
+          "withoutUser": false,
+        },
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/core-modules/workflow/resolvers/workflow-version-step.resolver.ts": {
+    "WorkflowVersionStepResolver": {
+      "authPrincipalGuard": {
+        "apiKey": false,
+        "application": {
+          "withUser": true,
+          "withoutUser": false,
+        },
+        "oauthClient": {
+          "withUser": true,
+          "withoutUser": false,
+        },
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/core-modules/workflow/resolvers/workflow-version.resolver.ts": {
+    "WorkflowVersionResolver": {
+      "authPrincipalGuard": {
+        "apiKey": false,
+        "application": {
+          "withUser": true,
+          "withoutUser": false,
+        },
+        "oauthClient": {
+          "withUser": true,
+          "withoutUser": false,
+        },
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/core-modules/workspace-invitation/workspace-invitation.resolver.ts": {
+    "WorkspaceInvitationResolver": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+    "WorkspaceInvitationResolver.resendWorkspaceInvitation": {
+      "authPrincipalGuard": {
+        "apiKey": false,
+        "application": {
+          "withUser": true,
+          "withoutUser": false,
+        },
+        "oauthClient": {
+          "withUser": true,
+          "withoutUser": false,
+        },
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+    "WorkspaceInvitationResolver.sendInvitations": {
+      "authPrincipalGuard": {
+        "apiKey": false,
+        "application": {
+          "withUser": true,
+          "withoutUser": false,
+        },
+        "oauthClient": {
+          "withUser": true,
+          "withoutUser": false,
+        },
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/core-modules/workspace/workspace.resolver.ts": {
+    "WorkspaceResolver.activateWorkspace": {
+      "authPrincipalGuard": {
+        "apiKey": false,
+        "application": false,
+        "oauthClient": false,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+    "WorkspaceResolver.checkCustomDomainValidRecords": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+    "WorkspaceResolver.currentWorkspace": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+    "WorkspaceResolver.deleteCurrentWorkspace": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+    "WorkspaceResolver.updateWorkspace": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+    "WorkspaceResolver.updateWorkspaceAllowedIframeOrigins": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/metadata-modules/ai/ai-agent-execution/resolvers/agent-run.resolver.ts": {
+    "AgentRunResolver": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/metadata-modules/ai/ai-agent-monitor/resolvers/agent-turn.resolver.ts": {
+    "AgentTurnResolver": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+    "AgentTurnResolver.runEvaluationInput": {
+      "authPrincipalGuard": {
+        "apiKey": false,
+        "application": {
+          "withUser": true,
+          "withoutUser": false,
+        },
+        "oauthClient": {
+          "withUser": true,
+          "withoutUser": false,
+        },
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/metadata-modules/ai/ai-agent/agent.resolver.ts": {
+    "AgentResolver": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+    "AgentResolver.findOneAgent": {
+      "applicationTarget": {
+        "argName": "input",
+        "decorator": "ApplicationTargetArg",
+        "idKey": "id",
+        "kind": "applicationOwnedEntity",
+        "metadataName": "agent",
+        "requireApplicationRegistrationOwnership": false,
+      },
+    },
+  },
+  "src/engine/metadata-modules/ai/ai-chat/resolvers/agent-chat-subscription.resolver.ts": {
+    "AgentChatSubscriptionResolver": {
+      "authPrincipalGuard": {
+        "apiKey": false,
+        "application": {
+          "withUser": true,
+          "withoutUser": false,
+        },
+        "oauthClient": {
+          "withUser": true,
+          "withoutUser": false,
+        },
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/metadata-modules/ai/ai-chat/resolvers/agent-chat.resolver.ts": {
+    "AgentChatResolver": {
+      "authPrincipalGuard": {
+        "apiKey": false,
+        "application": {
+          "withUser": true,
+          "withoutUser": false,
+        },
+        "oauthClient": {
+          "withUser": true,
+          "withoutUser": false,
+        },
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/metadata-modules/ai/ai-chat/resolvers/ai-chat-usage.resolver.ts": {
+    "AiChatUsageResolver": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/metadata-modules/ai/ai-chat/resolvers/workspace-setup-chat.resolver.ts": {
+    "WorkspaceSetupChatResolver": {
+      "authPrincipalGuard": {
+        "apiKey": false,
+        "application": {
+          "withUser": true,
+          "withoutUser": false,
+        },
+        "oauthClient": {
+          "withUser": true,
+          "withoutUser": false,
+        },
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/metadata-modules/ai/ai-generate-text/controllers/ai-generate-text.controller.ts": {
+    "AiGenerateTextController": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/metadata-modules/ai/ai-tool-call-answer/resolvers/tool-call-answer.resolver.ts": {
+    "ToolCallAnswerResolver": {
+      "authPrincipalGuard": {
+        "apiKey": false,
+        "application": {
+          "withUser": true,
+          "withoutUser": false,
+        },
+        "oauthClient": {
+          "withUser": true,
+          "withoutUser": false,
+        },
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/metadata-modules/ai/ai-workspace-stats/resolvers/ai-workspace-stats.resolver.ts": {
+    "AiWorkspaceStatsResolver": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/metadata-modules/calendar-channel/resolvers/calendar-channel.resolver.ts": {
+    "CalendarChannelResolver": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/metadata-modules/command-menu-item/command-menu-item.resolver.ts": {
+    "CommandMenuItemResolver": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/metadata-modules/connected-account/resolvers/connected-account.resolver.ts": {
+    "ConnectedAccountResolver": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+    "ConnectedAccountResolver.applicationConnectedAccounts": {
+      "applicationTarget": {
+        "argName": "applicationId",
+        "decorator": "ApplicationTargetArg",
+        "kind": "applicationId",
+        "requireApplicationRegistrationOwnership": false,
+      },
+    },
+  },
+  "src/engine/metadata-modules/field-metadata/controllers/field-metadata.controller.ts": {
+    "FieldMetadataController": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/metadata-modules/field-metadata/field-metadata.resolver.ts": {
+    "FieldMetadataResolver": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/metadata-modules/front-component/controllers/front-component.controller.ts": {
+    "FrontComponentController": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+    "FrontComponentController.getBuiltJs": {
+      "applicationTarget": {
+        "decorator": "ApplicationTargetParam",
+        "kind": "applicationOwnedEntity",
+        "metadataName": "frontComponent",
+        "paramName": "frontComponentId",
+        "requireApplicationRegistrationOwnership": false,
+      },
+    },
+  },
+  "src/engine/metadata-modules/front-component/front-component.resolver.ts": {
+    "FrontComponentResolver": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+    "FrontComponentResolver.frontComponent": {
+      "authPrincipalGuard": {
+        "apiKey": false,
+        "application": false,
+        "oauthClient": false,
+        "userSession": {
+          "impersonated": true,
+          "playground": false,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+    "FrontComponentResolver.generateFrontComponentApplicationTokenPair": {
+      "authPrincipalGuard": {
+        "apiKey": false,
+        "application": false,
+        "oauthClient": false,
+        "userSession": {
+          "impersonated": true,
+          "playground": false,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/metadata-modules/index-metadata/index-metadata.resolver.ts": {
+    "IndexMetadataResolver": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/metadata-modules/logic-function/logic-function.resolver.ts": {
+    "LogicFunctionResolver": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+    "LogicFunctionResolver.executeOneLogicFunction": {
+      "applicationTarget": {
+        "argName": "input",
+        "decorator": "ApplicationTargetArg",
+        "idKey": "id",
+        "kind": "applicationOwnedEntity",
+        "metadataName": "logicFunction",
+        "requireApplicationRegistrationOwnership": false,
+      },
+    },
+    "LogicFunctionResolver.findOneLogicFunction": {
+      "applicationTarget": {
+        "argName": "input",
+        "decorator": "ApplicationTargetArg",
+        "idKey": "id",
+        "kind": "applicationOwnedEntity",
+        "metadataName": "logicFunction",
+        "requireApplicationRegistrationOwnership": false,
+      },
+    },
+    "LogicFunctionResolver.getLogicFunctionSourceCode": {
+      "applicationTarget": {
+        "argName": "input",
+        "decorator": "ApplicationTargetArg",
+        "idKey": "id",
+        "kind": "applicationOwnedEntity",
+        "metadataName": "logicFunction",
+        "requireApplicationRegistrationOwnership": false,
+      },
+    },
+    "LogicFunctionResolver.updateOneLogicFunction": {
+      "applicationTarget": {
+        "argName": "input",
+        "decorator": "ApplicationTargetArg",
+        "idKey": "id",
+        "kind": "applicationOwnedEntity",
+        "metadataName": "logicFunction",
+        "requireApplicationRegistrationOwnership": false,
+      },
+    },
+  },
+  "src/engine/metadata-modules/message-channel/resolvers/application-message-channels.resolver.ts": {
+    "ApplicationMessageChannelsResolver": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/metadata-modules/message-channel/resolvers/application-message-ingestion.resolver.ts": {
+    "ApplicationMessageIngestionResolver": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/metadata-modules/message-channel/resolvers/message-channel.resolver.ts": {
+    "MessageChannelResolver": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/metadata-modules/message-folder/resolvers/message-folder.resolver.ts": {
+    "MessageFolderResolver": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/metadata-modules/metadata-translation/metadata-translation.resolver.ts": {
+    "MetadataTranslationResolver": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/metadata-modules/minimal-metadata/minimal-metadata.resolver.ts": {
+    "MinimalMetadataResolver": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.resolver.ts": {
+    "NavigationMenuItemResolver": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/metadata-modules/object-metadata/controllers/object-metadata.controller.ts": {
+    "ObjectMetadataController": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/metadata-modules/object-metadata/object-metadata.resolver.ts": {
+    "ObjectMetadataResolver": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/metadata-modules/page-layout-tab/controllers/page-layout-tab.controller.ts": {
+    "PageLayoutTabController": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/metadata-modules/page-layout-tab/resolvers/page-layout-tab.resolver.ts": {
+    "PageLayoutTabResolver": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/metadata-modules/page-layout-widget/controllers/page-layout-widget.controller.ts": {
+    "PageLayoutWidgetController": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/metadata-modules/page-layout-widget/resolvers/page-layout-widget.resolver.ts": {
+    "PageLayoutWidgetResolver": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/metadata-modules/page-layout/controllers/page-layout.controller.ts": {
+    "PageLayoutController": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/metadata-modules/page-layout/resolvers/page-layout.resolver.ts": {
+    "PageLayoutResolver": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/metadata-modules/permission-flag/permission-flag.resolver.ts": {
+    "PermissionFlagResolver": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/metadata-modules/record-permissions/record-permissions.resolver.ts": {
+    "RecordPermissionsResolver": {
+      "authPrincipalGuard": {
+        "apiKey": false,
+        "application": {
+          "withUser": true,
+          "withoutUser": false,
+        },
+        "oauthClient": {
+          "withUser": true,
+          "withoutUser": false,
+        },
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/metadata-modules/role/role.resolver.ts": {
+    "RoleResolver": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+    "RoleResolver.updateWorkspaceMemberRole": {
+      "authPrincipalGuard": {
+        "apiKey": false,
+        "application": {
+          "withUser": true,
+          "withoutUser": false,
+        },
+        "oauthClient": {
+          "withUser": true,
+          "withoutUser": false,
+        },
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/metadata-modules/settings-menu-item/settings-menu-item.resolver.ts": {
+    "SettingsMenuItemResolver": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/metadata-modules/skill/skill.resolver.ts": {
+    "SkillResolver": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+    "SkillResolver.skill": {
+      "applicationTarget": {
+        "argName": "id",
+        "decorator": "ApplicationTargetArg",
+        "kind": "applicationOwnedEntity",
+        "metadataName": "skill",
+        "requireApplicationRegistrationOwnership": false,
+      },
+    },
+  },
+  "src/engine/metadata-modules/timeline-activity-type/timeline-activity-type.resolver.ts": {
+    "TimelineActivityTypeResolver": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/metadata-modules/validation-rule/validation-rule.resolver.ts": {
+    "ValidationRuleResolver": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/metadata-modules/view-field-group/resolvers/view-field-group.resolver.ts": {
+    "ViewFieldGroupResolver": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/metadata-modules/view-field/controllers/view-field.controller.ts": {
+    "ViewFieldController": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/metadata-modules/view-field/resolvers/view-field.resolver.ts": {
+    "ViewFieldResolver": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/metadata-modules/view-filter-group/controllers/view-filter-group.controller.ts": {
+    "ViewFilterGroupController": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/metadata-modules/view-filter-group/resolvers/view-filter-group.resolver.ts": {
+    "ViewFilterGroupResolver": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/metadata-modules/view-filter/controllers/view-filter.controller.ts": {
+    "ViewFilterController": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/metadata-modules/view-filter/resolvers/view-filter.resolver.ts": {
+    "ViewFilterResolver": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/metadata-modules/view-group/controllers/view-group.controller.ts": {
+    "ViewGroupController": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/metadata-modules/view-group/resolvers/view-group.resolver.ts": {
+    "ViewGroupResolver": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/metadata-modules/view-sort/controllers/view-sort.controller.ts": {
+    "ViewSortController": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/metadata-modules/view-sort/resolvers/view-sort.resolver.ts": {
+    "ViewSortResolver": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/metadata-modules/view/controllers/view.controller.ts": {
+    "ViewController": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/metadata-modules/view/resolvers/view.resolver.ts": {
+    "ViewResolver": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/metadata-modules/webhook/controllers/webhook.controller.ts": {
+    "WebhookController": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/metadata-modules/webhook/webhook.resolver.ts": {
+    "WebhookResolver": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/engine/subscriptions/event-stream.resolver.ts": {
+    "EventStreamResolver": {
+      "authPrincipalGuard": {
+        "apiKey": false,
+        "application": {
+          "withUser": true,
+          "withoutUser": false,
+        },
+        "oauthClient": {
+          "withUser": true,
+          "withoutUser": false,
+        },
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/modules/calendar/calendar-event-creation-manager/resolvers/create-calendar-event.resolver.ts": {
+    "CreateCalendarEventResolver": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/modules/call-recording/resolvers/call-recording.resolver.ts": {
+    "CallRecordingResolver": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/modules/connected-account/channel-sync/channel-sync.resolver.ts": {
+    "ChannelSyncResolver": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/modules/dashboard/chart-data/resolvers/bar-chart-data.resolver.ts": {
+    "BarChartDataResolver": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/modules/dashboard/chart-data/resolvers/line-chart-data.resolver.ts": {
+    "LineChartDataResolver": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/modules/dashboard/chart-data/resolvers/pie-chart-data.resolver.ts": {
+    "PieChartDataResolver": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/modules/dashboard/controllers/dashboard.controller.ts": {
+    "DashboardController": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/modules/dashboard/resolvers/dashboard.resolver.ts": {
+    "DashboardResolver": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/modules/emailing/resolvers/emailing-send.resolver.ts": {
+    "EmailingSendResolver": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/modules/emailing/resolvers/message-list.resolver.ts": {
+    "MessageListResolver": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/modules/emailing/resolvers/message-suppression.resolver.ts": {
+    "MessageSuppressionResolver": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/modules/emailing/resolvers/unsubscribe-topic.resolver.ts": {
+    "UnsubscribeTopicResolver": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+  "src/modules/messaging/message-outbound-manager/resolvers/send-email.resolver.ts": {
+    "SendEmailResolver": {
+      "authPrincipalGuard": {
+        "apiKey": true,
+        "application": true,
+        "oauthClient": true,
+        "userSession": {
+          "impersonated": true,
+          "playground": true,
+          "standard": true,
+          "workspaceAgnostic": false,
+        },
+      },
+    },
+  },
+}
+`;
