@@ -4,6 +4,7 @@ import { AgentHistoryMigrationModule } from 'src/database/commands/agent-history
 import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
 import { RestrictExportRecordsToIndexPageCommand } from 'src/database/commands/upgrade-version-command/2-45/2-45-workspace-command-1790837443029-restrict-export-records-to-index-page.command';
 import { GateWorkflowCommandsOnRecordUpdatePermissionCommand } from 'src/database/commands/upgrade-version-command/2-45/2-45-workspace-command-1790853316722-gate-workflow-commands-on-record-update-permission.command';
+import { RemoveSeeVersionWorkflowRunCommandMenuItemCommand } from 'src/database/commands/upgrade-version-command/2-45/2-45-workspace-command-1790860694324-remove-see-version-workflow-run-command-menu-item.command';
 import { AddAgentChatThreadParticipantObjectCommand } from 'src/database/commands/upgrade-version-command/2-45/2-45-workspace-command-1790861454223-add-agent-chat-thread-participant-object.command';
 import { BackfillAgentChatThreadInboxStateCommand } from 'src/database/commands/upgrade-version-command/2-45/2-45-workspace-command-1790861454224-backfill-agent-chat-thread-inbox-state.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
@@ -21,6 +22,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
   providers: [
     RestrictExportRecordsToIndexPageCommand,
     GateWorkflowCommandsOnRecordUpdatePermissionCommand,
+    RemoveSeeVersionWorkflowRunCommandMenuItemCommand,
     AddAgentChatThreadParticipantObjectCommand,
     BackfillAgentChatThreadInboxStateCommand,
   ],

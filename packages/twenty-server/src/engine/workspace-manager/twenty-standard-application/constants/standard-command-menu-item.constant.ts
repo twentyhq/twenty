@@ -678,25 +678,6 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     engineComponentKey: EngineComponentKey.TOGGLE_WORKFLOW_VISIBILITY,
     hotKeys: null,
   },
-  seeVersionWorkflowRun: {
-    universalIdentifier: 'cc3a065c-c89e-40ac-9449-4272c55b1bb8',
-    label: i18nLabel(
-      msg({ message: `See Version`, context: 'commandMenuItem.label' }),
-    ),
-    icon: 'IconVersions',
-    isPinned: true,
-    position: 33,
-    shortLabel: i18nLabel(
-      msg({ message: `See Version`, context: 'commandMenuItem.shortLabel' }),
-    ),
-    availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
-    conditionalAvailabilityExpression: null,
-    availabilityObjectMetadataUniversalIdentifier:
-      STANDARD_OBJECTS.workflowRun.universalIdentifier,
-    frontComponentUniversalIdentifier: null,
-    engineComponentKey: EngineComponentKey.SEE_VERSION_WORKFLOW_RUN,
-    hotKeys: null,
-  },
   seeWorkflowWorkflowRun: {
     universalIdentifier: '9d9cc62d-3543-45c3-93f3-23d2d8979f2b',
     label: i18nLabel(
