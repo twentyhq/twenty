@@ -18,7 +18,6 @@ import { type ToolContext } from 'src/engine/core-modules/tool-provider/types/to
 import { type ToolDescriptor } from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
 import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
 import { findSimilarToolNames } from 'src/engine/core-modules/tool-provider/utils/find-similar-tool-names.util';
-import { wrapWithErrorHandler } from 'src/engine/core-modules/tool-provider/utils/tool-error.util';
 import { ToolOutputSpillService } from 'src/engine/core-modules/tool/services/tool-output-spill.service';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config.type';
@@ -126,7 +125,6 @@ export class ToolRegistryService {
     descriptors: ToolDescriptor[],
     context: ToolProviderContext,
     options?: {
-      wrapWithErrorContext?: boolean;
       compactOutput?: boolean;
       spillLargeOutput?: boolean;
     },
@@ -165,9 +163,7 @@ export class ToolRegistryService {
       toolSet[descriptor.name] = {
         description: descriptor.description,
         inputSchema: jsonSchema(schema),
-        execute: options?.wrapWithErrorContext
-          ? wrapWithErrorHandler(descriptor.name, executeFn)
-          : executeFn,
+        execute: executeFn,
       };
     }
 
@@ -387,13 +383,8 @@ export class ToolRegistryService {
     context: ToolProviderContext,
     options: ToolRetrievalOptions = {},
   ): Promise<ToolSet> {
-    const {
-      categories,
-      excludeTools,
-      wrapWithErrorContext,
-      compactOutput,
-      spillLargeOutput,
-    } = options;
+    const { categories, excludeTools, compactOutput, spillLargeOutput } =
+      options;
     const categorySet = categories ? new Set(categories) : undefined;
 
     const results = await Promise.all(
@@ -425,7 +416,6 @@ export class ToolRegistryService {
     }
 
     const toolSet = this.hydrateToolSet(filteredDescriptors, context, {
-      wrapWithErrorContext,
       compactOutput,
       spillLargeOutput,
     });

@@ -1,4 +1,4 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { type AggregateOperations } from 'twenty-shared/types';
@@ -35,8 +35,6 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 
 @Injectable()
 export class ToolExecutorService {
-  private readonly logger = new Logger(ToolExecutorService.name);
-
   constructor(
     @Inject(TOOL_PROVIDERS)
     private readonly providers: ToolProvider[],
