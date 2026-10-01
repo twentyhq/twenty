@@ -64,10 +64,13 @@ export class RecordAccessPolicyService {
       string,
       Map<string, Promise<RecordShare[]>>
     >();
-    const fetchRecordShares = async (
-      objectMetadataId: string,
-      recordIds: string[],
-    ) => {
+    const fetchRecordShares = async ({
+      objectMetadataId,
+      recordIds,
+    }: {
+      objectMetadataId: string;
+      recordIds: string[];
+    }) => {
       const recordSharesByRecordId =
         recordSharesByRecordIdByObject.get(objectMetadataId) ??
         new Map<string, Promise<RecordShare[]>>();
