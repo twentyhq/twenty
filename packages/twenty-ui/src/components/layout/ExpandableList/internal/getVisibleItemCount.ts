@@ -16,7 +16,9 @@ export const getVisibleItemCount = ({
     const nextOccupiedWidth =
       occupiedWidth + itemWidth + (visibleItemCount > 0 ? gap : 0);
 
-    if (visibleItemCount > 0 && nextOccupiedWidth > availableWidth) {
+    const shouldKeepFirstItemVisible = visibleItemCount === 0;
+
+    if (!shouldKeepFirstItemVisible && nextOccupiedWidth > availableWidth) {
       const partialItemFits = occupiedWidth + gap < availableWidth;
 
       return includePartialItem && partialItemFits
