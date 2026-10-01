@@ -7,10 +7,12 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { viewsFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/viewsFromObjectMetadataItemFamilySelector';
+import { getCompatibleEndDateFields } from '@/views/utils/getCompatibleEndDateFields';
 import { viewTypeIconKeyMapping } from '@/views/types/ViewType';
 import { useGetAvailableDateFields } from '@/views/view-picker/hooks/useGetAvailableDateFields';
 import { useGetAvailableFieldsToGroupRecordsBy } from '@/views/view-picker/hooks/useGetAvailableFieldsToGroupRecordsBy';
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
+import { viewPickerEndFieldMetadataIdComponentState } from '@/views/view-picker/states/viewPickerEndFieldMetadataIdComponentState';
 import { viewPickerStartFieldMetadataIdComponentState } from '@/views/view-picker/states/viewPickerStartFieldMetadataIdComponentState';
 import { viewPickerInputNameComponentState } from '@/views/view-picker/states/viewPickerInputNameComponentState';
 import { viewPickerIsDirtyComponentState } from '@/views/view-picker/states/viewPickerIsDirtyComponentState';
@@ -45,6 +47,10 @@ export const ViewPickerContentEffect = () => {
 
   const setViewPickerStartFieldMetadataId = useSetAtomComponentState(
     viewPickerStartFieldMetadataIdComponentState,
+  );
+
+  const setViewPickerEndFieldMetadataId = useSetAtomComponentState(
+    viewPickerEndFieldMetadataIdComponentState,
   );
 
   const [viewPickerType, setViewPickerType] = useAtomComponentState(
@@ -107,6 +113,17 @@ export const ViewPickerContentEffect = () => {
           : (availableDateFields[0]?.id ?? '');
 
       setViewPickerStartFieldMetadataId(startFieldMetadataId);
+
+      const isReferenceEndFieldCompatible = getCompatibleEndDateFields({
+        dateFields: availableDateFields,
+        startFieldMetadataId,
+      }).some((field) => field.id === referenceView.endFieldMetadataId);
+
+      setViewPickerEndFieldMetadataId(
+        isReferenceEndFieldCompatible
+          ? (referenceView.endFieldMetadataId ?? '')
+          : '',
+      );
     }
   }, [
     referenceView,
@@ -114,6 +131,7 @@ export const ViewPickerContentEffect = () => {
     setViewPickerSelectedIcon,
     setViewPickerType,
     setViewPickerStartFieldMetadataId,
+    setViewPickerEndFieldMetadataId,
     setViewPickerVisibility,
     viewPickerIsPersisting,
     viewPickerIsDirty,

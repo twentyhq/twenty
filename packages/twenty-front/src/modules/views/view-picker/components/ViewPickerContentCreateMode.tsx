@@ -4,6 +4,7 @@ import { Key } from 'ts-key-enum';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { Select } from '@/ui/input/components/Select';
+import { getCompatibleEndDateFields } from '@/views/utils/getCompatibleEndDateFields';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
@@ -27,6 +28,7 @@ import { useCreateViewFromCurrentState } from '@/views/view-picker/hooks/useCrea
 import { useGetAvailableDateFields } from '@/views/view-picker/hooks/useGetAvailableDateFields';
 import { useGetAvailableFieldsToGroupRecordsBy } from '@/views/view-picker/hooks/useGetAvailableFieldsToGroupRecordsBy';
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
+import { viewPickerEndFieldMetadataIdComponentState } from '@/views/view-picker/states/viewPickerEndFieldMetadataIdComponentState';
 import { viewPickerStartFieldMetadataIdComponentState } from '@/views/view-picker/states/viewPickerStartFieldMetadataIdComponentState';
 import { viewPickerInputNameComponentState } from '@/views/view-picker/states/viewPickerInputNameComponentState';
 import { viewPickerIsDirtyComponentState } from '@/views/view-picker/states/viewPickerIsDirtyComponentState';
@@ -83,6 +85,9 @@ export const ViewPickerContentCreateMode = () => {
 
   const [viewPickerStartFieldMetadataId, setViewPickerStartFieldMetadataId] =
     useAtomComponentState(viewPickerStartFieldMetadataIdComponentState);
+
+  const [viewPickerEndFieldMetadataId, setViewPickerEndFieldMetadataId] =
+    useAtomComponentState(viewPickerEndFieldMetadataIdComponentState);
 
   const [viewPickerType, setViewPickerType] = useAtomComponentState(
     viewPickerTypeComponentState,
@@ -145,6 +150,7 @@ export const ViewPickerContentCreateMode = () => {
   };
 
   const handleClose = async () => {
+    setViewPickerIsDirty(false);
     setViewPickerMode('list');
   };
 
@@ -239,6 +245,15 @@ export const ViewPickerContentCreateMode = () => {
                 onChange={(value) => {
                   setViewPickerIsDirty(true);
                   setViewPickerStartFieldMetadataId(value);
+
+                  const isEndFieldStillCompatible = getCompatibleEndDateFields({
+                    dateFields: availableDateFields,
+                    startFieldMetadataId: value,
+                  }).some((field) => field.id === viewPickerEndFieldMetadataId);
+
+                  if (!isEndFieldStillCompatible) {
+                    setViewPickerEndFieldMetadataId('');
+                  }
                 }}
                 options={
                   availableDateFields.length > 0
@@ -251,6 +266,31 @@ export const ViewPickerContentCreateMode = () => {
                 dropdownId={`${dropdownId}-calendar-field`}
               />
             </ViewPickerSelectContainer>
+            {viewPickerType === ViewType.TIMELINE &&
+              availableDateFields.length > 0 && (
+                <ViewPickerSelectContainer>
+                  <Select
+                    label={t`End date field`}
+                    fullWidth
+                    value={viewPickerEndFieldMetadataId}
+                    onChange={(value) => {
+                      setViewPickerIsDirty(true);
+                      setViewPickerEndFieldMetadataId(value);
+                    }}
+                    options={[
+                      { value: '', label: t`None` },
+                      ...getCompatibleEndDateFields({
+                        dateFields: availableDateFields,
+                        startFieldMetadataId: viewPickerStartFieldMetadataId,
+                      }).map((field) => ({
+                        value: field.id,
+                        label: field.label,
+                      })),
+                    ]}
+                    dropdownId={`${dropdownId}-end-date-field`}
+                  />
+                </ViewPickerSelectContainer>
+              )}
             {availableDateFields.length === 0 && (
               <StyledFieldAvailableContainer>
                 {viewPickerType === ViewType.TIMELINE ? (

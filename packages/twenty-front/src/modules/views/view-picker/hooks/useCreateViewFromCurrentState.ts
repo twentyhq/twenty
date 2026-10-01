@@ -3,6 +3,7 @@ import { useChangeView } from '@/views/hooks/useChangeView';
 import { useCreateViewFromCurrentView } from '@/views/hooks/useCreateViewFromCurrentView';
 import { ViewType } from '@/views/types/ViewType';
 import { useCloseAndResetViewPicker } from '@/views/view-picker/hooks/useCloseAndResetViewPicker';
+import { viewPickerEndFieldMetadataIdComponentState } from '@/views/view-picker/states/viewPickerEndFieldMetadataIdComponentState';
 import { viewPickerStartFieldMetadataIdComponentState } from '@/views/view-picker/states/viewPickerStartFieldMetadataIdComponentState';
 import { viewPickerInputNameComponentState } from '@/views/view-picker/states/viewPickerInputNameComponentState';
 import { viewPickerIsDirtyComponentState } from '@/views/view-picker/states/viewPickerIsDirtyComponentState';
@@ -12,6 +13,7 @@ import { viewPickerModeComponentState } from '@/views/view-picker/states/viewPic
 import { viewPickerSelectedIconComponentState } from '@/views/view-picker/states/viewPickerSelectedIconComponentState';
 import { viewPickerTypeComponentState } from '@/views/view-picker/states/viewPickerTypeComponentState';
 import { viewPickerVisibilityComponentState } from '@/views/view-picker/states/viewPickerVisibilityComponentState';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -38,6 +40,11 @@ export const useCreateViewFromCurrentState = () => {
   const viewPickerStartFieldMetadataIdCallbackState =
     useAtomComponentStateCallbackState(
       viewPickerStartFieldMetadataIdComponentState,
+    );
+
+  const viewPickerEndFieldMetadataIdCallbackState =
+    useAtomComponentStateCallbackState(
+      viewPickerEndFieldMetadataIdComponentState,
     );
 
   const viewPickerIsPersistingCallbackState =
@@ -70,6 +77,9 @@ export const useCreateViewFromCurrentState = () => {
     const startFieldMetadataId = store.get(
       viewPickerStartFieldMetadataIdCallbackState,
     );
+    const endFieldMetadataId = store.get(
+      viewPickerEndFieldMetadataIdCallbackState,
+    );
 
     const viewPickerMode = store.get(viewPickerModeCallbackState);
     const visibility = store.get(viewPickerVisibilityCallbackState);
@@ -88,7 +98,10 @@ export const useCreateViewFromCurrentState = () => {
         mainGroupByFieldMetadataId:
           type === ViewType.KANBAN ? mainGroupByFieldMetadataId : null,
         startFieldMetadataId,
-        endFieldMetadataId: null,
+        endFieldMetadataId:
+          type === ViewType.TIMELINE && isNonEmptyString(endFieldMetadataId)
+            ? endFieldMetadataId
+            : null,
         visibility,
       },
       shouldCopyFiltersAndSortsAndAggregate,
@@ -108,6 +121,7 @@ export const useCreateViewFromCurrentState = () => {
     viewPickerIsPersistingCallbackState,
     viewPickerMainGroupByFieldMetadataIdCallbackState,
     viewPickerStartFieldMetadataIdCallbackState,
+    viewPickerEndFieldMetadataIdCallbackState,
     viewPickerSelectedIconCallbackState,
     viewPickerTypeCallbackState,
     viewPickerModeCallbackState,

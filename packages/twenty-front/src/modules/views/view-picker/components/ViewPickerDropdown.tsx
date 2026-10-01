@@ -4,12 +4,14 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { StyledDropdownButtonContainer } from '@/ui/layout/dropdown/components/StyledDropdownButtonContainer';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useGetRecordIndexTotalCount } from '@/views/hooks/internal/useGetRecordIndexTotalCount';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { ViewPickerContentCreateMode } from '@/views/view-picker/components/ViewPickerContentCreateMode';
 import { ViewPickerContentEditMode } from '@/views/view-picker/components/ViewPickerContentEditMode';
 import { ViewPickerContentEffect } from '@/views/view-picker/components/ViewPickerContentEffect';
 import { ViewPickerListContent } from '@/views/view-picker/components/ViewPickerListContent';
+import { viewPickerIsDirtyComponentState } from '@/views/view-picker/states/viewPickerIsDirtyComponentState';
 import { useUpdateViewFromCurrentState } from '@/views/view-picker/hooks/useUpdateViewFromCurrentState';
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
 import { getViewPickerDropdownId } from '@/views/view-picker/utils/getViewPickerDropdownId';
@@ -66,6 +68,9 @@ export const ViewPickerDropdown = () => {
   );
 
   const { viewPickerMode, setViewPickerMode } = useViewPickerMode();
+  const setViewPickerIsDirty = useSetAtomComponentState(
+    viewPickerIsDirtyComponentState,
+  );
 
   const { getIcon } = useIcons();
   const CurrentViewIcon = getIcon(currentView?.icon);
@@ -73,6 +78,8 @@ export const ViewPickerDropdown = () => {
   const handleClickOutside = async () => {
     if (isDropdownOpen && viewPickerMode === 'edit') {
       await updateViewFromCurrentState();
+    } else {
+      setViewPickerIsDirty(false);
     }
     setViewPickerMode('list');
   };
