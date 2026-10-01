@@ -67,7 +67,7 @@ export const useExpandableListLayout = ({
       const itemWidths = measureItemWidths({
         items,
         itemElements,
-        shouldMeasureNaturalWidths: supportsSynchronousLayout,
+        supportsSynchronousLayout,
       });
       const gap = parseFloat(getComputedStyle(items).columnGap) || 0;
       const containerWidth = container.clientWidth;

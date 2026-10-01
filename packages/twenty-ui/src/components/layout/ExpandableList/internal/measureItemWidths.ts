@@ -1,14 +1,14 @@
 export const measureItemWidths = ({
   items,
   itemElements,
-  shouldMeasureNaturalWidths,
+  supportsSynchronousLayout,
 }: {
   items: HTMLElement;
   itemElements: Element[];
-  shouldMeasureNaturalWidths: boolean;
+  supportsSynchronousLayout: boolean;
 }) => {
-  if (!shouldMeasureNaturalWidths) {
-    return itemElements.map((item) => item.clientWidth);
+  if (!supportsSynchronousLayout) {
+    return itemElements.map((item) => item.scrollWidth);
   }
 
   items.setAttribute('data-measuring', '');
