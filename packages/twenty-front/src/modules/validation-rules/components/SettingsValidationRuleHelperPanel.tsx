@@ -56,11 +56,7 @@ export const SettingsValidationRuleHelperPanel = ({
 
   return (
     <StyledPanel>
-      <StyledList
-        role="listbox"
-        aria-label={t`Suggestions`}
-        onMouseDown={(event) => event.preventDefault()}
-      >
+      <StyledList role="listbox" aria-label={t`Suggestions`}>
         {items.length === 0 && (
           <StyledEmpty>{t`Nothing to suggest here.`}</StyledEmpty>
         )}
@@ -78,6 +74,10 @@ export const SettingsValidationRuleHelperPanel = ({
                       element?.scrollIntoView({ block: 'nearest' })
                   : undefined
               }
+              onMouseDown={(event) => {
+                event.preventDefault();
+                onSelect(item);
+              }}
             >
               <MenuItem
                 LeftComponent={
@@ -93,9 +93,7 @@ export const SettingsValidationRuleHelperPanel = ({
                 }
                 contextualTextPosition="right"
                 focused={isHighlighted}
-                shortcut={isHighlighted ? ['Enter'] : undefined}
                 onMouseEnter={() => onHighlight(index)}
-                onClick={() => onSelect(item)}
               />
             </div>
           );
