@@ -82,6 +82,7 @@ When adding AI behavior:
 
 `sendInboxMessage` from `twenty-sdk/logic-function` posts a message from the app in a workspace member's chats.
 
+- `workspaceMemberId` is the member who receives it, and `text` is the message, in markdown.
 - `threadKey` picks the conversation per app and member: a new key starts one titled `title`, a known key adds to it. `idempotencyKey` identifies the message in it, so sending again with the same keys writes nothing and retries never duplicate it.
 - `request` (optional) ends the message on `ask_questions`, `request_form` or `propose_email`, which pause the conversation until the member answers, or on one of the app's own tools by `logicFunctionUniversalIdentifier`, rendered by its front component without pausing.
 - Only one call the member answers (`ask_questions`, `request_form`, `propose_email`) can wait at a time; another fails with `THREAD_AWAITING_ANSWER` until they answer. Plain messages and app tool requests are still accepted.
