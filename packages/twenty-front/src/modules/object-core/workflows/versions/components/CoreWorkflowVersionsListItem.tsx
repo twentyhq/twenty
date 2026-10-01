@@ -21,7 +21,7 @@ export const CoreWorkflowVersionsListItem = ({
   status,
   onSelect,
 }: CoreWorkflowVersionsListItemProps) => {
-  const { t } = useLingui();
+  const { t, i18n } = useLingui();
   const statusLabel = t(CORE_WORKFLOW_VERSION_STATUS_LABELS[status]);
 
   return (
@@ -29,7 +29,7 @@ export const CoreWorkflowVersionsListItem = ({
       <CommandMenuItem
         id={id}
         Icon={IconVersions}
-        label={new Date(createdAt).toLocaleDateString(undefined, {
+        label={i18n.date(createdAt, {
           year: 'numeric',
           month: 'long',
           day: 'numeric',
