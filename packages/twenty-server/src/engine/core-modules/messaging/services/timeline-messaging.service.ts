@@ -25,6 +25,15 @@ export type TimelineThreadWithoutParticipants = Omit<
   'firstParticipant' | 'lastTwoParticipants' | 'participantCount' | 'read'
 >;
 
+type DiscoveredThreadPage = {
+  totalNumberOfThreads: number;
+  messageThreadIds: string[];
+  messages: Pick<
+    MessageWorkspaceEntity,
+    'id' | 'messageThreadId' | 'receivedAt' | 'isDraft'
+  >[];
+};
+
 @Injectable()
 export class TimelineMessagingService {
   constructor(
@@ -44,63 +53,15 @@ export class TimelineMessagingService {
     totalNumberOfThreads: number;
   }> {
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-      const messageThreadRepository =
-        this.workspaceOrmManager.getRepositoryWithContextPermissions<MessageThreadWorkspaceEntity>(
-          'messageThread',
-          undefined,
-          'existence',
-        );
-
-      const totalQueryBuilder = messageThreadRepository
-        .createQueryBuilder('messageThread')
-        .select('messageThread.id', 'id')
-        .innerJoin('messageThread.messages', 'messages')
-        .groupBy('messageThread.id');
-      const threadIdsQueryBuilder = messageThreadRepository
-        .createQueryBuilder('messageThread')
-        .select('messageThread.id', 'id')
-        .addSelect('MAX(messages.receivedAt)', 'max_received_at')
-        .innerJoin('messageThread.messages', 'messages')
-        .groupBy('messageThread.id')
-        .orderBy('max_received_at', 'DESC')
-        .offset(offset)
-        .limit(pageSize);
-
-      const applyRecordFilter = (
-        queryBuilder: WorkspaceSelectQueryBuilder,
-      ): void => {
-        if (isDefined(targetFilter)) {
-          queryBuilder
-            .innerJoin(
-              'messageThread.messageThreadTargets',
-              'messageThreadTargets',
-            )
-            .where(
-              `messageThreadTargets.${targetFilter.fieldName} = :targetRecordId`,
-              { targetRecordId: targetFilter.recordId },
-            );
-
-          return;
-        }
-
-        queryBuilder
-          .innerJoin('messages.messageParticipants', 'messageParticipants')
-          .where('messageParticipants.personId IN(:...personIds)', {
-            personIds,
-          });
-      };
-
-      applyRecordFilter(totalQueryBuilder);
-      applyRecordFilter(threadIdsQueryBuilder);
-
-      let totalNumberOfThreads: number;
-      let messageThreadIds: string[];
+      let discoveredThreads: DiscoveredThreadPage;
 
       try {
-        totalNumberOfThreads = await totalQueryBuilder.getCount();
-        messageThreadIds = (
-          await threadIdsQueryBuilder.getRawMany<{ id: string }>()
-        ).map((thread) => thread.id);
+        discoveredThreads = await this.findDiscoverableThreads({
+          personIds,
+          offset,
+          pageSize,
+          targetFilter,
+        });
       } catch (error) {
         if (error instanceof PermissionsException) {
           return { messageThreads: [], totalNumberOfThreads: 0 };
@@ -109,26 +70,12 @@ export class TimelineMessagingService {
         throw error;
       }
 
+      const { totalNumberOfThreads, messageThreadIds, messages } =
+        discoveredThreads;
+
       if (messageThreadIds.length === 0) {
         return { messageThreads: [], totalNumberOfThreads };
       }
-
-      const messages = await this.workspaceOrmManager
-        .getRepositoryWithContextPermissions<MessageWorkspaceEntity>(
-          'message',
-          undefined,
-          'existence',
-        )
-        .find({
-          where: { messageThreadId: In(messageThreadIds) },
-          select: {
-            id: true,
-            messageThreadId: true,
-            receivedAt: true,
-            isDraft: true,
-          },
-          order: { receivedAt: 'DESC' },
-        });
 
       const messagesByThreadId = groupBy(
         messages,
@@ -177,6 +124,95 @@ export class TimelineMessagingService {
         totalNumberOfThreads,
       };
     });
+  }
+
+  private async findDiscoverableThreads({
+    personIds,
+    offset,
+    pageSize,
+    targetFilter,
+  }: {
+    personIds: string[];
+    offset: number;
+    pageSize: number;
+    targetFilter?: TargetFilter;
+  }): Promise<DiscoveredThreadPage> {
+    const messageThreadRepository =
+      this.workspaceOrmManager.getRepositoryWithContextPermissions<MessageThreadWorkspaceEntity>(
+        'messageThread',
+        undefined,
+        'existence',
+      );
+
+    const totalQueryBuilder = messageThreadRepository
+      .createQueryBuilder('messageThread')
+      .select('messageThread.id', 'id')
+      .innerJoin('messageThread.messages', 'messages')
+      .groupBy('messageThread.id');
+    const threadIdsQueryBuilder = messageThreadRepository
+      .createQueryBuilder('messageThread')
+      .select('messageThread.id', 'id')
+      .addSelect('MAX(messages.receivedAt)', 'max_received_at')
+      .innerJoin('messageThread.messages', 'messages')
+      .groupBy('messageThread.id')
+      .orderBy('max_received_at', 'DESC')
+      .offset(offset)
+      .limit(pageSize);
+
+    const applyRecordFilter = (
+      queryBuilder: WorkspaceSelectQueryBuilder,
+    ): void => {
+      if (isDefined(targetFilter)) {
+        queryBuilder
+          .innerJoin(
+            'messageThread.messageThreadTargets',
+            'messageThreadTargets',
+          )
+          .where(
+            `messageThreadTargets.${targetFilter.fieldName} = :targetRecordId`,
+            { targetRecordId: targetFilter.recordId },
+          );
+
+        return;
+      }
+
+      queryBuilder
+        .innerJoin('messages.messageParticipants', 'messageParticipants')
+        .where('messageParticipants.personId IN(:...personIds)', {
+          personIds,
+        });
+    };
+
+    applyRecordFilter(totalQueryBuilder);
+    applyRecordFilter(threadIdsQueryBuilder);
+
+    const totalNumberOfThreads = await totalQueryBuilder.getCount();
+    const messageThreadIds = (
+      await threadIdsQueryBuilder.getRawMany<{ id: string }>()
+    ).map((thread) => thread.id);
+
+    if (messageThreadIds.length === 0) {
+      return { totalNumberOfThreads, messageThreadIds, messages: [] };
+    }
+
+    const messages = await this.workspaceOrmManager
+      .getRepositoryWithContextPermissions<MessageWorkspaceEntity>(
+        'message',
+        undefined,
+        'existence',
+      )
+      .find({
+        where: { messageThreadId: In(messageThreadIds) },
+        select: {
+          id: true,
+          messageThreadId: true,
+          receivedAt: true,
+          isDraft: true,
+        },
+        order: { receivedAt: 'DESC' },
+      });
+
+    return { totalNumberOfThreads, messageThreadIds, messages };
   }
 
   // A role that cannot read subjects or bodies sees every thread as unshared.

@@ -102,14 +102,18 @@ describe('updateOneObjectRecordsPermissions', () => {
       },
     });
 
-    await makeGraphqlApiRequest(updateMessageOperation);
-
-    if (isDefined(messageThreadShare)) {
-      await setManualRecordShare({
-        workspaceId: SEED_APPLE_WORKSPACE_ID,
-        share: messageThreadShare,
-        enabled: false,
-      });
+    // Restoring the text needs the write grant, so it is revoked afterwards
+    // whatever the restore outcome.
+    try {
+      await makeGraphqlApiRequest(updateMessageOperation);
+    } finally {
+      if (isDefined(messageThreadShare)) {
+        await setManualRecordShare({
+          workspaceId: SEED_APPLE_WORKSPACE_ID,
+          share: messageThreadShare,
+          enabled: false,
+        });
+      }
     }
   });
 

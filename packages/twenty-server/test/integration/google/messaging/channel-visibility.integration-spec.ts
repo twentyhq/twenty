@@ -118,6 +118,8 @@ describe('Message thread access from channel visibility (integration)', () => {
       }),
     );
 
+    expect(personResponse.body.errors).toBeUndefined();
+
     senderPersonId = personResponse.body.data.createPerson.id;
 
     janeChannel = await connectMessagingAccount({
@@ -135,6 +137,9 @@ describe('Message thread access from channel visibility (integration)', () => {
         filter: { subject: { eq: subject } },
       }),
     );
+
+    expect(response.body.errors).toBeUndefined();
+    expect(response.body.data.messages.edges.length).toBeGreaterThan(0);
 
     messageId = response.body.data.messages.edges[0].node.id;
     messageThreadId = response.body.data.messages.edges[0].node.messageThreadId;

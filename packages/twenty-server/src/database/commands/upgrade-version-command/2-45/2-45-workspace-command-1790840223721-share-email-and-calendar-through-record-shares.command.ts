@@ -7,7 +7,10 @@ import { DataSource } from 'typeorm';
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
-import { buildChannelRecordShareBackfillQueries } from 'src/database/commands/upgrade-version-command/2-45/utils/build-channel-record-share-backfill-queries.util';
+import {
+  buildChannelRecordShareBackfillQueries,
+  CHANNEL_RECORD_SHARE_BACKFILL_SOURCES,
+} from 'src/database/commands/upgrade-version-command/2-45/utils/build-channel-record-share-backfill-queries.util';
 import {
   buildDiscoverableEmailAndCalendarObjectUpdates,
   buildRevertedEmailAndCalendarObjectUpdates,
@@ -103,14 +106,35 @@ export class ShareEmailAndCalendarThroughRecordSharesCommand extends Provisioned
     );
   }
 
+  // One channel per transaction, under the lock the runtime channel sync takes,
+  // so a concurrent sync cannot have its revocations reinserted from an older
+  // snapshot. The key format must match the runtime sync.
   private async grantChannelRecords(workspaceId: string): Promise<void> {
     const schemaName = escapeIdentifier(getWorkspaceSchemaName(workspaceId));
 
-    await this.dataSource.transaction(async (manager) => {
-      for (const query of buildChannelRecordShareBackfillQueries(schemaName)) {
-        await manager.query(query, [workspaceId]);
+    for (const source of CHANNEL_RECORD_SHARE_BACKFILL_SOURCES) {
+      const queries = buildChannelRecordShareBackfillQueries({
+        schemaName,
+        source,
+      });
+      const channels: { id: string }[] = await this.dataSource.query(
+        `SELECT id FROM core."${source.channelTableName}" WHERE "workspaceId" = $1`,
+        [workspaceId],
+      );
+
+      for (const { id: channelId } of channels) {
+        await this.dataSource.transaction(async (manager) => {
+          await manager.query(
+            'SELECT pg_advisory_xact_lock(hashtextextended($1, 0))',
+            [`channel-record-share:${workspaceId}:${channelId}`],
+          );
+
+          for (const query of queries) {
+            await manager.query(query, [workspaceId, channelId]);
+          }
+        });
       }
-    });
+    }
   }
 
   private async updateObjects(
