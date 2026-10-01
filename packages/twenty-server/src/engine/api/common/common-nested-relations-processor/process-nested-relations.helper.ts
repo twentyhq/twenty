@@ -11,7 +11,8 @@ import {
   type ConcurrencyLimiter,
   createConcurrencyLimiter,
 } from 'src/engine/api/common/common-nested-relations-processor/utils/create-concurrency-limiter.util';
-import { assignRelationRecords } from 'src/engine/api/common/common-nested-relations-processor/utils/assign-relation-records.util';
+import { assignManyToOneRelationRecords } from 'src/engine/api/common/common-nested-relations-processor/utils/assign-many-to-one-relation-records.util';
+import { assignOneToManyRelationRecords } from 'src/engine/api/common/common-nested-relations-processor/utils/assign-one-to-many-relation-records.util';
 import { getUniqueRelationIds } from 'src/engine/api/common/common-nested-relations-processor/utils/get-unique-relation-ids.util';
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
 import {
@@ -216,8 +217,8 @@ export class ProcessNestedRelationsHelper {
         relationResults: [],
         relationAggregatedFieldsResult: {},
         sourceFieldName,
-        joinField: 'id',
-        joinColumnName: computeMorphOrRelationFieldJoinColumnName({
+        relatedRecordJoinColumnName: 'id',
+        parentRecordJoinColumnName: computeMorphOrRelationFieldJoinColumnName({
           name: sourceFieldName,
         }),
         relationType,
@@ -306,11 +307,11 @@ export class ProcessNestedRelationsHelper {
       relationResults,
       relationAggregatedFieldsResult,
       sourceFieldName,
-      joinField:
+      relatedRecordJoinColumnName:
         relationType === RelationType.ONE_TO_MANY
           ? `${fieldMetadataTargetRelationColumnName}`
           : 'id',
-      joinColumnName,
+      parentRecordJoinColumnName: joinColumnName,
       relationType,
       selectedFields,
     });
@@ -544,8 +545,8 @@ export class ProcessNestedRelationsHelper {
     relationResults,
     relationAggregatedFieldsResult,
     sourceFieldName,
-    joinField,
-    joinColumnName,
+    relatedRecordJoinColumnName,
+    parentRecordJoinColumnName,
     relationType,
     selectedFields,
   }: {
@@ -557,20 +558,27 @@ export class ProcessNestedRelationsHelper {
     // oxlint-disable-next-line typescript/no-explicit-any
     relationAggregatedFieldsResult: Record<string, any>;
     sourceFieldName: string;
-    joinField: string;
-    joinColumnName: string;
+    relatedRecordJoinColumnName: string;
+    parentRecordJoinColumnName: string;
     relationType: RelationType;
     selectedFields: Record<string, unknown>;
   }): void {
-    assignRelationRecords({
-      parentRecords,
-      relationRecords: relationResults,
-      sourceFieldName,
-      joinField,
-      joinColumnName,
-      relationType,
-      selectedFields,
-    });
+    if (relationType === RelationType.ONE_TO_MANY) {
+      assignOneToManyRelationRecords({
+        parentRecords,
+        relationRecords: relationResults,
+        sourceFieldName,
+        relatedRecordJoinColumnName,
+      });
+    } else {
+      assignManyToOneRelationRecords({
+        parentRecords,
+        relationRecords: relationResults,
+        sourceFieldName,
+        parentRecordJoinColumnName,
+        selectedFields,
+      });
+    }
 
     parentObjectRecordsAggregatedValues[sourceFieldName] =
       relationAggregatedFieldsResult;

@@ -1,20 +1,17 @@
 import { type ObjectRecord } from 'twenty-shared/types';
 
-import { assignRelationRecords } from 'src/engine/api/common/common-nested-relations-processor/utils/assign-relation-records.util';
-import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
+import { assignManyToOneRelationRecords } from 'src/engine/api/common/common-nested-relations-processor/utils/assign-many-to-one-relation-records.util';
+import { assignOneToManyRelationRecords } from 'src/engine/api/common/common-nested-relations-processor/utils/assign-one-to-many-relation-records.util';
 
 const assignActivities = (
   parentRecords: ObjectRecord[],
   relationRecords: ObjectRecord[],
 ) =>
-  assignRelationRecords({
+  assignOneToManyRelationRecords({
     parentRecords,
     relationRecords,
     sourceFieldName: 'activities',
-    joinField: 'opportunityId',
-    joinColumnName: '',
-    relationType: RelationType.ONE_TO_MANY,
-    selectedFields: {},
+    relatedRecordJoinColumnName: 'opportunityId',
   });
 
 const assignCompanies = (
@@ -22,17 +19,15 @@ const assignCompanies = (
   relationRecords: ObjectRecord[],
   selectedFields: Record<string, unknown> = {},
 ) =>
-  assignRelationRecords({
+  assignManyToOneRelationRecords({
     parentRecords,
     relationRecords,
     sourceFieldName: 'company',
-    joinField: '',
-    joinColumnName: 'companyId',
-    relationType: RelationType.MANY_TO_ONE,
+    parentRecordJoinColumnName: 'companyId',
     selectedFields,
   });
 
-describe('assignRelationRecords', () => {
+describe('relation record assignment', () => {
   it('attaches only matching children in their original order', () => {
     const parents = [{ id: 'first' }, { id: 'second' }, { id: 'empty' }];
     const children = [

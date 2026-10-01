@@ -16,12 +16,12 @@ describe('createRowToEntityMapper', () => {
         person_deletedAt: null,
         extra: 'ignored',
       }),
-    ).toEqual({
+    ).toStrictEqual({
       id: 'first',
       name: undefined,
       deletedAt: null,
     });
-    expect(mapRow({ person_id: 'second', person_name: 'Name' })).toEqual({
+    expect(mapRow({ person_id: 'second', person_name: 'Name' })).toStrictEqual({
       id: 'second',
       name: 'Name',
     });
@@ -57,7 +57,7 @@ describe('createRowToEntityMapper', () => {
       owner_name: null,
     });
 
-    expect(first).toEqual({
+    expect(first).toStrictEqual({
       id: 'first',
       company: {
         id: 'company-1',
@@ -65,17 +65,19 @@ describe('createRowToEntityMapper', () => {
         owner: { id: 'owner-1', name: 'Alice' },
       },
     });
-    expect(second).toEqual({
+    expect(second).toStrictEqual({
       id: 'second',
       company: { id: 'company-2', name: 'Second', owner: null },
     });
-    expect(unmatched).toEqual({ id: 'third', company: null });
+    expect(unmatched).toStrictEqual({ id: 'third', company: null });
   });
 
   it('keeps a partial joined object without an ID, even when its value is null', () => {
     const mapRow = createRowToEntityMapper({ company_name: 'company.name' });
 
-    expect(mapRow({ company_name: null })).toEqual({ company: { name: null } });
-    expect(mapRow({})).toEqual({});
+    expect(mapRow({ company_name: null })).toStrictEqual({
+      company: { name: null },
+    });
+    expect(mapRow({})).toStrictEqual({});
   });
 });
