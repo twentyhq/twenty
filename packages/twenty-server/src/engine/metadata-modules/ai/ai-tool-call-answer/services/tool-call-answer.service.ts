@@ -5,6 +5,7 @@ import { generateId } from 'ai';
 import { ASK_QUESTIONS_TOOL_NAME } from 'twenty-shared/ai';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
+import { StepStatus } from 'twenty-shared/workflow';
 
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { workspaceAuthContextStorage } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
@@ -12,6 +13,7 @@ import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/servi
 import { type ToolContext } from 'src/engine/core-modules/tool-provider/types/tool-context.type';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
+import { REQUEST_FORM_PAUSING_TOOL } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/request-form.pausing-tool';
 import { type PausingToolCompletionContext } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/types/pausing-tool-completion-context.type';
 import { parsePausingToolCall } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/parse-pausing-tool-call.util';
 import { AgentActorContextService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-actor-context.service';
@@ -23,6 +25,7 @@ import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/service
 import { mapErrorToStreamError } from 'src/engine/metadata-modules/ai/ai-chat/utils/map-error-to-stream-error.util';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
+import { AgentHistoryWorkspaceStorageService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-workspace-storage.service';
 import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import {
   AiException,
@@ -38,6 +41,7 @@ import {
   type WorkflowRunWorkspaceEntity,
 } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+import { isWorkflowFormAction } from 'src/modules/workflow/workflow-executor/workflow-actions/form/guards/is-workflow-form-action.guard';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 import { WorkflowRunnerWorkspaceService } from 'src/modules/workflow/workflow-runner/workspace-services/workflow-runner.workspace-service';
 
@@ -78,6 +82,7 @@ export class ToolCallAnswerService {
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly agentActorContextService: AgentActorContextService,
     private readonly toolRegistryService: ToolRegistryService,
+    private readonly agentHistoryWorkspaceStorageService: AgentHistoryWorkspaceStorageService,
   ) {}
 
   async answer(args: AnswerToolCallArgs): Promise<AnswerToolCallOutcome> {
@@ -286,8 +291,7 @@ export class ToolCallAnswerService {
     }
   }
 
-  // Behind submitFormStep, kept for clients built before answerToolCall: a
-  // form step's call is named after the step, in the step's conversation.
+  // Runs created before conversations are available still need to accept answers.
   async answerFormStep({
     workflowRunId,
     stepId,
@@ -296,17 +300,138 @@ export class ToolCallAnswerService {
     workflowRunId: string;
     stepId: string;
   }): Promise<void> {
+    await this.assertCanAnswerForWorkflowRun({
+      workflowRunId,
+      workspaceId: args.workspace.id,
+      userWorkspaceId: args.userWorkspaceId,
+    });
+
     const workflowRun = await this.workflowRunWorkspaceService.getWorkflowRun({
       workflowRunId,
       workspaceId: args.workspace.id,
     });
     const threadId = workflowRun?.state?.stepInfos?.[stepId]?.threadId;
 
-    if (!isDefined(threadId)) {
+    if (isDefined(threadId)) {
+      await this.answer({ ...args, threadId, toolCallId: stepId });
+
+      return;
+    }
+
+    // The pending-form backfill holds the history fence while reading and
+    // rewriting runs. It must not overwrite an answer accepted in the meantime.
+    const recordedThreadId = await this.agentHistoryWorkspaceStorageService.run(
+      args.workspace.id,
+      async () => {
+        const currentRun =
+          await this.workflowRunWorkspaceService.getWorkflowRun({
+            workflowRunId,
+            workspaceId: args.workspace.id,
+          });
+        const currentThreadId =
+          currentRun?.state?.stepInfos?.[stepId]?.threadId;
+
+        if (isDefined(currentThreadId)) {
+          return currentThreadId;
+        }
+
+        await this.answerFormWithoutConversation({
+          ...args,
+          workflowRunId,
+          stepId,
+          workflowRun: currentRun,
+        });
+
+        return null;
+      },
+      { lockMode: 'exclusive' },
+    );
+
+    // Release the fence before the conversation answer takes its own history locks.
+    if (isDefined(recordedThreadId)) {
+      await this.answer({
+        ...args,
+        threadId: recordedThreadId,
+        toolCallId: stepId,
+      });
+
+      return;
+    }
+
+    // The answer is already committed. Release the history fence before resuming
+    // or failing the run, since failure closes its other waiting conversations.
+    try {
+      await this.workflowRunnerWorkspaceService.resume({
+        workspaceId: args.workspace.id,
+        workflowRunId,
+        lastExecutedStepId: stepId,
+      });
+    } catch (error) {
+      await this.workflowRunWorkspaceService.endWorkflowRun({
+        workspaceId: args.workspace.id,
+        workflowRunId,
+        status: WorkflowRunStatus.FAILED,
+        error: 'The run could not resume after its form was answered',
+      });
+
+      throw error;
+    }
+  }
+
+  private async answerFormWithoutConversation({
+    workflowRun,
+    workflowRunId,
+    stepId,
+    ...args
+  }: Omit<AnswerToolCallArgs, 'threadId' | 'toolCallId' | 'modelId'> & {
+    workflowRun: WorkflowRunWorkspaceEntity | null;
+    workflowRunId: string;
+    stepId: string;
+  }): Promise<void> {
+    const stepInfo = workflowRun?.state?.stepInfos?.[stepId];
+    const step = workflowRun?.state?.flow?.steps.find(
+      ({ id }) => id === stepId,
+    );
+
+    if (
+      workflowRun?.status !== WorkflowRunStatus.RUNNING ||
+      stepInfo?.status !== StepStatus.PENDING ||
+      isDefined(stepInfo.error) ||
+      !isDefined(step) ||
+      !isWorkflowFormAction(step)
+    ) {
       throw this.notPending();
     }
 
-    await this.answer({ ...args, threadId, toolCallId: stepId });
+    const formCall = REQUEST_FORM_PAUSING_TOOL.parseCall({
+      fields: step.settings.input,
+    });
+
+    if (!isDefined(formCall)) {
+      throw this.notPending();
+    }
+
+    const validation = formCall.validate(args.response);
+
+    if (!validation.isValid) {
+      throw new AiException(
+        validation.errorMessage,
+        AiExceptionCode.INVALID_TOOL_CALL_OUTPUT,
+      );
+    }
+
+    const hasCompletedStep =
+      await this.workflowRunnerWorkspaceService.completeFormStep({
+        workspaceId: args.workspace.id,
+        workflowRunId,
+        step,
+        expectedThreadId: null,
+        response: validation.output,
+      });
+
+    if (!hasCompletedStep) {
+      throw this.notPending();
+    }
   }
 
   // Behind answerAgentChatQuestion, kept for clients built before
