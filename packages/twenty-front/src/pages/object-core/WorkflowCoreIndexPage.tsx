@@ -5,7 +5,6 @@ import { useInView } from 'react-intersection-observer';
 import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme';
 
 import { CommandMenuContextProvider } from '@/command-menu-item/contexts/CommandMenuContextProvider';
 import { getCommandMenuIdFromRecordIndexId } from '@/command-menu-item/utils/getCommandMenuIdFromRecordIndexId';
@@ -20,8 +19,8 @@ import { useCreateCoreWorkflow } from '@/object-core/workflows/hooks/useCreateCo
 import { coreWorkflowsFilterSettingsState } from '@/object-core/workflows/states/coreWorkflowsFilterSettingsState';
 import { isUsableCoreWorkflowFilterRule } from '@/object-core/workflows/utils/isUsableCoreWorkflowFilterRule';
 import { RecordIndexEmptyStateDisplay } from '@/object-record/record-index/components/RecordIndexEmptyStateDisplay';
+import { RecordIndexPageHeaderTitle } from '@/object-record/record-index/components/RecordIndexPageHeaderTitle';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { CoreWorkflowsFilterBar } from '@/object-core/workflows/components/CoreWorkflowsFilterBar';
 import { WORKFLOW_CORE_TABLE_COLUMNS } from '@/object-core/workflows/constants/WorkflowCoreTableColumns';
 import {
@@ -46,22 +45,6 @@ const StyledTableContainer = styled.div`
 
 const StyledFetchMoreSentinel = styled.div`
   height: 1px;
-`;
-
-const StyledTitleWithSelectedRecords = styled.div`
-  display: flex;
-  flex-direction: row;
-  gap: ${themeCssVariables.spacing[1]};
-`;
-
-const StyledTitle = styled.div`
-  color: ${themeCssVariables.font.color.primary};
-  padding-right: ${themeCssVariables.spacing['0.5']};
-`;
-
-const StyledSelectedRecordsCount = styled.div`
-  color: ${themeCssVariables.font.color.tertiary};
-  padding-left: ${themeCssVariables.spacing['0.5']};
 `;
 
 const getCoreWorkflowLink = (workflow: CoreWorkflow) =>
@@ -99,8 +82,6 @@ export const WorkflowCoreIndexPage = () => {
     selectRows,
   } = useCoreWorkflowsSelection({ coreWorkflows });
 
-  const { formatNumber } = useNumberFormat();
-
   useListenToCoreWorkflowEvents({ refetch: refetchLoadedCoreWorkflows });
 
   const coreWorkflowsFilterSettings = useAtomStateValue(
@@ -119,19 +100,6 @@ export const WorkflowCoreIndexPage = () => {
     !hasNextPage &&
     displayedCoreWorkflows.length === 0;
 
-  const pageHeaderTitle =
-    selectedRowCount > 0 ? (
-      <StyledTitleWithSelectedRecords>
-        <StyledTitle>{objectMetadataItem.labelPlural}</StyledTitle>
-        <>{'->'}</>
-        <StyledSelectedRecordsCount>
-          {t`${formatNumber(selectedRowCount)} selected`}
-        </StyledSelectedRecordsCount>
-      </StyledTitleWithSelectedRecords>
-    ) : (
-      objectMetadataItem.labelPlural
-    );
-
   useEffect(() => {
     if (inView && hasNextPage && !loading) {
       void fetchNextPage();
@@ -147,7 +115,12 @@ export const WorkflowCoreIndexPage = () => {
             icon={
               <ObjectMetadataIcon objectMetadataItem={objectMetadataItem} />
             }
-            title={pageHeaderTitle}
+            title={
+              <RecordIndexPageHeaderTitle
+                label={objectMetadataItem.labelPlural}
+                numberOfSelectedRecords={selectedRowCount}
+              />
+            }
             actionButton={
               <>
                 <CommandMenuComponentInstanceContext.Provider
