@@ -3,6 +3,7 @@ import {
   MetadataReadability,
   MetadataWritability,
   ObjectOpenRecordIn,
+  ObjectSharingReach,
 } from 'twenty-shared/types';
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
@@ -148,6 +149,7 @@ export const createStandardObjectFlatMetadata = <
     readability,
     readabilityParentFieldUniversalIdentifiers,
     discoverableFieldUniversalIdentifiers,
+    sharingReach: ObjectSharingReach.WORKSPACE,
     openRecordIn,
     isLabelSyncedWithName: false,
     overrides: null,

@@ -12,6 +12,7 @@ import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graph
 type WorkflowActionStepType =
   | 'SEND_EMAIL'
   | 'DRAFT_EMAIL'
+  | 'SEND_CHAT_MESSAGE'
   | 'CREATE_CALENDAR_EVENT'
   | 'CREATE_RECORD'
   | 'UPDATE_RECORD'
@@ -187,12 +188,14 @@ export const runWorkflowActionStep = async ({
   input,
   payload,
   runToken,
+  beforeRun,
 }: {
   name: string;
   stepType: WorkflowActionStepType;
   input: Record<string, unknown>;
   payload?: object;
   runToken?: string;
+  beforeRun?: () => Promise<unknown>;
 }): Promise<WorkflowActionStepRun> => {
   const workflowId = await createWorkflow(name);
 
@@ -217,6 +220,8 @@ export const runWorkflowActionStep = async ({
     const step = await findWorkflowVersionStep({ workflowVersionId, stepType });
 
     await updateWorkflowVersionStepInput({ workflowVersionId, step, input });
+
+    await beforeRun?.();
 
     workflowRunId = await runWorkflowVersion({
       workflowVersionId,

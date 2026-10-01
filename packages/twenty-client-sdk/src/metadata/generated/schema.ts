@@ -212,7 +212,7 @@ export interface Object {
     openRecordIn: ObjectOpenRecordIn
     readability: MetadataReadability
     readabilityParentFieldUniversalIdentifiers?: Scalars['UUID'][]
-    discoverableFieldUniversalIdentifiers?: Scalars['UUID'][]
+    sharingReach: ObjectSharingReach
     writability: MetadataWritability
     applicationId: Scalars['UUID']
     createdAt: Scalars['DateTime']
@@ -231,7 +231,9 @@ export interface Object {
 
 export type ObjectOpenRecordIn = 'SIDE_PANEL' | 'RECORD_PAGE' | 'USER_CHOICE'
 
-export type MetadataReadability = 'OPEN' | 'PRIVATE' | 'DISCOVERABLE' | 'INHERITED' | 'APPLICATION' | 'SYSTEM'
+export type MetadataReadability = 'OPEN' | 'PRIVATE' | 'INHERITED' | 'APPLICATION' | 'SYSTEM'
+
+export type ObjectSharingReach = 'ROLE_ACCESS' | 'WORKSPACE'
 
 export type MetadataWritability = 'OPEN' | 'APPLICATION' | 'SYSTEM'
 
@@ -1388,6 +1390,8 @@ export interface RecordSharingGrantDTO {
     principalId: Scalars['UUID']
     accessLevel: RecordShareAccessLevel
     rowCause: Scalars['String']
+    canRoleRead?: Scalars['Boolean']
+    canRoleUpdate?: Scalars['Boolean']
     __typename: 'RecordSharingGrantDTO'
 }
 
@@ -1407,6 +1411,7 @@ export interface RecordSharingDTO {
     isOpenByDefault: Scalars['Boolean']
     generalAccessLevel?: RecordShareAccessLevel
     isGeneralAccessDefault: Scalars['Boolean']
+    sharingReach: ObjectSharingReach
     roles: RecordSharingRoleDTO[]
     shares: RecordSharingGrantDTO[]
     __typename: 'RecordSharingDTO'
@@ -1687,7 +1692,7 @@ export interface FeatureFlag {
     __typename: 'FeatureFlag'
 }
 
-export type FeatureFlagKey = 'IS_APPLICATION_WORKFLOWS_ENABLED' | 'IS_ASYNC_CSV_EXPORT_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_JSON_FILTER_ENABLED' | 'IS_MESSAGE_CAMPAIGN_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED' | 'IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED' | 'IS_AI_CHAT_SHARING_DROPDOWN_ENABLED' | 'IS_INITIAL_OBJECT_VIEW_ENABLED' | 'IS_WEBHOOK_RATE_LIMIT_ENABLED' | 'IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED' | 'IS_EXECUTION_QUOTA_ENABLED' | 'IS_RECORD_CREATION_FORM_ENABLED' | 'IS_LOGS_SETTINGS_SECTION_ENABLED' | 'IS_CONVERSATIONS_TAB_ENABLED' | 'IS_VALIDATION_RULES_ENABLED' | 'IS_RECORD_LEVEL_SHARING_ENABLED'
+export type FeatureFlagKey = 'IS_APPLICATION_WORKFLOWS_ENABLED' | 'IS_ASYNC_CSV_EXPORT_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_JSON_FILTER_ENABLED' | 'IS_MESSAGE_CAMPAIGN_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED' | 'IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED' | 'IS_AI_CHAT_SHARING_DROPDOWN_ENABLED' | 'IS_INITIAL_OBJECT_VIEW_ENABLED' | 'IS_WEBHOOK_RATE_LIMIT_ENABLED' | 'IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED' | 'IS_EXECUTION_QUOTA_ENABLED' | 'IS_RECORD_CREATION_FORM_ENABLED' | 'IS_LOGS_SETTINGS_SECTION_ENABLED' | 'IS_CONVERSATIONS_TAB_ENABLED' | 'IS_VALIDATION_RULES_ENABLED' | 'IS_RECORD_LEVEL_SHARING_ENABLED' | 'IS_WORKFLOW_SEND_CHAT_MESSAGE_ENABLED'
 
 export interface WorkspaceUrls {
     customUrl?: Scalars['String']
@@ -3082,6 +3087,11 @@ export interface AgentChatEvent {
     __typename: 'AgentChatEvent'
 }
 
+export interface SendInboxMessageResult {
+    threadId: Scalars['UUID']
+    __typename: 'SendInboxMessageResult'
+}
+
 export interface StartWorkspaceSetupChatResult {
     outcome: WorkspaceSetupChatOutcome
     thread?: AgentChatThread
@@ -3696,6 +3706,7 @@ export interface Mutation {
     stopAgentChatStream: Scalars['Boolean']
     deleteQueuedChatMessage: Scalars['Boolean']
     startWorkspaceSetupChat: StartWorkspaceSetupChatResult
+    sendInboxMessage: SendInboxMessageResult
     createSkill: Skill
     updateSkill: Skill
     deleteSkill: Skill
@@ -3996,7 +4007,7 @@ export interface ObjectGenqlSelection{
     openRecordIn?: boolean | number
     readability?: boolean | number
     readabilityParentFieldUniversalIdentifiers?: boolean | number
-    discoverableFieldUniversalIdentifiers?: boolean | number
+    sharingReach?: boolean | number
     writability?: boolean | number
     applicationId?: boolean | number
     createdAt?: boolean | number
@@ -5207,6 +5218,8 @@ export interface RecordSharingGrantDTOGenqlSelection{
     principalId?: boolean | number
     accessLevel?: boolean | number
     rowCause?: boolean | number
+    canRoleRead?: boolean | number
+    canRoleUpdate?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -5226,6 +5239,7 @@ export interface RecordSharingDTOGenqlSelection{
     isOpenByDefault?: boolean | number
     generalAccessLevel?: boolean | number
     isGeneralAccessDefault?: boolean | number
+    sharingReach?: boolean | number
     roles?: RecordSharingRoleDTOGenqlSelection
     shares?: RecordSharingGrantDTOGenqlSelection
     __typename?: boolean | number
@@ -7004,6 +7018,12 @@ export interface AgentChatEventGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface SendInboxMessageResultGenqlSelection{
+    threadId?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface StartWorkspaceSetupChatResultGenqlSelection{
     outcome?: boolean | number
     thread?: AgentChatThreadGenqlSelection
@@ -7675,6 +7695,7 @@ export interface MutationGenqlSelection{
     stopAgentChatStream?: { __args: {threadId: Scalars['UUID']} }
     deleteQueuedChatMessage?: { __args: {messageId: Scalars['UUID']} }
     startWorkspaceSetupChat?: (StartWorkspaceSetupChatResultGenqlSelection & { __args?: {companyContext?: (Scalars['JSON'] | null), personContext?: (Scalars['JSON'] | null)} })
+    sendInboxMessage?: (SendInboxMessageResultGenqlSelection & { __args: {input: SendInboxMessageInput} })
     createSkill?: (SkillGenqlSelection & { __args: {input: CreateSkillInput} })
     updateSkill?: (SkillGenqlSelection & { __args: {input: UpdateSkillInput} })
     deleteSkill?: (SkillGenqlSelection & { __args: {id: Scalars['UUID']} })
@@ -7932,7 +7953,7 @@ export interface UpdateOneObjectInput {update: UpdateObjectPayload,
 /** The id of the object to update */
 id: Scalars['UUID']}
 
-export interface UpdateObjectPayload {labelSingular?: (Scalars['String'] | null),labelPlural?: (Scalars['String'] | null),nameSingular?: (Scalars['String'] | null),namePlural?: (Scalars['String'] | null),description?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),shortcut?: (Scalars['String'] | null),color?: (Scalars['String'] | null),isActive?: (Scalars['Boolean'] | null),labelIdentifierFieldMetadataId?: (Scalars['UUID'] | null),imageIdentifierFieldMetadataId?: (Scalars['UUID'] | null),isLabelSyncedWithName?: (Scalars['Boolean'] | null),isSearchable?: (Scalars['Boolean'] | null),openRecordIn?: (ObjectOpenRecordIn | null),readability?: (MetadataReadability | null),translations?: (MetadataTranslationOverrideInput[] | null)}
+export interface UpdateObjectPayload {labelSingular?: (Scalars['String'] | null),labelPlural?: (Scalars['String'] | null),nameSingular?: (Scalars['String'] | null),namePlural?: (Scalars['String'] | null),description?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),shortcut?: (Scalars['String'] | null),color?: (Scalars['String'] | null),isActive?: (Scalars['Boolean'] | null),labelIdentifierFieldMetadataId?: (Scalars['UUID'] | null),imageIdentifierFieldMetadataId?: (Scalars['UUID'] | null),isLabelSyncedWithName?: (Scalars['Boolean'] | null),isSearchable?: (Scalars['Boolean'] | null),openRecordIn?: (ObjectOpenRecordIn | null),readability?: (MetadataReadability | null),sharingReach?: (ObjectSharingReach | null),translations?: (MetadataTranslationOverrideInput[] | null)}
 
 export interface MetadataTranslationOverrideInput {locale: Scalars['String'],property: Scalars['String'],value?: (Scalars['String'] | null)}
 
@@ -8149,6 +8170,8 @@ export interface EnqueueJobItemInput {payload?: (Scalars['JSON'] | null),jobId?:
 export interface ReportAppConnectionAuthFailureInput {id: Scalars['ID'],reason?: (Scalars['String'] | null)}
 
 export interface FileAttachmentInput {id: Scalars['UUID'],filename: Scalars['String']}
+
+export interface SendInboxMessageInput {workspaceMemberId: Scalars['UUID'],threadKey: Scalars['String'],idempotencyKey: Scalars['String'],title: Scalars['String'],text: Scalars['String'],toolCall?: (Scalars['JSON'] | null)}
 
 export interface CreateSkillInput {id?: (Scalars['UUID'] | null),name: Scalars['String'],label: Scalars['String'],icon?: (Scalars['String'] | null),description?: (Scalars['String'] | null),content: Scalars['String']}
 
@@ -10493,6 +10516,14 @@ export interface CreateRecordExportInput {objectMetadataId: Scalars['UUID'],fiel
     
 
 
+    const SendInboxMessageResult_possibleTypes: string[] = ['SendInboxMessageResult']
+    export const isSendInboxMessageResult = (obj?: { __typename?: any } | null): obj is SendInboxMessageResult => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isSendInboxMessageResult"')
+      return SendInboxMessageResult_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const StartWorkspaceSetupChatResult_possibleTypes: string[] = ['StartWorkspaceSetupChatResult']
     export const isStartWorkspaceSetupChatResult = (obj?: { __typename?: any } | null): obj is StartWorkspaceSetupChatResult => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isStartWorkspaceSetupChatResult"')
@@ -10837,10 +10868,14 @@ export const enumObjectOpenRecordIn = {
 export const enumMetadataReadability = {
    OPEN: 'OPEN' as const,
    PRIVATE: 'PRIVATE' as const,
-   DISCOVERABLE: 'DISCOVERABLE' as const,
    INHERITED: 'INHERITED' as const,
    APPLICATION: 'APPLICATION' as const,
    SYSTEM: 'SYSTEM' as const
+}
+
+export const enumObjectSharingReach = {
+   ROLE_ACCESS: 'ROLE_ACCESS' as const,
+   WORKSPACE: 'WORKSPACE' as const
 }
 
 export const enumMetadataWritability = {
@@ -11302,7 +11337,8 @@ export const enumFeatureFlagKey = {
    IS_LOGS_SETTINGS_SECTION_ENABLED: 'IS_LOGS_SETTINGS_SECTION_ENABLED' as const,
    IS_CONVERSATIONS_TAB_ENABLED: 'IS_CONVERSATIONS_TAB_ENABLED' as const,
    IS_VALIDATION_RULES_ENABLED: 'IS_VALIDATION_RULES_ENABLED' as const,
-   IS_RECORD_LEVEL_SHARING_ENABLED: 'IS_RECORD_LEVEL_SHARING_ENABLED' as const
+   IS_RECORD_LEVEL_SHARING_ENABLED: 'IS_RECORD_LEVEL_SHARING_ENABLED' as const,
+   IS_WORKFLOW_SEND_CHAT_MESSAGE_ENABLED: 'IS_WORKFLOW_SEND_CHAT_MESSAGE_ENABLED' as const
 }
 
 export const enumIdentityProviderType = {

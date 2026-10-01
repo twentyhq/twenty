@@ -147,6 +147,7 @@ export class WorkspaceOrmManager {
       featureFlagsMap,
       billingEntitlements,
       rolesPermissions: permissionsPerRoleId,
+      roleIdsWithAllRecordsAccess,
       userWorkspaceRoleMap,
       apiKeyRoleMap,
       flatRowLevelPermissionPredicateMaps,
@@ -158,6 +159,7 @@ export class WorkspaceOrmManager {
       'featureFlagsMap',
       'billingEntitlements',
       'rolesPermissions',
+      'roleIdsWithAllRecordsAccess',
       'userWorkspaceRoleMap',
       'apiKeyRoleMap',
       'flatRowLevelPermissionPredicateMaps',
@@ -189,6 +191,7 @@ export class WorkspaceOrmManager {
       featureFlagsMap,
       billingEntitlements,
       permissionsPerRoleId,
+      roleIdsWithAllRecordsAccess,
       userWorkspaceRoleMap,
       apiKeyRoleMap,
     };
@@ -235,6 +238,7 @@ export class WorkspaceOrmManager {
       featureFlagsMap: {} as ORMWorkspaceContext['featureFlagsMap'],
       billingEntitlements,
       permissionsPerRoleId: {},
+      roleIdsWithAllRecordsAccess: [],
       userWorkspaceRoleMap: {},
       apiKeyRoleMap: {},
     };
