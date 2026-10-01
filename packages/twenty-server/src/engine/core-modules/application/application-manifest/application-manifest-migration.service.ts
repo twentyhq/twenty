@@ -63,9 +63,6 @@ export class ApplicationManifestMigrationService {
       );
     }
 
-    // Will be sync with inferDeletionFromMissingEntities: false to produces a purely
-    // additive migration that registers the pre-install logic function without
-    // touching any previously-synced metadata (important on upgrades).
     const preInstallOnlyManifest: Manifest = {
       application: manifest.application,
       objects: [],
@@ -135,10 +132,7 @@ export class ApplicationManifestMigrationService {
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigrationFromTo(
         {
-          // inferDeletionFromMissingEntities is intentionally omitted (undefined)
-          // so this pared-down sync is purely additive — existing metadata for
-          // objects/fields/other logic functions that are absent from
-          // preInstallOnlyManifest are left untouched on upgrades.
+          // inferDeletionFromMissingEntities omitted so this pre-install sync is purely additive
           buildOptions: {
             isSystemBuild: false,
             applicationUniversalIdentifier:

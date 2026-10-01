@@ -30,7 +30,6 @@
       "MenuItemDraggable": "components/navigation/MenuItemDraggable/MenuItemDraggable",
       "MenuItemSuggestion": "components/navigation/MenuItemSuggestion/MenuItemSuggestion",
       "MenuPicker": "components/navigation/MenuPicker/MenuPicker",
-      "NavigationBar": "components/navigation/NavigationBar/NavigationBar",
       "NotificationCounter": "components/data-display/NotificationCounter/NotificationCounter",
       "SearchInput": "components/input/SearchInput/SearchInput",
       "Section": "components/layout/Section/Section",
@@ -753,10 +752,13 @@
   "primitives/navigation": {
     "reExports": [],
     "values": {
+      "Breadcrumb": "primitives/navigation/Breadcrumb/Breadcrumb",
       "ListItem": "primitives/navigation/ListItem/ListItem",
       "Tabs": "primitives/navigation/Tabs/Tabs"
     },
     "types": {
+      "BreadcrumbItem": "primitives/navigation/Breadcrumb/types/BreadcrumbItem",
+      "BreadcrumbProps": "primitives/navigation/Breadcrumb/types/BreadcrumbProps",
       "ListItemColor": "primitives/navigation/ListItem/types/ListItemColor",
       "ListItemDescriptionPlacement": "primitives/navigation/ListItem/types/ListItemDescriptionPlacement",
       "ListItemIndicator": "primitives/navigation/ListItem/types/ListItemIndicator",
@@ -836,12 +838,17 @@
   "primitives/typography": {
     "reExports": [],
     "values": {
+      "formatShortcut": "primitives/typography/Shortcut/formatShortcut",
       "Heading": "primitives/typography/Heading/Heading",
       "OverflowingTextWithTooltip": "primitives/typography/OverflowingTextWithTooltip/OverflowingTextWithTooltip",
+      "Shortcut": "primitives/typography/Shortcut/Shortcut",
       "Text": "primitives/typography/Text/Text"
     },
     "types": {
-      "HeadingProps": "primitives/typography/Heading/types/HeadingProps"
+      "HeadingProps": "primitives/typography/Heading/types/HeadingProps",
+      "ShortcutDefinition": "primitives/typography/Shortcut/types/ShortcutDefinition",
+      "ShortcutFormatOptions": "primitives/typography/Shortcut/types/ShortcutFormatOptions",
+      "ShortcutProps": "primitives/typography/Shortcut/types/ShortcutProps"
     }
   },
   "styles": {
@@ -898,7 +905,6 @@
     "values": {
       "getMainColorNameFromPaletteColorName": "utilities/color/utils/getMainColorNameFromPaletteColorName",
       "getOsControlSymbol": "utilities/device/getOsControlSymbol",
-      "getOsShortcutSeparator": "utilities/device/getOsShortcutSeparator",
       "getSafeUrl": "utilities/utils/getSafeUrl",
       "getUserDevice": "utilities/device/getUserDevice",
       "isDefined": "utilities/utils/isDefined",

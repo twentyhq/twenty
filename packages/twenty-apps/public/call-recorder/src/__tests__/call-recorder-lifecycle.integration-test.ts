@@ -43,7 +43,6 @@ import { cancelScheduledRecallBots } from 'src/logic-functions/flows/cancel-sche
 import { syncCalendarBotSchedulingHandler } from 'src/logic-functions/sync-calendar-bot-scheduling';
 import reconcileCalendarEventLogicFunction from 'src/logic-functions/reconcile-call-recorder-calendar-event';
 
-// ---------------------------------------------------------------------------
 // Call Recorder end-to-end behavior against a live Twenty server.
 //
 // The app is installed on the test server by the vitest global setup, and all
@@ -60,7 +59,6 @@ import reconcileCalendarEventLogicFunction from 'src/logic-functions/reconcile-c
 // The suite issues a few hundred API requests; if the test server runs with
 // the default API_RATE_LIMITING_LONG_LIMIT of 100 requests per minute,
 // raise it (e.g. to 100000) or the runs trip the limiter.
-// ---------------------------------------------------------------------------
 
 const WORKSPACE_API_KEY_ENV = 'TWENTY_API_KEY';
 const RECALL_BASE_URL = 'https://us-west-2.recall.ai/api/v1';
@@ -247,11 +245,9 @@ const hoursAgo = (hours: number) =>
   new Date(Date.now() - hours * 60 * 60 * 1000).toISOString();
 const daysAgo = (days: number) => hoursAgo(days * 24);
 
-// ---------------------------------------------------------------------------
 // Recall API fake, installed as a fetch interceptor. Twenty API traffic falls
 // through to the real fetch, except the metadata enqueueJobs mutation, which is
 // captured here so fanned-out jobs do not run inside the test.
-// ---------------------------------------------------------------------------
 
 type FakeRecallBotStatusChange = {
   code: string;
@@ -729,10 +725,6 @@ class FakeRecallApi {
 const jsonResponse = (status: number, body: object): Response =>
   new Response(JSON.stringify(body), { status });
 
-// ---------------------------------------------------------------------------
-// Recall webhook payloads, mirroring the shapes Recall actually delivers.
-// ---------------------------------------------------------------------------
-
 const buildBotMetadata = (callRecordingId: string, workspaceId: string) => ({
   twentyWorkspaceId: workspaceId,
   twentyCallRecordingId: callRecordingId,
@@ -812,11 +804,6 @@ const buildTranscriptDoneWebhook = ({
     transcript: { id: 'recall-transcript-1' },
   },
 });
-
-// ---------------------------------------------------------------------------
-// Test workspace helpers: real rows in the test database, cleaned up or
-// restored after each scenario.
-// ---------------------------------------------------------------------------
 
 describe('call recorder app lifecycle (integration)', () => {
   // Built before the fetch interceptor is installed so the shared client's

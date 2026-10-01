@@ -26,8 +26,6 @@ import { findAwaitingPausingToolParts } from 'src/engine/metadata-modules/ai/ai-
 import { buildRequestFormPendingOutput } from 'src/engine/metadata-modules/ai/ai-chat/tools/request-form.tool';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
-import { hasWorkflowRunThreadFields } from 'src/engine/metadata-modules/ai/ai-history/utils/has-workflow-run-thread-fields.util';
-import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 
 export type RecordedExecutionResult = {
@@ -40,11 +38,8 @@ export type RecordedConversation = {
   isAwaitingAnswer: boolean;
 };
 
-// A conversation is recorded only for an execution of a step that waits on a
-// person, a form or an agent that asks, and continued when that execution
-// resumes. Each gets its own, so a loop iteration or a retry never reads or
-// continues another one's messages. The conversation has no owner: it belongs
-// to the run and is readable by whoever can read the run.
+// One conversation per execution, so a loop iteration or retry never reads or continues another's messages.
+// It has no owner: it belongs to the run and is readable by whoever can read the run.
 @Injectable()
 export class WorkflowAgentConversationWorkspaceService {
   constructor(
@@ -56,7 +51,6 @@ export class WorkflowAgentConversationWorkspaceService {
     private readonly messageRepository: AgentHistoryRepository<AgentMessageWorkspaceEntity>,
     @InjectAgentHistoryRepository('agentMessagePart')
     private readonly messagePartRepository: AgentHistoryRepository<AgentMessagePartEntity>,
-    private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
   ) {}
 
@@ -78,20 +72,14 @@ export class WorkflowAgentConversationWorkspaceService {
     prompt: string;
     initiatorUserWorkspaceId: string | null;
     executionResult: RecordedExecutionResult;
-  }): Promise<RecordedConversation | null> {
-    const conversation = await this.openConversation({
+  }): Promise<RecordedConversation> {
+    const { threadId, turnId } = await this.openConversation({
       workspaceId,
       workflowRunId,
       stepId,
       title,
       agentId,
     });
-
-    if (!isDefined(conversation)) {
-      return null;
-    }
-
-    const { threadId, turnId } = conversation;
 
     await this.insertMessage({
       workspaceId,
@@ -114,8 +102,7 @@ export class WorkflowAgentConversationWorkspaceService {
     return { threadId, isAwaitingAnswer };
   }
 
-  // A form step asks for its fields the way an agent would, so it is answered
-  // like any call that waits on a person. The call is named after the step.
+  // A form step is answered like any call that waits on a person
   async recordFormRequest({
     workspaceId,
     workflowRunId,
@@ -129,19 +116,13 @@ export class WorkflowAgentConversationWorkspaceService {
     title: string;
     fields: RequestFormToolInput['fields'];
   }): Promise<void> {
-    const conversation = await this.openConversation({
+    const { threadId, turnId } = await this.openConversation({
       workspaceId,
       workflowRunId,
       stepId,
       title,
       agentId: null,
     });
-
-    if (!isDefined(conversation)) {
-      return;
-    }
-
-    const { threadId, turnId } = conversation;
 
     const messageId = await this.insertMessage({
       workspaceId,
@@ -168,8 +149,7 @@ export class WorkflowAgentConversationWorkspaceService {
     );
   }
 
-  // Continues a conversation whose question has been answered: the answer is
-  // already recorded as the last message, so only the agent's reply is added.
+  // The answer is already the last message, so only the agent's reply is added
   async recordContinuation({
     workspaceId,
     threadId,
@@ -221,9 +201,7 @@ export class WorkflowAgentConversationWorkspaceService {
     return convertToModelMessages(uiMessages);
   }
 
-  // A paused reply marks its conversation as waiting on its calls, all of
-  // which have to be answerable: one call nobody can answer would keep the
-  // step waiting forever on the others, so the step fails instead.
+  // One unanswerable call would keep the step waiting forever, so the step fails instead
   private async recordReply({
     workspaceId,
     threadId,
@@ -272,7 +250,6 @@ export class WorkflowAgentConversationWorkspaceService {
     return true;
   }
 
-  // Only a workspace whose conversations can name a run records one.
   private async openConversation({
     workspaceId,
     workflowRunId,
@@ -285,16 +262,7 @@ export class WorkflowAgentConversationWorkspaceService {
     stepId: string;
     title: string;
     agentId: string | null;
-  }): Promise<{ threadId: string; turnId: string } | null> {
-    const { flatFieldMetadataMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatFieldMetadataMaps',
-      ]);
-
-    if (!hasWorkflowRunThreadFields(flatFieldMetadataMaps)) {
-      return null;
-    }
-
+  }): Promise<{ threadId: string; turnId: string }> {
     const threadInsertResult = await this.threadRepository.insert(workspaceId, {
       title,
       workflowRunId,

@@ -53,8 +53,6 @@ describe('createLivenessWatchdog', () => {
     expect(onSilent).not.toHaveBeenCalled();
   });
 
-  // A second session must be judged on its own silence, not excused by the
-  // activity of the one before it.
   it('forgets activity from a previous session when re-armed', () => {
     const onSilent = jest.fn();
     const watchdog = createLivenessWatchdog({

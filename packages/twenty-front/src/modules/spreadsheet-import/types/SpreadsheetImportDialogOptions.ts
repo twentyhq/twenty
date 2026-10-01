@@ -35,7 +35,6 @@ export type SpreadsheetImportDialogOptions = {
   onAbortSubmit?: () => void;
   // Allows submitting with errors. Default: true
   allowInvalidSubmit?: boolean;
-  // Theme configuration passed to underlying Chakra-UI
   customTheme?: object;
   maxRecords?: number;
   maxFileSize?: number;

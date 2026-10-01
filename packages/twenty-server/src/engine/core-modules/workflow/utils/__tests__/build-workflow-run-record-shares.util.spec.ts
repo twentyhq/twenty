@@ -67,8 +67,6 @@ describe('buildWorkflowRunRecordShares', () => {
     ]);
   });
 
-  // A private workflow whose creator can no longer be resolved has nobody to
-  // grant, and core shows such a workflow to nobody either.
   it('grants nothing for a private workflow without a resolvable creator', () => {
     expect(
       buildWorkflowRunRecordShares({

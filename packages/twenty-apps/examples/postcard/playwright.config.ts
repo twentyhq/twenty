@@ -9,7 +9,6 @@ import * as path from 'path';
 // WebKit actually reads); the browser process Playwright spawns inherits it.
 process.env.TZ = 'Europe/Paris';
 
-// Front-end base URL of the running Twenty instance under test.
 const FRONT_BASE_URL = process.env.FRONT_BASE_URL ?? 'http://localhost:3001';
 
 export default defineConfig({

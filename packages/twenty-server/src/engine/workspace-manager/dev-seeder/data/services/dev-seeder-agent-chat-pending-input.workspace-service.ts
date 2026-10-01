@@ -200,9 +200,8 @@ type ConversationToSeed = {
   askedBy: Member;
   prompt: string;
   intro: string;
-  // Calls made in the same step, each waiting on its own answer.
   calls: SeededToolCall[];
-  // Answers the first call, in a conversation that made only one.
+  // Only answers the first call
   answer?: {
     response: Record<string, unknown>;
     reply: string;
@@ -310,9 +309,6 @@ const CONVERSATIONS_TO_SEED: ConversationToSeed[] = [
   },
 ];
 
-// Seeds Tim's conversations that wait on a question, an email or a form, or have
-// just been answered, so each card and each answered state renders without
-// calling a model.
 @Injectable()
 export class DevSeederAgentChatPendingInputWorkspaceService {
   constructor(
@@ -368,7 +364,7 @@ export class DevSeederAgentChatPendingInputWorkspaceService {
           ...call,
           pausingToolCall,
           pendingOutput: await call.buildPendingOutput(),
-          // The first call keeps the id it had when conversations made one.
+          // The first call keeps its original seed id
           toolCallId: `call_${seedId(callIndex === 0 ? 'toolCall' : `toolCall${callIndex}`).replace(/-/g, '')}`,
         };
       }),
@@ -406,8 +402,7 @@ export class DevSeederAgentChatPendingInputWorkspaceService {
       ? await firstCall.pausingToolCall.complete({
           output: conversation.answer.response,
           context: {
-            // Seeds never send anything: the email reads as sent, as it would
-            // once the person's own send_email succeeded.
+            // Seeds never send anything; the email reads as sent
             executeTool: async () => ({
               success: true,
               message: 'Email sent successfully',

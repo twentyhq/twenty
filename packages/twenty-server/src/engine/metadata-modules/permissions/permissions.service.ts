@@ -274,8 +274,7 @@ export class PermissionsService {
     );
   }
 
-  // Naming an application that no longer exists is not the same as declaring
-  // no role, and must not fall back to the full permissions of the user.
+  // A deleted application must not fall back to the user's full permissions
   private async findApplicationDefaultRoleIdOrThrow({
     applicationId,
     workspaceId,

@@ -29,8 +29,7 @@ type ProcessRolloverParams = {
   nextAllowanceMicro: number;
 };
 
-// The transition writes more rows than a single grant does, so it is given more
-// room than the lock's default before it gives up.
+// The transition writes more rows than a single grant, so it gets more lock room than the default
 const ROLLOVER_LOCK_OPTIONS = { ms: 200, maxRetries: 50, ttl: 30_000 };
 
 @Injectable()
@@ -50,9 +49,7 @@ export class BillingCreditRolloverService {
   ): Promise<void> {
     const { workspaceId, closingPeriodStart, closingPeriodEnd } = params;
 
-    // Read outside the lock: usage comes from ClickHouse and no credit write
-    // can change it, so paying that latency while holding the lock would only
-    // stall concurrent grants.
+    // Outside the lock: no credit write changes ClickHouse usage, and its latency would stall grants
     const usageMicro =
       await this.billingUsageService.getCreditsUsedBetweenOrNull({
         workspaceId,
@@ -60,12 +57,7 @@ export class BillingCreditRolloverService {
         to: closingPeriodEnd,
       });
 
-    // Reading usage as zero when the query failed would roll a full unused
-    // allowance over to every workspace invoiced during the outage. Throwing
-    // fails the webhook so Stripe redelivers it; returning normally would
-    // answer 200 and the transition would never run, closing no grants and
-    // carrying nothing forward, so the workspace silently loses its balance
-    // at expiry.
+    // Throw so Stripe redelivers: zero usage would roll a full allowance over, and a 200 never reruns the transition
     if (!isDefined(usageMicro)) {
       throw new BillingException(
         `Cannot roll credits over for workspace ${workspaceId}: usage for the period starting ${closingPeriodStart.toISOString()} could not be read`,
@@ -73,9 +65,7 @@ export class BillingCreditRolloverService {
       );
     }
 
-    // Everything from here reads the ledger, decides from that snapshot, then
-    // writes it back. A grant landing in between would either be carried twice
-    // or dropped, so the whole read-decide-write runs alone.
+    // Read-decide-write runs alone: a grant landing in between would be carried twice or dropped
     await this.cacheLockService.withLock(
       () => this.carryGrantsForward({ ...params, usageMicro }),
       buildBillingCreditStateLockKey(workspaceId),
@@ -92,9 +82,7 @@ export class BillingCreditRolloverService {
       'BILLING_ROLLOVER_TOTAL_CAP_MULTIPLIER',
     );
 
-    // Closing the old grants and writing their successors is one settlement:
-    // committing the first half alone would leave the workspace with every
-    // grant closed and nothing carrying the unspent part forward.
+    // One transaction: closing grants without their successors loses the unspent credits
     await this.dataSource.transaction(async (entityManager) =>
       this.settleGrants({
         ...params,
@@ -157,14 +145,9 @@ export class BillingCreditRolloverService {
           type: carryForwardGrant.type,
           sourceGrantId: carryForwardGrant.sourceGrantId,
           effectiveAt: nextPeriodStart,
-          // Null for everything but a time-boxed grant, whose deadline the
-          // successor inherits. Stamping the period end here instead would make
-          // every balance depend on the next transition running, which is the
-          // failure this settlement exists to survive.
+          // Inherited rather than stamped with the period end: balances must not depend on the next transition running
           expiresAt: carryForwardGrant.expiresAt,
-          // Pinned to UTC: Stripe's boundaries are UTC instants, and a
-          // midnight boundary rendered in the server's local zone dates to the
-          // previous day.
+          // UTC: Stripe boundaries are UTC instants, and local-zone midnight dates to the previous day
           reason: `Carried over from the period starting ${i18n.date(
             closingPeriodStart,
             { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' },

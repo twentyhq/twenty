@@ -343,10 +343,7 @@ export const ClearField: Story = {
   },
 };
 
-/**
- * Line breaks are not authorized in JSON strings. Users should instead put newlines characters themselves.
- * See https://stackoverflow.com/a/42073.
- */
+// Line breaks are not allowed in JSON strings, users type escaped newlines (https://stackoverflow.com/a/42073)
 export const DoesNotBreakWhenUserInsertsNewlineInJsonString: Story = {
   args: {
     placeholder: 'Enter valid json',

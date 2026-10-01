@@ -14,7 +14,6 @@ export type SpreadsheetImportField = {
   description?: string;
   fieldValidationDefinitions?: SpreadsheetImportFieldValidationDefinition[];
   fieldType: SpreadsheetImportFieldType;
-  // Field metadata type
   fieldMetadataType: FieldMetadataType;
   // if true, it can be a composite sub-field or a relation connect field (or both)
   isNestedField: boolean;

@@ -209,7 +209,8 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
       msg({ message: `Export`, context: 'commandMenuItem.shortLabel' }),
     ),
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
-    conditionalAvailabilityExpression: 'permissionFlags.EXPORT_CSV',
+    conditionalAvailabilityExpression:
+      'pageType == "INDEX_PAGE" and permissionFlags.EXPORT_CSV',
     availabilityObjectMetadataUniversalIdentifier: null,
     frontComponentUniversalIdentifier: null,
     engineComponentKey: EngineComponentKey.EXPORT_RECORDS,
@@ -1109,8 +1110,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
     conditionalAvailabilityExpression:
       'numberOfSelectedRecords == 1 and noneDefined(selectedRecords, "deletedAt") and objectPermissions.canUpdateObjectRecords and featureFlags.IS_MESSAGE_CAMPAIGN_ENABLED',
-    // A sent campaign is the one people re-run, so the button is only pinned
-    // there; drafts keep it in the menu.
+    // Pinned only on sent campaigns, the ones people re-run; drafts keep it in the menu
     conditionalPinnedExpression:
       'everyEquals(selectedRecords, "status", "SENT")',
     availabilityObjectMetadataUniversalIdentifier:

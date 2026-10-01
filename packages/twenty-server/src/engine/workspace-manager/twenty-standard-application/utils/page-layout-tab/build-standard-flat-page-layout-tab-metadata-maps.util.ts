@@ -34,7 +34,6 @@ export const buildStandardFlatPageLayoutTabMetadataMaps = ({
       const tab = layout.tabs[tabTitle];
       const tabWidgets = Object.values(tab.widgets);
 
-      // A tab only excluded widgets fill would reach the page empty.
       const isFilledOnlyWithExcludedWidgets =
         isNonEmptyArray(tabWidgets) &&
         tabWidgets.every(

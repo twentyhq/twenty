@@ -11,8 +11,6 @@ export type AwaitingPausingToolPart = {
   isAnswerable: boolean;
 };
 
-// A step can call several pausing tools at once, and each waits on its own
-// answer.
 export const findAwaitingPausingToolParts = (
   parts: ExtendedUIMessagePart[],
 ): AwaitingPausingToolPart[] =>
