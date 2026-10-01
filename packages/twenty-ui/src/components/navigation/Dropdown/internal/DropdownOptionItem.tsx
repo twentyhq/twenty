@@ -34,7 +34,8 @@ export const DropdownOptionItem = ({
   const isMenu = type === 'menu';
   const hasSelectionState = isDefined(selected);
   const isPressableOption = !isMenu && nativeButton;
-  const isCurrentOption = !isMenu && !nativeButton && selected === true;
+  const isCurrentOption =
+    !isMenu && !nativeButton && hasSelectionState && selected;
   const selectableMenuOptionRole = multiple
     ? 'menuitemcheckbox'
     : 'menuitemradio';
