@@ -23,6 +23,18 @@ const findObjectWithIndex = async ({
   return foundObject;
 };
 
+const findSearchVectorIndex = <TIndex extends { indexType: string }>(
+  indexMetadataList: TIndex[],
+): TIndex => {
+  const searchVectorIndex = indexMetadataList.find(
+    ({ indexType }) => indexType === 'GIN',
+  );
+
+  jestExpectToBeDefined(searchVectorIndex);
+
+  return searchVectorIndex;
+};
+
 describe('Index metadata creation through object metadata creation v2', () => {
   let createdObjectId: string;
 
@@ -80,9 +92,12 @@ describe('Index metadata creation through object metadata creation v2', () => {
 
     jestExpectToBeDefined(tsVectorField);
 
-    expect(foundObject.indexMetadataList.length).toBe(1);
-    const { indexFieldMetadataList, ...index } =
-      foundObject.indexMetadataList[0];
+    expect(
+      foundObject.indexMetadataList.map(({ indexType }) => indexType).sort(),
+    ).toEqual(['BTREE', 'GIN']);
+    const { indexFieldMetadataList, ...index } = findSearchVectorIndex(
+      foundObject.indexMetadataList,
+    );
 
     expect(index).toMatchSnapshot();
     expect(indexFieldMetadataList.length).toBe(1);
@@ -100,9 +115,9 @@ describe('Index metadata creation through object metadata creation v2', () => {
       objectMetadataId: createdObjectId,
     });
 
-    expect(foundObject.indexMetadataList.length).toBe(1);
-    const { indexFieldMetadataList: _, ...index } =
-      foundObject.indexMetadataList[0];
+    const { indexFieldMetadataList: _, ...index } = findSearchVectorIndex(
+      foundObject.indexMetadataList,
+    );
 
     expect(index).toMatchSnapshot();
     const fromIndexName = index.name;
@@ -121,9 +136,9 @@ describe('Index metadata creation through object metadata creation v2', () => {
         objectMetadataId: createdObjectId,
       });
 
-      expect(foundObject.indexMetadataList.length).toBe(1);
-      const { indexFieldMetadataList: _, ...index } =
-        foundObject.indexMetadataList[0];
+      const { indexFieldMetadataList: _, ...index } = findSearchVectorIndex(
+        foundObject.indexMetadataList,
+      );
 
       expect(index).toMatchSnapshot();
       expect(fromIndexName).not.toBe(index.name);
