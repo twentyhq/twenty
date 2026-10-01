@@ -10,7 +10,8 @@ import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migrati
 
 // A record of an object open by default carries share rows only when it
 // departs from that default: an everyone row below the required level
-// restricts it, and a grant to one of the principals lifts the restriction.
+// restricts it, and a grant naming one of the principals lifts the
+// restriction: another everyone row, such as one an application wrote, does not.
 // Kept as a single NOT EXISTS so the planner can use an anti-join instead of
 // a per-row subplan, which an OR with the grant check would force.
 export const buildRecordShareExceptionCondition = ({
@@ -66,7 +67,9 @@ export const buildRecordShareExceptionCondition = ({
       [restrictedAccessLevelsParameterName]: Object.values(
         RecordShareAccessLevel,
       ).filter((accessLevel) => !accessLevels.includes(accessLevel)),
-      [principalIdsParameterName]: principalIds,
+      [principalIdsParameterName]: principalIds.filter(
+        (principalId) => principalId !== EVERYONE_PRINCIPAL_ID,
+      ),
       [accessLevelsParameterName]: accessLevels,
     },
   };

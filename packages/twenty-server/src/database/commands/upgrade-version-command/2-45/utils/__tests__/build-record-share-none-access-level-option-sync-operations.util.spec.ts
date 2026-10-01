@@ -123,12 +123,14 @@ describe('buildRecordShareNoneAccessLevelOptionSyncOperations', () => {
         direction: 'down',
       });
 
+    expect(flatEntityToUpdate).toHaveLength(1);
     expect(
       getOptions(flatEntityToUpdate[0]).map(({ value }) => value),
     ).not.toContain(RecordShareAccessLevel.NONE);
     expect(flatEntityToUpdate[0].defaultValue).toBe(
       RECORD_SHARE_ACCESS_LEVEL_DEFAULT_VALUE,
     );
+    expect(flatEntityToUpdate[0].updatedAt).toBe(NOW);
   });
 
   it('should do nothing when the record share object is not provisioned', () => {
