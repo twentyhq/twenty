@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { Field, NumberInput } from 'twenty-ui/primitives/input';
+import { Button, Field, NumberInput } from 'twenty-ui/primitives/input';
 import { Text } from 'twenty-ui/primitives/typography';
 
 import { TwentyUiGalleryCard } from '@/__stories__/shared/front-components/twenty-ui-gallery-card';
@@ -50,6 +50,7 @@ const NumberInputExample = () => {
           showButtons={false}
           onValueChange={() => setChanges((count) => count + 1)}
         />
+        <Button type="submit">Save quantity</Button>
         <Text role="status">
           Value: {value ?? 'empty'}; Changes: {changes}; Submissions:{' '}
           {submissions}

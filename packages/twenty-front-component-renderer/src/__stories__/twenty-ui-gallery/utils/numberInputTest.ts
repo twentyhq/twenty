@@ -63,5 +63,9 @@ export const numberInputTest: TwentyUiGalleryPlayFunction = async ({
   expect(formData.get('quantity')).toBe('4');
   expect(formData.get('readOnlyQuantity')).toBe('4');
   expect(formData.has('disabledQuantity')).toBe(false);
+  await userEvent.click(canvas.getByRole('button', { name: 'Save quantity' }));
+  await waitFor(() =>
+    expect(status).toHaveTextContent('Value: 4; Changes: 4; Submissions: 1'),
+  );
   expect(errorHandler).not.toHaveBeenCalled();
 };
