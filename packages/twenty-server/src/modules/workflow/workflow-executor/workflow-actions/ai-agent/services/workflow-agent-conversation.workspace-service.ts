@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { randomUUID } from 'node:crypto';
-
 import { convertToModelMessages, type ModelMessage } from 'ai';
 import {
   type ExtendedUIMessage,
@@ -9,23 +7,19 @@ import {
   REQUEST_FORM_TOOL_NAME,
   type RequestFormToolInput,
 } from 'twenty-shared/ai';
-import { isDefined } from 'twenty-shared/utils';
-import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
-import { type AgentMessagePartEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message-part.entity';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
-import { type AgentTurnEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-turn.entity';
 import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { type AgentMessageWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message.workspace-entity';
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
 import { finalizeDanglingToolParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/finalize-dangling-tool-parts.util';
 import { mapAiStepsToUiMessageParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/map-ai-steps-to-ui-message-parts.util';
 import { mapDBPartsToUIMessageParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/mapDBPartsToUIMessageParts';
-import { mapUIMessagePartsToPersistedDBParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/map-ui-message-parts-to-persisted-db-parts.util';
 import { findAwaitingPausingToolParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/find-awaiting-pausing-tool-parts.util';
 import { buildRequestFormPendingOutput } from 'src/engine/metadata-modules/ai/ai-chat/tools/request-form.tool';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
+import { AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 
 export type RecordedExecutionResult = {
@@ -48,12 +42,9 @@ export class WorkflowAgentConversationWorkspaceService {
   constructor(
     @InjectAgentHistoryRepository('agentChatThread')
     private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
-    @InjectAgentHistoryRepository('agentTurn')
-    private readonly turnRepository: AgentHistoryRepository<AgentTurnEntity>,
     @InjectAgentHistoryRepository('agentMessage')
     private readonly messageRepository: AgentHistoryRepository<AgentMessageWorkspaceEntity>,
-    @InjectAgentHistoryRepository('agentMessagePart')
-    private readonly messagePartRepository: AgentHistoryRepository<AgentMessagePartEntity>,
+    private readonly conversationWriterService: AgentConversationWriterService,
     private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
   ) {}
 
@@ -84,7 +75,7 @@ export class WorkflowAgentConversationWorkspaceService {
       agentId,
     });
 
-    await this.insertMessage({
+    await this.conversationWriterService.insertMessage({
       workspaceId,
       threadId,
       turnId,
@@ -128,7 +119,7 @@ export class WorkflowAgentConversationWorkspaceService {
       agentId: null,
     });
 
-    const messageId = await this.insertMessage({
+    const messageId = await this.conversationWriterService.insertMessage({
       workspaceId,
       threadId,
       turnId,
@@ -146,11 +137,11 @@ export class WorkflowAgentConversationWorkspaceService {
       ],
     });
 
-    await this.threadRepository.update(
+    await this.conversationWriterService.markAwaitingAnswer({
       workspaceId,
-      { id: threadId },
-      { pendingQuestionMessageId: messageId },
-    );
+      threadId,
+      messageId,
+    });
   }
 
   // Continues a conversation whose question has been answered: the answer is
@@ -166,7 +157,11 @@ export class WorkflowAgentConversationWorkspaceService {
     agentId: string | null;
     executionResult: RecordedExecutionResult;
   }): Promise<RecordedConversation> {
-    const turnId = await this.insertTurn({ workspaceId, threadId, agentId });
+    const turnId = await this.conversationWriterService.insertTurn({
+      workspaceId,
+      threadId,
+      agentId,
+    });
 
     const isAwaitingAnswer = await this.recordReply({
       workspaceId,
@@ -228,7 +223,7 @@ export class WorkflowAgentConversationWorkspaceService {
       return false;
     }
 
-    const messageId = await this.insertMessage({
+    const messageId = await this.conversationWriterService.insertMessage({
       workspaceId,
       threadId,
       turnId,
@@ -248,11 +243,11 @@ export class WorkflowAgentConversationWorkspaceService {
       return false;
     }
 
-    await this.threadRepository.update(
+    await this.conversationWriterService.markAwaitingAnswer({
       workspaceId,
-      { id: threadId },
-      { pendingQuestionMessageId: messageId },
-    );
+      threadId,
+      messageId,
+    });
 
     return true;
   }
@@ -276,7 +271,11 @@ export class WorkflowAgentConversationWorkspaceService {
     });
     const threadId = threadInsertResult.identifiers[0].id as string;
 
-    const turnId = await this.insertTurn({ workspaceId, threadId, agentId });
+    const turnId = await this.conversationWriterService.insertTurn({
+      workspaceId,
+      threadId,
+      agentId,
+    });
 
     await this.workflowRunWorkspaceService.setStepThreadId({
       stepId,
@@ -286,67 +285,5 @@ export class WorkflowAgentConversationWorkspaceService {
     });
 
     return { threadId, turnId };
-  }
-
-  private async insertTurn({
-    workspaceId,
-    threadId,
-    agentId,
-  }: {
-    workspaceId: string;
-    threadId: string;
-    agentId: string | null;
-  }): Promise<string> {
-    const turnInsertResult = await this.turnRepository.insert(workspaceId, {
-      threadId,
-      agentId,
-    });
-
-    return turnInsertResult.identifiers[0].id as string;
-  }
-
-  private async insertMessage({
-    workspaceId,
-    threadId,
-    turnId,
-    role,
-    agentId,
-    senderUserWorkspaceId,
-    parts,
-  }: {
-    workspaceId: string;
-    threadId: string;
-    turnId: string;
-    role: AgentMessageRole;
-    agentId: string | null;
-    senderUserWorkspaceId: string | null;
-    parts: ExtendedUIMessagePart[];
-  }): Promise<string> {
-    const messageId = randomUUID();
-
-    await this.messageRepository.insert(workspaceId, {
-      id: messageId,
-      threadId,
-      turnId,
-      role,
-      agentId,
-      processedAt: new Date().toISOString(),
-      ...(isDefined(senderUserWorkspaceId) ? { senderUserWorkspaceId } : {}),
-    });
-
-    const dbParts = mapUIMessagePartsToPersistedDBParts(
-      parts,
-      messageId,
-      workspaceId,
-    );
-
-    if (dbParts.length > 0) {
-      await this.messagePartRepository.insert(
-        workspaceId,
-        dbParts as QueryDeepPartialEntity<AgentMessagePartEntity>[],
-      );
-    }
-
-    return messageId;
   }
 }

@@ -3223,6 +3223,7 @@ export type Mutation = {
   saveImapSmtpCaldavAccount: ImapSmtpCaldavConnectionSuccess;
   sendChatMessage: SendChatMessageResult;
   sendEmail: SendEmailOutput;
+  sendInboxMessage: SendInboxMessageResult;
   sendInvitations: SendInvitations;
   sendMessageCampaign: SendMessageCampaignOutputDto;
   sendMessageCampaignTest: SendEmailViaDomainOutput;
@@ -4146,6 +4147,11 @@ export type MutationSendChatMessageArgs = {
 
 export type MutationSendEmailArgs = {
   input: SendEmailInput;
+};
+
+
+export type MutationSendInboxMessageArgs = {
+  input: SendInboxMessageInput;
 };
 
 
@@ -6134,6 +6140,19 @@ export type SendEmailOutput = {
 export type SendEmailViaDomainOutput = {
   __typename?: 'SendEmailViaDomainOutput';
   messageId: Scalars['String']['output'];
+};
+
+export type SendInboxMessageInput = {
+  context?: InputMaybe<Scalars['String']['input']>;
+  questions?: InputMaybe<Scalars['JSON']['input']>;
+  text: Scalars['String']['input'];
+  title: Scalars['String']['input'];
+  workspaceMemberId: Scalars['UUID']['input'];
+};
+
+export type SendInboxMessageResult = {
+  __typename?: 'SendInboxMessageResult';
+  threadId: Scalars['UUID']['output'];
 };
 
 export type SendInvitations = {

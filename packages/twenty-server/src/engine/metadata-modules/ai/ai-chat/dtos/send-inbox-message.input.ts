@@ -1,0 +1,33 @@
+import { Field, InputType } from '@nestjs/graphql';
+
+import GraphQLJSON from 'graphql-type-json';
+import { IsNotEmpty, IsOptional, IsString, IsUUID } from 'class-validator';
+import { type AskQuestionItem } from 'twenty-shared/ai';
+
+import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+
+@InputType('SendInboxMessageInput')
+export class SendInboxMessageInputDTO {
+  @IsUUID()
+  @Field(() => UUIDScalarType)
+  workspaceMemberId: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @Field()
+  title: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @Field()
+  text: string;
+
+  @IsOptional()
+  @IsString()
+  @Field({ nullable: true })
+  context?: string;
+
+  @IsOptional()
+  @Field(() => GraphQLJSON, { nullable: true })
+  questions?: AskQuestionItem[];
+}

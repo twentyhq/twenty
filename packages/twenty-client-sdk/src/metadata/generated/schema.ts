@@ -3076,6 +3076,11 @@ export interface AgentChatEvent {
     __typename: 'AgentChatEvent'
 }
 
+export interface SendInboxMessageResult {
+    threadId: Scalars['UUID']
+    __typename: 'SendInboxMessageResult'
+}
+
 export interface StartWorkspaceSetupChatResult {
     outcome: WorkspaceSetupChatOutcome
     thread?: AgentChatThread
@@ -3690,6 +3695,7 @@ export interface Mutation {
     stopAgentChatStream: Scalars['Boolean']
     deleteQueuedChatMessage: Scalars['Boolean']
     startWorkspaceSetupChat: StartWorkspaceSetupChatResult
+    sendInboxMessage: SendInboxMessageResult
     createSkill: Skill
     updateSkill: Skill
     deleteSkill: Skill
@@ -6992,6 +6998,12 @@ export interface AgentChatEventGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface SendInboxMessageResultGenqlSelection{
+    threadId?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface StartWorkspaceSetupChatResultGenqlSelection{
     outcome?: boolean | number
     thread?: AgentChatThreadGenqlSelection
@@ -7663,6 +7675,7 @@ export interface MutationGenqlSelection{
     stopAgentChatStream?: { __args: {threadId: Scalars['UUID']} }
     deleteQueuedChatMessage?: { __args: {messageId: Scalars['UUID']} }
     startWorkspaceSetupChat?: (StartWorkspaceSetupChatResultGenqlSelection & { __args?: {companyContext?: (Scalars['JSON'] | null), personContext?: (Scalars['JSON'] | null)} })
+    sendInboxMessage?: (SendInboxMessageResultGenqlSelection & { __args: {input: SendInboxMessageInput} })
     createSkill?: (SkillGenqlSelection & { __args: {input: CreateSkillInput} })
     updateSkill?: (SkillGenqlSelection & { __args: {input: UpdateSkillInput} })
     deleteSkill?: (SkillGenqlSelection & { __args: {id: Scalars['UUID']} })
@@ -8137,6 +8150,8 @@ export interface EnqueueJobItemInput {payload?: (Scalars['JSON'] | null),jobId?:
 export interface ReportAppConnectionAuthFailureInput {id: Scalars['ID'],reason?: (Scalars['String'] | null)}
 
 export interface FileAttachmentInput {id: Scalars['UUID'],filename: Scalars['String']}
+
+export interface SendInboxMessageInput {workspaceMemberId: Scalars['UUID'],title: Scalars['String'],text: Scalars['String'],context?: (Scalars['String'] | null),questions?: (Scalars['JSON'] | null)}
 
 export interface CreateSkillInput {id?: (Scalars['UUID'] | null),name: Scalars['String'],label: Scalars['String'],icon?: (Scalars['String'] | null),description?: (Scalars['String'] | null),content: Scalars['String']}
 
@@ -10477,6 +10492,14 @@ export interface CreateRecordExportInput {objectMetadataId: Scalars['UUID'],fiel
     export const isAgentChatEvent = (obj?: { __typename?: any } | null): obj is AgentChatEvent => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isAgentChatEvent"')
       return AgentChatEvent_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const SendInboxMessageResult_possibleTypes: string[] = ['SendInboxMessageResult']
+    export const isSendInboxMessageResult = (obj?: { __typename?: any } | null): obj is SendInboxMessageResult => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isSendInboxMessageResult"')
+      return SendInboxMessageResult_possibleTypes.includes(obj.__typename)
     }
     
 

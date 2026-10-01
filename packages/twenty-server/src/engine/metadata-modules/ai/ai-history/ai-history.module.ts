@@ -1,5 +1,6 @@
 import { AGENT_HISTORY_OBJECT_NAMES } from 'src/engine/metadata-modules/ai/ai-history/constants/agent-history-object-names.constant';
 import { Module } from '@nestjs/common';
+import { AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
 import { AgentHistoryWorkspaceStorageService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-workspace-storage.service';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { getAgentHistoryRepositoryToken } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
@@ -16,7 +17,15 @@ const REPOSITORY_PROVIDERS = AGENT_HISTORY_OBJECT_NAMES.map((objectName) => ({
 }));
 
 @Module({
-  providers: [AgentHistoryWorkspaceStorageService, ...REPOSITORY_PROVIDERS],
-  exports: [AgentHistoryWorkspaceStorageService, ...REPOSITORY_PROVIDERS],
+  providers: [
+    AgentHistoryWorkspaceStorageService,
+    AgentConversationWriterService,
+    ...REPOSITORY_PROVIDERS,
+  ],
+  exports: [
+    AgentHistoryWorkspaceStorageService,
+    AgentConversationWriterService,
+    ...REPOSITORY_PROVIDERS,
+  ],
 })
 export class AgentHistoryModule {}

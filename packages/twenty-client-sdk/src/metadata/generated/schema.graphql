@@ -3489,6 +3489,10 @@ type AgentChatEvent {
   event: JSON!
 }
 
+type SendInboxMessageResult {
+  threadId: UUID!
+}
+
 type StartWorkspaceSetupChatResult {
   outcome: WorkspaceSetupChatOutcome!
   thread: AgentChatThread
@@ -4297,6 +4301,7 @@ type Mutation {
   stopAgentChatStream(threadId: UUID!): Boolean!
   deleteQueuedChatMessage(messageId: UUID!): Boolean!
   startWorkspaceSetupChat(companyContext: JSON, personContext: JSON): StartWorkspaceSetupChatResult!
+  sendInboxMessage(input: SendInboxMessageInput!): SendInboxMessageResult!
   createSkill(input: CreateSkillInput!): Skill!
   updateSkill(input: UpdateSkillInput!): Skill!
   deleteSkill(id: UUID!): Skill!
@@ -5573,6 +5578,14 @@ input ReportAppConnectionAuthFailureInput {
 input FileAttachmentInput {
   id: UUID!
   filename: String!
+}
+
+input SendInboxMessageInput {
+  workspaceMemberId: UUID!
+  title: String!
+  text: String!
+  context: String
+  questions: JSON
 }
 
 input CreateSkillInput {
