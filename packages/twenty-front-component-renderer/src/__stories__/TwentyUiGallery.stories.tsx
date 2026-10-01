@@ -1,7 +1,7 @@
 import { breadcrumbTest } from '@/__stories__/twenty-ui-gallery/utils/breadcrumbTest';
-import { expandableListEventIsolationTest } from '@/__stories__/twenty-ui-gallery/utils/expandableListEventIsolationTest';
+import { expandableListEventIsolationFailureTest } from '@/__stories__/twenty-ui-gallery/utils/expandableListEventIsolationFailureTest';
 import { expandableListGeometryTest } from '@/__stories__/twenty-ui-gallery/utils/expandableListGeometryTest';
-import { expandableListTest } from '@/__stories__/twenty-ui-gallery/utils/expandableListTest';
+import { expandableListSandboxFailureTest } from '@/__stories__/twenty-ui-gallery/utils/expandableListSandboxFailureTest';
 import { jsonTreeTest } from '@/__stories__/twenty-ui-gallery/utils/jsonTreeTest';
 import { inlineBannerSandboxTest } from '@/__stories__/twenty-ui-gallery/utils/inlineBannerSandboxTest';
 import { themeTokenTest } from '@/__stories__/twenty-ui-gallery/utils/themeTokenTest';
@@ -554,16 +554,16 @@ export const InlineBannerPreactFocusFailure: Story = createGalleryStory({
   play: inlineBannerSandboxTest,
 });
 
-export const ExpandableListReact: Story = createGalleryStory({
+export const ExpandableListReactPopupFailure: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-expandable-list',
   runtime: 'react',
-  play: expandableListTest,
+  play: expandableListSandboxFailureTest,
 });
 
-export const ExpandableListPreact: Story = createGalleryStory({
+export const ExpandableListPreactPopupFailure: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-expandable-list',
   runtime: 'preact',
-  play: expandableListTest,
+  play: expandableListSandboxFailureTest,
 });
 
 export const ExpandableListGeometryReact: Story = createGalleryStory({
@@ -578,14 +578,16 @@ export const ExpandableListGeometryPreact: Story = createGalleryStory({
   play: expandableListGeometryTest,
 });
 
-export const ExpandableListEventIsolationReact: Story = createGalleryStory({
-  frontComponentBundleName: 'twenty-ui-expandable-list',
-  runtime: 'react',
-  play: expandableListEventIsolationTest,
-});
+export const ExpandableListEventIsolationReactFailure: Story =
+  createGalleryStory({
+    frontComponentBundleName: 'twenty-ui-expandable-list',
+    runtime: 'react',
+    play: expandableListEventIsolationFailureTest,
+  });
 
-export const ExpandableListEventIsolationPreact: Story = createGalleryStory({
-  frontComponentBundleName: 'twenty-ui-expandable-list',
-  runtime: 'preact',
-  play: expandableListEventIsolationTest,
-});
+export const ExpandableListEventIsolationPreactFailure: Story =
+  createGalleryStory({
+    frontComponentBundleName: 'twenty-ui-expandable-list',
+    runtime: 'preact',
+    play: expandableListEventIsolationFailureTest,
+  });

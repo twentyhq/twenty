@@ -1,10 +1,11 @@
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
-import { errorHandler } from '@/__stories__/shared/test-utils/createFrontComponentStoryMeta';
+import { SANDBOX_ERROR_PATTERNS } from '@/__stories__/twenty-ui-gallery/constants/SANDBOX_ERROR_PATTERNS';
+import { expectSandboxErrors } from '@/__stories__/twenty-ui-gallery/utils/expectSandboxErrors';
 import { expectFrontComponentMounted } from '@/__stories__/shared/test-utils/matchers/expectFrontComponentMounted';
 import { type TwentyUiGalleryPlayFunction } from '@/__stories__/twenty-ui-gallery/types/TwentyUiGalleryPlayFunction';
 
-export const expandableListEventIsolationTest: TwentyUiGalleryPlayFunction =
+export const expandableListEventIsolationFailureTest: TwentyUiGalleryPlayFunction =
   async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const page = within(canvasElement.ownerDocument.body);
@@ -18,9 +19,6 @@ export const expandableListEventIsolationTest: TwentyUiGalleryPlayFunction =
     const popup = await page.findByRole('dialog', { name: 'Show all targets' });
     const lastTarget = within(popup).getByRole('button', { name: 'Delta' });
     await waitFor(() => expect(lastTarget).toBeVisible());
-    await expect(canvas.getByLabelText('Host activations')).toHaveTextContent(
-      '0',
-    );
 
     await userEvent.click(lastTarget);
     await waitFor(() =>
@@ -28,8 +26,16 @@ export const expandableListEventIsolationTest: TwentyUiGalleryPlayFunction =
         'Delta',
       ),
     );
-    await expect(canvas.getByLabelText('Host activations')).toHaveTextContent(
-      '0',
+    await waitFor(() =>
+      expect(
+        Number(canvas.getByLabelText('Host activations').textContent),
+      ).toBeGreaterThan(0),
     );
-    await expect(errorHandler).not.toHaveBeenCalled();
+    await expectSandboxErrors({
+      requiredErrors: [SANDBOX_ERROR_PATTERNS.NATIVE_EVENT_DEFAULT_PREVENTED],
+      allowedAdditionalErrors: [
+        SANDBOX_ERROR_PATTERNS.VIEWPORT_WIDTH,
+        SANDBOX_ERROR_PATTERNS.MISSING_EVENT_CONSTRUCTOR,
+      ],
+    });
   };

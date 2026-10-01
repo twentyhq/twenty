@@ -19,6 +19,7 @@ requiring them to occur.
 | `twenty-ui-display-helpers` | Text |
 | `twenty-ui-list-item` | ListItem |
 | `twenty-ui-tabs` | Tabs |
+| `twenty-ui-expandable-list` | ExpandableList |
 | `twenty-ui-popover` | Popover |
 | `twenty-ui-menu` | Menu |
 | `twenty-ui-select` | Select |
@@ -53,6 +54,7 @@ No stories are skipped or marked as expected-to-fail by the runner.
 | Field controls | Forwarded events lack the `nativeEvent` Base UI reads for `composedPath`. Textarea's cloned render element loses its change handler in React. The value report checks the state received by the component after typing. |
 | Tabs | Activation fails on the missing `nativeEvent` for `composedPath` in both runtimes. |
 | Popover, Dialog, AlertDialog | Opening fails while reading pointer contact data from the missing `nativeEvent`. |
+| ExpandableList | Both runtimes measure and resize the inline list. Popup lifecycle checks verify selection, dismissal, focus restoration, and independent lists while requiring the existing missing native event data or event constructor errors. Focus restoration can also call a stale host listener, which is checked with the existing exact host-error assertion. Separate event isolation failure stories verify that popup selection still activates the surrounding host because worker event cancellation reaches it after propagation. Full popup compatibility remains blocked on the event bridge work in [#26356](https://github.com/twentyhq/twenty/pull/26356). |
 | Menu | Opening fails on the missing `nativeEvent.pointerType` and pointer contact data. |
 | Select | Opening fails on missing native event data and focus support. Preact can report only the last of these failures when the host coalesces sandbox errors. |
 | Switch, Checkbox, Radio (standard and card), SegmentedControl | Activation attempts to construct an unavailable `PointerEvent`. `RadioCardReact` never gets that far: React drops the click handler Base UI adds through `React.cloneElement`, so only the group's focus handling fails on the missing `nativeEvent` for `composedPath`. |
