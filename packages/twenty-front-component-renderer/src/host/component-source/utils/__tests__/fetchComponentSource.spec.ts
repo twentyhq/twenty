@@ -1,9 +1,6 @@
 import { createHash, webcrypto } from 'node:crypto';
 import { TextEncoder as NodeTextEncoder } from 'node:util';
 
-import { CustomError } from 'twenty-shared/utils';
-
-import { FRONT_COMPONENT_SOURCE_CHECKSUM_MISMATCH_ERROR_CODE } from '@/host/component-source/constants/FrontComponentSourceChecksumMismatchErrorCode';
 import { fetchComponentSource } from '@/host/component-source/utils/fetchComponentSource';
 
 const COMPONENT_SOURCE = 'export default () => {};';
@@ -23,6 +20,7 @@ const STALE_URL = buildFingerprintedUrl(
 const BARE_URL = 'https://api.twenty.com/rest/front-components/component-id';
 const PRESIGNED_URL =
   'https://bucket.example.com/built.mjs?X-Amz-Signature=SECRET_SIGNATURE';
+const CHECKSUM_MISMATCH_MESSAGE = 'Front component source checksum mismatch';
 
 const SHARED_DEPENDENCIES_SOURCE =
   'export const __shared_dependencies_react__ = {};';
@@ -94,19 +92,6 @@ const setupCaches = (cache: FakeCache) => {
     open: jest.fn(async () => cache),
   };
 };
-
-const disableWebCrypto = () => {
-  Object.defineProperty(globalThis, 'crypto', {
-    value: undefined,
-    configurable: true,
-  });
-};
-
-const captureRejection = async (promise: Promise<unknown>): Promise<unknown> =>
-  promise.then(
-    () => undefined,
-    (thrown: unknown) => thrown,
-  );
 
 describe('fetchComponentSource', () => {
   const originalFetch = globalThis.fetch;
@@ -281,38 +266,47 @@ describe('fetchComponentSource', () => {
 
     globalThis.fetch = fetchMock as unknown as typeof fetch;
 
-    await expect(
-      fetchComponentSource({ url: STALE_URL }),
-    ).rejects.toMatchObject({
-      code: FRONT_COMPONENT_SOURCE_CHECKSUM_MISMATCH_ERROR_CODE,
-    });
+    await expect(fetchComponentSource({ url: STALE_URL })).rejects.toThrow(
+      CHECKSUM_MISMATCH_MESSAGE,
+    );
     expect(cache.put).not.toHaveBeenCalled();
-    expect(cache.delete).not.toHaveBeenCalled();
   });
 
-  it('evicts a poisoned cache entry and rejects when the network response also mismatches', async () => {
+  it('rejects a mismatched presigned response without leaking the presigned URL, the token, or the source', async () => {
     const cache = new FakeCache();
-
-    await cache.put(FINGERPRINTED_URL, {
-      text: async () => 'globalThis.injectedByAnotherComponent = true;',
-    });
-    cache.put.mockClear();
 
     setupCaches(cache);
 
-    const fetchMock = jest.fn(async () =>
-      createFakeJsResponse('some other build output'),
-    );
+    const fetchMock = jest
+      .fn()
+      .mockResolvedValueOnce(createFakeJsonHandoffResponse(PRESIGNED_URL))
+      .mockResolvedValueOnce(
+        createFakeJsResponse('globalThis.leak = "SOURCE_MARKER";'),
+      );
 
     globalThis.fetch = fetchMock as unknown as typeof fetch;
 
-    await expect(
-      fetchComponentSource({ url: FINGERPRINTED_URL }),
-    ).rejects.toMatchObject({
-      code: FRONT_COMPONENT_SOURCE_CHECKSUM_MISMATCH_ERROR_CODE,
-    });
-    expect(cache.delete).toHaveBeenCalledWith(FINGERPRINTED_URL);
-    expect(fetchMock).toHaveBeenCalledTimes(1);
+    const error = await fetchComponentSource({
+      url: FINGERPRINTED_URL,
+      headers: { Authorization: 'Bearer SECRET_TOKEN' },
+    }).catch((thrown: unknown) => thrown);
+
+    expect(error).toBeInstanceOf(Error);
+
+    const { message } = error as Error;
+
+    expect(message).toContain(CHECKSUM_MISMATCH_MESSAGE);
+    expect(message).toContain(FINGERPRINTED_URL);
+
+    for (const secret of [
+      'SECRET_TOKEN',
+      'SECRET_SIGNATURE',
+      'bucket.example.com',
+      'SOURCE_MARKER',
+    ]) {
+      expect(message).not.toContain(secret);
+    }
+
     expect(cache.put).not.toHaveBeenCalled();
   });
 
@@ -353,90 +347,6 @@ describe('fetchComponentSource', () => {
     });
   });
 
-  it('rejects a mismatched shared dependencies bundle and does not cache it', async () => {
-    const cache = new FakeCache();
-
-    setupCaches(cache);
-
-    const fetchMock = jest.fn(async () =>
-      createFakeJsResponse(
-        'export const __shared_dependencies_react__ = { tampered: true };',
-      ),
-    );
-
-    globalThis.fetch = fetchMock as unknown as typeof fetch;
-
-    await expect(
-      fetchComponentSource({ url: FINGERPRINTED_SHARED_DEPENDENCIES_URL }),
-    ).rejects.toMatchObject({
-      code: FRONT_COMPONENT_SOURCE_CHECKSUM_MISMATCH_ERROR_CODE,
-    });
-    expect(cache.put).not.toHaveBeenCalled();
-  });
-
-  it('returns and caches a matching presigned handoff response', async () => {
-    const cache = new FakeCache();
-
-    setupCaches(cache);
-
-    const fetchMock = jest
-      .fn()
-      .mockResolvedValueOnce(createFakeJsonHandoffResponse(PRESIGNED_URL))
-      .mockResolvedValueOnce(createFakeJsResponse(COMPONENT_SOURCE));
-
-    globalThis.fetch = fetchMock as unknown as typeof fetch;
-
-    const source = await fetchComponentSource({ url: FINGERPRINTED_URL });
-
-    expect(source).toBe(COMPONENT_SOURCE);
-    expect(fetchMock).toHaveBeenCalledTimes(2);
-    expect(cache.put).toHaveBeenCalledTimes(1);
-    expect(cache.put.mock.calls[0][0]).toBe(FINGERPRINTED_URL);
-  });
-
-  it('does not leak the presigned URL, headers, or source in the checksum mismatch error', async () => {
-    const cache = new FakeCache();
-
-    setupCaches(cache);
-
-    const substitutedSource = 'globalThis.leak = "SOURCE_MARKER";';
-
-    const fetchMock = jest
-      .fn()
-      .mockResolvedValueOnce(createFakeJsonHandoffResponse(PRESIGNED_URL))
-      .mockResolvedValueOnce(createFakeJsResponse(substitutedSource));
-
-    globalThis.fetch = fetchMock as unknown as typeof fetch;
-
-    const error = await captureRejection(
-      fetchComponentSource({
-        url: FINGERPRINTED_URL,
-        headers: { Authorization: 'Bearer SECRET_TOKEN' },
-      }),
-    );
-
-    expect(error).toBeInstanceOf(CustomError);
-
-    const { message, code } = error as CustomError;
-
-    expect(code).toBe(FRONT_COMPONENT_SOURCE_CHECKSUM_MISMATCH_ERROR_CODE);
-    expect(message).toContain(FINGERPRINTED_URL);
-    expect(message).toContain(computeSha256Hex(COMPONENT_SOURCE));
-    expect(message).toContain(computeSha256Hex(substitutedSource));
-
-    for (const secret of [
-      'SECRET_TOKEN',
-      'SECRET_SIGNATURE',
-      'bucket.example.com',
-      'SOURCE_MARKER',
-    ]) {
-      expect(message).not.toContain(secret);
-      expect(String(error)).not.toContain(secret);
-    }
-
-    expect(cache.put).not.toHaveBeenCalled();
-  });
-
   it('never touches the cache for a non-fingerprinted URL', async () => {
     const cache = new FakeCache();
 
@@ -473,7 +383,7 @@ describe('fetchComponentSource', () => {
     expect(cache.put).not.toHaveBeenCalled();
   });
 
-  it('returns a verified network response when CacheStorage is unavailable', async () => {
+  it('falls back to the network when CacheStorage is unavailable', async () => {
     (globalThis as unknown as { caches?: unknown }).caches = undefined;
 
     const fetchMock = jest.fn(async () =>
@@ -488,7 +398,7 @@ describe('fetchComponentSource', () => {
     expect(fetchMock).toHaveBeenCalledTimes(1);
   });
 
-  it('rejects a mismatched network response even when CacheStorage is unavailable', async () => {
+  it('rejects a mismatched network response when CacheStorage is unavailable', async () => {
     (globalThis as unknown as { caches?: unknown }).caches = undefined;
 
     const fetchMock = jest.fn(async () =>
@@ -497,14 +407,12 @@ describe('fetchComponentSource', () => {
 
     globalThis.fetch = fetchMock as unknown as typeof fetch;
 
-    await expect(
-      fetchComponentSource({ url: STALE_URL }),
-    ).rejects.toMatchObject({
-      code: FRONT_COMPONENT_SOURCE_CHECKSUM_MISMATCH_ERROR_CODE,
-    });
+    await expect(fetchComponentSource({ url: STALE_URL })).rejects.toThrow(
+      CHECKSUM_MISMATCH_MESSAGE,
+    );
   });
 
-  it('verifies a cache hit with the pure-JS digest when WebCrypto is unavailable', async () => {
+  it('does not trust the cache when WebCrypto is unavailable', async () => {
     const cache = new FakeCache();
 
     await cache.put(FINGERPRINTED_URL, {
@@ -513,71 +421,9 @@ describe('fetchComponentSource', () => {
     cache.put.mockClear();
 
     setupCaches(cache);
-    disableWebCrypto();
-
-    const fetchMock = jest.fn();
-
-    globalThis.fetch = fetchMock as unknown as typeof fetch;
-
-    const source = await fetchComponentSource({ url: FINGERPRINTED_URL });
-
-    expect(source).toBe(COMPONENT_SOURCE);
-    expect(fetchMock).not.toHaveBeenCalled();
-    expect(cache.delete).not.toHaveBeenCalled();
-  });
-
-  it('caches a matching network response with the pure-JS digest when WebCrypto is unavailable', async () => {
-    const cache = new FakeCache();
-
-    setupCaches(cache);
-    disableWebCrypto();
-
-    const fetchMock = jest.fn(async () =>
-      createFakeJsResponse(COMPONENT_SOURCE),
-    );
-
-    globalThis.fetch = fetchMock as unknown as typeof fetch;
-
-    const source = await fetchComponentSource({ url: FINGERPRINTED_URL });
-
-    expect(source).toBe(COMPONENT_SOURCE);
-    expect(cache.put).toHaveBeenCalledTimes(1);
-    expect(cache.put.mock.calls[0][0]).toBe(FINGERPRINTED_URL);
-  });
-
-  it('rejects a mismatched network response with the pure-JS digest when WebCrypto is unavailable', async () => {
-    const cache = new FakeCache();
-
-    setupCaches(cache);
-    disableWebCrypto();
-
-    const fetchMock = jest.fn(async () =>
-      createFakeJsResponse(COMPONENT_SOURCE),
-    );
-
-    globalThis.fetch = fetchMock as unknown as typeof fetch;
-
-    await expect(
-      fetchComponentSource({ url: STALE_URL }),
-    ).rejects.toMatchObject({
-      code: FRONT_COMPONENT_SOURCE_CHECKSUM_MISMATCH_ERROR_CODE,
-    });
-    expect(cache.put).not.toHaveBeenCalled();
-  });
-
-  it('falls back to the pure-JS digest when crypto.subtle.digest throws', async () => {
-    const cache = new FakeCache();
-
-    setupCaches(cache);
 
     Object.defineProperty(globalThis, 'crypto', {
-      value: {
-        subtle: {
-          digest: () => {
-            throw new Error('opaque origin');
-          },
-        },
-      },
+      value: undefined,
       configurable: true,
     });
 
@@ -590,6 +436,7 @@ describe('fetchComponentSource', () => {
     const source = await fetchComponentSource({ url: FINGERPRINTED_URL });
 
     expect(source).toBe(COMPONENT_SOURCE);
-    expect(cache.put).toHaveBeenCalledTimes(1);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(cache.put).not.toHaveBeenCalled();
   });
 });

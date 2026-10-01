@@ -199,7 +199,6 @@ export {
   getEdgeTypename,
   getGroupByConnectionTypename,
 } from './graphql/graphql-get-typename.util';
-export { computeSha256HexDigest } from './hash/computeSha256HexDigest';
 export { getImageAbsoluteURI } from './image/getImageAbsoluteURI';
 export { getLinkFaviconUrl } from './image/getLinkFaviconUrl';
 export {

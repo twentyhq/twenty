@@ -1,8 +1,10 @@
-import { computeSha256HexDigest, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
-const computeWebCryptoSha256HexDigest = async (
-  source: string,
-): Promise<string | undefined> => {
+export const computeComponentSourceChecksum = async ({
+  source,
+}: {
+  source: string;
+}): Promise<string | undefined> => {
   // Guards stay inside the try block: in Firefox, accessing `crypto`
   // in an opaque-origin context throws instead of being undefined.
   try {
@@ -22,11 +24,3 @@ const computeWebCryptoSha256HexDigest = async (
     return undefined;
   }
 };
-
-export const computeComponentSourceChecksum = async ({
-  source,
-}: {
-  source: string;
-}): Promise<string> =>
-  (await computeWebCryptoSha256HexDigest(source)) ??
-  computeSha256HexDigest(source);

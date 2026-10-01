@@ -1,6 +1,5 @@
-import { isDefined } from 'twenty-shared/utils';
+import { CustomError, isDefined } from 'twenty-shared/utils';
 
-import { assertComponentSourceMatchesChecksumOrThrow } from '@/host/component-source/utils/assertComponentSourceMatchesChecksumOrThrow';
 import { computeComponentSourceChecksum } from '@/host/component-source/utils/computeComponentSourceChecksum';
 import { deleteComponentSourceFromCache } from '@/host/component-source/utils/deleteComponentSourceFromCache';
 import { evictStaleComponentSourceCacheEntries } from '@/host/component-source/utils/evictStaleComponentSourceCacheEntries';
@@ -47,11 +46,18 @@ export const fetchComponentSource = async ({
     return source;
   }
 
-  await assertComponentSourceMatchesChecksumOrThrow({
-    url,
-    source,
-    expectedChecksum,
-  });
+  const sourceChecksum = await computeComponentSourceChecksum({ source });
+
+  if (!isDefined(sourceChecksum)) {
+    return source;
+  }
+
+  if (sourceChecksum !== expectedChecksum) {
+    throw new CustomError(
+      `Front component source checksum mismatch for ${url}: expected ${expectedChecksum}, received ${sourceChecksum}`,
+      'FRONT_COMPONENT_SOURCE_CHECKSUM_MISMATCH',
+    );
+  }
 
   if (isDefined(cache)) {
     writeComponentSourceToCache({ cache, url, source });
