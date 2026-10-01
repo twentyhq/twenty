@@ -173,7 +173,7 @@ describe('export file cleanup (integration)', () => {
     const exports = getAppProviderByClassName<RecordExportWorkspaceService>(
       'RecordExportWorkspaceService',
     );
-    await exports.cancel({
+    await exports.removeFile({
       workspaceId: SEED_APPLE_WORKSPACE_ID,
       id: file.id,
     });

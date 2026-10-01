@@ -1,19 +1,8 @@
 import { type RecordExportParameters } from 'src/engine/core-modules/record-export/types/record-export-parameters.type';
+import { type TrackedJob } from 'src/engine/core-modules/tracked-job/types/tracked-job.type';
 
-export type RecordExport = {
-  id: string;
-  workspaceId: string;
-  userWorkspaceId: string;
-  workspaceMemberId: string;
+export type RecordExport = TrackedJob & {
   requestTokenHash: string;
-  permissionsHash: string;
   parameters: RecordExportParameters;
   filename: string;
-  createdAt: number;
-};
-
-export type RecordExportProgress = {
-  processedRecordCount: number;
-  totalRecordCount: number | null;
-  errorMessage?: string;
 };
