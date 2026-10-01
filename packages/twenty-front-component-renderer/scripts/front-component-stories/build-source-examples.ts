@@ -188,6 +188,18 @@ type ChecksumFixtures = {
   staleChecksum: string;
 };
 
+const CHECKSUM_FIXTURE_FILE_NAME_PATTERN = /^[0-9a-f]{64}\.js$/;
+
+const removeChecksumFixtureFiles = (): void => {
+  const checksumFixtureFileNames = fs
+    .readdirSync(exampleSourcesBuiltDir)
+    .filter((fileName) => CHECKSUM_FIXTURE_FILE_NAME_PATTERN.test(fileName));
+
+  for (const fileName of checksumFixtureFileNames) {
+    fs.rmSync(path.join(exampleSourcesBuiltDir, fileName));
+  }
+};
+
 const writeChecksumFixtures = (): ChecksumFixtures => {
   const builtSource = fs.readFileSync(
     path.join(exampleSourcesBuiltDir, `${CHECKSUM_FIXTURE_COMPONENT}.mjs`),
@@ -198,6 +210,8 @@ const writeChecksumFixtures = (): ChecksumFixtures => {
       .update(STALE_CHECKSUM_SEED)
       .digest('hex'),
   };
+
+  removeChecksumFixtureFiles();
 
   for (const checksum of Object.values(fixtures)) {
     fs.writeFileSync(
