@@ -1,7 +1,7 @@
 /* @license Enterprise */
 
 import { MetadataReadability } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isNonEmptyArray } from 'twenty-shared/utils';
 
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
@@ -15,4 +15,4 @@ export const isDiscoverableObject = (
 ): boolean =>
   flatObjectMetadata.readability === MetadataReadability.DISCOVERABLE ||
   (flatObjectMetadata.readability === MetadataReadability.INHERITED &&
-    isDefined(flatObjectMetadata.discoverableFieldUniversalIdentifiers));
+    isNonEmptyArray(flatObjectMetadata.discoverableFieldUniversalIdentifiers));

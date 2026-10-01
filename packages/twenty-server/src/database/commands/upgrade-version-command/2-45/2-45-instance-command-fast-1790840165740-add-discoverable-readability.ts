@@ -16,7 +16,7 @@ export class AddDiscoverableReadabilityFastInstanceCommand implements FastInstan
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query('CREATE TYPE "core"."objectMetadata_readability_enum_old" AS ENUM(\'APPLICATION\', \'INHERITED\', \'OPEN\', \'PRIVATE\', \'SYSTEM\')');
+    await queryRunner.query('CREATE TYPE "core"."objectMetadata_readability_enum_old" AS ENUM(\'OPEN\', \'PRIVATE\', \'INHERITED\', \'APPLICATION\', \'SYSTEM\')');
     await queryRunner.query('ALTER TABLE "core"."objectMetadata" ALTER COLUMN "readability" DROP DEFAULT');
     await queryRunner.query('ALTER TABLE "core"."objectMetadata" ALTER COLUMN "readability" TYPE "core"."objectMetadata_readability_enum_old" USING (CASE WHEN "readability"::"text" = \'DISCOVERABLE\' THEN \'PRIVATE\' ELSE "readability"::"text" END)::"core"."objectMetadata_readability_enum_old"');
     await queryRunner.query('ALTER TABLE "core"."objectMetadata" ALTER COLUMN "readability" SET DEFAULT \'OPEN\'');
