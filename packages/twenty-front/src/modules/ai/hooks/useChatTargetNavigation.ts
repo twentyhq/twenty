@@ -2,7 +2,7 @@ import { useStore } from 'jotai';
 import { AppPath } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
 
-import { useAiChatArtifactSurface } from '@/ai/hooks/useAiChatArtifactSurface';
+import { useIsAiChatArtifactSurface } from '@/ai/hooks/useIsAiChatArtifactSurface';
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { useOpenRoutedPageInSidePanel } from '@/side-panel/routing/hooks/useOpenRoutedPageInSidePanel';
@@ -13,8 +13,7 @@ export const useChatTargetNavigation = () => {
   const navigateApp = useNavigateApp();
   const { openRecordInSidePanel } = useOpenRecordInSidePanel();
   const { openRoutedPageInSidePanel } = useOpenRoutedPageInSidePanel();
-  const { isAiChatArtifactSurface, openAiChatArtifact } =
-    useAiChatArtifactSurface();
+  const isAiChatArtifactSurface = useIsAiChatArtifactSurface();
 
   const openRecordTarget = ({
     recordId,
@@ -24,13 +23,9 @@ export const useChatTargetNavigation = () => {
     objectNameSingular: string;
   }) => {
     if (isAiChatArtifactSurface) {
-      openAiChatArtifact({
-        sidePanelPath: getAppPath(AppPath.RecordShowPage, {
-          objectNameSingular,
-          objectRecordId: recordId,
-        }),
-        openInSidePanel: () =>
-          openRecordInSidePanel({ recordId, objectNameSingular }),
+      openRecordInSidePanel({
+        recordId,
+        objectNameSingular,
       });
 
       return;
@@ -68,15 +63,12 @@ export const useChatTargetNavigation = () => {
     const recordIndexQueryParams = isDefined(viewId) ? { viewId } : undefined;
 
     if (isAiChatArtifactSurface) {
-      const path = getAppPath(
-        AppPath.RecordIndexPage,
-        recordIndexParams,
-        recordIndexQueryParams,
-      );
-
-      openAiChatArtifact({
-        sidePanelPath: path,
-        openInSidePanel: () => openRoutedPageInSidePanel({ path }),
+      openRoutedPageInSidePanel({
+        path: getAppPath(
+          AppPath.RecordIndexPage,
+          recordIndexParams,
+          recordIndexQueryParams,
+        ),
       });
 
       return;

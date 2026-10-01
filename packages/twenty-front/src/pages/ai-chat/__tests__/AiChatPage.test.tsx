@@ -40,6 +40,10 @@ jest.mock('@/ai/components/AiChatPageThreadUrlSyncEffect', () => ({
   AiChatPageThreadUrlSyncEffect: () => null,
 }));
 
+jest.mock('@/ai/components/AiChatThreadTriageHotkeysEffect', () => ({
+  AiChatThreadTriageHotkeysEffect: () => null,
+}));
+
 jest.mock('@/ai/components/AiChatPageCloseSidePanelChatEffect', () => ({
   AiChatPageCloseSidePanelChatEffect: () => null,
 }));

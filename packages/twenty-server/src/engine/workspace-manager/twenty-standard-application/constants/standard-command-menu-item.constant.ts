@@ -998,7 +998,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
       STANDARD_OBJECTS.agentChatThread.universalIdentifier,
     frontComponentUniversalIdentifier: null,
     engineComponentKey: EngineComponentKey.MARK_AI_CHAT_AS_DONE,
-    hotKeys: null,
+    hotKeys: ['E'],
   },
   reopenAiChat: {
     universalIdentifier: 'c3166829-0e0e-4821-9851-de5cf18945f3',
@@ -1018,7 +1018,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
       STANDARD_OBJECTS.agentChatThread.universalIdentifier,
     frontComponentUniversalIdentifier: null,
     engineComponentKey: EngineComponentKey.REOPEN_AI_CHAT,
-    hotKeys: null,
+    hotKeys: ['E'],
   },
   snoozeAiChat: {
     universalIdentifier: '9fbb747d-2e09-4822-a1e5-6792d0a28fb7',
@@ -1026,7 +1026,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
       msg({ message: `Snooze`, context: 'commandMenuItem.label' }),
     ),
     icon: 'IconClock',
-    isPinned: false,
+    isPinned: true,
     position: 77,
     shortLabel: i18nLabel(
       msg({ message: `Snooze`, context: 'commandMenuItem.shortLabel' }),
@@ -1038,7 +1038,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
       STANDARD_OBJECTS.agentChatThread.universalIdentifier,
     frontComponentUniversalIdentifier: null,
     engineComponentKey: EngineComponentKey.SNOOZE_AI_CHAT,
-    hotKeys: null,
+    hotKeys: ['H'],
   },
   replyToEmailThread: {
     universalIdentifier: '8f015cbd-c764-434e-a6c6-bb7581b4be44',

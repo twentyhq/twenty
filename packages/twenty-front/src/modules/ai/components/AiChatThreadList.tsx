@@ -19,14 +19,18 @@ const StyledGroupTitle = styled.div`
 type AiChatThreadListProps = {
   threads: AgentChatThreadRecord[];
   surface: AiChatThreadActionsSurface;
+  selectedThreadId?: string;
   isGroupedByDate?: boolean;
+  onThreadClick: (thread: AgentChatThreadRecord) => void;
   onDetachThread?: (threadId: string) => void;
 };
 
 export const AiChatThreadList = ({
   threads,
   surface,
+  selectedThreadId,
   isGroupedByDate = true,
+  onThreadClick,
   onDetachThread,
 }: AiChatThreadListProps) => {
   const renderThread = (thread: AgentChatThreadRecord) => (
@@ -34,6 +38,8 @@ export const AiChatThreadList = ({
       key={thread.id}
       thread={thread}
       surface={surface}
+      isSelected={thread.id === selectedThreadId}
+      onClick={onThreadClick}
       onDetach={
         isDefined(onDetachThread) ? () => onDetachThread(thread.id) : undefined
       }

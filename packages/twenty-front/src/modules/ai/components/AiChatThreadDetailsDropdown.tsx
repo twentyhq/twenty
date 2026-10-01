@@ -20,9 +20,9 @@ import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 import { AgentChatThreadPreviewsEffect } from '@/ai/components/AgentChatThreadPreviewsEffect';
 import { AiChatThreadLinkedRecordsPage } from '@/ai/components/AiChatThreadLinkedRecordsPage';
-import { useAiChatArtifactSurface } from '@/ai/hooks/useAiChatArtifactSurface';
 import { useAiChatThreadLinkedRecords } from '@/ai/hooks/useAiChatThreadLinkedRecords';
 import { useChatTargetNavigation } from '@/ai/hooks/useChatTargetNavigation';
+import { useIsAiChatArtifactSurface } from '@/ai/hooks/useIsAiChatArtifactSurface';
 import { agentChatThreadPreviewFamilySelector } from '@/ai/states/selectors/agentChatThreadPreviewFamilySelector';
 import { agentChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
 import { getAgentChatThreadMembers } from '@/ai/utils/getAgentChatThreadMembers';
@@ -125,7 +125,7 @@ const AiChatThreadLinkedRecordChips = ({
 }: AiChatThreadLinkedRecordChipsProps) => {
   const { t } = useLingui();
   const { closeDropdown } = useCloseDropdown();
-  const { isAiChatArtifactSurface } = useAiChatArtifactSurface();
+  const isAiChatArtifactSurface = useIsAiChatArtifactSurface();
   const { openRecordTarget } = useChatTargetNavigation();
 
   if (linkedRecords.length === 0) {

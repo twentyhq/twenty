@@ -7,7 +7,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { ChatReferenceChip } from '@/ai/components/ChatReferenceChip';
 import { TextWithChatReferences } from '@/ai/components/TextWithChatReferences';
 import { ChatReferenceNavigationEnabledContext } from '@/ai/contexts/ChatReferenceNavigationEnabledContext';
-import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { type ChatReferenceIdentity } from '@/ai/types/ChatReferenceIdentity';
 import { type ChatReferenceMatch } from '@/ai/types/ChatReferenceMatch';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
@@ -39,7 +38,6 @@ jest.mock('@/side-panel/hooks/useOpenRecordInSidePanel', () => ({
 const companyObjectMetadataItem = getMockObjectMetadataItemOrThrow('company');
 
 const RECORD_ID = '11111111-1111-4111-8111-111111111111';
-const THREAD_ID = '99999999-9999-4999-8999-999999999999';
 const VIEW_ID = '44444444-4444-4444-4444-444444444444';
 const ROLE_ID = '55555555-5555-4555-8555-555555555555';
 const APPLICATION_ID = '66666666-6666-4666-8666-666666666666';
@@ -182,14 +180,12 @@ const renderWithReferences = (
     initialPath = '/objects/companies',
     isNavigationEnabled = true,
     isWorkspaceSetupChat = false,
-    currentThreadId = null,
   }: {
     permissionFlags?: PermissionFlagType[];
     views?: ViewWithRelations[];
     initialPath?: string;
     isNavigationEnabled?: boolean;
     isWorkspaceSetupChat?: boolean;
-    currentThreadId?: string | null;
   } = {},
 ) => {
   const Wrapper = getJestMetadataAndApolloMocksWrapper({
@@ -205,7 +201,6 @@ const renderWithReferences = (
         shouldOpenAiChatAfterOnboardingState.atom,
         isWorkspaceSetupChat,
       );
-      store.set(currentAiChatThreadState.atom, currentThreadId);
     },
   });
 
@@ -294,19 +289,20 @@ describe('ChatReferenceChip', () => {
     });
   });
 
-  it('should move a chat opened from the inbox full page to open a record beside it', () => {
+  it('should open a record beside a chat shown in the inbox', () => {
     renderWithReferences(
       <ChatReferenceChip reference={findCase('record').reference} />,
-      { initialPath: '/inbox', currentThreadId: THREAD_ID },
+      { initialPath: '/inbox/99999999-9999-4999-8999-999999999999' },
     );
 
     clickChip('Acme');
 
-    expect(openRecordInSidePanelMock).not.toHaveBeenCalled();
+    expect(openRecordInSidePanelMock).toHaveBeenCalledWith({
+      recordId: RECORD_ID,
+      objectNameSingular: 'company',
+    });
     expect(screen.getByTestId('location-probe')).toHaveTextContent(
-      `/chat/${THREAD_ID}?panel=${encodeURIComponent(
-        `/object/company/${RECORD_ID}`,
-      )}`,
+      '/inbox/99999999-9999-4999-8999-999999999999',
     );
   });
 

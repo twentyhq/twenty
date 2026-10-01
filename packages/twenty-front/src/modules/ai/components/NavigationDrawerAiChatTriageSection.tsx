@@ -36,7 +36,7 @@ export const NavigationDrawerAiChatTriageSection = () => {
 
   const handleTriageClick = (filterStatus: AgentChatThreadFilterStatus) => {
     setAgentChatThreadFilterStatus(filterStatus);
-    navigate(AppPath.AiChatInbox);
+    navigate(AppPath.AiChatInbox, { threadId: null });
   };
 
   return (

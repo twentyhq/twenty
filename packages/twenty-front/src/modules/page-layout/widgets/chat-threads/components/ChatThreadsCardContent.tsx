@@ -1,5 +1,6 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconRefresh } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
@@ -10,8 +11,13 @@ import { AI_CHAT_THREAD_ACTIONS_SURFACE } from '@/ai/constants/AiChatThreadActio
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
 import { AnimatedPlaceholder } from '@/ui/feedback/empty-state/components/AnimatedPlaceholder/AnimatedPlaceholder';
+import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
+import { useCurrentSidePanelRoutedPath } from '@/side-panel/routing/hooks/useCurrentSidePanelRoutedPath';
+import { getRecordShowParamsFromPath } from '@/side-panel/routing/utils/getRecordShowParamsFromPath';
+import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { EmptyState } from '@/ui/feedback/empty-state/components/EmptyState';
 import { ErrorState } from '@/ui/feedback/empty-state/components/ErrorState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const StyledThreadsContainer = styled.div`
   display: flex;
@@ -37,7 +43,31 @@ export const ChatThreadsCardContent = ({
   onDetachThread,
   threads,
 }: ChatThreadsCardContentProps) => {
+  const { openRecordInSidePanel } = useOpenRecordInSidePanel();
+  const isSidePanelOpened = useAtomStateValue(isSidePanelOpenedState);
+  const sidePanelRoutedPath = useCurrentSidePanelRoutedPath();
+  const sidePanelRecord = isDefined(sidePanelRoutedPath)
+    ? getRecordShowParamsFromPath(sidePanelRoutedPath)
+    : null;
+  const sidePanelThreadId =
+    isSidePanelOpened &&
+    sidePanelRecord?.objectNameSingular ===
+      CoreObjectNameSingular.AgentChatThread
+      ? sidePanelRecord.objectRecordId
+      : undefined;
   const isThreadsEmpty = threads.length === 0;
+
+  // Opening the chat already in the panel would drop the panel's back history
+  const handleThreadClick = (thread: AgentChatThreadRecord) => {
+    if (thread.id === sidePanelThreadId) {
+      return;
+    }
+
+    openRecordInSidePanel({
+      recordId: thread.id,
+      objectNameSingular: CoreObjectNameSingular.AgentChatThread,
+    });
+  };
 
   if (loading && isThreadsEmpty) {
     return <SkeletonLoader />;
@@ -83,6 +113,8 @@ export const ChatThreadsCardContent = ({
       <AiChatThreadList
         threads={threads}
         surface={AI_CHAT_THREAD_ACTIONS_SURFACE.RECORD_PAGE}
+        selectedThreadId={sidePanelThreadId}
+        onThreadClick={handleThreadClick}
         onDetachThread={onDetachThread}
       />
     </StyledThreadsContainer>

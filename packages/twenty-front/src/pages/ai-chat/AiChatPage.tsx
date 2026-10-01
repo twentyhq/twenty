@@ -1,11 +1,9 @@
 import { styled } from '@linaria/react';
 import { useParams } from 'react-router-dom';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useIsMobile } from 'twenty-ui/utilities';
 
 import { AiChatCloseButton } from '@/ai/components/AiChatCloseButton';
-import { AiChatThreadDetailsDropdown } from '@/ai/components/AiChatThreadDetailsDropdown';
 import { AiChatPageCloseSidePanelChatEffect } from '@/ai/components/AiChatPageCloseSidePanelChatEffect';
 import { AiChatPageContinueInSidePanelEffect } from '@/ai/components/AiChatPageContinueInSidePanelEffect';
 import { AiChatPageHeader } from '@/ai/components/AiChatPageHeader';
@@ -17,7 +15,7 @@ import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { getDisplayedAiChatThreadId } from '@/ai/utils/getDisplayedAiChatThreadId';
 import { PageCardLayout } from '@/ui/layout/page/components/PageCardLayout';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { RecordShowPageContent } from '~/pages/object-record/RecordShowPage';
+import { AiChatThreadPageContent } from '~/pages/ai-chat/AiChatThreadPageContent';
 
 const StyledChatContainer = styled.div`
   --ai-chat-content-max-width: 768px;
@@ -44,17 +42,9 @@ export const AiChatPage = () => {
       <AiChatPageCloseSidePanelChatEffect />
       <AiChatPageContinueInSidePanelEffect />
       {isDefined(displayedThreadId) ? (
-        <RecordShowPageContent
-          parameters={{
-            objectNameSingular: CoreObjectNameSingular.AgentChatThread,
-            objectRecordId: displayedThreadId,
-          }}
+        <AiChatThreadPageContent
+          threadId={displayedThreadId}
           headerActions={isMobile && <AiChatCloseButton />}
-          headerTitleAccessory={
-            <AiChatThreadDetailsDropdown threadId={displayedThreadId} />
-          }
-          headerTitleMode="record-title"
-          isRecordIdentifierBarHidden
         />
       ) : (
         // A new chat has no record until its first message is sent

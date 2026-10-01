@@ -129,7 +129,9 @@ describe('NavigationDrawerAiChatTriageSection', () => {
     expect(jotaiStore.get(agentChatThreadFilterStatusState.atom)).toBe(
       AGENT_CHAT_THREAD_FILTER_STATUS.SNOOZED,
     );
-    expect(navigate).toHaveBeenCalledWith(AppPath.AiChatInbox);
+    expect(navigate).toHaveBeenCalledWith(AppPath.AiChatInbox, {
+      threadId: null,
+    });
   });
 
   it('marks the status shown on the inbox page as current', () => {
@@ -138,7 +140,7 @@ describe('NavigationDrawerAiChatTriageSection', () => {
       AGENT_CHAT_THREAD_FILTER_STATUS.ARCHIVED,
     );
 
-    renderTriage(AppPath.AiChatInbox);
+    renderTriage('/inbox');
 
     expect(screen.getByRole('button', { name: 'Done' })).toHaveAttribute(
       'aria-current',

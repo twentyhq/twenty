@@ -1,6 +1,7 @@
 import { useIsMobile } from 'twenty-ui/utilities';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
+import { getAppPath } from 'twenty-shared/utils';
 
 import { useReturnFromExpandedAiChat } from '@/ai/hooks/useReturnFromExpandedAiChat';
 import { getExpandedAiChatReturnLocation } from '@/ai/utils/getExpandedAiChatReturnLocation';
@@ -83,7 +84,7 @@ export const useSwitchNavigationDrawerMode = () => {
   const switchToAiChat = () => {
     setCurrentMobileNavigationDrawer('main');
     setNavigationDrawerActiveTab(NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY);
-    navigate(AppPath.AiChatInbox);
+    navigate(getAppPath(AppPath.AiChatInbox, { threadId: null }));
   };
 
   // AI mode also lists chat history beside other pages, so only the chat and inbox pages make a click a no-op.

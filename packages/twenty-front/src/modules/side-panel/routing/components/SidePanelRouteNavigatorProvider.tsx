@@ -4,13 +4,11 @@ import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { useOpenSettingsMenu } from '@/navigation/hooks/useOpenSettings';
 import { useOpenRoutedPageInSidePanel } from '@/side-panel/routing/hooks/useOpenRoutedPageInSidePanel';
 import { isWorkspaceLocationAvailableOnSurface } from '@/app/routing/utils/isWorkspaceLocationAvailableOnSurface';
-import { SIDE_PANEL_PATH_SEARCH_PARAM } from '@/side-panel/routing/constants/SidePanelPathSearchParam';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 import { useStore } from 'jotai';
 import { type ReactNode, useContext, useMemo } from 'react';
 import {
   createPath,
-  parsePath,
   type NavigateOptions,
   type Navigator,
   type To,
@@ -64,15 +62,7 @@ export const SidePanelRouteNavigatorProvider = ({
         return;
       }
 
-      // A main location that names its own side panel page swaps the panel's
-      // page through the URL instead of closing the panel
-      const namesSidePanelPage = new URLSearchParams(
-        parsePath(path).search,
-      ).has(SIDE_PANEL_PATH_SEARCH_PARAM);
-
-      if (!namesSidePanelPage) {
-        void closeSidePanelMenu();
-      }
+      void closeSidePanelMenu();
       if (path.startsWith('/settings')) {
         openSettingsMenu();
       }

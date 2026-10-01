@@ -12,7 +12,7 @@ import { IconApps, IconLock, useIcons } from 'twenty-ui/icon';
 import { useTheme } from 'twenty-ui/theme';
 
 import { CHAT_REFERENCE_PERMISSION_FLAG_BY_KIND } from '@/ai/constants/ChatReferencePermissionFlagByKind';
-import { useAiChatArtifactSurface } from '@/ai/hooks/useAiChatArtifactSurface';
+import { useIsAiChatArtifactSurface } from '@/ai/hooks/useIsAiChatArtifactSurface';
 import { type ChatReferenceMatch } from '@/ai/types/ChatReferenceMatch';
 import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
@@ -45,8 +45,7 @@ export const useChatReferenceTarget = (
 ): ChatReferenceTarget | null => {
   const theme = useTheme();
   const { getIcon } = useIcons();
-  const { isAiChatArtifactSurface, openAiChatArtifact } =
-    useAiChatArtifactSurface();
+  const isAiChatArtifactSurface = useIsAiChatArtifactSurface();
   const { openRecordInSidePanel } = useOpenRecordInSidePanel();
   const { openRoutedPageInSidePanel } = useOpenRoutedPageInSidePanel();
   const hasPermission = useHasPermissionFlag(
@@ -215,23 +214,15 @@ export const useChatReferenceTarget = (
     switch (reference.kind) {
       case 'record':
         return () =>
-          openAiChatArtifact({
-            sidePanelPath: path,
-            openInSidePanel: () =>
-              openRecordInSidePanel({
-                recordId: reference.recordId,
-                objectNameSingular: reference.objectNameSingular,
-              }),
+          openRecordInSidePanel({
+            recordId: reference.recordId,
+            objectNameSingular: reference.objectNameSingular,
           });
       // Application settings aren't routed in the side panel, so the chip navigates like a plain link.
       case 'app':
         return undefined;
       default:
-        return () =>
-          openAiChatArtifact({
-            sidePanelPath: path,
-            openInSidePanel: () => openRoutedPageInSidePanel({ path }),
-          });
+        return () => openRoutedPageInSidePanel({ path });
     }
   };
 

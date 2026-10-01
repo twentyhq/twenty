@@ -4,7 +4,6 @@ import { useStore } from 'jotai';
 
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
-import { SIDE_PANEL_PATH_SEARCH_PARAM } from '@/side-panel/routing/constants/SidePanelPathSearchParam';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { isCurrentPathAiChatPage } from '~/utils/isCurrentPathAiChatPage';
 
@@ -15,11 +14,8 @@ export const useNavigateToAiChatPage = () => {
 
   const navigateToAiChatPage = ({
     threadId,
-    sidePanelPath,
   }: {
     threadId?: string | null;
-    // Opened in the side panel next to the chat, in the same navigation
-    sidePanelPath?: string;
   } = {}) => {
     if (
       store.get(isLayoutCustomizationModeEnabledState.atom) ||
@@ -28,9 +24,7 @@ export const useNavigateToAiChatPage = () => {
       return;
     }
 
-    if (!isDefined(sidePanelPath)) {
-      void closeSidePanelMenu();
-    }
+    void closeSidePanelMenu();
 
     navigate(
       AppPath.AiChat,
@@ -38,12 +32,8 @@ export const useNavigateToAiChatPage = () => {
         threadId:
           isDefined(threadId) && isValidUuid(threadId) ? threadId : null,
       },
-      isDefined(sidePanelPath)
-        ? { [SIDE_PANEL_PATH_SEARCH_PARAM]: sidePanelPath }
-        : undefined,
+      undefined,
       {
-        // The chat page is a main page, even when a side panel page asks for it
-        surface: 'main',
         state: {
           // Read from the window rather than useLocation so that opening a new
           // chat does not require a router context from every caller of
