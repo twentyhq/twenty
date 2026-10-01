@@ -178,6 +178,33 @@ describe('WorkflowRunWorkspaceService conversations', () => {
     });
   });
 
+  describe('updateStepInfoIfPending without an expected conversation', () => {
+    const claim = (service: WorkflowRunWorkspaceService) =>
+      service.updateStepInfoIfPending({
+        stepId: 'step-id',
+        stepInfo: { status: StepStatus.SUCCESS },
+        workflowRunId: 'workflow-run-id',
+        workspaceId: 'workspace-id',
+      });
+
+    it('claims a PENDING step whatever conversation it holds, only once', async () => {
+      const { service, updateWorkflowRun } = buildService({
+        stepInfo: { status: StepStatus.PENDING, threadId: 'other-thread' },
+      });
+      updateWorkflowRun.mockImplementation(async ({ partialUpdate }) => {
+        jest.spyOn(service, 'getWorkflowRunOrFail').mockResolvedValue({
+          id: 'workflow-run-id',
+          status: WorkflowRunStatus.RUNNING,
+          state: partialUpdate.state,
+        } as never);
+      });
+
+      expect(await claim(service)).toBe(true);
+      expect(await claim(service)).toBe(false);
+      expect(updateWorkflowRun).toHaveBeenCalledTimes(1);
+    });
+  });
+
   describe('endWorkflowRun', () => {
     const endRun = (service: WorkflowRunWorkspaceService) =>
       service.endWorkflowRun({
