@@ -580,6 +580,7 @@
                     "ui/primitives/input/field",
                     "ui/primitives/input/input",
                     "ui/primitives/input/input-group",
+                    "ui/primitives/input/number-input",
                     "ui/primitives/input/textarea",
                     "ui/primitives/input/checkbox",
                     "ui/primitives/input/radio",

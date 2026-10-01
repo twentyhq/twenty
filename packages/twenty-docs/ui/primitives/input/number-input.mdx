@@ -14,9 +14,25 @@ import NumberInputReference from '/snippets/ui/generated/input/number-input.mdx'
   height={180}
 />
 
+## Uncontrolled value
+
+Use `defaultValue` to set the initial quantity. The input owns subsequent changes.
+
+```tsx
+import { Field, NumberInput } from 'twenty-ui/primitives/input';
+
+export const QuantityInput = () => (
+  <Field.Root>
+    <Field.Label>Quantity</Field.Label>
+    <NumberInput name="quantity" defaultValue={3} min={0} max={10} step={1} />
+    <Field.Description>Choose up to ten items.</Field.Description>
+  </Field.Root>
+);
+```
+
 ## Controlled value
 
-Pass a number or `null` through `value` and update it in `onValueChange`. The callback receives the next numeric value and event details. Use `defaultValue` instead when the field should own its value.
+Pass a number or `null` through `value` and update it in `onValueChange` to own the same quantity in React state. The callback receives the next numeric value and event details.
 
 ```tsx
 import { useState } from 'react';
