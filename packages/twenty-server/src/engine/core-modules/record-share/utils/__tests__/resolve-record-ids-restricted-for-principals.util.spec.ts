@@ -120,15 +120,11 @@ describe('resolveRecordIdsRestrictedForPrincipals', () => {
             EVERYONE_PRINCIPAL_ID,
             RecordShareAccessLevel.NONE,
           ),
-          {
-            ...buildShare(
-              'restricted',
-              EVERYONE_PRINCIPAL_ID,
-              RecordShareAccessLevel.FULL,
-            ),
-            rowCause: RecordShareRowCause.APPLICATION,
-            sourceId: 'application-1',
-          },
+          buildShare(
+            'restricted',
+            EVERYONE_PRINCIPAL_ID,
+            RecordShareAccessLevel.FULL,
+          ),
         ],
         principalIds: [EVERYONE_PRINCIPAL_ID, MEMBER_ID],
         accessLevels: SELECT_ACCESS_LEVELS,
