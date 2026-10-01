@@ -71,7 +71,20 @@ describe('GraphqlQueryOrderFieldParser', () => {
     objectMetadataId: 'company-object-id',
   });
 
-  const rootFields = [closeDateField, stageField, fullNameField, companyField];
+  const positionField = createMockField({
+    id: 'position-id',
+    type: FieldMetadataType.POSITION,
+    name: 'position',
+    isNullable: false,
+  });
+
+  const rootFields = [
+    closeDateField,
+    stageField,
+    fullNameField,
+    companyField,
+    positionField,
+  ];
   const fields = [...rootFields, companyNameField, companyContactNameField];
 
   const flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata> = {
@@ -202,6 +215,19 @@ describe('GraphqlQueryOrderFieldParser', () => {
     expect(result.orderBy['opportunity.stage']).toMatchObject({
       order: 'DESC',
       nulls: 'NULLS FIRST',
+    });
+  });
+
+  it('should leave the NULLS placement out on a column without nulls, so its index serves the order', () => {
+    const result = parser.parse(
+      [{ position: OrderByDirection.AscNullsFirst }],
+      'opportunity',
+    );
+
+    expect(result.orderBy['opportunity.position']).toEqual({
+      order: 'ASC',
+      useLower: false,
+      castToText: false,
     });
   });
 
