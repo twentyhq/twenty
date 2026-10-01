@@ -158,6 +158,7 @@ export class RecordShareStorageService {
     );
   }
 
+  // Without a custodian the departing member's grants are only dropped
   async transferMemberGrants({
     workspaceId,
     objectMetadataIds,
@@ -167,12 +168,8 @@ export class RecordShareStorageService {
     workspaceId: string;
     objectMetadataIds: string[];
     fromWorkspaceMemberId: string;
-    toWorkspaceMemberId: string;
+    toWorkspaceMemberId: string | undefined;
   }): Promise<void> {
-    if (objectMetadataIds.length === 0) {
-      return;
-    }
-
     const transferableRowCauses = In([
       RecordShareRowCause.OWNER,
       RecordShareRowCause.MANUAL,
@@ -190,71 +187,65 @@ export class RecordShareStorageService {
                 principalId: fromWorkspaceMemberId,
                 rowCause: transferableRowCauses,
               };
-              const fullGrants = await repository.find({
-                where: {
-                  ...fromMember,
-                  accessLevel: RecordShareAccessLevel.FULL,
-                },
-              });
 
-              for (const fullGrantsChunk of chunk(
-                fullGrants,
-                QUERY_MAX_RECORDS,
-              )) {
-                await repository.insert(
-                  fullGrantsChunk.map((grant) => ({
-                    objectMetadataId: grant.objectMetadataId,
-                    recordId: grant.recordId,
-                    principalType: grant.principalType,
-                    principalId: toWorkspaceMemberId,
-                    accessLevel: grant.accessLevel,
-                    rowCause: grant.rowCause,
-                    sourceId: grant.sourceId,
-                  })),
-                  { onConflictDoNothing: true },
-                );
-              }
-
-              // The insert skips the rows the custodian already holds on
-              // these records, which are raised to full access instead
-              const fullGrantKeys = new Set(
-                fullGrants.map(buildRecordShareRowKey),
-              );
-              const custodianGrantIdsToRaise: string[] = [];
-
-              for (const fullGrantsChunk of chunk(
-                fullGrants,
-                QUERY_MAX_RECORDS,
-              )) {
-                const custodianGrants = await repository.find({
+              if (isDefined(toWorkspaceMemberId)) {
+                const fullGrants = await repository.find({
                   where: {
-                    principalType: RecordSharePrincipalType.WORKSPACE_MEMBER,
-                    principalId: toWorkspaceMemberId,
-                    recordId: In(
-                      fullGrantsChunk.map((fullGrant) => fullGrant.recordId),
-                    ),
-                    rowCause: transferableRowCauses,
-                    accessLevel: Not(RecordShareAccessLevel.FULL),
+                    ...fromMember,
+                    accessLevel: RecordShareAccessLevel.FULL,
                   },
                 });
+                const fullGrantKeys = new Set(
+                  fullGrants.map(buildRecordShareRowKey),
+                );
 
-                custodianGrantIdsToRaise.push(
-                  ...custodianGrants
+                for (const fullGrantsChunk of chunk(
+                  fullGrants,
+                  QUERY_MAX_RECORDS,
+                )) {
+                  await repository.insert(
+                    fullGrantsChunk.map((grant) => ({
+                      objectMetadataId: grant.objectMetadataId,
+                      recordId: grant.recordId,
+                      principalType: grant.principalType,
+                      principalId: toWorkspaceMemberId,
+                      accessLevel: grant.accessLevel,
+                      rowCause: grant.rowCause,
+                      sourceId: grant.sourceId,
+                    })),
+                    { onConflictDoNothing: true },
+                  );
+
+                  // The insert skips the rows the custodian already holds on
+                  // these records, which are raised to full access instead
+                  const custodianGrantIdsToRaise = (
+                    await repository.find({
+                      where: {
+                        principalType:
+                          RecordSharePrincipalType.WORKSPACE_MEMBER,
+                        principalId: toWorkspaceMemberId,
+                        recordId: In(
+                          fullGrantsChunk.map(
+                            (fullGrant) => fullGrant.recordId,
+                          ),
+                        ),
+                        rowCause: transferableRowCauses,
+                        accessLevel: Not(RecordShareAccessLevel.FULL),
+                      },
+                    })
+                  )
                     .filter((grant) =>
                       fullGrantKeys.has(buildRecordShareRowKey(grant)),
                     )
-                    .map((grant) => grant.id),
-                );
-              }
+                    .map((grant) => grant.id);
 
-              for (const grantIdsChunk of chunk(
-                custodianGrantIdsToRaise,
-                QUERY_MAX_RECORDS,
-              )) {
-                await repository.update(
-                  { id: In(grantIdsChunk) },
-                  { accessLevel: RecordShareAccessLevel.FULL },
-                );
+                  if (custodianGrantIdsToRaise.length > 0) {
+                    await repository.update(
+                      { id: In(custodianGrantIdsToRaise) },
+                      { accessLevel: RecordShareAccessLevel.FULL },
+                    );
+                  }
+                }
               }
 
               await repository.delete(fromMember);

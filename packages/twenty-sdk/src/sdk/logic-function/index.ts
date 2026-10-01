@@ -68,6 +68,12 @@ export type { AppMessageChannel } from '@/sdk/logic-function/messaging/types/app
 export { runAgent } from '@/sdk/logic-function/agents/run-agent';
 export type { RunAgentInput, RunAgentResult } from 'twenty-shared/application';
 
+export { sendInboxMessage } from '@/sdk/logic-function/inbox/send-inbox-message';
+export type {
+  SendInboxMessageInput,
+  SendInboxMessageResult,
+} from 'twenty-shared/application';
+
 export { enqueueJob } from '@/sdk/logic-function/jobs/enqueue-job';
 export { enqueueJobs } from '@/sdk/logic-function/jobs/enqueue-jobs';
 export { getJobs } from '@/sdk/logic-function/jobs/get-jobs';

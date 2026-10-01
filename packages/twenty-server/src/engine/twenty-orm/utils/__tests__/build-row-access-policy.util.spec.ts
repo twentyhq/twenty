@@ -267,7 +267,7 @@ describe('buildRowAccessPolicy', () => {
       expect(policy.kind).toBe('gated');
       if (policy.kind !== 'gated') throw new Error('Expected a grant gate');
       expect(policy.condition.sql).toMatch(
-        /^"company"."id" = ANY\(ARRAY\(SELECT "company_namedGrant"."recordId" FROM "workspace"."recordShare"/,
+        /^"company"."id" = ANY\(ARRAY\(SELECT "company_recordShare"."recordId" FROM "workspace"."recordShare"/,
       );
       expect(Object.values(policy.condition.parameters)).toContainEqual([
         'role-2',
@@ -323,7 +323,7 @@ describe('buildRowAccessPolicy', () => {
 
       if (policy.kind !== 'gated') throw new Error('Expected a grant gate');
       expect(policy.condition.sql).toMatch(
-        /^\(\(\("company"."title" = :restricted\) AND \(NOT EXISTS .*\)\) OR \("company"."id" = ANY\(ARRAY\(SELECT "company_namedGrant"."recordId"/,
+        /^\(\(\("company"."title" = :restricted\) AND \(NOT EXISTS .*\)\) OR \("company"."id" = ANY\(ARRAY\(SELECT "company_recordShare"."recordId"/,
       );
     });
 

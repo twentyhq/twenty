@@ -33,6 +33,7 @@ export enum AiExceptionCode {
   INVALID_EVALUATION_REQUEST = 'INVALID_EVALUATION_REQUEST',
   TOOL_CALL_RESOLUTION_FORBIDDEN = 'TOOL_CALL_RESOLUTION_FORBIDDEN',
   THREAD_AWAITING_WORKFLOW_INPUT = 'THREAD_AWAITING_WORKFLOW_INPUT',
+  THREAD_AWAITING_ANSWER = 'THREAD_AWAITING_ANSWER',
 }
 
 const getAiExceptionUserFriendlyMessage = (code: AiExceptionCode) => {
@@ -93,6 +94,8 @@ const getAiExceptionUserFriendlyMessage = (code: AiExceptionCode) => {
       return msg`You are not allowed to answer this request.`;
     case AiExceptionCode.THREAD_AWAITING_WORKFLOW_INPUT:
       return msg`This workflow is waiting for an answer. Answer it before sending a message.`;
+    case AiExceptionCode.THREAD_AWAITING_ANSWER:
+      return msg`This conversation is waiting for an answer to an earlier request.`;
     default:
       assertUnreachable(code);
   }

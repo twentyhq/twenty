@@ -1376,27 +1376,6 @@ export interface NavigationMenuItem {
 
 export type NavigationMenuItemType = 'VIEW' | 'FOLDER' | 'LINK' | 'OBJECT' | 'RECORD' | 'PAGE_LAYOUT'
 
-export interface ObjectAccessOverviewRoleDTO {
-    id: Scalars['UUID']
-    label: Scalars['String']
-    icon?: Scalars['String']
-    canRead: Scalars['Boolean']
-    canUpdate: Scalars['Boolean']
-    canSoftDelete: Scalars['Boolean']
-    canDestroy: Scalars['Boolean']
-    hasRowFilter: Scalars['Boolean']
-    canAccessAllRecords: Scalars['Boolean']
-    __typename: 'ObjectAccessOverviewRoleDTO'
-}
-
-export interface ObjectAccessOverviewDTO {
-    objectMetadataId: Scalars['UUID']
-    roles: ObjectAccessOverviewRoleDTO[]
-    restrictedRecordCount: Scalars['Int']
-    sharedRecordCount: Scalars['Int']
-    __typename: 'ObjectAccessOverviewDTO'
-}
-
 export interface RecordPermissionsDTO {
     canRead: Scalars['Boolean']
     canUpdate: Scalars['Boolean']
@@ -1713,7 +1692,7 @@ export interface FeatureFlag {
     __typename: 'FeatureFlag'
 }
 
-export type FeatureFlagKey = 'IS_APPLICATION_WORKFLOWS_ENABLED' | 'IS_ASYNC_CSV_EXPORT_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_JSON_FILTER_ENABLED' | 'IS_MESSAGE_CAMPAIGN_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED' | 'IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED' | 'IS_AI_CHAT_SHARING_DROPDOWN_ENABLED' | 'IS_INITIAL_OBJECT_VIEW_ENABLED' | 'IS_WEBHOOK_RATE_LIMIT_ENABLED' | 'IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED' | 'IS_EXECUTION_QUOTA_ENABLED' | 'IS_RECORD_CREATION_FORM_ENABLED' | 'IS_LOGS_SETTINGS_SECTION_ENABLED' | 'IS_CONVERSATIONS_TAB_ENABLED' | 'IS_VALIDATION_RULES_ENABLED' | 'IS_RECORD_LEVEL_SHARING_ENABLED' | 'IS_OBJECT_ACCESS_VIEW_ENABLED'
+export type FeatureFlagKey = 'IS_APPLICATION_WORKFLOWS_ENABLED' | 'IS_ASYNC_CSV_EXPORT_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_JSON_FILTER_ENABLED' | 'IS_MESSAGE_CAMPAIGN_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED' | 'IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED' | 'IS_AI_CHAT_SHARING_DROPDOWN_ENABLED' | 'IS_INITIAL_OBJECT_VIEW_ENABLED' | 'IS_WEBHOOK_RATE_LIMIT_ENABLED' | 'IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED' | 'IS_EXECUTION_QUOTA_ENABLED' | 'IS_RECORD_CREATION_FORM_ENABLED' | 'IS_LOGS_SETTINGS_SECTION_ENABLED' | 'IS_CONVERSATIONS_TAB_ENABLED' | 'IS_VALIDATION_RULES_ENABLED' | 'IS_RECORD_LEVEL_SHARING_ENABLED' | 'IS_WORKFLOW_SEND_CHAT_MESSAGE_ENABLED'
 
 export interface WorkspaceUrls {
     customUrl?: Scalars['String']
@@ -3108,6 +3087,11 @@ export interface AgentChatEvent {
     __typename: 'AgentChatEvent'
 }
 
+export interface SendInboxMessageResult {
+    threadId: Scalars['UUID']
+    __typename: 'SendInboxMessageResult'
+}
+
 export interface StartWorkspaceSetupChatResult {
     outcome: WorkspaceSetupChatOutcome
     thread?: AgentChatThread
@@ -3380,14 +3364,13 @@ export interface MinimalMetadata {
 
 export interface Query {
     recordSharing: RecordSharingDTO
-    objectAccessOverview: ObjectAccessOverviewDTO
-    applicationSdkClientChecksums?: SdkClientChecksums
-    isApplicationStopped: Scalars['Boolean']
     navigationMenuItems: NavigationMenuItem[]
     navigationMenuItem?: NavigationMenuItem
     enterprisePortalSession?: Scalars['String']
     enterpriseCheckoutSession?: Scalars['String']
     enterpriseSubscriptionStatus?: EnterpriseSubscriptionStatusDTO
+    applicationSdkClientChecksums?: SdkClientChecksums
+    isApplicationStopped: Scalars['Boolean']
     usageLimits: UsageLimit[]
     usageQuotasWithConsumption: UsageQuotaWithConsumption[]
     usageQuotaDefinitions: UsageQuotaDefinitions
@@ -3723,6 +3706,7 @@ export interface Mutation {
     stopAgentChatStream: Scalars['Boolean']
     deleteQueuedChatMessage: Scalars['Boolean']
     startWorkspaceSetupChat: StartWorkspaceSetupChatResult
+    sendInboxMessage: SendInboxMessageResult
     createSkill: Skill
     updateSkill: Skill
     deleteSkill: Skill
@@ -5215,29 +5199,6 @@ export interface NavigationMenuItemGenqlSelection{
     createdAt?: boolean | number
     updatedAt?: boolean | number
     targetRecordIdentifier?: RecordIdentifierGenqlSelection
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface ObjectAccessOverviewRoleDTOGenqlSelection{
-    id?: boolean | number
-    label?: boolean | number
-    icon?: boolean | number
-    canRead?: boolean | number
-    canUpdate?: boolean | number
-    canSoftDelete?: boolean | number
-    canDestroy?: boolean | number
-    hasRowFilter?: boolean | number
-    canAccessAllRecords?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface ObjectAccessOverviewDTOGenqlSelection{
-    objectMetadataId?: boolean | number
-    roles?: ObjectAccessOverviewRoleDTOGenqlSelection
-    restrictedRecordCount?: boolean | number
-    sharedRecordCount?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -7057,6 +7018,12 @@ export interface AgentChatEventGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface SendInboxMessageResultGenqlSelection{
+    threadId?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface StartWorkspaceSetupChatResultGenqlSelection{
     outcome?: boolean | number
     thread?: AgentChatThreadGenqlSelection
@@ -7333,14 +7300,13 @@ export interface MinimalMetadataGenqlSelection{
 
 export interface QueryGenqlSelection{
     recordSharing?: (RecordSharingDTOGenqlSelection & { __args: {target: RecordSharingTargetInput} })
-    objectAccessOverview?: (ObjectAccessOverviewDTOGenqlSelection & { __args: {objectMetadataId: Scalars['UUID']} })
-    applicationSdkClientChecksums?: (SdkClientChecksumsGenqlSelection & { __args: {applicationId: Scalars['UUID']} })
-    isApplicationStopped?: { __args: {applicationUniversalIdentifier: Scalars['String']} }
     navigationMenuItems?: NavigationMenuItemGenqlSelection
     navigationMenuItem?: (NavigationMenuItemGenqlSelection & { __args: {id: Scalars['UUID']} })
     enterprisePortalSession?: { __args: {returnUrlPath?: (Scalars['String'] | null)} } | boolean | number
     enterpriseCheckoutSession?: { __args: {billingInterval?: (Scalars['String'] | null)} } | boolean | number
     enterpriseSubscriptionStatus?: EnterpriseSubscriptionStatusDTOGenqlSelection
+    applicationSdkClientChecksums?: (SdkClientChecksumsGenqlSelection & { __args: {applicationId: Scalars['UUID']} })
+    isApplicationStopped?: { __args: {applicationUniversalIdentifier: Scalars['String']} }
     usageLimits?: UsageLimitGenqlSelection
     usageQuotasWithConsumption?: UsageQuotaWithConsumptionGenqlSelection
     usageQuotaDefinitions?: UsageQuotaDefinitionsGenqlSelection
@@ -7729,6 +7695,7 @@ export interface MutationGenqlSelection{
     stopAgentChatStream?: { __args: {threadId: Scalars['UUID']} }
     deleteQueuedChatMessage?: { __args: {messageId: Scalars['UUID']} }
     startWorkspaceSetupChat?: (StartWorkspaceSetupChatResultGenqlSelection & { __args?: {companyContext?: (Scalars['JSON'] | null), personContext?: (Scalars['JSON'] | null)} })
+    sendInboxMessage?: (SendInboxMessageResultGenqlSelection & { __args: {input: SendInboxMessageInput} })
     createSkill?: (SkillGenqlSelection & { __args: {input: CreateSkillInput} })
     updateSkill?: (SkillGenqlSelection & { __args: {input: UpdateSkillInput} })
     deleteSkill?: (SkillGenqlSelection & { __args: {id: Scalars['UUID']} })
@@ -8203,6 +8170,8 @@ export interface EnqueueJobItemInput {payload?: (Scalars['JSON'] | null),jobId?:
 export interface ReportAppConnectionAuthFailureInput {id: Scalars['ID'],reason?: (Scalars['String'] | null)}
 
 export interface FileAttachmentInput {id: Scalars['UUID'],filename: Scalars['String']}
+
+export interface SendInboxMessageInput {workspaceMemberId: Scalars['UUID'],threadKey: Scalars['String'],idempotencyKey: Scalars['String'],title: Scalars['String'],text: Scalars['String'],toolCall?: (Scalars['JSON'] | null)}
 
 export interface CreateSkillInput {id?: (Scalars['UUID'] | null),name: Scalars['String'],label: Scalars['String'],icon?: (Scalars['String'] | null),description?: (Scalars['String'] | null),content: Scalars['String']}
 
@@ -9087,22 +9056,6 @@ export interface CreateRecordExportInput {objectMetadataId: Scalars['UUID'],fiel
     export const isNavigationMenuItem = (obj?: { __typename?: any } | null): obj is NavigationMenuItem => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isNavigationMenuItem"')
       return NavigationMenuItem_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const ObjectAccessOverviewRoleDTO_possibleTypes: string[] = ['ObjectAccessOverviewRoleDTO']
-    export const isObjectAccessOverviewRoleDTO = (obj?: { __typename?: any } | null): obj is ObjectAccessOverviewRoleDTO => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isObjectAccessOverviewRoleDTO"')
-      return ObjectAccessOverviewRoleDTO_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const ObjectAccessOverviewDTO_possibleTypes: string[] = ['ObjectAccessOverviewDTO']
-    export const isObjectAccessOverviewDTO = (obj?: { __typename?: any } | null): obj is ObjectAccessOverviewDTO => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isObjectAccessOverviewDTO"')
-      return ObjectAccessOverviewDTO_possibleTypes.includes(obj.__typename)
     }
     
 
@@ -10563,6 +10516,14 @@ export interface CreateRecordExportInput {objectMetadataId: Scalars['UUID'],fiel
     
 
 
+    const SendInboxMessageResult_possibleTypes: string[] = ['SendInboxMessageResult']
+    export const isSendInboxMessageResult = (obj?: { __typename?: any } | null): obj is SendInboxMessageResult => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isSendInboxMessageResult"')
+      return SendInboxMessageResult_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const StartWorkspaceSetupChatResult_possibleTypes: string[] = ['StartWorkspaceSetupChatResult']
     export const isStartWorkspaceSetupChatResult = (obj?: { __typename?: any } | null): obj is StartWorkspaceSetupChatResult => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isStartWorkspaceSetupChatResult"')
@@ -11377,7 +11338,7 @@ export const enumFeatureFlagKey = {
    IS_CONVERSATIONS_TAB_ENABLED: 'IS_CONVERSATIONS_TAB_ENABLED' as const,
    IS_VALIDATION_RULES_ENABLED: 'IS_VALIDATION_RULES_ENABLED' as const,
    IS_RECORD_LEVEL_SHARING_ENABLED: 'IS_RECORD_LEVEL_SHARING_ENABLED' as const,
-   IS_OBJECT_ACCESS_VIEW_ENABLED: 'IS_OBJECT_ACCESS_VIEW_ENABLED' as const
+   IS_WORKFLOW_SEND_CHAT_MESSAGE_ENABLED: 'IS_WORKFLOW_SEND_CHAT_MESSAGE_ENABLED' as const
 }
 
 export const enumIdentityProviderType = {

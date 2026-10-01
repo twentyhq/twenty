@@ -1,7 +1,6 @@
 import { assertUnreachable } from 'twenty-shared/utils';
 
 import { buildInheritedReadabilityCondition } from 'src/engine/core-modules/record-share/utils/build-inherited-readability-condition.util';
-import { buildRecordIdsSharedWithPrincipalsCondition } from 'src/engine/core-modules/record-share/utils/build-record-ids-shared-with-principals-condition.util';
 import { buildRecordShareCondition } from 'src/engine/core-modules/record-share/utils/build-record-share-condition.util';
 import { buildRecordShareExceptionCondition } from 'src/engine/core-modules/record-share/utils/build-record-share-exception-condition.util';
 import {
@@ -11,12 +10,7 @@ import {
   type RowAccessCompilationEnvironment,
   type SqlCondition,
 } from 'src/engine/twenty-orm/types/row-access-policy.type';
-import {
-  TwentyOrmException,
-  TwentyOrmExceptionCode,
-} from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { combineSqlConditions } from 'src/engine/twenty-orm/utils/combine-sql-conditions.util';
-import { renderRowLevelPermissionFilterToSql } from 'src/engine/twenty-orm/utils/render-row-level-permission-filter-to-sql.util';
 
 export const compileRowAccessPolicy = ({
   policy,
@@ -44,43 +38,17 @@ export const compileRowAccessExpression = ({
 }): SqlCondition => {
   switch (expression.kind) {
     case 'and':
-      return combineSqlConditions(
-        expression.operands.map((operand) =>
-          compileRowAccessExpression({ expression: operand, environment }),
-        ),
-      );
     case 'or':
       return combineSqlConditions(
         expression.operands.map((operand) =>
           compileRowAccessExpression({ expression: operand, environment }),
         ),
-        'OR',
+        expression.kind === 'or' ? 'OR' : 'AND',
       );
-    case 'roleFilter': {
-      const condition = renderRowLevelPermissionFilterToSql({
-        recordFilter: expression.recordFilter,
-        tableAlias: expression.tableAlias,
-        objectMetadata: expression.flatObjectMetadata,
-        flatFieldMetadataMaps: environment.flatFieldMetadataMaps,
-      });
-
-      // The builder only emits filters that render to a condition
-      if (condition === null) {
-        throw new TwentyOrmException(
-          `Row-level filter of ${expression.flatObjectMetadata.nameSingular} rendered no condition`,
-          TwentyOrmExceptionCode.MALFORMED_METADATA,
-        );
-      }
-
-      return condition;
-    }
+    case 'roleFilter':
+      return expression.condition;
     case 'recordShared':
       return buildRecordShareCondition({
-        ...expression,
-        recordShareTableExpression: environment.recordShareTableExpression,
-      });
-    case 'namedGrant':
-      return buildRecordIdsSharedWithPrincipalsCondition({
         ...expression,
         recordShareTableExpression: environment.recordShareTableExpression,
       });

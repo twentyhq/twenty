@@ -1066,9 +1066,13 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       updatedColumns: insertedColumns,
     });
 
-    this.validateRLSPredicatesForWrittenRecords(
-      this.formatResult<ObjectRecord[]>(formattedRecords),
-    );
+    validateRLSPredicatesForRecords({
+      records: this.formatResult<ObjectRecord[]>(formattedRecords),
+      objectMetadata: this.options.flatObjectMetadata,
+      internalContext: this.options.internalContext,
+      authContext: this.options.authContext,
+      shouldBypassPermissionChecks: this.options.shouldBypassPermissionChecks,
+    });
 
     await this.validateInheritedParentsAreWritableOrThrow({
       writtenRecords: formattedRecords,
@@ -2033,20 +2037,6 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       `SELECT "recordId", "principalId", "accessLevel" FROM ${this.resolveRowAccessPolicyEnvironment().recordShareTableExpression} WHERE "objectMetadataId" = :objectMetadataId AND "recordId" = ANY(:recordIds) AND "deletedAt" IS NULL`,
       { objectMetadataId, recordIds },
     );
-  }
-
-  private validateRLSPredicatesForWrittenRecords(
-    records: ObjectRecord[],
-    errorMessage?: string,
-  ): void {
-    validateRLSPredicatesForRecords({
-      records,
-      objectMetadata: this.options.flatObjectMetadata,
-      internalContext: this.options.internalContext,
-      authContext: this.options.authContext,
-      shouldBypassPermissionChecks: this.options.shouldBypassPermissionChecks,
-      ...(isDefined(errorMessage) ? { errorMessage } : {}),
-    });
   }
 
   private emitMutationEvent({
