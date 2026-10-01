@@ -146,7 +146,9 @@ export const AiChatThreadListItem = ({
 }: AiChatThreadListItemProps) => {
   const theme = useTheme();
   const { t } = useLingui();
-  const { handleThreadClick } = useAiChatThreadClick();
+  const { handleThreadClick } = useAiChatThreadClick({
+    shouldOpenInFullPage: surface === AI_CHAT_THREAD_ACTIONS_SURFACE.INBOX_PAGE,
+  });
   const {
     isRenaming,
     draftTitle,
