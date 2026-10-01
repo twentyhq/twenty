@@ -352,7 +352,9 @@ export const useFrontComponentExecutionContext = ({
         const recordContext = isDefined(params.objectNameSingular)
           ? {
               objectNameSingular: params.objectNameSingular,
-              recordId: params.recordId,
+              selectedRecordIds:
+                params.selectedRecordIds ??
+                (isDefined(params.recordId) ? [params.recordId] : undefined),
             }
           : undefined;
 

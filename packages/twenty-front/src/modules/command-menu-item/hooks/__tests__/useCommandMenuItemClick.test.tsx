@@ -85,7 +85,7 @@ describe('useCommandMenuItemClick', () => {
       selectedRecordIds: ['record-1'],
       expectedRecordContext: {
         objectNameSingular: 'company',
-        recordId: 'record-1',
+        selectedRecordIds: ['record-1'],
       },
     },
     {
@@ -94,7 +94,7 @@ describe('useCommandMenuItemClick', () => {
       selectedRecordIds: ['record-1', 'record-2'],
       expectedRecordContext: {
         objectNameSingular: 'company',
-        recordId: undefined,
+        selectedRecordIds: ['record-1', 'record-2'],
       },
     },
     {
@@ -103,7 +103,7 @@ describe('useCommandMenuItemClick', () => {
       selectedRecordIds: [],
       expectedRecordContext: {
         objectNameSingular: 'company',
-        recordId: undefined,
+        selectedRecordIds: [],
       },
     },
     {

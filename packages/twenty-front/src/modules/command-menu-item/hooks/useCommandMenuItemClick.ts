@@ -112,9 +112,6 @@ export const useCommandMenuItemClick = ({
     if (isFrontComponent && isDefined(item.frontComponentId)) {
       const { selectedRecords, objectMetadataItem } = commandMenuContextApi;
 
-      const recordId =
-        selectedRecords.length === 1 ? selectedRecords[0].id : undefined;
-
       const objectNameSingular = objectMetadataItem.nameSingular as
         | string
         | undefined;
@@ -126,7 +123,10 @@ export const useCommandMenuItemClick = ({
         pageTitle: label,
         pageIcon: Icon,
         recordContext: isDefined(objectNameSingular)
-          ? { objectNameSingular, recordId }
+          ? {
+              objectNameSingular,
+              selectedRecordIds: selectedRecords.map((record) => record.id),
+            }
           : undefined,
       });
     }
