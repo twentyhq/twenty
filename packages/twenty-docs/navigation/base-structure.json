@@ -652,12 +652,12 @@
                 "ui/components/avatar-group",
                 "ui/components/callout",
                 "ui/components/command-block",
+                "ui/components/image-input",
                 "ui/components/inline-banner",
                 "ui/components/json-tree",
                 "ui/components/menu-items",
                 "ui/components/menu-picker",
                 "ui/components/notification-counter",
-                "ui/components/image-input",
                 "ui/components/search-input",
                 "ui/components/tinted-icon-tile"
               ]
