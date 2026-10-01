@@ -337,18 +337,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
         };
       }
       case WorkflowActionType.SEND_CHAT_MESSAGE: {
-        const isSendChatMessageEnabled =
-          await this.featureFlagService.isFeatureEnabled(
-            FeatureFlagKey.IS_WORKFLOW_SEND_CHAT_MESSAGE_ENABLED,
-            workspaceId,
-          );
-
-        if (!isSendChatMessageEnabled) {
-          throw new WorkflowVersionStepException(
-            `WorkflowActionType '${type}' is not enabled`,
-            WorkflowVersionStepExceptionCode.INVALID_REQUEST,
-          );
-        }
+        await this.assertSendChatMessageEnabled(workspaceId);
 
         return {
           builtStep: {
@@ -746,6 +735,21 @@ export class WorkflowVersionStepOperationsWorkspaceService {
     }
   }
 
+  private async assertSendChatMessageEnabled(workspaceId: string) {
+    const isSendChatMessageEnabled =
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_WORKFLOW_SEND_CHAT_MESSAGE_ENABLED,
+        workspaceId,
+      );
+
+    if (!isSendChatMessageEnabled) {
+      throw new WorkflowVersionStepException(
+        `WorkflowActionType '${WorkflowActionType.SEND_CHAT_MESSAGE}' is not enabled`,
+        WorkflowVersionStepExceptionCode.INVALID_REQUEST,
+      );
+    }
+  }
+
   async enrichFormStepResponse({
     workspaceId,
     step,
@@ -883,6 +887,10 @@ export class WorkflowVersionStepOperationsWorkspaceService {
       x: step.position?.x ?? 0,
       y: step.position?.y ?? 0,
     };
+
+    if (step.type === WorkflowActionType.SEND_CHAT_MESSAGE) {
+      await this.assertSendChatMessageEnabled(workspaceId);
+    }
 
     switch (step.type) {
       case WorkflowActionType.CODE: {

@@ -1,10 +1,12 @@
 import { Inject, Injectable } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
+import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined, isValidUuid, resolveInput } from 'twenty-shared/utils';
 
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { AGENT_INBOX_SERVICE_TOKEN } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-inbox-service.token';
 import type { AgentInboxService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-inbox.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
@@ -29,6 +31,7 @@ export class SendChatMessageWorkflowAction implements WorkflowAction {
     private readonly agentInboxService: AgentInboxService,
     private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   async execute({
@@ -42,6 +45,19 @@ export class SendChatMessageWorkflowAction implements WorkflowAction {
     if (!isWorkflowSendChatMessageAction(step)) {
       throw new WorkflowStepExecutorException(
         'Step is not a send chat message action',
+        WorkflowStepExecutorExceptionCode.INVALID_STEP_TYPE,
+      );
+    }
+
+    const isSendChatMessageEnabled =
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_WORKFLOW_SEND_CHAT_MESSAGE_ENABLED,
+        runInfo.workspaceId,
+      );
+
+    if (!isSendChatMessageEnabled) {
+      throw new WorkflowStepExecutorException(
+        'Sending chat messages from workflows is not enabled',
         WorkflowStepExecutorExceptionCode.INVALID_STEP_TYPE,
       );
     }

@@ -223,6 +223,15 @@ const assertStepTypesAreSupported = (steps: WorkflowAction[]): void => {
       WorkflowVersionStepExceptionCode.INVALID_REQUEST,
     );
   }
+
+  if (
+    steps.some((step) => step.type === WorkflowActionType.SEND_CHAT_MESSAGE)
+  ) {
+    throw new WorkflowVersionStepException(
+      'SEND_CHAT_MESSAGE steps cannot be created via create_complete_workflow. Use create_workflow_version_step instead.',
+      WorkflowVersionStepExceptionCode.INVALID_REQUEST,
+    );
+  }
 };
 
 const findInitialDraftCoreVersionIdOrThrow = async ({
