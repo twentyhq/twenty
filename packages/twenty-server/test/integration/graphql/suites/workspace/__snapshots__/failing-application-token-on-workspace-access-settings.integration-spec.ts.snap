@@ -1,0 +1,211 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Workspace access settings with an application token should fail should refuse an invitation with a chosen role, creating no invitation 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "PERMISSION_DENIED",
+    "userFriendlyMessage": "User does not have permission.",
+  },
+  "message": "Entity performing the request does not have permission",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Workspace access settings with an application token should fail with a user-bound application token should refuse to update allowImpersonation, which stays unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "PERMISSION_DENIED",
+    "userFriendlyMessage": "User does not have permission.",
+  },
+  "message": "Entity performing the request does not have permission",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Workspace access settings with an application token should fail with a user-bound application token should refuse to update defaultRoleId, which stays unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "PERMISSION_DENIED",
+    "userFriendlyMessage": "User does not have permission.",
+  },
+  "message": "Entity performing the request does not have permission",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Workspace access settings with an application token should fail with a user-bound application token should refuse to update inviteHash, which stays unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "PERMISSION_DENIED",
+    "userFriendlyMessage": "User does not have permission.",
+  },
+  "message": "Entity performing the request does not have permission",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Workspace access settings with an application token should fail with a user-bound application token should refuse to update isGoogleAuthEnabled, which stays unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "PERMISSION_DENIED",
+    "userFriendlyMessage": "User does not have permission.",
+  },
+  "message": "Entity performing the request does not have permission",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Workspace access settings with an application token should fail with a user-bound application token should refuse to update isMicrosoftAuthEnabled, which stays unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "PERMISSION_DENIED",
+    "userFriendlyMessage": "User does not have permission.",
+  },
+  "message": "Entity performing the request does not have permission",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Workspace access settings with an application token should fail with a user-bound application token should refuse to update isPasswordAuthEnabled, which stays unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "PERMISSION_DENIED",
+    "userFriendlyMessage": "User does not have permission.",
+  },
+  "message": "Entity performing the request does not have permission",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Workspace access settings with an application token should fail with a user-bound application token should refuse to update isPublicInviteLinkEnabled, which stays unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "PERMISSION_DENIED",
+    "userFriendlyMessage": "User does not have permission.",
+  },
+  "message": "Entity performing the request does not have permission",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Workspace access settings with an application token should fail with a user-bound application token should refuse to update isTwoFactorAuthenticationEnforced, which stays unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "PERMISSION_DENIED",
+    "userFriendlyMessage": "User does not have permission.",
+  },
+  "message": "Entity performing the request does not have permission",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Workspace access settings with an application token should fail with a user-bound application token should refuse to update workspaceDiscoverability, which stays unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "PERMISSION_DENIED",
+    "userFriendlyMessage": "User does not have permission.",
+  },
+  "message": "Entity performing the request does not have permission",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Workspace access settings with an application token should fail with an application token without user binding should refuse to update allowImpersonation, which stays unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "This endpoint requires a token bound to a user workspace.",
+}
+`;
+
+exports[`Workspace access settings with an application token should fail with an application token without user binding should refuse to update defaultRoleId, which stays unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "This endpoint requires a token bound to a user workspace.",
+}
+`;
+
+exports[`Workspace access settings with an application token should fail with an application token without user binding should refuse to update inviteHash, which stays unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "This endpoint requires a token bound to a user workspace.",
+}
+`;
+
+exports[`Workspace access settings with an application token should fail with an application token without user binding should refuse to update isGoogleAuthEnabled, which stays unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "This endpoint requires a token bound to a user workspace.",
+}
+`;
+
+exports[`Workspace access settings with an application token should fail with an application token without user binding should refuse to update isMicrosoftAuthEnabled, which stays unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "This endpoint requires a token bound to a user workspace.",
+}
+`;
+
+exports[`Workspace access settings with an application token should fail with an application token without user binding should refuse to update isPasswordAuthEnabled, which stays unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "This endpoint requires a token bound to a user workspace.",
+}
+`;
+
+exports[`Workspace access settings with an application token should fail with an application token without user binding should refuse to update isPublicInviteLinkEnabled, which stays unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "This endpoint requires a token bound to a user workspace.",
+}
+`;
+
+exports[`Workspace access settings with an application token should fail with an application token without user binding should refuse to update isTwoFactorAuthenticationEnforced, which stays unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "This endpoint requires a token bound to a user workspace.",
+}
+`;
+
+exports[`Workspace access settings with an application token should fail with an application token without user binding should refuse to update workspaceDiscoverability, which stays unchanged 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "This endpoint requires a token bound to a user workspace.",
+}
+`;
