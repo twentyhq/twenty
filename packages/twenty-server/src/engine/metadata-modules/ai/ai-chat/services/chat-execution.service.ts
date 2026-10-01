@@ -453,6 +453,7 @@ export class ChatExecutionService {
       },
       workspaceInstructions: workspace.aiAdditionalInstructions ?? undefined,
       userContext,
+      workspaceId: workspace.id,
       isWorkspaceSetupThread,
       canAttachConversationToRecords,
     });
