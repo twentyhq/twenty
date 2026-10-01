@@ -12,18 +12,16 @@ import { createOneOperationFactory } from 'test/integration/graphql/utils/create
 import { deleteManyOperationFactory } from 'test/integration/graphql/utils/delete-many-operation-factory.util';
 import { destroyManyOperationFactory } from 'test/integration/graphql/utils/destroy-many-operation-factory.util';
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
-import { makeGraphqlAPIRequestWithMemberRole } from 'test/integration/graphql/utils/make-graphql-api-request-with-member-role.util';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { makeGraphqlApiRequestWithMemberRole } from 'test/integration/graphql/utils/make-graphql-api-request-with-member-role.util';
+import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { restoreManyOperationFactory } from 'test/integration/graphql/utils/restore-many-operation-factory.util';
 import { updateOneOperationFactory } from 'test/integration/graphql/utils/update-one-operation-factory.util';
 import { setObjectReadability } from 'test/integration/metadata/suites/object-metadata/utils/set-object-readability.util';
 import { upsertObjectPermissions } from 'test/integration/metadata/suites/object-permission/utils/upsert-object-permissions.util';
 import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
-import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 import {
-  FeatureFlagKey,
   MetadataReadability,
   RecordShareAccessLevel,
   RecordSharePrincipalType,
@@ -51,6 +49,9 @@ const BOTH_PERSON_NOTE_TARGET_ID = randomUUID();
 const BOTH_COMPANY_NOTE_TARGET_ID = randomUUID();
 const MEMBER_NOTE_TARGET_ID = randomUUID();
 const COMPANY_NOTE_ATTACHMENT_ID = randomUUID();
+const TASK_ON_PERSON_ID = randomUUID();
+const TASK_ALONE_ID = randomUUID();
+const PERSON_TASK_TARGET_ID = randomUUID();
 const PERSON_NOTE_ATTACHMENT_ID = randomUUID();
 
 const NOTE_IDS = [
@@ -68,6 +69,7 @@ const NOTE_TARGET_IDS = [
   MEMBER_NOTE_TARGET_ID,
 ];
 const ATTACHMENT_IDS = [COMPANY_NOTE_ATTACHMENT_ID, PERSON_NOTE_ATTACHMENT_ID];
+const TASK_IDS = [TASK_ON_PERSON_ID, TASK_ALONE_ID];
 
 const collectIds = (edges: { node: { id: string } }[]): string[] =>
   edges.map((edge) => edge.node.id).sort();
@@ -93,6 +95,13 @@ const findNoteTargetsOperation = findManyOperationFactory({
   objectMetadataPluralName: 'noteTargets',
   gqlFields: 'id',
   filter: { id: { in: NOTE_TARGET_IDS } },
+});
+
+const findTasksOperation = findManyOperationFactory({
+  objectMetadataSingularName: 'task',
+  objectMetadataPluralName: 'tasks',
+  gqlFields: 'id',
+  filter: { id: { in: TASK_IDS } },
 });
 
 const findAttachmentsOperation = findManyOperationFactory({
@@ -134,13 +143,6 @@ const reattachNoteOnBothToCompanyOperation = restoreManyOperationFactory({
   filter: { id: { eq: BOTH_COMPANY_NOTE_TARGET_ID } },
 });
 
-const setRecordSharingEnabled = (value: boolean) =>
-  updateFeatureFlag({
-    featureFlag: FeatureFlagKey.IS_RECORD_SHARING_ENABLED,
-    value,
-    expectToFail: false,
-  });
-
 const destroyRecords = ({
   objectMetadataSingularName,
   objectMetadataPluralName,
@@ -150,7 +152,7 @@ const destroyRecords = ({
   objectMetadataPluralName: string;
   ids: string[];
 }) =>
-  makeGraphqlAPIRequest(
+  makeGraphqlApiRequest(
     destroyManyOperationFactory({
       objectMetadataSingularName,
       objectMetadataPluralName,
@@ -163,11 +165,11 @@ describe('inheritedThroughChildrenReadabilityObjectRecordsPermissions', () => {
   let recordShareStorageService: RecordShareStorageService;
   let personObjectMetadataId: string;
   let noteObjectMetadataId: string;
+  let taskObjectMetadataId: string;
 
   const sourceId = randomUUID();
 
   beforeAll(async () => {
-    await setRecordSharingEnabled(true);
     recordShareStorageService =
       getAppProviderByClassName<RecordShareStorageService>(
         'RecordShareStorageService',
@@ -184,6 +186,11 @@ describe('inheritedThroughChildrenReadabilityObjectRecordsPermissions', () => {
     noteObjectMetadataId = (
       await objectMetadataRepository.findOneOrFail({
         where: { workspaceId: SEED_APPLE_WORKSPACE_ID, nameSingular: 'note' },
+      })
+    ).id;
+    taskObjectMetadataId = (
+      await objectMetadataRepository.findOneOrFail({
+        where: { workspaceId: SEED_APPLE_WORKSPACE_ID, nameSingular: 'task' },
       })
     ).id;
 
@@ -245,6 +252,22 @@ describe('inheritedThroughChildrenReadabilityObjectRecordsPermissions', () => {
         },
       },
       {
+        objectMetadataSingularName: 'task',
+        data: { id: TASK_ON_PERSON_ID, title: 'On the private person' },
+      },
+      {
+        objectMetadataSingularName: 'task',
+        data: { id: TASK_ALONE_ID, title: 'Attached to nothing' },
+      },
+      {
+        objectMetadataSingularName: 'taskTarget',
+        data: {
+          id: PERSON_TASK_TARGET_ID,
+          taskId: TASK_ON_PERSON_ID,
+          targetPersonId: PERSON_ID,
+        },
+      },
+      {
         objectMetadataSingularName: 'attachment',
         data: {
           id: COMPANY_NOTE_ATTACHMENT_ID,
@@ -263,7 +286,7 @@ describe('inheritedThroughChildrenReadabilityObjectRecordsPermissions', () => {
     ];
 
     for (const { objectMetadataSingularName, data } of createRecords) {
-      const response = await makeGraphqlAPIRequest(
+      const response = await makeGraphqlApiRequest(
         createOneOperationFactory({
           objectMetadataSingularName,
           gqlFields: 'id',
@@ -281,7 +304,6 @@ describe('inheritedThroughChildrenReadabilityObjectRecordsPermissions', () => {
   });
 
   afterAll(async () => {
-    await setRecordSharingEnabled(false);
     await recordShareStorageService.deleteBySourceId({
       workspaceId: SEED_APPLE_WORKSPACE_ID,
       sourceId,
@@ -290,6 +312,11 @@ describe('inheritedThroughChildrenReadabilityObjectRecordsPermissions', () => {
       workspaceId: SEED_APPLE_WORKSPACE_ID,
       objectMetadataId: noteObjectMetadataId,
       recordIds: NOTE_IDS,
+    });
+    await recordShareStorageService.deleteByRecordIds({
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      objectMetadataId: taskObjectMetadataId,
+      recordIds: TASK_IDS,
     });
     await setObjectReadability(
       personObjectMetadataId,
@@ -311,6 +338,16 @@ describe('inheritedThroughChildrenReadabilityObjectRecordsPermissions', () => {
       ids: NOTE_IDS,
     });
     await destroyRecords({
+      objectMetadataSingularName: 'taskTarget',
+      objectMetadataPluralName: 'taskTargets',
+      ids: [PERSON_TASK_TARGET_ID],
+    });
+    await destroyRecords({
+      objectMetadataSingularName: 'task',
+      objectMetadataPluralName: 'tasks',
+      ids: TASK_IDS,
+    });
+    await destroyRecords({
       objectMetadataSingularName: 'person',
       objectMetadataPluralName: 'people',
       ids: [PERSON_ID],
@@ -323,19 +360,19 @@ describe('inheritedThroughChildrenReadabilityObjectRecordsPermissions', () => {
   });
 
   describe('without a share row on the person', () => {
-    it('should show the notes attached to the open company, their company targets and their attachments only', async () => {
+    it('should show the notes attached to the open company or to nothing, their company targets and their attachments only', async () => {
       const notesResponse =
-        await makeGraphqlAPIRequestWithMemberRole(findNotesOperation);
-      const noteTargetsResponse = await makeGraphqlAPIRequestWithMemberRole(
+        await makeGraphqlApiRequestWithMemberRole(findNotesOperation);
+      const noteTargetsResponse = await makeGraphqlApiRequestWithMemberRole(
         findNoteTargetsOperation,
       );
-      const attachmentsResponse = await makeGraphqlAPIRequestWithMemberRole(
+      const attachmentsResponse = await makeGraphqlApiRequestWithMemberRole(
         findAttachmentsOperation,
       );
 
       expect(notesResponse.body.errors).toBeUndefined();
       expect(collectIds(notesResponse.body.data.notes.edges)).toEqual(
-        [NOTE_ON_COMPANY_ID, NOTE_ON_BOTH_ID].sort(),
+        [NOTE_ON_COMPANY_ID, NOTE_ON_BOTH_ID, NOTE_ALONE_ID].sort(),
       );
 
       const noteOnBoth = notesResponse.body.data.notes.edges.find(
@@ -355,11 +392,64 @@ describe('inheritedThroughChildrenReadabilityObjectRecordsPermissions', () => {
       ).toEqual([COMPANY_NOTE_ATTACHMENT_ID]);
     });
 
-    it('should let the member rename the note on the open company and refuse the one on the private person', async () => {
-      const companyNoteResponse = await makeGraphqlAPIRequestWithMemberRole(
+    it('should show the task attached to nothing and hide the one on the private person, to the query and the event gate alike', async () => {
+      const memberRole = await findOneRoleByLabel({ label: 'Member' });
+      const { rolesPermissions, flatObjectMetadataMaps } =
+        await getAppProviderByClassName<WorkspaceCacheService>(
+          'WorkspaceCacheService',
+        ).getOrRecompute(SEED_APPLE_WORKSPACE_ID, [
+          'rolesPermissions',
+          'flatObjectMetadataMaps',
+        ]);
+      const taskObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: taskObjectMetadataId,
+        flatEntityMaps: flatObjectMetadataMaps,
+      });
+
+      expect(taskObjectMetadata).toBeDefined();
+
+      const recordIdsAdmittedByEventGate =
+        await getAppProviderByClassName<RecordAccessPolicyService>(
+          'RecordAccessPolicyService',
+        )
+          .buildEventRecordAccessGate({
+            name: 'task.created',
+            workspaceId: SEED_APPLE_WORKSPACE_ID,
+            objectMetadata: taskObjectMetadata!,
+            events: TASK_IDS.map((id) => ({
+              recordId: id,
+              properties: { after: { id } },
+            })),
+          })
+          .resolveAdmittedRecordIds({
+            isSystemContext: false,
+            objectsPermissions: rolesPermissions[memberRole.id],
+            principalIds: [
+              EVERYONE_PRINCIPAL_ID,
+              WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+              memberRole.id,
+            ],
+            isOwningApplication: () => false,
+            resolveRowLevelPermissionRecordFilter: () => null,
+          });
+      const tasksResponse =
+        await makeGraphqlApiRequestWithMemberRole(findTasksOperation);
+
+      expect(tasksResponse.body.errors).toBeUndefined();
+      expect(collectIds(tasksResponse.body.data.tasks.edges)).toEqual([
+        TASK_ALONE_ID,
+      ]);
+      expect([...recordIdsAdmittedByEventGate]).toEqual([TASK_ALONE_ID]);
+    });
+
+    it('should let the member rename the notes on the open company or on nothing and refuse the one on the private person', async () => {
+      const companyNoteResponse = await makeGraphqlApiRequestWithMemberRole(
         renameNoteOperation(NOTE_ON_COMPANY_ID, 'Renamed on the open company'),
       );
-      const personNoteResponse = await makeGraphqlAPIRequestWithMemberRole(
+      const aloneNoteResponse = await makeGraphqlApiRequestWithMemberRole(
+        renameNoteOperation(NOTE_ALONE_ID, 'Renamed on nothing'),
+      );
+      const personNoteResponse = await makeGraphqlApiRequestWithMemberRole(
         renameNoteOperation(NOTE_ON_PERSON_ID, 'Renamed on the private person'),
       );
 
@@ -368,12 +458,17 @@ describe('inheritedThroughChildrenReadabilityObjectRecordsPermissions', () => {
         id: NOTE_ON_COMPANY_ID,
         title: 'Renamed on the open company',
       });
+      expect(aloneNoteResponse.body.errors).toBeUndefined();
+      expect(aloneNoteResponse.body.data.updateNote).toEqual({
+        id: NOTE_ALONE_ID,
+        title: 'Renamed on nothing',
+      });
       expect(personNoteResponse.body.data?.updateNote ?? null).toBeNull();
       expect(personNoteResponse.body.errors).toBeDefined();
     });
 
     it('should refuse to attach the note on the private person to the open company', async () => {
-      const response = await makeGraphqlAPIRequestWithMemberRole(
+      const response = await makeGraphqlApiRequestWithMemberRole(
         attachNoteToCompanyOperation,
       );
 
@@ -383,13 +478,13 @@ describe('inheritedThroughChildrenReadabilityObjectRecordsPermissions', () => {
     });
 
     it('should refuse to restore a detached target of a note the member cannot write', async () => {
-      const detachResponse = await makeGraphqlAPIRequest(
+      const detachResponse = await makeGraphqlApiRequest(
         detachNoteOnBothFromCompanyOperation,
       );
 
       expect(detachResponse.body.errors).toBeUndefined();
 
-      const restoreResponse = await makeGraphqlAPIRequestWithMemberRole(
+      const restoreResponse = await makeGraphqlApiRequestWithMemberRole(
         reattachNoteOnBothToCompanyOperation,
       );
 
@@ -397,15 +492,67 @@ describe('inheritedThroughChildrenReadabilityObjectRecordsPermissions', () => {
       expect(restoreResponse.body.errors).toBeDefined();
       expect(restoreResponse.body.errors[0].message).toContain('not writable');
 
-      await setRecordSharingEnabled(false);
-
-      const reattachResponse = await makeGraphqlAPIRequest(
+      const reattachResponse = await makeGraphqlApiRequest(
         reattachNoteOnBothToCompanyOperation,
       );
 
       expect(reattachResponse.body.errors).toBeUndefined();
+    });
 
-      await setRecordSharingEnabled(true);
+    it('should not show a deleted note in the trash through a target detached before its deletion', async () => {
+      const noteOnBothFilter = { id: { eq: NOTE_ON_BOTH_ID } };
+
+      const detachResponse = await makeGraphqlApiRequest(
+        detachNoteOnBothFromCompanyOperation,
+      );
+      const deleteResponse = await makeGraphqlApiRequest(
+        deleteManyOperationFactory({
+          objectMetadataSingularName: 'note',
+          objectMetadataPluralName: 'notes',
+          gqlFields: 'id',
+          filter: noteOnBothFilter,
+        }),
+      );
+      const trashedNotesResponse = await makeGraphqlApiRequestWithMemberRole(
+        findManyOperationFactory({
+          objectMetadataSingularName: 'note',
+          objectMetadataPluralName: 'notes',
+          gqlFields: 'id',
+          filter: {
+            ...noteOnBothFilter,
+            not: { deletedAt: { is: 'NULL' } },
+          },
+        }),
+      );
+      const restoreNoteResponse = await makeGraphqlApiRequest(
+        restoreManyOperationFactory({
+          objectMetadataSingularName: 'note',
+          objectMetadataPluralName: 'notes',
+          gqlFields: 'id',
+          filter: noteOnBothFilter,
+        }),
+      );
+      const restoreTargetsResponse = await makeGraphqlApiRequest(
+        restoreManyOperationFactory({
+          objectMetadataSingularName: 'noteTarget',
+          objectMetadataPluralName: 'noteTargets',
+          gqlFields: 'id',
+          filter: {
+            id: {
+              in: [BOTH_PERSON_NOTE_TARGET_ID, BOTH_COMPANY_NOTE_TARGET_ID],
+            },
+          },
+        }),
+      );
+
+      expect(detachResponse.body.errors).toBeUndefined();
+      expect(deleteResponse.body.data.deleteNotes).toEqual([
+        { id: NOTE_ON_BOTH_ID },
+      ]);
+      expect(trashedNotesResponse.body.errors).toBeUndefined();
+      expect(trashedNotesResponse.body.data.notes.edges).toEqual([]);
+      expect(restoreNoteResponse.body.errors).toBeUndefined();
+      expect(restoreTargetsResponse.body.errors).toBeUndefined();
     });
   });
 
@@ -427,19 +574,24 @@ describe('inheritedThroughChildrenReadabilityObjectRecordsPermissions', () => {
       });
     });
 
-    it('should show every attached note, target and attachment and keep the unattached note hidden', async () => {
+    it('should show every note, target and attachment', async () => {
       const notesResponse =
-        await makeGraphqlAPIRequestWithMemberRole(findNotesOperation);
-      const noteTargetsResponse = await makeGraphqlAPIRequestWithMemberRole(
+        await makeGraphqlApiRequestWithMemberRole(findNotesOperation);
+      const noteTargetsResponse = await makeGraphqlApiRequestWithMemberRole(
         findNoteTargetsOperation,
       );
-      const attachmentsResponse = await makeGraphqlAPIRequestWithMemberRole(
+      const attachmentsResponse = await makeGraphqlApiRequestWithMemberRole(
         findAttachmentsOperation,
       );
 
       expect(notesResponse.body.errors).toBeUndefined();
       expect(collectIds(notesResponse.body.data.notes.edges)).toEqual(
-        [NOTE_ON_PERSON_ID, NOTE_ON_COMPANY_ID, NOTE_ON_BOTH_ID].sort(),
+        [
+          NOTE_ON_PERSON_ID,
+          NOTE_ON_COMPANY_ID,
+          NOTE_ON_BOTH_ID,
+          NOTE_ALONE_ID,
+        ].sort(),
       );
       expect(noteTargetsResponse.body.errors).toBeUndefined();
       expect(
@@ -482,10 +634,12 @@ describe('inheritedThroughChildrenReadabilityObjectRecordsPermissions', () => {
             name: 'note.created',
             workspaceId: SEED_APPLE_WORKSPACE_ID,
             objectMetadata: noteObjectMetadata!,
-            events: NOTE_IDS.map((id) => ({
-              recordId: id,
-              properties: { after: { id } },
-            })),
+            events: NOTE_IDS.filter((id) => id !== MEMBER_NOTE_ID).map(
+              (id) => ({
+                recordId: id,
+                properties: { after: { id } },
+              }),
+            ),
           })
           .resolveAdmittedRecordIds({
             isSystemContext: false,
@@ -499,7 +653,7 @@ describe('inheritedThroughChildrenReadabilityObjectRecordsPermissions', () => {
             resolveRowLevelPermissionRecordFilter: () => null,
           });
       const notesResponse =
-        await makeGraphqlAPIRequestWithMemberRole(findNotesOperation);
+        await makeGraphqlApiRequestWithMemberRole(findNotesOperation);
 
       expect([...recordIdsAdmittedByEventGate].sort()).toEqual(
         collectIds(notesResponse.body.data.notes.edges),
@@ -528,11 +682,11 @@ describe('inheritedThroughChildrenReadabilityObjectRecordsPermissions', () => {
       await setMemberCanReadPeople(false);
 
       const notesResponse =
-        await makeGraphqlAPIRequestWithMemberRole(findNotesOperation);
-      const noteTargetsResponse = await makeGraphqlAPIRequestWithMemberRole(
+        await makeGraphqlApiRequestWithMemberRole(findNotesOperation);
+      const noteTargetsResponse = await makeGraphqlApiRequestWithMemberRole(
         findNoteTargetsOperation,
       );
-      const attachmentsResponse = await makeGraphqlAPIRequestWithMemberRole(
+      const attachmentsResponse = await makeGraphqlApiRequestWithMemberRole(
         findAttachmentsOperation,
       );
 
@@ -540,7 +694,7 @@ describe('inheritedThroughChildrenReadabilityObjectRecordsPermissions', () => {
 
       expect(notesResponse.body.errors).toBeUndefined();
       expect(collectIds(notesResponse.body.data.notes.edges)).toEqual(
-        [NOTE_ON_COMPANY_ID, NOTE_ON_BOTH_ID].sort(),
+        [NOTE_ON_COMPANY_ID, NOTE_ON_BOTH_ID, NOTE_ALONE_ID].sort(),
       );
       expect(noteTargetsResponse.body.errors).toBeUndefined();
       expect(
@@ -553,10 +707,10 @@ describe('inheritedThroughChildrenReadabilityObjectRecordsPermissions', () => {
     });
 
     it('should still refuse to rename the note on the private person or attach it elsewhere', async () => {
-      const renameResponse = await makeGraphqlAPIRequestWithMemberRole(
+      const renameResponse = await makeGraphqlApiRequestWithMemberRole(
         renameNoteOperation(NOTE_ON_PERSON_ID, 'Renamed with READ'),
       );
-      const attachResponse = await makeGraphqlAPIRequestWithMemberRole(
+      const attachResponse = await makeGraphqlApiRequestWithMemberRole(
         attachNoteToCompanyOperation,
       );
 
@@ -588,10 +742,10 @@ describe('inheritedThroughChildrenReadabilityObjectRecordsPermissions', () => {
     });
 
     it('should let the member rename the note on the private person and attach it to the open company', async () => {
-      const renameResponse = await makeGraphqlAPIRequestWithMemberRole(
+      const renameResponse = await makeGraphqlApiRequestWithMemberRole(
         renameNoteOperation(NOTE_ON_PERSON_ID, 'Renamed with READ_WRITE'),
       );
-      const attachResponse = await makeGraphqlAPIRequestWithMemberRole(
+      const attachResponse = await makeGraphqlApiRequestWithMemberRole(
         attachNoteToCompanyOperation,
       );
 
@@ -607,7 +761,7 @@ describe('inheritedThroughChildrenReadabilityObjectRecordsPermissions', () => {
     });
 
     it('should let the member read back a note they created before attaching it anywhere', async () => {
-      const createResponse = await makeGraphqlAPIRequestWithMemberRole(
+      const createResponse = await makeGraphqlApiRequestWithMemberRole(
         createOneOperationFactory({
           objectMetadataSingularName: 'note',
           gqlFields: 'id',
@@ -615,7 +769,7 @@ describe('inheritedThroughChildrenReadabilityObjectRecordsPermissions', () => {
         }),
       );
       const notesResponse =
-        await makeGraphqlAPIRequestWithMemberRole(findNotesOperation);
+        await makeGraphqlApiRequestWithMemberRole(findNotesOperation);
 
       expect(createResponse.body.errors).toBeUndefined();
       expect(notesResponse.body.errors).toBeUndefined();
@@ -624,6 +778,7 @@ describe('inheritedThroughChildrenReadabilityObjectRecordsPermissions', () => {
           NOTE_ON_PERSON_ID,
           NOTE_ON_COMPANY_ID,
           NOTE_ON_BOTH_ID,
+          NOTE_ALONE_ID,
           MEMBER_NOTE_ID,
         ].sort(),
       );
@@ -665,17 +820,18 @@ describe('inheritedThroughChildrenReadabilityObjectRecordsPermissions', () => {
           });
       const noteOnPersonFilter = { id: { eq: NOTE_ON_PERSON_ID } };
 
-      const deleteResponse = await makeGraphqlAPIRequest(
+      const deleteResponse = await makeGraphqlApiRequest(
         deleteManyOperationFactory({
           objectMetadataSingularName: 'note',
           objectMetadataPluralName: 'notes',
-          gqlFields: 'id',
+          gqlFields: 'id deletedAt',
           filter: noteOnPersonFilter,
         }),
       );
+      const { deletedAt } = deleteResponse.body.data.deleteNotes[0];
       const deletedNoteEventProperties = {
         before: { id: NOTE_ON_PERSON_ID },
-        after: { id: NOTE_ON_PERSON_ID },
+        after: { id: NOTE_ON_PERSON_ID, deletedAt },
         updatedFields: ['deletedAt'],
         diff: {},
       };
@@ -699,7 +855,7 @@ describe('inheritedThroughChildrenReadabilityObjectRecordsPermissions', () => {
           } as ObjectRecordDeleteEvent['properties'],
         },
       ]);
-      const restoreResponse = await makeGraphqlAPIRequest(
+      const restoreResponse = await makeGraphqlApiRequest(
         restoreManyOperationFactory({
           objectMetadataSingularName: 'note',
           objectMetadataPluralName: 'notes',
@@ -710,7 +866,7 @@ describe('inheritedThroughChildrenReadabilityObjectRecordsPermissions', () => {
 
       expect(deleteResponse.body.errors).toBeUndefined();
       expect(deleteResponse.body.data.deleteNotes).toEqual([
-        { id: NOTE_ON_PERSON_ID },
+        { id: NOTE_ON_PERSON_ID, deletedAt: expect.any(String) },
       ]);
       expect(restoreResponse.body.errors).toBeUndefined();
       expect(restoreResponse.body.data.restoreNotes).toEqual([
@@ -720,11 +876,11 @@ describe('inheritedThroughChildrenReadabilityObjectRecordsPermissions', () => {
       expect([...readableThroughCapturedLinks]).toEqual([NOTE_ON_PERSON_ID]);
     });
 
-    it('should not show a deleted note in the trash through a target detached before its deletion', async () => {
+    it('should show a deleted note in the trash when its only target was detached before its deletion', async () => {
       const noteOnCompanyFilter = { id: { eq: NOTE_ON_COMPANY_ID } };
       const companyNoteTargetFilter = { id: { eq: COMPANY_NOTE_TARGET_ID } };
 
-      const detachResponse = await makeGraphqlAPIRequest(
+      const detachResponse = await makeGraphqlApiRequest(
         deleteManyOperationFactory({
           objectMetadataSingularName: 'noteTarget',
           objectMetadataPluralName: 'noteTargets',
@@ -733,9 +889,7 @@ describe('inheritedThroughChildrenReadabilityObjectRecordsPermissions', () => {
         }),
       );
 
-      await setRecordSharingEnabled(false);
-
-      const deleteResponse = await makeGraphqlAPIRequest(
+      const deleteResponse = await makeGraphqlApiRequest(
         deleteManyOperationFactory({
           objectMetadataSingularName: 'note',
           objectMetadataPluralName: 'notes',
@@ -744,9 +898,7 @@ describe('inheritedThroughChildrenReadabilityObjectRecordsPermissions', () => {
         }),
       );
 
-      await setRecordSharingEnabled(true);
-
-      const trashedNotesResponse = await makeGraphqlAPIRequestWithMemberRole(
+      const trashedNotesResponse = await makeGraphqlApiRequestWithMemberRole(
         findManyOperationFactory({
           objectMetadataSingularName: 'note',
           objectMetadataPluralName: 'notes',
@@ -758,9 +910,7 @@ describe('inheritedThroughChildrenReadabilityObjectRecordsPermissions', () => {
         }),
       );
 
-      await setRecordSharingEnabled(false);
-
-      const restoreNoteResponse = await makeGraphqlAPIRequest(
+      const restoreNoteResponse = await makeGraphqlApiRequest(
         restoreManyOperationFactory({
           objectMetadataSingularName: 'note',
           objectMetadataPluralName: 'notes',
@@ -768,7 +918,7 @@ describe('inheritedThroughChildrenReadabilityObjectRecordsPermissions', () => {
           filter: noteOnCompanyFilter,
         }),
       );
-      const restoreTargetResponse = await makeGraphqlAPIRequest(
+      const restoreTargetResponse = await makeGraphqlApiRequest(
         restoreManyOperationFactory({
           objectMetadataSingularName: 'noteTarget',
           objectMetadataPluralName: 'noteTargets',
@@ -777,8 +927,6 @@ describe('inheritedThroughChildrenReadabilityObjectRecordsPermissions', () => {
         }),
       );
 
-      await setRecordSharingEnabled(true);
-
       expect(detachResponse.body.data.deleteNoteTargets).toEqual([
         { id: COMPANY_NOTE_TARGET_ID },
       ]);
@@ -786,7 +934,9 @@ describe('inheritedThroughChildrenReadabilityObjectRecordsPermissions', () => {
         { id: NOTE_ON_COMPANY_ID },
       ]);
       expect(trashedNotesResponse.body.errors).toBeUndefined();
-      expect(trashedNotesResponse.body.data.notes.edges).toEqual([]);
+      expect(collectIds(trashedNotesResponse.body.data.notes.edges)).toEqual([
+        NOTE_ON_COMPANY_ID,
+      ]);
       expect(restoreNoteResponse.body.errors).toBeUndefined();
       expect(restoreTargetResponse.body.errors).toBeUndefined();
     });

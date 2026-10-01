@@ -6,9 +6,9 @@ import {
 } from 'test/integration/graphql/utils/upload-core-picture-with-direct-upload.util';
 import { createFileUploadAndPutFile } from 'test/integration/graphql/utils/upload-file-with-direct-upload.util';
 import { ONE_BY_ONE_TRANSPARENT_PNG } from 'test/integration/metadata/suites/file/utils/seed-workspace-logo.util';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 
-import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.types';
+import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.type';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 const CORE_PICTURE_PATH_PATTERN = /^core-picture\/[0-9a-f-]{36}\.png$/;
@@ -75,7 +75,7 @@ describe('Core picture direct upload should succeed', () => {
     });
     expect(await findWorkspaceLogoFileId()).toBe(uploadedLogo.id);
 
-    const workspaceResponse = await makeMetadataAPIRequest({
+    const workspaceResponse = await makeMetadataApiRequest({
       query: gql`
         query GetWorkspaceLogo {
           currentWorkspace {
@@ -135,7 +135,7 @@ describe('Core picture direct upload should succeed', () => {
 
     const completeResponses = await Promise.all(
       [firstUpload.fileId, secondUpload.fileId].map((fileId) =>
-        makeMetadataAPIRequest({
+        makeMetadataApiRequest({
           query: completeWorkspaceLogoUploadMutation,
           variables: { fileId },
         }),
@@ -167,7 +167,7 @@ describe('Core picture direct upload should succeed', () => {
 
     uploadedFileIds.push(uploadedLogo.id);
 
-    const retriedResponse = await makeMetadataAPIRequest({
+    const retriedResponse = await makeMetadataApiRequest({
       query: completeWorkspaceLogoUploadMutation,
       variables: { fileId: uploadedLogo.id },
     });

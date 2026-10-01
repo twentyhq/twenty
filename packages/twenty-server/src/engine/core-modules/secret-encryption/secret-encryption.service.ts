@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
@@ -26,16 +26,11 @@ type VersionedOptions = {
 
 @Injectable()
 export class SecretEncryptionService {
-  private readonly logger = new Logger(SecretEncryptionService.name);
-  private hasLoggedLegacyCtrDecryption = false;
-
   constructor(
     private readonly environmentConfigDriver: EnvironmentConfigDriver,
   ) {}
 
-  // Legacy CTR pair (`encrypt` / `decrypt`) is intentionally left unbranded.
-  // Its callers predate the enc:v2 envelope and never went through the
-  // branded API; retrofitting them is tracked as a separate follow-up.
+  // TODO: migrate legacy CTR callers to the branded enc:v2 envelope.
   public encrypt(value: string): string {
     if (!isDefined(value)) {
       return value;
@@ -48,9 +43,8 @@ export class SecretEncryptionService {
     return encryptAesCtr({ plaintext: value, rawKey: primary });
   }
 
-  // Legacy CTR has no integrity tag, so a wrong key produces an arbitrary
-  // byte sequence rather than throwing. Rotation of these rows requires
-  // migrating the consumer to the versioned envelope first.
+  // CTR has no integrity tag, so a wrong key yields garbage instead of throwing:
+  // migrate a caller to enc:v2 before rotating the key its rows use.
   public decrypt(value: string): string {
     if (!isDefined(value)) {
       return value;
@@ -78,8 +72,6 @@ export class SecretEncryptionService {
   }
 
   public maskDecryptedValue(decryptedValue: string, mask: string): string {
-    // Visible-char count caps at 5 and at one-tenth of the secret length, so
-    // short secrets reveal nothing and longer secrets reveal a stable prefix.
     const visibleCharsCount = Math.min(
       5,
       Math.floor(decryptedValue.length / 10),
@@ -142,53 +134,5 @@ export class SecretEncryptionService {
       rawKey,
       workspaceId: opts.workspaceId,
     }) as PlaintextString;
-  }
-
-  /**
-   * @deprecated Legacy variant kept only for the 2.5 encryption backfill
-   * instance commands, which read pre-v2 rows (legacy AES-CTR ciphertext or
-   * plaintext) and re-encrypt them into the enc:v2 envelope. Runtime and
-   * rotation paths must use `decryptVersionedOrThrow` instead.
-   */
-  public legacyDecryptVersionedWithFallback(
-    value: EncryptedString,
-    opts: VersionedOptions = {},
-  ): PlaintextString {
-    if (!isDefined(value)) {
-      return value;
-    }
-
-    const parsed = parseSecretEncryptionEnvelopeOrThrow({ value });
-
-    if (parsed.version === 2) {
-      const keys = resolveEncryptionKeysOrThrow({
-        environmentConfigDriver: this.environmentConfigDriver,
-      });
-      const rawKey = pickEncryptionKeyByKeyIdOrThrow({
-        keyId: parsed.keyId,
-        keys,
-      });
-
-      return decryptAesGcmV2OrThrow({
-        payloadBase64: parsed.payload,
-        rawKey,
-        workspaceId: opts.workspaceId,
-      }) as PlaintextString;
-    }
-
-    this.warnLegacyCtrDecryptionOnce();
-
-    return this.decrypt(value) as PlaintextString;
-  }
-
-  private warnLegacyCtrDecryptionOnce(): void {
-    if (this.hasLoggedLegacyCtrDecryption) {
-      return;
-    }
-
-    this.hasLoggedLegacyCtrDecryption = true;
-    this.logger.warn(
-      'Decrypted a legacy unprefixed AES-CTR ciphertext. These rows should be re-encrypted into the enc:v2 envelope in a follow-up migration.',
-    );
   }
 }

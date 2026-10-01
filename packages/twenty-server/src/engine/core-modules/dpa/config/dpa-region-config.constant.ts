@@ -1,5 +1,5 @@
 import { DpaRegion } from 'src/engine/core-modules/dpa/enums/dpa-region.enum';
-import { type DpaRegionConfig } from 'src/engine/core-modules/dpa/types/dpa.types';
+import { type DpaRegionConfig } from 'src/engine/core-modules/dpa/types/dpa.type';
 
 export const DEFAULT_DPA_REGION: DpaRegion = DpaRegion.EU;
 
@@ -7,8 +7,7 @@ const DPA_COMMON_VALUES = {
   PROCESSOR_ENTITY: 'Twenty.com PBC',
   PROCESSOR_LEGAL_FORM:
     'a public benefit corporation under the laws of Delaware, USA',
-  // Registered office is the Delaware registered agent; the SF notices
-  // address is kept distinct so the two are not conflated under one label.
+  // The Delaware registered office and the SF notices address must stay distinct.
   PROCESSOR_ADDRESS:
     'c/o National Registered Agents, Inc., 1209 Orange Street, Wilmington, Delaware 19801, USA. For notices: 2261 Market Street #5275, San Francisco, California 94114, USA',
   EU_AFFILIATE_ENTITY: 'Twenty.com SAS',

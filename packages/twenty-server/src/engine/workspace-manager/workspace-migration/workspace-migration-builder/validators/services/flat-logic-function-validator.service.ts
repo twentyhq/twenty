@@ -15,6 +15,7 @@ import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/wo
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
 import { type UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
+import { validateLogicFunctionForwardedRequestHeaders } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-logic-function-forwarded-request-headers.util';
 
 @Injectable()
 export class FlatLogicFunctionValidatorService {
@@ -92,6 +93,10 @@ export class FlatLogicFunctionValidatorService {
         userFriendlyMessage: msg`Handler name is invalid`,
       });
     }
+
+    validationResult.errors.push(
+      ...validateLogicFunctionForwardedRequestHeaders(flatEntityUpdate),
+    );
 
     const mergedPrebuiltState = {
       executionMode:
@@ -224,6 +229,12 @@ export class FlatLogicFunctionValidatorService {
         userFriendlyMessage: msg`Handler name is invalid`,
       });
     }
+
+    validationResult.errors.push(
+      ...validateLogicFunctionForwardedRequestHeaders(
+        flatLogicFunctionToValidate,
+      ),
+    );
 
     if (
       flatLogicFunctionToValidate.executionMode ===

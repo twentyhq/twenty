@@ -39,7 +39,7 @@ import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { type MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { type MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
-import { type MessageAttachment } from 'src/modules/messaging/message-import-manager/types/message';
+import { type MessageAttachment } from 'src/modules/messaging/message-import-manager/types/message.type';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
 type ParentThreadContext = {
@@ -298,8 +298,8 @@ export class EmailComposerService {
     return attachments;
   }
 
-  // Resolve parent's root thread id (Gmail/MS native or stored) + RFC 5322 §3.6.4
-  // References chain so replies thread on both Twenty and recipient mail clients.
+  // Parent's root thread id (provider-native or stored) and RFC 5322 §3.6.4 References chain, so replies thread
+  // on both Twenty and recipient mail clients.
   private async getParentThreadContext(
     workspaceId: string,
     inReplyTo: string,

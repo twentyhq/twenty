@@ -10,6 +10,7 @@ import { useDropdownItemFocus } from './useDropdownItemFocus';
 
 export const DropdownOptionItem = ({
   selected,
+  indicator,
   onSelect,
   closeOnSelect,
   color,
@@ -17,7 +18,8 @@ export const DropdownOptionItem = ({
   endIcon,
   description,
   descriptionPlacement,
-  hotkeys,
+  shortcut,
+  shortcutJoinLabel,
   hasSubmenu,
   children,
   render,
@@ -28,9 +30,16 @@ export const DropdownOptionItem = ({
   id,
   ...props
 }: DropdownOptionItemProps) => {
-  const { type, multiple, closeTree } = useDropdownContext();
+  const { type, multiple, closeTree, searchTargetId } = useDropdownContext();
   const isMenu = type === 'menu';
-  const menuOptionRole = multiple ? 'menuitemcheckbox' : 'menuitemradio';
+  const hasSelectionState = isDefined(selected);
+  const selectableMenuOptionRole = multiple
+    ? 'menuitemcheckbox'
+    : 'menuitemradio';
+  const menuOptionRole = hasSelectionState
+    ? selectableMenuOptionRole
+    : 'menuitem';
+  const selectionIndicator = multiple ? 'checkbox' : 'check';
   const generatedId = useId();
   const itemId = id ?? generatedId;
   const itemFocus = useDropdownItemFocus({ id: itemId });
@@ -42,14 +51,15 @@ export const DropdownOptionItem = ({
       disabled={disabled}
       nativeButton={nativeButton}
       role={isMenu ? menuOptionRole : undefined}
-      aria-checked={isMenu ? selected : undefined}
-      aria-pressed={isMenu ? undefined : selected}
+      aria-checked={isMenu && hasSelectionState ? selected : undefined}
+      aria-pressed={!isMenu && hasSelectionState ? selected : undefined}
       tabIndex={itemFocus.tabIndex}
       onFocus={(event) => {
         itemFocus.activate();
         onFocus?.(event);
       }}
       data-dropdown-item=""
+      data-dropdown-option-item=""
       onClick={(event) => {
         onClick?.(event);
 
@@ -69,13 +79,17 @@ export const DropdownOptionItem = ({
           render={render ?? <button type="button" />}
           disabled={disabled}
           selected={selected}
-          indicator={multiple ? 'checkbox' : 'check'}
+          focused={searchTargetId === itemId}
+          indicator={
+            indicator ?? (hasSelectionState ? selectionIndicator : 'none')
+          }
           color={color}
           startIcon={startIcon}
           endIcon={endIcon}
           description={description}
           descriptionPlacement={descriptionPlacement}
-          hotkeys={hotkeys}
+          shortcut={shortcut}
+          shortcutJoinLabel={shortcutJoinLabel}
           hasSubmenu={hasSubmenu}
         >
           {children}

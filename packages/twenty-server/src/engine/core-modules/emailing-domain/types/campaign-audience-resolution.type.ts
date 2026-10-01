@@ -6,10 +6,10 @@ export type CampaignAudienceResolution = {
     totalMembers: number;
     withoutEmail: number;
     duplicateEmails: number;
-    overCap: number;
     hardSuppressed: number;
     globallyUnsubscribed: number;
     topicUnsubscribed: number;
+    trackingRefused: number;
     sendable: number;
   };
 };

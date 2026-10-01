@@ -19,8 +19,7 @@ describe('getLocaleTextDirection', () => {
     expect(getLocaleTextDirection('ar-EG')).toBe('rtl');
   });
 
-  // A locale it cannot place is laid out left to right rather than throwing:
-  // the wrong direction is recoverable, a blank app is not.
+  // Falls back to left to right: a wrong direction is recoverable, a blank app is not.
   it('falls back to ltr for an unknown locale', () => {
     expect(getLocaleTextDirection('zz-ZZ')).toBe('ltr');
     expect(getLocaleTextDirection('')).toBe('ltr');

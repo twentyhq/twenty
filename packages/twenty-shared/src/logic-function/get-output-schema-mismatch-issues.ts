@@ -1,5 +1,5 @@
 import { isDefined } from '@/utils';
-import { type BaseOutputSchemaV2 } from '@/workflow/workflow-schema/types/base-output-schema.type';
+import { type BaseOutputSchemaV2 } from '@/workflow/workflow-schema/types/BaseOutputSchema';
 
 const buildPath = (parentPath: string, key: string): string =>
   parentPath ? `${parentPath}.${key}` : key;

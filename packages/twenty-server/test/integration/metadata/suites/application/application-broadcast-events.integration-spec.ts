@@ -4,7 +4,7 @@ import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
 import { uninstallApplication } from 'test/integration/metadata/suites/application/utils/uninstall-application.util';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -113,7 +113,7 @@ describe('Application broadcast events', () => {
 
     broadcastSpy.mockClear();
 
-    const updateRegistrationResponse = await makeMetadataAPIRequest({
+    const updateRegistrationResponse = await makeMetadataApiRequest({
       query: gql`
         mutation UpdateApplicationRegistration(
           $input: UpdateApplicationRegistrationInput!

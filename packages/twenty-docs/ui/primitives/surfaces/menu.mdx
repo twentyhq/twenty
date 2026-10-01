@@ -68,7 +68,7 @@ export const RecordMenu = ({ onDuplicate, onDelete }: RecordMenuProps) => (
 );
 ```
 
-`defaultOpen` defaults to `false`, so it can be omitted. Action items close the menu when selected by default. `disabled` prevents selection. `hotkeys` displays shortcut hints; register shortcut handlers in your application.
+`defaultOpen` defaults to `false`, so it can be omitted. Action items close the menu when selected by default. `disabled` prevents selection. `shortcut` displays shortcut hints; register shortcut handlers in your application.
 
 ## Controlled state
 
@@ -227,6 +227,10 @@ Arrow keys move through the items, including disabled ones, which receive focus 
 | Submenu        | `inline-end` | `start` | `0`          | `-4`          |
 
 It uses the [theme's portal container](/ui/theming) by default.
+
+## Labels
+
+Supply labels through each part’s children and native accessible attributes. `Item`, `CheckboxItem`, `RadioItem`, and `SubmenuTrigger` accept `shortcutJoinLabel` to replace the default `then` between sequential shortcut steps.
 
 ## Props
 

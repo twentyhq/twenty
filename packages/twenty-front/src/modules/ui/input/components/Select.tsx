@@ -1,68 +1,23 @@
-import { ListItem } from 'twenty-ui/primitives/navigation';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
-import { Tag } from 'twenty-ui/primitives/data-display';
+import { type SelectProps } from '@/ui/input/types/SelectProps';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { styled } from '@linaria/react';
-import { type MouseEvent, useMemo, useRef, useState } from 'react';
-
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
-import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
+import { t } from '@lingui/core/macro';
+import { useMemo, useRef, useState } from 'react';
+import { Dropdown } from 'twenty-ui/components';
+import { Tag } from 'twenty-ui/primitives/data-display';
 
 import { type SelectValue } from '@/ui/input/components/internal/select/types';
+import { getSelectDropdownInitialFocus } from '@/ui/input/components/internal/select/utils/getSelectDropdownInitialFocus';
+import { isFocusMovingWithinSelect } from '@/ui/input/components/internal/select/utils/isFocusMovingWithinSelect';
+import { isSelectOptionMatchingSearch } from '@/ui/input/components/internal/select/utils/isSelectOptionMatchingSearch';
 import { SelectControl } from '@/ui/input/components/SelectControl';
-import { type FormFieldInputVariant } from '@/ui/input/types/FormFieldInputVariant';
-import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
-import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { type DropdownOffset } from '@/ui/layout/dropdown/types/DropdownOffset';
-import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
-import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
-import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
-import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
-import { type IconComponent } from 'twenty-ui/icon';
-import { type SelectOption } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
-
-export type SelectSizeVariant = 'small' | 'default';
-
-export type CallToActionButton = {
-  text: string;
-  onClick: (event: MouseEvent<HTMLDivElement>) => void;
-  Icon?: IconComponent;
-};
-
-export type SelectProps<Value extends SelectValue> = {
-  className?: string;
-  renderAsTag?: boolean;
-  disabled?: boolean;
-  selectSizeVariant?: SelectSizeVariant;
-  dropdownId: string;
-  dropdownWidth?: number;
-  dropdownWidthAuto?: boolean;
-  emptyOption?: SelectOption<Value>;
-  fullWidth?: boolean;
-  label?: string;
-  description?: string;
-  onChange?: (value: Value) => void;
-  onBlur?: () => void;
-  options: SelectOption<Value>[];
-  value?: Value;
-  withSearchInput?: boolean;
-  needIconCheck?: boolean;
-  pinnedOption?: SelectOption<Value>;
-  callToActionButton?: CallToActionButton;
-  dropdownOffset?: DropdownOffset;
-  hasRightElement?: boolean;
-  showContextualTextInControl?: boolean;
-  showIconInControl?: boolean;
-  isDropdownInModal?: boolean;
-  variant?: FormFieldInputVariant;
-};
 
 const StyledContainer = styled.div<{ fullWidth?: boolean }>`
   width: ${({ fullWidth }) => (fullWidth ? '100%' : 'auto')};
@@ -81,7 +36,7 @@ const StyledDescription = styled.span`
   font-size: ${themeCssVariables.font.size.sm};
 `;
 
-export const Select = <Value extends SelectValue>({
+export const Select = <TValue extends SelectValue>({
   className,
   disabled: disabledFromProps,
   selectSizeVariant,
@@ -100,15 +55,14 @@ export const Select = <Value extends SelectValue>({
   needIconCheck,
   pinnedOption,
   callToActionButton,
-  dropdownOffset,
+  dropdownSideOffset = 0,
   hasRightElement,
   showContextualTextInControl = true,
   showIconInControl = true,
-  isDropdownInModal = false,
   variant = 'default',
   renderAsTag = false,
-}: SelectProps<Value>) => {
-  const selectContainerRef = useRef<HTMLDivElement>(null);
+}: SelectProps<TValue>) => {
+  const dropdownContentRef = useRef<HTMLDivElement>(null);
 
   const [searchInputValue, setSearchInputValue] = useState('');
 
@@ -129,27 +83,22 @@ export const Select = <Value extends SelectValue>({
       return emptyOption;
     }
 
-    if (options.length > 0) {
+    if (isNonEmptyArray(options)) {
       return options[0];
     }
 
     return null;
   }, [emptyOption, options, pinnedOption, value]);
 
-  const filteredOptions = useMemo(() => {
-    if (!isNonEmptyString(searchInputValue)) {
-      return options;
-    }
+  const normalizedSearchInputValue = normalizeSearchText(searchInputValue);
 
-    const normalizedSearch = normalizeSearchText(searchInputValue);
-
-    return options.filter(
-      ({ label, searchKeywords }) =>
-        normalizeSearchText(label).includes(normalizedSearch) ||
-        (isDefined(searchKeywords) &&
-          normalizeSearchText(searchKeywords).includes(normalizedSearch)),
-    );
-  }, [options, searchInputValue]);
+  const filteredOptions = useMemo(
+    () =>
+      options.filter((option) =>
+        isSelectOptionMatchingSearch({ option, normalizedSearchInputValue }),
+      ),
+    [options, normalizedSearchInputValue],
+  );
 
   const isDisabled =
     disabledFromProps ||
@@ -158,21 +107,12 @@ export const Select = <Value extends SelectValue>({
       !isDefined(callToActionButton) &&
       (!isDefined(emptyOption) || selectedOption !== emptyOption));
 
-  const { closeDropdown } = useCloseDropdown();
-
-  const dropDownMenuWidth =
-    dropdownWidthAuto && selectContainerRef.current?.clientWidth
-      ? selectContainerRef.current?.clientWidth
-      : dropdownWidth;
-
-  const selectableItemIdArray = filteredOptions.map((option) => option.label);
-
-  const selectedItemId = useAtomComponentStateValue(
-    selectedItemIdComponentState,
-    dropdownId,
-  );
-
-  const { setSelectedItemId } = useSelectableList(dropdownId);
+  const shouldShowPinnedOption =
+    isDefined(pinnedOption) &&
+    isSelectOptionMatchingSearch({
+      option: pinnedOption,
+      normalizedSearchInputValue,
+    });
 
   const controlSelectedOption = useMemo(() => {
     if (!isDefined(selectedOption)) {
@@ -188,15 +128,6 @@ export const Select = <Value extends SelectValue>({
     };
   }, [selectedOption, showContextualTextInControl, showIconInControl]);
 
-  const handleDropdownOpen = () => {
-    if (
-      isDefined(controlSelectedOption) &&
-      !isNonEmptyString(searchInputValue)
-    ) {
-      setSelectedItemId(controlSelectedOption.label);
-    }
-  };
-
   if (!isDefined(controlSelectedOption)) {
     return <></>;
   }
@@ -205,9 +136,18 @@ export const Select = <Value extends SelectValue>({
     <StyledContainer
       className={className}
       fullWidth={fullWidth}
-      tabIndex={0}
-      onBlur={onBlur}
-      ref={selectContainerRef}
+      onBlur={(event) => {
+        if (
+          isFocusMovingWithinSelect({
+            event,
+            dropdownContent: dropdownContentRef.current,
+          })
+        ) {
+          return;
+        }
+
+        onBlur?.();
+      }}
     >
       {isNonEmptyString(label) && <StyledLabel>{label}</StyledLabel>}
       {isDisabled ? (
@@ -220,13 +160,8 @@ export const Select = <Value extends SelectValue>({
           variant={variant}
         />
       ) : (
-        <Dropdown
-          dropdownId={dropdownId}
-          dropdownPlacement="bottom-start"
-          dropdownOffset={dropdownOffset}
-          isDropdownInModal={isDropdownInModal}
-          onOpen={handleDropdownOpen}
-          clickableComponent={
+        <DropdownRoot dropdownId={dropdownId} type="picker">
+          <Dropdown.Trigger render={<div />} nativeButton={false}>
             <SelectControl
               renderAsTag={renderAsTag}
               selectedOption={controlSelectedOption}
@@ -235,145 +170,125 @@ export const Select = <Value extends SelectValue>({
               hasRightElement={hasRightElement}
               variant={variant}
             />
-          }
-          dropdownComponents={
-            <LegacyDropdownContent widthInPixels={dropDownMenuWidth}>
-              {withSearchInput === true && (
-                <DropdownMenuSearchInput
-                  autoFocus
-                  value={searchInputValue}
-                  onChange={(event) => setSearchInputValue(event.target.value)}
-                />
-              )}
-              {withSearchInput === true && isNonEmptyArray(filteredOptions) && (
-                <DropdownMenuSeparator />
-              )}
-              {isDefined(pinnedOption) && (
-                <DropdownMenuItemsContainer scrollable={false}>
-                  <ListItem
-                    onClick={() => {
-                      onChange?.(pinnedOption.value);
-                      onBlur?.();
-                      closeDropdown(dropdownId);
-                    }}
-                    role="option"
-                    aria-selected={
-                      controlSelectedOption.value === pinnedOption.value
-                    }
-                    selected={
-                      needIconCheck &&
-                      controlSelectedOption.value === pinnedOption.value
-                    }
-                    indicator={needIconCheck ? 'check' : 'none'}
-                    description={pinnedOption.contextualText}
-                    startIcon={
-                      <>
-                        <SelectOptionIcon
-                          Icon={pinnedOption.Icon}
-                          color={pinnedOption.iconThemeColor}
-                        />
-                        {pinnedOption.LeftComponent}
-                      </>
-                    }
-                  >
-                    {pinnedOption.label}
-                  </ListItem>
-                </DropdownMenuItemsContainer>
-              )}
-              {isDefined(pinnedOption) && isNonEmptyArray(filteredOptions) && (
-                <DropdownMenuSeparator />
-              )}
-              {isNonEmptyArray(filteredOptions) && (
-                <DropdownMenuItemsContainer hasMaxHeight>
-                  <SelectableList
-                    selectableListInstanceId={dropdownId}
-                    focusId={dropdownId}
-                    selectableItemIdArray={selectableItemIdArray}
-                  >
-                    {filteredOptions.map((option) => {
-                      const handleSelectOption = () => {
+          </Dropdown.Trigger>
+          <DropdownContent
+            ref={dropdownContentRef}
+            initialFocus={
+              withSearchInput
+                ? undefined
+                : () =>
+                    getSelectDropdownInitialFocus(dropdownContentRef.current)
+            }
+            width={dropdownWidthAuto ? 'var(--anchor-width)' : dropdownWidth}
+            align="start"
+            sideOffset={dropdownSideOffset}
+            aria-label={isNonEmptyString(label) ? label : undefined}
+          >
+            {withSearchInput === true && (
+              <Dropdown.Search
+                value={searchInputValue}
+                onValueChange={setSearchInputValue}
+                placeholder={t`Search`}
+                aria-label={t`Search`}
+              />
+            )}
+            {withSearchInput === true && isNonEmptyArray(filteredOptions) && (
+              <Dropdown.Separator />
+            )}
+            {shouldShowPinnedOption && (
+              <Dropdown.Section>
+                <Dropdown.OptionItem
+                  onSelect={() => {
+                    onChange?.(pinnedOption.value);
+                    onBlur?.();
+                  }}
+                  disabled={pinnedOption.disabled}
+                  selected={controlSelectedOption.value === pinnedOption.value}
+                  indicator={needIconCheck ? 'check' : 'none'}
+                  description={pinnedOption.contextualText}
+                  startIcon={
+                    <>
+                      <SelectOptionIcon
+                        Icon={pinnedOption.Icon}
+                        color={pinnedOption.iconThemeColor}
+                      />
+                      {pinnedOption.LeftComponent}
+                    </>
+                  }
+                >
+                  {pinnedOption.label}
+                </Dropdown.OptionItem>
+              </Dropdown.Section>
+            )}
+            {shouldShowPinnedOption && isNonEmptyArray(filteredOptions) && (
+              <Dropdown.Separator />
+            )}
+            {isNonEmptyArray(filteredOptions) && (
+              <Dropdown.Section scrollable>
+                {filteredOptions.map((option) => {
+                  const tagColor = renderAsTag ? option.color : undefined;
+                  const isColoredTag = isDefined(tagColor);
+
+                  return (
+                    <Dropdown.OptionItem
+                      key={`${option.value}-${option.label}`}
+                      onSelect={() => {
                         onChange?.(option.value);
                         onBlur?.();
-                        closeDropdown(dropdownId);
-                      };
-
-                      return (
-                        <SelectableListItem
-                          key={`${option.value}-${option.label}`}
-                          itemId={option.label}
-                          onEnter={handleSelectOption}
+                      }}
+                      disabled={option.disabled}
+                      selected={controlSelectedOption.value === option.value}
+                      indicator={
+                        isColoredTag || needIconCheck ? 'check' : 'none'
+                      }
+                      description={
+                        isColoredTag ? undefined : option.contextualText
+                      }
+                      startIcon={
+                        isColoredTag ? undefined : (
+                          <>
+                            <SelectOptionIcon
+                              Icon={option.Icon}
+                              color={option.iconThemeColor}
+                            />
+                            {option.LeftComponent}
+                          </>
+                        )
+                      }
+                    >
+                      {isColoredTag ? (
+                        <Tag
+                          color={tagColor}
+                          borderStyle="dashed"
+                          variant="soft"
                         >
-                          {renderAsTag && isDefined(option.color) ? (
-                            <ListItem
-                              focused={selectedItemId === option.label}
-                              onClick={handleSelectOption}
-                              role="option"
-                              aria-selected={
-                                controlSelectedOption.value === option.value
-                              }
-                              selected={
-                                controlSelectedOption.value === option.value
-                              }
-                              indicator="check"
-                            >
-                              <Tag
-                                color={option.color}
-                                borderStyle="dashed"
-                                variant={'soft'}
-                              >
-                                {option.label}
-                              </Tag>
-                            </ListItem>
-                          ) : (
-                            <ListItem
-                              focused={selectedItemId === option.label}
-                              onClick={handleSelectOption}
-                              role="option"
-                              aria-selected={
-                                controlSelectedOption.value === option.value
-                              }
-                              selected={
-                                needIconCheck &&
-                                controlSelectedOption.value === option.value
-                              }
-                              indicator={needIconCheck ? 'check' : 'none'}
-                              description={option.contextualText}
-                              startIcon={
-                                <>
-                                  <SelectOptionIcon
-                                    Icon={option.Icon}
-                                    color={option.iconThemeColor}
-                                  />
-                                  {option.LeftComponent}
-                                </>
-                              }
-                            >
-                              {option.label}
-                            </ListItem>
-                          )}
-                        </SelectableListItem>
-                      );
-                    })}
-                  </SelectableList>
-                </DropdownMenuItemsContainer>
-              )}
-              {isDefined(callToActionButton) &&
-                isNonEmptyArray(filteredOptions) && <DropdownMenuSeparator />}
-              {isDefined(callToActionButton) && (
-                <DropdownMenuItemsContainer hasMaxHeight scrollable={false}>
-                  <ListItem
-                    onClick={callToActionButton.onClick}
-                    startIcon={
-                      <SelectOptionIcon Icon={callToActionButton.Icon} />
-                    }
-                  >
-                    {callToActionButton.text}
-                  </ListItem>
-                </DropdownMenuItemsContainer>
-              )}
-            </LegacyDropdownContent>
-          }
-        />
+                          {option.label}
+                        </Tag>
+                      ) : (
+                        option.label
+                      )}
+                    </Dropdown.OptionItem>
+                  );
+                })}
+              </Dropdown.Section>
+            )}
+            {isDefined(callToActionButton) &&
+              isNonEmptyArray(filteredOptions) && <Dropdown.Separator />}
+            {isDefined(callToActionButton) && (
+              <Dropdown.Section>
+                <Dropdown.ActionItem
+                  onClick={callToActionButton.onClick}
+                  closeOnClick={false}
+                  startIcon={
+                    <SelectOptionIcon Icon={callToActionButton.Icon} />
+                  }
+                >
+                  {callToActionButton.text}
+                </Dropdown.ActionItem>
+              </Dropdown.Section>
+            )}
+          </DropdownContent>
+        </DropdownRoot>
       )}
       {isNonEmptyString(description) && (
         <StyledDescription>{description}</StyledDescription>

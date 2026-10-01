@@ -1,6 +1,5 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { type ReactNode } from 'react';
 
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
@@ -62,8 +61,8 @@ export const SettingsAdminChats = () => {
           <SearchInput
             placeholder={t`Search by workspace, user email or thread id...`}
             value={searchQuery}
-            onChange={setSearchQuery}
-            filterDropdown={(filterButton: ReactNode) => (
+            onValueChange={setSearchQuery}
+            filterDropdown={(filterButton) => (
               <SettingsAdminChatsFilterDropdown
                 filterButton={filterButton}
                 filters={filters}

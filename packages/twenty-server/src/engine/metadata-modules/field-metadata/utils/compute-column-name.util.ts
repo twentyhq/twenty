@@ -17,7 +17,6 @@ export type FieldTypeAndNameMetadata = {
   type: FieldMetadataType;
 };
 
-// TODO: If we need to implement custom name logic for columns, we can do it here
 export function computeColumnName(
   fieldMetadataOrFieldName: FieldTypeAndNameMetadata | string,
   options?: ComputeColumnNameOptions,

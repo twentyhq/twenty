@@ -1,10 +1,10 @@
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import {
   createWebhook,
   createWebhookReceiver,
   deleteWebhook,
 } from 'test/integration/metadata/suites/utils/webhook-test.util';
-import { makeAdminPanelAPIRequest } from 'test/integration/twenty-config/utils/make-admin-panel-api-request.util';
+import { makeAdminPanelApiRequest } from 'test/integration/twenty-config/utils/make-admin-panel-api-request.util';
 import { expectEventually } from 'test/integration/utils/expect-eventually.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 
@@ -77,7 +77,7 @@ describe('Webhook rate limiting', () => {
   };
 
   const createPerson = async (lastName: string) => {
-    const response = await makeGraphqlAPIRequest({
+    const response = await makeGraphqlApiRequest({
       query: CREATE_PERSON_MUTATION,
       variables: { data: { name: { firstName: 'WebhookThrottle', lastName } } },
     });
@@ -95,7 +95,7 @@ describe('Webhook rate limiting', () => {
       getCoreRepository<FeatureFlagEntity>(FeatureFlagEntity);
     redis = await createClient({ url: process.env.REDIS_URL }).connect();
 
-    await makeAdminPanelAPIRequest({
+    await makeAdminPanelApiRequest({
       query: CREATE_CONFIG_VARIABLE_MUTATION,
       variables: { key: 'OUTBOUND_HTTP_ALLOWED_INTERNAL_HOSTS', value: ['*'] },
     });
@@ -148,7 +148,7 @@ describe('Webhook rate limiting', () => {
     await deleteWebhook(webhookId).catch(() => {});
 
     for (const personId of createdPersonIds) {
-      await makeGraphqlAPIRequest({
+      await makeGraphqlApiRequest({
         query: DESTROY_PERSON_MUTATION,
         variables: { id: personId },
       }).catch(() => {});
@@ -159,7 +159,7 @@ describe('Webhook rate limiting', () => {
       key: FeatureFlagKey.IS_WEBHOOK_RATE_LIMIT_ENABLED,
       workspaceId: SEED_APPLE_WORKSPACE_ID,
     });
-    await makeAdminPanelAPIRequest({
+    await makeAdminPanelApiRequest({
       query: DELETE_CONFIG_VARIABLE_MUTATION,
       variables: { key: 'OUTBOUND_HTTP_ALLOWED_INTERNAL_HOSTS' },
     }).catch(() => {});

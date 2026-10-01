@@ -11,7 +11,6 @@ import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migrati
 import { randomUUID } from 'node:crypto';
 import { parse } from 'graphql';
 import {
-  FeatureFlagKey,
   FieldMetadataType,
   MetadataReadability,
   MetadataWritability,
@@ -23,7 +22,7 @@ import {
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
 import { destroyManyOperationFactory } from 'test/integration/graphql/utils/destroy-many-operation-factory.util';
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateOneOperationFactory } from 'test/integration/graphql/utils/update-one-operation-factory.util';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
@@ -32,8 +31,7 @@ import { setObjectReadability } from 'test/integration/metadata/suites/object-me
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { upsertObjectPermissions } from 'test/integration/metadata/suites/object-permission/utils/upsert-object-permissions.util';
 import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
-import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
 import { type RecordSharePrincipalInput } from 'src/engine/core-modules/record-share/dtos/record-sharing.dto';
@@ -54,17 +52,10 @@ const READ_SHARING = parse(
 const SET_SHARE = parse(
   `mutation SetShare($target: RecordSharingTargetInput!, $principal: RecordSharePrincipalInput!, $enabled: Boolean!, $accessLevel: RecordShareAccessLevel) { setRecordShare(target: $target, principal: $principal, enabled: $enabled, accessLevel: $accessLevel) { ${fields} } }`,
 );
-const setFlag = (value: boolean) =>
-  updateFeatureFlag({
-    featureFlag: FeatureFlagKey.IS_RECORD_SHARING_ENABLED,
-    value,
-    expectToFail: false,
-  });
 
 describe('Generic sharing API on an ordinary private object', () => {
   let objectMetadataId: string;
   let memberRoleId: string;
-  let originalFlag: boolean;
   let shares: RecordShareStorageService;
   const target = () => ({ objectMetadataId, recordId: RECORD_ID });
   const grant = async (
@@ -86,7 +77,7 @@ describe('Generic sharing API on an ordinary private object', () => {
       ],
     });
   const settings = (token = APPLE_JONY_MEMBER_ACCESS_TOKEN) =>
-    makeMetadataAPIRequest(
+    makeMetadataApiRequest(
       { query: READ_SHARING, variables: { target: target() } },
       token,
     );
@@ -96,7 +87,7 @@ describe('Generic sharing API on an ordinary private object', () => {
     token = APPLE_JONY_MEMBER_ACCESS_TOKEN,
     accessLevel = RecordShareAccessLevel.READ,
   ) =>
-    makeMetadataAPIRequest(
+    makeMetadataApiRequest(
       {
         query: SET_SHARE,
         variables: { target: target(), principal, enabled, accessLevel },
@@ -104,7 +95,7 @@ describe('Generic sharing API on an ordinary private object', () => {
       token,
     );
   const read = () =>
-    makeGraphqlAPIRequest(
+    makeGraphqlApiRequest(
       findManyOperationFactory({
         objectMetadataSingularName: OBJECT_NAME,
         objectMetadataPluralName: OBJECT_PLURAL,
@@ -135,7 +126,7 @@ describe('Generic sharing API on an ordinary private object', () => {
       workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
     };
     const invite = (accessLevel: RecordShareAccessLevel) =>
-      makeMetadataAPIRequest({
+      makeMetadataApiRequest({
         query: SET_SHARE,
         variables: { target: target(), principal, enabled: true, accessLevel },
       });
@@ -162,13 +153,6 @@ describe('Generic sharing API on an ordinary private object', () => {
     shares = getAppProviderByClassName<RecordShareStorageService>(
       'RecordShareStorageService',
     );
-    const cache = getAppProviderByClassName<WorkspaceCacheService>(
-      'WorkspaceCacheService',
-    );
-    originalFlag =
-      (await cache.getOrRecompute(workspaceId, ['featureFlagsMap']))
-        .featureFlagsMap[FeatureFlagKey.IS_RECORD_SHARING_ENABLED] === true;
-    await setFlag(true);
     const { data } = await createOneObjectMetadata({
       input: {
         nameSingular: OBJECT_NAME,
@@ -191,7 +175,7 @@ describe('Generic sharing API on an ordinary private object', () => {
     });
     expect(
       (
-        await makeGraphqlAPIRequest(
+        await makeGraphqlApiRequest(
           createOneOperationFactory({
             objectMetadataSingularName: OBJECT_NAME,
             gqlFields: 'id',
@@ -205,7 +189,6 @@ describe('Generic sharing API on an ordinary private object', () => {
   });
 
   beforeEach(async () => {
-    await setFlag(true);
     await shares.deleteByRecordIds({
       workspaceId,
       objectMetadataId,
@@ -234,7 +217,7 @@ describe('Generic sharing API on an ordinary private object', () => {
       recordIds: [RECORD_ID],
     });
     await setObjectReadability(objectMetadataId, MetadataReadability.OPEN);
-    await makeGraphqlAPIRequest(
+    await makeGraphqlApiRequest(
       destroyManyOperationFactory({
         objectMetadataSingularName: OBJECT_NAME,
         objectMetadataPluralName: OBJECT_PLURAL,
@@ -250,24 +233,22 @@ describe('Generic sharing API on an ordinary private object', () => {
       expectToFail: false,
     });
     await deleteOneObjectMetadata({ input: { idToDelete: objectMetadataId } });
-    await setFlag(originalFlag);
   });
 
-  it('keeps flag-off creates private after activation', async () => {
-    await setFlag(false);
+  it('keeps creates private', async () => {
     const recordId = randomUUID();
-    const created = await makeGraphqlAPIRequest(
+    const created = await makeGraphqlApiRequest(
       createOneOperationFactory({
         objectMetadataSingularName: OBJECT_NAME,
         gqlFields: 'id',
-        data: { id: recordId, name: 'Private with sharing UI disabled' },
+        data: { id: recordId, name: 'Private create' },
       }),
     );
     expect(created.body.errors).toBeUndefined();
     const recordTarget = { objectMetadataId, recordId };
     try {
       const readSettings = (token: string) =>
-        makeMetadataAPIRequest(
+        makeMetadataApiRequest(
           { query: READ_SHARING, variables: { target: recordTarget } },
           token,
         );
@@ -278,7 +259,7 @@ describe('Generic sharing API on an ordinary private object', () => {
         (await readSettings(APPLE_JANE_ADMIN_ACCESS_TOKEN)).body.data
           .recordSharing,
       ).toMatchObject({
-        isEnabled: false,
+        isEnabled: true,
         permissions: { canRead: true, canUpdate: true },
         shares: [
           expect.objectContaining({
@@ -289,7 +270,7 @@ describe('Generic sharing API on an ordinary private object', () => {
         ],
       });
     } finally {
-      await makeGraphqlAPIRequest(
+      await makeGraphqlApiRequest(
         destroyManyOperationFactory({
           objectMetadataSingularName: OBJECT_NAME,
           objectMetadataPluralName: OBJECT_PLURAL,
@@ -297,7 +278,6 @@ describe('Generic sharing API on an ordinary private object', () => {
           filter: { id: { eq: recordId } },
         }),
       );
-      await setFlag(true);
     }
   });
 
@@ -308,7 +288,7 @@ describe('Generic sharing API on an ordinary private object', () => {
       recordId: RECORD_ID,
     };
     const query = () =>
-      makeMetadataAPIRequest(
+      makeMetadataApiRequest(
         {
           query: parse(
             `query Permissions($targets: [RecordPermissionsTargetInput!]!) { recordPermissions(targets: $targets) { objectMetadataId recordId permissions { canRead canUpdate canDelete canSoftDelete } } }`,
@@ -358,7 +338,7 @@ describe('Generic sharing API on an ordinary private object', () => {
       recordId: RECORD_ID,
       gqlFields: 'id',
     };
-    const deleted = await makeGraphqlAPIRequest(
+    const deleted = await makeGraphqlApiRequest(
       deleteOneOperationFactory(operation),
     );
     expect(deleted.body.errors).toBeUndefined();
@@ -369,7 +349,7 @@ describe('Generic sharing API on an ordinary private object', () => {
         viewerAccessLevel: 'FULL',
         permissions: { canRead: true, canUpdate: true },
       });
-      const permissions = await makeMetadataAPIRequest(
+      const permissions = await makeMetadataApiRequest(
         {
           query: parse(
             `query Permissions($targets: [RecordPermissionsTargetInput!]!) { recordPermissions(targets: $targets) { permissions { canRead canUpdate } } }`,
@@ -391,7 +371,7 @@ describe('Generic sharing API on an ordinary private object', () => {
       ).toBeDefined();
     } finally {
       await setRoleUpdate(true);
-      const restored = await makeGraphqlAPIRequest(
+      const restored = await makeGraphqlApiRequest(
         restoreOneOperationFactory(operation),
       );
       expect(restored.body.errors).toBeUndefined();
@@ -462,7 +442,7 @@ describe('Generic sharing API on an ordinary private object', () => {
         },
       });
       if (accessLevel === RecordShareAccessLevel.READ_WRITE) {
-        const updated = await makeGraphqlAPIRequest(
+        const updated = await makeGraphqlApiRequest(
           updateOneOperationFactory({
             objectMetadataSingularName: OBJECT_NAME,
             gqlFields: 'id',
@@ -612,7 +592,7 @@ describe('Generic sharing API on an ordinary private object', () => {
       expect(
         (await change({ everyone: true }, true)).body.errors,
       ).toBeDefined();
-      const result = await makeGraphqlAPIRequest(
+      const result = await makeGraphqlApiRequest(
         updateOneOperationFactory({
           objectMetadataSingularName: OBJECT_NAME,
           gqlFields: 'id',
@@ -627,13 +607,12 @@ describe('Generic sharing API on an ordinary private object', () => {
     }
   });
 
-  it('preserves saved grants while the sharing UI is disabled', async () => {
+  it('enforces saved grants', async () => {
     await grant(RecordShareAccessLevel.READ);
-    await setFlag(false);
     expect((await read()).body.data[OBJECT_PLURAL].edges).toHaveLength(1);
     expect(
       (await settings(APPLE_JANE_ADMIN_ACCESS_TOKEN)).body.data.recordSharing,
-    ).toMatchObject({ isEnabled: false, permissions: { canUpdate: true } });
+    ).toMatchObject({ isEnabled: true, permissions: { canUpdate: true } });
     await grant(RecordShareAccessLevel.READ, RecordShareRowCause.APPLICATION);
     expect((await read()).body.data[OBJECT_PLURAL].edges).toHaveLength(1);
     expect(
@@ -691,7 +670,7 @@ describe('Generic sharing API on an ordinary private object', () => {
       ),
     ).toHaveLength(1);
     const missingId = randomUUID();
-    const missing = await makeMetadataAPIRequest({
+    const missing = await makeMetadataApiRequest({
       query: SET_SHARE,
       variables: {
         target: { objectMetadataId, recordId: missingId },

@@ -13,7 +13,7 @@ import {
   type DpaResolveContext,
   type ResolvedDpa,
   type ResolvedDpaBlock,
-} from 'src/engine/core-modules/dpa/types/dpa.types';
+} from 'src/engine/core-modules/dpa/types/dpa.type';
 import { type SubprocessorList } from 'src/engine/core-modules/dpa/types/subprocessor.type';
 
 const MERGE_FIELD_PATTERN = /\{\{([A-Z_]+)\}\}/g;
@@ -91,7 +91,6 @@ const buildExecutionBlocks = (
   return blocks;
 };
 
-// Pure: no I/O or clock access — everything time-dependent is passed in via context.
 export const resolveDpa = (context: DpaResolveContext): ResolvedDpa => {
   const config = getDpaRegionConfig(context.region);
 

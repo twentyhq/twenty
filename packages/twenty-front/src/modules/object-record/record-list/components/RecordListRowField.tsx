@@ -10,9 +10,7 @@ import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { styled } from '@linaria/react';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
 
-// Shrinkable rather than fixed: a long record label can eat into the fields'
-// share of the row, and a field that refuses to give any of it back is clipped
-// off the left edge of the right-aligned group instead of narrowing.
+// Shrinkable so a long record label narrows fields instead of clipping them off the left edge.
 const StyledFieldContainer = styled.div`
   align-items: center;
   display: flex;

@@ -100,7 +100,6 @@ export const ArrayFieldFilterSchema = z
   })
   .optional();
 
-// Composite filter schemas — A1.3
 // Each is a shared constant so all LINKS/ADDRESS/etc. fields share one $def.
 
 export const LinksFilterSchema = z

@@ -2,7 +2,7 @@ import { randomUUID } from 'crypto';
 
 import { createManyOperationFactory } from 'test/integration/graphql/utils/create-many-operation-factory.util';
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
-import { makeGraphqlAPIRequestWithApiKey } from 'test/integration/graphql/utils/make-graphql-api-request-with-api-key.util';
+import { makeGraphqlApiRequestWithApiKey } from 'test/integration/graphql/utils/make-graphql-api-request-with-api-key.util';
 import { createMorphRelationBetweenObjects } from 'test/integration/metadata/suites/object-metadata/utils/create-morph-relation-between-objects.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
@@ -18,10 +18,7 @@ type MorphParentConnection = {
   pageInfo: { hasNextPage: boolean; endCursor: string };
 };
 
-// A MANY_TO_ONE morph relation materializes one relation field per target
-// (owner -> ownerMorphCursorPerson / ownerMorphCursorCompany), so ordering by
-// one leg must treat records attached to the other leg - and unattached ones -
-// as the NULL block of the scan.
+// Each morph target is its own relation field, so records on the other leg fall in the NULL block.
 describe('morph relation cursor pagination', () => {
   let parentObjectMetadataId = '';
   let personObjectMetadataId = '';
@@ -96,7 +93,7 @@ describe('morph relation cursor pagination', () => {
       label: 'Owner',
     });
 
-    await makeGraphqlAPIRequestWithApiKey(
+    await makeGraphqlApiRequestWithApiKey(
       createManyOperationFactory({
         objectMetadataSingularName: 'morphCursorPerson',
         objectMetadataPluralName: 'morphCursorPeople',
@@ -108,7 +105,7 @@ describe('morph relation cursor pagination', () => {
       }),
     ).expect(200);
 
-    await makeGraphqlAPIRequestWithApiKey(
+    await makeGraphqlApiRequestWithApiKey(
       createManyOperationFactory({
         objectMetadataSingularName: 'morphCursorCompany',
         objectMetadataPluralName: 'morphCursorCompanies',
@@ -120,7 +117,7 @@ describe('morph relation cursor pagination', () => {
       }),
     ).expect(200);
 
-    await makeGraphqlAPIRequestWithApiKey(
+    await makeGraphqlApiRequestWithApiKey(
       createManyOperationFactory({
         objectMetadataSingularName: 'morphCursorParent',
         objectMetadataPluralName: 'morphCursorParents',
@@ -175,7 +172,7 @@ describe('morph relation cursor pagination', () => {
           errors?: unknown;
           data: { morphCursorParents: MorphParentConnection };
         };
-      } = await makeGraphqlAPIRequestWithApiKey(
+      } = await makeGraphqlApiRequestWithApiKey(
         findManyOperationFactory({
           objectMetadataSingularName: 'morphCursorParent',
           objectMetadataPluralName: 'morphCursorParents',
@@ -229,8 +226,7 @@ describe('morph relation cursor pagination', () => {
     );
   });
 
-  // Cursors read the morph leg's orderBy values from the ordering join itself,
-  // so pagination must not depend on the selection set (issue #24333)
+  // Regression for #24333: cursors must not depend on the selected fields.
   it('should paginate exhaustively when the ordered morph leg is not selected', async () => {
     await collectAllPages('id');
   });

@@ -34,7 +34,7 @@ import { FrontComponentEntity } from 'src/engine/metadata-modules/front-componen
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
-import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/workspace-related-entity';
+import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/workspace-related-entity.type';
 
 @Entity({ name: 'application', schema: 'core' })
 @ObjectType('Application')
@@ -122,9 +122,6 @@ export class ApplicationEntity extends WorkspaceRelatedEntity {
   @Column({ type: 'jsonb', nullable: false, default: {} })
   availablePackages: Record<string, string>;
 
-  // What the app declares it bills for: recurring charges the platform raises
-  // each period, and the operations it charges against, each with the billing
-  // category metered and the app-authored label shown for that spend.
   @Column({ type: 'jsonb', nullable: false, default: {} })
   @WasIntroducedInUpgrade({
     upgradeCommandName:

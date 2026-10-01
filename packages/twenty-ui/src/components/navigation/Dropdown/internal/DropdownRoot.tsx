@@ -1,4 +1,4 @@
-import { useCallback, useContext, useState } from 'react';
+import { useCallback, useContext, useRef, useState } from 'react';
 
 import { Popover } from '@ui/primitives/surfaces/Popover/Popover';
 import { isDefined } from '@ui/utilities/utils/isDefined';
@@ -8,7 +8,10 @@ import { type DropdownType } from '../types/DropdownType';
 import { DropdownContext } from './DropdownContext';
 import { type DropdownFocusTarget } from './DropdownFocusTarget';
 import { type DropdownPageFocusRequest } from './DropdownPageFocusRequest';
+import { DropdownNestedRootEffect } from './DropdownNestedRootEffect';
+import { isDropdownDismissPrevented } from './isDropdownDismissPrevented';
 import { preventDismissingClickActivation } from './preventDismissingClickActivation';
+import { useRegisteredElementId } from './useRegisteredElementId';
 
 type PageHistoryEntry = { id?: string; trigger?: DropdownFocusTarget };
 
@@ -18,11 +21,21 @@ export const DropdownRoot = ({
   open: controlledOpen,
   defaultOpen = false,
   onOpenChange,
+  onEscapeKeyDown,
+  onInteractOutside,
   multiple = false,
   defaultPage = 'root',
   isSubmenu = false,
 }: DropdownRootProps & { isSubmenu?: boolean }) => {
   const parent = useContext(DropdownContext);
+  const openNestedRootCountRef = useRef(0);
+  const registerOpenNestedRoot = useCallback(() => {
+    openNestedRootCountRef.current += 1;
+
+    return () => {
+      openNestedRootCountRef.current -= 1;
+    };
+  }, []);
   const [uncontrolledOpen, setUncontrolledOpen] = useState(defaultOpen);
   const open = controlledOpen ?? uncontrolledOpen;
   const [previousOpen, setPreviousOpen] = useState(open);
@@ -41,6 +54,9 @@ export const DropdownRoot = ({
     'first',
   );
   const [focusOnOpen, setFocusOnOpen] = useState(true);
+  const [searchTargetId, setSearchTargetId] = useState<string>();
+  const [triggerId, registerTrigger] = useRegisteredElementId();
+  const [titleId, registerTitle] = useRegisteredElementId();
 
   if (previousOpen !== open) {
     setPreviousOpen(open);
@@ -51,6 +67,7 @@ export const DropdownRoot = ({
       setPageFocusRequest(undefined);
       setInitialFocusEdge('first');
       setFocusOnOpen(true);
+      setSearchTargetId(undefined);
     }
   }
 
@@ -75,18 +92,19 @@ export const DropdownRoot = ({
     trigger,
   }: {
     id: string;
-    trigger: DropdownFocusTarget;
+    trigger?: DropdownFocusTarget;
   }) => {
     setPageFocusRequest({ pageId: id });
     setPageHistory((history) => [...history, { id, trigger }]);
   };
 
   const goBack = () => {
-    if (pageHistory.length < 2) {
+    const previousPage = pageHistory[pageHistory.length - 2];
+
+    if (!isDefined(previousPage)) {
       return;
     }
 
-    const previousPage = pageHistory[pageHistory.length - 2];
     const trigger = pageHistory[pageHistory.length - 1]?.trigger;
 
     setPageFocusRequest({
@@ -117,10 +135,34 @@ export const DropdownRoot = ({
     <Popover.Root
       open={open}
       onOpenChange={(nextOpen, eventDetails) => {
-        if (
+        const isOutsideDismissal =
           eventDetails.reason === 'outside-press' ||
-          eventDetails.reason === 'focus-out'
-        ) {
+          eventDetails.reason === 'focus-out';
+
+        if (isOutsideDismissal && openNestedRootCountRef.current > 0) {
+          eventDetails.cancel();
+          return;
+        }
+
+        const isEscapeDismissPrevented =
+          eventDetails.reason === 'escape-key' &&
+          isDropdownDismissPrevented({
+            onDismiss: onEscapeKeyDown,
+            event: eventDetails.event,
+          });
+        const isOutsideDismissPrevented =
+          isOutsideDismissal &&
+          isDropdownDismissPrevented({
+            onDismiss: onInteractOutside,
+            event: eventDetails.event,
+          });
+
+        if (isEscapeDismissPrevented || isOutsideDismissPrevented) {
+          eventDetails.cancel();
+          return;
+        }
+
+        if (isOutsideDismissal) {
           preventDismissingClickActivation(eventDetails.event);
         }
 
@@ -156,8 +198,21 @@ export const DropdownRoot = ({
           goToPage,
           goBack,
           registerPage,
+          registerOpenNestedRoot,
+          searchTargetId,
+          setSearchTargetId,
+          triggerId,
+          registerTrigger,
+          titleId,
+          registerTitle,
         }}
       >
+        <DropdownNestedRootEffect
+          open={open}
+          registerOpenNestedRoot={
+            isSubmenu ? undefined : parent?.registerOpenNestedRoot
+          }
+        />
         {children}
       </DropdownContext.Provider>
     </Popover.Root>

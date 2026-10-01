@@ -2,7 +2,6 @@ import { FAST_PATH_SCENE } from '@/tokens/feature-scenes/fast-path-scene';
 
 const INK = FAST_PATH_SCENE.cursorInk;
 
-// The palette's resting hand cursor (authored artwork, verbatim).
 export function PreviewCursorIcon() {
   return (
     <svg

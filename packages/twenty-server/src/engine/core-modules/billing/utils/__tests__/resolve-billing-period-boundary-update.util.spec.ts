@@ -31,9 +31,7 @@ describe('resolveBillingPeriodBoundaryUpdate', () => {
     ).toEqual({});
   });
 
-  // Two subscription events for the same subscription can be processed out of
-  // order, and the older one would otherwise rewind the window the rollover
-  // settles against.
+  // Out-of-order events must not rewind the window the rollover settles against
   it('keeps the stored window when a late event carries an older one', () => {
     expect(
       resolveBillingPeriodBoundaryUpdate({

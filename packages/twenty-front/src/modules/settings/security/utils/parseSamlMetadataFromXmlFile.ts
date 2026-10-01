@@ -74,11 +74,11 @@ export const parseSamlMetadataFromXmlFile = (
     if (!entityDescriptor)
       throw new Error('EntityDescriptor element is missing');
 
-    const IDPSSODescriptor = getByPrefixAndKey(xmlDoc, 'IDPSSODescriptor');
-    if (!IDPSSODescriptor)
+    const idpSsoDescriptor = getByPrefixAndKey(xmlDoc, 'IDPSSODescriptor');
+    if (!idpSsoDescriptor)
       throw new Error('IDPSSODescriptor element is missing');
 
-    const keyDescriptors = getByPrefixAndKey(IDPSSODescriptor, 'KeyDescriptor');
+    const keyDescriptors = getByPrefixAndKey(idpSsoDescriptor, 'KeyDescriptor');
     if (!keyDescriptors) throw new Error('KeyDescriptor element is missing');
 
     const keyInfo = getByPrefixAndKey(keyDescriptors, 'KeyInfo');
@@ -95,16 +95,14 @@ export const parseSamlMetadataFromXmlFile = (
       throw new Error('X509Certificate is missing or empty');
 
     const singleSignOnServices = getAllByPrefixAndKey(
-      IDPSSODescriptor,
+      idpSsoDescriptor,
       'SingleSignOnService',
     ).map((service) => ({
       binding: service.getAttribute('Binding'),
       location: service.getAttribute('Location'),
     }));
 
-    // Prefer HTTP-Redirect (the default authnRequestBinding on the SP side),
-    // fall back to HTTP-POST since both are valid SAML 2.0 bindings and many
-    // IdPs (e.g. JumpCloud) only advertise HTTP-POST.
+    // Prefer HTTP-Redirect (the SP default), falling back to HTTP-POST, the only binding some IdPs (e.g. JumpCloud) advertise
     const ssoUrl =
       singleSignOnServices.find((s) => s.binding === HTTP_REDIRECT_BINDING)
         ?.location ??

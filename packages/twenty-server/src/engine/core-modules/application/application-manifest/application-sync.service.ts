@@ -13,7 +13,6 @@ import { toApplicationCapabilities } from 'src/engine/core-modules/application/u
 import { ApplicationManifestMigrationService } from 'src/engine/core-modules/application/application-manifest/application-manifest-migration.service';
 import { ApplicationUninstallService } from 'src/engine/core-modules/application/application-manifest/services/application-uninstall.service';
 import { enrichApplicationManifestSyncError } from 'src/engine/core-modules/application/application-manifest/utils/enrich-application-manifest-sync-error.util';
-import { buildFromToAllUniversalFlatEntityMaps } from 'src/engine/core-modules/application/application-manifest/utils/build-from-to-all-universal-flat-entity-maps.util';
 import { ApplicationTranslationSyncService } from 'src/engine/core-modules/application/application-translation/application-translation-sync.service';
 import { getApplicationSubAllFlatEntityMaps } from 'src/engine/core-modules/application/application-manifest/utils/get-application-sub-all-flat-entity-maps.util';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
@@ -27,7 +26,8 @@ import { type FlatApplication } from 'src/engine/core-modules/application/types/
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { LOGIC_FUNCTION_DRIVER_FACTORY_TOKEN } from 'src/engine/core-modules/logic-function/logic-function-drivers/constants/logic-function-driver-factory.token';
 import { type LogicFunctionDriverFactory } from 'src/engine/core-modules/logic-function/logic-function-drivers/logic-function-driver.factory';
-import { createEmptyAllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-all-flat-entity-maps.constant';
+import { findReservedVariableNamesInApplicationManifest } from 'src/engine/core-modules/application/utils/find-reserved-variable-names-in-application-manifest.util';
+import { type AllFlatEntityOperationRecordByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-operation-record-by-metadata-name.type';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { FrontComponentEntity } from 'src/engine/metadata-modules/front-component/entities/front-component.entity';
 import { WorkspaceEventBroadcaster } from 'src/engine/subscriptions/workspace-event-broadcaster/workspace-event-broadcaster.service';
@@ -76,6 +76,17 @@ export class ApplicationSyncService {
     workspaceMigration: WorkspaceMigration;
     hasSchemaMetadataChanged: boolean;
   }> {
+    // Checked upfront: server variables reach the registration only after the workspace changes
+    const reservedVariableNames =
+      findReservedVariableNamesInApplicationManifest(manifest.application);
+
+    if (reservedVariableNames.length > 0) {
+      throw new ApplicationException(
+        `Variable names are reserved: ${reservedVariableNames.join(', ')}`,
+        ApplicationExceptionCode.INVALID_INPUT,
+      );
+    }
+
     const ownerFlatApplication: FlatApplication = dryRun
       ? await this.resolveDryRunOwnerFlatApplication({ workspaceId, manifest })
       : await this.syncApplication({
@@ -106,10 +117,7 @@ export class ApplicationSyncService {
     }
 
     if (!dryRun && isDefined(ownerFlatApplication.applicationRegistrationId)) {
-      // Translation sync runs after the metadata migration is already applied
-      // and is non-critical to the application itself, so a failure here must
-      // never abort an otherwise successful install/sync. It is idempotent and
-      // self-heals on the next sync.
+      // Non-critical and self-healing on next sync, so a failure must not abort the install
       try {
         await this.applicationTranslationSyncService.syncFromManifest({
           applicationRegistrationId:
@@ -200,10 +208,7 @@ export class ApplicationSyncService {
     };
   }
 
-  // Registers the application + only the pre-install logic function in
-  // workspace metadata so the pre-install hook can resolve and execute it
-  // before the main synchronizeFromManifest runs the full migrations.
-  // No-op when the manifest does not declare a pre-install logic function.
+  // Lets the pre-install hook resolve its logic function before the full migrations run
   public async preInstallSynchronizeFromManifest({
     workspaceId,
     manifest,
@@ -404,12 +409,11 @@ export class ApplicationSyncService {
       getMetadataFlatEntityMapsKey,
     );
 
-    const cacheResult = await this.workspaceCacheService.getOrRecompute(
-      workspaceId,
-      [...flatEntityMapsCacheKeys, 'featureFlagsMap'],
-    );
-
-    const { featureFlagsMap, ...fromAllFlatEntityMaps } = cacheResult;
+    const fromAllFlatEntityMaps =
+      await this.workspaceCacheService.getOrRecompute(
+        workspaceId,
+        flatEntityMapsCacheKeys,
+      );
 
     const applicationFromAllFlatEntityMaps = getApplicationSubAllFlatEntityMaps(
       {
@@ -418,22 +422,30 @@ export class ApplicationSyncService {
       },
     );
 
-    const fromToAllFlatEntityMaps = buildFromToAllUniversalFlatEntityMaps({
-      fromAllFlatEntityMaps: applicationFromAllFlatEntityMaps,
-      toAllUniversalFlatEntityMaps: createEmptyAllFlatEntityMaps(),
-    });
+    // Unlike manifest omission, uninstall also removes engine-owned and workspace-local metadata, so expand the deletions
+    // to dependents owned by other applications
+    const allFlatEntityOperationRecordByMetadataName: AllFlatEntityOperationRecordByMetadataName =
+      Object.fromEntries(
+        Object.values(ALL_METADATA_NAME).map((metadataName) => [
+          metadataName,
+          {
+            flatEntityToCreate: {},
+            flatEntityToUpdate: {},
+            flatEntityToDelete:
+              applicationFromAllFlatEntityMaps[
+                getMetadataFlatEntityMapsKey(metadataName)
+              ].byUniversalIdentifier,
+          },
+        ]),
+      );
 
     const validateAndBuildResult =
-      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigrationFromTo(
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigrationFromRecord(
         {
-          buildOptions: {
-            isSystemBuild: true,
-            inferDeletionFromMissingEntities: true,
-            applicationUniversalIdentifier,
-          },
-          fromToAllFlatEntityMaps,
+          isSystemBuild: true,
+          applicationUniversalIdentifier,
+          allFlatEntityOperationRecordByMetadataName,
           workspaceId,
-          additionalCacheDataMaps: { featureFlagsMap },
         },
       );
 

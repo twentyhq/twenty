@@ -5,7 +5,7 @@ import { generateAppleAdminApplicationTokenPair } from 'test/integration/utils/g
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
 import { findConnectionProvidersByApplication } from 'test/integration/metadata/suites/connection-provider/utils/find-connection-providers-by-application.util';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { type Manifest } from 'twenty-shared/application';
 import {
   ConnectedAccountProvider,
@@ -225,9 +225,9 @@ describe('app message channels API (e2e)', () => {
   };
 
   const request = (
-    operation: Parameters<typeof makeMetadataAPIRequest>[0],
+    operation: Parameters<typeof makeMetadataApiRequest>[0],
     token = owningApplicationToken,
-  ) => makeMetadataAPIRequest(operation, token);
+  ) => makeMetadataApiRequest(operation, token);
 
   const createChannel = ({
     connectedAccountId = ownConnectionId,
@@ -348,9 +348,7 @@ describe('app message channels API (e2e)', () => {
 
     adminUserWorkspaceId = userWorkspace.id;
 
-    // Minted with the admin token, so it carries that admin's userWorkspaceId
-    // alongside the owning applicationId — the shape an app gets when a member
-    // triggered the run, rather than a cron.
+    // Carries the admin's userWorkspaceId: the shape of a member-triggered run rather than a cron.
     const tokenPair = await generateAppleAdminApplicationTokenPair({
       applicationId: owningApplicationDbId,
     });
@@ -385,8 +383,6 @@ describe('app message channels API (e2e)', () => {
       userWorkspaceId: adminUserWorkspaceId,
     });
 
-    // Owned by the calling application, but private to a member who is not
-    // the one behind the token.
     await insertAppConnection({
       id: foreignMemberConnectionId,
       applicationId: owningApplicationDbId,
@@ -481,8 +477,7 @@ describe('app message channels API (e2e)', () => {
 
       expect(channel).toMatchObject({
         handle: CHANNEL_HANDLE,
-        // Trimmed rather than stored as given, so the UI never renders a
-        // padded label.
+        // Trimmed so the UI never renders a padded label.
         displayName: 'Ada at LinkedIn',
         type: MessageChannelType.APP,
         visibility: MessageChannelVisibility.SHARE_EVERYTHING,
@@ -547,8 +542,7 @@ describe('app message channels API (e2e)', () => {
   describe('appMessageChannels', () => {
     it("lists the application's own channels and nothing else", async () => {
       const channel = await createChannelOrThrow();
-      // A channel that exists, is type APP, and lives in the same workspace —
-      // so a list query that forgot to scope by application would return it.
+      // Same workspace and type APP, so a list query not scoped by application would return it.
       const foreignChannel = await createChannelOrThrow({
         connectedAccountId: otherAppConnectionId,
         token: otherApplicationToken,
@@ -723,8 +717,7 @@ describe('app message channels API (e2e)', () => {
           buildMessage({
             externalId: 'sent-by-the-channel-owner',
             threadExternalId,
-            // Same account as the channel handle, spelled the way a provider
-            // that upper-cases its profile API would return it.
+            // The channel's own handle, spelled the way a provider that upper-cases its profile API returns it.
             senderHandle: CHANNEL_HANDLE.toUpperCase(),
           }),
           buildMessage({

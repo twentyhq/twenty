@@ -132,6 +132,46 @@ describe('@remote-dom/polyfill mutation hooks contract the worker MutationObserv
     expect(callsNamed('setText')[0].args[1]).toBe('second');
   });
 
+  it.each([
+    ['Node', 'compareDocumentPosition'],
+    ['Node', 'getRootNode'],
+    ['Element', 'closest'],
+    ['Element', 'matches'],
+    ['Element', 'focus'],
+    ['Element', 'blur'],
+  ])(
+    'still ships %s without %s, which the worker polyfills install itself',
+    (className, methodName) => {
+      const polyfillWindow = new Window() as unknown as Record<
+        string,
+        { prototype: Record<string, unknown> }
+      >;
+
+      expect(polyfillWindow[className].prototype).not.toHaveProperty(
+        methodName,
+      );
+    },
+  );
+
+  it('still ships the Node.contains walk that re-reads the argument parent, which the worker replaces', () => {
+    const polyfillWindow = new Window();
+
+    expect(String(polyfillWindow.Node.prototype.contains)).toContain(
+      'node.parentNode',
+    );
+  });
+
+  it('still throws on pseudo-class selectors, which the worker selector engine replaces', () => {
+    const polyfillWindow = new Window();
+    const { document } = polyfillWindow;
+
+    document.body.append(document.createElement('button'));
+
+    expect(() => document.body.querySelectorAll(':disabled')).toThrow(
+      'not implemented',
+    );
+  });
+
   it('exposes childNodes as a list whose item returns undefined out of range', () => {
     const { document } = createHookRecorder();
 

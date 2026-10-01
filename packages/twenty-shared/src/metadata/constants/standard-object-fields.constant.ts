@@ -4,22 +4,9 @@ import { getSystemRelationFieldUniversalIdentifier } from '@/application/determi
 import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from '@/metadata/constants/standard-object-universal-identifiers.constant';
 import { buildStandardObjectSystemFields } from '@/metadata/utils/internal/build-standard-object-system-fields.util';
 
-// Important notice:
-// - Never ever mutate an existing universal identifier
-// - Deleting an existing universal identifier should be very rare
-// - System field universal identifiers (id, createdAt, updatedAt, deletedAt,
-//   createdBy, updatedBy, position, searchVector) are deterministically derived
-//   from the standard application universal identifier, the object universal
-//   identifier and the field name (buildStandardObjectSystemFields). The name
-//   field is a default field, not a system field, and keeps its hardcoded
-//   universal identifier.
-// - System relation field universal identifiers are deterministically derived
-//   from the object + the relation target object
-//   (getSystemRelationFieldUniversalIdentifier).
-//
-// Fields live in their own const so that both STANDARD_OBJECTS' `fields` and
-// its INDEX view (buildStandardObjectIndexView) can read the same field
-// universal identifiers.
+// Never mutate an existing universal identifier, and delete one only rarely.
+// System field ids come from buildStandardObjectSystemFields and getSystemRelationFieldUniversalIdentifier;
+// name is a default field, not a system one, and keeps its hardcoded id.
 export const STANDARD_OBJECT_FIELDS = {
   agentChatThread: {
     ...buildStandardObjectBaseFields(
@@ -28,6 +15,9 @@ export const STANDARD_OBJECT_FIELDS = {
     archivedAt: { universalIdentifier: 'b42eaf6f-240f-41ef-af61-51d5ac9cde7d' },
     userWorkspaceId: {
       universalIdentifier: 'bf830886-b6dc-46e9-a229-eecbb0e66032',
+    },
+    workspaceMember: {
+      universalIdentifier: '6f3ed3b5-0642-4a2a-9558-98376adb60f4',
     },
     title: { universalIdentifier: '9283c05e-127c-46ec-82e9-6424a7c0a2f1' },
     totalInputTokens: {
@@ -57,6 +47,9 @@ export const STANDARD_OBJECT_FIELDS = {
     activeStreamId: {
       universalIdentifier: 'bcead20f-75b3-45be-92b9-ea7ec4bddfcd',
     },
+    workflowRun: {
+      universalIdentifier: '2187f4c6-bff3-4b80-8585-c82965faf79b',
+    },
     pendingQuestionMessageId: {
       universalIdentifier: '51a9b421-7d90-4a59-9712-036ea9721e65',
     },
@@ -65,6 +58,55 @@ export const STANDARD_OBJECT_FIELDS = {
     },
     turns: { universalIdentifier: 'd5c88fbc-d318-4ee1-b70a-751a925bef5b' },
     messages: { universalIdentifier: '5c851a60-e5d9-4b1e-9926-c2eab6fc9e62' },
+    attachments: {
+      universalIdentifier: getSystemRelationFieldUniversalIdentifier({
+        applicationUniversalIdentifier:
+          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+        objectUniversalIdentifier:
+          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.agentChatThread,
+        relationTargetObjectUniversalIdentifier:
+          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.attachment,
+      }),
+    },
+    recordTargets: {
+      universalIdentifier: '5b37eceb-2992-4d27-9897-14af3e3ce9b2',
+    },
+  },
+  agentChatThreadTarget: {
+    ...buildStandardObjectBaseFields(
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.agentChatThreadTarget,
+    ),
+    thread: { universalIdentifier: '54664c16-3c3d-4d5e-904c-59e1b3707cfb' },
+    targetPerson: {
+      universalIdentifier: getSystemRelationFieldUniversalIdentifier({
+        applicationUniversalIdentifier:
+          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+        objectUniversalIdentifier:
+          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.agentChatThreadTarget,
+        relationTargetObjectUniversalIdentifier:
+          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person,
+      }),
+    },
+    targetCompany: {
+      universalIdentifier: getSystemRelationFieldUniversalIdentifier({
+        applicationUniversalIdentifier:
+          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+        objectUniversalIdentifier:
+          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.agentChatThreadTarget,
+        relationTargetObjectUniversalIdentifier:
+          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company,
+      }),
+    },
+    targetOpportunity: {
+      universalIdentifier: getSystemRelationFieldUniversalIdentifier({
+        applicationUniversalIdentifier:
+          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+        objectUniversalIdentifier:
+          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.agentChatThreadTarget,
+        relationTargetObjectUniversalIdentifier:
+          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity,
+      }),
+    },
   },
   agentTurn: {
     ...buildStandardObjectBaseFields(
@@ -82,6 +124,9 @@ export const STANDARD_OBJECT_FIELDS = {
       STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.agentMessage,
     ),
     agentId: { universalIdentifier: '880a91ad-4ab1-4067-87f6-970a53aa2234' },
+    senderWorkspaceMember: {
+      universalIdentifier: '69bea8e1-451d-4c3c-9d34-505b5a67e06e',
+    },
     senderUserWorkspaceId: {
       universalIdentifier: 'f4184c3a-b85c-4cef-8181-b2fefdf98fda',
     },
@@ -433,6 +478,16 @@ export const STANDARD_OBJECT_FIELDS = {
           STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workflow,
       }),
     },
+    targetAgentChatThread: {
+      universalIdentifier: getSystemRelationFieldUniversalIdentifier({
+        applicationUniversalIdentifier:
+          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+        objectUniversalIdentifier:
+          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.attachment,
+        relationTargetObjectUniversalIdentifier:
+          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.agentChatThread,
+      }),
+    },
   },
   blocklist: {
     ...buildStandardObjectSystemFields(
@@ -661,6 +716,16 @@ export const STANDARD_OBJECT_FIELDS = {
           STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company,
         relationTargetObjectUniversalIdentifier:
           STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.noteTarget,
+      }),
+    },
+    agentChatThreadTargets: {
+      universalIdentifier: getSystemRelationFieldUniversalIdentifier({
+        applicationUniversalIdentifier:
+          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+        objectUniversalIdentifier:
+          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company,
+        relationTargetObjectUniversalIdentifier:
+          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.agentChatThreadTarget,
       }),
     },
     calendarEventTargets: {
@@ -1075,6 +1140,16 @@ export const STANDARD_OBJECT_FIELDS = {
           STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.noteTarget,
       }),
     },
+    agentChatThreadTargets: {
+      universalIdentifier: getSystemRelationFieldUniversalIdentifier({
+        applicationUniversalIdentifier:
+          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+        objectUniversalIdentifier:
+          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity,
+        relationTargetObjectUniversalIdentifier:
+          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.agentChatThreadTarget,
+      }),
+    },
     calendarEventTargets: {
       universalIdentifier: getSystemRelationFieldUniversalIdentifier({
         applicationUniversalIdentifier:
@@ -1155,6 +1230,15 @@ export const STANDARD_OBJECT_FIELDS = {
           STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.noteTarget,
       }),
     },
+    agentChatThreadTargets: {
+      universalIdentifier: getSystemRelationFieldUniversalIdentifier({
+        applicationUniversalIdentifier:
+          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+        objectUniversalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person,
+        relationTargetObjectUniversalIdentifier:
+          STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.agentChatThreadTarget,
+      }),
+    },
     calendarEventTargets: {
       universalIdentifier: getSystemRelationFieldUniversalIdentifier({
         applicationUniversalIdentifier:
@@ -1225,6 +1309,20 @@ export const STANDARD_OBJECT_FIELDS = {
     },
     sourceId: {
       universalIdentifier: '534a2244-9feb-4d21-afd9-c9a20052b300',
+    },
+  },
+  shortLink: {
+    ...buildStandardObjectSystemFields(
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.shortLink,
+    ),
+    authoredTemplateUrl: {
+      universalIdentifier: '6f588340-ddff-4113-984b-c37c045d496c',
+    },
+    resolvedDestinationUrl: {
+      universalIdentifier: '5ba068eb-0594-4945-9183-7174a37a9406',
+    },
+    templateAndResolvedUrlHash: {
+      universalIdentifier: '175f7743-b027-4374-b577-6503679d00fc',
     },
   },
   task: {
@@ -1375,6 +1473,9 @@ export const STANDARD_OBJECT_FIELDS = {
     coreWorkflowVersionId: {
       universalIdentifier: '58e3f476-425d-4c66-b391-779d0412e107',
     },
+    agentChatThreads: {
+      universalIdentifier: 'c664a2e7-ef64-4597-9cdf-ded3eae85ae4',
+    },
     timelineActivities: {
       universalIdentifier: getSystemRelationFieldUniversalIdentifier({
         applicationUniversalIdentifier:
@@ -1465,6 +1566,12 @@ export const STANDARD_OBJECT_FIELDS = {
     },
     timelineActivities: {
       universalIdentifier: '20202020-e15b-47b8-94fe-8200e3c66615',
+    },
+    agentMessages: {
+      universalIdentifier: '211b2717-450a-4f5f-808f-39695c819319',
+    },
+    agentChatThreads: {
+      universalIdentifier: 'fbaf92a6-44ae-4b6d-9d10-2c15d84eaea1',
     },
     timeZone: {
       universalIdentifier: '20202020-2d33-4c21-a86e-5943b050dd54',

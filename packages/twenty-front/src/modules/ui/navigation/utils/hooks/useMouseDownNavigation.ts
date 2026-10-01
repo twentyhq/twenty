@@ -1,5 +1,5 @@
 import { isNavigationModifierPressed } from '@/ui/navigation/utils/isNavigationModifierPressed';
-import { type TriggerEventType } from '@/ui/navigation/utils/types/trigger-event.type';
+import { type TriggerEventType } from '@/ui/navigation/utils/types/TriggerEventType';
 import { type MouseEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { isDefined } from 'twenty-ui/utilities';
@@ -25,7 +25,6 @@ export const useMouseDownNavigation = ({
   const handleClick = (event: MouseEvent<HTMLElement>) => {
     if (disabled) return;
 
-    // For modifier keys, let the default browser behavior handle it
     if (isNavigationModifierPressed(event)) {
       onBeforeNavigation?.();
       if (isDefined(onClick) && !isDefined(to)) {

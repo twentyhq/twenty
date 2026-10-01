@@ -2,7 +2,7 @@ import { randomUUID } from 'crypto';
 
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
 import { destroyOneOperationFactory } from 'test/integration/graphql/utils/destroy-one-operation-factory.util';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { BlocklistScope } from 'twenty-shared/types';
 
 import { type BaseGraphQLError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
@@ -15,7 +15,7 @@ export const createWorkspaceBlocklistEntry = async ({
   data: { createBlocklist: { id: string; scope: string } } | undefined;
   errors: BaseGraphQLError[];
 }> => {
-  const response = await makeGraphqlAPIRequest(
+  const response = await makeGraphqlApiRequest(
     createOneOperationFactory({
       objectMetadataSingularName: 'blocklist',
       gqlFields: `
@@ -37,7 +37,7 @@ export const createWorkspaceBlocklistEntry = async ({
 export const destroyWorkspaceBlocklistEntry = async (
   blocklistEntryId: string,
 ): Promise<void> => {
-  const response = await makeGraphqlAPIRequest(
+  const response = await makeGraphqlApiRequest(
     destroyOneOperationFactory({
       objectMetadataSingularName: 'blocklist',
       gqlFields: 'id',

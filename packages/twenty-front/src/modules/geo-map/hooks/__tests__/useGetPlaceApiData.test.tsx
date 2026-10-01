@@ -11,7 +11,7 @@ import { useGetPlaceApiData } from '@/geo-map/hooks/useGetPlaceApiData';
 import {
   type PlaceAutocompleteResult,
   type PlaceDetailsResult,
-} from '@/geo-map/types/placeApi';
+} from '@/geo-map/types/PlaceApi';
 
 const mockAutocompleteResults: PlaceAutocompleteResult[] = [
   {
@@ -306,7 +306,6 @@ describe('useGetPlaceApiData', () => {
         expect(autocompleteData).toEqual(mockAutocompleteResults);
       });
 
-      // Then get place details for the first result
       const placeDetailsData = await result.current.getPlaceDetailsData(
         'ChIJD7fiBh9u5kcRYJSMaMOCCwQ',
         'test-token',

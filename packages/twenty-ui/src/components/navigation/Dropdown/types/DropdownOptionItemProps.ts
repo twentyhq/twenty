@@ -4,7 +4,8 @@ export type DropdownOptionItemProps = Omit<
   DropdownActionItemProps,
   'page' | 'closeOnClick' | 'onSelect'
 > & {
-  selected: boolean;
+  selected?: boolean;
+  indicator?: 'check' | 'checkbox' | 'none';
   onSelect?: () => void;
   closeOnSelect?: boolean;
 };

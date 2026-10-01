@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import React from 'react';
 
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { useIsMobile } from 'twenty-ui/utilities';
 
 import { MOBILE_VIEWPORT } from 'twenty-ui/theme';
 import { Step, type StepProps } from './Step';
@@ -31,7 +31,6 @@ export const StepBar = ({ activeStep, children }: StepBarProps) => {
           return null;
         }
 
-        // If the child is not a Step, return it as-is
         // oxlint-disable-next-line typescript/ban-ts-comment
         // @ts-expect-error
         if (child.type?.displayName !== Step.displayName) {

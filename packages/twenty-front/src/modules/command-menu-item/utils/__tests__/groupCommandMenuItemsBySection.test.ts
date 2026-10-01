@@ -20,11 +20,13 @@ describe('groupCommandMenuItemsBySection', () => {
   it('groups every section, empty ones included', () => {
     expect(Object.keys(groupCommandMenuItemsBySection([]))).toEqual([
       'SELECTION',
-      'THIS_VIEW',
+      'CURRENT_VIEW',
+      'THIS_OBJECT',
       'ASK_AND_FIND',
       'CREATE_RECORD',
       'WORKSPACE',
       'GO_TO',
+      'DEVELOPER',
       'FALLBACK',
     ]);
   });
@@ -42,16 +44,23 @@ describe('groupCommandMenuItemsBySection', () => {
         CommandMenuItemAvailabilityType.GLOBAL,
       ),
       buildCommandMenuItem(
+        'export-view',
+        EngineComponentKey.EXPORT_VIEW,
+        CommandMenuItemAvailabilityType.GLOBAL_OBJECT_CONTEXT,
+      ),
+      buildCommandMenuItem(
         'create-view',
         EngineComponentKey.CREATE_NEW_VIEW,
         CommandMenuItemAvailabilityType.GLOBAL_OBJECT_CONTEXT,
       ),
     ]);
 
-    expect(commandMenuItemsBySection.THIS_VIEW.map((item) => item.id)).toEqual([
-      'import',
-      'create-view',
-    ]);
+    expect(
+      commandMenuItemsBySection.THIS_OBJECT.map((item) => item.id),
+    ).toEqual(['import', 'create-view']);
+    expect(
+      commandMenuItemsBySection.CURRENT_VIEW.map((item) => item.id),
+    ).toEqual(['export-view']);
     expect(
       commandMenuItemsBySection.ASK_AND_FIND.map((item) => item.id),
     ).toEqual(['search']);

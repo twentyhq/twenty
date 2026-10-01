@@ -1,18 +1,18 @@
+import { useIsThirdPartyApplication } from '@/applications/hooks/useIsThirdPartyApplication';
 import { CoreWorkflowEditor } from '@/object-core/workflows/components/CoreWorkflowEditor';
-import { CoreWorkflowShowToolbar } from '@/object-core/workflows/components/CoreWorkflowShowToolbar';
+import { CoreObjectIdentifierBar } from '@/object-core/components/CoreObjectIdentifierBar';
 import { CoreWorkflowToWorkspaceRedirect } from '@/object-core/workflows/components/CoreWorkflowToWorkspaceRedirect';
 import { useRenameCoreWorkflow } from '@/object-core/workflows/hooks/useRenameCoreWorkflow';
-import { useValidateCoreWorkflowVersion } from '@/object-core/workflows/hooks/useValidateCoreWorkflowVersion';
 import { styled } from '@linaria/react';
+import { isNonEmptyString } from '@sniptt/guards';
 import { t } from '@lingui/core/macro';
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
 import { PermissionFlagType } from 'twenty-shared/constants';
-import { isDefined } from 'twenty-shared/utils';
-import { IconSettingsAutomation } from 'twenty-ui/icon';
-import { Loader } from 'twenty-ui/primitives/feedback';
+import { getAppPath, isDefined } from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/primitives/input';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { WorkspaceRouteUnavailable } from '@/app/routing/components/WorkspaceRouteUnavailable';
 import { RecordShowCommandMenu } from '@/command-menu-item/components/RecordShowCommandMenu';
@@ -22,20 +22,19 @@ import { useListenToCoreWorkflowEvents } from '@/object-core/workflows/hooks/use
 import { useCoreWorkflowVersions } from '@/object-core/workflows/versions/hooks/useCoreWorkflowVersions';
 import { invalidateCoreWorkflowVersions } from '@/object-core/workflows/versions/utils/invalidateCoreWorkflowVersions';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
+import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { RecordShowPageResourceEffect } from '@/object-record/record-show/components/RecordShowPageResourceEffect';
 import { RecordShowContainerContextStoreTargetedRecordsEffect } from '@/object-record/record-show/components/RecordShowContainerContextStoreTargetedRecordsEffect';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
-import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { SidePanelToggleButton } from '@/side-panel/components/SidePanelToggleButton';
-import { TextInput } from '@/ui/input/components/TextInput';
 import { PageCardHeader } from '@/ui/layout/page/components/PageCardHeader';
 import { PageCardLayout } from '@/ui/layout/page/components/PageCardLayout';
 import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
 import { useIsWorkflowCoreEnabled } from '@/workflow/hooks/useIsWorkflowCoreEnabled';
-import { WorkflowVisibility } from '~/generated/graphql';
 import { getWorkflowCurrentVersion } from '@/workflow/utils/getWorkflowCurrentVersion';
+import { PageContentSkeletonLoader } from '~/loading/components/PageContentSkeletonLoader';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -44,17 +43,23 @@ const StyledContainer = styled.div`
   min-height: 0;
 `;
 
+const StyledUntitled = styled.span`
+  color: ${themeCssVariables.font.color.tertiary};
+`;
+
 const CoreWorkflowShowContent = ({
   coreWorkflowId,
 }: {
   coreWorkflowId: string;
 }) => {
   const client = useApolloCoreClient();
-  const { closeSidePanelMenu } = useSidePanelMenu();
   const { record, coreWorkflow, loading, error, refetch } =
     useCoreWorkflowShowPageResource({
       coreWorkflowId,
     });
+  const isApplicationManaged = useIsThirdPartyApplication(
+    coreWorkflow?.applicationId,
+  );
   const versions = useCoreWorkflowVersions(coreWorkflowId);
   const { refetchCoreWorkflowVersions } = versions;
 
@@ -68,8 +73,7 @@ const CoreWorkflowShowContent = ({
     refetch: refetchCoreWorkflowAndVersions,
   });
 
-  const [searchParams, setSearchParams] = useSearchParams();
-  const [editedName, setEditedName] = useState<string>();
+  const [searchParams] = useSearchParams();
   const requestedVersionId = searchParams.get('version');
   const currentVersion = getWorkflowCurrentVersion({
     versions: versions.coreWorkflowVersions,
@@ -78,16 +82,12 @@ const CoreWorkflowShowContent = ({
   const selectedVersion = isDefined(requestedVersionId)
     ? versions.coreWorkflowVersions.find(({ id }) => id === requestedVersionId)
     : currentVersion;
-  const isReadOnlyVersion = isDefined(requestedVersionId);
-  const isHistoricalVersion =
-    isDefined(requestedVersionId) && selectedVersion?.id !== currentVersion?.id;
+  const isReadOnlyVersion =
+    isApplicationManaged || isDefined(requestedVersionId);
   const { renameWorkflow } = useRenameCoreWorkflow({
     coreWorkflowId,
     currentName: record?.name,
   });
-  const { validate, isValidating } = useValidateCoreWorkflowVersion(
-    selectedVersion?.id,
-  );
 
   const resource = (
     <RecordShowPageResourceEffect
@@ -104,7 +104,7 @@ const CoreWorkflowShowContent = ({
     return (
       <>
         {resource}
-        <Loader />
+        <PageContentSkeletonLoader />
       </>
     );
   }
@@ -117,7 +117,9 @@ const CoreWorkflowShowContent = ({
           <Button
             title={t`Retry`}
             onClick={() => invalidateCoreWorkflowVersions(client)}
-          />
+          >
+            {t`Retry`}
+          </Button>
         </WorkspaceRouteUnavailable>
       </>
     );
@@ -143,26 +145,24 @@ const CoreWorkflowShowContent = ({
       <PageCardLayout
         header={
           <PageCardHeader
-            icon={<IconSettingsAutomation />}
-            title={
-              <TextInput
-                placeholder={t`Workflow name`}
-                value={editedName ?? record.name ?? ''}
-                onChange={setEditedName}
-                onBlur={async (event) => {
-                  const name = event.target.value;
-                  const didSave = await renameWorkflow(name);
-                  if (didSave) {
-                    setEditedName((currentName) =>
-                      currentName === name ? undefined : currentName,
-                    );
-                  }
-                }}
-              />
-            }
+            links={[
+              {
+                children: t`Workflows`,
+                href: getAppPath(AppPath.RecordIndexPage, {
+                  objectNamePlural: CoreObjectNamePlural.Workflow,
+                }),
+              },
+              {
+                children: isNonEmptyString(record.name) ? (
+                  record.name
+                ) : (
+                  <StyledUntitled>{t`Untitled`}</StyledUntitled>
+                ),
+              },
+            ]}
             actionButton={
               <>
-                {!isReadOnlyVersion && <RecordShowCommandMenu />}
+                {!isDefined(requestedVersionId) && <RecordShowCommandMenu />}
                 <SidePanelToggleButton />
               </>
             }
@@ -170,24 +170,12 @@ const CoreWorkflowShowContent = ({
         }
       >
         <StyledContainer>
-          <CoreWorkflowShowToolbar
-            coreWorkflowId={coreWorkflowId}
-            versions={versions.coreWorkflowVersions}
-            selectedVersionId={selectedVersion?.id}
-            visibility={
-              coreWorkflow?.visibility ?? WorkflowVisibility.WORKSPACE
-            }
-            canChangeVisibility={coreWorkflow?.canChangeVisibility ?? false}
-            isHistoricalVersion={isHistoricalVersion}
-            isValidating={isValidating}
-            onVersionChange={(versionId) => {
-              closeSidePanelMenu();
-              setSearchParams(
-                versionId === currentVersion?.id ? {} : { version: versionId },
-              );
-            }}
-            onValidate={validate}
-            onRefresh={() => invalidateCoreWorkflowVersions(client)}
+          <CoreObjectIdentifierBar
+            recordId={coreWorkflowId}
+            name={record.name}
+            namePlaceholder={t`Untitled`}
+            onRename={renameWorkflow}
+            isReadOnly={isApplicationManaged}
           />
           {isDefined(selectedVersion) ? (
             <CoreWorkflowEditor

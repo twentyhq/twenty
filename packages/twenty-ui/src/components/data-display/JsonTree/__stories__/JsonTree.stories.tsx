@@ -1,6 +1,8 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { JsonTree } from '@ui/components/data-display/JsonTree/JsonTree';
 import { isTwoFirstDepths } from '@ui/components/data-display/JsonTree/internal/utils/isTwoFirstDepths';
+import { Button } from '@ui/primitives/input/Button/Button';
+import { type FormEvent } from 'react';
 import { A11Y_DEFER_COLOR_CONTRAST } from '@ui/testing';
 import {
   expect,
@@ -40,6 +42,7 @@ export const String: Story = {
     const node = await canvas.findByText('Hello');
 
     expect(node).toBeVisible();
+    expect(canvas.queryByRole('button')).not.toBeInTheDocument();
   },
 };
 
@@ -646,5 +649,76 @@ export const GroupedRoots: Story = {
       { id: 'second-step', label: 'Find company', value: { name: 'Example' } },
     ],
     onNodeValueClick: fn(),
+  },
+};
+
+const onValueContainerClick = fn();
+const onValueContainerKeyDown = fn();
+const onValueFormSubmit = fn((event: FormEvent) => event.preventDefault());
+
+export const NativeValueActions: Story = {
+  parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
+  args: {
+    value: 'Copy this value',
+    onNodeValueClick: fn(),
+  },
+  beforeEach: () => {
+    onValueContainerClick.mockClear();
+    onValueContainerKeyDown.mockClear();
+    onValueFormSubmit.mockClear();
+  },
+  render: (args) => (
+    <>
+      <Button>Before values</Button>
+      <form
+        onClick={onValueContainerClick}
+        onKeyDown={onValueContainerKeyDown}
+        onSubmit={onValueFormSubmit}
+      >
+        <JsonTree {...args} />
+        <fieldset disabled>
+          <legend>Unavailable values</legend>
+          <JsonTree {...args} entries={undefined} value="Disabled value" />
+        </fieldset>
+      </form>
+      <Button>After values</Button>
+    </>
+  ),
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const user = userEvent.setup();
+    const value = canvas.getByRole('button', { name: 'Copy this value' });
+    const disabledValue = canvas.getByRole('button', {
+      name: 'Disabled value',
+    });
+
+    await user.click(canvas.getByRole('button', { name: 'Before values' }));
+    await user.tab();
+    expect(value).toHaveFocus();
+    expect(value).toHaveAttribute('type', 'button');
+    expect(getComputedStyle(value).outlineStyle).toBe('solid');
+    expect(value.getBoundingClientRect().height).toBe(24);
+    expect(getComputedStyle(value).paddingInlineStart).toBe('0px');
+
+    await user.keyboard('{Enter}');
+    expect(args.onNodeValueClick).toHaveBeenCalledTimes(1);
+    await user.keyboard('[Space>]');
+    expect(args.onNodeValueClick).toHaveBeenCalledTimes(1);
+    await user.keyboard('[/Space]');
+    expect(args.onNodeValueClick).toHaveBeenCalledTimes(2);
+    expect(onValueContainerKeyDown).toHaveBeenCalledTimes(2);
+    await user.click(value);
+    expect(args.onNodeValueClick).toHaveBeenCalledTimes(3);
+    expect(args.onNodeValueClick).toHaveBeenLastCalledWith('Copy this value');
+    expect(onValueContainerClick).toHaveBeenCalledTimes(3);
+    expect(value).toHaveFocus();
+
+    await user.click(disabledValue);
+    expect(disabledValue).toBeDisabled();
+    expect(args.onNodeValueClick).toHaveBeenCalledTimes(3);
+    value.focus();
+    await user.tab();
+    expect(canvas.getByRole('button', { name: 'After values' })).toHaveFocus();
+    expect(onValueFormSubmit).not.toHaveBeenCalled();
   },
 };

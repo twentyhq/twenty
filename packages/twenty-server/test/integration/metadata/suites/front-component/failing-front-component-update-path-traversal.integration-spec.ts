@@ -99,8 +99,7 @@ const FAILING_UPDATE_TEST_CASES: EachTestingContext<TestContext>[] = [
     },
   },
   {
-    title:
-      'when sourceComponentPath is a folder path without extension',
+    title: 'when sourceComponentPath is a folder path without extension',
     context: {
       manifest: buildManifest({
         sourceComponentPath: 'src/front-components/my-component',

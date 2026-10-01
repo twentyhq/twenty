@@ -61,11 +61,7 @@ export const SettingsAdminWorkspaceCreditGrantModal = ({
   );
   const [reason, setReason] = useState('');
   const [expiresInDays, setExpiresInDays] = useState<number | null>(null);
-  // Identifies one intended grant, so a RetryLink retry or a resubmit after a
-  // lost response is answered with the grant the first attempt wrote rather
-  // than crediting the workspace twice. Keyed on the submitted values, since
-  // editing the amount and resubmitting is a different intent that must not be
-  // answered with the earlier grant.
+  // Idempotency key per submitted values: retries reuse it, an edited amount is a new grant.
   const [submittedGrant, setSubmittedGrant] = useState<{
     payload: string;
     clientOperationId: string;
@@ -82,8 +78,7 @@ export const SettingsAdminWorkspaceCreditGrantModal = ({
   const parsedAmount = Number(amount);
   const isAmountValid = Number.isFinite(parsedAmount) && parsedAmount > 0;
 
-  // The modal is mounted for the whole page, so without this the next admin to
-  // open it starts from the last grant's amount and reason.
+  // The modal stays mounted, so reset it for the next admin.
   const handleClose = () => {
     setAmount('');
     setType(BillingCreditGrantType.COMPENSATION);
@@ -183,7 +178,6 @@ export const SettingsAdminWorkspaceCreditGrantModal = ({
                 label: t(CREDIT_GRANT_TYPE_LABELS[grantType]),
               }))}
               onChange={setType}
-              isDropdownInModal
               fullWidth
             />
 
@@ -196,7 +190,6 @@ export const SettingsAdminWorkspaceCreditGrantModal = ({
                 label: t(option.label),
               }))}
               onChange={setExpiresInDays}
-              isDropdownInModal
               fullWidth
             />
 

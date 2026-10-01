@@ -20,7 +20,7 @@ import {
   WorkflowStepExecutorExceptionCode,
 } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
 import { WorkflowExecutionContextService } from 'src/modules/workflow/workflow-executor/services/workflow-execution-context.service';
-import { type WorkflowRunInfo } from 'src/modules/workflow/workflow-executor/types/workflow-action-input';
+import { type WorkflowRunInfo } from 'src/modules/workflow/workflow-executor/types/workflow-action-input.type';
 import { getUserFromAuthContext } from 'src/modules/workflow/workflow-executor/utils/get-user-from-auth-context.util';
 import { type WorkflowSendEmailActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/types/workflow-send-email-action-input.type';
 import { buildEmailStepLog } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/utils/build-email-step-log.util';
@@ -100,11 +100,8 @@ export abstract class EmailWorkflowActionBase extends ToolBackedWorkflowAction<W
     return { ...resolvedInput, connectedAccountId };
   }
 
-  // The sender configured on an email step is either a connected account id
-  // (static pick) or a workspace member id (from a resolved workflow variable).
-  // When it is a workspace member id, resolve that member's first connected
-  // account; otherwise return it unchanged so the regular connected account
-  // flow applies. Only meaningful inside workflow email actions.
+  // The sender is a connected account id or, from a workflow variable, a workspace member id; a member id resolves
+  // to that member's first connected account, anything else is returned unchanged
   protected async resolveSenderConnectedAccountId(
     senderId: string,
     workspaceId: string,

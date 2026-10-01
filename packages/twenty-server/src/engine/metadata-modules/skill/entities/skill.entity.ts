@@ -12,6 +12,7 @@ import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorato
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 
 @Entity('skill')
+@Index('IDX_SKILL_APPLICATION_ID', ['applicationId'])
 @Index('IDX_SKILL_ID_IS_ACTIVE', ['id', 'isActive'])
 @Index('IDX_SKILL_NAME_WORKSPACE_ID_UNIQUE', ['name', 'workspaceId'], {
   unique: true,

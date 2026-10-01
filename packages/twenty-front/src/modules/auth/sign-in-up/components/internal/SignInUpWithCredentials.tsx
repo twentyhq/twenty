@@ -12,7 +12,7 @@ import { SignInUpEmailField } from '@/auth/sign-in-up/components/internal/SignIn
 import { SignInUpPasswordField } from '@/auth/sign-in-up/components/internal/SignInUpPasswordField';
 import { StyledSsoButtonContainer } from '@/auth/sign-in-up/components/internal/SignInUpSsoButtonStyles';
 import { AuthenticatedMethod } from '@/auth/types/AuthenticatedMethod.enum';
-import { SignInUpMode } from '@/auth/types/signInUpMode';
+import { SignInUpMode } from '@/auth/types/SignInUpMode';
 import { isRequestingCaptchaTokenState } from '@/captcha/states/isRequestingCaptchaTokenState';
 import { captchaState } from '@/client-config/states/captchaState';
 import { isDDLLockedState } from '@/client-config/states/isDDLLockedState';

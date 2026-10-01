@@ -21,7 +21,7 @@ import {
 } from 'src/modules/timeline/utils/resolve-timeline-activity-type.util';
 import { TimelineActivityTargetQueryService } from 'src/modules/timeline/services/timeline-activity-target-query.service';
 import { type ResolvedTimelineActivityTarget } from 'src/modules/timeline/types/resolved-timeline-activity-target.type';
-import { type TimelineActivityPayload } from 'src/modules/timeline/types/timeline-activity-payload';
+import { type TimelineActivityPayload } from 'src/modules/timeline/types/timeline-activity-payload.type';
 import { type TimelineActivityRuleAction } from 'src/modules/timeline/types/timeline-activity-rule-action.type';
 import { type TimelineActivityRule } from 'src/modules/timeline/types/timeline-activity-rule.type';
 import { buildLinkedTimelineActivityHappensAtSyncUpdates } from 'src/modules/timeline/utils/build-linked-timeline-activity-happens-at-sync-updates.util';
@@ -49,8 +49,7 @@ const hasNonEmptyDiff = (
 ): boolean =>
   isDefined(properties.diff) && Object.keys(properties.diff).length > 0;
 
-// Only the diff is worth storing: the rest of an event payload is the record
-// itself, which the timeline reads live.
+// The rest of an event payload is the record itself, which the timeline reads live
 const keepDiffOnly = (
   properties: ObjectRecordBaseEvent['properties'],
 ): Pick<ObjectRecordBaseEvent['properties'], 'diff'> =>
@@ -145,8 +144,7 @@ export class TimelineActivityService {
 
     const payloads = (
       await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-        // Resolved after the rule check so batches without rules, system
-        // objects mostly, never pay the workspace member query.
+        // After the rule check so batches without rules skip the workspace member query
         const enrichedEvents = await this.enrichEventsWithWorkspaceMemberId({
           events: auditLoggedEvents,
         });
@@ -178,9 +176,7 @@ export class TimelineActivityService {
       await this.timelineActivityRepository.updateLinkedTimelineActivitiesHappensAt(
         {
           workspaceId,
-          // The unfiltered events on purpose: this keeps an already written
-          // row anchored to its source moment, so hiding the happensAt field
-          // from the timeline must not strand linked rows at a stale time.
+          // Unfiltered on purpose: hiding happensAt from the timeline must not strand linked rows at a stale time
           updates: buildLinkedTimelineActivityHappensAtSyncUpdates({
             rules: sourceRules,
             events,
@@ -460,8 +456,7 @@ export class TimelineActivityService {
         },
       );
 
-    // The junction event is the semantic fact; this enrichment read can race
-    // the transaction that created the linked record.
+    // The junction event is the fact; this enrichment read can race the transaction that created the linked record
     return eventsWithJunctionRecord.map(({ event, target, sourceRecordId }) => {
       const sourceRecord = sourceRecordsByRecordId.get(sourceRecordId);
 

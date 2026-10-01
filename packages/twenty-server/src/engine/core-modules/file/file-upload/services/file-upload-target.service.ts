@@ -16,7 +16,7 @@ import {
 import { type BatchFileResult } from 'src/engine/core-modules/file/file-upload/types/batch-file-result.type';
 import { buildPendingUploadResourcePath } from 'src/engine/core-modules/file/file-upload/utils/build-pending-upload-resource-path.util';
 import { toBatchErrorMessage } from 'src/engine/core-modules/file/file-upload/utils/to-batch-error-message.util';
-import { FileSettings } from 'src/engine/core-modules/file/types/file-settings.types';
+import { FileSettings } from 'src/engine/core-modules/file/types/file-settings.type';
 import { FileUploadTokenJwtPayload } from 'src/engine/core-modules/auth/types/file-upload-token-jwt-payload.type';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
@@ -64,8 +64,7 @@ export class FileUploadTargetService {
       resourcePath,
     });
 
-    // The prefix is added after the final path has passed validation, so a
-    // path close to the limit would only fail once the client tried to write.
+    // The prefix lengthens the path, so near-limit paths would otherwise fail only when the client writes.
     const pendingPathValidation = validateFilePath({
       resourcePath: pendingResourcePath,
       fileFolder,

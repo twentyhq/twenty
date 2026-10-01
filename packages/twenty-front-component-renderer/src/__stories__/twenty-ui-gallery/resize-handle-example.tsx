@@ -9,9 +9,9 @@ export const ResizeHandleExample = () => {
 
   return (
     <div>
-      <Card id={regionId} style={{ height, overflow: 'hidden' }}>
+      <Card.Root id={regionId} style={{ height, overflow: 'hidden' }}>
         <Text>{height} pixels</Text>
-      </Card>
+      </Card.Root>
       <ResizeHandle
         aria-label="Resize example"
         aria-controls={regionId}

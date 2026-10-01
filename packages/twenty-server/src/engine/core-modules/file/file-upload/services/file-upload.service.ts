@@ -31,7 +31,7 @@ import { FileUploadTargetService } from 'src/engine/core-modules/file/file-uploa
 import { assertValidDirectUploadSize } from 'src/engine/core-modules/file/file-upload/utils/assert-valid-direct-upload-size.util';
 import { buildSvgTooLargeException } from 'src/engine/core-modules/file/file-upload/utils/build-svg-too-large-exception.util';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
-import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.types';
+import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.type';
 import { buildFileInfo } from 'src/engine/core-modules/file/utils/build-file-info.utils';
 import { buildPendingUploadResourcePath } from 'src/engine/core-modules/file/file-upload/utils/build-pending-upload-resource-path.util';
 import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file/utils/remove-file-folder-from-file-entity-path.utils';
@@ -51,9 +51,7 @@ export const DIRECT_UPLOAD_FILE_FOLDERS = [
   FileFolder.CorePicture,
 ] as const;
 
-// A tarball leaves quarantine through completeAppTarballUpload only, behind
-// the marketplace-apps permission: the generic completion, open to any member
-// allowed to upload files, must not persist bytes in that folder.
+// These folders leave quarantine only through their dedicated, permission-gated completions, never the generic one.
 export const DEDICATED_COMPLETION_FILE_FOLDERS = [
   FileFolder.AppTarball,
   FileFolder.CorePicture,
@@ -68,8 +66,8 @@ export class FileUploadService {
     private readonly fileUrlService: FileUrlService,
     private readonly fileUploadTargetService: FileUploadTargetService,
     private readonly fileUploadCompletionService: FileUploadCompletionService,
-    @InjectRepository(ApplicationEntity)
-    private readonly applicationRepository: Repository<ApplicationEntity>,
+    @InjectWorkspaceScopedRepository(ApplicationEntity)
+    private readonly applicationRepository: WorkspaceScopedRepository<ApplicationEntity>,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     @InjectWorkspaceScopedRepository(FieldMetadataEntity)
@@ -111,9 +109,7 @@ export class FileUploadService {
 
     const { ext } = buildFileInfo(filename);
 
-    // Completion refuses to sanitize an SVG this big, so reject before the
-    // client transfers it. The declared extension is a client claim, which
-    // only makes this a shortcut: the sniffed check at completion decides.
+    // Completion refuses SVGs this big; the declared extension is only a hint, the sniffed check at completion decides.
     if (ext.toLowerCase() === 'svg' && size > MAX_SANITIZABLE_SVG_BYTES) {
       throw buildSvgTooLargeException(
         `declared size ${size} exceeds the ${MAX_SANITIZABLE_SVG_BYTES} byte limit`,
@@ -388,12 +384,14 @@ export class FileUploadService {
         },
       );
 
-      const application = await this.applicationRepository.findOneOrFail({
-        where: {
-          id: fieldMetadata.applicationId,
-          workspaceId,
+      const application = await this.applicationRepository.findOneOrFail(
+        workspaceId,
+        {
+          where: {
+            id: fieldMetadata.applicationId,
+          },
         },
-      });
+      );
 
       return {
         applicationUniversalIdentifier: application.universalIdentifier,
@@ -415,8 +413,9 @@ export class FileUploadService {
     }
 
     const workspaceCustomApplication = await this.applicationRepository.findOne(
+      workspaceId,
       {
-        where: { id: workspace.workspaceCustomApplicationId, workspaceId },
+        where: { id: workspace.workspaceCustomApplicationId },
       },
     );
 
@@ -471,12 +470,14 @@ export class FileUploadService {
   }> {
     const [fileFolder] = file.path.split('/');
 
-    const application = await this.applicationRepository.findOneOrFail({
-      where: {
-        id: file.applicationId,
-        workspaceId,
+    const application = await this.applicationRepository.findOneOrFail(
+      workspaceId,
+      {
+        where: {
+          id: file.applicationId,
+        },
       },
-    });
+    );
 
     return {
       application,

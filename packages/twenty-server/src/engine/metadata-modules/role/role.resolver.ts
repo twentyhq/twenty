@@ -22,8 +22,7 @@ import { AuthApplication } from 'src/engine/decorators/auth/auth-application.dec
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
-import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
-import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { AiAgentRoleService } from 'src/engine/metadata-modules/ai/ai-agent-role/ai-agent-role.service';
 import {
   AiException,
@@ -69,7 +68,17 @@ import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filt
 @MetadataResolver(() => RoleDTO)
 @UsePipes(ResolverValidationPipe)
 @UseGuards(
-  WorkspaceAuthGuard,
+  AuthPrincipalGuard({
+    userSession: {
+      standard: true,
+      impersonated: true,
+      playground: true,
+      workspaceAgnostic: false,
+    },
+    apiKey: true,
+    oauthClient: true,
+    application: true,
+  }),
   SettingsPermissionGuard(PermissionFlagType.ROLES),
 )
 @UseFilters(
@@ -103,7 +112,19 @@ export class RoleResolver {
   }
 
   @Mutation(() => WorkspaceMemberDTO)
-  @UseGuards(UserAuthGuard)
+  @UseGuards(
+    AuthPrincipalGuard({
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: false,
+      oauthClient: { withUser: true, withoutUser: false },
+      application: { withUser: true, withoutUser: false },
+    }),
+  )
   async updateWorkspaceMemberRole(
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Args('workspaceMemberId', { type: () => UUIDScalarType })
@@ -201,8 +222,7 @@ export class RoleResolver {
     return deletedRole.id;
   }
 
-  // API-key callers have no user workspace; lockout protection only applies to
-  // human actors, so they resolve to no acting roles.
+  // Lockout protection only applies to human actors; API-key callers have no user workspace
   private async getActingRoleIds({
     workspaceId,
     actingUserWorkspaceId,

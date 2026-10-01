@@ -220,6 +220,12 @@ export { resolveRichTextVariables } from './rich-text-variable-resolver';
 export { safeParseRelativeDateFilterJsonStringified } from './safeParseRelativeDateFilterJsonStringified';
 export { getGenericOperationName } from './sentry/getGenericOperationName';
 export { getHumanReadableNameFromCode } from './sentry/getHumanReadableNameFromCode';
+export { getEnabledAddressSubFields } from './sort/getEnabledAddressSubFields';
+export type { OrderByFieldMetadata } from './sort/getOrderByForFieldMetadataType';
+export { getOrderByForFieldMetadataType } from './sort/getOrderByForFieldMetadataType';
+export { getOrderByForRelationField } from './sort/getOrderByForRelationField';
+export { resolveAddressSortSubField } from './sort/resolveAddressSortSubField';
+export { resolvePrimaryFullNameSortSubField } from './sort/resolvePrimaryFullNameSortSubField';
 export { appendCopySuffix } from './strings/appendCopySuffix';
 export { camelToKebab } from './strings/camelToKebab';
 export { camelToSnakeCase } from './strings/camelToSnakeCase';
@@ -308,6 +314,22 @@ export { normalizeUrl } from './url/normalizeUrl';
 export { normalizeUrlOrigin } from './url/normalizeUrlOrigin';
 export { safeDecodeURIComponent } from './url/safeDecodeURIComponent';
 export { uuidToBase36 } from './uuidToBase36';
+export { buildValidationRuleEvaluationContext } from './validation-rule/buildValidationRuleEvaluationContext';
+export { compileValidationRuleExpression } from './validation-rule/compileValidationRuleExpression';
+export { createValidationRuleEvaluator } from './validation-rule/createValidationRuleEvaluator';
+export { evaluateValidationRuleExpression } from './validation-rule/evaluateValidationRuleExpression';
+export { hasValidationRuleBracketAccess } from './validation-rule/hasValidationRuleBracketAccess';
+export { isValidationRuleReservedName } from './validation-rule/isValidationRuleReservedName';
+export { isValidationRuleValueDefined } from './validation-rule/isValidationRuleValueDefined';
+export { isValidationRuleValueEmpty } from './validation-rule/isValidationRuleValueEmpty';
+export { parseValidationRuleExpression } from './validation-rule/parseValidationRuleExpression';
+export { resolveValidationRuleIdentifierPath } from './validation-rule/resolveValidationRuleIdentifierPath';
+export { tokenizeValidationRuleExpression } from './validation-rule/tokenizeValidationRuleExpression';
+export { validationRuleParser } from './validation-rule/validationRuleParser';
+export {
+  validationRuleNullPlaceholders,
+  validationRuleCompositeFieldTypeByValue,
+} from './validation-rule/validationRuleValueRegistry';
 export { assertIsDefinedOrThrow } from './validation/assertIsDefinedOrThrow';
 export { emailSchema } from './validation/emailSchema';
 export { escapeForIlike } from './validation/escapeForIlike';

@@ -51,7 +51,7 @@ import {
   type ExistingUserOrNewUser,
   type SignInUpBaseParams,
   type SignInUpNewUserPayload,
-} from 'src/engine/core-modules/auth/types/signInUp.type';
+} from 'src/engine/core-modules/auth/types/sign-in-up.type';
 import { assertIssuerIsPublishedOrThrow } from 'src/engine/core-modules/auth/utils/assert-issuer-is-published.util';
 import { validateRedirectUri } from 'src/engine/core-modules/auth/utils/validate-redirect-uri.util';
 import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain-server-config/services/domain-server-config.service';
@@ -394,7 +394,6 @@ export class AuthService {
       new AuthException('User not found', AuthExceptionCode.USER_NOT_FOUND),
     );
 
-    // passwordHash is hidden for security reasons
     user.passwordHash = '';
 
     const accessToken = await this.accessTokenService.generateAccessToken({
@@ -537,10 +536,7 @@ export class AuthService {
       );
     }
 
-    // OAuth 2.1 / MCP auth spec: PKCE is mandatory for public clients
-    // (clients registered with token_endpoint_auth_method=none, i.e. no
-    // client secret hash). Confidential clients are authenticated at the
-    // token endpoint instead.
+    // OAuth 2.1 / MCP auth spec: PKCE is mandatory for public clients (no client secret)
     const isPublicClient = !applicationRegistration.oAuthClientSecretHash;
 
     if (isPublicClient && !codeChallenge) {
@@ -550,9 +546,8 @@ export class AuthService {
       );
     }
 
-    // RFC 8252 §7.3: Native apps using loopback redirect URIs may use any port.
-    // When a registration has no explicit redirect URIs (e.g. the seeded CLI registration),
-    // allow any loopback redirect URI.
+    // RFC 8252 §7.3: native apps may use any loopback port, so a registration without redirect URIs
+    // (e.g. the seeded CLI one) accepts any loopback redirect URI
     const hasRegisteredRedirectUris =
       applicationRegistration.oAuthRedirectUris.length > 0;
 
@@ -991,8 +986,6 @@ export class AuthService {
     const existingUser =
       await this.userService.findUserByEmailWithWorkspaces(email);
 
-    // Route SSO sign-ins through the same create-or-select flow as credentials
-    // instead of landing straight on a workspace subdomain.
     if (!workspaceId && !workspaceInviteHash) {
       const user =
         existingUser ??
@@ -1016,8 +1009,7 @@ export class AuthService {
           authProvider,
         });
 
-      // The token rides in the fragment so it never reaches access logs,
-      // proxies or Referer headers: browsers keep it out of the request line.
+      // The fragment keeps the token out of access logs, proxies and Referer headers
       const url = this.domainServerConfigService.buildBaseUrl({
         pathname: AppPath.SignInUp,
         searchParams: {

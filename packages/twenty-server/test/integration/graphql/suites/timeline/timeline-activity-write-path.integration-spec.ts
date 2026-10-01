@@ -2,12 +2,12 @@ import { createOneOperationFactory } from 'test/integration/graphql/utils/create
 import { destroyOneOperationFactory } from 'test/integration/graphql/utils/destroy-one-operation-factory.util';
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
 import { updateManyOperationFactory } from 'test/integration/graphql/utils/update-many-operation-factory.util';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateOneOperationFactory } from 'test/integration/graphql/utils/update-one-operation-factory.util';
 import { deleteOneOperationFactory } from 'test/integration/graphql/utils/delete-one-operation-factory.util';
 import { gql } from 'graphql-tag';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
 import { deleteOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/delete-one-field-metadata.util';
 import { updateOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/update-one-field-metadata.util';
@@ -57,7 +57,7 @@ const createRecord = async ({
   objectMetadataSingularName: string;
   data: object;
 }): Promise<void> => {
-  const response = await makeGraphqlAPIRequest(
+  const response = await makeGraphqlApiRequest(
     createOneOperationFactory({
       objectMetadataSingularName,
       gqlFields: 'id',
@@ -77,7 +77,7 @@ const updateRecord = async ({
   recordId: string;
   data: object;
 }): Promise<void> => {
-  const response = await makeGraphqlAPIRequest(
+  const response = await makeGraphqlApiRequest(
     updateOneOperationFactory({
       objectMetadataSingularName,
       gqlFields: 'id',
@@ -94,7 +94,7 @@ const findTimelineActivities = async (
 ): Promise<TimelineActivityRow[]> => {
   await waitForAllJobsToFinish();
 
-  const response = await makeGraphqlAPIRequest(
+  const response = await makeGraphqlApiRequest(
     findManyOperationFactory({
       objectMetadataSingularName: 'timelineActivity',
       objectMetadataPluralName: 'timelineActivities',
@@ -136,8 +136,7 @@ const FIND_MANY_TIMELINE_ACTIVITY_TYPES = gql`
   }
 `;
 
-// Mirrors the server resolver: several types share an action, and the one bound
-// to the event's object wins over the shared one.
+// Mirrors the server resolver: an object-bound type wins over a shared one for the same action.
 const timelineActivityTypeIdByObjectAndAction = new Map<string, string>();
 
 const buildKey = (
@@ -239,7 +238,7 @@ let nonAuditLoggedFieldMetadataId = '';
 
 describe('timeline activity write path (integration)', () => {
   beforeAll(async () => {
-    const response = await makeMetadataAPIRequest({
+    const response = await makeMetadataApiRequest({
       query: FIND_MANY_TIMELINE_ACTIVITY_TYPES,
     });
 
@@ -259,7 +258,7 @@ describe('timeline activity write path (integration)', () => {
     }
 
     const companyObjectMetadataId = (
-      await makeMetadataAPIRequest({
+      await makeMetadataApiRequest({
         query: gql`
           query {
             objects(paging: { first: 1000 }) {
@@ -297,8 +296,7 @@ describe('timeline activity write path (integration)', () => {
 
   afterAll(async () => {
     if (isNonEmptyString(nonAuditLoggedFieldMetadataId)) {
-      // A field has to be deactivated before it can be deleted, otherwise its
-      // name stays taken and the next run cannot recreate it.
+      // Deleting without deactivating first leaves the name taken for the next run.
       await updateOneFieldMetadata({
         input: {
           idToUpdate: nonAuditLoggedFieldMetadataId,
@@ -314,7 +312,7 @@ describe('timeline activity write path (integration)', () => {
     }
 
     for (const { objectMetadataSingularName, id } of CREATED_RECORD_IDS) {
-      await makeGraphqlAPIRequest(
+      await makeGraphqlApiRequest(
         destroyOneOperationFactory({
           objectMetadataSingularName,
           gqlFields: 'id',
@@ -443,7 +441,7 @@ describe('timeline activity write path (integration)', () => {
       }
 
       const updateBatchTo = async (name: string) => {
-        const response = await makeGraphqlAPIRequest(
+        const response = await makeGraphqlApiRequest(
           updateManyOperationFactory({
             objectMetadataSingularName: 'company',
             objectMetadataPluralName: 'companies',
@@ -650,8 +648,6 @@ describe('timeline activity write path (integration)', () => {
       expect(rowsWithoutTarget).toHaveLength(0);
     });
 
-    // The note rule only fans out on its trigger field, so editing the body
-    // leaves the linked timelines alone.
     it('should not write a linked entry when a non trigger field changes', async () => {
       await updateRecord({
         objectMetadataSingularName: 'note',
@@ -680,7 +676,7 @@ describe('timeline activity write path (integration)', () => {
     });
 
     it('should write a linked entry on the company when the note target is deleted', async () => {
-      await makeGraphqlAPIRequest(
+      await makeGraphqlApiRequest(
         deleteOneOperationFactory({
           objectMetadataSingularName: 'noteTarget',
           gqlFields: 'id',
@@ -958,7 +954,7 @@ describe('timeline activity write path (integration)', () => {
         'proposal-final.pdf',
       );
 
-      const deleteResponse = await makeGraphqlAPIRequest(
+      const deleteResponse = await makeGraphqlApiRequest(
         deleteOneOperationFactory({
           objectMetadataSingularName: 'attachment',
           gqlFields: 'id',

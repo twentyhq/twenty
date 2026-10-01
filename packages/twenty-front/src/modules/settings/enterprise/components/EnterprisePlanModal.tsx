@@ -8,9 +8,9 @@ import { useApolloClient } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
-import { CardPicker, MainButton, useToast } from 'twenty-ui/components';
+import { MainButton, useToast } from 'twenty-ui/components';
 import { Loader } from 'twenty-ui/primitives/feedback';
-import { RadioGroup } from 'twenty-ui/primitives/input';
+import { Radio, RadioGroup } from 'twenty-ui/primitives/input';
 import { Dialog } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
 
@@ -184,18 +184,18 @@ export const EnterprisePlanModal = () => {
               value={selectedInterval}
               onValueChange={setSelectedInterval}
             >
-              <CardPicker value="monthly">
+              <Radio variant="card" value="monthly">
                 <StyledIntervalCardContent>
                   <StyledIntervalTitle>{t`Monthly`}</StyledIntervalTitle>
                   <StyledIntervalSubtitle>{`$${MONTHLY_PRICE} / ${t`seat / month`}`}</StyledIntervalSubtitle>
                 </StyledIntervalCardContent>
-              </CardPicker>
-              <CardPicker value="yearly">
+              </Radio>
+              <Radio variant="card" value="yearly">
                 <StyledIntervalCardContent>
                   <StyledIntervalTitle>{t`Yearly`}</StyledIntervalTitle>
                   <StyledIntervalSubtitle>{`$${YEARLY_PRICE} / ${t`seat / month`}`}</StyledIntervalSubtitle>
                 </StyledIntervalCardContent>
-              </CardPicker>
+              </Radio>
             </RadioGroup>
 
             <StyledCheckoutButton

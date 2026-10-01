@@ -80,7 +80,7 @@ export class UpgradeSequenceRunnerService {
     sequence: UpgradeStep[];
     options: ParsedUpgradeCommandOptions;
   }): Promise<UpgradeSequenceRunnerReport> {
-    const allProvisionedWorkspaceIds =
+    let allProvisionedWorkspaceIds =
       await this.workspaceVersionService.getProvisionedWorkspaceIds();
 
     const startCursor = await this.resolveStartCursor({
@@ -132,6 +132,23 @@ export class UpgradeSequenceRunnerService {
               logFields: {
                 before: step.name,
                 reason: 'workspace-filter-active',
+              },
+            }),
+          );
+
+          break;
+        }
+
+        if (options.dryRun) {
+          this.logger.log(
+            formatUpgradeLog({
+              humanMessage:
+                `Dry run stopped before instance step "${step.name}": ` +
+                'instance commands cannot run in dry-run mode.',
+              event: 'sequence.stopped',
+              logFields: {
+                before: step.name,
+                reason: 'dry-run',
               },
             }),
           );
@@ -211,6 +228,15 @@ export class UpgradeSequenceRunnerService {
       }
 
       cursor += workspaceCommandsSegment.length;
+
+      // A workspace segment can outlive workspace deletion and cleanup jobs.
+      const remainingProvisionedWorkspaceIds = new Set(
+        await this.workspaceVersionService.getProvisionedWorkspaceIds(),
+      );
+
+      allProvisionedWorkspaceIds = allProvisionedWorkspaceIds.filter(
+        (workspaceId) => remainingProvisionedWorkspaceIds.has(workspaceId),
+      );
 
       workspaceCursors = await this.fetchWorkspaceCursors(
         allProvisionedWorkspaceIds,
@@ -388,6 +414,10 @@ export class UpgradeSequenceRunnerService {
       allProvisionedWorkspaceIds,
       options,
     });
+
+    if (workspaceIds.length === 0) {
+      return { success: [], fail: [], skipped: [], interrupted: false };
+    }
 
     return this.workspaceIteratorService.iterate({
       workspaceIds,

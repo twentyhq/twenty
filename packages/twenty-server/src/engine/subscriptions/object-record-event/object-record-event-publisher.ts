@@ -33,7 +33,7 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadat
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { UserWorkspaceRoleMap } from 'src/engine/metadata-modules/role-target/types/user-workspace-role-map';
+import { UserWorkspaceRoleMap } from 'src/engine/metadata-modules/role-target/types/user-workspace-role-map.type';
 import { type FlatRowLevelPermissionPredicateGroupMaps } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-group-maps.type';
 import { type FlatRowLevelPermissionPredicateMaps } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-maps.type';
 import { RecordAccessPolicyService } from 'src/engine/core-modules/record-share/services/record-access-policy.service';
@@ -48,7 +48,7 @@ import {
 } from 'src/engine/subscriptions/types/event-stream-data.type';
 import { type EventStreamPayload } from 'src/engine/subscriptions/types/event-stream-payload.type';
 import { ObjectRecordSubscriptionEvent } from 'src/engine/subscriptions/types/object-record-subscription-event.type';
-import { RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
+import { RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config.type';
 import { buildRowLevelPermissionRecordFilter } from 'src/engine/twenty-orm/utils/build-row-level-permission-record-filter.util';
 import { computePermissionIntersection } from 'src/engine/twenty-orm/utils/compute-permission-intersection.util';
 import { type RowAccessPolicySubject } from 'src/engine/twenty-orm/types/row-access-policy.type';
@@ -421,9 +421,7 @@ export class ObjectRecordEventPublisher {
       });
     }
 
-    // The cache keeps soft-deleted applications, so absence is not enough.
-    // An application that has gone away is not one declaring no role: falling
-    // back to the user alone would widen a stream that is already open.
+    // The cache keeps soft-deleted applications; a gone one must not fall back to the user alone and widen the stream
     const application = findActiveFlatApplicationById(
       permissionsContext.flatApplicationMaps,
       applicationId,

@@ -39,7 +39,6 @@ const isLocalizedFile = (file: string): boolean =>
 // English source path a localized file mirrors: strip the leading `<lang>/`.
 const sourcePathOf = (localizedFile: string): string => {
   const segments = path.relative(DOCS_ROOT, localizedFile).split(path.sep);
-  // segments[0] is the language code; the rest is the source-relative path.
   return path.join(DOCS_ROOT, ...segments.slice(1));
 };
 
@@ -80,7 +79,6 @@ const main = (): void => {
     return;
   }
 
-  // Per-language blast-radius check.
   const filesByLanguage = new Map<string, number>();
   const orphansByLanguage = new Map<string, number>();
   for (const file of localizedFiles) {

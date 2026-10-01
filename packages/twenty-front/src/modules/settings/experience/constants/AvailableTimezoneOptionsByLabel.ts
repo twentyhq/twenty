@@ -6,8 +6,6 @@ const { AVAILABLE_TIME_ZONE_OPTIONS_BY_LABEL } = {
   AVAILABLE_TIME_ZONE_OPTIONS_BY_LABEL: IANA_TIME_ZONES.reduce<
     Record<string, SelectOption>
   >((result, ianaTimeZone) => {
-    // Skip time zones with GMT, UTC, or UCT in their name,
-    // and duplicates.
     if (
       formatTimeZoneLabel(ianaTimeZone).slice(11).includes('GMT') ||
       formatTimeZoneLabel(ianaTimeZone).slice(11).includes('UTC') ||

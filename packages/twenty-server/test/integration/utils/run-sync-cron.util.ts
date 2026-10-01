@@ -2,8 +2,6 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 
 import { enqueueJobAndDrain } from 'test/integration/utils/enqueue-job-and-drain.util';
 
-export const runSyncCron = async (cronJob: {
-  name: string;
-}): Promise<void> => {
+export const runSyncCron = async (cronJob: { name: string }): Promise<void> => {
   await enqueueJobAndDrain(MessageQueue.cronQueue, cronJob.name, {});
 };

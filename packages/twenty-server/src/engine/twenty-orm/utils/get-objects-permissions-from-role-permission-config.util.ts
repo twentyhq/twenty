@@ -4,7 +4,7 @@ import {
 } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
-import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
+import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config.type';
 import { computePermissionIntersection } from 'src/engine/twenty-orm/utils/compute-permission-intersection.util';
 
 export const getObjectsPermissionsFromRolePermissionConfig = ({
@@ -33,8 +33,7 @@ export const getObjectsPermissionsFromRolePermissionConfig = ({
     return computePermissionIntersection(permissionsPerRole);
   }
 
-  // Multi-role union is unimplemented and every producer emits one role, so
-  // taking the first is exact rather than lossy.
+  // Multi-role union is unimplemented and every producer emits one role, so taking the first is exact
   if ('unionOf' in rolePermissionConfig) {
     const roleId = rolePermissionConfig.unionOf[0];
 

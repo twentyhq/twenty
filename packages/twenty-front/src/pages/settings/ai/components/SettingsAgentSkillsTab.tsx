@@ -1,8 +1,7 @@
 import { getApplicationDisplayName } from '@/applications/utils/getApplicationDisplayName';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { useSortedArray } from '@/ui/layout/table/hooks/useSortedArray';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -12,6 +11,7 @@ import { useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import {
+  Dropdown,
   SearchInput,
   Section,
   SettingsRow,
@@ -51,8 +51,7 @@ export const SettingsAgentSkillsTab = () => {
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const installedApplications = currentWorkspace?.installedApplications;
 
-  // not memoized: getApplicationDisplayName translates the standard and custom
-  // labels, so a cached label would survive a locale change
+  // not memoized: the label is translated, so a cached one would survive a locale change
   const skillTableItems = (data?.skills ?? []).map((skill) => {
     const application = installedApplications?.find(
       (installedApplication) => installedApplication.id === skill.applicationId,
@@ -130,32 +129,35 @@ export const SettingsAgentSkillsTab = () => {
         <SearchInput
           placeholder={t`Search a skill...`}
           value={searchTerm}
-          onChange={setSearchTerm}
+          onValueChange={setSearchTerm}
           filterDropdown={(filterButton) => (
-            <Dropdown
+            <DropdownRoot
               dropdownId="settings-skills-filter-dropdown"
-              dropdownPlacement="bottom-end"
-              dropdownOffset={{ x: 0, y: 8 }}
-              clickableComponent={filterButton}
-              dropdownComponents={
-                <LegacyDropdownContent>
-                  <DropdownMenuItemsContainer>
+              type="panel"
+            >
+              <Dropdown.Trigger render={filterButton} />
+              <DropdownContent
+                side="bottom"
+                align="end"
+                sideOffset={8}
+                alignOffset={0}
+              >
+                <Dropdown.Section>
+                  <SettingsRow
+                    startIcon={<IconArchive />}
+                    onCheckedChange={setShowDeactivated}
+                    checked={showDeactivated}
+                  >{t`Deactivated`}</SettingsRow>
+                  {isAdvancedModeEnabled && (
                     <SettingsRow
-                      startIcon={<IconArchive />}
-                      onCheckedChange={setShowDeactivated}
-                      checked={showDeactivated}
-                    >{t`Deactivated`}</SettingsRow>
-                    {isAdvancedModeEnabled && (
-                      <SettingsRow
-                        startIcon={<IconSettings />}
-                        onCheckedChange={setShowSystemSkills}
-                        checked={showSystemSkills}
-                      >{t`System skills`}</SettingsRow>
-                    )}
-                  </DropdownMenuItemsContainer>
-                </LegacyDropdownContent>
-              }
-            />
+                      startIcon={<IconSettings />}
+                      onCheckedChange={setShowSystemSkills}
+                      checked={showSystemSkills}
+                    >{t`System skills`}</SettingsRow>
+                  )}
+                </Dropdown.Section>
+              </DropdownContent>
+            </DropdownRoot>
           )}
         />
       </StyledSearchContainer>

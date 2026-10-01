@@ -6,7 +6,7 @@ import { getCurrentUser } from 'test/integration/graphql/utils/get-current-user.
 import { signUpOperationFactory } from 'test/integration/graphql/utils/sign-up-operation-factory.util';
 import { signUpInWorkspaceAndGetAccessToken } from 'test/integration/graphql/utils/sign-up-in-workspace-and-get-access-token.util';
 import { deleteUser } from 'test/integration/graphql/utils/delete-user.util';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { updateConfigVariable } from 'test/integration/twenty-config/utils/update-config-variable.util';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
@@ -68,7 +68,6 @@ describe('deleteUser', () => {
   });
 
   it('should soft delete user and remove workspace relations when deleting a user in their only workspace', async () => {
-    // 1.  Arrange
     // Enable public invite link to allow sign up without personal token
     const enablePublicInviteLinkMutation = {
       query: `
@@ -218,7 +217,7 @@ describe('updateUserEmail', () => {
       }
     `;
 
-    const updateResponse = await makeMetadataAPIRequest(
+    const updateResponse = await makeMetadataApiRequest(
       {
         query: updateEmailMutation,
         variables: { newEmail: updatedEmail },
@@ -259,7 +258,7 @@ describe('updateUserEmail', () => {
         }
       `;
 
-      const updateResponse = await makeMetadataAPIRequest(
+      const updateResponse = await makeMetadataApiRequest(
         {
           query: updateEmailMutation,
           variables: { newEmail: updatedEmail },

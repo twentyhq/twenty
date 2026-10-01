@@ -133,6 +133,7 @@ export { getViewFilterUniversalIdentifier } from './deterministic-identifier/get
 export { getViewGroupUniversalIdentifier } from './deterministic-identifier/get-view-group-universal-identifier.util';
 export { getViewSortUniversalIdentifier } from './deterministic-identifier/get-view-sort-universal-identifier.util';
 export { getViewUniversalIdentifier } from './deterministic-identifier/get-view-universal-identifier.util';
+export { getWorkflowVersionUniversalIdentifier } from './deterministic-identifier/get-workflow-version-universal-identifier.util';
 export type {
   EnqueueJobOptions,
   EnqueueJobInput,
@@ -175,6 +176,8 @@ export type { OAuthConnectionProviderConfig } from './oauthConnectionProviderCon
 export type { OAuthProviderTokenRequestContentType } from './oauthProviderTokenRequestContentType.type';
 export type { ObjectFieldManifest } from './objectFieldManifest.type';
 export type { ObjectManifest } from './objectManifestType';
+export type { ObjectPermissionAction } from './objectPermissionActionType';
+export { OBJECT_PERMISSION_ACTIONS } from './objectPermissionActionType';
 export type {
   PageLayoutWidgetManifest,
   StandalonePageLayoutWidgetManifest,
@@ -187,6 +190,7 @@ export type {
 } from './permissionFlagManifestType';
 export type { PostInstallLogicFunctionApplicationManifest } from './postInstallLogicFunctionApplicationType';
 export type { PreInstallLogicFunctionApplicationManifest } from './preInstallLogicFunctionApplicationType';
+export type { RoleManifestGrant } from './roleManifestGrantType';
 export type {
   ObjectPermissionManifest,
   FieldPermissionManifest,
@@ -233,6 +237,13 @@ export {
   serializeApplicationVariableValue,
   deserializeApplicationVariableValue,
 } from './utils/applicationVariableValueSerialization';
+export type { EffectiveObjectPermissions } from './utils/getEffectiveObjectPermissionsFromRoleManifest';
+export {
+  ROLE_LEVEL_FLAG_BY_OBJECT_PERMISSION_ACTION,
+  getEffectiveObjectPermissionsFromRoleManifest,
+} from './utils/getEffectiveObjectPermissionsFromRoleManifest';
+export { getRoleManifestGrantsNotCoveredBy } from './utils/getRoleManifestGrantsNotCoveredBy';
+export { getRowLevelRestrictionSignature } from './utils/getRowLevelRestrictionSignature';
 export {
   RESERVED_SETTINGS_MENU_ITEM_TITLES,
   isReservedSettingsMenuItemTitle,
@@ -249,3 +260,7 @@ export type {
   ViewManifest,
 } from './viewManifestType';
 export type { WorkflowActionTriggerSettings } from './workflowActionTriggerSettingsType';
+export type { WorkflowManifest } from './workflowManifestType';
+export { workflowManifestSchema } from './workflowManifestType';
+export type { WorkflowStepManifest } from './workflowStepManifestType';
+export { workflowStepManifestSchema } from './workflowStepManifestType';

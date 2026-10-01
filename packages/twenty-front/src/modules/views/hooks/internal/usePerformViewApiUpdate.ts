@@ -31,8 +31,7 @@ export const usePerformViewApiUpdate = () => {
 
   const store = useStore();
 
-  // The server recreates the view groups when mainGroupByFieldMetadataId changes,
-  // so the store has to be realigned on the groups returned by the mutation
+  // The server recreates view groups when mainGroupByFieldMetadataId changes
   const syncViewGroupsFromMutationResult = useCallback(
     ({
       viewId,

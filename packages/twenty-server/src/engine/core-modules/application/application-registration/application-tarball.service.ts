@@ -37,7 +37,8 @@ import {
   FileUploadCompletionService,
   type FileUploadStorageLocation,
 } from 'src/engine/core-modules/file/file-upload/services/file-upload-completion.service';
-import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.types';
+import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.type';
+import { findReservedVariableNamesInApplicationManifest } from 'src/engine/core-modules/application/utils/find-reserved-variable-names-in-application-manifest.util';
 import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file/utils/remove-file-folder-from-file-entity-path.utils';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
@@ -392,6 +393,16 @@ export class ApplicationTarballService {
     ) {
       throw new ApplicationRegistrationException(
         'Tarball manifest application universalIdentifier must be a valid UUID',
+        ApplicationRegistrationExceptionCode.INVALID_INPUT,
+      );
+    }
+
+    const reservedVariableNames =
+      findReservedVariableNamesInApplicationManifest(manifest.application);
+
+    if (reservedVariableNames.length > 0) {
+      throw new ApplicationRegistrationException(
+        `Variable names are reserved: ${reservedVariableNames.join(', ')}`,
         ApplicationRegistrationExceptionCode.INVALID_INPUT,
       );
     }

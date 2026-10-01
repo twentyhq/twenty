@@ -11,14 +11,9 @@ import { SettingsDataModelFieldRelationJunctionForm } from '@/settings/data-mode
 import { SettingsDataModelFieldRelationPreviewContent } from '@/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationPreviewContent';
 import { SettingsDataModelRelationPreviewImage } from '@/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationPreviewImageCard';
 import { SettingsDataModelRelationFieldPreviewSubWidget } from '@/settings/data-model/fields/preview/components/SettingsDataModelRelationFieldPreviewSubWidget';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { useIsMobile } from 'twenty-ui/utilities';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  FieldMetadataType,
-  RelationType,
-  FeatureFlagKey,
-} from '~/generated-metadata/graphql';
+import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 import { type SettingsDataModelFieldEditFormValues } from '@/settings/data-model/types/SettingsDataModelFieldEditFormValues';
 
 type SettingsDataModelFieldRelationFormCardProps = {
@@ -37,9 +32,6 @@ export const SettingsDataModelFieldRelationFormCard = ({
       SettingsDataModelFieldEditFormValues
   >();
   const isMobile = useIsMobile();
-  const isJunctionRelationsEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_JUNCTION_RELATIONS_ENABLED,
-  );
 
   const { objectMetadataItems } = useObjectMetadataItems();
 
@@ -132,12 +124,11 @@ export const SettingsDataModelFieldRelationFormCard = ({
             sourceObjectMetadataId={sourceObjectMetadataItem?.id}
             disabled={disabled}
           />
-          {isJunctionRelationsEnabled && (
-            <SettingsDataModelFieldRelationJunctionForm
-              objectNameSingular={objectNameSingular}
-              existingFieldMetadataId={existingFieldMetadataId}
-            />
-          )}
+          <SettingsDataModelFieldRelationJunctionForm
+            objectNameSingular={objectNameSingular}
+            existingFieldMetadataId={existingFieldMetadataId}
+            disabled={disabled}
+          />
         </>
       }
     />

@@ -6,8 +6,8 @@ import { getMenuListItemProps } from './getMenuListItemProps';
 
 export const MenuItem = (props: MenuActionItemProps) => (
   <MenuPrimitive.Item
-    {...getMenuListItemProps<MenuPrimitive.Item.State, MenuActionItemProps>(
+    {...getMenuListItemProps<MenuPrimitive.Item.State, MenuActionItemProps>({
       props,
-    )}
+    })}
   />
 );

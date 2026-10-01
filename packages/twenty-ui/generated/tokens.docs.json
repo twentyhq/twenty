@@ -483,6 +483,13 @@
     "isNumber": false
   },
   {
+    "path": "boxShadow.bottomPanel",
+    "cssVariable": "--t-box-shadow-bottom-panel",
+    "light": "0px 0px 20px 0px color(display-p3 0 0 0 / 0.1)",
+    "dark": "0px 0px 20px 0px rgba(0, 0, 0, 0.1)",
+    "isNumber": false
+  },
+  {
     "path": "boxShadow.color",
     "cssVariable": "--t-box-shadow-color",
     "light": "color(display-p3 0 0 0 / 0.039)",
@@ -6088,6 +6095,13 @@
     "light": "2147483647",
     "dark": "2147483647",
     "isNumber": true
+  },
+  {
+    "path": "modal.size.compact.width",
+    "cssVariable": "--t-modal-size-compact-width",
+    "light": "360px",
+    "dark": "360px",
+    "isNumber": false
   },
   {
     "path": "modal.size.fullscreen.height",

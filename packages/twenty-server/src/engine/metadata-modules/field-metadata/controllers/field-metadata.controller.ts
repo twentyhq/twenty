@@ -20,14 +20,14 @@ import { ApiPath, FeatureFlagKey } from 'twenty-shared/types';
 
 import { type RestCursorPageInfo } from 'src/engine/api/rest/metadata/types/rest-cursor-page-info.type';
 import { paginateByIdCursor } from 'src/engine/api/rest/metadata/utils/paginate-by-id-cursor.util';
-import { type AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request';
+import { type AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request.type';
 import { ApplicationRestApiExceptionFilter } from 'src/engine/core-modules/application/application-rest-api-exception.filter';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
-import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { DerivedFieldMetadataIdsService } from 'src/engine/metadata-modules/derived-field-metadata-ids/services/derived-field-metadata-ids.service';
 import { type DerivedFieldMetadataIds } from 'src/engine/metadata-modules/derived-field-metadata-ids/types/derived-field-metadata-ids.type';
 import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
@@ -61,7 +61,17 @@ import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scope
 @Controller(`${ApiPath.Rest}/metadata/fields`)
 @UseGuards(
   JwtAuthGuard,
-  WorkspaceAuthGuard,
+  AuthPrincipalGuard({
+    userSession: {
+      standard: true,
+      impersonated: true,
+      playground: true,
+      workspaceAgnostic: false,
+    },
+    apiKey: true,
+    oauthClient: true,
+    application: true,
+  }),
   SettingsPermissionGuard(PermissionFlagType.DATA_MODEL),
 )
 @UseFilters(
@@ -82,8 +92,7 @@ export class FieldMetadataController {
     private readonly applicationTranslationCatalogService: ApplicationTranslationCatalogService,
   ) {}
 
-  // REST returns the same labels the app renders: resolved for the caller's
-  // locale, through the one resolver the GraphQL read path uses.
+  // same locale-resolved labels as the GraphQL read path
   private async toPresentedFieldDtos({
     fields,
     derivedFieldMetadataIds,

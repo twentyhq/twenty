@@ -1,6 +1,7 @@
 export const STANDARD_OBJECT_ICONS = {
   activityTarget: 'IconCheckbox',
   activity: 'IconCheckbox',
+  agentChatThreadTarget: 'IconMessage',
   apiKey: 'IconRobot',
   attachment: 'IconFileImport',
   blocklist: 'IconForbid2',

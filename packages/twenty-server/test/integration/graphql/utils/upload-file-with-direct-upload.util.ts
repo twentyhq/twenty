@@ -1,6 +1,6 @@
 import gql from 'graphql-tag';
 import request from 'supertest';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { FileFolder } from 'twenty-shared/types';
 
 export const createFileUploadMutation = gql`
@@ -79,7 +79,7 @@ export const createFileUploadAndPutFile = async ({
   fieldMetadataId,
   token,
 }: UploadFileWithDirectUploadArgs): Promise<DirectUploadTarget> => {
-  const createResponse = await makeMetadataAPIRequest(
+  const createResponse = await makeMetadataApiRequest(
     {
       query: createFileUploadMutation,
       variables: {
@@ -109,7 +109,7 @@ export const uploadFileWithDirectUpload = async (
 ): Promise<DirectUploadedFile> => {
   const { fileId } = await createFileUploadAndPutFile(args);
 
-  const completeResponse = await makeMetadataAPIRequest(
+  const completeResponse = await makeMetadataApiRequest(
     {
       query: completeFileUploadMutation,
       variables: { fileId },

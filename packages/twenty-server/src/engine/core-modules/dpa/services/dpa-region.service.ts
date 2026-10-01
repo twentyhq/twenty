@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { DEFAULT_DPA_REGION } from 'src/engine/core-modules/dpa/config/dpa-region-config.constant';
-import { type DpaRegion } from 'src/engine/core-modules/dpa/types/dpa.types';
+import { type DpaRegion } from 'src/engine/core-modules/dpa/types/dpa.type';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 

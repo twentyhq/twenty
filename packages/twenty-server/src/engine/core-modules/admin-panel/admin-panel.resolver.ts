@@ -84,6 +84,7 @@ import { MessageQueueService } from 'src/engine/core-modules/message-queue/servi
 import { type ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
 import { ConfigVariableGraphqlApiExceptionFilter } from 'src/engine/core-modules/twenty-config/filters/config-variable-graphql-api-exception.filter';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { ThrottlerGraphqlApiExceptionFilter } from 'src/engine/core-modules/throttler/filters/throttler-graphql-api-exception.filter';
 import { TwoFactorAuthenticationExceptionFilter } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication-exception.filter';
 import { UsageBreakdownItemDTO } from 'src/engine/core-modules/usage/dtos/usage-breakdown-item.dto';
 import { UsageAnalyticsService } from 'src/engine/core-modules/usage/services/usage-analytics.service';
@@ -92,12 +93,9 @@ import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { AdminPanelGuard } from 'src/engine/guards/admin-panel-guard';
 import { AdminPanelOrImpersonateGuard } from 'src/engine/guards/admin-panel-or-impersonate.guard';
-import { NoImpersonationGuard } from 'src/engine/guards/no-impersonation.guard';
+import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { ServerLevelImpersonateGuard } from 'src/engine/guards/server-level-impersonate.guard';
-import { RequireUserSessionGuard } from 'src/engine/guards/require-user-session.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
-import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
-import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { MODEL_FAMILY_LABELS } from 'src/engine/metadata-modules/ai/ai-models/constants/model-family-labels.const';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { AiModelTier } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-tier.enum';
@@ -113,13 +111,22 @@ import { getAvailableEfforts } from 'src/engine/metadata-modules/ai/ai-models/ut
 @UseFilters(
   AuthGraphqlApiExceptionFilter,
   TwoFactorAuthenticationExceptionFilter,
+  ThrottlerGraphqlApiExceptionFilter,
   PreventNestToAutoLogGraphqlErrorsFilter,
   ConfigVariableGraphqlApiExceptionFilter,
 )
 @UseGuards(
-  WorkspaceAuthGuard,
-  UserAuthGuard,
-  RequireUserSessionGuard,
+  AuthPrincipalGuard({
+    userSession: {
+      standard: true,
+      impersonated: true,
+      playground: true,
+      workspaceAgnostic: false,
+    },
+    apiKey: false,
+    oauthClient: false,
+    application: false,
+  }),
   SettingsPermissionGuard(PermissionFlagType.SECURITY),
 )
 export class AdminPanelResolver {
@@ -186,13 +193,39 @@ export class AdminPanelResolver {
     return this.adminStatisticsService.getTopWorkspaces(searchTerm);
   }
 
-  @UseGuards(AdminPanelGuard, NoImpersonationGuard)
+  @UseGuards(
+    AuthPrincipalGuard({
+      userSession: {
+        standard: true,
+        impersonated: false,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: false,
+      oauthClient: false,
+      application: false,
+    }),
+    AdminPanelGuard,
+  )
   @Query(() => [ServerAdminDTO])
   async getServerAdmins(): Promise<ServerAdminDTO[]> {
     return this.adminServerAdminService.getServerAdmins();
   }
 
-  @UseGuards(AdminPanelGuard, NoImpersonationGuard)
+  @UseGuards(
+    AuthPrincipalGuard({
+      userSession: {
+        standard: true,
+        impersonated: false,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: false,
+      oauthClient: false,
+      application: false,
+    }),
+    AdminPanelGuard,
+  )
   @Mutation(() => ServerAdminDTO)
   async updateServerAdminAccess(
     @Args() input: UpdateServerAdminAccessInput,
@@ -318,9 +351,6 @@ export class AdminPanelResolver {
         }),
       );
 
-    // Listed alongside language models rather than on a page of their own: an
-    // administrator enables and disables them the same way, and the table says
-    // which kind each one is.
     const evaluationModels = this.aiModelRegistryService
       .getAllEvaluationModelsWithStatus()
       .map(({ modelConfig, isAvailable, isAdminEnabled }) => ({
@@ -341,8 +371,7 @@ export class AdminPanelResolver {
 
     return {
       models: [...languageModels, ...evaluationModels],
-      // The model the tier actually runs on here, not the head of the chain: a
-      // chain can start with a provider this instance holds no key for.
+      // Not the chain head: it can start with a provider this instance holds no key for
       defaultModelByTier: AI_MODEL_TIERS.map((tier) => ({
         tier,
         modelId:

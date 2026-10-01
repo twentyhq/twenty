@@ -28,9 +28,6 @@ export const STRUCTURAL_EXEMPTIONS = [
 // payoff doesn't justify dual-injecting every call site or growing the
 // wrapper API. Treat as a "deliberately not migrated" list, not a backlog.
 export const WORKSPACE_SCOPED_EXEMPTIONS = [
-  // Resolved by id alone at auth/request-routing time and inside file-storage
-  // transactions; very few of the ~50 call sites carry a workspaceId.
-  'ApplicationEntity',
   // Read by user across every workspace they belong to (the "apps you
   // authorized" screen) and from the OAuth token endpoint, which has no
   // request workspace to scope by.
@@ -38,11 +35,7 @@ export const WORKSPACE_SCOPED_EXEMPTIONS = [
   // 20+ call sites across calendar/messaging modules; staged for a dedicated PR.
   'CalendarChannelEntity',
   'MessageChannelEntity',
-  // The domain column is globally unique across workspaces, so duplicate
-  // preflight checks must query cross-workspace; writes stay on the wrapper.
-  'EmailingDomainEntity',
   'UserWorkspaceEntity',
   'ConnectedAccountEntity',
-  'MessageFolderEntity',
   'WorkspaceSsoIdentityProviderEntity',
 ] as const;

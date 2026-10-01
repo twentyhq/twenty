@@ -1,13 +1,13 @@
 import { gql } from 'graphql-tag';
-import { makeMetadataAPIRequestWithMemberRole } from 'test/integration/metadata/suites/utils/make-metadata-api-request-with-member-role.util';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeMetadataApiRequestWithMemberRole } from 'test/integration/metadata/suites/utils/make-metadata-api-request-with-member-role.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 
 import { CONNECTED_ACCOUNT_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/connected-account-data-seeds.constant';
 
 describe('connectedAccountResolver (e2e)', () => {
   describe('myConnectedAccounts', () => {
     it('should not return another user private connected account', async () => {
-      const response = await makeMetadataAPIRequest({
+      const response = await makeMetadataApiRequest({
         query: gql`
           query MyConnectedAccounts {
             myConnectedAccounts {
@@ -30,7 +30,7 @@ describe('connectedAccountResolver (e2e)', () => {
     });
 
     it('should return a workspace-shared account owned by someone else', async () => {
-      const response = await makeMetadataAPIRequestWithMemberRole({
+      const response = await makeMetadataApiRequestWithMemberRole({
         query: gql`
           query MyConnectedAccounts {
             myConnectedAccounts {
@@ -54,7 +54,7 @@ describe('connectedAccountResolver (e2e)', () => {
     });
 
     it('should not offer an archived workspace-shared account to other members', async () => {
-      const response = await makeMetadataAPIRequestWithMemberRole({
+      const response = await makeMetadataApiRequestWithMemberRole({
         query: gql`
           query MyConnectedAccounts {
             myConnectedAccounts {
@@ -77,7 +77,7 @@ describe('connectedAccountResolver (e2e)', () => {
     });
 
     it('should list the caller own accounts before workspace-shared ones', async () => {
-      const response = await makeMetadataAPIRequestWithMemberRole({
+      const response = await makeMetadataApiRequestWithMemberRole({
         query: gql`
           query MyConnectedAccounts {
             myConnectedAccounts {
@@ -102,7 +102,7 @@ describe('connectedAccountResolver (e2e)', () => {
     });
 
     it('should resolve the account of every message channel the caller can see', async () => {
-      const channelsResponse = await makeMetadataAPIRequestWithMemberRole({
+      const channelsResponse = await makeMetadataApiRequestWithMemberRole({
         query: gql`
           query MyMessageChannels {
             myMessageChannels {
@@ -113,7 +113,7 @@ describe('connectedAccountResolver (e2e)', () => {
         `,
       });
 
-      const accountsResponse = await makeMetadataAPIRequestWithMemberRole({
+      const accountsResponse = await makeMetadataApiRequestWithMemberRole({
         query: gql`
           query MyConnectedAccounts {
             myConnectedAccounts {
@@ -140,7 +140,7 @@ describe('connectedAccountResolver (e2e)', () => {
     });
 
     it('should not return sensitive fields', async () => {
-      const response = await makeMetadataAPIRequest({
+      const response = await makeMetadataApiRequest({
         query: gql`
           query MyConnectedAccounts {
             myConnectedAccounts {
@@ -176,7 +176,7 @@ describe('connectedAccountResolver (e2e)', () => {
     });
 
     it('should reject requesting hidden fields via GraphQL', async () => {
-      const response = await makeMetadataAPIRequest({
+      const response = await makeMetadataApiRequest({
         query: gql`
           query MyConnectedAccounts {
             myConnectedAccounts {
@@ -195,7 +195,7 @@ describe('connectedAccountResolver (e2e)', () => {
 
   describe('deleteConnectedAccount', () => {
     it('should allow deleting own account', async () => {
-      const response = await makeMetadataAPIRequest({
+      const response = await makeMetadataApiRequest({
         query: gql`
           mutation DeleteConnectedAccount($id: UUID!) {
             deleteConnectedAccount(id: $id) {
@@ -214,7 +214,7 @@ describe('connectedAccountResolver (e2e)', () => {
     });
 
     it('should deny deleting another user account', async () => {
-      const response = await makeMetadataAPIRequest({
+      const response = await makeMetadataApiRequest({
         query: gql`
           mutation DeleteConnectedAccount($id: UUID!) {
             deleteConnectedAccount(id: $id) {
@@ -230,7 +230,7 @@ describe('connectedAccountResolver (e2e)', () => {
     });
 
     it('should deny a member deleting a workspace-shared account owned by someone else', async () => {
-      const response = await makeMetadataAPIRequestWithMemberRole({
+      const response = await makeMetadataApiRequestWithMemberRole({
         query: gql`
           mutation DeleteConnectedAccount($id: UUID!) {
             deleteConnectedAccount(id: $id) {
@@ -246,7 +246,7 @@ describe('connectedAccountResolver (e2e)', () => {
     });
 
     it('should keep a denied member able to use the workspace-shared account', async () => {
-      const response = await makeMetadataAPIRequestWithMemberRole({
+      const response = await makeMetadataApiRequestWithMemberRole({
         query: gql`
           query MyMessageChannels($connectedAccountId: UUID) {
             myMessageChannels(connectedAccountId: $connectedAccountId) {
@@ -265,7 +265,7 @@ describe('connectedAccountResolver (e2e)', () => {
     });
 
     it('should allow a member deleting a workspace-shared account they own', async () => {
-      const response = await makeMetadataAPIRequestWithMemberRole({
+      const response = await makeMetadataApiRequestWithMemberRole({
         query: gql`
           mutation DeleteConnectedAccount($id: UUID!) {
             deleteConnectedAccount(id: $id) {
@@ -284,7 +284,7 @@ describe('connectedAccountResolver (e2e)', () => {
     });
 
     it('should allow an admin deleting a workspace-shared account', async () => {
-      const response = await makeMetadataAPIRequest({
+      const response = await makeMetadataApiRequest({
         query: gql`
           mutation DeleteConnectedAccount($id: UUID!) {
             deleteConnectedAccount(id: $id) {
