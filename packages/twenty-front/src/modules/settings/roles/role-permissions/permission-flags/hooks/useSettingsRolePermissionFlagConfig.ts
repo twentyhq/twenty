@@ -2,6 +2,7 @@ import { type SettingsRolePermissionsSettingPermission } from '@/settings/roles/
 import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
 import {
+  IconAddressBook,
   IconApps,
   IconCreditCard,
   IconHierarchy,
@@ -16,7 +17,11 @@ import {
   IconSpy,
   IconUsers,
 } from 'twenty-ui/icon';
-import { PermissionFlagType } from '~/generated-metadata/graphql';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import {
+  FeatureFlagKey,
+  PermissionFlagType,
+} from '~/generated-metadata/graphql';
 
 type UseSettingsRolePermissionFlagConfigParams = {
   assignmentCapabilities?: {
@@ -36,6 +41,9 @@ export const useSettingsRolePermissionFlagConfig = ({
   } = assignmentCapabilities ?? {};
 
   const hasAssignmentCapabilities = assignmentCapabilities !== undefined;
+  const isRecordLevelSharingEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED,
+  );
 
   return useMemo(() => {
     const allPermissions: SettingsRolePermissionsSettingPermission[] = [
@@ -156,6 +164,19 @@ export const useSettingsRolePermissionFlagConfig = ({
         isRelevantForApiKeys: true,
         isRelevantForUsers: true,
       },
+      ...(isRecordLevelSharingEnabled
+        ? [
+            {
+              key: PermissionFlagType.ACCESS_ALL_RECORDS,
+              name: t`All records`,
+              description: t`See and manage records restricted by sharing`,
+              Icon: IconAddressBook,
+              isRelevantForAgents: true,
+              isRelevantForApiKeys: true,
+              isRelevantForUsers: true,
+            },
+          ]
+        : []),
     ];
 
     const canBeAssignedOnlyToAgents =
@@ -185,6 +206,7 @@ export const useSettingsRolePermissionFlagConfig = ({
       return true;
     });
   }, [
+    isRecordLevelSharingEnabled,
     hasAssignmentCapabilities,
     canBeAssignedToAgents,
     canBeAssignedToUsers,

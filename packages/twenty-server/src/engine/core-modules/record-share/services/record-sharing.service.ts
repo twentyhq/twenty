@@ -37,6 +37,7 @@ import {
   resolveRoleObjectAccess,
 } from 'src/engine/core-modules/record-share/utils/resolve-role-object-access.util';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { canRolesAccessAllRecords } from 'src/engine/core-modules/record-share/utils/can-roles-access-all-records.util';
 import { isRecordShareExceptionObject } from 'src/engine/core-modules/record-share/utils/is-record-share-exception-object.util';
 import { isRecordShareableObject } from 'src/engine/core-modules/record-share/utils/is-record-shareable-object.util';
 import { resolveRecordGeneralAccess } from 'src/engine/core-modules/record-share/utils/resolve-record-general-access.util';
@@ -49,6 +50,7 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { type OperationType } from 'src/engine/twenty-orm/repository/permissions.utils';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { resolveRoleIdsFromAuthContext } from 'src/engine/twenty-orm/utils/resolve-role-ids-from-auth-context.util';
 import { resolvePrincipalIdsFromAuthContext } from 'src/engine/twenty-orm/utils/resolve-principal-ids-from-auth-context.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -385,17 +387,18 @@ export class RecordSharingService {
     transactionScope?: WorkspaceTransactionScope;
   }) {
     const workspaceId = authContext.workspace.id;
-    const { userWorkspaceRoleMap, apiKeyRoleMap } =
+    const { userWorkspaceRoleMap, apiKeyRoleMap, roleIdsWithAllRecordsAccess } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'userWorkspaceRoleMap',
         'apiKeyRoleMap',
+        'roleIdsWithAllRecordsAccess',
       ]);
-    const principalIds =
-      resolvePrincipalIdsFromAuthContext({
-        authContext,
-        userWorkspaceRoleMap,
-        apiKeyRoleMap,
-      }) ?? [];
+    const roleMaps = { authContext, userWorkspaceRoleMap, apiKeyRoleMap };
+    const principalIds = resolvePrincipalIdsFromAuthContext(roleMaps) ?? [];
+    const canAccessAllRecords = canRolesAccessAllRecords({
+      roleIds: resolveRoleIdsFromAuthContext(roleMaps),
+      roleIdsWithAllRecordsAccess,
+    });
     const shares = await this.recordShareStorageService.findByRecordIds({
       workspaceId,
       objectMetadataId,
@@ -420,7 +423,8 @@ export class RecordSharingService {
       implicitAccessLevels: sharingObject.isRecordShareExceptionObject
         ? [
             generalAccess.accessLevel,
-            creatorWorkspaceMemberId === authContext.workspaceMemberId
+            creatorWorkspaceMemberId === authContext.workspaceMemberId ||
+            canAccessAllRecords
               ? RecordShareAccessLevel.FULL
               : null,
           ]

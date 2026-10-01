@@ -4,9 +4,15 @@ import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/ge
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 import { Injectable } from '@nestjs/common';
 
+import groupBy from 'lodash.groupby';
+
 import { isDefined } from 'twenty-shared/utils';
 import { In, type EntityManager, type FindOptionsWhere } from 'typeorm';
-import { RecordShareRowCause } from 'twenty-shared/types';
+import {
+  RecordShareAccessLevel,
+  RecordSharePrincipalType,
+  RecordShareRowCause,
+} from 'twenty-shared/types';
 
 import {
   RecordShareException,
@@ -151,6 +157,75 @@ export class RecordShareStorageService {
   }): Promise<void> {
     await this.withRepository({ workspaceId, transactionScope }, (repository) =>
       repository.delete({ sourceId }),
+    );
+  }
+
+  // Hands the grants a member held over to another member: full access moves
+  // to them, any lower grant goes with the member
+  async transferMemberGrants({
+    workspaceId,
+    fromWorkspaceMemberId,
+    toWorkspaceMemberId,
+  }: {
+    workspaceId: string;
+    fromWorkspaceMemberId: string;
+    toWorkspaceMemberId: string;
+  }): Promise<void> {
+    const transferableRowCauses = In([
+      RecordShareRowCause.OWNER,
+      RecordShareRowCause.MANUAL,
+    ]);
+
+    await this.workspaceOrmManager.executeInWorkspaceContext(
+      () =>
+        this.workspaceOrmManager.runInWorkspaceTransaction((transactionScope) =>
+          this.withRepository(
+            { workspaceId, transactionScope },
+            async (repository) => {
+              const fromMember = {
+                principalType: RecordSharePrincipalType.WORKSPACE_MEMBER,
+                principalId: fromWorkspaceMemberId,
+                rowCause: transferableRowCauses,
+              };
+              const fullGrants = await repository.find({
+                where: {
+                  ...fromMember,
+                  accessLevel: RecordShareAccessLevel.FULL,
+                },
+              });
+
+              for (const [objectMetadataId, grants] of Object.entries(
+                groupBy(fullGrants, (grant) => grant.objectMetadataId),
+              )) {
+                await repository.insert(
+                  grants.map((grant) => ({
+                    objectMetadataId: grant.objectMetadataId,
+                    recordId: grant.recordId,
+                    principalType: grant.principalType,
+                    principalId: toWorkspaceMemberId,
+                    accessLevel: grant.accessLevel,
+                    rowCause: grant.rowCause,
+                    sourceId: grant.sourceId,
+                  })),
+                  { onConflictDoNothing: true },
+                );
+                await repository.update(
+                  {
+                    objectMetadataId,
+                    recordId: In(grants.map((grant) => grant.recordId)),
+                    principalType: RecordSharePrincipalType.WORKSPACE_MEMBER,
+                    principalId: toWorkspaceMemberId,
+                    rowCause: transferableRowCauses,
+                  },
+                  { accessLevel: RecordShareAccessLevel.FULL },
+                );
+              }
+
+              await repository.delete(fromMember);
+            },
+          ),
+        ),
+      buildSystemAuthContext(workspaceId),
     );
   }
 

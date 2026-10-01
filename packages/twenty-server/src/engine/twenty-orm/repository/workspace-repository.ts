@@ -31,6 +31,7 @@ import {
   validateOperationIsPermittedOrThrow,
 } from 'src/engine/twenty-orm/repository/permissions.utils';
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
+import { canRolesAccessAllRecords } from 'src/engine/core-modules/record-share/utils/can-roles-access-all-records.util';
 import { type InheritedReadabilityChildRecords } from 'src/engine/core-modules/record-share/types/inherited-readability-child-records.type';
 import { type InheritedReadabilityChildrenParent } from 'src/engine/core-modules/record-share/types/inherited-readability-children-parent.type';
 import { type InheritedReadabilityColumnParent } from 'src/engine/core-modules/record-share/types/inherited-readability-column-parent.type';
@@ -55,6 +56,7 @@ import {
 import { isChildRecordBoundAtDeletion } from 'src/engine/twenty-orm/utils/is-child-record-bound-at-deletion.util';
 import { isOwningApplicationAuthContext } from 'src/engine/twenty-orm/utils/is-owning-application-auth-context.util';
 import { resolvePrincipalIdsFromAuthContext } from 'src/engine/twenty-orm/utils/resolve-principal-ids-from-auth-context.util';
+import { resolveRoleIdsFromAuthContext } from 'src/engine/twenty-orm/utils/resolve-role-ids-from-auth-context.util';
 import { resolveInheritedReadabilityChildLinks } from 'src/engine/core-modules/record-share/utils/resolve-inherited-readability-child-links.util';
 import { resolveInheritedReadabilityParents } from 'src/engine/core-modules/record-share/utils/resolve-inherited-readability-parents.util';
 import { resolveRowLevelPermissionRecordFilter } from 'src/engine/twenty-orm/utils/resolve-row-level-permission-record-filter.util';
@@ -2167,13 +2169,20 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
   }
 
   private resolveRowAccessPolicySubject(): RowAccessPolicySubject {
+    const roleMaps = {
+      authContext: this.options.authContext,
+      userWorkspaceRoleMap: this.options.internalContext.userWorkspaceRoleMap,
+      apiKeyRoleMap: this.options.internalContext.apiKeyRoleMap,
+    };
+
     return {
       isSystemContext: this.options.authContext?.type === 'system',
       objectsPermissions: this.options.objectRecordsPermissions,
-      principalIds: resolvePrincipalIdsFromAuthContext({
-        authContext: this.options.authContext,
-        userWorkspaceRoleMap: this.options.internalContext.userWorkspaceRoleMap,
-        apiKeyRoleMap: this.options.internalContext.apiKeyRoleMap,
+      principalIds: resolvePrincipalIdsFromAuthContext(roleMaps),
+      canAccessAllRecords: canRolesAccessAllRecords({
+        roleIds: resolveRoleIdsFromAuthContext(roleMaps),
+        roleIdsWithAllRecordsAccess:
+          this.options.internalContext.roleIdsWithAllRecordsAccess,
       }),
       isOwningApplication: (objectMetadata) =>
         isOwningApplicationAuthContext({

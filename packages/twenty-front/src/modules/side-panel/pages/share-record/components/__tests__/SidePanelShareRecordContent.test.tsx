@@ -420,6 +420,24 @@ describe('Share record side panel', () => {
     },
   );
 
+  it('tells viewers of a record open by default that admins can change its access', async () => {
+    renderSharing({
+      sharing: {
+        ...sharing,
+        isOpenByDefault: true,
+        viewerAccessLevel: RecordShareAccessLevel.READ,
+        roles: [],
+      },
+    });
+    await waitFor(() =>
+      expect(
+        screen.getByText(
+          'Only the creator of this record, people with full access to it and admins can change who has access.',
+        ),
+      ).toBeVisible(),
+    );
+  });
+
   it('marks the default access of a record open by default and lets owners restrict it', async () => {
     const user = userEvent.setup();
     renderSharing({

@@ -7,6 +7,7 @@ import { type WorkspacePostQueryHookInstance } from 'src/engine/api/graphql/work
 
 import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
 import { WorkspaceQueryHookType } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/types/workspace-query-hook.type';
+import { RecordShareOwnershipTransferService } from 'src/engine/core-modules/record-share/services/record-share-ownership-transfer.service';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
@@ -33,6 +34,7 @@ export class WorkspaceMemberDeleteOnePostQueryHook implements WorkspacePostQuery
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly connectedAccountOwnershipTransferService: ConnectedAccountOwnershipTransferService,
+    private readonly recordShareOwnershipTransferService: RecordShareOwnershipTransferService,
     @InjectAgentHistoryRepository('agentChatThread')
     private readonly agentChatThreadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
   ) {}
@@ -93,6 +95,17 @@ export class WorkspaceMemberDeleteOnePostQueryHook implements WorkspacePostQuery
     await this.connectedAccountOwnershipTransferService.transferConnectedAccountsOwnershipToCustodian(
       {
         removedUserWorkspace: userWorkspace,
+        actingUserWorkspaceId:
+          'userWorkspaceId' in authContext
+            ? authContext.userWorkspaceId
+            : undefined,
+      },
+    );
+
+    await this.recordShareOwnershipTransferService.transferRecordSharesToCustodian(
+      {
+        removedUserWorkspace: userWorkspace,
+        removedWorkspaceMemberId: workspaceMember.id,
         actingUserWorkspaceId:
           'userWorkspaceId' in authContext
             ? authContext.userWorkspaceId

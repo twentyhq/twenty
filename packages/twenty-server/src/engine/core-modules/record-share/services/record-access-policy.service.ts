@@ -22,7 +22,7 @@ import {
 import { resolveRecordIdsRestrictedForPrincipals } from 'src/engine/core-modules/record-share/utils/resolve-record-ids-restricted-for-principals.util';
 import { resolveRecordIdsSharedWithPrincipals } from 'src/engine/core-modules/record-share/utils/resolve-record-ids-shared-with-principals.util';
 import { isRecordGrantBeyondRoleAllowed } from 'src/engine/core-modules/record-share/utils/is-record-grant-beyond-role-allowed.util';
-import { isRecordShareExceptionObject } from 'src/engine/core-modules/record-share/utils/is-record-share-exception-object.util';
+import { shouldEnforceRecordShareExceptions } from 'src/engine/core-modules/record-share/utils/should-enforce-record-share-exceptions.util';
 import { resolveRecordShareGateKind } from 'src/engine/core-modules/record-share/utils/resolve-record-share-gate-kind.util';
 import { MAX_INHERITED_READABILITY_DEPTH } from 'src/engine/core-modules/record-share/constants/max-inherited-readability-depth.constant';
 import { resolveRequiredRecordShareAccessLevels } from 'src/engine/core-modules/record-share/utils/resolve-required-record-share-access-levels.util';
@@ -269,11 +269,13 @@ export class RecordAccessPolicyService {
   private async areRecordShareExceptionsEnforced({
     workspaceId,
     objectMetadata,
+    subject,
   }: SnapshotEvaluation): Promise<boolean> {
-    return (
-      isRecordShareExceptionObject(objectMetadata) &&
-      (await this.isRecordSharingEnabled(workspaceId))
-    );
+    return shouldEnforceRecordShareExceptions({
+      flatObjectMetadata: objectMetadata,
+      isRecordSharingEnabled: await this.isRecordSharingEnabled(workspaceId),
+      canAccessAllRecords: subject.canAccessAllRecords,
+    });
   }
 
   private async resolveSnapshotIdsNotRestrictedForSubject(

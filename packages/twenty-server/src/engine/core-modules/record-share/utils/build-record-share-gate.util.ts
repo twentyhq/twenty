@@ -12,9 +12,9 @@ import {
 } from 'src/engine/core-modules/record-share/utils/build-inherited-readability-condition.util';
 import { buildRecordShareCondition } from 'src/engine/core-modules/record-share/utils/build-record-share-condition.util';
 import { buildRecordShareExceptionCondition } from 'src/engine/core-modules/record-share/utils/build-record-share-exception-condition.util';
-import { isRecordShareExceptionObject } from 'src/engine/core-modules/record-share/utils/is-record-share-exception-object.util';
 import { isOpenWhenDetachedObject } from 'src/engine/core-modules/record-share/utils/is-open-when-detached-object.util';
 import { resolveInheritedReadabilityParents } from 'src/engine/core-modules/record-share/utils/resolve-inherited-readability-parents.util';
+import { shouldEnforceRecordShareExceptions } from 'src/engine/core-modules/record-share/utils/should-enforce-record-share-exceptions.util';
 import { resolveRequiredRecordShareAccessLevels } from 'src/engine/core-modules/record-share/utils/resolve-required-record-share-access-levels.util';
 import {
   type RowAccessPolicy,
@@ -45,8 +45,11 @@ export const buildRecordShareGate = ({
   });
   switch (gateKind) {
     case 'open':
-      return context.environment.isRecordSharingEnabled &&
-        isRecordShareExceptionObject(target.flatObjectMetadata)
+      return shouldEnforceRecordShareExceptions({
+        flatObjectMetadata: target.flatObjectMetadata,
+        isRecordSharingEnabled: context.environment.isRecordSharingEnabled,
+        canAccessAllRecords: context.subject.canAccessAllRecords,
+      })
         ? buildRecordShareExceptionGate(context, target)
         : { kind: 'open' };
     case 'deny':

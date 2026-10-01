@@ -114,6 +114,7 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         billingEntitlements: {},
         userWorkspaceRoleMap: {},
         apiKeyRoleMap: {},
+        roleIdsWithAllRecordsAccess: [],
         eventEmitterService: { emitDatabaseBatchEvent },
         recordStock: {
           assertRecordStockAvailable: jest.fn().mockResolvedValue(undefined),
