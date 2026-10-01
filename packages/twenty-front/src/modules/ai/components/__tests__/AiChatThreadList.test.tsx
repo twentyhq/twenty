@@ -3,11 +3,15 @@ import { I18nProvider } from '@lingui/react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
+import { SidePanelPages } from 'twenty-shared/types';
+import { IconMessage } from 'twenty-ui/icon';
 
 import { AiChatThreadList } from '@/ai/components/AiChatThreadList';
 import { AI_CHAT_THREAD_ACTIONS_SURFACE } from '@/ai/constants/AiChatThreadActionsSurface';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { type AiChatThreadActionsSurface } from '@/ai/types/AiChatThreadActionsSurface';
+import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
+import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 
 const openRecordInSidePanel = jest.fn();
@@ -34,11 +38,37 @@ const THREAD: AgentChatThreadRecord = {
   lastActivityAt: '2026-10-01T10:00:00.000Z',
 };
 
-const MetadataAndApolloMocksWrapper = getJestMetadataAndApolloMocksWrapper({
-  apolloMocks: [],
-});
+const clickThread = async (
+  surface: AiChatThreadActionsSurface,
+  { isOpenInSidePanel = false }: { isOpenInSidePanel?: boolean } = {},
+) => {
+  const MetadataAndApolloMocksWrapper = getJestMetadataAndApolloMocksWrapper({
+    apolloMocks: [],
+    onInitializeJotaiStore: (store) => {
+      if (!isOpenInSidePanel) {
+        return;
+      }
 
-const clickThread = async (surface: AiChatThreadActionsSurface) => {
+      store.set(isSidePanelOpenedState.atom, true);
+      store.set(sidePanelNavigationStackState.atom, [
+        {
+          page: SidePanelPages.RoutedPage,
+          pageTitle: 'Pricing questions',
+          pageIcon: IconMessage,
+          pageId: 'panel-page-1',
+          routedFlowStateScopeId: 'panel-page-1',
+          routedLocation: {
+            pathname: `/object/agentChatThread/${THREAD.id}`,
+            search: '',
+            hash: '',
+            state: null,
+            key: 'chat',
+          },
+        },
+      ]);
+    },
+  });
+
   render(
     <MetadataAndApolloMocksWrapper>
       <I18nProvider i18n={i18n}>
@@ -69,6 +99,14 @@ describe('AiChatThreadList', () => {
       objectNameSingular: 'agentChatThread',
       resetNavigationStack: true,
     });
+  });
+
+  it('leaves the side panel alone when the chat is already open in it', async () => {
+    await clickThread(AI_CHAT_THREAD_ACTIONS_SURFACE.INBOX_PAGE, {
+      isOpenInSidePanel: true,
+    });
+
+    expect(openRecordInSidePanel).not.toHaveBeenCalled();
   });
 
   it('opens a chat from a record on top of the side panel, so back returns to it', async () => {

@@ -1,8 +1,13 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { useStore } from 'jotai';
 import { Key } from 'ts-key-enum';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import {
+  AppPath,
+  CoreObjectNameSingular,
+  SidePanelPages,
+} from 'twenty-shared/types';
+import { getAppPath, isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AiChatThreadActionsDropdown } from '@/ai/components/AiChatThreadActionsDropdown';
@@ -26,6 +31,8 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
+import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
+import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 import { WorkspaceMemberAvatarStack } from '@/workspace-member/components/WorkspaceMemberAvatarStack';
 
 const StyledThreadItem = styled.div`
@@ -132,6 +139,7 @@ export const AiChatThreadListItem = ({
   onDetach,
 }: AiChatThreadListItemProps) => {
   const { t } = useLingui();
+  const store = useStore();
   const { openRecordInSidePanel } = useOpenRecordInSidePanel();
   const {
     isRenaming,
@@ -174,21 +182,40 @@ export const AiChatThreadListItem = ({
     isDropdownOpenComponentState,
     itemMenuDropdownId,
   );
+  const handleClick = () => {
+    if (isRenaming) {
+      return;
+    }
+
+    const currentSidePanelItem = store
+      .get(sidePanelNavigationStackState.atom)
+      .at(-1);
+    const isAlreadyOpen =
+      store.get(isSidePanelOpenedState.atom) &&
+      currentSidePanelItem?.page === SidePanelPages.RoutedPage &&
+      currentSidePanelItem.routedLocation.pathname ===
+        getAppPath(AppPath.RecordShowPage, {
+          objectNameSingular: CoreObjectNameSingular.AgentChatThread,
+          objectRecordId: thread.id,
+        });
+
+    // Reopening the chat on screen would drop the panel's back history
+    if (isAlreadyOpen) {
+      return;
+    }
+
+    openRecordInSidePanel({
+      recordId: thread.id,
+      objectNameSingular: CoreObjectNameSingular.AgentChatThread,
+      // The inbox lists chats like an index view, so a click replaces the
+      // panel instead of stacking on it
+      resetNavigationStack:
+        surface === AI_CHAT_THREAD_ACTIONS_SURFACE.INBOX_PAGE,
+    });
+  };
+
   return (
-    <StyledThreadItem
-      onClick={() => {
-        if (!isRenaming) {
-          openRecordInSidePanel({
-            recordId: thread.id,
-            objectNameSingular: CoreObjectNameSingular.AgentChatThread,
-            // The inbox lists chats like an index view, so a click replaces
-            // the panel instead of stacking on it
-            resetNavigationStack:
-              surface === AI_CHAT_THREAD_ACTIONS_SURFACE.INBOX_PAGE,
-          });
-        }
-      }}
-    >
+    <StyledThreadItem onClick={handleClick}>
       <StyledLeading>
         <WorkspaceMemberAvatarStack
           workspaceMembers={threadMembers}

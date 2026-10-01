@@ -112,7 +112,7 @@ export const AiChatThreadLinkedRecordsPage = ({
           );
         })}
         {hasNoOptions &&
-          (loading ? (
+          (areSearchRecordsStale ? (
             <Dropdown.Loading>{t`Loading records`}</Dropdown.Loading>
           ) : (
             <Dropdown.Empty>{t`No records found`}</Dropdown.Empty>
