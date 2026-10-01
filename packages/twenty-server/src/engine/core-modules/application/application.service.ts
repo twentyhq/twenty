@@ -770,10 +770,10 @@ export class ApplicationService {
       'flatApplicationMaps',
     ]);
 
-    await this.workspaceCacheService.invalidateAndRecompute(
-      workspaceId,
-      ALL_FLAT_ENTITY_MAPS_PROPERTIES,
-    );
+    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+      ...ALL_FLAT_ENTITY_MAPS_PROPERTIES,
+      'applicationVariableUserValueMaps',
+    ]);
 
     await this.broadcastApplicationEvent({
       type: 'deleted',

@@ -10,16 +10,37 @@ import {
 } from 'test/integration/secret-encryption/utils/find-one-application.util';
 import { runSecretEncryptionRotationCommand } from 'test/integration/secret-encryption/utils/run-secret-encryption-rotation-command.util';
 import { updateOneApplicationVariable } from 'test/integration/secret-encryption/utils/update-one-application-variable.util';
+import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
+import { type ApplicationVariableEntityService } from 'src/engine/core-modules/application/application-variable/application-variable.service';
+import { type ApplicationVariableUserValueService } from 'src/engine/core-modules/application/application-variable/application-variable-user-value.service';
 import { SECRET_APPLICATION_VARIABLE_MASK } from 'src/engine/core-modules/application/application-variable/constants/secret-application-variable-mask.constant';
+import { computeEncryptionKeyId } from 'src/engine/core-modules/secret-encryption/utils/compute-encryption-key-id.util';
+import { encryptAesGcmV2 } from 'src/engine/core-modules/secret-encryption/utils/encrypt-aes-gcm-v2.util';
+import { formatSecretEncryptionEnvelopeV2 } from 'src/engine/core-modules/secret-encryption/utils/format-secret-encryption-envelope-v2.util';
+import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
+import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 
 const ROTATION_VARIABLE_KEY = 'TEST_ROTATION_SECRET';
+const USER_ROTATION_VARIABLE_KEY = 'TEST_USER_ROTATION_SECRET';
+const PREVIOUS_ENCRYPTION_KEY = 'previous-encryption-key-retired-by-rotation';
 
 const buildExpectedMask = (plaintext: string): string => {
   const visibleCharsCount = Math.min(5, Math.floor(plaintext.length / 10));
 
   return `${plaintext.slice(0, visibleCharsCount)}${SECRET_APPLICATION_VARIABLE_MASK}`;
 };
+
+const encryptWithPreviousEncryptionKey = (plaintext: string): string =>
+  formatSecretEncryptionEnvelopeV2({
+    keyId: computeEncryptionKeyId({ rawKey: PREVIOUS_ENCRYPTION_KEY }),
+    payloadBase64: encryptAesGcmV2({
+      plaintext,
+      rawKey: PREVIOUS_ENCRYPTION_KEY,
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+    }),
+  });
 
 describe('secret-encryption:rotate command (integration)', () => {
   let applicationUniversalIdentifier: string;
@@ -52,6 +73,11 @@ describe('secret-encryption:rotate command (integration)', () => {
             applicationVariables: {
               [ROTATION_VARIABLE_KEY]: {
                 universalIdentifier: crypto.randomUUID(),
+                isSecret: true,
+              },
+              [USER_ROTATION_VARIABLE_KEY]: {
+                universalIdentifier: crypto.randomUUID(),
+                scope: 'USER',
                 isSecret: true,
               },
             },
@@ -116,5 +142,86 @@ describe('secret-encryption:rotate command (integration)', () => {
     );
 
     expect(variable?.value).toBe(buildExpectedMask(plaintext));
+  }, 90000);
+
+  it('refreshes the workspace cache so cached applicationVariables decrypt without the fallback key', async () => {
+    await global.testDataSource.query(
+      `UPDATE core."applicationVariable"
+          SET "value" = $1
+        WHERE "applicationId" = $2 AND "key" = $3`,
+      [
+        encryptWithPreviousEncryptionKey(plaintext),
+        applicationId,
+        ROTATION_VARIABLE_KEY,
+      ],
+    );
+    await getAppProviderByClassName<WorkspaceCacheService>(
+      'WorkspaceCacheService',
+    ).invalidateAndRecompute(SEED_APPLE_WORKSPACE_ID, [
+      'applicationVariableMaps',
+    ]);
+
+    await runSecretEncryptionRotationCommand(
+      {},
+      { FALLBACK_ENCRYPTION_KEY: PREVIOUS_ENCRYPTION_KEY },
+    );
+
+    await expect(
+      getAppProviderByClassName<ApplicationVariableEntityService>(
+        'ApplicationVariableEntityService',
+      ).getServerEnvVariables({
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        applicationId,
+      }),
+    ).resolves.toEqual({ [ROTATION_VARIABLE_KEY]: plaintext });
+  }, 90000);
+
+  it('refreshes cached member values so they decrypt without the fallback key', async () => {
+    await global.testDataSource.query(
+      `INSERT INTO core."applicationVariableUserValue"
+        ("workspaceId", "applicationVariableId", "userWorkspaceId", "value")
+       SELECT "workspaceId", "id", $1, $2
+         FROM core."applicationVariable"
+        WHERE "applicationId" = $3 AND "key" = $4`,
+      [
+        USER_WORKSPACE_DATA_SEED_IDS.JANE,
+        encryptWithPreviousEncryptionKey(plaintext),
+        applicationId,
+        USER_ROTATION_VARIABLE_KEY,
+      ],
+    );
+    await getAppProviderByClassName<WorkspaceCacheService>(
+      'WorkspaceCacheService',
+    ).invalidateAndRecompute(SEED_APPLE_WORKSPACE_ID, [
+      'applicationVariableUserValueMaps',
+    ]);
+
+    await runSecretEncryptionRotationCommand(
+      { site: 'application-variable-user-value' },
+      { FALLBACK_ENCRYPTION_KEY: PREVIOUS_ENCRYPTION_KEY },
+    );
+
+    const memberValues =
+      await getAppProviderByClassName<ApplicationVariableUserValueService>(
+        'ApplicationVariableUserValueService',
+      ).findApplicationVariableUserValues({
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        applicationId,
+        requestUserWorkspaceId: undefined,
+      });
+
+    expect(memberValues).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
+          variables: [
+            expect.objectContaining({
+              key: USER_ROTATION_VARIABLE_KEY,
+              value: plaintext,
+            }),
+          ],
+        }),
+      ]),
+    );
   }, 90000);
 });

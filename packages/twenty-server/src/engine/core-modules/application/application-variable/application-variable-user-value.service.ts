@@ -1,8 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import groupBy from 'lodash.groupby';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
-import { In } from 'typeorm';
 
 import {
   ApplicationException,
@@ -16,6 +14,7 @@ import {
 import { ApplicationVariableEntityService } from 'src/engine/core-modules/application/application-variable/application-variable.service';
 import { type ApplicationVariableUserValueDTO } from 'src/engine/core-modules/application/application-variable/dtos/application-variable-user-value.dto';
 import { type WorkspaceMemberApplicationVariablesDTO } from 'src/engine/core-modules/application/application-variable/dtos/workspace-member-application-variables.dto';
+import { type ApplicationVariableUserValueMaps } from 'src/engine/core-modules/application/application-variable/types/application-variable-user-value-maps.type';
 import { findActiveFlatApplicationByUniversalIdentifier } from 'src/engine/core-modules/application/utils/find-active-flat-application-by-universal-identifier.util';
 import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
@@ -30,11 +29,6 @@ type ApplicationVariableTarget = {
   workspaceId: string;
   applicationId: string;
 };
-
-type UserValue = Pick<
-  ApplicationVariableUserValueEntity,
-  'applicationVariableId' | 'value'
->;
 
 @Injectable()
 export class ApplicationVariableUserValueService {
@@ -72,22 +66,15 @@ export class ApplicationVariableUserValueService {
       return [];
     }
 
-    const userValues = await this.applicationVariableUserValueRepository.find(
-      workspaceId,
-      {
-        select: { applicationVariableId: true, value: true },
-        where: {
-          userWorkspaceId,
-          applicationVariableId: In(
-            userFlatApplicationVariables.map(({ id }) => id),
-          ),
-        },
-      },
-    );
+    const { applicationVariableUserValueMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'applicationVariableUserValueMaps',
+      ]);
 
     return this.toApplicationVariableUserValues({
       userFlatApplicationVariables,
-      userValues,
+      applicationVariableUserValueMaps,
+      userWorkspaceId,
       workspaceId,
       shouldMaskSecret: true,
     });
@@ -110,35 +97,21 @@ export class ApplicationVariableUserValueService {
       return [];
     }
 
-    const [userWorkspaces, userValues, { flatWorkspaceMemberMaps }] =
-      await Promise.all([
-        this.userWorkspaceRepository.find(workspaceId, {
-          select: { id: true, userId: true },
-          where: isDefined(requestUserWorkspaceId)
-            ? { id: requestUserWorkspaceId }
-            : undefined,
-        }),
-        this.applicationVariableUserValueRepository.find(workspaceId, {
-          select: {
-            userWorkspaceId: true,
-            applicationVariableId: true,
-            value: true,
-          },
-          where: {
-            applicationVariableId: In(
-              userFlatApplicationVariables.map(({ id }) => id),
-            ),
-            ...(isDefined(requestUserWorkspaceId)
-              ? { userWorkspaceId: requestUserWorkspaceId }
-              : {}),
-          },
-        }),
-        this.workspaceCacheService.getOrRecompute(workspaceId, [
-          'flatWorkspaceMemberMaps',
-        ]),
-      ]);
-
-    const userValuesByUserWorkspaceId = groupBy(userValues, 'userWorkspaceId');
+    const [
+      userWorkspaces,
+      { applicationVariableUserValueMaps, flatWorkspaceMemberMaps },
+    ] = await Promise.all([
+      this.userWorkspaceRepository.find(workspaceId, {
+        select: { id: true, userId: true },
+        where: isDefined(requestUserWorkspaceId)
+          ? { id: requestUserWorkspaceId }
+          : undefined,
+      }),
+      this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'applicationVariableUserValueMaps',
+        'flatWorkspaceMemberMaps',
+      ]),
+    ]);
 
     return userWorkspaces.flatMap(({ id: userWorkspaceId, userId }) => {
       const workspaceMemberId = resolveWorkspaceMemberIdForUser({
@@ -156,7 +129,8 @@ export class ApplicationVariableUserValueService {
           workspaceMemberId,
           variables: this.toApplicationVariableUserValues({
             userFlatApplicationVariables,
-            userValues: userValuesByUserWorkspaceId[userWorkspaceId] ?? [],
+            applicationVariableUserValueMaps,
+            userWorkspaceId,
             workspaceId,
             shouldMaskSecret: isDefined(requestUserWorkspaceId),
           }),
@@ -201,26 +175,25 @@ export class ApplicationVariableUserValueService {
       },
       ['applicationVariableId', 'userWorkspaceId'],
     );
+
+    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+      'applicationVariableUserValueMaps',
+    ]);
   }
 
   private toApplicationVariableUserValues({
     userFlatApplicationVariables,
-    userValues,
+    applicationVariableUserValueMaps,
+    userWorkspaceId,
     workspaceId,
     shouldMaskSecret,
   }: {
     userFlatApplicationVariables: FlatApplicationVariable[];
-    userValues: UserValue[];
+    applicationVariableUserValueMaps: ApplicationVariableUserValueMaps;
+    userWorkspaceId: string;
     workspaceId: string;
     shouldMaskSecret: boolean;
   }): ApplicationVariableUserValueDTO[] {
-    const userValueByApplicationVariableId = new Map(
-      userValues.map(({ applicationVariableId, value }) => [
-        applicationVariableId,
-        value,
-      ]),
-    );
-
     return userFlatApplicationVariables.map((flatApplicationVariable) => ({
       key: flatApplicationVariable.key,
       label: flatApplicationVariable.label,
@@ -232,8 +205,9 @@ export class ApplicationVariableUserValueService {
       isDeprecated: flatApplicationVariable.isDeprecated,
       value: this.applicationVariableService.getDisplayValue({
         value:
-          userValueByApplicationVariableId.get(flatApplicationVariable.id) ??
-          null,
+          applicationVariableUserValueMaps.byApplicationVariableId[
+            flatApplicationVariable.id
+          ]?.[userWorkspaceId] ?? null,
         workspaceId,
         isSecret: flatApplicationVariable.isSecret && shouldMaskSecret,
       }),

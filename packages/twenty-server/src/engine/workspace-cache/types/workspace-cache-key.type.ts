@@ -10,6 +10,7 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { type ResolverNameMapEntry } from 'src/engine/api/graphql/direct-execution/utils/build-resolver-name-map.util';
 import { type FlatApiKey } from 'src/engine/core-modules/api-key/types/flat-api-key.type';
 import { type ApplicationVariableCacheMaps } from 'src/engine/core-modules/application/application-variable/types/application-variable-cache-maps.type';
+import { type ApplicationVariableUserValueMaps } from 'src/engine/core-modules/application/application-variable/types/application-variable-user-value-maps.type';
 import { type FlatApplicationCacheMaps } from 'src/engine/core-modules/application/types/flat-application-cache-maps.type';
 import { type CurrentBillingSubscription } from 'src/engine/core-modules/billing/types/flat-billing-subscription.type';
 import { type BillingEntitlements } from 'src/engine/core-modules/billing/types/billing-entitlements.type';
@@ -37,6 +38,7 @@ export type AdditionalCacheDataMaps = {
   flatRowLevelPermissionPredicateGroupMaps: FlatRowLevelPermissionPredicateGroupMaps;
   flatWorkspaceMemberMaps: FlatWorkspaceMemberMaps;
   applicationVariableMaps: ApplicationVariableCacheMaps;
+  applicationVariableUserValueMaps: ApplicationVariableUserValueMaps;
   graphQLResolverNameMap: Record<string, ResolverNameMapEntry>;
   currentBillingSubscription: CurrentBillingSubscription;
   billingEntitlements: BillingEntitlements;
