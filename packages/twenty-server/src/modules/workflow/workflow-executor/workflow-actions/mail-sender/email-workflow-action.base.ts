@@ -14,6 +14,7 @@ import { type ToolExecutionContext } from 'src/engine/core-modules/tool/types/to
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { type UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
+import { isConnectedAccountUsableByActor } from 'src/engine/metadata-modules/connected-account/utils/is-connected-account-usable-by-actor.util';
 import { type PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -95,7 +96,7 @@ export abstract class EmailWorkflowActionBase extends ToolBackedWorkflowAction<W
 
   protected override async postprocessInput(
     resolvedInput: WorkflowSendEmailActionInput,
-    workspaceId: string,
+    toolExecutionContext: ToolExecutionContext,
   ): Promise<WorkflowSendEmailActionInput> {
     if (!isDefined(resolvedInput.connectedAccountId)) {
       return resolvedInput;
@@ -103,7 +104,7 @@ export abstract class EmailWorkflowActionBase extends ToolBackedWorkflowAction<W
 
     const connectedAccountId = await this.resolveSenderConnectedAccountId(
       resolvedInput.connectedAccountId,
-      workspaceId,
+      toolExecutionContext,
     );
 
     return { ...resolvedInput, connectedAccountId };
@@ -113,11 +114,13 @@ export abstract class EmailWorkflowActionBase extends ToolBackedWorkflowAction<W
   // to that member's first connected account, anything else is returned unchanged
   protected async resolveSenderConnectedAccountId(
     senderId: string,
-    workspaceId: string,
+    toolExecutionContext: ToolExecutionContext,
   ): Promise<string> {
     if (!isValidUuid(senderId)) {
       return senderId;
     }
+
+    const { workspaceId } = toolExecutionContext;
 
     const authContext = buildSystemAuthContext(workspaceId);
 
@@ -131,7 +134,7 @@ export abstract class EmailWorkflowActionBase extends ToolBackedWorkflowAction<W
       const connectedAccountId =
         await this.findFirstConnectedAccountIdByWorkspaceMember(
           workspaceMember,
-          workspaceId,
+          toolExecutionContext,
         );
 
       if (!isDefined(connectedAccountId)) {
@@ -161,7 +164,11 @@ export abstract class EmailWorkflowActionBase extends ToolBackedWorkflowAction<W
 
   private async findFirstConnectedAccountIdByWorkspaceMember(
     workspaceMember: WorkspaceMemberWorkspaceEntity,
-    workspaceId: string,
+    {
+      workspaceId,
+      userWorkspaceId,
+      requireConnectedAccountUsableByCaller,
+    }: ToolExecutionContext,
   ): Promise<string | null> {
     const userWorkspace = await this.userWorkspaceRepository.findOne({
       where: { userId: workspaceMember.userId, workspaceId },
@@ -182,8 +189,17 @@ export abstract class EmailWorkflowActionBase extends ToolBackedWorkflowAction<W
 
     const operation = this.getMode();
 
-    const emailCapableAccount = connectedAccounts.find((connectedAccount) =>
-      canConnectedAccountPerformEmailOperation({ connectedAccount, operation }),
+    const emailCapableAccount = connectedAccounts.find(
+      (connectedAccount) =>
+        canConnectedAccountPerformEmailOperation({
+          connectedAccount,
+          operation,
+        }) &&
+        (!requireConnectedAccountUsableByCaller ||
+          isConnectedAccountUsableByActor({
+            connectedAccount,
+            userWorkspaceId,
+          })),
     );
 
     return emailCapableAccount?.id ?? null;

@@ -463,6 +463,49 @@ describe('SendEmailWorkflowAction', () => {
       );
     });
 
+    it('picks the first mailbox of the member that an application run may use', async () => {
+      getExecutionContext.mockResolvedValue({
+        application: { name: 'Installed app' },
+        rolePermissionConfig: {
+          intersectionOf: ['member-role-id', 'application-role-id'],
+        },
+        authContext: {
+          type: 'user',
+          user: { id: 'initiator-user-id' },
+          userWorkspaceId: 'initiator-user-workspace-id',
+        },
+      });
+      hasToolPermission.mockResolvedValue(true);
+      workspaceMemberRepository.findOne.mockResolvedValue({ userId: 'user-1' });
+      userWorkspaceRepository.findOne.mockResolvedValue({
+        id: USER_WORKSPACE_ID,
+      });
+      connectedAccountRepository.find.mockResolvedValue([
+        {
+          id: 'private-account-id',
+          provider: ConnectedAccountProvider.GOOGLE,
+          connectionParameters: null,
+          userWorkspaceId: USER_WORKSPACE_ID,
+          visibility: 'user',
+        },
+        {
+          id: MEMBER_ACCOUNT_ID,
+          provider: ConnectedAccountProvider.GOOGLE,
+          connectionParameters: null,
+          userWorkspaceId: USER_WORKSPACE_ID,
+          visibility: 'workspace',
+        },
+      ]);
+
+      await executeWithSender(WORKSPACE_MEMBER_ID);
+
+      expect(mockSendEmailTool.execute).toHaveBeenCalledTimes(1);
+      expect(mockSendEmailTool.execute).toHaveBeenCalledWith(
+        expect.objectContaining({ connectedAccountId: MEMBER_ACCOUNT_ID }),
+        expect.any(Object),
+      );
+    });
+
     it('skips an older application connection and picks the member mailbox', async () => {
       workspaceMemberRepository.findOne.mockResolvedValue({ userId: 'user-1' });
       userWorkspaceRepository.findOne.mockResolvedValue({
