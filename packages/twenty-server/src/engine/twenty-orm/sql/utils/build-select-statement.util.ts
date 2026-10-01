@@ -611,42 +611,46 @@ const buildRelationValue = (leaves: RelationColumnLeaf[]): unknown => {
   return relationValue;
 };
 
-export const mapRowToEntity = <T extends ObjectLiteral>(
-  row: Record<string, unknown>,
+export const createRowToEntityMapper = <TRecord extends ObjectLiteral>(
   columnNameByResultAlias: Record<string, string>,
-): T => {
-  const entity: Record<string, unknown> = {};
-  const relationLeavesByProperty = new Map<string, RelationColumnLeaf[]>();
+): ((row: Record<string, unknown>) => TRecord) => {
+  const columns = Object.entries(columnNameByResultAlias).map(
+    ([resultAlias, propertyPath]) => {
+      const [propertyName, ...remainingSegments] = propertyPath.split('.');
 
-  for (const [resultAlias, propertyPath] of Object.entries(
-    columnNameByResultAlias,
-  )) {
-    if (!(resultAlias in row)) {
-      continue;
+      return { resultAlias, propertyName, remainingSegments };
+    },
+  );
+
+  return (row) => {
+    const entity: Record<string, unknown> = {};
+    const relationLeavesByProperty = new Map<string, RelationColumnLeaf[]>();
+
+    for (const { resultAlias, propertyName, remainingSegments } of columns) {
+      if (!(resultAlias in row)) {
+        continue;
+      }
+
+      if (remainingSegments.length === 0) {
+        entity[propertyName] = row[resultAlias];
+        continue;
+      }
+
+      const relationLeaves = relationLeavesByProperty.get(propertyName) ?? [];
+
+      relationLeaves.push({
+        propertySegments: remainingSegments,
+        value: row[resultAlias],
+      });
+      relationLeavesByProperty.set(propertyName, relationLeaves);
     }
 
-    const propertySegments = propertyPath.split('.');
-
-    if (propertySegments.length === 1) {
-      entity[propertyPath] = row[resultAlias];
-      continue;
+    for (const [relationProperty, relationLeaves] of relationLeavesByProperty) {
+      entity[relationProperty] = buildRelationValue(relationLeaves);
     }
 
-    const [relationProperty, ...remainingSegments] = propertySegments;
-    const relationLeaves = relationLeavesByProperty.get(relationProperty) ?? [];
-
-    relationLeaves.push({
-      propertySegments: remainingSegments,
-      value: row[resultAlias],
-    });
-    relationLeavesByProperty.set(relationProperty, relationLeaves);
-  }
-
-  for (const [relationProperty, relationLeaves] of relationLeavesByProperty) {
-    entity[relationProperty] = buildRelationValue(relationLeaves);
-  }
-
-  return entity as T;
+    return entity as TRecord;
+  };
 };
 
 export const buildColumnNameByResultAlias = (

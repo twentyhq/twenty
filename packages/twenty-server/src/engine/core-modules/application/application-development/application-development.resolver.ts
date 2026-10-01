@@ -38,6 +38,7 @@ import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
+import { ApplicationTargetGuard } from 'src/engine/guards/application-target.guard';
 
 @UsePipes(ResolverValidationPipe)
 @MetadataResolver()
@@ -64,8 +65,14 @@ export class ApplicationDevelopmentResolver {
   ) {}
 
   @Mutation(() => DevelopmentApplicationDTO)
+  @UseGuards(ApplicationTargetGuard)
   async createDevelopmentApplication(
-    @Args() { universalIdentifier, name }: CreateDevelopmentApplicationInput,
+    @ApplicationTargetArgs<CreateDevelopmentApplicationInput>({
+      kind: 'applicationUniversalIdentifier',
+      idKey: 'universalIdentifier',
+      requireApplicationRegistrationOwnership: true,
+    })
+    { universalIdentifier, name }: CreateDevelopmentApplicationInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<DevelopmentApplicationDTO> {
     return this.applicationDevelopmentService.createDevelopmentApplication({
@@ -76,10 +83,12 @@ export class ApplicationDevelopmentResolver {
   }
 
   @Query(() => ApplicationExportDTO)
+  @UseGuards(ApplicationTargetGuard)
   async exportApplication(
     @ApplicationTargetArgs<ExportApplicationInput>({
       kind: 'applicationUniversalIdentifier',
       idKey: 'universalIdentifier',
+      requireApplicationRegistrationOwnership: true,
     })
     { universalIdentifier }: ExportApplicationInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -91,10 +100,12 @@ export class ApplicationDevelopmentResolver {
   }
 
   @Mutation(() => WorkspaceMigrationDTO)
+  @UseGuards(ApplicationTargetGuard)
   async syncApplication(
     @ApplicationTargetArgs<ApplicationInput>({
       kind: 'applicationUniversalIdentifier',
       idKey: 'manifest.application.universalIdentifier',
+      requireApplicationRegistrationOwnership: true,
     })
     { manifest, dryRun, inferDeletionFromMissingEntities }: ApplicationInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -111,7 +122,10 @@ export class ApplicationDevelopmentResolver {
     deprecationReason:
       'Use createApplicationFileUploads and completeApplicationFileUploads, which send the files straight to file storage.',
   })
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.UPLOAD_FILE))
+  @UseGuards(
+    SettingsPermissionGuard(PermissionFlagType.UPLOAD_FILE),
+    ApplicationTargetGuard,
+  )
   async uploadApplicationFile(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @Args({ name: 'file', type: () => GraphQLUpload })
@@ -119,6 +133,7 @@ export class ApplicationDevelopmentResolver {
     @ApplicationTargetArgs<UploadApplicationFileInput>({
       kind: 'applicationUniversalIdentifier',
       idKey: 'applicationUniversalIdentifier',
+      requireApplicationRegistrationOwnership: true,
     })
     {
       applicationUniversalIdentifier,
@@ -140,12 +155,16 @@ export class ApplicationDevelopmentResolver {
   }
 
   @Mutation(() => CreateApplicationFileUploadsResultDTO)
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.UPLOAD_FILE))
+  @UseGuards(
+    SettingsPermissionGuard(PermissionFlagType.UPLOAD_FILE),
+    ApplicationTargetGuard,
+  )
   async createApplicationFileUploads(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @ApplicationTargetArgs<CreateApplicationFileUploadsInput>({
       kind: 'applicationUniversalIdentifier',
       idKey: 'applicationUniversalIdentifier',
+      requireApplicationRegistrationOwnership: true,
     })
     {
       applicationUniversalIdentifier,
@@ -160,12 +179,16 @@ export class ApplicationDevelopmentResolver {
   }
 
   @Mutation(() => CompleteApplicationFileUploadsResultDTO)
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.UPLOAD_FILE))
+  @UseGuards(
+    SettingsPermissionGuard(PermissionFlagType.UPLOAD_FILE),
+    ApplicationTargetGuard,
+  )
   async completeApplicationFileUploads(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @ApplicationTargetArgs<CompleteApplicationFileUploadsInput>({
       kind: 'applicationUniversalIdentifier',
       idKey: 'applicationUniversalIdentifier',
+      requireApplicationRegistrationOwnership: true,
     })
     {
       applicationUniversalIdentifier,

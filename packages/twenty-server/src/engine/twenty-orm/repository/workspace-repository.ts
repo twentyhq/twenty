@@ -2,6 +2,7 @@ import { msg } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import {
+  FeatureFlagKey,
   MetadataReadability,
   type ObjectRecord,
   type ObjectsPermissions,
@@ -2187,6 +2188,10 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       ),
       resolveTableExpression: (objectMetadataId) =>
         this.getTableExpression(objectMetadataId),
+      isRecordSharingEnabled:
+        this.options.internalContext.featureFlagsMap[
+          FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED
+        ] ?? false,
     };
   }
 
