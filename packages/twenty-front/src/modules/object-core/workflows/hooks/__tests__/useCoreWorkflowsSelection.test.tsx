@@ -14,6 +14,7 @@ import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 type CoreWorkflowRow = Pick<CoreWorkflow, 'id' | 'workspaceWorkflowId'>;
 
 const TABLE_ID = 'core-workflows-table';
+const OTHER_SURFACE_TABLE_ID = 'core-workflows-table-side-panel';
 
 const coreWorkflows: CoreWorkflowRow[] = [
   { id: 'core-1', workspaceWorkflowId: 'workspace-1' },
@@ -41,6 +42,12 @@ describe('useCoreWorkflowsSelection', () => {
     jotaiStore.set(coreWorkflowsFilterSettingsState.atom, {});
     jotaiStore.set(
       sortedFieldByTableFamilyState.atomFamily({ tableId: TABLE_ID }),
+      null,
+    );
+    jotaiStore.set(
+      sortedFieldByTableFamilyState.atomFamily({
+        tableId: OTHER_SURFACE_TABLE_ID,
+      }),
       null,
     );
   });
@@ -138,6 +145,40 @@ describe('useCoreWorkflowsSelection', () => {
     });
 
     expect(result.current.selectedRowIds).toEqual(['core-2']);
+    expect(jotaiStore.get(coreWorkflowsSelectionState.atom).rowIds).toEqual([
+      'core-2',
+    ]);
+  });
+
+  it('should drop a selection whose table was re-sorted on another surface', () => {
+    const { result } = renderSelection();
+
+    act(() => {
+      jotaiStore.set(coreWorkflowsSelectionState.atom, {
+        filterSettings: jotaiStore.get(coreWorkflowsFilterSettingsState.atom),
+        tableId: OTHER_SURFACE_TABLE_ID,
+        sort: null,
+        rowIds: ['core-1'],
+      });
+    });
+
+    expect(result.current.selectedRowIds).toEqual(['core-1']);
+
+    act(() => {
+      jotaiStore.set(
+        sortedFieldByTableFamilyState.atomFamily({
+          tableId: OTHER_SURFACE_TABLE_ID,
+        }),
+        { fieldName: 'name', direction: 'desc' },
+      );
+    });
+
+    expect(result.current.selectedRowIds).toEqual([]);
+
+    act(() => {
+      result.current.toggleRow('core-2');
+    });
+
     expect(jotaiStore.get(coreWorkflowsSelectionState.atom).rowIds).toEqual([
       'core-2',
     ]);

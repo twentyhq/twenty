@@ -10,16 +10,12 @@ import { isNonEmptyArray } from 'twenty-shared/utils';
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
 import { CORE_WORKFLOWS_DELETE_COMMAND_ID } from '@/object-core/commands/constants/CoreWorkflowsDeleteCommandId';
 import { CORE_WORKFLOW_FILTERS_COMMAND_ID } from '@/object-core/commands/constants/CoreWorkflowFiltersCommandId';
-import { coreWorkflowsFilterSettingsState } from '@/object-core/workflows/states/coreWorkflowsFilterSettingsState';
-import { coreWorkflowsSelectionState } from '@/object-core/workflows/states/coreWorkflowsSelectionState';
-import { getSelectedCoreWorkflowRowIds } from '@/object-core/workflows/utils/getSelectedCoreWorkflowRowIds';
+import { useSelectedCoreWorkflowRowIds } from '@/object-core/workflows/hooks/useSelectedCoreWorkflowRowIds';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
-import { sortedFieldByTableFamilyState } from '@/ui/layout/table/states/sortedFieldByTableFamilyState';
-import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
@@ -43,20 +39,7 @@ export const useCoreObjectsCommands = () => {
     workflowObjectMetadataItem.id,
   );
 
-  const coreWorkflowsSelection = useAtomStateValue(coreWorkflowsSelectionState);
-  const coreWorkflowsFilterSettings = useAtomStateValue(
-    coreWorkflowsFilterSettingsState,
-  );
-  const sortedFieldByTable = useAtomFamilyStateValue(
-    sortedFieldByTableFamilyState,
-    { tableId: coreWorkflowsSelection.tableId },
-  );
-
-  const selectedCoreWorkflowIds = getSelectedCoreWorkflowRowIds({
-    selection: coreWorkflowsSelection,
-    currentFilterSettings: coreWorkflowsFilterSettings,
-    currentSort: sortedFieldByTable,
-  });
+  const selectedCoreWorkflowIds = useSelectedCoreWorkflowRowIds();
 
   const isOnCoreWorkflowsIndex =
     isWorkflowCoreIndexPageEnabled &&
