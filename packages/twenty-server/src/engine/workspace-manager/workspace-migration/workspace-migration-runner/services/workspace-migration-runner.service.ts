@@ -489,7 +489,6 @@ export class WorkspaceMigrationRunnerService {
         }`,
         'Runner',
       );
-      await this.logBlockingDbActivity();
 
       if (queryRunner.isTransactionActive && !queryRunner.isReleased) {
         await queryRunner
@@ -506,6 +505,10 @@ export class WorkspaceMigrationRunnerService {
           'Runner',
         );
       }
+
+      await queryRunner.release();
+
+      await this.logBlockingDbActivity();
 
       const invertedActions = [...actions].reverse();
 
@@ -545,7 +548,9 @@ export class WorkspaceMigrationRunnerService {
         context: getFlatEntityMapsExceptionContext(error),
       });
     } finally {
-      await queryRunner.release();
+      if (!queryRunner.isReleased) {
+        await queryRunner.release();
+      }
     }
 
     const postCommitInvalidateStart = performance.now();

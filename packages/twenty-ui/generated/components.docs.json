@@ -3195,6 +3195,27 @@
     ]
   },
   {
+    "name": "Breadcrumb",
+    "entryPoint": "twenty-ui/primitives/navigation",
+    "slug": "navigation/breadcrumb",
+    "props": [
+      {
+        "name": "links",
+        "type": "BreadcrumbItem[]",
+        "required": true,
+        "defaultValue": null,
+        "description": "Ordered trail items. Each item accepts `children`, `href`, `render`, and `title`. The final item represents the current page."
+      },
+      {
+        "name": "render",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Caller-supplied root element or renderer. Preserve the navigation landmark and forward the supplied props and ref."
+      }
+    ]
+  },
+  {
     "name": "ListItem",
     "entryPoint": "twenty-ui/primitives/navigation",
     "slug": "navigation/list-item",
@@ -9309,34 +9330,6 @@
         "required": false,
         "defaultValue": "5",
         "description": "Distance between the button and tooltip in pixels."
-      }
-    ]
-  },
-  {
-    "name": "NavigationBar",
-    "entryPoint": "twenty-ui/components",
-    "slug": "components/navigation-bar",
-    "props": [
-      {
-        "name": "activeItemName",
-        "type": "string",
-        "required": true,
-        "defaultValue": null,
-        "description": "Name of the item to highlight. The application owns navigation."
-      },
-      {
-        "name": "isHidden",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": "false",
-        "description": "Hides the bar visually and from the accessibility tree."
-      },
-      {
-        "name": "items",
-        "type": "{ name: string; label: string; Icon: IconComponent; onClick: () => void; }[]",
-        "required": true,
-        "defaultValue": null,
-        "description": "Navigation items with a unique name, accessible label, Icon component, and onClick callback."
       }
     ]
   },

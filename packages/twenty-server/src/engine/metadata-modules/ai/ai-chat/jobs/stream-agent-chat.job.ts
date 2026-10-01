@@ -603,7 +603,7 @@ export class StreamAgentChatJob {
             });
           }
         } catch {
-          // best-effort; the authoritative persist runs onFinish
+          // best-effort; the authoritative persist runs onEnd
         }
       })();
 

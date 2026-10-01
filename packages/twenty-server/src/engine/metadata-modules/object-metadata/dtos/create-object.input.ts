@@ -86,7 +86,7 @@ export class CreateObjectInput {
 
   @IsBoolean()
   @IsOptional()
-  @Field({ nullable: true }) // Not nullable to me
+  @Field({ nullable: true })
   isLabelSyncedWithName?: boolean;
 }
 

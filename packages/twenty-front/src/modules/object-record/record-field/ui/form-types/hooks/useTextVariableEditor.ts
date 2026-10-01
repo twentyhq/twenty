@@ -22,9 +22,6 @@ type UseTextVariableEditorProps = {
   ariaLabelledBy?: string;
 };
 
-/**
- * Checks if the given text is a valid JSON object (not array, primitive, or null)
- */
 const isJsonObject = (text: string): boolean => {
   try {
     const parsed = JSON.parse(text);

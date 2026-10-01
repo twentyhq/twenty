@@ -11,14 +11,10 @@
  *   npx nx generate:ui twenty-docs
  */}
 
-<ParamField body="activeItemName" type="string" required>
-  Name of the item to highlight. The application owns navigation.
+<ParamField body="links" type="BreadcrumbItem[]" required>
+  Ordered trail items. Each item accepts `children`, `href`, `render`, and `title`. The final item represents the current page.
 </ParamField>
 
-<ParamField body="isHidden" type="boolean" default="false">
-  Hides the bar visually and from the accessibility tree.
-</ParamField>
-
-<ParamField body="items" type="{ name: string; label: string; Icon: IconComponent; onClick: () =&gt; void; }[]" required>
-  Navigation items with a unique name, accessible label, Icon component, and onClick callback.
+<ParamField body="render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, {}&gt;">
+  Caller-supplied root element or renderer. Preserve the navigation landmark and forward the supplied props and ref.
 </ParamField>
