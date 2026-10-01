@@ -1765,6 +1765,25 @@ enum NavigationMenuItemType {
   PAGE_LAYOUT
 }
 
+type ObjectAccessOverviewRoleDTO {
+  id: UUID!
+  label: String!
+  icon: String
+  canRead: Boolean!
+  canUpdate: Boolean!
+  canSoftDelete: Boolean!
+  canDestroy: Boolean!
+  hasRowFilter: Boolean!
+  canAccessAllRecords: Boolean!
+}
+
+type ObjectAccessOverviewDTO {
+  objectMetadataId: UUID!
+  roles: [ObjectAccessOverviewRoleDTO!]!
+  restrictedRecordCount: Int!
+  sharedRecordCount: Int!
+}
+
 type RecordPermissionsDTO {
   canRead: Boolean!
   canUpdate: Boolean!
@@ -2100,6 +2119,7 @@ enum FeatureFlagKey {
   IS_CONVERSATIONS_TAB_ENABLED
   IS_VALIDATION_RULES_ENABLED
   IS_RECORD_LEVEL_SHARING_ENABLED
+  IS_OBJECT_ACCESS_VIEW_ENABLED
   IS_WORKFLOW_SEND_CHAT_MESSAGE_ENABLED
 }
 
@@ -3830,13 +3850,14 @@ type MinimalMetadata {
 
 type Query {
   recordSharing(target: RecordSharingTargetInput!): RecordSharingDTO!
+  objectAccessOverview(objectMetadataId: UUID!): ObjectAccessOverviewDTO!
+  applicationSdkClientChecksums(applicationId: UUID!): SdkClientChecksums
+  isApplicationStopped(applicationUniversalIdentifier: String!): Boolean!
   navigationMenuItems: [NavigationMenuItem!]!
   navigationMenuItem(id: UUID!): NavigationMenuItem
   enterprisePortalSession(returnUrlPath: String): String
   enterpriseCheckoutSession(billingInterval: String): String
   enterpriseSubscriptionStatus: EnterpriseSubscriptionStatusDTO
-  applicationSdkClientChecksums(applicationId: UUID!): SdkClientChecksums
-  isApplicationStopped(applicationUniversalIdentifier: String!): Boolean!
   usageLimits: [UsageLimit!]!
   usageQuotasWithConsumption: [UsageQuotaWithConsumption!]!
   usageQuotaDefinitions: UsageQuotaDefinitions!
