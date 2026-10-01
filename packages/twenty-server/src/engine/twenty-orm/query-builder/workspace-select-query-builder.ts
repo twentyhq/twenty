@@ -67,6 +67,7 @@ export type QueryBuilderContext = {
   tableShape: WorkspaceTableShape;
   executor: QueryExecutor;
   objectRecordsPermissions: ObjectsPermissions;
+  isRecordSharingEnabled?: boolean;
   tableShapeByObjectMetadataId: (
     objectMetadataId: string,
   ) => WorkspaceTableShape;
@@ -78,6 +79,7 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
   readonly alias: string;
   readonly tableShape: WorkspaceTableShape;
   readonly objectRecordsPermissions: ObjectsPermissions;
+  readonly isRecordSharingEnabled: boolean;
 
   private readonly context: QueryBuilderContext;
   private readonly whereClauses: WhereClause[] = [];
@@ -100,6 +102,7 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
     this.alias = alias;
     this.tableShape = context.tableShape;
     this.objectRecordsPermissions = context.objectRecordsPermissions;
+    this.isRecordSharingEnabled = context.isRecordSharingEnabled ?? false;
     this.context = context;
   }
 

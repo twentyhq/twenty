@@ -43,6 +43,7 @@ import {
 } from 'src/engine/twenty-orm/types/row-access-policy.type';
 import { resolveRecordShareGateKind } from 'src/engine/core-modules/record-share/utils/resolve-record-share-gate-kind.util';
 import { buildRowAccessPolicy } from 'src/engine/twenty-orm/utils/build-row-access-policy.util';
+import { isRecordGrantBeyondRoleAllowed } from 'src/engine/core-modules/record-share/utils/is-record-grant-beyond-role-allowed.util';
 import { isObjectOperationPermitted } from 'src/engine/twenty-orm/utils/is-object-operation-permitted.util';
 import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
@@ -187,6 +188,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
         tableShape: this.options.tableShape,
         executor: this.options.executor,
         objectRecordsPermissions: this.options.objectRecordsPermissions,
+        isRecordSharingEnabled: this.isRecordSharingEnabled,
         tableShapeByObjectMetadataId: this.options.tableShapeByObjectMetadataId,
         onBeforeExecute: (queryBuilder) => this.onBeforeExecute(queryBuilder),
         formatResult: (records) => this.formatResult(records),
@@ -1903,6 +1905,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       allFieldsSelected: false,
       updatedColumns,
       authContext: this.options.authContext,
+      isRecordSharingEnabled: this.isRecordSharingEnabled,
     });
   }
 
@@ -2000,6 +2003,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
           this.options.internalContext.flatFieldMetadataMaps,
         objectIdByNameSingular:
           this.options.internalContext.objectIdByNameSingular,
+        isRecordSharingEnabled: this.isRecordSharingEnabled,
         selectedColumns: columnNames,
         allFieldsSelected: false,
         updatedColumns: [],
@@ -2057,7 +2061,12 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
 
     if (
       alias === queryBuilder.alias &&
-      !this.isObjectOperationPermitted({ flatObjectMetadata, operationType })
+      !this.isObjectOperationPermitted({ flatObjectMetadata, operationType }) &&
+      !isRecordGrantBeyondRoleAllowed({
+        flatObjectMetadata,
+        operationType,
+        isRecordSharingEnabled: this.isRecordSharingEnabled,
+      })
     ) {
       throw new PermissionsException(
         PermissionsExceptionMessage.PERMISSION_DENIED,
@@ -2094,6 +2103,18 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       default:
         assertUnreachable(policy);
     }
+  }
+
+  // Whether the role alone permits the operation, regardless of any record
+  // grant that may reach beyond it
+  isObjectOperationPermittedByRole(operationType: OperationType): boolean {
+    return (
+      this.options.shouldBypassPermissionChecks ||
+      this.isObjectOperationPermitted({
+        flatObjectMetadata: this.options.flatObjectMetadata,
+        operationType,
+      })
+    );
   }
 
   private isObjectOperationPermitted({
@@ -2178,11 +2199,16 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       ),
       resolveTableExpression: (objectMetadataId) =>
         this.getTableExpression(objectMetadataId),
-      isRecordSharingEnabled:
-        this.options.internalContext.featureFlagsMap[
-          FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED
-        ] ?? false,
+      isRecordSharingEnabled: this.isRecordSharingEnabled,
     };
+  }
+
+  private get isRecordSharingEnabled(): boolean {
+    return (
+      this.options.internalContext.featureFlagsMap[
+        FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED
+      ] ?? false
+    );
   }
 
   private resolveInheritedReadabilityParents(

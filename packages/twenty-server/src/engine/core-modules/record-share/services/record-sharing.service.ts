@@ -23,6 +23,7 @@ import {
 import { RecordShareStorageService } from 'src/engine/core-modules/record-share/services/record-share-storage.service';
 import { type RecordShareInput } from 'src/engine/core-modules/record-share/types/record-share-input.type';
 import { isRecordShareExceptionObject } from 'src/engine/core-modules/record-share/utils/is-record-share-exception-object.util';
+import { isRecordShareableObject } from 'src/engine/core-modules/record-share/utils/is-record-shareable-object.util';
 import { resolveRecordGeneralAccess } from 'src/engine/core-modules/record-share/utils/resolve-record-general-access.util';
 import { resolveShareWithPrincipalOrThrow } from 'src/engine/core-modules/record-share/utils/resolve-share-with-principal-or-throw.util';
 import { resolveViewerRecordShareAccessLevel } from 'src/engine/core-modules/record-share/utils/resolve-viewer-record-share-access-level.util';
@@ -49,6 +50,7 @@ const CREATED_BY_WORKSPACE_MEMBER_ID_COLUMN_NAME = 'createdByWorkspaceMemberId';
 
 type RecordSharingObject = {
   objectMetadata: FlatObjectMetadata;
+  isRecordSharingEnabled: boolean;
   isRecordShareExceptionObject: boolean;
 };
 
@@ -133,7 +135,8 @@ export class RecordSharingService {
       await this.getRecordShares({ ...args, sharingObject });
     const canChangeSharing =
       permissions.canUpdate &&
-      viewerAccessLevel === RecordShareAccessLevel.FULL;
+      viewerAccessLevel === RecordShareAccessLevel.FULL &&
+      (await this.isUpdatePermittedByRole(args, objectMetadata));
     const { flatRoleMaps } = canChangeSharing
       ? await this.workspaceCacheService.getOrRecompute(
           args.authContext.workspace.id,
@@ -215,7 +218,12 @@ export class RecordSharingService {
                 operationType: 'update',
                 withDeleted: args.withDeleted ?? true,
               });
-            if (writableIds.length !== 1) {
+            // A grant may let someone edit a record beyond their role, never
+            // decide who else gets it
+            if (
+              writableIds.length !== 1 ||
+              !repository.isObjectOperationPermittedByRole('update')
+            ) {
               throw new NotFoundError('Record not found');
             }
             const { viewerAccessLevel, creatorWorkspaceMemberId } =
@@ -442,12 +450,24 @@ export class RecordSharingService {
 
   private isShareable({
     objectMetadata,
-    isRecordShareExceptionObject,
+    isRecordSharingEnabled,
   }: RecordSharingObject): boolean {
-    return (
-      isRecordShareExceptionObject ||
-      objectMetadata.readability === MetadataReadability.PRIVATE ||
-      objectMetadata.readability === MetadataReadability.INHERITED
+    return isRecordShareableObject({
+      flatObjectMetadata: objectMetadata,
+      isRecordSharingEnabled,
+    });
+  }
+
+  private isUpdatePermittedByRole(
+    { authContext }: RecordSharingArgs,
+    objectMetadata: FlatObjectMetadata,
+  ): Promise<boolean> {
+    return this.workspaceOrmManager.executeInWorkspaceContext(
+      () =>
+        this.workspaceOrmManager
+          .getRepositoryWithContextPermissions(objectMetadata.nameSingular)
+          .isObjectOperationPermittedByRole('update'),
+      authContext,
     );
   }
 
@@ -466,12 +486,13 @@ export class RecordSharingService {
     if (!isDefined(objectMetadata)) {
       throw new NotFoundError('Record not found');
     }
+    const isRecordSharingEnabled =
+      featureFlagsMap[FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED] ?? false;
     return {
       objectMetadata,
+      isRecordSharingEnabled,
       isRecordShareExceptionObject:
-        (featureFlagsMap[FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED] ??
-          false) &&
-        isRecordShareExceptionObject(objectMetadata),
+        isRecordSharingEnabled && isRecordShareExceptionObject(objectMetadata),
     };
   }
 }

@@ -1,7 +1,11 @@
 import { Field, InputType } from '@nestjs/graphql';
 
 import { Type } from 'class-transformer';
-import { MetadataReadability, ObjectOpenRecordIn } from 'twenty-shared/types';
+import {
+  MetadataReadability,
+  ObjectOpenRecordIn,
+  ObjectSharingReach,
+} from 'twenty-shared/types';
 import {
   IsBoolean,
   IsEnum,
@@ -97,6 +101,11 @@ export class UpdateObjectPayload {
   @ValidateIf((_, value) => value !== undefined)
   @Field(() => MetadataReadability, { nullable: true })
   readability?: MetadataReadability;
+
+  @IsEnum(ObjectSharingReach)
+  @IsOptional()
+  @Field(() => ObjectSharingReach, { nullable: true })
+  sharingReach?: ObjectSharingReach;
 
   @Type(() => MetadataTranslationOverrideInput)
   @ValidateNested({ each: true })

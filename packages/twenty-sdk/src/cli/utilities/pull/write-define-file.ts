@@ -11,6 +11,7 @@ import {
   NavigationMenuItemType,
   NumberDataType,
   ObjectOpenRecordIn,
+  ObjectSharingReach,
   ObjectRecordGroupByDateGranularity,
   PageLayoutTabLayoutMode,
   PageLayoutType,
@@ -83,6 +84,11 @@ export const OBJECT_ENUM_BINDINGS: EnumBinding[] = [
     path: ['openRecordIn'],
     symbol: 'ObjectOpenRecordIn',
     members: ObjectOpenRecordIn,
+  },
+  {
+    path: ['sharingReach'],
+    symbol: 'ObjectSharingReach',
+    members: ObjectSharingReach,
   },
   ...buildFieldEnumBindings(['fields', '[]']),
 ];

@@ -6,6 +6,7 @@ import { type ObjectRecordEvent } from 'twenty-shared/database-events';
 import { FeatureFlagKey, type ObjectRecord } from 'twenty-shared/types';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import { isNonEmptyString } from '@sniptt/guards';
+import { EVERYONE_PRINCIPAL_ID } from 'twenty-shared/constants';
 import { In, MoreThanOrEqual } from 'typeorm';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -20,6 +21,7 @@ import {
 } from 'src/engine/core-modules/record-share/utils/resolve-event-record-snapshots.util';
 import { resolveRecordIdsRestrictedForPrincipals } from 'src/engine/core-modules/record-share/utils/resolve-record-ids-restricted-for-principals.util';
 import { resolveRecordIdsSharedWithPrincipals } from 'src/engine/core-modules/record-share/utils/resolve-record-ids-shared-with-principals.util';
+import { isRecordGrantBeyondRoleAllowed } from 'src/engine/core-modules/record-share/utils/is-record-grant-beyond-role-allowed.util';
 import { isRecordShareExceptionObject } from 'src/engine/core-modules/record-share/utils/is-record-share-exception-object.util';
 import { resolveRecordShareGateKind } from 'src/engine/core-modules/record-share/utils/resolve-record-share-gate-kind.util';
 import { MAX_INHERITED_READABILITY_DEPTH } from 'src/engine/core-modules/record-share/constants/max-inherited-readability-depth.constant';
@@ -88,28 +90,36 @@ export class RecordAccessPolicyService {
 
     return {
       resolveAdmittedRecordIds: async (subject) => {
+        const eventSnapshots = resolveEventRecordSnapshots(events);
         const snapshots = await this.resolveSnapshotsReadableByRole({
           workspaceId,
           objectMetadata,
-          snapshots: resolveEventRecordSnapshots(events),
+          snapshots: eventSnapshots,
           subject,
           depth: 0,
         });
 
-        if (snapshots.length === 0) {
-          return new Set();
-        }
+        const admittedSnapshotIds =
+          snapshots.length === 0
+            ? new Set<string>()
+            : await this.resolveSnapshotIdsAdmittedByRecordShareGate(
+                {
+                  workspaceId,
+                  objectMetadata,
+                  snapshots,
+                  subject,
+                  depth: 0,
+                },
+                fetchRecordShares,
+              );
 
-        return this.resolveSnapshotIdsAdmittedByRecordShareGate(
-          {
-            workspaceId,
-            objectMetadata,
-            snapshots,
-            subject,
-            depth: 0,
-          },
-          fetchRecordShares,
-        );
+        return new Set([
+          ...admittedSnapshotIds,
+          ...(await this.resolveSnapshotIdsGrantedBeyondRole(
+            { workspaceId, objectMetadata, snapshots: eventSnapshots, subject },
+            fetchRecordShares,
+          )),
+        ]);
       },
     };
   }
@@ -205,14 +215,47 @@ export class RecordAccessPolicyService {
     }
   }
 
-  private async areRecordShareExceptionsEnforced({
-    workspaceId,
-    objectMetadata,
-  }: SnapshotEvaluation): Promise<boolean> {
-    if (!isRecordShareExceptionObject(objectMetadata)) {
-      return false;
+  // A record shared by name reaches its recipients whatever their role or row
+  // filter says about the object, as the row access policy does
+  private async resolveSnapshotIdsGrantedBeyondRole(
+    {
+      workspaceId,
+      objectMetadata,
+      snapshots,
+      subject,
+    }: Omit<SnapshotEvaluation, 'depth'>,
+    fetchRecordShares: FetchRecordShares,
+  ): Promise<Set<string>> {
+    const namedPrincipalIds = (subject.principalIds ?? []).filter(
+      (principalId) => principalId !== EVERYONE_PRINCIPAL_ID,
+    );
+
+    if (
+      snapshots.length === 0 ||
+      namedPrincipalIds.length === 0 ||
+      !isRecordGrantBeyondRoleAllowed({
+        flatObjectMetadata: objectMetadata,
+        operationType: 'select',
+        isRecordSharingEnabled: await this.isRecordSharingEnabled(workspaceId),
+      })
+    ) {
+      return new Set();
     }
 
+    const grantedRecordIds = resolveRecordIdsSharedWithPrincipals({
+      recordShares: await fetchRecordShares(),
+      principalIds: namedPrincipalIds,
+      accessLevels: resolveRequiredRecordShareAccessLevels('select'),
+    });
+
+    return new Set(
+      snapshots
+        .map((snapshot) => snapshot.id)
+        .filter((snapshotId) => grantedRecordIds.has(snapshotId)),
+    );
+  }
+
+  private async isRecordSharingEnabled(workspaceId: string): Promise<boolean> {
     const { featureFlagsMap } = await this.workspaceCacheService.getOrRecompute(
       workspaceId,
       ['featureFlagsMap'],
@@ -220,6 +263,16 @@ export class RecordAccessPolicyService {
 
     return (
       featureFlagsMap[FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED] ?? false
+    );
+  }
+
+  private async areRecordShareExceptionsEnforced({
+    workspaceId,
+    objectMetadata,
+  }: SnapshotEvaluation): Promise<boolean> {
+    return (
+      isRecordShareExceptionObject(objectMetadata) &&
+      (await this.isRecordSharingEnabled(workspaceId))
     );
   }
 

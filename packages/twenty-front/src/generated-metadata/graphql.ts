@@ -4707,6 +4707,7 @@ export type Object = {
   readability: MetadataReadability;
   readabilityParentFieldUniversalIdentifiers?: Maybe<Array<Scalars['UUID']['output']>>;
   searchFieldMetadataList: Array<SearchField>;
+  sharingReach: ObjectSharingReach;
   shortcut?: Maybe<Scalars['String']['output']>;
   universalIdentifier: Scalars['String']['output'];
   updatedAt: Scalars['DateTime']['output'];
@@ -4844,6 +4845,11 @@ export enum ObjectRecordGroupByDateGranularity {
   QUARTER_OF_THE_YEAR = 'QUARTER_OF_THE_YEAR',
   WEEK = 'WEEK',
   YEAR = 'YEAR'
+}
+
+export enum ObjectSharingReach {
+  ROLE_ACCESS = 'ROLE_ACCESS',
+  WORKSPACE = 'WORKSPACE'
 }
 
 /** Onboarding status */
@@ -6666,6 +6672,7 @@ export type UpdateObjectPayload = {
   nameSingular?: InputMaybe<Scalars['String']['input']>;
   openRecordIn?: InputMaybe<ObjectOpenRecordIn>;
   readability?: InputMaybe<MetadataReadability>;
+  sharingReach?: InputMaybe<ObjectSharingReach>;
   shortcut?: InputMaybe<Scalars['String']['input']>;
   translations?: InputMaybe<Array<MetadataTranslationOverrideInput>>;
 };

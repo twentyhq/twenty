@@ -1,4 +1,9 @@
-import { MetadataReadability, MetadataWritability } from 'twenty-shared/types';
+import { EVERYONE_PRINCIPAL_ID } from 'twenty-shared/constants';
+import {
+  MetadataReadability,
+  MetadataWritability,
+  ObjectSharingReach,
+} from 'twenty-shared/types';
 
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -196,6 +201,101 @@ describe('buildRowAccessPolicy', () => {
         depth: 0,
       }),
     ).toEqual({ kind: 'open' });
+  });
+
+  describe('with a record shared beyond the role', () => {
+    const sharingEnvironment = { ...environment, isRecordSharingEnabled: true };
+    const company = buildObject({
+      id: 'company',
+      readability: MetadataReadability.OPEN,
+    });
+    const buildForCompany = (
+      subject: RowAccessPolicySubject,
+      operationType: 'select' | 'update' | 'delete' = 'select',
+    ) =>
+      buildRowAccessPolicy({
+        subject,
+        environment: sharingEnvironment,
+        tableAlias: 'company',
+        flatObjectMetadata: company,
+        operationType,
+        depth: 0,
+      });
+    const withoutObjectPermission: RowAccessPolicySubject = {
+      ...readEverything,
+      principalIds: ['role-2', 'member-1', 'role-1'],
+      objectsPermissions: {},
+    };
+
+    it('narrows a subject without object permission to the records named for them', () => {
+      const policy = buildForCompany(withoutObjectPermission);
+
+      expect(policy.kind).toBe('gated');
+      if (policy.kind !== 'gated') throw new Error('Expected a grant gate');
+      expect(policy.condition.sql).toMatch(
+        /^EXISTS \(SELECT 1 FROM "workspace"."recordShare" AS "company_recordShare"/,
+      );
+      expect(Object.values(policy.condition.parameters)).toContainEqual([
+        'role-2',
+        'member-1',
+        'role-1',
+      ]);
+    });
+
+    it('never lets general access reach beyond the role', () => {
+      const policy = buildForCompany({
+        ...withoutObjectPermission,
+        principalIds: [EVERYONE_PRINCIPAL_ID, 'member-1'],
+      });
+
+      if (policy.kind !== 'gated') throw new Error('Expected a grant gate');
+      expect(Object.values(policy.condition.parameters)).toContainEqual([
+        'member-1',
+      ]);
+    });
+
+    it('keeps deletion with the role', () => {
+      expect(buildForCompany(withoutObjectPermission, 'delete')).toEqual({
+        kind: 'denied',
+      });
+    });
+
+    it('denies a subject named nowhere', () => {
+      expect(
+        buildForCompany({
+          ...withoutObjectPermission,
+          principalIds: [EVERYONE_PRINCIPAL_ID],
+        }),
+      ).toEqual({ kind: 'denied' });
+    });
+
+    it('lets a named grant bypass the row filter of the role', () => {
+      const policy = buildForCompany({
+        ...readEverything,
+        resolveRowLevelPermissionRecordFilter: () => NOTE_FILTER,
+      });
+
+      if (policy.kind !== 'gated') throw new Error('Expected a grant gate');
+      expect(policy.condition.sql).toMatch(
+        /^\(\(\("company"."title" = :restricted\) AND \(NOT EXISTS .*\)\) OR \(EXISTS \(SELECT 1 FROM "workspace"."recordShare" AS "company_recordShare"/,
+      );
+    });
+
+    it('keeps the role limits when the object restricts sharing to the role', () => {
+      expect(
+        buildRowAccessPolicy({
+          subject: withoutObjectPermission,
+          environment: sharingEnvironment,
+          tableAlias: 'company',
+          flatObjectMetadata: {
+            ...company,
+            sharingReach: ObjectSharingReach.ROLE_ACCESS,
+          },
+          operationType: 'select',
+          depth: 0,
+        }),
+      ).toEqual({ kind: 'denied' });
+    });
   });
 
   it('denies an object the subject has no permission on', () => {
