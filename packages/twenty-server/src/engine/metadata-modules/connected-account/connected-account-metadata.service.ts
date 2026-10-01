@@ -30,6 +30,7 @@ import { type ConnectedAccountDeletedEvent } from 'src/engine/metadata-modules/c
 import { type ConnectedAccountUsableByCaller } from 'src/engine/metadata-modules/connected-account/types/connected-account-usable-by-caller.type';
 import { buildConnectedAccountUsableByCallerWhere } from 'src/engine/metadata-modules/connected-account/utils/build-connected-account-usable-by-caller-where.util';
 import { getConnectedAccountAdministrationPermissionFlag } from 'src/engine/metadata-modules/connected-account/utils/get-connected-account-administration-permission-flag.util';
+import { isConnectedAccountUsableByActor } from 'src/engine/metadata-modules/connected-account/utils/is-connected-account-usable-by-actor.util';
 import { isConnectedAccountUsableByCaller } from 'src/engine/metadata-modules/connected-account/utils/is-connected-account-usable-by-caller.util';
 import { MESSAGE_CHANNEL_DELETED_EVENT } from 'src/engine/metadata-modules/message-channel/constants/message-channel-deleted.constant';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
@@ -94,12 +95,7 @@ export class ConnectedAccountMetadataService {
         }),
       )
       .filter((connectedAccount) =>
-        isDefined(userWorkspaceId)
-          ? isConnectedAccountUsableByCaller({
-              connectedAccount,
-              userWorkspaceId,
-            })
-          : connectedAccount.visibility === 'workspace',
+        isConnectedAccountUsableByActor({ connectedAccount, userWorkspaceId }),
       );
   }
 

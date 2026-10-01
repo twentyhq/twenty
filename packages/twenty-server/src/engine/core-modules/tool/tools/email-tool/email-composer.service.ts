@@ -33,6 +33,7 @@ import { parseCommaSeparatedEmails } from 'src/engine/core-modules/tool/tools/em
 import { selectConnectedAccountIdForCaller } from 'src/engine/core-modules/tool/tools/email-tool/utils/select-connected-account-id-for-caller.util';
 import { type ToolExecutionContext } from 'src/engine/core-modules/tool/types/tool-execution-context.type';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
+import { isConnectedAccountUsableByActor } from 'src/engine/metadata-modules/connected-account/utils/is-connected-account-usable-by-actor.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
@@ -64,10 +65,14 @@ export class EmailComposerService {
     connectedAccountId,
     workspaceId,
     operation,
+    userWorkspaceId,
+    requireConnectedAccountUsableByCaller,
   }: {
     connectedAccountId: string;
     workspaceId: string;
     operation: EmailOperation;
+    userWorkspaceId?: string;
+    requireConnectedAccountUsableByCaller?: boolean;
   }): Promise<ConnectedAccountEntity> {
     if (!isValidUuid(connectedAccountId)) {
       throw new EmailToolException(
@@ -96,6 +101,16 @@ export class EmailComposerService {
       }
 
       if (
+        requireConnectedAccountUsableByCaller &&
+        !isConnectedAccountUsableByActor({ connectedAccount, userWorkspaceId })
+      ) {
+        throw new EmailToolException(
+          `Connected account '${connectedAccountId}' is private to another member`,
+          EmailToolExceptionCode.CONNECTED_ACCOUNT_NOT_USABLE_BY_CALLER,
+        );
+      }
+
+      if (
         !canConnectedAccountPerformEmailOperation({
           connectedAccount,
           operation,
@@ -115,10 +130,12 @@ export class EmailComposerService {
     workspaceId,
     userWorkspaceId,
     operation,
+    requireConnectedAccountUsableByCaller,
   }: {
     workspaceId: string;
     userWorkspaceId?: string;
     operation: EmailOperation;
+    requireConnectedAccountUsableByCaller?: boolean;
   }): Promise<string> {
     const authContext = buildSystemAuthContext(workspaceId);
 
@@ -147,7 +164,20 @@ export class EmailComposerService {
       }
 
       if (!isDefined(userWorkspaceId)) {
-        return usableMailboxes[0].id;
+        const defaultMailbox = requireConnectedAccountUsableByCaller
+          ? usableMailboxes.find((connectedAccount) =>
+              isConnectedAccountUsableByActor({ connectedAccount }),
+            )
+          : usableMailboxes[0];
+
+        if (!isDefined(defaultMailbox)) {
+          throw new EmailToolException(
+            `No connected account shared with this workspace can ${operation.toLowerCase()} email`,
+            EmailToolExceptionCode.NO_EMAIL_CAPABLE_CONNECTED_ACCOUNT,
+          );
+        }
+
+        return defaultMailbox.id;
       }
 
       const connectedAccountId = selectConnectedAccountIdForCaller({
@@ -367,7 +397,11 @@ export class EmailComposerService {
     context: ToolExecutionContext;
     operation: EmailOperation;
   }): Promise<EmailComposerResult> {
-    const { workspaceId, userWorkspaceId } = context;
+    const {
+      workspaceId,
+      userWorkspaceId,
+      requireConnectedAccountUsableByCaller,
+    } = context;
     const { subject, body, files, inReplyTo, fromHandle } = parameters;
     let { connectedAccountId } = parameters;
 
@@ -410,6 +444,7 @@ export class EmailComposerService {
         workspaceId,
         userWorkspaceId,
         operation,
+        requireConnectedAccountUsableByCaller,
       });
     }
 
@@ -417,6 +452,8 @@ export class EmailComposerService {
       connectedAccountId,
       workspaceId,
       operation,
+      userWorkspaceId,
+      requireConnectedAccountUsableByCaller,
     });
 
     const messageChannel =

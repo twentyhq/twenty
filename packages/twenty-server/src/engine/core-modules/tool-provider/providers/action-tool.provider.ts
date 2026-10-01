@@ -268,6 +268,8 @@ export class ActionToolProvider implements ToolProvider {
       userWorkspaceId: context.userWorkspaceId,
       threadId: context.threadId,
       onCodeExecutionUpdate: context.onCodeExecutionUpdate,
+      requireConnectedAccountUsableByCaller:
+        context.requireConnectedAccountUsableByCaller,
     });
   }
 
