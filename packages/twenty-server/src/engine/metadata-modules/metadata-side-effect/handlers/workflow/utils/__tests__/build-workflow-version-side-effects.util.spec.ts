@@ -85,18 +85,25 @@ const persisted = ({ workflow, version }: ReturnType<typeof convert>) => {
   return maps;
 };
 
-const expand = (
+const diff = (
   workflow: ReturnType<typeof convert>['workflow'],
   from = createEmptyAllFlatEntityMaps(),
 ) => {
   const to = createEmptyAllFlatEntityMaps();
   to.flatWorkflowMaps.byUniversalIdentifier[WORKFLOW_ID] =
     workflow as FlatWorkflow;
-  const operations = buildAllFlatEntityOperationRecordByMetadataNameFromFromTo({
+  return buildAllFlatEntityOperationRecordByMetadataNameFromFromTo({
     fromAllFlatEntityMaps: from,
     toAllUniversalFlatEntityMaps: to,
     buildOptions,
   });
+};
+
+const expand = (
+  workflow: ReturnType<typeof convert>['workflow'],
+  from = createEmptyAllFlatEntityMaps(),
+) => {
+  const operations = diff(workflow, from);
   if (!isDefined(operations.workflow)) {
     return {};
   }
@@ -143,7 +150,9 @@ describe('application workflow version side effects', () => {
       id: before.version.id,
       steps: [{ name: 'Updated step' }],
     });
-    expect(operations.workflowVersion?.flatEntityToDelete).toBeUndefined();
+    expect(
+      diff(after.workflow, persisted(before)).workflowVersion,
+    ).toBeUndefined();
     expect(before.version.steps?.[0].name).toBe('Finish');
   });
 
@@ -174,7 +183,7 @@ describe('application workflow version side effects', () => {
     expect(
       operations.workflowVersion?.flatEntityToUpdate?.[VERSION_ID],
     ).toMatchObject({ id: before.version.id, isSystemSideEffect: true });
-    expect(operations.workflowVersion?.flatEntityToDelete).toBeUndefined();
+    expect(diff(after.workflow, existing).workflowVersion).toBeUndefined();
   });
 
   it('leaves API workflow operations without a version payload unchanged', () => {

@@ -2,6 +2,7 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { WorkflowActionType } from 'twenty-shared/workflow';
 
 import {
+  type WorkflowAction,
   type WorkflowCodeAction,
   type WorkflowCreateRecordAction,
   type WorkflowDeleteRecordAction,
@@ -110,35 +111,36 @@ describe('canUpdateWorkflowRunStep', () => {
     ).toBe(false);
   });
 
-  it('refuses any other change to the steps of an application-bound run', () => {
-    const codeStepReplacingForm: WorkflowCodeAction = {
-      ...FORM_STEP,
-      type: WorkflowActionType.CODE,
-      settings: {
-        ...FORM_STEP.settings,
-        input: { logicFunctionId: 'function-id', logicFunctionInput: {} },
-      },
-    };
-    const formStepReplacingRecord: WorkflowFormAction = {
-      ...FORM_STEP,
-      id: RECORD_STEP.id,
-    };
-    const reroutedFormStep: WorkflowFormAction = {
-      ...FORM_STEP,
-      nextStepIds: [],
-    };
+  const codeStepReplacingForm: WorkflowCodeAction = {
+    ...FORM_STEP,
+    type: WorkflowActionType.CODE,
+    settings: {
+      ...FORM_STEP.settings,
+      input: { logicFunctionId: 'function-id', logicFunctionInput: {} },
+    },
+  };
+  const formStepReplacingRecord: WorkflowFormAction = {
+    ...FORM_STEP,
+    id: RECORD_STEP.id,
+  };
+  const reroutedFormStep: WorkflowFormAction = {
+    ...FORM_STEP,
+    nextStepIds: [],
+  };
 
-    for (const step of [
-      codeStepReplacingForm,
-      formStepReplacingRecord,
-      reroutedFormStep,
-    ]) {
-      expect(
-        canUpdateWorkflowRunStep({
-          workflowRun: buildWorkflowRun('installed-app-id'),
-          step,
-        }),
-      ).toBe(false);
-    }
+  it.each<{ change: string; step: WorkflowAction }>([
+    { change: 'a code step replacing the form', step: codeStepReplacingForm },
+    {
+      change: 'a form step taking over another step id',
+      step: formStepReplacingRecord,
+    },
+    { change: 'a rerouted form step', step: reroutedFormStep },
+  ])('refuses $change on an application-bound run', ({ step }) => {
+    expect(
+      canUpdateWorkflowRunStep({
+        workflowRun: buildWorkflowRun('installed-app-id'),
+        step,
+      }),
+    ).toBe(false);
   });
 });

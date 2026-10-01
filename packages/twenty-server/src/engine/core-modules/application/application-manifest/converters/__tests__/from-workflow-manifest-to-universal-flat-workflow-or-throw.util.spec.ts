@@ -216,16 +216,22 @@ describe('application workflow action graphs', () => {
   );
 
   it('validates each action input instead of accepting arbitrary configuration', () => {
-    const invalid = structuredClone(manifest);
-    Object.assign(invalid.version.steps[0], {
-      type: 'HTTP_REQUEST',
-      input: { method: 'BOGUS' },
-    });
+    const httpRequestManifest = structuredClone(manifest);
+    const httpRequestStep = {
+      universalIdentifier: STEP_ID,
+      name: 'Request',
+      type: 'HTTP_REQUEST' as const,
+      input: { url: 'https://example.com', method: 'GET' as const },
+      nextStepIds: [],
+    };
+    httpRequestManifest.version.steps = [httpRequestStep];
     expect(() =>
-      convert({
-        ...options,
-        manifest: invalid,
-      }),
+      convert({ ...options, manifest: httpRequestManifest }),
+    ).not.toThrow();
+
+    Object.assign(httpRequestStep.input, { method: 'BOGUS' });
+    expect(() =>
+      convert({ ...options, manifest: httpRequestManifest }),
     ).toThrow();
   });
 });

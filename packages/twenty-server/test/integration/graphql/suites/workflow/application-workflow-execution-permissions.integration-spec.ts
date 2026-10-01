@@ -1,6 +1,7 @@
 import { randomUUID } from 'node:crypto';
 
 import request from 'supertest';
+import { answerToolCall } from 'test/integration/graphql/suites/workflow/utils/answer-tool-call.util';
 import { runWorkflowActionStep } from 'test/integration/graphql/suites/workflow/utils/run-workflow-action-step.util';
 import { workflowGraphqlRequest } from 'test/integration/graphql/suites/workflow/utils/workflow-graphql-request.util';
 import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
@@ -10,7 +11,10 @@ import { syncApplication } from 'test/integration/metadata/suites/application/ut
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { generateApplicationTokenPair } from 'test/integration/utils/generate-application-token-pair.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
-import { type Manifest } from 'twenty-shared/application';
+import {
+  getWorkflowVersionUniversalIdentifier,
+  type Manifest,
+} from 'twenty-shared/application';
 import { SystemPermissionFlag } from 'twenty-shared/constants';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { FeatureFlagKey } from 'twenty-shared/types';
@@ -50,7 +54,6 @@ type WorkflowStepManifestWithoutEdges = WithoutEdges<WorkflowStepManifest>;
 
 type TestWorkflow = {
   universalIdentifier: string;
-  versionUniversalIdentifier: string;
   steps: WorkflowStepManifest[];
 };
 
@@ -61,7 +64,6 @@ const buildTestWorkflow = (
 
   return {
     universalIdentifier: randomUUID(),
-    versionUniversalIdentifier: randomUUID(),
     steps: steps.map(
       (step, index) =>
         ({
@@ -209,7 +211,6 @@ const buildManifest = ({
         universalIdentifier: workflow.universalIdentifier,
         name: `${RUN_PREFIX} ${index}`,
         version: {
-          universalIdentifier: workflow.versionUniversalIdentifier,
           trigger: {
             universalIdentifier: randomUUID(),
             type: 'MANUAL',
@@ -244,12 +245,6 @@ const RUN_CORE_WORKFLOW_VERSION = `
     runCoreWorkflowVersion(input: $input) {
       workflowRunId
     }
-  }
-`;
-
-const SUBMIT_FORM_STEP = `
-  mutation SubmitFormStep($input: SubmitFormStepInput!) {
-    submitFormStep(input: $input)
   }
 `;
 
@@ -288,7 +283,13 @@ const findVersionId = async (workflow: TestWorkflow): Promise<string> => {
   const [version] = await globalThis.testDataSource.query(
     `SELECT id FROM core."workflowVersion"
      WHERE "workspaceId" = $1 AND "universalIdentifier" = $2`,
-    [SEED_APPLE_WORKSPACE_ID, workflow.versionUniversalIdentifier],
+    [
+      SEED_APPLE_WORKSPACE_ID,
+      getWorkflowVersionUniversalIdentifier({
+        applicationUniversalIdentifier: APP_ID,
+        workflowUniversalIdentifier: workflow.universalIdentifier,
+      }),
+    ],
   );
 
   return version.id;
@@ -591,14 +592,19 @@ describe('application workflow execution permissions', () => {
   }, 120000);
 
   it('reads the records picked in a form with the permissions of the run', async () => {
-    const workflowRunId = await runWorkflow(FORM_WORKFLOW);
     const [formStep] = FORM_WORKFLOW.steps;
+    const startFormRun = async () => {
+      const workflowRunId = await runWorkflow(FORM_WORKFLOW);
 
-    await waitForRun(
-      workflowRunId,
-      ({ state }) =>
-        state?.stepInfos?.[formStep.universalIdentifier]?.status === 'PENDING',
-    );
+      await waitForRun(
+        workflowRunId,
+        ({ state }) =>
+          state?.stepInfos?.[formStep.universalIdentifier]?.status ===
+          'PENDING',
+      );
+
+      return workflowRunId;
+    };
 
     const [opportunity] = await globalThis.testDataSource.query(
       `SELECT id FROM "${SCHEMA}"."opportunity" WHERE "deletedAt" IS NULL LIMIT 1`,
@@ -607,29 +613,30 @@ describe('application workflow execution permissions', () => {
       `SELECT id FROM "${SCHEMA}"."company" WHERE "deletedAt" IS NULL LIMIT 1`,
     );
 
-    const unreadableSelection = await workflowGraphqlRequest(SUBMIT_FORM_STEP, {
-      input: {
-        workflowRunId,
+    const unreadableRunId = await startFormRun();
+    const unreadableSelection = await answerToolCall({
+      toolCall: {
+        workflowRunId: unreadableRunId,
         stepId: formStep.universalIdentifier,
-        response: { opportunity: { id: opportunity.id } },
       },
+      response: { opportunity: { id: opportunity.id } },
     });
 
-    expect(unreadableSelection.body.errors?.[0]?.message).toContain(
-      'cannot be read with the permissions of this run',
-    );
+    expect(unreadableSelection.body.errors).toBeDefined();
+    expect((await waitForRunToEnd(unreadableRunId)).status).toBe('FAILED');
 
-    const readableSelection = await workflowGraphqlRequest(SUBMIT_FORM_STEP, {
-      input: {
-        workflowRunId,
+    const readableRunId = await startFormRun();
+    const readableSelection = await answerToolCall({
+      toolCall: {
+        workflowRunId: readableRunId,
         stepId: formStep.universalIdentifier,
-        response: { company: { id: company.id } },
       },
+      response: { company: { id: company.id } },
     });
 
     expect(readableSelection.body.errors).toBeUndefined();
 
-    const workflowRun = await waitForRunToEnd(workflowRunId);
+    const workflowRun = await waitForRunToEnd(readableRunId);
 
     expect(workflowRun.status).toBe('COMPLETED');
     expect(

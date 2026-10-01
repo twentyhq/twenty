@@ -19,17 +19,19 @@ export const computeAiAgentOutputSchema = (
   }
 
   return Object.fromEntries(
-    Object.entries(responseFormat.schema.properties).map(([name, property]) => [
-      name,
-      {
-        isLeaf: true,
-        type: property.type,
-        label: name,
-        ...(isDefined(property.description)
-          ? { description: property.description }
-          : {}),
-        value: generateFakeValue(property.type),
-      },
-    ]),
+    Object.entries(responseFormat.schema.properties ?? {}).map(
+      ([name, property]) => [
+        name,
+        {
+          isLeaf: true,
+          type: property.type,
+          label: name,
+          ...(isDefined(property.description)
+            ? { description: property.description }
+            : {}),
+          value: generateFakeValue(property.type),
+        },
+      ],
+    ),
   );
 };
