@@ -142,9 +142,13 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
                 ? ViewCalendarLayout.MONTH
                 : undefined,
             startFieldMetadataId:
-              viewType === ViewType.CALENDAR ? startFieldMetadataId : undefined,
+              viewType === ViewType.CALENDAR || viewType === ViewType.TIMELINE
+                ? startFieldMetadataId
+                : undefined,
             endFieldMetadataId:
-              viewType === ViewType.CALENDAR ? endFieldMetadataId : undefined,
+              viewType === ViewType.CALENDAR || viewType === ViewType.TIMELINE
+                ? endFieldMetadataId
+                : undefined,
             visibility,
           },
         },

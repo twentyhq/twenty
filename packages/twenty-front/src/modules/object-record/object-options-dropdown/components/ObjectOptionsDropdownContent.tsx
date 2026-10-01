@@ -10,6 +10,7 @@ import { ObjectOptionsDropdownRecordGroupFieldsContent } from '@/object-record/o
 import { ObjectOptionsDropdownRecordGroupLoadLimitContent } from '@/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupLoadLimitContent';
 import { ObjectOptionsDropdownRecordGroupsContent } from '@/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupsContent';
 import { ObjectOptionsDropdownRecordGroupSortContent } from '@/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupSortContent';
+import { ObjectOptionsDropdownTimelineDateFieldContent } from '@/object-record/object-options-dropdown/components/ObjectOptionsDropdownTimelineDateFieldContent';
 import { ObjectOptionsDropdownVisibilityContent } from '@/object-record/object-options-dropdown/components/ObjectOptionsDropdownVisibilityContent';
 import { useObjectOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsDropdown';
 
@@ -39,6 +40,14 @@ export const ObjectOptionsDropdownContent = () => {
       return <ObjectOptionsDropdownCalendarViewContent />;
     case 'calendarFields':
       return <ObjectOptionsDropdownCalendarFieldsContent />;
+    case 'timelineStartField':
+      return (
+        <ObjectOptionsDropdownTimelineDateFieldContent dateFieldRole="start" />
+      );
+    case 'timelineEndField':
+      return (
+        <ObjectOptionsDropdownTimelineDateFieldContent dateFieldRole="end" />
+      );
     case 'visibility':
       return <ObjectOptionsDropdownVisibilityContent />;
     default:

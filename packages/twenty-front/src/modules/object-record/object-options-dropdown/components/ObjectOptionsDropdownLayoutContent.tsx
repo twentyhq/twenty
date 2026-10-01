@@ -73,6 +73,12 @@ export const ObjectOptionsDropdownLayoutContent = () => {
       )
     : undefined;
 
+  const endFieldMetadata = currentView?.endFieldMetadataId
+    ? objectMetadataItem.fields.find(
+        (field) => field.id === currentView.endFieldMetadataId,
+      )
+    : undefined;
+
   const { setAndPersistViewType } = useSetViewTypeFromLayoutOptionsMenu();
   const { availableFieldsForGrouping, navigateToSelectSettings } =
     useGetAvailableFieldsToGroupRecordsBy();
@@ -108,6 +114,20 @@ export const ObjectOptionsDropdownLayoutContent = () => {
     }
   };
 
+  const handleSelectTimelineViewType = async () => {
+    if (isDefaultView) {
+      return;
+    }
+    if (availableDateFields.length === 0) {
+      navigateToDateFieldSettings();
+      closeDropdown(dropdownId);
+      return;
+    }
+    if (currentView?.type !== ViewType.TIMELINE) {
+      await setAndPersistViewType(ViewType.TIMELINE);
+    }
+  };
+
   const isDefaultView = currentView?.key === 'INDEX';
   const nbsp = '\u00A0';
 
@@ -115,13 +135,18 @@ export const ObjectOptionsDropdownLayoutContent = () => {
     ViewType.TABLE,
     ViewType.LIST,
     ...(!isDefaultView ? [ViewType.CALENDAR] : []),
+    ...(!isDefaultView ? [ViewType.TIMELINE] : []),
     ...(isDefaultView ? [] : [ViewType.KANBAN]),
     ...(currentView?.type === ViewType.KANBAN ? ['Group'] : []),
     ...(currentView?.type === ViewType.CALENDAR
       ? ['CalendarView', 'CalendarDateField']
       : []),
+    ...(currentView?.type === ViewType.TIMELINE
+      ? ['TimelineStartField', 'TimelineEndField']
+      : []),
     ...(currentView?.type !== ViewType.TABLE &&
-    currentView?.type !== ViewType.LIST
+    currentView?.type !== ViewType.LIST &&
+    currentView?.type !== ViewType.TIMELINE
       ? ['Compact view']
       : []),
   ];
@@ -220,6 +245,38 @@ export const ObjectOptionsDropdownLayoutContent = () => {
               </ListItem>
             </SelectableListItem>
             <SelectableListItem
+              itemId={ViewType.TIMELINE}
+              onEnter={handleSelectTimelineViewType}
+            >
+              <ListItem
+                disabled={isDefaultView}
+                focused={selectedItemId === ViewType.TIMELINE}
+                onClick={handleSelectTimelineViewType}
+                role="option"
+                aria-selected={currentView?.type === ViewType.TIMELINE}
+                selected={currentView?.type === ViewType.TIMELINE}
+                indicator="check"
+                description={
+                  isDefaultView ? (
+                    <>
+                      {nbsp}·{nbsp}
+                      <OverflowingTextWithTooltip
+                        text={t`Not available for default view`}
+                      />
+                    </>
+                  ) : undefined
+                }
+                descriptionPlacement={'end'}
+                startIcon={
+                  <SelectOptionIcon
+                    Icon={viewTypeIconMapping(ViewType.TIMELINE)}
+                  />
+                }
+              >
+                {t(getViewTypeLabel(ViewType.TIMELINE))}
+              </ListItem>
+            </SelectableListItem>
+            <SelectableListItem
               itemId={ViewType.KANBAN}
               onEnter={() => {
                 setAndPersistViewType(ViewType.KANBAN);
@@ -294,6 +351,36 @@ export const ObjectOptionsDropdownLayoutContent = () => {
                 </SelectableListItem>
               </>
             )}
+            {currentView?.type === ViewType.TIMELINE && (
+              <>
+                <SelectableListItem
+                  itemId="TimelineStartField"
+                  onEnter={() => onContentChange('timelineStartField')}
+                >
+                  <ListItem
+                    focused={selectedItemId === 'TimelineStartField'}
+                    onClick={() => onContentChange('timelineStartField')}
+                    startIcon={<IconCalendar />}
+                    description={startFieldMetadata?.label}
+                    descriptionPlacement="end"
+                    hasSubmenu
+                  >{t`Start date`}</ListItem>
+                </SelectableListItem>
+                <SelectableListItem
+                  itemId="TimelineEndField"
+                  onEnter={() => onContentChange('timelineEndField')}
+                >
+                  <ListItem
+                    focused={selectedItemId === 'TimelineEndField'}
+                    onClick={() => onContentChange('timelineEndField')}
+                    startIcon={<IconCalendar />}
+                    description={endFieldMetadata?.label ?? t`None`}
+                    descriptionPlacement="end"
+                    hasSubmenu
+                  >{t`End date`}</ListItem>
+                </SelectableListItem>
+              </>
+            )}
             {currentView?.type === ViewType.KANBAN && (
               <SelectableListItem
                 itemId="Group"
@@ -318,7 +405,8 @@ export const ObjectOptionsDropdownLayoutContent = () => {
               </SelectableListItem>
             )}
             {currentView?.type !== ViewType.TABLE &&
-              currentView?.type !== ViewType.LIST && (
+              currentView?.type !== ViewType.LIST &&
+              currentView?.type !== ViewType.TIMELINE && (
                 <SelectableListItem
                   itemId="Compact view"
                   onEnter={() => {

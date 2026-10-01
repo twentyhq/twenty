@@ -122,7 +122,10 @@ export const ObjectOptionsDropdownCustomView = ({
     ...(customViewData?.type === ViewType.CALENDAR
       ? ['CalendarDateField', 'CalendarView']
       : []),
-    ...(customViewData?.type !== ViewType.CALENDAR ? ['Group'] : []),
+    ...(customViewData?.type !== ViewType.CALENDAR &&
+    customViewData?.type !== ViewType.TIMELINE
+      ? ['Group']
+      : []),
     'Delete view',
   ];
 
@@ -239,44 +242,45 @@ export const ObjectOptionsDropdownCustomView = ({
               hasSubmenu
             >{t`Fields`}</ListItem>
           </SelectableListItem>
-          {customViewData?.type !== ViewType.CALENDAR && (
-            <Tooltip
-              content={t`Not available on Default View`}
-              side="bottom"
-              maxWidth={'100%'}
-              delay={TooltipDelay.mediumDelay}
-              disabled={!isDefaultView}
-            >
-              <div id="group-by-menu-item">
-                <SelectableListItem
-                  itemId="Group"
-                  onEnter={() =>
-                    isDefined(recordIndexGroupFieldMetadataItem)
-                      ? onContentChange('recordGroups')
-                      : onContentChange('recordGroupFields')
-                  }
-                >
-                  <ListItem
-                    focused={selectedItemId === 'Group'}
-                    onClick={() =>
+          {customViewData?.type !== ViewType.CALENDAR &&
+            customViewData?.type !== ViewType.TIMELINE && (
+              <Tooltip
+                content={t`Not available on Default View`}
+                side="bottom"
+                maxWidth={'100%'}
+                delay={TooltipDelay.mediumDelay}
+                disabled={!isDefaultView}
+              >
+                <div id="group-by-menu-item">
+                  <SelectableListItem
+                    itemId="Group"
+                    onEnter={() =>
                       isDefined(recordIndexGroupFieldMetadataItem)
                         ? onContentChange('recordGroups')
                         : onContentChange('recordGroupFields')
                     }
-                    startIcon={<IconLayoutList />}
-                    description={
-                      isDefaultView
-                        ? t`Not available on Default View`
-                        : recordIndexGroupFieldMetadataItem?.label
-                    }
-                    descriptionPlacement="end"
-                    hasSubmenu
-                    disabled={isDefaultView}
-                  >{t`Group`}</ListItem>
-                </SelectableListItem>
-              </div>
-            </Tooltip>
-          )}
+                  >
+                    <ListItem
+                      focused={selectedItemId === 'Group'}
+                      onClick={() =>
+                        isDefined(recordIndexGroupFieldMetadataItem)
+                          ? onContentChange('recordGroups')
+                          : onContentChange('recordGroupFields')
+                      }
+                      startIcon={<IconLayoutList />}
+                      description={
+                        isDefaultView
+                          ? t`Not available on Default View`
+                          : recordIndexGroupFieldMetadataItem?.label
+                      }
+                      descriptionPlacement="end"
+                      hasSubmenu
+                      disabled={isDefaultView}
+                    >{t`Group`}</ListItem>
+                  </SelectableListItem>
+                </div>
+              </Tooltip>
+            )}
         </DropdownMenuItemsContainer>
         <DropdownMenuSeparator />
         <DropdownMenuItemsContainer scrollable={false}>

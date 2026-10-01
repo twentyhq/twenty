@@ -10,13 +10,15 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { useGetAvailableDateFields } from '@/views/view-picker/hooks/useGetAvailableDateFields';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
-import { IconChevronLeft, IconSettings, useIcons } from 'twenty-ui/icon';
+import { isDefined } from 'twenty-shared/utils';
+import { IconChevronLeft, IconSettings, IconX, useIcons } from 'twenty-ui/icon';
 import { ListItem } from 'twenty-ui/primitives/navigation';
 
 type ObjectOptionsDropdownDateFieldSelectContentProps = {
   title: string;
   selectableFields: FieldMetadataItem[];
   selectedFieldMetadataId: string | null | undefined;
+  canSelectNone?: boolean;
   onBack: () => void;
   onSelect: (fieldMetadataId: string | null) => Promise<void>;
 };
@@ -25,6 +27,7 @@ export const ObjectOptionsDropdownDateFieldSelectContent = ({
   title,
   selectableFields,
   selectedFieldMetadataId,
+  canSelectNone = false,
   onBack,
   onSelect,
 }: ObjectOptionsDropdownDateFieldSelectContentProps) => {
@@ -64,6 +67,18 @@ export const ObjectOptionsDropdownDateFieldSelectContent = ({
       />
       <DropdownMenuSeparator />
       <DropdownMenuItemsContainer>
+        {canSelectNone && (
+          <ListItem
+            onClick={() => handleSelect(null)}
+            role="option"
+            aria-selected={!isDefined(selectedFieldMetadataId)}
+            selected={!isDefined(selectedFieldMetadataId)}
+            indicator="check"
+            startIcon={<IconX />}
+          >
+            {t`None`}
+          </ListItem>
+        )}
         {filteredFields.map((fieldMetadataItem) => (
           <ListItem
             key={fieldMetadataItem.id}

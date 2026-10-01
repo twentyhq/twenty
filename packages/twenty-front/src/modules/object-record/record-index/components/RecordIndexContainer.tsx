@@ -8,6 +8,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 
 import { RecordIndexCalendarContainer } from '@/object-record/record-index/components/RecordIndexCalendarContainer';
+import { RecordIndexTimelineContainer } from '@/object-record/record-index/components/RecordIndexTimelineContainer';
 import { RecordIndexEmptyStateNotShared } from '@/object-record/record-index/components/RecordIndexEmptyStateNotShared';
 import { RecordIndexFiltersToContextStoreEffect } from '@/object-record/record-index/components/RecordIndexFiltersToContextStoreEffect';
 import { useHasCurrentViewNonReadableFields } from '@/object-record/record-index/hooks/useHasCurrentViewNonReadableFields';
@@ -65,6 +66,11 @@ export const RecordIndexContainer = () => {
           {recordIndexViewType === ViewType.CALENDAR && (
             <StyledContainerWithPadding>
               <RecordIndexCalendarContainer />
+            </StyledContainerWithPadding>
+          )}
+          {recordIndexViewType === ViewType.TIMELINE && (
+            <StyledContainerWithPadding>
+              <RecordIndexTimelineContainer />
             </StyledContainerWithPadding>
           )}
           {recordIndexViewType === ViewType.LIST && (

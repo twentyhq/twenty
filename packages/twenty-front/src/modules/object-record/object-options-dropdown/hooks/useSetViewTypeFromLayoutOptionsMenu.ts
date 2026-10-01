@@ -115,11 +115,32 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
           updateCurrentViewParams.mainGroupByFieldMetadataId = null;
           return await updateCurrentView(updateCurrentViewParams);
         }
+        case ViewType.TIMELINE: {
+          const startFieldMetadataId =
+            availableDateFields.find(
+              (field) => field.id === currentView.startFieldMetadataId,
+            )?.id ?? availableDateFields[0]?.id;
+
+          if (!isDefined(startFieldMetadataId)) {
+            throw new Error('No date fields for timeline');
+          }
+
+          if (shouldChangeIcon(currentView.icon, currentView.type)) {
+            updateCurrentViewParams.icon = viewTypeIconKeyMapping(viewType);
+          }
+          updateCurrentViewParams.startFieldMetadataId = startFieldMetadataId;
+          if (startFieldMetadataId !== currentView.startFieldMetadataId) {
+            updateCurrentViewParams.endFieldMetadataId = null;
+          }
+          updateCurrentViewParams.mainGroupByFieldMetadataId = null;
+          await updateCurrentView(updateCurrentViewParams);
+          setRecordIndexViewType(viewType);
+          return;
+        }
         case ViewType.TABLE_WIDGET:
         case ViewType.KANBAN_WIDGET:
         case ViewType.LIST_WIDGET:
         case ViewType.CALENDAR_WIDGET:
-        case ViewType.TIMELINE:
         case ViewType.FIELDS_WIDGET: {
           return;
         }
@@ -159,6 +180,12 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
     if (
       oldViewType === ViewType.CALENDAR &&
       oldIcon === viewTypeIconKeyMapping(ViewType.CALENDAR)
+    ) {
+      return true;
+    }
+    if (
+      oldViewType === ViewType.TIMELINE &&
+      oldIcon === viewTypeIconKeyMapping(ViewType.TIMELINE)
     ) {
       return true;
     }

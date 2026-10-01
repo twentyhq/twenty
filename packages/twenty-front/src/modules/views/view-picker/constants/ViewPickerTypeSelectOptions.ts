@@ -21,6 +21,11 @@ export const VIEW_PICKER_TYPE_SELECT_OPTIONS = [
     Icon: viewTypeIconMapping(ViewType.CALENDAR),
   },
   {
+    value: ViewType.TIMELINE,
+    label: VIEW_TYPE_LABELS[ViewType.TIMELINE],
+    Icon: viewTypeIconMapping(ViewType.TIMELINE),
+  },
+  {
     value: ViewType.LIST,
     label: VIEW_TYPE_LABELS[ViewType.LIST],
     Icon: viewTypeIconMapping(ViewType.LIST),

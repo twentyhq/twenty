@@ -33,6 +33,7 @@ const CREATABLE_VIEW_TYPES = [
   ViewType.LIST,
   ViewType.KANBAN,
   ViewType.CALENDAR,
+  ViewType.TIMELINE,
   ViewType.TABLE_WIDGET,
   ViewType.KANBAN_WIDGET,
   ViewType.LIST_WIDGET,
@@ -118,13 +119,13 @@ const CreateViewInputSchema = z.object({
     .string()
     .optional()
     .describe(
-      'Date field name to use for the calendar (required for CALENDAR views, must be a DATE or DATE_TIME field, e.g., "createdAt", "dueAt")',
+      'Start date field name (required for CALENDAR and TIMELINE views, must be a DATE or DATE_TIME field, e.g., "createdAt", "dueAt")',
     ),
   endFieldName: z
     .string()
     .optional()
     .describe(
-      'Optional end date field name for the calendar. It must have the same DATE or DATE_TIME type as startFieldName.',
+      'Optional end date field name for CALENDAR and TIMELINE views. It must have the same DATE or DATE_TIME type as startFieldName. On a TIMELINE, records without an end date render as one-day bars.',
     ),
   fieldNames: z
     .array(z.string())
@@ -263,13 +264,13 @@ const UpsertCompleteViewInputSchema = z.object({
     .string()
     .optional()
     .describe(
-      'Date field name for the calendar (required for CALENDAR, must be DATE or DATE_TIME).',
+      'Start date field name (required for CALENDAR and TIMELINE, must be DATE or DATE_TIME).',
     ),
   endFieldName: z
     .string()
     .optional()
     .describe(
-      'Optional end date field name for the calendar. It must match the type of startFieldName.',
+      'Optional end date field name for CALENDAR and TIMELINE. It must match the type of startFieldName.',
     ),
   fields: z
     .array(UpsertCompleteViewFieldSchema)
@@ -434,7 +435,7 @@ export class ViewToolsFactory {
 
     if (!isFieldMetadataDateKind(fieldMetadata.type)) {
       throw new Error(
-        `Field "${fieldName}" has type "${fieldMetadata.type}" and cannot be used as a calendar field. Only DATE or DATE_TIME fields are supported.`,
+        `Field "${fieldName}" has type "${fieldMetadata.type}" and cannot be used as a start or end date field. Only DATE or DATE_TIME fields are supported.`,
       );
     }
 
@@ -530,6 +531,15 @@ export class ViewToolsFactory {
     ) {
       throw new Error(
         'KANBAN views require mainGroupByFieldName. Provide a SELECT field name (e.g. "stage").',
+      );
+    }
+
+    if (
+      parameters.type === ViewType.TIMELINE &&
+      !isDefined(parameters.startFieldName)
+    ) {
+      throw new Error(
+        'TIMELINE views require startFieldName (a DATE or DATE_TIME field name).',
       );
     }
 
@@ -670,7 +680,7 @@ DECLARATIVE CHILDREN (replace semantics): fields, filters, and sorts each descri
 - Omitting the key leaves existing entries untouched.
 This means you never need to fetch child ids to edit a view — just pass the desired end state. For surgical single-entry edits, the granular tools (create_view_filter, update_view_sort, etc.) remain available.
 
-VIEW TYPES: TABLE (default), LIST, KANBAN (requires mainGroupByFieldName, a SELECT field), CALENDAR (requires startFieldName + calendarLayout).`,
+VIEW TYPES: TABLE (default), LIST, KANBAN (requires mainGroupByFieldName, a SELECT field), CALENDAR (requires startFieldName + calendarLayout), TIMELINE (requires startFieldName, endFieldName optional).`,
         inputSchema: UpsertCompleteViewInputSchema,
         execute: async (parameters: {
           id?: string;
@@ -795,7 +805,7 @@ VIEW TYPES: TABLE (default), LIST, KANBAN (requires mainGroupByFieldName, a SELE
       },
       create_view: {
         description:
-          'Create a new view for an object. Views define how records are displayed. For KANBAN views, mainGroupByFieldName is required and must be a SELECT field (e.g., "stage", "status"). For CALENDAR views, startFieldName and calendarLayout are required.',
+          'Create a new view for an object. Views define how records are displayed. For KANBAN views, mainGroupByFieldName is required and must be a SELECT field (e.g., "stage", "status"). For CALENDAR views, startFieldName and calendarLayout are required. For TIMELINE views, startFieldName is required and endFieldName is optional.',
         inputSchema: CreateViewInputSchema,
         execute: async (parameters: {
           name: string;
@@ -823,6 +833,15 @@ VIEW TYPES: TABLE (default), LIST, KANBAN (requires mainGroupByFieldName, a SELE
             ) {
               throw new Error(
                 'KANBAN views require mainGroupByFieldName. Provide a SELECT field name (e.g., "stage", "status") to group records into columns.',
+              );
+            }
+
+            if (
+              parameters.type === ViewType.TIMELINE &&
+              !parameters.startFieldName
+            ) {
+              throw new Error(
+                'TIMELINE views require startFieldName. Provide a DATE or DATE_TIME field name (e.g., "dueAt", "createdAt").',
               );
             }
 

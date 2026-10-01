@@ -49,6 +49,7 @@ const INDEX_VIEW_TYPES = [
   ViewType.KANBAN,
   ViewType.CALENDAR,
   ViewType.LIST,
+  ViewType.TIMELINE,
 ];
 const FIELDS_WIDGET_VIEW_TYPES = [ViewType.FIELDS_WIDGET];
 const WIDGET_VIEW_TYPES = [

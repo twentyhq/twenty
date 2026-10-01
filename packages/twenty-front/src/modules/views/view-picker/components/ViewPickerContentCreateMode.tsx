@@ -224,11 +224,16 @@ export const ViewPickerContentCreateMode = () => {
             )}
           </>
         )}
-        {viewPickerType === ViewType.CALENDAR && (
+        {(viewPickerType === ViewType.CALENDAR ||
+          viewPickerType === ViewType.TIMELINE) && (
           <>
             <ViewPickerSelectContainer>
               <Select
-                label={t`Date field`}
+                label={
+                  viewPickerType === ViewType.TIMELINE
+                    ? t`Start date field`
+                    : t`Date field`
+                }
                 fullWidth
                 value={viewPickerStartFieldMetadataId}
                 onChange={(value) => {
@@ -248,9 +253,15 @@ export const ViewPickerContentCreateMode = () => {
             </ViewPickerSelectContainer>
             {availableDateFields.length === 0 && (
               <StyledFieldAvailableContainer>
-                <Trans>
-                  Set up a Date field on {objectLabel} to create a Calendar
-                </Trans>
+                {viewPickerType === ViewType.TIMELINE ? (
+                  <Trans>
+                    Set up a Date field on {objectLabel} to create a Timeline
+                  </Trans>
+                ) : (
+                  <Trans>
+                    Set up a Date field on {objectLabel} to create a Calendar
+                  </Trans>
+                )}
               </StyledFieldAvailableContainer>
             )}
           </>

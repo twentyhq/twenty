@@ -69,7 +69,8 @@ export const ViewPickerCreateButton = () => {
   }
 
   if (
-    viewPickerType === ViewType.CALENDAR &&
+    (viewPickerType === ViewType.CALENDAR ||
+      viewPickerType === ViewType.TIMELINE) &&
     availableDateFields.length === 0
   ) {
     return (
@@ -97,7 +98,8 @@ export const ViewPickerCreateButton = () => {
           viewPickerIsPersisting ||
           (viewPickerType === ViewType.KANBAN &&
             viewPickerMainGroupByFieldMetadataId === '') ||
-          (viewPickerType === ViewType.CALENDAR &&
+          ((viewPickerType === ViewType.CALENDAR ||
+            viewPickerType === ViewType.TIMELINE) &&
             viewPickerStartFieldMetadataId === '')
         }
         variant="solid"

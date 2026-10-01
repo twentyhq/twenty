@@ -10,4 +10,6 @@ export type ObjectOptionsContentId =
   | 'addRecordGroup'
   | 'calendarFields'
   | 'calendarView'
+  | 'timelineStartField'
+  | 'timelineEndField'
   | 'visibility';
