@@ -11,8 +11,7 @@ import { type AgentTurnEntity } from 'src/engine/metadata-modules/ai/ai-agent-ex
 import { mapUIMessagePartsToPersistedDBParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/map-ui-message-parts-to-persisted-db-parts.util';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
-import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
-import { type AgentMessageWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message.workspace-entity';
+import { AgentHistoryTransactionService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-transaction.service';
 import {
   AiException,
   AiExceptionCode,
@@ -21,12 +20,9 @@ import {
 @Injectable()
 export class AgentConversationWriterService {
   constructor(
-    @InjectAgentHistoryRepository('agentChatThread')
-    private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
     @InjectAgentHistoryRepository('agentTurn')
     private readonly turnRepository: AgentHistoryRepository<AgentTurnEntity>,
-    @InjectAgentHistoryRepository('agentMessage')
-    private readonly messageRepository: AgentHistoryRepository<AgentMessageWorkspaceEntity>,
+    private readonly transactionService: AgentHistoryTransactionService,
   ) {}
 
   async insertTurn({
@@ -82,7 +78,7 @@ export class AgentConversationWriterService {
   }): Promise<string> {
     const messageId = id ?? randomUUID();
 
-    await this.messageRepository.transaction(workspaceId, async (scope) => {
+    await this.transactionService.run(workspaceId, async (scope) => {
       await scope.insert('agentMessage', {
         id: messageId,
         threadId,
@@ -117,28 +113,12 @@ export class AgentConversationWriterService {
 
       if (claimedThreadCount === 0) {
         throw new AiException(
-          'The conversation is waiting for an answer to an earlier request',
+          'The conversation is waiting for an answer to an earlier question',
           AiExceptionCode.THREAD_AWAITING_ANSWER,
         );
       }
     });
 
     return messageId;
-  }
-
-  async markAwaitingAnswer({
-    workspaceId,
-    threadId,
-    messageId,
-  }: {
-    workspaceId: string;
-    threadId: string;
-    messageId: string;
-  }): Promise<void> {
-    await this.threadRepository.update(
-      workspaceId,
-      { id: threadId },
-      { pendingQuestionMessageId: messageId },
-    );
   }
 }

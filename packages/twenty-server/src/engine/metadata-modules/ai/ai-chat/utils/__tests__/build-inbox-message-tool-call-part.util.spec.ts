@@ -14,11 +14,15 @@ const build = (toolCall: unknown) =>
   buildInboxMessageToolCallPart({
     toolCall,
     toolCallId: TOOL_CALL_ID,
-    applicationTool: SHARE_RECORDING_TOOL,
+    findApplicationTool: async (logicFunctionUniversalIdentifier) =>
+      logicFunctionUniversalIdentifier ===
+      SHARE_RECORDING_TOOL.universalIdentifier
+        ? SHARE_RECORDING_TOOL
+        : undefined,
   });
 
 describe('buildInboxMessageToolCallPart', () => {
-  it('asks questions as a pending ask_questions call', () => {
+  it('asks questions as a pending ask_questions call', async () => {
     const questions = [
       {
         header: 'Share',
@@ -27,7 +31,9 @@ describe('buildInboxMessageToolCallPart', () => {
       },
     ];
 
-    expect(build({ toolName: 'ask_questions', input: { questions } })).toEqual({
+    await expect(
+      build({ toolName: 'ask_questions', input: { questions } }),
+    ).resolves.toEqual({
       isAwaitingAnswer: true,
       part: {
         type: 'tool-ask_questions',
@@ -41,10 +47,12 @@ describe('buildInboxMessageToolCallPart', () => {
     });
   });
 
-  it('requests a form as a pending request_form call', () => {
+  it('requests a form as a pending request_form call', async () => {
     const fields = [{ name: 'note', label: 'Note', type: 'TEXT' }];
 
-    expect(build({ toolName: 'request_form', input: { fields } })).toEqual({
+    await expect(
+      build({ toolName: 'request_form', input: { fields } }),
+    ).resolves.toEqual({
       isAwaitingAnswer: true,
       part: expect.objectContaining({
         type: 'tool-request_form',
@@ -54,14 +62,16 @@ describe('buildInboxMessageToolCallPart', () => {
     });
   });
 
-  it('proposes an email as a pending propose_email call', () => {
+  it('proposes an email as a pending propose_email call', async () => {
     const email = {
       recipients: { to: 'team@acme.com', cc: '', bcc: '' },
       subject: 'Recap',
       body: 'Here is the recap.',
     };
 
-    expect(build({ toolName: 'propose_email', input: email })).toEqual({
+    await expect(
+      build({ toolName: 'propose_email', input: email }),
+    ).resolves.toEqual({
       isAwaitingAnswer: true,
       part: expect.objectContaining({
         type: 'tool-propose_email',
@@ -73,13 +83,13 @@ describe('buildInboxMessageToolCallPart', () => {
     });
   });
 
-  it('renders an application tool with its front component without pausing', () => {
-    expect(
+  it('renders an application tool with its front component without pausing', async () => {
+    await expect(
       build({
         logicFunctionUniversalIdentifier: 'share-recording-tool',
         input: { callRecordingId: 'call-recording-1' },
       }),
-    ).toEqual({
+    ).resolves.toEqual({
       isAwaitingAnswer: false,
       part: {
         type: 'tool-app_share_recording',
@@ -117,9 +127,9 @@ describe('buildInboxMessageToolCallPart', () => {
         logicFunctionUniversalIdentifier: 'share-recording-tool',
       },
     ],
-  ])('rejects %s', (_, toolCall) => {
-    expect(() => build(toolCall)).toThrow(
-      expect.objectContaining({ code: AiExceptionCode.INVALID_AGENT_INPUT }),
-    );
+  ])('rejects %s', async (_, toolCall) => {
+    await expect(build(toolCall)).rejects.toMatchObject({
+      code: AiExceptionCode.INVALID_AGENT_INPUT,
+    });
   });
 });

@@ -115,13 +115,14 @@ export class WorkflowAgentConversationWorkspaceService {
       agentId: null,
     });
 
-    const messageId = await this.conversationWriterService.insertMessage({
+    await this.conversationWriterService.insertMessage({
       workspaceId,
       threadId,
       turnId,
       role: AgentMessageRole.ASSISTANT,
       agentId: null,
       senderUserWorkspaceId: null,
+      isAwaitingAnswer: true,
       parts: [
         {
           type: `tool-${REQUEST_FORM_TOOL_NAME}`,
@@ -131,12 +132,6 @@ export class WorkflowAgentConversationWorkspaceService {
           output: buildRequestFormPendingOutput(),
         } as ExtendedUIMessagePart,
       ],
-    });
-
-    await this.conversationWriterService.markAwaitingAnswer({
-      workspaceId,
-      threadId,
-      messageId,
     });
   }
 
@@ -216,33 +211,24 @@ export class WorkflowAgentConversationWorkspaceService {
       return false;
     }
 
-    const messageId = await this.conversationWriterService.insertMessage({
+    const awaitingParts = findAwaitingPausingToolParts(replyParts);
+    const isAwaitingAnswer =
+      executionResult.isPaused === true &&
+      awaitingParts.length > 0 &&
+      awaitingParts.every(({ isAnswerable }) => isAnswerable);
+
+    await this.conversationWriterService.insertMessage({
       workspaceId,
       threadId,
       turnId,
       role: AgentMessageRole.ASSISTANT,
       agentId,
       senderUserWorkspaceId: null,
+      isAwaitingAnswer,
       parts: replyParts,
     });
 
-    const awaitingParts = findAwaitingPausingToolParts(replyParts);
-
-    if (
-      executionResult.isPaused !== true ||
-      awaitingParts.length === 0 ||
-      !awaitingParts.every(({ isAnswerable }) => isAnswerable)
-    ) {
-      return false;
-    }
-
-    await this.conversationWriterService.markAwaitingAnswer({
-      workspaceId,
-      threadId,
-      messageId,
-    });
-
-    return true;
+    return isAwaitingAnswer;
   }
 
   private async openConversation({

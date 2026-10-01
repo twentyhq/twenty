@@ -25,7 +25,7 @@ const buildService = ({ existingHiddenMessage = null as unknown } = {}) => {
     delete: jest.fn().mockResolvedValue({ affected: 1 }),
   };
   const messagePartRepository = { insert: jest.fn().mockResolvedValue({}) };
-  const transaction = jest.fn(
+  const run = jest.fn(
     (
       workspaceId: string,
       work: (scope: {
@@ -53,9 +53,8 @@ const buildService = ({ existingHiddenMessage = null as unknown } = {}) => {
     } as never,
     {} as never,
     new AgentConversationWriterService(
-      threadRepository as never,
       turnRepository as never,
-      { ...messageRepository, transaction } as never,
+      { run } as never,
     ),
     {} as never,
   );

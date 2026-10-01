@@ -5,6 +5,7 @@ import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { withWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
+import { AgentHistoryTransactionService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-transaction.service';
 import { AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
 import { AgentChatActorService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-actor.service';
 import { AgentTurnWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-turn.workspace-entity';
@@ -216,9 +217,8 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         chatSharing as never,
         chatRecordEvents as never,
         new AgentConversationWriterService(
-          threads as never,
           turns as never,
-          messageRepository as never,
+          new AgentHistoryTransactionService(storage as never, orm as never),
         ),
         new AgentChatThreadService(
           threads as never,

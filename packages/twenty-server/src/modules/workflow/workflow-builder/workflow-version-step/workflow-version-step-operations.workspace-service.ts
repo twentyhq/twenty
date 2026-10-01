@@ -4,7 +4,6 @@ import { msg } from '@lingui/core/macro';
 import { AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID } from 'twenty-shared/ai';
 import { inputSchemaToOutputSchema } from 'twenty-shared/logic-function';
 import {
-  FeatureFlagKey,
   FieldMetadataType,
   StepLogicalOperator,
   ViewFilterOperand,
@@ -12,6 +11,7 @@ import {
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
 import {
   IF_ELSE_BRANCH_POSITION_OFFSETS,
+  WORKFLOW_ACTION_FEATURE_FLAGS,
   WorkflowActionType,
   getFunctionInputFromInputSchema,
   type StepIfElseBranch,
@@ -182,6 +182,8 @@ export class WorkflowVersionStepOperationsWorkspaceService {
       nextStepIds: [],
     };
 
+    await this.assertActionTypeEnabled({ type, workspaceId });
+
     switch (type) {
       case WorkflowActionType.CODE: {
         const logicFunctionId = id ?? v4();
@@ -337,8 +339,6 @@ export class WorkflowVersionStepOperationsWorkspaceService {
         };
       }
       case WorkflowActionType.SEND_CHAT_MESSAGE: {
-        await this.assertSendChatMessageEnabled(workspaceId);
-
         return {
           builtStep: {
             ...baseStep,
@@ -735,16 +735,24 @@ export class WorkflowVersionStepOperationsWorkspaceService {
     }
   }
 
-  private async assertSendChatMessageEnabled(workspaceId: string) {
-    const isSendChatMessageEnabled =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_WORKFLOW_SEND_CHAT_MESSAGE_ENABLED,
-        workspaceId,
-      );
+  private async assertActionTypeEnabled({
+    type,
+    workspaceId,
+  }: {
+    type: WorkflowActionType;
+    workspaceId: string;
+  }) {
+    const featureFlag = WORKFLOW_ACTION_FEATURE_FLAGS[type];
 
-    if (!isSendChatMessageEnabled) {
+    if (
+      isDefined(featureFlag) &&
+      !(await this.featureFlagService.isFeatureEnabled(
+        featureFlag,
+        workspaceId,
+      ))
+    ) {
       throw new WorkflowVersionStepException(
-        `WorkflowActionType '${WorkflowActionType.SEND_CHAT_MESSAGE}' is not enabled`,
+        `WorkflowActionType '${type}' is not enabled`,
         WorkflowVersionStepExceptionCode.INVALID_REQUEST,
       );
     }
@@ -888,9 +896,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
       y: step.position?.y ?? 0,
     };
 
-    if (step.type === WorkflowActionType.SEND_CHAT_MESSAGE) {
-      await this.assertSendChatMessageEnabled(workspaceId);
-    }
+    await this.assertActionTypeEnabled({ type: step.type, workspaceId });
 
     switch (step.type) {
       case WorkflowActionType.CODE: {

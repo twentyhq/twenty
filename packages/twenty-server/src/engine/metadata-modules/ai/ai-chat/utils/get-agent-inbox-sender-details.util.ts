@@ -11,7 +11,7 @@ export const getAgentInboxSenderDetails = (
 ): AgentInboxSenderDetails =>
   sender.type === 'application'
     ? {
-        key: sender.application.id,
+        key: `application:${sender.application.id}`,
         applicationId: sender.application.id,
         description: `The "${sender.application.name}" application`,
       }

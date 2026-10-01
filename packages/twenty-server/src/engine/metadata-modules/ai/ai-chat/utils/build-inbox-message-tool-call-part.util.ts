@@ -126,15 +126,17 @@ const buildPausingToolPart = ({
 // conversation, or one of the application's own tools, rendered by its front
 // component with the input and output the application gives. The caller
 // resolves that tool, scoped to the sending application.
-export const buildInboxMessageToolCallPart = ({
+export const buildInboxMessageToolCallPart = async ({
   toolCall,
   toolCallId,
-  applicationTool,
+  findApplicationTool,
 }: {
   toolCall: unknown;
   toolCallId: string;
-  applicationTool?: FlatLogicFunction;
-}): InboxMessageToolCallPart => {
+  findApplicationTool: (
+    logicFunctionUniversalIdentifier: string,
+  ) => Promise<FlatLogicFunction | undefined>;
+}): Promise<InboxMessageToolCallPart> => {
   if (!isPlainObject(toolCall)) {
     return throwInvalidToolCall('toolCall must be an object');
   }
@@ -158,10 +160,12 @@ export const buildInboxMessageToolCallPart = ({
 
   const input = parseOptionalRecord('input', toolCall.input);
   const output = parseOptionalRecord('output', toolCall.output);
+  const applicationTool = await findApplicationTool(
+    toolCall.logicFunctionUniversalIdentifier,
+  );
 
   if (
-    applicationTool?.universalIdentifier !==
-      toolCall.logicFunctionUniversalIdentifier ||
+    !isDefined(applicationTool) ||
     !isDefined(
       applicationTool.toolTriggerSettings?.frontComponentUniversalIdentifier,
     )

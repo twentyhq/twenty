@@ -303,7 +303,7 @@ describe('Sending an inbox message as an application', () => {
     }
 
     const { threadId: failedThreadId } = buildInboxMessageIds({
-      senderKey: application.id,
+      senderKey: `application:${application.id}`,
       workspaceMemberId: input.workspaceMemberId,
       threadKey,
       idempotencyKey: input.idempotencyKey,

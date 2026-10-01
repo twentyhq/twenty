@@ -12,21 +12,21 @@ describe('getAgentInboxSenderDetails', () => {
         } as FlatApplication,
       }),
     ).toEqual({
-      key: 'application-id',
+      key: 'application:application-id',
       applicationId: 'application-id',
       description: 'The "Call recorder" application',
     });
   });
 
-  it('keeps workflow conversations apart from application ones', () => {
+  it('attributes a workflow message to no application', () => {
     expect(
       getAgentInboxSenderDetails({
         type: 'workflow',
-        workflowId: 'application-id',
+        workflowId: 'workflow-id',
         workflowName: 'Welcome new deals',
       }),
     ).toEqual({
-      key: 'workflow:application-id',
+      key: 'workflow:workflow-id',
       applicationId: null,
       description: 'The "Welcome new deals" workflow',
     });

@@ -7,6 +7,7 @@ type InboxMessageIds = {
   turnId: string;
   openingMessageId: string;
   messageId: string;
+  toolCallId: string;
 };
 
 export const buildInboxMessageIds = ({
@@ -34,6 +35,7 @@ export const buildInboxMessageIds = ({
   return {
     threadId,
     messageId,
+    toolCallId: `call_${messageId.replace(/-/g, '')}`,
     turnId: v5(`${threadId}:turn`, INBOX_MESSAGE_ID_NAMESPACE),
     openingMessageId: v5(`${threadId}:opening`, INBOX_MESSAGE_ID_NAMESPACE),
   };

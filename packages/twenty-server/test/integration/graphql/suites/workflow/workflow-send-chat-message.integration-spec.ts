@@ -84,6 +84,24 @@ describe('Send chat message workflow step', () => {
     }
   }, 120000);
 
+  it('fails a step that runs after the feature flag is turned off', async () => {
+    await setSendChatMessageEnabled(true);
+
+    const { stepStatus, stepError } = await runWorkflowActionStep({
+      name: 'Send chat message turned off',
+      stepType: 'SEND_CHAT_MESSAGE',
+      input: {
+        workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+        title: 'Should not be sent',
+        text: 'Hello',
+      },
+      beforeRun: () => setSendChatMessageEnabled(false),
+    });
+
+    expect(stepStatus).toBe('FAILED');
+    expect(stepError).toContain('is not enabled');
+  }, 120000);
+
   it('cannot be added to a workflow while the feature flag is off', async () => {
     await setSendChatMessageEnabled(false);
 

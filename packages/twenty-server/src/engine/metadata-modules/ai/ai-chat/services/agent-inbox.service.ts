@@ -5,8 +5,7 @@ import {
   type SendInboxMessageInput,
   type SendInboxMessageResult,
 } from 'twenty-shared/application';
-import { isNonEmptyString } from '@sniptt/guards';
-import { isDefined, isPlainObject } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
@@ -46,10 +45,10 @@ export class AgentInboxService {
   }: {
     workspaceId: string;
     sender: AgentInboxSender;
-    input: SendInboxMessageInput;
+    input: Omit<SendInboxMessageInput, 'toolCall'> & { toolCall?: unknown };
   }): Promise<SendInboxMessageResult> {
     const senderDetails = getAgentInboxSenderDetails(sender);
-    const { threadId, turnId, openingMessageId, messageId } =
+    const { threadId, turnId, openingMessageId, messageId, toolCallId } =
       buildInboxMessageIds({
         senderKey: senderDetails.key,
         workspaceMemberId: input.workspaceMemberId,
@@ -69,14 +68,15 @@ export class AgentInboxService {
     }
 
     const toolCallPart = isDefined(input.toolCall)
-      ? buildInboxMessageToolCallPart({
+      ? await buildInboxMessageToolCallPart({
           toolCall: input.toolCall,
-          toolCallId: `call_${messageId.replace(/-/g, '')}`,
-          applicationTool: await this.findApplicationTool({
-            workspaceId,
-            applicationId: senderDetails.applicationId,
-            toolCall: input.toolCall,
-          }),
+          toolCallId,
+          findApplicationTool: (logicFunctionUniversalIdentifier) =>
+            this.findApplicationTool({
+              workspaceId,
+              applicationId: senderDetails.applicationId,
+              logicFunctionUniversalIdentifier,
+            }),
         })
       : undefined;
 
@@ -89,37 +89,14 @@ export class AgentInboxService {
         title: input.title,
       }));
 
-    await this.ignoreDuplicate(() =>
-      this.conversationWriterService.insertTurn({
-        workspaceId,
-        id: turnId,
-        threadId,
-        agentId: null,
-      }),
-    );
-
-    // Answering a tool call resolves who may answer from the user message of
-    // its turn, and models expect a conversation to open with one. It holds
-    // no text from the sender, so nothing the sender wrote reads as the
-    // member's request.
-    await this.ignoreDuplicate(() =>
-      this.conversationWriterService.insertMessage({
-        workspaceId,
-        id: openingMessageId,
-        threadId,
-        turnId,
-        role: AgentMessageRole.USER,
-        agentId: null,
-        senderUserWorkspaceId: thread.userWorkspaceId,
-        isHidden: true,
-        parts: [
-          {
-            type: 'text',
-            text: `${senderDetails.description} started this conversation. Its messages follow.`,
-          },
-        ],
-      }),
-    );
+    await this.ensureOpener({
+      workspaceId,
+      threadId,
+      turnId,
+      openingMessageId,
+      memberUserWorkspaceId: thread.userWorkspaceId,
+      senderDescription: senderDetails.description,
+    });
 
     const parts: ExtendedUIMessagePart[] = [{ type: 'text', text: input.text }];
 
@@ -151,6 +128,54 @@ export class AgentInboxService {
     }
 
     return { threadId };
+  }
+
+  // Answering a tool call resolves who may answer from the user message of
+  // its turn, and models expect a conversation to open with one. It holds
+  // no text from the sender, so nothing the sender wrote reads as the
+  // member's request.
+  private async ensureOpener({
+    workspaceId,
+    threadId,
+    turnId,
+    openingMessageId,
+    memberUserWorkspaceId,
+    senderDescription,
+  }: {
+    workspaceId: string;
+    threadId: string;
+    turnId: string;
+    openingMessageId: string;
+    memberUserWorkspaceId: string | null;
+    senderDescription: string;
+  }): Promise<void> {
+    await this.ignoreDuplicate(() =>
+      this.conversationWriterService.insertTurn({
+        workspaceId,
+        id: turnId,
+        threadId,
+        agentId: null,
+      }),
+    );
+
+    await this.ignoreDuplicate(() =>
+      this.conversationWriterService.insertMessage({
+        workspaceId,
+        id: openingMessageId,
+        threadId,
+        turnId,
+        role: AgentMessageRole.USER,
+        agentId: null,
+        senderUserWorkspaceId: memberUserWorkspaceId,
+        isHidden: true,
+        parts: [
+          {
+            type: 'text',
+            text: `${senderDescription} started this conversation. Its messages follow.`,
+          },
+        ],
+      }),
+    );
   }
 
   private findThread({
@@ -230,17 +255,13 @@ export class AgentInboxService {
   private async findApplicationTool({
     workspaceId,
     applicationId,
-    toolCall,
+    logicFunctionUniversalIdentifier,
   }: {
     workspaceId: string;
     applicationId: string | null;
-    toolCall: unknown;
+    logicFunctionUniversalIdentifier: string;
   }): Promise<FlatLogicFunction | undefined> {
-    if (
-      !isDefined(applicationId) ||
-      !isPlainObject(toolCall) ||
-      !isNonEmptyString(toolCall.logicFunctionUniversalIdentifier)
-    ) {
+    if (!isDefined(applicationId)) {
       return undefined;
     }
 
@@ -250,7 +271,7 @@ export class AgentInboxService {
       ]);
     const logicFunction =
       flatLogicFunctionMaps.byUniversalIdentifier[
-        toolCall.logicFunctionUniversalIdentifier
+        logicFunctionUniversalIdentifier
       ];
 
     return logicFunction?.applicationId === applicationId &&

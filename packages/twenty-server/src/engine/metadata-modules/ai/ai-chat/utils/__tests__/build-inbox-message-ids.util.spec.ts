@@ -1,7 +1,7 @@
 import { buildInboxMessageIds } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-inbox-message-ids.util';
 
 const INPUT = {
-  senderKey: 'application-id',
+  senderKey: 'application:application-id',
   workspaceMemberId: 'workspace-member-id',
   threadKey: 'first-call-recording',
   idempotencyKey: 'first-call-recording',
@@ -25,7 +25,11 @@ describe('buildInboxMessageIds', () => {
       idempotencyKey: 'second-message',
     });
 
-    expect(second).toEqual({ ...first, messageId: expect.any(String) });
+    expect(second).toEqual({
+      ...first,
+      messageId: expect.any(String),
+      toolCallId: expect.any(String),
+    });
     expect(second.messageId).not.toBe(first.messageId);
   });
 
@@ -41,7 +45,7 @@ describe('buildInboxMessageIds', () => {
   );
 
   it.each([
-    { senderKey: 'other-application-id' },
+    { senderKey: 'application:other-application-id' },
     { workspaceMemberId: 'other-workspace-member-id' },
     { threadKey: 'other-thread' },
   ])('returns another thread when %o differs', (override) => {

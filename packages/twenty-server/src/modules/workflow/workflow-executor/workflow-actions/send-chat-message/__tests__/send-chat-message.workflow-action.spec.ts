@@ -1,13 +1,11 @@
 import { WorkflowActionType } from 'twenty-shared/workflow';
 
-import { type FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { type AgentInboxService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-inbox.service';
 import { type WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { WorkflowStepExecutorExceptionCode } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
 import { createMockIteratorStep } from 'src/modules/workflow/workflow-executor/utils/create-mock-workflow-steps.util';
 import { SendChatMessageWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/send-chat-message/send-chat-message.workflow-action';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
-import { type WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 
 const WORKSPACE_ID = 'workspace-id';
 const WORKFLOW_RUN_ID = 'workflow-run-id';
@@ -32,8 +30,7 @@ const buildStep = (input: Record<string, unknown>): WorkflowAction =>
 
 describe('SendChatMessageWorkflowAction', () => {
   const sendMessage = jest.fn();
-  const findWorkflow = jest.fn();
-  const isFeatureEnabled = jest.fn();
+  const findWorkflowRun = jest.fn();
   let action: SendChatMessageWorkflowAction;
 
   const execute = (input: Record<string, unknown>) =>
@@ -47,21 +44,17 @@ describe('SendChatMessageWorkflowAction', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     sendMessage.mockResolvedValue({ threadId: 'thread-id' });
-    findWorkflow.mockResolvedValue({ id: WORKFLOW_ID, name: 'New deals' });
-    isFeatureEnabled.mockResolvedValue(true);
+    findWorkflowRun.mockResolvedValue({
+      id: WORKFLOW_RUN_ID,
+      workflow: { id: WORKFLOW_ID, name: 'New deals' },
+    });
 
     action = new SendChatMessageWorkflowAction(
       { sendMessage } as unknown as AgentInboxService,
       {
-        getWorkflowRunOrFail: jest
-          .fn()
-          .mockResolvedValue({ id: WORKFLOW_RUN_ID, workflowId: WORKFLOW_ID }),
-      } as unknown as WorkflowRunWorkspaceService,
-      {
         executeInWorkspaceContext: jest.fn((callback) => callback()),
-        getRepository: jest.fn().mockReturnValue({ findOne: findWorkflow }),
+        getRepository: jest.fn().mockReturnValue({ findOne: findWorkflowRun }),
       } as unknown as WorkspaceOrmManager,
-      { isFeatureEnabled } as unknown as FeatureFlagService,
     );
   });
 
@@ -137,21 +130,6 @@ describe('SendChatMessageWorkflowAction', () => {
         input: expect.objectContaining({ title: 'Send Chat Message' }),
       }),
     );
-  });
-
-  it('fails the step while the feature flag is off', async () => {
-    isFeatureEnabled.mockResolvedValue(false);
-
-    await expect(
-      execute({
-        workspaceMemberId: WORKSPACE_MEMBER_ID,
-        title: '',
-        text: 'Hello',
-      }),
-    ).rejects.toMatchObject({
-      code: WorkflowStepExecutorExceptionCode.INVALID_STEP_TYPE,
-    });
-    expect(sendMessage).not.toHaveBeenCalled();
   });
 
   it.each([
