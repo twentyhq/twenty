@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import {
+  RecordShareAccessLevel,
   RecordSharePrincipalType,
   RecordShareRowCause,
 } from 'twenty-shared/types';
@@ -13,7 +14,6 @@ import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.
 import { RecordShareStorageService } from 'src/engine/core-modules/record-share/services/record-share-storage.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
-import { buildWorkflowRunRecordShares } from 'src/engine/core-modules/workflow/utils/build-workflow-run-record-shares.util';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
@@ -26,10 +26,6 @@ const WORKFLOW_RUN_BATCH_SIZE = 500;
 
 // A whole workflow's runs can take longer than the default lock lifetime.
 const CORE_WORKFLOW_LOCK_OPTIONS = { ttl: 30_000, maxRetries: 300 };
-
-type CoreWorkflowAccess = {
-  creatorWorkspaceMemberId: string | null;
-};
 
 // Who sees a run beyond its creator follows from its core workflow at read
 // time (WORKFLOW_RUN_OF_SHARED_WORKFLOW_SHARING_RULE); only the creator's grant
@@ -108,7 +104,7 @@ export class WorkflowRunRecordShareService {
         await this.replaceShares({
           workspaceId,
           workflowRunIds: runIds,
-          access: { creatorWorkspaceMemberId: null },
+          creatorWorkspaceMemberId: null,
         });
         continue;
       }
@@ -119,7 +115,11 @@ export class WorkflowRunRecordShareService {
           this.replaceShares({
             workspaceId,
             workflowRunIds: runIds,
-            access: await this.resolveAccess({ workspaceId, coreWorkflowId }),
+            creatorWorkspaceMemberId:
+              await this.resolveCreatorWorkspaceMemberId({
+                workspaceId,
+                coreWorkflowId,
+              }),
           }),
       );
     }
@@ -156,18 +156,21 @@ export class WorkflowRunRecordShareService {
     await this.replaceShares({
       workspaceId,
       workflowRunIds: runs.map(({ id }) => id),
-      access: await this.resolveAccess({ workspaceId, coreWorkflowId }),
+      creatorWorkspaceMemberId: await this.resolveCreatorWorkspaceMemberId({
+        workspaceId,
+        coreWorkflowId,
+      }),
     });
   }
 
   private async replaceShares({
     workspaceId,
     workflowRunIds,
-    access,
+    creatorWorkspaceMemberId,
   }: {
     workspaceId: string;
     workflowRunIds: string[];
-    access: CoreWorkflowAccess;
+    creatorWorkspaceMemberId: string | null;
   }): Promise<void> {
     const { flatObjectMetadataMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
@@ -212,15 +215,21 @@ export class WorkflowRunRecordShareService {
                   },
                 ],
               });
-              await this.recordShareStorageService.insertMany({
-                workspaceId,
-                transactionScope,
-                recordShares: buildWorkflowRunRecordShares({
-                  objectMetadataId,
-                  workflowRunIds: batch,
-                  ...access,
-                }),
-              });
+              if (isDefined(creatorWorkspaceMemberId)) {
+                await this.recordShareStorageService.insertMany({
+                  workspaceId,
+                  transactionScope,
+                  recordShares: batch.map((workflowRunId) => ({
+                    objectMetadataId,
+                    recordId: workflowRunId,
+                    principalId: creatorWorkspaceMemberId,
+                    principalType: RecordSharePrincipalType.WORKSPACE_MEMBER,
+                    accessLevel: RecordShareAccessLevel.FULL,
+                    rowCause: RecordShareRowCause.OWNER,
+                    sourceId: workflowRunId,
+                  })),
+                });
+              }
             },
           ),
         buildSystemAuthContext(workspaceId),
@@ -228,13 +237,13 @@ export class WorkflowRunRecordShareService {
     }
   }
 
-  private async resolveAccess({
+  private async resolveCreatorWorkspaceMemberId({
     workspaceId,
     coreWorkflowId,
   }: {
     workspaceId: string;
     coreWorkflowId: string;
-  }): Promise<CoreWorkflowAccess> {
+  }): Promise<string | null> {
     const coreWorkflow = await this.coreWorkflowRepository.findOne(
       workspaceId,
       {
@@ -244,18 +253,14 @@ export class WorkflowRunRecordShareService {
       },
     );
 
-    if (!isDefined(coreWorkflow)) {
-      return { creatorWorkspaceMemberId: null };
+    if (!isDefined(coreWorkflow?.createdByUserWorkspaceId)) {
+      return null;
     }
 
-    return {
-      creatorWorkspaceMemberId: isDefined(coreWorkflow.createdByUserWorkspaceId)
-        ? await this.resolveWorkspaceMemberId({
-            workspaceId,
-            userWorkspaceId: coreWorkflow.createdByUserWorkspaceId,
-          })
-        : null,
-    };
+    return this.resolveWorkspaceMemberId({
+      workspaceId,
+      userWorkspaceId: coreWorkflow.createdByUserWorkspaceId,
+    });
   }
 
   private async resolveWorkspaceMemberId({
