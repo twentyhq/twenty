@@ -31,6 +31,7 @@ describe('buildInboxMessageIds', () => {
       toolCallId: expect.any(String),
     });
     expect(second.messageId).not.toBe(first.messageId);
+    expect(second.toolCallId).not.toBe(first.toolCallId);
   });
 
   it.each(['opening', 'turn'])(

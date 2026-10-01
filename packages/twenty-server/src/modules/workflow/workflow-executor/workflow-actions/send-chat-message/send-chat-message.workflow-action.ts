@@ -5,11 +5,12 @@ import { isDefined, isValidUuid, resolveInput } from 'twenty-shared/utils';
 
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
+import { type WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
+import { WorkflowCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-core-sync.service';
 import { AgentInboxService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-inbox.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
-import { type WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 import {
   WorkflowStepExecutorException,
   WorkflowStepExecutorExceptionCode,
@@ -26,6 +27,7 @@ export class SendChatMessageWorkflowAction implements WorkflowAction {
   constructor(
     private readonly agentInboxService: AgentInboxService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
+    private readonly workflowCoreSyncService: WorkflowCoreSyncService,
   ) {}
 
   async execute({
@@ -91,11 +93,13 @@ export class SendChatMessageWorkflowAction implements WorkflowAction {
     return { result: { threadId } };
   }
 
+  // Every run carries the core workflow it was started from, which is the
+  // identity the executor bills and the conversation is attributed to.
   private async findRunWorkflowOrThrow({
     workflowRunId,
     workspaceId,
   }: WorkflowActionInput['runInfo']): Promise<
-    Pick<WorkflowWorkspaceEntity, 'id' | 'name'>
+    Pick<WorkflowEntity, 'id' | 'name'>
   > {
     const workflowRun =
       await this.workspaceOrmManager.executeInWorkspaceContext(
@@ -106,19 +110,25 @@ export class SendChatMessageWorkflowAction implements WorkflowAction {
             })
             .findOne({
               where: { id: workflowRunId },
-              relations: { workflow: true },
-              withDeleted: true,
+              select: ['id', 'coreWorkflowId'],
             }),
         buildSystemAuthContext(workspaceId),
       );
 
-    if (!isDefined(workflowRun?.workflow)) {
+    const workflow = isDefined(workflowRun?.coreWorkflowId)
+      ? await this.workflowCoreSyncService.findCoreWorkflowById(
+          workspaceId,
+          workflowRun.coreWorkflowId,
+        )
+      : null;
+
+    if (!isDefined(workflow)) {
       throw new WorkflowStepExecutorException(
         'Workflow run has no workflow',
         WorkflowStepExecutorExceptionCode.INTERNAL_ERROR,
       );
     }
 
-    return workflowRun.workflow;
+    return workflow;
   }
 }

@@ -1,5 +1,6 @@
 import { WorkflowActionType } from 'twenty-shared/workflow';
 
+import { type WorkflowCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-core-sync.service';
 import { type AgentInboxService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-inbox.service';
 import { type WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { WorkflowStepExecutorExceptionCode } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
@@ -31,6 +32,7 @@ const buildStep = (input: Record<string, unknown>): WorkflowAction =>
 describe('SendChatMessageWorkflowAction', () => {
   const sendMessage = jest.fn();
   const findWorkflowRun = jest.fn();
+  const findCoreWorkflowById = jest.fn();
   let action: SendChatMessageWorkflowAction;
 
   const execute = (input: Record<string, unknown>) =>
@@ -46,7 +48,11 @@ describe('SendChatMessageWorkflowAction', () => {
     sendMessage.mockResolvedValue({ threadId: 'thread-id' });
     findWorkflowRun.mockResolvedValue({
       id: WORKFLOW_RUN_ID,
-      workflow: { id: WORKFLOW_ID, name: 'New deals' },
+      coreWorkflowId: WORKFLOW_ID,
+    });
+    findCoreWorkflowById.mockResolvedValue({
+      id: WORKFLOW_ID,
+      name: 'New deals',
     });
 
     action = new SendChatMessageWorkflowAction(
@@ -55,6 +61,7 @@ describe('SendChatMessageWorkflowAction', () => {
         executeInWorkspaceContext: jest.fn((callback) => callback()),
         getRepository: jest.fn().mockReturnValue({ findOne: findWorkflowRun }),
       } as unknown as WorkspaceOrmManager,
+      { findCoreWorkflowById } as unknown as WorkflowCoreSyncService,
     );
   });
 
@@ -130,6 +137,24 @@ describe('SendChatMessageWorkflowAction', () => {
         input: expect.objectContaining({ title: 'Send Chat Message' }),
       }),
     );
+  });
+
+  it('fails the step when the run has no core workflow', async () => {
+    findWorkflowRun.mockResolvedValue({
+      id: WORKFLOW_RUN_ID,
+      coreWorkflowId: null,
+    });
+
+    await expect(
+      execute({
+        workspaceMemberId: WORKSPACE_MEMBER_ID,
+        title: '',
+        text: 'Hello',
+      }),
+    ).rejects.toMatchObject({
+      code: WorkflowStepExecutorExceptionCode.INTERNAL_ERROR,
+    });
+    expect(sendMessage).not.toHaveBeenCalled();
   });
 
   it.each([

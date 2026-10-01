@@ -218,7 +218,7 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         chatRecordEvents as never,
         new AgentConversationWriterService(
           turns as never,
-          new AgentHistoryTransactionService(storage as never, orm as never),
+          new AgentHistoryTransactionService(workspaceStorage, orm as never),
         ),
         new AgentChatThreadService(
           threads as never,
