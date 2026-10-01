@@ -29,8 +29,29 @@ export const useExpandableListLayout = ({
       return;
     }
 
-    const itemElements = Array.from(items.children);
+    const observedElements = new Set<Element>();
     const measure = () => {
+      const itemElements = Array.from(items.children);
+      const currentElements = new Set<Element>([container, ...itemElements]);
+
+      if (isDefined(triggerRef.current)) {
+        currentElements.add(triggerRef.current);
+      }
+
+      for (const element of observedElements) {
+        if (!currentElements.has(element)) {
+          observer?.unobserve(element);
+          observedElements.delete(element);
+        }
+      }
+
+      for (const element of currentElements) {
+        if (!observedElements.has(element)) {
+          observer?.observe(element);
+          observedElements.add(element);
+        }
+      }
+
       items.setAttribute('data-measuring', '');
       const itemWidths = itemElements.map((item) => item.clientWidth);
       items.removeAttribute('data-measuring');
@@ -60,6 +81,10 @@ export const useExpandableListLayout = ({
       );
     };
 
+    const observer = isDefined(globalThis.ResizeObserver)
+      ? new ResizeObserver(measure)
+      : undefined;
+
     measure();
 
     const contentObserver = new MutationObserver(measure);
@@ -71,7 +96,9 @@ export const useExpandableListLayout = ({
       subtree: true,
     });
 
-    if (!isDefined(globalThis.ResizeObserver)) {
+    contentObserver.observe(container, { childList: true });
+
+    if (!isDefined(observer)) {
       const interval = setInterval(measure, FALLBACK_MEASUREMENT_INTERVAL_MS);
       window.addEventListener('resize', measure);
 
@@ -82,22 +109,11 @@ export const useExpandableListLayout = ({
       };
     }
 
-    const observer = new ResizeObserver(measure);
-    observer.observe(container);
-
-    for (const item of itemElements) {
-      observer.observe(item);
-    }
-
-    if (isDefined(triggerRef.current)) {
-      observer.observe(triggerRef.current);
-    }
-
     return () => {
       contentObserver.disconnect();
       observer.disconnect();
     };
-  });
+  }, [itemCount, inlineItemCount, reserveCountSpace]);
 
   return { containerRef, itemsRef, triggerRef, visibleItemCount, hasOverflow };
 };
