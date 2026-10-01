@@ -5,8 +5,8 @@ import {
   type SendInboxMessageInput,
   type SendInboxMessageResult,
 } from 'twenty-shared/application';
-import { isDefined } from 'twenty-shared/utils';
-import { IsNull } from 'typeorm';
+import { isNonEmptyString } from '@sniptt/guards';
+import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
@@ -20,10 +20,7 @@ import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-
 import { AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
 import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { type AgentMessageWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message.workspace-entity';
-import {
-  AiException,
-  AiExceptionCode,
-} from 'src/engine/metadata-modules/ai/ai.exception';
+import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @Injectable()
@@ -41,7 +38,7 @@ export class AgentInboxService {
   // Every record has an id derived from the keys: the thread key picks the
   // conversation, and the idempotency key the message in it, so a retry or a
   // concurrent send completes the same message instead of writing another.
-  // The sender's message is written last: once it exists, it is done.
+  // A message is written with its parts at once, so one that exists is done.
   async sendMessage({
     workspaceId,
     sender,
@@ -59,23 +56,29 @@ export class AgentInboxService {
         threadKey: input.threadKey,
         idempotencyKey: input.idempotencyKey,
       });
+
+    const existingThread = await this.findThread({ workspaceId, threadId });
+
+    // A member who deleted the conversation has dismissed it, and a message
+    // that exists was already delivered.
+    if (
+      isDefined(existingThread?.deletedAt) ||
+      (await this.messageExists({ workspaceId, id: messageId }))
+    ) {
+      return { threadId };
+    }
+
     const request = isDefined(input.request)
       ? buildInboxMessageRequestPart({
           request: input.request,
           toolCallId: `call_${messageId.replace(/-/g, '')}`,
-          findApplicationTool: await this.buildApplicationToolFinder({
+          applicationTool: await this.findApplicationTool({
             workspaceId,
             applicationId: senderDetails.applicationId,
+            request: input.request,
           }),
         })
       : undefined;
-
-    const existingThread = await this.findThread({ workspaceId, threadId });
-
-    // A member who deleted the conversation has dismissed it.
-    if (isDefined(existingThread?.deletedAt)) {
-      return { threadId };
-    }
 
     const thread =
       existingThread ??
@@ -85,14 +88,6 @@ export class AgentInboxService {
         workspaceMemberId: input.workspaceMemberId,
         title: input.title,
       }));
-
-    if (await this.messageExists({ workspaceId, id: messageId })) {
-      return { threadId };
-    }
-
-    if (request?.isAwaitingAnswer) {
-      await this.claimPendingRequest({ workspaceId, threadId, messageId });
-    }
 
     await this.ignoreDuplicate(() =>
       this.conversationWriterService.insertTurn({
@@ -142,6 +137,7 @@ export class AgentInboxService {
         agentId: null,
         senderUserWorkspaceId: null,
         senderApplicationId: senderDetails.applicationId,
+        isAwaitingAnswer: request?.isAwaitingAnswer,
         parts,
       }),
     );
@@ -200,41 +196,6 @@ export class AgentInboxService {
     }
   }
 
-  // Only one request waits on the member at a time: a second would leave
-  // the first one unanswerable. The slot is taken in a single conditional
-  // write so concurrent sends cannot both take it.
-  private async claimPendingRequest({
-    workspaceId,
-    threadId,
-    messageId,
-  }: {
-    workspaceId: string;
-    threadId: string;
-    messageId: string;
-  }): Promise<void> {
-    const { affected } = await this.threadRepository.update(
-      workspaceId,
-      { id: threadId, pendingQuestionMessageId: IsNull() },
-      { pendingQuestionMessageId: messageId },
-    );
-
-    if (affected > 0) {
-      return;
-    }
-
-    const thread = await this.threadRepository.findOne(workspaceId, {
-      where: { id: threadId },
-      select: ['id', 'pendingQuestionMessageId'],
-    });
-
-    if (thread?.pendingQuestionMessageId !== messageId) {
-      throw new AiException(
-        'The conversation is waiting for an answer to an earlier request',
-        AiExceptionCode.THREAD_AWAITING_ANSWER,
-      );
-    }
-  }
-
   // Every id is derived from the keys, so a row that already exists was
   // written by a concurrent send of the same conversation.
   private async ignoreDuplicate(write: () => Promise<unknown>) {
@@ -266,32 +227,35 @@ export class AgentInboxService {
     );
   }
 
-  private async buildApplicationToolFinder({
+  private async findApplicationTool({
     workspaceId,
     applicationId,
+    request,
   }: {
     workspaceId: string;
     applicationId: string | null;
-  }) {
-    if (!isDefined(applicationId)) {
-      return () => undefined;
+    request: unknown;
+  }): Promise<FlatLogicFunction | undefined> {
+    if (
+      !isDefined(applicationId) ||
+      !isPlainObject(request) ||
+      !isNonEmptyString(request.logicFunctionUniversalIdentifier)
+    ) {
+      return undefined;
     }
 
     const { flatLogicFunctionMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatLogicFunctionMaps',
       ]);
+    const logicFunction =
+      flatLogicFunctionMaps.byUniversalIdentifier[
+        request.logicFunctionUniversalIdentifier
+      ];
 
-    return (logicFunctionUniversalIdentifier: string) => {
-      const logicFunction =
-        flatLogicFunctionMaps.byUniversalIdentifier[
-          logicFunctionUniversalIdentifier
-        ];
-
-      return logicFunction?.applicationId === applicationId &&
-        !isDefined(logicFunction.deletedAt)
-        ? logicFunction
-        : undefined;
-    };
+    return logicFunction?.applicationId === applicationId &&
+      !isDefined(logicFunction.deletedAt)
+      ? logicFunction
+      : undefined;
   }
 }

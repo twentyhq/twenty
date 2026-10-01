@@ -149,6 +149,8 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
           ),
         getRepository:
           workspaceDataSource.getRepository.bind(workspaceDataSource),
+        runInWorkspaceTransaction:
+          workspaceDataSource.transaction.bind(workspaceDataSource),
       };
     };
     const orm = createOrm();
@@ -217,7 +219,6 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
           threads as never,
           turns as never,
           messageRepository as never,
-          messageParts as never,
         ),
         new AgentChatThreadService(
           threads as never,

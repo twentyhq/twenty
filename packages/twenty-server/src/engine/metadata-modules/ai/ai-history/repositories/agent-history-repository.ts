@@ -7,6 +7,7 @@ import {
 } from 'src/engine/metadata-modules/ai/ai.exception';
 import { AgentHistoryStorageException } from 'src/engine/metadata-modules/ai/ai-history/exceptions/agent-history-storage.exception';
 import { type AgentHistoryObjectName } from 'src/engine/metadata-modules/ai/ai-history/types/agent-history-object-name.type';
+import { type AgentHistoryTransactionScope } from 'src/engine/metadata-modules/ai/ai-history/types/agent-history-transaction-scope.type';
 import { type FindOptionsWhere, type ObjectLiteral } from 'typeorm';
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { isDefined, isNonEmptyString } from 'twenty-shared/utils';
@@ -32,7 +33,9 @@ export class AgentHistoryRepository<TRecord extends { id: string }> {
     >,
     private readonly workspaceOrmManager: Pick<
       WorkspaceOrmManager,
-      'executeInWorkspaceContext' | 'getRepository'
+      | 'executeInWorkspaceContext'
+      | 'getRepository'
+      | 'runInWorkspaceTransaction'
     >,
   ) {}
 
@@ -159,13 +162,14 @@ export class AgentHistoryRepository<TRecord extends { id: string }> {
     });
   }
 
-  private async addSenderRelation(
-    values: QueryDeepPartialEntity<TRecord> | QueryDeepPartialEntity<TRecord>[],
+  private async addSenderRelation<TValues extends ObjectLiteral>(
+    values: TValues | TValues[],
     workspaceId: string,
     context: AgentHistoryStorageContext,
+    name: AgentHistoryObjectName = this.name,
   ) {
     const records: ObjectLiteral[] = Array.isArray(values) ? values : [values];
-    return this.name === 'agentMessage' &&
+    return name === 'agentMessage' &&
       records.some((record) => isNonEmptyString(record.senderUserWorkspaceId))
       ? await addAgentMessageSenderWorkspaceMember(values, workspaceId, context)
       : values;
@@ -193,6 +197,56 @@ export class AgentHistoryRepository<TRecord extends { id: string }> {
         raw: result.generatedMaps,
       };
     });
+  }
+
+  // Writes several history objects together, so a failed write leaves none
+  // of them behind.
+  transaction<TResult>(
+    workspaceId: string,
+    work: (scope: AgentHistoryTransactionScope) => Promise<TResult>,
+  ): Promise<TResult> {
+    return this.storageService.run(workspaceId, (context) =>
+      this.workspaceOrmManager.executeInWorkspaceContext(
+        () =>
+          this.workspaceOrmManager.runInWorkspaceTransaction(
+            (transactionScope) => {
+              const getRepository = (name: AgentHistoryObjectName) =>
+                transactionScope.getRepository(
+                  name,
+                  { shouldBypassPermissionChecks: true },
+                  { shouldSkipEventEmission: true },
+                );
+
+              return work({
+                insert: async (name, values) => {
+                  await getRepository(name).insert(
+                    await this.addSenderRelation(
+                      values,
+                      workspaceId,
+                      context,
+                      name,
+                    ),
+                  );
+                },
+                update: async (name, where, values) => {
+                  const result = await getRepository(name)
+                    .createQueryBuilder()
+                    .withDeleted()
+                    .where(where)
+                    .update()
+                    .set(values)
+                    .returning(['id'])
+                    .execute();
+
+                  return result.generatedMaps.length;
+                },
+              });
+            },
+          ),
+        buildSystemAuthContext(workspaceId),
+        { lite: true },
+      ),
+    );
   }
 
   delete(workspaceId: string, where: FindOptionsWhere<TRecord>) {

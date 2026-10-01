@@ -25,6 +25,21 @@ const buildService = ({ existingHiddenMessage = null as unknown } = {}) => {
     delete: jest.fn().mockResolvedValue({ affected: 1 }),
   };
   const messagePartRepository = { insert: jest.fn().mockResolvedValue({}) };
+  const transaction = jest.fn(
+    (
+      workspaceId: string,
+      work: (scope: {
+        insert: (name: string, values: unknown) => Promise<unknown>;
+      }) => Promise<unknown>,
+    ) =>
+      work({
+        insert: (name, values) =>
+          (name === 'agentMessage'
+            ? messageRepository
+            : messagePartRepository
+          ).insert(workspaceId, values),
+      }),
+  );
 
   const service = new AgentChatService(
     threadRepository as never,
@@ -40,8 +55,7 @@ const buildService = ({ existingHiddenMessage = null as unknown } = {}) => {
     new AgentConversationWriterService(
       threadRepository as never,
       turnRepository as never,
-      messageRepository as never,
-      messagePartRepository as never,
+      { ...messageRepository, transaction } as never,
     ),
     {} as never,
   );

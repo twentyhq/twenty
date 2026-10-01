@@ -4,9 +4,8 @@ import { randomUUID } from 'node:crypto';
 
 import { type ExtendedUIMessagePart } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
-import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
+import { IsNull } from 'typeorm';
 
-import { type AgentMessagePartEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message-part.entity';
 import { type AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
 import { type AgentTurnEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-turn.entity';
 import { mapUIMessagePartsToPersistedDBParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/map-ui-message-parts-to-persisted-db-parts.util';
@@ -14,6 +13,10 @@ import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-histor
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { type AgentMessageWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message.workspace-entity';
+import {
+  AiException,
+  AiExceptionCode,
+} from 'src/engine/metadata-modules/ai/ai.exception';
 
 @Injectable()
 export class AgentConversationWriterService {
@@ -24,8 +27,6 @@ export class AgentConversationWriterService {
     private readonly turnRepository: AgentHistoryRepository<AgentTurnEntity>,
     @InjectAgentHistoryRepository('agentMessage')
     private readonly messageRepository: AgentHistoryRepository<AgentMessageWorkspaceEntity>,
-    @InjectAgentHistoryRepository('agentMessagePart')
-    private readonly messagePartRepository: AgentHistoryRepository<AgentMessagePartEntity>,
   ) {}
 
   async insertTurn({
@@ -48,6 +49,10 @@ export class AgentConversationWriterService {
     return (id ?? turnInsertResult.identifiers[0].id) as string;
   }
 
+  // The message and its parts are written together, so a message that
+  // exists is complete. A message that awaits an answer also takes the
+  // thread's single pending slot in the same write, and fails if another
+  // message holds it.
   async insertMessage({
     workspaceId,
     id,
@@ -58,6 +63,7 @@ export class AgentConversationWriterService {
     senderUserWorkspaceId,
     senderApplicationId,
     isHidden,
+    isAwaitingAnswer,
     processedAt,
     parts,
   }: {
@@ -70,35 +76,52 @@ export class AgentConversationWriterService {
     senderUserWorkspaceId: string | null;
     senderApplicationId?: string | null;
     isHidden?: boolean;
+    isAwaitingAnswer?: boolean;
     processedAt?: Date;
     parts: ExtendedUIMessagePart[];
   }): Promise<string> {
     const messageId = id ?? randomUUID();
 
-    await this.messageRepository.insert(workspaceId, {
-      id: messageId,
-      threadId,
-      turnId,
-      role,
-      agentId,
-      processedAt: (processedAt ?? new Date()).toISOString(),
-      ...(isDefined(senderUserWorkspaceId) ? { senderUserWorkspaceId } : {}),
-      ...(isDefined(senderApplicationId) ? { senderApplicationId } : {}),
-      ...(isDefined(isHidden) ? { isHidden } : {}),
-    });
+    await this.messageRepository.transaction(workspaceId, async (scope) => {
+      await scope.insert('agentMessage', {
+        id: messageId,
+        threadId,
+        turnId,
+        role,
+        agentId,
+        processedAt: (processedAt ?? new Date()).toISOString(),
+        ...(isDefined(senderUserWorkspaceId) ? { senderUserWorkspaceId } : {}),
+        ...(isDefined(senderApplicationId) ? { senderApplicationId } : {}),
+        ...(isDefined(isHidden) ? { isHidden } : {}),
+      });
 
-    const dbParts = mapUIMessagePartsToPersistedDBParts(
-      parts,
-      messageId,
-      workspaceId,
-    );
-
-    if (dbParts.length > 0) {
-      await this.messagePartRepository.insert(
+      const dbParts = mapUIMessagePartsToPersistedDBParts(
+        parts,
+        messageId,
         workspaceId,
-        dbParts as QueryDeepPartialEntity<AgentMessagePartEntity>[],
       );
-    }
+
+      if (dbParts.length > 0) {
+        await scope.insert('agentMessagePart', dbParts);
+      }
+
+      if (isAwaitingAnswer !== true) {
+        return;
+      }
+
+      const claimedThreadCount = await scope.update(
+        'agentChatThread',
+        { id: threadId, pendingQuestionMessageId: IsNull() },
+        { pendingQuestionMessageId: messageId },
+      );
+
+      if (claimedThreadCount === 0) {
+        throw new AiException(
+          'The conversation is waiting for an answer to an earlier request',
+          AiExceptionCode.THREAD_AWAITING_ANSWER,
+        );
+      }
+    });
 
     return messageId;
   }

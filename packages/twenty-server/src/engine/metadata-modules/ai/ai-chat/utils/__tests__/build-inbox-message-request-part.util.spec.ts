@@ -5,6 +5,7 @@ import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-functi
 const TOOL_CALL_ID = 'call_inbox';
 
 const SHARE_RECORDING_TOOL = {
+  universalIdentifier: 'share-recording-tool',
   name: 'share-recording',
   toolTriggerSettings: { frontComponentUniversalIdentifier: 'component-id' },
 } as FlatLogicFunction;
@@ -13,10 +14,7 @@ const build = (request: unknown) =>
   buildInboxMessageRequestPart({
     request,
     toolCallId: TOOL_CALL_ID,
-    findApplicationTool: (logicFunctionUniversalIdentifier) =>
-      logicFunctionUniversalIdentifier === 'share-recording-tool'
-        ? SHARE_RECORDING_TOOL
-        : undefined,
+    applicationTool: SHARE_RECORDING_TOOL,
   });
 
 describe('buildInboxMessageRequestPart', () => {

@@ -124,17 +124,16 @@ const buildPausingToolPart = ({
 
 // A request is either a call the member answers, which pauses the
 // conversation, or one of the application's own tools, rendered by its front
-// component with the input and output the application gives.
+// component with the input and output the application gives. The caller
+// resolves that tool, scoped to the sending application.
 export const buildInboxMessageRequestPart = ({
   request,
   toolCallId,
-  findApplicationTool,
+  applicationTool,
 }: {
   request: unknown;
   toolCallId: string;
-  findApplicationTool: (
-    logicFunctionUniversalIdentifier: string,
-  ) => FlatLogicFunction | undefined;
+  applicationTool?: FlatLogicFunction;
 }): InboxMessageRequestPart => {
   if (!isPlainObject(request)) {
     return throwInvalidRequest('request must be an object');
@@ -160,13 +159,11 @@ export const buildInboxMessageRequestPart = ({
   const input = parseOptionalRecord('input', request.input);
   const output = parseOptionalRecord('output', request.output);
 
-  const logicFunction = findApplicationTool(
-    request.logicFunctionUniversalIdentifier,
-  );
-
   if (
+    applicationTool?.universalIdentifier !==
+      request.logicFunctionUniversalIdentifier ||
     !isDefined(
-      logicFunction?.toolTriggerSettings?.frontComponentUniversalIdentifier,
+      applicationTool.toolTriggerSettings?.frontComponentUniversalIdentifier,
     )
   ) {
     return throwInvalidRequest(
@@ -176,7 +173,7 @@ export const buildInboxMessageRequestPart = ({
 
   return {
     part: buildToolPart({
-      toolName: buildLogicFunctionToolName(logicFunction.name),
+      toolName: buildLogicFunctionToolName(applicationTool.name),
       toolCallId,
       input,
       output,
