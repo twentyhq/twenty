@@ -1,4 +1,5 @@
 import { styled } from '@linaria/react';
+import { useId } from 'react';
 
 import { type ColorScheme } from '@/workspace-member/types/WorkspaceMember';
 import { IconCheck } from 'twenty-ui/icon';
@@ -6,7 +7,7 @@ import { Radio } from 'twenty-ui/primitives/input';
 import { MOBILE_VIEWPORT, themeCssVariables, useTheme } from 'twenty-ui/theme';
 import { SettingsAppearancePreview } from '~/pages/settings/profile/appearance/components/SettingsAppearancePreview';
 
-const StyledChoice = styled.div`
+const StyledChoice = styled.label`
   display: flex;
   flex: 1 1 0;
   flex-direction: column;
@@ -85,12 +86,13 @@ export const SettingsAppearanceOption = ({
   label,
 }: SettingsAppearanceOptionProps) => {
   const theme = useTheme();
+  const labelId = useId();
 
   return (
     <StyledChoice>
       <Radio
         value={colorScheme}
-        aria-label={label}
+        aria-labelledby={labelId}
         render={
           <StyledRadio>
             <SettingsAppearancePreview colorScheme={colorScheme} />
@@ -100,7 +102,7 @@ export const SettingsAppearanceOption = ({
           </StyledRadio>
         }
       />
-      <StyledLabel>{label}</StyledLabel>
+      <StyledLabel id={labelId}>{label}</StyledLabel>
     </StyledChoice>
   );
 };
