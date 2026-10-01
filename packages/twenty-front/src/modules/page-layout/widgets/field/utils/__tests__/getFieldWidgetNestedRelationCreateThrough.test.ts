@@ -31,8 +31,6 @@ describe('getFieldWidgetNestedRelationCreateThrough', () => {
   });
 
   it('should return undefined for a many-to-one first hop', () => {
-    // The intermediate is unambiguous there, so the created record's join
-    // column is prefilled from the seeded direct filter instead of a picker.
     expect(
       getFieldWidgetNestedRelationCreateThrough({
         fieldRelationMetadata: {

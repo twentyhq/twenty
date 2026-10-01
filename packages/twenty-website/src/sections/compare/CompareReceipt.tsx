@@ -53,8 +53,6 @@ const CardsGrid = styled.div`
   }
 `;
 
-// Mirrors the pricing page's PlanCard shell so both pages read as one
-// component family.
 const CardShell = styled.div`
   background-color: ${color('white')};
   border: 1px solid transparent;
@@ -113,8 +111,6 @@ const priceSuffixClassName = css`
   min-width: 0;
 `;
 
-// Clones the billing toggle's discount badge so the savings chip is the
-// same component language as the pricing page's "-25%".
 const SavingsBadge = styled.span`
   align-items: center;
   align-self: center;

@@ -55,8 +55,7 @@ type CoreWorkflowCursor = {
   id: string;
 };
 
-// sorting and the keyset comparison stay on the raw columns so a btree index
-// can serve them; only the cursor value is rendered to text
+// sort and keyset-compare on raw columns so a btree index serves them; only the cursor value is rendered to text
 const SORT_COLUMN_BY_FIELD: Record<
   CoreWorkflowOrderByField,
   { column: string; cursorExpression: string; nullable: boolean; cast: string }
@@ -76,8 +75,7 @@ const SORT_COLUMN_BY_FIELD: Record<
   },
 };
 
-// Every raw query binds the reader as $2, right after the workspace, so the
-// filter parameters keep starting at $3 in both the page and the count.
+// every raw query binds the reader right after the workspace so filter parameters start at $3 in both page and count queries
 const READER_PARAMETER = '$2';
 const VISIBILITY_PREDICATE = buildCoreWorkflowVisibilitySqlPredicate({
   tableAlias: 'c',

@@ -97,8 +97,7 @@ export class ImpersonationService {
     );
   }
 
-  // Hands the impersonator back the session parked when impersonation started.
-  // Nothing is minted on the strength of the impersonated user's cookie.
+  // Restores the parked session; never mints one from the impersonated user's cookie.
   async stopImpersonation({
     impersonationContext,
     workspaceId,
@@ -167,8 +166,7 @@ export class ImpersonationService {
     return { canRestoreImpersonatorSession };
   }
 
-  // The parked token is evidence of nothing on its own, so it is re-resolved
-  // and checked against the impersonator the impersonation session names.
+  // The parked token proves nothing alone, so it is re-checked against the impersonator.
   private async restoreImpersonatorSession(
     request: Request,
     impersonatorUserWorkspaceId: string,

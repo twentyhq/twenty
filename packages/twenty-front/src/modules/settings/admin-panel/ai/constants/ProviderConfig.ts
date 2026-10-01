@@ -17,7 +17,6 @@ export const PROVIDER_ICON_CONFIG: Record<string, { Icon: IconComponent }> = {
   mistral: { Icon: IconBrandMistral },
   xai: { Icon: IconBrandXai },
   'openai-compatible': { Icon: IconProviderOpenai },
-  // models.dev serves no logo for an evaluation-only provider, and the fallback
-  // renders a broken image rather than nothing.
+  // models.dev has no logo for evaluation-only providers and the fallback renders a broken image.
   'typesafe-ai': { Icon: IconBrandTypesafeAi },
 };

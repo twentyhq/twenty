@@ -1,5 +1,4 @@
-// Ordered from fastest and cheapest to most capable. The order is what the
-// slider walks, so it must stay monotonic in both directions.
+// The slider walks this order, so it must stay monotonic from fastest and cheapest to most capable.
 export const AI_MODEL_TIERS = [
   'extraFast',
   'fast',

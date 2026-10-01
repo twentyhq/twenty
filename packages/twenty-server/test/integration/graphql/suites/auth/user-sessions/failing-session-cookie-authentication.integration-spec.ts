@@ -36,8 +36,7 @@ describe('failing session cookie authentication (integration)', () => {
   });
 
   it('should reject a session token presented as a Bearer header', async () => {
-    // Cookie-only by design: accepting sess_ tokens as Bearer would reopen
-    // the XSS-exfiltration surface cookie sessions close.
+    // Accepting sess_ tokens as Bearer would reopen the XSS-exfiltration surface cookie sessions close.
     const response = await makeMetadataApiRequest(
       currentUserIdentityQueryFactory(),
       sessionToken,

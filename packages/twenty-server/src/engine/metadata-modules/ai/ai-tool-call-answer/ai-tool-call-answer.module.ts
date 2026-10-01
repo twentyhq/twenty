@@ -14,8 +14,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
 import { WorkflowRunModule } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.module';
 import { WorkflowRunnerModule } from 'src/modules/workflow/workflow-runner/workflow-runner.module';
 
-// Answering a paused call can resume a chat or a workflow run, so this sits
-// above both.
+// sits above chat and workflow since an answer can resume either
 @Module({
   imports: [
     AgentHistoryModule,

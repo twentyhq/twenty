@@ -115,7 +115,6 @@ export class AgentHistoryWorkspaceStorageService {
       await runner.connect();
       await runner.startTransaction('REPEATABLE READ');
       await runner.query('SET TRANSACTION READ ONLY');
-      // Unprovisioned workspaces have no history tables to include in reports.
       const provisioned: { workspaceId: string }[] = await runner.query(
         `SELECT id AS "workspaceId" FROM unnest($1::uuid[], $2::text[]) AS candidate(id, table_name) WHERE to_regclass(table_name) IS NOT NULL
          AND EXISTS (SELECT 1 FROM core."keyValuePair" state WHERE state."workspaceId" = candidate.id

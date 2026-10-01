@@ -129,11 +129,8 @@ type WorkspaceRepositoryOptions<TEntity extends ObjectLiteral> = {
   executor: QueryExecutor;
   objectRecordsPermissions: ObjectsPermissions;
   shouldBypassPermissionChecks: boolean;
-  // Suppresses the CREATED/UPDATED/DELETED database events this repository
-  // would otherwise emit, and with them the snapshot SELECT that reads every
-  // written row back to build the event payload. Only for bulk system writes
-  // whose rows no subscriber cares about (campaign materialisation, backfills):
-  // webhooks, workflow triggers and timeline activities will NOT fire.
+  // Suppresses database events and their snapshot SELECT, for bulk system writes only: webhooks, workflow triggers
+  // and timeline activities will NOT fire
   shouldSkipEventEmission: boolean;
   tableShapeByObjectMetadataId: (
     objectMetadataId: string,
@@ -202,8 +199,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     );
   }
 
-  // TypeORM drops undefined properties before it validates or writes anything;
-  // strip them here so they neither throw on an unknown field nor bind as NULL
+  // Strip undefined like TypeORM does, so they neither throw as unknown fields nor bind as NULL
   private formatWriteData(
     data: Partial<ObjectRecord>,
   ): Record<string, unknown> {
@@ -225,8 +221,6 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     this.applyRowLevelPermissionPredicates(queryBuilder, kind);
   }
 
-  // Capability reads use the same validators and SQL predicates as a mutation,
-  // without performing a no-op write or emitting record events.
   async findRecordIdsAllowedForOperation({
     recordIds,
     operationType,
@@ -1460,11 +1454,8 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       .withDeleted();
   }
 
-  // Re-parenting a child, or creating one under a parent, is a write on that
-  // parent: the destination must grant the caller at least READ_WRITE. The
-  // records inheriting through a row are checked on the row before and after
-  // the write, whatever the write is, since creating, changing, deleting or
-  // restoring the row changes what they expose
+  // Re-parenting or creating under a parent is a write on that parent, so the destination must grant READ_WRITE
+  // Inheriting records are checked before and after any write, since creating, changing, deleting or restoring the row changes what they expose
   private async validateInheritedParentsAreWritableOrThrow({
     writtenRecords,
     affectedRecords,
@@ -2128,8 +2119,6 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     });
   }
 
-  // Records of an object whose readability keeps them out of the API are never
-  // readable here, whatever the caller's role or grants
   isReadDeniedByReadability(): boolean {
     const subject = this.resolveRowAccessPolicySubject();
 

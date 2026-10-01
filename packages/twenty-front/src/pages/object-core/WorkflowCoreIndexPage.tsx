@@ -19,6 +19,7 @@ import { useCreateCoreWorkflow } from '@/object-core/workflows/hooks/useCreateCo
 import { coreWorkflowsFilterSettingsState } from '@/object-core/workflows/states/coreWorkflowsFilterSettingsState';
 import { isUsableCoreWorkflowFilterRule } from '@/object-core/workflows/utils/isUsableCoreWorkflowFilterRule';
 import { RecordIndexEmptyStateDisplay } from '@/object-record/record-index/components/RecordIndexEmptyStateDisplay';
+import { RecordIndexPageHeaderTitle } from '@/object-record/record-index/components/RecordIndexPageHeaderTitle';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { CoreWorkflowsFilterBar } from '@/object-core/workflows/components/CoreWorkflowsFilterBar';
 import { WORKFLOW_CORE_TABLE_COLUMNS } from '@/object-core/workflows/constants/WorkflowCoreTableColumns';
@@ -73,8 +74,13 @@ export const WorkflowCoreIndexPage = () => {
   const { createCoreWorkflow, canCreateCoreWorkflow, isCreatingCoreWorkflow } =
     useCreateCoreWorkflow();
 
-  const { displayedCoreWorkflows, selectedRowIds, toggleRow, selectRows } =
-    useCoreWorkflowsSelection({ coreWorkflows });
+  const {
+    displayedCoreWorkflows,
+    selectedRowIds,
+    selectedRowCount,
+    toggleRow,
+    selectRows,
+  } = useCoreWorkflowsSelection({ coreWorkflows });
 
   useListenToCoreWorkflowEvents({ refetch: refetchLoadedCoreWorkflows });
 
@@ -109,7 +115,12 @@ export const WorkflowCoreIndexPage = () => {
             icon={
               <ObjectMetadataIcon objectMetadataItem={objectMetadataItem} />
             }
-            title={objectMetadataItem.labelPlural}
+            title={
+              <RecordIndexPageHeaderTitle
+                label={objectMetadataItem.labelPlural}
+                numberOfSelectedRecords={selectedRowCount}
+              />
+            }
             actionButton={
               <>
                 <CommandMenuComponentInstanceContext.Provider

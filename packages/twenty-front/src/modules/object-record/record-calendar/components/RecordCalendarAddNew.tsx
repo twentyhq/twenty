@@ -68,8 +68,7 @@ export const RecordCalendarAddNew = ({
       })
     : false;
 
-  // Creating in a nested relation or junction widget requires picking the
-  // related record, which only the table layout offers today.
+  // Creating through a nested relation or junction needs a record picker only the table layout offers.
   const recordTableWidgetContext = useContext(RecordTableWidgetContext);
 
   if (

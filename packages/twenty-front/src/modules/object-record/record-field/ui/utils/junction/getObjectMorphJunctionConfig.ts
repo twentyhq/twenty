@@ -75,8 +75,7 @@ export const getObjectMorphJunctionConfig = ({
     inferredJunctionConfigs.push(resolvedJunctionConfig);
   }
 
-  // Older workspaces can lack the junction target marker. The relation graph is
-  // still authoritative when it describes exactly one morph junction.
+  // Older workspaces can lack the junction target marker; infer when the graph shows exactly one morph junction.
   return inferredJunctionConfigs.length === 1
     ? inferredJunctionConfigs[0]
     : null;

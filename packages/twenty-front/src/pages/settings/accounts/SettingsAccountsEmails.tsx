@@ -27,9 +27,7 @@ export const SettingsAccountsEmails = () => {
         (channel) =>
           channel.isSyncEnabled &&
           channel.syncStage !== MessageChannelSyncStage.PENDING_CONFIGURATION &&
-          // Every setting on this page is a mailbox setting, so it lists
-          // mailboxes only: group inboxes have their own page, and app-owned
-          // channels are configured by the app that created them.
+          // Mailboxes only: group inboxes have their own page and app-owned channels are configured by their app
           channel.type === MessageChannelType.EMAIL,
       ),
     [allMessageChannels],
