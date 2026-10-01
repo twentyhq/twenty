@@ -499,7 +499,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     ),
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
     conditionalAvailabilityExpression:
-      'numberOfSelectedRecords == 1 and (everyEquals(selectedRecords, "currentVersion.status", "ACTIVE") or includesEvery(selectedRecords, "statuses", "ACTIVE")) and noneDefined(selectedRecords, "deletedAt")',
+      'numberOfSelectedRecords == 1 and (everyEquals(selectedRecords, "currentVersion.status", "ACTIVE") or includesEvery(selectedRecords, "statuses", "ACTIVE")) and noneDefined(selectedRecords, "deletedAt") and noneEquals(selectedRecords, "recordPermissions.canUpdate", false)',
     availabilityObjectMetadataUniversalIdentifier:
       STANDARD_OBJECTS.workflow.universalIdentifier,
     frontComponentUniversalIdentifier: null,
@@ -602,7 +602,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     ),
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
     conditionalAvailabilityExpression:
-      'pageType == "RECORD_PAGE" and everyDefined(selectedRecords, "currentVersion.trigger") and everyDefined(selectedRecords, "currentVersion.steps") and every(selectedRecords, "currentVersion.steps.length") and noneDefined(selectedRecords, "deletedAt")',
+      'pageType == "RECORD_PAGE" and everyDefined(selectedRecords, "currentVersion.trigger") and everyDefined(selectedRecords, "currentVersion.steps") and every(selectedRecords, "currentVersion.steps.length") and noneDefined(selectedRecords, "deletedAt") and noneEquals(selectedRecords, "recordPermissions.canUpdate", false)',
     availabilityObjectMetadataUniversalIdentifier:
       STANDARD_OBJECTS.workflow.universalIdentifier,
     frontComponentUniversalIdentifier: null,
@@ -622,7 +622,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     ),
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
     conditionalAvailabilityExpression:
-      'everyDefined(selectedRecords, "currentVersion") and noneDefined(selectedRecords, "deletedAt")',
+      'everyDefined(selectedRecords, "currentVersion") and noneDefined(selectedRecords, "deletedAt") and noneEquals(selectedRecords, "recordPermissions.canUpdate", false)',
     availabilityObjectMetadataUniversalIdentifier:
       STANDARD_OBJECTS.workflow.universalIdentifier,
     frontComponentUniversalIdentifier: null,
@@ -645,7 +645,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     ),
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
     conditionalAvailabilityExpression:
-      'numberOfSelectedRecords == 1 and everyEquals(selectedRecords, "visibility", "WORKSPACE") and every(selectedRecords, "canChangeVisibility") and noneDefined(selectedRecords, "deletedAt")',
+      'numberOfSelectedRecords == 1 and everyEquals(selectedRecords, "visibility", "WORKSPACE") and every(selectedRecords, "canChangeVisibility") and noneDefined(selectedRecords, "deletedAt") and noneEquals(selectedRecords, "recordPermissions.canUpdate", false)',
     availabilityObjectMetadataUniversalIdentifier:
       STANDARD_OBJECTS.workflow.universalIdentifier,
     frontComponentUniversalIdentifier: null,
@@ -676,25 +676,6 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
       STANDARD_OBJECTS.workflow.universalIdentifier,
     frontComponentUniversalIdentifier: null,
     engineComponentKey: EngineComponentKey.TOGGLE_WORKFLOW_VISIBILITY,
-    hotKeys: null,
-  },
-  seeVersionWorkflowRun: {
-    universalIdentifier: 'cc3a065c-c89e-40ac-9449-4272c55b1bb8',
-    label: i18nLabel(
-      msg({ message: `See Version`, context: 'commandMenuItem.label' }),
-    ),
-    icon: 'IconVersions',
-    isPinned: true,
-    position: 33,
-    shortLabel: i18nLabel(
-      msg({ message: `See Version`, context: 'commandMenuItem.shortLabel' }),
-    ),
-    availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
-    conditionalAvailabilityExpression: null,
-    availabilityObjectMetadataUniversalIdentifier:
-      STANDARD_OBJECTS.workflowRun.universalIdentifier,
-    frontComponentUniversalIdentifier: null,
-    engineComponentKey: EngineComponentKey.SEE_VERSION_WORKFLOW_RUN,
     hotKeys: null,
   },
   seeWorkflowWorkflowRun: {

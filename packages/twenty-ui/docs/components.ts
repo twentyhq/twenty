@@ -12,6 +12,7 @@ import { TOAST_PROVIDER_PROP_DESCRIPTIONS } from './toastProviderPropDescription
 import { TOASTER_PROP_DESCRIPTIONS } from './toasterPropDescriptions';
 import { RADIO_PROP_DESCRIPTIONS } from './radioPropDescriptions';
 import { SEARCH_INPUT_PROP_DESCRIPTIONS } from './searchInputPropDescriptions';
+import { IMAGE_INPUT_PROP_DESCRIPTIONS } from './imageInputPropDescriptions';
 import { ANIMATED_ICON_CROSSFADE_PROP_DESCRIPTIONS } from './animatedIconCrossfadePropDescriptions';
 import { MENU_ITEM_PROP_DESCRIPTIONS } from './menuItemPropDescriptions';
 import { MENU_ITEM_AVATAR_PROP_DESCRIPTIONS } from './menuItemAvatarPropDescriptions';
@@ -591,6 +592,13 @@ export const DOCUMENTED_COMPONENTS = [
     entryPoint: 'twenty-ui/components',
     slug: 'components/toaster',
     propDescriptions: TOASTER_PROP_DESCRIPTIONS,
+  },
+  {
+    name: 'ImageInput',
+    source: 'components/input/ImageInput/ImageInput.tsx',
+    entryPoint: 'twenty-ui/components',
+    slug: 'components/image-input',
+    propDescriptions: IMAGE_INPUT_PROP_DESCRIPTIONS,
   },
   {
     name: 'SearchInput',

@@ -2131,6 +2131,7 @@ export type FeatureFlag = {
 
 export enum FeatureFlagKey {
   IS_AI_CHAT_SHARING_DROPDOWN_ENABLED = 'IS_AI_CHAT_SHARING_DROPDOWN_ENABLED',
+  IS_APPLICATION_WORKFLOWS_ENABLED = 'IS_APPLICATION_WORKFLOWS_ENABLED',
   IS_ASYNC_CSV_EXPORT_ENABLED = 'IS_ASYNC_CSV_EXPORT_ENABLED',
   IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED = 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED',
   IS_CONVERSATIONS_TAB_ENABLED = 'IS_CONVERSATIONS_TAB_ENABLED',
@@ -2712,6 +2713,8 @@ export type LogicFunctionLogs = {
   __typename?: 'LogicFunctionLogs';
   /** Execution Logs */
   logs: Scalars['String']['output'];
+  name?: Maybe<Scalars['String']['output']>;
+  universalIdentifier?: Maybe<Scalars['UUID']['output']>;
 };
 
 export type LogicFunctionLogsInput = {

@@ -1,5 +1,7 @@
 import { Field, HideField, ObjectType } from '@nestjs/graphql';
 
+import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+
 @ObjectType('LogicFunctionLogs')
 export class LogicFunctionLogsDTO {
   @Field({ description: 'Execution Logs' })
@@ -11,12 +13,12 @@ export class LogicFunctionLogsDTO {
   @HideField()
   applicationId?: string;
 
-  @HideField()
+  @Field(() => String, { nullable: true })
   name?: string;
 
   @HideField()
   id?: string;
 
-  @HideField()
+  @Field(() => UUIDScalarType, { nullable: true })
   universalIdentifier?: string;
 }

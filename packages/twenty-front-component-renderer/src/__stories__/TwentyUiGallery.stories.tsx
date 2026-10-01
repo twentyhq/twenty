@@ -1,4 +1,5 @@
 import { breadcrumbTest } from '@/__stories__/twenty-ui-gallery/utils/breadcrumbTest';
+import { imageInputTest } from '@/__stories__/twenty-ui-gallery/utils/imageInputTest';
 import { overflowingListEventIsolationFailureTest } from '@/__stories__/twenty-ui-gallery/utils/overflowingListEventIsolationFailureTest';
 import { overflowingListGeometryTest } from '@/__stories__/twenty-ui-gallery/utils/overflowingListGeometryTest';
 import { overflowingListSandboxFailureTest } from '@/__stories__/twenty-ui-gallery/utils/overflowingListSandboxFailureTest';
@@ -604,3 +605,15 @@ export const OverflowingListEventIsolationPreactFailure: Story =
     runtime: 'preact',
     play: overflowingListEventIsolationFailureTest,
   });
+
+export const ImageInputReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-image-input',
+  runtime: 'react',
+  play: imageInputTest,
+});
+
+export const ImageInputPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-image-input',
+  runtime: 'preact',
+  play: imageInputTest,
+});
