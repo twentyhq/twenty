@@ -49,7 +49,7 @@ export type ImageSessionSettings = {
     // Fades the hover light toward the top/bottom canvas edges (0 = off).
     lightVerticalFade?: number;
     // Hover radii authored at this preview distance, scaled each frame to the
-    // live framing (the partner hero's getHoverScale); omit to keep them fixed.
+    // live framing (the partner hero); omit to keep them fixed.
     radiusReferenceDistance?: number;
     fadeIn: number;
     fadeOut: number;
@@ -243,7 +243,7 @@ function getRelativeImageScale({
   return Math.max(Math.sqrt(currentArea / referenceArea), MIN_FOOTPRINT_SCALE);
 }
 
-// The image-backdrop scene: image pass -> blur chain -> band composite,
+// The image-backdrop scene: image pass -> band composite,
 // with pointer-follow hover light/flow. One rig replaces the old site's
 // four ~700-line per-backdrop hooks.
 export function createImageSession({

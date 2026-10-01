@@ -3,8 +3,7 @@ import { CrowdinApiError } from '../errors/crowdin-api.error';
 const IDENTICAL_TRANSLATION_CODE = 'identicalTranslation';
 const VALIDATION_ERROR_CODE = 'validationError';
 
-// validationError also covers unrelated refusals, so the wording has to narrow
-// it down to the one that means the text we wanted is already there.
+// validationError also covers unrelated refusals, so the wording narrows it down.
 const DUPLICATE_TRANSLATION_REGEX = /duplicate translation/i;
 
 type CrowdinErrorBody = {

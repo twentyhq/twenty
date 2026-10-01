@@ -30,7 +30,7 @@
       "MenuItemDraggable": "components/navigation/MenuItemDraggable/MenuItemDraggable",
       "MenuItemSuggestion": "components/navigation/MenuItemSuggestion/MenuItemSuggestion",
       "MenuPicker": "components/navigation/MenuPicker/MenuPicker",
-      "NavigationBar": "components/navigation/NavigationBar/NavigationBar",
+      "MetricRow": "components/data-display/MetricRow/MetricRow",
       "NotificationCounter": "components/data-display/NotificationCounter/NotificationCounter",
       "SearchInput": "components/input/SearchInput/SearchInput",
       "Section": "components/layout/Section/Section",
@@ -81,6 +81,7 @@
       "MenuItemProps": "components/navigation/MenuItem/types/MenuItemProps",
       "MenuItemSuggestionProps": "components/navigation/MenuItemSuggestion/types/MenuItemSuggestionProps",
       "MenuPickerProps": "components/navigation/MenuPicker/types/MenuPickerProps",
+      "MetricRowProps": "components/data-display/MetricRow/types/MetricRowProps",
       "SearchInputProps": "components/input/SearchInput/types/SearchInputProps",
       "SectionHeaderProps": "components/layout/Section/types/SectionHeaderProps",
       "SectionRootProps": "components/layout/Section/types/SectionRootProps",
@@ -671,12 +672,14 @@
     "values": {
       "Banner": "primitives/feedback/Banner/Banner",
       "Loader": "primitives/feedback/Loader/Loader",
-      "ProgressBar": "primitives/feedback/ProgressBar/ProgressBar"
+      "ProgressBar": "primitives/feedback/ProgressBar/ProgressBar",
+      "ProgressRing": "primitives/feedback/ProgressRing/ProgressRing"
     },
     "types": {
       "BannerColor": "primitives/feedback/Banner/Banner",
       "BannerVariant": "primitives/feedback/Banner/Banner",
-      "ProgressBarProps": "primitives/feedback/ProgressBar/types/ProgressBarProps"
+      "ProgressBarProps": "primitives/feedback/ProgressBar/types/ProgressBarProps",
+      "ProgressRingProps": "primitives/feedback/ProgressRing/types/ProgressRingProps"
     }
   },
   "primitives/input": {
@@ -753,10 +756,13 @@
   "primitives/navigation": {
     "reExports": [],
     "values": {
+      "Breadcrumb": "primitives/navigation/Breadcrumb/Breadcrumb",
       "ListItem": "primitives/navigation/ListItem/ListItem",
       "Tabs": "primitives/navigation/Tabs/Tabs"
     },
     "types": {
+      "BreadcrumbItem": "primitives/navigation/Breadcrumb/types/BreadcrumbItem",
+      "BreadcrumbProps": "primitives/navigation/Breadcrumb/types/BreadcrumbProps",
       "ListItemColor": "primitives/navigation/ListItem/types/ListItemColor",
       "ListItemDescriptionPlacement": "primitives/navigation/ListItem/types/ListItemDescriptionPlacement",
       "ListItemIndicator": "primitives/navigation/ListItem/types/ListItemIndicator",
@@ -836,12 +842,17 @@
   "primitives/typography": {
     "reExports": [],
     "values": {
+      "formatShortcut": "primitives/typography/Shortcut/formatShortcut",
       "Heading": "primitives/typography/Heading/Heading",
       "OverflowingTextWithTooltip": "primitives/typography/OverflowingTextWithTooltip/OverflowingTextWithTooltip",
+      "Shortcut": "primitives/typography/Shortcut/Shortcut",
       "Text": "primitives/typography/Text/Text"
     },
     "types": {
-      "HeadingProps": "primitives/typography/Heading/types/HeadingProps"
+      "HeadingProps": "primitives/typography/Heading/types/HeadingProps",
+      "ShortcutDefinition": "primitives/typography/Shortcut/types/ShortcutDefinition",
+      "ShortcutFormatOptions": "primitives/typography/Shortcut/types/ShortcutFormatOptions",
+      "ShortcutProps": "primitives/typography/Shortcut/types/ShortcutProps"
     }
   },
   "styles": {
@@ -898,7 +909,6 @@
     "values": {
       "getMainColorNameFromPaletteColorName": "utilities/color/utils/getMainColorNameFromPaletteColorName",
       "getOsControlSymbol": "utilities/device/getOsControlSymbol",
-      "getOsShortcutSeparator": "utilities/device/getOsShortcutSeparator",
       "getSafeUrl": "utilities/utils/getSafeUrl",
       "getUserDevice": "utilities/device/getUserDevice",
       "isDefined": "utilities/utils/isDefined",

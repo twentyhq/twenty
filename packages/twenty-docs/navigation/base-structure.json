@@ -568,7 +568,8 @@
                   "pages": [
                     "ui/primitives/feedback/banner",
                     "ui/primitives/feedback/loader",
-                    "ui/primitives/feedback/progress-bar"
+                    "ui/primitives/feedback/progress-bar",
+                    "ui/primitives/feedback/progress-ring"
                   ]
                 },
                 {
@@ -604,6 +605,7 @@
                   "key": "uiNavigation",
                   "label": "Navigation",
                   "pages": [
+                    "ui/primitives/navigation/breadcrumb",
                     "ui/primitives/navigation/list-item",
                     "ui/primitives/navigation/tabs"
                   ]
@@ -626,6 +628,7 @@
                   "pages": [
                     "ui/primitives/typography/heading",
                     "ui/primitives/typography/text",
+                    "ui/primitives/typography/shortcut",
                     "ui/primitives/typography/overflowing-text-with-tooltip"
                   ]
                 }
@@ -654,7 +657,7 @@
                 "ui/components/json-tree",
                 "ui/components/menu-items",
                 "ui/components/menu-picker",
-                "ui/components/navigation-bar",
+                "ui/components/metric-row",
                 "ui/components/notification-counter",
                 "ui/components/search-input",
                 "ui/components/tinted-icon-tile"

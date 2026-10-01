@@ -12,8 +12,6 @@ type SellableCatalogPrice = {
   } | null;
 };
 
-// A price is only sellable if its product is too, so superseding a whole
-// packaging takes all of its prices out of circulation in one edit.
 export const isSellableCatalogPrice = (
   billingPrice: SellableCatalogPrice,
 ): boolean =>

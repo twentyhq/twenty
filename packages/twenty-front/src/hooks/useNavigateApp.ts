@@ -5,8 +5,7 @@ import { getAppPath } from 'twenty-shared/utils';
 
 type NavigateAppOptions = NavigateOptions;
 
-// Stable across renders so an effect can list it as a dependency without
-// re-running every time the caller renders.
+// Stable across renders so effects can depend on it.
 export const useNavigateApp = () => {
   const navigate = useNavigate();
 

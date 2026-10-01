@@ -56,7 +56,6 @@ export const turnSortsIntoOrderBy = (
             orderByDirection: direction,
           });
         }
-        // Fallback if related object not found - sort by FK
         return [{ [`${correspondingField.name}Id`]: direction }];
       }
 

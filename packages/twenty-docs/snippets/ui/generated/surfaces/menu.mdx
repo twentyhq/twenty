@@ -240,15 +240,6 @@
   Icon rendered after the content.
 </ParamField>
 
-<ParamField body="Item.hotkeys" type="string[]">
-  Keyboard shortcut keys displayed at the end of the row. Registering the
-  shortcut is up to the application.
-</ParamField>
-
-<ParamField body="Item.hotkeysJoinLabel" type="string">
-  Text between shortcut keys. Defaults to `then`.
-</ParamField>
-
 <ParamField body="Item.label" type="string">
   Overrides the text label to use when the item is matched during keyboard text navigation.
 </ParamField>
@@ -268,6 +259,15 @@
   with a different tag, or compose it with another component.
 
   Accepts a `ReactElement` or a function that returns the element to render.
+</ParamField>
+
+<ParamField body="Item.shortcut" type="ShortcutDefinition">
+  Keyboard shortcut keys displayed at the end of the row. Registering the
+  shortcut is up to the application.
+</ParamField>
+
+<ParamField body="Item.shortcutJoinLabel" type="string">
+  Text between sequential shortcut steps. Defaults to `then`.
 </ParamField>
 
 <ParamField body="Item.startIcon" type="ReactNode">
@@ -323,15 +323,6 @@
   Icon rendered after the content.
 </ParamField>
 
-<ParamField body="CheckboxItem.hotkeys" type="string[]">
-  Keyboard shortcut keys displayed at the end of the row. Registering the
-  shortcut is up to the application.
-</ParamField>
-
-<ParamField body="CheckboxItem.hotkeysJoinLabel" type="string">
-  Text between shortcut keys. Defaults to `then`.
-</ParamField>
-
 <ParamField body="CheckboxItem.label" type="string">
   Overrides the text label to use when the item is matched during keyboard text navigation.
 </ParamField>
@@ -355,6 +346,15 @@
   with a different tag, or compose it with another component.
 
   Accepts a `ReactElement` or a function that returns the element to render.
+</ParamField>
+
+<ParamField body="CheckboxItem.shortcut" type="ShortcutDefinition">
+  Keyboard shortcut keys displayed at the end of the row. Registering the
+  shortcut is up to the application.
+</ParamField>
+
+<ParamField body="CheckboxItem.shortcutJoinLabel" type="string">
+  Text between sequential shortcut steps. Defaults to `then`.
 </ParamField>
 
 <ParamField body="CheckboxItem.startIcon" type="ReactNode">
@@ -441,15 +441,6 @@
   Icon rendered after the content.
 </ParamField>
 
-<ParamField body="RadioItem.hotkeys" type="string[]">
-  Keyboard shortcut keys displayed at the end of the row. Registering the
-  shortcut is up to the application.
-</ParamField>
-
-<ParamField body="RadioItem.hotkeysJoinLabel" type="string">
-  Text between shortcut keys. Defaults to `then`.
-</ParamField>
-
 <ParamField body="RadioItem.label" type="string">
   Overrides the text label to use when the item is matched during keyboard text navigation.
 </ParamField>
@@ -469,6 +460,15 @@
   with a different tag, or compose it with another component.
 
   Accepts a `ReactElement` or a function that returns the element to render.
+</ParamField>
+
+<ParamField body="RadioItem.shortcut" type="ShortcutDefinition">
+  Keyboard shortcut keys displayed at the end of the row. Registering the
+  shortcut is up to the application.
+</ParamField>
+
+<ParamField body="RadioItem.shortcutJoinLabel" type="string">
+  Text between sequential shortcut steps. Defaults to `then`.
 </ParamField>
 
 <ParamField body="RadioItem.startIcon" type="ReactNode">
@@ -646,15 +646,6 @@
   Icon rendered after the content.
 </ParamField>
 
-<ParamField body="SubmenuTrigger.hotkeys" type="string[]">
-  Keyboard shortcut keys displayed at the end of the row. Registering the
-  shortcut is up to the application.
-</ParamField>
-
-<ParamField body="SubmenuTrigger.hotkeysJoinLabel" type="string">
-  Text between shortcut keys. Defaults to `then`.
-</ParamField>
-
 <ParamField body="SubmenuTrigger.label" type="string">
   Overrides the text label to use when the item is matched during keyboard text navigation.
 </ParamField>
@@ -678,6 +669,15 @@
   with a different tag, or compose it with another component.
 
   Accepts a `ReactElement` or a function that returns the element to render.
+</ParamField>
+
+<ParamField body="SubmenuTrigger.shortcut" type="ShortcutDefinition">
+  Keyboard shortcut keys displayed at the end of the row. Registering the
+  shortcut is up to the application.
+</ParamField>
+
+<ParamField body="SubmenuTrigger.shortcutJoinLabel" type="string">
+  Text between sequential shortcut steps. Defaults to `then`.
 </ParamField>
 
 <ParamField body="SubmenuTrigger.startIcon" type="ReactNode">

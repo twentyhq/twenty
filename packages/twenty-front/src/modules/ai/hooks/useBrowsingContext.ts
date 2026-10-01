@@ -61,8 +61,7 @@ export const useGetBrowsingContext = () => {
       (item) => item.id === objectMetadataItemId,
     );
 
-    // The chat page is the chat's own record page, which is not what the user
-    // is asking about
+    // The chat page is the chat's own record page, not what the user is asking about.
     if (
       !objectMetadataItem ||
       objectMetadataItem.nameSingular === CoreObjectNameSingular.AgentChatThread

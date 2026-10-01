@@ -51,9 +51,7 @@ export const useFieldWidgetActionVisibility = ({
   const isOneToManyRelation =
     relationMetadata?.relationType === RelationType.ONE_TO_MANY;
 
-  // "See all" links to the relation field's own index, which lists the first
-  // hop. A nested widget lists the second hop, so the link would point at a
-  // different object than the widget shows.
+  // "See all" opens the first hop's index, but a nested widget lists the second hop.
   const isNestedRelationWidget = isDefined(
     widget.configuration.nestedRelationFieldMetadataId,
   );
@@ -83,9 +81,6 @@ export const useFieldWidgetActionVisibility = ({
     objectPermissionsByObjectMetadataId,
   });
 
-  // The read-only chain already hides edit during layout customization
-  // (useIsRecordReadOnly returns true then); the explicit check states the
-  // rule here instead of leaving it implicit.
   const showEdit =
     !isPageLayoutInEditMode &&
     !isFieldReadOnly &&

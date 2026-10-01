@@ -212,19 +212,6 @@ describe('Core REST API Find Many endpoint', () => {
     expect(filteredPeople.length).toBeGreaterThan(0);
   });
 
-  // TODO: Refacto-common - Uncomment this after https://github.com/twentyhq/core-team-issues/issues/1627
-
-  //     expect(response.body).toMatchInlineSnapshot(`
-  // {
-  //   "error": "BadRequestException",
-  //   "messages": [
-  //     "field 'company' does not exist in 'person' object",
-  //   ],
-  //   "statusCode": 400,
-  // }
-  // `);
-  //   });
-
   it('should support ordering Desc of results', async () => {
     const descResponse = await makeRestApiRequest({
       method: 'get',
@@ -300,41 +287,6 @@ describe('Core REST API Find Many endpoint', () => {
     }).expect(400);
   });
 
-  // TODO: Uncomment this test when we support composite fields ordering in the rest api
-
-  //   const testPeople = [
-  //     {
-  //       id: TEST_PERSON_1_ID,
-  //       firstName: 'Alice',
-  //       lastName: 'Brown',
-  //       position: 0,
-  //     },
-  //     {
-  //       id: TEST_PERSON_2_ID,
-  //       firstName: 'Alice',
-  //       lastName: 'Smith',
-  //       position: 1,
-  //     },
-  //     {
-  //       id: TEST_PERSON_3_ID,
-  //       firstName: 'Bob',
-  //       lastName: 'Johnson',
-  //       position: 2,
-  //     },
-  //     {
-  //       id: TEST_PERSON_4_ID,
-  //       firstName: 'Bob',
-  //       lastName: 'Williams',
-  //       position: 3,
-  //     },
-  //     {
-  //       id: TEST_PERSON_5_ID,
-  //       firstName: 'Charlie',
-  //       lastName: 'Davis',
-  //       position: 4,
-  //     },
-  //   ];
-
   it('should support depth 0 parameter', async () => {
     const response = await makeRestApiRequest({
       method: 'get',
@@ -408,8 +360,7 @@ describe('Core REST API Find Many endpoint', () => {
       expect(new Set(ids).size).toBe(testPersonIds.length);
     });
 
-    // Cursors read relation orderBy values from the ordering join itself, so
-    // continuation must not require any depth (issue #24333)
+    // Regression for #24333: continuation must not require any depth.
     it('should continue past the first page at depth 0', async () => {
       const ids: string[] = [];
       let startingAfter: string | undefined = undefined;

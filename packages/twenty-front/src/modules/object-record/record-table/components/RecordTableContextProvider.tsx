@@ -61,8 +61,7 @@ export const RecordTableContextProvider = ({
 
   const isTouchDevice = useIsTouchDevice();
 
-  // Navigating on mouse down only buys a frame on a real pointer: a tap
-  // synthesises its mouse events after the finger is already gone.
+  // A tap synthesises its mouse events after the finger lifts, so mouse down only helps real pointers.
   const triggerEvent =
     openRecordIn === OpenRecordIn.SIDE_PANEL || isTouchDevice
       ? 'CLICK'

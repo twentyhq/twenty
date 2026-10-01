@@ -197,8 +197,7 @@ export class AccessTokenService {
 
     if (token) {
       if (isUserSessionToken(token)) {
-        // Session tokens are cookie-only by design: accepting them as Bearer would
-        // reopen the XSS-exfiltration surface cookie sessions close.
+        // Session tokens are cookie-only: accepting them as Bearer reopens XSS exfiltration
         throw new AuthException(
           'Session tokens are only accepted from the session cookie',
           AuthExceptionCode.UNAUTHENTICATED,

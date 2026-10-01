@@ -210,6 +210,26 @@ export const DisabledCommand: Story = {
   },
 };
 
+export const OptionWithoutSelectionState: Story = {
+  render: () => (
+    <RecordActionsMenu>
+      <Dropdown.OptionItem onSelect={onDuplicate}>
+        Duplicate
+      </Dropdown.OptionItem>
+    </RecordActionsMenu>
+  ),
+  play: async ({ canvasElement }) => {
+    const body = within(canvasElement.ownerDocument.body);
+
+    await openRecordActions(canvasElement);
+    const option = body.getByRole('menuitem', { name: 'Duplicate' });
+
+    expect(option).not.toHaveAttribute('aria-checked');
+    await userEvent.click(option);
+    expect(onDuplicate).toHaveBeenCalledOnce();
+  },
+};
+
 export const TypeaheadAndHomeEnd: Story = {
   render: () => (
     <RecordActionsMenu>

@@ -178,6 +178,7 @@ export {
   getStepOutgoingStepIds,
 } from './validation/utils/get-step-outgoing-step-ids.util';
 export { getVariablePathSuggestions } from './validation/utils/get-variable-path-suggestions.util';
+export { validateWorkflowExecutionPaths } from './validation/utils/validate-workflow-execution-paths.util';
 export { validateWorkflowGraph } from './validation/utils/validate-workflow-graph.util';
 export { validateWorkflowStepParams } from './validation/utils/validate-workflow-step-params.util';
 export { validateWorkflowVariableReferences } from './validation/utils/validate-workflow-variable-references.util';

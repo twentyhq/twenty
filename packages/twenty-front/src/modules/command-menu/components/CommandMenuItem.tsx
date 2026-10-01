@@ -1,30 +1,13 @@
+import { type CommandMenuItemProps } from '@/command-menu/types/CommandMenuItemProps';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { type ReactNode } from 'react';
 import { MenuItem } from 'twenty-ui/components';
-import { IconArrowUpRight, type IconComponent } from 'twenty-ui/icon';
+import { IconArrowUpRight } from 'twenty-ui/icon';
 
 import { useCommandMenuOnItemClick } from '@/command-menu/hooks/useCommandMenuOnItemClick';
 import { isSelectedItemIdComponentFamilyState } from '@/ui/layout/selectable-list/states/isSelectedItemIdComponentFamilyState';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
-import { type Nullable } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-
-export type CommandMenuItemProps = {
-  label: string;
-  description?: string;
-  to?: string;
-  id: string;
-  onClick?: () => void;
-  Icon?: IconComponent;
-  hotKeys?: Nullable<string[]>;
-  LeftComponent?: ReactNode;
-  RightComponent?: ReactNode;
-  contextualTextPosition?: 'left' | 'right';
-  hasSubMenu?: boolean;
-  isSubMenuOpened?: boolean;
-  disabled?: boolean;
-};
 
 export const CommandMenuItem = ({
   label,
@@ -61,8 +44,8 @@ export const CommandMenuItem = ({
       text={label}
       contextualText={description}
       contextualTextPosition={contextualTextPosition}
-      hotKeys={hotKeys}
-      hotKeysJoinLabel={t`then`}
+      shortcut={isDefined(hotKeys) ? hotKeys.map((key) => [key]) : undefined}
+      shortcutJoinLabel={t`then`}
       onClick={
         onClick || to
           ? () =>

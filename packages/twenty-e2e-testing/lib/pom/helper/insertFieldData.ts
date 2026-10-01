@@ -10,7 +10,6 @@ export class InsertFieldData {
   private readonly countrySelect: Locator;
   private readonly arrayValueInput: Locator;
   private readonly arrayAddValueButton: Locator;
-  // boolean react after click so no need to write special locator
   private readonly currencySelect: Locator;
   private readonly currencyAmountInput: Locator;
   private readonly monthSelect: Locator;
@@ -78,7 +77,6 @@ export class InsertFieldData {
     );
   }
 
-  // address
   async typeAddress1(value: string) {
     await this.address1Input.fill(value);
   }
@@ -106,7 +104,6 @@ export class InsertFieldData {
       .click();
   }
 
-  // array
   async typeArrayValue(value: string) {
     await this.arrayValueInput.fill(value);
   }
@@ -115,7 +112,6 @@ export class InsertFieldData {
     await this.arrayAddValueButton.click();
   }
 
-  // currency
   async selectCurrency(value: string) {
     await this.currencySelect.click();
     await this.page
@@ -127,7 +123,6 @@ export class InsertFieldData {
     await this.currencyAmountInput.fill(value);
   }
 
-  // date(-time)
   async typeDate(value: string) {
     await this.dateInput.fill(value);
   }
@@ -164,7 +159,6 @@ export class InsertFieldData {
     await this.clearDateButton.click();
   }
 
-  // email
   async typeEmail(value: string) {
     await this.page.locator(`//input[@placeholder='Email']`).fill(value);
   }
@@ -173,7 +167,6 @@ export class InsertFieldData {
     await this.addMailButton.click();
   }
 
-  // full name
   async typeFirstName(name: string) {
     await this.firstNameInput.fill(name);
   }
@@ -182,15 +175,12 @@ export class InsertFieldData {
     await this.lastNameInput.fill(name);
   }
 
-  // JSON
-  // placeholder is dependent on the name of field
   async typeJSON(placeholder: string, value: string) {
     await this.page
       .locator(`//input[@placeholder='${placeholder}']`)
       .fill(value);
   }
 
-  // link
   async typeLink(value: string) {
     await this.page.locator("//input[@placeholder='URL']").fill(value);
   }
@@ -199,22 +189,18 @@ export class InsertFieldData {
     await this.addUrlButton.click();
   }
 
-  // (multi-)select
   async selectValue(value: string) {
     await this.page
       .locator(`//div[@data-testid='tooltip' and contains(., '${value}')]`)
       .click();
   }
 
-  // number
-  // placeholder is dependent on the name of field
   async typeNumber(placeholder: string, value: string) {
     await this.page
       .locator(`//input[@placeholder='${placeholder}']`)
       .fill(value);
   }
 
-  // phones
   async selectCountryPhoneCode(countryCode: string) {
     await this.page
       .locator(
@@ -231,14 +217,11 @@ export class InsertFieldData {
     await this.addPhoneButton.click();
   }
 
-  // rating
   // if adding rating for the first time, hover must be used
   async selectRating(rating: number) {
     await this.page.locator(`//div[@role='slider']/div[${rating}]`).click();
   }
 
-  // text
-  // placeholder is dependent on the name of field
   async typeText(placeholder: string, value: string) {
     await this.page
       .locator(`//input[@placeholder='${placeholder}']`)
