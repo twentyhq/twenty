@@ -48,7 +48,6 @@ const SHARING = {
   hasInheritedAccess: false,
   isOpenByDefault: false,
   generalAccessLevel: RecordShareAccessLevel.NONE,
-  isGeneralAccessDefault: true,
   sharingReach: ObjectSharingReach.WORKSPACE,
   viewerAccessLevel: RecordShareAccessLevel.FULL,
   permissions: {

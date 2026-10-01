@@ -31,7 +31,6 @@ const createHarness = () => {
     hasInheritedAccess: false,
     isOpenByDefault: false,
     generalAccessLevel: 'NONE',
-    isGeneralAccessDefault: true,
     sharingReach: 'WORKSPACE',
     shares: [],
     roles: [],
