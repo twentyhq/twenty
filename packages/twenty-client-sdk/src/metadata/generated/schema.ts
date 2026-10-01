@@ -1390,7 +1390,7 @@ export interface RecordSharingGrantDTO {
     __typename: 'RecordSharingGrantDTO'
 }
 
-export type RecordShareAccessLevel = 'READ' | 'READ_WRITE' | 'FULL'
+export type RecordShareAccessLevel = 'NONE' | 'READ' | 'READ_WRITE' | 'FULL'
 
 export interface RecordSharingRoleDTO {
     id: Scalars['UUID']
@@ -1403,6 +1403,9 @@ export interface RecordSharingDTO {
     permissions: RecordPermissionsDTO
     isEnabled: Scalars['Boolean']
     hasInheritedAccess: Scalars['Boolean']
+    isOpenByDefault: Scalars['Boolean']
+    generalAccessLevel?: RecordShareAccessLevel
+    isGeneralAccessDefault: Scalars['Boolean']
     roles: RecordSharingRoleDTO[]
     shares: RecordSharingGrantDTO[]
     __typename: 'RecordSharingDTO'
@@ -1683,7 +1686,7 @@ export interface FeatureFlag {
     __typename: 'FeatureFlag'
 }
 
-export type FeatureFlagKey = 'IS_APPLICATION_WORKFLOWS_ENABLED' | 'IS_ASYNC_CSV_EXPORT_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_JSON_FILTER_ENABLED' | 'IS_MESSAGE_CAMPAIGN_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED' | 'IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED' | 'IS_AI_CHAT_SHARING_DROPDOWN_ENABLED' | 'IS_INITIAL_OBJECT_VIEW_ENABLED' | 'IS_WEBHOOK_RATE_LIMIT_ENABLED' | 'IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED' | 'IS_EXECUTION_QUOTA_ENABLED' | 'IS_RECORD_CREATION_FORM_ENABLED' | 'IS_LOGS_SETTINGS_SECTION_ENABLED' | 'IS_CONVERSATIONS_TAB_ENABLED' | 'IS_VALIDATION_RULES_ENABLED' | 'IS_WORKFLOW_SEND_CHAT_MESSAGE_ENABLED'
+export type FeatureFlagKey = 'IS_APPLICATION_WORKFLOWS_ENABLED' | 'IS_ASYNC_CSV_EXPORT_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_JSON_FILTER_ENABLED' | 'IS_MESSAGE_CAMPAIGN_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED' | 'IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED' | 'IS_AI_CHAT_SHARING_DROPDOWN_ENABLED' | 'IS_INITIAL_OBJECT_VIEW_ENABLED' | 'IS_WEBHOOK_RATE_LIMIT_ENABLED' | 'IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED' | 'IS_EXECUTION_QUOTA_ENABLED' | 'IS_RECORD_CREATION_FORM_ENABLED' | 'IS_LOGS_SETTINGS_SECTION_ENABLED' | 'IS_CONVERSATIONS_TAB_ENABLED' | 'IS_VALIDATION_RULES_ENABLED' | 'IS_RECORD_LEVEL_SHARING_ENABLED' | 'IS_WORKFLOW_SEND_CHAT_MESSAGE_ENABLED'
 
 export interface WorkspaceUrls {
     customUrl?: Scalars['String']
@@ -2373,6 +2376,8 @@ export interface UpsertRowLevelPermissionPredicatesResult {
 export interface LogicFunctionLogs {
     /** Execution Logs */
     logs: Scalars['String']
+    name?: Scalars['String']
+    universalIdentifier?: Scalars['UUID']
     __typename: 'LogicFunctionLogs'
 }
 
@@ -5222,6 +5227,9 @@ export interface RecordSharingDTOGenqlSelection{
     permissions?: RecordPermissionsDTOGenqlSelection
     isEnabled?: boolean | number
     hasInheritedAccess?: boolean | number
+    isOpenByDefault?: boolean | number
+    generalAccessLevel?: boolean | number
+    isGeneralAccessDefault?: boolean | number
     roles?: RecordSharingRoleDTOGenqlSelection
     shares?: RecordSharingGrantDTOGenqlSelection
     __typename?: boolean | number
@@ -6242,6 +6250,8 @@ export interface UpsertRowLevelPermissionPredicatesResultGenqlSelection{
 export interface LogicFunctionLogsGenqlSelection{
     /** Execution Logs */
     logs?: boolean | number
+    name?: boolean | number
+    universalIdentifier?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -11257,6 +11267,7 @@ export const enumNavigationMenuItemType = {
 }
 
 export const enumRecordShareAccessLevel = {
+   NONE: 'NONE' as const,
    READ: 'READ' as const,
    READ_WRITE: 'READ_WRITE' as const,
    FULL: 'FULL' as const
@@ -11311,6 +11322,7 @@ export const enumFeatureFlagKey = {
    IS_LOGS_SETTINGS_SECTION_ENABLED: 'IS_LOGS_SETTINGS_SECTION_ENABLED' as const,
    IS_CONVERSATIONS_TAB_ENABLED: 'IS_CONVERSATIONS_TAB_ENABLED' as const,
    IS_VALIDATION_RULES_ENABLED: 'IS_VALIDATION_RULES_ENABLED' as const,
+   IS_RECORD_LEVEL_SHARING_ENABLED: 'IS_RECORD_LEVEL_SHARING_ENABLED' as const,
    IS_WORKFLOW_SEND_CHAT_MESSAGE_ENABLED: 'IS_WORKFLOW_SEND_CHAT_MESSAGE_ENABLED' as const
 }
 
