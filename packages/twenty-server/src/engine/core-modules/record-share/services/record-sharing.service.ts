@@ -267,6 +267,7 @@ export class RecordSharingService {
                 share,
                 enabled: args.enabled,
                 creatorWorkspaceMemberId,
+                actingWorkspaceMemberId: args.authContext.workspaceMemberId,
               });
               return;
             }
@@ -308,12 +309,14 @@ export class RecordSharingService {
     share,
     enabled,
     creatorWorkspaceMemberId,
+    actingWorkspaceMemberId,
   }: {
     workspaceId: string;
     transactionScope: WorkspaceTransactionScope;
     share: Omit<RecordShareInput, 'rowCause'>;
     enabled: boolean;
     creatorWorkspaceMemberId: string | undefined;
+    actingWorkspaceMemberId: string | undefined;
   }): Promise<void> {
     const accessLevel = enabled
       ? share.accessLevel
@@ -323,21 +326,25 @@ export class RecordSharingService {
       accessLevel === RecordShareAccessLevel.NONE ||
       accessLevel === RecordShareAccessLevel.READ;
 
-    if (isRestriction && isDefined(creatorWorkspaceMemberId)) {
+    // Whoever restricts may only manage the record through the general
+    // access they are lowering, so they keep a grant alongside the creator
+    const ownerWorkspaceMemberIds = [
+      ...new Set([creatorWorkspaceMemberId, actingWorkspaceMemberId]),
+    ].filter(isDefined);
+
+    if (isRestriction && ownerWorkspaceMemberIds.length > 0) {
       await this.recordShareStorageService.insertMany({
         workspaceId,
         transactionScope,
-        recordShares: [
-          {
-            recordId: share.recordId,
-            objectMetadataId: share.objectMetadataId,
-            principalId: creatorWorkspaceMemberId,
-            principalType: RecordSharePrincipalType.WORKSPACE_MEMBER,
-            accessLevel: RecordShareAccessLevel.FULL,
-            rowCause: RecordShareRowCause.OWNER,
-            sourceId: share.recordId,
-          },
-        ],
+        recordShares: ownerWorkspaceMemberIds.map((ownerWorkspaceMemberId) => ({
+          recordId: share.recordId,
+          objectMetadataId: share.objectMetadataId,
+          principalId: ownerWorkspaceMemberId,
+          principalType: RecordSharePrincipalType.WORKSPACE_MEMBER,
+          accessLevel: RecordShareAccessLevel.FULL,
+          rowCause: RecordShareRowCause.OWNER,
+          sourceId: share.recordId,
+        })),
       });
     }
 
