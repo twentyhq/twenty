@@ -31,10 +31,6 @@ export const releaseTeamsConnectionTenant = async ({
 }: {
   connectedAccountId: string;
 }): Promise<{ releasedTenantId: string | null }> => {
-  if (!isNonEmptyString(connectedAccountId)) {
-    throw new Error('Teams tenant release failed: missing connectedAccountId');
-  }
-
   const connectedAccountTenantKvKey =
     buildTeamsConnectedAccountTenantKvKey(connectedAccountId);
   const tenantId = await kv.get<string>(connectedAccountTenantKvKey);

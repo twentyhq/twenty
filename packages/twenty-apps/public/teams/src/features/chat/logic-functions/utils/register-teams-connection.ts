@@ -14,12 +14,6 @@ export const registerTeamsConnection = async ({
 }: {
   connectedAccountId: string;
 }): Promise<{ claimedTenantId: string | null }> => {
-  if (!isNonEmptyString(connectedAccountId)) {
-    throw new Error(
-      'Teams connection registration failed: onConnect payload is missing connectedAccountId',
-    );
-  }
-
   const isChatEnabled = isFeatureEnabled({
     isAvailable: FEATURE_FLAGS.IS_CHAT_ASSISTANT_ENABLED,
     settingValue: process.env[CHAT_ENABLED_APPLICATION_VARIABLE_KEY],
