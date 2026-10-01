@@ -61,7 +61,7 @@ export const buildInheritedReadabilityCondition = ({
   recordShareTableExpression,
   principalIds,
   accessLevels,
-  isOpenWhenDetached = false,
+  isOpenWhenDetached,
 }: {
   tableAlias: string;
   objectMetadataId: string;
@@ -69,7 +69,7 @@ export const buildInheritedReadabilityCondition = ({
   recordShareTableExpression: string;
   principalIds: string[];
   accessLevels: RecordShareAccessLevel[];
-  isOpenWhenDetached?: boolean;
+  isOpenWhenDetached: boolean;
 }): SqlCondition => {
   const parameters: ObjectLiteral = {};
   const quotedTableAlias = escapeIdentifier(tableAlias);
