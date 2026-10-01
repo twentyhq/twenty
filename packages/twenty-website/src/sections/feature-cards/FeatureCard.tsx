@@ -40,7 +40,6 @@ const CardImage = styled.div`
   width: 100%;
 `;
 
-// The scene design box every feature-card visual is authored in.
 const SCENE_DESIGN_WIDTH_PX = 411;
 const SCENE_DESIGN_HEIGHT_PX = 508;
 

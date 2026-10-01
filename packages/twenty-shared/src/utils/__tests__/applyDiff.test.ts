@@ -20,7 +20,7 @@ describe('applyDiff', () => {
       const result = applyDiff(obj, []);
 
       expect(result).toEqual({ test: 'value' });
-      expect(result).not.toBe(obj); // Should return a copy
+      expect(result).not.toBe(obj);
     });
 
     it('should skip invalid diffs', () => {
@@ -220,8 +220,8 @@ describe('applyDiff', () => {
     it('should remove multiple array elements in correct order', () => {
       const obj = ['a', 'b', 'c', 'd', 'e'];
       const diffs: Difference[] = [
-        { type: 'REMOVE', path: [1], oldValue: 'b' }, // Remove 'b'
-        { type: 'REMOVE', path: [3], oldValue: 'd' }, // Remove 'd'
+        { type: 'REMOVE', path: [1], oldValue: 'b' },
+        { type: 'REMOVE', path: [3], oldValue: 'd' },
       ];
 
       const result = applyDiff(obj, diffs);
@@ -231,9 +231,9 @@ describe('applyDiff', () => {
     it('should handle complex array removal scenarios', () => {
       const obj = ['a', 'b', 'c', 'd', 'e', 'f'];
       const diffs: Difference[] = [
-        { type: 'REMOVE', path: [0], oldValue: 'a' }, // Remove 'a'
-        { type: 'REMOVE', path: [2], oldValue: 'c' }, // Remove 'c'
-        { type: 'REMOVE', path: [4], oldValue: 'e' }, // Remove 'e'
+        { type: 'REMOVE', path: [0], oldValue: 'a' },
+        { type: 'REMOVE', path: [2], oldValue: 'c' },
+        { type: 'REMOVE', path: [4], oldValue: 'e' },
       ];
 
       const result = applyDiff(obj, diffs);
@@ -248,7 +248,7 @@ describe('applyDiff', () => {
         ],
       };
       const diffs: Difference[] = [
-        { type: 'REMOVE', path: ['items', 0, 'tags', 1], oldValue: 'tag2' }, // Remove 'tag2'
+        { type: 'REMOVE', path: ['items', 0, 'tags', 1], oldValue: 'tag2' },
       ];
 
       const result = applyDiff(obj, diffs);
@@ -292,7 +292,7 @@ describe('applyDiff', () => {
           value: 'newValue',
         },
         { type: 'REMOVE', path: ['remove'], oldValue: 'toDelete' },
-        { type: 'REMOVE', path: ['nested', 'array', 1], oldValue: 'b' }, // Remove 'b'
+        { type: 'REMOVE', path: ['nested', 'array', 1], oldValue: 'b' },
         { type: 'CREATE', path: ['nested', 'newArray'], value: [1, 2, 3] },
       ];
 
@@ -311,10 +311,10 @@ describe('applyDiff', () => {
     it('should handle operations on the same array', () => {
       const obj = ['a', 'b', 'c', 'd'];
       const diffs: Difference[] = [
-        { type: 'CHANGE', path: [0], oldValue: 'a', value: 'A' }, // Change 'a' to 'A'
-        { type: 'REMOVE', path: [1], oldValue: 'b' }, // Remove 'b'
-        { type: 'REMOVE', path: [3], oldValue: 'd' }, // Remove 'd'
-        { type: 'REMOVE', path: [3], oldValue: 'd' }, // Remove 'd'
+        { type: 'CHANGE', path: [0], oldValue: 'a', value: 'A' },
+        { type: 'REMOVE', path: [1], oldValue: 'b' },
+        { type: 'REMOVE', path: [3], oldValue: 'd' },
+        { type: 'REMOVE', path: [3], oldValue: 'd' },
       ];
 
       const result = applyDiff(obj, diffs);
@@ -486,7 +486,7 @@ describe('applyDiff', () => {
 
       const result = applyDiff(obj, diffs);
       expect(result).toEqual({ prop: 'newValue' });
-      expect(obj.prop).toBe('value'); // Original unchanged
+      expect(obj.prop).toBe('value');
     });
   });
 

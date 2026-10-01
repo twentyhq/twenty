@@ -110,7 +110,6 @@ describe('copyBaseApplicationProject', () => {
     expect(content).not.toContain('DESCRIPTION-TO-BE-GENERATED');
     expect(content).not.toContain('UUID-TO-BE-GENERATED');
 
-    // Both UUIDs should be valid v4 format
     const uuidMatches = content.match(
       /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/g,
     );

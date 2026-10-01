@@ -26,8 +26,6 @@ import { findAwaitingPausingToolParts } from 'src/engine/metadata-modules/ai/ai-
 import { buildRequestFormPendingOutput } from 'src/engine/metadata-modules/ai/ai-chat/tools/request-form.tool';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
-import { hasWorkflowRunThreadFields } from 'src/engine/metadata-modules/ai/ai-history/utils/has-workflow-run-thread-fields.util';
-import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 
 export type RecordedExecutionResult = {
@@ -56,7 +54,6 @@ export class WorkflowAgentConversationWorkspaceService {
     private readonly messageRepository: AgentHistoryRepository<AgentMessageWorkspaceEntity>,
     @InjectAgentHistoryRepository('agentMessagePart')
     private readonly messagePartRepository: AgentHistoryRepository<AgentMessagePartEntity>,
-    private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
   ) {}
 
@@ -78,20 +75,14 @@ export class WorkflowAgentConversationWorkspaceService {
     prompt: string;
     initiatorUserWorkspaceId: string | null;
     executionResult: RecordedExecutionResult;
-  }): Promise<RecordedConversation | null> {
-    const conversation = await this.openConversation({
+  }): Promise<RecordedConversation> {
+    const { threadId, turnId } = await this.openConversation({
       workspaceId,
       workflowRunId,
       stepId,
       title,
       agentId,
     });
-
-    if (!isDefined(conversation)) {
-      return null;
-    }
-
-    const { threadId, turnId } = conversation;
 
     await this.insertMessage({
       workspaceId,
@@ -129,19 +120,13 @@ export class WorkflowAgentConversationWorkspaceService {
     title: string;
     fields: RequestFormToolInput['fields'];
   }): Promise<void> {
-    const conversation = await this.openConversation({
+    const { threadId, turnId } = await this.openConversation({
       workspaceId,
       workflowRunId,
       stepId,
       title,
       agentId: null,
     });
-
-    if (!isDefined(conversation)) {
-      return;
-    }
-
-    const { threadId, turnId } = conversation;
 
     const messageId = await this.insertMessage({
       workspaceId,
@@ -272,7 +257,6 @@ export class WorkflowAgentConversationWorkspaceService {
     return true;
   }
 
-  // Only a workspace whose conversations can name a run records one.
   private async openConversation({
     workspaceId,
     workflowRunId,
@@ -285,16 +269,7 @@ export class WorkflowAgentConversationWorkspaceService {
     stepId: string;
     title: string;
     agentId: string | null;
-  }): Promise<{ threadId: string; turnId: string } | null> {
-    const { flatFieldMetadataMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatFieldMetadataMaps',
-      ]);
-
-    if (!hasWorkflowRunThreadFields(flatFieldMetadataMaps)) {
-      return null;
-    }
-
+  }): Promise<{ threadId: string; turnId: string }> {
     const threadInsertResult = await this.threadRepository.insert(workspaceId, {
       title,
       workflowRunId,

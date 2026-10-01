@@ -28,8 +28,6 @@ const COMPARE_LINKS = [
     label: msg`Twenty vs Microsoft Dynamics`,
     href: '/compare-pricing/microsoft-dynamics',
   },
-  // Attio comparison parked, may return:
-  // { label: msg`Twenty vs Attio`, href: '/compare-pricing/attio' },
 ];
 
 const Grid = styled.div`

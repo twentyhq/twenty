@@ -19,20 +19,9 @@ import { type AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-ch
 import { type IndexFieldMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-field-metadata.entity';
 import { type SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 
-/**
- * Union of all entities that don't extend `WorkspaceRelatedEntity`.
- *
- * Membership is about the base class, not the column: several members declare
- * their own `workspaceId`, so this is not a "has no workspaceId" predicate and
- * must not be used as one.
- *
- * This type is used alongside `WorkspaceRelatedEntity` to enable TypeScript
- * to properly extract entity relation properties for dynamic typing purposes.
- *
- * @see ExtractEntityRelatedEntityProperties
- * @see ExtractEntityManyToOneEntityRelationProperties
- * @see ExtractEntityOneToManyEntityRelationProperties
- */
+// Membership is about the base class (not extending `WorkspaceRelatedEntity`),
+// not the column: several members declare their own `workspaceId`, so this is
+// not a "has no workspaceId" predicate and must not be used as one.
 export type AllNonWorkspaceRelatedEntity =
   | AgentChatThreadEntity
   | AgentMessagePartEntity
