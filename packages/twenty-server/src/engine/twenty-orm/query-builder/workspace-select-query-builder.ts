@@ -196,6 +196,22 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
     return this.appendWhere('or', condition, parameters);
   }
 
+  // Kept apart from the caller's filters, which existence reads validate
+  // against the discoverable fields
+  andWhereRowAccessPredicate(
+    sql: string,
+    parameters: Record<string, unknown>,
+  ): this {
+    this.setParameters(parameters);
+    this.whereClauses.push({
+      operator: 'and',
+      sql: `(${sql})`,
+      isRowAccessPredicate: true,
+    });
+
+    return this;
+  }
+
   setParameters(parameters: Record<string, unknown>): this {
     for (const parameterName of Object.keys(parameters)) {
       if (RESERVED_PARAMETER_NAMES.includes(parameterName)) {
@@ -766,13 +782,18 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
   getFilterReferencedColumnNamesByAlias(): Record<string, string[]> {
     const aliases = collectStatementAliases(this.toSelectStatementState());
     const expressions = [
-      ...this.whereClauses.map((whereClause) => whereClause.sql),
+      ...this.whereClauses
+        .filter((whereClause) => whereClause.isRowAccessPredicate !== true)
+        .map((whereClause) => whereClause.sql),
       ...this.existsFilterClauses.flatMap((existsFilterClause) => [
         existsFilterClause.conditionSql,
         existsFilterClause.correlationCondition,
       ]),
       ...this.joinClauses
-        .map((joinClause) => joinClause.condition)
+        .map(
+          (joinClause) =>
+            joinClause.condition ?? joinClause.toManyPlainCondition,
+        )
         .filter(isDefined),
       ...this.groupByExpressions,
     ].map((expression) => quoteQualifiedAliasReferences(expression, aliases));
@@ -780,8 +801,15 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
     return collectQualifiedAndMainAliasColumnNames({
       expressions,
       mainAlias: this.alias,
-      mainAliasColumnNames: Object.keys(
-        this.tableShape.columnShapeByColumnName,
+      columnNamesByAlias: Object.fromEntries(
+        [this.alias, ...this.joinClauses.map(({ alias }) => alias)].map(
+          (alias) => [
+            alias,
+            Object.keys(
+              this.getTableShapeForAlias(alias)?.columnShapeByColumnName ?? {},
+            ),
+          ],
+        ),
       ),
       aliases: [
         ...aliases,
@@ -790,10 +818,6 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
         ),
       ],
     });
-  }
-
-  isRowLevelPermissionApplied(alias: string): boolean {
-    return this.aliasesWithRowLevelPermissionApplied.has(alias);
   }
 
   getSelectedColumnNames(): string[] {
