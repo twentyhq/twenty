@@ -33,10 +33,6 @@ import {
 import { type RecordShareInput } from 'src/engine/core-modules/record-share/types/record-share-input.type';
 import { type RecordShare } from 'src/engine/core-modules/record-share/types/record-share.type';
 import { isRecordGrantBeyondRoleAllowed } from 'src/engine/core-modules/record-share/utils/is-record-grant-beyond-role-allowed.util';
-import {
-  type RoleObjectAccess,
-  resolveRoleObjectAccess,
-} from 'src/engine/core-modules/record-share/utils/resolve-role-object-access.util';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { canRolesAccessAllRecords } from 'src/engine/core-modules/record-share/utils/can-roles-access-all-records.util';
 import { isRecordShareExceptionObject } from 'src/engine/core-modules/record-share/utils/is-record-share-exception-object.util';
@@ -281,11 +277,6 @@ export class RecordSharingService {
                 shareWith: [shareWith],
                 ...maps,
               });
-              await this.assertPrincipalCanBeReachedOrThrow({
-                workspaceId,
-                sharingObject,
-                principal,
-              });
             }
             const share = {
               ...principal,
@@ -316,7 +307,7 @@ export class RecordSharingService {
             // Runs after the write: the new share satisfies the share gate,
             // so the check below only tests the role and its row filter
             if (args.enabled) {
-              await this.assertSharedRecordReachesPrincipalOrThrow({
+              await this.assertPrincipalReachesRecordOrThrow({
                 workspaceId,
                 transactionScope,
                 sharingObject,
@@ -526,45 +517,8 @@ export class RecordSharingService {
       : undefined;
   }
 
-  // Without reach beyond roles, a grant to someone whose role cannot access the
-  // object would be stored without ever taking effect
-  private async assertPrincipalCanBeReachedOrThrow({
-    workspaceId,
-    sharingObject: { objectMetadata, isRecordSharingEnabled },
-    principal,
-  }: {
-    workspaceId: string;
-    sharingObject: RecordSharingObject;
-    principal: Pick<RecordShareInput, 'principalId' | 'principalType'>;
-  }): Promise<void> {
-    if (
-      principal.principalType === RecordSharePrincipalType.EVERYONE ||
-      isRecordGrantBeyondRoleAllowed({
-        flatObjectMetadata: objectMetadata,
-        operationType: 'select',
-        isRecordSharingEnabled,
-      })
-    ) {
-      return;
-    }
-
-    const [{ canRoleRead }] = await this.resolveRoleObjectAccessByShare({
-      workspaceId,
-      objectMetadataId: objectMetadata.id,
-      shares: [principal],
-    });
-
-    if (canRoleRead === false) {
-      throw new RecordShareException(
-        `Principal ${principal.principalId} cannot access ${objectMetadata.nameSingular} records through its role`,
-        RecordShareExceptionCode.INVALID_SHARE_WITH,
-        {
-          userFriendlyMessage: msg`Their role cannot access these records, and this object is only shared with roles that can.`,
-        },
-      );
-    }
-  }
-
+  // Null when the role cannot be resolved, so a missing membership is never
+  // reported as a role that cannot read the object
   private async withRoleObjectAccess<TShare extends RecordShare>({
     workspaceId,
     objectMetadataId,
@@ -573,38 +527,31 @@ export class RecordSharingService {
     workspaceId: string;
     objectMetadataId: string;
     shares: TShare[];
-  }): Promise<(TShare & RoleObjectAccess)[]> {
-    const accesses = await this.resolveRoleObjectAccessByShare({
-      workspaceId,
-      objectMetadataId,
-      shares,
-    });
-
-    return shares.map((share, index) =>
-      share.principalType === RecordSharePrincipalType.EVERYONE
-        ? { ...share, canRoleRead: null, canRoleUpdate: null }
-        : { ...share, ...accesses[index] },
-    );
-  }
-
-  private async resolveRoleObjectAccessByShare({
-    workspaceId,
-    objectMetadataId,
-    shares,
-  }: {
-    workspaceId: string;
-    objectMetadataId: string;
-    shares: Pick<RecordShareInput, 'principalId' | 'principalType'>[];
-  }): Promise<RoleObjectAccess[]> {
+  }) {
     const { rolesPermissions } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'rolesPermissions',
       ]);
     const roleIds = await this.resolveRoleIdsByShare({ workspaceId, shares });
 
-    return roleIds.map((roleId) =>
-      resolveRoleObjectAccess({ rolesPermissions, objectMetadataId, roleId }),
-    );
+    return shares.map((share, index) => {
+      const roleId = roleIds[index];
+      const roleObjectsPermissions = isDefined(roleId)
+        ? rolesPermissions[roleId]
+        : undefined;
+
+      if (!isDefined(roleObjectsPermissions)) {
+        return { ...share, canRoleRead: null, canRoleUpdate: null };
+      }
+
+      const objectPermissions = roleObjectsPermissions[objectMetadataId];
+
+      return {
+        ...share,
+        canRoleRead: objectPermissions?.canReadObjectRecords ?? false,
+        canRoleUpdate: objectPermissions?.canUpdateObjectRecords ?? false,
+      };
+    });
   }
 
   private async resolveRoleIdsByShare({
@@ -659,10 +606,9 @@ export class RecordSharingService {
     });
   }
 
-  // Object access alone is not enough when shares stay within role access:
-  // the row filter of the recipient's role may still hide this record, which
-  // would leave a share that grants nothing
-  private async assertSharedRecordReachesPrincipalOrThrow({
+  // Without reach beyond roles, a grant the recipient's role cannot use would
+  // be stored without ever taking effect
+  private async assertPrincipalReachesRecordOrThrow({
     workspaceId,
     transactionScope,
     sharingObject: { objectMetadata, isRecordSharingEnabled },
@@ -675,11 +621,8 @@ export class RecordSharingService {
     principal: Pick<RecordShareInput, 'principalId' | 'principalType'>;
     recordId: string;
   }): Promise<void> {
-    // A role's row filter can depend on which member reads, so a share with a
-    // role is only held to object access here and filtered per member on read
     if (
       principal.principalType === RecordSharePrincipalType.EVERYONE ||
-      principal.principalType === RecordSharePrincipalType.ROLE ||
       isRecordGrantBeyondRoleAllowed({
         flatObjectMetadata: objectMetadata,
         operationType: 'select',
@@ -711,6 +654,27 @@ export class RecordSharingService {
       'flatRowLevelPermissionPredicateGroupMaps',
       'flatFieldMetadataMaps',
     ]);
+    const roleObjectsPermissions = rolesPermissions[roleId];
+
+    if (
+      isDefined(roleObjectsPermissions) &&
+      roleObjectsPermissions[objectMetadata.id]?.canReadObjectRecords !== true
+    ) {
+      throw new RecordShareException(
+        `Principal ${principal.principalId} cannot access ${objectMetadata.nameSingular} records through its role`,
+        RecordShareExceptionCode.INVALID_SHARE_WITH,
+        {
+          userFriendlyMessage: msg`Their role cannot access these records, and this object is only shared with roles that can.`,
+        },
+      );
+    }
+
+    // A role's row filter can depend on which member reads, so a share with a
+    // role is only held to object access here and filtered per member on read
+    if (principal.principalType === RecordSharePrincipalType.ROLE) {
+      return;
+    }
+
     const workspaceMember =
       principal.principalType === RecordSharePrincipalType.WORKSPACE_MEMBER
         ? await transactionScope
