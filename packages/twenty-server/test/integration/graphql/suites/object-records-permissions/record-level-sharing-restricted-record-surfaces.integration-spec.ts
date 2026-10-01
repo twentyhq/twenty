@@ -203,7 +203,7 @@ describe('A restricted record on an object open by default', () => {
       APPLE_JONY_MEMBER_ACCESS_TOKEN,
     );
 
-    expect(response.body.data?.company ?? null).toBeNull();
+    expect(response.body.errors?.[0]?.extensions?.code).toBe('NOT_FOUND');
   });
 
   it('should leave it out of group counts', async () => {
