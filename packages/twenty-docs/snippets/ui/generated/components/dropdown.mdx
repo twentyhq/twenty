@@ -214,15 +214,6 @@
   Shows a chevron indicating that the item opens a submenu.
 </ParamField>
 
-<ParamField body="ActionItem.hotkeys" type="string[]">
-  Keyboard shortcut keys displayed at the end of the row. Registering the
-  shortcut is up to the application.
-</ParamField>
-
-<ParamField body="ActionItem.hotkeysJoinLabel" type="string">
-  Text between shortcut keys. Defaults to `then`.
-</ParamField>
-
 <ParamField body="ActionItem.nativeButton" type="boolean" default="true when render is omitted; false otherwise">
   Whether the component renders a native `<button>` element when replacing it
   via the `render` prop.
@@ -235,6 +226,15 @@
 
 <ParamField body="ActionItem.render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt;">
   Element rendered as the row instead of a native button. Custom components must forward the supplied props and ref.
+</ParamField>
+
+<ParamField body="ActionItem.shortcut" type="ShortcutDefinition">
+  Keyboard shortcut keys displayed at the end of the row. Registering the
+  shortcut is up to the application.
+</ParamField>
+
+<ParamField body="ActionItem.shortcutJoinLabel" type="string">
+  Text between sequential shortcut steps. Defaults to `then`.
 </ParamField>
 
 <ParamField body="ActionItem.startIcon" type="ReactNode">
@@ -280,15 +280,6 @@
   Shows a chevron indicating that the item opens a submenu.
 </ParamField>
 
-<ParamField body="OptionItem.hotkeys" type="string[]">
-  Keyboard shortcut keys displayed at the end of the row. Registering the
-  shortcut is up to the application.
-</ParamField>
-
-<ParamField body="OptionItem.hotkeysJoinLabel" type="string">
-  Text between shortcut keys. Defaults to `then`.
-</ParamField>
-
 <ParamField body="OptionItem.indicator" type="&quot;check&quot; | &quot;checkbox&quot; | &quot;none&quot;">
   Selection indicator: a check icon after the content, a checkbox before it, or none. Defaults to `checkbox` when `multiple` is set, otherwise `check`.
 </ParamField>
@@ -309,6 +300,15 @@
 
 <ParamField body="OptionItem.selected" type="boolean" required>
   Whether the option is selected. Exposed as `aria-checked` in menus and `aria-pressed` in other dropdown types.
+</ParamField>
+
+<ParamField body="OptionItem.shortcut" type="ShortcutDefinition">
+  Keyboard shortcut keys displayed at the end of the row. Registering the
+  shortcut is up to the application.
+</ParamField>
+
+<ParamField body="OptionItem.shortcutJoinLabel" type="string">
+  Text between sequential shortcut steps. Defaults to `then`.
 </ParamField>
 
 <ParamField body="OptionItem.startIcon" type="ReactNode">
@@ -448,15 +448,6 @@
   Shows a chevron indicating that the item opens a submenu.
 </ParamField>
 
-<ParamField body="Back.hotkeys" type="string[]">
-  Keyboard shortcut keys displayed at the end of the row. Registering the
-  shortcut is up to the application.
-</ParamField>
-
-<ParamField body="Back.hotkeysJoinLabel" type="string">
-  Text between shortcut keys. Defaults to `then`.
-</ParamField>
-
 <ParamField body="Back.nativeButton" type="boolean" default="true when render is omitted; false otherwise">
   Whether the component renders a native `<button>` element when replacing it
   via the `render` prop.
@@ -465,6 +456,15 @@
 
 <ParamField body="Back.render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt;">
   Element rendered as the row instead of a native button. Custom components must forward the supplied props and ref.
+</ParamField>
+
+<ParamField body="Back.shortcut" type="ShortcutDefinition">
+  Keyboard shortcut keys displayed at the end of the row. Registering the
+  shortcut is up to the application.
+</ParamField>
+
+<ParamField body="Back.shortcutJoinLabel" type="string">
+  Text between sequential shortcut steps. Defaults to `then`.
 </ParamField>
 
 <ParamField body="Back.startIcon" type="ReactNode">
@@ -540,15 +540,6 @@
   Shows a chevron indicating that the item opens a submenu.
 </ParamField>
 
-<ParamField body="SubmenuTrigger.hotkeys" type="string[]">
-  Keyboard shortcut keys displayed at the end of the row. Registering the
-  shortcut is up to the application.
-</ParamField>
-
-<ParamField body="SubmenuTrigger.hotkeysJoinLabel" type="string">
-  Text between shortcut keys. Defaults to `then`.
-</ParamField>
-
 <ParamField body="SubmenuTrigger.nativeButton" type="boolean" default="true when render is omitted; false otherwise">
   Whether the component renders a native `<button>` element when replacing it
   via the `render` prop.
@@ -561,6 +552,15 @@
 
 <ParamField body="SubmenuTrigger.render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt;">
   Element rendered as the row instead of a native button. Custom components must forward the supplied props and ref.
+</ParamField>
+
+<ParamField body="SubmenuTrigger.shortcut" type="ShortcutDefinition">
+  Keyboard shortcut keys displayed at the end of the row. Registering the
+  shortcut is up to the application.
+</ParamField>
+
+<ParamField body="SubmenuTrigger.shortcutJoinLabel" type="string">
+  Text between sequential shortcut steps. Defaults to `then`.
 </ParamField>
 
 <ParamField body="SubmenuTrigger.startIcon" type="ReactNode">

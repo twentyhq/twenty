@@ -14,14 +14,14 @@ const LabelOverrides = () => {
         isClosable
         closeLabel="Dismiss notice"
       />
-      <ListItem hotkeys={['G', 'D']}>Default shortcut</ListItem>
-      <ListItem hotkeys={['G', 'S']} hotkeysJoinLabel="followed by">
+      <ListItem shortcut={[['G'], ['D']]}>Default shortcut</ListItem>
+      <ListItem shortcut={[['G'], ['S']]} shortcutJoinLabel="followed by">
         Supplied shortcut
       </ListItem>
       <MenuItem
         text="Legacy shortcut"
-        hotKeys={['G', 'L']}
-        hotKeysJoinLabel="next"
+        shortcut={[['G'], ['L']]}
+        shortcutJoinLabel="next"
       />
     </TwentyUiGalleryCard>
   );

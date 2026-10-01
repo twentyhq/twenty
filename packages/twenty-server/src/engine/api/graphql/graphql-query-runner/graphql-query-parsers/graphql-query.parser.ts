@@ -155,7 +155,6 @@ export class GraphqlQueryParser {
   ): void {
     // Add ORDER BY columns with underscore alias for DISTINCT compatibility
     // This must be called AFTER setFindOptions because setFindOptions clears addSelect
-    // We need to add columns that are in orderBy but NOT in the selected columns
     for (const orderByKey of Object.keys(parsedOrderBy)) {
       const parts = orderByKey.split('.');
 
@@ -194,7 +193,6 @@ export class GraphqlQueryParser {
           ? ` ${orderByCondition.nulls}`
           : '';
 
-        // Convert "alias.column" to quoted SQL identifier "alias"."column"
         const parts = orderByField.split('.');
         const quotedColumn =
           parts.length === 2

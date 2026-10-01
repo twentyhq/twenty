@@ -44,8 +44,8 @@ import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-enti
 import { type AuthoredOverrides } from 'src/engine/metadata-modules/overrides/types/authored-overrides.type';
 import { JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
 
-// This entity is used as a reference test case for type utilities in:
-// Modifying relations or properties may require updating type test expectations for Typecheck to pass.
+// Reference case for the type tests in types/__tests__/field-metadata-entity.test-type.ts:
+// modifying relations or properties may require updating their expectations for typecheck to pass.
 @Entity('fieldMetadata')
 @Index('IDX_FIELD_METADATA_APPLICATION_ID', ['applicationId'])
 @Check(
@@ -172,7 +172,6 @@ export class FieldMetadataEntity<
   @Column({ type: 'boolean', default: false })
   isUIReadOnly: WasRemovedInUpgrade<boolean>;
 
-  // Is this really nullable ?
   @Column({ nullable: true, default: true, type: 'boolean' })
   isNullable: boolean | null;
 

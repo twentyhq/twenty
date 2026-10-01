@@ -51,7 +51,6 @@ export type CompetitorComparison = {
 
 const HUBSPOT_PRICING_URL = 'https://www.hubspot.com/pricing/sales';
 const SALESFORCE_PRICING_URL = 'https://www.salesforce.com/sales/pricing/';
-// const ATTIO_PRICING_URL = 'https://attio.com/pricing';
 const PIPEDRIVE_PRICING_URL = 'https://www.pipedrive.com/en/pricing';
 const DYNAMICS_PRICING_URL =
   'https://www.microsoft.com/en-us/dynamics-365/products/sales/pricing';
@@ -246,93 +245,6 @@ const SALESFORCE_COMPARISON: CompetitorComparison = {
   honest: msg`Salesforce remains the deepest enterprise platform, with an ecosystem for almost everything. At a thousand seats with a dedicated admin team, it is a different conversation.`,
   sourceNote: msg`List prices from Salesforce's public pricing page, billed annually, checked on July 30, 2026.`,
 };
-
-// The Attio comparison is parked for now (may return later). The data is
-// kept commented so it only needs re-verification to come back.
-// export const ATTIO_COMPARISON: CompetitorComparison = {
-//   competitor: 'Attio',
-//   competitorColumnLabel: msg`On Attio`,
-//   eyebrow: msg`Twenty vs Attio`,
-//   heading: msg`What does\n*Attio* really cost?`,
-//   intro: msg`Both are modern CRMs. One is open source.\nHere is the price of the difference.`,
-//   migrationLine: msg`Import your data and see your own numbers. Moving a workspace from Attio usually takes an afternoon.`,
-//   slug: 'attio',
-//   tableTitle: msg`The same features, priced differently`,
-//   rows: [
-//     {
-//       feature: msg`The modern CRM`,
-//       description: msg`Objects, pipelines, email sync`,
-//       competitor: {
-//         price: msg`$35/user/mo`,
-//         detail: msg`Plus plan, billed annually`,
-//         sourceUrl: ATTIO_PRICING_URL,
-//       },
-//       twenty: { detail: msg`$9/user on Pro` },
-//     },
-//     {
-//       feature: msg`The full platform`,
-//       description: msg`Advanced reporting and workflows`,
-//       competitor: {
-//         price: msg`$79/user/mo`,
-//         detail: msg`Pro plan, billed annually`,
-//         sourceUrl: ATTIO_PRICING_URL,
-//       },
-//       twenty: { detail: msg`Included from Pro, $9/user` },
-//     },
-//     {
-//       feature: msg`SAML SSO & advanced admin`,
-//       description: msg`Single sign-on, access control`,
-//       competitor: {
-//         price: msg`Custom pricing`,
-//         detail: msg`Enterprise plan only`,
-//         sourceUrl: ATTIO_PRICING_URL,
-//       },
-//       twenty: { detail: msg`Organization, $19/user` },
-//     },
-//     {
-//       feature: msg`Cost per workflow run`,
-//       description: msg`An automation that writes a record`,
-//       competitor: {
-//         price: msg`From ≈ 1.5¢/run`,
-//         detail: msg`One credit per data-writing block, $150 per 10k credits`,
-//         sourceUrl: ATTIO_PRICING_URL,
-//       },
-//       twenty: { detail: msg`Credit allowance included with every plan` },
-//     },
-//     {
-//       feature: msg`Source code`,
-//       description: msg`Audit it, extend it, own it`,
-//       competitor: {
-//         price: msg`Closed`,
-//         detail: msg`Proprietary`,
-//       },
-//       twenty: { detail: msg`Open source` },
-//     },
-//   ],
-//   receipt: {
-//     scenario: msg`A 20-person team, billed annually`,
-//     competitorLines: [
-//       { label: msg`20 × Pro ($79)`, amount: msg`$18,960/yr` },
-//       {
-//         label: msg`SSO & advanced admin`,
-//         amount: msg`Enterprise upgrade`,
-//       },
-//     ],
-//     competitorTotalAmount: msg`$18,960+`,
-//     competitorTotalSuffix: msg`per year`,
-//     competitorPerUser: msg`$79 per user per month, before Enterprise`,
-//     twentyLines: [
-//       { label: msg`20 × Organization ($19)`, amount: msg`$4,560/yr` },
-//       { label: msg`SSO & advanced admin`, amount: msg`Included` },
-//     ],
-//     twentyTotalAmount: msg`$4,560`,
-//     twentyTotalSuffix: msg`per year`,
-//     twentyPerUser: msg`$19 per user per month, SSO included`,
-//     multiplier: msg`≈ 4× less`,
-//   },
-//   honest: msg`Attio is a polished, fast product with strong built-in enrichment. If you never need to extend or own your CRM, it is a credible pick.`,
-//   sourceNote: msg`List prices from Attio's public pricing page, billed annually, checked on July 30, 2026.`,
-// };
 
 const PIPEDRIVE_COMPARISON: CompetitorComparison = {
   competitor: 'Pipedrive',

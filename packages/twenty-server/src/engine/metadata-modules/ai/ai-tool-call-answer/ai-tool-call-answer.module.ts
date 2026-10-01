@@ -6,7 +6,6 @@ import { AiBillingModule } from 'src/engine/metadata-modules/ai/ai-billing/ai-bi
 import { AgentChatStreamStateModule } from 'src/engine/metadata-modules/ai/ai-chat/agent-chat-stream-state.module';
 import { AiChatModule } from 'src/engine/metadata-modules/ai/ai-chat/ai-chat.module';
 import { AgentHistoryModule } from 'src/engine/metadata-modules/ai/ai-history/ai-history.module';
-import { AnswerAgentChatQuestionResolver } from 'src/engine/metadata-modules/ai/ai-tool-call-answer/resolvers/answer-agent-chat-question.resolver';
 import { ToolCallAnswerResolver } from 'src/engine/metadata-modules/ai/ai-tool-call-answer/resolvers/tool-call-answer.resolver';
 import { ToolCallAnswerService } from 'src/engine/metadata-modules/ai/ai-tool-call-answer/services/tool-call-answer.service';
 import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai/interceptors/ai-graphql-api-exception.interceptor';
@@ -33,7 +32,6 @@ import { WorkflowRunnerModule } from 'src/modules/workflow/workflow-runner/workf
   providers: [
     ToolCallAnswerService,
     ToolCallAnswerResolver,
-    AnswerAgentChatQuestionResolver,
     AiGraphqlApiExceptionInterceptor,
   ],
 })

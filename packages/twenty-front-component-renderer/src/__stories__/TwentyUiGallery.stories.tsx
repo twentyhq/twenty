@@ -1,3 +1,4 @@
+import { breadcrumbTest } from '@/__stories__/twenty-ui-gallery/utils/breadcrumbTest';
 import { jsonTreeTest } from '@/__stories__/twenty-ui-gallery/utils/jsonTreeTest';
 import { inlineBannerSandboxTest } from '@/__stories__/twenty-ui-gallery/utils/inlineBannerSandboxTest';
 import { themeTokenTest } from '@/__stories__/twenty-ui-gallery/utils/themeTokenTest';
@@ -224,6 +225,18 @@ export const DisplayHelpersPreact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-display-helpers',
   runtime: 'preact',
   play: displayHelpersTest,
+});
+
+export const BreadcrumbReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-breadcrumb',
+  runtime: 'react',
+  play: breadcrumbTest,
+});
+
+export const BreadcrumbPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-breadcrumb',
+  runtime: 'preact',
+  play: breadcrumbTest,
 });
 
 export const ListItemReact: Story = createGalleryStory({

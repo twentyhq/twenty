@@ -168,7 +168,6 @@ export class BillingCreditGrantService {
     };
   }
 
-  // Grants that were spendable at any point during the given period.
   async findGrantsLiveDuringPeriod(
     {
       workspaceId,

@@ -3,26 +3,18 @@ import { type DestroyManyResolverArgs } from 'src/engine/api/graphql/workspace-r
 
 import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import { AgentChatThreadLifecycleService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-lifecycle.service';
+import { excludeWorkflowRunThreadsFromFilter } from 'src/engine/metadata-modules/ai/ai-chat/utils/exclude-workflow-run-threads-from-filter.util';
 
 @WorkspaceQueryHook(`agentChatThread.destroyMany`)
 export class AgentChatThreadDestroyManyPreQueryHook implements WorkspacePreQueryHookInstance {
-  constructor(
-    private readonly threadLifecycleService: AgentChatThreadLifecycleService,
-  ) {}
-
   async execute(
-    authContext: WorkspaceAuthContext,
+    _authContext: WorkspaceAuthContext,
     _objectName: string,
     payload: DestroyManyResolverArgs,
   ): Promise<DestroyManyResolverArgs> {
     return {
       ...payload,
-      filter:
-        await this.threadLifecycleService.excludeWorkflowRunThreadsFromFilter({
-          workspaceId: authContext.workspace.id,
-          filter: payload.filter,
-        }),
+      filter: excludeWorkflowRunThreadsFromFilter(payload.filter),
     };
   }
 }
