@@ -37,8 +37,11 @@ export const SettingsAdminTwoFactorAuthenticationRecoveryCode = ({
   const apolloAdminClient = useApolloAdminClient();
   const { openDialog } = useDialog();
   const { enqueueToast } = useToast();
-  const { generatedRecoveryCode, showGeneratedRecoveryCode } =
-    useGeneratedRecoveryCode();
+  const {
+    generatedRecoveryCode,
+    showGeneratedRecoveryCode,
+    clearGeneratedRecoveryCode,
+  } = useGeneratedRecoveryCode();
 
   const [generateRecoveryCode] = useMutation(
     GenerateTwoFactorAuthenticationRecoveryCodeAsServerAdminDocument,
@@ -78,6 +81,7 @@ export const SettingsAdminTwoFactorAuthenticationRecoveryCode = ({
           recoveryCode={generatedRecoveryCode.recoveryCode}
           expiresAt={generatedRecoveryCode.expiresAt}
           memberName={memberName}
+          onExpire={clearGeneratedRecoveryCode}
         />
       )}
       <div>

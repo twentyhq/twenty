@@ -131,6 +131,7 @@ export const MemberTwoFactorAuthenticationRecoverySection = ({
               recoveryCode={generatedRecoveryCode.recoveryCode}
               expiresAt={generatedRecoveryCode.expiresAt}
               memberName={memberName}
+              onExpire={clearGeneratedRecoveryCode}
             />
           )}
           <StyledActionRow>

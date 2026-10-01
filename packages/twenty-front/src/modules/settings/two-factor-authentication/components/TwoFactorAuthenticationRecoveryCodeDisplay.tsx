@@ -1,3 +1,4 @@
+import { TwoFactorAuthenticationRecoveryCodeExpiryEffect } from '@/settings/two-factor-authentication/components/TwoFactorAuthenticationRecoveryCodeExpiryEffect';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
@@ -31,12 +32,14 @@ type TwoFactorAuthenticationRecoveryCodeDisplayProps = {
   recoveryCode: string;
   expiresAt: string;
   memberName: string;
+  onExpire: () => void;
 };
 
 export const TwoFactorAuthenticationRecoveryCodeDisplay = ({
   recoveryCode,
   expiresAt,
   memberName,
+  onExpire,
 }: TwoFactorAuthenticationRecoveryCodeDisplayProps) => {
   const { t } = useLingui();
   const { copyToClipboard } = useCopyToClipboard();
@@ -44,6 +47,10 @@ export const TwoFactorAuthenticationRecoveryCodeDisplay = ({
 
   return (
     <StyledContainer>
+      <TwoFactorAuthenticationRecoveryCodeExpiryEffect
+        expiresAt={expiresAt}
+        onExpire={onExpire}
+      />
       <StyledCodeRow>
         <StyledCodeInputContainer>
           <SettingsTextInput
