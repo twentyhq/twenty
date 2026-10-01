@@ -1390,6 +1390,8 @@ export interface RecordSharingGrantDTO {
     principalId: Scalars['UUID']
     accessLevel: RecordShareAccessLevel
     rowCause: Scalars['String']
+    canRoleRead?: Scalars['Boolean']
+    canRoleUpdate?: Scalars['Boolean']
     __typename: 'RecordSharingGrantDTO'
 }
 
@@ -1409,6 +1411,7 @@ export interface RecordSharingDTO {
     isOpenByDefault: Scalars['Boolean']
     generalAccessLevel?: RecordShareAccessLevel
     isGeneralAccessDefault: Scalars['Boolean']
+    sharingReach: ObjectSharingReach
     roles: RecordSharingRoleDTO[]
     shares: RecordSharingGrantDTO[]
     __typename: 'RecordSharingDTO'
@@ -5215,6 +5218,8 @@ export interface RecordSharingGrantDTOGenqlSelection{
     principalId?: boolean | number
     accessLevel?: boolean | number
     rowCause?: boolean | number
+    canRoleRead?: boolean | number
+    canRoleUpdate?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -5234,6 +5239,7 @@ export interface RecordSharingDTOGenqlSelection{
     isOpenByDefault?: boolean | number
     generalAccessLevel?: boolean | number
     isGeneralAccessDefault?: boolean | number
+    sharingReach?: boolean | number
     roles?: RecordSharingRoleDTOGenqlSelection
     shares?: RecordSharingGrantDTOGenqlSelection
     __typename?: boolean | number

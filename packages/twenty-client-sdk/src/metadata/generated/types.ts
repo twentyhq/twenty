@@ -3418,6 +3418,12 @@ export default {
             "rowCause": [
                 1
             ],
+            "canRoleRead": [
+                8
+            ],
+            "canRoleUpdate": [
+                8
+            ],
             "__typename": [
                 1
             ]
@@ -3456,6 +3462,9 @@ export default {
             ],
             "isGeneralAccessDefault": [
                 8
+            ],
+            "sharingReach": [
+                28
             ],
             "roles": [
                 173

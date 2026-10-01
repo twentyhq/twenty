@@ -5,7 +5,10 @@ import userEvent from '@testing-library/user-event';
 import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 import { MemoryRouter } from 'react-router-dom';
-import { RecordShareAccessLevel } from '~/generated-metadata/graphql';
+import {
+  ObjectSharingReach,
+  RecordShareAccessLevel,
+} from '~/generated-metadata/graphql';
 import { RecordSharePrincipalType } from 'twenty-shared/types';
 
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
@@ -33,6 +36,9 @@ const sharing = {
   },
   isEnabled: true,
   hasInheritedAccess: false,
+  isOpenByDefault: false,
+  generalAccessLevel: RecordShareAccessLevel.NONE,
+  sharingReach: ObjectSharingReach.WORKSPACE,
   roles: [{ id: 'sales-role', label: 'Sales' }],
   shares: [],
 };
@@ -47,6 +53,7 @@ const renderSharing = (overrides = {}) => {
   return render(
     <SidePanelShareRecordContent
       recordUrl="https://example.com/record"
+      objectLabelPlural="Companies"
       sharingState={{
         sharing,
         setShare,
@@ -132,6 +139,7 @@ describe('Share record side panel', () => {
     renderSharing({
       sharing: {
         ...sharing,
+        generalAccessLevel: RecordShareAccessLevel.READ,
         shares: [
           {
             id: 'everyone',
@@ -139,14 +147,20 @@ describe('Share record side panel', () => {
             principalId: 'everyone',
             accessLevel: 'READ',
             rowCause: 'MANUAL',
+            canRoleRead: null,
+            canRoleUpdate: null,
           },
         ],
       },
     });
     await user.click(
-      screen.getByRole('button', { name: /^Everyone in the workspace/ }),
+      screen.getByRole('button', {
+        name: /^Everyone with access to Companies/,
+      }),
     );
-    await user.click(screen.getByRole('menuitemradio', { name: 'Restricted' }));
+    await user.click(
+      screen.getByRole('menuitemradio', { name: 'Restricted (default)' }),
+    );
     expect(setShare).toHaveBeenCalledWith({
       principal: { everyone: true },
       enabled: false,
@@ -176,7 +190,7 @@ describe('Share record side panel', () => {
       await waitFor(() =>
         expect(
           screen.getByText(
-            'Full access and edit permission are required to manage sharing.',
+            'Only the creator of this record and people with full access to it can change who has access.',
           ),
         ).toBeVisible(),
       );
@@ -335,7 +349,12 @@ describe('Share record side panel', () => {
       { workspaceMemberId: 'alice-member' },
     ],
     ['Sales', 'ROLE', 'sales-role', { roleId: 'sales-role' }],
-    ['Everyone in the workspace', 'EVERYONE', 'everyone', { everyone: true }],
+    [
+      'Everyone with access to Companies',
+      'EVERYONE',
+      'everyone',
+      { everyone: true },
+    ],
   ])(
     'can upgrade and downgrade %s without removing their grant',
     async (label, principalType, principalId, principal) => {
@@ -349,12 +368,22 @@ describe('Share record side panel', () => {
           rowCause: 'MANUAL',
         },
       ];
-      const view = renderSharing({ sharing: { ...sharing, shares } });
+      const generalAccessLevelOf = (accessLevel: string) =>
+        principalType === 'EVERYONE'
+          ? accessLevel
+          : RecordShareAccessLevel.NONE;
+      const view = renderSharing({
+        sharing: {
+          ...sharing,
+          generalAccessLevel: generalAccessLevelOf('READ'),
+          shares,
+        },
+      });
       await user.click(
         screen.getByRole('button', {
           name:
             principalType === 'EVERYONE'
-              ? /^Everyone in the workspace/
+              ? /^Everyone with access to Companies/
               : new RegExp(`^${label}`),
         }),
       );
@@ -368,6 +397,7 @@ describe('Share record side panel', () => {
       renderSharing({
         sharing: {
           ...sharing,
+          generalAccessLevel: generalAccessLevelOf('FULL'),
           shares: [{ ...shares[0], accessLevel: 'FULL' }],
         },
       });
@@ -375,7 +405,7 @@ describe('Share record side panel', () => {
         screen.getByRole('button', {
           name:
             principalType === 'EVERYONE'
-              ? /^Everyone in the workspace/
+              ? /^Everyone with access to Companies/
               : new RegExp(`^${label}`),
         }),
       );
@@ -385,6 +415,63 @@ describe('Share record side panel', () => {
         enabled: true,
         accessLevel: 'READ',
       });
+    },
+  );
+
+  it('marks the default access of a record open by default and lets owners restrict it', async () => {
+    const user = userEvent.setup();
+    renderSharing({
+      sharing: {
+        ...sharing,
+        isOpenByDefault: true,
+        generalAccessLevel: RecordShareAccessLevel.READ_WRITE,
+      },
+    });
+    await user.click(
+      screen.getByRole('button', {
+        name: 'Everyone with access to Companies Editor',
+      }),
+    );
+    expect(
+      screen.getByRole('menuitemradio', { name: 'Editor (default)' }),
+    ).toBeVisible();
+    await user.click(screen.getByRole('menuitemradio', { name: 'Restricted' }));
+    expect(setShare).toHaveBeenCalledWith({
+      principal: { everyone: true },
+      enabled: false,
+    });
+  });
+
+  it.each([
+    [
+      ObjectSharingReach.WORKSPACE,
+      "Gets this record only: their role can't access Companies",
+    ],
+    [
+      ObjectSharingReach.ROLE_ACCESS,
+      "Won't see it: their role can't access Companies",
+    ],
+  ])(
+    'explains what a grant does for a role without access when sharing reach is %s',
+    async (sharingReach, note) => {
+      renderSharing({
+        sharing: {
+          ...sharing,
+          sharingReach,
+          shares: [
+            {
+              id: 'grant',
+              principalType: 'WORKSPACE_MEMBER',
+              principalId: 'alice-member',
+              accessLevel: 'READ',
+              rowCause: 'MANUAL',
+              canRoleRead: false,
+              canRoleUpdate: false,
+            },
+          ],
+        },
+      });
+      await waitFor(() => expect(screen.getByText(note)).toBeVisible());
     },
   );
 });

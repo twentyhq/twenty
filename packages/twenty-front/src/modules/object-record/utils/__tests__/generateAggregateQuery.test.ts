@@ -1,4 +1,8 @@
-import { ObjectOpenRecordIn } from 'twenty-shared/types';
+import {
+  MetadataReadability,
+  ObjectOpenRecordIn,
+  ObjectSharingReach,
+} from 'twenty-shared/types';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { generateAggregateQuery } from '@/object-record/utils/generateAggregateQuery';
 import { MetadataWritability } from '~/generated-metadata/graphql';
@@ -29,6 +33,8 @@ describe('generateAggregateQuery', () => {
       isUICreatable: true,
       writability: MetadataWritability.OPEN,
       openRecordIn: ObjectOpenRecordIn.USER_CHOICE,
+      sharingReach: ObjectSharingReach.WORKSPACE,
+      readability: MetadataReadability.OPEN,
     };
 
     const mockRecordGqlFields = {
@@ -75,6 +81,8 @@ describe('generateAggregateQuery', () => {
       isUICreatable: true,
       writability: MetadataWritability.OPEN,
       openRecordIn: ObjectOpenRecordIn.USER_CHOICE,
+      sharingReach: ObjectSharingReach.WORKSPACE,
+      readability: MetadataReadability.OPEN,
     };
 
     const mockRecordGqlFields = {
