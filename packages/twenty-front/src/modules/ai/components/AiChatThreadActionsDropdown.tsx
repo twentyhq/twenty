@@ -124,7 +124,9 @@ export const AiChatThreadActionsDropdown = ({
           id: thread.id,
           title: thread.title ?? null,
           deletedAt: thread.deletedAt ?? null,
-          lastActivityAt: thread.lastActivityAt ?? null,
+          ...(isDefined(thread.lastActivityAt)
+            ? { lastActivityAt: thread.lastActivityAt }
+            : {}),
         },
       ],
     });
