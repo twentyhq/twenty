@@ -99,6 +99,19 @@ export const FormattedValue: Story = {
   },
 };
 
+export const EmptyValueText: Story = {
+  args: {
+    progressValueText: '',
+  },
+  play: async ({ canvasElement }) => {
+    const progress = within(canvasElement).getByRole('progressbar', {
+      name: 'Imported files',
+    });
+
+    await expect(progress).toHaveAttribute('aria-valuetext', '75%');
+  },
+};
+
 const ControlledMetricRow = () => {
   const [completed, setCompleted] = useState(false);
 

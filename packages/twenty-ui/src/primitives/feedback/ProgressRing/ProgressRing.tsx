@@ -1,5 +1,6 @@
 import { Progress } from '@base-ui/react/progress';
 import { clamp } from '@base-ui/utils/clamp';
+import { isNonEmptyString } from '@sniptt/guards';
 import { clsx } from 'clsx';
 import { type CSSProperties } from 'react';
 
@@ -34,7 +35,9 @@ export const ProgressRing = ({
       value={boundedValue}
       min={0}
       max={100}
-      getAriaValueText={(formattedValue) => ariaValueText ?? formattedValue}
+      getAriaValueText={(formattedValue) =>
+        isNonEmptyString(ariaValueText) ? ariaValueText : formattedValue
+      }
       className={clsx(styles.root, className)}
       style={
         {
