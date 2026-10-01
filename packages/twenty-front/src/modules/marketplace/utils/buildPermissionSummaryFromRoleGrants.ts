@@ -75,11 +75,8 @@ export const buildPermissionSummaryFromRoleGrants = ({
       (object) => object.universalIdentifier === objectUniversalIdentifier,
     );
 
-  const getObjectLabel = (
-    objectUniversalIdentifier: string | null | undefined,
-  ) =>
-    findObject(objectUniversalIdentifier)?.labelPlural ??
-    t`records of an object added by this version`;
+  const getObjectLabel = (object: ObjectDescriptor | undefined) =>
+    object?.labelPlural ?? t`records of an object added by this version`;
 
   const toSummaryItem = (
     grant: ApplicationUpgradeRoleGrant,
@@ -102,13 +99,16 @@ export const buildPermissionSummaryFromRoleGrants = ({
           Icon: IconAddressBook,
           label: getObjectRecordsLabel({
             action: grant.action,
-            objectLabel: getObjectLabel(grant.objectUniversalIdentifier),
+            objectLabel: getObjectLabel(
+              findObject(grant.objectUniversalIdentifier),
+            ),
           }),
         };
       case ApplicationUpgradeRoleGrantType.FIELD_VALUE: {
-        const objectLabel = getObjectLabel(grant.objectUniversalIdentifier);
+        const object = findObject(grant.objectUniversalIdentifier);
+        const objectLabel = getObjectLabel(object);
         const fieldLabel =
-          findObject(grant.objectUniversalIdentifier)?.fields.find(
+          object?.fields.find(
             (field) =>
               field.universalIdentifier === grant.fieldUniversalIdentifier,
           )?.label ?? t`a restricted field`;
@@ -122,7 +122,9 @@ export const buildPermissionSummaryFromRoleGrants = ({
         };
       }
       case ApplicationUpgradeRoleGrantType.ROW_LEVEL_RESTRICTION: {
-        const objectLabel = getObjectLabel(grant.objectUniversalIdentifier);
+        const objectLabel = getObjectLabel(
+          findObject(grant.objectUniversalIdentifier),
+        );
 
         return {
           Icon: IconFilter,

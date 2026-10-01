@@ -416,7 +416,7 @@ export const SettingsApplicationDetails = () => {
               button={{
                 title: t`Review`,
                 onClick: handleUpgrade,
-                disabled: isUpgrading,
+                disabled: isUpgrading || !isPermissionSummaryReady,
               }}
             />
           )}
