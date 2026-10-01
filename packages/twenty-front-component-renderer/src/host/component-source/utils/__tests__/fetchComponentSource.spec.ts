@@ -3,11 +3,10 @@ import { TextEncoder as NodeTextEncoder } from 'node:util';
 
 import { CustomError } from 'twenty-shared/utils';
 
+import { FRONT_COMPONENT_SOURCE_CHECKSUM_MISMATCH_ERROR_CODE } from '@/host/component-source/constants/FrontComponentSourceChecksumMismatchErrorCode';
 import { fetchComponentSource } from '@/host/component-source/utils/fetchComponentSource';
 
 const COMPONENT_SOURCE = 'export default () => {};';
-
-const CHECKSUM_MISMATCH_CODE = 'FRONT_COMPONENT_SOURCE_CHECKSUM_MISMATCH';
 
 const computeSha256Hex = (content: string): string =>
   createHash('sha256').update(content).digest('hex');
@@ -284,7 +283,9 @@ describe('fetchComponentSource', () => {
 
     await expect(
       fetchComponentSource({ url: STALE_URL }),
-    ).rejects.toMatchObject({ code: CHECKSUM_MISMATCH_CODE });
+    ).rejects.toMatchObject({
+      code: FRONT_COMPONENT_SOURCE_CHECKSUM_MISMATCH_ERROR_CODE,
+    });
     expect(cache.put).not.toHaveBeenCalled();
     expect(cache.delete).not.toHaveBeenCalled();
   });
@@ -307,7 +308,9 @@ describe('fetchComponentSource', () => {
 
     await expect(
       fetchComponentSource({ url: FINGERPRINTED_URL }),
-    ).rejects.toMatchObject({ code: CHECKSUM_MISMATCH_CODE });
+    ).rejects.toMatchObject({
+      code: FRONT_COMPONENT_SOURCE_CHECKSUM_MISMATCH_ERROR_CODE,
+    });
     expect(cache.delete).toHaveBeenCalledWith(FINGERPRINTED_URL);
     expect(fetchMock).toHaveBeenCalledTimes(1);
     expect(cache.put).not.toHaveBeenCalled();
@@ -365,7 +368,9 @@ describe('fetchComponentSource', () => {
 
     await expect(
       fetchComponentSource({ url: FINGERPRINTED_SHARED_DEPENDENCIES_URL }),
-    ).rejects.toMatchObject({ code: CHECKSUM_MISMATCH_CODE });
+    ).rejects.toMatchObject({
+      code: FRONT_COMPONENT_SOURCE_CHECKSUM_MISMATCH_ERROR_CODE,
+    });
     expect(cache.put).not.toHaveBeenCalled();
   });
 
@@ -414,7 +419,7 @@ describe('fetchComponentSource', () => {
 
     const { message, code } = error as CustomError;
 
-    expect(code).toBe(CHECKSUM_MISMATCH_CODE);
+    expect(code).toBe(FRONT_COMPONENT_SOURCE_CHECKSUM_MISMATCH_ERROR_CODE);
     expect(message).toContain(FINGERPRINTED_URL);
     expect(message).toContain(computeSha256Hex(COMPONENT_SOURCE));
     expect(message).toContain(computeSha256Hex(substitutedSource));
@@ -494,7 +499,9 @@ describe('fetchComponentSource', () => {
 
     await expect(
       fetchComponentSource({ url: STALE_URL }),
-    ).rejects.toMatchObject({ code: CHECKSUM_MISMATCH_CODE });
+    ).rejects.toMatchObject({
+      code: FRONT_COMPONENT_SOURCE_CHECKSUM_MISMATCH_ERROR_CODE,
+    });
   });
 
   it('verifies a cache hit with the pure-JS digest when WebCrypto is unavailable', async () => {
@@ -552,7 +559,9 @@ describe('fetchComponentSource', () => {
 
     await expect(
       fetchComponentSource({ url: STALE_URL }),
-    ).rejects.toMatchObject({ code: CHECKSUM_MISMATCH_CODE });
+    ).rejects.toMatchObject({
+      code: FRONT_COMPONENT_SOURCE_CHECKSUM_MISMATCH_ERROR_CODE,
+    });
     expect(cache.put).not.toHaveBeenCalled();
   });
 

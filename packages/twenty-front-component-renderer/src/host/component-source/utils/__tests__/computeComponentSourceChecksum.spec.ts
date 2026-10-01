@@ -27,6 +27,8 @@ describe('computeComponentSourceChecksum', () => {
   });
 
   afterEach(() => {
+    jest.restoreAllMocks();
+
     if (originalCrypto !== undefined) {
       Object.defineProperty(globalThis, 'crypto', originalCrypto);
     }
@@ -36,42 +38,47 @@ describe('computeComponentSourceChecksum', () => {
   });
 
   it.each(SOURCES)(
-    'matches the SHA-256 hex digest with WebCrypto for %j',
+    'computes the SHA-256 hex digest of %j with WebCrypto',
     async (source) => {
-      await expect(computeComponentSourceChecksum({ source })).resolves.toBe(
-        computeSha256Hex(source),
-      );
-    },
-  );
-
-  it.each(SOURCES)(
-    'matches the SHA-256 hex digest without WebCrypto for %j',
-    async (source) => {
-      Object.defineProperty(globalThis, 'crypto', {
-        value: undefined,
-        configurable: true,
-      });
+      const digestSpy = jest.spyOn(webcrypto.subtle, 'digest');
 
       await expect(computeComponentSourceChecksum({ source })).resolves.toBe(
         computeSha256Hex(source),
       );
+      expect(digestSpy).toHaveBeenCalledWith('SHA-256', expect.anything());
     },
   );
 
-  it('matches the SHA-256 hex digest when crypto.subtle.digest throws', async () => {
-    Object.defineProperty(globalThis, 'crypto', {
-      value: {
+  it.each([
+    ['crypto is undefined', undefined],
+    ['crypto has no subtle', {}],
+    [
+      'crypto.subtle.digest throws',
+      {
         subtle: {
           digest: () => {
             throw new Error('opaque origin');
           },
         },
       },
-      configurable: true,
-    });
+    ],
+  ])(
+    'computes the same digest without WebCrypto when %s',
+    async (_label, unusableCrypto) => {
+      const digestSpy = jest.spyOn(webcrypto.subtle, 'digest');
 
-    await expect(
-      computeComponentSourceChecksum({ source: SOURCES[0] }),
-    ).resolves.toBe(computeSha256Hex(SOURCES[0]));
-  });
+      Object.defineProperty(globalThis, 'crypto', {
+        value: unusableCrypto,
+        configurable: true,
+      });
+
+      for (const source of SOURCES) {
+        await expect(computeComponentSourceChecksum({ source })).resolves.toBe(
+          computeSha256Hex(source),
+        );
+      }
+
+      expect(digestSpy).not.toHaveBeenCalled();
+    },
+  );
 });
