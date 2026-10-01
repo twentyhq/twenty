@@ -1,5 +1,8 @@
 import { Field, ID, InputType, ObjectType } from '@nestjs/graphql';
-import { RecordShareAccessLevel } from 'twenty-shared/types';
+import {
+  ObjectSharingReach,
+  RecordShareAccessLevel,
+} from 'twenty-shared/types';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { RecordPermissionsDTO } from 'src/engine/core-modules/record-share/dtos/record-permissions.dto';
@@ -41,6 +44,14 @@ export class RecordSharingGrantDTO {
 
   @Field(() => String)
   rowCause: string;
+
+  // What the role of the principal grants on the object without this share;
+  // null for everyone, who holds the access of each member's own role
+  @Field(() => Boolean, { nullable: true })
+  canRoleRead: boolean | null;
+
+  @Field(() => Boolean, { nullable: true })
+  canRoleUpdate: boolean | null;
 }
 
 @ObjectType()
@@ -74,6 +85,9 @@ export class RecordSharingDTO {
 
   @Field(() => Boolean)
   isGeneralAccessDefault: boolean;
+
+  @Field(() => ObjectSharingReach)
+  sharingReach: ObjectSharingReach;
 
   @Field(() => [RecordSharingRoleDTO])
   roles: RecordSharingRoleDTO[];
