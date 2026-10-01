@@ -753,10 +753,13 @@
   "primitives/navigation": {
     "reExports": [],
     "values": {
+      "Breadcrumb": "primitives/navigation/Breadcrumb/Breadcrumb",
       "ListItem": "primitives/navigation/ListItem/ListItem",
       "Tabs": "primitives/navigation/Tabs/Tabs"
     },
     "types": {
+      "BreadcrumbItem": "primitives/navigation/Breadcrumb/types/BreadcrumbItem",
+      "BreadcrumbProps": "primitives/navigation/Breadcrumb/types/BreadcrumbProps",
       "ListItemColor": "primitives/navigation/ListItem/types/ListItemColor",
       "ListItemDescriptionPlacement": "primitives/navigation/ListItem/types/ListItemDescriptionPlacement",
       "ListItemIndicator": "primitives/navigation/ListItem/types/ListItemIndicator",
