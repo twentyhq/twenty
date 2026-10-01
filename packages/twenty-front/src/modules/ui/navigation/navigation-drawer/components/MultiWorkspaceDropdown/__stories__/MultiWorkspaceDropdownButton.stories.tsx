@@ -151,7 +151,7 @@ export const PagesAndWorkspaceLinks: Story = {
       );
       await waitFor(() =>
         expect(openWindow).toHaveBeenCalledWith(
-          'https://acme.example.com/?locale=en',
+          'https://acme.example.com/welcome?locale=en',
           '_self',
         ),
       );
@@ -186,6 +186,32 @@ export const PagesAndWorkspaceLinks: Story = {
     } finally {
       openWindow.mockRestore();
     }
+  },
+};
+
+export const RootInvitationLink: Story = {
+  beforeEach: () => {
+    jotaiStore.set(availableWorkspacesState.atom, {
+      availableWorkspacesForSignIn: AVAILABLE_WORKSPACES.slice(0, 2),
+      availableWorkspacesForSignUp: [INVITED_WORKSPACE],
+    });
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement.ownerDocument.body);
+
+    await userEvent.click(canvas.getByRole('button', { name: 'Twenty' }));
+    const invitedWorkspace = await canvas.findByRole('menuitemradio', {
+      name: 'Invited workspace',
+    });
+
+    expect(invitedWorkspace).toHaveAttribute(
+      'href',
+      'https://invited.example.com/invite/workspace-invite?inviteToken=personal-invite',
+    );
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() =>
+      expect(canvas.queryByRole('menu')).not.toBeInTheDocument(),
+    );
   },
 };
 

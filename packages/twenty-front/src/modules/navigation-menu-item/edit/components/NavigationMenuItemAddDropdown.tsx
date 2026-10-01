@@ -44,7 +44,10 @@ export const NavigationMenuItemAddDropdown = ({
         }
       }}
     >
-      <Dropdown.Trigger nativeButton={false} render={<div>{children}</div>} />
+      <Dropdown.Trigger
+        nativeButton={false}
+        render={<div tabIndex={-1}>{children}</div>}
+      />
       <DropdownContent
         anchor={
           navigationMenuItemInsertionAnchor?.dropdownId === dropdownId

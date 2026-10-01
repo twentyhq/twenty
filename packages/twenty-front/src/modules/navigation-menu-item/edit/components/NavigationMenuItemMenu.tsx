@@ -27,6 +27,7 @@ type NavigationMenuItemMenuProps = {
   side?: ComponentProps<typeof DropdownContent>['side'];
   mode: NavigationMenuItemMenuMode;
   onModeChange: (mode: NavigationMenuItemMenuMode) => void;
+  onOpen?: () => void;
   onClose?: () => void;
   renderMenu: (controls: {
     onClose: () => void;
@@ -40,6 +41,7 @@ export const NavigationMenuItemMenu = ({
   renderMenu,
   mode,
   onModeChange,
+  onOpen,
   onClose,
   anchor,
   side = 'right',
@@ -58,6 +60,7 @@ export const NavigationMenuItemMenu = ({
   const close = () => closeDropdown(dropdownId);
   const isAdding = mode.type === 'add';
   const isEditing = mode.type === 'edit';
+  const menuAriaLabel = isEditing ? t`Edit link` : t`Menu item actions`;
   const openAddMenu = (target: NavigationMenuItemAddTarget) => {
     const { folderId } = target;
 
@@ -75,12 +78,24 @@ export const NavigationMenuItemMenu = ({
       dropdownId={dropdownId}
       type={isAdding ? 'picker' : isEditing ? 'panel' : 'menu'}
       onOpenChange={(open) => {
-        if (!open) {
-          onModeChange({ type: 'actions' });
-          onClose?.();
+        if (open) {
+          onOpen?.();
+          return;
         }
+
+        onClose?.();
       }}
       onInteractOutside={(event) => {
+        const isOnRowActions = isDefined(
+          event.target?.closest(
+            `[data-navigation-menu-item-id="${dropdownId}"] [data-navigation-actions]`,
+          ),
+        );
+
+        if (isOnRowActions) {
+          return;
+        }
+
         const isInsideRowPopup = [
           `${dropdownId}-icon`,
           `${dropdownId}-icon-icon-color-picker`,
@@ -119,7 +134,7 @@ export const NavigationMenuItemMenu = ({
             ? GenericDropdownContentWidth.ExtraLarge
             : GenericDropdownContentWidth.Large
         }
-        aria-label={isEditing ? t`Edit link` : t`Menu item actions`}
+        aria-label={isAdding ? undefined : menuAriaLabel}
       >
         {mode.type === 'add' ? (
           <NavigationMenuItemAddDropdownContent

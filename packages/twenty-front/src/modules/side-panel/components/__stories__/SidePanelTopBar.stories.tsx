@@ -118,14 +118,13 @@ export const HistoryNavigation: Story = {
     });
 
     await userEvent.pointer({ target: backButton, keys: '[MouseRight]' });
-    await body.findByRole('menu', { name: 'Navigation history' });
+    expect(body.queryByRole('menu')).not.toBeInTheDocument();
     await userEvent.click(backButton);
 
     await waitFor(() => {
       expect(jotaiStore.get(sidePanelNavigationStackState.atom)).toHaveLength(
         1,
       );
-      expect(body.queryByRole('menu')).not.toBeInTheDocument();
     });
   },
 };

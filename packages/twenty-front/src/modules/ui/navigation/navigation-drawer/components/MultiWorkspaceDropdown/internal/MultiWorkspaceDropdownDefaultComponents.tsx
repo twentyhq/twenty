@@ -4,13 +4,12 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { countAvailableWorkspaces } from '@/auth/utils/availableWorkspacesUtils';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { supportChatState } from '@/client-config/states/supportChatState';
-import { useBuildWorkspaceUrl } from '@/domain-manager/hooks/useBuildWorkspaceUrl';
 import { useRedirectToDefaultDomain } from '@/domain-manager/hooks/useRedirectToDefaultDomain';
-import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
 import { useOpenRecordInPreference } from '@/settings/experience/hooks/useOpenRecordInPreference';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
+import { AvailableWorkspaceItem } from '@/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/components/AvailableWorkspaceItem';
 import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
 import { OPEN_RECORD_IN_OPTIONS } from '@/ui/navigation/navigation-drawer/constants/OpenRecordInOptions';
 import { useColorScheme } from '@/ui/theme/hooks/useColorScheme';
@@ -33,9 +32,7 @@ import {
 } from 'twenty-ui/icon';
 import { Avatar } from 'twenty-ui/primitives/data-display';
 import { useIsMobile } from 'twenty-ui/utilities';
-import { type AvailableWorkspace } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 export const MultiWorkspaceDropdownDefaultComponents = () => {
@@ -44,11 +41,9 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
     isMultiWorkspaceEnabledState,
   );
   const { t } = useLingui();
-  const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
   const availableWorkspaces = useAtomStateValue(availableWorkspacesState);
   const availableWorkspacesCount =
     countAvailableWorkspaces(availableWorkspaces);
-  const { buildWorkspaceUrl } = useBuildWorkspaceUrl();
   const { redirectToDefaultDomain } = useRedirectToDefaultDomain();
   const { signOut } = useAuth();
   const { colorScheme, colorSchemeList } = useColorScheme();
@@ -67,12 +62,6 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
 
   const handleSupport = () => {
     window.FrontChat?.('show');
-  };
-
-  const handleChange = (availableWorkspace: AvailableWorkspace) => {
-    redirectToWorkspaceDomain(
-      getWorkspaceUrl(availableWorkspace.workspaceUrls),
-    );
   };
 
   const createWorkspace = () => {
@@ -135,34 +124,11 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
               .filter(({ id }) => id !== currentWorkspace?.id)
               .slice(0, 3)
               .map((availableWorkspace) => (
-                <Dropdown.OptionItem
+                <AvailableWorkspaceItem
                   key={availableWorkspace.id}
-                  render={
-                    <a
-                      href={buildWorkspaceUrl(
-                        getWorkspaceUrl(availableWorkspace.workspaceUrls),
-                      )}
-                    />
-                  }
-                  onClick={(event) => {
-                    event.preventDefault();
-                    handleChange(availableWorkspace);
-                  }}
-                  selected={false}
-                  startIcon={
-                    <Avatar
-                      name={availableWorkspace.displayName || ''}
-                      colorSeed={getWorkspaceAvatarColorSeed(
-                        availableWorkspace.displayName,
-                      )}
-                      src={getAbsoluteImageUrl(
-                        availableWorkspace.logo ?? DEFAULT_WORKSPACE_LOGO,
-                      )}
-                    />
-                  }
-                >
-                  {availableWorkspace.displayName ?? t`(No name)`}
-                </Dropdown.OptionItem>
+                  availableWorkspace={availableWorkspace}
+                  isSelected={false}
+                />
               ))}
             {availableWorkspacesCount > 4 && (
               <Dropdown.ActionItem

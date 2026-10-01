@@ -407,6 +407,46 @@ export const OptionsWithoutSelectionState: Story = {
   },
 };
 
+export const LinkOptionsMarkCurrent: Story = {
+  render: () => (
+    <Dropdown.Root type="picker">
+      <Dropdown.Trigger>Workspaces</Dropdown.Trigger>
+      <Dropdown.Content aria-label="Switch workspace">
+        <Dropdown.OptionItem
+          selected
+          render={<a href="mailto:acme@example.com" aria-label="Acme" />}
+        >
+          Acme
+        </Dropdown.OptionItem>
+        <Dropdown.OptionItem
+          selected={false}
+          render={<a href="mailto:globex@example.com" aria-label="Globex" />}
+        >
+          Globex
+        </Dropdown.OptionItem>
+      </Dropdown.Content>
+    </Dropdown.Root>
+  ),
+  play: async ({ canvasElement }) => {
+    const body = within(canvasElement.ownerDocument.body);
+
+    await userEvent.click(
+      within(canvasElement).getByRole('button', { name: 'Workspaces' }),
+    );
+    const currentWorkspace = await body.findByRole('link', { name: 'Acme' });
+
+    expect(currentWorkspace).toHaveAttribute('aria-current', 'true');
+    expect(currentWorkspace).not.toHaveAttribute('aria-pressed');
+    expect(body.getByRole('link', { name: 'Globex' })).not.toHaveAttribute(
+      'aria-current',
+    );
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() =>
+      expect(body.queryByRole('dialog')).not.toBeInTheDocument(),
+    );
+  },
+};
+
 export const LoadingStatus: Story = {
   render: () => (
     <Dropdown.Root type="picker">

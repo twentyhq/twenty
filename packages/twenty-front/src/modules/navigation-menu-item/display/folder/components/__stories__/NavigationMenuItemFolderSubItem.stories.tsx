@@ -1,4 +1,4 @@
-import { expect, fn, userEvent, within } from 'storybook/test';
+import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import { NavigationMenuItemFolderNavigationDrawerItemDropdown } from '@/navigation-menu-item/display/folder/components/NavigationMenuItemFolderNavigationDrawerItemDropdown';
 import { openNavigationMenuItemFolderIdsState } from '@/navigation-menu-item/common/states/openNavigationMenuItemFolderIdsState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
@@ -77,6 +77,9 @@ export const AddMenuResetsOnClose: Story = {
       jotaiStore.get(openNavigationMenuItemFolderIdsState.atom),
     ).toContain('6194edbc-ae3b-4c7c-b6ea-41ea28edc242');
     await expect(await body.findByPlaceholderText('Search...')).toBeVisible();
+    await waitFor(() =>
+      expect(body.getByPlaceholderText('Search...')).toHaveFocus(),
+    );
     await userEvent.click(await body.findByRole('button', { name: 'Close' }));
     await userEvent.hover(canvas.getByText('Example website'));
     await userEvent.click(options);

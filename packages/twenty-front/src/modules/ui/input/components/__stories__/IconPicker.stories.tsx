@@ -134,6 +134,7 @@ export const WithSearchAndClose: Story = {
 
     await userEvent.click(searchedIcon);
 
+    expect(searchInput).toHaveValue('Building skyscraper');
     await waitFor(() => expect(searchedIcon).not.toBeInTheDocument());
 
     iconPickerButton = await canvas.findByRole('button', {

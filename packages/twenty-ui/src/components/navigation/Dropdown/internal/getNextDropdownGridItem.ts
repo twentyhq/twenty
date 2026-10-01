@@ -1,5 +1,30 @@
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
+const getNearestEnabledCell = ({
+  rowCells,
+  column,
+  isEnabledCell,
+}: {
+  rowCells: HTMLElement[];
+  column: number;
+  isEnabledCell: (cell: HTMLElement | undefined) => cell is HTMLElement;
+}) => {
+  const targetColumn = Math.min(column, rowCells.length - 1);
+
+  for (let distance = 0; distance < rowCells.length; distance++) {
+    const nearestCell = [
+      rowCells[targetColumn - distance],
+      rowCells[targetColumn + distance],
+    ].find(isEnabledCell);
+
+    if (isDefined(nearestCell)) {
+      return nearestCell;
+    }
+  }
+
+  return undefined;
+};
+
 export const getNextDropdownGridItem = ({
   key,
   items,
@@ -42,21 +67,32 @@ export const getNextDropdownGridItem = ({
   const step = key === 'ArrowDown' || key === forwardKey ? 1 : -1;
   const rowCount = Math.ceil(cells.length / columns);
   const enabledItems = new Set(items);
+  const isEnabledCell = (cell: HTMLElement | undefined): cell is HTMLElement =>
+    isDefined(cell) && enabledItems.has(cell);
 
   if (isVertical) {
     for (let row = currentRow + step; row >= 0 && row < rowCount; row += step) {
-      const nextIndex = Math.min(
-        row * columns + currentColumn,
-        cells.length - 1,
-      );
-      const nextItem = cells[nextIndex];
+      const sameColumnCell =
+        cells[Math.min(row * columns + currentColumn, cells.length - 1)];
 
-      if (isDefined(nextItem) && enabledItems.has(nextItem)) {
-        return nextItem;
+      if (isEnabledCell(sameColumnCell)) {
+        return sameColumnCell;
       }
     }
 
-    const sectionItems = items.filter((item) => cells.includes(item));
+    for (let row = currentRow + step; row >= 0 && row < rowCount; row += step) {
+      const nearestCell = getNearestEnabledCell({
+        rowCells: cells.slice(row * columns, (row + 1) * columns),
+        column: currentColumn,
+        isEnabledCell,
+      });
+
+      if (isDefined(nearestCell)) {
+        return nearestCell;
+      }
+    }
+
+    const sectionItems = cells.filter(isEnabledCell);
     const boundaryItem =
       step < 0 ? sectionItems[0] : sectionItems[sectionItems.length - 1];
     const adjacentItem = isDefined(boundaryItem)
@@ -73,7 +109,7 @@ export const getNextDropdownGridItem = ({
   ) {
     const nextItem = cells[currentRow * columns + column];
 
-    if (isDefined(nextItem) && enabledItems.has(nextItem)) {
+    if (isEnabledCell(nextItem)) {
       return nextItem;
     }
   }

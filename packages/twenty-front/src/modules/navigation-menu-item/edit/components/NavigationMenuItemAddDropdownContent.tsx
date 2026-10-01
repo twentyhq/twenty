@@ -188,6 +188,7 @@ export const NavigationMenuItemAddDropdownContent = ({
         )}
         <Dropdown.Search
           key={`search-${page}`}
+          autoFocus
           value={search}
           onValueChange={setSearch}
           placeholder={step === 'record' ? t`Search records...` : t`Search...`}

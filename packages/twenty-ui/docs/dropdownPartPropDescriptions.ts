@@ -49,7 +49,7 @@ export const DROPDOWN_PART_PROP_DESCRIPTIONS = {
   OptionItem: {
     ...DROPDOWN_ITEM_PROP_DESCRIPTIONS,
     selected:
-      'Whether the option is selected. Exposed as `aria-checked` in menus and `aria-pressed` in other dropdown types. Omit it for options that navigate or apply without a selection state.',
+      'Whether the option is selected. Exposed as `aria-checked` in menus and `aria-pressed` in other dropdown types, or as `aria-current` when `render` is not a button, such as a link. Omit it for options that navigate or apply without a selection state.',
     onSelect:
       'Called when the option is activated. The application owns the selected value.',
     closeOnSelect:

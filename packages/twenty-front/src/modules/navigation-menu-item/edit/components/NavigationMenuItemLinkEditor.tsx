@@ -1,6 +1,6 @@
 import { isKeyboardEventComposing } from '@/ui/utilities/hotkey/utils/isKeyboardEventComposing';
 import { Dropdown } from 'twenty-ui/components';
-import { useState } from 'react';
+import { type KeyboardEvent, useState } from 'react';
 import { Key } from 'ts-key-enum';
 import { type FieldDoubleText } from '@/object-record/record-field/ui/types/FieldDoubleText';
 import { styled } from '@linaria/react';
@@ -52,20 +52,31 @@ export const NavigationMenuItemLinkEditor = ({
     void updateItem(item.id, { name: firstValue.trim(), link });
     onClose();
   };
+  const handleEditorKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (isKeyboardEventComposing(event.nativeEvent)) {
+      return;
+    }
+
+    if (event.key === Key.Enter) {
+      event.preventDefault();
+      saveLink(value);
+      return;
+    }
+
+    if (event.key !== Key.Tab) {
+      return;
+    }
+
+    const inputs = event.currentTarget.querySelectorAll('input');
+    const edgeInput = event.shiftKey ? inputs[0] : inputs[inputs.length - 1];
+
+    if (event.target === edgeInput) {
+      event.preventDefault();
+    }
+  };
   return (
     <Dropdown.Page id="root" type="panel">
-      <div
-        onKeyDown={(event) => {
-          if (isKeyboardEventComposing(event.nativeEvent)) {
-            return;
-          }
-
-          if (event.key === Key.Enter) {
-            event.preventDefault();
-            saveLink(value);
-          }
-        }}
-      >
+      <div onKeyDown={handleEditorKeyDown}>
         <DoubleTextInput
           instanceId={dropdownId}
           selectOnFocus

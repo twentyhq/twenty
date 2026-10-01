@@ -15,6 +15,8 @@ export const SidePanelBackButton = () => {
 
   const { contextChips } = useSidePanelContextChips();
 
+  const historyChips = contextChips.slice(0, -1);
+
   const { openDropdown } = useOpenDropdown();
 
   const backButtonRef = useRef<HTMLButtonElement>(null);
@@ -22,7 +24,7 @@ export const SidePanelBackButton = () => {
   const handleBackButtonContextMenu = (
     event: MouseEvent<HTMLButtonElement>,
   ) => {
-    if (!isNonEmptyArray(contextChips)) {
+    if (!isNonEmptyArray(historyChips)) {
       return;
     }
 
@@ -57,11 +59,10 @@ export const SidePanelBackButton = () => {
       </IconButton>
       <DropdownContent
         anchor={backButtonRef}
-        finalFocus={backButtonRef}
         aria-label={t`Navigation history`}
       >
         <Dropdown.Section>
-          {contextChips.slice(0, -1).map((chip, index) => (
+          {historyChips.map((chip, index) => (
             <Dropdown.ActionItem
               key={index}
               startIcon={<>{Children.toArray(chip.Icons)}</>}

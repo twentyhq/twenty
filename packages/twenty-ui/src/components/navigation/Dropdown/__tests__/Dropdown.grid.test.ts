@@ -80,6 +80,28 @@ describe('Dropdown grid navigation', () => {
     expect(navigate({ key: 'ArrowUp', from: 7 })).toBe(cells[1]);
   });
 
+  it('moves to the nearest enabled cell of the next row when the column has none left', () => {
+    const { cells, content, navigate } = createGrid({ disabledIndex: 7 });
+    const action = document.createElement('button');
+    action.dataset.dropdownItem = '';
+    content.append(action);
+
+    expect(navigate({ key: 'ArrowDown', from: 4 })).toBe(cells[6]);
+    expect(navigate({ key: 'ArrowDown', from: 5 })).toBe(cells[6]);
+  });
+
+  it('stays in the grid when the cell above in the first row is disabled', () => {
+    const { cells, navigate } = createGrid({ disabledIndex: 1 });
+
+    expect(navigate({ key: 'ArrowUp', from: 4 })).toBe(cells[0]);
+  });
+
+  it('reaches enabled cells of the last row when its column is disabled', () => {
+    const { cells, navigate } = createGrid({ count: 6, disabledIndex: 5 });
+
+    expect(navigate({ key: 'ArrowDown', from: 2 })).toBe(cells[4]);
+  });
+
   it('lands on the last cell of a partial row and stops at the last row', () => {
     const { cells, navigate } = createGrid();
 

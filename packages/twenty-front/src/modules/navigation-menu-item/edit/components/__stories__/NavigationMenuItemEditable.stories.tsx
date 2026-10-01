@@ -425,3 +425,67 @@ export const ObjectColorDraftReturnsToPersistedValue: Story = {
     ).not.toHaveProperty(company.id);
   },
 };
+
+export const AddPickerFocusesSearch: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+
+    await userEvent.pointer({
+      target: await canvas.findByText('Docs'),
+      keys: '[MouseRight]',
+    });
+    await userEvent.click(await body.findByText('Add menu item after'));
+    const picker = await body.findByRole('dialog', { name: 'Add menu item' });
+    const search = within(picker).getByPlaceholderText('Search...');
+
+    await waitFor(() => expect(search).toHaveFocus());
+    await userEvent.keyboard('link');
+    await expect(search).toHaveValue('link');
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() => expect(picker).not.toBeInTheDocument());
+  },
+};
+
+export const RowActionsButtonTogglesMenu: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+    const user = userEvent.setup({ pointerEventsCheck: 0 });
+    const [docsActionsButton] = await canvas.findAllByRole('button', {
+      name: 'Menu item actions',
+    });
+
+    await user.click(docsActionsButton);
+    const menu = await body.findByRole('menu', { name: 'Menu item actions' });
+
+    await waitFor(() => expect(menu).toBeVisible());
+    await user.click(docsActionsButton);
+    await waitFor(() => expect(menu).not.toBeInTheDocument());
+  },
+};
+
+export const LinkEditorKeepsTabFocus: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+
+    await userEvent.click(
+      (await canvas.findAllByRole('button', { name: 'Edit link' }))[0],
+    );
+    const label = await body.findByPlaceholderText('Link label');
+    const url = body.getByPlaceholderText('URL');
+
+    await userEvent.click(url);
+    await userEvent.tab();
+    await expect(url).toHaveFocus();
+    await userEvent.tab({ shift: true });
+    await expect(label).toHaveFocus();
+    await userEvent.tab({ shift: true });
+    await expect(label).toHaveFocus();
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() =>
+      expect(body.queryByPlaceholderText('URL')).not.toBeInTheDocument(),
+    );
+  },
+};

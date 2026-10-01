@@ -41,6 +41,7 @@ export const NavigationMenuItemFolderNavigationDrawerItemDropdown = ({
       }
       mode={mode}
       onModeChange={setMode}
+      onOpen={() => setMode({ type: 'actions' })}
       side="bottom"
       renderMenu={({ onClose, onAdd }) => (
         <Dropdown.Section>

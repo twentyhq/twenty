@@ -132,7 +132,7 @@ Actions and single selection close by default. Set `multiple` on the root to kee
 
 ## Icon grids
 
-Set `columns` on `Section` to lay out items in equal-width grid columns. The same count drives keyboard navigation: Left and Right move within a row, while Up and Down move between rows. Navigation skips disabled options and follows the reading direction. Up from the first row returns to the search field when no earlier section exists. A short final row uses its last item when the requested column is missing.
+Set `columns` on `Section` to lay out items in equal-width grid columns. The same count drives keyboard navigation: Left and Right move within a row, while Up and Down move between rows. Navigation skips disabled options and follows the reading direction. When no enabled option is left in the column, Up and Down move to the nearest enabled option of the next row. Up from the first row returns to the search field when no earlier section exists. A short final row uses its last item when the requested column is missing. Inside a submenu, the backward arrow closes the submenu only from the first column.
 
 Render each icon as an `OptionItem` with an accessible label and an icon button through `render`. Use `indicator="none"` to show selection through the button background.
 

@@ -157,15 +157,14 @@ export const IconPicker = ({
         dropdownId={dropdownId}
         type="picker"
         onOpenChange={(open) => {
-          if (open) {
-            setVisibleCount(maxIconsVisible);
-            onOpen?.();
+          if (!open) {
+            onClose?.();
             return;
           }
 
           setSearchString('');
           setVisibleCount(maxIconsVisible);
-          onClose?.();
+          onOpen?.();
         }}
       >
         <Dropdown.Trigger

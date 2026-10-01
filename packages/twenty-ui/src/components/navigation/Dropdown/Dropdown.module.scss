@@ -25,6 +25,11 @@
     > [data-dropdown-section-label] {
       grid-column: 1 / -1;
     }
+
+    > [data-dropdown-item] {
+      max-inline-size: 100%;
+      min-inline-size: 0;
+    }
   }
 
   &[data-scrollable] {

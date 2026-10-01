@@ -475,4 +475,34 @@ describe('SidePanelTopBar', () => {
 
     expect(screen.queryByRole('menu')).not.toBeInTheDocument();
   });
+
+  it('does not open an empty history with a single context chip', () => {
+    mockContextChips = [{ Icons: [], text: 'Search' }];
+
+    renderSidePanelCommandMenu(
+      createSidePanelTopBarStore({
+        sidePanelNavigationStack: [
+          {
+            page: SidePanelPages.CommandMenuDisplay,
+            pageTitle: 'Command Menu',
+            pageIcon: IconDotsVertical,
+            pageId: 'command-menu',
+          },
+          {
+            page: SidePanelPages.SearchRecords,
+            pageTitle: 'Search',
+            pageIcon: IconDotsVertical,
+            pageId: 'search-records',
+          },
+        ],
+      }),
+    );
+
+    const isNativeContextMenuAllowed = fireEvent.contextMenu(
+      screen.getByRole('button', { name: 'Back' }),
+    );
+
+    expect(isNativeContextMenuAllowed).toBe(true);
+    expect(screen.queryByRole('menu')).not.toBeInTheDocument();
+  });
 });
