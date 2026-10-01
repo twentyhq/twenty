@@ -1,6 +1,5 @@
 /* @license Enterprise */
 
-import { type ObjectRecord } from 'twenty-shared/types';
 import { assertUnreachable } from 'twenty-shared/utils';
 
 import { type ExecuteRawQuery } from 'src/engine/core-modules/record-share/types/record-sharing-rule.type';
@@ -63,9 +62,7 @@ export const evaluateRowAccessPolicy = async <TRecord extends RowAccessRecord>({
   }
 };
 
-export const evaluateRowAccessExpression = async <
-  TRecord extends RowAccessRecord,
->({
+const evaluateRowAccessExpression = async <TRecord extends RowAccessRecord>({
   expression,
   records,
   context,
@@ -105,33 +102,35 @@ export const evaluateRowAccessExpression = async <
         const remainingRecords = records.filter(
           (record) => !admittedIds.has(record.id),
         );
-
-        for (const admittedId of await evaluateRowAccessExpression({
+        const operandAdmittedIds = await evaluateRowAccessExpression({
           expression: operand,
           records: remainingRecords,
           context,
-        })) {
+        });
+
+        for (const admittedId of operandAdmittedIds) {
           admittedIds.add(admittedId);
         }
       }
 
       return admittedIds;
     }
-    case 'roleFilter':
-      return new Set(
-        records
-          .filter((record) =>
-            isRecordMatchingRLSRowLevelPermissionPredicate({
-              record: record as unknown as ObjectRecord,
-              filter: expression.recordFilter,
-              flatObjectMetadata: expression.flatObjectMetadata,
-              flatFieldMetadataMaps: context.flatFieldMetadataMaps,
-              shouldIgnoreSoftDeleteDefaultFilter:
-                context.shouldIgnoreSoftDeleteDefaultFilter,
-            }),
-          )
-          .map((record) => record.id),
-      );
+    case 'roleFilter': {
+      const matchingRecordIds = records
+        .filter((record) =>
+          isRecordMatchingRLSRowLevelPermissionPredicate({
+            record,
+            filter: expression.recordFilter,
+            flatObjectMetadata: expression.flatObjectMetadata,
+            flatFieldMetadataMaps: context.flatFieldMetadataMaps,
+            shouldIgnoreSoftDeleteDefaultFilter:
+              context.shouldIgnoreSoftDeleteDefaultFilter,
+          }),
+        )
+        .map((record) => record.id);
+
+      return new Set(matchingRecordIds);
+    }
     case 'recordShared': {
       const sharedRecordIds = resolveRecordIdsSharedWithPrincipals({
         recordShares: await context.fetchRecordShares(
@@ -142,7 +141,11 @@ export const evaluateRowAccessExpression = async <
         accessLevels: expression.accessLevels,
       });
 
-      return new Set(recordIds.filter((id) => sharedRecordIds.has(id)));
+      const admittedRecordIds = recordIds.filter((id) =>
+        sharedRecordIds.has(id),
+      );
+
+      return new Set(admittedRecordIds);
     }
     case 'recordNotRestricted': {
       const restrictedRecordIds = resolveRecordIdsRestrictedForPrincipals({
@@ -154,7 +157,11 @@ export const evaluateRowAccessExpression = async <
         accessLevels: expression.accessLevels,
       });
 
-      return new Set(recordIds.filter((id) => !restrictedRecordIds.has(id)));
+      const admittedRecordIds = recordIds.filter(
+        (id) => !restrictedRecordIds.has(id),
+      );
+
+      return new Set(admittedRecordIds);
     }
     case 'sharingRule':
       return expression.rule.resolveMatchingRecordIds({

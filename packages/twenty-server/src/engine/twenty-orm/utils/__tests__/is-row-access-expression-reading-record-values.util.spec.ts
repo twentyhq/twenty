@@ -39,6 +39,12 @@ describe('isRowAccessExpressionReadingRecordValues', () => {
         operands: [
           recordShared,
           { ...recordShared, kind: 'recordNotRestricted' },
+          {
+            ...recordShared,
+            kind: 'inheritedReadability',
+            parents: [],
+            isOpenWhenDetached: false,
+          },
         ],
       }),
     ).toBe(false);

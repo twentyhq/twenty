@@ -249,7 +249,7 @@ describe('Access to all records and ownership transfer', () => {
     const { data } = await createOneRole({
       expectToFail: false,
       input: {
-        label: 'All records auditor',
+        label: `All records auditor ${randomUUID()}`,
         canUpdateAllSettings: false,
         canAccessAllTools: false,
         canReadAllObjectRecords: true,
@@ -283,11 +283,14 @@ describe('Access to all records and ownership transfer', () => {
         [RESTRICTED_RECORD_ID, SHARED_RECORD_ID].sort(),
       );
     } finally {
-      await assignRoleToPhil(guestRoleId);
-      await deleteOneRole({
-        expectToFail: false,
-        input: { idToDelete: auditorRoleId },
-      });
+      try {
+        await assignRoleToPhil(guestRoleId);
+      } finally {
+        await deleteOneRole({
+          expectToFail: false,
+          input: { idToDelete: auditorRoleId },
+        });
+      }
     }
   });
 

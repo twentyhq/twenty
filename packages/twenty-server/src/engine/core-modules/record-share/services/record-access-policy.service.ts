@@ -3,6 +3,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
+import groupBy from 'lodash.groupby';
 import { type ObjectRecordEvent } from 'twenty-shared/database-events';
 import { FeatureFlagKey, type ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -57,27 +58,58 @@ export class RecordAccessPolicyService {
     objectMetadata,
     events,
   }: WorkspaceEventBatch<ObjectRecordEvent>): EventRecordAccessGate {
-    const recordSharesByKey = new Map<string, Promise<RecordShare[]>>();
-    const fetchRecordShares = (
+    // One lookup per object for the whole batch: operands only ever ask for
+    // records of the batch, so later calls are served from what was fetched
+    const recordSharesByRecordIdByObject = new Map<
+      string,
+      Map<string, Promise<RecordShare[]>>
+    >();
+    const fetchRecordShares = async (
       objectMetadataId: string,
       recordIds: string[],
     ) => {
-      const key = `${objectMetadataId}:${[...recordIds].sort().join(',')}`;
-      const cachedRecordShares = recordSharesByKey.get(key);
+      const recordSharesByRecordId =
+        recordSharesByRecordIdByObject.get(objectMetadataId) ??
+        new Map<string, Promise<RecordShare[]>>();
 
-      if (isDefined(cachedRecordShares)) {
-        return cachedRecordShares;
+      recordSharesByRecordIdByObject.set(
+        objectMetadataId,
+        recordSharesByRecordId,
+      );
+
+      const uniqueRecordIds = [...new Set(recordIds)];
+      const missingRecordIds = uniqueRecordIds.filter(
+        (recordId) => !recordSharesByRecordId.has(recordId),
+      );
+
+      if (missingRecordIds.length > 0) {
+        const groupedRecordShares = this.recordShareStorageService
+          .findByRecordIds({
+            workspaceId,
+            objectMetadataId,
+            recordIds: missingRecordIds,
+          })
+          .then((recordShares) =>
+            groupBy(recordShares, (recordShare) => recordShare.recordId),
+          );
+
+        for (const recordId of missingRecordIds) {
+          recordSharesByRecordId.set(
+            recordId,
+            groupedRecordShares.then(
+              (recordSharesOfRecord) => recordSharesOfRecord[recordId] ?? [],
+            ),
+          );
+        }
       }
 
-      const recordShares = this.recordShareStorageService.findByRecordIds({
-        workspaceId,
-        objectMetadataId,
-        recordIds,
-      });
+      const recordSharesPerRecord = await Promise.all(
+        uniqueRecordIds.map(
+          (recordId) => recordSharesByRecordId.get(recordId) ?? [],
+        ),
+      );
 
-      recordSharesByKey.set(key, recordShares);
-
-      return recordShares;
+      return recordSharesPerRecord.flat();
     };
 
     return {

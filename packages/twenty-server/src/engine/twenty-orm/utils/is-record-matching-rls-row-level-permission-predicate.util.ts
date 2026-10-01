@@ -74,25 +74,51 @@ const isNotFilter = (
   filter: RecordGqlOperationFilter,
 ): filter is NotObjectRecordFilter => 'not' in filter && !!filter.not;
 
+type SubFieldMatcher = (subFieldFilter: never, subFieldValue: never) => boolean;
+
+const matchString: SubFieldMatcher = (
+  stringFilter: StringFilter,
+  value: string,
+) => isMatchingStringFilter({ stringFilter, value });
+
+const matchRawJson: SubFieldMatcher = (
+  rawJsonFilter: RawJsonFilter,
+  value: string,
+) => isMatchingRawJsonFilter({ rawJsonFilter, value });
+
+const matchUUID: SubFieldMatcher = (uuidFilter: UUIDFilter, value: string) =>
+  isMatchingUUIDFilter({ uuidFilter, value });
+
+const matchSelect: SubFieldMatcher = (
+  selectFilter: SelectFilter,
+  value: string,
+) => isMatchingSelectFilter({ selectFilter, value });
+
 // Sub-fields are ANDed as in SQL; one this matcher cannot read never matches
-const isMatchingCompositeStringSubFields = ({
+const isMatchingCompositeSubFields = ({
   compositeFilter,
   value,
-  subFieldNames,
+  matcherBySubFieldName,
 }: {
-  compositeFilter: Partial<Record<string, StringFilter>>;
-  value: Record<string, string>;
-  subFieldNames: string[];
+  compositeFilter: object;
+  value: Record<string, unknown> | null | undefined;
+  matcherBySubFieldName: Record<string, SubFieldMatcher>;
 }): boolean =>
-  Object.entries(compositeFilter).every(
-    ([subFieldName, subFieldFilter]) =>
-      !isDefined(subFieldFilter) ||
-      (subFieldNames.includes(subFieldName) &&
-        isMatchingStringFilter({
-          stringFilter: subFieldFilter,
-          value: value[subFieldName],
-        })),
-  );
+  Object.entries(compositeFilter).every(([subFieldName, subFieldFilter]) => {
+    if (!isDefined(subFieldFilter)) {
+      return true;
+    }
+
+    const matcher = matcherBySubFieldName[subFieldName];
+
+    return (
+      isDefined(matcher) &&
+      (matcher as (filter: unknown, value: unknown) => boolean)(
+        subFieldFilter,
+        value?.[subFieldName] ?? null,
+      )
+    );
+  });
 
 export const isRecordMatchingRLSRowLevelPermissionPredicate = ({
   record,
@@ -312,23 +338,27 @@ export const isRecordMatchingRLSRowLevelPermissionPredicate = ({
         );
       }
       case FieldMetadataType.ADDRESS:
-        return isMatchingCompositeStringSubFields({
+        return isMatchingCompositeSubFields({
           compositeFilter: filterValue as AddressFilter,
           value: recordFieldValue,
-          subFieldNames: [
-            'addressStreet1',
-            'addressStreet2',
-            'addressCity',
-            'addressState',
-            'addressCountry',
-            'addressPostcode',
-          ],
+          matcherBySubFieldName: {
+            addressStreet1: matchString,
+            addressStreet2: matchString,
+            addressCity: matchString,
+            addressState: matchString,
+            addressCountry: matchString,
+            addressPostcode: matchString,
+          },
         });
       case FieldMetadataType.LINKS:
-        return isMatchingCompositeStringSubFields({
+        return isMatchingCompositeSubFields({
           compositeFilter: filterValue as LinksFilter,
           value: recordFieldValue,
-          subFieldNames: ['primaryLinkLabel', 'primaryLinkUrl'],
+          matcherBySubFieldName: {
+            primaryLinkLabel: matchString,
+            primaryLinkUrl: matchString,
+            secondaryLinks: matchRawJson,
+          },
         });
       case FieldMetadataType.DATE:
       case FieldMetadataType.DATE_TIME: {
@@ -362,37 +392,35 @@ export const isRecordMatchingRLSRowLevelPermissionPredicate = ({
           value: recordFieldValue,
         });
       }
-      case FieldMetadataType.ACTOR: {
-        const actorFilter = filterValue as ActorFilter;
-
-        return (
-          (actorFilter.source === undefined ||
-            isMatchingSelectFilter({
-              selectFilter: actorFilter.source,
-              value: recordFieldValue.source,
-            })) &&
-          isMatchingCompositeStringSubFields({
-            compositeFilter: { name: actorFilter.name },
-            value: recordFieldValue,
-            subFieldNames: ['name'],
-          })
-        );
-      }
+      case FieldMetadataType.ACTOR:
+        return isMatchingCompositeSubFields({
+          compositeFilter: filterValue as ActorFilter,
+          value: recordFieldValue,
+          matcherBySubFieldName: {
+            source: matchSelect,
+            name: matchString,
+            workspaceMemberId: matchUUID,
+          },
+        });
       case FieldMetadataType.EMAILS:
-        return isMatchingCompositeStringSubFields({
+        return isMatchingCompositeSubFields({
           compositeFilter: filterValue as EmailsFilter,
           value: recordFieldValue,
-          subFieldNames: ['primaryEmail'],
+          matcherBySubFieldName: {
+            primaryEmail: matchString,
+            additionalEmails: matchRawJson,
+          },
         });
       case FieldMetadataType.PHONES:
-        return isMatchingCompositeStringSubFields({
+        return isMatchingCompositeSubFields({
           compositeFilter: filterValue as PhonesFilter,
           value: recordFieldValue,
-          subFieldNames: [
-            'primaryPhoneNumber',
-            'primaryPhoneCountryCode',
-            'primaryPhoneCallingCode',
-          ],
+          matcherBySubFieldName: {
+            primaryPhoneNumber: matchString,
+            primaryPhoneCountryCode: matchString,
+            primaryPhoneCallingCode: matchString,
+            additionalPhones: matchRawJson,
+          },
         });
       case FieldMetadataType.RELATION:
       case FieldMetadataType.MORPH_RELATION: {
