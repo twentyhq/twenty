@@ -29,8 +29,8 @@ export const attachApplicationTarget = ({
     );
   }
 
-  // The guards are listed in the handler's own @UseGuards, after its
-  // principal and permission guards: a parameter decorator would put them first
+  // The guard is listed in the handler's own @UseGuards, after its principal
+  // and permission guards: a parameter decorator would put it first
   Reflect.defineMetadata(
     APPLICATION_TARGET_METADATA_KEY,
     target,
