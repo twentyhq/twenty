@@ -653,6 +653,7 @@
                 "ui/components/avatar-group",
                 "ui/components/callout",
                 "ui/components/command-block",
+                "ui/components/image-input",
                 "ui/components/inline-banner",
                 "ui/components/json-tree",
                 "ui/components/menu-items",
