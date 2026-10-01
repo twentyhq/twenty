@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { ApplicationLookupModule } from 'src/engine/core-modules/application/application-lookup/application-lookup.module';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationManifestApplyService } from 'src/engine/core-modules/application/application-manifest/application-manifest-apply.service';
@@ -27,6 +28,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
 @Module({
   imports: [
     TypeOrmModule.forFeature([ApplicationEntity, FrontComponentEntity]),
+    ApplicationLookupModule,
     ApplicationModule,
     ApplicationHealthModule,
     ApplicationRegistrationModule,

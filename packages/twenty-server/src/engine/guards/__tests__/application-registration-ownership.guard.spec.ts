@@ -2,6 +2,7 @@ import { type ExecutionContext } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { GqlExecutionContext } from '@nestjs/graphql';
 
+import { type ApplicationLookupService } from 'src/engine/core-modules/application/application-lookup/application-lookup.service';
 import {
   ApplicationRegistrationException,
   ApplicationRegistrationExceptionCode,
@@ -11,7 +12,6 @@ import {
   ApplicationException,
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
-import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { ApplicationTargetArg } from 'src/engine/decorators/auth/application-target-arg.decorator';
 import { ApplicationTargetArgs } from 'src/engine/decorators/auth/application-target-args.decorator';
 import { ApplicationRegistrationOwnershipGuard } from 'src/engine/guards/application-registration-ownership.guard';
@@ -105,7 +105,7 @@ const buildFlatLogicFunctionMaps = () => ({
 describe('ApplicationRegistrationOwnershipGuard', () => {
   let guard: ApplicationRegistrationOwnershipGuard;
 
-  const applicationService = {
+  const applicationLookupService = {
     findByUniversalIdentifier: jest.fn(),
     findById: jest.fn(),
   };
@@ -149,14 +149,14 @@ describe('ApplicationRegistrationOwnershipGuard', () => {
     jest.restoreAllMocks();
     jest.clearAllMocks();
 
-    applicationService.findByUniversalIdentifier.mockResolvedValue(
+    applicationLookupService.findByUniversalIdentifier.mockResolvedValue(
       LINKED_APPLICATION,
     );
-    applicationService.findById.mockResolvedValue(LINKED_APPLICATION);
+    applicationLookupService.findById.mockResolvedValue(LINKED_APPLICATION);
 
     guard = new ApplicationRegistrationOwnershipGuard(
       new Reflector(),
-      applicationService as unknown as ApplicationService,
+      applicationLookupService as unknown as ApplicationLookupService,
       applicationRegistrationService as unknown as ApplicationRegistrationService,
       {
         getOrRecomputeManyOrAllFlatEntityMaps: jest.fn().mockResolvedValue({
@@ -212,7 +212,7 @@ describe('ApplicationRegistrationOwnershipGuard', () => {
         code: ApplicationExceptionCode.INVALID_INPUT,
       });
       expect(
-        applicationService.findByUniversalIdentifier,
+        applicationLookupService.findByUniversalIdentifier,
       ).not.toHaveBeenCalled();
       expectNoOwnershipCheck();
     },
@@ -245,12 +245,12 @@ describe('ApplicationRegistrationOwnershipGuard', () => {
       });
 
       await expect(guard.canActivate(context)).resolves.toBe(true);
-      expect(applicationService.findByUniversalIdentifier).toHaveBeenCalledWith(
-        {
-          universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
-          workspaceId: WORKSPACE_ID,
-        },
-      );
+      expect(
+        applicationLookupService.findByUniversalIdentifier,
+      ).toHaveBeenCalledWith({
+        universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+        workspaceId: WORKSPACE_ID,
+      });
       expect(
         applicationRegistrationService.findOneByIdOwnedByWorkspaceOrThrow,
       ).toHaveBeenCalledWith({
@@ -268,7 +268,7 @@ describe('ApplicationRegistrationOwnershipGuard', () => {
     ])(
       'should fall back to the identifier when the application row $title',
       async ({ application }) => {
-        applicationService.findByUniversalIdentifier.mockResolvedValueOnce(
+        applicationLookupService.findByUniversalIdentifier.mockResolvedValueOnce(
           application,
         );
 
@@ -339,7 +339,7 @@ describe('ApplicationRegistrationOwnershipGuard', () => {
       });
 
       await expect(guard.canActivate(context)).resolves.toBe(true);
-      expect(applicationService.findById).toHaveBeenCalledWith({
+      expect(applicationLookupService.findById).toHaveBeenCalledWith({
         id: APPLICATION_ID,
         workspaceId: WORKSPACE_ID,
       });
@@ -352,7 +352,9 @@ describe('ApplicationRegistrationOwnershipGuard', () => {
     });
 
     it('should fall back to the identifier when the application is not linked', async () => {
-      applicationService.findById.mockResolvedValueOnce(UNLINKED_APPLICATION);
+      applicationLookupService.findById.mockResolvedValueOnce(
+        UNLINKED_APPLICATION,
+      );
 
       const context = buildContext({
         handler: TestResolver.prototype.updateApplication,
@@ -369,7 +371,7 @@ describe('ApplicationRegistrationOwnershipGuard', () => {
     });
 
     it('should refuse an application unknown to the workspace', async () => {
-      applicationService.findById.mockResolvedValueOnce(null);
+      applicationLookupService.findById.mockResolvedValueOnce(null);
 
       const context = buildContext({
         handler: TestResolver.prototype.updateApplication,
@@ -391,7 +393,7 @@ describe('ApplicationRegistrationOwnershipGuard', () => {
       });
 
       await expect(guard.canActivate(context)).resolves.toBe(true);
-      expect(applicationService.findById).toHaveBeenCalledWith({
+      expect(applicationLookupService.findById).toHaveBeenCalledWith({
         id: APPLICATION_ID,
         workspaceId: WORKSPACE_ID,
       });
@@ -412,7 +414,7 @@ describe('ApplicationRegistrationOwnershipGuard', () => {
       await expect(guard.canActivate(context)).rejects.toMatchObject({
         code: ApplicationExceptionCode.ENTITY_NOT_FOUND,
       });
-      expect(applicationService.findById).not.toHaveBeenCalled();
+      expect(applicationLookupService.findById).not.toHaveBeenCalled();
       expectNoOwnershipCheck();
     });
   });

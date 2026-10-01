@@ -6,6 +6,7 @@ import { ApplicationGaugeService } from 'src/engine/core-modules/application/app
 import { ApplicationStopModule } from 'src/engine/core-modules/application/application-stop/application-stop.module';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationResolver } from 'src/engine/core-modules/application/application.resolver';
+import { ApplicationLookupModule } from 'src/engine/core-modules/application/application-lookup/application-lookup.module';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { WorkspaceFlatApplicationMapCacheService } from 'src/engine/core-modules/application/workspace-flat-application-map-cache.service';
 import { ApplicationVariableEntity } from 'src/engine/core-modules/application/application-variable/application-variable.entity';
@@ -37,6 +38,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
       ObjectMetadataEntity,
       ApplicationVariableEntity,
     ]),
+    ApplicationLookupModule,
     ApplicationStopModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     WorkspaceCacheModule,

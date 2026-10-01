@@ -9,13 +9,13 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { type AllMetadataName } from 'twenty-shared/metadata';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 
+import { ApplicationLookupService } from 'src/engine/core-modules/application/application-lookup/application-lookup.service';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { type ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import {
   ApplicationException,
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
-import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { APPLICATION_TARGET_METADATA_KEY } from 'src/engine/core-modules/application/constants/application-target-metadata-key.constant';
 import { type ApplicationTarget } from 'src/engine/core-modules/application/types/application-target.type';
 import { readApplicationTargetIdOrThrow } from 'src/engine/core-modules/application/utils/read-application-target-id-or-throw.util';
@@ -32,7 +32,7 @@ import { getRequest } from 'src/utils/extract-request';
 export class ApplicationRegistrationOwnershipGuard implements CanActivate {
   constructor(
     private readonly reflector: Reflector,
-    private readonly applicationService: ApplicationService,
+    private readonly applicationLookupService: ApplicationLookupService,
     private readonly applicationRegistrationService: ApplicationRegistrationService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
   ) {}
@@ -75,7 +75,7 @@ export class ApplicationRegistrationOwnershipGuard implements CanActivate {
         return true;
       case 'applicationUniversalIdentifier': {
         const application =
-          await this.applicationService.findByUniversalIdentifier({
+          await this.applicationLookupService.findByUniversalIdentifier({
             universalIdentifier: targetValue,
             workspaceId,
           });
@@ -162,7 +162,7 @@ export class ApplicationRegistrationOwnershipGuard implements CanActivate {
     applicationId: string;
     workspaceId: string;
   }): Promise<ApplicationEntity> {
-    const application = await this.applicationService.findById({
+    const application = await this.applicationLookupService.findById({
       id: applicationId,
       workspaceId,
     });

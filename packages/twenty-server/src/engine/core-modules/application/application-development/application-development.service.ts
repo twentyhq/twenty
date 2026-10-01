@@ -24,6 +24,7 @@ import {
   ApplicationException,
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
+import { ApplicationLookupService } from 'src/engine/core-modules/application/application-lookup/application-lookup.service';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
@@ -40,6 +41,7 @@ export class ApplicationDevelopmentService {
 
   constructor(
     private readonly applicationService: ApplicationService,
+    private readonly applicationLookupService: ApplicationLookupService,
     private readonly applicationSyncService: ApplicationSyncService,
     private readonly applicationManifestApplyService: ApplicationManifestApplyService,
     private readonly applicationManifestExportService: ApplicationManifestExportService,
@@ -68,10 +70,11 @@ export class ApplicationDevelopmentService {
         workspaceId,
       });
 
-    const existing = await this.applicationService.findByUniversalIdentifier({
-      universalIdentifier,
-      workspaceId,
-    });
+    const existing =
+      await this.applicationLookupService.findByUniversalIdentifier({
+        universalIdentifier,
+        workspaceId,
+      });
 
     if (existing) {
       return {
@@ -215,12 +218,11 @@ export class ApplicationDevelopmentService {
       );
     }
 
-    const application = await this.applicationService.findByUniversalIdentifier(
-      {
+    const application =
+      await this.applicationLookupService.findByUniversalIdentifier({
         universalIdentifier: applicationUniversalIdentifier,
         workspaceId,
-      },
-    );
+      });
 
     if (!isDefined(application)) {
       throw new ApplicationException(
@@ -250,12 +252,11 @@ export class ApplicationDevelopmentService {
         workspaceId,
       });
 
-    const application = await this.applicationService.findByUniversalIdentifier(
-      {
+    const application =
+      await this.applicationLookupService.findByUniversalIdentifier({
         universalIdentifier: manifest.application.universalIdentifier,
         workspaceId,
-      },
-    );
+      });
 
     if (!isDefined(application)) {
       throw new ApplicationException(

@@ -12,7 +12,7 @@ import {
   ApplicationException,
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
-import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { ApplicationLookupService } from 'src/engine/core-modules/application/application-lookup/application-lookup.service';
 import { settings } from 'src/engine/constants/settings';
 import { validateFilePath } from 'src/engine/core-modules/file-storage/utils/validate-file-path.util';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
@@ -32,7 +32,7 @@ const APPLICATION_FILE_SETTINGS = {
 @Injectable()
 export class ApplicationFileUploadService {
   constructor(
-    private readonly applicationService: ApplicationService,
+    private readonly applicationLookupService: ApplicationLookupService,
     private readonly fileUploadTargetService: FileUploadTargetService,
     private readonly fileUploadCompletionService: FileUploadCompletionService,
     @InjectWorkspaceScopedRepository(FileEntity)
@@ -198,12 +198,11 @@ export class ApplicationFileUploadService {
     workspaceId: string;
     applicationUniversalIdentifier: string;
   }) {
-    const application = await this.applicationService.findByUniversalIdentifier(
-      {
+    const application =
+      await this.applicationLookupService.findByUniversalIdentifier({
         universalIdentifier: applicationUniversalIdentifier,
         workspaceId,
-      },
-    );
+      });
 
     if (!isDefined(application)) {
       throw new ApplicationException(
