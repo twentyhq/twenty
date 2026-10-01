@@ -69,8 +69,7 @@ function(options?: ClientOptions): Client {
 // MetadataApiClient (auto-injected by twenty-client-sdk)
 import type { TwentyClientRunAs } from '../shared/twenty-client-run-as.type';
 
-// Ambient type stubs for the genql-generated code this template gets
-// injected into. They enable full typecheck/lint on this file.
+// Ambient stubs for the genql-generated code this template is injected into.
 
 const APP_ACCESS_TOKEN_ENV_KEY = 'TWENTY_APP_ACCESS_TOKEN';
 const APP_APPLICATION_ACCESS_TOKEN_ENV_KEY =
