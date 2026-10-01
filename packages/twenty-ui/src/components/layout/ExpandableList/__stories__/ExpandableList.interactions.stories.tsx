@@ -188,15 +188,28 @@ export const CountVisibility: Story = {
 };
 
 export const CountDisabled: Story = {
-  args: { showOverflowCount: false },
+  args: {
+    showOverflowCount: false,
+    children: ['First item', 'Second item', 'Third item'].map((label) => (
+      <Button key={label} style={{ width: 100 }}>
+        {label}
+      </Button>
+    )),
+  },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await userEvent.hover(canvas.getByText('Customer'));
-    expect(canvas.queryByRole('button')).not.toBeInTheDocument();
+    await userEvent.hover(canvas.getByRole('button', { name: 'First item' }));
+    expect(
+      canvas.queryByRole('button', { name: 'Show all items' }),
+    ).not.toBeInTheDocument();
+
+    for (const label of ['First item', 'Second item', 'Third item']) {
+      await userEvent.tab();
+      expect(canvas.getByRole('button', { name: label })).toHaveFocus();
+    }
   },
 };
-
 
 export const InlineItemFocus: Story = {
   args: {

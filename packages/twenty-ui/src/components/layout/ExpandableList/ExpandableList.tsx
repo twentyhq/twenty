@@ -42,6 +42,8 @@ export const ExpandableList = ({
       reserveCountSpace: isCountVisible,
     });
   const mergedRef = useMergedRefs(containerRef, ref);
+  const displayedItemCount =
+    showOverflowCount === false ? inlineItemCount : visibleItemCount;
   const hiddenItemCount = children.length - visibleItemCount;
   const canExpand = showOverflowCount !== false && hasOverflow;
 
@@ -88,14 +90,16 @@ export const ExpandableList = ({
       >
         <div ref={itemsRef} className={styles.items}>
           {children.slice(0, inlineItemCount).map((child, index) => {
-            const isHidden = index >= visibleItemCount;
+            const isHidden = index >= displayedItemCount;
 
             return (
               <div
                 key={child.key ?? index}
                 className={styles.item}
                 data-hidden={isHidden || undefined}
-                data-last-visible={index === visibleItemCount - 1 || undefined}
+                data-last-visible={
+                  index === displayedItemCount - 1 || undefined
+                }
                 aria-hidden={isHidden || undefined}
                 inert={isHidden}
               >
