@@ -22,6 +22,7 @@ import {
 } from 'src/engine/core-modules/public-domain/public-domain.exception';
 import { PublicDomainService } from 'src/engine/core-modules/public-domain/public-domain.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { ApplicationTargetArgs } from 'src/engine/decorators/auth/application-target-args.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
@@ -65,7 +66,12 @@ export class PublicDomainResolver {
 
   @Mutation(() => PublicDomainDTO)
   async createPublicDomain(
-    @Args() { domain, applicationId }: CreatePublicDomainInput,
+    @ApplicationTargetArgs<CreatePublicDomainInput>({
+      kind: 'applicationId',
+      idKey: 'applicationId',
+      requireApplicationRegistrationOwnership: false,
+    })
+    { domain, applicationId }: CreatePublicDomainInput,
     @AuthWorkspace() currentWorkspace: WorkspaceEntity,
   ): Promise<PublicDomainDTO> {
     return this.publicDomainService.createPublicDomain({

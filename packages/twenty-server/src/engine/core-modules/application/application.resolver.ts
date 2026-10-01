@@ -1,5 +1,5 @@
 import { UseGuards } from '@nestjs/common';
-import { Args, Parent, Query, ResolveField } from '@nestjs/graphql';
+import { Parent, Query, ResolveField } from '@nestjs/graphql';
 
 import { isDefined } from 'twenty-shared/utils';
 
@@ -21,6 +21,7 @@ import { getInstalledSdkMetadataModule } from 'src/engine/core-modules/sdk-clien
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
+import { ApplicationTargetArg } from 'src/engine/decorators/auth/application-target-arg.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
@@ -50,7 +51,11 @@ export class ApplicationResolver {
 
   @Query(() => SdkClientChecksumsDTO, { nullable: true })
   async applicationSdkClientChecksums(
-    @Args('applicationId', { type: () => UUIDScalarType })
+    @ApplicationTargetArg(
+      'applicationId',
+      { kind: 'applicationId', requireApplicationRegistrationOwnership: false },
+      { type: () => UUIDScalarType },
+    )
     applicationId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<SdkClientChecksumsDTO | null> {
@@ -76,7 +81,10 @@ export class ApplicationResolver {
   // query so listing applications does not trigger one Redis read per app.
   @Query(() => Boolean)
   async isApplicationStopped(
-    @Args('applicationUniversalIdentifier')
+    @ApplicationTargetArg('applicationUniversalIdentifier', {
+      kind: 'applicationUniversalIdentifier',
+      requireApplicationRegistrationOwnership: false,
+    })
     applicationUniversalIdentifier: string,
   ): Promise<boolean> {
     return this.applicationStopService.isApplicationStopped(

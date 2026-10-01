@@ -65,7 +65,12 @@ export class ApplicationDevelopmentResolver {
 
   @Mutation(() => DevelopmentApplicationDTO)
   async createDevelopmentApplication(
-    @Args() { universalIdentifier, name }: CreateDevelopmentApplicationInput,
+    @ApplicationTargetArgs<CreateDevelopmentApplicationInput>({
+      kind: 'applicationUniversalIdentifier',
+      idKey: 'universalIdentifier',
+      requireApplicationRegistrationOwnership: true,
+    })
+    { universalIdentifier, name }: CreateDevelopmentApplicationInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<DevelopmentApplicationDTO> {
     return this.applicationDevelopmentService.createDevelopmentApplication({

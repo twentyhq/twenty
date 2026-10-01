@@ -1,5 +1,5 @@
 import { UseFilters, UseGuards } from '@nestjs/common';
-import { Args, Query } from '@nestjs/graphql';
+import { Query } from '@nestjs/graphql';
 
 import { isDefined } from 'twenty-shared/utils';
 
@@ -11,6 +11,7 @@ import {
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
 import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
+import { ApplicationTargetArg } from 'src/engine/decorators/auth/application-target-arg.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
@@ -40,7 +41,10 @@ export class ApplicationSchemaResolver {
 
   @Query(() => String)
   async applicationCoreGraphqlSchema(
-    @Args('applicationUniversalIdentifier')
+    @ApplicationTargetArg('applicationUniversalIdentifier', {
+      kind: 'applicationUniversalIdentifier',
+      requireApplicationRegistrationOwnership: false,
+    })
     applicationUniversalIdentifier: string,
     @AuthWorkspace() workspace: FlatWorkspace,
   ): Promise<string> {

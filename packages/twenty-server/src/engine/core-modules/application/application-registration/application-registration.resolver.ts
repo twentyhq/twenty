@@ -62,6 +62,7 @@ import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { getScopedCallingApplication } from 'src/engine/core-modules/application/utils/get-scoped-calling-application.util';
 import { ApplicationTargetArg } from 'src/engine/decorators/auth/application-target-arg.decorator';
+import { ApplicationTargetArgs } from 'src/engine/decorators/auth/application-target-args.decorator';
 import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
 import {
   ApplicationRegistrationException,
@@ -581,7 +582,12 @@ export class ApplicationRegistrationResolver {
   )
   @Query(() => String)
   async githubClaimAuthorizationUrl(
-    @Args() { applicationRegistrationId }: ApplicationRegistrationClaimInput,
+    @ApplicationTargetArgs<ApplicationRegistrationClaimInput>({
+      kind: 'applicationRegistrationId',
+      idKey: 'applicationRegistrationId',
+      requireApplicationRegistrationOwnership: false,
+    })
+    { applicationRegistrationId }: ApplicationRegistrationClaimInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @AuthUser({ allowUndefined: true }) user: UserEntity | undefined,
     @Context() context: { req: Request },
@@ -619,7 +625,11 @@ export class ApplicationRegistrationResolver {
   )
   @Mutation(() => ApplicationRegistrationEntity)
   async transferApplicationRegistrationOwnership(
-    @Args()
+    @ApplicationTargetArgs<TransferApplicationRegistrationOwnershipInput>({
+      kind: 'applicationRegistrationId',
+      idKey: 'applicationRegistrationId',
+      requireApplicationRegistrationOwnership: true,
+    })
     {
       applicationRegistrationId,
       targetWorkspaceSubdomain,
