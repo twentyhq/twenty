@@ -25,6 +25,7 @@ import { UpdateApplicationRegistrationVariableInput } from 'src/engine/core-modu
 import { ApplicationRegistrationExceptionFilter } from 'src/engine/core-modules/application/application-registration/application-registration-exception-filter';
 import { ApplicationRegistrationAssetUrlService } from 'src/engine/core-modules/application/application-registration/application-registration-asset-url.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
+import { ApplicationRegistrationLookupService } from 'src/engine/core-modules/application/application-registration/application-registration-lookup/application-registration-lookup.service';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { ApplicationTarballService } from 'src/engine/core-modules/application/application-registration/application-tarball.service';
 import { ApplicationRegistrationClaimService } from 'src/engine/core-modules/application/application-registration/application-registration-claim.service';
@@ -83,6 +84,7 @@ import { ApplicationRegistrationOwnershipGuard } from 'src/engine/guards/applica
 export class ApplicationRegistrationResolver {
   constructor(
     private readonly applicationRegistrationService: ApplicationRegistrationService,
+    private readonly applicationRegistrationLookupService: ApplicationRegistrationLookupService,
     private readonly applicationRegistrationClaimService: ApplicationRegistrationClaimService,
     private readonly applicationRegistrationVariableService: ApplicationRegistrationVariableService,
     private readonly applicationTarballService: ApplicationTarballService,
@@ -122,7 +124,7 @@ export class ApplicationRegistrationResolver {
     })
     universalIdentifier: string,
   ): Promise<ApplicationRegistrationEntity | null> {
-    return this.applicationRegistrationService.findOneByUniversalIdentifierGlobal(
+    return this.applicationRegistrationLookupService.findOneByUniversalIdentifierGlobal(
       universalIdentifier,
     );
   }
@@ -188,7 +190,7 @@ export class ApplicationRegistrationResolver {
     applicationRegistrationId: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<ApplicationRegistrationEntity> {
-    return this.applicationRegistrationService.findOneByIdOrThrow({
+    return this.applicationRegistrationLookupService.findOneByIdOrThrow({
       applicationRegistrationId,
       ownerWorkspaceId: workspaceId,
     });
@@ -510,7 +512,7 @@ export class ApplicationRegistrationResolver {
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<string | null> {
     const registration =
-      await this.applicationRegistrationService.findOneByIdOrThrow({
+      await this.applicationRegistrationLookupService.findOneByIdOrThrow({
         applicationRegistrationId,
         ownerWorkspaceId: workspaceId,
       });

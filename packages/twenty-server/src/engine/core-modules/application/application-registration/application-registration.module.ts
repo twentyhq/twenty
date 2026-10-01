@@ -17,6 +17,7 @@ import { ApplicationTarballService } from 'src/engine/core-modules/application/a
 import { ApplicationPackageModule } from 'src/engine/core-modules/application/application-package/application-package.module';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationLookupModule } from 'src/engine/core-modules/application/application-lookup/application-lookup.module';
+import { ApplicationRegistrationLookupModule } from 'src/engine/core-modules/application/application-registration/application-registration-lookup/application-registration-lookup.module';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { CacheLockModule } from 'src/engine/core-modules/cache-lock/cache-lock.module';
 import { DomainServerConfigModule } from 'src/engine/core-modules/domain/domain-server-config/domain-server-config.module';
@@ -46,6 +47,7 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata
     ]),
     ApplicationRegistrationVariableModule,
     ApplicationLookupModule,
+    ApplicationRegistrationLookupModule,
     ApplicationModule,
     ApplicationPackageModule,
     CacheLockModule,

@@ -18,7 +18,7 @@ import { type ApplicationExport } from 'src/engine/core-modules/application/appl
 import { ApplicationVersionValidationService } from 'src/engine/core-modules/application/application-package/application-version-validation.service';
 import { VERSION_REASON_TO_APPLICATION_EXCEPTION_CODE } from 'src/engine/core-modules/application/application-package/constants/version-reason-to-exception-code.constant';
 import { ApplicationRegistrationAssetService } from 'src/engine/core-modules/application/application-registration/application-registration-asset.service';
-import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
+import { ApplicationRegistrationLookupService } from 'src/engine/core-modules/application/application-registration/application-registration-lookup/application-registration-lookup.service';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import {
   ApplicationException,
@@ -45,7 +45,7 @@ export class ApplicationDevelopmentService {
     private readonly applicationSyncService: ApplicationSyncService,
     private readonly applicationManifestApplyService: ApplicationManifestApplyService,
     private readonly applicationManifestExportService: ApplicationManifestExportService,
-    private readonly applicationRegistrationService: ApplicationRegistrationService,
+    private readonly applicationRegistrationLookupService: ApplicationRegistrationLookupService,
     private readonly applicationRegistrationAssetService: ApplicationRegistrationAssetService,
     private readonly applicationVersionValidationService: ApplicationVersionValidationService,
     private readonly fileStorageService: FileStorageService,
@@ -65,10 +65,12 @@ export class ApplicationDevelopmentService {
     await this.throttlePerApplication(universalIdentifier, workspaceId);
 
     const applicationRegistration =
-      await this.applicationRegistrationService.findOneOwnedByWorkspaceOrThrow({
-        universalIdentifier,
-        workspaceId,
-      });
+      await this.applicationRegistrationLookupService.findOneOwnedByWorkspaceOrThrow(
+        {
+          universalIdentifier,
+          workspaceId,
+        },
+      );
 
     const existing =
       await this.applicationLookupService.findByUniversalIdentifier({
@@ -146,10 +148,12 @@ export class ApplicationDevelopmentService {
       );
     }
 
-    await this.applicationRegistrationService.findOneOwnedByWorkspaceOrThrow({
-      universalIdentifier: manifest.application.universalIdentifier,
-      workspaceId,
-    });
+    await this.applicationRegistrationLookupService.findOneOwnedByWorkspaceOrThrow(
+      {
+        universalIdentifier: manifest.application.universalIdentifier,
+        workspaceId,
+      },
+    );
 
     if (dryRun === true) {
       const { workspaceMigration } =
@@ -247,10 +251,12 @@ export class ApplicationDevelopmentService {
     inferDeletionFromMissingEntities: boolean,
   ): Promise<WorkspaceMigrationDTO> {
     const applicationRegistration =
-      await this.applicationRegistrationService.findOneOwnedByWorkspaceOrThrow({
-        universalIdentifier: manifest.application.universalIdentifier,
-        workspaceId,
-      });
+      await this.applicationRegistrationLookupService.findOneOwnedByWorkspaceOrThrow(
+        {
+          universalIdentifier: manifest.application.universalIdentifier,
+          workspaceId,
+        },
+      );
 
     const application =
       await this.applicationLookupService.findByUniversalIdentifier({

@@ -21,7 +21,9 @@ import { ALL_OAUTH_SCOPES } from 'src/engine/core-modules/application/applicatio
 import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
 import { findReservedVariableNamesInApplicationManifest } from 'src/engine/core-modules/application/utils/find-reserved-variable-names-in-application-manifest.util';
 import { ApplicationRegistrationAssetUrlService } from 'src/engine/core-modules/application/application-registration/application-registration-asset-url.service';
+import { ApplicationRegistrationLookupService } from 'src/engine/core-modules/application/application-registration/application-registration-lookup/application-registration-lookup.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
+import { APPLICATION_REGISTRATION_WITHOUT_MANIFEST_SELECT } from 'src/engine/core-modules/application/application-registration/constants/application-registration-without-manifest-select.constant';
 import {
   ApplicationRegistrationException,
   ApplicationRegistrationExceptionCode,
@@ -75,40 +77,6 @@ const APPLICATION_REGISTRATION_UPDATE_LOCK_OPTIONS = {
   maxRetries: 120,
 };
 
-const APPLICATION_REGISTRATION_WITHOUT_MANIFEST_SELECT: (keyof ApplicationRegistrationEntity)[] =
-  [
-    'id',
-    'universalIdentifier',
-    'name',
-    'oAuthClientId',
-    'oAuthRedirectUris',
-    'oAuthScopes',
-    'createdByUserId',
-    'ownerWorkspaceId',
-    'sourceType',
-    'sourcePackage',
-    'tarballFileId',
-    'latestAvailableVersion',
-    'isListed',
-    'isVetted',
-    'isPreInstalled',
-    'logo',
-    'logoFileId',
-    'description',
-    'author',
-    'category',
-    'websiteUrl',
-    'aboutDescription',
-    'pricingDescription',
-    'termsUrl',
-    'emailSupport',
-    'issueReportUrl',
-    'screenshots',
-    'galleryImages',
-    'createdAt',
-    'updatedAt',
-  ];
-
 export type UpsertApplicationRegistrationFromCatalogParams = {
   universalIdentifier: string;
   name: string;
@@ -152,6 +120,7 @@ export class ApplicationRegistrationService {
     @InjectMessageQueue(MessageQueue.applicationUpgradeQueue)
     private readonly applicationUpgradeQueueService: MessageQueueService,
     private readonly workspaceEventBroadcaster: WorkspaceEventBroadcaster,
+    private readonly applicationRegistrationLookupService: ApplicationRegistrationLookupService,
   ) {}
 
   async broadcastApplicationRegistrationUpdatedById(
@@ -396,28 +365,6 @@ export class ApplicationRegistrationService {
     };
   }
 
-  async findOneByIdOrThrow({
-    applicationRegistrationId,
-    ownerWorkspaceId,
-  }: {
-    applicationRegistrationId: string;
-    ownerWorkspaceId: string;
-  }): Promise<ApplicationRegistrationEntity> {
-    const registration = await this.applicationRegistrationRepository.findOne({
-      select: APPLICATION_REGISTRATION_WITHOUT_MANIFEST_SELECT,
-      where: { id: applicationRegistrationId, ownerWorkspaceId },
-    });
-
-    if (!registration) {
-      throw new ApplicationRegistrationException(
-        `Application registration with id ${applicationRegistrationId} not found`,
-        ApplicationRegistrationExceptionCode.APPLICATION_REGISTRATION_NOT_FOUND,
-      );
-    }
-
-    return registration;
-  }
-
   async findOneByIdGlobal(id: string): Promise<ApplicationRegistrationEntity> {
     const registration = await this.applicationRegistrationRepository.findOne({
       select: APPLICATION_REGISTRATION_WITHOUT_MANIFEST_SELECT,
@@ -432,80 +379,6 @@ export class ApplicationRegistrationService {
     }
 
     return registration;
-  }
-
-  async findOneOwnedByWorkspaceOrThrow({
-    universalIdentifier,
-    workspaceId,
-  }: {
-    universalIdentifier: string;
-    workspaceId: string;
-  }): Promise<ApplicationRegistrationEntity> {
-    const applicationRegistration =
-      await this.findOneByUniversalIdentifierGlobal(universalIdentifier);
-
-    if (!isDefined(applicationRegistration)) {
-      throw new ApplicationException(
-        `No registration found for "${universalIdentifier}". Create one first with createApplicationRegistration.`,
-        ApplicationExceptionCode.APPLICATION_NOT_FOUND,
-      );
-    }
-
-    this.assertOwnedByWorkspaceOrThrow({
-      applicationRegistration,
-      workspaceId,
-    });
-
-    return applicationRegistration;
-  }
-
-  async findOneByIdOwnedByWorkspaceOrThrow({
-    applicationRegistrationId,
-    workspaceId,
-  }: {
-    applicationRegistrationId: string;
-    workspaceId: string;
-  }): Promise<ApplicationRegistrationEntity> {
-    const applicationRegistration =
-      await this.applicationRegistrationRepository.findOne({
-        select: APPLICATION_REGISTRATION_WITHOUT_MANIFEST_SELECT,
-        where: { id: applicationRegistrationId },
-      });
-
-    if (!isDefined(applicationRegistration)) {
-      throw new ApplicationException(
-        `No registration found with id "${applicationRegistrationId}".`,
-        ApplicationExceptionCode.APPLICATION_NOT_FOUND,
-      );
-    }
-
-    this.assertOwnedByWorkspaceOrThrow({
-      applicationRegistration,
-      workspaceId,
-    });
-
-    return applicationRegistration;
-  }
-
-  private assertOwnedByWorkspaceOrThrow({
-    applicationRegistration,
-    workspaceId,
-  }: {
-    applicationRegistration: ApplicationRegistrationEntity;
-    workspaceId: string;
-  }): void {
-    if (applicationRegistration.ownerWorkspaceId === workspaceId) {
-      return;
-    }
-
-    const { universalIdentifier, ownerWorkspaceId } = applicationRegistration;
-
-    throw new ApplicationException(
-      !isDefined(ownerWorkspaceId)
-        ? `"${universalIdentifier}" is registered on this instance but claimed by no workspace. Claim its ownership before developing on it.`
-        : `"${universalIdentifier}" is registered to another workspace. Change the universalIdentifier in your manifest, or transfer the registration from the owning workspace.`,
-      ApplicationExceptionCode.FORBIDDEN,
-    );
   }
 
   async findOneByClientId(
@@ -548,14 +421,6 @@ export class ApplicationRegistrationService {
     };
   }
 
-  async findOneByUniversalIdentifierGlobal(
-    universalIdentifier: string,
-  ): Promise<ApplicationRegistrationEntity | null> {
-    return this.applicationRegistrationRepository.findOne({
-      where: { universalIdentifier },
-    });
-  }
-
   async create({
     input,
     ownerWorkspaceId,
@@ -571,7 +436,9 @@ export class ApplicationRegistrationService {
     const universalIdentifier = input.universalIdentifier ?? v4();
 
     const existingByUid =
-      await this.findOneByUniversalIdentifierGlobal(universalIdentifier);
+      await this.applicationRegistrationLookupService.findOneByUniversalIdentifierGlobal(
+        universalIdentifier,
+      );
 
     if (existingByUid) {
       throw new ApplicationRegistrationException(
@@ -624,10 +491,11 @@ export class ApplicationRegistrationService {
   ): Promise<ApplicationRegistrationEntity> {
     const { id, update } = input;
 
-    const existingRegistration = await this.findOneByIdOrThrow({
-      applicationRegistrationId: id,
-      ownerWorkspaceId,
-    });
+    const existingRegistration =
+      await this.applicationRegistrationLookupService.findOneByIdOrThrow({
+        applicationRegistrationId: id,
+        ownerWorkspaceId,
+      });
 
     await this.applyUpdate({ id, update });
 
@@ -636,7 +504,7 @@ export class ApplicationRegistrationService {
       existingRegistration,
     );
 
-    return this.findOneByIdOrThrow({
+    return this.applicationRegistrationLookupService.findOneByIdOrThrow({
       applicationRegistrationId: id,
       ownerWorkspaceId,
     });
@@ -830,10 +698,11 @@ export class ApplicationRegistrationService {
     applicationRegistrationId: string;
     ownerWorkspaceId: string;
   }): Promise<boolean> {
-    const applicationRegistration = await this.findOneByIdOrThrow({
-      applicationRegistrationId,
-      ownerWorkspaceId,
-    });
+    const applicationRegistration =
+      await this.applicationRegistrationLookupService.findOneByIdOrThrow({
+        applicationRegistrationId,
+        ownerWorkspaceId,
+      });
 
     // Deleted explicitly: the FK cascade removes rows, not stored bytes
     try {
@@ -868,7 +737,7 @@ export class ApplicationRegistrationService {
     applicationRegistrationId: string;
     ownerWorkspaceId: string;
   }): Promise<string> {
-    await this.findOneByIdOrThrow({
+    await this.applicationRegistrationLookupService.findOneByIdOrThrow({
       applicationRegistrationId,
       ownerWorkspaceId,
     });
@@ -915,9 +784,10 @@ export class ApplicationRegistrationService {
       universalIdentifier: rawParams.universalIdentifier.toLowerCase(),
     };
 
-    const existing = await this.findOneByUniversalIdentifierGlobal(
-      params.universalIdentifier,
-    );
+    const existing =
+      await this.applicationRegistrationLookupService.findOneByUniversalIdentifierGlobal(
+        params.universalIdentifier,
+      );
 
     if (
       isDefined(existing) &&
@@ -1061,9 +931,10 @@ export class ApplicationRegistrationService {
   }
 
   async findOrCreateCliRegistration(): Promise<ApplicationRegistrationEntity> {
-    const existing = await this.findOneByUniversalIdentifierGlobal(
-      TWENTY_CLI_APPLICATION_REGISTRATION.universalIdentifier,
-    );
+    const existing =
+      await this.applicationRegistrationLookupService.findOneByUniversalIdentifierGlobal(
+        TWENTY_CLI_APPLICATION_REGISTRATION.universalIdentifier,
+      );
 
     if (isDefined(existing)) {
       return existing;
@@ -1093,9 +964,10 @@ export class ApplicationRegistrationService {
       await this.invalidateMarketplaceAppsCache();
     }
 
-    const registration = await this.findOneByUniversalIdentifierGlobal(
-      TWENTY_CLI_APPLICATION_REGISTRATION.universalIdentifier,
-    );
+    const registration =
+      await this.applicationRegistrationLookupService.findOneByUniversalIdentifierGlobal(
+        TWENTY_CLI_APPLICATION_REGISTRATION.universalIdentifier,
+      );
 
     if (!isDefined(registration)) {
       throw new ApplicationException(
@@ -1152,7 +1024,7 @@ export class ApplicationRegistrationService {
     applicationRegistrationId: string;
     ownerWorkspaceId: string;
   }): Promise<ApplicationRegistrationStatsDTO> {
-    await this.findOneByIdOrThrow({
+    await this.applicationRegistrationLookupService.findOneByIdOrThrow({
       applicationRegistrationId,
       ownerWorkspaceId,
     });
@@ -1373,10 +1245,11 @@ export class ApplicationRegistrationService {
     targetWorkspaceSubdomain: string;
     currentOwnerWorkspaceId: string;
   }): Promise<ApplicationRegistrationEntity> {
-    const registration = await this.findOneByIdOrThrow({
-      applicationRegistrationId: params.applicationRegistrationId,
-      ownerWorkspaceId: params.currentOwnerWorkspaceId,
-    });
+    const registration =
+      await this.applicationRegistrationLookupService.findOneByIdOrThrow({
+        applicationRegistrationId: params.applicationRegistrationId,
+        ownerWorkspaceId: params.currentOwnerWorkspaceId,
+      });
 
     const targetWorkspace = await this.workspaceRepository.findOne({
       where: { subdomain: params.targetWorkspaceSubdomain },

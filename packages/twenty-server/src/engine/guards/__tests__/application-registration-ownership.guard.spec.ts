@@ -7,7 +7,7 @@ import {
   ApplicationRegistrationException,
   ApplicationRegistrationExceptionCode,
 } from 'src/engine/core-modules/application/application-registration/application-registration.exception';
-import { type ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
+import { type ApplicationRegistrationLookupService } from 'src/engine/core-modules/application/application-registration/application-registration-lookup/application-registration-lookup.service';
 import {
   ApplicationException,
   ApplicationExceptionCode,
@@ -110,7 +110,7 @@ describe('ApplicationRegistrationOwnershipGuard', () => {
     findById: jest.fn(),
   };
 
-  const applicationRegistrationService = {
+  const applicationRegistrationLookupService = {
     findOneOwnedByWorkspaceOrThrow: jest.fn(),
     findOneByIdOwnedByWorkspaceOrThrow: jest.fn(),
     findOneByIdOrThrow: jest.fn(),
@@ -138,10 +138,10 @@ describe('ApplicationRegistrationOwnershipGuard', () => {
 
   const expectNoOwnershipCheck = () => {
     expect(
-      applicationRegistrationService.findOneOwnedByWorkspaceOrThrow,
+      applicationRegistrationLookupService.findOneOwnedByWorkspaceOrThrow,
     ).not.toHaveBeenCalled();
     expect(
-      applicationRegistrationService.findOneByIdOwnedByWorkspaceOrThrow,
+      applicationRegistrationLookupService.findOneByIdOwnedByWorkspaceOrThrow,
     ).not.toHaveBeenCalled();
   };
 
@@ -157,7 +157,7 @@ describe('ApplicationRegistrationOwnershipGuard', () => {
     guard = new ApplicationRegistrationOwnershipGuard(
       new Reflector(),
       applicationLookupService as unknown as ApplicationLookupService,
-      applicationRegistrationService as unknown as ApplicationRegistrationService,
+      applicationRegistrationLookupService as unknown as ApplicationRegistrationLookupService,
       {
         getOrRecomputeManyOrAllFlatEntityMaps: jest.fn().mockResolvedValue({
           flatLogicFunctionMaps: buildFlatLogicFunctionMaps(),
@@ -219,7 +219,7 @@ describe('ApplicationRegistrationOwnershipGuard', () => {
   );
 
   it('should propagate a refusal from the ownership rule', async () => {
-    applicationRegistrationService.findOneByIdOwnedByWorkspaceOrThrow.mockRejectedValueOnce(
+    applicationRegistrationLookupService.findOneByIdOwnedByWorkspaceOrThrow.mockRejectedValueOnce(
       new ApplicationException('Refused', ApplicationExceptionCode.FORBIDDEN),
     );
 
@@ -252,13 +252,13 @@ describe('ApplicationRegistrationOwnershipGuard', () => {
         workspaceId: WORKSPACE_ID,
       });
       expect(
-        applicationRegistrationService.findOneByIdOwnedByWorkspaceOrThrow,
+        applicationRegistrationLookupService.findOneByIdOwnedByWorkspaceOrThrow,
       ).toHaveBeenCalledWith({
         applicationRegistrationId: LINKED_REGISTRATION_ID,
         workspaceId: WORKSPACE_ID,
       });
       expect(
-        applicationRegistrationService.findOneOwnedByWorkspaceOrThrow,
+        applicationRegistrationLookupService.findOneOwnedByWorkspaceOrThrow,
       ).not.toHaveBeenCalled();
     });
 
@@ -281,13 +281,13 @@ describe('ApplicationRegistrationOwnershipGuard', () => {
 
         await expect(guard.canActivate(context)).resolves.toBe(true);
         expect(
-          applicationRegistrationService.findOneOwnedByWorkspaceOrThrow,
+          applicationRegistrationLookupService.findOneOwnedByWorkspaceOrThrow,
         ).toHaveBeenCalledWith({
           universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
           workspaceId: WORKSPACE_ID,
         });
         expect(
-          applicationRegistrationService.findOneByIdOwnedByWorkspaceOrThrow,
+          applicationRegistrationLookupService.findOneByIdOwnedByWorkspaceOrThrow,
         ).not.toHaveBeenCalled();
       },
     );
@@ -302,18 +302,18 @@ describe('ApplicationRegistrationOwnershipGuard', () => {
 
       await expect(guard.canActivate(context)).resolves.toBe(true);
       expect(
-        applicationRegistrationService.findOneByIdOrThrow,
+        applicationRegistrationLookupService.findOneByIdOrThrow,
       ).toHaveBeenCalledWith({
         applicationRegistrationId: TARGETED_REGISTRATION_ID,
         ownerWorkspaceId: WORKSPACE_ID,
       });
       expect(
-        applicationRegistrationService.findOneByIdOwnedByWorkspaceOrThrow,
+        applicationRegistrationLookupService.findOneByIdOwnedByWorkspaceOrThrow,
       ).not.toHaveBeenCalled();
     });
 
     it('should propagate the not found refusal for a registration the workspace does not own', async () => {
-      applicationRegistrationService.findOneByIdOrThrow.mockRejectedValueOnce(
+      applicationRegistrationLookupService.findOneByIdOrThrow.mockRejectedValueOnce(
         new ApplicationRegistrationException(
           `Application registration with id ${FOREIGN_REGISTRATION_ID} not found`,
           ApplicationRegistrationExceptionCode.APPLICATION_REGISTRATION_NOT_FOUND,
@@ -344,7 +344,7 @@ describe('ApplicationRegistrationOwnershipGuard', () => {
         workspaceId: WORKSPACE_ID,
       });
       expect(
-        applicationRegistrationService.findOneByIdOwnedByWorkspaceOrThrow,
+        applicationRegistrationLookupService.findOneByIdOwnedByWorkspaceOrThrow,
       ).toHaveBeenCalledWith({
         applicationRegistrationId: LINKED_REGISTRATION_ID,
         workspaceId: WORKSPACE_ID,
@@ -363,7 +363,7 @@ describe('ApplicationRegistrationOwnershipGuard', () => {
 
       await expect(guard.canActivate(context)).resolves.toBe(true);
       expect(
-        applicationRegistrationService.findOneOwnedByWorkspaceOrThrow,
+        applicationRegistrationLookupService.findOneOwnedByWorkspaceOrThrow,
       ).toHaveBeenCalledWith({
         universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
         workspaceId: WORKSPACE_ID,
@@ -398,7 +398,7 @@ describe('ApplicationRegistrationOwnershipGuard', () => {
         workspaceId: WORKSPACE_ID,
       });
       expect(
-        applicationRegistrationService.findOneByIdOwnedByWorkspaceOrThrow,
+        applicationRegistrationLookupService.findOneByIdOwnedByWorkspaceOrThrow,
       ).toHaveBeenCalledWith({
         applicationRegistrationId: LINKED_REGISTRATION_ID,
         workspaceId: WORKSPACE_ID,

@@ -10,7 +10,7 @@ import { type AllMetadataName } from 'twenty-shared/metadata';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 
 import { ApplicationLookupService } from 'src/engine/core-modules/application/application-lookup/application-lookup.service';
-import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
+import { ApplicationRegistrationLookupService } from 'src/engine/core-modules/application/application-registration/application-registration-lookup/application-registration-lookup.service';
 import { type ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import {
   ApplicationException,
@@ -33,7 +33,7 @@ export class ApplicationRegistrationOwnershipGuard implements CanActivate {
   constructor(
     private readonly reflector: Reflector,
     private readonly applicationLookupService: ApplicationLookupService,
-    private readonly applicationRegistrationService: ApplicationRegistrationService,
+    private readonly applicationRegistrationLookupService: ApplicationRegistrationLookupService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
   ) {}
 
@@ -67,7 +67,7 @@ export class ApplicationRegistrationOwnershipGuard implements CanActivate {
       case 'applicationRegistrationId':
         // Same owner-scoped lookup as the registration endpoints, so a foreign
         // id stays NOT_FOUND instead of confirming the registration exists
-        await this.applicationRegistrationService.findOneByIdOrThrow({
+        await this.applicationRegistrationLookupService.findOneByIdOrThrow({
           applicationRegistrationId: targetValue,
           ownerWorkspaceId: workspaceId,
         });
@@ -189,16 +189,18 @@ export class ApplicationRegistrationOwnershipGuard implements CanActivate {
     workspaceId: string;
   }): Promise<void> {
     if (isDefined(applicationRegistrationId)) {
-      await this.applicationRegistrationService.findOneByIdOwnedByWorkspaceOrThrow(
+      await this.applicationRegistrationLookupService.findOneByIdOwnedByWorkspaceOrThrow(
         { applicationRegistrationId, workspaceId },
       );
 
       return;
     }
 
-    await this.applicationRegistrationService.findOneOwnedByWorkspaceOrThrow({
-      universalIdentifier,
-      workspaceId,
-    });
+    await this.applicationRegistrationLookupService.findOneOwnedByWorkspaceOrThrow(
+      {
+        universalIdentifier,
+        workspaceId,
+      },
+    );
   }
 }
