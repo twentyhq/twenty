@@ -20,6 +20,7 @@ export const getActionIconStrokeOrThrow = (
     case 'IF_ELSE':
       return 'sm';
     case 'FORM':
+    case 'SEND_CHAT_MESSAGE':
     case 'ITERATOR':
     case 'EMPTY':
     case 'FILTER':
