@@ -1,3 +1,4 @@
+import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
@@ -8,7 +9,10 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
 
 // Own module: the command menu and the workflow API both need it and already depend on each other.
 @Module({
-  imports: [TypeOrmModule.forFeature([WorkflowEntity, WorkflowVersionEntity])],
+  imports: [
+    ApplicationModule,
+    TypeOrmModule.forFeature([WorkflowEntity, WorkflowVersionEntity]),
+  ],
   providers: [
     CoreWorkflowAccessService,
     provideWorkspaceScopedRepository(WorkflowEntity),
