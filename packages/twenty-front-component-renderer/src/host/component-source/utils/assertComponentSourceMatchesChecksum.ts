@@ -1,5 +1,6 @@
 import { CustomError } from 'twenty-shared/utils';
 
+import { FRONT_COMPONENT_SOURCE_CHECKSUM_MISMATCH_ERROR_CODE } from '@/host/component-source/constants/FrontComponentSourceChecksumMismatchErrorCode';
 import { computeComponentSourceChecksum } from '@/host/component-source/utils/computeComponentSourceChecksum';
 
 export const assertComponentSourceMatchesChecksum = async ({
@@ -19,6 +20,6 @@ export const assertComponentSourceMatchesChecksum = async ({
 
   throw new CustomError(
     `Front component source checksum mismatch for ${url}: expected ${expectedChecksum}, received ${actualChecksum}`,
-    'FRONT_COMPONENT_SOURCE_CHECKSUM_MISMATCH',
+    FRONT_COMPONENT_SOURCE_CHECKSUM_MISMATCH_ERROR_CODE,
   );
 };

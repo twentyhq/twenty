@@ -10,12 +10,14 @@ import { type GeometryTracker } from '@/host/geometry/types/GeometryTracker';
 import { type FrontComponentMediaSessionHost } from '@/host/media/types/FrontComponentMediaSessionHost';
 import { fetchComponentSource } from '@/host/component-source/utils/fetchComponentSource';
 import { fetchSdkClientSources } from '@/host/component-source/utils/fetchSdkClientSources';
+import { isNewerComponentSourceAvailable } from '@/host/component-source/utils/isNewerComponentSourceAvailable';
 import { buildFrontComponentStorageSnapshots } from '@/host/storage/utils/buildFrontComponentStorageSnapshots';
 import { FRONT_COMPONENT_SANDBOX_DOCUMENT } from '@/remote/sandbox/generated/frontComponentSandboxDocument';
 import { createFrontComponentSandboxIframe } from '@/remote/sandbox/utils/createFrontComponentSandboxIframe';
 import { createFrontComponentSandboxMessageHandler } from '@/remote/sandbox/utils/createFrontComponentSandboxMessageHandler';
 import { type FrontComponentExecutionContext } from 'twenty-sdk/front-component';
 
+import { type CheckForNewerComponentSource } from '@/types/CheckForNewerComponentSource';
 import { type FrontComponentThread } from '@/types/FrontComponentThread';
 import { type SdkClientUrls } from '@/types/SdkClientUrls';
 import { buildAuthorizationHeadersFromAccessToken } from '@/host/component-source/utils/buildAuthorizationHeadersFromAccessToken';
@@ -34,6 +36,7 @@ type FrontComponentWorkerEffectProps = {
   initialExecutionContext: FrontComponentExecutionContext;
   geometryTracker: GeometryTracker;
   mediaSessionHost?: FrontComponentMediaSessionHost;
+  checkForNewerComponentSource?: CheckForNewerComponentSource;
   setReceiver: React.Dispatch<React.SetStateAction<RemoteReceiver | null>>;
   setThread: React.Dispatch<React.SetStateAction<FrontComponentThread | null>>;
   setError: React.Dispatch<React.SetStateAction<Error | null>>;
@@ -51,6 +54,7 @@ export const FrontComponentWorkerEffect = ({
   initialExecutionContext,
   geometryTracker,
   mediaSessionHost,
+  checkForNewerComponentSource,
   setReceiver,
   setThread,
   setError,
@@ -159,9 +163,20 @@ export const FrontComponentWorkerEffect = ({
             mediaSessionHost?.getRecorderCapabilities(),
         });
       } catch (error) {
-        if (!isCancelled) {
-          setError(error instanceof Error ? error : new Error(String(error)));
+        if (isCancelled) {
+          return;
         }
+
+        const hasNewerComponentSource = await isNewerComponentSourceAvailable({
+          error,
+          checkForNewerComponentSource,
+        });
+
+        if (isCancelled || hasNewerComponentSource) {
+          return;
+        }
+
+        setError(error instanceof Error ? error : new Error(String(error)));
       }
     };
 
@@ -190,6 +205,7 @@ export const FrontComponentWorkerEffect = ({
     initialExecutionContext,
     geometryTracker,
     mediaSessionHost,
+    checkForNewerComponentSource,
     setError,
     setReceiver,
     setThread,

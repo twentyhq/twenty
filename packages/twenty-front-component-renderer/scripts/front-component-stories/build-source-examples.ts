@@ -188,9 +188,6 @@ type ChecksumFixtures = {
   staleChecksum: string;
 };
 
-// Serves the same built component under a sha256 file name that matches its
-// bytes and under one that does not, so stories can exercise the renderer's
-// checksum verification against real static responses.
 const writeChecksumFixtures = (): ChecksumFixtures => {
   const builtSource = fs.readFileSync(
     path.join(exampleSourcesBuiltDir, `${CHECKSUM_FIXTURE_COMPONENT}.mjs`),

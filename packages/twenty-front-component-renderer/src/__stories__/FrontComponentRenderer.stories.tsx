@@ -1,5 +1,5 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { type ComponentProps, useState } from 'react';
+import { type ComponentProps, useCallback, useState } from 'react';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 
 import { FrontComponentRenderer } from '@/host/components/FrontComponentRenderer';
@@ -8,8 +8,16 @@ import { getBuiltStoryComponentPathForRender } from '@/__stories__/utils/getBuil
 import { getFingerprintedStoryComponentUrl } from '@/__stories__/utils/getFingerprintedStoryComponentUrl';
 
 const errorHandler = fn();
+const newerComponentSourceCheck = fn<() => Promise<boolean>>();
 
 const CHECKSUM_MISMATCH_MESSAGE_PATTERN = /checksum mismatch/;
+
+const STALE_COMPONENT_URL = getFingerprintedStoryComponentUrl(
+  checksumFixtures.staleChecksum,
+);
+const MATCHING_COMPONENT_URL = getFingerprintedStoryComponentUrl(
+  checksumFixtures.matchingChecksum,
+);
 
 type ChecksumRecoveryHarnessProps = Pick<
   ComponentProps<typeof FrontComponentRenderer>,
@@ -18,36 +26,40 @@ type ChecksumRecoveryHarnessProps = Pick<
   | 'executionContext'
   | 'frontComponentHostCommunicationApi'
   | 'colorScheme'
->;
+> & {
+  isNewerBuildKnownToHost: boolean;
+};
 
 const ChecksumRecoveryHarness = ({
+  isNewerBuildKnownToHost,
   onError,
   applicationAccessToken,
   executionContext,
   frontComponentHostCommunicationApi,
   colorScheme,
 }: ChecksumRecoveryHarnessProps) => {
-  const [componentUrl, setComponentUrl] = useState(
-    getFingerprintedStoryComponentUrl(checksumFixtures.staleChecksum),
-  );
+  const [componentUrl, setComponentUrl] = useState(STALE_COMPONENT_URL);
+
+  const checkForNewerComponentSource = useCallback(async () => {
+    setComponentUrl(MATCHING_COMPONENT_URL);
+
+    return true;
+  }, []);
 
   return (
     <>
       <button
         type="button"
         data-testid="load-matching-build"
-        onClick={() =>
-          setComponentUrl(
-            getFingerprintedStoryComponentUrl(
-              checksumFixtures.matchingChecksum,
-            ),
-          )
-        }
+        onClick={() => setComponentUrl(MATCHING_COMPONENT_URL)}
       >
         Load matching build
       </button>
       <FrontComponentRenderer
         componentUrl={componentUrl}
+        checkForNewerComponentSource={
+          isNewerBuildKnownToHost ? checkForNewerComponentSource : undefined
+        }
         onError={onError}
         applicationAccessToken={applicationAccessToken}
         executionContext={executionContext}
@@ -78,6 +90,8 @@ const meta: Meta<typeof FrontComponentRenderer> = {
   },
   beforeEach: () => {
     errorHandler.mockClear();
+    newerComponentSourceCheck.mockClear();
+    newerComponentSourceCheck.mockResolvedValue(false);
   },
 };
 
@@ -170,9 +184,8 @@ export const ErrorHandling: Story = {
 
 export const ChecksumMismatch: Story = {
   args: {
-    componentUrl: getFingerprintedStoryComponentUrl(
-      checksumFixtures.staleChecksum,
-    ),
+    componentUrl: STALE_COMPONENT_URL,
+    checkForNewerComponentSource: newerComponentSourceCheck,
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -193,15 +206,14 @@ export const ChecksumMismatch: Story = {
       );
     });
 
+    expect(newerComponentSourceCheck).toHaveBeenCalledTimes(1);
     expect(canvas.queryByTestId('static-component')).not.toBeInTheDocument();
   },
 };
 
 export const ChecksumRecovery: Story = {
   args: {
-    componentUrl: getFingerprintedStoryComponentUrl(
-      checksumFixtures.staleChecksum,
-    ),
+    componentUrl: STALE_COMPONENT_URL,
   },
   render: ({
     onError,
@@ -211,6 +223,7 @@ export const ChecksumRecovery: Story = {
     colorScheme,
   }) => (
     <ChecksumRecoveryHarness
+      isNewerBuildKnownToHost={false}
       onError={onError}
       applicationAccessToken={applicationAccessToken}
       executionContext={executionContext}
@@ -232,6 +245,39 @@ export const ChecksumRecovery: Story = {
     expect(
       await canvas.findByTestId('static-component', {}, { timeout: 30000 }),
     ).toBeVisible();
+    expect(
+      canvas.queryByText(CHECKSUM_MISMATCH_MESSAGE_PATTERN),
+    ).not.toBeInTheDocument();
+  },
+};
+
+export const OutdatedChecksumSilentRecovery: Story = {
+  args: {
+    componentUrl: STALE_COMPONENT_URL,
+  },
+  render: ({
+    onError,
+    applicationAccessToken,
+    executionContext,
+    frontComponentHostCommunicationApi,
+    colorScheme,
+  }) => (
+    <ChecksumRecoveryHarness
+      isNewerBuildKnownToHost
+      onError={onError}
+      applicationAccessToken={applicationAccessToken}
+      executionContext={executionContext}
+      frontComponentHostCommunicationApi={frontComponentHostCommunicationApi}
+      colorScheme={colorScheme}
+    />
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(
+      await canvas.findByTestId('static-component', {}, { timeout: 30000 }),
+    ).toBeVisible();
+    expect(errorHandler).not.toHaveBeenCalled();
     expect(
       canvas.queryByText(CHECKSUM_MISMATCH_MESSAGE_PATTERN),
     ).not.toBeInTheDocument();
