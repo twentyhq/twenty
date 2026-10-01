@@ -15,10 +15,12 @@ import { CoreWorkflowRunnerService } from 'src/modules/workflow/workflow-runner/
 import { WorkflowCoreModule } from 'src/engine/core-modules/workflow/workflow-core.module';
 import { WorkflowVersionCoreModule } from 'src/engine/core-modules/workflow/workflow-version-core.module';
 import { WorkflowExecutionContextModule } from 'src/modules/workflow/workflow-executor/services/workflow-execution-context.module';
+import { ApplicationWorkflowLifecycleModule } from 'src/modules/workflow/application-workflow-lifecycle/application-workflow-lifecycle.module';
 
 @Module({
   imports: [
     ApplicationModule,
+    ApplicationWorkflowLifecycleModule,
     WorkflowCommonModule,
     WorkflowExecutorModule,
     BillingModule,

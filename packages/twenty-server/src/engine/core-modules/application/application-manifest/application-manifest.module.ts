@@ -23,6 +23,7 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
+import { ApplicationWorkflowLifecycleModule } from 'src/modules/workflow/application-workflow-lifecycle/application-workflow-lifecycle.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     ApplicationRegistrationModule,
     ApplicationTranslationModule,
     ApplicationVariableEntityModule,
+    ApplicationWorkflowLifecycleModule,
     FeatureFlagModule,
     FileStorageModule,
     LogicFunctionExecutorModule,

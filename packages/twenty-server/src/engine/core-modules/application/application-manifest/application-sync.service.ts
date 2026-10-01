@@ -38,6 +38,7 @@ import { WorkspaceMigration } from 'src/engine/workspace-manager/workspace-migra
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+import { ApplicationWorkflowLifecycleWorkspaceService } from 'src/modules/workflow/application-workflow-lifecycle/services/application-workflow-lifecycle.workspace-service';
 
 @Injectable()
 export class ApplicationSyncService {
@@ -56,6 +57,7 @@ export class ApplicationSyncService {
     @InjectWorkspaceScopedRepository(FrontComponentEntity)
     private readonly frontComponentRepository: WorkspaceScopedRepository<FrontComponentEntity>,
     private readonly workspaceEventBroadcaster: WorkspaceEventBroadcaster,
+    private readonly applicationWorkflowLifecycleWorkspaceService: ApplicationWorkflowLifecycleWorkspaceService,
   ) {}
 
   public async synchronizeFromManifest({
@@ -455,6 +457,15 @@ export class ApplicationSyncService {
         'Validation errors occurred while uninstalling application',
       );
     }
+
+    await this.applicationWorkflowLifecycleWorkspaceService.stopInProgressRuns({
+      workspaceId,
+      coreWorkflowIds: Object.values(
+        applicationFromAllFlatEntityMaps.flatWorkflowMaps.byUniversalIdentifier,
+      )
+        .filter(isDefined)
+        .map(({ id }) => id),
+    });
 
     await this.applicationService.delete(
       applicationUniversalIdentifier,

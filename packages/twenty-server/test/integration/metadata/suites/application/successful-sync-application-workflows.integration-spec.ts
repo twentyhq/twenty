@@ -338,11 +338,6 @@ describe('application-owned core workflows', () => {
       inferDeletionFromMissingEntities: false,
     });
     expect(additive.errors).toBeUndefined();
-    const removing = await syncApplication({
-      manifest: missingWorkflow,
-      expectToFail: true,
-    });
-    expect(removing.errors).toBeDefined();
     expect(await findDefinitions()).toEqual(updatedDefinitions);
   }, 90000);
 });

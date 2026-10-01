@@ -25,6 +25,7 @@ import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { WorkspaceMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration.type';
+import { ApplicationWorkflowLifecycleWorkspaceService } from 'src/modules/workflow/application-workflow-lifecycle/services/application-workflow-lifecycle.workspace-service';
 
 @Injectable()
 export class ApplicationManifestMigrationService {
@@ -34,6 +35,7 @@ export class ApplicationManifestMigrationService {
     private readonly applicationService: ApplicationService,
     private readonly computeManifestFlatEntityMapsService: ComputeApplicationManifestAllUniversalFlatEntityMapsService,
     private readonly logger: LoggerService,
+    private readonly applicationWorkflowLifecycleWorkspaceService: ApplicationWorkflowLifecycleWorkspaceService,
   ) {}
 
   async syncPreInstallLogicFunctionFromManifest({
@@ -233,9 +235,17 @@ export class ApplicationManifestMigrationService {
       idByUniversalIdentifierByMetadataName,
       isApplicationWorkflowsEnabled:
         featureFlagsMap[FeatureFlagKey.IS_APPLICATION_WORKFLOWS_ENABLED],
-      inferDeletionFromMissingEntities,
       now,
     });
+
+    const { workspaceCustomFlatApplication, twentyStandardFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      );
+
+    const isInstalledApplication =
+      ownerFlatApplication.id !== workspaceCustomFlatApplication.id &&
+      ownerFlatApplication.id !== twentyStandardFlatApplication.id;
 
     const allFlatEntityOperationRecordByMetadataName =
       buildAllFlatEntityOperationRecordByMetadataNameFromFromTo({
@@ -250,6 +260,19 @@ export class ApplicationManifestMigrationService {
             ownerFlatApplication.universalIdentifier,
         },
       });
+
+    if (isInstalledApplication) {
+      await this.applicationWorkflowLifecycleWorkspaceService.assertUpdateKeepsInProgressRunsExecutable(
+        {
+          workspaceId,
+          applicationName: ownerFlatApplication.name,
+          fromAllFlatEntityMaps,
+          flatEntityOperationRecordByMetadataName:
+            allFlatEntityOperationRecordByMetadataName,
+          dryRun,
+        },
+      );
+    }
 
     const validateBuildRunStart = performance.now();
     const validateAndBuildResult =

@@ -9,7 +9,6 @@ import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decora
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
-import { workflowHasRunningSteps } from 'src/modules/workflow/common/utils/workflow-has-running-steps.util';
 import {
   WorkflowVersionStepException,
   WorkflowVersionStepExceptionCode,
@@ -32,7 +31,7 @@ import { type RunWorkflowJobData } from 'src/modules/workflow/workflow-runner/ty
 import { buildRetryStepInfos } from 'src/modules/workflow/workflow-runner/utils/build-retry-step-infos.util';
 import { buildRunWorkflowJobOptions } from 'src/modules/workflow/workflow-runner/utils/build-run-workflow-job-options.util';
 import { getRunnableStepIds } from 'src/modules/workflow/workflow-runner/utils/get-runnable-step-ids.util';
-import { WorkflowThrottlingWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run-queue/workspace-services/workflow-throttling.workspace-service';
+import { WorkflowRunStopWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run-queue/workspace-services/workflow-run-stop.workspace-service';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 import { CoreWorkflowRunnerService } from 'src/modules/workflow/workflow-runner/services/core-workflow-runner.service';
 import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
@@ -44,7 +43,7 @@ export class WorkflowRunnerWorkspaceService {
     @InjectMessageQueue(MessageQueue.workflowQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly workflowVersionStepOperationsWorkspaceService: WorkflowVersionStepOperationsWorkspaceService,
-    private readonly workflowThrottlingWorkspaceService: WorkflowThrottlingWorkspaceService,
+    private readonly workflowRunStopWorkspaceService: WorkflowRunStopWorkspaceService,
     private readonly coreWorkflowRunnerService: CoreWorkflowRunnerService,
     private readonly workflowVersionCoreSyncService: WorkflowVersionCoreSyncService,
     private readonly workflowExecutionContextService: WorkflowExecutionContextService,
@@ -208,80 +207,10 @@ export class WorkflowRunnerWorkspaceService {
   }
 
   async stopWorkflowRun(workspaceId: string, workflowRunId: string) {
-    const workflowRun =
-      await this.workflowRunWorkspaceService.getWorkflowRunOrFail({
-        workflowRunId,
-        workspaceId,
-      });
-
-    const stoppableStatuses = [
-      WorkflowRunStatus.NOT_STARTED,
-      WorkflowRunStatus.ENQUEUED,
-      WorkflowRunStatus.RUNNING,
-    ];
-
-    if (!stoppableStatuses.includes(workflowRun.status)) {
-      return {
-        id: workflowRun.id,
-        status: workflowRun.status,
-      };
-    }
-
-    const wasNotStarted = workflowRun.status === WorkflowRunStatus.NOT_STARTED;
-
-    let newStatus: WorkflowRunStatus;
-
-    if (!isDefined(workflowRun.state)) {
-      await this.workflowRunWorkspaceService.endWorkflowRun({
-        workflowRunId,
-        workspaceId,
-        status: WorkflowRunStatus.STOPPED,
-      });
-      newStatus = WorkflowRunStatus.STOPPED;
-    } else {
-      const stepInfos = workflowRun.state.stepInfos;
-      const steps = workflowRun.state.flow.steps;
-
-      if (workflowHasRunningSteps({ stepInfos, steps })) {
-        const isStopping =
-          await this.workflowRunWorkspaceService.markWorkflowRunAsStopping({
-            workflowRunId,
-            workspaceId,
-          });
-
-        if (isStopping) {
-          newStatus = WorkflowRunStatus.STOPPING;
-        } else {
-          // The run changed before the lock was taken, so report what it is now.
-          const currentWorkflowRun =
-            await this.workflowRunWorkspaceService.getWorkflowRunOrFail({
-              workflowRunId,
-              workspaceId,
-            });
-
-          newStatus = currentWorkflowRun.status;
-        }
-      } else {
-        await this.workflowRunWorkspaceService.endWorkflowRun({
-          workflowRunId,
-          workspaceId,
-          status: WorkflowRunStatus.STOPPED,
-        });
-        newStatus = WorkflowRunStatus.STOPPED;
-      }
-    }
-
-    // Only after the stop is persisted, so a persistence failure can't desync the throttle counter
-    if (wasNotStarted) {
-      await this.workflowThrottlingWorkspaceService.decreaseWorkflowRunNotStartedCount(
-        workspaceId,
-      );
-    }
-
-    return {
-      id: workflowRun.id,
-      status: newStatus,
-    };
+    return this.workflowRunStopWorkspaceService.stopWorkflowRun(
+      workspaceId,
+      workflowRunId,
+    );
   }
 
   async retryWorkflowRun(workspaceId: string, workflowRunId: string) {

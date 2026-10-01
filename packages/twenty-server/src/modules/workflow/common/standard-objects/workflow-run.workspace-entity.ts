@@ -15,6 +15,7 @@ import { type WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standa
 import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executor/types/workflow-action-output.type';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { type WorkflowTrigger } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
+import { type WorkflowRunPinnedDependencies } from 'src/modules/workflow/application-workflow-lifecycle/types/workflow-run-pinned-dependencies.type';
 
 export enum WorkflowRunStatus {
   NOT_STARTED = 'NOT_STARTED',
@@ -52,6 +53,7 @@ export type WorkflowRunState = {
   };
   stepInfos: WorkflowRunStepInfos;
   workflowRunError?: string;
+  pinnedDependencies?: WorkflowRunPinnedDependencies;
 };
 
 export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {

@@ -53,6 +53,8 @@ import { RUN_WORKFLOW_JOB_NAME } from 'src/modules/workflow/workflow-runner/cons
 import { type RunWorkflowJobData } from 'src/modules/workflow/workflow-runner/types/run-workflow-job-data.type';
 import { buildRunWorkflowJobOptions } from 'src/modules/workflow/workflow-runner/utils/build-run-workflow-job-options.util';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
+import { WorkflowRunPinnedDependenciesService } from 'src/modules/workflow/application-workflow-lifecycle/services/workflow-run-pinned-dependencies.service';
+import { type WorkflowRunPinnedDependencies } from 'src/modules/workflow/application-workflow-lifecycle/types/workflow-run-pinned-dependencies.type';
 
 const MAX_EXECUTED_STEPS_COUNT = 20;
 
@@ -73,6 +75,7 @@ export class WorkflowExecutorWorkspaceService {
     private readonly featureFlagService: FeatureFlagService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
     private readonly metricsService: MetricsService,
+    private readonly workflowRunPinnedDependenciesService: WorkflowRunPinnedDependenciesService,
     @InjectMessageQueue(MessageQueue.workflowQueue)
     private readonly messageQueueService: MessageQueueService,
   ) {}
@@ -136,24 +139,6 @@ export class WorkflowExecutorWorkspaceService {
       return;
     }
 
-    const workflow = isDefined(workflowRun.coreWorkflowId)
-      ? await this.workflowCoreSyncService.findCoreWorkflowById(
-          workspaceId,
-          workflowRun.coreWorkflowId,
-        )
-      : null;
-
-    if (!isDefined(workflow)) {
-      throw new Error(
-        `Workflow run ${workflowRun.id} has no core workflow identity for billing`,
-      );
-    }
-
-    const billingSpenders = {
-      workflowId: workflow.workspaceWorkflowId ?? workflow.id,
-      applicationId: workflow.applicationId,
-    };
-
     let actionOutput: WorkflowActionOutput;
 
     // A resumed step was claimed as started, which shouldExecuteStep refuses.
@@ -166,6 +151,24 @@ export class WorkflowExecutorWorkspaceService {
         workflowRunStatus: workflowRun.status,
       })
     ) {
+      const workflow = isDefined(workflowRun.coreWorkflowId)
+        ? await this.workflowCoreSyncService.findCoreWorkflowById(
+            workspaceId,
+            workflowRun.coreWorkflowId,
+          )
+        : null;
+
+      if (!isDefined(workflow)) {
+        throw new Error(
+          `Workflow run ${workflowRun.id} has no core workflow identity for billing`,
+        );
+      }
+
+      const billingSpenders = {
+        workflowId: workflow.workspaceWorkflowId ?? workflow.id,
+        applicationId: workflow.applicationId,
+      };
+
       actionOutput = await this.executeStep({
         step: stepToExecute,
         steps,
@@ -173,6 +176,7 @@ export class WorkflowExecutorWorkspaceService {
         workflowRunId,
         workspaceId,
         billingSpenders,
+        pinnedDependencies: workflowRun.state.pinnedDependencies,
         resumedThreadId,
         previousStepLog: isDefined(resumedThreadId)
           ? workflowRun.stepLogs?.[stepId]
@@ -211,6 +215,15 @@ export class WorkflowExecutorWorkspaceService {
           actionOutput.shouldFailSafely = true;
         }
       }
+
+      // A resumed step's node run was charged when it first ran and paused.
+      if (
+        !isDefined(actionOutput.error) &&
+        !actionOutput.shouldFailSafely &&
+        !isDefined(resumedThreadId)
+      ) {
+        await this.sendWorkflowNodeRunEvent(workspaceId, billingSpenders);
+      }
     } else if (
       shouldFailSafely({
         step: stepToExecute,
@@ -233,19 +246,6 @@ export class WorkflowExecutorWorkspaceService {
       };
     } else {
       return;
-    }
-
-    const isError =
-      isDefined(actionOutput.error) && !actionOutput.shouldFailSafely;
-
-    // A resumed step's node run was charged when it first ran and paused.
-    if (
-      !isError &&
-      !actionOutput.shouldFailSafely &&
-      !actionOutput.shouldSkipStepExecution &&
-      !isDefined(resumedThreadId)
-    ) {
-      await this.sendWorkflowNodeRunEvent(workspaceId, billingSpenders);
     }
 
     const { shouldProcessNextSteps } = await this.processStepExecutionResult({
@@ -519,6 +519,7 @@ export class WorkflowExecutorWorkspaceService {
     workflowRunId,
     workspaceId,
     billingSpenders,
+    pinnedDependencies,
     resumedThreadId,
     previousStepLog,
   }: {
@@ -528,6 +529,7 @@ export class WorkflowExecutorWorkspaceService {
     workflowRunId: string;
     workspaceId: string;
     billingSpenders: WorkflowBillingSpenders;
+    pinnedDependencies?: WorkflowRunPinnedDependencies;
     resumedThreadId?: string;
     previousStepLog?: WorkflowRunStepLog;
   }) {
@@ -554,6 +556,10 @@ export class WorkflowExecutorWorkspaceService {
       if (isDefined(nodeRunRefusal)) {
         return nodeRunRefusal;
       }
+
+      await this.workflowRunPinnedDependenciesService.assertStepDependenciesUnchanged(
+        { workspaceId, step, pinnedDependencies },
+      );
 
       return await workflowAction.execute({
         currentStepId: stepId,

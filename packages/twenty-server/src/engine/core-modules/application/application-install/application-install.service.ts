@@ -9,7 +9,7 @@ import {
   Manifest,
 } from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { buildApplicationFileList } from 'src/engine/core-modules/application/application-install/utils/build-application-file-list.util';
@@ -353,6 +353,22 @@ export class ApplicationInstallService {
             ],
           );
         }
+      }
+
+      if (
+        isVersionUpgrade &&
+        (await this.hasApplicationWorkflows({
+          manifest: resolvedPackage.manifest,
+          applicationId: application.id,
+          workspaceId: params.workspaceId,
+        }))
+      ) {
+        await this.applicationSyncService.synchronizeFromManifest({
+          workspaceId: params.workspaceId,
+          manifest: resolvedPackage.manifest,
+          applicationRegistrationId: appRegistration.id,
+          dryRun: true,
+        });
       }
 
       if (isVersionUpgrade && shouldApplyApprovedCapabilities) {
@@ -705,6 +721,29 @@ export class ApplicationInstallService {
     }
 
     return absolutePath;
+  }
+
+  private async hasApplicationWorkflows({
+    manifest,
+    applicationId,
+    workspaceId,
+  }: {
+    manifest: Manifest;
+    applicationId: string;
+    workspaceId: string;
+  }): Promise<boolean> {
+    if (isNonEmptyArray(manifest.workflows)) {
+      return true;
+    }
+
+    const { flatWorkflowMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatWorkflowMaps',
+      ]);
+
+    return Object.values(flatWorkflowMaps.byUniversalIdentifier).some(
+      (flatWorkflow) => flatWorkflow?.applicationId === applicationId,
+    );
   }
 
   private async writeFilesToStorage(

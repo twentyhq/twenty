@@ -12,6 +12,7 @@ export enum WorkflowStepExecutorExceptionCode {
   STEP_NOT_FOUND = 'STEP_NOT_FOUND',
   FORBIDDEN = 'FORBIDDEN',
   INTERNAL_ERROR = 'INTERNAL_ERROR',
+  EXECUTION_DEPENDENCY_CHANGED = 'EXECUTION_DEPENDENCY_CHANGED',
 }
 
 const getWorkflowStepExecutorExceptionUserFriendlyMessage = (
@@ -30,6 +31,8 @@ const getWorkflowStepExecutorExceptionUserFriendlyMessage = (
       return msg`This workflow step is not allowed with the permissions of the workflow.`;
     case WorkflowStepExecutorExceptionCode.INTERNAL_ERROR:
       return STANDARD_ERROR_MESSAGE;
+    case WorkflowStepExecutorExceptionCode.EXECUTION_DEPENDENCY_CHANGED:
+      return msg`The application changed what this step runs after the run started. Start a new run.`;
     default:
       assertUnreachable(code);
   }

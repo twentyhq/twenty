@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { type ActorMetadata } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import isEqual from 'lodash.isequal';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
@@ -12,6 +13,10 @@ import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service'
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { WorkflowCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-core-sync.service';
 import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
+import { type WorkflowVersionEntity } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
+import { WorkflowRunPinnedDependenciesService } from 'src/modules/workflow/application-workflow-lifecycle/services/workflow-run-pinned-dependencies.service';
+import { type WorkflowRunPinnedDependencies } from 'src/modules/workflow/application-workflow-lifecycle/types/workflow-run-pinned-dependencies.type';
+import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { buildWorkflowRunCreatedBy } from 'src/modules/workflow/workflow-executor/utils/build-workflow-run-created-by.util';
 import {
@@ -41,6 +46,7 @@ export class CoreWorkflowRunnerService {
     private readonly workflowThrottlingWorkspaceService: WorkflowThrottlingWorkspaceService,
     private readonly metricsService: MetricsService,
     private readonly applicationService: ApplicationService,
+    private readonly workflowRunPinnedDependenciesService: WorkflowRunPinnedDependenciesService,
     @InjectMessageQueue(MessageQueue.workflowQueue)
     private readonly messageQueueService: MessageQueueService,
   ) {}
@@ -102,6 +108,26 @@ export class CoreWorkflowRunnerService {
       );
     }
 
+    const { workspaceCustomFlatApplication, twentyStandardFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      );
+
+    const isApplicationWorkflow =
+      workflow.applicationId !== workspaceCustomFlatApplication.id &&
+      workflow.applicationId !== twentyStandardFlatApplication.id;
+
+    const pinnedDependencies = isApplicationWorkflow
+      ? await this.pinApplicationWorkflowDependencies({
+          workspaceId,
+          workflowVersion: {
+            id: workflowVersion.id,
+            steps: workflowVersion.steps,
+            triggers: workflowVersion.triggers,
+          },
+        })
+      : undefined;
+
     const subscriptionInactiveReason =
       await this.billingUsageService.getSubscriptionInactiveReason(workspaceId);
 
@@ -119,10 +145,6 @@ export class CoreWorkflowRunnerService {
       : isManualTrigger
         ? WorkflowRunStatus.ENQUEUED
         : WorkflowRunStatus.NOT_STARTED;
-    const { workspaceCustomFlatApplication, twentyStandardFlatApplication } =
-      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
-        { workspaceId },
-      );
     const createdBy = buildWorkflowRunCreatedBy({
       source,
       workflowApplicationId: workflow.applicationId,
@@ -145,6 +167,7 @@ export class CoreWorkflowRunnerService {
         status,
         triggerPayload: payload,
         error: isHardThrottled ? 'Throttle limit reached' : undefined,
+        pinnedDependencies,
         workspaceId,
       });
 
@@ -169,6 +192,41 @@ export class CoreWorkflowRunnerService {
     }
 
     return { workflowRunId: createdWorkflowRunId };
+  }
+
+  private async pinApplicationWorkflowDependencies({
+    workspaceId,
+    workflowVersion,
+  }: {
+    workspaceId: string;
+    workflowVersion: Pick<WorkflowVersionEntity, 'id' | 'triggers'> & {
+      steps: WorkflowAction[];
+    };
+  }): Promise<WorkflowRunPinnedDependencies> {
+    const pinnedDependencies =
+      await this.workflowRunPinnedDependenciesService.pinDependencies({
+        workspaceId,
+        steps: workflowVersion.steps,
+      });
+
+    const currentWorkflowVersion =
+      await this.workflowVersionCoreSyncService.findCoreVersionById(
+        workspaceId,
+        workflowVersion.id,
+      );
+
+    if (
+      !isDefined(currentWorkflowVersion) ||
+      !isEqual(currentWorkflowVersion.steps, workflowVersion.steps) ||
+      !isEqual(currentWorkflowVersion.triggers, workflowVersion.triggers)
+    ) {
+      throw new WorkflowRunException(
+        'The application updated this workflow while the run was starting. Start the run again.',
+        WorkflowRunExceptionCode.WORKFLOW_RUN_INVALID,
+      );
+    }
+
+    return pinnedDependencies;
   }
 
   private async checkHardThrottleLimit(workspaceId: string): Promise<boolean> {
