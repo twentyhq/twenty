@@ -72,6 +72,7 @@ const buildResolver = () => {
     {} as never,
     sharing as never,
     recordEvents as never,
+    {} as never,
   );
   const streaming = {
     streamAgentChat: jest

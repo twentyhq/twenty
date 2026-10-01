@@ -431,6 +431,30 @@ export const buildAgentChatThreadStandardFlatFieldMetadatas = (
     writability: MetadataWritability.SYSTEM,
     isAuditLogged: false,
   },
+  lastActivityAt: {
+    ...createStandardFieldFlatMetadata({
+      ...args,
+      context: {
+        fieldName: 'lastActivityAt',
+        type: FieldMetadataType.DATE_TIME,
+        label: i18nLabel(
+          msg({ message: 'Last activity', context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: 'When the thread was created or last received a message',
+            context: 'fieldMetadata.description',
+          }),
+        ),
+        icon: 'IconCalendarClock',
+        isSystem: true,
+        isUIEditable: false,
+        isNullable: true,
+      },
+    }),
+    writability: MetadataWritability.SYSTEM,
+    isAuditLogged: false,
+  },
   createdAt: {
     ...createStandardFieldFlatMetadata({
       ...args,
@@ -645,6 +669,36 @@ export const buildAgentChatThreadStandardFlatFieldMetadatas = (
         isUIEditable: false,
         isNullable: true,
         targetObjectName: 'agentChatThreadTarget',
+        targetFieldName: 'thread',
+        morphId: null,
+        settings: {
+          relationType: RelationType.ONE_TO_MANY,
+          joinColumnName: null,
+        },
+      },
+    }),
+    writability: MetadataWritability.SYSTEM,
+    isAuditLogged: false,
+  },
+  participants: {
+    ...createStandardRelationFieldFlatMetadata({
+      ...args,
+      context: {
+        fieldName: 'participants',
+        type: FieldMetadataType.RELATION,
+        label: i18nLabel(
+          msg({ message: 'Participants', context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: 'Read and inbox state of each member in this thread',
+            context: 'fieldMetadata.description',
+          }),
+        ),
+        icon: 'IconUsers',
+        isUIEditable: false,
+        isNullable: true,
+        targetObjectName: 'agentChatThreadParticipant',
         targetFieldName: 'thread',
         morphId: null,
         settings: {

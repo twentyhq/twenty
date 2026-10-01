@@ -2,6 +2,7 @@ import { lockAgentChatThread } from 'src/engine/metadata-modules/ai/ai-chat/util
 import { type AgentHistoryStorageContext } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-workspace-storage.service';
 import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
 import { randomUUID } from 'node:crypto';
+import { getAgentChatThreadParticipantTable } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-agent-chat-thread-participant-table.util';
 import { backfillWorkspaceChatThreadOwnerGrants } from 'src/engine/metadata-modules/ai/ai-chat/utils/backfill-workspace-chat-thread-owner-grants.util';
 import { Injectable } from '@nestjs/common';
 
@@ -127,8 +128,8 @@ export class AgentChatSharingService {
       args.workspaceId,
       async ({ manager, table }) => {
         const records = await manager.query<AgentChatThreadWorkspaceEntity[]>(
-          `INSERT INTO ${table('agentChatThread')} (id, title, "workspaceMemberId", "userWorkspaceId")
-         VALUES ($1, $2, $3, $4) RETURNING *`,
+          `INSERT INTO ${table('agentChatThread')} (id, title, "workspaceMemberId", "userWorkspaceId", "lastActivityAt")
+         VALUES ($1, $2, $3, $4, clock_timestamp()) RETURNING *`,
           [
             args.id ?? randomUUID(),
             args.title ?? null,
@@ -155,6 +156,11 @@ export class AgentChatSharingService {
             AiExceptionCode.THREAD_NOT_FOUND,
           );
         }
+        await manager.query(
+          `INSERT INTO ${getAgentChatThreadParticipantTable(args.workspaceId)} ("threadId", "workspaceMemberId", "lastReadAt")
+           VALUES ($1, $2, $3)`,
+          [record.id, authContext.workspaceMemberId, record.lastActivityAt],
+        );
         return record;
       },
     );

@@ -40,7 +40,8 @@ export const updateAgentChatThreadUsage = async ({
         "totalCacheReadTokens" = "totalCacheReadTokens" + $7,
         "totalCacheCreationTokens" = "totalCacheCreationTokens" + $8,
         "contextWindowTokens" = $9, "conversationSize" = $10,
-        "pendingQuestionMessageId" = $11, "lastStreamError" = NULL, "updatedAt" = now()
+        "pendingQuestionMessageId" = $11, "lastStreamError" = NULL,
+        "lastActivityAt" = clock_timestamp(), "updatedAt" = now()
       WHERE id = $1 AND "activeStreamId" = $2
       RETURNING id
     ) SELECT id FROM updated`,

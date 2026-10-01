@@ -1,6 +1,7 @@
 import { workspaceAuthContextStorage } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
+import { AgentChatThreadParticipantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant.service';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { Injectable, Logger } from '@nestjs/common';
@@ -53,6 +54,7 @@ export class AgentChatService {
     private readonly titleGenerationService: AgentTitleGenerationService,
     private readonly sharingService: AgentChatSharingService,
     private readonly threadRecordEventService: AgentChatThreadRecordEventService,
+    private readonly participantService: AgentChatThreadParticipantService,
   ) {}
 
   async createThread({
@@ -751,15 +753,20 @@ export class AgentChatService {
       workspaceId,
     });
 
-    const threadAfter = { ...thread, updatedAt: new Date().toISOString() };
-
-    // Conversations are listed by most recent change, so a message moves its
+    // Conversations are listed by last activity, so a message moves its
     // conversation to the top when it is sent, not only once the turn ends.
-    await this.threadRepository.update(
-      workspaceId,
-      { id: threadId },
-      { updatedAt: threadAfter.updatedAt },
-    );
+    const { lastActivityAt, updatedAt } =
+      await this.participantService.recordMemberActivity({
+        threadId,
+        workspaceMemberId,
+        workspaceId,
+      });
+
+    const threadAfter = {
+      ...thread,
+      lastActivityAt: lastActivityAt.toISOString(),
+      updatedAt: updatedAt.toISOString(),
+    };
 
     await this.threadRecordEventService.emitThreadUpdated({
       workspaceId,

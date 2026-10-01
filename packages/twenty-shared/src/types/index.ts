@@ -9,6 +9,11 @@
 
 export type { AllowedAddressSubField } from './AddressFieldsType';
 export { ALLOWED_ADDRESS_SUBFIELDS } from './AddressFieldsType';
+export type {
+  AgentChatThreadInboxScope,
+  AgentChatThreadParticipantState,
+  AgentChatThreadInboxState,
+} from './AgentChatThreadInboxState';
 export { AggregateOperations } from './AggregateOperations';
 export type { AllowedFullNameSortSubField } from './AllowedFullNameSortSubField';
 export { ApiPath } from './ApiPath';

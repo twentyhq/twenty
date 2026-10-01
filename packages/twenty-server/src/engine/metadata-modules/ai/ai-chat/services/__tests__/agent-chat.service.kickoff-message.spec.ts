@@ -38,6 +38,7 @@ const buildService = ({ existingHiddenMessage = null as unknown } = {}) => {
       getReadableThread: jest.fn().mockResolvedValue({ id: THREAD_ID }),
     } as never,
     {} as never,
+    {} as never,
   );
 
   return { service, messageRepository, turnRepository, messagePartRepository };
