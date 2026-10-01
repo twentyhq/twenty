@@ -10,7 +10,7 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
-import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { type RawAuthContext } from 'src/engine/core-modules/auth/types/raw-auth-context.type';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.service';
@@ -103,7 +103,7 @@ export class ImpersonationService {
     workspaceId,
     request,
   }: {
-    impersonationContext: AuthContext['impersonationContext'];
+    impersonationContext: RawAuthContext['impersonationContext'];
     workspaceId: string;
     request: Request;
   }): Promise<{ canRestoreImpersonatorSession: boolean }> {

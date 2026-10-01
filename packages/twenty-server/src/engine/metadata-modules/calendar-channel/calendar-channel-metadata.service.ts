@@ -170,33 +170,45 @@ export class CalendarChannelMetadataService {
     workspaceId: string;
     data: Partial<CalendarChannelEntity>;
   }): Promise<CalendarChannelDTO> {
-    const previousCalendarChannel = isDefined(data.visibility)
-      ? await this.repository.findOne({ where: { id, workspaceId } })
-      : null;
-
-    await this.repository.update(
-      { id, workspaceId },
-      data as Record<string, unknown>,
-    );
-
-    if (
-      isDefined(previousCalendarChannel) &&
-      isDefined(data.visibility) &&
-      data.visibility !== previousCalendarChannel.visibility
-    ) {
-      await this.channelRecordShareService.syncChannelRecordSharesAfterVisibilityChange(
-        {
-          workspaceId,
-          source: CALENDAR_EVENT_CHANNEL_RECORD_SHARE_SOURCE,
-          channelId: id,
-          revertVisibilityChange: () =>
-            this.repository.update(
-              { id, workspaceId },
-              { visibility: previousCalendarChannel.visibility },
-            ),
-        },
+    if (!isDefined(data.visibility)) {
+      await this.repository.update(
+        { id, workspaceId },
+        data as Record<string, unknown>,
       );
+
+      return this.repository.findOneOrFail({ where: { id, workspaceId } });
     }
+
+    const visibility = data.visibility;
+
+    await this.channelRecordShareService.changeChannelVisibility({
+      workspaceId,
+      source: CALENDAR_EVENT_CHANNEL_RECORD_SHARE_SOURCE,
+      channelId: id,
+      applyVisibilityChange: async () => {
+        const previousCalendarChannel = await this.repository.findOne({
+          where: { id, workspaceId },
+        });
+
+        await this.repository.update(
+          { id, workspaceId },
+          data as Record<string, unknown>,
+        );
+
+        if (
+          !isDefined(previousCalendarChannel) ||
+          previousCalendarChannel.visibility === visibility
+        ) {
+          return undefined;
+        }
+
+        return () =>
+          this.repository.update(
+            { id, workspaceId },
+            { visibility: previousCalendarChannel.visibility },
+          );
+      },
+    });
 
     return this.repository.findOneOrFail({ where: { id, workspaceId } });
   }
