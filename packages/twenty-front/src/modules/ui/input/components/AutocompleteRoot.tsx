@@ -1,4 +1,5 @@
-import { createElement } from 'react';
+import { type ReactNode } from 'react';
+import { isNonEmptyArray } from 'twenty-shared/utils';
 import {
   type AutocompleteRootProps as AutocompletePrimitiveRootProps,
   Autocomplete,
@@ -12,29 +13,32 @@ import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDrop
 import { type GlobalHotkeysConfig } from '@/ui/utilities/hotkey/types/GlobalHotkeysConfig';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
-type AutocompletePrimitiveProps<TItem> = Omit<
-  AutocompletePrimitiveRootProps<TItem>,
-  'items'
-> & {
-  items?: readonly TItem[];
-};
-
-type AutocompleteRootProps<TItem> = Omit<
-  AutocompletePrimitiveProps<TItem>,
-  'open' | 'defaultOpen'
-> & {
+type AutocompleteRootProps<TItem> = {
+  children: ReactNode;
   dropdownId: string;
+  items: readonly TItem[];
+  value: string;
+  onValueChange: (value: string) => void;
+  itemToStringValue?: (item: TItem) => string;
   enabled?: boolean;
+  openOnValueChange?: boolean;
+  onClose?: () => void;
+  onItemHighlightedByUser?: (item: TItem | undefined) => void;
   globalHotkeysConfig?: Partial<GlobalHotkeysConfig>;
 };
 
 export const AutocompleteRoot = <TItem,>({
   children,
   dropdownId,
+  items,
+  value,
+  onValueChange,
+  itemToStringValue,
   enabled = true,
+  openOnValueChange = true,
+  onClose,
+  onItemHighlightedByUser,
   globalHotkeysConfig,
-  onOpenChange,
-  ...props
 }: AutocompleteRootProps<TItem>) => {
   const isDropdownOpen = useAtomComponentStateValue(
     isDropdownOpenComponentState,
@@ -43,49 +47,65 @@ export const AutocompleteRoot = <TItem,>({
   const { openDropdown } = useOpenDropdown();
   const { closeDropdown } = useCloseDropdown();
 
-  const handleOpenChange: NonNullable<
-    AutocompletePrimitiveRootProps<TItem>['onOpenChange']
-  > = (open, details) => {
-    if (!enabled) {
-      details.cancel();
-      return;
-    }
+  const handleValueChange: AutocompletePrimitiveRootProps<TItem>['onValueChange'] =
+    (nextValue, details) => {
+      if (details.reason === 'item-press' || details.reason === 'escape-key') {
+        return;
+      }
 
-    onOpenChange?.(open, details);
+      onValueChange(nextValue);
+    };
 
-    if (details.isCanceled) {
-      return;
-    }
+  const handleOpenChange: AutocompletePrimitiveRootProps<TItem>['onOpenChange'] =
+    (open, details) => {
+      const isOpeningOnValueChange =
+        details.reason === 'input-change' && !openOnValueChange;
+      const isOpeningEmptyList =
+        details.reason === 'list-navigation' && !isNonEmptyArray(items);
 
-    if (!open) {
-      closeDropdown(dropdownId);
-      return;
-    }
+      if (
+        !enabled ||
+        (open && (isOpeningOnValueChange || isOpeningEmptyList))
+      ) {
+        details.cancel();
+        return;
+      }
 
-    if (isDropdownOpen) {
-      return;
-    }
+      if (!open) {
+        closeDropdown(dropdownId);
+        onClose?.();
+        return;
+      }
 
-    openDropdown({
-      dropdownComponentInstanceIdFromProps: dropdownId,
-      globalHotkeysConfig,
-    });
-  };
+      openDropdown({
+        dropdownComponentInstanceIdFromProps: dropdownId,
+        globalHotkeysConfig,
+      });
+    };
+
+  const handleItemHighlighted: AutocompletePrimitiveRootProps<TItem>['onItemHighlighted'] =
+    (item, details) => {
+      onItemHighlightedByUser?.(details.reason === 'none' ? undefined : item);
+    };
 
   return (
     <DropdownComponentInstanceContext.Provider
       value={{ instanceId: dropdownId }}
     >
-      {createElement<AutocompletePrimitiveProps<TItem>>(
-        Autocomplete.Root,
-        {
-          ...props,
-          open: enabled && isDropdownOpen,
-          onOpenChange: handleOpenChange,
-        },
-        <DropdownCleanupEffect dropdownId={dropdownId} />,
-        children,
-      )}
+      <Autocomplete.Root<TItem>
+        items={items}
+        filter={null}
+        autoHighlight="always"
+        value={value}
+        open={enabled && isDropdownOpen}
+        itemToStringValue={itemToStringValue}
+        onValueChange={handleValueChange}
+        onOpenChange={handleOpenChange}
+        onItemHighlighted={handleItemHighlighted}
+      >
+        <DropdownCleanupEffect dropdownId={dropdownId} />
+        {children}
+      </Autocomplete.Root>
     </DropdownComponentInstanceContext.Provider>
   );
 };

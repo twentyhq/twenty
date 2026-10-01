@@ -34,15 +34,16 @@ export const useAddressAutocomplete = (
       placeId,
       token,
       addressStreet1,
-      internalValue,
+      getInternalValue,
     }: {
       placeId: string;
       token: string;
       addressStreet1?: string;
-      internalValue?: FieldAddressDraftValue;
+      getInternalValue?: () => FieldAddressDraftValue;
     }) => {
       const placeData = await getPlaceDetailsData(placeId, token);
       const countryName = findCountryNameByCountryCode(placeData?.country);
+      const internalValue = getInternalValue?.();
 
       const updatedAddress = {
         addressStreet1:

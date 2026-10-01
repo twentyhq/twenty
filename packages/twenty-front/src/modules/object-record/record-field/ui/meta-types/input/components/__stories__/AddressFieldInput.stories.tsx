@@ -126,6 +126,7 @@ const escapeJestfn = fn();
 const clickOutsideJestFn = fn();
 const tabJestFn = fn();
 const shiftTabJestFn = fn();
+const autocompleteResponseJestFn = fn();
 
 const clearMocksDecorator: Decorator = (Story, context) => {
   if (context.parameters.clearMocks === true) {
@@ -134,6 +135,7 @@ const clearMocksDecorator: Decorator = (Story, context) => {
     clickOutsideJestFn.mockClear();
     tabJestFn.mockClear();
     shiftTabJestFn.mockClear();
+    autocompleteResponseJestFn.mockClear();
   }
   return <Story />;
 };
@@ -171,8 +173,14 @@ const meta: Meta = {
     mockingDate: null,
     msw: {
       handlers: [
-        graphql.query('GetAutoCompleteAddress', ({ variables }) =>
-          HttpResponse.json({
+        graphql.query('GetAutoCompleteAddress', ({ variables }) => {
+          autocompleteResponseJestFn(variables.address);
+
+          if (variables.address.includes('Nowhere')) {
+            return HttpResponse.json({ data: { getAutoCompleteAddress: [] } });
+          }
+
+          return HttpResponse.json({
             data: {
               getAutoCompleteAddress: [
                 {
@@ -183,8 +191,8 @@ const meta: Meta = {
                 },
               ],
             },
-          }),
-        ),
+          });
+        }),
         graphql.query('GetAddressDetails', ({ variables }) =>
           HttpResponse.json({
             data: {
@@ -329,6 +337,35 @@ export const CancelsSuggestionsBeforePersisting: Story = {
         }),
       );
     });
+  },
+};
+
+export const IgnoresArrowKeysWithoutSuggestions: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const screen = within(canvasElement.ownerDocument.body);
+    const input = canvas.getByRole('combobox', { name: 'Address 1' });
+
+    await userEvent.type(input, ' Nowhere');
+    await waitFor(() =>
+      expect(autocompleteResponseJestFn).toHaveBeenCalledWith(
+        'Address 1 Nowhere',
+      ),
+    );
+    await userEvent.keyboard('{ArrowDown}');
+
+    expect(input).toHaveAttribute('aria-expanded', 'false');
+    expect(screen.queryByRole('listbox')).not.toBeInTheDocument();
+
+    await userEvent.keyboard('{Escape}');
+
+    await waitFor(() =>
+      expect(escapeJestfn).toHaveBeenCalledWith({
+        newValue: expect.objectContaining({
+          addressStreet1: 'Address 1 Nowhere',
+        }),
+      }),
+    );
   },
 };
 

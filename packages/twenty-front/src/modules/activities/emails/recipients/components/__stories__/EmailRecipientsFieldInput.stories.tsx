@@ -210,6 +210,8 @@ export const ChipMenusReturnFocusToTheInput: Story = {
     expect(
       await screen.findByRole('menuitem', { name: 'Add as person' }),
     ).toBeVisible();
+    expect(input).toHaveFocus();
+    expect(input).toHaveValue('jeff');
     expect(screen.getByRole('menuitem', { name: 'Edit' })).toBeVisible();
     expect(screen.getByRole('menuitem', { name: 'Remove' })).toBeVisible();
     await userEvent.click(screen.getByRole('menuitem', { name: 'Copy email' }));

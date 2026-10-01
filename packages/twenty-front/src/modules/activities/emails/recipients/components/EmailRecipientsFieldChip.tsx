@@ -97,7 +97,12 @@ export const EmailRecipientsFieldChip = ({
           removeAriaLabel={t`Remove ${recipient.address}`}
         />
       </Dropdown.Trigger>
-      <DropdownContent align="start" width={280} finalFocus={inputRef}>
+      <DropdownContent
+        align="start"
+        width={280}
+        initialFocus={false}
+        finalFocus={inputRef}
+      >
         <EmailRecipientChipMenuContent
           recipient={recipient}
           resolution={resolution}

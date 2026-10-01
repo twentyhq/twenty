@@ -151,6 +151,10 @@ export const DismissesWithoutSelecting: Story = {
       expect(input).toHaveValue('London');
       expect(input).toHaveFocus();
     });
+    await userEvent.keyboard('{ArrowDown}');
+
+    expect(input).toHaveAttribute('aria-expanded', 'false');
+    expect(screen.queryByRole('listbox')).not.toBeInTheDocument();
 
     await userEvent.type(input, ' UK');
     await screen.findByRole(

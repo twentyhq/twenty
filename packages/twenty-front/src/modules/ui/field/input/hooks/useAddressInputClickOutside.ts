@@ -2,6 +2,7 @@ import { atom, useStore } from 'jotai';
 import { type RefObject, useEffect, useState } from 'react';
 
 import { SELECT_AUTOCOMPLETE_LIST_DROPDOWN_ID } from '@/geo-map/constants/SelectAutocompleteListDropDownId';
+import { isClickFromPointerDown } from '@/ui/field/input/utils/isClickFromPointerDown';
 import { SELECT_COUNTRY_DROPDOWN_ID } from '@/ui/input/components/internal/country/constants/SelectCountryDropdownId';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
@@ -59,8 +60,11 @@ export const useAddressInputClickOutside = ({
     callback: (event) => {
       const pointerDown = store.get(pointerDownAtom);
       const wasDropdownOpenOnPointerDown =
-        pointerDown?.target === event.target &&
-        pointerDown?.wasDropdownOpen === true;
+        pointerDown?.wasDropdownOpen === true &&
+        isClickFromPointerDown({
+          clickTarget: event.target,
+          pointerDownTarget: pointerDown.target,
+        });
       store.set(pointerDownAtom, null);
 
       const isDropdownOpen = ADDRESS_DROPDOWN_IDS.some((dropdownId) =>

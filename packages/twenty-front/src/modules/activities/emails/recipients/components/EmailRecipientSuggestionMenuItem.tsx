@@ -14,7 +14,7 @@ export const EmailRecipientSuggestionMenuItem = ({
   onPick,
 }: EmailRecipientSuggestionMenuItemProps) => (
   <Autocomplete.Item
-    value={suggestion}
+    value={suggestion.suggestionId}
     onClick={() => onPick(suggestion)}
     description={suggestion.secondaryText}
     startIcon={

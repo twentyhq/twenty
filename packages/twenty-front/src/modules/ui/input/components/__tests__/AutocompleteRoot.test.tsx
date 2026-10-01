@@ -1,11 +1,14 @@
+import { AutocompleteContent } from '@/ui/input/components/AutocompleteContent';
 import { AutocompleteRoot } from '@/ui/input/components/AutocompleteRoot';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { focusStackState } from '@/ui/utilities/focus/states/focusStackState';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
+import { ParentClickOutsideIdContext } from '@/ui/utilities/pointer-event/contexts/ParentClickOutsideIdContext';
 import {
   act,
+  fireEvent,
   render,
   renderHook,
   screen,
@@ -13,40 +16,54 @@ import {
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { createStore, Provider as JotaiProvider } from 'jotai';
-import { StrictMode } from 'react';
+import { StrictMode, useState } from 'react';
 import { Autocomplete } from 'twenty-ui/primitives/input';
 
 const OPTIONS = ['Paris', 'London'];
 const DROPDOWN_ID = 'autocomplete';
 
+type AutocompleteExampleProps = {
+  enabled?: boolean;
+  label?: string;
+  items?: string[];
+  openOnValueChange?: boolean;
+  onItemHighlightedByUser?: (item: string | undefined) => void;
+};
+
 const AutocompleteExample = ({
   enabled = true,
   label = 'City',
-}: {
-  enabled?: boolean;
-  label?: string;
-}) => (
-  <AutocompleteRoot
-    dropdownId={DROPDOWN_ID}
-    enabled={enabled}
-    items={OPTIONS}
-    filter={null}
-    autoHighlight="always"
-  >
-    <Autocomplete.InputGroup>
-      <Autocomplete.Input aria-label={label} />
-    </Autocomplete.InputGroup>
-    <Autocomplete.Popup>
-      <Autocomplete.List>
-        {(option: string) => (
-          <Autocomplete.Item key={option} value={option}>
-            {option}
-          </Autocomplete.Item>
-        )}
-      </Autocomplete.List>
-    </Autocomplete.Popup>
-  </AutocompleteRoot>
-);
+  items = OPTIONS,
+  openOnValueChange,
+  onItemHighlightedByUser,
+}: AutocompleteExampleProps) => {
+  const [value, setValue] = useState('');
+
+  return (
+    <AutocompleteRoot
+      dropdownId={DROPDOWN_ID}
+      enabled={enabled}
+      items={items}
+      value={value}
+      openOnValueChange={openOnValueChange}
+      onValueChange={setValue}
+      onItemHighlightedByUser={onItemHighlightedByUser}
+    >
+      <Autocomplete.InputGroup>
+        <Autocomplete.Input aria-label={label} />
+      </Autocomplete.InputGroup>
+      <AutocompleteContent>
+        <Autocomplete.List>
+          {items.map((option) => (
+            <Autocomplete.Item key={option} value={option}>
+              {option}
+            </Autocomplete.Item>
+          ))}
+        </Autocomplete.List>
+      </AutocompleteContent>
+    </AutocompleteRoot>
+  );
+};
 
 describe('AutocompleteRoot', () => {
   it('keeps input focus while navigating and restores the focus stack on Escape', async () => {
@@ -81,40 +98,75 @@ describe('AutocompleteRoot', () => {
       expect(screen.queryByRole('listbox')).not.toBeInTheDocument(),
     );
     expect(input).toHaveFocus();
+    expect(input).toHaveValue('Pa');
     expect(store.get(focusStackState.atom)).toEqual([]);
   });
 
-  it('allows consumers to wait for results before opening without pushing focus', async () => {
+  it('waits for results before opening when openOnValueChange is false', async () => {
     const user = userEvent.setup();
     const store = createStore();
+
     render(
       <JotaiProvider store={store}>
-        <AutocompleteRoot
-          dropdownId={DROPDOWN_ID}
-          items={OPTIONS}
-          onOpenChange={(open, details) => {
-            if (open && details.reason === 'input-change') {
-              details.cancel();
-            }
-          }}
-        >
-          <Autocomplete.Input aria-label="City" />
-          <Autocomplete.Popup>
-            <Autocomplete.List>
-              {(option: string) => (
-                <Autocomplete.Item key={option} value={option}>
-                  {option}
-                </Autocomplete.Item>
-              )}
-            </Autocomplete.List>
-          </Autocomplete.Popup>
-        </AutocompleteRoot>
+        <AutocompleteExample openOnValueChange={false} />
       </JotaiProvider>,
     );
 
     await user.type(screen.getByRole('combobox'), 'Pa');
+
     expect(screen.queryByRole('listbox')).not.toBeInTheDocument();
     expect(store.get(focusStackState.atom)).toEqual([]);
+  });
+
+  it('does not open an empty list from the arrow keys', async () => {
+    const user = userEvent.setup();
+    const store = createStore();
+
+    render(
+      <JotaiProvider store={store}>
+        <AutocompleteExample items={[]} />
+      </JotaiProvider>,
+    );
+
+    await user.click(screen.getByRole('combobox'));
+    await user.keyboard('{ArrowDown}');
+
+    expect(screen.getByRole('combobox')).toHaveAttribute(
+      'aria-expanded',
+      'false',
+    );
+    expect(store.get(focusStackState.atom)).toEqual([]);
+  });
+
+  it('keeps the highlighted item when the same items are passed again', async () => {
+    const user = userEvent.setup();
+    const store = createStore();
+    const onItemHighlightedByUser = jest.fn();
+
+    const { rerender } = render(
+      <JotaiProvider store={store}>
+        <AutocompleteExample
+          items={[...OPTIONS]}
+          onItemHighlightedByUser={onItemHighlightedByUser}
+        />
+      </JotaiProvider>,
+    );
+
+    await user.type(screen.getByRole('combobox'), 'Pa');
+    await user.keyboard('{ArrowDown}');
+
+    expect(onItemHighlightedByUser).toHaveBeenLastCalledWith('London');
+
+    rerender(
+      <JotaiProvider store={store}>
+        <AutocompleteExample
+          items={[...OPTIONS]}
+          onItemHighlightedByUser={onItemHighlightedByUser}
+        />
+      </JotaiProvider>,
+    );
+
+    expect(onItemHighlightedByUser).toHaveBeenLastCalledWith('London');
   });
 
   it('opens only the active input for a shared dropdown id and supports external close', async () => {
@@ -158,6 +210,29 @@ describe('AutocompleteRoot', () => {
       expect(screen.queryByRole('listbox')).not.toBeInTheDocument(),
     );
     expect(store.get(focusStackState.atom)).toEqual([]);
+  });
+
+  it('marks the popup as inside its parent surface and keeps the input focused on press', async () => {
+    const user = userEvent.setup();
+    const store = createStore();
+
+    render(
+      <JotaiProvider store={store}>
+        <ParentClickOutsideIdContext.Provider value="side-panel">
+          <AutocompleteExample />
+        </ParentClickOutsideIdContext.Provider>
+      </JotaiProvider>,
+    );
+
+    const input = screen.getByRole('combobox');
+    await user.type(input, 'Pa');
+
+    const listbox = screen.getByRole('listbox');
+
+    expect(
+      listbox.closest('[data-click-outside-id="side-panel"]'),
+    ).not.toBeNull();
+    expect(fireEvent.mouseDown(listbox)).toBe(false);
   });
 
   it('cleans up an open autocomplete when its mounted owner leaves StrictMode', async () => {

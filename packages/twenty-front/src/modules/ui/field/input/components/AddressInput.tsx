@@ -1,4 +1,5 @@
 import { styled } from '@linaria/react';
+import { atom, useAtomValue, useStore } from 'jotai';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { PlaceAutocompleteSelect } from '@/geo-map/components/PlaceAutocompleteSelect';
@@ -69,7 +70,16 @@ export const AddressInput = ({
   onChange,
   subFields,
 }: AddressInputProps) => {
-  const [internalValue, setInternalValue] = useState(value);
+  const store = useStore();
+  const [internalValueAtom] = useState(() =>
+    atom<FieldAddressDraftValue>(value),
+  );
+  const internalValue = useAtomValue(internalValueAtom);
+  const setInternalValue = useCallback(
+    (updatedValue: FieldAddressDraftValue) =>
+      store.set(internalValueAtom, updatedValue),
+    [internalValueAtom, store],
+  );
 
   const addressStreet1InputRef = useRef<HTMLInputElement>(null);
   const addressStreet2InputRef = useRef<HTMLInputElement>(null);
@@ -144,6 +154,7 @@ export const AddressInput = ({
     },
     [
       internalValue,
+      setInternalValue,
       onChange,
       findCountryCodeByCountryName,
       typeOfAddressForAutocomplete,
@@ -170,7 +181,7 @@ export const AddressInput = ({
         placeId,
         token,
         addressStreet1: text,
-        internalValue,
+        getInternalValue: () => store.get(internalValueAtom),
       });
       setInternalValue(updatedAddress);
     },
@@ -179,7 +190,9 @@ export const AddressInput = ({
       tokenForPlaceApi,
       typeOfAddressForAutocomplete,
       autoFillInputsFromPlaceDetails,
-      internalValue,
+      internalValueAtom,
+      setInternalValue,
+      store,
     ],
   );
 
@@ -218,7 +231,7 @@ export const AddressInput = ({
 
   useEffect(() => {
     setInternalValue(value);
-  }, [value]);
+  }, [setInternalValue, value]);
 
   const renderInputWithAutocomplete = ({
     fieldType,
@@ -235,31 +248,14 @@ export const AddressInput = ({
         enabled={typeOfAddressForAutocomplete === fieldType}
         items={placeAutocompleteData}
         itemToStringValue={(place) => place.text}
-        filter={null}
-        autoHighlight="always"
         value={internalValue[fieldType] ?? ''}
-        onValueChange={(updatedValue, details) => {
-          if (
-            details.reason === 'item-press' ||
-            details.reason === 'escape-key'
-          ) {
-            return;
-          }
-
+        openOnValueChange={false}
+        onValueChange={(updatedValue) =>
           getChangeHandler(fieldType)(
             turnIntoEmptyStringIfWhitespacesOnly(updatedValue),
-          );
-        }}
-        onOpenChange={(open, details) => {
-          if (open && details.reason === 'input-change') {
-            details.cancel();
-            return;
-          }
-
-          if (!open) {
-            closeDropdownOfAutocomplete();
-          }
-        }}
+          )
+        }
+        onClose={closeDropdownOfAutocomplete}
       >
         <Autocomplete.Input
           aria-label={label}

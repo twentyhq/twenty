@@ -1,4 +1,5 @@
 import { type PlaceAutocompleteResult } from '@/geo-map/types/PlaceApi';
+import { AutocompleteContent } from '@/ui/input/components/AutocompleteContent';
 import { Tag } from 'twenty-ui/primitives/data-display';
 import { Autocomplete } from 'twenty-ui/primitives/input';
 
@@ -11,7 +12,7 @@ export const PlaceAutocompleteSelect = ({
   list,
   onChange,
 }: PlaceAutocompleteSelectProps) => (
-  <Autocomplete.Popup width={345}>
+  <AutocompleteContent width={345}>
     <Autocomplete.List>
       {list.map((place) => (
         <Autocomplete.Item
@@ -25,5 +26,5 @@ export const PlaceAutocompleteSelect = ({
         </Autocomplete.Item>
       ))}
     </Autocomplete.List>
-  </Autocomplete.Popup>
+  </AutocompleteContent>
 );

@@ -3,6 +3,7 @@ import { Autocomplete } from 'twenty-ui/primitives/input';
 
 import { EmailRecipientSuggestionMenuItem } from '@/activities/emails/recipients/components/EmailRecipientSuggestionMenuItem';
 import { type EmailRecipientSuggestion } from '@/activities/emails/recipients/types/EmailRecipientSuggestion';
+import { AutocompleteContent } from '@/ui/input/components/AutocompleteContent';
 
 type EmailRecipientSuggestionsDropdownContentProps = {
   suggestions: EmailRecipientSuggestion[];
@@ -16,7 +17,7 @@ export const EmailRecipientSuggestionsDropdownContent = ({
   const { t } = useLingui();
 
   return (
-    <Autocomplete.Popup align="start" sideOffset={4} width={340}>
+    <AutocompleteContent align="start" sideOffset={4} width={340}>
       <Autocomplete.List>
         {suggestions.map((suggestion) => (
           <EmailRecipientSuggestionMenuItem
@@ -27,6 +28,6 @@ export const EmailRecipientSuggestionsDropdownContent = ({
         ))}
       </Autocomplete.List>
       <Autocomplete.Empty>{t`No results`}</Autocomplete.Empty>
-    </Autocomplete.Popup>
+    </AutocompleteContent>
   );
 };

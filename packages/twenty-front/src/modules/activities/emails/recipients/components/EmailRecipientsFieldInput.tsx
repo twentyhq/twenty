@@ -7,7 +7,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { atom, useStore } from 'jotai';
 import {
   type ClipboardEvent,
-  type ComponentProps,
+  type KeyboardEvent,
   type MouseEvent,
   type ReactNode,
   useContext,
@@ -17,7 +17,7 @@ import {
   useState,
 } from 'react';
 import { flushSync } from 'react-dom';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { Autocomplete } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { useDebouncedCallback } from 'use-debounce';
@@ -78,24 +78,20 @@ const StyledRowContainer = styled.div<{ $isDropTarget: boolean }>`
 `;
 
 const StyledInput = styled.input`
-  && {
-    background: transparent;
-    block-size: 20px;
-    border: none;
-    border-radius: 0;
-    color: ${themeCssVariables.font.color.primary};
-    flex: 1 1 60px;
-    font-family: inherit;
-    font-size: ${themeCssVariables.font.size.md};
-    font-weight: ${themeCssVariables.font.weight.regular};
-    inline-size: auto;
-    min-width: 60px;
-    outline: none;
-    padding: 0;
+  background: transparent;
+  border: none;
+  color: ${themeCssVariables.font.color.primary};
+  flex: 1 1 60px;
+  font-family: inherit;
+  font-size: ${themeCssVariables.font.size.md};
+  font-weight: ${themeCssVariables.font.weight.regular};
+  height: 20px;
+  min-width: 60px;
+  outline: none;
+  padding: 0;
 
-    &::placeholder {
-      ${FORM_FIELD_PLACEHOLDER_STYLES}
-    }
+  &::placeholder {
+    ${FORM_FIELD_PLACEHOLDER_STYLES}
   }
 `;
 
@@ -332,9 +328,7 @@ export const EmailRecipientsFieldInput = ({
 
     debouncedSetSuggestionsSearchInput(value);
 
-    if (value.trim().length > 0) {
-      openSuggestions();
-    } else {
+    if (value.trim().length === 0) {
       resetSuggestionsSearchInput();
       closeSuggestions();
     }
@@ -426,11 +420,8 @@ export const EmailRecipientsFieldInput = ({
     dependencies: [handleSubmitHotkey],
   });
 
-  const handleInputKeyDown: NonNullable<
-    ComponentProps<typeof Autocomplete.Input>['onKeyDown']
-  > = (event) => {
+  const handleInputKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
     if (event.ctrlKey || event.metaKey) {
-      event.preventBaseUIHandler();
       return;
     }
 
@@ -441,7 +432,6 @@ export const EmailRecipientsFieldInput = ({
 
     switch (event.key) {
       case 'Enter': {
-        event.preventBaseUIHandler();
         event.preventDefault();
 
         if (!isEditing && isDropdownOpen && suggestions.length > 0) {
@@ -546,8 +536,6 @@ export const EmailRecipientsFieldInput = ({
         return;
       }
       case 'Escape': {
-        event.preventBaseUIHandler();
-
         if (isDropdownOpen) {
           event.preventDefault();
           event.stopPropagation();
@@ -575,7 +563,10 @@ export const EmailRecipientsFieldInput = ({
   const recipientsInput = (
     <Autocomplete.Input
       key="email-recipients-input"
-      render={<StyledInput />}
+      render={(inputProps) => (
+        // oxlint-disable-next-line react/jsx-props-no-spreading
+        <StyledInput {...inputProps} className={undefined} />
+      )}
       ref={inputRef}
       type="text"
       autoComplete="off"
@@ -632,44 +623,17 @@ export const EmailRecipientsFieldInput = ({
     <>
       <ToastOnQueryErrorEffect error={error} />
       <FormFieldInputContainer>
-        <AutocompleteRoot<EmailRecipientSuggestion>
+        <AutocompleteRoot
           dropdownId={suggestionsDropdownId}
-          items={suggestions}
-          filter={null}
-          autoHighlight="always"
+          enabled={!isEditing}
+          items={suggestions.map((suggestion) => suggestion.suggestionId)}
           value={inputValue}
-          itemToStringValue={(suggestion) => suggestion.recipient.address}
           globalHotkeysConfig={{ enableGlobalHotkeysWithModifiers: true }}
-          onValueChange={(value, details) => {
-            if (
-              details.reason === 'item-press' ||
-              details.reason === 'escape-key'
-            ) {
-              return;
-            }
-
-            handleInputChange(value);
-          }}
-          onItemHighlighted={(suggestion, details) => {
-            store.set(
-              highlightedSuggestionIdAtom,
-              details.reason === 'none' ? undefined : suggestion?.suggestionId,
-            );
-          }}
-          onOpenChange={(open, details) => {
-            const isNavigatingEmptySuggestions =
-              details.reason === 'list-navigation' &&
-              !isNonEmptyArray(suggestions);
-
-            if (open && (isEditing || isNavigatingEmptySuggestions)) {
-              details.cancel();
-              return;
-            }
-
-            if (!open) {
-              store.set(highlightedSuggestionIdAtom, undefined);
-            }
-          }}
+          onValueChange={handleInputChange}
+          onItemHighlightedByUser={(suggestionId) =>
+            store.set(highlightedSuggestionIdAtom, suggestionId)
+          }
+          onClose={() => store.set(highlightedSuggestionIdAtom, undefined)}
         >
           <Autocomplete.InputGroup
             render={

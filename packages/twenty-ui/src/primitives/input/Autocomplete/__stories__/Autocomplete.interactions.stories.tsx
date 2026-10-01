@@ -154,3 +154,51 @@ export const ControlledResults: Story = {
     await expect(input).toHaveValue('Paris');
   },
 };
+
+const PreventedEnterExample = () => {
+  const [enterCount, setEnterCount] = useState(0);
+
+  return (
+    <>
+      <Autocomplete.Root items={['Apple', 'Banana']} autoHighlight="always">
+        <Autocomplete.Input
+          aria-label="Fruit"
+          onKeyDown={(event) => {
+            if (event.key === 'Enter') {
+              event.preventDefault();
+              setEnterCount((count) => count + 1);
+            }
+          }}
+        />
+        <Autocomplete.Popup>
+          <Autocomplete.List>
+            {(fruit: string) => (
+              <Autocomplete.Item key={fruit} value={fruit}>
+                {fruit}
+              </Autocomplete.Item>
+            )}
+          </Autocomplete.List>
+        </Autocomplete.Popup>
+      </Autocomplete.Root>
+      <span>{`Enter count: ${enterCount}`}</span>
+    </>
+  );
+};
+
+export const PreventedKeyDown: Story = {
+  render: () => <PreventedEnterExample />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+    const input = canvas.getByRole('combobox', { name: 'Fruit' });
+    await userEvent.type(input, 'a');
+    const apple = await body.findByRole('option', { name: 'Apple' });
+    await waitFor(() =>
+      expect(input).toHaveAttribute('aria-activedescendant', apple.id),
+    );
+    await userEvent.keyboard('{Enter}');
+    await expect(canvas.getByText('Enter count: 1')).toBeVisible();
+    await expect(input).toHaveValue('a');
+    await expect(input).toHaveAttribute('aria-expanded', 'true');
+  },
+};
