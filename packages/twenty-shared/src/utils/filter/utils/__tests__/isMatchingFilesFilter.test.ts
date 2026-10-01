@@ -119,24 +119,6 @@ describe('isMatchingFilesFilter', () => {
         }),
       ).toBe(false);
     });
-  });
-
-  describe('ilike filter', () => {
-    it('should be case insensitive', () => {
-      expect(
-        isMatchingFilesFilter({
-          filesFilter: { ilike: '%FILE.PDF%' },
-          value: [
-            {
-              fileId: '1',
-              label: 'file.pdf',
-              url: 'http://example.com/file.pdf',
-              extension: 'pdf',
-            },
-          ],
-        }),
-      ).toBe(true);
-    });
 
     it('should match partial file names', () => {
       expect(
@@ -240,6 +222,24 @@ describe('isMatchingFilesFilter', () => {
           value: [],
         }),
       ).toBe(false);
+    });
+  });
+
+  describe('ilike filter', () => {
+    it('should be case insensitive', () => {
+      expect(
+        isMatchingFilesFilter({
+          filesFilter: { ilike: '%FILE.PDF%' },
+          value: [
+            {
+              fileId: '1',
+              label: 'file.pdf',
+              url: 'http://example.com/file.pdf',
+              extension: 'pdf',
+            },
+          ],
+        }),
+      ).toBe(true);
     });
   });
 });

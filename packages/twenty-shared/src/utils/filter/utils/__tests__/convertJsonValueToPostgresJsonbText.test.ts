@@ -27,6 +27,18 @@ describe('convertJsonValueToPostgresJsonbText', () => {
     );
   });
 
+  it('should print numbers in plain decimal notation like Postgres', () => {
+    expect(
+      convertJsonValueToPostgresJsonbText([1e21, 1e-7, -1.5e-7, 1.2345e25]),
+    ).toBe(
+      '[1000000000000000000000, 0.0000001, -0.00000015, 12345000000000000000000000]',
+    );
+  });
+
+  it('should format undefined as null', () => {
+    expect(convertJsonValueToPostgresJsonbText(undefined)).toBe('null');
+  });
+
   it('should drop undefined properties like the write path does', () => {
     expect(convertJsonValueToPostgresJsonbText({ a: undefined, b: 1 })).toBe(
       '{"b": 1}',

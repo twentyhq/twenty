@@ -56,6 +56,8 @@ describe('generateFieldFilterZodSchema', () => {
       );
 
       expect(schema!.parse({ ilike: '%acme%' })).toEqual({ ilike: '%acme%' });
+      expect(schema!.parse({ like: '%acme%' })).toEqual({ like: '%acme%' });
+      expect(schema!.parse({ is: 'NOT_NULL' })).toEqual({ is: 'NOT_NULL' });
       expect(schema!.parse({ eq: 'acme', neq: 'acme' })).toEqual({});
     });
   });

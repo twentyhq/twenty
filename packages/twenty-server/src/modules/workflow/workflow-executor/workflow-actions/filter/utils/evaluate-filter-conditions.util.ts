@@ -204,10 +204,20 @@ function evaluateTextAndArrayFilter(
   }
 }
 
+function parseRawJsonOperand(leftOperand: unknown): unknown {
+  if (!isString(leftOperand)) {
+    return leftOperand;
+  }
+
+  try {
+    return JSON.parse(leftOperand);
+  } catch {
+    return leftOperand;
+  }
+}
+
 function evaluateRawJsonFilter(filter: ResolvedFilter): boolean {
-  const jsonValue = isString(filter.leftOperand)
-    ? (parseJson<unknown>(filter.leftOperand) ?? filter.leftOperand)
-    : filter.leftOperand;
+  const jsonValue = parseRawJsonOperand(filter.leftOperand);
   const isEmpty = !isDefined(jsonValue) || jsonValue === '';
 
   const containsSearchValue = () =>

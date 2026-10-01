@@ -1541,6 +1541,10 @@ describe('evaluateFilterConditions', () => {
           true,
         );
         expect(evaluateRawJson(ViewFilterOperand.IS_EMPTY, '')).toBe(true);
+        expect(evaluateRawJson(ViewFilterOperand.IS_EMPTY, 'null')).toBe(true);
+        expect(
+          evaluateRawJson(ViewFilterOperand.CONTAINS, 'null', 'null'),
+        ).toBe(false);
       });
     });
 

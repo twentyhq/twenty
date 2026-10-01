@@ -27,7 +27,36 @@ const sortKeysInJsonbOrder = (keys: string[]) =>
     .sort((left, right) => compareJsonbKeyBytes(left.bytes, right.bytes))
     .map(({ key }) => key);
 
+const EXPONENTIAL_NUMBER_PATTERN = /^(-?)(\d+)(?:\.(\d+))?e([+-]\d+)$/;
+
+// Postgres prints jsonb numbers in plain decimal notation, never exponential
+const formatNumberAsJsonbText = (jsonNumber: number) => {
+  const [, sign = '', integerDigits = '', fractionDigits = '', exponent = '0'] =
+    EXPONENTIAL_NUMBER_PATTERN.exec(String(jsonNumber)) ?? [];
+
+  if (integerDigits === '') {
+    return String(jsonNumber);
+  }
+
+  const digits = integerDigits + fractionDigits;
+  const decimalPointIndex = integerDigits.length + Number(exponent);
+
+  if (decimalPointIndex >= digits.length) {
+    return `${sign}${digits}${'0'.repeat(decimalPointIndex - digits.length)}`;
+  }
+
+  if (decimalPointIndex <= 0) {
+    return `${sign}0.${'0'.repeat(-decimalPointIndex)}${digits}`;
+  }
+
+  return `${sign}${digits.slice(0, decimalPointIndex)}.${digits.slice(decimalPointIndex)}`;
+};
+
 const formatAsJsonbText = (jsonValue: unknown): string => {
+  if (typeof jsonValue === 'number') {
+    return formatNumberAsJsonbText(jsonValue);
+  }
+
   if (Array.isArray(jsonValue)) {
     return `[${jsonValue.map(formatAsJsonbText).join(', ')}]`;
   }
@@ -44,4 +73,4 @@ const formatAsJsonbText = (jsonValue: unknown): string => {
 };
 
 export const convertJsonValueToPostgresJsonbText = (jsonValue: unknown) =>
-  formatAsJsonbText(JSON.parse(JSON.stringify(jsonValue)));
+  formatAsJsonbText(JSON.parse(JSON.stringify(jsonValue) ?? 'null'));
