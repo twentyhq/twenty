@@ -19,7 +19,7 @@ import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
-@RegisteredWorkspaceCommand('2.45.0', 1790853921407)
+@RegisteredWorkspaceCommand('2.45.0', 1790876639146)
 @Command({
   name: 'upgrade:2-45:add-record-share-none-access-level',
   description:

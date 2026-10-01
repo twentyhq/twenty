@@ -15,9 +15,13 @@ export type RecordSharingRule = {
   objectUniversalIdentifier: string;
   principalId: string;
   accessLevel: RecordShareAccessLevel;
-  buildCondition: (tableAlias: string) => SqlCondition;
+  buildCondition: (args: {
+    tableAlias: string;
+    workspaceId: string;
+  }) => SqlCondition;
   resolveMatchingRecordIds: (args: {
     records: RowAccessRecord[];
+    workspaceId: string;
     executeRawQuery: ExecuteRawQuery;
   }) => Promise<Set<string>>;
 };

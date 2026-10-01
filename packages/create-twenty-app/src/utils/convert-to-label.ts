@@ -1,4 +1,4 @@
-import { startCase } from 'lodash';
+import startCase from 'lodash.startcase';
 
 export const convertToLabel = (str: string) => {
   const s = startCase(str).toLowerCase();

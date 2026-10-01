@@ -5,13 +5,14 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
-const SHARE_RECORD_UNIVERSAL_IDENTIFIER = 'b9336f9f-d10c-42c0-b7cd-40c94ae235ef';
+const SHARE_RECORD_UNIVERSAL_IDENTIFIER =
+  'b9336f9f-d10c-42c0-b7cd-40c94ae235ef';
 
 const CHAT_ONLY_SHARE_RECORD_EXPRESSION =
   'numberOfSelectedRecords == 1 and featureFlags.IS_AI_CHAT_SHARING_DROPDOWN_ENABLED and noneDefined(selectedRecords, "deletedAt")';
 
 export const ALL_OBJECTS_SHARE_RECORD_EXPRESSION =
-  'numberOfSelectedRecords == 1 and noneDefined(selectedRecords, "deletedAt") and ((featureFlags.IS_RECORD_LEVEL_SHARING_ENABLED and not objectMetadataItem.isSystem) or (objectMetadataItem.nameSingular == "agentChatThread" and (featureFlags.IS_AI_CHAT_SHARING_DROPDOWN_ENABLED or featureFlags.IS_RECORD_LEVEL_SHARING_ENABLED)))';
+  'numberOfSelectedRecords == 1 and noneDefined(selectedRecords, "deletedAt") and ((featureFlags.IS_RECORD_LEVEL_SHARING_ENABLED and not objectMetadataItem.isSystem and objectMetadataItem.readability != "APPLICATION" and objectMetadataItem.readability != "SYSTEM") or (objectMetadataItem.nameSingular == "agentChatThread" and (featureFlags.IS_AI_CHAT_SHARING_DROPDOWN_ENABLED or featureFlags.IS_RECORD_LEVEL_SHARING_ENABLED)))';
 
 // Only an item still holding the expression and object scope it shipped with
 // is moved, so a workspace that customized either keeps its version

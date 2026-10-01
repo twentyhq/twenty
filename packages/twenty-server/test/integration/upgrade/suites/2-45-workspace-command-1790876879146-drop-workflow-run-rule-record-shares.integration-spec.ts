@@ -1,7 +1,7 @@
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
-import { type DropWorkflowRunRuleRecordSharesCommand } from 'src/database/commands/upgrade-version-command/2-45/2-45-workspace-command-1790866795187-drop-workflow-run-rule-record-shares.command';
+import { type DropWorkflowRunRuleRecordSharesCommand } from 'src/database/commands/upgrade-version-command/2-45/2-45-workspace-command-1790876879146-drop-workflow-run-rule-record-shares.command';
 import { type UpgradeCommandRegistryService } from 'src/engine/core-modules/upgrade/services/upgrade-command-registry.service';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
@@ -11,7 +11,7 @@ import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder
 const workspaceId = SEED_APPLE_WORKSPACE_ID;
 const schemaName = getWorkspaceSchemaName(workspaceId);
 
-describe('2-45 workspace command 1790866795187 - DropWorkflowRunRuleRecordSharesCommand (integration)', () => {
+describe('2-45 workspace command 1790876879146 - DropWorkflowRunRuleRecordSharesCommand (integration)', () => {
   let command: DropWorkflowRunRuleRecordSharesCommand;
   let workspaceOrmManager: WorkspaceOrmManager;
 
@@ -77,7 +77,7 @@ describe('2-45 workspace command 1790866795187 - DropWorkflowRunRuleRecordShares
 
     expect(registry.getBundleForVersion('2.45.0').workspaceCommands).toEqual(
       expect.arrayContaining([
-        expect.objectContaining({ command, timestamp: 1790866795187 }),
+        expect.objectContaining({ command, timestamp: 1790876879146 }),
       ]),
     );
   });

@@ -1,10 +1,11 @@
-import { UseGuards } from '@nestjs/common';
-import { Args, Parent, Query, ResolveField } from '@nestjs/graphql';
+import { UseFilters, UseGuards } from '@nestjs/common';
+import { Parent, Query, ResolveField } from '@nestjs/graphql';
 
 import { isDefined } from 'twenty-shared/utils';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
 import { ApplicationStopService } from 'src/engine/core-modules/application/application-stop/application-stop.service';
 import { type ApplicationVariableEntity } from 'src/engine/core-modules/application/application-variable/application-variable.entity';
 import { ApplicationVariableEntityDTO } from 'src/engine/core-modules/application/application-variable/dtos/application-variable.dto';
@@ -21,10 +22,12 @@ import { getInstalledSdkMetadataModule } from 'src/engine/core-modules/sdk-clien
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
+import { ApplicationTargetArg } from 'src/engine/decorators/auth/application-target-arg.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { ApplicationTargetGuard } from 'src/engine/guards/application-target.guard';
 
 @UseGuards(
   AuthPrincipalGuard({
@@ -41,6 +44,7 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
   NoPermissionGuard,
 )
 @MetadataResolver(() => ApplicationDTO)
+@UseFilters(ApplicationExceptionFilter)
 export class ApplicationResolver {
   constructor(
     private readonly twentyConfigService: TwentyConfigService,
@@ -49,8 +53,13 @@ export class ApplicationResolver {
   ) {}
 
   @Query(() => SdkClientChecksumsDTO, { nullable: true })
+  @UseGuards(ApplicationTargetGuard)
   async applicationSdkClientChecksums(
-    @Args('applicationId', { type: () => UUIDScalarType })
+    @ApplicationTargetArg(
+      'applicationId',
+      { kind: 'applicationId', requireApplicationRegistrationOwnership: false },
+      { type: () => UUIDScalarType },
+    )
     applicationId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<SdkClientChecksumsDTO | null> {
@@ -75,8 +84,12 @@ export class ApplicationResolver {
   // temporarily stopped and behaving in a degraded way. Kept as a dedicated
   // query so listing applications does not trigger one Redis read per app.
   @Query(() => Boolean)
+  @UseGuards(ApplicationTargetGuard)
   async isApplicationStopped(
-    @Args('applicationUniversalIdentifier')
+    @ApplicationTargetArg('applicationUniversalIdentifier', {
+      kind: 'applicationUniversalIdentifier',
+      requireApplicationRegistrationOwnership: false,
+    })
     applicationUniversalIdentifier: string,
   ): Promise<boolean> {
     return this.applicationStopService.isApplicationStopped(

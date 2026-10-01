@@ -1,23 +1,26 @@
 import { Command } from 'nest-commander';
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
-import { isNonEmptyArray } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
-import { buildShareRecordAvailabilityUpdate } from 'src/database/commands/upgrade-version-command/2-45/utils/build-share-record-availability-update.util';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
+import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-@RegisteredWorkspaceCommand('2.45.0', 1790855177506)
+const SEE_VERSION_WORKFLOW_RUN_UNIVERSAL_IDENTIFIER =
+  'cc3a065c-c89e-40ac-9449-4272c55b1bb8';
+
+@RegisteredWorkspaceCommand('2.45.0', 1790860694324)
 @Command({
-  name: 'upgrade:2-45:open-share-record-to-every-object',
+  name: 'upgrade:2-45:remove-see-version-workflow-run-command-menu-item',
   description:
-    'Offer the Share command on every object, behind the record-level sharing flag',
+    'Remove the See Version workflow run command menu item from existing workspaces',
 })
-export class OpenShareRecordToEveryObjectCommand extends ProvisionedWorkspaceCommandRunner {
+export class RemoveSeeVersionWorkflowRunCommandMenuItemCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly workspaceCacheService: WorkspaceCacheService,
@@ -26,42 +29,30 @@ export class OpenShareRecordToEveryObjectCommand extends ProvisionedWorkspaceCom
     super(workspaceIteratorService);
   }
 
-  override async runOnWorkspace(args: RunOnWorkspaceArgs): Promise<void> {
-    await this.up(args);
-  }
-
-  async up(args: RunOnWorkspaceArgs): Promise<void> {
-    await this.syncAvailability(args, 'up');
-  }
-
-  async down(args: RunOnWorkspaceArgs): Promise<void> {
-    await this.syncAvailability(args, 'down');
-  }
-
-  private async syncAvailability(
-    { workspaceId, options }: RunOnWorkspaceArgs,
-    direction: 'up' | 'down',
-  ): Promise<void> {
-    const { flatCommandMenuItemMaps, flatObjectMetadataMaps } =
+  override async runOnWorkspace({
+    workspaceId,
+    options,
+  }: RunOnWorkspaceArgs): Promise<void> {
+    const { flatCommandMenuItemMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatCommandMenuItemMaps',
-        'flatObjectMetadataMaps',
       ]);
 
-    const commandMenuItemsToUpdate = buildShareRecordAvailabilityUpdate({
-      flatCommandMenuItemsByUniversalIdentifier:
-        flatCommandMenuItemMaps.byUniversalIdentifier,
-      flatObjectMetadataMaps,
-      now: new Date().toISOString(),
-      direction,
-    });
+    const seeVersionWorkflowRun =
+      flatCommandMenuItemMaps.byUniversalIdentifier[
+        SEE_VERSION_WORKFLOW_RUN_UNIVERSAL_IDENTIFIER
+      ];
 
-    if (!isNonEmptyArray(commandMenuItemsToUpdate)) {
+    if (
+      !isDefined(seeVersionWorkflowRun) ||
+      seeVersionWorkflowRun.engineComponentKey !==
+        EngineComponentKey.SEE_VERSION_WORKFLOW_RUN
+    ) {
       return;
     }
 
     this.logger.log(
-      `${options.dryRun ? '[DRY RUN] ' : ''}Workspace ${workspaceId}: updating the Share command menu item`,
+      `${options.dryRun ? '[DRY RUN] ' : ''}Workspace ${workspaceId}: removing the See Version workflow run command menu item`,
     );
 
     if (options.dryRun) {
@@ -78,8 +69,8 @@ export class OpenShareRecordToEveryObjectCommand extends ProvisionedWorkspaceCom
           allFlatEntityOperationByMetadataName: {
             commandMenuItem: {
               flatEntityToCreate: [],
-              flatEntityToDelete: [],
-              flatEntityToUpdate: commandMenuItemsToUpdate,
+              flatEntityToDelete: [seeVersionWorkflowRun],
+              flatEntityToUpdate: [],
             },
           },
         },

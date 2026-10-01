@@ -336,7 +336,7 @@ describe('isRecordMatchingRLSRowLevelPermissionPredicate', () => {
         filter: {
           address: {
             addressCity: { eq: 'Paris' },
-            addressLat: { eq: 48.85 },
+            addressPlanet: { eq: 'Earth' },
           },
         } as RecordGqlOperationFilter,
         flatObjectMetadata,
@@ -403,6 +403,22 @@ describe('isRecordMatchingRLSRowLevelPermissionPredicate', () => {
         flatFieldMetadataMaps,
       }),
     ).toBe(false);
+  });
+
+  it('matches address coordinates', () => {
+    expect(
+      isRecordMatchingRLSRowLevelPermissionPredicate({
+        record: {
+          ...baseRecord,
+          address: { ...baseRecord.address, addressLat: 48.85 },
+        },
+        filter: {
+          address: { addressLat: { gte: 48 } },
+        } as RecordGqlOperationFilter,
+        flatObjectMetadata,
+        flatFieldMetadataMaps,
+      }),
+    ).toBe(true);
   });
 
   it('supports relation join column filters', () => {

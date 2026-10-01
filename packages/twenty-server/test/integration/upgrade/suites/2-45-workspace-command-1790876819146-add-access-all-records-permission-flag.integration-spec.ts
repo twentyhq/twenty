@@ -6,7 +6,7 @@ import {
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 
-import { type AddAccessAllRecordsPermissionFlagCommand } from 'src/database/commands/upgrade-version-command/2-45/2-45-workspace-command-1790858301122-add-access-all-records-permission-flag.command';
+import { type AddAccessAllRecordsPermissionFlagCommand } from 'src/database/commands/upgrade-version-command/2-45/2-45-workspace-command-1790876819146-add-access-all-records-permission-flag.command';
 import { type UpgradeCommandRegistryService } from 'src/engine/core-modules/upgrade/services/upgrade-command-registry.service';
 import { PermissionFlagEntity } from 'src/engine/metadata-modules/permission-flag/permission-flag.entity';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
@@ -15,7 +15,7 @@ const workspaceId = SEED_APPLE_WORKSPACE_ID;
 const ACCESS_ALL_RECORDS_UNIVERSAL_IDENTIFIER =
   SystemPermissionFlag[PermissionFlagType.ACCESS_ALL_RECORDS];
 
-describe('2-45 workspace command 1790858301122 - AddAccessAllRecordsPermissionFlagCommand (integration)', () => {
+describe('2-45 workspace command 1790876819146 - AddAccessAllRecordsPermissionFlagCommand (integration)', () => {
   let command: AddAccessAllRecordsPermissionFlagCommand;
 
   const run = (
@@ -55,7 +55,7 @@ describe('2-45 workspace command 1790858301122 - AddAccessAllRecordsPermissionFl
 
     expect(registry.getBundleForVersion('2.45.0').workspaceCommands).toEqual(
       expect.arrayContaining([
-        expect.objectContaining({ command, timestamp: 1790858301122 }),
+        expect.objectContaining({ command, timestamp: 1790876819146 }),
       ]),
     );
   });

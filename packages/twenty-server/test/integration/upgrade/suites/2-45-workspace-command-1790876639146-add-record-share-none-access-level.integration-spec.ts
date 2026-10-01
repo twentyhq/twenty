@@ -11,7 +11,7 @@ import {
   RecordShareRowCause,
 } from 'twenty-shared/types';
 
-import { type AddRecordShareNoneAccessLevelCommand } from 'src/database/commands/upgrade-version-command/2-45/2-45-workspace-command-1790853921407-add-record-share-none-access-level.command';
+import { type AddRecordShareNoneAccessLevelCommand } from 'src/database/commands/upgrade-version-command/2-45/2-45-workspace-command-1790876639146-add-record-share-none-access-level.command';
 import { type RecordShareStorageService } from 'src/engine/core-modules/record-share/services/record-share-storage.service';
 import { type UpgradeCommandRegistryService } from 'src/engine/core-modules/upgrade/services/upgrade-command-registry.service';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
@@ -25,7 +25,7 @@ const authContext = buildSystemAuthContext(workspaceId);
 const RECORD_ID = randomUUID();
 const OBJECT_METADATA_ID = randomUUID();
 
-describe('2-45 workspace command 1790853921407 - AddRecordShareNoneAccessLevelCommand (integration)', () => {
+describe('2-45 workspace command 1790876639146 - AddRecordShareNoneAccessLevelCommand (integration)', () => {
   let command: AddRecordShareNoneAccessLevelCommand;
   let workspaceOrmManager: WorkspaceOrmManager;
   let shares: RecordShareStorageService;
@@ -112,7 +112,7 @@ describe('2-45 workspace command 1790853921407 - AddRecordShareNoneAccessLevelCo
 
     expect(registry.getBundleForVersion('2.45.0').workspaceCommands).toEqual(
       expect.arrayContaining([
-        expect.objectContaining({ command, timestamp: 1790853921407 }),
+        expect.objectContaining({ command, timestamp: 1790876639146 }),
       ]),
     );
   });

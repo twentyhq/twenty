@@ -96,7 +96,7 @@ const STANDARD_PERMISSION_FLAG_METADATA: Record<
   },
   [PermissionFlagType.ACCESS_ALL_RECORDS]: {
     label: 'All records',
-    description: 'See and manage records restricted by sharing',
+    description: 'See records restricted by sharing',
     icon: 'IconAddressBook',
   },
   [PermissionFlagType.AI]: {

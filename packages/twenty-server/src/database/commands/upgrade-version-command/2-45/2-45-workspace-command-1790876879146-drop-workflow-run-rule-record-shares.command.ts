@@ -17,7 +17,7 @@ const EVERYONE_PRINCIPAL_ID = '5047ca8f-514a-4609-8ef4-1bb63f3084c5';
 
 // Runs of a workspace-visible workflow are now admitted by a sharing rule
 // evaluated at read time, so the rows 2-44 materialized for it are dropped
-@RegisteredWorkspaceCommand('2.45.0', 1790866795187)
+@RegisteredWorkspaceCommand('2.45.0', 1790876879146)
 @Command({
   name: 'upgrade:2-45:drop-workflow-run-rule-record-shares',
   description:
