@@ -306,7 +306,9 @@ describe('buildRowAccessPolicy', () => {
     it('discovers the parent of a child that declares discoverable fields', () => {
       const sql = gatedSql(readExistence, {
         ...attachment,
-        discoverableFieldUniversalIdentifiers: ['discoverable-field-universal-identifier'],
+        discoverableFieldUniversalIdentifiers: [
+          'discoverable-field-universal-identifier',
+        ],
       });
 
       expect(sql).toContain('"attachment"."targetPersonId" IS NOT NULL');
@@ -341,7 +343,9 @@ describe('buildRowAccessPolicy', () => {
           tableAlias: 'attachment',
           flatObjectMetadata: {
             ...attachment,
-            discoverableFieldUniversalIdentifiers: ['discoverable-field-universal-identifier'],
+            discoverableFieldUniversalIdentifiers: [
+              'discoverable-field-universal-identifier',
+            ],
           },
           operationType: 'select',
           depth: 0,
