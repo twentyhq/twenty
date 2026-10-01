@@ -4,6 +4,11 @@ import { beautifyPastDateRelativeToNowShort } from '~/utils/date-utils';
 
 const RELATIVE_ACTIVITY_TIME_MAX_DAYS = 7;
 
+const ACTIVITY_DATE_FORMAT = new Intl.DateTimeFormat(undefined, {
+  month: 'short',
+  day: 'numeric',
+});
+
 // Recent activity reads as "now", "2h" or "3d", older activity as its date
 export const formatAgentChatThreadActivityTime = (activityAt: string) => {
   const activityDate = new Date(activityAt);
@@ -19,8 +24,5 @@ export const formatAgentChatThreadActivityTime = (activityAt: string) => {
     return beautifyPastDateRelativeToNowShort(activityDate);
   }
 
-  return new Intl.DateTimeFormat(undefined, {
-    month: 'short',
-    day: 'numeric',
-  }).format(activityDate);
+  return ACTIVITY_DATE_FORMAT.format(activityDate);
 };

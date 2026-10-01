@@ -1,11 +1,8 @@
-import { parseChatReferences } from '@/ai/utils/parseChatReferences';
-import { replaceMalformedChatReferencesWithDisplayName } from '@/ai/utils/replaceMalformedChatReferencesWithDisplayName';
+import { isString } from '@sniptt/guards';
+
+import { getChatReferenceSegments } from '@/ai/utils/getChatReferenceSegments';
 
 export const replaceChatReferencesWithDisplayName = (text: string): string =>
-  replaceMalformedChatReferencesWithDisplayName(
-    parseChatReferences(text).reduce(
-      (replacedText, { fullMatch, displayName }) =>
-        replacedText.replace(fullMatch, () => displayName),
-      text,
-    ),
-  );
+  getChatReferenceSegments(text)
+    .map((segment) => (isString(segment) ? segment : segment.displayName))
+    .join('');

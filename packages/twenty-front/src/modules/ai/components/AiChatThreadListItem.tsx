@@ -16,7 +16,7 @@ import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/use
 import { getAiChatThreadItemMenuDropdownId } from '@/ai/utils/getAiChatThreadItemMenuDropdownId';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
-import { StyledVisuallyHidden } from '@/ui/accessibility/components/StyledVisuallyHidden';
+import { VisibilityHidden } from 'twenty-ui/primitives/accessibility';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { agentChatThreadPreviewFamilySelector } from '@/ai/states/selectors/agentChatThreadPreviewFamilySelector';
 import { formatAgentChatThreadActivityTime } from '@/ai/utils/formatAgentChatThreadActivityTime';
@@ -240,7 +240,7 @@ export const AiChatThreadListItem = ({
             <StyledThreadTitle $isUnread={!isDeleted && isUnread}>
               {displayTitle}
               {!isDeleted && isUnread && (
-                <StyledVisuallyHidden>{t`, unread`}</StyledVisuallyHidden>
+                <VisibilityHidden>{t`, unread`}</VisibilityHidden>
               )}
             </StyledThreadTitle>
             {isDefined(previewText) && (

@@ -10,10 +10,9 @@ import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { NavigationDrawerAiChatTriageSection } from '@/ai/components/NavigationDrawerAiChatTriageSection';
 import { AGENT_CHAT_THREAD_FILTER_STATUS } from '@/ai/constants/AgentChatThreadFilterStatus';
 import { agentChatThreadFilterStatusState } from '@/ai/states/agentChatThreadFilterStatusState';
-import { agentChatThreadListState } from '@/ai/states/agentChatThreadListState';
+import { setAgentChatThreadList } from '@/ai/testing/setAgentChatThreadList';
 import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
 import { hasLoadedAgentChatThreadParticipantsState } from '@/ai/states/hasLoadedAgentChatThreadParticipantsState';
-import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import {
   jotaiStore,
   resetJotaiStore,
@@ -77,19 +76,18 @@ describe('NavigationDrawerAiChatTriageSection', () => {
     resetJotaiStore();
     navigate.mockClear();
 
-    for (const threadId of THREAD_IDS) {
-      jotaiStore.set(recordStoreFamilyState.atomFamily(threadId), {
-        __typename: 'AgentChatThread',
-        id: threadId,
-        deletedAt: null,
-        lastActivityAt: '2026-10-01T10:00:00.000Z',
-      } as never);
-    }
-    jotaiStore.set(agentChatThreadListState.atom, {
-      threadIds: THREAD_IDS,
-      hasNextPage: false,
-      endCursor: null,
-    });
+    setAgentChatThreadList(
+      jotaiStore,
+      THREAD_IDS.map(
+        (threadId) =>
+          ({
+            __typename: 'AgentChatThread',
+            id: threadId,
+            deletedAt: null,
+            lastActivityAt: '2026-10-01T10:00:00.000Z',
+          }) as never,
+      ),
+    );
     jotaiStore.set(hasLoadedAgentChatThreadParticipantsState.atom, true);
   });
 

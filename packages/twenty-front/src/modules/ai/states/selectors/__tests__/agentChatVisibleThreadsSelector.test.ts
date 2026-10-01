@@ -5,12 +5,11 @@ import { AGENT_CHAT_THREAD_LAST_ACTIVITY_FILTER } from '@/ai/constants/AgentChat
 import { agentChatThreadFilterStatusState } from '@/ai/states/agentChatThreadFilterStatusState';
 import { agentChatThreadInboxNowState } from '@/ai/states/agentChatThreadInboxNowState';
 import { agentChatThreadLastActivityFilterState } from '@/ai/states/agentChatThreadLastActivityFilterState';
-import { agentChatThreadListState } from '@/ai/states/agentChatThreadListState';
+import { setAgentChatThreadList } from '@/ai/testing/setAgentChatThreadList';
 import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
 import { hasLoadedAgentChatThreadParticipantsState } from '@/ai/states/hasLoadedAgentChatThreadParticipantsState';
 import { agentChatVisibleThreadsSelector } from '@/ai/states/selectors/agentChatVisibleThreadsSelector';
 import { type AgentChatThreadFilterStatus } from '@/ai/types/AgentChatThreadFilterStatus';
-import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 
 const NOW = new Date('2026-10-01T12:00:00.000Z').getTime();
 const LAST_ACTIVITY_AT = '2026-10-01T10:00:00.000Z';
@@ -72,22 +71,21 @@ const THREADS: {
 const getVisibleThreadIds = (filterStatus: AgentChatThreadFilterStatus) => {
   const store = createStore();
 
-  for (const { id, deletedAt, lastActivityAt } of THREADS) {
-    store.set(recordStoreFamilyState.atomFamily(id), {
-      __typename: 'AgentChatThread',
-      id,
-      title: id,
-      deletedAt,
-      createdAt: LAST_ACTIVITY_AT,
-      updatedAt: LAST_ACTIVITY_AT,
-      lastActivityAt: lastActivityAt ?? LAST_ACTIVITY_AT,
-    } as never);
-  }
-  store.set(agentChatThreadListState.atom, {
-    threadIds: THREADS.map(({ id }) => id),
-    hasNextPage: false,
-    endCursor: null,
-  });
+  setAgentChatThreadList(
+    store,
+    THREADS.map(
+      ({ id, deletedAt, lastActivityAt }) =>
+        ({
+          __typename: 'AgentChatThread',
+          id,
+          title: id,
+          deletedAt,
+          createdAt: LAST_ACTIVITY_AT,
+          updatedAt: LAST_ACTIVITY_AT,
+          lastActivityAt: lastActivityAt ?? LAST_ACTIVITY_AT,
+        }) as never,
+    ),
+  );
   store.set(
     agentChatThreadParticipantsState.atom,
     Object.fromEntries(

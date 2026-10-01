@@ -1,3 +1,5 @@
+import { useMemo } from 'react';
+
 import { agentChatThreadListState } from '@/ai/states/agentChatThreadListState';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { sortChatThreadsByLastActivityDesc } from '@/ai/utils/sortChatThreadsByLastActivityDesc';
@@ -10,8 +12,13 @@ export const useChatThreads = (
   const threads = useAtomStateValue(threadsSelector);
   const agentChatThreadList = useAtomStateValue(agentChatThreadListState);
 
+  const sortedThreads = useMemo(
+    () => sortChatThreadsByLastActivityDesc(threads),
+    [threads],
+  );
+
   return {
-    threads: sortChatThreadsByLastActivityDesc(threads),
+    threads: sortedThreads,
     loading: agentChatThreadList === null,
   };
 };

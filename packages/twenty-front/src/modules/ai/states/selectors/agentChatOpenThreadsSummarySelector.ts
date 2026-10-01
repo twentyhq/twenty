@@ -1,14 +1,6 @@
-import {
-  getAgentChatThreadInboxScope,
-  isAgentChatThreadUnread,
-  isDefined,
-} from 'twenty-shared/utils';
-
-import { agentChatThreadInboxNowState } from '@/ai/states/agentChatThreadInboxNowState';
-import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
+import { agentChatThreadInboxStatusFamilySelector } from '@/ai/states/selectors/agentChatThreadInboxStatusFamilySelector';
+import { agentChatRecentThreadsSelector } from '@/ai/states/selectors/agentChatRecentThreadsSelector';
 import { hasLoadedAgentChatThreadParticipantsState } from '@/ai/states/hasLoadedAgentChatThreadParticipantsState';
-import { agentChatThreadsSelector } from '@/ai/states/selectors/agentChatThreadsSelector';
-import { buildAgentChatThreadInboxState } from '@/ai/utils/buildAgentChatThreadInboxState';
 import { createAtomSelector } from '@/ui/utilities/state/jotai/utils/createAtomSelector';
 
 type AgentChatOpenThreadsSummary = {
@@ -24,23 +16,19 @@ export const agentChatOpenThreadsSummarySelector =
         return { openThreadCount: 0, hasUnreadOpenThread: false };
       }
 
-      const participants = get(agentChatThreadParticipantsState);
-      const now = new Date(get(agentChatThreadInboxNowState));
-
-      const openThreadInboxStates = get(agentChatThreadsSelector)
-        .filter((thread) => !isDefined(thread.deletedAt))
+      const openThreadStatuses = get(agentChatRecentThreadsSelector)
         .map((thread) =>
-          buildAgentChatThreadInboxState(thread, participants[thread.id]),
+          get(agentChatThreadInboxStatusFamilySelector, {
+            threadId: thread.id,
+            lastActivityAt: thread.lastActivityAt ?? null,
+          }),
         )
-        .filter(
-          (inboxState) =>
-            getAgentChatThreadInboxScope(inboxState, now) === 'INBOX',
-        );
+        .filter(({ scope }) => scope === 'INBOX');
 
       return {
-        openThreadCount: openThreadInboxStates.length,
-        hasUnreadOpenThread: openThreadInboxStates.some((inboxState) =>
-          isAgentChatThreadUnread(inboxState),
+        openThreadCount: openThreadStatuses.length,
+        hasUnreadOpenThread: openThreadStatuses.some(
+          ({ isUnread }) => isUnread,
         ),
       };
     },

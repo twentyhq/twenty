@@ -71,6 +71,10 @@ export const useChatThreadsForRecord = ({
   );
 
   const isRecordLinkable = isNonEmptyArray(filter?.or);
+  const chatObjectMetadataItem = objectMetadataItems.find(
+    ({ nameSingular }) =>
+      nameSingular === CoreObjectNameSingular.AgentChatThread,
+  );
 
   const {
     records: links,
@@ -84,12 +88,8 @@ export const useChatThreadsForRecord = ({
     orderBy: [
       {
         thread: {
-          [getAgentChatThreadLastActivityFieldName(
-            objectMetadataItems.find(
-              ({ nameSingular }) =>
-                nameSingular === CoreObjectNameSingular.AgentChatThread,
-            ),
-          )]: 'DescNullsLast',
+          [getAgentChatThreadLastActivityFieldName(chatObjectMetadataItem)]:
+            'DescNullsLast',
         },
       },
     ] satisfies RecordGqlOperationOrderBy,
@@ -123,17 +123,18 @@ export const useChatThreadsForRecord = ({
   });
 
   // Custom legs allow duplicate links; sorted since an update doesn't reorder the fetched page.
-  const threads = sortChatThreadsByLastActivityDesc(
-    uniqBy(links.map(({ thread }) => thread).filter(isDefined), 'id'),
+  const threads = useMemo(
+    () =>
+      sortChatThreadsByLastActivityDesc(
+        uniqBy(links.map(({ thread }) => thread).filter(isDefined), 'id'),
+      ),
+    [links],
   );
 
   const getLinkIdsToThread = (threadId: string) =>
     links.filter((link) => link.threadId === threadId).map(({ id }) => id);
 
-  const chatObjectMetadataItemId = objectMetadataItems.find(
-    ({ nameSingular }) =>
-      nameSingular === CoreObjectNameSingular.AgentChatThread,
-  )?.id;
+  const chatObjectMetadataItemId = chatObjectMetadataItem?.id;
 
   useListenToObjectRecordOperationBrowserEvent({
     onObjectRecordOperationBrowserEvent: refetchLinks,

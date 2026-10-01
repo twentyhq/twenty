@@ -23,12 +23,11 @@ type AiChatThreadInboxActionItemsProps = {
   thread: Pick<AgentChatThreadRecord, 'id' | 'lastActivityAt'>;
 };
 
-const formatSnoozeTime = (date: Date) =>
-  new Intl.DateTimeFormat(undefined, {
-    weekday: 'short',
-    hour: 'numeric',
-    minute: '2-digit',
-  }).format(date);
+const SNOOZE_TIME_FORMAT = new Intl.DateTimeFormat(undefined, {
+  weekday: 'short',
+  hour: 'numeric',
+  minute: '2-digit',
+});
 
 export const AiChatThreadInboxActionItems = ({
   thread,
@@ -112,7 +111,7 @@ export const AiChatThreadInboxActionItems = ({
             {snoozeOptions.map((option) => (
               <Dropdown.ActionItem
                 key={option.key}
-                description={formatSnoozeTime(option.date)}
+                description={SNOOZE_TIME_FORMAT.format(option.date)}
                 descriptionPlacement="end"
                 onClick={runAction(() => snoozeUntilOption(option.key))}
               >

@@ -14,8 +14,6 @@ type AgentChatThreadPreviewsEffectProps = {
   threads: Pick<AgentChatThreadRecord, 'id' | 'lastActivityAt'>[];
 };
 
-// Fetches the previews of the listed threads that are missing, or older than
-// the thread's last activity
 export const AgentChatThreadPreviewsEffect = ({
   threads,
 }: AgentChatThreadPreviewsEffectProps) => {

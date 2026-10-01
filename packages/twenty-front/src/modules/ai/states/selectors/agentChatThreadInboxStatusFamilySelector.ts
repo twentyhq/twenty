@@ -57,4 +57,6 @@ export const agentChatThreadInboxStatusFamilySelector =
             isAgentChatThreadUnread(inboxState),
         };
       },
+    areEqual: (previous, next) =>
+      previous.scope === next.scope && previous.isUnread === next.isUnread,
   });

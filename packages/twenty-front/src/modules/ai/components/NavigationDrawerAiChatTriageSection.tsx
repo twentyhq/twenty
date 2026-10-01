@@ -13,7 +13,7 @@ import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/componen
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
-import { isMatchingLocation } from '~/utils/isMatchingLocation';
+import { isAiChatInboxPath } from '~/utils/isAiChatInboxPath';
 
 const AI_CHAT_TRIAGE_NAVIGATION_SECTION_ID = 'AiChatTriage';
 
@@ -32,7 +32,7 @@ export const NavigationDrawerAiChatTriageSection = () => {
   const { openThreadCount, hasUnreadOpenThread } = useAtomStateValue(
     agentChatOpenThreadsSummarySelector,
   );
-  const isOnInboxPage = isMatchingLocation(location, AppPath.AiChatInbox);
+  const isOnInboxPage = isAiChatInboxPath(location.pathname);
 
   const handleTriageClick = (filterStatus: AgentChatThreadFilterStatus) => {
     setAgentChatThreadFilterStatus(filterStatus);

@@ -21,8 +21,7 @@ import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMe
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { isAiChatPath } from '~/utils/isAiChatPath';
-import { isMatchingLocation } from '~/utils/isMatchingLocation';
+import { isAiModePath } from '~/utils/isAiModePath';
 
 export const useSwitchNavigationDrawerMode = () => {
   const isMobile = useIsMobile();
@@ -33,8 +32,7 @@ export const useSwitchNavigationDrawerMode = () => {
   const activeNavigationDrawerMode = useActiveNavigationDrawerMode();
   const isSettingsDrawer = useIsSettingsDrawer();
   const isSettingsPage = useIsSettingsPage();
-  const isAiChatPage = isAiChatPath(location.pathname);
-  const isAiChatInboxPage = isMatchingLocation(location, AppPath.AiChatInbox);
+  const isAiModePage = isAiModePath(location.pathname);
 
   const navigationMemorizedUrl = useAtomStateValue(navigationMemorizedUrlState);
   const navigationDrawerExpandedMemorized = useAtomStateValue(
@@ -77,7 +75,7 @@ export const useSwitchNavigationDrawerMode = () => {
       return;
     }
 
-    if (isAiChatPage || isAiChatInboxPage) {
+    if (isAiModePage) {
       returnFromExpandedAiChat();
     }
   };
@@ -100,7 +98,7 @@ export const useSwitchNavigationDrawerMode = () => {
         switchToNavigationMenu();
         break;
       case NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY:
-        if (isAiChatPage || isAiChatInboxPage) {
+        if (isAiModePage) {
           return;
         }
         switchToAiChat();

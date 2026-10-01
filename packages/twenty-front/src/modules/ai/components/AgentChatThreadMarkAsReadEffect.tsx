@@ -21,9 +21,6 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 
 const isDocumentVisible = () => document.visibilityState === 'visible';
 
-// Mounted where a thread's messages are on screen: the thread is read while
-// it is shown in a visible tab, including activity that lands meanwhile, and
-// the unread line keeps the position the member opened it at
 export const AgentChatThreadMarkAsReadEffect = () => {
   const store = useStore();
   // The displayed thread rather than the selected one, which can still be

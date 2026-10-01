@@ -1,5 +1,5 @@
 import { type NavigationDrawerItemProps } from '@/ui/navigation/navigation-drawer/types/NavigationDrawerItemProps';
-import { StyledVisuallyHidden } from '@/ui/accessibility/components/StyledVisuallyHidden';
+import { VisibilityHidden } from 'twenty-ui/primitives/accessibility';
 import { isObject } from '@sniptt/guards';
 import { useIsNavigationDrawerContentExpanded } from '@/navigation/hooks/useIsNavigationDrawerContentExpanded';
 import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
@@ -376,7 +376,7 @@ export const NavigationDrawerItem = ({
                       {isUnread ? (
                         <StyledUnreadItemLabel>
                           {label}
-                          <StyledVisuallyHidden>{t`, unread`}</StyledVisuallyHidden>
+                          <VisibilityHidden>{t`, unread`}</VisibilityHidden>
                         </StyledUnreadItemLabel>
                       ) : (
                         <StyledItemLabel>{label}</StyledItemLabel>
