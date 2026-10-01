@@ -6,7 +6,9 @@ import { Popover } from '@ui/primitives/surfaces/Popover/Popover';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import styles from './ExpandableList.module.scss';
+import { ExpandableListItem } from './internal/ExpandableListItem';
 import { useExpandableListLayout } from './internal/useExpandableListLayout';
+import { useFocusedElementUnmountRef } from './internal/useFocusedElementUnmountRef';
 import { type ExpandableListProps } from './types/ExpandableListProps';
 
 const stopPropagation = (event: SyntheticEvent) => event.stopPropagation();
@@ -52,25 +54,18 @@ export const ExpandableList = ({
       reserveCountSpace: isCountVisible,
       isMeasurementEnabled: showOverflowCount !== false || isOpen,
     });
-  const resetFocusStateWhenFocusedElementUnmounts = useCallback(
-    (element: HTMLElement | null) => {
-      if (!isDefined(element)) {
-        return;
-      }
-
-      return () => {
-        if (element.contains(element.ownerDocument.activeElement)) {
-          setHasFocus(false);
-          setFocusedItemCountVisibility(undefined);
-        }
-      };
-    },
-    [],
-  );
+  const resetFocusState = useCallback(() => {
+    setHasFocus(false);
+    setFocusedItemCountVisibility(undefined);
+  }, []);
+  const resetFocusWhenFocusedTriggerUnmounts =
+    useFocusedElementUnmountRef(resetFocusState);
+  const resetFocusWhenFocusedPopupUnmounts =
+    useFocusedElementUnmountRef(resetFocusState);
   const mergedRef = useMergedRefs(containerRef, ref);
   const mergedTriggerRef = useMergedRefs(
     triggerRef,
-    resetFocusStateWhenFocusedElementUnmounts,
+    resetFocusWhenFocusedTriggerUnmounts,
   );
   const displayedItemCount =
     showOverflowCount === false ? inlineItemCount : visibleItemCount;
@@ -82,64 +77,55 @@ export const ExpandableList = ({
   }
 
   return (
-    <div
-      {...props}
-      ref={mergedRef}
-      className={clsx(styles.root, className)}
-      onMouseEnter={(event) => {
-        setIsHovered(true);
-        onMouseEnter?.(event);
-      }}
-      onMouseLeave={(event) => {
-        setIsHovered(false);
-        onMouseLeave?.(event);
-      }}
-      onFocusCapture={(event) => {
-        setHasFocus(true);
+    <Popover.Root open={isOpen && canExpand} onOpenChange={setIsOpen}>
+      <div
+        {...props}
+        ref={mergedRef}
+        className={clsx(styles.root, className)}
+        onMouseEnter={(event) => {
+          setIsHovered(true);
+          onMouseEnter?.(event);
+        }}
+        onMouseLeave={(event) => {
+          setIsHovered(false);
+          onMouseLeave?.(event);
+        }}
+        onFocusCapture={(event) => {
+          setHasFocus(true);
 
-        if (itemsRef.current?.contains(event.target)) {
-          setFocusedItemCountVisibility(
-            (currentVisibility) => currentVisibility ?? isCountVisible,
-          );
-        }
+          if (itemsRef.current?.contains(event.target)) {
+            setFocusedItemCountVisibility(
+              (currentVisibility) => currentVisibility ?? isCountVisible,
+            );
+          }
 
-        onFocusCapture?.(event);
-      }}
-      onBlurCapture={(event) => {
-        setHasFocus(event.currentTarget.contains(event.relatedTarget));
+          onFocusCapture?.(event);
+        }}
+        onBlurCapture={(event) => {
+          setHasFocus(event.currentTarget.contains(event.relatedTarget));
 
-        if (!itemsRef.current?.contains(event.relatedTarget)) {
-          setFocusedItemCountVisibility(undefined);
-        }
+          if (!itemsRef.current?.contains(event.relatedTarget)) {
+            setFocusedItemCountVisibility(undefined);
+          }
 
-        onBlurCapture?.(event);
-      }}
-    >
-      <div ref={itemsRef} className={styles.items}>
-        {children.slice(0, inlineItemCount).map((child, index) => {
-          const isHidden = index >= displayedItemCount;
-
-          return (
-            <div
+          onBlurCapture?.(event);
+        }}
+      >
+        <div ref={itemsRef} className={styles.items}>
+          {children.slice(0, inlineItemCount).map((child, index) => (
+            <ExpandableListItem
               key={child.key ?? index}
-              ref={resetFocusStateWhenFocusedElementUnmounts}
-              className={styles.item}
-              data-hidden={isHidden || undefined}
-              data-last-visible={
-                (showOverflowCount !== false &&
-                  index === displayedItemCount - 1) ||
-                undefined
+              isHidden={index >= displayedItemCount}
+              isLastVisible={
+                showOverflowCount !== false && index === displayedItemCount - 1
               }
-              aria-hidden={isHidden || undefined}
-              inert={isHidden}
+              onFocusedItemUnmount={resetFocusState}
             >
               {child}
-            </div>
-          );
-        })}
-      </div>
-      {canExpand && (
-        <Popover.Root open={isOpen} onOpenChange={setIsOpen}>
+            </ExpandableListItem>
+          ))}
+        </div>
+        {canExpand && (
           <Popover.Trigger
             ref={mergedTriggerRef}
             type="button"
@@ -150,21 +136,21 @@ export const ExpandableList = ({
           >
             +{hiddenItemCount}
           </Popover.Trigger>
-          <Popover.Popup
-            ref={resetFocusStateWhenFocusedElementUnmounts}
-            anchor={containerRef}
-            align="start"
-            sideOffset={-9}
-            alignOffset={-7}
-            aria-label={overflowLabel}
-            className={styles.popup}
-            data-expandable-list-popup=""
-            {...STOP_PROPAGATION_PROPS}
-          >
-            {children}
-          </Popover.Popup>
-        </Popover.Root>
-      )}
-    </div>
+        )}
+        <Popover.Popup
+          ref={resetFocusWhenFocusedPopupUnmounts}
+          anchor={containerRef}
+          align="start"
+          sideOffset={-9}
+          alignOffset={-7}
+          aria-label={overflowLabel}
+          className={styles.popup}
+          data-expandable-list-popup=""
+          {...STOP_PROPAGATION_PROPS}
+        >
+          {children}
+        </Popover.Popup>
+      </div>
+    </Popover.Root>
   );
 };
