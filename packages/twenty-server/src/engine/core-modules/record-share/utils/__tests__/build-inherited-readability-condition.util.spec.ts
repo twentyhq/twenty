@@ -20,7 +20,7 @@ const countOccurrences = (haystack: string, needle: string): number =>
 
 const build = (
   parents: InheritedReadabilityParentCondition[],
-  { isOpenWhenDetached }: { isOpenWhenDetached?: boolean } = {},
+  { isOpenWhenDetached = false }: { isOpenWhenDetached?: boolean } = {},
 ) =>
   buildInheritedReadabilityCondition({
     tableAlias: 'attachment',

@@ -14,7 +14,7 @@ import {
   RecordSharePrincipalType,
   RecordShareRowCause,
 } from 'twenty-shared/types';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type UserWorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { NotFoundError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
@@ -709,20 +709,13 @@ export class RecordSharingService {
       },
       operationType: 'select',
     });
-    const isRecordReachable =
-      policy.kind === 'open' ||
-      (policy.kind === 'gated' &&
-        isNonEmptyArray(
-          await repository
-            .createQueryBuilder()
-            .select(['id'])
-            .where({ id: recordId })
-            .withDeleted()
-            .andWhere(policy.condition.sql, policy.condition.parameters)
-            .getMany<ObjectRecord>({ noFormatting: true }),
-        ));
+    const reachableRecordIds =
+      await repository.findRecordIdsAdmittedByRowAccessPolicy({
+        recordIds: [recordId],
+        policy,
+      });
 
-    if (!isRecordReachable) {
+    if (!reachableRecordIds.has(recordId)) {
       throw new RecordShareException(
         `Principal ${principal.principalId} cannot see record ${recordId} through its role`,
         RecordShareExceptionCode.INVALID_SHARE_WITH,

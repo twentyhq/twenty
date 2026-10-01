@@ -118,8 +118,6 @@ describe('ObjectRecordEventPublisher', () => {
     getRepository: jest.Mock;
   };
 
-  const companyObjectMetadata: FlatObjectMetadata = COMPANY_FLAT_OBJECT_MOCK;
-
   const companyNameField = getFlatFieldMetadataMock({
     objectMetadataId: COMPANY_FLAT_OBJECT_MOCK.id,
     type: FieldMetadataType.TEXT,
@@ -129,9 +127,29 @@ describe('ObjectRecordEventPublisher', () => {
     workspaceId,
   });
 
-  const mockFlatFieldMetadataMaps = buildFlatFieldMetadataMaps([
-    companyNameField,
-  ]);
+  const rowLevelPermissionFilteredFields = [
+    'status',
+    'assigneeId',
+    'locale',
+  ].map((name) =>
+    getFlatFieldMetadataMock({
+      objectMetadataId: COMPANY_FLAT_OBJECT_MOCK.id,
+      type: FieldMetadataType.TEXT,
+      name,
+      label: name,
+      universalIdentifier: `company-${name}-field-universal-id`,
+      workspaceId,
+    }),
+  );
+
+  const companyFields = [companyNameField, ...rowLevelPermissionFilteredFields];
+
+  const companyObjectMetadata: FlatObjectMetadata = {
+    ...COMPANY_FLAT_OBJECT_MOCK,
+    fieldIds: companyFields.map((field) => field.id),
+  };
+
+  const mockFlatFieldMetadataMaps = buildFlatFieldMetadataMaps(companyFields);
 
   const mockUserWorkspaceRoleMap: Record<string, string> = {
     [userWorkspaceId]: roleId,
@@ -217,6 +235,8 @@ describe('ObjectRecordEventPublisher', () => {
       universalIdentifiersByApplicationId: {},
     },
     flatFieldMetadataMaps:
+      overrides.flatFieldMetadataMaps ?? mockFlatFieldMetadataMaps,
+    flatFieldMetadataMapsOrm:
       overrides.flatFieldMetadataMaps ?? mockFlatFieldMetadataMaps,
     userWorkspaceRoleMap:
       overrides.userWorkspaceRoleMap ?? mockUserWorkspaceRoleMap,
