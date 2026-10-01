@@ -206,7 +206,11 @@ export const CountDisabled: Story = {
 
     for (const label of ['First item', 'Second item', 'Third item']) {
       await userEvent.tab();
-      expect(canvas.getByRole('button', { name: label })).toHaveFocus();
+      const item = canvas.getByRole('button', { name: label });
+      expect(item).toHaveFocus();
+      expect(item.parentElement?.getBoundingClientRect().width).toBeGreaterThan(
+        0,
+      );
     }
   },
 };

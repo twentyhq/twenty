@@ -98,7 +98,9 @@ export const ExpandableList = ({
                 className={styles.item}
                 data-hidden={isHidden || undefined}
                 data-last-visible={
-                  index === displayedItemCount - 1 || undefined
+                  (showOverflowCount !== false &&
+                    index === displayedItemCount - 1) ||
+                  undefined
                 }
                 aria-hidden={isHidden || undefined}
                 inert={isHidden}
