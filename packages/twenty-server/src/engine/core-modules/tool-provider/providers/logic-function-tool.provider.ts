@@ -17,6 +17,7 @@ import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
+import { buildLogicFunctionToolName } from 'src/engine/core-modules/tool-provider/utils/build-logic-function-tool-name.util';
 
 @Injectable()
 export class LogicFunctionToolProvider implements ToolProvider {
@@ -92,7 +93,7 @@ export class LogicFunctionToolProvider implements ToolProvider {
     const descriptors: (ToolIndexEntry | ToolDescriptor)[] = [];
 
     for (const logicFunction of logicFunctionsWithSchema) {
-      const toolName = this.buildLogicFunctionToolName(logicFunction.name);
+      const toolName = buildLogicFunctionToolName(logicFunction.name);
 
       const base: ToolIndexEntry = {
         name: toolName,
@@ -126,12 +127,5 @@ export class LogicFunctionToolProvider implements ToolProvider {
     }
 
     return descriptors;
-  }
-
-  private buildLogicFunctionToolName(functionName: string): string {
-    return `app_${functionName
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, '_')
-      .replace(/^_+|_+$/g, '')}`;
   }
 }

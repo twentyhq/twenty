@@ -218,6 +218,17 @@ export const computeStepOutputSchema = ({
       return generateFormOutputSchema(formFields, objectMetadataItems);
     }
 
+    case 'SEND_CHAT_MESSAGE': {
+      return {
+        threadId: {
+          isLeaf: true,
+          type: FieldMetadataType.UUID,
+          label: 'Conversation ID',
+          value: '',
+        },
+      };
+    }
+
     case 'SEND_EMAIL': {
       return {
         success: {

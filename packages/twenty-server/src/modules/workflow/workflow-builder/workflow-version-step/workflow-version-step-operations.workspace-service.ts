@@ -11,6 +11,7 @@ import {
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
 import {
   IF_ELSE_BRANCH_POSITION_OFFSETS,
+  WORKFLOW_ACTION_FEATURE_FLAGS,
   WorkflowActionType,
   getFunctionInputFromInputSchema,
   type StepIfElseBranch,
@@ -19,6 +20,7 @@ import { v4 } from 'uuid';
 
 import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
 import { FindRecordsService } from 'src/engine/core-modules/record-crud/services/find-records.service';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { type WorkflowStepPositionInput } from 'src/engine/core-modules/workflow/dtos/update-workflow-step-position.input';
 import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
 import { AiAgentRoleService } from 'src/engine/metadata-modules/ai/ai-agent-role/ai-agent-role.service';
@@ -87,6 +89,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly workflowVersionCoreSyncService: WorkflowVersionCoreSyncService,
     private readonly findRecordsService: FindRecordsService,
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   async runWorkflowVersionStepDeletionSideEffects({
@@ -178,6 +181,8 @@ export class WorkflowVersionStepOperationsWorkspaceService {
       valid: false,
       nextStepIds: [],
     };
+
+    await this.assertActionTypeEnabled({ type, workspaceId });
 
     switch (type) {
       case WorkflowActionType.CODE: {
@@ -328,6 +333,23 @@ export class WorkflowVersionStepOperationsWorkspaceService {
                 },
                 subject: '',
                 body: '',
+              },
+            },
+          },
+        };
+      }
+      case WorkflowActionType.SEND_CHAT_MESSAGE: {
+        return {
+          builtStep: {
+            ...baseStep,
+            name: 'Send Chat Message',
+            type: WorkflowActionType.SEND_CHAT_MESSAGE,
+            settings: {
+              ...BASE_STEP_DEFINITION,
+              input: {
+                workspaceMemberId: '',
+                title: '',
+                text: '',
               },
             },
           },
@@ -713,6 +735,29 @@ export class WorkflowVersionStepOperationsWorkspaceService {
     }
   }
 
+  private async assertActionTypeEnabled({
+    type,
+    workspaceId,
+  }: {
+    type: WorkflowActionType;
+    workspaceId: string;
+  }) {
+    const featureFlag = WORKFLOW_ACTION_FEATURE_FLAGS[type];
+
+    if (
+      isDefined(featureFlag) &&
+      !(await this.featureFlagService.isFeatureEnabled(
+        featureFlag,
+        workspaceId,
+      ))
+    ) {
+      throw new WorkflowVersionStepException(
+        `WorkflowActionType '${type}' is not enabled`,
+        WorkflowVersionStepExceptionCode.INVALID_REQUEST,
+      );
+    }
+  }
+
   async enrichFormStepResponse({
     workspaceId,
     step,
@@ -850,6 +895,8 @@ export class WorkflowVersionStepOperationsWorkspaceService {
       x: step.position?.x ?? 0,
       y: step.position?.y ?? 0,
     };
+
+    await this.assertActionTypeEnabled({ type: step.type, workspaceId });
 
     switch (step.type) {
       case WorkflowActionType.CODE: {
