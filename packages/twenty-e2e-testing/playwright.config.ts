@@ -18,18 +18,17 @@ export default defineConfig({
   fullyParallel: false,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
-  workers: 1, // 1 worker = 1 test at the time, tests can't be parallelized
+  workers: 1, // tests can't be parallelized
   timeout: process.env.CI ? 60_000 : 30 * 1000,
   use: {
     baseURL: process.env.FRONTEND_BASE_URL || 'http://localhost:3001',
-    trace: 'retain-on-failure', // trace takes EVERYTHING from page source, records every single step, should be used only when normal debugging won't work
-    screenshot: 'on', // either 'on' here or in different method in modules, if 'on' all screenshots are overwritten each time the test is run
+    trace: 'retain-on-failure',
+    screenshot: 'on',
     headless: true, // instead of changing it to false, run 'yarn test:e2e:debug' or 'yarn test:e2e:ui'
     testIdAttribute: 'data-testid',
   },
   expect: {
-    // CI runners are slow enough that post-mutation UI transitions routinely
-    // exceed 5s; locally keep the tight budget.
+    // CI runners routinely exceed 5s on post-mutation UI transitions.
     timeout: process.env.CI ? 15_000 : 5000,
   },
   reporter: [

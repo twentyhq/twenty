@@ -218,8 +218,7 @@ export class AgentHistoryRepository<TRecord extends { id: string }> {
     conflictPaths: string[],
   ) {
     return this.run(workspaceId, async (repository, context) => {
-      // Workspace upsert selects before inserting. Serialize concurrent stream
-      // checkpoints for the same identity so both cannot take the insert path.
+      // workspace upsert selects before inserting, so serialize concurrent checkpoints per identity
       const valuesByField: ObjectLiteral = values;
       const identity = [...conflictPaths]
         .sort()

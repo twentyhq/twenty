@@ -139,8 +139,7 @@ export const useObjectOptionsForBoard = ({
   const { updateRecordField } = useUpdateRecordField(recordBoardId);
   const { upsertRecordField } = useUpsertRecordField(recordBoardId);
 
-  // Todo : this seems over complex and should at least be extracted to an util with unit test.
-  // Let's refactor this as we introduce the new viewBar
+  // TODO: overly complex; extract to a unit-tested util.
   const handleBoardFieldVisibilityChange = useCallback(
     async (
       updatedFieldDefinition: Pick<

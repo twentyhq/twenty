@@ -433,9 +433,7 @@ export class ObjectRecordEventPublisher {
       });
     }
 
-    // The cache keeps soft-deleted applications, so absence is not enough.
-    // An application that has gone away is not one declaring no role: falling
-    // back to the user alone would widen a stream that is already open.
+    // The cache keeps soft-deleted applications; a gone one must not fall back to the user alone and widen the stream
     const application = findActiveFlatApplicationById(
       permissionsContext.flatApplicationMaps,
       applicationId,

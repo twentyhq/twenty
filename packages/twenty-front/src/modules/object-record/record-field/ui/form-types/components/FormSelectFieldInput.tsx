@@ -152,9 +152,7 @@ export const FormSelectFieldInput = ({
             withSearchInput
             disabled={readonly}
             dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
-            dropdownOffset={{
-              y: parseInt(theme.spacing[1], 10),
-            }}
+            dropdownSideOffset={parseInt(theme.spacing[1], 10)}
           />
         ) : (
           <FormFieldInputInnerContainer

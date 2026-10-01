@@ -13,8 +13,7 @@ import { messages as enMessages } from '~/locales/generated/en';
 i18n.load({ [SOURCE_LOCALE]: enMessages });
 i18n.activate(SOURCE_LOCALE);
 
-// jsdom has no TextEncoder/TextDecoder, and @ai-sdk/provider-utils builds one
-// while being imported.
+// jsdom lacks TextEncoder/TextDecoder, which @ai-sdk/provider-utils builds at import.
 if (globalThis.TextDecoder === undefined) {
   Object.assign(globalThis, { TextDecoder, TextEncoder });
 }
@@ -40,8 +39,7 @@ if (typeof window !== 'undefined') {
   });
 }
 
-// jsdom does not implement ResizeObserver; @dnd-kit/dom expects it at import
-// time.
+// jsdom lacks ResizeObserver, which @dnd-kit/dom expects at import time.
 class ResizeObserverMock {
   observe() {}
   unobserve() {}

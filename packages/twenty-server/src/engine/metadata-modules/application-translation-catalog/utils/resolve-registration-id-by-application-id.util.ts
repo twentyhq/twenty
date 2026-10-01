@@ -7,8 +7,7 @@ type ApplicationRegistrationLookup = {
   >;
 };
 
-// The standard application is skipped: its strings live in the server's own
-// lingui catalog, not in applicationTranslation.
+// skips the standard application, whose strings live in the server's lingui catalog
 export const resolveRegistrationIdByApplicationId = ({
   applicationIds,
   flatApplicationMaps,

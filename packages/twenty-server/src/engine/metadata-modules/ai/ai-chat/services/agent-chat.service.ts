@@ -579,8 +579,7 @@ export class AgentChatService {
     return savedTurnId;
   }
 
-  // A tool call id is only unique within the conversation that made it, so
-  // the part is looked up through its message's thread.
+  // tool call ids are only unique within a conversation
   async findToolPart({
     threadId,
     toolCallId,
@@ -645,9 +644,7 @@ export class AgentChatService {
     );
   }
 
-  // The answer and, once no call of the message still waits, the
-  // conversation no longer waiting on it are written together, so an answer
-  // never strands a conversation waiting on calls that are all answered.
+  // written together so an answer never strands a conversation waiting on answered calls
   async recordToolCallAnswer({
     threadId,
     messageId,
@@ -681,8 +678,6 @@ export class AgentChatService {
     );
   }
 
-  // Calls nothing can answer anymore are closed, so the conversation no longer
-  // waits on them.
   async closePendingToolCalls({
     threadId,
     messageId,
@@ -705,7 +700,6 @@ export class AgentChatService {
     });
   }
 
-  // Sending to a soft deleted conversation brings it back to the list
   async restoreThread({
     threadId,
     workspaceMemberId,
@@ -753,8 +747,7 @@ export class AgentChatService {
 
     const threadAfter = { ...thread, updatedAt: new Date().toISOString() };
 
-    // Conversations are listed by most recent change, so a message moves its
-    // conversation to the top when it is sent, not only once the turn ends.
+    // conversations sort by last change, so bump on send rather than at turn end
     await this.threadRepository.update(
       workspaceId,
       { id: threadId },

@@ -41,10 +41,7 @@ const buildWrapper =
   );
 
 describe('useFlowOrThrow', () => {
-  // The workflow diagram on the main surface writes the flow, and the side
-  // panel step editor deliberately provides the same visualizer instance id to
-  // read it. If component ids were rewritten per surface, the side panel would
-  // read a different atom and every step click would crash.
+  // The side panel step editor reuses the main diagram's visualizer instance id; per-surface ids would read another atom and crash on step click
   it('reads a flow written on the main surface from a side panel sharing the instance id', () => {
     const store = createStore();
     const flow = {

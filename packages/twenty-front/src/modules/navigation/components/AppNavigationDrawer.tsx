@@ -25,8 +25,7 @@ export const AppNavigationDrawer = ({
 
   return (
     <NavigationDrawer className={className}>
-      {/* Mobile switches modes from the navigation bar at the bottom of the
-          screen, so a second switcher inside the drawer only repeats it. */}
+      {/* Mobile switches modes from the bottom navigation bar instead. */}
       {!isMobile && (
         <NavigationDrawerFixedContent>
           <MainNavigationDrawerModeSwitcher />

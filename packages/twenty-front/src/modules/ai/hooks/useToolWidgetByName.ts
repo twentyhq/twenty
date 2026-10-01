@@ -8,8 +8,6 @@ import { type ToolWidget } from '@/ai/types/ToolWidget';
 
 const EMPTY_TOOL_WIDGETS: Map<string, ToolWidget> = new Map();
 
-// A tool names the widget that renders its calls; the chat resolves that
-// pointer instead of switching on tool names it would have to know about.
 export const useToolWidgetByName = (): Map<string, ToolWidget> => {
   const { toolIndex } = useGetToolIndex();
 

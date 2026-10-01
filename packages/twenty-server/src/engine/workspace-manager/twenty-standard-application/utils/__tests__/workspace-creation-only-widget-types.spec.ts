@@ -15,9 +15,6 @@ const COMPANY_CONVERSATIONS_TAB =
   STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.companyRecordPage.tabs
     .conversations;
 
-// Upgrades from before 2.31 backfill record pages from these definitions while
-// the widget type enum does not hold CHAT_THREADS yet: a single such widget in
-// them fails the whole upgrade.
 describe('widget types only workspace creation builds', () => {
   it('should leave chat threads widgets, and the tab they fill, out of what upgrade commands build', () => {
     const allFlatEntityMaps = computeStandardFlatEntityMaps();

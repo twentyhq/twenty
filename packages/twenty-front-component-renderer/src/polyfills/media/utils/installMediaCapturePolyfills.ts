@@ -56,9 +56,7 @@ export const installMediaCapturePolyfills = ({
       );
     }
 
-    // Detailed constraint objects (deviceId, resolution, ...) are accepted
-    // but not forwarded: the host captures with its defaults for the
-    // requested kinds.
+    // Detailed constraints are accepted but not forwarded: the host captures with its defaults.
     const startStreamResult = await bridge.startStream({
       audio: isAudioRequested,
       video: isVideoRequested,
@@ -102,8 +100,7 @@ export const installMediaCapturePolyfills = ({
 
     installTarget.navigator ??= targetNavigator;
 
-    // The worker's own navigator is a platform object whose mediaDevices
-    // does not exist; define it without clobbering anything already there.
+    // Worker navigators lack mediaDevices; define it without clobbering an existing one.
     if (!isDefined(targetNavigator.mediaDevices)) {
       Object.defineProperty(targetNavigator, 'mediaDevices', {
         configurable: true,

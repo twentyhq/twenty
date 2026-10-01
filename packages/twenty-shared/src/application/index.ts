@@ -133,6 +133,7 @@ export { getViewFilterUniversalIdentifier } from './deterministic-identifier/get
 export { getViewGroupUniversalIdentifier } from './deterministic-identifier/get-view-group-universal-identifier.util';
 export { getViewSortUniversalIdentifier } from './deterministic-identifier/get-view-sort-universal-identifier.util';
 export { getViewUniversalIdentifier } from './deterministic-identifier/get-view-universal-identifier.util';
+export { getWorkflowVersionUniversalIdentifier } from './deterministic-identifier/get-workflow-version-universal-identifier.util';
 export type {
   EnqueueJobOptions,
   EnqueueJobInput,
@@ -259,3 +260,7 @@ export type {
   ViewManifest,
 } from './viewManifestType';
 export type { WorkflowActionTriggerSettings } from './workflowActionTriggerSettingsType';
+export type { WorkflowManifest } from './workflowManifestType';
+export { workflowManifestSchema } from './workflowManifestType';
+export type { WorkflowStepManifest } from './workflowStepManifestType';
+export { workflowStepManifestSchema } from './workflowStepManifestType';

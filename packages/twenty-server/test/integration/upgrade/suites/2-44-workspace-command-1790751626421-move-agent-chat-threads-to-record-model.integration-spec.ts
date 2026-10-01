@@ -102,7 +102,6 @@ describe('2-44 workspace command 1790751626421 - MoveAgentChatThreadsToRecordMod
     const chatService =
       getAppProviderByClassName<AgentChatService>('AgentChatService');
 
-    // What a workspace that has not run the command yet looks like
     await runCommand('down');
 
     for (const threadId of threadIds) {

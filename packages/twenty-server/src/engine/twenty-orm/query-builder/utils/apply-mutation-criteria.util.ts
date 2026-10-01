@@ -16,8 +16,7 @@ export type MutationCriteria =
   | ObjectWhereLike
   | ObjectWhereLike[];
 
-// A where object with no key filters nothing, so the mutation would reach
-// every row of the table.
+// An empty where object would make the mutation reach every row
 const assertWhereObjectFilters = (whereObject: ObjectWhereLike): void => {
   if (Object.keys(whereObject).length === 0) {
     throw new TwentyOrmException(
