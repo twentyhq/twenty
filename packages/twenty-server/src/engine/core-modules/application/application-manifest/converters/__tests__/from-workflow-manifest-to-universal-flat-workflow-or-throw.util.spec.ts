@@ -1,11 +1,13 @@
-import { type WorkflowManifest } from 'twenty-shared/application';
+import {
+  getWorkflowVersionUniversalIdentifier,
+  type WorkflowManifest,
+} from 'twenty-shared/application';
 
 import { fromWorkflowManifestToUniversalFlatWorkflowOrThrow } from 'src/engine/core-modules/application/application-manifest/converters/from-workflow-manifest-to-universal-flat-workflow-or-throw.util';
 import { type FlatWorkflow } from 'src/engine/metadata-modules/flat-workflow/types/flat-workflow.type';
 import { type FlatWorkflowVersion } from 'src/engine/metadata-modules/flat-workflow-version/types/flat-workflow-version.type';
 
 const WORKFLOW_ID = '11111111-1111-4111-8111-111111111111';
-const VERSION_ID = '22222222-2222-4222-8222-222222222222';
 const TRIGGER_ID = '33333333-3333-4333-8333-333333333333';
 const STEP_ID = '44444444-4444-4444-8444-444444444444';
 const FUNCTION_ID = '55555555-5555-4555-8555-555555555555';
@@ -14,7 +16,6 @@ const manifest: WorkflowManifest = {
   universalIdentifier: WORKFLOW_ID,
   name: 'Greeting',
   version: {
-    universalIdentifier: VERSION_ID,
     trigger: {
       universalIdentifier: TRIGGER_ID,
       type: 'MANUAL',
@@ -116,7 +117,13 @@ describe('application workflow definitions', () => {
       second.version.steps?.[0].settings.input,
     );
     expect(first.version.universalIdentifier).toBe(
-      second.version.universalIdentifier,
+      getWorkflowVersionUniversalIdentifier({
+        applicationUniversalIdentifier: APPLICATION_ID,
+        workflowUniversalIdentifier: WORKFLOW_ID,
+      }),
+    );
+    expect(second.version.universalIdentifier).toBe(
+      first.version.universalIdentifier,
     );
     expect(first.version.id).not.toBe(second.version.id);
   });

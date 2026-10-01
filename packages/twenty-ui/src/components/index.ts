@@ -37,8 +37,6 @@ export type { ToastProviderProps } from './feedback/Toast/types/ToastProviderPro
 export type { ToastVariant } from './feedback/Toast/types/ToastVariant';
 export { Toaster } from './feedback/Toaster/Toaster';
 export type { ToasterProps } from './feedback/Toaster/types/ToasterProps';
-export { ColorSchemePicker } from './input/ColorSchemePicker/ColorSchemePicker';
-export type { ColorSchemePickerProps } from './input/ColorSchemePicker/types/ColorSchemePickerProps';
 export { IconButton } from './input/IconButton/IconButton';
 export type { IconButtonProps } from './input/IconButton/types/IconButtonProps';
 export type { IconButtonSize } from './input/IconButton/types/IconButtonSize';
@@ -87,6 +85,5 @@ export type { MenuItemSuggestionProps } from './navigation/MenuItemSuggestion/ty
 export { MenuPicker } from './navigation/MenuPicker/MenuPicker';
 export type { MenuPickerProps } from './navigation/MenuPicker/types/MenuPickerProps';
 export { NavigationBar } from './navigation/NavigationBar/NavigationBar';
-export { RoundedLink } from './navigation/RoundedLink/RoundedLink';
 export { TabButton } from './navigation/TabButton/TabButton';
 export type { TabButtonProps } from './navigation/TabButton/types/TabButtonProps';

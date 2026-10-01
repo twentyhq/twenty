@@ -1,25 +1,27 @@
 import { Injectable } from '@nestjs/common';
 
-import { msg } from '@lingui/core/macro';
 import { type ActorMetadata } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { StepStatus } from 'twenty-shared/workflow';
+import { msg } from '@lingui/core/macro';
 
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
+import { workflowHasRunningSteps } from 'src/modules/workflow/common/utils/workflow-has-running-steps.util';
 import {
   WorkflowVersionStepException,
   WorkflowVersionStepExceptionCode,
 } from 'src/modules/workflow/common/exceptions/workflow-version-step.exception';
-import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
-import { workflowHasRunningSteps } from 'src/modules/workflow/common/utils/workflow-has-running-steps.util';
 import { WorkflowVersionStepOperationsWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step-operations.workspace-service';
-import {
-  type AnsweredToolPart,
-  WorkflowAgentConversationWorkspaceService,
-} from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/services/workflow-agent-conversation.workspace-service';
 import { WorkflowStepExecutorException } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
+import { WorkflowExecutionContextService } from 'src/modules/workflow/workflow-executor/services/workflow-execution-context.service';
+import { type WorkflowExecutionContext } from 'src/modules/workflow/workflow-executor/types/workflow-execution-context.type';
+import {
+  type WorkflowFormAction,
+  type WorkflowAction,
+} from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { isWorkflowFormAction } from 'src/modules/workflow/workflow-executor/workflow-actions/form/guards/is-workflow-form-action.guard';
 import {
   WorkflowRunException,
@@ -34,7 +36,6 @@ import { WorkflowThrottlingWorkspaceService } from 'src/modules/workflow/workflo
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 import { CoreWorkflowRunnerService } from 'src/modules/workflow/workflow-runner/services/core-workflow-runner.service';
 import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
-import { WorkflowExecutionContextService } from 'src/modules/workflow/workflow-executor/services/workflow-execution-context.service';
 
 @Injectable()
 export class WorkflowRunnerWorkspaceService {
@@ -46,7 +47,6 @@ export class WorkflowRunnerWorkspaceService {
     private readonly workflowThrottlingWorkspaceService: WorkflowThrottlingWorkspaceService,
     private readonly coreWorkflowRunnerService: CoreWorkflowRunnerService,
     private readonly workflowVersionCoreSyncService: WorkflowVersionCoreSyncService,
-    private readonly workflowAgentConversationWorkspaceService: WorkflowAgentConversationWorkspaceService,
     private readonly workflowExecutionContextService: WorkflowExecutionContextService,
   ) {}
 
@@ -105,45 +105,110 @@ export class WorkflowRunnerWorkspaceService {
     );
   }
 
-  // Called with the answer to the form step's Ask, whose claim the step
-  // transition takes: false when the form no longer waits for it.
-  async submitFormStep({
+  // Called once every call a step's conversation waits on is answered: a
+  // form step completes with its answer, while an agent step stays PENDING
+  // until the resume job claims it and continues its conversation.
+  async resumeAnsweredStep({
     workspaceId,
-    stepId,
     workflowRunId,
+    step,
+    threadId,
     response,
   }: {
     workspaceId: string;
-    stepId: string;
     workflowRunId: string;
+    step: WorkflowAction;
+    threadId: string;
+    response: Record<string, unknown>;
+  }): Promise<void> {
+    if (!isWorkflowFormAction(step)) {
+      await this.messageQueueService.add<RunWorkflowJobData>(
+        RunWorkflowJob.name,
+        {
+          workspaceId,
+          workflowRunId,
+          stepToResume: { stepId: step.id, threadId },
+        },
+        buildRunWorkflowJobOptions(workflowRunId),
+      );
+
+      return;
+    }
+
+    const hasCompletedStep = await this.completeFormStep({
+      workspaceId,
+      workflowRunId,
+      step,
+      expectedThreadId: threadId,
+      response,
+    });
+
+    if (hasCompletedStep) {
+      await this.resume({
+        workspaceId,
+        workflowRunId,
+        lastExecutedStepId: step.id,
+      });
+    }
+  }
+
+  async completeFormStep({
+    workspaceId,
+    workflowRunId,
+    step,
+    expectedThreadId,
+    response,
+  }: {
+    workspaceId: string;
+    workflowRunId: string;
+    step: WorkflowFormAction;
+    expectedThreadId: string | null;
     response: Record<string, unknown>;
   }): Promise<boolean> {
+    const enrichedResponse =
+      await this.workflowVersionStepOperationsWorkspaceService.enrichFormStepResponse(
+        {
+          workspaceId,
+          step,
+          response,
+          recordReadContext: await this.findFormRecordReadContext({
+            workspaceId,
+            workflowRunId,
+            step,
+          }),
+        },
+      );
+
+    return this.workflowRunWorkspaceService.updateStepInfoIfPending({
+      stepId: step.id,
+      stepInfo: {
+        status: StepStatus.SUCCESS,
+        result: enrichedResponse,
+      },
+      expectedThreadId,
+      workspaceId,
+      workflowRunId,
+    });
+  }
+
+  private async findFormRecordReadContext({
+    workspaceId,
+    workflowRunId,
+    step,
+  }: {
+    workspaceId: string;
+    workflowRunId: string;
+    step: WorkflowFormAction;
+  }): Promise<WorkflowExecutionContext | undefined> {
+    if (!step.settings.input.some((field) => field.type === 'RECORD')) {
+      return undefined;
+    }
+
     const workflowRun =
       await this.workflowRunWorkspaceService.getWorkflowRunOrFail({
         workflowRunId,
         workspaceId,
       });
-
-    const step = workflowRun.state?.flow?.steps?.find(
-      (step) => step.id === stepId,
-    );
-
-    if (!isDefined(step)) {
-      throw new WorkflowVersionStepException(
-        'Step not found',
-        WorkflowVersionStepExceptionCode.NOT_FOUND,
-      );
-    }
-
-    if (!isWorkflowFormAction(step)) {
-      throw new WorkflowVersionStepException(
-        'Step is not a form',
-        WorkflowVersionStepExceptionCode.INVALID_REQUEST,
-        {
-          userFriendlyMessage: msg`Step is not a form`,
-        },
-      );
-    }
 
     const applicationBoundExecutionContext =
       await this.workflowExecutionContextService
@@ -162,88 +227,7 @@ export class WorkflowRunnerWorkspaceService {
           throw error;
         });
 
-    const enrichedResponse =
-      await this.workflowVersionStepOperationsWorkspaceService.enrichFormStepResponse(
-        {
-          workspaceId,
-          step,
-          response,
-          recordReadContext: applicationBoundExecutionContext ?? undefined,
-        },
-      );
-
-    const hasCompletedStep =
-      await this.workflowRunWorkspaceService.updateStepInfoIfPending({
-        stepId,
-        stepInfo: {
-          status: StepStatus.SUCCESS,
-          result: enrichedResponse,
-        },
-        inputAskResponse: enrichedResponse,
-        workspaceId,
-        workflowRunId,
-      });
-
-    if (!hasCompletedStep) {
-      return false;
-    }
-
-    await this.resume({
-      workspaceId,
-      workflowRunId,
-      lastExecutedStepId: stepId,
-    });
-
-    return true;
-  }
-
-  // The step stays PENDING until the resume job claims it in its
-  // conversation.
-  async resumeAnsweredAgentStep({
-    workspaceId,
-    workflowRunId,
-    stepId,
-    threadId,
-    toolPart,
-    toolResult,
-    answerText,
-    senderUserWorkspaceId,
-  }: {
-    workspaceId: string;
-    workflowRunId: string;
-    stepId: string;
-    threadId: string;
-    toolPart: AnsweredToolPart;
-    toolResult: Record<string, unknown>;
-    answerText: string;
-    senderUserWorkspaceId: string;
-  }): Promise<void> {
-    const { hasAwaitingToolCalls } =
-      await this.workflowAgentConversationWorkspaceService.recordAnswer({
-        workspaceId,
-        threadId,
-        toolPart,
-        toolResult,
-        answerText,
-        senderUserWorkspaceId,
-      });
-
-    // The agent paused on several calls and continues once all are
-    // answered. Two answers that both see none left each queue a resume,
-    // and the resume's claim on the step lets only one of them run it.
-    if (hasAwaitingToolCalls) {
-      return;
-    }
-
-    await this.messageQueueService.add<RunWorkflowJobData>(
-      RunWorkflowJob.name,
-      {
-        workspaceId,
-        workflowRunId,
-        stepToResume: { stepId, threadId },
-      },
-      buildRunWorkflowJobOptions(workflowRunId),
-    );
+    return applicationBoundExecutionContext ?? undefined;
   }
 
   async stopWorkflowRun(workspaceId: string, workflowRunId: string) {

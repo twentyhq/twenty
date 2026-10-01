@@ -62,7 +62,10 @@ export { workflowFilterActionSettingsSchema } from './schemas/filter-action-sett
 export { workflowFindRecordsActionSchema } from './schemas/find-records-action-schema';
 export { workflowFindRecordsActionSettingsSchema } from './schemas/find-records-action-settings-schema';
 export { workflowFormActionSchema } from './schemas/form-action-schema';
-export { workflowFormActionSettingsSchema } from './schemas/form-action-settings-schema';
+export {
+  workflowFormFieldSchema,
+  workflowFormActionSettingsSchema,
+} from './schemas/form-action-settings-schema';
 export { workflowHttpRequestActionSchema } from './schemas/http-request-action-schema';
 export { workflowHttpRequestActionSettingsSchema } from './schemas/http-request-action-settings-schema';
 export { workflowIfElseActionSchema } from './schemas/if-else-action-schema';

@@ -6,7 +6,7 @@ description: Controlled search text with an optional filter popup.
 import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 import SearchInputReference from '/snippets/ui/generated/components/search-input.mdx';
 
-`SearchInput` supplies a search icon and text input. `onChange` receives the new string. Filtering, fetching, and debouncing belong to your application.
+`SearchInput` supplies a search icon and text input. `onValueChange` receives the new string; `onChange` receives the native React change event. Filtering, fetching, and debouncing belong to your application.
 
 ```tsx
 import { useState } from 'react';
@@ -20,7 +20,7 @@ export const PeopleSearch = () => {
       aria-label="Search people"
       placeholder="Name or email"
       value={search}
-      onChange={setSearch}
+      onValueChange={setSearch}
     />
   );
 };
@@ -33,6 +33,8 @@ Use `aria-label` or `aria-labelledby` for an accessible name. `filterDropdown` r
   title="SearchInput example"
   height={280}
 />
+
+Native input props, `className`, `style`, and `ref` apply to the input itself. The shared `InputGroup` owns the search adornment and focus treatment. Use `size="sm"` for a compact search field.
 
 ## Props
 

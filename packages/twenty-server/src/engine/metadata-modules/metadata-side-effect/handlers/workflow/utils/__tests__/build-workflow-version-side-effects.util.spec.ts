@@ -1,18 +1,23 @@
 import { buildWorkflowVersionSideEffects } from 'src/engine/metadata-modules/metadata-side-effect/handlers/workflow/utils/build-workflow-version-side-effects.util';
 import { validateApplicationWorkflowVersion } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-application-workflow-version.util';
-import { type WorkflowManifest } from 'twenty-shared/application';
+import {
+  getWorkflowVersionUniversalIdentifier,
+  type WorkflowManifest,
+} from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
 import { fromWorkflowManifestToUniversalFlatWorkflowOrThrow } from 'src/engine/core-modules/application/application-manifest/converters/from-workflow-manifest-to-universal-flat-workflow-or-throw.util';
 import { buildAllFlatEntityOperationRecordByMetadataNameFromFromTo } from 'src/engine/core-modules/application/application-manifest/utils/build-all-flat-entity-operation-record-by-metadata-name-from-from-to.util';
 import { createEmptyAllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-all-flat-entity-maps.constant';
-import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { type FlatWorkflow } from 'src/engine/metadata-modules/flat-workflow/types/flat-workflow.type';
 import { flatEntityToScalarFlatEntity } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/flat-entity-to-scalar-flat-entity.util';
 
 const APPLICATION_ID = '11111111-1111-4111-8111-111111111111';
 const WORKFLOW_ID = '22222222-2222-4222-8222-222222222222';
-const VERSION_ID = '33333333-3333-4333-8333-333333333333';
+const VERSION_ID = getWorkflowVersionUniversalIdentifier({
+  applicationUniversalIdentifier: APPLICATION_ID,
+  workflowUniversalIdentifier: WORKFLOW_ID,
+});
 const TRIGGER_ID = '44444444-4444-4444-8444-444444444444';
 const STEP_ID = '55555555-5555-4555-8555-555555555555';
 const buildOptions = {
@@ -24,7 +29,6 @@ const manifest: WorkflowManifest = {
   universalIdentifier: WORKFLOW_ID,
   name: 'Application workflow',
   version: {
-    universalIdentifier: VERSION_ID,
     trigger: {
       universalIdentifier: TRIGGER_ID,
       type: 'MANUAL',
@@ -143,33 +147,6 @@ describe('application workflow version side effects', () => {
     expect(before.version.steps?.[0].name).toBe('Finish');
   });
 
-  it('rejects two workflows that declare the same version identifier in one installation', () => {
-    const first = convert().workflow;
-    const second = convert({
-      ...manifest,
-      universalIdentifier: '66666666-6666-4666-8666-666666666666',
-    }).workflow;
-    const result = buildWorkflowVersionSideEffects({
-      flatEntity: second,
-      allFlatEntityOperationRecordByMetadataName: {
-        workflow: {
-          flatEntityToCreate: {
-            [first.universalIdentifier]: first,
-            [second.universalIdentifier]: second,
-          },
-          flatEntityToUpdate: {},
-          flatEntityToDelete: {},
-        },
-      },
-      relatedFlatEntityMaps: createEmptyAllFlatEntityMaps(),
-      context: { buildOptions },
-    });
-    expect(result.status).toBe('fail');
-    expect(JSON.stringify(result)).toContain(
-      'cannot share a version identifier',
-    );
-  });
-
   it('does not generate operations when only sync timestamps change', () => {
     const before = convert();
     const after = convert(
@@ -214,37 +191,27 @@ describe('application workflow version side effects', () => {
   });
 });
 
-const validate = (
-  version: ReturnType<typeof convert>['version'],
-  maps: AllFlatEntityMaps,
-) => ({
-  errors: validateApplicationWorkflowVersion({
-    version,
-    relatedFlatEntityMaps: maps,
-  }),
+const validate = (version: ReturnType<typeof convert>['version']) => ({
+  errors: validateApplicationWorkflowVersion({ version }),
 });
 
 describe('managed workflow version validation', () => {
   it('accepts a valid companion and accumulates missing edge and self-cycle errors', () => {
     const definition = convert();
-    const maps = persisted(definition);
-    maps.flatWorkflowVersionMaps =
-      createEmptyAllFlatEntityMaps().flatWorkflowVersionMaps;
-    expect(validate(definition.version, maps).errors).toEqual([]);
+    expect(validate(definition.version).errors).toEqual([]);
     const invalid = structuredClone(manifest);
     invalid.version.trigger.nextStepIds = [APPLICATION_ID];
     invalid.version.steps[0].nextStepIds = [STEP_ID];
     const { version } = convert(invalid);
-    expect(validate(version, maps).errors.length).toBeGreaterThan(1);
+    expect(validate(version).errors.length).toBeGreaterThan(1);
   });
 
   it('validates a managed definition but leaves API definitions unchanged', () => {
     const definition = convert();
-    const maps = persisted(definition);
     const invalid = { ...definition.version, triggers: null };
-    expect(validate(invalid, maps).errors).not.toEqual([]);
-    expect(
-      validate({ ...invalid, isSystemSideEffect: false }, maps).errors,
-    ).toEqual([]);
+    expect(validate(invalid).errors).not.toEqual([]);
+    expect(validate({ ...invalid, isSystemSideEffect: false }).errors).toEqual(
+      [],
+    );
   });
 });
