@@ -39,6 +39,7 @@ import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/a
 import { findAwaitingPausingToolParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/find-awaiting-pausing-tool-parts.util';
 import { AgentChatCancelSubscriberService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-cancel-subscriber.service';
 import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
+import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
 import { AgentChatStreamHeartbeatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-heartbeat.service';
 import { AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-streaming.service';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
@@ -88,6 +89,7 @@ export class StreamAgentChatJob {
     private readonly metricsService: MetricsService,
     private readonly aiModelRegistryService: AiModelRegistryService,
     private readonly actorService: AgentChatActorService,
+    private readonly sharingService: AgentChatSharingService,
   ) {}
 
   @Process(STREAM_AGENT_CHAT_JOB_NAME)
@@ -867,7 +869,7 @@ export class StreamAgentChatJob {
       threadId,
       streamId,
       shouldRecordActivity:
-        await this.agentChatService.hasThreadInboxState(workspaceId),
+        await this.sharingService.hasInboxState(workspaceId),
       usage: {
         totalInputTokens: streamUsage.inputTokens,
         totalOutputTokens: streamUsage.outputTokens,

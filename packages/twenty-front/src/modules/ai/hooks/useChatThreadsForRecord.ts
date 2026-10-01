@@ -135,13 +135,11 @@ export const useChatThreadsForRecord = ({
   const getLinkIdsToThread = (threadId: string) =>
     links.filter((link) => link.threadId === threadId).map(({ id }) => id);
 
-  const chatObjectMetadataItemId = chatObjectMetadataItem?.id;
-
   useListenToObjectRecordOperationBrowserEvent({
     onObjectRecordOperationBrowserEvent: refetchLinks,
-    objectMetadataItemId: chatObjectMetadataItemId,
+    objectMetadataItemId: chatObjectMetadataItem?.id,
     operationTypes: THREAD_OPERATION_TYPES,
-    enabled: isRecordLinkable && isDefined(chatObjectMetadataItemId),
+    enabled: isRecordLinkable && isDefined(chatObjectMetadataItem),
   });
 
   return { threads, getLinkIdsToThread, loading, error, refetch };

@@ -1,16 +1,12 @@
 import { useLingui } from '@lingui/react/macro';
-import { useState } from 'react';
 import { Dropdown } from 'twenty-ui/components';
-import { Avatar } from 'twenty-ui/primitives/data-display';
-import { useDebounce } from 'use-debounce';
 
+import { AiChatSearchRecordOptionItem } from '@/ai/components/AiChatSearchRecordOptionItem';
 import { AiChatThreadLinkedRecordOptionItem } from '@/ai/components/AiChatThreadLinkedRecordOptionItem';
+import { useAiChatRecordSearch } from '@/ai/hooks/useAiChatRecordSearch';
 import { type AgentChatConversationTarget } from '@/ai/types/AgentChatConversationTarget';
-import { getAvatarShape } from '@/object-metadata/utils/getAvatarShape';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { useObjectRecordSearchRecords } from '@/object-record/hooks/useObjectRecordSearchRecords';
 import { type FieldWidgetRelationRecord } from '@/page-layout/widgets/field/types/FieldWidgetRelationRecord';
-import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 type AiChatThreadLinkedRecordsPageProps = {
   linkedRecords: FieldWidgetRelationRecord[];
@@ -26,18 +22,14 @@ export const AiChatThreadLinkedRecordsPage = ({
   onUnlink,
 }: AiChatThreadLinkedRecordsPageProps) => {
   const { t } = useLingui();
-  const [search, setSearch] = useState('');
-  const trimmedSearch = search.trim();
-  const [debouncedSearch] = useDebounce(trimmedSearch, 300);
-
-  const { searchRecords, loading } = useObjectRecordSearchRecords({
-    objectNameSingulars: linkableObjectMetadataItems.map(
-      ({ nameSingular }) => nameSingular,
-    ),
-    searchInput: debouncedSearch,
-    skip: linkableObjectMetadataItems.length === 0,
-  });
-  const areSearchRecordsStale = loading || debouncedSearch !== trimmedSearch;
+  const {
+    search,
+    setSearch,
+    trimmedSearch,
+    searchRecords,
+    areSearchRecordsStale,
+    objectMetadataItemByNameSingular,
+  } = useAiChatRecordSearch(linkableObjectMetadataItems);
 
   const linkedRecordIds = new Set(linkedRecords.map(({ record }) => record.id));
   // Linked records lead an empty search, so they can be unlinked without
@@ -46,12 +38,6 @@ export const AiChatThreadLinkedRecordsPage = ({
   const searchRecordsToShow = isShowingLinkedRecords
     ? searchRecords.filter(({ recordId }) => !linkedRecordIds.has(recordId))
     : searchRecords;
-  const linkableObjectMetadataItemByNameSingular = new Map(
-    linkableObjectMetadataItems.map((objectMetadataItem) => [
-      objectMetadataItem.nameSingular,
-      objectMetadataItem,
-    ]),
-  );
   const hasNoOptions =
     searchRecordsToShow.length === 0 &&
     (!isShowingLinkedRecords || linkedRecords.length === 0);
@@ -86,29 +72,17 @@ export const AiChatThreadLinkedRecordsPage = ({
           const isLinked = linkedRecordIds.has(searchRecord.recordId);
 
           return (
-            <Dropdown.OptionItem
+            <AiChatSearchRecordOptionItem
               key={`${searchRecord.objectNameSingular}-${searchRecord.recordId}`}
+              searchRecord={searchRecord}
+              objectMetadataItem={objectMetadataItemByNameSingular.get(
+                searchRecord.objectNameSingular,
+              )}
               selected={isLinked}
               indicator="checkbox"
               disabled={areSearchRecordsStale}
-              startIcon={
-                <Avatar
-                  name={searchRecord.label}
-                  colorSeed={searchRecord.recordId}
-                  src={getAbsoluteImageUrl(searchRecord.imageUrl)}
-                  shape={getAvatarShape(
-                    linkableObjectMetadataItemByNameSingular.get(
-                      searchRecord.objectNameSingular,
-                    ),
-                  )}
-                  size="sm"
-                />
-              }
-              description={searchRecord.objectLabelSingular}
               onSelect={() => (isLinked ? onUnlink(target) : onLink(target))}
-            >
-              {searchRecord.label}
-            </Dropdown.OptionItem>
+            />
           );
         })}
         {hasNoOptions &&

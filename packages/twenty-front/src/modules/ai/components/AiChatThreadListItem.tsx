@@ -5,9 +5,9 @@ import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AiChatThreadActionsDropdown } from '@/ai/components/AiChatThreadActionsDropdown';
-import { AI_CHAT_THREAD_ACTIONS_SURFACE } from '@/ai/constants/AiChatThreadActionsSurface';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { type AiChatThreadActionsSurface } from '@/ai/types/AiChatThreadActionsSurface';
+import { useAgentChatThreadMembers } from '@/ai/hooks/useAgentChatThreadMembers';
 import { useAiChatThreadRename } from '@/ai/hooks/useAiChatThreadRename';
 import { agentChatThreadInboxStatusFamilySelector } from '@/ai/states/selectors/agentChatThreadInboxStatusFamilySelector';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
@@ -18,7 +18,6 @@ import { VisibilityHidden } from 'twenty-ui/primitives/accessibility';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { agentChatThreadPreviewFamilySelector } from '@/ai/states/selectors/agentChatThreadPreviewFamilySelector';
 import { formatAgentChatThreadActivityTime } from '@/ai/utils/formatAgentChatThreadActivityTime';
-import { getAgentChatThreadMembers } from '@/ai/utils/getAgentChatThreadMembers';
 import { getAgentChatThreadLastActivityAt } from '@/ai/utils/getAgentChatThreadLastActivityAt';
 import { getAgentChatThreadPreviewText } from '@/ai/utils/getAgentChatThreadPreviewText';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
@@ -118,11 +117,9 @@ const StyledMenuTrigger = styled.div<{ $isDropdownOpen: boolean }>`
   }
 `;
 
-const THREAD_MEMBERS_MAX_VISIBLE = 2;
-
 type AiChatThreadListItemProps = {
   thread: AgentChatThreadRecord;
-  surface?: AiChatThreadActionsSurface;
+  surface: AiChatThreadActionsSurface;
   isSelected: boolean;
   onClick: (thread: AgentChatThreadRecord) => void;
   onDetach?: () => void;
@@ -131,7 +128,7 @@ type AiChatThreadListItemProps = {
 // Keyed per surface; every record page uses RECORD_PAGE, so two record pages on screen share it.
 export const AiChatThreadListItem = ({
   thread,
-  surface = AI_CHAT_THREAD_ACTIONS_SURFACE.SIDE_PANEL,
+  surface,
   isSelected,
   onClick,
   onDetach,
@@ -146,7 +143,6 @@ export const AiChatThreadListItem = ({
     commitRename,
   } = useAiChatThreadRename(thread);
 
-  const isDeleted = isDefined(thread.deletedAt);
   const { isUnread } = useAtomFamilySelectorValue(
     agentChatThreadInboxStatusFamilySelector,
     { threadId: thread.id, lastActivityAt: thread.lastActivityAt ?? null },
@@ -159,11 +155,11 @@ export const AiChatThreadListItem = ({
   const currentWorkspaceMembers = useAtomStateValue(
     currentWorkspaceMembersState,
   );
-  const threadMembers = getAgentChatThreadMembers({
+  const threadMembers = useAgentChatThreadMembers({
+    threadId: thread.id,
     ownerWorkspaceMemberId: thread.workspaceMemberId,
-    memberIds: preview?.memberIds ?? [],
-    workspaceMembers: currentWorkspaceMembers,
   });
+  const isShownAsUnread = !isDefined(thread.deletedAt) && isUnread;
   const previewText = getAgentChatThreadPreviewText({
     preview,
     workspaceMembers: currentWorkspaceMembers,
@@ -191,7 +187,7 @@ export const AiChatThreadListItem = ({
         <WorkspaceMemberAvatarStack
           workspaceMembers={threadMembers}
           defaultAvatarName={t`Member`}
-          maxVisible={THREAD_MEMBERS_MAX_VISIBLE}
+          maxVisible={2}
         />
       </StyledLeading>
       <StyledThreadContent>
@@ -221,9 +217,9 @@ export const AiChatThreadListItem = ({
           />
         ) : (
           <StyledThreadHeading>
-            <StyledThreadTitle $isUnread={!isDeleted && isUnread}>
+            <StyledThreadTitle $isUnread={isShownAsUnread}>
               {displayTitle}
-              {!isDeleted && isUnread && (
+              {isShownAsUnread && (
                 <VisibilityHidden>{t`, unread`}</VisibilityHidden>
               )}
             </StyledThreadTitle>

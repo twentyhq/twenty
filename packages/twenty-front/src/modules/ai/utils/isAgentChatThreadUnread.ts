@@ -1,11 +1,11 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { type AgentChatThreadInboxState } from '@/ai/types/AgentChatThreadInboxState';
+import { type AgentChatThreadParticipantState } from '@/ai/types/AgentChatThreadParticipantState';
 
-export const isAgentChatThreadUnread = ({
-  lastActivityAt,
-  participant,
-}: AgentChatThreadInboxState): boolean => {
+export const isAgentChatThreadUnread = (
+  lastActivityAt: string | null | undefined,
+  participant: AgentChatThreadParticipantState | undefined,
+): boolean => {
   if (!isDefined(lastActivityAt)) {
     return false;
   }

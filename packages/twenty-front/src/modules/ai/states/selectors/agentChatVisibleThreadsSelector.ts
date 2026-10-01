@@ -1,3 +1,4 @@
+import { millisecondsInDay } from 'date-fns/constants';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type AgentChatThreadInboxScope } from '@/ai/types/AgentChatThreadInboxScope';
@@ -12,8 +13,6 @@ import { type AgentChatThreadFilterStatus } from '@/ai/types/AgentChatThreadFilt
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { getAgentChatThreadLastActivityAt } from '@/ai/utils/getAgentChatThreadLastActivityAt';
 import { createAtomSelector } from '@/ui/utilities/state/jotai/utils/createAtomSelector';
-
-const MILLISECONDS_PER_DAY = 24 * 60 * 60 * 1000;
 
 const INBOX_SCOPE_BY_FILTER_STATUS: Partial<
   Record<AgentChatThreadFilterStatus, AgentChatThreadInboxScope>
@@ -37,7 +36,7 @@ export const agentChatVisibleThreadsSelector = createAtomSelector<
     const cutoffMs =
       lastActivityDays !== null
         ? get(agentChatThreadInboxNowState) -
-          lastActivityDays * MILLISECONDS_PER_DAY
+          lastActivityDays * millisecondsInDay
         : null;
     const requiredScope = INBOX_SCOPE_BY_FILTER_STATUS[filterStatus];
 

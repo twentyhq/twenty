@@ -1,4 +1,5 @@
-import { agentChatThreadInboxStatusesFamilySelector } from '@/ai/states/selectors/agentChatThreadInboxStatusesFamilySelector';
+import { hasLoadedAgentChatThreadParticipantsState } from '@/ai/states/hasLoadedAgentChatThreadParticipantsState';
+import { agentChatThreadInboxStatusFamilySelector } from '@/ai/states/selectors/agentChatThreadInboxStatusFamilySelector';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -16,6 +17,7 @@ import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPe
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { hasAnySoftDeleteFilterOnViewComponentSelector } from '@/object-record/record-filter/states/hasAnySoftDeleteFilterOnView';
 import { recordPermissionsByRecordIdFamilySelector } from '@/object-record/record-sharing/states/recordPermissionsByRecordIdFamilySelector';
+import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { recordStoreRecordsSelector } from '@/object-record/record-store/states/selectors/recordStoreRecordsSelector';
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
 import { currentPageLayoutIdState } from '@/page-layout/states/currentPageLayoutIdState';
@@ -92,29 +94,35 @@ export const useCurrentCommandMenuContextApi = (): CommandMenuContextApi => {
   );
 
   // A chat's read and done state belongs to the member, not to the record,
-  // so the inbox commands read it from here
-  const agentChatThreadInboxStatuses = useAtomFamilySelectorValue(
-    agentChatThreadInboxStatusesFamilySelector,
-    objectMetadataItem?.nameSingular === CoreObjectNameSingular.AgentChatThread
-      ? (recordIds ?? [])
-      : [],
+  // so the inbox commands read it from here. Those commands only apply to a
+  // single chat, and stay hidden until the member state loads rather than
+  // offering the wrong half of a pair
+  const hasLoadedAgentChatThreadParticipants = useAtomStateValue(
+    hasLoadedAgentChatThreadParticipantsState,
+  );
+  const inboxStatusThreadId =
+    objectMetadataItem?.nameSingular ===
+      CoreObjectNameSingular.AgentChatThread &&
+    hasLoadedAgentChatThreadParticipants
+      ? recordIds?.[0]
+      : undefined;
+  const agentChatThreadInboxStatus = useAtomFamilySelectorValue(
+    agentChatThreadInboxStatusFamilySelector,
+    { threadId: inboxStatusThreadId ?? '', lastActivityAt: null },
   );
 
   // Records shared below the role's access level carry their own permissions, which availability expressions read per record
-  const selectedRecords = storedSelectedRecords.map((record) => {
-    const recordWithPermissions = isDefined(
-      recordPermissionsByRecordId[record.id],
-    )
-      ? { ...record, recordPermissions: recordPermissionsByRecordId[record.id] }
-      : record;
-
-    return isDefined(agentChatThreadInboxStatuses[record.id])
-      ? {
-          ...recordWithPermissions,
-          inboxStatus: agentChatThreadInboxStatuses[record.id],
-        }
-      : recordWithPermissions;
-  });
+  const selectedRecords = storedSelectedRecords.map(
+    (record): ObjectRecord => ({
+      ...record,
+      ...(isDefined(recordPermissionsByRecordId[record.id]) && {
+        recordPermissions: recordPermissionsByRecordId[record.id],
+      }),
+      ...(record.id === inboxStatusThreadId && {
+        inboxStatus: agentChatThreadInboxStatus,
+      }),
+    }),
+  );
 
   const currentPageLayoutId = useAtomStateValue(currentPageLayoutIdState);
 

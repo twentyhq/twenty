@@ -11,7 +11,6 @@ import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadPar
 import { agentChatThreadUnreadSinceState } from '@/ai/states/agentChatThreadUnreadSinceState';
 import { hasLoadedAgentChatThreadParticipantsState } from '@/ai/states/hasLoadedAgentChatThreadParticipantsState';
 import { agentChatViewedThreadIdState } from '@/ai/states/agentChatViewedThreadIdState';
-import { buildAgentChatThreadInboxState } from '@/ai/utils/buildAgentChatThreadInboxState';
 import { agentChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -101,12 +100,9 @@ export const AgentChatThreadMarkAsReadEffect = () => {
       threadId,
       visitId,
       isUnread: isAgentChatThreadUnread(
-        buildAgentChatThreadInboxState(
-          store.get(
-            agentChatThreadRecordFamilySelector.selectorFamily(threadId),
-          ),
-          participant,
-        ),
+        store.get(agentChatThreadRecordFamilySelector.selectorFamily(threadId))
+          ?.lastActivityAt,
+        participant,
       ),
       lastReadAt: participant?.lastReadAt ?? null,
     });
@@ -130,10 +126,8 @@ export const AgentChatThreadMarkAsReadEffect = () => {
     }
 
     const isUnread = isAgentChatThreadUnread(
-      buildAgentChatThreadInboxState(
-        { lastActivityAt },
-        store.get(agentChatThreadParticipantsState.atom)[threadId],
-      ),
+      lastActivityAt,
+      store.get(agentChatThreadParticipantsState.atom)[threadId],
     );
 
     if (isUnread) {

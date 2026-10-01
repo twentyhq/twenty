@@ -3,8 +3,8 @@ import { randomUUID } from 'node:crypto';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
-import { type AddAgentChatThreadParticipantObjectCommand } from 'src/database/commands/upgrade-version-command/2-45/2-45-workspace-command-1790861454223-add-agent-chat-thread-participant-object.command';
-import { type BackfillAgentChatThreadInboxStateCommand } from 'src/database/commands/upgrade-version-command/2-45/2-45-workspace-command-1790861454224-backfill-agent-chat-thread-inbox-state.command';
+import { type AddAgentChatThreadParticipantObjectCommand } from 'src/database/commands/upgrade-version-command/2-45/2-45-workspace-command-1790884925593-add-agent-chat-thread-participant-object.command';
+import { type BackfillAgentChatThreadInboxStateCommand } from 'src/database/commands/upgrade-version-command/2-45/2-45-workspace-command-1790884925594-backfill-agent-chat-thread-inbox-state.command';
 import { type AgentChatThreadParticipantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant.service';
 import { type AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { type UpgradeCommandRegistryService } from 'src/engine/core-modules/upgrade/services/upgrade-command-registry.service';

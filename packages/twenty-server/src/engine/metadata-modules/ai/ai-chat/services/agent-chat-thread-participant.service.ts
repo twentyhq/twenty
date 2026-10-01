@@ -2,8 +2,9 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
+import { type AgentChatThreadParticipantDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-thread-participant.dto';
+import { type AgentChatThreadPreviewDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-thread-preview.dto';
 import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
-import { type AgentChatThreadParticipantRow } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-participant-row.type';
 import { getAgentChatThreadParticipantTable } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-agent-chat-thread-participant-table.util';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
@@ -18,6 +19,13 @@ type ParticipantArgs = {
   workspaceMemberId: string;
   threadId: string;
 };
+
+type ThreadActivityTimestamps = {
+  lastActivityAt: Date | null;
+  updatedAt: Date;
+};
+
+const PREVIEW_TEXT_MAX_LENGTH = 280;
 
 const PARTICIPANT_COLUMNS = `"threadId", "lastReadAt", "archivedAt", "snoozedUntil"`;
 
@@ -37,14 +45,14 @@ export class AgentChatThreadParticipantService {
     workspaceId,
     workspaceMemberId,
   }: Omit<ParticipantArgs, 'threadId'>): Promise<
-    AgentChatThreadParticipantRow[]
+    AgentChatThreadParticipantDTO[]
   > {
     if (!(await this.sharingService.hasInboxState(workspaceId))) {
       return [];
     }
 
     const rows = await this.threadRepository.query(workspaceId, ({ manager }) =>
-      manager.query<AgentChatThreadParticipantRow[]>(
+      manager.query<AgentChatThreadParticipantDTO[]>(
         `SELECT ${PARTICIPANT_COLUMNS}
          FROM ${getAgentChatThreadParticipantTable(workspaceId)}
          WHERE "workspaceMemberId" = $1`,
@@ -63,9 +71,77 @@ export class AgentChatThreadParticipantService {
     return rows.filter(({ threadId }) => readableThreadIds.has(threadId));
   }
 
+  // A user message without a sender predates multiplayer chats, when every
+  // user message was the owner's
+  async findPreviewsForThreads({
+    workspaceId,
+    workspaceMemberId,
+    threadIds,
+  }: {
+    workspaceId: string;
+    workspaceMemberId: string;
+    threadIds: string[];
+  }): Promise<AgentChatThreadPreviewDTO[]> {
+    const readableThreadIds = await this.sharingService.findReadableThreadIds({
+      workspaceId,
+      workspaceMemberId,
+      threadIds,
+    });
+
+    if (readableThreadIds.length === 0) {
+      return [];
+    }
+
+    return this.threadRepository.query(workspaceId, ({ manager, table }) =>
+      manager.query<AgentChatThreadPreviewDTO[]>(
+        `SELECT thread.id AS "threadId",
+           last_message.role AS "lastMessageRole",
+           left(last_text."textContent", $2) AS "lastMessageText",
+           last_message."senderWorkspaceMemberId" AS "lastMessageSenderWorkspaceMemberId",
+           COALESCE(member."memberIds", ARRAY[]::uuid[]) AS "memberIds"
+         FROM ${table('agentChatThread')} thread
+         LEFT JOIN LATERAL (
+           SELECT message.id, message.role,
+             CASE WHEN message.role = 'user'
+               THEN COALESCE(message."senderWorkspaceMemberId", thread."workspaceMemberId")
+             END AS "senderWorkspaceMemberId"
+           FROM ${table('agentMessage')} message
+           WHERE message."threadId" = thread.id
+             AND message."deletedAt" IS NULL
+             AND message."isHidden" = false
+             AND message.role IN ('user', 'assistant')
+           ORDER BY message."createdAt" DESC, message.id DESC
+           LIMIT 1
+         ) last_message ON true
+         LEFT JOIN LATERAL (
+           SELECT part."textContent"
+           FROM ${table('agentMessagePart')} part
+           WHERE part."messageId" = last_message.id
+             AND part.type = 'text'
+             AND btrim(coalesce(part."textContent", '')) <> ''
+           ORDER BY part."orderIndex" DESC
+           LIMIT 1
+         ) last_text ON true
+         LEFT JOIN LATERAL (
+           SELECT array_remove(
+             array_agg(DISTINCT COALESCE(message."senderWorkspaceMemberId", thread."workspaceMemberId")),
+             NULL
+           ) AS "memberIds"
+           FROM ${table('agentMessage')} message
+           WHERE message."threadId" = thread.id
+             AND message."deletedAt" IS NULL
+             AND message."isHidden" = false
+             AND message.role = 'user'
+         ) member ON true
+         WHERE thread.id = ANY($1)`,
+        [readableThreadIds, PREVIEW_TEXT_MAX_LENGTH],
+      ),
+    );
+  }
+
   async markAsRead(
     args: ParticipantArgs,
-  ): Promise<AgentChatThreadParticipantRow> {
+  ): Promise<AgentChatThreadParticipantDTO> {
     // Read up to what the thread holds now, never past it, and never back
     return this.upsertOne(
       args,
@@ -76,13 +152,12 @@ export class AgentChatThreadParticipantService {
            "lastReadAt" = GREATEST(participant."lastReadAt", EXCLUDED."lastReadAt"),
            "updatedAt" = now()
          RETURNING ${PARTICIPANT_COLUMNS}`,
-      [args.threadId, args.workspaceMemberId],
     );
   }
 
   async markAsUnread(
     args: ParticipantArgs,
-  ): Promise<AgentChatThreadParticipantRow> {
+  ): Promise<AgentChatThreadParticipantDTO> {
     return this.upsertOne(
       args,
       ({ participantTable }) =>
@@ -92,11 +167,10 @@ export class AgentChatThreadParticipantService {
            "lastReadAt" = NULL,
            "updatedAt" = now()
          RETURNING ${PARTICIPANT_COLUMNS}`,
-      [args.threadId, args.workspaceMemberId],
     );
   }
 
-  archive(args: ParticipantArgs): Promise<AgentChatThreadParticipantRow> {
+  archive(args: ParticipantArgs): Promise<AgentChatThreadParticipantDTO> {
     return this.setArchive(args, null);
   }
 
@@ -105,7 +179,7 @@ export class AgentChatThreadParticipantService {
     ...args
   }: ParticipantArgs & {
     snoozedUntil: Date;
-  }): Promise<AgentChatThreadParticipantRow> {
+  }): Promise<AgentChatThreadParticipantDTO> {
     if (snoozedUntil.getTime() <= Date.now()) {
       throw new AiException(
         'Snooze time must be in the future',
@@ -118,7 +192,7 @@ export class AgentChatThreadParticipantService {
 
   async moveToInbox(
     args: ParticipantArgs,
-  ): Promise<AgentChatThreadParticipantRow> {
+  ): Promise<AgentChatThreadParticipantDTO> {
     return this.upsertOne(
       args,
       ({ participantTable }) =>
@@ -129,7 +203,6 @@ export class AgentChatThreadParticipantService {
            "snoozedUntil" = NULL,
            "updatedAt" = now()
          RETURNING ${PARTICIPANT_COLUMNS}`,
-      [args.threadId, args.workspaceMemberId],
     );
   }
 
@@ -139,25 +212,31 @@ export class AgentChatThreadParticipantService {
     workspaceId,
     workspaceMemberId,
     threadId,
-  }: ParticipantArgs): Promise<{
-    lastActivityAt: Date | null;
-    updatedAt: Date;
-  }> {
+  }: ParticipantArgs): Promise<ThreadActivityTimestamps> {
     if (!(await this.sharingService.hasInboxState(workspaceId))) {
-      const thread = await this.updateThreadTimestamps({
+      const rows = await this.threadRepository.query(
         workspaceId,
-        threadId,
-        shouldRecordActivity: false,
-      });
+        ({ manager, table }) =>
+          manager.query<ThreadActivityTimestamps[]>(
+            `WITH thread AS (
+               UPDATE ${table('agentChatThread')}
+               SET "updatedAt" = now()
+               WHERE id = $1
+               RETURNING NULL::timestamptz AS "lastActivityAt", "updatedAt"
+             )
+             SELECT "lastActivityAt", "updatedAt" FROM thread`,
+            [threadId],
+          ),
+      );
 
-      if (!isDefined(thread)) {
+      if (rows.length !== 1) {
         throw new AiException(
           'Thread not found',
           AiExceptionCode.THREAD_NOT_FOUND,
         );
       }
 
-      return thread;
+      return rows[0];
     }
 
     const participantTable = getAgentChatThreadParticipantTable(workspaceId);
@@ -165,7 +244,7 @@ export class AgentChatThreadParticipantService {
     const rows = await this.threadRepository.query(
       workspaceId,
       ({ manager, table }) =>
-        manager.query<{ lastActivityAt: Date; updatedAt: Date }[]>(
+        manager.query<ThreadActivityTimestamps[]>(
           `WITH thread AS (
              UPDATE ${table('agentChatThread')}
              SET "lastActivityAt" = clock_timestamp(), "updatedAt" = now()
@@ -196,41 +275,24 @@ export class AgentChatThreadParticipantService {
   }
 
   // Activity no member wrote, such as an agent reply saved after its stream
-  // lost the thread to a newer one
+  // lost the thread to a newer one. Callers check hasInboxState first, since
+  // lastActivityAt only exists once the workspace has upgraded
   async recordThreadActivity({
     workspaceId,
     threadId,
-  }: Omit<ParticipantArgs, 'workspaceMemberId'>): Promise<{
-    lastActivityAt: Date | null;
-    updatedAt: Date;
-  } | null> {
-    if (!(await this.sharingService.hasInboxState(workspaceId))) {
-      return null;
-    }
-
-    return this.updateThreadTimestamps({
-      workspaceId,
-      threadId,
-      shouldRecordActivity: true,
-    });
-  }
-
-  private async updateThreadTimestamps({
-    workspaceId,
-    threadId,
-    shouldRecordActivity,
-  }: Omit<ParticipantArgs, 'workspaceMemberId'> & {
-    shouldRecordActivity: boolean;
-  }): Promise<{ lastActivityAt: Date | null; updatedAt: Date } | null> {
+  }: Omit<
+    ParticipantArgs,
+    'workspaceMemberId'
+  >): Promise<ThreadActivityTimestamps | null> {
     const rows = await this.threadRepository.query(
       workspaceId,
       ({ manager, table }) =>
-        manager.query<{ lastActivityAt: Date | null; updatedAt: Date }[]>(
+        manager.query<ThreadActivityTimestamps[]>(
           `WITH thread AS (
              UPDATE ${table('agentChatThread')}
-             SET ${shouldRecordActivity ? '"lastActivityAt" = clock_timestamp(), ' : ''}"updatedAt" = now()
+             SET "lastActivityAt" = clock_timestamp(), "updatedAt" = now()
              WHERE id = $1
-             RETURNING ${shouldRecordActivity ? '"lastActivityAt"' : 'NULL::timestamptz AS "lastActivityAt"'}, "updatedAt"
+             RETURNING "lastActivityAt", "updatedAt"
            )
            SELECT "lastActivityAt", "updatedAt" FROM thread`,
           [threadId],
@@ -243,7 +305,7 @@ export class AgentChatThreadParticipantService {
   private setArchive(
     args: ParticipantArgs,
     snoozedUntil: Date | null,
-  ): Promise<AgentChatThreadParticipantRow> {
+  ): Promise<AgentChatThreadParticipantDTO> {
     return this.upsertOne(
       args,
       ({ participantTable }) =>
@@ -254,7 +316,7 @@ export class AgentChatThreadParticipantService {
            "snoozedUntil" = EXCLUDED."snoozedUntil",
            "updatedAt" = now()
          RETURNING ${PARTICIPANT_COLUMNS}`,
-      [args.threadId, args.workspaceMemberId, snoozedUntil],
+      [snoozedUntil],
     );
   }
 
@@ -264,8 +326,8 @@ export class AgentChatThreadParticipantService {
       participantTable: string;
       threadTable: string;
     }) => string,
-    parameters: unknown[],
-  ): Promise<AgentChatThreadParticipantRow> {
+    extraParameters: unknown[] = [],
+  ): Promise<AgentChatThreadParticipantDTO> {
     const [readableThreadId] = await this.sharingService.findReadableThreadIds({
       workspaceId,
       workspaceMemberId,
@@ -289,12 +351,12 @@ export class AgentChatThreadParticipantService {
     const rows = await this.threadRepository.query(
       workspaceId,
       ({ manager, table }) =>
-        manager.query<AgentChatThreadParticipantRow[]>(
+        manager.query<AgentChatThreadParticipantDTO[]>(
           buildQuery({
             participantTable: getAgentChatThreadParticipantTable(workspaceId),
             threadTable: table('agentChatThread'),
           }),
-          parameters,
+          [threadId, workspaceMemberId, ...extraParameters],
         ),
     );
 

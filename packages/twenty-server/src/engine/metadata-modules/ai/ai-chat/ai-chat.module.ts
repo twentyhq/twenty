@@ -37,7 +37,6 @@ import { AgentChatThreadEntity } from './entities/agent-chat-thread.entity';
 import { StreamAgentChatJob } from './jobs/stream-agent-chat.job';
 import { AgentChatResolver } from './resolvers/agent-chat.resolver';
 import { AgentChatThreadParticipantResolver } from './resolvers/agent-chat-thread-participant.resolver';
-import { AgentChatThreadPreviewResolver } from './resolvers/agent-chat-thread-preview.resolver';
 import { AgentChatSubscriptionResolver } from './resolvers/agent-chat-subscription.resolver';
 import { WorkspaceSetupChatResolver } from './resolvers/workspace-setup-chat.resolver';
 import { WorkspaceSetupChatService } from './services/workspace-setup-chat.service';
@@ -46,7 +45,6 @@ import { AgentChatStreamingService } from './services/agent-chat-streaming.servi
 import { AgentChatService } from './services/agent-chat.service';
 import { AgentChatThreadTargetService } from './services/agent-chat-thread-target.service';
 import { AgentChatThreadParticipantService } from './services/agent-chat-thread-participant.service';
-import { AgentChatThreadPreviewService } from './services/agent-chat-thread-preview.service';
 import { AgentChatTurnPreflightService } from './services/agent-chat-turn-preflight.service';
 import { AgentTitleGenerationService } from './services/agent-title-generation.service';
 import { ChatExecutionService } from './services/chat-execution.service';
@@ -92,12 +90,10 @@ import { SystemPromptBuilderService } from './services/system-prompt-builder.ser
     AgentChatCancelSubscriberService,
     AgentChatResolver,
     AgentChatThreadParticipantResolver,
-    AgentChatThreadPreviewResolver,
     AgentChatSubscriptionResolver,
     WorkspaceSetupChatResolver,
     AgentChatService,
     AgentChatThreadParticipantService,
-    AgentChatThreadPreviewService,
     AgentChatThreadTargetService,
     AgentChatStreamingService,
     AgentChatTurnPreflightService,

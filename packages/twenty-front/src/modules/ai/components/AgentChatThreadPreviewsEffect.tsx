@@ -91,19 +91,19 @@ export const AgentChatThreadPreviewsEffect = ({
         }));
       })
       .catch(() => {
-        store.set(agentChatThreadPreviewsState.atom, (currentPreviews) =>
-          Object.fromEntries(
-            Object.entries(currentPreviews).flatMap(([threadId, entry]) => {
-              if (!isRequestCurrent(threadId, entry)) {
-                return [[threadId, entry]];
-              }
-
-              return isDefined(entry.preview)
-                ? [[threadId, { preview: entry.preview }]]
-                : [];
-            }),
+        store.set(agentChatThreadPreviewsState.atom, (currentPreviews) => ({
+          ...currentPreviews,
+          ...Object.fromEntries(
+            [...requestedLastActivityAts.keys()]
+              .filter((threadId) =>
+                isRequestCurrent(threadId, currentPreviews[threadId]),
+              )
+              .map((threadId) => [
+                threadId,
+                { preview: currentPreviews[threadId].preview },
+              ]),
           ),
-        );
+        }));
       });
   }, [client, store, threads]);
 

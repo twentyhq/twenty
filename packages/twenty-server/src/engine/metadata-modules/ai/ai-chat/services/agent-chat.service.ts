@@ -756,21 +756,12 @@ export class AgentChatService {
         workspaceId,
       });
 
-    const threadAfter = {
-      ...thread,
-      lastActivityAt: lastActivityAt?.toISOString() ?? thread.lastActivityAt,
-      updatedAt: updatedAt.toISOString(),
-    };
-
-    await this.threadRecordEventService.emitThreadUpdated({
+    await this.emitThreadActivityUpdated({
       workspaceId,
-      threadBefore: thread,
-      threadAfter,
+      thread,
+      lastActivityAt,
+      updatedAt,
     });
-  }
-
-  hasThreadInboxState(workspaceId: string): Promise<boolean> {
-    return this.sharingService.hasInboxState(workspaceId);
   }
 
   async recordThreadActivity({
@@ -780,6 +771,10 @@ export class AgentChatService {
     workspaceId: string;
     threadId: string;
   }): Promise<void> {
+    if (!(await this.sharingService.hasInboxState(workspaceId))) {
+      return;
+    }
+
     const thread = await this.threadRepository.findOne(workspaceId, {
       where: { id: threadId },
     });
@@ -797,14 +792,28 @@ export class AgentChatService {
       return;
     }
 
-    // Open chat lists reorder and bring the chat back from these events
+    await this.emitThreadActivityUpdated({ workspaceId, thread, ...activity });
+  }
+
+  // Open chat lists reorder and bring the chat back from these events
+  private async emitThreadActivityUpdated({
+    workspaceId,
+    thread,
+    lastActivityAt,
+    updatedAt,
+  }: {
+    workspaceId: string;
+    thread: AgentChatThreadWorkspaceEntity;
+    lastActivityAt: Date | null;
+    updatedAt: Date;
+  }): Promise<void> {
     await this.threadRecordEventService.emitThreadUpdated({
       workspaceId,
       threadBefore: thread,
       threadAfter: {
         ...thread,
-        lastActivityAt: activity.lastActivityAt?.toISOString() ?? null,
-        updatedAt: activity.updatedAt.toISOString(),
+        lastActivityAt: lastActivityAt?.toISOString() ?? thread.lastActivityAt,
+        updatedAt: updatedAt.toISOString(),
       },
     });
   }

@@ -245,7 +245,6 @@ describe('StreamAgentChatJob', () => {
         : jest.fn().mockResolvedValue(undefined),
       generateTitleIfNeeded: jest.fn().mockResolvedValue(null),
       notifyThreadUsageUpdated: jest.fn().mockResolvedValue(undefined),
-      hasThreadInboxState: jest.fn().mockResolvedValue(true),
       recordThreadActivity: jest.fn().mockResolvedValue(undefined),
     };
     const chatExecutionService = {
@@ -300,6 +299,9 @@ describe('StreamAgentChatJob', () => {
         .fn()
         .mockReturnValue({ modelId: 'openai/gpt-5.6-luna' }),
     };
+    const sharingService = {
+      hasInboxState: jest.fn().mockResolvedValue(true),
+    };
     const actorService = {
       authorizeJob: jest.fn().mockResolvedValue({
         authorization: { authContext: { workspaceMemberId: 'member' } },
@@ -318,6 +320,7 @@ describe('StreamAgentChatJob', () => {
       metricsService as never,
       aiModelRegistryService as never,
       actorService as never,
+      sharingService as never,
     );
 
     const turnCounts = (key: string) =>

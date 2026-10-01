@@ -20,22 +20,18 @@ import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 import { AgentChatThreadPreviewsEffect } from '@/ai/components/AgentChatThreadPreviewsEffect';
 import { AiChatThreadLinkedRecordsPage } from '@/ai/components/AiChatThreadLinkedRecordsPage';
+import { useAgentChatThreadMembers } from '@/ai/hooks/useAgentChatThreadMembers';
 import { useAiChatThreadLinkedRecords } from '@/ai/hooks/useAiChatThreadLinkedRecords';
 import { useChatTargetNavigation } from '@/ai/hooks/useChatTargetNavigation';
 import { useIsAiChatArtifactSurface } from '@/ai/hooks/useIsAiChatArtifactSurface';
-import { agentChatThreadPreviewFamilySelector } from '@/ai/states/selectors/agentChatThreadPreviewFamilySelector';
 import { agentChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
-import { getAgentChatThreadMembers } from '@/ai/utils/getAgentChatThreadMembers';
-import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { RecordChip } from '@/object-record/components/RecordChip';
-import { type FieldWidgetRelationRecord } from '@/page-layout/widgets/field/types/FieldWidgetRelationRecord';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const AI_CHAT_THREAD_DETAILS_PAGE = {
   DETAILS: 'details',
@@ -114,42 +110,6 @@ const AiChatThreadDetailsRow = ({
   );
 };
 
-type AiChatThreadLinkedRecordChipsProps = {
-  dropdownId: string;
-  linkedRecords: FieldWidgetRelationRecord[];
-};
-
-const AiChatThreadLinkedRecordChips = ({
-  dropdownId,
-  linkedRecords,
-}: AiChatThreadLinkedRecordChipsProps) => {
-  const { t } = useLingui();
-  const { closeDropdown } = useCloseDropdown();
-  const isAiChatArtifactSurface = useIsAiChatArtifactSurface();
-  const { openRecordTarget } = useChatTargetNavigation();
-
-  if (linkedRecords.length === 0) {
-    return <StyledEmptyValue>{t`None`}</StyledEmptyValue>;
-  }
-
-  return linkedRecords.map(({ record, objectNameSingular }) => (
-    <RecordChip
-      key={`${objectNameSingular}-${record.id}`}
-      objectNameSingular={objectNameSingular}
-      record={record}
-      // Linked records open like the records the chat mentions
-      onClick={
-        isAiChatArtifactSurface
-          ? () => {
-              closeDropdown(dropdownId);
-              openRecordTarget({ recordId: record.id, objectNameSingular });
-            }
-          : undefined
-      }
-    />
-  ));
-};
-
 type AiChatThreadEditLinkedRecordsButtonProps = {
   hasLinkedRecords: boolean;
 };
@@ -199,18 +159,13 @@ export const AiChatThreadDetailsDropdown = ({
     agentChatThreadRecordFamilySelector,
     threadId,
   );
-  const preview = useAtomFamilySelectorValue(
-    agentChatThreadPreviewFamilySelector,
+  const followers = useAgentChatThreadMembers({
     threadId,
-  );
-  const currentWorkspaceMembers = useAtomStateValue(
-    currentWorkspaceMembersState,
-  );
-  const followers = getAgentChatThreadMembers({
     ownerWorkspaceMemberId: thread?.workspaceMemberId,
-    memberIds: preview?.memberIds ?? [],
-    workspaceMembers: currentWorkspaceMembers,
   });
+  const { closeDropdown } = useCloseDropdown();
+  const isAiChatArtifactSurface = useIsAiChatArtifactSurface();
+  const { openRecordTarget } = useChatTargetNavigation();
   const dropdownContentRef = useRef<HTMLDivElement>(null);
   const previewThreads = useMemo(
     () =>
@@ -261,10 +216,29 @@ export const AiChatThreadDetailsDropdown = ({
                   )
                 }
               >
-                <AiChatThreadLinkedRecordChips
-                  dropdownId={dropdownId}
-                  linkedRecords={linkedRecords}
-                />
+                {linkedRecords.length === 0 ? (
+                  <StyledEmptyValue>{t`None`}</StyledEmptyValue>
+                ) : (
+                  linkedRecords.map(({ record, objectNameSingular }) => (
+                    <RecordChip
+                      key={`${objectNameSingular}-${record.id}`}
+                      objectNameSingular={objectNameSingular}
+                      record={record}
+                      // Linked records open like the records the chat mentions
+                      onClick={
+                        isAiChatArtifactSurface
+                          ? () => {
+                              closeDropdown(dropdownId);
+                              openRecordTarget({
+                                recordId: record.id,
+                                objectNameSingular,
+                              });
+                            }
+                          : undefined
+                      }
+                    />
+                  ))
+                )}
               </AiChatThreadDetailsRow>
             )}
             <AiChatThreadDetailsRow Icon={IconBell} label={t`Following`}>

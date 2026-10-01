@@ -2,7 +2,6 @@ import { lockAgentChatThread } from 'src/engine/metadata-modules/ai/ai-chat/util
 import { type AgentHistoryStorageContext } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-workspace-storage.service';
 import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
 import { randomUUID } from 'node:crypto';
-import { hasAgentChatThreadInboxState } from 'src/engine/metadata-modules/ai/ai-chat/utils/has-agent-chat-thread-inbox-state.util';
 import { getAgentChatThreadParticipantTable } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-agent-chat-thread-participant-table.util';
 import { backfillWorkspaceChatThreadOwnerGrants } from 'src/engine/metadata-modules/ai/ai-chat/utils/backfill-workspace-chat-thread-owner-grants.util';
 import { Injectable } from '@nestjs/common';
@@ -49,13 +48,21 @@ export class AgentChatSharingService {
     private readonly workspaceOrmManager: WorkspaceOrmManager,
   ) {}
 
+  // Fence for the 2.45 cross-upgrade window: until
+  // upgrade:2-45:add-agent-chat-thread-participant-object has reached a
+  // workspace, it has neither the participant table nor the thread's
+  // lastActivityAt column. Remove once 2.45 leaves the window.
   async hasInboxState(workspaceId: string): Promise<boolean> {
     const { flatObjectMetadataMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatObjectMetadataMaps',
       ]);
 
-    return hasAgentChatThreadInboxState(flatObjectMetadataMaps);
+    return isDefined(
+      flatObjectMetadataMaps.byUniversalIdentifier[
+        STANDARD_OBJECTS.agentChatThreadParticipant.universalIdentifier
+      ],
+    );
   }
 
   getReadableThread(args: ThreadAccessArgs) {
@@ -132,7 +139,6 @@ export class AgentChatSharingService {
           ...(await repository.findRecordIdsAllowedForOperation({
             recordIds: threadIdBatch,
             operationType: 'select',
-            updatedColumns: [],
             withDeleted: true,
           })),
         );

@@ -1,3 +1,4 @@
+import { millisecondsInDay } from 'date-fns/constants';
 import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -12,8 +13,6 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 
 // setTimeout fires immediately past this delay
 const MAX_TIMEOUT_DELAY_MS = 2 ** 31 - 1;
-
-const MILLISECONDS_PER_DAY = 24 * 60 * 60 * 1000;
 
 // Snoozed threads come back, and threads age out of the last activity
 // filter, when their time passes, which no event announces
@@ -42,7 +41,7 @@ export const AgentChatThreadInboxClockEffect = () => {
       ? agentChatThreads.map(
           (thread) =>
             new Date(getAgentChatThreadLastActivityAt(thread)).getTime() +
-            lastActivityFilterDays * MILLISECONDS_PER_DAY,
+            lastActivityFilterDays * millisecondsInDay,
         )
       : [];
     const nextWakeUpMs = Math.min(
@@ -57,7 +56,7 @@ export const AgentChatThreadInboxClockEffect = () => {
 
     const timeoutId = window.setTimeout(
       () => setAgentChatThreadInboxNow(Date.now()),
-      Math.min(Math.max(nextWakeUpMs - Date.now(), 0), MAX_TIMEOUT_DELAY_MS),
+      Math.min(nextWakeUpMs - Date.now(), MAX_TIMEOUT_DELAY_MS),
     );
 
     return () => window.clearTimeout(timeoutId);

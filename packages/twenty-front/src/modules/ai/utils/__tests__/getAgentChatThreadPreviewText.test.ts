@@ -53,4 +53,13 @@ describe('getAgentChatThreadPreviewText', () => {
       ),
     ).toBe('Ready Linked to Airbnb today');
   });
+
+  it('keeps replacement patterns in a reference name as written', () => {
+    expect(
+      getText(
+        null,
+        'Contact [[record:company:a1b2c3d4-e5f6-7890-abcd-ef1234567890:A$&B $$ Co]] next',
+      ),
+    ).toBe('Contact A$&B $$ Co next');
+  });
 });

@@ -1,17 +1,13 @@
 import { useLingui } from '@lingui/react/macro';
 import { type Editor } from '@tiptap/react';
-import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { Dropdown } from 'twenty-ui/components';
-import { Avatar } from 'twenty-ui/primitives/data-display';
-import { useDebounce } from 'use-debounce';
 
+import { AiChatSearchRecordOptionItem } from '@/ai/components/AiChatSearchRecordOptionItem';
+import { useAiChatRecordSearch } from '@/ai/hooks/useAiChatRecordSearch';
 import { useMentionSearch } from '@/mention/hooks/useMentionSearch';
 import { getMentionTagContent } from '@/mention/utils/getMentionTagContent';
-import { getAvatarShape } from '@/object-metadata/utils/getAvatarShape';
-import { useObjectRecordSearchRecords } from '@/object-record/hooks/useObjectRecordSearchRecords';
 import { type SearchRecord } from '~/generated/graphql';
-import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 type AiChatAddMenuRecordsPageProps = {
   editor: Editor | null;
@@ -21,25 +17,15 @@ export const AiChatAddMenuRecordsPage = ({
   editor,
 }: AiChatAddMenuRecordsPageProps) => {
   const { t } = useLingui();
-  const [search, setSearch] = useState('');
-  const trimmedSearch = search.trim();
-  const [debouncedSearch] = useDebounce(trimmedSearch, 300);
   const { searchableObjectMetadataItems } = useMentionSearch();
-  const searchableObjectMetadataItemByNameSingular = new Map(
-    searchableObjectMetadataItems.map((objectMetadataItem) => [
-      objectMetadataItem.nameSingular,
-      objectMetadataItem,
-    ]),
-  );
-
-  const { searchRecords, loading } = useObjectRecordSearchRecords({
-    objectNameSingulars: searchableObjectMetadataItems.map(
-      ({ nameSingular }) => nameSingular,
-    ),
-    searchInput: debouncedSearch,
-    skip: searchableObjectMetadataItems.length === 0,
-  });
-  const areSearchRecordsStale = loading || debouncedSearch !== trimmedSearch;
+  const {
+    search,
+    setSearch,
+    searchRecords,
+    loading,
+    areSearchRecordsStale,
+    objectMetadataItemByNameSingular,
+  } = useAiChatRecordSearch(searchableObjectMetadataItems);
 
   const handleRecordSelect = (record: SearchRecord) => {
     if (!isDefined(editor)) {
@@ -62,29 +48,17 @@ export const AiChatAddMenuRecordsPage = ({
       <Dropdown.Separator />
       <Dropdown.Section scrollable>
         {searchRecords.map((record) => (
-          <Dropdown.OptionItem
+          <AiChatSearchRecordOptionItem
             key={`${record.objectNameSingular}-${record.recordId}`}
+            searchRecord={record}
+            objectMetadataItem={objectMetadataItemByNameSingular.get(
+              record.objectNameSingular,
+            )}
             selected={false}
             indicator="none"
             disabled={areSearchRecordsStale}
-            startIcon={
-              <Avatar
-                name={record.label}
-                colorSeed={record.recordId}
-                src={getAbsoluteImageUrl(record.imageUrl)}
-                shape={getAvatarShape(
-                  searchableObjectMetadataItemByNameSingular.get(
-                    record.objectNameSingular,
-                  ),
-                )}
-                size="sm"
-              />
-            }
-            description={record.objectLabelSingular}
             onSelect={() => handleRecordSelect(record)}
-          >
-            {record.label}
-          </Dropdown.OptionItem>
+          />
         ))}
         {searchRecords.length === 0 &&
           (loading ? (

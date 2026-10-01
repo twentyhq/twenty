@@ -1,8 +1,9 @@
 import { t } from '@lingui/core/macro';
+import { isString } from '@sniptt/guards';
 import { isDefined, isNonEmptyString } from 'twenty-shared/utils';
 
 import { type AgentChatThreadPreview } from '~/generated-metadata/graphql';
-import { replaceChatReferencesWithDisplayName } from '@/ai/utils/replaceChatReferencesWithDisplayName';
+import { getChatReferenceSegments } from '@/ai/utils/getChatReferenceSegments';
 import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPartialMembers';
 import { stripMarkdown } from '~/utils/string/stripMarkdown';
 
@@ -19,9 +20,10 @@ export const getAgentChatThreadPreviewText = ({
 }): string | null => {
   // The server cuts the text short, which can leave half a reference at the end
   const text = stripMarkdown(
-    replaceChatReferencesWithDisplayName(
-      preview?.lastMessageText ?? '',
-    ).replace(/\[\[[^\]]*$/, ''),
+    getChatReferenceSegments(preview?.lastMessageText ?? '')
+      .map((segment) => (isString(segment) ? segment : segment.displayName))
+      .join('')
+      .replace(/\[\[[^\]]*$/, ''),
   );
 
   if (!isNonEmptyString(text)) {

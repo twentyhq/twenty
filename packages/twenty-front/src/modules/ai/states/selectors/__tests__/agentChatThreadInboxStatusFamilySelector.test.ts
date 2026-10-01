@@ -3,7 +3,7 @@ import { createStore } from 'jotai';
 import { agentChatThreadInboxNowState } from '@/ai/states/agentChatThreadInboxNowState';
 import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
 import { hasLoadedAgentChatThreadParticipantsState } from '@/ai/states/hasLoadedAgentChatThreadParticipantsState';
-import { agentChatThreadInboxStatusesFamilySelector } from '@/ai/states/selectors/agentChatThreadInboxStatusesFamilySelector';
+import { agentChatThreadInboxStatusFamilySelector } from '@/ai/states/selectors/agentChatThreadInboxStatusFamilySelector';
 import { setAgentChatThreadList } from '@/ai/testing/setAgentChatThreadList';
 
 const NOW = new Date('2026-10-01T12:00:00.000Z').getTime();
@@ -57,34 +57,42 @@ const buildStore = ({
   return store;
 };
 
-describe('agentChatThreadInboxStatusesFamilySelector', () => {
-  it('returns the inbox status of each requested thread', () => {
+describe('agentChatThreadInboxStatusFamilySelector', () => {
+  it('returns the inbox status of a stored thread', () => {
     const store = buildStore({ hasLoadedParticipants: true });
-
-    expect(
+    const getInboxStatus = (threadId: string) =>
       store.get(
-        agentChatThreadInboxStatusesFamilySelector.selectorFamily([
-          'read',
-          'unread',
-          'archived',
-          'snoozed',
-        ]),
-      ),
-    ).toEqual({
-      read: { scope: 'INBOX', isUnread: false },
-      unread: { scope: 'INBOX', isUnread: true },
-      archived: { scope: 'ARCHIVED', isUnread: false },
-      snoozed: { scope: 'SNOOZED', isUnread: false },
+        agentChatThreadInboxStatusFamilySelector.selectorFamily({
+          threadId,
+          lastActivityAt: null,
+        }),
+      );
+
+    expect(getInboxStatus('read')).toEqual({ scope: 'INBOX', isUnread: false });
+    expect(getInboxStatus('unread')).toEqual({
+      scope: 'INBOX',
+      isUnread: true,
+    });
+    expect(getInboxStatus('archived')).toEqual({
+      scope: 'ARCHIVED',
+      isUnread: false,
+    });
+    expect(getInboxStatus('snoozed')).toEqual({
+      scope: 'SNOOZED',
+      isUnread: false,
     });
   });
 
-  it('returns no status before the participants load', () => {
+  it('never reads as unread before the participants load', () => {
     const store = buildStore({ hasLoadedParticipants: false });
 
     expect(
       store.get(
-        agentChatThreadInboxStatusesFamilySelector.selectorFamily(['read']),
+        agentChatThreadInboxStatusFamilySelector.selectorFamily({
+          threadId: 'unread',
+          lastActivityAt: null,
+        }),
       ),
-    ).toEqual({});
+    ).toEqual({ scope: 'INBOX', isUnread: false });
   });
 });

@@ -6,9 +6,9 @@ import { agentChatThreadKeptUnreadIdState } from '@/ai/states/agentChatThreadKep
 import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
 import { agentChatViewedThreadIdState } from '@/ai/states/agentChatViewedThreadIdState';
 import { hasLoadedAgentChatThreadParticipantsState } from '@/ai/states/hasLoadedAgentChatThreadParticipantsState';
-import { buildAgentChatThreadInboxState } from '@/ai/utils/buildAgentChatThreadInboxState';
 import { agentChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
 import { createAtomFamilySelector } from '@/ui/utilities/state/jotai/utils/createAtomFamilySelector';
+import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 type AgentChatThreadInboxStatusFamilyKey = {
   threadId: string;
@@ -27,17 +27,17 @@ export const agentChatThreadInboxStatusFamilySelector =
       ({ threadId, lastActivityAt }) =>
       ({ get }) => {
         const storedThread = get(agentChatThreadRecordFamilySelector, threadId);
-        const inboxState = buildAgentChatThreadInboxState(
-          { lastActivityAt: storedThread?.lastActivityAt ?? lastActivityAt },
-          get(agentChatThreadParticipantsState)[threadId],
-        );
+        const threadLastActivityAt =
+          storedThread?.lastActivityAt ?? lastActivityAt;
+        const participant = get(agentChatThreadParticipantsState)[threadId];
         const isViewed =
           get(agentChatViewedThreadIdState) === threadId &&
           get(agentChatThreadKeptUnreadIdState) !== threadId;
 
         return {
           scope: getAgentChatThreadInboxScope(
-            inboxState,
+            threadLastActivityAt,
+            participant,
             new Date(get(agentChatThreadInboxNowState)),
           ),
           // Without its participant rows every thread would read as unread.
@@ -46,9 +46,8 @@ export const agentChatThreadInboxStatusFamilySelector =
           isUnread:
             get(hasLoadedAgentChatThreadParticipantsState) &&
             !isViewed &&
-            isAgentChatThreadUnread(inboxState),
+            isAgentChatThreadUnread(threadLastActivityAt, participant),
         };
       },
-    areEqual: (previous, next) =>
-      previous.scope === next.scope && previous.isUnread === next.isUnread,
+    areEqual: isDeeplyEqual,
   });

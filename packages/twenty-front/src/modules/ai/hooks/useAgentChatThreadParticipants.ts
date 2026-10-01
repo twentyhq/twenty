@@ -1,3 +1,4 @@
+import { type TypedDocumentNode } from '@apollo/client';
 import { useApolloClient } from '@apollo/client/react';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
@@ -8,11 +9,13 @@ import { type AgentChatThreadParticipantState } from '@/ai/types/AgentChatThread
 import { useApplyAgentChatThreadUpdate } from '@/ai/hooks/useApplyAgentChatThreadUpdate';
 import { agentChatThreadKeptUnreadIdState } from '@/ai/states/agentChatThreadKeptUnreadIdState';
 import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
-import { agentChatThreadUnreadSinceState } from '@/ai/states/agentChatThreadUnreadSinceState';
+import {
+  type AgentChatThreadUnreadSince,
+  agentChatThreadUnreadSinceState,
+} from '@/ai/states/agentChatThreadUnreadSinceState';
 import { agentChatViewedThreadIdState } from '@/ai/states/agentChatViewedThreadIdState';
 import { agentChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
 import { hasLoadedAgentChatThreadParticipantsState } from '@/ai/states/hasLoadedAgentChatThreadParticipantsState';
-import { toAgentChatThreadParticipantState } from '@/ai/utils/toAgentChatThreadParticipantState';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import {
   ArchiveAgentChatThreadDocument,
@@ -22,8 +25,6 @@ import {
   MoveAgentChatThreadToInboxDocument,
   SnoozeAgentChatThreadDocument,
 } from '~/generated-metadata/graphql';
-
-const noop = () => {};
 
 const EMPTY_PARTICIPANT_STATE: AgentChatThreadParticipantState = {
   lastReadAt: null,
@@ -69,7 +70,11 @@ export const useAgentChatThreadParticipants = () => {
       Object.fromEntries(
         result.data.myAgentChatThreadParticipants.map((participant) => [
           participant.threadId,
-          toAgentChatThreadParticipantState(participant),
+          {
+            lastReadAt: participant.lastReadAt ?? null,
+            archivedAt: participant.archivedAt ?? null,
+            snoozedUntil: participant.snoozedUntil ?? null,
+          },
         ]),
       ),
     );
@@ -78,17 +83,18 @@ export const useAgentChatThreadParticipants = () => {
   // The change shows right away; if the server refuses it, the member's
   // state is reloaded from the server
   const updateParticipant = useCallback(
-    async ({
-      threadId,
+    async <TVariables extends { threadId: string }>({
+      mutation,
+      variables,
       optimisticState,
-      mutate,
       applyLocalState,
     }: {
-      threadId: string;
+      mutation: TypedDocumentNode<unknown, TVariables>;
+      variables: TVariables;
       optimisticState: Partial<AgentChatThreadParticipantState>;
-      mutate: () => Promise<unknown>;
-      applyLocalState?: () => () => void;
+      applyLocalState?: () => (() => void) | undefined;
     }) => {
+      const { threadId } = variables;
       const previousState = store.get(agentChatThreadParticipantsState.atom)[
         threadId
       ];
@@ -100,7 +106,7 @@ export const useAgentChatThreadParticipants = () => {
       const rollbackLocalState = applyLocalState?.();
 
       try {
-        await mutate();
+        await client.mutate({ mutation, variables });
       } catch (error) {
         rollbackLocalState?.();
         enqueueToast(getToastOptionsFromError({ error }));
@@ -108,11 +114,37 @@ export const useAgentChatThreadParticipants = () => {
       }
     },
     [
+      client,
       enqueueToast,
       refreshAgentChatThreadParticipants,
       setParticipantState,
       store,
     ],
+  );
+
+  // The rollback leaves the unread line alone once another thread owns it
+  const patchUnreadSince = useCallback(
+    (threadId: string, patch: Partial<AgentChatThreadUnreadSince>) => {
+      const previousUnreadSince = store.get(
+        agentChatThreadUnreadSinceState.atom,
+      );
+
+      if (previousUnreadSince?.threadId === threadId) {
+        store.set(agentChatThreadUnreadSinceState.atom, {
+          ...previousUnreadSince,
+          ...patch,
+        });
+      }
+
+      return () => {
+        if (
+          store.get(agentChatThreadUnreadSinceState.atom)?.threadId === threadId
+        ) {
+          store.set(agentChatThreadUnreadSinceState.atom, previousUnreadSince);
+        }
+      };
+    },
+    [store],
   );
 
   const setKeptUnreadThreadId = useCallback(
@@ -147,17 +179,13 @@ export const useAgentChatThreadParticipants = () => {
       );
 
       return updateParticipant({
-        threadId,
+        mutation: MarkAgentChatThreadAsReadDocument,
+        variables: { threadId },
         optimisticState: { lastReadAt: thread?.lastActivityAt ?? null },
-        applyLocalState: () => releaseKeptUnreadThread(threadId) ?? noop,
-        mutate: () =>
-          client.mutate({
-            mutation: MarkAgentChatThreadAsReadDocument,
-            variables: { threadId },
-          }),
+        applyLocalState: () => releaseKeptUnreadThread(threadId),
       });
     },
-    [client, releaseKeptUnreadThread, store, updateParticipant],
+    [releaseKeptUnreadThread, store, updateParticipant],
   );
 
   // On the thread on screen, it stays unread until the member leaves it, and
@@ -165,99 +193,68 @@ export const useAgentChatThreadParticipants = () => {
   const keepViewedThreadUnread = useCallback(
     (threadId: string) => {
       if (store.get(agentChatViewedThreadIdState.atom) !== threadId) {
-        return noop;
+        return undefined;
       }
 
       const rollbackKeptUnreadThreadId = setKeptUnreadThreadId(threadId);
-      const previousUnreadSince = store.get(
-        agentChatThreadUnreadSinceState.atom,
-      );
-
-      if (previousUnreadSince?.threadId === threadId) {
-        store.set(agentChatThreadUnreadSinceState.atom, {
-          ...previousUnreadSince,
-          isUnread: true,
-          lastReadAt: null,
-        });
-      }
+      const rollbackUnreadSince = patchUnreadSince(threadId, {
+        isUnread: true,
+        lastReadAt: null,
+      });
 
       return () => {
         rollbackKeptUnreadThreadId();
-
-        if (
-          store.get(agentChatThreadUnreadSinceState.atom)?.threadId === threadId
-        ) {
-          store.set(agentChatThreadUnreadSinceState.atom, previousUnreadSince);
-        }
+        rollbackUnreadSince();
       };
     },
-    [setKeptUnreadThreadId, store],
+    [patchUnreadSince, setKeptUnreadThreadId, store],
   );
 
   const markAgentChatThreadAsUnread = useCallback(
     (threadId: string) =>
       updateParticipant({
-        threadId,
+        mutation: MarkAgentChatThreadAsUnreadDocument,
+        variables: { threadId },
         optimisticState: { lastReadAt: null },
         applyLocalState: () => keepViewedThreadUnread(threadId),
-        mutate: () =>
-          client.mutate({
-            mutation: MarkAgentChatThreadAsUnreadDocument,
-            variables: { threadId },
-          }),
       }),
-    [client, keepViewedThreadUnread, updateParticipant],
+    [keepViewedThreadUnread, updateParticipant],
   );
 
   const archiveAgentChatThread = useCallback(
     (threadId: string) =>
       updateParticipant({
-        threadId,
+        mutation: ArchiveAgentChatThreadDocument,
+        variables: { threadId },
         optimisticState: {
           archivedAt: new Date().toISOString(),
           snoozedUntil: null,
         },
-        mutate: () =>
-          client.mutate({
-            mutation: ArchiveAgentChatThreadDocument,
-            variables: { threadId },
-          }),
       }),
-    [client, updateParticipant],
+    [updateParticipant],
   );
 
   const snoozeAgentChatThread = useCallback(
     (threadId: string, snoozedUntil: Date) =>
       updateParticipant({
-        threadId,
+        mutation: SnoozeAgentChatThreadDocument,
+        variables: { threadId, snoozedUntil: snoozedUntil.toISOString() },
         optimisticState: {
           archivedAt: new Date().toISOString(),
           snoozedUntil: snoozedUntil.toISOString(),
         },
-        mutate: () =>
-          client.mutate({
-            mutation: SnoozeAgentChatThreadDocument,
-            variables: {
-              threadId,
-              snoozedUntil: snoozedUntil.toISOString(),
-            },
-          }),
       }),
-    [client, updateParticipant],
+    [updateParticipant],
   );
 
   const moveAgentChatThreadToInbox = useCallback(
     (threadId: string) =>
       updateParticipant({
-        threadId,
+        mutation: MoveAgentChatThreadToInboxDocument,
+        variables: { threadId },
         optimisticState: { archivedAt: null, snoozedUntil: null },
-        mutate: () =>
-          client.mutate({
-            mutation: MoveAgentChatThreadToInboxDocument,
-            variables: { threadId },
-          }),
       }),
-    [client, updateParticipant],
+    [updateParticipant],
   );
 
   // Mirrors what the server records when the member sends a message, so the
@@ -272,16 +269,9 @@ export const useAgentChatThreadParticipants = () => {
       ];
 
       // Writing in a thread catches the member up, so its unread line goes
-      const previousUnreadSince = store.get(
-        agentChatThreadUnreadSinceState.atom,
-      );
-
-      if (previousUnreadSince?.threadId === threadId) {
-        store.set(agentChatThreadUnreadSinceState.atom, {
-          ...previousUnreadSince,
-          isUnread: false,
-        });
-      }
+      const rollbackUnreadSince = patchUnreadSince(threadId, {
+        isUnread: false,
+      });
       const rollbackKeptUnreadThread = releaseKeptUnreadThread(threadId);
 
       applyAgentChatThreadUpdate({ id: threadId, lastActivityAt: activityAt });
@@ -299,16 +289,12 @@ export const useAgentChatThreadParticipants = () => {
         rollbackKeptUnreadThread?.();
 
         setParticipantState(threadId, previousState);
-
-        if (
-          store.get(agentChatThreadUnreadSinceState.atom)?.threadId === threadId
-        ) {
-          store.set(agentChatThreadUnreadSinceState.atom, previousUnreadSince);
-        }
+        rollbackUnreadSince();
       };
     },
     [
       applyAgentChatThreadUpdate,
+      patchUnreadSince,
       releaseKeptUnreadThread,
       setParticipantState,
       store,

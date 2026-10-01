@@ -20,14 +20,6 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
 const PARTICIPANT_OBJECT_UNIVERSAL_IDENTIFIER =
   STANDARD_OBJECTS.agentChatThreadParticipant.universalIdentifier;
 
-const PARTICIPANT_FIELD_UNIVERSAL_IDENTIFIERS = Object.values(
-  STANDARD_OBJECTS.agentChatThreadParticipant.fields,
-).map((field) => field.universalIdentifier);
-
-const PARTICIPANT_INDEX_UNIVERSAL_IDENTIFIERS = Object.values(
-  STANDARD_OBJECTS.agentChatThreadParticipant.indexes,
-).map((index) => index.universalIdentifier);
-
 // Fields this change adds to objects that already exist
 const EXISTING_OBJECT_FIELD_UNIVERSAL_IDENTIFIERS = [
   STANDARD_OBJECTS.agentChatThread.fields.participants.universalIdentifier,
@@ -36,7 +28,7 @@ const EXISTING_OBJECT_FIELD_UNIVERSAL_IDENTIFIERS = [
     .universalIdentifier,
 ];
 
-@RegisteredWorkspaceCommand('2.45.0', 1790861454223)
+@RegisteredWorkspaceCommand('2.45.0', 1790884925593)
 @Command({
   name: 'upgrade:2-45:add-agent-chat-thread-participant-object',
   description:
@@ -102,7 +94,9 @@ export class AddAgentChatThreadParticipantObjectCommand extends ProvisionedWorks
         standardFlatEntityMaps: standardAllFlatEntityMaps.flatFieldMetadataMaps,
         existingFlatEntityMaps: flatFieldMetadataMaps,
         universalIdentifiers: [
-          ...PARTICIPANT_FIELD_UNIVERSAL_IDENTIFIERS,
+          ...Object.values(
+            STANDARD_OBJECTS.agentChatThreadParticipant.fields,
+          ).map((field) => field.universalIdentifier),
           ...EXISTING_OBJECT_FIELD_UNIVERSAL_IDENTIFIERS,
         ],
       });
@@ -110,7 +104,9 @@ export class AddAgentChatThreadParticipantObjectCommand extends ProvisionedWorks
       getStandardFlatEntitiesToCreateOrThrow<FlatIndexMetadata>({
         standardFlatEntityMaps: standardAllFlatEntityMaps.flatIndexMaps,
         existingFlatEntityMaps: flatIndexMaps,
-        universalIdentifiers: PARTICIPANT_INDEX_UNIVERSAL_IDENTIFIERS,
+        universalIdentifiers: Object.values(
+          STANDARD_OBJECTS.agentChatThreadParticipant.indexes,
+        ).map((index) => index.universalIdentifier),
       });
 
     const operationCount =

@@ -23,7 +23,7 @@ export const AiChatThreadTriageHotkeysEffect = ({
   );
   const { scope } = useAtomFamilySelectorValue(
     agentChatThreadInboxStatusFamilySelector,
-    { threadId, lastActivityAt: thread?.lastActivityAt ?? null },
+    { threadId, lastActivityAt: null },
   );
   const hasLoadedAgentChatThreadParticipants = useAtomStateValue(
     hasLoadedAgentChatThreadParticipantsState,

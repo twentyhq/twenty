@@ -2,6 +2,7 @@ import { agentChatThreadInboxStatusFamilySelector } from '@/ai/states/selectors/
 import { agentChatRecentThreadsSelector } from '@/ai/states/selectors/agentChatRecentThreadsSelector';
 import { hasLoadedAgentChatThreadParticipantsState } from '@/ai/states/hasLoadedAgentChatThreadParticipantsState';
 import { createAtomSelector } from '@/ui/utilities/state/jotai/utils/createAtomSelector';
+import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 type AgentChatOpenThreadsSummary = {
   openThreadCount: number;
@@ -32,7 +33,5 @@ export const agentChatOpenThreadsSummarySelector =
         ),
       };
     },
-    areEqual: (previous, next) =>
-      previous.openThreadCount === next.openThreadCount &&
-      previous.hasUnreadOpenThread === next.hasUnreadOpenThread,
+    areEqual: isDeeplyEqual,
   });

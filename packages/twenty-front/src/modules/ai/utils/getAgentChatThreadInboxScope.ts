@@ -1,13 +1,14 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { type AgentChatThreadInboxScope } from '@/ai/types/AgentChatThreadInboxScope';
-import { type AgentChatThreadInboxState } from '@/ai/types/AgentChatThreadInboxState';
+import { type AgentChatThreadParticipantState } from '@/ai/types/AgentChatThreadParticipantState';
 
 // Activity and archiving have different writers and are compared rather than
 // folded into a status, so a message landing right after an archive brings the
 // thread back whichever write committed last
 export const getAgentChatThreadInboxScope = (
-  { lastActivityAt, participant }: AgentChatThreadInboxState,
+  lastActivityAt: string | null | undefined,
+  participant: AgentChatThreadParticipantState | undefined,
   now: Date,
 ): AgentChatThreadInboxScope => {
   if (!isDefined(participant) || !isDefined(participant.archivedAt)) {
