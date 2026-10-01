@@ -9,6 +9,7 @@ import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/
 import { type ToolProvider } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
 import { type ToolRetrievalOptions } from 'src/engine/core-modules/tool-provider/interfaces/tool-retrieval-options.type';
 
+import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { TOOL_PROVIDERS } from 'src/engine/core-modules/tool-provider/constants/tool-providers.token';
 import { compactToolOutput } from 'src/engine/core-modules/tool-provider/output-transforms/compact-tool-output.util';
 import { normalizeToolOutputToJsonValues } from 'src/engine/core-modules/tool-provider/output-transforms/normalize-tool-output-to-json-values.util';
@@ -17,6 +18,7 @@ import { type LearnToolsAspect } from 'src/engine/core-modules/tool-provider/too
 import { type ToolContext } from 'src/engine/core-modules/tool-provider/types/tool-context.type';
 import { type ToolDescriptor } from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
 import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
+import { buildToolExecutionFailure } from 'src/engine/core-modules/tool-provider/utils/build-tool-execution-failure.util';
 import { findSimilarToolNames } from 'src/engine/core-modules/tool-provider/utils/find-similar-tool-names.util';
 import { ToolOutputSpillService } from 'src/engine/core-modules/tool/services/tool-output-spill.service';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
@@ -31,6 +33,7 @@ export class ToolRegistryService {
     private readonly providers: ToolProvider[],
     private readonly toolExecutorService: ToolExecutorService,
     private readonly toolOutputSpillService: ToolOutputSpillService,
+    private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
 
   async getCatalog(
@@ -352,16 +355,23 @@ export class ToolRegistryService {
 
       return normalizeToolOutputToJsonValues(inlined);
     } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : String(error);
+      const { output, shouldCapture } = buildToolExecutionFailure(
+        error,
+        toolName,
+      );
 
-      this.logger.error(`Error executing tool "${toolName}": ${errorMessage}`);
+      if (shouldCapture) {
+        this.exceptionHandlerService.captureExceptions([error], {
+          workspace: { id: context.workspaceId },
+          tags: { toolName, 'twenty.workspace.id': context.workspaceId },
+        });
+      }
 
-      return {
-        success: false,
-        message: `Failed to execute ${toolName}`,
-        error: errorMessage,
-      };
+      this.logger.error(
+        `Error executing tool "${toolName}" in workspace ${context.workspaceId}: ${output.error}`,
+      );
+
+      return output;
     }
   }
 

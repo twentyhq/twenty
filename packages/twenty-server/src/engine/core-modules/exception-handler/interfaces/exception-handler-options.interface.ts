@@ -11,6 +11,7 @@ export interface ExceptionHandlerOptions {
   document?: string;
   // oxlint-disable-next-line typescript/no-explicit-any
   additionalData?: Record<string, any>;
+  tags?: Record<string, string>;
   user?: ExceptionHandlerUser | null;
   workspace?: ExceptionHandlerWorkspace | null;
 }
