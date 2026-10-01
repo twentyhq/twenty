@@ -31,8 +31,6 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { AiChatThreadPageContent } from '~/pages/ai-chat/AiChatThreadPageContent';
 
-const AI_CHAT_INBOX_LIST_WIDTH = 400;
-
 const StyledInbox = styled.div`
   display: flex;
   flex: 1;
@@ -42,8 +40,7 @@ const StyledInbox = styled.div`
 
 const StyledListPane = styled.div<{ $isFullWidth: boolean }>`
   display: flex;
-  flex: ${({ $isFullWidth }) =>
-    $isFullWidth ? '1' : `0 0 ${AI_CHAT_INBOX_LIST_WIDTH}px`};
+  flex: ${({ $isFullWidth }) => ($isFullWidth ? '1' : '0 0 400px')};
   min-width: 0;
 `;
 

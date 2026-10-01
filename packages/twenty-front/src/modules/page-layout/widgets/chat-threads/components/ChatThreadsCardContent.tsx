@@ -57,18 +57,6 @@ export const ChatThreadsCardContent = ({
       : undefined;
   const isThreadsEmpty = threads.length === 0;
 
-  // Opening the chat already in the panel would drop the panel's back history
-  const handleThreadClick = (thread: AgentChatThreadRecord) => {
-    if (thread.id === sidePanelThreadId) {
-      return;
-    }
-
-    openRecordInSidePanel({
-      recordId: thread.id,
-      objectNameSingular: CoreObjectNameSingular.AgentChatThread,
-    });
-  };
-
   if (loading && isThreadsEmpty) {
     return <SkeletonLoader />;
   }
@@ -114,7 +102,12 @@ export const ChatThreadsCardContent = ({
         threads={threads}
         surface={AI_CHAT_THREAD_ACTIONS_SURFACE.RECORD_PAGE}
         selectedThreadId={sidePanelThreadId}
-        onThreadClick={handleThreadClick}
+        onThreadClick={({ id }) =>
+          openRecordInSidePanel({
+            recordId: id,
+            objectNameSingular: CoreObjectNameSingular.AgentChatThread,
+          })
+        }
         onDetachThread={onDetachThread}
       />
     </StyledThreadsContainer>

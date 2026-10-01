@@ -9,12 +9,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { viewsSelector } from '@/views/states/selectors/viewsSelector';
 import { computeObjectViewTargetIds } from '@/views/utils/computeObjectViewTargetIds';
 import { isUsableLastVisitedView } from '@/views/utils/isUsableLastVisitedView';
-import {
-  matchPath,
-  matchRoutes,
-  useLocation,
-  useSearchParams,
-} from 'react-router-dom';
+import { matchRoutes, useLocation, useSearchParams } from 'react-router-dom';
 import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { FeatureFlagKey, ViewType } from '~/generated-metadata/graphql';
@@ -68,12 +63,12 @@ export const RouteContextStoreProvider = () => {
     location,
     AppPath.WorkflowCoreShowPage,
   );
+  const routeParams = matchRoutes(routeObjects, location)?.at(-1)?.params;
   // A chat on screen, full page or in the inbox, is the record page of the chat
   const isAiChatPage =
     isMatchingLocation(location, AppPath.AiChat) ||
-    isDefined(
-      matchPath(AppPath.AiChatInbox, location.pathname)?.params.threadId,
-    );
+    (isMatchingLocation(location, AppPath.AiChatInbox) &&
+      isDefined(routeParams?.threadId));
   const isRecordShowPage =
     isCoreWorkflowShowPage ||
     isAiChatPage ||
@@ -81,7 +76,6 @@ export const RouteContextStoreProvider = () => {
   const isStandalonePage = isMatchingLocation(location, AppPath.PageLayoutPage);
   const isSettingsPage = useIsSettingsPage();
 
-  const routeParams = matchRoutes(routeObjects, location)?.at(-1)?.params;
   const objectNamePlural = routeParams?.objectNamePlural;
   const objectNameSingular = isCoreWorkflowShowPage
     ? CoreObjectNameSingular.Workflow

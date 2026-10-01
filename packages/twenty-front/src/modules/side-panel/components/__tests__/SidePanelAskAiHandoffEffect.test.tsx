@@ -43,14 +43,21 @@ describe('SidePanelAskAiHandoffEffect', () => {
     expect(onContinueChatFromFullWidth).toHaveBeenCalled();
   });
 
-  it.each(['/inbox', '/settings/profile'])(
-    'closes the chat when leaving it for %s',
+  it('closes the chat when leaving it for settings', () => {
+    const store = leaveChatPageFor('/settings/profile');
+
+    expect(openAskAiPage).not.toHaveBeenCalled();
+    expect(onContinueChatFromFullWidth).not.toHaveBeenCalled();
+    expect(store.get(shouldContinueAiChatInSidePanelState.atom)).toBe(false);
+  });
+
+  it.each(['/inbox', '/inbox/20202020-0000-4000-8000-000000000001'])(
+    'leaves the chat to the page it moves to on %s',
     (pathname) => {
       const store = leaveChatPageFor(pathname);
 
       expect(openAskAiPage).not.toHaveBeenCalled();
-      expect(onContinueChatFromFullWidth).not.toHaveBeenCalled();
-      expect(store.get(shouldContinueAiChatInSidePanelState.atom)).toBe(false);
+      expect(store.get(shouldContinueAiChatInSidePanelState.atom)).toBe(true);
     },
   );
 });

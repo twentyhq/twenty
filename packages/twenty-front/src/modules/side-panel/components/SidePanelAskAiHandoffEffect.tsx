@@ -5,8 +5,7 @@ import { useLocation } from 'react-router-dom';
 import { shouldContinueAiChatInSidePanelState } from '@/ai/states/shouldContinueAiChatInSidePanelState';
 import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 import { useOpenAskAiPageInSidePanel } from '@/side-panel/hooks/useOpenAskAiPageInSidePanel';
-import { isAiChatInboxPath } from '~/utils/isAiChatInboxPath';
-import { isAiChatPath } from '~/utils/isAiChatPath';
+import { isAiModePath } from '~/utils/isAiModePath';
 import { isSettingsPath } from '~/utils/isSettingsPath';
 
 type SidePanelAskAiHandoffEffectProps = {
@@ -21,7 +20,7 @@ export const SidePanelAskAiHandoffEffect = ({
   const { openAskAiPage } = useOpenAskAiPageInSidePanel();
 
   useLayoutEffect(() => {
-    if (isAiChatPath(pathname)) {
+    if (isAiModePath(pathname)) {
       return;
     }
 
@@ -32,8 +31,7 @@ export const SidePanelAskAiHandoffEffect = ({
     store.set(shouldContinueAiChatInSidePanelState.atom, false);
     store.set(shouldOpenAiChatAfterOnboardingState.atom, false);
 
-    // The inbox lists the chats, so leaving a chat for it closes the chat
-    if (isSettingsPath(pathname) || isAiChatInboxPath(pathname)) {
+    if (isSettingsPath(pathname)) {
       return;
     }
 

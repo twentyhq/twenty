@@ -134,13 +134,13 @@ const StyledLabelParent = styled.div`
   white-space: nowrap;
 `;
 
-const StyledItemLabel = styled.span`
-  font-weight: ${themeCssVariables.font.weight.medium};
-`;
-
-const StyledUnreadItemLabel = styled.span`
-  color: ${themeCssVariables.font.color.primary};
-  font-weight: ${themeCssVariables.font.weight.semiBold};
+const StyledItemLabel = styled.span<{ $isUnread: boolean }>`
+  color: ${({ $isUnread }) =>
+    $isUnread ? themeCssVariables.font.color.primary : 'inherit'};
+  font-weight: ${({ $isUnread }) =>
+    $isUnread
+      ? themeCssVariables.font.weight.semiBold
+      : themeCssVariables.font.weight.medium};
 `;
 
 const StyledItemSecondaryLabel = styled.span`
@@ -373,14 +373,12 @@ export const NavigationDrawerItem = ({
                 <OverflowingTextWithTooltip
                   text={
                     <>
-                      {isUnread ? (
-                        <StyledUnreadItemLabel>
-                          {label}
+                      <StyledItemLabel $isUnread={isUnread}>
+                        {label}
+                        {isUnread && (
                           <VisibilityHidden>{t`, unread`}</VisibilityHidden>
-                        </StyledUnreadItemLabel>
-                      ) : (
-                        <StyledItemLabel>{label}</StyledItemLabel>
-                      )}
+                        )}
+                      </StyledItemLabel>
                       {secondaryLabel && (
                         <StyledItemSecondaryLabel>
                           {' · '}
