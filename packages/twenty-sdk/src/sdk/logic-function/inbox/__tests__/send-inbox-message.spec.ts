@@ -15,13 +15,13 @@ describe('sendInboxMessage', () => {
 
   beforeEach(() => {
     process.env.TWENTY_API_URL = 'https://api.test';
-    process.env.TWENTY_APP_ACCESS_TOKEN = 'app-token';
+    process.env.TWENTY_APP_APPLICATION_ACCESS_TOKEN = 'app-token';
     fetchSpy = vi.spyOn(globalThis, 'fetch');
   });
 
   afterEach(() => {
     delete process.env.TWENTY_API_URL;
-    delete process.env.TWENTY_APP_ACCESS_TOKEN;
+    delete process.env.TWENTY_APP_APPLICATION_ACCESS_TOKEN;
     fetchSpy.mockRestore();
   });
 
