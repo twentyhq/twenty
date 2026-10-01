@@ -180,7 +180,7 @@ export const SettingsAdminUserDetail = () => {
             key={`${user.id}-${activeWorkspace.id}`}
             userId={user.id}
             workspaceId={activeWorkspace.id}
-            memberName={userFullName}
+            memberName={displayName}
           />
         )}
     </Section.Root>

@@ -7,6 +7,8 @@ import { OTPInput } from 'input-otp';
 import { useState } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme';
 
+const OTP_LENGTH = 6;
+
 const StyledConfirmationContent = styled.div`
   align-items: center;
   display: flex;
@@ -38,6 +40,7 @@ export const TwoFactorAuthenticationRecoveryCodeConfirmationDialog = ({
       title={t`Generate a recovery code`}
       confirmButtonColor="accent"
       confirmButtonText={t`Generate code`}
+      isConfirmButtonDisabled={otp.length !== OTP_LENGTH}
       onConfirmClick={() => {
         onConfirm(otp);
         setOtp('');
@@ -50,7 +53,7 @@ export const TwoFactorAuthenticationRecoveryCodeConfirmationDialog = ({
           </div>
           <div>{t`Enter your two-factor authentication code to confirm.`}</div>
           <OTPInput
-            maxLength={6}
+            maxLength={OTP_LENGTH}
             value={otp}
             onChange={setOtp}
             autoFocus

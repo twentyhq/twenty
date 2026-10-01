@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
 const MINIMUM_DISPLAY_DURATION_MS = 5 * 60 * 1000;
 
@@ -11,24 +12,25 @@ export const useGeneratedRecoveryCode = () => {
   const [generatedRecoveryCode, setGeneratedRecoveryCode] =
     useState<GeneratedRecoveryCode | null>(null);
 
-  const showGeneratedRecoveryCode = (
-    recoveryCodeToShow: GeneratedRecoveryCode,
-  ) => {
-    setGeneratedRecoveryCode(recoveryCodeToShow);
+  useEffect(() => {
+    if (!isDefined(generatedRecoveryCode)) {
+      return;
+    }
 
-    setTimeout(
-      () =>
-        setGeneratedRecoveryCode((currentRecoveryCode) =>
-          currentRecoveryCode === recoveryCodeToShow
-            ? null
-            : currentRecoveryCode,
-        ),
+    const hideTimeoutId = setTimeout(
+      () => setGeneratedRecoveryCode(null),
       Math.max(
-        new Date(recoveryCodeToShow.expiresAt).getTime() - Date.now(),
+        new Date(generatedRecoveryCode.expiresAt).getTime() - Date.now(),
         MINIMUM_DISPLAY_DURATION_MS,
       ),
     );
-  };
+
+    return () => clearTimeout(hideTimeoutId);
+  }, [generatedRecoveryCode]);
+
+  const showGeneratedRecoveryCode = (
+    recoveryCodeToShow: GeneratedRecoveryCode,
+  ) => setGeneratedRecoveryCode(recoveryCodeToShow);
 
   const clearGeneratedRecoveryCode = () => setGeneratedRecoveryCode(null);
 

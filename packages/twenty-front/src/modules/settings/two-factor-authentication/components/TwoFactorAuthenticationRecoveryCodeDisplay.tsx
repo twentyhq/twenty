@@ -49,6 +49,7 @@ export const TwoFactorAuthenticationRecoveryCodeDisplay = ({
           <SettingsTextInput
             instanceId="two-factor-authentication-recovery-code-display"
             value={recoveryCode}
+            readOnly
             fullWidth
           />
         </StyledCodeInputContainer>

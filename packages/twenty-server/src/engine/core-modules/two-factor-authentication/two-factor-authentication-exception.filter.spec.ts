@@ -1,4 +1,5 @@
 import {
+  ConflictError,
   ForbiddenError,
   UserInputError,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
@@ -107,12 +108,26 @@ describe('TwoFactorAuthenticationExceptionFilter', () => {
     });
 
     it.each([
-      TwoFactorAuthenticationExceptionCode.INVALID_RECOVERY_CODE,
-      TwoFactorAuthenticationExceptionCode.STEP_UP_AUTHENTICATION_REQUIRED,
-    ])('should throw UserInputError for %s exception', (code) => {
+      [
+        TwoFactorAuthenticationExceptionCode.INVALID_RECOVERY_CODE,
+        UserInputError,
+      ],
+      [
+        TwoFactorAuthenticationExceptionCode.STEP_UP_AUTHENTICATION_REQUIRED,
+        UserInputError,
+      ],
+      [
+        TwoFactorAuthenticationExceptionCode.RECOVERY_CODE_TARGET_NOT_ALLOWED,
+        ForbiddenError,
+      ],
+      [
+        TwoFactorAuthenticationExceptionCode.RECOVERY_CODE_ISSUANCE_CONFLICT,
+        ConflictError,
+      ],
+    ])('should map %s to the matching GraphQL error', (code, ExpectedError) => {
       const exception = new TwoFactorAuthenticationException('Error', code);
 
-      expect(() => filter.catch(exception)).toThrow(UserInputError);
+      expect(() => filter.catch(exception)).toThrow(ExpectedError);
     });
   });
 });
