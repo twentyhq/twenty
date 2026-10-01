@@ -5,16 +5,17 @@ import { type DataSource, type QueryRunner } from 'typeorm';
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
+import { buildMissingPositionIdIndexes } from 'src/database/commands/upgrade-version-command/2-45/utils/build-missing-position-id-indexes.util';
 import {
-  buildMissingPositionIdIndexes,
   buildPositionIdIndexes,
   type PositionIdIndex,
-} from 'src/database/commands/upgrade-version-command/2-45/utils/build-missing-position-id-indexes.util';
+} from 'src/database/commands/upgrade-version-command/2-45/utils/build-position-id-indexes.util';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { POSITION_ID_INDEX_FIELD_NAMES } from 'src/engine/metadata-modules/object-metadata/utils/build-position-id-index-for-object.util';
 import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { type UniversalFlatIndexMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-index-metadata.type';
 import { getWorkspaceSchemaContextForMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/get-workspace-schema-context-for-migration.util';
@@ -27,10 +28,15 @@ const groupByApplication = <
   const indexesByApplication = new Map<string, TIndex[]>();
 
   for (const index of indexes) {
-    indexesByApplication.set(index.applicationUniversalIdentifier, [
-      ...(indexesByApplication.get(index.applicationUniversalIdentifier) ?? []),
-      index,
-    ]);
+    const applicationIndexes = indexesByApplication.get(
+      index.applicationUniversalIdentifier,
+    );
+
+    if (isDefined(applicationIndexes)) {
+      applicationIndexes.push(index);
+    } else {
+      indexesByApplication.set(index.applicationUniversalIdentifier, [index]);
+    }
   }
 
   return indexesByApplication;
@@ -114,7 +120,11 @@ export class AddPositionIdIndexesCommand extends ProvisionedWorkspaceCommandRunn
     }
   }
 
-  async down({ workspaceId, options }: RunOnWorkspaceArgs): Promise<void> {
+  async down({
+    workspaceId,
+    dataSource,
+    options,
+  }: RunOnWorkspaceArgs): Promise<void> {
     const { flatObjectMetadataMaps, flatFieldMetadataMaps, flatIndexMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatObjectMetadataMaps',
@@ -122,11 +132,12 @@ export class AddPositionIdIndexesCommand extends ProvisionedWorkspaceCommandRunn
         'flatIndexMaps',
       ]);
 
-    const existingIndexes = buildPositionIdIndexes({
+    const positionIdIndexes = buildPositionIdIndexes({
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
       now: new Date().toISOString(),
-    })
+    });
+    const existingIndexes = positionIdIndexes
       .map(
         ({ universalFlatIndexMetadata }) =>
           flatIndexMaps.byUniversalIdentifier[
@@ -153,6 +164,51 @@ export class AddPositionIdIndexesCommand extends ProvisionedWorkspaceCommandRunn
         flatEntityToCreate: [],
         flatEntityToDelete: applicationIndexes,
       });
+    }
+
+    if (isDefined(dataSource)) {
+      await this.dropUnrecordedIndexes({
+        dataSource,
+        workspaceId,
+        indexes: positionIdIndexes,
+      });
+    }
+  }
+
+  // An up interrupted between the build and the metadata sync leaves indexes
+  // the metadata migration does not know about
+  private async dropUnrecordedIndexes({
+    dataSource,
+    workspaceId,
+    indexes,
+  }: {
+    dataSource: DataSource;
+    workspaceId: string;
+    indexes: PositionIdIndex[];
+  }): Promise<void> {
+    const queryRunner = dataSource.createQueryRunner();
+
+    await queryRunner.connect();
+
+    try {
+      for (const {
+        flatObjectMetadata,
+        universalFlatIndexMetadata,
+      } of indexes) {
+        const { schemaName } = getWorkspaceSchemaContextForMigration({
+          workspaceId,
+          objectMetadata: flatObjectMetadata,
+        });
+
+        await this.workspaceSchemaManagerService.indexManager.dropIndex({
+          queryRunner,
+          schemaName,
+          indexName: universalFlatIndexMetadata.name,
+          concurrently: true,
+        });
+      }
+    } finally {
+      await queryRunner.release();
     }
   }
 
@@ -184,9 +240,7 @@ export class AddPositionIdIndexesCommand extends ProvisionedWorkspaceCommandRunn
       );
 
     if (result.status === 'fail') {
-      throw new Error(
-        `Failed to sync (position, id) index metadata for application ${applicationUniversalIdentifier} in workspace ${workspaceId}:\n${JSON.stringify(result, null, 2)}`,
-      );
+      throw new WorkspaceMigrationBuilderException(result);
     }
   }
 

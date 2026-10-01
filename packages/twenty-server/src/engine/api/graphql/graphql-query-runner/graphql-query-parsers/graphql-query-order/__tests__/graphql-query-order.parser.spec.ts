@@ -231,6 +231,20 @@ describe('GraphqlQueryOrderFieldParser', () => {
     });
   });
 
+  it('should leave the NULLS placement out on a column without nulls when paginating backwards', () => {
+    const result = parser.parse(
+      [{ position: OrderByDirection.AscNullsFirst }],
+      'opportunity',
+      false,
+    );
+
+    expect(result.orderBy['opportunity.position']).toEqual({
+      order: 'DESC',
+      useLower: false,
+      castToText: false,
+    });
+  });
+
   it('should keep the first direction when the same field is ordered twice', () => {
     const result = parser.parse(
       [
