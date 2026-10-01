@@ -3,6 +3,7 @@ import { useLayoutEffect, useRef, useState } from 'react';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import { getVisibleItemCount } from './getVisibleItemCount';
+import { measureItemWidths } from './measureItemWidths';
 
 const FALLBACK_MEASUREMENT_INTERVAL_MS = 100;
 
@@ -10,25 +11,35 @@ export const useExpandableListLayout = ({
   itemCount,
   inlineItemCount,
   reserveCountSpace,
+  isMeasurementEnabled,
 }: {
   itemCount: number;
   inlineItemCount: number;
   reserveCountSpace: boolean;
+  isMeasurementEnabled: boolean;
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const itemsRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
+  const measureRef = useRef<() => void>(undefined);
+  const layoutInputRef = useRef({ itemCount, reserveCountSpace });
   const [visibleItemCount, setVisibleItemCount] = useState(inlineItemCount);
   const [hasOverflow, setHasOverflow] = useState(itemCount > inlineItemCount);
+
+  useLayoutEffect(() => {
+    layoutInputRef.current = { itemCount, reserveCountSpace };
+    measureRef.current?.();
+  }, [itemCount, inlineItemCount, reserveCountSpace]);
 
   useLayoutEffect(() => {
     const container = containerRef.current;
     const items = itemsRef.current;
 
-    if (!isDefined(container) || !isDefined(items)) {
+    if (!isMeasurementEnabled || !isDefined(container) || !isDefined(items)) {
       return;
     }
 
+    const supportsSynchronousLayout = isDefined(globalThis.ResizeObserver);
     const observedElements = new Set<Element>();
     const measure = () => {
       const itemElements = Array.from(items.children);
@@ -52,9 +63,12 @@ export const useExpandableListLayout = ({
         }
       }
 
-      items.setAttribute('data-measuring', '');
-      const itemWidths = itemElements.map((item) => item.clientWidth);
-      items.removeAttribute('data-measuring');
+      const latestLayoutInput = layoutInputRef.current;
+      const itemWidths = measureItemWidths({
+        items,
+        itemElements,
+        shouldMeasureNaturalWidths: supportsSynchronousLayout,
+      });
       const gap = parseFloat(getComputedStyle(items).columnGap) || 0;
       const containerWidth = container.clientWidth;
       const fittedItemCount = getVisibleItemCount({
@@ -63,10 +77,10 @@ export const useExpandableListLayout = ({
         gap,
         includePartialItem: false,
       });
-      const nextHasOverflow = itemCount > fittedItemCount;
+      const nextHasOverflow = latestLayoutInput.itemCount > fittedItemCount;
       const triggerWidth = triggerRef.current?.offsetWidth ?? 0;
       const availableWidth =
-        reserveCountSpace && nextHasOverflow
+        latestLayoutInput.reserveCountSpace && nextHasOverflow
           ? Math.max(0, containerWidth - triggerWidth - gap)
           : containerWidth;
 
@@ -76,15 +90,16 @@ export const useExpandableListLayout = ({
           itemWidths,
           availableWidth,
           gap,
-          includePartialItem: !reserveCountSpace,
+          includePartialItem: !latestLayoutInput.reserveCountSpace,
         }),
       );
     };
 
-    const observer = isDefined(globalThis.ResizeObserver)
+    const observer = supportsSynchronousLayout
       ? new ResizeObserver(measure)
       : undefined;
 
+    measureRef.current = measure;
     measure();
 
     const contentObserver = new MutationObserver(measure);
@@ -103,6 +118,7 @@ export const useExpandableListLayout = ({
       window.addEventListener('resize', measure);
 
       return () => {
+        measureRef.current = undefined;
         clearInterval(interval);
         contentObserver.disconnect();
         window.removeEventListener('resize', measure);
@@ -110,10 +126,11 @@ export const useExpandableListLayout = ({
     }
 
     return () => {
+      measureRef.current = undefined;
       contentObserver.disconnect();
       observer.disconnect();
     };
-  }, [itemCount, inlineItemCount, reserveCountSpace]);
+  }, [isMeasurementEnabled]);
 
   return { containerRef, itemsRef, triggerRef, visibleItemCount, hasOverflow };
 };

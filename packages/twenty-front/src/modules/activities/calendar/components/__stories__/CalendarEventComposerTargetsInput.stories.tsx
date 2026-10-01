@@ -63,7 +63,7 @@ export const OverflowAndPicker: Story = {
     const canvas = within(canvasElement);
     const body = within(canvasElement.ownerDocument.body);
     const overflowButton = await canvas.findByRole('button', {
-      name: 'Show all items',
+      name: /Show all items$/,
     });
     const pickerButton = canvas.getByRole('button', {
       name: 'Add a related record',

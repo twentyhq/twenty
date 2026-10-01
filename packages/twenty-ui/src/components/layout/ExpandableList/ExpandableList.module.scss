@@ -72,7 +72,7 @@
   }
 }
 
-.popup {
+.popup[data-expandable-list-popup] {
   flex-direction: row;
   flex-wrap: wrap;
   inline-size: max(220px, var(--anchor-width));

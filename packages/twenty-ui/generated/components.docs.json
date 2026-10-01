@@ -7792,14 +7792,14 @@
         "type": "string",
         "required": false,
         "defaultValue": "Show all items",
-        "description": "Accessible label for the overflow button and popup. Defaults to Show all items."
+        "description": "Accessible label for the popup. The overflow button is named by its visible count followed by this label. Defaults to Show all items."
       },
       {
         "name": "showOverflowCount",
         "type": "boolean",
         "required": false,
         "defaultValue": null,
-        "description": "Shows the overflow count on hover and keyboard focus by default. Use true to show it whenever items overflow, or false to omit the trigger."
+        "description": "Shows the overflow count on hover and keyboard focus by default. Use true to show it whenever items overflow, or false to omit the trigger. An open popup stays open until it is dismissed."
       }
     ]
   },

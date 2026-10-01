@@ -12,7 +12,7 @@ export const expandableListEventIsolationFailureTest: TwentyUiGalleryPlayFunctio
     await expectFrontComponentMounted(canvas);
 
     const trigger = await canvas.findByRole('button', {
-      name: 'Show all targets',
+      name: /Show all targets$/,
     });
     trigger.focus();
     await userEvent.keyboard('{Enter}');

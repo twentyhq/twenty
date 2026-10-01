@@ -11,7 +11,7 @@ export const expandableListGeometryTest: TwentyUiGalleryPlayFunction = async ({
   await expectFrontComponentMounted(canvas);
 
   const trigger = await canvas.findByRole('button', {
-    name: 'Show all measured items',
+    name: /Show all measured items$/,
   });
   await waitFor(() => expect(trigger).toHaveTextContent('+3'));
   await expect(
@@ -26,7 +26,7 @@ export const expandableListGeometryTest: TwentyUiGalleryPlayFunction = async ({
   );
   await waitFor(() =>
     expect(
-      canvas.queryByRole('button', { name: 'Show all measured items' }),
+      canvas.queryByRole('button', { name: /Show all measured items$/ }),
     ).toBeNull(),
   );
   await expect(

@@ -15,10 +15,10 @@ export const expandableListSandboxFailureTest: TwentyUiGalleryPlayFunction =
       await expectFrontComponentMounted(canvas);
 
       const targetsTrigger = await canvas.findByRole('button', {
-        name: 'Show all targets',
+        name: /Show all targets$/,
       });
       const reviewersTrigger = canvas.getByRole('button', {
-        name: 'Show all reviewers',
+        name: /Show all reviewers$/,
       });
 
       await waitFor(() => expect(targetsTrigger).toHaveTextContent('+2'));

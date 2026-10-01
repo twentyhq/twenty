@@ -26,7 +26,6 @@ const StyledClickableContainer = styled.div`
   gap: ${themeCssVariables.spacing[1]};
   min-height: 24px;
   min-width: 0;
-  overflow: hidden;
   width: 100%;
 `;
 
@@ -101,6 +100,7 @@ export const CalendarEventComposerTargetsInput = ({
     .filter(isDefined);
   const hasChips = isNonEmptyArray(chips);
   const pickerLabel = t`Add a related record`;
+  const pickerOptionsId = `${dropdownId}-options`;
 
   return (
     <>
@@ -109,29 +109,29 @@ export const CalendarEventComposerTargetsInput = ({
         onClick={handleToggleDropdown}
         data-click-outside-id={dropdownId}
       >
-        {hasChips && (
-          <ExpandableList overflowLabel={t`Show all items`} showOverflowCount>
-            {chips}
-          </ExpandableList>
-        )}
         {hasChips ? (
-          <IconButton
-            type="button"
-            size="sm"
-            variant="ghost"
-            aria-label={pickerLabel}
-            aria-controls={`${dropdownId}-options`}
-            aria-expanded={isDropdownOpen}
-            aria-haspopup="listbox"
-          >
-            <IconPlus />
-          </IconButton>
+          <>
+            <ExpandableList overflowLabel={t`Show all items`} showOverflowCount>
+              {chips}
+            </ExpandableList>
+            <IconButton
+              type="button"
+              size="sm"
+              variant="ghost"
+              aria-label={pickerLabel}
+              aria-controls={pickerOptionsId}
+              aria-expanded={isDropdownOpen}
+              aria-haspopup="listbox"
+            >
+              <IconPlus />
+            </IconButton>
+          </>
         ) : (
           <Button
             type="button"
             size="sm"
             variant="ghost"
-            aria-controls={`${dropdownId}-options`}
+            aria-controls={pickerOptionsId}
             aria-expanded={isDropdownOpen}
             aria-haspopup="listbox"
           >

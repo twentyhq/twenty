@@ -37,7 +37,7 @@ export const TeamList = () => (
 
 ## Count visibility
 
-The overflow button appears on pointer hover or keyboard focus by default. Set `showOverflowCount` to `true` to keep it visible whenever items overflow. Set it to `false` only when the surrounding interface provides another way to access the complete list.
+The overflow button appears on pointer hover or keyboard focus by default. Set `showOverflowCount` to `true` to keep it visible whenever items overflow. Set it to `false` only when the surrounding interface provides another way to access the complete list. A popup that is already open stays open until it is dismissed, even if `showOverflowCount` changes to `false`.
 
 ## Limit inline mounting
 
@@ -45,7 +45,7 @@ Use `maxInlineCount` when rendering a large collection or expensive item content
 
 ## Popup behavior
 
-Enter, Space, and pointer activation open a non-modal popup with the complete list. Escape closes it and restores focus to the overflow button. An outside interaction also closes it. The popup uses the surrounding theme and supports ordinary content, links, and buttons without turning them into menu items.
+Enter, Space, and pointer activation open a non-modal popup with the complete list. Escape closes it and restores focus to the overflow button. Assistive technologies announce the button by its visible count followed by `overflowLabel`, for example "+3 Show all teams". An outside interaction also closes it. The popup uses the surrounding theme and supports ordinary content, links, and buttons without turning them into menu items.
 
 Overflow-trigger and popup interactions do not activate a clickable field host. Each list owns its measurement and popup state independently. Native `div` attributes, styles, class names, and refs apply to the compact row.
 
