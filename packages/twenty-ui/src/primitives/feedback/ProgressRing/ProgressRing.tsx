@@ -2,7 +2,7 @@ import { Progress } from '@base-ui/react/progress';
 import { clsx } from 'clsx';
 import { type CSSProperties } from 'react';
 
-import { isRenderableSlot } from '@ui/primitives/navigation/ListItem/internal/isRenderableSlot';
+import { isRenderableSlot } from '@ui/utilities/internal/isRenderableSlot';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import styles from './ProgressRing.module.scss';
