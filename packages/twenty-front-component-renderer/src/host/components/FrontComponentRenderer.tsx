@@ -9,7 +9,6 @@ import { FrontComponentMediaSessionEffect } from '@/host/effect-components/Front
 import { FrontComponentUpdateContextEffect } from '@/host/effect-components/FrontComponentUpdateContextEffect';
 import { FrontComponentUpdateHostCommunicationApiEffect } from '@/host/effect-components/FrontComponentUpdateHostCommunicationApiEffect';
 import { type FrontComponentMediaSessionHost } from '@/host/media/types/FrontComponentMediaSessionHost';
-import { type CheckForNewerComponentSource } from '@/types/CheckForNewerComponentSource';
 import { type FrontComponentHostCommunicationApi } from '@/types/FrontComponentHostCommunicationApi';
 import { type FrontComponentThread } from '@/types/FrontComponentThread';
 import { type SdkClientUrls } from '@/types/SdkClientUrls';
@@ -43,7 +42,6 @@ type FrontComponentRendererProps = {
   executionContext: FrontComponentExecutionContext;
   frontComponentHostCommunicationApi: FrontComponentHostCommunicationApi;
   mediaSessionHost?: FrontComponentMediaSessionHost;
-  checkForNewerComponentSource?: CheckForNewerComponentSource;
   onError: (error?: Error) => void;
   colorScheme: 'light' | 'dark';
   loadingFallback?: ReactNode;
@@ -61,7 +59,6 @@ export const FrontComponentRenderer = ({
   executionContext,
   frontComponentHostCommunicationApi,
   mediaSessionHost,
-  checkForNewerComponentSource,
   onError,
   colorScheme,
   loadingFallback,
@@ -91,7 +88,6 @@ export const FrontComponentRenderer = ({
           initialExecutionContext={initialExecutionContext}
           geometryTracker={geometryTracker}
           mediaSessionHost={mediaSessionHost}
-          checkForNewerComponentSource={checkForNewerComponentSource}
           setReceiver={setReceiver}
           setThread={setThread}
           setError={setError}

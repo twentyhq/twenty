@@ -1,7 +1,6 @@
 import { FrontComponentApplicationTokenPairEffect } from '@/front-components/components/FrontComponentApplicationTokenPairEffect';
 import { FrontComponentLoadErrorToastEffect } from '@/front-components/components/FrontComponentLoadErrorToastEffect';
 import { FrontComponentRendererProvider } from '@/front-components/components/FrontComponentRendererProvider';
-import { useCheckForNewerFrontComponentSource } from '@/front-components/hooks/useCheckForNewerFrontComponentSource';
 import { useFrontComponentExecutionContext } from '@/front-components/hooks/useFrontComponentExecutionContext';
 import { useOnApplicationSdkClientChecksumsUpdated } from '@/front-components/hooks/useOnApplicationSdkClientChecksumsUpdated';
 import { useOnFrontComponentUpdated } from '@/front-components/hooks/useOnFrontComponentUpdated';
@@ -146,13 +145,6 @@ const FrontComponentRendererContent = ({
     frontComponentId,
   });
 
-  const { checkForNewerFrontComponentSource } =
-    useCheckForNewerFrontComponentSource({
-      frontComponentId,
-      builtComponentChecksum: frontComponent.builtComponentChecksum,
-      frontComponentSharedDependenciesChecksum,
-    });
-
   const handleError = useCallback(
     (error?: Error) => {
       if (!isDefined(error)) {
@@ -268,7 +260,6 @@ const FrontComponentRendererContent = ({
             mediaSessionHost={mediaSessionHost}
             applicationVariables={initialApplicationVariables}
             storageNamespace={storageNamespace}
-            checkForNewerComponentSource={checkForNewerFrontComponentSource}
             onError={handleError}
             loadingFallback={loadingFallback}
           />
