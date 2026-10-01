@@ -38,6 +38,7 @@ import {
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { APPLICATION_LIFECYCLE_LOCK_OPTIONS } from 'src/engine/core-modules/application/application-install/constants/application-lifecycle-lock-options.constant';
 import { buildApplicationLifecycleLockKey } from 'src/engine/core-modules/application/application-install/utils/build-application-lifecycle-lock-key.util';
+import { hasUserApprovedRoleGrantsForVersion } from 'src/engine/core-modules/application/application-install/utils/has-user-approved-role-grants-for-version.util';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
@@ -343,9 +344,11 @@ export class ApplicationInstallService {
         applicationId: application.id,
         workspaceId: params.workspaceId,
         manifest: resolvedPackage.manifest,
-        hasUserApprovedRoleGrants:
-          (params.hasUserApprovedRoleGrants ?? false) &&
-          params.version === newVersion,
+        hasUserApprovedRoleGrants: hasUserApprovedRoleGrantsForVersion({
+          hasUserApprovedRoleGrants: params.hasUserApprovedRoleGrants,
+          approvedVersion: params.version,
+          resolvedVersion: newVersion,
+        }),
       });
     }
 

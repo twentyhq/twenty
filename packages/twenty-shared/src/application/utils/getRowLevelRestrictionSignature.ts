@@ -118,12 +118,12 @@ export const getRowLevelRestrictionSignature = ({
               group.universalIdentifier,
             ) === parentGroupUniversalIdentifier,
         )
-        .map((group) =>
-          stringifyWithSortedKeys({
-            logicalOperator: group.logicalOperator,
-            children: getChildSignatures(group.universalIdentifier),
-          }),
-        ),
+        .map((group) => ({
+          logicalOperator: group.logicalOperator,
+          children: getChildSignatures(group.universalIdentifier),
+        }))
+        .filter(({ children }) => children.length > 0)
+        .map((groupSignature) => stringifyWithSortedKeys(groupSignature)),
     ].sort();
 
   return stringifyWithSortedKeys(getChildSignatures(null));

@@ -290,6 +290,32 @@ describe('getRoleManifestGrantsNotCoveredBy', () => {
       ).toEqual([]);
     });
 
+    it('ignores a predicate group without predicates', () => {
+      const restrictedRole = buildRestrictedRole({
+        universalIdentifier: 'role',
+        operand: RowLevelPermissionPredicateOperand.IS_NOT_EMPTY,
+      });
+      const role = {
+        ...restrictedRole,
+        rowLevelPermissionPredicateGroups: [
+          ...(restrictedRole.rowLevelPermissionPredicateGroups ?? []),
+          {
+            universalIdentifier: 'role-empty-group',
+            objectUniversalIdentifier: PERSON,
+            logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator.OR,
+          },
+        ],
+      };
+
+      expect(
+        getRoleManifestGrantsNotCoveredBy({
+          role,
+          superset,
+          toolPermissionFlagUniversalIdentifiers: [],
+        }),
+      ).toEqual([]);
+    });
+
     it('reports a restriction that differs by operand or value', () => {
       const differentOperand = buildRestrictedRole({
         universalIdentifier: 'role',
