@@ -111,7 +111,7 @@ describe('ApplicationRegistrationOwnershipGuard', () => {
   const applicationRegistrationService = {
     findOneOwnedByWorkspaceOrThrow: jest.fn(),
     findOneByIdOwnedByWorkspaceOrThrow: jest.fn(),
-    findOneById: jest.fn(),
+    findOneByIdOrThrow: jest.fn(),
   };
 
   const buildContext = ({
@@ -298,7 +298,9 @@ describe('ApplicationRegistrationOwnershipGuard', () => {
       });
 
       await expect(guard.canActivate(context)).resolves.toBe(true);
-      expect(applicationRegistrationService.findOneById).toHaveBeenCalledWith({
+      expect(
+        applicationRegistrationService.findOneByIdOrThrow,
+      ).toHaveBeenCalledWith({
         applicationRegistrationId: 'targeted-registration-id',
         ownerWorkspaceId: WORKSPACE_ID,
       });
@@ -308,7 +310,7 @@ describe('ApplicationRegistrationOwnershipGuard', () => {
     });
 
     it('should propagate the not found refusal for a registration the workspace does not own', async () => {
-      applicationRegistrationService.findOneById.mockRejectedValueOnce(
+      applicationRegistrationService.findOneByIdOrThrow.mockRejectedValueOnce(
         new ApplicationRegistrationException(
           'Application registration with id foreign-registration-id not found',
           ApplicationRegistrationExceptionCode.APPLICATION_REGISTRATION_NOT_FOUND,

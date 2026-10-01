@@ -77,7 +77,7 @@ export class ApplicationRegistrationOwnershipGuard implements CanActivate {
       case 'applicationRegistrationId':
         // Same owner-scoped lookup as the registration endpoints, so a foreign
         // id stays NOT_FOUND instead of confirming the registration exists
-        await this.applicationRegistrationService.findOneById({
+        await this.applicationRegistrationService.findOneByIdOrThrow({
           applicationRegistrationId: targetValue,
           ownerWorkspaceId: workspaceId,
         });

@@ -183,7 +183,7 @@ export class ApplicationRegistrationResolver {
     applicationRegistrationId: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<ApplicationRegistrationEntity> {
-    return this.applicationRegistrationService.findOneById({
+    return this.applicationRegistrationService.findOneByIdOrThrow({
       applicationRegistrationId,
       ownerWorkspaceId: workspaceId,
     });
@@ -492,10 +492,11 @@ export class ApplicationRegistrationResolver {
     applicationRegistrationId: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<string | null> {
-    const registration = await this.applicationRegistrationService.findOneById({
-      applicationRegistrationId,
-      ownerWorkspaceId: workspaceId,
-    });
+    const registration =
+      await this.applicationRegistrationService.findOneByIdOrThrow({
+        applicationRegistrationId,
+        ownerWorkspaceId: workspaceId,
+      });
 
     if (
       registration.sourceType !== ApplicationRegistrationSourceType.TARBALL ||

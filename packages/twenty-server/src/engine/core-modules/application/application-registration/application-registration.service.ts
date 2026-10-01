@@ -396,7 +396,7 @@ export class ApplicationRegistrationService {
     };
   }
 
-  async findOneById({
+  async findOneByIdOrThrow({
     applicationRegistrationId,
     ownerWorkspaceId,
   }: {
@@ -624,7 +624,7 @@ export class ApplicationRegistrationService {
   ): Promise<ApplicationRegistrationEntity> {
     const { id, update } = input;
 
-    const existingRegistration = await this.findOneById({
+    const existingRegistration = await this.findOneByIdOrThrow({
       applicationRegistrationId: id,
       ownerWorkspaceId,
     });
@@ -636,7 +636,7 @@ export class ApplicationRegistrationService {
       existingRegistration,
     );
 
-    return this.findOneById({
+    return this.findOneByIdOrThrow({
       applicationRegistrationId: id,
       ownerWorkspaceId,
     });
@@ -830,7 +830,7 @@ export class ApplicationRegistrationService {
     applicationRegistrationId: string;
     ownerWorkspaceId: string;
   }): Promise<boolean> {
-    const applicationRegistration = await this.findOneById({
+    const applicationRegistration = await this.findOneByIdOrThrow({
       applicationRegistrationId,
       ownerWorkspaceId,
     });
@@ -868,7 +868,10 @@ export class ApplicationRegistrationService {
     applicationRegistrationId: string;
     ownerWorkspaceId: string;
   }): Promise<string> {
-    await this.findOneById({ applicationRegistrationId, ownerWorkspaceId });
+    await this.findOneByIdOrThrow({
+      applicationRegistrationId,
+      ownerWorkspaceId,
+    });
 
     const { clientSecret, clientSecretHash } =
       await this.generateClientSecret();
@@ -1149,7 +1152,10 @@ export class ApplicationRegistrationService {
     applicationRegistrationId: string;
     ownerWorkspaceId: string;
   }): Promise<ApplicationRegistrationStatsDTO> {
-    await this.findOneById({ applicationRegistrationId, ownerWorkspaceId });
+    await this.findOneByIdOrThrow({
+      applicationRegistrationId,
+      ownerWorkspaceId,
+    });
 
     return this.computeStats(applicationRegistrationId);
   }
@@ -1367,7 +1373,7 @@ export class ApplicationRegistrationService {
     targetWorkspaceSubdomain: string;
     currentOwnerWorkspaceId: string;
   }): Promise<ApplicationRegistrationEntity> {
-    const registration = await this.findOneById({
+    const registration = await this.findOneByIdOrThrow({
       applicationRegistrationId: params.applicationRegistrationId,
       ownerWorkspaceId: params.currentOwnerWorkspaceId,
     });
