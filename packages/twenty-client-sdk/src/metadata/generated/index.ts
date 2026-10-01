@@ -232,8 +232,6 @@ export class MetadataApiClient {
       typeof headers === 'function' ? undefined : headers,
     );
 
-    // Priority: explicit header > the token for the requested access > api key
-    // (legacy).
     this.authorizationToken =
       tokenFromHeaders ??
       processEnvironment[
