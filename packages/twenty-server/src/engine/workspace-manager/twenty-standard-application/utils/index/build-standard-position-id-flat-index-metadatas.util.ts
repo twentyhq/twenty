@@ -54,17 +54,13 @@ export const buildStandardPositionIdFlatIndexMetadatas = ({
 
       const relatedEntityIds =
         standardObjectMetadataRelatedEntityIds[objectName];
-      const fieldIdByName = new Map(
-        Object.entries(relatedEntityIds.fields).map(([fieldName, { id }]) => [
-          fieldName,
-          id,
-        ]),
+      const fieldIdByName: Record<string, { id: string } | undefined> =
+        relatedEntityIds.fields;
+      const fieldIds = POSITION_ID_INDEX_FIELD_NAMES.map(
+        (fieldName) => fieldIdByName[fieldName]?.id,
       );
-      const fieldIds = POSITION_ID_INDEX_FIELD_NAMES.map((fieldName) =>
-        fieldIdByName.get(fieldName),
-      ).filter(isDefined);
 
-      if (fieldIds.length !== POSITION_ID_INDEX_FIELD_NAMES.length) {
+      if (!fieldIds.every(isDefined)) {
         return [];
       }
 

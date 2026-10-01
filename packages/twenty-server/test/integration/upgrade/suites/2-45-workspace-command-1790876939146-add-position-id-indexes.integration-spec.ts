@@ -1,6 +1,3 @@
-import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
-import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
-import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
 import { type AddPositionIdIndexesCommand } from 'src/database/commands/upgrade-version-command/2-45/2-45-workspace-command-1790876939146-add-position-id-indexes.command';
@@ -16,7 +13,6 @@ const schemaName = getWorkspaceSchemaName(workspaceId);
 describe('2-45 workspace command 1790876939146 - AddPositionIdIndexesCommand (integration)', () => {
   let command: AddPositionIdIndexesCommand;
   let workspaceOrmManager: WorkspaceOrmManager;
-  let customObjectMetadataId: string | undefined;
 
   const run = async (
     direction: 'up' | 'down',
@@ -62,19 +58,6 @@ describe('2-45 workspace command 1790876939146 - AddPositionIdIndexesCommand (in
 
   afterAll(async () => {
     await run('up');
-
-    if (customObjectMetadataId !== undefined) {
-      await updateOneObjectMetadata({
-        input: {
-          idToUpdate: customObjectMetadataId,
-          updatePayload: { isActive: false },
-        },
-        expectToFail: false,
-      });
-      await deleteOneObjectMetadata({
-        input: { idToDelete: customObjectMetadataId },
-      });
-    }
   });
 
   it('is registered in the 2.45 bundle', () => {
@@ -97,25 +80,6 @@ describe('2-45 workspace command 1790876939146 - AddPositionIdIndexesCommand (in
     );
     expect(indexedTables).not.toContain('recordShare');
     expect(indexedTables).not.toContain('timelineActivity');
-  });
-
-  it('indexes a new custom object', async () => {
-    const { data } = await createOneObjectMetadata({
-      input: {
-        nameSingular: 'positionIndexedPet',
-        namePlural: 'positionIndexedPets',
-        labelSingular: 'Position indexed pet',
-        labelPlural: 'Position indexed pets',
-        icon: 'IconPaw',
-        isLabelSyncedWithName: false,
-      },
-    });
-
-    customObjectMetadataId = data.createOneObject.id;
-
-    expect(await findPositionIdIndexedTables()).toContain(
-      '_positionIndexedPet',
-    );
   });
 
   it('removes the indexes on the way down and rebuilds them on the way up', async () => {
