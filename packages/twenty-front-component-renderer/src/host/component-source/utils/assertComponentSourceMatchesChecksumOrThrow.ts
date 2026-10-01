@@ -3,7 +3,7 @@ import { CustomError } from 'twenty-shared/utils';
 import { FRONT_COMPONENT_SOURCE_CHECKSUM_MISMATCH_ERROR_CODE } from '@/host/component-source/constants/FrontComponentSourceChecksumMismatchErrorCode';
 import { computeComponentSourceChecksum } from '@/host/component-source/utils/computeComponentSourceChecksum';
 
-export const assertComponentSourceMatchesChecksum = async ({
+export const assertComponentSourceMatchesChecksumOrThrow = async ({
   url,
   source,
   expectedChecksum,
