@@ -1566,7 +1566,7 @@
         "type": "boolean",
         "required": false,
         "defaultValue": "false",
-        "description": "Allows typed and pasted values outside the bounds for application policy and native range validation. Buttons and keyboard adjustments remain bounded."
+        "description": "Allows onValueChange to receive typed and pasted numbers outside the bounds. Native range validation still applies; buttons and keyboard adjustments remain bounded."
       },
       {
         "name": "aria-roledescription",
@@ -1629,14 +1629,14 @@
         "type": "number",
         "required": false,
         "defaultValue": null,
-        "description": "Inclusive maximum. Typed values clamp unless allowOutOfRange is enabled."
+        "description": "Inclusive maximum. By default, onValueChange reports bounded numbers and out-of-range drafts normalize on blur."
       },
       {
         "name": "min",
         "type": "number",
         "required": false,
         "defaultValue": null,
-        "description": "Inclusive minimum. Typed values clamp unless allowOutOfRange is enabled."
+        "description": "Inclusive minimum. By default, onValueChange reports bounded numbers and out-of-range drafts normalize on blur."
       },
       {
         "name": "name",

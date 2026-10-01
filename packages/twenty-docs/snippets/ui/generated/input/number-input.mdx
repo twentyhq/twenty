@@ -12,7 +12,7 @@
  */}
 
 <ParamField body="allowOutOfRange" type="boolean" default="false">
-  Allows typed and pasted values outside the bounds for application policy and native range validation. Buttons and keyboard adjustments remain bounded.
+  Allows onValueChange to receive typed and pasted numbers outside the bounds. Native range validation still applies; buttons and keyboard adjustments remain bounded.
 </ParamField>
 
 <ParamField body="aria-roledescription" type="string" default="Number field">
@@ -49,11 +49,11 @@
 </ParamField>
 
 <ParamField body="max" type="number">
-  Inclusive maximum. Typed values clamp unless allowOutOfRange is enabled.
+  Inclusive maximum. By default, onValueChange reports bounded numbers and out-of-range drafts normalize on blur.
 </ParamField>
 
 <ParamField body="min" type="number">
-  Inclusive minimum. Typed values clamp unless allowOutOfRange is enabled.
+  Inclusive minimum. By default, onValueChange reports bounded numbers and out-of-range drafts normalize on blur.
 </ParamField>
 
 <ParamField body="name" type="string">

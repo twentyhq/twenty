@@ -8,9 +8,9 @@ export const NUMBER_INPUT_PROP_DESCRIPTIONS = {
   onValueChange:
     'Called with the next number or null and event details when the numeric value changes. Clearing reports null; incomplete text does not report a number.',
   allowOutOfRange:
-    'Allows typed and pasted values outside the bounds for application policy and native range validation. Buttons and keyboard adjustments remain bounded.',
-  min: 'Inclusive minimum. Typed values clamp unless allowOutOfRange is enabled.',
-  max: 'Inclusive maximum. Typed values clamp unless allowOutOfRange is enabled.',
+    'Allows onValueChange to receive typed and pasted numbers outside the bounds. Native range validation still applies; buttons and keyboard adjustments remain bounded.',
+  min: 'Inclusive minimum. By default, onValueChange reports bounded numbers and out-of-range drafts normalize on blur.',
+  max: 'Inclusive maximum. By default, onValueChange reports bounded numbers and out-of-range drafts normalize on blur.',
   step: 'Amount added or subtracted by the buttons and arrow keys.',
   showButtons: 'Shows the decrement and increment buttons.',
   decrementLabel: 'Accessible name for the decrement button.',
