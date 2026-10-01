@@ -1,3 +1,5 @@
+import { isDefined } from '@/utils/validation';
+
 import { type TipTapDocument } from './tiptap-document';
 import { TIPTAP_DOCUMENT_SCHEMA_VERSION } from './tiptap-document-schema-version';
 import { type TipTapMark } from './tiptap-mark-types';
@@ -23,13 +25,21 @@ export const isTipTapNode = (value: unknown): value is TipTapNode => {
     return false;
   }
 
-  // BlockNote blocks always carry a top-level `id`, which TipTap nodes never
-  // have. Without this guard BlockNote JSON is mistaken for TipTap content:
-  // e.g. a BlockNote divider (`type: 'divider'`) collides with
+  // Reject BlockNote-shaped values. BlockNote blocks always carry a top-level
+  // `id`, which TipTap nodes never have — but don't rely on `id` alone:
+  // `props` / `children` mark BlockNote blocks and `styles` marks BlockNote
+  // inline content, and none of these keys exist on TipTap nodes. Without
+  // this guard BlockNote JSON is mistaken for TipTap content: e.g. a
+  // BlockNote divider (`type: 'divider'`) collides with
   // TIPTAP_NODE_TYPES.DIVIDER and sends the document through a lossy markdown
   // round-trip that strips BlockNote `styles` (bold, italic, ...).
   // See https://github.com/twentyhq/twenty/issues/26865
-  if (typeof value.id === 'string') {
+  if (
+    typeof value.id === 'string' ||
+    isDefined(value.props) ||
+    isDefined(value.children) ||
+    isDefined(value.styles)
+  ) {
     return false;
   }
 
