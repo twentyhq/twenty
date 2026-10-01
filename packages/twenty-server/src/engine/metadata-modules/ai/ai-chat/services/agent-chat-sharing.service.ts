@@ -6,6 +6,7 @@ import { hasAgentChatThreadInboxState } from 'src/engine/metadata-modules/ai/ai-
 import { getAgentChatThreadParticipantTable } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-agent-chat-thread-participant-table.util';
 import { backfillWorkspaceChatThreadOwnerGrants } from 'src/engine/metadata-modules/ai/ai-chat/utils/backfill-workspace-chat-thread-owner-grants.util';
 import { Injectable } from '@nestjs/common';
+import chunk from 'lodash.chunk';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
@@ -32,6 +33,8 @@ type ThreadAccessArgs = {
   workspaceMemberId: string;
   threadId: string;
 };
+
+const READABLE_THREAD_IDS_BATCH_SIZE = 1000;
 
 @Injectable()
 export class AgentChatSharingService {
@@ -103,18 +106,31 @@ export class AgentChatSharingService {
 
     const authContext = await this.getAuthContext(args);
 
-    return this.workspaceOrmManager.executeInWorkspaceContext(
-      () =>
-        this.workspaceOrmManager
-          .getRepositoryWithContextPermissions('agentChatThread')
-          .findRecordIdsAllowedForOperation({
-            recordIds: threadIds,
+    // Each id is a query parameter, so a long chat history is checked in
+    // batches that stay well under PostgreSQL's parameter limit
+    return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+      const repository =
+        this.workspaceOrmManager.getRepositoryWithContextPermissions(
+          'agentChatThread',
+        );
+      const readableThreadIds: string[] = [];
+
+      for (const threadIdBatch of chunk(
+        threadIds,
+        READABLE_THREAD_IDS_BATCH_SIZE,
+      )) {
+        readableThreadIds.push(
+          ...(await repository.findRecordIdsAllowedForOperation({
+            recordIds: threadIdBatch,
             operationType: 'select',
             updatedColumns: [],
             withDeleted: true,
-          }),
-      authContext,
-    );
+          })),
+        );
+      }
+
+      return readableThreadIds;
+    }, authContext);
   }
 
   async getPermissionsForThreads(

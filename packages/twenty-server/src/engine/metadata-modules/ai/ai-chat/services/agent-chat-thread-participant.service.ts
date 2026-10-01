@@ -281,7 +281,7 @@ export class AgentChatThreadParticipantService {
     if (!(await this.hasInboxState(workspaceId))) {
       throw new AiException(
         'Chat inbox state is not available until this workspace finishes upgrading',
-        AiExceptionCode.THREAD_NOT_FOUND,
+        AiExceptionCode.CHAT_THREAD_INBOX_STATE_UNAVAILABLE,
       );
     }
 
