@@ -22,7 +22,7 @@ const StyledList = styled.div`
   display: flex;
   flex-direction: column;
   overflow-y: auto;
-  padding: ${themeCssVariables.spacing[1]};
+  padding: ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[4]};
 `;
 
 const StyledEmpty = styled.div`
