@@ -170,6 +170,10 @@ export const SettingsApplicationDetails = () => {
   };
 
   const handleUpgrade = async () => {
+    if (isUpgrading) {
+      return;
+    }
+
     if (requiresPermissionApproval) {
       openDialog(UPGRADE_PERMISSION_VALIDATION_MODAL_ID);
 
@@ -393,7 +397,11 @@ export const SettingsApplicationDetails = () => {
               color="blue"
               LeftIcon={IconLock}
               message={t`Version ${latestAvailableVersion ?? ''} asks for more permissions. Review them to upgrade.`}
-              button={{ title: t`Review`, onClick: handleUpgrade }}
+              button={{
+                title: t`Review`,
+                onClick: handleUpgrade,
+                disabled: isUpgrading,
+              }}
             />
           )}
           {isApplicationStopped && (
