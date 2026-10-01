@@ -29,6 +29,7 @@ import { WorkflowExecutionContextService } from 'src/modules/workflow/workflow-e
 import { type WorkflowActionInput } from 'src/modules/workflow/workflow-executor/types/workflow-action-input.type';
 import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executor/types/workflow-action-output.type';
 import { findStepOrThrow } from 'src/modules/workflow/workflow-executor/utils/find-step-or-throw.util';
+import { APPLICATION_BOUND_AGENT_EXCLUDED_TOOL_NAMES } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/constants/application-bound-agent-excluded-tool-names.constant';
 import { WORKFLOW_AGENT_ASK_QUESTIONS_PROMPT } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/constants/workflow-agent-ask-questions-prompt.constant';
 import {
   type RecordedConversation,
@@ -185,6 +186,8 @@ export class AiAgentWorkflowAction implements WorkflowAction {
             additionalRoleRestrictionIds: getRoleIdsFromRolePermissionConfig(
               executionContext.rolePermissionConfig,
             ),
+            additionalExcludedToolNames:
+              APPLICATION_BOUND_AGENT_EXCLUDED_TOOL_NAMES,
           }
         : {}),
     });

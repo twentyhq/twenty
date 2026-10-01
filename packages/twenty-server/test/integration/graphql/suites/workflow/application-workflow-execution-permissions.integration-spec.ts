@@ -566,7 +566,7 @@ describe('application workflow execution permissions', () => {
 
     expect(status).toBe('FAILED');
     expect(stepStatus).toBe('FAILED');
-    expect(stepError).toContain('SEND_EMAIL steps cannot run');
+    expect(stepError).toContain('Applications cannot use SEND_EMAIL steps');
   }, 120000);
 
   it('only lets the values of a form step change on an application workflow run', async () => {

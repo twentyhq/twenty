@@ -44,7 +44,6 @@ import { OUTPUT_NAVIGATION_TOOL_NAMES } from 'src/engine/core-modules/tool/tools
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { OPEN_ENDED_AGENT_REGISTRY_TOOL_CATEGORIES } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/open-ended-agent-registry-tool-categories.const';
-import { APPLICATION_BOUND_AGENT_EXCLUDED_TOOL_NAMES } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/application-bound-agent-excluded-tool-names.const';
 import { WORKFLOW_AGENT_EXCLUDED_TOOL_NAMES } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/workflow-agent-excluded-tool-names.const';
 import { WORKFLOW_AGENT_REGISTRY_TOOL_CATEGORIES } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/workflow-agent-registry-tool-categories.const';
 import { RunAgentAttachmentService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/run-agent-attachment.service';
@@ -149,6 +148,7 @@ export class AgentAsyncExecutorService {
     agentRoleId,
     runAsRoleId,
     additionalRoleRestrictionIds,
+    additionalExcludedToolNames = [],
     authContext,
     actorContext,
   }: {
@@ -156,6 +156,7 @@ export class AgentAsyncExecutorService {
     agentRoleId: string;
     runAsRoleId?: string;
     additionalRoleRestrictionIds?: string[];
+    additionalExcludedToolNames?: readonly string[];
     authContext?: WorkspaceAuthContext;
     actorContext?: ActorMetadata;
   }): Promise<ToolSet> {
@@ -181,9 +182,7 @@ export class AgentAsyncExecutorService {
       excludeTools: [
         ...OUTPUT_NAVIGATION_TOOL_NAMES,
         ...WORKFLOW_AGENT_EXCLUDED_TOOL_NAMES,
-        ...(isNonEmptyArray(additionalRoleRestrictionIds)
-          ? APPLICATION_BOUND_AGENT_EXCLUDED_TOOL_NAMES
-          : []),
+        ...additionalExcludedToolNames,
       ],
       wrapWithErrorContext: false,
     });
@@ -196,6 +195,7 @@ export class AgentAsyncExecutorService {
     agentRoleId,
     runAsRoleId,
     additionalRoleRestrictionIds,
+    additionalExcludedToolNames = [],
     authContext,
     actorContext,
   }: {
@@ -203,6 +203,7 @@ export class AgentAsyncExecutorService {
     agentRoleId: string;
     runAsRoleId?: string;
     additionalRoleRestrictionIds?: string[];
+    additionalExcludedToolNames?: readonly string[];
     authContext?: WorkspaceAuthContext;
     actorContext?: ActorMetadata;
   }): Promise<{ tools: ToolSet; catalogSection: string }> {
@@ -239,9 +240,7 @@ export class AgentAsyncExecutorService {
     const excludedToolNames = new Set<string>([
       ...OUTPUT_NAVIGATION_TOOL_NAMES,
       ...WORKFLOW_AGENT_EXCLUDED_TOOL_NAMES,
-      ...(isNonEmptyArray(additionalRoleRestrictionIds)
-        ? APPLICATION_BOUND_AGENT_EXCLUDED_TOOL_NAMES
-        : []),
+      ...additionalExcludedToolNames,
     ]);
 
     const catalog = fullCatalog.filter(
@@ -281,6 +280,7 @@ export class AgentAsyncExecutorService {
     userWorkspaceId,
     runAsRoleId,
     additionalRoleRestrictionIds,
+    additionalExcludedToolNames,
     operationType = UsageOperationType.AI_WORKFLOW_TOKEN,
     toolLoadingStrategy = 'preload',
     priorModelMessages = [],
@@ -298,6 +298,7 @@ export class AgentAsyncExecutorService {
     userWorkspaceId?: string | null;
     runAsRoleId?: string;
     additionalRoleRestrictionIds?: string[];
+    additionalExcludedToolNames?: readonly string[];
     operationType?: UsageOperationType;
     toolLoadingStrategy?: AgentToolLoadingStrategy;
   }): Promise<AgentExecutionResult> {
@@ -371,6 +372,7 @@ export class AgentAsyncExecutorService {
               agentRoleId,
               runAsRoleId,
               additionalRoleRestrictionIds,
+              additionalExcludedToolNames,
               authContext,
               actorContext,
             });
@@ -383,6 +385,7 @@ export class AgentAsyncExecutorService {
               agentRoleId,
               runAsRoleId,
               additionalRoleRestrictionIds,
+              additionalExcludedToolNames,
               authContext,
               actorContext,
             });

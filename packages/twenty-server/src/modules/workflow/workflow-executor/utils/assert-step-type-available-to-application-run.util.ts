@@ -7,7 +7,7 @@ import {
   WorkflowStepExecutorExceptionCode,
 } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
 
-export const assertStepTypeAvailableToRun = ({
+export const assertStepTypeAvailableToApplicationRun = ({
   stepType,
   runApplicationId,
 }: {
@@ -22,7 +22,7 @@ export const assertStepTypeAvailableToRun = ({
   }
 
   throw new WorkflowStepExecutorException(
-    `${stepType} steps cannot run in a workflow run started by an application`,
+    `Applications cannot use ${stepType} steps`,
     WorkflowStepExecutorExceptionCode.FORBIDDEN,
   );
 };

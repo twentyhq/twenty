@@ -1,24 +1,24 @@
 import { WorkflowActionType } from 'twenty-shared/workflow';
 
-import { assertStepTypeAvailableToRun } from 'src/modules/workflow/workflow-executor/utils/assert-step-type-available-to-run.util';
+import { assertStepTypeAvailableToApplicationRun } from 'src/modules/workflow/workflow-executor/utils/assert-step-type-available-to-application-run.util';
 
-describe('assertStepTypeAvailableToRun', () => {
+describe('assertStepTypeAvailableToApplicationRun', () => {
   it.each([
     WorkflowActionType.SEND_EMAIL,
     WorkflowActionType.DRAFT_EMAIL,
     WorkflowActionType.CREATE_CALENDAR_EVENT,
   ])('refuses %s steps in a run started by an application', (stepType) => {
     expect(() =>
-      assertStepTypeAvailableToRun({
+      assertStepTypeAvailableToApplicationRun({
         stepType,
         runApplicationId: 'installed-app-id',
       }),
-    ).toThrow(`${stepType} steps cannot run`);
+    ).toThrow(`Applications cannot use ${stepType} steps`);
   });
 
   it('lets a run started by an application use other steps', () => {
     expect(() =>
-      assertStepTypeAvailableToRun({
+      assertStepTypeAvailableToApplicationRun({
         stepType: WorkflowActionType.CREATE_RECORD,
         runApplicationId: 'installed-app-id',
       }),
@@ -27,7 +27,7 @@ describe('assertStepTypeAvailableToRun', () => {
 
   it('lets a run without an application send emails', () => {
     expect(() =>
-      assertStepTypeAvailableToRun({
+      assertStepTypeAvailableToApplicationRun({
         stepType: WorkflowActionType.SEND_EMAIL,
         runApplicationId: undefined,
       }),
