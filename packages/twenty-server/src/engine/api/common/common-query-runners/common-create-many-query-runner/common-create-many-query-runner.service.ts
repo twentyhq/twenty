@@ -73,7 +73,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     args: CommonExtendedInput<CreateManyQueryArgs>,
     queryRunnerContext: CommonExtendedQueryRunnerContext,
   ): Promise<ObjectRecord[]> {
-    const isPrivateObject = [
+    const requiresShareWithValidation = [
       MetadataReadability.PRIVATE,
       MetadataReadability.DISCOVERABLE,
     ].includes(queryRunnerContext.flatObjectMetadata.readability);
@@ -82,7 +82,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
 
     // An inherited record is reachable through its parent, so shareWith stays
     // optional there and is checked only when given
-    if (isPrivateObject || isNonEmptyArray(args.shareWith)) {
+    if (requiresShareWithValidation || isNonEmptyArray(args.shareWith)) {
       await this.shareWithService.validateShareWithOrThrow({
         authContext: queryRunnerContext.authContext,
         shareWith: args.shareWith,
