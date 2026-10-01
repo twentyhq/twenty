@@ -391,8 +391,18 @@ export const createOnboardingConstructionSiteRenderer = ({
       return;
     }
 
-    resources = createResources(pendingPrograms);
+    const programs = pendingPrograms;
     pendingPrograms = null;
+    resources = createResources(programs);
+    if (!isDefined(resources)) {
+      // A failed link or allocation leaves nothing to draw with: the canvas
+      // stays transparent, as it does without WebGL2. The programs are freed
+      // now since no resources reference them.
+      gl.deleteProgram(programs.sceneProgram);
+      gl.deleteProgram(programs.halftoneProgram);
+      return;
+    }
+
     allocateSceneTarget();
     requestRender();
   };
