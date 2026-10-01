@@ -139,7 +139,12 @@ describe('resolveDiscoverableFieldMetadataIds', () => {
         flatFieldMetadataMaps,
       }),
     ).toEqual(
-      new Set(['id-field', 'created-at-field', 'created-by-field', 'subject-field']),
+      new Set([
+        'id-field',
+        'created-at-field',
+        'created-by-field',
+        'subject-field',
+      ]),
     );
   });
 
