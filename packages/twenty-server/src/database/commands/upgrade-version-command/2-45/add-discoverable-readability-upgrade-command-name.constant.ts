@@ -1,0 +1,2 @@
+export const ADD_DISCOVERABLE_READABILITY_UPGRADE_COMMAND_NAME =
+  '2.45.0_AddDiscoverableReadabilityFastInstanceCommand_1790840165740';
