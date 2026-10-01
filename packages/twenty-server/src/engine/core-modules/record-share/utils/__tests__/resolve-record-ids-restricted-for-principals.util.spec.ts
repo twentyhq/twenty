@@ -111,6 +111,31 @@ describe('resolveRecordIdsRestrictedForPrincipals', () => {
     ).toEqual(new Set(['restricted']));
   });
 
+  it('should not let another everyone row lift a restriction', () => {
+    expect(
+      resolveRecordIdsRestrictedForPrincipals({
+        recordShares: [
+          buildShare(
+            'restricted',
+            EVERYONE_PRINCIPAL_ID,
+            RecordShareAccessLevel.NONE,
+          ),
+          {
+            ...buildShare(
+              'restricted',
+              EVERYONE_PRINCIPAL_ID,
+              RecordShareAccessLevel.FULL,
+            ),
+            rowCause: RecordShareRowCause.APPLICATION,
+            sourceId: 'application-1',
+          },
+        ],
+        principalIds: [EVERYONE_PRINCIPAL_ID, MEMBER_ID],
+        accessLevels: SELECT_ACCESS_LEVELS,
+      }),
+    ).toEqual(new Set(['restricted']));
+  });
+
   it('should ignore grants to other principals', () => {
     expect(
       resolveRecordIdsRestrictedForPrincipals({

@@ -40,7 +40,7 @@ describe('buildRecordShareExceptionCondition', () => {
         EVERYONE_PRINCIPAL_ID,
         RecordShareAccessLevel.NONE,
         RecordShareAccessLevel.READ,
-        PRINCIPAL_IDS,
+        ['principal-1'],
         RecordShareAccessLevel.READ_WRITE,
         RecordShareAccessLevel.FULL,
       ],
