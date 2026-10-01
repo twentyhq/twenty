@@ -1,11 +1,11 @@
 import { runComponentConformance } from '@test-utilities/conformance/runComponentConformance';
 
-import { NumberInput } from '../NumberInput';
-import styles from '../NumberInput.module.scss';
+import { NumberStepper } from '../NumberStepper';
+import styles from '../NumberStepper.module.scss';
 
 runComponentConformance({
-  name: 'NumberInput',
-  element: <NumberInput aria-label="Quantity" />,
+  name: 'NumberStepper',
+  element: <NumberStepper aria-label="Quantity" />,
   refInstanceOf: HTMLInputElement,
   ownClassName: styles.input,
   renderPropTagName: 'input',

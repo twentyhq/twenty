@@ -1,13 +1,13 @@
 import { useState } from 'react';
 
-import { NumberInput } from '../NumberInput';
-import { type NumberInputProps } from '../types/NumberInputProps';
+import { NumberStepper } from '../NumberStepper';
+import { type NumberStepperProps } from '../types/NumberStepperProps';
 
-export const ControlledNumberInputExample = (props: NumberInputProps) => {
+export const ControlledNumberStepperExample = (props: NumberStepperProps) => {
   const [value, setValue] = useState<number | null>(props.defaultValue ?? null);
 
   return (
-    <NumberInput
+    <NumberStepper
       {...props}
       value={value}
       onValueChange={(nextValue, eventDetails) => {

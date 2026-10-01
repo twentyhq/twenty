@@ -1557,9 +1557,9 @@
     ]
   },
   {
-    "name": "NumberInput",
+    "name": "NumberStepper",
     "entryPoint": "twenty-ui/primitives/input",
-    "slug": "input/number-input",
+    "slug": "input/number-stepper",
     "props": [
       {
         "name": "allowOutOfRange",

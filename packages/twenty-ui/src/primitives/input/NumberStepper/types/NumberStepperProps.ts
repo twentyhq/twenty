@@ -1,6 +1,6 @@
 import { type NumberField } from '@base-ui/react/number-field';
 
-export type NumberInputProps = Omit<
+export type NumberStepperProps = Omit<
   NumberField.Input.Props,
   | 'children'
   | 'defaultValue'

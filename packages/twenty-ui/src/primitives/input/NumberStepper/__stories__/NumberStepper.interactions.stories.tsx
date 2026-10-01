@@ -3,13 +3,13 @@ import { expect, fn, userEvent, within } from 'storybook/test';
 
 import { A11Y_DEFER_COLOR_CONTRAST, ComponentDecorator } from '@ui/testing';
 
-import { NumberInput } from '../NumberInput';
-import { type NumberInputProps } from '../types/NumberInputProps';
-import { ControlledNumberInputExample } from './ControlledNumberInputExample';
+import { NumberStepper } from '../NumberStepper';
+import { type NumberStepperProps } from '../types/NumberStepperProps';
+import { ControlledNumberStepperExample } from './ControlledNumberStepperExample';
 
-const meta: Meta<typeof NumberInput> = {
-  title: 'UI/Input/NumberInput/Interactions',
-  component: NumberInput,
+const meta: Meta<typeof NumberStepper> = {
+  title: 'UI/Input/NumberStepper/Interactions',
+  component: NumberStepper,
   tags: ['!autodocs'],
   decorators: [ComponentDecorator],
   parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
@@ -23,7 +23,7 @@ const meta: Meta<typeof NumberInput> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof NumberInput>;
+type Story = StoryObj<typeof NumberStepper>;
 
 export const PointerBounds: Story = {
   play: async ({ canvasElement, args }) => {
@@ -86,7 +86,7 @@ export const KeyboardBounds: Story = {
 
 export const ControlledDraft: Story = {
   args: { min: -5, max: 5 },
-  render: (args) => <ControlledNumberInputExample {...args} />,
+  render: (args) => <ControlledNumberStepperExample {...args} />,
   play: async ({ canvasElement, args }) => {
     const input = within(canvasElement).getByRole('textbox', {
       name: 'Quantity',
@@ -119,7 +119,7 @@ export const ControlledDraft: Story = {
 };
 
 export const BoundedDraft: Story = {
-  render: (args) => <ControlledNumberInputExample {...args} />,
+  render: (args) => <ControlledNumberStepperExample {...args} />,
   play: async ({ canvasElement, args }) => {
     const input = within(canvasElement).getByRole('textbox', {
       name: 'Quantity',
@@ -207,7 +207,7 @@ export const ReadOnly: Story = {
 
 export const OutOfRangeDraft: Story = {
   args: { defaultValue: 60, min: 30, max: 90, allowOutOfRange: true },
-  render: (args) => <ControlledNumberInputExample {...args} />,
+  render: (args) => <ControlledNumberStepperExample {...args} />,
   play: async ({ canvasElement, args }) => {
     const input = within(canvasElement).getByRole('textbox', {
       name: 'Quantity',
@@ -239,7 +239,7 @@ export const OutOfRangeDraft: Story = {
 
 export const OutOfRangeStepping: Story = {
   args: { defaultValue: 60, min: 30, max: 90, allowOutOfRange: true },
-  render: (args) => <ControlledNumberInputExample {...args} />,
+  render: (args) => <ControlledNumberStepperExample {...args} />,
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
     const input = canvas.getByRole('textbox', { name: 'Quantity' });
@@ -278,7 +278,7 @@ export const OutOfRangeStepping: Story = {
 
 export const CanceledChange: Story = {
   args: {
-    onValueChange: fn<NonNullable<NumberInputProps['onValueChange']>>(
+    onValueChange: fn<NonNullable<NumberStepperProps['onValueChange']>>(
       (nextValue, eventDetails) => {
         if (nextValue === 2) {
           eventDetails.cancel();
@@ -286,7 +286,7 @@ export const CanceledChange: Story = {
       },
     ),
   },
-  render: (args) => <ControlledNumberInputExample {...args} />,
+  render: (args) => <ControlledNumberStepperExample {...args} />,
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
     const input = canvas.getByRole('textbox', { name: 'Quantity' });

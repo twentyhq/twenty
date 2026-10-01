@@ -7,16 +7,16 @@ import {
   ComponentDecorator,
 } from '@ui/testing';
 
-import { NumberInput } from '../NumberInput';
+import { NumberStepper } from '../NumberStepper';
 
-const meta: Meta<typeof NumberInput> = {
-  title: 'UI/Input/NumberInput',
-  component: NumberInput,
+const meta: Meta<typeof NumberStepper> = {
+  title: 'UI/Input/NumberStepper',
+  component: NumberStepper,
   args: { 'aria-label': 'Quantity', defaultValue: 3, min: 0, max: 10 },
 };
 
 export default meta;
-type Story = StoryObj<typeof NumberInput>;
+type Story = StoryObj<typeof NumberStepper>;
 
 export const Default: Story = {
   decorators: [ComponentDecorator],
@@ -27,7 +27,7 @@ export const WithoutButtons: Story = {
   args: { showButtons: false },
 };
 
-type NumberInputCatalogState =
+type NumberStepperCatalogState =
   | 'default'
   | 'minimum'
   | 'maximum'
@@ -35,14 +35,16 @@ type NumberInputCatalogState =
   | 'readOnly'
   | 'invalid';
 
-const getNumberInputCatalogStateProps = (state: NumberInputCatalogState) => ({
+const getNumberStepperCatalogStateProps = (
+  state: NumberStepperCatalogState,
+) => ({
   defaultValue: state === 'minimum' ? 0 : state === 'maximum' ? 10 : 3,
   disabled: state === 'disabled',
   readOnly: state === 'readOnly',
   'aria-invalid': state === 'invalid' || undefined,
 });
 
-export const Catalog: CatalogStory<Story, typeof NumberInput> = {
+export const Catalog: CatalogStory<Story, typeof NumberStepper> = {
   decorators: [CatalogDecorator],
   parameters: {
     a11y: A11Y_DEFER_COLOR_CONTRAST,
@@ -57,8 +59,8 @@ export const Catalog: CatalogStory<Story, typeof NumberInput> = {
             'disabled',
             'readOnly',
             'invalid',
-          ] satisfies NumberInputCatalogState[],
-          props: getNumberInputCatalogStateProps,
+          ] satisfies NumberStepperCatalogState[],
+          props: getNumberStepperCatalogStateProps,
         },
         {
           name: 'buttons',
@@ -70,7 +72,7 @@ export const Catalog: CatalogStory<Story, typeof NumberInput> = {
   },
 };
 
-export const CatalogDark: CatalogStory<Story, typeof NumberInput> = {
+export const CatalogDark: CatalogStory<Story, typeof NumberStepper> = {
   ...Catalog,
   tags: ['!autodocs'],
   globals: { colorScheme: 'dark' },

@@ -3,13 +3,13 @@ import { expect, fn, userEvent, within } from 'storybook/test';
 
 import { A11Y_DEFER_COLOR_CONTRAST, ComponentDecorator } from '@ui/testing';
 
-import { NumberInput } from '../NumberInput';
-import { NumberInputFieldExample } from './NumberInputFieldExample';
-import { NumberInputFormExample } from './NumberInputFormExample';
+import { NumberStepper } from '../NumberStepper';
+import { NumberStepperFieldExample } from './NumberStepperFieldExample';
+import { NumberStepperFormExample } from './NumberStepperFormExample';
 
-const meta: Meta<typeof NumberInput> = {
-  title: 'UI/Input/NumberInput/Forms',
-  component: NumberInput,
+const meta: Meta<typeof NumberStepper> = {
+  title: 'UI/Input/NumberStepper/Forms',
+  component: NumberStepper,
   tags: ['!autodocs'],
   decorators: [ComponentDecorator],
   parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
@@ -23,10 +23,10 @@ const meta: Meta<typeof NumberInput> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof NumberInput>;
+type Story = StoryObj<typeof NumberStepper>;
 
 export const FormSubmission: Story = {
-  render: (args) => <NumberInputFormExample {...args} />,
+  render: (args) => <NumberStepperFormExample {...args} />,
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
     const input = canvas.getByRole('textbox', { name: 'Quantity' });
@@ -51,7 +51,7 @@ export const FormSubmission: Story = {
 
 export const SmallFractionalStep: Story = {
   args: { defaultValue: 0, step: 0.0001 },
-  render: (args) => <NumberInputFormExample {...args} />,
+  render: (args) => <NumberStepperFormExample {...args} />,
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
     const input = canvas.getByRole('textbox', { name: 'Quantity' });
@@ -79,7 +79,7 @@ export const SmallFractionalStep: Story = {
 };
 
 export const ExternalForm: Story = {
-  render: (args) => <NumberInputFormExample {...args} external />,
+  render: (args) => <NumberStepperFormExample {...args} external />,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -97,7 +97,7 @@ export const ExternalForm: Story = {
 
 export const Required: Story = {
   args: { defaultValue: undefined, required: true },
-  render: (args) => <NumberInputFormExample {...args} />,
+  render: (args) => <NumberStepperFormExample {...args} />,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const input = canvas.getByRole('textbox', { name: 'Quantity' });
@@ -124,7 +124,7 @@ export const Required: Story = {
 };
 
 export const WithFieldAndRef: Story = {
-  render: (args) => <NumberInputFieldExample {...args} />,
+  render: (args) => <NumberStepperFieldExample {...args} />,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const input = canvas.getByRole('textbox', { name: 'Quantity' });
@@ -144,7 +144,7 @@ export const WithFieldAndRef: Story = {
 
 export const OutOfRangeValidation: Story = {
   args: { defaultValue: 60, min: 30, max: 90, allowOutOfRange: true },
-  render: (args) => <NumberInputFormExample {...args} />,
+  render: (args) => <NumberStepperFormExample {...args} />,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const input = canvas.getByRole('textbox', { name: 'Quantity' });
@@ -172,7 +172,7 @@ export const OutOfRangeValidation: Story = {
 
 export const DisabledSubmission: Story = {
   args: { disabled: true },
-  render: (args) => <NumberInputFormExample {...args} />,
+  render: (args) => <NumberStepperFormExample {...args} />,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 

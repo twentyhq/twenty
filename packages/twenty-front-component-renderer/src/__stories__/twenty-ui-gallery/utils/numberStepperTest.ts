@@ -4,7 +4,7 @@ import { errorHandler } from '@/__stories__/shared/test-utils/createFrontCompone
 import { expectFrontComponentMounted } from '@/__stories__/shared/test-utils/matchers/expectFrontComponentMounted';
 import { type TwentyUiGalleryPlayFunction } from '@/__stories__/twenty-ui-gallery/types/TwentyUiGalleryPlayFunction';
 
-export const numberInputTest: TwentyUiGalleryPlayFunction = async ({
+export const numberStepperTest: TwentyUiGalleryPlayFunction = async ({
   canvasElement,
 }) => {
   const canvas = within(canvasElement);

@@ -16,7 +16,7 @@ requiring them to occur.
 | Fixture | Components |
 | --- | --- |
 | `twenty-ui-field-controls` | Field, Input, InputGroup, Textarea |
-| `twenty-ui-number-input` | NumberInput (keyboard bounds, disabled/read-only state, named form values and submission) |
+| `twenty-ui-number-stepper` | NumberStepper (keyboard bounds, disabled/read-only state, named form values and submission) |
 | `twenty-ui-display-helpers` | Text |
 | `twenty-ui-list-item` | ListItem |
 | `twenty-ui-tabs` | Tabs |
@@ -52,7 +52,7 @@ No stories are skipped or marked as expected-to-fail by the runner.
 | Component | Current limitation |
 | --- | --- |
 | Field controls | Forwarded events lack the `nativeEvent` Base UI reads for `composedPath`. Textarea's cloned render element loses its change handler in React. The value report checks the state received by the component after typing. |
-| NumberInput | Pointer stepping fails because the worker input does not implement `setSelectionRange`. Text editing fails because forwarded events lack the `nativeEvent.defaultPrevented` Base UI reads. Separate React and Preact stories assert these gaps and successful keyboard bounds, disabled/read-only state, named form values and submission. |
+| NumberStepper | Pointer stepping fails because the worker input does not implement `setSelectionRange`. Text editing fails because forwarded events lack the `nativeEvent.defaultPrevented` Base UI reads. Separate React and Preact stories assert these gaps and successful keyboard bounds, disabled/read-only state, named form values and submission. |
 | Tabs | Activation fails on the missing `nativeEvent` for `composedPath` in both runtimes. |
 | Popover, Dialog, AlertDialog | Opening fails while reading pointer contact data from the missing `nativeEvent`. |
 | Menu | Opening fails on the missing `nativeEvent.pointerType` and pointer contact data. |

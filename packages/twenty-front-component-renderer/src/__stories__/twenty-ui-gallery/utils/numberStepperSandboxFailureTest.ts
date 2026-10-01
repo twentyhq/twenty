@@ -8,7 +8,7 @@ import { expectSandboxErrors } from '@/__stories__/twenty-ui-gallery/utils/expec
 const MISSING_SELECTION_RANGE_ERROR =
   /^Uncaught TypeError: .+\.setSelectionRange is not a function$/;
 
-export const numberInputSandboxFailureTest: TwentyUiGalleryPlayFunction =
+export const numberStepperSandboxFailureTest: TwentyUiGalleryPlayFunction =
   async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await expectFrontComponentMounted(canvas);

@@ -2,18 +2,18 @@ import { useId, useState } from 'react';
 
 import { Button } from '@ui/primitives/input/Button/Button';
 
-import { NumberInput } from '../NumberInput';
-import { type NumberInputProps } from '../types/NumberInputProps';
+import { NumberStepper } from '../NumberStepper';
+import { type NumberStepperProps } from '../types/NumberStepperProps';
 
-export const NumberInputFormExample = ({
+export const NumberStepperFormExample = ({
   external = false,
   ...props
-}: NumberInputProps & { external?: boolean }) => {
+}: NumberStepperProps & { external?: boolean }) => {
   const formId = useId();
   const [savedQuantity, setSavedQuantity] = useState('Not saved');
   const [submissionCount, setSubmissionCount] = useState(0);
 
-  const input = <NumberInput {...props} form={formId} name="quantity" />;
+  const input = <NumberStepper {...props} form={formId} name="quantity" />;
 
   return (
     <>

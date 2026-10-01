@@ -1,16 +1,16 @@
 ---
-title: NumberInput
+title: NumberStepper
 description: Edit a number with optional bounds and increment or decrement buttons.
 ---
 
 import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
-import NumberInputReference from '/snippets/ui/generated/input/number-input.mdx';
+import NumberStepperReference from '/snippets/ui/generated/input/number-stepper.mdx';
 
-`NumberInput` combines a compact numeric text field with decrement and increment buttons. It owns numeric editing, bounds, and step interactions. Your application chooses the limits and handles persistence.
+`NumberStepper` combines a compact numeric text field with decrement and increment buttons. It owns numeric editing, bounds, and step interactions. Your application chooses the limits and handles persistence.
 
 <StoryEmbed
-  storyId="ui-input-numberinput--default"
-  title="NumberInput example"
+  storyId="ui-input-numberstepper--default"
+  title="NumberStepper example"
   height={180}
 />
 
@@ -19,12 +19,12 @@ import NumberInputReference from '/snippets/ui/generated/input/number-input.mdx'
 Use `defaultValue` to set the initial quantity. The input owns subsequent changes.
 
 ```tsx
-import { Field, NumberInput } from 'twenty-ui/primitives/input';
+import { Field, NumberStepper } from 'twenty-ui/primitives/input';
 
 export const QuantityInput = () => (
   <Field.Root>
     <Field.Label>Quantity</Field.Label>
-    <NumberInput name="quantity" defaultValue={3} min={0} max={10} step={1} />
+    <NumberStepper name="quantity" defaultValue={3} min={0} max={10} step={1} />
     <Field.Description>Choose up to ten items.</Field.Description>
   </Field.Root>
 );
@@ -36,7 +36,7 @@ Pass a number or `null` through `value` and update it in `onValueChange` to own 
 
 ```tsx
 import { useState } from 'react';
-import { Field, NumberInput } from 'twenty-ui/primitives/input';
+import { Field, NumberStepper } from 'twenty-ui/primitives/input';
 
 export const QuantityInput = () => {
   const [quantity, setQuantity] = useState<number | null>(3);
@@ -44,7 +44,7 @@ export const QuantityInput = () => {
   return (
     <Field.Root>
       <Field.Label>Quantity</Field.Label>
-      <NumberInput
+      <NumberStepper
         name="quantity"
         value={quantity}
         onValueChange={setQuantity}
@@ -90,4 +90,4 @@ The React and Preact renderer sandboxes support keyboard adjustments, bounds, an
 
 ## Props
 
-<NumberInputReference />
+<NumberStepperReference />

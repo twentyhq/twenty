@@ -7,12 +7,12 @@ import { Button } from '@ui/primitives/input/Button/Button';
 import inputStyles from '@ui/primitives/input/Input/Input.module.scss';
 import { mergeClassNames } from '@ui/utilities/internal/mergeClassNames';
 
-import styles from './NumberInput.module.scss';
-import { type NumberInputProps } from './types/NumberInputProps';
+import styles from './NumberStepper.module.scss';
+import { type NumberStepperProps } from './types/NumberStepperProps';
 
-const NUMBER_INPUT_MAXIMUM_FRACTION_DIGITS = 15;
+const NUMBER_STEPPER_MAXIMUM_FRACTION_DIGITS = 15;
 
-export const NumberInput = ({
+export const NumberStepper = ({
   value,
   defaultValue,
   onValueChange,
@@ -31,11 +31,11 @@ export const NumberInput = ({
   incrementLabel = 'Increase value',
   className,
   ...props
-}: NumberInputProps) => {
+}: NumberStepperProps) => {
   const [resolvedValue, setResolvedValue] = useControlled({
     controlled: value,
     default: defaultValue ?? null,
-    name: 'NumberInput',
+    name: 'NumberStepper',
     state: 'value',
   });
 
@@ -67,7 +67,7 @@ export const NumberInput = ({
       id={id}
       format={{
         useGrouping: false,
-        maximumFractionDigits: NUMBER_INPUT_MAXIMUM_FRACTION_DIGITS,
+        maximumFractionDigits: NUMBER_STEPPER_MAXIMUM_FRACTION_DIGITS,
       }}
       className={styles.root}
     >

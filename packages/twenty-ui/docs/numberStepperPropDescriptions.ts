@@ -1,8 +1,8 @@
 import { type ComponentProps } from 'react';
 
-import { type NumberInput } from '../src/primitives/input/NumberInput/NumberInput';
+import { type NumberStepper } from '../src/primitives/input/NumberStepper/NumberStepper';
 
-export const NUMBER_INPUT_PROP_DESCRIPTIONS = {
+export const NUMBER_STEPPER_PROP_DESCRIPTIONS = {
   value: 'Controlled numeric value. Use null for an empty field.',
   defaultValue: 'Initial number when the field owns its value.',
   onValueChange:
@@ -24,4 +24,4 @@ export const NUMBER_INPUT_PROP_DESCRIPTIONS = {
   ref: 'Ref to the visible input element.',
   className: 'Class applied to the visible input.',
   style: 'Inline styles applied to the visible input.',
-} satisfies Partial<Record<keyof ComponentProps<typeof NumberInput>, string>>;
+} satisfies Partial<Record<keyof ComponentProps<typeof NumberStepper>, string>>;

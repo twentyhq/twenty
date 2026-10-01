@@ -9,7 +9,7 @@ import { TOAST_PROVIDER_PROP_DESCRIPTIONS } from './toastProviderPropDescription
 import { TOASTER_PROP_DESCRIPTIONS } from './toasterPropDescriptions';
 import { RADIO_PROP_DESCRIPTIONS } from './radioPropDescriptions';
 import { SEARCH_INPUT_PROP_DESCRIPTIONS } from './searchInputPropDescriptions';
-import { NUMBER_INPUT_PROP_DESCRIPTIONS } from './numberInputPropDescriptions';
+import { NUMBER_STEPPER_PROP_DESCRIPTIONS } from './numberStepperPropDescriptions';
 import { ANIMATED_ICON_CROSSFADE_PROP_DESCRIPTIONS } from './animatedIconCrossfadePropDescriptions';
 import { MENU_ITEM_PROP_DESCRIPTIONS } from './menuItemPropDescriptions';
 import { MENU_ITEM_AVATAR_PROP_DESCRIPTIONS } from './menuItemAvatarPropDescriptions';
@@ -213,11 +213,11 @@ export const DOCUMENTED_COMPONENTS = [
     slug: 'input/input-group',
   },
   {
-    name: 'NumberInput',
-    source: 'primitives/input/NumberInput/NumberInput.tsx',
+    name: 'NumberStepper',
+    source: 'primitives/input/NumberStepper/NumberStepper.tsx',
     entryPoint: 'twenty-ui/primitives/input',
-    slug: 'input/number-input',
-    propDescriptions: NUMBER_INPUT_PROP_DESCRIPTIONS,
+    slug: 'input/number-stepper',
+    propDescriptions: NUMBER_STEPPER_PROP_DESCRIPTIONS,
     propDefaults: {
       allowOutOfRange: 'false',
       step: '1',

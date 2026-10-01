@@ -7,7 +7,7 @@ import { t } from '@lingui/core/macro';
 import { useId, useRef } from 'react';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
-import { NumberInput } from 'twenty-ui/primitives/input';
+import { NumberStepper } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 type SettingsCounterProps = {
@@ -96,7 +96,7 @@ export const SettingsCounter = ({
 
   return (
     <StyledCounterContainer showButtons={showButtons}>
-      <NumberInput
+      <NumberStepper
         ref={inputRef}
         aria-labelledby={ariaLabelledBy}
         aria-describedby={ariaDescribedBy}
