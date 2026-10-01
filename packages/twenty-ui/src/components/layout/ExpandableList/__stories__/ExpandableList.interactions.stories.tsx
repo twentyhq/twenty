@@ -197,6 +197,42 @@ export const CountDisabled: Story = {
   },
 };
 
+
+export const InlineItemFocus: Story = {
+  args: {
+    showOverflowCount: undefined,
+    style: { width: 168 },
+    children: ['First item', 'Second item', 'Third item'].map((label) => (
+      <Button key={label} style={{ width: 80 }}>
+        {label}
+      </Button>
+    )),
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const firstItem = canvas.getByRole('button', { name: 'First item' });
+    const secondItem = canvas.getByRole('button', { name: 'Second item' });
+    const trigger = await canvas.findByRole('button', {
+      name: 'Show all items',
+    });
+
+    await userEvent.unhover(firstItem);
+    await waitFor(() => expect(trigger).toHaveStyle({ opacity: '0' }));
+    await userEvent.tab();
+    expect(firstItem).toHaveFocus();
+    await userEvent.tab();
+    expect(secondItem).toHaveFocus();
+    expect(secondItem.closest('[inert]')).toBeNull();
+    expect(secondItem.closest('[aria-hidden="true"]')).toBeNull();
+    await userEvent.hover(secondItem);
+    expect(secondItem).toHaveFocus();
+    expect(trigger).toHaveStyle({ opacity: '0' });
+    await userEvent.tab();
+    expect(trigger).toHaveFocus();
+    await waitFor(() => expect(trigger).toHaveStyle({ opacity: '1' }));
+  },
+};
+
 export const ClickableFieldHost: Story = {
   args: { maxInlineCount: 1 },
   render: (args) => (

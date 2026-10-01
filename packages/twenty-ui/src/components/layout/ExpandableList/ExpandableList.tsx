@@ -25,7 +25,12 @@ export const ExpandableList = ({
   const [isHovered, setIsHovered] = useState(false);
   const [hasFocus, setHasFocus] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  const isCountVisible = showOverflowCount ?? (isHovered || hasFocus || isOpen);
+  const [focusedItemCountVisibility, setFocusedItemCountVisibility] =
+    useState<boolean>();
+  const isCountVisible =
+    focusedItemCountVisibility ??
+    showOverflowCount ??
+    (isHovered || hasFocus || isOpen);
   const inlineItemCount =
     isDefined(maxInlineCount) && Number.isFinite(maxInlineCount)
       ? Math.min(children.length, Math.max(0, Math.floor(maxInlineCount)))
@@ -62,10 +67,22 @@ export const ExpandableList = ({
         }}
         onFocusCapture={(event) => {
           setHasFocus(true);
+
+          if (itemsRef.current?.contains(event.target)) {
+            setFocusedItemCountVisibility(
+              (currentVisibility) => currentVisibility ?? isCountVisible,
+            );
+          }
+
           onFocusCapture?.(event);
         }}
         onBlurCapture={(event) => {
           setHasFocus(event.currentTarget.contains(event.relatedTarget));
+
+          if (!itemsRef.current?.contains(event.relatedTarget)) {
+            setFocusedItemCountVisibility(undefined);
+          }
+
           onBlurCapture?.(event);
         }}
       >
