@@ -22,6 +22,7 @@ export const CoreWorkflowVersionsListItem = ({
   onSelect,
 }: CoreWorkflowVersionsListItemProps) => {
   const { t } = useLingui();
+  const statusLabel = t(CORE_WORKFLOW_VERSION_STATUS_LABELS[status]);
 
   return (
     <SelectableListItem itemId={id} onEnter={onSelect}>
@@ -33,7 +34,7 @@ export const CoreWorkflowVersionsListItem = ({
           month: 'long',
           day: 'numeric',
         })}
-        description={`${label}, ${t(CORE_WORKFLOW_VERSION_STATUS_LABELS[status])}`}
+        description={t`${label}, ${statusLabel}`}
         onClick={onSelect}
       />
     </SelectableListItem>
