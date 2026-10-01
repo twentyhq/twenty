@@ -108,6 +108,7 @@ import { SystemPromptBuilderService } from './services/system-prompt-builder.ser
   ],
   exports: [
     AgentChatActorService,
+    AgentInboxService,
     AgentChatSharingService,
     AgentChatService,
     AgentChatStreamingService,

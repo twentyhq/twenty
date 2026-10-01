@@ -1683,7 +1683,7 @@ export interface FeatureFlag {
     __typename: 'FeatureFlag'
 }
 
-export type FeatureFlagKey = 'IS_APPLICATION_WORKFLOWS_ENABLED' | 'IS_ASYNC_CSV_EXPORT_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_JSON_FILTER_ENABLED' | 'IS_MESSAGE_CAMPAIGN_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED' | 'IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED' | 'IS_AI_CHAT_SHARING_DROPDOWN_ENABLED' | 'IS_INITIAL_OBJECT_VIEW_ENABLED' | 'IS_WEBHOOK_RATE_LIMIT_ENABLED' | 'IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED' | 'IS_EXECUTION_QUOTA_ENABLED' | 'IS_RECORD_CREATION_FORM_ENABLED' | 'IS_LOGS_SETTINGS_SECTION_ENABLED' | 'IS_CONVERSATIONS_TAB_ENABLED' | 'IS_VALIDATION_RULES_ENABLED'
+export type FeatureFlagKey = 'IS_APPLICATION_WORKFLOWS_ENABLED' | 'IS_ASYNC_CSV_EXPORT_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_JSON_FILTER_ENABLED' | 'IS_MESSAGE_CAMPAIGN_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED' | 'IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED' | 'IS_AI_CHAT_SHARING_DROPDOWN_ENABLED' | 'IS_INITIAL_OBJECT_VIEW_ENABLED' | 'IS_WEBHOOK_RATE_LIMIT_ENABLED' | 'IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED' | 'IS_EXECUTION_QUOTA_ENABLED' | 'IS_RECORD_CREATION_FORM_ENABLED' | 'IS_LOGS_SETTINGS_SECTION_ENABLED' | 'IS_CONVERSATIONS_TAB_ENABLED' | 'IS_VALIDATION_RULES_ENABLED' | 'IS_WORKFLOW_SEND_CHAT_MESSAGE_ENABLED'
 
 export interface WorkspaceUrls {
     customUrl?: Scalars['String']
@@ -3445,6 +3445,13 @@ export interface Query {
     getToolInputSchema?: Scalars['JSON']
     webhooks: Webhook[]
     webhook?: Webhook
+    aiChatUsage?: AiChatUsage
+    chatThread: AgentChatThread
+    chatMessages: AgentMessage[]
+    chatStreamCatchupChunks: ChatStreamCatchupChunks
+    getAiSystemPromptPreview: AiSystemPromptPreview
+    skills: Skill[]
+    skill?: Skill
     myMessageFolders: MessageFolder[]
     myCalendarChannels: CalendarChannel[]
     getPermissionFlags: PermissionFlag[]
@@ -3454,13 +3461,6 @@ export interface Query {
     appConnections: AppConnection[]
     appConnection: AppConnection
     findWorkspaceAiStats: WorkspaceAiStats
-    aiChatUsage?: AiChatUsage
-    chatThread: AgentChatThread
-    chatMessages: AgentMessage[]
-    chatStreamCatchupChunks: ChatStreamCatchupChunks
-    getAiSystemPromptPreview: AiSystemPromptPreview
-    skills: Skill[]
-    skill?: Skill
     agentTurns: AgentTurn[]
     validationRules: ValidationRule[]
     timelineActivityTypes: TimelineActivityType[]
@@ -3680,15 +3680,6 @@ export interface Mutation {
     createWebhook: Webhook
     updateWebhook: Webhook
     deleteWebhook: Webhook
-    updateMessageFolder: MessageFolder
-    updateMessageFolders: MessageFolder[]
-    updateCalendarChannel: CalendarChannel
-    setAppKeyValue: AppKeyValue
-    deleteAppKeyValue: Scalars['Boolean']
-    /** @deprecated Use enqueueJobs instead. */
-    enqueueJob: EnqueueJobResult
-    enqueueJobs: EnqueueJobsResult
-    reportAppConnectionAuthFailure: Scalars['Boolean']
     createChatThread: AgentChatThread
     sendChatMessage: SendChatMessageResult
     retryChatMessage: SendChatMessageResult
@@ -3701,6 +3692,15 @@ export interface Mutation {
     deleteSkill: Skill
     activateSkill: Skill
     deactivateSkill: Skill
+    updateMessageFolder: MessageFolder
+    updateMessageFolders: MessageFolder[]
+    updateCalendarChannel: CalendarChannel
+    setAppKeyValue: AppKeyValue
+    deleteAppKeyValue: Scalars['Boolean']
+    /** @deprecated Use enqueueJobs instead. */
+    enqueueJob: EnqueueJobResult
+    enqueueJobs: EnqueueJobsResult
+    reportAppConnectionAuthFailure: Scalars['Boolean']
     evaluateAgentTurn: AgentTurnEvaluation
     runEvaluationInput: AgentTurn
     createValidationRule: ValidationRule
@@ -7384,6 +7384,13 @@ export interface QueryGenqlSelection{
     getToolInputSchema?: { __args: {toolName: Scalars['String']} }
     webhooks?: WebhookGenqlSelection
     webhook?: (WebhookGenqlSelection & { __args: {id: Scalars['UUID']} })
+    aiChatUsage?: AiChatUsageGenqlSelection
+    chatThread?: (AgentChatThreadGenqlSelection & { __args: {id: Scalars['UUID']} })
+    chatMessages?: (AgentMessageGenqlSelection & { __args: {threadId: Scalars['UUID']} })
+    chatStreamCatchupChunks?: (ChatStreamCatchupChunksGenqlSelection & { __args: {threadId: Scalars['UUID']} })
+    getAiSystemPromptPreview?: AiSystemPromptPreviewGenqlSelection
+    skills?: SkillGenqlSelection
+    skill?: (SkillGenqlSelection & { __args: {id: Scalars['UUID']} })
     myMessageFolders?: (MessageFolderGenqlSelection & { __args?: {messageChannelId?: (Scalars['UUID'] | null)} })
     myCalendarChannels?: (CalendarChannelGenqlSelection & { __args?: {connectedAccountId?: (Scalars['UUID'] | null)} })
     getPermissionFlags?: PermissionFlagGenqlSelection
@@ -7393,13 +7400,6 @@ export interface QueryGenqlSelection{
     appConnections?: (AppConnectionGenqlSelection & { __args?: {filter?: (ListAppConnectionsInput | null)} })
     appConnection?: (AppConnectionGenqlSelection & { __args: {id: Scalars['ID']} })
     findWorkspaceAiStats?: WorkspaceAiStatsGenqlSelection
-    aiChatUsage?: AiChatUsageGenqlSelection
-    chatThread?: (AgentChatThreadGenqlSelection & { __args: {id: Scalars['UUID']} })
-    chatMessages?: (AgentMessageGenqlSelection & { __args: {threadId: Scalars['UUID']} })
-    chatStreamCatchupChunks?: (ChatStreamCatchupChunksGenqlSelection & { __args: {threadId: Scalars['UUID']} })
-    getAiSystemPromptPreview?: AiSystemPromptPreviewGenqlSelection
-    skills?: SkillGenqlSelection
-    skill?: (SkillGenqlSelection & { __args: {id: Scalars['UUID']} })
     agentTurns?: (AgentTurnGenqlSelection & { __args: {agentId: Scalars['UUID']} })
     validationRules?: (ValidationRuleGenqlSelection & { __args: {objectMetadataId: Scalars['UUID']} })
     timelineActivityTypes?: TimelineActivityTypeGenqlSelection
@@ -7660,15 +7660,6 @@ export interface MutationGenqlSelection{
     createWebhook?: (WebhookGenqlSelection & { __args: {input: CreateWebhookInput} })
     updateWebhook?: (WebhookGenqlSelection & { __args: {input: UpdateWebhookInput} })
     deleteWebhook?: (WebhookGenqlSelection & { __args: {id: Scalars['UUID']} })
-    updateMessageFolder?: (MessageFolderGenqlSelection & { __args: {input: UpdateMessageFolderInput} })
-    updateMessageFolders?: (MessageFolderGenqlSelection & { __args: {input: UpdateMessageFoldersInput} })
-    updateCalendarChannel?: (CalendarChannelGenqlSelection & { __args: {input: UpdateCalendarChannelInput} })
-    setAppKeyValue?: (AppKeyValueGenqlSelection & { __args: {input: SetAppKeyValueInput} })
-    deleteAppKeyValue?: { __args: {key: Scalars['String'], scope?: (AppKeyValueScope | null)} }
-    /** @deprecated Use enqueueJobs instead. */
-    enqueueJob?: (EnqueueJobResultGenqlSelection & { __args: {input: EnqueueJobInput} })
-    enqueueJobs?: (EnqueueJobsResultGenqlSelection & { __args: {input: EnqueueJobsInput} })
-    reportAppConnectionAuthFailure?: { __args: {input: ReportAppConnectionAuthFailureInput} }
     createChatThread?: AgentChatThreadGenqlSelection
     sendChatMessage?: (SendChatMessageResultGenqlSelection & { __args: {threadId: Scalars['UUID'], text: Scalars['String'], messageId: Scalars['UUID'], browsingContext?: (Scalars['JSON'] | null), modelId?: (Scalars['String'] | null), fileAttachments?: (FileAttachmentInput[] | null)} })
     retryChatMessage?: (SendChatMessageResultGenqlSelection & { __args: {threadId: Scalars['UUID'], modelId?: (Scalars['String'] | null)} })
@@ -7681,6 +7672,15 @@ export interface MutationGenqlSelection{
     deleteSkill?: (SkillGenqlSelection & { __args: {id: Scalars['UUID']} })
     activateSkill?: (SkillGenqlSelection & { __args: {id: Scalars['UUID']} })
     deactivateSkill?: (SkillGenqlSelection & { __args: {id: Scalars['UUID']} })
+    updateMessageFolder?: (MessageFolderGenqlSelection & { __args: {input: UpdateMessageFolderInput} })
+    updateMessageFolders?: (MessageFolderGenqlSelection & { __args: {input: UpdateMessageFoldersInput} })
+    updateCalendarChannel?: (CalendarChannelGenqlSelection & { __args: {input: UpdateCalendarChannelInput} })
+    setAppKeyValue?: (AppKeyValueGenqlSelection & { __args: {input: SetAppKeyValueInput} })
+    deleteAppKeyValue?: { __args: {key: Scalars['String'], scope?: (AppKeyValueScope | null)} }
+    /** @deprecated Use enqueueJobs instead. */
+    enqueueJob?: (EnqueueJobResultGenqlSelection & { __args: {input: EnqueueJobInput} })
+    enqueueJobs?: (EnqueueJobsResultGenqlSelection & { __args: {input: EnqueueJobsInput} })
+    reportAppConnectionAuthFailure?: { __args: {input: ReportAppConnectionAuthFailureInput} }
     evaluateAgentTurn?: (AgentTurnEvaluationGenqlSelection & { __args: {turnId: Scalars['UUID']} })
     runEvaluationInput?: (AgentTurnGenqlSelection & { __args: {agentId: Scalars['UUID'], input: Scalars['String']} })
     createValidationRule?: (ValidationRuleGenqlSelection & { __args: {input: CreateValidationRuleInput} })
@@ -8129,6 +8129,14 @@ update: UpdateWebhookInputUpdates}
 
 export interface UpdateWebhookInputUpdates {targetUrl?: (Scalars['String'] | null),operations?: (Scalars['String'][] | null),description?: (Scalars['String'] | null),secret?: (Scalars['String'] | null)}
 
+export interface FileAttachmentInput {id: Scalars['UUID'],filename: Scalars['String']}
+
+export interface SendInboxMessageInput {workspaceMemberId: Scalars['UUID'],threadKey: Scalars['String'],idempotencyKey: Scalars['String'],title: Scalars['String'],text: Scalars['String'],request?: (Scalars['JSON'] | null)}
+
+export interface CreateSkillInput {id?: (Scalars['UUID'] | null),name: Scalars['String'],label: Scalars['String'],icon?: (Scalars['String'] | null),description?: (Scalars['String'] | null),content: Scalars['String']}
+
+export interface UpdateSkillInput {id: Scalars['UUID'],name?: (Scalars['String'] | null),label?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),description?: (Scalars['String'] | null),content?: (Scalars['String'] | null),isActive?: (Scalars['Boolean'] | null)}
+
 export interface UpdateMessageFolderInput {id: Scalars['UUID'],update: UpdateMessageFolderInputUpdates}
 
 export interface UpdateMessageFolderInputUpdates {isSynced: Scalars['Boolean']}
@@ -8148,14 +8156,6 @@ export interface EnqueueJobsInput {logicFunctionUniversalIdentifier: Scalars['St
 export interface EnqueueJobItemInput {payload?: (Scalars['JSON'] | null),jobId?: (Scalars['String'] | null)}
 
 export interface ReportAppConnectionAuthFailureInput {id: Scalars['ID'],reason?: (Scalars['String'] | null)}
-
-export interface FileAttachmentInput {id: Scalars['UUID'],filename: Scalars['String']}
-
-export interface SendInboxMessageInput {workspaceMemberId: Scalars['UUID'],threadKey: Scalars['String'],idempotencyKey: Scalars['String'],title: Scalars['String'],text: Scalars['String'],request?: (Scalars['JSON'] | null)}
-
-export interface CreateSkillInput {id?: (Scalars['UUID'] | null),name: Scalars['String'],label: Scalars['String'],icon?: (Scalars['String'] | null),description?: (Scalars['String'] | null),content: Scalars['String']}
-
-export interface UpdateSkillInput {id: Scalars['UUID'],name?: (Scalars['String'] | null),label?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),description?: (Scalars['String'] | null),content?: (Scalars['String'] | null),isActive?: (Scalars['Boolean'] | null)}
 
 export interface CreateValidationRuleInput {objectMetadataId: Scalars['UUID'],errorFieldMetadataId?: (Scalars['UUID'] | null),name: Scalars['String'],description?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),expression: Scalars['String'],message: Scalars['String'],isActive?: (Scalars['Boolean'] | null)}
 
@@ -11310,7 +11310,8 @@ export const enumFeatureFlagKey = {
    IS_RECORD_CREATION_FORM_ENABLED: 'IS_RECORD_CREATION_FORM_ENABLED' as const,
    IS_LOGS_SETTINGS_SECTION_ENABLED: 'IS_LOGS_SETTINGS_SECTION_ENABLED' as const,
    IS_CONVERSATIONS_TAB_ENABLED: 'IS_CONVERSATIONS_TAB_ENABLED' as const,
-   IS_VALIDATION_RULES_ENABLED: 'IS_VALIDATION_RULES_ENABLED' as const
+   IS_VALIDATION_RULES_ENABLED: 'IS_VALIDATION_RULES_ENABLED' as const,
+   IS_WORKFLOW_SEND_CHAT_MESSAGE_ENABLED: 'IS_WORKFLOW_SEND_CHAT_MESSAGE_ENABLED' as const
 }
 
 export const enumIdentityProviderType = {

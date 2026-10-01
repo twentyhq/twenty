@@ -46,7 +46,7 @@ export class AgentInboxResolver {
   ): Promise<SendInboxMessageResultDTO> {
     return this.agentInboxService.sendMessage({
       workspaceId: workspace.id,
-      application,
+      sender: { type: 'application', application },
       input,
     });
   }

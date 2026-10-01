@@ -4,6 +4,7 @@ import { msg } from '@lingui/core/macro';
 import { AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID } from 'twenty-shared/ai';
 import { inputSchemaToOutputSchema } from 'twenty-shared/logic-function';
 import {
+  FeatureFlagKey,
   FieldMetadataType,
   StepLogicalOperator,
   ViewFilterOperand,
@@ -19,6 +20,7 @@ import { v4 } from 'uuid';
 
 import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
 import { FindRecordsService } from 'src/engine/core-modules/record-crud/services/find-records.service';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { type WorkflowStepPositionInput } from 'src/engine/core-modules/workflow/dtos/update-workflow-step-position.input';
 import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
 import { AiAgentRoleService } from 'src/engine/metadata-modules/ai/ai-agent-role/ai-agent-role.service';
@@ -87,6 +89,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly workflowVersionCoreSyncService: WorkflowVersionCoreSyncService,
     private readonly findRecordsService: FindRecordsService,
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   async runWorkflowVersionStepDeletionSideEffects({
@@ -328,6 +331,36 @@ export class WorkflowVersionStepOperationsWorkspaceService {
                 },
                 subject: '',
                 body: '',
+              },
+            },
+          },
+        };
+      }
+      case WorkflowActionType.SEND_CHAT_MESSAGE: {
+        const isSendChatMessageEnabled =
+          await this.featureFlagService.isFeatureEnabled(
+            FeatureFlagKey.IS_WORKFLOW_SEND_CHAT_MESSAGE_ENABLED,
+            workspaceId,
+          );
+
+        if (!isSendChatMessageEnabled) {
+          throw new WorkflowVersionStepException(
+            `WorkflowActionType '${type}' is not enabled`,
+            WorkflowVersionStepExceptionCode.INVALID_REQUEST,
+          );
+        }
+
+        return {
+          builtStep: {
+            ...baseStep,
+            name: 'Send Chat Message',
+            type: WorkflowActionType.SEND_CHAT_MESSAGE,
+            settings: {
+              ...BASE_STEP_DEFINITION,
+              input: {
+                workspaceMemberId: '',
+                title: '',
+                message: '',
               },
             },
           },

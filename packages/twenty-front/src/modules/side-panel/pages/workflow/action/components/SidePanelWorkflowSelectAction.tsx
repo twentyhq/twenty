@@ -5,6 +5,7 @@ import { logicFunctionsSelector } from '@/logic-functions/states/logicFunctionsS
 import { ToolMenuItem } from '@/side-panel/pages/workflow/action/components/ToolMenuItem';
 import { WorkflowActionMenuItems } from '@/side-panel/pages/workflow/action/components/WorkflowActionMenuItems';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { type WorkflowActionType } from '@/workflow/types/Workflow';
 import { JEV_MODEL_ID } from 'twenty-shared/ai';
 import { SidePanelStepListContainer } from '@/workflow/workflow-steps/components/SidePanelWorkflowSelectStepContainer';
@@ -16,6 +17,7 @@ import { HUMAN_INPUT_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/
 import { RECORD_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/RecordActions';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
+import { FeatureFlagKey } from 'twenty-shared/types';
 
 export type WorkflowActionSelection = {
   type: WorkflowActionType;
@@ -42,6 +44,14 @@ export const SidePanelWorkflowSelectAction = ({
           contextualText: t`TypeSafe AI API key missing`,
         }
       : action,
+  );
+
+  const isSendChatMessageEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_WORKFLOW_SEND_CHAT_MESSAGE_ENABLED,
+  );
+
+  const humanInputActions = HUMAN_INPUT_ACTIONS.filter(
+    (action) => action.type !== 'SEND_CHAT_MESSAGE' || isSendChatMessageEnabled,
   );
 
   const logicFunctions = useAtomStateValue(logicFunctionsSelector);
@@ -105,7 +115,7 @@ export const SidePanelWorkflowSelectAction = ({
         {t`Human Input`}
       </SidePanelWorkflowSelectStepTitle>
       <WorkflowActionMenuItems
-        actions={HUMAN_INPUT_ACTIONS}
+        actions={humanInputActions}
         onClick={handleActionClick}
       />
 

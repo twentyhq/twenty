@@ -21,6 +21,7 @@ export const getActionIconColorOrThrow = (
     case 'PICK_RECORD':
       return themeCssVariables.color.gray9;
     case 'FORM':
+    case 'SEND_CHAT_MESSAGE':
       return themeCssVariables.color.orange9;
     case 'ITERATOR':
     case 'EMPTY':

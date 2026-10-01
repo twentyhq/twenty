@@ -8,11 +8,12 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 import { IsNull } from 'typeorm';
 
-import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
+import { type AgentInboxSender } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-inbox-sender.type';
 import { buildInboxMessageIds } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-inbox-message-ids.util';
 import { buildInboxMessageRequestPart } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-inbox-message-request-part.util';
+import { getAgentInboxSenderDetails } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-agent-inbox-sender-details.util';
 import { isUniqueViolationError } from 'src/engine/metadata-modules/ai/ai-chat/utils/is-unique-violation-error.util';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
@@ -40,19 +41,20 @@ export class AgentInboxService {
   // Every record has an id derived from the keys: the thread key picks the
   // conversation, and the idempotency key the message in it, so a retry or a
   // concurrent send completes the same message instead of writing another.
-  // The application's message is written last: once it exists, it is done.
+  // The sender's message is written last: once it exists, it is done.
   async sendMessage({
     workspaceId,
-    application,
+    sender,
     input,
   }: {
     workspaceId: string;
-    application: FlatApplication;
+    sender: AgentInboxSender;
     input: SendInboxMessageInput;
   }): Promise<SendInboxMessageResult> {
+    const senderDetails = getAgentInboxSenderDetails(sender);
     const { threadId, turnId, openingMessageId, messageId } =
       buildInboxMessageIds({
-        applicationId: application.id,
+        senderKey: senderDetails.key,
         workspaceMemberId: input.workspaceMemberId,
         threadKey: input.threadKey,
         idempotencyKey: input.idempotencyKey,
@@ -63,7 +65,7 @@ export class AgentInboxService {
           toolCallId: `call_${messageId.replace(/-/g, '')}`,
           findApplicationTool: await this.buildApplicationToolFinder({
             workspaceId,
-            applicationId: application.id,
+            applicationId: senderDetails.applicationId,
           }),
         })
       : undefined;
@@ -103,7 +105,7 @@ export class AgentInboxService {
 
     // Answering a request resolves who may answer from the user message of
     // its turn, and models expect a conversation to open with one. It holds
-    // no application text, so nothing the application wrote reads as the
+    // no text from the sender, so nothing the sender wrote reads as the
     // member's request.
     await this.ignoreDuplicate(() =>
       this.conversationWriterService.insertMessage({
@@ -118,7 +120,7 @@ export class AgentInboxService {
         parts: [
           {
             type: 'text',
-            text: `The "${application.name}" application started this conversation. Its messages follow.`,
+            text: `${senderDetails.description} started this conversation. Its messages follow.`,
           },
         ],
       }),
@@ -139,7 +141,7 @@ export class AgentInboxService {
         role: AgentMessageRole.ASSISTANT,
         agentId: null,
         senderUserWorkspaceId: null,
-        senderApplicationId: application.id,
+        senderApplicationId: senderDetails.applicationId,
         parts,
       }),
     );
@@ -269,8 +271,12 @@ export class AgentInboxService {
     applicationId,
   }: {
     workspaceId: string;
-    applicationId: string;
+    applicationId: string | null;
   }) {
+    if (!isDefined(applicationId)) {
+      return () => undefined;
+    }
+
     const { flatLogicFunctionMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatLogicFunctionMaps',
