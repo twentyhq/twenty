@@ -14,6 +14,7 @@ export const ExpandableListControlledFocusExample = () => {
     >
       <Button
         key="toggle-count"
+        aria-pressed={showOverflowCount}
         style={{ width: 80 }}
         onClick={() => setShowOverflowCount((isVisible) => !isVisible)}
       >
