@@ -5,9 +5,9 @@ import { MetadataReadability } from 'twenty-shared/types';
 
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
-// Email and calendar lost their visibility hooks in 2.44. Until a workspace's
+// Email and calendar lost their visibility hooks in 2.45. Until a workspace's
 // upgrade makes them discoverable they stay private rather than open. Remove
-// once 2.44 leaves the cross-upgrade window.
+// once 2.45 leaves the cross-upgrade window.
 const OBJECT_UNIVERSAL_IDENTIFIERS_PRIVATE_UNTIL_UPGRADED = new Set<string>([
   STANDARD_OBJECTS.messageThread.universalIdentifier,
   STANDARD_OBJECTS.message.universalIdentifier,

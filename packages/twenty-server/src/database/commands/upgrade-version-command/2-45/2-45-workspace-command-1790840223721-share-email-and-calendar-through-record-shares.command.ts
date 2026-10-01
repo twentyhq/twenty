@@ -7,11 +7,11 @@ import { DataSource } from 'typeorm';
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
-import { buildChannelRecordShareBackfillQueries } from 'src/database/commands/upgrade-version-command/2-44/utils/build-channel-record-share-backfill-queries.util';
+import { buildChannelRecordShareBackfillQueries } from 'src/database/commands/upgrade-version-command/2-45/utils/build-channel-record-share-backfill-queries.util';
 import {
   buildDiscoverableEmailAndCalendarObjectUpdates,
   buildRevertedEmailAndCalendarObjectUpdates,
-} from 'src/database/commands/upgrade-version-command/2-44/utils/build-discoverable-email-and-calendar-object-updates.util';
+} from 'src/database/commands/upgrade-version-command/2-45/utils/build-discoverable-email-and-calendar-object-updates.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -25,9 +25,9 @@ import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migrati
 // now decide who reads them: the members who synced them own them, and a
 // channel that shares everything grants everyone. Grants are written before
 // readability changes, so nobody loses access in between.
-@RegisteredWorkspaceCommand('2.44.0', 1790784206384)
+@RegisteredWorkspaceCommand('2.45.0', 1790840223721)
 @Command({
-  name: 'upgrade:2-44:share-email-and-calendar-through-record-shares',
+  name: 'upgrade:2-45:share-email-and-calendar-through-record-shares',
   description:
     'Grant message threads and calendar events to the members and channels that synced them, then make them discoverable',
 })

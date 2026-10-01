@@ -19,7 +19,6 @@ import { MoveAgentChatThreadsToRecordModelCommand } from 'src/database/commands/
 import { AddChatRecordPageCommandMenuItemsCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790751626422-add-chat-record-page-command-menu-items.command';
 import { AddChatRecordPageCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790756589463-add-chat-record-page.command';
 import { RecordPendingFormConversationsCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790772993322-record-pending-form-conversations.command';
-import { ShareEmailAndCalendarThroughRecordSharesCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790784206384-share-email-and-calendar-through-record-shares.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/workspace-migration-runner.module';
 
@@ -48,7 +47,6 @@ import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/wor
     AddChatRecordPageCommandMenuItemsCommand,
     AddChatRecordPageCommand,
     RecordPendingFormConversationsCommand,
-    ShareEmailAndCalendarThroughRecordSharesCommand,
   ],
 })
 export class V2_44_UpgradeVersionCommandModule {}

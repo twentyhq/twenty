@@ -1,7 +1,7 @@
 import { MetadataReadability } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { DISCOVERABLE_EMAIL_AND_CALENDAR_OBJECTS } from 'src/database/commands/upgrade-version-command/2-44/constants/discoverable-email-and-calendar-objects.constant';
+import { DISCOVERABLE_EMAIL_AND_CALENDAR_OBJECTS } from 'src/database/commands/upgrade-version-command/2-45/constants/discoverable-email-and-calendar-objects.constant';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -20,8 +20,15 @@ export const buildDiscoverableEmailAndCalendarObjectUpdates = ({
   flatObjectMetadataMaps,
   flatFieldMetadataMaps,
 }: {
-  flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
-  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+  flatObjectMetadataMaps: Pick<
+    FlatEntityMaps<FlatObjectMetadata>,
+    'byUniversalIdentifier'
+  >;
+  flatFieldMetadataMaps: {
+    byUniversalIdentifier: Partial<
+      Record<string, Pick<FlatFieldMetadata, 'objectMetadataId'>>
+    >;
+  };
 }): FlatObjectMetadata[] =>
   DISCOVERABLE_EMAIL_AND_CALENDAR_OBJECTS.flatMap((declaration) => {
     const flatObjectMetadata =
@@ -83,7 +90,10 @@ export const buildDiscoverableEmailAndCalendarObjectUpdates = ({
 export const buildRevertedEmailAndCalendarObjectUpdates = ({
   flatObjectMetadataMaps,
 }: {
-  flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
+  flatObjectMetadataMaps: Pick<
+    FlatEntityMaps<FlatObjectMetadata>,
+    'byUniversalIdentifier'
+  >;
 }): FlatObjectMetadata[] =>
   DISCOVERABLE_EMAIL_AND_CALENDAR_OBJECTS.flatMap((declaration) => {
     const flatObjectMetadata =

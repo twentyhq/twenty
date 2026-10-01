@@ -1,13 +1,11 @@
 import { STANDARD_OBJECT_FIELDS, STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { MetadataReadability } from 'twenty-shared/types';
 
-import { DISCOVERABLE_EMAIL_AND_CALENDAR_OBJECTS } from 'src/database/commands/upgrade-version-command/2-44/constants/discoverable-email-and-calendar-objects.constant';
+import { DISCOVERABLE_EMAIL_AND_CALENDAR_OBJECTS } from 'src/database/commands/upgrade-version-command/2-45/constants/discoverable-email-and-calendar-objects.constant';
 import {
   buildDiscoverableEmailAndCalendarObjectUpdates,
   buildRevertedEmailAndCalendarObjectUpdates,
-} from 'src/database/commands/upgrade-version-command/2-44/utils/build-discoverable-email-and-calendar-object-updates.util';
-import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+} from 'src/database/commands/upgrade-version-command/2-45/utils/build-discoverable-email-and-calendar-object-updates.util';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
@@ -24,15 +22,14 @@ const INHERITED_TARGET_PARENT_FIELDS: Record<string, string[]> = {
 
 const buildFlatObjectMetadataMaps = (
   flatObjectMetadatas: FlatObjectMetadata[],
-) =>
-  ({
-    byUniversalIdentifier: Object.fromEntries(
-      flatObjectMetadatas.map((flatObjectMetadata) => [
-        flatObjectMetadata.universalIdentifier,
-        flatObjectMetadata,
-      ]),
-    ),
-  }) as unknown as FlatEntityMaps<FlatObjectMetadata>;
+) => ({
+  byUniversalIdentifier: Object.fromEntries(
+    flatObjectMetadatas.map((flatObjectMetadata) => [
+      flatObjectMetadata.universalIdentifier,
+      flatObjectMetadata,
+    ]),
+  ),
+});
 
 const buildWorkspace = ({
   missingFieldUniversalIdentifiers = [],
@@ -67,7 +64,7 @@ const buildWorkspace = ({
             ]),
       ),
     ),
-  } as unknown as FlatEntityMaps<FlatFieldMetadata>;
+  };
 
   return {
     flatObjectMetadataMaps: buildFlatObjectMetadataMaps(flatObjectMetadatas),

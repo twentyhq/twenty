@@ -5,7 +5,7 @@ const { calendarEvent, calendarEventTarget, message, messageThread } =
   STANDARD_OBJECT_FIELDS;
 
 // Frozen copy of what the standard application declares for these objects in
-// 2.44. Targets keep their readability and only gain discoverable fields.
+// 2.45. Targets keep their readability and only gain discoverable fields.
 export const DISCOVERABLE_EMAIL_AND_CALENDAR_OBJECTS = [
   {
     universalIdentifier: STANDARD_OBJECTS.messageThread.universalIdentifier,
