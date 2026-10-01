@@ -79,10 +79,10 @@ export class ToolExecutorService {
           this.dispatchByExecutionRef(descriptor, args ?? {}, contextWithAuth),
       );
     } catch (error) {
-      const { output, shouldCapture } = buildToolExecutionFailure(
+      const { output, shouldCapture } = buildToolExecutionFailure({
         error,
-        descriptor.name,
-      );
+        toolName: descriptor.name,
+      });
 
       if (shouldCapture) {
         this.exceptionHandlerService.captureExceptions([error], {
@@ -338,6 +338,9 @@ export class ToolExecutorService {
       );
     }
 
+    // Defense-in-depth: catalog and by-name lookups already filter by
+    // `isAvailable`, but re-verify at dispatch so the gate is enforced in
+    // one place regardless of how the descriptor reached us.
     if (!(await provider.isAvailable(context))) {
       return {
         success: false,

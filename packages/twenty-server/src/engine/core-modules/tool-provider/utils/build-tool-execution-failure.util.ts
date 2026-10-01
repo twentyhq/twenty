@@ -12,10 +12,13 @@ const getToolExecutionErrorMessage = (error: unknown): string => {
   return error instanceof Error ? error.message : String(error);
 };
 
-export const buildToolExecutionFailure = (
-  error: unknown,
-  toolName: string,
-): { output: ToolOutput; shouldCapture: boolean } => ({
+export const buildToolExecutionFailure = ({
+  error,
+  toolName,
+}: {
+  error: unknown;
+  toolName: string;
+}): { output: ToolOutput; shouldCapture: boolean } => ({
   output: {
     success: false,
     message: `Failed to execute ${toolName}`,

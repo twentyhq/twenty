@@ -2,8 +2,7 @@ import { type StepResult, type ToolSet } from 'ai';
 
 import { type AiToolCallLog } from 'twenty-shared/workflow';
 
-import { isToolOutputSuccessful } from 'src/engine/core-modules/tool-provider/utils/is-tool-output-successful.util';
-import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
+import { isFailedToolOutput } from 'src/engine/core-modules/tool-provider/utils/is-failed-tool-output.util';
 import {
   TRUNCATION_SENTINEL,
   truncateStringToUtf8ByteBudget,
@@ -121,16 +120,13 @@ export const mapAiStepsToToolCallLogs = (
             maxToolOutputBytes,
           );
 
-          if (isToolOutputSuccessful(part.output)) {
-            entry.state = 'success';
-          } else {
-            const { error, message } = part.output as ToolOutput;
-
-            entry.errorMessage = String(error ?? message).slice(
-              0,
-              MAX_ERROR_MESSAGE_LENGTH,
-            );
+          if (isFailedToolOutput(part.output)) {
+            entry.errorMessage = String(
+              part.output.error ?? part.output.message,
+            ).slice(0, MAX_ERROR_MESSAGE_LENGTH);
             entry.state = 'error';
+          } else {
+            entry.state = 'success';
           }
         }
         continue;

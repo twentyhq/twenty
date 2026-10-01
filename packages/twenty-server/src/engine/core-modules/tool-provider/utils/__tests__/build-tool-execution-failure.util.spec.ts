@@ -4,10 +4,12 @@ import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager
 describe('buildToolExecutionFailure', () => {
   it('should report a crash and return its message', () => {
     expect(
-      buildToolExecutionFailure(
-        new TypeError("Cannot read properties of undefined (reading 'id')"),
-        'find_people',
-      ),
+      buildToolExecutionFailure({
+        error: new TypeError(
+          "Cannot read properties of undefined (reading 'id')",
+        ),
+        toolName: 'find_people',
+      }),
     ).toEqual({
       output: {
         success: false,
@@ -31,7 +33,9 @@ describe('buildToolExecutionFailure', () => {
       },
     } as never);
 
-    expect(buildToolExecutionFailure(error, 'create_view')).toEqual({
+    expect(
+      buildToolExecutionFailure({ error, toolName: 'create_view' }),
+    ).toEqual({
       output: {
         success: false,
         message: 'Failed to execute create_view',
@@ -42,7 +46,9 @@ describe('buildToolExecutionFailure', () => {
   });
 
   it('should report a thrown value that is not an Error', () => {
-    expect(buildToolExecutionFailure('boom', 'find_people')).toEqual({
+    expect(
+      buildToolExecutionFailure({ error: 'boom', toolName: 'find_people' }),
+    ).toEqual({
       output: {
         success: false,
         message: 'Failed to execute find_people',
