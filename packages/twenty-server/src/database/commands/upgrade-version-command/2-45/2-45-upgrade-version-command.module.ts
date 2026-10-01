@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 
 import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
-import { AddAccessAllRecordsPermissionFlagCommand } from 'src/database/commands/upgrade-version-command/2-45/2-45-workspace-command-1790876819146-add-access-all-records-permission-flag.command';
 import { OpenShareRecordToEveryObjectCommand } from 'src/database/commands/upgrade-version-command/2-45/2-45-workspace-command-1790876759146-open-share-record-to-every-object.command';
 import { AddRecordShareNoneAccessLevelCommand } from 'src/database/commands/upgrade-version-command/2-45/2-45-workspace-command-1790876639146-add-record-share-none-access-level.command';
 import { RestrictExportRecordsToIndexPageCommand } from 'src/database/commands/upgrade-version-command/2-45/2-45-workspace-command-1790837443029-restrict-export-records-to-index-page.command';
@@ -22,7 +21,6 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     GateWorkflowCommandsOnRecordUpdatePermissionCommand,
     RemoveSeeVersionWorkflowRunCommandMenuItemCommand,
     OpenShareRecordToEveryObjectCommand,
-    AddAccessAllRecordsPermissionFlagCommand,
   ],
 })
 export class V2_45_UpgradeVersionCommandModule {}
