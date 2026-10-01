@@ -159,9 +159,7 @@ export const AbortFirstUpload: Story = {
     await expect(
       canvas.getByRole('button', { name: 'Upload' }),
     ).toHaveAttribute('aria-disabled', 'true');
-    await expect(
-      canvas.getByRole('button', { name: 'Remove' }),
-    ).toHaveAttribute('aria-disabled', 'true');
+    await expect(canvas.getByRole('button', { name: 'Remove' })).toBeDisabled();
     await expect(abortButton).toBeEnabled();
     abortButton.focus();
     await userEvent.keyboard('{Enter}');

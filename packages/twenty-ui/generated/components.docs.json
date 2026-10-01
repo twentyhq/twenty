@@ -8538,7 +8538,7 @@
         "type": "boolean",
         "required": false,
         "defaultValue": "false",
-        "description": "Marks the module busy. Selection and removal stay focusable but unavailable. Shows Abort when onAbort is supplied."
+        "description": "Marks the module busy. Selection and removal controls that would otherwise be enabled stay focusable but unavailable. Shows Abort when onAbort is supplied."
       },
       {
         "name": "onAbort",

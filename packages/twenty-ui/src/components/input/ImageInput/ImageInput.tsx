@@ -37,9 +37,9 @@ export const ImageInput = ({
   const hasHelperText = isNonEmptyString(helperText);
   const hasErrorMessage = isNonEmptyString(errorMessage);
   const isSelectionUnavailable = disabled || !isDefined(onUpload);
+  const isRemovalUnavailable = disabled || !hasPicture || !isDefined(onRemove);
   const isUploadDisabled = isSelectionUnavailable || isUploading;
-  const isRemoveDisabled =
-    disabled || isUploading || !hasPicture || !isDefined(onRemove);
+  const isRemoveDisabled = isRemovalUnavailable || isUploading;
   const showAbort = isUploading && isDefined(onAbort);
   const describedBy =
     [hasHelperText && helperTextId, hasErrorMessage && errorMessageId]
@@ -113,7 +113,7 @@ export const ImageInput = ({
                   startIcon={<IconUpload />}
                   onClick={openFilePicker}
                   disabled={isUploadDisabled}
-                  focusableWhenDisabled={isUploading}
+                  focusableWhenDisabled={isUploading && !isSelectionUnavailable}
                   aria-describedby={describedBy}
                   variant="outline"
                 >
@@ -125,7 +125,7 @@ export const ImageInput = ({
                 startIcon={<IconTrash />}
                 onClick={onRemove}
                 disabled={isRemoveDisabled}
-                focusableWhenDisabled={isUploading}
+                focusableWhenDisabled={isUploading && !isRemovalUnavailable}
                 variant="outline"
               >
                 {removeLabel}

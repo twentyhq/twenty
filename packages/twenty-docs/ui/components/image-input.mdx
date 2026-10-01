@@ -43,7 +43,7 @@ An empty or failed image shows a placeholder. Changing `src` retries the preview
 
 ## Uploading and disabled states
 
-`isUploading` marks the root busy and makes selection and removal unavailable. Those controls stay focusable, so keyboard focus is not lost when an upload starts. Supply `onAbort` to replace Upload with Abort during an upload. Abort works before the first image URL exists. The application owns cancellation and sets `isUploading` back to `false` when the upload ends.
+`isUploading` marks the root busy and makes selection and removal unavailable. Controls that were available stay focusable, so keyboard focus is not lost when an upload starts. Supply `onAbort` to replace Upload with Abort during an upload. Abort works before the first image URL exists. The application owns cancellation and sets `isUploading` back to `false` when the upload ends.
 
 `disabled` disables every action. Selection requires `onUpload`. Removal requires both `onRemove` and a nonempty `src`.
 
