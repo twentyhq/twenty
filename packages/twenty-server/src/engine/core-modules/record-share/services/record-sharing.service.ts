@@ -652,7 +652,9 @@ export class RecordSharingService {
 
     if (
       isDefined(roleObjectsPermissions) &&
-      roleObjectsPermissions[objectMetadata.id]?.canReadObjectRecords !== true
+      !(
+        roleObjectsPermissions[objectMetadata.id]?.canReadObjectRecords ?? false
+      )
     ) {
       throw new RecordShareException(
         `Principal ${principal.principalId} cannot access ${objectMetadata.nameSingular} records through its role`,
