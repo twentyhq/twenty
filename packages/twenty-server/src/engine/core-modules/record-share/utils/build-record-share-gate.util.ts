@@ -11,7 +11,9 @@ import {
   type InheritedReadabilityParentCondition,
 } from 'src/engine/core-modules/record-share/utils/build-inherited-readability-condition.util';
 import { buildRecordShareCondition } from 'src/engine/core-modules/record-share/utils/build-record-share-condition.util';
+import { buildRecordShareExceptionCondition } from 'src/engine/core-modules/record-share/utils/build-record-share-exception-condition.util';
 import { isDiscoverableObject } from 'src/engine/core-modules/record-share/utils/is-discoverable-object.util';
+import { isRecordShareExceptionObject } from 'src/engine/core-modules/record-share/utils/is-record-share-exception-object.util';
 import { isOpenWhenDetachedObject } from 'src/engine/core-modules/record-share/utils/is-open-when-detached-object.util';
 import { resolveInheritedReadabilityParents } from 'src/engine/core-modules/record-share/utils/resolve-inherited-readability-parents.util';
 import { resolveRequiredRecordShareAccessLevels } from 'src/engine/core-modules/record-share/utils/resolve-required-record-share-access-levels.util';
@@ -53,7 +55,10 @@ export const buildRecordShareGate = ({
   });
   switch (gateKind) {
     case 'open':
-      return { kind: 'open' };
+      return context.environment.isRecordSharingEnabled &&
+        isRecordShareExceptionObject(target.flatObjectMetadata)
+        ? buildRecordShareExceptionGate(context, target)
+        : { kind: 'open' };
     case 'deny':
       return { kind: 'denied' };
     case 'inherited':
@@ -101,6 +106,28 @@ const buildOwnRecordShareGate = (
   return {
     kind: 'gated',
     condition: buildRecordShareCondition({
+      tableAlias: target.tableAlias,
+      recordShareTableExpression:
+        context.environment.recordShareTableExpression,
+      objectMetadataId: target.flatObjectMetadata.id,
+      ...principals,
+    }),
+  };
+};
+
+const buildRecordShareExceptionGate = (
+  context: RowAccessPolicyContext,
+  target: RowAccessPolicyTarget,
+): RowAccessPolicy => {
+  const principals = resolveRecordSharePrincipals(context, target);
+
+  if (!isDefined(principals)) {
+    return { kind: 'open' };
+  }
+
+  return {
+    kind: 'gated',
+    condition: buildRecordShareExceptionCondition({
       tableAlias: target.tableAlias,
       recordShareTableExpression:
         context.environment.recordShareTableExpression,

@@ -3446,6 +3446,15 @@ export default {
             "hasInheritedAccess": [
                 8
             ],
+            "isOpenByDefault": [
+                8
+            ],
+            "generalAccessLevel": [
+                171
+            ],
+            "isGeneralAccessDefault": [
+                8
+            ],
             "roles": [
                 172
             ],
@@ -5460,6 +5469,12 @@ export default {
         "LogicFunctionLogs": {
             "logs": [
                 1
+            ],
+            "name": [
+                1
+            ],
+            "universalIdentifier": [
+                3
             ],
             "__typename": [
                 1
