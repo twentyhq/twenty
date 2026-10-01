@@ -60,8 +60,6 @@ export const ExpandableList = ({
   }, []);
   const resetFocusWhenFocusedTriggerUnmounts =
     useFocusedElementUnmountRef(resetFocusState);
-  const resetFocusWhenFocusedPopupUnmounts =
-    useFocusedElementUnmountRef(resetFocusState);
   const mergedRef = useMergedRefs(containerRef, ref);
   const mergedTriggerRef = useMergedRefs(
     triggerRef,
@@ -138,7 +136,6 @@ export const ExpandableList = ({
           </Popover.Trigger>
         )}
         <Popover.Popup
-          ref={resetFocusWhenFocusedPopupUnmounts}
           anchor={containerRef}
           align="start"
           sideOffset={-9}

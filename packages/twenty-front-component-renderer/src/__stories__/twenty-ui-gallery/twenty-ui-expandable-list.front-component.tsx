@@ -15,6 +15,7 @@ const ExpandableListExample = () => {
   const [selectedTarget, setSelectedTarget] = useState('None');
   const [hostActivations, setHostActivations] = useState(0);
   const [listWidth, setListWidth] = useState(130);
+  const [isMeasuredListMounted, setIsMeasuredListMounted] = useState(true);
 
   return (
     <TwentyUiGalleryCard title="Expandable list">
@@ -50,18 +51,23 @@ const ExpandableListExample = () => {
         Add target
       </Button>
       <Button>Outside list</Button>
-      <ExpandableList
-        showOverflowCount
-        overflowLabel="Show all measured items"
-        style={{ width: listWidth }}
-      >
-        {INITIAL_TARGETS.map((target) => (
-          <Button key={target} style={{ width: 90 }}>
-            Measured {target}
-          </Button>
-        ))}
-      </ExpandableList>
+      {isMeasuredListMounted && (
+        <ExpandableList
+          showOverflowCount
+          overflowLabel="Show all measured items"
+          style={{ width: listWidth }}
+        >
+          {INITIAL_TARGETS.map((target) => (
+            <Button key={target} style={{ width: 90 }}>
+              Measured {target}
+            </Button>
+          ))}
+        </ExpandableList>
+      )}
       <Button onClick={() => setListWidth(500)}>Widen measured list</Button>
+      <Button onClick={() => setIsMeasuredListMounted(false)}>
+        Remove measured list
+      </Button>
       <output aria-label="Selected target">{selectedTarget}</output>
       <output aria-label="Host activations">{hostActivations}</output>
     </TwentyUiGalleryCard>

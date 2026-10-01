@@ -32,5 +32,18 @@ export const expandableListGeometryTest: TwentyUiGalleryPlayFunction = async ({
   await expect(
     canvas.getByRole('button', { name: 'Measured Delta' }),
   ).toBeVisible();
+
+  await userEvent.click(
+    canvas.getByRole('button', { name: 'Remove measured list' }),
+  );
+  await waitFor(() =>
+    expect(canvas.queryByRole('button', { name: 'Measured Alpha' })).toBeNull(),
+  );
+  await userEvent.click(canvas.getByRole('button', { name: 'Add target' }));
+  await waitFor(() =>
+    expect(
+      canvas.getByRole('button', { name: /Show all targets$/ }),
+    ).toHaveTextContent('+3'),
+  );
   await expect(errorHandler).not.toHaveBeenCalled();
 };
