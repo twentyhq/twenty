@@ -3871,24 +3871,25 @@ type Query {
   commandMenuItem(id: UUID!): CommandMenuItem
   frontComponents: [FrontComponent!]!
   frontComponent(id: UUID!): FrontComponent
+  getInviteSuggestions: [InviteSuggestion!]!
+  applicationConnectionProviders(applicationId: UUID!): [ApplicationConnectionProvider!]!
+  getUsageAnalytics(input: UsageAnalyticsInput): UsageAnalytics!
   billingPortalSession(returnUrlPath: String, forPaymentMethodUpdate: Boolean): BillingSession!
   listPlans: [BillingPlan!]!
   getResourceCreditUsage: [BillingResourceCreditUsage!]!
-  getUsageAnalytics(input: UsageAnalyticsInput): UsageAnalytics!
-  myConnectedAccounts: [ConnectedAccountPublicDTO!]!
-  applicationConnectedAccounts(applicationId: UUID!): [ApplicationConnectedAccountDTO!]!
-  applicationConnectionProviders(applicationId: UUID!): [ApplicationConnectionProvider!]!
-  currentWorkspace: Workspace!
-  getPublicWorkspaceDataByDomain(origin: String): PublicWorkspaceData!
-  getPublicWorkspaceDataById(id: UUID!): PublicWorkspaceDataSummary!
-  getInviteSuggestions: [InviteSuggestion!]!
   findWorkspaceInvitations: [WorkspaceInvitation!]!
   getApprovedAccessDomains: [ApprovedAccessDomain!]!
-  getViewFilterGroups(viewId: String): [ViewFilterGroup!]!
-  getViewFilterGroup(id: String!): ViewFilterGroup
+  getRoles: [Role!]!
   apiKeys: [ApiKey!]!
   getApiKeyRoles: [Role!]!
   apiKey(input: GetApiKeyInput!): ApiKey
+  getViewFilterGroups(viewId: String): [ViewFilterGroup!]!
+  getViewFilterGroup(id: String!): ViewFilterGroup
+  myConnectedAccounts: [ConnectedAccountPublicDTO!]!
+  applicationConnectedAccounts(applicationId: UUID!): [ApplicationConnectedAccountDTO!]!
+  currentWorkspace: Workspace!
+  getPublicWorkspaceDataByDomain(origin: String): PublicWorkspaceData!
+  getPublicWorkspaceDataById(id: UUID!): PublicWorkspaceDataSummary!
   findApplicationRegistrationByClientId(clientId: String!): PublicApplicationRegistration
   findApplicationRegistrationByUniversalIdentifier(universalIdentifier: String!): ApplicationRegistration
   findManyApplicationRegistrations: [ApplicationRegistration!]!
@@ -3919,7 +3920,6 @@ type Query {
   ): Field!
   getViewGroups(viewId: String): [ViewGroup!]!
   getViewGroup(id: String!): ViewGroup
-  getRoles: [Role!]!
   previewMessageCampaignAudience(input: PreviewMessageCampaignAudienceInput!): CampaignAudiencePreviewDTO!
   messageSuppressions(input: FindMessageSuppressionsInput!): MessageSuppressionList!
   unsubscribeTopics: [UnsubscribeTopic!]!
@@ -4196,6 +4196,10 @@ type Mutation {
   updateFrontComponent(input: UpdateFrontComponentInput!): FrontComponent!
   deleteFrontComponent(id: UUID!): FrontComponent!
   updateOneApplicationVariable(key: String!, value: String!, applicationId: UUID): Boolean!
+  skipSyncEmailOnboardingStep(isAutoSkipped: Boolean! = false): OnboardingStepSuccess!
+  completeBookCallOnboardingStep(hasBookedCall: Boolean! = false, isAutoSkipped: Boolean! = false): OnboardingStepSuccess!
+  triggerInstallAppsOnboardingStep(universalIdentifiers: [String!]!, isAutoSkipped: Boolean! = false): OnboardingStepSuccess!
+  goBackToPreviousOnboardingStep: OnboardingStepNavigation!
   checkoutSession(recurringInterval: SubscriptionInterval!, plan: BillingPlanKey! = PRO, requirePaymentMethod: Boolean! = true, successUrlPath: String): BillingSession!
   createSubscriptionPaymentIntent(recurringInterval: SubscriptionInterval!, plan: BillingPlanKey! = PRO, requirePaymentMethod: Boolean! = true, successUrlPath: String, idempotencyKey: String!): BillingPaymentIntent!
   createBillingPaymentMethodSetupIntent: BillingPaymentIntent!
@@ -4206,6 +4210,30 @@ type Mutation {
   setResourceCreditSubscriptionPrice(priceId: String!): BillingUpdate!
   endSubscriptionTrialPeriod: BillingEndTrialPeriod!
   cancelSwitchResourceCreditPrice: BillingUpdate!
+  deleteWorkspaceInvitation(appTokenId: String!): String!
+  resendWorkspaceInvitation(appTokenId: String!): SendInvitations!
+  sendInvitations(emails: [String!]!, roleId: UUID): SendInvitations!
+  createApprovedAccessDomain(input: CreateApprovedAccessDomainInput!): ApprovedAccessDomain!
+  deleteApprovedAccessDomain(input: DeleteApprovedAccessDomainInput!): Boolean!
+  validateApprovedAccessDomain(input: ValidateApprovedAccessDomainInput!): ApprovedAccessDomain!
+  updateWorkspaceMemberRole(workspaceMemberId: UUID!, roleId: UUID!): WorkspaceMember!
+  createOneRole(createRoleInput: CreateRoleInput!): Role!
+  updateOneRole(updateRoleInput: UpdateRoleInput!): Role!
+  deleteOneRole(roleId: UUID!): String!
+  upsertObjectPermissions(upsertObjectPermissionsInput: UpsertObjectPermissionsInput!): [ObjectPermission!]!
+  upsertPermissionFlags(upsertPermissionFlagsInput: UpsertPermissionFlagsInput!): [RolePermissionFlag!]!
+  upsertFieldPermissions(upsertFieldPermissionsInput: UpsertFieldPermissionsInput!): [FieldPermission!]!
+  upsertRowLevelPermissionPredicates(input: UpsertRowLevelPermissionPredicatesInput!): UpsertRowLevelPermissionPredicatesResult!
+  assignRoleToAgent(agentId: UUID!, roleId: UUID!): Boolean!
+  removeRoleFromAgent(agentId: UUID!): Boolean!
+  createApiKey(input: CreateApiKeyInput!): ApiKey!
+  updateApiKey(input: UpdateApiKeyInput!): ApiKey
+  revokeApiKey(input: RevokeApiKeyInput!): ApiKey
+  assignRoleToApiKey(apiKeyId: UUID!, roleId: UUID!): Boolean!
+  createViewFilterGroup(input: CreateViewFilterGroupInput!): ViewFilterGroup!
+  updateViewFilterGroup(id: String!, input: UpdateViewFilterGroupInput!): ViewFilterGroup!
+  deleteViewFilterGroup(id: String!): Boolean!
+  destroyViewFilterGroup(id: String!): Boolean!
   deleteConnectedAccount(id: UUID!): ConnectedAccountPublicDTO!
   disconnectConnectedAccount(id: UUID!): ConnectedAccountPublicDTO!
   activateWorkspace(data: ActivateWorkspaceInput!): Workspace!
@@ -4214,24 +4242,6 @@ type Mutation {
   deleteCurrentWorkspace: Workspace!
   checkCustomDomainValidRecords: DomainValidRecords
   enrichWorkspaceCompany: WorkspaceCompanyEnrichmentResult!
-  skipSyncEmailOnboardingStep(isAutoSkipped: Boolean! = false): OnboardingStepSuccess!
-  completeBookCallOnboardingStep(hasBookedCall: Boolean! = false, isAutoSkipped: Boolean! = false): OnboardingStepSuccess!
-  triggerInstallAppsOnboardingStep(universalIdentifiers: [String!]!, isAutoSkipped: Boolean! = false): OnboardingStepSuccess!
-  goBackToPreviousOnboardingStep: OnboardingStepNavigation!
-  deleteWorkspaceInvitation(appTokenId: String!): String!
-  resendWorkspaceInvitation(appTokenId: String!): SendInvitations!
-  sendInvitations(emails: [String!]!, roleId: UUID): SendInvitations!
-  createApprovedAccessDomain(input: CreateApprovedAccessDomainInput!): ApprovedAccessDomain!
-  deleteApprovedAccessDomain(input: DeleteApprovedAccessDomainInput!): Boolean!
-  validateApprovedAccessDomain(input: ValidateApprovedAccessDomainInput!): ApprovedAccessDomain!
-  createViewFilterGroup(input: CreateViewFilterGroupInput!): ViewFilterGroup!
-  updateViewFilterGroup(id: String!, input: UpdateViewFilterGroupInput!): ViewFilterGroup!
-  deleteViewFilterGroup(id: String!): Boolean!
-  destroyViewFilterGroup(id: String!): Boolean!
-  createApiKey(input: CreateApiKeyInput!): ApiKey!
-  updateApiKey(input: UpdateApiKeyInput!): ApiKey
-  revokeApiKey(input: RevokeApiKeyInput!): ApiKey
-  assignRoleToApiKey(apiKeyId: UUID!, roleId: UUID!): Boolean!
   upgradeApplication(appRegistrationId: String!, targetVersion: String!): Boolean!
   createApplicationRegistration(input: CreateApplicationRegistrationInput!): CreateApplicationRegistration!
   updateApplicationRegistration(input: UpdateApplicationRegistrationInput!): ApplicationRegistration!
@@ -4260,16 +4270,6 @@ type Mutation {
   updateManyViewGroups(inputs: [UpdateViewGroupInput!]!): [ViewGroup!]!
   deleteViewGroup(input: DeleteViewGroupInput!): ViewGroup!
   destroyViewGroup(input: DestroyViewGroupInput!): ViewGroup!
-  updateWorkspaceMemberRole(workspaceMemberId: UUID!, roleId: UUID!): WorkspaceMember!
-  createOneRole(createRoleInput: CreateRoleInput!): Role!
-  updateOneRole(updateRoleInput: UpdateRoleInput!): Role!
-  deleteOneRole(roleId: UUID!): String!
-  upsertObjectPermissions(upsertObjectPermissionsInput: UpsertObjectPermissionsInput!): [ObjectPermission!]!
-  upsertPermissionFlags(upsertPermissionFlagsInput: UpsertPermissionFlagsInput!): [RolePermissionFlag!]!
-  upsertFieldPermissions(upsertFieldPermissionsInput: UpsertFieldPermissionsInput!): [FieldPermission!]!
-  upsertRowLevelPermissionPredicates(input: UpsertRowLevelPermissionPredicatesInput!): UpsertRowLevelPermissionPredicatesResult!
-  assignRoleToAgent(agentId: UUID!, roleId: UUID!): Boolean!
-  removeRoleFromAgent(agentId: UUID!): Boolean!
   sendMessageCampaign(input: SendMessageCampaignInput!): SendMessageCampaignOutputDTO!
   cancelMessageCampaign(input: CancelMessageCampaignInput!): CancelMessageCampaignOutputDTO!
   sendMessageCampaignTest(input: SendMessageCampaignTestInput!): SendEmailViaDomainOutput!
@@ -5043,6 +5043,149 @@ input UpdateFrontComponentInputUpdates {
   description: String
 }
 
+input CreateApprovedAccessDomainInput {
+  domain: String!
+  email: String!
+}
+
+input DeleteApprovedAccessDomainInput {
+  id: UUID!
+}
+
+input ValidateApprovedAccessDomainInput {
+  validationToken: String!
+  approvedAccessDomainId: UUID!
+}
+
+input CreateRoleInput {
+  id: String
+  label: String!
+  description: String
+  icon: String
+  canUpdateAllSettings: Boolean
+  canAccessAllTools: Boolean
+  canReadAllObjectRecords: Boolean
+  canUpdateAllObjectRecords: Boolean
+  canSoftDeleteAllObjectRecords: Boolean
+  canDestroyAllObjectRecords: Boolean
+  canBeAssignedToUsers: Boolean
+  canBeAssignedToAgents: Boolean
+  canBeAssignedToApiKeys: Boolean
+}
+
+input UpdateRoleInput {
+  update: UpdateRolePayload!
+
+  """The id of the role to update"""
+  id: UUID!
+}
+
+input UpdateRolePayload {
+  label: String
+  description: String
+  icon: String
+  canUpdateAllSettings: Boolean
+  canAccessAllTools: Boolean
+  canReadAllObjectRecords: Boolean
+  canUpdateAllObjectRecords: Boolean
+  canSoftDeleteAllObjectRecords: Boolean
+  canDestroyAllObjectRecords: Boolean
+  canBeAssignedToUsers: Boolean
+  canBeAssignedToAgents: Boolean
+  canBeAssignedToApiKeys: Boolean
+}
+
+input UpsertObjectPermissionsInput {
+  roleId: UUID!
+  objectPermissions: [ObjectPermissionInput!]!
+}
+
+input ObjectPermissionInput {
+  objectMetadataId: UUID!
+  canReadObjectRecords: Boolean
+  canUpdateObjectRecords: Boolean
+  canSoftDeleteObjectRecords: Boolean
+  canDestroyObjectRecords: Boolean
+}
+
+input UpsertPermissionFlagsInput {
+  roleId: UUID!
+  permissionFlagKeys: [String!]!
+}
+
+input UpsertFieldPermissionsInput {
+  roleId: UUID!
+  fieldPermissions: [FieldPermissionInput!]!
+}
+
+input FieldPermissionInput {
+  objectMetadataId: UUID!
+  fieldMetadataId: UUID!
+  canReadFieldValue: Boolean
+  canUpdateFieldValue: Boolean
+}
+
+input UpsertRowLevelPermissionPredicatesInput {
+  roleId: UUID!
+  objectMetadataId: UUID!
+  predicates: [RowLevelPermissionPredicateInput!]!
+  predicateGroups: [RowLevelPermissionPredicateGroupInput!]!
+}
+
+input RowLevelPermissionPredicateInput {
+  id: UUID
+  fieldMetadataId: UUID!
+  operand: RowLevelPermissionPredicateOperand!
+  value: JSON
+  subFieldName: String
+  workspaceMemberFieldMetadataId: String
+  workspaceMemberSubFieldName: String
+  rowLevelPermissionPredicateGroupId: UUID
+  positionInRowLevelPermissionPredicateGroup: Float
+}
+
+input RowLevelPermissionPredicateGroupInput {
+  id: UUID
+  objectMetadataId: UUID!
+  parentRowLevelPermissionPredicateGroupId: UUID
+  logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator!
+  positionInRowLevelPermissionPredicateGroup: Float
+}
+
+input CreateApiKeyInput {
+  name: String!
+  expiresAt: String!
+  revokedAt: String
+  roleId: UUID!
+}
+
+input UpdateApiKeyInput {
+  id: UUID!
+  name: String
+  expiresAt: String
+  revokedAt: String
+}
+
+input RevokeApiKeyInput {
+  id: UUID!
+}
+
+input CreateViewFilterGroupInput {
+  id: UUID
+  parentViewFilterGroupId: UUID
+  logicalOperator: ViewFilterGroupLogicalOperator = AND
+  positionInViewFilterGroup: Float
+  viewId: UUID!
+}
+
+input UpdateViewFilterGroupInput {
+  id: UUID
+  parentViewFilterGroupId: UUID
+  logicalOperator: ViewFilterGroupLogicalOperator = AND
+  positionInViewFilterGroup: Float
+  viewId: UUID
+}
+
 input ActivateWorkspaceInput {
   """
   Deprecated: the workspace name is set at creation (signUpInNewWorkspace) and this field is ignored during activation. Kept for backward compatibility.
@@ -5083,54 +5226,6 @@ input UpdateWorkspaceInput {
 input UpdateWorkspaceAllowedIframeOriginsInput {
   operation: String!
   origin: String!
-}
-
-input CreateApprovedAccessDomainInput {
-  domain: String!
-  email: String!
-}
-
-input DeleteApprovedAccessDomainInput {
-  id: UUID!
-}
-
-input ValidateApprovedAccessDomainInput {
-  validationToken: String!
-  approvedAccessDomainId: UUID!
-}
-
-input CreateViewFilterGroupInput {
-  id: UUID
-  parentViewFilterGroupId: UUID
-  logicalOperator: ViewFilterGroupLogicalOperator = AND
-  positionInViewFilterGroup: Float
-  viewId: UUID!
-}
-
-input UpdateViewFilterGroupInput {
-  id: UUID
-  parentViewFilterGroupId: UUID
-  logicalOperator: ViewFilterGroupLogicalOperator = AND
-  positionInViewFilterGroup: Float
-  viewId: UUID
-}
-
-input CreateApiKeyInput {
-  name: String!
-  expiresAt: String!
-  revokedAt: String
-  roleId: UUID!
-}
-
-input UpdateApiKeyInput {
-  id: UUID!
-  name: String
-  expiresAt: String
-  revokedAt: String
-}
-
-input RevokeApiKeyInput {
-  id: UUID!
 }
 
 input CreateApplicationRegistrationInput {
@@ -5275,101 +5370,6 @@ input DeleteViewGroupInput {
 input DestroyViewGroupInput {
   """The id of the view group to destroy."""
   id: UUID!
-}
-
-input CreateRoleInput {
-  id: String
-  label: String!
-  description: String
-  icon: String
-  canUpdateAllSettings: Boolean
-  canAccessAllTools: Boolean
-  canReadAllObjectRecords: Boolean
-  canUpdateAllObjectRecords: Boolean
-  canSoftDeleteAllObjectRecords: Boolean
-  canDestroyAllObjectRecords: Boolean
-  canBeAssignedToUsers: Boolean
-  canBeAssignedToAgents: Boolean
-  canBeAssignedToApiKeys: Boolean
-}
-
-input UpdateRoleInput {
-  update: UpdateRolePayload!
-
-  """The id of the role to update"""
-  id: UUID!
-}
-
-input UpdateRolePayload {
-  label: String
-  description: String
-  icon: String
-  canUpdateAllSettings: Boolean
-  canAccessAllTools: Boolean
-  canReadAllObjectRecords: Boolean
-  canUpdateAllObjectRecords: Boolean
-  canSoftDeleteAllObjectRecords: Boolean
-  canDestroyAllObjectRecords: Boolean
-  canBeAssignedToUsers: Boolean
-  canBeAssignedToAgents: Boolean
-  canBeAssignedToApiKeys: Boolean
-}
-
-input UpsertObjectPermissionsInput {
-  roleId: UUID!
-  objectPermissions: [ObjectPermissionInput!]!
-}
-
-input ObjectPermissionInput {
-  objectMetadataId: UUID!
-  canReadObjectRecords: Boolean
-  canUpdateObjectRecords: Boolean
-  canSoftDeleteObjectRecords: Boolean
-  canDestroyObjectRecords: Boolean
-}
-
-input UpsertPermissionFlagsInput {
-  roleId: UUID!
-  permissionFlagKeys: [String!]!
-}
-
-input UpsertFieldPermissionsInput {
-  roleId: UUID!
-  fieldPermissions: [FieldPermissionInput!]!
-}
-
-input FieldPermissionInput {
-  objectMetadataId: UUID!
-  fieldMetadataId: UUID!
-  canReadFieldValue: Boolean
-  canUpdateFieldValue: Boolean
-}
-
-input UpsertRowLevelPermissionPredicatesInput {
-  roleId: UUID!
-  objectMetadataId: UUID!
-  predicates: [RowLevelPermissionPredicateInput!]!
-  predicateGroups: [RowLevelPermissionPredicateGroupInput!]!
-}
-
-input RowLevelPermissionPredicateInput {
-  id: UUID
-  fieldMetadataId: UUID!
-  operand: RowLevelPermissionPredicateOperand!
-  value: JSON
-  subFieldName: String
-  workspaceMemberFieldMetadataId: String
-  workspaceMemberSubFieldName: String
-  rowLevelPermissionPredicateGroupId: UUID
-  positionInRowLevelPermissionPredicateGroup: Float
-}
-
-input RowLevelPermissionPredicateGroupInput {
-  id: UUID
-  objectMetadataId: UUID!
-  parentRowLevelPermissionPredicateGroupId: UUID
-  logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator!
-  positionInRowLevelPermissionPredicateGroup: Float
 }
 
 input SendMessageCampaignInput {
