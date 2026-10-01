@@ -30,8 +30,19 @@ describe('serializeEvent', () => {
     });
   });
 
+  it.each([0, 1])('should preserve click detail %s', (detail) => {
+    expect(serializeEvent({ type: 'click', detail })).toEqual({
+      type: 'click',
+      detail,
+    });
+  });
+
   it('should ignore properties with the wrong type', () => {
-    const result = serializeEvent({ type: 'wheel', deltaX: 'not-a-number' });
+    const result = serializeEvent({
+      type: 'wheel',
+      deltaX: 'not-a-number',
+      detail: 'not-a-number',
+    });
 
     expect(result).toEqual({ type: 'wheel' });
   });

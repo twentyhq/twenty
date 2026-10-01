@@ -13,7 +13,9 @@ import {
   sidePanelWidthState,
 } from '@/side-panel/states/sidePanelWidthState';
 import { DialogContainerContext } from '@/ui/layout/dialog/contexts/DialogContainerContext';
-import { ResizablePanelGap } from '@/ui/layout/resizable-panel/components/ResizablePanelGap';
+import { ResizablePanel } from 'twenty-ui/components';
+import { useLingui } from '@lingui/react/macro';
+import { getUiZoom } from '@/ui/theme/utils/getUiZoom';
 import { ParentClickOutsideIdContext } from '@/ui/utilities/pointer-event/contexts/ParentClickOutsideIdContext';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -73,6 +75,7 @@ const StyledModalContainer = styled.div`
 `;
 
 export const SidePanelForDesktop = () => {
+  const { t } = useLingui();
   const store = useStore();
   const isSidePanelOpened = useAtomStateValue(isSidePanelOpenedState);
   const [sidePanelWidth, setSidePanelWidth] = useAtomState(sidePanelWidthState);
@@ -145,6 +148,18 @@ export const SidePanelForDesktop = () => {
     [setSidePanelWidth, setTableWidthResizeIsActive],
   );
 
+  const handleWidthPreview = (width: number) => {
+    document.documentElement.style.setProperty(
+      SIDE_PANEL_WIDTH_VAR,
+      `${width}px`,
+    );
+  };
+
+  const handleResizeEnd = () => {
+    setIsResizing(false);
+    setTableWidthResizeIsActive(true);
+  };
+
   const handleResizeStart = useCallback(() => {
     setIsResizing(true);
     setTableWidthResizeIsActive(false);
@@ -162,14 +177,19 @@ export const SidePanelForDesktop = () => {
       <SidePanelAskAiHandoffEffect
         onContinueChatFromFullWidth={handleContinueChatFromFullWidth}
       />
-      <ResizablePanelGap
+      <ResizablePanel
         side="left"
-        constraints={SIDE_PANEL_CONSTRAINTS}
-        currentSize={sidePanelWidth}
-        onSizeChange={handleWidthChange}
+        min={SIDE_PANEL_CONSTRAINTS.min}
+        max={SIDE_PANEL_CONSTRAINTS.max}
+        size={sidePanelWidth}
+        onSizeChange={handleWidthPreview}
+        onSizeCommit={handleWidthChange}
         onCollapse={handleCollapse}
-        gapWidth={0}
-        cssVariableName={SIDE_PANEL_WIDTH_VAR}
+        variant="gap"
+        disabled={!isSidePanelOpened}
+        aria-label={t`Resize side panel`}
+        scale={getUiZoom}
+        onResizeEnd={handleResizeEnd}
         onResizeStart={handleResizeStart}
       />
 

@@ -3,9 +3,11 @@ import { type ReactNode, useState } from 'react';
 
 import { useNavigationDrawerExpanded } from '@/navigation/hooks/useNavigationDrawerExpanded';
 import { tableWidthResizeIsActiveState } from '@/object-record/record-table/states/tableWidthResizeIsActivedState';
-import { ResizablePanelEdge } from '@/ui/layout/resizable-panel/components/ResizablePanelEdge';
-import { NAVIGATION_DRAWER_COLLAPSED_WIDTH } from '@/ui/layout/resizable-panel/constants/NavigationDrawerCollapsedWidth';
-import { NAVIGATION_DRAWER_CONSTRAINTS } from '@/ui/layout/resizable-panel/constants/NavigationDrawerConstraints';
+import { ResizablePanel } from 'twenty-ui/components';
+import { useLingui } from '@lingui/react/macro';
+import { getUiZoom } from '@/ui/theme/utils/getUiZoom';
+import { NAVIGATION_DRAWER_COLLAPSED_WIDTH } from '@/ui/navigation/navigation-drawer/constants/NavigationDrawerCollapsedWidth';
+import { NAVIGATION_DRAWER_CONSTRAINTS } from '@/ui/navigation/navigation-drawer/constants/NavigationDrawerConstraints';
 import { NavigationDrawerWidthEffect } from '@/ui/navigation/components/NavigationDrawerWidthEffect';
 import { NAVIGATION_DRAWER_CLICK_OUTSIDE_ID } from '@/ui/navigation/navigation-drawer/constants/NavigationDrawerClickOutsideId';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
@@ -82,6 +84,7 @@ export const NavigationDrawer = ({
   children,
   className,
 }: NavigationDrawerProps) => {
+  const { t } = useLingui();
   const [isResizing, setIsResizing] = useState(false);
   const isMobile = useIsMobile();
   const isExpanded = useNavigationDrawerExpanded();
@@ -111,7 +114,19 @@ export const NavigationDrawer = ({
     setTableWidthResizeIsActive(true);
   };
 
-  const handleResizeStart = (_size: number) => {
+  const handleWidthPreview = (width: number) => {
+    document.documentElement.style.setProperty(
+      NAVIGATION_DRAWER_WIDTH_VAR,
+      `${width}px`,
+    );
+  };
+
+  const handleResizeEnd = () => {
+    setIsResizing(false);
+    setTableWidthResizeIsActive(true);
+  };
+
+  const handleResizeStart = () => {
     setIsResizing(true);
     setTableWidthResizeIsActive(false);
   };
@@ -131,14 +146,18 @@ export const NavigationDrawer = ({
         </StyledContainer>
 
         {isNavigationDrawerExpanded && !isMobile && (
-          <ResizablePanelEdge
+          <ResizablePanel
             side="right"
-            constraints={NAVIGATION_DRAWER_CONSTRAINTS}
-            currentSize={navigationDrawerWidth}
-            onSizeChange={handleWidthChange}
+            min={NAVIGATION_DRAWER_CONSTRAINTS.min}
+            max={NAVIGATION_DRAWER_CONSTRAINTS.max}
+            size={navigationDrawerWidth}
+            onSizeChange={handleWidthPreview}
+            onSizeCommit={handleWidthChange}
             onCollapse={handleCollapse}
             showHandle={false}
-            cssVariableName={NAVIGATION_DRAWER_WIDTH_VAR}
+            aria-label={t`Resize navigation drawer`}
+            scale={getUiZoom}
+            onResizeEnd={handleResizeEnd}
             onResizeStart={handleResizeStart}
           />
         )}

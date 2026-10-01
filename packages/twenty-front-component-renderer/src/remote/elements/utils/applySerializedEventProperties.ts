@@ -18,6 +18,7 @@ const SERIALIZED_EVENT_PROPERTY_KEYS = [
   'offsetY',
   'movementX',
   'movementY',
+  'detail',
   'button',
   'buttons',
   'pointerId',

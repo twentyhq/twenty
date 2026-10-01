@@ -2,9 +2,15 @@ import { formatShortcut } from 'twenty-ui/primitives/typography';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useReducedMotion } from 'framer-motion';
+import { useStore } from 'jotai';
 import { type TransitionEvent, useSyncExternalStore, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { IconButton, LightIconButton, useToast } from 'twenty-ui/components';
+import {
+  IconButton,
+  LightIconButton,
+  ResizablePanel,
+  useToast,
+} from 'twenty-ui/components';
 import {
   IconChevronDown,
   IconChevronUp,
@@ -37,7 +43,6 @@ import { SettingsEnterpriseFeatureGateCard } from '@/settings/components/Setting
 import { SETTINGS_CONTENT_MAX_WIDTH } from '@/settings/constants/SettingsContentMaxWidth';
 import { APP_HEADER_HEIGHT } from '@/ui/layout/constants/AppHeaderHeight';
 import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
-import { ResizablePanelEdge } from '@/ui/layout/resizable-panel/components/ResizablePanelEdge';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { TabListRoot } from '@/ui/layout/tab-list/components/TabListRoot';
 import { TAB_LIST_HEIGHT } from '@/ui/layout/tab-list/constants/TabListHeight';
@@ -254,6 +259,7 @@ const StyledDetailPanelWrapper = styled.div<{
 
 export const LogConsole = () => {
   const { t } = useLingui();
+  const store = useStore();
   const theme = useTheme();
   const { enqueueToast } = useToast();
   const shouldReduceMotion = useReducedMotion();
@@ -284,6 +290,9 @@ export const LogConsole = () => {
   );
   const [isDetailPanelResizing, setIsDetailPanelResizing] = useState(false);
   const [isResizing, setIsResizing] = useState(false);
+  const [resizeStartDisplayMode, setResizeStartDisplayMode] = useState(
+    logConsoleDisplayMode,
+  );
 
   const isOpen = logConsoleDisplayMode === 'open';
   const isFullScreen = isOpen && isLogConsoleFullScreen;
@@ -415,6 +424,7 @@ export const LogConsole = () => {
   };
 
   const handleResizeStart = (height: number) => {
+    setResizeStartDisplayMode(logConsoleDisplayMode);
     setIsResizing(true);
 
     if (height > 0) {
@@ -430,6 +440,44 @@ export const LogConsole = () => {
       Math.max(width, LOG_CONSOLE_DETAIL_PANEL_WIDTH_CONSTRAINTS.min),
     );
     setIsDetailPanelResizing(false);
+  };
+
+  const handleHeightPreview = (height: number) => {
+    document.documentElement.style.setProperty(
+      LOG_CONSOLE_HEIGHT_CSS_VARIABLE,
+      `${height}px`,
+    );
+  };
+
+  const handleDetailPanelWidthPreview = (width: number) => {
+    document.documentElement.style.setProperty(
+      LOG_CONSOLE_DETAIL_PANEL_CSS_VARIABLE,
+      `${width}px`,
+    );
+  };
+
+  const handleResizeEnd = ({ cancelled }: { cancelled: boolean }) => {
+    setIsResizing(false);
+    document.documentElement.style.removeProperty(
+      LOG_CONSOLE_HEIGHT_CSS_VARIABLE,
+    );
+
+    const shouldRestoreCollapsedMode =
+      cancelled &&
+      resizeStartDisplayMode === 'collapsed' &&
+      store.get(logConsoleDisplayModeState.atom) === 'open' &&
+      !store.get(isLogConsoleFullScreenState.atom);
+
+    if (shouldRestoreCollapsedMode) {
+      setLogConsoleDisplayMode('collapsed');
+    }
+  };
+
+  const handleDetailPanelResizeEnd = () => {
+    setIsDetailPanelResizing(false);
+    document.documentElement.style.removeProperty(
+      LOG_CONSOLE_DETAIL_PANEL_CSS_VARIABLE,
+    );
   };
 
   const handleHeightChange = (height: number) => {
@@ -601,12 +649,16 @@ export const LogConsole = () => {
                 isResizing={isDetailPanelResizing}
               >
                 {isDefined(logConsoleSelectedLog) && (
-                  <ResizablePanelEdge
+                  <ResizablePanel
                     side="left"
-                    constraints={LOG_CONSOLE_DETAIL_PANEL_WIDTH_CONSTRAINTS}
-                    currentSize={detailPanelWidth}
-                    onSizeChange={handleDetailPanelWidthChange}
-                    cssVariableName={LOG_CONSOLE_DETAIL_PANEL_CSS_VARIABLE}
+                    min={LOG_CONSOLE_DETAIL_PANEL_WIDTH_CONSTRAINTS.min}
+                    max={LOG_CONSOLE_DETAIL_PANEL_WIDTH_CONSTRAINTS.max}
+                    size={detailPanelWidth}
+                    onSizeChange={handleDetailPanelWidthPreview}
+                    onSizeCommit={handleDetailPanelWidthChange}
+                    aria-label={t`Resize log details`}
+                    scale={getUiZoom}
+                    onResizeEnd={handleDetailPanelResizeEnd}
                     showHandle={false}
                     onResizeStart={() => setIsDetailPanelResizing(true)}
                   />
@@ -617,12 +669,16 @@ export const LogConsole = () => {
           )}
         </TabListRoot>
         {!displayedLayout.isFullScreen && (
-          <ResizablePanelEdge
+          <ResizablePanel
             side="top"
-            constraints={logConsoleResizeConstraints}
-            currentSize={isOpen ? logConsoleBodyHeight : 0}
-            onSizeChange={handleHeightChange}
-            cssVariableName={LOG_CONSOLE_HEIGHT_CSS_VARIABLE}
+            min={logConsoleResizeConstraints.min}
+            max={logConsoleResizeConstraints.max}
+            size={isOpen ? logConsoleBodyHeight : 0}
+            onSizeChange={handleHeightPreview}
+            onSizeCommit={handleHeightChange}
+            aria-label={t`Resize log console`}
+            scale={getUiZoom}
+            onResizeEnd={handleResizeEnd}
             onResizeStart={handleResizeStart}
           />
         )}

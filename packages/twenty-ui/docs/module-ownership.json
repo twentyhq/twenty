@@ -64,6 +64,7 @@
     "MenuPicker",
     "MetricRow",
     "NotificationCounter",
+    "ResizablePanel",
     "SearchInput",
     "Section",
     "SettingsRow",

@@ -18,6 +18,7 @@ export type SerializedEventData = {
   offsetY?: number;
   movementX?: number;
   movementY?: number;
+  detail?: number;
   button?: number;
   buttons?: number;
   pointerId?: number;

@@ -67,6 +67,9 @@ export const serializeEvent = (event: unknown): SerializedEventData => {
   if (isNumber(domEvent.movementY)) {
     serialized.movementY = domEvent.movementY;
   }
+  if (isNumber(domEvent.detail)) {
+    serialized.detail = domEvent.detail;
+  }
   if (isNumber(domEvent.button)) {
     serialized.button = domEvent.button;
   }

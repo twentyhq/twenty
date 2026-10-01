@@ -54,6 +54,8 @@ export type { SearchInputProps } from './input/SearchInput/types/SearchInputProp
 export { SettingsRow } from './input/SettingsRow/SettingsRow';
 export type { SettingsRowProps } from './input/SettingsRow/types/SettingsRowProps';
 export { AnimatedIconCrossfade } from './layout/AnimatedIconCrossfade/AnimatedIconCrossfade';
+export { ResizablePanel } from './layout/ResizablePanel/ResizablePanel';
+export type { ResizablePanelProps } from './layout/ResizablePanel/types/ResizablePanelProps';
 export { Section } from './layout/Section/Section';
 export type { SectionHeaderProps } from './layout/Section/types/SectionHeaderProps';
 export type { SectionRootProps } from './layout/Section/types/SectionRootProps';

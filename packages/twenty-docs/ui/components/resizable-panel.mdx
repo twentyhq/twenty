@@ -1,0 +1,82 @@
+---
+title: ResizablePanel
+description: Resize a panel from an edge or gap, with committed sizes and optional collapse.
+---
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import ResizablePanelReference from '/snippets/ui/generated/components/resizable-panel.mdx';
+
+`ResizablePanel` is a focusable separator that manages bounded panel sizes, drag cancellation and optional collapse. It composes [ResizeHandle](/ui/primitives/layout/resize-handle). The application owns the panel content, layout and saved size.
+
+<StoryEmbed
+  storyId="ui-components-resizablepanel--documentation"
+  title="Resizable panel example"
+/>
+
+## Usage
+
+Place the default `edge` variant inside a panel with `position: relative` and visible overflow so the full edge remains reachable. Set `side` to its physical edge: `left`, `right`, `top` or `bottom`. Give the separator a specific accessible name and use `aria-controls` to identify the panel.
+
+```tsx
+import { useId, useState } from 'react';
+import { ResizablePanel } from 'twenty-ui/components';
+import { Card } from 'twenty-ui/primitives/surfaces';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const ResizableNotes = () => {
+  const panelId = useId();
+  const [width, setWidth] = useState(240);
+  const [savedWidth, setSavedWidth] = useState(240);
+
+  return (
+    <Card.Root
+      id={panelId}
+      style={{ position: 'relative', overflow: 'visible', width, height: 180 }}
+    >
+      <Text>Record notes</Text>
+      <ResizablePanel
+        side="right"
+        size={savedWidth}
+        onSizeChange={setWidth}
+        onSizeCommit={setSavedWidth}
+        min={160}
+        max={400}
+        aria-label="Resize notes width"
+        aria-controls={panelId}
+      />
+    </Card.Root>
+  );
+};
+```
+
+`size` is the committed size. `onSizeChange` reports the live size while dragging so the application can update its layout. `onSizeCommit` reports successful drags and keyboard changes so the application can save the new size. Update the controlled `size` from this callback. Without `size`, use `defaultSize` for uncontrolled committed state; it defaults to `min`.
+
+## Edges and gaps
+
+A right edge increases the size when moving right, and a bottom edge increases it when moving down. Left and top edges reverse those movements. These are physical directions and remain the same in right-to-left content.
+
+Use `variant="gap"` between elements in a flex layout. `gapSize` sets the space between them. The gap remains interactive without a visible grip. Set `showHandle={false}` to hide the grip on an edge while keeping its resizing and focus behavior.
+
+<StoryEmbed
+  storyId="ui-components-resizablepanel--gap"
+  title="Resizable gap example"
+/>
+
+## Bounds, zoom and cancellation
+
+Both pointer and keyboard resizing stay within the required `min` and `max` bounds. Pointer movement starts a drag after five physical pixels. `scale` accepts a positive zoom factor or a function returning one; it is sampled at the start of the gesture and converts pointer movement to layout pixels.
+
+Escape, pointer cancellation, lost pointer capture, disabling the separator and unmounting it cancel an active drag. `onSizeChange` restores the starting size and `onSizeCommit` does not run. `onResizeEnd` reports `{ cancelled, value }`, using the restored size after cancellation. Use `onResizeStart` and `onResizeEnd` for temporary application state associated with dragging.
+
+## Keyboard and collapse
+
+Arrow keys move the selected edge by `step`, which defaults to `10`. Home selects `min`; End selects `max`. Each size change commits immediately. The separator orientation describes the dividing edge, so width resizing uses a vertical separator.
+
+Supply `onCollapse` to receive a collapse request from a click without dragging, Enter or Space. A drag that moves away and returns to its start remains a drag. The application decides whether to hide the panel and where to restore focus. `disabled` prevents resizing and collapse and removes the separator from the tab order.
+
+Native props, styles and refs reach the separator. A custom `render` element must [forward the supplied props and ref](/ui/primitives/overview#custom-components) to retain focus, pointer capture and keyboard handling.
+
+## Props
+
+<ResizablePanelReference />
