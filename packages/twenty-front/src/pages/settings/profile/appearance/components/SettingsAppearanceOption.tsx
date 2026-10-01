@@ -3,7 +3,7 @@ import { styled } from '@linaria/react';
 import { type ColorScheme } from '@/workspace-member/types/WorkspaceMember';
 import { IconCheck } from 'twenty-ui/icon';
 import { Radio } from 'twenty-ui/primitives/input';
-import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme';
+import { MOBILE_VIEWPORT, themeCssVariables, useTheme } from 'twenty-ui/theme';
 import { SettingsAppearancePreview } from '~/pages/settings/profile/appearance/components/SettingsAppearancePreview';
 
 const StyledChoice = styled.div`
@@ -83,20 +83,24 @@ type SettingsAppearanceOptionProps = {
 export const SettingsAppearanceOption = ({
   colorScheme,
   label,
-}: SettingsAppearanceOptionProps) => (
-  <StyledChoice>
-    <Radio
-      value={colorScheme}
-      aria-label={label}
-      render={
-        <StyledRadio>
-          <SettingsAppearancePreview colorScheme={colorScheme} />
-          <StyledCheckmark aria-hidden>
-            <IconCheck size={14} />
-          </StyledCheckmark>
-        </StyledRadio>
-      }
-    />
-    <StyledLabel>{label}</StyledLabel>
-  </StyledChoice>
-);
+}: SettingsAppearanceOptionProps) => {
+  const theme = useTheme();
+
+  return (
+    <StyledChoice>
+      <Radio
+        value={colorScheme}
+        aria-label={label}
+        render={
+          <StyledRadio>
+            <SettingsAppearancePreview colorScheme={colorScheme} />
+            <StyledCheckmark aria-hidden>
+              <IconCheck size={theme.icon.size.sm} />
+            </StyledCheckmark>
+          </StyledRadio>
+        }
+      />
+      <StyledLabel>{label}</StyledLabel>
+    </StyledChoice>
+  );
+};
