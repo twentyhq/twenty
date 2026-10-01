@@ -879,6 +879,8 @@ export class StreamAgentChatJob {
       workspaceId,
       threadId,
       streamId,
+      shouldRecordActivity:
+        await this.agentChatService.hasThreadInboxState(workspaceId),
       usage: {
         totalInputTokens: streamUsage.inputTokens,
         totalOutputTokens: streamUsage.outputTokens,

@@ -2,6 +2,7 @@ import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomStat
 
 export type AgentChatThreadUnreadSince = {
   threadId: string;
+  visitId: string;
   isUnread: boolean;
   lastReadAt: string | null;
 };

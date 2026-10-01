@@ -24,6 +24,10 @@ const threadObjectMetadataItem = {
   id: 'agent-chat-thread-metadata-id',
   nameSingular: 'agentChatThread',
   namePlural: 'agentChatThreads',
+  fields: [
+    ...personObjectMetadataItem.fields,
+    { ...companyTargetField, name: 'lastActivityAt' },
+  ],
 };
 const threadTargetObjectMetadataItem = {
   ...personObjectMetadataItem,

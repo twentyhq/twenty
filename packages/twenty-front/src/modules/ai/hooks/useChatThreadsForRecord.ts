@@ -8,6 +8,7 @@ import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { getActivityTargetsFilter } from '@/activities/utils/getActivityTargetsFilter';
 import { type AgentChatThreadTargetRecord } from '@/ai/types/AgentChatThreadTargetRecord';
+import { getAgentChatThreadLastActivityFieldName } from '@/ai/utils/getAgentChatThreadLastActivityFieldName';
 import { sortChatThreadsByLastActivityDesc } from '@/ai/utils/sortChatThreadsByLastActivityDesc';
 import { useListenToObjectRecordOperationBrowserEvent } from '@/browser-event/hooks/useListenToObjectRecordOperationBrowserEvent';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
@@ -20,10 +21,6 @@ import { type TargetRecordIdentifier } from '@/ui/layout/contexts/TargetRecordId
 // The widget shows the most recent conversations in a card rather than a
 // browsable list, so it asks for one page and never pages further.
 const CHAT_THREADS_FOR_RECORD_PAGE_SIZE = 20;
-
-const CHAT_THREADS_FOR_RECORD_ORDER_BY: RecordGqlOperationOrderBy = [
-  { thread: { lastActivityAt: 'DescNullsLast' } },
-];
 
 const CHAT_THREADS_FOR_RECORD_GQL_FIELDS = {
   id: true,
@@ -87,7 +84,18 @@ export const useChatThreadsForRecord = ({
     objectNameSingular: CoreObjectNameSingular.AgentChatThreadTarget,
     skip: !isRecordLinkable,
     filter,
-    orderBy: CHAT_THREADS_FOR_RECORD_ORDER_BY,
+    orderBy: [
+      {
+        thread: {
+          [getAgentChatThreadLastActivityFieldName(
+            objectMetadataItems.find(
+              ({ nameSingular }) =>
+                nameSingular === CoreObjectNameSingular.AgentChatThread,
+            ),
+          )]: 'DescNullsLast',
+        },
+      },
+    ] satisfies RecordGqlOperationOrderBy,
     recordGqlFields: CHAT_THREADS_FOR_RECORD_GQL_FIELDS,
     limit: CHAT_THREADS_FOR_RECORD_PAGE_SIZE,
   });

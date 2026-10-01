@@ -1104,6 +1104,7 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
           repository: threads,
           workspaceId: WORKSPACE_ID,
           threadId: THREAD_ID,
+          shouldRecordActivity: false,
           usage: {
             totalInputTokens: 1,
             totalOutputTokens: 2,

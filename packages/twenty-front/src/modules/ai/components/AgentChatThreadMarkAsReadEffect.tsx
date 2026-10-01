@@ -1,5 +1,6 @@
 import { useStore } from 'jotai';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { v4 } from 'uuid';
 import {
   isAgentChatThreadUnread,
   isDefined,
@@ -41,6 +42,7 @@ export const AgentChatThreadMarkAsReadEffect = () => {
   );
   const { markAgentChatThreadAsRead } = useAgentChatThreadParticipants();
   const hasActivity = isDefined(lastActivityAt);
+  const visitIdRef = useRef(v4());
 
   useEffect(() => {
     const handleVisibilityChange = () => setIsVisible(isDocumentVisible());
@@ -67,13 +69,17 @@ export const AgentChatThreadMarkAsReadEffect = () => {
 
   // Runs before the read mark below, so it sees where the member left off.
   // Kept for the rest of the visit, as this effect can run again once the
-  // thread is already marked read
+  // thread is already marked read; a later visit mounts a new effect and
+  // takes it again
   useEffect(() => {
+    const unreadSince = store.get(agentChatThreadUnreadSinceState.atom);
+
     if (
       !isDefined(threadId) ||
       !hasLoadedAgentChatThreadParticipants ||
       !hasActivity ||
-      store.get(agentChatThreadUnreadSinceState.atom)?.threadId === threadId
+      (unreadSince?.threadId === threadId &&
+        unreadSince.visitId === visitIdRef.current)
     ) {
       return;
     }
@@ -84,6 +90,7 @@ export const AgentChatThreadMarkAsReadEffect = () => {
 
     store.set(agentChatThreadUnreadSinceState.atom, {
       threadId,
+      visitId: visitIdRef.current,
       isUnread: isAgentChatThreadUnread(
         buildAgentChatThreadInboxState(
           store.get(recordStoreFamilyState.atomFamily(threadId)) as

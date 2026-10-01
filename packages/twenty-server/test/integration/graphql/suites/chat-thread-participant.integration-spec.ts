@@ -248,9 +248,10 @@ describe('Chat thread participant state through the authenticated API', () => {
 
     const owner = await findMyParticipant(threadId);
 
+    expect(lastActivityAt).not.toBeNull();
     expect(owner).toMatchObject({ archivedAt: null, snoozedUntil: null });
     expect(new Date(owner!.lastReadAt!).getTime()).toBe(
-      lastActivityAt.getTime(),
+      lastActivityAt!.getTime(),
     );
 
     // The other member archived before this activity, so it is back in their
@@ -261,7 +262,7 @@ describe('Chat thread participant state through the authenticated API', () => {
     );
 
     expect(new Date(member!.archivedAt!).getTime()).toBeLessThan(
-      lastActivityAt.getTime(),
+      lastActivityAt!.getTime(),
     );
     expect(member!.lastReadAt).toBeNull();
   });
@@ -283,5 +284,35 @@ describe('Chat thread participant state through the authenticated API', () => {
         response.body.data.myAgentChatThreadParticipants as Participant[]
       ).filter((participant) => participant.threadId === threadId),
     ).toHaveLength(1);
+  });
+
+  it('stops listing a thread once the member loses access to it', async () => {
+    const cache = getAppProviderByClassName<WorkspaceCacheService>(
+      'WorkspaceCacheService',
+    );
+    const { flatObjectMetadataMaps } = await cache.getOrRecompute(
+      SEED_APPLE_WORKSPACE_ID,
+      ['flatObjectMetadataMaps'],
+    );
+
+    await setManualRecordShare({
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      share: {
+        objectMetadataId:
+          flatObjectMetadataMaps.byUniversalIdentifier[
+            STANDARD_OBJECTS.agentChatThread.universalIdentifier
+          ]!.id,
+        recordId: threadId,
+        principalId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+        principalType: RecordSharePrincipalType.WORKSPACE_MEMBER,
+        accessLevel: RecordShareAccessLevel.READ,
+        sourceId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+      },
+      enabled: false,
+    });
+
+    expect(
+      await findMyParticipant(threadId, APPLE_JONY_MEMBER_ACCESS_TOKEN),
+    ).toBeUndefined();
   });
 });

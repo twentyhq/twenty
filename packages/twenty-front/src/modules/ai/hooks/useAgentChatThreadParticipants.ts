@@ -222,11 +222,13 @@ export const useAgentChatThreadParticipants = () => {
       ];
 
       // Writing in a thread catches the member up, so its unread line goes
-      const unreadSince = store.get(agentChatThreadUnreadSinceState.atom);
+      const previousUnreadSince = store.get(
+        agentChatThreadUnreadSinceState.atom,
+      );
 
-      if (unreadSince?.threadId === threadId) {
+      if (previousUnreadSince?.threadId === threadId) {
         store.set(agentChatThreadUnreadSinceState.atom, {
-          ...unreadSince,
+          ...previousUnreadSince,
           isUnread: false,
         });
       }
@@ -243,6 +245,12 @@ export const useAgentChatThreadParticipants = () => {
           lastActivityAt: previousThread?.lastActivityAt ?? null,
         });
         setParticipantState(threadId, previousState);
+
+        if (
+          store.get(agentChatThreadUnreadSinceState.atom)?.threadId === threadId
+        ) {
+          store.set(agentChatThreadUnreadSinceState.atom, previousUnreadSince);
+        }
       };
     },
     [applyAgentChatThreadUpdate, setParticipantState, store],

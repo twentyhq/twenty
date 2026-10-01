@@ -8,6 +8,7 @@ import { agentChatUsageComponentFamilyState } from '@/ai/states/agentChatUsageCo
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { buildAgentChatThreadListFilter } from '@/ai/utils/buildAgentChatThreadListFilter';
+import { getAgentChatThreadLastActivityFieldName } from '@/ai/utils/getAgentChatThreadLastActivityFieldName';
 import { getAgentChatUsageFromThread } from '@/ai/utils/getAgentChatUsageFromThread';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
@@ -80,7 +81,13 @@ export const useRefreshAgentChatThreads = () => {
                   ],
                 }
               : buildAgentChatThreadListFilter(chatObjectMetadataItem),
-            orderBy: [{ lastActivityAt: 'DescNullsLast' }],
+            orderBy: [
+              {
+                [getAgentChatThreadLastActivityFieldName(
+                  chatObjectMetadataItem,
+                )]: 'DescNullsLast',
+              },
+            ],
             limit: QUERY_MAX_RECORDS,
             lastCursor,
           },

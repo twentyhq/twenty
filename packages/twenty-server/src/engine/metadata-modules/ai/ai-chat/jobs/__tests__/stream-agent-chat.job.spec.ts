@@ -245,6 +245,7 @@ describe('StreamAgentChatJob', () => {
         : jest.fn().mockResolvedValue(undefined),
       generateTitleIfNeeded: jest.fn().mockResolvedValue(null),
       notifyThreadUsageUpdated: jest.fn().mockResolvedValue(undefined),
+      hasThreadInboxState: jest.fn().mockResolvedValue(true),
     };
     const chatExecutionService = {
       streamChat: streamChatRejection

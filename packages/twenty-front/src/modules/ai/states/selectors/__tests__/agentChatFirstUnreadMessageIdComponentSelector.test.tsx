@@ -52,10 +52,13 @@ const Wrapper = ({ children }: { children: ReactNode }) => (
 );
 
 const getFirstUnreadMessageId = (
-  unreadSince: AgentChatThreadUnreadSince | null,
+  unreadSince: Omit<AgentChatThreadUnreadSince, 'visitId'>,
   messages = MESSAGES,
 ) => {
-  jotaiStore.set(agentChatThreadUnreadSinceState.atom, unreadSince);
+  jotaiStore.set(agentChatThreadUnreadSinceState.atom, {
+    ...unreadSince,
+    visitId: 'visit',
+  });
   jotaiStore.set(
     agentChatMessagesComponentFamilyState.atomFamily({
       instanceId: INSTANCE_ID,

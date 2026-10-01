@@ -238,6 +238,16 @@ export class ToolCallAnswerService {
 
       await this.publishToolCallResolved({ threadId, toolCallId, workspaceId });
 
+      // An answer is a message the member sent, so the chat moves up and
+      // comes back to their inbox. A run's conversation is not in chat lists
+      if (!isDefined(workflowRunId)) {
+        await this.agentChatService.notifyThreadActivityUpdated({
+          threadId,
+          workspaceMemberId: args.workspaceMemberId,
+          workspaceId,
+        });
+      }
+
       // A run resumes in its own executor, and a conversation still waiting
       // on other calls resumes with the last of their answers.
       if (isDefined(step) || !isLastAnswer) {

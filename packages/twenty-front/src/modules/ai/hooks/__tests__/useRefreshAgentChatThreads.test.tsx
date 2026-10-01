@@ -21,7 +21,7 @@ const chatObjectMetadataItemAtom = atom<unknown>({
   id: 'chat-object',
   nameSingular: 'agentChatThread',
   namePlural: 'agentChatThreads',
-  fields: [{ name: 'title' }],
+  fields: [{ name: 'title' }, { name: 'lastActivityAt' }],
   readableFields: [{ name: 'title' }],
 });
 
@@ -135,6 +135,31 @@ describe('useRefreshAgentChatThreads', () => {
     expect(store.get(agentChatThreadsSelector.atom)).toMatchObject([
       { id: 'thread-1', title: 'Loaded thread' },
     ]);
+  });
+
+  it('orders by last change on a workspace the 2.45 upgrade has not reached', async () => {
+    const store = buildStore();
+    store.set(chatObjectMetadataItemAtom, {
+      id: 'chat-object',
+      nameSingular: 'agentChatThread',
+      namePlural: 'agentChatThreads',
+      fields: [{ name: 'title' }],
+      readableFields: [{ name: 'title' }],
+    });
+    queryMock.mockResolvedValue(buildPage([buildThread('thread-1', 'Chat')]));
+    const result = renderRefresh(store);
+
+    await act(async () => {
+      await result.current.refreshAgentChatThreads();
+    });
+
+    expect(queryMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        variables: expect.objectContaining({
+          orderBy: [{ updatedAt: 'DescNullsLast' }],
+        }),
+      }),
+    );
   });
 
   it('appends the next page after the loaded chats', async () => {

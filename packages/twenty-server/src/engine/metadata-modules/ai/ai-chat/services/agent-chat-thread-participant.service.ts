@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
 import { type AgentChatThreadParticipantRow } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-participant-row.type';
 import { getAgentChatThreadParticipantTable } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-agent-chat-thread-participant-table.util';
+import { hasAgentChatThreadInboxState } from 'src/engine/metadata-modules/ai/ai-chat/utils/has-agent-chat-thread-inbox-state.util';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
@@ -10,6 +11,7 @@ import {
   AiException,
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 type ParticipantArgs = {
   workspaceId: string;
@@ -27,15 +29,31 @@ export class AgentChatThreadParticipantService {
     @InjectAgentHistoryRepository('agentChatThread')
     private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
     private readonly sharingService: AgentChatSharingService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
-  findForWorkspaceMember({
+  async hasInboxState(workspaceId: string): Promise<boolean> {
+    const { flatObjectMetadataMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatObjectMetadataMaps',
+      ]);
+
+    return hasAgentChatThreadInboxState(flatObjectMetadataMaps);
+  }
+
+  // A member keeps their row after losing access to a thread, so rows are
+  // only returned for threads they can still read
+  async findForWorkspaceMember({
     workspaceId,
     workspaceMemberId,
   }: Omit<ParticipantArgs, 'threadId'>): Promise<
     AgentChatThreadParticipantRow[]
   > {
-    return this.threadRepository.query(workspaceId, ({ manager }) =>
+    if (!(await this.hasInboxState(workspaceId))) {
+      return [];
+    }
+
+    const rows = await this.threadRepository.query(workspaceId, ({ manager }) =>
       manager.query<AgentChatThreadParticipantRow[]>(
         `SELECT ${PARTICIPANT_COLUMNS}
          FROM ${getAgentChatThreadParticipantTable(workspaceId)}
@@ -43,6 +61,16 @@ export class AgentChatThreadParticipantService {
         [workspaceMemberId],
       ),
     );
+
+    const readableThreadIds = new Set(
+      await this.sharingService.findReadableThreadIds({
+        workspaceId,
+        workspaceMemberId,
+        threadIds: rows.map(({ threadId }) => threadId),
+      }),
+    );
+
+    return rows.filter(({ threadId }) => readableThreadIds.has(threadId));
   }
 
   async markAsRead(
@@ -131,7 +159,14 @@ export class AgentChatThreadParticipantService {
     workspaceId,
     workspaceMemberId,
     threadId,
-  }: ParticipantArgs): Promise<{ lastActivityAt: Date; updatedAt: Date }> {
+  }: ParticipantArgs): Promise<{
+    lastActivityAt: Date | null;
+    updatedAt: Date;
+  }> {
+    if (!(await this.hasInboxState(workspaceId))) {
+      return this.touchThread({ workspaceId, threadId });
+    }
+
     const participantTable = getAgentChatThreadParticipantTable(workspaceId);
 
     const rows = await this.threadRepository.query(
@@ -167,6 +202,36 @@ export class AgentChatThreadParticipantService {
     return rows[0];
   }
 
+  private async touchThread({
+    workspaceId,
+    threadId,
+  }: Omit<ParticipantArgs, 'workspaceMemberId'>): Promise<{
+    lastActivityAt: null;
+    updatedAt: Date;
+  }> {
+    const rows = await this.threadRepository.query(
+      workspaceId,
+      ({ manager, table }) =>
+        manager.query<{ updatedAt: Date }[]>(
+          `WITH thread AS (
+             UPDATE ${table('agentChatThread')} SET "updatedAt" = now()
+             WHERE id = $1 RETURNING "updatedAt"
+           )
+           SELECT "updatedAt" FROM thread`,
+          [threadId],
+        ),
+    );
+
+    if (rows.length !== 1) {
+      throw new AiException(
+        'Thread not found',
+        AiExceptionCode.THREAD_NOT_FOUND,
+      );
+    }
+
+    return { lastActivityAt: null, updatedAt: rows[0].updatedAt };
+  }
+
   private setArchive(
     args: ParticipantArgs,
     snoozedUntil: Date | null,
@@ -193,6 +258,13 @@ export class AgentChatThreadParticipantService {
     }) => string,
     parameters: unknown[],
   ): Promise<AgentChatThreadParticipantRow> {
+    if (!(await this.hasInboxState(workspaceId))) {
+      throw new AiException(
+        'Chat inbox state is not available until this workspace finishes upgrading',
+        AiExceptionCode.THREAD_NOT_FOUND,
+      );
+    }
+
     const rows = await this.threadRepository.query(
       workspaceId,
       ({ manager, table }) =>

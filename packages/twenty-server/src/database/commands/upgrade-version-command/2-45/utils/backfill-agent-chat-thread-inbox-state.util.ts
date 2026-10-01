@@ -1,5 +1,6 @@
 import { type EntityManager } from 'typeorm';
 
+import { MOVE_AGENT_CHAT_THREADS_TO_RECORD_MODEL_UPGRADE_MIGRATION_NAME } from 'src/database/commands/upgrade-version-command/2-45/utils/move-agent-chat-threads-to-record-model-upgrade-migration-name.constant';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
@@ -24,7 +25,9 @@ const getTables = (workspaceId: string) => {
 // Every member who could read a thread before this upgrade starts with it
 // read, so the upgrade itself does not light up every existing conversation.
 // Chats 2.44 moved from archived to the trash become archived for their owner
-// again: they keep archivedAt, which tells them apart from deleted chats.
+// again. They keep archivedAt, and were trashed no later than that move was
+// recorded, which tells them apart from chats a member restored and deleted
+// again since.
 export const backfillAgentChatThreadInboxState = async ({
   manager,
   workspaceId,
@@ -37,7 +40,8 @@ export const backfillAgentChatThreadInboxState = async ({
   const tables = getTables(workspaceId);
 
   const threads = await manager.query<{ id: string }[]>(
-    `UPDATE ${tables.thread} thread
+    `WITH updated AS (
+     UPDATE ${tables.thread} thread
      SET "lastActivityAt" = COALESCE(
        (
          SELECT max(message."createdAt")
@@ -50,7 +54,9 @@ export const backfillAgentChatThreadInboxState = async ({
        thread."createdAt"
      )
      WHERE thread."lastActivityAt" IS NULL
-     RETURNING thread.id`,
+     RETURNING thread.id
+     )
+     SELECT id FROM updated`,
   );
 
   const participants = await manager.query<{ threadId: string }[]>(
@@ -84,6 +90,13 @@ export const backfillAgentChatThreadInboxState = async ({
        WHERE thread."archivedAt" IS NOT NULL
          AND thread."deletedAt" IS NOT NULL
          AND thread."workspaceMemberId" IS NOT NULL
+         AND thread."deletedAt" <= (
+           SELECT min(migration."createdAt")
+           FROM core."upgradeMigration" migration
+           WHERE migration."workspaceId" = $1
+             AND migration.name = $2
+             AND migration.status = 'completed'
+         )
        RETURNING thread.id, thread."workspaceMemberId", thread."archivedAt", thread."lastActivityAt"
      )
      INSERT INTO ${tables.participant} AS participant ("threadId", "workspaceMemberId", "lastReadAt", "archivedAt")
@@ -95,6 +108,10 @@ export const backfillAgentChatThreadInboxState = async ({
      ON CONFLICT ("threadId", "workspaceMemberId") DO UPDATE SET
        "archivedAt" = EXCLUDED."archivedAt"
      RETURNING participant."threadId"`,
+    [
+      workspaceId,
+      MOVE_AGENT_CHAT_THREADS_TO_RECORD_MODEL_UPGRADE_MIGRATION_NAME,
+    ],
   );
 
   return {
@@ -105,7 +122,8 @@ export const backfillAgentChatThreadInboxState = async ({
 };
 
 // Only chats whose owner still holds them archived go back to the trash, so a
-// chat restored by hand after 2.44 stays where its owner put it
+// chat restored by hand after 2.44 stays where its owner put it. They go back
+// at the time the 2.44 move was recorded, so running up again finds them
 export const moveRestoredArchivedChatThreadsBackToTrash = async ({
   manager,
   workspaceId,
@@ -116,15 +134,31 @@ export const moveRestoredArchivedChatThreadsBackToTrash = async ({
   const tables = getTables(workspaceId);
 
   const threads = await manager.query<{ id: string }[]>(
-    `UPDATE ${tables.thread} thread
-     SET "deletedAt" = now()
+    `WITH moved AS (
+     UPDATE ${tables.thread} thread
+     SET "deletedAt" = COALESCE(
+       (
+         SELECT min(migration."createdAt")
+         FROM core."upgradeMigration" migration
+         WHERE migration."workspaceId" = $1
+           AND migration.name = $2
+           AND migration.status = 'completed'
+       ),
+       now()
+     )
      FROM ${tables.participant} participant
      WHERE participant."threadId" = thread.id
        AND participant."workspaceMemberId" = thread."workspaceMemberId"
        AND participant."archivedAt" IS NOT NULL
        AND thread."archivedAt" IS NOT NULL
        AND thread."deletedAt" IS NULL
-     RETURNING thread.id`,
+     RETURNING thread.id
+     )
+     SELECT id FROM moved`,
+    [
+      workspaceId,
+      MOVE_AGENT_CHAT_THREADS_TO_RECORD_MODEL_UPGRADE_MIGRATION_NAME,
+    ],
   );
 
   return threads.length;

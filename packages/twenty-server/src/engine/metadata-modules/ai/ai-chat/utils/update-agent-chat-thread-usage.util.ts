@@ -19,12 +19,14 @@ export const updateAgentChatThreadUsage = async ({
   threadId,
   streamId,
   usage,
+  shouldRecordActivity,
 }: {
   repository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>;
   workspaceId: string;
   threadId: string;
   streamId: string;
   usage: ThreadUsageUpdate;
+  shouldRecordActivity: boolean;
 }): Promise<{ affected: number }> =>
   repository.query(workspaceId, async ({ manager, table }) => {
     // Keep arithmetic in PostgreSQL and ownership in the same UPDATE. DTO numbers
@@ -41,7 +43,7 @@ export const updateAgentChatThreadUsage = async ({
         "totalCacheCreationTokens" = "totalCacheCreationTokens" + $8,
         "contextWindowTokens" = $9, "conversationSize" = $10,
         "pendingQuestionMessageId" = $11, "lastStreamError" = NULL,
-        "lastActivityAt" = clock_timestamp(), "updatedAt" = now()
+        ${shouldRecordActivity ? '"lastActivityAt" = clock_timestamp(),' : ''} "updatedAt" = now()
       WHERE id = $1 AND "activeStreamId" = $2
       RETURNING id
     ) SELECT id FROM updated`,

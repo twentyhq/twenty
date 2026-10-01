@@ -5,6 +5,8 @@ import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 import { type AddAgentChatThreadParticipantObjectCommand } from 'src/database/commands/upgrade-version-command/2-45/2-45-workspace-command-1790842377355-add-agent-chat-thread-participant-object.command';
 import { type BackfillAgentChatThreadInboxStateCommand } from 'src/database/commands/upgrade-version-command/2-45/2-45-workspace-command-1790842377356-backfill-agent-chat-thread-inbox-state.command';
+import { type AgentChatThreadParticipantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant.service';
+import { type AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { type UpgradeCommandRegistryService } from 'src/engine/core-modules/upgrade/services/upgrade-command-registry.service';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
@@ -26,6 +28,11 @@ const CREATED_AT = new Date('2026-01-01T00:00:00.000Z');
 const LAST_VISIBLE_MESSAGE_AT = new Date('2026-01-02T00:00:00.000Z');
 const HIDDEN_MESSAGE_AT = new Date('2026-01-03T00:00:00.000Z');
 const ARCHIVED_AT = new Date('2026-01-05T00:00:00.000Z');
+const MOVED_TO_TRASH_AT = new Date('2026-01-10T00:00:00.000Z');
+const MOVE_RECORDED_AT = new Date('2026-01-10T00:01:00.000Z');
+const DELETED_AGAIN_AT = new Date('2026-01-20T00:00:00.000Z');
+const MOVE_MIGRATION_NAME =
+  '2.44.0_MoveAgentChatThreadsToRecordModelCommand_1790751626421';
 
 type StoredParticipant = {
   threadId: string;
@@ -43,11 +50,20 @@ describe('2-45 workspace commands - agent chat thread inbox state (integration)'
   const emptyThreadId = randomUUID();
   const legacyArchivedThreadId = randomUUID();
   const deletedThreadId = randomUUID();
+  const deletedAgainThreadId = randomUUID();
+  const createdBeforeUpgradeThreadId = randomUUID();
+  let beforeUpgrade: {
+    createdThreadLastActivityAt: string | null;
+    recordedLastActivityAt: Date | null;
+    participants: unknown[];
+  };
   const threadIds = [
+    createdBeforeUpgradeThreadId,
     sharedThreadId,
     emptyThreadId,
     legacyArchivedThreadId,
     deletedThreadId,
+    deletedAgainThreadId,
   ];
 
   const runCommand = (
@@ -124,13 +140,50 @@ describe('2-45 workspace commands - agent chat thread inbox state (integration)'
     await runCommand(backfillCommand, 'down');
     await runCommand(objectCommand, 'down');
 
+    const chatService =
+      getAppProviderByClassName<AgentChatService>('AgentChatService');
+    const participantService =
+      getAppProviderByClassName<AgentChatThreadParticipantService>(
+        'AgentChatThreadParticipantService',
+      );
+    const createdThread = await chatService.createThread({
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+      id: createdBeforeUpgradeThreadId,
+      title: 'Created before the upgrade',
+    });
+    const { lastActivityAt } = await participantService.recordMemberActivity({
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+      threadId: createdBeforeUpgradeThreadId,
+    });
+
+    beforeUpgrade = {
+      createdThreadLastActivityAt: createdThread.lastActivityAt ?? null,
+      recordedLastActivityAt: lastActivityAt,
+      participants: await participantService.findForWorkspaceMember({
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+      }),
+    };
+
     await insertThread(sharedThreadId);
     await insertThread(emptyThreadId);
     await insertThread(legacyArchivedThreadId, {
       archivedAt: ARCHIVED_AT,
-      deletedAt: ARCHIVED_AT,
+      deletedAt: MOVED_TO_TRASH_AT,
     });
     await insertThread(deletedThreadId, { deletedAt: ARCHIVED_AT });
+    // Moved to the trash by 2.44, restored by its owner, then deleted again
+    await insertThread(deletedAgainThreadId, {
+      archivedAt: ARCHIVED_AT,
+      deletedAt: DELETED_AGAIN_AT,
+    });
+    await global.testDataSource.query(
+      `INSERT INTO core."upgradeMigration" (name, status, attempt, "executedByVersion", "workspaceId", "createdAt")
+       VALUES ($1, 'completed', 99, '2.44.0', $2, $3)`,
+      [MOVE_MIGRATION_NAME, SEED_APPLE_WORKSPACE_ID, MOVE_RECORDED_AT],
+    );
 
     await insertMessage(sharedThreadId, {
       createdAt: LAST_VISIBLE_MESSAGE_AT,
@@ -172,6 +225,10 @@ describe('2-45 workspace commands - agent chat thread inbox state (integration)'
 
   afterAll(async () => {
     await runCommand(objectCommand, 'up');
+    await global.testDataSource.query(
+      `DELETE FROM core."upgradeMigration" WHERE name = $1 AND attempt = 99 AND "workspaceId" = $2`,
+      [MOVE_MIGRATION_NAME, SEED_APPLE_WORKSPACE_ID],
+    );
     await global.testDataSource.query(
       `DELETE FROM ${SCHEMA}."agentMessage" WHERE "threadId" = ANY($1)`,
       [threadIds],
@@ -245,6 +302,12 @@ describe('2-45 workspace commands - agent chat thread inbox state (integration)'
     expect(threads[deletedThreadId].deletedAt).toEqual(ARCHIVED_AT);
   });
 
+  it('leaves a chat its owner deleted again after the 2.44 move in the trash', async () => {
+    const threads = await readThreads();
+
+    expect(threads[deletedAgainThreadId].deletedAt).toEqual(DELETED_AGAIN_AT);
+  });
+
   it('changes nothing when it runs again', async () => {
     const participantsBefore = await readParticipants();
 
@@ -262,9 +325,17 @@ describe('2-45 workspace commands - agent chat thread inbox state (integration)'
 
     const threads = await readThreads();
 
-    expect(threads[legacyArchivedThreadId].deletedAt).not.toBeNull();
+    expect(threads[legacyArchivedThreadId].deletedAt).toEqual(MOVE_RECORDED_AT);
     expect(threads[sharedThreadId].deletedAt).toBeNull();
 
     await runCommand(backfillCommand, 'up');
+
+    expect((await readThreads())[legacyArchivedThreadId].deletedAt).toBeNull();
+  });
+
+  it('keeps chats working on a workspace the upgrade has not reached yet', () => {
+    expect(beforeUpgrade.createdThreadLastActivityAt).toBeNull();
+    expect(beforeUpgrade.recordedLastActivityAt).toBeNull();
+    expect(beforeUpgrade.participants).toEqual([]);
   });
 });

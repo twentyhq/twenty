@@ -764,7 +764,7 @@ export class AgentChatService {
 
     const threadAfter = {
       ...thread,
-      lastActivityAt: lastActivityAt.toISOString(),
+      lastActivityAt: lastActivityAt?.toISOString() ?? thread.lastActivityAt,
       updatedAt: updatedAt.toISOString(),
     };
 
@@ -773,6 +773,10 @@ export class AgentChatService {
       threadBefore: thread,
       threadAfter,
     });
+  }
+
+  hasThreadInboxState(workspaceId: string): Promise<boolean> {
+    return this.participantService.hasInboxState(workspaceId);
   }
 
   async notifyThreadUsageUpdated({
