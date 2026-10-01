@@ -1,5 +1,6 @@
 /* @license Enterprise */
 
+import { msg } from '@lingui/core/macro';
 import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
@@ -48,6 +49,7 @@ export class ObjectAccessOverviewService {
       throw new RecordShareException(
         'Object not found',
         RecordShareExceptionCode.OBJECT_NOT_FOUND,
+        { userFriendlyMessage: msg`This object no longer exists.` },
       );
     }
 
