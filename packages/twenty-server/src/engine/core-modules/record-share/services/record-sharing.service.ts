@@ -186,7 +186,13 @@ export class RecordSharingService {
     if (!this.isShareable(sharingObject)) {
       throw new NotFoundError('Record not found');
     }
-    const shareWith = { ...args.principal, accessLevel: args.accessLevel };
+    // Withdrawing a share ignores its level, which may be NONE on the way out
+    const shareWith = {
+      ...args.principal,
+      accessLevel: args.enabled
+        ? args.accessLevel
+        : RecordShareAccessLevel.READ,
+    };
     const principal = resolveShareWithPrincipalOrThrow(shareWith);
     await this.workspaceOrmManager.executeInWorkspaceContext(
       () =>
@@ -331,6 +337,22 @@ export class RecordSharingService {
             accessLevel: RecordShareAccessLevel.FULL,
             rowCause: RecordShareRowCause.OWNER,
             sourceId: share.recordId,
+          },
+        ],
+      });
+    }
+
+    // On a record open by default, owner rows only exist to keep a
+    // restriction manageable, so they go once the record follows the default
+    if (isDefaultAccess) {
+      await this.recordShareStorageService.deleteMatching({
+        workspaceId,
+        transactionScope,
+        criteria: [
+          {
+            objectMetadataId: share.objectMetadataId,
+            recordId: share.recordId,
+            rowCause: RecordShareRowCause.OWNER,
           },
         ],
       });

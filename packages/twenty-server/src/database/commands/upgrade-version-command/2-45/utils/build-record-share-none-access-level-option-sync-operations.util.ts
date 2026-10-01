@@ -38,7 +38,10 @@ export const buildRecordShareNoneAccessLevelOptionSyncOperations = ({
   now,
   direction,
 }: {
-  existingFlatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+  existingFlatFieldMetadataMaps: Pick<
+    FlatEntityMaps<FlatFieldMetadata>,
+    'byUniversalIdentifier'
+  >;
   now: string;
   direction: 'up' | 'down';
 }): FlatEntityToCreateDeleteUpdate<'fieldMetadata'> => {

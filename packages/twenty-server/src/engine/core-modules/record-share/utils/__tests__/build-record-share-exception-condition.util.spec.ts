@@ -25,8 +25,16 @@ describe('buildRecordShareExceptionCondition', () => {
       RecordShareAccessLevel.FULL,
     ]);
 
-    expect(compileNamedParameters(sql, parameters)).toEqual({
-      text: 'NOT EXISTS (SELECT 1 FROM "workspace_abc"."recordShare" AS "company_recordShareRestriction" WHERE "company_recordShareRestriction"."recordId" = "company"."id" AND "company_recordShareRestriction"."objectMetadataId" = $1 AND "company_recordShareRestriction"."principalId" = $2 AND "company_recordShareRestriction"."accessLevel" IN ($3, $4) AND "company_recordShareRestriction"."deletedAt" IS NULL AND NOT EXISTS (SELECT 1 FROM "workspace_abc"."recordShare" AS "company_recordShareGrant" WHERE "company_recordShareGrant"."recordId" = "company_recordShareRestriction"."recordId" AND "company_recordShareGrant"."objectMetadataId" = $1 AND "company_recordShareGrant"."principalId" = ANY($5) AND "company_recordShareGrant"."accessLevel" IN ($6, $7) AND "company_recordShareGrant"."deletedAt" IS NULL))',
+    const { text, values } = compileNamedParameters(sql, parameters);
+
+    expect({
+      text: text.replace(
+        /recordShare(Restriction|Grant)_[0-9a-f]{10}/g,
+        'recordShare$1',
+      ),
+      values,
+    }).toEqual({
+      text: 'NOT EXISTS (SELECT 1 FROM "workspace_abc"."recordShare" AS "recordShareRestriction" WHERE "recordShareRestriction"."recordId" = "company"."id" AND "recordShareRestriction"."objectMetadataId" = $1 AND "recordShareRestriction"."principalId" = $2 AND "recordShareRestriction"."accessLevel" IN ($3, $4) AND "recordShareRestriction"."deletedAt" IS NULL AND NOT EXISTS (SELECT 1 FROM "workspace_abc"."recordShare" AS "recordShareGrant" WHERE "recordShareGrant"."recordId" = "recordShareRestriction"."recordId" AND "recordShareGrant"."objectMetadataId" = $1 AND "recordShareGrant"."principalId" = ANY($5) AND "recordShareGrant"."accessLevel" IN ($6, $7) AND "recordShareGrant"."deletedAt" IS NULL))',
       values: [
         OBJECT_METADATA_ID,
         EVERYONE_PRINCIPAL_ID,
@@ -37,6 +45,23 @@ describe('buildRecordShareExceptionCondition', () => {
         RecordShareAccessLevel.FULL,
       ],
     });
+  });
+
+  it('should keep its aliases apart whatever the length of the table alias', () => {
+    const { sql } = buildRecordShareExceptionCondition({
+      tableAlias: 'a'.repeat(80),
+      recordShareTableExpression: '"workspace_abc"."recordShare"',
+      objectMetadataId: OBJECT_METADATA_ID,
+      principalIds: PRINCIPAL_IDS,
+      accessLevels: [RecordShareAccessLevel.FULL],
+    });
+
+    const aliases = [...sql.matchAll(/ AS "([^"]+)"/g)].map(([, alias]) =>
+      Buffer.from(alias).subarray(0, 63).toString(),
+    );
+
+    expect(aliases).toHaveLength(2);
+    expect(new Set(aliases).size).toBe(2);
   });
 
   it('should only treat levels below the required ones as restrictions', () => {
