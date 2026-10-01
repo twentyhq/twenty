@@ -16,6 +16,7 @@ export const NumberInput = ({
   value,
   defaultValue,
   onValueChange,
+  allowOutOfRange = false,
   min,
   max,
   step = 1,
@@ -54,6 +55,7 @@ export const NumberInput = ({
       }}
       min={min}
       max={max}
+      allowOutOfRange={allowOutOfRange}
       step={step}
       smallStep={step}
       largeStep={step}

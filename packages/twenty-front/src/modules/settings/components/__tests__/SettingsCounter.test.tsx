@@ -9,8 +9,10 @@ import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentTyp
 
 const RetentionCounter = ({
   onChange,
+  showButtons = false,
 }: {
   onChange: (value: number) => void;
+  showButtons?: boolean;
 }) => {
   const [value, setValue] = useState(90);
 
@@ -25,7 +27,7 @@ const RetentionCounter = ({
       }}
       minValue={30}
       maxValue={1095}
-      showButtons={false}
+      showButtons={showButtons}
     />
   );
 };
@@ -47,11 +49,113 @@ it('associates settings copy and preserves the minimum when clearing once', asyn
   );
 
   await user.clear(input);
+
+  expect(onChange).toHaveBeenCalledTimes(1);
+  expect(onChange).toHaveBeenCalledWith(30);
+
   await user.tab();
 
   expect(onChange).toHaveBeenCalledTimes(1);
   expect(onChange).toHaveBeenCalledWith(30);
   expect(input).toHaveValue('30');
+});
+
+it('ignores below-minimum drafts and persists valid retention edits immediately', async () => {
+  const onChange = jest.fn();
+  const user = userEvent.setup();
+
+  render(
+    <JotaiProvider store={createStore()}>
+      <RetentionCounter onChange={onChange} />
+    </JotaiProvider>,
+  );
+
+  const input = screen.getByRole('textbox', { name: 'Log retention' });
+
+  await user.tripleClick(input);
+  await user.keyboard('6');
+
+  expect(input).toHaveValue('6');
+  expect(onChange).not.toHaveBeenCalled();
+
+  await user.keyboard('0');
+
+  expect(input).toHaveValue('60');
+  expect(onChange).toHaveBeenCalledTimes(1);
+  expect(onChange).toHaveBeenCalledWith(60);
+
+  await user.tab();
+
+  expect(onChange).toHaveBeenCalledTimes(1);
+  expect(onChange).toHaveBeenCalledWith(60);
+  expect(input).toHaveValue('60');
+});
+
+it('restores the saved value when a below-minimum draft loses focus', async () => {
+  const onChange = jest.fn();
+  const user = userEvent.setup();
+
+  render(
+    <JotaiProvider store={createStore()}>
+      <RetentionCounter onChange={onChange} />
+    </JotaiProvider>,
+  );
+
+  const input = screen.getByRole('textbox', { name: 'Log retention' });
+
+  await user.tripleClick(input);
+  await user.keyboard('4');
+  await user.tab();
+
+  expect(input).toHaveValue('90');
+  expect(onChange).not.toHaveBeenCalled();
+});
+
+it('clamps a pasted retention value to the maximum exactly once', async () => {
+  const onChange = jest.fn();
+  const user = userEvent.setup();
+
+  render(
+    <JotaiProvider store={createStore()}>
+      <RetentionCounter onChange={onChange} />
+    </JotaiProvider>,
+  );
+
+  const input = screen.getByRole('textbox', { name: 'Log retention' });
+
+  await user.tripleClick(input);
+  await user.paste('2000');
+
+  expect(onChange).toHaveBeenCalledTimes(1);
+  expect(onChange).toHaveBeenCalledWith(1095);
+
+  await user.tab();
+
+  expect(input).toHaveValue('1095');
+  expect(onChange).toHaveBeenCalledTimes(1);
+});
+
+it('persists each pointer and keyboard adjustment once', async () => {
+  const onChange = jest.fn();
+  const user = userEvent.setup();
+
+  render(
+    <JotaiProvider store={createStore()}>
+      <RetentionCounter onChange={onChange} showButtons />
+    </JotaiProvider>,
+  );
+
+  await user.click(screen.getByRole('button', { name: 'Increase value' }));
+
+  expect(onChange).toHaveBeenCalledTimes(1);
+  expect(onChange).toHaveBeenLastCalledWith(91);
+
+  await user.click(screen.getByRole('textbox', { name: 'Log retention' }));
+  await user.keyboard('{ArrowDown}');
+  await user.tab();
+
+  expect(onChange).toHaveBeenCalledTimes(2);
+  expect(onChange).toHaveBeenLastCalledWith(90);
 });
 
 it('restores an already saved minimum without persisting another change', async () => {

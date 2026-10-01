@@ -6,6 +6,7 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useId, useRef } from 'react';
 import { Key } from 'ts-key-enum';
+import { isDefined } from 'twenty-shared/utils';
 import { NumberInput } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
@@ -78,7 +79,13 @@ export const SettingsCounter = ({
   });
 
   const handleValueChange = (nextValue: number | null) => {
-    const nextSettingsValue = nextValue ?? minValue;
+    if (isDefined(nextValue) && nextValue < minValue) {
+      return;
+    }
+
+    const nextSettingsValue = isDefined(maxValue)
+      ? Math.min(nextValue ?? minValue, maxValue)
+      : (nextValue ?? minValue);
 
     if (nextSettingsValue === value) {
       return;
@@ -95,6 +102,7 @@ export const SettingsCounter = ({
         aria-describedby={ariaDescribedBy}
         value={value}
         onValueChange={handleValueChange}
+        allowOutOfRange
         min={minValue}
         max={maxValue}
         disabled={disabled}

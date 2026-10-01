@@ -141,3 +141,31 @@ export const WithFieldAndRef: Story = {
     await expect(input).toHaveFocus();
   },
 };
+
+export const OutOfRangeValidation: Story = {
+  args: { defaultValue: 60, min: 30, max: 90, allowOutOfRange: true },
+  render: (args) => <NumberInputFormExample {...args} />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const input = canvas.getByRole('textbox', { name: 'Quantity' });
+    const saveButton = canvas.getByRole('button', { name: 'Save quantity' });
+
+    await userEvent.tripleClick(input);
+    await userEvent.keyboard('999');
+    await userEvent.click(saveButton);
+    await expect(input).toHaveValue('999');
+    await expect(input.closest('form')).toBeInvalid();
+    await expect(canvas.getByLabelText('Submission count')).toHaveTextContent(
+      '0',
+    );
+    await userEvent.tripleClick(input);
+    await userEvent.keyboard('60');
+    await userEvent.click(saveButton);
+    await expect(canvas.getByLabelText('Saved quantity')).toHaveTextContent(
+      '60',
+    );
+    await expect(canvas.getByLabelText('Submission count')).toHaveTextContent(
+      '1',
+    );
+  },
+};

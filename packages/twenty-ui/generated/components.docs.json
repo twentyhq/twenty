@@ -1562,6 +1562,13 @@
     "slug": "input/number-input",
     "props": [
       {
+        "name": "allowOutOfRange",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Allows typed and pasted values outside the bounds for application policy and native range validation. Buttons and keyboard adjustments remain bounded."
+      },
+      {
         "name": "aria-roledescription",
         "type": "string",
         "required": false,
@@ -1622,14 +1629,14 @@
         "type": "number",
         "required": false,
         "defaultValue": null,
-        "description": "Inclusive maximum for numeric changes."
+        "description": "Inclusive maximum. Typed values clamp unless allowOutOfRange is enabled."
       },
       {
         "name": "min",
         "type": "number",
         "required": false,
         "defaultValue": null,
-        "description": "Inclusive minimum for numeric changes."
+        "description": "Inclusive minimum. Typed values clamp unless allowOutOfRange is enabled."
       },
       {
         "name": "name",

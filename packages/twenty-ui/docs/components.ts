@@ -219,6 +219,7 @@ export const DOCUMENTED_COMPONENTS = [
     slug: 'input/number-input',
     propDescriptions: NUMBER_INPUT_PROP_DESCRIPTIONS,
     propDefaults: {
+      allowOutOfRange: 'false',
       step: '1',
       showButtons: 'true',
       decrementLabel: 'Decrease value',

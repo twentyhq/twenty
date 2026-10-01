@@ -18,6 +18,7 @@ export type NumberInputProps = Omit<
 > &
   Pick<
     NumberField.Root.Props,
+    | 'allowOutOfRange'
     | 'defaultValue'
     | 'disabled'
     | 'max'

@@ -203,3 +203,74 @@ export const ReadOnly: Story = {
     await expect(args.onValueChange).not.toHaveBeenCalled();
   },
 };
+
+export const OutOfRangeDraft: Story = {
+  args: { defaultValue: 60, min: 30, max: 90, allowOutOfRange: true },
+  render: (args) => <ControlledNumberInputExample {...args} />,
+  play: async ({ canvasElement, args }) => {
+    const input = within(canvasElement).getByRole('textbox', {
+      name: 'Quantity',
+    });
+
+    await userEvent.tripleClick(input);
+    await userEvent.keyboard('6');
+    await expect(input).toHaveValue('6');
+    await expect(args.onValueChange).toHaveBeenCalledTimes(1);
+    await expect(args.onValueChange).toHaveBeenLastCalledWith(
+      6,
+      expect.anything(),
+    );
+    await userEvent.keyboard('0');
+    await expect(input).toHaveValue('60');
+    await expect(args.onValueChange).toHaveBeenCalledTimes(2);
+    await expect(args.onValueChange).toHaveBeenLastCalledWith(
+      60,
+      expect.anything(),
+    );
+    await userEvent.tab();
+    await expect(input).toHaveValue('60');
+    await expect(args.onValueChange).toHaveBeenCalledTimes(2);
+    await userEvent.click(input);
+    await userEvent.tab();
+    await expect(args.onValueChange).toHaveBeenCalledTimes(2);
+  },
+};
+
+export const OutOfRangeStepping: Story = {
+  args: { defaultValue: 60, min: 30, max: 90, allowOutOfRange: true },
+  render: (args) => <ControlledNumberInputExample {...args} />,
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const input = canvas.getByRole('textbox', { name: 'Quantity' });
+    const decrease = canvas.getByRole('button', { name: 'Decrease value' });
+    const increase = canvas.getByRole('button', { name: 'Increase value' });
+
+    await userEvent.tripleClick(input);
+    await userEvent.keyboard('999');
+    await expect(input).toHaveValue('999');
+    await userEvent.tab();
+    await expect(input).toHaveValue('999');
+    await expect(args.onValueChange).toHaveBeenCalledTimes(3);
+    await expect(args.onValueChange).toHaveBeenLastCalledWith(
+      999,
+      expect.anything(),
+    );
+    await userEvent.click(decrease);
+    await expect(input).toHaveValue('90');
+    await expect(increase).toBeDisabled();
+    await expect(args.onValueChange).toHaveBeenCalledTimes(4);
+    await expect(args.onValueChange).toHaveBeenLastCalledWith(
+      90,
+      expect.anything(),
+    );
+    await userEvent.click(input);
+    await userEvent.keyboard('{Home}{ArrowDown}');
+    await expect(input).toHaveValue('30');
+    await expect(decrease).toBeDisabled();
+    await expect(args.onValueChange).toHaveBeenCalledTimes(5);
+    await expect(args.onValueChange).toHaveBeenLastCalledWith(
+      30,
+      expect.anything(),
+    );
+  },
+};

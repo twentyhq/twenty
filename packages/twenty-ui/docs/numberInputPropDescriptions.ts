@@ -7,8 +7,10 @@ export const NUMBER_INPUT_PROP_DESCRIPTIONS = {
   defaultValue: 'Initial number when the field owns its value.',
   onValueChange:
     'Called with the next number or null and event details when the numeric value changes. Clearing reports null; incomplete text does not report a number.',
-  min: 'Inclusive minimum for numeric changes.',
-  max: 'Inclusive maximum for numeric changes.',
+  allowOutOfRange:
+    'Allows typed and pasted values outside the bounds for application policy and native range validation. Buttons and keyboard adjustments remain bounded.',
+  min: 'Inclusive minimum. Typed values clamp unless allowOutOfRange is enabled.',
+  max: 'Inclusive maximum. Typed values clamp unless allowOutOfRange is enabled.',
   step: 'Amount added or subtracted by the buttons and arrow keys.',
   showButtons: 'Shows the decrement and increment buttons.',
   decrementLabel: 'Accessible name for the decrement button.',

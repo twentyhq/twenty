@@ -11,6 +11,10 @@
  *   npx nx generate:ui twenty-docs
  */}
 
+<ParamField body="allowOutOfRange" type="boolean" default="false">
+  Allows typed and pasted values outside the bounds for application policy and native range validation. Buttons and keyboard adjustments remain bounded.
+</ParamField>
+
 <ParamField body="aria-roledescription" type="string" default="Number field">
   A user-friendly description of the input's role for assistive tech. This is a role
   description, not an accessible name — use `Field.Label` or `aria-label` to name the control.
@@ -45,11 +49,11 @@
 </ParamField>
 
 <ParamField body="max" type="number">
-  Inclusive maximum for numeric changes.
+  Inclusive maximum. Typed values clamp unless allowOutOfRange is enabled.
 </ParamField>
 
 <ParamField body="min" type="number">
-  Inclusive minimum for numeric changes.
+  Inclusive minimum. Typed values clamp unless allowOutOfRange is enabled.
 </ParamField>
 
 <ParamField body="name" type="string">

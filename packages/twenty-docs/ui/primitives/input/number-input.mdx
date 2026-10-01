@@ -42,7 +42,13 @@ export const QuantityInput = () => {
 };
 ```
 
-Clearing the field reports `null`. Incomplete text such as `-` or `+` remains editable without reporting an invalid number until it is replaced or stepped. Parseable numeric edits report the bounded value; the displayed draft is normalized on blur. Receiving the same numeric value again does not call `onValueChange` again.
+Clearing the field reports `null`. Incomplete text such as `-` or `+` remains editable without reporting an invalid number until it is replaced or stepped. By default, parseable numeric edits report the bounded value; the displayed draft is normalized on blur. Values equal to the current value do not call `onValueChange` again.
+
+## Application validation
+
+Set `allowOutOfRange` when the application needs the parsed value before applying its own limits or validation. `onValueChange` then receives typed and pasted numbers outside the range. Uncontrolled fields, or controlled fields that accept those values, preserve them on blur. For example, replacing `60` with `45` reports `4` and then `45`, even when `min={30}`. The application can ignore the intermediate value without accidentally saving the minimum.
+
+Buttons and keyboard adjustments still stop at `min` and `max`. Native form validation prevents submission while an accepted value is outside that range. `allowOutOfRange` defaults to `false`.
 
 ## Bounds and interaction
 
