@@ -16,7 +16,7 @@ import MetricRowReference from '/snippets/ui/generated/components/metric-row.mdx
 
 ## Usage
 
-Pass the visible label as children and the formatted value through `value`. Add `progress` when the metric has a known percentage.
+Pass a nonempty text label as required children and the formatted value through `value`. Add `progress` when the metric has a known percentage.
 
 ```tsx
 import { MetricRow } from 'twenty-ui/components';
@@ -45,7 +45,22 @@ export const CompletedMetric = () => (
 
 ## Composition and accessibility
 
-The label and value can contain formatted text. A string value is also exposed as the progress ring's accessible value text. Other content keeps the ring's percentage value text. Keep the label non-interactive so it can name the progress ring clearly. The optional `startIcon` is decorative and renders at 14px.
+The required text label names the progress ring. A string value is also exposed as its accessible value text. For formatted value content, supply `progressValueText` when a percentage does not describe the metric fully. This text overrides the string value fallback. Without it, other content keeps the ring's percentage value text. The optional `startIcon` is decorative and renders at 14px.
+
+```tsx
+import { MetricRow } from 'twenty-ui/components';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const FormattedStorageMetric = () => (
+  <MetricRow
+    value={<Text render={<bdi />}>12 / 20 GB</Text>}
+    progress={60}
+    progressValueText="12 of 20 gigabytes used"
+  >
+    Storage
+  </MetricRow>
+);
+```
 
 Native attributes, `className`, `style`, and `ref` target the outer row. `render` can replace that element. Progress stays controlled and bounded to 0 to 100, with the same reduced-motion behavior as `ProgressRing`.
 

@@ -16,6 +16,7 @@ export const MetricRow = ({
   value,
   progress,
   progressColor,
+  progressValueText,
   render,
   ref,
   className,
@@ -43,7 +44,9 @@ export const MetricRow = ({
               size="sm"
               barColor={progressColor}
               aria-labelledby={labelId}
-              aria-valuetext={isString(value) ? value : undefined}
+              aria-valuetext={
+                progressValueText ?? (isString(value) ? value : undefined)
+              }
             >
               {value}
             </ProgressRing>

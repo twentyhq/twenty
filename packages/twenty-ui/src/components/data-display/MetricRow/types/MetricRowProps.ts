@@ -3,9 +3,14 @@ import { type ReactNode } from 'react';
 
 import { type IconComponent } from '@ui/icon';
 
-export type MetricRowProps = useRender.ComponentProps<'div'> & {
+export type MetricRowProps = Omit<
+  useRender.ComponentProps<'div'>,
+  'children'
+> & {
+  children: string;
   startIcon?: IconComponent;
   value: ReactNode;
   progress?: number;
   progressColor?: string;
+  progressValueText?: string;
 };

@@ -11,8 +11,8 @@
  *   npx nx generate:ui twenty-docs
  */}
 
-<ParamField body="children" type="ReactNode">
-  Visible label that also names the optional progress ring.
+<ParamField body="children" type="string" required>
+  Required nonempty text label that also names the optional progress ring.
 </ParamField>
 
 <ParamField body="className" type="string">
@@ -25,6 +25,10 @@
 
 <ParamField body="progressColor" type="string">
   CSS color of the filled arc when progress is provided.
+</ParamField>
+
+<ParamField body="progressValueText" type="string">
+  Accessible value text for the progress ring. Overrides the string value fallback; supply it when formatted content needs more context than a percentage.
 </ParamField>
 
 <ParamField body="render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, {}&gt;">

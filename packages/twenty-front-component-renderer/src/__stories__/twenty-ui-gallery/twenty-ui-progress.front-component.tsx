@@ -4,6 +4,7 @@ import { MetricRow } from 'twenty-ui/components';
 import { IconDatabase } from 'twenty-ui/icon';
 import { ProgressRing } from 'twenty-ui/primitives/feedback';
 import { Button } from 'twenty-ui/primitives/input';
+import { Text } from 'twenty-ui/primitives/typography';
 
 import { TwentyUiGalleryCard } from '@/__stories__/shared/front-components/twenty-ui-gallery-card';
 
@@ -21,8 +22,9 @@ const ProgressExample = () => {
       </ProgressRing>
       <MetricRow
         startIcon={IconDatabase}
-        value={`${progress} / 100 GB`}
+        value={<Text render={<bdi />}>{progress} / 100 GB</Text>}
         progress={progress}
+        progressValueText={`${progress} of 100 gigabytes used`}
       >
         Storage
       </MetricRow>

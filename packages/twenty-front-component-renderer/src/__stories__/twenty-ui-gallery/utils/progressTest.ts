@@ -22,7 +22,10 @@ export const progressTest: TwentyUiGalleryPlayFunction = async ({
   expect(importProgress).toHaveAttribute('aria-valuemax', '100');
   expect(importProgress).toHaveAttribute('aria-valuetext', '25 of 100 records');
   expect(storageProgress).toHaveAttribute('aria-valuenow', '25');
-  expect(storageProgress).toHaveAttribute('aria-valuetext', '25 / 100 GB');
+  expect(storageProgress).toHaveAttribute(
+    'aria-valuetext',
+    '25 of 100 gigabytes used',
+  );
   expect(canvas.getByText('25 / 100 GB')).toBeVisible();
   expect(canvas.getByText('0')).toBeVisible();
   expect(canvas.getAllByRole('progressbar')).toHaveLength(4);
@@ -44,7 +47,10 @@ export const progressTest: TwentyUiGalleryPlayFunction = async ({
       '75 of 100 records',
     );
     expect(storageProgress).toHaveAttribute('aria-valuenow', '75');
-    expect(storageProgress).toHaveAttribute('aria-valuetext', '75 / 100 GB');
+    expect(storageProgress).toHaveAttribute(
+      'aria-valuetext',
+      '75 of 100 gigabytes used',
+    );
     expect(canvas.getByText('75 / 100 GB')).toBeVisible();
   });
   expect(errorHandler).not.toHaveBeenCalled();

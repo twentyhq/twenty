@@ -83,10 +83,10 @@
     "props": [
       {
         "name": "children",
-        "type": "ReactNode",
-        "required": false,
+        "type": "string",
+        "required": true,
         "defaultValue": null,
-        "description": "Visible label that also names the optional progress ring."
+        "description": "Required nonempty text label that also names the optional progress ring."
       },
       {
         "name": "className",
@@ -108,6 +108,13 @@
         "required": false,
         "defaultValue": null,
         "description": "CSS color of the filled arc when progress is provided."
+      },
+      {
+        "name": "progressValueText",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": "Accessible value text for the progress ring. Overrides the string value fallback; supply it when formatted content needs more context than a percentage."
       },
       {
         "name": "render",

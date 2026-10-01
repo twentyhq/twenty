@@ -127,6 +127,7 @@ export const CatalogDark: Story = {
 export const RightToLeft: Story = {
   args: {
     dir: 'rtl',
+    progressValueText: '75 of 100 files imported',
     value: (
       <Text render={<bdi />} dir="ltr">
         75 of 100
@@ -140,6 +141,10 @@ export const RightToLeft: Story = {
       name: 'Imported files',
     });
 
+    await expect(progress).toHaveAttribute(
+      'aria-valuetext',
+      '75 of 100 files imported',
+    );
     await expect(progress.getBoundingClientRect().right).toBeLessThan(
       label.getBoundingClientRect().left,
     );
