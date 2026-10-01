@@ -1,7 +1,6 @@
 import { defineConfig, devices } from '@playwright/test';
 import * as path from 'path';
 
-// Front-end base URL of the running Twenty instance under test.
 const FRONT_BASE_URL = process.env.FRONT_BASE_URL ?? 'http://localhost:3001';
 
 export default defineConfig({

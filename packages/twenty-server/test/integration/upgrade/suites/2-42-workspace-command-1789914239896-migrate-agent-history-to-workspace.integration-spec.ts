@@ -17,8 +17,8 @@ import { type UpgradeCommandRegistryService } from 'src/engine/core-modules/upgr
 import { type WorkspaceCommandRunnerService } from 'src/engine/core-modules/upgrade/services/workspace-command-runner.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { type AgentChatStreamHeartbeatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-heartbeat.service';
-import { AGENT_HISTORY_STORAGE_KEY } from 'src/engine/metadata-modules/ai/ai-history/constants/agent-history-storage-key.constant';
-import { type AgentHistoryStorageService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-storage.service';
+import { AGENT_HISTORY_MIGRATION_STORAGE_KEY } from 'src/database/commands/agent-history/agent-history-migration-storage-key.constant';
+import { type AgentHistoryUpgradeStorageService } from 'src/database/commands/agent-history/agent-history-upgrade-storage.service';
 import { type WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -71,7 +71,7 @@ describe('versioned agent history upgrade (integration)', () => {
   let command: MigrateAgentHistoryToWorkspaceCommand;
   let dataSource: DataSource;
   let workspaceOrmManager: WorkspaceOrmManager;
-  let storage: AgentHistoryStorageService;
+  let storage: AgentHistoryUpgradeStorageService;
   let heartbeat: AgentChatStreamHeartbeatService;
   let upgradeRunner: WorkspaceCommandRunnerService;
   let upgradeCommandName: string;
@@ -108,7 +108,7 @@ describe('versioned agent history upgrade (integration)', () => {
     workspaceOrmManager = getAppProviderByClassName<WorkspaceOrmManager>(
       'WorkspaceOrmManager',
     );
-    storage = getAppProviderByClassName<AgentHistoryStorageService>(
+    storage = getAppProviderByClassName<AgentHistoryUpgradeStorageService>(
       'AgentHistoryUpgradeStorageService',
     );
     heartbeat = getAppProviderByClassName<AgentChatStreamHeartbeatService>(
@@ -204,7 +204,7 @@ describe('versioned agent history upgrade (integration)', () => {
     );
     await dataSource.query(
       'DELETE FROM core."keyValuePair" WHERE "workspaceId" = $1 AND key = $2',
-      [WORKSPACE_ID, AGENT_HISTORY_STORAGE_KEY],
+      [WORKSPACE_ID, AGENT_HISTORY_MIGRATION_STORAGE_KEY],
     );
     await getAppProviderByClassName<WorkspaceCacheService>(
       'WorkspaceCacheService',
@@ -309,7 +309,7 @@ describe('versioned agent history upgrade (integration)', () => {
       expect(
         await dataSource.query(
           'SELECT 1 FROM core."keyValuePair" WHERE "workspaceId" = $1 AND key = $2',
-          [workspaceId, AGENT_HISTORY_STORAGE_KEY],
+          [workspaceId, AGENT_HISTORY_MIGRATION_STORAGE_KEY],
         ),
       ).toHaveLength(0);
       expect(
@@ -338,7 +338,7 @@ describe('versioned agent history upgrade (integration)', () => {
       await expect(command.up(args)).rejects.toThrow(/schema is missing/i);
       await dataSource.query(
         'DELETE FROM core."keyValuePair" WHERE "workspaceId" = $1 AND key = $2',
-        [workspaceId, AGENT_HISTORY_STORAGE_KEY],
+        [workspaceId, AGENT_HISTORY_MIGRATION_STORAGE_KEY],
       );
       await dataSource.query(
         `INSERT INTO core."userWorkspace" (id, "workspaceId", "userId")

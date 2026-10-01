@@ -300,7 +300,7 @@ export class WorkspaceResolver {
         workspaceCustomFlatApplication,
       );
     } catch {
-      // Temporary should be removed after CreateWorkspaceCustomApplicationCommand is run
+      // TODO: remove this fallback, added while workspaces were being backfilled with a custom application
       return null;
     }
   }
