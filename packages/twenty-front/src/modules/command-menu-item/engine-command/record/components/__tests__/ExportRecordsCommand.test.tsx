@@ -11,17 +11,14 @@ import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectM
 const mockSynchronousDownload = jest.fn().mockResolvedValue(undefined);
 const mockAsyncDownload = jest.fn().mockResolvedValue(undefined);
 const mockCancelAsyncDownload = jest.fn();
-const mockSingleRecordDownload = jest.fn().mockResolvedValue(undefined);
 const mockObjectMetadataItem = getMockObjectMetadataItemOrThrow('person');
-let mockRecordIndexId: string | undefined;
 
 jest.mock(
   '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi',
   () => ({
     useHeadlessCommandContextApi: () => ({
       objectMetadataItem: mockObjectMetadataItem,
-      recordIndexId: mockRecordIndexId,
-      selectedRecords: [{ id: 'selected-record' }],
+      recordIndexId: 'record-index',
     }),
   }),
 );
@@ -43,9 +40,6 @@ jest.mock(
     }),
   }),
 );
-jest.mock('@/object-record/record-show/hooks/useExportSingleRecord', () => ({
-  useExportSingleRecord: () => ({ download: mockSingleRecordDownload }),
-}));
 
 const renderExport = (enabled?: boolean) => {
   const Wrapper = getJestMetadataAndApolloMocksWrapper({
@@ -81,7 +75,6 @@ const renderExport = (enabled?: boolean) => {
 beforeEach(() => {
   jest.useRealTimers();
   jest.clearAllMocks();
-  mockRecordIndexId = 'record-index';
 });
 
 it.each([undefined, false, true])(
@@ -96,19 +89,5 @@ it.each([undefined, false, true])(
     expect(
       enabled ? mockSynchronousDownload : mockAsyncDownload,
     ).not.toHaveBeenCalled();
-    expect(mockSingleRecordDownload).not.toHaveBeenCalled();
-  },
-);
-
-it.each([false, true])(
-  'keeps single-record export when the workspace flag is %s',
-  async (enabled) => {
-    mockRecordIndexId = undefined;
-    renderExport(enabled);
-    await waitFor(() =>
-      expect(mockSingleRecordDownload).toHaveBeenCalledTimes(1),
-    );
-    expect(mockAsyncDownload).not.toHaveBeenCalled();
-    expect(mockSynchronousDownload).not.toHaveBeenCalled();
   },
 );

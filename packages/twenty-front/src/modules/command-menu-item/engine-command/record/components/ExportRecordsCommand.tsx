@@ -8,7 +8,6 @@ import { CommandComponentInstanceContext } from '@/command-menu-item/engine-comm
 import { commandMenuItemProgressFamilyState } from '@/command-menu-item/states/commandMenuItemProgressFamilyState';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { useRecordIndexExportRecords } from '@/object-record/record-index/export/hooks/useRecordIndexExportRecords';
-import { useExportSingleRecord } from '@/object-record/record-show/hooks/useExportSingleRecord';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
@@ -69,29 +68,11 @@ const ExportAsyncIndexRecordsContent = ({
   );
 };
 
-const ExportShowRecordContent = ({
-  objectMetadataItem,
-  recordId,
-}: {
-  objectMetadataItem: EnrichedObjectMetadataItem;
-  recordId: string;
-}) => {
-  const filename = `${objectMetadataItem.nameSingular}.csv`;
-  const { download } = useExportSingleRecord({
-    filename,
-    objectMetadataItem,
-    recordId,
-  });
-
-  return <HeadlessEngineCommandWrapperEffect execute={download} />;
-};
-
 export const ExportRecordsCommand = () => {
   const isAsyncCsvExportEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_ASYNC_CSV_EXPORT_ENABLED,
   );
-  const { objectMetadataItem, recordIndexId, selectedRecords } =
-    useHeadlessCommandContextApi();
+  const { objectMetadataItem, recordIndexId } = useHeadlessCommandContextApi();
 
   const engineCommandId = useAvailableComponentInstanceIdOrThrow(
     CommandComponentInstanceContext,
@@ -106,22 +87,8 @@ export const ExportRecordsCommand = () => {
     throw new Error('Object metadata item is required to export records');
   }
 
-  const recordId = selectedRecords[0]?.id;
-  const isShowPageExport = !isDefined(recordIndexId) && isDefined(recordId);
-
-  if (isShowPageExport) {
-    return (
-      <ExportShowRecordContent
-        objectMetadataItem={objectMetadataItem}
-        recordId={recordId}
-      />
-    );
-  }
-
   if (!isDefined(recordIndexId)) {
-    throw new Error(
-      'Record index ID is required to export records from index page',
-    );
+    throw new Error('Record index ID is required to export records');
   }
 
   return (
