@@ -151,8 +151,7 @@ export const makeSlowInstance = (name: string, version?: string) =>
 export const makeWorkspace = (name: string, version?: string) =>
   makeStep('workspace', name, version) as WorkspaceUpgradeStep;
 
-// Steps the status service can resolve a version from: it reads the version
-// off the command name, not off the step's `version` field.
+// The status service reads the version off the command name, not the step's `version` field.
 export const makeVersionedStep = (
   kind: UpgradeStep['kind'],
   { version, label }: { version: string; label: string },
@@ -370,8 +369,7 @@ export const seedInstanceMigration = async (
     attempt?: number;
   },
 ) => {
-  // Seeds must have past timestamps so the runner's NOW()-based records
-  // always sort after them in createdAt order.
+  // Past timestamps so the runner's NOW()-based records always sort after the seeds.
   const createdAt = new Date(
     Date.now() - (1000000 - seedSequenceCounter * 1000),
   ).toISOString();

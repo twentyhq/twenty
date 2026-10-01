@@ -67,8 +67,8 @@ export const PageLayoutTabListEffect = ({
   }, [componentInstanceId, nextActiveTabId, onChangeTab, store]);
 
   useEffect(() => {
-    // Cancelling customization can pin the active tab again. Replace its stale
-    // hash without overwriting a different deep link or the main URL from a panel.
+    // Cancelling customization can re-pin the active tab; replace its stale hash
+    // without overwriting another deep link or the main URL from a panel.
     if (
       shouldSyncWithUrl &&
       isDefined(activeTabId) &&

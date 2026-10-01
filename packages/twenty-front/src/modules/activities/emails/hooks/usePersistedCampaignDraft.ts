@@ -42,8 +42,7 @@ export const usePersistedCampaignDraft = <TDraft extends object>({
     draft,
     updateDraft,
     flush,
-    // Inputs seeded through defaultValue (TipTap editors, record picker) read
-    // the draft on mount only; key them with this to remount on adoption.
+    // defaultValue-seeded inputs (TipTap, record picker) read the draft on mount only; key them to remount.
     draftResyncKey: `${campaignId}-${draftResyncKey}`,
   };
 };

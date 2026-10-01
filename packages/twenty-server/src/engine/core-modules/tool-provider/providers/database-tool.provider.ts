@@ -56,10 +56,7 @@ export class DatabaseToolProvider implements ToolProvider {
     return true;
   }
 
-  // Database CRUD tools emit `executionRef.kind === 'database_crud'` descriptors
-  // and are dispatched inline by ToolExecutorService. The static-tool path is
-  // unreachable for this provider; this method exists only to satisfy the
-  // interface.
+  // Unreachable: database CRUD descriptors are dispatched inline by ToolExecutorService.
   async executeStaticTool(
     toolName: string,
     _args: Record<string, unknown>,
@@ -467,8 +464,7 @@ export class DatabaseToolProvider implements ToolProvider {
       }
     }
 
-    // Every record operation but group_by answers with recordReferences, which
-    // the records widget turns into links; group_by answers with aggregates.
+    // group_by answers with aggregates, not the recordReferences the records widget links.
     return descriptors.map((descriptor) =>
       descriptor.operation === 'group_by'
         ? descriptor

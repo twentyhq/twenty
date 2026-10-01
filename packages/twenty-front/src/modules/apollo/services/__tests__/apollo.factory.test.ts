@@ -274,8 +274,7 @@ describe('ApolloFactory', () => {
     }
   }, 10000);
 
-  // fetch normalises header names, so assert case-insensitively rather than
-  // depending on the casing the mock happens to expose.
+  // fetch normalises header names.
   const readHeader = (
     headers: Record<string, string>,
     name: string,
@@ -301,8 +300,7 @@ describe('ApolloFactory', () => {
     expect(readHeader(headers, 'X-App-Version')).toBe('1.0.0');
   });
 
-  // The session cookie is issued and refreshed server-side, so a rejection is
-  // the end of the session rather than something the client can retry.
+  // The session cookie is server-managed, so a rejection ends the session.
   it('should sign out on an unauthenticated response', async () => {
     fetchMock.mockResponse(UNAUTHENTICATED_RESPONSE);
     mockOnUnauthenticatedError.mockImplementation(clearSessionGeneration);

@@ -7,9 +7,7 @@ import {
   STATUS_STYLE,
 } from '@/__stories__/shared/front-components/styles';
 
-// Deliberately uses only the standard web APIs — getUserMedia, MediaStream,
-// MediaRecorder — the way a third-party recording library would. It only
-// works if the media polyfills reached the real sandbox worker realm.
+// Uses only standard web APIs, so it works only if the polyfills reached the sandbox worker realm.
 const MediaRecorderPolyfillFrontComponent = () => {
   const [status, setStatus] = useState('idle');
 

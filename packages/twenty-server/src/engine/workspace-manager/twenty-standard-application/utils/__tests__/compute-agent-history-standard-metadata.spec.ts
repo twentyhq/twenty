@@ -89,8 +89,6 @@ describe('agent history workspace metadata', () => {
       ).toMatchObject({ isUnique: false });
     },
   );
-  // Conversations are shareable records and their record links inherit from
-  // them; the rest of the history is written and read by the platform only.
   const SHARED_ACCESS_POLICY_BY_OBJECT_NAME: Partial<
     Record<
       (typeof OBJECT_NAMES)[number],

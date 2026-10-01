@@ -26,8 +26,6 @@ describe('createDictationEventEmitter', () => {
     expect(listener).not.toHaveBeenCalled();
   });
 
-  // A listener that tears itself down on its own event must not stop the ones
-  // registered after it from being called for that same event.
   it('still reaches later listeners when an earlier one unsubscribes mid-emit', () => {
     const emitter = createDictationEventEmitter();
     const later = jest.fn();
