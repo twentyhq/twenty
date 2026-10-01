@@ -63,7 +63,6 @@ export class ObjectAccessOverviewService {
           canRead: objectPermissions?.canReadObjectRecords ?? false,
           canUpdate: objectPermissions?.canUpdateObjectRecords ?? false,
           canSoftDelete: objectPermissions?.canSoftDeleteObjectRecords ?? false,
-          canDestroy: objectPermissions?.canDestroyObjectRecords ?? false,
           hasRowFilter:
             (objectPermissions?.rowLevelPermissionPredicates.length ?? 0) > 0,
           canAccessAllRecords: roleIdsWithAllRecordsAccess.includes(role.id),
@@ -78,7 +77,6 @@ export class ObjectAccessOverviewService {
       });
 
     return {
-      objectMetadataId,
       roles,
       restrictedRecordCount,
       sharedRecordCount,

@@ -21,7 +21,6 @@ import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev
 const OBJECT_ACCESS_OVERVIEW_QUERY = parse(`
   query ObjectAccessOverview($objectMetadataId: UUID!) {
     objectAccessOverview(objectMetadataId: $objectMetadataId) {
-      objectMetadataId
       restrictedRecordCount
       sharedRecordCount
       roles {
@@ -30,7 +29,6 @@ const OBJECT_ACCESS_OVERVIEW_QUERY = parse(`
         canRead
         canUpdate
         canSoftDelete
-        canDestroy
         hasRowFilter
         canAccessAllRecords
       }
@@ -108,7 +106,6 @@ describe('Object access overview', () => {
       canRead: true,
       canUpdate: true,
       canSoftDelete: true,
-      canDestroy: true,
       hasRowFilter: false,
       canAccessAllRecords: true,
     });

@@ -25,9 +25,6 @@ export class ObjectAccessOverviewRoleDTO {
   canSoftDelete: boolean;
 
   @Field(() => Boolean)
-  canDestroy: boolean;
-
-  @Field(() => Boolean)
   hasRowFilter: boolean;
 
   @Field(() => Boolean)
@@ -36,9 +33,6 @@ export class ObjectAccessOverviewRoleDTO {
 
 @ObjectType()
 export class ObjectAccessOverviewDTO {
-  @Field(() => UUIDScalarType)
-  objectMetadataId: string;
-
   @Field(() => [ObjectAccessOverviewRoleDTO])
   roles: ObjectAccessOverviewRoleDTO[];
 

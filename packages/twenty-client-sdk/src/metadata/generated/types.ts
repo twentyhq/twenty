@@ -3404,9 +3404,6 @@ export default {
             "canSoftDelete": [
                 8
             ],
-            "canDestroy": [
-                8
-            ],
             "hasRowFilter": [
                 8
             ],
@@ -3418,9 +3415,6 @@ export default {
             ]
         },
         "ObjectAccessOverviewDTO": {
-            "objectMetadataId": [
-                3
-            ],
             "roles": [
                 169
             ],

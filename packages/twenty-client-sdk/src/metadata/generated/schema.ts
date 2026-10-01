@@ -1383,14 +1383,12 @@ export interface ObjectAccessOverviewRoleDTO {
     canRead: Scalars['Boolean']
     canUpdate: Scalars['Boolean']
     canSoftDelete: Scalars['Boolean']
-    canDestroy: Scalars['Boolean']
     hasRowFilter: Scalars['Boolean']
     canAccessAllRecords: Scalars['Boolean']
     __typename: 'ObjectAccessOverviewRoleDTO'
 }
 
 export interface ObjectAccessOverviewDTO {
-    objectMetadataId: Scalars['UUID']
     roles: ObjectAccessOverviewRoleDTO[]
     restrictedRecordCount: Scalars['Int']
     sharedRecordCount: Scalars['Int']
@@ -5232,7 +5230,6 @@ export interface ObjectAccessOverviewRoleDTOGenqlSelection{
     canRead?: boolean | number
     canUpdate?: boolean | number
     canSoftDelete?: boolean | number
-    canDestroy?: boolean | number
     hasRowFilter?: boolean | number
     canAccessAllRecords?: boolean | number
     __typename?: boolean | number
@@ -5240,7 +5237,6 @@ export interface ObjectAccessOverviewRoleDTOGenqlSelection{
 }
 
 export interface ObjectAccessOverviewDTOGenqlSelection{
-    objectMetadataId?: boolean | number
     roles?: ObjectAccessOverviewRoleDTOGenqlSelection
     restrictedRecordCount?: boolean | number
     sharedRecordCount?: boolean | number

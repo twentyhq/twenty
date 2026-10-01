@@ -47,9 +47,7 @@ export const ObjectAccess = ({ objectMetadataItem }: ObjectAccessProps) => {
 
   const isReadOnly =
     isObjectMetadataReadOnly({ objectMetadataItem }) || isDDLLocked;
-  const isReadabilityEditable =
-    getIsMetadataItemCustom(objectMetadataItem) &&
-    objectMetadataItem.readability !== MetadataReadability.INHERITED;
+  const isReadabilityEditable = getIsMetadataItemCustom(objectMetadataItem);
   const objectLabel = objectMetadataItem.labelPlural;
   const isOpenByDefault =
     objectMetadataItem.readability === MetadataReadability.OPEN;

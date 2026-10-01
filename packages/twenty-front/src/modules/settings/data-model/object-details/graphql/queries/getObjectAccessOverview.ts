@@ -3,7 +3,6 @@ import { gql } from '@apollo/client';
 export const GET_OBJECT_ACCESS_OVERVIEW = gql`
   query GetObjectAccessOverview($objectMetadataId: UUID!) {
     objectAccessOverview(objectMetadataId: $objectMetadataId) {
-      objectMetadataId
       restrictedRecordCount
       sharedRecordCount
       roles {
@@ -13,7 +12,6 @@ export const GET_OBJECT_ACCESS_OVERVIEW = gql`
         canRead
         canUpdate
         canSoftDelete
-        canDestroy
         hasRowFilter
         canAccessAllRecords
       }

@@ -1772,13 +1772,11 @@ type ObjectAccessOverviewRoleDTO {
   canRead: Boolean!
   canUpdate: Boolean!
   canSoftDelete: Boolean!
-  canDestroy: Boolean!
   hasRowFilter: Boolean!
   canAccessAllRecords: Boolean!
 }
 
 type ObjectAccessOverviewDTO {
-  objectMetadataId: UUID!
   roles: [ObjectAccessOverviewRoleDTO!]!
   restrictedRecordCount: Int!
   sharedRecordCount: Int!

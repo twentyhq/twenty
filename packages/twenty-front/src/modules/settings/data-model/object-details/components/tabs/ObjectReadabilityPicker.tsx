@@ -21,7 +21,7 @@ const OBJECT_READABILITY_OPTIONS = [
   {
     value: MetadataReadability.PRIVATE,
     title: msg`Restricted to their creator`,
-    description: msg`Only the creator and roles with access to all records see a new record, until it is shared.`,
+    description: msg`Only its creator sees a new record, until it is shared.`,
     cardMedia: <IconLock />,
   },
 ];
