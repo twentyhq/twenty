@@ -1,3 +1,4 @@
+import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { registerEnumType } from '@nestjs/graphql';
 
 import { type ActorMetadata } from 'twenty-shared/types';
@@ -66,10 +67,11 @@ export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
   position: number;
   searchVector: string;
   workflowVersion: EntityRelation<WorkflowVersionWorkspaceEntity>;
-  workflowVersionId: string;
+  workflowVersionId: string | null;
   workflow: EntityRelation<WorkflowWorkspaceEntity>;
-  workflowId: string;
+  workflowId: string | null;
   coreWorkflowId: string | null;
   coreWorkflowVersionId: string | null;
+  agentChatThreads: EntityRelation<AgentChatThreadWorkspaceEntity[]>;
   timelineActivities: EntityRelation<TimelineActivityWorkspaceEntity[]>;
 }

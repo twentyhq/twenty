@@ -14,17 +14,15 @@ const StyledContainer = styled.div`
 `;
 
 export const CoreWorkflowVersionCard = ({
-  workspaceWorkflowVersionId,
+  coreWorkflowVersionId,
 }: {
-  workspaceWorkflowVersionId: string;
+  coreWorkflowVersionId: string;
 }) => {
-  const { coreWorkflowVersion } = useCoreWorkflowVersion(
-    workspaceWorkflowVersionId,
-  );
+  const { coreWorkflowVersion } = useCoreWorkflowVersion(coreWorkflowVersionId);
 
   if (
     !isDefined(coreWorkflowVersion) ||
-    !isDefined(coreWorkflowVersion.workspaceWorkflowId)
+    !isDefined(coreWorkflowVersion.coreWorkflowId)
   ) {
     return null;
   }
@@ -33,13 +31,13 @@ export const CoreWorkflowVersionCard = ({
     <WorkflowVisualizerComponentInstanceContext.Provider
       value={{
         instanceId: getWorkflowVisualizerComponentInstanceId({
-          recordId: workspaceWorkflowVersionId,
+          recordId: coreWorkflowVersionId,
         }),
       }}
     >
       <CoreWorkflowVersionDiagramEffect
-        workflowId={coreWorkflowVersion.workspaceWorkflowId}
-        workspaceWorkflowVersionId={workspaceWorkflowVersionId}
+        workflowId={coreWorkflowVersion.coreWorkflowId}
+        coreWorkflowVersionId={coreWorkflowVersionId}
         label={coreWorkflowVersion.label}
         status={coreWorkflowVersion.status}
         createdAt={coreWorkflowVersion.createdAt}

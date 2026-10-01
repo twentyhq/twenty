@@ -46,8 +46,30 @@ export const Default: Story = {
   },
 };
 
-export const Documentation: Story = {
+export const Resizable: Story = {
   ...Default,
+  args: { resizable: true, resizeLabel: 'Resize code sample' },
+  play: async ({ canvasElement }) => {
+    await waitForCodeEditorContent(canvasElement, '"name": "Acme"');
+    const handle = within(canvasElement).getByRole('separator', {
+      name: 'Resize code sample',
+    });
+
+    handle.focus();
+    await userEvent.keyboard('{ArrowDown}');
+    await expect(handle).toHaveAttribute('aria-valuenow', '170');
+    await waitFor(() => {
+      const editor = within(canvasElement)
+        .getByRole('textbox')
+        .closest('.monaco-editor');
+
+      expect(editor?.getBoundingClientRect().height).toBe(170);
+    });
+  },
+};
+
+export const Documentation: Story = {
+  decorators: Default.decorators,
   args: { variant: 'with-header' },
   render: (args) => (
     <div style={{ width: '100%' }}>
@@ -66,6 +88,7 @@ export const Documentation: Story = {
 
 export const Dark: Story = {
   ...Documentation,
+  play: Default.play,
   tags: ['!autodocs'],
   globals: { colorScheme: 'dark' },
 };

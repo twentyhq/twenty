@@ -5,15 +5,14 @@ import { isMicrosoftCalendarEnabledState } from '@/client-config/states/isMicros
 import { isMicrosoftMessagingEnabledState } from '@/client-config/states/isMicrosoftMessagingEnabledState';
 import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTriggerApiOAuth';
 import { SettingsCard } from '@/settings/components/SettingsCard';
+import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink/UndecoratedLink';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useContext } from 'react';
 import { ConnectedAccountProvider, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { IconAt, IconGoogle, IconMicrosoft } from 'twenty-ui/icon';
-import { UndecoratedLink } from 'twenty-ui/primitives/navigation';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 const StyledCardsContainer = styled.div`
   display: flex;
@@ -22,7 +21,7 @@ const StyledCardsContainer = styled.div`
 `;
 
 export const SettingsAccountsListEmptyStateCard = () => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const { triggerApisOAuth } = useTriggerApisOAuth();
 
   const { t } = useLingui();

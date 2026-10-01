@@ -1,8 +1,8 @@
+import { LinkChip } from '@/ui/navigation/link/components/LinkChip/LinkChip';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { LinkChip } from 'twenty-ui/primitives/data-display';
 import { useIcons } from 'twenty-ui/icon';
-import { useTheme } from 'twenty-ui/theme-constants';
+import { useTheme } from 'twenty-ui/theme';
 
 import { DEFAULT_SKILL_ICON } from '@/skill-suggestion/constants/DefaultSkillIcon';
 

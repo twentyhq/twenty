@@ -1,4 +1,3 @@
-import { serializePlainTextAsAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializePlainTextAsAdvancedTextEditorDocument';
 import { agentChatDraftsByThreadIdState } from '@/ai/states/agentChatDraftsByThreadIdState';
 import {
   type AgentChatPrepromptMode,
@@ -6,9 +5,7 @@ import {
 } from '@/ai/states/agentChatPrepromptState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
-// Staging a preprompt is always these two steps: sending reads the draft rather
-// than the editor, so the draft has to be written before AgentChatPrepromptEffect
-// picks the preprompt up.
+// Sending reads the draft, not the editor, so it's written before AgentChatPrepromptEffect picks it up.
 export const useStageAiChatPreprompt = () => {
   const setAgentChatDraftsByThreadId = useSetAtomState(
     agentChatDraftsByThreadIdState,
@@ -16,19 +13,19 @@ export const useStageAiChatPreprompt = () => {
   const setAgentChatPreprompt = useSetAtomState(agentChatPrepromptState);
 
   const stageAiChatPreprompt = ({
-    text,
+    serializedDocument,
     mode,
     draftKey,
   }: {
-    text: string;
+    serializedDocument: string;
     mode: AgentChatPrepromptMode;
     draftKey: string;
   }) => {
     setAgentChatDraftsByThreadId((previousDrafts) => ({
       ...previousDrafts,
-      [draftKey]: serializePlainTextAsAdvancedTextEditorDocument(text),
+      [draftKey]: serializedDocument,
     }));
-    setAgentChatPreprompt({ text, mode });
+    setAgentChatPreprompt({ serializedDocument, mode });
   };
 
   return { stageAiChatPreprompt };

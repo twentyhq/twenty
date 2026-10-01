@@ -2,15 +2,17 @@ import { Tabs as TabsPrimitive } from '@base-ui/react/tabs';
 
 import { mergeClassNames } from '@ui/utilities/internal/mergeClassNames';
 
-import styles from '../Tabs.module.scss';
+import styles from '../../internal/tab/Tab.module.scss';
+import { TabsTabContent } from '../../internal/tab/TabsTabContent';
 import { type TabsTabProps } from '../types/TabsTabProps';
-import { isRenderableSlot } from './isRenderableSlot';
 
 export const TabsTab = ({
   className,
   children,
   startIcon,
+  endIcon,
   badge,
+  highlighted = false,
   size = 'sm',
   ...props
 }: TabsTabProps) => (
@@ -18,15 +20,10 @@ export const TabsTab = ({
     {...props}
     className={mergeClassNames(styles.tab, className)}
     data-size={size}
+    data-highlighted={highlighted || undefined}
   >
-    <span className={styles.content}>
-      {isRenderableSlot(startIcon) && (
-        <span className={styles.startIcon} aria-hidden>
-          {startIcon}
-        </span>
-      )}
-      <span className={styles.label}>{children}</span>
-      {isRenderableSlot(badge) && <span className={styles.badge}>{badge}</span>}
-    </span>
+    <TabsTabContent startIcon={startIcon} endIcon={endIcon} badge={badge}>
+      {children}
+    </TabsTabContent>
   </TabsPrimitive.Tab>
 );

@@ -22,7 +22,6 @@ let mockIsMobile = false;
 
 jest.mock('twenty-ui/utilities', () => ({
   useIsMobile: () => mockIsMobile,
-  getOsControlSymbol: () => '⌘',
 }));
 
 const renderSidePanelToggleButton = ({
@@ -52,12 +51,7 @@ const renderSidePanelToggleButton = ({
   render(
     <I18nProvider i18n={i18n}>
       <JotaiProvider store={store}>
-        <MemoryRouter
-          future={{
-            v7_relativeSplatPath: true,
-            v7_startTransition: true,
-          }}
-        >
+        <MemoryRouter>
           <SidePanelToggleButton />
         </MemoryRouter>
       </JotaiProvider>
@@ -70,7 +64,12 @@ const renderSidePanelToggleButton = ({
 describe('SidePanelToggleButton', () => {
   beforeEach(() => {
     mockIsMobile = false;
+    jest
+      .spyOn(window.navigator, 'userAgent', 'get')
+      .mockReturnValue('Macintosh; Intel Mac OS X');
   });
+
+  afterEach(() => jest.restoreAllMocks());
 
   it('opens the command menu when the side panel is closed', () => {
     const { store } = renderSidePanelToggleButton();

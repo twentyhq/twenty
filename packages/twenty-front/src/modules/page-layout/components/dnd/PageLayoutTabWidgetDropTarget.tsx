@@ -3,7 +3,7 @@ import { pointerIntersection } from '@dnd-kit/collision';
 import { useDroppable } from '@dnd-kit/react';
 import { styled } from '@linaria/react';
 import { type ReactNode, useCallback } from 'react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { PAGE_LAYOUT_TAB_DROP_TARGET_DATA_ATTRIBUTE } from '@/page-layout/constants/PageLayoutTabDropTargetDataAttribute';
 import { pageLayoutGridDragHoveredTabIdComponentState } from '@/page-layout/states/pageLayoutGridDragHoveredTabIdComponentState';
@@ -53,8 +53,7 @@ export const PageLayoutTabWidgetDropTarget = ({
     data,
   });
 
-  // Grid drags come from react-grid-layout, outside dnd-kit; their hover
-  // highlight is driven by pointer hit-testing instead of isDropTarget.
+  // Grid drags bypass dnd-kit, so their hover highlight comes from pointer hit-testing.
   const pageLayoutGridDragHoveredTabId = useAtomComponentStateValue(
     pageLayoutGridDragHoveredTabIdComponentState,
   );

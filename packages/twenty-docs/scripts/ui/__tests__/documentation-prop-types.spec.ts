@@ -35,7 +35,7 @@ describe('documentation prop types', () => {
         },
         required: false,
       },
-      '"sm" | "md"',
+      '"md" | "sm"',
     ],
     [
       {
@@ -46,6 +46,38 @@ describe('documentation prop types', () => {
         required: true,
       },
       '"sm" | undefined',
+    ],
+    [
+      {
+        type: {
+          name: 'enum',
+          value: ['1', '5', '2', '3', '4', '6', 'undefined'].map((value) => ({
+            value,
+          })),
+        },
+        required: false,
+      },
+      '1 | 2 | 3 | 4 | 5 | 6',
+    ],
+    [
+      {
+        type: {
+          name: 'enum',
+          value: ['10', '2', '-1', '1.5'].map((value) => ({ value })),
+        },
+        required: true,
+      },
+      '-1 | 1.5 | 2 | 10',
+    ],
+    [
+      {
+        type: {
+          name: 'enum',
+          value: ['2', '"auto"', '1'].map((value) => ({ value })),
+        },
+        required: true,
+      },
+      '"auto" | 1 | 2',
     ],
   ])('normalizes %j to %j', (input, expected) => {
     expect(normalizeDocumentationPropType(input)).toBe(expected);

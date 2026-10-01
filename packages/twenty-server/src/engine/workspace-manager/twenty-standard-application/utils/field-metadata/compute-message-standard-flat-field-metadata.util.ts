@@ -293,6 +293,8 @@ export const buildMessageStandardFlatFieldMetadatas = ({
       icon: 'IconMessage',
       isNullable: true,
       isUIEditable: false,
+      // An email body is prose, so it needs multi-line display like calendarEvent.description
+      settings: { displayedMaxRows: 99 },
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,

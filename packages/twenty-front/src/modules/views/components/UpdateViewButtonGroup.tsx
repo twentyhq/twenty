@@ -1,10 +1,10 @@
 import { styled } from '@linaria/react';
 
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { Dropdown, IconButton } from 'twenty-ui/components';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
+import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
@@ -22,11 +22,10 @@ import { getViewPickerDropdownId } from '@/views/view-picker/utils/getViewPicker
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
 import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/states/viewPickerReferenceViewIdComponentState';
 import { t } from '@lingui/core/macro';
+import { isDefined } from 'twenty-shared/utils';
 import { IconChevronDown, IconPlus } from 'twenty-ui/icon';
 import { Button, ButtonGroup } from 'twenty-ui/primitives/input';
-import { IconButton } from 'twenty-ui/components';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledContainer = styled.div`
   border-radius: ${themeCssVariables.border.radius.md};
@@ -45,18 +44,21 @@ export const UpdateViewButtonGroup = () => {
     contextStoreCurrentViewIdComponentState,
   );
 
-  const { closeDropdown: closeUpdateViewButtonDropdown } = useCloseDropdown();
   const { recordIndexId } = useRecordIndexContextOrThrow();
   const updateViewButtonDropdownId = `${UPDATE_VIEW_BUTTON_DROPDOWN_ID}-${recordIndexId}`;
   const { openDropdown: openViewPickerDropdown } = useOpenDropdown();
   const { currentView } = useGetCurrentViewOnly();
+  const isDropdownOpen = useAtomComponentStateValue(
+    isDropdownOpenComponentState,
+    getViewPickerDropdownId(recordIndexId),
+  );
 
   const setViewPickerReferenceViewId = useSetAtomComponentState(
     viewPickerReferenceViewIdComponentState,
   );
 
   const openViewPickerInCreateMode = () => {
-    if (!contextStoreCurrentViewId) {
+    if (!isDefined(contextStoreCurrentViewId)) {
       return;
     }
 
@@ -66,8 +68,6 @@ export const UpdateViewButtonGroup = () => {
     });
     setViewPickerReferenceViewId(contextStoreCurrentViewId);
     setViewPickerMode('create-from-current');
-
-    closeUpdateViewButtonDropdown(updateViewButtonDropdownId);
   };
 
   const handleCreateViewClick = () => {
@@ -116,25 +116,23 @@ export const UpdateViewButtonGroup = () => {
             onClick={handleUpdateViewClick}
             disabled={!canPersistChanges}
           >{t`Update view`}</Button>
-          <Dropdown
-            dropdownId={updateViewButtonDropdownId}
-            clickableComponent={
-              <IconButton aria-label={t`View update options`}>
-                <IconChevronDown />
-              </IconButton>
-            }
-            dropdownComponents={
-              <DropdownContent>
-                <DropdownMenuItemsContainer>
-                  <MenuItem
-                    onClick={handleCreateViewClick}
-                    LeftIcon={IconPlus}
-                    text={t`Create view`}
-                  />
-                </DropdownMenuItemsContainer>
-              </DropdownContent>
-            }
-          />
+          <DropdownRoot dropdownId={updateViewButtonDropdownId} type="menu">
+            <Dropdown.Trigger
+              render={
+                <IconButton aria-label={t`View update options`}>
+                  <IconChevronDown />
+                </IconButton>
+              }
+            />
+            <DropdownContent align="end" finalFocus={() => !isDropdownOpen}>
+              <Dropdown.Section>
+                <Dropdown.ActionItem
+                  onClick={handleCreateViewClick}
+                  startIcon={<IconPlus />}
+                >{t`Create view`}</Dropdown.ActionItem>
+              </Dropdown.Section>
+            </DropdownContent>
+          </DropdownRoot>
         </ButtonGroup>
       ) : (
         <Button

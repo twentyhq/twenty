@@ -4,7 +4,7 @@ import { HttpResponse, graphql } from 'msw';
 import { useEffect, useState } from 'react';
 import { expect, userEvent, within } from 'storybook/test';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
+import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { SidePanelComposeCalendarEventPage } from '@/side-panel/pages/compose-calendar-event/components/SidePanelComposeCalendarEventPage';
 import { composeCalendarEventInitialValuesComponentState } from '@/side-panel/pages/compose-calendar-event/states/composeCalendarEventInitialValuesComponentState';
@@ -18,6 +18,9 @@ import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadat
 import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 import { WorkspaceDecorator } from '~/testing/decorators/WorkspaceDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
+import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
+import { mockedUserData } from '~/testing/mock-data/users';
+import { mockedApolloClient } from '~/testing/mockedApolloClient';
 
 const STORY_PAGE_INSTANCE_ID = 'side-panel-composer-story';
 const GOOGLE_ACCOUNT_ID = '20202020-9ac0-4390-9a1a-ab4d2c4e1bb7';
@@ -157,6 +160,9 @@ const SidePanelComposerStory = ({ composer }: SidePanelComposerStoryProps) => {
 const meta = {
   title: 'Modules/SidePanel/ComposerPages',
   component: SidePanelComposerStory,
+  beforeEach: async () => {
+    await mockedApolloClient.clearStore();
+  },
   parameters: {
     container: { width: 480, height: 720 },
     msw: {
@@ -210,7 +216,7 @@ const meta = {
     ComponentDecorator,
     ObjectMetadataItemsDecorator,
     ToastDecorator,
-    RouterDecorator,
+    MemoryRouterDecorator,
     WorkspaceDecorator,
   ],
 } satisfies Meta<typeof SidePanelComposerStory>;
@@ -237,6 +243,58 @@ export const CalendarEvent: Story = {
     );
 
     expect(canvas.getByRole('button', { name: /^Create event/ })).toBeEnabled();
+  },
+};
+
+export const CalendarEventWithoutAccounts: Story = {
+  args: { composer: 'calendar-event' },
+  parameters: {
+    msw: {
+      handlers: [
+        graphql.query('MyConnectedAccounts', () =>
+          HttpResponse.json({ data: { myConnectedAccounts: [] } }),
+        ),
+        graphql.query('MyCalendarChannels', () =>
+          HttpResponse.json({ data: { myCalendarChannels: [] } }),
+        ),
+        ...meta.parameters.msw.handlers,
+      ],
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(
+      await canvas.findByRole('button', { name: 'Add account' }),
+    ).toBeVisible();
+    expect(
+      canvas.getByText(
+        'Connect Google, Microsoft or CalDAV and enable calendar sync before creating an event.',
+      ),
+    ).toBeVisible();
+  },
+};
+
+export const CalendarEventWithoutAccountPermission: Story = {
+  args: { composer: 'calendar-event' },
+  parameters: {
+    ...CalendarEventWithoutAccounts.parameters,
+    currentUserWorkspace: {
+      ...mockedUserData.currentUserWorkspace,
+      permissionFlags: [],
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(
+      await canvas.findByText(
+        'Ask a workspace admin for the Sync Account permission to connect a calendar account.',
+      ),
+    ).toBeVisible();
+    expect(
+      canvas.queryByRole('button', { name: 'Add account' }),
+    ).not.toBeInTheDocument();
   },
 };
 

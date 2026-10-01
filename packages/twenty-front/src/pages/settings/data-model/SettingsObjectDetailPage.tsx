@@ -188,6 +188,7 @@ export const SettingsObjectDetailPage = () => {
       }
       secondaryBar={
         <SettingsTabBar
+          aria-label={t`Object settings`}
           tabs={tabs}
           componentInstanceId={tabsComponentInstanceId}
         />

@@ -65,9 +65,7 @@ export class MessageQueueExplorer implements OnModuleInit {
 
     const groupedProcessors = this.groupProcessorsByQueueName(processors);
 
-    // Filter out empty entries: an explicit empty env value is parsed as ['']
-    // by the shared ARRAY transformer, which would otherwise turn an empty
-    // allowlist (meaning "all queues") into "no queues"
+    // The ARRAY transformer parses an empty env value as [''], which would turn "all queues" into "no queues".
     const enabledQueues = this.twentyConfigService
       .get('WORKER_ENABLED_QUEUES')
       .filter((queueName) => queueName.length > 0);
@@ -196,17 +194,9 @@ export class MessageQueueExplorer implements OnModuleInit {
         });
 
       try {
-        let result: unknown;
         for (const processorGroup of processorGroupCollection) {
-          const processorResult = await this.handleProcessor(
-            processorGroup,
-            job,
-          );
-          if (processorResult !== undefined) {
-            result = processorResult;
-          }
+          await this.handleProcessor(processorGroup, job);
         }
-        return result;
       } finally {
         this.eventLoopStallMonitorService.registerJobEnd(stallMonitorToken);
       }
@@ -253,13 +243,13 @@ export class MessageQueueExplorer implements OnModuleInit {
         contextId,
       );
 
-      return this.invokeProcessMethods(
+      await this.invokeProcessMethods(
         contextInstance,
         filteredProcessMethodNames,
         job,
       );
     } else {
-      return this.invokeProcessMethods(
+      await this.invokeProcessMethods(
         instance,
         filteredProcessMethodNames,
         job,
@@ -272,23 +262,15 @@ export class MessageQueueExplorer implements OnModuleInit {
     processMethodNames: string[],
     job: MessageQueueJob<MessageQueueJobData>,
   ) {
-    let result: unknown;
     for (const processMethodName of processMethodNames) {
       try {
         // @ts-expect-error legacy noImplicitAny
-        const methodResult = await instance[processMethodName].call(
-          instance,
-          job.data,
-          {
-            abortSignal: job.abortSignal,
-            retryLimit: job.retryLimit,
-            updateData: job.updateData,
-            updateProgress: job.updateProgress,
-          },
-        );
-        if (methodResult !== undefined) {
-          result = methodResult;
-        }
+        await instance[processMethodName].call(instance, job.data, {
+          abortSignal: job.abortSignal,
+          retryLimit: job.retryLimit,
+          updateData: job.updateData,
+          updateProgress: job.updateProgress,
+        });
       } catch (err) {
         if (shouldCaptureException(err)) {
           this.exceptionHandlerService.captureExceptions([err]);
@@ -296,6 +278,5 @@ export class MessageQueueExplorer implements OnModuleInit {
         throw err;
       }
     }
-    return result;
   }
 }

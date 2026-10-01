@@ -7,8 +7,8 @@ import {
   type SyntheticEvent,
 } from 'react';
 
-import { OverflowingTextWithTooltip } from '@ui/primitives/surfaces/OverflowingTextWithTooltip/OverflowingTextWithTooltip';
-import { themeCssVariables } from '@ui/theme-constants';
+import { OverflowingTextWithTooltip } from '@ui/primitives/typography/OverflowingTextWithTooltip/OverflowingTextWithTooltip';
+import { themeCssVariables } from '@ui/theme';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import styles from './Tag.module.scss';

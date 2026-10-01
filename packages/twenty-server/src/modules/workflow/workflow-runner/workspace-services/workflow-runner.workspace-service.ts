@@ -1,25 +1,27 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
-import { msg } from '@lingui/core/macro';
 import { type ActorMetadata } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { StepStatus } from 'twenty-shared/workflow';
+import { msg } from '@lingui/core/macro';
 
-import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
-import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
+import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
+import { workflowHasRunningSteps } from 'src/modules/workflow/common/utils/workflow-has-running-steps.util';
 import {
   WorkflowVersionStepException,
   WorkflowVersionStepExceptionCode,
 } from 'src/modules/workflow/common/exceptions/workflow-version-step.exception';
-import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
-import { setAllIteratorsStepInfosAsStopped } from 'src/modules/workflow/common/utils/set-all-iterators-step-infos-as-stopped.util';
-import { workflowHasRunningSteps } from 'src/modules/workflow/common/utils/workflow-has-running-steps.util';
-import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { WorkflowVersionStepOperationsWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step-operations.workspace-service';
+import { WorkflowStepExecutorException } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
+import { WorkflowExecutionContextService } from 'src/modules/workflow/workflow-executor/services/workflow-execution-context.service';
+import { type WorkflowExecutionContext } from 'src/modules/workflow/workflow-executor/types/workflow-execution-context.type';
+import {
+  type WorkflowFormAction,
+  type WorkflowAction,
+} from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { isWorkflowFormAction } from 'src/modules/workflow/workflow-executor/workflow-actions/form/guards/is-workflow-form-action.guard';
 import {
   WorkflowRunException,
@@ -30,26 +32,22 @@ import { type RunWorkflowJobData } from 'src/modules/workflow/workflow-runner/ty
 import { buildRetryStepInfos } from 'src/modules/workflow/workflow-runner/utils/build-retry-step-infos.util';
 import { buildRunWorkflowJobOptions } from 'src/modules/workflow/workflow-runner/utils/build-run-workflow-job-options.util';
 import { getRunnableStepIds } from 'src/modules/workflow/workflow-runner/utils/get-runnable-step-ids.util';
-import {
-  WorkflowRunEnqueueJob,
-  type WorkflowRunEnqueueJobData,
-} from 'src/modules/workflow/workflow-runner/workflow-run-queue/jobs/workflow-run-enqueue.job';
 import { WorkflowThrottlingWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run-queue/workspace-services/workflow-throttling.workspace-service';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
-import { WorkflowTriggerType } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
+import { CoreWorkflowRunnerService } from 'src/modules/workflow/workflow-runner/services/core-workflow-runner.service';
+import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
 
 @Injectable()
 export class WorkflowRunnerWorkspaceService {
-  private readonly logger = new Logger(WorkflowRunnerWorkspaceService.name);
   constructor(
     private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
-    private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
     @InjectMessageQueue(MessageQueue.workflowQueue)
     private readonly messageQueueService: MessageQueueService,
-    private readonly billingUsageService: BillingUsageService,
     private readonly workflowVersionStepOperationsWorkspaceService: WorkflowVersionStepOperationsWorkspaceService,
     private readonly workflowThrottlingWorkspaceService: WorkflowThrottlingWorkspaceService,
-    private readonly metricsService: MetricsService,
+    private readonly coreWorkflowRunnerService: CoreWorkflowRunnerService,
+    private readonly workflowVersionCoreSyncService: WorkflowVersionCoreSyncService,
+    private readonly workflowExecutionContextService: WorkflowExecutionContextService,
   ) {}
 
   async run({
@@ -65,53 +63,25 @@ export class WorkflowRunnerWorkspaceService {
     source: ActorMetadata;
     workflowRunId?: string;
   }) {
-    const subscriptionInactiveReason =
-      await this.billingUsageService.getSubscriptionInactiveReason(workspaceId);
+    const coreWorkflowVersion =
+      await this.workflowVersionCoreSyncService.findCoreVersionByWorkspaceVersionId(
+        workspaceId,
+        workflowVersionId,
+      );
 
-    if (isDefined(subscriptionInactiveReason)) {
-      this.logger.log(
-        `Cannot execute billed function for this workspace: ${subscriptionInactiveReason}`,
+    if (!isDefined(coreWorkflowVersion)) {
+      throw new WorkflowRunException(
+        'Workspace workflow version has no core execution mapping',
+        WorkflowRunExceptionCode.WORKFLOW_RUN_INVALID,
       );
     }
 
-    const workflowVersion =
-      await this.workflowCommonWorkspaceService.getWorkflowVersionOrFail({
-        workspaceId,
-        workflowVersionId,
-      });
-
-    const isManualTrigger =
-      workflowVersion.trigger?.type === WorkflowTriggerType.MANUAL;
-
-    const isHardThrottled = await this.checkHardThrottleLimit(workspaceId);
-
-    if (isHardThrottled) {
-      this.logger.log(`Workflow throttled for workspace ${workspaceId}`);
-      return this.createFailedWorkflowRun({
-        workspaceId,
-        workflowVersionId,
-        initialWorkflowRunId,
-        source,
-        payload,
-      });
-    }
-
-    if (isManualTrigger) {
-      return this.enqueueWorkflowRun({
-        workspaceId,
-        workflowVersionId,
-        initialWorkflowRunId,
-        source,
-        payload,
-      });
-    }
-
-    return this.createNotStartedWorkflowRunAndTriggerEnqueueJob({
+    return this.coreWorkflowRunnerService.run({
       workspaceId,
-      workflowVersionId,
-      initialWorkflowRunId,
-      source,
+      coreWorkflowVersionId: coreWorkflowVersion.id,
+      workflowRunId: initialWorkflowRunId,
       payload,
+      source,
     });
   }
 
@@ -135,42 +105,32 @@ export class WorkflowRunnerWorkspaceService {
     );
   }
 
-  async submitFormStep({
+  // A form step completes with its answer; an agent step stays PENDING until the resume job claims it
+  async resumeAnsweredStep({
     workspaceId,
-    stepId,
     workflowRunId,
+    step,
+    threadId,
     response,
   }: {
     workspaceId: string;
-    stepId: string;
     workflowRunId: string;
-    response: object;
-  }) {
-    const workflowRun =
-      await this.workflowRunWorkspaceService.getWorkflowRunOrFail({
-        workflowRunId,
-        workspaceId,
-      });
-
-    const step = workflowRun.state?.flow?.steps?.find(
-      (step) => step.id === stepId,
-    );
-
-    if (!isDefined(step)) {
-      throw new WorkflowVersionStepException(
-        'Step not found',
-        WorkflowVersionStepExceptionCode.NOT_FOUND,
-      );
-    }
-
+    step: WorkflowAction;
+    threadId: string;
+    response: Record<string, unknown>;
+  }): Promise<void> {
     if (!isWorkflowFormAction(step)) {
-      throw new WorkflowVersionStepException(
-        'Step is not a form',
-        WorkflowVersionStepExceptionCode.INVALID_REQUEST,
+      await this.messageQueueService.add<RunWorkflowJobData>(
+        RunWorkflowJob.name,
         {
-          userFriendlyMessage: msg`Step is not a form`,
+          workspaceId,
+          workflowRunId,
+          stepToResume: { stepId: step.id, threadId },
         },
+        buildRunWorkflowJobOptions(workflowRunId),
       );
+
+      return;
     }
 
     const enrichedResponse =
@@ -179,24 +139,72 @@ export class WorkflowRunnerWorkspaceService {
           workspaceId,
           step,
           response,
+          recordReadContext: await this.findFormRecordReadContext({
+            workspaceId,
+            workflowRunId,
+            step,
+          }),
         },
       );
 
-    await this.workflowRunWorkspaceService.updateWorkflowRunStepInfo({
-      stepId,
-      stepInfo: {
-        status: StepStatus.SUCCESS,
-        result: enrichedResponse,
-      },
-      workspaceId,
-      workflowRunId,
-    });
+    const hasCompletedStep =
+      await this.workflowRunWorkspaceService.updateStepInfoIfPending({
+        stepId: step.id,
+        stepInfo: {
+          status: StepStatus.SUCCESS,
+          result: enrichedResponse,
+        },
+        expectedThreadId: threadId,
+        workspaceId,
+        workflowRunId,
+      });
 
-    await this.resume({
-      workspaceId,
-      workflowRunId,
-      lastExecutedStepId: stepId,
-    });
+    if (hasCompletedStep) {
+      await this.resume({
+        workspaceId,
+        workflowRunId,
+        lastExecutedStepId: step.id,
+      });
+    }
+  }
+
+  private async findFormRecordReadContext({
+    workspaceId,
+    workflowRunId,
+    step,
+  }: {
+    workspaceId: string;
+    workflowRunId: string;
+    step: WorkflowFormAction;
+  }): Promise<WorkflowExecutionContext | undefined> {
+    if (!step.settings.input.some((field) => field.type === 'RECORD')) {
+      return undefined;
+    }
+
+    const workflowRun =
+      await this.workflowRunWorkspaceService.getWorkflowRunOrFail({
+        workflowRunId,
+        workspaceId,
+      });
+
+    const applicationBoundExecutionContext =
+      await this.workflowExecutionContextService
+        .getApplicationBoundExecutionContext({ workflowRun, workspaceId })
+        .catch((error: unknown) => {
+          if (error instanceof WorkflowStepExecutorException) {
+            throw new WorkflowVersionStepException(
+              error.message,
+              WorkflowVersionStepExceptionCode.INVALID_REQUEST,
+              {
+                userFriendlyMessage: msg`The permissions of this run no longer allow submitting this form.`,
+              },
+            );
+          }
+
+          throw error;
+        });
+
+    return applicationBoundExecutionContext ?? undefined;
   }
 
   async stopWorkflowRun(workspaceId: string, workflowRunId: string) {
@@ -235,28 +243,24 @@ export class WorkflowRunnerWorkspaceService {
       const steps = workflowRun.state.flow.steps;
 
       if (workflowHasRunningSteps({ stepInfos, steps })) {
-        const stoppedIteratorStepInfos = setAllIteratorsStepInfosAsStopped({
-          stepInfos,
-          steps,
-        });
+        const isStopping =
+          await this.workflowRunWorkspaceService.markWorkflowRunAsStopping({
+            workflowRunId,
+            workspaceId,
+          });
 
-        const mergedStepInfos = {
-          ...stepInfos,
-          ...stoppedIteratorStepInfos,
-        };
+        if (isStopping) {
+          newStatus = WorkflowRunStatus.STOPPING;
+        } else {
+          // The run changed before the lock was taken, so report what it is now.
+          const currentWorkflowRun =
+            await this.workflowRunWorkspaceService.getWorkflowRunOrFail({
+              workflowRunId,
+              workspaceId,
+            });
 
-        await this.workflowRunWorkspaceService.updateWorkflowRun({
-          workflowRunId,
-          workspaceId,
-          partialUpdate: {
-            status: WorkflowRunStatus.STOPPING,
-            state: {
-              ...workflowRun.state,
-              stepInfos: mergedStepInfos,
-            },
-          },
-        });
-        newStatus = WorkflowRunStatus.STOPPING;
+          newStatus = currentWorkflowRun.status;
+        }
       } else {
         await this.workflowRunWorkspaceService.endWorkflowRun({
           workflowRunId,
@@ -267,8 +271,7 @@ export class WorkflowRunnerWorkspaceService {
       }
     }
 
-    // Release the cached not-started slot only after the stop has been
-    // persisted, so a persistence failure can't desync the throttle counter.
+    // Only after the stop is persisted, so a persistence failure can't desync the throttle counter
     if (wasNotStarted) {
       await this.workflowThrottlingWorkspaceService.decreaseWorkflowRunNotStartedCount(
         workspaceId,
@@ -355,8 +358,7 @@ export class WorkflowRunnerWorkspaceService {
         buildRunWorkflowJobOptions(workflowRunId),
       );
     } catch (error) {
-      // The job couldn't be enqueued: revert to the previous failed state so
-      // the run isn't left stuck as RUNNING without a worker job.
+      // Revert so the run isn't left RUNNING without a worker job
       await this.workflowRunWorkspaceService.updateWorkflowRun({
         workflowRunId,
         workspaceId,
@@ -374,122 +376,5 @@ export class WorkflowRunnerWorkspaceService {
       id: workflowRun.id,
       status: WorkflowRunStatus.RUNNING,
     };
-  }
-
-  private async checkHardThrottleLimit(workspaceId: string): Promise<boolean> {
-    try {
-      await this.workflowThrottlingWorkspaceService.throttleOrThrowIfHardLimitReached(
-        workspaceId,
-      );
-
-      return false;
-    } catch {
-      void this.metricsService.incrementCounterForEvent({
-        key: MetricsKeys.WorkflowRunThrottled,
-        eventId: workspaceId,
-      });
-
-      return true;
-    }
-  }
-
-  private async createFailedWorkflowRun({
-    workspaceId,
-    workflowVersionId,
-    initialWorkflowRunId,
-    source,
-    payload,
-  }: {
-    workspaceId: string;
-    workflowVersionId: string;
-    initialWorkflowRunId?: string;
-    source: ActorMetadata;
-    payload: object;
-  }) {
-    const workflowRunId =
-      await this.workflowRunWorkspaceService.createWorkflowRun({
-        workflowVersionId,
-        workflowRunId: initialWorkflowRunId,
-        createdBy: source,
-        status: WorkflowRunStatus.FAILED,
-        triggerPayload: payload,
-        error: 'Throttle limit reached',
-        workspaceId,
-      });
-
-    return { workflowRunId };
-  }
-
-  private async enqueueWorkflowRun({
-    workspaceId,
-    workflowVersionId,
-    initialWorkflowRunId,
-    source,
-    payload,
-  }: {
-    workspaceId: string;
-    workflowVersionId: string;
-    initialWorkflowRunId?: string;
-    source: ActorMetadata;
-    payload: object;
-  }) {
-    const workflowRunId =
-      await this.workflowRunWorkspaceService.createWorkflowRun({
-        workflowVersionId,
-        workflowRunId: initialWorkflowRunId,
-        createdBy: source,
-        status: WorkflowRunStatus.ENQUEUED,
-        triggerPayload: payload,
-        workspaceId,
-      });
-
-    await this.messageQueueService.add<RunWorkflowJobData>(
-      RunWorkflowJob.name,
-      {
-        workspaceId,
-        workflowRunId,
-      },
-      buildRunWorkflowJobOptions(workflowRunId),
-    );
-
-    return { workflowRunId };
-  }
-
-  private async createNotStartedWorkflowRunAndTriggerEnqueueJob({
-    workspaceId,
-    workflowVersionId,
-    initialWorkflowRunId,
-    source,
-    payload,
-  }: {
-    workspaceId: string;
-    workflowVersionId: string;
-    initialWorkflowRunId?: string;
-    source: ActorMetadata;
-    payload: object;
-  }) {
-    const workflowRunId =
-      await this.workflowRunWorkspaceService.createWorkflowRun({
-        workflowVersionId,
-        workflowRunId: initialWorkflowRunId,
-        createdBy: source,
-        status: WorkflowRunStatus.NOT_STARTED,
-        triggerPayload: payload,
-        workspaceId,
-      });
-
-    await this.workflowThrottlingWorkspaceService.increaseWorkflowRunNotStartedCount(
-      workspaceId,
-    );
-
-    await this.messageQueueService.add<WorkflowRunEnqueueJobData>(
-      WorkflowRunEnqueueJob.name,
-      {
-        workspaceId,
-        isCacheMode: true,
-      },
-    );
-
-    return { workflowRunId };
   }
 }

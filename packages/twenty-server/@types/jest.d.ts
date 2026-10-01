@@ -1,3 +1,4 @@
+import { type createWorkflowTestServices } from '../test/integration/utils/create-workflow-test-services';
 import { type INestApplication } from '@nestjs/common';
 
 import 'jest';
@@ -32,6 +33,7 @@ declare global {
   const APPLE_SARAH_IMPERSONATE_TIM_INVALID_ACCESS_TOKEN: string;
 
   var testDataSource: DataSource;
+  var workflowTestServices: ReturnType<typeof createWorkflowTestServices>;
   var app: INestApplication;
   var dataSourceService: DataSourceService;
 }

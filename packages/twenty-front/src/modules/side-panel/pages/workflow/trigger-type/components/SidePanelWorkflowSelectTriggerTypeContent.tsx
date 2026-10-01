@@ -1,6 +1,6 @@
-import { useSidePanelWorkflowNavigation } from '@/side-panel/pages/workflow/hooks/useSidePanelWorkflowNavigation';
-import { useSidePanelWorkflowIdOrThrow } from '@/side-panel/pages/workflow/hooks/useSidePanelWorkflowIdOrThrow';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
+import { useSidePanelWorkflowIdOrThrow } from '@/side-panel/pages/workflow/hooks/useSidePanelWorkflowIdOrThrow';
+import { useSidePanelWorkflowNavigation } from '@/side-panel/pages/workflow/hooks/useSidePanelWorkflowNavigation';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useFlowOrThrow } from '@/workflow/hooks/useFlowOrThrow';
 import {
@@ -17,13 +17,12 @@ import { getTriggerDefaultDefinition } from '@/workflow/workflow-trigger/utils/g
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
+import { MenuItem } from 'twenty-ui/components';
 import { useIcons } from 'twenty-ui/icon';
-import { useContext } from 'react';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
-import { ThemeContext } from 'twenty-ui/theme-constants';
+import { useTheme } from 'twenty-ui/theme';
 
 export const SidePanelWorkflowSelectTriggerTypeContent = () => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const { getIcon } = useIcons();
   const workflowId = useSidePanelWorkflowIdOrThrow();
   const { updateTrigger } = useUpdateWorkflowVersionTrigger();

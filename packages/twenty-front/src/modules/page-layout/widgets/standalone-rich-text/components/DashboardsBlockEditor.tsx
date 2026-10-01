@@ -3,17 +3,15 @@ import { BlockNoteView } from '@blocknote/mantine';
 import { SuggestionMenuController } from '@blocknote/react';
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
-import { type ClipboardEvent, useContext } from 'react';
+import { type ClipboardEvent } from 'react';
 
-import {
-  CustomSlashMenu,
-  type SuggestionItem,
-} from '@/blocknote-editor/components/CustomSlashMenu';
+import { CustomSlashMenu } from '@/blocknote-editor/components/CustomSlashMenu';
+import { type SuggestionItem } from '@/blocknote-editor/types/SuggestionMenuItems';
 import { DashboardEditorSideMenu } from '@/page-layout/widgets/standalone-rich-text/components/DashboardEditorSideMenu';
 import { DashboardFormattingToolbar } from '@/page-layout/widgets/standalone-rich-text/components/DashboardFormattingToolbar';
 import { type DASHBOARD_BLOCK_SCHEMA } from '@/page-layout/widgets/standalone-rich-text/constants/DashboardBlockSchema';
 import { getDashboardSlashMenu } from '@/page-layout/widgets/standalone-rich-text/utils/getDashboardSlashMenu';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useThemeColorScheme, themeCssVariables } from 'twenty-ui/theme';
 type DashboardsBlockEditorProps = {
   editor: typeof DASHBOARD_BLOCK_SCHEMA.BlockNoteEditor;
   onFocus?: () => void;
@@ -158,7 +156,7 @@ export const DashboardsBlockEditor = ({
   onPaste,
   readonly,
 }: DashboardsBlockEditorProps) => {
-  const { colorScheme } = useContext(ThemeContext);
+  const colorScheme = useThemeColorScheme();
   const blockNoteTheme = colorScheme === 'light' ? 'light' : 'dark';
 
   const handleFocus = () => {

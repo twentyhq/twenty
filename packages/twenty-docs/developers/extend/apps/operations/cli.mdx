@@ -66,14 +66,14 @@ This is different from `yarn twenty docker:logs`, which shows the Docker contain
 
 ## Generating the typed client (`yarn twenty dev:generate-client`)
 
-Regenerate the typed API client (`twenty-client-sdk`) from the active remote's schema, without building or syncing an app. Use it to get a typed client in any project — like a backend service living in a separate repository — that talks to your Twenty instance:
+Regenerate the typed API client (`twenty-client-sdk`) for your app from the active remote. The client is scoped to the application declared in your manifest, so the command reads the build output: run `yarn twenty dev:build` (or `yarn twenty dev`) first.
 
 ```bash filename="Terminal"
-# In your project (no Twenty app definition required)
-yarn add twenty-sdk twenty-client-sdk
-
 # Connect to the Twenty instance to generate the client from
 yarn twenty remote:add
+
+# Build the app so the manifest exists
+yarn twenty dev:build
 
 # Generate the typed client into node_modules/twenty-client-sdk
 yarn twenty dev:generate-client
@@ -88,7 +88,7 @@ import { CoreApiClient } from 'twenty-client-sdk/core';
 Re-run the command whenever your data model changes to refresh the generated types.
 
 <Note>
-The client is generated inside `node_modules`, so it is not committed with your code. Run `yarn twenty dev:generate-client` after every install (for example in a `postinstall` script or in CI).
+The client is generated inside `node_modules`, so it is not committed with your code. Run `yarn twenty dev:build` then `yarn twenty dev:generate-client` after every install (for example in a `postinstall` script or in CI).
 </Note>
 
 ## Uninstalling an app (`yarn twenty app:uninstall`)

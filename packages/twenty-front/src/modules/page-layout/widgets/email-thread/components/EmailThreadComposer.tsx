@@ -20,8 +20,7 @@ import {
   IconSend,
   IconX,
 } from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { getOsControlSymbol } from 'twenty-ui/utilities';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledReplyBar = styled.button`
   align-items: center;
@@ -121,7 +120,7 @@ export const EmailThreadComposer = ({
           label: t`Send`,
           Icon: IconSend,
           isPrimaryCTA: true,
-          hotkeys: [getOsControlSymbol(), '⏎'],
+          shortcut: ['Mod', 'Enter'],
           onClick: handleSend,
           disabled: !canSendReply,
         },

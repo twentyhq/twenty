@@ -1,7 +1,7 @@
 import { originalDragSelectionComponentState } from '@/object-record/record-drag/states/originalDragSelectionComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { styled } from '@linaria/react';
-import { NotificationCounter } from 'twenty-ui/primitives/data-display';
+import { NotificationCounter } from 'twenty-ui/components';
 
 const StyledNotificationCounterContainer = styled.div`
   position: absolute;

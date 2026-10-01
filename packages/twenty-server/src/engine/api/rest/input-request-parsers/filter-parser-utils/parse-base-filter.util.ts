@@ -14,10 +14,6 @@ export enum FilterComparators {
   endsWith = 'endsWith',
   like = 'like',
   ilike = 'ilike',
-
-  // Not handled rigth now
-  // regex = 'regex',
-  // iregex = 'iregex',
 }
 
 export const parseBaseFilter = (

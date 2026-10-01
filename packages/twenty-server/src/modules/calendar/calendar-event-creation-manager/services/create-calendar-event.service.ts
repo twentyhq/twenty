@@ -11,7 +11,7 @@ import {
 } from 'src/modules/calendar/calendar-event-creation-manager/exceptions/calendar-event-creation.exception';
 import { CalendarSaveEventsService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-save-events.service';
 import { type ComposedCalendarEvent } from 'src/modules/calendar/calendar-event-creation-manager/types/composed-calendar-event.type';
-import { type FetchedCalendarEvent } from 'src/modules/calendar/common/types/fetched-calendar-event';
+import { type FetchedCalendarEvent } from 'src/modules/calendar/common/types/fetched-calendar-event.type';
 
 @Injectable()
 export class CreateCalendarEventService {
@@ -51,9 +51,7 @@ export class CreateCalendarEventService {
     }
   }
 
-  // Persist the created event right away so it is immediately visible in Twenty.
-  // The next provider sync reconciles it via its external id, so a persistence
-  // failure here is non-fatal.
+  // Non-fatal on failure: the next provider sync reconciles the event via its external id
   async persistCalendarEvent(
     createdEvent: FetchedCalendarEvent,
     data: ComposedCalendarEvent,

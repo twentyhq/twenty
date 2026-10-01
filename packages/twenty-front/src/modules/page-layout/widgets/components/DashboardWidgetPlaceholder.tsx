@@ -5,18 +5,13 @@ import { PageLayoutComponentInstanceContext } from '@/page-layout/states/context
 import { WidgetCard } from '@/page-layout/widgets/widget-card/components/WidgetCard';
 import { WidgetCardHeader } from '@/page-layout/widgets/widget-card/components/WidgetCardHeader';
 import { useNavigatePageLayoutSidePanel } from '@/side-panel/pages/page-layout/hooks/useNavigatePageLayoutSidePanel';
+import { AnimatedPlaceholder } from '@/ui/feedback/empty-state/components/AnimatedPlaceholder/AnimatedPlaceholder';
+import { EmptyState } from '@/ui/feedback/empty-state/components/EmptyState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import { SidePanelPages } from 'twenty-shared/types';
-import {
-  AnimatedPlaceholder,
-  AnimatedPlaceholderEmptyContainer,
-  AnimatedPlaceholderEmptySubTitle,
-  AnimatedPlaceholderEmptyTextContainer,
-  AnimatedPlaceholderEmptyTitle,
-} from 'twenty-ui/primitives/feedback';
 
 export const DashboardWidgetPlaceholder = () => {
   const pageLayoutId = useAvailableComponentInstanceIdOrThrow(
@@ -65,17 +60,17 @@ export const DashboardWidgetPlaceholder = () => {
         title={t`Add Widget`}
         isEmpty
       />
-      <AnimatedPlaceholderEmptyContainer>
+      <EmptyState.Root>
         <AnimatedPlaceholder type="noWidgets" />
-        <AnimatedPlaceholderEmptyTextContainer>
-          <AnimatedPlaceholderEmptyTitle>
+        <EmptyState.Content>
+          <EmptyState.Title>
             <Trans>Add widget</Trans>
-          </AnimatedPlaceholderEmptyTitle>
-          <AnimatedPlaceholderEmptySubTitle>
+          </EmptyState.Title>
+          <EmptyState.Description>
             <Trans>Click to add your first widget</Trans>
-          </AnimatedPlaceholderEmptySubTitle>
-        </AnimatedPlaceholderEmptyTextContainer>
-      </AnimatedPlaceholderEmptyContainer>
+          </EmptyState.Description>
+        </EmptyState.Content>
+      </EmptyState.Root>
     </WidgetCard>
   );
 };

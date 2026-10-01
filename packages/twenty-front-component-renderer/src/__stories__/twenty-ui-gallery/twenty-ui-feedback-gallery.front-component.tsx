@@ -1,24 +1,7 @@
 import { defineFrontComponent } from 'twenty-sdk/define';
-import {
-  AnimatedPlaceholder,
-  AnimatedPlaceholderEmptyContainer,
-  AnimatedPlaceholderEmptySubTitle,
-  AnimatedPlaceholderEmptyTextContainer,
-  AnimatedPlaceholderEmptyTitle,
-  AnimatedPlaceholderErrorContainer,
-  AnimatedPlaceholderErrorSubTitle,
-  AnimatedPlaceholderErrorTextContainer,
-  AnimatedPlaceholderErrorTitle,
-  Banner,
-  Callout,
-  CircularProgressBar,
-  Info,
-  InlineBanner,
-  Loader,
-  ProgressBar,
-  SidePanelInformationBanner,
-} from 'twenty-ui/primitives/feedback';
-import { ThemeProvider } from 'twenty-ui/theme-constants';
+import { Callout, InlineBanner } from 'twenty-ui/components';
+import { Banner, Loader, ProgressBar } from 'twenty-ui/primitives/feedback';
+import { ThemeProvider } from 'twenty-ui/theme';
 
 import {
   ComponentGallery,
@@ -26,70 +9,6 @@ import {
 } from '../shared/front-components/component-gallery';
 
 const FEEDBACK_ENTRIES: GalleryEntry[] = [
-  {
-    name: 'AnimatedPlaceholder',
-    node: <AnimatedPlaceholder type="error404" />,
-  },
-  {
-    name: 'AnimatedPlaceholderEmptyContainer',
-    node: (
-      <AnimatedPlaceholderEmptyContainer>
-        Empty
-      </AnimatedPlaceholderEmptyContainer>
-    ),
-  },
-  {
-    name: 'AnimatedPlaceholderEmptyTextContainer',
-    node: (
-      <AnimatedPlaceholderEmptyTextContainer>
-        Empty text
-      </AnimatedPlaceholderEmptyTextContainer>
-    ),
-  },
-  {
-    name: 'AnimatedPlaceholderEmptyTitle',
-    node: (
-      <AnimatedPlaceholderEmptyTitle>No records</AnimatedPlaceholderEmptyTitle>
-    ),
-  },
-  {
-    name: 'AnimatedPlaceholderEmptySubTitle',
-    node: (
-      <AnimatedPlaceholderEmptySubTitle>
-        Try adding one
-      </AnimatedPlaceholderEmptySubTitle>
-    ),
-  },
-  {
-    name: 'AnimatedPlaceholderErrorContainer',
-    node: (
-      <AnimatedPlaceholderErrorContainer>
-        Error
-      </AnimatedPlaceholderErrorContainer>
-    ),
-  },
-  {
-    name: 'AnimatedPlaceholderErrorTextContainer',
-    node: (
-      <AnimatedPlaceholderErrorTextContainer>
-        Error text
-      </AnimatedPlaceholderErrorTextContainer>
-    ),
-  },
-  {
-    name: 'AnimatedPlaceholderErrorTitle',
-    node: (
-      <AnimatedPlaceholderErrorTitle>Went wrong</AnimatedPlaceholderErrorTitle>
-    ),
-  },
-  {
-    name: 'AnimatedPlaceholderErrorSubTitle',
-    node: (
-      <AnimatedPlaceholderErrorSubTitle>
-        Please retry
-      </AnimatedPlaceholderErrorSubTitle>
-    ),
-  },
   {
     name: 'Banner',
     node: (
@@ -105,12 +24,14 @@ const FEEDBACK_ENTRIES: GalleryEntry[] = [
     ),
   },
   {
-    name: 'CircularProgressBar',
-    node: <CircularProgressBar size={50} barWidth={5} />,
-  },
-  {
-    name: 'Info',
-    node: <Info accent="blue" text="Some information" />,
+    name: 'InlineBanner compact link',
+    node: (
+      <InlineBanner
+        variant="compact"
+        message="Connect your account to keep your contacts in sync."
+        button={{ title: 'Connection settings', href: '#connection-settings' }}
+      />
+    ),
   },
   {
     name: 'InlineBanner',
@@ -123,10 +44,6 @@ const FEEDBACK_ENTRIES: GalleryEntry[] = [
   {
     name: 'ProgressBar',
     node: <ProgressBar value={50} ariaLabel="Progress" />,
-  },
-  {
-    name: 'SidePanelInformationBanner',
-    node: <SidePanelInformationBanner message="Panel info" variant="default" />,
   },
 ];
 

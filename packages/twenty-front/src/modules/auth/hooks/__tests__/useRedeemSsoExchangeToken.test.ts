@@ -21,8 +21,8 @@ jest.mock('@apollo/client/react', () => ({
 
 const mockEnqueueToast = jest.fn();
 
-jest.mock('twenty-ui/primitives/feedback', () => ({
-  ...jest.requireActual('twenty-ui/primitives/feedback'),
+jest.mock('twenty-ui/components', () => ({
+  ...jest.requireActual('twenty-ui/components'),
   useToast: () => ({ enqueueToast: mockEnqueueToast }),
 }));
 
@@ -80,8 +80,7 @@ describe('useRedeemSsoExchangeToken', () => {
     expect(jotaiStore.get(isAppEffectRedirectEnabledState.atom)).toBe(true);
   });
 
-  // The cookie is httpOnly, so nothing else can tell the client it is now
-  // signed in; without this the user stays on the sign-in flow.
+  // The cookie is httpOnly, so nothing else tells the client it is signed in.
   it('should mark the session active once the exchange succeeds', async () => {
     const { result } = renderHooks();
 

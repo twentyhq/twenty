@@ -27,6 +27,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "label",
       "isSecret",
       "isDeprecated",
+      "isRequired",
       "type",
       "options",
     ],
@@ -331,6 +332,16 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
     ],
     "propertiesToStringify": [],
   },
+  "settingsMenuItem": {
+    "propertiesToCompare": [
+      "frontComponentUniversalIdentifier",
+      "title",
+      "icon",
+      "position",
+      "scope",
+    ],
+    "propertiesToStringify": [],
+  },
   "skill": {
     "propertiesToCompare": [
       "name",
@@ -362,6 +373,21 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "overrides",
     ],
   },
+  "validationRule": {
+    "propertiesToCompare": [
+      "errorFieldMetadataUniversalIdentifier",
+      "name",
+      "description",
+      "icon",
+      "expression",
+      "bindings",
+      "message",
+      "isActive",
+    ],
+    "propertiesToStringify": [
+      "bindings",
+    ],
+  },
   "view": {
     "propertiesToCompare": [
       "deletedAt",
@@ -382,6 +408,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "mainGroupByFieldMetadataUniversalIdentifier",
       "shouldHideEmptyGroups",
       "kanbanColumnWidth",
+      "groupLoadLimit",
       "isActive",
       "universalOverrides",
     ],
@@ -474,6 +501,29 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
     ],
     "propertiesToStringify": [
       "operations",
+    ],
+  },
+  "workflow": {
+    "propertiesToCompare": [
+      "versionDefinitionHash",
+      "name",
+      "visibility",
+      "lastPublishedVersionId",
+      "lastPublishedCoreWorkflowVersionId",
+    ],
+    "propertiesToStringify": [],
+  },
+  "workflowVersion": {
+    "propertiesToCompare": [
+      "isSystemSideEffect",
+      "status",
+      "triggers",
+      "steps",
+      "coreWorkflowId",
+    ],
+    "propertiesToStringify": [
+      "triggers",
+      "steps",
     ],
   },
 }

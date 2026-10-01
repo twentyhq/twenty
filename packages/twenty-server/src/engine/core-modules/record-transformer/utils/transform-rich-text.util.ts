@@ -3,7 +3,7 @@ import {
   type RichTextMetadata,
   richTextValueSchema,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { convertTipTapBlocksToMarkdown, isDefined } from 'twenty-shared/utils';
 
 import type { ServerBlockNoteEditor } from '@blocknote/server-util';
 
@@ -38,6 +38,19 @@ export const transformRichTextValue = async (
     : richTextValue;
 
   const serverBlockNoteEditor = await getServerBlockNoteEditor();
+
+  const tipTapMarkdown = isDefined(parsedValue.blocknote)
+    ? convertTipTapBlocksToMarkdown(parsedValue.blocknote)
+    : undefined;
+
+  if (isDefined(tipTapMarkdown)) {
+    return {
+      markdown: parsedValue.markdown || tipTapMarkdown,
+      blocknote: JSON.stringify(
+        await serverBlockNoteEditor.tryParseMarkdownToBlocks(tipTapMarkdown),
+      ),
+    };
+  }
 
   // Patch: Handle cases where blocknote to markdown conversion fails for certain block types (custom/code blocks)
   // Todo : This may be resolved once the server-utils library is updated with proper conversion support - #947

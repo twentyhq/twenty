@@ -8,14 +8,12 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const mockCreateApplicationFileUploads = vi.fn();
 const mockCompleteApplicationFileUploads = vi.fn();
-const mockUploadFile = vi.fn();
 const mockPutFileToUploadUrl = vi.fn();
 
 vi.mock('@/cli/utilities/api/api-service', () => ({
   ApiService: class {
     createApplicationFileUploads = mockCreateApplicationFileUploads;
     completeApplicationFileUploads = mockCompleteApplicationFileUploads;
-    uploadFile = mockUploadFile;
   },
 }));
 
@@ -68,7 +66,6 @@ describe('FileUploader.uploadFiles', () => {
       success: true,
       data: { files: [], errors: [] },
     });
-    mockUploadFile.mockResolvedValue({ success: true, data: true });
     mockPutFileToUploadUrl.mockResolvedValue(undefined);
   });
 
@@ -128,62 +125,6 @@ describe('FileUploader.uploadFiles', () => {
 
     expect(failures).toHaveLength(2);
     expect(failures[0].error).toContain('Limit reached');
-    expect(mockPutFileToUploadUrl).not.toHaveBeenCalled();
-    expect(mockCompleteApplicationFileUploads).not.toHaveBeenCalled();
-  });
-
-  it('should fall back to multipart uploads when the server does not support direct uploads', async () => {
-    mockCreateApplicationFileUploads.mockResolvedValue({
-      success: false,
-      error:
-        'Cannot query field "createApplicationFileUploads" on type "Mutation".',
-    });
-
-    const failures = await buildUploader().uploadFiles(filesToUpload);
-
-    expect(failures).toEqual([]);
-    expect(mockUploadFile).toHaveBeenCalledTimes(2);
-    expect(mockUploadFile).toHaveBeenCalledWith({
-      applicationUniversalIdentifier: 'application-uid',
-      builtHandlerPath: 'handler.mjs',
-      fileFolder: FileFolder.BuiltLogicFunction,
-      filePath: join(appPath, OUTPUT_DIR, 'handler.mjs'),
-    });
-    expect(mockPutFileToUploadUrl).not.toHaveBeenCalled();
-    expect(mockCompleteApplicationFileUploads).not.toHaveBeenCalled();
-  });
-
-  it('should report multipart upload failures after falling back for an older server', async () => {
-    mockCreateApplicationFileUploads.mockResolvedValue({
-      success: false,
-      error:
-        'Cannot query field "createApplicationFileUploads" on type "Mutation".',
-    });
-    mockUploadFile.mockResolvedValueOnce({
-      success: false,
-      error: 'legacy upload failed',
-    });
-
-    const failures = await buildUploader().uploadFiles(filesToUpload);
-
-    expect(failures).toEqual([
-      {
-        builtPath: join(OUTPUT_DIR, 'handler.mjs'),
-        error: 'legacy upload failed',
-      },
-    ]);
-  });
-
-  it('should fall back when an older server rejects the direct upload input type', async () => {
-    mockCreateApplicationFileUploads.mockResolvedValue({
-      success: false,
-      error: 'Unknown type "ApplicationFileUploadRequestInput".',
-    });
-
-    const failures = await buildUploader().uploadFiles(filesToUpload);
-
-    expect(failures).toEqual([]);
-    expect(mockUploadFile).toHaveBeenCalledTimes(2);
     expect(mockPutFileToUploadUrl).not.toHaveBeenCalled();
     expect(mockCompleteApplicationFileUploads).not.toHaveBeenCalled();
   });

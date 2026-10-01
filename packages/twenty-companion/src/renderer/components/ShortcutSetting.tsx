@@ -1,10 +1,10 @@
 import { DEFAULT_SETTINGS } from '../../shared/constants/DEFAULT_SETTINGS';
 import { shortcutFromKeyboardEvent } from '../utils/shortcutFromKeyboardEvent';
-import { formatShortcut } from '../utils/formatShortcut';
+import { formatShortcut } from '@ui/primitives/typography/Shortcut/formatShortcut';
 import { i18n } from '@lingui/core';
 import { SettingsCardContent } from './SettingsCardContent';
 import { THEME_COMMON } from '@ui/theme/constants/ThemeCommon';
-import { IconButton } from '@ui/components/IconButton/IconButton';
+import { IconButton } from '@ui/components/input/IconButton/IconButton';
 import { useState } from 'react';
 import { IconCommand, IconRestore } from 'twenty-ui/icon';
 import { Button } from '@ui/primitives/input/Button/Button';
@@ -74,10 +74,10 @@ export const ShortcutSetting = ({ state, isPending, command }: ActionProps) => {
           >
             {capturing
               ? i18n._('Press shortcut…')
-              : formatShortcut(
-                  state.settings.openShortcut,
-                  navigator.platform.startsWith('Mac'),
-                )}
+              : formatShortcut({
+                  shortcut: state.settings.openShortcut.split('+'),
+                  combinationSeparator: ' + ',
+                })}
           </Button>
         </div>
       </div>

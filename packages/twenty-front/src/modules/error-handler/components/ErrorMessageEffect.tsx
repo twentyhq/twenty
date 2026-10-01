@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 
 import { useSearchParams } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/primitives/feedback';
+import { useToast } from 'twenty-ui/components';
 
 export const ErrorMessageEffect = () => {
   const { enqueueToast } = useToast();

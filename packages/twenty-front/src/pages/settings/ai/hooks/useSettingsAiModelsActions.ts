@@ -1,8 +1,8 @@
-import { useToast } from 'twenty-ui/primitives/feedback';
 import { useMutation } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { type AiModelTier } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
+import { useToast } from 'twenty-ui/components';
 
 import {
   currentWorkspaceState,
@@ -14,9 +14,8 @@ import {
   UpdateWorkspaceDocument,
 } from '~/generated-metadata/graphql';
 
-// Typed with the generated enum so the same object is both the optimistic
-// workspace patch and the mutation input; the enum's keys are the shared tier
-// literals, which is what makes the lookup below total.
+// Typed with the generated enum so one object is both the optimistic workspace patch and the mutation input;
+// the enum's keys are the shared tier literals, which keeps the GraphqlAiModelTier[tier] lookups total
 type WorkspaceAiModelSettingsChanges = Partial<
   Pick<
     CurrentWorkspace,

@@ -13,6 +13,7 @@ import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/
 import { BillingTrialPeriodDTO } from 'src/engine/core-modules/billing/dtos/billing-trial-period.dto';
 import { CaptchaDriverType } from 'src/engine/core-modules/captcha/interfaces';
 import { AuthProvidersDTO } from 'src/engine/core-modules/workspace/dtos/public-workspace-data.dto';
+import { type AiModelKind } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-model-kinds.const';
 import { AiModelTier as AiModelTierEnum } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-tier.enum';
 import { ModelFamily } from 'src/engine/metadata-modules/ai/ai-models/types/model-family.enum';
 import { type ModelId } from 'src/engine/metadata-modules/ai/ai-models/types/model-id.type';
@@ -37,7 +38,6 @@ export class NativeModelCapabilities {
 @ObjectType()
 export class ClientAiModelConfig {
   @Field(() => String)
-  // Composite model id (`provider/modelName`) for this workspace; matches registry and admin APIs.
   modelId: ModelId;
 
   @Field(() => String)
@@ -88,18 +88,55 @@ export class ClientAiModelConfig {
   @Field(() => Number, { nullable: true })
   costPerTask?: number;
 
-  // Reasoning levels a pin may name as `modelId@effort`; empty for a model
-  // that takes none, unset on a variant that already names its own.
+  // Reasoning levels a pin may name as `modelId@effort`; empty when the model takes none, unset on a variant naming its own.
   @Field(() => [String], { nullable: true })
   efforts?: string[];
 
   @Field(() => String, { nullable: true })
   effort?: string;
 
-  // A pinned effort without a reading of its own shows the base model's
-  // figures until the benchmark sync measures it.
   @Field(() => Boolean, { nullable: true })
   isBenchmarkInherited?: boolean;
+}
+
+@ObjectType()
+// Kept out of aiModels so existing pickers never offer a model that cannot answer a chat turn.
+export class ClientAiEvaluationModelConfig {
+  @Field(() => String)
+  modelId: string;
+
+  @Field(() => String)
+  label: string;
+
+  @Field(() => String, { nullable: true })
+  description?: string;
+
+  @Field(() => String, { nullable: true })
+  providerLabel?: string;
+
+  @Field(() => Boolean)
+  isAvailable: boolean;
+
+  @Field(() => [String])
+  supportedQuestionTypes: string[];
+
+  @Field(() => Number, { nullable: true })
+  maxCriteriaPerQuestion?: number;
+
+  @Field(() => Number, { nullable: true })
+  maxScoreLevels?: number;
+
+  @Field(() => Number, { nullable: true })
+  medianLatencyMs?: number;
+
+  @Field(() => Number, { nullable: true })
+  inputCostPerMillionTokens?: number;
+
+  @Field(() => Number, { nullable: true })
+  outputCostPerMillionTokens?: number;
+
+  @Field(() => Boolean, { nullable: true })
+  isDeprecated?: boolean;
 }
 
 @ObjectType()
@@ -107,7 +144,6 @@ export class ClientAiModelTierConfig {
   @Field(() => AiModelTierEnum)
   tier: AiModelTier;
 
-  // The model this instance resolves the tier to when a workspace has no pin.
   @Field(() => String)
   modelId: ModelId;
 }
@@ -115,11 +151,14 @@ export class ClientAiModelTierConfig {
 @ObjectType()
 export class AdminAiModelConfig {
   @Field(() => String)
-  // Composite model id (`provider/modelName`) used for toggles, defaults, and registry lookups.
+  // Composite `provider/modelName` id.
   modelId: string;
 
   @Field(() => String)
   label: string;
+
+  @Field(() => String)
+  kind: AiModelKind;
 
   @Field(() => ModelFamily, { nullable: true })
   modelFamily?: ModelFamily;
@@ -158,7 +197,7 @@ export class AdminAiModelConfig {
   providerLabel?: string;
 
   @Field(() => String, { nullable: true })
-  // Bare SDK model name from the provider definition (`AiProviderModelConfig.name`), not the composite `modelId`.
+  // Bare SDK model name, not the composite modelId.
   name?: string;
 
   @Field(() => String, { nullable: true })
@@ -173,8 +212,6 @@ export class AdminAiModelTierDefault {
   @Field(() => AiModelTierEnum)
   tier: AiModelTier;
 
-  // The model the tier resolves to on this instance; unset when no model is
-  // available.
   @Field(() => String, { nullable: true })
   modelId?: string;
 }
@@ -247,9 +284,13 @@ export class OnboardingConfig {
 
   inviteTeamCreditsRewardPerUser: number;
 
+  installAppsCreditsReward: number;
+
+  createProfileCreditsReward: number;
+
   upgradeCreditsReward: number;
 
-  installAppsCreditsRewardPerApp: number;
+  inviteTeamMaxInvites: number;
 }
 
 @ObjectType()
@@ -302,6 +343,9 @@ export class ClientConfig {
   @Field(() => [ClientAiModelConfig])
   aiModels: ClientAiModelConfig[];
 
+  @Field(() => [ClientAiEvaluationModelConfig])
+  aiEvaluationModels: ClientAiEvaluationModelConfig[];
+
   @Field(() => [ClientAiModelTierConfig])
   aiModelTiers: ClientAiModelTierConfig[];
 
@@ -349,8 +393,7 @@ export class ClientConfig {
   @Field(() => [PublicFeatureFlag])
   publicFeatureFlags: PublicFeatureFlag[];
 
-  // Always true now that cookie sessions are the only web auth path. Kept in
-  // the schema because removing a field breaks the public API contract.
+  // Always true; kept because removing a field breaks the public API contract.
   @Field(() => Boolean)
   isCookieSessionEnabled: boolean;
 

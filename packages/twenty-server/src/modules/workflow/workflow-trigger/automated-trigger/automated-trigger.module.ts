@@ -1,4 +1,7 @@
+import { WorkflowVersionCoreModule } from 'src/engine/core-modules/workflow/workflow-version-core.module';
 import { Module } from '@nestjs/common';
+
+import { WorkflowCoreModule } from 'src/engine/core-modules/workflow/workflow-core.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { CacheStorageModule } from 'src/engine/core-modules/cache-storage/cache-storage.module';
@@ -16,6 +19,8 @@ import { WorkflowDatabaseEventTriggerListener } from 'src/modules/workflow/workf
 
 @Module({
   imports: [
+    WorkflowVersionCoreModule,
+    WorkflowCoreModule,
     TypeOrmModule.forFeature([WorkspaceEntity]),
     CacheStorageModule,
     CronModule,

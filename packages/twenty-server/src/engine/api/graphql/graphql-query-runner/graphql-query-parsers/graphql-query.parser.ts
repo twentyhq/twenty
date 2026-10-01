@@ -8,7 +8,7 @@ import {
   type ObjectRecordOrderBy,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
-import { type GroupByField } from 'src/engine/api/common/common-query-runners/types/group-by-field.types';
+import { type GroupByField } from 'src/engine/api/common/common-query-runners/types/group-by-field.type';
 import { GraphqlQueryFilterConditionParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-condition.parser';
 import { GraphqlQueryOrderGroupByParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/graphql-query-order-group-by.parser';
 import {
@@ -101,10 +101,7 @@ export class GraphqlQueryParser {
         return true;
       }
 
-      // Only recurse into boolean-operator wrappers (and / or / not) — those
-      // are transparent w.r.t. which entity owns a deletedAt. Composite
-      // sub-field and relation-traversal nesting refers to a different
-      // entity's deletedAt, which must not widen the root query.
+      // Only and/or/not are transparent: nested composite or relation deletedAt belongs to another entity and must not widen the root query
       if (
         (key === 'and' || key === 'or' || key === 'not') &&
         typeof value === 'object' &&
@@ -142,7 +139,6 @@ export class GraphqlQueryParser {
 
     queryBuilder.orderBy(parseResult.orderBy);
 
-    // Return parsed orderBy so caller can add relation columns after setFindOptions
     return parseResult.orderBy;
   }
 
@@ -153,17 +149,14 @@ export class GraphqlQueryParser {
     objectNameSingular: string,
     columnsToSelect: Record<string, boolean>,
   ): void {
-    // Add ORDER BY columns with underscore alias for DISTINCT compatibility
-    // This must be called AFTER setFindOptions because setFindOptions clears addSelect
-    // We need to add columns that are in orderBy but NOT in the selected columns
+    // Must run after setFindOptions, which clears addSelect; the underscore alias keeps DISTINCT working
     for (const orderByKey of Object.keys(parsedOrderBy)) {
       const parts = orderByKey.split('.');
 
       if (parts.length === 2) {
         const [alias, column] = parts;
 
-        // For relation columns: always add (they're never in columnsToSelect)
-        // For main entity columns: only add if NOT already in columnsToSelect
+        // Relation columns are never in columnsToSelect
         const isMainEntity = alias === objectNameSingular;
         const isAlreadySelected = isMainEntity && columnsToSelect[column];
 
@@ -194,7 +187,6 @@ export class GraphqlQueryParser {
           ? ` ${orderByCondition.nulls}`
           : '';
 
-        // Convert "alias.column" to quoted SQL identifier "alias"."column"
         const parts = orderByField.split('.');
         const quotedColumn =
           parts.length === 2

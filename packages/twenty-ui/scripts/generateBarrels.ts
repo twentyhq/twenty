@@ -8,6 +8,25 @@ import ts from 'typescript';
 
 // TODO prastoin refactor this file in several one into its dedicated package and make it a TypeScript CLI
 
+const shouldCheck = process.argv.includes('--check');
+const writeGeneratedFile = ({
+  file,
+  content,
+}: {
+  file: string;
+  content: string;
+}) => {
+  if (fs.existsSync(file) && fs.readFileSync(file, 'utf8') === content) {
+    return;
+  }
+  if (shouldCheck) {
+    throw new Error(
+      `Generated exports are stale: ${file}. Run nx generateBarrels twenty-ui.`,
+    );
+  }
+  fs.writeFileSync(file, content, 'utf8');
+};
+
 const INDEX_FILENAME = 'index';
 const PACKAGE_JSON_FILENAME = 'package.json';
 const NX_PROJECT_CONFIGURATION_FILENAME = 'project.json';
@@ -30,8 +49,14 @@ if (prettierConfigFile == null) {
   throw new Error('Prettier config file not found');
 }
 const prettierConfiguration = prettier.resolveConfig(prettierConfigFile);
-const prettierFormat = (str: string, parser: Options['parser']) =>
-  prettier.format(str, {
+const prettierFormat = ({
+  content,
+  parser,
+}: {
+  content: string;
+  parser: Options['parser'];
+}) =>
+  prettier.format(content, {
     ...prettierConfiguration,
     parser,
   });
@@ -55,15 +80,14 @@ const createTypeScriptFile = ({
  *                              |___/
  */
 `;
-  const formattedContent = prettierFormat(
-    `${header}\n${content}\n`,
-    'typescript',
-  );
-  fs.writeFileSync(
-    path.join(filePath, `${filename}.ts`),
-    formattedContent,
-    'utf-8',
-  );
+  const formattedContent = prettierFormat({
+    content: `${header}\n${content}\n`,
+    parser: 'typescript',
+  });
+  writeGeneratedFile({
+    file: path.join(filePath, `${filename}.ts`),
+    content: formattedContent,
+  });
 };
 
 const getModuleName = (moduleDirectory: string) =>
@@ -182,7 +206,7 @@ const updateJsonFile = ({ content, file }: WriteInJsonFileArgs) => {
     ...prettierConfiguration,
     filepath: file,
   });
-  fs.writeFileSync(file, formattedContent, 'utf-8');
+  writeGeneratedFile({ file, content: formattedContent });
 };
 
 const writeInPackageJson = (update: JsonUpdate) => {
@@ -423,8 +447,7 @@ function extractExportsFromSourceFile(sourceFile: ts.SourceFile) {
             const exportName = element.name.text;
 
             // Check both the declaration and the individual specifier for type-only exports
-            const isTypeExport =
-              node.isTypeOnly || ts.isTypeOnlyExportDeclaration(node);
+            const isTypeExport = node.isTypeOnly || element.isTypeOnly;
             if (isTypeExport) {
               exports.push({
                 kind: 'type',

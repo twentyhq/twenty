@@ -2,10 +2,8 @@ import { ApplicationDisplay } from '@/applications/components/ApplicationDisplay
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
 import { StyledNameTableCell } from '@/settings/data-model/object-details/components/SettingsObjectItemTableRowStyledComponents';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { DropdownMenuSectionLabel } from '@/ui/layout/dropdown/components/DropdownMenuSectionLabel';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
@@ -14,14 +12,20 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useMutation, useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { type ReactNode, useContext, useState } from 'react';
+import { useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import {
   assertUnreachable,
   getSettingsPath,
   isDefined,
 } from 'twenty-shared/utils';
-import { Section } from 'twenty-ui/components';
+import {
+  Dropdown,
+  SearchInput,
+  Section,
+  SettingsRow,
+  useToast,
+} from 'twenty-ui/components';
 import {
   IconChevronRight,
   IconDotsVertical,
@@ -29,10 +33,8 @@ import {
   IconRefresh,
 } from 'twenty-ui/icon';
 import { Tag } from 'twenty-ui/primitives/data-display';
-import { useToast } from 'twenty-ui/primitives/feedback';
-import { Button, SearchInput } from 'twenty-ui/primitives/input';
-import { MenuItemSwitch } from 'twenty-ui/primitives/navigation';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { Button } from 'twenty-ui/primitives/input';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { useDebounce } from 'use-debounce';
 import {
   type ApplicationRegistrationFragmentFragment,
@@ -208,83 +210,72 @@ export const SettingsAdminApps = () => {
         <SearchInput
           placeholder={t`Search registrations...`}
           value={searchQuery}
-          onChange={setSearchQuery}
-          filterDropdown={(filterButton: ReactNode) => (
-            <Dropdown
+          onValueChange={setSearchQuery}
+          filterDropdown={(filterButton) => (
+            <DropdownRoot
               dropdownId="settings-admin-apps-filter-dropdown"
-              dropdownPlacement="bottom-end"
-              dropdownOffset={{ x: 0, y: 8 }}
-              clickableComponent={filterButton}
-              dropdownComponents={
-                <DropdownContent>
-                  <DropdownMenuItemsContainer>
-                    <MenuItemSwitch
-                      LeftIcon={IconPinned}
-                      onCheckedChange={() =>
-                        setShowPreInstalledOnly(!showPreInstalledOnly)
-                      }
-                      checked={showPreInstalledOnly}
-                      text={t`Pre-installed only`}
-                      size="sm"
-                    />
-                    <DropdownMenuSectionLabel label={t`Source`} />
-                    {SOURCE_TYPE_FILTER_OPTIONS.map(({ sourceType, label }) => (
-                      <MenuItemSwitch
-                        key={sourceType}
-                        onCheckedChange={() =>
-                          toggleSourceTypeFilter(sourceType)
-                        }
-                        checked={sourceTypeFilters.includes(sourceType)}
-                        text={label}
-                        size="sm"
-                      />
-                    ))}
-                    <DropdownMenuSectionLabel label={t`Listed`} />
-                    <MenuItemSwitch
-                      onCheckedChange={() =>
-                        setIsListedFilter(
-                          isListedFilter === true ? undefined : true,
-                        )
-                      }
-                      checked={isListedFilter === true}
-                      text={t`Listed`}
-                      size="sm"
-                    />
-                    <MenuItemSwitch
-                      onCheckedChange={() =>
-                        setIsListedFilter(
-                          isListedFilter === false ? undefined : false,
-                        )
-                      }
-                      checked={isListedFilter === false}
-                      text={t`Not listed`}
-                      size="sm"
-                    />
-                    <DropdownMenuSectionLabel label={t`Configured`} />
-                    <MenuItemSwitch
-                      onCheckedChange={() =>
-                        setIsConfiguredFilter(
-                          isConfiguredFilter === true ? undefined : true,
-                        )
-                      }
-                      checked={isConfiguredFilter === true}
-                      text={t`Configured`}
-                      size="sm"
-                    />
-                    <MenuItemSwitch
-                      onCheckedChange={() =>
-                        setIsConfiguredFilter(
-                          isConfiguredFilter === false ? undefined : false,
-                        )
-                      }
-                      checked={isConfiguredFilter === false}
-                      text={t`Not configured`}
-                      size="sm"
-                    />
-                  </DropdownMenuItemsContainer>
-                </DropdownContent>
-              }
-            />
+              type="panel"
+            >
+              <Dropdown.Trigger render={filterButton} />
+              <DropdownContent align="end" sideOffset={8}>
+                <Dropdown.Section>
+                  <SettingsRow
+                    startIcon={<IconPinned />}
+                    onCheckedChange={() =>
+                      setShowPreInstalledOnly(!showPreInstalledOnly)
+                    }
+                    checked={showPreInstalledOnly}
+                  >{t`Pre-installed only`}</SettingsRow>
+                </Dropdown.Section>
+                <Dropdown.Section label={t`Source`}>
+                  {SOURCE_TYPE_FILTER_OPTIONS.map(({ sourceType, label }) => (
+                    <SettingsRow
+                      key={sourceType}
+                      onCheckedChange={() => toggleSourceTypeFilter(sourceType)}
+                      checked={sourceTypeFilters.includes(sourceType)}
+                    >
+                      {label}
+                    </SettingsRow>
+                  ))}
+                </Dropdown.Section>
+                <Dropdown.Section label={t`Listed`}>
+                  <SettingsRow
+                    onCheckedChange={() =>
+                      setIsListedFilter(
+                        isListedFilter === true ? undefined : true,
+                      )
+                    }
+                    checked={isListedFilter === true}
+                  >{t`Listed`}</SettingsRow>
+                  <SettingsRow
+                    onCheckedChange={() =>
+                      setIsListedFilter(
+                        isListedFilter === false ? undefined : false,
+                      )
+                    }
+                    checked={isListedFilter === false}
+                  >{t`Not listed`}</SettingsRow>
+                </Dropdown.Section>
+                <Dropdown.Section label={t`Configured`}>
+                  <SettingsRow
+                    onCheckedChange={() =>
+                      setIsConfiguredFilter(
+                        isConfiguredFilter === true ? undefined : true,
+                      )
+                    }
+                    checked={isConfiguredFilter === true}
+                  >{t`Configured`}</SettingsRow>
+                  <SettingsRow
+                    onCheckedChange={() =>
+                      setIsConfiguredFilter(
+                        isConfiguredFilter === false ? undefined : false,
+                      )
+                    }
+                    checked={isConfiguredFilter === false}
+                  >{t`Not configured`}</SettingsRow>
+                </Dropdown.Section>
+              </DropdownContent>
+            </DropdownRoot>
           )}
         />
         {loading && registrations.length === 0 ? (
@@ -343,7 +334,7 @@ const SettingsAdminAppsTableRow = ({
   registration,
   getFormattedSource,
 }: SettingsAdminAppsTableRowProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
 
   return (
     <TableRow

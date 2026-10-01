@@ -1,5 +1,5 @@
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 
 export const findRecordNodesByFilter = async <TNode>(
   objectMetadataSingularName: string,
@@ -7,7 +7,7 @@ export const findRecordNodesByFilter = async <TNode>(
   gqlFields: string,
   filter: object,
 ): Promise<TNode[]> => {
-  const response = await makeGraphqlAPIRequest(
+  const response = await makeGraphqlApiRequest(
     findManyOperationFactory({
       objectMetadataSingularName,
       objectMetadataPluralName,

@@ -8,13 +8,13 @@ import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import { type CreditAllowanceProvider } from 'src/engine/core-modules/usage-limit/interfaces/credit-allowance-provider.service';
 import { type AnchoredPeriodUnit } from 'src/engine/core-modules/usage-limit/types/anchored-period-unit.type';
 import { type CalendarPeriodUnit } from 'src/engine/core-modules/usage-limit/types/calendar-period-unit.type';
-import { type FlatUsageLimit } from 'src/engine/core-modules/usage-limit/types/flat-usage-limit.type';
 import { type PeriodUnit } from 'src/engine/core-modules/usage-limit/types/period-unit.type';
 import { type UsagePeriod } from 'src/engine/core-modules/usage-limit/types/usage-period.type';
 import { findCreditAllowanceProvider } from 'src/engine/core-modules/usage-limit/utils/find-credit-allowance-provider.util';
 import { getCalendarDayPeriod } from 'src/engine/core-modules/usage-limit/utils/get-calendar-day-period.util';
 import { getCalendarMonthPeriod } from 'src/engine/core-modules/usage-limit/utils/get-calendar-month-period.util';
 import { getCalendarWeekPeriod } from 'src/engine/core-modules/usage-limit/utils/get-calendar-week-period.util';
+import { isAnchoredPeriodUnit } from 'src/engine/core-modules/usage-limit/utils/is-anchored-period-unit.util';
 
 @Injectable()
 export class UsagePeriodService implements OnModuleInit {
@@ -50,24 +50,17 @@ export class UsagePeriodService implements OnModuleInit {
 
   async findCurrentPeriodsByUnit({
     workspaceId,
-    limits,
+    periodUnits,
   }: {
     workspaceId: string;
-    limits: FlatUsageLimit[];
+    periodUnits: PeriodUnit[];
   }): Promise<Partial<Record<PeriodUnit, UsagePeriod>>> {
-    const periodUnits = [
-      ...new Set(
-        limits
-          .map((limit) => limit.periodUnit)
-          .filter(
-            (periodUnit): periodUnit is AnchoredPeriodUnit =>
-              periodUnit !== 'second',
-          ),
-      ),
+    const anchoredPeriodUnits = [
+      ...new Set(periodUnits.filter(isAnchoredPeriodUnit)),
     ];
 
     const periods = await Promise.all(
-      periodUnits.map(async (periodUnit) => ({
+      anchoredPeriodUnits.map(async (periodUnit) => ({
         periodUnit,
         period: await this.findCurrentPeriod({ workspaceId, periodUnit }),
       })),

@@ -2,6 +2,7 @@ import { formatAiChatTokens } from '@/ai/utils/formatAiChatTokens';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
+import { MetricRow } from 'twenty-ui/components';
 import { HorizontalSeparator } from 'twenty-ui/primitives/layout';
 import {
   IconArrowUp,
@@ -9,11 +10,10 @@ import {
   IconCoins,
   IconHistory,
 } from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { agentChatUsageComponentFamilyState } from '@/ai/states/agentChatUsageComponentFamilyState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
-import { UsageProgressRow } from '@/ui/feedback/progress-ring/components/UsageProgressRow';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { formatNumber } from '~/utils/format/formatNumber';
@@ -53,66 +53,66 @@ export const AiChatContextUsageDetails = () => {
           <HorizontalSeparator noMargin />
           <StyledSection>
             <StyledSectionTitle>{t`Last message`}</StyledSectionTitle>
-            <UsageProgressRow
-              Icon={IconArrowUp}
-              label={t`Input tokens`}
-              value={null}
-              valueLabel={formatAiChatTokens(lastMessage.inputTokens)}
-            />
-            <UsageProgressRow
-              Icon={IconHistory}
-              label={t`Cached input`}
-              value={null}
-              valueLabel={formatAiChatTokens(lastMessage.cachedInputTokens)}
-            />
-            <UsageProgressRow
-              Icon={IconArrowDown}
-              label={t`Output tokens`}
-              value={null}
-              valueLabel={formatAiChatTokens(lastMessage.outputTokens)}
-            />
-            <UsageProgressRow
-              Icon={IconCoins}
-              label={t`Credits`}
-              value={null}
-              valueLabel={formatNumber(
+            <MetricRow
+              startIcon={IconArrowUp}
+              value={formatAiChatTokens(lastMessage.inputTokens)}
+            >
+              {t`Input tokens`}
+            </MetricRow>
+            <MetricRow
+              startIcon={IconHistory}
+              value={formatAiChatTokens(lastMessage.cachedInputTokens)}
+            >
+              {t`Cached input`}
+            </MetricRow>
+            <MetricRow
+              startIcon={IconArrowDown}
+              value={formatAiChatTokens(lastMessage.outputTokens)}
+            >
+              {t`Output tokens`}
+            </MetricRow>
+            <MetricRow
+              startIcon={IconCoins}
+              value={formatNumber(
                 lastMessage.inputCredits + lastMessage.outputCredits,
                 { decimals: 3 },
               )}
-            />
+            >
+              {t`Credits`}
+            </MetricRow>
           </StyledSection>
         </>
       )}
       <HorizontalSeparator noMargin />
       <StyledSection>
         <StyledSectionTitle>{t`Conversation`}</StyledSectionTitle>
-        <UsageProgressRow
-          Icon={IconArrowUp}
-          label={t`Input tokens`}
-          value={null}
-          valueLabel={formatAiChatTokens(agentChatUsage.inputTokens)}
-        />
-        <UsageProgressRow
-          Icon={IconHistory}
-          label={t`Cached input`}
-          value={null}
-          valueLabel={formatAiChatTokens(agentChatUsage.cachedInputTokens)}
-        />
-        <UsageProgressRow
-          Icon={IconArrowDown}
-          label={t`Output tokens`}
-          value={null}
-          valueLabel={formatAiChatTokens(agentChatUsage.outputTokens)}
-        />
-        <UsageProgressRow
-          Icon={IconCoins}
-          label={t`Credits`}
-          value={null}
-          valueLabel={formatNumber(
+        <MetricRow
+          startIcon={IconArrowUp}
+          value={formatAiChatTokens(agentChatUsage.inputTokens)}
+        >
+          {t`Input tokens`}
+        </MetricRow>
+        <MetricRow
+          startIcon={IconHistory}
+          value={formatAiChatTokens(agentChatUsage.cachedInputTokens)}
+        >
+          {t`Cached input`}
+        </MetricRow>
+        <MetricRow
+          startIcon={IconArrowDown}
+          value={formatAiChatTokens(agentChatUsage.outputTokens)}
+        >
+          {t`Output tokens`}
+        </MetricRow>
+        <MetricRow
+          startIcon={IconCoins}
+          value={formatNumber(
             agentChatUsage.inputCredits + agentChatUsage.outputCredits,
             { decimals: 3 },
           )}
-        />
+        >
+          {t`Credits`}
+        </MetricRow>
       </StyledSection>
     </>
   );

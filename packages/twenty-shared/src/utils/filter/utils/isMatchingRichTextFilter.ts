@@ -1,5 +1,6 @@
 import { type RichTextFilter } from '@/types';
-import escapeRegExp from 'lodash.escaperegexp';
+import { convertLikePatternToRegexOrThrow } from '@/utils/filter/utils/convertLikePatternToRegexOrThrow';
+import { isDefined } from '@/utils/validation/isDefined';
 
 export const isMatchingRichTextFilter = ({
   richTextFilter,
@@ -10,9 +11,14 @@ export const isMatchingRichTextFilter = ({
 }) => {
   switch (true) {
     case richTextFilter.markdown !== undefined: {
-      const escapedPattern = escapeRegExp(richTextFilter.markdown.ilike);
-      const regexPattern = escapedPattern.replace(/%/g, '.*');
-      const regexCaseInsensitive = new RegExp(`^${regexPattern}$`, 'i');
+      if (!isDefined(richTextFilter.markdown.ilike)) {
+        return false;
+      }
+
+      const regexCaseInsensitive = convertLikePatternToRegexOrThrow({
+        pattern: richTextFilter.markdown.ilike,
+        isCaseInsensitive: true,
+      });
 
       return regexCaseInsensitive.test(value);
     }

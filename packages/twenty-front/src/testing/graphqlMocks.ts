@@ -57,8 +57,6 @@ const flatTaskRecords = mockedTaskRecords.map((record) =>
   getRecordFromRecordNode<Task>({ recordNode: record }),
 );
 
-// Wraps raw server-fetched records (which already have correct field shapes)
-// into a GraphQL connection response structure.
 const wrapRecordsAsConnection = (
   objectNameSingular: string,
   records: Record<string, unknown>[],
@@ -528,6 +526,7 @@ export const graphqlMocks = {
       return HttpResponse.json({
         data: {
           getRoles: mockedRoles,
+          getPermissionFlags: [],
         },
       });
     }),

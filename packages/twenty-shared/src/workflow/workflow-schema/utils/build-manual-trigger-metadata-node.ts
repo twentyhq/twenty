@@ -1,7 +1,7 @@
 import { WORKFLOW_TRIGGER_METADATA_LABEL } from '@/workflow/constants/WorkflowTriggerMetadataLabel';
 import { WORKFLOW_TRIGGER_METADATA_WORKSPACE_MEMBER_ID_KEY } from '@/workflow/constants/WorkflowTriggerMetadataWorkspaceMemberIdKey';
 import { WORKFLOW_TRIGGER_METADATA_WORKSPACE_MEMBER_ID_LABEL } from '@/workflow/constants/WorkflowTriggerMetadataWorkspaceMemberIdLabel';
-import { type Node } from '@/workflow/workflow-schema/types/base-output-schema.type';
+import { type Node } from '@/workflow/workflow-schema/types/BaseOutputSchema';
 
 export const buildManualTriggerMetadataNode = (): Node => ({
   isLeaf: false,

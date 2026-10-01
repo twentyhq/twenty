@@ -90,6 +90,47 @@ describe('fromFlatPageLayoutWidgetToPageLayoutWidgetManifest', () => {
     });
   });
 
+  it('should leave the position out and hoist its height behavior when the order of the widgets carries it', () => {
+    const viewportWidgetManifest: PageLayoutWidgetManifest = {
+      ...MINIMAL_WIDGET_MANIFEST,
+      heightBehavior: 'TAB_VIEWPORT',
+    };
+    const flatPageLayoutWidget = forward(viewportWidgetManifest);
+
+    expect(flatPageLayoutWidget.position).toEqual({
+      layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+      index: 0,
+      heightBehavior: 'TAB_VIEWPORT',
+    });
+
+    const pageLayoutWidgetManifest =
+      fromFlatPageLayoutWidgetToPageLayoutWidgetManifest({
+        flatPageLayoutWidget,
+        isPositionImpliedByOrder: true,
+      });
+
+    expect(pageLayoutWidgetManifest).toEqual(viewportWidgetManifest);
+    expect(
+      compareTwoFlatEntity({
+        fromUniversalFlatEntity: flatPageLayoutWidget,
+        toUniversalFlatEntity: forward(pageLayoutWidgetManifest),
+        metadataName: 'pageLayoutWidget',
+      }),
+    ).toBeUndefined();
+  });
+
+  it('should keep a grid position even when the order of the widgets is said to carry it', () => {
+    expect(
+      fromFlatPageLayoutWidgetToPageLayoutWidgetManifest({
+        flatPageLayoutWidget: forward(
+          MINIMAL_WIDGET_MANIFEST,
+          PageLayoutTabLayoutMode.GRID,
+        ),
+        isPositionImpliedByOrder: true,
+      }).position?.layoutMode,
+    ).toBe(PageLayoutTabLayoutMode.GRID);
+  });
+
   it('should keep an explicit null view reference inside the configuration', () => {
     const viewlessFieldsWidgetManifest: PageLayoutWidgetManifest = {
       ...MINIMAL_WIDGET_MANIFEST,

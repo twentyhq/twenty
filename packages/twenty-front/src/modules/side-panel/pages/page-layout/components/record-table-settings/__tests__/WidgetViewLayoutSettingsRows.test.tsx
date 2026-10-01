@@ -41,8 +41,9 @@ jest.mock(
   '@/side-panel/pages/page-layout/components/record-table-settings/RecordTableLayoutDropdownContent',
   () => ({ RecordTableLayoutDropdownContent: () => null }),
 );
-jest.mock('@/ui/layout/dropdown/components/DropdownContent', () => ({
-  DropdownContent: ({ children }: { children: React.ReactNode }) => children,
+jest.mock('@/ui/layout/dropdown/components/LegacyDropdownContent', () => ({
+  LegacyDropdownContent: ({ children }: { children: React.ReactNode }) =>
+    children,
 }));
 jest.mock('@/ui/layout/selectable-list/components/SelectableListItem', () => ({
   SelectableListItem: ({ children }: { children: React.ReactNode }) => children,
@@ -95,8 +96,6 @@ describe('WidgetViewLayoutSettingsRows', () => {
     expect(screen.getByTestId('row-Calendar view')).toHaveTextContent('Month');
   });
 
-  // The layout row used to fall through to Table for anything that was not
-  // kanban or calendar, so a list widget described itself as a table.
   it.each([
     [ViewType.TABLE_WIDGET, 'Table', 'Table'],
     [ViewType.KANBAN_WIDGET, 'Kanban', 'LayoutKanban'],

@@ -4,8 +4,9 @@ import { t } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { LightButton } from 'twenty-ui/components';
 import { Button } from 'twenty-ui/primitives/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
+import { serializePlainTextAsAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializePlainTextAsAdvancedTextEditorDocument';
 import { getAiChatSuggestedPrompts } from '@/ai/components/suggested-prompts/getAiChatSuggestedPrompts';
 import { useAiChatSuggestedPromptsContext } from '@/ai/hooks/useAiChatSuggestedPromptsContext';
 import { useStageAiChatPreprompt } from '@/ai/hooks/useStageAiChatPreprompt';
@@ -71,7 +72,9 @@ export const AiChatSuggestedPrompts = ({
 
   const handleClick = (suggestedPrompt: SuggestedPrompt) => {
     stageAiChatPreprompt({
-      text: resolveMessage(pickRandom(suggestedPrompt.prompts)),
+      serializedDocument: serializePlainTextAsAdvancedTextEditorDocument(
+        resolveMessage(pickRandom(suggestedPrompt.prompts)),
+      ),
       mode: suggestedPrompt.mode ?? 'PREFILL',
       draftKey: currentAiChatThread ?? AGENT_CHAT_NEW_THREAD_DRAFT_KEY,
     });

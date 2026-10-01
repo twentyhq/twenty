@@ -23,7 +23,6 @@ import { BillingWebhookModule } from 'src/engine/core-modules/billing-webhook/bi
 import { AppBillingModule } from 'src/engine/core-modules/billing/app-billing/app-billing.module';
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { BillingGraphqlApiExceptionFilter } from 'src/engine/core-modules/billing/filters/billing-graphql-api-exception.filter';
-import { RecordExportModule } from 'src/engine/core-modules/record-export/record-export.module';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { CacheStorageModule } from 'src/engine/core-modules/cache-storage/cache-storage.module';
 import { TimelineCalendarEventModule } from 'src/engine/core-modules/calendar/timeline-calendar-event.module';
@@ -84,15 +83,15 @@ import { ChannelSyncModule } from 'src/modules/connected-account/channel-sync/ch
 import { CreateCalendarEventModule } from 'src/modules/calendar/calendar-event-creation-manager/create-calendar-event.module';
 import { CallRecordingModule } from 'src/modules/call-recording/call-recording.module';
 import { DashboardModule } from 'src/modules/dashboard/dashboard.module';
+import { AiToolCallAnswerModule } from 'src/engine/metadata-modules/ai/ai-tool-call-answer/ai-tool-call-answer.module';
 import { SendEmailModule } from 'src/modules/messaging/message-outbound-manager/send-email.module';
 import { ClientConfigModule } from './client-config/client-config.module';
 import { EventLogsViewerModule } from './event-logs/event-logs-viewer.module';
-import { FileModule } from './file/file.module';
+import { FileApiModule } from './file/file-api.module';
 
 @Module({
   imports: [
     EnvironmentModule,
-    RecordExportModule,
     TwentyConfigModule.forRoot(),
     HealthModule,
     AuthModule,
@@ -103,7 +102,7 @@ import { FileModule } from './file/file.module';
     UsageModule,
     ClientConfigModule,
     FeatureFlagModule,
-    FileModule,
+    FileApiModule,
     RecordShareModule,
     RowLevelPermissionModule,
     OpenApiModule,
@@ -130,6 +129,7 @@ import { FileModule } from './file/file.module';
     CloudflareModule,
     DnsManagerModule,
     WorkflowApiModule,
+    AiToolCallAnswerModule,
     WorkspaceEventEmitterModule,
     ActorModule,
     TelemetryModule,

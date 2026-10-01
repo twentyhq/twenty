@@ -3,7 +3,7 @@ import {
   findWorkspaceInvitationsByEmail,
   seedWorkspaceInvitation,
 } from 'test/integration/graphql/utils/seed-workspace-invitation.util';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { resendWorkspaceInvitationOperationFactory } from 'test/integration/graphql/utils/resend-workspace-invitation-operation-factory.util';
 
 const ONE_HOUR_IN_MS = 60 * 60 * 1000;
@@ -22,7 +22,7 @@ describe('resendWorkspaceInvitation (integration)', () => {
     });
 
     try {
-      const response = await makeMetadataAPIRequest(
+      const response = await makeMetadataApiRequest(
         resendWorkspaceInvitationOperationFactory({ appTokenId }),
       );
 

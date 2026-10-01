@@ -16,6 +16,8 @@ my-twenty-app/
       universal-identifiers.ts              # Auto-generated UUIDs and metadata
     front-components/
       main-page.tsx                         # Welcome page component
+    logic-functions/
+      health-check.ts                       # Reports whether the app can run
     navigation-menu-items/
       main-page.navigation-menu-item.ts     # Sidebar entry for the welcome page
     page-layouts/
@@ -47,6 +49,7 @@ my-twenty-app/
 | `src/default-role.ts` | Default role controlling what your logic functions can access. |
 | `src/constants/universal-identifiers.ts` | Auto-generated UUIDs and metadata (display name, description). |
 | `src/front-components/`, `src/navigation-menu-items/`, `src/page-layouts/` | A starter welcome page: a front component rendered by a standalone page layout, reachable from the sidebar. |
+| `src/logic-functions/health-check.ts` | A starter [health check](/developers/extend/apps/logic/logic-functions#health-check) reporting `ok`. Fill it in to surface configuration problems only your app can detect. |
 | `src/__tests__/` | A unit test plus an integration test (with its global setup) that syncs the app against a real server. |
 | `public/` | Static assets (images, fonts) served with your app. |
 | `locales/` | Translation catalogs. `en.json` is the source catalog `dev:translations-extract` fills in; the set of files here is what a sync publishes, so an empty folder declares no translations. `locales/compiled/` is written by `pull` for entries whose source strings are not in the tree yet, is published by a sync too, and is not meant to be edited by hand. |

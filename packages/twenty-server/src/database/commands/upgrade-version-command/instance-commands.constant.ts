@@ -1,3 +1,4 @@
+import { AddApplicationWorkflowSideEffectsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-45/2-45-instance-command-fast-1790853315722-add-application-workflow-side-effects';
 // Auto-edited by generate:instance-command — do not edit manually
 
 import { AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand } from 'src/database/commands/upgrade-version-command/1-21/1-21-instance-command-fast-1775129420309-add-view-field-group-id-index-on-view-field';
@@ -194,6 +195,29 @@ import { AddWorkspaceWorkflowVersionIdToWorkflowVersionFastInstanceCommand } fro
 import { AddReadabilityParentFieldsToObjectMetadataFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-41/2-41-instance-command-fast-1789373200000-add-readability-parent-fields-to-object-metadata';
 import { AddAppMessageChannelTypeFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-41/2-41-instance-command-fast-1789395506192-add-app-message-channel-type';
 import { AddAppMessageChannelUniqueHandleFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-41/2-41-instance-command-fast-1789418882171-add-app-message-channel-unique-handle';
+import { AddCampaignTrackingFlagsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-instance-command-fast-1790615265539-add-campaign-tracking-flags';
+import { AddWorkflowExecutionCompatibilityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-fast-1789719131000-add-workflow-execution-compatibility';
+import { CoreWorkflowCommandMenuItemsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-fast-1789730706712-core-workflow-command-menu-items';
+import { AddWorkflowVisibilityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-fast-1789893300000-add-workflow-visibility';
+import { AddAiEvaluationModelToWorkspaceFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-fast-1789918648347-add-ai-evaluation-model-to-workspace';
+import { AddIsRequiredToApplicationVariablesFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-fast-1789920900000-add-is-required-to-application-variables';
+import { AddDeferredWorkspaceMigrationActionTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-fast-1790085198967-add-deferred-workspace-migration-action-table';
+import { RenameDeferredWorkspaceMigrationActionNameFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-instance-command-fast-1790255000000-rename-deferred-workspace-migration-action-name';
+import { AddHealthCheckToApplicationFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-fast-1790088275000-add-health-check-to-application';
+import { AddApplicationGrantedCapabilitiesFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-fast-1790088525621-add-application-granted-capabilities';
+import { AddViewGroupLoadLimitFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-fast-1790088647379-add-view-group-load-limit';
+import { AddSettingsMenuItemFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-fast-1790165860000-add-settings-menu-item';
+import { BackfillSettingsMenuItemSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-instance-command-slow-1790165870000-backfill-settings-menu-item';
+import { AddChatMessageSenderFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-instance-command-fast-1790171503074-add-chat-message-sender';
+import { AddWorkspaceAllowedIframeOriginsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-instance-command-fast-1790232481570-add-workspace-allowed-iframe-origins';
+import { AddUsageLimitInstanceOverrideFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-instance-command-fast-1790245573467-add-usage-limit-instance-override';
+import { EnforceWorkflowVersionCoreParentSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-instance-command-slow-1790323148754-enforce-workflow-version-core-parent';
+import { AddCoreForeignKeyIndexesSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-instance-command-slow-1790343790126-add-core-foreign-key-indexes';
+import { AddChatThreadsWidgetTypeFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-instance-command-fast-1790621229217-add-chat-threads-widget-type';
+import { AddValidationRuleTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-instance-command-fast-1790624264147-add-validation-rule-table';
+import { ReapplyUsageLimitPeriodReshapeFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-instance-command-fast-1790755883509-reapply-usage-limit-period-reshape';
+import { AddChatWidgetTypeFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-instance-command-fast-1790756560653-add-chat-widget-type';
+import { DropLegacyCampaignSendingCoreTablesFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-45/2-45-instance-command-fast-1790842027068-drop-legacy-campaign-sending-core-tables';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -387,7 +411,31 @@ export const INSTANCE_COMMANDS = [
   AddWorkspaceWorkflowIdToWorkflowFastInstanceCommand,
   AddCoreVersionPointersFastInstanceCommand,
   AddWorkspaceWorkflowVersionIdToWorkflowVersionFastInstanceCommand,
+  AddWorkflowExecutionCompatibilityFastInstanceCommand,
+  CoreWorkflowCommandMenuItemsFastInstanceCommand,
+  AddWorkflowVisibilityFastInstanceCommand,
   AddReadabilityParentFieldsToObjectMetadataFastInstanceCommand,
   AddAppMessageChannelTypeFastInstanceCommand,
   AddAppMessageChannelUniqueHandleFastInstanceCommand,
+  AddCampaignTrackingFlagsFastInstanceCommand,
+  AddAiEvaluationModelToWorkspaceFastInstanceCommand,
+  AddIsRequiredToApplicationVariablesFastInstanceCommand,
+  AddDeferredWorkspaceMigrationActionTableFastInstanceCommand,
+  RenameDeferredWorkspaceMigrationActionNameFastInstanceCommand,
+  AddHealthCheckToApplicationFastInstanceCommand,
+  AddApplicationGrantedCapabilitiesFastInstanceCommand,
+  AddViewGroupLoadLimitFastInstanceCommand,
+  AddSettingsMenuItemFastInstanceCommand,
+  BackfillSettingsMenuItemSlowInstanceCommand,
+  AddChatMessageSenderFastInstanceCommand,
+  AddWorkspaceAllowedIframeOriginsFastInstanceCommand,
+  AddUsageLimitInstanceOverrideFastInstanceCommand,
+  EnforceWorkflowVersionCoreParentSlowInstanceCommand,
+  AddCoreForeignKeyIndexesSlowInstanceCommand,
+  AddChatThreadsWidgetTypeFastInstanceCommand,
+  AddValidationRuleTableFastInstanceCommand,
+  ReapplyUsageLimitPeriodReshapeFastInstanceCommand,
+  AddChatWidgetTypeFastInstanceCommand,
+  DropLegacyCampaignSendingCoreTablesFastInstanceCommand,
+  AddApplicationWorkflowSideEffectsFastInstanceCommand,
 ];

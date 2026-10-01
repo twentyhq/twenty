@@ -93,9 +93,10 @@ export class AgentRunService {
       );
     }
 
-    const application = await this.applicationService.findById(
-      agent.applicationId,
-    );
+    const application = await this.applicationService.findById({
+      id: agent.applicationId,
+      workspaceId: workspace.id,
+    });
 
     if (!application) {
       throw new NotFoundException(
@@ -138,7 +139,7 @@ export class AgentRunService {
       if (executionResult.hasNoMoreAvailableCredits) {
         return {
           result: null,
-          error: 'AI agent stopped: no more available credits.',
+          error: 'Agent stopped: no more available credits.',
           success: false,
         };
       }

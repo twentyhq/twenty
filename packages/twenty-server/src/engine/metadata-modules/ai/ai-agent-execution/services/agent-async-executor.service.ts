@@ -5,6 +5,7 @@ import {
   generateText,
   jsonSchema,
   type LanguageModelUsage,
+  type ModelMessage,
   Output,
   isStepCount,
   type StepResult,
@@ -48,7 +49,10 @@ import { WORKFLOW_AGENT_REGISTRY_TOOL_CATEGORIES } from 'src/engine/metadata-mod
 import { RunAgentAttachmentService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/run-agent-attachment.service';
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
 import { type AgentToolLoadingStrategy } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-tool-loading-strategy.type';
+import { assertAgentResponseFormatHasOutputFieldsOrThrow } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/assert-agent-response-format-has-output-fields-or-throw.util';
 import { buildAgentRolePermissionConfig } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-agent-role-permission-config.util';
+import { buildStrictAgentResponseSchema } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-strict-agent-response-schema.util';
+import { endsOnPausingToolCall } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/ends-on-pausing-tool-call.util';
 import { AGENT_CONFIG } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-config.const';
 import { STRUCTURED_OUTPUT_SYSTEM_PROMPT } from 'src/engine/metadata-modules/ai/ai-agent/constants/structured-output-system-prompt.const';
 import { type AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
@@ -91,10 +95,7 @@ const EMPTY_USAGE: LanguageModelUsage = {
   },
 };
 
-// Agent execution uses registry tools plus native model tools. The caller
-// supplies the base system prompt describing its execution context (workflow
-// step, programmatic run). Workflow registry tools are intentionally excluded
-// to avoid circular dependencies and recursive workflow execution.
+// workflow registry tools are excluded to avoid circular dependencies and recursive workflow execution
 @Injectable()
 export class AgentAsyncExecutorService {
   private readonly logger = new Logger(AgentAsyncExecutorService.name);
@@ -141,8 +142,7 @@ export class AgentAsyncExecutorService {
     return {};
   }
 
-  // Workflow agent nodes run a scoped task: pre-load the full schemas of the
-  // few explicitly-granted objects so the model skips the learn_tools round trip.
+  // preloading the few granted object schemas saves the model a learn_tools round trip
   private async buildPreloadedRegistryTools({
     agent,
     agentRoleId,
@@ -182,10 +182,8 @@ export class AgentAsyncExecutorService {
     });
   }
 
-  // Open-ended agents (runAgent / Slack) need broad object access, which would
-  // make pre-loading ship every schema. Expose a compact catalog plus the
-  // learn_tools / execute_tool meta-tools instead, using composed role
-  // permissions rather than explicit grants only.
+  // open-ended agents have broad access, so preloading would ship every schema: expose a compact catalog plus
+  // learn_tools / execute_tool instead, scoped by composed role permissions rather than explicit grants only
   private async buildLazyRegistryTools({
     agent,
     agentRoleId,
@@ -235,9 +233,7 @@ export class AgentAsyncExecutorService {
         !excludedToolNames.has(entry.name),
     );
 
-    // Restrict the meta-tools to the shown catalog. Enforced at call time, so a
-    // tool that appears after the catalog was built still can't be reached,
-    // preserving the recursion guard.
+    // meta-tools are limited to the shown catalog, checked at call time so a tool added later stays unreachable (recursion guard)
     const allowedToolNames = new Set(catalog.map((entry) => entry.name));
     const isToolAllowed = (toolName: string): boolean =>
       allowedToolNames.has(toolName);
@@ -269,9 +265,14 @@ export class AgentAsyncExecutorService {
     runAsRoleId,
     operationType = UsageOperationType.AI_WORKFLOW_TOKEN,
     toolLoadingStrategy = 'preload',
+    priorModelMessages = [],
+    pausingTools = {},
   }: {
     agent: AgentEntity | null;
     messages: RunAgentMessage[];
+    // a continued conversation, with the tool calls and results plain run messages cannot carry
+    priorModelMessages?: ModelMessage[];
+    pausingTools?: ToolSet;
     baseSystemPrompt: string;
     actorContext?: ActorMetadata;
     authContext?: WorkspaceAuthContext;
@@ -281,12 +282,14 @@ export class AgentAsyncExecutorService {
     operationType?: UsageOperationType;
     toolLoadingStrategy?: AgentToolLoadingStrategy;
   }): Promise<AgentExecutionResult> {
-    if (!isNonEmptyArray(messages)) {
+    if (!isNonEmptyArray(messages) && !isNonEmptyArray(priorModelMessages)) {
       throw new AiException(
         'Provide at least one message to run an agent',
         AiExceptionCode.INVALID_AGENT_INPUT,
       );
     }
+
+    assertAgentResponseFormatHasOutputFieldsOrThrow(agent?.responseFormat);
 
     await this.aiBillingService.assertAiExecutionAllowed({
       workspaceId,
@@ -342,8 +345,6 @@ export class AgentAsyncExecutorService {
 
         let registryTools: ToolSet = {};
 
-        // Registry tools are scoped exclusively by the agent permission-tab
-        // role. No role means no registry tools.
         if (isDefined(agentRoleId)) {
           if (toolLoadingStrategy === 'lazy') {
             const lazyToolset = await this.buildLazyRegistryTools({
@@ -391,13 +392,16 @@ export class AgentAsyncExecutorService {
           )?.modalities,
         });
 
+      const offeredToolNames = Object.keys(pausingTools);
+
       const textResponse = await generateText({
         instructions: `${baseSystemPrompt}\n\n${agent ? tipTapDocumentToMarkdown(agent.prompt) : ''}${toolCatalogSection}`,
-        tools,
+        tools: { ...tools, ...pausingTools },
         model: registeredModel.model,
-        messages: modelMessages,
+        messages: [...priorModelMessages, ...modelMessages],
         stopWhen: (step) =>
           isStepCount(AGENT_CONFIG.MAX_STEPS)(step) ||
+          endsOnPausingToolCall({ steps: step.steps, offeredToolNames }) ||
           hasNoMoreAvailableCredits,
         providerOptions,
         ...buildAiTelemetry({
@@ -502,7 +506,12 @@ export class AgentAsyncExecutorService {
 
       let result: object = { response: textResponse.text };
 
-      if (agentSchema) {
+      const endsOnPausingTool = endsOnPausingToolCall({
+        steps: textResponse.steps,
+        offeredToolNames,
+      });
+
+      if (isDefined(agentSchema) && !endsOnPausingTool) {
         const structuredResult = await generateText({
           instructions: STRUCTURED_OUTPUT_SYSTEM_PROMPT,
           model: registeredModel.model,
@@ -511,7 +520,9 @@ export class AgentAsyncExecutorService {
                  Execution Results: ${textResponse.text}
 
                  Please generate the structured output based on the execution results and context above.`,
-          output: Output.object({ schema: jsonSchema(agentSchema) }),
+          output: Output.object({
+            schema: jsonSchema(buildStrictAgentResponseSchema(agentSchema)),
+          }),
           providerOptions: getCallLevelProviderOptions({
             sdkPackage: registeredModel.sdkPackage,
             providerOptions: undefined,
@@ -560,9 +571,9 @@ export class AgentAsyncExecutorService {
         result = structuredResult.output as object;
       }
 
-      const tokenCostInDollars = this.aiBillingService.calculateCost(
+      const tokenCostInDollars = this.aiBillingService.calculateStepsCost(
         registeredModel.modelId,
-        { usage: accumulatedUsage, cacheCreationTokens },
+        executionSteps,
       );
       const totalCostInDollars =
         tokenCostInDollars +
@@ -575,6 +586,8 @@ export class AgentAsyncExecutorService {
         cacheCreationTokens,
         nativeWebSearchCallCount,
         hasNoMoreAvailableCredits,
+        // out of credits fails the execution even if it asked something, so it is never left waiting for an answer
+        isPaused: endsOnPausingTool && !hasNoMoreAvailableCredits,
         steps: executionSteps,
         modelId: resolvedModelId,
         totalCostInDollars,
@@ -593,13 +606,12 @@ export class AgentAsyncExecutorService {
         resolvedModelId ??
         agent?.modelId ??
         AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID;
-      // Nothing was generated when execution failed before a model resolved,
-      // and pricing an unresolved id would throw over the original error.
+      // pricing an unresolved model id would throw over the original error
       const costInDollars = isDefined(resolvedModelId)
-        ? this.aiBillingService.calculateCost(resolvedModelId, {
-            usage: accumulatedUsage,
-            cacheCreationTokens,
-          })
+        ? this.aiBillingService.calculateStepsCost(
+            resolvedModelId,
+            executionSteps,
+          )
         : 0;
       const creditsUsedMicro = convertDollarsToCreditsMicro(costInDollars);
       const totalTokens =

@@ -4,11 +4,9 @@ import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomStat
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useEffect } from 'react';
 import { action } from 'storybook/actions';
-import {
-  ComponentDecorator,
-  ComponentWithRouterDecorator,
-} from 'twenty-ui/testing';
+import { ComponentDecorator } from 'twenty-ui/testing';
 import { graphqlMocks } from '~/testing/graphqlMocks';
+import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 
 const PlaygroundApiKeySetterEffect = () => {
   const setPlaygroundApiKey = useSetAtomState(playgroundApiKeyState);

@@ -227,6 +227,14 @@ export class CalendarWebhookSubscriptionService {
       return;
     }
 
+    if (
+      !this.webhookSubscriptionDriverFactory.isProviderSupported(
+        connectedAccount.provider,
+      )
+    ) {
+      return;
+    }
+
     const driver = this.webhookSubscriptionDriverFactory.getDriver(
       connectedAccount.provider,
     );
@@ -281,6 +289,13 @@ export class CalendarWebhookSubscriptionService {
       return;
     }
 
+    if (
+      calendarChannel.webhookSubscriptionStatus !==
+      WebhookSubscriptionStatus.ACTIVE
+    ) {
+      return;
+    }
+
     const connectedAccount = await this.connectedAccountRepository.findOne({
       where: {
         id: calendarChannel.connectedAccountId,
@@ -292,12 +307,25 @@ export class CalendarWebhookSubscriptionService {
       return;
     }
 
+    if (
+      !this.webhookSubscriptionDriverFactory.isProviderSupported(
+        connectedAccount.provider,
+      )
+    ) {
+      return;
+    }
+
     const driver = this.webhookSubscriptionDriverFactory.getDriver(
       connectedAccount.provider,
     );
 
     try {
       await driver.deleteSubscription(this.toContext(calendarChannel));
+
+      await this.webhookSubscriptionStatusService.markAsExpired(
+        WebhookSubscriptionChannelType.CALENDAR,
+        calendarChannelId,
+      );
 
       this.metricsService.incrementCounterBy({
         key: MetricsKeys.ConnectedAccountWebhookSubscriptionDeleted,
@@ -337,11 +365,6 @@ export class CalendarWebhookSubscriptionService {
     }
 
     await this.deleteSubscription(calendarChannelId, workspaceId);
-
-    await this.webhookSubscriptionStatusService.markAsExpired(
-      WebhookSubscriptionChannelType.CALENDAR,
-      calendarChannelId,
-    );
   }
 
   private buildMetricAttributes(provider: string) {

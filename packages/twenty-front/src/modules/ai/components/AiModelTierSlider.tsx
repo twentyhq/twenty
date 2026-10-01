@@ -3,7 +3,7 @@ import { useLingui } from '@lingui/react/macro';
 import { type ChangeEvent } from 'react';
 import { AI_MODEL_TIERS, type AiModelTier } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AiModelTierInformationButton } from '@/ai/components/AiModelTierInformationButton';
 import { useAiModelTiers } from '@/ai/hooks/useAiModelTiers';
@@ -53,8 +53,7 @@ const StyledTrack = styled.div<{ disabled: boolean }>`
   }
 `;
 
-// The handle centre sits on a dot, so the fill runs from the track inset to
-// half a handle past that dot.
+// The handle centre sits on a dot, so the fill runs half a handle past it.
 const StyledFill = styled.div`
   background: ${themeCssVariables.color.blue};
   border-radius: ${themeCssVariables.border.radius.sm};

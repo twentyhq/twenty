@@ -1,15 +1,8 @@
 import { type SelectableItem } from '@/object-record/select/types/SelectableItem';
-import { styled } from '@linaria/react';
+import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { Avatar } from 'twenty-ui/primitives/data-display';
-import { MenuItemMultiSelectAvatar } from 'twenty-ui/primitives/navigation';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
-
-const StyledPinnedItemsContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  padding: ${themeCssVariables.spacing[1]};
-`;
 
 export const ObjectFilterDropdownRecordPinnedItems = (props: {
   selectableItems: SelectableItem[];
@@ -19,17 +12,20 @@ export const ObjectFilterDropdownRecordPinnedItems = (props: {
   ) => void;
 }) => {
   return (
-    <StyledPinnedItemsContainer>
+    <DropdownMenuItemsContainer isMultiSelect scrollable={false}>
       {props.selectableItems.map((selectableItem) => {
         return (
-          <MenuItemMultiSelectAvatar
+          <ListItem
+            render={<button type="button" />}
             key={selectableItem.id}
+            role="option"
+            aria-selected={selectableItem.isSelected}
             selected={selectableItem.isSelected}
-            onSelectChange={(newCheckedValue) => {
-              props.onChange(selectableItem, newCheckedValue);
+            indicator="checkbox"
+            onClick={() => {
+              props.onChange(selectableItem, !selectableItem.isSelected);
             }}
-            text={selectableItem.name}
-            avatar={
+            startIcon={
               selectableItem.avatarUrl ? (
                 <Avatar
                   src={getAbsoluteImageUrl(selectableItem.avatarUrl)}
@@ -44,9 +40,11 @@ export const ObjectFilterDropdownRecordPinnedItems = (props: {
                 )
               )
             }
-          />
+          >
+            {selectableItem.name}
+          </ListItem>
         );
       })}
-    </StyledPinnedItemsContainer>
+    </DropdownMenuItemsContainer>
   );
 };

@@ -1,3 +1,5 @@
+import { ListItem } from 'twenty-ui/primitives/navigation';
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
@@ -5,7 +7,6 @@ import { isSelectedItemIdComponentFamilyState } from '@/ui/layout/selectable-lis
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useInitializeFilterOnFieldMetadataItemFromViewBarFilterDropdown } from '@/views/hooks/useInitializeFilterOnFieldMetadataItemFromViewBarFilterDropdown';
 import { useIcons } from 'twenty-ui/icon';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
 
 export type ViewBarFilterDropdownFieldSelectMenuItemProps = {
   fieldMetadataItemToSelect: FieldMetadataItem;
@@ -41,12 +42,13 @@ export const ViewBarFilterDropdownFieldSelectMenuItem = ({
       itemId={fieldMetadataItemToSelect.id}
       onEnter={handleClick}
     >
-      <MenuItem
+      <ListItem
         focused={isSelectedItemId}
         onClick={handleClick}
-        LeftIcon={Icon}
-        text={fieldMetadataItemToSelect.label}
-      />
+        startIcon={<SelectOptionIcon Icon={Icon} />}
+      >
+        {fieldMetadataItemToSelect.label}
+      </ListItem>
     </SelectableListItem>
   );
 };

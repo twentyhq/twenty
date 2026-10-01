@@ -14,6 +14,7 @@ const EXPECTED_PROVIDER_NAMES = [
   'google',
   'xai',
   'mistral',
+  'typesafe-ai',
 ];
 
 describe('ai-providers.json integrity', () => {
@@ -32,16 +33,38 @@ describe('ai-providers.json integrity', () => {
     });
   });
 
-  it('should have all required fields for each model', () => {
+  it('should identify and price every model', () => {
     Object.values(PROVIDERS).forEach((config) => {
       (config.models ?? []).forEach((model) => {
         expect(model.name).toBeDefined();
         expect(model.label).toBeDefined();
         expect(model.inputCostPerMillionTokens).toBeDefined();
         expect(model.outputCostPerMillionTokens).toBeDefined();
-        expect(model.contextWindowTokens).toBeGreaterThan(0);
-        expect(model.maxOutputTokens).toBeGreaterThan(0);
       });
+    });
+  });
+
+  it('should size the window of every language model', () => {
+    Object.values(PROVIDERS).forEach((config) => {
+      (config.models ?? [])
+        .filter((model) => (model.kind ?? 'language') === 'language')
+        .forEach((model) => {
+          expect(model.contextWindowTokens).toBeGreaterThan(0);
+          expect(model.maxOutputTokens).toBeGreaterThan(0);
+        });
+    });
+  });
+
+  // evaluation models get the whole state at once, so there is no window to size
+  it('should declare the question types of every evaluation model, and no window', () => {
+    Object.values(PROVIDERS).forEach((config) => {
+      (config.models ?? [])
+        .filter((model) => model.kind === 'evaluation')
+        .forEach((model) => {
+          expect(model.supportedQuestionTypes?.length ?? 0).toBeGreaterThan(0);
+          expect(model.contextWindowTokens).toBeUndefined();
+          expect(model.maxOutputTokens).toBeUndefined();
+        });
     });
   });
 
@@ -86,8 +109,7 @@ describe('ai-providers.json integrity', () => {
     });
   });
 
-  // Where a self-hosted instance processes and retains data depends on its own
-  // provider accounts, so the shipped catalog states neither on its behalf.
+  // residency and retention depend on each self-hosted instance's own provider accounts
   it('should not assert data residency or zero data retention', () => {
     Object.values(PROVIDERS).forEach((config) => {
       expect(config.dataResidency).toBeUndefined();

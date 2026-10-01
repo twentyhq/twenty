@@ -1,11 +1,13 @@
-import { WorkflowVersionStatus } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
+import { WorkflowVersionStatus as CoreWorkflowVersionStatus } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
 import { type WorkflowToolDependencies } from 'src/modules/workflow/workflow-tools/types/workflow-tool-dependencies.type';
 
 import { createGetWorkflowCurrentVersionTool } from '../get-workflow-current-version.tool';
 
 const WORKSPACE_ID = '20202020-aaaa-4d02-bf25-6aeccf7ea419';
-const WORKFLOW_ID = '20202020-bbbb-4d02-bf25-6aeccf7ea419';
+const CORE_WORKFLOW_ID = '20202020-bbbb-4d02-bf25-6aeccf7ea419';
 const ROLE_ID = '20202020-cccc-4d02-bf25-6aeccf7ea419';
+const CORE_DRAFT_VERSION_ID = '20202020-dddd-4d02-bf25-6aeccf7ea419';
+const CORE_ACTIVE_VERSION_ID = '20202020-eeee-4d02-bf25-6aeccf7ea419';
 
 const buildContext = () => ({
   workspaceId: WORKSPACE_ID,
@@ -13,95 +15,82 @@ const buildContext = () => ({
 });
 
 const buildDeps = ({
-  workflow,
-  versions,
+  coreWorkflow,
+  coreWorkflowVersions,
 }: {
-  workflow: unknown;
-  versions: unknown[];
-}) => {
-  const getRepositoryMock = jest.fn();
+  coreWorkflow: unknown;
+  coreWorkflowVersions: { id: string; status: CoreWorkflowVersionStatus }[];
+}) => ({
+  coreWorkflowListService: {
+    findOneById: jest.fn().mockResolvedValue(coreWorkflow),
+  },
+  coreWorkflowVersionListService: {
+    findManyByCoreWorkflowId: jest.fn().mockResolvedValue(coreWorkflowVersions),
+    findOneByCoreWorkflowVersionId: jest
+      .fn()
+      .mockImplementation(async ({ coreWorkflowVersionId }) => ({
+        id: coreWorkflowVersionId,
+        label: 'v1',
+        status: CoreWorkflowVersionStatus.DRAFT,
+        trigger: null,
+        steps: [],
+      })),
+  },
+});
 
-  getRepositoryMock.mockReturnValueOnce({
-    findOne: jest.fn().mockResolvedValue(workflow),
-  });
-
-  getRepositoryMock.mockReturnValueOnce({
-    find: jest.fn().mockResolvedValue(versions),
-  });
-
-  return {
-    workspaceOrmManager: {
-      executeInWorkspaceContext: jest
-        .fn()
-        .mockImplementation(async (fn) => fn()),
-      getRepository: getRepositoryMock,
-    },
-  };
-};
+const buildTool = (deps: ReturnType<typeof buildDeps>) =>
+  createGetWorkflowCurrentVersionTool(
+    deps as unknown as Pick<
+      WorkflowToolDependencies,
+      'coreWorkflowListService' | 'coreWorkflowVersionListService'
+    >,
+    buildContext(),
+  );
 
 describe('get_workflow_current_version tool', () => {
-  it('should pass rolePermissionConfig to both getRepository calls', async () => {
-    const context = buildContext();
+  it('should read the definition from core using the core workflow id', async () => {
     const deps = buildDeps({
-      workflow: { id: WORKFLOW_ID },
-      versions: [
+      coreWorkflow: { id: CORE_WORKFLOW_ID },
+      coreWorkflowVersions: [
         {
-          id: 'v1',
-          status: WorkflowVersionStatus.DRAFT,
-          workflowId: WORKFLOW_ID,
+          id: CORE_DRAFT_VERSION_ID,
+          status: CoreWorkflowVersionStatus.DRAFT,
         },
       ],
     });
 
-    const tool = createGetWorkflowCurrentVersionTool(
-      deps as unknown as Pick<WorkflowToolDependencies, 'workspaceOrmManager'>,
-      context,
-    );
+    await buildTool(deps).execute({ coreWorkflowId: CORE_WORKFLOW_ID });
 
-    await tool.execute({ workflowId: WORKFLOW_ID });
-
-    expect(deps.workspaceOrmManager.getRepository).toHaveBeenNthCalledWith(
-      1,
-      'workflow',
-      context.rolePermissionConfig,
-    );
-    expect(deps.workspaceOrmManager.getRepository).toHaveBeenNthCalledWith(
-      2,
-      'workflowVersion',
-      context.rolePermissionConfig,
-    );
+    expect(deps.coreWorkflowListService.findOneById).toHaveBeenCalledWith({
+      workspaceId: WORKSPACE_ID,
+      coreWorkflowId: CORE_WORKFLOW_ID,
+    });
+    expect(
+      deps.coreWorkflowVersionListService.findManyByCoreWorkflowId,
+    ).toHaveBeenCalledWith({
+      workspaceId: WORKSPACE_ID,
+      coreWorkflowId: CORE_WORKFLOW_ID,
+    });
   });
 
   it('should return draft version over active version', async () => {
-    const context = buildContext();
     const deps = buildDeps({
-      workflow: { id: WORKFLOW_ID },
-      versions: [
+      coreWorkflow: { id: CORE_WORKFLOW_ID },
+      coreWorkflowVersions: [
         {
-          id: 'v-active',
-          name: 'Active',
-          status: WorkflowVersionStatus.ACTIVE,
-          workflowId: WORKFLOW_ID,
-          trigger: null,
-          steps: [],
+          id: CORE_ACTIVE_VERSION_ID,
+          status: CoreWorkflowVersionStatus.ACTIVE,
         },
         {
-          id: 'v-draft',
-          name: 'Draft',
-          status: WorkflowVersionStatus.DRAFT,
-          workflowId: WORKFLOW_ID,
-          trigger: null,
-          steps: [],
+          id: CORE_DRAFT_VERSION_ID,
+          status: CoreWorkflowVersionStatus.DRAFT,
         },
       ],
     });
 
-    const tool = createGetWorkflowCurrentVersionTool(
-      deps as unknown as Pick<WorkflowToolDependencies, 'workspaceOrmManager'>,
-      context,
-    );
-
-    const result = await tool.execute({ workflowId: WORKFLOW_ID });
+    const result = await buildTool(deps).execute({
+      coreWorkflowId: CORE_WORKFLOW_ID,
+    });
 
     expect(result.success).toBe(true);
 
@@ -112,36 +101,34 @@ describe('get_workflow_current_version tool', () => {
       throw new Error('Expected workflowVersion to be present in the result');
     }
 
-    expect(result.workflowVersion.id).toBe('v-draft');
+    expect(result.workflowVersion.coreWorkflowVersionId).toBe(
+      CORE_DRAFT_VERSION_ID,
+    );
+    expect(result.workflowVersion.coreWorkflowId).toBe(CORE_WORKFLOW_ID);
   });
 
   it('should return error when workflow is not found', async () => {
-    const context = buildContext();
-    const deps = buildDeps({ workflow: null, versions: [] });
+    const deps = buildDeps({ coreWorkflow: null, coreWorkflowVersions: [] });
 
-    const tool = createGetWorkflowCurrentVersionTool(
-      deps as unknown as Pick<WorkflowToolDependencies, 'workspaceOrmManager'>,
-      context,
-    );
-
-    const result = await tool.execute({ workflowId: WORKFLOW_ID });
+    const result = await buildTool(deps).execute({
+      coreWorkflowId: CORE_WORKFLOW_ID,
+    });
 
     expect(result.success).toBe(false);
-    expect(result.error).toContain(WORKFLOW_ID);
+    expect(result.error).toContain(CORE_WORKFLOW_ID);
   });
 
-  it('should return error when no draft or active version exists', async () => {
-    const context = buildContext();
-    const deps = buildDeps({ workflow: { id: WORKFLOW_ID }, versions: [] });
+  it('should return error when no draft, active or deactivated version exists', async () => {
+    const deps = buildDeps({
+      coreWorkflow: { id: CORE_WORKFLOW_ID },
+      coreWorkflowVersions: [],
+    });
 
-    const tool = createGetWorkflowCurrentVersionTool(
-      deps as unknown as Pick<WorkflowToolDependencies, 'workspaceOrmManager'>,
-      context,
-    );
-
-    const result = await tool.execute({ workflowId: WORKFLOW_ID });
+    const result = await buildTool(deps).execute({
+      coreWorkflowId: CORE_WORKFLOW_ID,
+    });
 
     expect(result.success).toBe(false);
-    expect(result.error).toContain('no draft or active version');
+    expect(result.error).toContain('no draft, active or deactivated version');
   });
 });

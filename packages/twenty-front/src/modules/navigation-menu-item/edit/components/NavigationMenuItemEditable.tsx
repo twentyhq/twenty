@@ -11,10 +11,10 @@ import { useCallback, useState, type ReactNode } from 'react';
 import { styled } from '@linaria/react';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { themeCssVariables, useTheme } from 'twenty-ui/theme-constants';
+import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 import { NavigationMenuItemMenu } from '@/navigation-menu-item/edit/components/NavigationMenuItemMenu';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -144,7 +144,7 @@ export const NavigationMenuItemEditable = ({
       }
       renderMenu={({ onClose, onAdd }) =>
         mode === 'edit' && item.type === NavigationMenuItemType.LINK ? (
-          <DropdownContent
+          <LegacyDropdownContent
             widthInPixels={GenericDropdownContentWidth.ExtraLarge}
           >
             <NavigationMenuItemLinkEditor
@@ -152,7 +152,7 @@ export const NavigationMenuItemEditable = ({
               dropdownId={dropdownId}
               onClose={onClose}
             />
-          </DropdownContent>
+          </LegacyDropdownContent>
         ) : (
           <NavigationMenuItemActions
             item={item}

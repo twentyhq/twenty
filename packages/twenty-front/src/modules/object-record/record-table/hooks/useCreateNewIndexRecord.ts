@@ -5,7 +5,7 @@ import { recordGroupDefinitionsComponentSelector } from '@/object-record/record-
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { useBuildRecordInputFromFilters } from '@/object-record/record-table/hooks/useBuildRecordInputFromFilters';
-import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { type OnRecordCreated } from '@/object-record/types/OnRecordCreated';
 import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -44,8 +44,8 @@ export const useCreateNewIndexRecord = ({
     instanceId,
   });
 
-  const onRecordCreated = useCallback(
-    (createdRecord: ObjectRecord, recordInput?: Partial<ObjectRecord>) => {
+  const onRecordCreated = useCallback<OnRecordCreated>(
+    ({ record: createdRecord, recordInput }) => {
       if (isDefined(recordIndexGroupFieldMetadataItem)) {
         const recordGroup = recordGroupDefinitions.find(
           findByProperty(

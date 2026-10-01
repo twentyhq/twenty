@@ -2,11 +2,13 @@ import { type DataSource } from 'typeorm';
 import { type FeatureFlagKey } from 'twenty-shared/types';
 
 import { type BillingEntitlements } from 'src/engine/core-modules/billing/types/billing-entitlements.type';
+import { type WorkspaceRecordStockService } from 'src/engine/core-modules/usage-limit/services/workspace-record-stock.service';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { type UserWorkspaceRoleMap } from 'src/engine/metadata-modules/role-target/types/user-workspace-role-map';
+import { type FlatValidationRuleMaps } from 'src/engine/metadata-modules/flat-validation-rule/types/flat-validation-rule-maps.type';
+import { type UserWorkspaceRoleMap } from 'src/engine/metadata-modules/role-target/types/user-workspace-role-map.type';
 import { type FlatRowLevelPermissionPredicateGroupMaps } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-group-maps.type';
 import { type FlatRowLevelPermissionPredicateMaps } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-maps.type';
 import { type WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
@@ -18,12 +20,16 @@ export interface WorkspaceInternalContext {
   flatIndexMaps: FlatEntityMaps<FlatIndexMetadata>;
   flatRowLevelPermissionPredicateMaps: FlatRowLevelPermissionPredicateMaps;
   flatRowLevelPermissionPredicateGroupMaps: FlatRowLevelPermissionPredicateGroupMaps;
+  flatValidationRuleMaps?: FlatValidationRuleMaps;
   objectIdByNameSingular: Record<string, string>;
   featureFlagsMap: Record<FeatureFlagKey, boolean>;
   billingEntitlements: BillingEntitlements;
-  isRecordSharingEnabled: boolean;
   userWorkspaceRoleMap: UserWorkspaceRoleMap;
   apiKeyRoleMap: Record<string, string>;
   eventEmitterService: Pick<WorkspaceEventEmitter, 'emitDatabaseBatchEvent'>;
+  recordStock: Pick<
+    WorkspaceRecordStockService,
+    'assertRecordStockAvailable' | 'acquireRecordStock' | 'releaseRecordStock'
+  >;
   coreDataSource: DataSource;
 }

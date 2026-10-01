@@ -13,7 +13,7 @@ import { parseFilterRestRequest } from 'src/engine/api/rest/input-request-parser
 import { parseLimitRestRequest } from 'src/engine/api/rest/input-request-parsers/limit-parser-utils/parse-limit-rest-request.util';
 import { parseOrderByRestRequest } from 'src/engine/api/rest/input-request-parsers/order-by-parser-utils/parse-order-by-rest-request.util';
 import { parseStartingAfterRestRequest } from 'src/engine/api/rest/input-request-parsers/starting-after-parser-utils/parse-starting-after-rest-request.util';
-import { AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request';
+import { AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request.type';
 import { workspaceQueryRunnerRestApiExceptionHandler } from 'src/engine/api/rest/utils/workspace-query-runner-rest-api-exception-handler.util';
 
 @Injectable()

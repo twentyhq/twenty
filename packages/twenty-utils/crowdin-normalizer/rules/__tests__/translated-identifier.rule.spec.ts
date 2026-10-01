@@ -15,8 +15,6 @@ describe('TRANSLATED_IDENTIFIER_RULE', () => {
     );
   });
 
-  // A translation reorders spans to suit its own grammar, so position says
-  // nothing about which source span belongs in which slot.
   it('stands down on more than one span, where order cannot be trusted', () => {
     const sourceText =
       'The `twenty-app` keyword in your `package.json` `keywords` array';
@@ -27,9 +25,7 @@ describe('TRANSLATED_IDENTIFIER_RULE', () => {
     expect(fix(translationText, sourceText)).toBe(translationText);
   });
 
-  // Backticks in the docs mark UI labels as often as symbols, and the reader
-  // sees those labels translated in their own app, so restoring them would
-  // un-translate correct work.
+  // Backticked UI labels are rightly translated, so restoring them would undo correct work.
   it.each([
     [
       'Go to `Settings` in the left sidebar.',
@@ -87,8 +83,6 @@ describe('TRANSLATED_IDENTIFIER_RULE', () => {
     },
   );
 
-  // Lining them up positionally is only sound when both sides hold the same
-  // number; a translation that dropped or added one cannot be matched safely.
   it('stands down when the counts do not line up', () => {
     const sourceText = 'Use `a` and `b`.';
 
@@ -103,12 +97,9 @@ describe('TRANSLATED_IDENTIFIER_RULE', () => {
     expect(detect(translationText, sourceText)).toBe(false);
   });
 
-  // Translated pages live under /l/<lang>/ and link to each other there, so a
-  // locale-prefixed target is the translation being right, not wrong. Paths and
-  // link targets are left to a human.
   it('leaves link targets alone, including locale-prefixed ones', () => {
     const sourceText = 'See [the guide](/user-guide/billing).';
-    const translationText = 'Vezi [ghidul](/l/ro/user-guide/billing).';
+    const translationText = 'Vezi [ghidul](/ro/user-guide/billing).';
 
     expect(detect(translationText, sourceText)).toBe(false);
     expect(fix(translationText, sourceText)).toBe(translationText);

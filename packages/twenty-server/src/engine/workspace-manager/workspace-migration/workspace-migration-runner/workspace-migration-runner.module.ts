@@ -7,13 +7,22 @@ import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { DeferredWorkspaceMigrationActionEntity } from 'src/engine/metadata-modules/deferred-workspace-migration-action/deferred-workspace-migration-action.entity';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.module';
+import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceSchemaMigrationRunnerActionHandlersModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/workspace-schema-migration-runner-action-handlers.module';
 import { FlatCacheInvalidateCommand } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/commands/flat-cache-invalidate.command';
+import { RetryFailedDeferredWorkspaceMigrationActionsCommand } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/commands/retry-failed-deferred-workspace-migration-actions.command';
+import { DeferredWorkspaceMigrationActionRecoveryCronCommand } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/crons/commands/deferred-workspace-migration-action-recovery.cron.command';
+import { DeferredWorkspaceMigrationActionHandlerRegistryService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/registry/deferred-workspace-migration-action-handler-registry.service';
 import { WorkspaceMigrationRunnerActionHandlerRegistryService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/registry/workspace-migration-runner-action-handler-registry.service';
+import { DeferredWorkspaceMigrationActionRecoveryService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/deferred-workspace-migration-action-recovery.service';
+import { DeferredWorkspaceMigrationActionGaugeService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/deferred-workspace-migration-action-gauge.service';
+import { DeferredWorkspaceMigrationActionRunnerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/deferred-workspace-migration-action-runner.service';
+import { InFlightDeferredWorkspaceMigrationActionsService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/in-flight-deferred-workspace-migration-actions.service';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/workspace-migration-runner.service';
 
 @Module({
@@ -26,15 +35,31 @@ import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/wo
     DiscoveryModule,
     WorkspaceCacheStorageModule,
     WorkspaceCacheModule,
-    TypeOrmModule.forFeature([WorkspaceEntity]),
+    TypeOrmModule.forFeature([
+      WorkspaceEntity,
+      DeferredWorkspaceMigrationActionEntity,
+    ]),
     WorkspaceIteratorModule,
     MetricsModule,
   ],
   providers: [
     WorkspaceMigrationRunnerService,
     WorkspaceMigrationRunnerActionHandlerRegistryService,
+    DeferredWorkspaceMigrationActionHandlerRegistryService,
+    DeferredWorkspaceMigrationActionRunnerService,
+    DeferredWorkspaceMigrationActionRecoveryService,
+    InFlightDeferredWorkspaceMigrationActionsService,
+    provideWorkspaceScopedRepository(DeferredWorkspaceMigrationActionEntity),
+    DeferredWorkspaceMigrationActionGaugeService,
     FlatCacheInvalidateCommand,
+    RetryFailedDeferredWorkspaceMigrationActionsCommand,
+    DeferredWorkspaceMigrationActionRecoveryCronCommand,
   ],
-  exports: [WorkspaceMigrationRunnerService],
+  exports: [
+    WorkspaceMigrationRunnerService,
+    DeferredWorkspaceMigrationActionRunnerService,
+    DeferredWorkspaceMigrationActionRecoveryService,
+    DeferredWorkspaceMigrationActionRecoveryCronCommand,
+  ],
 })
 export class WorkspaceMigrationRunnerModule {}

@@ -1,6 +1,7 @@
 import { CalendarEventComposerFields } from '@/activities/calendar/components/CalendarEventComposerFields';
 import { useCalendarEventComposer } from '@/activities/calendar/hooks/useCalendarEventComposer';
 import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTriggerApiOAuth';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
 import { useSidePanelHistory } from '@/side-panel/hooks/useSidePanelHistory';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
@@ -12,11 +13,10 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { ConnectedAccountProvider, SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/primitives/feedback';
+import { IconButton, useToast } from 'twenty-ui/components';
 import { IconCalendarEvent, IconTrash } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { IconButton } from 'twenty-ui/components';
-import { getOsControlSymbol } from 'twenty-ui/utilities';
+import { PermissionFlagType } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 const StyledContainer = styled.div`
@@ -33,6 +33,9 @@ export const SidePanelComposeCalendarEventPage = () => {
   const { closeSidePanelMenu } = useSidePanelMenu();
   const navigateSettings = useNavigateSettings();
   const { triggerApisOAuth } = useTriggerApisOAuth();
+  const hasConnectedAccountsPermission = useHasPermissionFlag(
+    PermissionFlagType.CONNECTED_ACCOUNTS,
+  );
   const { enqueueToast } = useToast();
 
   const composerState = useCalendarEventComposer({
@@ -89,8 +92,12 @@ export const SidePanelComposeCalendarEventPage = () => {
       <CalendarEventComposerFields
         composerState={composerState}
         contextRecord={composeCalendarEventInitialValues.contextRecord}
-        onAddAccount={handleAddAccount}
-        onReauthorize={handleReauthorize}
+        onAddAccount={
+          hasConnectedAccountsPermission ? handleAddAccount : undefined
+        }
+        onReauthorize={
+          hasConnectedAccountsPermission ? handleReauthorize : undefined
+        }
       />
       <SidePanelFooter
         actions={[
@@ -107,7 +114,7 @@ export const SidePanelComposeCalendarEventPage = () => {
             key="create"
             size="sm"
             startIcon={<IconCalendarEvent />}
-            hotkeys={[getOsControlSymbol(), '⏎']}
+            shortcut={['Mod', 'Enter']}
             onClick={composerState.handleCreate}
             disabled={!composerState.canCreate}
             variant="solid"

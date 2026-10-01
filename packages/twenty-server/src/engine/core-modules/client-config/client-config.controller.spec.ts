@@ -47,6 +47,7 @@ describe('ClientConfigController', () => {
             },
           ],
         },
+        aiEvaluationModels: [],
         aiModelTiers: [],
         aiModels: [
           {
@@ -91,8 +92,10 @@ describe('ClientConfigController', () => {
         onboarding: {
           importContactsCreditsReward: 2,
           inviteTeamCreditsRewardPerUser: 3,
-          upgradeCreditsReward: 5,
-          installAppsCreditsRewardPerApp: 1,
+          installAppsCreditsReward: 1,
+          createProfileCreditsReward: 0.5,
+          upgradeCreditsReward: 0.5,
+          inviteTeamMaxInvites: 10,
         },
         isAttachmentPreviewEnabled: true,
         analyticsEnabled: false,

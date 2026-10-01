@@ -5,6 +5,7 @@ export const APPLICATION_ENTITY_RELATION_PROPERTIES = [
   'agents',
   'frontComponents',
   'commandMenuItems',
+  'settingsMenuItems',
   'logicFunctions',
   'objects',
   'applicationVariables',

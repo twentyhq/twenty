@@ -8,8 +8,8 @@ import { StyledOnboardingStepTitle } from '@/onboarding/components/StyledOnboard
 import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { MainButton } from 'twenty-ui/components';
-import { ClickToActionLink } from 'twenty-ui/primitives/navigation';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { Button } from 'twenty-ui/primitives/input';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledFooter = styled(StyledOnboardingContentBlock)`
   align-items: center;
@@ -44,9 +44,9 @@ export const ChooseYourPlanErrorState = ({
       <OnboardingStepAnimatedItem index={2}>
         <StyledFooter>
           <MainButton onClick={onRetry} fullWidth>{t`Try again`}</MainButton>
-          <ClickToActionLink onClick={signOut}>
+          <Button variant="link" onClick={signOut}>
             <Trans>Log out</Trans>
-          </ClickToActionLink>
+          </Button>
         </StyledFooter>
       </OnboardingStepAnimatedItem>
     </StyledOnboardingStepPage>

@@ -24,16 +24,10 @@ interface TestingModuleCreatePreHook {
   (moduleBuilder: TestingModuleBuilder): TestingModuleBuilder;
 }
 
-/**
- * Hook for adding items to nest application
- */
 export type TestingAppCreatePreHook = (
   app: NestExpressApplication,
 ) => Promise<void>;
 
-/**
- * Sets basic integration testing module of app
- */
 export const createApp = async (
   config: {
     moduleBuilderHook?: TestingModuleCreatePreHook;
@@ -73,7 +67,7 @@ export const createApp = async (
   app.use(
     '/graphql',
     graphqlUploadExpress({
-      maxFieldSize: bytes(settings.storage.maxFileSize)!,
+      maxFieldSize: bytes(settings.maxRequestBodySize)!,
       maxFiles: 10,
     }),
   );
@@ -81,7 +75,7 @@ export const createApp = async (
   app.use(
     '/metadata',
     graphqlUploadExpress({
-      maxFieldSize: bytes(settings.storage.maxFileSize)!,
+      maxFieldSize: bytes(settings.maxRequestBodySize)!,
       maxFiles: 10,
     }),
   );

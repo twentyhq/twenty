@@ -1,5 +1,5 @@
 import { WorkflowActionType } from '@/workflow/types/WorkflowActionType';
-import { type ValidatableWorkflowStep } from '@/workflow/validation/types/workflow-validation.type';
+import { type ValidatableWorkflowStep } from '@/workflow/validation/types/WorkflowValidation';
 import {
   getStepInput,
   getStepOutgoingStepIds,

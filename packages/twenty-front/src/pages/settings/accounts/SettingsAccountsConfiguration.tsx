@@ -10,7 +10,7 @@ import { GET_MY_MESSAGE_CHANNELS } from '@/settings/accounts/graphql/queries/get
 import { useMutation, useQuery } from '@apollo/client/react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/primitives/feedback';
+import { useToast } from 'twenty-ui/components';
 import { StartChannelSyncDocument } from '~/generated-metadata/graphql';
 import { SettingsAccountsConfigurationSelectedMessageChannelEffect } from '~/pages/settings/accounts/SettingsAccountsConfigurationSelectedMessageChannelEffect';
 import { SettingsAccountsConfigurationStepCalendar } from '~/pages/settings/accounts/SettingsAccountsConfigurationStepCalendar';

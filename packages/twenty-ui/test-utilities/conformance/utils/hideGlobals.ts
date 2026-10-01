@@ -1,4 +1,4 @@
-import { isDefined } from '@ui/utilities/utils/isDefined';
+import { isDefined } from '@ui/utilities';
 
 type HiddenGlobal = {
   globalName: string;

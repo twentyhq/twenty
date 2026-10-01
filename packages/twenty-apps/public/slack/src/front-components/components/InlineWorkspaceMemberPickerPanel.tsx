@@ -1,33 +1,14 @@
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
-import { MenuItem, MenuItemAvatar } from 'twenty-ui/navigation';
+import { isDefined } from 'twenty-sdk/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
+import { SlackDropdownBackdrop } from 'src/front-components/components/SlackDropdownBackdrop';
+import { SlackPickerDropdownPanel } from 'src/front-components/components/SlackPickerDropdownPanel';
 import { useWorkspaceMemberSearch } from 'src/front-components/hooks/use-workspace-member-search';
 import { type WorkspaceMemberOption } from 'src/front-components/types/workspace-member-option.type';
 import { getMemberDisplayName } from 'src/front-components/utils/get-member-display-name.util';
-
-const StyledBackdrop = styled.div`
-  inset: 0;
-  position: fixed;
-  z-index: 1;
-`;
-
-const StyledDropdownPanel = styled.div`
-  background: ${() => themeCssVariables.background.primary};
-  border: 1px solid ${() => themeCssVariables.border.color.medium};
-  border-radius: ${() => themeCssVariables.border.radius.md};
-  box-shadow: ${() => themeCssVariables.boxShadow.light};
-  box-sizing: border-box;
-  left: 0;
-  margin-top: ${() => themeCssVariables.spacing[1]};
-  min-width: 240px;
-  position: absolute;
-  top: 100%;
-  width: 100%;
-  z-index: 2;
-`;
 
 const StyledSearchInput = styled.input`
   background: transparent;
@@ -47,30 +28,6 @@ const StyledSearchInput = styled.input`
   }
 `;
 
-const StyledOptions = styled.div`
-  max-height: 240px;
-  overflow-y: auto;
-  padding: ${() => themeCssVariables.spacing[1]};
-`;
-
-const getEmptyStateText = ({
-  isSearching,
-  searchErrorMessage,
-}: {
-  isSearching: boolean;
-  searchErrorMessage: string | undefined;
-}): string => {
-  if (isSearching) {
-    return 'Searching…';
-  }
-
-  if (isNonEmptyString(searchErrorMessage)) {
-    return searchErrorMessage;
-  }
-
-  return 'No results';
-};
-
 type InlineWorkspaceMemberPickerPanelProps = {
   onSelect: (member: WorkspaceMemberOption) => void;
   onClose: () => void;
@@ -87,55 +44,64 @@ export const InlineWorkspaceMemberPickerPanel = ({
 
   return (
     <>
-      <StyledBackdrop onClick={onClose} />
-      <StyledDropdownPanel>
-        <StyledSearchInput
-          value={searchTerm}
-          onChange={(event) => setSearchTerm(event.target.value)}
-          onKeyDown={(event) => {
-            if (event.key === 'Escape') {
-              event.preventDefault();
-              onClose();
+      <SlackDropdownBackdrop onClose={onClose} />
+      <SlackPickerDropdownPanel
+        options={options.map((member) => {
+          const displayedName = getMemberDisplayName(member);
 
-              return;
-            }
+          return {
+            key: member.id,
+            name: displayedName,
+            meta: member.userEmail ?? undefined,
+            avatar: {
+              type: 'rounded' as const,
+              placeholder: displayedName,
+              placeholderColorSeed: member.id,
+            },
+          };
+        })}
+        isSearching={isSearching}
+        emptyText={
+          isNonEmptyString(searchErrorMessage)
+            ? searchErrorMessage
+            : 'No results'
+        }
+        listLabel="Workspace members"
+        onSelect={(memberId) => {
+          const selectedMember = options.find(
+            (member) => member.id === memberId,
+          );
 
-            if (event.key === 'Enter') {
-              event.preventDefault();
+          if (isDefined(selectedMember)) {
+            onSelect(selectedMember);
+          }
+        }}
+        header={
+          <StyledSearchInput
+            value={searchTerm}
+            onChange={(event) => setSearchTerm(event.target.value)}
+            onKeyDown={(event) => {
+              if (event.key === 'Escape') {
+                event.preventDefault();
+                onClose();
 
-              if (options.length > 0) {
-                onSelect(options[0]);
+                return;
               }
-            }
-          }}
-          placeholder="Search members"
-          aria-label="Search workspace members"
-          autoFocus
-        />
-        <StyledOptions role="listbox" aria-label="Workspace members">
-          {options.map((member) => (
-            <div key={member.id} role="option" aria-selected={false}>
-              <MenuItemAvatar
-                avatar={{
-                  type: 'rounded',
-                  size: 'md',
-                  placeholder: getMemberDisplayName(member),
-                  placeholderColorSeed: member.id,
-                }}
-                text={getMemberDisplayName(member)}
-                contextualText={member.userEmail ?? undefined}
-                onClick={() => onSelect(member)}
-              />
-            </div>
-          ))}
-          {options.length === 0 && (
-            <MenuItem
-              disabled
-              text={getEmptyStateText({ isSearching, searchErrorMessage })}
-            />
-          )}
-        </StyledOptions>
-      </StyledDropdownPanel>
+
+              if (event.key === 'Enter') {
+                event.preventDefault();
+
+                if (options.length > 0) {
+                  onSelect(options[0]);
+                }
+              }
+            }}
+            placeholder="Search members"
+            aria-label="Search workspace members"
+            autoFocus
+          />
+        }
+      />
     </>
   );
 };

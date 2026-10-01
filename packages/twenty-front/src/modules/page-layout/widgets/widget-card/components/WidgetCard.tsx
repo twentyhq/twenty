@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { type WidgetCardVariant } from '~/modules/page-layout/widgets/types/WidgetCardVariant';
 import { isWidgetCardFlushInViewMode } from '@/page-layout/widgets/utils/isWidgetCardFlushInViewMode';
 
@@ -33,9 +33,7 @@ const shouldUseSecondaryBackground = (
   props: Pick<WidgetCardStyledProps, 'variant' | 'isEditable' | 'isDragging'>,
 ) => (props.isEditable && props.isDragging) || props.variant === 'framed';
 
-// The card is the single owner of how far its header and body are inset:
-// WidgetCardHeader and WidgetCardContent both read these, widget bodies never
-// declare their own inline padding.
+// WidgetCardHeader and WidgetCardContent read these insets; widget bodies never declare their own padding.
 // oxlint-disable-next-line twenty/sort-css-properties-alphabetically
 const StyledWidgetCard = styled.div<WidgetCardStyledProps>`
   --widget-card-padding-inline: ${({ variant, isEditable }) =>
@@ -56,8 +54,7 @@ const StyledWidgetCard = styled.div<WidgetCardStyledProps>`
       : 'transparent';
   }};
 
-  // Declared only when the card actually paints a surface, so a transparent
-  // card leaves the layout container's value in place for its content to read.
+  // Only when painting a surface, so a transparent card leaves the container's value for its content.
   &[data-secondary-background='true'] {
     --record-card-background-color: ${themeCssVariables.background.secondary};
   }

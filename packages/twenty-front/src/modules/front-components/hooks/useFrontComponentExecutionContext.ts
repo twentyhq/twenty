@@ -1,7 +1,9 @@
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
 import { getFieldMetadataItemById } from '@/object-metadata/utils/getFieldMetadataItemById';
 import { resolveOpenRecordIn } from '@/object-record/record-index/utils/resolveOpenRecordIn';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { type FrontComponentToolCall } from 'twenty-sdk/front-component';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useRef } from 'react';
@@ -23,6 +25,7 @@ import {
   type EnqueueSnackbarParams,
 } from 'twenty-shared/types';
 
+import { serializePlainTextAsAdvancedTextEditorDocument } from '@/advanced-text-editor/utils/serializePlainTextAsAdvancedTextEditorDocument';
 import { useOpenAskAiPageWithPreprompt } from '@/ai/hooks/useOpenAskAiPageWithPreprompt';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { useCommandMenuConfirmationModal } from '@/command-menu-item/confirmation-modal/hooks/useCommandMenuConfirmationModal';
@@ -31,7 +34,7 @@ import { commandMenuItemProgressFamilyState } from '@/command-menu-item/states/c
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreRecordShowParentViewComponentState } from '@/context-store/states/contextStoreRecordShowParentViewComponentState';
 import { useDirectFileUpload } from '@/file/hooks/useDirectFileUpload';
-import { useRequestApplicationTokenRefresh } from '@/front-components/hooks/useRequestApplicationTokenRefresh';
+import { useFrontComponentApplicationTokenPair } from '@/front-components/hooks/useFrontComponentApplicationTokenPair';
 import { getMediaFileExtension } from '@/front-components/media-session/utils/getMediaFileExtension';
 import { setRecordPageActiveTabId } from '@/page-layout/utils/setRecordPageActiveTabId';
 import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
@@ -42,11 +45,12 @@ import { useOpenRichTextInSidePanel } from '@/side-panel/hooks/useOpenRichTextIn
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { useOpenRoutedPageInSidePanel } from '@/side-panel/routing/hooks/useOpenRoutedPageInSidePanel';
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { useStore } from 'jotai';
 import { CustomError, getAppPath, isDefined } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/primitives/feedback';
+import { useToast } from 'twenty-ui/components';
 import { useIcons } from 'twenty-ui/icon';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { FileFolder } from '~/generated-metadata/graphql';
@@ -118,14 +122,18 @@ export const useFrontComponentExecutionContext = ({
   applicationId,
   commandMenuItemId,
   selectedRecordIds,
+  objectNameSingular,
   timelineActivityId,
+  toolCall,
   colorScheme,
 }: {
   frontComponentId: string;
   applicationId: string;
   commandMenuItemId?: string;
   selectedRecordIds?: string[];
+  objectNameSingular?: string;
   timelineActivityId?: string;
+  toolCall?: FrontComponentToolCall;
   colorScheme: 'light' | 'dark';
 }): {
   executionContext: FrontComponentExecutionContext;
@@ -135,9 +143,8 @@ export const useFrontComponentExecutionContext = ({
   const currentUser = useAtomStateValue(currentUserState);
   const navigateApp = useNavigateApp();
   const store = useStore();
-  const { requestAccessTokenRefresh } = useRequestApplicationTokenRefresh({
-    frontComponentId,
-  });
+  const { requestApplicationAccessTokenRefresh } =
+    useFrontComponentApplicationTokenPair();
   const { openConfirmationModal } = useCommandMenuConfirmationModal();
   const { openAskAiPageWithPreprompt } = useOpenAskAiPageWithPreprompt();
   const { navigateSidePanel } = useNavigateSidePanel();
@@ -149,6 +156,13 @@ export const useFrontComponentExecutionContext = ({
   const { openFrontComponentInSidePanel } = useOpenFrontComponentInSidePanel();
   const isMobile = useIsMobile();
   const { objectMetadataItems } = useObjectMetadataItems();
+  const selectedObjectMetadataItem = useAtomFamilySelectorValue(
+    objectMetadataItemFamilySelector,
+    {
+      objectName: objectNameSingular ?? '',
+      objectNameType: 'singular',
+    },
+  );
   const setSidePanelSearch = useSetAtomState(sidePanelSearchState);
   const { getIcon } = useIcons();
   const unmountEngineCommand = useUnmountCommand();
@@ -335,13 +349,12 @@ export const useFrontComponentExecutionContext = ({
       }
 
       if (params.page === SidePanelPages.ViewFrontComponent) {
-        const recordContext =
-          isDefined(params.recordId) && isDefined(params.objectNameSingular)
-            ? {
-                recordId: params.recordId,
-                objectNameSingular: params.objectNameSingular,
-              }
-            : undefined;
+        const recordContext = isDefined(params.objectNameSingular)
+          ? {
+              objectNameSingular: params.objectNameSingular,
+              recordId: params.recordId,
+            }
+          : undefined;
 
         openFrontComponentInSidePanel({
           frontComponentId: params.frontComponentId,
@@ -360,7 +373,9 @@ export const useFrontComponentExecutionContext = ({
         isNonEmptyString(params.preprompt.text)
       ) {
         openAskAiPageWithPreprompt({
-          text: params.preprompt.text,
+          serializedDocument: serializePlainTextAsAdvancedTextEditorDocument(
+            params.preprompt.text,
+          ),
           mode: params.preprompt.mode,
           model: params.preprompt.model,
         });
@@ -421,10 +436,17 @@ export const useFrontComponentExecutionContext = ({
     userId: currentUser?.id ?? null,
     recordId: selectedRecordIds?.length === 1 ? selectedRecordIds[0] : null,
     selectedRecordIds: selectedRecordIds ?? [],
+    selectedObjectMetadata: isDefined(selectedObjectMetadataItem)
+      ? {
+          id: selectedObjectMetadataItem.id,
+          nameSingular: selectedObjectMetadataItem.nameSingular,
+          namePlural: selectedObjectMetadataItem.namePlural,
+        }
+      : null,
     timelineActivityId: timelineActivityId ?? null,
+    toolCall,
     colorScheme,
-    // i18n.locale is a Lingui string; the host is always configured with the
-    // APP_LOCALES set, so it is a valid AppLocale.
+    // The host is always configured with APP_LOCALES, so this is a valid AppLocale.
     locale: i18n.locale as AppLocale,
   };
 
@@ -468,16 +490,13 @@ export const useFrontComponentExecutionContext = ({
       }
       lastCopyToClipboardCallAtRef.current = now;
 
-      // Front components notify their own users, so a host success toast
-      // would show up on top of theirs.
+      // Front components show their own toast; a host one would stack on top.
       await copyToClipboardWithoutSuccessToast(text);
     };
 
   const hostUploadFile: FrontComponentHostCommunicationApi['uploadFile'] =
     async (file, params) => {
-      // Arguments come from sandboxed application code: reject malformed
-      // shapes here. fieldMetadataId is mandatory — a file uploaded outside
-      // a FILES field could never be attached to a record and would leak.
+      // Sandboxed input; fieldMetadataId is mandatory since a file uploaded outside a FILES field could never be attached and would leak.
       if (
         !(file instanceof Blob) ||
         file.size === 0 ||
@@ -487,8 +506,7 @@ export const useFrontComponentExecutionContext = ({
         return { status: 'failed', reason: 'invalid-params' };
       }
 
-      // A non-FILES target would upload fine and then fail at attach time,
-      // stranding the file; reject it before uploading anything.
+      // A non-FILES target would fail at attach time, stranding the uploaded file.
       const { fieldMetadataItem } = getFieldMetadataItemById({
         fieldMetadataId: params.fieldMetadataId,
         objectMetadataItems,
@@ -576,6 +594,9 @@ export const useFrontComponentExecutionContext = ({
         storageType,
       });
     };
+
+  const requestAccessTokenRefresh: FrontComponentHostCommunicationApi['requestAccessTokenRefresh'] =
+    () => requestApplicationAccessTokenRefresh(applicationId);
 
   const frontComponentHostCommunicationApi: FrontComponentHostCommunicationApi =
     {

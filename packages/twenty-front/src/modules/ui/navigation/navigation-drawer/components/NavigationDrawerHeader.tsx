@@ -1,15 +1,16 @@
-import { NAVIGATION_DRAWER_COLLAPSED_BUTTON_SIZE } from '@/ui/navigation/navigation-drawer/constants/NavigationDrawerCollapsedButtonSize';
+import { FrontComponentMediaSessionIndicator } from '@/front-components/media-session/components/FrontComponentMediaSessionIndicator';
 import { APP_HEADER_HEIGHT } from '@/ui/layout/constants/AppHeaderHeight';
+import { NAVIGATION_DRAWER_COLLAPSED_BUTTON_SIZE } from '@/ui/navigation/navigation-drawer/constants/NavigationDrawerCollapsedButtonSize';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
+import { LightIconButton } from 'twenty-ui/components';
 import { IconSearch } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/primitives/input';
-import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
+import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme';
 
+import { useIsNavigationDrawerContentExpanded } from '@/navigation/hooks/useIsNavigationDrawerContentExpanded';
 import { useOpenRecordsSearchPageInSidePanel } from '@/side-panel/hooks/useOpenRecordsSearchPageInSidePanel';
 import { MultiWorkspaceDropdownButton } from '@/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/MultiWorkspaceDropdownButton';
-import { useIsNavigationDrawerContentExpanded } from '@/navigation/hooks/useIsNavigationDrawerContentExpanded';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { useIsMobile } from 'twenty-ui/utilities';
 import { NavigationDrawerCollapseButton } from './NavigationDrawerCollapseButton';
 
 const StyledContainer = styled.div`
@@ -31,6 +32,10 @@ const StyledHeaderRow = styled.div`
 `;
 
 const StyledCollapsedSearch = styled.div`
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[2]};
   padding: ${themeCssVariables.spacing[3]} ${themeCssVariables.spacing[2]}
     ${themeCssVariables.spacing[1]};
 `;
@@ -88,12 +93,13 @@ export const NavigationDrawerHeader = () => {
   const searchButton = !isMobile && (
     <StyledSearchButtonContainer isExpanded={isExpanded}>
       <LightIconButton
-        Icon={IconSearch}
-        accent="secondary"
-        size="small"
+        emphasis="standard"
+        size="sm"
         onClick={openRecordsSearchPage}
         aria-label={t`Search`}
-      />
+      >
+        <IconSearch />
+      </LightIconButton>
     </StyledSearchButtonContainer>
   );
 
@@ -105,6 +111,7 @@ export const NavigationDrawerHeader = () => {
         </StyledWorkspaceDropdownContainer>
         {isExpanded && (
           <StyledRightActions>
+            <FrontComponentMediaSessionIndicator />
             {searchButton}
             <StyledNavigationDrawerCollapseButtonContainer>
               <NavigationDrawerCollapseButton direction="left" />
@@ -113,7 +120,10 @@ export const NavigationDrawerHeader = () => {
         )}
       </StyledHeaderRow>
       {!isExpanded && !isMobile && (
-        <StyledCollapsedSearch>{searchButton}</StyledCollapsedSearch>
+        <StyledCollapsedSearch>
+          <FrontComponentMediaSessionIndicator />
+          {searchButton}
+        </StyledCollapsedSearch>
       )}
     </StyledContainer>
   );

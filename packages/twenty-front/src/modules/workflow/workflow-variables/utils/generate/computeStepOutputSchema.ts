@@ -5,6 +5,7 @@ import {
 } from '@/workflow/types/Workflow';
 import { type WorkflowFormActionField } from '@/workflow/workflow-steps/workflow-actions/form-action/types/WorkflowFormActionField';
 import { type OutputSchemaV2 } from '@/workflow/workflow-variables/types/StepOutputSchemaV2';
+import { generateClassifyOutputSchema } from '@/workflow/workflow-variables/utils/generate/generateClassifyOutputSchema';
 import { generateFindRecordsOutputSchema } from '@/workflow/workflow-variables/utils/generate/generateFindRecordsOutputSchema';
 import { generateFormOutputSchema } from '@/workflow/workflow-variables/utils/generate/generateFormOutputSchema';
 import { generateRecordEventOutputSchema } from '@/workflow/workflow-variables/utils/generate/generateRecordEventOutputSchema';
@@ -138,7 +139,6 @@ export const computeStepOutputSchema = ({
           };
         }
 
-        // BULK_RECORDS - array indicator nested under payload
         return {
           [WORKFLOW_TRIGGER_PAYLOAD_KEY]: {
             isLeaf: false,
@@ -285,6 +285,10 @@ export const computeStepOutputSchema = ({
           value: '',
         },
       };
+    }
+
+    case 'CLASSIFY': {
+      return generateClassifyOutputSchema(step.settings.input.questions);
     }
 
     case 'FILTER':

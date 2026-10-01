@@ -1,3 +1,4 @@
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { isDefined } from 'twenty-shared/utils';
 import { isUndefined } from '@sniptt/guards';
 import { Key } from 'ts-key-enum';
@@ -23,7 +24,7 @@ import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomC
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { type IconComponent } from 'twenty-ui/icon';
-import { MenuItemSelect } from 'twenty-ui/primitives/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 
 export type SingleRecordPickerMenuItemsProps = {
   EmptyIcon?: IconComponent;
@@ -96,8 +97,7 @@ export const SingleRecordPickerMenuItems = ({
       selectableListInstanceId={selectableListComponentInstanceId}
       selectableItemIdArray={selectableItemIds}
       focusId={focusId}
-      // The empty option leads the list, so preselecting it would make Enter
-      // detach the relation instead of picking a record.
+      // The empty option leads, so preselecting it would make Enter detach the relation.
       shouldPreselectFirstItem={!isDefined(emptyLabel)}
     >
       {emptyLabel && (
@@ -109,16 +109,20 @@ export const SingleRecordPickerMenuItems = ({
             onMorphItemSelected();
           }}
         >
-          <MenuItemSelect
+          <ListItem
             onClick={() => {
               setSingleRecordPickerSelectedId(undefined);
               onMorphItemSelected();
             }}
-            LeftIcon={EmptyIcon}
-            text={emptyLabel}
-            selected={isUndefined(singleRecordPickerSelectedId)}
             focused={isSelectedItemId}
-          />
+            role="option"
+            aria-selected={isUndefined(singleRecordPickerSelectedId)}
+            selected={isUndefined(singleRecordPickerSelectedId)}
+            indicator="check"
+            startIcon={<SelectOptionIcon Icon={EmptyIcon} />}
+          >
+            {emptyLabel}
+          </ListItem>
         </SelectableListItem>
       )}
       {singleRecordPickerShouldShowInitialLoading ? (

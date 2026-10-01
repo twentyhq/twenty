@@ -1,11 +1,11 @@
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { StyledDropdownContentContainer } from '@/ui/layout/dropdown/components/internal/DropdownInternalContainer';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
+import { StyledOverlayPortalLayer } from '@/ui/layout/overlay/components/StyledOverlayPortalLayer';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { styled } from '@linaria/react';
 import { FloatingPortal, offset, shift, useFloating } from '@floating-ui/react';
 import { type ReactNode } from 'react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 type ExpandedListDropdownProps = {
   anchorElement?: HTMLElement;
@@ -13,11 +13,12 @@ type ExpandedListDropdownProps = {
   onClickOutside?: () => void;
 };
 
-const StyledExpandedListContainer = styled.div`
+const StyledExpandedListContainer = styled.div<{ widthInPixels: number }>`
   display: flex;
   flex-wrap: wrap;
   gap: ${themeCssVariables.spacing[1]};
   padding: ${themeCssVariables.spacing[2]};
+  width: ${({ widthInPixels }) => widthInPixels}px;
 `;
 
 // TODO: unify this and use Dropdown component instead
@@ -43,23 +44,21 @@ export const ExpandedListDropdown = ({
 
   const dropdownContentWidth = anchorElement
     ? Math.max(220, anchorElement.offsetWidth)
-    : undefined;
+    : GenericDropdownContentWidth.Medium;
 
   return (
     <FloatingPortal>
-      <StyledDropdownContentContainer
+      <StyledOverlayPortalLayer
         data-floating-ui-viewport
         ref={refs.setFloating}
         style={floatingStyles}
       >
         <OverlayContainer>
-          <DropdownContent widthInPixels={dropdownContentWidth}>
-            <StyledExpandedListContainer>
-              {children}
-            </StyledExpandedListContainer>
-          </DropdownContent>
+          <StyledExpandedListContainer widthInPixels={dropdownContentWidth}>
+            {children}
+          </StyledExpandedListContainer>
         </OverlayContainer>
-      </StyledDropdownContentContainer>
+      </StyledOverlayPortalLayer>
     </FloatingPortal>
   );
 };

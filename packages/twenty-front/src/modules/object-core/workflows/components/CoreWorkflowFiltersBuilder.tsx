@@ -1,9 +1,9 @@
+import { InputLabel } from '@/ui/input/components/internal/InputLabel/InputLabel';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { type StepFilter } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { InputLabel } from 'twenty-ui/primitives/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { CoreWorkflowFilterAddRuleButton } from '@/object-core/workflows/components/CoreWorkflowFilterAddRuleButton';
 import { CoreWorkflowFilterColumn } from '@/object-core/workflows/components/CoreWorkflowFilterColumn';

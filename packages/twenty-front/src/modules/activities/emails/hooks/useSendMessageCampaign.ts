@@ -11,7 +11,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { plural, t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { MessageCampaignStatus } from 'twenty-shared/types';
-import { useToast } from 'twenty-ui/primitives/feedback';
+import { useToast } from 'twenty-ui/components';
 import {
   type SendMessageCampaignMutation,
   type SendMessageCampaignMutationVariables,

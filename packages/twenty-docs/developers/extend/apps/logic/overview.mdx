@@ -64,4 +64,6 @@ Functions run sandboxed in isolated Node.js processes and access the workspace t
 
 <Note>
 **Install-time hooks** — code that runs before or after the install — share this runtime but use their own define functions and live under [Config → Install Hooks](/developers/extend/apps/config/install-hooks).
+
+The [**health check**](/developers/extend/apps/logic/logic-functions#health-check) shares it too. It declares no trigger: Twenty calls it on demand when the app's settings page opens.
 </Note>

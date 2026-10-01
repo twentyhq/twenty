@@ -1,10 +1,10 @@
 import { Dialog } from 'twenty-ui/primitives/surfaces';
 import { styled } from '@linaria/react';
 import { MainButton } from 'twenty-ui/components';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { t } from '@lingui/core/macro';
-import { CircularProgressBar } from 'twenty-ui/primitives/feedback';
+import { Loader } from 'twenty-ui/primitives/feedback';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 const StyledFooterContainer = styled.div`
@@ -37,7 +37,7 @@ export const StepNavigationButton = ({
       <Dialog.Footer style={{ padding: 'var(--t-spacing-5)' }}>
         {!isUndefinedOrNull(onBack) && (
           <MainButton
-            startIcon={isLoading ? <CircularProgressBar /> : undefined}
+            startIcon={isLoading ? <Loader /> : undefined}
             onClick={!isLoading ? onBack : undefined}
             variant="outline"
           >
@@ -46,7 +46,7 @@ export const StepNavigationButton = ({
         )}
         {!isUndefinedOrNull(onContinue) && (
           <MainButton
-            startIcon={isLoading ? <CircularProgressBar /> : undefined}
+            startIcon={isLoading ? <Loader /> : undefined}
             onClick={!isLoading ? onContinue : undefined}
             disabled={isContinueDisabled}
           >

@@ -2,8 +2,8 @@ import { styled } from '@linaria/react';
 import { type ReactNode, useState } from 'react';
 
 import { IconChevronDown, IconChevronUp } from 'twenty-ui/icon';
-import { AnimatedExpandableContainer } from 'twenty-ui/primitives/layout';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { Collapsible } from 'twenty-ui/primitives/layout';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 type SettingsAdminChatCollapsibleSectionProps = {
   label: string;
@@ -54,9 +54,7 @@ export const SettingsAdminChatCollapsibleSection = ({
           <IconChevronDown size={14} />
         )}
       </StyledToggleButton>
-      <AnimatedExpandableContainer isExpanded={isExpanded} mode="fit-content">
-        {children}
-      </AnimatedExpandableContainer>
+      <Collapsible isExpanded={isExpanded}>{children}</Collapsible>
     </StyledContainer>
   );
 };

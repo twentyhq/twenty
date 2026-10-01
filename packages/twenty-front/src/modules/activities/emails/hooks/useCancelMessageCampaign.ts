@@ -6,7 +6,7 @@ import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useU
 import { plural, t } from '@lingui/core/macro';
 import { MessageCampaignStatus } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/primitives/feedback';
+import { useToast } from 'twenty-ui/components';
 import {
   type CancelMessageCampaignMutation,
   type CancelMessageCampaignMutationVariables,

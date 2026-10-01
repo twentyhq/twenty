@@ -5,7 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components';
 import { IconAddressBook, IconPencil, IconReload } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { useEnterLayoutCustomizationMode } from '@/layout-customization/hooks/useEnterLayoutCustomizationMode';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
@@ -68,8 +68,7 @@ export const ObjectLayout = ({ objectMetadataItem }: ObjectLayoutProps) => {
       return;
     }
 
-    // Customizing a layout takes over the whole page, so it is the main outlet
-    // that has to move even when this settings page is hosted in the panel.
+    // Customizing a layout takes over the whole page, so it targets the main outlet even from the panel
     navigateApp(
       AppPath.RecordShowPage,
       {

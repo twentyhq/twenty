@@ -1,6 +1,6 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
-import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
+import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { SettingsBillingLimitsTable } from '@/settings/billing/components/SettingsBillingLimitsTable';
 import { type UsageQuotaWithConsumption } from '@/settings/billing/types/UsageQuotaWithConsumption';
@@ -8,6 +8,7 @@ import {
   UsageOperationType,
   UsageResourceType,
 } from '~/generated-metadata/graphql';
+import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 
 const buildQuota = (
   overrides: Partial<UsageQuotaWithConsumption>,
@@ -60,7 +61,7 @@ const API_KEY_QUOTA = buildQuota({
 const meta: Meta<typeof SettingsBillingLimitsTable> = {
   title: 'Modules/Settings/Billing/SettingsBillingLimitsTable',
   component: SettingsBillingLimitsTable,
-  decorators: [ComponentDecorator, RouterDecorator],
+  decorators: [ComponentDecorator, MemoryRouterDecorator],
   args: { quotas: [ALL_OPERATIONS_QUOTA, CUSTOM_USER_QUOTA, API_KEY_QUOTA] },
 };
 
@@ -70,6 +71,12 @@ type Story = StoryObj<typeof SettingsBillingLimitsTable>;
 export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
+
+    await expect(
+      await canvas.findByRole('progressbar', {
+        name: /used by Production key$/,
+      }),
+    ).toHaveAttribute('aria-valuenow', '98');
 
     await userEvent.hover(await canvas.findByText('Deactivated'));
 

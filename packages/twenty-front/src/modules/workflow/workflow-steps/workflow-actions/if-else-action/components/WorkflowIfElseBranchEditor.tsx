@@ -11,9 +11,10 @@ import { i18n, type MessageDescriptor } from '@lingui/core';
 import { type StepFilter, type StepFilterGroup } from 'twenty-shared/types';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import { type StepIfElseBranch } from 'twenty-shared/workflow';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledBranchContainer = styled.div`
+  align-items: start;
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[2]};

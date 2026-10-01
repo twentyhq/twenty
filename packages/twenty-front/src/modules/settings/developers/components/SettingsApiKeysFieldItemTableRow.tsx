@@ -6,9 +6,8 @@ import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useContext } from 'react';
 import { IconChevronRight } from 'twenty-ui/icon';
-import { ThemeContext } from 'twenty-ui/theme-constants';
+import { useTheme } from 'twenty-ui/theme';
 import { type ApiKey } from '~/generated-metadata/graphql';
 
 const StyledEllipsisLabel = styled.div`
@@ -31,7 +30,7 @@ export const SettingsApiKeysFieldItemTableRow = ({
   to,
 }: SettingsApiKeysFieldItemTableRowProps) => {
   const { t } = useLingui();
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const formattedExpiration = formatExpiration(apiKey.expiresAt || null);
 
   const gridColumns = '5fr 2fr 3fr 1fr';

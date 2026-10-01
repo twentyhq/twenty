@@ -1,6 +1,7 @@
 import { Popover as PopoverPrimitive } from '@base-ui/react/popover';
 
-import { useThemeContainer } from '@ui/theme-constants';
+import { useProvidedTextDirection } from '@ui/primitives/layout/TextDirectionProvider/internal/useProvidedTextDirection';
+import { useThemeContainer } from '@ui/theme';
 import { mergeClassNames } from '@ui/utilities/internal/mergeClassNames';
 
 import styles from '../Popover.module.scss';
@@ -13,6 +14,7 @@ export const PopoverPopup = ({
   alignOffset,
   arrow = false,
   anchor,
+  collisionPadding,
   container,
   keepMounted,
   className,
@@ -20,6 +22,7 @@ export const PopoverPopup = ({
   ...props
 }: PopoverPopupProps) => {
   const themeContainer = useThemeContainer();
+  const direction = useProvidedTextDirection();
 
   return (
     <PopoverPrimitive.Portal
@@ -27,11 +30,13 @@ export const PopoverPopup = ({
       keepMounted={keepMounted}
     >
       <PopoverPrimitive.Positioner
+        dir={direction}
         side={side}
         align={align}
         sideOffset={sideOffset}
         alignOffset={alignOffset}
         anchor={anchor}
+        collisionPadding={collisionPadding}
         className={styles.positioner}
       >
         <PopoverPrimitive.Popup

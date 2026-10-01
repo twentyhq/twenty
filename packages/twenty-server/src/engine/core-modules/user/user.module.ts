@@ -19,6 +19,7 @@ import { UserVarsModule } from 'src/engine/core-modules/user/user-vars/user-vars
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { UserResolver } from 'src/engine/core-modules/user/user.resolver';
 import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
+import { AgentHistoryModule } from 'src/engine/metadata-modules/ai/ai-history/ai-history.module';
 import { ConnectedAccountMetadataModule } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
@@ -38,6 +39,7 @@ import { UserService } from './services/user.service';
     UserWorkspaceModule,
     UserRoleModule,
     ConnectedAccountMetadataModule,
+    AgentHistoryModule,
     FeatureFlagModule,
     PermissionsModule,
     EmailVerificationModule,

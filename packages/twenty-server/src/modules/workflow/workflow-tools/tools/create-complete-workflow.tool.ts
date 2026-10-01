@@ -1,20 +1,18 @@
+import { isDefined } from 'twenty-shared/utils';
 import {
   workflowActionSchema,
   WorkflowActionType,
   workflowTriggerSchema,
 } from 'twenty-shared/workflow';
-import { v4 as uuidv4 } from 'uuid';
 import { z } from 'zod';
 
-import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
-import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { WorkflowVersionStatus as CoreWorkflowVersionStatus } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
 import {
   WorkflowVersionStepException,
   WorkflowVersionStepExceptionCode,
 } from 'src/modules/workflow/common/exceptions/workflow-version-step.exception';
-import { WorkflowVersionStatus } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
-import { WorkflowStatus } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+import { DEFAULT_AGENT_WORKFLOW_ACTOR } from 'src/modules/workflow/workflow-tools/constants/default-agent-workflow-actor.constant';
 import { workflowStepConnectionOptionsSchema } from 'src/modules/workflow/workflow-tools/tools/schemas/workflow-step-connection-options.schema';
 import {
   type WorkflowToolContext,
@@ -54,21 +52,16 @@ const createCompleteWorkflowSchema = z.object({
 
 type CreateCompleteWorkflowToolDeps = Pick<
   WorkflowToolDependencies,
-  | 'workflowVersionService'
-  | 'workflowVersionEdgeService'
-  | 'workflowTriggerService'
-  | 'workspaceOrmManager'
-  | 'recordPositionService'
-  | 'workflowVersionCoreSyncService'
+  | 'coreWorkflowMutationService'
+  | 'coreWorkflowVersionListService'
+  | 'coreWorkflowVersionMutationService'
+  | 'coreWorkflowVersionWriteService'
+  | 'coreWorkflowLifecycleService'
 >;
-
-type CreateCompleteWorkflowToolContext = WorkflowToolContext & {
-  rolePermissionConfig: RolePermissionConfig;
-};
 
 export const createCreateCompleteWorkflowTool = (
   deps: CreateCompleteWorkflowToolDeps,
-  context: CreateCompleteWorkflowToolContext,
+  context: WorkflowToolContext,
 ) => ({
   name: 'create_complete_workflow' as const,
   description: `Create a complete workflow with trigger, steps, and connections in a single operation.
@@ -105,6 +98,8 @@ IMPORTANT: The tool schema provides comprehensive field descriptions, examples, 
 
 This is the most efficient way for AI to create workflows as it handles all the complexity in one call.
 
+Returns the core workflow ID and core workflow version ID, which every other workflow tool expects.
+
 Call validate_workflow once when the workflow is complete, before activating.`,
   inputSchema: createCompleteWorkflowSchema,
   execute: async (parameters: {
@@ -122,69 +117,66 @@ Call validate_workflow once when the workflow is complete, before activating.`,
     activate?: boolean;
   }) => {
     try {
-      const codeSteps = parameters.steps.filter(
-        (step) => step.type === ('CODE' as string),
-      );
+      const { workspaceId } = context;
 
-      if (codeSteps.length > 0) {
-        throw new WorkflowVersionStepException(
-          'CODE steps cannot be created via create_complete_workflow because it does not create the underlying logic function. Use create_workflow_version_step instead.',
-          WorkflowVersionStepExceptionCode.INVALID_REQUEST,
-        );
-      }
+      assertStepTypesAreSupported(parameters.steps);
 
-      const aiAgentSteps = parameters.steps.filter(
-        (step) => step.type === WorkflowActionType.AI_AGENT,
-      );
+      const coreWorkflow =
+        await deps.coreWorkflowMutationService.createWorkflow({
+          workspaceId,
+          createdBy: context.actorContext ?? DEFAULT_AGENT_WORKFLOW_ACTOR,
+          userWorkspaceId: undefined,
+          name: parameters.name,
+        });
 
-      if (aiAgentSteps.length > 0) {
-        throw new WorkflowVersionStepException(
-          'AI_AGENT steps cannot be created via create_complete_workflow because it does not create the underlying agent. Use create_workflow_version_step instead, then call update_agent to configure the agent.',
-          WorkflowVersionStepExceptionCode.INVALID_REQUEST,
-        );
-      }
-      const workflowId = await createWorkflow({
+      const coreWorkflowVersionId = await findInitialDraftCoreVersionIdOrThrow({
         deps,
-        context,
-        name: parameters.name,
+        workspaceId,
+        userWorkspaceId: context.userWorkspaceId,
+        coreWorkflowId: coreWorkflow.id,
       });
 
-      const workflowVersionId = await createWorkflowVersion({
-        deps,
-        context,
-        workflowId,
+      const { coreWorkflowVersion } =
+        await deps.coreWorkflowVersionWriteService.getValidatedDraftCoreWorkflowVersion(
+          {
+            workspaceId,
+            userWorkspaceId: context.userWorkspaceId,
+            coreWorkflowVersionId,
+          },
+        );
+
+      await deps.coreWorkflowVersionWriteService.writeContentAndMirror({
+        workspaceId,
+        coreWorkflowVersionId,
+        expectedVersion: coreWorkflowVersion,
         trigger: parameters.trigger,
         steps: parameters.steps,
       });
 
-      if (parameters.edges && parameters.edges.length > 0) {
-        for (const edge of parameters.edges) {
-          await deps.workflowVersionEdgeService.createWorkflowVersionEdge({
-            source: edge.source === 'trigger' ? 'trigger' : edge.source,
-            target: edge.target,
-            sourceConnectionOptions: edge.sourceConnectionOptions,
-            workflowVersionId,
-            workspaceId: context.workspaceId,
-          });
-        }
+      for (const edge of parameters.edges ?? []) {
+        await deps.coreWorkflowVersionMutationService.createEdge({
+          userWorkspaceId: context.userWorkspaceId,
+          source: edge.source,
+          target: edge.target,
+          sourceConnectionOptions: edge.sourceConnectionOptions,
+          coreWorkflowVersionId,
+          workspaceId,
+        });
       }
 
-      await deps.workflowVersionService.autoLayoutWorkflowVersion({
-        workflowVersionId,
-        workspaceId: context.workspaceId,
-      });
+      await deps.coreWorkflowVersionMutationService.autoLayoutCoreWorkflowVersion(
+        {
+          workspaceId,
+          userWorkspaceId: context.userWorkspaceId,
+          coreWorkflowVersionId,
+        },
+      );
 
       if (parameters.activate) {
-        await deps.workflowTriggerService.activateWorkflowVersion(
-          workflowVersionId,
-          context.workspaceId,
-        );
-
-        await updateWorkflowStatus({
-          deps,
-          context,
-          workflowId,
-          workflowVersionId,
+        await deps.coreWorkflowLifecycleService.activateCoreWorkflowVersion({
+          workspaceId,
+          userWorkspaceId: context.userWorkspaceId,
+          coreWorkflowVersionId,
         });
       }
 
@@ -192,18 +184,20 @@ Call validate_workflow once when the workflow is complete, before activating.`,
         success: true,
         message: `Workflow "${parameters.name}" created successfully with ${parameters.steps.length} steps`,
         result: {
-          workflowId,
-          workflowVersionId,
+          coreWorkflowId: coreWorkflow.id,
+          coreWorkflowVersionId,
           name: parameters.name,
           stepIds: parameters.steps.map((step) => step.id),
         },
-        recordReferences: [
-          {
-            objectNameSingular: 'workflow',
-            recordId: workflowId,
-            displayName: parameters.name,
-          },
-        ],
+        recordReferences: isDefined(coreWorkflow.workspaceWorkflowId)
+          ? [
+              {
+                objectNameSingular: 'workflow',
+                recordId: coreWorkflow.workspaceWorkflowId,
+                displayName: parameters.name,
+              },
+            ]
+          : [],
       };
     } catch (error) {
       return {
@@ -215,113 +209,50 @@ Call validate_workflow once when the workflow is complete, before activating.`,
   },
 });
 
-const createWorkflow = async ({
-  deps,
-  context,
-  name,
-}: {
-  deps: CreateCompleteWorkflowToolDeps;
-  context: CreateCompleteWorkflowToolContext;
-  name: string;
-}): Promise<string> => {
-  const authContext = buildSystemAuthContext(context.workspaceId);
-
-  return deps.workspaceOrmManager.executeInWorkspaceContext(async () => {
-    const workflowRepository = deps.workspaceOrmManager.getRepository(
-      'workflow',
-      context.rolePermissionConfig,
+const assertStepTypesAreSupported = (steps: WorkflowAction[]): void => {
+  if (steps.some((step) => step.type === WorkflowActionType.CODE)) {
+    throw new WorkflowVersionStepException(
+      'CODE steps cannot be created via create_complete_workflow because it does not create the underlying logic function. Use create_workflow_version_step instead.',
+      WorkflowVersionStepExceptionCode.INVALID_REQUEST,
     );
+  }
 
-    const workflowPosition =
-      await deps.recordPositionService.buildRecordPosition({
-        value: 'first',
-        objectMetadata: {
-          isCustom: false,
-          nameSingular: 'workflow',
-        },
-        workspaceId: context.workspaceId,
-      });
-
-    const workflow = {
-      id: uuidv4(),
-      name,
-      statuses: [WorkflowStatus.DRAFT],
-      position: workflowPosition,
-    };
-
-    await workflowRepository.insert(workflow);
-
-    return workflow.id;
-  }, authContext);
+  if (steps.some((step) => step.type === WorkflowActionType.AI_AGENT)) {
+    throw new WorkflowVersionStepException(
+      'AI_AGENT steps cannot be created via create_complete_workflow because it does not create the underlying agent. Use create_workflow_version_step instead, then call update_agent to configure the agent.',
+      WorkflowVersionStepExceptionCode.INVALID_REQUEST,
+    );
+  }
 };
 
-const createWorkflowVersion = async ({
+const findInitialDraftCoreVersionIdOrThrow = async ({
   deps,
-  context,
-  workflowId,
-  trigger,
-  steps,
+  workspaceId,
+  userWorkspaceId,
+  coreWorkflowId,
 }: {
   deps: CreateCompleteWorkflowToolDeps;
-  context: CreateCompleteWorkflowToolContext;
-  workflowId: string;
-  trigger: WorkflowTrigger;
-  steps: WorkflowAction[];
+  workspaceId: string;
+  userWorkspaceId: string | undefined;
+  coreWorkflowId: string;
 }): Promise<string> => {
-  const workflowVersionId = uuidv4();
+  const coreWorkflowVersions =
+    await deps.coreWorkflowVersionListService.findManyByCoreWorkflowId({
+      workspaceId,
+      userWorkspaceId,
+      coreWorkflowId,
+    });
 
-  await deps.workflowVersionCoreSyncService.writeWorkflowVersionAndMirror(
-    context.workspaceId,
-    async (workflowVersionRepository) => {
-      const versionPosition =
-        await deps.recordPositionService.buildRecordPosition({
-          value: 'first',
-          objectMetadata: {
-            isCustom: false,
-            nameSingular: 'workflowVersion',
-          },
-          workspaceId: context.workspaceId,
-        });
-
-      await workflowVersionRepository.insert({
-        id: workflowVersionId,
-        workflowId,
-        name: 'v1',
-        status: WorkflowVersionStatus.DRAFT,
-        trigger,
-        steps,
-        position: versionPosition,
-      });
-
-      return workflowVersionId;
-    },
+  const draftVersion = coreWorkflowVersions.find(
+    (version) => version.status === CoreWorkflowVersionStatus.DRAFT,
   );
 
-  return workflowVersionId;
-};
-
-const updateWorkflowStatus = async ({
-  deps,
-  context,
-  workflowId,
-  workflowVersionId,
-}: {
-  deps: CreateCompleteWorkflowToolDeps;
-  context: CreateCompleteWorkflowToolContext;
-  workflowId: string;
-  workflowVersionId: string;
-}) => {
-  const authContext = buildSystemAuthContext(context.workspaceId);
-
-  await deps.workspaceOrmManager.executeInWorkspaceContext(async () => {
-    const workflowRepository = deps.workspaceOrmManager.getRepository(
-      'workflow',
-      context.rolePermissionConfig,
+  if (!isDefined(draftVersion)) {
+    throw new WorkflowVersionStepException(
+      `Created workflow '${coreWorkflowId}' has no initial draft version`,
+      WorkflowVersionStepExceptionCode.NOT_FOUND,
     );
+  }
 
-    await workflowRepository.update(workflowId, {
-      statuses: [WorkflowStatus.ACTIVE],
-      lastPublishedVersionId: workflowVersionId,
-    });
-  }, authContext);
+  return draftVersion.id;
 };

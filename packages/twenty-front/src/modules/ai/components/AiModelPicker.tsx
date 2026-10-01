@@ -7,7 +7,7 @@ import {
 } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { LightButton } from 'twenty-ui/components';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AiModelTierSlider } from '@/ai/components/AiModelTierSlider';
 import { useAiModelTiers } from '@/ai/hooks/useAiModelTiers';

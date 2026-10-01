@@ -1,4 +1,4 @@
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 
 import {
   extractSessionCookie,
@@ -36,9 +36,8 @@ describe('failing session cookie authentication (integration)', () => {
   });
 
   it('should reject a session token presented as a Bearer header', async () => {
-    // Cookie-only by design: accepting sess_ tokens as Bearer would reopen
-    // the XSS-exfiltration surface cookie sessions close.
-    const response = await makeMetadataAPIRequest(
+    // Accepting sess_ tokens as Bearer would reopen the XSS-exfiltration surface cookie sessions close.
+    const response = await makeMetadataApiRequest(
       currentUserIdentityQueryFactory(),
       sessionToken,
     ).expect(200);

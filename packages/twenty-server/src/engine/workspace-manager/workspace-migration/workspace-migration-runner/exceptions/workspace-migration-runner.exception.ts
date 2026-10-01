@@ -3,7 +3,7 @@ import { msg } from '@lingui/core/macro';
 import { assertUnreachable, CustomError } from 'twenty-shared/utils';
 
 import { type FlatEntityMapsExceptionContext } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
-import { type AllUniversalWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-action-common';
+import { type AllUniversalWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-action-common.type';
 import { formatWorkspaceMigrationRunnerExecutionErrors } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/format-workspace-migration-runner-execution-errors.util';
 
 export const WorkspaceMigrationRunnerExceptionCode = {
@@ -11,6 +11,8 @@ export const WorkspaceMigrationRunnerExceptionCode = {
   EXECUTION_FAILED: 'EXECUTION_FAILED',
   APPLICATION_NOT_FOUND: 'APPLICATION_NOT_FOUND',
   DDL_LOCKED: 'DDL_LOCKED',
+  DEFERRED_WORKSPACE_MIGRATION_ACTIONS_IN_PROGRESS:
+    'DEFERRED_WORKSPACE_MIGRATION_ACTIONS_IN_PROGRESS',
 } as const;
 
 const getWorkspaceMigrationRunnerExceptionUserFriendlyMessage = (
@@ -25,6 +27,8 @@ const getWorkspaceMigrationRunnerExceptionUserFriendlyMessage = (
       return msg`Application not found.`;
     case WorkspaceMigrationRunnerExceptionCode.DDL_LOCKED:
       return msg`Workspace schema changes are temporarily locked.`;
+    case WorkspaceMigrationRunnerExceptionCode.DEFERRED_WORKSPACE_MIGRATION_ACTIONS_IN_PROGRESS:
+      return msg`A previous data model change is still being applied in the background. Please try again in a moment.`;
     default:
       assertUnreachable(code);
   }

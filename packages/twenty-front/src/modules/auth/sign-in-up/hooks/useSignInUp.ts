@@ -12,7 +12,7 @@ import {
 } from '@/auth/states/signInUpStepState';
 import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState';
 import { AuthenticatedMethod } from '@/auth/types/AuthenticatedMethod.enum';
-import { SignInUpMode } from '@/auth/types/signInUpMode';
+import { SignInUpMode } from '@/auth/types/SignInUpMode';
 import { useReadCaptchaToken } from '@/captcha/hooks/useReadCaptchaToken';
 import { useCaptcha } from '@/client-config/hooks/useCaptcha';
 import { useBuildSearchParamsFromUrlSyncedStates } from '@/domain-manager/hooks/useBuildSearchParamsFromUrlSyncedStates';
@@ -25,7 +25,7 @@ import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomStat
 import { useLingui } from '@lingui/react/macro';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/primitives/feedback';
+import { useToast } from 'twenty-ui/components';
 import { buildAppPathWithQueryParams } from '~/utils/buildAppPathWithQueryParams';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
 

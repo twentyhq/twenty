@@ -3,11 +3,11 @@ import { AnimatedFormattedNumber } from '@/settings/billing/components/internal/
 import { SettingsBillingPlanComparisonTableRow } from '@/settings/billing/components/internal/SettingsBillingPlanComparisonTableRow';
 import { SETTINGS_BILLING_COMPARED_PLAN_KEYS } from '@/settings/billing/constants/SettingsBillingComparedPlanKeys';
 import { SETTINGS_BILLING_PLAN_COMPARISON_ROWS } from '@/settings/billing/constants/SettingsBillingPlanComparisonRows';
-import { type SettingsBillingPlanAction } from '@/settings/billing/types/settingsBillingPlanAction.type';
+import { type SettingsBillingPlanAction } from '@/settings/billing/types/SettingsBillingPlanAction';
 import {
   type SettingsBillingPlanInterval,
   type SettingsBillingPlanPrices,
-} from '@/settings/billing/types/settingsBillingPlanComparison.type';
+} from '@/settings/billing/types/SettingsBillingPlanComparison';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { useLingui } from '@lingui/react/macro';
 import { styled } from '@linaria/react';
@@ -16,7 +16,7 @@ import {
   SegmentedControl,
   type SegmentedControlOption,
 } from 'twenty-ui/primitives/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import {
   BillingPlanKey,
   SubscriptionInterval,
@@ -185,9 +185,9 @@ export const SettingsBillingPlanComparisonTable = ({
                 </StyledPlanSubtitle>
               </StyledHeaderText>
               <SegmentedControl
-                ariaLabel={t`Billing period`}
+                aria-label={t`Billing period`}
                 itemWidth="content"
-                onChange={onBillingIntervalChange}
+                onValueChange={onBillingIntervalChange}
                 options={billingIntervalOptions}
                 value={billingInterval}
               />

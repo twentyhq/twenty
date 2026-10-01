@@ -1,3 +1,7 @@
+import { RecordExportWorkspaceService } from 'src/engine/core-modules/record-export/services/record-export.workspace-service';
+import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
+import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard';
+import { PermissionsRestApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-rest-api-exception.filter';
 import { type CanActivate, Logger } from '@nestjs/common';
 import { Test, type TestingModule } from '@nestjs/testing';
 
@@ -69,6 +73,10 @@ describe('FileController', () => {
       controllers: [FileController],
       providers: [
         {
+          provide: RecordExportWorkspaceService,
+          useValue: { openDownload: jest.fn() },
+        },
+        {
           provide: FileService,
           useValue: {
             getFileStreamById: jest.fn(),
@@ -84,6 +92,12 @@ describe('FileController', () => {
         },
       ],
     })
+      .overrideGuard(JwtAuthGuard)
+      .useValue(mock_NoPermissionGuard)
+      .overrideGuard(CustomPermissionGuard)
+      .useValue(mock_NoPermissionGuard)
+      .overrideFilter(PermissionsRestApiExceptionFilter)
+      .useValue({})
       .overrideGuard(FileByIdGuard)
       .useValue(mock_FileByIdGuard)
       .overrideGuard(PublicEndpointGuard)

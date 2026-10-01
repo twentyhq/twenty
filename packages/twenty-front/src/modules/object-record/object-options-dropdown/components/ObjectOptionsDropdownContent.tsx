@@ -7,6 +7,7 @@ import { ObjectOptionsDropdownHiddenRecordGroupsContent } from '@/object-record/
 import { ObjectOptionsDropdownLayoutContent } from '@/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent';
 import { ObjectOptionsDropdownMenuContent } from '@/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuContent';
 import { ObjectOptionsDropdownRecordGroupFieldsContent } from '@/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupFieldsContent';
+import { ObjectOptionsDropdownRecordGroupLoadLimitContent } from '@/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupLoadLimitContent';
 import { ObjectOptionsDropdownRecordGroupsContent } from '@/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupsContent';
 import { ObjectOptionsDropdownRecordGroupSortContent } from '@/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupSortContent';
 import { ObjectOptionsDropdownVisibilityContent } from '@/object-record/object-options-dropdown/components/ObjectOptionsDropdownVisibilityContent';
@@ -28,6 +29,8 @@ export const ObjectOptionsDropdownContent = () => {
       return <ObjectOptionsDropdownRecordGroupFieldsContent />;
     case 'recordGroupSort':
       return <ObjectOptionsDropdownRecordGroupSortContent />;
+    case 'recordGroupLoadLimit':
+      return <ObjectOptionsDropdownRecordGroupLoadLimitContent />;
     case 'hiddenRecordGroups':
       return <ObjectOptionsDropdownHiddenRecordGroupsContent />;
     case 'addRecordGroup':

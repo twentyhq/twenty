@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-shared/utils';
 import {
   type DeepPartial,
   type DeleteResult,
@@ -11,7 +12,6 @@ import {
   type SelectQueryBuilder,
   type UpdateResult,
 } from 'typeorm';
-import { isDefined } from 'twenty-shared/utils';
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { type UpsertOptions } from 'typeorm/repository/UpsertOptions';
 
@@ -167,6 +167,37 @@ export class WorkspaceScopedRepository<T extends WorkspaceScopedEntity> {
     );
   }
 
+  async deleteAndReturn(
+    workspaceId: string,
+    criteria: FindOptionsWhere<T>,
+  ): Promise<T[]> {
+    this.assertWorkspaceId(workspaceId);
+
+    const { raw } = await this.repository
+      .createQueryBuilder()
+      .delete()
+      .from(this.repository.target)
+      .where(this.mergeWorkspaceIdIntoCriteria(workspaceId, criteria))
+      .returning('*')
+      .execute();
+
+    return ((raw ?? []) as Record<string, unknown>[]).map((row) =>
+      this.repository.create(this.hydrateRawRow(row)),
+    );
+  }
+
+  // DELETE ... RETURNING skips hydration, so column transformers are applied by hand (a bigint would read as a string)
+  private hydrateRawRow(row: Record<string, unknown>): DeepPartial<T> {
+    const { driver } = this.repository.manager.connection;
+
+    return Object.fromEntries(
+      this.repository.metadata.columns.map((column) => [
+        column.propertyName,
+        driver.prepareHydratedValue(row[column.databaseName], column),
+      ]),
+    ) as DeepPartial<T>;
+  }
+
   softDelete(
     workspaceId: string,
     criteria: FindOptionsWhere<T>,
@@ -178,13 +209,8 @@ export class WorkspaceScopedRepository<T extends WorkspaceScopedEntity> {
     );
   }
 
-  // save / saveMany / softRemove / recover / remove are intentionally absent.
-  // TypeORM's entity-based methods use only the primary key in the WHERE
-  // clause, so stamping workspaceId on the entity object does not add an
-  // AND workspace_id = ? guard to the SQL. A leaked entity id could act on a
-  // row from a different workspace and silently reassign its workspaceId.
-  // The criteria-based methods either cannot target an existing row or
-  // always carry workspaceId in the WHERE clause.
+  // save/softRemove/recover/remove are intentionally absent: entity-based methods filter on the primary key only,
+  // so a leaked id could act on, and reassign, another workspace's row
 
   insert(
     workspaceId: string,
@@ -279,14 +305,24 @@ export class WorkspaceScopedRepository<T extends WorkspaceScopedEntity> {
     return this.repository.createQueryBuilder(alias);
   }
 
+  createScopedQueryBuilder(
+    workspaceId: string,
+    alias: string,
+  ): SelectQueryBuilder<T> {
+    this.assertWorkspaceId(workspaceId);
+
+    return this.repository
+      .createQueryBuilder(alias)
+      .where(`${alias}.workspaceId = :workspaceId`, { workspaceId });
+  }
+
   withManager(manager: EntityManager): WorkspaceScopedRepository<T> {
     return new WorkspaceScopedRepository<T>(
       manager.getRepository(this.repository.target),
     );
   }
 
-  // TypeORM drops `undefined` values from WHERE, which would emit an
-  // unscoped query.
+  // TypeORM drops undefined from WHERE, which would emit an unscoped query
   private assertWorkspaceId(workspaceId: string): void {
     if (
       workspaceId === undefined ||
@@ -336,9 +372,7 @@ export class WorkspaceScopedRepository<T extends WorkspaceScopedEntity> {
     return { workspaceId, ...clause } as FindOptionsWhere<T>;
   }
 
-  // ON CONFLICT matches on the conflict target alone. When that target does
-  // not contain workspaceId, a row from another workspace can satisfy it and
-  // the DO UPDATE would overwrite that row and reassign its workspaceId.
+  // ON CONFLICT matches on the target alone, so without workspaceId DO UPDATE could overwrite another workspace's row
   private async assertConflictTargetsBelongToWorkspace(
     workspaceId: string,
     entity: QueryDeepPartialEntity<T> | QueryDeepPartialEntity<T>[],

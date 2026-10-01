@@ -1,73 +1,94 @@
+import { OnboardingRewardMainButton } from '@/onboarding/components/OnboardingRewardMainButton';
 import { OnboardingSkipButton } from '@/onboarding/components/OnboardingSkipButton';
 import { OnboardingStepAnimatedItem } from '@/onboarding/components/OnboardingStepAnimatedItem';
 import { StyledOnboardingStepHeading } from '@/onboarding/components/StyledOnboardingStepHeading';
 import { StyledOnboardingStepPage } from '@/onboarding/components/StyledOnboardingStepPage';
 import { StyledOnboardingStepSubtitle } from '@/onboarding/components/StyledOnboardingStepSubtitle';
-import { StyledOnboardingStepTagsRow } from '@/onboarding/components/StyledOnboardingStepTagsRow';
 import { StyledOnboardingStepTitle } from '@/onboarding/components/StyledOnboardingStepTitle';
-import { OnboardingCreditsRewardTag } from '@/onboarding/components/import-contacts/OnboardingCreditsRewardTag';
 import { ONBOARDING_CONTENT_BLOCK_WIDTH } from '@/onboarding/constants/OnboardingContentBlockWidth';
+import { useInstallOnboardingApps } from '@/onboarding/hooks/useInstallOnboardingApps';
+import { useOnboardingStepEnterHotkey } from '@/onboarding/hooks/useOnboardingStepEnterHotkey';
+import { onboardingCreditsProgressSelector } from '@/onboarding/states/selectors/onboardingCreditsProgressSelector';
 import { type OnboardingInstallableApp } from '@/onboarding/types/OnboardingInstallableApp';
+import { PageFocusId } from '@/types/PageFocusId';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
+import { plural } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
-import { IconButton, MainButton } from 'twenty-ui/components';
+import { isNonEmptyArray } from 'twenty-shared/utils';
+import { IconCheck } from 'twenty-ui/icon';
 import { Avatar } from 'twenty-ui/primitives/data-display';
-import { IconCheck, IconPlus } from 'twenty-ui/icon';
-import { AnimatedIconCrossfade } from 'twenty-ui/primitives/layout';
-import { themeCssVariables, useTheme } from 'twenty-ui/theme-constants';
+import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
-const StyledTitleRow = styled.div`
-  align-items: center;
-  display: flex;
-  gap: 10px;
-`;
-
-const StyledBetaTag = styled.span`
-  align-items: center;
-  background-color: ${themeCssVariables.grayScale.gray3};
-  border: 1px solid ${themeCssVariables.border.color.light};
-  border-radius: ${themeCssVariables.border.radius.pill};
-  box-sizing: border-box;
-  color: ${themeCssVariables.grayScale.gray10};
-  corner-shape: round;
-  display: flex;
-  font-size: ${themeCssVariables.font.size.md};
-  font-weight: ${themeCssVariables.font.weight.medium};
-  height: ${themeCssVariables.spacing[6]};
-  line-height: 1.4;
-  padding: 0 ${themeCssVariables.spacing[2]};
-`;
-
-const StyledCard = styled.div`
-  background-color: ${themeCssVariables.background.primary};
-  border: 1px solid ${themeCssVariables.border.color.medium};
-  border-radius: ${themeCssVariables.border.radius.md};
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
+const StyledTiles = styled.div`
+  display: grid;
+  gap: ${themeCssVariables.spacing[3]};
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   max-width: 100%;
   width: ${ONBOARDING_CONTENT_BLOCK_WIDTH}px;
 `;
 
-const StyledAppRow = styled.div`
-  align-items: center;
+const StyledTile = styled.button`
+  align-items: flex-start;
+  background-color: ${themeCssVariables.background.primary};
+  border: 1px solid ${themeCssVariables.border.color.medium};
+  border-radius: ${themeCssVariables.border.radius.md};
+  box-sizing: border-box;
+  cursor: pointer;
   display: flex;
-  gap: ${themeCssVariables.spacing[3]};
-  padding: ${themeCssVariables.spacing[4]};
+  flex-direction: column;
+  font-family: inherit;
+  min-height: 156px;
+  padding: ${themeCssVariables.spacing[3]};
+  position: relative;
+  text-align: left;
+  transition: border-color 0.15s ease;
 
-  & + & {
-    border-top: 1px solid ${themeCssVariables.border.color.light};
+  &:hover {
+    border-color: ${themeCssVariables.border.color.strong};
+  }
+
+  &:disabled {
+    cursor: default;
   }
 `;
 
-const StyledAppText = styled.div`
+const StyledTileContent = styled.span`
   display: flex;
-  flex: 1 1 0;
   flex-direction: column;
   gap: 10px;
-  min-width: 0;
+  transition: opacity 0.15s ease;
+
+  [aria-pressed='false'] > & {
+    opacity: 0.5;
+  }
+
+  [aria-pressed='false']:hover > & {
+    opacity: 0.8;
+  }
+`;
+
+const StyledTileCheck = styled.span`
+  align-items: center;
+  background-color: ${themeCssVariables.background.primary};
+  border: 1px solid ${themeCssVariables.border.color.strong};
+  border-radius: 50%;
+  box-sizing: border-box;
+  color: ${themeCssVariables.font.color.inverted};
+  corner-shape: round;
+  display: flex;
+  height: 18px;
+  justify-content: center;
+  position: absolute;
+  right: ${themeCssVariables.spacing[2]};
+  top: ${themeCssVariables.spacing[2]};
+  width: 18px;
+
+  [aria-pressed='true'] > & {
+    background-color: ${themeCssVariables.background.primaryInverted};
+    border-color: ${themeCssVariables.background.primaryInverted};
+  }
 `;
 
 const StyledAppLabel = styled.span`
@@ -98,59 +119,74 @@ const StyledInstallButton = styled.div`
 
 type InstallAppsContentProps = {
   apps: (OnboardingInstallableApp & { logoUrl: string | null })[];
-  selectedUniversalIdentifiers: string[];
-  creditsRewardPerApp?: number;
-  isCompleting: boolean;
-  onToggleApp: (universalIdentifier: string) => void;
-  onInstall: () => void;
-  onSkip: () => void;
 };
 
-export const InstallAppsContent = ({
-  apps,
-  selectedUniversalIdentifiers,
-  creditsRewardPerApp,
-  isCompleting,
-  onToggleApp,
-  onInstall,
-  onSkip,
-}: InstallAppsContentProps) => {
+export const InstallAppsContent = ({ apps }: InstallAppsContentProps) => {
   const { t } = useLingui();
   const theme = useTheme();
+  const {
+    selectedUniversalIdentifiers,
+    isCompleting,
+    toggleApp,
+    installSelectedAppsAndContinue,
+    skip,
+  } = useInstallOnboardingApps(apps.map((app) => app.universalIdentifier));
+  const onboardingCreditsProgress = useAtomStateValue(
+    onboardingCreditsProgressSelector,
+  );
+  const creditsReward =
+    onboardingCreditsProgress.rewardCreditsByStep.installApps;
+
+  useOnboardingStepEnterHotkey({
+    focusId: PageFocusId.InstallApps,
+    onEnter: () => {
+      void installSelectedAppsAndContinue();
+    },
+  });
 
   const hasApps = isNonEmptyArray(apps);
+  const hasSelectedApps = isNonEmptyArray(selectedUniversalIdentifiers);
+  const selectedAppsCount = selectedUniversalIdentifiers.length;
+
+  const getInstallLabel = () => {
+    if (!hasSelectedApps) {
+      return t`Continue without apps`;
+    }
+
+    if (selectedAppsCount === apps.length) {
+      return plural(selectedAppsCount, {
+        one: 'Install # app',
+        other: 'Install all # apps',
+      });
+    }
+
+    return plural(selectedAppsCount, {
+      one: 'Install # app',
+      other: 'Install # apps',
+    });
+  };
 
   return (
-    <StyledOnboardingStepPage>
+    <StyledOnboardingStepPage data-testid="onboarding-install-apps-step">
       <StyledOnboardingStepHeading>
         <OnboardingStepAnimatedItem index={0}>
-          <StyledTitleRow>
-            <StyledOnboardingStepTitle>{t`Install your first apps`}</StyledOnboardingStepTitle>
-            <StyledBetaTag>{t`Beta`}</StyledBetaTag>
-          </StyledTitleRow>
+          <StyledOnboardingStepTitle>{t`Start with the essentials`}</StyledOnboardingStepTitle>
         </OnboardingStepAnimatedItem>
         <OnboardingStepAnimatedItem index={1}>
           <StyledOnboardingStepSubtitle>
             {hasApps
-              ? t`Get the most out of your CRM by installing some apps`
+              ? plural(apps.length, {
+                  one: 'One app, installed in one click.',
+                  other: '# apps, installed in one click.',
+                })
               : t`No apps are available to install right now`}
           </StyledOnboardingStepSubtitle>
         </OnboardingStepAnimatedItem>
-        {isDefined(creditsRewardPerApp) && hasApps && (
-          <OnboardingStepAnimatedItem index={2}>
-            <StyledOnboardingStepTagsRow>
-              <OnboardingCreditsRewardTag
-                amount={creditsRewardPerApp * apps.length}
-                suffix={t`free credits (${creditsRewardPerApp} per tool)`}
-              />
-            </StyledOnboardingStepTagsRow>
-          </OnboardingStepAnimatedItem>
-        )}
       </StyledOnboardingStepHeading>
 
       {hasApps && (
-        <OnboardingStepAnimatedItem index={3}>
-          <StyledCard>
+        <OnboardingStepAnimatedItem index={2}>
+          <StyledTiles>
             {apps.map((app) => {
               const labelText = t(app.label);
               const isSelected = selectedUniversalIdentifiers.includes(
@@ -158,59 +194,51 @@ export const InstallAppsContent = ({
               );
 
               return (
-                <StyledAppRow key={app.universalIdentifier}>
-                  <Avatar
-                    src={getAbsoluteImageUrl(app.logoUrl)}
-                    name={labelText}
-                    colorSeed={app.universalIdentifier}
-                    size="lg"
-                    shape="square"
-                  />
-                  <StyledAppText>
+                <StyledTile
+                  key={app.universalIdentifier}
+                  type="button"
+                  aria-pressed={isSelected}
+                  disabled={isCompleting}
+                  onClick={() => toggleApp(app.universalIdentifier)}
+                >
+                  <StyledTileContent>
+                    <Avatar
+                      src={getAbsoluteImageUrl(app.logoUrl)}
+                      name={labelText}
+                      colorSeed={app.universalIdentifier}
+                      size="xl"
+                      shape="rounded-square"
+                    />
                     <StyledAppLabel>{labelText}</StyledAppLabel>
                     <StyledAppDescription>
                       {t(app.description)}
                     </StyledAppDescription>
-                  </StyledAppText>
-                  <IconButton
-                    size="sm"
-                    variant="outline"
-                    color={isSelected ? 'accent' : 'neutral'}
-                    aria-label={
-                      isSelected
-                        ? t`Deselect ${labelText}`
-                        : t`Select ${labelText}`
-                    }
-                    onClick={() => onToggleApp(app.universalIdentifier)}
-                  >
-                    <AnimatedIconCrossfade
-                      isActive={isSelected}
-                      ActiveIcon={IconCheck}
-                      InactiveIcon={IconPlus}
-                      size={theme.icon.size.md}
-                    />
-                  </IconButton>
-                </StyledAppRow>
+                  </StyledTileContent>
+                  <StyledTileCheck aria-hidden>
+                    {isSelected && (
+                      <IconCheck size={theme.icon.size.sm} stroke={3} />
+                    )}
+                  </StyledTileCheck>
+                </StyledTile>
               );
             })}
-          </StyledCard>
+          </StyledTiles>
         </OnboardingStepAnimatedItem>
       )}
 
-      <OnboardingStepAnimatedItem index={4}>
+      <OnboardingStepAnimatedItem index={3}>
         <StyledFooter>
           {hasApps && (
             <StyledInstallButton>
-              <MainButton
-                onClick={onInstall}
-                disabled={
-                  isCompleting || !isNonEmptyArray(selectedUniversalIdentifiers)
-                }
-                fullWidth
-              >{t`Install`}</MainButton>
+              <OnboardingRewardMainButton
+                label={getInstallLabel()}
+                creditsReward={hasSelectedApps ? creditsReward : 0}
+                disabled={isCompleting}
+                onClick={installSelectedAppsAndContinue}
+              />
             </StyledInstallButton>
           )}
-          <OnboardingSkipButton onClick={onSkip} disabled={isCompleting} />
+          <OnboardingSkipButton onClick={skip} disabled={isCompleting} />
         </StyledFooter>
       </OnboardingStepAnimatedItem>
     </StyledOnboardingStepPage>

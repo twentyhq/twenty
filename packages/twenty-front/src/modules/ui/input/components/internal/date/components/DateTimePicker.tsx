@@ -6,38 +6,28 @@ import {
   type RelativeDateFilter,
 } from 'twenty-shared/utils';
 
-import {
-  DATE_TIME_PICKER_MONTH_YEAR_PANEL_DROPDOWN_ID,
-  DateTimePickerHeader,
-} from '@/ui/input/components/internal/date/components/DateTimePickerHeader';
+import { DateTimePickerHeader } from '@/ui/input/components/internal/date/components/DateTimePickerHeader';
 import { RelativeDatePickerHeader } from '@/ui/input/components/internal/date/components/RelativeDatePickerHeader';
 import { RelativeDateTimeRangeText } from '@/ui/input/components/internal/date/components/RelativeDateTimeRangeText';
 import { StyledDatePickerContainer } from '@/ui/input/components/internal/date/components/StyledDatePickerContainer';
 import { getRelativeDatePickerCalendarRange } from '@/ui/input/components/internal/date/utils/getRelativeDatePickerCalendarRange';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { lazy, Suspense, useContext, type ComponentType } from 'react';
+import { Suspense, lazy, type ComponentType } from 'react';
 import type { DatePickerProps as ReactDatePickerLibProps } from 'react-datepicker';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 
 import 'react-datepicker/dist/react-datepicker.css';
 
 import { IconCalendarX } from 'twenty-ui/icon';
-import { MenuItemLeftContent } from 'twenty-ui/primitives/navigation';
+import { Text } from 'twenty-ui/primitives/typography';
 
 import { useGetShiftedDateToSystemTimeZone } from '@/ui/input/components/internal/date/hooks/useGetShiftedDateToSystemTimeZone';
 import { useUserFirstDayOfTheWeek } from '@/ui/input/components/internal/date/hooks/useUserFirstDayOfTheWeek';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { Temporal } from 'temporal-polyfill';
 
-export {
-  MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID,
-  MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID,
-} from '@/ui/input/components/internal/date/components/DatePicker';
-export { DATE_TIME_PICKER_MONTH_YEAR_PANEL_DROPDOWN_ID } from '@/ui/input/components/internal/date/components/DateTimePickerHeader';
-
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 const StyledOuterWrapper = styled.div`
   align-items: flex-start;
@@ -148,15 +138,13 @@ export const DateTimePicker = ({
   hideHeaderInput,
   timeZone,
 }: DateTimePickerProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const { userFirstDayOfTheWeek } = useUserFirstDayOfTheWeek();
 
   const { userTimezone } = useUserTimezone();
 
   const dateToUse =
     date ?? Temporal.Now.zonedDateTimeISO(timeZone ?? userTimezone);
-
-  const { closeDropdown: closeMonthYearPanel } = useCloseDropdown();
 
   const { getShiftedDateToSystemTimeZone } =
     useGetShiftedDateToSystemTimeZone();
@@ -176,16 +164,6 @@ export const DateTimePicker = ({
       });
 
     return { zonedDateTime };
-  };
-
-  const handleClear = () => {
-    closeMonthYearPanel(DATE_TIME_PICKER_MONTH_YEAR_PANEL_DROPDOWN_ID);
-    onClear?.();
-  };
-
-  const handleClose = (newDate: Temporal.ZonedDateTime) => {
-    closeMonthYearPanel(DATE_TIME_PICKER_MONTH_YEAR_PANEL_DROPDOWN_ID);
-    onClose?.(newDate);
   };
 
   const handleChangeMonth = (month: number) => {
@@ -227,7 +205,7 @@ export const DateTimePicker = ({
     }
     const { zonedDateTime } = getZonedDateTimeFromDatePicked(newDate);
 
-    handleClose?.(zonedDateTime);
+    onClose?.(zonedDateTime);
   };
 
   const relativeUnit = relativeDate?.unit ?? 'DAY';
@@ -358,6 +336,7 @@ export const DateTimePicker = ({
                   />
                 ) : (
                   <DateTimePickerHeader
+                    instanceId={instanceId}
                     date={dateToUse}
                     onChange={onChange}
                     onAddMonth={handleAddMonth}
@@ -376,9 +355,10 @@ export const DateTimePicker = ({
         {clearable && (
           <>
             <StyledSeparator />
-            <StyledButtonContainer onClick={handleClear}>
+            <StyledButtonContainer onClick={() => onClear?.()}>
               <StyledButtonContent>
-                <MenuItemLeftContent LeftIcon={IconCalendarX} text={t`Clear`} />
+                <IconCalendarX size={theme.icon.size.md} />
+                <Text>{t`Clear`}</Text>
               </StyledButtonContent>
             </StyledButtonContainer>
           </>

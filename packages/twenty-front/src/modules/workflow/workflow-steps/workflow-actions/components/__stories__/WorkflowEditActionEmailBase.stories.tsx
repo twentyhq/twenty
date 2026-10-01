@@ -5,15 +5,17 @@ import {
 import { WorkflowEditActionEmailBase } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { HttpResponse, graphql } from 'msw';
-import { expect, fn, within } from 'storybook/test';
-import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
+import { expect, fn, userEvent, within } from 'storybook/test';
+import { ComponentDecorator } from 'twenty-ui/testing';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 import { WorkflowStepActionDrawerDecorator } from '~/testing/decorators/WorkflowStepActionDrawerDecorator';
 import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
 import { WorkspaceDecorator } from '~/testing/decorators/WorkspaceDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
+import { mockedUserData } from '~/testing/mock-data/users';
 import { getWorkflowNodeIdMock } from '~/testing/mock-data/workflow';
+import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 
 const MOCK_CONNECTED_ACCOUNT_ID = '20202020-9ac0-4390-9a1a-ab4d2c4e1bb7';
 
@@ -129,6 +131,17 @@ const DEFAULT_DRAFT_EMAIL_ACTION: WorkflowDraftEmailAction = {
   },
 };
 
+const OWN_ACCOUNT_DRAFT_EMAIL_ACTION: WorkflowDraftEmailAction = {
+  ...DEFAULT_DRAFT_EMAIL_ACTION,
+  settings: {
+    ...DEFAULT_DRAFT_EMAIL_ACTION.settings,
+    input: {
+      ...DEFAULT_DRAFT_EMAIL_ACTION.settings.input,
+      connectedAccountId: MOCK_CONNECTED_ACCOUNT_ID,
+    },
+  },
+};
+
 const VARIABLE_SENDER_SEND_EMAIL_ACTION: WorkflowSendEmailAction = {
   id: getWorkflowNodeIdMock(),
   name: 'Send Email',
@@ -229,7 +242,7 @@ const meta: Meta<typeof WorkflowEditActionEmailBase> = {
     ComponentDecorator,
     ObjectMetadataItemsDecorator,
     ToastDecorator,
-    RouterDecorator,
+    MemoryRouterDecorator,
     WorkspaceDecorator,
   ],
 };
@@ -273,6 +286,42 @@ export const Configured: Story = {
 
     const subjectInput = await canvas.findByText('Welcome to Twenty!');
     expect(subjectInput).toBeVisible();
+
+    await userEvent.click(canvas.getByText('tim@apple.dev'));
+
+    const dropdown = within(canvasElement.ownerDocument.body);
+
+    expect(await dropdown.findByText('Add account')).toBeVisible();
+  },
+};
+
+export const WithoutConnectedAccountsPermission: Story = {
+  args: {
+    action: CONFIGURED_SEND_EMAIL_ACTION,
+    actionOptions: {
+      onActionUpdate: fn(),
+    },
+  },
+  parameters: {
+    currentUserWorkspace: {
+      ...mockedUserData.currentUserWorkspace,
+      permissionFlags: [],
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await userEvent.click(await canvas.findByText('tim@apple.dev'));
+
+    const dropdown = within(canvasElement.ownerDocument.body);
+    const accountAlias = await dropdown.findByText('sales@apple.dev');
+
+    expect(accountAlias).toBeVisible();
+    expect(dropdown.queryByText('Add account')).not.toBeInTheDocument();
+
+    await userEvent.click(accountAlias);
+
+    expect(await canvas.findByText('sales@apple.dev')).toBeVisible();
   },
 };
 
@@ -291,6 +340,52 @@ export const DraftEmail: Story = {
     expect(await canvas.findByText('Subject')).toBeVisible();
     expect(await canvas.findByText('Body')).toBeVisible();
     expect(await canvas.findByText('Advanced options')).toBeVisible();
+  },
+};
+
+export const DraftEmailMissingScopes: Story = {
+  args: {
+    action: OWN_ACCOUNT_DRAFT_EMAIL_ACTION,
+    actionOptions: {
+      onActionUpdate: fn(),
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(
+      await canvas.findByText('Missing email draft permission.'),
+    ).toBeVisible();
+    expect(
+      await canvas.findByRole('button', { name: 'Reauthorize' }),
+    ).toBeVisible();
+  },
+};
+
+export const DraftEmailMissingScopesWithoutPermission: Story = {
+  args: {
+    action: OWN_ACCOUNT_DRAFT_EMAIL_ACTION,
+    actionOptions: {
+      onActionUpdate: fn(),
+    },
+  },
+  parameters: {
+    currentUserWorkspace: {
+      ...mockedUserData.currentUserWorkspace,
+      permissionFlags: [],
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(
+      await canvas.findByText(
+        'Ask a workspace admin for the Sync Account permission to reconnect this account.',
+      ),
+    ).toBeVisible();
+    expect(
+      canvas.queryByRole('button', { name: 'Reauthorize' }),
+    ).not.toBeInTheDocument();
   },
 };
 

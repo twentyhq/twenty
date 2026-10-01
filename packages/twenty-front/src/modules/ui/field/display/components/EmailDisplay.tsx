@@ -1,10 +1,9 @@
+import { ContactLink } from '@/ui/field/display/components/internal/ContactLink/ContactLink';
+import { EllipsisDisplay } from '@/ui/field/display/components/internal/EllipsisDisplay/EllipsisDisplay';
 import { type MouseEvent } from 'react';
-import { EllipsisDisplay } from 'twenty-ui/primitives/data-display';
 import { isDefined } from 'twenty-shared/utils';
-import { ContactLink } from 'twenty-ui/primitives/navigation';
 
 const validateEmail = (email: string) => {
-  // Record this without using regex
   const emailParts = email.split('@');
 
   if (emailParts.length !== 2) {

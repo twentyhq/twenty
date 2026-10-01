@@ -5,7 +5,7 @@ import { Provider as JotaiProvider } from 'jotai';
 import { MemoryRouter } from 'react-router-dom';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { AppPath } from 'twenty-shared/types';
-import { ThemeProvider } from 'twenty-ui/theme-constants';
+import { ThemeProvider } from 'twenty-ui/theme';
 
 import { VerifyEmail } from '@/auth/components/VerifyEmail';
 import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
@@ -53,12 +53,11 @@ jest.mock('~/hooks/useNavigateApp', () => ({
 
 const mockEnqueueToast = jest.fn();
 
-jest.mock('twenty-ui/primitives/feedback', () => ({
-  ...jest.requireActual('twenty-ui/primitives/feedback'),
+jest.mock('twenty-ui/components', () => ({
+  ...jest.requireActual('twenty-ui/components'),
   useToast: () => ({ enqueueToast: mockEnqueueToast }),
 }));
 
-// Rendered by VerifyEmail in the error state; isolate it from Apollo.
 jest.mock(
   '@/auth/sign-in-up/hooks/useHandleResendEmailVerificationToken',
   () => ({
@@ -114,8 +113,6 @@ describe('VerifyEmail', () => {
       );
     });
 
-    // The workspace-agnostic flow only sets the next sign-in-up step, so the
-    // effect must hand off to the SignInUp page for that step to render.
     await waitFor(() => {
       expect(navigateMock).toHaveBeenCalledWith(AppPath.SignInUp);
     });

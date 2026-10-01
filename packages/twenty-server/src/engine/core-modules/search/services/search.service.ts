@@ -38,8 +38,9 @@ import {
   SearchException,
   SearchExceptionCode,
 } from 'src/engine/core-modules/search/exceptions/search.exception';
-import { type RecordsWithObjectMetadataItem } from 'src/engine/core-modules/search/types/records-with-object-metadata-item';
+import { type RecordsWithObjectMetadataItem } from 'src/engine/core-modules/search/types/records-with-object-metadata-item.type';
 import { formatSearchTerms } from 'src/engine/core-modules/search/utils/format-search-terms';
+import { hasCjkCharacters } from 'src/engine/core-modules/search/utils/has-cjk-characters';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
@@ -55,7 +56,7 @@ import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
 import { resolveRolePermissionConfig } from 'src/engine/twenty-orm/utils/resolve-role-permission-config.util';
-import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
+import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config.type';
 import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
 import { resolveEffectiveFlatEntityProperty } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-flat-entity-property.util';
 
@@ -123,6 +124,7 @@ export class SearchService {
                 this.workspaceOrmManager.getRepository<ObjectRecord>(
                   flatObjectMetadata.nameSingular,
                   rolePermissionConfig,
+                  { useReplica: true },
                 );
 
               return {
@@ -202,11 +204,7 @@ export class SearchService {
     });
   }
 
-  // Runs a fast tsvector query first (uses GIN index). If tsvector returns zero
-  // results for an object type on the first page, falls back to ILIKE on the
-  // searchVector text to catch cases where tokenization fails (e.g. CJK text).
-  // Skipped when tsvector finds any results (partial results mean the data just
-  // has fewer matches, not a tokenization issue) and on paginated requests.
+  // The simple text search config does not segment CJK, so fall back to substring matching.
   async buildSearchQueryAndGetRecordsWithFallback<
     Entity extends ObjectLiteral,
   >({
@@ -245,7 +243,7 @@ export class SearchService {
 
     if (
       tsvectorResults.length > 0 ||
-      !isNonEmptyString(searchInput.trim()) ||
+      !hasCjkCharacters(searchInput) ||
       isDefined(after)
     ) {
       return tsvectorResults;
@@ -376,7 +374,7 @@ export class SearchService {
       .addOrderBy('id', 'ASC', 'NULLS FIRST')
       .setParameter('searchTerms', searchTerms)
       .setParameter('searchTermsOr', searchTermsOr)
-      .take(limit + 1) // We take one more to check if hasNextPage is true
+      .take(limit + 1)
       .getRawMany<ObjectRecord & { tsRank: number; tsRankCD: number }>();
   }
 

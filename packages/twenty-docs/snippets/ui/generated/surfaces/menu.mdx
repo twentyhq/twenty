@@ -149,7 +149,7 @@
 
 ### Menu.Popup
 
-<ParamField body="Popup.align" type="&quot;center&quot; | &quot;start&quot; | &quot;end&quot;">
+<ParamField body="Popup.align" type="&quot;center&quot; | &quot;end&quot; | &quot;start&quot;">
   Alignment of the popup along the anchor. Defaults to `start`.
 </ParamField>
 
@@ -193,7 +193,7 @@
   Accepts a `ReactElement` or a function that returns the element to render.
 </ParamField>
 
-<ParamField body="Popup.side" type="&quot;top&quot; | &quot;right&quot; | &quot;bottom&quot; | &quot;left&quot; | &quot;inline-end&quot; | &quot;inline-start&quot;">
+<ParamField body="Popup.side" type="&quot;bottom&quot; | &quot;inline-end&quot; | &quot;inline-start&quot; | &quot;left&quot; | &quot;right&quot; | &quot;top&quot;">
   Side of the anchor the popup is placed on. Defaults to `bottom` for a menu
   and `inline-end` for a submenu.
 </ParamField>
@@ -219,7 +219,7 @@
   Whether to close the menu when the item is clicked.
 </ParamField>
 
-<ParamField body="Item.color" type="&quot;neutral&quot; | &quot;danger&quot;">
+<ParamField body="Item.color" type="&quot;danger&quot; | &quot;neutral&quot;">
   Color of the text and icons. `danger` marks a destructive action.
 </ParamField>
 
@@ -227,7 +227,7 @@
   Supporting text, placed according to `descriptionPlacement`.
 </ParamField>
 
-<ParamField body="Item.descriptionPlacement" type="&quot;inline&quot; | &quot;end&quot;">
+<ParamField body="Item.descriptionPlacement" type="&quot;end&quot; | &quot;inline&quot;">
   Where the description renders: inline after the content or at the end of
   the row.
 </ParamField>
@@ -238,11 +238,6 @@
 
 <ParamField body="Item.endIcon" type="ReactNode">
   Icon rendered after the content.
-</ParamField>
-
-<ParamField body="Item.hotkeys" type="string[]">
-  Keyboard shortcut keys displayed at the end of the row. Registering the
-  shortcut is up to the application.
 </ParamField>
 
 <ParamField body="Item.label" type="string">
@@ -264,6 +259,15 @@
   with a different tag, or compose it with another component.
 
   Accepts a `ReactElement` or a function that returns the element to render.
+</ParamField>
+
+<ParamField body="Item.shortcut" type="ShortcutDefinition">
+  Keyboard shortcut keys displayed at the end of the row. Registering the
+  shortcut is up to the application.
+</ParamField>
+
+<ParamField body="Item.shortcutJoinLabel" type="string">
+  Text between sequential shortcut steps. Defaults to `then`.
 </ParamField>
 
 <ParamField body="Item.startIcon" type="ReactNode">
@@ -292,7 +296,7 @@
   Whether to close the menu when the item is clicked.
 </ParamField>
 
-<ParamField body="CheckboxItem.color" type="&quot;neutral&quot; | &quot;danger&quot;">
+<ParamField body="CheckboxItem.color" type="&quot;danger&quot; | &quot;neutral&quot;">
   Color of the text and icons. `danger` marks a destructive action.
 </ParamField>
 
@@ -306,7 +310,7 @@
   Supporting text, placed according to `descriptionPlacement`.
 </ParamField>
 
-<ParamField body="CheckboxItem.descriptionPlacement" type="&quot;inline&quot; | &quot;end&quot;">
+<ParamField body="CheckboxItem.descriptionPlacement" type="&quot;end&quot; | &quot;inline&quot;">
   Where the description renders: inline after the content or at the end of
   the row.
 </ParamField>
@@ -317,11 +321,6 @@
 
 <ParamField body="CheckboxItem.endIcon" type="ReactNode">
   Icon rendered after the content.
-</ParamField>
-
-<ParamField body="CheckboxItem.hotkeys" type="string[]">
-  Keyboard shortcut keys displayed at the end of the row. Registering the
-  shortcut is up to the application.
 </ParamField>
 
 <ParamField body="CheckboxItem.label" type="string">
@@ -347,6 +346,15 @@
   with a different tag, or compose it with another component.
 
   Accepts a `ReactElement` or a function that returns the element to render.
+</ParamField>
+
+<ParamField body="CheckboxItem.shortcut" type="ShortcutDefinition">
+  Keyboard shortcut keys displayed at the end of the row. Registering the
+  shortcut is up to the application.
+</ParamField>
+
+<ParamField body="CheckboxItem.shortcutJoinLabel" type="string">
+  Text between sequential shortcut steps. Defaults to `then`.
 </ParamField>
 
 <ParamField body="CheckboxItem.startIcon" type="ReactNode">
@@ -412,7 +420,7 @@
   Whether to close the menu when the item is clicked.
 </ParamField>
 
-<ParamField body="RadioItem.color" type="&quot;neutral&quot; | &quot;danger&quot;">
+<ParamField body="RadioItem.color" type="&quot;danger&quot; | &quot;neutral&quot;">
   Color of the text and icons. `danger` marks a destructive action.
 </ParamField>
 
@@ -420,7 +428,7 @@
   Supporting text, placed according to `descriptionPlacement`.
 </ParamField>
 
-<ParamField body="RadioItem.descriptionPlacement" type="&quot;inline&quot; | &quot;end&quot;">
+<ParamField body="RadioItem.descriptionPlacement" type="&quot;end&quot; | &quot;inline&quot;">
   Where the description renders: inline after the content or at the end of
   the row.
 </ParamField>
@@ -431,11 +439,6 @@
 
 <ParamField body="RadioItem.endIcon" type="ReactNode">
   Icon rendered after the content.
-</ParamField>
-
-<ParamField body="RadioItem.hotkeys" type="string[]">
-  Keyboard shortcut keys displayed at the end of the row. Registering the
-  shortcut is up to the application.
 </ParamField>
 
 <ParamField body="RadioItem.label" type="string">
@@ -457,6 +460,15 @@
   with a different tag, or compose it with another component.
 
   Accepts a `ReactElement` or a function that returns the element to render.
+</ParamField>
+
+<ParamField body="RadioItem.shortcut" type="ShortcutDefinition">
+  Keyboard shortcut keys displayed at the end of the row. Registering the
+  shortcut is up to the application.
+</ParamField>
+
+<ParamField body="RadioItem.shortcutJoinLabel" type="string">
+  Text between sequential shortcut steps. Defaults to `then`.
 </ParamField>
 
 <ParamField body="RadioItem.startIcon" type="ReactNode">
@@ -607,7 +619,7 @@
   Requires the `openOnHover` prop.
 </ParamField>
 
-<ParamField body="SubmenuTrigger.color" type="&quot;neutral&quot; | &quot;danger&quot;">
+<ParamField body="SubmenuTrigger.color" type="&quot;danger&quot; | &quot;neutral&quot;">
   Color of the text and icons. `danger` marks a destructive action.
 </ParamField>
 
@@ -621,7 +633,7 @@
   Supporting text, placed according to `descriptionPlacement`.
 </ParamField>
 
-<ParamField body="SubmenuTrigger.descriptionPlacement" type="&quot;inline&quot; | &quot;end&quot;">
+<ParamField body="SubmenuTrigger.descriptionPlacement" type="&quot;end&quot; | &quot;inline&quot;">
   Where the description renders: inline after the content or at the end of
   the row.
 </ParamField>
@@ -632,11 +644,6 @@
 
 <ParamField body="SubmenuTrigger.endIcon" type="ReactNode">
   Icon rendered after the content.
-</ParamField>
-
-<ParamField body="SubmenuTrigger.hotkeys" type="string[]">
-  Keyboard shortcut keys displayed at the end of the row. Registering the
-  shortcut is up to the application.
 </ParamField>
 
 <ParamField body="SubmenuTrigger.label" type="string">
@@ -650,7 +657,7 @@
 </ParamField>
 
 <ParamField body="SubmenuTrigger.onClick" type="((event: BaseUIEvent&lt;MouseEvent&lt;HTMLDivElement, MouseEvent&gt;&gt;) =&gt; void)">
-
+  The click handler for the submenu trigger.
 </ParamField>
 
 <ParamField body="SubmenuTrigger.openOnHover" type="boolean" default="true">
@@ -662,6 +669,15 @@
   with a different tag, or compose it with another component.
 
   Accepts a `ReactElement` or a function that returns the element to render.
+</ParamField>
+
+<ParamField body="SubmenuTrigger.shortcut" type="ShortcutDefinition">
+  Keyboard shortcut keys displayed at the end of the row. Registering the
+  shortcut is up to the application.
+</ParamField>
+
+<ParamField body="SubmenuTrigger.shortcutJoinLabel" type="string">
+  Text between sequential shortcut steps. Defaults to `then`.
 </ParamField>
 
 <ParamField body="SubmenuTrigger.startIcon" type="ReactNode">

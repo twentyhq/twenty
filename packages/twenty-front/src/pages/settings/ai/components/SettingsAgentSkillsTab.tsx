@@ -1,23 +1,24 @@
-import { Section } from 'twenty-ui/components';
-import { useToast } from 'twenty-ui/primitives/feedback';
 import { getApplicationDisplayName } from '@/applications/utils/getApplicationDisplayName';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useSortedArray } from '@/ui/layout/table/hooks/useSortedArray';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useMutation, useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
-import { IconArchive, IconSettings } from 'twenty-ui/icon';
-import { SearchInput } from 'twenty-ui/primitives/input';
-import { MenuItemSwitch } from 'twenty-ui/primitives/navigation';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-
-import { useMutation, useQuery } from '@apollo/client/react';
 import { isDefined } from 'twenty-shared/utils';
+import {
+  Dropdown,
+  SearchInput,
+  Section,
+  SettingsRow,
+  useToast,
+} from 'twenty-ui/components';
+import { IconArchive, IconSettings } from 'twenty-ui/icon';
+import { themeCssVariables } from 'twenty-ui/theme';
 import {
   ActivateSkillDocument,
   DeleteSkillDocument,
@@ -50,8 +51,7 @@ export const SettingsAgentSkillsTab = () => {
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const installedApplications = currentWorkspace?.installedApplications;
 
-  // not memoized: getApplicationDisplayName translates the standard and custom
-  // labels, so a cached label would survive a locale change
+  // not memoized: the label is translated, so a cached one would survive a locale change
   const skillTableItems = (data?.skills ?? []).map((skill) => {
     const application = installedApplications?.find(
       (installedApplication) => installedApplication.id === skill.applicationId,
@@ -129,36 +129,35 @@ export const SettingsAgentSkillsTab = () => {
         <SearchInput
           placeholder={t`Search a skill...`}
           value={searchTerm}
-          onChange={setSearchTerm}
+          onValueChange={setSearchTerm}
           filterDropdown={(filterButton) => (
-            <Dropdown
+            <DropdownRoot
               dropdownId="settings-skills-filter-dropdown"
-              dropdownPlacement="bottom-end"
-              dropdownOffset={{ x: 0, y: 8 }}
-              clickableComponent={filterButton}
-              dropdownComponents={
-                <DropdownContent>
-                  <DropdownMenuItemsContainer>
-                    <MenuItemSwitch
-                      LeftIcon={IconArchive}
-                      onCheckedChange={setShowDeactivated}
-                      checked={showDeactivated}
-                      text={t`Deactivated`}
-                      size="sm"
-                    />
-                    {isAdvancedModeEnabled && (
-                      <MenuItemSwitch
-                        LeftIcon={IconSettings}
-                        onCheckedChange={setShowSystemSkills}
-                        checked={showSystemSkills}
-                        text={t`System skills`}
-                        size="sm"
-                      />
-                    )}
-                  </DropdownMenuItemsContainer>
-                </DropdownContent>
-              }
-            />
+              type="panel"
+            >
+              <Dropdown.Trigger render={filterButton} />
+              <DropdownContent
+                side="bottom"
+                align="end"
+                sideOffset={8}
+                alignOffset={0}
+              >
+                <Dropdown.Section>
+                  <SettingsRow
+                    startIcon={<IconArchive />}
+                    onCheckedChange={setShowDeactivated}
+                    checked={showDeactivated}
+                  >{t`Deactivated`}</SettingsRow>
+                  {isAdvancedModeEnabled && (
+                    <SettingsRow
+                      startIcon={<IconSettings />}
+                      onCheckedChange={setShowSystemSkills}
+                      checked={showSystemSkills}
+                    >{t`System skills`}</SettingsRow>
+                  )}
+                </Dropdown.Section>
+              </DropdownContent>
+            </DropdownRoot>
           )}
         />
       </StyledSearchContainer>

@@ -2,6 +2,7 @@ import { useQuery } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { TintedIconTile } from 'twenty-ui/components';
 import {
   IconBox,
   IconFolder,
@@ -10,7 +11,7 @@ import {
   IconTable,
   useIcons,
 } from 'twenty-ui/icon';
-import { Avatar, TintedIconTile } from 'twenty-ui/primitives/data-display';
+import { Avatar } from 'twenty-ui/primitives/data-display';
 import {
   FindAllStandalonePageLayoutsDocument,
   type NavigationMenuItem,

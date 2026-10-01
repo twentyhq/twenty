@@ -140,11 +140,13 @@ export const resolveSlackIdentities = async ({
   knownIdentities = [],
   client,
   slackClient,
+  slackConnectionId,
 }: {
   slackUserIds: string[];
   knownIdentities?: SlackUserIdentity[];
   client: CoreApiClient;
   slackClient: WebClient | undefined;
+  slackConnectionId: string | undefined;
 }): Promise<Map<string, SlackIdentityResolution>> => {
   const resolutionBySlackUserId = new Map<string, SlackIdentityResolution>();
   const requestedSlackUserIds = [...new Set(slackUserIds)];
@@ -167,7 +169,7 @@ export const resolveSlackIdentities = async ({
   }
 
   const [installedSlackTeamId, identityBySlackUserId] = await Promise.all([
-    getInstalledSlackTeamId(slackClient),
+    getInstalledSlackTeamId({ slackClient, slackConnectionId }),
     fetchMissingIdentities({
       slackClient,
       slackUserIds: requestedSlackUserIds,

@@ -3,7 +3,7 @@ import { useId, useState } from 'react';
 import { expect, userEvent, within } from 'storybook/test';
 
 import { ComponentDecorator } from '@ui/testing';
-import { ThemeProvider } from '@ui/theme-constants/ThemeProvider';
+import { ThemeProvider } from '@ui/theme/ThemeProvider';
 
 import { Menu } from '../Menu';
 import { type MenuPopupProps } from '../types/MenuPopupProps';
@@ -89,6 +89,25 @@ export const ScopedTheme: Story = {
     expect(
       await within(scope).findByRole('menu', { name: 'Options' }),
     ).toBeVisible();
+  },
+};
+
+export const InheritedDirection: Story = {
+  render: () => (
+    <section aria-label="Right-to-left container" dir="rtl">
+      <ThemeProvider colorScheme="light" applyToRoot={false}>
+        <div style={{ width: 260, height: 240 }}>
+          <PortalMenu />
+        </div>
+      </ThemeProvider>
+    </section>
+  ),
+  play: async ({ canvasElement }) => {
+    const scope = within(canvasElement).getByRole('region', {
+      name: 'Right-to-left container',
+    });
+    const menu = await within(scope).findByRole('menu', { name: 'Options' });
+    expect(getComputedStyle(menu).direction).toBe('rtl');
   },
 };
 

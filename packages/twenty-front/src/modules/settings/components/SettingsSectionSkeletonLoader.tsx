@@ -1,7 +1,6 @@
 import { styled } from '@linaria/react';
-import { useContext } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
 
@@ -19,7 +18,7 @@ const StyledRows = styled.div`
 export const SettingsSectionSkeletonLoader = ({
   rowCount = 4,
 }: SettingsSectionSkeletonLoaderProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
 
   return (
     <StyledRows>

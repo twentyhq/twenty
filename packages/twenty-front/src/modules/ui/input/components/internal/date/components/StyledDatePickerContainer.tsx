@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 export const DATE_PICKER_CONTAINER_WIDTH = 280;
 
@@ -41,8 +41,6 @@ export const StyledDatePickerContainer = styled.div<{
   & .react-datepicker-wrapper {
     display: none;
   }
-
-  // Header
 
   & .react-datepicker__header {
     background: transparent;
@@ -165,8 +163,6 @@ export const StyledDatePickerContainer = styled.div<{
   & .react-datepicker__month-container {
     float: none;
   }
-
-  // Days
 
   & .react-datepicker__month {
     margin: 0;

@@ -7,11 +7,9 @@ import {
   Query,
   ResolveField,
 } from '@nestjs/graphql';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
@@ -25,7 +23,7 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { AllowSuspendedWorkspace } from 'src/engine/decorators/auth/allow-suspended-workspace.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
-import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
 import { FieldFilterInput } from 'src/engine/metadata-modules/field-metadata/dtos/field-filter.input';
 import { fromFlatObjectMetadataToObjectMetadataDto } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-flat-object-metadata-to-object-metadata-dto.util';
@@ -61,8 +59,22 @@ import { resolveEffectiveEntityProperty } from 'src/engine/metadata-modules/over
 import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
 import { fromObjectMetadataEntityToObjectMetadataDto } from 'src/engine/metadata-modules/object-metadata/utils/from-object-metadata-entity-to-object-metadata-dto.util';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
-@UseGuards(WorkspaceAuthGuard)
+@UseGuards(
+  AuthPrincipalGuard({
+    userSession: {
+      standard: true,
+      impersonated: true,
+      playground: true,
+      workspaceAgnostic: false,
+    },
+    apiKey: true,
+    oauthClient: true,
+    application: true,
+  }),
+)
 @MetadataResolver(() => ObjectMetadataDTO)
 @UsePipes(ResolverValidationPipe)
 @UseFilters(
@@ -76,8 +88,8 @@ export class ObjectMetadataResolver {
     private readonly objectRecordCountService: ObjectRecordCountService,
     private readonly mostlyEmptyFieldsService: MostlyEmptyFieldsService,
     private readonly applicationTranslationCatalogService: ApplicationTranslationCatalogService,
-    @InjectRepository(ObjectMetadataEntity)
-    private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
+    @InjectWorkspaceScopedRepository(ObjectMetadataEntity)
+    private readonly objectMetadataRepository: WorkspaceScopedRepository<ObjectMetadataEntity>,
   ) {}
 
   @UseGuards(NoPermissionGuard)
@@ -134,9 +146,10 @@ export class ObjectMetadataResolver {
     id: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<ObjectMetadataDTO> {
-    const objectMetadata = await this.objectMetadataRepository.findOne({
-      where: { id, workspaceId },
-    });
+    const objectMetadata = await this.objectMetadataRepository.findOne(
+      workspaceId,
+      { where: { id } },
+    );
 
     if (!isDefined(objectMetadata)) {
       throw new NotFoundError(
@@ -396,6 +409,26 @@ export class ObjectMetadataResolver {
         });
 
       return fromFlatObjectMetadataToObjectMetadataDto(flatobjectMetadata);
+    } catch (error) {
+      objectMetadataGraphqlApiExceptionHandler(error);
+    }
+  }
+
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.DATA_MODEL))
+  @Mutation(() => [ObjectMetadataDTO])
+  async updateManyObjects(
+    @Args('inputs', { type: () => [UpdateOneObjectInput] })
+    updateObjectInputs: UpdateOneObjectInput[],
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+  ) {
+    try {
+      const flatObjectMetadatas =
+        await this.objectMetadataService.updateManyObjects({
+          updateObjectInputs,
+          workspaceId,
+        });
+
+      return flatObjectMetadatas.map(fromFlatObjectMetadataToObjectMetadataDto);
     } catch (error) {
       objectMetadataGraphqlApiExceptionHandler(error);
     }

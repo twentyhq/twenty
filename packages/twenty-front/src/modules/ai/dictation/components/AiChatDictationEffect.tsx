@@ -15,7 +15,7 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { useListenToBrowserEvent } from '@/browser-event/hooks/useListenToBrowserEvent';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { useToast } from 'twenty-ui/primitives/feedback';
+import { useToast } from 'twenty-ui/components';
 
 type AiChatDictationEffectProps = {
   onInterimText: (text: string) => void;
@@ -46,9 +46,7 @@ export const AiChatDictationEffect = ({
 
     const createdEngine = createWebSpeechDictationEngine({
       isIOS,
-      // Read from the store rather than subscribed to, so a language change
-      // neither re-renders this nor rebuilds the engine; the next session
-      // picks it up.
+      // Read imperatively so a language change doesn't rebuild the engine; the next session picks it up.
       getLanguage: () =>
         getDictationLanguage(
           store.get(currentWorkspaceMemberState.atom)?.locale,
@@ -63,8 +61,7 @@ export const AiChatDictationEffect = ({
     };
   }, [isSupported, isIOS, store, setDictationEngine]);
 
-  // Separate from construction so fresh handler identities re-subscribe instead
-  // of tearing down a live recording.
+  // Separate so fresh handler identities re-subscribe without tearing down a live recording.
   useEffect(() => {
     if (!isDefined(dictationEngine)) {
       return;
@@ -80,16 +77,12 @@ export const AiChatDictationEffect = ({
           break;
         case 'state':
           setIsDictationRecording(event.state === 'recording');
-          // The session took its pending words with it, settled or not.
           if (event.state === 'idle') {
             onInterimText('');
           }
           break;
         case 'error':
-          // Remembered only where a silent engine stays silent. A desktop
-          // browser that missed one start — a cold speech service, a blip
-          // reaching it — would otherwise lose the button for the life of the
-          // origin, with clearing site data the only way back.
+          // iOS only: elsewhere one missed start (cold speech service) would hide the button for the origin's life.
           if (event.reason === 'engine-silent' && isIOS) {
             setHasWebSpeechProvenSilent(true);
           }
@@ -110,8 +103,7 @@ export const AiChatDictationEffect = ({
     enqueueToast,
   ]);
 
-  // Both send paths dispatch this, so dictation does not have to be lifted into
-  // the composer to be stopped by one.
+  // Both send paths dispatch this, so dictation needn't be lifted into the composer.
   const handleSendMessage = useCallback(() => {
     dictationEngine?.cancel();
   }, [dictationEngine]);

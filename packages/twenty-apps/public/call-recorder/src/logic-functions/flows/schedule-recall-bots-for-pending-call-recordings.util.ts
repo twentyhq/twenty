@@ -5,6 +5,8 @@ import { CallRecordingStatus } from 'src/logic-functions/constants/call-recordin
 import { type CalendarEventRecord } from 'src/logic-functions/types/calendar-event-record.type';
 import { type CallRecordingRecord } from 'src/logic-functions/types/call-recording-record.type';
 import { canRescheduleCallRecordingWithoutRecallLookup } from 'src/logic-functions/domain/can-reschedule-call-recording-without-recall-lookup.util';
+import { computeRecallBotJoinAt } from 'src/logic-functions/domain/compute-recall-bot-join-at.util';
+import { enqueuePreJoinCreditCheck } from 'src/logic-functions/data/enqueue-pre-join-credit-check.util';
 import { getCurrentWorkspaceId } from 'src/logic-functions/data/get-current-workspace-id.util';
 import { hasMeetingEnded } from 'src/logic-functions/domain/has-meeting-ended.util';
 import { scheduleRecallBotForCallRecording } from 'src/logic-functions/flows/schedule-recall-bot-for-call-recording.util';
@@ -101,11 +103,6 @@ export const scheduleRecallBotsForPendingCallRecordings = async ({
     return result;
   }
 
-  // Rows without a schedule-attempt marker never reached Recall, so no bot
-  // can exist for them. Rows whose stored idempotency key still matches the
-  // current scheduling inputs can re-send the creation and let Recall dedupe
-  // it. Only attempts whose inputs drifted since the attempt pay for a
-  // Recall lookup.
   const workspaceId = getCurrentWorkspaceId();
   const ambiguousCallRecordings = resumableCallRecordings.filter(
     ({ callRecording, calendarEvent }) =>
@@ -139,10 +136,9 @@ export const scheduleRecallBotsForPendingCallRecordings = async ({
     return result;
   }
 
-  // A run that POSTed a bot but died before the id write-back leaves the bot
-  // claimable by metadata; one workspace-wide lookup finds them all without a
-  // per-recording list call.
-  const lookupResult = await findScheduledRecallBotIdsByCallRecordingId();
+  const lookupResult = await findScheduledRecallBotIdsByCallRecordingId(
+    ambiguousCallRecordings.map(({ callRecording }) => callRecording.id),
+  );
 
   // A failed lookup can hide existing bots; creating one now could duplicate
   // them, so defer to the next run.
@@ -160,6 +156,14 @@ export const scheduleRecallBotsForPendingCallRecordings = async ({
         data: { externalBotId: existingExternalBotId },
       });
       result.attachedCallRecordingIds.push(callRecording.id);
+
+      if (!isUndefined(calendarEvent.startsAt)) {
+        await enqueuePreJoinCreditCheck({
+          callRecordingId: callRecording.id,
+          externalBotId: existingExternalBotId,
+          joinAt: computeRecallBotJoinAt(calendarEvent.startsAt),
+        });
+      }
       continue;
     }
 
@@ -185,15 +189,12 @@ const scheduleBotForResumableCallRecording = async ({
   calendarEvent: CalendarEventRecord;
   result: ScheduleRecallBotsForPendingCallRecordingsResult;
 }): Promise<void> => {
-  const didScheduleRecallBot = await scheduleRecallBotForCallRecording(
-    client,
-    {
-      callRecording,
-      calendarEvent,
-    },
-  );
+  const scheduleResult = await scheduleRecallBotForCallRecording(client, {
+    callRecording,
+    calendarEvent,
+  });
 
-  if (didScheduleRecallBot) {
+  if (scheduleResult.status === 'scheduled') {
     result.scheduledCallRecordingIds.push(callRecording.id);
   }
 };

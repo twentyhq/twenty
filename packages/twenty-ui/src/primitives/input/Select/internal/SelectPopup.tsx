@@ -1,7 +1,7 @@
-import { useDirection } from '@base-ui/react/direction-provider';
 import { Select as SelectPrimitive } from '@base-ui/react/select';
 
-import { useThemeContainer } from '@ui/theme-constants';
+import { useProvidedTextDirection } from '@ui/primitives/layout/TextDirectionProvider/internal/useProvidedTextDirection';
+import { useThemeContainer } from '@ui/theme';
 import { mergeClassNames } from '@ui/utilities/internal/mergeClassNames';
 
 import styles from '../Select.module.scss';
@@ -19,7 +19,7 @@ export const SelectPopup = ({
   ...props
 }: SelectPopupProps) => {
   const themeContainer = useThemeContainer();
-  const direction = useDirection();
+  const direction = useProvidedTextDirection();
 
   return (
     <SelectPrimitive.Portal

@@ -20,7 +20,7 @@ const CheckboxBox = styled.div<{ $checked?: boolean }>`
       $checked
         ? THEME_LIGHT.border.color.blue
         : THEME_LIGHT.font.color.primary};
-  border-radius: 3px;
+  border-radius: ${THEME_LIGHT.border.radius.smRound};
   display: flex;
   flex: 0 0 auto;
   height: 14px;

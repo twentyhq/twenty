@@ -1,9 +1,9 @@
-import { ComposerFieldRow } from '@/activities/components/ComposerFieldRow';
-import { ComposerHeader } from '@/activities/components/ComposerHeader';
-import { StyledComposerTextInput } from '@/activities/components/ComposerTextInput';
 import { CalendarEventComposerTargetsInput } from '@/activities/calendar/components/CalendarEventComposerTargetsInput';
 import { CalendarEventLocationInput } from '@/activities/calendar/components/CalendarEventLocationInput';
 import { type useCalendarEventComposer } from '@/activities/calendar/hooks/useCalendarEventComposer';
+import { ComposerFieldRow } from '@/activities/components/ComposerFieldRow';
+import { ComposerHeader } from '@/activities/components/ComposerHeader';
+import { StyledComposerTextInput } from '@/activities/components/ComposerTextInput';
 import { EmailRecipientsFieldInput } from '@/activities/emails/recipients/components/EmailRecipientsFieldInput';
 import { useEmailRecipientsDragAndDrop } from '@/activities/emails/recipients/hooks/useEmailRecipientsDragAndDrop';
 import { type EmailComposerContextRecord } from '@/activities/emails/recipients/types/EmailComposerContextRecord';
@@ -21,9 +21,10 @@ import { DragDropItemDndContext } from '@/ui/utilities/drag-and-drop/context/Dra
 import { DragDropProvider } from '@dnd-kit/react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { Callout } from 'twenty-ui/primitives/feedback';
+import { isDefined } from 'twenty-shared/utils';
+import { Callout } from 'twenty-ui/components';
 import { Switch } from 'twenty-ui/primitives/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const COMPOSER_LABEL_MIN_WIDTH = '80px';
 
@@ -55,8 +56,8 @@ const StyledNoticesContainer = styled.div`
 type CalendarEventComposerFieldsProps = {
   composerState: ReturnType<typeof useCalendarEventComposer>;
   contextRecord: EmailComposerContextRecord;
-  onAddAccount: () => void;
-  onReauthorize: () => void;
+  onAddAccount?: () => void;
+  onReauthorize?: () => void;
 };
 
 export const CalendarEventComposerFields = ({
@@ -309,16 +310,32 @@ export const CalendarEventComposerFields = ({
             <Callout
               variant="warning"
               title={t`Connect a calendar account`}
-              description={t`Connect Google, Microsoft or CalDAV and enable calendar sync before creating an event.`}
-              action={{ label: t`Add account`, onClick: onAddAccount }}
+              description={
+                isDefined(onAddAccount)
+                  ? t`Connect Google, Microsoft or CalDAV and enable calendar sync before creating an event.`
+                  : t`Ask a workspace admin for the Sync Account permission to connect a calendar account.`
+              }
+              action={
+                isDefined(onAddAccount)
+                  ? { label: t`Add account`, onClick: onAddAccount }
+                  : undefined
+              }
             />
           )}
           {composerState.missingScopes.length > 0 && (
             <Callout
               variant="error"
               title={t`Calendar access needs approval`}
-              description={t`Reconnect this account to grant permission to create calendar events.`}
-              action={{ label: t`Reconnect`, onClick: onReauthorize }}
+              description={
+                isDefined(onReauthorize)
+                  ? t`Reconnect this account to grant permission to create calendar events.`
+                  : t`Ask a workspace admin for the Sync Account permission to reconnect this account.`
+              }
+              action={
+                isDefined(onReauthorize)
+                  ? { label: t`Reconnect`, onClick: onReauthorize }
+                  : undefined
+              }
             />
           )}
           {!composerState.hasValidDateRange && (

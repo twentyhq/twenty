@@ -7,7 +7,7 @@ import {
 
 export type FrontComponentActiveMediaSession = {
   streamId: string;
-  mediaType: MediaSessionMediaType;
+  mediaTypes: MediaSessionMediaType[];
   startedAt: number;
   getLiveMediaStream: () => MediaStream | null;
 };
@@ -22,15 +22,14 @@ export type MediaSessionStartVeto = {
 };
 
 export type CreateFrontComponentMediaSessionHostInput = {
-  // Extra host page policy, called before any device is touched: return a
-  // veto (as a DOMException name + message) to refuse the capture. The
-  // one-capture-at-a-time slot is enforced internally, before this hook.
-  beforeStartStream?: (
-    mediaType: MediaSessionMediaType,
-  ) => MediaSessionStartVeto | null;
+  beforeStartStream?: (input: {
+    mediaTypes: MediaSessionMediaType[];
+    abortSignal: AbortSignal;
+  }) => MediaSessionStartVeto | null | Promise<MediaSessionStartVeto | null>;
   onActiveSessionsChange?: (
     activeSessions: FrontComponentActiveMediaSession[],
   ) => void;
+  onPendingStartChange?: (mediaTypes: MediaSessionMediaType[] | null) => void;
 };
 
 export type FrontComponentMediaSessionHost = MediaSessionHostFunctions & {

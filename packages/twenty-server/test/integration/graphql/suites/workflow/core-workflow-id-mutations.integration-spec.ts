@@ -217,20 +217,6 @@ describe('core workflow id mutations (e2e)', () => {
   });
 
   it('activates, runs and deactivates by core ids', async () => {
-    const validateResponse = await workflowGraphqlRequest(
-      `
-        mutation ValidateCoreWorkflowVersion($coreWorkflowVersionId: UUID!) {
-          validateCoreWorkflowVersion(
-            coreWorkflowVersionId: $coreWorkflowVersionId
-          )
-        }
-      `,
-      { coreWorkflowVersionId },
-    );
-
-    expect(validateResponse.body.errors).toBeUndefined();
-    expect(validateResponse.body.data.validateCoreWorkflowVersion).toBe(true);
-
     const activateResponse = await workflowGraphqlRequest(
       `
         mutation ActivateCoreWorkflowVersion($coreWorkflowVersionId: UUID!) {
@@ -539,6 +525,76 @@ describe('core workflow id mutations (e2e)', () => {
     const duplicatedVersions = await getVersions(duplicated.id);
 
     expect(duplicatedVersions).toHaveLength(1);
+  });
+
+  it('duplicates a workflow that has no workspace mirror', async () => {
+    const createResponse = await workflowGraphqlRequest(`
+      mutation {
+        createCoreWorkflow(input: { name: "Core Id Mutations Without Mirror" }) {
+          id
+        }
+      }
+    `);
+
+    expect(createResponse.body.errors).toBeUndefined();
+
+    const sourceCoreWorkflowId = createResponse.body.data.createCoreWorkflow.id;
+
+    coreWorkflowIdsToDelete.push(sourceCoreWorkflowId);
+
+    const [sourceVersion] = await getVersions(sourceCoreWorkflowId);
+
+    const triggerResponse = await workflowGraphqlRequest(
+      `
+        mutation UpdateCoreWorkflowVersionTrigger(
+          $input: UpdateCoreWorkflowVersionTriggerInput!
+        ) {
+          updateCoreWorkflowVersionTrigger(input: $input) {
+            trigger
+          }
+        }
+      `,
+      {
+        input: {
+          coreWorkflowVersionId: sourceVersion.id,
+          trigger: MANUAL_TRIGGER,
+        },
+      },
+    );
+
+    expect(triggerResponse.body.errors).toBeUndefined();
+
+    await global.testDataSource.query(
+      `UPDATE core.workflow SET "workspaceWorkflowId" = NULL WHERE id = $1`,
+      [sourceCoreWorkflowId],
+    );
+
+    const response = await workflowGraphqlRequest(
+      `
+        mutation DuplicateCoreWorkflow($input: DuplicateCoreWorkflowInput!) {
+          duplicateCoreWorkflow(input: $input) {
+            id
+            name
+          }
+        }
+      `,
+      {
+        input: {
+          coreWorkflowIdToDuplicate: sourceCoreWorkflowId,
+          coreWorkflowVersionIdToCopy: sourceVersion.id,
+        },
+      },
+    );
+
+    expect(response.body.errors).toBeUndefined();
+
+    const duplicated = response.body.data.duplicateCoreWorkflow;
+
+    coreWorkflowIdsToDelete.push(duplicated.id);
+
+    expect(duplicated.name).toBe(
+      'Core Id Mutations Without Mirror (Duplicate)',
+    );
   });
 
   it('rejects core ids that do not exist', async () => {

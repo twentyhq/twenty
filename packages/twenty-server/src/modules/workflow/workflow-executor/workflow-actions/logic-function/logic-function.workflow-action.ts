@@ -13,7 +13,7 @@ import {
   WorkflowStepExecutorException,
   WorkflowStepExecutorExceptionCode,
 } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
-import { type WorkflowActionInput } from 'src/modules/workflow/workflow-executor/types/workflow-action-input';
+import { type WorkflowActionInput } from 'src/modules/workflow/workflow-executor/types/workflow-action-input.type';
 import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executor/types/workflow-action-output.type';
 import { findStepOrThrow } from 'src/modules/workflow/workflow-executor/utils/find-step-or-throw.util';
 import { isWorkflowLogicFunctionAction } from 'src/modules/workflow/workflow-executor/workflow-actions/logic-function/guards/is-workflow-logic-function-action.guard';
@@ -79,8 +79,17 @@ export class LogicFunctionWorkflowAction implements WorkflowAction {
       );
     }
 
-    const { authContext } =
+    const { authContext, application } =
       await this.workflowExecutionContextService.getExecutionContext(runInfo);
+
+    await this.workflowExecutionContextService.assertStepTargetBelongsToRunApplicationOrThrow(
+      {
+        application,
+        workspaceId,
+        targetApplicationId: logicFunction.applicationId,
+        targetLabel: `Logic function "${logicFunction.name}"`,
+      },
+    );
 
     const result = await this.logicFunctionExecutorService.execute({
       logicFunctionId: workflowActionInput.logicFunctionId,

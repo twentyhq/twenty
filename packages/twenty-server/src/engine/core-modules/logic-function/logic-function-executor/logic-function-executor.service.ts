@@ -1,6 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { type MessageDescriptor } from '@lingui/core';
+import { msg } from '@lingui/core/macro';
 import {
   DEFAULT_API_KEY_NAME,
   DEFAULT_API_URL_NAME,
@@ -42,9 +44,15 @@ import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/service
 import { LogicFunctionDriverFactory } from 'src/engine/core-modules/logic-function/logic-function-drivers/logic-function-driver.factory';
 import { computeLogicFunctionExecutionCreditsMicro } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/compute-logic-function-execution-credits-micro.util';
 import { resolveWorkspaceMemberIdForUser } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/resolve-workspace-member-id-for-user.util';
+import { LogicFunctionPrebuiltWarmUpService } from 'src/engine/core-modules/logic-function/logic-function-prebuilt-warm-up/logic-function-prebuilt-warm-up.service';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
+import {
+  ThrottlerException,
+  ThrottlerExceptionCode,
+} from 'src/engine/core-modules/throttler/throttler.exception';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
@@ -60,15 +68,26 @@ import { FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/ty
 import { SubscriptionChannel } from 'src/engine/subscriptions/enums/subscription-channel.enum';
 import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { LogicFunctionPrebuiltWarmUpService } from 'src/engine/core-modules/logic-function/logic-function-prebuilt-warm-up/logic-function-prebuilt-warm-up.service';
 import { cleanServerUrl } from 'src/utils/clean-server-url';
+import { CustomException } from 'src/utils/custom-exception';
 
-export class LogicFunctionExecutionException extends Error {
+export class LogicFunctionExecutionException extends CustomException<LogicFunctionExecutionExceptionCode> {
   constructor(
     message: string,
     public readonly code: LogicFunctionExecutionExceptionCode,
+    {
+      userFriendlyMessage,
+      statusCode,
+    }: { userFriendlyMessage?: MessageDescriptor; statusCode?: number } = {},
   ) {
-    super(message);
+    super(message, code, {
+      userFriendlyMessage:
+        userFriendlyMessage ??
+        (code === LogicFunctionExecutionExceptionCode.LOGIC_FUNCTION_NOT_FOUND
+          ? msg`Logic function not found.`
+          : msg`An error occurred.`),
+      statusCode,
+    });
     this.name = 'LogicFunctionExecutionException';
   }
 }
@@ -96,6 +115,7 @@ export class LogicFunctionExecutorService {
     private readonly eventLogEmitterService: EventLogEmitterService,
     private readonly usageRecorderService: UsageRecorderService,
     private readonly billingUsageService: BillingUsageService,
+    private readonly usageLimitQuotaService: UsageLimitQuotaService,
     private readonly featureFlagService: FeatureFlagService,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
     private readonly applicationService: ApplicationService,
@@ -115,6 +135,7 @@ export class LogicFunctionExecutorService {
     executionMode,
     workspaceDeletionRequestTimestamp,
     retry = { retryCount: 0, maxRetries: 0 },
+    shouldEnforceUsageLimits = true,
   }: {
     logicFunctionId: string;
     workspaceId: string;
@@ -124,6 +145,7 @@ export class LogicFunctionExecutorService {
     executionMode?: LogicFunctionExecutionMode;
     workspaceDeletionRequestTimestamp?: string;
     retry?: LogicFunctionRetryContext;
+    shouldEnforceUsageLimits?: boolean;
   }): Promise<LogicFunctionExecuteResult> {
     const { flatApplication, flatLogicFunction, applicationVariableMaps } =
       await this.getFlatEntitiesOrThrow({
@@ -131,11 +153,18 @@ export class LogicFunctionExecutorService {
         logicFunctionId,
       });
 
-    // Checked before the shared workspace throttle so a flood from a stopped
-    // application cannot exhaust the token bucket of the other applications.
+    // Before the shared workspace throttle so a stopped app's flood cannot drain other apps' token bucket.
     await this.assertApplicationNotStopped(flatApplication);
 
     await this.throttleExecution(workspaceId);
+
+    if (shouldEnforceUsageLimits) {
+      await this.assertExecutionAllowed({
+        workspaceId,
+        flatApplication,
+        flatLogicFunction,
+      });
+    }
 
     const envVariables = await this.getExecutionEnvVariables({
       workspaceId,
@@ -255,6 +284,40 @@ export class LogicFunctionExecutorService {
     }
   }
 
+  private async assertExecutionAllowed({
+    workspaceId,
+    flatApplication,
+    flatLogicFunction,
+  }: {
+    workspaceId: string;
+    flatApplication: FlatApplication;
+    flatLogicFunction: FlatLogicFunction;
+  }): Promise<void> {
+    if (isBillingExemptApplication(flatApplication.universalIdentifier)) {
+      return;
+    }
+
+    const isExecutionQuotaEnabled =
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_EXECUTION_QUOTA_ENABLED,
+        workspaceId,
+      );
+
+    if (!isExecutionQuotaEnabled) {
+      return;
+    }
+
+    await this.billingUsageService.assertUsageAllowed({
+      workspaceId,
+      resourceType: UsageResourceType.LOGIC_FUNCTION,
+      operationType: UsageOperationType.CODE_EXECUTION,
+      spenders: {
+        logicFunctionId: flatLogicFunction.id,
+        applicationId: flatApplication.id,
+      },
+    });
+  }
+
   private async throttleExecution(workspaceId: string) {
     try {
       await this.throttlerService.tokenBucketThrottleOrThrow(
@@ -263,10 +326,21 @@ export class LogicFunctionExecutorService {
         this.twentyConfigService.get('LOGIC_FUNCTION_EXEC_THROTTLE_LIMIT'),
         this.twentyConfigService.get('LOGIC_FUNCTION_EXEC_THROTTLE_TTL'),
       );
-    } catch {
+    } catch (error) {
+      if (
+        !(error instanceof ThrottlerException) ||
+        error.code !== ThrottlerExceptionCode.LIMIT_REACHED
+      ) {
+        throw error;
+      }
+
       throw new LogicFunctionExecutionException(
         'Logic function execution rate limit exceeded',
         LogicFunctionExecutionExceptionCode.RATE_LIMIT_EXCEEDED,
+        {
+          userFriendlyMessage: error.userFriendlyMessage,
+          statusCode: error.statusCode,
+        },
       );
     }
   }
@@ -368,8 +442,7 @@ export class LogicFunctionExecutorService {
     userWorkspaceId?: string;
     workspaceDeletionRequestTimestamp?: string;
   }) {
-    // Two tokens so a handler can choose per call which access it acts with,
-    // rather than the whole run being locked to one of them.
+    // Two tokens so a handler can choose per call which access it acts with.
     const hasTriggeringPerson = isDefined(userId) && isDefined(userWorkspaceId);
 
     const [applicationAccessToken, delegatedAccessToken] = await Promise.all([
@@ -412,9 +485,10 @@ export class LogicFunctionExecutorService {
       });
 
     return {
+      ...serverVariables,
+      ...workspaceVariables,
       [DEFAULT_API_URL_NAME]: baseUrl ?? '',
-      // Falls back to the application when nobody triggered the run, so a cron
-      // schedule or an install hook keeps working without asking for anything.
+      // Falls back to the application so cron schedules and install hooks work with nobody triggering.
       [DEFAULT_APP_ACCESS_TOKEN_NAME]: (
         delegatedAccessToken ?? applicationAccessToken
       ).token,
@@ -422,8 +496,6 @@ export class LogicFunctionExecutorService {
       [DEFAULT_API_KEY_NAME]: applicationAccessToken.token,
       [DEFAULT_FUNCTIONS_URL_NAME]: functionsBaseUrl ?? '',
       APPLICATION_ID: flatApplication.id,
-      ...serverVariables,
-      ...workspaceVariables,
     };
   }
 
@@ -576,11 +648,7 @@ export class LogicFunctionExecutorService {
         functionName: flatLogicFunction.name,
       });
 
-    // Billing-exempt apps (first-party maintenance apps whose per-record
-    // triggers fire during mailbox/calendar import) do not consume the
-    // workspace's credits for the execution itself. Explicit chargeCredits
-    // calls and AI token usage from within the function are billed separately
-    // and stay untouched.
+    // Billing-exempt apps skip the invocation charge; their explicit chargeCredits and AI usage are still billed.
     const { invocationCreditsMicro, durationCreditsMicro, billedDurationMs } =
       computeLogicFunctionExecutionCreditsMicro({
         durationMs: result.billedDurationMs,
@@ -597,7 +665,7 @@ export class LogicFunctionExecutorService {
     };
 
     if (totalCreditsMicro > 0) {
-      await this.billingUsageService.consumeUsageQuota({
+      await this.usageLimitQuotaService.consumeQuota({
         workspaceId,
         resourceType: UsageResourceType.LOGIC_FUNCTION,
         operationType: UsageOperationType.CODE_EXECUTION,

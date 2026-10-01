@@ -4,9 +4,9 @@ import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useNavigate } from 'react-router-dom';
 import { NavigationMenuItemType } from 'twenty-shared/types';
+import { LightIconButton } from 'twenty-ui/components';
 import { IconPlus, IconTool } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/primitives/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { useIsMobile } from 'twenty-ui/utilities';
 
 import { useEnterLayoutCustomizationMode } from '@/layout-customization/hooks/useEnterLayoutCustomizationMode';
@@ -105,8 +105,7 @@ export const WorkspaceSection = () => {
       sectionTitle={t`Workspace`}
       items={items}
       rightIcon={
-        // Customising the menu is a desktop job, so mobile shows neither the
-        // entry point nor the add button it turns into.
+        // Customising the menu is desktop-only.
         isMobile ? undefined : (
           <StyledRightIconsContainer>
             {isLayoutCustomizationModeEnabled ? (
@@ -116,20 +115,24 @@ export const WorkspaceSection = () => {
                 onOpen={openNavigationSection}
               >
                 <LightIconButton
-                  Icon={IconPlus}
-                  accent="tertiary"
-                  size="small"
-                />
+                  emphasis="subtle"
+                  size="sm"
+                  aria-label={t`Add`}
+                >
+                  <IconPlus />
+                </LightIconButton>
               </NavigationMenuItemAddDropdown>
             ) : (
               hasLayoutsPermission && (
                 <div onMouseEnter={preloadNavigationMenuItemDndKit}>
                   <LightIconButton
-                    Icon={IconTool}
-                    accent="tertiary"
-                    size="small"
+                    emphasis="subtle"
+                    size="sm"
                     onClick={handleEditClick}
-                  />
+                    aria-label={t`Edit navigation`}
+                  >
+                    <IconTool />
+                  </LightIconButton>
                 </div>
               )
             )}

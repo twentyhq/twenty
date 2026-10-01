@@ -7,20 +7,11 @@
  *                              |___/
  */
 
-export { AnimatedCircleLoading } from './AnimatedCircleLoading/AnimatedCircleLoading';
-export { AnimatedContainer } from './AnimatedContainer/AnimatedContainer';
-export { AnimatedEaseIn } from './AnimatedEaseIn/AnimatedEaseIn';
-export { AnimatedEaseInOut } from './AnimatedEaseInOut/AnimatedEaseInOut';
-export { AnimatedExpandableContainer } from './AnimatedExpandableContainer/AnimatedExpandableContainer';
-export type { AnimationDimension } from './AnimatedExpandableContainer/types/AnimationDimension';
-export type { AnimationDurationObject } from './AnimatedExpandableContainer/types/AnimationDurationObject';
-export type { AnimationDurations } from './AnimatedExpandableContainer/types/AnimationDurations';
-export type { AnimationMode } from './AnimatedExpandableContainer/types/AnimationMode';
-export type { AnimationSize } from './AnimatedExpandableContainer/types/AnimationSize';
-export { AnimatedIconCrossfade } from './AnimatedIconCrossfade/AnimatedIconCrossfade';
-export { AnimatedRotate } from './AnimatedRotate/AnimatedRotate';
-export { AutogrowWrapper } from './AutogrowWrapper/AutogrowWrapper';
+export { Collapsible } from './Collapsible/Collapsible';
+export type { AnimationDimension } from './Collapsible/types/AnimationDimension';
+export type { AnimationDurationObject } from './Collapsible/types/AnimationDurationObject';
+export type { AnimationDurations } from './Collapsible/types/AnimationDurations';
 export { HorizontalSeparator } from './HorizontalSeparator/HorizontalSeparator';
-export { useResizeHandle } from './ResizeHandle/hooks/useResizeHandle';
 export { ResizeHandle } from './ResizeHandle/ResizeHandle';
+export type { ResizeHandleProps } from './ResizeHandle/types/ResizeHandleProps';
 export { TextDirectionProvider } from './TextDirectionProvider/TextDirectionProvider';

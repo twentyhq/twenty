@@ -39,7 +39,7 @@ type ManyToOneRelationValue<
         ? {
             metadataName: TTargetMetadataName;
             foreignKey: FK;
-            // Should not be nullable, in the best of the world relation should always describe an inverse property
+            // TODO: make non-nullable once every relation describes an inverse property
             inverseOneToManyProperty:
               | keyof (typeof ALL_ONE_TO_MANY_METADATA_RELATIONS)[TTargetMetadataName]
               | null;
@@ -556,6 +556,17 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
     workspace: null,
     application: null,
   },
+  settingsMenuItem: {
+    workspace: null,
+    application: null,
+    frontComponent: {
+      metadataName: 'frontComponent',
+      foreignKey: 'frontComponentId',
+      inverseOneToManyProperty: null,
+      isNullable: false,
+      universalForeignKey: 'frontComponentUniversalIdentifier',
+    },
+  },
   searchFieldMetadata: {
     workspace: null,
     application: null,
@@ -580,6 +591,33 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
       isNullable: false,
       universalForeignKey: 'tsVectorFieldMetadataUniversalIdentifier',
     },
+  },
+  validationRule: {
+    workspace: null,
+    application: null,
+    objectMetadata: {
+      metadataName: 'objectMetadata',
+      foreignKey: 'objectMetadataId',
+      inverseOneToManyProperty: null,
+      isNullable: false,
+      universalForeignKey: 'objectMetadataUniversalIdentifier',
+    },
+    errorFieldMetadata: {
+      metadataName: 'fieldMetadata',
+      foreignKey: 'errorFieldMetadataId',
+      inverseOneToManyProperty: null,
+      isNullable: true,
+      universalForeignKey: 'errorFieldMetadataUniversalIdentifier',
+    },
+  },
+  workflow: {
+    workspace: null,
+    createdBy: null,
+    application: null,
+  },
+  workflowVersion: {
+    workspace: null,
+    application: null,
   },
 } as const satisfies ManyToOneMetadataRelationsProperties;
 

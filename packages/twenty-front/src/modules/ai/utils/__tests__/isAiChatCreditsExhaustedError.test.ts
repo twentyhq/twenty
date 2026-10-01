@@ -1,5 +1,7 @@
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 
+import { AiChatErrorCode } from '@/ai/utils/aiChatErrorCode';
+import { createAiChatCodedError } from '@/ai/utils/createAiChatCodedError';
 import { isAiChatCreditsExhaustedError } from '@/ai/utils/isAiChatCreditsExhaustedError';
 
 const buildError = (extensions: Record<string, unknown>) =>
@@ -9,10 +11,10 @@ const buildError = (extensions: Record<string, unknown>) =>
   });
 
 describe('isAiChatCreditsExhaustedError', () => {
-  it('covers both ways the server reports spent credits', () => {
+  it('covers both ways spent credits reach the client', () => {
     expect(
       isAiChatCreditsExhaustedError(
-        buildError({ code: 'BILLING_CREDITS_EXHAUSTED' }),
+        createAiChatCodedError('refused', AiChatErrorCode.CREDITS_EXHAUSTED),
       ),
     ).toBe(true);
 

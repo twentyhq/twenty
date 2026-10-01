@@ -1,3 +1,4 @@
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { styled } from '@linaria/react';
 import { type DraggableListDropResult } from '@/ui/layout/draggable-list/types/DraggableListDropResult';
 import { type MouseEvent, useCallback } from 'react';
@@ -5,7 +6,7 @@ import { type MouseEvent, useCallback } from 'react';
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSectionLabel } from '@/ui/layout/dropdown/components/DropdownMenuSectionLabel';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
@@ -24,8 +25,7 @@ import { computeViewPickerVisibleViews } from '@/views/view-picker/utils/compute
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useLingui } from '@lingui/react/macro';
 import { IconPlus } from 'twenty-ui/icon';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { FeatureFlagKey, ViewVisibility } from '~/generated-metadata/graphql';
 import { moveArrayItem } from '~/utils/array/moveArrayItem';
 
@@ -146,7 +146,7 @@ export const ViewPickerListContent = () => {
   );
 
   return (
-    <DropdownContent>
+    <LegacyDropdownContent>
       {workspaceViews.length > 0 && (
         <>
           {shouldShowSectionLabels && (
@@ -219,13 +219,12 @@ export const ViewPickerListContent = () => {
       <DropdownMenuSeparator />
       <StyledBoldDropdownMenuItemsContainerWrapper>
         <DropdownMenuItemsContainer scrollable={false}>
-          <MenuItem
+          <ListItem
             onClick={handleAddViewButtonClick}
-            LeftIcon={IconPlus}
-            text={t`Add view`}
-          />
+            startIcon={<IconPlus />}
+          >{t`Add view`}</ListItem>
         </DropdownMenuItemsContainer>
       </StyledBoldDropdownMenuItemsContainerWrapper>
-    </DropdownContent>
+    </LegacyDropdownContent>
   );
 };

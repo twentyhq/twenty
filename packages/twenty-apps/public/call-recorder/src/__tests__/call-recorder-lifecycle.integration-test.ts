@@ -1,6 +1,10 @@
 import { randomUUID } from 'crypto';
 
+import { isNull, isUndefined } from '@sniptt/guards';
 import { CoreApiClient } from 'twenty-client-sdk/core';
+import { MetadataApiClient } from 'twenty-client-sdk/metadata';
+import { getJobs } from 'twenty-sdk/logic-function';
+import { isDefined } from 'twenty-sdk/utils';
 import {
   afterEach,
   beforeAll,
@@ -11,10 +15,25 @@ import {
   vi,
 } from 'vitest';
 
+import {
+  APPLICATION_UNIVERSAL_IDENTIFIER,
+  CHECK_CREDITS_BEFORE_RECALL_BOT_JOIN_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
+  STALE_BOT_STATE_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
+} from 'src/constants/universal-identifiers';
+import { CallRecorderPreference } from 'src/constants/call-recorder-preference';
+import { reconcileStaleBotStateHandler } from 'src/logic-functions/reconcile-stale-bot-state';
 import { CALL_RECORDER_CALENDAR_BOT_SCHEDULING_ENABLED_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-calendar-bot-scheduling-enabled-env-var-name';
 import { CALENDAR_EVENT_UPDATE_BATCH_SIZE } from 'src/logic-functions/constants/calendar-event-update-batch-size';
+import { getBatches } from 'src/logic-functions/utils/get-batches.util';
+import { markCalendarEventsRecordingOn } from 'src/logic-functions/data/mark-calendar-events-recording-on.util';
 import { cancelCallRecordingRequest } from 'src/logic-functions/flows/cancel-call-recording-request.util';
+import { enqueueCallRecordingArtifactsImport } from 'src/logic-functions/data/enqueue-call-recording-artifacts-import.util';
+import { saveCallRecordingImportProgress } from 'src/logic-functions/data/save-call-recording-import-progress.util';
+import { convergeDivergedCallRecordings } from 'src/logic-functions/flows/converge-diverged-call-recordings.util';
 import { handleCallRecordingArtifactsImportJob } from 'src/logic-functions/flows/handle-call-recording-artifacts-import-job.util';
+import { handlePreJoinCreditCheckJob } from 'src/logic-functions/flows/handle-pre-join-credit-check-job.util';
+import { enqueuePreJoinCreditCheck } from 'src/logic-functions/data/enqueue-pre-join-credit-check.util';
+import { PRE_JOIN_CREDIT_CHECK_LEAD_MINUTES } from 'src/logic-functions/constants/pre-join-credit-check-lead-minutes';
 import { reconcileCallRecorderForCalendarEventIds } from 'src/logic-functions/flows/reconcile-call-recorder.util';
 import { retryFailedRecallCancellations } from 'src/logic-functions/flows/retry-failed-recall-cancellations.util';
 import { scheduleRecallBotsForPendingCallRecordings } from 'src/logic-functions/flows/schedule-recall-bots-for-pending-call-recordings.util';
@@ -24,24 +43,22 @@ import { cancelScheduledRecallBots } from 'src/logic-functions/flows/cancel-sche
 import { syncCalendarBotSchedulingHandler } from 'src/logic-functions/sync-calendar-bot-scheduling';
 import reconcileCalendarEventLogicFunction from 'src/logic-functions/reconcile-call-recorder-calendar-event';
 
-// ---------------------------------------------------------------------------
 // Call Recorder end-to-end behavior against a live Twenty server.
 //
 // The app is installed on the test server by the vitest global setup, and all
-// reads and writes go through the real API into the test database. Only the
-// externals are mocked:
+// reads and writes go through the real API into the test database. Lifecycle
+// scenarios control delivery order with fakes for:
 //   - the Recall API (a fetch interceptor that replays the same bot for a
 //     repeated Idempotency-Key, like the real API),
 //   - the trigger transports: webhook deliveries invoke the webhook logic
 //     function handler directly, and cron / database-event triggers invoke
-//     the flows they dispatch.
+//     the flows they dispatch, including queued artifact imports.
 //
-// Every scenario then asserts the resulting CallRecording rows in the DB.
+// Queue scenarios bypass those fakes and use the installed app's real worker.
 //
 // The suite issues a few hundred API requests; if the test server runs with
 // the default API_RATE_LIMITING_LONG_LIMIT of 100 requests per minute,
 // raise it (e.g. to 100000) or the runs trip the limiter.
-// ---------------------------------------------------------------------------
 
 const WORKSPACE_API_KEY_ENV = 'TWENTY_API_KEY';
 const RECALL_BASE_URL = 'https://us-west-2.recall.ai/api/v1';
@@ -50,12 +67,13 @@ const RESTRICTED_TITLE_PLACEHOLDER =
 
 // The app's generated client only covers the objects the app uses, but test
 // fixture discovery needs fields that are not part of the app schema; this
-// hits the workspace GraphQL API directly with the test API key.
-const workspaceGraphql = async (
+// hits the GraphQL APIs directly with the test API key.
+const twentyGraphql = async <TData>(
+  endpointPath: '/graphql' | '/metadata',
   query: string,
   variables: Record<string, unknown> = {},
-): Promise<any> => {
-  const response = await fetch(`${process.env.TWENTY_API_URL}/graphql`, {
+): Promise<TData> => {
+  const response = await fetch(`${process.env.TWENTY_API_URL}${endpointPath}`, {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${process.env[WORKSPACE_API_KEY_ENV]}`,
@@ -63,15 +81,79 @@ const workspaceGraphql = async (
     },
     body: JSON.stringify({ query, variables }),
   });
-  const payload = await response.json();
+  const payload = (await response.json()) as {
+    data: TData;
+    errors?: unknown[];
+  };
 
-  if (payload.errors !== undefined) {
+  if (isDefined(payload.errors)) {
     throw new Error(
-      `Workspace GraphQL request failed: ${JSON.stringify(payload.errors)}`,
+      `GraphQL request to ${endpointPath} failed: ${JSON.stringify(payload.errors)}`,
     );
   }
 
   return payload.data;
+};
+
+const fetchApplicationAccessToken = async (): Promise<string> => {
+  const {
+    findApplicationRegistrationByUniversalIdentifier: applicationRegistration,
+  } = await twentyGraphql<{
+    findApplicationRegistrationByUniversalIdentifier: {
+      id: string;
+      oAuthClientId: string;
+    } | null;
+  }>(
+    '/metadata',
+    `query FindApplicationRegistration($universalIdentifier: String!) {
+      findApplicationRegistrationByUniversalIdentifier(
+        universalIdentifier: $universalIdentifier
+      ) {
+        id
+        oAuthClientId
+      }
+    }`,
+    { universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER },
+  );
+
+  if (isNull(applicationRegistration)) {
+    throw new Error('Call recorder is not registered');
+  }
+
+  const {
+    rotateApplicationRegistrationClientSecret: { clientSecret },
+  } = await twentyGraphql<{
+    rotateApplicationRegistrationClientSecret: { clientSecret: string };
+  }>(
+    '/metadata',
+    `mutation RotateApplicationRegistrationClientSecret($id: String!) {
+      rotateApplicationRegistrationClientSecret(id: $id) {
+        clientSecret
+      }
+    }`,
+    { id: applicationRegistration.id },
+  );
+  const response = await fetch(`${process.env.TWENTY_API_URL}/oauth/token`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      grant_type: 'client_credentials',
+      client_id: applicationRegistration.oAuthClientId,
+      client_secret: clientSecret,
+    }),
+  });
+  const tokenResponse = (await response.json()) as {
+    access_token?: string;
+    error_description?: string;
+  };
+
+  if (!response.ok || isUndefined(tokenResponse.access_token)) {
+    throw new Error(
+      `Client credentials exchange failed: ${tokenResponse.error_description ?? response.statusText}`,
+    );
+  }
+
+  return tokenResponse.access_token;
 };
 
 type CalendarEventFixture = {
@@ -82,11 +164,18 @@ type CalendarEventFixture = {
   iCalUid: string;
   isCanceled: boolean;
   isFullDay: boolean;
-  callRecorderPreference: string | null;
+  callRecorderPreference: CallRecorderPreference | null;
   conferenceLink: {
     primaryLinkLabel: string;
     primaryLinkUrl: string;
     secondaryLinks: Array<{ label: string; url: string }> | null;
+  };
+};
+
+type CalendarEventFixturesPage = {
+  calendarEvents: {
+    edges: Array<{ node: CalendarEventFixture }>;
+    pageInfo: { hasNextPage: boolean; endCursor: string | null };
   };
 };
 
@@ -97,7 +186,8 @@ const discoverVisibleCalendarEventFixtures = async (): Promise<
   let after: string | null = null;
 
   do {
-    const eventsData = await workspaceGraphql(
+    const eventsData: CalendarEventFixturesPage = await twentyGraphql(
+      '/graphql',
       `query ($after: String) {
         calendarEvents(first: 200, after: $after) {
           edges {
@@ -126,7 +216,7 @@ const discoverVisibleCalendarEventFixtures = async (): Promise<
 
     fixtures.push(
       ...connection.edges
-        .map((edge: any) => edge.node)
+        .map((edge) => edge.node)
         .filter(
           (node: CalendarEventFixture) =>
             node.title !== RESTRICTED_TITLE_PLACEHOLDER &&
@@ -153,17 +243,24 @@ const inTwoHours = () =>
   new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString();
 const hoursAgo = (hours: number) =>
   new Date(Date.now() - hours * 60 * 60 * 1000).toISOString();
+const daysAgo = (days: number) => hoursAgo(days * 24);
 
-// ---------------------------------------------------------------------------
 // Recall API fake, installed as a fetch interceptor. Twenty API traffic falls
 // through to the real fetch, except the metadata enqueueJobs mutation, which is
 // captured here so fanned-out jobs do not run inside the test.
-// ---------------------------------------------------------------------------
+
+type FakeRecallBotStatusChange = {
+  code: string;
+  sub_code?: string;
+  created_at: string;
+};
 
 type FakeRecallBot = {
   id: string;
   metadata: Record<string, string>;
-  statusCode: string;
+  statusCode?: string;
+  statusChanges?: FakeRecallBotStatusChange[];
+  recordings?: Array<{ id: string; started_at: string; completed_at: string }>;
 };
 
 type FakeRecallTranscript = {
@@ -186,16 +283,57 @@ const MP3_FRAME_HEADER_BYTES = Uint8Array.from([
   ...new Array(412).fill(0),
 ]);
 
+const RECALL_METADATA_FILTER_PREFIX = 'metadata__';
+
+const matchesRecallBotListFilters = ({
+  bot,
+  listFilters,
+}: {
+  bot: Pick<FakeRecallBot, 'metadata' | 'statusCode'>;
+  listFilters: URLSearchParams;
+}): boolean => {
+  const statusFilters = listFilters.getAll('status');
+
+  if (
+    statusFilters.length > 0 &&
+    (isUndefined(bot.statusCode) || !statusFilters.includes(bot.statusCode))
+  ) {
+    return false;
+  }
+
+  return [...listFilters.entries()]
+    .filter(([filterKey]) =>
+      filterKey.startsWith(RECALL_METADATA_FILTER_PREFIX),
+    )
+    .every(
+      ([filterKey, filterValue]) =>
+        bot.metadata[filterKey.slice(RECALL_METADATA_FILTER_PREFIX.length)] ===
+        filterValue,
+    );
+};
+
 class FakeRecallApi {
   bots = new Map<string, FakeRecallBot>();
   botIdByIdempotencyKey = new Map<string, string>();
   transcripts = new Map<string, FakeRecallTranscript>();
   transcriptRequestFailureStatus: number | undefined = undefined;
+  failVideoDownload = false;
+  mediaContentLengthBytes: number | undefined = undefined;
   deletedBotIds: string[] = [];
   listRequestCount = 0;
   artifactImportRequests: object[] = [];
+  activeArtifactJobIds = new Set<string>();
+  recoveryRequests: object[] = [];
+  creditCheckRequests: object[] = [];
+  // Undefined lets the credit verdict fall through to the real server.
+  creditAvailability:
+    | { hasAvailableCredits: true }
+    | { hasAvailableCredits: false; reason: string }
+    | undefined = undefined;
+  hasExpiredMedia = false;
   failNextDelete = false;
   failCalendarEventUpdates = false;
+  failCallRecordingReads = false;
   failRecallRemovals = false;
 
   seedBot(bot: FakeRecallBot): void {
@@ -209,6 +347,74 @@ class FakeRecallApi {
     }
   }
 
+  // Mirrors Recall after retention: the bot history ends with media_expired,
+  // the recording disappears from the bot, and its transcripts read as deleted.
+  expireBotMedia({
+    botId,
+    recordingStartedAt,
+    recordingEndedAt,
+  }: {
+    botId: string;
+    recordingStartedAt: string;
+    recordingEndedAt: string;
+  }): void {
+    const bot = this.finishBotRecording({
+      botId,
+      recordingStartedAt,
+      recordingEndedAt,
+    });
+
+    this.hasExpiredMedia = true;
+    bot.statusCode = 'media_expired';
+    bot.statusChanges = [
+      ...(bot.statusChanges ?? []),
+      { code: 'media_expired', created_at: new Date().toISOString() },
+    ];
+    bot.recordings = [];
+
+    for (const transcript of this.transcripts.values()) {
+      transcript.statusCode = 'deleted';
+    }
+  }
+
+  // Mirrors Recall after a call the app never heard the end of: the bot
+  // history and its recording are complete, but no webhook reached the app.
+  finishBotRecording({
+    botId,
+    recordingStartedAt,
+    recordingEndedAt,
+  }: {
+    botId: string;
+    recordingStartedAt: string;
+    recordingEndedAt: string;
+  }): FakeRecallBot {
+    const bot = this.bots.get(botId);
+
+    if (bot === undefined) {
+      throw new Error(`Unknown fake Recall bot ${botId}`);
+    }
+
+    bot.statusCode = 'done';
+    bot.statusChanges = [
+      { code: 'in_call_recording', created_at: recordingStartedAt },
+      {
+        code: 'call_ended',
+        sub_code: 'timeout_exceeded_everyone_left',
+        created_at: recordingEndedAt,
+      },
+      { code: 'done', created_at: recordingEndedAt },
+    ];
+    bot.recordings = [
+      {
+        id: 'recall-recording-1',
+        started_at: recordingStartedAt,
+        completed_at: recordingEndedAt,
+      },
+    ];
+
+    return bot;
+  }
+
   botForCallRecording(callRecordingId: string): FakeRecallBot | undefined {
     return [...this.bots.values()].find(
       (bot) => bot.metadata.twentyCallRecordingId === callRecordingId,
@@ -217,6 +423,31 @@ class FakeRecallApi {
 
   handle(requestUrl: string, requestInit?: any): Response | undefined {
     const method: string = requestInit?.method ?? 'GET';
+
+    if (
+      requestUrl === `${process.env.TWENTY_API_URL}/app/billing/credits` &&
+      this.creditAvailability !== undefined
+    ) {
+      return jsonResponse(200, this.creditAvailability);
+    }
+
+    if (
+      requestUrl === `${process.env.TWENTY_API_URL}/metadata` &&
+      String(requestInit?.body ?? '').includes('getJobs')
+    ) {
+      const sentBody: { variables?: Record<string, string[]> } = JSON.parse(
+        requestInit?.body ?? '{}',
+      );
+      const requestedJobIds = Object.values(sentBody.variables ?? {}).flat();
+
+      return jsonResponse(200, {
+        data: {
+          getJobs: [...this.activeArtifactJobIds]
+            .filter((jobId) => requestedJobIds.includes(jobId))
+            .map((jobId) => ({ jobId, state: 'ACTIVE' })),
+        },
+      });
+    }
 
     // Capture the artifact-import enqueue instead of letting the job run.
     if (
@@ -227,9 +458,24 @@ class FakeRecallApi {
       const [input] = Object.values(sentBody.variables ?? {}) as {
         logicFunctionUniversalIdentifier: string;
         payloads: object[];
+        jobs?: { jobId: string; payload: object }[];
       }[];
+      const payloads =
+        input?.jobs?.map(({ payload }) => payload) ?? input?.payloads ?? [];
 
-      this.artifactImportRequests.push(...(input?.payloads ?? []));
+      if (
+        input?.logicFunctionUniversalIdentifier ===
+        STALE_BOT_STATE_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER
+      ) {
+        this.recoveryRequests.push(...payloads);
+      } else if (
+        input?.logicFunctionUniversalIdentifier ===
+        CHECK_CREDITS_BEFORE_RECALL_BOT_JOIN_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER
+      ) {
+        this.creditCheckRequests.push(...payloads);
+      } else {
+        this.artifactImportRequests.push(...payloads);
+      }
 
       return jsonResponse(200, {
         data: {
@@ -237,7 +483,8 @@ class FakeRecallApi {
             enqueued: true,
             logicFunctionUniversalIdentifier:
               input?.logicFunctionUniversalIdentifier ?? '',
-            enqueuedJobsCount: input?.payloads?.length ?? 0,
+            enqueuedJobsCount: payloads.length,
+            jobIds: input?.jobs?.map(({ jobId }) => jobId) ?? [],
           },
         },
       });
@@ -247,6 +494,14 @@ class FakeRecallApi {
       this.failCalendarEventUpdates &&
       requestUrl === `${process.env.TWENTY_API_URL}/graphql` &&
       String(requestInit?.body ?? '').includes('updateCalendarEvents')
+    ) {
+      return jsonResponse(500, { errors: [{ message: 'Internal error' }] });
+    }
+
+    if (
+      this.failCallRecordingReads &&
+      requestUrl === `${process.env.TWENTY_API_URL}/graphql` &&
+      String(requestInit?.body ?? '').includes('callRecordings')
     ) {
       return jsonResponse(500, { errors: [{ message: 'Internal error' }] });
     }
@@ -262,17 +517,39 @@ class FakeRecallApi {
     if (method === 'GET' && requestUrl.startsWith(`${RECALL_BASE_URL}/bot/?`)) {
       this.listRequestCount += 1;
 
+      const listFilters = new URL(requestUrl).searchParams;
+
       return jsonResponse(200, {
         next: null,
-        results: [...this.bots.values()].map((bot) => ({
-          id: bot.id,
-          metadata: bot.metadata,
-          status: { code: bot.statusCode },
-        })),
+        results: [...this.bots.values()]
+          .filter((bot) => matchesRecallBotListFilters({ bot, listFilters }))
+          .map((bot) => ({
+            id: bot.id,
+            metadata: bot.metadata,
+            status: { code: bot.statusCode },
+            status_changes: bot.statusChanges ?? [],
+            recordings: bot.recordings ?? [],
+          })),
       });
     }
 
     const botIdMatch = requestUrl.match(/\/bot\/([^/]+)\/$/);
+
+    if (method === 'GET' && botIdMatch !== null) {
+      const bot = this.bots.get(botIdMatch[1]);
+
+      if (bot === undefined) {
+        return jsonResponse(404, {});
+      }
+
+      return jsonResponse(200, {
+        id: bot.id,
+        metadata: bot.metadata,
+        status: { code: bot.statusCode },
+        status_changes: bot.statusChanges ?? [],
+        recordings: bot.recordings ?? [],
+      });
+    }
 
     const ejectedBotIdMatch = requestUrl.match(/\/bot\/([^/]+)\/leave_call\/$/);
 
@@ -300,10 +577,22 @@ class FakeRecallApi {
       return new Response(null, { status: 204 });
     }
 
+    if (method === 'PATCH' && botIdMatch !== null) {
+      const bot = this.bots.get(botIdMatch[1]);
+
+      if (bot === undefined) {
+        return jsonResponse(404, {});
+      }
+
+      return jsonResponse(200, { id: bot.id });
+    }
+
     if (
       method === 'POST' &&
       /\/recording\/[^/]+\/create_transcript\/$/.test(requestUrl)
     ) {
+      if (this.hasExpiredMedia) return jsonResponse(404, {});
+
       if (this.transcriptRequestFailureStatus !== undefined) {
         return jsonResponse(this.transcriptRequestFailureStatus, {});
       }
@@ -366,6 +655,7 @@ class FakeRecallApi {
     }
 
     if (method === 'GET' && /\/recording\/[^/]+\/$/.test(requestUrl)) {
+      if (this.hasExpiredMedia) return jsonResponse(404, {});
       return jsonResponse(200, {
         media_shortcuts: {
           video_mixed: {
@@ -382,6 +672,10 @@ class FakeRecallApi {
       method === 'GET' &&
       requestUrl.startsWith(`${FAKE_RECALL_DOWNLOAD_BASE_URL}/media/`)
     ) {
+      if (this.failVideoDownload && requestUrl.endsWith('.mp4')) {
+        return jsonResponse(500, {});
+      }
+
       // Twenty checks uploads by magic bytes, so the fake media needs real headers.
       const mediaBytes = requestUrl.endsWith('.mp4')
         ? MP4_FILE_HEADER_BYTES
@@ -389,7 +683,11 @@ class FakeRecallApi {
 
       return new Response(mediaBytes, {
         status: 200,
-        headers: { 'content-length': String(mediaBytes.byteLength) },
+        headers: {
+          'content-length': String(
+            this.mediaContentLengthBytes ?? mediaBytes.byteLength,
+          ),
+        },
       });
     }
 
@@ -412,7 +710,6 @@ class FakeRecallApi {
     const bot: FakeRecallBot = {
       id: `recall-bot-${randomUUID()}`,
       metadata: body.metadata ?? {},
-      statusCode: 'ready',
     };
 
     this.bots.set(bot.id, bot);
@@ -427,10 +724,6 @@ class FakeRecallApi {
 
 const jsonResponse = (status: number, body: object): Response =>
   new Response(JSON.stringify(body), { status });
-
-// ---------------------------------------------------------------------------
-// Recall webhook payloads, mirroring the shapes Recall actually delivers.
-// ---------------------------------------------------------------------------
 
 const buildBotMetadata = (callRecordingId: string, workspaceId: string) => ({
   twentyWorkspaceId: workspaceId,
@@ -484,6 +777,20 @@ const buildRecordingDoneWebhook = ({
   },
 });
 
+const buildRecordingDeletedWebhook = ({
+  botId,
+  metadata,
+}: {
+  botId: string;
+  metadata: Record<string, string>;
+}) => ({
+  event: 'recording.deleted',
+  data: {
+    bot: { id: botId, metadata },
+    recording: { id: 'recall-recording-1' },
+  },
+});
+
 const buildTranscriptDoneWebhook = ({
   botId,
   metadata,
@@ -498,15 +805,11 @@ const buildTranscriptDoneWebhook = ({
   },
 });
 
-// ---------------------------------------------------------------------------
-// Test workspace helpers: real rows in the test database, cleaned up or
-// restored after each scenario.
-// ---------------------------------------------------------------------------
-
 describe('call recorder app lifecycle (integration)', () => {
   // Built before the fetch interceptor is installed so the shared client's
   // Twenty API traffic always uses the real fetch.
   let client: CoreApiClient;
+  let applicationAccessToken: string;
   let workspaceId: string;
   let availableCalendarEventFixtures: CalendarEventFixture[];
   let nextCalendarEventFixtureIndex = 0;
@@ -528,6 +831,7 @@ describe('call recorder app lifecycle (integration)', () => {
     workspaceId = readWorkspaceIdFromApiKey();
     availableCalendarEventFixtures =
       await discoverVisibleCalendarEventFixtures();
+    applicationAccessToken = await fetchApplicationAccessToken();
   });
 
   beforeEach(() => {
@@ -707,6 +1011,7 @@ describe('call recorder app lifecycle (integration)', () => {
         edges: {
           node: {
             id: true,
+            title: true,
             status: true,
             recordingRequestStatus: true,
             calendarEventId: true,
@@ -718,6 +1023,8 @@ describe('call recorder app lifecycle (integration)', () => {
             startedAt: true,
             endedAt: true,
             transcript: true,
+            audio: { fileId: true },
+            video: { fileId: true },
           },
         },
       },
@@ -767,16 +1074,20 @@ describe('call recorder app lifecycle (integration)', () => {
   }> => {
     const calendarEventId = await createCalendarEvent();
 
-    await reconcileCallRecorderForCalendarEventIds({
+    const [reconciliation] = await reconcileCallRecorderForCalendarEventIds({
       client,
       calendarEventIds: [calendarEventId],
     });
 
-    const callRecording = (
-      await findCallRecordings({ calendarEventId: { in: [calendarEventId] } })
-    )[0];
+    if (reconciliation.action === 'FAILED' || !reconciliation.callRecordingId) {
+      throw new Error(
+        `Recording fixture failed: ${JSON.stringify(reconciliation)}`,
+      );
+    }
 
-    expect(callRecording).toBeDefined();
+    const callRecording = await fetchCallRecording(
+      reconciliation.callRecordingId,
+    );
     expect(callRecording.externalBotId).toBeTruthy();
 
     return {
@@ -787,30 +1098,144 @@ describe('call recorder app lifecycle (integration)', () => {
     };
   };
 
-  const deliverCalendarEventUpdate = ({
-    calendarEventId,
-    updatedFields,
-    before,
-    after,
-  }: {
-    calendarEventId: string;
-    updatedFields: string[];
-    before: Record<string, unknown>;
-    after: Record<string, unknown>;
-  }) =>
+  // The recovery cron only reconciles a bot once its meeting has started.
+  const moveMeetingIntoPast = (calendarEventId: string) =>
+    client.mutation({
+      updateCalendarEvent: {
+        __args: {
+          id: calendarEventId,
+          data: { startsAt: daysAgo(9), endsAt: daysAgo(8) },
+        },
+        id: true,
+      },
+    });
+
+  const deliverCalendarEventUpdates = (
+    ...calendarEventUpdates: {
+      calendarEventId: string;
+      updatedFields: string[];
+      before: Record<string, unknown>;
+      after: Record<string, unknown>;
+    }[]
+  ) =>
     (
       reconcileCalendarEventLogicFunction.config.handler as (
-        event: unknown,
+        batch: unknown,
       ) => Promise<object | undefined>
     )({
       name: 'calendarEvent.updated',
-      recordId: calendarEventId,
-      properties: {
-        updatedFields,
-        before: { id: calendarEventId, ...before },
-        after: { id: calendarEventId, ...after },
+      events: calendarEventUpdates.map(
+        ({ calendarEventId, updatedFields, before, after }) => ({
+          recordId: calendarEventId,
+          properties: {
+            updatedFields,
+            before: { id: calendarEventId, ...before },
+            after: { id: calendarEventId, ...after },
+          },
+        }),
+      ),
+    });
+
+  const deliverCalendarEventDestroyed = (
+    destroyedCalendarEvent: Record<string, unknown> & { id: string },
+  ) =>
+    (
+      reconcileCalendarEventLogicFunction.config.handler as (
+        batch: unknown,
+      ) => Promise<object | undefined>
+    )({
+      name: 'calendarEvent.destroyed',
+      events: [
+        {
+          recordId: destroyedCalendarEvent.id,
+          properties: { before: destroyedCalendarEvent },
+        },
+      ],
+    });
+
+  const updateCalendarEventForDelivery = async (
+    calendarEventId: string,
+    data: Partial<CalendarEventFixture>,
+  ) => {
+    const result = await client.query({
+      calendarEvents: {
+        __args: { filter: { id: { eq: calendarEventId } }, first: 1 },
+        edges: {
+          node: {
+            id: true,
+            title: true,
+            startsAt: true,
+            endsAt: true,
+            iCalUid: true,
+            callRecorderPreference: true,
+            conferenceLink: { primaryLinkUrl: true },
+          },
+        },
       },
     });
+    const before = result.calendarEvents?.edges?.[0]?.node;
+
+    if (isUndefined(before)) {
+      throw new Error(`Calendar event ${calendarEventId} not found`);
+    }
+
+    await client.mutation({
+      updateCalendarEvent: {
+        __args: { id: calendarEventId, data },
+        id: true,
+      },
+    });
+
+    return {
+      calendarEventId,
+      updatedFields: Object.keys(data),
+      before,
+      after: { ...before, ...data },
+    };
+  };
+
+  const simulateCalendarEventDestroy = async ({
+    calendarEventId,
+    callRecordingId,
+  }: {
+    calendarEventId: string;
+    callRecordingId: string;
+  }) => {
+    const { before } = await updateCalendarEventForDelivery(calendarEventId, {
+      startsAt: daysAgo(9),
+      endsAt: daysAgo(8),
+    });
+
+    await client.mutation({
+      updateCallRecording: {
+        __args: { id: callRecordingId, data: { calendarEventId: null } },
+        id: true,
+      },
+    });
+    createdCallRecordingIds.push(callRecordingId);
+
+    return before;
+  };
+
+  const interceptCoreApiRequests = (
+    intercept: (
+      request: { query: string; variables: Record<string, unknown> },
+      sendRequest: () => Promise<Response>,
+    ) => Promise<Response>,
+  ) => {
+    const interceptedFetch = globalThis.fetch;
+
+    vi.stubGlobal(
+      'fetch',
+      (input: Parameters<typeof fetch>[0], init?: RequestInit) => {
+        const sendRequest = () => interceptedFetch(input, init);
+
+        return String(input) === `${process.env.TWENTY_API_URL}/graphql`
+          ? intercept(JSON.parse(String(init?.body)), sendRequest)
+          : sendRequest();
+      },
+    );
+  };
 
   // Mocked webhook trigger: invokes the webhook logic function handler with
   // the payload Recall would have delivered.
@@ -839,6 +1264,471 @@ describe('call recorder app lifecycle (integration)', () => {
     scheduleRecallBotsForPendingCallRecordings({ client, now: new Date() });
   const runCancellationRetryCron = () =>
     retryFailedRecallCancellations({ client, now: new Date() });
+  const runStaleStateCron = async () => {
+    const result = await convergeDivergedCallRecordings({
+      client,
+      now: new Date(),
+    });
+
+    while (recall.recoveryRequests.length > 0) {
+      await reconcileStaleBotStateHandler(recall.recoveryRequests.shift());
+    }
+
+    await runQueuedArtifactImports();
+    return result;
+  };
+
+  describe('batched calendar reconciliation', () => {
+    it('saves later preference batches when the middle batch fails', async () => {
+      const fixtureCount = 2 * CALENDAR_EVENT_UPDATE_BATCH_SIZE + 1;
+      const fixtures = availableCalendarEventFixtures.slice(
+        nextCalendarEventFixtureIndex,
+        nextCalendarEventFixtureIndex + fixtureCount,
+      );
+      nextCalendarEventFixtureIndex += fixtureCount;
+      expect(fixtures).toHaveLength(fixtureCount);
+      expect(
+        fixtures.every(({ callRecorderPreference }) =>
+          isNull(callRecorderPreference),
+        ),
+      ).toBe(true);
+
+      const calendarEventIds = fixtures.map(({ id }) => id);
+      let preferenceBatchCount = 0;
+
+      interceptCoreApiRequests(async ({ query }, sendRequest) => {
+        if (query.includes('updateCalendarEvents(')) {
+          preferenceBatchCount += 1;
+
+          if (preferenceBatchCount === 2) {
+            return new Response('Preference update failed', { status: 500 });
+          }
+        }
+
+        return sendRequest();
+      });
+
+      try {
+        await expect(
+          markCalendarEventsRecordingOn(new CoreApiClient(), calendarEventIds),
+        ).rejects.toThrow('1 of 3 calendar event preference batches failed');
+
+        const result = await client.query({
+          calendarEvents: {
+            __args: {
+              filter: { id: { in: calendarEventIds } },
+              first: fixtureCount,
+            },
+            edges: { node: { id: true, callRecorderPreference: true } },
+          },
+        });
+        const failedCalendarEventIds = new Set(
+          [...calendarEventIds]
+            .sort()
+            .slice(
+              CALENDAR_EVENT_UPDATE_BATCH_SIZE,
+              2 * CALENDAR_EVENT_UPDATE_BATCH_SIZE,
+            ),
+        );
+        const calendarEvents = result.calendarEvents?.edges ?? [];
+
+        expect(preferenceBatchCount).toBe(3);
+        expect(calendarEvents).toHaveLength(fixtureCount);
+
+        for (const { node } of calendarEvents) {
+          expect(node.callRecorderPreference).toBe(
+            failedCalendarEventIds.has(node.id) ? null : 'ON',
+          );
+        }
+      } finally {
+        for (const calendarEventIdBatch of getBatches(
+          calendarEventIds,
+          CALENDAR_EVENT_UPDATE_BATCH_SIZE,
+        )) {
+          await client.mutation({
+            updateCalendarEvents: {
+              __args: {
+                filter: { id: { in: calendarEventIdBatch } },
+                data: { callRecorderPreference: null },
+              },
+              id: true,
+            },
+          });
+        }
+      }
+    });
+
+    it.each(['calendarEventId', 'id'])(
+      'leaves existing recordings intact without redelivery when the %s lookup fails',
+      async (filterField) => {
+        const { calendarEventId, callRecordingId, botId } =
+          await scheduleRecordingThroughCalendarReconciliation();
+        const update = await updateCalendarEventForDelivery(calendarEventId, {
+          startsAt: hoursAgo(-2 * 24),
+          endsAt: hoursAgo(-2 * 24 - 1),
+        });
+        let lookupFailed = false;
+        let mutationCount = 0;
+
+        interceptCoreApiRequests(async ({ query, variables }, sendRequest) => {
+          if (query.startsWith('mutation')) {
+            mutationCount += 1;
+          }
+
+          if (
+            query.includes('callRecordings(') &&
+            JSON.stringify(variables).includes(`"${filterField}":{"in":`)
+          ) {
+            lookupFailed = true;
+            return new Response('Recording lookup failed', { status: 500 });
+          }
+
+          return sendRequest();
+        });
+
+        await expect(
+          deliverCalendarEventUpdates(update),
+        ).rejects.not.toMatchObject({
+          name: 'RetryableLogicFunctionError',
+        });
+
+        expect(lookupFailed).toBe(true);
+        expect(mutationCount).toBe(0);
+        expect(
+          await findCallRecordings({
+            calendarEventId: { eq: calendarEventId },
+          }),
+        ).toHaveLength(1);
+        expect(await fetchCallRecording(callRecordingId)).toEqual(
+          expect.objectContaining({
+            recordingRequestStatus: 'REQUESTED',
+            externalBotId: botId,
+          }),
+        );
+        expect(recall.deletedBotIds).toEqual([]);
+        expect([...recall.bots.keys()]).toEqual([botId]);
+      },
+    );
+
+    it('leaves recording blank when its recording is deleted during reconciliation', async () => {
+      const { calendarEventId, callRecordingId } =
+        await scheduleRecordingThroughCalendarReconciliation();
+      const update = await updateCalendarEventForDelivery(calendarEventId, {
+        title: 'Renamed before deletion',
+        callRecorderPreference: null,
+      });
+      let recordingDeleted = false;
+
+      interceptCoreApiRequests(async ({ query, variables }, sendRequest) => {
+        const response = await sendRequest();
+
+        if (
+          !recordingDeleted &&
+          query.includes('callRecordings(') &&
+          JSON.stringify(variables).includes('"id":{"in":')
+        ) {
+          recordingDeleted = true;
+          await client.mutation({
+            destroyCallRecording: { __args: { id: callRecordingId }, id: true },
+          });
+        }
+
+        return response;
+      });
+
+      await deliverCalendarEventUpdates(update);
+
+      expect(recordingDeleted).toBe(true);
+      expect(
+        await findCallRecordings({ calendarEventId: { eq: calendarEventId } }),
+      ).toEqual([]);
+      expect(await fetchCallRecorderPreference(calendarEventId)).toBeNull();
+    });
+
+    it('keeps a replacement bot when an outdated reschedule receives a Recall 404', async () => {
+      const { calendarEventId, callRecordingId, botId, metadata } =
+        await scheduleRecordingThroughCalendarReconciliation();
+      const update = await updateCalendarEventForDelivery(calendarEventId, {
+        endsAt: hoursAgo(-3),
+      });
+      const replacementBotId = randomUUID();
+      let botReplaced = false;
+
+      interceptCoreApiRequests(async ({ query, variables }, sendRequest) => {
+        const response = await sendRequest();
+
+        if (
+          !botReplaced &&
+          query.includes('callRecordings(') &&
+          JSON.stringify(variables).includes('"id":{"in":')
+        ) {
+          botReplaced = true;
+          recall.bots.delete(botId);
+          recall.seedBot({
+            id: replacementBotId,
+            metadata,
+            statusCode: 'scheduled',
+          });
+          await client.mutation({
+            updateCallRecording: {
+              __args: {
+                id: callRecordingId,
+                data: { externalBotId: replacementBotId },
+              },
+              id: true,
+            },
+          });
+        }
+
+        return response;
+      });
+
+      await deliverCalendarEventUpdates(update);
+
+      expect(botReplaced).toBe(true);
+      expect((await fetchCallRecording(callRecordingId)).externalBotId).toBe(
+        replacementBotId,
+      );
+      expect([...recall.bots.keys()]).toEqual([replacementBotId]);
+    });
+
+    it('keeps a webhook status change while applying a calendar title change', async () => {
+      const { calendarEventId, callRecordingId, botId, metadata } =
+        await scheduleRecordingThroughCalendarReconciliation();
+      const update = await updateCalendarEventForDelivery(calendarEventId, {
+        title: 'Renamed while joining',
+      });
+      let webhookDelivered = false;
+
+      interceptCoreApiRequests(async ({ query, variables }, sendRequest) => {
+        const response = await sendRequest();
+
+        if (
+          !webhookDelivered &&
+          query.includes('callRecordings(') &&
+          JSON.stringify(variables).includes('"id":{"in":')
+        ) {
+          webhookDelivered = true;
+          await deliverRecallWebhook(
+            buildBotStatusChangeWebhook({
+              botId,
+              metadata,
+              statusCode: 'joining_call',
+            }),
+          );
+        }
+
+        return response;
+      });
+
+      await deliverCalendarEventUpdates(update);
+
+      expect(webhookDelivered).toBe(true);
+      expect(await fetchCallRecording(callRecordingId)).toEqual(
+        expect.objectContaining({
+          title: 'Renamed while joining',
+          status: 'JOINING',
+        }),
+      );
+    });
+
+    it('cancels the old recorder once when a meeting moves three weeks into the future', async () => {
+      const { calendarEventId, callRecordingId, botId } =
+        await scheduleRecordingThroughCalendarReconciliation();
+      const update = await updateCalendarEventForDelivery(calendarEventId, {
+        startsAt: hoursAgo(-21 * 24),
+        endsAt: hoursAgo(-21 * 24 - 1),
+      });
+
+      await deliverCalendarEventUpdates(update);
+
+      const recordings = await findCallRecordings({
+        calendarEventId: { eq: calendarEventId },
+      });
+      expect(recordings).toHaveLength(1);
+      expect(recordings[0].id).toBe(callRecordingId);
+      expect(recordings[0].recordingRequestStatus).toBe('CANCELED');
+      expect(recordings[0].externalBotId).toBeFalsy();
+      expect(recall.deletedBotIds).toEqual([botId]);
+      expect(recall.bots.size).toBe(0);
+      expect(await fetchCallRecorderPreference(calendarEventId)).toBeNull();
+    });
+
+    it('cancels the bot of a meeting whose calendar event was destroyed', async () => {
+      const { calendarEventId, callRecordingId, botId } =
+        await scheduleRecordingThroughCalendarReconciliation();
+      const destroyedCalendarEvent = await simulateCalendarEventDestroy({
+        calendarEventId,
+        callRecordingId,
+      });
+
+      await deliverCalendarEventDestroyed(destroyedCalendarEvent);
+
+      const callRecording = await fetchCallRecording(callRecordingId);
+      expect(callRecording.recordingRequestStatus).toBe('CANCELED');
+      expect(callRecording.externalBotId).toBeFalsy();
+      expect(recall.deletedBotIds).toEqual([botId]);
+      expect(recall.bots.size).toBe(0);
+    });
+
+    it('keeps the replacement recorder when the same reschedule is delivered twice', async () => {
+      const { calendarEventId, callRecordingId, botId } =
+        await scheduleRecordingThroughCalendarReconciliation();
+      const update = await updateCalendarEventForDelivery(calendarEventId, {
+        startsAt: hoursAgo(-2 * 24),
+        endsAt: hoursAgo(-2 * 24 - 1),
+      });
+
+      await deliverCalendarEventUpdates(update);
+      const recordings = await findCallRecordings({
+        calendarEventId: { eq: calendarEventId },
+      });
+      const replacement = recordings.find(({ id }) => id !== callRecordingId);
+      if (isUndefined(replacement)) {
+        throw new Error('The rescheduled meeting has no replacement recording');
+      }
+
+      await deliverCalendarEventUpdates(update);
+
+      expect(
+        await findCallRecordings({ calendarEventId: { eq: calendarEventId } }),
+      ).toHaveLength(2);
+      expect(
+        (await fetchCallRecording(callRecordingId)).recordingRequestStatus,
+      ).toBe('CANCELED');
+      expect(await fetchCallRecording(replacement.id)).toEqual(
+        expect.objectContaining({
+          recordingRequestStatus: 'REQUESTED',
+          externalBotId: replacement.externalBotId,
+        }),
+      );
+      expect(recall.deletedBotIds).toEqual([botId]);
+      expect([...recall.bots.keys()]).toEqual([replacement.externalBotId]);
+      expect(await fetchCallRecorderPreference(calendarEventId)).toBe('ON');
+    });
+
+    it('creates, updates and cancels recordings for different meetings in one batch', async () => {
+      const createdCalendarEventId = await createCalendarEvent({
+        callRecorderPreference: null,
+      });
+      const updated = await scheduleRecordingThroughCalendarReconciliation();
+      const canceled = await scheduleRecordingThroughCalendarReconciliation();
+      const updatedEvent = await updateCalendarEventForDelivery(
+        updated.calendarEventId,
+        { title: 'Renamed customer sync', callRecorderPreference: null },
+      );
+      const canceledEvent = await updateCalendarEventForDelivery(
+        canceled.calendarEventId,
+        { callRecorderPreference: CallRecorderPreference.OFF },
+      );
+
+      const createdEvent = await updateCalendarEventForDelivery(
+        createdCalendarEventId,
+        { title: 'New customer sync' },
+      );
+
+      await deliverCalendarEventUpdates(
+        createdEvent,
+        updatedEvent,
+        canceledEvent,
+      );
+
+      const createdRecordings = await findCallRecordings({
+        calendarEventId: { eq: createdCalendarEventId },
+      });
+      expect(createdRecordings).toHaveLength(1);
+      expect(createdRecordings[0].recordingRequestStatus).toBe('REQUESTED');
+      expect(recall.bots.has(createdRecordings[0].externalBotId)).toBe(true);
+      expect(await fetchCallRecording(updated.callRecordingId)).toEqual(
+        expect.objectContaining({
+          title: 'Renamed customer sync',
+          recordingRequestStatus: 'REQUESTED',
+          externalBotId: updated.botId,
+        }),
+      );
+      const canceledRecording = await fetchCallRecording(
+        canceled.callRecordingId,
+      );
+      expect(canceledRecording.recordingRequestStatus).toBe('CANCELED');
+      expect(canceledRecording.externalBotId).toBeFalsy();
+      expect(recall.deletedBotIds).toEqual([canceled.botId]);
+      expect(await fetchCallRecorderPreference(createdCalendarEventId)).toBe(
+        'ON',
+      );
+      expect(await fetchCallRecorderPreference(updated.calendarEventId)).toBe(
+        'ON',
+      );
+      expect(await fetchCallRecorderPreference(canceled.calendarEventId)).toBe(
+        'OFF',
+      );
+    });
+
+    it.each([1, 2])(
+      'cancels each recorder once when cancellation write %i fails during a move beyond seven days',
+      async (failedCancellationIndex) => {
+        const calendarEventId = await createCalendarEvent();
+        const callRecordingIds: string[] = [];
+        const botIds = [randomUUID(), randomUUID()];
+
+        for (const botId of botIds) {
+          const callRecordingId = await createPendingCallRecording({
+            calendarEventId,
+            externalBotId: botId,
+          });
+
+          callRecordingIds.push(callRecordingId);
+          recall.seedBot({
+            id: botId,
+            metadata: buildBotMetadata(callRecordingId, workspaceId),
+            statusCode: 'scheduled',
+          });
+        }
+
+        const update = await updateCalendarEventForDelivery(calendarEventId, {
+          startsAt: hoursAgo(-21 * 24),
+          endsAt: hoursAgo(-21 * 24 - 1),
+        });
+        let cancellationWriteCount = 0;
+
+        interceptCoreApiRequests(async ({ query, variables }, sendRequest) => {
+          if (
+            query.includes('updateCallRecording(') &&
+            JSON.stringify(variables).includes(
+              '"recordingRequestStatus":"CANCELED"',
+            )
+          ) {
+            cancellationWriteCount += 1;
+
+            if (cancellationWriteCount === failedCancellationIndex) {
+              return new Response('Cancellation write failed', { status: 500 });
+            }
+          }
+
+          return sendRequest();
+        });
+
+        const result = await deliverCalendarEventUpdates(update);
+
+        expect(result).toEqual(
+          expect.objectContaining({
+            reconciliationResults: [
+              expect.objectContaining({ action: 'FAILED' }),
+              expect.objectContaining({ action: 'CANCELED' }),
+            ],
+          }),
+        );
+        expect(cancellationWriteCount).toBe(3);
+        expect(recall.deletedBotIds.sort()).toEqual([...botIds].sort());
+
+        for (const callRecordingId of callRecordingIds) {
+          const callRecording = await fetchCallRecording(callRecordingId);
+
+          expect(callRecording.recordingRequestStatus).toBe('CANCELED');
+          expect(callRecording.externalBotId).toBeFalsy();
+        }
+      },
+    );
+  });
 
   describe('scheduling from calendar changes', () => {
     it('creates a recording and schedules a Recall bot for a meeting with recording enabled', async () => {
@@ -854,6 +1744,7 @@ describe('call recorder app lifecycle (integration)', () => {
       expect(recall.bots.get(botId)?.metadata).toEqual(
         buildBotMetadata(callRecordingId, workspaceId),
       );
+      expect(recall.creditCheckRequests).toEqual([{ callRecordingId }]);
     });
 
     it('creates nothing for a meeting without a conference link', async () => {
@@ -871,6 +1762,266 @@ describe('call recorder app lifecycle (integration)', () => {
           calendarEventId: { in: [calendarEventId] },
         }),
       ).toEqual([]);
+    });
+
+    it('does not ask the queue to redeliver a batch when the recording On echo lookup fails', async () => {
+      const calendarEventId = await createCalendarEvent();
+
+      recall.failCallRecordingReads = true;
+
+      await expect(
+        deliverCalendarEventUpdates({
+          calendarEventId,
+          updatedFields: ['callRecorderPreference'],
+          before: { callRecorderPreference: null },
+          after: { callRecorderPreference: 'ON' },
+        }),
+      ).rejects.not.toMatchObject({ name: 'RetryableLogicFunctionError' });
+      expect(
+        await findCallRecordings({
+          calendarEventId: { in: [calendarEventId] },
+        }),
+      ).toEqual([]);
+    });
+
+    it('retries a Core API read that failed with a 503 and finishes the batch', async () => {
+      const calendarEventId = await createCalendarEvent();
+      const unavailableResponses: Response[] = [];
+      const fetchBeforeOutage = globalThis.fetch;
+
+      vi.stubGlobal(
+        'fetch',
+        (input: Parameters<typeof fetch>[0], init?: RequestInit) => {
+          if (
+            unavailableResponses.length === 0 &&
+            String(input) === `${process.env.TWENTY_API_URL}/graphql` &&
+            String(init?.body ?? '').includes('callRecordings(')
+          ) {
+            const unavailableResponse = new Response('Service Unavailable', {
+              status: 503,
+            });
+
+            unavailableResponses.push(unavailableResponse);
+
+            return Promise.resolve(unavailableResponse);
+          }
+
+          return fetchBeforeOutage(input, init);
+        },
+      );
+
+      await deliverCalendarEventUpdates({
+        calendarEventId,
+        updatedFields: ['title'],
+        before: { title: 'Customer Sync' },
+        after: { title: 'Customer Sync (renamed)' },
+      });
+
+      const [callRecording] = await findCallRecordings({
+        calendarEventId: { eq: calendarEventId },
+      });
+
+      expect(unavailableResponses).toHaveLength(1);
+      expect(callRecording.recordingRequestStatus).toBe('REQUESTED');
+      expect(recall.bots.has(callRecording.externalBotId)).toBe(true);
+    });
+
+    it('sends a Core API write once when it fails with a 503', async () => {
+      const { calendarEventId } =
+        await scheduleRecordingThroughCalendarReconciliation();
+      const unavailableWriteBodies: string[] = [];
+      const fetchBeforeOutage = globalThis.fetch;
+
+      await client.mutation({
+        updateCalendarEvent: {
+          __args: {
+            id: calendarEventId,
+            data: { title: 'Customer Sync (renamed)' },
+          },
+          id: true,
+        },
+      });
+
+      vi.stubGlobal(
+        'fetch',
+        (input: Parameters<typeof fetch>[0], init?: RequestInit) => {
+          const body = String(init?.body ?? '');
+
+          if (
+            String(input) === `${process.env.TWENTY_API_URL}/graphql` &&
+            body.includes('updateCallRecording(')
+          ) {
+            unavailableWriteBodies.push(body);
+
+            return Promise.resolve(
+              new Response('Service Unavailable', { status: 503 }),
+            );
+          }
+
+          return fetchBeforeOutage(input, init);
+        },
+      );
+
+      const result = await deliverCalendarEventUpdates({
+        calendarEventId,
+        updatedFields: ['title'],
+        before: { title: 'Customer Sync' },
+        after: { title: 'Customer Sync (renamed)' },
+      });
+
+      expect(unavailableWriteBodies).toHaveLength(1);
+      expect(result).toEqual(
+        expect.objectContaining({
+          reconciliationResults: [
+            expect.objectContaining({ action: 'FAILED' }),
+          ],
+        }),
+      );
+    });
+  });
+
+  describe('credit gate', () => {
+    it('cancels the scheduled bot before it joins when the workspace cannot spend credits', async () => {
+      const { callRecordingId, botId } =
+        await scheduleRecordingThroughCalendarReconciliation();
+      recall.creditAvailability = {
+        hasAvailableCredits: false,
+        reason: 'no-credits',
+      };
+
+      const result = await handlePreJoinCreditCheckJob(
+        recall.creditCheckRequests[0],
+      );
+      const callRecording = await fetchCallRecording(callRecordingId);
+
+      expect(result).toEqual({
+        status: 'blocked',
+        failureReason: 'workspace_out_of_credits',
+      });
+      expect(recall.deletedBotIds).toEqual([botId]);
+      expect(callRecording.status).toBe('NOT_RECORDED');
+      expect(callRecording.callRecorderFailureReason).toBe(
+        'workspace_out_of_credits',
+      );
+      expect(callRecording.externalBotId).toBeFalsy();
+      expect(callRecording.botScheduleIdempotencyKey).toBeFalsy();
+    });
+
+    it('leaves the bot alone when the workspace can spend credits', async () => {
+      const { callRecordingId, botId } =
+        await scheduleRecordingThroughCalendarReconciliation();
+      recall.creditAvailability = { hasAvailableCredits: true };
+
+      const result = await handlePreJoinCreditCheckJob(
+        recall.creditCheckRequests[0],
+      );
+      const callRecording = await fetchCallRecording(callRecordingId);
+
+      expect(result).toEqual({ status: 'allowed' });
+      expect(recall.deletedBotIds).toEqual([]);
+      expect(callRecording.status).toBe('SCHEDULED');
+      expect(callRecording.externalBotId).toBe(botId);
+    });
+
+    it('runs the queued check through the real worker and leaves a funded bot alone', async ({
+      skip,
+    }) => {
+      const { findManyLogicFunctions } = await new MetadataApiClient().query({
+        findManyLogicFunctions: { name: true },
+      });
+
+      if (
+        !findManyLogicFunctions.some(
+          ({ name }) => name === 'check-credits-before-recall-bot-join',
+        )
+      ) {
+        skip('the installed call recorder predates the credit check');
+      }
+
+      const { callRecordingId, botId } =
+        await scheduleRecordingThroughCalendarReconciliation();
+
+      // The worker runs this job, so the enqueue and the job reads must reach the real server.
+      vi.unstubAllGlobals();
+      vi.stubEnv('TWENTY_APP_ACCESS_TOKEN', applicationAccessToken);
+
+      const joinAt = new Date(
+        Date.now() + PRE_JOIN_CREDIT_CHECK_LEAD_MINUTES * 60 * 1000,
+      ).toISOString();
+      const jobId = `credit-check.${callRecordingId}.${botId}.${new Date(joinAt).getTime()}`;
+
+      await enqueuePreJoinCreditCheck({
+        callRecordingId,
+        externalBotId: botId,
+        joinAt,
+      });
+
+      await expect
+        .poll(() => getJobs([jobId]), { timeout: 30_000, interval: 500 })
+        .toMatchObject([{ jobId, state: 'COMPLETED' }]);
+
+      const callRecording = await fetchCallRecording(callRecordingId);
+
+      expect(callRecording.status).toBe('SCHEDULED');
+      expect(callRecording.externalBotId).toBe(botId);
+    });
+
+    it('creates no bot for a meeting about to start when the workspace cannot spend credits', async () => {
+      recall.creditAvailability = {
+        hasAvailableCredits: false,
+        reason: 'no-subscription',
+      };
+      const calendarEventId = await createCalendarEvent({
+        startsAt: new Date(Date.now() + 5 * 60 * 1000).toISOString(),
+      });
+
+      const [reconciliation] = await reconcileCallRecorderForCalendarEventIds({
+        client,
+        calendarEventIds: [calendarEventId],
+      });
+      const [callRecording] = await findCallRecordings({
+        calendarEventId: { in: [calendarEventId] },
+      });
+
+      expect(reconciliation.action).toBe('CREATED');
+      expect(callRecording.status).toBe('NOT_RECORDED');
+      expect(callRecording.callRecorderFailureReason).toBe(
+        'workspace_without_subscription',
+      );
+      expect(callRecording.externalBotId).toBeFalsy();
+      expect(recall.bots.size).toBe(0);
+      expect(recall.creditCheckRequests).toEqual([]);
+    });
+
+    it('reconciles a user On change on a meeting whose bot the credit gate blocked', async () => {
+      recall.creditAvailability = {
+        hasAvailableCredits: false,
+        reason: 'no-subscription',
+      };
+      const calendarEventId = await createCalendarEvent({
+        startsAt: new Date(Date.now() + 5 * 60 * 1000).toISOString(),
+      });
+
+      await reconcileCallRecorderForCalendarEventIds({
+        client,
+        calendarEventIds: [calendarEventId],
+      });
+
+      recall.creditAvailability = { hasAvailableCredits: true };
+
+      const result = await deliverCalendarEventUpdates({
+        calendarEventId,
+        updatedFields: ['callRecorderPreference', 'updatedBy'],
+        before: { callRecorderPreference: null },
+        after: { callRecorderPreference: 'ON' },
+      });
+      const [callRecording] = await findCallRecordings({
+        calendarEventId: { in: [calendarEventId] },
+      });
+
+      expect(result).toEqual(expect.objectContaining({ reconciled: true }));
+      expect(callRecording.status).toBe('SCHEDULED');
+      expect(callRecording.callRecorderFailureReason).toBeFalsy();
     });
   });
 
@@ -922,7 +2073,7 @@ describe('call recorder app lifecycle (integration)', () => {
         'recall-recording-1',
       );
       expect(processedCallRecording.endedAt).toBeTruthy();
-      expect(recall.artifactImportRequests).toHaveLength(2);
+      expect(recall.artifactImportRequests).toHaveLength(3);
     });
 
     it('queues another artifact import when the transcript finishes later', async () => {
@@ -941,8 +2092,8 @@ describe('call recorder app lifecycle (integration)', () => {
         buildTranscriptDoneWebhook({ botId, metadata }),
       );
 
-      expect(recall.artifactImportRequests).toHaveLength(3);
-      expect(recall.artifactImportRequests[2]).toMatchObject({
+      expect(recall.artifactImportRequests).toHaveLength(4);
+      expect(recall.artifactImportRequests[3]).toMatchObject({
         callRecordingId,
       });
     });
@@ -1190,6 +2341,712 @@ describe('call recorder app lifecycle (integration)', () => {
     });
   });
 
+  describe('artifact import queue', () => {
+    beforeEach(() => {
+      vi.unstubAllGlobals();
+      vi.stubEnv('TWENTY_APP_ACCESS_TOKEN', applicationAccessToken);
+    });
+
+    const waitForCompletedJob = async (jobId: string) => {
+      await expect
+        .poll(() => getJobs([jobId]), { timeout: 30_000, interval: 500 })
+        .toMatchObject([{ jobId, state: 'COMPLETED' }]);
+
+      return getJobs([jobId]);
+    };
+
+    it.each([
+      { scope: 'transcript', trigger: 'transcript-ready', suffix: 'ready' },
+      { scope: 'video', trigger: 'recovery', suffix: 'recovery-2026-06-10' },
+      { scope: 'audio', trigger: 'expired', suffix: 'expired' },
+    ] as const)(
+      'deduplicates $scope imports and allows a later $trigger job',
+      async ({ scope, trigger, suffix }) => {
+        // A missing recording lets the real worker finish without contacting Recall.
+        const callRecordingId = randomUUID();
+        const request = {
+          callRecordingIds: [callRecordingId],
+          scopes: [scope],
+          requestedAt: '2026-06-10T03:30:00.000Z',
+        };
+        const jobId = `call-recorder-${callRecordingId}-${scope}`;
+
+        await enqueueCallRecordingArtifactsImport(request);
+        const originalJob = await waitForCompletedJob(jobId);
+        await enqueueCallRecordingArtifactsImport(request);
+        expect(await getJobs([jobId])).toEqual(originalJob);
+
+        await enqueueCallRecordingArtifactsImport({ ...request, trigger });
+        const laterJobId = `${jobId}-${suffix}`;
+        const laterJob = await waitForCompletedJob(laterJobId);
+        await enqueueCallRecordingArtifactsImport({ ...request, trigger });
+        expect(await getJobs([laterJobId])).toEqual(laterJob);
+      },
+    );
+
+    it.each([
+      { scope: 'video', attemptsMade: 1 },
+      { scope: 'audio', attemptsMade: 3 },
+    ] as const)(
+      'stops failed $scope executions after $attemptsMade attempts',
+      async ({ scope, attemptsMade }) => {
+        // Invalid UUID input makes the real database read fail before any Recall request.
+        const callRecordingId = `invalid-${randomUUID()}`;
+        const jobId = `call-recorder-${callRecordingId}-${scope}`;
+
+        await enqueueCallRecordingArtifactsImport({
+          callRecordingIds: [callRecordingId],
+          scopes: [scope],
+        });
+
+        // The worker completes the job when the application's retry budget is exhausted.
+        await expect
+          .poll(() => getJobs([jobId]), { timeout: 30_000, interval: 500 })
+          .toMatchObject([{ jobId, state: 'COMPLETED', attemptsMade }]);
+      },
+    );
+  });
+
+  describe('settling recordings whose Recall media expired', () => {
+    const recordingStartedAt = () => hoursAgo(1);
+
+    const deliverRecordingDone = async ({
+      botId,
+      metadata,
+    }: {
+      botId: string;
+      metadata: Record<string, string>;
+    }): Promise<{ startedAt: string; completedAt: string }> => {
+      const startedAt = recordingStartedAt();
+      const completedAt = new Date().toISOString();
+
+      await deliverRecallWebhook(
+        buildRecordingDoneWebhook({ botId, metadata, startedAt, completedAt }),
+      );
+
+      return { startedAt, completedAt };
+    };
+
+    const expireMediaAndAgeMeeting = async ({
+      calendarEventId,
+      botId,
+      startedAt,
+      completedAt,
+    }: {
+      calendarEventId: string;
+      botId: string;
+      startedAt: string;
+      completedAt: string;
+    }) => {
+      recall.expireBotMedia({
+        botId,
+        recordingStartedAt: startedAt,
+        recordingEndedAt: completedAt,
+      });
+      await moveMeetingIntoPast(calendarEventId);
+    };
+
+    const expectFailedWithExpiredArtifacts = (
+      callRecording: Awaited<ReturnType<typeof fetchCallRecording>>,
+    ) => {
+      expect(callRecording.status).toBe('FAILED');
+      expect(callRecording.callRecorderFailureReason.split(',').sort()).toEqual(
+        ['audio_import_expired', 'video_import_expired'],
+      );
+      expect(callRecording.transcript).toEqual({
+        recallTranscriptId: null,
+        status: 'EMPTY',
+        subCode: 'transcript_expired',
+      });
+    };
+
+    it('preserves independent failure outcomes when audio and video save concurrently', async () => {
+      const { callRecordingId, botId, metadata } =
+        await scheduleRecordingThroughCalendarReconciliation();
+      await deliverRecordingDone({ botId, metadata });
+
+      await Promise.all(
+        ['audio_file_too_large', 'video_import_failed'].map(
+          (callRecorderFailureReason) =>
+            saveCallRecordingImportProgress(client, {
+              callRecordingId,
+              externalBotId: botId,
+              data: { callRecorderFailureReason },
+            }),
+        ),
+      );
+
+      await saveCallRecordingImportProgress(client, {
+        callRecordingId,
+        externalBotId: botId,
+        data: { video: [{ fileId: randomUUID(), label: 'late-video.mp4' }] },
+      });
+
+      expect(
+        (await fetchCallRecording(callRecordingId)).callRecorderFailureReason
+          .split(',')
+          .sort(),
+      ).toEqual(['audio_file_too_large', 'video_import_failed']);
+      expect((await fetchCallRecording(callRecordingId)).video ?? []).toEqual(
+        [],
+      );
+    });
+
+    it('replaces a pending transcript and ignores late pending or failed results', async () => {
+      const { callRecordingId, botId, metadata } =
+        await scheduleRecordingThroughCalendarReconciliation();
+      await deliverRecordingDone({ botId, metadata });
+      const pending = { status: 'PENDING', recallTranscriptId: 'transcript-1' };
+      const transcript = { utterances: [{ text: 'Ready transcript' }] };
+      for (const data of [
+        { transcript: pending },
+        { transcript },
+        { transcript: pending },
+        {
+          transcript: { status: 'FAILED' },
+          callRecorderFailureReason: 'transcript_failed',
+        },
+      ]) {
+        await saveCallRecordingImportProgress(client, {
+          callRecordingId,
+          externalBotId: botId,
+          data,
+        });
+      }
+
+      const callRecording = await fetchCallRecording(callRecordingId);
+      expect(callRecording.transcript).toEqual(transcript);
+      expect(callRecording.callRecorderFailureReason).toBeFalsy();
+    });
+
+    it.each([
+      { status: 'COMPLETED' },
+      { externalBotId: 'replacement-bot' },
+    ] as const)(
+      'ignores late import progress after the recording changes: %j',
+      async (data) => {
+        const { callRecordingId, botId, metadata } =
+          await scheduleRecordingThroughCalendarReconciliation();
+        await deliverRecordingDone({ botId, metadata });
+        await client.mutation({
+          updateCallRecording: {
+            __args: { id: callRecordingId, data },
+            id: true,
+          },
+        });
+
+        await saveCallRecordingImportProgress(client, {
+          callRecordingId,
+          externalBotId: botId,
+          data: { transcript: { status: 'FAILED' } },
+        });
+
+        expect(
+          (await fetchCallRecording(callRecordingId)).transcript,
+        ).toBeNull();
+      },
+    );
+
+    it('fails a processing recording whose media expired before any artifact was imported', async () => {
+      const { calendarEventId, callRecordingId, botId, metadata } =
+        await scheduleRecordingThroughCalendarReconciliation();
+      const { startedAt, completedAt } = await deliverRecordingDone({
+        botId,
+        metadata,
+      });
+
+      await expireMediaAndAgeMeeting({
+        calendarEventId,
+        botId,
+        startedAt,
+        completedAt,
+      });
+
+      const cronResult = await runStaleStateCron();
+
+      expect(cronResult.enqueuedCallRecordingIds).toEqual([callRecordingId]);
+
+      const callRecording = await fetchCallRecording(callRecordingId);
+
+      expectFailedWithExpiredArtifacts(callRecording);
+    });
+
+    it.each(
+      (['audio', 'video'] as const).flatMap((scope) =>
+        (['recovery', 'expired'] as const).flatMap((trigger) =>
+          ['', '-expired', '-recovery-2026-06-10', '-recovery-2026-06-09'].map(
+            (suffix) => ({ scope, trigger, suffix }),
+          ),
+        ),
+      ),
+    )(
+      'leaves the active $scope$suffix import to the queue on $trigger while settling the other expired artifacts',
+      async ({ scope, trigger, suffix }) => {
+        const { calendarEventId, callRecordingId, botId, metadata } =
+          await scheduleRecordingThroughCalendarReconciliation();
+        const { startedAt, completedAt } = await deliverRecordingDone({
+          botId,
+          metadata,
+        });
+
+        await expireMediaAndAgeMeeting({
+          calendarEventId,
+          botId,
+          startedAt,
+          completedAt,
+        });
+        recall.artifactImportRequests = [];
+        recall.activeArtifactJobIds.add(
+          `call-recorder-${callRecordingId}-${scope}${suffix}`,
+        );
+
+        await enqueueCallRecordingArtifactsImport({
+          callRecordingIds: [callRecordingId],
+          scopes: ['transcript', 'audio', 'video'],
+          trigger,
+          requestedAt: '2026-06-10T00:05:00.000Z',
+        });
+        await runQueuedArtifactImports();
+
+        const callRecording = await fetchCallRecording(callRecordingId);
+
+        expect(callRecording.status).toBe('PROCESSING');
+        expect(callRecording.callRecorderFailureReason).toBe(
+          `${scope === 'audio' ? 'video' : 'audio'}_import_expired`,
+        );
+        expect(callRecording.transcript).toMatchObject({ status: 'EMPTY' });
+      },
+    );
+
+    it('completes a processing recording with imported media once Recall expires the rest', async () => {
+      const { calendarEventId, callRecordingId, botId, metadata } =
+        await scheduleRecordingThroughCalendarReconciliation();
+      const { startedAt, completedAt } = await deliverRecordingDone({
+        botId,
+        metadata,
+      });
+
+      await runQueuedArtifactImports();
+      const imported = await fetchCallRecording(callRecordingId);
+      await saveCallRecordingImportProgress(client, {
+        callRecordingId,
+        externalBotId: botId,
+        data: {
+          video: [{ fileId: randomUUID(), label: 'late-video.mp4' }],
+          callRecorderFailureReason: 'video_import_failed',
+        },
+      });
+      await expireMediaAndAgeMeeting({
+        calendarEventId,
+        botId,
+        startedAt,
+        completedAt,
+      });
+
+      const cronResult = await runStaleStateCron();
+
+      expect(cronResult.enqueuedCallRecordingIds).toEqual([callRecordingId]);
+
+      const callRecording = await fetchCallRecording(callRecordingId);
+
+      expect(callRecording.status).toBe('COMPLETED');
+      expect(callRecording.video).toMatchObject([
+        { fileId: imported.video[0].fileId },
+      ]);
+      expect(callRecording.callRecorderFailureReason).toBeFalsy();
+      expect(callRecording.transcript).toEqual({
+        recallTranscriptId: 'recall-transcript-1',
+        status: 'EMPTY',
+        subCode: 'transcript_expired',
+      });
+    });
+
+    it('keeps audio and never retries a saved video failure, including during repair', async () => {
+      const { calendarEventId, callRecordingId, botId, metadata } =
+        await scheduleRecordingThroughCalendarReconciliation();
+
+      recall.failVideoDownload = true;
+
+      const { startedAt, completedAt } = await deliverRecordingDone({
+        botId,
+        metadata,
+      });
+
+      await runQueuedArtifactImports();
+      recall.failVideoDownload = false;
+      await runStaleStateCron();
+
+      const repaired = await fetchCallRecording(callRecordingId);
+      expect(repaired.audio).toHaveLength(1);
+      expect(repaired.video ?? []).toHaveLength(0);
+      expect(repaired.callRecorderFailureReason).toBe('video_import_failed');
+
+      await expireMediaAndAgeMeeting({
+        calendarEventId,
+        botId,
+        startedAt,
+        completedAt,
+      });
+
+      await runStaleStateCron();
+
+      const callRecording = await fetchCallRecording(callRecordingId);
+
+      expect(callRecording.status).toBe('COMPLETED');
+      expect(callRecording.callRecorderFailureReason).toBe(
+        'video_import_failed',
+      );
+      expect(callRecording.transcript).toMatchObject({ status: 'EMPTY' });
+    });
+
+    it('saves and settles a video timeout even after its work signal has aborted', async () => {
+      const { callRecordingId, botId, metadata } =
+        await scheduleRecordingThroughCalendarReconciliation();
+      await deliverRecordingDone({ botId, metadata });
+      await saveCallRecordingImportProgress(client, {
+        callRecordingId,
+        externalBotId: botId,
+        data: { transcript: { status: 'EMPTY', recallTranscriptId: null } },
+      });
+
+      const controller = new AbortController();
+      const originalTimeout = AbortSignal.timeout.bind(AbortSignal);
+      const timeout = vi
+        .spyOn(AbortSignal, 'timeout')
+        .mockImplementation((milliseconds) =>
+          milliseconds === 14 * 60 * 1000
+            ? controller.signal
+            : originalTimeout(milliseconds),
+        );
+      const originalFetch = globalThis.fetch;
+      vi.stubGlobal(
+        'fetch',
+        (input: Parameters<typeof fetch>[0], init?: RequestInit) => {
+          if (String(input).endsWith('/media/video.mp4')) {
+            controller.abort(
+              new DOMException('Video deadline elapsed', 'TimeoutError'),
+            );
+            return Promise.reject(controller.signal.reason);
+          }
+
+          return originalFetch(input, init);
+        },
+      );
+
+      try {
+        await runQueuedArtifactImports();
+      } finally {
+        timeout.mockRestore();
+      }
+
+      const callRecording = await fetchCallRecording(callRecordingId);
+      expect(callRecording.status).toBe('COMPLETED');
+      expect(callRecording.audio).toHaveLength(1);
+      expect(callRecording.callRecorderFailureReason).toBe(
+        'video_import_failed',
+      );
+    });
+
+    it('fails a recording whose media was too large to store and whose transcript never arrived', async () => {
+      const { calendarEventId, callRecordingId, botId, metadata } =
+        await scheduleRecordingThroughCalendarReconciliation();
+
+      recall.mediaContentLengthBytes = 600 * 1024 * 1024;
+
+      const { startedAt, completedAt } = await deliverRecordingDone({
+        botId,
+        metadata,
+      });
+
+      await runQueuedArtifactImports();
+
+      expect(
+        (await fetchCallRecording(callRecordingId)).callRecorderFailureReason,
+      ).toBe('audio_file_too_large,video_file_too_large');
+
+      await expireMediaAndAgeMeeting({
+        calendarEventId,
+        botId,
+        startedAt,
+        completedAt,
+      });
+
+      await runStaleStateCron();
+
+      const callRecording = await fetchCallRecording(callRecordingId);
+
+      expect(callRecording.status).toBe('FAILED');
+      expect(callRecording.callRecorderFailureReason).toBe(
+        'audio_file_too_large,video_file_too_large',
+      );
+      expect(callRecording.transcript).toMatchObject({ status: 'EMPTY' });
+    });
+
+    it('settles a processing recording when Recall reports its media expired by webhook', async () => {
+      const { callRecordingId, botId, metadata } =
+        await scheduleRecordingThroughCalendarReconciliation();
+
+      const { startedAt, completedAt } = await deliverRecordingDone({
+        botId,
+        metadata,
+      });
+      recall.expireBotMedia({
+        botId,
+        recordingStartedAt: startedAt,
+        recordingEndedAt: completedAt,
+      });
+      await deliverRecallWebhook(
+        buildBotStatusChangeWebhook({
+          botId,
+          metadata,
+          statusCode: 'media_expired',
+        }),
+      );
+
+      expect(recall.artifactImportRequests).toHaveLength(6);
+
+      await runQueuedArtifactImports();
+
+      const callRecording = await fetchCallRecording(callRecordingId);
+
+      expectFailedWithExpiredArtifacts(callRecording);
+    });
+
+    it('settles a processing recording when Recall announces retention expiry by recording.deleted', async () => {
+      const { callRecordingId, botId, metadata } =
+        await scheduleRecordingThroughCalendarReconciliation();
+
+      const { startedAt, completedAt } = await deliverRecordingDone({
+        botId,
+        metadata,
+      });
+      recall.expireBotMedia({
+        botId,
+        recordingStartedAt: startedAt,
+        recordingEndedAt: completedAt,
+      });
+      await deliverRecallWebhook(
+        buildRecordingDeletedWebhook({ botId, metadata }),
+      );
+
+      expect(recall.artifactImportRequests).toHaveLength(6);
+
+      await runQueuedArtifactImports();
+
+      const callRecording = await fetchCallRecording(callRecordingId);
+
+      expectFailedWithExpiredArtifacts(callRecording);
+    });
+
+    it('drops a recording.deleted webhook for a recording that already completed', async () => {
+      const { callRecordingId, botId, metadata } =
+        await scheduleRecordingThroughCalendarReconciliation();
+
+      await deliverRecordingDone({ botId, metadata });
+      await runQueuedArtifactImports();
+      recall.completeTranscripts([]);
+      await deliverRecallWebhook(
+        buildTranscriptDoneWebhook({ botId, metadata }),
+      );
+      await runQueuedArtifactImports();
+
+      expect((await fetchCallRecording(callRecordingId)).status).toBe(
+        'COMPLETED',
+      );
+
+      const importRequestCountBeforeDeletion =
+        recall.artifactImportRequests.length;
+
+      await deliverRecallWebhook(
+        buildRecordingDeletedWebhook({ botId, metadata }),
+      );
+
+      expect(recall.artifactImportRequests).toHaveLength(
+        importRequestCountBeforeDeletion,
+      );
+
+      const callRecording = await fetchCallRecording(callRecordingId);
+
+      expect(callRecording.status).toBe('COMPLETED');
+      expect(callRecording.callRecorderFailureReason).toBeFalsy();
+      expect(callRecording.audio).toHaveLength(1);
+      expect(callRecording.video).toHaveLength(1);
+    });
+
+    it('fails a processing recording whose recording.done was lost once the bot reports its media expired', async () => {
+      const { callRecordingId, botId, metadata } =
+        await scheduleRecordingThroughCalendarReconciliation();
+      const startedAt = recordingStartedAt();
+      const endedAt = new Date().toISOString();
+
+      await deliverRecallWebhook(
+        buildBotStatusChangeWebhook({
+          botId,
+          metadata,
+          statusCode: 'call_ended',
+          statusTimestamp: endedAt,
+        }),
+      );
+
+      const processingCallRecording = await fetchCallRecording(callRecordingId);
+
+      expect(processingCallRecording.status).toBe('PROCESSING');
+      expect(processingCallRecording.externalRecordingId).toBeFalsy();
+      expect(processingCallRecording.startedAt).toBeFalsy();
+
+      recall.expireBotMedia({
+        botId,
+        recordingStartedAt: startedAt,
+        recordingEndedAt: endedAt,
+      });
+
+      await runStaleStateCron();
+
+      const callRecording = await fetchCallRecording(callRecordingId);
+
+      expectFailedWithExpiredArtifacts(callRecording);
+      expect(callRecording.startedAt).toBeTruthy();
+    });
+
+    it('keeps converging a processing recording whose media is still available', async () => {
+      const { calendarEventId, callRecordingId, botId, metadata } =
+        await scheduleRecordingThroughCalendarReconciliation();
+
+      await deliverRecordingDone({ botId, metadata });
+      await client.mutation({
+        updateCalendarEvent: {
+          __args: {
+            id: calendarEventId,
+            data: { startsAt: daysAgo(2), endsAt: daysAgo(1) },
+          },
+          id: true,
+        },
+      });
+
+      await runStaleStateCron();
+
+      const callRecording = await fetchCallRecording(callRecordingId);
+
+      expect(callRecording.status).toBe('PROCESSING');
+      expect(callRecording.callRecorderFailureReason).toBeFalsy();
+    });
+  });
+
+  describe('recovering recordings whose Recall webhooks were lost', () => {
+    it('imports the media of a processing recording whose recording.done was lost', async () => {
+      const { callRecordingId, botId, metadata } =
+        await scheduleRecordingThroughCalendarReconciliation();
+      const startedAt = hoursAgo(1);
+      const endedAt = new Date().toISOString();
+
+      await deliverRecallWebhook(
+        buildBotStatusChangeWebhook({
+          botId,
+          metadata,
+          statusCode: 'call_ended',
+          statusTimestamp: endedAt,
+        }),
+      );
+      recall.finishBotRecording({
+        botId,
+        recordingStartedAt: startedAt,
+        recordingEndedAt: endedAt,
+      });
+
+      const cronResult = await runStaleStateCron();
+
+      expect(cronResult.enqueuedCallRecordingIds).toEqual([callRecordingId]);
+
+      const callRecording = await fetchCallRecording(callRecordingId);
+
+      expect(callRecording.status).toBe('PROCESSING');
+      expect(callRecording.externalRecordingId).toBe('recall-recording-1');
+      expect(callRecording.startedAt).toBeTruthy();
+      expect(callRecording.audio).toHaveLength(1);
+      expect(callRecording.video).toHaveLength(1);
+      expect(callRecording.transcript).toMatchObject({ status: 'PENDING' });
+    });
+
+    it('moves a recording still marked recording to processing once Recall shows the bot finished', async () => {
+      const { calendarEventId, callRecordingId, botId, metadata } =
+        await scheduleRecordingThroughCalendarReconciliation();
+      const startedAt = hoursAgo(1);
+      const endedAt = new Date().toISOString();
+
+      await deliverRecallWebhook(
+        buildBotStatusChangeWebhook({
+          botId,
+          metadata,
+          statusCode: 'in_call_recording',
+          statusTimestamp: startedAt,
+        }),
+      );
+      recall.finishBotRecording({
+        botId,
+        recordingStartedAt: startedAt,
+        recordingEndedAt: endedAt,
+      });
+      await moveMeetingIntoPast(calendarEventId);
+
+      const cronResult = await runStaleStateCron();
+
+      expect(cronResult.enqueuedCallRecordingIds).toEqual([callRecordingId]);
+
+      const callRecording = await fetchCallRecording(callRecordingId);
+
+      expect(callRecording.status).toBe('PROCESSING');
+      expect(callRecording.externalRecordingId).toBe('recall-recording-1');
+      expect(callRecording.endedAt).toBeTruthy();
+      expect(callRecording.audio).toHaveLength(1);
+      expect(callRecording.video).toHaveLength(1);
+    });
+
+    it('fails a recording still marked recording whose bot vanished from Recall', async () => {
+      const { calendarEventId, callRecordingId, botId, metadata } =
+        await scheduleRecordingThroughCalendarReconciliation();
+
+      await deliverRecallWebhook(
+        buildBotStatusChangeWebhook({
+          botId,
+          metadata,
+          statusCode: 'in_call_recording',
+        }),
+      );
+      recall.bots.delete(botId);
+      await moveMeetingIntoPast(calendarEventId);
+
+      await runStaleStateCron();
+
+      const callRecording = await fetchCallRecording(callRecordingId);
+
+      expect(callRecording.status).toBe('FAILED');
+      expect(callRecording.callRecorderFailureReason).toBe(
+        'recall_bot_not_found',
+      );
+    });
+
+    it('leaves an upcoming meeting alone', async () => {
+      const { callRecordingId, botId, metadata } =
+        await scheduleRecordingThroughCalendarReconciliation();
+
+      await deliverRecallWebhook(
+        buildBotStatusChangeWebhook({
+          botId,
+          metadata,
+          statusCode: 'joining_call',
+        }),
+      );
+      recall.bots.delete(botId);
+
+      const cronResult = await runStaleStateCron();
+
+      expect(cronResult.enqueuedCallRecordingIds).toEqual([]);
+      expect((await fetchCallRecording(callRecordingId)).status).toBe(
+        'JOINING',
+      );
+    });
+  });
+
   describe('crash recovery cron', () => {
     it('schedules a bot for a recording created without one, with zero Recall list reads', async () => {
       const calendarEventId = await createCalendarEvent();
@@ -1242,7 +3099,7 @@ describe('call recorder app lifecycle (integration)', () => {
       const calendarEventId = await createCalendarEvent();
       const callRecordingId = await createPendingCallRecording({
         calendarEventId,
-        botScheduleAttemptedAt: hoursAgo(1),
+        botScheduleAttemptedAt: hoursAgo(0.25),
         botScheduleIdempotencyKey: 'key-from-before-the-meeting-moved',
       });
 
@@ -1258,6 +3115,26 @@ describe('call recorder app lifecycle (integration)', () => {
         'recall-bot-from-crashed-run',
       );
       expect(recall.listRequestCount).toBe(1);
+    });
+
+    it('attaches a scheduled bot that has no status yet instead of creating a twin', async () => {
+      const calendarEventId = await createCalendarEvent();
+      const callRecordingId = await createPendingCallRecording({
+        calendarEventId,
+        botScheduleAttemptedAt: hoursAgo(24),
+      });
+
+      recall.seedBot({
+        id: 'recall-bot-scheduled-before-lost-write-back',
+        metadata: buildBotMetadata(callRecordingId, workspaceId),
+      });
+
+      await runPendingRecoveryCron();
+
+      expect((await fetchCallRecording(callRecordingId)).externalBotId).toBe(
+        'recall-bot-scheduled-before-lost-write-back',
+      );
+      expect(recall.bots.size).toBe(1);
     });
 
     it('fails a recording whose meeting ended before any bot creation was attempted', async () => {
@@ -1452,7 +3329,7 @@ describe('call recorder app lifecycle (integration)', () => {
         calendarEventIds: [calendarEventId],
       });
 
-      const result = await deliverCalendarEventUpdate({
+      const result = await deliverCalendarEventUpdates({
         calendarEventId,
         updatedFields: ['callRecorderPreference'],
         before: { callRecorderPreference: null },
@@ -1465,12 +3342,111 @@ describe('call recorder app lifecycle (integration)', () => {
       });
     });
 
+    it('reconciles every change of a batch except the echo of its own On write', async () => {
+      const echoedCalendarEventId = await createCalendarEvent({
+        callRecorderPreference: null,
+      });
+
+      await reconcileCallRecorderForCalendarEventIds({
+        client,
+        calendarEventIds: [echoedCalendarEventId],
+      });
+
+      const newlyOnCalendarEventId = await createCalendarEvent({
+        callRecorderPreference: 'ON',
+      });
+
+      const result = await deliverCalendarEventUpdates(
+        {
+          calendarEventId: echoedCalendarEventId,
+          updatedFields: ['callRecorderPreference', 'updatedBy'],
+          before: { callRecorderPreference: null },
+          after: { callRecorderPreference: 'ON' },
+        },
+        {
+          calendarEventId: newlyOnCalendarEventId,
+          updatedFields: ['callRecorderPreference', 'updatedBy'],
+          before: { callRecorderPreference: null },
+          after: { callRecorderPreference: 'ON' },
+        },
+      );
+
+      expect(result).toEqual(
+        expect.objectContaining({
+          reconciled: true,
+          calendarEventIds: [newlyOnCalendarEventId],
+        }),
+      );
+
+      const callRecording = (
+        await findCallRecordings({
+          calendarEventId: { in: [newlyOnCalendarEventId] },
+        })
+      )[0];
+
+      expect(callRecording).toBeDefined();
+      expect(callRecording.recordingRequestStatus).toBe('REQUESTED');
+      expect(callRecording.externalBotId).toBeTruthy();
+    });
+
+    it('uses four Core API reads and no writes for a batch of meetings that already have bots', async () => {
+      const calendarEventIds = [
+        await createCalendarEvent(),
+        await createCalendarEvent(),
+        await createCalendarEvent(),
+      ];
+
+      await reconcileCallRecorderForCalendarEventIds({
+        client,
+        calendarEventIds,
+      });
+
+      const interceptedFetch = globalThis.fetch;
+      const twentyGraphqlRequestBodies: unknown[] = [];
+
+      vi.stubGlobal(
+        'fetch',
+        (input: Parameters<typeof fetch>[0], init?: RequestInit) => {
+          if (String(input) === `${process.env.TWENTY_API_URL}/graphql`) {
+            twentyGraphqlRequestBodies.push(init?.body);
+          }
+
+          return interceptedFetch(input, init);
+        },
+      );
+
+      const result = await deliverCalendarEventUpdates(
+        ...calendarEventIds.map((calendarEventId) => ({
+          calendarEventId,
+          updatedFields: ['endsAt'],
+          before: { endsAt: inTwoHours() },
+          after: { endsAt: inTwoHours() },
+        })),
+      );
+
+      expect(result).toEqual(
+        expect.objectContaining({
+          reconciliationResults: [
+            expect.objectContaining({ action: 'UPDATED' }),
+            expect.objectContaining({ action: 'UPDATED' }),
+            expect.objectContaining({ action: 'UPDATED' }),
+          ],
+        }),
+      );
+      expect(twentyGraphqlRequestBodies).toHaveLength(4);
+      expect(
+        twentyGraphqlRequestBodies.every((body) =>
+          JSON.parse(String(body)).query.startsWith('query'),
+        ),
+      ).toBe(true);
+    });
+
     it('schedules a bot when a user sets On on an eligible meeting that has none yet', async () => {
       const calendarEventId = await createCalendarEvent({
         callRecorderPreference: 'ON',
       });
 
-      const result = await deliverCalendarEventUpdate({
+      const result = await deliverCalendarEventUpdates({
         calendarEventId,
         updatedFields: ['callRecorderPreference'],
         before: { callRecorderPreference: null },
@@ -1496,7 +3472,7 @@ describe('call recorder app lifecycle (integration)', () => {
         callRecorderPreference: 'ON',
       });
 
-      const result = await deliverCalendarEventUpdate({
+      const result = await deliverCalendarEventUpdates({
         calendarEventId,
         updatedFields: ['callRecorderPreference'],
         before: { callRecorderPreference: null },
@@ -1522,7 +3498,7 @@ describe('call recorder app lifecycle (integration)', () => {
         callRecorderPreference: 'ON',
       });
 
-      const result = await deliverCalendarEventUpdate({
+      const result = await deliverCalendarEventUpdates({
         calendarEventId,
         updatedFields: ['callRecorderPreference'],
         before: { callRecorderPreference: null },
@@ -1553,7 +3529,7 @@ describe('call recorder app lifecycle (integration)', () => {
         },
       });
 
-      const result = await deliverCalendarEventUpdate({
+      const result = await deliverCalendarEventUpdates({
         calendarEventId,
         updatedFields: ['callRecorderPreference'],
         before: { callRecorderPreference: 'OFF' },
@@ -1743,7 +3719,7 @@ describe('call recorder app lifecycle (integration)', () => {
         },
       });
 
-      const result = await deliverCalendarEventUpdate({
+      const result = await deliverCalendarEventUpdates({
         calendarEventId,
         updatedFields: ['callRecorderPreference'],
         before: { callRecorderPreference: null },

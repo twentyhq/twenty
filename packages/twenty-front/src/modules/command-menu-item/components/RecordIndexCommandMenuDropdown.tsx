@@ -2,35 +2,20 @@ import { COMMAND_MENU_DROPDOWN_CLICK_OUTSIDE_ID } from '@/command-menu-item/cons
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
 import { CommandMenuItemRenderer } from '@/command-menu-item/display/components/CommandMenuItemRenderer';
 import { recordIndexCommandMenuDropdownPositionComponentState } from '@/command-menu-item/states/recordIndexCommandMenuDropdownPositionComponentState';
+import { createVirtualElementFromPosition } from '@/command-menu-item/utils/createVirtualElementFromPosition';
 import { getCommandMenuDropdownIdFromCommandMenuId } from '@/command-menu-item/utils/getCommandMenuDropdownIdFromCommandMenuId';
 import { CommandMenuComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuComponentInstanceContext';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
-import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
-import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
-import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
+import { Dropdown } from 'twenty-ui/components';
 import { IconLayoutSidebarRightExpand } from 'twenty-ui/icon';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
 import { CommandMenuItemAvailabilityType } from '~/generated-metadata/graphql';
-
-const StyledDropdownMenuContainer = styled.div`
-  align-items: center;
-  display: flex;
-
-  flex-direction: column;
-  height: 100%;
-  justify-content: center;
-  width: 100%;
-`;
 
 export const RecordIndexCommandMenuDropdown = () => {
   const { t } = useLingui();
@@ -49,7 +34,6 @@ export const RecordIndexCommandMenuDropdown = () => {
   );
 
   const dropdownId = getCommandMenuDropdownIdFromCommandMenuId(commandMenuId);
-  const { closeDropdown } = useCloseDropdown();
 
   const recordIndexCommandMenuDropdownPosition = useAtomComponentStateValue(
     recordIndexCommandMenuDropdownPositionComponentState,
@@ -58,64 +42,30 @@ export const RecordIndexCommandMenuDropdown = () => {
 
   const { openSidePanelMenu } = useSidePanelMenu();
 
-  const selectedItemIdArray = [
-    ...recordIndexCommandMenuItems.map((item) => item.id),
-    ...(shouldShowMoreActions ? ['more-actions'] : []),
-  ];
-
-  const selectedItemId = useAtomComponentStateValue(
-    selectedItemIdComponentState,
-    dropdownId,
-  );
-
   return (
-    <Dropdown
-      dropdownId={dropdownId}
-      data-select-disable
-      dropdownPlacement="bottom-start"
-      dropdownOffset={{
-        x: recordIndexCommandMenuDropdownPosition.x ?? 0,
-        y: recordIndexCommandMenuDropdownPosition.y ?? 0,
-      }}
-      dropdownComponents={
-        <DropdownContent>
-          <StyledDropdownMenuContainer
-            data-click-outside-id={COMMAND_MENU_DROPDOWN_CLICK_OUTSIDE_ID}
-          >
-            <DropdownMenuItemsContainer>
-              <SelectableList
-                focusId={dropdownId}
-                selectableItemIdArray={selectedItemIdArray}
-                selectableListInstanceId={dropdownId}
-              >
-                {recordIndexCommandMenuItems.map((item) => (
-                  <CommandMenuItemRenderer item={item} key={item.id} />
-                ))}
-                {shouldShowMoreActions && (
-                  <SelectableListItem
-                    itemId="more-actions"
-                    key="more-actions"
-                    onEnter={() => {
-                      closeDropdown(dropdownId);
-                      openSidePanelMenu();
-                    }}
-                  >
-                    <MenuItem
-                      LeftIcon={IconLayoutSidebarRightExpand}
-                      onClick={() => {
-                        closeDropdown(dropdownId);
-                        openSidePanelMenu();
-                      }}
-                      focused={selectedItemId === 'more-actions'}
-                      text={t`More actions`}
-                    />
-                  </SelectableListItem>
-                )}
-              </SelectableList>
-            </DropdownMenuItemsContainer>
-          </StyledDropdownMenuContainer>
-        </DropdownContent>
-      }
-    />
+    <DropdownRoot dropdownId={dropdownId} type="menu">
+      <DropdownContent
+        anchor={createVirtualElementFromPosition(
+          recordIndexCommandMenuDropdownPosition,
+        )}
+        aria-label={t`Actions`}
+      >
+        <Dropdown.Section
+          data-click-outside-id={COMMAND_MENU_DROPDOWN_CLICK_OUTSIDE_ID}
+        >
+          {recordIndexCommandMenuItems.map((item) => (
+            <CommandMenuItemRenderer item={item} key={item.id} />
+          ))}
+          {shouldShowMoreActions && (
+            <Dropdown.ActionItem
+              startIcon={<IconLayoutSidebarRightExpand />}
+              onClick={() => openSidePanelMenu()}
+            >
+              {t`More actions`}
+            </Dropdown.ActionItem>
+          )}
+        </Dropdown.Section>
+      </DropdownContent>
+    </DropdownRoot>
   );
 };

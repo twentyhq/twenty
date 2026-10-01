@@ -1,8 +1,9 @@
+import groupBy from 'lodash.groupby';
 import { Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-import { In, Repository } from 'typeorm';
+import { In, IsNull, Repository } from 'typeorm';
 
 import { CalendarChannelSyncStage } from 'twenty-shared/types';
 import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-monitor.decorator';
@@ -12,7 +13,6 @@ import { Process } from 'src/engine/core-modules/message-queue/decorators/proces
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import {
   CalendarEventsImportJob,
   type CalendarEventsImportJobData,
@@ -30,8 +30,6 @@ export class CalendarEventsImportCronJob {
   private readonly logger = new Logger(CalendarEventsImportCronJob.name);
 
   constructor(
-    @InjectRepository(WorkspaceEntity)
-    private readonly workspaceRepository: Repository<WorkspaceEntity>,
     @InjectMessageQueue(MessageQueue.calendarQueue)
     private readonly messageQueueService: MessageQueueService,
     @InjectRepository(CalendarChannelEntity)
@@ -45,24 +43,27 @@ export class CalendarEventsImportCronJob {
     CALENDAR_EVENTS_IMPORT_CRON_PATTERN,
   )
   async handle(): Promise<void> {
-    const activeWorkspaces = await this.workspaceRepository.find({
-      where: {
-        activationStatus: WorkspaceActivationStatus.ACTIVE,
-      },
-    });
+    const pendingCalendarChannelsAcrossWorkspaces =
+      await this.calendarChannelRepository.find({
+        where: {
+          isSyncEnabled: true,
+          syncStage: CalendarChannelSyncStage.CALENDAR_EVENTS_IMPORT_PENDING,
+          workspace: {
+            activationStatus: WorkspaceActivationStatus.ACTIVE,
+            deletedAt: IsNull(),
+          },
+        },
+      });
 
-    for (const activeWorkspace of activeWorkspaces) {
+    const pendingCalendarChannelsByWorkspaceId = groupBy(
+      pendingCalendarChannelsAcrossWorkspaces,
+      'workspaceId',
+    );
+
+    for (const [workspaceId, pendingCalendarChannels] of Object.entries(
+      pendingCalendarChannelsByWorkspaceId,
+    )) {
       try {
-        const pendingCalendarChannels =
-          await this.calendarChannelRepository.find({
-            where: {
-              workspaceId: activeWorkspace.id,
-              isSyncEnabled: true,
-              syncStage:
-                CalendarChannelSyncStage.CALENDAR_EVENTS_IMPORT_PENDING,
-            },
-          });
-
         const calendarChannelsToSchedule = pendingCalendarChannels.filter(
           (calendarChannel) =>
             !isThrottled(
@@ -76,7 +77,7 @@ export class CalendarEventsImportCronJob {
 
         if (throttledCount > 0) {
           this.logger.log(
-            `Skipped ${throttledCount} throttled calendar channels for workspace ${activeWorkspace.id}`,
+            `Skipped ${throttledCount} throttled calendar channels for workspace ${workspaceId}`,
           );
         }
 
@@ -98,7 +99,7 @@ export class CalendarEventsImportCronJob {
           })
           .where({
             id: In(calendarChannelIds),
-            workspaceId: activeWorkspace.id,
+            workspaceId,
             isSyncEnabled: true,
             syncStage: CalendarChannelSyncStage.CALENDAR_EVENTS_IMPORT_PENDING,
           })
@@ -114,14 +115,14 @@ export class CalendarEventsImportCronJob {
             CalendarEventsImportJob.name,
             {
               calendarChannelId,
-              workspaceId: activeWorkspace.id,
+              workspaceId,
             },
           );
         }
       } catch (error) {
         this.exceptionHandlerService.captureExceptions([error], {
           workspace: {
-            id: activeWorkspace.id,
+            id: workspaceId,
           },
         });
       }

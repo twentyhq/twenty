@@ -3,12 +3,14 @@ import { isDefined } from 'twenty-shared/utils';
 
 const METADATA_NAMES_WITHOUT_MANIFEST_REPRESENTATION: AllMetadataName[] = [
   'webhook',
+  'workflowVersion',
 ];
 
 const WORKSPACE_BOUND_PROPERTIES = [
   'userWorkspaceId',
   'apiKeyId',
   'workflowVersionId',
+  'coreWorkflowVersionId',
   'targetRecordId',
 ] as const;
 

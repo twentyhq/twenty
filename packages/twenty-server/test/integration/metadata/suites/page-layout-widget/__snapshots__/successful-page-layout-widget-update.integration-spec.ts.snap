@@ -226,7 +226,7 @@ exports[`Page layout widget update should succeed from a STANDALONE_RICH_TEXT wi
 {
   "configuration": {
     "body": {
-      "blocknote": "{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"Hello world"}]}]}",
+      "blocknote": "[{"id":"5f4a1c1e-0000-4000-8000-000000000001","type":"paragraph","props":{},"content":[{"type":"text","text":"Hello world","styles":{}}],"children":[]}]",
       "markdown": "# Hello world",
     },
     "configurationType": "STANDALONE_RICH_TEXT",

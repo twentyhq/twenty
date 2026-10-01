@@ -1,4 +1,4 @@
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import {
   type DeleteOneObjectFactoryInput,
   deleteOneObjectMetadataQueryFactory,
@@ -17,7 +17,7 @@ export const deleteOneObjectMetadata = async ({
     gqlFields,
   });
 
-  const response = await makeMetadataAPIRequest(graphqlOperation);
+  const response = await makeMetadataApiRequest(graphqlOperation);
 
   if (expectToFail === true) {
     warnIfNoErrorButExpectedToFail({

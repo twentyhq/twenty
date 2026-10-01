@@ -12,8 +12,7 @@ import { SettingsDataModelSetFieldValueEffect } from '@/settings/data-model/fiel
 import { SettingsDataModelSetLabelIdentifierRecordEffect } from '@/settings/data-model/fields/preview/components/SettingsDataModelSetLabelIdentifierRecordEffect';
 import { useFieldPreviewValue } from '@/settings/data-model/fields/preview/hooks/useFieldPreviewValue';
 import { useIcons } from 'twenty-ui/icon';
-import { useContext } from 'react';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 type SettingsDataModelFieldPreviewProps = {
@@ -63,7 +62,7 @@ export const SettingsDataModelFieldPreview = ({
       objectNameSingular: objectNameSingular,
     });
 
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const { getIcon } = useIcons();
   const FieldIcon = getIcon(fieldMetadataItem.icon);
 

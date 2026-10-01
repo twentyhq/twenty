@@ -14,6 +14,7 @@ export { IconBrandAnthropic } from './components/IconBrandAnthropic';
 export { IconBrandGemini } from './components/IconBrandGemini';
 export { IconBrandGroq } from './components/IconBrandGroq';
 export { IconBrandMistral } from './components/IconBrandMistral';
+export { IconBrandTypesafeAi } from './components/IconBrandTypesafeAi';
 export { IconBrandXai } from './components/IconBrandXai';
 export { IconChartBarHorizontal } from './components/IconChartBarHorizontal';
 export { IconGmail } from './components/IconGmail';
@@ -346,6 +347,7 @@ export {
   IconMessage,
   IconMessageCirclePlus,
   IconMicrophone,
+  IconMinimize,
   IconMinus,
   IconMoneybag,
   IconMoodSmile,
@@ -451,6 +453,7 @@ export {
   IconSquareRoundedX,
   IconSquareX,
   IconStack2,
+  IconStairs,
   IconStar,
   IconStatusChange,
   IconStepInto,

@@ -81,6 +81,7 @@ export const SettingsAI = () => {
       title={t`AI`}
       secondaryBar={
         <SettingsTabBar
+          aria-label={t`AI settings`}
           tabs={tabs}
           componentInstanceId={SETTINGS_AI_TABS.COMPONENT_INSTANCE_ID}
         />

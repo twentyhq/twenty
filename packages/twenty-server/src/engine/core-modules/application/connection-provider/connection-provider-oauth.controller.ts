@@ -42,8 +42,7 @@ export class ConnectionProviderOAuthController {
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
   ) {}
 
-  // Public endpoint — the transient token carries workspace + user context
-  // so we don't need a session cookie here.
+  // Public: the transient token carries workspace and user context
   @Get('authorize')
   async authorize(
     @Query('applicationId') applicationId: string,
@@ -55,8 +54,7 @@ export class ConnectionProviderOAuthController {
     @Query('redirectLocation') redirectLocation: string | undefined,
     @Res() res: Response,
   ) {
-    // Captured early so the error-redirect lands on the user's own
-    // subdomain (different cookie domain otherwise = de-facto logout).
+    // Captured early so error redirects land on the user's subdomain (another cookie domain logs them out)
     let workspace: WorkspaceEntity | null = null;
 
     try {
@@ -103,19 +101,13 @@ export class ConnectionProviderOAuthController {
         await this.oauthProviderService.findOneByApplicationAndName({
           applicationId,
           name: providerName,
+          workspaceId,
         });
 
       if (!provider) {
         throw new ConnectionProviderException(
           `OAuth provider "${providerName}" not found for application ${applicationId}`,
           ConnectionProviderExceptionCode.PROVIDER_NOT_FOUND,
-        );
-      }
-
-      if (provider.workspaceId !== workspaceId) {
-        throw new ConnectionProviderException(
-          'OAuth provider does not belong to the requesting workspace',
-          ConnectionProviderExceptionCode.FORBIDDEN,
         );
       }
 
@@ -145,8 +137,7 @@ export class ConnectionProviderOAuthController {
 
       return res.redirect(authorizationUrl);
     } catch (error) {
-      // Without an explicit log, CustomException would 500 silently
-      // (it doesn't extend HttpException, so Nest's default filter swallows it).
+      // CustomException doesn't extend HttpException, so Nest's filter would 500 it silently
       this.logger.error(
         `OAuth authorize failed (applicationId=${applicationId}, providerName=${providerName}): ${error instanceof Error ? error.message : String(error)}`,
         error instanceof Error ? error.stack : undefined,

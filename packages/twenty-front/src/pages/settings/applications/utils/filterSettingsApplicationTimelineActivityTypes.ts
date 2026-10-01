@@ -1,6 +1,6 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
-import { type SettingsApplicationTimelineActivityType } from '~/pages/settings/applications/types/settingsApplicationTimelineActivityType';
+import { type SettingsApplicationTimelineActivityType } from '~/pages/settings/applications/types/SettingsApplicationTimelineActivityType';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
 export const filterSettingsApplicationTimelineActivityTypes = ({

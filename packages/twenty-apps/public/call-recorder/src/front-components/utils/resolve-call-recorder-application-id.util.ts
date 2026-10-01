@@ -1,20 +1,19 @@
 import { isNonEmptyString, isUndefined } from '@sniptt/guards';
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 
-const applicationIdPromiseByFrontComponentId = new Map<
-  string,
-  Promise<string>
->();
+import { APPLICATION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 
-const fetchCallRecorderApplicationId = async (frontComponentId: string) => {
+let applicationIdPromise: Promise<string> | undefined;
+
+const fetchCallRecorderApplicationId = async () => {
   const client = new MetadataApiClient();
-  const frontComponentResult = await client.query({
-    frontComponent: {
-      __args: { id: frontComponentId },
-      applicationId: true,
+  const applicationResult = await client.query({
+    findOneApplication: {
+      __args: { universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER },
+      id: true,
     },
   });
-  const applicationId = frontComponentResult.frontComponent?.applicationId;
+  const applicationId = applicationResult.findOneApplication?.id;
 
   if (!isNonEmptyString(applicationId)) {
     throw new Error('Could not resolve the call recorder application.');
@@ -23,32 +22,20 @@ const fetchCallRecorderApplicationId = async (frontComponentId: string) => {
   return applicationId;
 };
 
-export const resolveCallRecorderApplicationId = (
-  frontComponentId: string,
-): Promise<string> => {
-  const existingApplicationIdPromise =
-    applicationIdPromiseByFrontComponentId.get(frontComponentId);
+export const resolveCallRecorderApplicationId = (): Promise<string> => {
+  if (isUndefined(applicationIdPromise)) {
+    const pendingApplicationIdPromise = fetchCallRecorderApplicationId();
 
-  if (isUndefined(existingApplicationIdPromise)) {
-    const applicationIdPromise =
-      fetchCallRecorderApplicationId(frontComponentId);
+    applicationIdPromise = pendingApplicationIdPromise;
 
-    applicationIdPromiseByFrontComponentId.set(
-      frontComponentId,
-      applicationIdPromise,
-    );
-
-    void applicationIdPromise.catch(() => {
-      if (
-        applicationIdPromiseByFrontComponentId.get(frontComponentId) ===
-        applicationIdPromise
-      ) {
-        applicationIdPromiseByFrontComponentId.delete(frontComponentId);
+    void pendingApplicationIdPromise.catch(() => {
+      if (applicationIdPromise === pendingApplicationIdPromise) {
+        applicationIdPromise = undefined;
       }
     });
 
-    return applicationIdPromise;
+    return pendingApplicationIdPromise;
   }
 
-  return existingApplicationIdPromise;
+  return applicationIdPromise;
 };

@@ -9,7 +9,7 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { t } from '@lingui/core/macro';
 import { type RecordGqlOperationFilter } from 'twenty-shared/types';
-import { useToast } from 'twenty-ui/primitives/feedback';
+import { useToast } from 'twenty-ui/components';
 import { IconPlus } from 'twenty-ui/icon';
 import { logError } from '~/utils/logError';
 
@@ -40,8 +40,7 @@ export const RecordTableWidgetJunctionAddNewRow = ({
     junctionCreateThrough,
   });
 
-  // Linking an existing record only writes the junction object, so the
-  // junction's own permissions gate the row rather than the target object's.
+  // Linking only writes the junction object, so its permissions gate the row.
   if (
     isObjectMetadataReadOnly({
       objectPermissions: junctionObjectPermissions,

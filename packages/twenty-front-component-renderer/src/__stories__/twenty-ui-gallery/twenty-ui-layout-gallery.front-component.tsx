@@ -1,18 +1,10 @@
 import { defineFrontComponent } from 'twenty-sdk/define';
+import 'twenty-ui/style.css';
+import { AnimatedIconCrossfade } from 'twenty-ui/components';
 import { IconHeart, IconStar } from 'twenty-ui/icon';
-import {
-  AnimatedCircleLoading,
-  AnimatedContainer,
-  AnimatedEaseIn,
-  AnimatedEaseInOut,
-  AnimatedExpandableContainer,
-  AnimatedIconCrossfade,
-  AnimatedRotate,
-  AutogrowWrapper,
-  HorizontalSeparator,
-  ResizeHandle,
-} from 'twenty-ui/primitives/layout';
-import { ThemeProvider } from 'twenty-ui/theme-constants';
+import { Collapsible, HorizontalSeparator } from 'twenty-ui/primitives/layout';
+import { ThemeProvider } from 'twenty-ui/theme';
+import { ResizeHandleExample } from './resize-handle-example';
 
 import {
   ComponentGallery,
@@ -21,28 +13,8 @@ import {
 
 const LAYOUT_ENTRIES: GalleryEntry[] = [
   {
-    name: 'AnimatedCircleLoading',
-    node: <AnimatedCircleLoading>Loading</AnimatedCircleLoading>,
-  },
-  {
-    name: 'AnimatedContainer',
-    node: <AnimatedContainer>Content</AnimatedContainer>,
-  },
-  {
-    name: 'AnimatedEaseIn',
-    node: <AnimatedEaseIn>Fades in</AnimatedEaseIn>,
-  },
-  {
-    name: 'AnimatedEaseInOut',
-    node: <AnimatedEaseInOut isOpen={true}>Panel</AnimatedEaseInOut>,
-  },
-  {
-    name: 'AnimatedExpandableContainer',
-    node: (
-      <AnimatedExpandableContainer isExpanded={true}>
-        Expandable
-      </AnimatedExpandableContainer>
-    ),
+    name: 'Collapsible',
+    node: <Collapsible isExpanded={true}>Expandable</Collapsible>,
   },
   {
     name: 'AnimatedIconCrossfade',
@@ -56,20 +28,12 @@ const LAYOUT_ENTRIES: GalleryEntry[] = [
     ),
   },
   {
-    name: 'AnimatedRotate',
-    node: <AnimatedRotate>Rotate</AnimatedRotate>,
-  },
-  {
-    name: 'AutogrowWrapper',
-    node: <AutogrowWrapper>Grows</AutogrowWrapper>,
-  },
-  {
     name: 'HorizontalSeparator',
     node: <HorizontalSeparator text="or" />,
   },
   {
     name: 'ResizeHandle',
-    node: <ResizeHandle />,
+    node: <ResizeHandleExample />,
   },
 ];
 

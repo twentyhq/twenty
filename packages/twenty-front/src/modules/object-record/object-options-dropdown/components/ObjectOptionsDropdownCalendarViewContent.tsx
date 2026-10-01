@@ -1,7 +1,7 @@
-import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useObjectOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsDropdown';
 import { recordIndexCalendarLayoutComponentState } from '@/object-record/record-index/states/recordIndexCalendarLayoutComponentState';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -9,9 +9,9 @@ import { SelectableList } from '@/ui/layout/selectable-list/components/Selectabl
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useUpdateCurrentView } from '@/views/hooks/useUpdateCurrentView';
 import { t } from '@lingui/core/macro';
-import { Pill } from 'twenty-ui/primitives/data-display';
 import {
   IconCalendarEvent,
   IconCalendarMonth,
@@ -19,7 +19,8 @@ import {
   IconChevronLeft,
   IconTimelineEvent,
 } from 'twenty-ui/icon';
-import { MenuItemSelect } from 'twenty-ui/primitives/navigation';
+import { Pill } from 'twenty-ui/primitives/data-display';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { ViewCalendarLayout } from '~/generated-metadata/graphql';
 
 const RECORD_CALENDAR_TIMELINE_VIEW_ID = 'record-calendar-timeline-view';
@@ -62,7 +63,7 @@ export const ObjectOptionsDropdownCalendarViewContent = () => {
   };
 
   return (
-    <DropdownContent>
+    <LegacyDropdownContent>
       <DropdownMenuHeader
         StartComponent={
           <DropdownMenuHeaderLeftComponent
@@ -83,51 +84,65 @@ export const ObjectOptionsDropdownCalendarViewContent = () => {
             itemId={ViewCalendarLayout.DAY}
             onEnter={() => handleCalendarViewChange(ViewCalendarLayout.DAY)}
           >
-            <MenuItemSelect
-              LeftIcon={IconCalendarEvent}
-              text={t`Day`}
-              selected={recordIndexCalendarLayout === ViewCalendarLayout.DAY}
+            <ListItem
               onClick={() => handleCalendarViewChange(ViewCalendarLayout.DAY)}
               focused={selectedItemId === ViewCalendarLayout.DAY}
-            />
+              role="option"
+              aria-selected={
+                recordIndexCalendarLayout === ViewCalendarLayout.DAY
+              }
+              selected={recordIndexCalendarLayout === ViewCalendarLayout.DAY}
+              indicator="check"
+              startIcon={<SelectOptionIcon Icon={IconCalendarEvent} />}
+            >{t`Day`}</ListItem>
           </SelectableListItem>
           <SelectableListItem
             itemId={ViewCalendarLayout.WEEK}
             onEnter={() => handleCalendarViewChange(ViewCalendarLayout.WEEK)}
           >
-            <MenuItemSelect
-              LeftIcon={IconCalendarWeek}
-              text={t`Week`}
-              selected={recordIndexCalendarLayout === ViewCalendarLayout.WEEK}
+            <ListItem
               onClick={() => handleCalendarViewChange(ViewCalendarLayout.WEEK)}
               focused={selectedItemId === ViewCalendarLayout.WEEK}
-            />
+              role="option"
+              aria-selected={
+                recordIndexCalendarLayout === ViewCalendarLayout.WEEK
+              }
+              selected={recordIndexCalendarLayout === ViewCalendarLayout.WEEK}
+              indicator="check"
+              startIcon={<SelectOptionIcon Icon={IconCalendarWeek} />}
+            >{t`Week`}</ListItem>
           </SelectableListItem>
           <SelectableListItem
             itemId={ViewCalendarLayout.MONTH}
             onEnter={() => handleCalendarViewChange(ViewCalendarLayout.MONTH)}
           >
-            <MenuItemSelect
-              LeftIcon={IconCalendarMonth}
-              text={t`Month`}
-              selected={recordIndexCalendarLayout === ViewCalendarLayout.MONTH}
+            <ListItem
               onClick={() => handleCalendarViewChange(ViewCalendarLayout.MONTH)}
               focused={selectedItemId === ViewCalendarLayout.MONTH}
-            />
+              role="option"
+              aria-selected={
+                recordIndexCalendarLayout === ViewCalendarLayout.MONTH
+              }
+              selected={recordIndexCalendarLayout === ViewCalendarLayout.MONTH}
+              indicator="check"
+              startIcon={<SelectOptionIcon Icon={IconCalendarMonth} />}
+            >{t`Month`}</ListItem>
           </SelectableListItem>
           <SelectableListItem itemId={RECORD_CALENDAR_TIMELINE_VIEW_ID}>
-            <MenuItemSelect
-              LeftIcon={IconTimelineEvent}
-              text={t`Timeline`}
-              selected={false}
+            <ListItem
               focused={selectedItemId === RECORD_CALENDAR_TIMELINE_VIEW_ID}
-              contextualText={<Pill label={t`Soon`} />}
-              contextualTextPosition="right"
               disabled
-            />
+              role="option"
+              aria-selected={false}
+              selected={false}
+              indicator="check"
+              description={<Pill label={t`Soon`} />}
+              descriptionPlacement={'end'}
+              startIcon={<SelectOptionIcon Icon={IconTimelineEvent} />}
+            >{t`Timeline`}</ListItem>
           </SelectableListItem>
         </SelectableList>
       </DropdownMenuItemsContainer>
-    </DropdownContent>
+    </LegacyDropdownContent>
   );
 };

@@ -1,13 +1,17 @@
 import { type FlatUsageLimit } from 'src/engine/core-modules/usage-limit/types/flat-usage-limit.type';
 import { isIntraWorkspaceScoped } from 'src/engine/core-modules/usage-limit/utils/is-intra-workspace-scoped.util';
 
-export const findEnforceableLimits = ({
+export const findEnforceableLimits = <TLimit extends FlatUsageLimit>({
   limits,
   isIntraWorkspaceLimitEntitled,
 }: {
-  limits: FlatUsageLimit[];
+  limits: TLimit[];
   isIntraWorkspaceLimitEntitled: boolean;
-}): FlatUsageLimit[] =>
+}): TLimit[] =>
   isIntraWorkspaceLimitEntitled
     ? limits
-    : limits.filter((limit) => !isIntraWorkspaceScoped(limit.spenderType));
+    : limits.filter(
+        (limit) =>
+          !isIntraWorkspaceScoped(limit.spenderType) ||
+          limit.isInstanceOverride,
+      );

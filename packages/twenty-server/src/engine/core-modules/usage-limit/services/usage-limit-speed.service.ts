@@ -12,7 +12,7 @@ import {
   TOKEN_BUCKETS_ALLOW_PARTIAL_ARG,
   TOKEN_BUCKETS_DENY_PARTIAL_ARG,
   TRY_CONSUME_TOKEN_BUCKETS_SCRIPT,
-} from 'src/engine/core-modules/usage-limit/constants/try-consume-token-buckets-script.constant';
+} from 'src/engine/core-modules/throttler/constants/try-consume-token-buckets-script.constant';
 import {
   UsageLimitException,
   UsageLimitExceptionCode,
@@ -246,8 +246,12 @@ export class UsageLimitSpeedService {
       });
 
     return buildSpeedBuckets({
-      speedLimitDefaults: definition.defaults.map(
-        (speedLimitDefaultDefinition) => ({
+      speedLimitDefaults: definition.defaults
+        .filter(
+          (speedLimitDefaultDefinition) =>
+            speedLimitDefaultDefinition.operationType === operationType,
+        )
+        .map((speedLimitDefaultDefinition) => ({
           spenderType: speedLimitDefaultDefinition.spenderType,
           counterScope: speedLimitDefaultDefinition.counterScope,
           isOverridable: speedLimitDefaultDefinition.isOverridable,
@@ -257,8 +261,7 @@ export class UsageLimitSpeedService {
           windowMs: this.twentyConfigService.get(
             speedLimitDefaultDefinition.windowMsConfigVariable,
           ),
-        }),
-      ),
+        })),
       limits: enforceableLimits,
       authContext,
       resourceType,

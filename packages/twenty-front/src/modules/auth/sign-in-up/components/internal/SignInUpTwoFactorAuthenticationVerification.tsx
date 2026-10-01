@@ -12,6 +12,7 @@ import {
   SignInUpStep,
   signInUpStepState,
 } from '@/auth/states/signInUpStepState';
+import { getTwoFactorAuthenticationErrorToastOptions } from '@/auth/utils/getTwoFactorAuthenticationErrorToastOptions';
 import { useReadCaptchaToken } from '@/captcha/hooks/useReadCaptchaToken';
 import { useCaptcha } from '@/client-config/hooks/useCaptcha';
 import { ONBOARDING_CONTENT_BLOCK_WIDTH } from '@/onboarding/constants/OnboardingContentBlockWidth';
@@ -23,12 +24,10 @@ import { OTPInput, type SlotProps } from 'input-otp';
 import { useState } from 'react';
 import { Controller } from 'react-hook-form';
 import { AppPath } from 'twenty-shared/types';
-import { MainButton } from 'twenty-ui/components';
-import { ClickToActionLink } from 'twenty-ui/primitives/navigation';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { MainButton, useToast } from 'twenty-ui/components';
+import { Button } from 'twenty-ui/primitives/input';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
-
-import { useToast } from 'twenty-ui/primitives/feedback';
 
 const StyledForm = styled.form`
   align-items: center;
@@ -200,14 +199,15 @@ export const SignInUpTOTPVerification = () => {
       }
 
       await getAuthTokensFromOTP(values.otp, loginToken, captchaToken);
-    } catch {
+    } catch (error) {
       form.setValue('otp', '');
 
-      enqueueToast({
-        variant: 'error',
-        children: t`Invalid verification code. Please try again.`,
-        dedupeKey: 'invalid-otp-dedupe-key',
-      });
+      enqueueToast(
+        getTwoFactorAuthenticationErrorToastOptions({
+          error,
+          dedupeKey: 'invalid-otp-dedupe-key',
+        }),
+      );
     } finally {
       setIsLoading(false);
     }
@@ -269,9 +269,9 @@ export const SignInUpTOTPVerification = () => {
         disabled={isLoading}
       >{t`Submit`}</MainButton>
       <StyledActionBackLinkContainer>
-        <ClickToActionLink onClick={handleBack}>
+        <Button variant="link" onClick={handleBack}>
           <Trans>Back</Trans>
-        </ClickToActionLink>
+        </Button>
       </StyledActionBackLinkContainer>
     </StyledForm>
   );

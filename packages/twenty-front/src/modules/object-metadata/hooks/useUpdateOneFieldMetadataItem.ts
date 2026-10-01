@@ -8,13 +8,13 @@ import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetad
 import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
 import { type FlatFieldMetadataItem } from '@/metadata-store/types/FlatFieldMetadataItem';
 import { lastFieldMetadataItemUpdateState } from '@/object-metadata/states/lastFieldMetadataItemUpdateState';
-import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult.type';
+import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { t } from '@lingui/core/macro';
 import { CrudOperationType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/primitives/feedback';
+import { useToast } from 'twenty-ui/components';
 import { v4 as uuidv4 } from 'uuid';
 
 export const useUpdateOneFieldMetadataItem = () => {

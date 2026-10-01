@@ -1,11 +1,11 @@
 import { Button } from '@ui/primitives/input/Button/Button';
-import { DirectionProvider } from '@base-ui/react/direction-provider';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useRef, useState } from 'react';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
+import { TextDirectionProvider } from '@ui/primitives/layout/TextDirectionProvider/TextDirectionProvider';
 import { ComponentDecorator } from '@ui/testing';
-import { ThemeProvider } from '@ui/theme-constants/ThemeProvider';
+import { ThemeProvider } from '@ui/theme/ThemeProvider';
 
 import { DialogExample } from './DialogExample';
 import { waitForDialog } from './waitForDialog';
@@ -21,7 +21,7 @@ type Story = StoryObj<typeof DialogExample>;
 export const ScopedThemeAndDirection: Story = {
   decorators: [ComponentDecorator],
   render: () => (
-    <DirectionProvider direction="rtl">
+    <TextDirectionProvider direction="rtl">
       <ThemeProvider colorScheme="dark" applyToRoot={false}>
         <div
           data-testid="theme-scope"
@@ -34,7 +34,7 @@ export const ScopedThemeAndDirection: Story = {
           <DialogExample defaultOpen />
         </div>
       </ThemeProvider>
-    </DirectionProvider>
+    </TextDirectionProvider>
   ),
   play: async ({ canvasElement }) => {
     const dialog = await waitForDialog(canvasElement);

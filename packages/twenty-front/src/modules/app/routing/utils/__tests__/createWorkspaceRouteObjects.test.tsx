@@ -42,6 +42,7 @@ describe('workspace route objects', () => {
     );
 
     expect(panelRoutes.map(({ path }) => path)).toEqual([
+      AppPath.WorkflowCoreShowPage,
       AppPath.RecordIndexPage,
       AppPath.RecordShowPage,
       SETTINGS_ROOT_PATH,
@@ -78,32 +79,6 @@ describe('workspace route objects', () => {
     );
     expect(matchRoutes(panelRoutes, '/settings/billing')).toBeNull();
     expect(matchRoutes(mainRoutes, '/settings/billing')).not.toBeNull();
-  });
-
-  it('hosts the specialized workflow index on both surfaces', () => {
-    const routeObjects = createWorkspaceRouteObjects({
-      isWorkflowCoreIndexPageEnabled: true,
-    });
-
-    expect(
-      isWorkspaceLocationAvailableOnSurface(
-        routeObjects,
-        'side-panel',
-        '/objects/workflows',
-      ),
-    ).toBe(true);
-    expect(
-      getWorkspaceRouteObjectsForSurface(routeObjects, 'side-panel').map(
-        ({ path }) => path,
-      ),
-    ).toContain(AppPath.WorkflowCoreIndexPage);
-    expect(
-      isWorkspaceLocationAvailableOnSurface(
-        routeObjects,
-        'side-panel',
-        '/objects/companies',
-      ),
-    ).toBe(true);
   });
 
   it.each([
@@ -178,13 +153,11 @@ describe('workspace route objects', () => {
     ).toBe(false);
   });
 
-  it('allows the specialized workflow index to expand', () => {
+  it('allows the core workflow show page to expand', () => {
     expect(
       isWorkspaceLocationExpandableFromSidePanel(
-        createWorkspaceRouteObjects({
-          isWorkflowCoreIndexPageEnabled: true,
-        }),
-        '/objects/workflows',
+        createWorkspaceRouteObjects({}),
+        '/workflow/core-workflow-id',
       ),
     ).toBe(true);
   });

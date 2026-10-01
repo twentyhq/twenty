@@ -1,15 +1,16 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { type ReactNode, useContext, useState } from 'react';
+import { useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { SearchInput } from 'twenty-ui/primitives/input';
+import { ProgressRing } from 'twenty-ui/primitives/feedback';
+import { SearchInput } from 'twenty-ui/components';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 import { SettingsBillingLimitSpenderCell } from '@/settings/billing/components/SettingsBillingLimitSpenderCell';
-import { SettingsBillingLimitAmount } from '@/settings/billing/components/internal/SettingsBillingLimitAmount';
 import { SettingsBillingLimitsFilterDropdown } from '@/settings/billing/components/SettingsBillingLimitsFilterDropdown';
+import { SettingsBillingLimitAmount } from '@/settings/billing/components/internal/SettingsBillingLimitAmount';
 import { useUsageLimitRows } from '@/settings/billing/hooks/useUsageLimitRows';
 import { type UsageLimitRow } from '@/settings/billing/types/UsageLimitRow';
 import { type UsageQuotaWithConsumption } from '@/settings/billing/types/UsageQuotaWithConsumption';
@@ -18,7 +19,6 @@ import { getUsageLimitRingColor } from '@/settings/billing/utils/getUsageLimitRi
 import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
 import { SettingsNameCellSecondaryLabel } from '@/settings/components/SettingsNameCellSecondaryLabel';
 import { SettingsTableListSection } from '@/settings/components/SettingsTableListSection';
-import { ProgressRingWithLabel } from '@/ui/feedback/progress-ring/components/ProgressRingWithLabel';
 import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { type UsageResourceType } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
@@ -82,7 +82,7 @@ const StyledTooltipRow = styled.div`
 
 const NameCell = ({ item }: { item: UsageLimitRow }) => {
   const { t } = useLingui();
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
 
   const deactivatedAnchorId = `usage-limit-deactivated-${item.id}`;
 
@@ -146,13 +146,17 @@ const UsedCell = ({ item }: { item: UsageLimitRow }) => {
     >
       <StyledUsed id={anchorId}>
         {isDefined(item.consumedPercentage) ? (
-          <ProgressRingWithLabel
+          <ProgressRing
             value={item.consumedPercentage}
+            size="sm"
+            aria-label={t`${item.name} used by ${item.spenderName}`}
             barColor={getUsageLimitRingColor({
               consumedPercentage: item.consumedPercentage,
               isExhausted: item.isExhausted,
             })}
-          />
+          >
+            {`${item.consumedPercentage}%`}
+          </ProgressRing>
         ) : (
           <StyledEmptyValue>—</StyledEmptyValue>
         )}
@@ -208,9 +212,9 @@ export const SettingsBillingLimitsTable = ({
             <SearchInput
               placeholder={t`Search a limit`}
               value={searchText}
-              onChange={setSearchText}
+              onValueChange={setSearchText}
               filterButtonAriaLabel={t`Filter limits`}
-              filterDropdown={(filterButton: ReactNode) => (
+              filterDropdown={(filterButton) => (
                 <SettingsBillingLimitsFilterDropdown
                   filterButton={filterButton}
                   resourceTypes={resourceTypes}

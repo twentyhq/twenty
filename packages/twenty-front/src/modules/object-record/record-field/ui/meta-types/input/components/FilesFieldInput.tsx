@@ -18,7 +18,7 @@ import { useLingui } from '@lingui/react/macro';
 import { useCallback, useContext, useMemo, useState } from 'react';
 import { MULTI_ITEM_FIELD_DEFAULT_MAX_VALUES } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/primitives/feedback';
+import { useToast } from 'twenty-ui/components';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const FilesFieldInput = () => {
@@ -63,8 +63,7 @@ export const FilesFieldInput = () => {
       if (isDefined(nextValue)) {
         setDraftValue(nextValue);
 
-        // This input renders nothing without files, so it has to be closed once
-        // the last one is gone, the value itself being persisted by onSubmit
+        // This input renders nothing without files, so close it once the last is gone; persisting is left to onSubmit.
         if (nextValue.length === 0) {
           onEnter?.({ newValue: nextValue, skipPersist: true });
         }

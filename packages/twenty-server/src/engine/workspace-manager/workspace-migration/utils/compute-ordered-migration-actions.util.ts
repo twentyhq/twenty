@@ -1,5 +1,5 @@
 import { type OrchestratorActionsReport } from 'src/engine/workspace-manager/workspace-migration/types/workspace-migration-orchestrator.type';
-import { type AllUniversalWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-action-common';
+import { type AllUniversalWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-action-common.type';
 
 export const computeOrderedMigrationActions = (
   aggregatedOrchestratorActionsReport: OrchestratorActionsReport,
@@ -41,6 +41,13 @@ export const computeOrderedMigrationActions = (
     ...aggregatedOrchestratorActionsReport.viewSort.delete,
     ...aggregatedOrchestratorActionsReport.view.delete,
 
+    ...aggregatedOrchestratorActionsReport.workflowVersion.delete,
+    ...aggregatedOrchestratorActionsReport.workflow.delete,
+    ...aggregatedOrchestratorActionsReport.workflow.create,
+    ...aggregatedOrchestratorActionsReport.workflow.update,
+    ...aggregatedOrchestratorActionsReport.workflowVersion.create,
+    ...aggregatedOrchestratorActionsReport.workflowVersion.update,
+
     ...aggregatedOrchestratorActionsReport.logicFunction.delete,
     ...aggregatedOrchestratorActionsReport.logicFunction.create,
     ...aggregatedOrchestratorActionsReport.logicFunction.update,
@@ -67,7 +74,6 @@ export const computeOrderedMigrationActions = (
     ...aggregatedOrchestratorActionsReport.fieldPermission.create,
     ...aggregatedOrchestratorActionsReport.fieldPermission.update,
 
-    // Permission flag definitions and their role assignments.
     ...aggregatedOrchestratorActionsReport.rolePermissionFlag.delete,
     ...aggregatedOrchestratorActionsReport.permissionFlag.delete,
     ...aggregatedOrchestratorActionsReport.permissionFlag.create,
@@ -79,13 +85,21 @@ export const computeOrderedMigrationActions = (
     ...aggregatedOrchestratorActionsReport.skill.create,
     ...aggregatedOrchestratorActionsReport.skill.update,
 
-    ...aggregatedOrchestratorActionsReport.frontComponent.delete,
+    // Menu items CASCADE on frontComponentId, so a repointed item would be lost if its old component were deleted first:
+    // dropped items go first, then new components, then item repoints, and unreferenced components last
+    ...aggregatedOrchestratorActionsReport.commandMenuItem.delete,
+    ...aggregatedOrchestratorActionsReport.settingsMenuItem.delete,
+
     ...aggregatedOrchestratorActionsReport.frontComponent.create,
     ...aggregatedOrchestratorActionsReport.frontComponent.update,
 
-    ...aggregatedOrchestratorActionsReport.commandMenuItem.delete,
     ...aggregatedOrchestratorActionsReport.commandMenuItem.create,
     ...aggregatedOrchestratorActionsReport.commandMenuItem.update,
+
+    ...aggregatedOrchestratorActionsReport.settingsMenuItem.create,
+    ...aggregatedOrchestratorActionsReport.settingsMenuItem.update,
+
+    ...aggregatedOrchestratorActionsReport.frontComponent.delete,
 
     ...aggregatedOrchestratorActionsReport.pageLayout.delete,
     ...aggregatedOrchestratorActionsReport.pageLayout.create,
@@ -129,6 +143,8 @@ export const computeOrderedMigrationActions = (
     ...aggregatedOrchestratorActionsReport.timelineActivityType.delete,
     ...aggregatedOrchestratorActionsReport.timelineActivityType.create,
     ...aggregatedOrchestratorActionsReport.timelineActivityType.update,
-    ///
+    ...aggregatedOrchestratorActionsReport.validationRule.delete,
+    ...aggregatedOrchestratorActionsReport.validationRule.create,
+    ...aggregatedOrchestratorActionsReport.validationRule.update,
   ];
 };

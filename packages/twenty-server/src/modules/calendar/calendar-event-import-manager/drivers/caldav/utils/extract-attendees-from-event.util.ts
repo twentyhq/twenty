@@ -3,7 +3,7 @@ import type * as ical from 'node-ical';
 import { isDefined } from 'twenty-shared/utils';
 
 import { mapPartStatToResponseStatus } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/map-partstat-to-response-status.util';
-import { type FetchedCalendarEventParticipant } from 'src/modules/calendar/common/types/fetched-calendar-event';
+import { type FetchedCalendarEventParticipant } from 'src/modules/calendar/common/types/fetched-calendar-event.type';
 
 export const extractAttendeesFromEvent = (
   event: ical.VEvent,
@@ -17,7 +17,7 @@ export const extractAttendeesFromEvent = (
   return attendees.map((attendee) => {
     const rawValue = isString(attendee) ? attendee : attendee.val;
     const params = isString(attendee) ? undefined : attendee.params;
-    const handle = rawValue.replace(/^mailto:/i, '');
+    const handle = rawValue.replace(/^mailto:/i, '').toLowerCase();
     const partStat = params?.PARTSTAT ?? 'NEEDS_ACTION';
 
     return {

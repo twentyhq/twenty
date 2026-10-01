@@ -3,7 +3,7 @@ import { type ReactNode } from 'react';
 import { expect, it } from 'vitest';
 
 import { runComponentConformance } from '@test-utilities/conformance/runComponentConformance';
-import { ThemeProvider } from '@ui/theme-constants/ThemeProvider';
+import { ThemeProvider } from '@ui/theme/ThemeProvider';
 
 import { Dialog } from '../Dialog';
 

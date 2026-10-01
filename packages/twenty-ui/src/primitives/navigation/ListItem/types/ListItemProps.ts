@@ -1,3 +1,4 @@
+import { type ShortcutDefinition } from '@ui/primitives/typography/Shortcut/types/ShortcutDefinition';
 import { type useRender } from '@base-ui/react/use-render';
 import { type ReactNode } from 'react';
 
@@ -39,11 +40,13 @@ export type ListItemProps = Omit<
   descriptionPlacement?: ListItemDescriptionPlacement;
   /** Trailing content, such as buttons, rendered after the content. */
   actions?: ReactNode;
+  actionsVisibility?: 'hover' | 'always';
   /**
    * Keyboard shortcut keys displayed at the end of the row. Registering the
    * shortcut is up to the application.
    */
-  hotkeys?: string[];
+  shortcut?: ShortcutDefinition;
+  shortcutJoinLabel?: string;
   /** Shows a chevron indicating that the item opens a submenu. */
   hasSubmenu?: boolean;
 };

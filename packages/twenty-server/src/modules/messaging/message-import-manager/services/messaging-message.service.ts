@@ -10,7 +10,7 @@ import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system
 import { type MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { type MessageThreadWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-thread.workspace-entity';
 import { type MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
-import { type MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message';
+import { type MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message.type';
 
 type MessageAccumulator = {
   existingMessageInDB?: MessageWorkspaceEntity;
@@ -64,14 +64,18 @@ export class MessagingMessageService {
         const messageChannelMessageAssociationRepository =
           transactionScope.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
             'messageChannelMessageAssociation',
+            { shouldBypassPermissionChecks: true },
           );
 
         const messageRepository =
-          transactionScope.getRepository<MessageWorkspaceEntity>('message');
+          transactionScope.getRepository<MessageWorkspaceEntity>('message', {
+            shouldBypassPermissionChecks: true,
+          });
 
         const messageThreadRepository =
           transactionScope.getRepository<MessageThreadWorkspaceEntity>(
             'messageThread',
+            { shouldBypassPermissionChecks: true },
           );
 
         const messageAccumulatorMap = new Map<string, MessageAccumulator>();

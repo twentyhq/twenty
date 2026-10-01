@@ -9,7 +9,7 @@ import { useMutation } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/primitives/feedback';
+import { useToast } from 'twenty-ui/components';
 import { UpdateWorkspaceDocument } from '~/generated-metadata/graphql';
 
 export const useSettingsCustomDomain = () => {

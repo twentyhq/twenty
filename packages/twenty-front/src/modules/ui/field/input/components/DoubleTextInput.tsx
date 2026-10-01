@@ -17,11 +17,12 @@ import { isDefined } from 'twenty-shared/utils';
 import { splitFullName } from '~/utils/format/spiltFullName';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
 import { StyledTextInput } from './TextInput';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledContainer = styled.div`
   display: flex;
   justify-content: space-between;
+  width: 100%;
 
   & > input:last-child {
     border-left: 1px solid ${themeCssVariables.border.color.strong};

@@ -59,5 +59,8 @@ export default defineApplicationRole({
     },
   ],
   fieldPermissions: [],
-  permissionFlagUniversalIdentifiers: [SystemPermissionFlag.UPLOAD_FILE],
+  permissionFlagUniversalIdentifiers: [
+    SystemPermissionFlag.UPLOAD_FILE,
+    SystemPermissionFlag.AI,
+  ],
 });

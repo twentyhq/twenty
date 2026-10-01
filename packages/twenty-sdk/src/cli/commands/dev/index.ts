@@ -214,7 +214,7 @@ export const registerDevCommands = (program: Command): void => {
   program
     .command('dev:generate-client [appPath]')
     .description(
-      'Generate the typed API client from the active remote (no app definition required)',
+      'Generate the typed API client for the built app from the active remote',
     )
     .action(async (appPath) => {
       await generateClientCommand.execute({

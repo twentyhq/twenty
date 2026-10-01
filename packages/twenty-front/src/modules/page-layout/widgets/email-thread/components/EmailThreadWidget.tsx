@@ -1,3 +1,4 @@
+import { EmptyState } from '@/ui/feedback/empty-state/components/EmptyState';
 import { useCallback, useState } from 'react';
 
 import { CustomResolverFetchMoreLoader } from '@/activities/components/CustomResolverFetchMoreLoader';
@@ -9,24 +10,18 @@ import { type EmailDraftPrefill } from '@/activities/emails/types/EmailDraftPref
 import { type EmailThreadMessageWithSender } from '@/activities/emails/types/EmailThreadMessageWithSender';
 import { getEmailDraftPrefillFromMessage } from '@/activities/emails/utils/getEmailDraftPrefillFromMessage';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
+import { WidgetRelationsHeader } from '@/page-layout/widgets/components/WidgetRelationsHeader';
+import { EmailThreadComposer } from '@/page-layout/widgets/email-thread/components/EmailThreadComposer';
+import { EmailThreadIntermediaryMessages } from '@/page-layout/widgets/email-thread/components/EmailThreadIntermediaryMessages';
+import { AnimatedPlaceholder } from '@/ui/feedback/empty-state/components/AnimatedPlaceholder/AnimatedPlaceholder';
 import {
   StyledWidgetContentContainer,
   StyledWidgetScrollContainer,
 } from '@/ui/layout/components/WidgetContentContainer';
-import { EmailThreadComposer } from '@/page-layout/widgets/email-thread/components/EmailThreadComposer';
-import { EmailThreadIntermediaryMessages } from '@/page-layout/widgets/email-thread/components/EmailThreadIntermediaryMessages';
-import { WidgetRelationsHeader } from '@/page-layout/widgets/components/WidgetRelationsHeader';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  AnimatedPlaceholder,
-  AnimatedPlaceholderEmptyContainer,
-  AnimatedPlaceholderEmptySubTitle,
-  AnimatedPlaceholderEmptyTextContainer,
-  AnimatedPlaceholderEmptyTitle,
-} from 'twenty-ui/primitives/feedback';
 
 type EmailThreadWidgetProps = {
   widget: PageLayoutWidget;
@@ -114,17 +109,15 @@ export const EmailThreadWidget = ({
       <StyledWidgetContentContainer>
         <WidgetRelationsHeader />
         <StyledWidgetScrollContainer>
-          <AnimatedPlaceholderEmptyContainer>
+          <EmptyState.Root>
             <AnimatedPlaceholder type="emptyInbox" />
-            <AnimatedPlaceholderEmptyTextContainer>
-              <AnimatedPlaceholderEmptyTitle>
-                {t`No messages to show`}
-              </AnimatedPlaceholderEmptyTitle>
-              <AnimatedPlaceholderEmptySubTitle>
+            <EmptyState.Content>
+              <EmptyState.Title>{t`No messages to show`}</EmptyState.Title>
+              <EmptyState.Description>
                 {t`The messages in this thread are missing or incomplete.`}
-              </AnimatedPlaceholderEmptySubTitle>
-            </AnimatedPlaceholderEmptyTextContainer>
-          </AnimatedPlaceholderEmptyContainer>
+              </EmptyState.Description>
+            </EmptyState.Content>
+          </EmptyState.Root>
         </StyledWidgetScrollContainer>
       </StyledWidgetContentContainer>
     );

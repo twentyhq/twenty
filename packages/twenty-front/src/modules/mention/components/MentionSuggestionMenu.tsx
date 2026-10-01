@@ -1,6 +1,6 @@
+import { AvatarOrIcon } from '@/ui/field/display/components/internal/AvatarOrIcon/AvatarOrIcon';
 import { forwardRef } from 'react';
-import { AvatarOrIcon } from 'twenty-ui/primitives/data-display';
-import { MenuItemSuggestion } from 'twenty-ui/primitives/navigation';
+import { MenuItemSuggestion } from 'twenty-ui/components';
 
 import type { MentionSearchResult } from '@/mention/types/MentionSearchResult';
 import type { MentionSuggestionMenuProps } from '@/mention/types/MentionSuggestionMenuProps';

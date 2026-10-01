@@ -125,7 +125,7 @@ jobs:
         run: sudo chown -R runner:docker . || true
 
       - name: Fix translated documentation links
-        run: bash packages/twenty-docs/scripts/fix-translated-links.sh
+        run: yarn docs:fix-links
       - name: Prune orphan localized translations
         if: github.event_name != 'pull_request' && (inputs.force_pull == true || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
         run: yarn docs:prune-orphans --apply

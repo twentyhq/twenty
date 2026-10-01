@@ -30,6 +30,10 @@ export const WithColor: Story = {
   },
 };
 
+export const WithColorDocumentation: Story = {
+  args: WithColor.args,
+};
+
 export const WithDefaultCssVariable: Story = {
   decorators: [
     (Story) => (

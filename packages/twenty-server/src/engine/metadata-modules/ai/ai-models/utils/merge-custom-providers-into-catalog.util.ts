@@ -4,8 +4,7 @@ import { type AiProviderConfig } from 'src/engine/metadata-modules/ai/ai-models/
 import { type AiProviderModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider-model-config.type';
 import { type AiProvidersConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-providers-config.type';
 
-// A custom reading completes the catalog's rather than replacing it, so one
-// effort or one metric set by hand keeps the others the sync measured.
+// a hand-set effort or metric keeps the others the sync measured
 const mergeDefined = <TValue extends Record<string, unknown>>({
   catalogValue,
   customValue,
@@ -17,19 +16,14 @@ const mergeDefined = <TValue extends Record<string, unknown>>({
     ? { ...catalogValue, ...customValue }
     : (customValue ?? catalogValue);
 
-// Publishers and routes spell one model differently (`claude-haiku-4-5`,
-// `claude_haiku_4.5`, `claude-haiku-4-5-v1:0`), so names are compared with
-// separators and a trailing deployment version dropped.
+// publishers and routes spell one model differently: `claude-haiku-4-5`, `claude_haiku_4.5`, `claude-haiku-4-5-v1:0`
 const normalizeModelName = (modelName: string): string =>
   modelName
     .toLowerCase()
     .replace(/-v\d+(?::\d+)?$/, '')
     .replace(/[\s.\-_]/g, '');
 
-// Bedrock and Azure prefix a model with the region and vendor that serve it
-// (`eu.anthropic.claude-opus-4-7`). Dropping leading dot-separated segments
-// one at a time lets a route fall back to the model it serves, while a name
-// such as `gpt-4.1` still matches itself first.
+// Bedrock and Azure prefix region and vendor (`eu.anthropic.claude-opus-4-7`), yet `gpt-4.1` must match itself first
 const routeCandidates = (modelName: string): string[] => {
   const segments = modelName.split('.');
 
@@ -75,10 +69,7 @@ const mergeModels = ({
       : customModel;
   });
 
-// A provider the catalog does not know (a gateway, Bedrock, Azure) serves
-// models the catalog does know under another route. Its prices are its own,
-// so only what describes the model itself carries over: the efforts it takes
-// and the readings measured for it.
+// a route's prices are its own, so only efforts and readings carry over from the catalog model
 const withReadingsFromAnyProvider = ({
   catalog,
   customModels,
@@ -107,10 +98,7 @@ const withReadingsFromAnyProvider = ({
   });
 };
 
-// A provider written before the catalog carried efforts and benchmarks would
-// strip both from every model it lists, and the tier chains could no longer
-// name an effort on it. A model the catalog knows keeps the catalog fields the
-// entry does not set itself; the entry still decides which models exist.
+// providers written before the catalog carried efforts and benchmarks would otherwise strip them
 export const inheritCatalogReadings = ({
   catalog,
   providers,
@@ -145,8 +133,6 @@ export const inheritCatalogReadings = ({
   return result;
 };
 
-// A custom entry replaces the catalog provider of the same name; providers it
-// does not name stay as the catalog has them.
 export const mergeCustomProvidersIntoCatalog = ({
   catalog,
   custom,

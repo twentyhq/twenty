@@ -8,6 +8,7 @@ import {
   type ViewManifest,
   type ViewSortManifest,
 } from 'twenty-shared/application';
+import { DEFAULT_VIEW_GROUP_LOAD_LIMIT } from 'twenty-shared/constants';
 import {
   AggregateOperations,
   FieldMetadataType,
@@ -343,6 +344,7 @@ const ALL_PETS_VIEW_MANIFEST: ViewManifest = {
   visibility: ViewVisibility.WORKSPACE,
   openRecordIn: ViewOpenRecordIn.SIDE_PANEL,
   shouldHideEmptyGroups: false,
+  groupLoadLimit: DEFAULT_VIEW_GROUP_LOAD_LIMIT,
 };
 
 const ZOO_PETS_VIEW_MANIFEST: ViewManifest = {
@@ -356,6 +358,7 @@ const ZOO_PETS_VIEW_MANIFEST: ViewManifest = {
   visibility: ViewVisibility.WORKSPACE,
   openRecordIn: ViewOpenRecordIn.RECORD_PAGE,
   shouldHideEmptyGroups: true,
+  groupLoadLimit: DEFAULT_VIEW_GROUP_LOAD_LIMIT,
   mainGroupByFieldMetadataUniversalIdentifier: SPECIES_FIELD_UID,
 };
 

@@ -1,8 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { type LanguageModelUsage } from 'ai';
-
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
+import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
 import { type QuotaCost } from 'src/engine/core-modules/usage-limit/types/quota-cost.type';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
@@ -10,13 +9,16 @@ import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 import { UsageRecorderService } from 'src/engine/core-modules/usage/services/usage-recorder.service';
 import { type UsageSpenders } from 'src/engine/core-modules/usage/types/usage-spenders.type';
 import { NATIVE_WEB_SEARCH_COST_PER_CALL_DOLLARS } from 'src/engine/metadata-modules/ai/ai-billing/constants/native-web-search-cost-per-call-dollars';
-import { computeCostBreakdown } from 'src/engine/metadata-modules/ai/ai-billing/utils/compute-cost-breakdown.util';
+import { type BillingTokenUsage } from 'src/engine/metadata-modules/ai/ai-billing/types/billing-token-usage.type';
+import { computeStepCostBreakdown } from 'src/engine/metadata-modules/ai/ai-billing/utils/compute-step-cost-breakdown.util';
 import { convertDollarsToCreditsMicro } from 'src/engine/metadata-modules/ai/ai-billing/utils/convert-dollars-to-credits-micro.util';
+import { extractCacheCreationTokens } from 'src/engine/metadata-modules/ai/ai-billing/utils/extract-cache-creation-tokens.util';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
+import { type AiModelCostConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-cost-config.type';
 import { type ModelId } from 'src/engine/metadata-modules/ai/ai-models/types/model-id.type';
 
 export type BillingUsageInput = {
-  usage: LanguageModelUsage;
+  usage: BillingTokenUsage;
   cacheCreationTokens?: number;
 };
 
@@ -28,6 +30,7 @@ export class AiBillingService {
     private readonly usageRecorderService: UsageRecorderService,
     private readonly aiModelRegistryService: AiModelRegistryService,
     private readonly billingUsageService: BillingUsageService,
+    private readonly usageLimitQuotaService: UsageLimitQuotaService,
   ) {}
 
   async assertAiExecutionAllowed({
@@ -58,26 +61,54 @@ export class AiBillingService {
     spenders: UsageSpenders;
     cost: QuotaCost;
   }): Promise<{ hasNoMoreAvailableCredits: boolean }> {
-    return this.billingUsageService.consumeUsageQuota({
+    const { exhausted } = await this.usageLimitQuotaService.consumeQuota({
       workspaceId,
       resourceType: UsageResourceType.AI,
       operationType,
       spenders,
       cost,
     });
+
+    return {
+      hasNoMoreAvailableCredits: exhausted.some(
+        (scope) => scope.exhaustedKind === 'allowance',
+      ),
+    };
+  }
+
+  // evaluation models first: getEffectiveModelConfig throws on ids outside its registry
+  private getCostConfig(modelId: ModelId): AiModelCostConfig {
+    return (
+      this.aiModelRegistryService.getEvaluationModelConfig(modelId) ??
+      this.aiModelRegistryService.getEffectiveModelConfig(modelId)
+    );
+  }
+
+  calculateStepsCost(
+    modelId: ModelId,
+    steps: {
+      usage: BillingTokenUsage;
+      providerMetadata?: Record<string, Record<string, unknown> | undefined>;
+    }[],
+  ): number {
+    const model = this.getCostConfig(modelId);
+
+    return steps.reduce(
+      (costInDollars, step) =>
+        costInDollars +
+        computeStepCostBreakdown(model, {
+          usage: step.usage,
+          cacheCreationTokens: extractCacheCreationTokens(
+            step.providerMetadata,
+          ),
+        }).totalCostInDollars,
+      0,
+    );
   }
 
   calculateCost(modelId: ModelId, billingInput: BillingUsageInput): number {
-    const model = this.aiModelRegistryService.getEffectiveModelConfig(modelId);
-    const { usage, cacheCreationTokens = 0 } = billingInput;
-
-    const breakdown = computeCostBreakdown(model, {
-      inputTokens: usage.inputTokens,
-      outputTokens: usage.outputTokens,
-      reasoningTokens: usage.outputTokenDetails?.reasoningTokens,
-      cachedInputTokens: usage.inputTokenDetails?.cacheReadTokens,
-      cacheCreationTokens,
-    });
+    const model = this.getCostConfig(modelId);
+    const breakdown = computeStepCostBreakdown(model, billingInput);
 
     this.logger.log(
       `Cost for ${model.modelId}: $${breakdown.totalCostInDollars.toFixed(6)} ` +

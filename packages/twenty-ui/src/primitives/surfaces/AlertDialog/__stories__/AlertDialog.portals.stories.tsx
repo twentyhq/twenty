@@ -1,10 +1,10 @@
-import { DirectionProvider } from '@base-ui/react/direction-provider';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useRef, useState } from 'react';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
+import { TextDirectionProvider } from '@ui/primitives/layout/TextDirectionProvider/TextDirectionProvider';
 import { ComponentDecorator } from '@ui/testing';
-import { ThemeProvider } from '@ui/theme-constants/ThemeProvider';
+import { ThemeProvider } from '@ui/theme/ThemeProvider';
 
 import { AlertDialogExample } from './AlertDialogExample';
 import { waitForAlertDialog } from './waitForAlertDialog';
@@ -20,7 +20,7 @@ type Story = StoryObj<typeof AlertDialogExample>;
 export const ScopedThemeAndDirection: Story = {
   decorators: [ComponentDecorator],
   render: () => (
-    <DirectionProvider direction="rtl">
+    <TextDirectionProvider direction="rtl">
       <ThemeProvider colorScheme="dark" applyToRoot={false}>
         <div data-testid="theme-scope">
           <div
@@ -30,7 +30,7 @@ export const ScopedThemeAndDirection: Story = {
           <AlertDialogExample defaultOpen />
         </div>
       </ThemeProvider>
-    </DirectionProvider>
+    </TextDirectionProvider>
   ),
   play: async ({ canvasElement }) => {
     const dialog = await waitForAlertDialog(canvasElement);

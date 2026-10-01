@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
+import { msg } from '@lingui/core/macro';
 import { AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID } from 'twenty-shared/ai';
 import { inputSchemaToOutputSchema } from 'twenty-shared/logic-function';
 import {
@@ -15,10 +15,10 @@ import {
   getFunctionInputFromInputSchema,
   type StepIfElseBranch,
 } from 'twenty-shared/workflow';
-import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
+import { FindRecordsService } from 'src/engine/core-modules/record-crud/services/find-records.service';
 import { type WorkflowStepPositionInput } from 'src/engine/core-modules/workflow/dtos/update-workflow-step-position.input';
 import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
 import { AiAgentRoleService } from 'src/engine/metadata-modules/ai/ai-agent-role/ai-agent-role.service';
@@ -44,6 +44,7 @@ import {
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { type OutputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/types/output-schema.type';
 import { CodeStepBuildService } from 'src/modules/workflow/workflow-builder/workflow-version-step/code-step/services/code-step-build.service';
+import { type WorkflowExecutionContext } from 'src/modules/workflow/workflow-executor/types/workflow-execution-context.type';
 import { type BaseWorkflowActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action-settings.type';
 import {
   type WorkflowAction,
@@ -78,13 +79,14 @@ export class WorkflowVersionStepOperationsWorkspaceService {
     private readonly agentService: AgentService,
     @InjectWorkspaceScopedRepository(RoleTargetEntity)
     private readonly roleTargetRepository: WorkspaceScopedRepository<RoleTargetEntity>,
-    @InjectRepository(ObjectMetadataEntity)
-    private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
+    @InjectWorkspaceScopedRepository(ObjectMetadataEntity)
+    private readonly objectMetadataRepository: WorkspaceScopedRepository<ObjectMetadataEntity>,
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
     private readonly aiAgentRoleService: AiAgentRoleService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly workflowVersionCoreSyncService: WorkflowVersionCoreSyncService,
+    private readonly findRecordsService: FindRecordsService,
   ) {}
 
   async runWorkflowVersionStepDeletionSideEffects({
@@ -146,6 +148,12 @@ export class WorkflowVersionStepOperationsWorkspaceService {
         break;
       }
     }
+  }
+
+  private async findFirstActiveObjectMetadata(workspaceId: string) {
+    return this.objectMetadataRepository.findOne(workspaceId, {
+      where: { isActive: true, isSystem: false },
+    });
   }
 
   async runStepCreationSideEffectsAndBuildStep({
@@ -374,9 +382,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
       }
       case WorkflowActionType.CREATE_RECORD: {
         const activeObjectMetadataItem =
-          await this.objectMetadataRepository.findOne({
-            where: { workspaceId, isActive: true, isSystem: false },
-          });
+          await this.findFirstActiveObjectMetadata(workspaceId);
 
         return {
           builtStep: {
@@ -395,9 +401,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
       }
       case WorkflowActionType.UPDATE_RECORD: {
         const activeObjectMetadataItem =
-          await this.objectMetadataRepository.findOne({
-            where: { workspaceId, isActive: true, isSystem: false },
-          });
+          await this.findFirstActiveObjectMetadata(workspaceId);
 
         return {
           builtStep: {
@@ -418,9 +422,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
       }
       case WorkflowActionType.DELETE_RECORD: {
         const activeObjectMetadataItem =
-          await this.objectMetadataRepository.findOne({
-            where: { workspaceId, isActive: true, isSystem: false },
-          });
+          await this.findFirstActiveObjectMetadata(workspaceId);
 
         return {
           builtStep: {
@@ -439,9 +441,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
       }
       case WorkflowActionType.UPSERT_RECORD: {
         const activeObjectMetadataItem =
-          await this.objectMetadataRepository.findOne({
-            where: { workspaceId, isActive: true, isSystem: false },
-          });
+          await this.findFirstActiveObjectMetadata(workspaceId);
 
         return {
           builtStep: {
@@ -461,9 +461,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
       }
       case WorkflowActionType.FIND_RECORDS: {
         const activeObjectMetadataItem =
-          await this.objectMetadataRepository.findOne({
-            where: { workspaceId, isActive: true, isSystem: false },
-          });
+          await this.findFirstActiveObjectMetadata(workspaceId);
 
         return {
           builtStep: {
@@ -483,9 +481,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
       }
       case WorkflowActionType.PICK_RECORD: {
         const activeObjectMetadataItem =
-          await this.objectMetadataRepository.findOne({
-            where: { workspaceId, isActive: true, isSystem: false },
-          });
+          await this.findFirstActiveObjectMetadata(workspaceId);
 
         return {
           builtStep: {
@@ -569,13 +565,43 @@ export class WorkflowVersionStepOperationsWorkspaceService {
         return {
           builtStep: {
             ...baseStep,
-            name: 'AI Agent',
+            name: 'Agent',
             type: WorkflowActionType.AI_AGENT,
             settings: {
               ...BASE_STEP_DEFINITION,
               input: {
                 agentId: newAgent.id,
                 prompt: '',
+              },
+            },
+          },
+        };
+      }
+      case WorkflowActionType.CLASSIFY: {
+        return {
+          builtStep: {
+            ...baseStep,
+            name: 'Classify',
+            type: WorkflowActionType.CLASSIFY,
+            settings: {
+              ...BASE_STEP_DEFINITION,
+              input: {
+                state: '',
+                questions: [
+                  {
+                    id: v4(),
+                    name: '',
+                    type: 'choice',
+                    instructions: '',
+                    criteria: [
+                      {
+                        id: v4(),
+                        name: 'Lawyer',
+                        description: 'Advises clients on legal matters',
+                      },
+                    ],
+                  },
+                ],
               },
             },
           },
@@ -691,10 +717,15 @@ export class WorkflowVersionStepOperationsWorkspaceService {
     workspaceId,
     step,
     response,
+    recordReadContext,
   }: {
     workspaceId: string;
     step: WorkflowFormAction;
     response: object;
+    recordReadContext?: Pick<
+      WorkflowExecutionContext,
+      'authContext' | 'rolePermissionConfig'
+    >;
   }) {
     const authContext = buildSystemAuthContext(workspaceId);
 
@@ -719,6 +750,18 @@ export class WorkflowVersionStepOperationsWorkspaceService {
             // @ts-expect-error legacy noImplicitAny
             isValidUuid(response[key].id)
           ) {
+            if (isDefined(recordReadContext)) {
+              return {
+                key,
+                value: await this.findSelectedRecordOrThrow({
+                  objectName: field.settings.objectName,
+                  // @ts-expect-error legacy noImplicitAny
+                  recordId: response[key].id,
+                  recordReadContext,
+                }),
+              };
+            }
+
             const { flatObjectMetadata, flatFieldMetadataMaps } =
               await this.workflowCommonWorkspaceService.getObjectMetadataInfo(
                 field.settings.objectName,
@@ -758,6 +801,42 @@ export class WorkflowVersionStepOperationsWorkspaceService {
         return acc;
       }, {});
     }, authContext);
+  }
+
+  private async findSelectedRecordOrThrow({
+    objectName,
+    recordId,
+    recordReadContext,
+  }: {
+    objectName: string;
+    recordId: string;
+    recordReadContext: Pick<
+      WorkflowExecutionContext,
+      'authContext' | 'rolePermissionConfig'
+    >;
+  }) {
+    const { success, result } = await this.findRecordsService.execute({
+      objectName,
+      filter: { id: { eq: recordId } },
+      limit: 1,
+      authContext: recordReadContext.authContext,
+      rolePermissionConfig: recordReadContext.rolePermissionConfig,
+      shouldBuildEffectiveSelectFields: false,
+    });
+
+    const record = success ? result?.records[0] : undefined;
+
+    if (!isDefined(record)) {
+      throw new WorkflowVersionStepException(
+        `Record ${recordId} of ${objectName} cannot be read with the permissions of this run`,
+        WorkflowVersionStepExceptionCode.INVALID_REQUEST,
+        {
+          userFriendlyMessage: msg`You cannot select this record in this form.`,
+        },
+      );
+    }
+
+    return record;
   }
 
   async cloneStep({

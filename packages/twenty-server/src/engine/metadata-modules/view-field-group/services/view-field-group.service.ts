@@ -8,7 +8,6 @@ import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { fromCreateViewFieldGroupInputToFlatViewFieldGroupToCreate } from 'src/engine/metadata-modules/flat-view-field-group/utils/from-create-view-field-group-input-to-flat-view-field-group-to-create.util';
-import { fromDeleteViewFieldGroupInputToFlatViewFieldGroupOrThrow } from 'src/engine/metadata-modules/flat-view-field-group/utils/from-delete-view-field-group-input-to-flat-view-field-group-or-throw.util';
 import { fromDestroyViewFieldGroupInputToFlatViewFieldGroupOrThrow } from 'src/engine/metadata-modules/flat-view-field-group/utils/from-destroy-view-field-group-input-to-flat-view-field-group-or-throw.util';
 import { fromUpdateViewFieldGroupInputToFlatViewFieldGroupToUpdateOrThrow } from 'src/engine/metadata-modules/flat-view-field-group/utils/from-update-view-field-group-input-to-flat-view-field-group-to-update-or-throw.util';
 import { CreateViewFieldGroupInput } from 'src/engine/metadata-modules/view-field-group/dtos/inputs/create-view-field-group.input';
@@ -207,68 +206,10 @@ export class ViewFieldGroupService {
     deleteViewFieldGroupInput: DeleteViewFieldGroupInput;
     workspaceId: string;
   }): Promise<ViewFieldGroupDTO> {
-    const { workspaceCustomFlatApplication } =
-      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
-        {
-          workspaceId,
-        },
-      );
-
-    const { flatViewFieldGroupMaps: existingFlatViewFieldGroupMaps } =
-      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatViewFieldGroupMaps'],
-        },
-      );
-
-    const optimisticallyUpdatedFlatViewFieldGroupWithDeletedAt =
-      fromDeleteViewFieldGroupInputToFlatViewFieldGroupOrThrow({
-        flatViewFieldGroupMaps: existingFlatViewFieldGroupMaps,
-        deleteViewFieldGroupInput,
-      });
-
-    const validateAndBuildResult =
-      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
-        {
-          allFlatEntityOperationByMetadataName: {
-            viewFieldGroup: {
-              flatEntityToCreate: [],
-              flatEntityToDelete: [],
-              flatEntityToUpdate: [
-                optimisticallyUpdatedFlatViewFieldGroupWithDeletedAt,
-              ],
-            },
-          },
-          workspaceId,
-          isSystemBuild: false,
-          applicationUniversalIdentifier:
-            workspaceCustomFlatApplication.universalIdentifier,
-        },
-      );
-
-    if (validateAndBuildResult.status === 'fail') {
-      throw new WorkspaceMigrationBuilderException(
-        validateAndBuildResult,
-        'Multiple validation errors occurred while deleting view field group',
-      );
-    }
-
-    const { flatViewFieldGroupMaps: recomputedExistingFlatViewFieldGroupMaps } =
-      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatViewFieldGroupMaps'],
-        },
-      );
-
-    return fromFlatViewFieldGroupToViewFieldGroupDto(
-      findFlatEntityByUniversalIdentifierOrThrow({
-        universalIdentifier:
-          optimisticallyUpdatedFlatViewFieldGroupWithDeletedAt.universalIdentifier,
-        flatEntityMaps: recomputedExistingFlatViewFieldGroupMaps,
-      }),
-    );
+    return this.destroyOne({
+      destroyViewFieldGroupInput: deleteViewFieldGroupInput,
+      workspaceId,
+    });
   }
 
   async destroyOne({

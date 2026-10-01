@@ -5,7 +5,7 @@ import { type UsagePeriod } from 'src/engine/core-modules/usage-limit/types/usag
 
 @Injectable()
 export abstract class CreditAllowanceProvider {
-  abstract isCreditAllowanceEnabled(workspaceId: string): Promise<boolean>;
+  abstract isCreditAllowanceEnabled(): Promise<boolean>;
 
   abstract getCreditAllowancePeriod(
     workspaceId: string,

@@ -36,7 +36,7 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadat
 import { getObjectsPermissionsFromRolePermissionConfig } from 'src/engine/twenty-orm/utils/get-objects-permissions-from-role-permission-config.util';
 import { getRoleIdsFromRolePermissionConfig } from 'src/engine/twenty-orm/utils/get-role-ids-from-role-permission-config.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { ToolCategory } from 'twenty-shared/ai';
+import { RECORDS_TOOL_WIDGET_NAME, ToolCategory } from 'twenty-shared/ai';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -56,10 +56,7 @@ export class DatabaseToolProvider implements ToolProvider {
     return true;
   }
 
-  // Database CRUD tools emit `executionRef.kind === 'database_crud'` descriptors
-  // and are dispatched inline by ToolExecutorService. The static-tool path is
-  // unreachable for this provider; this method exists only to satisfy the
-  // interface.
+  // Unreachable: database CRUD descriptors are dispatched inline by ToolExecutorService.
   async executeStaticTool(
     toolName: string,
     _args: Record<string, unknown>,
@@ -199,7 +196,7 @@ export class DatabaseToolProvider implements ToolProvider {
             this.i18nService,
             context.locale,
           ),
-          description: `Search for ${objectMetadata.labelPlural} records using flexible filtering criteria. Supports exact matches, pattern matching, ranges, and null checks. Use limit/offset for pagination and orderBy for sorting. Filter fields are top-level arguments — pass each field as its own key (e.g. { id: { eq: "record-id" } }, or { name: { firstName: { ilike: "%ada%" } } }); do NOT wrap them in a "filter" object and do NOT place a bare operator like "ilike"/"eq" at the top level. Combine conditions with and/or/not. Returns an array of matching records with their full data, plus a "count" of total matches and a "hasNextPage" flag. When "hasNextPage" is true, more records match than were returned: continue with a higher offset (or increase the limit) before concluding a record is absent or answering count/enumeration questions.`,
+          description: `Search for ${objectMetadata.labelPlural} records using flexible filtering criteria. Supports exact matches, pattern matching, ranges, and null checks. Use limit/offset for pagination and orderBy for sorting. Filter fields are top-level arguments — pass each field as its own key (e.g. { id: { eq: "record-id" } }; composite fields take their sub-field: { <field>: { <subField>: { ilike: "%ada%" } } }); do NOT wrap them in a "filter" object and do NOT place a bare operator like "ilike"/"eq" at the top level. Combine conditions with and/or/not. Returns an array of matching records with their full data, plus a "count" of total matches and a "hasNextPage" flag. When "hasNextPage" is true, more records match than were returned: continue with a higher offset (or increase the limit) before concluding a record is absent or answering count/enumeration questions.`,
           category: ToolCategory.DATABASE_CRUD,
           ...(shouldIncludeSchema(`find_many_${snakePlural}`) && {
             inputSchema: toToolJsonSchema(
@@ -467,7 +464,12 @@ export class DatabaseToolProvider implements ToolProvider {
       }
     }
 
-    return descriptors;
+    // group_by answers with aggregates, not the recordReferences the records widget links.
+    return descriptors.map((descriptor) =>
+      descriptor.operation === 'group_by'
+        ? descriptor
+        : { ...descriptor, widgetName: RECORDS_TOOL_WIDGET_NAME },
+    );
   }
 
   private async buildFieldsResolver({

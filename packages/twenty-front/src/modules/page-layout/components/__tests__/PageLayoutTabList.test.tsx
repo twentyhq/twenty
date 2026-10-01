@@ -58,7 +58,8 @@ jest.mock('@/ui/utilities/pointer-event/hooks/useClickOutsideListener', () => ({
   useClickOutsideListener: () => ({ toggleClickOutside: jest.fn() }),
 }));
 
-jest.mock('@/ui/utilities/responsive/hooks/useIsMobile', () => ({
+jest.mock('twenty-ui/utilities', () => ({
+  ...jest.requireActual('twenty-ui/utilities'),
   useIsMobile: () => false,
 }));
 
@@ -86,13 +87,6 @@ jest.mock('@/ui/utilities/dimensions/components/NodeDimension', () => ({
 jest.mock('@/ui/layout/tab-list/components/TabListHiddenMeasurements', () => ({
   TabListHiddenMeasurements: () => null,
 }));
-
-jest.mock(
-  '@/ui/layout/tab-list/components/TabListFromUrlOptionalEffect',
-  () => ({
-    TabListFromUrlOptionalEffect: () => null,
-  }),
-);
 
 jest.mock('@/page-layout/components/PageLayoutTabListVisibleTabs', () => ({
   PageLayoutTabListVisibleTabs: ({
@@ -186,6 +180,7 @@ const renderTabList = ({
             value={{ instanceId: PAGE_LAYOUT_ID }}
           >
             <PageLayoutTabList
+              aria-label="Record sections"
               tabs={TABS}
               componentInstanceId={TAB_LIST_ID}
               pageLayoutType={pageLayoutType}
@@ -219,17 +214,14 @@ describe('PageLayoutTabList selection', () => {
         'aria-pressed',
         'true',
       );
-      expect(mockNavigate).toHaveBeenCalledWith(
-        { search: '', hash: `#${title}` },
-        { replace: false, state: null },
-      );
+      expect(mockNavigate).not.toHaveBeenCalled();
       expect(mockOpenTabSettings).not.toHaveBeenCalled();
 
       await user.click(screen.getByRole('button', { name: title }));
 
       expect(mockOpenTabSettings).toHaveBeenCalledTimes(1);
       expect(mockOpenTabSettings).toHaveBeenCalledWith(title);
-      expect(mockNavigate).toHaveBeenCalledTimes(1);
+      expect(mockNavigate).not.toHaveBeenCalled();
     },
   );
 
@@ -277,11 +269,7 @@ describe('PageLayoutTabList selection', () => {
       .setup()
       .dblClick(screen.getByRole('button', { name: 'Notes' }));
 
-    expect(mockNavigate).toHaveBeenCalledTimes(1);
-    expect(mockNavigate).toHaveBeenCalledWith(
-      { search: '', hash: '#Notes' },
-      { replace: false, state: null },
-    );
+    expect(mockNavigate).not.toHaveBeenCalled();
     expect(mockOpenTabSettings).toHaveBeenCalledTimes(1);
     expect(store.get(settingsTabAtom)).toBe('Notes');
   });
@@ -330,6 +318,10 @@ describe('PageLayoutTabList selection', () => {
 
       expect(mockOpenTabSettings).not.toHaveBeenCalled();
       expect(mockCloseSidePanelMenu).not.toHaveBeenCalled();
+      expect(mockNavigate).toHaveBeenCalledWith(
+        { search: '', hash: `#${title}` },
+        { replace: false, state: null },
+      );
     },
   );
 

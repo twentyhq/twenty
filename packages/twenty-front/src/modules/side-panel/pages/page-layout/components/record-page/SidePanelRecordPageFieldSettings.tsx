@@ -29,7 +29,7 @@ import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWid
 import { useWidgetSettingsPlacementSelectableItemIds } from '@/side-panel/pages/page-layout/hooks/useWidgetSettingsPlacementSelectableItemIds';
 import { getWidgetViewLayoutSettingsItemIds } from '@/side-panel/pages/page-layout/utils/getWidgetViewLayoutSettingsItemIds';
 import { SidePanelSubPages } from '@/side-panel/types/SidePanelSubPages';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
@@ -98,12 +98,7 @@ export const SidePanelRecordPageFieldSettings = () => {
     nestedRelationFieldMetadataId: currentNestedRelationFieldMetadataId,
   });
 
-  // A relation field widget in table display mode embeds a widget view scoped to
-  // the current record's related records; its source object is the relation
-  // target (or the nested relation target two hops away), not the record
-  // page's own object. A configured but unresolvable nested relation keeps
-  // the target undefined so the terminal view's settings stay hidden instead
-  // of being edited against the first hop's object.
+  // The embedded view lists the relation target, not the page's object; an unresolvable nested hop stays undefined to hide its settings
   const targetObjectMetadataId = isDefined(currentNestedRelationFieldMetadataId)
     ? resolvedNestedRelation?.nestedRelationTargetObjectMetadataItem.id
     : currentFieldMetadataItem?.relation?.targetObjectMetadata.id;
@@ -217,9 +212,9 @@ export const SidePanelRecordPageFieldSettings = () => {
                 Icon={IconListDetails}
                 dropdownId="field"
                 dropdownComponents={
-                  <DropdownContent>
+                  <LegacyDropdownContent>
                     <FieldWidgetFieldDropdownContent />
-                  </DropdownContent>
+                  </LegacyDropdownContent>
                 }
                 dropdownPlacement="bottom-end"
                 description={fieldLabel}
@@ -233,9 +228,9 @@ export const SidePanelRecordPageFieldSettings = () => {
                 Icon={layoutRowIcon}
                 dropdownId="layout"
                 dropdownComponents={
-                  <DropdownContent>
+                  <LegacyDropdownContent>
                     <FieldWidgetLayoutDropdownContent />
-                  </DropdownContent>
+                  </LegacyDropdownContent>
                 }
                 dropdownPlacement="bottom-end"
                 description={layoutLabel}

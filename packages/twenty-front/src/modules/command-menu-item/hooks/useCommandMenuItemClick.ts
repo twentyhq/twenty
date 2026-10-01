@@ -94,6 +94,7 @@ export const useCommandMenuItemClick = ({
         engineComponentKey: item.engineComponentKey,
         frontComponentId: item.frontComponentId ?? undefined,
         workflowVersionId: item.workflowVersionId ?? undefined,
+        coreWorkflowVersionId: item.coreWorkflowVersionId ?? undefined,
         availabilityType: item.availabilityType,
         availabilityObjectMetadataId: item.availabilityObjectMetadataId,
         payload:
@@ -124,10 +125,9 @@ export const useCommandMenuItemClick = ({
         frontComponentId: item.frontComponentId,
         pageTitle: label,
         pageIcon: Icon,
-        recordContext:
-          isDefined(recordId) && isDefined(objectNameSingular)
-            ? { recordId, objectNameSingular }
-            : undefined,
+        recordContext: isDefined(objectNameSingular)
+          ? { objectNameSingular, recordId }
+          : undefined,
       });
     }
   };

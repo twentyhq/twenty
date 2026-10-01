@@ -1,17 +1,14 @@
 import { availableWorkspacesState } from '@/auth/states/availableWorkspacesState';
 import { returnToPathState } from '@/auth/states/returnToPathState';
 import { useBuildWorkspaceUrl } from '@/domain-manager/hooks/useBuildWorkspaceUrl';
+import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink/UndecoratedLink';
 import { useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { FormProvider } from 'react-hook-form';
-import {
-  ClickToActionLink,
-  UndecoratedLink,
-} from 'twenty-ui/primitives/navigation';
+import { Button } from 'twenty-ui/primitives/input';
 
 import { StyledOnboardingContentContainer } from '@/auth/components/StyledOnboardingContentContainer';
-import { OnboardingStepAnimatedItem } from '@/onboarding/components/OnboardingStepAnimatedItem';
 import { SignInUpWithCredentials } from '@/auth/sign-in-up/components/internal/SignInUpWithCredentials';
 import { SignInUpWithGoogle } from '@/auth/sign-in-up/components/internal/SignInUpWithGoogle';
 import { SignInUpWithMicrosoft } from '@/auth/sign-in-up/components/internal/SignInUpWithMicrosoft';
@@ -24,15 +21,16 @@ import {
 import { getAvailableWorkspacePathAndSearchParams } from '@/auth/utils/availableWorkspacesUtils';
 import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { isDDLLockedState } from '@/client-config/states/isDDLLockedState';
+import { OnboardingStepAnimatedItem } from '@/onboarding/components/OnboardingStepAnimatedItem';
 import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { getWorkspaceAvatarColorSeed } from '@/workspace/utils/getWorkspaceAvatarColorSeed';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useContext } from 'react';
-import { Avatar } from 'twenty-ui/primitives/data-display';
 import { IconChevronRight, IconPlus } from 'twenty-ui/icon';
+import { Avatar } from 'twenty-ui/primitives/data-display';
 import { HorizontalSeparator } from 'twenty-ui/primitives/layout';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import {
   type AvailableWorkspace,
   GetWorkspaceCreationDefaultsDocument,
@@ -127,7 +125,7 @@ const StyledForgotPasswordLinkContainer = styled.div`
 `;
 
 export const SignInUpGlobalScopeForm = () => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const authProviders = useAtomStateValue(authProvidersState);
   const isDDLLocked = useAtomStateValue(isDDLLockedState);
   const signInUpStep = useAtomStateValue(signInUpStepState);
@@ -182,6 +180,9 @@ export const SignInUpGlobalScopeForm = () => {
                     <StyledWorkspaceContent>
                       <Avatar
                         name={availableWorkspace.displayName || ''}
+                        colorSeed={getWorkspaceAvatarColorSeed(
+                          availableWorkspace.displayName,
+                        )}
                         src={getAbsoluteImageUrl(
                           availableWorkspace.logo ?? DEFAULT_WORKSPACE_LOGO,
                         )}
@@ -259,11 +260,12 @@ export const SignInUpGlobalScopeForm = () => {
           </FormProvider>
           {signInUpStep === SignInUpStep.Password && (
             <StyledForgotPasswordLinkContainer>
-              <ClickToActionLink
+              <Button
+                variant="link"
                 onClick={handleResetPassword(form.getValues('email'))}
               >
                 <Trans>Forgot your password?</Trans>
-              </ClickToActionLink>
+              </Button>
             </StyledForgotPasswordLinkContainer>
           )}
         </StyledOnboardingContentContainer>

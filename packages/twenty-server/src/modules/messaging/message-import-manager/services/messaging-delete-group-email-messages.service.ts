@@ -42,11 +42,13 @@ export class MessagingDeleteGroupEmailMessagesService {
         const messageChannelMessageAssociationRepository =
           this.workspaceOrmManager.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
             'messageChannelMessageAssociation',
+            { shouldBypassPermissionChecks: true },
           );
 
         const messageParticipantRepository =
           this.workspaceOrmManager.getRepository<MessageParticipantWorkspaceEntity>(
             'messageParticipant',
+            { shouldBypassPermissionChecks: true },
           );
 
         let cursorId: string | undefined;

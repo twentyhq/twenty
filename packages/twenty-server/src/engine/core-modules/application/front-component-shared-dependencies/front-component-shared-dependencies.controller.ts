@@ -28,14 +28,27 @@ import {
 import { PRESIGNED_URL_NO_STORE_CACHE_CONTROL } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 import { setFileResponseHeaders } from 'src/engine/core-modules/file/utils/set-file-response-headers.utils';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { ApplicationTargetParam } from 'src/engine/decorators/auth/application-target-param.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { AllowSuspendedWorkspace } from 'src/engine/decorators/auth/allow-suspended-workspace.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
-import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 
 @Controller(`${ApiPath.Rest}/front-component-shared-dependencies`)
 @AllowSuspendedWorkspace()
-@UseGuards(WorkspaceAuthGuard)
+@UseGuards(
+  AuthPrincipalGuard({
+    userSession: {
+      standard: true,
+      impersonated: true,
+      playground: true,
+      workspaceAgnostic: false,
+    },
+    apiKey: true,
+    oauthClient: true,
+    application: true,
+  }),
+)
 @UseFilters(ApplicationRestApiExceptionFilter)
 export class FrontComponentSharedDependenciesController {
   private readonly logger = new Logger(
@@ -50,7 +63,8 @@ export class FrontComponentSharedDependenciesController {
   @UseGuards(NoPermissionGuard)
   async getBuiltSharedDependencies(
     @Res() res: Response,
-    @Param('applicationId') applicationId: string,
+    @ApplicationTargetParam('applicationId', { kind: 'applicationId' })
+    applicationId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Param('cacheKey') cacheKey?: string,
   ) {

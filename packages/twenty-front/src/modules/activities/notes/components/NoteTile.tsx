@@ -7,12 +7,11 @@ import { getActivityPreview } from '@/activities/utils/getActivityPreview';
 import { useObjectMorphJunctionConfigOrThrow } from '@/object-record/record-field/ui/hooks/useObjectMorphJunctionConfigOrThrow';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { RecordFieldsScopeContextProvider } from '@/object-record/record-field-list/contexts/RecordFieldsScopeContext';
 import { FieldContextProvider } from '@/object-record/record-field/ui/components/FieldContextProvider';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledCard = styled.div<{ isSingleNote: boolean }>`
   align-items: flex-start;
@@ -112,17 +111,11 @@ export const NoteTile = ({
           fieldPosition={0}
           isDisplayModeFixHeight
         >
-          <RecordFieldsScopeContextProvider
-            value={{
-              scopeInstanceId: note.id,
-            }}
+          <RecordFieldComponentInstanceContext.Provider
+            value={{ instanceId: componentInstanceId }}
           >
-            <RecordFieldComponentInstanceContext.Provider
-              value={{ instanceId: componentInstanceId }}
-            >
-              <RecordInlineCell instanceIdPrefix={instanceIdPrefix} />
-            </RecordFieldComponentInstanceContext.Provider>
-          </RecordFieldsScopeContextProvider>
+            <RecordInlineCell instanceIdPrefix={instanceIdPrefix} />
+          </RecordFieldComponentInstanceContext.Provider>
         </FieldContextProvider>
       </StyledFooter>
     </StyledCard>

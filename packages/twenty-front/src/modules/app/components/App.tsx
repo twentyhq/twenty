@@ -6,12 +6,12 @@ import { AppErrorBoundary } from '@/error-handler/components/AppErrorBoundary';
 import { AppRootErrorFallback } from '@/error-handler/components/AppRootErrorFallback';
 import { ExceptionHandlerProvider } from '@/error-handler/components/ExceptionHandlerProvider';
 import { ClickOutsideListenerContext } from '@/ui/utilities/pointer-event/contexts/ClickOutsideListenerContext';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { HelmetProvider } from '@dr.pogodin/react-helmet';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { Provider as JotaiProvider } from 'jotai';
-import { HelmetProvider } from '@dr.pogodin/react-helmet';
-import { ToastProvider } from 'twenty-ui/primitives/feedback';
+import { ToastProvider } from 'twenty-ui/components';
 import { IconsProvider } from 'twenty-ui/icon';
 import { initialI18nActivate } from '~/utils/i18n/initialI18nActivate';
 

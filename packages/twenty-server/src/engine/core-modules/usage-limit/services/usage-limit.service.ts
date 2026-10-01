@@ -13,12 +13,20 @@ import {
 } from 'src/engine/core-modules/usage-limit/exceptions/usage-limit.exception';
 import { UsageLimitEntitlementService } from 'src/engine/core-modules/usage-limit/services/usage-limit-entitlement.service';
 import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
+import { UsageLimitStockService } from 'src/engine/core-modules/usage-limit/services/usage-limit-stock.service';
 import { UsagePeriodService } from 'src/engine/core-modules/usage-limit/services/usage-period.service';
 import { type SpenderType } from 'src/engine/core-modules/usage-limit/types/spender-type.type';
 import { UsageLimitEntity } from 'src/engine/core-modules/usage-limit/usage-limit.entity';
-import { buildUsageLimitScope } from 'src/engine/core-modules/usage-limit/utils/build-usage-limit-scope.util';
+import { assertUsageLimitDefaultOverrideIsAllowed } from 'src/engine/core-modules/usage-limit/utils/assert-usage-limit-default-override-is-allowed.util';
+import { assertUsageLimitInstanceOverrideIsAllowed } from 'src/engine/core-modules/usage-limit/utils/assert-usage-limit-instance-override-is-allowed.util';
+import {
+  buildUsageLimitScope,
+  type UsageLimitScope,
+} from 'src/engine/core-modules/usage-limit/utils/build-usage-limit-scope.util';
 import { isIntraWorkspaceScoped } from 'src/engine/core-modules/usage-limit/utils/is-intra-workspace-scoped.util';
+import { isStockLimit } from 'src/engine/core-modules/usage-limit/utils/is-stock-limit.util';
 import { validateUsageLimitAgainstDefinition } from 'src/engine/core-modules/usage-limit/utils/validate-usage-limit-against-definition.util';
+import { validateUsageLimitAgainstKindRule } from 'src/engine/core-modules/usage-limit/utils/validate-usage-limit-against-kind-rule.util';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
@@ -43,6 +51,7 @@ export class UsageLimitService {
     private readonly logicFunctionRepository: WorkspaceScopedRepository<LogicFunctionEntity>,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly usageLimitQuotaService: UsageLimitQuotaService,
+    private readonly usageLimitStockService: UsageLimitStockService,
     private readonly usageLimitEntitlementService: UsageLimitEntitlementService,
     private readonly usagePeriodService: UsagePeriodService,
   ) {}
@@ -54,13 +63,17 @@ export class UsageLimitService {
   async create({
     workspaceId,
     input,
+    isOperator,
   }: {
     workspaceId: string;
     input: CreateUsageLimitInput;
+    isOperator: boolean;
   }): Promise<UsageLimitEntity> {
-    await this.validateInput({ workspaceId, input });
+    await this.validateInput({ workspaceId, input, isOperator });
 
     const scope = buildUsageLimitScope(input);
+
+    assertUsageLimitDefaultOverrideIsAllowed({ scope, isOperator });
 
     await this.assertScopeIsFree({ workspaceId, scope });
 
@@ -69,6 +82,7 @@ export class UsageLimitService {
       ...scope,
       limitValue: input.limitValue,
       burstValue: input.burstValue ?? null,
+      isInstanceOverride: isOperator,
     });
 
     await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
@@ -80,7 +94,7 @@ export class UsageLimitService {
       { where: scope },
     );
 
-    await this.usageLimitQuotaService.dropLimitCounter(usageLimit);
+    await this.dropCounter(usageLimit);
 
     return usageLimit;
   }
@@ -88,12 +102,12 @@ export class UsageLimitService {
   async update({
     workspaceId,
     input,
+    isOperator,
   }: {
     workspaceId: string;
     input: UpdateUsageLimitInput;
+    isOperator: boolean;
   }): Promise<UsageLimitEntity> {
-    await this.validateInput({ workspaceId, input: input.payload });
-
     const usageLimit = await this.usageLimitRepository.findOne(workspaceId, {
       where: { id: input.id },
     });
@@ -105,7 +119,20 @@ export class UsageLimitService {
       );
     }
 
+    const authorizedScope = buildUsageLimitScope(usageLimit);
+
+    assertUsageLimitInstanceOverrideIsAllowed({ usageLimit, isOperator });
+
+    assertUsageLimitDefaultOverrideIsAllowed({
+      scope: authorizedScope,
+      isOperator,
+    });
+
+    await this.validateInput({ workspaceId, input: input.payload, isOperator });
+
     const scope = buildUsageLimitScope(input.payload);
+
+    assertUsageLimitDefaultOverrideIsAllowed({ scope, isOperator });
 
     await this.assertScopeIsFree({
       workspaceId,
@@ -113,15 +140,27 @@ export class UsageLimitService {
       allowedUsageLimitId: usageLimit.id,
     });
 
-    await this.usageLimitRepository.update(
+    const { affected } = await this.usageLimitRepository.update(
       workspaceId,
-      { id: usageLimit.id },
+      {
+        id: usageLimit.id,
+        ...authorizedScope,
+        isInstanceOverride: usageLimit.isInstanceOverride,
+      },
       {
         ...scope,
         limitValue: input.payload.limitValue,
         burstValue: input.payload.burstValue ?? null,
+        isInstanceOverride: isOperator,
       },
     );
+
+    if (!isDefined(affected) || affected === 0) {
+      throw new UsageLimitException(
+        `Usage limit ${input.id} changed while this request was being authorized`,
+        UsageLimitExceptionCode.LIMIT_CONFLICT,
+      );
+    }
 
     await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
       'usageLimits',
@@ -132,9 +171,9 @@ export class UsageLimitService {
       { where: { id: usageLimit.id } },
     );
 
-    // counters are keyed by scope, so a scope change leaves two of them to rewarm
-    await this.usageLimitQuotaService.dropLimitCounter(usageLimit);
-    await this.usageLimitQuotaService.dropLimitCounter(updatedUsageLimit);
+    // counters are keyed by scope and value, so an edit leaves two of them behind
+    await this.dropCounter(usageLimit);
+    await this.dropCounter(updatedUsageLimit);
 
     return updatedUsageLimit;
   }
@@ -145,7 +184,7 @@ export class UsageLimitService {
     allowedUsageLimitId,
   }: {
     workspaceId: string;
-    scope: ReturnType<typeof buildUsageLimitScope>;
+    scope: UsageLimitScope;
     allowedUsageLimitId?: string;
   }): Promise<void> {
     const usageLimitHoldingScope = await this.usageLimitRepository.findOne(
@@ -167,13 +206,17 @@ export class UsageLimitService {
   private async validateInput({
     workspaceId,
     input,
+    isOperator,
   }: {
     workspaceId: string;
     input: CreateUsageLimitInput;
+    isOperator: boolean;
   }): Promise<void> {
     validateUsageLimitAgainstDefinition(input);
+    validateUsageLimitAgainstKindRule(input);
 
     if (
+      !isOperator &&
       isIntraWorkspaceScoped(input.spenderType) &&
       !(await this.usageLimitEntitlementService.isIntraWorkspaceLimitEntitled(
         workspaceId,
@@ -207,9 +250,11 @@ export class UsageLimitService {
   async delete({
     workspaceId,
     usageLimitId,
+    isOperator,
   }: {
     workspaceId: string;
     usageLimitId: string;
+    isOperator: boolean;
   }): Promise<boolean> {
     const usageLimit = await this.usageLimitRepository.findOne(workspaceId, {
       where: { id: usageLimitId },
@@ -219,21 +264,49 @@ export class UsageLimitService {
       return false;
     }
 
+    assertUsageLimitInstanceOverrideIsAllowed({ usageLimit, isOperator });
+
+    assertUsageLimitDefaultOverrideIsAllowed({
+      scope: buildUsageLimitScope(usageLimit),
+      isOperator,
+    });
+
     const { affected } = await this.usageLimitRepository.delete(workspaceId, {
       id: usageLimitId,
+      ...buildUsageLimitScope(usageLimit),
+      isInstanceOverride: usageLimit.isInstanceOverride,
     });
 
     if (!isDefined(affected) || affected === 0) {
-      return false;
+      throw new UsageLimitException(
+        `Usage limit ${usageLimitId} changed while this request was being authorized`,
+        UsageLimitExceptionCode.LIMIT_CONFLICT,
+      );
     }
 
     await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
       'usageLimits',
     ]);
 
-    await this.usageLimitQuotaService.dropLimitCounter(usageLimit);
+    await this.dropCounter(usageLimit);
 
     return true;
+  }
+
+  private async dropCounter(usageLimit: UsageLimitEntity): Promise<void> {
+    if (isStockLimit(usageLimit)) {
+      return this.usageLimitStockService.dropStockCounters({
+        workspaceId: usageLimit.workspaceId,
+        resourceType: usageLimit.resourceType,
+        operationType: usageLimit.operationType,
+        spenderType: usageLimit.spenderType,
+        spenderId: usageLimit.spenderId,
+        meter: usageLimit.meter,
+        limitValue: usageLimit.limitValue,
+      });
+    }
+
+    return this.usageLimitQuotaService.dropLimitCounter(usageLimit);
   }
 
   private async validateSpenderBelongsToWorkspace({

@@ -1,3 +1,4 @@
+import { WorkflowCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-core-sync.service';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type WorkspacePostQueryHookInstance } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/interfaces/workspace-query-hook.interface';
@@ -14,6 +15,7 @@ import { type WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standa
 })
 export class WorkflowUpdateOnePostQueryHook implements WorkspacePostQueryHookInstance {
   constructor(
+    private readonly workflowCoreSyncService: WorkflowCoreSyncService,
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
   ) {}
 
@@ -29,6 +31,10 @@ export class WorkflowUpdateOnePostQueryHook implements WorkspacePostQueryHookIns
     await this.workflowCommonWorkspaceService.syncCommandMenuItemLabelForWorkflows(
       workflowIds,
       authContext,
+    );
+    await this.workflowCoreSyncService.reconcileWorkspaceWorkflows(
+      authContext.workspace.id,
+      payload.map((workflow) => workflow.id),
     );
   }
 }

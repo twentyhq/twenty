@@ -1,4 +1,12 @@
+import { useRefreshAgentChatThreadPermissions } from '@/ai/hooks/useRefreshAgentChatThreadPermissions';
+import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
+import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
+import { agentChatFetchedMessagesComponentFamilyState } from '@/ai/states/agentChatFetchedMessagesComponentFamilyState';
+import { agentChatQueuedMessagesComponentFamilyState } from '@/ai/states/agentChatQueuedMessagesComponentFamilyState';
+import { useRefreshAgentChatThreads } from '@/ai/hooks/useRefreshAgentChatThreads';
+import { isChatAccessDenied } from '@/ai/utils/isChatAccessDenied';
 import { useEffect } from 'react';
+import { t } from '@lingui/core/macro';
 
 import { readUIMessageStream, type UIMessageChunk } from 'ai';
 import { print, type ExecutionResult } from 'graphql';
@@ -34,11 +42,9 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { markWorkspaceCreditsExhausted } from '@/workspace/utils/updateWorkspaceResourceCreditCap';
 
 const THROTTLE_MS = 100;
+const PERMISSIONS_REFRESH_INTERVAL_MS = 30_000;
 
-// readUIMessageStream requires initialization chunks (start, start-step,
-// text-start) before content chunks. When reconnecting to a thread mid-stream,
-// those chunks were already sent before we subscribed. This adapter injects
-// synthetic initialization chunks so the reader can process mid-stream content.
+// readUIMessageStream needs start chunks that a mid-stream reconnect missed, so inject synthetic ones.
 const createMidStreamAdapter = () => {
   let hasSeenStart = false;
   const knownTextPartIds = new Set<string>();
@@ -103,6 +109,10 @@ type AgentChatEventPayload = {
 
 export const useAgentChatSubscription = (threadId: string | null) => {
   const store = useStore();
+  const currentUserWorkspace = useAtomStateValue(currentUserWorkspaceState);
+  const { refreshAgentChatThreadPermissions } =
+    useRefreshAgentChatThreadPermissions();
+  const { refreshAgentChatThreads } = useRefreshAgentChatThreads();
   const sseClient = useAtomStateValue(sseClientState);
   const agentChatStreamResubscribeNonce = useAtomStateValue(
     agentChatStreamResubscribeNonceState,
@@ -129,6 +139,13 @@ export const useAgentChatSubscription = (threadId: string | null) => {
     useAtomComponentFamilyStateCallbackState(
       agentChatHandleEventCallbackComponentFamilyState,
     );
+  const fetchedMessagesFamilyCallback =
+    useAtomComponentFamilyStateCallbackState(
+      agentChatFetchedMessagesComponentFamilyState,
+    );
+  const queuedMessagesFamilyCallback = useAtomComponentFamilyStateCallbackState(
+    agentChatQueuedMessagesComponentFamilyState,
+  );
   const messagesFamilyCallback = useAtomComponentFamilyStateCallbackState(
     agentChatMessagesComponentFamilyState,
   );
@@ -156,6 +173,8 @@ export const useAgentChatSubscription = (threadId: string | null) => {
     const handleEventCallbackAtom =
       handleEventCallbackFamilyCallback(familyKey);
     const messagesAtom = messagesFamilyCallback(familyKey);
+    const fetchedMessagesAtom = fetchedMessagesFamilyCallback(familyKey);
+    const queuedMessagesAtom = queuedMessagesFamilyCallback(familyKey);
     const usageAtom = usageFamilyCallback(familyKey);
     const threadTitleAtom = threadTitleFamilyCallback(familyKey);
 
@@ -164,6 +183,8 @@ export const useAgentChatSubscription = (threadId: string | null) => {
     let latestMessage: ExtendedUIMessage | null = null;
     let writer: WritableStreamDefaultWriter<UIMessageChunk> | null = null;
     let disposed = false;
+    let accessDenied = false;
+    let lastPermissionsRefreshAt: number | undefined;
 
     store.set(firstLiveSeqAtom, null);
     store.set(agentChatStreamLastEventTimestampState.atom, Date.now());
@@ -186,7 +207,7 @@ export const useAgentChatSubscription = (threadId: string | null) => {
     const flushToAtom = () => {
       const messageToFlush = latestMessage;
 
-      if (!isDefined(messageToFlush)) {
+      if (disposed || accessDenied || !isDefined(messageToFlush)) {
         return;
       }
 
@@ -225,6 +246,9 @@ export const useAgentChatSubscription = (threadId: string | null) => {
       let lastUsageCountedMessageId: string | null = null;
 
       for await (const message of messageStream) {
+        if (disposed || accessDenied) {
+          break;
+        }
         const extendedMessage = message as ExtendedUIMessage;
 
         const titlePart = extendedMessage.parts.find(
@@ -331,6 +355,9 @@ export const useAgentChatSubscription = (threadId: string | null) => {
     };
 
     const handleEvent = (event: AgentChatSubscriptionEvent) => {
+      if (disposed || accessDenied) {
+        return;
+      }
       switch (event.type) {
         case 'stream-chunk': {
           if (isDefined(event.seq) && store.get(firstLiveSeqAtom) === null) {
@@ -352,7 +379,7 @@ export const useAgentChatSubscription = (threadId: string | null) => {
           break;
         }
 
-        case 'question-answered': {
+        case 'tool-call-resolved': {
           dispatchBrowserEvent(AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME);
           break;
         }
@@ -363,6 +390,15 @@ export const useAgentChatSubscription = (threadId: string | null) => {
         }
 
         case 'keepalive': {
+          // The reconnect heartbeat also reloads shared link access, catching edit downgrades without polling.
+          if (
+            !isDefined(lastPermissionsRefreshAt) ||
+            Date.now() - lastPermissionsRefreshAt >=
+              PERMISSIONS_REFRESH_INTERVAL_MS
+          ) {
+            lastPermissionsRefreshAt = Date.now();
+            void refreshAgentChatThreadPermissions([threadId]);
+          }
           break;
         }
 
@@ -385,7 +421,7 @@ export const useAgentChatSubscription = (threadId: string | null) => {
             errorAtom,
             createAiChatCodedError(
               'Chat stopped: no more available credits.',
-              AiChatErrorCode.BILLING_CREDITS_EXHAUSTED,
+              AiChatErrorCode.CREDITS_EXHAUSTED,
             ),
           );
 
@@ -400,6 +436,32 @@ export const useAgentChatSubscription = (threadId: string | null) => {
 
     store.set(handleEventCallbackAtom, () => handleEvent);
 
+    let disposeSubscription: (() => void) | undefined;
+
+    const handleAccessDenied = () => {
+      accessDenied = true;
+      disposeSubscription?.();
+      latestMessage = null;
+      if (isDefined(throttleTimer)) {
+        clearTimeout(throttleTimer);
+        throttleTimer = null;
+      }
+      resetStreamProcessing();
+      store.set(messagesAtom, []);
+      store.set(fetchedMessagesAtom, []);
+      store.set(queuedMessagesAtom, []);
+      store.set(isStreamingAtom, false);
+      store.set(isAwaitingPersistedRefetchAtom, false);
+      store.set(
+        errorAtom,
+        createAiChatCodedError(
+          t`This conversation is no longer available.`,
+          'NOT_FOUND',
+        ),
+      );
+      void refreshAgentChatThreads();
+    };
+
     const dispose = sseClient.subscribe<AgentChatEventPayload>(
       {
         query: print(ON_AGENT_CHAT_EVENT),
@@ -407,16 +469,32 @@ export const useAgentChatSubscription = (threadId: string | null) => {
       },
       {
         next: (value: ExecutionResult<AgentChatEventPayload>) => {
+          if (disposed || accessDenied) {
+            return;
+          }
+          if (isChatAccessDenied(value.errors)) {
+            handleAccessDenied();
+            return;
+          }
           store.set(agentChatStreamLastEventTimestampState.atom, Date.now());
 
           if (isDefined(value.data?.onAgentChatEvent?.event)) {
+            if (isGraphqlErrorOfType(store.get(errorAtom), 'NOT_FOUND')) {
+              store.set(errorAtom, null);
+              dispatchBrowserEvent(AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME);
+            }
             handleEvent(
               value.data.onAgentChatEvent.event as AgentChatSubscriptionEvent,
             );
           }
         },
-        error: () => {
-          // graphql-sse handles reconnection automatically
+        error: (errors) => {
+          if (disposed || accessDenied) {
+            return;
+          }
+          if (Array.isArray(errors) && isChatAccessDenied(errors)) {
+            handleAccessDenied();
+          }
         },
         complete: () => {
           if (!disposed) {
@@ -425,6 +503,11 @@ export const useAgentChatSubscription = (threadId: string | null) => {
         },
       },
     );
+
+    disposeSubscription = dispose;
+    if (accessDenied) {
+      dispose();
+    }
 
     return () => {
       disposed = true;
@@ -435,7 +518,9 @@ export const useAgentChatSubscription = (threadId: string | null) => {
         clearTimeout(throttleTimer);
       }
       cleanupStream();
-      dispose();
+      if (!accessDenied) {
+        dispose();
+      }
     };
   }, [
     threadId,
@@ -449,7 +534,12 @@ export const useAgentChatSubscription = (threadId: string | null) => {
     isAwaitingPersistedRefetchFamilyCallback,
     handleEventCallbackFamilyCallback,
     messagesFamilyCallback,
+    fetchedMessagesFamilyCallback,
+    queuedMessagesFamilyCallback,
     usageFamilyCallback,
     threadTitleFamilyCallback,
+    refreshAgentChatThreads,
+    refreshAgentChatThreadPermissions,
+    currentUserWorkspace,
   ]);
 };

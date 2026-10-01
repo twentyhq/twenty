@@ -101,7 +101,11 @@ export const SettingsApplicationFrontComponentDetail = () => {
       title={frontComponent?.name ?? t`Front component`}
       links={breadcrumbLinks}
       secondaryBar={
-        <SettingsTabBar tabs={tabs} componentInstanceId={instanceId} />
+        <SettingsTabBar
+          aria-label={t`Front component details`}
+          tabs={tabs}
+          componentInstanceId={instanceId}
+        />
       }
     >
       <SettingsPageContainer>

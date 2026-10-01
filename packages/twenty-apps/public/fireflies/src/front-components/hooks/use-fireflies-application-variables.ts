@@ -1,8 +1,8 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { useEffect, useState } from 'react';
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
-import { useFrontComponentId } from 'twenty-sdk/front-component';
 
+import { APPLICATION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { type FirefliesApplicationVariable } from 'src/front-components/types/fireflies-application-variable.type';
 import { shouldDisplayApplicationVariable } from 'src/front-components/utils/should-display-application-variable.util';
 
@@ -25,7 +25,6 @@ const APPLICATION_VARIABLES_LOADING_STATE: FirefliesApplicationVariablesState =
 
 export const useFirefliesApplicationVariables =
   (): FirefliesApplicationVariablesState => {
-    const frontComponentId = useFrontComponentId();
     const [state, setState] = useState<FirefliesApplicationVariablesState>(
       APPLICATION_VARIABLES_LOADING_STATE,
     );
@@ -38,31 +37,10 @@ export const useFirefliesApplicationVariables =
       const fetchApplicationVariables = async () => {
         try {
           const client = new MetadataApiClient();
-          const frontComponentResult = await client.query({
-            frontComponent: {
-              __args: { id: frontComponentId },
-              applicationId: true,
-            },
-          });
-
-          const applicationId =
-            frontComponentResult.frontComponent?.applicationId;
-
-          if (!isNonEmptyString(applicationId)) {
-            if (!cancelled) {
-              setState({
-                applicationId: undefined,
-                applicationVariables: [],
-                isApplicationVariablesQueryLoading: false,
-                errorMessage: APPLICATION_VARIABLES_ERROR_MESSAGE,
-              });
-            }
-            return;
-          }
-
           const applicationResult = await client.query({
             findOneApplication: {
-              __args: { id: applicationId },
+              __args: { universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER },
+              id: true,
               applicationVariables: {
                 key: true,
                 value: true,
@@ -74,6 +52,18 @@ export const useFirefliesApplicationVariables =
           });
 
           if (cancelled) {
+            return;
+          }
+
+          const applicationId = applicationResult.findOneApplication?.id;
+
+          if (!isNonEmptyString(applicationId)) {
+            setState({
+              applicationId: undefined,
+              applicationVariables: [],
+              isApplicationVariablesQueryLoading: false,
+              errorMessage: APPLICATION_VARIABLES_ERROR_MESSAGE,
+            });
             return;
           }
 
@@ -109,7 +99,7 @@ export const useFirefliesApplicationVariables =
       return () => {
         cancelled = true;
       };
-    }, [frontComponentId]);
+    }, []);
 
     return state;
   };

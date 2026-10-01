@@ -1,3 +1,5 @@
+import { builtinModules } from 'node:module';
+
 import packageJson from './package.json';
 
 const externalDeps = [
@@ -5,14 +7,18 @@ const externalDeps = [
   ...Object.keys(packageJson.devDependencies).filter(
     (dep) => dep !== 'twenty-shared',
   ),
-  'node:fs/promises',
-  'node:fs',
-  'node:path',
-  'node:os',
-  'node:url',
 ];
 
+const nodeBuiltins = new Set<string>([
+  ...builtinModules,
+  ...builtinModules.map((moduleName) => `node:${moduleName}`),
+]);
+
+const isNodeBuiltin = (id: string) =>
+  id.startsWith('node:') || nodeBuiltins.has(id);
+
 export const isExternal = (id: string) =>
+  isNodeBuiltin(id) ||
   externalDeps.some((dep) => id === dep || id.startsWith(`${dep}/`));
 
 export const entryFileNames = (chunk: any, extension: 'cjs' | 'mjs') => {

@@ -1,6 +1,5 @@
-import { AnimatedPlaceholder } from '@ui/primitives/feedback/AnimatedPlaceholder/AnimatedPlaceholder';
-import type { AnimatedPlaceholderType } from '@ui/primitives/feedback/AnimatedPlaceholder/types/AnimatedPlaceholderType';
 import { type ReactNode } from 'react';
+import { RecordingEmptyIllustration } from './internal/RecordingEmptyIllustration';
 
 export const Empty = ({
   icon,
@@ -10,14 +9,14 @@ export const Empty = ({
   actions,
 }: {
   icon?: ReactNode;
-  animatedPlaceholderType?: AnimatedPlaceholderType;
+  animatedPlaceholderType?: 'noCallRecording';
   title: string;
   children: ReactNode;
   actions?: ReactNode;
 }) => (
   <div className="empty">
     {animatedPlaceholderType ? (
-      <AnimatedPlaceholder type={animatedPlaceholderType} assetBasePath="." />
+      <RecordingEmptyIllustration />
     ) : (
       <span className="empty-icon">{icon}</span>
     )}

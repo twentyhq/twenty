@@ -3,14 +3,14 @@ import { filterAttachmentsToRestore } from '@/activities/utils/filterAttachments
 import { getActivityAttachmentIdsAndNameToUpdate } from '@/activities/utils/getActivityAttachmentIdsAndNameToUpdate';
 import { getActivityAttachmentIdsToDelete } from '@/activities/utils/getActivityAttachmentIdsToDelete';
 import { getActivityAttachmentPathsToRestore } from '@/activities/utils/getActivityAttachmentPathsToRestore';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useDeleteManyRecords } from '@/object-record/hooks/useDeleteManyRecords';
 import { useLazyFetchAllRecords } from '@/object-record/hooks/useLazyFetchAllRecords';
 import { useRestoreManyRecords } from '@/object-record/hooks/useRestoreManyRecords';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
-import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/primitives/feedback';
+import { useToast } from 'twenty-ui/components';
 
 export const useAttachmentSync = (attachments: Attachment[]) => {
   const { deleteManyRecords: deleteAttachments } = useDeleteManyRecords({

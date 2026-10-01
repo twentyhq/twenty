@@ -37,16 +37,63 @@ describe('getCallRecordingStatusDisplayConfiguration', () => {
     },
   );
 
-  it('does not use a transcript marker as the summary status', () => {
-    expect(
-      getCallRecordingStatusDisplayConfiguration(
-        {
-          status: CallRecordingStatus.PROCESSING,
-          transcript: { status: 'PENDING' },
-        },
-        'summary',
-      ).title,
-    ).toBe('Processing Recording');
+  it.each(['PENDING', 'FAILED', 'EMPTY'])(
+    'does not use a %s transcript marker as the summary status',
+    (status) => {
+      expect(
+        getCallRecordingStatusDisplayConfiguration(
+          {
+            status: CallRecordingStatus.PROCESSING,
+            transcript: { status },
+          },
+          'summary',
+        ).title,
+      ).toBe('Processing Recording');
+    },
+  );
+
+  describe.each([
+    CallRecordingStatus.PROCESSING,
+    CallRecordingStatus.COMPLETED,
+    CallRecordingStatus.FAILED,
+  ])('when the recording is %s', (status) => {
+    it.each([
+      {
+        subCode: undefined,
+        title: 'No Speech Detected',
+        subTitle: 'No speech was detected in this recording.',
+      },
+      {
+        subCode: null,
+        title: 'No Speech Detected',
+        subTitle: 'No speech was detected in this recording.',
+      },
+      {
+        subCode: 'transcript_expired',
+        title: 'Transcript Expired',
+        subTitle: 'The transcript expired before it could be imported.',
+      },
+      {
+        subCode: 'transcript_request_rejected:422',
+        title: 'Transcript Unavailable',
+        subTitle: 'No transcript is available for this recording.',
+      },
+      {
+        subCode: 'provider_specific_reason',
+        title: 'Transcript Unavailable',
+        subTitle: 'No transcript is available for this recording.',
+      },
+    ])(
+      'explains an empty transcript with reason $subCode',
+      ({ subCode, title, subTitle }) => {
+        expect(
+          getCallRecordingStatusDisplayConfiguration(
+            { status, transcript: { status: 'EMPTY', subCode } },
+            'transcript',
+          ),
+        ).toEqual({ title, subTitle });
+      },
+    );
   });
 
   it('shows the transcript empty state after recording completion', () => {

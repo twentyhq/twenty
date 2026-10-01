@@ -19,7 +19,7 @@ import {
   type IconComponent,
 } from 'twenty-ui/icon';
 import { Switch } from 'twenty-ui/primitives/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { useGetLogicFunctionHttpUrl } from '@/settings/logic-functions/hooks/useGetLogicFunctionHttpUrl';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
@@ -105,7 +105,7 @@ export const SettingsLogicFunctionHttpTriggerSection = ({
             value={value.httpMethod as HTTPMethod}
             options={HTTP_METHOD_OPTIONS}
             onChange={(newMethod) => updateField('httpMethod', newMethod)}
-            dropdownOffset={{ y: 4 }}
+            dropdownSideOffset={4}
             dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
           />
           <SettingsTextInput

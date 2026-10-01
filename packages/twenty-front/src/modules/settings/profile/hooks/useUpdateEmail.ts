@@ -6,7 +6,7 @@ import { currentUserState } from '@/auth/states/currentUserState';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useMutation } from '@apollo/client/react';
-import { useToast } from 'twenty-ui/primitives/feedback';
+import { useToast } from 'twenty-ui/components';
 import { UpdateUserEmailDocument } from '~/generated-metadata/graphql';
 
 export const useUpdateEmail = () => {

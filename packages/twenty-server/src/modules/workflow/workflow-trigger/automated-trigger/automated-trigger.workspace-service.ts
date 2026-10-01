@@ -31,6 +31,7 @@ export class AutomatedTriggerWorkspaceService {
       await transactionScope
         .getRepository<WorkflowAutomatedTriggerWorkspaceEntity>(
           'workflowAutomatedTrigger',
+          { shouldBypassPermissionChecks: true },
         )
         .insert({ type, settings, workflowId });
 
@@ -43,6 +44,7 @@ export class AutomatedTriggerWorkspaceService {
       const workflowAutomatedTriggerRepository =
         this.workspaceOrmManager.getRepository<WorkflowAutomatedTriggerWorkspaceEntity>(
           'workflowAutomatedTrigger',
+          { shouldBypassPermissionChecks: true },
         );
 
       await workflowAutomatedTriggerRepository.insert({
@@ -66,6 +68,7 @@ export class AutomatedTriggerWorkspaceService {
       await transactionScope
         .getRepository<WorkflowAutomatedTriggerWorkspaceEntity>(
           'workflowAutomatedTrigger',
+          { shouldBypassPermissionChecks: true },
         )
         .delete({ workflowId });
 
@@ -78,6 +81,7 @@ export class AutomatedTriggerWorkspaceService {
       const workflowAutomatedTriggerRepository =
         this.workspaceOrmManager.getRepository<WorkflowAutomatedTriggerWorkspaceEntity>(
           'workflowAutomatedTrigger',
+          { shouldBypassPermissionChecks: true },
         );
 
       await workflowAutomatedTriggerRepository.delete({ workflowId });

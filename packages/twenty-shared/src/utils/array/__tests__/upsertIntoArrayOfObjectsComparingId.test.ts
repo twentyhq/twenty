@@ -27,7 +27,7 @@ const mockTestObjects: TestObject[] = [
 describe('upsertIntoArrayOfObjectsComparingId', () => {
   it('should insert in empty array', () => {
     expect(
-      upsertIntoArrayOfObjectsComparingId([], mockTestObjects[0]),
+      upsertIntoArrayOfObjectsComparingId([], mockTestObjects[0]!),
     ).toStrictEqual([mockTestObjects[0]]);
   });
 

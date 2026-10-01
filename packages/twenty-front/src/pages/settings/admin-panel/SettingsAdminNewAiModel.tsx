@@ -16,14 +16,13 @@ import { t } from '@lingui/core/macro';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { Section } from 'twenty-ui/components';
+import { InlineBanner, Section, useToast } from 'twenty-ui/components';
 import { IconPlus } from 'twenty-ui/icon';
-import { Info, useToast } from 'twenty-ui/primitives/feedback';
 import { Checkbox, Switch } from 'twenty-ui/primitives/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { OrganizationAdornment } from '~/pages/settings/enterprise/components/OrganizationAdornment';
 
 const StyledComboInputContainer = styled.div`
@@ -343,11 +342,19 @@ export const SettingsAdminNewAiModel = () => {
       >
         <SettingsPageContainer>
           {!hasCustomAiProviderAccess && (
-            <Info
-              accent="danger"
-              text={customAiProviderGateDescription}
-              buttonTitle={t`Activate`}
-              to={getSettingsPath(SettingsPath.AdminPanelOrganization)}
+            <InlineBanner
+              variant="compact"
+              color="danger"
+              message={customAiProviderGateDescription}
+              button={{
+                title: t`Activate`,
+                href: getSettingsPath(SettingsPath.AdminPanelOrganization),
+                render: (
+                  <Link
+                    to={getSettingsPath(SettingsPath.AdminPanelOrganization)}
+                  />
+                ),
+              }}
             />
           )}
 

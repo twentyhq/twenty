@@ -1,6 +1,7 @@
 import { type ObjectsPermissions } from 'twenty-shared/types';
 import { isDefined, pascalCase } from 'twenty-shared/utils';
-import { FindOperator, type ObjectLiteral } from 'typeorm';
+import { type ObjectLiteral } from 'typeorm';
+import { InstanceChecker } from 'typeorm/util/InstanceChecker';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
@@ -59,7 +60,7 @@ const isNestedWhereObject = (value: unknown): value is ObjectWhereLike =>
   isDefined(value) &&
   typeof value === 'object' &&
   !Array.isArray(value) &&
-  !(value instanceof FindOperator) &&
+  !InstanceChecker.isFindOperator(value) &&
   !(value instanceof Date);
 
 export type QueryBuilderContext = {
@@ -115,8 +116,11 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
     ];
   }
 
-  clone(): WorkspaceSelectQueryBuilder {
-    const cloned = new WorkspaceSelectQueryBuilder(this.alias, this.context);
+  clone(executor?: QueryExecutor): WorkspaceSelectQueryBuilder {
+    const cloned = new WorkspaceSelectQueryBuilder(
+      this.alias,
+      isDefined(executor) ? { ...this.context, executor } : this.context,
+    );
 
     cloned.whereClauses.push(...this.whereClauses);
     cloned.existsFilterClauses.push(
@@ -770,8 +774,7 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
       );
     }
 
-    // Row-level permission predicates are injected on the select path only, so an
-    // EXISTS rendered here would filter the related table with no predicate at all.
+    // Row-level permission predicates are injected on the select path only, so an EXISTS here would be unfiltered
     if (this.existsFilterClauses.length > 0) {
       throw new TwentyOrmException(
         `A mutation cannot carry a relation filter; rewrite the filter as an "id IN (subquery)" predicate first`,
@@ -843,6 +846,14 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
       return this;
     }
 
+    // Dropping an unreadable condition would widen the query, or make a delete hit every row
+    if (typeof condition !== 'string') {
+      throw new TwentyOrmException(
+        'A where condition must be a SQL string, a where object or a where factory',
+        TwentyOrmExceptionCode.INVALID_QUERY,
+      );
+    }
+
     if (condition.length > 0) {
       this.whereClauses.push({ operator, sql: `(${condition})` });
     }
@@ -895,7 +906,7 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
         hasCompositeChildColumns &&
         isDefined(value) &&
         typeof value === 'object' &&
-        !(value instanceof FindOperator) &&
+        !InstanceChecker.isFindOperator(value) &&
         !Array.isArray(value)
       ) {
         for (const [subFieldName, subValue] of Object.entries(
@@ -936,10 +947,7 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
     return { sql: conditions.join(' AND '), parameters };
   }
 
-  // Registers a correlated EXISTS on a relation and returns the token to place
-  // in a where clause; the caller writes the related table's condition on the
-  // nested builder, whose alias names that table. Unlike a join, an EXISTS never
-  // duplicates root rows, so this is how a to-many relation gets filtered.
+  // EXISTS rather than a join so filtering a to-many relation never duplicates root rows
   addRelationExistsFilter({
     relationFieldName,
     applyWhere,
@@ -1077,7 +1085,7 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
       return parameterName;
     };
 
-    if (value instanceof FindOperator) {
+    if (InstanceChecker.isFindOperator(value)) {
       switch (value.type) {
         case 'in':
           return `${quotedColumn} IN (:...${nextParameter(value.value)})`;

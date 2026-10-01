@@ -4,16 +4,12 @@ import { FormFieldInputRowContainer } from '@/object-record/record-field/ui/form
 import { VariableChipStandalone } from '@/object-record/record-field/ui/form-types/components/VariableChipStandalone';
 import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
 import { Field } from 'twenty-ui/primitives/input';
-import {
-  DatePicker,
-  MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID,
-  MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID,
-} from '@/ui/input/components/internal/date/components/DatePicker';
+import { DatePicker } from '@/ui/input/components/internal/date/components/DatePicker';
 import { DatePickerInput } from '@/ui/input/components/internal/date/components/DatePickerInput';
+import { useIsDatePickerDropdownOpen } from '@/ui/input/components/internal/date/hooks/useIsDatePickerDropdownOpen';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { type FormFieldInputVariant } from '@/ui/input/types/FormFieldInputVariant';
 
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
@@ -31,7 +27,7 @@ import { useId, useRef, useState } from 'react';
 import { Temporal } from 'temporal-polyfill';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { type Nullable } from 'twenty-ui/utilities';
 
 const FORM_DATE_FIELD_PICKER_CLICK_OUTSIDE_ID =
@@ -125,25 +121,22 @@ export const FormDateFieldInput = ({
     }
   };
 
-  const { closeDropdown: closeDropdownMonthSelect } = useCloseDropdown();
-  const { closeDropdown: closeDropdownYearSelect } = useCloseDropdown();
+  const { isDatePickerDropdownOpen } = useIsDatePickerDropdownOpen();
 
   useListenClickOutside({
     refs: [datePickerWrapperRef],
-    listenerId: 'FormDateFieldInputBase',
+    listenerId: `FormDateFieldInputBase-${instanceId}`,
     callback: (event) => {
+      if (isDatePickerDropdownOpen(instanceId)) {
+        return;
+      }
+
       event.stopImmediatePropagation();
 
-      closeDropdownYearSelect(MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID);
-      closeDropdownMonthSelect(MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID);
       handlePickerClickOutside();
     },
     enabled: displayDatePicker,
-    excludedClickOutsideIds: [
-      FORM_DATE_FIELD_PICKER_CLICK_OUTSIDE_ID,
-      MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID,
-      MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID,
-    ],
+    excludedClickOutsideIds: [FORM_DATE_FIELD_PICKER_CLICK_OUTSIDE_ID],
   });
 
   const handlePickerChange = (newDate: Nullable<string>) => {
@@ -275,6 +268,7 @@ export const FormDateFieldInput = ({
           <FormFieldInputInnerContainer
             ref={refs.setReference}
             formFieldInputInstanceId={instanceId}
+            enableGlobalEscapeHotkeysConflictingWithKeyboard={false}
             hasRightElement={isDefined(VariablePicker) && !readonly}
             variant={variant}
           >

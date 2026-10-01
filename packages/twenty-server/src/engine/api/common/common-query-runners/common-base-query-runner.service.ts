@@ -129,11 +129,12 @@ export abstract class CommonBaseQueryRunnerService<
       flatFieldMetadataMaps,
     } = queryRunnerContext;
 
-    if ((queryRunnerContext.nestedOperationDepth ?? 0) === 0) {
+    const isRootOperation =
+      (queryRunnerContext.nestedOperationDepth ?? 0) === 0;
+
+    if (isRootOperation) {
       await this.consumeApiSpeedLimit(authContext);
     }
-
-    this.recordApiUsage(authContext);
 
     await this.validate(args, queryRunnerContext);
 
@@ -159,11 +160,15 @@ export abstract class CommonBaseQueryRunnerService<
       selectedFieldsResult,
     } as CommonExtendedInput<Args>;
 
-    this.validateQueryComplexity(
+    const queryComplexity = this.validateQueryComplexity(
       selectedFieldsResult,
       processedArgs,
       queryRunnerContext,
     );
+
+    if (isRootOperation) {
+      this.recordApiComplexityUsage(authContext, queryComplexity);
+    }
 
     const results = await this.workspaceOrmManager.executeInWorkspaceContext(
       async () =>
@@ -332,6 +337,9 @@ export abstract class CommonBaseQueryRunnerService<
           apiKeyId: isApiKeyAuthContext(authContext)
             ? authContext.apiKey.id
             : undefined,
+          applicationId: isUserAuthContext(authContext)
+            ? authContext.application?.id
+            : undefined,
         });
 
       if (!userHasPermission) {
@@ -381,13 +389,10 @@ export abstract class CommonBaseQueryRunnerService<
       rolePermissionConfig,
       repository,
       featureFlagsMap: context.featureFlagsMap,
-      isRecordSharingEnabled: context.isRecordSharingEnabled,
     };
   }
 
-  // useReplica follows isReadOnly so reads on read-only runners hit the replica
-  // and everything else the primary, keeping root read and nested-relation
-  // loading consistent.
+  // The repository already uses the replica only on read-only runners, so root reads and nested-relation loading agree
   protected getReadRepository({
     repository,
   }: Pick<
@@ -542,26 +547,23 @@ export abstract class CommonBaseQueryRunnerService<
     };
   }
 
-  private recordApiUsage(authContext: WorkspaceAuthContext) {
+  private recordApiComplexityUsage(
+    authContext: WorkspaceAuthContext,
+    queryComplexity: number,
+  ) {
     const apiType = getApiType();
 
     if (!isDefined(apiType)) {
       return;
     }
 
-    const spenders = buildUsageSpendersFromAuthContext(authContext);
-
-    if (!isDefined(spenders.apiKeyId) && !isDefined(spenders.applicationId)) {
-      return;
-    }
-
     this.usageRecorderService.accumulate(authContext.workspace.id, {
       resourceType: UsageResourceType.API,
       operationType: UsageOperationType.API_REQUEST,
-      quantity: 1,
-      unit: UsageUnit.REQUEST,
+      quantity: queryComplexity,
+      unit: UsageUnit.COMPLEXITY,
       resourceContext: apiType,
-      spenders,
+      spenders: buildUsageSpendersFromAuthContext(authContext),
     });
   }
 
@@ -622,7 +624,7 @@ export abstract class CommonBaseQueryRunnerService<
     selectedFieldsResult: CommonSelectedFieldsResult,
     args: CommonExtendedInput<Args>,
     queryRunnerContext: CommonBaseQueryRunnerContext,
-  ) {
+  ): number {
     const maximumComplexity = this.twentyConfigService.get(
       'COMMON_QUERY_COMPLEXITY_LIMIT',
     );
@@ -652,5 +654,7 @@ export abstract class CommonBaseQueryRunnerService<
         },
       );
     }
+
+    return queryComplexity;
   }
 }

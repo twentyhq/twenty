@@ -28,6 +28,7 @@ export const messageChannelGraphqlApiExceptionHandler = (error: Error) => {
       case MessageChannelExceptionCode.INVALID_MESSAGE_CHANNEL_INPUT:
         throw new UserInputError(error);
       case MessageChannelExceptionCode.MESSAGE_CHANNEL_OWNERSHIP_VIOLATION:
+      case MessageChannelExceptionCode.EMAIL_GROUP_SENDING_REQUIRES_PAID_PLAN:
         throw new ForbiddenError(error);
       case MessageChannelExceptionCode.EMAIL_GROUP_NOT_CONFIGURED:
         throw new InternalServerError(error);
@@ -48,6 +49,9 @@ export const messageChannelGraphqlApiExceptionHandler = (error: Error) => {
       case EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_NOT_FOUND:
         throw new NotFoundError(error);
       case EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_INSUFFICIENT_CREDITS:
+      case EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_SUBSCRIPTION_INACTIVE:
+      case EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_USAGE_LIMIT_REACHED:
+      case EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_REQUIRES_PAID_PLAN:
       case EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_NOT_SENDABLE:
       case EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_NOT_CANCELABLE:
       case EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_SCHEDULE_NOT_IN_FUTURE:

@@ -1,8 +1,6 @@
 import { type ReactNode } from 'react';
 
 import { runComponentConformance } from '@test-utilities/conformance/runComponentConformance';
-import { CardPicker } from '@ui/primitives/input/CardPicker/CardPicker';
-import cardPickerStyles from '@ui/primitives/input/CardPicker/CardPicker.module.scss';
 import { RadioGroup } from '@ui/primitives/input/RadioGroup/RadioGroup';
 import groupStyles from '@ui/primitives/input/RadioGroup/RadioGroup.module.scss';
 
@@ -29,10 +27,14 @@ runComponentConformance({
 });
 
 runComponentConformance({
-  name: 'CardPicker',
-  element: <CardPicker value="option">Option</CardPicker>,
+  name: 'Radio card',
+  element: (
+    <Radio variant="card" value="option">
+      Option
+    </Radio>
+  ),
   wrapper: RadioGroupWrapper,
   refInstanceOf: HTMLDivElement,
-  ownClassName: cardPickerStyles.container,
+  ownClassName: styles.card,
   renderPropTagName: 'div',
 });

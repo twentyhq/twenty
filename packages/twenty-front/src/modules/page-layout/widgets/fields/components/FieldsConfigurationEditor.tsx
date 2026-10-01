@@ -28,8 +28,9 @@ import { DragDropItemDndContext } from '@/ui/utilities/drag-and-drop/context/Dra
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useLingui } from '@lingui/react/macro';
 import { Fragment, useState } from 'react';
+import { flushSync } from 'react-dom';
+import { MenuItem } from 'twenty-ui/components';
 import { IconNewSection } from 'twenty-ui/icon';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
 
 const StyledGroupsDroppable = styled.div`
   display: flex;
@@ -133,7 +134,9 @@ export const FieldsConfigurationEditor = ({
 
   const handleAddGroup = ({ afterGroupId }: { afterGroupId?: string }) => {
     const newGroupName = t`New Group`;
-    const newGroupId = createGroup({ name: newGroupName, afterGroupId });
+    const newGroupId = flushSync(() =>
+      createGroup({ name: newGroupName, afterGroupId }),
+    );
 
     setRenamingGroupValue(newGroupName);
     openDropdown({

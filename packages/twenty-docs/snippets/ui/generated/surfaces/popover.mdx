@@ -132,7 +132,7 @@
 
 ### Popover.Popup
 
-<ParamField body="Popup.align" type="&quot;center&quot; | &quot;start&quot; | &quot;end&quot;" default="center">
+<ParamField body="Popup.align" type="&quot;center&quot; | &quot;end&quot; | &quot;start&quot;" default="center">
   Alignment of the popup along the anchor.
 </ParamField>
 
@@ -151,6 +151,11 @@
 <ParamField body="Popup.className" type="string | ((state: PopoverPopupState) =&gt; string | undefined)">
   CSS class applied to the element, or a function that
   returns a class based on the component's state.
+</ParamField>
+
+<ParamField body="Popup.collisionPadding" type="Padding">
+  Space in pixels kept between the popup and the edges of its collision
+  boundary, for all sides or per side. Defaults to 5.
 </ParamField>
 
 <ParamField body="Popup.container" type="HTMLElement | ShadowRoot | RefObject&lt;HTMLElement | ShadowRoot | null&gt; | null">
@@ -191,7 +196,7 @@
   Accepts a `ReactElement` or a function that returns the element to render.
 </ParamField>
 
-<ParamField body="Popup.side" type="&quot;top&quot; | &quot;right&quot; | &quot;bottom&quot; | &quot;left&quot; | &quot;inline-end&quot; | &quot;inline-start&quot;" default="bottom">
+<ParamField body="Popup.side" type="&quot;bottom&quot; | &quot;inline-end&quot; | &quot;inline-start&quot; | &quot;left&quot; | &quot;right&quot; | &quot;top&quot;" default="bottom">
   Side of the anchor the popup is placed on.
 </ParamField>
 

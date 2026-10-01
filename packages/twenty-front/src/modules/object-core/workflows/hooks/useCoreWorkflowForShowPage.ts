@@ -20,10 +20,10 @@ type CoreWorkflowShowPageWorkflow = Pick<
 >;
 
 export const useCoreWorkflowForShowPage = ({
-  workspaceWorkflowId,
+  coreWorkflowId,
   skip,
 }: {
-  workspaceWorkflowId: string | undefined;
+  coreWorkflowId: string | undefined;
   skip: boolean;
 }): {
   coreWorkflow: CoreWorkflowShowPageWorkflow | undefined;
@@ -32,12 +32,12 @@ export const useCoreWorkflowForShowPage = ({
 } => {
   const apolloCoreClient = useApolloCoreClient();
 
-  const shouldSkip = skip || !isDefined(workspaceWorkflowId);
+  const shouldSkip = skip || !isDefined(coreWorkflowId);
 
   const { data: coreWorkflowData } = useQuery(GetCoreWorkflowDocument, {
     client: apolloCoreClient,
     fetchPolicy: 'cache-and-network',
-    variables: { workspaceWorkflowId: workspaceWorkflowId ?? '' },
+    variables: { coreWorkflowId: coreWorkflowId ?? '' },
     skip: shouldSkip,
   });
 
@@ -46,26 +46,20 @@ export const useCoreWorkflowForShowPage = ({
     {
       client: apolloCoreClient,
       fetchPolicy: 'cache-and-network',
-      variables: { workspaceWorkflowId: workspaceWorkflowId ?? '' },
+      variables: { coreWorkflowId: coreWorkflowId ?? '' },
       skip: shouldSkip,
     },
   );
 
   const coreWorkflow = coreWorkflowData?.coreWorkflow;
 
-  const versions = (
-    coreWorkflowVersionsData?.coreWorkflowVersions ?? []
-  ).flatMap((coreWorkflowVersion) =>
-    isDefined(coreWorkflowVersion.workspaceWorkflowVersionId)
-      ? [
-          {
-            id: coreWorkflowVersion.workspaceWorkflowVersionId,
-            name: coreWorkflowVersion.label,
-            status: coreWorkflowVersion.status,
-            createdAt: coreWorkflowVersion.createdAt,
-          },
-        ]
-      : [],
+  const versions = (coreWorkflowVersionsData?.coreWorkflowVersions ?? []).map(
+    (version) => ({
+      id: version.id,
+      name: version.label,
+      status: version.status,
+      createdAt: version.createdAt,
+    }),
   );
 
   const draftVersionIdFromServer = versions.find(
@@ -75,10 +69,11 @@ export const useCoreWorkflowForShowPage = ({
   return {
     coreWorkflow: isDefined(coreWorkflow)
       ? {
-          id: coreWorkflow.workspaceWorkflowId,
+          id: coreWorkflow.id,
           name: coreWorkflow.name ?? '',
           statuses: coreWorkflow.statuses,
-          lastPublishedVersionId: coreWorkflow.lastPublishedVersionId,
+          lastPublishedVersionId:
+            coreWorkflow.lastPublishedCoreWorkflowVersionId,
         }
       : undefined,
     versions,

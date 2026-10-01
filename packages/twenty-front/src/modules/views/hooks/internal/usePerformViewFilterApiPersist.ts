@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 
 import { type FlatViewFilter } from '@/metadata-store/types/FlatViewFilter';
-import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult.type';
+import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult';
 import { usePerformViewEntityApiPersistOperation } from '@/views/hooks/internal/usePerformViewEntityApiPersistOperation';
 import { useMutation } from '@apollo/client/react';
 import { CrudOperationType } from 'twenty-shared/types';
@@ -16,8 +16,7 @@ import {
   UpdateViewFilterDocument,
 } from '~/generated-metadata/graphql';
 
-// Normalize value like the fetch path (splitViewWithRelated) so store
-// comparisons against string-converted values stay consistent
+// Normalized like the fetch path (splitViewWithRelated) so store comparisons stay consistent
 const toFlatViewFilter = ({
   __typename,
   ...viewFilter

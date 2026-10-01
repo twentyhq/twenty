@@ -17,9 +17,9 @@ import {
 import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
-import { Info, useToast } from 'twenty-ui/primitives/feedback';
+import { InlineBanner, useToast } from 'twenty-ui/components';
 import { Button } from 'twenty-ui/primitives/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { CreateBillingPaymentMethodSetupIntentDocument } from '~/generated-metadata/graphql';
 
 type AddPaymentMethodFormContentProps = {
@@ -170,9 +170,10 @@ export const AddPaymentMethodForm = ({
   if (!isDefined(stripePromise)) {
     return (
       <StyledFormContainer>
-        <Info
-          accent="danger"
-          text={t`Card payment is currently unavailable. Please verify your Stripe configuration or contact your workspace admin.`}
+        <InlineBanner
+          variant="compact"
+          color="danger"
+          message={t`Card payment is currently unavailable. Please verify your Stripe configuration or contact your workspace admin.`}
         />
       </StyledFormContainer>
     );

@@ -29,7 +29,6 @@ import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/bil
 import { WORKSPACE_ACTIVATING_SUBSCRIPTION_STATUSES } from 'src/engine/core-modules/billing/constants/workspace-activating-subscription-statuses.constant';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
 import { BillingPriceService } from 'src/engine/core-modules/billing/services/billing-price.service';
-import { BillingUsageCacheService } from 'src/engine/core-modules/billing/services/billing-usage-cache.service';
 import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
 import { StripeCustomerService } from 'src/engine/core-modules/billing/stripe/services/stripe-customer.service';
 import { StripeSubscriptionScheduleService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-schedule.service';
@@ -55,8 +54,7 @@ export class BillingSubscriptionService {
     private readonly billingPriceService: BillingPriceService,
     @InjectWorkspaceScopedRepository(BillingSubscriptionEntity)
     private readonly billingSubscriptionRepository: WorkspaceScopedRepository<BillingSubscriptionEntity>,
-    // Stripe webhooks resolve by stripeCustomerId before any workspaceId
-    // is known. Used only when the criteria has no workspaceId.
+    // Stripe webhooks resolve by stripeCustomerId before any workspaceId is known
     // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(BillingSubscriptionEntity)
     private readonly billingSubscriptionRepositoryUnscoped: Repository<BillingSubscriptionEntity>,
@@ -69,7 +67,6 @@ export class BillingSubscriptionService {
     private readonly billingCustomerRepository: WorkspaceScopedRepository<BillingCustomerEntity>,
     private readonly enterprisePlanService: EnterprisePlanService,
     private readonly workspaceCacheService: WorkspaceCacheService,
-    private readonly billingUsageCacheService: BillingUsageCacheService,
     private readonly usageLimitQuotaService: UsageLimitQuotaService,
   ) {}
 
@@ -164,9 +161,7 @@ export class BillingSubscriptionService {
         ? data.object.customer
         : data.object.customer?.id;
 
-    // The Stripe account receives every setup intent, including ones that are
-    // not tied to a workspace subscription. Those can never be recovered, and
-    // failing would only have Stripe redeliver them
+    // Setup intents unrelated to a subscription can't be recovered; failing only makes Stripe redeliver
     if (!isDefined(stripeCustomerId)) {
       this.logger.warn(
         `Ignoring successful setup intent ${data.object.id} without customer`,
@@ -211,9 +206,7 @@ export class BillingSubscriptionService {
         { default_payment_method: stripePaymentMethodId },
       );
 
-    // The persisted status can lag behind Stripe when this event lands before
-    // the subscription update one, so the live status decides whether an
-    // overdue invoice has to be retried
+    // The persisted status can lag Stripe when this event precedes the subscription update, so the live one decides
     if (
       [SubscriptionStatus.PastDue, SubscriptionStatus.Unpaid].includes(
         getSubscriptionStatus(stripeSubscription.status),
@@ -325,8 +318,6 @@ export class BillingSubscriptionService {
       billingSubscription.workspaceId,
       updatedSubscription.id,
     );
-
-    await this.billingUsageCacheService.flushAvailableCredits(workspace.id);
 
     await this.workspaceCacheService.invalidateAndRecompute(workspace.id, [
       'currentBillingSubscription',

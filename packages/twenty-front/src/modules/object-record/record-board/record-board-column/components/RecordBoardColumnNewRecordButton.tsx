@@ -14,7 +14,7 @@ import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/icon';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 const StyledNewButton = styled.button`
   align-items: center;
@@ -34,7 +34,7 @@ const StyledNewButton = styled.button`
 `;
 
 export const RecordBoardColumnNewRecordButton = () => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const { objectMetadataItem, selectFieldMetadataItem } =
     useContext(RecordBoardContext);
 
@@ -56,8 +56,7 @@ export const RecordBoardColumnNewRecordButton = () => {
     objectMetadataItem: objectMetadataItem,
   });
 
-  // Creating in a nested relation or junction widget requires picking the
-  // related record, which only the table layout offers today.
+  // Creating through a nested relation or junction needs a record picker only the table layout offers.
   const recordTableWidgetContext = useContext(RecordTableWidgetContext);
 
   if (

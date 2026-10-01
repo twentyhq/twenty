@@ -11,6 +11,7 @@ export { CAPTURE_ALL_VARIABLE_TAG_INNER_REGEX } from './constants/CaptureAllVari
 export { CONTENT_TYPE_VALUES_HTTP_REQUEST } from './constants/ContentTypeValuesHttpRequest';
 export { IF_ELSE_BRANCH_POSITION_OFFSETS } from './constants/IfElseBranchPositionOffsets';
 export { OBJECTS_BLOCKED_FROM_AUTOMATION } from './constants/ObjectsBlockedFromAutomation';
+export { OBJECTS_SYNCED_FROM_CONNECTED_ACCOUNTS } from './constants/ObjectsSyncedFromConnectedAccounts';
 export { STEP_RETRY_DELAYS_MS } from './constants/StepRetryDelaysMs';
 export { TRIGGER_STEP_ID } from './constants/TriggerStepId';
 export { WORKFLOW_TRIGGER_METADATA_KEY } from './constants/WorkflowTriggerMetadataKey';
@@ -34,6 +35,14 @@ export { workflowAiAgentActionSettingsSchema } from './schemas/ai-agent-action-s
 export { baseTriggerSchema } from './schemas/base-trigger-schema';
 export { baseWorkflowActionSchema } from './schemas/base-workflow-action-schema';
 export { baseWorkflowActionSettingsSchema } from './schemas/base-workflow-action-settings-schema';
+export { workflowClassifyActionSchema } from './schemas/classify-action-schema';
+export {
+  CLASSIFY_ANSWER_NAME_PATTERN,
+  CLASSIFY_OPTION_NAME_FORBIDDEN_CHARACTER,
+  workflowClassifyCriterionSchema,
+  workflowClassifyQuestionSchema,
+  workflowClassifyActionSettingsSchema,
+} from './schemas/classify-action-settings-schema';
 export { workflowCodeActionSchema } from './schemas/code-action-schema';
 export { workflowCodeActionSettingsSchema } from './schemas/code-action-settings-schema';
 export { workflowCreateCalendarEventActionSchema } from './schemas/create-calendar-event-action-schema';
@@ -53,7 +62,10 @@ export { workflowFilterActionSettingsSchema } from './schemas/filter-action-sett
 export { workflowFindRecordsActionSchema } from './schemas/find-records-action-schema';
 export { workflowFindRecordsActionSettingsSchema } from './schemas/find-records-action-settings-schema';
 export { workflowFormActionSchema } from './schemas/form-action-schema';
-export { workflowFormActionSettingsSchema } from './schemas/form-action-settings-schema';
+export {
+  workflowFormFieldSchema,
+  workflowFormActionSettingsSchema,
+} from './schemas/form-action-settings-schema';
 export { workflowHttpRequestActionSchema } from './schemas/http-request-action-schema';
 export { workflowHttpRequestActionSettingsSchema } from './schemas/http-request-action-settings-schema';
 export { workflowIfElseActionSchema } from './schemas/if-else-action-schema';
@@ -112,7 +124,11 @@ export type {
 export type { StepIfElseBranch } from './types/StepIfElseBranch';
 export { WorkflowActionType } from './types/WorkflowActionType';
 export type { WorkflowAttachment } from './types/WorkflowAttachment';
-export type { BodyType } from './types/workflowHttpRequestStep';
+export type {
+  WorkflowClassifyCriterion,
+  WorkflowClassifyQuestion,
+} from './types/WorkflowClassifyQuestion';
+export type { BodyType } from './types/WorkflowHttpRequestStep';
 export type {
   WorkflowRunStepInfo,
   WorkflowRunStepInfos,
@@ -128,6 +144,7 @@ export { canObjectBeManagedByAutomation } from './utils/canObjectBeManagedByAuto
 export { extractRawVariableNamePart } from './utils/extractRawVariableNameParts';
 export { getFunctionInputFromInputSchema } from './utils/getFunctionInputFromInputSchema';
 export { getWorkflowRunContext } from './utils/getWorkflowRunContext';
+export { isObjectSyncedFromConnectedAccounts } from './utils/isObjectSyncedFromConnectedAccounts';
 export { isStandaloneVariableString } from './utils/isStandaloneVariableString';
 export { parseBooleanFromStringValue } from './utils/parseBooleanFromStringValue';
 export { parseDataFromContentType } from './utils/parseDataFromContentType';
@@ -151,7 +168,7 @@ export type {
   ValidatableWorkflowStep,
   ValidatableWorkflowTrigger,
   ValidatableWorkflow,
-} from './validation/types/workflow-validation.type';
+} from './validation/types/WorkflowValidation';
 export type { WorkflowGraph } from './validation/utils/build-workflow-graph.util';
 export { buildWorkflowGraph } from './validation/utils/build-workflow-graph.util';
 export { extractVariablesFromInput } from './validation/utils/extract-variables-from-input.util';
@@ -161,6 +178,7 @@ export {
   getStepOutgoingStepIds,
 } from './validation/utils/get-step-outgoing-step-ids.util';
 export { getVariablePathSuggestions } from './validation/utils/get-variable-path-suggestions.util';
+export { validateWorkflowExecutionPaths } from './validation/utils/validate-workflow-execution-paths.util';
 export { validateWorkflowGraph } from './validation/utils/validate-workflow-graph.util';
 export { validateWorkflowStepParams } from './validation/utils/validate-workflow-step-params.util';
 export { validateWorkflowVariableReferences } from './validation/utils/validate-workflow-variable-references.util';
@@ -172,7 +190,7 @@ export type {
   Leaf,
   Node,
   BaseOutputSchemaV2,
-} from './workflow-schema/types/base-output-schema.type';
+} from './workflow-schema/types/BaseOutputSchema';
 export type {
   RecordFieldLeaf,
   RecordFieldNode,
@@ -190,7 +208,7 @@ export type {
   ManualTriggerOutputSchema,
   OutputSchemaV2,
   VariableSearchResult,
-} from './workflow-schema/types/output-schema.type';
+} from './workflow-schema/types/OutputSchema';
 export { buildManualTriggerMetadataNode } from './workflow-schema/utils/build-manual-trigger-metadata-node';
 export { collectOutputSchemaPaths } from './workflow-schema/utils/collect-output-schema-paths';
 export type { OutputSchemaPathFailure } from './workflow-schema/utils/find-output-schema-path-failure';
@@ -214,4 +232,4 @@ export type {
   GlobalAvailability,
   SingleRecordAvailability,
   BulkRecordsAvailability,
-} from './workflow-trigger/types/workflow-trigger.type';
+} from './workflow-trigger/types/WorkflowTrigger';

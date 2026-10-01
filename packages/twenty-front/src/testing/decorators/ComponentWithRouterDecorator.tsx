@@ -13,7 +13,7 @@ import {
   isRouteParams,
 } from '~/testing/decorators/PageDecorator';
 
-import { ComponentStorybookLayout } from '~/testing/ComponentStorybookLayout';
+import { ComponentStorybookLayout } from 'twenty-ui/testing';
 
 interface StrictArgs {
   [name: string]: unknown;
@@ -50,6 +50,7 @@ const createRouter = ({
 export const ComponentWithRouterDecorator: Decorator = (Story, { args }) => {
   return (
     <RouterProvider
+      useTransitions={false}
       router={createRouter({
         Story,
         args,

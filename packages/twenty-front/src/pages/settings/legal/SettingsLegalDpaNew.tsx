@@ -20,8 +20,7 @@ import {
   type GenerateSignedDpaResult,
 } from '@/settings/legal/types/Dpa';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
-import { Section } from 'twenty-ui/components';
-import { useToast } from 'twenty-ui/primitives/feedback';
+import { Section, useToast } from 'twenty-ui/components';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 export const SettingsLegalDpaNew = () => {

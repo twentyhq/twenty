@@ -2,11 +2,11 @@ import { SETTINGS_BILLING_COMPARED_PLAN_KEYS } from '@/settings/billing/constant
 import {
   type SettingsBillingPlanComparisonCell,
   type SettingsBillingPlanComparisonRow,
-} from '@/settings/billing/types/settingsBillingPlanComparison.type';
+} from '@/settings/billing/types/SettingsBillingPlanComparison';
 import { useLingui } from '@lingui/react/macro';
 import { styled } from '@linaria/react';
 import { IconCheck, IconX } from 'twenty-ui/icon';
-import { themeCssVariables, useTheme } from 'twenty-ui/theme-constants';
+import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 const StyledFeatureCell = styled.div<{
   hasTopBorder?: boolean;

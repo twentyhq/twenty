@@ -1,11 +1,11 @@
-import { Dialog } from 'twenty-ui/primitives/surfaces';
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
 import { ImportDataStep } from '@/spreadsheet-import/steps/components/ImportDataStep';
 import { type SpreadsheetImportStep } from '@/spreadsheet-import/steps/types/SpreadsheetImportStep';
 import { SpreadsheetImportStepType } from '@/spreadsheet-import/steps/types/SpreadsheetImportStepType';
-import { useCallback, useContext, useState } from 'react';
-import { CircularProgressBar, useToast } from 'twenty-ui/primitives/feedback';
-import { ThemeContext } from 'twenty-ui/theme-constants';
+import { useCallback, useState } from 'react';
+import { useToast } from 'twenty-ui/components';
+import { Loader } from 'twenty-ui/primitives/feedback';
+import { Dialog } from 'twenty-ui/primitives/surfaces';
 import { MatchColumnsStep } from './MatchColumnsStep/MatchColumnsStep';
 import { SelectHeaderStep } from './SelectHeaderStep/SelectHeaderStep';
 import { SelectSheetStep } from './SelectSheetStep/SelectSheetStep';
@@ -21,7 +21,6 @@ export const SpreadsheetImportStepper = ({
   nextStep,
   prevStep,
 }: SpreadsheetImportStepperProps) => {
-  const { theme } = useContext(ThemeContext);
   const { initialStepState } = useSpreadsheetImportInternal();
 
   const [currentStepState, setCurrentStepState] =
@@ -134,11 +133,7 @@ export const SpreadsheetImportStepper = ({
             justifyContent: 'center',
           }}
         >
-          <CircularProgressBar
-            size={80}
-            barWidth={8}
-            barColor={theme.font.color.primary}
-          />
+          <Loader />
         </Dialog.Body>
       );
   }

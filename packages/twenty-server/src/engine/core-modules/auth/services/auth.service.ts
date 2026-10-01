@@ -4,12 +4,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 import crypto, { randomUUID } from 'node:crypto';
 
 import { msg } from '@lingui/core/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { addMilliseconds } from 'date-fns';
 import ms from 'ms';
 import { PasswordUpdateNotifyEmail, renderEmail } from 'twenty-emails';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { AppPath, ConnectedAccountProvider } from 'twenty-shared/types';
-import { isNonEmptyString } from '@sniptt/guards';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { IsNull, Repository } from 'typeorm';
 
@@ -17,10 +17,8 @@ import {
   AppTokenEntity,
   AppTokenType,
 } from 'src/engine/core-modules/app-token/app-token.entity';
-import { INVITATION_APP_TOKEN_TYPES } from 'src/engine/core-modules/workspace-invitation/constants/invitation-app-token-types';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
-import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.service';
-import { IMPERSONATION_EVENT } from 'src/engine/core-modules/event-logs/emit/events/workspace-event/impersonation/impersonation';
+import { isEmailInApprovedAccessDomains } from 'src/engine/core-modules/approved-access-domain/utils/is-email-in-approved-access-domains.util';
 import {
   AuthException,
   AuthExceptionCode,
@@ -53,28 +51,30 @@ import {
   type ExistingUserOrNewUser,
   type SignInUpBaseParams,
   type SignInUpNewUserPayload,
-} from 'src/engine/core-modules/auth/types/signInUp.type';
+} from 'src/engine/core-modules/auth/types/sign-in-up.type';
+import { assertIssuerIsPublishedOrThrow } from 'src/engine/core-modules/auth/utils/assert-issuer-is-published.util';
 import { validateRedirectUri } from 'src/engine/core-modules/auth/utils/validate-redirect-uri.util';
 import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain-server-config/services/domain-server-config.service';
-import { UserSessionService } from 'src/engine/core-modules/user-session/services/user-session.service';
-import { UserSessionRevokedReason } from 'src/engine/core-modules/user-session/types/user-session-revoked-reason.type';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { WorkspaceDomainConfig } from 'src/engine/core-modules/domain/workspace-domains/types/workspace-domain-config.type';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
+import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.service';
+import { IMPERSONATION_EVENT } from 'src/engine/core-modules/event-logs/emit/events/workspace-event/impersonation/impersonation';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { UserSessionService } from 'src/engine/core-modules/user-session/services/user-session.service';
+import { UserSessionRevokedReason } from 'src/engine/core-modules/user-session/types/user-session-revoked-reason.type';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
+import { INVITATION_APP_TOKEN_TYPES } from 'src/engine/core-modules/workspace-invitation/constants/invitation-app-token-types';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
-import { assertIssuerIsPublishedOrThrow } from 'src/engine/core-modules/auth/utils/assert-issuer-is-published.util';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
-import { isEmailInApprovedAccessDomains } from 'src/engine/core-modules/approved-access-domain/utils/is-email-in-approved-access-domains.util';
 
 @Injectable()
 // oxlint-disable-next-line twenty/inject-workspace-repository
@@ -332,6 +332,7 @@ export class AuthService {
       userWorkspaceId: userWorkspace.id,
       workspaceId: workspace.id,
       setting: PermissionFlagType.SSO_BYPASS,
+      applicationId: undefined,
     });
   }
 
@@ -393,7 +394,6 @@ export class AuthService {
       new AuthException('User not found', AuthExceptionCode.USER_NOT_FOUND),
     );
 
-    // passwordHash is hidden for security reasons
     user.passwordHash = '';
 
     const accessToken = await this.accessTokenService.generateAccessToken({
@@ -536,10 +536,7 @@ export class AuthService {
       );
     }
 
-    // OAuth 2.1 / MCP auth spec: PKCE is mandatory for public clients
-    // (clients registered with token_endpoint_auth_method=none, i.e. no
-    // client secret hash). Confidential clients are authenticated at the
-    // token endpoint instead.
+    // OAuth 2.1 / MCP auth spec: PKCE is mandatory for public clients (no client secret)
     const isPublicClient = !applicationRegistration.oAuthClientSecretHash;
 
     if (isPublicClient && !codeChallenge) {
@@ -549,9 +546,8 @@ export class AuthService {
       );
     }
 
-    // RFC 8252 §7.3: Native apps using loopback redirect URIs may use any port.
-    // When a registration has no explicit redirect URIs (e.g. the seeded CLI registration),
-    // allow any loopback redirect URI.
+    // RFC 8252 §7.3: native apps may use any loopback port, so a registration without redirect URIs
+    // (e.g. the seeded CLI one) accepts any loopback redirect URI
     const hasRegisteredRedirectUris =
       applicationRegistration.oAuthRedirectUris.length > 0;
 
@@ -990,8 +986,6 @@ export class AuthService {
     const existingUser =
       await this.userService.findUserByEmailWithWorkspaces(email);
 
-    // Route SSO sign-ins through the same create-or-select flow as credentials
-    // instead of landing straight on a workspace subdomain.
     if (!workspaceId && !workspaceInviteHash) {
       const user =
         existingUser ??
@@ -1015,8 +1009,7 @@ export class AuthService {
           authProvider,
         });
 
-      // The token rides in the fragment so it never reaches access logs,
-      // proxies or Referer headers: browsers keep it out of the request line.
+      // The fragment keeps the token out of access logs, proxies and Referer headers
       const url = this.domainServerConfigService.buildBaseUrl({
         pathname: AppPath.SignInUp,
         searchParams: {

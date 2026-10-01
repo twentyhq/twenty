@@ -32,10 +32,15 @@ export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const buttons = canvas.getAllByRole('button');
-    buttons[0].focus();
+    buttons[0]!.focus();
     await userEvent.tab();
     await expect(buttons[1]).toHaveFocus();
   },
+};
+
+export const Documentation: Story = {
+  args: Default.args,
+  decorators: Default.decorators,
 };
 
 export const Dark: Story = { ...Default, globals: { colorScheme: 'dark' } };
@@ -135,5 +140,30 @@ export const UnspecifiedAppearance: Story = {
     await expect(defaultButton).toHaveAttribute('data-variant', 'outline');
     await expect(defaultButton).toHaveAttribute('data-color', 'neutral');
     await expect(defaultButton).toHaveAttribute('data-size', 'md');
+  },
+};
+
+export const FramedAttached: Story = {
+  ...Default,
+  args: { ...Default.args, framed: true },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const buttons = canvas.getAllByRole('button');
+    const firstButtonStyle = getComputedStyle(buttons[0]!);
+    const lastButtonStyle = getComputedStyle(buttons[2]!);
+    const groupStyle = getComputedStyle(canvas.getByRole('group'));
+
+    await expect(firstButtonStyle.borderStartEndRadius).toBe('0px');
+    await expect(lastButtonStyle.borderStartStartRadius).toBe('0px');
+    await expect(firstButtonStyle.borderStartStartRadius).toBe(
+      lastButtonStyle.borderStartEndRadius,
+    );
+    await expect(
+      parseFloat(groupStyle.borderStartStartRadius) -
+        parseFloat(firstButtonStyle.borderStartStartRadius),
+    ).toBe(
+      parseFloat(groupStyle.paddingInlineStart) +
+        parseFloat(groupStyle.borderInlineStartWidth),
+    );
   },
 };

@@ -19,6 +19,38 @@ describe('isMatchingRawJsonFilter', () => {
         }),
       ).toBe(false);
     });
+
+    it('should treat regex metacharacters in the pattern literally', () => {
+      expect(() =>
+        isMatchingRawJsonFilter({
+          rawJsonFilter: { like: '%(%' },
+          value: 'some (test) value',
+        }),
+      ).not.toThrow();
+
+      expect(
+        isMatchingRawJsonFilter({
+          rawJsonFilter: { like: '%(test)%' },
+          value: 'some (test) value',
+        }),
+      ).toBe(true);
+
+      expect(
+        isMatchingRawJsonFilter({
+          rawJsonFilter: { like: '%a.c%' },
+          value: 'abc',
+        }),
+      ).toBe(false);
+    });
+
+    it('should match across lines', () => {
+      expect(
+        isMatchingRawJsonFilter({
+          rawJsonFilter: { like: '%value%' },
+          value: { key: 'value' } as any,
+        }),
+      ).toBe(true);
+    });
   });
 
   describe('is', () => {

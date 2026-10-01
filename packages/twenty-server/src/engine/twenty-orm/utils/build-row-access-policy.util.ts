@@ -1,3 +1,4 @@
+import { isMetadataWritePermitted } from 'src/engine/twenty-orm/utils/is-metadata-write-permitted.util';
 import { isDefined } from 'twenty-shared/utils';
 
 import { buildRecordShareGate } from 'src/engine/core-modules/record-share/utils/build-record-share-gate.util';
@@ -16,7 +17,24 @@ export const buildRowAccessPolicy = ({
   environment,
   ...target
 }: RowAccessPolicyContext & RowAccessPolicyTarget): RowAccessPolicy => {
+  if (subject.isSystemContext) {
+    return { kind: 'open' };
+  }
+
   const context = { subject, environment };
+  // Inherited writes also need the parent's writability, or a child could become writable through a SYSTEM parent
+  if (
+    target.operationType !== 'select' &&
+    !isMetadataWritePermitted({
+      writability: target.flatObjectMetadata.writability,
+      isSystemContext: false,
+      isOwningApplication: subject.isOwningApplication(
+        target.flatObjectMetadata,
+      ),
+    })
+  ) {
+    return { kind: 'denied' };
+  }
 
   if (
     isDefined(subject.objectsPermissions) &&

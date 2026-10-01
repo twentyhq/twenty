@@ -112,6 +112,7 @@ describe('McpCoreController', () => {
         mockUser,
         mockUserWorkspaceId,
         undefined,
+        undefined,
         mockRes,
       );
 
@@ -122,6 +123,8 @@ describe('McpCoreController', () => {
           userId: mockUser.id,
           userWorkspaceId: mockUserWorkspaceId,
           apiKey: mockApiKey,
+          application: undefined,
+          isDirectMode: false,
         },
       );
       expect(result).toEqual(mockResponse);
@@ -158,6 +161,7 @@ describe('McpCoreController', () => {
         mockUser,
         mockUserWorkspaceId,
         undefined,
+        undefined,
         mockRes,
       );
 
@@ -168,6 +172,8 @@ describe('McpCoreController', () => {
           userId: mockUser.id,
           userWorkspaceId: mockUserWorkspaceId,
           apiKey: mockApiKey,
+          application: undefined,
+          isDirectMode: false,
         },
       );
       expect(result).toEqual(mockResponse);
@@ -203,6 +209,7 @@ describe('McpCoreController', () => {
         mockUser,
         mockUserWorkspaceId,
         undefined,
+        undefined,
         mockRes,
       );
 
@@ -213,6 +220,8 @@ describe('McpCoreController', () => {
           userId: mockUser.id,
           userWorkspaceId: mockUserWorkspaceId,
           apiKey: mockApiKey,
+          application: undefined,
+          isDirectMode: false,
         },
       );
       expect(result).toEqual(mockResponse);
@@ -232,6 +241,7 @@ describe('McpCoreController', () => {
         mockApiKey,
         mockUser,
         mockUserWorkspaceId,
+        undefined,
         undefined,
         mockRes,
       );
@@ -266,6 +276,7 @@ describe('McpCoreController', () => {
         undefined,
         undefined,
         undefined,
+        undefined,
         mockRes,
       );
 
@@ -276,6 +287,7 @@ describe('McpCoreController', () => {
           userId: undefined,
           userWorkspaceId: undefined,
           apiKey: mockApiKey,
+          isDirectMode: false,
         },
       );
       expect(result).toEqual(mockResponse);
@@ -306,6 +318,7 @@ describe('McpCoreController', () => {
         mockApiKey,
         mockUser,
         mockUserWorkspaceId,
+        undefined,
         'application/json, text/event-stream',
         mockRes,
       );
@@ -338,6 +351,8 @@ describe('McpCoreController', () => {
           userId: mockUser.id,
           userWorkspaceId: mockUserWorkspaceId,
           apiKey: mockApiKey,
+          application: undefined,
+          isDirectMode: false,
         },
         expect.any(Function),
       );
@@ -364,6 +379,7 @@ describe('McpCoreController', () => {
         mockApiKey,
         mockUser,
         mockUserWorkspaceId,
+        undefined,
         'application/json',
         mockRes,
       );
@@ -388,6 +404,7 @@ describe('McpCoreController', () => {
         mockApiKey,
         mockUser,
         mockUserWorkspaceId,
+        undefined,
         'application/json, text/event-stream',
         mockRes,
       );

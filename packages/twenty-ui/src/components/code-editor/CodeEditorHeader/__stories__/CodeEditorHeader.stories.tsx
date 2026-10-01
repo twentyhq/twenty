@@ -1,9 +1,9 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, within } from 'storybook/test';
 
+import { LightIconButton } from '@ui/components/input/LightIconButton/LightIconButton';
 import { IconCopy } from '@ui/icon/components/TablerIcons';
 import { Button } from '@ui/primitives/input/Button/Button';
-import { LightIconButton } from '@ui/primitives/input/LightIconButton/LightIconButton';
 import { A11Y_DEFER_COLOR_CONTRAST, ComponentDecorator } from '@ui/testing';
 
 import { CodeEditorHeader } from '../CodeEditorHeader';
@@ -40,7 +40,9 @@ export const WithActions: Story = {
   ...Default,
   args: {
     leftNodes: [
-      <LightIconButton key="copy" Icon={IconCopy} aria-label="Copy code" />,
+      <LightIconButton key="copy" aria-label="Copy code">
+        <IconCopy />
+      </LightIconButton>,
     ],
     rightNodes: [
       <Button key="run" size="sm" variant="solid" color="accent">

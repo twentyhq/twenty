@@ -3,7 +3,7 @@ import { AI_MODEL_TIERS, type AiModelTier } from 'twenty-shared/ai';
 import { Section } from 'twenty-ui/components';
 import { IconMessage, IconRobot, IconWand } from 'twenty-ui/icon';
 import { Card } from 'twenty-ui/primitives/surfaces';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AiModelTierIndicator } from '@/ai/components/AiModelTierIndicator';
 import { useAiModelTiers } from '@/ai/hooks/useAiModelTiers';
@@ -53,7 +53,10 @@ export const SettingsAiModelsTab = () => {
           title={t`Models`}
           description={t`Choose the default modes for people and agents`}
         />
-        <Card rounded backgroundColor={themeCssVariables.background.secondary}>
+        <Card.Root
+          rounded
+          backgroundColor={themeCssVariables.background.secondary}
+        >
           <StyledSettingsSelectGroup controlWidth={160}>
             <SettingsOptionCardContentSelect
               Icon={IconMessage}
@@ -120,7 +123,7 @@ export const SettingsAiModelsTab = () => {
               ))}
             </StyledSettingsSelectGroup>
           )}
-        </Card>
+        </Card.Root>
       </Section.Root>
 
       <SettingsAiModelTiersPreview />

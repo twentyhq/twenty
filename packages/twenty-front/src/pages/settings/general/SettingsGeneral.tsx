@@ -93,6 +93,7 @@ export const SettingsGeneral = () => {
       secondaryBar={
         hasSecurityPermission ? (
           <SettingsTabBar
+            aria-label={t`General settings`}
             tabs={tabs}
             componentInstanceId={SETTINGS_GENERAL_TABS_INSTANCE_ID}
           />

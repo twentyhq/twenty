@@ -82,7 +82,7 @@ export const MultipleRecordPickerMenuItems = ({
   const searchHasNoResults = pickableRecordIds.length === 0;
 
   return (
-    <DropdownMenuItemsContainer hasMaxHeight>
+    <DropdownMenuItemsContainer isMultiSelect hasMaxHeight>
       {multipleRecordPickerShouldShowInitialLoading ? (
         <RecordPickerInitialLoadingEmptyContainer />
       ) : multipleRecordPickerShouldShowSkeleton ? (

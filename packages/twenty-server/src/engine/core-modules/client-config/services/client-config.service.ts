@@ -10,6 +10,7 @@ import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/
 
 import { MaintenanceModeService } from 'src/engine/core-modules/admin-panel/maintenance-mode.service';
 import {
+  type ClientAiEvaluationModelConfig,
   type ClientAiModelConfig,
   type ClientConfig,
 } from 'src/engine/core-modules/client-config/client-config.entity';
@@ -36,8 +37,6 @@ export class ClientConfigService {
     private maintenanceModeService: MaintenanceModeService,
   ) {}
 
-  // A variant carries only the reading taken at its own effort, so until the
-  // sync measures it the base model's reading is shown, flagged as such.
   private resolveBenchmark(modelConfig: AiModelConfig | undefined): {
     benchmark?: AiModelBenchmark;
     isInherited: boolean;
@@ -134,8 +133,29 @@ export class ClientConfigService {
       },
     );
 
-    // A tier with no model is left out; the client shows its "configure a
-    // provider" state from the empty list rather than an error.
+    const aiEvaluationModels: ClientAiEvaluationModelConfig[] =
+      this.aiModelRegistryService
+        .getAvailableEvaluationModelConfigs()
+        .filter((modelConfig) =>
+          this.aiModelRegistryService.isModelAdminAllowed(modelConfig.modelId),
+        )
+        .map((modelConfig) => ({
+          modelId: modelConfig.modelId,
+          label: modelConfig.label,
+          description: modelConfig.description,
+          providerLabel: getProviderLabel(modelConfig.modelId.split('/')[0]),
+          isAvailable: isDefined(
+            this.aiModelRegistryService.getEvaluationModel(modelConfig.modelId),
+          ),
+          supportedQuestionTypes: modelConfig.supportedQuestionTypes,
+          maxCriteriaPerQuestion: modelConfig.maxCriteriaPerQuestion,
+          maxScoreLevels: modelConfig.maxScoreLevels,
+          medianLatencyMs: modelConfig.medianLatencyMs,
+          inputCostPerMillionTokens: modelConfig.inputCostPerMillionTokens,
+          outputCostPerMillionTokens: modelConfig.outputCostPerMillionTokens,
+          isDeprecated: modelConfig.isDeprecated,
+        }));
+
     const aiModelTiers = AI_MODEL_TIERS.flatMap((tier) => {
       const model = this.aiModelRegistryService.findDefaultModelForTier(tier);
 
@@ -166,6 +186,7 @@ export class ClientConfigService {
         ],
       },
       aiModels,
+      aiEvaluationModels,
       aiModelTiers,
       authProviders: {
         google: this.twentyConfigService.get('AUTH_GOOGLE_ENABLED'),
@@ -221,15 +242,29 @@ export class ClientConfigService {
                 'ONBOARDING_INVITE_TEAM_CREDITS_REWARD_PER_USER',
               ),
             ),
-            upgradeCreditsReward: toDisplayCredits(
+            installAppsCreditsReward: toDisplayCredits(
               this.twentyConfigService.get(
-                'BILLING_FREE_WORKFLOW_CREDITS_FOR_TRIAL_PERIOD_WITH_CREDIT_CARD',
+                'ONBOARDING_INSTALL_APPS_CREDITS_REWARD',
               ),
             ),
-            installAppsCreditsRewardPerApp: toDisplayCredits(
+            createProfileCreditsReward: toDisplayCredits(
               this.twentyConfigService.get(
-                'ONBOARDING_INSTALL_APPS_CREDITS_REWARD_PER_APP',
+                'BILLING_FREE_WORKFLOW_CREDITS_FOR_TRIAL_PERIOD_WITHOUT_CREDIT_CARD',
               ),
+            ),
+            upgradeCreditsReward: toDisplayCredits(
+              Math.max(
+                0,
+                this.twentyConfigService.get(
+                  'BILLING_FREE_WORKFLOW_CREDITS_FOR_TRIAL_PERIOD_WITH_CREDIT_CARD',
+                ) -
+                  this.twentyConfigService.get(
+                    'BILLING_FREE_WORKFLOW_CREDITS_FOR_TRIAL_PERIOD_WITHOUT_CREDIT_CARD',
+                  ),
+              ),
+            ),
+            inviteTeamMaxInvites: this.twentyConfigService.get(
+              'ONBOARDING_INVITE_TEAM_MAX_INVITES',
             ),
           }
         : null,

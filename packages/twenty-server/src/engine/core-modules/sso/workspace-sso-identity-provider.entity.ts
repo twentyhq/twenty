@@ -10,7 +10,7 @@ import {
 } from 'typeorm';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/workspace-related-entity';
+import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/workspace-related-entity.type';
 
 export enum IdentityProviderType {
   OIDC = 'OIDC',
@@ -42,7 +42,6 @@ registerEnumType(SsoIdentityProviderStatus, {
 @Entity({ name: 'workspaceSSOIdentityProvider', schema: 'core' })
 @ObjectType('WorkspaceSSOIdentityProvider')
 export class WorkspaceSsoIdentityProviderEntity extends WorkspaceRelatedEntity {
-  // COMMON
   @Field(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -73,14 +72,12 @@ export class WorkspaceSsoIdentityProviderEntity extends WorkspaceRelatedEntity {
   @Column()
   issuer: string;
 
-  // OIDC
   @Column({ nullable: true })
   clientID?: string;
 
   @Column({ nullable: true })
   clientSecret?: string;
 
-  // SAML
   @Column({ nullable: true })
   ssoURL?: string;
 

@@ -19,7 +19,7 @@ import { useParams } from 'react-router-dom';
 import { type Manifest } from 'twenty-shared/application';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { InlineBanner } from 'twenty-ui/primitives/feedback';
+import { InlineBanner } from 'twenty-ui/components';
 import {
   IconBox,
   IconEyeOff,
@@ -226,6 +226,7 @@ export const SettingsAvailableApplicationDetails = () => {
         }
         secondaryBar={
           <SettingsTabBar
+            aria-label={t`Available application details`}
             tabs={tabs}
             componentInstanceId={AVAILABLE_APPLICATION_DETAIL_ID}
           />
@@ -246,6 +247,7 @@ export const SettingsAvailableApplicationDetails = () => {
         appDisplayName={displayName}
         appLogoUrl={detail?.logoUrl ?? undefined}
         defaultRole={defaultRole}
+        requestedCapabilities={detail?.requestedCapabilities}
         onAuthorize={install}
         isInstalling={isInstalling}
       />

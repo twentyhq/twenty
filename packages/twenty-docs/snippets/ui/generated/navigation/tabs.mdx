@@ -113,6 +113,14 @@
   To work around it, ensure that `defaultValue` or `value` on `<Tabs.Root>` is set to an enabled Tab's value.
 </ParamField>
 
+<ParamField body="Tab.endIcon" type="ReactNode">
+  Decorative content after the label and before the badge.
+</ParamField>
+
+<ParamField body="Tab.highlighted" type="boolean" default="false">
+  Emphasizes the tab content without changing selection.
+</ParamField>
+
 <ParamField body="Tab.nativeButton" type="boolean" default="true">
   Whether the component renders a native `<button>` element when replacing it
   via the `render` prop.
@@ -126,7 +134,7 @@
   Accepts a `ReactElement` or a function that returns the element to render.
 </ParamField>
 
-<ParamField body="Tab.size" type="&quot;sm&quot; | &quot;md&quot;" default="sm">
+<ParamField body="Tab.size" type="&quot;md&quot; | &quot;sm&quot;" default="sm">
   Visual size of the tab.
 </ParamField>
 

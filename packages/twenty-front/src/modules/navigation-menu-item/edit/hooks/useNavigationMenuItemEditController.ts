@@ -13,7 +13,7 @@ import { buildCreateNavigationMenuItemInput } from '@/navigation-menu-item/commo
 import { computeInsertIndexAndPosition } from '@/navigation-menu-item/common/utils/computeInsertIndexAndPosition';
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { useToast } from 'twenty-ui/primitives/feedback';
+import { useToast } from 'twenty-ui/components';
 
 export type NewNavigationMenuItemInput = {
   type: NavigationMenuItemType;

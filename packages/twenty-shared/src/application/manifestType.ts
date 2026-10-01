@@ -1,3 +1,4 @@
+import { type WorkflowManifest } from './workflowManifestType';
 import { type AppLocale } from '@/translations';
 
 import { type AgentManifest } from './agentManifestType';
@@ -20,6 +21,7 @@ import {
 } from './pageLayoutManifestType';
 import { type PermissionFlagManifest } from './permissionFlagManifestType';
 import { type RoleManifest } from './roleManifestType';
+import { type SettingsMenuItemManifest } from './settingsMenuItemManifestType';
 import { type SkillManifest } from './skillManifestType';
 import { type TimelineActivityTypeManifest } from './timelineActivityTypeManifestType';
 import {
@@ -32,6 +34,7 @@ export type TranslationsManifest = Partial<
 >;
 
 export type Manifest = {
+  workflows?: WorkflowManifest[];
   application: ApplicationManifest;
   objects: ObjectManifest[];
   fields: FieldManifest[];
@@ -52,5 +55,6 @@ export type Manifest = {
   pageLayoutWidgets: StandalonePageLayoutWidgetManifest[];
   commandMenuItems: CommandMenuItemManifest[];
   timelineActivityTypes: TimelineActivityTypeManifest[];
+  settingsMenuItems: SettingsMenuItemManifest[];
   translations?: TranslationsManifest;
 };

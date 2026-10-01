@@ -393,13 +393,9 @@ export class RowLevelPermissionPredicateService {
       }
     }
 
-    const groupsToDelete = existingGroups
-      .filter((group) => !inputGroupIds.has(group.id))
-      .map((group) => ({
-        ...group,
-        deletedAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      }));
+    const groupsToDelete = existingGroups.filter(
+      (group) => !inputGroupIds.has(group.id),
+    );
 
     return {
       groupsToCreate,
@@ -493,13 +489,9 @@ export class RowLevelPermissionPredicateService {
       }
     }
 
-    const predicatesToDelete = existingPredicates
-      .filter((predicate) => !inputPredicateIds.has(predicate.id))
-      .map((predicate) => ({
-        ...predicate,
-        deletedAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      }));
+    const predicatesToDelete = existingPredicates.filter(
+      (predicate) => !inputPredicateIds.has(predicate.id),
+    );
 
     return {
       predicatesToCreate,
@@ -536,16 +528,13 @@ export class RowLevelPermissionPredicateService {
           allFlatEntityOperationByMetadataName: {
             rowLevelPermissionPredicateGroup: {
               flatEntityToCreate: groupsToCreate,
-              flatEntityToUpdate: [...groupsToUpdate, ...groupsToDelete],
-              flatEntityToDelete: [],
+              flatEntityToUpdate: groupsToUpdate,
+              flatEntityToDelete: groupsToDelete,
             },
             rowLevelPermissionPredicate: {
               flatEntityToCreate: predicatesToCreate,
-              flatEntityToUpdate: [
-                ...predicatesToUpdate,
-                ...predicatesToDelete,
-              ],
-              flatEntityToDelete: [],
+              flatEntityToUpdate: predicatesToUpdate,
+              flatEntityToDelete: predicatesToDelete,
             },
           },
           workspaceId,

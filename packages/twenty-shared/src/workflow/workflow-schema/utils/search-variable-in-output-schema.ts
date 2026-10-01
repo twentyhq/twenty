@@ -4,7 +4,7 @@ import { isObject } from 'class-validator';
 
 import { CAPTURE_ALL_VARIABLE_TAG_INNER_REGEX } from '../../constants/CaptureAllVariableTagInnerRegex';
 import { parseVariablePath } from '../../utils/variable-path.util';
-import { type BaseOutputSchemaV2 } from '../types/base-output-schema.type';
+import { type BaseOutputSchemaV2 } from '../types/BaseOutputSchema';
 import {
   type FieldOutputSchemaV2,
   type FindRecordsOutputSchema,
@@ -15,7 +15,7 @@ import {
   type RecordFieldNodeValue,
   type RecordOutputSchemaV2,
   type VariableSearchResult,
-} from '../types/output-schema.type';
+} from '../types/OutputSchema';
 import { isFlattenedArrayOutputSchema } from './flattened-array-output-schema';
 
 const EMPTY_RESULT: VariableSearchResult = {

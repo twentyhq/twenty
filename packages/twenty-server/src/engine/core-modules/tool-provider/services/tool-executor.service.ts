@@ -64,10 +64,12 @@ export class ToolExecutorService {
     context: ToolProviderContext,
   ): Promise<ToolOutput> {
     const safeArgs = args ?? {};
+    const executionContext = await (context.resolveExecutionContext?.() ??
+      context);
 
     return withResolvedToolAuthContext(
       {
-        context,
+        context: executionContext,
         userRepository: this.userRepository,
         userWorkspaceRepository: this.userWorkspaceRepository,
         workspaceCacheService: this.workspaceCacheService,
@@ -317,9 +319,7 @@ export class ToolExecutorService {
       );
     }
 
-    // Defense-in-depth: catalog and by-name lookups already filter by
-    // `isAvailable`, but re-verify at dispatch so the gate is enforced in
-    // one place regardless of how the descriptor reached us.
+    // Defense-in-depth: re-verify at dispatch whatever path the descriptor came from.
     if (!(await provider.isAvailable(context))) {
       return {
         success: false,

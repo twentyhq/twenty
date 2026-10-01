@@ -1,17 +1,19 @@
 /* @license Enterprise */
 
-import { styled } from '@linaria/react';
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
+
 import { t } from '@lingui/core/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
+import { Dropdown } from 'twenty-ui/components';
+import { IconUserCircle, useIcons } from 'twenty-ui/icon';
+import { Field } from 'twenty-ui/primitives/input';
 import {
-  compositeTypeDefinitions,
-  FieldMetadataType,
   CoreObjectNameSingular,
+  FieldMetadataType,
+  compositeTypeDefinitions,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
-import { IconUserCircle, IconX, useIcons } from 'twenty-ui/icon';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
@@ -20,48 +22,18 @@ import { getCompositeSubFieldType } from '@/object-record/object-filter-dropdown
 import { getFieldMetadataTypeLabel } from '@/object-record/object-filter-dropdown/utils/getFieldMetadataTypeLabel';
 import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
+import { type RLSDynamicValue } from '@/object-record/record-filter/types/RecordFilter';
 import { SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS } from '@/settings/data-model/constants/SettingsCompositeFieldTypeConfigs';
 import { type CompositeFieldSubFieldName } from '@/settings/data-model/types/CompositeFieldSubFieldName';
 import { type CompositeFieldType } from '@/settings/data-model/types/CompositeFieldType';
 import { RECORD_LEVEL_PERMISSION_PREDICATE_FIELD_TYPES } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/constants/RecordLevelPermissionPredicateFieldTypes';
 import { getComparableWorkspaceMemberRelationFields } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/utils/getComparableWorkspaceMemberRelationFields';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
-import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
-const StyledSearchInput = styled.input`
-  background: transparent;
-  border: none;
-  border-bottom: 1px solid ${themeCssVariables.border.color.light};
-  border-radius: 0;
-  color: ${themeCssVariables.font.color.primary};
-  font-family: inherit;
-  font-size: ${themeCssVariables.font.size.sm};
-  font-weight: inherit;
-  margin: 0;
-  max-width: 100%;
-  min-height: 19px;
-  outline: none;
-  overflow: hidden;
-  padding: ${themeCssVariables.spacing[2]};
-  text-decoration: none;
-
-  &::placeholder {
-    color: ${themeCssVariables.font.color.light};
-  }
-`;
-
 type SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelectProps =
   {
-    onSelect: (
-      workspaceMemberFieldMetadataId: string,
-      workspaceMemberSubFieldName?: string | null,
-    ) => void;
+    onSelect: (selection: RLSDynamicValue) => void;
     recordFilterId: string;
   };
 
@@ -71,7 +43,6 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelec
     recordFilterId,
   }: SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelectProps) => {
     const { getIcon } = useIcons();
-    const { closeDropdown } = useCloseDropdown();
     const [searchInput, setSearchInput] = useState('');
 
     const { objectMetadataItem: workspaceMemberMetadataItem } =
@@ -171,14 +142,6 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelec
 
     const compatibleWorkspaceMemberFields =
       getCompatibleWorkspaceMemberFields();
-
-    const handleSelectField = (
-      fieldMetadataId: string,
-      subFieldName?: string | null,
-    ) => {
-      onSelect(fieldMetadataId, subFieldName);
-      closeDropdown();
-    };
 
     const menuItems: Array<{
       id: string;
@@ -282,44 +245,46 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelec
       : t`Search 1 field`;
 
     return (
-      <DropdownContent widthInPixels={GenericDropdownContentWidth.Medium}>
-        <DropdownMenuHeader
-          StartComponent={
-            <DropdownMenuHeaderLeftComponent
-              onClick={() => closeDropdown()}
-              Icon={IconX}
-            />
-          }
-        >
-          {headerText}
-        </DropdownMenuHeader>
-        <StyledSearchInput
-          value={searchInput}
-          autoFocus
-          placeholder={placeholderText}
-          onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-            setSearchInput(event.target.value)
-          }
-        />
-        <DropdownMenuItemsContainer>
+      <>
+        <Dropdown.Header>
+          <Dropdown.Title>{headerText}</Dropdown.Title>
+          <Dropdown.Close aria-label={t`Close`} />
+        </Dropdown.Header>
+        <Field.Root>
+          <Dropdown.Search
+            value={searchInput}
+            placeholder={placeholderText}
+            aria-label={placeholderText}
+            onValueChange={setSearchInput}
+          />
+        </Field.Root>
+        <Dropdown.Section>
           {filteredMenuItems.map((item) => (
-            <MenuItem
+            <Dropdown.OptionItem
               key={item.id}
-              LeftIcon={item.icon ? getIcon(item.icon) : IconUserCircle}
-              text={item.label}
-              onClick={() =>
-                handleSelectField(item.fieldMetadataId, item.subFieldName)
+              startIcon={
+                <SelectOptionIcon
+                  Icon={
+                    isNonEmptyString(item.icon)
+                      ? getIcon(item.icon)
+                      : IconUserCircle
+                  }
+                />
               }
-            />
+              onSelect={() =>
+                onSelect({
+                  workspaceMemberFieldMetadataId: item.fieldMetadataId,
+                  workspaceMemberSubFieldName: item.subFieldName,
+                })
+              }
+            >
+              {item.label}
+            </Dropdown.OptionItem>
           ))}
-          {filteredMenuItems.length === 0 && (
-            <MenuItem
-              text={t`No compatible fields`}
-              onClick={() => {}}
-              disabled
-            />
+          {!isNonEmptyArray(filteredMenuItems) && (
+            <Dropdown.Empty>{t`No compatible fields`}</Dropdown.Empty>
           )}
-        </DropdownMenuItemsContainer>
-      </DropdownContent>
+        </Dropdown.Section>
+      </>
     );
   };

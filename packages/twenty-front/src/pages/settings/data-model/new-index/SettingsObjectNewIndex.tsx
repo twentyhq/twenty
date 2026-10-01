@@ -19,9 +19,8 @@ import { useParams } from 'react-router-dom';
 import { MAX_CUSTOM_INDEXES_PER_OBJECT } from 'twenty-shared/constants';
 import { AppPath, RelationType, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { Section } from 'twenty-ui/components';
+import { Callout, Section, useToast } from 'twenty-ui/components';
 import { IconAlertTriangle } from 'twenty-ui/icon';
-import { Callout, useToast } from 'twenty-ui/primitives/feedback';
 import { IndexType } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
@@ -35,8 +34,7 @@ const isFieldIndexable = (field: FieldMetadataItem): boolean => {
   if (field.isSystem === true) return false;
   if (field.isActive !== true) return false;
 
-  // Only MANY_TO_ONE relations have a join column on this side; ONE_TO_MANY
-  // and MANY_TO_MANY have nothing concrete to index.
+  // Only MANY_TO_ONE relations have a join column on this side to index
   const relationType =
     field.relation?.type ?? field.morphRelations?.[0]?.type ?? null;
 

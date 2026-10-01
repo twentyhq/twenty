@@ -1,0 +1,1 @@
+export const RECALL_API_NOT_FOUND_STATUS = 404;

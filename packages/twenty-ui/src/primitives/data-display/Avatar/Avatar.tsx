@@ -2,7 +2,7 @@ import { Avatar as AvatarPrimitive } from '@base-ui/react/avatar';
 import { Button as ButtonPrimitive } from '@base-ui/react/button';
 import { type CSSProperties } from 'react';
 
-import { useTheme } from '@ui/theme-constants';
+import { useTheme } from '@ui/theme';
 import { stringToThemeColorP3String } from '@ui/utilities';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 import { mergeClassNames } from '@ui/utilities/internal/mergeClassNames';
@@ -22,6 +22,7 @@ export const Avatar = ({
   backgroundColor,
   borderColor,
   pulsing = false,
+  ring = false,
   disabled = false,
   nativeButton = true,
   onClick,
@@ -71,6 +72,7 @@ export const Avatar = ({
       data-size={size}
       data-shape={shape}
       data-pulsing={pulsing || undefined}
+      data-ring={ring || undefined}
       data-disabled={disabled || undefined}
       data-clickable={isInteractive || undefined}
       className={mergeClassNames(styles.root, className)}

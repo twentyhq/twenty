@@ -22,18 +22,16 @@ import { applySimpleQuotesToString } from '~/utils/string/applySimpleQuotesToStr
 import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
 import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsWrapper';
 import { TextArea } from '@/ui/input/components/TextArea';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { t } from '@lingui/core/macro';
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
-import { LightButton } from 'twenty-ui/components';
+import { Dropdown, LightButton, LightIconButton } from 'twenty-ui/components';
 import {
   IconDotsVertical,
   IconPencil,
@@ -41,10 +39,9 @@ import {
   IconPoint,
   IconTrash,
 } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/primitives/input';
-import { CardContent, CardFooter } from 'twenty-ui/primitives/surfaces';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+
+import { Card } from 'twenty-ui/primitives/surfaces';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { SettingsDataModelFieldSelectFormOptionRow } from './SettingsDataModelFieldSelectFormOptionRow';
 
 export const settingsDataModelFieldSelectFormSchema = z.object({
@@ -167,7 +164,7 @@ export const SettingsDataModelFieldSelectForm = ({
   fieldType,
   disabled = false,
 }: SettingsDataModelFieldSelectFormProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const { initialDefaultValue, initialOptions } =
     useSelectSettingsFormInitialValues({
       fieldMetadataId: existingFieldMetadataId,
@@ -194,7 +191,6 @@ export const SettingsDataModelFieldSelectForm = ({
 
   const OPTIONS_DROPDOWN_ID =
     'settings-data-model-field-select-options-dropdown';
-  const { closeDropdown: closeOptionsDropdown } = useCloseDropdown();
 
   useEffect(() => {
     const newOptionValue = searchParams.get('newOption');
@@ -335,7 +331,7 @@ export const SettingsDataModelFieldSelectForm = ({
         render={({ field: { onChange, value: options } }) => (
           <>
             <StyledContainerWrapper>
-              <CardContent>
+              <Card.Content>
                 <StyledOptionsHeaderContainer>
                   <StyledLabelContainer>
                     {!isBulkInputMode && (
@@ -365,49 +361,45 @@ export const SettingsDataModelFieldSelectForm = ({
                     </StyledOptionsLabel>
                   </StyledLabelContainer>
                   {!disabled && (
-                    <Dropdown
-                      dropdownId={OPTIONS_DROPDOWN_ID}
-                      clickableComponent={
-                        <LightIconButton
-                          Icon={IconDotsVertical}
-                          accent="tertiary"
-                        />
-                      }
-                      dropdownComponents={
-                        <DropdownContent
-                          widthInPixels={GenericDropdownContentWidth.Narrow}
-                        >
-                          <DropdownMenuItemsContainer>
-                            <MenuItem
-                              text={
-                                isBulkInputMode ? t`Single edit` : t`Bulk edit`
-                              }
-                              LeftIcon={IconPencil}
-                              onClick={() => {
-                                if (!isBulkInputMode) {
-                                  setBulkInputText(
-                                    convertOptionsToBulkText(options),
-                                  );
-                                }
-                                setIsBulkInputMode(
-                                  (currentInputMode) => !currentInputMode,
+                    <DropdownRoot dropdownId={OPTIONS_DROPDOWN_ID} type="menu">
+                      <Dropdown.Trigger
+                        render={
+                          <LightIconButton
+                            emphasis="subtle"
+                            aria-label={t`More options`}
+                          >
+                            <IconDotsVertical />
+                          </LightIconButton>
+                        }
+                      />
+                      <DropdownContent
+                        width={GenericDropdownContentWidth.Narrow}
+                        align="end"
+                      >
+                        <Dropdown.Section>
+                          <Dropdown.ActionItem
+                            startIcon={<IconPencil />}
+                            onClick={() => {
+                              if (!isBulkInputMode) {
+                                setBulkInputText(
+                                  convertOptionsToBulkText(options),
                                 );
-                                closeOptionsDropdown(OPTIONS_DROPDOWN_ID);
-                              }}
-                            />
-                            <MenuItem
-                              text={t`Remove all`}
-                              accent="danger"
-                              LeftIcon={IconTrash}
-                              onClick={() => {
-                                onChange([]);
-                                closeOptionsDropdown(OPTIONS_DROPDOWN_ID);
-                              }}
-                            />
-                          </DropdownMenuItemsContainer>
-                        </DropdownContent>
-                      }
-                    />
+                              }
+                              setIsBulkInputMode(
+                                (currentInputMode) => !currentInputMode,
+                              );
+                            }}
+                          >
+                            {isBulkInputMode ? t`Single edit` : t`Bulk edit`}
+                          </Dropdown.ActionItem>
+                          <Dropdown.ActionItem
+                            color="danger"
+                            startIcon={<IconTrash />}
+                            onClick={() => onChange([])}
+                          >{t`Remove all`}</Dropdown.ActionItem>
+                        </Dropdown.Section>
+                      </DropdownContent>
+                    </DropdownRoot>
                   )}
                 </StyledOptionsHeaderContainer>
 
@@ -523,18 +515,18 @@ export const SettingsDataModelFieldSelectForm = ({
                     />
                   </>
                 )}
-              </CardContent>
+              </Card.Content>
             </StyledContainerWrapper>
             {!disabled && !isBulkInputMode && (
               <StyledFooterContainer>
-                <CardFooter>
+                <Card.Footer>
                   <StyledButtonContainer>
                     <LightButton
                       startIcon={<IconPlus />}
                       onClick={handleAddOption}
                     >{t`Add option`}</LightButton>
                   </StyledButtonContainer>
-                </CardFooter>
+                </Card.Footer>
               </StyledFooterContainer>
             )}
           </>

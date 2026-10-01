@@ -6,13 +6,12 @@ import { type ObjectRecordEvent } from 'twenty-shared/database-events';
 import { type ObjectRecord } from 'twenty-shared/types';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import { isNonEmptyString } from '@sniptt/guards';
-import { In } from 'typeorm';
+import { In, MoreThanOrEqual } from 'typeorm';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { RecordShareService } from 'src/engine/core-modules/record-share/services/record-share.service';
-import { RecordSharingFeatureService } from 'src/engine/core-modules/record-share/services/record-sharing-feature.service';
+import { RecordShareStorageService } from 'src/engine/core-modules/record-share/services/record-share-storage.service';
 import { type EventRecordAccessGate } from 'src/engine/core-modules/record-share/types/event-record-access-gate.type';
 import { type RecordShare } from 'src/engine/core-modules/record-share/types/record-share.type';
 import {
@@ -28,8 +27,10 @@ import { type InheritedReadabilityColumnParent } from 'src/engine/core-modules/r
 import { type RowAccessPolicySubject } from 'src/engine/twenty-orm/types/row-access-policy.type';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { isObjectOperationPermitted } from 'src/engine/twenty-orm/utils/is-object-operation-permitted.util';
+import { isChildRecordBoundAtDeletion } from 'src/engine/twenty-orm/utils/is-child-record-bound-at-deletion.util';
 import { isRecordMatchingRLSRowLevelPermissionPredicate } from 'src/engine/twenty-orm/utils/is-record-matching-rls-row-level-permission-predicate.util';
 import { resolveInheritedReadabilityParents } from 'src/engine/core-modules/record-share/utils/resolve-inherited-readability-parents.util';
+import { isOpenWhenDetachedObject } from 'src/engine/core-modules/record-share/utils/is-open-when-detached-object.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
@@ -54,18 +55,20 @@ type SnapshotEvaluationInContext = SnapshotEvaluation & {
 
 type FetchRecordShares = () => Promise<RecordShare[]>;
 
+type SnapshotIdsThroughParent = {
+  readableSnapshotIds: Set<string>;
+  attachedSnapshotIds: Set<string>;
+};
+
 @Injectable()
 export class RecordAccessPolicyService {
   constructor(
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly workspaceCacheService: WorkspaceCacheService,
-    private readonly recordShareService: RecordShareService,
-    private readonly recordSharingFeatureService: RecordSharingFeatureService,
+    private readonly recordShareStorageService: RecordShareStorageService,
   ) {}
 
-  // A subject receives the records a query would return it: its role must read
-  // the object and the row-level filter must hold on the event snapshot before
-  // the share gate of the object is consulted.
+  // Mirrors the query gate: role read, then the row-level filter on the event snapshot, then the share gate.
   buildEventRecordAccessGate({
     workspaceId,
     objectMetadata,
@@ -73,16 +76,11 @@ export class RecordAccessPolicyService {
   }: WorkspaceEventBatch<ObjectRecordEvent>): EventRecordAccessGate {
     let recordSharesPromise: Promise<RecordShare[]> | undefined;
     const fetchRecordShares: FetchRecordShares = () =>
-      (recordSharesPromise ??= this.recordShareService.findByRecordIds({
+      (recordSharesPromise ??= this.recordShareStorageService.findByRecordIds({
         workspaceId,
         objectMetadataId: objectMetadata.id,
         recordIds: events.map((event) => event.recordId),
       }));
-
-    let isRecordSharingEnabledPromise: Promise<boolean> | undefined;
-    const fetchIsRecordSharingEnabled = () =>
-      (isRecordSharingEnabledPromise ??=
-        this.recordSharingFeatureService.isRecordSharingEnabled(workspaceId));
 
     return {
       resolveAdmittedRecordIds: async (subject) => {
@@ -98,12 +96,14 @@ export class RecordAccessPolicyService {
           return new Set();
         }
 
-        if (!(await fetchIsRecordSharingEnabled())) {
-          return new Set(snapshots.map((snapshot) => snapshot.id));
-        }
-
         return this.resolveSnapshotIdsAdmittedByRecordShareGate(
-          { workspaceId, objectMetadata, snapshots, subject, depth: 0 },
+          {
+            workspaceId,
+            objectMetadata,
+            snapshots,
+            subject,
+            depth: 0,
+          },
           fetchRecordShares,
         );
       },
@@ -187,7 +187,9 @@ export class RecordAccessPolicyService {
             evaluation,
             fetchRecordShares,
           )),
-          ...(await this.resolveSnapshotIdsReadableThroughParents(evaluation)),
+          ...(await this.resolveSnapshotIdsReadableThroughParents({
+            ...evaluation,
+          })),
         ]);
       default:
         return assertUnreachable(gateKind);
@@ -242,9 +244,10 @@ export class RecordAccessPolicyService {
       flatObjectMetadataMaps: maps.flatObjectMetadataMaps,
     });
     const readableSnapshotIds = new Set<string>();
+    const attachedSnapshotIds = new Set<string>();
 
     for (const parent of parents) {
-      const readableIds =
+      const snapshotIdsThroughParent =
         parent.kind === 'column'
           ? await this.resolveSnapshotIdsReadableThroughColumnParent({
               ...evaluation,
@@ -257,8 +260,20 @@ export class RecordAccessPolicyService {
               parent,
             });
 
-      for (const readableId of readableIds) {
+      for (const readableId of snapshotIdsThroughParent.readableSnapshotIds) {
         readableSnapshotIds.add(readableId);
+      }
+
+      for (const attachedId of snapshotIdsThroughParent.attachedSnapshotIds) {
+        attachedSnapshotIds.add(attachedId);
+      }
+    }
+
+    if (isOpenWhenDetachedObject(objectMetadata)) {
+      for (const snapshot of evaluation.snapshots) {
+        if (!attachedSnapshotIds.has(snapshot.id)) {
+          readableSnapshotIds.add(snapshot.id);
+        }
       }
     }
 
@@ -272,7 +287,7 @@ export class RecordAccessPolicyService {
     parent,
   }: SnapshotEvaluationInContext & {
     parent: InheritedReadabilityColumnParent;
-  }): Promise<Set<string>> {
+  }): Promise<SnapshotIdsThroughParent> {
     const parentIdBySnapshotId = new Map(
       snapshots.flatMap((snapshot) => {
         const parentId = snapshot[parent.joinColumnName];
@@ -287,15 +302,19 @@ export class RecordAccessPolicyService {
       depth: depth + 1,
     });
 
-    return new Set(
-      [...parentIdBySnapshotId]
-        .filter(([, parentId]) => readableParentIds.has(parentId))
-        .map(([snapshotId]) => snapshotId),
-    );
+    return {
+      readableSnapshotIds: new Set(
+        [...parentIdBySnapshotId]
+          .filter(([, parentId]) => readableParentIds.has(parentId))
+          .map(([snapshotId]) => snapshotId),
+      ),
+      attachedSnapshotIds: new Set(parentIdBySnapshotId.keys()),
+    };
   }
 
   private async resolveSnapshotIdsReadableThroughChildren({
     workspaceId,
+    objectMetadata,
     snapshots,
     subject,
     depth,
@@ -303,7 +322,7 @@ export class RecordAccessPolicyService {
     parent,
   }: SnapshotEvaluationInContext & {
     parent: InheritedReadabilityChildrenParent;
-  }): Promise<Set<string>> {
+  }): Promise<SnapshotIdsThroughParent> {
     const childNameSingular = parent.childFlatObjectMetadata.nameSingular;
     const capturedChildSnapshotsBySnapshotId = new Map(
       snapshots.flatMap((snapshot) => {
@@ -332,12 +351,20 @@ export class RecordAccessPolicyService {
       .map((snapshot) => snapshot.id);
 
     const readableSnapshotIds = new Set<string>();
+    const attachedSnapshotIds = new Set(
+      [...capturedChildSnapshotsBySnapshotId]
+        .filter(
+          ([, capturedChildSnapshots]) => capturedChildSnapshots.length > 0,
+        )
+        .map(([snapshotId]) => snapshotId),
+    );
 
     if (liveSnapshotIds.length > 0) {
-      const childRows = await this.workspaceOrmManager
-        .getRepository(childNameSingular, {
-          shouldBypassPermissionChecks: true,
-        })
+      const childRepository = this.workspaceOrmManager.getRepository(
+        childNameSingular,
+        { shouldBypassPermissionChecks: true },
+      );
+      const childRows = await childRepository
         .createQueryBuilder()
         .select(['id', parent.childJoinColumnName])
         .where({ [parent.childJoinColumnName]: In(liveSnapshotIds) })
@@ -350,8 +377,59 @@ export class RecordAccessPolicyService {
       });
 
       for (const childRow of childRows) {
+        const snapshotId = String(childRow[parent.childJoinColumnName]);
+
+        attachedSnapshotIds.add(snapshotId);
+
         if (readableChildIds.has(String(childRow.id))) {
-          readableSnapshotIds.add(String(childRow[parent.childJoinColumnName]));
+          readableSnapshotIds.add(snapshotId);
+        }
+      }
+
+      const trashedSnapshots = snapshots.filter(
+        (snapshot) =>
+          !capturedChildSnapshotsBySnapshotId.has(snapshot.id) &&
+          isDefined(snapshot.deletedAt),
+      );
+
+      if (
+        isOpenWhenDetachedObject(objectMetadata) &&
+        trashedSnapshots.length > 0
+      ) {
+        const snapshotById = new Map(
+          trashedSnapshots.map((snapshot) => [snapshot.id, snapshot]),
+        );
+        const earliestDeletedAt = new Date(
+          Math.min(
+            ...trashedSnapshots.map((snapshot) =>
+              new Date(String(snapshot.deletedAt)).getTime(),
+            ),
+          ),
+        );
+        // Rows trashed along with the record still attach it, as in the query gate; rows trashed earlier do not.
+        const trashedChildRows = await childRepository
+          .createQueryBuilder()
+          .select(['id', parent.childJoinColumnName, 'deletedAt'])
+          .where({
+            [parent.childJoinColumnName]: In([...snapshotById.keys()]),
+            deletedAt: MoreThanOrEqual(earliestDeletedAt),
+          })
+          .withDeleted()
+          .getMany<ObjectRecord>({ noFormatting: true });
+
+        for (const childRow of trashedChildRows) {
+          const snapshotId = String(childRow[parent.childJoinColumnName]);
+          const snapshot = snapshotById.get(snapshotId);
+
+          if (
+            isDefined(snapshot) &&
+            isChildRecordBoundAtDeletion({
+              childRecord: childRow,
+              record: snapshot,
+            })
+          ) {
+            attachedSnapshotIds.add(snapshotId);
+          }
         }
       }
     }
@@ -378,7 +456,7 @@ export class RecordAccessPolicyService {
       }
     }
 
-    return readableSnapshotIds;
+    return { readableSnapshotIds, attachedSnapshotIds };
   }
 
   private async resolveReadableSnapshotIds(
@@ -400,7 +478,7 @@ export class RecordAccessPolicyService {
     return this.resolveSnapshotIdsAdmittedByRecordShareGate(
       { ...evaluation, snapshots: candidateSnapshots },
       () =>
-        this.recordShareService.findByRecordIds({
+        this.recordShareStorageService.findByRecordIds({
           workspaceId,
           objectMetadataId: objectMetadata.id,
           recordIds: candidateSnapshots.map((snapshot) => snapshot.id),

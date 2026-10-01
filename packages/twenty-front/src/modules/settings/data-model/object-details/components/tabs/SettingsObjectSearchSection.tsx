@@ -1,18 +1,16 @@
+import { formatShortcut } from 'twenty-ui/primitives/typography';
 import { useUpdateOneFieldMetadataItem } from '@/object-metadata/hooks/useUpdateOneFieldMetadataItem';
 import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { SEARCH_VECTOR_FIELD_NAME } from '@/object-record/constants/SearchVectorFieldName';
 import { SettingsOptionCardContentSwitch } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSwitch';
-
-import { SettingsObjectFieldDataType } from '@/settings/data-model/object-details/components/SettingsObjectFieldDataType';
 import { canBeSearchable } from '@/settings/data-model/fields/forms/utils/canBeSearchable';
-
+import { SettingsObjectFieldDataType } from '@/settings/data-model/object-details/components/SettingsObjectFieldDataType';
 import { type SettingsFieldType } from '@/settings/data-model/types/SettingsFieldType';
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
@@ -20,10 +18,8 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useContext, useMemo, useState } from 'react';
-import { useToast } from 'twenty-ui/primitives/feedback';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
-
+import { useMemo, useState } from 'react';
+import { Dropdown, LightIconButton, useToast } from 'twenty-ui/components';
 import {
   IconEye,
   IconPlus,
@@ -31,10 +27,10 @@ import {
   IconTrash,
   useIcons,
 } from 'twenty-ui/icon';
-import { Button, LightIconButton } from 'twenty-ui/primitives/input';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
+import { Button } from 'twenty-ui/primitives/input';
 import { Card } from 'twenty-ui/primitives/surfaces';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 type SettingsObjectSearchSectionProps = {
   objectMetadataItem: EnrichedObjectMetadataItem;
@@ -109,10 +105,9 @@ export const SettingsObjectSearchSection = ({
 }: SettingsObjectSearchSectionProps) => {
   const { t } = useLingui();
   const { getIcon } = useIcons();
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const { updateOneObjectMetadataItem } = useUpdateOneObjectMetadataItem();
   const { updateOneFieldMetadataItem } = useUpdateOneFieldMetadataItem();
-  const { closeDropdown } = useCloseDropdown();
   const { enqueueToast } = useToast();
 
   const isConfigurableSearchFieldsEnabled = useIsFeatureEnabled(
@@ -187,16 +182,16 @@ export const SettingsObjectSearchSection = ({
   return (
     <StyledSearchSectionContent>
       {!isReadOnly && (
-        <Card rounded>
+        <Card.Root rounded>
           <SettingsOptionCardContentSwitch
             Icon={IconEye}
             title={t`Global search`}
-            description={t`Show this object's records in the command menu (⌘K).`}
+            description={t`Show this object's records in the command menu (${formatShortcut({ shortcut: ['Mod', 'K'] })}).`}
             checked={isSearchable}
             advancedMode
             onChange={handleToggleSearchable}
           />
-        </Card>
+        </Card.Root>
       )}
       {searchFields.length > 0 && (
         <>
@@ -238,12 +233,14 @@ export const SettingsObjectSearchSection = ({
                   <TableCell align="right">
                     {isEditable && !entry.isLabelIdentifier && (
                       <LightIconButton
-                        Icon={IconTrash}
-                        accent="tertiary"
+                        emphasis="subtle"
                         onClick={() =>
                           handleSetFieldSearchable(entry.id, false)
                         }
-                      />
+                        aria-label={t`Remove searchable field`}
+                      >
+                        <IconTrash />
+                      </LightIconButton>
                     )}
                   </TableCell>
                 </TableRow>
@@ -254,40 +251,36 @@ export const SettingsObjectSearchSection = ({
       )}
       {isEditable && (
         <StyledButtonContainer>
-          <Dropdown
-            dropdownId={ADD_SEARCH_FIELD_DROPDOWN_ID}
-            dropdownPlacement="bottom-end"
-            dropdownOffset={{ x: 0, y: 8 }}
-            clickableComponent={
-              <Button
-                startIcon={<IconPlus />}
-                size="sm"
-                disabled={addableFields.length === 0}
-                variant="outline"
-              >{t`Add field`}</Button>
-            }
-            dropdownComponents={
-              <DropdownContent>
-                <DropdownMenuItemsContainer hasMaxHeight>
-                  {addableFields.map((field) => {
-                    const FieldIcon = getIcon(field.icon);
+          <DropdownRoot dropdownId={ADD_SEARCH_FIELD_DROPDOWN_ID} type="menu">
+            <Dropdown.Trigger
+              disabled={addableFields.length === 0}
+              render={
+                <Button
+                  startIcon={<IconPlus />}
+                  size="sm"
+                  disabled={addableFields.length === 0}
+                  variant="outline"
+                >{t`Add field`}</Button>
+              }
+            />
+            <DropdownContent align="end" sideOffset={8}>
+              <Dropdown.Section scrollable>
+                {addableFields.map((field) => {
+                  const FieldIcon = getIcon(field.icon);
 
-                    return (
-                      <MenuItem
-                        key={field.id}
-                        LeftIcon={FieldIcon}
-                        text={field.label}
-                        onClick={() => {
-                          closeDropdown(ADD_SEARCH_FIELD_DROPDOWN_ID);
-                          handleSetFieldSearchable(field.id, true);
-                        }}
-                      />
-                    );
-                  })}
-                </DropdownMenuItemsContainer>
-              </DropdownContent>
-            }
-          />
+                  return (
+                    <Dropdown.ActionItem
+                      key={field.id}
+                      startIcon={<SelectOptionIcon Icon={FieldIcon} />}
+                      onClick={() => handleSetFieldSearchable(field.id, true)}
+                    >
+                      {field.label}
+                    </Dropdown.ActionItem>
+                  );
+                })}
+              </Dropdown.Section>
+            </DropdownContent>
+          </DropdownRoot>
         </StyledButtonContainer>
       )}
     </StyledSearchSectionContent>

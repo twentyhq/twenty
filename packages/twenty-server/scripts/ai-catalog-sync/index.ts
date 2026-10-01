@@ -10,6 +10,7 @@ import { type ModelsDevData } from 'src/engine/metadata-modules/ai/ai-models/typ
 import { assertPayloadIsUsable } from './utils/assert-payload-is-usable.util';
 import { buildCatalog } from './utils/build-catalog.util';
 import { carryOverCommittedFields } from './utils/carry-over-committed-fields.util';
+import { mergeEvaluationModels } from './utils/merge-evaluation-models.util';
 import { enrichCatalog } from './utils/enrich-catalog.util';
 import { fetchArtificialAnalysisBenchmarks } from './utils/fetch-artificial-analysis-benchmarks.util';
 import { projectCatalog } from './utils/project-catalog.util';
@@ -32,6 +33,10 @@ const AI_MODELS_DIR = path.resolve(
 );
 
 const MODELS_PATH = path.join(AI_MODELS_DIR, 'ai-models.json');
+const EVALUATION_MODELS_PATH = path.join(
+  AI_MODELS_DIR,
+  'ai-evaluation-models.json',
+);
 const SELF_HOST_SPEC_PATH = path.join(AI_MODELS_DIR, 'ai-self-host-spec.json');
 const CATALOG_PATH = path.join(AI_MODELS_DIR, 'ai-providers.json');
 const BENCHMARKS_PATH = path.join(AI_MODELS_DIR, 'ai-model-benchmarks.json');
@@ -52,8 +57,7 @@ const readCommittedModels = (filePath: string): GeneratedCatalog =>
     ? (JSON.parse(fs.readFileSync(filePath, 'utf-8')) as GeneratedCatalog)
     : {};
 
-// The vendors the shipped catalog carries are the ones the self-host spec
-// serves; nothing else needs to be fetched, checked or written.
+// The shipped catalog carries exactly the vendors the self-host spec serves
 const readVendors = (spec: CatalogSpec): string[] => {
   const vendors = [
     ...new Set(
@@ -63,8 +67,7 @@ const readVendors = (spec: CatalogSpec): string[] => {
     ),
   ];
 
-  // An empty list would fetch nothing, assert nothing and write an empty
-  // catalog over the real one, and the sync PR automerges.
+  // An empty list would write an empty catalog over the real one, and the sync PR automerges
   if (!isNonEmptyArray(vendors)) {
     throw new Error(
       `${SELF_HOST_SPEC_PATH} names no vendor to carry: every route lists models explicitly`,
@@ -94,8 +97,7 @@ const fetchModelsDev = async ({
   return data;
 };
 
-// A leaderboard outage must never break the model catalog, so a failed fetch
-// degrades to an empty index and the catalog is written without benchmarks.
+// A leaderboard outage must never break the model catalog, so a failed fetch degrades to an empty index
 const fetchBenchmarks = async (): Promise<BenchmarkIndex> => {
   const apiKey = process.env.ARTIFICIAL_ANALYSIS_API_KEY;
 
@@ -150,9 +152,7 @@ const main = async (): Promise<void> => {
 
   const fetched = await fetchBenchmarks();
 
-  // A failed fetch must not delete measurements we already published: the
-  // catalog PR is automerged, so an empty index would silently strip every
-  // benchmark until the next healthy run.
+  // The catalog PR automerges, so a failed fetch must not strip already published benchmarks
   const benchmarkIndex =
     fetched.size > 0 ? fetched : readCommittedBenchmarks(BENCHMARKS_PATH);
 
@@ -167,6 +167,11 @@ const main = async (): Promise<void> => {
   carryOverCommittedFields({
     catalog,
     committedCatalog: readCommittedModels(MODELS_PATH),
+  });
+
+  mergeEvaluationModels({
+    catalog,
+    evaluationModels: readCommittedModels(EVALUATION_MODELS_PATH),
   });
 
   const overlay = enrichCatalog({
@@ -191,8 +196,7 @@ const main = async (): Promise<void> => {
   }
 
   await writeJson(MODELS_PATH, catalog);
-  // Self-host runs the same projection cloud does, from a spec that names the
-  // five direct routes and lets each serve its whole vendor.
+  // The spec names the five direct routes and lets each serve its whole vendor
   await writeJson(
     CATALOG_PATH,
     projectCatalog({ canonicalCatalog: catalog, spec: selfHostSpec }),

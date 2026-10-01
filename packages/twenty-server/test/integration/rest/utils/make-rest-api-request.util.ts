@@ -1,20 +1,20 @@
 import request from 'supertest';
 
-export type RestAPIRequestMethod = 'get' | 'post' | 'put' | 'patch' | 'delete';
+export type RestApiRequestMethod = 'get' | 'post' | 'put' | 'patch' | 'delete';
 
-interface RestAPIRequestParams {
-  method: RestAPIRequestMethod;
+interface RestApiRequestParams {
+  method: RestApiRequestMethod;
   path: string;
   bearer?: string;
   body?: any;
 }
 
-export const makeRestAPIRequest = ({
+export const makeRestApiRequest = ({
   method,
   path,
   bearer = API_KEY_ACCESS_TOKEN,
   body = {},
-}: RestAPIRequestParams) => {
+}: RestApiRequestParams) => {
   const client = request(`http://localhost:${APP_PORT}`);
 
   const req = client[method](`/rest${path}`).set(

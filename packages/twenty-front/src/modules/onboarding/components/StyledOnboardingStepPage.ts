@@ -1,9 +1,8 @@
 import { styled } from '@linaria/react';
-import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
+import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme';
 
 export const StyledOnboardingStepPage = styled.div`
   align-items: center;
-  background-color: ${themeCssVariables.background.secondary};
   box-sizing: border-box;
   display: flex;
   flex: 1 1 0;

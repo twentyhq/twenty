@@ -22,6 +22,8 @@ const INHERITED_STANDARD_OBJECT_PARENT_FIELDS = {
   taskTarget: STANDARD_OBJECT_FIELDS.taskTarget.targetPerson,
   messageThreadTarget: STANDARD_OBJECT_FIELDS.messageThreadTarget.messageThread,
   calendarEventTarget: STANDARD_OBJECT_FIELDS.calendarEventTarget.calendarEvent,
+  agentChatThreadTarget: STANDARD_OBJECT_FIELDS.agentChatThreadTarget.thread,
+  agentChatThread: STANDARD_OBJECT_FIELDS.agentChatThread.workflowRun,
 } as const;
 
 describe('Standard object readability', () => {
@@ -62,7 +64,17 @@ describe('Standard object readability', () => {
   ) as (keyof typeof INHERITED_STANDARD_OBJECT_PARENT_FIELDS)[];
 
   const nonOpenObjectUniversalIdentifiers: string[] = [
+    STANDARD_OBJECTS.agentMessage.universalIdentifier,
+    STANDARD_OBJECTS.agentMessagePart.universalIdentifier,
+    STANDARD_OBJECTS.agentTurn.universalIdentifier,
+    STANDARD_OBJECTS.agentTurnEvaluation.universalIdentifier,
+
+    STANDARD_OBJECTS.campaignDelivery.universalIdentifier,
+    STANDARD_OBJECTS.messageSuppression.universalIdentifier,
+
     STANDARD_OBJECTS.recordShare.universalIdentifier,
+    STANDARD_OBJECTS.workflowRun.universalIdentifier,
+    STANDARD_OBJECTS.shortLink.universalIdentifier,
     ...inheritedObjectNames.map(
       (objectName) => STANDARD_OBJECTS[objectName].universalIdentifier,
     ),
@@ -75,11 +87,43 @@ describe('Standard object readability', () => {
       ),
   );
 
-  it('declares recordShare SYSTEM for readability and writability', () => {
-    expect(findStandardFlatObjectMetadata('recordShare')).toMatchObject({
-      readability: MetadataReadability.SYSTEM,
-      writability: MetadataWritability.SYSTEM,
+  // workflowRun grants follow the core workflow's visibility, which does not live on the workspace workflow record
+  it('declares workflowRun PRIVATE and leaves workflow and workflowVersion OPEN', () => {
+    expect(findStandardFlatObjectMetadata('workflowRun')).toMatchObject({
+      readability: MetadataReadability.PRIVATE,
     });
+    expect(findStandardFlatObjectMetadata('workflow')).toMatchObject({
+      readability: MetadataReadability.OPEN,
+    });
+    expect(findStandardFlatObjectMetadata('workflowVersion')).toMatchObject({
+      readability: MetadataReadability.OPEN,
+    });
+  });
+
+  it.each(['recordShare', 'shortLink'] as const)(
+    'declares %s SYSTEM for readability and writability',
+    (objectName) => {
+      expect(findStandardFlatObjectMetadata(objectName)).toMatchObject({
+        readability: MetadataReadability.SYSTEM,
+        writability: MetadataWritability.SYSTEM,
+      });
+    },
+  );
+
+  // Inheriting from the record would reveal which private conversations are filed under it
+  it('resolves its thread as the only parent of an agentChatThreadTarget', () => {
+    expect(
+      resolveParents('agentChatThreadTarget').map((parent) =>
+        parent.kind === 'column'
+          ? {
+              joinColumnName: parent.joinColumnName,
+              parentNameSingular: parent.parentFlatObjectMetadata.nameSingular,
+            }
+          : parent.kind,
+      ),
+    ).toEqual([
+      { joinColumnName: 'threadId', parentNameSingular: 'agentChatThread' },
+    ]);
   });
 
   it.each(inheritedObjectNames)(
@@ -102,6 +146,7 @@ describe('Standard object readability', () => {
 
     expect(parentJoinColumnNames).toEqual(
       [
+        'targetAgentChatThreadId',
         'targetCompanyId',
         'targetDashboardId',
         'targetNoteId',
@@ -111,6 +156,39 @@ describe('Standard object readability', () => {
         'targetWorkflowId',
       ].sort(),
     );
+  });
+
+  it('resolves the agent chat thread as the parent of a chat attachment', () => {
+    expect(
+      resolveParents('attachment').map((parent) =>
+        parent.kind === 'column'
+          ? {
+              joinColumnName: parent.joinColumnName,
+              parentNameSingular: parent.parentFlatObjectMetadata.nameSingular,
+              parentReadability: parent.parentFlatObjectMetadata.readability,
+            }
+          : parent.kind,
+      ),
+    ).toContainEqual({
+      joinColumnName: 'targetAgentChatThreadId',
+      parentNameSingular: 'agentChatThread',
+      parentReadability: MetadataReadability.INHERITED,
+    });
+  });
+
+  it('resolves its workflow run as the only parent of an agentChatThread', () => {
+    expect(
+      resolveParents('agentChatThread').map((parent) =>
+        parent.kind === 'column'
+          ? {
+              joinColumnName: parent.joinColumnName,
+              parentNameSingular: parent.parentFlatObjectMetadata.nameSingular,
+            }
+          : parent.kind,
+      ),
+    ).toEqual([
+      { joinColumnName: 'workflowRunId', parentNameSingular: 'workflowRun' },
+    ]);
   });
 
   it('resolves every target of a noteTarget as its parent, not the note', () => {

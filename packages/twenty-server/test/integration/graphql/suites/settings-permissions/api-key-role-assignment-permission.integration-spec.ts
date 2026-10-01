@@ -1,7 +1,7 @@
 import gql from 'graphql-tag';
 import request from 'supertest';
 import { deleteOneRoleOperationFactory } from 'test/integration/graphql/utils/delete-one-role-operation-factory.util';
-import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
 import { updateWorkspaceMemberRole } from 'test/integration/metadata/suites/role/utils/update-workspace-member-role.util';
 import { PermissionFlagType } from 'twenty-shared/constants';
@@ -16,9 +16,25 @@ describe('API key role assignment permission', () => {
   let adminRoleId: string;
   let originalMemberRoleId: string;
   let apiKeyId: string;
+  let applicationRegistrationId: string;
+
+  const rotateClientSecretAs = (token?: string) =>
+    makeMetadataApiRequest(
+      {
+        query: gql`
+          mutation RotateSecret($id: String!) {
+            rotateApplicationRegistrationClientSecret(id: $id) {
+              clientSecret
+            }
+          }
+        `,
+        variables: { id: applicationRegistrationId },
+      },
+      token,
+    );
 
   const createApiKeyAsJony = (roleId: string) =>
-    makeMetadataAPIRequest(
+    makeMetadataApiRequest(
       {
         query: gql`
           mutation CreateApiKey($input: CreateApiKeyInput!) {
@@ -42,7 +58,7 @@ describe('API key role assignment permission', () => {
     originalMemberRoleId = (await findOneRoleByLabel({ label: 'Member' })).id;
     adminRoleId = (await findOneRoleByLabel({ label: 'Admin' })).id;
 
-    const createRoleResponse = await makeMetadataAPIRequest({
+    const createRoleResponse = await makeMetadataApiRequest({
       query: gql`
         mutation CreateOneRole {
           createOneRole(
@@ -63,7 +79,7 @@ describe('API key role assignment permission', () => {
 
     customRoleId = createRoleResponse.body.data.createOneRole.id;
 
-    await makeMetadataAPIRequest({
+    await makeMetadataApiRequest({
       query: gql`
         mutation UpsertPermissionFlags {
           upsertPermissionFlags(
@@ -78,7 +94,7 @@ describe('API key role assignment permission', () => {
       `,
     });
 
-    const createApiKeyResponse = await makeMetadataAPIRequest({
+    const createApiKeyResponse = await makeMetadataApiRequest({
       query: gql`
         mutation CreateApiKey($input: CreateApiKeyInput!) {
           createApiKey(input: $input) {
@@ -96,6 +112,25 @@ describe('API key role assignment permission', () => {
     });
 
     apiKeyId = createApiKeyResponse.body.data.createApiKey.id;
+
+    const createRegistrationResponse = await makeMetadataApiRequest({
+      query: gql`
+        mutation CreateApplicationRegistration(
+          $input: CreateApplicationRegistrationInput!
+        ) {
+          createApplicationRegistration(input: $input) {
+            applicationRegistration {
+              id
+            }
+          }
+        }
+      `,
+      variables: { input: { name: 'Rotation escalation target' } },
+    });
+
+    applicationRegistrationId =
+      createRegistrationResponse.body.data.createApplicationRegistration
+        .applicationRegistration.id;
 
     await updateWorkspaceMemberRole({
       input: {
@@ -119,6 +154,12 @@ describe('API key role assignment permission', () => {
       .query('DELETE FROM core."apiKey" WHERE id = $1', [apiKeyId])
       .catch(() => {});
 
+    await testDataSource
+      .query('DELETE FROM core."applicationRegistration" WHERE id = $1', [
+        applicationRegistrationId,
+      ])
+      .catch(() => {});
+
     await client
       .post('/metadata')
       .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
@@ -134,7 +175,7 @@ describe('API key role assignment permission', () => {
   });
 
   it('denies assigning a role to an API key when the caller lacks ROLES permission', async () => {
-    const response = await makeMetadataAPIRequest(
+    const response = await makeMetadataApiRequest(
       {
         query: gql`
           mutation AssignRoleToApiKey($apiKeyId: UUID!, $roleId: UUID!) {
@@ -148,5 +189,27 @@ describe('API key role assignment permission', () => {
 
     expect(response.body.errors).toBeDefined();
     expect(response.body.errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
+  });
+
+  // A rotated secret is redeemable at /oauth/token for the application's own
+  // role, so rotating binds that role to the caller just as creating an API
+  // key does.
+  it('denies rotating an application registration client secret when the caller lacks ROLES permission', async () => {
+    const response = await rotateClientSecretAs(APPLE_JONY_MEMBER_ACCESS_TOKEN);
+
+    expect(
+      response.body.data?.rotateApplicationRegistrationClientSecret ?? null,
+    ).toBeNull();
+    expect(response.body.errors).toBeDefined();
+    expect(response.body.errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
+  });
+
+  it('allows rotating an application registration client secret with ROLES permission', async () => {
+    const response = await rotateClientSecretAs();
+
+    expect(response.body.errors).toBeUndefined();
+    expect(
+      response.body.data.rotateApplicationRegistrationClientSecret.clientSecret,
+    ).toEqual(expect.any(String));
   });
 });

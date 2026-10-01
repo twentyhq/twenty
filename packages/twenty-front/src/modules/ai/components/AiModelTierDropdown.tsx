@@ -2,7 +2,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { AI_MODEL_TIERS, type AiModelTier } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AiModelTierBars } from '@/ai/components/AiModelTierBars';
 import { AiModelTierSlider } from '@/ai/components/AiModelTierSlider';
@@ -10,7 +10,8 @@ import { useAiModelTiers } from '@/ai/hooks/useAiModelTiers';
 import { useIsWorkspaceSetupChat } from '@/ai/hooks/useIsWorkspaceSetupChat';
 import { useWorkspaceAiModelTiers } from '@/ai/hooks/useWorkspaceAiModelTiers';
 import { agentChatUserSelectedModelTierState } from '@/ai/states/agentChatUserSelectedModelTierState';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { Dropdown } from 'twenty-ui/components';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 
@@ -36,8 +37,7 @@ export const AiModelTierDropdown = ({
   const [agentChatUserSelectedModelTier, setAgentChatUserSelectedModelTier] =
     useAtomState(agentChatUserSelectedModelTierState);
 
-  // The setup chat runs on the fast tier server-side whatever the workspace
-  // setting says, so the control shows what will actually answer.
+  // The setup chat always runs on the fast tier server-side.
   const workspaceTier: AiModelTier = isWorkspaceSetupChat ? 'fast' : chatTier;
 
   const selectedTier = agentChatUserSelectedModelTier ?? workspaceTier;
@@ -48,35 +48,36 @@ export const AiModelTierDropdown = ({
   };
 
   return (
-    <Dropdown
-      dropdownId={dropdownId}
-      dropdownPlacement="top-end"
-      dropdownOffset={{ x: 0, y: 8 }}
-      clickableComponent={
-        <AiModelTierBars
-          selectedTier={selectedTier}
-          label={
-            isDefined(selectedResolvedTier.model)
-              ? t`${selectedResolvedTier.label}: ${selectedResolvedTier.model.label}`
-              : selectedResolvedTier.label
-          }
-          disabled={disabled}
-        />
-      }
-      dropdownComponents={
-        <DropdownContent widthInPixels={SLIDER_DROPDOWN_WIDTH_PX}>
-          <StyledSliderContainer
-            role="group"
-            aria-label={t`Choose a model mode`}
-          >
-            <AiModelTierSlider
-              selectedTier={selectedTier}
-              onTierChange={handleTierChange}
-              disabled={disabled}
-            />
-          </StyledSliderContainer>
-        </DropdownContent>
-      }
-    />
+    <DropdownRoot dropdownId={dropdownId} type="panel">
+      <Dropdown.Trigger
+        disabled={disabled}
+        render={
+          <AiModelTierBars
+            selectedTier={selectedTier}
+            label={
+              isDefined(selectedResolvedTier.model)
+                ? t`${selectedResolvedTier.label}: ${selectedResolvedTier.model.label}`
+                : selectedResolvedTier.label
+            }
+            disabled={disabled}
+          />
+        }
+      />
+      <DropdownContent
+        width={SLIDER_DROPDOWN_WIDTH_PX}
+        side="top"
+        align="end"
+        sideOffset={8}
+        aria-label={t`Choose a model mode`}
+      >
+        <StyledSliderContainer role="group" aria-label={t`Choose a model mode`}>
+          <AiModelTierSlider
+            selectedTier={selectedTier}
+            onTierChange={handleTierChange}
+            disabled={disabled}
+          />
+        </StyledSliderContainer>
+      </DropdownContent>
+    </DropdownRoot>
   );
 };

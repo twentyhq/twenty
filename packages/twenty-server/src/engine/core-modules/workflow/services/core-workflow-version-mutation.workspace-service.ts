@@ -16,7 +16,10 @@ import {
 } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
 import { CoreWorkflowIdResolutionService } from 'src/engine/core-modules/workflow/services/core-workflow-id-resolution.service';
 import { CoreWorkflowVersionListService } from 'src/engine/core-modules/workflow/services/core-workflow-version-list.service';
-import { CoreWorkflowVersionWriteService } from 'src/engine/core-modules/workflow/services/core-workflow-version-write.service';
+import {
+  CoreWorkflowVersionPostCommitError,
+  CoreWorkflowVersionWriteService,
+} from 'src/engine/core-modules/workflow/services/core-workflow-version-write.service';
 import { WorkflowCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-core-sync.service';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
@@ -32,6 +35,7 @@ import {
   WorkflowVersionStepException,
   WorkflowVersionStepExceptionCode,
 } from 'src/modules/workflow/common/exceptions/workflow-version-step.exception';
+import { computeWorkflowStepPositions } from 'src/modules/workflow/workflow-builder/utils/compute-workflow-step-positions.util';
 import { computeWorkflowVersionStepChanges } from 'src/modules/workflow/workflow-builder/utils/compute-workflow-version-step-updates.util';
 import { WorkflowSchemaWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-schema/workflow-schema.workspace-service';
 import {
@@ -39,7 +43,7 @@ import {
   buildSourceStepWithAddedEdge,
   buildSourceStepWithRemovedEdge,
 } from 'src/modules/workflow/workflow-builder/workflow-version-edge/utils/build-updated-source-step-for-edge.util';
-import { type WorkflowStepConnectionOptions } from 'src/modules/workflow/workflow-builder/workflow-version-step/types/WorkflowStepConnectionOptions';
+import { type WorkflowStepConnectionOptions } from 'src/modules/workflow/workflow-builder/workflow-version-step/types/workflow-step-connection-options.type';
 import { getNextStepIdsForStepTypeChange } from 'src/modules/workflow/workflow-builder/workflow-version-step/utils/get-next-step-ids-for-step-type-change.util';
 import { insertStep } from 'src/modules/workflow/workflow-builder/workflow-version-step/utils/insert-step';
 import { removeStep } from 'src/modules/workflow/workflow-builder/workflow-version-step/utils/remove-step';
@@ -63,9 +67,11 @@ export class CoreWorkflowVersionMutationWorkspaceService {
 
   async createStep({
     workspaceId,
+    userWorkspaceId,
     input,
   }: {
     workspaceId: string;
+    userWorkspaceId: string | undefined;
     input: CreateCoreWorkflowVersionStepInput;
   }): Promise<WorkflowVersionStepChangesDTO> {
     const {
@@ -79,9 +85,9 @@ export class CoreWorkflowVersionMutationWorkspaceService {
       defaultSettings,
     } = input;
 
-    const { trigger, steps } =
+    const { coreWorkflowVersion, trigger, steps } =
       await this.coreWorkflowVersionWriteService.getValidatedDraftCoreWorkflowVersion(
-        { workspaceId, coreWorkflowVersionId },
+        { workspaceId, userWorkspaceId, coreWorkflowVersionId },
       );
 
     const { builtStep, additionalCreatedSteps } =
@@ -115,7 +121,8 @@ export class CoreWorkflowVersionMutationWorkspaceService {
     await this.coreWorkflowVersionWriteService.writeContentAndMirror({
       workspaceId,
       coreWorkflowVersionId,
-      trigger: updatedTrigger === trigger ? undefined : updatedTrigger,
+      expectedVersion: coreWorkflowVersion,
+      trigger: updatedTrigger ?? null,
       steps: updatedSteps,
     });
 
@@ -129,16 +136,18 @@ export class CoreWorkflowVersionMutationWorkspaceService {
 
   async duplicateStep({
     workspaceId,
+    userWorkspaceId,
     coreWorkflowVersionId,
     stepId,
   }: {
     workspaceId: string;
+    userWorkspaceId: string | undefined;
     coreWorkflowVersionId: string;
     stepId: string;
   }): Promise<WorkflowVersionStepChangesDTO> {
-    const { trigger, steps } =
+    const { coreWorkflowVersion, trigger, steps } =
       await this.coreWorkflowVersionWriteService.getValidatedDraftCoreWorkflowVersion(
-        { workspaceId, coreWorkflowVersionId },
+        { workspaceId, userWorkspaceId, coreWorkflowVersionId },
       );
 
     const stepToDuplicate = steps?.find((step) => step.id === stepId);
@@ -170,6 +179,8 @@ export class CoreWorkflowVersionMutationWorkspaceService {
     await this.coreWorkflowVersionWriteService.writeContentAndMirror({
       workspaceId,
       coreWorkflowVersionId,
+      expectedVersion: coreWorkflowVersion,
+      trigger: updatedTrigger ?? null,
       steps: updatedSteps,
     });
 
@@ -183,16 +194,18 @@ export class CoreWorkflowVersionMutationWorkspaceService {
 
   async updateStep({
     workspaceId,
+    userWorkspaceId,
     coreWorkflowVersionId,
     step,
   }: {
     workspaceId: string;
+    userWorkspaceId: string | undefined;
     coreWorkflowVersionId: string;
     step: WorkflowAction;
   }): Promise<WorkflowActionDTO> {
-    const { trigger, steps } =
+    const { coreWorkflowVersion, trigger, steps } =
       await this.coreWorkflowVersionWriteService.getValidatedDraftCoreWorkflowVersion(
-        { workspaceId, coreWorkflowVersionId },
+        { workspaceId, userWorkspaceId, coreWorkflowVersionId },
       );
 
     if (!isDefined(steps)) {
@@ -240,32 +253,70 @@ export class CoreWorkflowVersionMutationWorkspaceService {
       updatedSteps.push(...additionalCreatedSteps);
     }
 
-    await this.coreWorkflowVersionWriteService.writeContentAndMirror({
-      workspaceId,
-      coreWorkflowVersionId,
-      steps: updatedSteps,
-    });
+    try {
+      await this.coreWorkflowVersionWriteService.writeContentAndMirror({
+        workspaceId,
+        coreWorkflowVersionId,
+        expectedVersion: coreWorkflowVersion,
+        trigger,
+        steps: updatedSteps,
+      });
+    } catch (error) {
+      if (isStepTypeChanged) {
+        const stepsToDelete =
+          error instanceof CoreWorkflowVersionPostCommitError
+            ? [existingStep]
+            : [updatedStep, ...(additionalCreatedSteps ?? [])];
+
+        await Promise.allSettled(
+          stepsToDelete.map((stepToDelete) =>
+            this.workflowVersionStepOperationsWorkspaceService.runWorkflowVersionStepDeletionSideEffects(
+              {
+                step: stepToDelete,
+                workspaceId,
+              },
+            ),
+          ),
+        );
+      }
+
+      throw error;
+    }
+
+    if (isStepTypeChanged) {
+      await this.workflowVersionStepOperationsWorkspaceService.runWorkflowVersionStepDeletionSideEffects(
+        {
+          step: existingStep,
+          workspaceId,
+        },
+      );
+    }
 
     return updatedStep;
   }
 
   async updateTrigger({
     workspaceId,
+    userWorkspaceId,
     coreWorkflowVersionId,
     trigger,
   }: {
     workspaceId: string;
+    userWorkspaceId: string | undefined;
     coreWorkflowVersionId: string;
     trigger: WorkflowTrigger;
   }): Promise<WorkflowVersionTriggerDTO> {
-    await this.coreWorkflowVersionWriteService.getValidatedDraftCoreWorkflowVersion(
-      { workspaceId, coreWorkflowVersionId },
-    );
+    const { coreWorkflowVersion, steps } =
+      await this.coreWorkflowVersionWriteService.getValidatedDraftCoreWorkflowVersion(
+        { workspaceId, userWorkspaceId, coreWorkflowVersionId },
+      );
 
     await this.coreWorkflowVersionWriteService.writeContentAndMirror({
       workspaceId,
       coreWorkflowVersionId,
+      expectedVersion: coreWorkflowVersion,
       trigger,
+      steps,
     });
 
     return { trigger };
@@ -273,16 +324,18 @@ export class CoreWorkflowVersionMutationWorkspaceService {
 
   async deleteStep({
     workspaceId,
+    userWorkspaceId,
     coreWorkflowVersionId,
     stepIdToDelete,
   }: {
     workspaceId: string;
+    userWorkspaceId: string | undefined;
     coreWorkflowVersionId: string;
     stepIdToDelete: string;
   }): Promise<WorkflowVersionStepChangesDTO> {
-    const { trigger, steps } =
+    const { coreWorkflowVersion, trigger, steps } =
       await this.coreWorkflowVersionWriteService.getValidatedDraftCoreWorkflowVersion(
-        { workspaceId, coreWorkflowVersionId },
+        { workspaceId, userWorkspaceId, coreWorkflowVersionId },
       );
 
     const isDeletingTrigger =
@@ -318,8 +371,9 @@ export class CoreWorkflowVersionMutationWorkspaceService {
     await this.coreWorkflowVersionWriteService.writeContentAndMirror({
       workspaceId,
       coreWorkflowVersionId,
-      trigger: updatedTrigger === trigger ? undefined : updatedTrigger,
-      steps: updatedSteps === steps ? undefined : (updatedSteps ?? null),
+      expectedVersion: coreWorkflowVersion,
+      trigger: updatedTrigger ?? null,
+      steps: updatedSteps ?? null,
     });
 
     const removedSteps =
@@ -346,12 +400,14 @@ export class CoreWorkflowVersionMutationWorkspaceService {
 
   async createEdge({
     workspaceId,
+    userWorkspaceId,
     coreWorkflowVersionId,
     source,
     target,
     sourceConnectionOptions,
   }: {
     workspaceId: string;
+    userWorkspaceId: string | undefined;
     coreWorkflowVersionId: string;
     source: string;
     target: string;
@@ -359,11 +415,13 @@ export class CoreWorkflowVersionMutationWorkspaceService {
   }): Promise<WorkflowVersionStepChangesDTO> {
     assertEdgeConnectionOptionsAreSupported(sourceConnectionOptions);
 
-    const { trigger, steps } = await this.getValidatedDraftWithTargetStep({
-      workspaceId,
-      coreWorkflowVersionId,
-      target,
-    });
+    const { coreWorkflowVersion, trigger, steps } =
+      await this.getValidatedDraftWithTargetStep({
+        workspaceId,
+        userWorkspaceId,
+        coreWorkflowVersionId,
+        target,
+      });
 
     if (source === TRIGGER_STEP_ID) {
       if (!isDefined(trigger)) {
@@ -388,7 +446,9 @@ export class CoreWorkflowVersionMutationWorkspaceService {
       await this.coreWorkflowVersionWriteService.writeContentAndMirror({
         workspaceId,
         coreWorkflowVersionId,
+        expectedVersion: coreWorkflowVersion,
         trigger: updatedTrigger,
+        steps,
       });
 
       return computeWorkflowVersionStepChanges({
@@ -428,6 +488,8 @@ export class CoreWorkflowVersionMutationWorkspaceService {
       await this.coreWorkflowVersionWriteService.writeContentAndMirror({
         workspaceId,
         coreWorkflowVersionId,
+        expectedVersion: coreWorkflowVersion,
+        trigger,
         steps: updatedSteps,
       });
     }
@@ -441,12 +503,14 @@ export class CoreWorkflowVersionMutationWorkspaceService {
 
   async deleteEdge({
     workspaceId,
+    userWorkspaceId,
     coreWorkflowVersionId,
     source,
     target,
     sourceConnectionOptions,
   }: {
     workspaceId: string;
+    userWorkspaceId: string | undefined;
     coreWorkflowVersionId: string;
     source: string;
     target: string;
@@ -454,11 +518,13 @@ export class CoreWorkflowVersionMutationWorkspaceService {
   }): Promise<WorkflowVersionStepChangesDTO> {
     assertEdgeConnectionOptionsAreSupported(sourceConnectionOptions);
 
-    const { trigger, steps } = await this.getValidatedDraftWithTargetStep({
-      workspaceId,
-      coreWorkflowVersionId,
-      target,
-    });
+    const { coreWorkflowVersion, trigger, steps } =
+      await this.getValidatedDraftWithTargetStep({
+        workspaceId,
+        userWorkspaceId,
+        coreWorkflowVersionId,
+        target,
+      });
 
     if (source === TRIGGER_STEP_ID) {
       if (!isDefined(trigger)) {
@@ -485,7 +551,9 @@ export class CoreWorkflowVersionMutationWorkspaceService {
       await this.coreWorkflowVersionWriteService.writeContentAndMirror({
         workspaceId,
         coreWorkflowVersionId,
+        expectedVersion: coreWorkflowVersion,
         trigger: updatedTrigger,
+        steps,
       });
 
       return computeWorkflowVersionStepChanges({
@@ -533,6 +601,8 @@ export class CoreWorkflowVersionMutationWorkspaceService {
     await this.coreWorkflowVersionWriteService.writeContentAndMirror({
       workspaceId,
       coreWorkflowVersionId,
+      expectedVersion: coreWorkflowVersion,
+      trigger,
       steps: updatedSteps,
     });
 
@@ -545,16 +615,18 @@ export class CoreWorkflowVersionMutationWorkspaceService {
 
   async updatePositions({
     workspaceId,
+    userWorkspaceId,
     coreWorkflowVersionId,
     positions,
   }: {
     workspaceId: string;
+    userWorkspaceId: string | undefined;
     coreWorkflowVersionId: string;
     positions: WorkflowStepPositionUpdateInput[];
   }): Promise<void> {
-    const { trigger, steps } =
+    const { coreWorkflowVersion, trigger, steps } =
       await this.coreWorkflowVersionWriteService.getValidatedDraftCoreWorkflowVersion(
-        { workspaceId, coreWorkflowVersionId },
+        { workspaceId, userWorkspaceId, coreWorkflowVersionId },
       );
 
     const triggerPosition = positions.find(
@@ -579,24 +651,52 @@ export class CoreWorkflowVersionMutationWorkspaceService {
     await this.coreWorkflowVersionWriteService.writeContentAndMirror({
       workspaceId,
       coreWorkflowVersionId,
-      trigger: updatedTrigger,
-      steps: updatedSteps,
+      expectedVersion: coreWorkflowVersion,
+      trigger: updatedTrigger ?? trigger,
+      steps: updatedSteps ?? steps,
+    });
+  }
+
+  async autoLayoutCoreWorkflowVersion({
+    workspaceId,
+    userWorkspaceId,
+    coreWorkflowVersionId,
+  }: {
+    workspaceId: string;
+    userWorkspaceId: string | undefined;
+    coreWorkflowVersionId: string;
+  }): Promise<void> {
+    const { trigger, steps } =
+      await this.coreWorkflowVersionWriteService.getValidatedDraftCoreWorkflowVersion(
+        { workspaceId, userWorkspaceId, coreWorkflowVersionId },
+      );
+
+    await this.updatePositions({
+      workspaceId,
+      userWorkspaceId,
+      coreWorkflowVersionId,
+      positions: computeWorkflowStepPositions({
+        trigger,
+        steps: steps ?? [],
+      }),
     });
   }
 
   @WithLock('coreWorkflowId')
   async createDraftFromCoreWorkflowVersion({
     workspaceId,
+    userWorkspaceId,
     coreWorkflowId,
     coreWorkflowVersionIdToCopy,
   }: {
     workspaceId: string;
+    userWorkspaceId: string | undefined;
     coreWorkflowId: string;
     coreWorkflowVersionIdToCopy: string;
   }): Promise<CoreWorkflowVersionDTO> {
     const { coreWorkflow, workspaceWorkflowId } =
       await this.coreWorkflowIdResolutionService.resolveWorkspaceWorkflowIdOrThrow(
-        { workspaceId, coreWorkflowId },
+        { workspaceId, userWorkspaceId, coreWorkflowId },
       );
 
     const versionToCopy = await this.coreWorkflowVersionRepository.findOne(
@@ -645,20 +745,17 @@ export class CoreWorkflowVersionMutationWorkspaceService {
       await this.coreWorkflowVersionWriteService.writeContentAndMirror({
         workspaceId,
         coreWorkflowVersionId: existingDraft.id,
+        expectedVersion: existingDraft,
         trigger: triggerToCopy,
         steps: copiedSteps,
       });
 
       return this.findCoreVersionDTOOrThrow({
         workspaceId,
+        userWorkspaceId,
         coreWorkflowVersionId: existingDraft.id,
       });
     }
-
-    const applicationId =
-      await this.workflowCoreSyncService.getCustomApplicationIdOrThrow(
-        workspaceId,
-      );
 
     const { coreWorkflowVersionId } =
       await this.coreWorkflowVersionWriteService.createDraftCoreWorkflowVersionAndMirror(
@@ -666,7 +763,6 @@ export class CoreWorkflowVersionMutationWorkspaceService {
           workspaceId,
           coreWorkflowId: coreWorkflow.id,
           workspaceWorkflowId,
-          applicationId,
           trigger: triggerToCopy,
           steps: copiedSteps,
         },
@@ -674,6 +770,7 @@ export class CoreWorkflowVersionMutationWorkspaceService {
 
     return this.findCoreVersionDTOOrThrow({
       workspaceId,
+      userWorkspaceId,
       coreWorkflowVersionId,
     });
   }
@@ -695,13 +792,6 @@ export class CoreWorkflowVersionMutationWorkspaceService {
     updatedStep: WorkflowAction;
     additionalCreatedSteps?: WorkflowAction[];
   }> {
-    await this.workflowVersionStepOperationsWorkspaceService.runWorkflowVersionStepDeletionSideEffects(
-      {
-        step: existingStep,
-        workspaceId,
-      },
-    );
-
     const { builtStep, additionalCreatedSteps } =
       await this.workflowVersionStepOperationsWorkspaceService.runStepCreationSideEffectsAndBuildStep(
         {
@@ -732,16 +822,18 @@ export class CoreWorkflowVersionMutationWorkspaceService {
 
   private async getValidatedDraftWithTargetStep({
     workspaceId,
+    userWorkspaceId,
     coreWorkflowVersionId,
     target,
   }: {
     workspaceId: string;
+    userWorkspaceId: string | undefined;
     coreWorkflowVersionId: string;
     target: string;
   }) {
     const validatedDraft =
       await this.coreWorkflowVersionWriteService.getValidatedDraftCoreWorkflowVersion(
-        { workspaceId, coreWorkflowVersionId },
+        { workspaceId, userWorkspaceId, coreWorkflowVersionId },
       );
 
     const targetStep = validatedDraft.steps?.find((step) => step.id === target);
@@ -779,14 +871,17 @@ export class CoreWorkflowVersionMutationWorkspaceService {
 
   private async findCoreVersionDTOOrThrow({
     workspaceId,
+    userWorkspaceId,
     coreWorkflowVersionId,
   }: {
     workspaceId: string;
+    userWorkspaceId: string | undefined;
     coreWorkflowVersionId: string;
   }): Promise<CoreWorkflowVersionDTO> {
     const coreWorkflowVersion =
       await this.coreWorkflowVersionListService.findOneByCoreWorkflowVersionId({
         workspaceId,
+        userWorkspaceId,
         coreWorkflowVersionId,
       });
 

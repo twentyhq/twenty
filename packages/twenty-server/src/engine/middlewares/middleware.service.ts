@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { type Request, type Response } from 'express';
-import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
@@ -20,6 +19,7 @@ import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { INTERNAL_SERVER_ERROR } from 'src/engine/middlewares/constants/default-error-message.constant';
 import { bindDataToRequestObject } from 'src/engine/utils/bind-data-to-request-object.util';
+import { getRequestLocaleFromHeader } from 'src/engine/utils/get-request-locale-from-header.util';
 import {
   handleException,
   handleExceptionAndConvertToGraphQLError,
@@ -155,9 +155,7 @@ export class MiddlewareService {
 
   public async hydrateGraphqlRequest(request: Request) {
     if (!this.isTokenPresent(request)) {
-      request.locale =
-        (request.headers['x-locale'] as keyof typeof APP_LOCALES) ??
-        SOURCE_LOCALE;
+      request.locale = getRequestLocaleFromHeader(request);
 
       return;
     }
@@ -167,10 +165,7 @@ export class MiddlewareService {
     try {
       data = await this.accessTokenService.validateTokenByRequest(request);
     } catch (error) {
-      // Clearing is a response side effect, never a reason to swallow: letting
-      // the request continue unauthenticated builds the schema without the
-      // workspace, so the client gets "Cannot query field" instead of an auth
-      // error and never learns its session was revoked.
+      // Never swallow: continuing unauthenticated yields "Cannot query field" instead of an auth error
       this.clearDeadSessionCookie(request, error);
 
       throw error;

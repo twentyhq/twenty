@@ -4,8 +4,9 @@ import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { useToast } from 'twenty-ui/components';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { Tag } from 'twenty-ui/primitives/data-display';
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { type ThemeColor } from 'twenty-ui/theme';
 
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
@@ -23,7 +24,7 @@ import {
 import { SettingsTableListSection } from '@/settings/components/SettingsTableListSection';
 import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
-import { useToast } from 'twenty-ui/primitives/feedback';
+
 import { type WorkspaceBillingAdminPanelQuery } from '~/generated-admin/graphql';
 import { beautifyExactDate } from '~/utils/date-utils';
 
@@ -37,10 +38,7 @@ type SettingsAdminWorkspaceCreditGrantsTableProps = {
   onGrantCreditsClick: () => void;
 };
 
-// Every row is its own grid, so a fr track is sized by that row's own content
-// and a wide tag pushes the columns after it out of line with the rows above.
-// Fixed widths for all but the reason, which takes what is left because its
-// cell hides the overflow.
+// Each row is its own grid, so fr tracks would misalign rows; only the overflow-hidden reason flexes.
 const CREDIT_GRANTS_GRID_AUTO_COLUMNS = '88px 140px 88px 108px 108px 1fr 36px';
 const REVOKE_CREDIT_GRANT_MODAL_ID = 'revoke-credit-grant-modal';
 const EM_DASH = '—';
@@ -95,9 +93,7 @@ export const SettingsAdminWorkspaceCreditGrantsTable = ({
   };
 
   const handleRevoke = async (creditGrantId: string) => {
-    // The refetch that clears the row lands well after the mutation resolves,
-    // so without this the button stays live and a second click revokes an
-    // already revoked grant.
+    // The refetch removing the row lands well after the mutation, so block a second revoke.
     setIsRevoking(true);
 
     try {

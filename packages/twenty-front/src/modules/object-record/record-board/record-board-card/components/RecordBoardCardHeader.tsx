@@ -2,6 +2,7 @@ import { RecordBoardContext } from '@/object-record/record-board/contexts/Record
 import { useRecordBoardSelection } from '@/object-record/record-board/hooks/useRecordBoardSelection';
 import { RecordBoardCardContext } from '@/object-record/record-board/record-board-card/contexts/RecordBoardCardContext';
 import { isRecordBoardCardSelectedComponentFamilyState } from '@/object-record/record-board/states/isRecordBoardCardSelectedComponentFamilyState';
+import { t } from '@lingui/core/macro';
 
 import { RecordChip } from '@/object-record/components/RecordChip';
 import { useActiveRecordBoardCard } from '@/object-record/record-board/hooks/useActiveRecordBoardCard';
@@ -16,13 +17,14 @@ import { useAtomComponentFamilyState } from '@/ui/utilities/state/jotai/hooks/us
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
-import { OpenRecordIn } from 'twenty-shared/types';
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { OpenRecordIn } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { LightIconButton } from 'twenty-ui/components';
 import { IconEye, IconEyeOff } from 'twenty-ui/icon';
-import { Checkbox, LightIconButton } from 'twenty-ui/primitives/input';
+import { Checkbox } from 'twenty-ui/primitives/input';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { useIsMobile, useIsTouchDevice } from 'twenty-ui/utilities';
 
 const StyledCompactIconContainer = styled.div`
@@ -104,12 +106,17 @@ export const RecordBoardCardHeader = () => {
         <StyledCompactIconContainer className="compact-icon-container">
           <StopPropagationContainer>
             <LightIconButton
-              Icon={recordBoardCardIsExpanded ? IconEyeOff : IconEye}
-              accent="tertiary"
+              emphasis="subtle"
               onClick={() => {
                 setRecordBoardCardIsExpanded(!recordBoardCardIsExpanded);
               }}
-            />
+              aria-label={
+                recordBoardCardIsExpanded ? t`Collapse card` : t`Expand card`
+              }
+              aria-expanded={recordBoardCardIsExpanded}
+            >
+              {recordBoardCardIsExpanded ? <IconEyeOff /> : <IconEye />}
+            </LightIconButton>
           </StopPropagationContainer>
         </StyledCompactIconContainer>
       )}

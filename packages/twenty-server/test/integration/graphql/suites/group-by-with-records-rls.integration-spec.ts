@@ -4,7 +4,7 @@ import gql from 'graphql-tag';
 import { COMPANY_GQL_FIELDS } from 'test/integration/constants/company-gql-fields.constants';
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
 import { destroyOneOperationFactory } from 'test/integration/graphql/utils/destroy-one-operation-factory.util';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import {
   type CompanyNameRlsRoleSetup,
   cleanupCompanyNameRlsRole,
@@ -37,7 +37,7 @@ describe('group-by with records respects row-level permission predicates', () =>
       { id: testCompanyId1, name: VISIBLE_COMPANY_NAME },
       { id: testCompanyId2, name: HIDDEN_COMPANY_NAME },
     ]) {
-      await makeGraphqlAPIRequest(
+      await makeGraphqlApiRequest(
         createOneOperationFactory({
           objectMetadataSingularName: 'company',
           gqlFields: COMPANY_GQL_FIELDS,
@@ -54,7 +54,7 @@ describe('group-by with records respects row-level permission predicates', () =>
 
   afterAll(async () => {
     for (const recordId of [testCompanyId1, testCompanyId2]) {
-      await makeGraphqlAPIRequest(
+      await makeGraphqlApiRequest(
         destroyOneOperationFactory({
           objectMetadataSingularName: 'company',
           gqlFields: 'id',
@@ -67,7 +67,7 @@ describe('group-by with records respects row-level permission predicates', () =>
   });
 
   it('filters records in group-by results based on RLS predicates', async () => {
-    const response = await makeGraphqlAPIRequest(
+    const response = await makeGraphqlApiRequest(
       {
         query: gql`
           query CompaniesGroupBy(

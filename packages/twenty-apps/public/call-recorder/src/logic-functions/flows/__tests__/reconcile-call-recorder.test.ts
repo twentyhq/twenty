@@ -4,6 +4,13 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { computeCallRecordingIdForMeeting } from 'src/logic-functions/domain/compute-call-recording-id-for-meeting.util';
 import { reconcileCallRecorderForCalendarEventIds } from 'src/logic-functions/flows/reconcile-call-recorder.util';
 
+const enqueueJobsMock = vi.hoisted(() => vi.fn());
+
+vi.mock('twenty-sdk/logic-function', async (importOriginal) => ({
+  ...(await importOriginal<object>()),
+  enqueueJobs: enqueueJobsMock,
+}));
+
 const fetchMock = vi.fn();
 
 const NOW = new Date('2026-01-01T12:00:00.000Z');
@@ -69,6 +76,30 @@ type CallRecordingNode = {
   externalRecordingId?: string | null;
   callRecorderFailureReason?: string | null;
 };
+
+const matchesCallRecordingFilter = (
+  callRecording: CallRecordingNode,
+  filter: Record<string, { eq?: unknown; in?: unknown[]; is?: 'NULL' }>,
+): boolean =>
+  Object.entries(filter).every(([field, condition]) => {
+    const value = callRecording[field as keyof CallRecordingNode] ?? null;
+
+    if (condition.is === 'NULL') {
+      return value === null || value === '';
+    }
+
+    if (condition.in !== undefined) {
+      return condition.in.includes(value);
+    }
+
+    if ('eq' in condition) {
+      return value === condition.eq;
+    }
+
+    throw new Error(
+      `Unhandled filter on ${field}: ${JSON.stringify(condition)}`,
+    );
+  });
 
 type FakeCoreApiClientFixture = {
   calendarEvents: CalendarEventNode[];
@@ -142,6 +173,25 @@ class FakeCoreApiClient {
         createCallRecording: {
           id: createdCallRecording.id,
         },
+      };
+    }
+
+    if (mutation.updateCallRecordings !== undefined) {
+      const { filter, data } = mutation.updateCallRecordings.__args;
+      const matchingCallRecordings = this.callRecordings.filter(
+        (callRecording) => matchesCallRecordingFilter(callRecording, filter),
+      );
+
+      matchingCallRecordings.forEach((callRecording) => {
+        Object.assign(callRecording, data);
+        this.mutations.push({
+          name: 'updateCallRecording',
+          args: { id: callRecording.id, data },
+        });
+      });
+
+      return {
+        updateCallRecordings: matchingCallRecordings.map(({ id }) => ({ id })),
       };
     }
 
@@ -255,6 +305,7 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
     vi.stubEnv('RECALL_API_KEY', 'recall-api-key');
     vi.stubEnv('RECALL_REGION', 'us-west-2');
     vi.stubEnv('CALL_RECORDER_USE_WORKSPACE_LOGO', 'false');
+    enqueueJobsMock.mockReset();
     fetchMock.mockReset();
     fetchMock.mockImplementation(
       async (requestUrl: string, requestInit: RequestInit) => {
@@ -501,6 +552,16 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
           twentyWorkspaceId: WORKSPACE_ID,
           twentyCallRecordingId: buildCustomerSyncCallRecordingId(),
         },
+      }),
+    );
+    expect(enqueueJobsMock).toHaveBeenCalledExactlyOnceWith(
+      expect.objectContaining({
+        jobs: [
+          {
+            jobId: `credit-check.${buildCustomerSyncCallRecordingId()}.recall-bot-1.${new Date(FUTURE_RECALL_BOT_JOIN_AT).getTime()}`,
+            payload: { callRecordingId: buildCustomerSyncCallRecordingId() },
+          },
+        ],
       }),
     );
   });
@@ -904,8 +965,8 @@ describe('reconcileCallRecorderForCalendarEventIds', () => {
     class CancelCleanupFailureFakeCoreApiClient extends FakeCoreApiClient {
       override async mutation(mutation: any): Promise<any> {
         if (
-          mutation.updateCallRecording !== undefined &&
-          mutation.updateCallRecording.__args.data.externalBotId === null
+          mutation.updateCallRecordings !== undefined &&
+          mutation.updateCallRecordings.__args.data.externalBotId === null
         ) {
           throw new Error('recall exploded');
         }

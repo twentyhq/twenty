@@ -3,6 +3,11 @@ import { type LimitKind } from 'src/engine/core-modules/usage-limit/types/limit-
 import { type UsageLimitDefinitions } from 'src/engine/core-modules/usage-limit/types/usage-limit-definition.type';
 import { type UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 
+const definitionsByResourceType: Record<
+  UsageResourceType,
+  UsageLimitDefinitions
+> = USAGE_LIMIT_DEFINITIONS;
+
 export const findUsageLimitDefinition = <TLimitKind extends LimitKind>({
   resourceType,
   limitKind,
@@ -10,4 +15,4 @@ export const findUsageLimitDefinition = <TLimitKind extends LimitKind>({
   resourceType: UsageResourceType;
   limitKind: TLimitKind;
 }): UsageLimitDefinitions[TLimitKind] =>
-  USAGE_LIMIT_DEFINITIONS[resourceType][limitKind];
+  definitionsByResourceType[resourceType][limitKind];

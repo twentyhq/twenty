@@ -11,11 +11,9 @@ import { ResendApiClientService } from 'src/engine/core-modules/emailing-domain/
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { InboundEmailParserService } from 'src/modules/messaging/message-import-manager/drivers/inbound-email/services/inbound-email-parser.service';
 import { type InboundEmailMessageSourceInterface } from 'src/modules/messaging/message-import-manager/drivers/inbound-email/sources/inbound-email-message-source.interface';
-import { type MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message';
+import { type MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message.type';
 
-// Resend stores received emails on their side; the reference is the received
-// email id from the email.received webhook, and the raw MIME is fetched
-// through a pre-signed download URL.
+// The reference is the email.received webhook's email id; the raw MIME is fetched through a pre-signed URL
 @Injectable()
 export class ResendInboundEmailMessageSourceService implements InboundEmailMessageSourceInterface {
   constructor(

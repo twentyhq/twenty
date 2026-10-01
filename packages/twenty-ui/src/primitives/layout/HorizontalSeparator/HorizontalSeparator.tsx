@@ -1,6 +1,6 @@
 import { type JSX } from 'react';
 
-import { Label } from '@ui/primitives/typography';
+import { Label } from '@ui/primitives/typography/internal/Label/Label';
 
 import styles from './HorizontalSeparator.module.scss';
 

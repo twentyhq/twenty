@@ -3,7 +3,7 @@ import { type ReactNode } from 'react';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { styled } from '@linaria/react';
 import { useIsMobile } from 'twenty-ui/utilities';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledFixedContainer = styled.div<{ isMobile?: boolean }>`
   flex-shrink: 0;

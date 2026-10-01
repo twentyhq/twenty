@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { createAmazonBedrock } from '@ai-sdk/amazon-bedrock';
 import { createAnthropic, type AnthropicProvider } from '@ai-sdk/anthropic';
@@ -7,6 +7,7 @@ import { createGoogleGenerativeAI } from '@ai-sdk/google';
 import { createMistral } from '@ai-sdk/mistral';
 import { createOpenAI, type OpenAIProvider } from '@ai-sdk/openai';
 import { createOpenAICompatible } from '@ai-sdk/openai-compatible';
+import { createTypeSafeAi } from '@ai-sdk/typesafe-ai';
 import { createXai, type XaiProvider } from '@ai-sdk/xai';
 import { fromNodeProviderChain } from '@aws-sdk/credential-providers';
 import {
@@ -26,22 +27,26 @@ import {
   AI_SDK_MISTRAL,
   AI_SDK_OPENAI,
   AI_SDK_OPENAI_COMPATIBLE,
+  AI_SDK_TYPESAFE_AI,
   AI_SDK_XAI,
 } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-sdk-package.const';
 import { sanitizeGeminiToolResultRefsMiddleware } from 'src/engine/metadata-modules/ai/ai-models/middleware/sanitize-gemini-tool-result-refs.middleware';
+import { type AiEvaluationModel } from 'src/engine/metadata-modules/ai/ai-models/types/ai-evaluation-model.type';
 import { type AiProviderConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider-config.type';
+import { getEvaluationModelFactory } from 'src/engine/metadata-modules/ai/ai-models/utils/get-evaluation-model-factory.util';
 import { getTranscriptionModelFactory } from 'src/engine/metadata-modules/ai/ai-models/utils/get-transcription-model-factory.util';
 
 export type AiSdkProviderInstance = {
-  createModel: (modelId: string) => LanguageModel;
-  // Absent on providers with no speech-to-text API.
+  createModel?: (modelId: string) => LanguageModel;
   createTranscriptionModel?: (modelId: string) => TranscriptionModel;
+  createEvaluationModel?: (modelId: string) => AiEvaluationModel;
   rawProvider: unknown;
   sdkPackage: AiSdkPackage;
 };
 
 @Injectable()
 export class SdkProviderFactoryService {
+  private readonly logger = new Logger(SdkProviderFactoryService.name);
   private readonly providerInstances = new Map<string, AiSdkProviderInstance>();
 
   createProvider(
@@ -96,13 +101,15 @@ export class SdkProviderFactoryService {
   private toProviderInstance(
     provider: unknown,
     sdkPackage: AiSdkPackage,
-    createModel: (modelId: string) => LanguageModel,
+    createModel?: (modelId: string) => LanguageModel,
   ): AiSdkProviderInstance {
     const createTranscriptionModel = getTranscriptionModelFactory(provider);
+    const createEvaluationModel = getEvaluationModelFactory(provider);
 
     return {
-      createModel,
+      ...(isDefined(createModel) && { createModel }),
       ...(isDefined(createTranscriptionModel) && { createTranscriptionModel }),
+      ...(isDefined(createEvaluationModel) && { createEvaluationModel }),
       rawProvider: provider,
       sdkPackage,
     };
@@ -130,6 +137,8 @@ export class SdkProviderFactoryService {
         return this.buildOpenAiCompatibleProvider(config);
       case AI_SDK_AZURE:
         return this.buildAzureProvider(config);
+      case AI_SDK_TYPESAFE_AI:
+        return this.buildTypeSafeAiProvider(config);
       default:
         throw new Error(`Unsupported SDK package: ${config.npm}`);
     }
@@ -221,6 +230,18 @@ export class SdkProviderFactoryService {
       AI_SDK_OPENAI_COMPATIBLE,
       (modelId: string) => provider(modelId),
     );
+  }
+
+  // evaluation-only provider: no createModel, so the registry skips it for chat
+  private buildTypeSafeAiProvider(
+    config: AiProviderConfig,
+  ): AiSdkProviderInstance {
+    const provider = createTypeSafeAi({
+      ...(config.apiKey && { apiKey: config.apiKey }),
+      ...(config.baseUrl && { baseURL: config.baseUrl }),
+    });
+
+    return this.toProviderInstance(provider, AI_SDK_TYPESAFE_AI);
   }
 
   private buildAzureProvider(config: AiProviderConfig): AiSdkProviderInstance {

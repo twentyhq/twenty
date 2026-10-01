@@ -14,10 +14,10 @@ import { ThemeProvider, themeCssVariables } from 'twenty-ui/theme-constants';
 import { H2Title } from 'twenty-ui/typography';
 
 import { SlackAccessModeSection } from 'src/front-components/components/SlackAccessModeSection';
+import { SlackChannelRulesSection } from 'src/front-components/components/SlackChannelRulesSection';
 import { SlackUserLinkForm } from 'src/front-components/components/SlackUserLinkForm';
 import { SlackUserLinksList } from 'src/front-components/components/SlackUserLinksList';
 import { UnlinkedSlackUsersList } from 'src/front-components/components/UnlinkedSlackUsersList';
-import { SLACK_CONNECTION_HEALTH_CALLOUTS } from 'src/front-components/constants/slack-connection-health-callouts.constant';
 import { useCanManageSlackUserLinks } from 'src/front-components/hooks/use-can-manage-slack-user-links';
 import { useMatchSlackUserLinks } from 'src/front-components/hooks/use-match-slack-user-links';
 import { useSlackConnectionStatus } from 'src/front-components/hooks/use-slack-connection-status';
@@ -26,6 +26,8 @@ import { useResendSlackUserLinkConsent } from 'src/front-components/hooks/use-re
 import { useSlackUserLinks } from 'src/front-components/hooks/use-slack-user-links';
 import { useUnlinkedSlackUsers } from 'src/front-components/hooks/use-unlinked-slack-users';
 import { type SlackUserLinkRecord } from 'src/front-components/types/slack-user-link-record.type';
+import { enqueueSlackToolResultSnackbar } from 'src/front-components/utils/enqueue-slack-tool-result-snackbar.util';
+import { SLACK_CONNECTION_HEALTH } from 'src/logic-functions/constants/slack-connection-health';
 
 const StyledContainer = styled.div`
   box-sizing: border-box;
@@ -131,10 +133,7 @@ const SlackUserLinksSettingsContent = () => {
   const handleRemove = async (slackUserLink: SlackUserLinkRecord) => {
     const result = await removeSlackUserLink(slackUserLink.id);
 
-    enqueueSnackbar({
-      message: isNonEmptyString(result.error) ? result.error : result.message,
-      variant: result.success ? 'success' : 'error',
-    });
+    enqueueSlackToolResultSnackbar(result);
 
     if (result.success) {
       await handleLinkSaved();
@@ -161,34 +160,21 @@ const SlackUserLinksSettingsContent = () => {
       slackUserId: slackUserLink.slackUserId,
     });
 
-    enqueueSnackbar({
-      message: isNonEmptyString(result.error) ? result.error : result.message,
-      variant: result.success ? 'success' : 'error',
-    });
+    enqueueSlackToolResultSnackbar(result);
 
     if (result.success) {
       await refetchSlackUserLinks();
     }
   };
 
-  if (isConnectionStatusLoading || !isSlackConnected) {
+  const isConnectionBroken =
+    isDefined(connectionHealth) &&
+    connectionHealth !== SLACK_CONNECTION_HEALTH.OK;
+
+  // A broken connection is reported by the app health banner, which stays
+  // visible next to the connection itself; the tools below need a working one.
+  if (isConnectionStatusLoading || !isSlackConnected || isConnectionBroken) {
     return null;
-  }
-
-  const connectionHealthCallout = isDefined(connectionHealth)
-    ? SLACK_CONNECTION_HEALTH_CALLOUTS[connectionHealth]
-    : undefined;
-
-  if (isDefined(connectionHealthCallout)) {
-    return (
-      <StyledContainer>
-        <Callout
-          variant="error"
-          title={connectionHealthCallout.title}
-          description={connectionHealthCallout.description}
-        />
-      </StyledContainer>
-    );
   }
 
   if (isPermissionLoading) {
@@ -215,6 +201,10 @@ const SlackUserLinksSettingsContent = () => {
         />
       )}
       <SlackAccessModeSection canManage={canManage} />
+      <SlackChannelRulesSection
+        canManage={canManage}
+        installedSlackTeamId={installedSlackTeamId}
+      />
       {canManage && (
         <Section>
           <H2Title

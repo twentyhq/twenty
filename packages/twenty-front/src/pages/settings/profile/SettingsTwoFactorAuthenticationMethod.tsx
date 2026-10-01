@@ -18,7 +18,7 @@ import { getSettingsPath } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components';
 import { Loader } from 'twenty-ui/primitives/feedback';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { resolveCjsModuleDefaultExport } from '~/utils/resolveCjsModuleDefaultExport';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 

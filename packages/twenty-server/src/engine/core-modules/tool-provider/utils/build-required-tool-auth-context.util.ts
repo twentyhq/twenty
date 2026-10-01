@@ -26,9 +26,7 @@ export const buildRequiredToolAuthContext = async ({
     );
   }
 
-  // The identity triple arrives as separate fields, so validate that the
-  // userWorkspace actually binds this user to this workspace, exactly like
-  // token-based auth does, before building an auth context from it.
+  // The identity arrives as separate fields, so verify the userWorkspace binds this user to this workspace, as token auth does.
   const userWorkspace = await userWorkspaceRepository.findOne({
     where: {
       id: context.userWorkspaceId,
@@ -79,5 +77,6 @@ export const buildRequiredToolAuthContext = async ({
     user: fromUserEntityToFlat(user),
     workspaceMemberId,
     workspaceMember,
+    application: context.application,
   });
 };

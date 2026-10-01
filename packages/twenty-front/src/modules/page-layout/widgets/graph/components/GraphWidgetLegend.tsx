@@ -11,12 +11,13 @@ import { NodeDimensionEffect } from '@/ui/utilities/dimensions/components/NodeDi
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { styled } from '@linaria/react';
+import { t } from '@lingui/core/macro';
 import { AnimatePresence, motion } from 'framer-motion';
-import { useContext, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
+import { LightIconButton } from 'twenty-ui/components';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { IconChevronLeft, IconChevronRight } from 'twenty-ui/icon';
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
-import { LightIconButton } from 'twenty-ui/primitives/input';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 export type GraphWidgetLegendItem = {
   id: string;
@@ -135,7 +136,7 @@ export const GraphWidgetLegend = ({
   items,
   show = true,
 }: GraphWidgetLegendProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
 
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -266,17 +267,21 @@ export const GraphWidgetLegend = ({
                 <LightIconButton
                   onClick={handlePreviousPage}
                   disabled={safeCurrentPage === 0}
-                  Icon={IconChevronLeft}
-                  accent="tertiary"
-                />
+                  emphasis="subtle"
+                  aria-label={t`Previous`}
+                >
+                  <IconChevronLeft />
+                </LightIconButton>
                 <StyledPaginationIndicator>
                   {safeCurrentPage + 1}/{totalPages}
                 </StyledPaginationIndicator>
                 <LightIconButton
                   onClick={handleNextPage}
                   disabled={safeCurrentPage === totalPages - 1}
-                  Icon={IconChevronRight}
-                />
+                  aria-label={t`Next`}
+                >
+                  <IconChevronRight />
+                </LightIconButton>
               </StyledPaginationContainer>
             )}
             <StyledAnimationClipContainer>

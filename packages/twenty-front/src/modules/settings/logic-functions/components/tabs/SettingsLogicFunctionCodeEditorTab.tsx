@@ -50,6 +50,7 @@ export const SettingsLogicFunctionCodeEditorTab = ({
   const HeaderTabList = (
     <StyledTabListContainer>
       <TabList
+        aria-label={t`Function files`}
         tabs={files.map((file) => {
           return { id: file.path, title: file.path.split('/').at(-1) || '' };
         })}

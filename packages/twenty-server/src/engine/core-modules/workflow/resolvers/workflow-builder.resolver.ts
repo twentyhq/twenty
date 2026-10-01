@@ -24,11 +24,12 @@ import {
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { type WorkflowTrigger } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
+import { CoreWorkflowAccessService } from 'src/engine/core-modules/workflow/services/core-workflow-access.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
-import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
-import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { type OutputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/types/output-schema.type';
 import { WorkflowSchemaWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-schema/workflow-schema.workspace-service';
@@ -36,8 +37,17 @@ import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filt
 
 @CoreResolver()
 @UseGuards(
-  WorkspaceAuthGuard,
-  UserAuthGuard,
+  AuthPrincipalGuard({
+    userSession: {
+      standard: true,
+      impersonated: true,
+      playground: true,
+      workspaceAgnostic: false,
+    },
+    apiKey: false,
+    oauthClient: { withUser: true, withoutUser: false },
+    application: { withUser: true, withoutUser: false },
+  }),
   SettingsPermissionGuard(PermissionFlagType.WORKFLOWS),
 )
 @UsePipes(ResolverValidationPipe)
@@ -54,10 +64,13 @@ export class WorkflowBuilderResolver {
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
     @InjectWorkspaceScopedRepository(WorkflowVersionEntity)
     private readonly coreWorkflowVersionRepository: WorkspaceScopedRepository<WorkflowVersionEntity>,
+    private readonly coreWorkflowAccessService: CoreWorkflowAccessService,
   ) {}
 
   @Mutation(() => graphqlTypeJson)
   async computeStepOutputSchema(
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @Args('input')
     {
@@ -71,6 +84,7 @@ export class WorkflowBuilderResolver {
       workspaceId,
       workflowVersionContent: await this.resolveWorkflowVersionContent({
         workspaceId,
+        userWorkspaceId,
         workflowVersionId,
         coreWorkflowVersionId,
       }),
@@ -79,10 +93,12 @@ export class WorkflowBuilderResolver {
 
   private async resolveWorkflowVersionContent({
     workspaceId,
+    userWorkspaceId,
     workflowVersionId,
     coreWorkflowVersionId,
   }: {
     workspaceId: string;
+    userWorkspaceId: string | undefined;
     workflowVersionId?: string;
     coreWorkflowVersionId?: string;
   }): Promise<
@@ -90,6 +106,14 @@ export class WorkflowBuilderResolver {
     | undefined
   > {
     if (isDefined(coreWorkflowVersionId)) {
+      await this.coreWorkflowAccessService.assertCoreWorkflowVersionsAreAccessibleOrThrow(
+        {
+          workspaceId,
+          userWorkspaceId,
+          coreWorkflowVersionIds: [coreWorkflowVersionId],
+        },
+      );
+
       const coreWorkflowVersion =
         await this.coreWorkflowVersionRepository.findOne(workspaceId, {
           where: { id: coreWorkflowVersionId },
@@ -114,6 +138,14 @@ export class WorkflowBuilderResolver {
     if (!isDefined(workflowVersionId)) {
       return undefined;
     }
+
+    await this.coreWorkflowAccessService.assertWorkspaceWorkflowVersionsAreAccessibleOrThrow(
+      {
+        workspaceId,
+        userWorkspaceId,
+        workspaceWorkflowVersionIds: [workflowVersionId],
+      },
+    );
 
     const workflowVersion =
       await this.workflowCommonWorkspaceService.getWorkflowVersionOrFail({

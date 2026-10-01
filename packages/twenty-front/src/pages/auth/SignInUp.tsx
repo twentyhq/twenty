@@ -37,7 +37,7 @@ import { useLingui } from '@lingui/react/macro';
 import { useSearchParams } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 import { Loader } from 'twenty-ui/primitives/feedback';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledLoaderContainer = styled.div`
   align-items: center;
@@ -145,9 +145,7 @@ export const SignInUp = () => {
       );
     }
 
-    // The workspace creation form is shared by both multi-workspace and
-    // single-workspace self-host, so it must render regardless of domain or
-    // workspace scope.
+    // Shared by multi-workspace and single-workspace self-host, so it renders regardless of domain or workspace scope
     if (signInUpStep === SignInUpStep.WorkspaceCreation) {
       return <SignInUpWorkspaceCreationForm />;
     }

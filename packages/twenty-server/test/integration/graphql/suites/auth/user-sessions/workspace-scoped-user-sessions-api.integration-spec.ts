@@ -14,10 +14,7 @@ import { ALLOWED_ORIGIN } from 'test/integration/graphql/suites/auth/user-sessio
 
 type UserSessionApiEntry = { id: string; isCurrent: boolean };
 
-// Tim is seeded in both apple and yc, which is what makes this provable: one
-// person, two workspaces. Almost nothing in Twenty is account-wide, so a
-// workspace must not surface, or be able to revoke, the sessions this person
-// holds in another workspace.
+// Tim is seeded in both apple and yc, proving a workspace can neither list nor revoke his sessions in the other.
 describe('workspace-scoped user sessions API (integration)', () => {
   let appleCookieHeader: string;
   let ycCookieHeader: string;
@@ -81,14 +78,12 @@ describe('workspace-scoped user sessions API (integration)', () => {
 
     expect(response.body.errors).toBeDefined();
 
-    // Still usable: the refusal has to be a no-op, not a silent revocation.
     const ycSessionsAfter = await fetchSessions(ycCookieHeader);
 
     expect(ycSessionsAfter.map((session) => session.id)).toContain(ycSessionId);
   });
 
   it('should leave other workspaces signed in when revoking all other devices', async () => {
-    // A second apple sign-in guarantees there is something to revoke.
     await signInTo('apple');
 
     const response = await postMetadataOperationWithHeaders(
@@ -97,9 +92,9 @@ describe('workspace-scoped user sessions API (integration)', () => {
     );
 
     expect(response.body.errors).toBeUndefined();
-    expect(response.body.data.revokeAllOtherUserSessions).toBeGreaterThanOrEqual(
-      1,
-    );
+    expect(
+      response.body.data.revokeAllOtherUserSessions,
+    ).toBeGreaterThanOrEqual(1);
 
     const ycResponse = await postMetadataOperationWithHeaders(
       currentUserIdentityQueryFactory(),

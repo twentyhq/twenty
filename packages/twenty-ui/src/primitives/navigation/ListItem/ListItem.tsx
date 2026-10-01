@@ -1,12 +1,14 @@
 import { useRender } from '@base-ui/react/use-render';
-import { isNonEmptyArray } from '@sniptt/guards';
+import { isString } from '@sniptt/guards';
 import { clsx } from 'clsx';
 import { type MouseEvent } from 'react';
 
 import { IconCheck, IconChevronRight } from '@ui/icon';
-import { MenuItemHotKeys } from '@ui/primitives/navigation/MenuItemHotKeys/MenuItemHotKeys';
+import { Shortcut } from '@ui/primitives/typography/Shortcut/Shortcut';
+import { OverflowingTextWithTooltip } from '@ui/primitives/typography/OverflowingTextWithTooltip/OverflowingTextWithTooltip';
+import { isRenderableSlot } from '@ui/utilities/internal/isRenderableSlot';
+import { isDefined } from '@ui/utilities/utils/isDefined';
 
-import { isRenderableSlot } from './internal/isRenderableSlot';
 import { ListItemCheckboxIndicator } from './internal/ListItemCheckboxIndicator';
 import styles from './ListItem.module.scss';
 import { type ListItemProps } from './types/ListItemProps';
@@ -22,7 +24,9 @@ export const ListItem = ({
   description,
   descriptionPlacement = 'inline',
   actions,
-  hotkeys,
+  actionsVisibility = 'hover',
+  shortcut,
+  shortcutJoinLabel,
   hasSubmenu = false,
   className,
   children,
@@ -39,7 +43,12 @@ export const ListItem = ({
       return;
     }
 
-    onClick?.(event);
+    if (!isDefined(onClick)) {
+      return;
+    }
+
+    event.stopPropagation();
+    onClick(event);
   };
 
   return useRender({
@@ -48,6 +57,7 @@ export const ListItem = ({
     state: { color, indicator, selected, highlighted: focused, disabled },
     props: {
       ...props,
+      'data-actions-visibility': actionsVisibility,
       className: clsx(styles.root, className),
       'aria-disabled': disabled || undefined,
       onClick: handleClick,
@@ -57,33 +67,41 @@ export const ListItem = ({
             <ListItemCheckboxIndicator checked={selected} disabled={disabled} />
           )}
           {isRenderableSlot(startIcon) && (
-            <div className={styles.startIcon}>{startIcon}</div>
+            <span className={styles.startIcon}>{startIcon}</span>
           )}
-          <div className={styles.label}>
-            <div className={styles.text}>{children}</div>
+          <span className={styles.label}>
+            <span className={styles.text}>
+              {isString(children) ? (
+                <OverflowingTextWithTooltip text={children} />
+              ) : (
+                children
+              )}
+            </span>
             {hasDescription && descriptionPlacement === 'inline' && (
-              <div
+              <span
                 className={clsx(styles.description, styles.inlineDescription)}
               >
                 {description}
-              </div>
+              </span>
             )}
-          </div>
+          </span>
           {hasDescription && descriptionPlacement === 'end' && (
-            <div className={clsx(styles.description, styles.endDescription)}>
+            <span className={clsx(styles.description, styles.endDescription)}>
               {description}
-            </div>
+            </span>
           )}
           {isRenderableSlot(actions) && (
-            <div className={styles.actions}>{actions}</div>
+            <span className={styles.actions}>{actions}</span>
           )}
-          {isNonEmptyArray(hotkeys) && (
-            <div className={styles.hotkeys}>
-              <MenuItemHotKeys hotKeys={hotkeys} />
-            </div>
+          {isDefined(shortcut) && (
+            <Shortcut
+              className={styles.hotkeys}
+              shortcut={shortcut}
+              sequenceJoinLabel={shortcutJoinLabel}
+            />
           )}
           {isRenderableSlot(endIcon) && (
-            <div className={styles.endIcon}>{endIcon}</div>
+            <span className={styles.endIcon}>{endIcon}</span>
           )}
           {indicator === 'check' && selected && (
             <IconCheck className={styles.checkIndicator} aria-hidden />

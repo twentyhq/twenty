@@ -8,11 +8,15 @@ import { isNonEmptyString } from '@sniptt/guards';
 
 import { msg } from '@lingui/core/macro';
 import { isAiModelTier, type AiModelTier } from 'twenty-shared/ai';
-import { PermissionFlagType } from 'twenty-shared/constants';
+import {
+  MAX_ALLOWED_IFRAME_ORIGINS,
+  PermissionFlagType,
+} from 'twenty-shared/constants';
 import {
   assertIsDefinedOrThrow,
   isAutoSelectModelId,
   isDefined,
+  normalizeAllowedIframeOrigin,
 } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import {
@@ -28,6 +32,7 @@ import {
 import { PostgresAdvisoryLockService } from 'src/database/typeorm/postgres-advisory-lock.service';
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { ApplicationUninstallService } from 'src/engine/core-modules/application/application-manifest/services/application-uninstall.service';
 import { PreInstalledAppsService } from 'src/engine/core-modules/application/pre-installed-apps/pre-installed-apps.service';
@@ -60,6 +65,8 @@ import { UpgradeSequenceReaderService } from 'src/engine/core-modules/upgrade/se
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
+import { type UpdateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/update-workspace-input';
+import { type UpdateWorkspaceAllowedIframeOriginsInput } from 'src/engine/core-modules/workspace/dtos/update-workspace-allowed-iframe-origins.input';
 import { WORKSPACE_FIELDS_UPDATABLE_BEFORE_ACTIVATION } from 'src/engine/core-modules/workspace/constants/workspace-fields-updatable-before-activation.constant';
 import {
   WorkspaceDeletionApplicationUninstallJob,
@@ -104,10 +111,7 @@ import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-
 import { DEFAULT_FEATURE_FLAGS } from 'src/engine/workspace-manager/workspace-migration/constant/default-feature-flags';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-// A workspace stuck in ONGOING_CREATION for longer than this is treated as a
-// crashed activation (the process died before the catch block could reset it to
-// PENDING_CREATION) and may be retried. It is far longer than a real activation
-// takes, so a genuinely in-progress activation is never reclaimed.
+// far longer than a real activation, so an older ONGOING_CREATION is a crashed attempt that may be reclaimed
 const WORKSPACE_ACTIVATION_STALE_LOCK_TIMEOUT_MS = 5 * 60 * 1000;
 const WORKSPACE_APPLICATION_UNINSTALL_RETRY_LIMIT = 3;
 
@@ -140,8 +144,10 @@ export class WorkspaceService {
     aiAgentModelTier: PermissionFlagType.AI_SETTINGS,
     isAutoModelSelectionEnabled: PermissionFlagType.AI_SETTINGS,
     aiModelIdByTier: PermissionFlagType.AI_SETTINGS,
+    aiEvaluationModelId: PermissionFlagType.AI_SETTINGS,
     aiAdditionalInstructions: PermissionFlagType.WORKSPACE,
     isInternalMessagesImportEnabled: PermissionFlagType.WORKSPACE,
+    isCampaignClickTrackingEnabled: PermissionFlagType.WORKSPACE,
   };
 
   constructor(
@@ -186,9 +192,7 @@ export class WorkspaceService {
     private readonly applicationUninstallService: ApplicationUninstallService,
   ) {}
 
-  // Pins are stored as given, so a stale or mistyped id must be refused here
-  // rather than silently falling back to the tier default at run time. A pin
-  // that is already stored is left alone so the others stay editable.
+  // reject unknown new pins now rather than silently falling back at run time; stored pins stay so the form remains editable
   private validateAiModelIdByTier({
     aiModelIdByTier,
     storedAiModelIdByTier,
@@ -238,14 +242,92 @@ export class WorkspaceService {
     }
   }
 
+  // same contract as validateAiModelIdByTier
+  private validateAiEvaluationModelId({
+    aiEvaluationModelId,
+    storedAiEvaluationModelId,
+  }: {
+    aiEvaluationModelId: string | null;
+    storedAiEvaluationModelId: string | null;
+  }): void {
+    if (!isNonEmptyString(aiEvaluationModelId)) {
+      return;
+    }
+
+    if (aiEvaluationModelId === storedAiEvaluationModelId) {
+      return;
+    }
+
+    if (
+      !isDefined(
+        this.aiModelRegistryService.getEvaluationModelConfig(
+          aiEvaluationModelId,
+        ),
+      )
+    ) {
+      throw new WorkspaceException(
+        `Model "${aiEvaluationModelId}" is not an evaluation model in this instance's catalog`,
+        WorkspaceExceptionCode.AI_MODEL_PIN_NOT_VALID,
+      );
+    }
+
+    if (!this.aiModelRegistryService.isModelAdminAllowed(aiEvaluationModelId)) {
+      throw new WorkspaceException(
+        'Selected model has been disabled by the administrator',
+        WorkspaceExceptionCode.AI_MODEL_PIN_NOT_VALID,
+      );
+    }
+  }
+
+  async updateWorkspaceAllowedIframeOrigins(
+    workspaceId: string,
+    input: UpdateWorkspaceAllowedIframeOriginsInput,
+  ): Promise<WorkspaceEntity> {
+    const updatedWorkspace = await this.workspaceRepository.manager.transaction(
+      async (manager) => {
+        const repository = manager.getRepository(WorkspaceEntity);
+        const workspace = await repository.findOne({
+          where: { id: workspaceId },
+          lock: { mode: 'pessimistic_write' },
+        });
+        assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
+        const origin = normalizeAllowedIframeOrigin(input.origin);
+        assertIsDefinedOrThrow(origin);
+        const origins = workspace.allowedIframeOrigins ?? [];
+        const allowedIframeOrigins =
+          input.operation === 'add'
+            ? [...new Set([...origins, origin])]
+            : origins.filter((existingOrigin) => existingOrigin !== origin);
+
+        if (allowedIframeOrigins.length > MAX_ALLOWED_IFRAME_ORIGINS) {
+          throw new WorkspaceException(
+            'Too many embedding origins',
+            WorkspaceExceptionCode.IFRAME_ORIGIN_LIMIT_EXCEEDED,
+          );
+        }
+
+        await repository.update(workspaceId, { allowedIframeOrigins });
+        return { ...workspace, allowedIframeOrigins };
+      },
+    );
+
+    await this.coreEntityCacheService.invalidate(
+      'workspaceEntity',
+      workspaceId,
+    );
+    return updatedWorkspace;
+  }
+
   async updateWorkspaceById({
     payload,
     userWorkspaceId,
     apiKey,
+    application,
   }: {
-    payload: Partial<WorkspaceEntity> & { id: string };
+    payload: UpdateWorkspaceInput & { id: string };
     userWorkspaceId?: string;
     apiKey: ApiKeyEntity | undefined;
+    application?: FlatApplication;
   }) {
     const workspace = await this.workspaceRepository.findOneBy({
       id: payload.id,
@@ -258,6 +340,7 @@ export class WorkspaceService {
       userWorkspaceId,
       workspaceId: workspace.id,
       apiKey,
+      application,
       workspaceActivationStatus: workspace.activationStatus,
     });
 
@@ -346,13 +429,25 @@ export class WorkspaceService {
       });
     }
 
+    if (isDefined(payload.aiEvaluationModelId)) {
+      this.validateAiEvaluationModelId({
+        aiEvaluationModelId: payload.aiEvaluationModelId,
+        storedAiEvaluationModelId: workspace.aiEvaluationModelId,
+      });
+    }
+
     let updatedWorkspace: WorkspaceEntity;
 
     try {
-      updatedWorkspace = await this.workspaceRepository.save({
-        ...workspace,
+      await this.workspaceRepository.update(workspace.id, {
         ...payload,
+        ...(payload.customDomain === null
+          ? { isCustomDomainEnabled: false }
+          : {}),
         ...(payload.logo === null ? { logoFileId: null } : {}),
+      });
+      updatedWorkspace = await this.workspaceRepository.findOneByOrFail({
+        id: workspace.id,
       });
     } catch (error) {
       if (payload.customDomain && customDomainRegistered) {
@@ -381,13 +476,8 @@ export class WorkspaceService {
   }
 
   async activateWorkspace(user: AuthContextUser, workspace: WorkspaceEntity) {
-    // Acquire the activation lock by atomically moving the workspace to
-    // ONGOING_CREATION. First try the normal case (PENDING_CREATION). If nothing
-    // matches, the workspace may be stuck in ONGOING_CREATION from a prior
-    // attempt that was killed before the catch block could reset it — reclaim it,
-    // but only once the lock is stale, so a genuinely concurrent activation is
-    // never interrupted. Postgres row locking serializes concurrent reclaims, and
-    // repository.update bumps updatedAt, so a reclaimed lock is immediately fresh.
+    // a workspace stuck in ONGOING_CREATION is reclaimed only once its lock is stale, so a live activation is never interrupted;
+    // row locking serializes reclaims and update bumps updatedAt, so a reclaimed lock is immediately fresh again
     let activationLockResult = await this.workspaceRepository.update(
       {
         id: workspace.id,
@@ -410,10 +500,7 @@ export class WorkspaceService {
     }
 
     if ((activationLockResult.affected ?? 0) === 0) {
-      // Activation is idempotent for the terminal state: if a prior attempt
-      // already completed (e.g. the client lost the response and retried),
-      // return the active workspace instead of failing. Otherwise another
-      // activation is genuinely in progress and must not be interrupted.
+      // a client retrying after a lost response gets the already-active workspace
       const existingWorkspace = await this.workspaceRepository.findOneBy({
         id: workspace.id,
       });
@@ -816,8 +903,7 @@ export class WorkspaceService {
     }
   }
 
-  // FieldMetadataEntity has a self-referencing FK (relationTargetFieldMetadataId)
-  // Related fields must be deleted together to avoid constraint violations
+  // relationTargetFieldMetadataId is a self-referencing FK, so related fields must share a chunk
   private async getFieldMetadataIdChunks(
     workspaceId: string,
   ): Promise<string[][]> {
@@ -946,12 +1032,14 @@ export class WorkspaceService {
     userWorkspaceId,
     workspaceId,
     apiKey,
+    application,
     workspaceActivationStatus,
   }: {
     payload: Partial<WorkspaceEntity>;
     userWorkspaceId?: string;
     workspaceId: string;
     apiKey: ApiKeyEntity | undefined;
+    application?: FlatApplication;
     workspaceActivationStatus: WorkspaceActivationStatus;
   }) {
     const systemFields = new Set(['id', 'createdAt', 'updatedAt', 'deletedAt']);
@@ -1018,6 +1106,7 @@ export class WorkspaceService {
           workspaceId,
           setting: permission,
           apiKeyId: apiKey?.id,
+          applicationId: application?.id,
         });
 
       if (!hasPermission) {

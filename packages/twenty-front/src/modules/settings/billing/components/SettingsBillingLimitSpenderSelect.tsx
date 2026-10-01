@@ -1,33 +1,26 @@
-import { useLingui } from '@lingui/react/macro';
-import { useState } from 'react';
-import { isDefined } from 'twenty-shared/utils';
-import { Avatar } from 'twenty-ui/primitives/data-display';
-import { IconChevronLeft } from 'twenty-ui/icon';
-import {
-  MenuItemSelect,
-  MenuItemSelectAvatar,
-} from 'twenty-ui/primitives/navigation';
-
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SettingsBillingLimitNestedSelect } from '@/settings/billing/components/internal/SettingsBillingLimitNestedSelect';
+import { SettingsBillingLimitSpenderOptionList } from '@/settings/billing/components/internal/SettingsBillingLimitSpenderOptionList';
 import { AVATAR_SPENDER_TYPES } from '@/settings/billing/constants/AvatarSpenderTypes';
 import { USAGE_LIMIT_SPENDER_TYPE_ICONS } from '@/settings/billing/constants/UsageLimitSpenderTypeIcons';
 import { USAGE_LIMIT_SPENDER_TYPE_LABELS } from '@/settings/billing/constants/UsageLimitSpenderTypeLabels';
 import { USAGE_LIMIT_SPENDER_TYPE_POOL_LABELS } from '@/settings/billing/constants/UsageLimitSpenderTypePoolLabels';
-import {
-  type UsageLimitSpenderOption,
-  useUsageLimitSpenderOptions,
-} from '@/settings/billing/hooks/useUsageLimitSpenderOptions';
+import { useUsageLimitSpenderOptions } from '@/settings/billing/hooks/useUsageLimitSpenderOptions';
 import { type UsageLimitSpenderType } from '@/settings/billing/types/UsageLimitSpenderType';
 import { getUsageLimitSpenderGroups } from '@/settings/billing/utils/getUsageLimitSpenderGroups';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
-import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { getWorkspaceAvatarColorSeed } from '@/workspace/utils/getWorkspaceAvatarColorSeed';
+import { useLingui } from '@lingui/react/macro';
+import { Link } from 'react-router-dom';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { Dropdown } from 'twenty-ui/components';
+import { IconArrowUp } from 'twenty-ui/icon';
+import { Avatar } from 'twenty-ui/primitives/data-display';
+import { ListItem } from 'twenty-ui/primitives/navigation';
+import { OrganizationAdornment } from '~/pages/settings/enterprise/components/OrganizationAdornment';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 const SPENDER_DROPDOWN_ID = 'usage-limit-spender';
@@ -53,22 +46,14 @@ export const SettingsBillingLimitSpenderSelect = ({
   onChange,
 }: SettingsBillingLimitSpenderSelectProps) => {
   const { t } = useLingui();
-  const { closeDropdown } = useCloseDropdown();
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
-
-  const [browsedSpenderType, setBrowsedSpenderType] =
-    useState<UsageLimitSpenderType | null>(null);
 
   const groups = getUsageLimitSpenderGroups(allowedSpenderTypes);
 
-  const listedSpenderType = browsedSpenderType ?? undefined;
-  const { spenderOptionsByType, loading } = useUsageLimitSpenderOptions(
-    [listedSpenderType, spenderType].filter(isDefined),
+  const { spenderOptionsByType } = useUsageLimitSpenderOptions(
+    [spenderType].filter(isDefined),
   );
 
-  const listedSpenderOptions = isDefined(listedSpenderType)
-    ? (spenderOptionsByType[listedSpenderType] ?? [])
-    : [];
   const selectedSpenderOptions = isDefined(spenderType)
     ? (spenderOptionsByType[spenderType] ?? [])
     : [];
@@ -77,16 +62,13 @@ export const SettingsBillingLimitSpenderSelect = ({
   const workspaceAvatarUrl = getAbsoluteImageUrl(
     currentWorkspace?.logo ?? DEFAULT_WORKSPACE_LOGO,
   );
-
-  const resetNavigation = () => setBrowsedSpenderType(null);
+  const workspaceAvatarColorSeed = getWorkspaceAvatarColorSeed(workspaceName);
 
   const handleSelect = (
     nextSpenderType: UsageLimitSpenderType,
     nextSpenderId: string,
   ) => {
     onChange({ spenderType: nextSpenderType, spenderId: nextSpenderId });
-    resetNavigation();
-    closeDropdown(SPENDER_DROPDOWN_ID);
   };
 
   const getSelectedLabel = (): string => {
@@ -113,6 +95,7 @@ export const SettingsBillingLimitSpenderSelect = ({
       return (
         <Avatar
           name={workspaceName}
+          colorSeed={workspaceAvatarColorSeed}
           src={workspaceAvatarUrl}
           shape="square"
           size="md"
@@ -142,143 +125,10 @@ export const SettingsBillingLimitSpenderSelect = ({
     );
   };
 
-  const renderOption = (
-    kind: UsageLimitSpenderType,
-    option: UsageLimitSpenderOption,
-  ) => {
-    const selected = spenderType === kind && spenderId === option.id;
-
-    if (AVATAR_SPENDER_TYPES.includes(kind)) {
-      return (
-        <MenuItemSelectAvatar
-          key={option.id}
-          text={option.label}
-          selected={selected}
-          avatar={
-            <Avatar
-              name={option.label}
-              src={option.avatarUrl}
-              shape={kind === 'userWorkspace' ? 'circle' : 'square'}
-              size="md"
-            />
-          }
-          onClick={() => handleSelect(kind, option.id)}
-        />
-      );
-    }
-
-    return (
-      <MenuItemSelect
-        key={option.id}
-        LeftIcon={USAGE_LIMIT_SPENDER_TYPE_ICONS[kind]}
-        text={option.label}
-        selected={selected}
-        onClick={() => handleSelect(kind, option.id)}
-      />
-    );
-  };
-
-  const renderOptionList = (kind: UsageLimitSpenderType) => (
-    <>
-      <MenuItemSelect
-        text={t(USAGE_LIMIT_SPENDER_TYPE_POOL_LABELS[kind])}
-        selected={spenderType === kind && spenderId === ''}
-        onClick={() => handleSelect(kind, '')}
-      />
-      {loading ? (
-        <MenuItemSelect text={t`Loading…`} selected={false} disabled />
-      ) : (
-        listedSpenderOptions.map((option) => renderOption(kind, option))
-      )}
-    </>
-  );
-
-  const renderBackHeader = (title: string, onBack: () => void) => (
-    <DropdownMenuHeader
-      StartComponent={
-        <DropdownMenuHeaderLeftComponent
-          onClick={onBack}
-          Icon={IconChevronLeft}
-        />
-      }
-    >
-      {title}
-    </DropdownMenuHeader>
-  );
-
-  const renderSubSpenderContent = (kind: UsageLimitSpenderType) => (
-    <DropdownContent>
-      {renderBackHeader(t(USAGE_LIMIT_SPENDER_TYPE_LABELS[kind]), () =>
-        setBrowsedSpenderType(null),
-      )}
-      <DropdownMenuItemsContainer>
-        {renderOptionList(kind)}
-      </DropdownMenuItemsContainer>
-    </DropdownContent>
-  );
-
   const workspaceGroup = groups.find((group) => group.id === 'workspace');
   const otherGroups = groups.filter((group) => group.id !== 'workspace');
-
-  const renderRootContent = () => (
-    <DropdownContent>
-      {isDefined(workspaceGroup) && (
-        <DropdownMenuItemsContainer>
-          <MenuItemSelectAvatar
-            text={workspaceName}
-            contextualText={t`Workspace`}
-            selected={spenderType === 'workspace'}
-            avatar={
-              <Avatar
-                name={workspaceName}
-                src={workspaceAvatarUrl}
-                shape="square"
-                size="md"
-              />
-            }
-            onClick={() => handleSelect('workspace', '')}
-          />
-        </DropdownMenuItemsContainer>
-      )}
-      {isDefined(workspaceGroup) && otherGroups.length > 0 && (
-        <DropdownMenuSeparator />
-      )}
-      {otherGroups.length > 0 && (
-        <DropdownMenuItemsContainer>
-          {otherGroups.map((group) =>
-            isIntraWorkspaceLimitEntitled ? (
-              <MenuItemSelect
-                key={group.id}
-                LeftIcon={group.Icon}
-                text={t(group.label)}
-                selected={false}
-                hasSubMenu
-                onClick={() => setBrowsedSpenderType(group.spenderType)}
-              />
-            ) : (
-              <MenuItemSelect
-                key={group.id}
-                LeftIcon={group.Icon}
-                text={t(group.label)}
-                selected={false}
-                disabled
-                contextualText={t`Organization plan`}
-                contextualTextPosition="right"
-              />
-            ),
-          )}
-        </DropdownMenuItemsContainer>
-      )}
-    </DropdownContent>
-  );
-
-  const renderContent = () => {
-    if (isDefined(browsedSpenderType)) {
-      return renderSubSpenderContent(browsedSpenderType);
-    }
-
-    return renderRootContent();
-  };
+  const isLockedByPlan =
+    !isIntraWorkspaceLimitEntitled && otherGroups.length > 0;
 
   return (
     <SettingsBillingLimitNestedSelect
@@ -295,8 +145,77 @@ export const SettingsBillingLimitSpenderSelect = ({
       }
       SelectedAvatar={renderSelectedAvatar()}
       isDisabled={isDisabled}
-      onClose={resetNavigation}
-      dropdownComponents={renderContent()}
-    />
+    >
+      <Dropdown.Page id="root">
+        <Dropdown.Section>
+          {isDefined(workspaceGroup) && (
+            <Dropdown.OptionItem
+              selected={spenderType === 'workspace'}
+              onSelect={() => handleSelect('workspace', '')}
+              description={t`Workspace`}
+              startIcon={
+                <Avatar
+                  name={workspaceName}
+                  colorSeed={workspaceAvatarColorSeed}
+                  src={workspaceAvatarUrl}
+                  shape="square"
+                  size="md"
+                />
+              }
+            >
+              {workspaceName}
+            </Dropdown.OptionItem>
+          )}
+          {otherGroups.map((group) =>
+            isIntraWorkspaceLimitEntitled ? (
+              <Dropdown.ActionItem
+                key={group.id}
+                page={group.spenderType}
+                startIcon={<SelectOptionIcon Icon={group.Icon} />}
+              >
+                {t(group.label)}
+              </Dropdown.ActionItem>
+            ) : (
+              <ListItem
+                key={group.id}
+                startIcon={<SelectOptionIcon Icon={group.Icon} />}
+                endIcon={<OrganizationAdornment iconOnly />}
+              >
+                {t(group.label)}
+              </ListItem>
+            ),
+          )}
+        </Dropdown.Section>
+        {isLockedByPlan && (
+          <>
+            <Dropdown.Separator />
+            <Dropdown.Section>
+              <Dropdown.ActionItem
+                render={
+                  <Link to={getSettingsPath(SettingsPath.BillingPlans)} />
+                }
+                startIcon={<IconArrowUp />}
+              >
+                {t`Upgrade to Organization`}
+              </Dropdown.ActionItem>
+            </Dropdown.Section>
+          </>
+        )}
+      </Dropdown.Page>
+      {isIntraWorkspaceLimitEntitled &&
+        otherGroups.map((group) => (
+          <Dropdown.Page key={group.id} id={group.spenderType}>
+            <Dropdown.Back>
+              {t(USAGE_LIMIT_SPENDER_TYPE_LABELS[group.spenderType])}
+            </Dropdown.Back>
+            <SettingsBillingLimitSpenderOptionList
+              spenderType={group.spenderType}
+              selectedSpenderType={spenderType}
+              selectedSpenderId={spenderId}
+              onSelect={handleSelect}
+            />
+          </Dropdown.Page>
+        ))}
+    </SettingsBillingLimitNestedSelect>
   );
 };

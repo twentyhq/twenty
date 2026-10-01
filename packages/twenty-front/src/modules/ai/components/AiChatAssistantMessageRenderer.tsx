@@ -4,9 +4,16 @@ import { CodeExecutionDisplay } from '@/ai/components/CodeExecutionDisplay';
 import { RoutingStatusDisplay } from '@/ai/components/RoutingStatusDisplay';
 import { ThinkingStepsDisplay } from '@/ai/components/ThinkingStepsDisplay';
 
+import { AiChatEmailApprovalStatusRenderer } from '@/ai/components/AiChatEmailApprovalStatusRenderer';
+import { AiChatFormStatusRenderer } from '@/ai/components/AiChatFormStatusRenderer';
 import { AiChatQuestionStatusRenderer } from '@/ai/components/AiChatQuestionStatusRenderer';
+import { AiChatToolPartRenderer } from '@/ai/components/AiChatToolPartRenderer';
 import { LazyMarkdownContent } from '@/ai/components/LazyMarkdownRenderer';
 import { ToolStepRenderer } from '@/ai/components/ToolStepRenderer';
+import { useToolWidgetByName } from '@/ai/hooks/useToolWidgetByName';
+import { type ToolWidget } from '@/ai/types/ToolWidget';
+import { getEffectiveToolName } from '@/ai/utils/getEffectiveToolName';
+import { shouldToolPartRenderStandalone } from '@/ai/utils/shouldToolPartRenderStandalone';
 import { groupContiguousThinkingStepParts } from '@/ai/utils/groupContiguousThinkingStepParts';
 import { isCodeInterpreterToolPart } from '@/ai/utils/isCodeInterpreterToolPart';
 import { isHiddenCompleteWorkspaceSetupToolPart } from '@/ai/utils/isHiddenCompleteWorkspaceSetupToolPart';
@@ -16,8 +23,10 @@ import {
   ASK_QUESTIONS_TOOL_NAME,
   type ExtendedUIMessagePart,
   isSucceededCompleteWorkspaceSetupToolPart,
+  PROPOSE_EMAIL_TOOL_NAME,
+  REQUEST_FORM_TOOL_NAME,
 } from 'twenty-shared/ai';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledMessagePartsContainer = styled.div`
   display: flex;
@@ -27,9 +36,11 @@ const StyledMessagePartsContainer = styled.div`
 
 const MessagePartRenderer = ({
   part,
+  widgetByToolName,
   isStreaming,
 }: {
   part: ExtendedUIMessagePart;
+  widgetByToolName: Map<string, ToolWidget>;
   isStreaming: boolean;
 }) => {
   switch (part.type) {
@@ -63,7 +74,37 @@ const MessagePartRenderer = ({
           );
         }
 
-        return <ToolStepRenderer toolPart={part} isStreaming={isStreaming} />;
+        if (getToolName(part) === PROPOSE_EMAIL_TOOL_NAME) {
+          return (
+            <AiChatEmailApprovalStatusRenderer
+              toolPart={part}
+              isStreaming={isStreaming}
+            />
+          );
+        }
+
+        if (getToolName(part) === REQUEST_FORM_TOOL_NAME) {
+          return (
+            <AiChatFormStatusRenderer
+              toolPart={part}
+              isStreaming={isStreaming}
+            />
+          );
+        }
+
+        const widget = widgetByToolName.get(getEffectiveToolName(part));
+
+        if (!shouldToolPartRenderStandalone(part, widget)) {
+          return <ToolStepRenderer toolPart={part} isStreaming={isStreaming} />;
+        }
+
+        return (
+          <AiChatToolPartRenderer
+            toolPart={part}
+            widget={widget}
+            isStreaming={isStreaming}
+          />
+        );
       }
       return null;
   }
@@ -78,6 +119,8 @@ export const AiChatAssistantMessageRenderer = ({
   isLastMessageStreaming: boolean;
   hasError?: boolean;
 }) => {
+  const widgetByToolName = useToolWidgetByName();
+
   const hasCodeExecutionData = messageParts.some(
     (part) => part.type === 'data-code-execution',
   );
@@ -90,7 +133,15 @@ export const AiChatAssistantMessageRenderer = ({
       !isHiddenCompleteWorkspaceSetupToolPart(part) &&
       !(hasCodeExecutionData && isCodeInterpreterToolPart(part)),
   );
-  const renderItems = groupContiguousThinkingStepParts(filteredParts);
+  const renderItems = groupContiguousThinkingStepParts(
+    filteredParts,
+    (part) =>
+      isToolUIPart(part) &&
+      shouldToolPartRenderStandalone(
+        part,
+        widgetByToolName.get(getEffectiveToolName(part)),
+      ),
+  );
 
   const lastRenderItemIndex = renderItems.length - 1;
 
@@ -127,6 +178,7 @@ export const AiChatAssistantMessageRenderer = ({
             <MessagePartRenderer
               key={index}
               part={renderItem.part}
+              widgetByToolName={widgetByToolName}
               isStreaming={isLastMessageStreaming}
             />
           ),

@@ -9,6 +9,7 @@ import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/servi
 import { getDatabaseCrudToolFlatObjects } from 'src/engine/metadata-modules/ai/ai-agent/utils/get-database-crud-tool-flat-objects.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { SkillService } from 'src/engine/metadata-modules/skill/skill.service';
+import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config.type';
 
 @Injectable()
 export class McpInstructionBuilderService {
@@ -21,9 +22,13 @@ export class McpInstructionBuilderService {
   async buildInstructions({
     workspaceId,
     roleId,
+    rolePermissionConfig,
+    isDirectMode,
   }: {
     workspaceId: string;
     roleId: string;
+    rolePermissionConfig: RolePermissionConfig;
+    isDirectMode: boolean;
   }): Promise<string> {
     const [{ flatObjectMetadataMaps }, allSkills, actionToolCatalog] =
       await Promise.all([
@@ -33,6 +38,7 @@ export class McpInstructionBuilderService {
         }),
         this.skillService.findAllFlatSkills(workspaceId),
         this.toolRegistry.buildToolIndex(workspaceId, roleId, {
+          rolePermissionConfig,
           categories: [ToolCategory.ACTION],
         }),
       ]);
@@ -57,6 +63,7 @@ export class McpInstructionBuilderService {
       objectNames,
       actionToolNames,
       skillNames,
+      isDirectMode,
     });
   }
 }

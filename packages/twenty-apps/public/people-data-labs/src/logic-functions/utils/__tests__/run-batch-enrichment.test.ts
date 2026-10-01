@@ -1,10 +1,15 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { chargeCredits } from 'twenty-sdk/billing';
 
+import { PDL_ACCESS_ERROR_MESSAGE } from 'src/constants/pdl-access-error-message';
+import { PDL_COMPANY_MIN_LIKELIHOOD_ENV_VAR_NAME } from 'src/constants/pdl-company-min-likelihood-env-var-name';
+import { PDL_COMPANY_WEAK_IDENTIFIER_MIN_LIKELIHOOD_ENV_VAR_NAME } from 'src/constants/pdl-company-weak-identifier-min-likelihood-env-var-name';
 import { UPDATE_FIELDS_OPTIONS } from 'src/constants/update-fields-options';
+import { PdlConfigError } from 'src/logic-functions/errors/pdl-config-error';
 import { runBatchEnrichment } from 'src/logic-functions/utils/run-batch-enrichment';
 import { type BatchEnrichmentAdapter } from 'src/types/batch-enrichment-adapter';
+import { type MinLikelihoods } from 'src/types/min-likelihoods';
 import { type PdlEnrichResult } from 'src/types/pdl-enrich-result';
 
 vi.mock('twenty-sdk/billing', () => ({
@@ -86,6 +91,11 @@ const buildHarness = (configs: RecordConfig[]) => {
 
   const updateManyStatus = vi.fn(async () => undefined);
 
+  const extractParams = vi.fn(
+    ({ node }: { node: FakeNode; minLikelihoods: MinLikelihoods }) =>
+      node.hasIdentifier ? { id: node.id } : undefined,
+  );
+
   const buildMatchedData = vi.fn(
     async ({
       node,
@@ -105,10 +115,12 @@ const buildHarness = (configs: RecordConfig[]) => {
     objectNameSingular: 'Test',
     noIdentifierMessage: 'no identifier',
     costPerMatchDollars: FAKE_COST_PER_MATCH_DOLLARS,
+    minLikelihoodEnvVarName: PDL_COMPANY_MIN_LIKELIHOOD_ENV_VAR_NAME,
+    weakIdentifierMinLikelihoodEnvVarName:
+      PDL_COMPANY_WEAK_IDENTIFIER_MIN_LIKELIHOOD_ENV_VAR_NAME,
     readRecords,
     getNodeId: (node) => node.id,
-    extractParams: ({ node }) =>
-      node.hasIdentifier ? { id: node.id } : undefined,
+    extractParams,
     enrichBatch,
     buildMatchedData,
     updateOne,
@@ -118,6 +130,7 @@ const buildHarness = (configs: RecordConfig[]) => {
   return {
     adapter,
     readRecords,
+    extractParams,
     enrichBatch,
     updateOne,
     updateManyStatus,
@@ -130,9 +143,73 @@ const isPresent = <TValue>(value: TValue | undefined): value is TValue =>
 
 const records = (...ids: string[]) => ids.map((id) => ({ id }));
 
+const buildRecordIds = (count: number) =>
+  Array.from({ length: count }, (_unused, index) => `r${index}`);
+
+const INVALID_API_KEY_OUTCOME: PdlEnrichResult<FakeData> = {
+  outcome: 'error',
+  httpStatus: 401,
+  message: 'Invalid API key',
+};
+
 describe('runBatchEnrichment', () => {
   beforeEach(() => {
     vi.mocked(chargeCredits).mockClear();
+  });
+
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
+  it('resolves the likelihoods once and passes them to every chunk', async () => {
+    vi.stubEnv(PDL_COMPANY_MIN_LIKELIHOOD_ENV_VAR_NAME, '4');
+    const ids = buildRecordIds(150);
+    const harness = buildHarness(ids.map((id) => ({ id })));
+
+    await runBatchEnrichment({
+      client: CLIENT,
+      input: {
+        records: ids.map((id) => ({ id })),
+        weakIdentifierMinLikelihood: 9,
+      },
+      adapter: harness.adapter,
+    });
+
+    expect(harness.readRecords).toHaveBeenCalledTimes(2);
+    expect(harness.extractParams).toHaveBeenCalledTimes(150);
+    for (const [extractParamsArgs] of harness.extractParams.mock.calls) {
+      expect(extractParamsArgs.minLikelihoods).toEqual({
+        strongIdentifierMinLikelihood: 4,
+        weakIdentifierMinLikelihood: 9,
+      });
+    }
+  });
+
+  it('rejects an invalid setting before reading records or calling PDL', async () => {
+    vi.stubEnv(
+      PDL_COMPANY_WEAK_IDENTIFIER_MIN_LIKELIHOOD_ENV_VAR_NAME,
+      'invalid',
+    );
+    const ids = buildRecordIds(150);
+    const harness = buildHarness(ids.map((id) => ({ id })));
+
+    await expect(
+      runBatchEnrichment({
+        client: CLIENT,
+        input: { records: ids.map((id) => ({ id })) },
+        adapter: harness.adapter,
+      }),
+    ).rejects.toThrow(
+      new PdlConfigError(
+        'Each minimum likelihood setting must be an integer between 1 and 10.',
+      ),
+    );
+
+    expect(harness.readRecords).not.toHaveBeenCalled();
+    expect(harness.enrichBatch).not.toHaveBeenCalled();
+    expect(harness.updateOne).not.toHaveBeenCalled();
+    expect(harness.updateManyStatus).not.toHaveBeenCalled();
+    expect(chargeCredits).not.toHaveBeenCalled();
   });
 
   it('reads every id in one call and enriches the set in one batch', async () => {
@@ -405,7 +482,7 @@ describe('runBatchEnrichment', () => {
   });
 
   it('chunks large id sets into separate read and PDL calls', async () => {
-    const ids = Array.from({ length: 150 }, (_unused, index) => `r${index}`);
+    const ids = buildRecordIds(150);
     const harness = buildHarness(ids.map((id) => ({ id })));
 
     const result = await runBatchEnrichment({
@@ -417,6 +494,75 @@ describe('runBatchEnrichment', () => {
     expect(harness.readRecords).toHaveBeenCalledTimes(2);
     expect(harness.enrichBatch).toHaveBeenCalledTimes(2);
     expect(result.matched).toBe(150);
+  });
+
+  it('stops enriching the remaining chunks when PDL rejects the API key', async () => {
+    const ids = buildRecordIds(150);
+    const harness = buildHarness(
+      ids.map((id) => ({ id, outcome: INVALID_API_KEY_OUTCOME })),
+    );
+
+    const result = await runBatchEnrichment({
+      client: CLIENT,
+      input: { records: ids.map((id) => ({ id })) },
+      adapter: harness.adapter,
+    });
+
+    expect(harness.readRecords).toHaveBeenCalledTimes(1);
+    expect(harness.enrichBatch).toHaveBeenCalledTimes(1);
+    expect(harness.updateManyStatus).toHaveBeenCalledExactlyOnceWith({
+      client: CLIENT,
+      recordIds: ids.slice(0, 100),
+      data: {
+        pdlEnrichmentStatus: 'ERROR',
+        pdlLastEnrichedAt: expect.any(String),
+      },
+    });
+    expect(result).toMatchObject({ total: 150, errored: 150, success: false });
+    expect(result.results[0]).toMatchObject({
+      recordId: 'r0',
+      status: 'ERROR',
+      error: PDL_ACCESS_ERROR_MESSAGE,
+    });
+    expect(result.results[149]).toMatchObject({
+      recordId: 'r149',
+      status: 'ERROR',
+      error: PDL_ACCESS_ERROR_MESSAGE,
+    });
+  });
+
+  it('stops enriching the remaining chunks when the API key is not configured', async () => {
+    const ids = buildRecordIds(150);
+    const harness = buildHarness(ids.map((id) => ({ id })));
+    harness.enrichBatch.mockRejectedValue(
+      new PdlConfigError('PDL_API_KEY is not set.'),
+    );
+
+    const result = await runBatchEnrichment({
+      client: CLIENT,
+      input: { records: ids.map((id) => ({ id })) },
+      adapter: harness.adapter,
+    });
+
+    expect(harness.enrichBatch).toHaveBeenCalledTimes(1);
+    expect(result).toMatchObject({ total: 150, errored: 150 });
+    expect(result.results[0].error).toBe(PDL_ACCESS_ERROR_MESSAGE);
+    expect(result.results[149].error).toBe(PDL_ACCESS_ERROR_MESSAGE);
+  });
+
+  it('keeps enriching the remaining chunks after a chunk fails for another reason', async () => {
+    const ids = buildRecordIds(150);
+    const harness = buildHarness(ids.map((id) => ({ id })));
+    harness.enrichBatch.mockRejectedValueOnce(new Error('pdl down'));
+
+    const result = await runBatchEnrichment({
+      client: CLIENT,
+      input: { records: ids.map((id) => ({ id })) },
+      adapter: harness.adapter,
+    });
+
+    expect(harness.enrichBatch).toHaveBeenCalledTimes(2);
+    expect(result).toMatchObject({ matched: 50, errored: 100 });
   });
 
   it('bills only matched outcomes after the PDL call', async () => {
@@ -475,7 +621,7 @@ describe('runBatchEnrichment', () => {
   });
 
   it('bills each chunk separately', async () => {
-    const ids = Array.from({ length: 150 }, (_unused, index) => `r${index}`);
+    const ids = buildRecordIds(150);
     const harness = buildHarness(ids.map((id) => ({ id })));
 
     await runBatchEnrichment({

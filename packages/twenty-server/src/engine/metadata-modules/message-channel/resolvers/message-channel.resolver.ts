@@ -1,11 +1,10 @@
 import { UseGuards, UseInterceptors, UseFilters } from '@nestjs/common';
 import { Args, Mutation, Parent, Query, ResolveField } from '@nestjs/graphql';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
-import { Not, Repository } from 'typeorm';
+import { Not } from 'typeorm';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
@@ -19,7 +18,7 @@ import { AllowSuspendedWorkspace } from 'src/engine/decorators/auth/allow-suspen
 import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
-import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
 import { ConnectedAccountPublicDTO } from 'src/engine/metadata-modules/connected-account/dtos/connected-account-public.dto';
 import { CreateEmailGroupChannelInput } from 'src/engine/metadata-modules/message-channel/dtos/create-email-group-channel.input';
@@ -38,6 +37,8 @@ import {
 import { MessageFolderEntity } from 'src/engine/metadata-modules/message-folder/entities/message-folder.entity';
 import { MessagingProcessGroupEmailActionsService } from 'src/modules/messaging/message-import-manager/services/messaging-process-group-email-actions.service';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import {
   MessageChannelPendingGroupEmailsAction,
   MessageChannelSyncStage,
@@ -45,7 +46,19 @@ import {
   MessageFolderPendingSyncAction,
 } from 'twenty-shared/types';
 
-@UseGuards(WorkspaceAuthGuard)
+@UseGuards(
+  AuthPrincipalGuard({
+    userSession: {
+      standard: true,
+      impersonated: true,
+      playground: true,
+      workspaceAgnostic: false,
+    },
+    apiKey: true,
+    oauthClient: true,
+    application: true,
+  }),
+)
 @UseInterceptors(MessageChannelGraphqlApiExceptionInterceptor)
 @MetadataResolver(() => MessageChannelDTO)
 @UseFilters(AuthGraphqlApiExceptionFilter)
@@ -54,8 +67,8 @@ export class MessageChannelResolver {
     private readonly messageChannelMetadataService: MessageChannelMetadataService,
     private readonly connectedAccountMetadataService: ConnectedAccountMetadataService,
     private readonly applicationMessageChannelsService: ApplicationMessageChannelsService,
-    @InjectRepository(MessageFolderEntity)
-    private readonly messageFolderRepository: Repository<MessageFolderEntity>,
+    @InjectWorkspaceScopedRepository(MessageFolderEntity)
+    private readonly messageFolderRepository: WorkspaceScopedRepository<MessageFolderEntity>,
     private readonly messagingProcessGroupEmailActionsService: MessagingProcessGroupEmailActionsService,
   ) {}
 
@@ -77,12 +90,8 @@ export class MessageChannelResolver {
       return buildPublicConnectedAccount(account);
     }
 
-    // An app channel's connection belongs to the application, not to a member,
-    // so there is no userWorkspaceId to resolve it through on a cron, webhook
-    // or install hook. Reachability is delegated rather than re-derived: the
-    // same predicate the app-facing channel API gates on also decides this,
-    // including the boundary that stops one member reaching another's private
-    // connection through the app.
+    // app connections have no member owner, so reachability is delegated to the app-facing predicate, which also
+    // stops one member reaching another's private connection through the app
     if (
       isDefined(application) &&
       messageChannel.type === MessageChannelType.APP
@@ -158,11 +167,7 @@ export class MessageChannelResolver {
         applicationId: application?.id,
       });
 
-    // An app channel's settings belong to the app that created it: its
-    // visibility is the app's statement about how private its provider's
-    // messages are, and the mailbox fields on this input (folder import
-    // policy, group-email exclusions, contact auto-creation) have no meaning
-    // for it. Mutations go through updateAppMessageChannel instead.
+    // app channel settings belong to the creating app and go through updateAppMessageChannel
     if (messageChannel.type === MessageChannelType.APP) {
       throw new MessageChannelException(
         `Message channel ${input.id} is owned by an application and cannot be updated through this endpoint`,
@@ -174,13 +179,15 @@ export class MessageChannelResolver {
       messageChannel.syncStage ===
       MessageChannelSyncStage.MESSAGE_LIST_FETCH_ONGOING;
 
-    const foldersWithPendingAction = await this.messageFolderRepository.find({
-      where: {
-        messageChannelId: messageChannel.id,
-        pendingSyncAction: Not(MessageFolderPendingSyncAction.NONE),
-        workspaceId: workspace.id,
+    const foldersWithPendingAction = await this.messageFolderRepository.find(
+      workspace.id,
+      {
+        where: {
+          messageChannelId: messageChannel.id,
+          pendingSyncAction: Not(MessageFolderPendingSyncAction.NONE),
+        },
       },
-    });
+    );
 
     const hasPendingGroupEmailsAction =
       messageChannel.pendingGroupEmailsAction !==
@@ -203,7 +210,6 @@ export class MessageChannelResolver {
       isDefined(input.update.excludeGroupEmails) &&
       input.update.excludeGroupEmails !== messageChannel.excludeGroupEmails
     ) {
-      // Service expects WorkspaceEntity type but only reads .id
       await this.messagingProcessGroupEmailActionsService.markMessageChannelAsPendingGroupEmailsAction(
         messageChannel as unknown as MessageChannelEntity,
         workspace.id,

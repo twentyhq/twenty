@@ -2,11 +2,9 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useAtomValue } from 'jotai';
-import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconCheck, IconPaint } from 'twenty-ui/icon';
-import { GRAY_SCALE_LIGHT } from 'twenty-ui/theme';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { GRAY_SCALE_LIGHT, useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 import { LayoutCustomizationBarMenuDropdown } from '@/layout-customization/components/LayoutCustomizationBarMenuDropdown';
 import { LayoutCustomizationBarResetConfirmationModal } from '@/layout-customization/components/LayoutCustomizationBarResetConfirmationModal';
@@ -74,7 +72,7 @@ const StyledRightSection = styled.div`
 `;
 
 const LayoutCustomizationBarContent = () => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const { t } = useLingui();
 
   const { save, isSaving } = useSaveLayoutCustomization();

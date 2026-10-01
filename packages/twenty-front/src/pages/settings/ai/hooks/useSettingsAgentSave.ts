@@ -2,10 +2,10 @@ import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { useEffect, useState } from 'react';
-import { useDebouncedCallback } from 'use-debounce';
 import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/primitives/feedback';
+import { useToast } from 'twenty-ui/components';
+import { useDebouncedCallback } from 'use-debounce';
 
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useSaveDraftRoleToDB } from '@/settings/roles/role/hooks/useSaveDraftRoleToDB';
@@ -123,8 +123,7 @@ export const useSettingsAgentSave = ({
     }
   }, 1_000);
 
-  // Role permissions are edited by the shared roles module through Jotai
-  // state, so there is no change handler to schedule the save from.
+  // Role permissions are edited through Jotai state by the shared roles module, so no change handler can schedule the save
   useEffect(() => {
     if (isRoleDirty) {
       autoSave();

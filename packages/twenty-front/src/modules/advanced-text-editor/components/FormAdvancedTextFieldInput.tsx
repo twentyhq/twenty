@@ -7,18 +7,20 @@ import { serializeAdvancedTextEditorDocument } from '@/advanced-text-editor/util
 import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
 import { type VariablePickerComponent } from '@/ui/input/types/VariablePickerComponent';
 import { useFullScreenModal } from '@/ui/layout/fullscreen/hooks/useFullScreenModal';
-import { type BreadcrumbProps } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
+import { type BreadcrumbProps } from '@/ui/navigation/bread-crumb/types/BreadcrumbProps';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
+import { useRemoveFocusItemFromFocusStackOnUnmount } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackOnUnmount';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type Editor } from '@tiptap/core';
 import { type ComponentType, useEffect, useId, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { LightIconButton } from 'twenty-ui/components';
 import { IconMaximize } from 'twenty-ui/icon';
-import { Field, LightIconButton } from 'twenty-ui/primitives/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { Field } from 'twenty-ui/primitives/input';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { useIsMobile } from 'twenty-ui/utilities';
 
 const StyledAdvancedTextFieldContainerWrapper = styled.div<{
@@ -29,8 +31,7 @@ const StyledAdvancedTextFieldContainerWrapper = styled.div<{
   flex-grow: ${({ hasFieldChrome }) => (hasFieldChrome ? 0 : 1)};
   min-height: ${({ hasFieldChrome }) => (hasFieldChrome ? 'auto' : '0')};
 
-  /* Document editors stretch to their available height; field editors keep
-     their intrinsic height so they compose naturally inside forms. */
+  /* Field editors keep their intrinsic height inside forms; document editors stretch. */
   & > * {
     flex-grow: ${({ hasFieldChrome }) => (hasFieldChrome ? 0 : 1)};
     min-height: ${({ hasFieldChrome }) => (hasFieldChrome ? 'auto' : '0')};
@@ -137,6 +138,10 @@ export const FormAdvancedTextFieldInput = ({
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
   const { removeFocusItemFromFocusStackById } =
     useRemoveFocusItemFromFocusStackById();
+  useRemoveFocusItemFromFocusStackOnUnmount({
+    focusId: instanceId,
+    isEnabled: true,
+  });
 
   const editor = useAdvancedTextEditor({
     profile,
@@ -188,7 +193,14 @@ export const FormAdvancedTextFieldInput = ({
       );
     }
 
-    editor.commands.insertVariableTag(variableName);
+    const focusedHtmlEditor = editor.storage.html?.focusedHtmlEditor;
+
+    const variableTargetEditor =
+      isDefined(focusedHtmlEditor) && !focusedHtmlEditor.isDestroyed
+        ? focusedHtmlEditor
+        : editor;
+
+    variableTargetEditor.commands.insertVariableTag(variableName);
   };
 
   const defaultBreadcrumbs: BreadcrumbProps['links'] = [
@@ -250,11 +262,13 @@ export const FormAdvancedTextFieldInput = ({
                 >
                   {!readonly && !isFullScreen && (
                     <LightIconButton
-                      Icon={IconMaximize}
-                      size="small"
+                      size="sm"
                       onClick={handleEnterFullScreen}
-                      accent="tertiary"
-                    />
+                      emphasis="subtle"
+                      aria-label={t`Expand to full screen`}
+                    >
+                      <IconMaximize />
+                    </LightIconButton>
                   )}
                 </StyledEditorActionButtonContainer>
               )}

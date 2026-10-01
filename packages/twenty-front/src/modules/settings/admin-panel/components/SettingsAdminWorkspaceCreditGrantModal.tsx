@@ -1,4 +1,3 @@
-import { DialogInstance } from '@/ui/layout/dialog/components/DialogInstance';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { CREDIT_GRANT_EXPIRY_OPTIONS } from '@/settings/admin-panel/constants/CreditGrantExpiryOptions';
 import { CREDIT_GRANT_TYPE_LABELS } from '@/settings/admin-panel/constants/CreditGrantTypeLabels';
@@ -7,20 +6,20 @@ import { GRANT_WORKSPACE_CREDITS } from '@/settings/admin-panel/graphql/mutation
 import { GET_WORKSPACE_BILLING_ADMIN_PANEL } from '@/settings/admin-panel/graphql/queries/getWorkspaceBillingAdminPanel';
 import { Select } from '@/ui/input/components/Select';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
+import { DialogInstance } from '@/ui/layout/dialog/components/DialogInstance';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { useMutation } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
-import { Section } from 'twenty-ui/components';
-import { Dialog } from 'twenty-ui/primitives/surfaces';
+import { Section, useToast } from 'twenty-ui/components';
 import { Button } from 'twenty-ui/primitives/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { Dialog } from 'twenty-ui/primitives/surfaces';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { v4 } from 'uuid';
 import { BillingCreditGrantType } from '~/generated-admin/graphql';
 
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
-import { useToast } from 'twenty-ui/primitives/feedback';
 
 type SettingsAdminWorkspaceCreditGrantModalProps = {
   modalInstanceId: string;
@@ -62,11 +61,7 @@ export const SettingsAdminWorkspaceCreditGrantModal = ({
   );
   const [reason, setReason] = useState('');
   const [expiresInDays, setExpiresInDays] = useState<number | null>(null);
-  // Identifies one intended grant, so a RetryLink retry or a resubmit after a
-  // lost response is answered with the grant the first attempt wrote rather
-  // than crediting the workspace twice. Keyed on the submitted values, since
-  // editing the amount and resubmitting is a different intent that must not be
-  // answered with the earlier grant.
+  // Idempotency key per submitted values: retries reuse it, an edited amount is a new grant.
   const [submittedGrant, setSubmittedGrant] = useState<{
     payload: string;
     clientOperationId: string;
@@ -83,8 +78,7 @@ export const SettingsAdminWorkspaceCreditGrantModal = ({
   const parsedAmount = Number(amount);
   const isAmountValid = Number.isFinite(parsedAmount) && parsedAmount > 0;
 
-  // The modal is mounted for the whole page, so without this the next admin to
-  // open it starts from the last grant's amount and reason.
+  // The modal stays mounted, so reset it for the next admin.
   const handleClose = () => {
     setAmount('');
     setType(BillingCreditGrantType.COMPENSATION);
@@ -184,7 +178,6 @@ export const SettingsAdminWorkspaceCreditGrantModal = ({
                 label: t(CREDIT_GRANT_TYPE_LABELS[grantType]),
               }))}
               onChange={setType}
-              isDropdownInModal
               fullWidth
             />
 
@@ -197,7 +190,6 @@ export const SettingsAdminWorkspaceCreditGrantModal = ({
                 label: t(option.label),
               }))}
               onChange={setExpiresInDays}
-              isDropdownInModal
               fullWidth
             />
 

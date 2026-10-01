@@ -23,6 +23,8 @@ import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system
 import { AccountsToReconnectService } from 'src/modules/connected-account/services/accounts-to-reconnect.service';
 import { AccountsToReconnectKeys } from 'src/modules/connected-account/types/accounts-to-reconnect-key-value.type';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
 @Injectable()
 export class MessageChannelSyncStatusService {
@@ -34,8 +36,8 @@ export class MessageChannelSyncStatusService {
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     @InjectRepository(MessageChannelEntity)
     private readonly messageChannelRepository: Repository<MessageChannelEntity>,
-    @InjectRepository(MessageFolderEntity)
-    private readonly messageFolderRepository: Repository<MessageFolderEntity>,
+    @InjectWorkspaceScopedRepository(MessageFolderEntity)
+    private readonly messageFolderRepository: WorkspaceScopedRepository<MessageFolderEntity>,
     @InjectRepository(ConnectedAccountEntity)
     private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
     @InjectRepository(UserWorkspaceEntity)
@@ -131,7 +133,8 @@ export class MessageChannelSyncStatusService {
         );
 
         await this.messageFolderRepository.update(
-          { messageChannelId: In(messageChannelIds), workspaceId },
+          workspaceId,
+          { messageChannelId: In(messageChannelIds) },
           {
             syncCursor: '',
             pendingSyncAction: MessageFolderPendingSyncAction.NONE,
@@ -191,6 +194,33 @@ export class MessageChannelSyncStatusService {
       authContext,
       { lite: true },
     );
+  }
+
+  public async markAsMessagesListFetchScheduledIfPending(
+    messageChannelIds: string[],
+    workspaceId: string,
+  ): Promise<string[]> {
+    if (!messageChannelIds.length) {
+      return [];
+    }
+
+    const updateResult = await this.messageChannelRepository
+      .createQueryBuilder()
+      .update()
+      .set({
+        syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_SCHEDULED,
+        syncStageStartedAt: new Date(),
+      })
+      .where({
+        id: In(messageChannelIds),
+        workspaceId,
+        isSyncEnabled: true,
+        syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,
+      })
+      .returning('id')
+      .execute();
+
+    return updateResult.raw.map((row: { id: string }) => row.id);
   }
 
   public async markAsMessagesListFetchOngoing(

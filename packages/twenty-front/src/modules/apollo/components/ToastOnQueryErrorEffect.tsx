@@ -2,7 +2,7 @@ import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsF
 import { type ErrorLike } from '@apollo/client';
 import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/primitives/feedback';
+import { useToast } from 'twenty-ui/components';
 
 type ToastOnQueryErrorEffectProps = {
   error: ErrorLike | undefined;

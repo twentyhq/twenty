@@ -1,5 +1,6 @@
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { t } from '@lingui/core/macro';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
@@ -13,7 +14,6 @@ import {
   IconPencil,
   IconTrash,
 } from 'twenty-ui/icon';
-import { MenuItem } from 'twenty-ui/primitives/navigation';
 
 type MultiItemFieldMenuItemProps<T> = {
   dropdownId: string;
@@ -85,35 +85,31 @@ export const MultiItemFieldMenuItem = <T,>({
       RightIcon={!isHovered && showPrimaryIcon ? IconBookmark : null}
       dropdownId={dropdownId}
       dropdownContent={
-        <DropdownContent>
+        <LegacyDropdownContent>
           <DropdownMenuItemsContainer>
             {showSetAsPrimaryButton && (
-              <MenuItem
-                LeftIcon={IconBookmarkPlus}
-                text={t`Set as Primary`}
+              <ListItem
+                startIcon={<IconBookmarkPlus />}
                 onClick={handleSetAsPrimaryClick}
-              />
+              >{t`Set as Primary`}</ListItem>
             )}
-            <MenuItem
-              LeftIcon={IconPencil}
-              text={t`Edit`}
+            <ListItem
+              startIcon={<IconPencil />}
               onClick={handleEditClick}
-            />
-            <MenuItem
-              accent="danger"
-              LeftIcon={IconTrash}
-              text={t`Delete`}
+            >{t`Edit`}</ListItem>
+            <ListItem
+              color="danger"
+              startIcon={<IconTrash />}
               onClick={handleDeleteClick}
-            />
+            >{t`Delete`}</ListItem>
             {showCopyButton && (
-              <MenuItem
-                LeftIcon={IconCopy}
-                text={t`Copy`}
+              <ListItem
+                startIcon={<IconCopy />}
                 onClick={handleCopyClick}
-              />
+              >{t`Copy`}</ListItem>
             )}
           </DropdownMenuItemsContainer>
-        </DropdownContent>
+        </LegacyDropdownContent>
       }
     />
   );

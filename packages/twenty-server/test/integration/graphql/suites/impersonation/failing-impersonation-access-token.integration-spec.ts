@@ -1,6 +1,6 @@
 import gql from 'graphql-tag';
 import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 
 // Exercises the per-request JWT validation checkpoint (jwt.auth.strategy):
 // an impersonation access token whose impersonator is not authorized to
@@ -19,7 +19,7 @@ describe('Impersonation - access token validation denial (integration)', () => {
       }
     `;
 
-    const response = await makeGraphqlAPIRequest(
+    const response = await makeGraphqlApiRequest(
       { query },
       APPLE_SARAH_IMPERSONATE_TIM_INVALID_ACCESS_TOKEN,
     );

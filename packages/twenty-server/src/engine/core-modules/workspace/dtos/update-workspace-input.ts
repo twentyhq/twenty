@@ -56,6 +56,11 @@ export class UpdateWorkspaceInput {
   @IsOptional()
   isPublicInviteLinkEnabled?: boolean;
 
+  @Field({ nullable: true })
+  @IsBoolean()
+  @IsOptional()
+  isCampaignClickTrackingEnabled?: boolean;
+
   @Field(() => WorkspaceDiscoverability, { nullable: true })
   @IsEnum(WorkspaceDiscoverability)
   @IsOptional()
@@ -138,6 +143,11 @@ export class UpdateWorkspaceInput {
   @IsObject()
   @IsOptional()
   aiModelIdByTier?: Partial<Record<AiModelTier, string>>;
+
+  @Field({ nullable: true })
+  @IsString()
+  @IsOptional()
+  aiEvaluationModelId?: string;
 
   @Field({ nullable: true })
   @IsString()

@@ -377,6 +377,11 @@ const FIELDS_WIDGET_MANIFEST: PageLayoutWidgetManifest = {
   },
 };
 
+const withoutPosition = ({
+  position: _position,
+  ...pageLayoutWidgetManifest
+}: PageLayoutWidgetManifest) => pageLayoutWidgetManifest;
+
 const statusOf = (
   coverage: ReturnType<typeof reconstructPageLayoutsManifest>['coverage'],
   universalIdentifier: string,
@@ -389,7 +394,7 @@ const reasonOf = (
 ) => statusOf(coverage, universalIdentifier)?.reason;
 
 describe('reconstructPageLayoutsManifest', () => {
-  it('should nest tabs and widgets under an exported page layout and order every collection by universal identifier', () => {
+  it('should nest tabs and widgets under an exported page layout, order tabs by universal identifier and let the order of vertical-list widgets carry their position', () => {
     const { pageLayouts, pageLayoutTabs, pageLayoutWidgets, coverage } =
       reconstruct({
         applicationAllFlatEntityMaps: buildMaps({
@@ -429,8 +434,8 @@ describe('reconstructPageLayoutsManifest', () => {
           {
             ...OVERVIEW_TAB_MANIFEST,
             widgets: [
-              FIELDS_WIDGET_MANIFEST,
-              buildNotesWidgetManifest('notes-widget'),
+              withoutPosition(buildNotesWidgetManifest('notes-widget')),
+              withoutPosition(FIELDS_WIDGET_MANIFEST),
             ],
           },
         ],
@@ -444,6 +449,43 @@ describe('reconstructPageLayoutsManifest', () => {
         ({ status }) => status === ApplicationExportCoverageStatus.EXPORTED,
       ),
     ).toBe(true);
+  });
+
+  it('should keep explicit positions when the vertical-list indices of a tab have a gap', () => {
+    const lastWidgetManifest: PageLayoutWidgetManifest = {
+      ...buildNotesWidgetManifest('a-last-widget'),
+      position: { layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST, index: 2 },
+    };
+
+    const { pageLayouts } = reconstruct({
+      applicationAllFlatEntityMaps: buildMaps({
+        objects: [petObject],
+        pageLayouts: [
+          buildFlatPageLayout({ pageLayoutManifest: PET_PAGE_MANIFEST }),
+        ],
+        pageLayoutTabs: [
+          buildFlatPageLayoutTab({
+            pageLayoutTabManifest: OVERVIEW_TAB_MANIFEST,
+            pageLayoutUniversalIdentifier: PET_PAGE_UID,
+          }),
+        ],
+        pageLayoutWidgets: [
+          buildFlatPageLayoutWidget({
+            pageLayoutWidgetManifest: buildNotesWidgetManifest('notes-widget'),
+            pageLayoutTabUniversalIdentifier: OVERVIEW_TAB_UID,
+          }),
+          buildFlatPageLayoutWidget({
+            pageLayoutWidgetManifest: lastWidgetManifest,
+            pageLayoutTabUniversalIdentifier: OVERVIEW_TAB_UID,
+          }),
+        ],
+      }),
+    });
+
+    expect(pageLayouts[0].tabs?.[0].widgets).toEqual([
+      lastWidgetManifest,
+      buildNotesWidgetManifest('notes-widget'),
+    ]);
   });
 
   it('should hide an engine-derived page layout, export a tab added to it standalone with its widgets, and export a widget added to an engine-derived tab standalone', () => {
@@ -500,7 +542,7 @@ describe('reconstructPageLayoutsManifest', () => {
         title: 'Extra',
         position: 60,
         layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
-        widgets: [buildNotesWidgetManifest('extra-widget')],
+        widgets: [withoutPosition(buildNotesWidgetManifest('extra-widget'))],
       },
     ]);
     expect(statusOf(coverage, ENGINE_PAGE_UID)?.status).toBe(
@@ -575,7 +617,7 @@ describe('reconstructPageLayoutsManifest', () => {
       COMPANY_PAGE_UID,
     );
     expect(pageLayoutTabs[0].widgets).toEqual([
-      buildNotesWidgetManifest('company-widget'),
+      withoutPosition(buildNotesWidgetManifest('company-widget')),
     ]);
     expect(statusOf(coverage, 'company-widget')?.status).toBe(
       ApplicationExportCoverageStatus.EXPORTED,

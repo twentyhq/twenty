@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const BREADCRUMB_WIDTH = 24;
 const ICON_CENTER_OFFSET = 8;
@@ -10,8 +10,7 @@ export type SettingsMessageFoldersBreadcrumbProps = {
   parentsIsLastList: boolean[];
 };
 
-// Every offset here is an inset from the side the tree grows out of, so the
-// whole connector mirrors with the document under dir="rtl".
+// Insets from the side the tree grows out of, so the connector mirrors under dir="rtl".
 const StyledBreadcrumbOverlay = styled.div<{ depth: number }>`
   height: 28px;
   inset-inline-start: 0;

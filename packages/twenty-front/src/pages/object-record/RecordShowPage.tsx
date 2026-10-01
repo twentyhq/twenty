@@ -1,12 +1,18 @@
-import { useParams } from 'react-router-dom';
-import { FeatureFlagKey } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { type ReactNode } from 'react';
+import { Navigate, useParams } from 'react-router-dom';
+import {
+  AppPath,
+  CoreObjectNameSingular,
+  FeatureFlagKey,
+} from 'twenty-shared/types';
+import { getAppPath, isDefined } from 'twenty-shared/utils';
 
 import { WorkspaceRouteUnavailable } from '@/app/routing/components/WorkspaceRouteUnavailable';
 import { findCoreObjectShowPage } from '@/object-core/utils/findCoreObjectShowPage';
 import { isWorkspaceWorkflowVersionRouteHidden } from '@/object-core/workflows/utils/isWorkspaceWorkflowVersionRouteHidden';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { RecordShowPageShell } from '@/object-record/record-show/components/RecordShowPageShell';
+import { type RecordShowPageHeaderTitleMode } from '@/object-record/record-show/types/RecordShowPageHeaderTitleMode';
 import { useRecordShowPage } from '@/object-record/record-show/hooks/useRecordShowPage';
 import { useRecordShowPageResource } from '@/object-record/record-show/hooks/useRecordShowPageResource';
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
@@ -17,10 +23,16 @@ type RecordShowPageParameters = {
   objectRecordId?: string;
 };
 
-const WorkspaceRecordShowPageContent = ({
+export const RecordShowPageContent = ({
   parameters,
+  headerActions,
+  headerTitleMode,
+  isRecordIdentifierBarHidden,
 }: {
   parameters: RecordShowPageParameters;
+  headerActions?: ReactNode;
+  headerTitleMode?: RecordShowPageHeaderTitleMode;
+  isRecordIdentifierBarHidden?: boolean;
 }) => {
   const { objectNameSingular, objectRecordId } = useRecordShowPage(
     parameters.objectNameSingular ?? '',
@@ -39,6 +51,9 @@ const WorkspaceRecordShowPageContent = ({
       record={record}
       loading={loading}
       error={error}
+      headerActions={headerActions}
+      headerTitleMode={headerTitleMode}
+      isRecordIdentifierBarHidden={isRecordIdentifierBarHidden}
     />
   );
 };
@@ -63,6 +78,22 @@ export const RecordShowPage = () => {
     return <WorkspaceRouteUnavailable />;
   }
 
+  // A chat's record page is the chat page, on its own route
+  if (
+    !isInSidePanel &&
+    parameters.objectNameSingular === CoreObjectNameSingular.AgentChatThread &&
+    isDefined(parameters.objectRecordId)
+  ) {
+    return (
+      <Navigate
+        replace
+        to={getAppPath(AppPath.AiChat, {
+          threadId: parameters.objectRecordId,
+        })}
+      />
+    );
+  }
+
   if (
     isWorkspaceWorkflowVersionRouteHidden({
       objectNameSingular: parameters.objectNameSingular,
@@ -72,13 +103,13 @@ export const RecordShowPage = () => {
     return <WorkspaceRouteUnavailable />;
   }
 
-  const CoreObjectShowPage = findCoreObjectShowPage(
-    parameters.objectNameSingular,
-  );
+  const CoreObjectShowPage = isWorkflowCoreIndexPageEnabled
+    ? findCoreObjectShowPage(parameters.objectNameSingular)
+    : undefined;
 
   if (isDefined(CoreObjectShowPage) && isDefined(parameters.objectRecordId)) {
     return <CoreObjectShowPage objectRecordId={parameters.objectRecordId} />;
   }
 
-  return <WorkspaceRecordShowPageContent parameters={parameters} />;
+  return <RecordShowPageContent parameters={parameters} />;
 };

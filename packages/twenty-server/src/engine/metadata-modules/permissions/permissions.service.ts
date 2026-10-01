@@ -1,13 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { msg } from '@lingui/core/macro';
 import {
   PermissionFlagType,
   SystemPermissionFlag,
+  TOOL_PERMISSION_FLAGS,
 } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
 
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
@@ -18,16 +17,15 @@ import {
 import { type FlatRolePermissionFlagMaps } from 'src/engine/metadata-modules/flat-role-permission-flag/types/flat-role-permission-flag-maps.type';
 import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
 import { flatRoleHasPermissionFlag } from 'src/engine/metadata-modules/flat-role/utils/flat-role-has-permission-flag.util';
-import { TOOL_PERMISSION_FLAGS } from 'src/engine/metadata-modules/permissions/constants/tool-permission-flags';
 import {
   PermissionsException,
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
-import { type UserWorkspacePermissions } from 'src/engine/metadata-modules/permissions/types/user-workspace-permissions';
+import { type UserWorkspacePermissions } from 'src/engine/metadata-modules/permissions/types/user-workspace-permissions.type';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
-import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
+import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config.type';
 import { getRoleIdsFromRolePermissionConfig } from 'src/engine/twenty-orm/utils/get-role-ids-from-role-permission-config.util';
 import { resolveRoleIdsForUser } from 'src/engine/twenty-orm/utils/resolve-role-ids-for-user.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
@@ -48,11 +46,11 @@ export class PermissionsService {
     private readonly apiKeyRoleService: ApiKeyRoleService,
     @InjectWorkspaceScopedRepository(RoleEntity)
     private readonly roleRepository: WorkspaceScopedRepository<RoleEntity>,
-    @InjectRepository(ApplicationEntity)
-    private readonly applicationRepository: Repository<ApplicationEntity>,
+    @InjectWorkspaceScopedRepository(ApplicationEntity)
+    private readonly applicationRepository: WorkspaceScopedRepository<ApplicationEntity>,
   ) {}
 
-  private isToolPermission(feature: string) {
+  private isToolPermission(feature: PermissionFlagType) {
     return TOOL_PERMISSION_FLAGS.includes(feature);
   }
 
@@ -155,7 +153,7 @@ export class PermissionsService {
     workspaceId: string;
     setting: PermissionFlagType;
     apiKeyId?: string;
-    applicationId?: string;
+    applicationId: string | undefined;
   }): Promise<boolean> {
     if (isDefined(apiKeyId)) {
       const roleId = await this.apiKeyRoleService.getRoleIdForApiKeyId(
@@ -226,15 +224,22 @@ export class PermissionsService {
     }
 
     if (applicationId) {
-      const application = await this.applicationRepository.findOne({
-        where: { id: applicationId, workspaceId },
-      });
+      const application = await this.applicationRepository.findOne(
+        workspaceId,
+        {
+          where: { id: applicationId },
+        },
+      );
 
-      if (!isDefined(application) || !isDefined(application.defaultRoleId)) {
-        throw new ApplicationException(
-          `Could not find application ${applicationId}`,
-          ApplicationExceptionCode.APPLICATION_NOT_FOUND,
+      if (!isDefined(application)) {
+        throw new PermissionsException(
+          PermissionsExceptionMessage.NO_AUTHENTICATION_CONTEXT,
+          PermissionsExceptionCode.NO_AUTHENTICATION_CONTEXT,
         );
+      }
+
+      if (!isDefined(application.defaultRoleId)) {
+        return false;
       }
 
       const applicationRoleId = application.defaultRoleId;
@@ -269,8 +274,7 @@ export class PermissionsService {
     );
   }
 
-  // Naming an application that no longer exists is not the same as declaring
-  // no role, and must not fall back to the full permissions of the user.
+  // A deleted application must not fall back to the user's full permissions
   private async findApplicationDefaultRoleIdOrThrow({
     applicationId,
     workspaceId,
@@ -278,8 +282,8 @@ export class PermissionsService {
     applicationId: string;
     workspaceId: string;
   }): Promise<string | undefined> {
-    const application = await this.applicationRepository.findOne({
-      where: { id: applicationId, workspaceId },
+    const application = await this.applicationRepository.findOne(workspaceId, {
+      where: { id: applicationId },
     });
 
     if (!isDefined(application)) {

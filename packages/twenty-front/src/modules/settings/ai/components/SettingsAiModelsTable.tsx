@@ -1,5 +1,5 @@
 import { t } from '@lingui/core/macro';
-import { useContext, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
@@ -9,7 +9,7 @@ import { IconTrash } from 'twenty-ui/icon';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { Checkbox } from 'twenty-ui/primitives/input';
 import { IconButton } from 'twenty-ui/components';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 import { SettingsAiModelHoverCard } from '@/settings/ai/components/SettingsAiModelHoverCard';
 import { type AiModelSummary } from '@/settings/ai/types/AiModelSummary';
@@ -40,6 +40,16 @@ const StyledModelLabel = styled.span`
 
 const StyledDeprecatedSuffix = styled.span`
   color: ${themeCssVariables.font.color.light};
+`;
+
+// Evaluation models can't chat or run agents, so their rows are badged apart.
+const StyledKindBadge = styled.span`
+  background: ${themeCssVariables.background.transparent.light};
+  border-radius: ${themeCssVariables.border.radius.sm};
+  color: ${themeCssVariables.font.color.tertiary};
+  flex-shrink: 0;
+  font-size: ${themeCssVariables.font.size.xs};
+  padding: 0 ${themeCssVariables.spacing[1]};
 `;
 
 const hoverCardTooltipClass = css`
@@ -78,7 +88,7 @@ export const SettingsAiModelsTable = <TModel extends AiModelSummary>({
 }: SettingsAiModelsTableProps<TModel>) => {
   const hoveredRowRef = useRef<HTMLDivElement>(null);
   const [hoveredModelId, setHoveredModelId] = useState<string | null>(null);
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
 
   const hoveredModel = models.find((model) => model.modelId === hoveredModelId);
   const hasRemove = isDefined(onRemove);
@@ -171,6 +181,11 @@ export const SettingsAiModelsTable = <TModel extends AiModelSummary>({
                       }
                     />
                     <StyledModelLabel>{model.label}</StyledModelLabel>
+                    {model.kind === 'evaluation' && (
+                      <StyledKindBadge>
+                        <Trans>Evaluation</Trans>
+                      </StyledKindBadge>
+                    )}
                     {disabled && model.isDeprecated && (
                       <StyledDeprecatedSuffix>
                         · <Trans>Deprecated</Trans>

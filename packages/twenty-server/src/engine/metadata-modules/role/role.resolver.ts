@@ -13,15 +13,16 @@ import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorato
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { WorkspaceMemberDTO } from 'src/engine/core-modules/user/dtos/workspace-member.dto';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
-import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
-import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { AiAgentRoleService } from 'src/engine/metadata-modules/ai/ai-agent-role/ai-agent-role.service';
 import {
   AiException,
@@ -58,6 +59,7 @@ import { RowLevelPermissionPredicateGraphqlApiExceptionFilter } from 'src/engine
 import { RowLevelPermissionPredicateGroupService } from 'src/engine/metadata-modules/row-level-permission-predicate/services/row-level-permission-predicate-group.service';
 import { RowLevelPermissionPredicateService } from 'src/engine/metadata-modules/row-level-permission-predicate/services/row-level-permission-predicate.service';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
+import { resolveRoleIdsForUser } from 'src/engine/twenty-orm/utils/resolve-role-ids-for-user.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
@@ -66,7 +68,17 @@ import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filt
 @MetadataResolver(() => RoleDTO)
 @UsePipes(ResolverValidationPipe)
 @UseGuards(
-  WorkspaceAuthGuard,
+  AuthPrincipalGuard({
+    userSession: {
+      standard: true,
+      impersonated: true,
+      playground: true,
+      workspaceAgnostic: false,
+    },
+    apiKey: true,
+    oauthClient: true,
+    application: true,
+  }),
   SettingsPermissionGuard(PermissionFlagType.ROLES),
 )
 @UseFilters(
@@ -100,7 +112,19 @@ export class RoleResolver {
   }
 
   @Mutation(() => WorkspaceMemberDTO)
-  @UseGuards(UserAuthGuard)
+  @UseGuards(
+    AuthPrincipalGuard({
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: false,
+      oauthClient: { withUser: true, withoutUser: false },
+      application: { withUser: true, withoutUser: false },
+    }),
+  )
   async updateWorkspaceMemberRole(
     @AuthWorkspace() workspace: WorkspaceEntity,
     @Args('workspaceMemberId', { type: () => UUIDScalarType })
@@ -160,6 +184,8 @@ export class RoleResolver {
     @Args('updateRoleInput') updateRoleInput: UpdateRoleInput,
     @AuthUserWorkspaceId({ allowUndefined: true })
     actingUserWorkspaceId?: string,
+    @AuthApplication({ allowUndefined: true })
+    application?: FlatApplication,
   ): Promise<RoleDTO> {
     const role = await this.roleService.updateRole({
       input: updateRoleInput,
@@ -167,6 +193,7 @@ export class RoleResolver {
       actingRoleIds: await this.getActingRoleIds({
         workspaceId: workspace.id,
         actingUserWorkspaceId,
+        application,
       }),
     });
 
@@ -179,6 +206,8 @@ export class RoleResolver {
     @Args('roleId', { type: () => UUIDScalarType }) roleId: string,
     @AuthUserWorkspaceId({ allowUndefined: true })
     actingUserWorkspaceId?: string,
+    @AuthApplication({ allowUndefined: true })
+    application?: FlatApplication,
   ): Promise<string> {
     const deletedRole = await this.roleService.deleteRole({
       roleId,
@@ -186,31 +215,34 @@ export class RoleResolver {
       actingRoleIds: await this.getActingRoleIds({
         workspaceId: workspace.id,
         actingUserWorkspaceId,
+        application,
       }),
     });
 
     return deletedRole.id;
   }
 
-  // API-key callers have no user workspace; lockout protection only applies to
-  // human actors, so they resolve to no acting roles.
+  // Lockout protection only applies to human actors; API-key callers have no user workspace
   private async getActingRoleIds({
     workspaceId,
     actingUserWorkspaceId,
+    application,
   }: {
     workspaceId: string;
     actingUserWorkspaceId?: string;
+    application?: FlatApplication;
   }): Promise<string[] | undefined> {
     if (!isDefined(actingUserWorkspaceId)) {
       return undefined;
     }
 
-    return [
-      await this.userRoleService.getRoleIdForUserWorkspace({
+    return resolveRoleIdsForUser({
+      userRoleId: await this.userRoleService.getRoleIdForUserWorkspace({
         workspaceId,
         userWorkspaceId: actingUserWorkspaceId,
       }),
-    ];
+      applicationRoleId: application?.defaultRoleId,
+    });
   }
 
   @Mutation(() => [ObjectPermissionDTO])

@@ -15,7 +15,7 @@ import { type PendingFileCleanupCronJob } from 'src/engine/core-modules/file/fil
 import {
   FILE_STATUS,
   type FileStatus,
-} from 'src/engine/core-modules/file/types/file-status.types';
+} from 'src/engine/core-modules/file/types/file-status.type';
 import { type JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { type RecordExportWorkspaceService } from 'src/engine/core-modules/record-export/services/record-export.workspace-service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
@@ -40,7 +40,7 @@ describe('export file cleanup (integration)', () => {
       applicationUniversalIdentifier:
         TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
       fileFolder,
-      resourcePath: `${v4()}/${id}.csv`,
+      resourcePath: `${id}.csv`,
     };
     await storage.createPendingFile({
       ...resource,
@@ -175,9 +175,9 @@ describe('export file cleanup (integration)', () => {
     );
     await exports.cancel({
       workspaceId: SEED_APPLE_WORKSPACE_ID,
-      id: file.resource.resourcePath.split('/')[0],
+      id: file.id,
     });
-    expect(await storage.checkFileExists(file.resource)).toBe(false);
+    expect(await storage.checkFileExists(file.resource)).toBe(true);
     expect(
       await globalThis.testDataSource.query(
         'SELECT id FROM core.file WHERE id = $1',

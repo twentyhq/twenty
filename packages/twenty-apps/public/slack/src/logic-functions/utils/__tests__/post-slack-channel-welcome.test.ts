@@ -5,16 +5,24 @@ import { postSlackChannelWelcome } from 'src/logic-functions/utils/post-slack-ch
 
 const {
   claimSlackChannelWelcomeMock,
+  coreApiClientMock,
   getSlackClientMock,
+  isSlackChannelSilencedMock,
   postSlackMessageMock,
   releaseSlackChannelWelcomeMock,
   resolveSlackBotUserIdOrThrowMock,
 } = vi.hoisted(() => ({
   claimSlackChannelWelcomeMock: vi.fn(),
+  coreApiClientMock: vi.fn(),
   getSlackClientMock: vi.fn(),
+  isSlackChannelSilencedMock: vi.fn(),
   postSlackMessageMock: vi.fn(),
   releaseSlackChannelWelcomeMock: vi.fn(),
   resolveSlackBotUserIdOrThrowMock: vi.fn(),
+}));
+
+vi.mock('twenty-client-sdk/core', () => ({
+  CoreApiClient: coreApiClientMock,
 }));
 
 vi.mock('src/logic-functions/utils/claim-slack-channel-welcome', () => ({
@@ -23,6 +31,10 @@ vi.mock('src/logic-functions/utils/claim-slack-channel-welcome', () => ({
 
 vi.mock('src/logic-functions/utils/get-slack-client', () => ({
   getSlackClient: getSlackClientMock,
+}));
+
+vi.mock('src/logic-functions/utils/is-slack-channel-silenced', () => ({
+  isSlackChannelSilenced: isSlackChannelSilencedMock,
 }));
 
 vi.mock('src/logic-functions/utils/post-slack-message', () => ({
@@ -53,6 +65,7 @@ const buildJoinEvent = (slackUserId: string): SlackEventsRequestBody => ({
 describe('postSlackChannelWelcome', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    isSlackChannelSilencedMock.mockResolvedValue(false);
     resolveSlackBotUserIdOrThrowMock.mockResolvedValue(BOT_USER_ID);
     claimSlackChannelWelcomeMock.mockResolvedValue(true);
     releaseSlackChannelWelcomeMock.mockResolvedValue(undefined);
@@ -81,6 +94,26 @@ describe('postSlackChannelWelcome', () => {
       skipped: 'Channel was already welcomed',
     });
     expect(getSlackClientMock).not.toHaveBeenCalled();
+  });
+
+  it('should stay silent when a channel rule silences the channel', async () => {
+    isSlackChannelSilencedMock.mockResolvedValue(true);
+
+    const result = await postSlackChannelWelcome(buildJoinEvent(BOT_USER_ID));
+
+    expect(result).toEqual({
+      ok: true,
+      skipped: 'Channel is silenced by a channel rule',
+    });
+    expect(postSlackMessageMock).not.toHaveBeenCalled();
+  });
+
+  it('should leave the welcome claim unspent when the channel is silenced', async () => {
+    isSlackChannelSilencedMock.mockResolvedValue(true);
+
+    await postSlackChannelWelcome(buildJoinEvent(BOT_USER_ID));
+
+    expect(claimSlackChannelWelcomeMock).not.toHaveBeenCalled();
   });
 
   it('should post the channel message and its thread reply on the bot join', async () => {

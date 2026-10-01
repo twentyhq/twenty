@@ -2,7 +2,7 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { type ApplicationVariableOption } from 'twenty-shared/application';
 import { Section } from 'twenty-ui/components';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { type ApplicationVariable } from '~/generated-metadata/graphql';
 import { SettingsApplicationVariableInput } from '~/pages/settings/applications/components/SettingsApplicationVariableInput';
 import { SettingsApplicationVariableLabelRow } from '~/pages/settings/applications/components/SettingsApplicationVariableLabelRow';

@@ -1,8 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
 
 import { ApplicationVariableEntity } from 'src/engine/core-modules/application/application-variable/application-variable.entity';
 import {
@@ -14,6 +12,8 @@ import { type ApplicationVariableCacheMaps } from 'src/engine/core-modules/appli
 import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 import { type FlatApplicationVariable } from 'src/engine/metadata-modules/flat-application-variable/types/flat-application-variable.type';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 type GetEnvVariablesArgs = {
@@ -25,8 +25,8 @@ type GetEnvVariablesArgs = {
 @Injectable()
 export class ApplicationVariableEntityService {
   constructor(
-    @InjectRepository(ApplicationVariableEntity)
-    private readonly applicationVariableRepository: Repository<ApplicationVariableEntity>,
+    @InjectWorkspaceScopedRepository(ApplicationVariableEntity)
+    private readonly applicationVariableRepository: WorkspaceScopedRepository<ApplicationVariableEntity>,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly secretEncryptionService: SecretEncryptionService,
   ) {}
@@ -131,9 +131,10 @@ export class ApplicationVariableEntityService {
     workspaceId: string;
     plainTextValue: PlaintextString;
   }) {
-    const existingVariable = await this.applicationVariableRepository.findOne({
-      where: { key, applicationId },
-    });
+    const existingVariable = await this.applicationVariableRepository.findOne(
+      workspaceId,
+      { where: { key, applicationId } },
+    );
 
     if (!isDefined(existingVariable)) {
       throw new ApplicationVariableEntityException(
@@ -143,6 +144,7 @@ export class ApplicationVariableEntityService {
     }
 
     await this.applicationVariableRepository.update(
+      workspaceId,
       { key, applicationId },
       {
         value: this.secretEncryptionService.encryptVersioned(plainTextValue, {

@@ -1,27 +1,34 @@
-import { Field as FieldPrimitive } from '@base-ui/react/field';
 import { DirectionProvider } from '@base-ui/react/direction-provider';
+import { Field as FieldPrimitive } from '@base-ui/react/field';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useRef, useState } from 'react';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 
-import { CardPicker } from '@ui/primitives/input/CardPicker/CardPicker';
 import { Field } from '@ui/primitives/input/Field/Field';
 import { RadioGroup } from '@ui/primitives/input/RadioGroup/RadioGroup';
 import { type RadioGroupProps } from '@ui/primitives/input/RadioGroup/types/RadioGroupProps';
 import { A11Y_DEFER_COLOR_CONTRAST, ComponentDecorator } from '@ui/testing';
 
 import { Radio } from '../Radio';
+import { type RadioProps } from '../types/RadioProps';
 
-const RadioExample = (props: RadioGroupProps) => (
+const RadioExample = ({
+  variant,
+  ...props
+}: RadioGroupProps & Pick<RadioProps, 'variant'>) => (
   <RadioGroup aria-label="Fruit" {...props}>
-    <Radio value="apple">Apple</Radio>
+    <Radio variant={variant} value="apple">
+      Apple
+    </Radio>
     <div>
-      <Radio value="banana" disabled>
+      <Radio variant={variant} value="banana" disabled>
         Banana
       </Radio>
     </div>
     <div>
-      <Radio value="cherry">Cherry</Radio>
+      <Radio variant={variant} value="cherry">
+        Cherry
+      </Radio>
     </div>
   </RadioGroup>
 );
@@ -179,7 +186,7 @@ export const Controlled: Story = {
   },
 };
 
-const FormExample = () => {
+const FormExample = ({ variant }: Pick<RadioProps, 'variant'>) => {
   const [value, setValue] = useState('apple');
   const [submitted, setSubmitted] = useState('');
 
@@ -197,10 +204,14 @@ const FormExample = () => {
         <Field.Label>Fruit</Field.Label>
         <RadioGroup value={value} onValueChange={setValue} required>
           <FieldPrimitive.Item>
-            <Radio value="apple">Apple</Radio>
+            <Radio variant={variant} value="apple">
+              Apple
+            </Radio>
           </FieldPrimitive.Item>
           <FieldPrimitive.Item>
-            <Radio value="cherry">Cherry</Radio>
+            <Radio variant={variant} value="cherry">
+              Cherry
+            </Radio>
           </FieldPrimitive.Item>
         </RadioGroup>
         <Field.Description>Choose one fruit</Field.Description>
@@ -323,40 +334,27 @@ export const RightToLeft: Story = {
   },
 };
 
-const CardsExample = ({ onValueChange }: RadioGroupProps) => {
-  const [value, setValue] = useState('monthly');
-
-  return (
-    <RadioGroup
-      aria-label="Billing interval"
-      value={value}
-      onValueChange={(nextValue, details) => {
-        setValue(nextValue);
-        onValueChange?.(nextValue, details);
-      }}
-    >
-      <CardPicker value="monthly">Monthly</CardPicker>
-      <CardPicker value="yearly">Yearly</CardPicker>
-      {value === 'yearly' && <input aria-label="Purchase order" />}
-    </RadioGroup>
-  );
+export const CardsKeyboard: Story = {
+  ...Keyboard,
+  args: { ...Keyboard.args, variant: 'card' },
 };
 
-export const Cards: Story = {
-  decorators: [ComponentDecorator],
-  render: (args) => <CardsExample {...args} />,
-  play: async ({ canvasElement, args }) => {
-    const canvas = within(canvasElement);
-    await userEvent.click(canvas.getByText('Yearly'));
-    await expect(canvas.getByRole('radio', { name: 'Yearly' })).toBeChecked();
-    await expect(args.onValueChange).toHaveBeenCalledTimes(1);
-    await userEvent.type(
-      canvas.getByRole('textbox', { name: 'Purchase order' }),
-      'PO-42',
-    );
-    await expect(args.onValueChange).toHaveBeenCalledTimes(1);
-    await userEvent.click(canvas.getByRole('radio', { name: 'Monthly' }));
-    await userEvent.keyboard('{ArrowDown}');
-    await expect(canvas.getByRole('radio', { name: 'Yearly' })).toBeChecked();
-  },
+export const CardsDisabledGroup: Story = {
+  ...DisabledGroup,
+  args: { ...DisabledGroup.args, variant: 'card' },
+};
+
+export const CardsReadOnlyGroup: Story = {
+  ...ReadOnlyGroup,
+  args: { ...ReadOnlyGroup.args, variant: 'card' },
+};
+
+export const CardsForm: Story = {
+  ...Form,
+  render: () => <FormExample variant="card" />,
+};
+
+export const CardsRightToLeft: Story = {
+  ...RightToLeft,
+  args: { ...RightToLeft.args, variant: 'card' },
 };

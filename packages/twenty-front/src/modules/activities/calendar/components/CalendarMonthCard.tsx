@@ -12,7 +12,7 @@ export const CalendarMonthCard = ({ dayTimes }: CalendarMonthCardProps) => {
   const { calendarEventsByDayTime } = useContext(CalendarContext);
 
   return (
-    <Card fullWidth>
+    <Card.Root fullWidth>
       {dayTimes.map((dayTime, index) => {
         const dayCalendarEvents = calendarEventsByDayTime[dayTime] || [];
 
@@ -24,6 +24,6 @@ export const CalendarMonthCard = ({ dayTimes }: CalendarMonthCardProps) => {
           />
         );
       })}
-    </Card>
+    </Card.Root>
   );
 };

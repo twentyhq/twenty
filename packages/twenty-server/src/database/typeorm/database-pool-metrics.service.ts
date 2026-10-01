@@ -6,14 +6,13 @@ import { type DataSource } from 'typeorm';
 import { type PostgresDriver } from 'typeorm/driver/postgres/PostgresDriver';
 import { isDefined } from 'twenty-shared/utils';
 
+import { POD_NAME } from 'src/engine/core-modules/metrics/constants/pod-name.constant';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 
 export enum DatabasePoolName {
   Core = 'core',
   WorkspacePrimary = 'workspace_primary',
   WorkspaceReplica = 'workspace_replica',
-  WorkspaceV2Primary = 'workspace_v2_primary',
-  WorkspaceV2Replica = 'workspace_v2_replica',
 }
 
 type PoolConnectCallback = (
@@ -92,6 +91,7 @@ export class DatabasePoolMetricsService {
               pool: poolName,
             },
           })),
+        perPod: true,
       });
     }
   }
@@ -116,12 +116,15 @@ export class DatabasePoolMetricsService {
 
     const recordAcquisition = (startedAt: number, error?: unknown) => {
       if (isDefined(error)) {
-        this.acquisitionFailureCounter.add(1, { pool: poolName });
+        this.acquisitionFailureCounter.add(1, {
+          pod: POD_NAME,
+          pool: poolName,
+        });
       }
 
       this.acquisitionDurationHistogram.record(
         (performance.now() - startedAt) / 1000,
-        { pool: poolName },
+        { pod: POD_NAME, pool: poolName },
       );
     };
 
@@ -181,6 +184,7 @@ export class DatabasePoolMetricsService {
         return await obtainMasterConnection();
       } catch (error) {
         this.acquisitionFailureCounter.add(1, {
+          pod: POD_NAME,
           pool: poolName,
         });
 
@@ -189,6 +193,7 @@ export class DatabasePoolMetricsService {
         this.acquisitionDurationHistogram.record(
           (performance.now() - start) / 1000,
           {
+            pod: POD_NAME,
             pool: poolName,
           },
         );

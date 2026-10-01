@@ -7,18 +7,15 @@ import { useAutosaveApplicationVariable } from 'src/front-components/hooks/use-a
 import { requestCalendarBotSchedulingSync } from 'src/front-components/utils/request-calendar-bot-scheduling-sync.util';
 
 type SchedulingSectionProps = {
-  frontComponentId: string;
   isEnabled: boolean;
   onEnabledChange: (isEnabled: boolean) => void;
 };
 
 export const SchedulingSection = ({
-  frontComponentId,
   isEnabled,
   onEnabledChange,
 }: SchedulingSectionProps) => {
   const { saveImmediately } = useAutosaveApplicationVariable({
-    frontComponentId,
     variableKey: CALL_RECORDER_CALENDAR_BOT_SCHEDULING_ROW.variableKey,
     onSaveSuccess: () => requestCalendarBotSchedulingSync(),
     onSaveError: (value) => onEnabledChange(value !== 'true'),

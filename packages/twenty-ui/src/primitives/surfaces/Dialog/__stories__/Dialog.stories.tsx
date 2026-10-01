@@ -14,7 +14,7 @@ const meta: Meta<typeof DialogExample> = {
   argTypes: {
     size: {
       control: 'select',
-      options: ['sm', 'md', 'lg', 'xl', 'fullscreen'],
+      options: ['sm', 'compact', 'md', 'lg', 'xl', 'fullscreen'],
     },
   },
 };
@@ -47,8 +47,12 @@ export const Default: Story = {
 };
 
 export const Documentation: Story = {
-  ...Default,
+  decorators: Default.decorators,
   args: { defaultOpen: false },
+};
+
+export const DocumentationInteractions: Story = {
+  ...Documentation,
   play: async ({ canvasElement }) => {
     const trigger = within(canvasElement).getByRole('button', {
       name: 'Edit account',
@@ -71,6 +75,10 @@ export const Documentation: Story = {
 export const Small: Story = {
   ...Default,
   args: { defaultOpen: true, size: 'sm' },
+};
+export const Compact: Story = {
+  ...Default,
+  args: { defaultOpen: true, size: 'compact' },
 };
 export const Large: Story = {
   ...Default,

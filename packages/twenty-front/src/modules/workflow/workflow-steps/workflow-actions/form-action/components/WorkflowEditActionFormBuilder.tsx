@@ -1,12 +1,12 @@
-import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
 import { FormFieldInputInnerContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputInnerContainer';
 import { FormFieldInputRowContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputRowContainer';
 import { FormFieldPlaceholder } from '@/object-record/record-field/ui/form-types/components/FormFieldPlaceholder';
-import { InputLabel, LightIconButton } from 'twenty-ui/primitives/input';
+import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
+import { InputLabel } from '@/ui/input/components/internal/InputLabel/InputLabel';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
-import { DragDropItemSortableHandle } from '@/ui/utilities/drag-and-drop/components/DragDropItemSortableHandle';
 import { type DraggableListDropResult } from '@/ui/layout/draggable-list/types/DraggableListDropResult';
+import { DragDropItemSortableHandle } from '@/ui/utilities/drag-and-drop/components/DragDropItemSortableHandle';
 import {
   type WorkflowFormAction,
   type WorkflowTriggerType,
@@ -19,10 +19,10 @@ import { getDefaultFormFieldSettings } from '@/workflow/workflow-steps/workflow-
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { Callout } from 'twenty-ui/primitives/feedback';
+import { Callout, LightIconButton } from 'twenty-ui/components';
 import {
   IconAlertTriangle,
   IconChevronDown,
@@ -30,7 +30,7 @@ import {
   IconPlus,
   IconTrash,
 } from 'twenty-ui/icon';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { useDebouncedCallback } from 'use-debounce';
 import { v4 } from 'uuid';
 
@@ -154,7 +154,7 @@ export const WorkflowEditActionFormBuilder = ({
   actionOptions,
 }: WorkflowEditActionFormBuilderProps) => {
   const { t } = useLingui();
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
 
   const [formData, setFormData] = useState<FormData>(action.settings.input);
 
@@ -247,6 +247,7 @@ export const WorkflowEditActionFormBuilder = ({
               title={t`This form will appear in workflow runs.`}
               description={t`Because this workflow is not using a manual trigger, the form will not open on top of the interface. To fill it, open the corresponding workflow run and complete the form there.`}
               isClosable
+              closeLabel={t`Close`}
               onClose={() => setIsCalloutVisible(false)}
               action={{
                 label: t`Learn more`,
@@ -299,10 +300,9 @@ export const WorkflowEditActionFormBuilder = ({
                         {showButtons && (
                           <StyledGripButtonContainer>
                             <DragDropItemSortableHandle>
-                              <LightIconButton
-                                Icon={IconGripVertical}
-                                aria-label={t`Reorder field`}
-                              />
+                              <LightIconButton aria-label={t`Reorder field`}>
+                                <IconGripVertical />
+                              </LightIconButton>
                             </DragDropItemSortableHandle>
                           </StyledGripButtonContainer>
                         )}
@@ -348,7 +348,6 @@ export const WorkflowEditActionFormBuilder = ({
                         {showButtons && (
                           <StyledTrashButtonContainer>
                             <LightIconButton
-                              Icon={IconTrash}
                               aria-label={t`Delete field`}
                               onClick={() => {
                                 const updatedFormData = formData.filter(
@@ -366,7 +365,9 @@ export const WorkflowEditActionFormBuilder = ({
                                   },
                                 });
                               }}
-                            />
+                            >
+                              <IconTrash />
+                            </LightIconButton>
                           </StyledTrashButtonContainer>
                         )}
 

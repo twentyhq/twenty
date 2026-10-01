@@ -1,39 +1,209 @@
-import { DIALOG_PROP_DESCRIPTIONS } from './dialogPropDescriptions';
+import { METRIC_ROW_PROP_DESCRIPTIONS } from './metricRowPropDescriptions';
+import { PROGRESS_RING_PROP_DESCRIPTIONS } from './progressRingPropDescriptions';
+import { AVATAR_GROUP_PROP_DESCRIPTIONS } from './avatarGroupPropDescriptions';
+import { COMMAND_BLOCK_PROP_DESCRIPTIONS } from './commandBlockPropDescriptions';
+import { JSON_TREE_PROP_DESCRIPTIONS } from './jsonTreePropDescriptions';
+import { NOTIFICATION_COUNTER_PROP_DESCRIPTIONS } from './notificationCounterPropDescriptions';
+import { TINTED_ICON_TILE_PROP_DESCRIPTIONS } from './tintedIconTilePropDescriptions';
+import { CALLOUT_PROP_DESCRIPTIONS } from './calloutPropDescriptions';
+import { INLINE_BANNER_PROP_DESCRIPTIONS } from './inlineBannerPropDescriptions';
+import { TOAST_PROVIDER_PROP_DESCRIPTIONS } from './toastProviderPropDescriptions';
+import { TOASTER_PROP_DESCRIPTIONS } from './toasterPropDescriptions';
+import { RADIO_PROP_DESCRIPTIONS } from './radioPropDescriptions';
+import { SEARCH_INPUT_PROP_DESCRIPTIONS } from './searchInputPropDescriptions';
+import { ANIMATED_ICON_CROSSFADE_PROP_DESCRIPTIONS } from './animatedIconCrossfadePropDescriptions';
+import { MENU_ITEM_PROP_DESCRIPTIONS } from './menuItemPropDescriptions';
+import { MENU_ITEM_AVATAR_PROP_DESCRIPTIONS } from './menuItemAvatarPropDescriptions';
+import { MENU_ITEM_DRAGGABLE_PROP_DESCRIPTIONS } from './menuItemDraggablePropDescriptions';
+import { MENU_ITEM_SUGGESTION_PROP_DESCRIPTIONS } from './menuItemSuggestionPropDescriptions';
+import { MENU_PICKER_PROP_DESCRIPTIONS } from './menuPickerPropDescriptions';
+import { THEME_PROVIDER_PROP_DESCRIPTIONS } from './themeProviderPropDescriptions';
+import { ICON_PROP_DESCRIPTIONS } from './iconPropDescriptions';
+import { ICONS_PROVIDER_PROP_DESCRIPTIONS } from './iconsProviderPropDescriptions';
+import { ILLUSTRATION_ICON_WRAPPER_PROP_DESCRIPTIONS } from './illustrationIconWrapperPropDescriptions';
+import { THINKING_ORBIT_LOADER_ICON_PROP_DESCRIPTIONS } from './thinkingOrbitLoaderIconPropDescriptions';
+import { COMPONENT_STORYBOOK_LAYOUT_PROP_DESCRIPTIONS } from './componentStorybookLayoutPropDescriptions';
+import { COLLAPSIBLE_PROP_DESCRIPTIONS } from './collapsiblePropDescriptions';
 import { AVATAR_PROP_DESCRIPTIONS } from './avatarPropDescriptions';
+import { BANNER_PROP_DESCRIPTIONS } from './bannerPropDescriptions';
+import { BREADCRUMB_PROP_DESCRIPTIONS } from './breadcrumbPropDescriptions';
 import { BUTTON_GROUP_PROP_DESCRIPTIONS } from './buttonGroupPropDescriptions';
 import { BUTTON_PROP_DESCRIPTIONS } from './buttonPropDescriptions';
-import { ICON_BUTTON_PROP_DESCRIPTIONS } from './iconButtonPropDescriptions';
+import { CARD_CONTENT_PROP_DESCRIPTIONS } from './cardContentPropDescriptions';
+import { CARD_FOOTER_PROP_DESCRIPTIONS } from './cardFooterPropDescriptions';
+import { CARD_HEADER_PROP_DESCRIPTIONS } from './cardHeaderPropDescriptions';
+import { CARD_PROP_DESCRIPTIONS } from './cardPropDescriptions';
 import { CHIP_PROP_DESCRIPTIONS } from './chipPropDescriptions';
 import { CODE_EDITOR_HEADER_PROP_DESCRIPTIONS } from './codeEditorHeaderPropDescriptions';
 import { CODE_EDITOR_PROP_DESCRIPTIONS } from './codeEditorPropDescriptions';
+import { COLOR_SAMPLE_PROP_DESCRIPTIONS } from './colorSamplePropDescriptions';
+import { DIALOG_POPUP_PROP_DESCRIPTIONS } from './dialogPopupPropDescriptions';
 import { DIALOG_TITLE_PROP_DESCRIPTIONS } from './dialogTitlePropDescriptions';
+import { DROPDOWN_PART_PROP_DESCRIPTIONS } from './dropdownPartPropDescriptions';
 import { HEADING_PROP_DESCRIPTIONS } from './headingPropDescriptions';
+import { HORIZONTAL_SEPARATOR_PROP_DESCRIPTIONS } from './horizontalSeparatorPropDescriptions';
+import { ICON_BUTTON_PROP_DESCRIPTIONS } from './iconButtonPropDescriptions';
 import { LIGHT_BUTTON_PROP_DESCRIPTIONS } from './lightButtonPropDescriptions';
+import { LIGHT_ICON_BUTTON_PROP_DESCRIPTIONS } from './lightIconButtonPropDescriptions';
+import { LOADER_PROP_DESCRIPTIONS } from './loaderPropDescriptions';
+import { OVERFLOWING_TEXT_WITH_TOOLTIP_PROP_DESCRIPTIONS } from './overflowingTextWithTooltipPropDescriptions';
+import { PILL_PROP_DESCRIPTIONS } from './pillPropDescriptions';
+import { PROGRESS_BAR_PROP_DESCRIPTIONS } from './progressBarPropDescriptions';
+import { RESIZE_HANDLE_PROP_DESCRIPTIONS } from './resizeHandlePropDescriptions';
 import { SECTION_HEADER_PROP_DESCRIPTIONS } from './sectionHeaderPropDescriptions';
 import { SECTION_ROOT_PROP_DESCRIPTIONS } from './sectionRootPropDescriptions';
+import { SEGMENTED_CONTROL_PROP_DESCRIPTIONS } from './segmentedControlPropDescriptions';
+import { SETTINGS_ROW_PROP_DESCRIPTIONS } from './settingsRowPropDescriptions';
 import { STATUS_PROP_DESCRIPTIONS } from './statusPropDescriptions';
 import { TAG_PROP_DESCRIPTIONS } from './tagPropDescriptions';
+import { TEXT_DIRECTION_PROVIDER_PROP_DESCRIPTIONS } from './textDirectionProviderPropDescriptions';
 import { TOOLTIP_PART_PROP_DESCRIPTIONS } from './tooltipPartPropDescriptions';
 import { TOOLTIP_PROP_DESCRIPTIONS } from './tooltipPropDescriptions';
+import { VISIBILITY_HIDDEN_PROP_DESCRIPTIONS } from './visibilityHiddenPropDescriptions';
 
 export const DOCUMENTED_COMPONENTS = [
   {
+    name: 'ProgressRing',
+    source: 'primitives/feedback/ProgressRing/ProgressRing.tsx',
+    entryPoint: 'twenty-ui/primitives/feedback',
+    slug: 'feedback/progress-ring',
+    propDescriptions: PROGRESS_RING_PROP_DESCRIPTIONS,
+  },
+  {
+    name: 'MetricRow',
+    source: 'components/data-display/MetricRow/MetricRow.tsx',
+    entryPoint: 'twenty-ui/components',
+    slug: 'components/metric-row',
+    propDescriptions: METRIC_ROW_PROP_DESCRIPTIONS,
+  },
+  {
+    name: 'Shortcut',
+    source: 'primitives/typography/Shortcut/Shortcut.tsx',
+    entryPoint: 'twenty-ui/primitives/typography',
+    slug: 'typography/shortcut',
+    propDescriptions: {
+      shortcut:
+        'Flat key array for a simultaneous combination, or nested key arrays for an ordered sequence of combinations.',
+      platform:
+        'Optional mac or other platform override. Defaults to server-safe device detection.',
+      sequenceJoinLabel: 'Text between sequence steps. Defaults to then.',
+      combinationSeparator:
+        'Optional separator between simultaneous keys. Defaults to no separator on Apple devices and a space elsewhere.',
+      variant: 'Keycaps, inline text, or a separated button hint.',
+      visibility:
+        'Always visible by default. Desktop hints hide on mobile viewports.',
+    },
+  },
+  {
+    name: 'VisibilityHidden',
+    source: 'primitives/accessibility/components/VisibilityHidden.tsx',
+    entryPoint: 'twenty-ui/primitives/accessibility',
+    slug: 'accessibility/visibility-hidden',
+    propDescriptions: VISIBILITY_HIDDEN_PROP_DESCRIPTIONS,
+  },
+  {
+    name: 'ColorSample',
+    source: 'primitives/data-display/ColorSample/ColorSample.tsx',
+    entryPoint: 'twenty-ui/primitives/data-display',
+    slug: 'data-display/color-sample',
+    propDescriptions: COLOR_SAMPLE_PROP_DESCRIPTIONS,
+  },
+  {
+    name: 'Pill',
+    source: 'primitives/data-display/Pill/Pill.tsx',
+    entryPoint: 'twenty-ui/primitives/data-display',
+    slug: 'data-display/pill',
+    propDescriptions: PILL_PROP_DESCRIPTIONS,
+  },
+  {
+    name: 'Banner',
+    source: 'primitives/feedback/Banner/Banner.tsx',
+    entryPoint: 'twenty-ui/primitives/feedback',
+    slug: 'feedback/banner',
+    propDescriptions: BANNER_PROP_DESCRIPTIONS,
+  },
+  {
+    name: 'Loader',
+    source: 'primitives/feedback/Loader/Loader.tsx',
+    entryPoint: 'twenty-ui/primitives/feedback',
+    slug: 'feedback/loader',
+    propDescriptions: LOADER_PROP_DESCRIPTIONS,
+  },
+  {
+    name: 'ProgressBar',
+    source: 'primitives/feedback/ProgressBar/ProgressBar.tsx',
+    entryPoint: 'twenty-ui/primitives/feedback',
+    slug: 'feedback/progress-bar',
+    propDescriptions: PROGRESS_BAR_PROP_DESCRIPTIONS,
+  },
+  {
+    name: 'SegmentedControl',
+    source: 'primitives/input/SegmentedControl/SegmentedControl.tsx',
+    entryPoint: 'twenty-ui/primitives/input',
+    slug: 'input/segmented-control',
+    propDescriptions: SEGMENTED_CONTROL_PROP_DESCRIPTIONS,
+  },
+  {
+    name: 'Collapsible',
+    source: 'primitives/layout/Collapsible/Collapsible.tsx',
+    entryPoint: 'twenty-ui/primitives/layout',
+    slug: 'layout/collapsible',
+    propDescriptions: COLLAPSIBLE_PROP_DESCRIPTIONS,
+  },
+  {
+    name: 'HorizontalSeparator',
+    source: 'primitives/layout/HorizontalSeparator/HorizontalSeparator.tsx',
+    entryPoint: 'twenty-ui/primitives/layout',
+    slug: 'layout/horizontal-separator',
+    propDescriptions: HORIZONTAL_SEPARATOR_PROP_DESCRIPTIONS,
+  },
+  {
+    name: 'ResizeHandle',
+    source: 'primitives/layout/ResizeHandle/ResizeHandle.tsx',
+    entryPoint: 'twenty-ui/primitives/layout',
+    slug: 'layout/resize-handle',
+    propDescriptions: RESIZE_HANDLE_PROP_DESCRIPTIONS,
+    propDefaults: { defaultValue: '150', min: '50', max: '500', step: '10' },
+  },
+  {
+    name: 'TextDirectionProvider',
+    source: 'primitives/layout/TextDirectionProvider/TextDirectionProvider.tsx',
+    entryPoint: 'twenty-ui/primitives/layout',
+    slug: 'layout/text-direction-provider',
+    propDescriptions: TEXT_DIRECTION_PROVIDER_PROP_DESCRIPTIONS,
+  },
+  {
+    name: 'OverflowingTextWithTooltip',
+    source:
+      'primitives/typography/OverflowingTextWithTooltip/OverflowingTextWithTooltip.tsx',
+    entryPoint: 'twenty-ui/primitives/typography',
+    slug: 'typography/overflowing-text-with-tooltip',
+    propDescriptions: OVERFLOWING_TEXT_WITH_TOOLTIP_PROP_DESCRIPTIONS,
+  },
+  {
+    name: 'LightIconButton',
+    source: 'components/input/LightIconButton/LightIconButton.tsx',
+    entryPoint: 'twenty-ui/components',
+    slug: 'input/light-icon-button',
+    propDescriptions: LIGHT_ICON_BUTTON_PROP_DESCRIPTIONS,
+  },
+  {
     name: 'IconButton',
-    source: 'components/IconButton/IconButton.tsx',
+    source: 'components/input/IconButton/IconButton.tsx',
     entryPoint: 'twenty-ui/components',
     slug: 'input/icon-button',
     propDescriptions: ICON_BUTTON_PROP_DESCRIPTIONS,
   },
   {
     name: 'MainButton',
-    source: 'components/MainButton/MainButton.tsx',
+    source: 'components/input/MainButton/MainButton.tsx',
     entryPoint: 'twenty-ui/components',
     slug: 'input/main-button',
     propDescriptions: BUTTON_PROP_DESCRIPTIONS,
   },
   {
     name: 'LightButton',
-    source: 'components/LightButton/LightButton.tsx',
+    source: 'components/input/LightButton/LightButton.tsx',
     entryPoint: 'twenty-ui/components',
     slug: 'input/light-button',
     propDescriptions: LIGHT_BUTTON_PROP_DESCRIPTIONS,
@@ -57,6 +227,11 @@ export const DOCUMENTED_COMPONENTS = [
     source: 'primitives/input/Field/Field.tsx',
     entryPoint: 'twenty-ui/primitives/input',
     slug: 'input/field',
+    partPropDescriptions: {
+      Control: {
+        defaultValue: 'The default value of the input. Use when uncontrolled.',
+      },
+    },
   },
   {
     name: 'Input',
@@ -87,6 +262,7 @@ export const DOCUMENTED_COMPONENTS = [
     source: 'primitives/input/Radio/Radio.tsx',
     entryPoint: 'twenty-ui/primitives/input',
     slug: 'input/radio',
+    propDescriptions: RADIO_PROP_DESCRIPTIONS,
   },
   {
     name: 'RadioGroup',
@@ -113,24 +289,58 @@ export const DOCUMENTED_COMPONENTS = [
     slug: 'input/switch',
   },
   {
+    name: 'Breadcrumb',
+    source: 'primitives/navigation/Breadcrumb/Breadcrumb.tsx',
+    entryPoint: 'twenty-ui/primitives/navigation',
+    slug: 'navigation/breadcrumb',
+    propDescriptions: BREADCRUMB_PROP_DESCRIPTIONS,
+  },
+  {
     name: 'ListItem',
     source: 'primitives/navigation/ListItem/ListItem.tsx',
     entryPoint: 'twenty-ui/primitives/navigation',
     slug: 'navigation/list-item',
+    propDescriptions: {
+      shortcutJoinLabel:
+        'Text between sequential shortcut steps. Defaults to `then`; pass an empty string to omit it.',
+      actionsVisibility:
+        'When trailing actions are visible: on hover and focus, or always.',
+    },
   },
   {
     name: 'Tabs',
     source: 'primitives/navigation/Tabs/Tabs.tsx',
     entryPoint: 'twenty-ui/primitives/navigation',
     slug: 'navigation/tabs',
+    partPropDescriptions: {
+      Tab: {
+        endIcon: 'Decorative content after the label and before the badge.',
+        highlighted: 'Emphasizes the tab content without changing selection.',
+      },
+    },
+  },
+  {
+    name: 'Card',
+    source: 'primitives/surfaces/Card/Card.tsx',
+    entryPoint: 'twenty-ui/primitives/surfaces',
+    slug: 'surfaces/card',
+    partPropDescriptions: {
+      Root: CARD_PROP_DESCRIPTIONS,
+      Header: CARD_HEADER_PROP_DESCRIPTIONS,
+      Content: CARD_CONTENT_PROP_DESCRIPTIONS,
+      Footer: CARD_FOOTER_PROP_DESCRIPTIONS,
+    },
+    partPropDefaults: { Footer: { divider: 'true' } },
   },
   {
     name: 'Dialog',
     source: 'primitives/surfaces/Dialog/Dialog.tsx',
     entryPoint: 'twenty-ui/primitives/surfaces',
     slug: 'surfaces/dialog',
-    propDescriptions: DIALOG_PROP_DESCRIPTIONS,
-    partPropDescriptions: { Title: DIALOG_TITLE_PROP_DESCRIPTIONS },
+    partPropDescriptions: {
+      Popup: DIALOG_POPUP_PROP_DESCRIPTIONS,
+      Title: DIALOG_TITLE_PROP_DESCRIPTIONS,
+    },
   },
   {
     name: 'AlertDialog',
@@ -143,6 +353,25 @@ export const DOCUMENTED_COMPONENTS = [
     source: 'primitives/surfaces/Menu/Menu.tsx',
     entryPoint: 'twenty-ui/primitives/surfaces',
     slug: 'surfaces/menu',
+    partPropDescriptions: {
+      Item: {
+        shortcutJoinLabel:
+          'Text between sequential shortcut steps. Defaults to `then`.',
+      },
+      CheckboxItem: {
+        shortcutJoinLabel:
+          'Text between sequential shortcut steps. Defaults to `then`.',
+      },
+      RadioItem: {
+        shortcutJoinLabel:
+          'Text between sequential shortcut steps. Defaults to `then`.',
+      },
+      SubmenuTrigger: {
+        shortcutJoinLabel:
+          'Text between sequential shortcut steps. Defaults to `then`.',
+        onClick: 'The click handler for the submenu trigger.',
+      },
+    },
   },
   {
     name: 'Popover',
@@ -162,8 +391,8 @@ export const DOCUMENTED_COMPONENTS = [
   },
   {
     name: 'Toast',
-    source: 'primitives/feedback/Toast/Toast.tsx',
-    entryPoint: 'twenty-ui/primitives/feedback',
+    source: 'components/feedback/Toast/Toast.tsx',
+    entryPoint: 'twenty-ui/components',
     slug: 'feedback/toast',
   },
   {
@@ -208,8 +437,55 @@ export const DOCUMENTED_COMPONENTS = [
     propDescriptions: HEADING_PROP_DESCRIPTIONS,
   },
   {
+    name: 'SettingsRow',
+    source: 'components/input/SettingsRow/SettingsRow.tsx',
+    entryPoint: 'twenty-ui/components',
+    slug: 'components/settings-row',
+    propDescriptions: SETTINGS_ROW_PROP_DESCRIPTIONS,
+  },
+  {
+    name: 'Dropdown',
+    source: 'components/navigation/Dropdown/Dropdown.tsx',
+    entryPoint: 'twenty-ui/components',
+    slug: 'components/dropdown',
+    parts: [
+      'Root',
+      'Trigger',
+      'Content',
+      'ActionItem',
+      'OptionItem',
+      'Search',
+      'Header',
+      'Title',
+      'Close',
+      'Page',
+      'Back',
+      'Submenu',
+      'SubmenuTrigger',
+      'Section',
+      'Separator',
+      'Loading',
+      'Empty',
+    ],
+    partPropDescriptions: DROPDOWN_PART_PROP_DESCRIPTIONS,
+    partPropDefaults: {
+      ActionItem: {
+        nativeButton: 'true when render is omitted; false otherwise',
+      },
+      OptionItem: {
+        nativeButton: 'true when render is omitted; false otherwise',
+      },
+      Back: {
+        nativeButton: 'true when render is omitted; false otherwise',
+      },
+      SubmenuTrigger: {
+        nativeButton: 'true when render is omitted; false otherwise',
+      },
+    },
+  },
+  {
     name: 'Section',
-    source: 'components/Section/Section.tsx',
+    source: 'components/layout/Section/Section.tsx',
     entryPoint: 'twenty-ui/components',
     slug: 'components/section',
     partPropDescriptions: {
@@ -230,5 +506,173 @@ export const DOCUMENTED_COMPONENTS = [
     entryPoint: 'twenty-ui/components/code-editor',
     slug: 'components/code-editor-header',
     propDescriptions: CODE_EDITOR_HEADER_PROP_DESCRIPTIONS,
+  },
+  {
+    name: 'TabButton',
+    source: 'components/navigation/TabButton/TabButton.tsx',
+    entryPoint: 'twenty-ui/components',
+    slug: 'components/tab-button',
+    propDescriptions: {
+      ...BUTTON_PROP_DESCRIPTIONS,
+      active:
+        'Highlights the current destination or an action associated with the active tab. Does not change the control role.',
+      badge: 'Content following the label and trailing icon, such as a count.',
+      size: 'Padding of the tab content: sm or md.',
+    },
+  },
+  {
+    name: 'AvatarGroup',
+    source: 'components/data-display/AvatarGroup/AvatarGroup.tsx',
+    entryPoint: 'twenty-ui/components',
+    slug: 'components/avatar-group',
+    propDescriptions: AVATAR_GROUP_PROP_DESCRIPTIONS,
+  },
+  {
+    name: 'CommandBlock',
+    source: 'components/data-display/CommandBlock/CommandBlock.tsx',
+    entryPoint: 'twenty-ui/components',
+    slug: 'components/command-block',
+    propDescriptions: COMMAND_BLOCK_PROP_DESCRIPTIONS,
+  },
+  {
+    name: 'JsonTree',
+    source: 'components/data-display/JsonTree/JsonTree.tsx',
+    entryPoint: 'twenty-ui/components',
+    slug: 'components/json-tree',
+    propDescriptions: JSON_TREE_PROP_DESCRIPTIONS,
+  },
+  {
+    name: 'NotificationCounter',
+    source:
+      'components/data-display/NotificationCounter/NotificationCounter.tsx',
+    entryPoint: 'twenty-ui/components',
+    slug: 'components/notification-counter',
+    propDescriptions: NOTIFICATION_COUNTER_PROP_DESCRIPTIONS,
+  },
+  {
+    name: 'TintedIconTile',
+    source: 'components/data-display/TintedIconTile/TintedIconTile.tsx',
+    entryPoint: 'twenty-ui/components',
+    slug: 'components/tinted-icon-tile',
+    propDescriptions: TINTED_ICON_TILE_PROP_DESCRIPTIONS,
+  },
+  {
+    name: 'Callout',
+    source: 'components/feedback/Callout/Callout.tsx',
+    entryPoint: 'twenty-ui/components',
+    slug: 'components/callout',
+    propDescriptions: CALLOUT_PROP_DESCRIPTIONS,
+  },
+  {
+    name: 'InlineBanner',
+    source: 'components/feedback/InlineBanner/InlineBanner.tsx',
+    entryPoint: 'twenty-ui/components',
+    slug: 'components/inline-banner',
+    propDescriptions: INLINE_BANNER_PROP_DESCRIPTIONS,
+  },
+  {
+    name: 'ToastProvider',
+    source: 'components/feedback/Toast/ToastProvider.tsx',
+    entryPoint: 'twenty-ui/components',
+    slug: 'components/toast-provider',
+    propDescriptions: TOAST_PROVIDER_PROP_DESCRIPTIONS,
+  },
+  {
+    name: 'Toaster',
+    source: 'components/feedback/Toaster/Toaster.tsx',
+    entryPoint: 'twenty-ui/components',
+    slug: 'components/toaster',
+    propDescriptions: TOASTER_PROP_DESCRIPTIONS,
+  },
+  {
+    name: 'SearchInput',
+    source: 'components/input/SearchInput/SearchInput.tsx',
+    entryPoint: 'twenty-ui/components',
+    slug: 'components/search-input',
+    propDescriptions: SEARCH_INPUT_PROP_DESCRIPTIONS,
+  },
+  {
+    name: 'AnimatedIconCrossfade',
+    source: 'components/layout/AnimatedIconCrossfade/AnimatedIconCrossfade.tsx',
+    entryPoint: 'twenty-ui/components',
+    slug: 'components/animated-icon-crossfade',
+    propDescriptions: ANIMATED_ICON_CROSSFADE_PROP_DESCRIPTIONS,
+  },
+  {
+    name: 'MenuItem',
+    source: 'components/navigation/MenuItem/MenuItem.tsx',
+    entryPoint: 'twenty-ui/components',
+    slug: 'components/menu-item',
+    propDescriptions: MENU_ITEM_PROP_DESCRIPTIONS,
+  },
+  {
+    name: 'MenuItemAvatar',
+    source: 'components/navigation/MenuItemAvatar/MenuItemAvatar.tsx',
+    entryPoint: 'twenty-ui/components',
+    slug: 'components/menu-item-avatar',
+    propDescriptions: MENU_ITEM_AVATAR_PROP_DESCRIPTIONS,
+  },
+  {
+    name: 'MenuItemDraggable',
+    source: 'components/navigation/MenuItemDraggable/MenuItemDraggable.tsx',
+    entryPoint: 'twenty-ui/components',
+    slug: 'components/menu-item-draggable',
+    propDescriptions: MENU_ITEM_DRAGGABLE_PROP_DESCRIPTIONS,
+  },
+  {
+    name: 'MenuItemSuggestion',
+    source: 'components/navigation/MenuItemSuggestion/MenuItemSuggestion.tsx',
+    entryPoint: 'twenty-ui/components',
+    slug: 'components/menu-item-suggestion',
+    propDescriptions: MENU_ITEM_SUGGESTION_PROP_DESCRIPTIONS,
+  },
+  {
+    name: 'MenuPicker',
+    source: 'components/navigation/MenuPicker/MenuPicker.tsx',
+    entryPoint: 'twenty-ui/components',
+    slug: 'components/menu-picker',
+    propDescriptions: MENU_PICKER_PROP_DESCRIPTIONS,
+  },
+  {
+    name: 'ThemeProvider',
+    source: 'theme/ThemeProvider.tsx',
+    entryPoint: 'twenty-ui/theme',
+    slug: 'theme/theme-provider',
+    propDescriptions: THEME_PROVIDER_PROP_DESCRIPTIONS,
+  },
+  {
+    name: 'Icon',
+    source: 'icon/components/Icon.tsx',
+    entryPoint: 'twenty-ui/icon',
+    slug: 'icon/icon',
+    propDescriptions: ICON_PROP_DESCRIPTIONS,
+  },
+  {
+    name: 'IconsProvider',
+    source: 'icon/providers/IconsProvider.tsx',
+    entryPoint: 'twenty-ui/icon',
+    slug: 'icon/icons-provider',
+    propDescriptions: ICONS_PROVIDER_PROP_DESCRIPTIONS,
+  },
+  {
+    name: 'IllustrationIconWrapper',
+    source: 'icon/components/IllustrationIconWrapper.tsx',
+    entryPoint: 'twenty-ui/icon',
+    slug: 'icon/illustration-icon-wrapper',
+    propDescriptions: ILLUSTRATION_ICON_WRAPPER_PROP_DESCRIPTIONS,
+  },
+  {
+    name: 'ThinkingOrbitLoaderIcon',
+    source: 'icon/components/ThinkingOrbitLoaderIcon.tsx',
+    entryPoint: 'twenty-ui/icon',
+    slug: 'icon/thinking-orbit-loader-icon',
+    propDescriptions: THINKING_ORBIT_LOADER_ICON_PROP_DESCRIPTIONS,
+  },
+  {
+    name: 'ComponentStorybookLayout',
+    source: 'testing/ComponentStorybookLayout.tsx',
+    entryPoint: 'twenty-ui/testing',
+    slug: 'testing/component-storybook-layout',
+    propDescriptions: COMPONENT_STORYBOOK_LAYOUT_PROP_DESCRIPTIONS,
   },
 ] as const;

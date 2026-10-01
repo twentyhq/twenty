@@ -1,42 +1,27 @@
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { styled } from '@linaria/react';
 import { plural, t } from '@lingui/core/macro';
-import { Fragment, useMemo, useRef, useState, type MouseEvent } from 'react';
-
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
-import { DropdownMenuSectionLabel } from '@/ui/layout/dropdown/components/DropdownMenuSectionLabel';
-import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
+import { useRef, useState } from 'react';
 
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useObjectMetadataSelectHelpers } from '@/object-metadata/hooks/useObjectMetadataSelectHelpers';
 import { isAdvancedRelationTargetObjectMetadata } from '@/object-metadata/utils/isAdvancedRelationTargetObjectMetadata';
 import { isObjectMetadataEligibleAsRelationTarget } from '@/object-metadata/utils/isObjectMetadataEligibleAsRelationTarget';
 import { MultiSelectControl } from '@/ui/input/components/MultiSelectControl';
+import { getSelectDropdownInitialFocus } from '@/ui/input/components/internal/select/utils/getSelectDropdownInitialFocus';
+import { isFocusMovingWithinSelect } from '@/ui/input/components/internal/select/utils/isFocusMovingWithinSelect';
+import { type SelectCallToActionButton } from '@/ui/input/types/SelectCallToActionButton';
+import { type SelectSizeVariant } from '@/ui/input/types/SelectSizeVariant';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { type DropdownOffset } from '@/ui/layout/dropdown/types/DropdownOffset';
-import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
-import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
-import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
-import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
-import { IconBox, type IconComponent } from 'twenty-ui/icon';
-import { MenuItem, MenuItemMultiSelect } from 'twenty-ui/primitives/navigation';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { Dropdown } from 'twenty-ui/components';
+import { IconBox } from 'twenty-ui/icon';
+import { themeCssVariables } from 'twenty-ui/theme';
 
-export type SelectSizeVariant = 'small' | 'default';
-
-type CallToActionButton = {
-  text: string;
-  onClick: (event: MouseEvent<HTMLDivElement>) => void;
-  Icon?: IconComponent;
-};
-
-export type SettingsMorphRelationMultiSelectProps = {
+type SettingsMorphRelationMultiSelectProps = {
   className?: string;
   disabled?: boolean;
   selectSizeVariant?: SelectSizeVariant;
@@ -50,9 +35,7 @@ export type SettingsMorphRelationMultiSelectProps = {
   onBlur?: () => void;
   selectedObjectMetadataIds: string[];
   withSearchInput?: boolean;
-  needIconCheck?: boolean;
-  callToActionButton?: CallToActionButton;
-  dropdownOffset?: DropdownOffset;
+  callToActionButton?: SelectCallToActionButton;
   hasRightElement?: boolean;
   error?: string;
 };
@@ -97,11 +80,10 @@ export const SettingsMorphRelationMultiSelect = ({
   selectedObjectMetadataIds,
   withSearchInput,
   callToActionButton,
-  dropdownOffset,
   hasRightElement,
   error,
 }: SettingsMorphRelationMultiSelectProps) => {
-  const selectContainerRef = useRef<HTMLDivElement>(null);
+  const dropdownContentRef = useRef<HTMLDivElement>(null);
 
   const [searchInputValue, setSearchInputValue] = useState('');
 
@@ -128,20 +110,17 @@ export const SettingsMorphRelationMultiSelect = ({
     localSelectedObjectMetadataIds.includes(option.objectMetadataId),
   );
 
-  const filteredOptions = useMemo(() => {
-    const matchingOptions = searchInputValue
-      ? options.filter(({ label }) =>
-          label.toLowerCase().includes(searchInputValue.toLowerCase()),
-        )
-      : options;
+  const matchingOptions = isNonEmptyString(searchInputValue)
+    ? options.filter(({ label: optionLabel }) =>
+        optionLabel.toLowerCase().includes(searchInputValue.toLowerCase()),
+      )
+    : options;
 
-    return [
-      ...matchingOptions.filter(({ isAdvanced }) => !isAdvanced),
-      ...matchingOptions.filter(({ isAdvanced }) => isAdvanced),
-    ];
-  }, [options, searchInputValue]);
+  const regularOptions = matchingOptions.filter(
+    ({ isAdvanced }) => !isAdvanced,
+  );
 
-  const advancedSectionStartIndex = filteredOptions.findIndex(
+  const advancedOptions = matchingOptions.filter(
     ({ isAdvanced }) => isAdvanced,
   );
 
@@ -149,178 +128,146 @@ export const SettingsMorphRelationMultiSelect = ({
     disabledFromProps ||
     (options.length <= 1 && !isDefined(callToActionButton));
 
-  const { closeDropdown } = useCloseDropdown();
+  const handleOptionToggle = (objectMetadataId: string) => {
+    const newSelectedObjectMetadataIds =
+      localSelectedObjectMetadataIds.includes(objectMetadataId)
+        ? localSelectedObjectMetadataIds.filter(
+            (selectedObjectMetadataId) =>
+              selectedObjectMetadataId !== objectMetadataId,
+          )
+        : [...localSelectedObjectMetadataIds, objectMetadataId];
 
-  const dropDownMenuWidth =
-    dropdownWidthAuto && selectContainerRef.current?.clientWidth
-      ? selectContainerRef.current?.clientWidth
-      : dropdownWidth;
+    setLocalSelectedObjectMetadataIds(newSelectedObjectMetadataIds);
+    onChange?.(newSelectedObjectMetadataIds);
+    onBlur?.();
+  };
 
-  const selectableItemIdArray = filteredOptions.map(
-    (option) => option.objectMetadataId,
-  );
-
-  const selectedItemId = useAtomComponentStateValue(
-    selectedItemIdComponentState,
-    dropdownId,
-  );
-
-  const { setSelectedItemId } = useSelectableList(dropdownId);
-
-  const handleDropdownOpen = () => {
-    if (selectedOptions.length > 0 && !searchInputValue) {
-      setSelectedItemId(selectedOptions[0].objectMetadataId);
+  const handleOpenChange = (open: boolean) => {
+    if (!open) {
+      setSearchInputValue('');
     }
   };
 
-  const addOrRemoveFromArray = (array: string[], item: string) => {
-    let newArray = new Set(array);
-    if (newArray.has(item)) {
-      newArray.delete(item);
-    } else {
-      newArray.add(item);
-    }
-    return Array.from(newArray);
-  };
+  const renderOption = (option: (typeof options)[number]) => (
+    <Dropdown.OptionItem
+      key={option.objectMetadataId}
+      selected={selectedObjectMetadataIds.includes(option.objectMetadataId)}
+      onSelect={() => handleOptionToggle(option.objectMetadataId)}
+      startIcon={
+        <SelectOptionIcon
+          Icon={option.Icon ?? undefined}
+          color={option.iconThemeColor}
+        />
+      }
+    >
+      {option.label}
+    </Dropdown.OptionItem>
+  );
+
+  const selectControl = (
+    <MultiSelectControl
+      selectedOptions={selectedOptions}
+      fixedIcon={selectedOptions.length < 2 ? undefined : IconBox}
+      fixedText={
+        selectedOptions.length < 2
+          ? undefined
+          : plural(selectedOptions.length, {
+              one: `# Object`,
+              other: `# Objects`,
+            })
+      }
+      isDisabled={isDisabled}
+      selectSizeVariant={selectSizeVariant}
+      hasRightElement={hasRightElement}
+    />
+  );
 
   return (
     <StyledContainer
       className={className}
       fullWidth={fullWidth}
-      tabIndex={0}
-      onBlur={onBlur}
-      ref={selectContainerRef}
+      onBlur={(event) => {
+        if (
+          isFocusMovingWithinSelect({
+            event,
+            dropdownContent: dropdownContentRef.current,
+          })
+        ) {
+          return;
+        }
+
+        onBlur?.();
+      }}
     >
-      {!!label && <StyledLabel>{label}</StyledLabel>}
+      {isNonEmptyString(label) && <StyledLabel>{label}</StyledLabel>}
       {isDisabled ? (
-        <MultiSelectControl
-          selectedOptions={selectedOptions}
-          fixedIcon={selectedOptions.length < 2 ? undefined : IconBox}
-          fixedText={
-            selectedOptions.length < 2
-              ? undefined
-              : plural(selectedOptions.length, {
-                  one: `# Object`,
-                  other: `# Objects`,
-                })
-          }
-          isDisabled={isDisabled}
-          selectSizeVariant={selectSizeVariant}
-          hasRightElement={hasRightElement}
-        />
+        selectControl
       ) : (
-        <Dropdown
+        <DropdownRoot
           dropdownId={dropdownId}
-          dropdownPlacement="bottom-start"
-          dropdownOffset={dropdownOffset}
-          onOpen={handleDropdownOpen}
-          clickableComponent={
-            <MultiSelectControl
-              selectedOptions={selectedOptions}
-              fixedIcon={selectedOptions.length < 2 ? undefined : IconBox}
-              fixedText={
-                selectedOptions.length < 2
-                  ? undefined
-                  : plural(selectedOptions.length, {
-                      one: `# Object`,
-                      other: `# Objects`,
-                    })
-              }
-              isDisabled={isDisabled}
-              selectSizeVariant={selectSizeVariant}
-              hasRightElement={hasRightElement}
-            />
-          }
-          dropdownComponents={
-            <DropdownContent widthInPixels={dropDownMenuWidth}>
-              {!!withSearchInput && (
-                <DropdownMenuSearchInput
-                  autoFocus
-                  value={searchInputValue}
-                  onChange={(event) => setSearchInputValue(event.target.value)}
-                />
-              )}
-              {!!withSearchInput && !!filteredOptions.length && (
-                <DropdownMenuSeparator />
-              )}
-              {!!filteredOptions.length && (
-                <DropdownMenuItemsContainer hasMaxHeight>
-                  <SelectableList
-                    selectableListInstanceId={dropdownId}
-                    focusId={dropdownId}
-                    selectableItemIdArray={selectableItemIdArray}
-                  >
-                    {filteredOptions.map((option, optionIndex) => (
-                      <Fragment key={option.objectMetadataId}>
-                        {optionIndex === advancedSectionStartIndex && (
-                          <>
-                            {optionIndex > 0 && <DropdownMenuSeparator />}
-                            <DropdownMenuSectionLabel label={t`Advanced`} />
-                          </>
-                        )}
-                        <SelectableListItem
-                          itemId={option.objectMetadataId}
-                          onEnter={() => {
-                            const newSelectedObjectMetadataIds =
-                              addOrRemoveFromArray(
-                                localSelectedObjectMetadataIds,
-                                option.objectMetadataId,
-                              );
-                            setLocalSelectedObjectMetadataIds(
-                              newSelectedObjectMetadataIds,
-                            );
-                            onChange?.(newSelectedObjectMetadataIds);
-                            onBlur?.();
-                            closeDropdown(dropdownId);
-                          }}
-                        >
-                          <MenuItemMultiSelect
-                            className=""
-                            LeftIcon={option.Icon ?? undefined}
-                            iconThemeColor={option.iconThemeColor}
-                            text={option.label}
-                            selected={selectedObjectMetadataIds.some(
-                              (selectedObjectMetadataId) =>
-                                selectedObjectMetadataId ===
-                                option.objectMetadataId,
-                            )}
-                            isKeySelected={
-                              selectedItemId === option.objectMetadataId
-                            }
-                            onSelectChange={() => {
-                              const newSelectedObjectMetadataIds =
-                                addOrRemoveFromArray(
-                                  localSelectedObjectMetadataIds,
-                                  option.objectMetadataId,
-                                );
-                              setLocalSelectedObjectMetadataIds(
-                                newSelectedObjectMetadataIds,
-                              );
-                              onChange?.(newSelectedObjectMetadataIds);
-                              onBlur?.();
-                            }}
-                          />
-                        </SelectableListItem>
-                      </Fragment>
-                    ))}
-                  </SelectableList>
-                </DropdownMenuItemsContainer>
-              )}
-              {!!callToActionButton && !!filteredOptions.length && (
-                <DropdownMenuSeparator />
-              )}
-              {!!callToActionButton && (
-                <DropdownMenuItemsContainer hasMaxHeight scrollable={false}>
-                  <MenuItem
-                    onClick={callToActionButton.onClick}
-                    LeftIcon={callToActionButton.Icon}
-                    text={callToActionButton.text}
-                  />
-                </DropdownMenuItemsContainer>
-              )}
-            </DropdownContent>
-          }
-        />
+          type="picker"
+          multiple
+          onOpenChange={handleOpenChange}
+        >
+          <Dropdown.Trigger render={<div />} nativeButton={false}>
+            {selectControl}
+          </Dropdown.Trigger>
+          <DropdownContent
+            ref={dropdownContentRef}
+            width={dropdownWidthAuto ? 'var(--anchor-width)' : dropdownWidth}
+            align="start"
+            initialFocus={
+              withSearchInput
+                ? undefined
+                : () =>
+                    getSelectDropdownInitialFocus(dropdownContentRef.current)
+            }
+            aria-label={isNonEmptyString(label) ? label : undefined}
+          >
+            {withSearchInput && (
+              <Dropdown.Search
+                value={searchInputValue}
+                onValueChange={setSearchInputValue}
+                placeholder={t`Search`}
+                aria-label={t`Search`}
+              />
+            )}
+            {withSearchInput && isNonEmptyArray(matchingOptions) && (
+              <Dropdown.Separator />
+            )}
+            {isNonEmptyArray(matchingOptions) && (
+              <Dropdown.Section scrollable>
+                {isNonEmptyArray(regularOptions) && (
+                  <Dropdown.Section>
+                    {regularOptions.map(renderOption)}
+                  </Dropdown.Section>
+                )}
+                {isNonEmptyArray(regularOptions) &&
+                  isNonEmptyArray(advancedOptions) && <Dropdown.Separator />}
+                {isNonEmptyArray(advancedOptions) && (
+                  <Dropdown.Section label={t`Advanced`}>
+                    {advancedOptions.map(renderOption)}
+                  </Dropdown.Section>
+                )}
+              </Dropdown.Section>
+            )}
+            {isDefined(callToActionButton) &&
+              isNonEmptyArray(matchingOptions) && <Dropdown.Separator />}
+            {isDefined(callToActionButton) && (
+              <Dropdown.Section>
+                <Dropdown.ActionItem
+                  onClick={callToActionButton.onClick}
+                  closeOnClick={false}
+                  startIcon={
+                    <SelectOptionIcon Icon={callToActionButton.Icon} />
+                  }
+                >
+                  {callToActionButton.text}
+                </Dropdown.ActionItem>
+              </Dropdown.Section>
+            )}
+          </DropdownContent>
+        </DropdownRoot>
       )}
       {isNonEmptyString(description) && (
         <StyledDescription>{description}</StyledDescription>

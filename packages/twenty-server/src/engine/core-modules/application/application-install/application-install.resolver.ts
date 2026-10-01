@@ -25,14 +25,19 @@ import { ApplicationRegistrationExceptionFilter } from 'src/engine/core-modules/
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { ApplicationDTO } from 'src/engine/core-modules/application/dtos/application.dto';
 import { UpdateApplicationInput } from 'src/engine/core-modules/application/dtos/update-application.input';
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { resolveTargetApplicationOrThrow } from 'src/engine/core-modules/application/utils/resolve-target-application-or-throw.util';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { JobStatusDTO } from 'src/engine/core-modules/message-queue/dtos/job-status.dto';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { ApplicationTargetArg } from 'src/engine/decorators/auth/application-target-arg.decorator';
+import { ApplicationTargetArgs } from 'src/engine/decorators/auth/application-target-args.decorator';
+import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { AllowSuspendedWorkspace } from 'src/engine/decorators/auth/allow-suspended-workspace.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
-import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
 
 @UsePipes(ResolverValidationPipe)
@@ -43,7 +48,19 @@ import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/wor
   AuthGraphqlApiExceptionFilter,
 )
 @UseInterceptors(WorkspaceMigrationGraphqlApiExceptionInterceptor)
-@UseGuards(WorkspaceAuthGuard)
+@UseGuards(
+  AuthPrincipalGuard({
+    userSession: {
+      standard: true,
+      impersonated: true,
+      playground: true,
+      workspaceAgnostic: false,
+    },
+    apiKey: true,
+    oauthClient: true,
+    application: true,
+  }),
+)
 export class ApplicationInstallResolver {
   constructor(
     private readonly applicationService: ApplicationService,
@@ -66,6 +83,8 @@ export class ApplicationInstallResolver {
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.APPLICATIONS))
   async findOneApplication(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @AuthApplication({ allowUndefined: true })
+    callingApplication: FlatApplication | undefined,
     @Args('id', { type: () => UUIDScalarType, nullable: true }) id?: string,
     @Args('universalIdentifier', {
       type: () => UUIDScalarType,
@@ -73,11 +92,20 @@ export class ApplicationInstallResolver {
     })
     universalIdentifier?: string,
   ) {
-    return await this.applicationService.findOneApplicationOrThrow({
-      id,
-      universalIdentifier,
-      workspaceId,
-    });
+    const { targetApplicationId, targetApplicationUniversalIdentifier } =
+      resolveTargetApplicationOrThrow({
+        callingApplication,
+        applicationId: id,
+        applicationUniversalIdentifier: universalIdentifier,
+      });
+
+    return await this.applicationService.findOneApplicationWithRelationsOrThrow(
+      {
+        id: targetApplicationId,
+        universalIdentifier: targetApplicationUniversalIdentifier,
+        workspaceId,
+      },
+    );
   }
 
   @Mutation(() => Boolean, {
@@ -85,7 +113,10 @@ export class ApplicationInstallResolver {
   })
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.APPLICATIONS))
   async installMarketplaceApp(
-    @Args('universalIdentifier') universalIdentifier: string,
+    @ApplicationTargetArg('universalIdentifier', {
+      kind: 'applicationUniversalIdentifier',
+    })
+    universalIdentifier: string,
     @Args('version', { type: () => String, nullable: true })
     version: string | undefined,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -102,7 +133,10 @@ export class ApplicationInstallResolver {
   @Mutation(() => ApplicationDTO)
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.APPLICATIONS))
   async installApplication(
-    @Args('universalIdentifier') universalIdentifier: string,
+    @ApplicationTargetArg('universalIdentifier', {
+      kind: 'applicationUniversalIdentifier',
+    })
+    universalIdentifier: string,
     @Args('version', { type: () => String, nullable: true })
     version: string | undefined,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -113,7 +147,7 @@ export class ApplicationInstallResolver {
       workspaceId: workspace.id,
     });
 
-    return this.applicationService.findOneApplicationOrThrow({
+    return this.applicationService.findOneApplicationWithRelationsOrThrow({
       universalIdentifier,
       workspaceId: workspace.id,
     });
@@ -122,7 +156,11 @@ export class ApplicationInstallResolver {
   @Mutation(() => TriggerInstallApplicationJobResultDTO)
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.APPLICATIONS))
   async triggerInstallApplicationJob(
-    @Args('input') { universalIdentifier }: TriggerInstallApplicationJobInput,
+    @ApplicationTargetArg<TriggerInstallApplicationJobInput>('input', {
+      kind: 'applicationUniversalIdentifier',
+      idKey: 'universalIdentifier',
+    })
+    { universalIdentifier }: TriggerInstallApplicationJobInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<TriggerInstallApplicationJobResultDTO> {
     return this.applicationLifecycleJobService.triggerInstallApplicationJob({
@@ -134,7 +172,11 @@ export class ApplicationInstallResolver {
   @Mutation(() => TriggerUninstallApplicationJobResultDTO)
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.APPLICATIONS))
   async triggerUninstallApplicationJob(
-    @Args('input') { universalIdentifier }: TriggerUninstallApplicationJobInput,
+    @ApplicationTargetArg<TriggerUninstallApplicationJobInput>('input', {
+      kind: 'applicationUniversalIdentifier',
+      idKey: 'universalIdentifier',
+    })
+    { universalIdentifier }: TriggerUninstallApplicationJobInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<TriggerUninstallApplicationJobResultDTO> {
     return this.applicationLifecycleJobService.triggerUninstallApplicationJob({
@@ -180,17 +222,23 @@ export class ApplicationInstallResolver {
       appRegistrationId: registration.id,
       version: params.version,
       workspaceId: params.workspaceId,
+      hasUserApprovedCapabilities: true,
     });
   }
 
   @Mutation(() => ApplicationDTO)
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.APPLICATIONS))
   async updateApplication(
-    @Args('id', { type: () => UUIDScalarType }) id: string,
+    @ApplicationTargetArg(
+      'id',
+      { kind: 'applicationId' },
+      { type: () => UUIDScalarType },
+    )
+    id: string,
     @Args('input') input: UpdateApplicationInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ) {
-    await this.applicationService.findOneApplicationOrThrow({
+    await this.applicationService.findOneApplicationWithRelationsOrThrow({
       id,
       workspaceId,
     });
@@ -206,7 +254,11 @@ export class ApplicationInstallResolver {
   @Mutation(() => Boolean)
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.APPLICATIONS))
   async uninstallApplication(
-    @Args() { universalIdentifier }: UninstallApplicationInput,
+    @ApplicationTargetArgs<UninstallApplicationInput>({
+      kind: 'applicationUniversalIdentifier',
+      idKey: 'universalIdentifier',
+    })
+    { universalIdentifier }: UninstallApplicationInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ) {
     await this.applicationUninstallRunnerService.uninstallApplication({

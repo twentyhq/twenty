@@ -23,7 +23,7 @@ import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
-import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @MetadataResolver()
@@ -39,7 +39,17 @@ export class UsageResolver {
 
   @Query(() => UsageAnalyticsDTO)
   @UseGuards(
-    WorkspaceAuthGuard,
+    AuthPrincipalGuard({
+      userSession: {
+        standard: true,
+        impersonated: true,
+        playground: true,
+        workspaceAgnostic: false,
+      },
+      apiKey: true,
+      oauthClient: true,
+      application: true,
+    }),
     SettingsPermissionGuard(PermissionFlagType.WORKSPACE),
   )
   async getUsageAnalytics(
@@ -66,8 +76,7 @@ export class UsageResolver {
         'flatApplicationMaps',
       ]);
 
-    // Per application, not workspace-wide: two apps may use the same operation
-    // name, and only the one that declared it should keep it as its own slice.
+    // Per application: two apps may declare the same operation name.
     const declaredOperationsByApplicationId = Object.fromEntries(
       Object.entries(flatApplicationMaps.byId).map(
         ([applicationId, application]) => [

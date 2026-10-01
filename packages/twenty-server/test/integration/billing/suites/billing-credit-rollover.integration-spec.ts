@@ -2,7 +2,6 @@ import { addMonths, startOfMonth, subMonths } from 'date-fns';
 import request from 'supertest';
 import { createMockStripeInvoiceFinalizedData } from 'test/integration/billing/utils/create-mock-stripe-invoice-finalized-data.util';
 import {
-  getBillingUsageCacheService,
   getSeededBillingWorkspaceId,
   insertCreditGrant,
   listCreditGrants,
@@ -20,9 +19,7 @@ import { type BillingUsageService } from 'src/engine/core-modules/billing/servic
 
 const client = request(`http://localhost:${APP_PORT}`);
 
-// Whole calendar months, anchored so the period the transition opens is the
-// one running right now. The ledger filters on now(), so periods fixed in the
-// past would read as expired and assert nothing.
+// The ledger filters on now(), so periods fixed in the past would read as expired and assert nothing
 const PERIOD_BOUNDARY = startOfMonth(new Date());
 const CLOSING_PERIOD_START = subMonths(PERIOD_BOUNDARY, 1);
 const CLOSING_PERIOD_END = PERIOD_BOUNDARY;
@@ -71,9 +68,7 @@ describe('Billing credit rollover (integration)', () => {
       creditAmountMicro: ALLOWANCE_MICRO,
     });
 
-    // Usage is read from ClickHouse, whose inserts are asynchronous. Stubbing
-    // the read keeps every expectation exact instead of racing ingestion; the
-    // query itself has its own unit coverage.
+    // ClickHouse inserts are asynchronous, so the read is stubbed rather than racing ingestion
     usageSpy = jest.spyOn(billingUsageService, 'getCreditsUsedBetweenOrNull');
   });
 
@@ -100,8 +95,7 @@ describe('Billing credit rollover (integration)', () => {
       revokedAt: null,
     });
     expect(new Date(grants[0].effectiveAt)).toEqual(CLOSING_PERIOD_END);
-    // Successors carry no deadline: stamping the next period end would put the
-    // balance back at the mercy of the transition after this one running.
+    // Stamping the next period end would expose the balance to the following transition
     expect(grants[0].expiresAt).toBeNull();
   });
 
@@ -146,8 +140,7 @@ describe('Billing credit rollover (integration)', () => {
 
     expect(compensation).toBeDefined();
 
-    // Its expiry was pulled back to the boundary, so the balance counts it
-    // once through its carried-forward copy rather than twice.
+    // Pulled back to the boundary, so the balance counts it once through its carried-forward copy
     expect(compensation?.expiresAt).toEqual(CLOSING_PERIOD_END);
     expect(
       grants.some(
@@ -183,7 +176,6 @@ describe('Billing credit rollover (integration)', () => {
     ).toBe(ALLOWANCE_MICRO);
   });
 
-  // A redelivery must not hand out the credits a second time.
   it('is idempotent when Stripe redelivers the same invoice', async () => {
     usageSpy.mockResolvedValue(300_000);
 
@@ -199,8 +191,7 @@ describe('Billing credit rollover (integration)', () => {
     ).toBe(afterFirst.reduce((total, grant) => total + grant.amountMicro, 0));
   });
 
-  // Returning normally would answer 200 and Stripe would never redeliver, so
-  // the transition would be lost and the balance would expire unrolled.
+  // Returning normally would answer 200 and Stripe would never redeliver
   it('fails the webhook when usage cannot be read so Stripe redelivers', async () => {
     usageSpy.mockResolvedValue(null);
 
@@ -209,55 +200,10 @@ describe('Billing credit rollover (integration)', () => {
     expect(await listCreditGrants(workspaceId)).toHaveLength(0);
   });
 
-  it('adds the carried balance to a warm available-credits counter', async () => {
-    usageSpy.mockResolvedValue(300_000);
-    const cache = getBillingUsageCacheService();
-
-    await cache.warmAvailableCredits(
-      workspaceId,
-      CLOSING_PERIOD_START,
-      NEXT_PERIOD_END,
-      120_000,
-    );
-
-    await postInvoiceFinalized().expect(200);
-
-    expect(
-      await cache.getAvailableCredits(workspaceId, CLOSING_PERIOD_START),
-    ).toBe(120_000 + 700_000);
-  });
-
-  it('leaves a warm available-credits counter alone when a successful delivery is repeated', async () => {
-    usageSpy.mockResolvedValue(300_000);
-    const cache = getBillingUsageCacheService();
-
-    await cache.warmAvailableCredits(
-      workspaceId,
-      CLOSING_PERIOD_START,
-      NEXT_PERIOD_END,
-      120_000,
-    );
-
-    await postInvoiceFinalized().expect(200);
-    const afterFirst = await cache.getAvailableCredits(
-      workspaceId,
-      CLOSING_PERIOD_START,
-    );
-
-    await postInvoiceFinalized().expect(200);
-
-    expect(afterFirst).toBe(120_000 + 700_000);
-    expect(
-      await cache.getAvailableCredits(workspaceId, CLOSING_PERIOD_START),
-    ).toBe(afterFirst);
-  });
-
   it('drops the allowance counter on the period transition', async () => {
     usageSpy.mockResolvedValue(300_000);
 
-    // The counter is keyed by the period the subscription is currently in,
-    // which is the one the invoice is closing: Stripe moves the subscription
-    // forward in a separate event.
+    // Stripe advances the subscription in a separate event, so the counter is keyed by the closing period
     await warmAllowanceCounter(workspaceId, CLOSING_PERIOD_START, 120_000);
 
     await postInvoiceFinalized().expect(200);
@@ -267,10 +213,20 @@ describe('Billing credit rollover (integration)', () => {
     ).toBeNull();
   });
 
-  // A subscription anchored on the 31st runs January 31 to February 28. Once
-  // the subscription.updated webhook has moved the subscription on, calendar
-  // arithmetic clamps February 28 back to January 28 and the closing period
-  // swallows three days of the period before it.
+  it('drops the allowance counter again when a successful delivery is repeated', async () => {
+    usageSpy.mockResolvedValue(300_000);
+
+    await postInvoiceFinalized().expect(200);
+    await warmAllowanceCounter(workspaceId, CLOSING_PERIOD_START, 120_000);
+
+    await postInvoiceFinalized().expect(200);
+
+    expect(
+      await readAllowanceCounter(workspaceId, CLOSING_PERIOD_START),
+    ).toBeNull();
+  });
+
+  // A 31st anchor runs Jan 31 to Feb 28; once advanced, calendar arithmetic clamps Feb 28 back to Jan 28 and swallows three days
   describe('a month-end anchor whose subscription already advanced', () => {
     const MONTH_END_BOUNDARY = new Date('2026-02-28T00:00:00.000Z');
     const TRUE_CLOSING_PERIOD_START = new Date('2026-01-31T00:00:00.000Z');
@@ -284,8 +240,7 @@ describe('Billing credit rollover (integration)', () => {
         periodEnd: MONTH_END_NEXT_PERIOD_END,
         creditAmountMicro: ALLOWANCE_MICRO,
       });
-      // What the previous transition left behind: a grant closed at the instant
-      // the period it belonged to ended.
+      // What the previous transition left: a grant closed at the end of its period
       await insertCreditGrant({
         workspaceId,
         amountMicro: 100_000,

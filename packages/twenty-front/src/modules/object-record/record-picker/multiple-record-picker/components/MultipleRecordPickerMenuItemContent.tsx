@@ -1,8 +1,7 @@
-import { t } from '@lingui/core/macro';
-
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getAvatarShape } from '@/object-metadata/utils/getAvatarShape';
 import { MultipleRecordPickerComponentInstanceContext } from '@/object-record/record-picker/multiple-record-picker/states/contexts/MultipleRecordPickerComponentInstanceContext';
+import { multipleRecordPickerSearchableObjectMetadataItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSearchableObjectMetadataItemsComponentState';
 import { multipleRecordPickerIsSelectedComponentFamilySelector } from '@/object-record/record-picker/multiple-record-picker/states/selectors/multipleRecordPickerIsSelectedComponentFamilySelector';
 import { getMultipleRecordPickerSelectableListId } from '@/object-record/record-picker/multiple-record-picker/utils/getMultipleRecordPickerSelectableListId';
 import { type RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
@@ -12,11 +11,10 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { t } from '@lingui/core/macro';
 import { capitalize } from 'twenty-shared/utils';
 import { Avatar } from 'twenty-ui/primitives/data-display';
-import { MenuItemMultiSelectAvatar } from 'twenty-ui/primitives/navigation';
-
-import { multipleRecordPickerSearchableObjectMetadataItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSearchableObjectMetadataItemsComponentState';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { type SearchRecord } from '~/generated/graphql';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
@@ -78,11 +76,19 @@ export const MultipleRecordPickerMenuItemContent = ({
       key={searchRecord.recordId}
       onEnter={() => handleSelectChange(!isRecordSelectedWithObjectItem)}
     >
-      <MenuItemMultiSelectAvatar
-        onSelectChange={(isSelected) => handleSelectChange(isSelected)}
-        isKeySelected={isSelectedItemId}
+      <ListItem
+        focused={isSelectedItemId}
+        role="option"
+        aria-selected={isRecordSelectedWithObjectItem}
         selected={isRecordSelectedWithObjectItem}
-        avatar={
+        indicator="checkbox"
+        description={
+          showObjectName
+            ? capitalize(objectMetadataItem.labelSingular)
+            : undefined
+        }
+        onClick={() => handleSelectChange(!isRecordSelectedWithObjectItem)}
+        startIcon={
           <Avatar
             src={getAbsoluteImageUrl(searchRecord.imageUrl)}
             colorSeed={searchRecord.recordId}
@@ -91,13 +97,9 @@ export const MultipleRecordPickerMenuItemContent = ({
             shape={getAvatarShape(objectMetadataItem)}
           />
         }
-        text={displayText}
-        contextualText={
-          showObjectName
-            ? capitalize(objectMetadataItem.labelSingular)
-            : undefined
-        }
-      />
+      >
+        {displayText}
+      </ListItem>
     </SelectableListItem>
   );
 };

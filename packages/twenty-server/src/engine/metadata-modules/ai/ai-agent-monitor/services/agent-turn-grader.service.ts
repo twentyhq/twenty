@@ -1,26 +1,26 @@
+import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
+import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { Injectable, Logger } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
 import { generateText } from 'ai';
 
 import { NotFoundError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { AgentMessageEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
-import { AgentTurnEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-turn.entity';
-import { AgentTurnEvaluationEntity } from 'src/engine/metadata-modules/ai/ai-agent-monitor/entities/agent-turn-evaluation.entity';
+import { AgentMessageWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message.workspace-entity';
+import { AgentTurnWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-turn.workspace-entity';
+import { AgentTurnEvaluationWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-turn-evaluation.workspace-entity';
 import { buildAiTelemetry } from 'src/engine/metadata-modules/ai/ai-models/utils/build-ai-telemetry.util';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { buildReasoningProviderOptions } from 'src/engine/metadata-modules/ai/ai-models/utils/build-reasoning-provider-options.util';
-import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
-import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 @Injectable()
 export class AgentTurnGraderService {
   private readonly logger = new Logger(AgentTurnGraderService.name);
 
   constructor(
-    @InjectWorkspaceScopedRepository(AgentTurnEntity)
-    private readonly turnRepository: WorkspaceScopedRepository<AgentTurnEntity>,
-    @InjectWorkspaceScopedRepository(AgentTurnEvaluationEntity)
-    private readonly evaluationRepository: WorkspaceScopedRepository<AgentTurnEvaluationEntity>,
+    @InjectAgentHistoryRepository('agentTurn')
+    private readonly turnRepository: AgentHistoryRepository<AgentTurnWorkspaceEntity>,
+    @InjectAgentHistoryRepository('agentTurnEvaluation')
+    private readonly evaluationRepository: AgentHistoryRepository<AgentTurnEvaluationWorkspaceEntity>,
     private readonly aiModelRegistryService: AiModelRegistryService,
   ) {}
 
@@ -30,7 +30,7 @@ export class AgentTurnGraderService {
   }: {
     turnId: string;
     workspaceId: string;
-  }): Promise<AgentTurnEvaluationEntity> {
+  }): Promise<AgentTurnEvaluationWorkspaceEntity> {
     const turn = await this.turnRepository.findOne(workspaceId, {
       where: { id: turnId },
       relations: ['messages', 'messages.parts'],
@@ -42,7 +42,7 @@ export class AgentTurnGraderService {
       });
     }
 
-    const { score, comment } = await this.evaluateWithAI(turn);
+    const { score, comment } = await this.evaluateWithAI(turn, workspaceId);
 
     return this.evaluationRepository.insertAndReturnOne(workspaceId, {
       turnId,
@@ -52,7 +52,10 @@ export class AgentTurnGraderService {
   }
 
   private async evaluateWithAI(
-    turn: AgentTurnEntity & { messages: AgentMessageEntity[] },
+    turn: AgentTurnWorkspaceEntity & {
+      messages: AgentMessageWorkspaceEntity[];
+    },
+    workspaceId: string,
   ): Promise<{ score: number; comment: string }> {
     try {
       const defaultModel =
@@ -90,7 +93,7 @@ Respond ONLY with valid JSON in this exact format:
         temperature: 0.3,
         ...buildAiTelemetry({
           functionId: 'agent-turn-grading',
-          workspaceId: turn.workspaceId,
+          workspaceId,
           agentId: turn.agentId,
           threadId: turn.threadId,
           turnId: turn.id,
@@ -111,7 +114,9 @@ Respond ONLY with valid JSON in this exact format:
   }
 
   private buildEvaluationContext(
-    turn: AgentTurnEntity & { messages: AgentMessageEntity[] },
+    turn: AgentTurnWorkspaceEntity & {
+      messages: AgentMessageWorkspaceEntity[];
+    },
   ): string {
     const userMessages = turn.messages.filter((m) => m.role === 'user');
     const assistantMessages = turn.messages.filter(
@@ -159,7 +164,9 @@ Respond ONLY with valid JSON in this exact format:
   }
 
   private getFallbackEvaluation(
-    turn: AgentTurnEntity & { messages: AgentMessageEntity[] },
+    turn: AgentTurnWorkspaceEntity & {
+      messages: AgentMessageWorkspaceEntity[];
+    },
   ): {
     score: number;
     comment: string;

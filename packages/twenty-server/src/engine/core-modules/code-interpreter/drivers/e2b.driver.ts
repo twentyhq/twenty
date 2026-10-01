@@ -79,6 +79,7 @@ export class E2BDriver implements CodeInterpreterDriver {
         sandboxApi: Sandbox,
         apiKey,
         sessionId,
+        actorKey: context?.actorKey,
         timeoutMs,
         idleTimeoutMs,
       }));
@@ -87,7 +88,6 @@ export class E2BDriver implements CodeInterpreterDriver {
     }
 
     try {
-      // A reused sandbox already has the scripts from its first run.
       if (!isReused) {
         try {
           await uploadDirectoryToSandbox(

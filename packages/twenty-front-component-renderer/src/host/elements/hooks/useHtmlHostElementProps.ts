@@ -8,10 +8,12 @@ import { useReactUnsupportedEventListenerRef } from '@/host/events/hooks/useReac
 import { type ElementRefCallback } from '@/host/elements/types/ElementRefCallback';
 import { buildHostReactPropsFromRemoteProps } from '@/host/elements/utils/buildHostReactPropsFromRemoteProps';
 import { createDropTargetGuardProps } from '@/host/elements/utils/createDropTargetGuardProps';
+import { createResizableSeparatorProps } from '@/host/elements/utils/createResizableSeparatorProps';
 import { extractReactUnsupportedEventHandlers } from '@/host/events/utils/extractReactUnsupportedEventHandlers';
 import { getRemoteElementIdFromProps } from '@/host/elements/utils/getRemoteElementIdFromProps';
 import { preventDefaultThenForwardToRemote } from '@/host/events/utils/preventDefaultThenForwardToRemote';
 import { sanitizeIframeSandbox } from '@/host/elements/utils/sanitizeIframeSandbox';
+import { useRetryPendingHostFocus } from '@/host/focus/hooks/useRetryPendingHostFocus';
 
 type HtmlHostElementProps = {
   setEditableFocused: SetEditableFocused | null;
@@ -20,10 +22,13 @@ type HtmlHostElementProps = {
   composedElementRef: ElementRefCallback;
 };
 
-export const useHtmlHostElementProps = (
-  props: Record<string, unknown>,
-  htmlTag: string,
-): HtmlHostElementProps => {
+export const useHtmlHostElementProps = ({
+  props,
+  htmlTag,
+}: {
+  props: Record<string, unknown>;
+  htmlTag: string;
+}): HtmlHostElementProps => {
   const setEditableFocused = useContext(FrontComponentInputFocusContext);
 
   const remoteElementId = getRemoteElementIdFromProps(props);
@@ -39,6 +44,8 @@ export const useHtmlHostElementProps = (
 
   const geometryNodeRef = useGeometryNodeRef(remoteElementId);
 
+  useRetryPendingHostFocus();
+
   const composedElementRef = useComposedElementRef([
     reactUnsupportedEventListenerRef,
     geometryNodeRef,
@@ -46,6 +53,7 @@ export const useHtmlHostElementProps = (
 
   const hostEnforcedProps: Record<string, unknown> = {
     ...createDropTargetGuardProps(reactBindableProps),
+    ...createResizableSeparatorProps(reactBindableProps),
     ...(htmlTag === 'iframe' && {
       sandbox: sanitizeIframeSandbox(reactBindableProps.sandbox),
     }),

@@ -12,14 +12,14 @@ import { CommandMenuComponentInstanceContext } from '@/command-menu/states/conte
 import { PinnedCommandMenuItemButtons } from '@/command-menu-item/display/components/PinnedCommandMenuItemButtons';
 import { CommandMenuItemContainerType } from '@/command-menu-item/types/CommandMenuItemContainerType';
 import { CoreObjectTable } from '@/object-core/components/CoreObjectTable';
-import { useListenToObjectRecordOperationBrowserEvent } from '@/browser-event/hooks/useListenToObjectRecordOperationBrowserEvent';
 import { CoreObjectTableAddNewRow } from '@/object-core/components/CoreObjectTableAddNewRow';
-import { getDeletedRecordIdsFromOperation } from '@/object-core/utils/getDeletedRecordIdsFromOperation';
 import { useCoreWorkflowsSelection } from '@/object-core/workflows/hooks/useCoreWorkflowsSelection';
+import { useListenToCoreWorkflowEvents } from '@/object-core/workflows/hooks/useListenToCoreWorkflowEvents';
 import { useCreateCoreWorkflow } from '@/object-core/workflows/hooks/useCreateCoreWorkflow';
 import { coreWorkflowsFilterSettingsState } from '@/object-core/workflows/states/coreWorkflowsFilterSettingsState';
 import { isUsableCoreWorkflowFilterRule } from '@/object-core/workflows/utils/isUsableCoreWorkflowFilterRule';
 import { RecordIndexEmptyStateDisplay } from '@/object-record/record-index/components/RecordIndexEmptyStateDisplay';
+import { RecordIndexPageHeaderTitle } from '@/object-record/record-index/components/RecordIndexPageHeaderTitle';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { CoreWorkflowsFilterBar } from '@/object-core/workflows/components/CoreWorkflowsFilterBar';
 import { WORKFLOW_CORE_TABLE_COLUMNS } from '@/object-core/workflows/constants/WorkflowCoreTableColumns';
@@ -48,12 +48,7 @@ const StyledFetchMoreSentinel = styled.div`
 `;
 
 const getCoreWorkflowLink = (workflow: CoreWorkflow) =>
-  isDefined(workflow.workspaceWorkflowId)
-    ? getAppPath(AppPath.RecordShowPage, {
-        objectNameSingular: CoreObjectNameSingular.Workflow,
-        objectRecordId: workflow.workspaceWorkflowId,
-      })
-    : undefined;
+  getAppPath(AppPath.WorkflowCoreShowPage, { coreWorkflowId: workflow.id });
 
 export const WorkflowCoreIndexPage = () => {
   const tableId = useWorkspaceSurfaceScopedComponentInstanceId(
@@ -64,8 +59,15 @@ export const WorkflowCoreIndexPage = () => {
     objectNameSingular: CoreObjectNameSingular.Workflow,
   });
 
-  const { coreWorkflows, hasNextPage, loading, error, fetchNextPage } =
-    useCoreWorkflows({ tableId });
+  const {
+    coreWorkflows,
+    hasNextPage,
+    loading,
+    isInitialLoading,
+    error,
+    fetchNextPage,
+    refetchLoadedCoreWorkflows,
+  } = useCoreWorkflows({ tableId });
 
   const { ref: fetchMoreRef, inView } = useInView();
 
@@ -75,19 +77,12 @@ export const WorkflowCoreIndexPage = () => {
   const {
     displayedCoreWorkflows,
     selectedRowIds,
+    selectedRowCount,
     toggleRow,
     selectRows,
-    forgetDeletedWorkspaceWorkflows,
   } = useCoreWorkflowsSelection({ coreWorkflows });
 
-  useListenToObjectRecordOperationBrowserEvent({
-    objectMetadataItemId: objectMetadataItem.id,
-    operationTypes: ['delete-one', 'delete-many'],
-    onObjectRecordOperationBrowserEvent: (detail) =>
-      forgetDeletedWorkspaceWorkflows(
-        getDeletedRecordIdsFromOperation(detail.operation),
-      ),
-  });
+  useListenToCoreWorkflowEvents({ refetch: refetchLoadedCoreWorkflows });
 
   const coreWorkflowsFilterSettings = useAtomStateValue(
     coreWorkflowsFilterSettingsState,
@@ -100,7 +95,7 @@ export const WorkflowCoreIndexPage = () => {
   const hasError = isDefined(error);
 
   const isEmpty =
-    !loading &&
+    !isInitialLoading &&
     !hasError &&
     !hasNextPage &&
     displayedCoreWorkflows.length === 0;
@@ -120,7 +115,12 @@ export const WorkflowCoreIndexPage = () => {
             icon={
               <ObjectMetadataIcon objectMetadataItem={objectMetadataItem} />
             }
-            title={objectMetadataItem.labelPlural}
+            title={
+              <RecordIndexPageHeaderTitle
+                label={objectMetadataItem.labelPlural}
+                numberOfSelectedRecords={selectedRowCount}
+              />
+            }
             actionButton={
               <>
                 <CommandMenuComponentInstanceContext.Provider
@@ -172,7 +172,7 @@ export const WorkflowCoreIndexPage = () => {
               }
             />
           )}
-          {!hasError && !isEmpty && (
+          {!isInitialLoading && !hasError && !isEmpty && (
             <>
               <CoreObjectTable
                 tableId={tableId}
@@ -185,8 +185,6 @@ export const WorkflowCoreIndexPage = () => {
                   selectedRowIds,
                   onToggleRow: toggleRow,
                   onToggleAllRows: selectRows,
-                  isItemSelectable: (coreWorkflow) =>
-                    isDefined(coreWorkflow.workspaceWorkflowId),
                 }}
               />
               {canCreateCoreWorkflow && (

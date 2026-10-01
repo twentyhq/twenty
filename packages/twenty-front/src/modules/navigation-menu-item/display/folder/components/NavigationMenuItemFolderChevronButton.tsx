@@ -1,9 +1,9 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import type React from 'react';
+import { LightIconButton } from 'twenty-ui/components';
 import { IconChevronRight } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/primitives/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 // Rotating a wrapper around the button keeps the icon component identity
 // stable: passing an inline component to LightIconButton's Icon prop remounts
@@ -38,12 +38,14 @@ export const NavigationMenuItemFolderChevronButton = ({
   return (
     <StyledButtonContainer isOpen={isOpen}>
       <LightIconButton
-        Icon={IconChevronRight}
-        size="small"
-        accent="tertiary"
+        size="sm"
+        emphasis="subtle"
         aria-label={isOpen ? t`Collapse folder` : t`Expand folder`}
         onClick={onClick}
-      />
+        aria-expanded={isOpen}
+      >
+        <IconChevronRight />
+      </LightIconButton>
     </StyledButtonContainer>
   );
 };

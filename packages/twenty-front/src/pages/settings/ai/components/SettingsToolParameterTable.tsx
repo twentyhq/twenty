@@ -3,7 +3,7 @@ import { NavigationButton } from '@/ui/input/components/NavigationButton';
 import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { type ComponentType, useContext } from 'react';
+import { type ComponentType } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { Table } from '@/ui/layout/table/components/Table';
@@ -11,6 +11,7 @@ import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import {
   IconArrowUpRight,
   IconInfoCircle,
@@ -22,11 +23,8 @@ import {
   IllustrationIconText,
   IllustrationIconToggle,
 } from 'twenty-ui/icon';
-import {
-  Tooltip,
-  OverflowingTextWithTooltip,
-} from 'twenty-ui/primitives/surfaces';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 type SchemaProperty = {
   type?: string;
@@ -97,7 +95,7 @@ export const SettingsToolParameterTable = ({
   requiredFields,
   functionLink,
 }: SettingsToolParameterTableProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const entries = Object.entries(schemaProperties);
 
   if (entries.length === 0 && !functionLink) {

@@ -16,13 +16,27 @@ import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/re
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
-import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
+import { UsageLimitGraphqlApiExceptionFilter } from 'src/engine/core-modules/usage-limit/filters/usage-limit-graphql-api-exception.filter';
 
-@UseGuards(WorkspaceAuthGuard)
+@UseGuards(
+  AuthPrincipalGuard({
+    userSession: {
+      standard: true,
+      impersonated: true,
+      playground: true,
+      workspaceAgnostic: false,
+    },
+    apiKey: true,
+    oauthClient: true,
+    application: true,
+  }),
+)
 @UsePipes(ResolverValidationPipe)
 @UseFilters(
+  UsageLimitGraphqlApiExceptionFilter,
   PreventNestToAutoLogGraphqlErrorsFilter,
   AuthGraphqlApiExceptionFilter,
 )
@@ -30,7 +44,10 @@ import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filt
 export class FilesFieldResolver {
   constructor(private readonly filesFieldService: FilesFieldService) {}
 
-  @Mutation(() => FileWithSignedUrlDTO)
+  @Mutation(() => FileWithSignedUrlDTO, {
+    deprecationReason:
+      'Use createFileUpload with the FilesField folder and the fieldMetadataUniversalIdentifier, then completeFileUpload, which send the file straight to file storage.',
+  })
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.UPLOAD_FILE))
   async uploadFilesFieldFileByUniversalIdentifier(
     @AuthWorkspace()
@@ -47,7 +64,7 @@ export class FilesFieldResolver {
     const stream = createReadStream();
     const buffer = await streamToBuffer(
       stream,
-      bytes(settings.storage.maxFileSize) ?? undefined,
+      bytes(settings.storage.maxMultipartFileSize) ?? undefined,
     );
 
     return await this.filesFieldService.uploadFile({

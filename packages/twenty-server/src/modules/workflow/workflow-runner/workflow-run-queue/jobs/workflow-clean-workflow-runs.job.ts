@@ -92,7 +92,7 @@ export class WorkflowCleanWorkflowRunsJob {
         ],
       );
 
-      // TypeORM's dataSource.query() for for DELETE ... RETURNING returns a tuple [rows, affectedCount]
+      // TypeORM's dataSource.query() for DELETE ... RETURNING returns a tuple [rows, affectedCount]
       deletedCount = result[0].length;
       totalDeleted += deletedCount;
     } while (deletedCount > 0);
@@ -116,7 +116,7 @@ export class WorkflowCleanWorkflowRunsJob {
           WITH ranked_runs AS (
             SELECT id,
                    ROW_NUMBER() OVER (
-                      PARTITION BY "workflowId"
+                      PARTITION BY COALESCE("coreWorkflowId", "workflowId")
                       ORDER BY "createdAt" DESC
                    ) AS rn
             FROM ${schemaName}."workflowRun"
@@ -139,7 +139,7 @@ export class WorkflowCleanWorkflowRunsJob {
         ],
       );
 
-      // TypeORM's dataSource.query() for for DELETE ... RETURNING returns a tuple [rows, affectedCount]
+      // TypeORM's dataSource.query() for DELETE ... RETURNING returns a tuple [rows, affectedCount]
       deletedCount = result[0].length;
       totalDeleted += deletedCount;
     } while (deletedCount > 0);

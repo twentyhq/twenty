@@ -2,7 +2,7 @@ import { RECORD_TABLE_CELL_DISPLAY_CLASS_NAME } from '@/object-record/record-tab
 import { t } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 import { type Ref } from 'react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledOuterContainer = styled.div`
   align-items: center;

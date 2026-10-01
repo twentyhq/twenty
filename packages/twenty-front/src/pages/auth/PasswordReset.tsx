@@ -1,8 +1,9 @@
-import { StyledAuthContent } from '@/auth/components/StyledAuthContent';
 import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
 import { Logo } from '@/auth/components/Logo';
+import { StyledAuthContent } from '@/auth/components/StyledAuthContent';
 import { StyledOnboardingContentContainer } from '@/auth/components/StyledOnboardingContentContainer';
 import { Title } from '@/auth/components/Title';
+import { AnimatedEaseIn } from '@/auth/components/internal/AnimatedEaseIn/AnimatedEaseIn';
 import { useAuth } from '@/auth/hooks/useAuth';
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
 import { currentUserState } from '@/auth/states/currentUserState';
@@ -24,15 +25,13 @@ import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { motion } from 'framer-motion';
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { useParams } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
-import { useToast } from 'twenty-ui/primitives/feedback';
-import { MainButton } from 'twenty-ui/components';
-import { AnimatedEaseIn } from 'twenty-ui/primitives/layout';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { MainButton, useToast } from 'twenty-ui/components';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { z } from 'zod';
 import {
   UpdatePasswordViaResetTokenDocument,
@@ -82,7 +81,7 @@ const StyledMainButtonContainer = styled.div`
 `;
 
 export const PasswordReset = () => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
   const { t } = useLingui();
   const { enqueueToast } = useToast();
 

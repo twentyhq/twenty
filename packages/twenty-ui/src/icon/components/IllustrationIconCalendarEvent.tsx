@@ -1,7 +1,7 @@
 import IllustrationIconCalendarEventRaw from '@assets/icons/illustration-calendar-event.svg?react';
 import { IllustrationIconWrapper } from '@ui/icon/components/IllustrationIconWrapper';
 import { type IconComponentProps } from '@ui/icon/types/IconComponent';
-import { useTheme } from '@ui/theme-constants';
+import { useTheme } from '@ui/theme';
 
 type IllustrationIconCalendarEventProps = Pick<IconComponentProps, 'size'>;
 

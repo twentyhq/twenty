@@ -1,3 +1,4 @@
+import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
@@ -34,7 +35,7 @@ import { t } from '@lingui/core/macro';
 import { useMemo, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/icon';
-import { MenuItemSelect } from 'twenty-ui/primitives/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { FieldDisplayMode } from '~/generated-metadata/graphql';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 
@@ -157,10 +158,7 @@ export const FieldWidgetFieldDropdownContent = () => {
     return candidatesByFieldId;
   }, [allFieldWidgetFieldMetadataItems, objectMetadataItems]);
 
-  // Keyboard focus carries over between the browse list and the drill-in
-  // submenu since both share the dropdown's selectable list instance. Align
-  // it on the checked option when entering the submenu, and back on the
-  // parent row when leaving, so Enter never activates a stale row.
+  // The browse list and submenu share one selectable list, so realign focus on enter and leave or Enter hits a stale row
   const handleDrillIn = (fieldMetadataItem: FieldMetadataItem) => {
     setDrillInFieldMetadataItem(fieldMetadataItem);
 
@@ -243,8 +241,7 @@ export const FieldWidgetFieldDropdownContent = () => {
     parentFieldMetadataItem: FieldMetadataItem,
     nestedFieldMetadataItem: FieldMetadataItem,
   ) => {
-    // A nested relation widget always renders as an embedded view, so the
-    // effective display mode is TABLE regardless of the current one.
+    // A nested relation widget always renders as an embedded view, so TABLE is the effective display mode
     const relationTableViewIdChange =
       resolveFieldWidgetRelationTableViewIdChange({
         selectedField: parentFieldMetadataItem,
@@ -327,24 +324,32 @@ export const FieldWidgetFieldDropdownContent = () => {
                 itemId={fieldMetadataItem.id}
                 onEnter={handleClick}
               >
-                <MenuItemSelect
-                  text={fieldMetadataItem.label}
-                  // Rows opening a submenu never show the checkmark: the
-                  // selected chain is only visible inside the submenu, like
-                  // the chart group by field selection.
+                <ListItem
+                  focused={selectedItemId === fieldMetadataItem.id}
+                  onClick={handleClick}
+                  role="option"
+                  aria-selected={
+                    !hasNestedFieldCandidates &&
+                    currentFieldMetadataId === fieldMetadataItem.id
+                  }
                   selected={
                     !hasNestedFieldCandidates &&
                     currentFieldMetadataId === fieldMetadataItem.id
                   }
-                  focused={selectedItemId === fieldMetadataItem.id}
-                  LeftIcon={getIcon(
-                    currentFieldMetadataId === fieldMetadataItem.id
-                      ? currentFieldMetadataItem?.icon
-                      : fieldMetadataItem.icon,
-                  )}
-                  hasSubMenu={hasNestedFieldCandidates}
-                  onClick={handleClick}
-                />
+                  indicator="check"
+                  hasSubmenu={hasNestedFieldCandidates}
+                  startIcon={
+                    <SelectOptionIcon
+                      Icon={getIcon(
+                        currentFieldMetadataId === fieldMetadataItem.id
+                          ? currentFieldMetadataItem?.icon
+                          : fieldMetadataItem.icon,
+                      )}
+                    />
+                  }
+                >
+                  {fieldMetadataItem.label}
+                </ListItem>
               </SelectableListItem>
             );
           })}

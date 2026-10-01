@@ -1,3 +1,4 @@
+import { settingsPermissionFlagDefinitionsState } from '@/settings/roles/states/settingsPermissionFlagDefinitionsState';
 import { settingsPersistedRoleFamilyState } from '@/settings/roles/states/settingsPersistedRoleFamilyState';
 import { settingsRoleIdsState } from '@/settings/roles/states/settingsRoleIdsState';
 import { settingsRolesIsLoadingState } from '@/settings/roles/states/settingsRolesIsLoadingState';
@@ -17,6 +18,10 @@ export const SettingsRolesQueryEffect = () => {
 
   const setSettingsRolesIsLoading = useSetAtomState(
     settingsRolesIsLoadingState,
+  );
+
+  const setSettingsPermissionFlagDefinitions = useSetAtomState(
+    settingsPermissionFlagDefinitionsState,
   );
 
   const store = useStore();
@@ -43,14 +48,20 @@ export const SettingsRolesQueryEffect = () => {
   useEffect(() => {
     setSettingsRolesIsLoading(loading);
     if (!loading) {
-      const roles = data?.getRoles;
-      if (!isDefined(roles)) {
+      if (!isDefined(data?.getRoles)) {
         return;
       }
 
-      populateRoles(roles);
+      setSettingsPermissionFlagDefinitions(data.getPermissionFlags);
+      populateRoles(data.getRoles);
     }
-  }, [data, loading, populateRoles, setSettingsRolesIsLoading]);
+  }, [
+    data,
+    loading,
+    populateRoles,
+    setSettingsPermissionFlagDefinitions,
+    setSettingsRolesIsLoading,
+  ]);
 
   return null;
 };

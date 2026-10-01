@@ -67,7 +67,11 @@ export const SettingsWorkspaceMembers = () => {
     <SettingsPageLayout
       title={t`Members`}
       secondaryBar={
-        <SettingsTabBar tabs={tabs} componentInstanceId={MEMBERS_TAB_LIST_ID} />
+        <SettingsTabBar
+          aria-label={t`Workspace members`}
+          tabs={tabs}
+          componentInstanceId={MEMBERS_TAB_LIST_ID}
+        />
       }
       links={[
         {

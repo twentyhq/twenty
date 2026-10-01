@@ -37,6 +37,8 @@ export type HeadlessTriggerWorkflowVersionCommandContextApi =
   HeadlessEngineCommandContextApi & {
     workflowId: string;
     workflowVersionId: string;
+    coreWorkflowId?: string;
+    coreWorkflowVersionId?: string;
     trigger: WorkflowTrigger | null;
     availabilityType: CommandMenuItemAvailabilityType;
     availabilityObjectMetadataId?: string | null;

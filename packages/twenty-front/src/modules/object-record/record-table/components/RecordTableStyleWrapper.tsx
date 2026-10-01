@@ -18,7 +18,7 @@ import { TABLE_Z_INDEX } from '@/object-record/record-table/constants/TableZInde
 import { getRecordTableColumnFieldWidthClassName } from '@/object-record/record-table/utils/getRecordTableColumnFieldWidthClassName';
 import { getRecordTableColumnFieldWidthCSSVariableName } from '@/object-record/record-table/utils/getRecordTableColumnFieldWidthCSSVariableName';
 import { styled } from '@linaria/react';
-import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
+import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme';
 
 export { HorizontalScrollBoxShadowCSS, VerticalScrollBoxShadowCSS };
 
@@ -87,9 +87,7 @@ const StyledTable = styled.div<{
       var(${RECORD_TABLE_CHECKBOX_WIDTH_CSS_VAR})
   );
 
-  // On mobile the frozen column travels with the content instead of being
-  // resized, so the data columns keep pace with the finger exactly and nothing
-  // reflows mid-gesture. It pins once only the remnant is left.
+  // On mobile the frozen column travels with the content so nothing reflows mid-gesture.
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     ${RECORD_TABLE_FIRST_COLUMN_LEFT_CSS_VAR}: calc(
       var(${RECORD_TABLE_DRAG_DROP_WIDTH_CSS_VAR}) +
@@ -101,8 +99,7 @@ const StyledTable = styled.div<{
     );
   }
 
-  // The mobile navigation bar floats over the page, so the table reserves its
-  // footprint to keep its last row reachable, grouped or not.
+  // Reserve the floating mobile navigation bar's footprint so the last row stays reachable.
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     padding-bottom: ${themeCssVariables.spacing[20]};
   }
@@ -206,9 +203,8 @@ const StyledTable = styled.div<{
   }
 
   @media (max-width: ${MOBILE_VIEWPORT}px) {
-    // clip, not hidden: hidden would make the cell its own scroll container and
-    // the anchor below would stick to it instead of the table. The margin keeps
-    // the scroll shadow, which paints outside the box.
+    // clip, not hidden: hidden makes the cell a scroll container the sticky anchor would stick to.
+    // The clip margin keeps the scroll shadow, which paints outside the box.
     div.header-cell.${getRecordTableColumnFieldWidthClassName(0)},
       div.table-cell.${getRecordTableColumnFieldWidthClassName(0)},
       div.footer-cell.${getRecordTableColumnFieldWidthClassName(0)},
@@ -217,10 +213,8 @@ const StyledTable = styled.div<{
       overflow-clip-margin: 4px;
     }
 
-    // Re-pins the cell contents at the table's left edge while the cell slides
-    // under it, so the record name holds still and truncates from the right.
-    // The anchor has to stay zero-width or sticky's containing-block constraint
-    // drags it along with the cell once the cell is narrower than the name.
+    // Pins the content at the table's left edge so the name holds still and truncates from the right.
+    // Must stay zero-width, or sticky's containing-block constraint drags it along with the cell.
     div.table-cell.${getRecordTableColumnFieldWidthClassName(0)}
       > .${RECORD_TABLE_CELL_CONTENT_CLASS_NAME},
       div.table-cell-0-0
@@ -234,8 +228,7 @@ const StyledTable = styled.div<{
       width: 0;
     }
 
-    // Absolute so it gives the chip its full layout width without adding any
-    // width back to the anchor.
+    // Absolute so the chip gets its full width without widening the anchor.
     div.table-cell.${getRecordTableColumnFieldWidthClassName(0)}
       > .${RECORD_TABLE_CELL_CONTENT_CLASS_NAME}
       > .${RECORD_TABLE_CELL_DISPLAY_CLASS_NAME},
@@ -253,9 +246,7 @@ const StyledTable = styled.div<{
       );
     }
 
-    // Shrink-wrapped so the label's and the aggregate's own boxes stay narrower
-    // than the pinned remnant; at full column width sticky's containing-block
-    // constraint would drag them off with the cell instead of holding them.
+    // Shrink-wrapped: at full column width sticky's containing-block constraint would drag these off with the cell.
     div.header-cell.${getRecordTableColumnFieldWidthClassName(0)}
       .${RECORD_TABLE_CELL_CONTENT_CLASS_NAME},
       div.footer-cell.${getRecordTableColumnFieldWidthClassName(0)}

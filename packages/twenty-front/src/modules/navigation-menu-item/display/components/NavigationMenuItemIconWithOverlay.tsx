@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
-import { useContext, type ReactNode } from 'react';
+import { type ReactNode } from 'react';
 import { type IconComponent } from 'twenty-ui/icon';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 const StyledCompositeContainer = styled.div`
   align-items: center;
@@ -37,7 +37,7 @@ export const NavigationMenuItemIconWithOverlay = ({
   children,
   OverlayIcon,
 }: NavigationMenuItemIconWithOverlayProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
 
   return (
     <StyledCompositeContainer>

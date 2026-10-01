@@ -2,8 +2,7 @@ import { SettingsOptionCardContentSwitch } from '@/settings/components/SettingsO
 
 import { useMutation } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
-import { Section } from 'twenty-ui/components';
-import { useToast } from 'twenty-ui/primitives/feedback';
+import { Section, useToast } from 'twenty-ui/components';
 import { IconRefresh } from 'twenty-ui/icon';
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { UpdateApplicationDocument } from '~/generated-metadata/graphql';
@@ -38,7 +37,7 @@ export const SettingsApplicationAutoUpdateSection = ({
   return (
     <Section.Root>
       <Section.Header title={t`Auto update`} />
-      <Card rounded fullWidth>
+      <Card.Root rounded fullWidth>
         <SettingsOptionCardContentSwitch
           Icon={IconRefresh}
           title={t`Auto-upgrade`}
@@ -46,7 +45,7 @@ export const SettingsApplicationAutoUpdateSection = ({
           checked={autoUpgrade}
           onChange={handleAutoUpgradeChange}
         />
-      </Card>
+      </Card.Root>
     </Section.Root>
   );
 };

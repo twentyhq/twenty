@@ -1,3 +1,4 @@
+import { isArray } from '@sniptt/guards';
 import React from 'react';
 
 import { useCaretPreservingElementRef } from '@/host/caret/hooks/useCaretPreservingElementRef';
@@ -32,12 +33,21 @@ export const createHtmlHostWrapper = (htmlTag: string) => {
   if (!CARET_PRESERVING_TAGS.has(htmlTag)) {
     return ({ children, ...props }: WrapperProps) => {
       const { reactBindableProps, hostEnforcedProps, composedElementRef } =
-        useHtmlHostElementProps(props, htmlTag);
+        useHtmlHostElementProps({ props, htmlTag });
+
+      const { value, ...reactBindablePropsWithoutValue } = reactBindableProps;
+
+      const shouldUseOptionSelectedState =
+        htmlTag === 'select' &&
+        reactBindableProps.multiple === true &&
+        !isArray(value);
 
       return createPlainHostElement({
         htmlTag,
         isVoid,
-        reactBindableProps,
+        reactBindableProps: shouldUseOptionSelectedState
+          ? reactBindablePropsWithoutValue
+          : reactBindableProps,
         hostEnforcedProps,
         composedElementRef,
         children,
@@ -53,7 +63,7 @@ export const createHtmlHostWrapper = (htmlTag: string) => {
       reactBindableProps,
       hostEnforcedProps,
       composedElementRef,
-    } = useHtmlHostElementProps(props, htmlTag);
+    } = useHtmlHostElementProps({ props, htmlTag });
 
     const caretPreservingElementRef = useCaretPreservingElementRef(
       composedElementRef,

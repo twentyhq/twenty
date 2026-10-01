@@ -181,9 +181,24 @@ export class BullMQDriver
     }
   }
 
+  private async writeGlobalConcurrency(
+    queueName: MessageQueue,
+    globalConcurrency: number | undefined,
+  ): Promise<void> {
+    const queue = this.queueMap[queueName];
+
+    if (isDefined(globalConcurrency)) {
+      await queue.setGlobalConcurrency(globalConcurrency);
+
+      return;
+    }
+
+    await queue.removeGlobalConcurrency();
+  }
+
   work<T>(
     queueName: MessageQueue,
-    handler: (job: MessageQueueJob<T>) => Promise<unknown> | unknown,
+    handler: (job: MessageQueueJob<T>) => Promise<void>,
     options?: MessageQueueWorkerOptions,
   ) {
     const workerOptions = {
@@ -204,6 +219,8 @@ export class BullMQDriver
     };
 
     this.workerOptionsMap[queueName] = options;
+
+    void this.writeGlobalConcurrency(queueName, options?.globalConcurrency);
 
     this.workerMap[queueName] = new Worker(
       queueName,
@@ -230,7 +247,7 @@ export class BullMQDriver
           this.logger.log(
             `Processing job ${job.id} with name ${job.name} on queue ${queueName}${workspaceSuffix}`,
           );
-          const result = await handler({
+          await handler({
             data: job.data,
             id: job.id ?? '',
             name: job.name,
@@ -245,7 +262,6 @@ export class BullMQDriver
           this.logger.log(
             `Job ${job.id} with name ${job.name} processed on queue ${queueName} in ${executionTime.toFixed(2)}ms${workspaceSuffix}`,
           );
-          return result;
         }),
       workerOptions,
     );
@@ -415,6 +431,7 @@ export class BullMQDriver
         count: QUEUE_RETENTION.failedMaxCount,
       },
       delay: options?.delay,
+      deduplication: options?.deduplication,
       broadcastTo: options?.broadcastTo,
     };
   }
@@ -431,7 +448,6 @@ export class BullMQDriver
       );
     }
 
-    // This ensures only one waiting job can be queued for a specific option.id
     if (options?.id && !options?.allowDuplicatedPrefixes) {
       const waitingJobIds = await this.getWaitingJobIds(queueName);
 
@@ -536,15 +552,16 @@ export class BullMQDriver
     queueName: MessageQueue,
     jobId: string,
   ): Promise<QueueJobDetails<T> | undefined> {
-    const queue = this.queueMap[queueName];
-    const state = await queue.getJobState(jobId);
+    const job = await this.queueMap[queueName].getJob(jobId);
 
-    // Read completion data after the state so a finished job includes its result.
-    if (state === 'unknown') {
+    if (!isDefined(job)) {
       return undefined;
     }
-    const job = await queue.getJob(jobId);
-    if (!isDefined(job)) {
+
+    const state = await job.getState();
+
+    // BullMQ reports 'unknown' for a job whose record was evicted by retention
+    if (state === 'unknown') {
       return undefined;
     }
 
@@ -569,7 +586,6 @@ export class BullMQDriver
       attemptsMade: job.attemptsMade,
       failedReason: job.failedReason,
       progress: job.progress,
-      result: job.returnvalue,
       timestamp: job.timestamp,
       processedOn: job.processedOn,
       finishedOn: job.finishedOn,

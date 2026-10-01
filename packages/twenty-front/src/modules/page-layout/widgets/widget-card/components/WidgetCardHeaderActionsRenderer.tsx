@@ -5,7 +5,7 @@ import { WidgetHeaderCommandMenuItems } from '@/page-layout/widgets/widget-card/
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { WidgetType } from '~/generated-metadata/graphql';
 
 const StyledActionsContainer = styled.div`
@@ -23,9 +23,7 @@ export const WidgetCardHeaderActionsRenderer = () => {
     return null;
   }
 
-  // Activity actions create records, so they hide while the layout is being
-  // arranged. Field widgets keep their actions: see-all is a read-only link,
-  // and edit hides itself through useFieldWidgetActionVisibility.
+  // Activity actions create records, so they hide while arranging; field widget actions handle their own visibility.
   if (isPageLayoutInEditMode && widget.type !== WidgetType.FIELD) {
     return null;
   }

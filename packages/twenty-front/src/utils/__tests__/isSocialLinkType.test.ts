@@ -1,5 +1,5 @@
+import { LinkType } from '@/ui/field/display/components/SocialLink/LinkType';
 import { isSocialLinkType } from '~/utils/isSocialLinkType';
-import { LinkType } from 'twenty-ui/primitives/navigation';
 
 describe('isSocialLinkType', () => {
   it('should return true for social link types', () => {

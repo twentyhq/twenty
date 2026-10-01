@@ -1,9 +1,7 @@
 /* @license Enterprise */
 
-import {
-  MetadataReadability,
-  type RecordShareAccessLevel,
-} from 'twenty-shared/types';
+import { resolveRecordShareGateKind } from 'src/engine/core-modules/record-share/utils/resolve-record-share-gate-kind.util';
+import { type RecordShareAccessLevel } from 'twenty-shared/types';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 
 import { MAX_INHERITED_READABILITY_DEPTH } from 'src/engine/core-modules/record-share/constants/max-inherited-readability-depth.constant';
@@ -13,6 +11,7 @@ import {
   type InheritedReadabilityParentCondition,
 } from 'src/engine/core-modules/record-share/utils/build-inherited-readability-condition.util';
 import { buildRecordShareCondition } from 'src/engine/core-modules/record-share/utils/build-record-share-condition.util';
+import { isOpenWhenDetachedObject } from 'src/engine/core-modules/record-share/utils/is-open-when-detached-object.util';
 import { resolveInheritedReadabilityParents } from 'src/engine/core-modules/record-share/utils/resolve-inherited-readability-parents.util';
 import { resolveRequiredRecordShareAccessLevels } from 'src/engine/core-modules/record-share/utils/resolve-required-record-share-access-levels.util';
 import {
@@ -34,38 +33,29 @@ export const buildRecordShareGate = ({
   target,
   buildParentPolicy,
 }: RecordShareGateArgs): RowAccessPolicy => {
-  const { isRecordSharingEnabled } = context.environment;
   const isOwningApplication = context.subject.isOwningApplication(
     target.flatObjectMetadata,
   );
 
-  switch (target.flatObjectMetadata.readability) {
-    case MetadataReadability.OPEN:
+  const gateKind = resolveRecordShareGateKind({
+    readability: target.flatObjectMetadata.readability,
+    isOwningApplication,
+  });
+  switch (gateKind) {
+    case 'open':
       return { kind: 'open' };
-    case MetadataReadability.INHERITED:
-      if (!isRecordSharingEnabled || isOwningApplication) {
-        return { kind: 'open' };
-      }
-
+    case 'deny':
+      return { kind: 'denied' };
+    case 'inherited':
       return buildInheritedReadabilityGate({
         context,
         target,
         buildParentPolicy,
       });
-    case MetadataReadability.SYSTEM:
-      return { kind: 'denied' };
-    case MetadataReadability.APPLICATION:
-      return isRecordSharingEnabled && !isOwningApplication
-        ? { kind: 'denied' }
-        : { kind: 'open' };
-    case MetadataReadability.PRIVATE:
-      if (!isRecordSharingEnabled || isOwningApplication) {
-        return { kind: 'open' };
-      }
-
+    case 'private':
       return buildOwnRecordShareGate(context, target);
     default:
-      return assertUnreachable(target.flatObjectMetadata.readability);
+      return assertUnreachable(gateKind);
   }
 };
 
@@ -140,8 +130,12 @@ const buildInheritedReadabilityGate = ({
     return { kind: 'open' };
   }
 
+  const isOpenWhenDetached = isOpenWhenDetachedObject(flatObjectMetadata);
+
   if (parents.length === 0) {
-    return buildOwnRecordShareGate(context, target);
+    return isOpenWhenDetached
+      ? { kind: 'open' }
+      : buildOwnRecordShareGate(context, target);
   }
 
   const principals = resolveRecordSharePrincipals(context, target);
@@ -166,6 +160,7 @@ const buildInheritedReadabilityGate = ({
       recordShareTableExpression:
         context.environment.recordShareTableExpression,
       ...principals,
+      isOpenWhenDetached,
     }),
   };
 };

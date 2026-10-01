@@ -1,7 +1,6 @@
 import type { TwentyClientRunAs } from '../shared/twenty-client-run-as.type';
 
-// Ambient type stubs for the genql-generated code this template gets
-// injected into. They enable full typecheck/lint on this file.
+// Ambient stubs for the genql-generated code this template is injected into.
 // __STRIPPED_DURING_INJECTION_START__
 type QueryGenqlSelection = Record<string, unknown>;
 type MutationGenqlSelection = Record<string, unknown>;
@@ -59,6 +58,20 @@ type GraphqlResponse = {
   statusText: string;
   payload: GraphqlResponsePayload | null;
   rawBody: string;
+};
+
+type FilesFieldUploadTarget = {
+  fileId: string;
+  uploadUrl: string;
+  contentType: string;
+};
+
+type FilesFieldUploadedFile = {
+  id: string;
+  path: string;
+  size: number;
+  createdAt: string;
+  url: string;
 };
 
 const getProcessEnvironment = (): ProcessEnvironment => {
@@ -179,8 +192,6 @@ export class TwentyGeneratedClient {
       typeof headers === 'function' ? undefined : headers,
     );
 
-    // Priority: explicit header > the token for the requested access > api key
-    // (legacy).
     this.authorizationToken =
       tokenFromHeaders ??
       processEnvironment[
@@ -210,60 +221,91 @@ export class TwentyGeneratedClient {
   }
 
   // __UPLOAD_FILE_START__
-  async uploadFile(
-    fileBuffer: Buffer,
-    filename: string,
-    contentType: string = 'application/octet-stream',
-    fieldMetadataUniversalIdentifier: string,
-  ): Promise<{
-    id: string;
-    path: string;
-    size: number;
-    createdAt: string;
-    url: string;
-  }> {
-    const form = new FormData();
-
-    form.append(
-      'operations',
-      JSON.stringify({
-        query: `mutation UploadFilesFieldFileByUniversalIdentifier($file: Upload!, $fieldMetadataUniversalIdentifier: String!) {
-        uploadFilesFieldFileByUniversalIdentifier(file: $file, fieldMetadataUniversalIdentifier: $fieldMetadataUniversalIdentifier) { id path size createdAt url }
+  async uploadFile({
+    fileBuffer,
+    filename,
+    fieldMetadataUniversalIdentifier,
+  }: {
+    fileBuffer: Buffer;
+    filename: string;
+    fieldMetadataUniversalIdentifier: string;
+  }): Promise<FilesFieldUploadedFile> {
+    const { createFileUpload: uploadTarget } =
+      await this.executeMutationOrThrow<{
+        createFileUpload: FilesFieldUploadTarget;
+      }>({
+        query: `mutation CreateFilesFieldFileUpload($filename: String!, $size: Float!, $fieldMetadataUniversalIdentifier: String!) {
+        createFileUpload(filename: $filename, size: $size, fileFolder: FilesField, fieldMetadataUniversalIdentifier: $fieldMetadataUniversalIdentifier) { fileId uploadUrl contentType }
       }`,
         variables: {
-          file: null,
+          filename,
+          size: fileBuffer.byteLength,
           fieldMetadataUniversalIdentifier,
         },
-      }),
-    );
-    form.append('map', JSON.stringify({ '0': ['variables.file'] }));
-    form.append(
-      '0',
-      new Blob([fileBuffer as BlobPart], { type: contentType }),
-      filename,
+      });
+
+    await this.putFileToUploadTargetOrThrow({ fileBuffer, uploadTarget });
+
+    const { completeFileUpload: uploadedFile } =
+      await this.executeMutationOrThrow<{
+        completeFileUpload: FilesFieldUploadedFile;
+      }>({
+        query: `mutation CompleteFilesFieldFileUpload($fileId: String!) {
+        completeFileUpload(fileId: $fileId) { id path size createdAt url }
+      }`,
+        variables: { fileId: uploadTarget.fileId },
+      });
+
+    return uploadedFile;
+  }
+
+  private async putFileToUploadTargetOrThrow({
+    fileBuffer,
+    uploadTarget,
+  }: {
+    fileBuffer: Buffer;
+    uploadTarget: FilesFieldUploadTarget;
+  }): Promise<void> {
+    const fetchImplementation = this.getFetchImplementationOrThrow();
+
+    const response = await fetchImplementation.call(
+      globalThis,
+      uploadTarget.uploadUrl,
+      {
+        method: 'PUT',
+        headers: { 'Content-Type': uploadTarget.contentType },
+        body: fileBuffer as BodyInit,
+        credentials: 'omit',
+      },
     );
 
+    if (!response.ok) {
+      throw new Error(
+        `File upload failed (${response.status} ${response.statusText}): ${await response.text()}`,
+      );
+    }
+  }
+
+  private async executeMutationOrThrow<TData>({
+    query,
+    variables,
+  }: {
+    query: string;
+    variables: Record<string, unknown>;
+  }): Promise<TData> {
     const result = await this.executeGraphqlRequestWithOptionalRefresh({
-      operation: form,
-      headers: {},
-      requestInit: {
-        method: 'POST',
-      },
+      operation: { query, variables },
     });
 
     if (result.errors) {
       throw new GenqlError(result.errors, result.data);
     }
 
-    const data = result.data as Record<string, unknown>;
+    if (!result.data) {
+      throw new Error('Empty GraphQL response');
+    }
 
-    return data.uploadFilesFieldFileByUniversalIdentifier as {
-      id: string;
-      path: string;
-      size: number;
-      createdAt: string;
-      url: string;
-    };
+    return result.data as TData;
   }
   // __UPLOAD_FILE_END__
 
@@ -312,12 +354,7 @@ export class TwentyGeneratedClient {
     requestInit?: RequestInit;
     token: string | null;
   }): Promise<GraphqlResponse> {
-    if (!this.fetchImplementation) {
-      throw new Error(
-        'Global `fetch` function is not available, ' +
-          'pass a fetch implementation to the Twenty client',
-      );
-    }
+    const fetchImplementation = this.getFetchImplementationOrThrow();
 
     const resolvedHeaders = await this.resolveHeaders();
     const requestHeaders = new Headers(resolvedHeaders);
@@ -340,7 +377,7 @@ export class TwentyGeneratedClient {
       requestHeaders.delete('Authorization');
     }
 
-    const response = await this.fetchImplementation.call(globalThis, this.url, {
+    const response = await fetchImplementation.call(globalThis, this.url, {
       ...this.requestOptions,
       ...requestInit,
       method: requestInit?.method ?? 'POST',
@@ -366,6 +403,17 @@ export class TwentyGeneratedClient {
       payload,
       rawBody,
     };
+  }
+
+  private getFetchImplementationOrThrow(): typeof globalThis.fetch {
+    if (!this.fetchImplementation) {
+      throw new Error(
+        'Global `fetch` function is not available, ' +
+          'pass a fetch implementation to the Twenty client',
+      );
+    }
+
+    return this.fetchImplementation;
   }
 
   private async resolveHeaders(): Promise<HeadersInit> {

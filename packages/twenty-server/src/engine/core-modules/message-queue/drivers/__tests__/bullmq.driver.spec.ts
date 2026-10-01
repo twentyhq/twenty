@@ -5,17 +5,19 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 
 const mockGetJobs = jest.fn();
 const mockGetJob = jest.fn();
-const mockGetJobState = jest.fn();
 const mockAdd = jest.fn();
 const mockAddBulk = jest.fn();
+const mockSetGlobalConcurrency = jest.fn();
+const mockRemoveGlobalConcurrency = jest.fn();
 
 jest.mock('bullmq', () => ({
   Queue: jest.fn().mockImplementation(() => ({
     getJobs: mockGetJobs,
     getJob: mockGetJob,
-    getJobState: mockGetJobState,
     add: mockAdd,
     addBulk: mockAddBulk,
+    setGlobalConcurrency: mockSetGlobalConcurrency,
+    removeGlobalConcurrency: mockRemoveGlobalConcurrency,
   })),
   Worker: jest.fn().mockImplementation(() => ({ on: jest.fn() })),
   MetricsTime: { ONE_WEEK: 1 },
@@ -46,26 +48,6 @@ describe('BullMQDriver deduplication', () => {
         id: job.opts.jobId ?? `auto-${index}`,
       })),
     );
-  });
-
-  it('includes the result when a job finishes during a snapshot read', async () => {
-    const job = {
-      id: 'export',
-      data: {},
-      returnvalue: null as { fileId: string } | null,
-      opts: {},
-      getState: mockGetJobState,
-    };
-    mockGetJob.mockImplementation(async () => ({ ...job }));
-    mockGetJobState.mockImplementation(async () => {
-      job.returnvalue = { fileId: 'completed-file' };
-      return 'completed';
-    });
-    const jobs = await driver.getJobs(MessageQueue.workspaceQueue, ['export']);
-    expect(jobs.export).toMatchObject({
-      state: 'completed',
-      result: { fileId: 'completed-file' },
-    });
   });
 
   describe('add', () => {
@@ -192,7 +174,6 @@ describe('BullMQDriver progress', () => {
       };
       const updateProgress = jest.spyOn(job, 'updateProgress');
       mockGetJob.mockResolvedValue(job);
-      mockGetJobState.mockResolvedValue('active');
       driver.work(MessageQueue.workspaceQueue, async (queueJob) => {
         await queueJob.updateProgress(progress);
       });
@@ -213,4 +194,35 @@ describe('BullMQDriver progress', () => {
       expect(jobs['job-id']).toMatchObject({ state: 'active', progress });
     },
   );
+});
+
+describe('BullMQDriver global concurrency', () => {
+  const driver = new BullMQDriver(
+    {} as never,
+    {} as never,
+    {} as never,
+    {} as never,
+  );
+
+  driver.register(MessageQueue.recordExportQueue);
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('sets the global concurrency when the queue declares one', () => {
+    driver.work(MessageQueue.recordExportQueue, jest.fn(), {
+      globalConcurrency: 2,
+    });
+
+    expect(mockSetGlobalConcurrency).toHaveBeenCalledWith(2);
+    expect(mockRemoveGlobalConcurrency).not.toHaveBeenCalled();
+  });
+
+  it('removes the global concurrency when the queue declares none', () => {
+    driver.work(MessageQueue.recordExportQueue, jest.fn(), {});
+
+    expect(mockRemoveGlobalConcurrency).toHaveBeenCalledTimes(1);
+    expect(mockSetGlobalConcurrency).not.toHaveBeenCalled();
+  });
 });

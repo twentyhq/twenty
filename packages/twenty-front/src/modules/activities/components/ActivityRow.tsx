@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import React from 'react';
-import { CardContent } from 'twenty-ui/primitives/surfaces';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { Card } from 'twenty-ui/primitives/surfaces';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledRowContentContainer = styled.div`
   > div {
@@ -38,13 +38,13 @@ export const ActivityRow = ({
 
   return (
     <StyledRowContentContainer>
-      <CardContent
+      <Card.Content
         onClick={handleClick}
         isClickable={disabled !== true}
         hasHoverHighlight={disabled !== true}
       >
         {children}
-      </CardContent>
+      </Card.Content>
     </StyledRowContentContainer>
   );
 };

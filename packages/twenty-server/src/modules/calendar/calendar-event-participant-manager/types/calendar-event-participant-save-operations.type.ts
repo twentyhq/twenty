@@ -1,5 +1,5 @@
 import { type CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
-import { type FetchedCalendarEventParticipant } from 'src/modules/calendar/common/types/fetched-calendar-event';
+import { type FetchedCalendarEventParticipant } from 'src/modules/calendar/common/types/fetched-calendar-event.type';
 
 export type CalendarEventParticipantSaveOperations = {
   participantsToInsert: (FetchedCalendarEventParticipant & {

@@ -1,4 +1,4 @@
-import { Section } from '@ui/components/Section/Section';
+import { Section } from '@ui/components/layout/Section/Section';
 import { Avatar } from '@ui/primitives/data-display/Avatar/Avatar';
 import { Card } from '@ui/primitives/surfaces/Card/Card';
 import { i18n } from '@lingui/core';
@@ -29,7 +29,7 @@ export const RecordingControls = ({
     stopping: i18n._('Finishing recording…'),
   }[active.status];
   return (
-    <Card
+    <Card.Root
       className="live-card"
       aria-label={i18n._('Current recording')}
       backgroundColor="var(--t-background-secondary)"
@@ -78,6 +78,6 @@ export const RecordingControls = ({
           {i18n._('Finish recording')}
         </Button>
       </div>
-    </Card>
+    </Card.Root>
   );
 };

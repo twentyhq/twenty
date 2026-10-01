@@ -11,8 +11,10 @@ type CreateAsyncRecallTranscriptResult =
 
 export const createAsyncRecallTranscript = async ({
   externalRecordingId,
+  signal,
 }: {
   externalRecordingId: string;
+  signal?: AbortSignal;
 }): Promise<CreateAsyncRecallTranscriptResult> => {
   const configResult = getRecallApiConfig();
 
@@ -22,13 +24,14 @@ export const createAsyncRecallTranscript = async ({
 
   const result = await recallBotApiRequest<{ id?: unknown }>({
     config: configResult.config,
+    signal,
     path: `/recording/${externalRecordingId}/create_transcript/`,
     method: 'POST',
     body: {
       provider: getRecallAsyncTranscriptProvider(),
       diarization: { use_separate_streams_when_available: true },
     },
-    maxAttempts: 1,
+    idempotencyKey: `create-transcript:${externalRecordingId}`,
   });
 
   if (!result.ok) {

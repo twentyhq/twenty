@@ -1,3 +1,3 @@
-import { type UsageMeter } from 'src/engine/core-modules/usage-limit/types/usage-meter.type';
+import { type QuotaMeter } from 'src/engine/core-modules/usage-limit/types/quota-meter.type';
 
-export type QuotaCost = Record<UsageMeter, number>;
+export type QuotaCost = Record<QuotaMeter, number>;

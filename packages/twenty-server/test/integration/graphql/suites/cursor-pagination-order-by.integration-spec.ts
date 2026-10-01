@@ -2,7 +2,7 @@ import { randomUUID } from 'crypto';
 
 import { createManyOperationFactory } from 'test/integration/graphql/utils/create-many-operation-factory.util';
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { deleteAllRecords } from 'test/integration/utils/delete-all-records';
 
 const PAGE_SIZE = 3;
@@ -63,9 +63,8 @@ const paginateForward = async ({
   let after: string | undefined = undefined;
   let pages = 0;
 
-  // Cap the loop far above the expected page count so a paging bug cannot hang the suite
   for (let iteration = 0; iteration < 20; iteration++) {
-    const response: GraphqlResponse = await makeGraphqlAPIRequest(
+    const response: GraphqlResponse = await makeGraphqlApiRequest(
       findManyOperationFactory({
         objectMetadataSingularName,
         objectMetadataPluralName,
@@ -104,7 +103,7 @@ const paginateBackwardFrom = async ({
   let before: string | undefined = startingBefore;
 
   for (let iteration = 0; iteration < 20; iteration++) {
-    const response: GraphqlResponse = await makeGraphqlAPIRequest(
+    const response: GraphqlResponse = await makeGraphqlApiRequest(
       findManyOperationFactory({
         objectMetadataSingularName: 'opportunity',
         objectMetadataPluralName: 'opportunities',
@@ -135,7 +134,7 @@ describe('Cursor pagination exhaustiveness with orderBy (issue #24333)', () => {
   beforeAll(async () => {
     await deleteAllRecords('opportunity');
 
-    await makeGraphqlAPIRequest(
+    await makeGraphqlApiRequest(
       createManyOperationFactory({
         objectMetadataSingularName: 'opportunity',
         objectMetadataPluralName: 'opportunities',
@@ -184,7 +183,6 @@ describe('Cursor pagination exhaustiveness with orderBy (issue #24333)', () => {
       expect(ids).toHaveLength(TOTAL_COUNT);
       expect(new Set(ids).size).toBe(TOTAL_COUNT);
 
-      // The NULL block sorts last: its records must all be there, at the end
       expect(new Set(ids.slice(DATED_CLOSE_DATES.length))).toEqual(
         new Set(nullCloseDateOpportunityIds),
       );
@@ -216,9 +214,7 @@ describe('Cursor pagination exhaustiveness with orderBy (issue #24333)', () => {
   });
 
   it('should walk backward across the NULL boundary with before cursors', async () => {
-    // Reach the last page forward, then walk back from its end cursor: the
-    // backward scan re-crosses the null/non-null boundary in reverse
-    const forwardResponse = await makeGraphqlAPIRequest(
+    const forwardResponse = await makeGraphqlApiRequest(
       findManyOperationFactory({
         objectMetadataSingularName: 'opportunity',
         objectMetadataPluralName: 'opportunities',
@@ -240,7 +236,6 @@ describe('Cursor pagination exhaustiveness with orderBy (issue #24333)', () => {
       startingBefore: forwardConnection.pageInfo.endCursor,
     });
 
-    // Everything before the last record, in the same order as the forward scan
     expect(ids).toEqual(forwardIds.slice(0, -1));
   });
 
@@ -249,7 +244,7 @@ describe('Cursor pagination exhaustiveness with orderBy (issue #24333)', () => {
       JSON.stringify({ id: datedOpportunityIds[0] }),
     ).toString('base64');
 
-    const response: GraphqlResponse = await makeGraphqlAPIRequest(
+    const response: GraphqlResponse = await makeGraphqlApiRequest(
       findManyOperationFactory({
         objectMetadataSingularName: 'opportunity',
         objectMetadataPluralName: 'opportunities',
@@ -276,8 +271,7 @@ describe('Cursor pagination exhaustiveness with orderBy (issue #24333)', () => {
     expect(ids).toEqual(datedOpportunityIds.slice(2));
   });
 
-  // Canonical lowercase UUID strings sort the same way in JS and in Postgres,
-  // so the expected order can be computed with a plain string sort
+  // Lowercase UUID strings sort the same in JS and Postgres, so a plain string sort gives the expected order.
   it('should honor an explicit descending id ordering across pages', async () => {
     const { ids } = await paginateForward({
       orderBy: { id: 'DescNullsLast' },
@@ -318,7 +312,7 @@ describe('Cursor pagination with composite orderBy not in the selection set', ()
   beforeAll(async () => {
     await deleteAllRecords('person');
 
-    await makeGraphqlAPIRequest(
+    await makeGraphqlApiRequest(
       createManyOperationFactory({
         objectMetadataSingularName: 'person',
         objectMetadataPluralName: 'people',
@@ -342,7 +336,6 @@ describe('Cursor pagination with composite orderBy not in the selection set', ()
       first: 2,
     });
 
-    // Global order must hold across pages: Alice..Eve
     expect(ids).toEqual(personIds);
   });
 });
@@ -362,7 +355,7 @@ describe('Cursor pagination ordered by a nullable foreign key', () => {
     await deleteAllRecords('opportunity');
     await deleteAllRecords('company');
 
-    await makeGraphqlAPIRequest(
+    await makeGraphqlApiRequest(
       createManyOperationFactory({
         objectMetadataSingularName: 'company',
         objectMetadataPluralName: 'companies',
@@ -374,7 +367,7 @@ describe('Cursor pagination ordered by a nullable foreign key', () => {
       }),
     ).expect(200);
 
-    await makeGraphqlAPIRequest(
+    await makeGraphqlApiRequest(
       createManyOperationFactory({
         objectMetadataSingularName: 'opportunity',
         objectMetadataPluralName: 'opportunities',
@@ -426,7 +419,7 @@ describe('Cursor pagination ordered by a nullable composite sub-field', () => {
   beforeAll(async () => {
     await deleteAllRecords('opportunity');
 
-    await makeGraphqlAPIRequest(
+    await makeGraphqlApiRequest(
       createManyOperationFactory({
         objectMetadataSingularName: 'opportunity',
         objectMetadataPluralName: 'opportunities',
@@ -457,7 +450,6 @@ describe('Cursor pagination ordered by a nullable composite sub-field', () => {
 
     expect(ids).toHaveLength(amountTotalCount);
     expect(new Set(ids).size).toBe(amountTotalCount);
-    // Non-null amounts keep their micros order across pages
     expect(ids.slice(0, withAmountOpportunityIds.length)).toEqual(
       withAmountOpportunityIds,
     );
@@ -486,7 +478,7 @@ describe('Cursor pagination with duplicate sort values', () => {
   beforeAll(async () => {
     await deleteAllRecords('opportunity');
 
-    await makeGraphqlAPIRequest(
+    await makeGraphqlApiRequest(
       createManyOperationFactory({
         objectMetadataSingularName: 'opportunity',
         objectMetadataPluralName: 'opportunities',
@@ -521,9 +513,8 @@ describe('Cursor pagination with duplicate sort values', () => {
   });
 });
 
-// Empty TEXT values are stored as SQL NULL (write-side normalization) and
-// presented as '' by the API: the scan's NULL block holds every empty row, and
-// cursors read the raw SQL values so the continuation follows the scan exactly
+// Empty TEXT values are stored as SQL NULL but returned as '' by the API: the scan's NULL block holds every empty row,
+// and cursors carry the raw SQL values so the continuation follows the scan.
 describe('Cursor pagination ordered by a TEXT field with empty values', () => {
   const namedCompanyIds = {
     ALPHA: '20202020-eeee-4000-8000-000000000001',
@@ -541,7 +532,7 @@ describe('Cursor pagination ordered by a TEXT field with empty values', () => {
   ];
 
   beforeAll(async () => {
-    await makeGraphqlAPIRequest(
+    await makeGraphqlApiRequest(
       createManyOperationFactory({
         objectMetadataSingularName: 'company',
         objectMetadataPluralName: 'companies',
@@ -549,7 +540,6 @@ describe('Cursor pagination ordered by a TEXT field with empty values', () => {
         data: [
           { id: namedCompanyIds.ALPHA, name: 'Alpha Corp' },
           { id: namedCompanyIds.BETA, name: 'Beta Inc' },
-          // One explicitly empty, the others without the field: both store NULL
           { id: emptyNameCompanyIds[0], name: '' },
           ...emptyNameCompanyIds.slice(1).map((id) => ({ id })),
         ],

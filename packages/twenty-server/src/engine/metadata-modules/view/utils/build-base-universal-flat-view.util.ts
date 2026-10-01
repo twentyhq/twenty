@@ -1,3 +1,4 @@
+import { DEFAULT_VIEW_GROUP_LOAD_LIMIT } from 'twenty-shared/constants';
 import { ViewOpenRecordIn, ViewVisibility } from 'twenty-shared/types';
 import { v4 } from 'uuid';
 
@@ -45,6 +46,7 @@ export const buildBaseUniversalFlatView = ({
     isCompact: false,
     shouldHideEmptyGroups: false,
     kanbanColumnWidth: null,
+    groupLoadLimit: DEFAULT_VIEW_GROUP_LOAD_LIMIT,
     kanbanAggregateOperation: null,
     kanbanAggregateOperationFieldMetadataUniversalIdentifier: null,
     mainGroupByFieldMetadataUniversalIdentifier: null,

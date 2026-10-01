@@ -1,4 +1,3 @@
-
 import {
   extractSessionCookie,
   normalizeSessionCookieForSnapshot,
@@ -11,12 +10,8 @@ import { USER_SESSION_SECURE_COOKIE_NAME } from 'src/engine/core-modules/user-se
 import { ALLOWED_ORIGIN } from 'test/integration/graphql/suites/auth/user-sessions/constants/session-origins.constants';
 import { setupDatabaseConfigOverrideForSuite } from 'test/integration/graphql/suites/auth/user-sessions/utils/setup-database-config-override.util';
 
-// SameSite=None forces Secure (browsers reject the combination without it),
-// which is the one secure-deployment trigger reachable at runtime: SERVER_URL
-// stays plain http in .env.test. The production combination (https SERVER_URL
-// with the SameSite=Lax default) is covered by
-// secure-deployment-session-cookie.integration-spec.ts under a dedicated app
-// boot.
+// SameSite=None forces Secure, the only secure-deployment trigger reachable while SERVER_URL is http in .env.test.
+// The https production case is covered by secure-deployment/suites/secure-session-cookie.integration-spec.ts.
 describe('successful session cookie delivery on a secure deployment (integration)', () => {
   setupDatabaseConfigOverrideForSuite('AUTH_COOKIE_SAME_SITE', 'none');
 
@@ -40,8 +35,6 @@ describe('successful session cookie delivery on a secure deployment (integration
       throw new Error('Expected a secure session cookie');
     }
 
-    // __Host- requires Secure, Path=/ and no Domain; browsers enforce the
-    // prefix contract, so the snapshot pins host-only scoping.
     expect(
       normalizeSessionCookieForSnapshot(secureSessionCookie.rawCookie),
     ).toMatchSnapshot('secure-session-cookie');

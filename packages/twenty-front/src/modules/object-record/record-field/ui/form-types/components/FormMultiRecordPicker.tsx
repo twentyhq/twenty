@@ -21,13 +21,13 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyArray } from '@sniptt/guards';
-import { useContext, useId, useState } from 'react';
+import { useId, useState } from 'react';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
+import { useToast } from 'twenty-ui/components';
 import { IconChevronDown } from 'twenty-ui/icon';
-import { useToast } from 'twenty-ui/primitives/feedback';
 import { Field } from 'twenty-ui/primitives/input';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { mapArrayToObject } from '~/utils/array/mapArrayToObject';
 
 const StyledFormSelectContainerWrapper = styled.div<{ readonly?: boolean }>`
@@ -73,7 +73,7 @@ export const FormMultiRecordPicker = ({
   testId,
   VariablePicker,
 }: FormMultiRecordPickerProps) => {
-  const { theme } = useContext(ThemeContext);
+  const theme = useTheme();
 
   const [draftValue, setDraftValue] = useState<FormMultiRecordPickerDraftValue>(
     getFormMultiRecordPickerDraftValue(defaultValue),

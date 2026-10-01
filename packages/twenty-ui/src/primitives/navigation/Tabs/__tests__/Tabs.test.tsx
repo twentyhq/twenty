@@ -2,8 +2,8 @@ import { type ReactNode } from 'react';
 
 import { runComponentConformance } from '@test-utilities/conformance/runComponentConformance';
 
+import styles from '../../internal/tab/Tab.module.scss';
 import { Tabs } from '../Tabs';
-import styles from '../Tabs.module.scss';
 
 const RootWrapper = ({ children }: { children: ReactNode }) => (
   <Tabs.Root defaultValue="overview">{children}</Tabs.Root>

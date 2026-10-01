@@ -24,6 +24,8 @@ import { isConfidentialApplicationOAuthClient } from 'src/engine/core-modules/ap
 import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
 @Injectable()
 export class OAuthService {
@@ -32,8 +34,12 @@ export class OAuthService {
   constructor(
     @InjectRepository(AppTokenEntity)
     private readonly appTokenRepository: Repository<AppTokenEntity>,
+    @InjectWorkspaceScopedRepository(ApplicationEntity)
+    private readonly applicationRepository: WorkspaceScopedRepository<ApplicationEntity>,
+    // Client-credentials counts a registration's installs across every workspace to enforce exactly one, so there is no workspace to scope by
+    // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(ApplicationEntity)
-    private readonly applicationRepository: Repository<ApplicationEntity>,
+    private readonly unscopedApplicationRepository: Repository<ApplicationEntity>,
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     private readonly applicationTokenService: ApplicationTokenService,
@@ -114,8 +120,7 @@ export class OAuthService {
       );
     }
 
-    // RFC 6749 §4.1.2: if a previously used code is presented, this indicates
-    // a potential compromise — log a security warning
+    // RFC 6749 §4.1.2: a reused code signals a potential compromise
     if (authCodeToken.revokedAt) {
       this.logger.warn(
         `Authorization code replay detected for client ${clientId}. ` +
@@ -161,7 +166,6 @@ export class OAuthService {
       }
     }
 
-    // PKCE: if code_challenge was stored, code_verifier is required
     const storedCodeChallenge = authCodeToken.context?.codeChallenge;
 
     if (storedCodeChallenge) {
@@ -243,8 +247,7 @@ export class OAuthService {
       authCodeToken.context?.scope ??
       applicationRegistration.oAuthScopes.join(' ');
 
-    // Recorded before the tokens exist, so a refresh token is never handed out
-    // without the grant that makes it redeemable and revocable.
+    // Recorded first so a refresh token never exists without a revocable grant
     await this.applicationAuthorizationService.recordAuthorization({
       userId: authCodeToken.userId,
       workspaceId: authCodeToken.workspaceId,
@@ -297,7 +300,7 @@ export class OAuthService {
       return secretError;
     }
 
-    const applications = await this.applicationRepository.find({
+    const applications = await this.unscopedApplicationRepository.find({
       where: { applicationRegistrationId: applicationRegistration.id },
     });
 
@@ -350,7 +353,6 @@ export class OAuthService {
 
     const applicationRegistration = clientValidation;
 
-    // Confidential clients (those with a secret) must authenticate
     if (
       isConfidentialApplicationOAuthClient(applicationRegistration) &&
       !isNonEmptyString(clientSecret)
@@ -378,10 +380,12 @@ export class OAuthService {
           refreshToken,
         );
 
-      // Verify the refresh token belongs to this client
-      const application = await this.applicationRepository.findOne({
-        where: { id: payload.applicationId },
-      });
+      const application = await this.applicationRepository.findOne(
+        payload.workspaceId,
+        {
+          where: { id: payload.applicationId },
+        },
+      );
 
       if (
         !application ||
@@ -430,7 +434,6 @@ export class OAuthService {
   }
 
   // RFC 7009: Token revocation
-  // Returns true if token was successfully processed (even if already invalid)
   async revokeToken(params: {
     token: string;
     clientId?: string;
@@ -467,13 +470,14 @@ export class OAuthService {
           token,
         );
 
-      // RFC 7009 §2.1: revoking a refresh token invalidates the authorization
-      // behind it, and only the client the token was issued to may ask for
-      // that. Access tokens stay stateless and live out their few minutes.
+      // RFC 7009 §2.1: only the issuing client may revoke; access tokens stay valid until expiry
       if (isDefined(applicationRegistration) && isDefined(payload.userId)) {
-        const application = await this.applicationRepository.findOne({
-          where: { id: payload.applicationId },
-        });
+        const application = await this.applicationRepository.findOne(
+          payload.workspaceId,
+          {
+            where: { id: payload.applicationId },
+          },
+        );
 
         if (
           application?.applicationRegistrationId === applicationRegistration.id
@@ -490,8 +494,7 @@ export class OAuthService {
         `Token revocation requested for application ${payload.applicationId}`,
       );
     } catch {
-      // Per RFC 7009 §2.2: the server responds with HTTP 200 for both
-      // valid and invalid tokens
+      // RFC 7009 §2.2: respond 200 for both valid and invalid tokens
     }
 
     return { success: true };
@@ -539,10 +542,12 @@ export class OAuthService {
         return { active: false };
       }
 
-      // Verify the token belongs to this client
-      const application = await this.applicationRepository.findOne({
-        where: { id: decoded.applicationId },
-      });
+      const application = await this.applicationRepository.findOne(
+        decoded.workspaceId,
+        {
+          where: { id: decoded.applicationId },
+        },
+      );
 
       if (
         !application ||
@@ -579,9 +584,12 @@ export class OAuthService {
             token,
           );
 
-        const application = await this.applicationRepository.findOne({
-          where: { id: payload.applicationId },
-        });
+        const application = await this.applicationRepository.findOne(
+          payload.workspaceId,
+          {
+            where: { id: payload.applicationId },
+          },
+        );
 
         if (
           !application ||
@@ -635,11 +643,7 @@ export class OAuthService {
     return null;
   }
 
-  // Refresh tokens issued before authorizations were recorded have no row to
-  // check against. Rejecting them would sign every live integration out the
-  // moment this ships, so the first refresh backfills the grant that was always
-  // implied. A revoked authorization keeps its row, so this never resurrects
-  // access the user turned off.
+  // Refresh tokens predating this table have no row: backfill it rather than sign every integration out
   private async consumeUserAuthorization({
     userId,
     workspaceId,
@@ -662,9 +666,7 @@ export class OAuthService {
       );
     }
 
-    // Rechecked on every refresh, not just when backfilling: removing a member
-    // soft-deletes the membership, so an existing grant outlives it and nothing
-    // else in this path would notice.
+    // Member removal soft-deletes the membership, which an existing grant outlives
     const userWorkspace = await this.userWorkspaceRepository.findOne({
       where: { userId, workspaceId },
     });
@@ -696,11 +698,7 @@ export class OAuthService {
     return null;
   }
 
-  // A token predating the authorization record has no row to mark revoked, and
-  // the refresh path would then happily backfill a fresh active one. Lay the
-  // row down first so the revocation has something to stick to. If the
-  // membership is gone the refresh already fails on that, so there is nothing
-  // worth recording.
+  // Lays a row down first, or the refresh path would backfill a fresh active one for a pre-table token
   private async revokeUserAuthorization({
     userId,
     workspaceId,
@@ -749,8 +747,7 @@ export class OAuthService {
     return isDefined(authorization?.revokedAt);
   }
 
-  // RFC 6749 §3.3: scope is a space-delimited list, so an empty value has to
-  // collapse to no scopes rather than to one blank one.
+  // RFC 6749 §3.3: an empty scope means no scopes, not one blank one
   private parseScopes(scope: string): string[] {
     return scope.split(' ').filter((entry) => entry.length > 0);
   }
@@ -759,12 +756,14 @@ export class OAuthService {
     applicationRegistration: ApplicationRegistrationEntity,
     workspaceId: string,
   ): Promise<ApplicationEntity> {
-    const existingApplication = await this.applicationRepository.findOne({
-      where: {
-        applicationRegistrationId: applicationRegistration.id,
-        workspaceId,
+    const existingApplication = await this.applicationRepository.findOne(
+      workspaceId,
+      {
+        where: {
+          applicationRegistrationId: applicationRegistration.id,
+        },
       },
-    });
+    );
 
     if (existingApplication) {
       return existingApplication;
@@ -776,12 +775,14 @@ export class OAuthService {
         workspaceId,
       });
 
-      const installedApplication = await this.applicationRepository.findOne({
-        where: {
-          applicationRegistrationId: applicationRegistration.id,
-          workspaceId,
+      const installedApplication = await this.applicationRepository.findOne(
+        workspaceId,
+        {
+          where: {
+            applicationRegistrationId: applicationRegistration.id,
+          },
         },
-      });
+      );
 
       if (installedApplication) {
         return installedApplication;
@@ -803,6 +804,7 @@ export class OAuthService {
       description: `OAuth application registered as "${applicationRegistration.name}"`,
       version: applicationRegistration.latestAvailableVersion ?? '1.0.0',
       sourcePath: 'oauth-install',
+      sourceType: applicationRegistration.sourceType,
       applicationRegistrationId: applicationRegistration.id,
       workspaceId,
     });

@@ -20,8 +20,8 @@ jest.mock('~/hooks/useNavigateSettings', () => ({
 
 const mockEnqueueToast = jest.fn();
 
-jest.mock('twenty-ui/primitives/feedback', () => ({
-  ...jest.requireActual('twenty-ui/primitives/feedback'),
+jest.mock('twenty-ui/components', () => ({
+  ...jest.requireActual('twenty-ui/components'),
   useToast: () => ({ enqueueToast: mockEnqueueToast }),
 }));
 

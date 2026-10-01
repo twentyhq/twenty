@@ -1,7 +1,6 @@
-import { type CreateUsageLimitInput } from 'src/engine/core-modules/usage-limit/dtos/create-usage-limit.input';
 import { type UsageLimitEntity } from 'src/engine/core-modules/usage-limit/usage-limit.entity';
 
-type UsageLimitScope = Pick<
+export type UsageLimitScope = Pick<
   UsageLimitEntity,
   | 'resourceType'
   | 'operationType'
@@ -13,15 +12,19 @@ type UsageLimitScope = Pick<
   | 'meter'
 >;
 
+type UsageLimitScopeSource = Omit<UsageLimitScope, 'spenderId'> & {
+  spenderId?: string | null;
+};
+
 export const buildUsageLimitScope = (
-  input: CreateUsageLimitInput,
+  source: UsageLimitScopeSource,
 ): UsageLimitScope => ({
-  resourceType: input.resourceType,
-  operationType: input.operationType,
-  spenderType: input.spenderType,
-  spenderId: input.spenderId ?? '',
-  limitKind: input.limitKind,
-  periodCount: input.periodCount,
-  periodUnit: input.periodUnit,
-  meter: input.meter,
+  resourceType: source.resourceType,
+  operationType: source.operationType,
+  spenderType: source.spenderType,
+  spenderId: source.spenderId ?? '',
+  limitKind: source.limitKind,
+  periodCount: source.periodCount,
+  periodUnit: source.periodUnit,
+  meter: source.meter,
 });

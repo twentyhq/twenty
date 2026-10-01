@@ -8,12 +8,14 @@ import { anyFieldFilterValueComponentState } from '@/object-record/record-filter
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { useCurrentRecordGroupDefinition } from '@/object-record/record-group/hooks/useCurrentRecordGroupDefinition';
 import { useRecordGroupFilter } from '@/object-record/record-group/hooks/useRecordGroupFilter';
+import { recordIndexGroupLoadLimitComponentState } from '@/object-record/record-index/states/recordIndexGroupLoadLimitComponentState';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import {
   combineFilters,
   computeRecordGqlOperationFilter,
+  isDefined,
   turnAnyFieldFilterIntoRecordGqlFilter,
 } from 'twenty-shared/utils';
 
@@ -47,6 +49,11 @@ export const useFindManyRecordIndexTableParams = (
     instanceId,
   );
 
+  const recordIndexGroupLoadLimit = useAtomComponentStateValue(
+    recordIndexGroupLoadLimitComponentState,
+    instanceId,
+  );
+
   const { filterValueDependencies } = useFilterValueDependencies();
 
   const flattenedFieldMetadataItems = useAtomStateValue(
@@ -67,7 +74,7 @@ export const useFindManyRecordIndexTableParams = (
 
   const { recordGqlOperationFilter: anyFieldFilter } =
     turnAnyFieldFilterIntoRecordGqlFilter({
-      fields: objectMetadataItem?.fields ?? [],
+      fields: objectMetadataItem?.readableFields ?? [],
       filterValue: anyFieldFilterValue,
     });
 
@@ -87,7 +94,9 @@ export const useFindManyRecordIndexTableParams = (
     objectNameSingular,
     filter: combinedFilter,
     orderBy,
-    // If we have a current record group definition, we only want to fetch 8 records by page
-    ...(currentRecordGroupDefinition ? { limit: 8 } : {}),
+    // Omitting limit lets ungrouped views fall through to QUERY_DEFAULT_LIMIT_RECORDS
+    ...(isDefined(currentRecordGroupDefinition)
+      ? { limit: recordIndexGroupLoadLimit }
+      : {}),
   };
 };

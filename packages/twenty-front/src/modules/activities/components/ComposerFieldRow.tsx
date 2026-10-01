@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { type MouseEventHandler, type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const ROW_MIN_HEIGHT = '40px';
 
@@ -47,14 +47,11 @@ type ComposerFieldRowProps = {
   children: ReactNode;
   trailing?: ReactNode;
   onClick?: MouseEventHandler<HTMLDivElement>;
-  // A floor, not a fixed width: mixed-length labels line up without a long
-  // translation running underneath its control.
+  // A floor, not a fixed width, so a long translation doesn't run under its control.
   labelMinWidth?: string;
 };
 
-// The visible label is a plain span, so it cannot be associated with whatever
-// control the row wraps. Naming the row as a group gives assistive technology
-// the field name even for controls that take no label of their own.
+// The label is a plain span, so the row is named as a group to give assistive technology the field name.
 export const ComposerFieldRow = ({
   label,
   children,

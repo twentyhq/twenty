@@ -44,7 +44,7 @@ export const useNavigationMenuItemSearchRecords = ({
     useObjectRecordSearchRecords({
       objectNameSingulars: includedObjectNameSingulars,
       searchInput: deferredSearchInput,
-      skip,
+      skip: skip || includedObjectNameSingulars.length === 0,
       limit: deferredSearchInput ? undefined : DEFAULT_RECORD_SUGGESTION_LIMIT,
     });
 

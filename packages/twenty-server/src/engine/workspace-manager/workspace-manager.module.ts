@@ -1,3 +1,4 @@
+import { AgentHistoryModule } from 'src/engine/metadata-modules/ai/ai-history/ai-history.module';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
@@ -25,6 +26,7 @@ import { WorkspaceManagerService } from './workspace-manager.service';
 
 @Module({
   imports: [
+    AgentHistoryModule,
     WorkspaceDataSourceModule,
     WorkspaceMigrationModule,
     ObjectMetadataModule,

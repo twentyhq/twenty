@@ -67,6 +67,7 @@ export class BlocklistAccessService {
       userWorkspaceId: context.userWorkspaceId,
       setting: PermissionFlagType.WORKSPACE,
       workspaceId: context.workspaceId,
+      applicationId: context.applicationId,
     });
   }
 

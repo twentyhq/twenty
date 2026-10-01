@@ -1,19 +1,18 @@
-import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
-import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
-import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
-import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponentInstanceContext';
-import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
+import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponentInstanceContext';
+import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
+import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
+import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
+import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
-import {
-  DEFAULT_COLOR_LABELS,
-  MenuItemSelectColor,
-} from 'twenty-ui/primitives/navigation';
+import { DEFAULT_COLOR_LABELS } from 'twenty-ui/components';
+import { ColorSample } from 'twenty-ui/primitives/data-display';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { type ThemeColor, MAIN_COLOR_NAMES } from 'twenty-ui/theme';
 
 type ThemeColorPickerMenuProps = {
@@ -65,13 +64,17 @@ export const ThemeColorPickerMenu = ({
               itemId={colorName}
               onEnter={() => onSelectColor(colorName)}
             >
-              <MenuItemSelectColor
+              <ListItem
                 focused={selectedItemId === colorName}
                 onClick={() => onSelectColor(colorName)}
-                color={colorName}
+                role="option"
+                aria-selected={colorName === selectedColor}
                 selected={colorName === selectedColor}
-                colorLabels={DEFAULT_COLOR_LABELS}
-              />
+                indicator="check"
+                startIcon={<ColorSample colorName={colorName} />}
+              >
+                {DEFAULT_COLOR_LABELS[colorName]}
+              </ListItem>
             </SelectableListItem>
           ))}
         </DropdownMenuItemsContainer>

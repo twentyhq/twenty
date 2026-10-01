@@ -25,8 +25,7 @@ import {
   AppTokenType,
 } from 'src/engine/core-modules/app-token/app-token.entity';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { BillingCreditGrantType } from 'src/engine/core-modules/billing/enums/billing-credit-grant-type.enum';
-import { BillingCreditService } from 'src/engine/core-modules/billing/services/billing-credit.service';
+import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import {
   AuthException,
@@ -50,7 +49,7 @@ import {
   type PartialUserWithPicture,
   type SignInUpBaseParams,
   type SignInUpNewUserPayload,
-} from 'src/engine/core-modules/auth/types/signInUp.type';
+} from 'src/engine/core-modules/auth/types/sign-in-up.type';
 import { SubdomainManagerService } from 'src/engine/core-modules/domain/subdomain-manager/services/subdomain-manager.service';
 import { EnterprisePlanService } from 'src/engine/core-modules/enterprise/services/enterprise-plan.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
@@ -96,10 +95,10 @@ export class SignInUpService {
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly applicationService: ApplicationService,
     private readonly fileCorePictureService: FileCorePictureService,
+    private readonly fileStorageService: FileStorageService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
     private readonly enterprisePlanService: EnterprisePlanService,
     private readonly eventLogEmitterService: EventLogEmitterService,
-    private readonly billingCreditService: BillingCreditService,
     private readonly billingService: BillingService,
     @InjectDataSource()
     private readonly dataSource: DataSource,
@@ -250,22 +249,10 @@ export class SignInUpService {
       params.invitation.type === AppTokenType.OnboardingInvitationToken &&
       params.userData.type === 'newUserWithPicture'
     ) {
-      try {
-        await this.billingCreditService.grantCredits({
-          workspaceId: invitationValidation.workspace.id,
-          amountMicro: this.twentyConfigService.get(
-            'ONBOARDING_INVITE_TEAM_CREDITS_REWARD_PER_USER',
-          ),
-          type: BillingCreditGrantType.ONBOARDING_REWARD,
-          reason: 'Onboarding reward: invited teammate signed up',
-          idempotencyKey: `onboarding-invite-team:${invitationValidation.workspace.id}:${updatedUser.id}`,
-        });
-      } catch (error) {
-        this.logger.error(
-          `Failed to credit onboarding invite reward for workspace ${invitationValidation.workspace.id}`,
-          error,
-        );
-      }
+      await this.onboardingService.creditInviteTeamReward({
+        workspaceId: invitationValidation.workspace.id,
+        userId: updatedUser.id,
+      });
     }
 
     await this.workspaceInvitationService.invalidateWorkspaceInvitation(
@@ -487,8 +474,7 @@ export class SignInUpService {
     }
   }
 
-  // Enforced here rather than at workspace creation so a restricted instance
-  // stops accumulating verified users that can never reach a workspace.
+  // Enforced at sign-up so a restricted instance stops accumulating users who can never reach a workspace
   private async assertSignUpWithoutWorkspaceAllowed(
     email: string,
   ): Promise<void> {
@@ -520,9 +506,7 @@ export class SignInUpService {
   }
 
   private async hasProvisionedDestination(email: string): Promise<boolean> {
-    // Invitations are read directly instead of through the sign-in picker,
-    // which hides HIDDEN workspaces: that is a listing rule, not a statement
-    // that the invitee has nowhere to land.
+    // Read directly: the sign-in picker hides HIDDEN workspaces, which is only a listing rule
     const invitations =
       await this.workspaceInvitationService.findInvitationsByEmail(email);
 
@@ -813,13 +797,8 @@ export class SignInUpService {
             queryRunner,
           );
 
-          // Click-through DPA: the DPA is incorporated by reference into the
-          // ToS/signup, so acceptance = execution. Only relevant on Twenty's
-          // managed cloud (multi-workspace), where Twenty is the Processor
-          // hosting the data; on self-hosted deployments Twenty is not the
-          // Processor, so there is nothing to record. Done atomically with
-          // workspace creation so we can later prove what was agreed. (Billing
-          // is an independent feature flag and must not be used to detect cloud.)
+          // Click-through DPA, recorded with the workspace as proof: only on managed cloud, where Twenty is the Processor
+          // Billing is an independent flag and must not be used to detect cloud
           if (
             this.twentyConfigService.get('IS_MULTIWORKSPACE_ENABLED') === true
           ) {
@@ -872,6 +851,11 @@ export class SignInUpService {
 
       return { user, workspace };
     } catch (error) {
+      await this.fileStorageService.invalidateStorageStock({
+        workspaceId,
+        applicationId: workspaceCustomApplicationId,
+      });
+
       const isSubdomainConflict =
         error instanceof QueryFailedError &&
         (error as QueryFailedErrorWithCode).code ===

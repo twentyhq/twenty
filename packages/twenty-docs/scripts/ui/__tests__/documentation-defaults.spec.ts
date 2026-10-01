@@ -1,9 +1,26 @@
+import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 
 import { normalizeDocumentationDefaultValue } from '../../../../twenty-ui/docs/normalizeDocumentationDefaultValue';
 import { renderComponentReference } from '../render-component-reference';
 
 describe('documentation defaults', () => {
+  it('documents render-dependent native button defaults on dropdown parts', () => {
+    const reference = readFileSync(
+      new URL(
+        '../../../snippets/ui/generated/components/dropdown.mdx',
+        import.meta.url,
+      ),
+      'utf8',
+    );
+
+    for (const part of ['ActionItem', 'OptionItem', 'Back', 'SubmenuTrigger']) {
+      expect(reference).toContain(
+        `body="${part}.nativeButton" type="boolean" default="true when render is omitted; false otherwise"`,
+      );
+    }
+  });
+
   it.each([
     ["'onSubmit'", 'onSubmit'],
     ['"horizontal"', 'horizontal'],

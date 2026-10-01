@@ -3,7 +3,9 @@ import { useIsThirdPartyApplication } from '@/applications/hooks/useIsThirdParty
 import { logicFunctionsSelector } from '@/logic-functions/states/logicFunctionsSelector';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type WorkflowDiagramStepNodeData } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
-import { capitalize, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
+import { t } from '@lingui/core/macro';
+import { getActionHeaderTypeOrThrow } from '@/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow';
 
 export const useWorkflowNodeLabel = (
   data: WorkflowDiagramStepNodeData,
@@ -27,5 +29,7 @@ export const useWorkflowNodeLabel = (
     return applicationChipData.name;
   }
 
-  return capitalize(data.nodeType);
+  return data.nodeType === 'action'
+    ? t(getActionHeaderTypeOrThrow(data.actionType))
+    : t`Trigger`;
 };

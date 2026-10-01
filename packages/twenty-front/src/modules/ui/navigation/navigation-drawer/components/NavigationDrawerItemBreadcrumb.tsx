@@ -1,6 +1,6 @@
 import { type NavigationDrawerSubItemState } from '@/ui/navigation/navigation-drawer/types/NavigationDrawerSubItemState';
 import { styled } from '@linaria/react';
-import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
+import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme';
 
 export type NavigationDrawerItemBreadcrumbProps = {
   state?: NavigationDrawerSubItemState;
@@ -54,8 +54,7 @@ const StyledRoundedProtrusion = styled.div<{ darker: boolean }>`
       darker
         ? themeCssVariables.font.color.tertiary
         : themeCssVariables.border.color.strong};
-  // The elbow is the border minus two sides. Written physically it keeps its
-  // left-hand shape under dir="rtl" and hangs off the wrong side of the item.
+  // Logical, not physical, so the elbow mirrors under dir="rtl"
   border-end-start-radius: 4px;
 
   border-inline-end: none;

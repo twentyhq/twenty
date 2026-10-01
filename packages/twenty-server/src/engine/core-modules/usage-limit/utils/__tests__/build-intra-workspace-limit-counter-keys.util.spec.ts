@@ -25,6 +25,7 @@ const buildLimit = (overrides: Partial<FlatUsageLimit>): FlatUsageLimit => ({
   meter: 'creditsUsedMicro',
   limitValue: 1_000,
   burstValue: null,
+  isInstanceOverride: false,
   ...overrides,
 });
 
@@ -45,8 +46,8 @@ describe('buildIntraWorkspaceLimitCounterKeys', () => {
         periodByUnit: { month: MONTH_PERIOD, week: WEEK_PERIOD },
       }),
     ).toEqual([
-      `{workspace-1}:quota:AI:ALL:userWorkspace:-:creditsUsedMicro:month:${MONTH_PERIOD.periodStart.getTime()}`,
-      `{workspace-1}:quota:AI:ALL:agent:agent-1:creditsUsedMicro:week:${WEEK_PERIOD.periodStart.getTime()}`,
+      `{workspace-1}:quota:AI:ALL:userWorkspace:-:creditsUsedMicro:month:${MONTH_PERIOD.periodStart.getTime()}:1000`,
+      `{workspace-1}:quota:AI:ALL:agent:agent-1:creditsUsedMicro:week:${WEEK_PERIOD.periodStart.getTime()}:1000`,
     ]);
   });
 

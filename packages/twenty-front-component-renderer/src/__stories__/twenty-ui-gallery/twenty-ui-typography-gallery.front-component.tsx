@@ -1,22 +1,15 @@
 import { useState } from 'react';
-import { Section } from 'twenty-ui/components';
-import { Button } from 'twenty-ui/primitives/input';
 import { defineFrontComponent } from 'twenty-sdk/define';
-import {
-  VisibilityHidden,
-  VisibilityHiddenInput,
-} from 'twenty-ui/primitives/accessibility';
-import { ThemeProvider } from 'twenty-ui/theme-constants';
+import { Section } from 'twenty-ui/components';
+import { VisibilityHidden } from 'twenty-ui/primitives/accessibility';
+import { Button } from 'twenty-ui/primitives/input';
 import {
   Heading,
   Text,
-  Label,
-  LinkifiedText,
-  SeparatorLineText,
-  StyledText,
-  StyledTextContent,
-  StyledTextWrapper,
+  Shortcut,
+  formatShortcut,
 } from 'twenty-ui/primitives/typography';
+import { ThemeProvider } from 'twenty-ui/theme';
 
 import {
   ComponentGallery,
@@ -44,6 +37,21 @@ const SectionExample = () => {
 
 const TYPOGRAPHY_ENTRIES: GalleryEntry[] = [
   {
+    name: 'Shortcut',
+    node: (
+      <>
+        <Shortcut shortcut={['Mod', 'K']} platform="mac" />
+        <Shortcut shortcut={[['G'], ['P']]} sequenceJoinLabel="next" />
+        <Text>
+          {formatShortcut({
+            shortcut: ['Mod', 'K'],
+            platform: 'other',
+          })}
+        </Text>
+      </>
+    ),
+  },
+  {
     name: 'Heading',
     node: (
       <Heading level={1} size="lg">
@@ -64,36 +72,8 @@ const TYPOGRAPHY_ENTRIES: GalleryEntry[] = [
     ),
   },
   {
-    name: 'Label',
-    node: <Label variant="default">Label</Label>,
-  },
-  {
-    name: 'LinkifiedText',
-    node: <LinkifiedText text="Visit https://twenty.com now" />,
-  },
-  {
-    name: 'SeparatorLineText',
-    node: <SeparatorLineText>or</SeparatorLineText>,
-  },
-  {
-    name: 'StyledText',
-    node: <StyledText text="Styled text" />,
-  },
-  {
-    name: 'StyledTextContent',
-    node: <StyledTextContent>Content</StyledTextContent>,
-  },
-  {
-    name: 'StyledTextWrapper',
-    node: <StyledTextWrapper>Wrapper</StyledTextWrapper>,
-  },
-  {
     name: 'VisibilityHidden',
     node: <VisibilityHidden>Screen-reader only</VisibilityHidden>,
-  },
-  {
-    name: 'VisibilityHiddenInput',
-    node: <VisibilityHiddenInput readOnly value="" />,
   },
 ];
 

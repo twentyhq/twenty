@@ -6,6 +6,7 @@ import {
   DEFAULT_TOOL_INPUT_SCHEMA,
 } from 'twenty-shared/logic-function';
 
+import { canCallerReachApplication } from 'src/engine/core-modules/application/utils/can-caller-reach-application.util';
 import { type GenerateDescriptorOptions } from 'src/engine/core-modules/tool-provider/interfaces/generate-descriptor-options.type';
 import { type ToolProvider } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
@@ -29,10 +30,7 @@ export class LogicFunctionToolProvider implements ToolProvider {
     return true;
   }
 
-  // Logic function tools emit `executionRef.kind === 'logic_function'`
-  // descriptors and are dispatched inline by ToolExecutorService. The
-  // static-tool path is unreachable for this provider; this method exists
-  // only to satisfy the interface.
+  // Unreachable: logic function descriptors are dispatched inline by ToolExecutorService.
   async executeStaticTool(
     toolName: string,
     _args: Record<string, unknown>,
@@ -49,13 +47,30 @@ export class LogicFunctionToolProvider implements ToolProvider {
   ): Promise<(ToolIndexEntry | ToolDescriptor)[]> {
     const includeSchemas = options?.includeSchemas ?? true;
 
-    const { flatLogicFunctionMaps, flatObjectMetadataMaps } =
+    const {
+      flatLogicFunctionMaps,
+      flatObjectMetadataMaps,
+      flatFrontComponentMaps,
+    } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId: context.workspaceId,
-          flatMapsKeys: ['flatLogicFunctionMaps', 'flatObjectMetadataMaps'],
+          flatMapsKeys: [
+            'flatLogicFunctionMaps',
+            'flatObjectMetadataMaps',
+            'flatFrontComponentMaps',
+          ],
         },
       );
+
+    const resolveWidgetFrontComponentId = (
+      frontComponentUniversalIdentifier: string | undefined,
+    ) =>
+      isDefined(frontComponentUniversalIdentifier)
+        ? flatFrontComponentMaps.byUniversalIdentifier[
+            frontComponentUniversalIdentifier
+          ]?.id
+        : undefined;
 
     const resolveObjectLabel = (objectUniversalIdentifier: string) =>
       flatObjectMetadataMaps.byUniversalIdentifier[objectUniversalIdentifier]
@@ -67,7 +82,11 @@ export class LogicFunctionToolProvider implements ToolProvider {
       (fn): fn is FlatLogicFunction =>
         isDefined(fn) &&
         isDefined(fn.toolTriggerSettings) &&
-        fn.deletedAt === null,
+        fn.deletedAt === null &&
+        canCallerReachApplication({
+          callingApplication: context.application,
+          applicationId: fn.applicationId,
+        }),
     );
 
     const descriptors: (ToolIndexEntry | ToolDescriptor)[] = [];
@@ -86,6 +105,9 @@ export class LogicFunctionToolProvider implements ToolProvider {
           kind: 'logic_function',
           logicFunctionId: logicFunction.id,
         },
+        frontComponentId: resolveWidgetFrontComponentId(
+          logicFunction.toolTriggerSettings?.frontComponentUniversalIdentifier,
+        ),
       };
 
       if (includeSchemas) {

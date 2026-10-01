@@ -2,7 +2,7 @@ import { BaseChip } from '@/ui/input/components/BaseChip';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { NodeViewWrapper, type NodeViewProps } from '@tiptap/react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledWrapper = styled.span`
   display: inline-block;

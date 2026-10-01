@@ -34,6 +34,7 @@ type KernelResponse = {
 };
 
 type LocalSession = {
+  actorKey?: string;
   workDir: string;
   outputDir: string;
   scriptsDir: string;
@@ -85,8 +86,7 @@ const buildEnvSetup = (env?: Record<string, string>): string => {
   return `import os\n${assignments}\n\n`;
 };
 
-// WARNING: This driver is UNSAFE and can be used for development only.
-// It executes arbitrary Python code on the server without any sandboxing.
+// UNSAFE: executes arbitrary Python on the server without sandboxing; development only.
 export class LocalDriver implements CodeInterpreterDriver {
   private readonly sessions = new Map<string, LocalSession>();
 
@@ -111,8 +111,6 @@ export class LocalDriver implements CodeInterpreterDriver {
     return this.executeEphemeral(code, files, context, callbacks);
   }
 
-  // Persistent path: reuse a per-session process + work dir so state survives
-  // between calls (variables, imports, files).
   private async executeInSession(
     sessionId: string,
     code: string,
@@ -120,10 +118,13 @@ export class LocalDriver implements CodeInterpreterDriver {
     context: ExecutionContext | undefined,
     callbacks?: StreamCallbacks,
   ): Promise<CodeExecutionResult> {
-    const session = await this.getOrCreateSession(sessionId, context?.env);
+    const session = await this.getOrCreateSession(
+      sessionId,
+      context?.env,
+      context?.actorKey,
+    );
 
-    // /home/user/output is cleared at the start of every call (matching the E2B
-    // behavior and the tool contract).
+    // Cleared on every call to match E2B behavior and the tool contract.
     await fs.rm(session.outputDir, { recursive: true, force: true });
     await fs.mkdir(session.outputDir, { recursive: true });
 
@@ -149,11 +150,10 @@ export class LocalDriver implements CodeInterpreterDriver {
     try {
       response = await this.runInSession(session, submission, timeoutMs);
     } catch (error) {
-      // A timeout or a dead kernel: kill the (possibly wedged) process so the
-      // next call recreates a clean one. The 'exit' handler reclaims the work
-      // dir.
       session.hasExited = true;
-      this.sessions.delete(sessionId);
+      if (this.sessions.get(sessionId) === session) {
+        this.sessions.delete(sessionId);
+      }
       session.child.kill('SIGKILL');
 
       return {
@@ -180,8 +180,6 @@ export class LocalDriver implements CodeInterpreterDriver {
     };
   }
 
-  // Ephemeral path (no session): fresh work dir + process per call, cleaned up
-  // afterwards. State does NOT persist between calls here.
   private async executeEphemeral(
     code: string,
     files: InputFile[] | undefined,
@@ -250,7 +248,6 @@ export class LocalDriver implements CodeInterpreterDriver {
     scriptsDir: string,
     outputDir: string,
   ): string {
-    // Rewrite E2B-style paths to local paths for compatibility
     return code
       .replace(/\/home\/user\/scripts\//g, `${scriptsDir}/`)
       .replace(/\/home\/user\/scripts/g, scriptsDir)
@@ -308,14 +305,33 @@ export class LocalDriver implements CodeInterpreterDriver {
     }
   }
 
+  async releaseSession(sessionId: string): Promise<void> {
+    const session = this.sessions.get(sessionId);
+    if (!isDefined(session)) {
+      return;
+    }
+    this.sessions.delete(sessionId);
+    session.hasExited = true;
+    session.child.kill('SIGKILL');
+    await fs.rm(session.workDir, { recursive: true, force: true });
+  }
+
   private async getOrCreateSession(
     sessionId: string,
     env?: Record<string, string>,
+    actorKey?: string,
   ): Promise<LocalSession> {
     const existing = this.sessions.get(sessionId);
 
-    if (isDefined(existing) && !existing.hasExited) {
+    if (
+      isDefined(existing) &&
+      !existing.hasExited &&
+      existing.actorKey === actorKey
+    ) {
       return existing;
+    }
+    if (isDefined(existing) && !existing.hasExited) {
+      await this.releaseSession(sessionId);
     }
 
     if (isDefined(existing)) {
@@ -354,6 +370,7 @@ export class LocalDriver implements CodeInterpreterDriver {
     const controlOut = child.stdio[4] as Readable;
 
     const session: LocalSession = {
+      actorKey,
       workDir,
       outputDir,
       scriptsDir,
@@ -394,11 +411,11 @@ export class LocalDriver implements CodeInterpreterDriver {
 
     const markExited = () => {
       session.hasExited = true;
-      this.sessions.delete(sessionId);
+      if (this.sessions.get(sessionId) === session) {
+        this.sessions.delete(sessionId);
+      }
       session.pending?.reject(new Error('Python kernel process exited'));
       session.pending = undefined;
-      // The kernel self-terminates (idle watchdog) or dies on its own; reclaim
-      // its work dir here so it doesn't leak.
       void fs.rm(workDir, { recursive: true, force: true }).catch(() => {});
     };
 

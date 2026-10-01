@@ -1,13 +1,6 @@
-import { type AllMetadataName } from '@/metadata/types/all-metadata-name.type';
+import { type AllMetadataName } from '@/metadata/types/AllMetadataName';
 
-// The single source of truth for which provider-owned metadata properties are
-// translatable. twenty-server resolves them against a catalog at request time
-// and derives MetadataEntityTranslatablePropertyName from this list; twenty-sdk
-// extracts them out of an application manifest at build time.
-//
-// The two used to keep separate lists and drifted: a property missing from one
-// side is a string that is either extracted and never read, or read and never
-// extracted, and both failure modes are silent.
+// Read by both twenty-server and twenty-sdk extraction: a property missing on either side fails silently.
 export const TRANSLATABLE_PROPERTIES_BY_METADATA_NAME = {
   objectMetadata: ['labelSingular', 'labelPlural', 'description'],
   fieldMetadata: ['label', 'description'],
@@ -19,6 +12,7 @@ export const TRANSLATABLE_PROPERTIES_BY_METADATA_NAME = {
   commandMenuItem: ['label', 'shortLabel'],
   navigationMenuItem: ['name'],
   timelineActivityType: ['label'],
+  settingsMenuItem: ['title'],
 } as const satisfies Partial<Record<AllMetadataName, readonly string[]>>;
 
 export type TranslatableMetadataName =

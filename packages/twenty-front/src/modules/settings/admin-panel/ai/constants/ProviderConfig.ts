@@ -1,6 +1,7 @@
 import {
   IconBrandAnthropic,
   IconBrandMistral,
+  IconBrandTypesafeAi,
   IconBrandXai,
   IconGoogle,
   IconProviderOpenai,
@@ -16,4 +17,6 @@ export const PROVIDER_ICON_CONFIG: Record<string, { Icon: IconComponent }> = {
   mistral: { Icon: IconBrandMistral },
   xai: { Icon: IconBrandXai },
   'openai-compatible': { Icon: IconProviderOpenai },
+  // models.dev has no logo for evaluation-only providers and the fallback renders a broken image.
+  'typesafe-ai': { Icon: IconBrandTypesafeAi },
 };

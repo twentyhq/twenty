@@ -13,4 +13,23 @@
   justify-content: flex-end;
   line-height: var(--t-text-line-height-lg);
   padding: 0 var(--t-spacing-2);
+
+  &[data-size='md'] {
+    font-size: var(--t-font-size-sm);
+    gap: var(--t-spacing-0_5);
+    height: calc(var(--t-spacing-4) + var(--t-spacing-0_5));
+    padding: 0 var(--t-spacing-1_5);
+
+    & > svg {
+      block-size: calc(var(--t-icon-size-sm) * 1px);
+      inline-size: calc(var(--t-icon-size-sm) * 1px);
+    }
+  }
+
+  &[data-color='inherit'] {
+    background: color-mix(in srgb, currentColor 16%, transparent);
+    color: inherit;
+    font-variant-numeric: tabular-nums;
+    font-weight: inherit;
+  }
 }

@@ -1,15 +1,15 @@
 import { gql } from '@apollo/client';
 
 export const GET_CORE_WORKFLOW_VERSION = gql`
-  query GetCoreWorkflowVersion($workspaceWorkflowVersionId: UUID!) {
-    coreWorkflowVersion(
-      workspaceWorkflowVersionId: $workspaceWorkflowVersionId
+  query GetCoreWorkflowVersion($coreWorkflowVersionId: UUID!) {
+    coreWorkflowVersion: coreWorkflowVersionById(
+      coreWorkflowVersionId: $coreWorkflowVersionId
     ) {
       id
       label
       status
       workspaceWorkflowVersionId
-      workspaceWorkflowId
+      coreWorkflowId
       trigger
       steps
       createdAt

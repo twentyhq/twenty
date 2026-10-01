@@ -10,6 +10,10 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 describe('OAuthDiscoveryController', () => {
   let controller: OAuthDiscoveryController;
 
+  const findOrCreateCliRegistrationMock = jest
+    .fn()
+    .mockResolvedValue({ oAuthClientId: 'cli-client-id' });
+
   const buildMockRequest = (host: string, protocol = 'https') =>
     ({
       protocol,
@@ -37,7 +41,9 @@ describe('OAuthDiscoveryController', () => {
         },
         {
           provide: ApplicationRegistrationService,
-          useValue: { findOneByUniversalIdentifierGlobal: jest.fn() },
+          useValue: {
+            findOrCreateCliRegistration: findOrCreateCliRegistrationMock,
+          },
         },
       ],
     }).compile();
@@ -93,7 +99,9 @@ describe('OAuthDiscoveryController', () => {
           },
           {
             provide: ApplicationRegistrationService,
-            useValue: { findOneByUniversalIdentifierGlobal: jest.fn() },
+            useValue: {
+              findOrCreateCliRegistration: findOrCreateCliRegistrationMock,
+            },
           },
         ],
       }).compile();
@@ -132,6 +140,16 @@ describe('OAuthDiscoveryController', () => {
           'https://app.example.com/authorize?iss=https%3A%2F%2Fapi.example.com',
         authorization_response_iss_parameter_supported: true,
       });
+    });
+
+    it('exposes the CLI client id, provisioning the registration if missing', async () => {
+      const request = buildMockRequest('crm.acme.com');
+
+      expect(
+        await controller.getAuthorizationServerMetadata(request),
+      ).toMatchObject({ cli_client_id: 'cli-client-id' });
+      expect(findOrCreateCliRegistrationMock).toHaveBeenCalledTimes(1);
+      expect(findOrCreateCliRegistrationMock).toHaveBeenCalledWith();
     });
   });
 });

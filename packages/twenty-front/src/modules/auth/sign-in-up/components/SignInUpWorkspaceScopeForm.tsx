@@ -13,7 +13,7 @@ import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthPro
 import { Trans } from '@lingui/react/macro';
 import { FormProvider } from 'react-hook-form';
 import { HorizontalSeparator } from 'twenty-ui/primitives/layout';
-import { ClickToActionLink } from 'twenty-ui/primitives/navigation';
+import { Button } from 'twenty-ui/primitives/input';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const SignInUpWorkspaceScopeForm = () => {
@@ -66,11 +66,12 @@ export const SignInUpWorkspaceScopeForm = () => {
         )}
       </StyledOnboardingContentContainer>
       {signInUpStep === SignInUpStep.Password && (
-        <ClickToActionLink
+        <Button
+          variant="link"
           onClick={handleResetPassword(form.getValues('email'))}
         >
           <Trans>Forgot your password?</Trans>
-        </ClickToActionLink>
+        </Button>
       )}
     </>
   );

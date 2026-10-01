@@ -6,7 +6,7 @@ import { Key } from 'ts-key-enum';
 import { t } from '@lingui/core/macro';
 import { IconArrowMerge } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledFooterContainer = styled.div`
   align-items: flex-end;
@@ -52,7 +52,7 @@ export const MergeRecordsFooter = ({
         <Button
           size="md"
           startIcon={<IconArrowMerge />}
-          hotkeys={isMerging ? undefined : ['⌘', '⏎']}
+          shortcut={isMerging ? undefined : ['Mod', 'Enter']}
           onClick={handleMergeRecords}
           disabled={isMerging}
           variant="solid"

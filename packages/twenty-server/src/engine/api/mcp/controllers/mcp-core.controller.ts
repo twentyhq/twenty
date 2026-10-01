@@ -5,6 +5,7 @@ import {
   HttpCode,
   HttpStatus,
   Post,
+  Query,
   Res,
   UseFilters,
   UseGuards,
@@ -23,20 +24,32 @@ import { writeSseEvent } from 'src/engine/api/mcp/utils/write-sse-event.util';
 import { RestApiExceptionFilter } from 'src/engine/api/rest/rest-api-exception.filter';
 import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
 import { FlatApiKey } from 'src/engine/core-modules/api-key/types/flat-api-key.type';
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { AuthApiKey } from 'src/engine/decorators/auth/auth-api-key.decorator';
+import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
-import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { WorkspaceNotSuspendedGuard } from 'src/engine/guards/workspace-not-suspended.guard';
 
 @Controller(ApiPath.Mcp)
 @UseGuards(
   McpAuthGuard,
-  WorkspaceAuthGuard,
+  AuthPrincipalGuard({
+    userSession: {
+      standard: true,
+      impersonated: true,
+      playground: true,
+      workspaceAgnostic: false,
+    },
+    apiKey: true,
+    oauthClient: true,
+    application: true,
+  }),
   WorkspaceNotSuspendedGuard,
   NoPermissionGuard,
 )
@@ -60,14 +73,19 @@ export class McpCoreController {
     @AuthUser({ allowUndefined: true }) user: UserEntity | undefined,
     @AuthUserWorkspaceId({ allowUndefined: true })
     userWorkspaceId: string | undefined,
+    @AuthApplication({ allowUndefined: true })
+    application: FlatApplication | undefined,
     @Headers('accept') acceptHeader: string | undefined,
     @Res({ passthrough: true }) res: Response,
+    @Query('mode') mode?: string,
   ) {
     const authContext = {
       workspace,
       userId: user?.id,
       userWorkspaceId,
       apiKey,
+      application,
+      isDirectMode: mode === 'direct',
     };
 
     // JSON-RPC notifications (no id) expect no response body regardless of Accept

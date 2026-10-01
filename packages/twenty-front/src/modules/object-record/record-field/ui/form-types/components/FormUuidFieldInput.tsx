@@ -3,7 +3,7 @@ import { FormFieldInputInnerContainer } from '@/object-record/record-field/ui/fo
 import { FormFieldInputRowContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputRowContainer';
 import { VariableChipStandalone } from '@/object-record/record-field/ui/form-types/components/VariableChipStandalone';
 import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
-import { TextInput } from '@/ui/field/input/components/TextInput';
+import { StyledTextInput } from '@/ui/field/input/components/TextInput';
 import { Field } from 'twenty-ui/primitives/input';
 import { isStandaloneVariableString } from 'twenty-shared/workflow';
 import { t } from '@lingui/core/macro';
@@ -95,13 +95,13 @@ export const FormUuidFieldInput = ({
           hasRightElement={isDefined(VariablePicker) && !readonly}
         >
           {draftValue.type === 'static' ? (
-            <TextInput
-              instanceId={instanceId}
+            <StyledTextInput
+              id={instanceId}
+              autoComplete="off"
               placeholder={placeholder ?? t`Enter a UUID`}
               value={draftValue.value}
-              copyButton={false}
               disabled={readonly}
-              onChange={handleChange}
+              onChange={(event) => handleChange(event.target.value)}
             />
           ) : (
             <VariableChipStandalone

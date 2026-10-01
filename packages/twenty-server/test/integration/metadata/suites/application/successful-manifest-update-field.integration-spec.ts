@@ -5,7 +5,7 @@ import { setupApplicationForSync } from 'test/integration/metadata/suites/applic
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
 import { findOneOperationFactory } from 'test/integration/graphql/utils/find-one-operation-factory.util';
-import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
 import { findManyObjectMetadataWithIndexes } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata-with-indexes.util';
 import { type FieldManifest, type Manifest } from 'twenty-shared/application';
@@ -121,7 +121,7 @@ const buildEstimateFieldManifest = (
 };
 
 const createTicketRecord = async (data: Record<string, unknown>) => {
-  const response = await makeGraphqlAPIRequest(
+  const response = await makeGraphqlApiRequest(
     createOneOperationFactory({
       objectMetadataSingularName: TEST_OBJECT.nameSingular,
       gqlFields: `
@@ -136,7 +136,7 @@ const createTicketRecord = async (data: Record<string, unknown>) => {
 };
 
 const findTicketRecordById = async (recordId: string) => {
-  const response = await makeGraphqlAPIRequest(
+  const response = await makeGraphqlApiRequest(
     findOneOperationFactory({
       objectMetadataSingularName: TEST_OBJECT.nameSingular,
       gqlFields: `
@@ -380,7 +380,6 @@ describe('Manifest update - fields', () => {
   }, 60000);
 
   it('should backfill existing null rows when a field becomes non-nullable on second sync', async () => {
-    // First sync creates a nullable field with no default.
     await syncApplication({
       manifest: buildManifest({
         fields: [buildEstimateFieldManifest({ isNullable: true })],
@@ -388,7 +387,6 @@ describe('Manifest update - fields', () => {
       expectToFail: false,
     });
 
-    // Persist a record whose estimate is NULL on the underlying column.
     const recordId = uuidv4();
     const createdRecord = await createTicketRecord({
       id: recordId,

@@ -20,8 +20,7 @@ import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-module
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { RecordAccessPolicyService } from 'src/engine/core-modules/record-share/services/record-access-policy.service';
-import { RecordShareService } from 'src/engine/core-modules/record-share/services/record-share.service';
-import { RecordSharingFeatureService } from 'src/engine/core-modules/record-share/services/record-sharing-feature.service';
+import { RecordShareStorageService } from 'src/engine/core-modules/record-share/services/record-share-storage.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
@@ -129,8 +128,7 @@ const buildRolesPermissions = ({
 describe('CallDatabaseEventTriggerJobsJob', () => {
   let job: CallDatabaseEventTriggerJobsJob;
   let messageQueueService: { bulkAdd: jest.Mock };
-  let recordShareService: { findByRecordIds: jest.Mock };
-  let recordSharingFeatureService: { isRecordSharingEnabled: jest.Mock };
+  let recordShareStorageService: { findByRecordIds: jest.Mock };
   let cacheData: Record<string, unknown>;
 
   const buildBatch = (
@@ -182,9 +180,8 @@ describe('CallDatabaseEventTriggerJobsJob', () => {
     };
 
     messageQueueService = { bulkAdd: jest.fn().mockResolvedValue(undefined) };
-    recordShareService = { findByRecordIds: jest.fn().mockResolvedValue([]) };
-    recordSharingFeatureService = {
-      isRecordSharingEnabled: jest.fn().mockResolvedValue(false),
+    recordShareStorageService = {
+      findByRecordIds: jest.fn().mockResolvedValue([]),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -198,18 +195,21 @@ describe('CallDatabaseEventTriggerJobsJob', () => {
         {
           provide: WorkspaceCacheService,
           useValue: {
-            getOrRecompute: jest.fn().mockImplementation(async () => cacheData),
+            getOrRecompute: jest.fn().mockImplementation(async () => ({
+              flatObjectMetadataMaps: { byUniversalIdentifier: {} },
+              ...cacheData,
+            })),
           },
         },
         {
           provide: ApplicationJobEnqueueThrottlerService,
           useValue: { throttleOrThrow: jest.fn().mockResolvedValue(undefined) },
         },
-        { provide: RecordShareService, useValue: recordShareService },
         {
-          provide: RecordSharingFeatureService,
-          useValue: recordSharingFeatureService,
+          provide: RecordShareStorageService,
+          useValue: recordShareStorageService,
         },
+
         {
           provide: WorkspaceOrmManager,
           useValue: {
@@ -350,8 +350,7 @@ describe('CallDatabaseEventTriggerJobsJob', () => {
   });
 
   it('should only enqueue the events of a private object shared with the application role', async () => {
-    recordSharingFeatureService.isRecordSharingEnabled.mockResolvedValue(true);
-    recordShareService.findByRecordIds.mockResolvedValue([
+    recordShareStorageService.findByRecordIds.mockResolvedValue([
       {
         id: 'record-share-1',
         recordId: 'record-shared',

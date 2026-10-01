@@ -1,34 +1,36 @@
+import { useCurrentAiChatThreadAccess } from '@/ai/hooks/useCurrentAiChatThreadAccess';
 import { StyledAiChatContentContainer } from '@/ai/components/StyledAiChatContentContainer';
 import { useState } from 'react';
 
 import { styled } from '@linaria/react';
 import { EditorContent } from '@tiptap/react';
 import { useLingui } from '@lingui/react/macro';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-
-import { isDefined } from 'twenty-shared/utils';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AiChatInlineBanner } from '@/ai/components/AiChatInlineBanner';
 import { AiModelTierDropdown } from '@/ai/components/AiModelTierDropdown';
 import { AiChatEmptyState } from '@/ai/components/AiChatEmptyState';
-import { AiChatQuestionCard } from '@/ai/components/AiChatQuestionCard';
+import { AiChatPendingAskGate } from '@/ai/components/AiChatPendingAskGate';
 import { AIChatNoMoreBillingCreditsBanner } from '@/ai/components/AIChatNoMoreBillingCreditsBanner';
+import { AiChatUsageLimitReachedBanner } from '@/ai/components/AiChatUsageLimitReachedBanner';
 import { AiChatStandaloneError } from '@/ai/components/AiChatStandaloneError';
 import { AgentChatContextPreview } from '@/ai/components/internal/AgentChatContextPreview';
-import { AgentChatFileUploadButton } from '@/ai/components/internal/AgentChatFileUploadButton';
+import { AiChatAddMenu } from '@/ai/components/AiChatAddMenu';
 import { AiChatDictationButton } from '@/ai/dictation/components/AiChatDictationButton';
 import { AiChatDictationEffect } from '@/ai/dictation/components/AiChatDictationEffect';
 import { AiChatDictationHint } from '@/ai/dictation/components/AiChatDictationHint';
 import { AiChatContextUsageButton } from '@/ai/components/internal/AiChatContextUsageButton';
 import { AiChatEditorFocusEffect } from '@/ai/components/internal/AiChatEditorFocusEffect';
+import { AiChatSentMessageHandOffEffect } from '@/ai/components/internal/AiChatSentMessageHandOffEffect';
 import { SendMessageButton } from '@/ai/components/internal/SendMessageButton';
 import { useAiChatEditor } from '@/ai/hooks/useAiChatEditor';
 import { useInsertDictatedText } from '@/ai/dictation/hooks/useInsertDictatedText';
 import { useIsAiChatComposerCentered } from '@/ai/hooks/useIsAiChatComposerCentered';
 import { useHasReachedAiChatCreditsCap } from '@/ai/hooks/useHasReachedAiChatCreditsCap';
-import { agentChatPendingQuestionComponentSelector } from '@/ai/states/selectors/agentChatPendingQuestionComponentSelector';
+import { useHasReachedAiChatUsageLimit } from '@/ai/hooks/useHasReachedAiChatUsageLimit';
+import { agentChatHasMessageComponentSelector } from '@/ai/states/selectors/agentChatHasMessageComponentSelector';
 import { aiModelsState } from '@/client-config/states/aiModelsState';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { useIsMobile } from 'twenty-ui/utilities';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
@@ -103,18 +105,23 @@ const StyledEditorWrapper = styled.div<{ isMobile: boolean }>`
   }
 `;
 
-// Collapsing this spacer is what slides the composer from the middle of an
-// empty page down to the bottom once the conversation starts.
+const StyledMessageListPlaceholder = styled.div`
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+`;
+
 const StyledComposerBottomSpacer = styled.div`
   flex-basis: 0;
   flex-grow: 0;
   flex-shrink: 0;
-  transition-duration: calc(${themeCssVariables.animation.duration.fast} * 1s);
+  transition-duration: calc(
+    ${themeCssVariables.animation.duration.normal} * 1s
+  );
   transition-property: flex-grow;
   transition-timing-function: ease-out;
 
-  // Only the collapse is animated: the composer becomes centered again on a
-  // thread switch, where sliding it back up would trail the content change.
+  // Only the collapse animates: re-centering on a thread switch would trail the content change.
   &.is-centered {
     flex-grow: 1;
     transition-property: none;
@@ -144,11 +151,14 @@ const StyledRightButtonsContainer = styled.div`
   gap: ${themeCssVariables.spacing[2]};
 `;
 
-export const AiChatEditorSection = () => {
+const EditableAiChatEditorSection = () => {
   const { t } = useLingui();
   const isMobile = useIsMobile();
   const isComposerCentered = useIsAiChatComposerCentered();
   const hasReachedAiChatCreditsCap = useHasReachedAiChatCreditsCap();
+  const hasReachedAiChatUsageLimit = useHasReachedAiChatUsageLimit();
+  const shouldShowUsageLimitBanner =
+    !hasReachedAiChatCreditsCap && hasReachedAiChatUsageLimit;
   const aiModels = useAtomStateValue(aiModelsState);
   const hasNoEnabledModels = aiModels.length === 0;
 
@@ -157,19 +167,52 @@ export const AiChatEditorSection = () => {
   const insertDictatedText = useInsertDictatedText(editor);
   const [dictationInterimText, setDictationInterimText] = useState('');
 
-  const pendingQuestion = useAtomComponentSelectorValue(
-    agentChatPendingQuestionComponentSelector,
+  const composer = (
+    <StyledInputBox isMobile={isMobile}>
+      <StyledEditorWrapper isMobile={isMobile}>
+        <EditorContent editor={editor} />
+      </StyledEditorWrapper>
+      <AiChatDictationHint interimText={dictationInterimText} />
+      <StyledButtonsContainer>
+        <StyledLeftButtonsContainer>
+          <AiChatAddMenu editor={editor} />
+          <AiChatDictationButton />
+          <AiChatContextUsageButton />
+        </StyledLeftButtonsContainer>
+        <StyledRightButtonsContainer>
+          <AiModelTierDropdown
+            dropdownId="ai-chat-model-tier-dropdown"
+            disabled={hasNoEnabledModels}
+          />
+          <SendMessageButton
+            onSend={handleSendAndClear}
+            isDisabled={hasNoEnabledModels}
+          />
+        </StyledRightButtonsContainer>
+      </StyledButtonsContainer>
+    </StyledInputBox>
+  );
+  const hasMessages = useAtomComponentSelectorValue(
+    agentChatHasMessageComponentSelector,
   );
 
   return (
     <>
       <AiChatEditorFocusEffect editor={editor} />
+      <AiChatSentMessageHandOffEffect
+        editor={editor}
+        isComposerCentered={isComposerCentered}
+      />
       <AiChatDictationEffect
         onInterimText={setDictationInterimText}
         onFinalText={insertDictatedText}
       />
-      <AiChatEmptyState isCentered={isComposerCentered} />
-      <AiChatStandaloneError />
+      {!hasMessages && (
+        <StyledMessageListPlaceholder>
+          <AiChatEmptyState isCentered={isComposerCentered} />
+          <AiChatStandaloneError />
+        </StyledMessageListPlaceholder>
+      )}
 
       <StyledInputArea isMobile={isMobile}>
         <AgentChatContextPreview />
@@ -179,37 +222,33 @@ export const AiChatEditorSection = () => {
           />
         )}
         {hasReachedAiChatCreditsCap && <AIChatNoMoreBillingCreditsBanner />}
-        {isDefined(pendingQuestion) ? (
-          <AiChatQuestionCard pendingQuestion={pendingQuestion} />
-        ) : (
-          <StyledInputBox isMobile={isMobile}>
-            <StyledEditorWrapper isMobile={isMobile}>
-              <EditorContent editor={editor} />
-            </StyledEditorWrapper>
-            <AiChatDictationHint interimText={dictationInterimText} />
-            <StyledButtonsContainer>
-              <StyledLeftButtonsContainer>
-                <AgentChatFileUploadButton />
-                <AiChatDictationButton />
-                <AiChatContextUsageButton />
-              </StyledLeftButtonsContainer>
-              <StyledRightButtonsContainer>
-                <AiModelTierDropdown
-                  dropdownId="ai-chat-model-tier-dropdown"
-                  disabled={hasNoEnabledModels}
-                />
-                <SendMessageButton
-                  onSend={handleSendAndClear}
-                  isDisabled={hasNoEnabledModels}
-                />
-              </StyledRightButtonsContainer>
-            </StyledButtonsContainer>
-          </StyledInputBox>
-        )}
+        {shouldShowUsageLimitBanner && <AiChatUsageLimitReachedBanner />}
+        <AiChatPendingAskGate>{composer}</AiChatPendingAskGate>
       </StyledInputArea>
       <StyledComposerBottomSpacer
         className={isComposerCentered ? 'is-centered' : undefined}
       />
     </>
   );
+};
+
+export const AiChatEditorSection = () => {
+  const { t } = useLingui();
+  const isMobile = useIsMobile();
+  const access = useCurrentAiChatThreadAccess();
+  if (access !== 'writer') {
+    return (
+      <StyledInputArea isMobile={isMobile}>
+        <div role="status">
+          {access === 'loading'
+            ? t`Loading conversation…`
+            : access === 'unavailable'
+              ? t`This conversation is no longer available.`
+              : t`View only — You can read this conversation.`}
+        </div>
+        <AiChatStandaloneError />
+      </StyledInputArea>
+    );
+  }
+  return <EditableAiChatEditorSection />;
 };

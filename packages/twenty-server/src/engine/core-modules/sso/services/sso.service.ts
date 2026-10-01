@@ -5,8 +5,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { msg } from '@lingui/core/macro';
 import { custom, Issuer } from 'openid-client';
-import { Repository } from 'typeorm';
+import { isDefined } from 'twenty-shared/utils';
+import { QueryFailedError, Repository } from 'typeorm';
 
+import { POSTGRESQL_ERROR_CODES } from 'src/engine/api/graphql/workspace-query-runner/constants/postgres-error-codes.constants';
+import { type QueryFailedErrorWithCode } from 'src/engine/api/graphql/workspace-query-runner/utils/workspace-query-runner-graphql-api-exception-handler.util';
 import {
   WorkspaceSsoIdentityProviderEntity,
   IdentityProviderType,
@@ -25,17 +28,15 @@ import {
   type SamlConfiguration,
   type SsoConfiguration,
 } from 'src/engine/core-modules/sso/types/sso-configurations.type';
+import { resolveIdTokenSigningAlgorithm } from 'src/engine/core-modules/sso/utils/resolve-id-token-signing-algorithm.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 @Injectable()
 export class SsoService {
   private readonly featureLookUpKey = BillingEntitlementKey.SSO;
 
-  // openid-client resolves this hook on whichever object issues the request:
-  // the Issuer class for discovery, the issuer instance for JWKS and the
-  // client instance for token and userinfo calls, so it is set on all three.
-  // It deep-merges what the hook returns with its own per-request options
-  // (method, headers, body), so only the agent needs to be returned.
+  // openid-client resolves this hook on the Issuer class, issuer and client instances, so all three get it.
+  // It deep-merges the result with its own per-request options, so only the agent is returned.
   private readonly oidcHttpOptions = (url: URL) => ({
     agent: this.secureHttpClientService.getSsrfSafeAgent(url),
   });
@@ -69,8 +70,7 @@ export class SsoService {
     try {
       return await Issuer.discover(issuerUrl);
     } catch (error) {
-      // Surfaced so a blocked private-network issuer is diagnosable at setup;
-      // at login the failure would only show as a redirect.
+      // Surfaced so a blocked private-network issuer is diagnosable at setup; at login it only shows as a redirect.
       const reason = error instanceof Error ? error.message : String(error);
 
       throw new SsoException(
@@ -127,26 +127,55 @@ export class SsoService {
   async createSamlIdentityProvider(
     data: Pick<
       WorkspaceSsoIdentityProviderEntity,
-      'ssoURL' | 'certificate' | 'fingerprint' | 'id'
+      'ssoURL' | 'certificate' | 'fingerprint' | 'id' | 'name' | 'issuer'
     >,
     workspaceId: string,
   ) {
     await this.isSsoEnabled(workspaceId);
 
-    const identityProvider =
-      await this.workspaceSsoIdentityProviderRepository.save({
-        ...data,
-        type: IdentityProviderType.SAML,
-        workspaceId,
-      });
-
-    return {
-      id: identityProvider.id,
-      type: identityProvider.type,
-      name: identityProvider.name,
-      issuer: this.buildIssuerURL(identityProvider),
-      status: identityProvider.status,
+    const identityProvider = {
+      id: data.id,
+      name: data.name,
+      issuer: data.issuer,
+      ssoURL: data.ssoURL,
+      certificate: data.certificate,
+      fingerprint: data.fingerprint,
+      type: IdentityProviderType.SAML,
+      workspaceId,
     };
+
+    try {
+      const { generatedMaps } =
+        await this.workspaceSsoIdentityProviderRepository.insert(
+          identityProvider,
+        );
+
+      const { status } = generatedMaps[0] as Pick<
+        WorkspaceSsoIdentityProviderEntity,
+        'status'
+      >;
+
+      return {
+        id: identityProvider.id,
+        type: identityProvider.type,
+        name: identityProvider.name,
+        issuer: this.buildIssuerURL(identityProvider),
+        status,
+      };
+    } catch (error) {
+      if (
+        error instanceof QueryFailedError &&
+        (error as QueryFailedErrorWithCode).code ===
+          POSTGRESQL_ERROR_CODES.UNIQUE_VIOLATION
+      ) {
+        throw new SsoException(
+          'Identity provider already exists',
+          SsoExceptionCode.IDENTITY_PROVIDER_ALREADY_EXISTS,
+        );
+      }
+
+      throw error;
+    }
   }
 
   async findSsoIdentityProviderById(identityProviderId: string) {
@@ -216,11 +245,18 @@ export class SsoService {
 
     issuer[custom.http_options] = this.oidcHttpOptions;
 
+    const idTokenSigningAlgorithm = resolveIdTokenSigningAlgorithm(
+      issuer.metadata,
+    );
+
     const client = new issuer.Client({
       client_id: identityProvider.clientID,
       client_secret: identityProvider.clientSecret,
       redirect_uris: [this.buildCallbackUrl(identityProvider)],
       response_types: [OidcResponseType.CODE],
+      ...(isDefined(idTokenSigningAlgorithm) && {
+        id_token_signed_response_alg: idTokenSigningAlgorithm,
+      }),
     });
 
     client[custom.http_options] = this.oidcHttpOptions;

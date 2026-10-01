@@ -61,8 +61,10 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_FOREIGN_KEY_AGGREGATOR_PROPERTIES should matc
     "rowLevelPermissionPredicateUniversalIdentifiers",
   ],
   "searchFieldMetadata": [],
+  "settingsMenuItem": [],
   "skill": [],
   "timelineActivityType": [],
+  "validationRule": [],
   "view": [
     "viewFieldUniversalIdentifiers",
     "viewFilterUniversalIdentifiers",
@@ -84,5 +86,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_FOREIGN_KEY_AGGREGATOR_PROPERTIES should matc
   "viewGroup": [],
   "viewSort": [],
   "webhook": [],
+  "workflow": [],
+  "workflowVersion": [],
 }
 `;

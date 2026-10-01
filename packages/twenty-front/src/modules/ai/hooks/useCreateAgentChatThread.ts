@@ -1,3 +1,5 @@
+import { useApplyAgentChatThreadUpdate } from '@/ai/hooks/useApplyAgentChatThreadUpdate';
+import { useRefreshAgentChatThreadPermissions } from '@/ai/hooks/useRefreshAgentChatThreadPermissions';
 import { useStore } from 'jotai';
 
 import { useProjectAiChatThreadToUrl } from '@/ai/hooks/useProjectAiChatThreadToUrl';
@@ -13,8 +15,6 @@ import { isCreatingChatThreadState } from '@/ai/states/isCreatingChatThreadState
 import { isCreatingForFirstSendState } from '@/ai/states/isCreatingForFirstSendState';
 import { skipMessagesSkeletonUntilLoadedState } from '@/ai/states/skipMessagesSkeletonUntilLoadedState';
 import { threadIdCreatedFromDraftState } from '@/ai/states/threadIdCreatedFromDraftState';
-import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
-import { type FlatAgentChatThread } from '@/metadata-store/types/FlatAgentChatThread';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { tipTapDocumentToMarkdown } from 'twenty-shared/utils';
 
@@ -30,29 +30,26 @@ export const useCreateAgentChatThread = () => {
   );
   const { projectAiChatThreadToUrl } = useProjectAiChatThreadToUrl();
   const store = useStore();
-  const { addToDraft, applyChanges } = useUpdateMetadataStoreDraft();
+  const { refreshAgentChatThreadPermissions } =
+    useRefreshAgentChatThreadPermissions();
+  const { addAgentChatThread } = useApplyAgentChatThreadUpdate();
 
   const [createChatThread] = useMutation(CreateChatThreadDocument, {
     onCompleted: (data) => {
-      const newThread: FlatAgentChatThread = {
+      const newThread = {
         id: data.createChatThread.id,
         title: data.createChatThread.title ?? null,
         createdAt: data.createChatThread.createdAt,
         updatedAt: data.createChatThread.updatedAt,
-        conversationSize: 0,
-        contextWindowTokens: null,
-        totalInputTokens: 0,
-        totalOutputTokens: 0,
-        totalCacheReadTokens: 0,
-        totalInputCredits: 0,
-        totalOutputCredits: 0,
+        deletedAt: null,
       };
 
-      addToDraft({ key: 'agentChatThreads', items: [newThread] });
-      applyChanges();
+      addAgentChatThread(newThread);
+      void refreshAgentChatThreadPermissions([newThread.id]);
 
       if (store.get(isCreatingForFirstSendState.atom)) {
         store.set(isCreatingForFirstSendState.atom, false);
+        store.set(threadIdCreatedFromDraftState.atom, newThread.id);
         setIsCreatingChatThread(false);
         return;
       }

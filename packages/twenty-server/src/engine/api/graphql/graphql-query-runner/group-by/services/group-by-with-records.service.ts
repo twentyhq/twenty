@@ -21,10 +21,12 @@ import { formatResultWithGroupByDimensionValues } from 'src/engine/api/graphql/g
 import {
   RECORDS_PER_GROUP_LIMIT,
   RELATIONS_PER_RECORD_LIMIT,
-  SUB_QUERY_PREFIX,
+  SUB_QUERY_ALIAS,
 } from 'src/engine/api/graphql/graphql-query-runner/group-by/services/group-by-with-records.constants';
 import { buildGroupByRecordConditions } from 'src/engine/api/graphql/graphql-query-runner/group-by/utils/build-group-by-record-conditions.util';
+import { buildRecordJsonObjectSql } from 'src/engine/api/graphql/graphql-query-runner/group-by/utils/build-record-json-object-sql.util';
 import { getGroupLimit } from 'src/engine/api/graphql/graphql-query-runner/group-by/utils/get-group-limit.util';
+import { buildColumnResultAlias } from 'src/engine/twenty-orm/sql/utils/build-column-result-alias.util';
 import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-select';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
@@ -172,10 +174,19 @@ export class GroupByWithRecordsService {
 
     subQueryBuilder.select([]);
 
-    for (const columnName of Object.keys(columnsToSelect)) {
+    const subQueryAliasByColumnName = Object.fromEntries(
+      Object.keys(columnsToSelect).map((columnName) => [
+        columnName,
+        buildColumnResultAlias(SUB_QUERY_ALIAS, columnName),
+      ]),
+    );
+
+    for (const [columnName, subQueryAlias] of Object.entries(
+      subQueryAliasByColumnName,
+    )) {
       subQueryBuilder.addSelect(
         `"${objectAlias}"."${columnName}"`,
-        `${SUB_QUERY_PREFIX}${columnName}`,
+        subQueryAlias,
       );
     }
 
@@ -213,21 +224,16 @@ export class GroupByWithRecordsService {
     const pageStart = offsetForRecords;
     const pageEnd = offsetForRecords + RECORDS_PER_GROUP_LIMIT;
 
-    const jsonObjectEntries = [
-      ...Object.keys(columnsToSelect).map(
-        (columnName) => `'${columnName}', "${SUB_QUERY_PREFIX}${columnName}"`,
-      ),
-      ...groupByDefinitions.map(
-        (groupByDefinition) =>
-          `'${groupByDefinition.alias}', "${groupByDefinition.alias}"`,
-      ),
-    ].join(', ');
+    const recordJsonObjectSql = buildRecordJsonObjectSql({
+      subQueryAliasByColumnName,
+      groupByDefinitions,
+    });
 
     const pageFilter = `record_row_number > ${pageStart} AND record_row_number <= ${pageEnd}`;
 
     const sql =
       `SELECT ${groupByAliases}, ` +
-      `JSON_AGG(CASE WHEN ${pageFilter} THEN JSON_BUILD_OBJECT(${jsonObjectEntries}) END) ` +
+      `JSONB_AGG(${recordJsonObjectSql} ORDER BY record_row_number) ` +
       `FILTER (WHERE ${pageFilter}) AS "records" ` +
       `FROM (${subQueryBuilder.getQuery()}) AS "ranked_records" ` +
       `GROUP BY ${groupByAliases}`;
