@@ -1,25 +1,33 @@
 import { getDropdownItems } from '../internal/getDropdownItems';
 import { getNextDropdownItem } from '../internal/getNextDropdownItem';
 
+const createCell = (label: string) => {
+  const cell = document.createElement('button');
+  cell.dataset.dropdownItem = '';
+  cell.textContent = label;
+
+  return cell;
+};
+
 const createGrid = ({
   count = 8,
   disabledIndex,
+  columns = '3',
 }: {
   count?: number;
   disabledIndex?: number;
+  columns?: string;
 } = {}) => {
   const content = document.createElement('div');
   content.dataset.dropdownContent = '';
   const search = document.createElement('input');
   const section = document.createElement('div');
-  section.dataset.dropdownColumns = '3';
+  section.dataset.dropdownColumns = columns;
   content.append(search, section);
   const cells: HTMLButtonElement[] = [];
 
   for (let index = 0; index < count; index++) {
-    const cell = document.createElement('button');
-    cell.dataset.dropdownItem = '';
-    cell.textContent = `Icon ${index + 1}`;
+    const cell = createCell(`Icon ${index + 1}`);
     cell.disabled = index === disabledIndex;
     section.append(cell);
     cells.push(cell);
@@ -124,5 +132,43 @@ describe('Dropdown grid navigation', () => {
     content.append(action);
 
     expect(navigate({ key: 'ArrowDown', from: 6 })).toBe(action);
+  });
+
+  it('places a nested section in a single cell and leaves its items to linear navigation', () => {
+    const content = document.createElement('div');
+    content.dataset.dropdownContent = '';
+    const section = document.createElement('div');
+    section.dataset.dropdownColumns = '3';
+    const first = createCell('A');
+    const second = createCell('B');
+    const nestedFirst = createCell('C1');
+    const nestedSecond = createCell('C2');
+    const fourth = createCell('D');
+    const fifth = createCell('E');
+    const nestedSection = document.createElement('div');
+    nestedSection.append(nestedFirst, nestedSecond);
+    section.append(first, second, nestedSection, fourth, fifth);
+    content.append(section);
+    const items = getDropdownItems(content);
+    const navigate = (key: string, from: HTMLElement) =>
+      getNextDropdownItem({
+        key,
+        items,
+        currentIndex: items.indexOf(from),
+        search: null,
+        isSearch: false,
+      });
+
+    expect(navigate('ArrowDown', first)).toBe(fourth);
+    expect(navigate('ArrowUp', fourth)).toBe(first);
+    expect(navigate('ArrowDown', second)).toBe(fifth);
+    expect(navigate('ArrowDown', nestedFirst)).toBe(nestedSecond);
+  });
+
+  it('uses linear navigation when the column count is not a positive integer', () => {
+    const { cells, navigate } = createGrid({ columns: '2.5' });
+
+    expect(navigate({ key: 'ArrowDown', from: 0 })).toBe(cells[1]);
+    expect(navigate({ key: 'ArrowRight', from: 0 })).toBeUndefined();
   });
 });

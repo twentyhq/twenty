@@ -1,3 +1,5 @@
+import { isPositiveInteger } from '@sniptt/guards';
+
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
 const getNearestEnabledCell = ({
@@ -51,15 +53,22 @@ export const getNextDropdownGridItem = ({
     !isDefined(section) ||
     !isDefined(currentItem) ||
     !isArrowKey ||
-    columns < 1
+    !isPositiveInteger(columns)
   ) {
     return undefined;
   }
 
-  const cells = Array.from(
-    section.querySelectorAll<HTMLElement>('[data-dropdown-item]'),
-  ).filter((item) => item.closest('[data-dropdown-columns]') === section);
+  const cells = Array.from(section.children).filter(
+    (child): child is HTMLElement =>
+      child instanceof HTMLElement &&
+      !child.hasAttribute('data-dropdown-section-label'),
+  );
   const currentIndex = cells.indexOf(currentItem);
+
+  if (currentIndex < 0) {
+    return undefined;
+  }
+
   const currentRow = Math.floor(currentIndex / columns);
   const currentColumn = currentIndex % columns;
   const isVertical = key === 'ArrowUp' || key === 'ArrowDown';
