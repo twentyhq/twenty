@@ -22,18 +22,19 @@
   padding: 0;
   transition: background 0.1s ease;
 
-  &:disabled {
+  &:disabled,
+  &[aria-disabled='true'] {
     background: var(--t-background-secondary);
     cursor: not-allowed;
   }
 
-  &:not(:disabled) {
+  &:not(:disabled, [aria-disabled='true']) {
     @include hover-capable {
       &:hover {
         background: var(--t-background-transparent-medium);
       }
 
-      &[data-has-picture]:hover {
+      &:has(.image):hover {
         background: transparent;
       }
 

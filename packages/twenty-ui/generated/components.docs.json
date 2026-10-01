@@ -8538,7 +8538,7 @@
         "type": "boolean",
         "required": false,
         "defaultValue": "false",
-        "description": "Marks the module busy and disables selection and removal. Shows Abort when onAbort is supplied."
+        "description": "Marks the module busy. Selection and removal stay focusable but unavailable. Shows Abort when onAbort is supplied."
       },
       {
         "name": "onAbort",
@@ -8601,7 +8601,7 @@
         "type": "string",
         "required": false,
         "defaultValue": "Upload",
-        "description": "Label for the preview, file selector, and Upload action."
+        "description": "Label for the preview and Upload action."
       }
     ]
   },

@@ -136,7 +136,9 @@ export const UploadingWithoutAbort: Story = {
     const canvas = within(canvasElement);
 
     for (const button of canvas.getAllByRole('button')) {
-      await expect(button).toBeDisabled();
+      await expect(button).toHaveAttribute('aria-disabled', 'true');
+      button.focus();
+      await expect(button).toHaveFocus();
       await userEvent.click(button);
     }
     await expect(getFileInput(canvasElement)).toBeDisabled();
@@ -154,8 +156,12 @@ export const AbortFirstUpload: Story = {
     const canvas = within(canvasElement);
     const abortButton = canvas.getByRole('button', { name: 'Abort' });
 
-    await expect(canvas.getByRole('button', { name: 'Upload' })).toBeDisabled();
-    await expect(canvas.getByRole('button', { name: 'Remove' })).toBeDisabled();
+    await expect(
+      canvas.getByRole('button', { name: 'Upload' }),
+    ).toHaveAttribute('aria-disabled', 'true');
+    await expect(
+      canvas.getByRole('button', { name: 'Remove' }),
+    ).toHaveAttribute('aria-disabled', 'true');
     await expect(abortButton).toBeEnabled();
     abortButton.focus();
     await userEvent.keyboard('{Enter}');

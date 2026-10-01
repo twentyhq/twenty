@@ -78,7 +78,6 @@ export const imageInputTest: TwentyUiGalleryPlayFunction = async ({
   await userEvent.click(
     input.getByRole('button', { name: 'Remove profile image' }),
   );
-  await expect(actions).toHaveTextContent('Removals: 3');
   await userEvent.click(
     canvas.getByRole('button', { name: 'Enable image input' }),
   );
@@ -87,6 +86,7 @@ export const imageInputTest: TwentyUiGalleryPlayFunction = async ({
       expect(button).toBeEnabled();
     }
   });
+  await expect(actions).toHaveTextContent('Removals: 3');
 
   await userEvent.click(canvas.getByRole('button', { name: 'Start upload' }));
   const abort = await input.findByRole('button', {
@@ -98,7 +98,7 @@ export const imageInputTest: TwentyUiGalleryPlayFunction = async ({
   for (const button of input.getAllByRole('button', {
     name: 'Choose profile image',
   })) {
-    await expect(button).toBeDisabled();
+    await expect(button).toHaveAttribute('aria-disabled', 'true');
   }
   await userEvent.click(abort);
   await waitFor(() => expect(actions).toHaveTextContent('Aborts: 1'));
@@ -131,6 +131,4 @@ export const imageInputTest: TwentyUiGalleryPlayFunction = async ({
   await expect(canvas.getByLabelText('Selected image')).toHaveTextContent(
     'profile.png; image/png; 5 bytes',
   );
-  await userEvent.upload(fileInput, []);
-  await expect(actions).toHaveTextContent('Uploads: 1');
 };

@@ -36,7 +36,8 @@ export const ImageInput = ({
   const hasPicture = isNonEmptyString(src);
   const hasHelperText = isNonEmptyString(helperText);
   const hasErrorMessage = isNonEmptyString(errorMessage);
-  const isUploadDisabled = disabled || isUploading || !isDefined(onUpload);
+  const isSelectionUnavailable = disabled || !isDefined(onUpload);
+  const isUploadDisabled = isSelectionUnavailable || isUploading;
   const isRemoveDisabled =
     disabled || isUploading || !hasPicture || !isDefined(onRemove);
   const showAbort = isUploading && isDefined(onAbort);
@@ -77,8 +78,8 @@ export const ImageInput = ({
           <button
             className={styles.preview}
             type="button"
-            data-has-picture={hasPicture || undefined}
-            disabled={isUploadDisabled}
+            disabled={isSelectionUnavailable}
+            aria-disabled={isUploading || undefined}
             aria-label={uploadLabel}
             aria-describedby={describedBy}
             onClick={openFilePicker}
@@ -93,9 +94,6 @@ export const ImageInput = ({
                 type="file"
                 accept={accept}
                 disabled={isUploadDisabled}
-                aria-label={uploadLabel}
-                aria-describedby={describedBy}
-                aria-invalid={hasErrorMessage || undefined}
                 hidden
                 onChange={handleFileChange}
               />
@@ -115,6 +113,7 @@ export const ImageInput = ({
                   startIcon={<IconUpload />}
                   onClick={openFilePicker}
                   disabled={isUploadDisabled}
+                  focusableWhenDisabled={isUploading}
                   aria-describedby={describedBy}
                   variant="outline"
                 >
@@ -126,6 +125,7 @@ export const ImageInput = ({
                 startIcon={<IconTrash />}
                 onClick={onRemove}
                 disabled={isRemoveDisabled}
+                focusableWhenDisabled={isUploading}
                 variant="outline"
               >
                 {removeLabel}

@@ -10,12 +10,12 @@ export const IMAGE_INPUT_PROP_DESCRIPTIONS = {
     'Shows an abort action while uploading. It can cancel the first upload before a src exists.',
   disabled: 'Disables file selection, removal, and abort actions.',
   isUploading:
-    'Marks the module busy and disables selection and removal. Shows Abort when onAbort is supplied.',
+    'Marks the module busy. Selection and removal stay focusable but unavailable. Shows Abort when onAbort is supplied.',
   helperText:
     'Application instructions, associated with the selection controls.',
   errorMessage:
     'Application error, displayed as an alert and associated with the selection controls.',
-  uploadLabel: 'Label for the preview, file selector, and Upload action.',
+  uploadLabel: 'Label for the preview and Upload action.',
   removeLabel: 'Label for the Remove action.',
   abortLabel: 'Label for the Abort action.',
   accept:

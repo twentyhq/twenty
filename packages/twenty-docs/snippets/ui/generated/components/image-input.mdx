@@ -36,7 +36,7 @@
 </ParamField>
 
 <ParamField body="isUploading" type="boolean" default="false">
-  Marks the module busy and disables selection and removal. Shows Abort when onAbort is supplied.
+  Marks the module busy. Selection and removal stay focusable but unavailable. Shows Abort when onAbort is supplied.
 </ParamField>
 
 <ParamField body="onAbort" type="(() =&gt; void)">
@@ -72,5 +72,5 @@
 </ParamField>
 
 <ParamField body="uploadLabel" type="string" default="Upload">
-  Label for the preview, file selector, and Upload action.
+  Label for the preview and Upload action.
 </ParamField>

@@ -43,7 +43,7 @@ An empty or failed image shows a placeholder. Changing `src` retries the preview
 
 ## Uploading and disabled states
 
-`isUploading` marks the root busy and disables selection and removal. Supply `onAbort` to replace Upload with Abort during an upload. Abort works before the first image URL exists. The application owns cancellation and sets `isUploading` back to `false` when the upload ends.
+`isUploading` marks the root busy and makes selection and removal unavailable. Those controls stay focusable, so keyboard focus is not lost when an upload starts. Supply `onAbort` to replace Upload with Abort during an upload. Abort works before the first image URL exists. The application owns cancellation and sets `isUploading` back to `false` when the upload ends.
 
 `disabled` disables every action. Selection requires `onUpload`. Removal requires both `onRemove` and a nonempty `src`.
 
@@ -55,7 +55,7 @@ An empty or failed image shows a placeholder. Changing `src` retries the preview
 
 ## Labels, instructions, and errors
 
-Supply localized `uploadLabel`, `removeLabel`, and `abortLabel` strings. They default to `Upload`, `Remove`, and `Abort`. The upload label also names the preview button and file picker.
+Supply localized `uploadLabel`, `removeLabel`, and `abortLabel` strings. They default to `Upload`, `Remove`, and `Abort`. The upload label also names the preview button.
 
 `helperText` and `errorMessage` belong to the application. Both describe the selection controls, and errors are announced as alerts. There are no built-in file limits or product instructions.
 
