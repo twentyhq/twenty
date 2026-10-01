@@ -149,7 +149,7 @@ const UsedCell = ({ item }: { item: UsageLimitRow }) => {
           <ProgressRing
             value={item.consumedPercentage}
             size="sm"
-            aria-label={t`Used`}
+            aria-label={t`${item.name} used by ${item.spenderName}`}
             barColor={getUsageLimitRingColor({
               consumedPercentage: item.consumedPercentage,
               isExhausted: item.isExhausted,

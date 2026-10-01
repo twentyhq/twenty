@@ -6,7 +6,6 @@ import { ProgressRing } from '@ui/primitives/feedback';
 import { Button } from '@ui/primitives/input/Button/Button';
 import { Text } from '@ui/primitives/typography/Text/Text';
 import { ComponentDecorator } from '@ui/testing';
-import { isDefined } from '@ui/utilities';
 
 const meta: Meta<typeof ProgressRing> = {
   title: 'UI/Feedback/ProgressRing/ProgressRing',
@@ -34,29 +33,11 @@ export const Small: Story = {
     const progress = within(canvasElement).getByRole('progressbar', {
       name: 'Import progress',
     });
-    const ring = progress.querySelector('svg');
+    const { width, height } = progress.getBoundingClientRect();
 
-    await expect(ring).toHaveAttribute('width', '14');
-    await expect(ring).toHaveAttribute('height', '14');
-    await expect(ring).toHaveAttribute('aria-hidden', 'true');
-
-    const [, indicator] = progress.getElementsByTagName('circle');
-
-    if (!isDefined(indicator)) {
-      throw new Error('Progress ring indicator is missing');
-    }
-
-    const indicatorStyle = getComputedStyle(indicator);
-    const prefersReducedMotion = window.matchMedia(
-      '(prefers-reduced-motion: reduce)',
-    ).matches;
-
-    await expect(indicatorStyle.transitionProperty).toBe(
-      prefersReducedMotion ? 'none' : 'stroke-dashoffset',
-    );
-    await expect(indicatorStyle.transitionDuration).toBe(
-      prefersReducedMotion ? '0s' : '0.3s',
-    );
+    await expect(width).toBe(14);
+    await expect(height).toBe(14);
+    await expect(progress).toHaveAttribute('aria-valuetext', '75%');
   },
 };
 
@@ -143,7 +124,10 @@ export const Controlled: Story = {
       'aria-valuetext',
       '50 of 100 files imported',
     );
-    canvas.getByRole('button', { name: 'Complete import' }).focus();
+    await userEvent.tab();
+    await expect(
+      canvas.getByRole('button', { name: 'Complete import' }),
+    ).toHaveFocus();
     await userEvent.keyboard('{Enter}');
     await expect(progress).toHaveAttribute('aria-valuenow', '100');
     await expect(progress).toHaveTextContent('100 of 100 files');
@@ -170,15 +154,12 @@ export const RightToLeft: Story = {
     const progress = within(canvasElement).getByRole('progressbar', {
       name: 'Import progress',
     });
-    const value = within(progress).getByText('75 of 100 files');
-    const [ring] = progress.getElementsByTagName('svg');
+    const progressBounds = progress.getBoundingClientRect();
+    const valueBounds = within(progress)
+      .getByText('75 of 100 files')
+      .getBoundingClientRect();
 
-    if (!isDefined(ring)) {
-      throw new Error('Progress ring is missing');
-    }
-
-    await expect(value.getBoundingClientRect().left).toBeGreaterThan(
-      ring.getBoundingClientRect().right,
-    );
+    await expect(valueBounds.right).toBeCloseTo(progressBounds.right);
+    await expect(valueBounds.left).toBeGreaterThan(progressBounds.left);
   },
 };

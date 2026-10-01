@@ -1,4 +1,5 @@
 import { Progress } from '@base-ui/react/progress';
+import { clamp } from '@base-ui/utils/clamp';
 import { clsx } from 'clsx';
 import { type CSSProperties } from 'react';
 
@@ -18,11 +19,11 @@ export const ProgressRing = ({
   children,
   className,
   style,
+  'aria-valuetext': ariaValueText,
   ...props
 }: ProgressRingProps) => {
-  const boundedValue = Number.isNaN(value)
-    ? 0
-    : Math.min(Math.max(value, 0), 100);
+  const clampedValue = clamp(value, 0, 100);
+  const boundedValue = Number.isNaN(clampedValue) ? 0 : clampedValue;
   const diameter = RING_SIZE[size];
   const radius = (diameter - STROKE_WIDTH) / 2;
   const circumference = 2 * Math.PI * radius;
@@ -33,6 +34,7 @@ export const ProgressRing = ({
       value={boundedValue}
       min={0}
       max={100}
+      getAriaValueText={(formattedValue) => ariaValueText ?? formattedValue}
       className={clsx(styles.root, className)}
       style={
         {

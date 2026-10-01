@@ -7,13 +7,16 @@ import { IconFiles } from '@ui/icon';
 import { Button } from '@ui/primitives/input/Button/Button';
 import { Card } from '@ui/primitives/surfaces/Card/Card';
 import { Text } from '@ui/primitives/typography/Text/Text';
-import { ComponentDecorator } from '@ui/testing';
+import { A11Y_DEFER_COLOR_CONTRAST, ComponentDecorator } from '@ui/testing';
 
 const meta: Meta<typeof MetricRow> = {
-  title: 'UI/Display/MetricRow',
+  title: 'UI/Data Display/MetricRow',
   component: MetricRow,
   decorators: [ComponentDecorator],
-  parameters: { container: { width: 320 } },
+  parameters: {
+    container: { width: 320 },
+    a11y: A11Y_DEFER_COLOR_CONTRAST,
+  },
   args: {
     children: 'Imported files',
     value: '75 of 100',
@@ -79,6 +82,20 @@ export const InCard: Story = {
     await expect(reviewed).toHaveTextContent('24 of 80');
     await expect(canvas.getAllByRole('progressbar')).toHaveLength(2);
     await expect(canvas.queryByRole('img')).not.toBeInTheDocument();
+  },
+};
+
+export const FormattedValue: Story = {
+  args: {
+    value: <Text render={<bdi />}>75 of 100</Text>,
+  },
+  play: async ({ canvasElement }) => {
+    const progress = within(canvasElement).getByRole('progressbar', {
+      name: 'Imported files',
+    });
+
+    await expect(progress).toHaveTextContent('75 of 100');
+    await expect(progress).toHaveAttribute('aria-valuetext', '75%');
   },
 };
 

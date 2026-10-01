@@ -4,7 +4,6 @@ import { clsx } from 'clsx';
 import { useId } from 'react';
 
 import { ProgressRing } from '@ui/primitives/feedback/ProgressRing/ProgressRing';
-import { Text } from '@ui/primitives/typography/Text/Text';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import styles from './MetricRow.module.scss';
@@ -34,9 +33,7 @@ export const MetricRow = ({
         <>
           <div className={styles.label}>
             {isDefined(StartIcon) && <StartIcon size={14} aria-hidden={true} />}
-            <Text render={<span />} id={labelId}>
-              {children}
-            </Text>
+            <span id={labelId}>{children}</span>
           </div>
           {isDefined(progress) ? (
             <ProgressRing
@@ -51,7 +48,7 @@ export const MetricRow = ({
               {value}
             </ProgressRing>
           ) : (
-            <Text render={<span />}>{value}</Text>
+            <span>{value}</span>
           )}
         </>
       ),

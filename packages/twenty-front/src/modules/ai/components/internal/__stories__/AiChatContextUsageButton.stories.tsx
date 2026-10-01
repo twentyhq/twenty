@@ -136,6 +136,9 @@ export const Expanded: Story = {
     );
     await userEvent.tab();
     await waitFor(() => expect(page.getByRole('dialog')).toBeVisible());
+    await expect(
+      page.getByRole('progressbar', { name: 'Context window' }),
+    ).toHaveAttribute('aria-valuetext', '20% used, 200k of 1M tokens');
     await userEvent.click(page.getByRole('button', { name: /^More/ }));
     await expect(page.getByText('Last message')).toBeVisible();
     await expect(page.getByText('Conversation')).toBeVisible();
