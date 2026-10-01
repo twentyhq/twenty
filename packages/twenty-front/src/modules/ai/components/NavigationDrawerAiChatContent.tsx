@@ -45,7 +45,6 @@ export const NavigationDrawerAiChatContent = () => {
 
   const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
   const { handleThreadClick } = useAiChatThreadClick({
-    resetNavigationStack: true,
     shouldOpenInFullPage: true,
   });
 
