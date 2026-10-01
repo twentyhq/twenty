@@ -53,7 +53,7 @@ export const SelectionAndKeyboard: Story = {
 
     expect(group.getAllByRole('radio')).toHaveLength(3);
     expect(light).toBeChecked();
-    await userEvent.click(dark);
+    await userEvent.click(group.getByText('Dark'));
     await waitFor(() => expect(dark).toBeChecked());
     expect(light).not.toBeChecked();
     expect(jotaiStore.get(persistedColorSchemeState.atom)).toBe('Dark');
@@ -89,9 +89,12 @@ export const UnavailableMember: Story = {
   parameters: { disabled: true },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    for (const radio of canvas.getAllByRole('radio')) {
+    for (const label of ['Light', 'Dark', 'System settings']) {
+      const radio = canvas.getByRole('radio', { name: label });
+
       expect(radio).toHaveAttribute('aria-disabled', 'true');
       await userEvent.click(radio);
+      await userEvent.click(canvas.getByText(label));
     }
     expect(savePreference).not.toHaveBeenCalled();
     expect(jotaiStore.get(persistedColorSchemeState.atom)).toBe('Light');
