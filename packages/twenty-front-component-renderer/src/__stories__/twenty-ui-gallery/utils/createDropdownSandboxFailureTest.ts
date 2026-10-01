@@ -1,20 +1,36 @@
+import { expect, userEvent, waitFor, within } from 'storybook/test';
+
+import { errorHandler } from '@/__stories__/shared/test-utils/createFrontComponentStoryMeta';
+import { expectFrontComponentMounted } from '@/__stories__/shared/test-utils/matchers/expectFrontComponentMounted';
+import { INTERACTION_TIMEOUT } from '@/__stories__/shared/test-utils/timeouts';
 import { SANDBOX_ERROR_PATTERNS } from '@/__stories__/twenty-ui-gallery/constants/SANDBOX_ERROR_PATTERNS';
 import { type TwentyUiGalleryPlayFunction } from '@/__stories__/twenty-ui-gallery/types/TwentyUiGalleryPlayFunction';
-import { createOverlayOpenTest } from '@/__stories__/twenty-ui-gallery/utils/createOverlayOpenTest';
+import { expectSandboxErrors } from '@/__stories__/twenty-ui-gallery/utils/expectSandboxErrors';
 
-const INITIAL_FOCUS_ERROR_BY_RUNTIME = {
-  react: SANDBOX_ERROR_PATTERNS.ELEMENT_DATASET,
-  preact: SANDBOX_ERROR_PATTERNS.ELEMENT_QUERY_SELECTOR_ALL,
-};
+export const createDropdownSandboxFailureTest =
+  (runtime: 'react' | 'preact'): TwentyUiGalleryPlayFunction =>
+  async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expectFrontComponentMounted(canvas);
 
-export const createDropdownSandboxFailureTest = (
-  runtime: 'react' | 'preact',
-): TwentyUiGalleryPlayFunction =>
-  createOverlayOpenTest({
-    trigger: { role: 'button', name: 'Choose assignee' },
-    expectedOpenStatus: null,
-    popupText: 'Assign person',
-    sandboxErrors: {
-      requiredErrors: [INITIAL_FOCUS_ERROR_BY_RUNTIME[runtime]],
-    },
-  });
+    const trigger = canvas.getByRole('button', { name: 'Choose assignee' });
+    expect(trigger).toHaveAttribute('aria-expanded', 'false');
+
+    await userEvent.click(trigger);
+
+    if (runtime === 'react') {
+      await expectSandboxErrors({
+        requiredErrors: [SANDBOX_ERROR_PATTERNS.ELEMENT_DATASET],
+      });
+      await waitFor(() => expect(trigger).not.toBeInTheDocument());
+
+      return;
+    }
+
+    await expect(
+      waitFor(() => expect(trigger).toHaveAttribute('aria-expanded', 'true'), {
+        timeout: INTERACTION_TIMEOUT,
+      }),
+    ).rejects.toThrow();
+    expect(errorHandler).not.toHaveBeenCalled();
+  };

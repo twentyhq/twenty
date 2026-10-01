@@ -58,7 +58,7 @@ expected-to-fail by the runner.
 | Field controls | Textarea's cloned render element loses its change handler in React, so `FieldControlsReact` reports an empty `Notes` value. |
 | Radio card | `RadioCardReact` cannot activate an option because React drops the click handler Base UI adds through `React.cloneElement` on its `render={<div />}` element. |
 | Popover, Dialog, AlertDialog, Menu, Select | The trigger opens the overlay, but the popup portals into the sandbox `document.body`, which never reaches the host, so its content stays invisible. Dismissal and focus restoration are not covered yet. |
-| Dropdown | The trigger opens the menu, but finding the initial focus target throws: sandbox elements have no `dataset` in React, and in Preact the popup ref has no `querySelectorAll`. |
+| Dropdown | The content looks up its search field through `dataset` on the popup ref, which has none in the sandbox. React throws when the popup mounts, and the uncaught error unmounts the component before the trigger reports the open state. Preact applies the ref to the `PopoverPopup` component instance at mount, so the lookup throws inside Preact's render queue: the rejection never reaches the host and Preact stops re-rendering, so the trigger never opens. |
 | ListItem | `ListItemPreact` handles selection, the disabled item and the submenu row, but the overflow tooltip's Floating UI `contains(parent, child)` check receives a parent without `contains` and throws. |
 | Slider | Thumbs stay hidden because the sandbox has no `ResizeObserver` to re-measure after the first geometry batch. |
 | Tooltip | `TooltipReact` opens on hover but remains open after Escape because React drops the handlers Base UI adds through `React.cloneElement`. |
