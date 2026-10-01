@@ -1,7 +1,8 @@
-import { type ValidationRuleFieldDescriptor } from 'twenty-shared/types';
+import {
+  type ValidationRuleFieldDescriptor,
+  type RecordGqlFields,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-
-import { type RecordGqlFields } from 'twenty-shared/types';
 
 export const buildValidationRulePreviewRelationGqlFields = ({
   bindingPaths,

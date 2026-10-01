@@ -1,9 +1,11 @@
 import { gql } from '@apollo/client';
 import { renderHook, waitFor } from '@testing-library/react';
 
-import { type RecordGqlFields } from 'twenty-shared/types';
+import {
+  type RecordGqlFields,
+  type RecordGqlOperationSignature,
+} from 'twenty-shared/types';
 import { setTestObjectMetadataItemsInMetadataStore } from '~/testing/utils/setTestObjectMetadataItemsInMetadataStore';
-import { type RecordGqlOperationSignature } from 'twenty-shared/types';
 import { useCombinedFindManyRecords } from '@/object-record/multiple-objects/hooks/useCombinedFindManyRecords';
 import { useGenerateCombinedFindManyRecordsQuery } from '@/object-record/multiple-objects/hooks/useGenerateCombinedFindManyRecordsQuery';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';

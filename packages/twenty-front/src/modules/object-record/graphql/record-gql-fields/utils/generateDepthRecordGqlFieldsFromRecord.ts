@@ -23,7 +23,7 @@ export const generateDepthRecordGqlFieldsFromRecord = ({
 
   return Object.fromEntries(
     Object.keys(depthRecordGqlFields)
-      .filter((key) => key in record)
+      .filter((key) => Object.hasOwn(record, key))
       .map((key) => [key, true]),
   );
 };
