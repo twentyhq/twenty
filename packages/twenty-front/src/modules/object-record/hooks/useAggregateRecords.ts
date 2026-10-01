@@ -22,11 +22,13 @@ export const useAggregateRecords = <T extends AggregateRecordsData>({
   filter,
   recordGqlFieldsAggregate,
   skip,
+  totalCountLimit,
 }: {
   objectNameSingular: string;
   recordGqlFieldsAggregate: RecordGqlFieldsAggregate;
   filter?: RecordGqlOperationFilter;
   skip?: boolean;
+  totalCountLimit?: number;
 }) => {
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
@@ -51,6 +53,7 @@ export const useAggregateRecords = <T extends AggregateRecordsData>({
       skip: skip || !isDefined(objectMetadataItem) || !hasReadPermission,
       variables: {
         filter,
+        totalCountLimit,
       },
       client: apolloCoreClient,
     },

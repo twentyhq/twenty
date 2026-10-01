@@ -30,6 +30,7 @@ export function assertFindManyArgs(
     'before',
     'after',
     'offset',
+    'totalCountLimit',
   ]);
 
   for (const key of argKeys) {
@@ -99,6 +100,18 @@ export function assertFindManyArgs(
   if ('offset' in args && isDefined(args.offset) && !isNumber(args.offset)) {
     throw new GraphqlDirectExecutionException(
       'Invalid argument: "offset" must be a number',
+      GraphqlDirectExecutionExceptionCode.INVALID_QUERY_INPUT,
+      { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
+    );
+  }
+
+  if (
+    'totalCountLimit' in args &&
+    isDefined(args.totalCountLimit) &&
+    !isNumber(args.totalCountLimit)
+  ) {
+    throw new GraphqlDirectExecutionException(
+      'Invalid argument: "totalCountLimit" must be a number',
       GraphqlDirectExecutionExceptionCode.INVALID_QUERY_INPUT,
       { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
     );

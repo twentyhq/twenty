@@ -12,6 +12,8 @@ import { dataPagesLoadedComponentState } from '@/object-record/record-table/virt
 import { lastScrollPositionComponentState } from '@/object-record/record-table/virtualization/states/lastScrollPositionComponentState';
 import { recordIdByRealIndexComponentState } from '@/object-record/record-table/virtualization/states/recordIdByRealIndexComponentState';
 import { totalNumberOfRecordsToVirtualizeComponentState } from '@/object-record/record-table/virtualization/states/totalNumberOfRecordsToVirtualizeComponentState';
+import { isTotalNumberOfRecordsToVirtualizeLowerBoundComponentState } from '@/object-record/record-table/virtualization/states/isTotalNumberOfRecordsToVirtualizeLowerBoundComponentState';
+import { RECORD_INDEX_TOTAL_COUNT_LIMIT } from '@/object-record/record-index/constants/RecordIndexTotalCountLimit';
 import { getVirtualizationOverscanWindow } from '@/object-record/record-table/virtualization/utils/getVirtualizationOverscanWindow';
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
@@ -46,6 +48,11 @@ export const useResetVirtualizationBecauseDataChanged = (
       totalNumberOfRecordsToVirtualizeComponentState,
     );
 
+  const isTotalNumberOfRecordsToVirtualizeLowerBoundCallbackState =
+    useAtomComponentStateCallbackState(
+      isTotalNumberOfRecordsToVirtualizeLowerBoundComponentState,
+    );
+
   const dataPagesLoadedCallbackState = useAtomComponentStateCallbackState(
     dataPagesLoadedComponentState,
   );
@@ -68,15 +75,21 @@ export const useResetVirtualizationBecauseDataChanged = (
   const store = useStore();
 
   const resetVirtualization = useCallback(async () => {
-    const { totalCount } = await findManyRecordsLazy();
+    const totalNumberOfRecordsToVirtualize =
+      store.get(totalNumberOfRecordsToVirtualizeCallbackState) ?? 0;
+
+    // Keep counting as far as people already scrolled
+    const totalCountLimit = Math.max(
+      totalNumberOfRecordsToVirtualize,
+      RECORD_INDEX_TOTAL_COUNT_LIMIT,
+    );
+
+    const { totalCount } = await findManyRecordsLazy({ totalCountLimit });
 
     const tableScrollWrapperHeight =
       scrollWrapperHTMLElement?.clientHeight ?? 0;
 
     const lastScrollPosition = store.get(lastScrollPositionCallbackState);
-
-    const totalNumberOfRecordsToVirtualize =
-      store.get(totalNumberOfRecordsToVirtualizeCallbackState) ?? 0;
 
     const { firstRealIndexInOverscanWindow, lastRealIndexInOverscanWindow } =
       getVirtualizationOverscanWindow(
@@ -128,7 +141,12 @@ export const useResetVirtualizationBecauseDataChanged = (
 
     store.set(dataPagesLoadedCallbackState, []);
     store.set(totalNumberOfRecordsToVirtualizeCallbackState, totalCount);
+    store.set(
+      isTotalNumberOfRecordsToVirtualizeLowerBoundCallbackState,
+      totalCount > totalCountLimit,
+    );
   }, [
+    isTotalNumberOfRecordsToVirtualizeLowerBoundCallbackState,
     findManyRecordsLazy,
     scrollWrapperHTMLElement?.clientHeight,
     lastScrollPositionCallbackState,

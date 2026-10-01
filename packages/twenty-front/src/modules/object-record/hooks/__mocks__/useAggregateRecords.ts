@@ -1,8 +1,11 @@
 import { gql } from '@apollo/client';
 
 export const AGGREGATE_QUERY = gql`
-  query AggregateOpportunities($filter: OpportunityFilterInput) {
-    opportunities(filter: $filter) {
+  query AggregateOpportunities(
+    $filter: OpportunityFilterInput
+    $totalCountLimit: Int
+  ) {
+    opportunities(filter: $filter, totalCountLimit: $totalCountLimit) {
       totalCount
       sumAmount
       avgAmount

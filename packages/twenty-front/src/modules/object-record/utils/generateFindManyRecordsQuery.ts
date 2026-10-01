@@ -33,12 +33,12 @@ query FindMany${capitalize(
   objectMetadataItem.nameSingular,
 )}FilterInput, $orderBy: [${capitalize(
   objectMetadataItem.nameSingular,
-)}OrderByInput], $lastCursor: String, $limit: Int, $offset: Int) {
+)}OrderByInput], $lastCursor: String, $limit: Int, $offset: Int, $totalCountLimit: Int) {
   ${objectMetadataItem.namePlural}(filter: $filter, orderBy: $orderBy, ${
     cursorDirection === 'before'
       ? 'last: $limit, before: $lastCursor'
       : 'first: $limit, after: $lastCursor'
-  }, offset: $offset){
+  }, offset: $offset, totalCountLimit: $totalCountLimit){
     edges {
       node ${mapObjectMetadataToGraphQLQuery({
         objectMetadataItems,

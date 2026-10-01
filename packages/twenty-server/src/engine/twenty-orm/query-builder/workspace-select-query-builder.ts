@@ -27,6 +27,7 @@ import { collectReferencedColumnNames } from 'src/engine/twenty-orm/sql/utils/co
 import { compileNamedParameters } from 'src/engine/twenty-orm/sql/utils/compile-named-parameters.util';
 import {
   RESERVED_PARAMETER_NAMES,
+  buildCappedCountStatement,
   buildCountStatement,
   buildHydrationPathByResultAlias,
   buildPaginationParameters,
@@ -646,12 +647,13 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
     return this;
   }
 
-  async getCount(): Promise<number> {
+  async getCount({ maximum }: { maximum?: number } = {}): Promise<number> {
     this.context.onBeforeExecute(this);
 
-    const sql = buildCountStatement(
-      this.toSelectStatementState({ allowPlainToManyJoins: true }),
-    );
+    const state = this.toSelectStatementState({ allowPlainToManyJoins: true });
+    const sql = isDefined(maximum)
+      ? buildCappedCountStatement(state, maximum)
+      : buildCountStatement(state);
     const compiled = compileNamedParameters(sql, this.parameters);
     const rows = await this.context.executor.execute(compiled);
 

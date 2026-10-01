@@ -40,6 +40,7 @@ const mocks: MockedResponse[] = [
           $lastCursor: String
           $limit: Int
           $offset: Int
+          $totalCountLimit: Int
         ) {
           people(
             filter: $filter
@@ -47,6 +48,7 @@ const mocks: MockedResponse[] = [
             first: $limit
             after: $lastCursor
             offset: $offset
+            totalCountLimit: $totalCountLimit
           ) {
             edges {
               node {

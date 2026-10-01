@@ -26,6 +26,7 @@ describe('getResolverArgs', () => {
         isArray: true,
       },
       offset: { type: GraphQLInt, isNullable: true },
+      totalCountLimit: { type: GraphQLInt, isNullable: true },
     },
     findOne: {
       filter: { kind: GqlInputTypeDefinitionKind.Filter, isNullable: false },

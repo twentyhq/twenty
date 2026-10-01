@@ -5,6 +5,7 @@ import { currentRecordFilterGroupsComponentState } from '@/object-record/record-
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
 import { anyFieldFilterValueComponentState } from '@/object-record/record-filter/states/anyFieldFilterValueComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
+import { RECORD_INDEX_TOTAL_COUNT_LIMIT } from '@/object-record/record-index/constants/RecordIndexTotalCountLimit';
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -64,12 +65,18 @@ export const useGetRecordIndexTotalCount = () => {
     recordGqlFieldsAggregate: {
       id: [AggregateOperations.COUNT],
     },
+    totalCountLimit: RECORD_INDEX_TOTAL_COUNT_LIMIT,
   });
 
   const totalCount = data?.id?.COUNT;
+  const isTotalCountLowerBound =
+    isDefined(totalCount) && totalCount > RECORD_INDEX_TOTAL_COUNT_LIMIT;
 
   return {
-    totalCount,
+    totalCount: isTotalCountLowerBound
+      ? RECORD_INDEX_TOTAL_COUNT_LIMIT
+      : totalCount,
+    isTotalCountLowerBound,
     loading,
   };
 };

@@ -20,8 +20,8 @@ export const generateAggregateQuery = ({
   return gql`
     query ${getAggregateQueryName(objectMetadataItem.namePlural)}($filter: ${capitalize(
       objectMetadataItem.nameSingular,
-    )}FilterInput) {
-      ${objectMetadataItem.namePlural}(filter: $filter) {
+    )}FilterInput, $totalCountLimit: Int) {
+      ${objectMetadataItem.namePlural}(filter: $filter, totalCountLimit: $totalCountLimit) {
         ${selectedFields ? '' : '__typename'}
         ${selectedFields}
       }

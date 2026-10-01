@@ -189,6 +189,38 @@ describe('WorkspaceSelectQueryBuilder joins', () => {
     );
   });
 
+  it('should stop counting at the maximum, so a large match costs no more than that', async () => {
+    const { queryBuilder, executedStatements } = buildQueryBuilder({
+      rows: [{ count: '5' }],
+    });
+
+    queryBuilder.setFindOptions({ select: { id: true } }).take(10);
+
+    const count = await queryBuilder.getCount({ maximum: 5 });
+
+    expect(count).toBe(5);
+    expect(executedStatements[0].text).toBe(
+      'SELECT COUNT(1) AS "count" FROM (' +
+        `SELECT 1 FROM "${SCHEMA_NAME}"."person" AS "person" ` +
+        'WHERE "person"."deletedAt" IS NULL LIMIT 5) AS "cappedRecords"',
+    );
+  });
+
+  it('should count distinct main records under the maximum when a to-many join multiplies rows', async () => {
+    const { queryBuilder, executedStatements } = buildQueryBuilder({
+      rows: [{ count: '2' }],
+    });
+
+    queryBuilder.innerJoin('person.people', 'people');
+
+    await queryBuilder.getCount({ maximum: 3 });
+
+    expect(executedStatements[0].text).toContain(
+      'SELECT COUNT(1) AS "count" FROM (SELECT DISTINCT "person"."id"',
+    );
+    expect(executedStatements[0].text).toContain('LIMIT 3) AS "cappedRecords"');
+  });
+
   it('should render an added join condition on a plain to-many join', async () => {
     const { queryBuilder, executedStatements } = buildQueryBuilder();
 

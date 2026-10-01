@@ -52,7 +52,7 @@ describe('generateAggregateQuery', () => {
     const normalizedQuery = result.loc?.source.body.replace(/\s+/g, ' ').trim();
 
     expect(normalizedQuery).toBe(
-      'query AggregateCompanies($filter: CompanyFilterInput) { companies(filter: $filter) { id name createdAt } }',
+      'query AggregateCompanies($filter: CompanyFilterInput, $totalCountLimit: Int) { companies(filter: $filter, totalCountLimit: $totalCountLimit) { id name createdAt } }',
     );
   });
 
@@ -97,7 +97,7 @@ describe('generateAggregateQuery', () => {
     const normalizedQuery = result.loc?.source.body.replace(/\s+/g, ' ').trim();
 
     expect(normalizedQuery).toBe(
-      'query AggregatePeople($filter: PersonFilterInput) { people(filter: $filter) { id } }',
+      'query AggregatePeople($filter: PersonFilterInput, $totalCountLimit: Int) { people(filter: $filter, totalCountLimit: $totalCountLimit) { id } }',
     );
   });
 });

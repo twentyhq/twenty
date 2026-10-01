@@ -30,6 +30,9 @@ import { lastScrollPositionComponentState } from '@/object-record/record-table/v
 import { recordIdByRealIndexComponentState } from '@/object-record/record-table/virtualization/states/recordIdByRealIndexComponentState';
 import { scrollAtRealIndexComponentState } from '@/object-record/record-table/virtualization/states/scrollAtRealIndexComponentState';
 import { totalNumberOfRecordsToVirtualizeComponentState } from '@/object-record/record-table/virtualization/states/totalNumberOfRecordsToVirtualizeComponentState';
+import { isTotalNumberOfRecordsToVirtualizeLowerBoundComponentState } from '@/object-record/record-table/virtualization/states/isTotalNumberOfRecordsToVirtualizeLowerBoundComponentState';
+import { getTotalNumberOfRecordsToVirtualize } from '@/object-record/record-table/virtualization/utils/getTotalNumberOfRecordsToVirtualize';
+import { RECORD_INDEX_TOTAL_COUNT_LIMIT } from '@/object-record/record-index/constants/RecordIndexTotalCountLimit';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
 import { useAtomComponentSelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorCallbackState';
@@ -116,6 +119,11 @@ export const useTriggerInitialRecordTableDataLoad = () => {
       totalNumberOfRecordsToVirtualizeComponentState,
     );
 
+  const isTotalNumberOfRecordsToVirtualizeLowerBoundCallbackState =
+    useAtomComponentStateCallbackState(
+      isTotalNumberOfRecordsToVirtualizeLowerBoundComponentState,
+    );
+
   const triggerInitialRecordTableDataLoad = useCallback(
     async ({
       shouldScrollToStart = true,
@@ -178,16 +186,27 @@ export const useTriggerInitialRecordTableDataLoad = () => {
         );
 
         const { records: findManyRecords, totalCount: findManyTotalCount } =
-          await findManyRecordsLazy();
+          await findManyRecordsLazy({
+            totalCountLimit: RECORD_INDEX_TOTAL_COUNT_LIMIT,
+          });
 
         records = findManyRecords;
         totalCount = findManyTotalCount;
 
+        const { totalNumberOfRecordsToVirtualize, isLowerBound } =
+          getTotalNumberOfRecordsToVirtualize({
+            totalCount,
+            totalCountLimit: RECORD_INDEX_TOTAL_COUNT_LIMIT,
+            recordLimit,
+          });
+
         store.set(
           totalNumberOfRecordsToVirtualizeCallbackState,
-          isDefined(recordLimit)
-            ? Math.min(totalCount, recordLimit)
-            : totalCount,
+          totalNumberOfRecordsToVirtualize,
+        );
+        store.set(
+          isTotalNumberOfRecordsToVirtualizeLowerBoundCallbackState,
+          isLowerBound,
         );
 
         if (isDefined(records)) {
@@ -241,6 +260,7 @@ export const useTriggerInitialRecordTableDataLoad = () => {
       dataLoadingStatusByRealIndexCallbackState,
       recordIdByRealIndexCallbackState,
       totalNumberOfRecordsToVirtualizeCallbackState,
+      isTotalNumberOfRecordsToVirtualizeLowerBoundCallbackState,
       upsertRecordsInStore,
       loadRecordsToVirtualRows,
       reapplyRowSelection,

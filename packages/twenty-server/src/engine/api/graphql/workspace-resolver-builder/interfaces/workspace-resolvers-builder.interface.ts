@@ -30,6 +30,7 @@ export interface FindManyResolverArgs<
   filter?: Filter;
   orderBy?: OrderBy;
   offset?: number;
+  totalCountLimit?: number;
 }
 
 export interface FindOneResolverArgs<Filter = ObjectRecordFilter> {

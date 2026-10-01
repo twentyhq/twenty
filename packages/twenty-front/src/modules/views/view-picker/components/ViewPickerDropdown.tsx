@@ -53,7 +53,7 @@ export const ViewPickerDropdown = () => {
 
   const { updateViewFromCurrentState } = useUpdateViewFromCurrentState();
 
-  const { totalCount } = useGetRecordIndexTotalCount();
+  const { totalCount, isTotalCountLowerBound } = useGetRecordIndexTotalCount();
 
   const { formatNumber } = useNumberFormat();
 
@@ -96,7 +96,12 @@ export const ViewPickerDropdown = () => {
             <OverflowingTextWithTooltip text={currentView?.name ?? t`All`} />
           </StyledViewName>
           <StyledDropdownLabelAdornments>
-            {isDefined(totalCount) && <>· {formatNumber(totalCount)} </>}
+            {isDefined(totalCount) && (
+              <>
+                · {formatNumber(totalCount)}
+                {isTotalCountLowerBound && '+'}{' '}
+              </>
+            )}
             <IconChevronDown size={theme.icon.size.sm} />
           </StyledDropdownLabelAdornments>
         </StyledDropdownButtonContainer>

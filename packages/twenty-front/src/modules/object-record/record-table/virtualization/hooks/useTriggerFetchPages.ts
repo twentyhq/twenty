@@ -11,6 +11,10 @@ import { dataPagesLoadedComponentState } from '@/object-record/record-table/virt
 import { lastScrollPositionComponentState } from '@/object-record/record-table/virtualization/states/lastScrollPositionComponentState';
 import { lowDetailsActivatedComponentState } from '@/object-record/record-table/virtualization/states/lowDetailsActivatedComponentState';
 import { totalNumberOfRecordsToVirtualizeComponentState } from '@/object-record/record-table/virtualization/states/totalNumberOfRecordsToVirtualizeComponentState';
+import { isTotalNumberOfRecordsToVirtualizeLowerBoundComponentState } from '@/object-record/record-table/virtualization/states/isTotalNumberOfRecordsToVirtualizeLowerBoundComponentState';
+import { getTotalNumberOfRecordsToVirtualize } from '@/object-record/record-table/virtualization/utils/getTotalNumberOfRecordsToVirtualize';
+import { RECORD_INDEX_TOTAL_COUNT_LIMIT } from '@/object-record/record-index/constants/RecordIndexTotalCountLimit';
+import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { getVirtualizationOverscanWindow } from '@/object-record/record-table/virtualization/utils/getVirtualizationOverscanWindow';
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
@@ -33,6 +37,13 @@ export const useTriggerFetchPages = () => {
     useAtomComponentStateCallbackState(
       totalNumberOfRecordsToVirtualizeComponentState,
     );
+
+  const isTotalNumberOfRecordsToVirtualizeLowerBoundCallbackState =
+    useAtomComponentStateCallbackState(
+      isTotalNumberOfRecordsToVirtualizeLowerBoundComponentState,
+    );
+
+  const { recordLimit } = useRecordIndexContextOrThrow();
 
   const lastScrollPositionCallbackState = useAtomComponentStateCallbackState(
     lastScrollPositionComponentState,
@@ -123,10 +134,40 @@ export const useTriggerFetchPages = () => {
         endingRealIndexToFetch - startingRealIndexToFetch;
 
       if (numberOfRecordsToFetch > 0) {
+        const isTotalNumberOfRecordsToVirtualizeLowerBound = store.get(
+          isTotalNumberOfRecordsToVirtualizeLowerBoundCallbackState,
+        );
+        // An exact total needs no count; a lower bound grows ahead of the scroll
+        const totalCountLimit = isTotalNumberOfRecordsToVirtualizeLowerBound
+          ? endingRealIndexToFetch + RECORD_INDEX_TOTAL_COUNT_LIMIT
+          : 0;
+
         const fetchResult = await findManyRecordsLazyWithOffset(
           numberOfRecordsToFetch,
           startingRealIndexToFetch,
+          totalCountLimit,
         );
+
+        if (
+          isTotalNumberOfRecordsToVirtualizeLowerBound &&
+          isDefined(fetchResult.totalCount)
+        ) {
+          const { totalNumberOfRecordsToVirtualize, isLowerBound } =
+            getTotalNumberOfRecordsToVirtualize({
+              totalCount: fetchResult.totalCount,
+              totalCountLimit,
+              recordLimit,
+            });
+
+          store.set(
+            totalNumberOfRecordsToVirtualizeCallbackState,
+            totalNumberOfRecordsToVirtualize,
+          );
+          store.set(
+            isTotalNumberOfRecordsToVirtualizeLowerBoundCallbackState,
+            isLowerBound,
+          );
+        }
 
         const records = fetchResult.records;
 
@@ -172,6 +213,8 @@ export const useTriggerFetchPages = () => {
     dataPagesLoadedCallbackState,
     findManyRecordsLazyWithOffset,
     totalNumberOfRecordsToVirtualizeCallbackState,
+    isTotalNumberOfRecordsToVirtualizeLowerBoundCallbackState,
+    recordLimit,
     loadRecordsToVirtualRows,
     upsertRecordsInStore,
     lastScrollPositionCallbackState,

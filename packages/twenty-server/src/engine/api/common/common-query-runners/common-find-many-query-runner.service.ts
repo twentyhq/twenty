@@ -142,8 +142,20 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
 
     commonQueryParser.applyDeletedAtToBuilder(queryBuilder, appliedFilters);
 
+    const { totalCount: totalCountAggregatedField, ...otherAggregatedFields } =
+      args.selectedFieldsResult.aggregate ?? {};
+    const totalCountLimit = isDefined(totalCountAggregatedField)
+      ? args.totalCountLimit
+      : undefined;
+    const selectedAggregatedFields = isDefined(totalCountLimit)
+      ? otherAggregatedFields
+      : (args.selectedFieldsResult.aggregate ?? {});
+    const cappedTotalCountQueryBuilder = isDefined(totalCountLimit)
+      ? aggregateQueryBuilder.clone()
+      : undefined;
+
     ProcessAggregateHelper.addSelectedAggregatedFieldsQueriesToQueryBuilder({
-      selectedAggregatedFields: args.selectedFieldsResult.aggregate,
+      selectedAggregatedFields,
       queryBuilder: aggregateQueryBuilder,
       objectMetadataNameSingular: flatObjectMetadata.nameSingular,
     });
@@ -224,11 +236,22 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
       orderByValuesByRecordId,
     });
     const hasAggregatedFields =
-      Object.keys(args.selectedFieldsResult.aggregate ?? {}).length > 0;
+      Object.keys(selectedAggregatedFields).length > 0;
 
-    const parentObjectRecordsAggregatedValues = hasAggregatedFields
+    const aggregatedValues = hasAggregatedFields
       ? await aggregateQueryBuilder.getRawOne<Record<string, number>>()
       : undefined;
+
+    const parentObjectRecordsAggregatedValues = isDefined(
+      cappedTotalCountQueryBuilder,
+    )
+      ? {
+          ...aggregatedValues,
+          totalCount: await cappedTotalCountQueryBuilder.getCount({
+            maximum: (totalCountLimit ?? 0) + 1,
+          }),
+        }
+      : aggregatedValues;
 
     if (isDefined(args.selectedFieldsResult.relations)) {
       await this.processNestedRelationsHelper.processNestedRelations({
@@ -349,6 +372,16 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
       throw new CommonQueryRunnerException(
         'Last argument must be non-negative',
         CommonQueryRunnerExceptionCode.INVALID_ARGS_LAST,
+        { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
+      );
+    }
+    if (
+      isDefined(args.totalCountLimit) &&
+      (!Number.isInteger(args.totalCountLimit) || args.totalCountLimit < 0)
+    ) {
+      throw new CommonQueryRunnerException(
+        'totalCountLimit argument must be a non-negative integer',
+        CommonQueryRunnerExceptionCode.INVALID_QUERY_INPUT,
         { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
       );
     }

@@ -568,6 +568,28 @@ export const buildCountStatement = (state: SelectStatementState): string => {
     .join(' ');
 };
 
+// Counting stops after maximum rows, so a large match costs no more than that
+export const buildCappedCountStatement = (
+  state: SelectStatementState,
+  maximum: number,
+): string => {
+  const whereExpression = buildWhereExpression(state);
+  const cappedRowExpression =
+    state.joinClauses.length > 0
+      ? `DISTINCT ${quoteColumn(state.alias, 'id')}`
+      : '1';
+
+  return `SELECT COUNT(1) AS "count" FROM (${[
+    `SELECT ${cappedRowExpression}`,
+    buildFromClause(state),
+    buildJoinClause(state),
+    whereExpression.length > 0 ? `WHERE ${whereExpression}` : '',
+    `LIMIT ${Math.max(0, Math.floor(maximum))}`,
+  ]
+    .filter((part) => part.length > 0)
+    .join(' ')}) AS "cappedRecords"`;
+};
+
 type RelationColumnLeaf = {
   propertySegments: string[];
   value: unknown;

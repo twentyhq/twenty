@@ -52,6 +52,8 @@ export interface FindManyQueryArgs {
   before?: string;
   after?: string;
   offset?: number;
+  // totalCount is exact up to this limit, and this limit plus one beyond it
+  totalCountLimit?: number;
 }
 
 export interface CreateManyQueryArgs {

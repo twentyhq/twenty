@@ -49,7 +49,7 @@ export const useLazyFindManyRecordsWithOffset = ({
   const hasReadPermission = objectPermissions.canReadObjectRecords;
 
   const findManyRecordsLazyWithOffset = useCallback(
-    async (limit: number, offset: number) => {
+    async (limit: number, offset: number, totalCountLimit: number) => {
       if (!hasReadPermission) {
         return {
           data: null,
@@ -66,6 +66,7 @@ export const useLazyFindManyRecordsWithOffset = ({
             ...params,
             limit,
             offset,
+            totalCountLimit,
           },
         });
 
@@ -88,6 +89,7 @@ export const useLazyFindManyRecordsWithOffset = ({
       return {
         data: result?.data,
         records,
+        totalCount: result?.data?.[objectMetadataItem.namePlural]?.totalCount,
         error: result?.error,
       };
     },

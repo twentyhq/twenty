@@ -30,6 +30,10 @@ export const getResolverArgs = (
           type: GraphQLInt,
           isNullable: true,
         },
+        totalCountLimit: {
+          type: GraphQLInt,
+          isNullable: true,
+        },
         before: {
           type: GraphQLString,
           isNullable: true,

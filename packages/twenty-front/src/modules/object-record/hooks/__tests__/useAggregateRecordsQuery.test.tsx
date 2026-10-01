@@ -84,7 +84,7 @@ describe('useAggregateRecordsQuery', () => {
     (generateAggregateQuery as jest.Mock).mockReturnValue({
       loc: {
         source: {
-          body: 'query AggregateCompanies($filter: CompanyFilterInput) { companies(filter: $filter) { totalCount } }',
+          body: 'query AggregateCompanies($filter: CompanyFilterInput, $totalCountLimit: Int) { companies(filter: $filter, totalCountLimit: $totalCountLimit) { totalCount } }',
         },
       },
     });
