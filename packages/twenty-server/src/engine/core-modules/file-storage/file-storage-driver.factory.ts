@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { fromNodeProviderChain } from '@aws-sdk/credential-providers';
+import { isNonEmptyString } from '@sniptt/guards';
 
 import { type StorageDriver } from 'src/engine/core-modules/file-storage/drivers/interfaces/storage-driver.interface';
 import { StorageDriverType } from 'src/engine/core-modules/file-storage/interfaces/file-storage.interface';
@@ -98,8 +99,19 @@ export class FileStorageDriverFactory extends DriverFactoryBase<StorageDriver> {
       }
 
       case StorageDriverType.GCS: {
+        const bucketName = this.twentyConfigService.get(
+          'STORAGE_GCS_BUCKET_NAME',
+        );
+
+        // Config validation lets unset variables through, so a missing bucket is caught here.
+        if (!isNonEmptyString(bucketName)) {
+          throw new Error(
+            'STORAGE_GCS_BUCKET_NAME is required when STORAGE_TYPE is GCS',
+          );
+        }
+
         rawDriver = new GcsDriver({
-          bucketName: this.twentyConfigService.get('STORAGE_GCS_BUCKET_NAME'),
+          bucketName,
           projectId:
             this.twentyConfigService.get('STORAGE_GCS_PROJECT_ID') || undefined,
           presignEnabled: this.twentyConfigService.get(

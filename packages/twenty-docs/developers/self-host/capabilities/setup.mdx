@@ -344,6 +344,8 @@ STORAGE_GCS_BUCKET_NAME=my-twenty-bucket
 STORAGE_GCS_PROJECT_ID=my-project
 ```
 
+With Docker Compose outside Google Cloud, mount a service account key file into the `server` and `worker` containers and point `GOOGLE_APPLICATION_CREDENTIALS` at it.
+
 Grant the runtime service account `roles/storage.objectUser` on the bucket:
 
 ```bash
@@ -360,9 +362,9 @@ Don't run `STORAGE_TYPE=local` on a Cloud Storage FUSE mount. A FUSE rename is a
 
 ### Signed URLs
 
-Set `STORAGE_GCS_PRESIGNED_URL_ENABLED=true` to redirect downloads to V4 signed URLs and to send direct uploads straight to the bucket instead of through the server. `STORAGE_S3_PRESIGNED_URL_EXPIRES_IN` sets their lifetime for both the S3 and the GCS drivers.
+Set `STORAGE_GCS_PRESIGNED_URL_ENABLED=true` to redirect downloads to V4 signed URLs and to send direct uploads straight to the bucket instead of through the server. `STORAGE_S3_PRESIGNED_URL_EXPIRES_IN` sets their lifetime for both the S3 and the GCS drivers; GCS caps it at seven days.
 
-Signing with Application Default Credentials calls the IAM `signBlob` API, so the runtime service account needs `roles/iam.serviceAccountTokenCreator` on itself:
+A service account key file in `GOOGLE_APPLICATION_CREDENTIALS` signs locally and needs no extra role. On Cloud Run, GKE and Compute Engine, the credentials come from the metadata server and hold no private key, so signing calls the IAM `signBlob` API, and the runtime service account needs `roles/iam.serviceAccountTokenCreator` on itself:
 
 ```bash
 gcloud iam service-accounts add-iam-policy-binding \

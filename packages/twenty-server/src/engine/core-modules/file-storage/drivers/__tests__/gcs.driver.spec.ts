@@ -177,6 +177,17 @@ describe('GcsDriver', () => {
       ).resolves.toEqual(Buffer.alloc(0));
     });
 
+    it('should not request a range for a zero-byte prefix', async () => {
+      await expect(
+        createDriver().readFilePrefix({
+          filePath: 'attachments/file.pdf',
+          byteCount: 0,
+        }),
+      ).resolves.toEqual(Buffer.alloc(0));
+
+      expect(mockFiles).toHaveLength(0);
+    });
+
     it('should map a missing object to FILE_NOT_FOUND', async () => {
       mockConfigureFile = (file) => {
         file.download.mockRejectedValue(buildApiError(404));
@@ -454,6 +465,41 @@ describe('GcsDriver', () => {
       ).resolves.toBeNull();
 
       expect(mockFiles[0].getSignedUrl).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('getPresignedUrl when GCS metadata is unavailable', () => {
+    it('should fall back to the server on a transient metadata error', async () => {
+      mockConfigureFile = (file) => {
+        file.getMetadata.mockRejectedValue(buildApiError(503));
+      };
+
+      await expect(
+        createDriver({ presignEnabled: true }).getPresignedUrl({
+          filePath: 'some/file.png',
+          responseCacheControl: 'private, no-store',
+        }),
+      ).resolves.toBeNull();
+    });
+  });
+
+  describe('getPresignedUrl expiry', () => {
+    it('should cap the lifetime at the seven days GCS can sign', async () => {
+      jest.setSystemTime(new Date('2026-01-01T00:00:00Z'));
+      mockConfigureFile = (file) => {
+        file.getSignedUrl.mockResolvedValue(['https://signed.read.url']);
+      };
+
+      await createDriver({ presignEnabled: true }).getPresignedUrl({
+        filePath: 'some/file.png',
+        expiresInSeconds: 30 * 24 * 60 * 60,
+      });
+
+      expect(mockFiles[0].getSignedUrl).toHaveBeenCalledWith(
+        expect.objectContaining({
+          expires: new Date('2026-01-08T00:00:00Z').getTime(),
+        }),
+      );
     });
   });
 

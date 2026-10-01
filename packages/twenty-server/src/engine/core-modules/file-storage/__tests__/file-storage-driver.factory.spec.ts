@@ -197,6 +197,18 @@ describe('FileStorageDriverFactory', () => {
       expect(driver.constructor.name).toBe('ValidatedStorageDriver');
     });
 
+    it('should refuse to create a GcsDriver without a bucket name', () => {
+      jest
+        .spyOn(twentyConfigService, 'get')
+        .mockImplementation((key: string) =>
+          key === 'STORAGE_TYPE' ? StorageDriverType.GCS : undefined,
+        );
+
+      expect(() => factory['createDriver']()).toThrow(
+        'STORAGE_GCS_BUCKET_NAME is required when STORAGE_TYPE is GCS',
+      );
+    });
+
     it('should throw error for invalid storage driver type', () => {
       jest.spyOn(twentyConfigService, 'get').mockReturnValue('invalid-type');
 

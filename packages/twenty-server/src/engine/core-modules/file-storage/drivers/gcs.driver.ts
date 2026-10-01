@@ -29,6 +29,7 @@ export type GcsDriverOptions = {
 };
 
 const DEFAULT_PRESIGNED_URL_EXPIRES_IN_SECONDS = 900;
+const MAX_SIGNED_URL_EXPIRES_IN_SECONDS = 7 * 24 * 60 * 60;
 
 const isApiErrorWithStatus = (error: unknown, statusCode: number): boolean =>
   error instanceof ApiError && error.code === statusCode;
@@ -96,6 +97,10 @@ export class GcsDriver implements StorageDriver {
     filePath: string;
     byteCount: number;
   }): Promise<Buffer> {
+    if (params.byteCount <= 0) {
+      return Buffer.alloc(0);
+    }
+
     try {
       const [content] = await this.bucket
         .file(params.filePath)
@@ -375,28 +380,23 @@ export class GcsDriver implements StorageDriver {
 
       return true;
     } catch (error) {
-      // 412 and 429 come from concurrent metadata updates, which GCS caps at one per second per object.
-      if (
-        isApiErrorWithStatus(error, 404) ||
-        isApiErrorWithStatus(error, 412) ||
-        isApiErrorWithStatus(error, 429)
-      ) {
-        this.logger.warn(
-          `Could not set Cache-Control on ${file.name}, serving it through the server instead`,
-        );
+      // Concurrent updates are common here: GCS allows one metadata update per object per second.
+      this.logger.warn(
+        `Could not set Cache-Control on ${file.name}, serving it through the server instead: ${error?.message ?? error}`,
+      );
 
-        return false;
-      }
-
-      throw error;
+      return false;
     }
   }
 
   private computeExpiry(expiresInSeconds: number | undefined): number {
-    return (
-      Date.now() +
-      (expiresInSeconds ?? DEFAULT_PRESIGNED_URL_EXPIRES_IN_SECONDS) * 1000
+    // GCS refuses to sign a V4 URL valid for longer than seven days.
+    const boundedExpiresInSeconds = Math.min(
+      expiresInSeconds ?? DEFAULT_PRESIGNED_URL_EXPIRES_IN_SECONDS,
+      MAX_SIGNED_URL_EXPIRES_IN_SECONDS,
     );
+
+    return Date.now() + boundedExpiresInSeconds * 1000;
   }
 
   private toFolderPrefix(folderPath: string): string {
