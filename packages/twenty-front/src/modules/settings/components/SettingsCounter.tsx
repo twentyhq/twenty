@@ -4,11 +4,19 @@ import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentTyp
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
+import { isInteger, isNonEmptyString } from '@sniptt/guards';
 import { useId, useRef } from 'react';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
-import { NumberStepper } from 'twenty-ui/primitives/input';
+import {
+  NumberStepper,
+  type NumberStepperProps,
+} from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
+
+const SETTINGS_COUNTER_CARET_NAVIGATION_KEYS: string[] = [Key.Home, Key.End];
+
+const SETTINGS_COUNTER_SEPARATOR_AND_PLUS_SIGN_KEYS = ['.', ',', '+'];
 
 type SettingsCounterProps = {
   value: number;
@@ -60,8 +68,33 @@ export const SettingsCounter = ({
     });
   };
 
-  const handleBlur = () => {
+  const handleBlur: NonNullable<NumberStepperProps['onBlur']> = (event) => {
     removeFocusItemFromFocusStackById({ focusId: instanceId });
+
+    const isFieldLeftEmpty = !isNonEmptyString(
+      event.currentTarget.value.trim(),
+    );
+
+    if (isFieldLeftEmpty && value !== minValue) {
+      onChange(minValue);
+    }
+  };
+
+  const handleKeyDown: NonNullable<NumberStepperProps['onKeyDown']> = (
+    event,
+  ) => {
+    if (SETTINGS_COUNTER_CARET_NAVIGATION_KEYS.includes(event.key)) {
+      event.preventBaseUIHandler();
+      return;
+    }
+
+    const isBlockedMinusSign = event.key === '-' && minValue >= 0;
+    const isSeparatorOrPlusSign =
+      SETTINGS_COUNTER_SEPARATOR_AND_PLUS_SIGN_KEYS.includes(event.key);
+
+    if (isBlockedMinusSign || isSeparatorOrPlusSign) {
+      event.preventDefault();
+    }
   };
 
   const handleEscape = () => {
@@ -79,13 +112,20 @@ export const SettingsCounter = ({
   });
 
   const handleValueChange = (nextValue: number | null) => {
-    if (isDefined(nextValue) && nextValue < minValue) {
+    if (!isDefined(nextValue)) {
       return;
     }
 
-    const nextSettingsValue = isDefined(maxValue)
-      ? Math.min(nextValue ?? minValue, maxValue)
-      : (nextValue ?? minValue);
+    const isPersistableValue = isInteger(nextValue) && nextValue >= minValue;
+
+    if (!isPersistableValue) {
+      return;
+    }
+
+    const nextSettingsValue = Math.min(
+      nextValue,
+      maxValue ?? Number.POSITIVE_INFINITY,
+    );
 
     if (nextSettingsValue === value) {
       return;
@@ -100,6 +140,7 @@ export const SettingsCounter = ({
         ref={inputRef}
         aria-labelledby={ariaLabelledBy}
         aria-describedby={ariaDescribedBy}
+        aria-roledescription={t`Number field`}
         value={value}
         onValueChange={handleValueChange}
         allowOutOfRange
@@ -111,6 +152,7 @@ export const SettingsCounter = ({
         incrementLabel={t`Increase value`}
         onFocus={handleFocus}
         onBlur={handleBlur}
+        onKeyDown={handleKeyDown}
       />
     </StyledCounterContainer>
   );

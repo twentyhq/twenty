@@ -1,5 +1,6 @@
 import { NumberField } from '@base-ui/react/number-field';
 import { useControlled } from '@base-ui/utils/useControlled';
+import { useValueAsRef } from '@base-ui/utils/useValueAsRef';
 import { clsx } from 'clsx';
 
 import { IconMinus, IconPlus } from '@ui/icon';
@@ -7,10 +8,10 @@ import { Button } from '@ui/primitives/input/Button/Button';
 import inputStyles from '@ui/primitives/input/Input/Input.module.scss';
 import { mergeClassNames } from '@ui/utilities/internal/mergeClassNames';
 
+import { NUMBER_STEPPER_FORMAT } from './internal/constants/NumberStepperFormat';
+import { isBlurRoundingOfCurrentValue } from './internal/utils/isBlurRoundingOfCurrentValue';
 import styles from './NumberStepper.module.scss';
 import { type NumberStepperProps } from './types/NumberStepperProps';
-
-const NUMBER_STEPPER_MAXIMUM_FRACTION_DIGITS = 15;
 
 export const NumberStepper = ({
   value,
@@ -38,21 +39,40 @@ export const NumberStepper = ({
     name: 'NumberStepper',
     state: 'value',
   });
+  const currentValueRef = useValueAsRef(resolvedValue);
+
+  const handleValueChange: NonNullable<
+    NumberField.Root.Props['onValueChange']
+  > = (nextValue, eventDetails) => {
+    if (nextValue === currentValueRef.current) {
+      return;
+    }
+
+    const isRoundingOnlyBlurChange = isBlurRoundingOfCurrentValue({
+      nextValue,
+      currentValue: currentValueRef.current,
+      reason: eventDetails.reason,
+    });
+
+    if (isRoundingOnlyBlurChange) {
+      eventDetails.cancel();
+      return;
+    }
+
+    onValueChange?.(nextValue, eventDetails);
+
+    if (eventDetails.isCanceled) {
+      return;
+    }
+
+    currentValueRef.current = nextValue;
+    setResolvedValue(nextValue);
+  };
 
   return (
     <NumberField.Root
       value={resolvedValue}
-      onValueChange={(nextValue, eventDetails) => {
-        if (nextValue === resolvedValue) {
-          return;
-        }
-
-        onValueChange?.(nextValue, eventDetails);
-
-        if (!eventDetails.isCanceled) {
-          setResolvedValue(nextValue);
-        }
-      }}
+      onValueChange={handleValueChange}
       min={min}
       max={max}
       allowOutOfRange={allowOutOfRange}
@@ -65,10 +85,7 @@ export const NumberStepper = ({
       name={name}
       form={form}
       id={id}
-      format={{
-        useGrouping: false,
-        maximumFractionDigits: NUMBER_STEPPER_MAXIMUM_FRACTION_DIGITS,
-      }}
+      format={NUMBER_STEPPER_FORMAT}
       className={styles.root}
     >
       {showButtons && (
@@ -92,7 +109,7 @@ export const NumberStepper = ({
         {...props}
         form={form}
         className={mergeClassNames(
-          clsx(inputStyles.input, inputStyles.sm, styles.input),
+          clsx(inputStyles.input, inputStyles.sm, styles.valueInput),
           className,
         )}
       />

@@ -68,9 +68,11 @@ Buttons and keyboard adjustments still stop at `min` and `max`. Native form vali
 
 ## Bounds and interaction
 
-`min` and `max` are inclusive. Increment and decrement buttons stop at the matching bound. Arrow Up and Arrow Down adjust the focused input by `step`, which defaults to `1`. Home and End select the corresponding bound when provided. The same step applies when Shift or Alt is held. Displayed values support up to 15 fraction digits; use a positive step within that precision for decimal adjustments.
+`min` and `max` are inclusive. Increment and decrement buttons stop at the matching bound. Arrow Up and Arrow Down adjust the focused input by `step`, which defaults to `1`. Home and End select the corresponding bound when provided; call `event.preventBaseUIHandler()` in `onKeyDown` to keep a key's text editing behavior instead. The same step applies when Shift or Alt is held. Displayed values support up to 15 fraction digits; use a positive step within that precision for decimal adjustments.
 
-`step` controls adjustments; it does not round typed values to a step. Setting both `min` and `step` also enables native step validation. Set `showButtons={false}` for text editing with the same keyboard behavior.
+Values use Latin digits and show grouping separators from five integer digits, such as `12,500`. Typed and pasted group separators of the browser's locale are accepted.
+
+`step` controls adjustments; it does not round typed values to a step. When `min` is set, native form validation also requires `min` plus a multiple of `step`: with the default `step` of `1`, a typed `2.5` blocks submission. Set `showButtons={false}` for text editing with the same keyboard behavior.
 
 Each button has a default accessible name. Use `decrementLabel` and `incrementLabel` to provide contextual or translated names. Give the input a visible `Field.Label`, `aria-label`, or `aria-labelledby`.
 
@@ -86,7 +88,7 @@ Native input attributes and handlers, `className`, `style`, and `ref` apply to t
 
 ## Front component renderer
 
-The React and Preact renderer sandboxes support keyboard adjustments, bounds, and form values. Pointer stepping and text editing are currently blocked by missing input selection and native event support in the renderer. These limitations do not affect normal React rendering.
+The React and Preact renderer sandboxes support keyboard adjustments, bounds, and form values. Pointer stepping and text editing are currently blocked by missing input selection and native event support in the renderer. Pasting is not supported: without input selection, the pasted text is inserted around the whole value, that wrong number is reported, and the front component then stops rendering. These limitations do not affect normal React rendering.
 
 ## Props
 

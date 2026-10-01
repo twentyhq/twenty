@@ -32,7 +32,7 @@ const RetentionCounter = ({
   );
 };
 
-it('associates settings copy and preserves the minimum when clearing once', async () => {
+it('associates settings copy and persists the minimum once a cleared field loses focus', async () => {
   const onChange = jest.fn();
   const user = userEvent.setup();
 
@@ -50,14 +50,82 @@ it('associates settings copy and preserves the minimum when clearing once', asyn
 
   await user.clear(input);
 
-  expect(onChange).toHaveBeenCalledTimes(1);
-  expect(onChange).toHaveBeenCalledWith(30);
+  expect(input).toHaveValue('');
+  expect(onChange).not.toHaveBeenCalled();
 
   await user.tab();
 
   expect(onChange).toHaveBeenCalledTimes(1);
   expect(onChange).toHaveBeenCalledWith(30);
   expect(input).toHaveValue('30');
+});
+
+it('keeps Home and End as caret navigation without persisting a bound', async () => {
+  const onChange = jest.fn();
+  const user = userEvent.setup();
+
+  render(
+    <JotaiProvider store={createStore()}>
+      <RetentionCounter onChange={onChange} />
+    </JotaiProvider>,
+  );
+
+  const input = screen.getByRole('textbox', { name: 'Log retention' });
+
+  await user.click(input);
+  await user.keyboard('{Home}1{End}');
+
+  expect(input).toHaveValue('190');
+  expect(onChange).toHaveBeenCalledTimes(1);
+  expect(onChange).toHaveBeenCalledWith(190);
+});
+
+it('accepts only whole numbers when typing or pasting', async () => {
+  const onChange = jest.fn();
+  const user = userEvent.setup();
+
+  render(
+    <JotaiProvider store={createStore()}>
+      <RetentionCounter onChange={onChange} />
+    </JotaiProvider>,
+  );
+
+  const input = screen.getByRole('textbox', { name: 'Log retention' });
+
+  await user.tripleClick(input);
+  await user.keyboard('-+1,0.00');
+
+  expect(input).toHaveValue('1000');
+  expect(onChange).toHaveBeenCalledTimes(2);
+  expect(onChange).toHaveBeenLastCalledWith(1000);
+
+  await user.tripleClick(input);
+  await user.paste('45.5');
+  await user.tab();
+
+  expect(input).toHaveValue('1000');
+  expect(onChange).toHaveBeenCalledTimes(2);
+});
+
+it('persists a single change when stepping from a below-minimum draft', async () => {
+  const onChange = jest.fn();
+  const user = userEvent.setup();
+
+  render(
+    <JotaiProvider store={createStore()}>
+      <RetentionCounter onChange={onChange} showButtons />
+    </JotaiProvider>,
+  );
+
+  const input = screen.getByRole('textbox', { name: 'Log retention' });
+
+  await user.tripleClick(input);
+  await user.keyboard('4');
+  await user.click(screen.getByRole('button', { name: 'Increase value' }));
+
+  expect(input).toHaveValue('30');
+  expect(onChange).toHaveBeenCalledTimes(1);
+  expect(onChange).toHaveBeenCalledWith(30);
 });
 
 it('ignores below-minimum drafts and persists valid retention edits immediately', async () => {

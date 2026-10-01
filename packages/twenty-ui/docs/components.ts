@@ -218,13 +218,6 @@ export const DOCUMENTED_COMPONENTS = [
     entryPoint: 'twenty-ui/primitives/input',
     slug: 'input/number-stepper',
     propDescriptions: NUMBER_STEPPER_PROP_DESCRIPTIONS,
-    propDefaults: {
-      allowOutOfRange: 'false',
-      step: '1',
-      showButtons: 'true',
-      decrementLabel: 'Decrease value',
-      incrementLabel: 'Increase value',
-    },
   },
   {
     name: 'Textarea',

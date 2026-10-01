@@ -198,6 +198,8 @@ export const ReadOnly: Story = {
     await userEvent.keyboard('9{ArrowUp}{Home}{End}');
     for (const button of canvas.getAllByRole('button')) {
       await expect(button).toHaveAttribute('aria-disabled', 'true');
+      await expect(getComputedStyle(button).cursor).toBe('default');
+      await expect(getComputedStyle(button).opacity).toBe('0.5');
       await userEvent.click(button);
     }
     await expect(input).toHaveValue('1');
@@ -273,6 +275,71 @@ export const OutOfRangeStepping: Story = {
       30,
       expect.anything(),
     );
+  },
+};
+
+export const OutOfRangeDraftStepping: Story = {
+  args: { defaultValue: 60, min: 30, max: 90, allowOutOfRange: true },
+  render: (args) => <ControlledNumberStepperExample {...args} />,
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const input = canvas.getByRole('textbox', { name: 'Quantity' });
+
+    await userEvent.tripleClick(input);
+    await userEvent.keyboard('4');
+    await expect(args.onValueChange).toHaveBeenCalledTimes(1);
+    await userEvent.click(
+      canvas.getByRole('button', { name: 'Increase value' }),
+    );
+    await expect(input).toHaveValue('30');
+    await expect(args.onValueChange).toHaveBeenCalledTimes(2);
+    await expect(args.onValueChange).toHaveBeenLastCalledWith(
+      30,
+      expect.anything(),
+    );
+  },
+};
+
+export const GroupedInput: Story = {
+  args: { defaultValue: 0, max: 20000 },
+  render: (args) => <ControlledNumberStepperExample {...args} />,
+  play: async ({ canvasElement, args }) => {
+    const input = within(canvasElement).getByRole('textbox', {
+      name: 'Quantity',
+    });
+
+    await userEvent.tripleClick(input);
+    await userEvent.keyboard('12,500');
+    await expect(args.onValueChange).toHaveBeenLastCalledWith(
+      12500,
+      expect.anything(),
+    );
+    await userEvent.tab();
+    await expect(input).toHaveValue('12,500');
+    await userEvent.tripleClick(input);
+    await userEvent.paste('1,500');
+    await expect(args.onValueChange).toHaveBeenLastCalledWith(
+      1500,
+      expect.anything(),
+    );
+    await userEvent.tab();
+    await expect(input).toHaveValue('1500');
+  },
+};
+
+export const UneditedPrecision: Story = {
+  args: { defaultValue: 0.1 + 0.2 },
+  render: (args) => <ControlledNumberStepperExample {...args} />,
+  play: async ({ canvasElement, args }) => {
+    const input = within(canvasElement).getByRole('textbox', {
+      name: 'Quantity',
+    });
+
+    await expect(input).toHaveValue('0.3');
+    await userEvent.click(input);
+    await userEvent.tab();
+    await expect(input).toHaveValue('0.3');
+    await expect(args.onValueChange).not.toHaveBeenCalled();
   },
 };
 

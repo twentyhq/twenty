@@ -7,6 +7,6 @@ runComponentConformance({
   name: 'NumberStepper',
   element: <NumberStepper aria-label="Quantity" />,
   refInstanceOf: HTMLInputElement,
-  ownClassName: styles.input,
+  ownClassName: styles.valueInput,
   renderPropTagName: 'input',
 });
