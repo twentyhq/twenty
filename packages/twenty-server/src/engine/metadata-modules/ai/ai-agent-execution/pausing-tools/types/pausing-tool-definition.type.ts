@@ -5,12 +5,8 @@ import { type PausingToolCompletionContext } from 'src/engine/metadata-modules/a
 
 export type PausingToolDefinition<TInput, TOutput> = {
   inputSchema: z.ZodType<TInput>;
-  // The output a person may submit depends on what the call asked, so the
-  // schema is built from the call's input.
   outputSchema: (input: TInput) => z.ZodType<TOutput>;
-  // Runs once the person's output is accepted, and only then: whatever the
-  // call does on the person's behalf happens here, and the tool result says
-  // what came of it.
+  // runs only after the output is accepted, so side effects on the person's behalf belong here
   complete: (args: {
     output: TOutput;
     input: TInput;

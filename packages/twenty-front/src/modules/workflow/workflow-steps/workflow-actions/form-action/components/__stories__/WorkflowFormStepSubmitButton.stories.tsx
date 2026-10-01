@@ -46,13 +46,7 @@ const FormSubmission = () => {
   );
 };
 
-const createHandlers = ({
-  threadId,
-  errorCode,
-}: {
-  threadId?: string;
-  errorCode?: string;
-} = {}) => [
+const createHandlers = ({ errorCode }: { errorCode?: string } = {}) => [
   graphql.query('FindOneWorkflowRun', () =>
     HttpResponse.json({
       data: {
@@ -68,13 +62,15 @@ const createHandlers = ({
           },
           state: {
             ...oneSucceededWorkflowRunQueryResult.workflowRun.state,
-            stepInfos: { [STEP_ID]: { status: 'PENDING', threadId } },
+            stepInfos: {
+              [STEP_ID]: { status: 'PENDING', threadId: THREAD_ID },
+            },
           },
         },
       },
     }),
   ),
-  graphql.mutation(threadId ? 'AnswerToolCall' : 'SubmitFormStep', () =>
+  graphql.mutation('AnswerToolCall', () =>
     HttpResponse.json(
       errorCode
         ? {
@@ -89,14 +85,12 @@ const createHandlers = ({
             ],
           }
         : {
-            data: threadId
-              ? {
-                  answerToolCall: {
-                    __typename: 'AnswerToolCallResult',
-                    streamId: null,
-                  },
-                }
-              : { submitFormStep: true },
+            data: {
+              answerToolCall: {
+                __typename: 'AnswerToolCallResult',
+                streamId: null,
+              },
+            },
           },
     ),
   ),
@@ -125,7 +119,7 @@ const meta: Meta<typeof FormSubmission> = {
 export default meta;
 type Story = StoryObj<typeof FormSubmission>;
 
-export const WithoutConversation: Story = {
+export const Submitted: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -134,11 +128,6 @@ export const WithoutConversation: Story = {
     );
     expect(await canvas.findByText('Form submitted')).toBeVisible();
   },
-};
-
-export const WithConversation: Story = {
-  parameters: { msw: { handlers: createHandlers({ threadId: THREAD_ID }) } },
-  play: WithoutConversation.play,
 };
 
 export const NoLongerPending: Story = {

@@ -134,9 +134,7 @@ export const FormBooleanFieldInput = ({
             hasRightElement={isDefined(VariablePicker) && !readonly}
             disabled={readonly}
             dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
-            dropdownOffset={{
-              y: parseInt(theme.spacing[1], 10),
-            }}
+            dropdownSideOffset={parseInt(theme.spacing[1], 10)}
           />
         ) : (
           <FormFieldInputInnerContainer

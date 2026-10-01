@@ -125,11 +125,7 @@ export const useExecuteTasksOnAnyLocationChange = () => {
     }
   }, [store]);
 
-  /**
-   * Be careful to put idempotent tasks here.
-   *
-   * Because it might be called multiple times.
-   */
+  // Tasks here must be idempotent: this can run several times per location change.
   const executeTasksOnAnyLocationChange = () => {
     closeAnyOpenDropdown();
 

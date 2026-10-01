@@ -2,8 +2,7 @@ type ThreadWithLastActivity = {
   updatedAt: string | Date;
 };
 
-// Sending a message touches its conversation, so updatedAt is its last
-// activity
+// Sending a message touches its conversation, so updatedAt is its last activity.
 const getLastActivityMs = (thread: ThreadWithLastActivity): number =>
   new Date(thread.updatedAt).getTime();
 

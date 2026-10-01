@@ -342,6 +342,57 @@ const getPersonLastContact = async (
   };
 };
 
+const getPersonTimelineDiffFieldNames = async (
+  client: CoreApiClient,
+  personId: string,
+): Promise<string[]> => {
+  const result = await client.query({
+    timelineActivities: {
+      __args: { filter: { targetPersonId: { eq: personId } } },
+      edges: { node: { properties: true } },
+    },
+  });
+
+  const edges = (
+    result.timelineActivities as {
+      edges?: {
+        node: { properties?: { diff?: Record<string, unknown> } | null };
+      }[];
+    } | null
+  )?.edges;
+
+  return (edges ?? []).flatMap(({ node }) =>
+    Object.keys(node.properties?.diff ?? {}),
+  );
+};
+
+const TIMELINE_POLL_TIMEOUT_MS = 30_000;
+const TIMELINE_POLL_INTERVAL_MS = 500;
+
+// Timeline activities are written async by the worker, so an empty timeline proves nothing; a later field write gives the check something to wait for.
+const waitForPersonTimelineDiffFieldName = async (
+  client: CoreApiClient,
+  { personId, fieldName }: { personId: string; fieldName: string },
+): Promise<string[]> => {
+  const deadline = Date.now() + TIMELINE_POLL_TIMEOUT_MS;
+
+  while (Date.now() < deadline) {
+    const fieldNames = await getPersonTimelineDiffFieldNames(client, personId);
+
+    if (fieldNames.includes(fieldName)) {
+      return fieldNames;
+    }
+
+    await new Promise((resolve) =>
+      setTimeout(resolve, TIMELINE_POLL_INTERVAL_MS),
+    );
+  }
+
+  throw new Error(
+    `No timeline activity for ${fieldName} on person ${personId} after ${TIMELINE_POLL_TIMEOUT_MS}ms`,
+  );
+};
+
 const expectColumns = (
   actual: PersonLastContact,
   expected: {
@@ -671,6 +722,49 @@ describe('last contact handlers', () => {
       lastEmailId: messageId,
       lastMeetingId: null,
     });
+  });
+
+  it('keeps last contact writes off the person timeline', async () => {
+    const workspaceMemberId = await getWorkspaceMemberId(client);
+    const personId = await createPerson(client);
+    createdPersonIds.push(personId);
+    const receivedAt = new Date(Date.now() - 5 * DAY_IN_MS).toISOString();
+
+    const messageId = await recordEmail({
+      personId,
+      workspaceMemberId,
+      receivedAt,
+      direction: 'outbound',
+    });
+
+    expect((await getPersonLastContact(client, personId)).lastEmailId).toBe(
+      messageId,
+    );
+
+    await client.mutation({
+      updatePerson: {
+        __args: { id: personId, data: { jobTitle: 'Timeline control' } },
+        id: true,
+      },
+    });
+
+    const timelineFieldNames = await waitForPersonTimelineDiffFieldName(
+      client,
+      { personId, fieldName: 'jobTitle' },
+    );
+
+    for (const fieldName of [
+      'lastContactAt',
+      'lastContactBy',
+      'lastContactById',
+      'lastContactItemMessage',
+      'lastContactItemMessageId',
+      'lastOutboundAt',
+      'lastEmail',
+      'lastEmailId',
+    ]) {
+      expect(timelineFieldNames).not.toContain(fieldName);
+    }
   });
 
   it('computes all columns for a single received (inbound) email', async () => {

@@ -785,61 +785,12 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       response: { answer },
     });
 
-  it('still answers a form through the deprecated submitFormStep', async () => {
-    const finalStep = emptyStep();
-    const form = formStep([finalStep.id]);
-    const fixture = await createFixture({
-      mirrorless: true,
-      steps: [form, finalStep],
-    });
-    const runId = await runFixture(fixture);
-
-    await waitForStep(runId, form.id, 'PENDING');
-
-    const response = await workflowGraphqlRequest(
-      'mutation Submit($input: SubmitFormStepInput!) { submitFormStep(input: $input) }',
-      {
-        input: {
-          stepId: form.id,
-          workflowRunId: runId,
-          response: { answer: 'Approved' },
-        },
-      },
-    );
-
-    expect(response.body.errors).toBeUndefined();
-    expect(response.body.data.submitFormStep).toBe(true);
-
-    const run = await waitForRun(runId, 'COMPLETED');
-
-    expect(run.state.stepInfos[form.id].result).toMatchObject({
-      answer: 'Approved',
-    });
-
-    const second = await workflowGraphqlRequest(
-      'mutation Submit($input: SubmitFormStepInput!) { submitFormStep(input: $input) }',
-      {
-        input: {
-          stepId: form.id,
-          workflowRunId: runId,
-          response: { answer: 'Rejected' },
-        },
-      },
-    );
-
-    expect(JSON.stringify(second.body.errors)).toContain(
-      'TOOL_CALL_NOT_PENDING',
-    );
-  });
-
   describe('the conversation a form step records', () => {
     const approvalForm = (nextStepIds: string[]): WorkflowAction => ({
       ...formStep(nextStepIds),
       name: 'Approve the discount',
     });
 
-    // The form's call is named after the step, in the conversation the step's
-    // current execution recorded.
     const getFormConversation = async (runId: string, stepId: string) => {
       const threadId = (await getRun(runId)).state.stepInfos[stepId].threadId;
       const [thread] = await global.testDataSource.query(
@@ -976,9 +927,6 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       });
     });
 
-    // Every iteration of a loop re-executes the same step in the same run, so
-    // each records its own conversation and one iteration's answer never
-    // stands for the next.
     it('records a conversation for each iteration of a form inside a loop', async () => {
       const afterLoop = emptyStep();
       const form = approvalForm([]);
@@ -1081,8 +1029,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     });
   });
 
-  // A stop waiting on a step still running on another branch parks the run in
-  // STOPPING with the form still PENDING; nothing would resume an answer.
+  // Nothing would resume an answer submitted to a run parked in STOPPING.
   it('refuses a submission while its run is stopping', async () => {
     const finalStep = emptyStep();
     const form = formStep([finalStep.id]);
@@ -1192,7 +1139,6 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
         .mockResolvedValueOnce(askingResult)
         .mockResolvedValueOnce(replyingResult);
 
-    // Each call the conversation waits on, and whether it still waits.
     const getToolCalls = async (threadId: string) => {
       const [thread] = await global.testDataSource.query(
         `SELECT "pendingQuestionMessageId" FROM "${schema}"."agentChatThread" WHERE id = $1`,
@@ -1234,8 +1180,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     const startAskingRun = async () => {
       const finalStep = emptyStep();
       const agent = agentStep([finalStep.id]);
-      // A run reads through its workspace workflow record, which a
-      // mirrorless fixture does not have.
+      // A run reads through its workspace workflow record, which a mirrorless fixture lacks.
       const fixture = await createFixture({ steps: [agent, finalStep] });
       const runId = await runFixture(fixture);
       const run = await waitForStep(runId, agent.id, 'PENDING');
@@ -1414,8 +1359,6 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       expect(waitingRun.status).toBe('RUNNING');
       expect(waitingRun.state.stepInfos[agent.id].status).toBe('PENDING');
 
-      // Had the first answer resumed the step, the second would find it no
-      // longer waiting.
       const second = await answer({ threadId, toolCallId: 'ask-2' });
 
       expect(second.body.errors).toBeUndefined();
@@ -1476,8 +1419,7 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
         getQueueToken(MessageQueue.workflowQueue),
       );
 
-      // Holds the resume back, so the run's fate can be decided while it is
-      // still queued.
+      // Holds the resume back so the run's fate is decided while it is still queued.
       const enqueue = jest.spyOn(queue, 'add').mockResolvedValueOnce(undefined);
 
       const response = await answer({ threadId });

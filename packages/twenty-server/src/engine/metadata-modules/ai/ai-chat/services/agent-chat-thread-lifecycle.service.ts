@@ -13,13 +13,11 @@ import { getCancelChannel } from 'src/engine/metadata-modules/ai/ai-chat/utils/g
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
-import { hasWorkflowRunThreadFields } from 'src/engine/metadata-modules/ai/ai-history/utils/has-workflow-run-thread-fields.util';
 import {
   PermissionsException,
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
-import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @Injectable()
 export class AgentChatThreadLifecycleService {
@@ -30,7 +28,6 @@ export class AgentChatThreadLifecycleService {
     private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
     private readonly redisClientService: RedisClientService,
     private readonly codeInterpreterService: CodeInterpreterService,
-    private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly threadRecordEventService: AgentChatThreadRecordEventService,
   ) {}
 
@@ -64,8 +61,7 @@ export class AgentChatThreadLifecycleService {
       );
   }
 
-  // Awaited by the soft delete paths so the stream is stopped before they
-  // respond
+  // awaited so the stream stops before the soft delete responds
   async stopDeletedThreads({
     workspaceId,
     threadIds,
@@ -91,8 +87,7 @@ export class AgentChatThreadLifecycleService {
     }
   }
 
-  // A run's conversation is the record of what its agent step did, so the
-  // record API may read it but not edit, delete or destroy it
+  // a run's conversation records what its agent step did, so the record API may only read it
   async assertThreadIsNotWorkflowRunThread({
     workspaceId,
     threadId,
@@ -112,25 +107,7 @@ export class AgentChatThreadLifecycleService {
     }
   }
 
-  async excludeWorkflowRunThreadsFromFilter<TFilter>({
-    workspaceId,
-    filter,
-  }: {
-    workspaceId: string;
-    filter: TFilter;
-  }): Promise<TFilter | { and: [TFilter, { workflowRunId: { is: 'NULL' } }] }> {
-    const { flatFieldMetadataMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatFieldMetadataMaps',
-      ]);
-
-    return hasWorkflowRunThreadFields(flatFieldMetadataMaps)
-      ? { and: [filter, { workflowRunId: { is: 'NULL' } }] }
-      : filter;
-  }
-
-  // The owner field is not writable through the record API. Owned and
-  // workflow-run threads are skipped so an upsert cannot reassign them
+  // owned and workflow-run threads are skipped so an upsert cannot reassign them
   async assignCreatedThreadsToCreator({
     authContext,
     threadIds,
@@ -143,15 +120,9 @@ export class AgentChatThreadLifecycleService {
     }
 
     const workspaceId = authContext.workspace.id;
-    const { flatFieldMetadataMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatFieldMetadataMaps',
-      ]);
     const unassignedThreadCriteria = {
       workspaceMemberId: IsNull(),
-      ...(hasWorkflowRunThreadFields(flatFieldMetadataMaps)
-        ? { workflowRunId: IsNull() }
-        : {}),
+      workflowRunId: IsNull(),
     };
 
     const threadsBefore = await this.threadRepository.find(workspaceId, {

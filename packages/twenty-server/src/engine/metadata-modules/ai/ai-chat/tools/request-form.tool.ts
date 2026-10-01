@@ -16,8 +16,7 @@ const requestFormFieldSchema = workflowFormFieldSchema.pick({
   settings: true,
 });
 
-// A form step issues this call with every field of its form, so a recorded
-// call is read without the limits an agent is held to.
+// form steps issue this call with every field, so recorded calls skip the agent's limits
 export const requestFormCallSchema = z.object({
   fields: z.array(requestFormFieldSchema),
 });

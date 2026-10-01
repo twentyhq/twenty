@@ -123,7 +123,6 @@ describe('getRecordNodeFromRecord', () => {
       [oneToManyRelationField.name]: true,
     };
 
-    // When / Then
     expect(() =>
       getRecordNodeFromRecord({
         objectMetadataItems,

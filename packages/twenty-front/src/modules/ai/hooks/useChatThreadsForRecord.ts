@@ -18,8 +18,7 @@ import { type ObjectRecordOperation } from '@/object-record/types/ObjectRecordOp
 import { useListenToEventsForQuery } from '@/sse-db-event/hooks/useListenToEventsForQuery';
 import { type TargetRecordIdentifier } from '@/ui/layout/contexts/TargetRecordIdentifier';
 
-// The widget shows the most recent conversations in a card rather than a
-// browsable list, so it asks for one page and never pages further.
+// A card of recent conversations, never paged further.
 const CHAT_THREADS_FOR_RECORD_PAGE_SIZE = 20;
 
 // Every turn updates its thread, so this ranks by the latest activity.
@@ -33,15 +32,13 @@ const CHAT_THREADS_FOR_RECORD_GQL_FIELDS = {
   thread: { id: true, title: true, deletedAt: true, updatedAt: true },
 } satisfies RecordGqlFields;
 
-// A link's record event carries its columns but not its conversation, so a
-// new link is read back rather than taken from the event.
+// Link events carry no conversation, so new links are read back.
 const LINK_OPERATION_TYPES: ObjectRecordOperation['type'][] = [
   'create-one',
   'create-many',
 ];
 
-// Title and activity changes reach the listed conversations through the
-// record cache; these change which conversations the page holds.
+// Title and activity changes arrive through the record cache; these change which conversations are listed.
 const THREAD_OPERATION_TYPES: ObjectRecordOperation['type'][] = [
   'delete-one',
   'delete-many',
@@ -113,9 +110,7 @@ export const useChatThreadsForRecord = ({
     enabled: isRecordLinkable,
   });
 
-  // A custom object leg carries no unique index, so a conversation can be
-  // linked to the record more than once. Sorted here too, as an update to a
-  // listed conversation does not reorder the fetched page.
+  // Custom legs allow duplicate links; sorted since an update doesn't reorder the fetched page.
   const threads = sortChatThreadsByLastActivityDesc(
     uniqBy(links.map(({ thread }) => thread).filter(isDefined), 'id'),
   );

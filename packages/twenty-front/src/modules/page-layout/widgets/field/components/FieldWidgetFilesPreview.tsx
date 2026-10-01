@@ -55,8 +55,7 @@ export const FieldWidgetFilesPreview = ({
     .toLowerCase()
     .replace('.', '');
 
-  // Files the viewer cannot render already come with their own download
-  // action inside the unavailable-preview state.
+  // Unpreviewable files get their own download action in the unavailable state.
   const isPreviewable = PREVIEWABLE_EXTENSIONS.includes(fileExtension);
 
   return (

@@ -1,8 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
-// Whether the reader may hand this workflow to the workspace or keep it to
-// themselves: they made it, or nobody did. The read rule in this directory has
-// to agree with this about an ownerless workflow.
+// the creator, or anyone when nobody made it; the visibility read rules in this directory must agree about ownerless workflows
 export const canChangeCoreWorkflowVisibility = ({
   createdByUserWorkspaceId,
   userWorkspaceId,

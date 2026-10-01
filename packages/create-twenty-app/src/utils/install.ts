@@ -4,9 +4,7 @@ import { promisify } from 'util';
 
 const execPromise = promisify(exec);
 
-// Raised as "All versions satisfying <range> are quarantined", or for a tag as
-// "The version for tag <tag> is quarantined", when every candidate version is
-// younger than the configured npmMinimalAgeGate.
+// Raised when every candidate version is younger than npmMinimalAgeGate.
 const YARN_QUARANTINE_ERROR_CODE = 'YN0016';
 
 const QUARANTINED_PACKAGE_PATTERN =
@@ -14,8 +12,7 @@ const QUARANTINED_PACKAGE_PATTERN =
 
 const ANSI_ESCAPE_PATTERN = /\x1b\[[0-9;]*m/g;
 
-// A selector Yarn can test against a version works as a preapproval entry; a
-// dist-tag does not, and only the bare package name will waive it.
+// Yarn preapproves version selectors but not dist-tags, which only the bare package name waives.
 const VERSION_SELECTOR_PATTERN = /^[\^~>=<\s]*\d/;
 
 const OUTPUT_TAIL_LINES = 20;
@@ -58,8 +55,7 @@ const buildQuarantineMessage = ({
     "that project's .yarnrc.yml:",
     '',
     '  npmPreapprovedPackages:',
-    // Quoted because a scoped descriptor starts with "@", which YAML reserves:
-    // an unquoted `- @scope/pkg@^1.2.3` is a parse error, not a value.
+    // Quoted: YAML reserves a leading "@", so an unquoted scoped descriptor fails to parse.
     ...quarantinedPackages.map((descriptor) => `    - "${descriptor}"`),
     '',
     'That leaves the gate in force for every other dependency.',
@@ -78,9 +74,7 @@ export const install = async (
 
   onProgress?.('Running yarn install');
   try {
-    // Yarn installs immutably by default when CI is set, but this install is what
-    // finalises the template's lockfile: it rewrites the workspace root entry to
-    // the project's real name. Immutable mode rejects that with YN0028.
+    // CI implies immutable installs, which reject (YN0028) the workspace root rename this install performs.
     await execPromise('yarn install --no-immutable', { cwd: root });
   } catch (error: any) {
     const output = `${error.stdout ?? ''}\n${error.stderr ?? ''}`;
@@ -88,8 +82,6 @@ export const install = async (
       ? parseQuarantinedPackages(output)
       : [];
 
-    // Continuing here would authenticate, sync and report success over a project
-    // that has no node_modules, so surface the failure instead.
     throw new Error(
       quarantinedPackages.length > 0
         ? buildQuarantineMessage({
@@ -101,8 +93,6 @@ export const install = async (
             '',
             tail(output),
             '',
-            // The project itself is intact: package.json carries its real name and
-            // the lockfile is the shipped one, which a plain install reconciles.
             'The project was created. Fix the problem above and run `yarn install` there.',
           ].join('\n'),
     );

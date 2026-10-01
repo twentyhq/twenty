@@ -1,8 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 import { type WorkflowRunStepLog } from 'twenty-shared/workflow';
 
-// An agent that asked a question runs again once it is answered, and the
-// step's log has to account for every segment rather than the last one only.
+// An agent that asked a question runs again once answered, so its log spans several segments
 export const mergeAiAgentStepLogs = ({
   previousStepLog,
   nextStepLog,

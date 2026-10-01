@@ -1,0 +1,69 @@
+---
+title: MetricRow
+description: Align a metric label and formatted value with optional progress.
+---
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import MetricRowReference from '/snippets/ui/generated/components/metric-row.mdx';
+
+`MetricRow` aligns a label, optional icon, and preformatted value. An optional [ProgressRing](/ui/primitives/feedback/progress-ring) uses the visible label as its accessible name.
+
+<StoryEmbed
+  storyId="ui-data-display-metricrow--default"
+  title="Metric row example"
+  height={160}
+/>
+
+## Usage
+
+Pass a nonempty text label as required children and the formatted value through `value`. Add `progress` when the metric has a known percentage.
+
+```tsx
+import { MetricRow } from 'twenty-ui/components';
+import { IconDatabase } from 'twenty-ui/icon';
+
+export const StorageMetric = () => (
+  <MetricRow startIcon={IconDatabase} value="12 / 20 GB" progress={60}>
+    Storage
+  </MetricRow>
+);
+```
+
+The application owns calculations, units, number formatting, and the meaning of the metric. `progressColor` accepts a CSS color for the filled arc.
+
+## Values without progress
+
+Omit `progress` to show a plain value. Numeric zero displays as `0`; content is never replaced with a placeholder. Supply your own placeholder when data is unavailable.
+
+```tsx
+import { MetricRow } from 'twenty-ui/components';
+
+export const CompletedMetric = () => (
+  <MetricRow value={0}>Completed imports</MetricRow>
+);
+```
+
+## Composition and accessibility
+
+The required text label names the progress ring. A string value is also exposed as its accessible value text. For formatted value content, supply `progressValueText` when a percentage does not describe the metric fully. This text overrides the string value fallback. Without it, other content keeps the ring's percentage value text. The optional `startIcon` is decorative and renders at 14px.
+
+```tsx
+import { MetricRow } from 'twenty-ui/components';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const FormattedStorageMetric = () => (
+  <MetricRow
+    value={<Text render={<bdi />}>12 / 20 GB</Text>}
+    progress={60}
+    progressValueText="12 of 20 gigabytes used"
+  >
+    Storage
+  </MetricRow>
+);
+```
+
+Native attributes, `className`, `style`, and `ref` target the outer row. `render` can replace that element. Progress stays controlled and bounded to 0 to 100, with the same reduced-motion behavior as `ProgressRing`.
+
+## Props
+
+<MetricRowReference />

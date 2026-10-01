@@ -1,5 +1,5 @@
 import { ADVANCED_FILTER_LOGICAL_OPERATOR_OPTIONS } from '@/object-record/advanced-filter/constants/AdvancedFilterLogicalOperatorOptions';
-import { DEFAULT_ADVANCED_FILTER_DROPDOWN_OFFSET } from '@/object-record/advanced-filter/constants/DefaultAdvancedFilterDropdownOffset';
+import { DEFAULT_ADVANCED_FILTER_DROPDOWN_SIDE_OFFSET } from '@/object-record/advanced-filter/constants/DefaultAdvancedFilterDropdownSideOffset';
 import { useUpsertRecordFilterGroup } from '@/object-record/record-filter-group/hooks/useUpsertRecordFilterGroup';
 import { type RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
 import { Select } from '@/ui/input/components/Select';
@@ -32,7 +32,7 @@ export const AdvancedFilterLogicalOperatorDropdown = ({
       value={recordFilterGroup.logicalOperator}
       onChange={handleChange}
       options={ADVANCED_FILTER_LOGICAL_OPERATOR_OPTIONS}
-      dropdownOffset={DEFAULT_ADVANCED_FILTER_DROPDOWN_OFFSET}
+      dropdownSideOffset={DEFAULT_ADVANCED_FILTER_DROPDOWN_SIDE_OFFSET}
     />
   );
 };

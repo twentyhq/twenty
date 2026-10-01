@@ -51,15 +51,7 @@ export class MessagingMessageParticipantService {
           isDefined(participant.personId) ||
           isDefined(participant.workspaceMemberId);
 
-        // A caller that states who a participant is owns that row, so it is
-        // matched on what cannot drift between deliveries: the message, the
-        // handle and the role. Keying on displayName as well would make a
-        // provider that renames someone — or simply omits the name on a later
-        // delivery — insert a rival row instead, leaving the original behind
-        // with its stale person link and the thread attached to both records.
-        //
-        // Callers that supply no identity keep the exact match, so the email
-        // path, where the matcher fills these in afterwards, is unchanged.
+        // Caller-identified rows match on message, handle and role only: displayName can drift between deliveries
         const findExisting = (participant: ParticipantWithMessageId) =>
           existingParticipantsBasedOnMessageIds.find(
             (existingParticipant) =>
@@ -70,8 +62,7 @@ export class MessagingMessageParticipantService {
                 existingParticipant.displayName === participant.displayName),
           );
 
-        // Paired once: the lookup is a scan of every existing row, and both
-        // the insert list and the update list below need the same answer.
+        // Paired once: the lookup scans every existing row
         const participantsWithExisting = participants.map((participant) => ({
           participant,
           existingParticipant: findExisting(participant),
@@ -98,11 +89,7 @@ export class MessagingMessageParticipantService {
             };
           });
 
-        // A re-ingested participant whose caller now knows the person it
-        // belongs to would otherwise keep its original, unlinked row forever.
-        // Only callers that supply an identity can trigger this, so the email
-        // path — which leaves both undefined and relies on the matcher — is
-        // untouched.
+        // Without this a re-ingested participant would keep its original unlinked row forever
         const identityUpdates = participantsWithExisting.flatMap(
           ({ participant, existingParticipant }) => {
             if (
@@ -117,13 +104,7 @@ export class MessagingMessageParticipantService {
             const workspaceMemberId =
               participant.workspaceMemberId ??
               existingParticipant.workspaceMemberId;
-            // Carried along because the row is no longer matched on it: without
-            // this a rename would be silently dropped on every later delivery.
-            // An omitted name arrives as an empty string though, and this is
-            // the only branch that writes the column back, so taking that
-            // literally would erase whatever an earlier delivery supplied — a
-            // caller adding a person link should not have to resend the rest
-            // of the row to keep it.
+            // An omitted name arrives as '', which must not erase one an earlier delivery supplied
             const displayName = isNonEmptyString(participant.displayName)
               ? participant.displayName
               : existingParticipant.displayName;
@@ -145,9 +126,7 @@ export class MessagingMessageParticipantService {
           },
         );
 
-        // One ingested batch is bounded by messages, not by participants, so
-        // a conversation with many people in it can exceed what updateMany
-        // accepts in a single call.
+        // Batches are bounded by messages, not participants, so they can exceed what updateMany accepts
         for (const identityUpdatesChunk of chunk(
           identityUpdates,
           QUERY_MAX_RECORDS,
