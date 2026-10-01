@@ -178,55 +178,33 @@ export class ApplicationMessageChannelsService {
       id,
     });
 
-    const data: UpdatableChannelFields = {};
+    const data: Omit<UpdatableChannelFields, 'visibility'> = {};
 
     if (displayName !== undefined) {
       data.displayName = normalizeDisplayName(displayName);
-    }
-
-    if (isDefined(visibility)) {
-      data.visibility = visibility;
     }
 
     if (isDefined(isSyncEnabled)) {
       data.isSyncEnabled = isSyncEnabled;
     }
 
-    if (Object.keys(data).length === 0) {
+    if (!isDefined(visibility) && Object.keys(data).length === 0) {
       return messageChannel;
     }
 
-    if (!isDefined(visibility)) {
-      await this.messageChannelRepository.update({ id, workspaceId }, data);
-
-      return this.messageChannelRepository.findOneOrFail({
-        where: { id, workspaceId },
+    // Written first so that a failed grant sync leaves the channel untouched
+    if (isDefined(visibility)) {
+      await this.channelRecordShareService.changeChannelVisibility({
+        workspaceId,
+        source: MESSAGE_THREAD_CHANNEL_RECORD_SHARE_SOURCE,
+        channelId: id,
+        visibility,
       });
     }
 
-    await this.channelRecordShareService.changeChannelVisibility({
-      workspaceId,
-      source: MESSAGE_THREAD_CHANNEL_RECORD_SHARE_SOURCE,
-      channelId: id,
-      applyVisibilityChange: async () => {
-        const previousMessageChannel =
-          await this.messageChannelRepository.findOneOrFail({
-            where: { id, workspaceId },
-          });
-
-        await this.messageChannelRepository.update({ id, workspaceId }, data);
-
-        if (previousMessageChannel.visibility === visibility) {
-          return undefined;
-        }
-
-        return () =>
-          this.messageChannelRepository.update(
-            { id, workspaceId },
-            { visibility: previousMessageChannel.visibility },
-          );
-      },
-    });
+    if (Object.keys(data).length > 0) {
+      await this.messageChannelRepository.update({ id, workspaceId }, data);
+    }
 
     return this.messageChannelRepository.findOneOrFail({
       where: { id, workspaceId },
