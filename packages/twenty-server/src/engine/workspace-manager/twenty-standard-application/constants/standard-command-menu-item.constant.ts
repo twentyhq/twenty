@@ -678,25 +678,6 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     engineComponentKey: EngineComponentKey.TOGGLE_WORKFLOW_VISIBILITY,
     hotKeys: null,
   },
-  seeVersionWorkflowRun: {
-    universalIdentifier: 'cc3a065c-c89e-40ac-9449-4272c55b1bb8',
-    label: i18nLabel(
-      msg({ message: `See Version`, context: 'commandMenuItem.label' }),
-    ),
-    icon: 'IconVersions',
-    isPinned: true,
-    position: 33,
-    shortLabel: i18nLabel(
-      msg({ message: `See Version`, context: 'commandMenuItem.shortLabel' }),
-    ),
-    availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
-    conditionalAvailabilityExpression: null,
-    availabilityObjectMetadataUniversalIdentifier:
-      STANDARD_OBJECTS.workflowRun.universalIdentifier,
-    frontComponentUniversalIdentifier: null,
-    engineComponentKey: EngineComponentKey.SEE_VERSION_WORKFLOW_RUN,
-    hotKeys: null,
-  },
   seeWorkflowWorkflowRun: {
     universalIdentifier: '9d9cc62d-3543-45c3-93f3-23d2d8979f2b',
     label: i18nLabel(
@@ -953,7 +934,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
     // Conversations keep the sharing they had before record-level sharing
     conditionalAvailabilityExpression:
-      'numberOfSelectedRecords == 1 and noneDefined(selectedRecords, "deletedAt") and ((featureFlags.IS_RECORD_LEVEL_SHARING_ENABLED and not objectMetadataItem.isSystem) or (objectMetadataItem.nameSingular == "agentChatThread" and (featureFlags.IS_AI_CHAT_SHARING_DROPDOWN_ENABLED or featureFlags.IS_RECORD_LEVEL_SHARING_ENABLED)))',
+      'numberOfSelectedRecords == 1 and noneDefined(selectedRecords, "deletedAt") and ((featureFlags.IS_RECORD_LEVEL_SHARING_ENABLED and not objectMetadataItem.isSystem and objectMetadataItem.readability != "APPLICATION" and objectMetadataItem.readability != "SYSTEM") or (objectMetadataItem.nameSingular == "agentChatThread" and (featureFlags.IS_AI_CHAT_SHARING_DROPDOWN_ENABLED or featureFlags.IS_RECORD_LEVEL_SHARING_ENABLED)))',
     availabilityObjectMetadataUniversalIdentifier: null,
     frontComponentUniversalIdentifier: null,
     engineComponentKey: EngineComponentKey.SHARE_RECORD,

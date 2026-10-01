@@ -113,6 +113,11 @@ export const SettingsObjectDetailPage = () => {
     ) : null;
   }
 
+  const isAccessTabVisible =
+    isObjectAccessViewEnabled &&
+    !objectMetadataItem.isRemote &&
+    !objectMetadataItem.isSystem;
+
   const tabs = [
     {
       id: SETTINGS_OBJECT_DETAIL_TABS.TABS_IDS.FIELDS,
@@ -138,10 +143,7 @@ export const SettingsObjectDetailPage = () => {
       id: SETTINGS_OBJECT_DETAIL_TABS.TABS_IDS.ACCESS,
       title: t`Access`,
       Icon: IconLock,
-      hide:
-        !isObjectAccessViewEnabled ||
-        objectMetadataItem.isRemote ||
-        objectMetadataItem.isSystem,
+      hide: !isAccessTabVisible,
     },
   ];
 
@@ -160,7 +162,11 @@ export const SettingsObjectDetailPage = () => {
       case SETTINGS_OBJECT_DETAIL_TABS.TABS_IDS.LAYOUT:
         return <ObjectLayout objectMetadataItem={objectMetadataItem} />;
       case SETTINGS_OBJECT_DETAIL_TABS.TABS_IDS.ACCESS:
-        return <ObjectAccess objectMetadataItem={objectMetadataItem} />;
+        return isAccessTabVisible ? (
+          <ObjectAccess objectMetadataItem={objectMetadataItem} />
+        ) : (
+          <ObjectFields objectMetadataItem={objectMetadataItem} />
+        );
       default:
         return <></>;
     }

@@ -313,6 +313,7 @@ export const isRecordMatchingRLSRowLevelPermissionPredicate = ({
         const fullNameFilter = filterValue as FullNameFilter;
 
         return (
+          hasOnlyReadableSubFields(fullNameFilter, ['firstName', 'lastName']) &&
           (fullNameFilter.firstName === undefined ||
             isMatchingStringFilter({
               stringFilter: fullNameFilter.firstName,
@@ -326,8 +327,12 @@ export const isRecordMatchingRLSRowLevelPermissionPredicate = ({
         );
       }
       case FieldMetadataType.ADDRESS: {
-        const addressFilter = filterValue as AddressFilter;
-        const addressSubFieldNames = [
+        // Row-level predicates can target coordinates, which AddressFilter omits
+        const addressFilter = filterValue as AddressFilter & {
+          addressLat?: FloatFilter;
+          addressLng?: FloatFilter;
+        };
+        const addressStringSubFieldNames = [
           'addressStreet1',
           'addressStreet2',
           'addressCity',
@@ -335,14 +340,29 @@ export const isRecordMatchingRLSRowLevelPermissionPredicate = ({
           'addressCountry',
           'addressPostcode',
         ] as const;
+        const addressCoordinateSubFieldNames = [
+          'addressLat',
+          'addressLng',
+        ] as const;
 
         return (
-          hasOnlyReadableSubFields(addressFilter, [...addressSubFieldNames]) &&
-          addressSubFieldNames.every((subFieldName) =>
+          hasOnlyReadableSubFields(addressFilter, [
+            ...addressStringSubFieldNames,
+            ...addressCoordinateSubFieldNames,
+          ]) &&
+          addressStringSubFieldNames.every((subFieldName) =>
             isMatchingOptionalStringFilter(
               addressFilter[subFieldName],
               recordFieldValue?.[subFieldName],
             ),
+          ) &&
+          addressCoordinateSubFieldNames.every(
+            (subFieldName) =>
+              !isDefined(addressFilter[subFieldName]) ||
+              isMatchingFloatFilter({
+                floatFilter: addressFilter[subFieldName],
+                value: recordFieldValue?.[subFieldName] ?? null,
+              }),
           )
         );
       }
@@ -402,14 +422,22 @@ export const isRecordMatchingRLSRowLevelPermissionPredicate = ({
         });
       }
       case FieldMetadataType.ACTOR: {
-        const actorFilter = filterValue as ActorFilter;
+        // Row-level predicates can target the context, which ActorFilter omits
+        const actorFilter = filterValue as ActorFilter & {
+          context?: RawJsonFilter;
+        };
 
         return (
           hasOnlyReadableSubFields(actorFilter, [
             'source',
             'name',
             'workspaceMemberId',
+            'context',
           ]) &&
+          isMatchingOptionalRawJsonFilter(
+            actorFilter.context,
+            recordFieldValue?.context,
+          ) &&
           (!isDefined(actorFilter.source) ||
             isMatchingSelectFilter({
               selectFilter: actorFilter.source,

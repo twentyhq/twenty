@@ -7,10 +7,14 @@ export const useObjectAccessOverview = ({
 }: {
   objectMetadataId: string;
 }) => {
-  const { data, loading } = useQuery(GetObjectAccessOverviewDocument, {
+  const { data, loading, error } = useQuery(GetObjectAccessOverviewDocument, {
     variables: { objectMetadataId },
-    fetchPolicy: 'network-only',
+    fetchPolicy: 'cache-and-network',
   });
 
-  return { objectAccessOverview: data?.objectAccessOverview, loading };
+  return {
+    objectAccessOverview: data?.objectAccessOverview,
+    loading,
+    error,
+  };
 };

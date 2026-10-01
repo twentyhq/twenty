@@ -108,6 +108,7 @@ const buildOwnRecordShareGate = (
   ).map((rule) => ({
     kind: 'sharingRule',
     tableAlias: target.tableAlias,
+    workspaceId: target.flatObjectMetadata.workspaceId,
     rule,
   }));
 

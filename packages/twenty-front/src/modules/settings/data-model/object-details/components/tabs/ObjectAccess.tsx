@@ -1,4 +1,5 @@
 import { styled } from '@linaria/react';
+import { isDefined } from 'twenty-shared/utils';
 import { useLingui } from '@lingui/react/macro';
 import { Section } from 'twenty-ui/components';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -40,7 +41,7 @@ export const ObjectAccess = ({ objectMetadataItem }: ObjectAccessProps) => {
   const isRecordLevelSharingEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED,
   );
-  const { objectAccessOverview } = useObjectAccessOverview({
+  const { objectAccessOverview, error } = useObjectAccessOverview({
     objectMetadataId: objectMetadataItem.id,
   });
 
@@ -50,6 +51,8 @@ export const ObjectAccess = ({ objectMetadataItem }: ObjectAccessProps) => {
     getIsMetadataItemCustom(objectMetadataItem) &&
     objectMetadataItem.readability !== MetadataReadability.INHERITED;
   const objectLabel = objectMetadataItem.labelPlural;
+  const isOpenByDefault =
+    objectMetadataItem.readability === MetadataReadability.OPEN;
 
   return (
     <StyledContentContainer>
@@ -58,7 +61,10 @@ export const ObjectAccess = ({ objectMetadataItem }: ObjectAccessProps) => {
           title={t`Who can see and edit by default`}
           description={t`What each role can do on ${objectLabel}. Open a role to change it.`}
         />
-        {objectAccessOverview && (
+        {isDefined(error) && (
+          <StyledSummary>{t`Access could not be loaded.`}</StyledSummary>
+        )}
+        {isDefined(objectAccessOverview) && (
           <ObjectAccessRolesTable roles={objectAccessOverview.roles} />
         )}
       </Section.Root>
@@ -86,14 +92,20 @@ export const ObjectAccess = ({ objectMetadataItem }: ObjectAccessProps) => {
               isReadOnly={isReadOnly}
             />
           </Section.Root>
-          {objectAccessOverview && (
+          {isDefined(objectAccessOverview) && (
             <Section.Root>
               <Section.Header
                 title={t`Today`}
-                description={t`Records whose access differs from what roles give.`}
+                description={
+                  isOpenByDefault
+                    ? t`Records whose access differs from what roles give.`
+                    : t`New records are private to their creator until shared.`
+                }
               />
               <StyledSummary>
-                {t`${objectAccessOverview.restrictedRecordCount} restricted, ${objectAccessOverview.sharedRecordCount} shared with specific people`}
+                {isOpenByDefault
+                  ? t`${objectAccessOverview.restrictedRecordCount} restricted, ${objectAccessOverview.sharedRecordCount} shared with specific people`
+                  : t`${objectAccessOverview.sharedRecordCount} shared with specific people`}
               </StyledSummary>
             </Section.Root>
           )}

@@ -59,6 +59,7 @@ describe('isRowAccessExpressionReadingRecordValues', () => {
           {
             kind: 'sharingRule',
             tableAlias: 'workflowRun',
+            workspaceId: 'workspace-id',
             rule: WORKFLOW_RUN_OF_SHARED_WORKFLOW_SHARING_RULE,
           },
         ],

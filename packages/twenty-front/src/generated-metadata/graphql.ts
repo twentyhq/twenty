@@ -2715,6 +2715,8 @@ export type LogicFunctionLogs = {
   __typename?: 'LogicFunctionLogs';
   /** Execution Logs */
   logs: Scalars['String']['output'];
+  name?: Maybe<Scalars['String']['output']>;
+  universalIdentifier?: Maybe<Scalars['UUID']['output']>;
 };
 
 export type LogicFunctionLogsInput = {

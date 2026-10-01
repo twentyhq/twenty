@@ -4,6 +4,7 @@ import { useGetIsMetadataItemCustom } from '@/object-metadata/hooks/useGetIsMeta
 import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getObjectColorWithFallback } from '@/object-metadata/utils/getObjectColorWithFallback';
+import { isShareableObjectMetadataItem } from '@/object-record/record-sharing/utils/isShareableObjectMetadataItem';
 import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
 import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsWrapper';
 import { SettingsUpdateDataModelObjectAboutForm } from '@/settings/data-model/object-details/components/SettingsUpdateDataModelObjectAboutForm';
@@ -193,8 +194,8 @@ export const ObjectSettings = ({
           </StyledFormSectionContainer>
         )}
       {isRecordLevelSharingEnabled &&
-        !isObjectAccessViewEnabled &&
-        !objectMetadataItem.isSystem && (
+        isShareableObjectMetadataItem(objectMetadataItem) &&
+        (!isObjectAccessViewEnabled || objectMetadataItem.isRemote) && (
           <StyledFormSectionContainer>
             <Section.Root>
               <Section.Header
