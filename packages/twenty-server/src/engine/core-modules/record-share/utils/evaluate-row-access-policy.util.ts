@@ -23,10 +23,10 @@ type InheritedReadabilityExpression = Extract<
 export type RowAccessEvaluationContext<TRecord extends RowAccessRecord> = {
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   shouldIgnoreSoftDeleteDefaultFilter: boolean;
-  fetchRecordShares: (
-    objectMetadataId: string,
-    recordIds: string[],
-  ) => Promise<RecordShareGrant[]>;
+  fetchRecordShares: (args: {
+    objectMetadataId: string;
+    recordIds: string[];
+  }) => Promise<RecordShareGrant[]>;
   executeRawQuery: ExecuteRawQuery;
   // Parents live in other tables, so whoever holds the records resolves them
   resolveRecordIdsReadableThroughParents: (args: {
@@ -134,10 +134,10 @@ const evaluateRowAccessExpression = async <TRecord extends RowAccessRecord>({
     case 'recordShared':
     case 'namedGrant': {
       const sharedRecordIds = resolveRecordIdsSharedWithPrincipals({
-        recordShares: await context.fetchRecordShares(
-          expression.objectMetadataId,
+        recordShares: await context.fetchRecordShares({
+          objectMetadataId: expression.objectMetadataId,
           recordIds,
-        ),
+        }),
         principalIds: expression.principalIds,
         accessLevels: expression.accessLevels,
       });
@@ -150,10 +150,10 @@ const evaluateRowAccessExpression = async <TRecord extends RowAccessRecord>({
     }
     case 'recordNotRestricted': {
       const restrictedRecordIds = resolveRecordIdsRestrictedForPrincipals({
-        recordShares: await context.fetchRecordShares(
-          expression.objectMetadataId,
+        recordShares: await context.fetchRecordShares({
+          objectMetadataId: expression.objectMetadataId,
           recordIds,
-        ),
+        }),
         principalIds: expression.principalIds,
         accessLevels: expression.accessLevels,
       });

@@ -87,7 +87,7 @@ const buildContext = (
 ): RowAccessEvaluationContext<RowAccessRecord> => ({
   flatFieldMetadataMaps,
   shouldIgnoreSoftDeleteDefaultFilter: false,
-  fetchRecordShares: jest.fn(async (_objectMetadataId, recordIds) =>
+  fetchRecordShares: jest.fn(async ({ recordIds }) =>
     recordShares.filter((recordShare) =>
       recordIds.includes(recordShare.recordId),
     ),
@@ -156,10 +156,10 @@ describe('evaluateRowAccessPolicy', () => {
         context,
       ),
     ).toEqual(new Set(['active-shared']));
-    expect(context.fetchRecordShares).toHaveBeenCalledWith(
-      flatObjectMetadata.id,
-      ['active-shared', 'active-private'],
-    );
+    expect(context.fetchRecordShares).toHaveBeenCalledWith({
+      objectMetadataId: flatObjectMetadata.id,
+      recordIds: ['active-shared', 'active-private'],
+    });
   });
 
   it('admits through either operand of an or, asking later operands only about records not yet admitted', async () => {
@@ -183,10 +183,10 @@ describe('evaluateRowAccessPolicy', () => {
         context,
       ),
     ).toEqual(new Set(['active-shared', 'archived-shared']));
-    expect(context.fetchRecordShares).toHaveBeenLastCalledWith(
-      flatObjectMetadata.id,
-      ['active-private', 'archived-shared'],
-    );
+    expect(context.fetchRecordShares).toHaveBeenLastCalledWith({
+      objectMetadataId: flatObjectMetadata.id,
+      recordIds: ['active-private', 'archived-shared'],
+    });
   });
 
   it('admits the records a sharing rule resolves, querying through the context', async () => {

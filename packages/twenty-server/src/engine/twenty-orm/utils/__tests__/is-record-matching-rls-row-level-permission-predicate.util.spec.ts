@@ -421,6 +421,40 @@ describe('isRecordMatchingRLSRowLevelPermissionPredicate', () => {
     ).toBe(true);
   });
 
+  it('treats null and empty sub-field filters as no constraint', () => {
+    expect(
+      isRecordMatchingRLSRowLevelPermissionPredicate({
+        record: baseRecord,
+        filter: {
+          name: { firstName: null, lastName: { eq: 'Doe' } },
+          address: { addressLat: {}, addressCity: { eq: 'Paris' } },
+        } as RecordGqlOperationFilter,
+        flatObjectMetadata,
+        flatFieldMetadataMaps,
+      }),
+    ).toBe(true);
+  });
+
+  it.each([
+    ['createdBy', { context: { is: 'NULL' } }, true],
+    ['createdBy', { context: { is: 'NOT_NULL' } }, false],
+    ['address', { addressLat: { is: 'NULL' } }, true],
+    ['address', { addressCity: { eq: 'Paris' } }, false],
+    ['name', { firstName: { is: 'NULL' } }, true],
+  ])(
+    'reads a null %s as null sub-fields for %j',
+    (fieldName, subFieldFilter, expected) => {
+      expect(
+        isRecordMatchingRLSRowLevelPermissionPredicate({
+          record: { ...baseRecord, [fieldName]: null },
+          filter: { [fieldName]: subFieldFilter } as RecordGqlOperationFilter,
+          flatObjectMetadata,
+          flatFieldMetadataMaps,
+        }),
+      ).toBe(expected);
+    },
+  );
+
   it('supports relation join column filters', () => {
     const result = isRecordMatchingRLSRowLevelPermissionPredicate({
       record: baseRecord,
