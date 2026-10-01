@@ -1,3 +1,4 @@
+import { type RecordGqlFields } from 'twenty-shared/types';
 import { triggerUpdateRecordOptimisticEffectByBatch } from '@/apollo/optimistic-effect/utils/triggerUpdateRecordOptimisticEffectByBatch';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
@@ -63,7 +64,7 @@ export const useTriggerOptimisticEffectFromSseDeleteEvents = () => {
       }
 
       for (const recordAfterDelete of recordsAfterDelete) {
-        const recordGqlFields = {
+        const recordGqlFields: RecordGqlFields = {
           deletedAt: true,
         };
 

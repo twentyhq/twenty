@@ -7,17 +7,14 @@ import { type WidgetAccessDenialInfo } from '@/page-layout/widgets/types/WidgetA
 import { useCallback, useMemo } from 'react';
 import {
   CoreObjectNameSingular,
-  type RecordGqlOperationGqlRecordFields,
+  type RecordGqlFields,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 const CALL_RECORDING_RECORD_FIELDS_BY_WIDGET_KIND = {
   summary: { id: true, status: true, summary: true },
   transcript: { id: true, status: true, transcript: true },
-} as const satisfies Record<
-  CallRecordingWidgetKind,
-  RecordGqlOperationGqlRecordFields
->;
+} as const satisfies Record<CallRecordingWidgetKind, RecordGqlFields>;
 
 export const useCallRecordingForWidget = ({
   kind,
@@ -47,7 +44,7 @@ export const useCallRecordingForWidget = ({
   const isAudioRestricted = isFieldRestricted('audio');
 
   // Requesting a field the role cannot read fails the whole query.
-  const recordGqlFields = useMemo(
+  const recordGqlFields = useMemo<RecordGqlFields>(
     () =>
       kind === 'transcript'
         ? {
