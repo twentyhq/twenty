@@ -2373,6 +2373,8 @@ export interface UpsertRowLevelPermissionPredicatesResult {
 export interface LogicFunctionLogs {
     /** Execution Logs */
     logs: Scalars['String']
+    name?: Scalars['String']
+    universalIdentifier?: Scalars['UUID']
     __typename: 'LogicFunctionLogs'
 }
 
@@ -6236,6 +6238,8 @@ export interface UpsertRowLevelPermissionPredicatesResultGenqlSelection{
 export interface LogicFunctionLogsGenqlSelection{
     /** Execution Logs */
     logs?: boolean | number
+    name?: boolean | number
+    universalIdentifier?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
