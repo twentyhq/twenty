@@ -10,7 +10,7 @@ import groupBy from 'lodash.groupby';
 import { In } from 'typeorm';
 
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
-import { type TimelineThreadDTO } from 'src/engine/core-modules/messaging/dtos/timeline-thread.dto';
+import { type TimelineThreadWithoutParticipants } from 'src/engine/core-modules/messaging/types/timeline-thread-without-participants.type';
 import { type TargetFilter } from 'src/engine/core-modules/target/utils/get-target-field-name-for-object-record.util';
 import { PermissionsException } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
@@ -19,11 +19,6 @@ import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system
 import { type MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 import { type MessageThreadWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-thread.workspace-entity';
 import { type MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
-
-export type TimelineThreadWithoutParticipants = Omit<
-  TimelineThreadDTO,
-  'firstParticipant' | 'lastTwoParticipants' | 'participantCount' | 'read'
->;
 
 type DiscoveredThreadPage = {
   totalNumberOfThreads: number;
