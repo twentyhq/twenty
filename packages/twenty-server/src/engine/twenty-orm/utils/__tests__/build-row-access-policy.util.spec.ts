@@ -168,7 +168,7 @@ describe('buildRowAccessPolicy', () => {
     expect(policy.kind).toBe('gated');
     if (policy.kind !== 'gated') throw new Error('Expected an exception gate');
     expect(policy.condition.sql).toMatch(
-      /^\(NOT EXISTS \(SELECT 1 FROM "workspace"."recordShare" AS "company_recordShareRestriction"/,
+      /^\(NOT EXISTS \(SELECT 1 FROM "workspace"."recordShare" AS "recordShareRestriction_[0-9a-f]{10}"/,
     );
   });
 

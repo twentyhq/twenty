@@ -33,10 +33,13 @@ export const buildRecordShareExceptionCondition = ({
   const principalIdsParameterName = `recordShareExceptionPrincipalIds_${parameterSuffix}`;
   const accessLevelsParameterName = `recordShareExceptionAccessLevels_${parameterSuffix}`;
 
+  // Derived from the table alias, these would collide once Postgres
+  // truncates a long alias to 63 bytes and the grant would shadow the
+  // restriction it must correlate with
   const restrictionAlias = escapeIdentifier(
-    `${tableAlias}_recordShareRestriction`,
+    `recordShareRestriction_${parameterSuffix}`,
   );
-  const grantAlias = escapeIdentifier(`${tableAlias}_recordShareGrant`);
+  const grantAlias = escapeIdentifier(`recordShareGrant_${parameterSuffix}`);
 
   const grantConditions = [
     `${grantAlias}."recordId" = ${restrictionAlias}."recordId"`,
