@@ -2143,6 +2143,7 @@ export enum FeatureFlagKey {
   IS_LOGS_SETTINGS_SECTION_ENABLED = 'IS_LOGS_SETTINGS_SECTION_ENABLED',
   IS_MESSAGE_CAMPAIGN_ENABLED = 'IS_MESSAGE_CAMPAIGN_ENABLED',
   IS_RECORD_CREATION_FORM_ENABLED = 'IS_RECORD_CREATION_FORM_ENABLED',
+  IS_RECORD_LEVEL_SHARING_ENABLED = 'IS_RECORD_LEVEL_SHARING_ENABLED',
   IS_REST_METADATA_API_NEW_FORMAT_DIRECT = 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT',
   IS_VALIDATION_RULES_ENABLED = 'IS_VALIDATION_RULES_ENABLED',
   IS_WEBHOOK_RATE_LIMIT_ENABLED = 'IS_WEBHOOK_RATE_LIMIT_ENABLED',
@@ -5834,6 +5835,7 @@ export type RecordPermissionsTargetInput = {
 
 export enum RecordShareAccessLevel {
   FULL = 'FULL',
+  NONE = 'NONE',
   READ = 'READ',
   READ_WRITE = 'READ_WRITE'
 }
@@ -5846,8 +5848,11 @@ export type RecordSharePrincipalInput = {
 
 export type RecordSharingDto = {
   __typename?: 'RecordSharingDTO';
+  generalAccessLevel?: Maybe<RecordShareAccessLevel>;
   hasInheritedAccess: Scalars['Boolean']['output'];
   isEnabled: Scalars['Boolean']['output'];
+  isGeneralAccessDefault: Scalars['Boolean']['output'];
+  isOpenByDefault: Scalars['Boolean']['output'];
   permissions: RecordPermissionsDto;
   roles: Array<RecordSharingRoleDto>;
   shares: Array<RecordSharingGrantDto>;

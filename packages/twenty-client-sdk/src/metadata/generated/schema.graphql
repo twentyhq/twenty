@@ -1775,6 +1775,7 @@ type RecordSharingGrantDTO {
 }
 
 enum RecordShareAccessLevel {
+  NONE
   READ
   READ_WRITE
   FULL
@@ -1790,6 +1791,9 @@ type RecordSharingDTO {
   permissions: RecordPermissionsDTO!
   isEnabled: Boolean!
   hasInheritedAccess: Boolean!
+  isOpenByDefault: Boolean!
+  generalAccessLevel: RecordShareAccessLevel
+  isGeneralAccessDefault: Boolean!
   roles: [RecordSharingRoleDTO!]!
   shares: [RecordSharingGrantDTO!]!
 }
@@ -2086,6 +2090,7 @@ enum FeatureFlagKey {
   IS_LOGS_SETTINGS_SECTION_ENABLED
   IS_CONVERSATIONS_TAB_ENABLED
   IS_VALIDATION_RULES_ENABLED
+  IS_RECORD_LEVEL_SHARING_ENABLED
 }
 
 type WorkspaceUrls {
