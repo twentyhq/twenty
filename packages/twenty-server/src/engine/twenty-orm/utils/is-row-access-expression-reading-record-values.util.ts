@@ -17,6 +17,7 @@ export const isRowAccessExpressionReadingRecordValues = (
     case 'sharingRule':
       return true;
     case 'recordShared':
+    case 'namedGrant':
     case 'recordNotRestricted':
     case 'inheritedReadability':
       return false;

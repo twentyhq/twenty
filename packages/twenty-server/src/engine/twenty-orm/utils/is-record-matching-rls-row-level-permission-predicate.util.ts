@@ -74,51 +74,39 @@ const isNotFilter = (
   filter: RecordGqlOperationFilter,
 ): filter is NotObjectRecordFilter => 'not' in filter && !!filter.not;
 
-type SubFieldMatcher = (subFieldFilter: never, subFieldValue: never) => boolean;
-
-const matchString: SubFieldMatcher = (
-  stringFilter: StringFilter,
-  value: string,
-) => isMatchingStringFilter({ stringFilter, value });
-
-const matchRawJson: SubFieldMatcher = (
-  rawJsonFilter: RawJsonFilter,
-  value: string,
-) => isMatchingRawJsonFilter({ rawJsonFilter, value });
-
-const matchUUID: SubFieldMatcher = (uuidFilter: UUIDFilter, value: string) =>
-  isMatchingUUIDFilter({ uuidFilter, value });
-
-const matchSelect: SubFieldMatcher = (
-  selectFilter: SelectFilter,
-  value: string,
-) => isMatchingSelectFilter({ selectFilter, value });
-
 // Sub-fields are ANDed as in SQL; one this matcher cannot read never matches
-const isMatchingCompositeSubFields = ({
-  compositeFilter,
-  value,
-  matcherBySubFieldName,
-}: {
-  compositeFilter: object;
-  value: Record<string, unknown> | null | undefined;
-  matcherBySubFieldName: Record<string, SubFieldMatcher>;
-}): boolean =>
-  Object.entries(compositeFilter).every(([subFieldName, subFieldFilter]) => {
-    if (!isDefined(subFieldFilter)) {
-      return true;
-    }
+const hasOnlyReadableSubFields = (
+  compositeFilter: object,
+  readableSubFieldNames: string[],
+): boolean =>
+  Object.entries(compositeFilter).every(
+    ([subFieldName, subFieldFilter]) =>
+      !isDefined(subFieldFilter) ||
+      readableSubFieldNames.includes(subFieldName),
+  );
 
-    const matcher = matcherBySubFieldName[subFieldName];
+const isMatchingOptionalStringFilter = (
+  stringFilter: StringFilter | null | undefined,
+  value: string,
+): boolean =>
+  !isDefined(stringFilter) || isMatchingStringFilter({ stringFilter, value });
 
-    return (
-      isDefined(matcher) &&
-      (matcher as (filter: unknown, value: unknown) => boolean)(
-        subFieldFilter,
-        value?.[subFieldName] ?? null,
-      )
-    );
-  });
+// A null JSON column matches nothing in SQL but an IS NULL check, while its
+// serialized form would match patterns like '%null%' in memory
+const isMatchingOptionalRawJsonFilter = (
+  rawJsonFilter: RawJsonFilter | null | undefined,
+  value: string | null | undefined,
+): boolean => {
+  if (!isDefined(rawJsonFilter)) {
+    return true;
+  }
+
+  if (!isDefined(value)) {
+    return rawJsonFilter.is === 'NULL';
+  }
+
+  return isMatchingRawJsonFilter({ rawJsonFilter, value });
+};
 
 export const isRecordMatchingRLSRowLevelPermissionPredicate = ({
   record,
@@ -337,29 +325,50 @@ export const isRecordMatchingRLSRowLevelPermissionPredicate = ({
             }))
         );
       }
-      case FieldMetadataType.ADDRESS:
-        return isMatchingCompositeSubFields({
-          compositeFilter: filterValue as AddressFilter,
-          value: recordFieldValue,
-          matcherBySubFieldName: {
-            addressStreet1: matchString,
-            addressStreet2: matchString,
-            addressCity: matchString,
-            addressState: matchString,
-            addressCountry: matchString,
-            addressPostcode: matchString,
-          },
-        });
-      case FieldMetadataType.LINKS:
-        return isMatchingCompositeSubFields({
-          compositeFilter: filterValue as LinksFilter,
-          value: recordFieldValue,
-          matcherBySubFieldName: {
-            primaryLinkLabel: matchString,
-            primaryLinkUrl: matchString,
-            secondaryLinks: matchRawJson,
-          },
-        });
+      case FieldMetadataType.ADDRESS: {
+        const addressFilter = filterValue as AddressFilter;
+        const addressSubFieldNames = [
+          'addressStreet1',
+          'addressStreet2',
+          'addressCity',
+          'addressState',
+          'addressCountry',
+          'addressPostcode',
+        ] as const;
+
+        return (
+          hasOnlyReadableSubFields(addressFilter, [...addressSubFieldNames]) &&
+          addressSubFieldNames.every((subFieldName) =>
+            isMatchingOptionalStringFilter(
+              addressFilter[subFieldName],
+              recordFieldValue?.[subFieldName],
+            ),
+          )
+        );
+      }
+      case FieldMetadataType.LINKS: {
+        const linksFilter = filterValue as LinksFilter;
+
+        return (
+          hasOnlyReadableSubFields(linksFilter, [
+            'primaryLinkLabel',
+            'primaryLinkUrl',
+            'secondaryLinks',
+          ]) &&
+          isMatchingOptionalStringFilter(
+            linksFilter.primaryLinkLabel,
+            recordFieldValue?.primaryLinkLabel,
+          ) &&
+          isMatchingOptionalStringFilter(
+            linksFilter.primaryLinkUrl,
+            recordFieldValue?.primaryLinkUrl,
+          ) &&
+          isMatchingOptionalRawJsonFilter(
+            linksFilter.secondaryLinks,
+            recordFieldValue?.secondaryLinks,
+          )
+        );
+      }
       case FieldMetadataType.DATE:
       case FieldMetadataType.DATE_TIME: {
         return isMatchingDateFilter({
@@ -392,36 +401,77 @@ export const isRecordMatchingRLSRowLevelPermissionPredicate = ({
           value: recordFieldValue,
         });
       }
-      case FieldMetadataType.ACTOR:
-        return isMatchingCompositeSubFields({
-          compositeFilter: filterValue as ActorFilter,
-          value: recordFieldValue,
-          matcherBySubFieldName: {
-            source: matchSelect,
-            name: matchString,
-            workspaceMemberId: matchUUID,
-          },
-        });
-      case FieldMetadataType.EMAILS:
-        return isMatchingCompositeSubFields({
-          compositeFilter: filterValue as EmailsFilter,
-          value: recordFieldValue,
-          matcherBySubFieldName: {
-            primaryEmail: matchString,
-            additionalEmails: matchRawJson,
-          },
-        });
-      case FieldMetadataType.PHONES:
-        return isMatchingCompositeSubFields({
-          compositeFilter: filterValue as PhonesFilter,
-          value: recordFieldValue,
-          matcherBySubFieldName: {
-            primaryPhoneNumber: matchString,
-            primaryPhoneCountryCode: matchString,
-            primaryPhoneCallingCode: matchString,
-            additionalPhones: matchRawJson,
-          },
-        });
+      case FieldMetadataType.ACTOR: {
+        const actorFilter = filterValue as ActorFilter;
+
+        return (
+          hasOnlyReadableSubFields(actorFilter, [
+            'source',
+            'name',
+            'workspaceMemberId',
+          ]) &&
+          (!isDefined(actorFilter.source) ||
+            isMatchingSelectFilter({
+              selectFilter: actorFilter.source,
+              value: recordFieldValue?.source ?? null,
+            })) &&
+          isMatchingOptionalStringFilter(
+            actorFilter.name,
+            recordFieldValue?.name,
+          ) &&
+          (!isDefined(actorFilter.workspaceMemberId) ||
+            isMatchingUUIDFilter({
+              uuidFilter: actorFilter.workspaceMemberId,
+              value: recordFieldValue?.workspaceMemberId ?? null,
+            }))
+        );
+      }
+      case FieldMetadataType.EMAILS: {
+        const emailsFilter = filterValue as EmailsFilter;
+
+        return (
+          hasOnlyReadableSubFields(emailsFilter, [
+            'primaryEmail',
+            'additionalEmails',
+          ]) &&
+          isMatchingOptionalStringFilter(
+            emailsFilter.primaryEmail,
+            recordFieldValue?.primaryEmail,
+          ) &&
+          isMatchingOptionalRawJsonFilter(
+            emailsFilter.additionalEmails,
+            recordFieldValue?.additionalEmails,
+          )
+        );
+      }
+      case FieldMetadataType.PHONES: {
+        // Row-level predicates can target the country code, which PhonesFilter omits
+        const phonesFilter = filterValue as PhonesFilter & {
+          primaryPhoneCountryCode?: StringFilter;
+        };
+        const phonesStringSubFieldNames = [
+          'primaryPhoneNumber',
+          'primaryPhoneCountryCode',
+          'primaryPhoneCallingCode',
+        ] as const;
+
+        return (
+          hasOnlyReadableSubFields(phonesFilter, [
+            ...phonesStringSubFieldNames,
+            'additionalPhones',
+          ]) &&
+          phonesStringSubFieldNames.every((subFieldName) =>
+            isMatchingOptionalStringFilter(
+              phonesFilter[subFieldName],
+              recordFieldValue?.[subFieldName],
+            ),
+          ) &&
+          isMatchingOptionalRawJsonFilter(
+            phonesFilter.additionalPhones,
+            recordFieldValue?.additionalPhones,
+          )
+        );
+      }
       case FieldMetadataType.RELATION:
       case FieldMetadataType.MORPH_RELATION: {
         const isJoinColumn =
