@@ -81,6 +81,7 @@ export class WorkspaceMigrationRunnerService {
     if (shouldInvalidateRoleMapCache || shouldInvalidateRolesPermissionsCache) {
       legacyCacheKeyNames.push(
         'rolesPermissions',
+        'roleIdsWithAllRecordsAccess',
         'userWorkspaceRoleMap',
         'flatRoleTargetMaps',
         'apiKeyRoleMap',
