@@ -1,5 +1,9 @@
 import { type ObjectManifest } from 'twenty-shared/application';
-import { MetadataReadability, MetadataWritability } from 'twenty-shared/types';
+import {
+  MetadataReadability,
+  MetadataWritability,
+  ObjectSharingReach,
+} from 'twenty-shared/types';
 
 import { fromObjectManifestToUniversalFlatObjectMetadata } from 'src/engine/core-modules/application/application-manifest/converters/from-object-manifest-to-universal-flat-object-metadata.util';
 
@@ -157,6 +161,30 @@ describe('fromObjectManifestToUniversalFlatObjectMetadata', () => {
       expect(result.discoverableFieldUniversalIdentifiers).toEqual([
         PARENT_FIELD_UID,
       ]);
+    });
+  });
+
+  describe('sharingReach', () => {
+    it('defaults to WORKSPACE when omitted from the manifest', () => {
+      const result = fromObjectManifestToUniversalFlatObjectMetadata({
+        objectManifest: buildObjectManifest({}),
+        applicationUniversalIdentifier: APP_UID,
+        now: NOW,
+      });
+
+      expect(result.sharingReach).toBe(ObjectSharingReach.WORKSPACE);
+    });
+
+    it('carries the manifest value through', () => {
+      const result = fromObjectManifestToUniversalFlatObjectMetadata({
+        objectManifest: buildObjectManifest({
+          sharingReach: ObjectSharingReach.ROLE_ACCESS,
+        }),
+        applicationUniversalIdentifier: APP_UID,
+        now: NOW,
+      });
+
+      expect(result.sharingReach).toBe(ObjectSharingReach.ROLE_ACCESS);
     });
   });
 

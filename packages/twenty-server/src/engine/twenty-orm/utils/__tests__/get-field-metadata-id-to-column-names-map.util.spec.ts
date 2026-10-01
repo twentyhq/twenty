@@ -3,6 +3,7 @@ import {
   MetadataReadability,
   MetadataWritability,
   ObjectOpenRecordIn,
+  ObjectSharingReach,
 } from 'twenty-shared/types';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -51,6 +52,7 @@ describe('getFieldMetadataIdToColumnNamesMap', () => {
     readability: MetadataReadability.OPEN,
     readabilityParentFieldUniversalIdentifiers: null,
     discoverableFieldUniversalIdentifiers: null,
+    sharingReach: ObjectSharingReach.WORKSPACE,
     openRecordIn: ObjectOpenRecordIn.USER_CHOICE,
     labelIdentifierFieldMetadataId: null,
     imageIdentifierFieldMetadataId: null,

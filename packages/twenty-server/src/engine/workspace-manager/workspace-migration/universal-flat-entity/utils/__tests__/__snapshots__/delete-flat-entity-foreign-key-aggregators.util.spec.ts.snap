@@ -80,6 +80,7 @@ exports[`deleteFlatEntityForeignKeyAggregators should strip raw workspace-scoped
   "readability": "OPEN",
   "readabilityParentFieldUniversalIdentifiers": null,
   "searchFieldMetadataUniversalIdentifiers": [],
+  "sharingReach": "WORKSPACE",
   "shortcut": "shortcut",
   "targetTableName": "",
   "universalIdentifier": "object-universal-identifier",

@@ -9,6 +9,7 @@ import {
   MetadataReadability,
   MetadataWritability,
   ObjectOpenRecordIn,
+  ObjectSharingReach,
 } from 'twenty-shared/types';
 
 import { type AuthoredOverrides } from 'src/engine/metadata-modules/overrides/types/authored-overrides.type';
@@ -19,6 +20,7 @@ import { type ObjectMetadataOverrides } from 'src/engine/metadata-modules/object
 registerEnumType(ObjectOpenRecordIn, { name: 'ObjectOpenRecordIn' });
 registerEnumType(MetadataReadability, { name: 'MetadataReadability' });
 registerEnumType(MetadataWritability, { name: 'MetadataWritability' });
+registerEnumType(ObjectSharingReach, { name: 'ObjectSharingReach' });
 
 @ObjectType('Object')
 export class ObjectMetadataDTO {
@@ -91,6 +93,8 @@ export class ObjectMetadataDTO {
   @Field(() => [UUIDScalarType], { nullable: true })
   discoverableFieldUniversalIdentifiers: string[] | null;
 
+  @Field(() => ObjectSharingReach)
+  sharingReach: ObjectSharingReach;
   @Field(() => MetadataWritability)
   writability: MetadataWritability;
 

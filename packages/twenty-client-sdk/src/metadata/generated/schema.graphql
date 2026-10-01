@@ -294,6 +294,7 @@ type Object {
   readability: MetadataReadability!
   readabilityParentFieldUniversalIdentifiers: [UUID!]
   discoverableFieldUniversalIdentifiers: [UUID!]
+  sharingReach: ObjectSharingReach!
   writability: MetadataWritability!
   applicationId: UUID!
   createdAt: DateTime!
@@ -334,6 +335,11 @@ enum MetadataReadability {
   INHERITED
   APPLICATION
   SYSTEM
+}
+
+enum ObjectSharingReach {
+  ROLE_ACCESS
+  WORKSPACE
 }
 
 enum MetadataWritability {
@@ -1774,6 +1780,8 @@ type RecordSharingGrantDTO {
   principalId: UUID!
   accessLevel: RecordShareAccessLevel!
   rowCause: String!
+  canRoleRead: Boolean
+  canRoleUpdate: Boolean
 }
 
 enum RecordShareAccessLevel {
@@ -1796,6 +1804,7 @@ type RecordSharingDTO {
   isOpenByDefault: Boolean!
   generalAccessLevel: RecordShareAccessLevel
   isGeneralAccessDefault: Boolean!
+  sharingReach: ObjectSharingReach!
   roles: [RecordSharingRoleDTO!]!
   shares: [RecordSharingGrantDTO!]!
 }
@@ -2093,6 +2102,7 @@ enum FeatureFlagKey {
   IS_CONVERSATIONS_TAB_ENABLED
   IS_VALIDATION_RULES_ENABLED
   IS_RECORD_LEVEL_SHARING_ENABLED
+  IS_WORKFLOW_SEND_CHAT_MESSAGE_ENABLED
 }
 
 type WorkspaceUrls {
@@ -3497,6 +3507,10 @@ type AgentChatEvent {
   event: JSON!
 }
 
+type SendInboxMessageResult {
+  threadId: UUID!
+}
+
 type StartWorkspaceSetupChatResult {
   outcome: WorkspaceSetupChatOutcome!
   thread: AgentChatThread
@@ -4305,6 +4319,7 @@ type Mutation {
   stopAgentChatStream(threadId: UUID!): Boolean!
   deleteQueuedChatMessage(messageId: UUID!): Boolean!
   startWorkspaceSetupChat(companyContext: JSON, personContext: JSON): StartWorkspaceSetupChatResult!
+  sendInboxMessage(input: SendInboxMessageInput!): SendInboxMessageResult!
   createSkill(input: CreateSkillInput!): Skill!
   updateSkill(input: UpdateSkillInput!): Skill!
   deleteSkill(id: UUID!): Skill!
@@ -4905,6 +4920,7 @@ input UpdateObjectPayload {
   isSearchable: Boolean
   openRecordIn: ObjectOpenRecordIn
   readability: MetadataReadability
+  sharingReach: ObjectSharingReach
   translations: [MetadataTranslationOverrideInput!]
 }
 
@@ -5581,6 +5597,15 @@ input ReportAppConnectionAuthFailureInput {
 input FileAttachmentInput {
   id: UUID!
   filename: String!
+}
+
+input SendInboxMessageInput {
+  workspaceMemberId: UUID!
+  threadKey: String!
+  idempotencyKey: String!
+  title: String!
+  text: String!
+  toolCall: JSON
 }
 
 input CreateSkillInput {

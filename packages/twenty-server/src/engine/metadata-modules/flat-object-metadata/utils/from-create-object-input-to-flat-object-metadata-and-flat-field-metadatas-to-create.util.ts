@@ -3,6 +3,7 @@ import {
   MetadataReadability,
   MetadataWritability,
   ObjectOpenRecordIn,
+  ObjectSharingReach,
 } from 'twenty-shared/types';
 import {
   capitalize,
@@ -79,6 +80,7 @@ export const fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCre
       readability: MetadataReadability.OPEN,
       readabilityParentFieldUniversalIdentifiers: null,
       discoverableFieldUniversalIdentifiers: null,
+      sharingReach: ObjectSharingReach.WORKSPACE,
       isSystem: false,
       labelPlural: capitalize(createObjectInput.labelPlural),
       labelSingular: capitalize(createObjectInput.labelSingular),
