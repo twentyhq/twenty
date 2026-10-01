@@ -3,6 +3,7 @@ import { type SyncableEntityOptions } from '@/application/syncableEntityOptionsT
 import { type MetadataReadability } from '@/types/MetadataReadability';
 import { type MetadataWritability } from '@/types/MetadataWritability';
 import { type ObjectOpenRecordIn } from '@/types/ObjectOpenRecordIn';
+import { type ObjectSharingReach } from '@/types/ObjectSharingReach';
 
 export type ObjectManifest = SyncableEntityOptions & {
   nameSingular: string;
@@ -22,6 +23,7 @@ export type ObjectManifest = SyncableEntityOptions & {
   // Readable without a grant, beside id, createdAt and createdBy, by callers
   // asking only whether a record exists
   discoverableFieldUniversalIdentifiers?: string[] | null;
+  sharingReach?: ObjectSharingReach;
   openRecordIn?: ObjectOpenRecordIn;
   fields: ObjectFieldManifest[];
   labelIdentifierFieldMetadataUniversalIdentifier: string;

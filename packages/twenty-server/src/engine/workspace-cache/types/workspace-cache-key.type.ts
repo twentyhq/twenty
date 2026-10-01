@@ -26,6 +26,7 @@ import { type UsageLimits } from 'src/engine/core-modules/usage-limit/types/usag
 export type AdditionalCacheDataMaps = {
   featureFlagsMap: Record<FeatureFlagKey, boolean>;
   rolesPermissions: ObjectsPermissionsByRoleId;
+  roleIdsWithAllRecordsAccess: string[];
   userWorkspaceRoleMap: UserWorkspaceRoleMap;
   apiKeyRoleMap: Record<string, string>;
   apiKeyMap: Record<string, FlatApiKey>;

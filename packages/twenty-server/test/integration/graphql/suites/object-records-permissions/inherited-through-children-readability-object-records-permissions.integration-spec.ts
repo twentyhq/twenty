@@ -429,6 +429,7 @@ describe('inheritedThroughChildrenReadabilityObjectRecordsPermissions', () => {
               WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
               memberRole.id,
             ],
+            canAccessAllRecords: false,
             isOwningApplication: () => false,
             resolveRowLevelPermissionRecordFilter: () => null,
           });
@@ -649,6 +650,7 @@ describe('inheritedThroughChildrenReadabilityObjectRecordsPermissions', () => {
               WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
               memberRole.id,
             ],
+            canAccessAllRecords: false,
             isOwningApplication: () => false,
             resolveRowLevelPermissionRecordFilter: () => null,
           });
@@ -815,6 +817,7 @@ describe('inheritedThroughChildrenReadabilityObjectRecordsPermissions', () => {
               WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
               memberRole.id,
             ],
+            canAccessAllRecords: false,
             isOwningApplication: () => false,
             resolveRowLevelPermissionRecordFilter: () => null,
           });

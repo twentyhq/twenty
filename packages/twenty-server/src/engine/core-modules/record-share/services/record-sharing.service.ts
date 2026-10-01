@@ -1,6 +1,10 @@
 import { buildRecordShareLockKey } from 'src/engine/core-modules/record-share/utils/build-record-share-lock-key.util';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+
+import { msg } from '@lingui/core/macro';
+import { In, Repository } from 'typeorm';
 
 import {
   FeatureFlagKey,
@@ -14,6 +18,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type UserWorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { NotFoundError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import { buildRoleRowAccessPolicySubject } from 'src/engine/core-modules/record-share/utils/build-role-row-access-policy-subject.util';
 import { type RecordPermissionsDTO } from 'src/engine/core-modules/record-share/dtos/record-permissions.dto';
 import {
   type RecordSharingDTO,
@@ -21,8 +26,17 @@ import {
   type RecordSharePrincipalInput,
 } from 'src/engine/core-modules/record-share/dtos/record-sharing.dto';
 import { RecordShareStorageService } from 'src/engine/core-modules/record-share/services/record-share-storage.service';
+import {
+  RecordShareException,
+  RecordShareExceptionCode,
+} from 'src/engine/core-modules/record-share/record-share.exception';
 import { type RecordShareInput } from 'src/engine/core-modules/record-share/types/record-share-input.type';
+import { type RecordShare } from 'src/engine/core-modules/record-share/types/record-share.type';
+import { isRecordGrantBeyondRoleAllowed } from 'src/engine/core-modules/record-share/utils/is-record-grant-beyond-role-allowed.util';
+import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { canRolesAccessAllRecords } from 'src/engine/core-modules/record-share/utils/can-roles-access-all-records.util';
 import { isRecordShareExceptionObject } from 'src/engine/core-modules/record-share/utils/is-record-share-exception-object.util';
+import { isRecordShareableObject } from 'src/engine/core-modules/record-share/utils/is-record-shareable-object.util';
 import { resolveRecordGeneralAccess } from 'src/engine/core-modules/record-share/utils/resolve-record-general-access.util';
 import { resolveShareWithPrincipalOrThrow } from 'src/engine/core-modules/record-share/utils/resolve-share-with-principal-or-throw.util';
 import { resolveViewerRecordShareAccessLevel } from 'src/engine/core-modules/record-share/utils/resolve-viewer-record-share-access-level.util';
@@ -33,11 +47,13 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { type OperationType } from 'src/engine/twenty-orm/repository/permissions.utils';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { resolveRoleIdsFromAuthContext } from 'src/engine/twenty-orm/utils/resolve-role-ids-from-auth-context.util';
 import { resolvePrincipalIdsFromAuthContext } from 'src/engine/twenty-orm/utils/resolve-principal-ids-from-auth-context.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
+import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 type RecordSharingArgs = RecordSharingTargetInput & {
   authContext: UserWorkspaceAuthContext;
@@ -49,6 +65,7 @@ const CREATED_BY_WORKSPACE_MEMBER_ID_COLUMN_NAME = 'createdByWorkspaceMemberId';
 
 type RecordSharingObject = {
   objectMetadata: FlatObjectMetadata;
+  isRecordSharingEnabled: boolean;
   isRecordShareExceptionObject: boolean;
 };
 
@@ -58,6 +75,8 @@ export class RecordSharingService {
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly recordShareStorageService: RecordShareStorageService,
+    @InjectRepository(UserWorkspaceEntity)
+    private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
   ) {}
 
   async getPermissions(args: RecordSharingArgs): Promise<RecordPermissionsDTO> {
@@ -133,7 +152,11 @@ export class RecordSharingService {
       await this.getRecordShares({ ...args, sharingObject });
     const canChangeSharing =
       permissions.canUpdate &&
-      viewerAccessLevel === RecordShareAccessLevel.FULL;
+      viewerAccessLevel === RecordShareAccessLevel.FULL &&
+      (await this.isUpdatePermittedByRole({
+        authContext: args.authContext,
+        objectMetadata,
+      }));
     const { flatRoleMaps } = canChangeSharing
       ? await this.workspaceCacheService.getOrRecompute(
           args.authContext.workspace.id,
@@ -152,7 +175,14 @@ export class RecordSharingService {
       isOpenByDefault: isRecordShareExceptionObject,
       generalAccessLevel: generalAccess.accessLevel,
       isGeneralAccessDefault: generalAccess.isDefault,
-      shares: canChangeSharing ? grants : [],
+      shares: canChangeSharing
+        ? await this.withRoleObjectAccess({
+            workspaceId: args.authContext.workspace.id,
+            objectMetadataId: objectMetadata.id,
+            shares: grants,
+          })
+        : [],
+      sharingReach: objectMetadata.sharingReach,
       roles: isDefined(flatRoleMaps)
         ? Object.values(flatRoleMaps.byUniversalIdentifier)
             .filter(isDefined)
@@ -221,7 +251,12 @@ export class RecordSharingService {
                 operationType: 'update',
                 withDeleted: args.withDeleted ?? true,
               });
-            if (writableIds.length !== 1) {
+            // A grant may let someone edit a record beyond their role, never
+            // decide who else gets it
+            if (
+              writableIds.length !== 1 ||
+              !repository.isObjectOperationPermittedByRole('update')
+            ) {
               throw new NotFoundError('Record not found');
             }
             const { viewerAccessLevel, creatorWorkspaceMemberId } =
@@ -269,6 +304,17 @@ export class RecordSharingService {
               enabled: args.enabled,
               share,
             });
+            // Runs after the write: the new share satisfies the share gate,
+            // so the check below only tests the role and its row filter
+            if (args.enabled) {
+              await this.assertPrincipalReachesRecordOrThrow({
+                workspaceId,
+                transactionScope,
+                sharingObject,
+                principal,
+                recordId: args.recordId,
+              });
+            }
           },
         ),
       args.authContext,
@@ -284,6 +330,7 @@ export class RecordSharingService {
         isOpenByDefault: false,
         generalAccessLevel: null,
         isGeneralAccessDefault: true,
+        sharingReach: objectMetadata.sharingReach,
         roles: [],
         shares: [],
       };
@@ -375,17 +422,18 @@ export class RecordSharingService {
     transactionScope?: WorkspaceTransactionScope;
   }) {
     const workspaceId = authContext.workspace.id;
-    const { userWorkspaceRoleMap, apiKeyRoleMap } =
+    const { userWorkspaceRoleMap, apiKeyRoleMap, roleIdsWithAllRecordsAccess } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'userWorkspaceRoleMap',
         'apiKeyRoleMap',
+        'roleIdsWithAllRecordsAccess',
       ]);
-    const principalIds =
-      resolvePrincipalIdsFromAuthContext({
-        authContext,
-        userWorkspaceRoleMap,
-        apiKeyRoleMap,
-      }) ?? [];
+    const roleMaps = { authContext, userWorkspaceRoleMap, apiKeyRoleMap };
+    const principalIds = resolvePrincipalIdsFromAuthContext(roleMaps) ?? [];
+    const canAccessAllRecords = canRolesAccessAllRecords({
+      roleIds: resolveRoleIdsFromAuthContext(roleMaps),
+      roleIdsWithAllRecordsAccess,
+    });
     const shares = await this.recordShareStorageService.findByRecordIds({
       workspaceId,
       objectMetadataId,
@@ -410,7 +458,8 @@ export class RecordSharingService {
       implicitAccessLevels: sharingObject.isRecordShareExceptionObject
         ? [
             generalAccess.accessLevel,
-            creatorWorkspaceMemberId === authContext.workspaceMemberId
+            creatorWorkspaceMemberId === authContext.workspaceMemberId ||
+            canAccessAllRecords
               ? RecordShareAccessLevel.FULL
               : null,
           ]
@@ -468,17 +517,237 @@ export class RecordSharingService {
       : undefined;
   }
 
+  // Null when the role cannot be resolved, so a missing membership is never
+  // reported as a role that cannot read the object
+  private async withRoleObjectAccess<TShare extends RecordShare>({
+    workspaceId,
+    objectMetadataId,
+    shares,
+  }: {
+    workspaceId: string;
+    objectMetadataId: string;
+    shares: TShare[];
+  }) {
+    const { rolesPermissions } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'rolesPermissions',
+      ]);
+    const roleIds = await this.resolveRoleIdsByShare({ workspaceId, shares });
+
+    return shares.map((share, index) => {
+      const roleId = roleIds[index];
+      const roleObjectsPermissions = isDefined(roleId)
+        ? rolesPermissions[roleId]
+        : undefined;
+
+      if (!isDefined(roleObjectsPermissions)) {
+        return { ...share, canRoleRead: null, canRoleUpdate: null };
+      }
+
+      const objectPermissions = roleObjectsPermissions[objectMetadataId];
+
+      return {
+        ...share,
+        canRoleRead: objectPermissions?.canReadObjectRecords ?? false,
+        canRoleUpdate: objectPermissions?.canUpdateObjectRecords ?? false,
+      };
+    });
+  }
+
+  private async resolveRoleIdsByShare({
+    workspaceId,
+    shares,
+  }: {
+    workspaceId: string;
+    shares: Pick<RecordShareInput, 'principalId' | 'principalType'>[];
+  }): Promise<(string | undefined)[]> {
+    const { flatWorkspaceMemberMaps, userWorkspaceRoleMap } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatWorkspaceMemberMaps',
+        'userWorkspaceRoleMap',
+      ]);
+    const userIdByWorkspaceMemberId = new Map(
+      shares
+        .filter(
+          (share) =>
+            share.principalType === RecordSharePrincipalType.WORKSPACE_MEMBER,
+        )
+        .map((share) => [
+          share.principalId,
+          flatWorkspaceMemberMaps.byId[share.principalId]?.userId,
+        ])
+        .filter((entry): entry is [string, string] => isDefined(entry[1])),
+    );
+    const userWorkspaces =
+      userIdByWorkspaceMemberId.size > 0
+        ? await this.userWorkspaceRepository.find({
+            select: ['id', 'userId'],
+            where: {
+              workspaceId,
+              userId: In([...userIdByWorkspaceMemberId.values()]),
+            },
+          })
+        : [];
+    const roleIdByUserId = new Map(
+      userWorkspaces.map((userWorkspace) => [
+        userWorkspace.userId,
+        userWorkspaceRoleMap[userWorkspace.id],
+      ]),
+    );
+
+    return shares.map((share) => {
+      if (share.principalType === RecordSharePrincipalType.ROLE) {
+        return share.principalId;
+      }
+
+      const userId = userIdByWorkspaceMemberId.get(share.principalId);
+
+      return isDefined(userId) ? roleIdByUserId.get(userId) : undefined;
+    });
+  }
+
+  // Without reach beyond roles, a grant the recipient's role cannot use would
+  // be stored without ever taking effect
+  private async assertPrincipalReachesRecordOrThrow({
+    workspaceId,
+    transactionScope,
+    sharingObject: { objectMetadata, isRecordSharingEnabled },
+    principal,
+    recordId,
+  }: {
+    workspaceId: string;
+    transactionScope: WorkspaceTransactionScope;
+    sharingObject: RecordSharingObject;
+    principal: Pick<RecordShareInput, 'principalId' | 'principalType'>;
+    recordId: string;
+  }): Promise<void> {
+    if (
+      principal.principalType === RecordSharePrincipalType.EVERYONE ||
+      isRecordGrantBeyondRoleAllowed({
+        flatObjectMetadata: objectMetadata,
+        operationType: 'select',
+        isRecordSharingEnabled,
+      })
+    ) {
+      return;
+    }
+
+    const [roleId] = await this.resolveRoleIdsByShare({
+      workspaceId,
+      shares: [principal],
+    });
+
+    if (!isDefined(roleId)) {
+      return;
+    }
+
+    const {
+      rolesPermissions,
+      roleIdsWithAllRecordsAccess,
+      flatRowLevelPermissionPredicateMaps,
+      flatRowLevelPermissionPredicateGroupMaps,
+      flatFieldMetadataMaps,
+    } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
+      'rolesPermissions',
+      'roleIdsWithAllRecordsAccess',
+      'flatRowLevelPermissionPredicateMaps',
+      'flatRowLevelPermissionPredicateGroupMaps',
+      'flatFieldMetadataMaps',
+    ]);
+    const roleObjectsPermissions = rolesPermissions[roleId];
+
+    if (
+      isDefined(roleObjectsPermissions) &&
+      !(
+        roleObjectsPermissions[objectMetadata.id]?.canReadObjectRecords ?? false
+      )
+    ) {
+      throw new RecordShareException(
+        `Principal ${principal.principalId} cannot access ${objectMetadata.nameSingular} records through its role`,
+        RecordShareExceptionCode.INVALID_SHARE_WITH,
+        {
+          userFriendlyMessage: msg`Their role cannot access these records, and this object is only shared with roles that can.`,
+        },
+      );
+    }
+
+    // A role's row filter can depend on which member reads, so a share with a
+    // role is only held to object access here and filtered per member on read
+    if (principal.principalType === RecordSharePrincipalType.ROLE) {
+      return;
+    }
+
+    const workspaceMember =
+      principal.principalType === RecordSharePrincipalType.WORKSPACE_MEMBER
+        ? await transactionScope
+            .getRepository<WorkspaceMemberWorkspaceEntity>('workspaceMember', {
+              shouldBypassPermissionChecks: true,
+            })
+            .findOne({ where: { id: principal.principalId } })
+        : null;
+    const roleSubject = buildRoleRowAccessPolicySubject({
+      roleId,
+      owningApplicationId: undefined,
+      rolesPermissions,
+      roleIdsWithAllRecordsAccess,
+      flatRowLevelPermissionPredicateMaps,
+      flatRowLevelPermissionPredicateGroupMaps,
+      flatFieldMetadataMaps,
+      workspaceMember: workspaceMember ?? undefined,
+    });
+    const repository = transactionScope.getRepository(
+      objectMetadata.nameSingular,
+      { shouldBypassPermissionChecks: true },
+    );
+    const policy = repository.buildRowAccessPolicy({
+      subject: {
+        ...roleSubject,
+        principalIds: [
+          ...(roleSubject.principalIds ?? []),
+          principal.principalId,
+        ],
+      },
+      operationType: 'select',
+    });
+    const reachableRecordIds =
+      await repository.findRecordIdsAdmittedByRowAccessPolicy({
+        recordIds: [recordId],
+        policy,
+      });
+
+    if (!reachableRecordIds.has(recordId)) {
+      throw new RecordShareException(
+        `Principal ${principal.principalId} cannot see record ${recordId} through its role`,
+        RecordShareExceptionCode.INVALID_SHARE_WITH,
+        {
+          userFriendlyMessage: msg`Their role cannot see this record, and this object is only shared with people who can.`,
+        },
+      );
+    }
+  }
+
   private isShareable({
     objectMetadata,
-    isRecordShareExceptionObject,
+    isRecordSharingEnabled,
   }: RecordSharingObject): boolean {
-    return (
-      isRecordShareExceptionObject ||
-      [
-        MetadataReadability.PRIVATE,
-        MetadataReadability.DISCOVERABLE,
-        MetadataReadability.INHERITED,
-      ].includes(objectMetadata.readability)
+    return isRecordShareableObject({
+      flatObjectMetadata: objectMetadata,
+      isRecordSharingEnabled,
+    });
+  }
+
+  private isUpdatePermittedByRole({
+    authContext,
+    objectMetadata,
+  }: Pick<RecordSharingArgs, 'authContext'> & {
+    objectMetadata: Pick<FlatObjectMetadata, 'nameSingular'>;
+  }): Promise<boolean> {
+    return this.workspaceOrmManager.executeInWorkspaceContext(
+      () =>
+        this.workspaceOrmManager
+          .getRepositoryWithContextPermissions(objectMetadata.nameSingular)
+          .isObjectOperationPermittedByRole('update'),
+      authContext,
     );
   }
 
@@ -497,12 +766,13 @@ export class RecordSharingService {
     if (!isDefined(objectMetadata)) {
       throw new NotFoundError('Record not found');
     }
+    const isRecordSharingEnabled =
+      featureFlagsMap[FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED] ?? false;
     return {
       objectMetadata,
+      isRecordSharingEnabled,
       isRecordShareExceptionObject:
-        (featureFlagsMap[FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED] ??
-          false) &&
-        isRecordShareExceptionObject(objectMetadata),
+        isRecordSharingEnabled && isRecordShareExceptionObject(objectMetadata),
     };
   }
 }

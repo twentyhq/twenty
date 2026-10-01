@@ -19,6 +19,7 @@ import {
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { validateWritabilityOrThrow } from 'src/engine/twenty-orm/repository/validate-writability-or-throw.util';
 import { isObjectOperationPermitted } from 'src/engine/twenty-orm/utils/is-object-operation-permitted.util';
+import { isRecordGrantBeyondRoleAllowed } from 'src/engine/core-modules/record-share/utils/is-record-grant-beyond-role-allowed.util';
 import { getColumnNameToFieldMetadataIdMap } from 'src/engine/twenty-orm/utils/get-column-name-to-field-metadata-id.util';
 
 export type OperationType =
@@ -40,6 +41,7 @@ type ValidateOperationIsPermittedOrThrowArgs = {
   allFieldsSelected: boolean;
   updatedColumns: string[];
   authContext?: WorkspaceAuthContext;
+  isRecordSharingEnabled?: boolean;
 };
 
 export const validateOperationIsPermittedOrThrow = ({
@@ -53,6 +55,7 @@ export const validateOperationIsPermittedOrThrow = ({
   allFieldsSelected,
   updatedColumns,
   authContext,
+  isRecordSharingEnabled = false,
 }: ValidateOperationIsPermittedOrThrowArgs) => {
   const objectMetadataIdForEntity = objectIdByNameSingular[entityName];
 
@@ -91,12 +94,19 @@ export const validateOperationIsPermittedOrThrow = ({
 
   const permissionsForEntity = objectsPermissions[objectMetadataIdForEntity];
 
+  // Records shared by name stay reachable without the object permission; the
+  // row access policy then narrows the query to those records
   if (
-    !isDefined(permissionsForEntity) ||
-    !isObjectOperationPermitted({
-      objectMetadata,
+    (!isDefined(permissionsForEntity) ||
+      !isObjectOperationPermitted({
+        objectMetadata,
+        operationType,
+        objectsPermissions,
+      })) &&
+    !isRecordGrantBeyondRoleAllowed({
+      flatObjectMetadata: objectMetadata,
       operationType,
-      objectsPermissions,
+      isRecordSharingEnabled,
     })
   ) {
     throw new PermissionsException(
@@ -105,10 +115,12 @@ export const validateOperationIsPermittedOrThrow = ({
     );
   }
 
+  const restrictedFields = permissionsForEntity?.restrictedFields ?? {};
+
   switch (operationType) {
     case 'select':
       validateReadFieldPermissionOrThrow({
-        restrictedFields: permissionsForEntity.restrictedFields,
+        restrictedFields,
         selectedColumns,
         columnNameToFieldMetadataIdMap,
         allFieldsSelected,
@@ -118,7 +130,7 @@ export const validateOperationIsPermittedOrThrow = ({
       break;
     case 'insert':
       validateReadFieldPermissionOrThrow({
-        restrictedFields: permissionsForEntity.restrictedFields,
+        restrictedFields,
         selectedColumns,
         columnNameToFieldMetadataIdMap,
         entityName,
@@ -127,7 +139,7 @@ export const validateOperationIsPermittedOrThrow = ({
 
       if (updatedColumns.length > 0) {
         const rlsFieldMetadataIds = new Set(
-          permissionsForEntity.rowLevelPermissionPredicates.map(
+          (permissionsForEntity?.rowLevelPermissionPredicates ?? []).map(
             (predicate) => predicate.fieldMetadataId,
           ),
         );
@@ -139,7 +151,7 @@ export const validateOperationIsPermittedOrThrow = ({
 
         if (updatedColumnsWithoutRlsFields.length > 0) {
           validateUpdateFieldPermissionOrThrow({
-            restrictedFields: permissionsForEntity.restrictedFields,
+            restrictedFields,
             updatedColumns: updatedColumnsWithoutRlsFields,
             columnNameToFieldMetadataIdMap,
             entityName,
@@ -150,7 +162,7 @@ export const validateOperationIsPermittedOrThrow = ({
       break;
     case 'update':
       validateReadFieldPermissionOrThrow({
-        restrictedFields: permissionsForEntity.restrictedFields,
+        restrictedFields,
         selectedColumns,
         columnNameToFieldMetadataIdMap,
         entityName,
@@ -159,7 +171,7 @@ export const validateOperationIsPermittedOrThrow = ({
 
       if (updatedColumns.length > 0) {
         validateUpdateFieldPermissionOrThrow({
-          restrictedFields: permissionsForEntity.restrictedFields,
+          restrictedFields,
           updatedColumns,
           columnNameToFieldMetadataIdMap,
           entityName,
@@ -169,7 +181,7 @@ export const validateOperationIsPermittedOrThrow = ({
       break;
     case 'delete':
       validateReadFieldPermissionOrThrow({
-        restrictedFields: permissionsForEntity.restrictedFields,
+        restrictedFields,
         selectedColumns,
         columnNameToFieldMetadataIdMap,
         entityName,
@@ -179,7 +191,7 @@ export const validateOperationIsPermittedOrThrow = ({
     case 'restore':
     case 'soft-delete':
       validateReadFieldPermissionOrThrow({
-        restrictedFields: permissionsForEntity.restrictedFields,
+        restrictedFields,
         selectedColumns,
         columnNameToFieldMetadataIdMap,
         entityName,
@@ -193,7 +205,7 @@ export const validateOperationIsPermittedOrThrow = ({
       );
   }
 
-  if (isEmpty(permissionsForEntity.restrictedFields)) {
+  if (isEmpty(restrictedFields)) {
     return;
   }
 };

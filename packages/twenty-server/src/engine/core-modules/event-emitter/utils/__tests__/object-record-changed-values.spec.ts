@@ -3,6 +3,7 @@ import {
   MetadataReadability,
   MetadataWritability,
   ObjectOpenRecordIn,
+  ObjectSharingReach,
   RelationType,
 } from 'twenty-shared/types';
 
@@ -52,6 +53,7 @@ const mockObjectMetadata: FlatObjectMetadata = {
   readability: MetadataReadability.OPEN,
   readabilityParentFieldUniversalIdentifiers: null,
   discoverableFieldUniversalIdentifiers: null,
+  sharingReach: ObjectSharingReach.WORKSPACE,
   openRecordIn: ObjectOpenRecordIn.USER_CHOICE,
   labelIdentifierFieldMetadataId: null,
   imageIdentifierFieldMetadataId: null,
