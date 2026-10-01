@@ -45,6 +45,7 @@ export class CoreWorkflowAccessService {
       );
     const workflows = await this.coreWorkflowRepository.find(args.workspaceId, {
       where: { id: In(args.coreWorkflowIds) },
+      select: { id: true, applicationId: true },
     });
     if (
       workflows.some(
