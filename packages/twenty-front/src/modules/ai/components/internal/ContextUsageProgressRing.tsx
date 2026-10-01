@@ -1,17 +1,12 @@
+import { ProgressRing } from 'twenty-ui/primitives/feedback';
 import { themeCssVariables } from 'twenty-ui/theme';
-
-import { ProgressRing } from '@/ui/feedback/progress-ring/components/ProgressRing';
 
 type ContextUsageProgressRingProps = {
   percentage: number;
-  size?: number;
-  strokeWidth?: number;
 };
 
 export const ContextUsageProgressRing = ({
   percentage,
-  size,
-  strokeWidth,
 }: ContextUsageProgressRingProps) => {
   const barColor =
     percentage > 80
@@ -23,9 +18,9 @@ export const ContextUsageProgressRing = ({
   return (
     <ProgressRing
       value={percentage}
-      size={size}
-      strokeWidth={strokeWidth}
+      aria-hidden
       barColor={barColor}
+      render={<span />}
     />
   );
 };

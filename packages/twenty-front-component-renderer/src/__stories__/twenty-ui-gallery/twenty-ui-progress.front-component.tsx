@@ -1,0 +1,43 @@
+import { useState } from 'react';
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { MetricRow } from 'twenty-ui/components';
+import { IconDatabase } from 'twenty-ui/icon';
+import { ProgressRing } from 'twenty-ui/primitives/feedback';
+import { Button } from 'twenty-ui/primitives/input';
+
+import { TwentyUiGalleryCard } from '@/__stories__/shared/front-components/twenty-ui-gallery-card';
+
+const ProgressExample = () => {
+  const [progress, setProgress] = useState(25);
+
+  return (
+    <TwentyUiGalleryCard title="Determinate progress">
+      <ProgressRing
+        value={progress}
+        aria-label="Importing records"
+        aria-valuetext={`${progress} of 100 records`}
+      >
+        {progress} / 100
+      </ProgressRing>
+      <MetricRow
+        startIcon={IconDatabase}
+        value={`${progress} / 100 GB`}
+        progress={progress}
+      >
+        Storage
+      </MetricRow>
+      <MetricRow value={0}>Completed imports</MetricRow>
+      <ProgressRing value={-10} size="sm" aria-label="Empty progress" />
+      <ProgressRing value={120} size="sm" aria-label="Complete progress" />
+      <Button onClick={() => setProgress(75)}>Advance progress</Button>
+    </TwentyUiGalleryCard>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'bdc37e74-31d3-4a94-9805-03bd38f40ddf',
+  name: 'twenty-ui-progress',
+  description:
+    'Controlled progress, formatted metric values and accessible names in the sandbox',
+  component: ProgressExample,
+});

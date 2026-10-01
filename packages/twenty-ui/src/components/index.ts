@@ -16,6 +16,8 @@ export type { JsonNodeHighlighting } from './data-display/JsonTree/types/JsonNod
 export type { JsonTreeEntry } from './data-display/JsonTree/types/JsonTreeEntry';
 export type { JsonTreeProps } from './data-display/JsonTree/types/JsonTreeProps';
 export type { ShouldExpandNodeInitiallyProps } from './data-display/JsonTree/types/ShouldExpandNodeInitiallyProps';
+export { MetricRow } from './data-display/MetricRow/MetricRow';
+export type { MetricRowProps } from './data-display/MetricRow/types/MetricRowProps';
 export { NotificationCounter } from './data-display/NotificationCounter/NotificationCounter';
 export { TintedIconTile } from './data-display/TintedIconTile/TintedIconTile';
 export type { TintedIconTileProps } from './data-display/TintedIconTile/types/TintedIconTileProps';
