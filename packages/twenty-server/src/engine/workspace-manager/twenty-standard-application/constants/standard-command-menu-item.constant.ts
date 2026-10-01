@@ -903,7 +903,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
       msg({ message: `New chat`, context: 'commandMenuItem.label' }),
     ),
     icon: 'IconMessageCirclePlus',
-    isPinned: true,
+    isPinned: false,
     position: 43,
     shortLabel: i18nLabel(
       msg({ message: `New chat`, context: 'commandMenuItem.shortLabel' }),

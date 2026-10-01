@@ -6,7 +6,7 @@ import { isDefined, isValidUuid } from 'twenty-shared/utils';
 import { IconButton } from 'twenty-ui/components';
 import { IconChevronLeft, IconPlus } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { themeCssVariables, useTheme } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { useIsMobile } from 'twenty-ui/utilities';
 
 import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
@@ -17,13 +17,10 @@ import { AiChatPageContinueInSidePanelEffect } from '@/ai/components/AiChatPageC
 import { AiChatPageThreadUrlSyncEffect } from '@/ai/components/AiChatPageThreadUrlSyncEffect';
 import { AiChatThreadFilterDropdown } from '@/ai/components/AiChatThreadFilterDropdown';
 import { AiChatThreadList } from '@/ai/components/AiChatThreadList';
-import { AGENT_CHAT_THREAD_FILTER_STATUS_ICONS } from '@/ai/constants/AgentChatThreadFilterStatusIcons';
-import { AGENT_CHAT_THREAD_FILTER_STATUS_LABELS } from '@/ai/constants/AgentChatThreadFilterStatusLabels';
 import { AGENT_CHAT_THREAD_GROUP_BY } from '@/ai/constants/AgentChatThreadGroupBy';
 import { AI_CHAT_THREAD_ACTIONS_SURFACE } from '@/ai/constants/AiChatThreadActionsSurface';
 import { useChatThreads } from '@/ai/hooks/useChatThreads';
 import { useSwitchToNewAiChat } from '@/ai/hooks/useSwitchToNewAiChat';
-import { agentChatThreadFilterStatusState } from '@/ai/states/agentChatThreadFilterStatusState';
 import { agentChatThreadGroupByState } from '@/ai/states/agentChatThreadGroupByState';
 import { agentChatVisibleThreadsSelector } from '@/ai/states/selectors/agentChatVisibleThreadsSelector';
 import { AnimatedPlaceholder } from '@/ui/feedback/empty-state/components/AnimatedPlaceholder/AnimatedPlaceholder';
@@ -62,23 +59,16 @@ const StyledThreadList = styled.div`
 
 export const AiChatInboxPage = () => {
   const { t } = useLingui();
-  const theme = useTheme();
   const isMobile = useIsMobile();
   const navigate = useNavigateApp();
   const { threadId } = useParams();
   const selectedThreadId =
     isDefined(threadId) && isValidUuid(threadId) ? threadId : undefined;
-  const agentChatThreadFilterStatus = useAtomStateValue(
-    agentChatThreadFilterStatusState,
-  );
   const agentChatThreadGroupBy = useAtomStateValue(agentChatThreadGroupByState);
   const { threads, loading } = useChatThreads(agentChatVisibleThreadsSelector);
   const { switchToNewChat } = useSwitchToNewAiChat({
     shouldOpenInFullPage: true,
   });
-
-  const StatusIcon =
-    AGENT_CHAT_THREAD_FILTER_STATUS_ICONS[agentChatThreadFilterStatus];
 
   // Rows hold a menu and a rename input, which a link cannot contain
   const selectThread = (nextThreadId: string | null) =>
@@ -102,16 +92,17 @@ export const AiChatInboxPage = () => {
           <PageCardLayout
             header={
               <PageCardHeader
-                icon={<StatusIcon size={theme.icon.size.md} />}
-                title={t(
-                  AGENT_CHAT_THREAD_FILTER_STATUS_LABELS[
-                    agentChatThreadFilterStatus
-                  ],
-                )}
+                title={<AiChatThreadFilterDropdown />}
                 actionButton={
-                  <AiChatThreadFilterDropdown
-                    surface={AI_CHAT_THREAD_ACTIONS_SURFACE.INBOX_PAGE}
-                  />
+                  <Button
+                    size="sm"
+                    variant="solid"
+                    color="accent"
+                    startIcon={<IconPlus />}
+                    onClick={switchToNewChat}
+                  >
+                    {t`New chat`}
+                  </Button>
                 }
               />
             }
@@ -128,13 +119,6 @@ export const AiChatInboxPage = () => {
                       {t`Conversations you can open will appear here.`}
                     </EmptyState.Description>
                   </EmptyState.Content>
-                  <Button
-                    variant="outline"
-                    startIcon={<IconPlus />}
-                    onClick={switchToNewChat}
-                  >
-                    {t`New chat`}
-                  </Button>
                 </EmptyState.Root>
               ) : (
                 <AiChatThreadList
