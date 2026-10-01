@@ -47,43 +47,38 @@ const FINALE_SCATTER_AMOUNT = 0.06;
 const SOFTWARE_RENDERER_PATTERN =
   /swiftshader|llvmpipe|software|basic render driver/i;
 
-const compileProgram = (
+const startProgramCompilation = (
   gl: WebGL2RenderingContext,
   vertexSource: string,
   fragmentSource: string,
 ) => {
-  const compileShader = (shaderType: number, source: string) => {
-    const shader = gl.createShader(shaderType);
-    if (!isDefined(shader)) {
-      return null;
-    }
-    gl.shaderSource(shader, source);
-    gl.compileShader(shader);
-    if (gl.getShaderParameter(shader, gl.COMPILE_STATUS) !== true) {
-      gl.deleteShader(shader);
-      return null;
-    }
-    return shader;
-  };
-
-  const vertexShader = compileShader(gl.VERTEX_SHADER, vertexSource);
-  const fragmentShader = compileShader(gl.FRAGMENT_SHADER, fragmentSource);
   const program = gl.createProgram();
+  const vertexShader = gl.createShader(gl.VERTEX_SHADER);
+  const fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
   if (
+    !isDefined(program) ||
     !isDefined(vertexShader) ||
-    !isDefined(fragmentShader) ||
-    !isDefined(program)
+    !isDefined(fragmentShader)
   ) {
     return null;
   }
 
+  gl.shaderSource(vertexShader, vertexSource);
+  gl.compileShader(vertexShader);
+  gl.shaderSource(fragmentShader, fragmentSource);
+  gl.compileShader(fragmentShader);
   gl.attachShader(program, vertexShader);
   gl.attachShader(program, fragmentShader);
   gl.linkProgram(program);
   gl.deleteShader(vertexShader);
   gl.deleteShader(fragmentShader);
 
-  return gl.getProgramParameter(program, gl.LINK_STATUS) ? program : null;
+  return program;
+};
+
+type Programs = {
+  sceneProgram: WebGLProgram;
+  halftoneProgram: WebGLProgram;
 };
 
 type MeshResources = {
@@ -165,6 +160,7 @@ export const createOnboardingConstructionSiteRenderer = ({
     return null;
   }
 
+  const parallelShaderCompile = gl.getExtension('KHR_parallel_shader_compile');
   const debugRendererInfo = gl.getExtension('WEBGL_debug_renderer_info');
   const shouldReduceMotion =
     prefersReducedMotion ||
@@ -207,25 +203,46 @@ export const createOnboardingConstructionSiteRenderer = ({
   let elapsedSeconds = 0;
   let lastFrameTimeMs: number | null = null;
   let isDestroyed = false;
+  let pendingPrograms: Programs | null = null;
+  let programsAnimationFrameHandle: number | null = null;
 
-  const createResources = (): GlResources | null => {
-    const sceneProgram = compileProgram(
+  const startPrograms = (): Programs | null => {
+    const sceneProgram = startProgramCompilation(
       gl,
       ONBOARDING_CONSTRUCTION_SITE_SHADERS.sceneVertex,
       ONBOARDING_CONSTRUCTION_SITE_SHADERS.sceneFragment,
     );
-    const halftoneProgram = compileProgram(
+    const halftoneProgram = startProgramCompilation(
       gl,
       ONBOARDING_CONSTRUCTION_SITE_SHADERS.fullScreenVertex,
       ONBOARDING_CONSTRUCTION_SITE_SHADERS.halftoneFragment,
     );
+    if (!isDefined(sceneProgram) || !isDefined(halftoneProgram)) {
+      gl.deleteProgram(sceneProgram);
+      gl.deleteProgram(halftoneProgram);
+      return null;
+    }
+    return { sceneProgram, halftoneProgram };
+  };
+
+  const isProgramCompiled = (program: WebGLProgram) =>
+    !isDefined(parallelShaderCompile) ||
+    gl.getProgramParameter(
+      program,
+      parallelShaderCompile.COMPLETION_STATUS_KHR,
+    );
+
+  const createResources = ({
+    sceneProgram,
+    halftoneProgram,
+  }: Programs): GlResources | null => {
     const sceneTexture = gl.createTexture();
     const sceneDepthBuffer = gl.createRenderbuffer();
     const sceneFramebuffer = gl.createFramebuffer();
     const emptyVertexArray = gl.createVertexArray();
     if (
-      !isDefined(sceneProgram) ||
-      !isDefined(halftoneProgram) ||
+      !gl.getProgramParameter(sceneProgram, gl.LINK_STATUS) ||
+      !gl.getProgramParameter(halftoneProgram, gl.LINK_STATUS) ||
       !isDefined(sceneTexture) ||
       !isDefined(sceneDepthBuffer) ||
       !isDefined(sceneFramebuffer) ||
@@ -343,6 +360,35 @@ export const createOnboardingConstructionSiteRenderer = ({
       sceneFramebuffer,
       emptyVertexArray,
     };
+  };
+
+  const createResourcesOnceProgramsAreCompiled = () => {
+    programsAnimationFrameHandle = null;
+    if (isDestroyed || !isDefined(pendingPrograms) || gl.isContextLost()) {
+      return;
+    }
+
+    if (
+      !isProgramCompiled(pendingPrograms.sceneProgram) ||
+      !isProgramCompiled(pendingPrograms.halftoneProgram)
+    ) {
+      programsAnimationFrameHandle = requestAnimationFrame(
+        createResourcesOnceProgramsAreCompiled,
+      );
+      return;
+    }
+
+    const programs = pendingPrograms;
+    pendingPrograms = null;
+    resources = createResources(programs);
+    if (!isDefined(resources)) {
+      gl.deleteProgram(programs.sceneProgram);
+      gl.deleteProgram(programs.halftoneProgram);
+      return;
+    }
+
+    allocateSceneTarget();
+    requestRender();
   };
 
   const allocateSceneTarget = () => {
@@ -571,7 +617,8 @@ export const createOnboardingConstructionSiteRenderer = ({
 
   const tick = (nowMs: number) => {
     animationFrameHandle = null;
-    if (isDestroyed || cssWidth < 1 || cssHeight < 1) {
+    if (isDestroyed || !isDefined(resources) || cssWidth < 1 || cssHeight < 1) {
+      lastFrameTimeMs = null;
       return;
     }
 
@@ -621,22 +668,23 @@ export const createOnboardingConstructionSiteRenderer = ({
   const handleContextLost = (event: Event) => {
     event.preventDefault();
     resources = null;
+    pendingPrograms = null;
   };
 
   const handleContextRestored = () => {
-    resources = createResources();
-    allocateSceneTarget();
-    requestRender();
+    pendingPrograms = startPrograms();
+    createResourcesOnceProgramsAreCompiled();
   };
 
-  resources = createResources();
-  if (!isDefined(resources)) {
+  pendingPrograms = startPrograms();
+  if (!isDefined(pendingPrograms)) {
     return null;
   }
 
   canvas.addEventListener('webglcontextlost', handleContextLost);
   canvas.addEventListener('webglcontextrestored', handleContextRestored);
   resize();
+  createResourcesOnceProgramsAreCompiled();
 
   return {
     setStage: ({ stageIndex }) => {
@@ -664,8 +712,16 @@ export const createOnboardingConstructionSiteRenderer = ({
       if (isDefined(animationFrameHandle)) {
         cancelAnimationFrame(animationFrameHandle);
       }
+      if (isDefined(programsAnimationFrameHandle)) {
+        cancelAnimationFrame(programsAnimationFrameHandle);
+      }
       canvas.removeEventListener('webglcontextlost', handleContextLost);
       canvas.removeEventListener('webglcontextrestored', handleContextRestored);
+      if (isDefined(pendingPrograms)) {
+        gl.deleteProgram(pendingPrograms.sceneProgram);
+        gl.deleteProgram(pendingPrograms.halftoneProgram);
+        pendingPrograms = null;
+      }
       if (isDefined(resources)) {
         deleteResources(gl, resources);
         resources = null;
