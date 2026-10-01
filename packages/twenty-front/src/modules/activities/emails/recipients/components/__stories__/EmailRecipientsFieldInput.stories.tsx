@@ -112,12 +112,17 @@ export const CommitsBufferWhileSearchIsPending: Story = {
     const input = await canvas.findByRole('combobox', { name: 'To' });
 
     await userEvent.type(input, 'jeff');
-    await screen.findByRole('option', { name: /Jeffery Griffin/ });
-    await userEvent.clear(input);
-    await userEvent.type(input, 'pending@example.net');
+
+    const staleSuggestion = await screen.findByRole('option', {
+      name: /Jeffery Griffin/,
+    });
+
+    await userEvent.type(input, '@example.net');
+
+    expect(input).toHaveAttribute('aria-activedescendant', staleSuggestion.id);
     await userEvent.keyboard('{Enter}');
 
-    expect(canvas.getByText('pending@example.net')).toBeVisible();
+    expect(canvas.getByText('jeff@example.net')).toBeVisible();
     expect(canvas.queryByText('Jeffery Griffin')).not.toBeInTheDocument();
     expect(input).toHaveValue('');
   },
@@ -278,19 +283,34 @@ export const ModifiedClicksSelectInsteadOfOpeningMenus: Story = {
 
 export const AddsRecipientAsPerson: Story = {
   args: {
-    initialRecipients: [{ address: 'ada@example.net', displayName: 'Ada' }],
+    initialRecipients: [
+      { address: 'ada@example.net', displayName: 'Ada Lovelace' },
+    ],
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const screen = within(canvasElement.ownerDocument.body);
     const input = await canvas.findByRole('combobox', { name: 'To' });
 
-    await userEvent.click(canvas.getByText('Ada'));
+    await userEvent.click(canvas.getByText('Ada Lovelace'));
     await userEvent.click(
       await screen.findByRole('menuitem', { name: 'Add as person' }),
     );
 
     await waitFor(() => expect(createPerson).toHaveBeenCalledTimes(1));
+    expect(createPerson).toHaveBeenCalledWith(
+      expect.objectContaining({
+        input: expect.objectContaining({
+          name: expect.objectContaining({
+            firstName: 'Ada',
+            lastName: 'Lovelace',
+          }),
+          emails: expect.objectContaining({
+            primaryEmail: 'ada@example.net',
+          }),
+        }),
+      }),
+    );
     expect(screen.queryByRole('menu')).not.toBeInTheDocument();
     await waitFor(() => expect(input).toHaveFocus());
   },

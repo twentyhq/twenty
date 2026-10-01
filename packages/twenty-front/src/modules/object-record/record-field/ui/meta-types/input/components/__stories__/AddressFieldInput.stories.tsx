@@ -5,6 +5,7 @@ import {
 } from '@storybook/react-vite';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { useAddressField } from '@/object-record/record-field/ui/meta-types/hooks/useAddressField';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
@@ -46,7 +47,11 @@ const AddressValueSetterEffect = ({
 const InitializedAddressFieldInput = () => {
   const { draftValue } = useAddressField();
 
-  return isDefined(draftValue) ? <AddressFieldInput /> : null;
+  if (!isDefined(draftValue)) {
+    return null;
+  }
+
+  return <AddressFieldInput />;
 };
 
 type AddressInputWithContextProps = FieldInputEventContextType & {
@@ -63,7 +68,11 @@ const AddressInputWithContext = ({
   onClickOutside,
   onTab,
   onShiftTab,
-  surface = { type: 'main', instanceId: 'main', ownsRouteLocation: true },
+  surface = {
+    type: 'main',
+    instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
+    ownsRouteLocation: true,
+  },
 }: AddressInputWithContextProps) => {
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
 
