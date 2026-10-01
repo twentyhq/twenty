@@ -3,15 +3,19 @@ import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-c
 import { HeadlessNavigateEngineCommand } from '@/command-menu-item/engine-command/components/HeadlessNavigateEngineCommand';
 import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
 import { useFindSelectedWorkflowRunCoreWorkflowIds } from '@/command-menu-item/engine-command/record/single-record/workflow-runs/hooks/useFindSelectedWorkflowRunCoreWorkflowIds';
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
+import { useOpenCoreWorkflowVersionSidePanel } from '@/object-core/workflows/versions/hooks/useOpenCoreWorkflowVersionSidePanel';
 import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { useNavigateApp } from '~/hooks/useNavigateApp';
+import { GetCoreWorkflowVersionDocument } from '~/generated/graphql';
 
 export const SeeVersionWorkflowRunSingleRecordCommand = () => {
   const isCore = useIsWorkflowCoreEnabled();
   const { selectedRecords } = useHeadlessCommandContextApi();
   const selectedRecord = selectedRecords[0];
-  const navigateApp = useNavigateApp();
+  const apolloCoreClient = useApolloCoreClient();
+  const { openCoreWorkflowVersionSidePanel } =
+    useOpenCoreWorkflowVersionSidePanel();
   const { findSelectedWorkflowRunCoreWorkflowIds } =
     useFindSelectedWorkflowRunCoreWorkflowIds();
 
@@ -19,18 +23,26 @@ export const SeeVersionWorkflowRunSingleRecordCommand = () => {
     return (
       <HeadlessEngineCommandWrapperEffect
         execute={async () => {
-          const { coreWorkflowId, coreWorkflowVersionId } =
+          const { coreWorkflowVersionId } =
             await findSelectedWorkflowRunCoreWorkflowIds();
 
-          if (!isDefined(coreWorkflowId) || !isDefined(coreWorkflowVersionId)) {
+          if (!isDefined(coreWorkflowVersionId)) {
             return;
           }
 
-          navigateApp(
-            AppPath.WorkflowCoreShowPage,
-            { coreWorkflowId },
-            { version: coreWorkflowVersionId },
-          );
+          const { data } = await apolloCoreClient.query({
+            query: GetCoreWorkflowVersionDocument,
+            variables: { coreWorkflowVersionId },
+          });
+
+          if (!isDefined(data?.coreWorkflowVersion)) {
+            return;
+          }
+
+          openCoreWorkflowVersionSidePanel({
+            coreWorkflowVersionId,
+            pageTitle: data.coreWorkflowVersion.label,
+          });
         }}
       />
     );
