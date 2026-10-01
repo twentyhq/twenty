@@ -19,8 +19,7 @@ import { ConfigVariableExceptionCode } from 'src/engine/core-modules/twenty-conf
 import { AdminPanelGuard } from 'src/engine/guards/admin-panel-guard';
 import { BillingDisabledGuard } from 'src/engine/guards/billing-disabled.guard';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
-import { RequireUserSessionGuard } from 'src/engine/guards/require-user-session.guard';
-import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 
 // Server-binding rejections that should surface as an activation failure with
 // their own user-facing message (rather than being silently swallowed).
@@ -32,7 +31,22 @@ const SERVER_BINDING_REJECTION_CODES: EnterpriseExceptionCode[] = [
 ];
 
 @Resolver()
-@UseGuards(RequireUserSessionGuard)
+@UseGuards(
+  AuthPrincipalGuard({
+    userSession: {
+      standard: true,
+      impersonated: true,
+      playground: true,
+      workspaceAgnostic: false,
+    },
+    apiKey: false,
+    oauthClient: false,
+    application: false,
+  }),
+  BillingDisabledGuard,
+  AdminPanelGuard,
+  NoPermissionGuard,
+)
 @UsePipes(ResolverValidationPipe)
 @UseFilters(EnterpriseExceptionFilter, PreventNestToAutoLogGraphqlErrorsFilter)
 export class EnterpriseResolver {
@@ -59,28 +73,14 @@ export class EnterpriseResolver {
   }
 
   @Query(() => String, { nullable: true })
-  @UseGuards(
-    WorkspaceAuthGuard,
-    BillingDisabledGuard,
-    AdminPanelGuard,
-    NoPermissionGuard,
-  )
   async enterprisePortalSession(
-    // for existing subscriptions
     @Args('returnUrlPath', { nullable: true }) returnUrlPath?: string,
   ): Promise<string | null> {
     return this.enterprisePlanService.getPortalUrl(returnUrlPath ?? undefined);
   }
 
   @Query(() => String, { nullable: true })
-  @UseGuards(
-    WorkspaceAuthGuard,
-    BillingDisabledGuard,
-    AdminPanelGuard,
-    NoPermissionGuard,
-  )
   async enterpriseCheckoutSession(
-    // for new subscriptions
     @Args('billingInterval', { nullable: true }) billingInterval?: string,
   ): Promise<string | null> {
     const interval = billingInterval === 'yearly' ? 'yearly' : 'monthly';
@@ -90,23 +90,11 @@ export class EnterpriseResolver {
   }
 
   @Query(() => EnterpriseSubscriptionStatusDTO, { nullable: true })
-  @UseGuards(
-    WorkspaceAuthGuard,
-    BillingDisabledGuard,
-    AdminPanelGuard,
-    NoPermissionGuard,
-  )
   async enterpriseSubscriptionStatus(): Promise<EnterpriseSubscriptionStatusDTO | null> {
     return this.enterprisePlanService.getSubscriptionStatus();
   }
 
   @Mutation(() => Boolean)
-  @UseGuards(
-    WorkspaceAuthGuard,
-    BillingDisabledGuard,
-    AdminPanelGuard,
-    NoPermissionGuard,
-  )
   async refreshEnterpriseValidityToken(): Promise<boolean> {
     const refreshed = await this.enterprisePlanService.refreshValidityToken();
 
@@ -116,12 +104,6 @@ export class EnterpriseResolver {
   }
 
   @Mutation(() => EnterpriseLicenseInfoDTO)
-  @UseGuards(
-    WorkspaceAuthGuard,
-    BillingDisabledGuard,
-    AdminPanelGuard,
-    NoPermissionGuard,
-  )
   async releaseEnterpriseServerBinding(): Promise<EnterpriseLicenseInfoDTO> {
     await this.enterprisePlanService.releaseServerBinding();
 
@@ -135,12 +117,6 @@ export class EnterpriseResolver {
   }
 
   @Mutation(() => EnterpriseLicenseInfoDTO)
-  @UseGuards(
-    WorkspaceAuthGuard,
-    BillingDisabledGuard,
-    AdminPanelGuard,
-    NoPermissionGuard,
-  )
   async setEnterpriseKey(
     @Args('enterpriseKey') enterpriseKey: string,
   ): Promise<EnterpriseLicenseInfoDTO> {

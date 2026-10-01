@@ -31,13 +31,13 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         namePlural: 'agentChatThreads',
         labelSingular: i18nLabel(
           msg({
-            message: 'Agent chat thread',
+            message: 'Chat',
             context: 'objectMetadata.labelSingular',
           }),
         ),
         labelPlural: i18nLabel(
           msg({
-            message: 'Agent chat threads',
+            message: 'Chats',
             context: 'objectMetadata.labelPlural',
           }),
         ),
@@ -51,7 +51,7 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         isSystem: true,
         isSearchable: false,
         isAuditLogged: false,
-        isUIEditable: false,
+        isUIEditable: true,
         isUICreatable: false,
         // A conversation outside a workflow run has no parent and is read only
         // through its own grants, as a PRIVATE record is. One held by a run's
@@ -59,7 +59,7 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         readability: MetadataReadability.INHERITED,
         readabilityParentFieldMetadataNames: ['workflowRun'],
         writability: MetadataWritability.OPEN,
-        labelIdentifierFieldMetadataName: 'id',
+        labelIdentifierFieldMetadataName: 'title',
       },
     }),
   agentChatThreadTarget: (

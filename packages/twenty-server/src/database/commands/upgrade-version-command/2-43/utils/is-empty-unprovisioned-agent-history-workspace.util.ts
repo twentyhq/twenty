@@ -2,7 +2,7 @@ import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { type DataSource } from 'typeorm';
 
 import { AGENT_HISTORY_OBJECT_NAMES } from 'src/engine/metadata-modules/ai/ai-history/constants/agent-history-object-names.constant';
-import { type AgentHistoryStorageService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-storage.service';
+import { type AgentHistoryUpgradeStorageService } from 'src/database/commands/agent-history/agent-history-upgrade-storage.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 
 // Older installations can retain empty workspace records without a physical
@@ -13,7 +13,7 @@ export const isEmptyUnprovisionedAgentHistoryWorkspace = async ({
   workspaceId,
 }: {
   dataSource: DataSource;
-  agentHistoryStorageService: AgentHistoryStorageService;
+  agentHistoryStorageService: AgentHistoryUpgradeStorageService;
   workspaceId: string;
 }): Promise<boolean> => {
   const runner = dataSource.createQueryRunner('master');

@@ -7,26 +7,11 @@ import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/m
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 import { ToolCategory } from 'twenty-shared/ai';
 
-/**
- * Contract tests for the MCP tool catalog.
- *
- * 1. Catalog contract: every category advertised by get_tool_catalog must be
- *    dispatchable end to end through execute_tool. Dispatchable means the
- *    registry resolves and executes the tool: a structured business failure
- *    (e.g. a search tool rejecting empty arguments) still proves dispatch,
- *    only "not found" / "not available" outputs do not. Scales automatically:
- *    a newly registered provider is covered the moment it appears in the
- *    catalog, with no new test code.
- * 2. Permission gating: the catalog is role-dependent. An API key bound to a
- *    role without settings permissions must not see settings-gated tools
- *    (e.g. the ROLE category), while an admin-bound key must.
- */
-
 const baseUrl = `http://localhost:${APP_PORT}`;
 
-const postMcp = (body: object, bearer: string) =>
+const postMcp = (body: object, bearer: string, path = '/mcp') =>
   request(baseUrl)
-    .post('/mcp')
+    .post(path)
     .set('Authorization', `Bearer ${bearer}`)
     .set('Content-Type', 'application/json')
     .set('Accept', 'application/json')
@@ -36,6 +21,7 @@ const callMcpTool = async (
   bearer: string,
   toolName: string,
   toolArguments: object,
+  path = '/mcp',
 ) => {
   const response = await postMcp(
     {
@@ -45,6 +31,7 @@ const callMcpTool = async (
       id: '1',
     },
     bearer,
+    path,
   ).expect(200);
 
   return response.body.result as {
@@ -95,6 +82,31 @@ const isDispatchFailure = (result: {
 // catalog advertises ships at least one read-only tool. Adding a category
 // here must be a conscious decision, not silent drift.
 const EXPECTED_CATEGORIES_WITHOUT_READ_ONLY_TOOLS: string[] = [];
+
+const listMcpTools = async (
+  bearer: string,
+  path: string,
+): Promise<{ name: string; inputSchema: { type?: string } }[]> => {
+  const response = await postMcp(
+    { jsonrpc: '2.0', method: 'tools/list', id: '1' },
+    bearer,
+    path,
+  ).expect(200);
+
+  return response.body.result.tools;
+};
+
+const META_MODE_TOOL_NAMES = [
+  'execute_tool',
+  'get_tool_catalog',
+  'learn_tools',
+  'list_object_metadata_names',
+  'list_skills',
+  'load_skills',
+  'search_help_center',
+];
+
+const DIRECT_MODE_PATH = '/mcp?mode=direct';
 
 const createApiKeyToken = async (roleId: string): Promise<string> => {
   const createResponse = await makeMetadataApiRequest({
@@ -286,6 +298,89 @@ describe('MCP tool catalog (integration)', () => {
       // The restricted role still sees record read tools, proving the empty
       // ROLE category is gating rather than a broken catalog.
       expect(catalog[ToolCategory.DATABASE_CRUD]?.length).toBeGreaterThan(0);
+    });
+  });
+
+  describe('direct mode', () => {
+    it('should list registry tools directly, without the meta-tools or MCP-excluded tools', async () => {
+      const toolNames = (
+        await listMcpTools(adminApiKeyToken, DIRECT_MODE_PATH)
+      ).map((tool) => tool.name);
+
+      expect(toolNames).toEqual(
+        expect.arrayContaining([
+          'find_many_companies',
+          'search_help_center',
+          'load_skills',
+        ]),
+      );
+
+      for (const hiddenToolName of [
+        'get_tool_catalog',
+        'learn_tools',
+        'execute_tool',
+        'http_request',
+      ]) {
+        expect(toolNames).not.toContain(hiddenToolName);
+      }
+    });
+
+    it('should declare an object root on every input schema', async () => {
+      const tools = await listMcpTools(adminApiKeyToken, DIRECT_MODE_PATH);
+
+      const toolsWithoutObjectRoot = tools
+        .filter((tool) => tool.inputSchema.type !== 'object')
+        .map((tool) => tool.name);
+
+      expect(toolsWithoutObjectRoot).toEqual([]);
+    });
+
+    it('should call a listed tool by name', async () => {
+      const result = await callMcpTool(
+        adminApiKeyToken,
+        'find_many_companies',
+        { limit: 1, select: ['id'] },
+        DIRECT_MODE_PATH,
+      );
+
+      expect(result.isError).toBe(false);
+    });
+
+    it('should refuse MCP-excluded tools called by name', async () => {
+      const result = await callMcpTool(
+        adminApiKeyToken,
+        'http_request',
+        {},
+        DIRECT_MODE_PATH,
+      );
+
+      expect(result.isError).toBe(true);
+      expect(isDispatchFailure(result)).toBe(true);
+    });
+
+    it('should keep plain /mcp on the meta-tools', async () => {
+      const toolNames = (await listMcpTools(adminApiKeyToken, '/mcp')).map(
+        (tool) => tool.name,
+      );
+
+      expect([...toolNames].sort()).toEqual(META_MODE_TOOL_NAMES);
+
+      const response = await postMcp(
+        {
+          jsonrpc: '2.0',
+          method: 'tools/call',
+          params: {
+            name: 'find_many_companies',
+            arguments: { limit: 1, select: ['id'] },
+          },
+          id: '1',
+        },
+        adminApiKeyToken,
+      ).expect(200);
+
+      expect(response.body.error?.message).toBe(
+        'Unknown tool: find_many_companies',
+      );
     });
   });
 });

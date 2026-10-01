@@ -1,23 +1,6 @@
-import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { addAgentMessageSenderWorkspaceMember } from 'src/engine/metadata-modules/ai/ai-history/utils/add-agent-message-sender-workspace-member.util';
-import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
 
-jest.mock(
-  'src/engine/twenty-orm/storage/orm-workspace-context.storage',
-  () => ({ getWorkspaceContext: jest.fn() }),
-);
-
-const setup = (hasRelation = true) => {
-  jest.mocked(getWorkspaceContext).mockReturnValue({
-    flatFieldMetadataMaps: {
-      byUniversalIdentifier: hasRelation
-        ? {
-            [STANDARD_OBJECTS.agentMessage.fields.senderWorkspaceMember
-              .universalIdentifier]: {},
-          }
-        : {},
-    },
-  } as never);
+const setup = () => {
   const query = jest
     .fn()
     .mockResolvedValue([{ membershipId: 'sender', memberId: 'member' }]);
@@ -33,16 +16,7 @@ const setup = (hasRelation = true) => {
 };
 
 describe('sender workspace member expansion', () => {
-  it('preserves complete legacy attribution before the relation is available', async () => {
-    const { query, expand } = setup(false);
-    const message = {
-      senderUserWorkspaceId: 'sender',
-      senderApplicationId: 'application',
-    };
-    expect(await expand(message)).toEqual(message);
-    expect(query).not.toHaveBeenCalled();
-  });
-  it('dual-writes members in a batch without changing sender or application IDs', async () => {
+  it('writes members in a batch without changing sender or application IDs', async () => {
     const { query, expand } = setup();
     const messages = [
       { senderUserWorkspaceId: 'sender', senderApplicationId: 'application' },

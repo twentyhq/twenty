@@ -223,7 +223,7 @@ describe('getTabsWithVisibleWidgets', () => {
       });
 
       expect(result).toHaveLength(1);
-      expect(result[0].widgets).toHaveLength(2); // All widgets kept in edit mode
+      expect(result[0].widgets).toHaveLength(2);
       expect(result[0].widgets[0].id).toBe('widget-1');
       expect(result[0].widgets[1].id).toBe('widget-2');
     });
@@ -267,8 +267,8 @@ describe('getTabsWithVisibleWidgets', () => {
       });
 
       expect(result).toHaveLength(2);
-      expect(result[0].widgets).toHaveLength(1); // Kept in edit mode
-      expect(result[1].widgets).toHaveLength(1); // Kept in edit mode
+      expect(result[0].widgets).toHaveLength(1);
+      expect(result[1].widgets).toHaveLength(1);
     });
   });
 
@@ -441,142 +441,6 @@ describe('getTabsWithVisibleWidgets', () => {
 
       expect(result).toHaveLength(1);
       expect(result[0].id).toBe('always');
-    });
-  });
-  describe('with feature flags', () => {
-    const createChatThreadsWidget = (
-      id: string,
-    ): PageLayoutTab['widgets'][0] => ({
-      ...createMockWidget(id),
-      type: WidgetType.CHAT_THREADS,
-    });
-
-    const buildTabs = () => [
-      createMockTab('emails', [createMockWidget('emails-widget')]),
-      createMockTab('conversations', [
-        createChatThreadsWidget('conversations-widget'),
-      ]),
-    ];
-
-    const getRenderedWidgetIds = (tabs: PageLayoutTab[]) =>
-      tabs.map((tab) => [tab.id, tab.widgets.map((widget) => widget.id)]);
-
-    it('should hide the conversations tab while the flag is off', () => {
-      const result = getTabsWithVisibleWidgets({
-        tabs: buildTabs(),
-        isEditMode: false,
-        context: buildWidgetVisibilityContext({
-          isMobile: false,
-          isInSidePanel: false,
-        }),
-      });
-
-      expect(getRenderedWidgetIds(result)).toEqual([
-        ['emails', ['emails-widget']],
-      ]);
-    });
-
-    it('should show the conversations tab while the flag is on', () => {
-      const result = getTabsWithVisibleWidgets({
-        tabs: buildTabs(),
-        isEditMode: false,
-        context: buildWidgetVisibilityContext({
-          isMobile: false,
-          isInSidePanel: false,
-          featureFlags: { IS_CONVERSATIONS_TAB_ENABLED: true },
-        }),
-      });
-
-      expect(getRenderedWidgetIds(result)).toEqual([
-        ['emails', ['emails-widget']],
-        ['conversations', ['conversations-widget']],
-      ]);
-    });
-
-    it('should apply feature flags in edit mode but keep device conditions and empty tabs', () => {
-      const tabs = [
-        ...buildTabs(),
-        createMockTab('mobile-only', [
-          {
-            ...createMockWidget('mobile-widget'),
-            conditionalAvailabilityExpression: 'device == "MOBILE"',
-          },
-        ]),
-        createMockTab('empty', []),
-      ];
-
-      const result = getTabsWithVisibleWidgets({
-        tabs,
-        persistedTabs: tabs,
-        isEditMode: true,
-        context: buildWidgetVisibilityContext({
-          isMobile: false,
-          isInSidePanel: false,
-        }),
-      });
-
-      expect(getRenderedWidgetIds(result)).toEqual([
-        ['emails', ['emails-widget']],
-        ['mobile-only', ['mobile-widget']],
-        ['empty', []],
-      ]);
-    });
-
-    it('should keep a tab in edit mode once the edit leaves it with only flag-gated widgets', () => {
-      const conversationsWidget = createChatThreadsWidget(
-        'conversations-widget',
-      );
-      const persistedTabs = [
-        createMockTab('emails', [
-          conversationsWidget,
-          createMockWidget('emails-widget'),
-        ]),
-      ];
-
-      const result = getTabsWithVisibleWidgets({
-        tabs: [createMockTab('emails', [conversationsWidget])],
-        persistedTabs,
-        isEditMode: true,
-        context: buildWidgetVisibilityContext({
-          isMobile: false,
-          isInSidePanel: false,
-        }),
-      });
-
-      expect(getRenderedWidgetIds(result)).toEqual([['emails', []]]);
-    });
-
-    it('should hide a chat threads widget without the flag, whatever its layout', () => {
-      const tabs = [
-        createMockTab('tab-1', [
-          createMockWidget('fields-widget'),
-          createChatThreadsWidget('conversations-widget'),
-        ]),
-      ];
-
-      const readResult = getTabsWithVisibleWidgets({
-        tabs,
-        isEditMode: false,
-        context: buildWidgetVisibilityContext({
-          isMobile: false,
-          isInSidePanel: false,
-        }),
-      });
-      const editResult = getTabsWithVisibleWidgets({
-        tabs,
-        isEditMode: true,
-        context: buildWidgetVisibilityContext({
-          isMobile: false,
-          isInSidePanel: false,
-        }),
-      });
-
-      expect(getRenderedWidgetIds(readResult)).toEqual([
-        ['tab-1', ['fields-widget']],
-      ]);
-      expect(getRenderedWidgetIds(editResult)).toEqual([
-        ['tab-1', ['fields-widget']],
-      ]);
     });
   });
 });

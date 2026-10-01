@@ -9,6 +9,7 @@ type UsageLimitDefinition =
 export const getUsageLimitOperationTypes = (
   definition: UsageLimitDefinition,
 ): UsageOperationType[] =>
-  definition.allowedMeters.includes('creditsUsedMicro')
+  definition.allowedMeters.includes('creditsUsedMicro') &&
+  definition.allowedOperationTypes.length > 1
     ? [UsageOperationType.ALL, ...definition.allowedOperationTypes]
     : definition.allowedOperationTypes;

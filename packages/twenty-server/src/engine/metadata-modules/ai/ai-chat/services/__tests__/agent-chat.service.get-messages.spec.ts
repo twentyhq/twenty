@@ -17,12 +17,11 @@ const buildService = () => {
     {} as never,
     {} as never,
     {} as never,
-    {} as never,
-    {} as never,
     {
       getThreadWithAccess: jest.fn().mockResolvedValue({ id: THREAD_ID }),
       getReadableThread: jest.fn().mockResolvedValue({ id: THREAD_ID }),
     } as never,
+    {} as never,
   );
 
   return { service, messageRepository };

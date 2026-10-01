@@ -133,8 +133,12 @@ describe('@remote-dom/polyfill mutation hooks contract the worker MutationObserv
   });
 
   it.each([
+    ['Node', 'compareDocumentPosition'],
+    ['Node', 'getRootNode'],
     ['Element', 'closest'],
     ['Element', 'matches'],
+    ['Element', 'focus'],
+    ['Element', 'blur'],
   ])(
     'still ships %s without %s, which the worker polyfills install itself',
     (className, methodName) => {
@@ -148,6 +152,14 @@ describe('@remote-dom/polyfill mutation hooks contract the worker MutationObserv
       );
     },
   );
+
+  it('still ships the Node.contains walk that re-reads the argument parent, which the worker replaces', () => {
+    const polyfillWindow = new Window();
+
+    expect(String(polyfillWindow.Node.prototype.contains)).toContain(
+      'node.parentNode',
+    );
+  });
 
   it('still throws on pseudo-class selectors, which the worker selector engine replaces', () => {
     const polyfillWindow = new Window();

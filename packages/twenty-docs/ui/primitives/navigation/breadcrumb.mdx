@@ -1,0 +1,79 @@
+---
+title: Breadcrumb
+description: Show a page's location with a trail of ancestor links.
+---
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import BreadcrumbReference from '/snippets/ui/generated/navigation/breadcrumb.mdx';
+
+`Breadcrumb` renders an ordered navigation trail. It owns separators, current-page semantics, link focus styles, and truncation of the current item's label.
+
+<StoryEmbed
+  storyId="primitives-navigation-breadcrumb--default"
+  title="Breadcrumb example"
+  height={160}
+/>
+
+## Usage
+
+Pass items in ancestor-to-current order. The navigation landmark defaults to the accessible name `Breadcrumb`; use `aria-label` to localize it or distinguish multiple trails. The final item receives `aria-current="page"`, whether it has a destination or displays plain text.
+
+```tsx
+import { Breadcrumb } from 'twenty-ui/primitives/navigation';
+
+export const CompanyBreadcrumb = () => (
+  <Breadcrumb
+    aria-label="Breadcrumb"
+    links={[
+      { children: 'Home', href: '/' },
+      { children: 'Companies', href: '/companies' },
+      { children: 'Acme' },
+    ]}
+  />
+);
+```
+
+Items with `href` use native links. Items without a destination are text. Separators are decorative and hidden from assistive technology. Links follow the browser's normal Tab and Enter behavior.
+
+## Router links
+
+Use an item's `render` prop to supply your router's link component, alongside `href`. The rendered link must forward the supplied props and ref to its anchor. See [custom components](/ui/primitives/overview#custom-components) for composition requirements.
+
+The application chooses destinations and decides when to show a mobile back action. `Breadcrumb` does not infer routes or collapse ancestors into a menu.
+
+## Long labels
+
+The current item shrinks and truncates with an ellipsis when the container has limited space. Ancestor items retain their width. Plain string labels become the native browser tooltip automatically. Use `title` to override that text or provide a tooltip for rich content.
+
+<StoryEmbed
+  storyId="primitives-navigation-breadcrumb--truncation"
+  title="Breadcrumb with a long current page label"
+  height={160}
+/>
+
+## Rich content
+
+An item's `children` can include text and supporting visual content. Keep the label readable and avoid nesting interactive controls inside a link.
+
+<StoryEmbed
+  storyId="primitives-navigation-breadcrumb--rich-content"
+  title="Breadcrumb with supporting content"
+  height={160}
+/>
+
+## Text direction
+
+The trail follows the surrounding text direction. Set `dir="rtl"` on `Breadcrumb` or an ancestor for right-to-left content. When other controls need matching directional keyboard or pointer behavior, also set [TextDirectionProvider](/ui/primitives/layout/text-direction-provider) to the same direction.
+
+<StoryEmbed
+  storyId="primitives-navigation-breadcrumb--rtl"
+  title="Breadcrumb in right-to-left content"
+  height={160}
+/>
+
+## Props
+
+Native navigation attributes, including accessible names, `className`, `style`, and event handlers, reach the root landmark.
+
+<BreadcrumbReference />

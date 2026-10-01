@@ -9,6 +9,8 @@ module.exports = {
     './src/modules/users/graphql/**/*.{ts,tsx}',
     './src/modules/views/graphql/**/*.{ts,tsx}',
     './src/modules/ai/graphql/**/*.{ts,tsx}',
+    // answerToolCall is served by the core (/graphql) schema via @CoreResolver.
+    '!./src/modules/ai/graphql/mutations/answerToolCall.ts',
     './src/modules/object-record/record-sharing/graphql/**/*.{ts,tsx}',
     './src/modules/applications/graphql/**/*.{ts,tsx}',
 
@@ -26,6 +28,7 @@ module.exports = {
     './src/modules/databases/graphql/**/*.{ts,tsx}',
     './src/modules/analytics/graphql/**/*.{ts,tsx}',
     './src/modules/object-metadata/graphql/**/*.{ts,tsx}',
+    './src/modules/validation-rules/graphql/**/*.{ts,tsx}',
     './src/modules/navigation-menu-item/**/graphql/**/*.{ts,tsx}',
     './src/modules/command-menu-item/graphql/**/*.{ts,tsx}',
     './src/modules/attachments/graphql/**/*.{ts,tsx}',

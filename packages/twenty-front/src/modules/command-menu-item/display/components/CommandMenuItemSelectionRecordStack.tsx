@@ -7,6 +7,7 @@ import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { SidePanelContextRecordChipAvatars } from '@/side-panel/components/SidePanelContextRecordChipAvatars';
+import { EASE_OUT } from '@/ui/theme/constants/EaseOut';
 
 // Card offsets in the 24px icon column for 1, 2 and 3 cards, front card first.
 const CARD_POSITIONS_BY_RECORD_COUNT = [
@@ -28,7 +29,6 @@ const DROP_DISTANCE_IN_PX = 6;
 const DROP_SCALE = 1.25;
 const HIDDEN_SCALE = 0.8;
 const OPENING_STAGGER_IN_SECONDS = 0.04;
-const EASE_OUT = [0.2, 0, 0, 1] as const;
 
 const StyledStack = styled.div`
   height: ${themeCssVariables.spacing[6]};

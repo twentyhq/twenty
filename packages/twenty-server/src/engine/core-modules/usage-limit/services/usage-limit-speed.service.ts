@@ -12,7 +12,7 @@ import {
   TOKEN_BUCKETS_ALLOW_PARTIAL_ARG,
   TOKEN_BUCKETS_DENY_PARTIAL_ARG,
   TRY_CONSUME_TOKEN_BUCKETS_SCRIPT,
-} from 'src/engine/core-modules/usage-limit/constants/try-consume-token-buckets-script.constant';
+} from 'src/engine/core-modules/throttler/constants/try-consume-token-buckets-script.constant';
 import {
   UsageLimitException,
   UsageLimitExceptionCode,

@@ -7,12 +7,10 @@ import { EditorContent } from '@tiptap/react';
 import { useLingui } from '@lingui/react/macro';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { isDefined } from 'twenty-shared/utils';
-
 import { AiChatInlineBanner } from '@/ai/components/AiChatInlineBanner';
 import { AiModelTierDropdown } from '@/ai/components/AiModelTierDropdown';
 import { AiChatEmptyState } from '@/ai/components/AiChatEmptyState';
-import { AiChatQuestionCard } from '@/ai/components/AiChatQuestionCard';
+import { AiChatPendingAskGate } from '@/ai/components/AiChatPendingAskGate';
 import { AIChatNoMoreBillingCreditsBanner } from '@/ai/components/AIChatNoMoreBillingCreditsBanner';
 import { AiChatUsageLimitReachedBanner } from '@/ai/components/AiChatUsageLimitReachedBanner';
 import { AiChatStandaloneError } from '@/ai/components/AiChatStandaloneError';
@@ -23,13 +21,14 @@ import { AiChatDictationEffect } from '@/ai/dictation/components/AiChatDictation
 import { AiChatDictationHint } from '@/ai/dictation/components/AiChatDictationHint';
 import { AiChatContextUsageButton } from '@/ai/components/internal/AiChatContextUsageButton';
 import { AiChatEditorFocusEffect } from '@/ai/components/internal/AiChatEditorFocusEffect';
+import { AiChatSentMessageHandOffEffect } from '@/ai/components/internal/AiChatSentMessageHandOffEffect';
 import { SendMessageButton } from '@/ai/components/internal/SendMessageButton';
 import { useAiChatEditor } from '@/ai/hooks/useAiChatEditor';
 import { useInsertDictatedText } from '@/ai/dictation/hooks/useInsertDictatedText';
 import { useIsAiChatComposerCentered } from '@/ai/hooks/useIsAiChatComposerCentered';
 import { useHasReachedAiChatCreditsCap } from '@/ai/hooks/useHasReachedAiChatCreditsCap';
 import { useHasReachedAiChatUsageLimit } from '@/ai/hooks/useHasReachedAiChatUsageLimit';
-import { agentChatPendingQuestionComponentSelector } from '@/ai/states/selectors/agentChatPendingQuestionComponentSelector';
+import { agentChatHasMessageComponentSelector } from '@/ai/states/selectors/agentChatHasMessageComponentSelector';
 import { aiModelsState } from '@/client-config/states/aiModelsState';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
@@ -106,13 +105,21 @@ const StyledEditorWrapper = styled.div<{ isMobile: boolean }>`
   }
 `;
 
+const StyledMessageListPlaceholder = styled.div`
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+`;
+
 // Collapsing this spacer is what slides the composer from the middle of an
 // empty page down to the bottom once the conversation starts.
 const StyledComposerBottomSpacer = styled.div`
   flex-basis: 0;
   flex-grow: 0;
   flex-shrink: 0;
-  transition-duration: calc(${themeCssVariables.animation.duration.fast} * 1s);
+  transition-duration: calc(
+    ${themeCssVariables.animation.duration.normal} * 1s
+  );
   transition-property: flex-grow;
   transition-timing-function: ease-out;
 
@@ -163,19 +170,52 @@ const EditableAiChatEditorSection = () => {
   const insertDictatedText = useInsertDictatedText(editor);
   const [dictationInterimText, setDictationInterimText] = useState('');
 
-  const pendingQuestion = useAtomComponentSelectorValue(
-    agentChatPendingQuestionComponentSelector,
+  const composer = (
+    <StyledInputBox isMobile={isMobile}>
+      <StyledEditorWrapper isMobile={isMobile}>
+        <EditorContent editor={editor} />
+      </StyledEditorWrapper>
+      <AiChatDictationHint interimText={dictationInterimText} />
+      <StyledButtonsContainer>
+        <StyledLeftButtonsContainer>
+          <AiChatAddMenu editor={editor} />
+          <AiChatDictationButton />
+          <AiChatContextUsageButton />
+        </StyledLeftButtonsContainer>
+        <StyledRightButtonsContainer>
+          <AiModelTierDropdown
+            dropdownId="ai-chat-model-tier-dropdown"
+            disabled={hasNoEnabledModels}
+          />
+          <SendMessageButton
+            onSend={handleSendAndClear}
+            isDisabled={hasNoEnabledModels}
+          />
+        </StyledRightButtonsContainer>
+      </StyledButtonsContainer>
+    </StyledInputBox>
+  );
+  const hasMessages = useAtomComponentSelectorValue(
+    agentChatHasMessageComponentSelector,
   );
 
   return (
     <>
       <AiChatEditorFocusEffect editor={editor} />
+      <AiChatSentMessageHandOffEffect
+        editor={editor}
+        isComposerCentered={isComposerCentered}
+      />
       <AiChatDictationEffect
         onInterimText={setDictationInterimText}
         onFinalText={insertDictatedText}
       />
-      <AiChatEmptyState isCentered={isComposerCentered} />
-      <AiChatStandaloneError />
+      {!hasMessages && (
+        <StyledMessageListPlaceholder>
+          <AiChatEmptyState isCentered={isComposerCentered} />
+          <AiChatStandaloneError />
+        </StyledMessageListPlaceholder>
+      )}
 
       <StyledInputArea isMobile={isMobile}>
         <AgentChatContextPreview />
@@ -186,33 +226,7 @@ const EditableAiChatEditorSection = () => {
         )}
         {hasReachedAiChatCreditsCap && <AIChatNoMoreBillingCreditsBanner />}
         {shouldShowUsageLimitBanner && <AiChatUsageLimitReachedBanner />}
-        {isDefined(pendingQuestion) ? (
-          <AiChatQuestionCard pendingQuestion={pendingQuestion} />
-        ) : (
-          <StyledInputBox isMobile={isMobile}>
-            <StyledEditorWrapper isMobile={isMobile}>
-              <EditorContent editor={editor} />
-            </StyledEditorWrapper>
-            <AiChatDictationHint interimText={dictationInterimText} />
-            <StyledButtonsContainer>
-              <StyledLeftButtonsContainer>
-                <AiChatAddMenu editor={editor} />
-                <AiChatDictationButton />
-                <AiChatContextUsageButton />
-              </StyledLeftButtonsContainer>
-              <StyledRightButtonsContainer>
-                <AiModelTierDropdown
-                  dropdownId="ai-chat-model-tier-dropdown"
-                  disabled={hasNoEnabledModels}
-                />
-                <SendMessageButton
-                  onSend={handleSendAndClear}
-                  isDisabled={hasNoEnabledModels}
-                />
-              </StyledRightButtonsContainer>
-            </StyledButtonsContainer>
-          </StyledInputBox>
-        )}
+        <AiChatPendingAskGate>{composer}</AiChatPendingAskGate>
       </StyledInputArea>
       <StyledComposerBottomSpacer
         className={isComposerCentered ? 'is-centered' : undefined}

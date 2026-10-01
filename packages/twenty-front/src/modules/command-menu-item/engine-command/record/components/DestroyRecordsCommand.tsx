@@ -7,7 +7,11 @@ import { PLACEHOLDER_RECORD_INDEX_ID } from '@/object-record/record-index/consta
 import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { t } from '@lingui/core/macro';
-import { AppPath, type RecordGqlOperationFilter } from 'twenty-shared/types';
+import {
+  AppPath,
+  CoreObjectNameSingular,
+  type RecordGqlOperationFilter,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
@@ -71,7 +75,12 @@ export const DestroyRecordsCommand = () => {
 
     await incrementalDestroyManyRecords();
 
-    if (!isSingleRecord || isInSidePanel) {
+    // The chat page moves on to another chat by itself once its chat is gone
+    if (
+      !isSingleRecord ||
+      isInSidePanel ||
+      objectMetadataItem.nameSingular === CoreObjectNameSingular.AgentChatThread
+    ) {
       return;
     }
 

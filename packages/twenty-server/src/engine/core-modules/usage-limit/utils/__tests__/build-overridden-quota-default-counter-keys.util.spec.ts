@@ -11,7 +11,7 @@ const DAY_PERIOD = {
   periodEnd: new Date('2026-08-21T00:00:00.000Z'),
 };
 
-const DEFAULT_COUNTER_KEY = `{workspace-1}:quota:EMAIL:EMAIL_SEND:workspace:-:quantity:day:${DAY_PERIOD.periodStart.getTime()}:default:1000`;
+const DEFAULT_COUNTER_KEY = `{workspace-1}:quota:EMAIL:EMAIL_SEND:workspace:-:quantity:day:${DAY_PERIOD.periodStart.getTime()}:1000:default`;
 
 const buildUsageLimit = (
   overrides: Partial<UsageLimitCounterScope> = {},
@@ -24,6 +24,7 @@ const buildUsageLimit = (
   limitKind: 'quota',
   periodUnit: 'day',
   meter: 'quantity',
+  limitValue: 500,
   ...overrides,
 });
 

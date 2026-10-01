@@ -216,7 +216,7 @@ export const mockedCommandMenuItems: CommandMenuItemFieldsFragment[] =
     "isPinned": false,
     "payload": null,
     "hotKeys": null,
-    "conditionalAvailabilityExpression": "permissionFlags.EXPORT_CSV",
+    "conditionalAvailabilityExpression": "pageType == \"INDEX_PAGE\" and permissionFlags.EXPORT_CSV",
     "availabilityType": "RECORD_SELECTION",
     "availabilityObjectMetadataId": null,
     "pageLayoutId": null,

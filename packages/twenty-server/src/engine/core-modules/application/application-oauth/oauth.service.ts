@@ -358,7 +358,6 @@ export class OAuthService {
 
     const applicationRegistration = clientValidation;
 
-    // Confidential clients (those with a secret) must authenticate
     if (
       isConfidentialApplicationOAuthClient(applicationRegistration) &&
       !isNonEmptyString(clientSecret)
@@ -386,7 +385,6 @@ export class OAuthService {
           refreshToken,
         );
 
-      // Verify the refresh token belongs to this client
       const application = await this.applicationRepository.findOne(
         payload.workspaceId,
         {
@@ -441,7 +439,6 @@ export class OAuthService {
   }
 
   // RFC 7009: Token revocation
-  // Returns true if token was successfully processed (even if already invalid)
   async revokeToken(params: {
     token: string;
     clientId?: string;
@@ -553,7 +550,6 @@ export class OAuthService {
         return { active: false };
       }
 
-      // Verify the token belongs to this client
       const application = await this.applicationRepository.findOne(
         decoded.workspaceId,
         {

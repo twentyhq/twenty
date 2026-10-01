@@ -175,7 +175,6 @@ const SETTINGS: HalftoneStudioSettings = {
   animation: { ...SOLID_ANIMATION },
 };
 
-// Every default the studio settings model draws on, in one place.
 export const HALFTONE_STUDIO_DEFAULTS = {
   geometrySpecs: GEOMETRY_SPECS,
   shapeHalftone: SHAPE_HALFTONE,

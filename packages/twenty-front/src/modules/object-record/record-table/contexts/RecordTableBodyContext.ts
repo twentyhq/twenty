@@ -1,6 +1,6 @@
+import { type OpenTableCellArgs } from '@/object-record/record-table/types/OpenTableCellArgs';
 import type React from 'react';
 
-import { type OpenTableCellArgs } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCell';
 import { type MoveFocusDirection } from '@/object-record/record-table/types/MoveFocusDirection';
 import { type TableCellPosition } from '@/object-record/record-table/types/TableCellPosition';
 import { createRequiredContext } from '~/utils/createRequiredContext';
