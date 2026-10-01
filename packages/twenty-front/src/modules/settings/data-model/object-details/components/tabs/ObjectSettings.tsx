@@ -4,6 +4,7 @@ import { useGetIsMetadataItemCustom } from '@/object-metadata/hooks/useGetIsMeta
 import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getObjectColorWithFallback } from '@/object-metadata/utils/getObjectColorWithFallback';
+import { isShareableObjectMetadataItem } from '@/object-record/record-sharing/utils/isShareableObjectMetadataItem';
 import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
 import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsWrapper';
 import { SettingsUpdateDataModelObjectAboutForm } from '@/settings/data-model/object-details/components/SettingsUpdateDataModelObjectAboutForm';
@@ -189,20 +190,21 @@ export const ObjectSettings = ({
             </Section.Root>
           </StyledFormSectionContainer>
         )}
-      {isRecordLevelSharingEnabled && !objectMetadataItem.isSystem && (
-        <StyledFormSectionContainer>
-          <Section.Root>
-            <Section.Header
-              title={t`Record sharing`}
-              description={t`Who a record of ${objectLabel} can be shared with. Roles still decide what people see by default.`}
-            />
-            <ObjectSharingReachPicker
-              objectMetadataItem={objectMetadataItem}
-              isReadOnly={isReadOnly}
-            />
-          </Section.Root>
-        </StyledFormSectionContainer>
-      )}
+      {isRecordLevelSharingEnabled &&
+        isShareableObjectMetadataItem(objectMetadataItem) && (
+          <StyledFormSectionContainer>
+            <Section.Root>
+              <Section.Header
+                title={t`Record sharing`}
+                description={t`Who a record of ${objectLabel} can be shared with. Roles still decide what people see by default.`}
+              />
+              <ObjectSharingReachPicker
+                objectMetadataItem={objectMetadataItem}
+                isReadOnly={isReadOnly}
+              />
+            </Section.Root>
+          </StyledFormSectionContainer>
+        )}
       <AdvancedSettingsWrapper>
         <StyledFormSectionContainer>
           <Section.Root>

@@ -25,6 +25,8 @@ export { Input } from './Input/Input';
 export type { InputProps } from './Input/types/InputProps';
 export { InputGroup } from './InputGroup/InputGroup';
 export type { InputGroupProps } from './InputGroup/types/InputGroupProps';
+export { NumberStepper } from './NumberStepper/NumberStepper';
+export type { NumberStepperProps } from './NumberStepper/types/NumberStepperProps';
 export { Radio } from './Radio/Radio';
 export type { RadioProps } from './Radio/types/RadioProps';
 export { RadioGroup } from './RadioGroup/RadioGroup';

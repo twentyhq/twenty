@@ -338,7 +338,7 @@ describe('Records shared beyond the role that can access their object', () => {
     ).toBeUndefined();
   });
 
-  it('should refuse a share the row filter of the recipient would hide', async () => {
+  it('should refuse a share the row filter of the recipient would hide, but let the role filter each member on read', async () => {
     await setMemberObjectAccess(true);
     await setSharingReach(ObjectSharingReach.ROLE_ACCESS);
     await upsertRowLevelPermissionPredicates({
@@ -370,6 +370,9 @@ describe('Records shared beyond the role that can access their object', () => {
           recordIds: [SHARED_RECORD_ID],
         }),
       ).toEqual([]);
+      expect(
+        (await setShare({ principal: { roleId: memberRoleId } })).body.errors,
+      ).toBeUndefined();
     } finally {
       await upsertRowLevelPermissionPredicates({
         expectToFail: false,

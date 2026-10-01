@@ -5481,6 +5481,12 @@ export default {
             "logs": [
                 1
             ],
+            "name": [
+                1
+            ],
+            "universalIdentifier": [
+                3
+            ],
             "__typename": [
                 1
             ]
