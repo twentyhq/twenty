@@ -8,19 +8,11 @@ import {
 } from 'twenty-shared/application';
 import { v4 as uuidv4 } from 'uuid';
 
-/**
- * Performance harness for installing / updating many logic functions through
- * application manifest sync. The goal is to find what could take >10s in prod
- * (which trips the node-postgres `query_timeout` in core.datasource.ts and
- * produces "Migration action 'update' for 'logicFunction' failed" + 504).
- *
- * IMPORTANT: the integration harness boots the NestJS app in-process with
- * `fakeTimers.enableGlobally: true`. We call `jest.useRealTimers()` for the whole
- * suite so timing (`performance.now()`) is real and cache-lock retry delays etc.
- * do not hang.
- */
+// Hunts for logic-function syncs slow enough to trip the prod query_timeout
+// (504 on "Migration action 'update' for 'logicFunction' failed").
 
-// Real timers for the whole suite — see note above.
+// The harness enables fake timers globally, which would fake performance.now()
+// and hang cache-lock retry delays.
 jest.useRealTimers();
 
 jest.setTimeout(120000);

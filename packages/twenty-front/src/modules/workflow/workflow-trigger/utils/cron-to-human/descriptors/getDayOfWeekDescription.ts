@@ -14,7 +14,6 @@ const getDayName = (
 ): string => {
   const normalizedDay = dayNum === 7 ? 0 : dayNum;
 
-  // Create a date for the given day (using a Sunday as base: 2024-01-07)
   const baseDate = new Date(2024, 0, 7); // Sunday
   const dayDate = new Date(
     baseDate.getTime() + normalizedDay * 24 * 60 * 60 * 1000,

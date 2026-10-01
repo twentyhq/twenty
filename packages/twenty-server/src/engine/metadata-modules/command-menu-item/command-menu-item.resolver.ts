@@ -202,9 +202,7 @@ export class CommandMenuItemResolver {
     return await this.commandMenuItemService.delete(id, workspace.id);
   }
 
-  // Activating a manual trigger writes a workspace-wide menu item, so the
-  // command menu announces a private workflow by name unless the list answers
-  // to the same rule as the workflow itself.
+  // manual trigger items are workspace-wide and would otherwise leak private workflow names
   private async withoutInaccessibleWorkflowItems({
     commandMenuItems,
     workspaceId,

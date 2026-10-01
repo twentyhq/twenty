@@ -1,10 +1,10 @@
 import { useRender } from '@base-ui/react/use-render';
-import { isNonEmptyArray, isString } from '@sniptt/guards';
+import { isString } from '@sniptt/guards';
 import { clsx } from 'clsx';
 import { type MouseEvent } from 'react';
 
 import { IconCheck, IconChevronRight } from '@ui/icon';
-import { MenuItemHotKeys } from '@ui/primitives/navigation/ListItem/internal/MenuItemHotKeys/MenuItemHotKeys';
+import { Shortcut } from '@ui/primitives/typography/Shortcut/Shortcut';
 import { OverflowingTextWithTooltip } from '@ui/primitives/typography/OverflowingTextWithTooltip/OverflowingTextWithTooltip';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
@@ -25,8 +25,8 @@ export const ListItem = ({
   descriptionPlacement = 'inline',
   actions,
   actionsVisibility = 'hover',
-  hotkeys,
-  hotkeysJoinLabel,
+  shortcut,
+  shortcutJoinLabel,
   hasSubmenu = false,
   className,
   children,
@@ -93,10 +93,12 @@ export const ListItem = ({
           {isRenderableSlot(actions) && (
             <span className={styles.actions}>{actions}</span>
           )}
-          {isNonEmptyArray(hotkeys) && (
-            <span className={styles.hotkeys}>
-              <MenuItemHotKeys hotKeys={hotkeys} joinLabel={hotkeysJoinLabel} />
-            </span>
+          {isDefined(shortcut) && (
+            <Shortcut
+              className={styles.hotkeys}
+              shortcut={shortcut}
+              sequenceJoinLabel={shortcutJoinLabel}
+            />
           )}
           {isRenderableSlot(endIcon) && (
             <span className={styles.endIcon}>{endIcon}</span>

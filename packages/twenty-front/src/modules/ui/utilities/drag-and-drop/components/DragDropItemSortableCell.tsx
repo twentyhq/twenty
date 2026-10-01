@@ -51,8 +51,6 @@ const StyledSortableRoot = styled.div<{
   transition: background 0.1s ease;
   will-change: transform;
 
-  /* When the cell delegates dragging to an explicit handle, only the handle
-     is grabbable, so the rest of the cell keeps its ambient cursor. */
   &:has([data-dnd-sortable-handle]) {
     cursor: inherit;
   }
@@ -73,8 +71,7 @@ type DragDropItemSortableCellProps = {
   id: string;
   index: number;
   restrictMovementTo?: 'x' | 'y' | 'none';
-  // Tags the split axis on the sortable's data so a pointer resolver can pick
-  // the drop boundary per hovered item across lists of mixed orientations.
+  // Lets a pointer resolver pick the drop boundary per item across lists of mixed orientations
   orientation?: DragDropItemDropTargetOrientation;
   type?: string;
 };
@@ -105,8 +102,7 @@ export const DragDropItemSortableCell = ({
     accept,
     collisionPriority: SORTABLE_COLLISION_PRIORITY,
     collisionDetector,
-    // Sortable metadata stays authoritative over consumer data so drag
-    // handlers always resolve the cell's real group and position.
+    // Sortable metadata overrides consumer data so handlers resolve the cell's real group and position
     data: {
       ...data,
       droppableId: group,

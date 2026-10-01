@@ -27,8 +27,6 @@ describe('getFieldWidgetEffectiveDisplayMode', () => {
     ).toBe(FieldDisplayMode.TABLE);
   });
 
-  // An embedded view is the only thing the table display mode can render, so
-  // without one the widget must fall back rather than render nothing.
   it.each([undefined, ''])(
     'should fall back to the field display mode when the view id is %p',
     (viewId) => {

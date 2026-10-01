@@ -74,9 +74,7 @@ export class NavigationMenuItemResolver {
     return resolveEffectiveEntityProperty({
       metadataName: 'navigationMenuItem',
       baseValue: navigationMenuItem.name,
-      // navigationMenuItem is not an overridable entity: a workspace renaming a
-      // folder edits the row itself, so there is no standard value left to
-      // translate and no override to arbitrate against.
+      // not overridable: renaming a folder edits the row itself
       overrides: undefined,
       property: 'name',
       i18nContext:

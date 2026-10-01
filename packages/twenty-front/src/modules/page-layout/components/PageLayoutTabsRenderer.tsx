@@ -92,10 +92,7 @@ const StyledTabsAndDashboardContainer = styled.div`
   }
 `;
 
-// Hidden prerendered tabs use display: none rather than <Activity mode="hidden">:
-// Apollo starts useQuery fetches from effects, which hidden activities do not
-// mount, so nothing would preload (see pageLayoutTabPrerenderContract.test).
-// display: contents keeps the active tab's layout identical to an unwrapped mount.
+// display: none, not a hidden <Activity>, which skips the effects Apollo fetches from (see pageLayoutTabPrerenderContract.test).
 const StyledTabContentDisplay = styled.div<{ isActiveTab: boolean }>`
   display: ${({ isActiveTab }) => (isActiveTab ? 'contents' : 'none')};
 `;
@@ -118,8 +115,7 @@ const StyledScrollWrapperContainer = styled.div`
     container-type: size;
   }
 
-  // The mobile navigation bar floats over the page, so the content reserves its
-  // footprint to stay readable once scrolled to the end.
+  // Reserve the floating mobile navigation bar's footprint.
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     .page-layout-scroll-wrapper {
       box-sizing: border-box;

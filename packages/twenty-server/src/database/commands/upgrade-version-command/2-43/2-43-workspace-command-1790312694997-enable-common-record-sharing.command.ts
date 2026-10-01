@@ -15,7 +15,7 @@ import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
-import { AgentHistoryStorageService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-storage.service';
+import { AgentHistoryUpgradeStorageService } from 'src/database/commands/agent-history/agent-history-upgrade-storage.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
@@ -29,7 +29,7 @@ export class EnableCommonRecordSharingCommand extends ProvisionedWorkspaceComman
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly workspaceCacheService: WorkspaceCacheService,
-    private readonly storage: AgentHistoryStorageService,
+    private readonly storage: AgentHistoryUpgradeStorageService,
     private readonly migrations: WorkspaceMigrationValidateBuildAndRunService,
     private readonly billingSubscriptionService: BillingSubscriptionService,
     @InjectDataSource() private readonly dataSource: DataSource,

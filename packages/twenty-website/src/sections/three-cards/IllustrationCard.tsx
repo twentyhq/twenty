@@ -53,8 +53,6 @@ const CardRule = styled.div`
   width: 100%;
 `;
 
-// The visual stage: the halftone illustration (diamond/flash/lock) renders
-// here when the visual-runtime port lands.
 const CardStage = styled.div`
   background-color: ${color('white')};
   border-radius: ${radius(2)};

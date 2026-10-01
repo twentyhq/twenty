@@ -117,8 +117,7 @@ export class WorkflowRunWorkspaceService {
         enqueuedAt: status === WorkflowRunStatus.ENQUEUED ? new Date() : null,
       });
 
-      // A run is a private record written by the system, so nobody reads it
-      // until it carries its workflow's grants.
+      // A run is a private system-written record, so nobody reads it until it carries its workflow's grants
       await this.workflowRunRecordShareService.syncRuns({
         workspaceId,
         workflowRunIds: [id],
@@ -207,9 +206,8 @@ export class WorkflowRunWorkspaceService {
 
     await this.updateWorkflowRun({ workflowRunId, workspaceId, partialUpdate });
 
-    // A run that ends can no longer consume an answer, so the calls its
-    // conversations wait on are closed. This is housekeeping: the run is over
-    // either way, and a failure here only leaves a call that looks waiting.
+    // An ended run cannot consume answers, so close the calls its conversations wait on.
+    // Best effort: a failure only leaves a call that looks waiting.
     if (
       Object.values(workflowRunToUpdate.state?.stepInfos ?? {}).some(
         (stepInfo) => isDefined(stepInfo?.threadId),
@@ -281,9 +279,7 @@ export class WorkflowRunWorkspaceService {
     await this.updateWorkflowRun({ workflowRunId, workspaceId, partialUpdate });
   }
 
-  // Built from the persisted step info rather than the executor's snapshot:
-  // the attempt that just failed recorded its conversation while it ran, and
-  // only the stored step info carries it into the history entry.
+  // Built from persisted step info: only it carries the failed attempt's conversation
   @WithLock('workflowRunId')
   async moveStepToRetry({
     stepId,
@@ -373,9 +369,7 @@ export class WorkflowRunWorkspaceService {
     });
   }
 
-  // Written from the state read under the lock rather than from the caller's
-  // snapshot, or a step-info write that landed in between, such as an accepted
-  // form submission, would be put back as it was.
+  // Written from the locked state, or a concurrent step-info write (e.g. a form submission) would be reverted
   @WithLock('workflowRunId')
   async markWorkflowRunAsStopping({
     workflowRunId,
@@ -419,13 +413,9 @@ export class WorkflowRunWorkspaceService {
     return true;
   }
 
-  // A step waiting on a person must move on exactly once. This shares the lock
-  // every step-info write takes, so of two concurrent callers the second finds
-  // the step no longer PENDING. A stop is refused too: endWorkflowRun turns a
-  // pending step into FAILED, and a stop still waiting on another branch
-  // leaves the run STOPPING with the step PENDING but nothing left to resume.
-  // An expected conversation must still be the step's: a retry or another loop
-  // iteration replaces it.
+  // Shares the step-info write lock so of two concurrent callers the second finds the step no longer PENDING.
+  // A stop is refused: endWorkflowRun fails a pending step, or leaves it PENDING with nothing to resume.
+  // expectedThreadId must still be the step's: a retry or another loop iteration replaces it.
   @WithLock('workflowRunId')
   async updateStepInfoIfPending({
     stepId,
@@ -436,7 +426,7 @@ export class WorkflowRunWorkspaceService {
   }: {
     stepId: string;
     stepInfo: Partial<WorkflowRunStepInfo>;
-    expectedThreadId?: string | null;
+    expectedThreadId?: string;
     workflowRunId: string;
     workspaceId: string;
   }): Promise<boolean> {
@@ -451,8 +441,8 @@ export class WorkflowRunWorkspaceService {
       workflowRunToUpdate.status !== WorkflowRunStatus.RUNNING ||
       currentStepInfo?.status !== StepStatus.PENDING ||
       isDefined(currentStepInfo.error) ||
-      (expectedThreadId !== undefined &&
-        (currentStepInfo.threadId ?? null) !== expectedThreadId)
+      (isDefined(expectedThreadId) &&
+        currentStepInfo.threadId !== expectedThreadId)
     ) {
       return false;
     }
@@ -474,9 +464,7 @@ export class WorkflowRunWorkspaceService {
     return true;
   }
 
-  // A run conversation names no step: it belongs to the step whose current
-  // execution recorded it, so one replaced by a retry or a later loop
-  // iteration belongs to no step anymore.
+  // A conversation replaced by a retry or a later loop iteration belongs to no step
   async findStepAwaitingAnswer({
     threadId,
     workflowRunId,
@@ -674,8 +662,7 @@ export class WorkflowRunWorkspaceService {
     workflowRunId: string;
     workspaceId: string;
   }): Promise<void> {
-    // An answer holding a conversation's claim decides its calls: it closes
-    // them itself once it finds the run over.
+    // An answer holding a conversation's claim closes its calls itself once it finds the run over
     const waitingThreads = await this.threadRepository.find(workspaceId, {
       where: {
         workflowRunId,

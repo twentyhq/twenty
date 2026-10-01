@@ -30,10 +30,7 @@ export class LogicFunctionToolProvider implements ToolProvider {
     return true;
   }
 
-  // Logic function tools emit `executionRef.kind === 'logic_function'`
-  // descriptors and are dispatched inline by ToolExecutorService. The
-  // static-tool path is unreachable for this provider; this method exists
-  // only to satisfy the interface.
+  // Unreachable: logic function descriptors are dispatched inline by ToolExecutorService.
   async executeStaticTool(
     toolName: string,
     _args: Record<string, unknown>,

@@ -8,7 +8,7 @@ import { getCoreRepository } from 'test/integration/utils/get-core-repository.ut
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { type AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { type AgentChatActorService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-actor.service';
-import { type AgentHistoryStorageService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-storage.service';
+import { type AgentHistoryUpgradeStorageService } from 'src/database/commands/agent-history/agent-history-upgrade-storage.service';
 import { type AttributeChatMessageSendersCommand } from 'src/database/commands/upgrade-version-command/2-43/2-43-workspace-command-1790171503075-attribute-chat-message-senders.command';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
@@ -169,9 +169,10 @@ describe('Persisted chat senders', () => {
     await command.up(args);
     await command.up(args);
     await command.down(args);
-    const storage = getAppProviderByClassName<AgentHistoryStorageService>(
-      'AgentHistoryUpgradeStorageService',
-    );
+    const storage =
+      getAppProviderByClassName<AgentHistoryUpgradeStorageService>(
+        'AgentHistoryUpgradeStorageService',
+      );
     const records = await storage.run(workspaceId, ({ manager, table }) =>
       manager.query(
         `SELECT id, "senderUserWorkspaceId" FROM ${table('agentMessage')} WHERE id = ANY($1::uuid[])`,

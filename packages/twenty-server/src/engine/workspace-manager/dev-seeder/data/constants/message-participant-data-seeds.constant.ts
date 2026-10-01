@@ -204,7 +204,6 @@ const CREATE_PARTICIPANT_DATA = (
     if (PERSON_PARTICIPANT) return PERSON_PARTICIPANT;
   }
 
-  // Try workspace member participant (30% chance, 0.4-0.7 range)
   if (PARTICIPANT_TYPE >= 0.4 && PARTICIPANT_TYPE < 0.7) {
     const WORKSPACE_PARTICIPANT = CREATE_WORKSPACE_MEMBER_PARTICIPANT(
       workspaceMemberIds,
@@ -237,7 +236,6 @@ const CREATE_MESSAGE_PARTICIPANTS = (
       ? MessageParticipantRole.FROM
       : MessageParticipantRole.TO;
 
-    // Random date within the last 3 months
     const NOW = new Date();
     const RANDOM_DAYS_OFFSET = Math.floor(Math.random() * 90);
     const PARTICIPANT_DATE = new Date(

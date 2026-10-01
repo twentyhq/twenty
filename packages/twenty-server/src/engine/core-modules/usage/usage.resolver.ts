@@ -76,8 +76,7 @@ export class UsageResolver {
         'flatApplicationMaps',
       ]);
 
-    // Per application, not workspace-wide: two apps may use the same operation
-    // name, and only the one that declared it should keep it as its own slice.
+    // Per application: two apps may declare the same operation name.
     const declaredOperationsByApplicationId = Object.fromEntries(
       Object.entries(flatApplicationMaps.byId).map(
         ([applicationId, application]) => [

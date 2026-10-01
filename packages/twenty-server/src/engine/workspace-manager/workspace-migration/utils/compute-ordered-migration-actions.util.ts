@@ -74,7 +74,6 @@ export const computeOrderedMigrationActions = (
     ...aggregatedOrchestratorActionsReport.fieldPermission.create,
     ...aggregatedOrchestratorActionsReport.fieldPermission.update,
 
-    // Permission flag definitions and their role assignments.
     ...aggregatedOrchestratorActionsReport.rolePermissionFlag.delete,
     ...aggregatedOrchestratorActionsReport.permissionFlag.delete,
     ...aggregatedOrchestratorActionsReport.permissionFlag.create,
@@ -86,12 +85,8 @@ export const computeOrderedMigrationActions = (
     ...aggregatedOrchestratorActionsReport.skill.create,
     ...aggregatedOrchestratorActionsReport.skill.update,
 
-    // Menu items hold a frontComponentId with onDelete: CASCADE, so one sync that
-    // repoints an item onto a new component while removing the old one would lose
-    // the row if the component went first: the update would then match nothing and
-    // report success. Items the manifest drops go first, then the new components,
-    // then the items repoint, and only then is a component nothing references left
-    // deleted.
+    // Menu items CASCADE on frontComponentId, so a repointed item would be lost if its old component were deleted first:
+    // dropped items go first, then new components, then item repoints, and unreferenced components last
     ...aggregatedOrchestratorActionsReport.commandMenuItem.delete,
     ...aggregatedOrchestratorActionsReport.settingsMenuItem.delete,
 
@@ -151,6 +146,5 @@ export const computeOrderedMigrationActions = (
     ...aggregatedOrchestratorActionsReport.validationRule.delete,
     ...aggregatedOrchestratorActionsReport.validationRule.create,
     ...aggregatedOrchestratorActionsReport.validationRule.update,
-    ///
   ];
 };

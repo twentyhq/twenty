@@ -9,8 +9,7 @@ import { isOrderByDirection } from 'src/engine/api/graphql/graphql-query-runner/
 import { type OrderByClause } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/graphql-query-order.parser';
 import { getEffectiveScanOrder } from 'src/engine/api/utils/get-effective-scan-order.utils';
 
-// Derives ORDER BY from the same scan-order primitive the keyset cursor
-// conditions use, so the SQL scan and the WHERE continuation cannot disagree
+// Same scan-order primitive as the keyset cursor conditions, so ORDER BY and the WHERE continuation cannot disagree
 export const convertOrderByToFindOptionsOrder = (
   direction: OrderByDirection,
   isForwardPagination = true,

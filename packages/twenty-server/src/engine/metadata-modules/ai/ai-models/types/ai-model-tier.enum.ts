@@ -2,8 +2,7 @@ import { registerEnumType } from '@nestjs/graphql';
 
 import { type AiModelTier as SharedAiModelTier } from 'twenty-shared/ai';
 
-// GraphQL needs a runtime enum. Keys equal values so the GraphQL names are the
-// twenty-shared tier literals and the client can use one type on both sides.
+// GraphQL needs a runtime enum; keys equal values so GraphQL names match the twenty-shared tier literals
 export enum AiModelTier {
   extraFast = 'extraFast',
   fast = 'fast',
@@ -14,7 +13,6 @@ export enum AiModelTier {
 
 registerEnumType(AiModelTier, { name: 'AiModelTier' });
 
-// The enum object itself must satisfy the shared record, so a tier added on
-// one side without the other fails to compile.
+// fails to compile when a tier is added on only one side
 const _assertTierValuesMatchShared: Record<SharedAiModelTier, AiModelTier> =
   AiModelTier;
