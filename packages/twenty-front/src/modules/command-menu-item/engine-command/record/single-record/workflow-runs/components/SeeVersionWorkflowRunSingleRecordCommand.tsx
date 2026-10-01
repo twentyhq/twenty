@@ -2,7 +2,7 @@ import { useIsWorkflowCoreEnabled } from '@/workflow/hooks/useIsWorkflowCoreEnab
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
 import { HeadlessNavigateEngineCommand } from '@/command-menu-item/engine-command/components/HeadlessNavigateEngineCommand';
 import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
-import { useFindSelectedWorkflowRunCoreWorkflowIds } from '@/command-menu-item/engine-command/record/single-record/workflow-runs/hooks/useFindSelectedWorkflowRunCoreWorkflowIds';
+import { useFindSelectedWorkflowRunCoreId } from '@/command-menu-item/engine-command/record/single-record/workflow-runs/hooks/useFindSelectedWorkflowRunCoreId';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useOpenCoreWorkflowVersionSidePanel } from '@/object-core/workflows/versions/hooks/useOpenCoreWorkflowVersionSidePanel';
 import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
@@ -16,15 +16,15 @@ export const SeeVersionWorkflowRunSingleRecordCommand = () => {
   const apolloCoreClient = useApolloCoreClient();
   const { openCoreWorkflowVersionSidePanel } =
     useOpenCoreWorkflowVersionSidePanel();
-  const { findSelectedWorkflowRunCoreWorkflowIds } =
-    useFindSelectedWorkflowRunCoreWorkflowIds();
+  const { findSelectedWorkflowRunCoreId } = useFindSelectedWorkflowRunCoreId(
+    'coreWorkflowVersionId',
+  );
 
   if (isCore) {
     return (
       <HeadlessEngineCommandWrapperEffect
         execute={async () => {
-          const { coreWorkflowVersionId } =
-            await findSelectedWorkflowRunCoreWorkflowIds();
+          const coreWorkflowVersionId = await findSelectedWorkflowRunCoreId();
 
           if (!isDefined(coreWorkflowVersionId)) {
             return;

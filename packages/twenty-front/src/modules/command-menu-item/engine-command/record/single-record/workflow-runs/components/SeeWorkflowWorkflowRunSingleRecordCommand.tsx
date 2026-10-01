@@ -2,7 +2,7 @@ import { useIsWorkflowCoreEnabled } from '@/workflow/hooks/useIsWorkflowCoreEnab
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
 import { HeadlessNavigateEngineCommand } from '@/command-menu-item/engine-command/components/HeadlessNavigateEngineCommand';
 import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
-import { useFindSelectedWorkflowRunCoreWorkflowIds } from '@/command-menu-item/engine-command/record/single-record/workflow-runs/hooks/useFindSelectedWorkflowRunCoreWorkflowIds';
+import { useFindSelectedWorkflowRunCoreId } from '@/command-menu-item/engine-command/record/single-record/workflow-runs/hooks/useFindSelectedWorkflowRunCoreId';
 import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
@@ -12,15 +12,14 @@ export const SeeWorkflowWorkflowRunSingleRecordCommand = () => {
   const { selectedRecords } = useHeadlessCommandContextApi();
   const selectedRecord = selectedRecords[0];
   const navigateApp = useNavigateApp();
-  const { findSelectedWorkflowRunCoreWorkflowIds } =
-    useFindSelectedWorkflowRunCoreWorkflowIds();
+  const { findSelectedWorkflowRunCoreId } =
+    useFindSelectedWorkflowRunCoreId('coreWorkflowId');
 
   if (isCore) {
     return (
       <HeadlessEngineCommandWrapperEffect
         execute={async () => {
-          const { coreWorkflowId } =
-            await findSelectedWorkflowRunCoreWorkflowIds();
+          const coreWorkflowId = await findSelectedWorkflowRunCoreId();
 
           if (!isDefined(coreWorkflowId)) {
             return;
