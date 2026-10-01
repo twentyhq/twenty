@@ -2,7 +2,12 @@
 
 import { Injectable } from '@nestjs/common';
 
+import {
+  RecordSharePrincipalType,
+  RecordShareRowCause,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { In } from 'typeorm';
 
 import { RecordShareStorageService } from 'src/engine/core-modules/record-share/services/record-share-storage.service';
 import { type UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -30,24 +35,26 @@ export class RecordShareOwnershipTransferService {
     actingUserWorkspaceId?: string;
   }): Promise<void> {
     const { workspaceId } = removedUserWorkspace;
-    const custodianUserWorkspace =
-      await this.memberCustodianService.resolveCustodianUserWorkspace({
-        removedUserWorkspace,
-        actingUserWorkspaceId,
-      });
-
-    if (!isDefined(custodianUserWorkspace)) {
-      return;
-    }
-
-    const { flatWorkspaceMemberMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatWorkspaceMemberMaps',
-      ]);
-    const toWorkspaceMemberId =
-      flatWorkspaceMemberMaps.idByUserId[custodianUserWorkspace.userId];
+    const toWorkspaceMemberId = await this.resolveCustodianWorkspaceMemberId({
+      removedUserWorkspace,
+      actingUserWorkspaceId,
+    });
 
     if (!isDefined(toWorkspaceMemberId)) {
+      await this.recordShareStorageService.deleteMatching({
+        workspaceId,
+        criteria: [
+          {
+            principalType: RecordSharePrincipalType.WORKSPACE_MEMBER,
+            principalId: removedWorkspaceMemberId,
+            rowCause: In([
+              RecordShareRowCause.OWNER,
+              RecordShareRowCause.MANUAL,
+            ]),
+          },
+        ],
+      });
+
       return;
     }
 
@@ -56,5 +63,31 @@ export class RecordShareOwnershipTransferService {
       fromWorkspaceMemberId: removedWorkspaceMemberId,
       toWorkspaceMemberId,
     });
+  }
+
+  private async resolveCustodianWorkspaceMemberId({
+    removedUserWorkspace,
+    actingUserWorkspaceId,
+  }: {
+    removedUserWorkspace: UserWorkspaceEntity;
+    actingUserWorkspaceId?: string;
+  }): Promise<string | undefined> {
+    const custodianUserWorkspace =
+      await this.memberCustodianService.resolveCustodianUserWorkspace({
+        removedUserWorkspace,
+        actingUserWorkspaceId,
+      });
+
+    if (!isDefined(custodianUserWorkspace)) {
+      return undefined;
+    }
+
+    const { flatWorkspaceMemberMaps } =
+      await this.workspaceCacheService.getOrRecompute(
+        removedUserWorkspace.workspaceId,
+        ['flatWorkspaceMemberMaps'],
+      );
+
+    return flatWorkspaceMemberMaps.idByUserId[custodianUserWorkspace.userId];
   }
 }

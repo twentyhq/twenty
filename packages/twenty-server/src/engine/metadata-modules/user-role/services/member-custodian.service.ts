@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
@@ -17,8 +19,6 @@ export class MemberCustodianService {
     private readonly userRoleService: UserRoleService,
   ) {}
 
-  // Whoever removes a member takes over what they owned, falling back to the
-  // oldest admin, then to the oldest remaining member
   async resolveCustodianUserWorkspace({
     removedUserWorkspace,
     actingUserWorkspaceId,

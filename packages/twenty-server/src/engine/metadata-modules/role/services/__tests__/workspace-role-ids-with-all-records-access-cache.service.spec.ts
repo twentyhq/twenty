@@ -14,11 +14,21 @@ const compute = () =>
         { id: 'auditor', canUpdateAllSettings: false },
         { id: 'member', canUpdateAllSettings: false },
         { id: 'ai-user', canUpdateAllSettings: false },
+        { id: 'legacy', canUpdateAllSettings: false },
       ],
       rolePermissionFlag: {
         byRoleId: new Map([
           ['auditor', [{ permissionFlagId: 'all-records' }]],
           ['ai-user', [{ permissionFlagId: 'ai' }]],
+          [
+            'legacy',
+            [
+              {
+                permissionFlagId: null,
+                flag: PermissionFlagType.ACCESS_ALL_RECORDS,
+              },
+            ],
+          ],
         ]),
       },
       permissionFlag: [
@@ -37,6 +47,6 @@ const compute = () =>
 
 describe('WorkspaceRoleIdsWithAllRecordsAccessCacheService', () => {
   it('lists roles that administer every setting or hold the permission', () => {
-    expect(compute()).toEqual(['admin', 'auditor']);
+    expect(compute()).toEqual(['admin', 'auditor', 'legacy']);
   });
 });

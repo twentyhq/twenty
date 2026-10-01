@@ -4,10 +4,11 @@ import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/ge
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 import { Injectable } from '@nestjs/common';
 
-import groupBy from 'lodash.groupby';
+import chunk from 'lodash.chunk';
 
+import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
-import { In, type EntityManager, type FindOptionsWhere } from 'typeorm';
+import { In, Not, type EntityManager, type FindOptionsWhere } from 'typeorm';
 import {
   RecordShareAccessLevel,
   RecordSharePrincipalType,
@@ -157,8 +158,6 @@ export class RecordShareStorageService {
     );
   }
 
-  // Hands the grants a member held over to another member: full access moves
-  // to them, any lower grant goes with the member
   async transferMemberGrants({
     workspaceId,
     fromWorkspaceMemberId,
@@ -191,11 +190,12 @@ export class RecordShareStorageService {
                 },
               });
 
-              for (const [objectMetadataId, grants] of Object.entries(
-                groupBy(fullGrants, (grant) => grant.objectMetadataId),
+              for (const fullGrantsChunk of chunk(
+                fullGrants,
+                QUERY_MAX_RECORDS,
               )) {
                 await repository.insert(
-                  grants.map((grant) => ({
+                  fullGrantsChunk.map((grant) => ({
                     objectMetadataId: grant.objectMetadataId,
                     recordId: grant.recordId,
                     principalType: grant.principalType,
@@ -206,14 +206,34 @@ export class RecordShareStorageService {
                   })),
                   { onConflictDoNothing: true },
                 );
-                await repository.update(
-                  {
-                    objectMetadataId,
-                    recordId: In(grants.map((grant) => grant.recordId)),
+              }
+
+              // The insert skips the rows the custodian already holds on
+              // these records, which are raised to full access instead
+              const fullGrantKeys = new Set(
+                fullGrants.map(buildRecordShareRowKey),
+              );
+              const custodianGrantIdsToRaise = (
+                await repository.find({
+                  where: {
                     principalType: RecordSharePrincipalType.WORKSPACE_MEMBER,
                     principalId: toWorkspaceMemberId,
                     rowCause: transferableRowCauses,
+                    accessLevel: Not(RecordShareAccessLevel.FULL),
                   },
+                })
+              )
+                .filter((grant) =>
+                  fullGrantKeys.has(buildRecordShareRowKey(grant)),
+                )
+                .map((grant) => grant.id);
+
+              for (const grantIdsChunk of chunk(
+                custodianGrantIdsToRaise,
+                QUERY_MAX_RECORDS,
+              )) {
+                await repository.update(
+                  { id: In(grantIdsChunk) },
                   { accessLevel: RecordShareAccessLevel.FULL },
                 );
               }
@@ -290,3 +310,8 @@ export class RecordShareStorageService {
     );
   }
 }
+
+const buildRecordShareRowKey = (
+  recordShare: Pick<RecordShare, 'objectMetadataId' | 'recordId' | 'rowCause'>,
+) =>
+  `${recordShare.objectMetadataId}:${recordShare.recordId}:${recordShare.rowCause}`;

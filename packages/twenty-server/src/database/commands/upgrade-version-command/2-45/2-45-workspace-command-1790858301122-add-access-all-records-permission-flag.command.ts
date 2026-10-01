@@ -113,7 +113,7 @@ export class AddAccessAllRecordsPermissionFlagCommand extends ProvisionedWorkspa
         universalIdentifier: ACCESS_ALL_RECORDS_UNIVERSAL_IDENTIFIER,
       });
 
-    if (!isDefined(permissionFlagToDelete) || options.dryRun) {
+    if (!isDefined(permissionFlagToDelete)) {
       return;
     }
 
@@ -123,6 +123,14 @@ export class AddAccessAllRecordsPermissionFlagCommand extends ProvisionedWorkspa
       (rolePermissionFlag): rolePermissionFlag is FlatRolePermissionFlag =>
         rolePermissionFlag?.permissionFlagId === permissionFlagToDelete.id,
     );
+
+    this.logger.log(
+      `${options.dryRun ? '[DRY RUN] ' : ''}Workspace ${workspaceId}: removing the access all records permission flag from ${rolePermissionFlagsToDelete.length} role(s)`,
+    );
+
+    if (options.dryRun) {
+      return;
+    }
 
     await this.runMigration({
       workspaceId,
