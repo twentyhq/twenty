@@ -78,6 +78,15 @@ When adding AI behavior:
 - Avoid exposing raw IDs, timestamps, or nested API output to end users when a readable answer is possible.
 - A `defineAgent` `roleUniversalIdentifier` must reference a role the app defines, and the application role (`defineApplicationRole` or `defaultRoleUniversalIdentifier`) must cover every permission that agent role grants. The build and `yarn twenty apply` fail otherwise, listing the excess grants.
 
+## Inbox Messages
+
+`sendInboxMessage` from `twenty-sdk/logic-function` opens a chat for a workspace member whose first message comes from the app, optionally ending on `questions` (1 to 4, each with 2 to 4 options) the member answers in the chat.
+
+- `idempotencyKey` identifies the conversation per app and member. Sending again with the same key returns the same `threadId` and writes nothing, so retries and concurrent runs never duplicate it. Use one key per conversation you mean to start, and let retries reuse it.
+- A conversation the member deleted is not recreated.
+- The app's default role needs `SystemPermissionFlag.AI`, and the member needs the AI permission.
+- It always uses the app's access and ignores `runAs`.
+
 ## Connection Providers
 
 For third-party connections:
