@@ -72,6 +72,12 @@ export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
+    await expect(
+      await canvas.findByRole('progressbar', {
+        name: /used by Production key$/,
+      }),
+    ).toHaveAttribute('aria-valuenow', '98');
+
     await userEvent.hover(await canvas.findByText('Deactivated'));
 
     const tooltip = await within(canvasElement.ownerDocument.body).findByRole(

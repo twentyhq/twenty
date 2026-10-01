@@ -26,6 +26,16 @@ const StyledSegment = styled.div`
   min-width: 0;
   padding-inline-start: ${themeCssVariables.spacing[6]};
   padding-top: ${themeCssVariables.spacing[6]};
+
+  &:first-child {
+    border-end-start-radius: ${themeCssVariables.border.radius.md};
+    border-start-start-radius: ${themeCssVariables.border.radius.md};
+  }
+
+  &:last-child {
+    border-end-end-radius: ${themeCssVariables.border.radius.md};
+    border-start-end-radius: ${themeCssVariables.border.radius.md};
+  }
 `;
 
 const StyledContent = styled.div`

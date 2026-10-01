@@ -6,6 +6,8 @@ import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ComputeApplicationManifestAllUniversalFlatEntityMapsService } from 'src/engine/core-modules/application/application-manifest/services/compute-application-manifest-all-universal-flat-entity-maps.service';
+import { addWorkflowManifestsToFlatEntityMapsOrThrow } from 'src/engine/core-modules/application/application-manifest/utils/add-workflow-manifests-to-flat-entity-maps-or-throw.util';
+import { preallocateWorkflowReferenceIds } from 'src/engine/core-modules/application/application-manifest/utils/preallocate-workflow-reference-ids.util';
 import { buildAllFlatEntityOperationRecordByMetadataNameFromFromTo } from 'src/engine/core-modules/application/application-manifest/utils/build-all-flat-entity-operation-record-by-metadata-name-from-from-to.util';
 import { buildFromToAllUniversalFlatEntityMaps } from 'src/engine/core-modules/application/application-manifest/utils/build-from-to-all-universal-flat-entity-maps.util';
 import { getApplicationSubAllFlatEntityMaps } from 'src/engine/core-modules/application/application-manifest/utils/get-application-sub-all-flat-entity-maps.util';
@@ -214,6 +216,27 @@ export class ApplicationManifestMigrationService {
         workspaceId,
       });
 
+    const idByUniversalIdentifierByMetadataName =
+      (manifest.workflows ?? []).length > 0
+        ? preallocateWorkflowReferenceIds({
+            fromAllFlatEntityMaps,
+            toAllUniversalFlatEntityMaps,
+          })
+        : {};
+
+    addWorkflowManifestsToFlatEntityMapsOrThrow({
+      workflows: manifest.workflows ?? [],
+      ownerFlatApplication,
+      fromAllFlatEntityMaps,
+      toAllUniversalFlatEntityMaps,
+      existingAllFlatEntityMaps,
+      idByUniversalIdentifierByMetadataName,
+      isApplicationWorkflowsEnabled:
+        featureFlagsMap[FeatureFlagKey.IS_APPLICATION_WORKFLOWS_ENABLED],
+      inferDeletionFromMissingEntities,
+      now,
+    });
+
     const allFlatEntityOperationRecordByMetadataName =
       buildAllFlatEntityOperationRecordByMetadataNameFromFromTo({
         fromAllFlatEntityMaps,
@@ -237,6 +260,7 @@ export class ApplicationManifestMigrationService {
           isSystemBuild: false,
           applicationUniversalIdentifier:
             ownerFlatApplication.universalIdentifier,
+          idByUniversalIdentifierByMetadataName,
           dryRun,
         },
       );
