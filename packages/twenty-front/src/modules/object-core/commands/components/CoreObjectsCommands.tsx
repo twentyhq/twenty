@@ -10,7 +10,7 @@ import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 
 type CoreObjectsCommandsProps = {
-  section: 'CURRENT_VIEW' | 'SELECTION';
+  section: 'THIS_OBJECT' | 'SELECTION';
 };
 
 export const CoreObjectsCommands = ({ section }: CoreObjectsCommandsProps) => {
@@ -35,20 +35,19 @@ export const CoreObjectsCommands = ({ section }: CoreObjectsCommandsProps) => {
 
   return (
     <>
-      {section === 'CURRENT_VIEW' &&
-        shouldDisplayCoreWorkflowFiltersCommand && (
-          <SelectableListItem
-            itemId={CORE_WORKFLOW_FILTERS_COMMAND_ID}
-            onEnter={openCoreWorkflowFiltersSidePanel}
-          >
-            <CommandMenuItem
-              id={CORE_WORKFLOW_FILTERS_COMMAND_ID}
-              label={coreWorkflowFiltersCommandLabel}
-              Icon={IconFilter}
-              onClick={openCoreWorkflowFiltersSidePanel}
-            />
-          </SelectableListItem>
-        )}
+      {section === 'THIS_OBJECT' && shouldDisplayCoreWorkflowFiltersCommand && (
+        <SelectableListItem
+          itemId={CORE_WORKFLOW_FILTERS_COMMAND_ID}
+          onEnter={openCoreWorkflowFiltersSidePanel}
+        >
+          <CommandMenuItem
+            id={CORE_WORKFLOW_FILTERS_COMMAND_ID}
+            label={coreWorkflowFiltersCommandLabel}
+            Icon={IconFilter}
+            onClick={openCoreWorkflowFiltersSidePanel}
+          />
+        </SelectableListItem>
+      )}
       {section === 'SELECTION' && shouldDisplayCoreWorkflowsDeleteCommand && (
         <SelectableListItem
           itemId={CORE_WORKFLOWS_DELETE_COMMAND_ID}
