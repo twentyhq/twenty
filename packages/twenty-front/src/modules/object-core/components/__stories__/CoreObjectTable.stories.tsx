@@ -54,6 +54,7 @@ export const ClearsSelectionOnSort: Story = {
 
     await userEvent.click(await canvas.findByText('Name'));
 
+    await expect(onToggleAllRows).toHaveBeenCalledTimes(1);
     await expect(onToggleAllRows).toHaveBeenCalledWith([]);
   },
 };
