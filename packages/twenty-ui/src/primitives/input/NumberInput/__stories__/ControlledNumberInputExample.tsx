@@ -12,7 +12,10 @@ export const ControlledNumberInputExample = (props: NumberInputProps) => {
       value={value}
       onValueChange={(nextValue, eventDetails) => {
         props.onValueChange?.(nextValue, eventDetails);
-        setValue(nextValue);
+
+        if (!eventDetails.isCanceled) {
+          setValue(nextValue);
+        }
       }}
     />
   );

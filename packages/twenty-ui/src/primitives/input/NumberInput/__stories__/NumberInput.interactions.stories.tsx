@@ -4,6 +4,7 @@ import { expect, fn, userEvent, within } from 'storybook/test';
 import { A11Y_DEFER_COLOR_CONTRAST, ComponentDecorator } from '@ui/testing';
 
 import { NumberInput } from '../NumberInput';
+import { type NumberInputProps } from '../types/NumberInputProps';
 import { ControlledNumberInputExample } from './ControlledNumberInputExample';
 
 const meta: Meta<typeof NumberInput> = {
@@ -271,6 +272,44 @@ export const OutOfRangeStepping: Story = {
     await expect(args.onValueChange).toHaveBeenLastCalledWith(
       30,
       expect.anything(),
+    );
+  },
+};
+
+export const CanceledChange: Story = {
+  args: {
+    onValueChange: fn<NonNullable<NumberInputProps['onValueChange']>>(
+      (nextValue, eventDetails) => {
+        if (nextValue === 2) {
+          eventDetails.cancel();
+        }
+      },
+    ),
+  },
+  render: (args) => <ControlledNumberInputExample {...args} />,
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const input = canvas.getByRole('textbox', { name: 'Quantity' });
+
+    await userEvent.click(
+      canvas.getByRole('button', { name: 'Increase value' }),
+    );
+    await expect(input).toHaveValue('1');
+    await expect(args.onValueChange).toHaveBeenCalledTimes(1);
+    await expect(args.onValueChange).toHaveBeenLastCalledWith(
+      2,
+      expect.objectContaining({ isCanceled: true }),
+    );
+    await userEvent.click(input);
+    await userEvent.keyboard('{ArrowUp}');
+    await expect(input).toHaveValue('1');
+    await expect(args.onValueChange).toHaveBeenCalledTimes(2);
+    await userEvent.keyboard('{ArrowDown}');
+    await expect(input).toHaveValue('0');
+    await expect(args.onValueChange).toHaveBeenCalledTimes(3);
+    await expect(args.onValueChange).toHaveBeenLastCalledWith(
+      0,
+      expect.objectContaining({ isCanceled: false }),
     );
   },
 };
