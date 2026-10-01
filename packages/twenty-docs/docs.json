@@ -574,7 +574,6 @@
                           "ui/primitives/input/radio",
                           "ui/primitives/input/radio-group",
                           "ui/primitives/input/select",
-                          "ui/primitives/input/autocomplete",
                           "ui/primitives/input/slider",
                           "ui/primitives/input/switch",
                           "ui/primitives/input/segmented-control"
