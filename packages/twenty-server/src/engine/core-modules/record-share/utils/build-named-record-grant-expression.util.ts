@@ -22,7 +22,7 @@ export const buildNamedRecordGrantExpression = (
   }
 
   return {
-    kind: 'recordShared',
+    kind: 'namedGrant',
     tableAlias,
     objectMetadataId: flatObjectMetadata.id,
     principalIds,

@@ -319,6 +319,29 @@ describe('Record-level sharing on an object open by default', () => {
     });
   });
 
+  it('should keep a full access holder who restricts the record in charge of it', async () => {
+    await setShare({
+      principal: EVERYONE,
+      enabled: true,
+      accessLevel: RecordShareAccessLevel.FULL,
+    });
+
+    const restricted = await setShare({
+      principal: EVERYONE,
+      enabled: false,
+      token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    });
+
+    expect(restricted.body.errors).toBeUndefined();
+    expect(await findRecordIds(APPLE_JONY_MEMBER_ACCESS_TOKEN)).toEqual([
+      RECORD_ID,
+    ]);
+    expect(
+      (await readSharing(APPLE_JONY_MEMBER_ACCESS_TOKEN)).body.data
+        .recordSharing.viewerAccessLevel,
+    ).toBe(RecordShareAccessLevel.FULL);
+  });
+
   it('should refuse NONE as a granted access level', async () => {
     const response = await setShare({
       principal: JONY,

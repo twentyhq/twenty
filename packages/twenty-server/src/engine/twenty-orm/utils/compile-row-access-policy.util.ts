@@ -1,6 +1,7 @@
 import { assertUnreachable } from 'twenty-shared/utils';
 
 import { buildInheritedReadabilityCondition } from 'src/engine/core-modules/record-share/utils/build-inherited-readability-condition.util';
+import { buildRecordIdsSharedWithPrincipalsCondition } from 'src/engine/core-modules/record-share/utils/build-record-ids-shared-with-principals-condition.util';
 import { buildRecordShareCondition } from 'src/engine/core-modules/record-share/utils/build-record-share-condition.util';
 import { buildRecordShareExceptionCondition } from 'src/engine/core-modules/record-share/utils/build-record-share-exception-condition.util';
 import {
@@ -61,6 +62,11 @@ export const compileRowAccessExpression = (
     }
     case 'recordShared':
       return buildRecordShareCondition({
+        ...expression,
+        recordShareTableExpression: environment.recordShareTableExpression,
+      });
+    case 'namedGrant':
+      return buildRecordIdsSharedWithPrincipalsCondition({
         ...expression,
         recordShareTableExpression: environment.recordShareTableExpression,
       });

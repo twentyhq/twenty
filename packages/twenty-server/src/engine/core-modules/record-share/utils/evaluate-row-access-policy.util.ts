@@ -130,7 +130,8 @@ const evaluateRowAccessExpression = async <TRecord extends RowAccessRecord>({
 
       return new Set(matchingRecordIds);
     }
-    case 'recordShared': {
+    case 'recordShared':
+    case 'namedGrant': {
       const sharedRecordIds = resolveRecordIdsSharedWithPrincipals({
         recordShares: await context.fetchRecordShares(
           expression.objectMetadataId,
