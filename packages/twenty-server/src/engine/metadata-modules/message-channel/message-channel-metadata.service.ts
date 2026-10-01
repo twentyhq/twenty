@@ -245,45 +245,24 @@ export class MessageChannelMetadataService {
     workspaceId: string;
     data: Partial<MessageChannelEntity>;
   }): Promise<MessageChannelDTO> {
-    if (!isDefined(data.visibility)) {
-      await this.repository.update(
-        { id, workspaceId },
-        data as Record<string, unknown>,
-      );
+    const { visibility, ...otherFields } = data;
 
-      return this.repository.findOneOrFail({ where: { id, workspaceId } });
+    // Written first so that a failed grant sync leaves the channel untouched
+    if (isDefined(visibility)) {
+      await this.channelRecordShareService.changeChannelVisibility({
+        workspaceId,
+        source: MESSAGE_THREAD_CHANNEL_RECORD_SHARE_SOURCE,
+        channelId: id,
+        visibility,
+      });
     }
 
-    const visibility = data.visibility;
-
-    await this.channelRecordShareService.changeChannelVisibility({
-      workspaceId,
-      source: MESSAGE_THREAD_CHANNEL_RECORD_SHARE_SOURCE,
-      channelId: id,
-      applyVisibilityChange: async () => {
-        const previousMessageChannel = await this.repository.findOne({
-          where: { id, workspaceId },
-        });
-
-        await this.repository.update(
-          { id, workspaceId },
-          data as Record<string, unknown>,
-        );
-
-        if (
-          !isDefined(previousMessageChannel) ||
-          previousMessageChannel.visibility === visibility
-        ) {
-          return undefined;
-        }
-
-        return () =>
-          this.repository.update(
-            { id, workspaceId },
-            { visibility: previousMessageChannel.visibility },
-          );
-      },
-    });
+    if (Object.keys(otherFields).length > 0) {
+      await this.repository.update(
+        { id, workspaceId },
+        otherFields as Record<string, unknown>,
+      );
+    }
 
     return this.repository.findOneOrFail({ where: { id, workspaceId } });
   }
