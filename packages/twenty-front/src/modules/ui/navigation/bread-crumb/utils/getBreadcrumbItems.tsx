@@ -5,9 +5,10 @@ import { type BreadcrumbItem } from 'twenty-ui/primitives/navigation';
 
 export const getBreadcrumbItems = (
   links: BreadcrumbProps['links'],
-): BreadcrumbItem[] =>
-  links.map(({ children, href }) => ({
+): BreadcrumbItem[] => {
+  return links.map(({ children, href }) => ({
     children,
     href: isNonEmptyString(href) ? href : undefined,
     render: isNonEmptyString(href) ? <Link to={href} /> : undefined,
   }));
+};
