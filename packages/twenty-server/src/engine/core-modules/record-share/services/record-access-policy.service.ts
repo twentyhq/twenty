@@ -3,7 +3,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { type ObjectRecordEvent } from 'twenty-shared/database-events';
-import { type ObjectRecord } from 'twenty-shared/types';
+import { FeatureFlagKey, type ObjectRecord } from 'twenty-shared/types';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import { isNonEmptyString } from '@sniptt/guards';
 import { In, MoreThanOrEqual } from 'typeorm';
@@ -18,7 +18,9 @@ import {
   type EventRecordSnapshot,
   resolveEventRecordSnapshots,
 } from 'src/engine/core-modules/record-share/utils/resolve-event-record-snapshots.util';
+import { resolveRecordIdsRestrictedForPrincipals } from 'src/engine/core-modules/record-share/utils/resolve-record-ids-restricted-for-principals.util';
 import { resolveRecordIdsSharedWithPrincipals } from 'src/engine/core-modules/record-share/utils/resolve-record-ids-shared-with-principals.util';
+import { isRecordShareExceptionObject } from 'src/engine/core-modules/record-share/utils/is-record-share-exception-object.util';
 import { resolveGatedReadability } from 'src/engine/core-modules/record-share/utils/resolve-gated-readability.util';
 import { resolveRecordShareGateKind } from 'src/engine/core-modules/record-share/utils/resolve-record-share-gate-kind.util';
 import { MAX_INHERITED_READABILITY_DEPTH } from 'src/engine/core-modules/record-share/constants/max-inherited-readability-depth.constant';
@@ -174,7 +176,12 @@ export class RecordAccessPolicyService {
 
     switch (gateKind) {
       case 'open':
-        return new Set(snapshots.map((snapshot) => snapshot.id));
+        return (await this.areRecordShareExceptionsEnforced(evaluation))
+          ? this.resolveSnapshotIdsNotRestrictedForSubject(
+              evaluation,
+              fetchRecordShares,
+            )
+          : new Set(snapshots.map((snapshot) => snapshot.id));
       case 'deny':
         return new Set();
       case 'private':
@@ -195,6 +202,45 @@ export class RecordAccessPolicyService {
       default:
         return assertUnreachable(gateKind);
     }
+  }
+
+  private async areRecordShareExceptionsEnforced({
+    workspaceId,
+    objectMetadata,
+  }: SnapshotEvaluation): Promise<boolean> {
+    if (!isRecordShareExceptionObject(objectMetadata)) {
+      return false;
+    }
+
+    const { featureFlagsMap } = await this.workspaceCacheService.getOrRecompute(
+      workspaceId,
+      ['featureFlagsMap'],
+    );
+
+    return (
+      featureFlagsMap[FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED] ?? false
+    );
+  }
+
+  private async resolveSnapshotIdsNotRestrictedForSubject(
+    { snapshots, subject }: SnapshotEvaluation,
+    fetchRecordShares: FetchRecordShares,
+  ): Promise<Set<string>> {
+    const snapshotIds = snapshots.map((snapshot) => snapshot.id);
+
+    if (!isDefined(subject.principalIds) || snapshotIds.length === 0) {
+      return new Set(snapshotIds);
+    }
+
+    const restrictedRecordIds = resolveRecordIdsRestrictedForPrincipals({
+      recordShares: await fetchRecordShares(),
+      principalIds: subject.principalIds,
+      accessLevels: resolveRequiredRecordShareAccessLevels('select'),
+    });
+
+    return new Set(
+      snapshotIds.filter((snapshotId) => !restrictedRecordIds.has(snapshotId)),
+    );
   }
 
   private async resolveSnapshotIdsSharedWithSubject(

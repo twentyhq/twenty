@@ -66,6 +66,15 @@ export class RecordSharingDTO {
   @Field(() => Boolean)
   hasInheritedAccess: boolean;
 
+  @Field(() => Boolean)
+  isOpenByDefault: boolean;
+
+  @Field(() => RecordShareAccessLevel, { nullable: true })
+  generalAccessLevel: RecordShareAccessLevel | null;
+
+  @Field(() => Boolean)
+  isGeneralAccessDefault: boolean;
+
   @Field(() => [RecordSharingRoleDTO])
   roles: RecordSharingRoleDTO[];
 
