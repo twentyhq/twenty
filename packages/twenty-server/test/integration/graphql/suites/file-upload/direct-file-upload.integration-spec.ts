@@ -198,7 +198,6 @@ describe('direct file upload (createFileUpload / completeFileUpload)', () => {
       `/file/${FileFolder.FilesField}/${uploadTarget.fileId}?token=`,
     );
 
-    // The confirmed file is downloadable through the regular file endpoint
     const { pathname, search } = new URL(completedFile.url);
     const downloadResponse = await request(global.app.getHttpServer()).get(
       `${pathname}${search}`,

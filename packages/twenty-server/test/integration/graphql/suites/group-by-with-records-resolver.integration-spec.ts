@@ -70,7 +70,6 @@ describe('basic group-by with records', () => {
       }),
     );
 
-    // Create test opportunities with different stages and dates
     await makeGraphqlApiRequest(
       createOneOperationFactory({
         objectMetadataSingularName: 'opportunity',

@@ -74,7 +74,6 @@ export class EnterpriseResolver {
 
   @Query(() => String, { nullable: true })
   async enterprisePortalSession(
-    // for existing subscriptions
     @Args('returnUrlPath', { nullable: true }) returnUrlPath?: string,
   ): Promise<string | null> {
     return this.enterprisePlanService.getPortalUrl(returnUrlPath ?? undefined);
@@ -82,7 +81,6 @@ export class EnterpriseResolver {
 
   @Query(() => String, { nullable: true })
   async enterpriseCheckoutSession(
-    // for new subscriptions
     @Args('billingInterval', { nullable: true }) billingInterval?: string,
   ): Promise<string | null> {
     const interval = billingInterval === 'yearly' ? 'yearly' : 'monthly';

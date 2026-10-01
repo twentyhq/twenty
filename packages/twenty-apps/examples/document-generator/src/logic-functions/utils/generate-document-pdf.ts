@@ -7,9 +7,8 @@ import {
   StandardFonts,
 } from 'pdf-lib';
 
-// Renders a document (title + Markdown body) into a marketable, multi-page A4
-// PDF using pdf-lib: a coloured header band, real typography, bold/italic runs,
-// headings and lists.
+// Renders Markdown content into a multi-page A4 PDF using pdf-lib, with
+// bold/italic runs, headings and lists.
 
 const PAGE_WIDTH = 595.28; // A4
 const PAGE_HEIGHT = 841.89;
@@ -58,7 +57,6 @@ const pickFont = (fonts: Fonts, run: Run): PDFFont => {
   return fonts.regular;
 };
 
-// Flatten marked inline tokens into styled runs.
 const toRuns = (
   tokens: Token[] | undefined,
   style: Omit<Run, 'text'>,
@@ -316,7 +314,6 @@ export const generateDocumentPdf = async (
 
   const ctx: Ctx = { pdf, page: pdf.addPage([PAGE_WIDTH, PAGE_HEIGHT]), y: 0, fonts };
 
-  // Render the template content only — no title header or footer.
   ctx.y = PAGE_HEIGHT - MARGIN;
 
   // Match the HTML renderer (breaks: true) so a single newline in a template

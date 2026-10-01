@@ -69,7 +69,6 @@ test('Create and update record', async ({ page }) => {
   await page.goto('/objects/people');
   await page.getByRole('button', { name: 'Create Person' }).click();
 
-  // Generate a random email for testing
   const randomEmail = `testuser_${Math.random().toString(36).substring(2, 10)}@example.com`;
 
   // Fill the record creation form in the side panel
@@ -104,7 +103,6 @@ test('Create and update record', async ({ page }) => {
     timeout: 15_000,
   });
 
-  // Fill intro
   const introInput = recordFieldList.getByText('Intro', { exact: true }).nth(1);
   await expect(introInput).toBeVisible();
   await introInput.click({ force: true });
@@ -112,7 +110,6 @@ test('Create and update record', async ({ page }) => {
   await page.getByPlaceholder('Intro').fill('This is an intro');
   await page.getByPlaceholder('Intro').press('Enter');
 
-  // Fill URL
   await recordFieldList.getByText('Linkedin', { exact: true }).first().click();
   const urlInput = recordFieldList.getByText('Linkedin', { exact: true }).nth(1);
   await expect(urlInput).toBeVisible();
@@ -120,7 +117,6 @@ test('Create and update record', async ({ page }) => {
   await page.getByPlaceholder('URL').fill('linkedin.com/johndoe');
   await page.getByPlaceholder('URL').press('Enter');
 
-  // Click on 4th star to rate
   await recordFieldList
     .getByText('Performance Rating', { exact: true })
     .first()
@@ -128,7 +124,6 @@ test('Create and update record', async ({ page }) => {
   const ratingContainer = recordFieldList.locator('div[aria-label="Rating"]');
   await ratingContainer.locator('svg').nth(3).click({ force: true });
 
-  // Fill phone field
   await recordFieldList.getByText('Phones', { exact: true }).first().click();
   const phoneInput = recordFieldList.getByText('Phones', { exact: true }).nth(1);
   await expect(phoneInput).toBeVisible();
@@ -136,7 +131,6 @@ test('Create and update record', async ({ page }) => {
   await page.getByPlaceholder('Phone').fill('+336 1 122 3344');
   await page.getByPlaceholder('Phone').press('Enter');
 
-  // Fill work preference
   await recordFieldList
     .getByText('Work Preference', { exact: true })
     .first()
@@ -157,7 +151,6 @@ test('Create and update record', async ({ page }) => {
   await page.waitForURL(/\/object\/person\//);
   const newPersonId = page.url().match(/\/object\/person\/([a-f0-9-]+)/)?.[1];
 
-  // Check data was saved
   const findOnePersonResponse = await postBackendGraphQL<FindOnePersonData>({
     page,
     data: {

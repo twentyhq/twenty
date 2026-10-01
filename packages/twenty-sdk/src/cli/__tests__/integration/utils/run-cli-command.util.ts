@@ -2,7 +2,6 @@ import { spawn, type ChildProcess } from 'child_process';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
-// CLI path and working directory (twenty-sdk src directory)
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const CLI_DIR = path.resolve(__dirname, '../../../..');
