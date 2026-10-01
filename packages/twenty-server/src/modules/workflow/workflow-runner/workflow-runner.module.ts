@@ -6,7 +6,6 @@ import { WorkflowCommonModule } from 'src/modules/workflow/common/workflow-commo
 import { CodeStepBuildModule } from 'src/modules/workflow/workflow-builder/workflow-version-step/code-step/code-step-build.module';
 import { WorkflowVersionStepModule } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step.module';
 import { WorkflowExecutorModule } from 'src/modules/workflow/workflow-executor/workflow-executor.module';
-import { WorkflowAgentConversationModule } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/workflow-agent-conversation.module';
 import { RunWorkflowJob } from 'src/modules/workflow/workflow-runner/jobs/run-workflow.job';
 import { WorkflowRunQueueModule } from 'src/modules/workflow/workflow-runner/workflow-run-queue/workflow-run-queue.module';
 import { WorkflowRunModule } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.module';
@@ -27,7 +26,6 @@ import { WorkflowVersionCoreModule } from 'src/engine/core-modules/workflow/work
     CodeStepBuildModule,
     WorkflowCoreModule,
     WorkflowVersionCoreModule,
-    WorkflowAgentConversationModule,
   ],
   providers: [
     WorkflowRunnerWorkspaceService,

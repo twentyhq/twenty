@@ -1,3 +1,5 @@
+import { jsonTreeTest } from '@/__stories__/twenty-ui-gallery/utils/jsonTreeTest';
+import { inlineBannerSandboxTest } from '@/__stories__/twenty-ui-gallery/utils/inlineBannerSandboxTest';
 import { themeTokenTest } from '@/__stories__/twenty-ui-gallery/utils/themeTokenTest';
 import { inputTest } from '@/__stories__/twenty-ui-gallery/utils/inputTest';
 import { settingsRowTest } from '@/__stories__/twenty-ui-gallery/utils/settingsRowTest';
@@ -113,12 +115,12 @@ export const InputPreact: Story = createGalleryStory({
 export const JsonVisualizerReact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-json-visualizer-gallery',
   runtime: 'react',
-  play: galleryRenderTest,
+  play: jsonTreeTest,
 });
 export const JsonVisualizerPreact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-json-visualizer-gallery',
   runtime: 'preact',
-  play: galleryRenderTest,
+  play: jsonTreeTest,
 });
 
 export const LayoutReact: Story = createGalleryStory({
@@ -522,4 +524,16 @@ export const IconButtonElevatedPreact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-icon-button-elevated',
   runtime: 'preact',
   play: iconButtonElevatedTest,
+});
+
+export const InlineBannerReactFocusFailure: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-inline-banner',
+  runtime: 'react',
+  play: inlineBannerSandboxTest,
+});
+
+export const InlineBannerPreactFocusFailure: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-inline-banner',
+  runtime: 'preact',
+  play: inlineBannerSandboxTest,
 });
