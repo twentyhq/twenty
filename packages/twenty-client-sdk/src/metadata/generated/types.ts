@@ -10082,6 +10082,15 @@ export default {
                     ]
                 }
             ],
+            "runApplicationHealthCheck": [
+                251,
+                {
+                    "applicationId": [
+                        3,
+                        "UUID!"
+                    ]
+                }
+            ],
             "grantApplicationCapabilities": [
                 260,
                 {
@@ -10157,15 +10166,6 @@ export default {
             ],
             "syncMarketplaceCatalog": [
                 8
-            ],
-            "runApplicationHealthCheck": [
-                251,
-                {
-                    "applicationId": [
-                        3,
-                        "UUID!"
-                    ]
-                }
             ],
             "createOneField": [
                 264,
