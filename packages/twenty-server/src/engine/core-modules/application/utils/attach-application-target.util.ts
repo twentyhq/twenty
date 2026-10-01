@@ -41,7 +41,7 @@ export const attachApplicationTarget = ({
 
   UseGuards(ApplicationTargetGuard)(prototype, propertyKey, descriptor);
 
-  if (target.requireWorkspaceOwnership === true) {
+  if (target.requireApplicationRegistrationOwnership === true) {
     UseGuards(ApplicationRegistrationOwnershipGuard)(
       prototype,
       propertyKey,

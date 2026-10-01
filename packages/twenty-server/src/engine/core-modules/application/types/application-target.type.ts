@@ -31,4 +31,4 @@ export type ApplicationTarget = ApplicationTargetKind &
     | { source: 'graphqlArg'; argName: string; idKey?: string }
     | { source: 'graphqlArgs'; idKey: string }
     | { source: 'routeParam'; argName: string }
-  ) & { requireWorkspaceOwnership?: boolean };
+  ) & { requireApplicationRegistrationOwnership?: boolean };

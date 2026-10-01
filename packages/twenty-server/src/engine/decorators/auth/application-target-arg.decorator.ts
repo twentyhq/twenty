@@ -15,7 +15,7 @@ export const ApplicationTargetArg =
     argName: string,
     target: ApplicationTargetKind & {
       idKey?: StringPathOf<TInput>;
-      requireWorkspaceOwnership?: boolean;
+      requireApplicationRegistrationOwnership?: boolean;
     },
     argsOptions?: ArgsOptions,
   ): ParameterDecorator =>

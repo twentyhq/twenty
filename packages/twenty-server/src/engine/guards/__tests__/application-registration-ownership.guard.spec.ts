@@ -41,7 +41,7 @@ class TestResolver {
     @ApplicationTargetArgs<UploadInput>({
       kind: 'applicationUniversalIdentifier',
       idKey: 'applicationUniversalIdentifier',
-      requireWorkspaceOwnership: true,
+      requireApplicationRegistrationOwnership: true,
     })
     _input: UploadInput,
   ) {}
@@ -57,7 +57,7 @@ class TestResolver {
   updateRegistration(
     @ApplicationTargetArg('id', {
       kind: 'applicationRegistrationId',
-      requireWorkspaceOwnership: true,
+      requireApplicationRegistrationOwnership: true,
     })
     _id: string,
   ) {}
@@ -65,7 +65,7 @@ class TestResolver {
   updateApplication(
     @ApplicationTargetArg('applicationId', {
       kind: 'applicationId',
-      requireWorkspaceOwnership: true,
+      requireApplicationRegistrationOwnership: true,
     })
     _applicationId: string,
   ) {}
@@ -75,7 +75,7 @@ class TestResolver {
       kind: 'applicationOwnedEntity',
       metadataName: 'logicFunction',
       idKey: 'id',
-      requireWorkspaceOwnership: true,
+      requireApplicationRegistrationOwnership: true,
     })
     _input: LogicFunctionInput,
   ) {}
