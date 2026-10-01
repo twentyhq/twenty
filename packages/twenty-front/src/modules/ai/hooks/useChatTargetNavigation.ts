@@ -2,7 +2,7 @@ import { useStore } from 'jotai';
 import { AppPath } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
 
-import { useIsAiChatArtifactSurface } from '@/ai/hooks/useIsAiChatArtifactSurface';
+import { useAiChatArtifactSurface } from '@/ai/hooks/useAiChatArtifactSurface';
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { useOpenRoutedPageInSidePanel } from '@/side-panel/routing/hooks/useOpenRoutedPageInSidePanel';
@@ -13,7 +13,8 @@ export const useChatTargetNavigation = () => {
   const navigateApp = useNavigateApp();
   const { openRecordInSidePanel } = useOpenRecordInSidePanel();
   const { openRoutedPageInSidePanel } = useOpenRoutedPageInSidePanel();
-  const isAiChatArtifactSurface = useIsAiChatArtifactSurface();
+  const { isAiChatArtifactSurface, openAiChatArtifact } =
+    useAiChatArtifactSurface();
 
   const openRecordTarget = ({
     recordId,
@@ -23,10 +24,13 @@ export const useChatTargetNavigation = () => {
     objectNameSingular: string;
   }) => {
     if (isAiChatArtifactSurface) {
-      openRecordInSidePanel({
-        recordId,
-        objectNameSingular,
-      });
+      openAiChatArtifact(({ resetNavigationStack }) =>
+        openRecordInSidePanel({
+          recordId,
+          objectNameSingular,
+          resetNavigationStack,
+        }),
+      );
 
       return;
     }
@@ -63,13 +67,16 @@ export const useChatTargetNavigation = () => {
     const recordIndexQueryParams = isDefined(viewId) ? { viewId } : undefined;
 
     if (isAiChatArtifactSurface) {
-      openRoutedPageInSidePanel({
-        path: getAppPath(
-          AppPath.RecordIndexPage,
-          recordIndexParams,
-          recordIndexQueryParams,
-        ),
-      });
+      openAiChatArtifact(({ resetNavigationStack }) =>
+        openRoutedPageInSidePanel({
+          path: getAppPath(
+            AppPath.RecordIndexPage,
+            recordIndexParams,
+            recordIndexQueryParams,
+          ),
+          resetNavigationStack,
+        }),
+      );
 
       return;
     }

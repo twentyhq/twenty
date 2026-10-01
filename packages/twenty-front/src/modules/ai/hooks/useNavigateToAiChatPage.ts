@@ -14,8 +14,10 @@ export const useNavigateToAiChatPage = () => {
 
   const navigateToAiChatPage = ({
     threadId,
+    shouldCloseSidePanel = true,
   }: {
     threadId?: string | null;
+    shouldCloseSidePanel?: boolean;
   } = {}) => {
     if (
       store.get(isLayoutCustomizationModeEnabledState.atom) ||
@@ -24,7 +26,9 @@ export const useNavigateToAiChatPage = () => {
       return;
     }
 
-    void closeSidePanelMenu();
+    if (shouldCloseSidePanel) {
+      void closeSidePanelMenu();
+    }
 
     navigate(
       AppPath.AiChat,
