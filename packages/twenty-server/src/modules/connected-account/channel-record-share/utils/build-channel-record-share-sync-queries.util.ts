@@ -48,10 +48,14 @@ export const buildChannelRecordShareSyncQueries = ({
         WHERE channel_record."recordId" = share."recordId"
           AND CASE share."rowCause"
             WHEN '${RecordShareRowCause.OWNER}' THEN share."principalId" = member.id
+              AND share."principalType" = '${RecordSharePrincipalType.WORKSPACE_MEMBER}'
               AND share."accessLevel" = '${RecordShareAccessLevel.FULL}'
             WHEN '${RecordShareRowCause.APPLICATION}' THEN share."principalId" = application."defaultRoleId"
+              AND share."principalType" = '${RecordSharePrincipalType.ROLE}'
               AND share."accessLevel" = '${RecordShareAccessLevel.FULL}'
             WHEN '${RecordShareRowCause.RULE}' THEN channel.visibility = '${source.shareEverythingVisibility}'
+              AND share."principalId" = '${EVERYONE_PRINCIPAL_ID}'
+              AND share."principalType" = '${RecordSharePrincipalType.EVERYONE}'
               AND share."accessLevel" = '${RecordShareAccessLevel.READ}'
             ELSE FALSE
           END

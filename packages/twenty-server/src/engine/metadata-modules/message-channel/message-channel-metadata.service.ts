@@ -245,33 +245,45 @@ export class MessageChannelMetadataService {
     workspaceId: string;
     data: Partial<MessageChannelEntity>;
   }): Promise<MessageChannelDTO> {
-    const previousMessageChannel = isDefined(data.visibility)
-      ? await this.repository.findOne({ where: { id, workspaceId } })
-      : null;
-
-    await this.repository.update(
-      { id, workspaceId },
-      data as Record<string, unknown>,
-    );
-
-    if (
-      isDefined(previousMessageChannel) &&
-      isDefined(data.visibility) &&
-      data.visibility !== previousMessageChannel.visibility
-    ) {
-      await this.channelRecordShareService.syncChannelRecordSharesAfterVisibilityChange(
-        {
-          workspaceId,
-          source: MESSAGE_THREAD_CHANNEL_RECORD_SHARE_SOURCE,
-          channelId: id,
-          revertVisibilityChange: () =>
-            this.repository.update(
-              { id, workspaceId },
-              { visibility: previousMessageChannel.visibility },
-            ),
-        },
+    if (!isDefined(data.visibility)) {
+      await this.repository.update(
+        { id, workspaceId },
+        data as Record<string, unknown>,
       );
+
+      return this.repository.findOneOrFail({ where: { id, workspaceId } });
     }
+
+    const visibility = data.visibility;
+
+    await this.channelRecordShareService.changeChannelVisibility({
+      workspaceId,
+      source: MESSAGE_THREAD_CHANNEL_RECORD_SHARE_SOURCE,
+      channelId: id,
+      applyVisibilityChange: async () => {
+        const previousMessageChannel = await this.repository.findOne({
+          where: { id, workspaceId },
+        });
+
+        await this.repository.update(
+          { id, workspaceId },
+          data as Record<string, unknown>,
+        );
+
+        if (
+          !isDefined(previousMessageChannel) ||
+          previousMessageChannel.visibility === visibility
+        ) {
+          return undefined;
+        }
+
+        return () =>
+          this.repository.update(
+            { id, workspaceId },
+            { visibility: previousMessageChannel.visibility },
+          );
+      },
+    });
 
     return this.repository.findOneOrFail({ where: { id, workspaceId } });
   }

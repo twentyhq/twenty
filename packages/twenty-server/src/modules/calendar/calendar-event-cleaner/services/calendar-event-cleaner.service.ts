@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
-import { In, MoreThan } from 'typeorm';
+import { Any, In, MoreThan } from 'typeorm';
 
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -101,14 +101,14 @@ export class CalendarEventCleanerService {
           const associationsToDelete =
             await calendarChannelEventAssociationRepository.find({
               where: {
-                eventExternalId: In(eventExternalIds),
+                eventExternalId: Any(eventExternalIds),
                 calendarChannelId,
               },
               select: { calendarEventId: true },
             });
 
           await calendarChannelEventAssociationRepository.delete({
-            eventExternalId: In(eventExternalIds),
+            eventExternalId: Any(eventExternalIds),
             calendarChannelId,
           });
 
