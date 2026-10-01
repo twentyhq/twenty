@@ -3,6 +3,7 @@ import { graphql, HttpResponse } from 'msw';
 import { useState } from 'react';
 import { expect, userEvent, within } from 'storybook/test';
 import { Toaster } from 'twenty-ui/components';
+import { isDefined } from 'twenty-shared/utils';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { useWorkflowRun } from '@/workflow/hooks/useWorkflowRun';
@@ -68,7 +69,12 @@ const createHandlers = ({
           },
           state: {
             ...oneSucceededWorkflowRunQueryResult.workflowRun.state,
-            stepInfos: { [STEP_ID]: { status: 'PENDING', threadId } },
+            stepInfos: {
+              [STEP_ID]: {
+                status: 'PENDING',
+                ...(isDefined(threadId) ? { threadId } : {}),
+              },
+            },
           },
         },
       },

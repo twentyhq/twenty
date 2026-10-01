@@ -30,12 +30,12 @@ export const rule = defineRule({
     type: 'problem',
     docs: {
       description:
-        'Forbid runtime code from importing upgrade command code, which is frozen once released',
+        'Forbid runtime code from importing upgrade command or agent-history migration code, which is frozen once released',
     },
     schema: [],
     messages: {
       noRuntimeImportFromUpgradeCommand:
-        "Runtime code must not import '{{ source }}'. Keep migration-only logic, constants and legacy formats in the version folder, and move shared primitives out of it instead.",
+        "Runtime code must not import '{{ source }}'. Keep migration-only logic, constants and legacy formats with the migration code, and move shared primitives out of it instead.",
     },
   },
   create: (context) => {

@@ -40,8 +40,7 @@ export const useAnswerFormStep = ({
     });
 
   // A form step's call is named after the step, in the conversation its
-  // current execution recorded. Returns false when the form no longer waits:
-  // it has no conversation, or someone answered it or the run ended first.
+  // current execution recorded.
   const answerFormStep = async (
     response: Record<string, unknown>,
   ): Promise<boolean> => {

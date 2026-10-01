@@ -688,7 +688,7 @@ describe('createShareWithObjectRecordsPermissions', () => {
         );
       });
 
-      it('requires an explicit API sharing target regardless of rollout state', async () => {
+      it('requires an explicit API sharing target', async () => {
         const recordId = trackRecordId();
         const response = await makeGraphqlApiRequestWithApiKey(
           createOneOperation({
@@ -702,7 +702,7 @@ describe('createShareWithObjectRecordsPermissions', () => {
         expect(await findRecordShares(recordId)).toEqual([]);
       });
 
-      it('keeps new member records private regardless of rollout state', async () => {
+      it('keeps new member records private', async () => {
         const recordId = trackRecordId();
         const response = await makeGraphqlApiRequest(
           createOneOperation({
