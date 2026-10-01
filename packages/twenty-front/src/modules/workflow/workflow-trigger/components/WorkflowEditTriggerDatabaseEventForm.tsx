@@ -1,7 +1,8 @@
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
-import { useObjectMetadataSelectHelpers } from '@/object-metadata/hooks/useObjectMetadataSelectHelpers';
 import { type FieldMultiSelectValue } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { WorkflowObjectSelect } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowObjectSelect';
+import { Select } from '@/ui/input/components/Select';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
+import { useWorkflowObjectSelectOptions } from '@/workflow/hooks/useWorkflowObjectSelectOptions';
 import { WorkflowFieldsMultiSelect } from '@/workflow/components/WorkflowEditUpdateEventFieldsMultiSelect';
 import { type WorkflowDatabaseEventTrigger } from '@/workflow/types/Workflow';
 import { splitWorkflowTriggerEventName } from '@/workflow/utils/splitWorkflowTriggerEventName';
@@ -9,23 +10,9 @@ import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowS
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
 import { WorkflowStepFilterBuilder } from '@/workflow/workflow-steps/filters/components/WorkflowStepFilterBuilder';
 import { type FilterSettings } from '@/workflow/workflow-steps/filters/types/FilterSettings';
-import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
-import { themeCssVariables } from 'twenty-ui/theme';
-
-const StyledLabel = styled.span`
-  color: ${themeCssVariables.font.color.light};
-  display: block;
-  font-size: ${themeCssVariables.font.size.xs};
-  font-weight: ${themeCssVariables.font.weight.semiBold};
-  margin-bottom: ${themeCssVariables.spacing[1]};
-`;
-
-const StyledRecordTypeSelectContainer = styled.div<{ fullWidth?: boolean }>`
-  width: ${({ fullWidth }) => (fullWidth ? '100%' : 'auto')};
-`;
 
 type WorkflowEditTriggerDatabaseEventFormProps = {
   trigger: WorkflowDatabaseEventTrigger;
@@ -45,11 +32,10 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
   triggerOptions,
 }: WorkflowEditTriggerDatabaseEventFormProps) => {
   const { t } = useLingui();
-  const { getSelectIconPropsFromObjectMetadataItem } =
-    useObjectMetadataSelectHelpers();
   const dropdownId = 'workflow-edit-trigger-record-type';
 
   const { objectMetadataItems } = useFilteredObjectMetadataItems();
+  const objectOptions = useWorkflowObjectSelectOptions();
 
   const triggerEvent = splitWorkflowTriggerEventName(
     trigger.settings.eventName,
@@ -61,13 +47,6 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
   const selectedObjectMetadataItem = objectMetadataItems.find(
     (item) => item.isActive && item.nameSingular === triggerEvent.objectType,
   );
-  const selectedOption = isDefined(selectedObjectMetadataItem)
-    ? {
-        label: selectedObjectMetadataItem.labelPlural,
-        value: selectedObjectMetadataItem.nameSingular,
-        ...getSelectIconPropsFromObjectMetadataItem(selectedObjectMetadataItem),
-      }
-    : { label: t`Select an option`, value: '' };
 
   const handleOptionClick = (value: string) => {
     if (triggerOptions.readonly === true) {
@@ -121,16 +100,19 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
   return (
     <>
       <WorkflowStepBody>
-        <StyledRecordTypeSelectContainer fullWidth>
-          <StyledLabel>{t`Record Type`}</StyledLabel>
-          <WorkflowObjectSelect
-            dropdownId={dropdownId}
-            label={t`Record Type`}
-            selectedOption={selectedOption}
-            disabled={triggerOptions.readonly === true}
-            onSelect={handleOptionClick}
-          />
-        </StyledRecordTypeSelectContainer>
+        <Select
+          dropdownId={dropdownId}
+          label={t`Record Type`}
+          fullWidth
+          disabled={triggerOptions.readonly === true}
+          value={triggerEvent.objectType}
+          emptyOption={{ label: t`Select an option`, value: '' }}
+          options={objectOptions}
+          onChange={handleOptionClick}
+          withSearchInput
+          dropdownSideOffset={4}
+          dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
+        />
         {isDefined(selectedObjectMetadataItem) && isFieldFilteringSupported && (
           <WorkflowFieldsMultiSelect
             label={t`Fields (Optional)`}

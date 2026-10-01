@@ -101,7 +101,7 @@ export const Default: Story = {
     await userEvent.click(canvas.getByRole('button', { name: 'People' }));
 
     expect(
-      await screen.findByRole('searchbox', { name: 'Search objects' }),
+      await screen.findByRole('searchbox', { name: 'Search' }),
     ).toHaveValue('');
     expect(
       await screen.findByRole('button', { name: 'Companies' }),

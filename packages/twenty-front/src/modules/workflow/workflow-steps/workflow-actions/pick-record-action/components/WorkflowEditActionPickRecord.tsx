@@ -10,23 +10,14 @@ import { HorizontalSeparator } from 'twenty-ui/primitives/layout';
 import { useDebouncedCallback } from 'use-debounce';
 
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
-import { useObjectMetadataSelectHelpers } from '@/object-metadata/hooks/useObjectMetadataSelectHelpers';
 import { isManyToOneRelationField } from '@/object-metadata/utils/isManyToOneRelationField';
 import { FormMultiRecordPicker } from '@/object-record/record-field/ui/form-types/components/FormMultiRecordPicker';
 import { Select } from '@/ui/input/components/Select';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
+import { useWorkflowObjectSelectOptions } from '@/workflow/hooks/useWorkflowObjectSelectOptions';
 import { type WorkflowPickRecordAction } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
-import { WorkflowObjectSelect } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowObjectSelect';
-import { themeCssVariables } from 'twenty-ui/theme';
-
-const StyledLabel = styled.span`
-  color: ${themeCssVariables.font.color.light};
-  display: block;
-  font-size: ${themeCssVariables.font.size.xs};
-  font-weight: ${themeCssVariables.font.weight.semiBold};
-  margin-bottom: ${themeCssVariables.spacing[1]};
-`;
 
 const StyledObjectSelectContainer = styled.div`
   width: 100%;
@@ -64,12 +55,11 @@ export const WorkflowEditActionPickRecord = ({
   actionOptions,
 }: WorkflowEditActionPickRecordProps) => {
   const { t } = useLingui();
-  const { getSelectIconPropsFromObjectMetadataItem } =
-    useObjectMetadataSelectHelpers();
 
   const dropdownId = `workflow-edit-action-pick-record-object-name-${action.id}`;
 
   const { objectMetadataItems } = useFilteredObjectMetadataItems();
+  const objectOptions = useWorkflowObjectSelectOptions();
 
   const [formData, setFormData] = useState<PickRecordFormData>(() => ({
     objectNameSingular: action.settings.input.objectName,
@@ -92,16 +82,6 @@ export const WorkflowEditActionPickRecord = ({
     (item) => item.nameSingular === formData.loadBalance?.objectNameSingular,
   );
 
-  const loadBalanceObjectOption = loadBalanceObjectMetadataItem
-    ? {
-        label: loadBalanceObjectMetadataItem.labelPlural,
-        value: loadBalanceObjectMetadataItem.nameSingular,
-        ...getSelectIconPropsFromObjectMetadataItem(
-          loadBalanceObjectMetadataItem,
-        ),
-      }
-    : { label: i18n._(defaultSelectedOptionMessage), value: '' };
-
   const loadBalanceFieldOptions: SelectOption<string>[] = (
     loadBalanceObjectMetadataItem?.fields ?? []
   )
@@ -121,14 +101,6 @@ export const WorkflowEditActionPickRecord = ({
 
   const loadBalancePoolObjectLabel =
     selectedObjectMetadataItem?.labelSingular ?? t`the selected object`;
-
-  const selectedOption = selectedObjectMetadataItem
-    ? {
-        label: selectedObjectMetadataItem.labelPlural,
-        value: selectedObjectMetadataItem.nameSingular,
-        ...getSelectIconPropsFromObjectMetadataItem(selectedObjectMetadataItem),
-      }
-    : { label: i18n._(defaultSelectedOptionMessage), value: '' };
 
   const saveAction = useDebouncedCallback(
     async (updatedFormData: PickRecordFormData) => {
@@ -238,16 +210,22 @@ export const WorkflowEditActionPickRecord = ({
   return (
     <>
       <WorkflowStepBody>
-        <StyledObjectSelectContainer>
-          <StyledLabel>{t`Object`}</StyledLabel>
-          <WorkflowObjectSelect
-            dropdownId={dropdownId}
-            label={t`Object`}
-            selectedOption={selectedOption}
-            disabled={isFormDisabled}
-            onSelect={handleObjectChange}
-          />
-        </StyledObjectSelectContainer>
+        <Select
+          dropdownId={dropdownId}
+          label={t`Object`}
+          fullWidth
+          disabled={isFormDisabled}
+          value={formData.objectNameSingular}
+          emptyOption={{
+            label: i18n._(defaultSelectedOptionMessage),
+            value: '',
+          }}
+          options={objectOptions}
+          onChange={handleObjectChange}
+          withSearchInput
+          dropdownSideOffset={4}
+          dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
+        />
 
         <Select
           dropdownId={`workflow-edit-action-pick-record-strategy-${action.id}`}
@@ -261,16 +239,22 @@ export const WorkflowEditActionPickRecord = ({
 
         {formData.strategy === 'LOAD_BALANCED' && (
           <>
-            <StyledObjectSelectContainer>
-              <StyledLabel>{t`Balance by`}</StyledLabel>
-              <WorkflowObjectSelect
-                dropdownId={loadBalanceObjectDropdownId}
-                label={t`Balance by`}
-                selectedOption={loadBalanceObjectOption}
-                disabled={isFormDisabled}
-                onSelect={handleLoadBalanceObjectChange}
-              />
-            </StyledObjectSelectContainer>
+            <Select
+              dropdownId={loadBalanceObjectDropdownId}
+              label={t`Balance by`}
+              fullWidth
+              disabled={isFormDisabled}
+              value={formData.loadBalance?.objectNameSingular ?? ''}
+              emptyOption={{
+                label: i18n._(defaultSelectedOptionMessage),
+                value: '',
+              }}
+              options={objectOptions}
+              onChange={handleLoadBalanceObjectChange}
+              withSearchInput
+              dropdownSideOffset={4}
+              dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
+            />
 
             {isDefined(loadBalanceObjectMetadataItem) && (
               <StyledObjectSelectContainer>

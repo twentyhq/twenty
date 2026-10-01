@@ -51,7 +51,7 @@ export const SelectRecordTypeWithKeyboard: Story = {
       await canvas.findByRole('button', { name: 'People' }),
     );
     await userEvent.type(
-      await screen.findByRole('searchbox', { name: 'Search objects' }),
+      await screen.findByRole('searchbox', { name: 'Search' }),
       'Companies',
     );
     await userEvent.keyboard('{Enter}');

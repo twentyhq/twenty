@@ -75,7 +75,7 @@ export const ObjectAndLoadBalanceSelection: Story = {
     expect(await canvas.findByText('Balance by')).toBeVisible();
     await userEvent.click(canvas.getByRole('button', { name: 'Companies' }));
     await userEvent.type(
-      await screen.findByRole('searchbox', { name: 'Search objects' }),
+      await screen.findByRole('searchbox', { name: 'Search' }),
       'person',
     );
     await userEvent.keyboard('{Enter}');
@@ -111,7 +111,7 @@ export const ObjectAndLoadBalanceSelection: Story = {
       within(balanceByField).getByRole('button', { name: 'People' }),
     );
     await userEvent.type(
-      await screen.findByRole('searchbox', { name: 'Search objects' }),
+      await screen.findByRole('searchbox', { name: 'Search' }),
       'company',
     );
     await userEvent.keyboard('{ArrowDown}{Enter}');
