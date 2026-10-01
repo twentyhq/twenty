@@ -38,8 +38,7 @@ export const MentionTag = Node.create({
         'data-image-url': attributes.imageUrl,
       }),
     },
-    // Marks the record a conversation started from, to be filed under it when
-    // sent. Left out of the HTML so a copied mention does not carry it along.
+    // Marks the record a conversation started from; left out of the HTML so a copied mention does not carry it.
     isConversationTarget: {
       default: false,
       rendered: false,

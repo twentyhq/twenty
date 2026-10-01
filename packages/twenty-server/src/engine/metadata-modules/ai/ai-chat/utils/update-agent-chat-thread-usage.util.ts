@@ -29,8 +29,7 @@ export const updateAgentChatThreadUsage = async ({
   shouldRecordActivity: boolean;
 }): Promise<{ affected: number }> =>
   repository.query(workspaceId, async ({ manager, table }) => {
-    // Keep arithmetic in PostgreSQL and ownership in the same UPDATE. DTO numbers
-    // must never be read back and added to exact NUMERIC totals in JavaScript.
+    // sum in Postgres: JS numbers must never be added to exact NUMERIC totals
     const rows = await manager.query<{ id: string }[]>(
       `
     WITH updated AS (

@@ -30,9 +30,7 @@ export const useNavigationDrawerModes = (): NavigationDrawerMode[] => {
     WorkspaceActivationStatus.SUSPENDED,
   );
 
-  // A suspended workspace is held on the billing settings by the route guard,
-  // so offering the modes it would bounce back from only flashes the user out
-  // and in again.
+  // The route guard holds a suspended workspace on billing settings, so other modes would bounce back.
   if (isWorkspaceSuspended) {
     return [];
   }

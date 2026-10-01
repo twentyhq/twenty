@@ -44,8 +44,7 @@ const DEFAULT_TARGETS = {
 };
 
 describe('buildSystemRelationFlatFieldMetadatasForObject', () => {
-  // The 2-38 backfill calls this with the four default targets only, so their
-  // output must not change because a later target exists.
+  // The committed 2-38 backfill passes only the default targets, so their output must not change when later targets exist
   it('mints exactly the default pairs when the chat target is not passed', () => {
     const bundles = buildSystemRelationFlatFieldMetadatasForObject({
       sourceFlatObjectMetadata: petFlatObjectMetadata,
@@ -90,7 +89,6 @@ describe('buildSystemRelationFlatFieldMetadatasForObject', () => {
     ]);
   });
 
-  // The 2-43 backfill passes the chat target alone to mint only its pair.
   it('mints the chat pair on the same morph as the standard legs', () => {
     const bundles = buildSystemRelationFlatFieldMetadatasForObject({
       sourceFlatObjectMetadata: petFlatObjectMetadata,

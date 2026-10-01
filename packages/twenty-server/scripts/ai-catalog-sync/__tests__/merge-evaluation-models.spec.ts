@@ -32,9 +32,7 @@ describe('mergeEvaluationModels', () => {
     ]);
   });
 
-  // The whole point of merging per model: the day an existing provider ships an
-  // evaluation model, it is one entry in the hand-maintained file and the
-  // language models the sync just fetched stay where they are.
+  // An existing provider's evaluation model must not displace the language models the sync fetched
   it('should keep the fetched models of a vendor that also ships an evaluation model', () => {
     const catalog: GeneratedCatalog = {
       openai: { models: [languageModel('gpt-5'), languageModel('gpt-5-mini')] },

@@ -11,8 +11,7 @@ export type ToolIndexEntry = {
   objectName?: string;
   operation?: string;
   icon?: string;
-  // Built-in widget that renders this tool's calls in the AI chat.
   widgetName?: ToolWidgetName;
-  // App-supplied front component that renders this tool's calls instead.
+  // App-supplied front component that renders this tool's calls instead of widgetName.
   frontComponentId?: string;
 };

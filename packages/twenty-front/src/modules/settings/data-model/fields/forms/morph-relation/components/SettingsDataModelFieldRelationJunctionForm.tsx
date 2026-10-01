@@ -68,7 +68,6 @@ export const SettingsDataModelFieldRelationJunctionForm = ({
         targetObjectMetadata.id === junctionObjectMetadataItem.id,
     )?.targetFieldMetadata.id;
 
-  // Self-referential relations cannot be junction objects
   if (sourceObjectMetadataId === junctionObjectMetadataItem.id) {
     return null;
   }

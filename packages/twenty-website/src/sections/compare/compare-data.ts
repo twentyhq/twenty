@@ -1,9 +1,8 @@
 import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 
-// Competitor list prices, checked against each vendor's public pricing page
-// on 2026-07-30 (annual billing unless stated). Keep every price cell paired
-// with its source URL; re-verify before changing any number.
+// Checked against vendors' public pricing pages on 2026-07-30 (annual unless stated); keep each price paired
+// with its source URL and re-verify before changing.
 
 export type CompareCompetitorCell = {
   detail: MessageDescriptor;

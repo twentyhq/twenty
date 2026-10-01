@@ -581,10 +581,7 @@ export class ConfigVariables {
     isHiddenInAdminPanel: true,
     type: ConfigVariableType.ENUM,
     options: Object.values(DpaRegion),
-    // Deployment-fixed: must mirror where data actually lives. Allowing a
-    // runtime DB/admin override could advertise a hosting location that does
-    // not match where data resides, so this is only configurable via
-    // environment variable.
+    // Env-only: a runtime override could advertise a hosting location that does not match where data lives.
     isEnvOnly: true,
   })
   @IsOptional()
@@ -1877,7 +1874,7 @@ export class ConfigVariables {
     type: ConfigVariableType.NUMBER,
   })
   @CastToPositiveNumber()
-  INVITATION_SENDING_BY_WORKSPACE_THROTTLE_TTL_IN_MS = 604_800_000; // 7 days
+  INVITATION_SENDING_BY_WORKSPACE_THROTTLE_TTL_IN_MS = 604_800_000;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.RATE_LIMITING,
@@ -1895,7 +1892,7 @@ export class ConfigVariables {
     type: ConfigVariableType.NUMBER,
   })
   @CastToPositiveNumber()
-  INVITATION_SENDING_BY_EMAIL_THROTTLE_TTL_IN_MS = 604_800_000; // 7 days
+  INVITATION_SENDING_BY_EMAIL_THROTTLE_TTL_IN_MS = 604_800_000;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.RATE_LIMITING,
@@ -2189,7 +2186,7 @@ export class ConfigVariables {
     type: ConfigVariableType.NUMBER,
   })
   @CastToPositiveNumber()
-  WORKFLOW_EXEC_HARD_THROTTLE_TTL = 3_600_000; // 1 hour;
+  WORKFLOW_EXEC_HARD_THROTTLE_TTL = 3_600_000;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.CAPTCHA_CONFIG,

@@ -97,9 +97,7 @@ describe('DatabaseToolProvider', () => {
       }),
     } as unknown as WorkspaceManyOrAllFlatEntityMapsCacheService;
 
-    // Returns the messageId so the label util falls back to the English source,
-    // mirroring the runtime behavior when no translation exists for the locale.
-    // getI18nInstance resolves verb descriptors to their English source message.
+    // Echo the messageId so labels fall back to the English source, as at runtime without a translation.
     const i18nService = {
       translateMessage: jest.fn(
         ({ messageId }: { messageId: string }) => messageId,

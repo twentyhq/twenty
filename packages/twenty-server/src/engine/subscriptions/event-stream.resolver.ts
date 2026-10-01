@@ -150,8 +150,7 @@ export class EventStreamResolver {
         },
       );
 
-      // Events are published once per workspace, so the locale can only be
-      // applied here, where the subscriber is known.
+      // Events are published once per workspace, so the locale is applied per subscriber here
       iterator = mapAsyncIterator(rawIterator, async (payload) => ({
         ...payload,
         metadataEvents:

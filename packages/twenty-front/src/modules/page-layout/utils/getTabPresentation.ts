@@ -8,11 +8,7 @@ type GetTabPresentationParams = {
   isInEditMode?: boolean;
 };
 
-// Presentation is derived from content, never stored. In view mode, a list tab
-// hosting a single widget renders it solo: full-bleed, owning the tab. Any
-// other tab is a stack of boxed widgets. Edit mode always shows the stack
-// structure so every tab is edited through the same vertical-list editor.
-// Grid tabs (dashboards) are always stacks.
+// Edit mode always stacks so every tab is edited through the same vertical-list editor.
 export const getTabPresentation = ({
   widgets,
   layoutMode,

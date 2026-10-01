@@ -72,9 +72,7 @@ export const RecordCalendarTopBar = () => {
     isRecordCalendarReadOnlyComponentState,
   );
 
-  // The layout switcher persists via updateCurrentView (an index-page write),
-  // so it must never render inside a dashboard widget; widget calendars drive
-  // their layout from the side-panel settings instead.
+  // The layout switcher writes the index view, so widget calendars must never render it.
   const widgetInstanceId = useAvailableComponentInstanceId(
     WidgetComponentInstanceContext,
   );

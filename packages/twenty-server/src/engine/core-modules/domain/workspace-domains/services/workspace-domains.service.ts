@@ -109,8 +109,7 @@ export class WorkspaceDomainsService {
       this.domainServerConfigService.getSubdomainAndDomainFromUrl(origin);
 
     if (!this.twentyConfigService.get('IS_MULTIWORKSPACE_ENABLED')) {
-      // Single-workspace: workspace is always the default. Still resolve a
-      // matching public domain so the route trigger can scope by application.
+      // Still resolve the public domain so route triggers can scope by application.
       const publicDomain = isDefined(domain)
         ? await this.publicDomainRepository.findOne({ where: { domain } })
         : null;

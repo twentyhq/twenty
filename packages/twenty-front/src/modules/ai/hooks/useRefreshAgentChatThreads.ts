@@ -147,8 +147,7 @@ export const useRefreshAgentChatThreads = () => {
           return undefined;
         }
 
-        // Retry once rather than overwrite a record event applied while the
-        // request was in flight
+        // Retry rather than overwrite a record event applied mid-request.
         if (hasChangedSinceRequest()) {
           continue;
         }
@@ -209,8 +208,7 @@ export const useRefreshAgentChatThreads = () => {
     [loadAgentChatThreads],
   );
 
-  // A chat opened by URL may sit past the loaded pages. Resolves to null
-  // when the chat is not listed for this member, undefined when unknown
+  // A chat opened by URL may be past the loaded pages; null if not listed for this member, undefined if unknown.
   const loadAgentChatThread = useCallback(
     async (threadId: string) => {
       for (let attempt = 0; attempt < 2; attempt++) {
@@ -243,8 +241,7 @@ export const useRefreshAgentChatThreads = () => {
 
         addAgentChatThread(thread);
 
-        // The chat may have been selected before its record was loaded, so
-        // its usage could not be restored then
+        // The chat may have been selected before its record loaded, when usage couldn't be restored.
         const usageAtom = agentChatUsageComponentFamilyState.atomFamily({
           instanceId: AGENT_CHAT_INSTANCE_ID,
           familyKey: { threadId: thread.id },
