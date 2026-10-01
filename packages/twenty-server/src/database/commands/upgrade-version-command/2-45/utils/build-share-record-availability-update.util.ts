@@ -13,8 +13,8 @@ const CHAT_ONLY_SHARE_RECORD_EXPRESSION =
 export const ALL_OBJECTS_SHARE_RECORD_EXPRESSION =
   'numberOfSelectedRecords == 1 and noneDefined(selectedRecords, "deletedAt") and ((featureFlags.IS_RECORD_LEVEL_SHARING_ENABLED and not objectMetadataItem.isSystem) or (objectMetadataItem.nameSingular == "agentChatThread" and (featureFlags.IS_AI_CHAT_SHARING_DROPDOWN_ENABLED or featureFlags.IS_RECORD_LEVEL_SHARING_ENABLED)))';
 
-// Only an item still holding the expression it shipped with is moved, so a
-// workspace that customized it keeps its version
+// Only an item still holding the expression and object scope it shipped with
+// is moved, so a workspace that customized either keeps its version
 export const buildShareRecordAvailabilityUpdate = ({
   flatCommandMenuItemsByUniversalIdentifier,
   flatObjectMetadataMaps,
@@ -38,9 +38,14 @@ export const buildShareRecordAvailabilityUpdate = ({
     return [];
   }
 
+  const agentChatThreadUniversalIdentifier =
+    STANDARD_OBJECTS.agentChatThread.universalIdentifier;
+
   if (direction === 'up') {
     return shareRecord.conditionalAvailabilityExpression ===
-      CHAT_ONLY_SHARE_RECORD_EXPRESSION
+      CHAT_ONLY_SHARE_RECORD_EXPRESSION &&
+      shareRecord.availabilityObjectMetadataUniversalIdentifier ===
+        agentChatThreadUniversalIdentifier
       ? [
           {
             ...shareRecord,
@@ -56,13 +61,14 @@ export const buildShareRecordAvailabilityUpdate = ({
 
   const agentChatThread =
     flatObjectMetadataMaps.byUniversalIdentifier[
-      STANDARD_OBJECTS.agentChatThread.universalIdentifier
+      agentChatThreadUniversalIdentifier
     ];
 
   if (
     !isDefined(agentChatThread) ||
     shareRecord.conditionalAvailabilityExpression !==
-      ALL_OBJECTS_SHARE_RECORD_EXPRESSION
+      ALL_OBJECTS_SHARE_RECORD_EXPRESSION ||
+    isDefined(shareRecord.availabilityObjectMetadataUniversalIdentifier)
   ) {
     return [];
   }

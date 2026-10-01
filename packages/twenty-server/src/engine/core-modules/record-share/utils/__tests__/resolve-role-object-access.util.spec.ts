@@ -1,7 +1,5 @@
 /* @license Enterprise */
 
-import { type ObjectsPermissionsByRoleId } from 'twenty-shared/types';
-
 import { resolveRoleObjectAccess } from 'src/engine/core-modules/record-share/utils/resolve-role-object-access.util';
 
 const rolesPermissions = {
@@ -11,26 +9,48 @@ const rolesPermissions = {
       canUpdateObjectRecords: false,
     },
   },
-} as unknown as ObjectsPermissionsByRoleId;
+  'role-editor': {
+    'object-1': {
+      canReadObjectRecords: true,
+      canUpdateObjectRecords: true,
+    },
+  },
+};
 
 describe('resolveRoleObjectAccess', () => {
-  it('should read the permissions of the role on the object', () => {
+  it.each([
+    ['role-reader', { canRoleRead: true, canRoleUpdate: false }],
+    ['role-editor', { canRoleRead: true, canRoleUpdate: true }],
+  ])('should read the permissions of %s on the object', (roleId, expected) => {
+    expect(
+      resolveRoleObjectAccess({
+        rolesPermissions,
+        roleId,
+        objectMetadataId: 'object-1',
+      }),
+    ).toEqual(expected);
+  });
+
+  it('should grant nothing on an object the role has no permissions on', () => {
     expect(
       resolveRoleObjectAccess({
         rolesPermissions,
         roleId: 'role-reader',
-        objectMetadataId: 'object-1',
+        objectMetadataId: 'object-2',
       }),
-    ).toEqual({ canRoleRead: true, canRoleUpdate: false });
+    ).toEqual({ canRoleRead: false, canRoleUpdate: false });
   });
 
   it.each([
-    ['an unknown role', 'role-unknown', 'object-1'],
-    ['no role', undefined, 'object-1'],
-    ['an object the role has no permissions on', 'role-reader', 'object-2'],
-  ])('should grant nothing for %s', (_, roleId, objectMetadataId) => {
+    ['an unknown role', 'role-unknown'],
+    ['no role', undefined],
+  ])('should report nothing for %s', (_, roleId) => {
     expect(
-      resolveRoleObjectAccess({ rolesPermissions, roleId, objectMetadataId }),
-    ).toEqual({ canRoleRead: false, canRoleUpdate: false });
+      resolveRoleObjectAccess({
+        rolesPermissions,
+        roleId,
+        objectMetadataId: 'object-1',
+      }),
+    ).toEqual({ canRoleRead: null, canRoleUpdate: null });
   });
 });

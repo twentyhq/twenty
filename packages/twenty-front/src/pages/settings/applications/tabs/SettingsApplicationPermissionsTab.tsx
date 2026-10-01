@@ -1,4 +1,8 @@
-import { ObjectOpenRecordIn, ObjectSharingReach } from 'twenty-shared/types';
+import {
+  MetadataReadability,
+  ObjectOpenRecordIn,
+  ObjectSharingReach,
+} from 'twenty-shared/types';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { buildFieldMetadataItemFromMarketplaceField } from '@/settings/applications/utils/buildFieldMetadataItemFromMarketplaceField';
@@ -219,6 +223,7 @@ const buildObjectMetadataItemsFromMarketplaceApp = (
         writability: MetadataWritability.OPEN,
         openRecordIn: ObjectOpenRecordIn.USER_CHOICE,
         sharingReach: ObjectSharingReach.WORKSPACE,
+        readability: MetadataReadability.OPEN,
         isLabelSyncedWithName: false,
         labelIdentifierFieldMetadataId: '',
         fields,

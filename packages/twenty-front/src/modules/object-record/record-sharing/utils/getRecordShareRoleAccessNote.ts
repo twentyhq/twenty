@@ -7,8 +7,7 @@ import {
   type RecordSharingGrantDto,
 } from '~/generated-metadata/graphql';
 
-// Explains how the role of a recipient changes what their grant does, so the
-// owner sees effective access rather than the level they picked
+// Owners see what each grant actually gives, not only the level they picked
 export const getRecordShareRoleAccessNote = ({
   share,
   sharingReach,

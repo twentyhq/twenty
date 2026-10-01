@@ -1,5 +1,9 @@
 import { gql } from '@apollo/client';
-import { ObjectOpenRecordIn, ObjectSharingReach } from 'twenty-shared/types';
+import {
+  MetadataReadability,
+  ObjectOpenRecordIn,
+  ObjectSharingReach,
+} from 'twenty-shared/types';
 
 export const query = gql`
   mutation DeleteOneObjectMetadataItem($idToDelete: UUID!) {
@@ -16,6 +20,7 @@ export const query = gql`
       isSearchable
       openRecordIn
       sharingReach
+      readability
       createdAt
       updatedAt
       labelIdentifierFieldMetadataId
@@ -41,6 +46,7 @@ export const responseData = {
   isSearchable: false,
   openRecordIn: ObjectOpenRecordIn.USER_CHOICE,
   sharingReach: ObjectSharingReach.WORKSPACE,
+  readability: MetadataReadability.OPEN,
   createdAt: '',
   updatedAt: '',
   labelIdentifierFieldMetadataId: '20202020-72ba-4e11-a36d-e17b544541e1',

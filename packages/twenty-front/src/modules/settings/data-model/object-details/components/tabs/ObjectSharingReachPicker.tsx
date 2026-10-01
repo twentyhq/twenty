@@ -33,10 +33,6 @@ export const ObjectSharingReachPicker = ({
   const { updateOneObjectMetadataItem } = useUpdateOneObjectMetadataItem();
 
   const handleChange = (sharingReach: ObjectSharingReach) => {
-    if (isReadOnly) {
-      return;
-    }
-
     void updateOneObjectMetadataItem({
       idToUpdate: objectMetadataItem.id,
       updatePayload: { sharingReach },
@@ -49,6 +45,7 @@ export const ObjectSharingReachPicker = ({
       onChange={handleChange}
       options={OBJECT_SHARING_REACH_OPTIONS}
       value={objectMetadataItem.sharingReach}
+      disabled={isReadOnly}
     />
   );
 };

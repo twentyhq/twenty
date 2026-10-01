@@ -128,6 +128,37 @@ describe('buildShareRecordAvailabilityUpdate', () => {
     expect(buildUpdate(undefined, 'up')).toEqual([]);
   });
 
+  it('leaves an item scoped to another object alone', () => {
+    const company =
+      allFlatEntityMaps.flatObjectMetadataMaps.byUniversalIdentifier[
+        STANDARD_OBJECTS.company.universalIdentifier
+      ];
+
+    expect(
+      buildUpdate(
+        {
+          ...chatOnlyShareRecord,
+          availabilityObjectMetadataId: company?.id ?? null,
+          availabilityObjectMetadataUniversalIdentifier:
+            STANDARD_OBJECTS.company.universalIdentifier,
+        },
+        'up',
+      ),
+    ).toEqual([]);
+    expect(
+      buildUpdate(
+        {
+          ...chatOnlyShareRecord,
+          conditionalAvailabilityExpression: ALL_OBJECTS_SHARE_RECORD_EXPRESSION,
+          availabilityObjectMetadataId: company?.id ?? null,
+          availabilityObjectMetadataUniversalIdentifier:
+            STANDARD_OBJECTS.company.universalIdentifier,
+        },
+        'down',
+      ),
+    ).toEqual([]);
+  });
+
   describe('availability', () => {
     const company = { nameSingular: 'company', isSystem: false };
     const conversation = { nameSingular: 'agentChatThread', isSystem: true };

@@ -1,7 +1,10 @@
 import { renderHook } from '@testing-library/react';
 
 import { useCanReadObjectRecordsOrSharedRecords } from '@/object-record/record-sharing/hooks/useCanReadObjectRecordsOrSharedRecords';
-import { ObjectSharingReach } from '~/generated-metadata/graphql';
+import {
+  MetadataReadability,
+  ObjectSharingReach,
+} from '~/generated-metadata/graphql';
 
 const mockIsRecordLevelSharingEnabled = jest.fn();
 const mockCanReadObjectRecords = jest.fn();
@@ -18,6 +21,7 @@ jest.mock('@/object-record/hooks/useObjectPermissionsForObject', () => ({
 const renderCanRead = (
   objectMetadataItem: Partial<{
     isSystem: boolean;
+    readability: MetadataReadability;
     sharingReach: ObjectSharingReach;
   }> = {},
 ) =>
@@ -25,6 +29,7 @@ const renderCanRead = (
     useCanReadObjectRecordsOrSharedRecords({
       id: 'object-id',
       isSystem: false,
+      readability: MetadataReadability.OPEN,
       sharingReach: ObjectSharingReach.WORKSPACE,
       ...objectMetadataItem,
     }),
@@ -53,9 +58,23 @@ describe('useCanReadObjectRecordsOrSharedRecords', () => {
     ).toBe(false);
   });
 
-  it('denies on system objects', () => {
-    expect(renderCanRead({ isSystem: true })).toBe(false);
-  });
+  it.each([true, false])(
+    'denies on system objects with record sharing enabled: %s',
+    (isRecordLevelSharingEnabled) => {
+      mockIsRecordLevelSharingEnabled.mockReturnValue(
+        isRecordLevelSharingEnabled,
+      );
+
+      expect(renderCanRead({ isSystem: true })).toBe(false);
+    },
+  );
+
+  it.each([MetadataReadability.APPLICATION, MetadataReadability.SYSTEM])(
+    'denies on %s objects, whose records are never shared',
+    (readability) => {
+      expect(renderCanRead({ readability })).toBe(false);
+    },
+  );
 
   it('denies when record sharing is disabled', () => {
     mockIsRecordLevelSharingEnabled.mockReturnValue(false);
