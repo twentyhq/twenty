@@ -3,6 +3,8 @@ import { render } from '@testing-library/react';
 import { TwoFactorAuthenticationRecoveryCodeExpiryEffect } from '@/settings/two-factor-authentication/components/TwoFactorAuthenticationRecoveryCodeExpiryEffect';
 
 const ONE_HOUR_MS = 60 * 60 * 1000;
+const FIVE_MINUTES_MS = 5 * 60 * 1000;
+const FORTY_DAYS_MS = 40 * 24 * ONE_HOUR_MS;
 
 const inOneHour = () => new Date(Date.now() + ONE_HOUR_MS).toISOString();
 
@@ -58,7 +60,24 @@ describe('TwoFactorAuthenticationRecoveryCodeExpiryEffect', () => {
       />,
     );
 
+    jest.advanceTimersByTime(FIVE_MINUTES_MS - 1000);
+    expect(onExpire).not.toHaveBeenCalled();
+
     jest.advanceTimersByTime(1000);
+    expect(onExpire).toHaveBeenCalledTimes(1);
+  });
+
+  it('keeps the code visible when the expiry is beyond the longest timer delay', () => {
+    const onExpire = jest.fn();
+
+    render(
+      <TwoFactorAuthenticationRecoveryCodeExpiryEffect
+        expiresAt={new Date(Date.now() + FORTY_DAYS_MS).toISOString()}
+        onExpire={onExpire}
+      />,
+    );
+
+    jest.advanceTimersByTime(ONE_HOUR_MS);
 
     expect(onExpire).not.toHaveBeenCalled();
   });
