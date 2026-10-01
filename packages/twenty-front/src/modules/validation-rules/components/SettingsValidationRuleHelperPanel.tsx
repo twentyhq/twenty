@@ -74,10 +74,7 @@ export const SettingsValidationRuleHelperPanel = ({
                       element?.scrollIntoView({ block: 'nearest' })
                   : undefined
               }
-              onMouseDown={(event) => {
-                event.preventDefault();
-                onSelect(item);
-              }}
+              onMouseDown={(event) => event.preventDefault()}
             >
               <MenuItem
                 LeftComponent={
@@ -94,6 +91,7 @@ export const SettingsValidationRuleHelperPanel = ({
                 contextualTextPosition="right"
                 focused={isHighlighted}
                 onMouseEnter={() => onHighlight(index)}
+                onClick={() => onSelect(item)}
               />
             </div>
           );
