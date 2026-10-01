@@ -11,6 +11,7 @@ import { TOAST_PROVIDER_PROP_DESCRIPTIONS } from './toastProviderPropDescription
 import { TOASTER_PROP_DESCRIPTIONS } from './toasterPropDescriptions';
 import { RADIO_PROP_DESCRIPTIONS } from './radioPropDescriptions';
 import { SEARCH_INPUT_PROP_DESCRIPTIONS } from './searchInputPropDescriptions';
+import { NUMBER_STEPPER_PROP_DESCRIPTIONS } from './numberStepperPropDescriptions';
 import { IMAGE_INPUT_PROP_DESCRIPTIONS } from './imageInputPropDescriptions';
 import { ANIMATED_ICON_CROSSFADE_PROP_DESCRIPTIONS } from './animatedIconCrossfadePropDescriptions';
 import { MENU_ITEM_PROP_DESCRIPTIONS } from './menuItemPropDescriptions';
@@ -245,6 +246,13 @@ export const DOCUMENTED_COMPONENTS = [
     source: 'primitives/input/InputGroup/InputGroup.tsx',
     entryPoint: 'twenty-ui/primitives/input',
     slug: 'input/input-group',
+  },
+  {
+    name: 'NumberStepper',
+    source: 'primitives/input/NumberStepper/NumberStepper.tsx',
+    entryPoint: 'twenty-ui/primitives/input',
+    slug: 'input/number-stepper',
+    propDescriptions: NUMBER_STEPPER_PROP_DESCRIPTIONS,
   },
   {
     name: 'Textarea',

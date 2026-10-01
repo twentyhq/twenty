@@ -20,6 +20,7 @@
     "ListItem",
     "Loader",
     "Menu",
+    "NumberStepper",
     "OverflowingTextWithTooltip",
     "Pill",
     "Popover",
