@@ -46,6 +46,10 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Partial<
     label: msg`AI chat sharing dropdown`,
     description: msg`Show the sharing dropdown on AI conversations when record sharing is enabled.`,
   },
+  [FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED]: {
+    label: msg`Record sharing`,
+    description: msg`Let people restrict and share individual records of any object.`,
+  },
   [FeatureFlagKey.IS_WEBHOOK_RATE_LIMIT_ENABLED]: {
     label: msg`Webhook rate limits`,
     description: msg`Limit the rate of outgoing webhook deliveries.`,

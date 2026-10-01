@@ -14,6 +14,7 @@ const DEFAULT_SEEDED_FEATURE_FLAGS: Partial<Record<FeatureFlagKey, boolean>> = {
   [FeatureFlagKey.IS_LOGS_SETTINGS_SECTION_ENABLED]: true,
   [FeatureFlagKey.IS_CONVERSATIONS_TAB_ENABLED]: false,
   [FeatureFlagKey.IS_VALIDATION_RULES_ENABLED]: true,
+  [FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED]: false,
 };
 
 type SeedFeatureFlagsArgs = {

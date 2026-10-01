@@ -3443,6 +3443,15 @@ export default {
             "hasInheritedAccess": [
                 8
             ],
+            "isOpenByDefault": [
+                8
+            ],
+            "generalAccessLevel": [
+                171
+            ],
+            "isGeneralAccessDefault": [
+                8
+            ],
             "roles": [
                 172
             ],
