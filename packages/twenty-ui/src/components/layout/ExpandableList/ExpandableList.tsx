@@ -1,6 +1,6 @@
 import { useMergedRefs } from '@base-ui/utils/useMergedRefs';
 import { clsx } from 'clsx';
-import { useState } from 'react';
+import { type SyntheticEvent, useState } from 'react';
 
 import { Popover } from '@ui/primitives/surfaces/Popover/Popover';
 import { isDefined } from '@ui/utilities/utils/isDefined';
@@ -8,6 +8,16 @@ import { isDefined } from '@ui/utilities/utils/isDefined';
 import styles from './ExpandableList.module.scss';
 import { useExpandableListLayout } from './internal/useExpandableListLayout';
 import { type ExpandableListProps } from './types/ExpandableListProps';
+
+const stopPropagation = (event: SyntheticEvent) => event.stopPropagation();
+
+const STOP_PROPAGATION_PROPS = {
+  onClick: stopPropagation,
+  onMouseDown: stopPropagation,
+  onPointerDown: stopPropagation,
+  onKeyDown: stopPropagation,
+  onKeyUp: stopPropagation,
+};
 
 export const ExpandableList = ({
   children,
@@ -115,11 +125,7 @@ export const ExpandableList = ({
             className={styles.trigger}
             data-visible={isCountVisible || undefined}
             aria-label={overflowLabel}
-            onClick={(event) => event.stopPropagation()}
-            onMouseDown={(event) => event.stopPropagation()}
-            onPointerDown={(event) => event.stopPropagation()}
-            onKeyDown={(event) => event.stopPropagation()}
-            onKeyUp={(event) => event.stopPropagation()}
+            {...STOP_PROPAGATION_PROPS}
           >
             +{hiddenItemCount}
           </Popover.Trigger>
@@ -131,11 +137,7 @@ export const ExpandableList = ({
           alignOffset={-7}
           aria-label={overflowLabel}
           className={styles.popup}
-          onClick={(event) => event.stopPropagation()}
-          onMouseDown={(event) => event.stopPropagation()}
-          onPointerDown={(event) => event.stopPropagation()}
-          onKeyDown={(event) => event.stopPropagation()}
-          onKeyUp={(event) => event.stopPropagation()}
+          {...STOP_PROPAGATION_PROPS}
         >
           {children}
         </Popover.Popup>
