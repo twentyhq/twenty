@@ -38,10 +38,13 @@ export const useApplicationUpgradePermissionSummary = ({
     [data, objectMetadataItems, settingsPermissionFlags, actionPermissionFlags],
   );
 
+  const hasPermissionSummaryError = !skip && isDefined(error);
+
   return {
-    permissionSummaryItems: skip ? [] : permissionSummaryItems,
+    permissionSummaryItems:
+      skip || hasPermissionSummaryError ? [] : permissionSummaryItems,
     isPermissionSummaryReady: skip || (!loading && !isDefined(error)),
-    hasPermissionSummaryError: !skip && isDefined(error),
+    hasPermissionSummaryError,
     refetchPermissionSummary: refetch,
   };
 };
