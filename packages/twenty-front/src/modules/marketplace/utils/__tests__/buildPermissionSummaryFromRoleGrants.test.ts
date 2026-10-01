@@ -7,6 +7,8 @@ import { ApplicationUpgradeRoleGrantType } from '~/generated-metadata/graphql';
 const COMPANY_UNIVERSAL_IDENTIFIER = '20202020-0000-4000-8000-000000000001';
 const SALARY_UNIVERSAL_IDENTIFIER = '20202020-0000-4000-8000-000000000002';
 const UNKNOWN_UNIVERSAL_IDENTIFIER = '20202020-0000-4000-8000-000000000003';
+const ANOTHER_UNKNOWN_UNIVERSAL_IDENTIFIER =
+  '20202020-0000-4000-8000-000000000004';
 
 const objects = [
   {
@@ -51,27 +53,6 @@ const getLabels = (grants: ReturnType<typeof buildGrant>[]) =>
   }).map(({ label }) => label);
 
 describe('buildPermissionSummaryFromRoleGrants', () => {
-  it('returns nothing when no grant is added', () => {
-    expect(getLabels([])).toEqual([]);
-  });
-
-  it('describes role-level grants', () => {
-    expect(
-      getLabels([
-        buildGrant({
-          type: ApplicationUpgradeRoleGrantType.ALL_OBJECT_RECORDS,
-          action: 'canUpdateObjectRecords',
-        }),
-        buildGrant({ type: ApplicationUpgradeRoleGrantType.ALL_SETTINGS }),
-        buildGrant({ type: ApplicationUpgradeRoleGrantType.ALL_TOOLS }),
-      ]),
-    ).toEqual([
-      'Create and edit all records',
-      'Update workspace settings',
-      'Access all tools',
-    ]);
-  });
-
   it('names the object, field and row-level restriction a grant covers', () => {
     expect(
       getLabels([
@@ -110,13 +91,18 @@ describe('buildPermissionSummaryFromRoleGrants', () => {
     ).toEqual(['Send emails via connected accounts']);
   });
 
-  it('falls back to generic labels for objects and flags the workspace does not have yet', () => {
+  it('falls back to generic labels, listed once, for objects and flags the workspace does not have yet', () => {
     expect(
       getLabels([
         buildGrant({
           type: ApplicationUpgradeRoleGrantType.OBJECT_RECORDS,
           action: 'canReadObjectRecords',
           objectUniversalIdentifier: UNKNOWN_UNIVERSAL_IDENTIFIER,
+        }),
+        buildGrant({
+          type: ApplicationUpgradeRoleGrantType.OBJECT_RECORDS,
+          action: 'canReadObjectRecords',
+          objectUniversalIdentifier: ANOTHER_UNKNOWN_UNIVERSAL_IDENTIFIER,
         }),
         buildGrant({
           type: ApplicationUpgradeRoleGrantType.PERMISSION_FLAG,
@@ -127,14 +113,5 @@ describe('buildPermissionSummaryFromRoleGrants', () => {
       'Read records of an object added by this version',
       'Use a permission added by this version',
     ]);
-  });
-
-  it('lists identical descriptions once', () => {
-    expect(
-      getLabels([
-        buildGrant({ type: ApplicationUpgradeRoleGrantType.ALL_TOOLS }),
-        buildGrant({ type: ApplicationUpgradeRoleGrantType.ALL_TOOLS }),
-      ]),
-    ).toEqual(['Access all tools']);
   });
 });

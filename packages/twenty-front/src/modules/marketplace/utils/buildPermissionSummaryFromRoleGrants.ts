@@ -2,6 +2,7 @@ import { type PermissionSummaryItem } from '@/marketplace/utils/buildPermissionS
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { t } from '@lingui/core/macro';
+import uniqBy from 'lodash.uniqby';
 import { SystemPermissionFlag } from 'twenty-shared/constants';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import {
@@ -41,19 +42,6 @@ const PERMISSION_FLAG_KEY_BY_UNIVERSAL_IDENTIFIER: Record<string, string> =
       key,
     ]),
   );
-
-const getAllRecordsLabel = (action: string | null | undefined) => {
-  switch (action) {
-    case 'canReadObjectRecords':
-      return t`Read all records`;
-    case 'canUpdateObjectRecords':
-      return t`Create and edit all records`;
-    case 'canSoftDeleteObjectRecords':
-      return t`Delete all records`;
-    default:
-      return t`Permanently delete all records`;
-  }
-};
 
 const getObjectRecordsLabel = ({
   action,
@@ -101,7 +89,10 @@ export const buildPermissionSummaryFromRoleGrants = ({
       case ApplicationUpgradeRoleGrantType.ALL_OBJECT_RECORDS:
         return {
           Icon: IconAddressBook,
-          label: getAllRecordsLabel(grant.action),
+          label: getObjectRecordsLabel({
+            action: grant.action,
+            objectLabel: t`all records`,
+          }),
         };
       case ApplicationUpgradeRoleGrantType.ALL_SETTINGS:
         return { Icon: IconSettings, label: t`Update workspace settings` };
@@ -163,10 +154,5 @@ export const buildPermissionSummaryFromRoleGrants = ({
     }
   };
 
-  const summaryItems = grants.map(toSummaryItem);
-
-  return summaryItems.filter(
-    (item, index) =>
-      summaryItems.findIndex(({ label }) => label === item.label) === index,
-  );
+  return uniqBy(grants.map(toSummaryItem), 'label');
 };
