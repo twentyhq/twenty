@@ -6,6 +6,7 @@ import { MetricRow } from '@ui/components';
 import { IconFiles } from '@ui/icon';
 import { Button } from '@ui/primitives/input/Button/Button';
 import { Card } from '@ui/primitives/surfaces/Card/Card';
+import { Text } from '@ui/primitives/typography/Text/Text';
 import { ComponentDecorator } from '@ui/testing';
 
 const meta: Meta<typeof MetricRow> = {
@@ -124,7 +125,14 @@ export const CatalogDark: Story = {
 };
 
 export const RightToLeft: Story = {
-  args: { dir: 'rtl' },
+  args: {
+    dir: 'rtl',
+    value: (
+      <Text render={<bdi />} dir="ltr">
+        75 of 100
+      </Text>
+    ),
+  },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const label = canvas.getByText('Imported files');

@@ -4,6 +4,7 @@ import { expect, userEvent, within } from 'storybook/test';
 
 import { ProgressRing } from '@ui/primitives/feedback';
 import { Button } from '@ui/primitives/input/Button/Button';
+import { Text } from '@ui/primitives/typography/Text/Text';
 import { ComponentDecorator } from '@ui/testing';
 import { isDefined } from '@ui/utilities';
 
@@ -154,7 +155,15 @@ export const CatalogDark: Story = {
 };
 
 export const RightToLeft: Story = {
-  args: { ...WithValue.args, dir: 'rtl' },
+  args: {
+    ...WithValue.args,
+    dir: 'rtl',
+    children: (
+      <Text render={<bdi />} dir="ltr">
+        75 of 100 files
+      </Text>
+    ),
+  },
   play: async ({ canvasElement }) => {
     const progress = within(canvasElement).getByRole('progressbar', {
       name: 'Import progress',
