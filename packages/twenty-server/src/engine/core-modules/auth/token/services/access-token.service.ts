@@ -15,7 +15,7 @@ import {
 } from 'src/engine/core-modules/auth/auth.exception';
 import { type AuthToken } from 'src/engine/core-modules/auth/dto/auth-token.dto';
 import { JwtAuthStrategy } from 'src/engine/core-modules/auth/strategies/jwt.auth.strategy';
-import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { type RawAuthContext } from 'src/engine/core-modules/auth/types/raw-auth-context.type';
 import { type AccessTokenJwtPayload } from 'src/engine/core-modules/auth/types/access-token-jwt-payload.type';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
 import { type PlaygroundTokenJwtPayload } from 'src/engine/core-modules/auth/types/playground-token-jwt-payload.type';
@@ -182,7 +182,7 @@ export class AccessTokenService {
     return { token, expiresAt };
   }
 
-  async validateToken(token: string): Promise<AuthContext> {
+  async validateToken(token: string): Promise<RawAuthContext> {
     await this.jwtWrapperService.verifyJwtToken(token);
 
     const decoded = this.jwtWrapperService.decode<AccessTokenJwtPayload>(token);
@@ -192,7 +192,7 @@ export class AccessTokenService {
     return context;
   }
 
-  async validateTokenByRequest(request: Request): Promise<AuthContext> {
+  async validateTokenByRequest(request: Request): Promise<RawAuthContext> {
     const token = this.jwtWrapperService.extractJwtFromRequest()(request);
 
     if (token) {
@@ -222,7 +222,7 @@ export class AccessTokenService {
 
   private async validateSessionToken(
     sessionToken: string,
-  ): Promise<AuthContext> {
+  ): Promise<RawAuthContext> {
     const { payload, authenticatedAt } =
       await this.userSessionService.resolveSession(sessionToken);
 

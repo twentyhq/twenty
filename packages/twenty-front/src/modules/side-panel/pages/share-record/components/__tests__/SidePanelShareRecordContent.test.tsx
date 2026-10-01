@@ -420,7 +420,7 @@ describe('Share record side panel', () => {
     },
   );
 
-  it('tells viewers of a record open by default that admins can change its access', async () => {
+  it('tells viewers of a record open by default who can change its access', async () => {
     renderSharing({
       sharing: {
         ...sharing,
@@ -432,7 +432,7 @@ describe('Share record side panel', () => {
     await waitFor(() =>
       expect(
         screen.getByText(
-          'Only the creator of this record, people with full access to it and admins can change who has access.',
+          'Only the creator of this record, people with full access to it and people with access to all records can change who has access.',
         ),
       ).toBeVisible(),
     );

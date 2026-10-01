@@ -12,7 +12,8 @@ import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-comma
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 
 const NOW = '2026-10-01T12:00:00.000Z';
-const SHARE_RECORD_UNIVERSAL_IDENTIFIER = 'b9336f9f-d10c-42c0-b7cd-40c94ae235ef';
+const SHARE_RECORD_UNIVERSAL_IDENTIFIER =
+  'b9336f9f-d10c-42c0-b7cd-40c94ae235ef';
 const CHAT_ONLY_EXPRESSION =
   'numberOfSelectedRecords == 1 and featureFlags.IS_AI_CHAT_SHARING_DROPDOWN_ENABLED and noneDefined(selectedRecords, "deletedAt")';
 
@@ -69,12 +70,15 @@ const isShareAvailable = ({
   deletedAt?: string | null;
   numberOfSelectedRecords?: number;
 }) =>
-  evaluateConditionalAvailabilityExpression(ALL_OBJECTS_SHARE_RECORD_EXPRESSION, {
-    featureFlags,
-    objectMetadataItem,
-    numberOfSelectedRecords,
-    selectedRecords: [{ id: 'record-1', deletedAt }],
-  });
+  evaluateConditionalAvailabilityExpression(
+    ALL_OBJECTS_SHARE_RECORD_EXPRESSION,
+    {
+      featureFlags,
+      objectMetadataItem,
+      numberOfSelectedRecords,
+      selectedRecords: [{ id: 'record-1', deletedAt }],
+    },
+  );
 
 describe('buildShareRecordAvailabilityUpdate', () => {
   it('matches the standard application item', () => {
@@ -149,7 +153,8 @@ describe('buildShareRecordAvailabilityUpdate', () => {
       buildUpdate(
         {
           ...chatOnlyShareRecord,
-          conditionalAvailabilityExpression: ALL_OBJECTS_SHARE_RECORD_EXPRESSION,
+          conditionalAvailabilityExpression:
+            ALL_OBJECTS_SHARE_RECORD_EXPRESSION,
           availabilityObjectMetadataId: company?.id ?? null,
           availabilityObjectMetadataUniversalIdentifier:
             STANDARD_OBJECTS.company.universalIdentifier,
@@ -193,6 +198,18 @@ describe('buildShareRecordAvailabilityUpdate', () => {
         isShareAvailable({ featureFlags, objectMetadataItem: conversation }),
       ).toBe(true);
     });
+
+    it.each(['APPLICATION', 'SYSTEM'])(
+      'stays off objects that are never shared, like %s ones',
+      (readability) => {
+        expect(
+          isShareAvailable({
+            featureFlags: { IS_RECORD_LEVEL_SHARING_ENABLED: true },
+            objectMetadataItem: { ...company, readability },
+          }),
+        ).toBe(false);
+      },
+    );
 
     it('hides on deleted records and multiple selections', () => {
       const featureFlags = { IS_RECORD_LEVEL_SHARING_ENABLED: true };

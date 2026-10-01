@@ -169,7 +169,7 @@ export const useSettingsRolePermissionFlagConfig = ({
             {
               key: PermissionFlagType.ACCESS_ALL_RECORDS,
               name: t`All records`,
-              description: t`See and manage records restricted by sharing`,
+              description: t`See records restricted by sharing`,
               Icon: IconAddressBook,
               isRelevantForAgents: true,
               isRelevantForApiKeys: true,

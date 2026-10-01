@@ -1459,6 +1459,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       tableShape: this.options.tableShape,
       executor: this.options.executor,
       objectRecordsPermissions: this.options.objectRecordsPermissions,
+      isRecordSharingEnabled: this.isRecordSharingEnabled,
       tableShapeByObjectMetadataId: this.options.tableShapeByObjectMetadataId,
       onBeforeExecute: () => undefined,
       formatResult: (records) => this.formatResult(records),

@@ -22,7 +22,7 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
 const ACCESS_ALL_RECORDS_UNIVERSAL_IDENTIFIER =
   SystemPermissionFlag[PermissionFlagType.ACCESS_ALL_RECORDS];
 
-@RegisteredWorkspaceCommand('2.45.0', 1790858301122)
+@RegisteredWorkspaceCommand('2.45.0', 1790876819146)
 @Command({
   name: 'upgrade:2-45:add-access-all-records-permission-flag',
   description:
@@ -71,12 +71,11 @@ export class AddAccessAllRecordsPermissionFlagCommand extends ProvisionedWorkspa
       );
     }
 
-    const permissionFlagToCreate =
-      buildStandardFlatPermissionFlagMetadataMaps({
-        now: new Date().toISOString(),
-        workspaceId,
-        twentyStandardApplicationId: twentyStandardApplication.id,
-      }).byUniversalIdentifier[ACCESS_ALL_RECORDS_UNIVERSAL_IDENTIFIER];
+    const permissionFlagToCreate = buildStandardFlatPermissionFlagMetadataMaps({
+      now: new Date().toISOString(),
+      workspaceId,
+      twentyStandardApplicationId: twentyStandardApplication.id,
+    }).byUniversalIdentifier[ACCESS_ALL_RECORDS_UNIVERSAL_IDENTIFIER];
 
     if (!isDefined(permissionFlagToCreate)) {
       throw new Error('Access all records permission flag definition missing');
@@ -121,7 +120,9 @@ export class AddAccessAllRecordsPermissionFlagCommand extends ProvisionedWorkspa
       flatRolePermissionFlagMaps.byUniversalIdentifier,
     ).filter(
       (rolePermissionFlag): rolePermissionFlag is FlatRolePermissionFlag =>
-        rolePermissionFlag?.permissionFlagId === permissionFlagToDelete.id,
+        isDefined(rolePermissionFlag) &&
+        (rolePermissionFlag.permissionFlagId === permissionFlagToDelete.id ||
+          rolePermissionFlag.flag === PermissionFlagType.ACCESS_ALL_RECORDS),
     );
 
     this.logger.log(
