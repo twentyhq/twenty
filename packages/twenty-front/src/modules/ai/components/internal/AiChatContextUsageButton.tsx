@@ -111,6 +111,8 @@ export const AiChatContextUsageButton = () => {
       ? Math.min(100, Math.max(0, (conversationSize / contextWindow) * 100))
       : 0;
 
+  const formattedPercentage = formatNumber(percentage, { decimals: 1 });
+
   const {
     usage: creditUsage,
     loading,
@@ -182,7 +184,11 @@ export const AiChatContextUsageButton = () => {
       <StyledTrigger
         ref={refs.setReference}
         type="button"
-        aria-label={t`Context and usage`}
+        aria-label={
+          contextWindow > 0
+            ? t`Context and usage, ${formattedPercentage}% of context window used`
+            : t`Context and usage, context window unavailable`
+        }
         // oxlint-disable-next-line react/jsx-props-no-spreading
         {...getReferenceProps()}
       >
@@ -202,7 +208,7 @@ export const AiChatContextUsageButton = () => {
               progress={percentage}
               value={
                 contextWindow > 0
-                  ? `(${formatAiChatTokens(conversationSize)}/${formatAiChatTokens(contextWindow)}) ${formatNumber(percentage, { decimals: 1 })}%`
+                  ? `(${formatAiChatTokens(conversationSize)}/${formatAiChatTokens(contextWindow)}) ${formattedPercentage}%`
                   : t`Not available`
               }
               progressColor={getUsageLimitRingColor({

@@ -110,9 +110,11 @@ export const NewChat: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const page = within(canvasElement.ownerDocument.body);
-    await userEvent.click(
-      canvas.getByRole('button', { name: 'Context and usage' }),
+    const trigger = canvas.getByRole('button', { name: /^Context and usage/ });
+    await expect(trigger).toHaveAccessibleName(
+      'Context and usage, context window unavailable',
     );
+    await userEvent.click(trigger);
     await waitFor(() => expect(page.getByText('80%')).toBeVisible());
     await expect(
       page.queryByRole('button', { name: /^More/ }),
@@ -128,6 +130,10 @@ export const Expanded: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const page = within(canvasElement.ownerDocument.body);
+    const trigger = canvas.getByRole('button', { name: /^Context and usage/ });
+    await expect(trigger).toHaveAccessibleName(
+      'Context and usage, 20% of context window used',
+    );
     await userEvent.tab();
     await waitFor(() => expect(page.getByRole('dialog')).toBeVisible());
     await userEvent.click(page.getByRole('button', { name: /^More/ }));
@@ -138,9 +144,7 @@ export const Expanded: Story = {
     await expect(page.getByText('75k')).toBeVisible();
     await userEvent.click(page.getByRole('button', { name: /^Less/ }));
     await expect(page.queryByText('Last message')).not.toBeInTheDocument();
-    await userEvent.click(
-      canvas.getByRole('button', { name: 'Context and usage' }),
-    );
+    await userEvent.click(trigger);
   },
 };
 export const ReopenedConversation: Story = {
