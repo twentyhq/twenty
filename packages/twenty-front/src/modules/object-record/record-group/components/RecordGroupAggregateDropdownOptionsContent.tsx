@@ -1,116 +1,90 @@
-import { useDropdownContextStateManagement } from '@/dropdown-context-state-management/hooks/useDropdownContextStateManagement';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getAggregateOperationLabel } from '@/object-record/record-board/record-board-column/utils/getAggregateOperationLabel';
 import { RecordGroupAggregateDropdownMenuItem } from '@/object-record/record-group/components/RecordGroupAggregateDropdownMenuItem';
-import { RecordGroupAggregateDropdownContext } from '@/object-record/record-group/states/context/RecordGroupAggregateDropdownContext';
-import { type RecordGroupAggregateDropdownContextValue } from '@/object-record/record-group/types/RecordGroupAggregateDropdownContextValue';
 import { aggregateOperationComponentState } from '@/object-record/record-group/states/aggregateOperationComponentState';
 import { availableFieldIdsForAggregateOperationComponentState } from '@/object-record/record-group/states/availableFieldIdsForAggregateOperationComponentState';
 import { recordIndexGroupAggregateOperationComponentState } from '@/object-record/record-index/states/recordIndexGroupAggregateOperationComponentState';
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import { type AvailableFieldsForAggregateOperation } from '@/object-record/types/AvailableFieldsForAggregateOperation';
-import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
-import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
-import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useUpdateViewAggregate } from '@/views/hooks/useUpdateViewAggregate';
-import isEmpty from 'lodash.isempty';
-import { IconCheck, IconChevronLeft } from 'twenty-ui/icon';
+import { isNonEmptyArray } from 'twenty-shared/utils';
+import { Dropdown } from 'twenty-ui/components';
+import { IconCheck } from 'twenty-ui/icon';
+
+type RecordGroupAggregateDropdownOptionsContentProps = {
+  availableAggregations: AvailableFieldsForAggregateOperation;
+  title: string;
+  objectMetadataItem: EnrichedObjectMetadataItem;
+};
 
 export const RecordGroupAggregateDropdownOptionsContent = ({
   availableAggregations,
   title,
-}: {
-  availableAggregations: AvailableFieldsForAggregateOperation;
-  title: string;
-}) => {
-  const { onContentChange, closeDropdown, resetContent, objectMetadataItem } =
-    useDropdownContextStateManagement<RecordGroupAggregateDropdownContextValue>(
-      {
-        context: RecordGroupAggregateDropdownContext,
-      },
-    );
-
+  objectMetadataItem,
+}: RecordGroupAggregateDropdownOptionsContentProps) => {
   const setAggregateOperation = useSetAtomComponentState(
     aggregateOperationComponentState,
   );
-
   const setAvailableFieldIdsForAggregateOperation = useSetAtomComponentState(
     availableFieldIdsForAggregateOperationComponentState,
   );
-
   const { updateViewAggregate } = useUpdateViewAggregate();
-
   const recordIndexGroupAggregateOperation = useAtomComponentStateValue(
     recordIndexGroupAggregateOperationComponentState,
   );
 
   return (
-    <LegacyDropdownContent>
-      <DropdownMenuHeader
-        StartComponent={
-          <DropdownMenuHeaderLeftComponent
-            onClick={resetContent}
-            Icon={IconChevronLeft}
-          />
-        }
-      >
-        {title}
-      </DropdownMenuHeader>
-      <DropdownMenuItemsContainer>
+    <>
+      <Dropdown.Back>{title}</Dropdown.Back>
+      <Dropdown.Section>
         {Object.entries(availableAggregations)
-          .filter(([, fields]) => !isEmpty(fields))
+          .filter(([, fields]) => isNonEmptyArray(fields))
           .map(
             ([
               availableAggregationOperation,
               availableAggregationFieldsIdsForOperation,
-            ]) => (
-              <RecordGroupAggregateDropdownMenuItem
-                key={`aggregate-dropdown-menu-content-${availableAggregationOperation}`}
-                onContentChange={() => {
-                  if (
-                    availableAggregationOperation !== AggregateOperations.COUNT
-                  ) {
-                    setAggregateOperation(
-                      availableAggregationOperation as ExtendedAggregateOperations,
-                    );
+            ]) => {
+              const aggregateOperation =
+                availableAggregationOperation as ExtendedAggregateOperations;
+              const isCountOperation =
+                aggregateOperation === AggregateOperations.COUNT;
 
+              return (
+                <RecordGroupAggregateDropdownMenuItem
+                  key={aggregateOperation}
+                  onClick={() => {
+                    if (isCountOperation) {
+                      updateViewAggregate({
+                        kanbanAggregateOperationFieldMetadataId:
+                          availableAggregationFieldsIdsForOperation[0],
+                        kanbanAggregateOperation: aggregateOperation,
+                        objectMetadataItem,
+                      });
+                      return;
+                    }
+
+                    setAggregateOperation(aggregateOperation);
                     setAvailableFieldIdsForAggregateOperation(
                       availableAggregationFieldsIdsForOperation,
                     );
-                    onContentChange('aggregateFields');
-                  } else {
-                    updateViewAggregate({
-                      kanbanAggregateOperationFieldMetadataId:
-                        availableAggregationFieldsIdsForOperation[0],
-                      kanbanAggregateOperation:
-                        availableAggregationOperation as AggregateOperations,
-                      objectMetadataItem,
-                    });
-                    closeDropdown();
+                  }}
+                  text={getAggregateOperationLabel(aggregateOperation)}
+                  page={isCountOperation ? undefined : 'aggregateFields'}
+                  RightIcon={
+                    isCountOperation &&
+                    recordIndexGroupAggregateOperation ===
+                      AggregateOperations.COUNT
+                      ? IconCheck
+                      : undefined
                   }
-                }}
-                text={getAggregateOperationLabel(
-                  availableAggregationOperation as ExtendedAggregateOperations,
-                )}
-                hasSubMenu={
-                  availableAggregationOperation === AggregateOperations.COUNT
-                    ? false
-                    : true
-                }
-                RightIcon={
-                  availableAggregationOperation === AggregateOperations.COUNT &&
-                  recordIndexGroupAggregateOperation ===
-                    AggregateOperations.COUNT
-                    ? IconCheck
-                    : undefined
-                }
-              />
-            ),
+                />
+              );
+            },
           )}
-      </DropdownMenuItemsContainer>
-    </LegacyDropdownContent>
+      </Dropdown.Section>
+    </>
   );
 };

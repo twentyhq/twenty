@@ -22,8 +22,9 @@ import { RecordTableWidgetContext } from '@/object-record/record-table-widget/co
 import { useIsRecordTableWidgetAggregateNonInteractive } from '@/object-record/record-table-widget/hooks/useIsRecordTableWidgetAggregateNonInteractive';
 import { useCreateNewIndexRecord } from '@/object-record/record-table/hooks/useCreateNewIndexRecord';
 import { canCreateRecordsForObjectMetadataItem } from '@/object-record/utils/canCreateRecordsForObjectMetadataItem';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { useToggleDropdown } from '@/ui/layout/dropdown/hooks/useToggleDropdown';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
+import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { DragDropItemSortableHandle } from '@/ui/utilities/drag-and-drop/components/DragDropItemSortableHandle';
 import { useDisableDragSelectOnPointerDown } from '@/ui/utilities/drag-select/hooks/useDisableDragSelectOnPointerDown';
@@ -31,7 +32,7 @@ import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hoo
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { isDefined } from 'twenty-shared/utils';
-import { LightIconButton } from 'twenty-ui/components';
+import { Dropdown, LightIconButton } from 'twenty-ui/components';
 import { IconDotsVertical, IconPlus } from 'twenty-ui/icon';
 
 const StyledHeader = styled.div<{ isReadOnly: boolean }>`
@@ -190,7 +191,7 @@ export const RecordBoardColumnHeader = () => {
     recordIndexAggregateDisplayLabelComponentState,
   );
 
-  const { toggleDropdown } = useToggleDropdown();
+  const { openDropdown } = useOpenDropdown();
 
   const dropdownId = `record-board-column-dropdown-${columnDefinition.id}`;
 
@@ -230,23 +231,25 @@ export const RecordBoardColumnHeader = () => {
                     />
                   </StyledTagContainer>
                 ) : (
-                  <Dropdown
-                    dropdownId={dropdownId}
-                    dropdownPlacement="bottom-start"
-                    dropdownOffset={{
-                      x: 0,
-                      y: 10,
-                    }}
-                    clickableComponent={
-                      <StyledTagContainer>
-                        <RecordGroupChip
-                          recordGroupDefinition={columnDefinition}
-                          fieldMetadataItem={selectFieldMetadataItem}
-                        />
-                      </StyledTagContainer>
-                    }
-                    dropdownComponents={<RecordBoardColumnDropdownMenu />}
-                  />
+                  <DropdownRoot dropdownId={dropdownId} type="menu">
+                    <Dropdown.Trigger
+                      nativeButton={false}
+                      render={<StyledTagContainer />}
+                    >
+                      <RecordGroupChip
+                        recordGroupDefinition={columnDefinition}
+                        fieldMetadataItem={selectFieldMetadataItem}
+                      />
+                    </Dropdown.Trigger>
+                    <DropdownContent
+                      aria-label={t`Column options`}
+                      side="bottom"
+                      align="start"
+                      sideOffset={10}
+                    >
+                      <RecordBoardColumnDropdownMenu />
+                    </DropdownContent>
+                  </DropdownRoot>
                 )}
               </StyledDropdownContainer>
 
@@ -270,7 +273,7 @@ export const RecordBoardColumnHeader = () => {
                   emphasis="subtle"
                   aria-label={t`More options`}
                   onClick={() => {
-                    toggleDropdown({
+                    openDropdown({
                       dropdownComponentInstanceIdFromProps: dropdownId,
                     });
                   }}

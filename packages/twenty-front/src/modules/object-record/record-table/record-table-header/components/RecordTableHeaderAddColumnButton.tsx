@@ -12,11 +12,14 @@ import { isRecordTableRowActiveComponentFamilyState } from '@/object-record/reco
 import { isRecordTableRowFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableRowFocusActiveComponentState';
 import { isRecordTableRowFocusedComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowFocusedComponentFamilyState';
 import { isRecordTableScrolledVerticallyComponentState } from '@/object-record/record-table/states/isRecordTableScrolledVerticallyComponentState';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { cx } from '@linaria/core';
+import { t } from '@lingui/core/macro';
+import { Dropdown } from 'twenty-ui/components';
 import { IconPlus } from 'twenty-ui/icon';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
@@ -109,16 +112,26 @@ export const RecordTableHeaderAddColumnButton = () => {
         position="left"
       />
       <StyledDropdownContainer>
-        <Dropdown
+        <DropdownRoot
           dropdownId={`${HIDDEN_TABLE_COLUMN_DROPDOWN_ID}-${recordTableId}`}
-          clickableComponent={
-            <StyledPlusIconContainer>
-              <IconPlus size={theme.icon.size.md} />
-            </StyledPlusIconContainer>
-          }
-          dropdownComponents={<RecordTableHeaderPlusButtonContent />}
-          dropdownPlacement="bottom-start"
-        />
+          type="picker"
+        >
+          <Dropdown.Trigger
+            render={<StyledPlusIconContainer />}
+            nativeButton={false}
+            aria-label={t`Add column`}
+            onKeyDown={(event) => {
+              if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+                event.stopPropagation();
+              }
+            }}
+          >
+            <IconPlus size={theme.icon.size.md} />
+          </Dropdown.Trigger>
+          <DropdownContent align="start" width={200}>
+            <RecordTableHeaderPlusButtonContent />
+          </DropdownContent>
+        </DropdownRoot>
       </StyledDropdownContainer>
     </StyledPlusIconHeaderCell>
   );

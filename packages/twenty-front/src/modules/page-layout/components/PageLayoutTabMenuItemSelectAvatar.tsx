@@ -1,15 +1,16 @@
 import { TabAvatar } from '@/ui/layout/tab-list/components/TabAvatar';
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import { t } from '@lingui/core/macro';
-import { type MouseEvent, useState } from 'react';
-import { LightIconButton } from 'twenty-ui/components';
-import { IconPencil } from 'twenty-ui/icon';
-import { ListItem } from 'twenty-ui/primitives/navigation';
+import { useContext } from 'react';
+import { DragDropItemSortableHandleRefContext } from '@/ui/utilities/drag-and-drop/context/DragDropItemSortableHandleRefContext';
+import { Dropdown, LightIconButton } from 'twenty-ui/components';
+import { IconGripVertical, IconPencil } from 'twenty-ui/icon';
 
 type PageLayoutTabMenuItemSelectAvatarProps = {
   tab: SingleTabProps;
   selected: boolean;
-  onClick?: (event?: MouseEvent) => void;
+  onSelect?: () => void;
+  closeOnSelect?: boolean;
   disabled?: boolean;
   showEditButton?: boolean;
   onEditClick?: (tabId: string) => void;
@@ -19,45 +20,58 @@ type PageLayoutTabMenuItemSelectAvatarProps = {
 export const PageLayoutTabMenuItemSelectAvatar = ({
   tab,
   selected,
-  onClick,
+  onSelect,
+  closeOnSelect,
   disabled,
   showEditButton = false,
   onEditClick,
   testId,
 }: PageLayoutTabMenuItemSelectAvatarProps) => {
-  const [isHovered, setIsHovered] = useState(false);
+  const handleRef = useContext(DragDropItemSortableHandleRefContext);
 
   return (
-    <ListItem
-      onClick={onClick}
+    <Dropdown.OptionItem
+      render={<div />}
+      onSelect={onSelect}
+      closeOnSelect={closeOnSelect}
       disabled={disabled}
       data-testid={testId}
-      role="option"
-      aria-selected={selected}
-      aria-disabled={disabled}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
       startIcon={<TabAvatar tab={tab} />}
-      selected={selected && !isHovered}
-      indicator="check"
+      selected={selected}
+      actionsVisibility="hover"
       actions={
-        isHovered &&
-        showEditButton && (
-          <LightIconButton
-            size="sm"
-            emphasis="subtle"
-            aria-label={t`Edit tab icon`}
-            onClick={(event) => {
-              event.stopPropagation();
-              onEditClick?.(tab.id);
-            }}
-          >
-            <IconPencil />
-          </LightIconButton>
-        )
+        !disabled ? (
+          <>
+            <LightIconButton
+              ref={handleRef}
+              data-dnd-sortable-handle
+              size="sm"
+              emphasis="subtle"
+              aria-label={t`Reorder ${tab.title} tab`}
+              onClick={(event) => event.stopPropagation()}
+            >
+              <IconGripVertical />
+            </LightIconButton>
+            {showEditButton && (
+              <LightIconButton
+                tabIndex={-1}
+                onPointerDownCapture={(event) => event.stopPropagation()}
+                size="sm"
+                emphasis="subtle"
+                aria-label={t`Edit tab icon`}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  onEditClick?.(tab.id);
+                }}
+              >
+                <IconPencil />
+              </LightIconButton>
+            )}
+          </>
+        ) : undefined
       }
     >
       {tab.title}
-    </ListItem>
+    </Dropdown.OptionItem>
   );
 };

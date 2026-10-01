@@ -1,4 +1,5 @@
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
+import { TABLE_Z_INDEX } from '@/object-record/record-table/constants/TableZIndex';
 import { hasRecordGroupsComponentSelector } from '@/object-record/record-group/states/selectors/hasRecordGroupsComponentSelector';
 
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
@@ -83,6 +84,7 @@ export const RecordTableHeaderCell = ({
     hasRecordGroups ||
     !isFirstRowActiveOrFocused ||
     isRecordTableScrolledVertically;
+  const isFirstScrollableColumn = recordFieldIndex === 1;
 
   return (
     <RecordTableHeaderCellContainer
@@ -97,6 +99,11 @@ export const RecordTableHeaderCell = ({
       shouldDisplayBorderBottom={shouldDisplayBorderBottom}
       isResizing={isResizingAnyColumn}
       isReadOnly={isRecordTableColumnHeadersReadOnly}
+      zIndex={
+        isFirstScrollableColumn
+          ? TABLE_Z_INDEX.headerColumns.headerColumnsNormal
+          : undefined
+      }
     >
       {isRecordTableColumnResizable && (
         <RecordTableHeaderResizeHandler

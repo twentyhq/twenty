@@ -10,5 +10,7 @@ declare const classNames: {
   readonly search: 'search';
   readonly status: 'status';
   readonly title: 'title';
+  readonly itemWithActions: 'itemWithActions';
+  readonly itemWithActionsPrimary: 'itemWithActionsPrimary';
 };
 export default classNames;

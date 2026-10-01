@@ -3,6 +3,7 @@ import { styled } from '@linaria/react';
 import { PAGE_LAYOUT_TAB_LIST_DROPPABLE_IDS } from '@/page-layout/components/PageLayoutTabListDroppableIds';
 import { PageLayoutTabListDroppableMoreButton } from '@/page-layout/components/PageLayoutTabListDroppableMoreButton';
 import { PageLayoutTabMenuItemSelectAvatar } from '@/page-layout/components/PageLayoutTabMenuItemSelectAvatar';
+import { PAGE_LAYOUT_TAB_LIST_DROPDOWN_SENSORS } from '@/page-layout/constants/PageLayoutTabListDropdownSensors';
 import { PAGE_LAYOUT_TAB_DND_TYPE } from '@/page-layout/constants/PageLayoutTabDndType';
 import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
@@ -11,10 +12,11 @@ import { pageLayoutTabSettingsOpenTabIdComponentState } from '@/page-layout/stat
 import { type PageLayoutTabDragData } from '@/page-layout/types/PageLayoutTabDragData';
 import { shouldEnableTabEditingFeatures } from '@/page-layout/utils/shouldEnableTabEditingFeatures';
 import { useNavigatePageLayoutSidePanel } from '@/side-panel/pages/page-layout/hooks/useNavigatePageLayoutSidePanel';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
+import { Dropdown } from 'twenty-ui/components';
+import { isDefined } from 'twenty-shared/utils';
 import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/contexts/TabListComponentInstanceContext';
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import { DragDropItemDropTarget } from '@/ui/utilities/drag-and-drop/components/DragDropItemDropTarget';
@@ -25,6 +27,9 @@ import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSe
 import { Fragment, useContext } from 'react';
 import { SidePanelPages } from 'twenty-shared/types';
 import { type PageLayoutType } from '~/generated-metadata/graphql';
+
+const SORTABLE_HANDLE_SELECTOR = '[data-dnd-sortable-handle]';
+const TAB_LIST_INSTANCE_ATTRIBUTE = 'data-tab-list-instance-id';
 
 const StyledOverflowMenuItemWrapper = styled.div`
   cursor: grab;
@@ -45,7 +50,6 @@ type PageLayoutTabListReorderableOverflowDropdownProps = {
   loading?: boolean;
   onSelect: (tabId: string) => void;
   visibleTabCount: number;
-  onClose: () => void;
   pageLayoutType: PageLayoutType;
 };
 
@@ -58,7 +62,6 @@ export const PageLayoutTabListReorderableOverflowDropdown = ({
   loading,
   onSelect,
   visibleTabCount,
-  onClose,
   pageLayoutType,
 }: PageLayoutTabListReorderableOverflowDropdownProps) => {
   const context = useContext(TabListComponentInstanceContext);
@@ -78,10 +81,7 @@ export const PageLayoutTabListReorderableOverflowDropdown = ({
     instanceId,
   );
 
-  const setIsPageLayoutTabDragging = useSetAtomComponentState(
-    isPageLayoutTabDraggingComponentState,
-    instanceId,
-  );
+  const { closeDropdown } = useCloseDropdown();
 
   const setPageLayoutTabSettingsOpenTabId = useSetAtomComponentState(
     pageLayoutTabSettingsOpenTabIdComponentState,
@@ -90,16 +90,12 @@ export const PageLayoutTabListReorderableOverflowDropdown = ({
 
   const { navigatePageLayoutSidePanel } = useNavigatePageLayoutSidePanel();
 
-  const handleClose = () => {
-    if (!isPageLayoutTabDragging) {
-      onClose();
-    }
-  };
-
   const handleTabSelect = (tabId: string) => {
-    setIsPageLayoutTabDragging(false);
+    if (isPageLayoutTabDragging) {
+      return;
+    }
+
     onSelect(tabId);
-    handleClose();
   };
 
   const handleEditClick = (tabId: string) => {
@@ -107,79 +103,97 @@ export const PageLayoutTabListReorderableOverflowDropdown = ({
       sidePanelPage: SidePanelPages.PageLayoutTabSettings,
     });
     setPageLayoutTabSettingsOpenTabId(tabId);
-    onClose();
+    closeDropdown(dropdownId);
   };
 
   return (
-    <Dropdown
+    <DropdownRoot
       dropdownId={dropdownId}
-      dropdownPlacement="bottom-end"
-      dropdownOffset={{ x: 0, y: 8 }}
-      onClickOutside={handleClose}
-      clickableComponent={
-        <PageLayoutTabListDroppableMoreButton
-          hiddenTabsCount={hiddenTabsCount}
-          isActiveTabHidden={isActiveTabHidden}
-          data-dropdown-id={dropdownId}
-        />
-      }
-      dropdownComponents={
-        <LegacyDropdownContent
-          widthInPixels={GenericDropdownContentWidth.Medium}
-        >
-          <DropdownMenuItemsContainer>
-            {hiddenTabs.map((tab, index) => {
-              const disabled = tab.disabled ?? loading;
-              const tabDragData: PageLayoutTabDragData = {
-                type: 'tab',
-                tabId: tab.id,
-                nextTabId: hiddenTabs[index + 1]?.id ?? null,
-              };
+      type="picker"
+      onInteractOutside={(event) => {
+        const target = event.target;
+        const tabList =
+          target instanceof Element
+            ? target
+                .closest(SORTABLE_HANDLE_SELECTOR)
+                ?.closest(`[${TAB_LIST_INSTANCE_ATTRIBUTE}]`)
+            : null;
+        const isVisibleTabPress =
+          isDefined(instanceId) &&
+          tabList?.getAttribute(TAB_LIST_INSTANCE_ATTRIBUTE) === instanceId;
 
-              return (
-                <Fragment key={tab.id}>
-                  <DragDropItemDropTarget
-                    index={visibleTabCount + index}
-                    droppableId={
-                      PAGE_LAYOUT_TAB_LIST_DROPPABLE_IDS.OVERFLOW_TABS
-                    }
-                    orientation="horizontal"
-                    compact
-                  />
-                  <DragDropItemSortableCell
-                    id={tab.id}
-                    index={visibleTabCount + index}
-                    group={PAGE_LAYOUT_TAB_LIST_DROPPABLE_IDS.OVERFLOW_TABS}
-                    data={tabDragData}
-                    type={PAGE_LAYOUT_TAB_DND_TYPE}
-                    accept={PAGE_LAYOUT_TAB_DND_TYPE}
-                    disabled={disabled}
-                    hasTransition={false}
-                    orientation="horizontal"
-                  >
-                    <StyledOverflowMenuItemWrapper>
-                      <PageLayoutTabMenuItemSelectAvatar
-                        tab={tab}
-                        selected={tab.id === activeTabId}
-                        onClick={() => handleTabSelect(tab.id)}
-                        disabled={disabled}
-                        showEditButton={shouldShowEditButton}
-                        onEditClick={handleEditClick}
-                      />
-                    </StyledOverflowMenuItemWrapper>
-                  </DragDropItemSortableCell>
-                </Fragment>
-              );
-            })}
-            <DragDropItemDropTarget
-              index={visibleTabCount + hiddenTabs.length}
-              droppableId={PAGE_LAYOUT_TAB_LIST_DROPPABLE_IDS.OVERFLOW_TABS}
-              orientation="horizontal"
-              compact
-            />
-          </DropdownMenuItemsContainer>
-        </LegacyDropdownContent>
-      }
-    />
+        if (isPageLayoutTabDragging || isVisibleTabPress) {
+          event.preventDefault();
+        }
+      }}
+      onEscapeKeyDown={(event) => {
+        if (isPageLayoutTabDragging) {
+          event.preventDefault();
+        }
+      }}
+    >
+      <Dropdown.Trigger
+        render={
+          <PageLayoutTabListDroppableMoreButton
+            hiddenTabsCount={hiddenTabsCount}
+            isActiveTabHidden={isActiveTabHidden}
+            data-dropdown-id={dropdownId}
+          />
+        }
+      />
+      <DropdownContent align="end" sideOffset={8} width={200}>
+        <Dropdown.Section>
+          {hiddenTabs.map((tab, index) => {
+            const disabled = tab.disabled ?? loading;
+            const tabDragData: PageLayoutTabDragData = {
+              type: 'tab',
+              tabId: tab.id,
+              nextTabId: hiddenTabs[index + 1]?.id ?? null,
+            };
+
+            return (
+              <Fragment key={tab.id}>
+                <DragDropItemDropTarget
+                  index={visibleTabCount + index}
+                  droppableId={PAGE_LAYOUT_TAB_LIST_DROPPABLE_IDS.OVERFLOW_TABS}
+                  orientation="horizontal"
+                  compact
+                />
+                <DragDropItemSortableCell
+                  id={tab.id}
+                  index={visibleTabCount + index}
+                  group={PAGE_LAYOUT_TAB_LIST_DROPPABLE_IDS.OVERFLOW_TABS}
+                  data={tabDragData}
+                  type={PAGE_LAYOUT_TAB_DND_TYPE}
+                  accept={PAGE_LAYOUT_TAB_DND_TYPE}
+                  disabled={disabled}
+                  hasTransition={false}
+                  sensors={PAGE_LAYOUT_TAB_LIST_DROPDOWN_SENSORS}
+                  orientation="horizontal"
+                >
+                  <StyledOverflowMenuItemWrapper>
+                    <PageLayoutTabMenuItemSelectAvatar
+                      tab={tab}
+                      selected={tab.id === activeTabId}
+                      onSelect={() => handleTabSelect(tab.id)}
+                      closeOnSelect={!isPageLayoutTabDragging}
+                      disabled={disabled}
+                      showEditButton={shouldShowEditButton}
+                      onEditClick={handleEditClick}
+                    />
+                  </StyledOverflowMenuItemWrapper>
+                </DragDropItemSortableCell>
+              </Fragment>
+            );
+          })}
+          <DragDropItemDropTarget
+            index={visibleTabCount + hiddenTabs.length}
+            droppableId={PAGE_LAYOUT_TAB_LIST_DROPPABLE_IDS.OVERFLOW_TABS}
+            orientation="horizontal"
+            compact
+          />
+        </Dropdown.Section>
+      </DropdownContent>
+    </DropdownRoot>
   );
 };

@@ -27,6 +27,10 @@ const DROPDOWN_ROOT_PROP_DESCRIPTIONS = {
 } satisfies Partial<Record<keyof DropdownRootProps, string>>;
 
 const DROPDOWN_ITEM_PROP_DESCRIPTIONS = {
+  actions:
+    'Trailing controls rendered beside the primary row control. Secondary actions activate independently of the row.',
+  actionsVisibility:
+    'Whether trailing actions appear on hover or remain visible. Defaults to `hover`.',
   shortcutJoinLabel:
     'Text between sequential shortcut steps. Defaults to `then`.',
   className: 'CSS class applied to the row.',

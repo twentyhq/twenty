@@ -3,6 +3,8 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 
+import { Button } from '@ui/primitives/input/Button/Button';
+
 import { ComponentDecorator } from '@ui/testing';
 
 import { Dropdown } from '../Dropdown';
@@ -11,6 +13,8 @@ import { DROPDOWN_STORY_A11Y_PARAMETERS } from './dropdownStoryA11yParameters';
 const PEOPLE = ['Ada Lovelace', 'Grace Hopper', 'Margaret Hamilton'];
 
 const onCreatePerson = fn();
+const onEditItem = fn();
+const onItemRef = fn<(element: HTMLElement | null) => void>();
 const onSelectPerson = fn();
 const onSelectOption = fn();
 const onSelectDisabledOption = fn();
@@ -107,6 +111,8 @@ const meta: Meta = {
   beforeEach: () => {
     for (const spy of [
       onCreatePerson,
+      onEditItem,
+      onItemRef,
       onSelectPerson,
       onSelectOption,
       onSelectDisabledOption,
@@ -431,6 +437,120 @@ export const LoadingStatus: Story = {
     await userEvent.keyboard('{Escape}');
     await waitFor(() =>
       expect(body.queryByRole('dialog')).not.toBeInTheDocument(),
+    );
+  },
+};
+
+export const OptionWithTrailingAction: Story = {
+  render: () => (
+    <Dropdown.Root type="picker">
+      <Dropdown.Trigger>Tabs</Dropdown.Trigger>
+      <Dropdown.Content>
+        <Dropdown.OptionItem
+          ref={onItemRef}
+          render={<div />}
+          data-dnd-sortable-handle
+          selected={false}
+          aria-label="Overview"
+          onSelect={onSelectOption}
+          actionsVisibility="always"
+          actions={
+            <Button
+              size="sm"
+              tabIndex={-1}
+              onClick={(event) => {
+                event.stopPropagation();
+                onEditItem();
+              }}
+            >
+              Edit overview
+            </Button>
+          }
+        >
+          Overview
+        </Dropdown.OptionItem>
+      </Dropdown.Content>
+    </Dropdown.Root>
+  ),
+  play: async ({ canvasElement }) => {
+    const body = within(canvasElement.ownerDocument.body);
+
+    await userEvent.click(
+      within(canvasElement).getByRole('button', { name: 'Tabs' }),
+    );
+    const option = await body.findByRole('button', {
+      name: 'Overview',
+    });
+    const action = body.getByRole('button', { name: 'Edit overview' });
+
+    expect(option.tagName).toBe('DIV');
+    expect(option).toHaveAttribute('data-dnd-sortable-handle');
+    expect(onItemRef).toHaveBeenCalledWith(option);
+    expect(option.contains(action)).toBe(false);
+    expect(action.closest('[data-dropdown-item]')).toBeNull();
+    expect(option).toHaveAttribute('data-actions-visibility', 'always');
+    expect(action).toHaveAttribute('tabindex', '-1');
+    await userEvent.click(action);
+    expect(onEditItem).toHaveBeenCalledOnce();
+    expect(onSelectOption).not.toHaveBeenCalled();
+    expect(body.getByRole('dialog')).toBeVisible();
+    option.focus();
+    await userEvent.keyboard('{Enter}');
+    expect(onSelectOption).toHaveBeenCalledOnce();
+    await waitFor(() =>
+      expect(body.queryByRole('dialog')).not.toBeInTheDocument(),
+    );
+  },
+};
+
+export const CommandWithTrailingAction: Story = {
+  render: () => (
+    <Dropdown.Root type="menu">
+      <Dropdown.Trigger>Views</Dropdown.Trigger>
+      <Dropdown.Content>
+        <Dropdown.ActionItem
+          aria-label="Open overview"
+          onClick={onSelectOption}
+          actions={
+            <Button
+              size="sm"
+              tabIndex={-1}
+              onClick={(event) => {
+                event.stopPropagation();
+                onEditItem();
+              }}
+            >
+              Edit view
+            </Button>
+          }
+        >
+          Open overview
+        </Dropdown.ActionItem>
+      </Dropdown.Content>
+    </Dropdown.Root>
+  ),
+  play: async ({ canvasElement }) => {
+    const body = within(canvasElement.ownerDocument.body);
+
+    await userEvent.click(
+      within(canvasElement).getByRole('button', { name: 'Views' }),
+    );
+    const item = await body.findByRole('menuitem', { name: 'Open overview' });
+
+    const action = body.getByRole('button', { name: 'Edit view' });
+
+    expect(item.tagName).toBe('BUTTON');
+    expect(item.contains(action)).toBe(false);
+    expect(action.closest('[data-dropdown-item]')).toBeNull();
+    await userEvent.click(action);
+    expect(onEditItem).toHaveBeenCalledOnce();
+    expect(onSelectOption).not.toHaveBeenCalled();
+    expect(body.getByRole('menu')).toBeVisible();
+    item.focus();
+    await userEvent.keyboard(' ');
+    expect(onSelectOption).toHaveBeenCalledOnce();
+    await waitFor(() =>
+      expect(body.queryByRole('menu')).not.toBeInTheDocument(),
     );
   },
 };

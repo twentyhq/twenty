@@ -1,9 +1,13 @@
 import { Button as ButtonPrimitive } from '@base-ui/react/button';
 import { useId } from 'react';
+import { clsx } from 'clsx';
 
 import { ListItem } from '@ui/primitives/navigation/ListItem/ListItem';
+import { isRenderableSlot } from '@ui/utilities/internal/isRenderableSlot';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
+import styles from '../Dropdown.module.scss';
+import { DropdownItemWithActions } from './DropdownItemWithActions';
 import { type DropdownActionItemProps } from '../types/DropdownActionItemProps';
 import { getDropdownItemLabel } from './getDropdownItemLabel';
 import { getDropdownItems } from './getDropdownItems';
@@ -19,6 +23,8 @@ export const DropdownActionItem = ({
   shortcut,
   shortcutJoinLabel,
   hasSubmenu,
+  actions,
+  actionsVisibility,
   children,
   render,
   disabled = false,
@@ -35,13 +41,18 @@ export const DropdownActionItem = ({
   const itemId = id ?? generatedId;
   const itemFocus = useDropdownItemFocus({ id: itemId });
 
-  return (
+  const hasActions = isRenderableSlot(actions);
+
+  const item = (
     <ButtonPrimitive
       {...props}
       id={itemId}
       disabled={disabled}
       nativeButton={nativeButton}
-      role={props.role ?? (type === 'menu' ? 'menuitem' : undefined)}
+      role={
+        props.role ??
+        (type === 'menu' ? 'menuitem' : nativeButton ? undefined : 'button')
+      }
       tabIndex={itemFocus.tabIndex}
       onFocus={(event) => {
         itemFocus.activate();
@@ -87,10 +98,15 @@ export const DropdownActionItem = ({
         <ListItem
           {...renderProps}
           render={render ?? <button type="button" />}
+          className={clsx(
+            renderProps.className,
+            hasActions && styles.itemWithActionsPrimary,
+          )}
           disabled={disabled}
           color={color}
           startIcon={startIcon}
           endIcon={endIcon}
+          actionsVisibility={actionsVisibility}
           description={description}
           descriptionPlacement={descriptionPlacement}
           shortcut={shortcut}
@@ -101,5 +117,18 @@ export const DropdownActionItem = ({
         </ListItem>
       )}
     />
+  );
+
+  return hasActions ? (
+    <DropdownItemWithActions
+      actions={actions}
+      actionsVisibility={actionsVisibility}
+      color={color}
+      disabled={disabled}
+    >
+      {item}
+    </DropdownItemWithActions>
+  ) : (
+    item
   );
 };

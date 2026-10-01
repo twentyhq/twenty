@@ -1,9 +1,13 @@
 import { Button as ButtonPrimitive } from '@base-ui/react/button';
 import { useId } from 'react';
+import { clsx } from 'clsx';
 
 import { ListItem } from '@ui/primitives/navigation/ListItem/ListItem';
+import { isRenderableSlot } from '@ui/utilities/internal/isRenderableSlot';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
+import styles from '../Dropdown.module.scss';
+import { DropdownItemWithActions } from './DropdownItemWithActions';
 import { type DropdownOptionItemProps } from '../types/DropdownOptionItemProps';
 import { useDropdownContext } from './useDropdownContext';
 import { useDropdownItemFocus } from './useDropdownItemFocus';
@@ -21,6 +25,8 @@ export const DropdownOptionItem = ({
   shortcut,
   shortcutJoinLabel,
   hasSubmenu,
+  actions,
+  actionsVisibility,
   children,
   render,
   disabled = false,
@@ -44,13 +50,19 @@ export const DropdownOptionItem = ({
   const itemId = id ?? generatedId;
   const itemFocus = useDropdownItemFocus({ id: itemId });
 
-  return (
+  const hasActions = isRenderableSlot(actions);
+
+  const item = (
     <ButtonPrimitive
       {...props}
       id={itemId}
       disabled={disabled}
       nativeButton={nativeButton}
-      role={isMenu ? menuOptionRole : undefined}
+      role={
+        isMenu
+          ? menuOptionRole
+          : (props.role ?? (nativeButton ? undefined : 'button'))
+      }
       aria-checked={isMenu && hasSelectionState ? selected : undefined}
       aria-pressed={!isMenu && hasSelectionState ? selected : undefined}
       tabIndex={itemFocus.tabIndex}
@@ -77,6 +89,10 @@ export const DropdownOptionItem = ({
         <ListItem
           {...renderProps}
           render={render ?? <button type="button" />}
+          className={clsx(
+            renderProps.className,
+            hasActions && styles.itemWithActionsPrimary,
+          )}
           disabled={disabled}
           selected={selected}
           focused={searchTargetId === itemId}
@@ -86,6 +102,7 @@ export const DropdownOptionItem = ({
           color={color}
           startIcon={startIcon}
           endIcon={endIcon}
+          actionsVisibility={actionsVisibility}
           description={description}
           descriptionPlacement={descriptionPlacement}
           shortcut={shortcut}
@@ -96,5 +113,21 @@ export const DropdownOptionItem = ({
         </ListItem>
       )}
     />
+  );
+
+  return hasActions ? (
+    <DropdownItemWithActions
+      actions={actions}
+      actionsVisibility={actionsVisibility}
+      color={color}
+      selected={selected}
+      focused={searchTargetId === itemId}
+      indicator={indicator ?? (hasSelectionState ? selectionIndicator : 'none')}
+      disabled={disabled}
+    >
+      {item}
+    </DropdownItemWithActions>
+  ) : (
+    item
   );
 };
