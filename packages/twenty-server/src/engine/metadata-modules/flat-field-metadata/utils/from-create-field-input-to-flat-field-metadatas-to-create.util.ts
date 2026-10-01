@@ -4,7 +4,6 @@ import {
   type FieldMetadataOptions,
 } from 'twenty-shared/types';
 import {
-  assertUnreachable,
   isDefined,
   trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties,
 } from 'twenty-shared/utils';
@@ -204,7 +203,17 @@ export const fromCreateFieldInputToFlatFieldMetadatasToCreate = async ({
       };
     }
     default: {
-      assertUnreachable(createFieldInput.type, 'Encountered an uncovered');
+      const unsupportedFieldType: never = createFieldInput.type;
+
+      return {
+        status: 'fail',
+        errors: [
+          {
+            code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+            message: `Field type "${unsupportedFieldType}" is not supported`,
+          },
+        ],
+      };
     }
   }
 };
