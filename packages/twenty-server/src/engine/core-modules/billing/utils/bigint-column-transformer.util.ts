@@ -1,8 +1,6 @@
 /* @license Enterprise */
 
-// Postgres returns bigint as a string, so it needs coercing back. Shared by the
-// micro-denominated credit columns so the ledger and the mirror it sums into
-// cannot coerce differently.
+// Postgres returns bigint as a string, so it needs coercing back.
 //
 // Number() is only lossless below 2^53, which is 9e9 credits at
 // INTERNAL_CREDITS_PER_DISPLAY_CREDIT. Balances are bounded well under that by

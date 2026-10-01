@@ -33,4 +33,5 @@ export default defineField({
     joinColumnName: 'lastContactItemMessageId',
   },
   isUIEditable: false,
+  isAuditLogged: false,
 });

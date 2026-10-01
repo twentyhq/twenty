@@ -25,6 +25,7 @@ import { COMPONENT_STORYBOOK_LAYOUT_PROP_DESCRIPTIONS } from './componentStorybo
 import { COLLAPSIBLE_PROP_DESCRIPTIONS } from './collapsiblePropDescriptions';
 import { AVATAR_PROP_DESCRIPTIONS } from './avatarPropDescriptions';
 import { BANNER_PROP_DESCRIPTIONS } from './bannerPropDescriptions';
+import { BREADCRUMB_PROP_DESCRIPTIONS } from './breadcrumbPropDescriptions';
 import { BUTTON_GROUP_PROP_DESCRIPTIONS } from './buttonGroupPropDescriptions';
 import { BUTTON_PROP_DESCRIPTIONS } from './buttonPropDescriptions';
 import { CARD_CONTENT_PROP_DESCRIPTIONS } from './cardContentPropDescriptions';
@@ -60,6 +61,24 @@ import { TOOLTIP_PROP_DESCRIPTIONS } from './tooltipPropDescriptions';
 import { VISIBILITY_HIDDEN_PROP_DESCRIPTIONS } from './visibilityHiddenPropDescriptions';
 
 export const DOCUMENTED_COMPONENTS = [
+  {
+    name: 'Shortcut',
+    source: 'primitives/typography/Shortcut/Shortcut.tsx',
+    entryPoint: 'twenty-ui/primitives/typography',
+    slug: 'typography/shortcut',
+    propDescriptions: {
+      shortcut:
+        'Flat key array for a simultaneous combination, or nested key arrays for an ordered sequence of combinations.',
+      platform:
+        'Optional mac or other platform override. Defaults to server-safe device detection.',
+      sequenceJoinLabel: 'Text between sequence steps. Defaults to then.',
+      combinationSeparator:
+        'Optional separator between simultaneous keys. Defaults to no separator on Apple devices and a space elsewhere.',
+      variant: 'Keycaps, inline text, or a separated button hint.',
+      visibility:
+        'Always visible by default. Desktop hints hide on mobile viewports.',
+    },
+  },
   {
     name: 'VisibilityHidden',
     source: 'primitives/accessibility/components/VisibilityHidden.tsx',
@@ -255,13 +274,20 @@ export const DOCUMENTED_COMPONENTS = [
     slug: 'input/switch',
   },
   {
+    name: 'Breadcrumb',
+    source: 'primitives/navigation/Breadcrumb/Breadcrumb.tsx',
+    entryPoint: 'twenty-ui/primitives/navigation',
+    slug: 'navigation/breadcrumb',
+    propDescriptions: BREADCRUMB_PROP_DESCRIPTIONS,
+  },
+  {
     name: 'ListItem',
     source: 'primitives/navigation/ListItem/ListItem.tsx',
     entryPoint: 'twenty-ui/primitives/navigation',
     slug: 'navigation/list-item',
     propDescriptions: {
-      hotkeysJoinLabel:
-        'Text between shortcut keys. Defaults to `then`; pass an empty string to omit it.',
+      shortcutJoinLabel:
+        'Text between sequential shortcut steps. Defaults to `then`; pass an empty string to omit it.',
       actionsVisibility:
         'When trailing actions are visible: on hover and focus, or always.',
     },
@@ -314,16 +340,20 @@ export const DOCUMENTED_COMPONENTS = [
     slug: 'surfaces/menu',
     partPropDescriptions: {
       Item: {
-        hotkeysJoinLabel: 'Text between shortcut keys. Defaults to `then`.',
+        shortcutJoinLabel:
+          'Text between sequential shortcut steps. Defaults to `then`.',
       },
       CheckboxItem: {
-        hotkeysJoinLabel: 'Text between shortcut keys. Defaults to `then`.',
+        shortcutJoinLabel:
+          'Text between sequential shortcut steps. Defaults to `then`.',
       },
       RadioItem: {
-        hotkeysJoinLabel: 'Text between shortcut keys. Defaults to `then`.',
+        shortcutJoinLabel:
+          'Text between sequential shortcut steps. Defaults to `then`.',
       },
       SubmenuTrigger: {
-        hotkeysJoinLabel: 'Text between shortcut keys. Defaults to `then`.',
+        shortcutJoinLabel:
+          'Text between sequential shortcut steps. Defaults to `then`.',
         onClick: 'The click handler for the submenu trigger.',
       },
     },

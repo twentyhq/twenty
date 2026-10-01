@@ -112,7 +112,6 @@ describe('useCreateManyRecords', () => {
       expect(res).toEqual(response);
     });
 
-    // Verify that the mutation was called with data without IDs
     expect(mocks[1].request.variables.data).toEqual(input);
     mocks[1].request.variables.data.forEach((record: any) => {
       expect(record).not.toHaveProperty('id');

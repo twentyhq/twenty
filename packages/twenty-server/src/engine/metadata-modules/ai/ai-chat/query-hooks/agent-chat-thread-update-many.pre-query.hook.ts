@@ -3,26 +3,18 @@ import { type UpdateManyResolverArgs } from 'src/engine/api/graphql/workspace-re
 
 import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import { AgentChatThreadLifecycleService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-lifecycle.service';
+import { excludeWorkflowRunThreadsFromFilter } from 'src/engine/metadata-modules/ai/ai-chat/utils/exclude-workflow-run-threads-from-filter.util';
 
 @WorkspaceQueryHook(`agentChatThread.updateMany`)
 export class AgentChatThreadUpdateManyPreQueryHook implements WorkspacePreQueryHookInstance {
-  constructor(
-    private readonly threadLifecycleService: AgentChatThreadLifecycleService,
-  ) {}
-
   async execute(
-    authContext: WorkspaceAuthContext,
+    _authContext: WorkspaceAuthContext,
     _objectName: string,
     payload: UpdateManyResolverArgs,
   ): Promise<UpdateManyResolverArgs> {
     return {
       ...payload,
-      filter:
-        await this.threadLifecycleService.excludeWorkflowRunThreadsFromFilter({
-          workspaceId: authContext.workspace.id,
-          filter: payload.filter,
-        }),
+      filter: excludeWorkflowRunThreadsFromFilter(payload.filter),
     };
   }
 }
