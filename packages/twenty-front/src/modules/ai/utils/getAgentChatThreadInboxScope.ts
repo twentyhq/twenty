@@ -6,11 +6,15 @@ import { type AgentChatThreadParticipantState } from '@/ai/types/AgentChatThread
 // Activity and archiving have different writers and are compared rather than
 // folded into a status, so a message landing right after an archive brings the
 // thread back whichever write committed last
-export const getAgentChatThreadInboxScope = (
-  lastActivityAt: string | null | undefined,
-  participant: AgentChatThreadParticipantState | undefined,
-  now: Date,
-): AgentChatThreadInboxScope => {
+export const getAgentChatThreadInboxScope = ({
+  lastActivityAt,
+  participant,
+  now,
+}: {
+  lastActivityAt: string | null | undefined;
+  participant: AgentChatThreadParticipantState | undefined;
+  now: Date;
+}): AgentChatThreadInboxScope => {
   if (!isDefined(participant) || !isDefined(participant.archivedAt)) {
     return 'INBOX';
   }

@@ -35,18 +35,21 @@ export const agentChatThreadInboxStatusFamilySelector =
           get(agentChatThreadKeptUnreadIdState) !== threadId;
 
         return {
-          scope: getAgentChatThreadInboxScope(
-            threadLastActivityAt,
+          scope: getAgentChatThreadInboxScope({
+            lastActivityAt: threadLastActivityAt,
             participant,
-            new Date(get(agentChatThreadInboxNowState)),
-          ),
+            now: new Date(get(agentChatThreadInboxNowState)),
+          }),
           // Without its participant rows every thread would read as unread.
           // The thread on screen is being read, so it never shows as unread
           // while its read mark is on its way
           isUnread:
             get(hasLoadedAgentChatThreadParticipantsState) &&
             !isViewed &&
-            isAgentChatThreadUnread(threadLastActivityAt, participant),
+            isAgentChatThreadUnread({
+              lastActivityAt: threadLastActivityAt,
+              participant,
+            }),
         };
       },
     areEqual: isDeeplyEqual,

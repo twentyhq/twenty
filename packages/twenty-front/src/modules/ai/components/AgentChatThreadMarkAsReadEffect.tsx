@@ -99,11 +99,12 @@ export const AgentChatThreadMarkAsReadEffect = () => {
     store.set(agentChatThreadUnreadSinceState.atom, {
       threadId,
       visitId,
-      isUnread: isAgentChatThreadUnread(
-        store.get(agentChatThreadRecordFamilySelector.selectorFamily(threadId))
-          ?.lastActivityAt,
+      isUnread: isAgentChatThreadUnread({
+        lastActivityAt: store.get(
+          agentChatThreadRecordFamilySelector.selectorFamily(threadId),
+        )?.lastActivityAt,
         participant,
-      ),
+      }),
       lastReadAt: participant?.lastReadAt ?? null,
     });
   }, [
@@ -125,10 +126,10 @@ export const AgentChatThreadMarkAsReadEffect = () => {
       return;
     }
 
-    const isUnread = isAgentChatThreadUnread(
+    const isUnread = isAgentChatThreadUnread({
       lastActivityAt,
-      store.get(agentChatThreadParticipantsState.atom)[threadId],
-    );
+      participant: store.get(agentChatThreadParticipantsState.atom)[threadId],
+    });
 
     if (isUnread) {
       void markAgentChatThreadAsRead(threadId);

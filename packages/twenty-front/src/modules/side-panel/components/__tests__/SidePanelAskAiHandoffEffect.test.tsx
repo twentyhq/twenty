@@ -3,6 +3,7 @@ import { createStore, Provider } from 'jotai';
 import { MemoryRouter } from 'react-router-dom';
 
 import { shouldContinueAiChatInSidePanelState } from '@/ai/states/shouldContinueAiChatInSidePanelState';
+import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 import { SidePanelAskAiHandoffEffect } from '@/side-panel/components/SidePanelAskAiHandoffEffect';
 
 const openAskAiPage = jest.fn();
@@ -16,6 +17,7 @@ const leaveChatPageFor = (pathname: string) => {
   const store = createStore();
 
   store.set(shouldContinueAiChatInSidePanelState.atom, true);
+  store.set(shouldOpenAiChatAfterOnboardingState.atom, true);
 
   render(
     <Provider store={store}>
@@ -58,6 +60,7 @@ describe('SidePanelAskAiHandoffEffect', () => {
 
       expect(openAskAiPage).not.toHaveBeenCalled();
       expect(store.get(shouldContinueAiChatInSidePanelState.atom)).toBe(true);
+      expect(store.get(shouldOpenAiChatAfterOnboardingState.atom)).toBe(false);
     },
   );
 });
