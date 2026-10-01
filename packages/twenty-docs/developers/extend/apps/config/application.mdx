@@ -42,7 +42,7 @@ export default defineApplication({
 Notes:
 - `universalIdentifier` fields are UUIDs you generate once and own. Keep them stable across syncs. The application's own `universalIdentifier` must be a valid UUID: the server rejects a manifest whose identifier is not one. It is unique across the whole instance and is bound to the workspace that owns its registration, so only that workspace can sync the app — see [Registration ownership](/developers/extend/apps/operations/publishing#registration-ownership).
 - `applicationVariables` accept an optional `label` — a user-friendly name displayed in the app's settings page instead of the raw variable key.
-- `applicationVariables` become environment variables for your functions and front components. In logic functions (server-side), they are available as `process.env.VARIABLE_NAME`. In front components, use `getApplicationVariable('VARIABLE_NAME')` from `twenty-sdk/front-component`. Variables marked with `isSecret: true` are only injected into logic functions. Front components receive only non-secret variables.
+- `applicationVariables` become environment variables for your functions and front components. In logic functions (server-side), they are available as `process.env.VARIABLE_NAME`. In front components, use `getApplicationVariable('VARIABLE_NAME')` from `twenty-sdk/front-component`. Variables marked with `isSecret: true` are only injected into logic functions. Front components receive only non-secret variables. Variables with `scope: 'USER'` are not injected at all: see [Workspace and user variables](#workspace-and-user-variables).
 - Your app can also read and update its own variable values at runtime, which is how a custom settings component saves what the user typed: see [Reading and updating variables at runtime](/developers/extend/apps/layout/front-components#reading-and-updating-variables-at-runtime). An application only ever reaches its own variables, in its own workspace.
 - The default role is detected automatically from the role file marked with [`defineApplicationRole()`](/developers/extend/apps/config/roles) — you do not need to reference it from `defineApplication()`.
 - Pre-install, post-install, and uninstall functions, and the health check, are detected automatically during the manifest build — you do not need to reference them in `defineApplication()`.
@@ -127,6 +127,39 @@ const config = JSON.parse(process.env.PROVIDER_CONFIG ?? '{}'); // '{"retries":3
 ```
 
 The same applies to front components reading values via `getApplicationVariable('VARIABLE_NAME')` — the returned value is a string; parse it as needed.
+
+## Workspace and user variables
+
+Each application variable has a `scope`:
+
+- **`WORKSPACE`** (default): one value for the whole workspace, set by a member who can manage apps.
+- **`USER`**: each member keeps their own value.
+
+```ts src/application-config.ts
+import { defineApplication, FieldType } from 'twenty-sdk/define';
+
+export default defineApplication({
+  // ...identity, role...
+  applicationVariables: {
+    RECORD_MY_MEETINGS: {
+      universalIdentifier: '0b6f3c1e-8a2d-4f57-9c1b-7e4d2a9f6c30',
+      label: 'Record my meetings',
+      type: FieldType.BOOLEAN,
+      scope: 'USER',
+    },
+  },
+});
+```
+
+A user variable cannot declare a `value`, and a workspace admin cannot set one for it: its values belong to each member. A member who has not set theirs has no value, so your app decides what an unset value means.
+
+A variable's scope is set when it is created and cannot change. To change it, declare the variable with a new `universalIdentifier`: the sync deletes the old variable and creates the new one.
+
+User variables can be `isSecret`, `isRequired`, or both. For example, a personal API key can declare `scope: 'USER', isSecret: true, isRequired: true`.
+
+For user variables, `isRequired` describes a per-member requirement. It does not affect the workspace configuration warning. Personal configuration warnings and enforcement are not available yet.
+
+User variables are never injected into `process.env` or returned by `getApplicationVariable`, because the person who triggered a run is not always the person the run is about.
 
 ## Default function role
 

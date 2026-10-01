@@ -7,6 +7,7 @@ import { ToastProvider } from 'twenty-ui/components';
 import {
   type Application,
   type ApplicationVariable,
+  ApplicationVariableScope,
   FindOneApplicationDocument,
   UpdateOneApplicationVariableDocument,
 } from '~/generated-metadata/graphql';
@@ -39,6 +40,7 @@ const buildApplicationVariable = (value: string): ApplicationVariable => ({
   isDeprecated: false,
   isRequired: false,
   type: 'TEXT',
+  scope: ApplicationVariableScope.WORKSPACE,
 });
 
 const buildApplication = (

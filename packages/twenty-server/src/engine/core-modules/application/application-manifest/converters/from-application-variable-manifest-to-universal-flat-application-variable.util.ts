@@ -1,6 +1,8 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 import {
+  DEFAULT_APPLICATION_VARIABLE_SCOPE,
   type ApplicationVariableOption,
+  type ApplicationVariableScope,
   type ApplicationVariableType,
 } from 'twenty-shared/application';
 
@@ -19,6 +21,7 @@ export const fromApplicationVariableManifestToUniversalFlatApplicationVariable =
     isRequired,
     type,
     options,
+    scope,
     applicationUniversalIdentifier,
     now,
   }: {
@@ -26,12 +29,13 @@ export const fromApplicationVariableManifestToUniversalFlatApplicationVariable =
     universalIdentifier: string;
     description?: string;
     label?: string;
-    encryptedValue: EncryptedString;
+    encryptedValue: EncryptedString | null;
     isSecret?: boolean;
     isDeprecated?: boolean;
     isRequired?: boolean;
     type?: ApplicationVariableType;
     options?: ApplicationVariableOption[];
+    scope?: ApplicationVariableScope;
     applicationUniversalIdentifier: string;
     now: string;
   }): UniversalFlatApplicationVariable => {
@@ -47,6 +51,7 @@ export const fromApplicationVariableManifestToUniversalFlatApplicationVariable =
       isRequired: (isDeprecated ?? false) ? false : (isRequired ?? false),
       type: type ?? FieldMetadataType.TEXT,
       options: options ?? null,
+      scope: scope ?? DEFAULT_APPLICATION_VARIABLE_SCOPE,
       createdAt: now,
       updatedAt: now,
     };

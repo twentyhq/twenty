@@ -48,8 +48,11 @@ export interface ApplicationVariable {
     isRequired: Scalars['Boolean']
     type: Scalars['String']
     options?: Scalars['JSON']
+    scope: ApplicationVariableScope
     __typename: 'ApplicationVariable'
 }
+
+export type ApplicationVariableScope = 'WORKSPACE' | 'USER'
 
 export interface Agent {
     id: Scalars['UUID']
@@ -3822,6 +3825,7 @@ export interface ApplicationVariableGenqlSelection{
     isRequired?: boolean | number
     type?: boolean | number
     options?: boolean | number
+    scope?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -10723,6 +10727,11 @@ export const enumApplicationRegistrationSourceType = {
    TARBALL: 'TARBALL' as const,
    LOCAL: 'LOCAL' as const,
    OAUTH_ONLY: 'OAUTH_ONLY' as const
+}
+
+export const enumApplicationVariableScope = {
+   WORKSPACE: 'WORKSPACE' as const,
+   USER: 'USER' as const
 }
 
 export const enumEngineComponentKey = {

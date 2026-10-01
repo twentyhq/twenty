@@ -23,6 +23,19 @@ export type ApplicationVariableOption = {
   value: string;
 };
 
+export const APPLICATION_VARIABLE_SCOPES = ['WORKSPACE', 'USER'] as const;
+
+export type ApplicationVariableScope =
+  (typeof APPLICATION_VARIABLE_SCOPES)[number];
+
+export const isApplicationVariableScope = (
+  scope: string,
+): scope is ApplicationVariableScope =>
+  (APPLICATION_VARIABLE_SCOPES as readonly string[]).includes(scope);
+
+export const DEFAULT_APPLICATION_VARIABLE_SCOPE: ApplicationVariableScope =
+  'WORKSPACE';
+
 export type ApplicationVariableValue =
   | string
   | number
@@ -37,6 +50,7 @@ type TypedApplicationVariable = {
   options?: ApplicationVariableOption[];
   isRequired?: boolean;
   isDeprecated?: boolean;
+  scope?: ApplicationVariableScope;
 };
 
 type SecretApplicationVariable = SyncableEntityOptions &
