@@ -1,5 +1,6 @@
 /** @jest-environment node */
 
+import { APPLICATION_WORKFLOW_UNAVAILABLE_STEP_TYPES } from '@/application/constants/ApplicationWorkflowUnavailableStepTypes';
 import { isDefined } from '@/utils/validation/isDefined';
 
 import {
@@ -123,7 +124,7 @@ describe('workflow manifest iterator cycles', () => {
 });
 
 describe('workflow manifest step types', () => {
-  it.each(['SEND_EMAIL', 'DRAFT_EMAIL', 'CREATE_CALENDAR_EVENT'])(
+  it.each(APPLICATION_WORKFLOW_UNAVAILABLE_STEP_TYPES)(
     'rejects %s steps',
     (type) => {
       const invalid = structuredClone(workflow);

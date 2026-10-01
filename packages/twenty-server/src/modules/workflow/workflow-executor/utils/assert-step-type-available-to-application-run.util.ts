@@ -1,7 +1,7 @@
-import { type WorkflowActionType } from 'twenty-shared/workflow';
+import { APPLICATION_WORKFLOW_UNAVAILABLE_STEP_TYPES } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
+import { type WorkflowActionType } from 'twenty-shared/workflow';
 
-import { APPLICATION_RUN_UNAVAILABLE_STEP_TYPES } from 'src/modules/workflow/workflow-executor/constants/application-run-unavailable-step-types.constant';
 import {
   WorkflowStepExecutorException,
   WorkflowStepExecutorExceptionCode,
@@ -16,7 +16,7 @@ export const assertStepTypeAvailableToApplicationRun = ({
 }): void => {
   if (
     !isDefined(runApplicationId) ||
-    !APPLICATION_RUN_UNAVAILABLE_STEP_TYPES.includes(stepType)
+    !APPLICATION_WORKFLOW_UNAVAILABLE_STEP_TYPES.includes(stepType)
   ) {
     return;
   }
