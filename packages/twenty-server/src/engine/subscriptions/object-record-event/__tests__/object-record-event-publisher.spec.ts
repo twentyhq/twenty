@@ -432,6 +432,60 @@ describe('ObjectRecordEventPublisher', () => {
       ).not.toHaveBeenCalled();
     });
 
+    it('publishes events of a record named for a subscriber whose role cannot read the object', async () => {
+      mockWorkspaceCacheService.getOrRecompute.mockImplementation(
+        createCacheMock({
+          rolesPermissions: {
+            [roleId]: {
+              [companyObjectMetadata.id]: {
+                ...mockRolesPermissions[roleId][companyObjectMetadata.id],
+                canReadObjectRecords: false,
+              },
+            },
+          },
+          featureFlagsMap: {
+            [FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED]: true,
+          },
+        }),
+      );
+      mockRecordShareStorageService.findByRecordIds.mockResolvedValue([
+        {
+          id: 'record-share-1',
+          recordId: 'record-1',
+          objectMetadataId: companyObjectMetadata.id,
+          principalId: 'test-workspace-member-id',
+          principalType: RecordSharePrincipalType.WORKSPACE_MEMBER,
+          accessLevel: RecordShareAccessLevel.READ,
+          rowCause: RecordShareRowCause.MANUAL,
+          sourceId: 'record-1',
+        },
+      ] as RecordShare[]);
+
+      await service.publish({
+        name: 'company.created',
+        workspaceId,
+        objectMetadata: companyObjectMetadata,
+        events: [
+          createMockEvent(),
+          createMockEvent({
+            recordId: 'record-2',
+            properties: { after: { id: 'record-2', name: 'Hidden Company' } },
+          }),
+        ],
+      } as WorkspaceEventBatch<never>);
+
+      const publishCall = (
+        mockSubscriptionService.publishToEventStream as jest.Mock
+      ).mock.calls[0][0];
+
+      expect(
+        publishCall.payload.objectRecordEventsWithQueryIds.map(
+          (matchedEvent: { objectRecordEvent: { recordId: string } }) =>
+            matchedEvent.objectRecordEvent.recordId,
+        ),
+      ).toEqual(['record-1']);
+    });
+
     it('should not publish events when query object name does not match event', async () => {
       const streamDataWithDifferentObject: EventStreamData = {
         ...mockStreamData,

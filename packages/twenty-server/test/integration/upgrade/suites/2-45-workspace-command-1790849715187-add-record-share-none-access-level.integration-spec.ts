@@ -15,6 +15,7 @@ import { type AddRecordShareNoneAccessLevelCommand } from 'src/database/commands
 import { type RecordShareStorageService } from 'src/engine/core-modules/record-share/services/record-share-storage.service';
 import { type UpgradeCommandRegistryService } from 'src/engine/core-modules/upgrade/services/upgrade-command-registry.service';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { type WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
@@ -117,6 +118,7 @@ describe('2-45 workspace command 1790849715187 - AddRecordShareNoneAccessLevelCo
   });
 
   it('removes restrictions and the option on the way down', async () => {
+    await run('up');
     await insertRestriction();
 
     await run('down');
@@ -129,6 +131,7 @@ describe('2-45 workspace command 1790849715187 - AddRecordShareNoneAccessLevelCo
   });
 
   it('keeps a workspace without the option untouched on a dry run', async () => {
+    await run('down');
     await run('up', { dryRun: true });
 
     expect(await findAccessLevelValues()).not.toContain(
@@ -137,6 +140,7 @@ describe('2-45 workspace command 1790849715187 - AddRecordShareNoneAccessLevelCo
   });
 
   it('adds the option so restrictions can be stored, once', async () => {
+    await run('down');
     await run('up');
     await run('up');
 
@@ -146,6 +150,38 @@ describe('2-45 workspace command 1790849715187 - AddRecordShareNoneAccessLevelCo
       values.filter((value) => value === RecordShareAccessLevel.NONE),
     ).toHaveLength(1);
     await insertRestriction();
+    expect(await findRestrictions()).toEqual([
+      expect.objectContaining({ accessLevel: RecordShareAccessLevel.NONE }),
+    ]);
+  });
+
+  it('puts restrictions back when the downgrade fails', async () => {
+    await run('up');
+    await shares.deleteByRecordIds({
+      workspaceId,
+      objectMetadataId: OBJECT_METADATA_ID,
+      recordIds: [RECORD_ID],
+    });
+    await insertRestriction();
+
+    const migrationSpy = jest
+      .spyOn(
+        getAppProviderByClassName<WorkspaceMigrationValidateBuildAndRunService>(
+          'WorkspaceMigrationValidateBuildAndRunService',
+        ),
+        'validateBuildAndRunLegacyWorkspaceMigration',
+      )
+      .mockRejectedValueOnce(new Error('Migration failed'));
+
+    try {
+      await expect(run('down')).rejects.toThrow('Migration failed');
+    } finally {
+      migrationSpy.mockRestore();
+    }
+
+    expect(await findAccessLevelValues()).toContain(
+      RecordShareAccessLevel.NONE,
+    );
     expect(await findRestrictions()).toEqual([
       expect.objectContaining({ accessLevel: RecordShareAccessLevel.NONE }),
     ]);
