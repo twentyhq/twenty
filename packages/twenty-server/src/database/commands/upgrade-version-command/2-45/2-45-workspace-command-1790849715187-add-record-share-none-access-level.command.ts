@@ -81,33 +81,72 @@ export class AddRecordShareNoneAccessLevelCommand extends ProvisionedWorkspaceCo
         STANDARD_OBJECTS.recordShare.universalIdentifier
       ];
 
+    const recordShareTable = isDefined(recordShareObjectMetadata)
+      ? `${escapeIdentifier(getWorkspaceSchemaName(workspaceId))}.${escapeIdentifier(computeObjectTargetTable(recordShareObjectMetadata))}`
+      : undefined;
+
     // Postgres cannot drop an enum value still in use, and a restriction
     // without the gate that reads it means nothing once rolled back
-    if (direction === 'down' && isDefined(recordShareObjectMetadata)) {
+    const deletedRestrictions =
+      direction === 'down' && isDefined(recordShareTable)
+        ? await this.deleteRestrictions(recordShareTable)
+        : [];
+
+    try {
+      const result =
+        await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
+          {
+            workspaceId,
+            isSystemBuild: true,
+            applicationUniversalIdentifier:
+              TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+            allFlatEntityOperationByMetadataName: {
+              fieldMetadata: fieldMetadataOperations,
+            },
+          },
+        );
+
+      if (result.status === 'fail') {
+        this.logger.error(
+          `Failed to ${direction === 'up' ? 'add' : 'remove'} the NONE record share access level for workspace ${workspaceId}:\n${JSON.stringify(result, null, 2)}`,
+        );
+        throw new WorkspaceMigrationBuilderException(result);
+      }
+    } catch (error) {
+      if (isDefined(recordShareTable)) {
+        await this.restoreRestrictions(recordShareTable, deletedRestrictions);
+      }
+      throw error;
+    }
+  }
+
+  private async deleteRestrictions(
+    recordShareTable: string,
+  ): Promise<Record<string, unknown>[]> {
+    const [rows]: [{ restriction: Record<string, unknown> }[], number] =
       await this.dataSource.query(
-        `DELETE FROM ${escapeIdentifier(getWorkspaceSchemaName(workspaceId))}.${escapeIdentifier(computeObjectTargetTable(recordShareObjectMetadata))} WHERE "accessLevel" = $1`,
+        `DELETE FROM ${recordShareTable} AS "recordShare" WHERE "accessLevel" = $1 RETURNING to_jsonb("recordShare") - 'searchVector' AS "restriction"`,
         [RecordShareAccessLevel.NONE],
       );
+
+    return rows.map(({ restriction }) => restriction);
+  }
+
+  // The metadata migration runs in its own transaction, so restrictions
+  // deleted ahead of it are put back when it fails
+  private async restoreRestrictions(
+    recordShareTable: string,
+    restrictions: Record<string, unknown>[],
+  ): Promise<void> {
+    if (restrictions.length === 0) {
+      return;
     }
 
-    const result =
-      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
-        {
-          workspaceId,
-          isSystemBuild: true,
-          applicationUniversalIdentifier:
-            TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
-          allFlatEntityOperationByMetadataName: {
-            fieldMetadata: fieldMetadataOperations,
-          },
-        },
-      );
+    const columns = Object.keys(restrictions[0]).map(escapeIdentifier).join(', ');
 
-    if (result.status === 'fail') {
-      this.logger.error(
-        `Failed to ${direction === 'up' ? 'add' : 'remove'} the NONE record share access level for workspace ${workspaceId}:\n${JSON.stringify(result, null, 2)}`,
-      );
-      throw new WorkspaceMigrationBuilderException(result);
-    }
+    await this.dataSource.query(
+      `INSERT INTO ${recordShareTable} (${columns}) SELECT ${columns} FROM jsonb_populate_recordset(NULL::${recordShareTable}, $1::jsonb)`,
+      [JSON.stringify(restrictions)],
+    );
   }
 }

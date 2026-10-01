@@ -40,12 +40,11 @@ const getOptions = (field: { options?: unknown }) =>
 
 const buildMaps = (
   field: FlatFieldMetadata | undefined,
-): FlatEntityMaps<FlatFieldMetadata> =>
-  ({
-    byUniversalIdentifier: isDefined(field)
-      ? { [ACCESS_LEVEL_FIELD_UNIVERSAL_IDENTIFIER]: field }
-      : {},
-  }) as unknown as FlatEntityMaps<FlatFieldMetadata>;
+): Pick<FlatEntityMaps<FlatFieldMetadata>, 'byUniversalIdentifier'> => ({
+  byUniversalIdentifier: isDefined(field)
+    ? { [ACCESS_LEVEL_FIELD_UNIVERSAL_IDENTIFIER]: field }
+    : {},
+});
 
 const fieldWithoutNoneOption: FlatFieldMetadata = {
   ...standardAccessLevelField,
@@ -127,6 +126,9 @@ describe('buildRecordShareNoneAccessLevelOptionSyncOperations', () => {
     expect(
       getOptions(flatEntityToUpdate[0]).map(({ value }) => value),
     ).not.toContain(RecordShareAccessLevel.NONE);
+    expect(flatEntityToUpdate[0].defaultValue).toBe(
+      RECORD_SHARE_ACCESS_LEVEL_DEFAULT_VALUE,
+    );
   });
 
   it('should do nothing when the record share object is not provisioned', () => {

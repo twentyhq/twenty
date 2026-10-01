@@ -6,6 +6,7 @@ import {
   RecordSharePrincipalType,
   RecordShareRowCause,
 } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type RecordShare } from 'src/engine/core-modules/record-share/types/record-share.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -47,7 +48,7 @@ export const resolveRecordGeneralAccess = ({
       recordShare.rowCause === RecordShareRowCause.MANUAL,
   );
 
-  if (everyoneManualShare !== undefined) {
+  if (isDefined(everyoneManualShare)) {
     return { accessLevel: everyoneManualShare.accessLevel, isDefault: false };
   }
 

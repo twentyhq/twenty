@@ -48,7 +48,7 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Partial<
   },
   [FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED]: {
     label: msg`Record sharing`,
-    description: msg`Let people restrict and share individual records of any object.`,
+    description: msg`Let people restrict and share individual records.`,
   },
   [FeatureFlagKey.IS_WEBHOOK_RATE_LIMIT_ENABLED]: {
     label: msg`Webhook rate limits`,

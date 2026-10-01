@@ -80,6 +80,7 @@ describe('2-45 workspace command 1790855177506 - OpenShareRecordToEveryObjectCom
   });
 
   it('keeps the conversation-only item on a dry run', async () => {
+    await run('down');
     await run('up', { dryRun: true });
 
     expect(
@@ -88,6 +89,7 @@ describe('2-45 workspace command 1790855177506 - OpenShareRecordToEveryObjectCom
   });
 
   it('offers the Share command on every object on the way up', async () => {
+    await run('down');
     await run('up');
 
     expect(await findShareRecord()).toMatchObject({

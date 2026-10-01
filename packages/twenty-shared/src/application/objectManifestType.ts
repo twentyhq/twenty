@@ -22,7 +22,6 @@ export type ObjectManifest = SyncableEntityOptions & {
   writability?: MetadataWritability;
   readability?: MetadataReadability;
   readabilityParentFieldUniversalIdentifiers?: string[] | null;
-  // How far owners may share a record beyond the roles that can access the object
   sharingReach?: ObjectSharingReach;
   openRecordIn?: ObjectOpenRecordIn;
   fields: ObjectFieldManifest[];

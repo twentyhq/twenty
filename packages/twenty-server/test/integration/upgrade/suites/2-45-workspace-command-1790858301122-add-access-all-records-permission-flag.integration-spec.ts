@@ -67,12 +67,14 @@ describe('2-45 workspace command 1790858301122 - AddAccessAllRecordsPermissionFl
   });
 
   it('adds nothing on a dry run', async () => {
+    await run('down');
     await run('up', { dryRun: true });
 
     expect(await findPermissionFlag()).toBeNull();
   });
 
   it('adds the permission flag on the way up, once', async () => {
+    await run('down');
     await run('up');
     await run('up');
 

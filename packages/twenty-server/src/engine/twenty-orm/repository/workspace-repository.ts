@@ -44,6 +44,7 @@ import {
 } from 'src/engine/twenty-orm/types/row-access-policy.type';
 import { resolveRecordShareGateKind } from 'src/engine/core-modules/record-share/utils/resolve-record-share-gate-kind.util';
 import { buildRowAccessPolicy } from 'src/engine/twenty-orm/utils/build-row-access-policy.util';
+import { buildNamedRecordGrantCondition } from 'src/engine/core-modules/record-share/utils/build-named-record-grant-condition.util';
 import { isRecordGrantBeyondRoleAllowed } from 'src/engine/core-modules/record-share/utils/is-record-grant-beyond-role-allowed.util';
 import { isObjectOperationPermitted } from 'src/engine/twenty-orm/utils/is-object-operation-permitted.util';
 import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
@@ -1218,11 +1219,10 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
 
       const rawBeforeForInput = rawBeforeByInputIndex[index];
 
-      this.validateRLSPredicatesForWrittenRecords(
+      await this.validateRLSPredicatesForUpdatedRecords(
         this.formatResult<ObjectRecord[]>(
           rawBeforeForInput.map((record) => ({ ...record, ...setColumns })),
         ),
-        'Updated record does not satisfy row-level security constraints of your current role',
       );
 
       const selectQueryBuilder = this.createQueryBuilder().where({
@@ -1699,11 +1699,10 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     }
 
     if (kind === 'update' && isDefined(setColumns)) {
-      this.validateRLSPredicatesForWrittenRecords(
+      await this.validateRLSPredicatesForUpdatedRecords(
         this.formatResult<ObjectRecord[]>(
           recordsBefore.map((record) => ({ ...record, ...setColumns })),
         ),
-        'Updated record does not satisfy row-level security constraints of your current role',
       );
     }
 
@@ -1909,6 +1908,71 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       authContext: this.options.authContext,
       isRecordSharingEnabled: this.isRecordSharingEnabled,
     });
+  }
+
+  // A record shared by name for editing stays editable whatever the row
+  // filter of the role says, as the row access policy let it through
+  private async validateRLSPredicatesForUpdatedRecords(
+    records: ObjectRecord[],
+  ): Promise<void> {
+    const recordIdsGrantedForUpdate =
+      await this.findRecordIdsGrantedForUpdateByName(
+        records.map((record) => record.id).filter(isDefined),
+      );
+
+    this.validateRLSPredicatesForWrittenRecords(
+      records.filter(
+        (record) =>
+          !isDefined(record.id) || !recordIdsGrantedForUpdate.has(record.id),
+      ),
+      'Updated record does not satisfy row-level security constraints of your current role',
+    );
+  }
+
+  private async findRecordIdsGrantedForUpdateByName(
+    recordIds: string[],
+  ): Promise<Set<string>> {
+    if (
+      this.options.shouldBypassPermissionChecks ||
+      recordIds.length === 0 ||
+      !isRecordGrantBeyondRoleAllowed({
+        flatObjectMetadata: this.options.flatObjectMetadata,
+        operationType: 'update',
+        isRecordSharingEnabled: this.isRecordSharingEnabled,
+      })
+    ) {
+      return new Set();
+    }
+
+    const tableAlias = this.options.tableShape.nameSingular;
+    const namedRecordGrantCondition = buildNamedRecordGrantCondition(
+      {
+        subject: this.resolveRowAccessPolicySubject(),
+        environment: this.resolveRowAccessPolicyEnvironment(),
+      },
+      {
+        tableAlias,
+        flatObjectMetadata: this.options.flatObjectMetadata,
+        operationType: 'update',
+        depth: 0,
+      },
+    );
+
+    if (!isDefined(namedRecordGrantCondition)) {
+      return new Set();
+    }
+
+    const grantedRecords = await this.buildIdsEventSnapshotQueryBuilder(
+      recordIds,
+    )
+      .select(['id'])
+      .andWhere(
+        namedRecordGrantCondition.sql,
+        namedRecordGrantCondition.parameters,
+      )
+      .getMany<ObjectRecord>({ noFormatting: true });
+
+    return new Set(grantedRecords.map((record) => String(record.id)));
   }
 
   private validateRLSPredicatesForWrittenRecords(

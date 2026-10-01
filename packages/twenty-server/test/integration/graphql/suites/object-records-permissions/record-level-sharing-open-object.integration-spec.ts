@@ -1,7 +1,6 @@
 import { randomUUID } from 'node:crypto';
 
 import { parse } from 'graphql';
-import { EVERYONE_PRINCIPAL_ID } from 'twenty-shared/constants';
 import {
   FeatureFlagKey,
   FieldMetadataType,
@@ -289,13 +288,11 @@ describe('Record-level sharing on an object open by default', () => {
       isGeneralAccessDefault: true,
     });
     expect(
-      (
-        await shares.findByRecordIds({
-          workspaceId,
-          objectMetadataId,
-          recordIds: [RECORD_ID],
-        })
-      ).filter((share) => share.principalId === EVERYONE_PRINCIPAL_ID),
+      await shares.findByRecordIds({
+        workspaceId,
+        objectMetadataId,
+        recordIds: [RECORD_ID],
+      }),
     ).toEqual([]);
     expect(
       (await rename('Open again', APPLE_JONY_MEMBER_ACCESS_TOKEN)).body.errors,

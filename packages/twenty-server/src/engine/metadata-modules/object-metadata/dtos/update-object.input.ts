@@ -103,7 +103,7 @@ export class UpdateObjectPayload {
   readability?: MetadataReadability;
 
   @IsEnum(ObjectSharingReach)
-  @IsOptional()
+  @ValidateIf((_, value) => value !== undefined)
   @Field(() => ObjectSharingReach, { nullable: true })
   sharingReach?: ObjectSharingReach;
 

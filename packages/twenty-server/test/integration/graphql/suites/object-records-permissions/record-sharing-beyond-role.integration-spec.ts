@@ -269,12 +269,13 @@ describe('Records shared beyond the role that can access their object', () => {
   });
 
   it('should not let general access reach beyond the role', async () => {
-    await setShare({
+    const share = await setShare({
       principal: EVERYONE,
       accessLevel: RecordShareAccessLevel.READ_WRITE,
     });
 
-    expect((await findIdsAsJony()).ids).toEqual([]);
+    expect(share.body.errors).toBeUndefined();
+    expect(await findIdsAsJony()).toEqual({ errors: undefined, ids: [] });
   });
 
   it('should let a role grant reach every member of the role', async () => {
@@ -285,6 +286,8 @@ describe('Records shared beyond the role that can access their object', () => {
 
   it('should tell owners what the role of each recipient grants on its own', async () => {
     await setShare({ principal: JONY });
+    await setShare({ principal: { roleId: memberRoleId } });
+    await setShare({ principal: EVERYONE });
 
     const sharing = await makeMetadataApiRequest({
       query: parse(
@@ -303,6 +306,12 @@ describe('Records shared beyond the role that can access their object', () => {
           canRoleRead: false,
           canRoleUpdate: false,
         },
+        { principalId: memberRoleId, canRoleRead: false, canRoleUpdate: false },
+        {
+          principalId: EVERYONE_PRINCIPAL_ID,
+          canRoleRead: null,
+          canRoleUpdate: null,
+        },
       ]),
     );
   });
@@ -316,9 +325,62 @@ describe('Records shared beyond the role that can access their object', () => {
       'INVALID_SHARE_WITH',
     );
 
+    expect(
+      (await setShare({ principal: { roleId: memberRoleId } })).body.errors?.[0]
+        ?.extensions?.subCode,
+    ).toBe('INVALID_SHARE_WITH');
+
     await setMemberObjectAccess(true);
 
     expect((await setShare({ principal: JONY })).body.errors).toBeUndefined();
+    expect(
+      (await setShare({ principal: { roleId: memberRoleId } })).body.errors,
+    ).toBeUndefined();
+  });
+
+  it('should refuse a share the row filter of the recipient would hide', async () => {
+    await setMemberObjectAccess(true);
+    await setSharingReach(ObjectSharingReach.ROLE_ACCESS);
+    await upsertRowLevelPermissionPredicates({
+      expectToFail: false,
+      input: {
+        roleId: memberRoleId,
+        objectMetadataId,
+        predicates: [
+          {
+            fieldMetadataId: nameFieldMetadataId,
+            operand: RowLevelPermissionPredicateOperand.CONTAINS,
+            value: 'Visible',
+          },
+        ],
+        predicateGroups: [],
+      },
+    });
+
+    try {
+      const response = await setShare({ principal: JONY });
+
+      expect(response.body.errors?.[0]?.extensions?.subCode).toBe(
+        'INVALID_SHARE_WITH',
+      );
+      expect(
+        await shares.findByRecordIds({
+          workspaceId,
+          objectMetadataId,
+          recordIds: [SHARED_RECORD_ID],
+        }),
+      ).toEqual([]);
+    } finally {
+      await upsertRowLevelPermissionPredicates({
+        expectToFail: false,
+        input: {
+          roleId: memberRoleId,
+          objectMetadataId,
+          predicates: [],
+          predicateGroups: [],
+        },
+      });
+    }
   });
 
   it('should stay within the role when the object limits sharing to it', async () => {
@@ -349,11 +411,17 @@ describe('Records shared beyond the role that can access their object', () => {
     try {
       expect((await findIdsAsJony()).ids).toEqual([OTHER_RECORD_ID]);
 
-      await setShare({ principal: JONY });
+      await setShare({
+        principal: JONY,
+        accessLevel: RecordShareAccessLevel.READ_WRITE,
+      });
 
       expect((await findIdsAsJony()).ids.sort()).toEqual(
         [SHARED_RECORD_ID, OTHER_RECORD_ID].sort(),
       );
+      expect(
+        (await renameAsJony('Edited under a row filter')).body.errors,
+      ).toBeUndefined();
 
       await setSharingReach(ObjectSharingReach.ROLE_ACCESS);
 
@@ -415,10 +483,12 @@ describe('Records shared beyond the role that can access their object', () => {
         });
     };
 
+    expect((await findIdsAsJony()).ids).toEqual([]);
     expect([...(await resolveAdmittedRecordIds())]).toEqual([]);
 
     await setShare({ principal: JONY });
 
+    expect((await findIdsAsJony()).ids).toEqual([SHARED_RECORD_ID]);
     expect([...(await resolveAdmittedRecordIds())]).toEqual([SHARED_RECORD_ID]);
 
     await setSharingReach(ObjectSharingReach.ROLE_ACCESS);

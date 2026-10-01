@@ -11,7 +11,6 @@ import {
   type SqlCondition,
 } from 'src/engine/twenty-orm/types/row-access-policy.type';
 import { combineSqlConditions } from 'src/engine/twenty-orm/utils/combine-sql-conditions.util';
-import { combineSqlConditionsWithOr } from 'src/engine/twenty-orm/utils/combine-sql-conditions-with-or.util';
 import { isObjectOperationPermitted } from 'src/engine/twenty-orm/utils/is-object-operation-permitted.util';
 import { renderRowLevelPermissionFilterToSql } from 'src/engine/twenty-orm/utils/render-row-level-permission-filter-to-sql.util';
 
@@ -87,10 +86,10 @@ export const buildRowAccessPolicy = ({
   if (isDefined(rolePredicate) && isDefined(namedRecordGrantCondition)) {
     return {
       kind: 'gated',
-      condition: combineSqlConditionsWithOr([
-        combineSqlConditions(conditions),
-        namedRecordGrantCondition,
-      ]),
+      condition: combineSqlConditions(
+        [combineSqlConditions(conditions), namedRecordGrantCondition],
+        'OR',
+      ),
     };
   }
 

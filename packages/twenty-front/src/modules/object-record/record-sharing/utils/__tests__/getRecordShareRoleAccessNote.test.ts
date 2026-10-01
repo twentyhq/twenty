@@ -74,5 +74,12 @@ describe('getRecordShareRoleAccessNote', () => {
         sharingReach: ObjectSharingReach.ROLE_ACCESS,
       }),
     ).toBeUndefined();
+    expect(
+      getNote({
+        canRoleRead: true,
+        canRoleUpdate: true,
+        sharingReach: ObjectSharingReach.ROLE_ACCESS,
+      }),
+    ).toBeUndefined();
   });
 });

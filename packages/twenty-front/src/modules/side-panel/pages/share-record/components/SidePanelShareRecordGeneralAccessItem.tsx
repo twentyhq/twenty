@@ -60,7 +60,7 @@ export const SidePanelShareRecordGeneralAccessItem = ({
     >
       <Dropdown.Section>
         <Dropdown.OptionItem
-          selected={isRestricted}
+          selected={isRestricted && !hasManagedWorkspaceAccess}
           disabled={isRestricted || saving}
           onSelect={() => {
             void setShare({ principal: { everyone: true }, enabled: false });
