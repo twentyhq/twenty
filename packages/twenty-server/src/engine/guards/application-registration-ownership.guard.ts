@@ -6,6 +6,7 @@ import {
 import { Reflector } from '@nestjs/core';
 
 import { isNonEmptyString } from '@sniptt/guards';
+import { type AllMetadataName } from 'twenty-shared/metadata';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
@@ -17,12 +18,15 @@ import {
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { APPLICATION_TARGET_METADATA_KEY } from 'src/engine/core-modules/application/constants/application-target-metadata-key.constant';
 import { type ApplicationTarget } from 'src/engine/core-modules/application/types/application-target.type';
-import { findApplicationOwnedFlatEntity } from 'src/engine/core-modules/application/utils/find-application-owned-flat-entity.util';
 import {
   getApplicationTargetName,
   readApplicationTargetValue,
 } from 'src/engine/core-modules/application/utils/read-application-target-value.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { type SyncableFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-from.type';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { getRequest } from 'src/utils/extract-request';
 
 // Authoring endpoints (file uploads, sync) may only touch an application whose
@@ -109,8 +113,7 @@ export class ApplicationRegistrationOwnershipGuard implements CanActivate {
 
         return true;
       case 'applicationOwnedEntity': {
-        const flatEntity = await findApplicationOwnedFlatEntity({
-          flatEntityMapsCacheService: this.flatEntityMapsCacheService,
+        const flatEntity = await this.findFlatEntity({
           metadataName: target.metadataName,
           entityId: targetValue,
           workspaceId,
@@ -136,6 +139,31 @@ export class ApplicationRegistrationOwnershipGuard implements CanActivate {
       default:
         return assertUnreachable(target);
     }
+  }
+
+  private async findFlatEntity({
+    metadataName,
+    entityId,
+    workspaceId,
+  }: {
+    metadataName: AllMetadataName;
+    entityId: string;
+    workspaceId: string;
+  }): Promise<SyncableFlatEntity | undefined> {
+    const flatMapsKey = getMetadataFlatEntityMapsKey(metadataName);
+
+    const flatEntityMapsByKey =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        { workspaceId, flatMapsKeys: [flatMapsKey] },
+      );
+
+    const flatEntityMaps: FlatEntityMaps<SyncableFlatEntity> =
+      flatEntityMapsByKey[flatMapsKey];
+
+    return findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: entityId,
+      flatEntityMaps,
+    });
   }
 
   private async findApplicationOrThrow({
