@@ -1,5 +1,5 @@
 import type { DefaultStyleSchema, Link, StyledText } from '@blocknote/core';
-import { type Token, type Tokens } from 'marked';
+import { type Token } from 'marked';
 import { isDefined, isNonEmptyArray, isSafeUrl } from 'twenty-shared/utils';
 
 type InlineStyle = 'bold' | 'italic' | 'strike' | 'code';
@@ -20,29 +20,37 @@ const STYLE_BY_TOKEN_TYPE: Record<string, InlineStyle> = {
   del: 'strike',
 };
 
-const collectInlineRuns = (
-  tokens: Token[],
-  styles: InlineStyle[],
-  href: string | undefined,
-  runs: InlineRun[],
-): void => {
+export const getChildTokens = (token: Token): Token[] =>
+  'tokens' in token && Array.isArray(token.tokens) ? token.tokens : [];
+
+const collectInlineRuns = ({
+  tokens,
+  styles,
+  href,
+  runs,
+}: {
+  tokens: Token[];
+  styles: InlineStyle[];
+  href?: string;
+  runs: InlineRun[];
+}): void => {
   for (const token of tokens) {
     const style = STYLE_BY_TOKEN_TYPE[token.type];
 
     if (isDefined(style)) {
-      collectInlineRuns(
-        (token as Tokens.Generic).tokens ?? [],
-        [...styles, style],
+      collectInlineRuns({
+        tokens: getChildTokens(token),
+        styles: [...styles, style],
         href,
         runs,
-      );
+      });
       continue;
     }
 
     switch (token.type) {
       case 'text':
         if (isNonEmptyArray(token.tokens)) {
-          collectInlineRuns(token.tokens, styles, href, runs);
+          collectInlineRuns({ tokens: token.tokens, styles, href, runs });
         } else {
           runs.push({ text: token.text, styles, href });
         }
@@ -57,12 +65,12 @@ const collectInlineRuns = (
         runs.push({ text: '\n', styles, href });
         break;
       case 'link':
-        collectInlineRuns(
-          token.tokens ?? [],
+        collectInlineRuns({
+          tokens: getChildTokens(token),
           styles,
-          isSafeUrl(token.href) ? token.href : href,
+          href: isSafeUrl(token.href) ? token.href : href,
           runs,
-        );
+        });
         break;
       case 'image':
         runs.push({
@@ -89,7 +97,7 @@ export const convertMarkdownInlineTokens = (
 ): InlineContent[] => {
   const runs: InlineRun[] = [];
 
-  collectInlineRuns(tokens, [], undefined, runs);
+  collectInlineRuns({ tokens, styles: [], runs });
 
   const mergedRuns: InlineRun[] = [];
 

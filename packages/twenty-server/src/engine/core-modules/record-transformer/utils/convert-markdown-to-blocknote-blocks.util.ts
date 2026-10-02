@@ -6,6 +6,7 @@ import { isNonEmptyArray, isSafeUrl } from 'twenty-shared/utils';
 
 import {
   convertMarkdownInlineTokens,
+  getChildTokens,
   type InlineContent,
 } from 'src/engine/core-modules/record-transformer/utils/convert-markdown-inline-tokens.util';
 
@@ -24,6 +25,14 @@ const createBlock = (block: PartialBlock): PartialBlock => ({
 const isBlankContent = (content: InlineContent[]) =>
   content.every((item) => item.type === 'text' && item.text.trim() === '');
 
+const LINE_BREAK_TOKEN: Tokens.Br = { type: 'br', raw: '\n' };
+
+const isListToken = (token: Token): token is Tokens.List =>
+  token.type === 'list';
+
+const isTableToken = (token: Token): token is Tokens.Table =>
+  token.type === 'table';
+
 const isImageToken = (token: Token): token is Tokens.Image =>
   token.type === 'image' && isSafeUrl(token.href);
 
@@ -40,23 +49,27 @@ const convertImage = (image: Tokens.Image): PartialBlock =>
     },
   });
 
-const getChildTokens = (token: Token): Token[] =>
-  (token as Tokens.Generic).tokens ?? [];
-
 const collectImageTokens = (token: Token): Tokens.Image[] =>
   isImageToken(token)
     ? [token]
     : getChildTokens(token).flatMap(collectImageTokens);
 
-const removeImageTokens = (token: Token): Token =>
-  isNonEmptyArray(getChildTokens(token))
-    ? ({
-        ...token,
-        tokens: getChildTokens(token)
-          .filter((childToken) => !isImageToken(childToken))
-          .map(removeImageTokens),
-      } as Token)
-    : token;
+const removeImageTokens = (token: Token): Token => {
+  const childTokens = getChildTokens(token);
+
+  if (!isNonEmptyArray(childTokens)) {
+    return token;
+  }
+
+  const tokenWithoutImages: Tokens.Generic = {
+    ...token,
+    tokens: childTokens
+      .filter((childToken) => !isImageToken(childToken))
+      .map(removeImageTokens),
+  };
+
+  return tokenWithoutImages;
+};
 
 const convertParagraph = (tokens: Token[]): PartialBlock[] => {
   const blocks: PartialBlock[] = [];
@@ -99,11 +112,15 @@ const convertParagraph = (tokens: Token[]): PartialBlock[] => {
   return blocks;
 };
 
-const convertListItem = (
-  list: Tokens.List,
-  item: Tokens.ListItem,
-  index: number,
-): PartialBlock => {
+const convertListItem = ({
+  list,
+  item,
+  index,
+}: {
+  list: Tokens.List;
+  item: Tokens.ListItem;
+  index: number;
+}): PartialBlock => {
   const tokens = item.tokens.filter(
     (token) => token.type !== 'checkbox' && token.type !== 'space',
   );
@@ -161,9 +178,9 @@ const collectQuoteLines = (tokens: Token[]): Token[][] =>
       case 'heading':
         return [getChildTokens(token)];
       case 'list':
-        return token.items.flatMap((item: Tokens.ListItem) =>
-          collectQuoteLines(item.tokens),
-        );
+        return isListToken(token)
+          ? token.items.flatMap((item) => collectQuoteLines(item.tokens))
+          : [];
       case 'blockquote':
         return collectQuoteLines(getChildTokens(token));
       default:
@@ -239,19 +256,19 @@ const convertBlockTokens = (tokens: Token[]): PartialBlock[] =>
             props: { backgroundColor: 'default', textColor: 'default' },
             content: convertMarkdownInlineTokens(
               collectQuoteLines(token.tokens ?? []).flatMap((line, index) =>
-                index > 0
-                  ? [{ type: 'br', raw: '\n' } as Tokens.Br, ...line]
-                  : line,
+                index > 0 ? [LINE_BREAK_TOKEN, ...line] : line,
               ),
             ),
           }),
         ];
       case 'list':
-        return token.items.map((item: Tokens.ListItem, index: number) =>
-          convertListItem(token as Tokens.List, item, index),
-        );
+        return isListToken(token)
+          ? token.items.map((item, index) =>
+              convertListItem({ list: token, item, index }),
+            )
+          : [];
       case 'table':
-        return [convertTable(token as Tokens.Table)];
+        return isTableToken(token) ? [convertTable(token)] : [];
       default:
         return [
           createBlock({
