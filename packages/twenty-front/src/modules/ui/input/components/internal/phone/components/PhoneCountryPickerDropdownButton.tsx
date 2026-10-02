@@ -1,5 +1,5 @@
 import { t } from '@lingui/core/macro';
-import { type ComponentProps, useId } from 'react';
+import { type ComponentProps, useId, useMemo } from 'react';
 import { PhoneCountryPicker } from 'twenty-ui/components';
 
 import { useCountries } from '@/ui/input/components/internal/hooks/useCountries';
@@ -56,13 +56,18 @@ export const PhoneCountryPickerDropdownButton = ({
   'aria-required': ariaRequired,
 }: PhoneCountryPickerDropdownButtonProps) => {
   const dropdownId = useId();
-  const countries = useCountries().map(
-    ({ countryCode, countryName, callingCode, Flag }) => ({
-      value: countryCode,
-      label: countryName,
-      callingCode,
-      flag: <Flag />,
-    }),
+  const availableCountries = useCountries();
+  const countries = useMemo(
+    () =>
+      availableCountries.map(
+        ({ countryCode, countryName, callingCode, Flag }) => ({
+          value: countryCode,
+          label: countryName,
+          callingCode,
+          flag: <Flag />,
+        }),
+      ),
+    [availableCountries],
   );
   const selectedCountry = countries.find((country) => country.value === value);
 
