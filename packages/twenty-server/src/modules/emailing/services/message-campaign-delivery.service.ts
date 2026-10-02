@@ -188,7 +188,7 @@ export class MessageCampaignDeliveryService {
     campaignId: string;
     messageId: string;
   }): Promise<void> {
-    const { affected: failedDeliveryCount } = await this.workspaceOrmManager
+    const { generatedMaps: failedDeliveries } = await this.workspaceOrmManager
       .getRepository(
         CampaignDeliveryWorkspaceEntity,
         { shouldBypassPermissionChecks: true },
@@ -202,7 +202,7 @@ export class MessageCampaignDeliveryService {
         },
       );
 
-    if (failedDeliveryCount === 1) {
+    if (failedDeliveries.length === 1) {
       this.logger.warn(
         `Campaign ${campaignId} of workspace ${workspaceId} gave up on message ${messageId} after ${SEND_SLOT_RETRY.attemptLimit} refused send slots`,
       );
@@ -478,7 +478,7 @@ export class MessageCampaignDeliveryService {
   }): Promise<string | null> {
     const claimToken = v4();
 
-    const { affected: claimedDeliveryCount } = await this.workspaceOrmManager
+    const { generatedMaps: claimedDeliveries } = await this.workspaceOrmManager
       .getRepository(
         CampaignDeliveryWorkspaceEntity,
         { shouldBypassPermissionChecks: true },
@@ -493,7 +493,7 @@ export class MessageCampaignDeliveryService {
         },
       );
 
-    return claimedDeliveryCount === 1 ? claimToken : null;
+    return claimedDeliveries.length === 1 ? claimToken : null;
   }
 
   private async settleClaimedDelivery({
@@ -514,7 +514,7 @@ export class MessageCampaignDeliveryService {
       >
     >;
   }): Promise<number> {
-    const { affected: settledDeliveryCount } = await this.workspaceOrmManager
+    const { generatedMaps: settledDeliveries } = await this.workspaceOrmManager
       .getRepository(
         CampaignDeliveryWorkspaceEntity,
         { shouldBypassPermissionChecks: true },
@@ -525,6 +525,6 @@ export class MessageCampaignDeliveryService {
         { ...update, claimToken: null, claimExpiresAt: null },
       );
 
-    return settledDeliveryCount ?? 0;
+    return settledDeliveries.length;
   }
 }
