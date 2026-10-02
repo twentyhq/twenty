@@ -80,9 +80,7 @@ export const SidePanelPathUrlSyncEffect = () => {
         if (pathInUrl !== currentRoutedPath) {
           openRoutedPageInSidePanel({
             path: pathInUrl,
-            // The URL is an external projection of the secondary location.
-            // Selecting another projected artifact starts a fresh stack entry
-            // and state flow; only in-panel replace navigation inherits them.
+            // Each URL selection starts a fresh stack entry; only in-panel replace navigation inherits state
             resetNavigationStack: true,
           });
         }

@@ -568,7 +568,8 @@
                   "pages": [
                     "ui/primitives/feedback/banner",
                     "ui/primitives/feedback/loader",
-                    "ui/primitives/feedback/progress-bar"
+                    "ui/primitives/feedback/progress-bar",
+                    "ui/primitives/feedback/progress-ring"
                   ]
                 },
                 {
@@ -580,6 +581,7 @@
                     "ui/primitives/input/field",
                     "ui/primitives/input/input",
                     "ui/primitives/input/input-group",
+                    "ui/primitives/input/number-stepper",
                     "ui/primitives/input/textarea",
                     "ui/primitives/input/checkbox",
                     "ui/primitives/input/radio",
@@ -604,6 +606,7 @@
                   "key": "uiNavigation",
                   "label": "Navigation",
                   "pages": [
+                    "ui/primitives/navigation/breadcrumb",
                     "ui/primitives/navigation/list-item",
                     "ui/primitives/navigation/tabs"
                   ]
@@ -626,6 +629,7 @@
                   "pages": [
                     "ui/primitives/typography/heading",
                     "ui/primitives/typography/text",
+                    "ui/primitives/typography/shortcut",
                     "ui/primitives/typography/overflowing-text-with-tooltip"
                   ]
                 }
@@ -641,6 +645,7 @@
                 "ui/components/input/icon-button",
                 "ui/components/input/light-icon-button",
                 "ui/components/section",
+                "ui/components/overflowing-list",
                 "ui/components/settings-row",
                 "ui/components/dropdown",
                 "ui/components/tab-button",
@@ -650,11 +655,12 @@
                 "ui/components/avatar-group",
                 "ui/components/callout",
                 "ui/components/command-block",
+                "ui/components/image-input",
                 "ui/components/inline-banner",
                 "ui/components/json-tree",
                 "ui/components/menu-items",
                 "ui/components/menu-picker",
-                "ui/components/navigation-bar",
+                "ui/components/metric-row",
                 "ui/components/notification-counter",
                 "ui/components/search-input",
                 "ui/components/tinted-icon-tile"

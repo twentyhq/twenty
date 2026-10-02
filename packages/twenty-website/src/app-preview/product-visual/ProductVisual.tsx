@@ -109,7 +109,6 @@ export function ProductVisual({
     { mobile: compactCursorTour },
   );
 
-  // The tour drives the page the collaborators look at.
   useEffect(() => {
     if (collaborative) {
       selectPageItem(heroCursor.pageItemId);

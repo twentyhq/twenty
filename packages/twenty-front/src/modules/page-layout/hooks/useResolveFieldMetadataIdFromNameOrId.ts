@@ -12,8 +12,7 @@ export const useResolveFieldMetadataIdFromNameOrId = (
     objectNameSingular: targetRecord.targetObjectNameSingular,
   });
 
-  // Only one field per morph group is served, so an id of another sibling
-  // resolves to the field that represents its group.
+  // Only one field per morph group is served, so a sibling id resolves to its group's field.
   return useMemo(
     () =>
       objectMetadataItem.fields.find(

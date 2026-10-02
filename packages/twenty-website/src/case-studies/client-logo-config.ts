@@ -1,6 +1,6 @@
 // The customer wordmarks shown on each case-study card. The old site shipped
 // five near-identical SVG files; here they are one config-driven component
-// (client-logo.tsx) plus the dotted Nine Dots mark. viewBox height is always
+// (ClientLogo.tsx) plus the dotted Nine Dots mark. viewBox height is always
 // 22 for wordmarks; the dots mark is a fixed 56x56 grid.
 export type ClientLogoKey =
   | 'nine-dots'

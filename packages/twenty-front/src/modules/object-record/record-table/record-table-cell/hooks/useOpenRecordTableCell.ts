@@ -110,7 +110,6 @@ export const useOpenRecordTableCell = (recordTableId: string) => {
         return;
       }
 
-      // Block editing for read-only records, but allow navigation (handled above)
       if (isReadOnly) {
         return;
       }

@@ -375,6 +375,38 @@ export const SelectionOverrides: Story = {
   },
 };
 
+export const OptionsWithoutSelectionState: Story = {
+  render: () => (
+    <Dropdown.Root type="picker">
+      <Dropdown.Trigger>Fields</Dropdown.Trigger>
+      <Dropdown.Content aria-label="Choose a field">
+        <Dropdown.Search
+          aria-label="Search fields"
+          value="Stage"
+          onValueChange={onSearchChange}
+        />
+        <Dropdown.OptionItem onSelect={() => onSelectOption('Stage')}>
+          Stage
+        </Dropdown.OptionItem>
+      </Dropdown.Content>
+    </Dropdown.Root>
+  ),
+  play: async ({ canvasElement }) => {
+    const body = within(canvasElement.ownerDocument.body);
+
+    await openFields(canvasElement);
+    expect(body.getByRole('button', { name: 'Stage' })).not.toHaveAttribute(
+      'aria-pressed',
+    );
+    await userEvent.keyboard('{Enter}');
+
+    expect(onSelectOption).toHaveBeenCalledWith('Stage');
+    await waitFor(() =>
+      expect(body.queryByRole('dialog')).not.toBeInTheDocument(),
+    );
+  },
+};
+
 export const LoadingStatus: Story = {
   render: () => (
     <Dropdown.Root type="picker">

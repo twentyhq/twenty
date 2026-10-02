@@ -1,0 +1,282 @@
+import { Injectable } from '@nestjs/common';
+
+import { type ExtendedUIMessagePart } from 'twenty-shared/ai';
+import {
+  type SendInboxMessageInput,
+  type SendInboxMessageResult,
+} from 'twenty-shared/application';
+import { isDefined } from 'twenty-shared/utils';
+
+import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
+import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
+import { type AgentInboxSender } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-inbox-sender.type';
+import { buildInboxMessageIds } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-inbox-message-ids.util';
+import { buildInboxMessageToolCallPart } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-inbox-message-tool-call-part.util';
+import { getAgentInboxSenderDetails } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-agent-inbox-sender-details.util';
+import { isUniqueViolationError } from 'src/engine/metadata-modules/ai/ai-chat/utils/is-unique-violation-error.util';
+import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
+import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
+import { AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
+import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
+import { type AgentMessageWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message.workspace-entity';
+import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+
+@Injectable()
+export class AgentInboxService {
+  constructor(
+    @InjectAgentHistoryRepository('agentChatThread')
+    private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
+    @InjectAgentHistoryRepository('agentMessage')
+    private readonly messageRepository: AgentHistoryRepository<AgentMessageWorkspaceEntity>,
+    private readonly threadService: AgentChatThreadService,
+    private readonly conversationWriterService: AgentConversationWriterService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
+  ) {}
+
+  // Every record has an id derived from the keys: the thread key picks the
+  // conversation, and the idempotency key the message in it, so a retry or a
+  // concurrent send completes the same message instead of writing another.
+  // A message is written with its parts at once, so one that exists is done.
+  async sendMessage({
+    workspaceId,
+    sender,
+    input,
+  }: {
+    workspaceId: string;
+    sender: AgentInboxSender;
+    input: Omit<SendInboxMessageInput, 'toolCall'> & { toolCall?: unknown };
+  }): Promise<SendInboxMessageResult> {
+    const senderDetails = getAgentInboxSenderDetails(sender);
+    const { threadId, turnId, openingMessageId, messageId, toolCallId } =
+      buildInboxMessageIds({
+        senderKey: senderDetails.key,
+        workspaceMemberId: input.workspaceMemberId,
+        threadKey: input.threadKey,
+        idempotencyKey: input.idempotencyKey,
+      });
+
+    const existingThread = await this.findThread({ workspaceId, threadId });
+
+    // A member who deleted the conversation has dismissed it, and a message
+    // that exists was already delivered.
+    if (
+      isDefined(existingThread?.deletedAt) ||
+      (await this.messageExists({ workspaceId, id: messageId }))
+    ) {
+      return { threadId };
+    }
+
+    const toolCallPart = isDefined(input.toolCall)
+      ? await buildInboxMessageToolCallPart({
+          toolCall: input.toolCall,
+          toolCallId,
+          findApplicationTool: (logicFunctionUniversalIdentifier) =>
+            this.findApplicationTool({
+              workspaceId,
+              applicationId: senderDetails.applicationId,
+              logicFunctionUniversalIdentifier,
+            }),
+        })
+      : undefined;
+
+    const thread =
+      existingThread ??
+      (await this.createThread({
+        workspaceId,
+        threadId,
+        workspaceMemberId: input.workspaceMemberId,
+        title: input.title,
+      }));
+
+    await this.ensureOpener({
+      workspaceId,
+      threadId,
+      turnId,
+      openingMessageId,
+      memberUserWorkspaceId: thread.userWorkspaceId,
+      senderDescription: senderDetails.description,
+    });
+
+    const parts: ExtendedUIMessagePart[] = [{ type: 'text', text: input.text }];
+
+    if (isDefined(toolCallPart)) {
+      parts.push(toolCallPart.part);
+    }
+
+    const isWritten = await this.ignoreDuplicate(() =>
+      this.conversationWriterService.insertMessage({
+        workspaceId,
+        id: messageId,
+        threadId,
+        turnId,
+        role: AgentMessageRole.ASSISTANT,
+        agentId: null,
+        senderUserWorkspaceId: null,
+        senderApplicationId: senderDetails.applicationId,
+        isAwaitingAnswer: toolCallPart?.isAwaitingAnswer,
+        parts,
+      }),
+    );
+
+    if (isWritten) {
+      await this.threadService.notifyThreadActivityUpdated({
+        threadId,
+        workspaceMemberId: input.workspaceMemberId,
+        workspaceId,
+      });
+    }
+
+    return { threadId };
+  }
+
+  // Answering a tool call resolves who may answer from the user message of
+  // its turn, and models expect a conversation to open with one. It holds
+  // no text from the sender, so nothing the sender wrote reads as the
+  // member's request.
+  private async ensureOpener({
+    workspaceId,
+    threadId,
+    turnId,
+    openingMessageId,
+    memberUserWorkspaceId,
+    senderDescription,
+  }: {
+    workspaceId: string;
+    threadId: string;
+    turnId: string;
+    openingMessageId: string;
+    memberUserWorkspaceId: string | null;
+    senderDescription: string;
+  }): Promise<void> {
+    await this.ignoreDuplicate(() =>
+      this.conversationWriterService.insertTurn({
+        workspaceId,
+        id: turnId,
+        threadId,
+        agentId: null,
+      }),
+    );
+
+    await this.ignoreDuplicate(() =>
+      this.conversationWriterService.insertMessage({
+        workspaceId,
+        id: openingMessageId,
+        threadId,
+        turnId,
+        role: AgentMessageRole.USER,
+        agentId: null,
+        senderUserWorkspaceId: memberUserWorkspaceId,
+        isHidden: true,
+        parts: [
+          {
+            type: 'text',
+            text: `${senderDescription} started this conversation. Its messages follow.`,
+          },
+        ],
+      }),
+    );
+  }
+
+  private findThread({
+    workspaceId,
+    threadId,
+  }: {
+    workspaceId: string;
+    threadId: string;
+  }) {
+    return this.threadRepository.findOne(workspaceId, {
+      where: { id: threadId },
+    });
+  }
+
+  private async createThread({
+    workspaceId,
+    threadId,
+    workspaceMemberId,
+    title,
+  }: {
+    workspaceId: string;
+    threadId: string;
+    workspaceMemberId: string;
+    title: string;
+  }): Promise<AgentChatThreadWorkspaceEntity> {
+    try {
+      return await this.threadService.createThread({
+        workspaceId,
+        workspaceMemberId,
+        id: threadId,
+        title,
+      });
+    } catch (error) {
+      const concurrentlyCreatedThread = isUniqueViolationError(error)
+        ? await this.findThread({ workspaceId, threadId })
+        : null;
+
+      if (!isDefined(concurrentlyCreatedThread)) {
+        throw error;
+      }
+
+      return concurrentlyCreatedThread;
+    }
+  }
+
+  // Every id is derived from the keys, so a row that already exists was
+  // written by a concurrent send of the same conversation.
+  private async ignoreDuplicate(write: () => Promise<unknown>) {
+    try {
+      await write();
+
+      return true;
+    } catch (error) {
+      if (isUniqueViolationError(error)) {
+        return false;
+      }
+
+      throw error;
+    }
+  }
+
+  private async messageExists({
+    workspaceId,
+    id,
+  }: {
+    workspaceId: string;
+    id: string;
+  }): Promise<boolean> {
+    return isDefined(
+      await this.messageRepository.findOne(workspaceId, {
+        where: { id },
+        select: ['id'],
+      }),
+    );
+  }
+
+  private async findApplicationTool({
+    workspaceId,
+    applicationId,
+    logicFunctionUniversalIdentifier,
+  }: {
+    workspaceId: string;
+    applicationId: string | null;
+    logicFunctionUniversalIdentifier: string;
+  }): Promise<FlatLogicFunction | undefined> {
+    if (!isDefined(applicationId)) {
+      return undefined;
+    }
+
+    const { flatLogicFunctionMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatLogicFunctionMaps',
+      ]);
+    const logicFunction =
+      flatLogicFunctionMaps.byUniversalIdentifier[
+        logicFunctionUniversalIdentifier
+      ];
+
+    return logicFunction?.applicationId === applicationId &&
+      !isDefined(logicFunction.deletedAt)
+      ? logicFunction
+      : undefined;
+  }
+}

@@ -284,8 +284,7 @@ describe('Parallel branch leaf resume workflow (e2e)', () => {
       },
     };
 
-    // Insert the run directly instead of going through runWorkflowVersion, so
-    // no start job is enqueued and the manual handle below is the only driver.
+    // Inserted directly so no start job is enqueued and the manual handle is the only driver.
     await global.testDataSource.query(
       `INSERT INTO "${schema}"."workflowRun" (id, name, "workflowId", "workflowVersionId", "coreWorkflowId", "coreWorkflowVersionId", status, state, position, "enqueuedAt")
        VALUES ($1, 'Parallel branch leaf resume run', $2, $3, $4, $5, 'ENQUEUED', $6, 0, now())`,
@@ -298,8 +297,7 @@ describe('Parallel branch leaf resume workflow (e2e)', () => {
         JSON.stringify(state),
       ],
     );
-    // Runs are private, and a direct insert skips the grants that creating a
-    // run writes, so the run would be unreadable through the record API.
+    // A direct insert skips the run's grants, leaving it unreadable through the record API.
     await getAppProviderByClassName<WorkflowRunRecordShareService>(
       'WorkflowRunRecordShareService',
     ).syncRuns({

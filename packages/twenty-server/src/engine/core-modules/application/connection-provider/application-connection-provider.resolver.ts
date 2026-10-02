@@ -13,6 +13,7 @@ import { ApplicationTargetArg } from 'src/engine/decorators/auth/application-tar
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
+import { ApplicationTargetGuard } from 'src/engine/guards/application-target.guard';
 
 @UseGuards(
   AuthPrincipalGuard({
@@ -36,11 +37,11 @@ export class ApplicationConnectionProviderResolver {
   ) {}
 
   @Query(() => [ApplicationConnectionProviderDTO])
-  @UseGuards(NoPermissionGuard)
+  @UseGuards(NoPermissionGuard, ApplicationTargetGuard)
   async applicationConnectionProviders(
     @ApplicationTargetArg(
       'applicationId',
-      { kind: 'applicationId' },
+      { kind: 'applicationId', requireApplicationRegistrationOwnership: false },
       { type: () => UUIDScalarType },
     )
     applicationId: string,

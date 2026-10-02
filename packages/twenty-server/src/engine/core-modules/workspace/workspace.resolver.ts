@@ -145,9 +145,7 @@ export class WorkspaceResolver {
     NoPermissionGuard,
   )
   async activateWorkspace(
-    // Deprecated: the workspace name is set at creation. This argument is kept
-    // for backward compatibility (removing it would be a breaking schema change)
-    // but is ignored.
+    // ignored, kept only because removing it would break the schema
     @Args('data') _data: ActivateWorkspaceInput,
     @AuthUser() user: AuthContextUser,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -300,7 +298,7 @@ export class WorkspaceResolver {
         workspaceCustomFlatApplication,
       );
     } catch {
-      // Temporary should be removed after CreateWorkspaceCustomApplicationCommand is run
+      // TODO: remove this fallback, added while workspaces were being backfilled with a custom application
       return null;
     }
   }

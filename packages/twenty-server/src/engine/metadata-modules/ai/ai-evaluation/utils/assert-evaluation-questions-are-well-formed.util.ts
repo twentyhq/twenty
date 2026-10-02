@@ -49,8 +49,7 @@ export const assertEvaluationQuestionsAreWellFormed = (
       );
     }
 
-    // A one-level rubric has nothing to grade between, and the spec floors it
-    // at two because a score is a position on that ladder.
+    // the spec floors a score rubric at two levels
     if (question.type === 'score' && question.criteria.length < 2) {
       throw new AiException(
         `Score question "${questionId}" needs at least two levels`,

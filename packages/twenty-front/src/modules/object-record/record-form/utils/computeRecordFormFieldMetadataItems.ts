@@ -1,4 +1,5 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { getFieldPermissions } from '@/object-metadata/utils/getFieldPermissions';
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { type RestrictedFieldsPermissions } from 'twenty-shared/types';
@@ -56,7 +57,10 @@ export const computeRecordFormFieldMetadataItems = <
     fieldMetadataItems
       .filter(
         (fieldMetadataItem) =>
-          restrictedFields[fieldMetadataItem.id]?.canUpdate !== false,
+          getFieldPermissions({
+            objectPermissions: { restrictedFields },
+            fieldMetadataId: fieldMetadataItem.id,
+          }).canUpdateField,
       )
       .map((fieldMetadataItem) => [fieldMetadataItem.id, fieldMetadataItem]),
   );

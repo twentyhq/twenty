@@ -1,5 +1,4 @@
-// Authorize after waiting for the next event: a grant may be revoked while
-// next() is blocked, including when the underlying transport buffered data.
+// Authorize after next() resolves: a grant may be revoked while it is blocked
 export const withAsyncIteratorAuthorization = <TValue>({
   iterator,
   authorize,

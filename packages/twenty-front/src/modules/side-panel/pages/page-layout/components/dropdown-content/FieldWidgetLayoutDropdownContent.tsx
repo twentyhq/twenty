@@ -51,9 +51,7 @@ const DISPLAY_MODE_ICONS: Record<FieldDisplayMode, IconComponent> = {
   [FieldDisplayMode.TABLE]: IconTable,
 };
 
-// One flat picker: inline display modes followed by the embedded-view layouts.
-// Picking a layout selects the TABLE display mode under the hood — users choose
-// "Kanban" directly instead of "Table" first and a layout second.
+// Picking an embedded-view layout implicitly selects the TABLE display mode
 export const FieldWidgetLayoutDropdownContent = () => {
   const { t } = useLingui();
 
@@ -88,8 +86,7 @@ export const FieldWidgetLayoutDropdownContent = () => {
     nestedRelationFieldMetadataId: currentNestedRelationFieldMetadataId,
   });
 
-  // Gate on the configured id, not on resolution success: a widget whose
-  // second hop was deleted must not fall back to first-hop behavior.
+  // Gate on the configured id, not resolution: a widget whose second hop was deleted must not fall back to first-hop behavior
   const isNestedRelationWidget = isDefined(
     currentNestedRelationFieldMetadataId,
   );
@@ -101,17 +98,13 @@ export const FieldWidgetLayoutDropdownContent = () => {
       )
     : [FieldDisplayMode.FIELD];
 
-  // A nested relation widget only makes sense as an embedded view: inline
-  // display modes would render the first hop's relation field, contradicting
-  // the widget's two-hop title.
+  // Inline display modes would render the first hop's field, contradicting the nested widget's two-hop title
   const inlineDisplayModes = isNestedRelationWidget
     ? []
     : availableDisplayModes.filter(
         (displayMode) => displayMode !== FieldDisplayMode.TABLE,
       );
 
-  // A configured but unresolvable second hop yields no traversal at all, so a
-  // stale nested widget cannot fall back to scoping by its first hop.
   const relationTraversal =
     isNestedRelationWidget && !isDefined(resolvedNestedRelation)
       ? undefined
@@ -127,9 +120,7 @@ export const FieldWidgetLayoutDropdownContent = () => {
   const relationTargetFieldMetadataId =
     relationTraversal?.relationTargetFieldMetadataId ?? null;
 
-  // Every embedded layout renders a view scoped by the relation's inverse
-  // field, so a relation the traversal cannot resolve offers none of them
-  // rather than entries that would leave the widget with nothing to render.
+  // Every embedded layout scopes its view by the relation's inverse field, so none are offered when it cannot resolve
   const hasEmbeddedViewLayouts =
     availableDisplayModes.includes(FieldDisplayMode.TABLE) &&
     isDefined(targetObjectMetadataId) &&
@@ -201,9 +192,7 @@ export const FieldWidgetLayoutDropdownContent = () => {
       return;
     }
 
-    // A view listing another object than the traversal's target predates
-    // junction traversal and would embed the wrong object, and a view id that
-    // resolves to nothing was deleted, so both are replaced.
+    // A view on another object predates junction traversal and an unresolved id was deleted, so both are replaced
     const isCurrentViewOnTargetObject =
       isDefined(currentViewId) &&
       isDefined(embeddedWidgetView) &&
@@ -220,9 +209,7 @@ export const FieldWidgetLayoutDropdownContent = () => {
           })
         : undefined);
 
-    // Creating the draft view still fails if the target object is not loaded,
-    // and switching to the table display mode without one would leave the
-    // widget with nothing to render, so it keeps the display mode it has.
+    // Draft view creation fails without the target object, so keep the current display mode
     if (!isDefined(viewId)) {
       closeDropdown();
       return;

@@ -4,7 +4,6 @@ import { type MouseEvent } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 const validateEmail = (email: string) => {
-  // Record this without using regex
   const emailParts = email.split('@');
 
   if (emailParts.length !== 2) {

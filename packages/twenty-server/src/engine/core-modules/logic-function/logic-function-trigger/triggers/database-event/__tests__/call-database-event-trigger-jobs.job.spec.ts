@@ -173,6 +173,7 @@ describe('CallDatabaseEventTriggerJobsJob', () => {
         idByUniversalIdentifier: {},
       },
       rolesPermissions: buildRolesPermissions(),
+      roleIdsWithAllRecordsAccess: [],
       flatRowLevelPermissionPredicateMaps: createEmptyFlatEntityMaps(),
       flatRowLevelPermissionPredicateGroupMaps: createEmptyFlatEntityMaps(),
       flatFieldMetadataMaps,
