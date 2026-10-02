@@ -13,7 +13,6 @@ const buildParticipantKey = ({
   handle: string | null;
 }): string => `${calendarEventId}:${handle}`;
 
-// The key already matches handle and calendarEventId, so only the remaining written fields can differ
 const hasParticipantChanged = ({
   existingParticipant,
   fetchedParticipant,
@@ -31,9 +30,11 @@ const hasParticipantChanged = ({
 export const buildCalendarEventParticipantSaveOperations = ({
   fetchedParticipants,
   existingParticipants,
+  shouldSkipUnchangedParticipants,
 }: {
   fetchedParticipants: FetchedParticipantWithCalendarEventId[];
   existingParticipants: CalendarEventParticipantWorkspaceEntity[];
+  shouldSkipUnchangedParticipants: boolean;
 }): CalendarEventParticipantSaveOperations => {
   const existingParticipantByKey = new Map<
     string,
@@ -70,7 +71,10 @@ export const buildCalendarEventParticipantSaveOperations = ({
       continue;
     }
 
-    if (!hasParticipantChanged({ existingParticipant, fetchedParticipant })) {
+    if (
+      shouldSkipUnchangedParticipants &&
+      !hasParticipantChanged({ existingParticipant, fetchedParticipant })
+    ) {
       continue;
     }
 

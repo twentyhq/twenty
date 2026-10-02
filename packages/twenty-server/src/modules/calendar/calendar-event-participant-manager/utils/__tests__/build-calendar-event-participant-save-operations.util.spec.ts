@@ -35,6 +35,7 @@ describe('buildCalendarEventParticipantSaveOperations', () => {
     const operations = buildCalendarEventParticipantSaveOperations({
       fetchedParticipants: [buildFetchedParticipant()],
       existingParticipants: [buildExistingParticipant()],
+      shouldSkipUnchangedParticipants: true,
     });
 
     expect(operations).toEqual({
@@ -44,10 +45,26 @@ describe('buildCalendarEventParticipantSaveOperations', () => {
     });
   });
 
+  it('updates unchanged participants when skipping is disabled', () => {
+    const operations = buildCalendarEventParticipantSaveOperations({
+      fetchedParticipants: [buildFetchedParticipant()],
+      existingParticipants: [buildExistingParticipant()],
+      shouldSkipUnchangedParticipants: false,
+    });
+
+    expect(operations.participantsToUpdate).toEqual([
+      {
+        criteria: 'existing-participant-id',
+        partialEntity: buildFetchedParticipant(),
+      },
+    ]);
+  });
+
   it('treats a null persisted display name as equal to an empty fetched one', () => {
     const operations = buildCalendarEventParticipantSaveOperations({
       fetchedParticipants: [buildFetchedParticipant({ displayName: '' })],
       existingParticipants: [buildExistingParticipant({ displayName: null })],
+      shouldSkipUnchangedParticipants: true,
     });
 
     expect(operations.participantsToUpdate).toEqual([]);
@@ -63,6 +80,7 @@ describe('buildCalendarEventParticipantSaveOperations', () => {
     const operations = buildCalendarEventParticipantSaveOperations({
       fetchedParticipants: [fetchedParticipant],
       existingParticipants: [buildExistingParticipant()],
+      shouldSkipUnchangedParticipants: true,
     });
 
     expect(operations.participantsToUpdate).toEqual([
@@ -83,6 +101,7 @@ describe('buildCalendarEventParticipantSaveOperations', () => {
     const operations = buildCalendarEventParticipantSaveOperations({
       fetchedParticipants: [newParticipant],
       existingParticipants: [buildExistingParticipant()],
+      shouldSkipUnchangedParticipants: true,
     });
 
     expect(operations.participantsToInsert).toEqual([

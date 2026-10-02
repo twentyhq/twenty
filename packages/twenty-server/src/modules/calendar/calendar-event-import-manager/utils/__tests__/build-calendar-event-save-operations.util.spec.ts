@@ -79,6 +79,7 @@ describe('buildCalendarEventSaveOperations', () => {
       existingAssociations: [buildExistingAssociation()],
       existingCalendarEvents: [buildExistingCalendarEvent()],
       calendarChannelId: CALENDAR_CHANNEL_ID,
+      shouldSkipUnchangedCalendarEvents: true,
     });
 
     expect(plan.saveOperations).toEqual({
@@ -99,6 +100,40 @@ describe('buildCalendarEventSaveOperations', () => {
     ]);
   });
 
+  it('updates unchanged events and associations when skipping is disabled', () => {
+    const plan = buildCalendarEventSaveOperations({
+      fetchedCalendarEvents: [buildFetchedCalendarEvent()],
+      existingAssociations: [buildExistingAssociation()],
+      existingCalendarEvents: [],
+      calendarChannelId: CALENDAR_CHANNEL_ID,
+      shouldSkipUnchangedCalendarEvents: false,
+    });
+
+    expect(plan.saveOperations.calendarEventsToUpdate).toHaveLength(1);
+    expect(plan.saveOperations.associationsToUpdate).toEqual([
+      {
+        criteria: ASSOCIATION_ID,
+        partialEntity: { recurringEventExternalId: '' },
+      },
+    ]);
+  });
+
+  it('treats an empty fetched timestamp as equal to a null persisted one', () => {
+    const plan = buildCalendarEventSaveOperations({
+      fetchedCalendarEvents: [
+        buildFetchedCalendarEvent({ externalCreatedAt: '' }),
+      ],
+      existingAssociations: [buildExistingAssociation()],
+      existingCalendarEvents: [
+        buildExistingCalendarEvent({ externalCreatedAt: null }),
+      ],
+      calendarChannelId: CALENDAR_CHANNEL_ID,
+      shouldSkipUnchangedCalendarEvents: true,
+    });
+
+    expect(plan.saveOperations.calendarEventsToUpdate).toEqual([]);
+  });
+
   it.each<[string, Partial<FetchedCalendarEvent>]>([
     ['title', { title: 'Weekly sync (moved)' }],
     ['startsAt', { startsAt: '2026-10-02T10:30:00+02:00' }],
@@ -111,6 +146,7 @@ describe('buildCalendarEventSaveOperations', () => {
       existingAssociations: [buildExistingAssociation()],
       existingCalendarEvents: [buildExistingCalendarEvent()],
       calendarChannelId: CALENDAR_CHANNEL_ID,
+      shouldSkipUnchangedCalendarEvents: true,
     });
 
     expect(plan.saveOperations.calendarEventsToUpdate).toEqual([
@@ -138,6 +174,7 @@ describe('buildCalendarEventSaveOperations', () => {
         }),
       ],
       calendarChannelId: CALENDAR_CHANNEL_ID,
+      shouldSkipUnchangedCalendarEvents: true,
     });
 
     expect(plan.saveOperations.calendarEventsToUpdate).toHaveLength(1);
@@ -149,6 +186,7 @@ describe('buildCalendarEventSaveOperations', () => {
       existingAssociations: [buildExistingAssociation()],
       existingCalendarEvents: [],
       calendarChannelId: CALENDAR_CHANNEL_ID,
+      shouldSkipUnchangedCalendarEvents: true,
     });
 
     expect(plan.saveOperations.calendarEventsToUpdate).toHaveLength(1);
@@ -162,6 +200,7 @@ describe('buildCalendarEventSaveOperations', () => {
       existingAssociations: [buildExistingAssociation()],
       existingCalendarEvents: [buildExistingCalendarEvent()],
       calendarChannelId: CALENDAR_CHANNEL_ID,
+      shouldSkipUnchangedCalendarEvents: true,
     });
 
     expect(plan.saveOperations.calendarEventsToUpdate).toEqual([]);
@@ -179,6 +218,7 @@ describe('buildCalendarEventSaveOperations', () => {
       existingAssociations: [],
       existingCalendarEvents: [],
       calendarChannelId: CALENDAR_CHANNEL_ID,
+      shouldSkipUnchangedCalendarEvents: true,
     });
 
     expect(plan.saveOperations.calendarEventsToInsert).toHaveLength(1);

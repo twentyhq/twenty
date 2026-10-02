@@ -14,11 +14,13 @@ export const buildCalendarEventSaveOperations = ({
   existingAssociations,
   existingCalendarEvents,
   calendarChannelId,
+  shouldSkipUnchangedCalendarEvents,
 }: {
   fetchedCalendarEvents: FetchedCalendarEvent[];
   existingAssociations: CalendarChannelEventAssociationWorkspaceEntity[];
   existingCalendarEvents: CalendarEventWorkspaceEntity[];
   calendarChannelId: string;
+  shouldSkipUnchangedCalendarEvents: boolean;
 }): CalendarEventSavePlan => {
   const existingAssociationByEventExternalId = new Map(
     existingAssociations.map((association) => [
@@ -81,6 +83,7 @@ export const buildCalendarEventSaveOperations = ({
       existingCalendarEventIds.push(calendarEventId);
 
       if (
+        !shouldSkipUnchangedCalendarEvents ||
         !isDefined(existingCalendarEvent) ||
         hasCalendarEventChanged({ existingCalendarEvent, calendarEvent })
       ) {
@@ -91,8 +94,9 @@ export const buildCalendarEventSaveOperations = ({
       }
 
       if (
+        !shouldSkipUnchangedCalendarEvents ||
         (existingAssociation.recurringEventExternalId ?? '') !==
-        recurringEventExternalId
+          recurringEventExternalId
       ) {
         saveOperations.associationsToUpdate.push({
           criteria: existingAssociation.id,
