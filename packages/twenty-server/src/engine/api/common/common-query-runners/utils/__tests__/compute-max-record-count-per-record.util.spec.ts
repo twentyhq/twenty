@@ -148,7 +148,7 @@ describe('computeMaxRecordCountPerRecord', () => {
   });
 
   it('should multiply relations nested under a one-to-many relation by its limit', () => {
-    expect(computeForCompany({ people: { company: {} } })).toBe(1 + 60 * 2);
+    expect(computeForCompany({ people: { company: {} } })).toBe(121);
   });
 
   it('should combine sibling and nested relations', () => {
@@ -157,7 +157,7 @@ describe('computeMaxRecordCountPerRecord', () => {
         accountOwner: {},
         people: { company: { accountOwner: {} } },
       }),
-    ).toBe(1 + 1 + 60 * (1 + 1 * (1 + 1)));
+    ).toBe(182);
   });
 
   it('should use the given one-to-many limit', () => {

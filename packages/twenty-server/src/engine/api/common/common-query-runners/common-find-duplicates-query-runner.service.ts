@@ -6,7 +6,7 @@ import {
   QUERY_MAX_RECORDS_FROM_RELATION,
 } from 'twenty-shared/constants';
 import { ObjectRecord, OrderByDirection } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { FindOptionsRelations, In, ObjectLiteral } from 'typeorm';
 
 import { WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
@@ -272,10 +272,9 @@ export class CommonFindDuplicatesQueryRunnerService extends CommonBaseQueryRunne
   protected override computeRootRecordCount(
     args: CommonExtendedInput<FindDuplicatesQueryArgs>,
   ): number {
-    const inputRecordCount =
-      isDefined(args.ids) && args.ids.length > 0
-        ? args.ids.length
-        : (args.data?.length ?? 0);
+    const inputRecordCount = isNonEmptyArray(args.ids)
+      ? args.ids.length
+      : (args.data?.length ?? 0);
 
     return inputRecordCount * QUERY_MAX_RECORDS;
   }

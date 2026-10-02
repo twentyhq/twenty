@@ -138,9 +138,8 @@ export class CommonRestoreManyQueryRunnerService extends CommonBaseQueryRunnerSe
   }
 
   protected override computeRootRecordCount(
-    _args: CommonExtendedInput<RestoreManyQueryArgs>,
-    results: ObjectRecord[],
+    args: CommonExtendedInput<RestoreManyQueryArgs>,
   ): number {
-    return results.length;
+    return this.computeFilteredMutationRootRecordCount(args.filter);
   }
 }

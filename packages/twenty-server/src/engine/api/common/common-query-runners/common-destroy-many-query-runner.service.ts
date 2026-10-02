@@ -139,9 +139,8 @@ export class CommonDestroyManyQueryRunnerService extends CommonBaseQueryRunnerSe
   }
 
   protected override computeRootRecordCount(
-    _args: CommonExtendedInput<DestroyManyQueryArgs>,
-    results: ObjectRecord[],
+    args: CommonExtendedInput<DestroyManyQueryArgs>,
   ): number {
-    return results.length;
+    return this.computeFilteredMutationRootRecordCount(args.filter);
   }
 }

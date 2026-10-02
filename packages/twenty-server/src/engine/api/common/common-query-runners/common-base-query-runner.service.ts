@@ -152,20 +152,10 @@ export abstract class CommonBaseQueryRunnerService<
       queryRunnerContext,
     );
 
-    const results = await this.workspaceOrmManager.executeInWorkspaceContext(
-      async () =>
-        this.executeQueryAndEnrichResults(
-          processedArgs,
-          queryRunnerContext,
-          commonQueryParser,
-        ),
-      authContext,
-    );
-
     if (isRootOperation) {
       this.recordApiComplexityUsage(
         authContext,
-        this.computeRootRecordCount(processedArgs, results) *
+        this.computeRootRecordCount(processedArgs) *
           computeMaxRecordCountPerRecord({
             relations: selectedFieldsResult.relations,
             flatObjectMetadata,
@@ -176,6 +166,16 @@ export abstract class CommonBaseQueryRunnerService<
           }),
       );
     }
+
+    const results = await this.workspaceOrmManager.executeInWorkspaceContext(
+      async () =>
+        this.executeQueryAndEnrichResults(
+          processedArgs,
+          queryRunnerContext,
+          commonQueryParser,
+        ),
+      authContext,
+    );
 
     return {
       results,
@@ -218,11 +218,14 @@ export abstract class CommonBaseQueryRunnerService<
     return selectedFieldsComplexity;
   }
 
-  protected computeRootRecordCount(
-    _args: CommonExtendedInput<Args>,
-    _results: Output,
-  ): number {
+  protected computeRootRecordCount(_args: CommonExtendedInput<Args>): number {
     return 1;
+  }
+
+  protected computeFilteredMutationRootRecordCount(
+    filter: Partial<ObjectRecordFilter>,
+  ): number {
+    return filter.id?.in?.length ?? 1;
   }
 
   private async processArgs(
