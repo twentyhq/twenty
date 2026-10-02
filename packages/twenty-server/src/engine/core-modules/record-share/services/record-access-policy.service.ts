@@ -130,16 +130,6 @@ export class RecordAccessPolicyService {
           flatFieldMetadataMaps: flatFieldMetadataMapsOrm,
           shouldIgnoreSoftDeleteDefaultFilter: true,
           fetchRecordShares,
-          executeRawQuery: (sql, parameters) =>
-            this.workspaceOrmManager.executeInWorkspaceContext(
-              () =>
-                this.workspaceOrmManager
-                  .getRepository(objectMetadata.nameSingular, {
-                    shouldBypassPermissionChecks: true,
-                  })
-                  .executeRaw(sql, parameters),
-              buildSystemAuthContext(workspaceId),
-            ),
           // Parents and children are only reached through their tables
           resolveRecordIdsReadableThroughParents: ({ expression, records }) =>
             this.workspaceOrmManager.executeInWorkspaceContext(async () => {

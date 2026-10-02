@@ -8,7 +8,6 @@ export type OrderByLeafColumn = {
   tableAlias: string;
   columnName: string;
   columnType: FieldMetadataType;
-  isNullable: boolean;
 };
 
 // ORDER BY, hidden column selection and the cursor raw-row alias all derive from this so they cannot drift apart
@@ -32,7 +31,6 @@ export const computeOrderByLeafColumn = (
           : leaf.path[1],
         columnType: (leaf.targetCompositeProperty ?? leaf.targetFieldMetadata)
           .type,
-        isNullable: true,
       };
     }
     case 'composite':
@@ -43,14 +41,12 @@ export const computeOrderByLeafColumn = (
           leaf.compositeProperty,
         ),
         columnType: leaf.compositeProperty.type,
-        isNullable: true,
       };
     case 'scalar':
       return {
         tableAlias: objectNameSingular,
         columnName: leaf.path[0],
         columnType: leaf.fieldMetadata.type,
-        isNullable: leaf.fieldMetadata.isNullable !== false,
       };
   }
 };

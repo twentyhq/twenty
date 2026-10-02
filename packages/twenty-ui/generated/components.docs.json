@@ -8070,6 +8070,41 @@
     ]
   },
   {
+    "name": "OverflowingList",
+    "entryPoint": "twenty-ui/components",
+    "slug": "components/overflowing-list",
+    "props": [
+      {
+        "name": "children",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>>[]",
+        "required": true,
+        "defaultValue": null,
+        "description": "Complete ordered list of elements, each with a stable key."
+      },
+      {
+        "name": "maxInlineCount",
+        "type": "number",
+        "required": false,
+        "defaultValue": null,
+        "description": "Maximum number of items mounted in the compact row. The popup still contains every item."
+      },
+      {
+        "name": "overflowLabel",
+        "type": "string",
+        "required": false,
+        "defaultValue": "Show all items",
+        "description": "Accessible label for the popup. The overflow button is named by its visible count followed by this label. Defaults to Show all items."
+      },
+      {
+        "name": "showOverflowCount",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": null,
+        "description": "Shows the overflow count on hover and keyboard focus by default. Use true to show it whenever items overflow, or false to omit the trigger. An open popup stays open until it is dismissed."
+      }
+    ]
+  },
+  {
     "name": "Section",
     "entryPoint": "twenty-ui/components",
     "slug": "components/section",

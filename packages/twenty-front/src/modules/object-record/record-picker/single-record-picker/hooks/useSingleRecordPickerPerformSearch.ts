@@ -10,7 +10,7 @@ import { searchRecordStoreFamilyState } from '@/object-record/record-picker/mult
 import { SingleRecordPickerComponentInstanceContext } from '@/object-record/record-picker/single-record-picker/states/contexts/SingleRecordPickerComponentInstanceContext';
 import { singleRecordPickerSearchableObjectMetadataItemsComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerSearchableObjectMetadataItemsComponentState';
 import { type RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
-import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionsFromMapByObjectMetadataId';
+import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { CustomError, isDefined } from 'twenty-shared/utils';
 
@@ -52,10 +52,10 @@ export const useSingleRecordPickerPerformSearch = ({
       }
 
       return (
-        getObjectPermissionsFromMapByObjectMetadataId({
+        getObjectPermissionsForObject(
           objectPermissionsByObjectMetadataId,
-          objectMetadataId: objectMetadataItem.id,
-        }).canReadObjectRecords === true
+          objectMetadataItem.id,
+        ).canReadObjectRecords === true
       );
     },
   );

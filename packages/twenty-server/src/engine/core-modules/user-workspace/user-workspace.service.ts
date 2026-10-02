@@ -362,7 +362,7 @@ export class UserWorkspaceService {
       // roleTarget has no deletedAt column, so its rows stay and access is gated by the soft-deleted userWorkspace.
       await this.userWorkspaceRepository.softDelete({ id: userWorkspaceId });
     } else {
-      // The delete nulls the creator of this member's workflows, so their runs lose the creator grant.
+      // The delete nulls the creator of this member's workflows, making them workspace-visible, so their runs' grants must follow.
       const createdCoreWorkflowIds =
         await this.workflowRunRecordShareService.findCoreWorkflowIdsCreatedBy({
           workspaceId,
