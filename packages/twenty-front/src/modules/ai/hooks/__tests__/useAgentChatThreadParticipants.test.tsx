@@ -141,4 +141,26 @@ describe('useAgentChatThreadParticipants', () => {
       isKeptUnread: true,
     });
   });
+
+  it('puts the visit back when the server refuses to mark it unread', async () => {
+    mutate.mockRejectedValue(new Error('Network error'));
+    query.mockResolvedValue({
+      data: { myAgentChatThreadParticipants: [READ_PARTICIPANT] },
+    });
+    const { result, store } = renderParticipants();
+    const visit = {
+      threadId: THREAD_ID,
+      isUnread: false,
+      lastReadAt: LAST_ACTIVITY_AT,
+      isKeptUnread: false,
+    };
+
+    store.set(agentChatThreadVisitState.atom, visit);
+
+    await act(async () => {
+      await result.current.markAgentChatThreadAsUnread(THREAD_ID);
+    });
+
+    expect(store.get(agentChatThreadVisitState.atom)).toEqual(visit);
+  });
 });

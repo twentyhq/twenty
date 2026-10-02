@@ -2,6 +2,7 @@ import { type CommandMenuItemDefinition } from '@/command-menu-item/types/Comman
 import { AppMenuItem } from '@/applications/components/AppMenuItem';
 import { useIsThirdPartyApplication } from '@/applications/hooks/useIsThirdPartyApplication';
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
+import { CommandMenuItemButtonHotkeyEffect } from '@/command-menu-item/display/components/CommandMenuItemButtonHotkeyEffect';
 import { CommandListItemLoader } from '@/command-menu-item/display/components/CommandListItemLoader';
 import { CommandMenuDropdownActionItem } from '@/command-menu-item/display/components/CommandMenuDropdownActionItem';
 import { useCommandMenuItemDisplay } from '@/command-menu-item/display/hooks/useCommandMenuItemDisplay';
@@ -14,7 +15,6 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
-import { useGlobalHotkeys } from '@/ui/utilities/hotkey/hooks/useGlobalHotkeys';
 import { assertUnreachable } from 'twenty-shared/utils';
 
 const StyledPreviewWrapper = styled.div`
@@ -61,20 +61,7 @@ const CommandMenuItemButtonRenderer = ({
   // command menu from anywhere, and key sequences belong to it too
   const [hotKey] = item.hotKeys ?? [];
   const runsOnHotKey =
-    !isInPreviewMode &&
-    item.hotKeys?.length === 1 &&
-    /^[a-z]$/i.test(hotKey ?? '');
-
-  useGlobalHotkeys({
-    keys: runsOnHotKey ? [hotKey.toLowerCase()] : [],
-    callback: () => {
-      if (!disabled) {
-        handleClick();
-      }
-    },
-    containsModifier: false,
-    dependencies: [disabled, handleClick],
-  });
+    item.hotKeys?.length === 1 && /^[a-z]$/i.test(hotKey ?? '');
 
   if (isInPreviewMode) {
     return (
@@ -89,15 +76,24 @@ const CommandMenuItemButtonRenderer = ({
   }
 
   return (
-    <CommandMenuButton
-      command={command}
-      onClick={disabled ? undefined : handleClick}
-      disabled={disabled}
-      progress={progress}
-      loading={isLoading}
-      isPrimaryAction={isPrimaryAction}
-      shouldHideLabel={shouldHideLabel}
-    />
+    <>
+      {runsOnHotKey && (
+        <CommandMenuItemButtonHotkeyEffect
+          hotKey={hotKey}
+          disabled={disabled}
+          onHotkeyTriggered={handleClick}
+        />
+      )}
+      <CommandMenuButton
+        command={command}
+        onClick={disabled ? undefined : handleClick}
+        disabled={disabled}
+        progress={progress}
+        loading={isLoading}
+        isPrimaryAction={isPrimaryAction}
+        shouldHideLabel={shouldHideLabel}
+      />
+    </>
   );
 };
 

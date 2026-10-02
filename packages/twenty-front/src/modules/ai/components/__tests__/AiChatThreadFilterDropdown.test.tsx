@@ -45,7 +45,9 @@ describe('AiChatThreadFilterDropdown', () => {
     await user.click(await screen.findByRole('menuitem', { name: /Status/ }));
     await user.click(await screen.findByRole('button', { name: 'Deleted' }));
 
-    expect(store.get(agentChatThreadFilterStatusState.atom)).toBe(AGENT_CHAT_THREAD_FILTER_STATUS.DELETED);
+    expect(store.get(agentChatThreadFilterStatusState.atom)).toBe(
+      AGENT_CHAT_THREAD_FILTER_STATUS.DELETED,
+    );
     await waitFor(() =>
       expect(screen.queryByRole('dialog')).not.toBeInTheDocument(),
     );

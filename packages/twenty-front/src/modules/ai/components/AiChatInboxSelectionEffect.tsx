@@ -7,7 +7,7 @@ import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 type AiChatInboxSelectionEffectProps = {
   selectedThreadId: string | undefined;
-  threads: AgentChatThreadRecord[];
+  threads: Pick<AgentChatThreadRecord, 'id'>[];
 };
 
 // A chat leaves the list when it is done, snoozed or deleted; the one that

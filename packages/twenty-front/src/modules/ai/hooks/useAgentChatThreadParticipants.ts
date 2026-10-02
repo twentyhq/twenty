@@ -50,27 +50,30 @@ export const useAgentChatThreadParticipants = () => {
     );
   }, [client, store]);
 
-  const updateVisit = useCallback(
-    (threadId: string, update: Partial<AgentChatThreadVisit>) =>
-      store.set(agentChatThreadVisitState.atom, (visit) =>
-        visit?.threadId === threadId ? { ...visit, ...update } : visit,
-      ),
-    [store],
-  );
-
-  // The change shows right away; if the server refuses it, the member's
-  // state is reloaded from the server
+  // The change shows right away; if the server refuses it, the visit is put
+  // back and the member's state is reloaded from the server
   const updateParticipant = useCallback(
     async <TVariables extends { threadId: string }>({
       mutation,
       variables,
       optimisticParticipant,
+      optimisticVisit,
     }: {
       mutation: TypedDocumentNode<unknown, TVariables>;
       variables: TVariables;
       optimisticParticipant: Partial<AgentChatThreadParticipantFieldsFragment>;
+      optimisticVisit?: Partial<AgentChatThreadVisit>;
     }) => {
       const { threadId } = variables;
+      const previousVisit = store.get(agentChatThreadVisitState.atom);
+
+      if (isDefined(optimisticVisit)) {
+        store.set(agentChatThreadVisitState.atom, (visit) =>
+          visit?.threadId === threadId
+            ? { ...visit, ...optimisticVisit }
+            : visit,
+        );
+      }
 
       store.set(agentChatThreadParticipantsState.atom, (participants) =>
         isDefined(participants)
@@ -89,6 +92,13 @@ export const useAgentChatThreadParticipants = () => {
         await client.mutate({ mutation, variables });
       } catch (error) {
         enqueueToast(getToastOptionsFromError({ error }));
+
+        if (isDefined(optimisticVisit)) {
+          store.set(agentChatThreadVisitState.atom, (visit) =>
+            visit?.threadId === threadId ? previousVisit : visit,
+          );
+        }
+
         await refreshAgentChatThreadParticipants();
       }
     },
@@ -96,10 +106,8 @@ export const useAgentChatThreadParticipants = () => {
   );
 
   const markAgentChatThreadAsRead = useCallback(
-    (threadId: string) => {
-      updateVisit(threadId, { isKeptUnread: false });
-
-      return updateParticipant({
+    (threadId: string) =>
+      updateParticipant({
         mutation: MarkAgentChatThreadAsReadDocument,
         variables: { threadId },
         optimisticParticipant: {
@@ -108,28 +116,26 @@ export const useAgentChatThreadParticipants = () => {
               agentChatThreadRecordFamilySelector.selectorFamily(threadId),
             )?.lastActivityAt ?? null,
         },
-      });
-    },
-    [store, updateParticipant, updateVisit],
+        optimisticVisit: { isKeptUnread: false },
+      }),
+    [store, updateParticipant],
   );
 
   // On the thread on screen, it stays unread until the member leaves it, and
   // its unread line moves to the first message from someone else
   const markAgentChatThreadAsUnread = useCallback(
-    (threadId: string) => {
-      updateVisit(threadId, {
-        isKeptUnread: true,
-        isUnread: true,
-        lastReadAt: null,
-      });
-
-      return updateParticipant({
+    (threadId: string) =>
+      updateParticipant({
         mutation: MarkAgentChatThreadAsUnreadDocument,
         variables: { threadId },
         optimisticParticipant: { lastReadAt: null },
-      });
-    },
-    [updateParticipant, updateVisit],
+        optimisticVisit: {
+          isKeptUnread: true,
+          isUnread: true,
+          lastReadAt: null,
+        },
+      }),
+    [updateParticipant],
   );
 
   const archiveAgentChatThread = useCallback(

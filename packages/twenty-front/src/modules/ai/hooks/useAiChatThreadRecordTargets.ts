@@ -1,3 +1,4 @@
+import uniqBy from 'lodash.uniqby';
 import { useCallback, useMemo } from 'react';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -95,10 +96,15 @@ export const useAiChatThreadRecordTargets = ({
     ? thread?.[junctionConfig.junctionField.name]
     : undefined;
 
-  const targetRecords = useFieldWidgetJunctionRelationRecords({
+  const junctionTargetRecords = useFieldWidgetJunctionRelationRecords({
     relationValue: junctionRecords,
     junctionConfig: { targetFields: junctionConfig?.targetFields ?? [] },
   });
+  // A chat can hold several links to the same record
+  const targetRecords = uniqBy(
+    junctionTargetRecords,
+    ({ record, objectNameSingular }) => `${objectNameSingular}-${record.id}`,
+  );
 
   const permissions = useAtomFamilySelectorValue(
     agentChatThreadPermissionsFamilySelector,

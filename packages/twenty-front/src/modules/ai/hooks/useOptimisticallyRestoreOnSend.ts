@@ -25,9 +25,15 @@ export const useOptimisticallyRestoreOnSend = () => {
     )?.[threadId];
     const previousVisit = store.get(agentChatThreadVisitState.atom);
 
+    // Workspaces not yet upgraded to 2.45 have no last activity and sort by
+    // the last change
+    const hasLastActivityAt = thread?.lastActivityAt !== undefined;
+
     applyAgentChatThreadUpdate({
       id: threadId,
-      lastActivityAt: optimisticUpdatedAt,
+      ...(hasLastActivityAt
+        ? { lastActivityAt: optimisticUpdatedAt }
+        : { updatedAt: optimisticUpdatedAt }),
       ...(isDefined(thread?.deletedAt) && {
         deletedAt: null,
         updatedAt: optimisticUpdatedAt,
@@ -55,11 +61,9 @@ export const useOptimisticallyRestoreOnSend = () => {
     return () => {
       applyAgentChatThreadUpdate({
         id: threadId,
-        lastActivityAt: thread?.lastActivityAt ?? null,
-        ...(isDefined(thread?.deletedAt) && {
-          deletedAt: thread.deletedAt,
-          updatedAt: thread.updatedAt,
-        }),
+        ...(hasLastActivityAt && { lastActivityAt: thread.lastActivityAt }),
+        ...(isDefined(thread) && { updatedAt: thread.updatedAt }),
+        ...(isDefined(thread?.deletedAt) && { deletedAt: thread.deletedAt }),
       });
       store.set(agentChatThreadParticipantsState.atom, (participants) => {
         if (!isDefined(participants)) {

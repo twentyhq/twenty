@@ -4,6 +4,7 @@ import { isDefined, isValidUuid } from 'twenty-shared/utils';
 
 import { useAgentChatThreadParticipants } from '@/ai/hooks/useAgentChatThreadParticipants';
 import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
+import { agentChatThreadOpenViewCountState } from '@/ai/states/agentChatThreadOpenViewCountState';
 import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
 import { agentChatThreadVisitState } from '@/ai/states/agentChatThreadVisitState';
 import { agentChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
@@ -48,10 +49,17 @@ export const AgentChatThreadMarkAsReadEffect = () => {
       return;
     }
 
-    return () =>
-      store.set(agentChatThreadVisitState.atom, (visit) =>
-        visit?.threadId === threadId ? null : visit,
-      );
+    store.set(agentChatThreadOpenViewCountState.atom, (count) => count + 1);
+
+    return () => {
+      store.set(agentChatThreadOpenViewCountState.atom, (count) => count - 1);
+
+      if (store.get(agentChatThreadOpenViewCountState.atom) === 0) {
+        store.set(agentChatThreadVisitState.atom, (visit) =>
+          visit?.threadId === threadId ? null : visit,
+        );
+      }
+    };
   }, [store, threadId]);
 
   useEffect(() => {

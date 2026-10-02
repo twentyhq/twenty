@@ -8,11 +8,13 @@ import { themeCssVariables } from 'twenty-ui/theme';
 
 import { useAgentChatThreadParticipants } from '@/ai/hooks/useAgentChatThreadParticipants';
 import { useFormatAgentChatThreadDate } from '@/ai/hooks/useFormatAgentChatThreadDate';
+import { agentChatThreadInboxNowState } from '@/ai/states/agentChatThreadInboxNowState';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { snoozeAiChatThreadIdComponentState } from '@/side-panel/pages/snooze-ai-chat/states/snoozeAiChatThreadIdComponentState';
 import { DateTimePicker } from '@/ui/input/components/internal/date/components/DateTimePicker';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -31,6 +33,9 @@ export const SidePanelSnoozeAiChatUntilDatePage = () => {
   const { formatAgentChatThreadDateTime } = useFormatAgentChatThreadDate();
   const { closeSidePanelMenu } = useSidePanelMenu();
   const { userTimezone } = useUserTimezone();
+  const agentChatThreadInboxNow = useAtomStateValue(
+    agentChatThreadInboxNowState,
+  );
   // Starts on tomorrow morning, like the Tomorrow option
   const [snoozedUntil, setSnoozedUntil] = useState(() =>
     Temporal.Now.plainDateISO(userTimezone)
@@ -46,7 +51,10 @@ export const SidePanelSnoozeAiChatUntilDatePage = () => {
   }
 
   const snoozedUntilDate = new Date(snoozedUntil.epochMilliseconds);
-  const isInFuture = snoozedUntilDate > new Date();
+  // The inbox clock ticks, so a time that passes while the page is open turns the button off
+  const isInFuture =
+    snoozedUntil.epochMilliseconds >
+    Math.max(agentChatThreadInboxNow, Date.now());
   const snoozedUntilLabel = formatAgentChatThreadDateTime(snoozedUntilDate);
 
   const handleChange = (date: Temporal.ZonedDateTime | null) => {

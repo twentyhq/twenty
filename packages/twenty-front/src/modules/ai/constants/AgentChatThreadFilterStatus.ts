@@ -3,7 +3,7 @@ export const AGENT_CHAT_THREAD_FILTER_STATUS = {
   UNREAD: 'unread',
   SNOOZED: 'snoozed',
   DONE: 'done',
-  // Stored before chats went to the trash, when deleting one archived it
+  // Deleting a chat used to archive it, so saved filters still hold 'archived'
   DELETED: 'archived',
   ALL: 'all',
 } as const;

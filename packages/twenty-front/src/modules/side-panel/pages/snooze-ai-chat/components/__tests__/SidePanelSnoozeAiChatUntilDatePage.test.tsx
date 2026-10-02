@@ -1,10 +1,11 @@
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 import { Temporal } from 'temporal-polyfill';
 
+import { agentChatThreadInboxNowState } from '@/ai/states/agentChatThreadInboxNowState';
 import { SidePanelSnoozeAiChatUntilDatePage } from '@/side-panel/pages/snooze-ai-chat/components/SidePanelSnoozeAiChatUntilDatePage';
 import { snoozeAiChatThreadIdComponentState } from '@/side-panel/pages/snooze-ai-chat/states/snoozeAiChatThreadIdComponentState';
 import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/contexts/SidePanelPageComponentInstanceContext';
@@ -74,6 +75,7 @@ describe('SidePanelSnoozeAiChatUntilDatePage', () => {
     jest.setSystemTime(new Date(2026, 9, 1, 17, 59));
     jest.clearAllMocks();
     resetJotaiStore();
+    jotaiStore.set(agentChatThreadInboxNowState.atom, Date.now());
     jotaiStore.set(
       snoozeAiChatThreadIdComponentState.atomFamily({ instanceId: PAGE_ID }),
       'thread-1',
@@ -100,6 +102,24 @@ describe('SidePanelSnoozeAiChatUntilDatePage', () => {
     render(<SidePanelSnoozeAiChatUntilDatePage />, { wrapper: Wrapper });
 
     fireEvent.click(screen.getByText('Pick an earlier time'));
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Pick a time in the future' }),
+    );
+
+    expect(
+      screen.getByRole('button', { name: 'Pick a time in the future' }),
+    ).toBeDisabled();
+    expect(snoozeAgentChatThread).not.toHaveBeenCalled();
+    expect(closeSidePanelMenu).not.toHaveBeenCalled();
+  });
+
+  it('turns the button off once the picked time passes', () => {
+    render(<SidePanelSnoozeAiChatUntilDatePage />, { wrapper: Wrapper });
+
+    act(() => {
+      jest.setSystemTime(new Date(2026, 9, 2, 9, 1));
+      jotaiStore.set(agentChatThreadInboxNowState.atom, Date.now());
+    });
 
     expect(
       screen.getByRole('button', { name: 'Pick a time in the future' }),

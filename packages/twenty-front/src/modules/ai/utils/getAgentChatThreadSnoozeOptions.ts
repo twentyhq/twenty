@@ -9,6 +9,7 @@ import {
   set,
   startOfHour,
 } from 'date-fns';
+import { fromZonedTime, toZonedTime } from 'date-fns-tz';
 
 export type AgentChatThreadSnoozeOption = {
   key: 'laterToday' | 'thisEvening' | 'tomorrow' | 'nextWeek';
@@ -25,9 +26,15 @@ const atHour = (date: Date, hour: number) =>
 
 // An option that is already behind, or that lands on the same moment as
 // another, is left out rather than shown twice.
-export const getAgentChatThreadSnoozeOptions = (
-  now: Date,
-): AgentChatThreadSnoozeOption[] => {
+export const getAgentChatThreadSnoozeOptions = ({
+  now: instant,
+  timeZone,
+}: {
+  now: Date;
+  timeZone: string;
+}): AgentChatThreadSnoozeOption[] => {
+  // Worked out on the member's clock, which can differ from the browser's
+  const now = toZonedTime(instant, timeZone);
   const thisEvening = atHour(now, EVENING_HOUR);
   // Rounded to a round hour, the way a person would say it: up, unless that
   // would push it into tomorrow
@@ -57,5 +64,9 @@ export const getAgentChatThreadSnoozeOptions = (
           .slice(0, index)
           .every((earlier) => earlier.date.getTime() !== option.date.getTime()),
     )
-    .sort((first, second) => first.date.getTime() - second.date.getTime());
+    .sort((first, second) => first.date.getTime() - second.date.getTime())
+    .map((option) => ({
+      ...option,
+      date: fromZonedTime(option.date, timeZone),
+    }));
 };

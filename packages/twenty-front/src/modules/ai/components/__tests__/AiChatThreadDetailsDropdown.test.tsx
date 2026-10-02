@@ -97,18 +97,32 @@ jest.mock(
     }: {
       onChange: (morphItem: RecordPickerPickableMorphItem) => void;
     }) => (
-      <button
-        onClick={() =>
-          onChange({
-            recordId: ACME_ID,
-            objectMetadataId: companyObjectMetadataItem.id,
-            isSelected: false,
-            isMatchingSearchFilter: true,
-          })
-        }
-      >
-        Unlink Acme
-      </button>
+      <>
+        <button
+          onClick={() =>
+            onChange({
+              recordId: ACME_ID,
+              objectMetadataId: companyObjectMetadataItem.id,
+              isSelected: false,
+              isMatchingSearchFilter: true,
+            })
+          }
+        >
+          Unlink Acme
+        </button>
+        <button
+          onClick={() =>
+            onChange({
+              recordId: GLOBEX_ID,
+              objectMetadataId: companyObjectMetadataItem.id,
+              isSelected: true,
+              isMatchingSearchFilter: true,
+            })
+          }
+        >
+          Link Globex
+        </button>
+      </>
     ),
   }),
 );
@@ -271,6 +285,26 @@ describe('AiChatThreadDetailsDropdown', () => {
     expect(attachChatThreadToRecord).not.toHaveBeenCalled();
   });
 
+  it('lets the conversation editor link a record', async () => {
+    const user = userEvent.setup();
+
+    await renderDetails();
+
+    await user.click(
+      await screen.findByRole('button', { name: 'Edit linked records' }),
+    );
+    await user.click(
+      await screen.findByRole('button', { name: 'Link Globex' }),
+    );
+
+    expect(attachChatThreadToRecord).toHaveBeenCalledWith({
+      threadId: THREAD_ID,
+      objectNameSingular: 'company',
+      recordId: GLOBEX_ID,
+    });
+    expect(detachChatThreadFromRecord).not.toHaveBeenCalled();
+  });
+
   it('unlinks every link between the conversation and the record', async () => {
     const user = userEvent.setup();
     mockThread.current = buildThread({
@@ -287,8 +321,10 @@ describe('AiChatThreadDetailsDropdown', () => {
 
     await renderDetails();
 
+    expect(await screen.findAllByText('Acme')).toHaveLength(1);
+
     await user.click(
-      await screen.findByRole('button', { name: 'Edit linked records' }),
+      screen.getByRole('button', { name: 'Edit linked records' }),
     );
     await user.click(
       await screen.findByRole('button', { name: 'Unlink Acme' }),

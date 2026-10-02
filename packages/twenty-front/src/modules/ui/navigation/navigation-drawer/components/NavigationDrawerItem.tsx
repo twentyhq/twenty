@@ -319,7 +319,7 @@ export const NavigationDrawerItem = ({
             handleMouseDown(event);
           }}
           active={active}
-          aria-current={isDefined(to) && active ? 'page' : undefined}
+          aria-current={active ? (isDefined(to) ? 'page' : true) : undefined}
           isSoon={isSoon}
           variant={variant}
           disabled={variant === 'placeholder'}

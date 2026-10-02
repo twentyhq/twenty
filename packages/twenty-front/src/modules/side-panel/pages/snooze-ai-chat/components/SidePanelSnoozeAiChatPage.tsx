@@ -17,6 +17,7 @@ import { useOpenSnoozeAiChatInSidePanel } from '@/side-panel/hooks/useOpenSnooze
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { snoozeAiChatThreadIdComponentState } from '@/side-panel/pages/snooze-ai-chat/states/snoozeAiChatThreadIdComponentState';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
+import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
@@ -36,13 +37,17 @@ export const SidePanelSnoozeAiChatPage = () => {
   const { closeSidePanelMenu } = useSidePanelMenu();
   const { openSnoozeAiChatUntilDateInSidePanel } =
     useOpenSnoozeAiChatInSidePanel();
+  const { userTimezone } = useUserTimezone();
   const [optionsComputedAt, setOptionsComputedAt] = useState(() => new Date());
 
   if (!isDefined(snoozeAiChatThreadId)) {
     return null;
   }
 
-  const snoozeOptions = getAgentChatThreadSnoozeOptions(optionsComputedAt);
+  const snoozeOptions = getAgentChatThreadSnoozeOptions({
+    now: optionsComputedAt,
+    timeZone: userTimezone,
+  });
 
   // An option can pass while the page stays open, so the list is refreshed
   // instead of snoozing into the past

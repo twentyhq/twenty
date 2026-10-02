@@ -92,6 +92,23 @@ describe('NavigationDrawerAiChatTriageSection', () => {
     expect(screen.getByRole('button', { name: 'Open · 2' })).toBeVisible();
   });
 
+  it('marks the status the inbox shows as current', () => {
+    jotaiStore.set(
+      agentChatThreadFilterStatusState.atom,
+      AGENT_CHAT_THREAD_FILTER_STATUS.SNOOZED,
+    );
+
+    renderTriage('/inbox');
+
+    expect(screen.getByRole('button', { name: 'Snoozed' })).toHaveAttribute(
+      'aria-current',
+      'true',
+    );
+    expect(screen.getByRole('button', { name: 'Done' })).not.toHaveAttribute(
+      'aria-current',
+    );
+  });
+
   it('opens the inbox on the chosen status', async () => {
     renderTriage();
 

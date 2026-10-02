@@ -28,6 +28,8 @@ export const HorizontalSeparator = ({
       {text ? (
         <div
           className={styles.separatorContainer}
+          role="separator"
+          aria-label={text}
           data-no-margin={noMargin || undefined}
           data-colored={color ? true : undefined}
           style={colorStyle}

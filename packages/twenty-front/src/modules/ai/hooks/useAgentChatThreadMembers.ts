@@ -4,7 +4,6 @@ import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
-// The owner leads, then the members who wrote in the thread
 export const useAgentChatThreadMembers = (
   thread:
     | Pick<
