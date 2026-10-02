@@ -45,5 +45,4 @@ export enum SidePanelPages {
   WorkflowCoreFilters = 'workflow-core-filters',
   ShareRecord = 'share-record',
   SnoozeAiChat = 'snooze-ai-chat',
-  SnoozeAiChatUntilDate = 'snooze-ai-chat-until-date',
 }

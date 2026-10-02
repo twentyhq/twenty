@@ -1,4 +1,5 @@
 import { t } from '@lingui/core/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPartialMembers';
@@ -18,8 +19,7 @@ export const getAgentChatSenderLabel = ({
     return t`Former member`;
   }
 
-  return (
-    `${sender.name.firstName} ${sender.name.lastName}`.trim() ||
-    sender.userEmail
-  );
+  const fullName = `${sender.name.firstName} ${sender.name.lastName}`.trim();
+
+  return isNonEmptyString(fullName) ? fullName : sender.userEmail;
 };

@@ -6,23 +6,17 @@ import { type ReactNode } from 'react';
 import { Temporal } from 'temporal-polyfill';
 
 import { agentChatThreadInboxNowState } from '@/ai/states/agentChatThreadInboxNowState';
-import { SidePanelSnoozeAiChatUntilDatePage } from '@/side-panel/pages/snooze-ai-chat/components/SidePanelSnoozeAiChatUntilDatePage';
-import { snoozeAiChatThreadIdComponentState } from '@/side-panel/pages/snooze-ai-chat/states/snoozeAiChatThreadIdComponentState';
-import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/contexts/SidePanelPageComponentInstanceContext';
+import { SnoozeAiChatUntilDatePicker } from '@/side-panel/pages/snooze-ai-chat/components/SnoozeAiChatUntilDatePicker';
 import {
   jotaiStore,
   resetJotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
 
 const snoozeAgentChatThread = jest.fn();
-const closeSidePanelMenu = jest.fn();
+const onSnoozed = jest.fn();
 
 jest.mock('@/ai/hooks/useAgentChatThreadParticipants', () => ({
   useAgentChatThreadParticipants: () => ({ snoozeAgentChatThread }),
-}));
-
-jest.mock('@/side-panel/hooks/useSidePanelMenu', () => ({
-  useSidePanelMenu: () => ({ closeSidePanelMenu }),
 }));
 
 jest.mock('@/ui/input/components/internal/date/hooks/useUserTimezone', () => ({
@@ -55,31 +49,19 @@ jest.mock(
   }),
 );
 
-const PAGE_ID = 'snooze-until-date-page';
-
 const Wrapper = ({ children }: { children: ReactNode }) => (
   <JotaiProvider store={jotaiStore}>
-    <I18nProvider i18n={i18n}>
-      <SidePanelPageComponentInstanceContext.Provider
-        value={{ instanceId: PAGE_ID }}
-      >
-        {children}
-      </SidePanelPageComponentInstanceContext.Provider>
-    </I18nProvider>
+    <I18nProvider i18n={i18n}>{children}</I18nProvider>
   </JotaiProvider>
 );
 
-describe('SidePanelSnoozeAiChatUntilDatePage', () => {
+describe('SnoozeAiChatUntilDatePicker', () => {
   beforeEach(() => {
     jest.useFakeTimers();
     jest.setSystemTime(new Date(2026, 9, 1, 17, 59));
     jest.clearAllMocks();
     resetJotaiStore();
     jotaiStore.set(agentChatThreadInboxNowState.atom, Date.now());
-    jotaiStore.set(
-      snoozeAiChatThreadIdComponentState.atomFamily({ instanceId: PAGE_ID }),
-      'thread-1',
-    );
   });
 
   afterEach(() => {
@@ -87,11 +69,14 @@ describe('SidePanelSnoozeAiChatUntilDatePage', () => {
   });
 
   it('snoozes the chat until tomorrow morning by default', () => {
-    render(<SidePanelSnoozeAiChatUntilDatePage />, { wrapper: Wrapper });
+    render(
+      <SnoozeAiChatUntilDatePicker threadId="thread-1" onSnoozed={onSnoozed} />,
+      { wrapper: Wrapper },
+    );
 
     fireEvent.click(screen.getByRole('button', { name: /Snooze until/ }));
 
-    expect(closeSidePanelMenu).toHaveBeenCalled();
+    expect(onSnoozed).toHaveBeenCalled();
     expect(snoozeAgentChatThread).toHaveBeenCalledWith({
       threadId: 'thread-1',
       snoozedUntil: new Date(2026, 9, 2, 9, 0),
@@ -99,7 +84,10 @@ describe('SidePanelSnoozeAiChatUntilDatePage', () => {
   });
 
   it('does not snooze until a time that has passed', () => {
-    render(<SidePanelSnoozeAiChatUntilDatePage />, { wrapper: Wrapper });
+    render(
+      <SnoozeAiChatUntilDatePicker threadId="thread-1" onSnoozed={onSnoozed} />,
+      { wrapper: Wrapper },
+    );
 
     fireEvent.click(screen.getByText('Pick an earlier time'));
     fireEvent.click(
@@ -110,11 +98,14 @@ describe('SidePanelSnoozeAiChatUntilDatePage', () => {
       screen.getByRole('button', { name: 'Pick a time in the future' }),
     ).toBeDisabled();
     expect(snoozeAgentChatThread).not.toHaveBeenCalled();
-    expect(closeSidePanelMenu).not.toHaveBeenCalled();
+    expect(onSnoozed).not.toHaveBeenCalled();
   });
 
   it('turns the button off once the picked time passes', () => {
-    render(<SidePanelSnoozeAiChatUntilDatePage />, { wrapper: Wrapper });
+    render(
+      <SnoozeAiChatUntilDatePicker threadId="thread-1" onSnoozed={onSnoozed} />,
+      { wrapper: Wrapper },
+    );
 
     act(() => {
       jest.setSystemTime(new Date(2026, 9, 2, 9, 1));

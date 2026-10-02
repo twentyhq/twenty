@@ -13,11 +13,13 @@ import {
 } from '@/ai/utils/getAgentChatThreadSnoozeOptions';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
-import { useOpenSnoozeAiChatInSidePanel } from '@/side-panel/hooks/useOpenSnoozeAiChatInSidePanel';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
+import { SnoozeAiChatUntilDatePicker } from '@/side-panel/pages/snooze-ai-chat/components/SnoozeAiChatUntilDatePicker';
 import { snoozeAiChatThreadIdComponentState } from '@/side-panel/pages/snooze-ai-chat/states/snoozeAiChatThreadIdComponentState';
+import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
+import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
@@ -35,8 +37,7 @@ export const SidePanelSnoozeAiChatPage = () => {
   const { snoozeAgentChatThread } = useAgentChatThreadParticipants();
   const { formatAgentChatThreadDateTime } = useFormatAgentChatThreadDate();
   const { closeSidePanelMenu } = useSidePanelMenu();
-  const { openSnoozeAiChatUntilDateInSidePanel } =
-    useOpenSnoozeAiChatInSidePanel();
+  const { openDropdown } = useOpenDropdown();
   const { userTimezone } = useUserTimezone();
   const [optionsComputedAt, setOptionsComputedAt] = useState(() => new Date());
 
@@ -66,8 +67,7 @@ export const SidePanelSnoozeAiChatPage = () => {
     });
   };
 
-  const handleSnoozeUntilDate = () =>
-    openSnoozeAiChatUntilDateInSidePanel(snoozeAiChatThreadId);
+  const untilDateDropdownId = `snooze-ai-chat-until-date-dropdown-${snoozeAiChatThreadId}`;
 
   return (
     <SidePanelList
@@ -97,14 +97,29 @@ export const SidePanelSnoozeAiChatPage = () => {
       </StyledSeparatorContainer>
       <SelectableListItem
         itemId={SNOOZE_UNTIL_DATE_ITEM_ID}
-        onEnter={handleSnoozeUntilDate}
+        onEnter={() =>
+          openDropdown({
+            dropdownComponentInstanceIdFromProps: untilDateDropdownId,
+          })
+        }
       >
-        <CommandMenuItem
-          id={SNOOZE_UNTIL_DATE_ITEM_ID}
-          Icon={IconCalendar}
-          label={t`Day & Time`}
-          hasSubMenu
-          onClick={handleSnoozeUntilDate}
+        <Dropdown
+          dropdownId={untilDateDropdownId}
+          dropdownPlacement="bottom-start"
+          clickableComponent={
+            <CommandMenuItem
+              id={SNOOZE_UNTIL_DATE_ITEM_ID}
+              Icon={IconCalendar}
+              label={t`Day & Time`}
+              hasSubMenu
+            />
+          }
+          dropdownComponents={
+            <SnoozeAiChatUntilDatePicker
+              threadId={snoozeAiChatThreadId}
+              onSnoozed={closeSidePanelMenu}
+            />
+          }
         />
       </SelectableListItem>
     </SidePanelList>

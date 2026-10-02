@@ -9,11 +9,8 @@ import { themeCssVariables } from 'twenty-ui/theme';
 import { useAgentChatThreadParticipants } from '@/ai/hooks/useAgentChatThreadParticipants';
 import { useFormatAgentChatThreadDate } from '@/ai/hooks/useFormatAgentChatThreadDate';
 import { agentChatThreadInboxNowState } from '@/ai/states/agentChatThreadInboxNowState';
-import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
-import { snoozeAiChatThreadIdComponentState } from '@/side-panel/pages/snooze-ai-chat/states/snoozeAiChatThreadIdComponentState';
 import { DateTimePicker } from '@/ui/input/components/internal/date/components/DateTimePicker';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const StyledContainer = styled.div`
@@ -24,14 +21,18 @@ const StyledContainer = styled.div`
   width: fit-content;
 `;
 
-export const SidePanelSnoozeAiChatUntilDatePage = () => {
+type SnoozeAiChatUntilDatePickerProps = {
+  threadId: string;
+  onSnoozed: () => void;
+};
+
+export const SnoozeAiChatUntilDatePicker = ({
+  threadId,
+  onSnoozed,
+}: SnoozeAiChatUntilDatePickerProps) => {
   const { t } = useLingui();
-  const snoozeAiChatThreadId = useAtomComponentStateValue(
-    snoozeAiChatThreadIdComponentState,
-  );
   const { snoozeAgentChatThread } = useAgentChatThreadParticipants();
   const { formatAgentChatThreadDateTime } = useFormatAgentChatThreadDate();
-  const { closeSidePanelMenu } = useSidePanelMenu();
   const { userTimezone } = useUserTimezone();
   const agentChatThreadInboxNow = useAtomStateValue(
     agentChatThreadInboxNowState,
@@ -46,12 +47,8 @@ export const SidePanelSnoozeAiChatUntilDatePage = () => {
       }),
   );
 
-  if (!isDefined(snoozeAiChatThreadId)) {
-    return null;
-  }
-
   const snoozedUntilDate = new Date(snoozedUntil.epochMilliseconds);
-  // The inbox clock ticks, so a time that passes while the page is open turns the button off
+  // The inbox clock ticks, so a time that passes while the picker is open turns the button off
   const isInFuture =
     snoozedUntil.epochMilliseconds >
     Math.max(agentChatThreadInboxNow, Date.now());
@@ -68,9 +65,9 @@ export const SidePanelSnoozeAiChatUntilDatePage = () => {
       return;
     }
 
-    void closeSidePanelMenu();
+    onSnoozed();
     void snoozeAgentChatThread({
-      threadId: snoozeAiChatThreadId,
+      threadId,
       snoozedUntil: snoozedUntilDate,
     });
   };
@@ -78,7 +75,7 @@ export const SidePanelSnoozeAiChatUntilDatePage = () => {
   return (
     <StyledContainer>
       <DateTimePicker
-        instanceId={`snooze-ai-chat-until-date-${snoozeAiChatThreadId}`}
+        instanceId={`snooze-ai-chat-until-date-${threadId}`}
         date={snoozedUntil}
         onChange={handleChange}
         clearable={false}

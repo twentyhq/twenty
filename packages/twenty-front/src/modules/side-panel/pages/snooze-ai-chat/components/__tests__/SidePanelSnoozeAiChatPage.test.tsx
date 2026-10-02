@@ -1,10 +1,12 @@
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { act, fireEvent, render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 
+import { agentChatThreadInboxNowState } from '@/ai/states/agentChatThreadInboxNowState';
 import { SidePanelSnoozeAiChatPage } from '@/side-panel/pages/snooze-ai-chat/components/SidePanelSnoozeAiChatPage';
 import { snoozeAiChatThreadIdComponentState } from '@/side-panel/pages/snooze-ai-chat/states/snoozeAiChatThreadIdComponentState';
 import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/contexts/SidePanelPageComponentInstanceContext';
@@ -15,7 +17,6 @@ import {
 
 const snoozeAgentChatThread = jest.fn();
 const closeSidePanelMenu = jest.fn();
-const openSnoozeAiChatUntilDateInSidePanel = jest.fn();
 
 jest.mock('@/ai/hooks/useAgentChatThreadParticipants', () => ({
   useAgentChatThreadParticipants: () => ({ snoozeAgentChatThread }),
@@ -23,12 +24,6 @@ jest.mock('@/ai/hooks/useAgentChatThreadParticipants', () => ({
 
 jest.mock('@/side-panel/hooks/useSidePanelMenu', () => ({
   useSidePanelMenu: () => ({ closeSidePanelMenu }),
-}));
-
-jest.mock('@/side-panel/hooks/useOpenSnoozeAiChatInSidePanel', () => ({
-  useOpenSnoozeAiChatInSidePanel: () => ({
-    openSnoozeAiChatUntilDateInSidePanel,
-  }),
 }));
 
 const PAGE_ID = 'snooze-page';
@@ -51,6 +46,7 @@ describe('SidePanelSnoozeAiChatPage', () => {
     jest.setSystemTime(new Date(2026, 9, 1, 17, 59));
     jest.clearAllMocks();
     resetJotaiStore();
+    jotaiStore.set(agentChatThreadInboxNowState.atom, Date.now());
     jotaiStore.set(
       snoozeAiChatThreadIdComponentState.atomFamily({ instanceId: PAGE_ID }),
       'thread-1',
@@ -79,14 +75,16 @@ describe('SidePanelSnoozeAiChatPage', () => {
     expect(screen.getByText('Today, 6:00 PM')).toBeInTheDocument();
   });
 
-  it('opens the day and time picker for the chat', () => {
+  it('opens the day and time picker for the chat in a dropdown', async () => {
+    const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
+
     render(<SidePanelSnoozeAiChatPage />, { wrapper: Wrapper });
 
-    fireEvent.click(screen.getByText('Day & Time'));
+    await user.click(screen.getByText('Day & Time'));
 
-    expect(openSnoozeAiChatUntilDateInSidePanel).toHaveBeenCalledWith(
-      'thread-1',
-    );
+    expect(
+      await screen.findByRole('button', { name: /^Snooze until/ }),
+    ).toBeInTheDocument();
     expect(snoozeAgentChatThread).not.toHaveBeenCalled();
   });
 
