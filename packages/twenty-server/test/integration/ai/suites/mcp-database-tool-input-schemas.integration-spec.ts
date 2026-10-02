@@ -1,34 +1,14 @@
-import { type JSONSchema7 } from 'json-schema';
 import request from 'supertest';
-import { normalizeMcpToolInputSchemas } from 'test/integration/ai/utils/normalize-mcp-tool-input-schemas.util';
+import { normalizeToolInputSchema } from 'test/integration/ai/utils/normalize-tool-input-schema.util';
 
-const OBJECT_TOOL_NAMES = [
+const OBJECT_NAMES = [
   { singular: 'pet', plural: 'pets' },
   { singular: 'survey_result', plural: 'survey_results' },
   { singular: 'note', plural: 'notes' },
 ];
 
-const buildDatabaseToolNames = ({
-  singular,
-  plural,
-}: {
-  singular: string;
-  plural: string;
-}) => [
-  `find_many_${plural}`,
-  `find_one_${singular}`,
-  `group_by_${plural}`,
-  `create_one_${singular}`,
-  `create_many_${plural}`,
-  `update_one_${singular}`,
-  `update_many_${plural}`,
-  `upsert_many_${plural}`,
-  `delete_one_${singular}`,
-  `delete_many_${plural}`,
-];
-
 const listDirectModeMcpTools = async (): Promise<
-  { name: string; inputSchema: JSONSchema7 }[]
+  { name: string; inputSchema: unknown }[]
 > => {
   const response = await request(`http://localhost:${APP_PORT}`)
     .post('/mcp?mode=direct')
@@ -42,28 +22,52 @@ const listDirectModeMcpTools = async (): Promise<
 };
 
 describe('MCP database tool input schemas', () => {
-  let tools: { name: string; inputSchema: JSONSchema7 }[];
+  let tools: { name: string; inputSchema: unknown }[];
 
   beforeAll(async () => {
     tools = await listDirectModeMcpTools();
   });
 
-  it.each(OBJECT_TOOL_NAMES)(
+  const getNormalizedInputSchema = (toolName: string) => {
+    const tool = tools.find(({ name }) => name === toolName);
+
+    expect(tool).toBeDefined();
+
+    return normalizeToolInputSchema({ inputSchema: tool?.inputSchema });
+  };
+
+  it.each(OBJECT_NAMES)(
     'should list the input schemas of the $singular database tools',
-    (objectToolNames) => {
-      const toolNames = buildDatabaseToolNames(objectToolNames);
-      const databaseTools = tools.filter(({ name }) =>
-        toolNames.includes(name),
+    ({ singular, plural }) => {
+      const findMany = getNormalizedInputSchema(`find_many_${plural}`);
+      const updateMany = getNormalizedInputSchema(`update_many_${plural}`);
+
+      expect(findMany.recordFilter).toMatchSnapshot('record filter');
+      expect(updateMany.recordFilter).toMatchSnapshot(
+        'update_many record filter',
       );
 
-      expect(databaseTools.map(({ name }) => name).sort()).toEqual(
-        [...toolNames].sort(),
-      );
+      for (const toolName of [`group_by_${plural}`, `delete_many_${plural}`]) {
+        expect(getNormalizedInputSchema(toolName).recordFilter).toEqual(
+          findMany.recordFilter,
+        );
+      }
 
-      for (const [toolName, normalizedSchema] of Object.entries(
-        normalizeMcpToolInputSchemas(databaseTools),
-      )) {
-        expect(normalizedSchema).toMatchSnapshot(toolName);
+      for (const toolName of [
+        `find_many_${plural}`,
+        `find_one_${singular}`,
+        `group_by_${plural}`,
+        `create_one_${singular}`,
+        `create_many_${plural}`,
+        `update_one_${singular}`,
+        `update_many_${plural}`,
+        `upsert_many_${plural}`,
+        `delete_one_${singular}`,
+        `delete_many_${plural}`,
+      ]) {
+        expect(getNormalizedInputSchema(toolName).inputSchema).toMatchSnapshot(
+          toolName,
+        );
       }
     },
   );
