@@ -2338,21 +2338,9 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
         });
       }
 
-      validateOperationIsPermittedOrThrow({
-        entityName: this.options.tableShape.nameSingular,
-        operationType: 'select',
-        objectsPermissions: this.options.objectRecordsPermissions,
-        flatObjectMetadataMaps:
-          this.options.internalContext.flatObjectMetadataMaps,
-        flatFieldMetadataMaps:
-          this.options.internalContext.flatFieldMetadataMaps,
-        objectIdByNameSingular:
-          this.options.internalContext.objectIdByNameSingular,
-        isRecordSharingEnabled: this.isRecordSharingEnabled,
-        selectedColumns: ['id'],
-        allFieldsSelected: false,
-        updatedColumns: [],
-      });
+      this.validateQueryIsPermitted(
+        this.createQueryBuilder(tableAlias).select(['id']),
+      );
 
       const policy = this.buildRowAccessPolicyForAlias({
         alias: tableAlias,
