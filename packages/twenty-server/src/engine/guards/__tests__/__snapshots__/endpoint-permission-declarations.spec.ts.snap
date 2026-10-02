@@ -392,6 +392,7 @@ exports[`endpoint permission declarations should match the AuthPrincipalGuard an
   "OAuthTokenController.introspect {"applicationTarget":null,"authPrincipalGuards":[]}",
   "OAuthTokenController.revoke {"applicationTarget":null,"authPrincipalGuards":[]}",
   "OAuthTokenController.token {"applicationTarget":null,"authPrincipalGuards":[]}",
+  "ObjectAccessOverviewResolver.objectAccessOverview {"applicationTarget":null,"authPrincipalGuards":[{"apiKey":false,"application":{"withoutUser":false,"withUser":true},"oauthClient":{"withoutUser":false,"withUser":true},"userSession":{"impersonated":true,"playground":true,"standard":true,"workspaceAgnostic":false}}]}",
   "ObjectMetadataController.createOne {"applicationTarget":null,"authPrincipalGuards":[{"apiKey":true,"application":true,"oauthClient":true,"userSession":{"impersonated":true,"playground":true,"standard":true,"workspaceAgnostic":false}}]}",
   "ObjectMetadataController.deleteOne {"applicationTarget":null,"authPrincipalGuards":[{"apiKey":true,"application":true,"oauthClient":true,"userSession":{"impersonated":true,"playground":true,"standard":true,"workspaceAgnostic":false}}]}",
   "ObjectMetadataController.findMany {"applicationTarget":null,"authPrincipalGuards":[{"apiKey":true,"application":true,"oauthClient":true,"userSession":{"impersonated":true,"playground":true,"standard":true,"workspaceAgnostic":false}}]}",
