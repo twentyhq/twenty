@@ -7,7 +7,6 @@ import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { CURRENCIES } from '@/settings/data-model/constants/Currencies';
 import { CurrencyPickerDropdownButton } from '@/ui/input/components/internal/currency/components/CurrencyPickerDropdownButton';
 import { CURRENCY_MICROS_DECIMAL_PLACES } from '@/ui/field/input/constants/CurrencyMicrosDecimalPlaces';
-import { type Currency } from '@/ui/input/components/internal/types/Currency';
 import { IMaskInput } from 'react-imask';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { getSeparatorsForNumberFormat } from '~/utils/format/getSeparatorsForNumberFormat';
@@ -105,8 +104,8 @@ export const CurrencyInput = ({
     onChange?.(value);
   };
 
-  const handleCurrencyChange = (currency: Currency) => {
-    onSelect?.(currency.value);
+  const handleCurrencyChange = (newCurrencyCode: string) => {
+    onSelect?.(newCurrencyCode);
   };
 
   useRegisterInputEvents({
@@ -131,7 +130,7 @@ export const CurrencyInput = ({
   return (
     <StyledContainer ref={wrapperRef}>
       <CurrencyPickerDropdownButton
-        selectedCurrencyCode={currency?.value ?? ''}
+        selectedCurrencyCode={currencyCode}
         onChange={handleCurrencyChange}
       />
       <StyledIcon>

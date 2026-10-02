@@ -47,6 +47,12 @@ export const SearchAndPointerSelection: Story = {
       options.queryByRole('button', { name: 'US Dollar (USD)' }),
     ).not.toBeInTheDocument();
     await userEvent.clear(search);
+    await userEvent.type(search, ' eUr ');
+    await expect(options.getAllByRole('button')).toHaveLength(1);
+    await expect(options.getByRole('button')).toHaveAccessibleName(
+      'Euro (EUR)',
+    );
+    await userEvent.clear(search);
     await userEvent.type(search, 'Euro (EUR)');
     await expect(options.getAllByRole('button')).toHaveLength(1);
     await userEvent.click(options.getByRole('button', { name: 'Euro (EUR)' }));
@@ -74,10 +80,11 @@ export const KeyboardNavigation: Story = {
     );
     const search = within(dialog).getByRole('searchbox');
 
+    await waitFor(() => expect(dialog).toBeVisible());
     await waitFor(() => expect(search).toHaveFocus());
     await userEvent.keyboard('{Enter}');
     await expect(args.onValueChange).not.toHaveBeenCalled();
-    await expect(dialog).toBeVisible();
+    await expect(trigger).toHaveAttribute('aria-expanded', 'true');
     await userEvent.keyboard('{ArrowDown}');
     await expect(
       within(dialog).getByRole('button', { name: 'US Dollar (USD)' }),
@@ -132,14 +139,15 @@ export const EmptyResultsAndLabelOverrides: Story = {
 
     await expect(search).toHaveAccessibleName('Find a currency');
     await expect(search).toHaveAttribute('placeholder', 'Find a currency');
+    const emptyStatus = within(dialog).getByRole('status');
+
+    await expect(emptyStatus).toBeEmptyDOMElement();
     await userEvent.type(search, 'unknown');
     await expect(within(dialog).queryAllByRole('button')).toHaveLength(0);
-    await expect(within(dialog).getByRole('status')).toHaveTextContent(
-      'No matching currencies',
-    );
+    await expect(emptyStatus).toHaveTextContent('No matching currencies');
     await userEvent.keyboard('{Enter}');
     await expect(args.onValueChange).not.toHaveBeenCalled();
-    await expect(dialog).toBeVisible();
+    await expect(trigger).toHaveAttribute('aria-expanded', 'true');
     await expect(search).toHaveFocus();
     await userEvent.keyboard('{Escape}');
     await waitFor(() => expect(dialog).not.toBeInTheDocument());
@@ -149,7 +157,9 @@ export const EmptyResultsAndLabelOverrides: Story = {
 
 export const DisabledCurrency: Story = {
   play: async ({ canvasElement, args }) => {
-    const { dialog, search } = await openCurrencyPicker({ canvasElement });
+    const { trigger, dialog, search } = await openCurrencyPicker({
+      canvasElement,
+    });
     const disabledCurrency = within(dialog).getByRole('button', {
       name: 'British Pound (GBP)',
     });
@@ -161,7 +171,7 @@ export const DisabledCurrency: Story = {
     await expect(search).not.toHaveAttribute('aria-activedescendant');
     await userEvent.keyboard('{Enter}');
     await expect(args.onValueChange).not.toHaveBeenCalled();
-    await expect(dialog).toBeVisible();
+    await expect(trigger).toHaveAttribute('aria-expanded', 'true');
     await userEvent.clear(search);
     await userEvent.type(search, 'jpy');
     await userEvent.keyboard('{Enter}');
@@ -191,14 +201,17 @@ export const DisabledTrigger: Story = {
 export const DisabledOptions: Story = {
   args: { optionsDisabled: true },
   play: async ({ canvasElement, args }) => {
-    await userEvent.click(
-      within(canvasElement).getByRole('button', { name: 'Currency' }),
-    );
+    const trigger = within(canvasElement).getByRole('button', {
+      name: 'Currency',
+    });
+
+    await userEvent.click(trigger);
     const dialog = await within(canvasElement.ownerDocument.body).findByRole(
       'dialog',
       { name: 'Currency' },
     );
 
+    await waitFor(() => expect(dialog).toBeVisible());
     await expect(within(dialog).getByRole('searchbox')).toBeDisabled();
     for (const option of within(dialog).getAllByRole('button')) {
       await expect(option).toHaveAttribute('aria-disabled', 'true');
@@ -208,7 +221,7 @@ export const DisabledOptions: Story = {
     );
     await userEvent.keyboard('{Enter}');
     await expect(args.onValueChange).not.toHaveBeenCalled();
-    await expect(dialog).toBeVisible();
+    await expect(trigger).toHaveAttribute('aria-expanded', 'true');
   },
 };
 

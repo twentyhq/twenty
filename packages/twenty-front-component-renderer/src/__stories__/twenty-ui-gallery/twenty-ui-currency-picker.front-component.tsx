@@ -15,16 +15,10 @@ const CURRENCIES = [
 const CurrencyPickerExample = () => {
   const [primaryCurrency, setPrimaryCurrency] = useState('EUR');
   const [secondaryCurrency, setSecondaryCurrency] = useState('USD');
-  const [primaryOpen, setPrimaryOpen] = useState(false);
-  const [secondaryOpen, setSecondaryOpen] = useState(false);
 
   return (
     <TwentyUiGalleryCard title="Currency picker">
-      <Dropdown.Root
-        type="picker"
-        open={primaryOpen}
-        onOpenChange={setPrimaryOpen}
-      >
+      <Dropdown.Root type="picker">
         <CurrencyPicker.Trigger
           aria-label="Primary currency"
           value={primaryCurrency}
@@ -35,18 +29,11 @@ const CurrencyPickerExample = () => {
             value={primaryCurrency}
             searchLabel="Search primary currencies"
             emptyLabel="No matching currencies"
-            onValueChange={(code) => {
-              setPrimaryCurrency(code);
-              setPrimaryOpen(false);
-            }}
+            onValueChange={setPrimaryCurrency}
           />
         </Dropdown.Content>
       </Dropdown.Root>
-      <Dropdown.Root
-        type="picker"
-        open={secondaryOpen}
-        onOpenChange={setSecondaryOpen}
-      >
+      <Dropdown.Root type="picker">
         <CurrencyPicker.Trigger
           aria-label="Secondary currency"
           value={secondaryCurrency}
@@ -56,10 +43,7 @@ const CurrencyPickerExample = () => {
             currencies={CURRENCIES}
             value={secondaryCurrency}
             searchLabel="Search secondary currencies"
-            onValueChange={(code) => {
-              setSecondaryCurrency(code);
-              setSecondaryOpen(false);
-            }}
+            onValueChange={setSecondaryCurrency}
           />
         </Dropdown.Content>
       </Dropdown.Root>

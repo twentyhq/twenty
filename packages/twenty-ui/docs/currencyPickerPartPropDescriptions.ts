@@ -6,6 +6,7 @@ export const CURRENCY_PICKER_PART_PROP_DESCRIPTIONS = {
     value:
       'Required currency code displayed beside the chevron. The application chooses its initial value and any fallback.',
     disabled: 'Disables opening the picker.',
+    id: 'ID forwarded to the trigger button.',
     render:
       'Replaces the native trigger button. Forward the supplied props and ref when rendering a custom component.',
   } satisfies Partial<Record<keyof CurrencyPickerTriggerProps, string>>,

@@ -15,9 +15,9 @@ export const CurrencyPickerDropdownButtonExample = ({
   return (
     <CurrencyPickerDropdownButton
       selectedCurrencyCode={currencyCode}
-      onChange={(currency) => {
-        setCurrencyCode(currency.value);
-        onChange(currency);
+      onChange={(newCurrencyCode) => {
+        setCurrencyCode(newCurrencyCode);
+        onChange(newCurrencyCode);
       }}
     />
   );

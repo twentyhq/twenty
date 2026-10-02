@@ -34,7 +34,7 @@ export const InvoiceCurrency = () => {
     <Dropdown.Root type="picker">
       <CurrencyPicker.Trigger
         value={currencyCode}
-        aria-label="Invoice currency"
+        aria-label={`Invoice currency: ${currencyCode}`}
       />
       <Dropdown.Content aria-label="Invoice currency" width={280}>
         <CurrencyPicker.Options
@@ -54,9 +54,9 @@ export const InvoiceCurrency = () => {
 
 ## Search and selection
 
-Search matches currency codes, names, and the displayed `Name (CODE)` label without case sensitivity, using the same matching rules in every browser locale. Results keep the supplied order, with the selected currency first when it matches the search. Each row shows `Name (CODE)` and exposes its selected state through `aria-pressed`.
+Search ignores surrounding whitespace and matches currency codes, names, and the displayed `Name (CODE)` label without case sensitivity, using the same matching rules in every browser locale. Results keep the supplied order, with the selected currency first when it matches the search. Each row shows `Name (CODE)` and exposes its selected state through `aria-pressed`.
 
-Search receives focus when the picker opens. With a nonempty search, Enter selects the first enabled match. With an empty search, Enter does nothing until ArrowDown moves focus to an option. Empty results keep the picker open and announce the empty label. Selection closes a single-selection dropdown; Escape and outside interaction use the dropdown's existing dismissal and focus behavior.
+Search receives focus when the picker opens. With a nonempty search, Enter selects the first enabled match. With an empty search, Enter does nothing until ArrowDown moves focus to an option. Empty results keep the picker open and show the empty label in a status region that stays in place while the picker is open, so screen readers announce it. Selection closes a single-selection dropdown; Escape and outside interaction use the dropdown's existing dismissal and focus behavior.
 
 Set `disabled` on a currency to keep its row visible while preventing selection. `Trigger.disabled` prevents opening; `Options.disabled` disables search and all options in an already open host.
 
@@ -64,9 +64,9 @@ Set `disabled` on a currency to keep its row visible while preventing selection.
 
 The picker owns searching, selected-first ordering, and currency selection. The application owns the currency catalogue, amount editing, formatting, default currency, persistence, and dropdown lifecycle. Currency names are data supplied by the caller.
 
-`searchLabel` defaults to `Search` and provides both the search placeholder and accessible name. `emptyLabel` defaults to `No results`. Supply translated labels and accessible names from your application. Give the trigger and dropdown content an accessible name that describes the currency being selected.
+`searchLabel` defaults to `Search` and provides both the search placeholder and accessible name. `emptyLabel` defaults to `No results`. Supply translated labels and accessible names from your application. Give the trigger an accessible name that includes its visible currency code, such as `Invoice currency: USD`, and give the dropdown content a name that describes the currency being selected.
 
-Native attributes, `className`, `style`, `ref`, and `render` apply to each part's root element. The trigger forwards the shared dropdown trigger interface; the options root is a div by default.
+Native attributes, `className`, `style`, `ref`, and `render` apply to each part's root element. The trigger forwards the shared dropdown trigger interface, except hover opening (`openOnHover`, `delay`, `closeDelay`) and the popover `handle` and `payload` props; the options root is a div by default.
 
 ## Front-component renderer
 

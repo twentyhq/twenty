@@ -16,20 +16,6 @@
             "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
           },
           {
-            "name": "closeDelay",
-            "type": "number",
-            "required": false,
-            "defaultValue": "0",
-            "description": "How long to wait before closing the popover that was opened on hover.\nSpecified in milliseconds.\n\nRequires the `openOnHover` prop."
-          },
-          {
-            "name": "delay",
-            "type": "number",
-            "required": false,
-            "defaultValue": "300",
-            "description": "How long to wait before the popover may be opened on hover. Specified in milliseconds.\n\nRequires the `openOnHover` prop."
-          },
-          {
             "name": "disabled",
             "type": "boolean",
             "required": false,
@@ -37,18 +23,11 @@
             "description": "Disables opening the picker."
           },
           {
-            "name": "handle",
-            "type": "PopoverHandle<unknown>",
-            "required": false,
-            "defaultValue": null,
-            "description": "A handle to associate the trigger with a popover."
-          },
-          {
             "name": "id",
             "type": "string",
             "required": false,
             "defaultValue": null,
-            "description": "ID of the trigger. In addition to being forwarded to the rendered element,\nit is also used to specify the active trigger for the popover in controlled mode (with the PopoverRoot `triggerId` prop)."
+            "description": "ID forwarded to the trigger button."
           },
           {
             "name": "nativeButton",
@@ -56,20 +35,6 @@
             "required": false,
             "defaultValue": "true",
             "description": "Whether the component renders a native `<button>` element when replacing it\nvia the `render` prop.\nSet to `false` if the rendered element is not a button (e.g. `<div>`)."
-          },
-          {
-            "name": "openOnHover",
-            "type": "boolean",
-            "required": false,
-            "defaultValue": "false",
-            "description": "Whether the popover should also open when the trigger is hovered."
-          },
-          {
-            "name": "payload",
-            "type": "unknown",
-            "required": false,
-            "defaultValue": null,
-            "description": "A payload to pass to the popover when it is opened."
           },
           {
             "name": "render",

@@ -2,7 +2,13 @@ import { type DropdownTriggerProps } from '@ui/components/navigation/Dropdown/ty
 
 export type CurrencyPickerTriggerProps = Omit<
   DropdownTriggerProps,
-  'children' | 'value'
+  | 'children'
+  | 'value'
+  | 'openOnHover'
+  | 'delay'
+  | 'closeDelay'
+  | 'handle'
+  | 'payload'
 > & {
   value: string;
 };

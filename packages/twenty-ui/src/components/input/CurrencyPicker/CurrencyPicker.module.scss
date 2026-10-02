@@ -45,3 +45,11 @@
   flex-direction: column;
   min-inline-size: 0;
 }
+
+.emptyStatus:empty {
+  padding: 0;
+}
+
+.emptyStatus:not(:empty) {
+  margin: var(--t-spacing-1);
+}

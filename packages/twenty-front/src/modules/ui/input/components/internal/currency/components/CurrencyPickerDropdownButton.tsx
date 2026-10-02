@@ -1,18 +1,15 @@
 import { t } from '@lingui/core/macro';
 import { useId } from 'react';
 import { CurrencyCode } from 'twenty-shared/constants';
-import { isDefined } from 'twenty-shared/utils';
 import { CurrencyPicker } from 'twenty-ui/components';
 
-import { CURRENCIES } from '@/settings/data-model/constants/Currencies';
 import { CURRENCY_PICKER_CURRENCIES } from '@/ui/input/components/internal/currency/constants/CurrencyPickerCurrencies';
-import { type Currency } from '@/ui/input/components/internal/types/Currency';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 
 type CurrencyPickerDropdownButtonProps = {
   selectedCurrencyCode: string;
-  onChange: (currency: Currency) => void;
+  onChange: (currencyCode: string) => void;
 };
 
 export const CurrencyPickerDropdownButton = ({
@@ -20,22 +17,17 @@ export const CurrencyPickerDropdownButton = ({
   onChange,
 }: CurrencyPickerDropdownButtonProps) => {
   const dropdownId = useId();
-  const currency = CURRENCIES.find(
-    ({ value }) => value === selectedCurrencyCode,
+  const selectedCurrency = CURRENCY_PICKER_CURRENCIES.find(
+    ({ code }) => code === selectedCurrencyCode,
   );
-  const currencyCode = currency?.value ?? CurrencyCode.USD;
-
-  const handleValueChange = (code: string) => {
-    const selectedCurrency = CURRENCIES.find(({ value }) => value === code);
-
-    if (isDefined(selectedCurrency)) {
-      onChange(selectedCurrency);
-    }
-  };
+  const currencyCode = selectedCurrency?.code ?? CurrencyCode.USD;
 
   return (
     <DropdownRoot dropdownId={dropdownId} type="picker">
-      <CurrencyPicker.Trigger value={currencyCode} />
+      <CurrencyPicker.Trigger
+        value={currencyCode}
+        aria-label={t`Currency: ${currencyCode}`}
+      />
       <DropdownContent
         side="bottom"
         align="start"
@@ -45,8 +37,8 @@ export const CurrencyPickerDropdownButton = ({
       >
         <CurrencyPicker.Options
           currencies={CURRENCY_PICKER_CURRENCIES}
-          value={currency?.value}
-          onValueChange={handleValueChange}
+          value={selectedCurrency?.code}
+          onValueChange={onChange}
           searchLabel={t`Search`}
           emptyLabel={t`No results`}
         />

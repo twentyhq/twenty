@@ -2,13 +2,11 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
-import { CURRENCIES } from '@/settings/data-model/constants/Currencies';
 import { CurrencyPickerDropdownButton } from '@/ui/input/components/internal/currency/components/CurrencyPickerDropdownButton';
-import { type Currency } from '@/ui/input/components/internal/types/Currency';
 
 import { CurrencyPickerDropdownButtonExample } from './CurrencyPickerDropdownButtonExample';
 
-const onCurrencyChange = fn<(currency: Currency) => void>();
+const onCurrencyChange = fn<(currencyCode: string) => void>();
 
 const meta: Meta<typeof CurrencyPickerDropdownButton> = {
   title: 'UI/Input/CurrencyPickerDropdownButton',
@@ -34,14 +32,16 @@ export const SearchPreservesCurrencyCallback: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const body = within(canvasElement.ownerDocument.body);
-    const trigger = canvas.getByRole('button', { name: 'USD' });
-    const euroCurrency = CURRENCIES.find(({ value }) => value === 'EUR');
+    const trigger = canvas.getByRole('button', { name: 'Currency: USD' });
 
-    expect(euroCurrency).toBeDefined();
     await userEvent.click(trigger);
-    expect(await body.findByRole('dialog', { name: 'Currency' })).toBeVisible();
+    const dialog = await body.findByRole('dialog', { name: 'Currency' });
+    await waitFor(() => expect(dialog).toBeVisible());
     const search = await body.findByRole('searchbox', { name: 'Search' });
     await waitFor(() => expect(search).toHaveFocus());
+    await userEvent.type(search, 'zzzzzz');
+    expect(await body.findByText('No results')).toBeVisible();
+    await userEvent.clear(search);
     await userEvent.type(search, 'euro');
     const euro = await body.findByRole('button', { name: 'Euro (EUR)' });
     expect(
@@ -54,8 +54,9 @@ export const SearchPreservesCurrencyCallback: Story = {
       expect(body.queryByRole('dialog')).not.toBeInTheDocument(),
     );
     expect(onCurrencyChange).toHaveBeenCalledTimes(1);
-    expect(onCurrencyChange.mock.calls[0]?.[0]).toBe(euroCurrency);
+    expect(onCurrencyChange).toHaveBeenCalledWith('EUR');
     expect(trigger).toHaveTextContent('EUR');
+    expect(trigger).toHaveAccessibleName('Currency: EUR');
     await waitFor(() => expect(trigger).toHaveFocus());
 
     await userEvent.click(trigger);
@@ -86,8 +87,10 @@ export const IndependentInstances: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const body = within(canvasElement.ownerDocument.body);
-    const firstTrigger = canvas.getByRole('button', { name: 'USD' });
-    const secondTrigger = canvas.getByRole('button', { name: 'EUR' });
+    const firstTrigger = canvas.getByRole('button', { name: 'Currency: USD' });
+    const secondTrigger = canvas.getByRole('button', {
+      name: 'Currency: EUR',
+    });
 
     await userEvent.click(firstTrigger);
     expect(
@@ -137,10 +140,13 @@ export const UnknownCurrencyUsesDisplayFallback: Story = {
   args: { selectedCurrencyCode: 'UNKNOWN' },
   play: async ({ canvasElement }) => {
     const body = within(canvasElement.ownerDocument.body);
-    const trigger = within(canvasElement).getByRole('button', { name: 'USD' });
+    const trigger = within(canvasElement).getByRole('button', {
+      name: 'Currency: USD',
+    });
 
     await userEvent.click(trigger);
-    expect(await body.findByRole('dialog', { name: 'Currency' })).toBeVisible();
+    const dialog = await body.findByRole('dialog', { name: 'Currency' });
+    await waitFor(() => expect(dialog).toBeVisible());
     expect(
       body.queryByRole('button', { pressed: true }),
     ).not.toBeInTheDocument();
@@ -148,7 +154,8 @@ export const UnknownCurrencyUsesDisplayFallback: Story = {
 
     await waitFor(() => expect(search).toHaveFocus());
     await userEvent.keyboard('{Enter}');
-    expect(body.getByRole('dialog', { name: 'Currency' })).toBeVisible();
+    expect(trigger).toHaveAttribute('aria-expanded', 'true');
+    await waitFor(() => expect(dialog).toBeVisible());
     expect(onCurrencyChange).not.toHaveBeenCalled();
 
     await userEvent.type(search, 'usd');
@@ -158,6 +165,8 @@ export const UnknownCurrencyUsesDisplayFallback: Story = {
     await waitFor(() =>
       expect(body.queryByRole('dialog')).not.toBeInTheDocument(),
     );
+    expect(onCurrencyChange).toHaveBeenCalledTimes(1);
+    expect(onCurrencyChange).toHaveBeenCalledWith('USD');
     await userEvent.click(trigger);
     expect(
       await body.findByRole('button', { name: /\(USD\)$/ }),

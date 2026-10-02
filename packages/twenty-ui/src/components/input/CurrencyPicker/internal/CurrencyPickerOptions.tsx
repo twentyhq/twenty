@@ -24,12 +24,11 @@ export const CurrencyPickerOptions = ({
   ...props
 }: CurrencyPickerOptionsProps) => {
   const [search, setSearch] = useState('');
-  const normalizedSearch = search.toLowerCase();
-  const matchingCurrencies = currencies.filter(
-    (currency) =>
-      currency.code.toLowerCase().includes(normalizedSearch) ||
-      getCurrencyPickerLabel(currency).toLowerCase().includes(normalizedSearch),
+  const normalizedSearch = search.trim().toLowerCase();
+  const matchingCurrencies = currencies.filter((currency) =>
+    getCurrencyPickerLabel(currency).toLowerCase().includes(normalizedSearch),
   );
+  const hasMatchingCurrencies = isNonEmptyArray(matchingCurrencies);
   const selectedCurrency = matchingCurrencies.find(
     ({ code }) => code === value,
   );
@@ -56,23 +55,25 @@ export const CurrencyPickerOptions = ({
             disabled={disabled}
           />
           <Dropdown.Separator />
-          <Dropdown.Section scrollable>
-            {!isNonEmptyArray(orderedCurrencies) && (
-              <Dropdown.Empty>{emptyLabel}</Dropdown.Empty>
-            )}
-            {orderedCurrencies.map((currency) => (
-              <Dropdown.OptionItem
-                key={currency.code}
-                selected={currency.code === value}
-                disabled={disabled || currency.disabled}
-                onSelect={() => onValueChange(currency.code)}
-              >
-                <OverflowingTextWithTooltip
-                  text={getCurrencyPickerLabel(currency)}
-                />
-              </Dropdown.OptionItem>
-            ))}
-          </Dropdown.Section>
+          {hasMatchingCurrencies && (
+            <Dropdown.Section scrollable>
+              {orderedCurrencies.map((currency) => (
+                <Dropdown.OptionItem
+                  key={currency.code}
+                  selected={currency.code === value}
+                  disabled={disabled || currency.disabled}
+                  onSelect={() => onValueChange(currency.code)}
+                >
+                  <OverflowingTextWithTooltip
+                    text={getCurrencyPickerLabel(currency)}
+                  />
+                </Dropdown.OptionItem>
+              ))}
+            </Dropdown.Section>
+          )}
+          <Dropdown.Empty className={styles.emptyStatus}>
+            {hasMatchingCurrencies ? null : emptyLabel}
+          </Dropdown.Empty>
         </>
       ),
     },

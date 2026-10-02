@@ -1,5 +1,5 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
+import { expect, fn, spyOn, userEvent, waitFor, within } from 'storybook/test';
 
 import { A11Y_DEFER_COLOR_CONTRAST, ComponentDecorator } from '@ui/testing';
 
@@ -21,13 +21,27 @@ const meta: Meta<typeof CurrencyPickerExample> = {
 export default meta;
 type Story = StoryObj<typeof CurrencyPickerExample>;
 
-export const CaseInsensitiveSearch: Story = {
+export const TurkishLocaleSearch: Story = {
   args: {
     currencies: [
       { code: 'INR', name: 'Indian Rupee' },
       { code: 'IDR', name: 'Indonesian Rupiah' },
       { code: 'USD', name: 'US Dollar' },
     ],
+  },
+  beforeEach: () => {
+    const originalToLocaleLowerCase = String.prototype.toLocaleLowerCase;
+    const toLocaleLowerCaseSpy = spyOn(
+      String.prototype,
+      'toLocaleLowerCase',
+    ).mockImplementation(function (
+      this: string,
+      locales?: Intl.LocalesArgument,
+    ) {
+      return originalToLocaleLowerCase.call(this, locales ?? 'tr-TR');
+    });
+
+    return () => toLocaleLowerCaseSpy.mockRestore();
   },
   play: async ({ canvasElement, args }) => {
     const firstPicker = await openCurrencyPicker({ canvasElement });
