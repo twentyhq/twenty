@@ -7,23 +7,24 @@ import { useRecordSharing } from '@/object-record/record-sharing/hooks/useRecord
 import { SidePanelShareRecordContent } from '@/side-panel/pages/share-record/components/SidePanelShareRecordContent';
 import { shareRecordTargetComponentState } from '@/side-panel/pages/share-record/states/shareRecordTargetComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { type RecordSharingTargetInput } from '~/generated-metadata/graphql';
+import { type RecordTargetInput } from '~/generated-metadata/graphql';
 
 const SidePanelShareRecordPageContent = ({
   target,
 }: {
-  target: RecordSharingTargetInput;
+  target: RecordTargetInput;
 }) => {
   const { objectMetadataItem } = useObjectMetadataItemById({
     objectId: target.objectMetadataId,
   });
-  const sharingState = useRecordSharing({ recordTarget: target, isOpen: true });
+  const sharingState = useRecordSharing({ recordTarget: target });
 
   return (
     <>
       <RecordSharingRefreshEffect refetch={sharingState.refetch} />
       <SidePanelShareRecordContent
         objectLabelPlural={objectMetadataItem.labelPlural}
+        sharingReach={objectMetadataItem.sharingReach}
         recordUrl={
           new URL(
             getLinkToShowPage(objectMetadataItem.nameSingular, {

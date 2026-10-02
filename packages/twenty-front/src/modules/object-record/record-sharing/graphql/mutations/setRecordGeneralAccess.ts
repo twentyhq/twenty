@@ -2,18 +2,13 @@ import { gql } from '@apollo/client';
 
 import { RECORD_SHARING_FRAGMENT } from '@/object-record/record-sharing/graphql/fragments/recordSharingFragment';
 
-export const SET_RECORD_SHARE = gql`
+export const SET_RECORD_GENERAL_ACCESS = gql`
   ${RECORD_SHARING_FRAGMENT}
-  mutation SetRecordShare(
+  mutation SetRecordGeneralAccess(
     $target: RecordTargetInput!
-    $principal: RecordSharePrincipalInput!
     $accessLevel: RecordShareAccessLevel!
   ) {
-    setRecordShare(
-      target: $target
-      principal: $principal
-      accessLevel: $accessLevel
-    ) {
+    setRecordGeneralAccess(target: $target, accessLevel: $accessLevel) {
       ...RecordSharingFields
     }
   }

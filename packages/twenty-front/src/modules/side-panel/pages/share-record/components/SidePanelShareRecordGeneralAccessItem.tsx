@@ -12,34 +12,32 @@ import { RecordShareAccessLevel } from '~/generated-metadata/graphql';
 type SidePanelShareRecordGeneralAccessItemProps = {
   itemId: string;
   generalAccessLevel: RecordShareAccessLevel | null | undefined;
-  isOpenByDefault: boolean;
-  hasManagedWorkspaceAccess: boolean;
+  defaultGeneralAccessLevel: RecordShareAccessLevel | null | undefined;
+  hasManagedGeneralAccess: boolean;
   objectLabelPlural: string;
   saving: boolean;
-  setShare: ReturnType<typeof useRecordSharing>['setShare'];
+  setGeneralAccess: ReturnType<typeof useRecordSharing>['setGeneralAccess'];
 };
 
 export const SidePanelShareRecordGeneralAccessItem = ({
   itemId,
   generalAccessLevel,
-  isOpenByDefault,
-  hasManagedWorkspaceAccess,
+  defaultGeneralAccessLevel,
+  hasManagedGeneralAccess,
   objectLabelPlural,
   saving,
-  setShare,
+  setGeneralAccess,
 }: SidePanelShareRecordGeneralAccessItemProps) => {
   const { t } = useLingui();
   const isRestricted =
     !isDefined(generalAccessLevel) ||
     generalAccessLevel === RecordShareAccessLevel.NONE;
-  const hasWorkspaceAccess = !isRestricted || hasManagedWorkspaceAccess;
-  const defaultAccessLevel = isOpenByDefault
-    ? RecordShareAccessLevel.READ_WRITE
-    : RecordShareAccessLevel.NONE;
+  const hasWorkspaceAccess = !isRestricted || hasManagedGeneralAccess;
   const withDefaultMarker = (
     label: string,
     accessLevel: RecordShareAccessLevel,
-  ) => (accessLevel === defaultAccessLevel ? t`${label} (default)` : label);
+  ) =>
+    accessLevel === defaultGeneralAccessLevel ? t`${label} (default)` : label;
 
   return (
     <SidePanelShareRecordDropdownItem
@@ -63,7 +61,7 @@ export const SidePanelShareRecordGeneralAccessItem = ({
           selected={!hasWorkspaceAccess}
           disabled={isRestricted || saving}
           onSelect={() => {
-            void setShare({ principal: { everyone: true }, enabled: false });
+            void setGeneralAccess(RecordShareAccessLevel.NONE);
           }}
         >
           {withDefaultMarker(t`Restricted`, RecordShareAccessLevel.NONE)}
@@ -77,11 +75,7 @@ export const SidePanelShareRecordGeneralAccessItem = ({
             selected={generalAccessLevel === option.value}
             disabled={generalAccessLevel === option.value || saving}
             onSelect={() => {
-              void setShare({
-                principal: { everyone: true },
-                enabled: true,
-                accessLevel: option.value,
-              });
+              void setGeneralAccess(option.value);
             }}
           >
             {withDefaultMarker(t(option.label), option.value)}

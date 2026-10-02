@@ -10,7 +10,7 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { recordPermissionsFamilyState } from '@/object-record/record-sharing/states/recordPermissionsFamilyState';
 import {
   GetRecordPermissionsDocument,
-  type RecordPermissionsTargetInput,
+  type RecordTargetInput,
 } from '~/generated-metadata/graphql';
 
 const PERMISSION_BATCH_SIZE = 100;
@@ -19,7 +19,7 @@ export const useRefreshRecordPermissions = () => {
   const client = useApolloClient();
   const store = useStore();
   const refreshRecordPermissions = useCallback(
-    async (targets: RecordPermissionsTargetInput[]) => {
+    async (targets: RecordTargetInput[]) => {
       const workspace = store.get(currentWorkspaceState.atom);
       const member = store.get(currentWorkspaceMemberState.atom);
       const userWorkspace = store.get(currentUserWorkspaceState.atom);
@@ -35,7 +35,7 @@ export const useRefreshRecordPermissions = () => {
         ).values(),
       ];
       const requestId = v4();
-      const targetAtom = (target: RecordPermissionsTargetInput) =>
+      const targetAtom = (target: RecordTargetInput) =>
         recordPermissionsFamilyState.atomFamily({
           objectMetadataId: target.objectMetadataId,
           recordId: target.recordId,

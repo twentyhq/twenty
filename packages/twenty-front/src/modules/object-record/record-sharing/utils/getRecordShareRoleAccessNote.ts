@@ -4,38 +4,38 @@ import { isDefined } from 'twenty-shared/utils';
 import {
   ObjectSharingReach,
   RecordShareAccessLevel,
-  type RecordSharingGrantDto,
+  type RecordSharingRoleDto,
 } from '~/generated-metadata/graphql';
 
 // Owners see what each grant actually gives, not only the level they picked
 export const getRecordShareRoleAccessNote = ({
-  share,
+  accessLevel,
+  principalRole,
   sharingReach,
   objectLabelPlural,
 }: {
-  share: Pick<
-    RecordSharingGrantDto,
-    'accessLevel' | 'canRoleRead' | 'canRoleUpdate'
-  >;
+  accessLevel: RecordShareAccessLevel;
+  principalRole:
+    | Pick<RecordSharingRoleDto, 'canRead' | 'canUpdate'>
+    | undefined;
   sharingReach: ObjectSharingReach;
   objectLabelPlural: string;
 }): string | undefined => {
-  if (!isDefined(share.canRoleRead)) {
+  if (!isDefined(principalRole)) {
     return undefined;
   }
 
   if (sharingReach === ObjectSharingReach.WORKSPACE) {
-    return share.canRoleRead
+    return principalRole.canRead
       ? undefined
       : t`Gets this record only: their role can't access ${objectLabelPlural}`;
   }
 
-  if (!share.canRoleRead) {
+  if (!principalRole.canRead) {
     return t`Won't see it: their role can't access ${objectLabelPlural}`;
   }
 
-  return share.accessLevel !== RecordShareAccessLevel.READ &&
-    share.canRoleUpdate === false
+  return accessLevel !== RecordShareAccessLevel.READ && !principalRole.canUpdate
     ? t`Can only view: their role can't edit ${objectLabelPlural}`
     : undefined;
 };
