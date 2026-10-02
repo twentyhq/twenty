@@ -3,7 +3,7 @@ import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import {
   buildChannelRecordShareBackfillQueries,
   CHANNEL_RECORD_SHARE_BACKFILL_SOURCES,
-} from 'src/database/commands/upgrade-version-command/2-45/utils/build-channel-record-share-backfill-queries.util';
+} from 'src/database/commands/upgrade-version-command/2-46/utils/build-channel-record-share-backfill-queries.util';
 
 const ON_CONFLICT_DO_NOTHING =
   'ON CONFLICT ("objectMetadataId", "recordId", "principalId", "rowCause", "sourceId") DO NOTHING';

@@ -1,11 +1,11 @@
 import { STANDARD_OBJECT_FIELDS, STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { MetadataReadability } from 'twenty-shared/types';
 
-import { DISCOVERABLE_EMAIL_AND_CALENDAR_OBJECTS } from 'src/database/commands/upgrade-version-command/2-45/constants/discoverable-email-and-calendar-objects.constant';
+import { DISCOVERABLE_EMAIL_AND_CALENDAR_OBJECTS } from 'src/database/commands/upgrade-version-command/2-46/constants/discoverable-email-and-calendar-objects.constant';
 import {
   buildDiscoverableEmailAndCalendarObjectUpdates,
   buildRevertedEmailAndCalendarObjectUpdates,
-} from 'src/database/commands/upgrade-version-command/2-45/utils/build-discoverable-email-and-calendar-object-updates.util';
+} from 'src/database/commands/upgrade-version-command/2-46/utils/build-discoverable-email-and-calendar-object-updates.util';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
