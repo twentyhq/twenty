@@ -69,6 +69,7 @@ describe('Standard object readability', () => {
     STANDARD_OBJECTS.agentMessagePart.universalIdentifier,
     STANDARD_OBJECTS.agentTurn.universalIdentifier,
     STANDARD_OBJECTS.agentTurnEvaluation.universalIdentifier,
+    STANDARD_OBJECTS.agentChatThreadParticipant.universalIdentifier,
 
     STANDARD_OBJECTS.campaignDelivery.universalIdentifier,
     STANDARD_OBJECTS.messageSuppression.universalIdentifier,
@@ -103,7 +104,7 @@ describe('Standard object readability', () => {
     });
   });
 
-  it.each(['recordShare', 'shortLink'] as const)(
+  it.each(['recordShare', 'shortLink', 'agentChatThreadParticipant'] as const)(
     'declares %s SYSTEM for readability and writability',
     (objectName) => {
       expect(findStandardFlatObjectMetadata(objectName)).toMatchObject({

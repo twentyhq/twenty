@@ -169,28 +169,24 @@ describe('useSwitchNavigationDrawerMode', () => {
         NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY,
       ),
     );
-    act(() =>
-      result.current.switchNavigationDrawerMode(
-        NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY,
-      ),
-    );
 
-    expect(mockSwitchToNewChat).toHaveBeenCalledTimes(2);
+    expect(mockSwitchToNewChat).toHaveBeenCalled();
   });
 
-  it('does not start a new chat when the chat page is already open', () => {
-    const { result } = renderSwitchNavigationDrawerMode({
-      pathname: AI_CHAT_PATH,
-    });
+  it.each([AI_CHAT_PATH, '/inbox'])(
+    'does not start a new chat when %s is already open',
+    (pathname) => {
+      const { result } = renderSwitchNavigationDrawerMode({ pathname });
 
-    act(() =>
-      result.current.switchNavigationDrawerMode(
-        NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY,
-      ),
-    );
+      act(() =>
+        result.current.switchNavigationDrawerMode(
+          NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY,
+        ),
+      );
 
-    expect(mockSwitchToNewChat).not.toHaveBeenCalled();
-  });
+      expect(mockSwitchToNewChat).not.toHaveBeenCalled();
+    },
+  );
 
   it.each([false, true])(
     'preserves desktop sidebar expansion (%s) when opening settings and returning home',

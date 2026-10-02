@@ -36,6 +36,7 @@ import { WorkflowToolsModule } from 'src/modules/workflow/workflow-tools/workflo
 import { AgentChatThreadEntity } from './entities/agent-chat-thread.entity';
 import { StreamAgentChatJob } from './jobs/stream-agent-chat.job';
 import { AgentChatResolver } from './resolvers/agent-chat.resolver';
+import { AgentChatThreadParticipantResolver } from './resolvers/agent-chat-thread-participant.resolver';
 import { AgentChatSubscriptionResolver } from './resolvers/agent-chat-subscription.resolver';
 import { AgentInboxResolver } from './resolvers/agent-inbox.resolver';
 import { WorkspaceSetupChatResolver } from './resolvers/workspace-setup-chat.resolver';
@@ -88,6 +89,7 @@ import { SystemPromptBuilderService } from './services/system-prompt-builder.ser
     AiChatUsageResolver,
     AgentChatCancelSubscriberService,
     AgentChatResolver,
+    AgentChatThreadParticipantResolver,
     AgentChatSubscriptionResolver,
     WorkspaceSetupChatResolver,
     AgentInboxResolver,
