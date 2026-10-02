@@ -54,6 +54,7 @@ const CountrySelectExample = () => {
 export default defineFrontComponent({
   universalIdentifier: 'fa3c0858-7f45-48aa-8406-8dd4e2aa24c9',
   name: 'twenty-ui-country-select',
-  description: 'Country labels, search, selection and clearing in the sandbox',
+  description:
+    'Country labels and flags rendered in the sandbox, with popup interaction unsupported',
   component: CountrySelectExample,
 });

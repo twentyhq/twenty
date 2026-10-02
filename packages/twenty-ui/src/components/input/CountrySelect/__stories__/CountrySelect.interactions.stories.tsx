@@ -14,7 +14,7 @@ import { CountrySelectExample } from './CountrySelectExample';
 import { waitForCountryPopup } from './waitForCountryPopup';
 
 const meta: Meta<typeof CountrySelectExample> = {
-  title: 'Components/Input/CountrySelect/Interactions',
+  title: 'UI/Input/CountrySelect/Interactions',
   component: CountrySelectExample,
   tags: ['!autodocs'],
   decorators: [ComponentDecorator],
@@ -50,7 +50,7 @@ export const PointerSelection: Story = {
       'true',
     );
     await userEvent.click(trigger);
-    const popup = await waitForCountryPopup(canvasElement);
+    const popup = await waitForCountryPopup({ canvasElement });
     const choices = within(popup);
 
     expect(choices.getByRole('button', { name: 'France' })).toHaveAttribute(
@@ -76,7 +76,7 @@ export const SearchAndKeyboard: Story = {
     await userEvent.tab();
     expect(trigger).toHaveFocus();
     await userEvent.keyboard('{Enter}');
-    const popup = await waitForCountryPopup(canvasElement);
+    const popup = await waitForCountryPopup({ canvasElement });
     const choices = within(popup);
     const search = choices.getByRole('searchbox', {
       name: 'Search countries',
@@ -93,7 +93,7 @@ export const SearchAndKeyboard: Story = {
     await waitFor(() => expect(popup).not.toBeInTheDocument());
     await waitFor(() => expect(trigger).toHaveFocus());
     await userEvent.keyboard('{Enter}');
-    const reopenedPopup = await waitForCountryPopup(canvasElement);
+    const reopenedPopup = await waitForCountryPopup({ canvasElement });
     const reopenedChoices = within(reopenedPopup);
 
     expect(reopenedChoices.getByRole('searchbox')).toHaveValue('');
@@ -119,7 +119,7 @@ export const ClearCountry: Story = {
     });
 
     await userEvent.click(trigger);
-    const popup = await waitForCountryPopup(canvasElement);
+    const popup = await waitForCountryPopup({ canvasElement });
     const choices = within(popup);
 
     await userEvent.type(choices.getByRole('searchbox'), 'NO COUNTRY');
@@ -129,7 +129,7 @@ export const ClearCountry: Story = {
     await waitFor(() => expect(popup).not.toBeInTheDocument());
     expect(trigger).toHaveTextContent('No country');
     await userEvent.click(trigger);
-    const reopenedPopup = await waitForCountryPopup(canvasElement);
+    const reopenedPopup = await waitForCountryPopup({ canvasElement });
 
     expect(
       within(reopenedPopup).getByRole('button', { name: 'No country' }),
@@ -146,7 +146,7 @@ export const EmptySearchAndEscape: Story = {
     });
 
     await userEvent.click(trigger);
-    const popup = await waitForCountryPopup(canvasElement);
+    const popup = await waitForCountryPopup({ canvasElement });
     const choices = within(popup);
     const search = choices.getByRole('searchbox');
 
@@ -174,7 +174,7 @@ export const UnknownStoredValue: Story = {
 
     expect(trigger).toHaveTextContent('No country');
     await userEvent.click(trigger);
-    const popup = await waitForCountryPopup(canvasElement);
+    const popup = await waitForCountryPopup({ canvasElement });
 
     for (const choice of within(popup).getAllByRole('button')) {
       expect(choice).toHaveAttribute('aria-pressed', 'false');
@@ -232,7 +232,10 @@ export const IndependentInstances: Story = {
 
     expect(billing.id).not.toBe(shipping.id);
     await userEvent.click(billing);
-    const popup = await waitForCountryPopup(canvasElement);
+    const popup = await waitForCountryPopup({
+      canvasElement,
+      name: 'Billing country',
+    });
 
     await userEvent.type(within(popup).getByRole('searchbox'), 'bresil');
     await userEvent.keyboard('{Enter}');
@@ -240,7 +243,10 @@ export const IndependentInstances: Story = {
     expect(billing).toHaveTextContent('Brésil');
     expect(shipping).toHaveTextContent('Japon');
     await userEvent.click(shipping);
-    const shippingPopup = await waitForCountryPopup(canvasElement);
+    const shippingPopup = await waitForCountryPopup({
+      canvasElement,
+      name: 'Shipping country',
+    });
 
     expect(shippingPopup).toHaveAccessibleName('Shipping country');
     expect(within(shippingPopup).getByRole('searchbox')).toHaveValue('');
@@ -293,7 +299,7 @@ export const ControlledUpdates: Story = {
     await userEvent.click(
       canvas.getByRole('button', { name: 'Open countries' }),
     );
-    const popup = await waitForCountryPopup(canvasElement);
+    const popup = await waitForCountryPopup({ canvasElement });
 
     await userEvent.click(
       within(popup).getByRole('button', { name: 'Brésil' }),
@@ -307,14 +313,52 @@ export const ControlledUpdates: Story = {
   },
 };
 
-const ScopedCountryExample = () => {
+const ArgumentUpdatesExample = (props: Partial<CountrySelectProps>) => {
+  const [value, setValue] = useState('France');
+
+  return (
+    <>
+      <CountrySelectExample {...props} value={value} />
+      <Button onClick={() => setValue('Japan')}>Apply Japan</Button>
+    </>
+  );
+};
+
+export const ArgumentUpdates: Story = {
+  render: (args) => <ArgumentUpdatesExample {...args} />,
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+
+    await userEvent.click(canvas.getByRole('button', { name: 'Country' }));
+    const popup = await waitForCountryPopup({ canvasElement });
+
+    await userEvent.click(
+      within(popup).getByRole('button', { name: 'Brésil' }),
+    );
+    await waitFor(() => expect(popup).not.toBeInTheDocument());
+    expect(canvas.getByRole('button', { name: 'Country' })).toHaveTextContent(
+      'Brésil',
+    );
+    await userEvent.click(canvas.getByRole('button', { name: 'Apply Japan' }));
+    expect(canvas.getByRole('button', { name: 'Country' })).toHaveTextContent(
+      'Japon',
+    );
+    expect(args.onValueChange).toHaveBeenCalledTimes(1);
+    expect(args.onValueChange).toHaveBeenCalledWith('Brazil');
+  },
+};
+
+const ScopedCountryExample = (props: Partial<CountrySelectProps>) => {
   const [container, setContainer] = useState<HTMLDivElement | null>(null);
 
   return (
     <ThemeProvider colorScheme="dark" applyToRoot={false}>
       <TextDirectionProvider direction="rtl">
         <div dir="rtl">
-          <CountrySelectExample popupProps={{ container, align: 'start' }} />
+          <CountrySelectExample
+            {...props}
+            popupProps={{ ...props.popupProps, container, align: 'start' }}
+          />
           <div ref={setContainer} role="region" aria-label="Country portal" />
         </div>
       </TextDirectionProvider>
@@ -323,13 +367,13 @@ const ScopedCountryExample = () => {
 };
 
 export const ScopedThemeAndContainer: Story = {
-  render: () => <ScopedCountryExample />,
+  render: (args) => <ScopedCountryExample {...args} />,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const trigger = canvas.getByRole('button', { name: 'Country' });
 
     await userEvent.click(trigger);
-    const popup = await waitForCountryPopup(canvasElement);
+    const popup = await waitForCountryPopup({ canvasElement });
 
     expect(
       canvas.getByRole('region', { name: 'Country portal' }),

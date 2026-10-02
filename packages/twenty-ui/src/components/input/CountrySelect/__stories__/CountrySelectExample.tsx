@@ -4,7 +4,7 @@ import { CountrySelect } from '../CountrySelect';
 import { type CountrySelectProps } from '../types/CountrySelectProps';
 import { COUNTRY_CHOICES } from './COUNTRY_CHOICES';
 
-export const CountrySelectExample = ({
+const StatefulCountrySelectExample = ({
   value: initialValue = 'France',
   onValueChange,
   ...props
@@ -29,3 +29,7 @@ export const CountrySelectExample = ({
     />
   );
 };
+
+export const CountrySelectExample = (props: Partial<CountrySelectProps>) => (
+  <StatefulCountrySelectExample key={props.value} {...props} />
+);
