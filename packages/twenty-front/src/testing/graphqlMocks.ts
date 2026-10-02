@@ -532,11 +532,21 @@ export const graphqlMocks = {
       });
     }),
     graphql.query(getOperationName(GET_ROLE) ?? '', ({ variables }) => {
-      return HttpResponse.json({
-        data: {
-          getRole: mockedRoles.find((role) => role.id === variables.id) ?? null,
-        },
-      });
+      const role = mockedRoles.find((role) => role.id === variables.id);
+
+      if (!isDefined(role)) {
+        return HttpResponse.json({
+          data: null,
+          errors: [
+            {
+              message: 'Role not found',
+              extensions: { code: 'NOT_FOUND' },
+            },
+          ],
+        });
+      }
+
+      return HttpResponse.json({ data: { getRole: role } });
     }),
     graphql.query(getOperationName(LIST_PLANS) ?? '', () => {
       return HttpResponse.json({

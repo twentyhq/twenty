@@ -1,9 +1,20 @@
+import gql from 'graphql-tag';
 import request from 'supertest';
 import { deleteOneRoleOperationFactory } from 'test/integration/graphql/utils/delete-one-role-operation-factory.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
+import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
+import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
+import { upsertRowLevelPermissionPredicates } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-predicates.util';
+import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 import { PermissionFlagType } from 'twenty-shared/constants';
+import {
+  RowLevelPermissionPredicateGroupLogicalOperator,
+  RowLevelPermissionPredicateOperand,
+} from 'twenty-shared/types';
+import { v4 } from 'uuid';
 
 import { fieldTextMock } from 'src/engine/api/__mocks__/object-metadata-item.mock';
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
@@ -171,59 +182,245 @@ describe('roles permissions', () => {
       await assertPermissionDeniedForMemberWithMemberRole({ query });
     });
 
-    it('should resolve every role relation in a single request', async () => {
-      const query = {
-        query: `
-          query GetRoles {
-            getRoles {
+    describe('role relations', () => {
+      let relationsRoleId: string;
+      let relationsApiKeyId: string;
+      let relationsPredicateId: string;
+      let relationsPredicateGroupId: string;
+
+      beforeAll(async () => {
+        const { objects } = await findManyObjectMetadata({
+          expectToFail: false,
+          input: { filter: {}, paging: { first: 1000 } },
+          gqlFields: `
+            id
+            nameSingular
+            fieldsList {
               id
-              label
-              workspaceMembers {
-                id
-              }
-              agents {
-                id
-              }
-              apiKeys {
-                id
-              }
-              permissionFlags {
-                flag
-              }
-              objectPermissions {
-                objectMetadataId
-              }
-              fieldPermissions {
-                fieldMetadataId
-              }
-              rowLevelPermissionPredicates {
-                id
-              }
-              rowLevelPermissionPredicateGroups {
+              name
+            }
+          `,
+        });
+
+        const companyObjectMetadata = objects.find(
+          (object: { nameSingular: string }) =>
+            object.nameSingular === 'company',
+        );
+
+        jestExpectToBeDefined(companyObjectMetadata);
+
+        const companyNameField = companyObjectMetadata.fieldsList?.find(
+          (field: { name: string }) => field.name === 'name',
+        );
+
+        jestExpectToBeDefined(companyNameField);
+
+        const { data: roleData } = await createOneRole({
+          expectToFail: false,
+          input: {
+            label: `Role relations ${v4()}`,
+            canUpdateAllSettings: false,
+            canAccessAllTools: false,
+            canReadAllObjectRecords: true,
+            canUpdateAllObjectRecords: false,
+            canSoftDeleteAllObjectRecords: false,
+            canDestroyAllObjectRecords: false,
+            canBeAssignedToUsers: true,
+            canBeAssignedToAgents: false,
+            canBeAssignedToApiKeys: true,
+          },
+        });
+
+        relationsRoleId = roleData.createOneRole.id;
+
+        const { data: rowLevelPermissionData } =
+          await upsertRowLevelPermissionPredicates({
+            expectToFail: false,
+            input: {
+              roleId: relationsRoleId,
+              objectMetadataId: companyObjectMetadata.id,
+              predicates: [
+                {
+                  fieldMetadataId: companyNameField.id,
+                  operand: RowLevelPermissionPredicateOperand.CONTAINS,
+                  value: 'Apple',
+                },
+              ],
+              predicateGroups: [
+                {
+                  objectMetadataId: companyObjectMetadata.id,
+                  logicalOperator:
+                    RowLevelPermissionPredicateGroupLogicalOperator.AND,
+                  parentRowLevelPermissionPredicateGroupId: null,
+                },
+              ],
+            },
+          });
+
+        relationsPredicateId =
+          rowLevelPermissionData.upsertRowLevelPermissionPredicates
+            .predicates[0].id;
+        relationsPredicateGroupId =
+          rowLevelPermissionData.upsertRowLevelPermissionPredicates
+            .predicateGroups[0].id;
+
+        const apiKeyResponse = await makeMetadataApiRequest({
+          query: gql`
+            mutation CreateApiKey($input: CreateApiKeyInput!) {
+              createApiKey(input: $input) {
                 id
               }
             }
-          }
-        `,
-      };
+          `,
+          variables: {
+            input: {
+              name: 'Role relations API key',
+              expiresAt: '2099-12-31T23:59:59Z',
+              roleId: relationsRoleId,
+            },
+          },
+        });
 
-      const resp = await client
-        .post('/metadata')
-        .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
-        .send(query);
+        relationsApiKeyId = apiKeyResponse.body.data.createApiKey.id;
+      });
 
-      expect(resp.status).toBe(200);
-      expect(resp.body.errors).toBeUndefined();
+      afterAll(async () => {
+        await makeMetadataApiRequest({
+          query: gql`
+            mutation AssignRoleToApiKey($apiKeyId: UUID!, $roleId: UUID!) {
+              assignRoleToApiKey(apiKeyId: $apiKeyId, roleId: $roleId)
+            }
+          `,
+          variables: { apiKeyId: relationsApiKeyId, roleId: adminRoleId },
+        });
 
-      for (const role of resp.body.data.getRoles) {
-        expect(Array.isArray(role.workspaceMembers)).toBe(true);
-        expect(Array.isArray(role.agents)).toBe(true);
-        expect(Array.isArray(role.apiKeys)).toBe(true);
-        expect(Array.isArray(role.rowLevelPermissionPredicates)).toBe(true);
-        expect(Array.isArray(role.rowLevelPermissionPredicateGroups)).toBe(
-          true,
-        );
-      }
+        await makeMetadataApiRequest({
+          query: gql`
+            mutation RevokeApiKey($input: RevokeApiKeyInput!) {
+              revokeApiKey(input: $input) {
+                id
+              }
+            }
+          `,
+          variables: { input: { id: relationsApiKeyId } },
+        });
+
+        await client
+          .post('/metadata')
+          .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
+          .send(deleteOneRoleOperationFactory(relationsRoleId));
+
+        await testDataSource
+          .query('DELETE FROM core."apiKey" WHERE id = $1', [relationsApiKeyId])
+          .catch(() => {});
+      });
+
+      it('should resolve each relation for its own role only', async () => {
+        const query = {
+          query: `
+            query GetRoles {
+              getRoles {
+                id
+                workspaceMembers {
+                  id
+                }
+                agents {
+                  id
+                }
+                apiKeys {
+                  id
+                }
+                permissionFlags {
+                  flag
+                }
+                objectPermissions {
+                  objectMetadataId
+                }
+                fieldPermissions {
+                  fieldMetadataId
+                }
+                rowLevelPermissionPredicates {
+                  id
+                  roleId
+                }
+                rowLevelPermissionPredicateGroups {
+                  id
+                  roleId
+                }
+              }
+            }
+          `,
+        };
+
+        const resp = await client
+          .post('/metadata')
+          .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
+          .send(query);
+
+        expect(resp.status).toBe(200);
+        expect(resp.body.errors).toBeUndefined();
+
+        const roles: {
+          id: string;
+          workspaceMembers: { id: string }[];
+          agents: { id: string }[];
+          apiKeys: { id: string }[];
+          permissionFlags: { flag: string }[];
+          objectPermissions: { objectMetadataId: string }[];
+          fieldPermissions: { fieldMetadataId: string }[];
+          rowLevelPermissionPredicates: { id: string; roleId: string }[];
+          rowLevelPermissionPredicateGroups: { id: string; roleId: string }[];
+        }[] = resp.body.data.getRoles;
+
+        expect(roles.length).toBeGreaterThan(0);
+
+        for (const role of roles) {
+          expect(Array.isArray(role.workspaceMembers)).toBe(true);
+          expect(Array.isArray(role.agents)).toBe(true);
+          expect(Array.isArray(role.apiKeys)).toBe(true);
+          expect(Array.isArray(role.permissionFlags)).toBe(true);
+          expect(Array.isArray(role.objectPermissions)).toBe(true);
+          expect(Array.isArray(role.fieldPermissions)).toBe(true);
+          expect(Array.isArray(role.rowLevelPermissionPredicates)).toBe(true);
+          expect(Array.isArray(role.rowLevelPermissionPredicateGroups)).toBe(
+            true,
+          );
+        }
+
+        const relationsRole = roles.find((role) => role.id === relationsRoleId);
+        const guestRole = roles.find((role) => role.id === guestRoleId);
+
+        expect(relationsRole).toMatchObject({
+          id: relationsRoleId,
+          workspaceMembers: [],
+          agents: [],
+          apiKeys: [{ id: relationsApiKeyId }],
+          rowLevelPermissionPredicates: [
+            { id: relationsPredicateId, roleId: relationsRoleId },
+          ],
+          rowLevelPermissionPredicateGroups: [
+            { id: relationsPredicateGroupId, roleId: relationsRoleId },
+          ],
+        });
+
+        expect(guestRole?.workspaceMembers).toEqual([
+          { id: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL },
+        ]);
+        expect(guestRole?.rowLevelPermissionPredicates).toEqual([]);
+        expect(guestRole?.rowLevelPermissionPredicateGroups).toEqual([]);
+
+        for (const role of roles.filter(
+          (role) => role.id !== relationsRoleId,
+        )) {
+          expect(role.apiKeys).not.toContainEqual({ id: relationsApiKeyId });
+          expect(role.rowLevelPermissionPredicates).not.toContainEqual(
+            expect.objectContaining({ id: relationsPredicateId }),
+          );
+          expect(role.rowLevelPermissionPredicateGroups).not.toContainEqual(
+            expect.objectContaining({ id: relationsPredicateGroupId }),
+          );
+        }
+      });
     });
   });
 

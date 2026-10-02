@@ -164,10 +164,14 @@ export class RoleRelationLoadersFactory {
   ): Promise<AgentDTO[][]> {
     const workspaceId = payloads[0].workspaceId;
 
-    const [flatRoleTargetsByRoleId, { flatAgentMaps }] = await Promise.all([
-      this.getFlatRoleTargetsByRoleId(workspaceId),
-      this.workspaceCacheService.getOrRecompute(workspaceId, ['flatAgentMaps']),
-    ]);
+    const [flatRoleTargetsByRoleId, { flatAgentMaps, flatApplicationMaps }] =
+      await Promise.all([
+        this.getFlatRoleTargetsByRoleId(workspaceId),
+        this.workspaceCacheService.getOrRecompute(workspaceId, [
+          'flatAgentMaps',
+          'flatApplicationMaps',
+        ]),
+      ]);
 
     return payloads.map(({ roleId }) =>
       (flatRoleTargetsByRoleId[roleId] ?? [])
@@ -180,7 +184,11 @@ export class RoleRelationLoadersFactory {
             : undefined,
         )
         .filter(isDefined)
-        .filter((flatAgent) => !isDefined(flatAgent.deletedAt))
+        .filter(
+          (flatAgent) =>
+            !isDefined(flatAgent.deletedAt) &&
+            isDefined(flatApplicationMaps.byId[flatAgent.applicationId]),
+        )
         .map((flatAgent) =>
           fromFlatAgentWithRoleIdToAgentDto({ ...flatAgent, roleId }),
         ),
@@ -244,13 +252,13 @@ export class RoleRelationLoadersFactory {
       flatRowLevelPermissionPredicateMaps.byUniversalIdentifier,
     )
       .filter(isDefined)
-      .filter((predicate) => predicate.deletedAt === null);
+      .filter((predicate) => !isDefined(predicate.deletedAt));
 
     const activePredicateGroups = Object.values(
       flatRowLevelPermissionPredicateGroupMaps.byUniversalIdentifier,
     )
       .filter(isDefined)
-      .filter((predicateGroup) => predicateGroup.deletedAt === null);
+      .filter((predicateGroup) => !isDefined(predicateGroup.deletedAt));
 
     const predicatesByRoleId = groupBy(
       sortByPositionInRowLevelPermissionPredicateGroup(activePredicates),

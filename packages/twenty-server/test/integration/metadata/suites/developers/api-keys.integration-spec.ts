@@ -137,6 +137,8 @@ describe('apiKeysResolver (e2e)', () => {
         `,
       });
 
+      expect(response.status).toBe(200);
+      expect(response.body.data).toBeDefined();
       expect(response.body.errors).toBeUndefined();
 
       const roles: {
@@ -169,6 +171,8 @@ describe('apiKeysResolver (e2e)', () => {
         variables: { id: roleId },
       });
 
+      expect(response.status).toBe(200);
+      expect(response.body.data).toBeDefined();
       expect(response.body.errors).toBeUndefined();
 
       return response.body.data.getRole.apiKeys.map(
@@ -193,6 +197,9 @@ describe('apiKeysResolver (e2e)', () => {
           },
         },
       });
+
+      expect(createResponse.status).toBe(200);
+      expect(createResponse.body.data).toBeDefined();
 
       const apiKeyId: string = createResponse.body.data.createApiKey.id;
 

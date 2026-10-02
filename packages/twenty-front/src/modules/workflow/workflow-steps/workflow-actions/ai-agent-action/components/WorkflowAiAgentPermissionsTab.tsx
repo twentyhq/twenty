@@ -142,10 +142,22 @@ export const WorkflowAiAgentPermissionsTab = ({
   });
 
   const refetchAgentAndRoles = async () => {
-    await apolloClient.refetchQueries({ include: [GetRoleDocument] });
     const result = await refetchAgent();
+    const refetchedAgent = result?.data?.findOneAgent;
+    const refetchedRoleId = refetchedAgent?.roleId;
+
+    // The role may have just been created for this agent, so the GetRole query
+    // above can still be skipped or bound to a stale id when this runs
+    if (isDefined(refetchedRoleId)) {
+      await apolloClient.query({
+        query: GetRoleDocument,
+        variables: { id: refetchedRoleId },
+        fetchPolicy: 'network-only',
+      });
+    }
+
     return {
-      refetchedAgent: result?.data?.findOneAgent,
+      refetchedAgent,
     };
   };
 

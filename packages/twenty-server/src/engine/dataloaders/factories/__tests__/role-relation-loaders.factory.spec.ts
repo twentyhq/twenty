@@ -41,9 +41,11 @@ const buildRoleTarget = ({
 
 const buildAgent = ({
   id,
+  applicationId = 'application',
   deletedAt = null,
 }: {
   id: string;
+  applicationId?: string;
   deletedAt?: string | null;
 }) => ({
   id,
@@ -57,7 +59,7 @@ const buildAgent = ({
   responseFormat: null,
   evaluationInputs: [],
   isCustom: true,
-  applicationId: 'application',
+  applicationId,
   workspaceId: WORKSPACE_ID,
   createdAt: '2026-01-01T00:00:00.000Z',
   updatedAt: '2026-01-02T00:00:00.000Z',
@@ -114,6 +116,11 @@ const CACHE_DATA = {
       agentId: 'agent-deleted',
     }),
     buildRoleTarget({
+      id: 'target-admin-agent-orphan',
+      roleId: ADMIN_ROLE_ID,
+      agentId: 'agent-orphan',
+    }),
+    buildRoleTarget({
       id: 'target-member-api-key',
       roleId: MEMBER_ROLE_ID,
       apiKeyId: 'api-key-active',
@@ -157,7 +164,11 @@ const CACHE_DATA = {
   flatAgentMaps: buildFlatEntityMaps([
     buildAgent({ id: 'agent-active' }),
     buildAgent({ id: 'agent-deleted', deletedAt: '2026-01-01T00:00:00.000Z' }),
+    buildAgent({ id: 'agent-orphan', applicationId: 'missing-application' }),
   ]),
+  flatApplicationMaps: {
+    byId: { application: { id: 'application' } },
+  },
   apiKeyMap: {
     'api-key-active': {
       id: 'api-key-active',
@@ -282,7 +293,7 @@ describe('RoleRelationLoadersFactory', () => {
     expect(userWorkspaceRepository.find).not.toHaveBeenCalled();
   });
 
-  it('should resolve agents from the cache and skip deleted agents', async () => {
+  it('should resolve agents from the cache and skip deleted or orphaned agents', async () => {
     const { agentsByRoleIdLoader } = factory.create();
 
     const [adminAgents, memberAgents, guestAgents] =
