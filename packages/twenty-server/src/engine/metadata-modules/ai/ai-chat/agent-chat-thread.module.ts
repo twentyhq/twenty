@@ -1,9 +1,10 @@
 import { Module } from '@nestjs/common';
 
-import { RecordShareModule } from 'src/engine/core-modules/record-share/record-share.module';
+import { RecordShareStorageModule } from 'src/engine/core-modules/record-share/record-share-storage.module';
 import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
 import { AgentChatThreadLifecycleModule } from 'src/engine/metadata-modules/ai/ai-chat/agent-chat-thread-lifecycle.module';
 import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
+import { AgentChatThreadParticipantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant.service';
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { AgentHistoryModule } from 'src/engine/metadata-modules/ai/ai-history/ai-history.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
@@ -16,11 +17,19 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     AgentChatThreadLifecycleModule,
     AgentHistoryModule,
     PermissionsModule,
-    RecordShareModule,
+    RecordShareStorageModule,
     UserWorkspaceModule,
     WorkspaceCacheModule,
   ],
-  providers: [AgentChatSharingService, AgentChatThreadService],
-  exports: [AgentChatSharingService, AgentChatThreadService],
+  providers: [
+    AgentChatSharingService,
+    AgentChatThreadParticipantService,
+    AgentChatThreadService,
+  ],
+  exports: [
+    AgentChatSharingService,
+    AgentChatThreadParticipantService,
+    AgentChatThreadService,
+  ],
 })
 export class AgentChatThreadModule {}

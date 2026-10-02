@@ -17,7 +17,6 @@ import { FieldWidgetEditAction } from '@/page-layout/widgets/field/components/Fi
 import { FieldWidgetRelationEditAction } from '@/page-layout/widgets/field/components/FieldWidgetRelationEditAction';
 import { useFieldWidgetFieldDefinition } from '@/page-layout/widgets/field/hooks/useFieldWidgetFieldDefinition';
 import { generateFieldWidgetInstanceId } from '@/page-layout/widgets/field/utils/generateFieldWidgetInstanceId';
-import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
@@ -89,10 +88,7 @@ export const WidgetActionFieldEdit = ({
     isDisplayModeFixHeight: false,
     isRecordFieldReadOnly: isRecordFieldReadOnly({
       isRecordReadOnly,
-      objectPermissions: getObjectPermissionsForObject(
-        objectPermissionsByObjectMetadataId,
-        objectMetadataItem.id,
-      ),
+      objectMetadataId: objectMetadataItem.id,
       fieldMetadataItem,
       fieldDefinition,
       objectPermissionsByObjectMetadataId,

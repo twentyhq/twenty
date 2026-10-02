@@ -57,38 +57,6 @@ export class RowLevelPermissionPredicateGroupService {
       .map(fromFlatRowLevelPermissionPredicateGroupToDto);
   }
 
-  async findByRole(
-    workspaceId: string,
-    roleId: string,
-  ): Promise<RowLevelPermissionPredicateGroupDTO[]> {
-    const hasRowLevelPermissionFeature =
-      await this.hasRowLevelPermissionFeature(workspaceId);
-
-    if (!hasRowLevelPermissionFeature) {
-      return [];
-    }
-
-    const { flatRowLevelPermissionPredicateGroupMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatRowLevelPermissionPredicateGroupMaps'],
-        },
-      );
-
-    return Object.values(
-      flatRowLevelPermissionPredicateGroupMaps.byUniversalIdentifier,
-    )
-      .filter(isDefined)
-      .filter((group) => group.deletedAt === null && group.roleId === roleId)
-      .sort(
-        (a, b) =>
-          (a.positionInRowLevelPermissionPredicateGroup ?? 0) -
-          (b.positionInRowLevelPermissionPredicateGroup ?? 0),
-      )
-      .map(fromFlatRowLevelPermissionPredicateGroupToDto);
-  }
-
   public async deleteAllRowLevelPermissionPredicateGroups(workspaceId: string) {
     // Checking first keeps the common no-op a read and lets cleanup retry on every pass after a failed attempt
     const hasPredicateGroups =

@@ -25,7 +25,8 @@ export const RecordBoardCardBody = () => {
     RecordBoardCardContext,
   );
 
-  const { updateOneRecord, objectPermissions } = useContext(RecordBoardContext);
+  const { updateOneRecord, objectMetadataItem } =
+    useContext(RecordBoardContext);
 
   const {
     labelIdentifierFieldMetadataItem,
@@ -88,7 +89,7 @@ export const RecordBoardCardBody = () => {
                 isLabelIdentifier: false,
                 isRecordFieldReadOnly: isRecordFieldReadOnly({
                   isRecordReadOnly,
-                  objectPermissions,
+                  objectMetadataId: objectMetadataItem.id,
                   fieldMetadataItem,
                   fieldDefinition: correspondingFieldDefinition,
                   objectPermissionsByObjectMetadataId,

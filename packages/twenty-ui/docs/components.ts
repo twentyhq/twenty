@@ -1,3 +1,4 @@
+import { CURRENCY_PICKER_PART_PROP_DESCRIPTIONS } from './currencyPickerPartPropDescriptions';
 import { OVERFLOWING_LIST_PROP_DESCRIPTIONS } from './overflowingListPropDescriptions';
 import { METRIC_ROW_PROP_DESCRIPTIONS } from './metricRowPropDescriptions';
 import { PROGRESS_RING_PROP_DESCRIPTIONS } from './progressRingPropDescriptions';
@@ -65,6 +66,14 @@ import { TOOLTIP_PROP_DESCRIPTIONS } from './tooltipPropDescriptions';
 import { VISIBILITY_HIDDEN_PROP_DESCRIPTIONS } from './visibilityHiddenPropDescriptions';
 
 export const DOCUMENTED_COMPONENTS = [
+  {
+    name: 'CurrencyPicker',
+    source: 'components/input/CurrencyPicker/CurrencyPicker.tsx',
+    entryPoint: 'twenty-ui/components',
+    slug: 'components/currency-picker',
+    parts: ['Trigger', 'Options'],
+    partPropDescriptions: CURRENCY_PICKER_PART_PROP_DESCRIPTIONS,
+  },
   {
     name: 'ProgressRing',
     source: 'primitives/feedback/ProgressRing/ProgressRing.tsx',

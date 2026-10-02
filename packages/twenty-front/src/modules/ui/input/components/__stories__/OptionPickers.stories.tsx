@@ -1,5 +1,4 @@
 import { ConfigVariableDatabaseInput } from '@/settings/admin-panel/config-variables/components/ConfigVariableDatabaseInput';
-import { CurrencyPickerDropdownButton } from '@/ui/input/components/internal/currency/components/CurrencyPickerDropdownButton';
 import { PhoneCountryPickerDropdownButton } from '@/ui/input/components/internal/phone/components/PhoneCountryPickerDropdownButton';
 import { DropdownMenuInnerSelect } from '@/ui/layout/dropdown/components/DropdownMenuInnerSelect';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
@@ -7,16 +6,6 @@ import { useState } from 'react';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { ConfigVariableType } from '~/generated-admin/graphql';
-
-const CurrencyExample = () => {
-  const [currency, setCurrency] = useState('USD');
-  return (
-    <CurrencyPickerDropdownButton
-      selectedCurrencyCode={currency}
-      onChange={(option) => setCurrency(option.value)}
-    />
-  );
-};
 
 const PhoneExample = () => {
   const [country, setCountry] = useState('US');
@@ -63,38 +52,6 @@ const meta: Meta = {
 };
 export default meta;
 type Story = StoryObj;
-
-export const CurrencySearchAndKeyboard: Story = {
-  render: () => <CurrencyExample />,
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const body = within(canvasElement.ownerDocument.body);
-    const trigger = canvas.getByRole('button');
-    await userEvent.click(trigger);
-    expect(await body.findByRole('dialog', { name: 'Currency' })).toBeVisible();
-    const search = await body.findByRole('searchbox', { name: 'Search' });
-    await userEvent.type(search, 'zzzzzz');
-    expect(await body.findByText('No results')).toBeVisible();
-    await userEvent.clear(search);
-    await userEvent.type(search, 'euro');
-    const euro = await body.findByRole('button', { name: /Euro \(EUR\)/ });
-    expect(
-      body.queryByRole('button', { pressed: true }),
-    ).not.toBeInTheDocument();
-    await waitFor(() => expect(euro).toHaveAttribute('data-highlighted'));
-    await userEvent.keyboard('{Enter}');
-    await waitFor(() =>
-      expect(body.queryByRole('dialog')).not.toBeInTheDocument(),
-    );
-    expect(trigger).toHaveTextContent('EUR');
-    await waitFor(() => expect(trigger).toHaveFocus());
-    await userEvent.click(trigger);
-    expect(await body.findByRole('searchbox', { name: 'Search' })).toHaveValue(
-      '',
-    );
-    await userEvent.keyboard('{Escape}');
-  },
-};
 
 export const PhoneSearchAndSelection: Story = {
   render: () => <PhoneExample />,

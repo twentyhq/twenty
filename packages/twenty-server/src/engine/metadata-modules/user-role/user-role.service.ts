@@ -5,6 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { In, Not, Repository } from 'typeorm';
 
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { type FlatWorkspaceMember } from 'src/engine/core-modules/user/types/flat-workspace-member.type';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -203,37 +204,25 @@ export class UserRoleService {
   public async getWorkspaceMembersAssignedToRole(
     roleId: string,
     workspaceId: string,
-  ): Promise<WorkspaceMemberWorkspaceEntity[]> {
-    const authContext = buildSystemAuthContext(workspaceId);
-
+  ): Promise<FlatWorkspaceMember[]> {
     const userWorkspaceIdsWithRole =
       await this.getUserWorkspaceIdsAssignedToRole(roleId, workspaceId);
 
-    const userIds = await this.userWorkspaceRepository
-      .find({
-        where: {
-          id: In(userWorkspaceIdsWithRole),
-        },
+    const { flatWorkspaceMemberMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatWorkspaceMemberMaps',
+      ]);
+
+    return userWorkspaceIdsWithRole
+      .map((userWorkspaceId) => {
+        const workspaceMemberId =
+          flatWorkspaceMemberMaps.idByUserWorkspaceId[userWorkspaceId];
+
+        return isDefined(workspaceMemberId)
+          ? flatWorkspaceMemberMaps.byId[workspaceMemberId]
+          : undefined;
       })
-      .then((userWorkspaces) =>
-        userWorkspaces.map((userWorkspace) => userWorkspace.userId),
-      );
-
-    return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-      const workspaceMemberRepository =
-        this.workspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
-          'workspaceMember',
-          { shouldBypassPermissionChecks: true },
-        );
-
-      const workspaceMembers = await workspaceMemberRepository.find({
-        where: {
-          userId: In(userIds),
-        },
-      });
-
-      return workspaceMembers;
-    }, authContext);
+      .filter(isDefined);
   }
 
   private validateNotSelfAssignmentOrThrow({

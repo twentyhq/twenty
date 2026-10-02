@@ -50,6 +50,7 @@
     "CodeEditor",
     "CodeEditorHeader",
     "CommandBlock",
+    "CurrencyPicker",
     "Dropdown",
     "IconButton",
     "ImageInput",
