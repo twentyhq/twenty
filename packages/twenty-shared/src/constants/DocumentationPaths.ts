@@ -164,6 +164,7 @@ export const DOCUMENTATION_PATHS = {
   UI_COMPONENTS_NAVIGATION_MENU_ITEMS: '/ui/components/navigation/menu-items',
   UI_COMPONENTS_NAVIGATION_MENU_PICKER: '/ui/components/navigation/menu-picker',
   UI_COMPONENTS_NAVIGATION_TAB_BUTTON: '/ui/components/navigation/tab-button',
+  UI_COMPONENTS_RESIZABLE_PANEL: '/ui/components/resizable-panel',
   UI_COMPONENTS_OVERVIEW: '/ui/components/overview',
   UI_COMPONENTS_SETTINGS_SETTINGS_ROW: '/ui/components/settings/settings-row',
   UI_DARK_MODE: '/ui/dark-mode',
