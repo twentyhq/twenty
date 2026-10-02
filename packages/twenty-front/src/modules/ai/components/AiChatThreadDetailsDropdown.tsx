@@ -75,7 +75,7 @@ export const AiChatThreadDetailsDropdown = ({
     recordPickerInstanceId: recordPickerDropdownId,
   });
   const { openDropdown } = useOpenDropdown();
-  const setRecordPickerSearchFilter = useSetAtomComponentState(
+  const setMultipleRecordPickerSearchFilter = useSetAtomComponentState(
     multipleRecordPickerSearchFilterComponentState,
     recordPickerDropdownId,
   );
@@ -177,7 +177,7 @@ export const AiChatThreadDetailsDropdown = ({
           dropdownPlacement="bottom-start"
           disableClickForClickableComponent
           clickableComponent={<span />}
-          onClose={() => setRecordPickerSearchFilter('')}
+          onClose={() => setMultipleRecordPickerSearchFilter('')}
           dropdownComponents={
             <MultipleRecordPicker
               focusId={recordPickerDropdownId}
