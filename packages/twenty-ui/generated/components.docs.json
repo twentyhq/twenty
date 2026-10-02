@@ -1,5 +1,121 @@
 [
   {
+    "name": "CurrencyPicker",
+    "entryPoint": "twenty-ui/components",
+    "slug": "components/currency-picker",
+    "props": [],
+    "parts": [
+      {
+        "name": "Trigger",
+        "props": [
+          {
+            "name": "className",
+            "type": "string | ((state: PopoverTriggerState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+          },
+          {
+            "name": "disabled",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": null,
+            "description": "Disables opening the picker."
+          },
+          {
+            "name": "id",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "ID forwarded to the trigger button."
+          },
+          {
+            "name": "nativeButton",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "true",
+            "description": "Whether the component renders a native `<button>` element when replacing it\nvia the `render` prop.\nSet to `false` if the rendered element is not a button (e.g. `<div>`)."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, PopoverTriggerState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Replaces the native trigger button. Forward the supplied props and ref when rendering a custom component."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: PopoverTriggerState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+          },
+          {
+            "name": "value",
+            "type": "string",
+            "required": true,
+            "defaultValue": null,
+            "description": "Required currency code displayed beside the chevron. The application chooses its initial value and any fallback."
+          }
+        ]
+      },
+      {
+        "name": "Options",
+        "props": [
+          {
+            "name": "currencies",
+            "type": "readonly CurrencyPickerOption[]",
+            "required": true,
+            "defaultValue": null,
+            "description": "Available currency codes and names, in catalogue order. Each code must be unique. An option can be disabled."
+          },
+          {
+            "name": "disabled",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "false",
+            "description": "Disables search and every currency option."
+          },
+          {
+            "name": "emptyLabel",
+            "type": "string",
+            "required": false,
+            "defaultValue": "No results",
+            "description": "Text announced when no currencies match. Defaults to No results."
+          },
+          {
+            "name": "onValueChange",
+            "type": "(code: string) => void",
+            "required": true,
+            "defaultValue": null,
+            "description": "Called with the code chosen by pointer or keyboard. The application updates the selected value."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Replaces the non-interactive root div. Forward the supplied props and ref when rendering a custom component."
+          },
+          {
+            "name": "searchLabel",
+            "type": "string",
+            "required": false,
+            "defaultValue": "Search",
+            "description": "Search placeholder and accessible name. Defaults to Search."
+          },
+          {
+            "name": "value",
+            "type": "string",
+            "required": false,
+            "defaultValue": null,
+            "description": "Selected currency code. Its matching row appears first and is marked pressed."
+          }
+        ]
+      }
+    ]
+  },
+  {
     "name": "ProgressRing",
     "entryPoint": "twenty-ui/primitives/feedback",
     "slug": "feedback/progress-ring",
