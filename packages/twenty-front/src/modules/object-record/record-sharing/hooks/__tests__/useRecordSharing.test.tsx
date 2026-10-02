@@ -11,6 +11,7 @@ import { type ReactNode } from 'react';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { RecordSharingPermissionsEffect } from '@/object-record/record-sharing/components/RecordSharingPermissionsEffect';
 import { RecordSharingRefreshEffect } from '@/object-record/record-sharing/components/RecordSharingRefreshEffect';
 import { useRecordSharing } from '@/object-record/record-sharing/hooks/useRecordSharing';
 import { recordPermissionsFamilyState } from '@/object-record/record-sharing/states/recordPermissionsFamilyState';
@@ -194,8 +195,18 @@ describe('useRecordSharing', () => {
   it('stores the record permissions of every loaded answer, focus refreshes included', async () => {
     const { request, wrapper, readStoredPermissions } = createHarness();
     const TestSharingRefresh = () => {
-      const { refetch } = useRecordSharing({ recordTarget: RECORD_TARGET });
-      return <RecordSharingRefreshEffect refetch={refetch} />;
+      const { sharing, refetch } = useRecordSharing({
+        recordTarget: RECORD_TARGET,
+      });
+      return (
+        <>
+          <RecordSharingPermissionsEffect
+            recordTarget={RECORD_TARGET}
+            permissions={sharing?.permissions}
+          />
+          <RecordSharingRefreshEffect refetch={refetch} />
+        </>
+      );
     };
     render(<TestSharingRefresh />, { wrapper });
     await waitFor(() =>
@@ -228,7 +239,7 @@ describe('useRecordSharing', () => {
       });
     });
     expect(result.current.sharing?.shares).toEqual([]);
-    expect(readStoredPermissions()).toEqual(SHARING.permissions);
+    expect(readStoredPermissions()).toBeUndefined();
     expect(mockEnqueueToast).toHaveBeenCalledTimes(1);
   });
 

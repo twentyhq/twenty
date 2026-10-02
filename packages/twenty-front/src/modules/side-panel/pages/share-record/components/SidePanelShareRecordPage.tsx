@@ -2,6 +2,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { getLinkToShowPage } from '@/object-metadata/utils/getLinkToShowPage';
+import { RecordSharingPermissionsEffect } from '@/object-record/record-sharing/components/RecordSharingPermissionsEffect';
 import { RecordSharingRefreshEffect } from '@/object-record/record-sharing/components/RecordSharingRefreshEffect';
 import { useRecordSharing } from '@/object-record/record-sharing/hooks/useRecordSharing';
 import { SidePanelShareRecordContent } from '@/side-panel/pages/share-record/components/SidePanelShareRecordContent';
@@ -21,6 +22,10 @@ const SidePanelShareRecordPageContent = ({
 
   return (
     <>
+      <RecordSharingPermissionsEffect
+        recordTarget={target}
+        permissions={sharingState.sharing?.permissions}
+      />
       <RecordSharingRefreshEffect refetch={sharingState.refetch} />
       <SidePanelShareRecordContent
         objectLabelPlural={objectMetadataItem.labelPlural}

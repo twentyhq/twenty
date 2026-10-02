@@ -1,6 +1,5 @@
 import { type ApolloCache } from '@apollo/client';
 import { useMutation, useQuery } from '@apollo/client/react';
-import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components';
 
@@ -29,16 +28,6 @@ export const useRecordSharing = ({
     fetchPolicy: 'network-only',
     notifyOnNetworkStatusChange: false,
   });
-  const permissions = data?.recordSharing.permissions;
-  const { objectMetadataId, recordId } = recordTarget;
-
-  // Mutations write their response into the same query, so every answer
-  // about the record, fetched or returned, keeps its permissions current
-  useEffect(() => {
-    if (isDefined(permissions)) {
-      setRecordPermissions({ objectMetadataId, recordId }, permissions);
-    }
-  }, [permissions, objectMetadataId, recordId, setRecordPermissions]);
 
   const writeSharing = (
     cache: ApolloCache,
@@ -77,7 +66,10 @@ export const useRecordSharing = ({
     mutate: () => Promise<RecordSharingFieldsFragment | undefined>,
   ) => {
     try {
-      await mutate();
+      const sharing = await mutate();
+      if (isDefined(sharing)) {
+        setRecordPermissions(recordTarget, sharing.permissions);
+      }
     } catch (mutationError) {
       enqueueToast(getToastOptionsFromError({ error: mutationError }));
     }
