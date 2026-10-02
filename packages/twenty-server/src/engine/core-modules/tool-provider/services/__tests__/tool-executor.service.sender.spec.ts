@@ -34,7 +34,6 @@ const build = () => {
     {} as never,
     {} as never,
     {} as never,
-    {} as never,
   );
   const current = {
     workspaceId: 'workspace',

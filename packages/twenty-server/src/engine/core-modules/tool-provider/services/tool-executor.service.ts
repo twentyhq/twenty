@@ -29,7 +29,6 @@ import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types
 import { buildRequiredToolAuthContext } from 'src/engine/core-modules/tool-provider/utils/build-required-tool-auth-context.util';
 import { withResolvedToolAuthContext } from 'src/engine/core-modules/tool-provider/utils/with-resolved-tool-auth-context.util';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
-import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
@@ -54,8 +53,6 @@ export class ToolExecutorService {
     private readonly workspaceCacheService: WorkspaceCacheService,
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
-    @InjectRepository(UserWorkspaceEntity)
-    private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
   ) {}
 
   async dispatch(
@@ -71,7 +68,6 @@ export class ToolExecutorService {
       {
         context: executionContext,
         userRepository: this.userRepository,
-        userWorkspaceRepository: this.userWorkspaceRepository,
         workspaceCacheService: this.workspaceCacheService,
       },
       (contextWithAuth) =>
@@ -112,7 +108,6 @@ export class ToolExecutorService {
       (await buildRequiredToolAuthContext({
         context,
         userRepository: this.userRepository,
-        userWorkspaceRepository: this.userWorkspaceRepository,
         workspaceCacheService: this.workspaceCacheService,
       }));
 

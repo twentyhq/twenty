@@ -92,6 +92,24 @@ describe('deleteUser', () => {
         );
       });
 
+    const getRolesWithMembersQuery = {
+      query: `
+        query GetRoles {
+          getRoles { id label workspaceMembers { id } }
+        }
+      `,
+    };
+
+    // Primes the memoized member cache, so a missed invalidation on join would hide the new member
+    await client
+      .post('/metadata')
+      .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
+      .send(getRolesWithMembersQuery)
+      .expect(200)
+      .expect((res) => {
+        expect(res.body.errors).toBeUndefined();
+      });
+
     const testEmail = `test_user_${Date.now()}@example.com`;
     const signUpMutation = signUpOperationFactory({
       email: testEmail,
@@ -133,6 +151,24 @@ describe('deleteUser', () => {
     expect(createdMember).toBeDefined();
     const createdWorkspaceMemberId = createdMember.id;
 
+    const rolesAfterJoinResponse = await client
+      .post('/metadata')
+      .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
+      .send(getRolesWithMembersQuery);
+
+    expect(rolesAfterJoinResponse.body.errors).toBeUndefined();
+    expect(
+      (
+        rolesAfterJoinResponse.body.data.getRoles as Array<{
+          workspaceMembers: Array<{ id: string }>;
+        }>
+      ).some((role) =>
+        role.workspaceMembers.some(
+          (workspaceMember) => workspaceMember.id === createdWorkspaceMemberId,
+        ),
+      ),
+    ).toBe(true);
+
     const deleteUserFromWorkspaceMutation = {
       query: `
         mutation DeleteUserFromWorkspace {
@@ -161,14 +197,6 @@ describe('deleteUser', () => {
       membersAfterDeletionResponse.body.data.workspaceMember;
 
     expect(createdMemberAfterDeletion).toBeNull();
-
-    const getRolesWithMembersQuery = {
-      query: `
-        query GetRoles {
-          getRoles { id label workspaceMembers { id } }
-        }
-      `,
-    };
 
     const rolesResponse = await client
       .post('/metadata')
