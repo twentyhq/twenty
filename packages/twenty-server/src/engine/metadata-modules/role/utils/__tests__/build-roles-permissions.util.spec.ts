@@ -202,6 +202,65 @@ describe('buildRolesPermissions', () => {
     });
   });
 
+  it("keeps each role's overrides, field restrictions and row level rules to that role", () => {
+    const otherRole = { ...ROLE, id: 'other' };
+    const otherPredicate = {
+      ...PREDICATE,
+      id: 'other-predicate',
+      roleId: otherRole.id,
+    };
+    const overrideFor = (canReadObjectRecords: boolean) => ({
+      objectMetadataId: COMPANY.id,
+      canReadObjectRecords,
+      canUpdateObjectRecords: null,
+      canSoftDeleteObjectRecords: null,
+      canDestroyObjectRecords: null,
+    });
+    const fieldRestrictionFor = (fieldMetadataId: string) => ({
+      objectMetadataId: COMPANY.id,
+      fieldMetadataId,
+      canReadFieldValue: false,
+      canUpdateFieldValue: null,
+    });
+
+    const permissions = build({
+      role: [ROLE, otherRole],
+      objectPermission: {
+        byRoleId: new Map([
+          [ROLE.id, [overrideFor(false)]],
+          [otherRole.id, [overrideFor(true)]],
+        ]),
+      },
+      fieldPermission: {
+        byRoleId: new Map([
+          [ROLE.id, [fieldRestrictionFor('company-revenue')]],
+          [otherRole.id, [fieldRestrictionFor('company-domain')]],
+        ]),
+      },
+      rowLevelPermissionPredicate: {
+        byRoleId: new Map([
+          [ROLE.id, [PREDICATE]],
+          [otherRole.id, [otherPredicate]],
+        ]),
+      },
+    });
+
+    expect(permissions.role.company).toMatchObject({
+      canReadObjectRecords: false,
+      restrictedFields: {
+        'company-revenue': { canRead: false, canUpdate: null },
+      },
+      rowLevelPermissionPredicates: [PREDICATE],
+    });
+    expect(permissions.other.company).toMatchObject({
+      canReadObjectRecords: true,
+      restrictedFields: {
+        'company-domain': { canRead: false, canUpdate: null },
+      },
+      rowLevelPermissionPredicates: [otherPredicate],
+    });
+  });
+
   it.each<
     [
       string,
