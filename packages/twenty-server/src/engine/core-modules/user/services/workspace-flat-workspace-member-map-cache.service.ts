@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 
-import { isDefined } from 'twenty-shared/utils';
 import { IsNull } from 'typeorm';
 
 import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
 import { type WorkspaceCacheProviderContext } from 'src/engine/workspace-cache/types/workspace-cache-provider-context.type';
 
 import { FlatWorkspaceMemberMaps } from 'src/engine/core-modules/user/types/flat-workspace-member-maps.type';
+import { buildFlatWorkspaceMemberMaps } from 'src/engine/core-modules/user/utils/build-flat-workspace-member-maps.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
@@ -38,46 +38,20 @@ export class WorkspaceFlatWorkspaceMemberMapCacheService extends WorkspaceCacheP
   }: WorkspaceCacheProviderContext<
     typeof USER_WORKSPACE_ROWS_REQUIREMENT
   >): Promise<FlatWorkspaceMemberMaps> {
-    const flatWorkspaceMemberMaps =
-      await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-        const workspaceMemberRepository =
-          this.workspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
-            'workspaceMember',
-            { shouldBypassPermissionChecks: true },
-          );
+    const workspaceMembers =
+      await this.workspaceOrmManager.executeInWorkspaceContext(
+        () =>
+          this.workspaceOrmManager
+            .getRepository<WorkspaceMemberWorkspaceEntity>('workspaceMember', {
+              shouldBypassPermissionChecks: true,
+            })
+            .find({ withDeleted: true }),
+        buildSystemAuthContext(workspaceId),
+      );
 
-        const flatWorkspaceMemberMaps: FlatWorkspaceMemberMaps = {
-          byId: {},
-          idByUserId: {},
-          idByUserWorkspaceId: {},
-          userWorkspaceIdByUserId: {},
-        };
-        const workspaceMembers = await workspaceMemberRepository.find({
-          withDeleted: true,
-        });
-
-        for (const workspaceMember of workspaceMembers) {
-          flatWorkspaceMemberMaps.byId[workspaceMember.id] = workspaceMember;
-          flatWorkspaceMemberMaps.idByUserId[workspaceMember.userId] =
-            workspaceMember.id;
-        }
-
-        return flatWorkspaceMemberMaps;
-      }, buildSystemAuthContext(workspaceId));
-
-    for (const userWorkspace of rows.userWorkspace) {
-      const workspaceMemberId =
-        flatWorkspaceMemberMaps.idByUserId[userWorkspace.userId];
-
-      flatWorkspaceMemberMaps.userWorkspaceIdByUserId[userWorkspace.userId] =
-        userWorkspace.id;
-
-      if (isDefined(workspaceMemberId)) {
-        flatWorkspaceMemberMaps.idByUserWorkspaceId[userWorkspace.id] =
-          workspaceMemberId;
-      }
-    }
-
-    return flatWorkspaceMemberMaps;
+    return buildFlatWorkspaceMemberMaps({
+      workspaceMembers,
+      userWorkspaces: rows.userWorkspace,
+    });
   }
 }

@@ -971,8 +971,7 @@ export class DataloaderService {
               ? flatWorkspaceMemberMaps.byId[workspaceMemberId]
               : undefined;
           })
-          .filter(isDefined)
-          .filter((workspaceMember) => !isDefined(workspaceMember.deletedAt)),
+          .filter(isDefined),
       );
     });
   }

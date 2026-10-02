@@ -66,6 +66,9 @@ describe('buildRequiredToolAuthContext', () => {
 
     expect(
       dependencies.workspaceCacheService.getOrRecompute,
+    ).toHaveBeenCalledTimes(1);
+    expect(
+      dependencies.workspaceCacheService.getOrRecompute,
     ).toHaveBeenCalledWith(workspaceId, ['flatWorkspaceMemberMaps']);
     expect(authContext).toMatchObject({
       type: 'user',

@@ -246,7 +246,7 @@ export class UserWorkspaceService {
 
     await this.createWorkspaceMember(workspace.id, user);
 
-    await this.workspaceCacheService.flush(workspace.id, [
+    await this.workspaceCacheService.invalidateAndRecompute(workspace.id, [
       'flatWorkspaceMemberMaps',
     ]);
 
@@ -383,10 +383,6 @@ export class UserWorkspaceService {
         coreWorkflowIds: createdCoreWorkflowIds,
       });
     }
-
-    await this.workspaceCacheService.flush(workspaceId, [
-      'flatWorkspaceMemberMaps',
-    ]);
   }
 
   async findAvailableWorkspacesByEmail(email: string) {

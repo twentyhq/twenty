@@ -268,15 +268,8 @@ export class WorkflowRunRecordShareService {
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatWorkspaceMemberMaps',
       ]);
-    const workspaceMemberId =
-      flatWorkspaceMemberMaps.idByUserWorkspaceId[userWorkspaceId];
-    const workspaceMember = isDefined(workspaceMemberId)
-      ? flatWorkspaceMemberMaps.byId[workspaceMemberId]
-      : undefined;
 
-    return isDefined(workspaceMember) && !isDefined(workspaceMember.deletedAt)
-      ? workspaceMember.id
-      : null;
+    return flatWorkspaceMemberMaps.idByUserWorkspaceId[userWorkspaceId] ?? null;
   }
 
   private findRuns({

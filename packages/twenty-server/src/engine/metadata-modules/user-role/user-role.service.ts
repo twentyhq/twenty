@@ -222,10 +222,7 @@ export class UserRoleService {
           ? flatWorkspaceMemberMaps.byId[workspaceMemberId]
           : undefined;
       })
-      .filter(
-        (workspaceMember): workspaceMember is FlatWorkspaceMember =>
-          isDefined(workspaceMember) && !isDefined(workspaceMember.deletedAt),
-      );
+      .filter(isDefined);
   }
 
   private validateNotSelfAssignmentOrThrow({
