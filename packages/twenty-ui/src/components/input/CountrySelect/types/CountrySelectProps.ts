@@ -9,8 +9,6 @@ export type CountrySelectProps = Omit<
   | 'value'
   | 'defaultValue'
   | 'onChange'
-  | 'handle'
-  | 'payload'
   | 'openOnHover'
   | 'delay'
   | 'closeDelay'

@@ -4,6 +4,7 @@ describe('normalizeSearchText', () => {
   it.each([
     { text: 'Hello World', expected: 'hello world' },
     { text: 'MixedCase123', expected: 'mixedcase123' },
+    { text: 'İtalya', expected: 'italya' },
   ])('folds case in $text', ({ text, expected }) => {
     expect(normalizeSearchText(text)).toBe(expected);
   });
@@ -22,6 +23,10 @@ describe('normalizeSearchText', () => {
     { text: 'NaÏvE', expected: 'naive' },
     { text: 'ZÜRICH', expected: 'zurich' },
     { text: 'Côte d’Ivoire', expected: 'cote d’ivoire' },
+    { text: "Côte d'Ivoire", expected: "cote d'ivoire" },
+    { text: 'Curaçao', expected: 'curacao' },
+    { text: 'RÉUNION', expected: 'reunion' },
+    { text: 'Türkiye', expected: 'turkiye' },
     { text: 'Việt Nam', expected: 'viet nam' },
     { text: 'Åland å', expected: 'aland a' },
     { text: 'e\u0301', expected: 'e' },
@@ -37,6 +42,8 @@ describe('normalizeSearchText', () => {
     { text: 'Łódź', expected: 'lodz' },
     { text: 'Øyvind', expected: 'oyvind' },
     { text: 'Đan Mạch', expected: 'dan mach' },
+    { text: 'Ðakovo', expected: 'dakovo' },
+    { text: 'Þingvellir', expected: 'thingvellir' },
     { text: 'Kıbrıs', expected: 'kibris' },
     { text: 'Ŋaŋ', expected: 'ngang' },
     { text: 'ÆØÐÞŁŒẞ', expected: 'aeodthloess' },
@@ -233,6 +240,7 @@ describe('normalizeSearchText', () => {
     { text: '   ', expected: '   ' },
     { text: 'user@example.com', expected: 'user@example.com' },
     { text: '123-456-7890', expected: '123-456-7890' },
+    { text: '+44', expected: '+44' },
     { text: 'Café #1', expected: 'cafe #1' },
   ])('preserves whitespace and punctuation in $text', ({ text, expected }) => {
     expect(normalizeSearchText(text)).toBe(expected);

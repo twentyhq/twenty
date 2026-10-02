@@ -48,6 +48,6 @@ export const countrySelectSandboxTest: TwentyUiGalleryPlayFunction = async ({
   await userEvent.click(billing);
   await expectSandboxErrors({
     requiredErrors: [SANDBOX_ERROR_PATTERNS.VIEWPORT_WIDTH],
-    allowedAdditionalErrors: [SANDBOX_ERROR_PATTERNS.DATASET_TYPE],
+    allowedAdditionalErrors: [SANDBOX_ERROR_PATTERNS.ELEMENT_DATASET],
   });
 };
