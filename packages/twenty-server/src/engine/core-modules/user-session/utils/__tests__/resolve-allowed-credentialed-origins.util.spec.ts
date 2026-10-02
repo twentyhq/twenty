@@ -8,6 +8,13 @@ type CredentialedOriginsConfig = Pick<
   'SERVER_URL' | 'FRONTEND_URL' | 'AUTH_COOKIE_ALLOWED_ORIGINS' | 'NODE_ENV'
 >;
 
+const PRODUCTION_CONFIG: CredentialedOriginsConfig = {
+  SERVER_URL: 'https://api.twenty.com',
+  FRONTEND_URL: 'https://app.twenty.com',
+  AUTH_COOKIE_ALLOWED_ORIGINS: '',
+  NODE_ENV: NodeEnvironment.PRODUCTION,
+};
+
 const buildTwentyConfigService = (
   config: CredentialedOriginsConfig,
 ): Pick<TwentyConfigService, 'get'> => {
@@ -22,10 +29,10 @@ describe('resolveAllowedCredentialedOrigins', () => {
   it('should allow the server, frontend and explicit origins', () => {
     const allowedOrigins = resolveAllowedCredentialedOrigins(
       buildTwentyConfigService({
+        ...PRODUCTION_CONFIG,
         SERVER_URL: 'https://api.twenty.com/graphql',
         FRONTEND_URL: 'https://App.twenty.com',
         AUTH_COOKIE_ALLOWED_ORIGINS: ' https://other.example , file:///tmp',
-        NODE_ENV: NodeEnvironment.PRODUCTION,
       }),
     );
 
@@ -37,58 +44,48 @@ describe('resolveAllowedCredentialedOrigins', () => {
   });
 
   it('should skip derived loopback origins in production only', () => {
-    const config = {
+    const loopbackConfig: CredentialedOriginsConfig = {
       SERVER_URL: 'http://localhost:3000',
       FRONTEND_URL: 'http://localhost:3001',
       AUTH_COOKIE_ALLOWED_ORIGINS: 'http://localhost:3001',
       NODE_ENV: NodeEnvironment.PRODUCTION,
     };
 
-    expect([
-      ...resolveAllowedCredentialedOrigins(buildTwentyConfigService(config)),
-    ]).toEqual(['http://localhost:3001']);
+    const productionAllowedOrigins = resolveAllowedCredentialedOrigins(
+      buildTwentyConfigService(loopbackConfig),
+    );
+    const developmentAllowedOrigins = resolveAllowedCredentialedOrigins(
+      buildTwentyConfigService({
+        ...loopbackConfig,
+        NODE_ENV: NodeEnvironment.DEVELOPMENT,
+      }),
+    );
 
-    expect([
-      ...resolveAllowedCredentialedOrigins(
-        buildTwentyConfigService({
-          ...config,
-          NODE_ENV: NodeEnvironment.DEVELOPMENT,
-        }),
-      ),
-    ]).toEqual(['http://localhost:3000', 'http://localhost:3001']);
+    expect([...productionAllowedOrigins]).toEqual(['http://localhost:3001']);
+    expect([...developmentAllowedOrigins]).toEqual([
+      'http://localhost:3000',
+      'http://localhost:3001',
+    ]);
   });
 
   it('should reuse the resolved origins while the config is unchanged', () => {
-    const twentyConfigService = buildTwentyConfigService({
-      SERVER_URL: 'https://api.twenty.com',
-      FRONTEND_URL: 'https://app.twenty.com',
-      AUTH_COOKIE_ALLOWED_ORIGINS: 'https://other.example',
-      NODE_ENV: NodeEnvironment.PRODUCTION,
-    });
+    const twentyConfigService = buildTwentyConfigService(PRODUCTION_CONFIG);
 
     expect(resolveAllowedCredentialedOrigins(twentyConfigService)).toBe(
       resolveAllowedCredentialedOrigins(twentyConfigService),
     );
   });
 
-  it('should reflect config changes made after a previous call', () => {
-    const config: CredentialedOriginsConfig = {
-      SERVER_URL: 'https://api.twenty.com',
-      FRONTEND_URL: 'https://app.twenty.com',
-      AUTH_COOKIE_ALLOWED_ORIGINS: '',
-      NODE_ENV: NodeEnvironment.PRODUCTION,
-    };
-    const twentyConfigService: Pick<TwentyConfigService, 'get'> = {
-      get: (key) => Object.assign(new ConfigVariables(), config)[key],
-    };
-
-    const allowedOriginsBeforeChange =
-      resolveAllowedCredentialedOrigins(twentyConfigService);
-
-    config.AUTH_COOKIE_ALLOWED_ORIGINS = 'https://other.example';
-
-    const allowedOriginsAfterChange =
-      resolveAllowedCredentialedOrigins(twentyConfigService);
+  it('should resolve the origins again when the config changes', () => {
+    const allowedOriginsBeforeChange = resolveAllowedCredentialedOrigins(
+      buildTwentyConfigService(PRODUCTION_CONFIG),
+    );
+    const allowedOriginsAfterChange = resolveAllowedCredentialedOrigins(
+      buildTwentyConfigService({
+        ...PRODUCTION_CONFIG,
+        AUTH_COOKIE_ALLOWED_ORIGINS: 'https://other.example',
+      }),
+    );
 
     expect(allowedOriginsAfterChange).not.toBe(allowedOriginsBeforeChange);
     expect(allowedOriginsBeforeChange.has('https://other.example')).toBe(false);
