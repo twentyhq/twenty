@@ -3423,6 +3423,7 @@ export interface Query {
     findWorkspaceInvitations: WorkspaceInvitation[]
     getApprovedAccessDomains: ApprovedAccessDomain[]
     getRoles: Role[]
+    getRole: Role
     apiKeys: ApiKey[]
     getApiKeyRoles: Role[]
     apiKey?: ApiKey
@@ -7366,6 +7367,7 @@ export interface QueryGenqlSelection{
     findWorkspaceInvitations?: WorkspaceInvitationGenqlSelection
     getApprovedAccessDomains?: ApprovedAccessDomainGenqlSelection
     getRoles?: RoleGenqlSelection
+    getRole?: (RoleGenqlSelection & { __args: {id: Scalars['UUID']} })
     apiKeys?: ApiKeyGenqlSelection
     getApiKeyRoles?: RoleGenqlSelection
     apiKey?: (ApiKeyGenqlSelection & { __args: {input: GetApiKeyInput} })
