@@ -14,10 +14,10 @@ export const transformRichTextValue = async (
   // oxlint-disable-next-line typescript/no-explicit-any
   richTextValue: any,
   {
-    shouldRejectRawHtml = false,
+    shouldRejectSlowConversion = false,
     converters = BLOCKNOTE_RICH_TEXT_CONVERTERS,
   }: {
-    shouldRejectRawHtml?: boolean;
+    shouldRejectSlowConversion?: boolean;
     converters?: RichTextConverters;
   } = {},
 ): Promise<RichTextMetadata> => {
@@ -33,7 +33,7 @@ export const transformRichTextValue = async (
     return {
       markdown: parsedValue.markdown || tipTapMarkdown,
       blocknote: await converters.convertMarkdownToBlocknote(tipTapMarkdown, {
-        shouldRejectRawHtml,
+        shouldRejectSlowConversion,
       }),
     };
   }
@@ -49,7 +49,7 @@ export const transformRichTextValue = async (
     parsedValue.blocknote ||
     (parsedValue.markdown
       ? await converters.convertMarkdownToBlocknote(parsedValue.markdown, {
-          shouldRejectRawHtml,
+          shouldRejectSlowConversion,
         })
       : null);
 

@@ -10,7 +10,7 @@ import { convertBlockNoteHtmlToBlocks } from 'src/engine/core-modules/record-tra
 export type RichTextConverters = {
   convertMarkdownToBlocknote: (
     markdown: string,
-    options: { shouldRejectRawHtml: boolean },
+    options: { shouldRejectSlowConversion: boolean },
   ) => Promise<string>;
   convertBlocknoteToMarkdown: (blocknote: string) => Promise<string>;
 };
@@ -50,7 +50,7 @@ const loadBlockNoteModules = (): Promise<BlockNoteModules> => {
 // The jsdom-based ServerBlockNoteEditor parse costs ~3ms per KB on the main
 // thread, so markdown goes through the DOM-free conversion whenever it can.
 const convertMarkdownToBlocknote: RichTextConverters['convertMarkdownToBlocknote'] =
-  async (markdown, { shouldRejectRawHtml }) => {
+  async (markdown, { shouldRejectSlowConversion }) => {
     const { markdownToHTML, serverBlockNoteEditor } =
       await loadBlockNoteModules();
 
@@ -60,10 +60,12 @@ const convertMarkdownToBlocknote: RichTextConverters['convertMarkdownToBlocknote
       return JSON.stringify(conversion.blocks);
     }
 
-    if (conversion.status === 'raw-html' && shouldRejectRawHtml) {
+    if (shouldRejectSlowConversion) {
       throw new RecordTransformerException(
-        'Rich text markdown containing raw HTML is not supported when writing several records at once',
-        RecordTransformerExceptionCode.RICH_TEXT_RAW_HTML_NOT_SUPPORTED_IN_BATCH,
+        conversion.status === 'raw-html'
+          ? 'Rich text markdown containing raw HTML is not supported when writing several records at once'
+          : 'Rich text markdown with tables, images, multi-paragraph quotes or code blocks without a language is not supported when writing several records at once',
+        RecordTransformerExceptionCode.RICH_TEXT_CONTENT_NOT_SUPPORTED_IN_BATCH,
       );
     }
 

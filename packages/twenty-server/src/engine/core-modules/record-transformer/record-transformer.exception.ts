@@ -12,7 +12,7 @@ export enum RecordTransformerExceptionCode {
   CONFLICTING_PHONE_COUNTRY_CODE = 'CONFLICTING_PHONE_COUNTRY_CODE',
   CONFLICTING_PHONE_CALLING_CODE = 'CONFLICTING_PHONE_CALLING_CODE',
   CONFLICTING_PHONE_CALLING_CODE_AND_COUNTRY_CODE = 'CONFLICTING_PHONE_CALLING_CODE_AND_COUNTRY_CODE',
-  RICH_TEXT_RAW_HTML_NOT_SUPPORTED_IN_BATCH = 'RICH_TEXT_RAW_HTML_NOT_SUPPORTED_IN_BATCH',
+  RICH_TEXT_CONTENT_NOT_SUPPORTED_IN_BATCH = 'RICH_TEXT_CONTENT_NOT_SUPPORTED_IN_BATCH',
 }
 
 const getRecordTransformerExceptionUserFriendlyMessage = (
@@ -33,8 +33,8 @@ const getRecordTransformerExceptionUserFriendlyMessage = (
       return msg`Conflicting phone calling code.`;
     case RecordTransformerExceptionCode.CONFLICTING_PHONE_CALLING_CODE_AND_COUNTRY_CODE:
       return msg`Conflicting phone calling code and country code.`;
-    case RecordTransformerExceptionCode.RICH_TEXT_RAW_HTML_NOT_SUPPORTED_IN_BATCH:
-      return msg`Rich text containing HTML can only be written one record at a time. Send markdown instead, or create the records one by one.`;
+    case RecordTransformerExceptionCode.RICH_TEXT_CONTENT_NOT_SUPPORTED_IN_BATCH:
+      return msg`This rich text can only be written one record at a time. HTML, tables, images, multi-paragraph quotes and code blocks without a language are not supported in batches.`;
     default:
       assertUnreachable(code);
   }

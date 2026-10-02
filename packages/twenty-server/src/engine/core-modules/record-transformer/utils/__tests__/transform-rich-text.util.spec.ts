@@ -17,8 +17,10 @@ const TIPTAP_VALUE = JSON.stringify({
 
 const buildConverters = (): jest.Mocked<RichTextConverters> => ({
   convertMarkdownToBlocknote: jest.fn(
-    async (markdown: string, _options: { shouldRejectRawHtml: boolean }) =>
-      `blocknote(${markdown})`,
+    async (
+      markdown: string,
+      _options: { shouldRejectSlowConversion: boolean },
+    ) => `blocknote(${markdown})`,
   ),
   convertBlocknoteToMarkdown: jest.fn(
     async (_blocknote: string) => 'converted markdown',
@@ -41,17 +43,17 @@ describe('transformRichTextValue', () => {
     expect(converters.convertBlocknoteToMarkdown).not.toHaveBeenCalled();
   });
 
-  it('should forward the raw html rejection to the markdown conversion', async () => {
+  it('should forward the slow conversion rejection to the markdown conversion', async () => {
     const converters = buildConverters();
 
     await transformRichTextValue(
       { markdown: '# Title' },
-      { shouldRejectRawHtml: true, converters },
+      { shouldRejectSlowConversion: true, converters },
     );
 
     expect(converters.convertMarkdownToBlocknote).toHaveBeenCalledWith(
       '# Title',
-      { shouldRejectRawHtml: true },
+      { shouldRejectSlowConversion: true },
     );
   });
 
