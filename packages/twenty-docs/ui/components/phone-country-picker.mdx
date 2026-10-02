@@ -79,7 +79,7 @@ Supply localized country labels in `countries`, an accessible name on `Trigger`,
 
 ## Sandbox renderer
 
-The React and Preact sandbox renderers display the trigger and preserve its disabled state. Opening the popup currently fails with the existing Dropdown viewport error in both runtimes; React also reports a missing event type. The renderer interaction stories retain their assertions so these failures remain visible.
+The React and Preact sandbox renderers display the trigger and preserve its disabled state. Opening the popup currently fails because Dropdown reads pointer contact data from a missing native event in both runtimes; React can also report a missing event type. Named sandbox failure stories require the pointer width error and reject unrelated errors. Popup interactions are covered in the regular UI stories; successful sandbox popup behavior remains unsupported.
 
 ## Props
 

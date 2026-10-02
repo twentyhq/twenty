@@ -3,6 +3,8 @@ export const SANDBOX_ERROR_PATTERNS = {
     "Uncaught TypeError: Cannot use 'in' operator to search for 'composedPath' in undefined",
   VIEWPORT_WIDTH:
     "Uncaught TypeError: Cannot read properties of undefined (reading 'width')",
+  NATIVE_EVENT_TYPE:
+    "Uncaught TypeError: Cannot read properties of undefined (reading 'type')",
   NATIVE_EVENT_DEFAULT_PREVENTED:
     "Uncaught TypeError: Cannot read properties of undefined (reading 'defaultPrevented')",
   MISSING_EVENT_CONSTRUCTOR:
