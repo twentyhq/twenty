@@ -1,8 +1,8 @@
 import { expect, fireEvent, userEvent, within } from 'storybook/test';
 
-import { type ResizablePanelProps } from '../types/ResizablePanelProps';
+import { withMockPointerCapture } from '@ui/primitives/layout/ResizeHandle/__stories__/withMockPointerCapture';
 
-import { withMockPointerCapture } from './withMockPointerCapture';
+import { type ResizablePanelProps } from '../types/ResizablePanelProps';
 
 export const playCancelledPanelResize = async ({
   canvasElement,

@@ -9,37 +9,35 @@ export const withMockPointerCapture = async ({
   handles,
   run,
 }: WithMockPointerCaptureArgs) => {
-  const restoreCaptureMocks = handles.map((handle) => {
-    const capturedPointers = new Set<number>();
-    const setPointerCapture = spyOn(
-      handle,
-      'setPointerCapture',
-    ).mockImplementation((pointerId) => {
-      capturedPointers.add(pointerId);
-    });
-    const hasPointerCapture = spyOn(
-      handle,
-      'hasPointerCapture',
-    ).mockImplementation((pointerId) => capturedPointers.has(pointerId));
-    const releasePointerCapture = spyOn(
-      handle,
-      'releasePointerCapture',
-    ).mockImplementation((pointerId) => {
-      capturedPointers.delete(pointerId);
-    });
-
-    return () => {
-      setPointerCapture.mockRestore();
-      hasPointerCapture.mockRestore();
-      releasePointerCapture.mockRestore();
-    };
-  });
+  const captureMocks: { mockRestore: () => void }[] = [];
 
   try {
+    for (const handle of handles) {
+      const capturedPointers = new Set<number>();
+
+      captureMocks.push(
+        spyOn(handle, 'setPointerCapture').mockImplementation((pointerId) => {
+          capturedPointers.add(pointerId);
+        }),
+      );
+      captureMocks.push(
+        spyOn(handle, 'hasPointerCapture').mockImplementation((pointerId) =>
+          capturedPointers.has(pointerId),
+        ),
+      );
+      captureMocks.push(
+        spyOn(handle, 'releasePointerCapture').mockImplementation(
+          (pointerId) => {
+            capturedPointers.delete(pointerId);
+          },
+        ),
+      );
+    }
+
     await run();
   } finally {
-    for (const restoreCaptureMock of restoreCaptureMocks) {
-      restoreCaptureMock();
+    for (const captureMock of captureMocks) {
+      captureMock.mockRestore();
     }
   }
 };
