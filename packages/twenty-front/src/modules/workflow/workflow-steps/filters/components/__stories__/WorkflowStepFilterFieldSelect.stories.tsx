@@ -83,7 +83,7 @@ export const Default: Story = {
     await waitFor(() =>
       expect(body.queryByRole('searchbox')).not.toBeInTheDocument(),
     );
-    await expect(trigger).toHaveFocus();
+    await waitFor(() => expect(trigger).toHaveFocus());
   },
 };
 

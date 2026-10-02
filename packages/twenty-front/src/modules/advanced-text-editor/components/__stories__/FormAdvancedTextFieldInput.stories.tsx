@@ -278,7 +278,7 @@ export const WorkflowVariablesInFullScreen: Story = {
       expect(body.queryByRole('searchbox')).not.toBeInTheDocument(),
     );
     await waitFor(() => expect(editor).toHaveFocus());
-    await expect(within(editor).getByText('name')).toBeVisible();
+    await waitFor(() => expect(within(editor).getByText('name')).toBeVisible());
     await userEvent.keyboard('!');
 
     await waitFor(() =>
