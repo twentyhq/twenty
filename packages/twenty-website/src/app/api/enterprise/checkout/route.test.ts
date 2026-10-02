@@ -94,15 +94,26 @@ describe('POST /api/enterprise/checkout', () => {
       'a server id Stripe search cannot take',
       { instanceMetadata: { serverId: "x' OR status:'active" } },
     ],
-  ])('rejects a checkout with %s', async (_label, body) => {
-    const { POST } = await loadRoute();
+  ])(
+    'grants an unstamped trial to a checkout with %s',
+    async (_label, body) => {
+      const { POST } = await loadRoute();
 
-    const response = await POST(buildRequest(body));
+      const response = await POST(buildRequest(body));
 
-    expect(response.status).toBe(400);
-    expect(search).not.toHaveBeenCalled();
-    expect(createSession).not.toHaveBeenCalled();
-  });
+      expect(response.status).toBe(200);
+      expect(search).not.toHaveBeenCalled();
+      expect(createSession).toHaveBeenCalledTimes(1);
+      expect(createSession).toHaveBeenCalledWith(
+        expect.objectContaining({
+          subscription_data: {
+            trial_period_days: 30,
+            metadata: { source: 'enterprise-self-hosted' },
+          },
+        }),
+      );
+    },
+  );
 
   it('is unconfigured without a Stripe key', async () => {
     jest.spyOn(console, 'error').mockImplementation(() => {});

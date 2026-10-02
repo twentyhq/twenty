@@ -61,13 +61,6 @@ export async function POST(request: Request) {
 
     const serverId = normalizeServerId(body.instanceMetadata?.serverId);
 
-    if (!isSearchableMetadataValue(serverId)) {
-      return NextResponse.json(
-        { error: 'Missing or invalid instanceMetadata.serverId' },
-        { status: 400 },
-      );
-    }
-
     const trialPeriodDays = resolveTrialPeriodDays({
       defaultTrialPeriodDays: DEFAULT_TRIAL_PERIOD_DAYS,
       hasPriorSubscription: await hasPriorSubscriptionForServer({
@@ -77,9 +70,9 @@ export async function POST(request: Request) {
     });
 
     const trialServerIdMetadata: Record<string, string> =
-      trialPeriodDays === undefined
-        ? {}
-        : { [STRIPE_METADATA_KEY.TRIAL_SERVER_ID]: serverId };
+      trialPeriodDays !== undefined && isSearchableMetadataValue(serverId)
+        ? { [STRIPE_METADATA_KEY.TRIAL_SERVER_ID]: serverId }
+        : {};
 
     const session = await stripe.checkout.sessions.create({
       mode: 'subscription',
