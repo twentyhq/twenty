@@ -66,7 +66,7 @@ The picker owns searching, selected-first ordering, and currency selection. The 
 
 `searchLabel` defaults to `Search` and provides both the search placeholder and accessible name. `emptyLabel` defaults to `No results`. Supply translated labels and accessible names from your application. Give the trigger an accessible name that includes its visible currency code, such as `Invoice currency: USD`, and give the dropdown content a name that describes the currency being selected.
 
-Native attributes, `className`, `style`, `ref`, and `render` apply to each part's root element. The trigger forwards the shared dropdown trigger interface, except hover opening (`openOnHover`, `delay`, `closeDelay`) and the popover `handle` and `payload` props; the options root is a div by default.
+Native attributes, `className`, `style`, `ref`, and `render` apply to each part's root element. The trigger forwards the shared dropdown trigger interface, except `children`, hover opening (`openOnHover`, `delay`, `closeDelay`), and the popover `handle` and `payload` props; the options root is a div by default.
 
 ## Front-component renderer
 
