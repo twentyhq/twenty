@@ -15,8 +15,9 @@ export const SettingsValidationRuleExampleExpression = ({
   expression,
   editorFields,
 }: SettingsValidationRuleExampleExpressionProps) => {
-  const findEditorField = (path: string) =>
-    editorFields.find((editorField) => editorField.path === path);
+  const findEditorField = (path: string) => {
+    return editorFields.find((editorField) => editorField.path === path);
+  };
 
   const segments = computeValidationRuleEditorSegments({
     expression,
