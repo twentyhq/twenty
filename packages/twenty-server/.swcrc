@@ -19,5 +19,9 @@
       ]
     }
   },
+  "module": {
+    "type": "commonjs",
+    "ignoreDynamic": true
+  },
   "minify": false
 }

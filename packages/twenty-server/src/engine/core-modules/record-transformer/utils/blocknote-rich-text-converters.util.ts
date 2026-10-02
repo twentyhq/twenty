@@ -20,18 +20,13 @@ type BlockNoteModules = {
   serverBlockNoteEditor: ServerBlockNoteEditor;
 };
 
-// SWC compiles import() to require() in CJS mode, which breaks ESM-only
-// transitive dependencies in @blocknote/core. Native import() resolves
-// the ESM bundle path where the full chain works.
-const nativeImport = new Function('specifier', 'return import(specifier)');
-
 let blockNoteModulesPromise: Promise<BlockNoteModules> | null = null;
 
 const loadBlockNoteModules = (): Promise<BlockNoteModules> => {
   if (!blockNoteModulesPromise) {
     blockNoteModulesPromise = Promise.all([
-      nativeImport('@blocknote/core'),
-      nativeImport('@blocknote/server-util'),
+      import('@blocknote/core'),
+      import('@blocknote/server-util'),
     ])
       .then(([blockNoteCore, blockNoteServerUtil]) => ({
         markdownToHTML: blockNoteCore.markdownToHTML,

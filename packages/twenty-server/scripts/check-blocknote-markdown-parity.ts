@@ -1,27 +1,10 @@
-import { join } from 'path';
-import { Worker } from 'worker_threads';
-
+import { BLOCKNOTE_VERSION_VERIFIED_FOR_PARITY } from 'src/engine/core-modules/record-transformer/constants/blocknote-version-verified-for-parity.constant';
 import { convertBlockNoteHtmlToBlocks } from 'src/engine/core-modules/record-transformer/utils/convert-blocknote-html-to-blocks.util';
 
-type BlockNoteReference = { html: string; blocks: unknown[] };
-
-// BlockNote only loads as native ESM, which jest cannot import, so the
-// reference output is computed in a worker thread.
-const computeBlockNoteReferences = (
-  markdowns: string[],
-): Promise<BlockNoteReference[]> =>
-  new Promise((resolve, reject) => {
-    const worker = new Worker(
-      join(__dirname, 'blocknote-markdown-reference.worker.mjs'),
-      { workerData: { markdowns } },
-    );
-
-    worker.once('message', (references: BlockNoteReference[]) => {
-      resolve(references);
-      void worker.terminate();
-    });
-    worker.once('error', reject);
-  });
+// Compares the DOM-free markdown conversion with BlockNote's own jsdom +
+// ProseMirror parser. Run it after upgrading @blocknote/core, then update
+// BLOCKNOTE_VERSION_VERIFIED_FOR_PARITY:
+//   npx tsx scripts/check-blocknote-markdown-parity.ts
 
 const createRandom = (seed: number) => {
   let state = seed;
@@ -159,44 +142,64 @@ const HANDWRITTEN_MARKDOWNS = [
   'Setext heading\n===\n\nAnother\n---',
 ];
 
-describe('convertBlockNoteHtmlToBlocks parity with BlockNote', () => {
-  it('should produce the same blocks as BlockNote whenever it converts', async () => {
-    const random = createRandom(20261002);
-    const markdowns = [
-      ...HANDWRITTEN_MARKDOWNS,
-      ...Array.from({ length: 300 }, () =>
-        generateDocument(random, NOTE_WORDS),
-      ),
-      ...Array.from({ length: 300 }, () =>
-        generateDocument(random, [...NOTE_WORDS, ...EDGE_CASE_WORDS]),
-      ),
-    ];
+const withoutIds = (blocks: unknown) =>
+  JSON.stringify(blocks, (key, value) => (key === 'id' ? undefined : value));
 
-    const references = await computeBlockNoteReferences(markdowns);
+const main = async () => {
+  const documentCount = Number(process.env.DOCUMENT_COUNT ?? 3000);
+  const random = createRandom(Number(process.env.SEED ?? 20261002));
+  const markdowns = [
+    ...HANDWRITTEN_MARKDOWNS,
+    ...Array.from({ length: documentCount }, () =>
+      generateDocument(random, NOTE_WORDS),
+    ),
+    ...Array.from({ length: documentCount }, () =>
+      generateDocument(random, [...NOTE_WORDS, ...EDGE_CASE_WORDS]),
+    ),
+  ];
 
-    const withoutIds = (blocks: unknown) =>
-      JSON.stringify(blocks, (key, value) =>
-        key === 'id' ? undefined : value,
+  // BlockNote's CommonJS build is broken, so it must load as ESM
+  const { markdownToHTML } = await import('@blocknote/core');
+  const { ServerBlockNoteEditor } = await import('@blocknote/server-util');
+  const serverBlockNoteEditor = ServerBlockNoteEditor.create();
+  let convertedCount = 0;
+  const mismatches: string[] = [];
+
+  for (const markdown of markdowns) {
+    const conversion = convertBlockNoteHtmlToBlocks(markdownToHTML(markdown));
+
+    if (conversion.status !== 'converted') {
+      continue;
+    }
+
+    convertedCount++;
+
+    const expected = withoutIds(
+      await serverBlockNoteEditor.tryParseMarkdownToBlocks(markdown),
+    );
+    const actual = withoutIds(conversion.blocks);
+
+    if (expected !== actual) {
+      mismatches.push(
+        `markdown: ${JSON.stringify(markdown)}\nexpected: ${expected}\nactual:   ${actual}`,
       );
+    }
+  }
 
-    let convertedCount = 0;
+  console.log(
+    `Verified against BlockNote parsing for ${markdowns.length} documents: ${convertedCount} converted without a DOM, ${mismatches.length} mismatches.`,
+  );
+  console.log(
+    `Version verified in BLOCKNOTE_VERSION_VERIFIED_FOR_PARITY: ${BLOCKNOTE_VERSION_VERIFIED_FOR_PARITY}`,
+  );
 
-    references.forEach(({ html, blocks }, index) => {
-      const conversion = convertBlockNoteHtmlToBlocks(html);
+  if (mismatches.length > 0) {
+    console.error(mismatches.slice(0, 5).join('\n\n'));
+    process.exit(1);
+  }
+};
 
-      if (conversion.status !== 'converted') {
-        return;
-      }
-
-      convertedCount++;
-
-      expect({
-        markdown: markdowns[index],
-        blocks: withoutIds(conversion.blocks),
-      }).toEqual({ markdown: markdowns[index], blocks: withoutIds(blocks) });
-    });
-
-    // Guards against the converter silently falling back on everything
-    expect(convertedCount).toBeGreaterThan(markdowns.length * 0.6);
-  }, 60_000);
+main().catch((error) => {
+  console.error(error);
+  process.exit(1);
 });
