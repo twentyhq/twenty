@@ -19,8 +19,6 @@ import { isAuthPrincipalVariantAccepted } from 'src/engine/guards/utils/is-auth-
 export const AuthPrincipalGuard = (
   authPrincipalGuardConfig: AuthPrincipalGuardConfig,
 ): Type<CanActivate> => {
-  // The config is otherwise closed over, and mixin() renames the class:
-  // this is how the endpoint permission snapshot reads it
   @Injectable()
   @SetMetadata(AUTH_PRINCIPAL_GUARD_CONFIG_KEY, authPrincipalGuardConfig)
   class AuthPrincipalMixin implements CanActivate {
