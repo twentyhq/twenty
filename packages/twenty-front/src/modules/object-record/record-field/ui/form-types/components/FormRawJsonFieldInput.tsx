@@ -60,7 +60,7 @@ export const FormRawJsonFieldInput = ({
       );
     }
 
-    editor.commands.insertVariableTag(variableName);
+    editor.chain().focus().insertVariableTag(variableName).run();
   };
 
   if (!isDefined(editor)) {

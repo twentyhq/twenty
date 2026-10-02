@@ -552,6 +552,23 @@ describe('application workflow execution permissions', () => {
     ).toBe(0);
   }, 120000);
 
+  it('refuses email steps when an application token starts a workspace workflow', async () => {
+    const { status, stepStatus, stepError } = await runWorkflowActionStep({
+      name: `${RUN_PREFIX} workspace email workflow started by the application`,
+      stepType: 'SEND_EMAIL',
+      input: {
+        recipients: { to: 'recipient@example.com' },
+        subject: 'Application workflow permissions',
+        body: 'Should never be sent',
+      },
+      runToken: await buildJaneTokenThroughApplication(APP_ID),
+    });
+
+    expect(status).toBe('FAILED');
+    expect(stepStatus).toBe('FAILED');
+    expect(stepError).toContain('Applications cannot use SEND_EMAIL steps');
+  }, 120000);
+
   it('only lets the values of a form step change on an application workflow run', async () => {
     const workflowRunId = await runWorkflow(FORM_WORKFLOW);
     const [formStep] = FORM_WORKFLOW.steps;
