@@ -291,7 +291,7 @@ export class RecordShareStorageService {
       repository
         .createQueryBuilder('recordShare')
         .select(
-          'COUNT(DISTINCT "recordShare"."recordId") FILTER (WHERE "recordShare"."principalType" = :everyonePrincipalType AND "recordShare"."accessLevel" = :noneAccessLevel)',
+          'COUNT(DISTINCT "recordShare"."recordId") FILTER (WHERE "recordShare"."principalType" = :everyonePrincipalType AND "recordShare"."accessLevel" IN (:...restrictedAccessLevels))',
           'restrictedRecordCount',
         )
         .addSelect(
@@ -301,7 +301,10 @@ export class RecordShareStorageService {
         .where('"recordShare"."objectMetadataId" = :objectMetadataId', {
           objectMetadataId,
           everyonePrincipalType: RecordSharePrincipalType.EVERYONE,
-          noneAccessLevel: RecordShareAccessLevel.NONE,
+          restrictedAccessLevels: [
+            RecordShareAccessLevel.NONE,
+            RecordShareAccessLevel.READ,
+          ],
           manualRowCause: RecordShareRowCause.MANUAL,
         })
         .getRawOne<{

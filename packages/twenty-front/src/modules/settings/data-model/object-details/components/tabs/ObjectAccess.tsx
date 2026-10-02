@@ -109,7 +109,10 @@ export const ObjectAccess = ({ objectMetadataItem }: ObjectAccessProps) => {
                   description={
                     isOpenByDefault
                       ? t`Records whose access differs from what roles give.`
-                      : t`New records are private to their creator until shared.`
+                      : objectMetadataItem.readability ===
+                          MetadataReadability.INHERITED
+                        ? t`Records follow the access of the records they are linked to until shared.`
+                        : t`New records are private to their creator until shared.`
                   }
                 />
                 <StyledSummary>

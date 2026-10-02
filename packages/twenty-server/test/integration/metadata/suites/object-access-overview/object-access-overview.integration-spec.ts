@@ -43,6 +43,7 @@ type OverviewRole = {
 
 describe('Object access overview', () => {
   const restrictedRecordId = randomUUID();
+  const readOnlyRecordId = randomUUID();
   const sharedRecordId = randomUUID();
   let companyObjectMetadataId: string;
   let companyNameFieldMetadataId: string;
@@ -81,7 +82,7 @@ describe('Object access overview', () => {
     await shares.deleteByRecordIds({
       workspaceId: SEED_APPLE_WORKSPACE_ID,
       objectMetadataId: companyObjectMetadataId,
-      recordIds: [restrictedRecordId, sharedRecordId],
+      recordIds: [restrictedRecordId, readOnlyRecordId, sharedRecordId],
     });
   });
 
@@ -169,6 +170,15 @@ describe('Object access overview', () => {
         },
         {
           objectMetadataId: companyObjectMetadataId,
+          recordId: readOnlyRecordId,
+          principalType: RecordSharePrincipalType.EVERYONE,
+          principalId: EVERYONE_PRINCIPAL_ID,
+          accessLevel: RecordShareAccessLevel.READ,
+          rowCause: RecordShareRowCause.MANUAL,
+          sourceId: readOnlyRecordId,
+        },
+        {
+          objectMetadataId: companyObjectMetadataId,
           recordId: sharedRecordId,
           principalType: RecordSharePrincipalType.WORKSPACE_MEMBER,
           principalId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
@@ -184,7 +194,7 @@ describe('Object access overview', () => {
     );
 
     expect(response.body.data.objectAccessOverview).toMatchObject({
-      restrictedRecordCount: 1,
+      restrictedRecordCount: 2,
       sharedRecordCount: 1,
     });
   });
