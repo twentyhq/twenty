@@ -51,13 +51,7 @@ export const resolveRoleIdsFromAuthContext = (
     : undefined;
 
   // An application running as a member must not reach past its own role by picking a more privileged member
-  if (
-    !isNonEmptyArray(heldRoleIds) ||
-    !isDefined(runAsApplicationRoleId) ||
-    heldRoleIds.includes(runAsApplicationRoleId)
-  ) {
-    return heldRoleIds;
-  }
-
-  return [...heldRoleIds, runAsApplicationRoleId];
+  return isNonEmptyArray(heldRoleIds) && isDefined(runAsApplicationRoleId)
+    ? [...new Set([...heldRoleIds, runAsApplicationRoleId])]
+    : heldRoleIds;
 };

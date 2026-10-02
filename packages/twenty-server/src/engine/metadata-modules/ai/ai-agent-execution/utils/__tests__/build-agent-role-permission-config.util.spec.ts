@@ -39,7 +39,7 @@ describe('buildAgentRolePermissionConfig', () => {
       buildAgentRolePermissionConfig({
         agentRoleId: 'agent-role-id',
         principalRoleIds: ['member-role-id', 'agent-role-id'],
-      }).intersectionOf,
-    ).toEqual(['agent-role-id', 'member-role-id']);
+      }),
+    ).toEqual({ intersectionOf: ['agent-role-id', 'member-role-id'] });
   });
 });

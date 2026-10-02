@@ -7,6 +7,6 @@ export const buildAgentRolePermissionConfig = ({
 }: {
   agentRoleId: string;
   principalRoleIds: string[];
-}): Extract<RolePermissionConfig, { intersectionOf: string[] }> => ({
+}): RolePermissionConfig => ({
   intersectionOf: [...new Set([agentRoleId, ...principalRoleIds])],
 });
