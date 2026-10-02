@@ -1,5 +1,6 @@
 export type UsageConsumptionRow = {
   operationType: string;
+  unit: string;
   userWorkspaceId: string;
   apiKeyId: string;
   applicationId: string;

@@ -53,9 +53,7 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         isAuditLogged: false,
         isUIEditable: true,
         isUICreatable: false,
-        // A conversation outside a workflow run has no parent and is read only
-        // through its own grants, as a PRIVATE record is. One held by a run's
-        // agent step is read by whoever reads the run.
+        // Read by whoever reads its workflow run; with no run it reads only through its own grants, like a PRIVATE record
         readability: MetadataReadability.INHERITED,
         readabilityParentFieldMetadataNames: ['workflowRun'],
         writability: MetadataWritability.OPEN,
@@ -100,10 +98,8 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         isAuditLogged: false,
         isUIEditable: false,
         isUICreatable: false,
-        // A link is exactly as private as the conversation it files, as a
-        // messageThreadTarget is for its thread, so it inherits from the thread
-        // rather than from the record. It stays writable because merging
-        // records re-points its legs under the caller, as for noteTarget.
+        // Inherits from the thread, not the record, so a link stays as private as the conversation. It stays
+        // writable because record merges re-point its legs under the caller, as for noteTarget
         readability: MetadataReadability.INHERITED,
         readabilityParentFieldMetadataNames: ['thread'],
         labelIdentifierFieldMetadataName: 'id',
@@ -1647,9 +1643,7 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         isSystem: true,
         isAuditLogged: false,
         isUICreatable: false,
-        // A run carries its workflow's inputs and outputs, so it is exactly as
-        // private as its core workflow; WorkflowRunRecordShareService writes
-        // the grants.
+        // As private as its core workflow; WorkflowRunRecordShareService writes the grants
         readability: MetadataReadability.PRIVATE,
         labelIdentifierFieldMetadataName: 'name',
       },
@@ -1747,53 +1741,6 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         isUICreatable: false,
         labelIdentifierFieldMetadataName: 'name',
         imageIdentifierFieldMetadataName: 'avatarUrl',
-      },
-      workspaceId,
-      standardObjectMetadataRelatedEntityIds,
-      twentyStandardApplicationId,
-      now,
-    }),
-  inputAsk: ({
-    now,
-    workspaceId,
-    standardObjectMetadataRelatedEntityIds,
-    twentyStandardApplicationId,
-    dependencyFlatEntityMaps,
-  }: Omit<CreateStandardObjectArgs<'inputAsk'>, 'context' | 'objectName'>) =>
-    createStandardObjectFlatMetadata({
-      objectName: 'inputAsk',
-      dependencyFlatEntityMaps,
-      context: {
-        universalIdentifier: STANDARD_OBJECTS.inputAsk.universalIdentifier,
-        // The code name is deliberately longer than the label: `ask` alone is
-        // unsearchable in a codebase, while the label is what anyone reads.
-        nameSingular: 'inputAsk',
-        namePlural: 'inputAsks',
-        labelSingular: i18nLabel(
-          msg({ message: `Ask`, context: 'objectMetadata.labelSingular' }),
-        ),
-        labelPlural: i18nLabel(
-          msg({ message: `Asks`, context: 'objectMetadata.labelPlural' }),
-        ),
-        description: i18nLabel(
-          msg({
-            message: `Something waiting on a person before it can continue`,
-            context: 'objectMetadata.description',
-          }),
-        ),
-        icon: 'IconHelpCircle',
-        isSystem: true,
-        isAuditLogged: false,
-        isUICreatable: false,
-        isUIEditable: true,
-        // A question shows what its run or conversation was doing, so it is
-        // read exactly as they are, never more widely.
-        readability: MetadataReadability.INHERITED,
-        readabilityParentFieldMetadataNames: ['workflowRun', 'thread'],
-        // Only the assignee is written through the API; every other field
-        // changes with what the Ask gates.
-        writability: MetadataWritability.OPEN,
-        labelIdentifierFieldMetadataName: 'name',
       },
       workspaceId,
       standardObjectMetadataRelatedEntityIds,

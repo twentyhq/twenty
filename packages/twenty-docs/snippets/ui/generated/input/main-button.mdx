@@ -36,10 +36,6 @@
   Expands the button to fill its container width.
 </ParamField>
 
-<ParamField body="hotkeys" type="string[]">
-  Keyboard shortcut hints displayed on non-mobile screens.
-</ParamField>
-
 <ParamField body="href" type="string">
   Destination URL. Enables native link semantics instead of button semantics.
 </ParamField>
@@ -50,6 +46,14 @@
 
 <ParamField body="render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, ButtonState&gt;">
   Caller-supplied root element or renderer. Preserve a native button, or an anchor when `href` is set. Router integration belongs to the caller.
+</ParamField>
+
+<ParamField body="shortcut" type="ShortcutDefinition">
+  Flat key array for simultaneous keys, or nested key arrays for an ordered sequence. Displayed on non-mobile screens.
+</ParamField>
+
+<ParamField body="shortcutJoinLabel" type="string">
+  Localized text between sequence steps. Defaults to then.
 </ParamField>
 
 <ParamField body="size" type="&quot;md&quot; | &quot;sm&quot;">

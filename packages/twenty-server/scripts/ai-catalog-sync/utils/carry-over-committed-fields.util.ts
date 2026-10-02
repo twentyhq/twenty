@@ -3,8 +3,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { type GeneratedCatalog } from '../types/generated-catalog.type';
 import { type GeneratedModel } from '../types/generated-model.type';
 
-// models.dev knows neither which effort levels a model takes nor its routing
-// facts, so a rebuild would drop them without this.
+// models.dev knows neither effort levels nor routing facts, so a rebuild would drop them
 const CARRIED_OVER_FIELDS = [
   'efforts',
   'dataResidency',

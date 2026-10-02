@@ -56,8 +56,6 @@ const AiChatThreadCommandMenuItems = () => {
     .map((item) => <CommandMenuItemRenderer item={item} key={item.id} />);
 };
 
-// A conversation row offers the chat's record commands, next to the actions
-// that only make sense in a list
 export const AiChatThreadActionsDropdown = ({
   thread,
   surface,
@@ -153,7 +151,6 @@ export const AiChatThreadActionsDropdown = ({
           }}
         >
           <Dropdown.Trigger
-            data-command-menu-anchor-instance-id={instanceId}
             render={
               trigger ?? (
                 <LightIconButton aria-label={t`Chat actions`} emphasis="subtle">

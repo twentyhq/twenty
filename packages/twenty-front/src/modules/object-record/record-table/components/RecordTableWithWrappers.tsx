@@ -16,8 +16,7 @@ import { styled } from '@linaria/react';
 const StyledRecordTablePrintBoundary = styled.div`
   display: contents;
 
-  // Without this, swiping the table back to its first column hands the gesture
-  // to the browser and navigates back on iOS.
+  // Otherwise swiping back to the first column triggers iOS back navigation.
   .scroll-wrapper-x-enabled {
     overscroll-behavior-x: contain;
   }

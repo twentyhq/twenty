@@ -1,8 +1,7 @@
 import { getNonReadableFieldMetadataIdsFromObjectPermissions } from '@/object-metadata/utils/getNonReadableFieldMetadataIdsFromObjectPermissions';
 import { getNonUpdatableFieldMetadataIdsFromObjectPermissions } from '@/object-metadata/utils/getNonUpdatableFieldMetadataIdsFromObjectPermissions';
-import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionsFromMapByObjectMetadataId';
+import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { type ObjectPermissions } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 
 type enrichObjectMetadataItemsWithPermissionsArgs = {
@@ -22,22 +21,20 @@ export const enrichObjectMetadataItemsWithPermissions = ({
 }: enrichObjectMetadataItemsWithPermissionsArgs) => {
   const formattedObjects: EnrichedObjectMetadataItem[] =
     objectMetadataItems.map((object) => {
-      const objectPermissions = getObjectPermissionsFromMapByObjectMetadataId({
+      const objectPermissions = getObjectPermissionsForObject(
         objectPermissionsByObjectMetadataId,
-        objectMetadataId: object.id,
-      });
+        object.id,
+      );
 
-      const nonReadableFieldMetadataIds = !isDefined(objectPermissions)
-        ? []
-        : getNonReadableFieldMetadataIdsFromObjectPermissions({
-            objectPermissions: objectPermissions,
-          });
+      const nonReadableFieldMetadataIds =
+        getNonReadableFieldMetadataIdsFromObjectPermissions({
+          objectPermissions,
+        });
 
-      const nonUpdatableFieldMetadataIds = !isDefined(objectPermissions)
-        ? []
-        : getNonUpdatableFieldMetadataIdsFromObjectPermissions({
-            objectPermissions: objectPermissions,
-          });
+      const nonUpdatableFieldMetadataIds =
+        getNonUpdatableFieldMetadataIdsFromObjectPermissions({
+          objectPermissions,
+        });
 
       const { fields, ...objectWithoutFields } = object;
 

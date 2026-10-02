@@ -7,7 +7,7 @@ import { serializeAdvancedTextEditorDocument } from '@/advanced-text-editor/util
 import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
 import { type VariablePickerComponent } from '@/ui/input/types/VariablePickerComponent';
 import { useFullScreenModal } from '@/ui/layout/fullscreen/hooks/useFullScreenModal';
-import { type BreadcrumbProps } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
+import { type BreadcrumbProps } from '@/ui/navigation/bread-crumb/types/BreadcrumbProps';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { useRemoveFocusItemFromFocusStackOnUnmount } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackOnUnmount';
@@ -31,8 +31,7 @@ const StyledAdvancedTextFieldContainerWrapper = styled.div<{
   flex-grow: ${({ hasFieldChrome }) => (hasFieldChrome ? 0 : 1)};
   min-height: ${({ hasFieldChrome }) => (hasFieldChrome ? 'auto' : '0')};
 
-  /* Document editors stretch to their available height; field editors keep
-     their intrinsic height so they compose naturally inside forms. */
+  /* Field editors keep their intrinsic height inside forms; document editors stretch. */
   & > * {
     flex-grow: ${({ hasFieldChrome }) => (hasFieldChrome ? 0 : 1)};
     min-height: ${({ hasFieldChrome }) => (hasFieldChrome ? 'auto' : '0')};

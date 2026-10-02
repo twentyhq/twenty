@@ -59,5 +59,10 @@ ruleTester.run(RULE_NAME, rule, {
       filename: `${SERVER}/src/engine/core-modules/foo/foo.service.ts`,
       errors: [{ messageId: 'noRuntimeImportFromUpgradeCommand' }],
     },
+    {
+      code: "import { AgentHistoryUpgradeStorageService } from 'src/database/commands/agent-history/agent-history-upgrade-storage.service';",
+      filename: `${SERVER}/src/engine/metadata-modules/ai/ai-history/services/foo.service.ts`,
+      errors: [{ messageId: 'noRuntimeImportFromUpgradeCommand' }],
+    },
   ],
 });

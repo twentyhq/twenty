@@ -29,16 +29,8 @@ const safeNumber = (value: number | undefined): number => {
   return Number.isFinite(result) ? result : 0;
 };
 
-// Input token semantics (all providers we use):
-//   `inputTokens` is the FULL prompt size and already includes cached and
-//   cache-creation tokens. The @ai-sdk/anthropic provider reports
-//   inputTokens = noCache + cacheRead + cacheCreation, and OpenAI-style
-//   providers include cached tokens (and never report cache-creation tokens).
-//   So the uncached, full-rate portion is always inputTokens minus cached
-//   minus cache-creation, and the full input size is just inputTokens.
-// Output token semantics still differ by model family:
-//   Anthropic: outputTokens excludes reasoning (thinking) tokens
-//   OpenAI/xAI/Groq/Google: outputTokens includes reasoning tokens
+// every provider we use counts cached and cache-creation tokens inside inputTokens
+// Anthropic's outputTokens excludes reasoning tokens; OpenAI/xAI/Groq/Google include them
 export const computeCostBreakdown = (
   model: AiModelCostConfig,
   usage: TokenUsageInput,

@@ -48,8 +48,7 @@ export const RecordTableNoRecordGroupRows = () => {
 
   const virtualRowIndices = getContiguousIncrementalValues(numberOfRows);
 
-  // Catches drops past the last row, where no row sortable is under the
-  // pointer; the drop target inside only renders the insertion indicator.
+  // Catches drops past the last row, where no row sortable is under the pointer.
   const { ref: endDropZoneRef } = useDroppable({
     id: RECORD_TABLE_NO_RECORD_GROUP_DROPPABLE_ID,
     accept: RECORD_TABLE_ROW_DND_TYPE,
@@ -70,8 +69,7 @@ export const RecordTableNoRecordGroupRows = () => {
         );
       })}
       <StyledEndDropZone ref={endDropZoneRef}>
-        {/* Zero footprint at rest; expands during a row drag so the zone
-            stays droppable even when the add-new row is hidden. */}
+        {/* Expands during a row drag so the zone stays droppable when the add-new row is hidden. */}
         <DragDropItemDropTarget
           index={totalNumberOfRecordsToVirtualize}
           droppableId={RECORD_TABLE_NO_RECORD_GROUP_DROPPABLE_ID}

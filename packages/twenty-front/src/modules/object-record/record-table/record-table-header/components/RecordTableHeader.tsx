@@ -12,8 +12,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-// The header takes the first slot of the virtualized row grid, whose pitch is
-// RECORD_TABLE_ROW_HEIGHT + 1 (row plus its bottom border).
+// Takes the first slot of the virtualized row grid, pitched at RECORD_TABLE_ROW_HEIGHT + 1 (bottom border).
 const StyledHeaderContainer = styled.div`
   background-color: ${themeCssVariables.background.primary};
   box-shadow: 0 -1px 0 ${themeCssVariables.background.primary};

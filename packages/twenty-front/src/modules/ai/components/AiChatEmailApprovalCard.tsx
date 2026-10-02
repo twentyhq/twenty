@@ -4,7 +4,7 @@ import { type FocusEvent, useId, useState } from 'react';
 import TextareaAutosize from 'react-textarea-autosize';
 import {
   type EmailApprovalDecision,
-  type InputAskEmailApprovalResponse,
+  type EmailApprovalResponse,
   type ProposeEmailToolResult,
   type ProposedEmail,
 } from 'twenty-shared/ai';
@@ -17,7 +17,7 @@ import { parseEmailRecipients } from '@/activities/emails/recipients/utils/parse
 import { serializeEmailRecipients } from '@/activities/emails/recipients/utils/serializeEmailRecipients';
 import { StyledAiChatAskCard } from '@/ai/components/AiChatAskStyledComponents';
 import { AiChatEmailRecipientsRow } from '@/ai/components/internal/AiChatEmailRecipientsRow';
-import { useAnswerAgentChatAsk } from '@/ai/hooks/useAnswerAgentChatAsk';
+import { useAnswerAgentChatToolCall } from '@/ai/hooks/useAnswerAgentChatToolCall';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
@@ -79,19 +79,17 @@ const StyledActions = styled.div`
 `;
 
 type AiChatEmailApprovalCardProps = {
-  askId: string;
   toolCallId: string;
   email: ProposedEmail;
 };
 
 export const AiChatEmailApprovalCard = ({
-  askId,
   toolCallId,
   email,
 }: AiChatEmailApprovalCardProps) => {
   const { t } = useLingui();
   const focusId = useId();
-  const { answerAgentChatAsk } = useAnswerAgentChatAsk();
+  const { answerAgentChatToolCall } = useAnswerAgentChatToolCall();
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
   const { removeFocusItemFromFocusStackById } =
     useRemoveFocusItemFromFocusStackById();
@@ -101,8 +99,7 @@ export const AiChatEmailApprovalCard = ({
   const [bcc, setBcc] = useState(() =>
     parseEmailRecipients(email.recipients.bcc),
   );
-  // Shown from the start when the draft has any, and kept once opened, so
-  // removing the last recipient does not take the field away.
+  // Kept once shown, so removing the last recipient doesn't hide the field.
   const [isCcShown, setIsCcShown] = useState(cc.length > 0);
   const [isBccShown, setIsBccShown] = useState(bcc.length > 0);
   const [subject, setSubject] = useState(email.subject);
@@ -112,9 +109,7 @@ export const AiChatEmailApprovalCard = ({
 
   const isAnswering = pendingDecision !== null;
 
-  // Typing in the card must not trigger the page's keyboard shortcuts. Focus
-  // events bubble up from every field, and from the buttons between them,
-  // which are left out since a button removed on click may never blur.
+  // Blocks page shortcuts while typing; buttons are excluded since one removed on click may never blur.
   const handleFieldFocus = (event: FocusEvent) => {
     if (
       !(event.target instanceof HTMLInputElement) &&
@@ -149,15 +144,13 @@ export const AiChatEmailApprovalCard = ({
       subject,
       body,
     };
-    const response: InputAskEmailApprovalResponse =
+    const response: EmailApprovalResponse =
       decision === 'discard' ? { decision } : { decision, email: editedEmail };
 
-    const isAnswered = await answerAgentChatAsk({
-      askId,
+    const isAnswered = await answerAgentChatToolCall({
       toolCallId,
       response,
-      // Only a discard is known before the server answers: sending or saving
-      // can still fail.
+      // Only a discard is certain before the server answers: sending or saving can still fail.
       optimisticToolOutput:
         decision === 'discard'
           ? {
@@ -170,7 +163,7 @@ export const AiChatEmailApprovalCard = ({
           : undefined,
     });
 
-    // The card goes once its Ask does, so it stays disabled until then.
+    // The card goes once its call is closed, so it stays disabled until then.
     if (!isAnswered) {
       setPendingDecision(null);
     }

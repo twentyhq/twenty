@@ -6,11 +6,16 @@ import { isDefined } from 'twenty-shared/utils';
 import {
   getWorkflowRunContext,
   StepStatus,
+  WORKFLOW_ACTION_FEATURE_FLAGS,
   WorkflowRunStepInfo,
   WorkflowRunStepInfos,
   type WorkflowRunStepLog,
 } from 'twenty-shared/workflow';
 
+import {
+  WorkflowStepExecutorException,
+  WorkflowStepExecutorExceptionCode,
+} from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
 import { isUsageRefusedError } from 'src/engine/core-modules/billing/utils/is-usage-refused-error.util';
@@ -380,6 +385,29 @@ export class WorkflowExecutorWorkspaceService {
     });
   }
 
+  private async assertActionTypeEnabled({
+    type,
+    workspaceId,
+  }: {
+    type: WorkflowAction['type'];
+    workspaceId: string;
+  }): Promise<void> {
+    const featureFlag = WORKFLOW_ACTION_FEATURE_FLAGS[type];
+
+    if (
+      isDefined(featureFlag) &&
+      !(await this.featureFlagService.isFeatureEnabled(
+        featureFlag,
+        workspaceId,
+      ))
+    ) {
+      throw new WorkflowStepExecutorException(
+        `WorkflowActionType '${type}' is not enabled`,
+        WorkflowStepExecutorExceptionCode.INVALID_STEP_TYPE,
+      );
+    }
+  }
+
   private async getNodeRunRefusal({
     workspaceId,
     billingSpenders,
@@ -502,7 +530,6 @@ export class WorkflowExecutorWorkspaceService {
     await this.workflowRunWorkspaceService.updateWorkflowRunStepInfo({
       stepId,
       stepInfo,
-      pendingAsks: isPendingEvent ? actionOutput.pendingAsks : undefined,
       workflowRunId,
       workspaceId,
     });
@@ -547,6 +574,8 @@ export class WorkflowExecutorWorkspaceService {
     });
 
     try {
+      await this.assertActionTypeEnabled({ type: step.type, workspaceId });
+
       // A resumed step's quota was checked when it first ran and paused.
       const nodeRunRefusal = isDefined(resumedThreadId)
         ? undefined

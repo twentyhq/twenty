@@ -9,7 +9,7 @@ import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutIn
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { useFieldWidgetFieldDefinition } from '@/page-layout/widgets/field/hooks/useFieldWidgetFieldDefinition';
 import { isFieldWidget } from '@/page-layout/widgets/field/utils/isFieldWidget';
-import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionsFromMapByObjectMetadataId';
+import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { isDefined } from 'twenty-shared/utils';
 import { RelationType } from '~/generated-metadata/graphql';
@@ -51,9 +51,7 @@ export const useFieldWidgetActionVisibility = ({
   const isOneToManyRelation =
     relationMetadata?.relationType === RelationType.ONE_TO_MANY;
 
-  // "See all" links to the relation field's own index, which lists the first
-  // hop. A nested widget lists the second hop, so the link would point at a
-  // different object than the widget shows.
+  // "See all" opens the first hop's index, but a nested widget lists the second hop.
   const isNestedRelationWidget = isDefined(
     widget.configuration.nestedRelationFieldMetadataId,
   );
@@ -74,18 +72,15 @@ export const useFieldWidgetActionVisibility = ({
 
   const isFieldReadOnly = isRecordFieldReadOnly({
     isRecordReadOnly,
-    objectPermissions: getObjectPermissionsFromMapByObjectMetadataId({
+    objectPermissions: getObjectPermissionsForObject(
       objectPermissionsByObjectMetadataId,
-      objectMetadataId: objectMetadataItem.id,
-    }),
+      objectMetadataItem.id,
+    ),
     fieldMetadataItem,
     fieldDefinition,
     objectPermissionsByObjectMetadataId,
   });
 
-  // The read-only chain already hides edit during layout customization
-  // (useIsRecordReadOnly returns true then); the explicit check states the
-  // rule here instead of leaving it implicit.
   const showEdit =
     !isPageLayoutInEditMode &&
     !isFieldReadOnly &&

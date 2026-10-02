@@ -10,6 +10,7 @@ type ThreadUsageUpdate = {
   totalCacheCreationTokens: number;
   contextWindowTokens: number | null;
   conversationSize: number;
+  pendingQuestionMessageId: string | null;
 };
 
 export const updateAgentChatThreadUsage = async ({
@@ -26,8 +27,7 @@ export const updateAgentChatThreadUsage = async ({
   usage: ThreadUsageUpdate;
 }): Promise<{ affected: number }> =>
   repository.query(workspaceId, async ({ manager, table }) => {
-    // Keep arithmetic in PostgreSQL and ownership in the same UPDATE. DTO numbers
-    // must never be read back and added to exact NUMERIC totals in JavaScript.
+    // sum in Postgres: JS numbers must never be added to exact NUMERIC totals
     const rows = await manager.query<{ id: string }[]>(
       `
     WITH updated AS (
@@ -39,7 +39,7 @@ export const updateAgentChatThreadUsage = async ({
         "totalCacheReadTokens" = "totalCacheReadTokens" + $7,
         "totalCacheCreationTokens" = "totalCacheCreationTokens" + $8,
         "contextWindowTokens" = $9, "conversationSize" = $10,
-        "lastStreamError" = NULL, "updatedAt" = now()
+        "pendingQuestionMessageId" = $11, "lastStreamError" = NULL, "updatedAt" = now()
       WHERE id = $1 AND "activeStreamId" = $2
       RETURNING id
     ) SELECT id FROM updated`,
@@ -54,6 +54,7 @@ export const updateAgentChatThreadUsage = async ({
         usage.totalCacheCreationTokens,
         usage.contextWindowTokens,
         usage.conversationSize,
+        usage.pendingQuestionMessageId,
       ],
     );
     return { affected: rows.length };

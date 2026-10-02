@@ -1,15 +1,18 @@
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { render, screen } from '@testing-library/react';
-import { type AskQuestionItem, type ProposedEmail } from 'twenty-shared/ai';
+import {
+  type AskQuestionItem,
+  type ProposedEmail,
+  type RequestFormField,
+} from 'twenty-shared/ai';
 
 import { AiChatPendingAskGate } from '@/ai/components/AiChatPendingAskGate';
 import { type AgentChatPendingQuestion } from '@/ai/types/AgentChatPendingQuestion';
 
-const useAgentChatPendingAsks = jest.fn();
-jest.mock('@/ai/hooks/useAgentChatPendingAsks', () => ({
-  useAgentChatPendingAsks: (args: { threadId: string }) =>
-    useAgentChatPendingAsks(args),
+const useAgentChatPendingToolCalls = jest.fn();
+jest.mock('@/ai/hooks/useAgentChatPendingToolCalls', () => ({
+  useAgentChatPendingToolCalls: () => useAgentChatPendingToolCalls(),
 }));
 jest.mock('@/ai/components/AiChatQuestionCard', () => ({
   AiChatQuestionCard: ({
@@ -19,6 +22,13 @@ jest.mock('@/ai/components/AiChatQuestionCard', () => ({
   }) => (
     <div role="group" aria-label="Questions">
       {pendingQuestion.questions[0].question}
+    </div>
+  ),
+}));
+jest.mock('@/ai/components/AiChatFormCard', () => ({
+  AiChatFormCard: ({ fields }: { fields: RequestFormField[] }) => (
+    <div role="group" aria-label="Form">
+      {fields[0].label}
     </div>
   ),
 }));
@@ -38,23 +48,20 @@ const QUESTIONS: AskQuestionItem[] = [
   },
 ];
 
-const EMAIL_ASK = {
-  id: 'ask-2',
+const EMAIL_APPROVAL = {
   toolCallId: 'call-2',
-  form: {
-    kind: 'emailApproval',
-    email: {
-      recipients: { to: 'tim@apple.dev', cc: '', bcc: '' },
-      subject: 'Your renewal',
-      body: 'Hi Tim',
-    },
+  kind: 'emailApproval',
+  email: {
+    recipients: { to: 'tim@apple.dev', cc: '', bcc: '' },
+    subject: 'Your renewal',
+    body: 'Hi Tim',
   },
 };
 
 const renderGate = () =>
   render(
     <I18nProvider i18n={i18n}>
-      <AiChatPendingAskGate threadId="thread-id">
+      <AiChatPendingAskGate>
         <textarea aria-label="Message" />
       </AiChatPendingAskGate>
     </I18nProvider>,
@@ -62,19 +69,12 @@ const renderGate = () =>
 
 describe('AiChatPendingAskGate', () => {
   it('shows the questions the thread waits on in place of the composer', () => {
-    useAgentChatPendingAsks.mockReturnValue([
-      {
-        id: 'ask-1',
-        toolCallId: 'call-1',
-        form: { kind: 'questions', questions: QUESTIONS },
-      },
+    useAgentChatPendingToolCalls.mockReturnValue([
+      { toolCallId: 'call-1', kind: 'questions', questions: QUESTIONS },
     ]);
 
     renderGate();
 
-    expect(useAgentChatPendingAsks).toHaveBeenCalledWith({
-      threadId: 'thread-id',
-    });
     expect(screen.getByRole('group', { name: 'Questions' })).toHaveTextContent(
       'Which plan?',
     );
@@ -82,7 +82,7 @@ describe('AiChatPendingAskGate', () => {
   });
 
   it('shows an email waiting for approval in place of the composer', () => {
-    useAgentChatPendingAsks.mockReturnValue([EMAIL_ASK]);
+    useAgentChatPendingToolCalls.mockReturnValue([EMAIL_APPROVAL]);
 
     renderGate();
 
@@ -92,14 +92,27 @@ describe('AiChatPendingAskGate', () => {
     expect(screen.queryByRole('textbox', { name: 'Message' })).toBeNull();
   });
 
-  it('shows the oldest of several requests first and says how many wait', () => {
-    useAgentChatPendingAsks.mockReturnValue([
-      EMAIL_ASK,
+  it('shows a form to fill in place of the composer', () => {
+    useAgentChatPendingToolCalls.mockReturnValue([
       {
-        id: 'ask-3',
-        toolCallId: 'call-3',
-        form: { kind: 'questions', questions: QUESTIONS },
+        toolCallId: 'call-4',
+        kind: 'form',
+        fields: [{ name: 'closeDate', label: 'Close date', type: 'DATE' }],
       },
+    ]);
+
+    renderGate();
+
+    expect(screen.getByRole('group', { name: 'Form' })).toHaveTextContent(
+      'Close date',
+    );
+    expect(screen.queryByRole('textbox', { name: 'Message' })).toBeNull();
+  });
+
+  it('shows the oldest of several requests first and says how many wait', () => {
+    useAgentChatPendingToolCalls.mockReturnValue([
+      EMAIL_APPROVAL,
+      { toolCallId: 'call-3', kind: 'questions', questions: QUESTIONS },
     ]);
 
     renderGate();
@@ -115,7 +128,7 @@ describe('AiChatPendingAskGate', () => {
   });
 
   it('shows the composer once nothing is pending', () => {
-    useAgentChatPendingAsks.mockReturnValue([]);
+    useAgentChatPendingToolCalls.mockReturnValue([]);
 
     renderGate();
 

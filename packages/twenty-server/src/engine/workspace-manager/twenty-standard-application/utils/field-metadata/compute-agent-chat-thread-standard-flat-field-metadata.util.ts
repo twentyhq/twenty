@@ -64,9 +64,7 @@ export const buildAgentChatThreadStandardFlatFieldMetadatas = (
         icon: 'IconId',
         isSystem: true,
         isUIEditable: false,
-        // A workflow run's conversation has no owner: it is read through the
-        // run. The column goes away with the owner contract step
-        // (twentyhq/core-team-issues#2925).
+        // Null for workflow run conversations, read through the run; the column goes away with the owner contract step (twentyhq/core-team-issues#2925)
         isNullable: true,
       },
     }),
@@ -519,9 +517,7 @@ export const buildAgentChatThreadStandardFlatFieldMetadatas = (
         ),
         icon: 'IconUsers',
         isUIEditable: false,
-        // Stays optional for a workflow run's conversation, which is read
-        // through its run rather than owned. Every other thread gets an owner
-        // with the owner contract step (twentyhq/core-team-issues#2925).
+        // Stays nullable for workflow run conversations, read through the run; other threads get an owner with the owner contract step (twentyhq/core-team-issues#2925)
         isNullable: true,
         targetObjectName: 'workspaceMember',
         targetFieldName: 'agentChatThreads',
@@ -650,35 +646,6 @@ export const buildAgentChatThreadStandardFlatFieldMetadatas = (
         settings: {
           relationType: RelationType.ONE_TO_MANY,
           joinColumnName: null,
-        },
-      },
-    }),
-    writability: MetadataWritability.SYSTEM,
-    isAuditLogged: false,
-  },
-  inputAsks: {
-    ...createStandardRelationFieldFlatMetadata({
-      ...args,
-      context: {
-        fieldName: 'inputAsks',
-        type: FieldMetadataType.RELATION,
-        label: i18nLabel(
-          msg({ message: 'Asks', context: 'fieldMetadata.label' }),
-        ),
-        description: i18nLabel(
-          msg({
-            message: 'Questions asked in this conversation',
-            context: 'fieldMetadata.description',
-          }),
-        ),
-        icon: 'IconHelpCircle',
-        isUIEditable: false,
-        isNullable: true,
-        targetObjectName: 'inputAsk',
-        targetFieldName: 'thread',
-        morphId: null,
-        settings: {
-          relationType: RelationType.ONE_TO_MANY,
         },
       },
     }),

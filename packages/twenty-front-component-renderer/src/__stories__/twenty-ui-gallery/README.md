@@ -16,10 +16,13 @@ to occur.
 | Fixture | Components |
 | --- | --- |
 | `twenty-ui-field-controls` | Field, Input, InputGroup, Textarea |
+| `twenty-ui-number-stepper` | NumberStepper (keyboard bounds, disabled/read-only state, named form values and submission) |
 | `twenty-ui-display-helpers` | Text |
+| `twenty-ui-image-input` | ImageInput |
 | `twenty-ui-list-item` | ListItem |
 | `twenty-ui-settings-row` | SettingsRow |
 | `twenty-ui-tabs` | Tabs |
+| `twenty-ui-overflowing-list` | OverflowingList |
 | `twenty-ui-popover` | Popover |
 | `twenty-ui-dialog` | Dialog |
 | `twenty-ui-menu` | Menu |
@@ -32,7 +35,7 @@ to occur.
 | `twenty-ui-radio-group` | RadioGroup, Radio (standard and card) |
 | `twenty-ui-tooltip` | Tooltip (convenience and compound APIs) |
 | `twenty-ui-responsive-hooks` | useIsMobile, useIsTouchDevice, Button hotkeys |
-| `twenty-ui-reading-directions` | Callout, ColorSchemePicker, ButtonGroup, Button, AvatarGroup, ListItem, JsonTree in LTR and RTL side by side (`TwentyUiReadingDirections.stories.tsx`) |
+| `twenty-ui-reading-directions` | Callout, ButtonGroup, Button, AvatarGroup, ListItem, JsonTree in LTR and RTL side by side (`TwentyUiReadingDirections.stories.tsx`) |
 
 The focused fixtures import public twenty-ui entry points and use
 `TwentyUiGalleryCard` for the light theme, mount marker, and `twenty-ui/style.css`.
@@ -56,8 +59,11 @@ expected-to-fail by the runner.
 | Component | Current limitation |
 | --- | --- |
 | Field controls | Textarea's cloned render element loses its change handler in React, so `FieldControlsReact` reports an empty `Notes` value. |
+| NumberStepper | Pointer stepping fails because the worker input does not implement `setSelectionRange`. Text editing fails because forwarded events lack the `nativeEvent.defaultPrevented` Base UI reads. Pasting is not covered: without `selectionStart`/`selectionEnd`, Base UI inserts the pasted text around the whole value and reports that number, then its caret restore throws from a layout effect, which unmounts the React tree and stops Preact rendering. Separate React and Preact stories assert the pointer and typing gaps and successful keyboard bounds, disabled/read-only state, named form values and submission. |
+| ImageInput | Native file picker activation and usable file contents are unavailable in the sandbox. The fixture checks forwarded file metadata, preview recovery, action callbacks, and supplied error changes. See the [ImageInput documentation](../../../../twenty-docs/ui/components/image-input.mdx). |
 | Radio card | `RadioCardReact` cannot activate an option because React drops the click handler Base UI adds through `React.cloneElement` on its `render={<div />}` element. |
 | Popover, Dialog, AlertDialog, Menu, Select | The trigger opens the overlay, but the popup portals into the sandbox `document.body`, which never reaches the host, so its content stays invisible. Dismissal and focus restoration are not covered yet. |
+| OverflowingList | Both runtimes measure, resize, and unmount the inline list, and keep rendering afterwards. A scoped light provider keeps popup portals inside the connected remote root and matches the gallery theme. Popup lifecycle checks verify selection, dismissal, focus restoration, and independent lists while requiring the missing native pointer width error; missing native `defaultPrevented` data and event constructor errors are optional. Focus restoration can also call a stale host listener, which is checked with the existing exact host-error assertion. Separate event isolation failure stories verify that opening the trigger activates the surrounding host, then check that popup selection adds no host activation. Full popup compatibility remains blocked on the event bridge work in [#26356](https://github.com/twentyhq/twenty/pull/26356). |
 | Dropdown | The content looks up its search field through `dataset` on the popup ref, which has none in the sandbox. React throws when the popup mounts, and the uncaught error unmounts the component before the trigger reports the open state. Preact applies the ref to the `PopoverPopup` component instance at mount, so the lookup throws inside Preact's render queue: the rejection never reaches the host and Preact stops re-rendering, so the trigger never opens. |
 | ListItem | `ListItemPreact` handles selection, the disabled item and the submenu row, but the overflow tooltip's Floating UI `contains(parent, child)` check receives a parent without `contains` and throws. |
 | Slider | Thumbs stay hidden because the sandbox has no `ResizeObserver` to re-measure after the first geometry batch. |

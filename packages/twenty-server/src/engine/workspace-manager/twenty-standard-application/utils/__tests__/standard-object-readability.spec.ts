@@ -74,7 +74,6 @@ describe('Standard object readability', () => {
 
     STANDARD_OBJECTS.recordShare.universalIdentifier,
     STANDARD_OBJECTS.workflowRun.universalIdentifier,
-    STANDARD_OBJECTS.inputAsk.universalIdentifier,
     STANDARD_OBJECTS.shortLink.universalIdentifier,
     ...inheritedObjectNames.map(
       (objectName) => STANDARD_OBJECTS[objectName].universalIdentifier,
@@ -88,8 +87,7 @@ describe('Standard object readability', () => {
       ),
   );
 
-  // Its grants follow the core workflow's visibility, since the workspace
-  // workflow record is not where that visibility lives.
+  // workflowRun grants follow the core workflow's visibility, which does not live on the workspace workflow record
   it('declares workflowRun PRIVATE and leaves workflow and workflowVersion OPEN', () => {
     expect(findStandardFlatObjectMetadata('workflowRun')).toMatchObject({
       readability: MetadataReadability.PRIVATE,
@@ -102,27 +100,6 @@ describe('Standard object readability', () => {
     });
   });
 
-  // A question reads as what asked it does: its run, or for a question asked
-  // outside a run, its conversation.
-  it('resolves its run and its conversation as the parents of an inputAsk', () => {
-    expect(findStandardFlatObjectMetadata('inputAsk')).toMatchObject({
-      readability: MetadataReadability.INHERITED,
-    });
-    expect(
-      resolveParents('inputAsk').map((parent) =>
-        parent.kind === 'column'
-          ? {
-              joinColumnName: parent.joinColumnName,
-              parentNameSingular: parent.parentFlatObjectMetadata.nameSingular,
-            }
-          : parent.kind,
-      ),
-    ).toEqual([
-      { joinColumnName: 'workflowRunId', parentNameSingular: 'workflowRun' },
-      { joinColumnName: 'threadId', parentNameSingular: 'agentChatThread' },
-    ]);
-  });
-
   it.each(['recordShare', 'shortLink'] as const)(
     'declares %s SYSTEM for readability and writability',
     (objectName) => {
@@ -133,8 +110,7 @@ describe('Standard object readability', () => {
     },
   );
 
-  // A link inheriting from its record, as noteTarget does, would tell everyone
-  // who can read the record which private conversations are filed under it.
+  // Inheriting from the record would reveal which private conversations are filed under it
   it('resolves its thread as the only parent of an agentChatThreadTarget', () => {
     expect(
       resolveParents('agentChatThreadTarget').map((parent) =>
@@ -200,8 +176,6 @@ describe('Standard object readability', () => {
     });
   });
 
-  // A member's chat has no run, so it reads only through its own grants, as a
-  // PRIVATE thread did; a run's conversation reads as its run does.
   it('resolves its workflow run as the only parent of an agentChatThread', () => {
     expect(
       resolveParents('agentChatThread').map((parent) =>

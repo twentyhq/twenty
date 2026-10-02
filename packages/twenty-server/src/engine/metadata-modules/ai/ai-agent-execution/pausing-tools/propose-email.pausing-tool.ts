@@ -49,21 +49,14 @@ const DECISION_TOOLS = {
   saveDraft: { toolName: 'draft_email', status: 'drafted' },
 } as const;
 
-// Sending or drafting runs the regular email tools as the person who
-// approved, so their connected accounts and permissions decide what happens.
 export const PROPOSE_EMAIL_PAUSING_TOOL = definePausingTool<
   ProposedEmail,
   ProposeEmailToolOutput
 >({
   inputSchema: proposeEmailInputSchema,
   outputSchema: () => proposeEmailOutputSchema,
-  buildAsk: (email) => ({
-    name: email.subject.trim(),
-    form: { kind: 'emailApproval', email },
-  }),
   complete: async ({ output: { decision, email }, input, context }) => {
-    // The person may edit what is sent, not which account sends it: the card
-    // offers no choice of account, so one in the answer is not theirs to pick.
+    // the card offers no account choice, so the answer may not override the sending account
     const finalEmail = {
       ...(email ?? input),
       connectedAccountId: input.connectedAccountId,

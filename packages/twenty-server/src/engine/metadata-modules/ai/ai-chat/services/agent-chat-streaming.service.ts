@@ -29,10 +29,11 @@ import {
   AgentMessageRole,
   AgentMessageStatus,
 } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
-import { parsePausingToolCall } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/parse-pausing-tool-call.util';
+import { skipAwaitingToolParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/skip-awaiting-tool-parts.util';
 import { mapDBPartsToUIMessageParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/mapDBPartsToUIMessageParts';
 import { type BrowsingContextType } from 'src/engine/metadata-modules/ai/ai-agent/types/browsing-context.type';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
+import { AgentMessagePartWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message-part.workspace-entity';
 import { type AgentChatThreadLastStreamError } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-last-stream-error.type';
 import { STREAM_AGENT_CHAT_JOB_NAME } from 'src/engine/metadata-modules/ai/ai-chat/jobs/stream-agent-chat-job-name.constant';
 import { type StreamAgentChatJobData } from 'src/engine/metadata-modules/ai/ai-chat/jobs/stream-agent-chat-job.types';
@@ -47,7 +48,6 @@ import {
 } from 'src/engine/metadata-modules/ai/ai.exception';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
-import { InputAskWorkspaceService } from 'src/modules/input-ask/workspace-services/input-ask.workspace-service';
 
 type StreamAgentChatOptions = {
   threadId: string;
@@ -79,7 +79,8 @@ export class AgentChatStreamingService {
     private readonly metricsService: MetricsService,
     private readonly streamRecoveryService: AgentChatStreamRecoveryService,
     private readonly actorService: AgentChatActorService,
-    private readonly inputAskWorkspaceService: InputAskWorkspaceService,
+    @InjectAgentHistoryRepository('agentMessagePart')
+    private readonly messagePartRepository: AgentHistoryRepository<AgentMessagePartWorkspaceEntity>,
   ) {}
 
   async reapDeadStream({
@@ -149,8 +150,8 @@ export class AgentChatStreamingService {
     });
 
     const [, hasQueuedBacklog] = await Promise.all([
-      this.settlePendingInputAsksBeforeSending({
-        threadId,
+      this.settlePendingToolCallsBeforeSending({
+        thread,
         workspaceId: workspace.id,
       }),
       this.agentChatService.hasQueuedMessages({
@@ -592,20 +593,14 @@ export class AgentChatStreamingService {
   }): Promise<void> {
     const threadStatus = await this.threadRepository.findOne(workspaceId, {
       where: { id: threadId },
-      select: ['id', 'deletedAt'],
+      select: ['id', 'deletedAt', 'pendingQuestionMessageId'],
     });
 
-    if (!threadStatus || threadStatus.deletedAt) {
-      return;
-    }
-
-    // Queued messages wait behind an Ask: they are the conversation after
-    // the answer, not a replacement for it.
+    // queued messages wait behind a pending tool call: they follow the answer rather than replace it
     if (
-      await this.inputAskWorkspaceService.hasPendingForThread({
-        threadId,
-        workspaceId,
-      })
+      !threadStatus ||
+      threadStatus.deletedAt ||
+      isDefined(threadStatus.pendingQuestionMessageId)
     ) {
       return;
     }
@@ -635,8 +630,7 @@ export class AgentChatStreamingService {
         userWorkspaceId = sender.userWorkspaceId;
         break;
       } catch (error) {
-        // A rolling upgrade can temporarily leave a worker with an older access
-        // policy. Preserve the request until a worker can authorize it.
+        // during a rolling upgrade a worker may run an older access policy, so keep the request for another worker
         if (
           error instanceof AiException &&
           error.code === AiExceptionCode.THREAD_NOT_FOUND
@@ -770,73 +764,49 @@ export class AgentChatStreamingService {
     }
   }
 
-  // A message sent while the agent waits on a person moves the conversation
-  // past the chat's own questions, which are closed as skipped so the model
-  // sees why they went unanswered. A workflow run's question gates the run,
-  // so it is never closed by a chat message.
-  private async settlePendingInputAsksBeforeSending({
-    threadId,
+  // a message sent while the agent waits on a person closes its pending calls as skipped, so the model sees why
+  // clearing the marker is the claim, which an answer holding the stream keeps
+  // workflow-run calls gate the run, so a chat message never closes them
+  private async settlePendingToolCallsBeforeSending({
+    thread,
     workspaceId,
   }: {
-    threadId: string;
+    thread: Pick<
+      AgentChatThreadWorkspaceEntity,
+      'id' | 'workflowRunId' | 'pendingQuestionMessageId'
+    >;
     workspaceId: string;
   }): Promise<void> {
-    const pendingInputAsks =
-      await this.inputAskWorkspaceService.findPendingForThread({
-        threadId,
-        workspaceId,
-      });
+    const messageId = thread.pendingQuestionMessageId;
 
-    if (
-      pendingInputAsks.some((pendingInputAsk) =>
-        isDefined(pendingInputAsk.workflowRunId),
-      )
-    ) {
+    if (!isDefined(messageId)) {
+      return;
+    }
+
+    if (isDefined(thread.workflowRunId)) {
       throw new AiException(
         'This conversation is waiting on an answer to its workflow run',
         AiExceptionCode.THREAD_AWAITING_WORKFLOW_INPUT,
       );
     }
 
-    for (const { toolCallId } of pendingInputAsks) {
-      if (isDefined(toolCallId)) {
-        await this.skipPendingToolCall({ threadId, toolCallId, workspaceId });
-      }
-    }
-  }
-
-  private async skipPendingToolCall({
-    threadId,
-    toolCallId,
-    workspaceId,
-  }: {
-    threadId: string;
-    toolCallId: string;
-    workspaceId: string;
-  }): Promise<void> {
-    const hasCanceled = await this.inputAskWorkspaceService.cancel({
+    const claim = await this.threadRepository.update(
       workspaceId,
-      match: { threadId, toolCallId },
-    });
+      {
+        id: thread.id,
+        pendingQuestionMessageId: messageId,
+        activeStreamId: IsNull(),
+      },
+      { pendingQuestionMessageId: null },
+    );
 
-    if (!hasCanceled) {
+    if (!claim.affected) {
       return;
     }
 
-    const toolPart = await this.agentChatService.findToolPart({
-      threadId,
-      toolCallId,
-      workspaceId,
-    });
-    const pausingToolCall = parsePausingToolCall(toolPart);
-
-    if (!isDefined(toolPart) || !isDefined(pausingToolCall)) {
-      return;
-    }
-
-    await this.agentChatService.updateToolPartOutput({
-      partId: toolPart.id,
-      toolOutput: pausingToolCall.toSkippedToolResult(),
+    await skipAwaitingToolParts({
+      messagePartRepository: this.messagePartRepository,
+      messageId,
       workspaceId,
     });
   }
@@ -879,8 +849,7 @@ export class AgentChatStreamingService {
           where: { id: threadId },
         })
       : undefined;
-    // A hidden row without parts is an interrupted seed attempt: it carries no context and
-    // would otherwise reach the model as an empty user message.
+    // a hidden row without parts is an interrupted seed and would reach the model as an empty message
     const filteredMessages = allMessages.filter(
       (message) =>
         message.status !== AgentMessageStatus.QUEUED &&
@@ -913,8 +882,7 @@ export class AgentChatStreamingService {
             return part;
           }),
         ),
-        // The hidden context seed gets no createdAt so injectMessageTimestamps skips it: its
-        // insert time is meaningless and later than the first real message it sorts before.
+        // no createdAt so injectMessageTimestamps skips the seed, whose insert time postdates the first real message
         ...(message.isHidden
           ? {}
           : {

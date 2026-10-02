@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { ApplicationSyncService } from 'src/engine/core-modules/application/application-manifest/application-sync.service';
 import { ApplicationException } from 'src/engine/core-modules/application/application.exception';
-import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { ApplicationLookupService } from 'src/engine/core-modules/application/application-lookup/application-lookup.service';
 import { type ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { APPLICATION_LIFECYCLE_LOCK_OPTIONS } from 'src/engine/core-modules/application/application-install/constants/application-lifecycle-lock-options.constant';
 import { buildApplicationLifecycleLockKey } from 'src/engine/core-modules/application/application-install/utils/build-application-lifecycle-lock-key.util';
@@ -13,7 +13,7 @@ import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.
 @Injectable()
 export class ApplicationUninstallRunnerService {
   constructor(
-    private readonly applicationService: ApplicationService,
+    private readonly applicationLookupService: ApplicationLookupService,
     private readonly applicationSyncService: ApplicationSyncService,
     private readonly metricsService: MetricsService,
     private readonly cacheLockService: CacheLockService,
@@ -29,10 +29,11 @@ export class ApplicationUninstallRunnerService {
     let application: ApplicationEntity | null = null;
 
     try {
-      application = await this.applicationService.findByUniversalIdentifier({
-        universalIdentifier,
-        workspaceId,
-      });
+      application =
+        await this.applicationLookupService.findByUniversalIdentifier({
+          universalIdentifier,
+          workspaceId,
+        });
 
       await this.cacheLockService.withLock(
         () =>

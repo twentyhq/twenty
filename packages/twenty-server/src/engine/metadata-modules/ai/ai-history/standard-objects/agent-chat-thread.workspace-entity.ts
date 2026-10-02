@@ -1,4 +1,3 @@
-import { type InputAskWorkspaceEntity } from 'src/modules/input-ask/standard-objects/input-ask.workspace-entity';
 import { type AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { type EntityRelation } from 'src/engine/workspace-manager/workspace-migration/types/entity-relation.interface';
 import { type AgentMessageWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message.workspace-entity';
@@ -16,7 +15,6 @@ export class AgentChatThreadWorkspaceEntity extends BaseWorkspaceEntity {
   workspaceMember: EntityRelation<WorkspaceMemberWorkspaceEntity> | null;
   recordTargets: EntityRelation<AgentChatThreadTargetWorkspaceEntity[]>;
   workflowRun: EntityRelation<WorkflowRunWorkspaceEntity> | null;
-  inputAsks: EntityRelation<InputAskWorkspaceEntity[]>;
 
   archivedAt: string | null;
   userWorkspaceId: string | null;

@@ -17,8 +17,6 @@ export const usePageLayoutTabWithVisibleWidgetsOrThrow = (
 
   const tab = currentPageLayout.tabs.find((tab) => tab.id === tabId);
 
-  // Memoized because consumers feed this widget array to dnd-kit and to
-  // memoized callbacks, which a fresh array on every render would defeat.
   const tabWithVisibleWidgets = useMemo(() => {
     if (!isDefined(tab)) {
       return undefined;

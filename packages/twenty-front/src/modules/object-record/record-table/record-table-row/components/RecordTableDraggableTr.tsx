@@ -17,10 +17,7 @@ import { DND_KIT_PLUGINS_WITHOUT_OPTIMISTIC } from '@/ui/utilities/drag-and-drop
 import { DRAG_SOURCE_OPACITY } from '@/ui/utilities/drag-and-drop/constants/DragSourceOpacity';
 import { DragDropItemSortableHandleRefContext } from '@/ui/utilities/drag-and-drop/context/DragDropItemSortableHandleRefContext';
 
-// Overlays the row's leading edge without reflowing it. The grip, checkbox and
-// first field cells are sticky at TABLE_Z_INDEX.cell.sticky; without a higher
-// z-index they would paint over the insertion line and truncate it to the
-// scrollable columns.
+// Above TABLE_Z_INDEX.cell.sticky so sticky cells don't paint over the insertion line.
 const StyledRowDropTargetSlot = styled.div`
   left: 0;
   position: absolute;
@@ -63,11 +60,7 @@ export const RecordTableDraggableTr = ({
     focusIndex,
   };
 
-  // The sortable id must never change in place: when the virtualization
-  // treadmill shifts recordIds across mounted rows after a reorder, dnd-kit
-  // re-registers each row under its new id and disposes the row that
-  // previously held it, leaving one row permanently undraggable. A stable
-  // per-instance id avoids the collision; recordId travels in the drag data.
+  // Stable per instance: dnd-kit breaks a row when virtualization shifts recordIds across mounted rows.
   const [sortableId] = useState(() => v4());
 
   const { handleRef, ref, isDragSource } = useSortable({

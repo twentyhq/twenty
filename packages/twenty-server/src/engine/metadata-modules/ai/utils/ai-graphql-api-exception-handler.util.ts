@@ -20,6 +20,7 @@ export const aiGraphqlApiExceptionHandler = (error: Error) => {
       case AiExceptionCode.RECORD_NOT_FOUND:
       case AiExceptionCode.WORKSPACE_NOT_FOUND:
       case AiExceptionCode.MESSAGE_NOT_FOUND:
+      case AiExceptionCode.TOOL_CALL_NOT_FOUND:
       case AiExceptionCode.ROLE_NOT_FOUND:
       case AiExceptionCode.RUN_AS_WORKSPACE_MEMBER_NOT_FOUND:
       case AiExceptionCode.EVALUATION_MODEL_NOT_FOUND:
@@ -28,12 +29,14 @@ export const aiGraphqlApiExceptionHandler = (error: Error) => {
       case AiExceptionCode.INVALID_AGENT_INPUT:
       case AiExceptionCode.INVALID_CHAT_THREAD_TITLE:
       case AiExceptionCode.INVALID_TOOL_CALL_OUTPUT:
+      case AiExceptionCode.TOOL_CALL_NOT_PENDING:
       case AiExceptionCode.EVALUATION_QUESTION_UNSUPPORTED:
       case AiExceptionCode.INVALID_EVALUATION_REQUEST:
         throw new UserInputError(error);
       case AiExceptionCode.AGENT_ALREADY_EXISTS:
       case AiExceptionCode.NO_FAILED_TURN_TO_RETRY:
       case AiExceptionCode.THREAD_AWAITING_WORKFLOW_INPUT:
+      case AiExceptionCode.THREAD_AWAITING_ANSWER:
         throw new ConflictError(error);
       case AiExceptionCode.AGENT_IS_STANDARD:
       case AiExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_AGENTS:

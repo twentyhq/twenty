@@ -15,12 +15,12 @@
       "AnimatedIconCrossfade": "components/layout/AnimatedIconCrossfade/AnimatedIconCrossfade",
       "AvatarGroup": "components/data-display/AvatarGroup/AvatarGroup",
       "Callout": "components/feedback/Callout/Callout",
-      "ColorSchemePicker": "components/input/ColorSchemePicker/ColorSchemePicker",
       "CommandBlock": "components/data-display/CommandBlock/CommandBlock",
       "DEFAULT_COLOR_LABELS": "components/navigation/MenuItem/constants/DefaultColorLabels",
       "Dropdown": "components/navigation/Dropdown/Dropdown",
       "getIconTileColorShades": "components/data-display/TintedIconTile/utils/getIconTileColorShades",
       "IconButton": "components/input/IconButton/IconButton",
+      "ImageInput": "components/input/ImageInput/ImageInput",
       "InlineBanner": "components/feedback/InlineBanner/InlineBanner",
       "JsonTree": "components/data-display/JsonTree/JsonTree",
       "LightButton": "components/input/LightButton/LightButton",
@@ -31,9 +31,9 @@
       "MenuItemDraggable": "components/navigation/MenuItemDraggable/MenuItemDraggable",
       "MenuItemSuggestion": "components/navigation/MenuItemSuggestion/MenuItemSuggestion",
       "MenuPicker": "components/navigation/MenuPicker/MenuPicker",
-      "NavigationBar": "components/navigation/NavigationBar/NavigationBar",
+      "MetricRow": "components/data-display/MetricRow/MetricRow",
       "NotificationCounter": "components/data-display/NotificationCounter/NotificationCounter",
-      "RoundedLink": "components/navigation/RoundedLink/RoundedLink",
+      "OverflowingList": "components/layout/OverflowingList/OverflowingList",
       "SearchInput": "components/input/SearchInput/SearchInput",
       "Section": "components/layout/Section/Section",
       "SettingsRow": "components/input/SettingsRow/SettingsRow",
@@ -50,7 +50,6 @@
       "CalloutProps": "components/feedback/Callout/types/CalloutProps",
       "CalloutVariant": "components/feedback/Callout/types/CalloutVariant",
       "ColorLabels": "components/navigation/MenuItem/types/ColorLabels",
-      "ColorSchemePickerProps": "components/input/ColorSchemePicker/types/ColorSchemePickerProps",
       "DropdownActionItemProps": "components/navigation/Dropdown/types/DropdownActionItemProps",
       "DropdownCloseProps": "components/navigation/Dropdown/types/DropdownCloseProps",
       "DropdownContentProps": "components/navigation/Dropdown/types/DropdownContentProps",
@@ -70,6 +69,7 @@
       "IconButtonProps": "components/input/IconButton/types/IconButtonProps",
       "IconButtonSize": "components/input/IconButton/types/IconButtonSize",
       "IconTileColorShades": "components/data-display/TintedIconTile/utils/getIconTileColorShades",
+      "ImageInputProps": "components/input/ImageInput/types/ImageInputProps",
       "InlineBannerButtonProps": "components/feedback/InlineBanner/types/InlineBannerButtonProps",
       "InlineBannerProps": "components/feedback/InlineBanner/types/InlineBannerProps",
       "JsonNodeHighlighting": "components/data-display/JsonTree/types/JsonNodeHighlighting",
@@ -84,6 +84,8 @@
       "MenuItemProps": "components/navigation/MenuItem/types/MenuItemProps",
       "MenuItemSuggestionProps": "components/navigation/MenuItemSuggestion/types/MenuItemSuggestionProps",
       "MenuPickerProps": "components/navigation/MenuPicker/types/MenuPickerProps",
+      "MetricRowProps": "components/data-display/MetricRow/types/MetricRowProps",
+      "OverflowingListProps": "components/layout/OverflowingList/types/OverflowingListProps",
       "SearchInputProps": "components/input/SearchInput/types/SearchInputProps",
       "SectionHeaderProps": "components/layout/Section/types/SectionHeaderProps",
       "SectionRootProps": "components/layout/Section/types/SectionRootProps",
@@ -674,12 +676,14 @@
     "values": {
       "Banner": "primitives/feedback/Banner/Banner",
       "Loader": "primitives/feedback/Loader/Loader",
-      "ProgressBar": "primitives/feedback/ProgressBar/ProgressBar"
+      "ProgressBar": "primitives/feedback/ProgressBar/ProgressBar",
+      "ProgressRing": "primitives/feedback/ProgressRing/ProgressRing"
     },
     "types": {
       "BannerColor": "primitives/feedback/Banner/Banner",
       "BannerVariant": "primitives/feedback/Banner/Banner",
-      "ProgressBarProps": "primitives/feedback/ProgressBar/types/ProgressBarProps"
+      "ProgressBarProps": "primitives/feedback/ProgressBar/types/ProgressBarProps",
+      "ProgressRingProps": "primitives/feedback/ProgressRing/types/ProgressRingProps"
     }
   },
   "primitives/input": {
@@ -691,6 +695,7 @@
       "Field": "primitives/input/Field/Field",
       "Input": "primitives/input/Input/Input",
       "InputGroup": "primitives/input/InputGroup/InputGroup",
+      "NumberStepper": "primitives/input/NumberStepper/NumberStepper",
       "Radio": "primitives/input/Radio/Radio",
       "RadioGroup": "primitives/input/RadioGroup/RadioGroup",
       "SegmentedControl": "primitives/input/SegmentedControl/SegmentedControl",
@@ -710,10 +715,10 @@
       "CheckboxShape": "primitives/input/Checkbox/types/CheckboxShape",
       "CheckboxSize": "primitives/input/Checkbox/types/CheckboxSize",
       "CheckboxVariant": "primitives/input/Checkbox/types/CheckboxVariant",
-      "ColorScheme": "primitives/input/types/ColorScheme",
       "InputGroupProps": "primitives/input/InputGroup/types/InputGroupProps",
       "InputProps": "primitives/input/Input/types/InputProps",
       "InputSize": "primitives/input/types/InputSize",
+      "NumberStepperProps": "primitives/input/NumberStepper/types/NumberStepperProps",
       "RadioGroupProps": "primitives/input/RadioGroup/types/RadioGroupProps",
       "RadioProps": "primitives/input/Radio/types/RadioProps",
       "SegmentedControlOption": "primitives/input/SegmentedControl/types/SegmentedControlOption",
@@ -757,10 +762,13 @@
   "primitives/navigation": {
     "reExports": [],
     "values": {
+      "Breadcrumb": "primitives/navigation/Breadcrumb/Breadcrumb",
       "ListItem": "primitives/navigation/ListItem/ListItem",
       "Tabs": "primitives/navigation/Tabs/Tabs"
     },
     "types": {
+      "BreadcrumbItem": "primitives/navigation/Breadcrumb/types/BreadcrumbItem",
+      "BreadcrumbProps": "primitives/navigation/Breadcrumb/types/BreadcrumbProps",
       "ListItemColor": "primitives/navigation/ListItem/types/ListItemColor",
       "ListItemDescriptionPlacement": "primitives/navigation/ListItem/types/ListItemDescriptionPlacement",
       "ListItemIndicator": "primitives/navigation/ListItem/types/ListItemIndicator",
@@ -840,12 +848,17 @@
   "primitives/typography": {
     "reExports": [],
     "values": {
+      "formatShortcut": "primitives/typography/Shortcut/formatShortcut",
       "Heading": "primitives/typography/Heading/Heading",
       "OverflowingTextWithTooltip": "primitives/typography/OverflowingTextWithTooltip/OverflowingTextWithTooltip",
+      "Shortcut": "primitives/typography/Shortcut/Shortcut",
       "Text": "primitives/typography/Text/Text"
     },
     "types": {
-      "HeadingProps": "primitives/typography/Heading/types/HeadingProps"
+      "HeadingProps": "primitives/typography/Heading/types/HeadingProps",
+      "ShortcutDefinition": "primitives/typography/Shortcut/types/ShortcutDefinition",
+      "ShortcutFormatOptions": "primitives/typography/Shortcut/types/ShortcutFormatOptions",
+      "ShortcutProps": "primitives/typography/Shortcut/types/ShortcutProps"
     }
   },
   "styles": {
@@ -902,7 +915,6 @@
     "values": {
       "getMainColorNameFromPaletteColorName": "utilities/color/utils/getMainColorNameFromPaletteColorName",
       "getOsControlSymbol": "utilities/device/getOsControlSymbol",
-      "getOsShortcutSeparator": "utilities/device/getOsShortcutSeparator",
       "getSafeUrl": "utilities/utils/getSafeUrl",
       "getUserDevice": "utilities/device/getUserDevice",
       "isDefined": "utilities/utils/isDefined",

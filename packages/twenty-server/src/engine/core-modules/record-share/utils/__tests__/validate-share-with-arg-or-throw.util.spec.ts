@@ -114,6 +114,19 @@ describe('validateShareWithArgOrThrow', () => {
     );
   });
 
+  it('should reject the NONE access level, which only withdraws access', () => {
+    expect(() =>
+      validateShareWithArgOrThrow({
+        authContext: userAuthContext,
+        shareWith: [
+          { everyone: true, accessLevel: RecordShareAccessLevel.NONE },
+        ],
+      }),
+    ).toThrow(
+      'shareWith access level "NONE" must be one of READ, READ_WRITE, FULL',
+    );
+  });
+
   it('should reject a workspaceMemberId that is not a uuid', () => {
     expect(() =>
       validateShareWithArgOrThrow({

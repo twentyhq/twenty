@@ -5,7 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AiChatAskCard } from '@/ai/components/AiChatAskCard';
-import { useAgentChatPendingAsks } from '@/ai/hooks/useAgentChatPendingAsks';
+import { useAgentChatPendingToolCalls } from '@/ai/hooks/useAgentChatPendingToolCalls';
 
 const StyledGate = styled.div`
   display: flex;
@@ -21,25 +21,22 @@ const StyledWaitingCount = styled.span`
 `;
 
 type AiChatPendingAskGateProps = {
-  threadId: string | null;
   children: ReactNode;
 };
 
-// The agent continues once every call it paused on is answered, so the
-// cards come one at a time, oldest first, each taking the composer's place.
+// The agent resumes once every paused call is answered, so cards come one at a time, oldest first.
 export const AiChatPendingAskGate = ({
-  threadId,
   children,
 }: AiChatPendingAskGateProps) => {
   const { t } = useLingui();
-  const pendingAsks = useAgentChatPendingAsks({ threadId });
-  const [currentAsk] = pendingAsks;
+  const pendingToolCalls = useAgentChatPendingToolCalls();
+  const [currentToolCall] = pendingToolCalls;
 
-  if (!isDefined(currentAsk)) {
+  if (!isDefined(currentToolCall)) {
     return children;
   }
 
-  const waitingCount = pendingAsks.length;
+  const waitingCount = pendingToolCalls.length;
 
   return (
     <StyledGate>
@@ -48,7 +45,10 @@ export const AiChatPendingAskGate = ({
           {t`${waitingCount} requests are waiting on you`}
         </StyledWaitingCount>
       )}
-      <AiChatAskCard key={currentAsk.id} pendingAsk={currentAsk} />
+      <AiChatAskCard
+        key={currentToolCall.toolCallId}
+        pendingToolCall={currentToolCall}
+      />
     </StyledGate>
   );
 };
