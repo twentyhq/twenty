@@ -1,7 +1,7 @@
 import { Autocomplete as AutocompletePrimitive } from '@base-ui/react/autocomplete';
 import { clsx } from 'clsx';
 
-import { isRenderableSlot } from '@ui/primitives/navigation/ListItem/internal/isRenderableSlot';
+import { isRenderableSlot } from '@ui/utilities/internal/isRenderableSlot';
 import listItemStyles from '@ui/primitives/navigation/ListItem/ListItem.module.scss';
 import { mergeClassNames } from '@ui/utilities/internal/mergeClassNames';
 
