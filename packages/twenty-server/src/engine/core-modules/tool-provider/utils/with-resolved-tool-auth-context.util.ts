@@ -10,7 +10,6 @@ export const withResolvedToolAuthContext = async <T>(
   {
     context,
     userRepository,
-    userWorkspaceRepository,
     workspaceCacheService,
   }: { context: ToolProviderContext } & ToolAuthContextDependencies,
   dispatch: (contextWithAuth: ToolProviderContext) => Promise<T>,
@@ -21,7 +20,6 @@ export const withResolvedToolAuthContext = async <T>(
       ? await buildRequiredToolAuthContext({
           context,
           userRepository,
-          userWorkspaceRepository,
           workspaceCacheService,
         })
       : undefined);

@@ -91,7 +91,6 @@ export const SidePanelShareRecordAddPeopleItem = ({
               onClick={() => {
                 void setShare({
                   principal: { workspaceMemberId: member.id },
-                  enabled: true,
                   accessLevel: invitationAccessLevel,
                 });
               }}
@@ -109,7 +108,6 @@ export const SidePanelShareRecordAddPeopleItem = ({
               onClick={() => {
                 void setShare({
                   principal: { roleId: role.id },
-                  enabled: true,
                   accessLevel: invitationAccessLevel,
                 });
               }}

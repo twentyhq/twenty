@@ -8,27 +8,37 @@ const OBJECT_LABEL_PLURAL = 'Opportunities';
 
 const getNote = ({
   accessLevel = RecordShareAccessLevel.READ_WRITE,
-  canRoleRead,
-  canRoleUpdate = false,
+  principalRole,
   sharingReach,
 }: {
   accessLevel?: RecordShareAccessLevel;
-  canRoleRead: boolean | null;
-  canRoleUpdate?: boolean | null;
+  principalRole:
+    | { canRead: boolean | null; canUpdate: boolean | null }
+    | undefined;
   sharingReach: ObjectSharingReach;
 }) =>
   getRecordShareRoleAccessNote({
-    share: { accessLevel, canRoleRead, canRoleUpdate },
+    accessLevel,
+    principalRole,
     sharingReach,
     objectLabelPlural: OBJECT_LABEL_PLURAL,
   });
 
 describe('getRecordShareRoleAccessNote', () => {
-  it('should say nothing about everyone, who has no single role', () => {
+  it('should say nothing when the role of the recipient is unknown', () => {
     expect(
       getNote({
-        canRoleRead: null,
+        principalRole: undefined,
         sharingReach: ObjectSharingReach.WORKSPACE,
+      }),
+    ).toBeUndefined();
+  });
+
+  it('should say nothing when the access of the role is unknown', () => {
+    expect(
+      getNote({
+        principalRole: { canRead: null, canUpdate: null },
+        sharingReach: ObjectSharingReach.ROLE_ACCESS,
       }),
     ).toBeUndefined();
   });
@@ -36,7 +46,7 @@ describe('getRecordShareRoleAccessNote', () => {
   it('should tell that a grant reaches beyond the role of its recipient', () => {
     expect(
       getNote({
-        canRoleRead: false,
+        principalRole: { canRead: false, canUpdate: false },
         sharingReach: ObjectSharingReach.WORKSPACE,
       }),
     ).toBe("Gets this record only: their role can't access Opportunities");
@@ -45,7 +55,7 @@ describe('getRecordShareRoleAccessNote', () => {
   it('should not warn about editing when the grant reaches beyond the role', () => {
     expect(
       getNote({
-        canRoleRead: true,
+        principalRole: { canRead: true, canUpdate: false },
         sharingReach: ObjectSharingReach.WORKSPACE,
       }),
     ).toBeUndefined();
@@ -54,7 +64,7 @@ describe('getRecordShareRoleAccessNote', () => {
   it('should warn that a grant does nothing when sharing stays within roles', () => {
     expect(
       getNote({
-        canRoleRead: false,
+        principalRole: { canRead: false, canUpdate: false },
         sharingReach: ObjectSharingReach.ROLE_ACCESS,
       }),
     ).toBe("Won't see it: their role can't access Opportunities");
@@ -63,21 +73,20 @@ describe('getRecordShareRoleAccessNote', () => {
   it('should warn that an edit grant only lets them view within roles', () => {
     expect(
       getNote({
-        canRoleRead: true,
+        principalRole: { canRead: true, canUpdate: false },
         sharingReach: ObjectSharingReach.ROLE_ACCESS,
       }),
     ).toBe("Can only view: their role can't edit Opportunities");
     expect(
       getNote({
         accessLevel: RecordShareAccessLevel.READ,
-        canRoleRead: true,
+        principalRole: { canRead: true, canUpdate: false },
         sharingReach: ObjectSharingReach.ROLE_ACCESS,
       }),
     ).toBeUndefined();
     expect(
       getNote({
-        canRoleRead: true,
-        canRoleUpdate: true,
+        principalRole: { canRead: true, canUpdate: true },
         sharingReach: ObjectSharingReach.ROLE_ACCESS,
       }),
     ).toBeUndefined();
