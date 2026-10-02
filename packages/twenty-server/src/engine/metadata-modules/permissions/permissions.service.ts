@@ -73,7 +73,10 @@ export class PermissionsService {
         isPermissionFlagGranted({
           role: flatRole,
           permissionFlag,
-          assignedPermissionFlagUniversalIdentifiers,
+          isPermissionFlagAssignedToRole: (permissionFlagUniversalIdentifier) =>
+            assignedPermissionFlagUniversalIdentifiers.has(
+              permissionFlagUniversalIdentifier,
+            ),
         }),
       ]),
     ) as Record<PermissionFlagType, boolean>;

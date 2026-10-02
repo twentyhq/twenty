@@ -17,9 +17,9 @@ export const isPermissionFlagGrantedToFlatRole = ({
   isPermissionFlagGranted({
     role: flatRole,
     permissionFlag,
-    assignedPermissionFlagUniversalIdentifiers:
+    isPermissionFlagAssignedToRole: (permissionFlagUniversalIdentifier) =>
       getFlatRolePermissionFlagUniversalIdentifiers({
         flatRole,
         flatRolePermissionFlagMaps,
-      }),
+      }).has(permissionFlagUniversalIdentifier),
   });

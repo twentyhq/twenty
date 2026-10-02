@@ -3,7 +3,10 @@ import { GqlExecutionContext } from '@nestjs/graphql';
 import { Test, type TestingModule } from '@nestjs/testing';
 
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-import { PermissionFlagType } from 'twenty-shared/constants';
+import {
+  PermissionFlagType,
+  SystemPermissionFlag,
+} from 'twenty-shared/constants';
 
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import {
@@ -98,9 +101,11 @@ describe('SettingsPermissionGuard', () => {
     const mockCache = ({
       defaultRoleId,
       canUpdateAllSettings = false,
+      isLayoutsFlagAssigned = false,
     }: {
       defaultRoleId: string | null;
       canUpdateAllSettings?: boolean;
+      isLayoutsFlagAssigned?: boolean;
     }) =>
       mockWorkspaceCacheService.getOrRecompute.mockResolvedValue({
         userWorkspaceRoleMap: {},
@@ -121,14 +126,25 @@ describe('SettingsPermissionGuard', () => {
               id: 'role-id',
               canUpdateAllSettings,
               canAccessAllTools: false,
-              rolePermissionFlagIds: [],
+              rolePermissionFlagIds: isLayoutsFlagAssigned
+                ? ['role-permission-flag-id']
+                : [],
             },
           },
           universalIdentifierById: { 'role-id': 'role-universal-identifier' },
         },
         flatRolePermissionFlagMaps: {
-          byUniversalIdentifier: {},
-          universalIdentifierById: {},
+          byUniversalIdentifier: {
+            'role-permission-flag-universal-identifier': {
+              id: 'role-permission-flag-id',
+              permissionFlagUniversalIdentifier:
+                SystemPermissionFlag[PermissionFlagType.LAYOUTS],
+            },
+          },
+          universalIdentifierById: {
+            'role-permission-flag-id':
+              'role-permission-flag-universal-identifier',
+          },
         },
       });
 
@@ -169,10 +185,27 @@ describe('SettingsPermissionGuard', () => {
       mockCache({ defaultRoleId: 'role-id', canUpdateAllSettings: true });
 
       await expect(guard.canActivate(mockExecutionContext)).resolves.toBe(true);
+      expect(mockWorkspaceCacheService.getOrRecompute).toHaveBeenCalledTimes(1);
       expect(mockWorkspaceCacheService.getOrRecompute).toHaveBeenCalledWith(
         'workspace-id',
-        expect.arrayContaining(['flatApplicationMaps', 'flatRoleMaps']),
+        [
+          'userWorkspaceRoleMap',
+          'apiKeyRoleMap',
+          'flatApplicationMaps',
+          'flatRoleMaps',
+          'flatRolePermissionFlagMaps',
+        ],
       );
+    });
+
+    it('should allow when the setting is assigned to the default role of the application', async () => {
+      mockCache({
+        defaultRoleId: 'role-id',
+        canUpdateAllSettings: false,
+        isLayoutsFlagAssigned: true,
+      });
+
+      await expect(guard.canActivate(mockExecutionContext)).resolves.toBe(true);
     });
 
     it('should deny with PERMISSION_DENIED when the default role of the application lacks the setting', async () => {

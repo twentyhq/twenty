@@ -104,7 +104,10 @@ export class WorkspaceRolesPermissionsCacheService extends WorkspaceCacheProvide
         isPermissionFlagGranted({
           role,
           permissionFlag,
-          assignedPermissionFlagUniversalIdentifiers,
+          isPermissionFlagAssignedToRole: (permissionFlagUniversalIdentifier) =>
+            assignedPermissionFlagUniversalIdentifiers.has(
+              permissionFlagUniversalIdentifier,
+            ),
         });
       const roleFieldPermissions = fieldPermissions.byRoleId.get(role.id) ?? [];
 
