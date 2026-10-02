@@ -48,7 +48,7 @@ describe('buildCreateUsageLimitInput', () => {
     });
   });
 
-  it('keeps a count as an integer and rejects fractions', () => {
+  it('rounds a count to a whole number', () => {
     expect(
       buildCreateUsageLimitInput(
         buildValues({
@@ -62,9 +62,17 @@ describe('buildCreateUsageLimitInput', () => {
     );
     expect(
       buildCreateUsageLimitInput(
-        buildValues({ unit: UsageUnit.INVOCATION, limitValue: '2.5' }),
-      ),
-    ).toBeNull();
+        buildValues({ unit: UsageUnit.INVOCATION, limitValue: '2.4' }),
+      )?.limitValue,
+    ).toBe(2);
+  });
+
+  it('rejects an amount that is not a positive number', () => {
+    for (const limitValue of ['', 'abc', '-5', '0', '1e30']) {
+      expect(
+        buildCreateUsageLimitInput(buildValues({ limitValue })),
+      ).toBeNull();
+    }
   });
 
   it('stores a runtime entered in minutes as milliseconds', () => {
