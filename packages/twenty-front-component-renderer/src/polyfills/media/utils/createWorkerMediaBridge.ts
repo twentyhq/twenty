@@ -58,8 +58,7 @@ export const createWorkerMediaBridge = (): WorkerMediaBridge => {
   };
 
   const isRecorderMimeTypeSupported = (mimeType: string): boolean => {
-    // The spec treats the empty string as "no preference", which is always
-    // supported.
+    // The spec treats '' as "no preference", which is always supported.
     if (mimeType === '') {
       return true;
     }
@@ -163,8 +162,7 @@ export const createWorkerMediaBridge = (): WorkerMediaBridge => {
       return MEDIA_TRANSPORT_UNAVAILABLE_FAILURE;
     }
 
-    // Events for this recorder can only arrive after this response: both
-    // travel the same message port, so registering now cannot miss any.
+    // Events travel the same message port after this response, so registering now cannot miss any.
     if (result.status === 'started') {
       recorderEventHandlersByRecorderId.set(result.recorderId, handlers);
     }

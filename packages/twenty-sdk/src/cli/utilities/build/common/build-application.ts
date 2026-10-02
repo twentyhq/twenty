@@ -76,10 +76,7 @@ export const buildApplication = async (
   const sharedDependencies =
     options.manifest.application.frontComponentSharedDependencies;
 
-  // Bake the app's compiled translation catalogs into every front-component
-  // bundle so the runtime t()/<Trans> resolves them in the sandboxed worker
-  // without a server round-trip. Omitted entirely when the app has no
-  // translations, leaving the runtime to fall back to source strings.
+  // Baked into each bundle so t()/<Trans> resolve in the sandboxed worker without a server round-trip
   const frontComponentTranslationCatalogs =
     await loadFrontComponentTranslationCatalogs(options.appPath);
 

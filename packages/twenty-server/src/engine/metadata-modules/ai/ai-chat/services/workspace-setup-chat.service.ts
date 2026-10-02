@@ -7,9 +7,7 @@ import {
   type WorkspaceCompanyEnrichment,
   type WorkspacePersonEnrichment,
 } from 'twenty-shared/workspace';
-import { QueryFailedError } from 'typeorm';
 
-import { POSTGRESQL_ERROR_CODES } from 'src/engine/api/graphql/workspace-query-runner/constants/postgres-error-codes.constants';
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -20,6 +18,7 @@ import { WorkspaceSetupChatOutcome } from 'src/engine/metadata-modules/ai/ai-cha
 import { AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-streaming.service';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { buildWorkspaceSetupChatThreadId } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-workspace-setup-chat-thread-id.util';
+import { isUniqueViolationError } from 'src/engine/metadata-modules/ai/ai-chat/utils/is-unique-violation-error.util';
 import { buildWorkspaceSetupKickoffMessageText } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-workspace-setup-kickoff-message-text.util';
 import { tagAiChatStreamScope } from 'src/engine/metadata-modules/ai/ai-chat/utils/tag-ai-chat-stream-scope.util';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
@@ -219,7 +218,7 @@ export class WorkspaceSetupChatService {
         title,
       });
     } catch (error) {
-      if (this.isUniqueViolation(error)) {
+      if (isUniqueViolationError(error)) {
         const concurrentlyCreatedThread =
           await this.agentChatService.findWritableThread({
             threadId,
@@ -236,14 +235,6 @@ export class WorkspaceSetupChatService {
     }
   }
 
-  private isUniqueViolation(error: unknown): boolean {
-    return (
-      error instanceof QueryFailedError &&
-      (error as QueryFailedError & { code?: string }).code ===
-        POSTGRESQL_ERROR_CODES.UNIQUE_VIOLATION
-    );
-  }
-
   private async resolveUserLocale({
     userId,
     userLocale,
@@ -253,8 +244,7 @@ export class WorkspaceSetupChatService {
     userLocale: string | null;
     workspaceId: string;
   }): Promise<string> {
-    // The workspace member locale is what the UI is translated with, while the user
-    // one stays at its signup default, so the assistant must follow the member locale.
+    // follow the member locale the UI uses; the user locale stays at its signup default
     const workspaceMemberLocale = await this.findWorkspaceMemberLocale({
       userId,
       workspaceId,

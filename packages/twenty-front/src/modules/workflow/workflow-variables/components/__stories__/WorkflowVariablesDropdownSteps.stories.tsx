@@ -1,3 +1,7 @@
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
+import { Dropdown } from 'twenty-ui/components';
+import { Button } from 'twenty-ui/primitives/input';
 import { WorkflowVariablesDropdownSteps } from '@/workflow/workflow-variables/components/WorkflowVariablesDropdownSteps';
 import { type StepOutputSchemaV2 } from '@/workflow/workflow-variables/types/StepOutputSchemaV2';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
@@ -48,11 +52,18 @@ const ASYNC_DECORATOR_WAIT_OPTIONS = { timeout: 5_000 };
 const meta = {
   title: 'Modules/Workflow/Variables/WorkflowVariablesDropdownSteps',
   component: WorkflowVariablesDropdownSteps,
+  render: (args) => (
+    <DropdownRoot dropdownId="workflow-variables-story" type="picker">
+      <Dropdown.Trigger render={<Button title="Open variables" />} />
+      <DropdownContent width={320}>
+        <WorkflowVariablesDropdownSteps {...args} />
+      </DropdownContent>
+    </DropdownRoot>
+  ),
   parameters: {
     msw: graphqlMocks,
   },
   args: {
-    dropdownId: 'variables',
     steps: STEPS,
     onSelect: fn(),
     onVariableSelect: fn(),
@@ -69,7 +80,12 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   play: async ({ canvasElement, args }) => {
-    const canvas = within(canvasElement);
+    await userEvent.click(
+      await within(canvasElement).findByRole('button', {
+        name: 'Open variables',
+      }),
+    );
+    const canvas = within(canvasElement.ownerDocument.body);
 
     const runCodeItem = await canvas.findByText(
       'Run code',
@@ -85,7 +101,12 @@ export const Default: Story = {
 
 export const NestedFieldSearch: Story = {
   play: async ({ canvasElement, args }) => {
-    const canvas = within(canvasElement);
+    await userEvent.click(
+      await within(canvasElement).findByRole('button', {
+        name: 'Open variables',
+      }),
+    );
+    const canvas = within(canvasElement.ownerDocument.body);
 
     const searchInput = await canvas.findByPlaceholderText(
       'Search steps and fields',
@@ -110,7 +131,12 @@ export const NestedFieldSearch: Story = {
 
 export const NestedContainerSearch: Story = {
   play: async ({ canvasElement, args }) => {
-    const canvas = within(canvasElement);
+    await userEvent.click(
+      await within(canvasElement).findByRole('button', {
+        name: 'Open variables',
+      }),
+    );
+    const canvas = within(canvasElement.ownerDocument.body);
 
     const searchInput = await canvas.findByPlaceholderText(
       'Search steps and fields',
@@ -145,7 +171,12 @@ export const WholeRecordSearch: Story = {
     ],
   },
   play: async ({ canvasElement, args }) => {
-    const canvas = within(canvasElement);
+    await userEvent.click(
+      await within(canvasElement).findByRole('button', {
+        name: 'Open variables',
+      }),
+    );
+    const canvas = within(canvasElement.ownerDocument.body);
 
     const searchInput = await canvas.findByPlaceholderText(
       'Search steps and fields',
@@ -165,7 +196,12 @@ export const WholeRecordSearch: Story = {
 
 export const StepSearchAndEmptyState: Story = {
   play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
+    await userEvent.click(
+      await within(canvasElement).findByRole('button', {
+        name: 'Open variables',
+      }),
+    );
+    const canvas = within(canvasElement.ownerDocument.body);
     const searchInput = await canvas.findByPlaceholderText(
       'Search steps and fields',
       undefined,

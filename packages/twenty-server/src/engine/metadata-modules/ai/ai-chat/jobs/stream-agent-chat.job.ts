@@ -49,6 +49,7 @@ import {
   resolveSupersededTurnOutcome,
 } from 'src/engine/metadata-modules/ai/ai-chat/utils/classify-agent-chat-turn-outcome.util';
 import { AGENT_CHAT_CHECKPOINT_INTERVAL_MS } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-checkpoint-interval-ms.constant';
+import { formatErrorWithCause } from 'src/engine/metadata-modules/ai/ai-chat/utils/format-error-with-cause.util';
 import { getCancelChannel } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-cancel-channel.util';
 import { mapErrorToStreamError } from 'src/engine/metadata-modules/ai/ai-chat/utils/map-error-to-stream-error.util';
 import { tagAiChatStreamScope } from 'src/engine/metadata-modules/ai/ai-chat/utils/tag-ai-chat-stream-scope.util';
@@ -61,22 +62,17 @@ import { getChatModelId } from 'src/engine/metadata-modules/ai/ai-models/utils/g
 
 export { STREAM_AGENT_CHAT_JOB_NAME, type StreamAgentChatJobData };
 
-// Derive assistantMessageId deterministically from streamId so assistant-message
-// persistence is idempotent per stream: a retried job for the stream is skipped,
-// while each distinct resume in a turn persists its own message.
+// assistantMessageId derives from streamId, so a retried job skips persistence while each resume persists its own message
 const ASSISTANT_MESSAGE_ID_NAMESPACE = '0b9c2a3d-4e5f-4a1b-8c2d-3e4f5a6b7c8d';
 
 @Processor({ queueName: MessageQueue.aiStreamQueue, scope: Scope.REQUEST })
 export class StreamAgentChatJob {
   private readonly logger = new Logger(StreamAgentChatJob.name);
 
-  // The processor is REQUEST-scoped, so this is per job. A publish failure
-  // after the stream already classified its outcome reaches the catch in
-  // handle(), which would otherwise count the same turn a second time.
+  // keeps the catch in handle() from counting a turn the stream already classified
   private hasRecordedTurnOutcome = false;
 
-  // Set once the turn has paused on a person, which is what the queue waits
-  // on: a queued message drained now would bypass the answer it is waiting for.
+  // set once the turn pauses on a person: a queued message drained then would bypass the pending answer
   private isAwaitingInput = false;
 
   constructor(
@@ -192,7 +188,7 @@ export class StreamAgentChatJob {
       );
     } catch (error) {
       this.logger.error(
-        `Stream ${data.streamId} failed: ${error instanceof Error ? error.message : String(error)}`,
+        `[AI_CHAT_TURN_FAILED] failurePhase=execution, model=${turnModelId}, threadId=${data.threadId}, workspaceId=${data.workspaceId}, streamId=${data.streamId}: ${formatErrorWithCause(error)}`,
       );
       const streamError = mapErrorToStreamError(error);
 
@@ -270,10 +266,7 @@ export class StreamAgentChatJob {
     }
   }
 
-  // The turn-started counter fires before the model is resolved downstream, so
-  // resolve it here too: auto-select ids such as `default-fast-model` would
-  // otherwise label the start of a turn differently from its outcome, and every
-  // per-model rate is computed across the two.
+  // resolve auto-select ids here so turn-start and outcome metrics carry the same model label
   private resolveTurnModelId(
     requestedModelId: string | undefined,
     workspace: WorkspaceEntity | null,
@@ -422,9 +415,7 @@ export class StreamAgentChatJob {
         return persistChain;
       };
 
-      // onEnd fires before the uiStream is fully drained. We use this
-      // promise to coordinate: the IIFE waits for DB persist to complete
-      // before publishing message-persisted (after all chunks).
+      // onEnd fires before the uiStream drains, so message-persisted waits on this
       let resolveStreamFinished: () => void;
       const streamFinishedPromise = new Promise<void>((res) => {
         resolveStreamFinished = res;
@@ -607,8 +598,7 @@ export class StreamAgentChatJob {
         }
       })();
 
-      // Publish all chunks first, then signal completion. This guarantees
-      // message-persisted arrives after every stream-chunk on the client.
+      // message-persisted must reach the client after every stream-chunk
       void (async () => {
         try {
           for await (const chunk of publishStream) {
@@ -777,8 +767,7 @@ export class StreamAgentChatJob {
     }
   }
 
-  // Returns null when the stream errored: that turn is accounted for by the
-  // catch in handle(), and counting it here too would double it.
+  // null on stream error: the catch in handle() already counts that turn
   private async persistStreamFinish({
     assistantMessageId,
     streamId,
@@ -823,8 +812,7 @@ export class StreamAgentChatJob {
     );
 
     const awaitingParts = findAwaitingPausingToolParts(responseMessage.parts);
-    // Without an answerable call nothing can resume the turn, so it fails and
-    // can be retried rather than wait forever.
+    // without an answerable call nothing can resume the turn, so fail rather than wait forever
     const isAwaitingAnswer =
       awaitingParts.length > 0 &&
       awaitingParts.every(({ isAnswerable }) => isAnswerable);

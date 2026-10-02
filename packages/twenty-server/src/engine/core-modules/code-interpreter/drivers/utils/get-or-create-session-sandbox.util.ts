@@ -36,8 +36,7 @@ const listSandboxesForSession = async (
     sandboxes.push(...(await paginator.nextItems()));
   }
 
-  // Re-check the tag client-side so a loose server-side match can never reuse
-  // another tenant's sandbox.
+  // A loose server-side tag match must never reuse another tenant's sandbox.
   return sandboxes.filter(
     (sandbox) => sandbox.metadata?.[SESSION_SANDBOX_METADATA_KEY] === sessionId,
   );
@@ -62,7 +61,6 @@ const connectAndKeepAlive = async (
 
     return sandbox;
   } catch {
-    // Couldn't refresh the timeout — kill it instead of leaking a running sandbox.
     await sandbox.kill().catch(() => undefined);
 
     return undefined;
@@ -105,8 +103,6 @@ export const getOrCreateSessionSandbox = async ({
   sandbox: Sandbox;
   isReused: boolean;
 }> => {
-  // The sandbox must outlive a single execution and the idle window before it
-  // auto-pauses, so take the larger of the two.
   const aliveTimeoutMs = Math.max(timeoutMs, idleTimeoutMs);
 
   const sessionSandboxes = await listSandboxesForSession(

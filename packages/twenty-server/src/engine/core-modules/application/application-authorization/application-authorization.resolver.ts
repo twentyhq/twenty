@@ -15,11 +15,6 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 
-// Scoped to this person within this workspace: an authorization grants an
-// application access to one workspace's data, so it is listed and revoked from
-// that workspace only, and revoking affects nobody else. Removing an
-// integration for the whole workspace is uninstalling it, an admin action that
-// lives elsewhere.
 @UsePipes(ResolverValidationPipe)
 @UseFilters(AuthGraphqlApiExceptionFilter)
 @UseGuards(

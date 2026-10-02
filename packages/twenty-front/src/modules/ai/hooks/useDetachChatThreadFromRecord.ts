@@ -10,8 +10,7 @@ export const useDetachChatThreadFromRecord = () => {
     objectNameSingular: CoreObjectNameSingular.AgentChatThreadTarget,
   });
 
-  // Takes every link between the conversation and the record: a custom leg
-  // carries no unique index, so there can be more than one.
+  // A custom leg has no unique index, so there can be several links.
   const detachChatThreadFromRecord = async (linkIds: string[]) => {
     try {
       await deleteLinks({ recordIdsToDelete: linkIds });

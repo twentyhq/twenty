@@ -2,7 +2,7 @@ import { type RestrictedFieldsPermissions } from 'twenty-shared/types';
 import { z } from 'zod';
 
 import { type ObjectMetadataForToolSchema } from 'src/engine/core-modules/record-crud/types/object-metadata-for-tool-schema.type';
-import { ObjectRecordOrderBySchema } from 'src/engine/core-modules/record-crud/zod-schemas/order-by.zod-schema';
+import { generateRecordOrderBySchema } from 'src/engine/core-modules/record-crud/zod-schemas/order-by.zod-schema';
 import { generateRecordFilterSchema } from 'src/engine/core-modules/record-crud/zod-schemas/record-filter.zod-schema';
 
 export const generateFindToolInputSchema = (
@@ -29,13 +29,7 @@ export const generateFindToolInputSchema = (
       .nonnegative()
       .default(0)
       .describe('Number of records to skip (default: 0)'),
-    orderBy: ObjectRecordOrderBySchema.describe(
-      'Sort by field(s). ' +
-        'Scalar fields: [{fieldName: "DescNullsLast"}]. ' +
-        'Composite fields (name, address, currency, …): [{fieldName: {subFieldName: "AscNullsFirst"}}] — e.g. [{"name": {"firstName": "AscNullsFirst"}}]. ' +
-        'Never use dot-notation keys like "name.firstName". ' +
-        'Use DescNullsLast for top/largest, AscNullsFirst for bottom/smallest.',
-    ),
+    orderBy: generateRecordOrderBySchema({ objectMetadata, restrictedFields }),
     select: z
       .array(z.string())
       .nonempty()

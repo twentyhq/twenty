@@ -25,8 +25,7 @@ const GLOBEX_ID = '20202020-0000-4000-8000-000000000003';
 
 const companyObjectMetadataItem = getMockObjectMetadataItemOrThrow('company');
 const personObjectMetadataItem = getMockObjectMetadataItemOrThrow('person');
-// The generated test workspace has no conversation objects, so a person's
-// company relation stands in for the conversation link's company leg.
+// The test workspace has no conversation objects; person.company stands in for the company leg.
 const companyTargetField = getMockFieldMetadataItemOrThrow({
   objectMetadataItem: personObjectMetadataItem,
   fieldName: 'company',
@@ -78,8 +77,7 @@ jest.mock(
   }),
 );
 
-// Opening the picker searches records over the network, which MockedProvider
-// cannot answer, so the picker's own list is replaced by the choice it offers.
+// MockedProvider can't answer the picker's network search.
 jest.mock(
   '@/object-record/record-picker/multiple-record-picker/hooks/useMultipleRecordPickerPerformSearch',
   () => ({
@@ -192,7 +190,6 @@ const renderRecordTargets = ({
     { wrapper: Wrapper },
   );
 
-  // The header renders once the workspace metadata is loaded.
   return screen.findByRole('heading', { name: 'Pricing questions' });
 };
 
@@ -246,8 +243,6 @@ describe('AiChatThreadRecordTargets', () => {
     expect(attachChatThreadToRecord).not.toHaveBeenCalled();
   });
 
-  // A custom object leg carries no unique index, so a record can be linked
-  // more than once, and unlinking it removes every link.
   it('unlinks every link between the conversation and the record', async () => {
     const user = userEvent.setup();
     mockThread.current = buildThread({
@@ -298,7 +293,6 @@ describe('AiChatThreadRecordTargets', () => {
     ).not.toBeInTheDocument();
   });
 
-  // The chat model files the conversation through its own tool.
   it('reads the links again when one is written elsewhere', async () => {
     await renderRecordTargets();
 

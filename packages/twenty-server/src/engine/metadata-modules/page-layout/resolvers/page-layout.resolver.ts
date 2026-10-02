@@ -85,9 +85,7 @@ export class PageLayoutResolver {
     return resolveEffectiveEntityProperty({
       metadataName: 'pageLayout',
       baseValue: pageLayout.name,
-      // pageLayout is not an overridable entity: a workspace renaming a layout
-      // edits the row itself, so there is no standard value left to translate
-      // and no override to arbitrate against.
+      // pageLayout is not overridable: a rename edits the row itself
       overrides: undefined,
       property: 'name',
       i18nContext,

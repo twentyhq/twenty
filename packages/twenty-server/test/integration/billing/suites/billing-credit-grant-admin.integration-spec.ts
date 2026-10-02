@@ -139,9 +139,7 @@ describe('Admin credit grant and revoke (integration)', () => {
     expect(grants[0].expiresAt).toBeNull();
   });
 
-  // Rounded up to a period end rather than the exact day: credits are spent and
-  // settled a period at a time, so a deadline inside one would be invisible to
-  // both the cached counter and the carry-forward.
+  // Credits settle a period at a time, so a mid-period deadline would be invisible to the counter and carry-forward
   it('expires a time-boxed grant at the end of the period the requested day falls in', async () => {
     const response = await grantCredits({
       workspaceId,
@@ -156,9 +154,7 @@ describe('Admin credit grant and revoke (integration)', () => {
 
     const [storedGrant] = await listCreditGrants(workspaceId);
 
-    // Which period the thirtieth day lands in depends on when the suite runs,
-    // so the boundary is derived the same way the server derives it rather
-    // than listed.
+    // The boundary depends on when the suite runs, so derive it like the server does
     const expectedExpiresAt = alignGrantExpiryToPeriodEnd({
       requestedExpiresAt: addDays(new Date(), 30),
       currentPeriodStart: PERIOD_START,
@@ -246,9 +242,7 @@ describe('Admin credit grant and revoke (integration)', () => {
     expect(await readAllowanceCounter(workspaceId, PERIOD_START)).toBeNull();
   });
 
-  // The panel only offers the three operator types, but the mutation is
-  // reachable directly and these two are written by the period transition and
-  // the onboarding jobs.
+  // The panel offers three operator types, but the mutation is reachable directly and jobs write these two
   it.each([
     BillingCreditGrantType.ROLLOVER,
     BillingCreditGrantType.ONBOARDING_REWARD,
@@ -280,9 +274,7 @@ describe('Admin credit grant and revoke (integration)', () => {
     expect(await listCreditGrants(workspaceId)).toHaveLength(0);
   });
 
-  // The admin panel keeps one operation id per open modal, so an Apollo retry
-  // or a resubmit after a lost response must answer with the grant the first
-  // attempt wrote rather than crediting the workspace a second time.
+  // The admin panel reuses one operation id per open modal, so a retry must not credit twice
   it('answers a retried grant with the original instead of granting twice', async () => {
     const clientOperationId = randomUUID();
     const variables = {
@@ -304,9 +296,7 @@ describe('Admin credit grant and revoke (integration)', () => {
     expect(await readAllowanceCounter(workspaceId, PERIOD_START)).toBeNull();
   });
 
-  // The refusal to time-box a grant with no billing period must not reach a
-  // replay: the subscription that anchored the original deadline can be gone by
-  // the time the client retries, and the operation already succeeded.
+  // The anchoring subscription can be gone by retry time, and the operation already succeeded
   it('answers a retried time-boxed grant after the subscription is canceled', async () => {
     const clientOperationId = randomUUID();
     const variables = {

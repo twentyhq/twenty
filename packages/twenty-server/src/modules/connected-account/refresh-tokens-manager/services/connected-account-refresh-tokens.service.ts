@@ -17,10 +17,7 @@ import { ConnectedAccountTokenEncryptionService } from 'src/engine/metadata-modu
 import { GoogleApiRefreshAccessTokenService } from 'src/modules/connected-account/refresh-tokens-manager/drivers/google/services/google-api-refresh-tokens.service';
 import { MicrosoftApiRefreshAccessTokenService } from 'src/modules/connected-account/refresh-tokens-manager/drivers/microsoft/services/microsoft-api-refresh-tokens.service';
 
-// Tokens flowing through this service can be in two states depending on
-// where they enter the pipeline. We model both shapes explicitly so the
-// type system can prevent the #20819 class of bug (mixing encrypted and
-// decrypted tokens in the same flow).
+// Encrypted and plaintext shapes are modeled separately so they cannot be mixed (#20819)
 export type ConnectedAccountPlaintextTokens = {
   accessToken: PlaintextString;
   refreshToken: PlaintextString | null;
@@ -31,8 +28,6 @@ export type ConnectedAccountEncryptedTokens = {
   refreshToken: EncryptedString | null;
 };
 
-// Public return type of resolveTokens: always encrypted (either fresh from
-// the database or freshly re-encrypted after a refresh round-trip).
 export type ConnectedAccountTokens = ConnectedAccountEncryptedTokens;
 
 const CONNECTED_ACCOUNT_ACCESS_TOKEN_EXPIRATION = 1000 * 60 * 60;

@@ -1,0 +1,35 @@
+.root {
+  align-items: center;
+  display: inline-flex;
+  flex-shrink: 0;
+  gap: var(--t-spacing-2);
+  justify-content: flex-end;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.ring {
+  flex-shrink: 0;
+  transform: rotate(-90deg);
+}
+
+.track {
+  fill: none;
+  stroke: color-mix(
+    in srgb,
+    var(--t-border-color-strong) 50%,
+    var(--t-background-quaternary) 50%
+  );
+}
+
+.indicator {
+  fill: none;
+  stroke: var(--progress-ring-color, var(--t-color-blue));
+  transition: stroke-dashoffset duration(normal) ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .indicator {
+    transition: none;
+  }
+}

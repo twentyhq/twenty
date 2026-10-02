@@ -123,8 +123,7 @@ export const useSettingsAgentSave = ({
     }
   }, 1_000);
 
-  // Role permissions are edited by the shared roles module through Jotai
-  // state, so there is no change handler to schedule the save from.
+  // Role permissions are edited through Jotai state by the shared roles module, so no change handler can schedule the save
   useEffect(() => {
     if (isRoleDirty) {
       autoSave();
