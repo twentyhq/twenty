@@ -1244,15 +1244,14 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
 
       this.applyRowLevelPermissionPredicates(selectQueryBuilder, 'update');
 
-      const result = await WorkspaceSelectQueryBuilder.toMutationQueryBuilder(
+      const result = await this.morphAndExecute({
         selectQueryBuilder,
-        'update',
-      )
-        .set(setColumns)
-        .returning(updateEventColumnsToReturn)
-        .execute();
+        kind: 'update',
+        columnsToReturn: updateEventColumnsToReturn,
+        setColumns,
+      });
 
-      generatedMaps.push(...(result.generatedMaps as ObjectRecord[]));
+      generatedMaps.push(...result.generatedMaps);
 
       if (result.generatedMaps.length === 0) {
         continue;
@@ -1274,7 +1273,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
             getUpdateEventRecords(rawBeforeForInput, recordsAfterWrite),
             setColumns,
           ),
-          result.generatedMaps as ObjectRecord[],
+          result.generatedMaps,
         ),
       );
     }
@@ -1661,22 +1660,27 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       this.applyRowLevelPermissionPredicates(selectQueryBuilder, kind);
     }
 
-    if (this.canMutateWithoutBeforeImage({ kind, data })) {
-      return this.performMutationWithoutBeforeImage({
-        selectQueryBuilder,
-        kind,
-        columnsToReturn,
-        data,
-        validateWrittenRecords,
-      });
-    }
+    // The before-image only feeds events, scoped-write checks and files field diffs
+    const canSkipBeforeImage =
+      this.options.shouldBypassPermissionChecks &&
+      this.options.shouldSkipEventEmission &&
+      !(
+        kind === 'update' &&
+        isDefined(data) &&
+        this.filesFieldSync.isUpdatingFilesField(
+          data,
+          this.options.flatObjectMetadata.id,
+        )
+      );
 
     const eventSelectQueryBuilder =
       this.buildEventSnapshotQueryBuilder(selectQueryBuilder);
 
-    const recordsBefore = await eventSelectQueryBuilder.getMany<ObjectRecord>({
-      noFormatting: true,
-    });
+    const recordsBefore = canSkipBeforeImage
+      ? []
+      : await eventSelectQueryBuilder.getMany<ObjectRecord>({
+          noFormatting: true,
+        });
 
     if (kind === 'update' && recordsBefore.length > QUERY_MAX_RECORDS) {
       throw new TwentyOrmException(
@@ -1713,10 +1717,13 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       }
     }
 
-    const setColumns =
-      kind === 'update' && isDefined(dataToWrite)
-        ? this.buildSetColumns(dataToWrite)
-        : undefined;
+    let setColumns: Record<string, unknown> | undefined;
+
+    if (kind === 'update' && isDefined(dataToWrite)) {
+      const { id: _id, ...columns } = this.formatWriteData(dataToWrite);
+
+      setColumns = columns;
+    }
 
     if (kind === 'update' && isDefined(setColumns)) {
       await this.validateRLSPredicatesForUpdatedRecords(
@@ -1745,7 +1752,13 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     const mutationResult = await this.morphAndExecute({
       selectQueryBuilder,
       kind,
-      columnsToReturn: this.getMutationColumnsToReturn(kind, columnsToReturn),
+      columnsToReturn:
+        kind === 'update'
+          ? getUpdateEventColumnsToReturn(
+              columnsToReturn,
+              this.options.tableShape,
+            )
+          : columnsToReturn,
       setColumns,
     });
 
@@ -1785,77 +1798,6 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     });
 
     return mutationResult.generatedMaps;
-  }
-
-  // The before-image only feeds events, scoped-write checks and files field diffs
-  private canMutateWithoutBeforeImage({
-    kind,
-    data,
-  }: {
-    kind: MutationKind;
-    data?: Partial<ObjectRecord>;
-  }): boolean {
-    return (
-      this.options.shouldBypassPermissionChecks &&
-      this.options.shouldSkipEventEmission &&
-      !(
-        kind === 'update' &&
-        isDefined(data) &&
-        this.filesFieldSync.isUpdatingFilesField(
-          data,
-          this.options.flatObjectMetadata.id,
-        )
-      )
-    );
-  }
-
-  private async performMutationWithoutBeforeImage({
-    selectQueryBuilder,
-    kind,
-    columnsToReturn,
-    data,
-    validateWrittenRecords,
-  }: {
-    selectQueryBuilder: WorkspaceSelectQueryBuilder;
-    kind: MutationKind;
-    columnsToReturn: string[];
-    data?: Partial<ObjectRecord>;
-    validateWrittenRecords?: ValidateWrittenRecords;
-  }): Promise<ObjectRecord[]> {
-    const mutationResult = await this.morphAndExecute({
-      selectQueryBuilder,
-      kind,
-      columnsToReturn: this.getMutationColumnsToReturn(kind, columnsToReturn),
-      setColumns:
-        kind === 'update' && isDefined(data)
-          ? this.buildSetColumns(data)
-          : undefined,
-    });
-
-    if (kind === 'delete') {
-      await this.releaseRecordStock(mutationResult.generatedMaps.length);
-    }
-
-    await validateWrittenRecords?.(mutationResult.generatedMaps);
-
-    return mutationResult.generatedMaps;
-  }
-
-  private buildSetColumns(
-    data: Partial<ObjectRecord>,
-  ): Record<string, unknown> {
-    const { id: _id, ...setColumns } = this.formatWriteData(data);
-
-    return setColumns;
-  }
-
-  private getMutationColumnsToReturn(
-    kind: MutationKind,
-    columnsToReturn: string[],
-  ): string[] {
-    return kind === 'update'
-      ? getUpdateEventColumnsToReturn(columnsToReturn, this.options.tableShape)
-      : columnsToReturn;
   }
 
   private async fetchInheritedReadabilityChildRecords(
@@ -1940,22 +1882,17 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     columnsToReturn: string[];
     setColumns?: Record<string, unknown>;
   }): Promise<{ generatedMaps: ObjectRecord[] }> {
-    if (kind === 'update') {
-      return WorkspaceSelectQueryBuilder.toMutationQueryBuilder(
+    const mutationQueryBuilder =
+      WorkspaceSelectQueryBuilder.toMutationQueryBuilder(
         selectQueryBuilder,
-        'update',
-      )
-        .set(setColumns ?? {})
-        .returning(columnsToReturn)
-        .execute();
+        kind,
+      );
+
+    if (kind === 'update') {
+      mutationQueryBuilder.set(setColumns ?? {});
     }
 
-    return WorkspaceSelectQueryBuilder.toMutationQueryBuilder(
-      selectQueryBuilder,
-      kind,
-    )
-      .returning(columnsToReturn)
-      .execute();
+    return mutationQueryBuilder.returning(columnsToReturn).execute();
   }
 
   private buildEventSnapshotQueryBuilder(
@@ -2265,28 +2202,11 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       return;
     }
 
-    if (
-      alias === queryBuilder.alias &&
-      !this.isObjectOperationPermitted({ flatObjectMetadata, operationType }) &&
-      !isRecordGrantBeyondRoleAllowed({
-        flatObjectMetadata,
-        operationType,
-        isRecordSharingEnabled: this.isRecordSharingEnabled,
-      })
-    ) {
-      throw new PermissionsException(
-        PermissionsExceptionMessage.PERMISSION_DENIED,
-        PermissionsExceptionCode.PERMISSION_DENIED,
-      );
-    }
-
-    const policy = buildRowAccessPolicy({
-      subject: this.resolveRowAccessPolicySubject(),
-      environment: this.resolveRowAccessPolicyEnvironment(),
-      tableAlias: alias,
+    const policy = this.buildRowAccessPolicyForAlias({
+      alias,
+      isMainAlias: alias === queryBuilder.alias,
       flatObjectMetadata,
       operationType,
-      depth: 0,
       joinParentRelationShape: queryBuilder.getJoinParentRelationShape(alias),
     });
 
@@ -2312,6 +2232,163 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
         return;
       default:
         assertUnreachable(policy);
+    }
+  }
+
+  private buildRowAccessPolicyForAlias({
+    alias,
+    isMainAlias,
+    flatObjectMetadata,
+    operationType,
+    joinParentRelationShape,
+  }: {
+    alias: string;
+    isMainAlias: boolean;
+    flatObjectMetadata: FlatObjectMetadata;
+    operationType: OperationType;
+    joinParentRelationShape?: WorkspaceRelationShape;
+  }): RowAccessPolicy {
+    if (
+      isMainAlias &&
+      !this.isObjectOperationPermitted({ flatObjectMetadata, operationType }) &&
+      !isRecordGrantBeyondRoleAllowed({
+        flatObjectMetadata,
+        operationType,
+        isRecordSharingEnabled: this.isRecordSharingEnabled,
+      })
+    ) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.PERMISSION_DENIED,
+        PermissionsExceptionCode.PERMISSION_DENIED,
+      );
+    }
+
+    return buildRowAccessPolicy({
+      subject: this.resolveRowAccessPolicySubject(),
+      environment: this.resolveRowAccessPolicyEnvironment(),
+      tableAlias: alias,
+      flatObjectMetadata,
+      operationType,
+      depth: 0,
+      joinParentRelationShape,
+    });
+  }
+
+  // Applies the checks of findRecordIdsAllowedForOperation to several
+  // operations in one query, with a boolean column per gated operation;
+  // deleted records are included
+  async findRecordIdsAllowedForOperations<
+    TOperationType extends OperationType,
+  >({
+    recordIds,
+    operationTypes,
+  }: {
+    recordIds: string[];
+    operationTypes: TOperationType[];
+  }): Promise<Record<TOperationType, Set<string>>> {
+    const allowedRecordIdsByOperationType = Object.fromEntries(
+      operationTypes.map((operationType) => [operationType, new Set<string>()]),
+    ) as Record<TOperationType, Set<string>>;
+
+    if (recordIds.length === 0) {
+      return allowedRecordIdsByOperationType;
+    }
+
+    const tableAlias = this.options.tableShape.nameSingular;
+    const recordAccesses = operationTypes.map((operationType, index) => ({
+      operationType,
+      access: this.resolveRecordAccessForOperation({
+        operationType,
+        tableAlias,
+      }),
+      columnAlias: `isAllowed_${index}`,
+    }));
+
+    if (recordAccesses.every(({ access }) => access === false)) {
+      return allowedRecordIdsByOperationType;
+    }
+
+    const queryBuilder = this.buildBypassingEventSelectQueryBuilder(tableAlias)
+      .where({ id: In(recordIds) })
+      .withDeleted()
+      .select([])
+      .addSelect(`${escapeIdentifier(tableAlias)}."id"`, 'id');
+
+    for (const { access, columnAlias } of recordAccesses) {
+      if (typeof access === 'boolean') {
+        continue;
+      }
+
+      queryBuilder
+        .addSelect(
+          `CASE WHEN ${access.sql} THEN TRUE ELSE FALSE END`,
+          columnAlias,
+        )
+        .setParameters(access.parameters);
+    }
+
+    const rows = await queryBuilder.getRawMany<Record<string, unknown>>();
+
+    for (const row of rows) {
+      for (const { operationType, access, columnAlias } of recordAccesses) {
+        if (access === true || row[columnAlias] === true) {
+          allowedRecordIdsByOperationType[operationType].add(String(row.id));
+        }
+      }
+    }
+
+    return allowedRecordIdsByOperationType;
+  }
+
+  private resolveRecordAccessForOperation({
+    operationType,
+    tableAlias,
+  }: {
+    operationType: OperationType;
+    tableAlias: string;
+  }): boolean | SqlCondition {
+    if (this.options.shouldBypassPermissionChecks) {
+      return true;
+    }
+
+    try {
+      if (operationType !== 'select') {
+        this.validateWriteIsPermitted({
+          operationType,
+          columnsToReturn: ['id'],
+          updatedColumns: [],
+        });
+      }
+
+      this.validateQueryIsPermitted(
+        this.createQueryBuilder(tableAlias).select(['id']),
+      );
+
+      const policy = this.buildRowAccessPolicyForAlias({
+        alias: tableAlias,
+        isMainAlias: true,
+        flatObjectMetadata: this.options.flatObjectMetadata,
+        operationType,
+      });
+
+      switch (policy.kind) {
+        case 'open':
+          return true;
+        case 'denied':
+          return false;
+        case 'gated':
+          return this.compileRowAccessExpression(policy.expression);
+        default:
+          return assertUnreachable(policy);
+      }
+    } catch (error) {
+      if (
+        error instanceof PermissionsException &&
+        error.code === PermissionsExceptionCode.PERMISSION_DENIED
+      ) {
+        return false;
+      }
+      throw error;
     }
   }
 

@@ -263,7 +263,7 @@ export class MessageCampaignLifecycleService {
       >
     >;
   }): Promise<number> {
-    const { affected: settledDeliveryCount } =
+    const { generatedMaps: settledDeliveries } =
       await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
         const campaignDeliveryRepository =
           this.workspaceOrmManager.getRepository(
@@ -274,7 +274,7 @@ export class MessageCampaignLifecycleService {
         return campaignDeliveryRepository.update(criteria, update);
       }, buildSystemAuthContext(workspaceId));
 
-    return settledDeliveryCount ?? 0;
+    return settledDeliveries.length;
   }
 
   async finalizeCampaignIfComplete({
