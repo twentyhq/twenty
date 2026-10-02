@@ -70,6 +70,12 @@ const buildResolver = () => {
       threadRepository as never,
       sharing as never,
       recordEvents as never,
+      {
+        recordMemberActivity: jest.fn().mockResolvedValue({
+          lastActivityAt: new Date(),
+          updatedAt: new Date(),
+        }),
+      } as never,
     ),
   );
   const streaming = {

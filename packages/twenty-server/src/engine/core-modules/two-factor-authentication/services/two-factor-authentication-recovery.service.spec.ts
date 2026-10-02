@@ -80,7 +80,7 @@ describe('TwoFactorAuthenticationRecoveryService', () => {
   };
   let userWorkspaceService: { getUserWorkspaceForUser: jest.Mock };
   let userSessionService: { revokeAllSessionsForUser: jest.Mock };
-  let throttlerService: { atomicTokenBucketThrottleOrThrow: jest.Mock };
+  let throttlerService: { tokenBucketThrottleOrThrow: jest.Mock };
   let emailService: { send: jest.Mock };
   let featureFlagService: { isFeatureEnabled: jest.Mock };
 
@@ -157,7 +157,7 @@ describe('TwoFactorAuthenticationRecoveryService', () => {
         },
         {
           provide: ThrottlerService,
-          useValue: { atomicTokenBucketThrottleOrThrow: jest.fn() },
+          useValue: { tokenBucketThrottleOrThrow: jest.fn() },
         },
         { provide: EmailService, useValue: { send: jest.fn() } },
         {
@@ -340,14 +340,13 @@ describe('TwoFactorAuthenticationRecoveryService', () => {
     it('consumes the code, removes the authenticator and revokes refresh tokens together, then signs out the member', async () => {
       await redeem();
 
-      expect(
-        throttlerService.atomicTokenBucketThrottleOrThrow,
-      ).toHaveBeenCalledWith(
-        expect.objectContaining({
-          key: buildTwoFactorAuthenticationRecoveryCodeRedemptionRateLimitKey({
-            userWorkspaceId: TARGET_USER_WORKSPACE_ID,
-          }),
+      expect(throttlerService.tokenBucketThrottleOrThrow).toHaveBeenCalledWith(
+        buildTwoFactorAuthenticationRecoveryCodeRedemptionRateLimitKey({
+          userWorkspaceId: TARGET_USER_WORKSPACE_ID,
         }),
+        1,
+        expect.any(Number),
+        expect.any(Number),
       );
       expect(
         transactionalRepositories.recoveryCode.update,

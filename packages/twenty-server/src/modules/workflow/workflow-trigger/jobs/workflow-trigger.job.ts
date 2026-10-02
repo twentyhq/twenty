@@ -92,9 +92,6 @@ export class WorkflowTriggerJob {
     }
 
     if (coreWorkflowVersion.status !== CoreWorkflowVersionStatus.ACTIVE) {
-      this.captureDroppedDispatch(
-        `Core workflow version ${coreWorkflowVersionId} is not active in workspace ${workspaceId}`,
-      );
       return;
     }
 

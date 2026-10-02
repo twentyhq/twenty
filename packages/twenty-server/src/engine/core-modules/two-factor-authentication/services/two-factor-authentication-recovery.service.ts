@@ -101,15 +101,14 @@ export class TwoFactorAuthenticationRecoveryService {
     targetUserId: UserEntity['id'];
     targetWorkspaceId: WorkspaceEntity['id'];
   }): Promise<{ recoveryCode: string; expiresAt: Date }> {
-    await this.throttlerService.atomicTokenBucketThrottleOrThrow({
-      key: buildTwoFactorAuthenticationRecoveryCodeIssuanceRateLimitKey({
+    await this.throttlerService.tokenBucketThrottleOrThrow(
+      buildTwoFactorAuthenticationRecoveryCodeIssuanceRateLimitKey({
         actorUserId: actor.id,
       }),
-      maxTokens:
-        TWO_FACTOR_AUTHENTICATION_RECOVERY_CODE_ISSUANCE_RATE_LIMIT_MAX,
-      timeWindow:
-        TWO_FACTOR_AUTHENTICATION_RECOVERY_CODE_ISSUANCE_RATE_LIMIT_WINDOW_MS,
-    });
+      1,
+      TWO_FACTOR_AUTHENTICATION_RECOVERY_CODE_ISSUANCE_RATE_LIMIT_MAX,
+      TWO_FACTOR_AUTHENTICATION_RECOVERY_CODE_ISSUANCE_RATE_LIMIT_WINDOW_MS,
+    );
 
     if (actor.id === targetUserId) {
       throw new TwoFactorAuthenticationException(
@@ -293,15 +292,14 @@ export class TwoFactorAuthenticationRecoveryService {
       targetWorkspaceId: workspace.id,
     });
 
-    await this.throttlerService.atomicTokenBucketThrottleOrThrow({
-      key: buildTwoFactorAuthenticationRecoveryCodeRedemptionRateLimitKey({
+    await this.throttlerService.tokenBucketThrottleOrThrow(
+      buildTwoFactorAuthenticationRecoveryCodeRedemptionRateLimitKey({
         userWorkspaceId: userWorkspace.id,
       }),
-      maxTokens:
-        TWO_FACTOR_AUTHENTICATION_RECOVERY_CODE_REDEMPTION_RATE_LIMIT_MAX,
-      timeWindow:
-        TWO_FACTOR_AUTHENTICATION_RECOVERY_CODE_REDEMPTION_RATE_LIMIT_WINDOW_MS,
-    });
+      1,
+      TWO_FACTOR_AUTHENTICATION_RECOVERY_CODE_REDEMPTION_RATE_LIMIT_MAX,
+      TWO_FACTOR_AUTHENTICATION_RECOVERY_CODE_REDEMPTION_RATE_LIMIT_WINDOW_MS,
+    );
 
     const isConsumed = await this.appTokenRepository.manager.transaction(
       async (entityManager) => {

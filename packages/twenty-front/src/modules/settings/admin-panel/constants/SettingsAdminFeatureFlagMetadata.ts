@@ -82,6 +82,10 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Partial<
     label: msg`Workflow chat messages`,
     description: msg`Add a workflow step that posts a message in a member's AI chat.`,
   },
+  [FeatureFlagKey.IS_CALENDAR_SYNC_SKIP_UNCHANGED_RECORDS_ENABLED]: {
+    label: msg`Skip unchanged calendar records`,
+    description: msg`Only write calendar events and participants that changed since the last sync.`,
+  },
   [FeatureFlagKey.IS_TWO_FACTOR_AUTHENTICATION_RECOVERY_CODE_ENABLED]: {
     label: msg`2FA recovery codes`,
     description: msg`Let admins issue one-time codes to members locked out of their authenticator app.`,
