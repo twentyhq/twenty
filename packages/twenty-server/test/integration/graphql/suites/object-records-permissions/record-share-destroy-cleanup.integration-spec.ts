@@ -28,8 +28,8 @@ import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder
 const OBJECT_NAME = 'destroyedSharingRecord';
 const OBJECT_PLURAL = 'destroyedSharingRecords';
 const workspaceId = SEED_APPLE_WORKSPACE_ID;
-const SET_SHARE = parse(
-  `mutation SetShare($target: RecordSharingTargetInput!, $principal: RecordSharePrincipalInput!, $enabled: Boolean!) { setRecordShare(target: $target, principal: $principal, enabled: $enabled) { generalAccessLevel } }`,
+const SET_GENERAL_ACCESS = parse(
+  `mutation SetGeneralAccess($target: RecordTargetInput!, $accessLevel: RecordShareAccessLevel!) { setRecordGeneralAccess(target: $target, accessLevel: $accessLevel) { generalAccessLevel } }`,
 );
 
 describe('Record shares of destroyed records', () => {
@@ -64,17 +64,16 @@ describe('Record shares of destroyed records', () => {
   const restrictToOwner = async (recordId: string) => {
     const response = await makeMetadataApiRequest(
       {
-        query: SET_SHARE,
+        query: SET_GENERAL_ACCESS,
         variables: {
           target: { objectMetadataId, recordId },
-          principal: { everyone: true },
-          enabled: false,
+          accessLevel: RecordShareAccessLevel.NONE,
         },
       },
       APPLE_JANE_ADMIN_ACCESS_TOKEN,
     );
 
-    expect(response.body.data.setRecordShare.generalAccessLevel).toBe(
+    expect(response.body.data.setRecordGeneralAccess.generalAccessLevel).toBe(
       RecordShareAccessLevel.NONE,
     );
   };
