@@ -15,7 +15,6 @@ import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockedCompanyRecords } from '~/testing/mock-data/generated/data/companies/mock-companies-data';
 import { mockedViews } from '~/testing/mock-data/generated/metadata/views/mock-views-data';
 import { mockedWorkspaceMemberRecords } from '~/testing/mock-data/generated/data/workspaceMembers/mock-workspaceMembers-data';
-import { mockedApolloClient } from '~/testing/mockedApolloClient';
 import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 import { sleep } from '~/utils/sleep';
@@ -246,34 +245,10 @@ export const MultiSelectPickerAnchorsToTableCell: Story = {
             },
           }),
         ),
-        graphql.query('AggregateCompanies', () =>
-          HttpResponse.json({
-            data: {
-              companies: {
-                totalCount: mockedCompanyRecords.length,
-                __typename: 'CompanyConnection',
-              },
-            },
-          }),
-        ),
-        graphql.mutation('UpdateOneCompany', ({ variables }) =>
-          HttpResponse.json({
-            data: {
-              updateCompany: {
-                ...mockedCompanyRecords.find(
-                  (companyRecord) => companyRecord.id === variables.idToUpdate,
-                ),
-                ...variables.input,
-              },
-            },
-          }),
-        ),
       ],
     },
   },
-  beforeEach: async () => {
-    await mockedApolloClient.clearStore();
-
+  beforeEach: () => {
     const originalViewFields = companyView.viewFields;
     const originalWorkPolicy = mockedCompanyRecords[0].workPolicy;
     const workPolicyField = getMockFieldMetadataItemOrThrow({
@@ -334,6 +309,12 @@ export const MultiSelectPickerAnchorsToTableCell: Story = {
     await expect(
       within(picker).getByRole('button', { name: 'Remote Work' }),
     ).toHaveAttribute('aria-pressed', 'true');
+
+    await userEvent.keyboard('{Enter}');
+
+    await expect(
+      within(picker).getByRole('button', { name: 'Remote Work' }),
+    ).toHaveAttribute('aria-pressed', 'false');
     await expect(picker).toBeVisible();
     await userEvent.keyboard('{Escape}');
     await waitFor(() => expect(picker).not.toBeInTheDocument());
