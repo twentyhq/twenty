@@ -147,6 +147,7 @@ export const DOCUMENTATION_PATHS = {
   UI_COMPONENTS_MENU_PICKER: '/ui/components/menu-picker',
   UI_COMPONENTS_METRIC_ROW: '/ui/components/metric-row',
   UI_COMPONENTS_NOTIFICATION_COUNTER: '/ui/components/notification-counter',
+  UI_COMPONENTS_OVERFLOWING_LIST: '/ui/components/overflowing-list',
   UI_COMPONENTS_OVERVIEW: '/ui/components/overview',
   UI_COMPONENTS_SEARCH_INPUT: '/ui/components/search-input',
   UI_COMPONENTS_SECTION: '/ui/components/section',

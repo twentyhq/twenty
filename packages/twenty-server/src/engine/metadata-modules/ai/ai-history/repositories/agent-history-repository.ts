@@ -177,37 +177,25 @@ export class AgentHistoryRepository<TRecord extends { id: string }> {
     values: QueryDeepPartialEntity<TRecord>,
   ) {
     return this.run(workspaceId, async (repository) => {
-      const result = await repository
-        .createQueryBuilder()
-        .withDeleted()
-        .where(where)
-        .update()
-        .set(values)
-        .returning(['id'])
-        .execute();
+      const result = await repository.update(where, values);
+      const generatedMaps = result.generatedMaps.map(
+        ({ id }): Pick<TRecord, 'id'> => ({ id }),
+      );
       return {
-        affected: result.generatedMaps.length,
-        generatedMaps: result.generatedMaps.map(
-          ({ id }): Pick<TRecord, 'id'> => ({ id }),
-        ),
-        raw: result.generatedMaps,
+        affected: generatedMaps.length,
+        generatedMaps,
+        raw: generatedMaps,
       };
     });
   }
 
   delete(workspaceId: string, where: FindOptionsWhere<TRecord>) {
     return this.run(workspaceId, async (repository) => {
-      const result = await repository
-        .createQueryBuilder()
-        .withDeleted()
-        .where(where)
-        .delete()
-        .returning(['id'])
-        .execute();
+      const result = await repository.delete(where);
       return {
-        affected: result.generatedMaps.length,
-        generatedMaps: result.generatedMaps,
-        raw: result.generatedMaps,
+        affected: result.raw.length,
+        generatedMaps: result.raw,
+        raw: result.raw,
       };
     });
   }

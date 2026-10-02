@@ -281,10 +281,6 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     }
   }
 
-  getInternalContext(): WorkspaceInternalContext {
-    return this.options.internalContext;
-  }
-
   get internalContext(): WorkspaceInternalContext {
     return this.options.internalContext;
   }
@@ -665,6 +661,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
   async update(
     criteria: MutationCriteria,
     partialEntity: Partial<ObjectRecord>,
+    options?: { columnsToReturn?: string[] },
   ): Promise<UpdateResult> {
     const records = await this.runMutation({
       selectQueryBuilder: applyMutationCriteriaToQueryBuilder(
@@ -673,7 +670,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       ),
       rowLevelPermissionsApplied: false,
       kind: 'update',
-      columnsToReturn: ['id'],
+      columnsToReturn: options?.columnsToReturn ?? ['id'],
       data: partialEntity,
     });
 
@@ -1247,8 +1244,10 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
 
       this.applyRowLevelPermissionPredicates(selectQueryBuilder, 'update');
 
-      const result = await selectQueryBuilder
-        .update()
+      const result = await WorkspaceSelectQueryBuilder.toMutationQueryBuilder(
+        selectQueryBuilder,
+        'update',
+      )
         .set(setColumns)
         .returning(updateEventColumnsToReturn)
         .execute();
@@ -1668,6 +1667,16 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       this.applyRowLevelPermissionPredicates(selectQueryBuilder, kind);
     }
 
+    if (this.canMutateWithoutBeforeImage({ kind, data })) {
+      return this.performMutationWithoutBeforeImage({
+        selectQueryBuilder,
+        kind,
+        columnsToReturn,
+        data,
+        validateWrittenRecords,
+      });
+    }
+
     const eventSelectQueryBuilder =
       this.buildEventSnapshotQueryBuilder(selectQueryBuilder);
 
@@ -1710,13 +1719,10 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       }
     }
 
-    let setColumns: Record<string, unknown> | undefined;
-
-    if (kind === 'update' && isDefined(dataToWrite)) {
-      const { id: _id, ...columns } = this.formatWriteData(dataToWrite);
-
-      setColumns = columns;
-    }
+    const setColumns =
+      kind === 'update' && isDefined(dataToWrite)
+        ? this.buildSetColumns(dataToWrite)
+        : undefined;
 
     if (kind === 'update' && isDefined(setColumns)) {
       await this.validateRLSPredicatesForUpdatedRecords(
@@ -1745,16 +1751,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     const mutationResult = await this.morphAndExecute({
       selectQueryBuilder,
       kind,
-      columnsToReturn:
-        kind === 'update'
-          ? getUpdateEventColumnsToReturn(
-              columnsToReturn,
-              this.options.tableShape,
-            )
-          : kind === 'delete'
-            ? // The destroyed records' ids are needed to drop their shares
-              [...new Set([...columnsToReturn, 'id'])]
-            : columnsToReturn,
+      columnsToReturn: this.getMutationColumnsToReturn(kind, columnsToReturn),
       setColumns,
     });
 
@@ -1802,6 +1799,88 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     });
 
     return mutationResult.generatedMaps;
+  }
+
+  // The before-image only feeds events, scoped-write checks and files field diffs
+  private canMutateWithoutBeforeImage({
+    kind,
+    data,
+  }: {
+    kind: MutationKind;
+    data?: Partial<ObjectRecord>;
+  }): boolean {
+    return (
+      this.options.shouldBypassPermissionChecks &&
+      this.options.shouldSkipEventEmission &&
+      !(
+        kind === 'update' &&
+        isDefined(data) &&
+        this.filesFieldSync.isUpdatingFilesField(
+          data,
+          this.options.flatObjectMetadata.id,
+        )
+      )
+    );
+  }
+
+  private async performMutationWithoutBeforeImage({
+    selectQueryBuilder,
+    kind,
+    columnsToReturn,
+    data,
+    validateWrittenRecords,
+  }: {
+    selectQueryBuilder: WorkspaceSelectQueryBuilder;
+    kind: MutationKind;
+    columnsToReturn: string[];
+    data?: Partial<ObjectRecord>;
+    validateWrittenRecords?: ValidateWrittenRecords;
+  }): Promise<ObjectRecord[]> {
+    const mutationResult = await this.morphAndExecute({
+      selectQueryBuilder,
+      kind,
+      columnsToReturn: this.getMutationColumnsToReturn(kind, columnsToReturn),
+      setColumns:
+        kind === 'update' && isDefined(data)
+          ? this.buildSetColumns(data)
+          : undefined,
+    });
+
+    if (kind === 'delete') {
+      await this.deleteRecordSharesOfDestroyedRecords(
+        mutationResult.generatedMaps,
+      );
+      await this.releaseRecordStock(mutationResult.generatedMaps.length);
+    }
+
+    await validateWrittenRecords?.(mutationResult.generatedMaps);
+
+    return mutationResult.generatedMaps;
+  }
+
+  private buildSetColumns(
+    data: Partial<ObjectRecord>,
+  ): Record<string, unknown> {
+    const { id: _id, ...setColumns } = this.formatWriteData(data);
+
+    return setColumns;
+  }
+
+  private getMutationColumnsToReturn(
+    kind: MutationKind,
+    columnsToReturn: string[],
+  ): string[] {
+    if (kind === 'update') {
+      return getUpdateEventColumnsToReturn(
+        columnsToReturn,
+        this.options.tableShape,
+      );
+    }
+
+    // The destroyed records' ids are needed to drop their shares
+    return kind === 'delete'
+      ? [...new Set([...columnsToReturn, 'id'])]
+      : columnsToReturn;
   }
 
   private async fetchInheritedReadabilityChildRecords(
@@ -1887,21 +1966,21 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     setColumns?: Record<string, unknown>;
   }): Promise<{ generatedMaps: ObjectRecord[] }> {
     if (kind === 'update') {
-      return selectQueryBuilder
-        .update()
+      return WorkspaceSelectQueryBuilder.toMutationQueryBuilder(
+        selectQueryBuilder,
+        'update',
+      )
         .set(setColumns ?? {})
         .returning(columnsToReturn)
         .execute();
     }
 
-    const mutationQueryBuilder =
-      kind === 'soft-delete'
-        ? selectQueryBuilder.softDelete()
-        : kind === 'restore'
-          ? selectQueryBuilder.restore()
-          : selectQueryBuilder.delete();
-
-    return mutationQueryBuilder.returning(columnsToReturn).execute();
+    return WorkspaceSelectQueryBuilder.toMutationQueryBuilder(
+      selectQueryBuilder,
+      kind,
+    )
+      .returning(columnsToReturn)
+      .execute();
   }
 
   private buildEventSnapshotQueryBuilder(
@@ -1935,7 +2014,6 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       objectIdByNameSingular:
         this.options.internalContext.objectIdByNameSingular,
       selectedColumns: columnsToReturn,
-      allFieldsSelected: false,
       updatedColumns,
       authContext: this.options.authContext,
       isRecordSharingEnabled: this.isRecordSharingEnabled,
@@ -2191,7 +2269,6 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
           this.options.internalContext.objectIdByNameSingular,
         isRecordSharingEnabled: this.isRecordSharingEnabled,
         selectedColumns: columnNames,
-        allFieldsSelected: false,
         updatedColumns: [],
       });
     }
@@ -2321,7 +2398,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       .where({ id: In(recordIds) })
       .withDeleted()
       .select(['id'])
-      .andWhere(condition.sql, condition.parameters)
+      .addRowAccessCondition(condition.sql, condition.parameters)
       .getMany<ObjectRecord>({ noFormatting: true });
 
     return new Set(admittedRecords.map((record) => String(record.id)));
@@ -2516,7 +2593,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     parameters: ObjectLiteral;
   }): void {
     if (alias === queryBuilder.alias) {
-      queryBuilder.andWhere(sql, parameters);
+      queryBuilder.addRowAccessCondition(sql, parameters);
 
       return;
     }

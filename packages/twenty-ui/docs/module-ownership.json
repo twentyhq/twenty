@@ -65,6 +65,7 @@
     "MenuPicker",
     "MetricRow",
     "NotificationCounter",
+    "OverflowingList",
     "SearchInput",
     "Section",
     "SettingsRow",
