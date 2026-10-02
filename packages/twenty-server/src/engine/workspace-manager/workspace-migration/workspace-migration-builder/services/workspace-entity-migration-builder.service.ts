@@ -1,6 +1,9 @@
 import { Inject } from '@nestjs/common';
 
-import { isValidUniversalIdentifier } from 'twenty-shared/application';
+import {
+  isValidUniversalIdentifier,
+  MINIMUM_UNIVERSAL_IDENTIFIER_UUID_VERSION,
+} from 'twenty-shared/application';
 import { type AllMetadataName } from 'twenty-shared/metadata';
 import { type FromTo } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -480,7 +483,7 @@ export abstract class WorkspaceEntityMigrationBuilderService<
       return [
         {
           code: FlatEntityMapsExceptionCode.ENTITY_MALFORMED,
-          message: `Invalid universalIdentifier: "${universalIdentifier}" is not a valid UUID, uuid version should be greater than 4`,
+          message: `Invalid universalIdentifier: "${universalIdentifier}" is not a valid UUID, uuid version should be greater than ${MINIMUM_UNIVERSAL_IDENTIFIER_UUID_VERSION}`,
           value: universalIdentifier,
         },
       ];
