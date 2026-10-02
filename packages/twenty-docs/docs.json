@@ -637,6 +637,7 @@
                       "ui/components/avatar-group",
                       "ui/components/callout",
                       "ui/components/command-block",
+                      "ui/components/currency-picker",
                       "ui/components/image-input",
                       "ui/components/inline-banner",
                       "ui/components/json-tree",
