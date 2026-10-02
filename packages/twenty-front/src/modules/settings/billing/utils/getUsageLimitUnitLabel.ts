@@ -1,6 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { USAGE_LIMIT_INVOCATION_LABELS } from '@/settings/billing/constants/UsageLimitInvocationLabels';
+import { USAGE_LIMIT_INVOCATION_UNIT_LABELS } from '@/settings/billing/constants/UsageLimitInvocationUnitLabels';
 import { USAGE_LIMIT_UNIT_LABELS } from '@/settings/billing/constants/UsageLimitUnitLabels';
 import { type UsageLimitUnitLabel } from '@/settings/billing/types/UsageLimitUnitLabel';
 import {
@@ -17,7 +17,7 @@ export const getUsageLimitUnitLabel = ({
 }): UsageLimitUnitLabel => {
   const invocationLabel =
     unit === UsageUnit.INVOCATION && isDefined(operationType)
-      ? USAGE_LIMIT_INVOCATION_LABELS[operationType]
+      ? USAGE_LIMIT_INVOCATION_UNIT_LABELS[operationType]
       : undefined;
 
   return invocationLabel ?? USAGE_LIMIT_UNIT_LABELS[unit];

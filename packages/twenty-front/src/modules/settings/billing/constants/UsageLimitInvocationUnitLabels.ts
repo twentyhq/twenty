@@ -3,7 +3,7 @@ import { msg } from '@lingui/core/macro';
 import { type UsageLimitUnitLabel } from '@/settings/billing/types/UsageLimitUnitLabel';
 import { UsageOperationType } from '~/generated-metadata/graphql';
 
-export const USAGE_LIMIT_INVOCATION_LABELS: Partial<
+export const USAGE_LIMIT_INVOCATION_UNIT_LABELS: Partial<
   Record<UsageOperationType, UsageLimitUnitLabel>
 > = {
   [UsageOperationType.WORKFLOW_EXECUTION]: {
