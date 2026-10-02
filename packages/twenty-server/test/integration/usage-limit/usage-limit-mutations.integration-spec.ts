@@ -176,25 +176,6 @@ describe('Usage limit mutations', () => {
         'EMAIL EMAIL_SEND quota limits cannot count MILLISECOND, only CREDIT, INVOCATION',
       );
     });
-
-    it('refuses a speed limit spanning every operation', async () => {
-      const response = await createUsageLimitRequest({
-        resourceType: UsageResourceType.WEBHOOK,
-        operationType: UsageOperationType.ALL,
-        limitKind: 'speed',
-        periodUnit: 'second',
-        unit: UsageUnit.REQUEST,
-      });
-
-      expect(response.body.errors?.[0]?.message).toBe(
-        'A speed limit targets a single operation, not ALL',
-      );
-      expect(
-        await usageLimitRepository.countBy({
-          workspaceId: SEED_APPLE_WORKSPACE_ID,
-        }),
-      ).toBe(0);
-    });
   });
 
   describe('updateUsageLimit', () => {

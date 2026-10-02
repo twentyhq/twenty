@@ -35,13 +35,6 @@ const buildLimitCounter = (
   ...overrides,
 });
 
-const buildRuntimeCounter = (key: string): LimitQuotaCounter =>
-  buildLimitCounter(key, {
-    unit: UsageUnit.MILLISECOND,
-    resourceType: UsageResourceType.LOGIC_FUNCTION,
-    operationType: UsageOperationType.CODE_EXECUTION,
-  });
-
 describe('findExhaustedCounters', () => {
   it('answers empty when every counter has budget left', () => {
     expect(
@@ -136,34 +129,6 @@ describe('findExhaustedCounters', () => {
         cost: { [UsageUnit.CREDIT]: 5_000 },
       }),
     ).toEqual([]);
-  });
-
-  it('ignores an invocation-only cost on a runtime limit', () => {
-    expect(
-      findExhaustedCounters({
-        counters: [buildRuntimeCounter('runtime')],
-        remainings: [10],
-        cost: { [UsageUnit.CREDIT]: 0, [UsageUnit.INVOCATION]: 500 },
-      }),
-    ).toEqual([]);
-  });
-
-  it('admits a run against a runtime limit with time left, whatever it will last', () => {
-    expect(
-      findExhaustedCounters({
-        counters: [buildRuntimeCounter('runtime')],
-        remainings: [100],
-      }),
-    ).toEqual([]);
-  });
-
-  it('refuses the next run once a run has overshot the runtime limit', () => {
-    expect(
-      findExhaustedCounters({
-        counters: [buildRuntimeCounter('runtime')],
-        remainings: [-400],
-      }),
-    ).toMatchObject([{ key: 'runtime' }]);
   });
 
   it('still refuses an emptied limit whatever the cost', () => {

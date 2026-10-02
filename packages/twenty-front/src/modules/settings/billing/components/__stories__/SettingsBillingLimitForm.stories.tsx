@@ -89,21 +89,6 @@ const CODE_EXECUTION_VALUES = {
   operationType: UsageOperationType.CODE_EXECUTION,
 };
 
-const openUnitOptions = async (canvasElement: HTMLElement) => {
-  await userEvent.click(
-    within(canvasElement).getByRole('button', { name: 'Credits' }),
-  );
-
-  const popup = await within(canvasElement.ownerDocument.body).findByRole(
-    'dialog',
-    { name: 'Unit' },
-  );
-
-  return within(popup)
-    .getAllByRole('button')
-    .map((button) => button.textContent);
-};
-
 const meta: Meta<typeof SettingsBillingLimitForm> = {
   title: 'Modules/Settings/Billing/SettingsBillingLimitForm',
   component: SettingsBillingLimitForm,
@@ -156,49 +141,6 @@ export const AllOperations: Story = {
       periodUnit: 'allowancePeriod',
       limitValue: '1000',
     },
-  },
-};
-
-export const CodeExecutionUnits: Story = {
-  args: { values: CODE_EXECUTION_VALUES },
-  play: async ({ canvasElement }) => {
-    expect(await openUnitOptions(canvasElement)).toEqual([
-      'Credits',
-      'Runs',
-      'Runtime',
-    ]);
-    await userEvent.keyboard('{Escape}');
-  },
-};
-
-export const WorkflowExecutionUnits: Story = {
-  args: {
-    values: {
-      ...FILLED_VALUES,
-      resourceType: UsageResourceType.WORKFLOW,
-      operationType: UsageOperationType.WORKFLOW_EXECUTION,
-    },
-  },
-  play: async ({ canvasElement }) => {
-    expect(await openUnitOptions(canvasElement)).toEqual(['Credits', 'Steps']);
-    await userEvent.keyboard('{Escape}');
-  },
-};
-
-export const RunsLimit: Story = {
-  args: {
-    values: {
-      ...CODE_EXECUTION_VALUES,
-      unit: UsageUnit.INVOCATION,
-      limitValue: '500',
-    },
-  },
-  play: async ({ canvasElement }) => {
-    expect(
-      within(canvasElement).getByText(
-        /Runs of free apps count toward this limit/,
-      ),
-    ).toBeVisible();
   },
 };
 

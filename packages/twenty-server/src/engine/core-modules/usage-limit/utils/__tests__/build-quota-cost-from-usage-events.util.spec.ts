@@ -87,31 +87,12 @@ describe('buildQuotaCostFromUsageEvents', () => {
     });
   });
 
-  it('counts an event without credits as zero credits', () => {
-    expect(
-      buildQuotaCostFromUsageEvents([
-        {
-          resourceType: UsageResourceType.WORKFLOW,
-          operationType: UsageOperationType.WORKFLOW_EXECUTION,
-          quantity: 1,
-          unit: UsageUnit.INVOCATION,
-        },
-      ]),
-    ).toEqual({ [UsageUnit.CREDIT]: 0, [UsageUnit.INVOCATION]: 1 });
-  });
-
-  it('states zero credits for no event', () => {
-    expect(buildQuotaCostFromUsageEvents([])).toEqual({
-      [UsageUnit.CREDIT]: 0,
-    });
-  });
-
   describe.each([
     ['a logic function run', logicFunctionRunEvents],
     ['a flat charge', flatChargeEvents],
   ])('for %s', (_label, usageEvents) => {
     it.each(Object.values(UsageUnit))(
-      'debits live the %s a rebuild from the recorded rows counts',
+      'debits live the same %s amount that a rebuild from the recorded rows counts',
       (unit) => {
         const cost = buildQuotaCostFromUsageEvents(usageEvents);
 

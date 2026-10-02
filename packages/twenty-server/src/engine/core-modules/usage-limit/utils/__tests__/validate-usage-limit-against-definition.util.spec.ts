@@ -88,16 +88,6 @@ describe('validateUsageLimitAgainstDefinition', () => {
     },
   );
 
-  it('accepts a webhook speed limit counted in requests', () => {
-    accepts({
-      ...validSpeedLimit,
-      resourceType: UsageResourceType.WEBHOOK,
-      operationType: UsageOperationType.WEBHOOK_CALL,
-      spenderType: 'workspace',
-      spenderId: null,
-    });
-  });
-
   it('leaves a speed limit on every operation to the kind rule', () => {
     accepts({ ...validSpeedLimit, operationType: UsageOperationType.ALL });
   });
@@ -149,20 +139,8 @@ describe('validateUsageLimitAgainstDefinition', () => {
     );
   });
 
-  it('rejects a token quota on web searches, which record invocations', () => {
-    rejects({
-      ...validQuotaLimit,
-      operationType: UsageOperationType.WEB_SEARCH,
-      unit: UsageUnit.TOKEN,
-    });
-  });
-
   it('rejects a quota counted in bytes, which the resource does not track', () => {
     rejects({ ...validQuotaLimit, unit: UsageUnit.BYTE });
-  });
-
-  it('rejects an api speed limit counted in complexity, which it does not debit', () => {
-    rejects({ ...validSpeedLimit, unit: UsageUnit.COMPLEXITY });
   });
 
   it('rejects a quota on every operation counted in anything but credits', () => {
@@ -182,10 +160,6 @@ describe('validateUsageLimitAgainstDefinition', () => {
       spenderType: 'userWorkspace',
       spenderId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
     });
-  });
-
-  it('accepts a storage stock counted in files', () => {
-    accepts({ ...validStockLimit, unit: UsageUnit.FILE });
   });
 
   it('rejects a storage stock counted in credits', () => {

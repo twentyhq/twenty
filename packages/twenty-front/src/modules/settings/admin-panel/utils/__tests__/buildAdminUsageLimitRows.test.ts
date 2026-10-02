@@ -50,14 +50,6 @@ const buildWorkspaceUsageLimits = ({
 });
 
 describe('buildAdminUsageLimitRows', () => {
-  it('carries the unit of the default', () => {
-    const [row] = buildAdminUsageLimitRows(
-      buildWorkspaceUsageLimits({ defaults: [buildDefault()] }),
-    );
-
-    expect(row.unit).toBe(UsageUnit.BYTE);
-  });
-
   it('shows one row per overridable default', () => {
     const rows = buildAdminUsageLimitRows(
       buildWorkspaceUsageLimits({

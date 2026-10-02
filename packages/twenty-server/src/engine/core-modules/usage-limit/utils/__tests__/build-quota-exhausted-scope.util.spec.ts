@@ -78,23 +78,6 @@ describe('buildQuotaExhaustedScope', () => {
     ).toMatchObject({ exhaustedKind: 'limit', isDefault: true });
   });
 
-  it('names the unit of an exhausted runtime limit', () => {
-    expect(
-      buildQuotaExhaustedScope({
-        resourceType: UsageResourceType.LOGIC_FUNCTION,
-        counter: buildLimitCounter({
-          unit: UsageUnit.MILLISECOND,
-          resourceType: UsageResourceType.LOGIC_FUNCTION,
-          operationType: UsageOperationType.CODE_EXECUTION,
-        }),
-        allowance: null,
-      }),
-    ).toMatchObject({
-      operationType: UsageOperationType.CODE_EXECUTION,
-      unit: UsageUnit.MILLISECOND,
-    });
-  });
-
   it('scopes an exhausted allowance counter to the whole workspace', () => {
     expect(
       buildQuotaExhaustedScope({

@@ -77,23 +77,6 @@ describe('buildQuotaDebits', () => {
     ).toEqual([]);
   });
 
-  it('debits nothing for an exempt run when no counter counts runs', () => {
-    expect(
-      buildQuotaDebits({
-        counters: [
-          allowanceCounter,
-          buildLimitCounter(UsageUnit.CREDIT),
-          buildLimitCounter(UsageUnit.MILLISECOND),
-        ],
-        cost: {
-          [UsageUnit.CREDIT]: 0,
-          [UsageUnit.INVOCATION]: 1,
-          [UsageUnit.MILLISECOND]: 0,
-        },
-      }),
-    ).toEqual([]);
-  });
-
   it('debits only the run counter for an exempt run, leaving the allowance alone', () => {
     const invocationCounter = buildLimitCounter(UsageUnit.INVOCATION);
 

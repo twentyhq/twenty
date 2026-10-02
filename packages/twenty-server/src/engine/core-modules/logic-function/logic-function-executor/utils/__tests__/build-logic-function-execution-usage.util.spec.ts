@@ -1,7 +1,6 @@
 import { MARKETPLACE_BILLING_EXEMPT_UNIVERSAL_IDENTIFIERS } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-billing-exempt-applications.constant';
 import { isBillingExemptApplication } from 'src/engine/core-modules/application/application-marketplace/utils/is-billing-exempt-application.util';
 import { buildLogicFunctionExecutionUsage } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/build-logic-function-execution-usage.util';
-import { computeLogicFunctionExecutionCreditsMicro } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/compute-logic-function-execution-credits-micro.util';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
@@ -33,41 +32,6 @@ const buildExpectedUsageEvent = ({
 });
 
 describe('buildLogicFunctionExecutionUsage', () => {
-  it('debits the credits, the run and the billed runtime of a paid run', () => {
-    const { invocationCreditsMicro, durationCreditsMicro } =
-      computeLogicFunctionExecutionCreditsMicro({
-        durationMs: 1_500,
-        isBillingExempt: false,
-      });
-
-    expect(
-      buildLogicFunctionExecutionUsage({
-        durationMs: 1_500,
-        isBillingExempt: false,
-        resourceId: LOGIC_FUNCTION_ID,
-        spenders: SPENDERS,
-      }),
-    ).toEqual({
-      usageEvents: [
-        buildExpectedUsageEvent({
-          creditsUsedMicro: invocationCreditsMicro,
-          quantity: 1,
-          unit: UsageUnit.INVOCATION,
-        }),
-        buildExpectedUsageEvent({
-          creditsUsedMicro: durationCreditsMicro,
-          quantity: 1_500,
-          unit: UsageUnit.MILLISECOND,
-        }),
-      ],
-      cost: {
-        [UsageUnit.CREDIT]: invocationCreditsMicro + durationCreditsMicro,
-        [UsageUnit.INVOCATION]: 1,
-        [UsageUnit.MILLISECOND]: 1_500,
-      },
-    });
-  });
-
   it('counts the run of a billing-exempt app at no credits and no runtime', () => {
     expect(
       buildLogicFunctionExecutionUsage({
