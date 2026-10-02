@@ -10,7 +10,7 @@ import { workflowAiAgentActionAgentState } from '@/workflow/workflow-steps/workf
 import { workflowAiAgentPermissionsIsAddingPermissionState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentPermissionsIsAddingPermissionState';
 import { workflowAiAgentPermissionsIsSystemObjectsListOpenState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentPermissionsIsSystemObjectsListOpenState';
 import { workflowAiAgentPermissionsSelectedObjectIdState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentPermissionsSelectedObjectIdState';
-import { useApolloClient, useQuery } from '@apollo/client/react';
+import { useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
@@ -100,9 +100,12 @@ export const WorkflowAiAgentPermissionsTab = ({
       itemA.nameSingular.localeCompare(itemB.nameSingular),
     );
 
-  const apolloClient = useApolloClient();
   const agentRoleId = workflowAiAgentActionAgent?.roleId;
-  const { data: roleData, loading: roleLoading } = useQuery(GetRoleDocument, {
+  const {
+    data: roleData,
+    loading: roleLoading,
+    refetch: refetchRole,
+  } = useQuery(GetRoleDocument, {
     variables: { id: agentRoleId ?? '' },
     skip: !isDefined(agentRoleId),
   });
@@ -144,21 +147,13 @@ export const WorkflowAiAgentPermissionsTab = ({
   const refetchAgentAndRoles = async () => {
     const result = await refetchAgent();
     const refetchedAgent = result?.data?.findOneAgent;
-    const refetchedRoleId = refetchedAgent?.roleId;
 
-    // The role may have just been created for this agent, so the GetRole query
-    // above can still be skipped or bound to a stale id when this runs
-    if (isDefined(refetchedRoleId)) {
-      await apolloClient.query({
-        query: GetRoleDocument,
-        variables: { id: refetchedRoleId },
-        fetchPolicy: 'network-only',
-      });
+    // The role may have just been created, so the query can still be skipped or bound to a stale id
+    if (isDefined(refetchedAgent?.roleId)) {
+      await refetchRole({ id: refetchedAgent.roleId });
     }
 
-    return {
-      refetchedAgent,
-    };
+    return { refetchedAgent };
   };
 
   const {

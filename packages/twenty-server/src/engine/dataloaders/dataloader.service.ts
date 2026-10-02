@@ -10,9 +10,12 @@ import { type IndexMetadataInterface } from 'src/engine/metadata-modules/index-m
 import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
 import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
 import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
+import { AgentsByRoleIdLoaderFactory } from 'src/engine/dataloaders/factories/agents-by-role-id-loader.factory';
+import { ApiKeysByRoleIdLoaderFactory } from 'src/engine/dataloaders/factories/api-keys-by-role-id-loader.factory';
 import { FieldMetadataConnectionLoaderFactory } from 'src/engine/dataloaders/factories/field-metadata-connection-loader.factory';
 import { IndexMetadataConnectionLoaderFactory } from 'src/engine/dataloaders/factories/index-metadata-connection-loader.factory';
-import { RoleRelationLoadersFactory } from 'src/engine/dataloaders/factories/role-relation-loaders.factory';
+import { RowLevelPermissionsByRoleIdLoaderFactory } from 'src/engine/dataloaders/factories/row-level-permissions-by-role-id-loader.factory';
+import { WorkspaceMembersByRoleIdLoaderFactory } from 'src/engine/dataloaders/factories/workspace-members-by-role-id-loader.factory';
 import { filterMorphRelationDuplicateFields } from 'src/engine/dataloaders/utils/filter-morph-relation-duplicate-fields.util';
 import { type FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
 import { RelationDTO } from 'src/engine/metadata-modules/field-metadata/dtos/relation.dto';
@@ -145,7 +148,10 @@ export class DataloaderService {
     private readonly applicationTranslationCatalogService: ApplicationTranslationCatalogService,
     private readonly fieldMetadataConnectionLoaderFactory: FieldMetadataConnectionLoaderFactory,
     private readonly indexMetadataConnectionLoaderFactory: IndexMetadataConnectionLoaderFactory,
-    private readonly roleRelationLoadersFactory: RoleRelationLoadersFactory,
+    private readonly workspaceMembersByRoleIdLoaderFactory: WorkspaceMembersByRoleIdLoaderFactory,
+    private readonly agentsByRoleIdLoaderFactory: AgentsByRoleIdLoaderFactory,
+    private readonly apiKeysByRoleIdLoaderFactory: ApiKeysByRoleIdLoaderFactory,
+    private readonly rowLevelPermissionsByRoleIdLoaderFactory: RowLevelPermissionsByRoleIdLoaderFactory,
   ) {}
 
   createLoaders(): IDataloaders {
@@ -175,6 +181,12 @@ export class DataloaderService {
       this.createApplicationAuthorIdentifiersLoader();
     const applicationTranslationCatalogLoader =
       this.createApplicationTranslationCatalogLoader();
+    const workspaceMembersByRoleIdLoader =
+      this.workspaceMembersByRoleIdLoaderFactory.create();
+    const agentsByRoleIdLoader = this.agentsByRoleIdLoaderFactory.create();
+    const apiKeysByRoleIdLoader = this.apiKeysByRoleIdLoaderFactory.create();
+    const rowLevelPermissionsByRoleIdLoader =
+      this.rowLevelPermissionsByRoleIdLoaderFactory.create();
 
     return {
       relationLoader,
@@ -196,7 +208,10 @@ export class DataloaderService {
       isConfiguredLoader,
       applicationAuthorIdentifiersLoader,
       applicationTranslationCatalogLoader,
-      ...this.roleRelationLoadersFactory.create(),
+      workspaceMembersByRoleIdLoader,
+      agentsByRoleIdLoader,
+      apiKeysByRoleIdLoader,
+      rowLevelPermissionsByRoleIdLoader,
     };
   }
 
