@@ -1,0 +1,4377 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`DatabaseToolProvider input schemas should generate the input schema of every database tool: create_many_opportunities 1`] = `
+{
+  "inputSchema": {
+    "properties": {
+      "records": {
+        "description": "Array of records to create. Each record should contain the required fields. Maximum 20 records per call.",
+        "items": {
+          "properties": {
+            "address": {
+              "properties": {
+                "addressCity": {
+                  "type": "string",
+                },
+                "addressCountry": {
+                  "type": "string",
+                },
+                "addressLat": {
+                  "type": "number",
+                },
+                "addressLng": {
+                  "type": "number",
+                },
+                "addressPostcode": {
+                  "type": "string",
+                },
+                "addressState": {
+                  "type": "string",
+                },
+                "addressStreet1": {
+                  "type": "string",
+                },
+                "addressStreet2": {
+                  "type": "string",
+                },
+              },
+              "type": "object",
+            },
+            "aliases": {
+              "items": {
+                "type": "string",
+              },
+              "type": "array",
+            },
+            "amount": {
+              "properties": {
+                "amountMicros": {
+                  "description": "Currency amount in micros (1 unit = 1,000,000 micros). Multiply the user-provided amount by 1,000,000 before writing.",
+                  "type": "number",
+                },
+                "currencyCode": {
+                  "type": "string",
+                },
+              },
+              "type": "object",
+            },
+            "attachments": {
+              "items": {
+                "additionalProperties": false,
+                "properties": {
+                  "fileId": {
+                    "format": "uuid",
+                    "type": "string",
+                  },
+                  "label": {
+                    "type": "string",
+                  },
+                },
+                "required": [
+                  "fileId",
+                  "label",
+                ],
+                "type": "object",
+              },
+              "type": "array",
+            },
+            "closeDate": {
+              "format": "date",
+              "type": "string",
+            },
+            "companyId": {
+              "format": "uuid",
+              "type": "string",
+            },
+            "contactName": {
+              "properties": {
+                "firstName": {
+                  "type": "string",
+                },
+                "lastName": {
+                  "type": "string",
+                },
+              },
+              "type": "object",
+            },
+            "emails": {
+              "properties": {
+                "additionalEmails": {
+                  "items": {
+                    "format": "email",
+                    "type": "string",
+                  },
+                  "type": "array",
+                },
+                "primaryEmail": {
+                  "format": "email",
+                  "type": "string",
+                },
+              },
+              "type": "object",
+            },
+            "emptySelect": {
+              "type": "string",
+            },
+            "externalId": {
+              "description": "External id",
+              "format": "uuid",
+              "type": "string",
+            },
+            "isPriority": {
+              "type": "boolean",
+            },
+            "lastContactAt": {
+              "format": "date-time",
+              "type": "string",
+            },
+            "name": {
+              "description": "Deal name",
+              "type": "string",
+            },
+            "notes": {
+              "properties": {
+                "blocknote": {
+                  "type": "string",
+                },
+                "markdown": {
+                  "type": "string",
+                },
+              },
+              "type": "object",
+            },
+            "payload": {
+              "additionalProperties": {},
+              "propertyNames": {
+                "type": "string",
+              },
+              "type": "object",
+            },
+            "phones": {
+              "properties": {
+                "additionalPhones": {
+                  "items": {
+                    "properties": {
+                      "callingCode": {
+                        "type": "string",
+                      },
+                      "countryCode": {
+                        "type": "string",
+                      },
+                      "number": {
+                        "type": "string",
+                      },
+                    },
+                    "required": [
+                      "number",
+                    ],
+                    "type": "object",
+                  },
+                  "type": "array",
+                },
+                "primaryPhoneCallingCode": {
+                  "type": "string",
+                },
+                "primaryPhoneCountryCode": {
+                  "type": "string",
+                },
+                "primaryPhoneNumber": {
+                  "type": "string",
+                },
+              },
+              "type": "object",
+            },
+            "pointOfContactId": {
+              "format": "uuid",
+              "type": "string",
+            },
+            "position": {
+              "anyOf": [
+                {
+                  "type": "number",
+                },
+                {
+                  "const": "first",
+                  "type": "string",
+                },
+                {
+                  "const": "last",
+                  "type": "string",
+                },
+              ],
+              "description": "Use "first" to insert at the top, "last" for the bottom, or a number for explicit ordering. Leave empty to place at the top (recommended).",
+            },
+            "probability": {
+              "type": "number",
+            },
+            "rating": {
+              "enum": [
+                "RATING_1",
+                "RATING_2",
+              ],
+              "type": "string",
+            },
+            "reviewer": {
+              "properties": {
+                "source": {
+                  "enum": [
+                    "EMAIL",
+                    "CALENDAR",
+                    "WORKFLOW",
+                    "AGENT",
+                    "API",
+                    "IMPORT",
+                    "MANUAL",
+                    "SYSTEM",
+                    "WEBHOOK",
+                  ],
+                  "type": "string",
+                },
+              },
+              "type": "object",
+            },
+            "score": {
+              "type": "number",
+            },
+            "seats": {
+              "type": "integer",
+            },
+            "stage": {
+              "enum": [
+                "NEW",
+                "WON",
+              ],
+              "type": "string",
+            },
+            "tags": {
+              "items": {
+                "enum": [
+                  "NEW",
+                  "WON",
+                ],
+                "type": "string",
+              },
+              "type": "array",
+            },
+            "targetPersonId": {
+              "format": "uuid",
+              "type": "string",
+            },
+            "website": {
+              "description": "Website",
+              "properties": {
+                "primaryLinkLabel": {
+                  "type": "string",
+                },
+                "primaryLinkUrl": {
+                  "format": "uri",
+                  "type": "string",
+                },
+                "secondaryLinks": {
+                  "items": {
+                    "properties": {
+                      "label": {
+                        "type": "string",
+                      },
+                      "url": {
+                        "format": "uri",
+                        "type": "string",
+                      },
+                    },
+                    "required": [
+                      "label",
+                      "url",
+                    ],
+                    "type": "object",
+                  },
+                  "type": "array",
+                },
+              },
+              "type": "object",
+            },
+          },
+          "required": [
+            "amount",
+            "companyId",
+            "name",
+            "position",
+          ],
+          "type": "object",
+        },
+        "maxItems": 20,
+        "minItems": 1,
+        "type": "array",
+      },
+    },
+    "required": [
+      "records",
+    ],
+    "type": "object",
+  },
+}
+`;
+
+exports[`DatabaseToolProvider input schemas should generate the input schema of every database tool: create_one_opportunity 1`] = `
+{
+  "inputSchema": {
+    "properties": {
+      "address": {
+        "properties": {
+          "addressCity": {
+            "type": "string",
+          },
+          "addressCountry": {
+            "type": "string",
+          },
+          "addressLat": {
+            "type": "number",
+          },
+          "addressLng": {
+            "type": "number",
+          },
+          "addressPostcode": {
+            "type": "string",
+          },
+          "addressState": {
+            "type": "string",
+          },
+          "addressStreet1": {
+            "type": "string",
+          },
+          "addressStreet2": {
+            "type": "string",
+          },
+        },
+        "type": "object",
+      },
+      "aliases": {
+        "items": {
+          "type": "string",
+        },
+        "type": "array",
+      },
+      "amount": {
+        "properties": {
+          "amountMicros": {
+            "description": "Currency amount in micros (1 unit = 1,000,000 micros). Multiply the user-provided amount by 1,000,000 before writing.",
+            "type": "number",
+          },
+          "currencyCode": {
+            "type": "string",
+          },
+        },
+        "type": "object",
+      },
+      "attachments": {
+        "items": {
+          "additionalProperties": false,
+          "properties": {
+            "fileId": {
+              "format": "uuid",
+              "type": "string",
+            },
+            "label": {
+              "type": "string",
+            },
+          },
+          "required": [
+            "fileId",
+            "label",
+          ],
+          "type": "object",
+        },
+        "type": "array",
+      },
+      "closeDate": {
+        "format": "date",
+        "type": "string",
+      },
+      "companyId": {
+        "format": "uuid",
+        "type": "string",
+      },
+      "contactName": {
+        "properties": {
+          "firstName": {
+            "type": "string",
+          },
+          "lastName": {
+            "type": "string",
+          },
+        },
+        "type": "object",
+      },
+      "emails": {
+        "properties": {
+          "additionalEmails": {
+            "items": {
+              "format": "email",
+              "type": "string",
+            },
+            "type": "array",
+          },
+          "primaryEmail": {
+            "format": "email",
+            "type": "string",
+          },
+        },
+        "type": "object",
+      },
+      "emptySelect": {
+        "type": "string",
+      },
+      "externalId": {
+        "description": "External id",
+        "format": "uuid",
+        "type": "string",
+      },
+      "isPriority": {
+        "type": "boolean",
+      },
+      "lastContactAt": {
+        "format": "date-time",
+        "type": "string",
+      },
+      "name": {
+        "description": "Deal name",
+        "type": "string",
+      },
+      "notes": {
+        "properties": {
+          "blocknote": {
+            "type": "string",
+          },
+          "markdown": {
+            "type": "string",
+          },
+        },
+        "type": "object",
+      },
+      "payload": {
+        "additionalProperties": {},
+        "propertyNames": {
+          "type": "string",
+        },
+        "type": "object",
+      },
+      "phones": {
+        "properties": {
+          "additionalPhones": {
+            "items": {
+              "properties": {
+                "callingCode": {
+                  "type": "string",
+                },
+                "countryCode": {
+                  "type": "string",
+                },
+                "number": {
+                  "type": "string",
+                },
+              },
+              "required": [
+                "number",
+              ],
+              "type": "object",
+            },
+            "type": "array",
+          },
+          "primaryPhoneCallingCode": {
+            "type": "string",
+          },
+          "primaryPhoneCountryCode": {
+            "type": "string",
+          },
+          "primaryPhoneNumber": {
+            "type": "string",
+          },
+        },
+        "type": "object",
+      },
+      "pointOfContactId": {
+        "format": "uuid",
+        "type": "string",
+      },
+      "position": {
+        "anyOf": [
+          {
+            "type": "number",
+          },
+          {
+            "const": "first",
+            "type": "string",
+          },
+          {
+            "const": "last",
+            "type": "string",
+          },
+        ],
+        "description": "Use "first" to insert at the top, "last" for the bottom, or a number for explicit ordering. Leave empty to place at the top (recommended).",
+      },
+      "probability": {
+        "type": "number",
+      },
+      "rating": {
+        "enum": [
+          "RATING_1",
+          "RATING_2",
+        ],
+        "type": "string",
+      },
+      "reviewer": {
+        "properties": {
+          "source": {
+            "enum": [
+              "EMAIL",
+              "CALENDAR",
+              "WORKFLOW",
+              "AGENT",
+              "API",
+              "IMPORT",
+              "MANUAL",
+              "SYSTEM",
+              "WEBHOOK",
+            ],
+            "type": "string",
+          },
+        },
+        "type": "object",
+      },
+      "score": {
+        "type": "number",
+      },
+      "seats": {
+        "type": "integer",
+      },
+      "stage": {
+        "enum": [
+          "NEW",
+          "WON",
+        ],
+        "type": "string",
+      },
+      "tags": {
+        "items": {
+          "enum": [
+            "NEW",
+            "WON",
+          ],
+          "type": "string",
+        },
+        "type": "array",
+      },
+      "targetPersonId": {
+        "format": "uuid",
+        "type": "string",
+      },
+      "website": {
+        "description": "Website",
+        "properties": {
+          "primaryLinkLabel": {
+            "type": "string",
+          },
+          "primaryLinkUrl": {
+            "format": "uri",
+            "type": "string",
+          },
+          "secondaryLinks": {
+            "items": {
+              "properties": {
+                "label": {
+                  "type": "string",
+                },
+                "url": {
+                  "format": "uri",
+                  "type": "string",
+                },
+              },
+              "required": [
+                "label",
+                "url",
+              ],
+              "type": "object",
+            },
+            "type": "array",
+          },
+        },
+        "type": "object",
+      },
+    },
+    "required": [
+      "amount",
+      "companyId",
+      "name",
+      "position",
+    ],
+    "type": "object",
+  },
+}
+`;
+
+exports[`DatabaseToolProvider input schemas should generate the input schema of every database tool: delete_many_opportunities 1`] = `
+{
+  "inputSchema": {
+    "properties": {
+      "filter": {
+        "description": "Filter to select which records to delete. Supports field-level filters and logical operators (or, and, not). WARNING: A broad filter may delete many records at once. Always verify the filter scope with a find query first.",
+        "recordFilter": true,
+      },
+    },
+    "required": [
+      "filter",
+    ],
+    "type": "object",
+  },
+  "recordFilter": "same as find_many_opportunities",
+}
+`;
+
+exports[`DatabaseToolProvider input schemas should generate the input schema of every database tool: delete_one_opportunity 1`] = `
+{
+  "inputSchema": {
+    "properties": {
+      "id": {
+        "description": "The unique UUID of the record to delete",
+        "format": "uuid",
+        "type": "string",
+      },
+    },
+    "required": [
+      "id",
+    ],
+    "type": "object",
+  },
+}
+`;
+
+exports[`DatabaseToolProvider input schemas should generate the input schema of every database tool: find_many_opportunities 1`] = `
+{
+  "inputSchema": {
+    "properties": {
+      "address": "same as recordFilter.properties.address",
+      "aliases": "same as recordFilter.properties.aliases",
+      "amount": "same as recordFilter.properties.amount",
+      "and": "same as recordFilter.properties.and",
+      "attachments": "same as recordFilter.properties.attachments",
+      "closeDate": "same as recordFilter.properties.closeDate",
+      "companyId": "same as recordFilter.properties.companyId",
+      "contactName": "same as recordFilter.properties.contactName",
+      "emails": "same as recordFilter.properties.emails",
+      "externalId": "same as recordFilter.properties.externalId",
+      "isPriority": "same as recordFilter.properties.isPriority",
+      "lastContactAt": "same as recordFilter.properties.lastContactAt",
+      "limit": {
+        "default": 10,
+        "description": "Maximum number of records to return (default: 10, max: 100). Start small and increase only if needed.",
+        "exclusiveMinimum": 0,
+        "type": "integer",
+      },
+      "name": "same as recordFilter.properties.name",
+      "not": "same as recordFilter.properties.not",
+      "notes": "same as recordFilter.properties.notes",
+      "offset": {
+        "default": 0,
+        "description": "Number of records to skip (default: 0)",
+        "type": "integer",
+      },
+      "or": "same as recordFilter.properties.or",
+      "orderBy": {
+        "description": "Array of sort criteria, one field per item. Use "DescNullsLast" for descending (top/largest), "AscNullsFirst" for ascending (bottom/smallest).",
+        "items": {
+          "additionalProperties": false,
+          "description": "Object with exactly ONE property. Scalar fields take a direction string; composite fields take an object with one sub-field. Never use dot-notation keys.",
+          "properties": {
+            "address": {
+              "additionalProperties": false,
+              "properties": {
+                "addressCity": {
+                  "enum": [
+                    "AscNullsFirst",
+                    "AscNullsLast",
+                    "DescNullsFirst",
+                    "DescNullsLast",
+                  ],
+                  "type": "string",
+                },
+                "addressCountry": {
+                  "enum": [
+                    "AscNullsFirst",
+                    "AscNullsLast",
+                    "DescNullsFirst",
+                    "DescNullsLast",
+                  ],
+                  "type": "string",
+                },
+                "addressLat": {
+                  "enum": [
+                    "AscNullsFirst",
+                    "AscNullsLast",
+                    "DescNullsFirst",
+                    "DescNullsLast",
+                  ],
+                  "type": "string",
+                },
+                "addressLng": {
+                  "enum": [
+                    "AscNullsFirst",
+                    "AscNullsLast",
+                    "DescNullsFirst",
+                    "DescNullsLast",
+                  ],
+                  "type": "string",
+                },
+                "addressPostcode": {
+                  "enum": [
+                    "AscNullsFirst",
+                    "AscNullsLast",
+                    "DescNullsFirst",
+                    "DescNullsLast",
+                  ],
+                  "type": "string",
+                },
+                "addressState": {
+                  "enum": [
+                    "AscNullsFirst",
+                    "AscNullsLast",
+                    "DescNullsFirst",
+                    "DescNullsLast",
+                  ],
+                  "type": "string",
+                },
+                "addressStreet1": {
+                  "enum": [
+                    "AscNullsFirst",
+                    "AscNullsLast",
+                    "DescNullsFirst",
+                    "DescNullsLast",
+                  ],
+                  "type": "string",
+                },
+                "addressStreet2": {
+                  "enum": [
+                    "AscNullsFirst",
+                    "AscNullsLast",
+                    "DescNullsFirst",
+                    "DescNullsLast",
+                  ],
+                  "type": "string",
+                },
+              },
+              "type": "object",
+            },
+            "aliases": {
+              "enum": [
+                "AscNullsFirst",
+                "AscNullsLast",
+                "DescNullsFirst",
+                "DescNullsLast",
+              ],
+              "type": "string",
+            },
+            "amount": {
+              "additionalProperties": false,
+              "properties": {
+                "amountMicros": {
+                  "enum": [
+                    "AscNullsFirst",
+                    "AscNullsLast",
+                    "DescNullsFirst",
+                    "DescNullsLast",
+                  ],
+                  "type": "string",
+                },
+                "currencyCode": {
+                  "enum": [
+                    "AscNullsFirst",
+                    "AscNullsLast",
+                    "DescNullsFirst",
+                    "DescNullsLast",
+                  ],
+                  "type": "string",
+                },
+              },
+              "type": "object",
+            },
+            "attachments": {
+              "enum": [
+                "AscNullsFirst",
+                "AscNullsLast",
+                "DescNullsFirst",
+                "DescNullsLast",
+              ],
+              "type": "string",
+            },
+            "closeDate": {
+              "enum": [
+                "AscNullsFirst",
+                "AscNullsLast",
+                "DescNullsFirst",
+                "DescNullsLast",
+              ],
+              "type": "string",
+            },
+            "companyId": {
+              "enum": [
+                "AscNullsFirst",
+                "AscNullsLast",
+                "DescNullsFirst",
+                "DescNullsLast",
+              ],
+              "type": "string",
+            },
+            "contactName": {
+              "additionalProperties": false,
+              "properties": {
+                "firstName": {
+                  "enum": [
+                    "AscNullsFirst",
+                    "AscNullsLast",
+                    "DescNullsFirst",
+                    "DescNullsLast",
+                  ],
+                  "type": "string",
+                },
+                "lastName": {
+                  "enum": [
+                    "AscNullsFirst",
+                    "AscNullsLast",
+                    "DescNullsFirst",
+                    "DescNullsLast",
+                  ],
+                  "type": "string",
+                },
+              },
+              "type": "object",
+            },
+            "createdAt": {
+              "enum": [
+                "AscNullsFirst",
+                "AscNullsLast",
+                "DescNullsFirst",
+                "DescNullsLast",
+              ],
+              "type": "string",
+            },
+            "emails": {
+              "additionalProperties": false,
+              "properties": {
+                "additionalEmails": {
+                  "enum": [
+                    "AscNullsFirst",
+                    "AscNullsLast",
+                    "DescNullsFirst",
+                    "DescNullsLast",
+                  ],
+                  "type": "string",
+                },
+                "primaryEmail": {
+                  "enum": [
+                    "AscNullsFirst",
+                    "AscNullsLast",
+                    "DescNullsFirst",
+                    "DescNullsLast",
+                  ],
+                  "type": "string",
+                },
+              },
+              "type": "object",
+            },
+            "emptySelect": {
+              "enum": [
+                "AscNullsFirst",
+                "AscNullsLast",
+                "DescNullsFirst",
+                "DescNullsLast",
+              ],
+              "type": "string",
+            },
+            "externalId": {
+              "enum": [
+                "AscNullsFirst",
+                "AscNullsLast",
+                "DescNullsFirst",
+                "DescNullsLast",
+              ],
+              "type": "string",
+            },
+            "id": {
+              "enum": [
+                "AscNullsFirst",
+                "AscNullsLast",
+                "DescNullsFirst",
+                "DescNullsLast",
+              ],
+              "type": "string",
+            },
+            "isPriority": {
+              "enum": [
+                "AscNullsFirst",
+                "AscNullsLast",
+                "DescNullsFirst",
+                "DescNullsLast",
+              ],
+              "type": "string",
+            },
+            "lastContactAt": {
+              "enum": [
+                "AscNullsFirst",
+                "AscNullsLast",
+                "DescNullsFirst",
+                "DescNullsLast",
+              ],
+              "type": "string",
+            },
+            "name": {
+              "enum": [
+                "AscNullsFirst",
+                "AscNullsLast",
+                "DescNullsFirst",
+                "DescNullsLast",
+              ],
+              "type": "string",
+            },
+            "notes": {
+              "additionalProperties": false,
+              "properties": {
+                "blocknote": {
+                  "enum": [
+                    "AscNullsFirst",
+                    "AscNullsLast",
+                    "DescNullsFirst",
+                    "DescNullsLast",
+                  ],
+                  "type": "string",
+                },
+                "markdown": {
+                  "enum": [
+                    "AscNullsFirst",
+                    "AscNullsLast",
+                    "DescNullsFirst",
+                    "DescNullsLast",
+                  ],
+                  "type": "string",
+                },
+              },
+              "type": "object",
+            },
+            "payload": {
+              "enum": [
+                "AscNullsFirst",
+                "AscNullsLast",
+                "DescNullsFirst",
+                "DescNullsLast",
+              ],
+              "type": "string",
+            },
+            "phones": {
+              "additionalProperties": false,
+              "properties": {
+                "additionalPhones": {
+                  "enum": [
+                    "AscNullsFirst",
+                    "AscNullsLast",
+                    "DescNullsFirst",
+                    "DescNullsLast",
+                  ],
+                  "type": "string",
+                },
+                "primaryPhoneCallingCode": {
+                  "enum": [
+                    "AscNullsFirst",
+                    "AscNullsLast",
+                    "DescNullsFirst",
+                    "DescNullsLast",
+                  ],
+                  "type": "string",
+                },
+                "primaryPhoneCountryCode": {
+                  "enum": [
+                    "AscNullsFirst",
+                    "AscNullsLast",
+                    "DescNullsFirst",
+                    "DescNullsLast",
+                  ],
+                  "type": "string",
+                },
+                "primaryPhoneNumber": {
+                  "enum": [
+                    "AscNullsFirst",
+                    "AscNullsLast",
+                    "DescNullsFirst",
+                    "DescNullsLast",
+                  ],
+                  "type": "string",
+                },
+              },
+              "type": "object",
+            },
+            "pointOfContactId": {
+              "enum": [
+                "AscNullsFirst",
+                "AscNullsLast",
+                "DescNullsFirst",
+                "DescNullsLast",
+              ],
+              "type": "string",
+            },
+            "position": {
+              "enum": [
+                "AscNullsFirst",
+                "AscNullsLast",
+                "DescNullsFirst",
+                "DescNullsLast",
+              ],
+              "type": "string",
+            },
+            "probability": {
+              "enum": [
+                "AscNullsFirst",
+                "AscNullsLast",
+                "DescNullsFirst",
+                "DescNullsLast",
+              ],
+              "type": "string",
+            },
+            "rating": {
+              "enum": [
+                "AscNullsFirst",
+                "AscNullsLast",
+                "DescNullsFirst",
+                "DescNullsLast",
+              ],
+              "type": "string",
+            },
+            "reviewer": {
+              "additionalProperties": false,
+              "properties": {
+                "context": {
+                  "enum": [
+                    "AscNullsFirst",
+                    "AscNullsLast",
+                    "DescNullsFirst",
+                    "DescNullsLast",
+                  ],
+                  "type": "string",
+                },
+                "name": {
+                  "enum": [
+                    "AscNullsFirst",
+                    "AscNullsLast",
+                    "DescNullsFirst",
+                    "DescNullsLast",
+                  ],
+                  "type": "string",
+                },
+                "source": {
+                  "enum": [
+                    "AscNullsFirst",
+                    "AscNullsLast",
+                    "DescNullsFirst",
+                    "DescNullsLast",
+                  ],
+                  "type": "string",
+                },
+                "workspaceMemberId": {
+                  "enum": [
+                    "AscNullsFirst",
+                    "AscNullsLast",
+                    "DescNullsFirst",
+                    "DescNullsLast",
+                  ],
+                  "type": "string",
+                },
+              },
+              "type": "object",
+            },
+            "score": {
+              "enum": [
+                "AscNullsFirst",
+                "AscNullsLast",
+                "DescNullsFirst",
+                "DescNullsLast",
+              ],
+              "type": "string",
+            },
+            "seats": {
+              "enum": [
+                "AscNullsFirst",
+                "AscNullsLast",
+                "DescNullsFirst",
+                "DescNullsLast",
+              ],
+              "type": "string",
+            },
+            "stage": {
+              "enum": [
+                "AscNullsFirst",
+                "AscNullsLast",
+                "DescNullsFirst",
+                "DescNullsLast",
+              ],
+              "type": "string",
+            },
+            "tags": {
+              "enum": [
+                "AscNullsFirst",
+                "AscNullsLast",
+                "DescNullsFirst",
+                "DescNullsLast",
+              ],
+              "type": "string",
+            },
+            "targetPersonId": {
+              "enum": [
+                "AscNullsFirst",
+                "AscNullsLast",
+                "DescNullsFirst",
+                "DescNullsLast",
+              ],
+              "type": "string",
+            },
+            "updatedAt": {
+              "enum": [
+                "AscNullsFirst",
+                "AscNullsLast",
+                "DescNullsFirst",
+                "DescNullsLast",
+              ],
+              "type": "string",
+            },
+            "website": {
+              "additionalProperties": false,
+              "properties": {
+                "primaryLinkLabel": {
+                  "enum": [
+                    "AscNullsFirst",
+                    "AscNullsLast",
+                    "DescNullsFirst",
+                    "DescNullsLast",
+                  ],
+                  "type": "string",
+                },
+                "primaryLinkUrl": {
+                  "enum": [
+                    "AscNullsFirst",
+                    "AscNullsLast",
+                    "DescNullsFirst",
+                    "DescNullsLast",
+                  ],
+                  "type": "string",
+                },
+                "secondaryLinks": {
+                  "enum": [
+                    "AscNullsFirst",
+                    "AscNullsLast",
+                    "DescNullsFirst",
+                    "DescNullsLast",
+                  ],
+                  "type": "string",
+                },
+              },
+              "type": "object",
+            },
+          },
+          "type": "object",
+        },
+        "type": "array",
+      },
+      "payload": "same as recordFilter.properties.payload",
+      "phones": "same as recordFilter.properties.phones",
+      "pointOfContactId": "same as recordFilter.properties.pointOfContactId",
+      "probability": "same as recordFilter.properties.probability",
+      "rating": "same as recordFilter.properties.rating",
+      "reviewer": "same as recordFilter.properties.reviewer",
+      "score": "same as recordFilter.properties.score",
+      "seats": "same as recordFilter.properties.seats",
+      "select": {
+        "description": "Fields to include in the response. Required. Use '*' to return all fields, or list specific field names. Relation fields resolve to related records as {id, label} summaries: MANY_TO_ONE returns a single object (or select the '<name>Id' FK column for just the id), ONE_TO_MANY returns up to 60 related records. For more fields or more records, query the related object directly. ",
+        "items": {
+          "type": "string",
+        },
+        "minItems": 1,
+        "type": "array",
+      },
+      "stage": "same as recordFilter.properties.stage",
+      "tags": "same as recordFilter.properties.tags",
+      "targetPersonId": "same as recordFilter.properties.targetPersonId",
+      "website": "same as recordFilter.properties.website",
+    },
+    "required": [
+      "select",
+    ],
+    "type": "object",
+  },
+  "recordFilter": {
+    "properties": {
+      "address": {
+        "properties": {
+          "addressCity": {
+            "properties": {
+              "eq": {
+                "description": "Equals",
+                "type": "string",
+              },
+              "ilike": {
+                "description": "ILIKE (% wildcard, case-insensitive)",
+                "type": "string",
+              },
+              "is": {
+                "description": "Is null or not null",
+                "enum": [
+                  "NULL",
+                  "NOT_NULL",
+                ],
+                "type": "string",
+              },
+              "like": {
+                "description": "LIKE (% wildcard)",
+                "type": "string",
+              },
+              "neq": {
+                "description": "Not equals",
+                "type": "string",
+              },
+            },
+            "type": "object",
+          },
+          "addressCountry": {
+            "properties": {
+              "eq": {
+                "description": "Equals",
+                "type": "string",
+              },
+              "ilike": {
+                "description": "ILIKE (% wildcard, case-insensitive)",
+                "type": "string",
+              },
+              "is": {
+                "description": "Is null or not null",
+                "enum": [
+                  "NULL",
+                  "NOT_NULL",
+                ],
+                "type": "string",
+              },
+              "like": {
+                "description": "LIKE (% wildcard)",
+                "type": "string",
+              },
+              "neq": {
+                "description": "Not equals",
+                "type": "string",
+              },
+            },
+            "type": "object",
+          },
+          "addressStreet1": {
+            "properties": {
+              "eq": {
+                "description": "Equals",
+                "type": "string",
+              },
+              "ilike": {
+                "description": "ILIKE (% wildcard, case-insensitive)",
+                "type": "string",
+              },
+              "is": {
+                "description": "Is null or not null",
+                "enum": [
+                  "NULL",
+                  "NOT_NULL",
+                ],
+                "type": "string",
+              },
+              "like": {
+                "description": "LIKE (% wildcard)",
+                "type": "string",
+              },
+              "neq": {
+                "description": "Not equals",
+                "type": "string",
+              },
+            },
+            "type": "object",
+          },
+        },
+        "type": "object",
+      },
+      "aliases": {
+        "properties": {
+          "containsIlike": {
+            "description": "Contains case-insensitive substring",
+            "type": "string",
+          },
+          "is": {
+            "description": "Is null or not null",
+            "enum": [
+              "NULL",
+              "NOT_NULL",
+            ],
+            "type": "string",
+          },
+          "isEmptyArray": {
+            "description": "Is empty array",
+            "type": "boolean",
+          },
+        },
+        "type": "object",
+      },
+      "amount": {
+        "properties": {
+          "amountMicros": {
+            "description": "Currency amount in micros (1 unit = 1,000,000 micros). Multiply the user-provided amount by 1,000,000 to build this filter.",
+            "properties": {
+              "eq": {
+                "description": "Equals",
+                "type": "number",
+              },
+              "gt": {
+                "description": ">",
+                "type": "number",
+              },
+              "gte": {
+                "description": ">=",
+                "type": "number",
+              },
+              "in": {
+                "description": "In array",
+                "items": {
+                  "type": "number",
+                },
+                "type": "array",
+              },
+              "is": {
+                "description": "Is null or not null",
+                "enum": [
+                  "NULL",
+                  "NOT_NULL",
+                ],
+                "type": "string",
+              },
+              "lt": {
+                "description": "<",
+                "type": "number",
+              },
+              "lte": {
+                "description": "<=",
+                "type": "number",
+              },
+              "neq": {
+                "description": "Not equals",
+                "type": "number",
+              },
+            },
+            "type": "object",
+          },
+          "currencyCode": {
+            "properties": {
+              "eq": {
+                "description": "Equals",
+                "type": "string",
+              },
+              "in": {
+                "description": "In array",
+                "items": {
+                  "type": "string",
+                },
+                "type": "array",
+              },
+              "is": {
+                "description": "Is null or not null",
+                "enum": [
+                  "NULL",
+                  "NOT_NULL",
+                ],
+                "type": "string",
+              },
+              "neq": {
+                "description": "Not equals",
+                "type": "string",
+              },
+            },
+            "type": "object",
+          },
+        },
+        "type": "object",
+      },
+      "and": {
+        "description": "AND condition - matches if ALL filters match",
+        "items": {
+          "recordFilter": true,
+        },
+        "type": "array",
+      },
+      "attachments": {
+        "properties": {
+          "eq": {
+            "description": "Equals",
+            "type": "string",
+          },
+          "ilike": {
+            "description": "ILIKE (% wildcard, case-insensitive)",
+            "type": "string",
+          },
+          "is": {
+            "description": "Is null or not null",
+            "enum": [
+              "NULL",
+              "NOT_NULL",
+            ],
+            "type": "string",
+          },
+          "like": {
+            "description": "LIKE (% wildcard)",
+            "type": "string",
+          },
+          "neq": {
+            "description": "Not equals",
+            "type": "string",
+          },
+        },
+        "type": "object",
+      },
+      "closeDate": {
+        "properties": {
+          "eq": {
+            "description": "Equals (ISO datetime)",
+            "format": "date-time",
+            "type": "string",
+          },
+          "gt": {
+            "description": "> ISO datetime",
+            "format": "date-time",
+            "type": "string",
+          },
+          "gte": {
+            "description": ">= ISO datetime",
+            "format": "date-time",
+            "type": "string",
+          },
+          "in": {
+            "description": "In array (ISO datetimes)",
+            "items": {
+              "format": "date-time",
+              "type": "string",
+            },
+            "type": "array",
+          },
+          "is": {
+            "description": "Is null or not null",
+            "enum": [
+              "NULL",
+              "NOT_NULL",
+            ],
+            "type": "string",
+          },
+          "lt": {
+            "description": "< ISO datetime",
+            "format": "date-time",
+            "type": "string",
+          },
+          "lte": {
+            "description": "<= ISO datetime",
+            "format": "date-time",
+            "type": "string",
+          },
+          "neq": {
+            "description": "Not equals (ISO datetime)",
+            "format": "date-time",
+            "type": "string",
+          },
+        },
+        "type": "object",
+      },
+      "companyId": {
+        "properties": {
+          "eq": {
+            "description": "Equals",
+            "format": "uuid",
+            "type": "string",
+          },
+          "in": {
+            "description": "In array of values",
+            "items": {
+              "format": "uuid",
+              "type": "string",
+            },
+            "type": "array",
+          },
+          "is": {
+            "description": "Is null or not null",
+            "enum": [
+              "NULL",
+              "NOT_NULL",
+            ],
+            "type": "string",
+          },
+          "neq": {
+            "description": "Not equals",
+            "format": "uuid",
+            "type": "string",
+          },
+        },
+        "type": "object",
+      },
+      "contactName": {
+        "properties": {
+          "firstName": {
+            "properties": {
+              "endsWith": {
+                "description": "Ends with",
+                "type": "string",
+              },
+              "eq": {
+                "description": "Equals",
+                "type": "string",
+              },
+              "ilike": {
+                "description": "ILIKE (% wildcard, case-insensitive)",
+                "type": "string",
+              },
+              "is": {
+                "description": "Is null or not null",
+                "enum": [
+                  "NULL",
+                  "NOT_NULL",
+                ],
+                "type": "string",
+              },
+              "like": {
+                "description": "LIKE (% wildcard)",
+                "type": "string",
+              },
+              "neq": {
+                "description": "Not equals",
+                "type": "string",
+              },
+              "startsWith": {
+                "description": "Starts with",
+                "type": "string",
+              },
+            },
+            "type": "object",
+          },
+          "lastName": {
+            "properties": {
+              "endsWith": {
+                "description": "Ends with",
+                "type": "string",
+              },
+              "eq": {
+                "description": "Equals",
+                "type": "string",
+              },
+              "ilike": {
+                "description": "ILIKE (% wildcard, case-insensitive)",
+                "type": "string",
+              },
+              "is": {
+                "description": "Is null or not null",
+                "enum": [
+                  "NULL",
+                  "NOT_NULL",
+                ],
+                "type": "string",
+              },
+              "like": {
+                "description": "LIKE (% wildcard)",
+                "type": "string",
+              },
+              "neq": {
+                "description": "Not equals",
+                "type": "string",
+              },
+              "startsWith": {
+                "description": "Starts with",
+                "type": "string",
+              },
+            },
+            "type": "object",
+          },
+        },
+        "type": "object",
+      },
+      "emails": {
+        "properties": {
+          "primaryEmail": {
+            "properties": {
+              "eq": {
+                "description": "Equals",
+                "format": "email",
+                "type": "string",
+              },
+              "ilike": {
+                "description": "ILIKE (% wildcard, case-insensitive)",
+                "type": "string",
+              },
+              "is": {
+                "description": "Is null or not null",
+                "enum": [
+                  "NULL",
+                  "NOT_NULL",
+                ],
+                "type": "string",
+              },
+              "like": {
+                "description": "LIKE (% wildcard)",
+                "type": "string",
+              },
+              "neq": {
+                "description": "Not equals",
+                "format": "email",
+                "type": "string",
+              },
+            },
+            "type": "object",
+          },
+        },
+        "type": "object",
+      },
+      "externalId": {
+        "properties": {
+          "eq": {
+            "description": "Equals",
+            "format": "uuid",
+            "type": "string",
+          },
+          "in": {
+            "description": "In array of values",
+            "items": {
+              "format": "uuid",
+              "type": "string",
+            },
+            "type": "array",
+          },
+          "is": {
+            "description": "Is null or not null",
+            "enum": [
+              "NULL",
+              "NOT_NULL",
+            ],
+            "type": "string",
+          },
+          "neq": {
+            "description": "Not equals",
+            "format": "uuid",
+            "type": "string",
+          },
+        },
+        "type": "object",
+      },
+      "isPriority": {
+        "properties": {
+          "eq": {
+            "description": "Equals",
+            "type": "boolean",
+          },
+          "is": {
+            "description": "Is null or not null",
+            "enum": [
+              "NULL",
+              "NOT_NULL",
+            ],
+            "type": "string",
+          },
+        },
+        "type": "object",
+      },
+      "lastContactAt": {
+        "properties": {
+          "eq": {
+            "description": "Equals (ISO datetime)",
+            "format": "date-time",
+            "type": "string",
+          },
+          "gt": {
+            "description": "> ISO datetime",
+            "format": "date-time",
+            "type": "string",
+          },
+          "gte": {
+            "description": ">= ISO datetime",
+            "format": "date-time",
+            "type": "string",
+          },
+          "in": {
+            "description": "In array (ISO datetimes)",
+            "items": {
+              "format": "date-time",
+              "type": "string",
+            },
+            "type": "array",
+          },
+          "is": {
+            "description": "Is null or not null",
+            "enum": [
+              "NULL",
+              "NOT_NULL",
+            ],
+            "type": "string",
+          },
+          "lt": {
+            "description": "< ISO datetime",
+            "format": "date-time",
+            "type": "string",
+          },
+          "lte": {
+            "description": "<= ISO datetime",
+            "format": "date-time",
+            "type": "string",
+          },
+          "neq": {
+            "description": "Not equals (ISO datetime)",
+            "format": "date-time",
+            "type": "string",
+          },
+        },
+        "type": "object",
+      },
+      "name": {
+        "properties": {
+          "endsWith": {
+            "description": "Ends with",
+            "type": "string",
+          },
+          "eq": {
+            "description": "Equals",
+            "type": "string",
+          },
+          "ilike": {
+            "description": "ILIKE (% wildcard, case-insensitive)",
+            "type": "string",
+          },
+          "in": {
+            "description": "In array",
+            "items": {
+              "type": "string",
+            },
+            "type": "array",
+          },
+          "is": {
+            "description": "Is null or not null",
+            "enum": [
+              "NULL",
+              "NOT_NULL",
+            ],
+            "type": "string",
+          },
+          "like": {
+            "description": "LIKE (% wildcard)",
+            "type": "string",
+          },
+          "neq": {
+            "description": "Not equals",
+            "type": "string",
+          },
+          "startsWith": {
+            "description": "Starts with",
+            "type": "string",
+          },
+        },
+        "type": "object",
+      },
+      "not": {
+        "description": "NOT condition - matches if the filter does NOT match",
+        "recordFilter": true,
+      },
+      "notes": {
+        "properties": {
+          "markdown": {
+            "properties": {
+              "endsWith": {
+                "description": "Ends with",
+                "type": "string",
+              },
+              "eq": {
+                "description": "Equals",
+                "type": "string",
+              },
+              "ilike": {
+                "description": "ILIKE (% wildcard, case-insensitive)",
+                "type": "string",
+              },
+              "is": {
+                "description": "Is null or not null",
+                "enum": [
+                  "NULL",
+                  "NOT_NULL",
+                ],
+                "type": "string",
+              },
+              "like": {
+                "description": "LIKE (% wildcard)",
+                "type": "string",
+              },
+              "neq": {
+                "description": "Not equals",
+                "type": "string",
+              },
+              "startsWith": {
+                "description": "Starts with",
+                "type": "string",
+              },
+            },
+            "type": "object",
+          },
+        },
+        "type": "object",
+      },
+      "or": {
+        "description": "OR condition - matches if ANY of the filters match",
+        "items": {
+          "recordFilter": true,
+        },
+        "type": "array",
+      },
+      "payload": {
+        "properties": {
+          "eq": {
+            "description": "Equals",
+            "type": "string",
+          },
+          "ilike": {
+            "description": "ILIKE (% wildcard, case-insensitive)",
+            "type": "string",
+          },
+          "is": {
+            "description": "Is null or not null",
+            "enum": [
+              "NULL",
+              "NOT_NULL",
+            ],
+            "type": "string",
+          },
+          "like": {
+            "description": "LIKE (% wildcard)",
+            "type": "string",
+          },
+          "neq": {
+            "description": "Not equals",
+            "type": "string",
+          },
+        },
+        "type": "object",
+      },
+      "phones": {
+        "properties": {
+          "primaryPhoneNumber": {
+            "properties": {
+              "eq": {
+                "description": "Equals",
+                "type": "string",
+              },
+              "ilike": {
+                "description": "ILIKE (% wildcard, case-insensitive)",
+                "type": "string",
+              },
+              "is": {
+                "description": "Is null or not null",
+                "enum": [
+                  "NULL",
+                  "NOT_NULL",
+                ],
+                "type": "string",
+              },
+              "like": {
+                "description": "LIKE (% wildcard)",
+                "type": "string",
+              },
+              "neq": {
+                "description": "Not equals",
+                "type": "string",
+              },
+            },
+            "type": "object",
+          },
+        },
+        "type": "object",
+      },
+      "pointOfContactId": {
+        "properties": {
+          "eq": {
+            "description": "Equals",
+            "format": "uuid",
+            "type": "string",
+          },
+          "in": {
+            "description": "In array of values",
+            "items": {
+              "format": "uuid",
+              "type": "string",
+            },
+            "type": "array",
+          },
+          "is": {
+            "description": "Is null or not null",
+            "enum": [
+              "NULL",
+              "NOT_NULL",
+            ],
+            "type": "string",
+          },
+          "neq": {
+            "description": "Not equals",
+            "format": "uuid",
+            "type": "string",
+          },
+        },
+        "type": "object",
+      },
+      "probability": {
+        "properties": {
+          "eq": {
+            "description": "Equals",
+            "type": "number",
+          },
+          "gt": {
+            "description": ">",
+            "type": "number",
+          },
+          "gte": {
+            "description": ">=",
+            "type": "number",
+          },
+          "in": {
+            "description": "In array",
+            "items": {
+              "type": "number",
+            },
+            "type": "array",
+          },
+          "is": {
+            "description": "Is null or not null",
+            "enum": [
+              "NULL",
+              "NOT_NULL",
+            ],
+            "type": "string",
+          },
+          "lt": {
+            "description": "<",
+            "type": "number",
+          },
+          "lte": {
+            "description": "<=",
+            "type": "number",
+          },
+          "neq": {
+            "description": "Not equals",
+            "type": "number",
+          },
+        },
+        "type": "object",
+      },
+      "rating": {
+        "properties": {
+          "eq": {
+            "description": "Equals",
+            "enum": [
+              "RATING_1",
+              "RATING_2",
+            ],
+            "type": "string",
+          },
+          "in": {
+            "description": "In array of values",
+            "items": {
+              "enum": [
+                "RATING_1",
+                "RATING_2",
+              ],
+              "type": "string",
+            },
+            "type": "array",
+          },
+          "is": {
+            "description": "Is null or not null",
+            "enum": [
+              "NULL",
+              "NOT_NULL",
+            ],
+            "type": "string",
+          },
+        },
+        "type": "object",
+      },
+      "reviewer": {
+        "properties": {
+          "eq": {
+            "description": "Equals",
+            "type": "string",
+          },
+          "ilike": {
+            "description": "ILIKE (% wildcard, case-insensitive)",
+            "type": "string",
+          },
+          "is": {
+            "description": "Is null or not null",
+            "enum": [
+              "NULL",
+              "NOT_NULL",
+            ],
+            "type": "string",
+          },
+          "like": {
+            "description": "LIKE (% wildcard)",
+            "type": "string",
+          },
+          "neq": {
+            "description": "Not equals",
+            "type": "string",
+          },
+        },
+        "type": "object",
+      },
+      "score": {
+        "properties": {
+          "eq": {
+            "description": "Equals",
+            "type": "number",
+          },
+          "gt": {
+            "description": ">",
+            "type": "number",
+          },
+          "gte": {
+            "description": ">=",
+            "type": "number",
+          },
+          "in": {
+            "description": "In array",
+            "items": {
+              "type": "number",
+            },
+            "type": "array",
+          },
+          "is": {
+            "description": "Is null or not null",
+            "enum": [
+              "NULL",
+              "NOT_NULL",
+            ],
+            "type": "string",
+          },
+          "lt": {
+            "description": "<",
+            "type": "number",
+          },
+          "lte": {
+            "description": "<=",
+            "type": "number",
+          },
+          "neq": {
+            "description": "Not equals",
+            "type": "number",
+          },
+        },
+        "type": "object",
+      },
+      "seats": {
+        "properties": {
+          "eq": {
+            "description": "Equals",
+            "type": "number",
+          },
+          "gt": {
+            "description": ">",
+            "type": "number",
+          },
+          "gte": {
+            "description": ">=",
+            "type": "number",
+          },
+          "in": {
+            "description": "In array",
+            "items": {
+              "type": "number",
+            },
+            "type": "array",
+          },
+          "is": {
+            "description": "Is null or not null",
+            "enum": [
+              "NULL",
+              "NOT_NULL",
+            ],
+            "type": "string",
+          },
+          "lt": {
+            "description": "<",
+            "type": "number",
+          },
+          "lte": {
+            "description": "<=",
+            "type": "number",
+          },
+          "neq": {
+            "description": "Not equals",
+            "type": "number",
+          },
+        },
+        "type": "object",
+      },
+      "stage": {
+        "properties": {
+          "eq": {
+            "description": "Equals",
+            "enum": [
+              "NEW",
+              "WON",
+            ],
+            "type": "string",
+          },
+          "in": {
+            "description": "In array of values",
+            "items": {
+              "enum": [
+                "NEW",
+                "WON",
+              ],
+              "type": "string",
+            },
+            "type": "array",
+          },
+          "is": {
+            "description": "Is null or not null",
+            "enum": [
+              "NULL",
+              "NOT_NULL",
+            ],
+            "type": "string",
+          },
+          "neq": {
+            "description": "Not equals",
+            "enum": [
+              "NEW",
+              "WON",
+            ],
+            "type": "string",
+          },
+        },
+        "type": "object",
+      },
+      "tags": {
+        "properties": {
+          "in": {
+            "description": "Contains any of these values",
+            "items": {
+              "enum": [
+                "NEW",
+                "WON",
+              ],
+              "type": "string",
+            },
+            "type": "array",
+          },
+          "is": {
+            "description": "Is null or not null",
+            "enum": [
+              "NULL",
+              "NOT_NULL",
+            ],
+            "type": "string",
+          },
+          "isEmptyArray": {
+            "description": "Is empty array",
+            "type": "boolean",
+          },
+        },
+        "type": "object",
+      },
+      "targetPersonId": {
+        "properties": {
+          "eq": {
+            "description": "Equals",
+            "format": "uuid",
+            "type": "string",
+          },
+          "in": {
+            "description": "In array of values",
+            "items": {
+              "format": "uuid",
+              "type": "string",
+            },
+            "type": "array",
+          },
+          "is": {
+            "description": "Is null or not null",
+            "enum": [
+              "NULL",
+              "NOT_NULL",
+            ],
+            "type": "string",
+          },
+          "neq": {
+            "description": "Not equals",
+            "format": "uuid",
+            "type": "string",
+          },
+        },
+        "type": "object",
+      },
+      "website": {
+        "properties": {
+          "primaryLinkUrl": {
+            "properties": {
+              "eq": {
+                "description": "Equals",
+                "format": "uri",
+                "type": "string",
+              },
+              "ilike": {
+                "description": "ILIKE (% wildcard, case-insensitive)",
+                "type": "string",
+              },
+              "is": {
+                "description": "Is null or not null",
+                "enum": [
+                  "NULL",
+                  "NOT_NULL",
+                ],
+                "type": "string",
+              },
+              "like": {
+                "description": "LIKE (% wildcard)",
+                "type": "string",
+              },
+              "neq": {
+                "description": "Not equals",
+                "format": "uri",
+                "type": "string",
+              },
+            },
+            "type": "object",
+          },
+        },
+        "type": "object",
+      },
+    },
+    "type": "object",
+  },
+}
+`;
+
+exports[`DatabaseToolProvider input schemas should generate the input schema of every database tool: find_one_opportunity 1`] = `
+{
+  "inputSchema": {
+    "properties": {
+      "id": {
+        "description": "The unique UUID of the record to retrieve",
+        "format": "uuid",
+        "type": "string",
+      },
+      "select": {
+        "description": "Fields to include in the response. Required. Use '*' to return all fields. Relation fields resolve to related records as {id, label} summaries: MANY_TO_ONE returns a single object (or select the <name>Id FK column for just the id), ONE_TO_MANY returns up to 60 related records.",
+        "items": {
+          "type": "string",
+        },
+        "minItems": 1,
+        "type": "array",
+      },
+    },
+    "required": [
+      "id",
+      "select",
+    ],
+    "type": "object",
+  },
+}
+`;
+
+exports[`DatabaseToolProvider input schemas should generate the input schema of every database tool: group_by_opportunities 1`] = `
+{
+  "inputSchema": {
+    "additionalProperties": false,
+    "properties": {
+      "address": "same as recordFilter.properties.address",
+      "aggregateFieldName": {
+        "description": "Field to aggregate. Required for any operation other than COUNT. Available fields: id, createdAt, updatedAt, deletedAt, createdBy, position, searchVector, name, notes, seats, probability, score, isPriority, closeDate, lastContactAt, stage, emptySelect, tags, rating, externalId, payload, aliases, attachments, reviewer, website, amount, amount.amountMicros, contactName, address, emails, phones, targetPerson.",
+        "type": "string",
+      },
+      "aggregateOperation": {
+        "default": "COUNT",
+        "description": "Aggregate operation to apply per group. Default: COUNT. Any operation other than COUNT requires aggregateFieldName.",
+        "enum": [
+          "MIN",
+          "MAX",
+          "AVG",
+          "SUM",
+          "COUNT",
+          "COUNT_UNIQUE_VALUES",
+          "COUNT_EMPTY",
+          "COUNT_NOT_EMPTY",
+          "COUNT_TRUE",
+          "COUNT_FALSE",
+          "PERCENTAGE_EMPTY",
+          "PERCENTAGE_NOT_EMPTY",
+        ],
+        "type": "string",
+      },
+      "aliases": "same as recordFilter.properties.aliases",
+      "amount": "same as recordFilter.properties.amount",
+      "and": "same as recordFilter.properties.and",
+      "attachments": "same as recordFilter.properties.attachments",
+      "closeDate": "same as recordFilter.properties.closeDate",
+      "companyId": "same as recordFilter.properties.companyId",
+      "contactName": "same as recordFilter.properties.contactName",
+      "emails": "same as recordFilter.properties.emails",
+      "externalId": "same as recordFilter.properties.externalId",
+      "groupBy": {
+        "description": "Fields to group by (max 2). Each entry must be an object with exactly one field key. At most one entry can use unnest. A record with several values is counted in each group, so totals can exceed the record count. Examples: {"status": true}, {"companyId": true}, {"createdAt": {"granularity": "MONTH", "timeZone": "UTC"}}. Available: createdAt (date), updatedAt (date), name, notes.blocknote, notes.markdown, seats, probability, score, isPriority, closeDate (date), lastContactAt (date), stage, emptySelect, tags (multi-value, {"tags": {"unnest": true}} counts each value), rating, externalId, aliases (multi-value, {"aliases": {"unnest": true}} counts each value), reviewer.source, reviewer.workspaceMemberId, reviewer.name, website.primaryLinkLabel, website.primaryLinkUrl, amount.amountMicros, amount.currencyCode, contactName.firstName, contactName.lastName, address.addressStreet1, address.addressStreet2, address.addressCity, address.addressPostcode, address.addressState, address.addressCountry, address.addressLat, address.addressLng, emails.primaryEmail, phones.primaryPhoneNumber, phones.primaryPhoneCountryCode, phones.primaryPhoneCallingCode, companyId, pointOfContactId, targetPersonId.",
+        "items": {
+          "anyOf": [
+            {
+              "additionalProperties": false,
+              "properties": {
+                "createdAt": {
+                  "additionalProperties": false,
+                  "description": "Date field grouping configuration",
+                  "properties": {
+                    "granularity": {
+                      "default": "MONTH",
+                      "description": "Date grouping granularity. Default: MONTH.",
+                      "enum": [
+                        "DAY",
+                        "MONTH",
+                        "QUARTER",
+                        "YEAR",
+                        "WEEK",
+                        "DAY_OF_THE_WEEK",
+                        "MONTH_OF_THE_YEAR",
+                        "QUARTER_OF_THE_YEAR",
+                      ],
+                      "type": "string",
+                    },
+                    "timeZone": {
+                      "default": "UTC",
+                      "description": "IANA timezone for date groupings (e.g. "America/New_York"). Default: UTC.",
+                      "type": "string",
+                    },
+                    "weekStartDay": {
+                      "description": "First day of week (MONDAY, SUNDAY, SATURDAY). Only used when granularity is WEEK.",
+                      "enum": [
+                        "MONDAY",
+                        "SUNDAY",
+                        "SATURDAY",
+                      ],
+                      "type": "string",
+                    },
+                  },
+                  "type": "object",
+                },
+              },
+              "required": [
+                "createdAt",
+              ],
+              "type": "object",
+            },
+            {
+              "additionalProperties": false,
+              "properties": {
+                "updatedAt": {
+                  "additionalProperties": false,
+                  "description": "Date field grouping configuration",
+                  "properties": {
+                    "granularity": {
+                      "default": "MONTH",
+                      "description": "Date grouping granularity. Default: MONTH.",
+                      "enum": [
+                        "DAY",
+                        "MONTH",
+                        "QUARTER",
+                        "YEAR",
+                        "WEEK",
+                        "DAY_OF_THE_WEEK",
+                        "MONTH_OF_THE_YEAR",
+                        "QUARTER_OF_THE_YEAR",
+                      ],
+                      "type": "string",
+                    },
+                    "timeZone": {
+                      "default": "UTC",
+                      "description": "IANA timezone for date groupings (e.g. "America/New_York"). Default: UTC.",
+                      "type": "string",
+                    },
+                    "weekStartDay": {
+                      "description": "First day of week (MONDAY, SUNDAY, SATURDAY). Only used when granularity is WEEK.",
+                      "enum": [
+                        "MONDAY",
+                        "SUNDAY",
+                        "SATURDAY",
+                      ],
+                      "type": "string",
+                    },
+                  },
+                  "type": "object",
+                },
+              },
+              "required": [
+                "updatedAt",
+              ],
+              "type": "object",
+            },
+            {
+              "additionalProperties": false,
+              "properties": {
+                "name": {
+                  "const": true,
+                  "type": "boolean",
+                },
+              },
+              "required": [
+                "name",
+              ],
+              "type": "object",
+            },
+            {
+              "additionalProperties": false,
+              "properties": {
+                "notes": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "blocknote": {
+                      "const": true,
+                      "type": "boolean",
+                    },
+                  },
+                  "required": [
+                    "blocknote",
+                  ],
+                  "type": "object",
+                },
+              },
+              "required": [
+                "notes",
+              ],
+              "type": "object",
+            },
+            {
+              "additionalProperties": false,
+              "properties": {
+                "notes": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "markdown": {
+                      "const": true,
+                      "type": "boolean",
+                    },
+                  },
+                  "required": [
+                    "markdown",
+                  ],
+                  "type": "object",
+                },
+              },
+              "required": [
+                "notes",
+              ],
+              "type": "object",
+            },
+            {
+              "additionalProperties": false,
+              "properties": {
+                "seats": {
+                  "const": true,
+                  "type": "boolean",
+                },
+              },
+              "required": [
+                "seats",
+              ],
+              "type": "object",
+            },
+            {
+              "additionalProperties": false,
+              "properties": {
+                "probability": {
+                  "const": true,
+                  "type": "boolean",
+                },
+              },
+              "required": [
+                "probability",
+              ],
+              "type": "object",
+            },
+            {
+              "additionalProperties": false,
+              "properties": {
+                "score": {
+                  "const": true,
+                  "type": "boolean",
+                },
+              },
+              "required": [
+                "score",
+              ],
+              "type": "object",
+            },
+            {
+              "additionalProperties": false,
+              "properties": {
+                "isPriority": {
+                  "const": true,
+                  "type": "boolean",
+                },
+              },
+              "required": [
+                "isPriority",
+              ],
+              "type": "object",
+            },
+            {
+              "additionalProperties": false,
+              "properties": {
+                "closeDate": {
+                  "additionalProperties": false,
+                  "description": "Date field grouping configuration",
+                  "properties": {
+                    "granularity": {
+                      "default": "MONTH",
+                      "description": "Date grouping granularity. Default: MONTH.",
+                      "enum": [
+                        "DAY",
+                        "MONTH",
+                        "QUARTER",
+                        "YEAR",
+                        "WEEK",
+                        "DAY_OF_THE_WEEK",
+                        "MONTH_OF_THE_YEAR",
+                        "QUARTER_OF_THE_YEAR",
+                      ],
+                      "type": "string",
+                    },
+                    "timeZone": {
+                      "default": "UTC",
+                      "description": "IANA timezone for date groupings (e.g. "America/New_York"). Default: UTC.",
+                      "type": "string",
+                    },
+                    "weekStartDay": {
+                      "description": "First day of week (MONDAY, SUNDAY, SATURDAY). Only used when granularity is WEEK.",
+                      "enum": [
+                        "MONDAY",
+                        "SUNDAY",
+                        "SATURDAY",
+                      ],
+                      "type": "string",
+                    },
+                  },
+                  "type": "object",
+                },
+              },
+              "required": [
+                "closeDate",
+              ],
+              "type": "object",
+            },
+            {
+              "additionalProperties": false,
+              "properties": {
+                "lastContactAt": {
+                  "additionalProperties": false,
+                  "description": "Date field grouping configuration",
+                  "properties": {
+                    "granularity": {
+                      "default": "MONTH",
+                      "description": "Date grouping granularity. Default: MONTH.",
+                      "enum": [
+                        "DAY",
+                        "MONTH",
+                        "QUARTER",
+                        "YEAR",
+                        "WEEK",
+                        "DAY_OF_THE_WEEK",
+                        "MONTH_OF_THE_YEAR",
+                        "QUARTER_OF_THE_YEAR",
+                      ],
+                      "type": "string",
+                    },
+                    "timeZone": {
+                      "default": "UTC",
+                      "description": "IANA timezone for date groupings (e.g. "America/New_York"). Default: UTC.",
+                      "type": "string",
+                    },
+                    "weekStartDay": {
+                      "description": "First day of week (MONDAY, SUNDAY, SATURDAY). Only used when granularity is WEEK.",
+                      "enum": [
+                        "MONDAY",
+                        "SUNDAY",
+                        "SATURDAY",
+                      ],
+                      "type": "string",
+                    },
+                  },
+                  "type": "object",
+                },
+              },
+              "required": [
+                "lastContactAt",
+              ],
+              "type": "object",
+            },
+            {
+              "additionalProperties": false,
+              "properties": {
+                "stage": {
+                  "const": true,
+                  "type": "boolean",
+                },
+              },
+              "required": [
+                "stage",
+              ],
+              "type": "object",
+            },
+            {
+              "additionalProperties": false,
+              "properties": {
+                "emptySelect": {
+                  "const": true,
+                  "type": "boolean",
+                },
+              },
+              "required": [
+                "emptySelect",
+              ],
+              "type": "object",
+            },
+            {
+              "additionalProperties": false,
+              "properties": {
+                "tags": {
+                  "anyOf": [
+                    {
+                      "const": true,
+                      "type": "boolean",
+                    },
+                    {
+                      "additionalProperties": false,
+                      "properties": {
+                        "unnest": {
+                          "const": true,
+                          "type": "boolean",
+                        },
+                      },
+                      "required": [
+                        "unnest",
+                      ],
+                      "type": "object",
+                    },
+                  ],
+                },
+              },
+              "required": [
+                "tags",
+              ],
+              "type": "object",
+            },
+            {
+              "additionalProperties": false,
+              "properties": {
+                "rating": {
+                  "const": true,
+                  "type": "boolean",
+                },
+              },
+              "required": [
+                "rating",
+              ],
+              "type": "object",
+            },
+            {
+              "additionalProperties": false,
+              "properties": {
+                "externalId": {
+                  "const": true,
+                  "type": "boolean",
+                },
+              },
+              "required": [
+                "externalId",
+              ],
+              "type": "object",
+            },
+            {
+              "additionalProperties": false,
+              "properties": {
+                "aliases": {
+                  "anyOf": [
+                    {
+                      "const": true,
+                      "type": "boolean",
+                    },
+                    {
+                      "additionalProperties": false,
+                      "properties": {
+                        "unnest": {
+                          "const": true,
+                          "type": "boolean",
+                        },
+                      },
+                      "required": [
+                        "unnest",
+                      ],
+                      "type": "object",
+                    },
+                  ],
+                },
+              },
+              "required": [
+                "aliases",
+              ],
+              "type": "object",
+            },
+            {
+              "additionalProperties": false,
+              "properties": {
+                "reviewer": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "source": {
+                      "const": true,
+                      "type": "boolean",
+                    },
+                  },
+                  "required": [
+                    "source",
+                  ],
+                  "type": "object",
+                },
+              },
+              "required": [
+                "reviewer",
+              ],
+              "type": "object",
+            },
+            {
+              "additionalProperties": false,
+              "properties": {
+                "reviewer": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "workspaceMemberId": {
+                      "const": true,
+                      "type": "boolean",
+                    },
+                  },
+                  "required": [
+                    "workspaceMemberId",
+                  ],
+                  "type": "object",
+                },
+              },
+              "required": [
+                "reviewer",
+              ],
+              "type": "object",
+            },
+            {
+              "additionalProperties": false,
+              "properties": {
+                "reviewer": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "name": {
+                      "const": true,
+                      "type": "boolean",
+                    },
+                  },
+                  "required": [
+                    "name",
+                  ],
+                  "type": "object",
+                },
+              },
+              "required": [
+                "reviewer",
+              ],
+              "type": "object",
+            },
+            {
+              "additionalProperties": false,
+              "properties": {
+                "website": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "primaryLinkLabel": {
+                      "const": true,
+                      "type": "boolean",
+                    },
+                  },
+                  "required": [
+                    "primaryLinkLabel",
+                  ],
+                  "type": "object",
+                },
+              },
+              "required": [
+                "website",
+              ],
+              "type": "object",
+            },
+            {
+              "additionalProperties": false,
+              "properties": {
+                "website": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "primaryLinkUrl": {
+                      "const": true,
+                      "type": "boolean",
+                    },
+                  },
+                  "required": [
+                    "primaryLinkUrl",
+                  ],
+                  "type": "object",
+                },
+              },
+              "required": [
+                "website",
+              ],
+              "type": "object",
+            },
+            {
+              "additionalProperties": false,
+              "properties": {
+                "amount": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "amountMicros": {
+                      "const": true,
+                      "type": "boolean",
+                    },
+                  },
+                  "required": [
+                    "amountMicros",
+                  ],
+                  "type": "object",
+                },
+              },
+              "required": [
+                "amount",
+              ],
+              "type": "object",
+            },
+            {
+              "additionalProperties": false,
+              "properties": {
+                "amount": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "currencyCode": {
+                      "const": true,
+                      "type": "boolean",
+                    },
+                  },
+                  "required": [
+                    "currencyCode",
+                  ],
+                  "type": "object",
+                },
+              },
+              "required": [
+                "amount",
+              ],
+              "type": "object",
+            },
+            {
+              "additionalProperties": false,
+              "properties": {
+                "contactName": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "firstName": {
+                      "const": true,
+                      "type": "boolean",
+                    },
+                  },
+                  "required": [
+                    "firstName",
+                  ],
+                  "type": "object",
+                },
+              },
+              "required": [
+                "contactName",
+              ],
+              "type": "object",
+            },
+            {
+              "additionalProperties": false,
+              "properties": {
+                "contactName": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "lastName": {
+                      "const": true,
+                      "type": "boolean",
+                    },
+                  },
+                  "required": [
+                    "lastName",
+                  ],
+                  "type": "object",
+                },
+              },
+              "required": [
+                "contactName",
+              ],
+              "type": "object",
+            },
+            {
+              "additionalProperties": false,
+              "properties": {
+                "address": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "addressStreet1": {
+                      "const": true,
+                      "type": "boolean",
+                    },
+                  },
+                  "required": [
+                    "addressStreet1",
+                  ],
+                  "type": "object",
+                },
+              },
+              "required": [
+                "address",
+              ],
+              "type": "object",
+            },
+            {
+              "additionalProperties": false,
+              "properties": {
+                "address": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "addressStreet2": {
+                      "const": true,
+                      "type": "boolean",
+                    },
+                  },
+                  "required": [
+                    "addressStreet2",
+                  ],
+                  "type": "object",
+                },
+              },
+              "required": [
+                "address",
+              ],
+              "type": "object",
+            },
+            {
+              "additionalProperties": false,
+              "properties": {
+                "address": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "addressCity": {
+                      "const": true,
+                      "type": "boolean",
+                    },
+                  },
+                  "required": [
+                    "addressCity",
+                  ],
+                  "type": "object",
+                },
+              },
+              "required": [
+                "address",
+              ],
+              "type": "object",
+            },
+            {
+              "additionalProperties": false,
+              "properties": {
+                "address": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "addressPostcode": {
+                      "const": true,
+                      "type": "boolean",
+                    },
+                  },
+                  "required": [
+                    "addressPostcode",
+                  ],
+                  "type": "object",
+                },
+              },
+              "required": [
+                "address",
+              ],
+              "type": "object",
+            },
+            {
+              "additionalProperties": false,
+              "properties": {
+                "address": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "addressState": {
+                      "const": true,
+                      "type": "boolean",
+                    },
+                  },
+                  "required": [
+                    "addressState",
+                  ],
+                  "type": "object",
+                },
+              },
+              "required": [
+                "address",
+              ],
+              "type": "object",
+            },
+            {
+              "additionalProperties": false,
+              "properties": {
+                "address": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "addressCountry": {
+                      "const": true,
+                      "type": "boolean",
+                    },
+                  },
+                  "required": [
+                    "addressCountry",
+                  ],
+                  "type": "object",
+                },
+              },
+              "required": [
+                "address",
+              ],
+              "type": "object",
+            },
+            {
+              "additionalProperties": false,
+              "properties": {
+                "address": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "addressLat": {
+                      "const": true,
+                      "type": "boolean",
+                    },
+                  },
+                  "required": [
+                    "addressLat",
+                  ],
+                  "type": "object",
+                },
+              },
+              "required": [
+                "address",
+              ],
+              "type": "object",
+            },
+            {
+              "additionalProperties": false,
+              "properties": {
+                "address": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "addressLng": {
+                      "const": true,
+                      "type": "boolean",
+                    },
+                  },
+                  "required": [
+                    "addressLng",
+                  ],
+                  "type": "object",
+                },
+              },
+              "required": [
+                "address",
+              ],
+              "type": "object",
+            },
+            {
+              "additionalProperties": false,
+              "properties": {
+                "emails": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "primaryEmail": {
+                      "const": true,
+                      "type": "boolean",
+                    },
+                  },
+                  "required": [
+                    "primaryEmail",
+                  ],
+                  "type": "object",
+                },
+              },
+              "required": [
+                "emails",
+              ],
+              "type": "object",
+            },
+            {
+              "additionalProperties": false,
+              "properties": {
+                "phones": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "primaryPhoneNumber": {
+                      "const": true,
+                      "type": "boolean",
+                    },
+                  },
+                  "required": [
+                    "primaryPhoneNumber",
+                  ],
+                  "type": "object",
+                },
+              },
+              "required": [
+                "phones",
+              ],
+              "type": "object",
+            },
+            {
+              "additionalProperties": false,
+              "properties": {
+                "phones": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "primaryPhoneCountryCode": {
+                      "const": true,
+                      "type": "boolean",
+                    },
+                  },
+                  "required": [
+                    "primaryPhoneCountryCode",
+                  ],
+                  "type": "object",
+                },
+              },
+              "required": [
+                "phones",
+              ],
+              "type": "object",
+            },
+            {
+              "additionalProperties": false,
+              "properties": {
+                "phones": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "primaryPhoneCallingCode": {
+                      "const": true,
+                      "type": "boolean",
+                    },
+                  },
+                  "required": [
+                    "primaryPhoneCallingCode",
+                  ],
+                  "type": "object",
+                },
+              },
+              "required": [
+                "phones",
+              ],
+              "type": "object",
+            },
+            {
+              "additionalProperties": false,
+              "properties": {
+                "companyId": {
+                  "const": true,
+                  "type": "boolean",
+                },
+              },
+              "required": [
+                "companyId",
+              ],
+              "type": "object",
+            },
+            {
+              "additionalProperties": false,
+              "properties": {
+                "pointOfContactId": {
+                  "const": true,
+                  "type": "boolean",
+                },
+              },
+              "required": [
+                "pointOfContactId",
+              ],
+              "type": "object",
+            },
+            {
+              "additionalProperties": false,
+              "properties": {
+                "targetPersonId": {
+                  "const": true,
+                  "type": "boolean",
+                },
+              },
+              "required": [
+                "targetPersonId",
+              ],
+              "type": "object",
+            },
+          ],
+        },
+        "maxItems": 2,
+        "minItems": 1,
+        "type": "array",
+      },
+      "isPriority": "same as recordFilter.properties.isPriority",
+      "lastContactAt": "same as recordFilter.properties.lastContactAt",
+      "limit": {
+        "default": 50,
+        "description": "Maximum number of groups to return (default: 50, max: 100).",
+        "exclusiveMinimum": 0,
+        "type": "integer",
+      },
+      "name": "same as recordFilter.properties.name",
+      "not": "same as recordFilter.properties.not",
+      "notes": "same as recordFilter.properties.notes",
+      "or": "same as recordFilter.properties.or",
+      "orderBy": {
+        "default": "DESC",
+        "description": "Order groups by aggregate value. DESC (default) gives "top N" behavior.",
+        "enum": [
+          "ASC",
+          "DESC",
+        ],
+        "type": "string",
+      },
+      "payload": "same as recordFilter.properties.payload",
+      "phones": "same as recordFilter.properties.phones",
+      "pointOfContactId": "same as recordFilter.properties.pointOfContactId",
+      "probability": "same as recordFilter.properties.probability",
+      "rating": "same as recordFilter.properties.rating",
+      "reviewer": "same as recordFilter.properties.reviewer",
+      "score": "same as recordFilter.properties.score",
+      "seats": "same as recordFilter.properties.seats",
+      "stage": "same as recordFilter.properties.stage",
+      "tags": "same as recordFilter.properties.tags",
+      "targetPersonId": "same as recordFilter.properties.targetPersonId",
+      "website": "same as recordFilter.properties.website",
+    },
+    "required": [
+      "groupBy",
+    ],
+    "type": "object",
+  },
+  "recordFilter": "same as find_many_opportunities",
+}
+`;
+
+exports[`DatabaseToolProvider input schemas should generate the input schema of every database tool: update_many_opportunities 1`] = `
+{
+  "inputSchema": {
+    "properties": {
+      "data": {
+        "description": "The field values to apply to all matching records. Only include fields you want to change.",
+        "properties": {
+          "address": {
+            "properties": {
+              "addressCity": {
+                "type": "string",
+              },
+              "addressCountry": {
+                "type": "string",
+              },
+              "addressLat": {
+                "type": "number",
+              },
+              "addressLng": {
+                "type": "number",
+              },
+              "addressPostcode": {
+                "type": "string",
+              },
+              "addressState": {
+                "type": "string",
+              },
+              "addressStreet1": {
+                "type": "string",
+              },
+              "addressStreet2": {
+                "type": "string",
+              },
+            },
+            "type": "object",
+          },
+          "aliases": {
+            "items": {
+              "type": "string",
+            },
+            "type": "array",
+          },
+          "amount": {
+            "properties": {
+              "amountMicros": {
+                "description": "Currency amount in micros (1 unit = 1,000,000 micros). Multiply the user-provided amount by 1,000,000 before writing.",
+                "type": "number",
+              },
+              "currencyCode": {
+                "type": "string",
+              },
+            },
+            "type": "object",
+          },
+          "attachments": {
+            "items": {
+              "additionalProperties": false,
+              "properties": {
+                "fileId": {
+                  "format": "uuid",
+                  "type": "string",
+                },
+                "label": {
+                  "type": "string",
+                },
+              },
+              "required": [
+                "fileId",
+                "label",
+              ],
+              "type": "object",
+            },
+            "type": "array",
+          },
+          "closeDate": {
+            "format": "date",
+            "type": "string",
+          },
+          "companyId": {
+            "format": "uuid",
+            "type": "string",
+          },
+          "contactName": {
+            "properties": {
+              "firstName": {
+                "type": "string",
+              },
+              "lastName": {
+                "type": "string",
+              },
+            },
+            "type": "object",
+          },
+          "emails": {
+            "properties": {
+              "additionalEmails": {
+                "items": {
+                  "format": "email",
+                  "type": "string",
+                },
+                "type": "array",
+              },
+              "primaryEmail": {
+                "format": "email",
+                "type": "string",
+              },
+            },
+            "type": "object",
+          },
+          "emptySelect": {
+            "type": "string",
+          },
+          "externalId": {
+            "description": "External id",
+            "format": "uuid",
+            "type": "string",
+          },
+          "isPriority": {
+            "type": "boolean",
+          },
+          "lastContactAt": {
+            "format": "date-time",
+            "type": "string",
+          },
+          "name": {
+            "description": "Deal name",
+            "type": "string",
+          },
+          "notes": {
+            "properties": {
+              "blocknote": {
+                "type": "string",
+              },
+              "markdown": {
+                "type": "string",
+              },
+            },
+            "type": "object",
+          },
+          "payload": {
+            "additionalProperties": {},
+            "propertyNames": {
+              "type": "string",
+            },
+            "type": "object",
+          },
+          "phones": {
+            "properties": {
+              "additionalPhones": {
+                "items": {
+                  "properties": {
+                    "callingCode": {
+                      "type": "string",
+                    },
+                    "countryCode": {
+                      "type": "string",
+                    },
+                    "number": {
+                      "type": "string",
+                    },
+                  },
+                  "required": [
+                    "number",
+                  ],
+                  "type": "object",
+                },
+                "type": "array",
+              },
+              "primaryPhoneCallingCode": {
+                "type": "string",
+              },
+              "primaryPhoneCountryCode": {
+                "type": "string",
+              },
+              "primaryPhoneNumber": {
+                "type": "string",
+              },
+            },
+            "type": "object",
+          },
+          "pointOfContactId": {
+            "format": "uuid",
+            "type": "string",
+          },
+          "position": {
+            "anyOf": [
+              {
+                "type": "number",
+              },
+              {
+                "const": "first",
+                "type": "string",
+              },
+              {
+                "const": "last",
+                "type": "string",
+              },
+            ],
+            "description": "Use "first" to insert at the top, "last" for the bottom, or a number for explicit ordering. Leave empty to place at the top (recommended).",
+          },
+          "probability": {
+            "type": "number",
+          },
+          "rating": {
+            "enum": [
+              "RATING_1",
+              "RATING_2",
+            ],
+            "type": "string",
+          },
+          "reviewer": {
+            "properties": {
+              "source": {
+                "enum": [
+                  "EMAIL",
+                  "CALENDAR",
+                  "WORKFLOW",
+                  "AGENT",
+                  "API",
+                  "IMPORT",
+                  "MANUAL",
+                  "SYSTEM",
+                  "WEBHOOK",
+                ],
+                "type": "string",
+              },
+            },
+            "type": "object",
+          },
+          "score": {
+            "type": "number",
+          },
+          "seats": {
+            "type": "integer",
+          },
+          "stage": {
+            "enum": [
+              "NEW",
+              "WON",
+            ],
+            "type": "string",
+          },
+          "tags": {
+            "items": {
+              "enum": [
+                "NEW",
+                "WON",
+              ],
+              "type": "string",
+            },
+            "type": "array",
+          },
+          "targetPersonId": {
+            "format": "uuid",
+            "type": "string",
+          },
+          "website": {
+            "description": "Website",
+            "properties": {
+              "primaryLinkLabel": {
+                "type": "string",
+              },
+              "primaryLinkUrl": {
+                "format": "uri",
+                "type": "string",
+              },
+              "secondaryLinks": {
+                "items": {
+                  "properties": {
+                    "label": {
+                      "type": "string",
+                    },
+                    "url": {
+                      "format": "uri",
+                      "type": "string",
+                    },
+                  },
+                  "required": [
+                    "label",
+                    "url",
+                  ],
+                  "type": "object",
+                },
+                "type": "array",
+              },
+            },
+            "type": "object",
+          },
+        },
+        "type": "object",
+      },
+      "filter": {
+        "description": "Filter to select which records to update. Supports field-level filters and logical operators (or, and, not). WARNING: A broad filter may update many records at once. Always verify the filter scope with a find query first.",
+        "recordFilter": true,
+      },
+    },
+    "required": [
+      "data",
+      "filter",
+    ],
+    "type": "object",
+  },
+  "recordFilter": "same as find_many_opportunities",
+}
+`;
+
+exports[`DatabaseToolProvider input schemas should generate the input schema of every database tool: update_one_opportunity 1`] = `
+{
+  "inputSchema": {
+    "properties": {
+      "address": {
+        "properties": {
+          "addressCity": {
+            "type": "string",
+          },
+          "addressCountry": {
+            "type": "string",
+          },
+          "addressLat": {
+            "type": "number",
+          },
+          "addressLng": {
+            "type": "number",
+          },
+          "addressPostcode": {
+            "type": "string",
+          },
+          "addressState": {
+            "type": "string",
+          },
+          "addressStreet1": {
+            "type": "string",
+          },
+          "addressStreet2": {
+            "type": "string",
+          },
+        },
+        "type": "object",
+      },
+      "aliases": {
+        "items": {
+          "type": "string",
+        },
+        "type": "array",
+      },
+      "amount": {
+        "properties": {
+          "amountMicros": {
+            "description": "Currency amount in micros (1 unit = 1,000,000 micros). Multiply the user-provided amount by 1,000,000 before writing.",
+            "type": "number",
+          },
+          "currencyCode": {
+            "type": "string",
+          },
+        },
+        "type": "object",
+      },
+      "attachments": {
+        "items": {
+          "additionalProperties": false,
+          "properties": {
+            "fileId": {
+              "format": "uuid",
+              "type": "string",
+            },
+            "label": {
+              "type": "string",
+            },
+          },
+          "required": [
+            "fileId",
+            "label",
+          ],
+          "type": "object",
+        },
+        "type": "array",
+      },
+      "closeDate": {
+        "format": "date",
+        "type": "string",
+      },
+      "companyId": {
+        "format": "uuid",
+        "type": "string",
+      },
+      "contactName": {
+        "properties": {
+          "firstName": {
+            "type": "string",
+          },
+          "lastName": {
+            "type": "string",
+          },
+        },
+        "type": "object",
+      },
+      "emails": {
+        "properties": {
+          "additionalEmails": {
+            "items": {
+              "format": "email",
+              "type": "string",
+            },
+            "type": "array",
+          },
+          "primaryEmail": {
+            "format": "email",
+            "type": "string",
+          },
+        },
+        "type": "object",
+      },
+      "emptySelect": {
+        "type": "string",
+      },
+      "externalId": {
+        "description": "External id",
+        "format": "uuid",
+        "type": "string",
+      },
+      "id": {
+        "format": "uuid",
+        "type": "string",
+      },
+      "isPriority": {
+        "type": "boolean",
+      },
+      "lastContactAt": {
+        "format": "date-time",
+        "type": "string",
+      },
+      "name": {
+        "description": "Deal name",
+        "type": "string",
+      },
+      "notes": {
+        "properties": {
+          "blocknote": {
+            "type": "string",
+          },
+          "markdown": {
+            "type": "string",
+          },
+        },
+        "type": "object",
+      },
+      "payload": {
+        "additionalProperties": {},
+        "propertyNames": {
+          "type": "string",
+        },
+        "type": "object",
+      },
+      "phones": {
+        "properties": {
+          "additionalPhones": {
+            "items": {
+              "properties": {
+                "callingCode": {
+                  "type": "string",
+                },
+                "countryCode": {
+                  "type": "string",
+                },
+                "number": {
+                  "type": "string",
+                },
+              },
+              "required": [
+                "number",
+              ],
+              "type": "object",
+            },
+            "type": "array",
+          },
+          "primaryPhoneCallingCode": {
+            "type": "string",
+          },
+          "primaryPhoneCountryCode": {
+            "type": "string",
+          },
+          "primaryPhoneNumber": {
+            "type": "string",
+          },
+        },
+        "type": "object",
+      },
+      "pointOfContactId": {
+        "format": "uuid",
+        "type": "string",
+      },
+      "position": {
+        "anyOf": [
+          {
+            "type": "number",
+          },
+          {
+            "const": "first",
+            "type": "string",
+          },
+          {
+            "const": "last",
+            "type": "string",
+          },
+        ],
+        "description": "Use "first" to insert at the top, "last" for the bottom, or a number for explicit ordering. Leave empty to place at the top (recommended).",
+      },
+      "probability": {
+        "type": "number",
+      },
+      "rating": {
+        "enum": [
+          "RATING_1",
+          "RATING_2",
+        ],
+        "type": "string",
+      },
+      "reviewer": {
+        "properties": {
+          "source": {
+            "enum": [
+              "EMAIL",
+              "CALENDAR",
+              "WORKFLOW",
+              "AGENT",
+              "API",
+              "IMPORT",
+              "MANUAL",
+              "SYSTEM",
+              "WEBHOOK",
+            ],
+            "type": "string",
+          },
+        },
+        "type": "object",
+      },
+      "score": {
+        "type": "number",
+      },
+      "seats": {
+        "type": "integer",
+      },
+      "stage": {
+        "enum": [
+          "NEW",
+          "WON",
+        ],
+        "type": "string",
+      },
+      "tags": {
+        "items": {
+          "enum": [
+            "NEW",
+            "WON",
+          ],
+          "type": "string",
+        },
+        "type": "array",
+      },
+      "targetPersonId": {
+        "format": "uuid",
+        "type": "string",
+      },
+      "website": {
+        "description": "Website",
+        "properties": {
+          "primaryLinkLabel": {
+            "type": "string",
+          },
+          "primaryLinkUrl": {
+            "format": "uri",
+            "type": "string",
+          },
+          "secondaryLinks": {
+            "items": {
+              "properties": {
+                "label": {
+                  "type": "string",
+                },
+                "url": {
+                  "format": "uri",
+                  "type": "string",
+                },
+              },
+              "required": [
+                "label",
+                "url",
+              ],
+              "type": "object",
+            },
+            "type": "array",
+          },
+        },
+        "type": "object",
+      },
+    },
+    "required": [
+      "id",
+    ],
+    "type": "object",
+  },
+}
+`;
+
+exports[`DatabaseToolProvider input schemas should generate the input schema of every database tool: upsert_many_opportunities 1`] = `
+{
+  "inputSchema": {
+    "properties": {
+      "records": {
+        "description": "Array of records to create. Each record should contain the required fields. Maximum 20 records per call.",
+        "items": {
+          "properties": {
+            "address": {
+              "properties": {
+                "addressCity": {
+                  "type": "string",
+                },
+                "addressCountry": {
+                  "type": "string",
+                },
+                "addressLat": {
+                  "type": "number",
+                },
+                "addressLng": {
+                  "type": "number",
+                },
+                "addressPostcode": {
+                  "type": "string",
+                },
+                "addressState": {
+                  "type": "string",
+                },
+                "addressStreet1": {
+                  "type": "string",
+                },
+                "addressStreet2": {
+                  "type": "string",
+                },
+              },
+              "type": "object",
+            },
+            "aliases": {
+              "items": {
+                "type": "string",
+              },
+              "type": "array",
+            },
+            "amount": {
+              "properties": {
+                "amountMicros": {
+                  "description": "Currency amount in micros (1 unit = 1,000,000 micros). Multiply the user-provided amount by 1,000,000 before writing.",
+                  "type": "number",
+                },
+                "currencyCode": {
+                  "type": "string",
+                },
+              },
+              "type": "object",
+            },
+            "attachments": {
+              "items": {
+                "additionalProperties": false,
+                "properties": {
+                  "fileId": {
+                    "format": "uuid",
+                    "type": "string",
+                  },
+                  "label": {
+                    "type": "string",
+                  },
+                },
+                "required": [
+                  "fileId",
+                  "label",
+                ],
+                "type": "object",
+              },
+              "type": "array",
+            },
+            "closeDate": {
+              "format": "date",
+              "type": "string",
+            },
+            "companyId": {
+              "format": "uuid",
+              "type": "string",
+            },
+            "contactName": {
+              "properties": {
+                "firstName": {
+                  "type": "string",
+                },
+                "lastName": {
+                  "type": "string",
+                },
+              },
+              "type": "object",
+            },
+            "emails": {
+              "properties": {
+                "additionalEmails": {
+                  "items": {
+                    "format": "email",
+                    "type": "string",
+                  },
+                  "type": "array",
+                },
+                "primaryEmail": {
+                  "format": "email",
+                  "type": "string",
+                },
+              },
+              "type": "object",
+            },
+            "emptySelect": {
+              "type": "string",
+            },
+            "externalId": {
+              "description": "External id",
+              "format": "uuid",
+              "type": "string",
+            },
+            "isPriority": {
+              "type": "boolean",
+            },
+            "lastContactAt": {
+              "format": "date-time",
+              "type": "string",
+            },
+            "name": {
+              "description": "Deal name",
+              "type": "string",
+            },
+            "notes": {
+              "properties": {
+                "blocknote": {
+                  "type": "string",
+                },
+                "markdown": {
+                  "type": "string",
+                },
+              },
+              "type": "object",
+            },
+            "payload": {
+              "additionalProperties": {},
+              "propertyNames": {
+                "type": "string",
+              },
+              "type": "object",
+            },
+            "phones": {
+              "properties": {
+                "additionalPhones": {
+                  "items": {
+                    "properties": {
+                      "callingCode": {
+                        "type": "string",
+                      },
+                      "countryCode": {
+                        "type": "string",
+                      },
+                      "number": {
+                        "type": "string",
+                      },
+                    },
+                    "required": [
+                      "number",
+                    ],
+                    "type": "object",
+                  },
+                  "type": "array",
+                },
+                "primaryPhoneCallingCode": {
+                  "type": "string",
+                },
+                "primaryPhoneCountryCode": {
+                  "type": "string",
+                },
+                "primaryPhoneNumber": {
+                  "type": "string",
+                },
+              },
+              "type": "object",
+            },
+            "pointOfContactId": {
+              "format": "uuid",
+              "type": "string",
+            },
+            "position": {
+              "anyOf": [
+                {
+                  "type": "number",
+                },
+                {
+                  "const": "first",
+                  "type": "string",
+                },
+                {
+                  "const": "last",
+                  "type": "string",
+                },
+              ],
+              "description": "Use "first" to insert at the top, "last" for the bottom, or a number for explicit ordering. Leave empty to place at the top (recommended).",
+            },
+            "probability": {
+              "type": "number",
+            },
+            "rating": {
+              "enum": [
+                "RATING_1",
+                "RATING_2",
+              ],
+              "type": "string",
+            },
+            "reviewer": {
+              "properties": {
+                "source": {
+                  "enum": [
+                    "EMAIL",
+                    "CALENDAR",
+                    "WORKFLOW",
+                    "AGENT",
+                    "API",
+                    "IMPORT",
+                    "MANUAL",
+                    "SYSTEM",
+                    "WEBHOOK",
+                  ],
+                  "type": "string",
+                },
+              },
+              "type": "object",
+            },
+            "score": {
+              "type": "number",
+            },
+            "seats": {
+              "type": "integer",
+            },
+            "stage": {
+              "enum": [
+                "NEW",
+                "WON",
+              ],
+              "type": "string",
+            },
+            "tags": {
+              "items": {
+                "enum": [
+                  "NEW",
+                  "WON",
+                ],
+                "type": "string",
+              },
+              "type": "array",
+            },
+            "targetPersonId": {
+              "format": "uuid",
+              "type": "string",
+            },
+            "website": {
+              "description": "Website",
+              "properties": {
+                "primaryLinkLabel": {
+                  "type": "string",
+                },
+                "primaryLinkUrl": {
+                  "format": "uri",
+                  "type": "string",
+                },
+                "secondaryLinks": {
+                  "items": {
+                    "properties": {
+                      "label": {
+                        "type": "string",
+                      },
+                      "url": {
+                        "format": "uri",
+                        "type": "string",
+                      },
+                    },
+                    "required": [
+                      "label",
+                      "url",
+                    ],
+                    "type": "object",
+                  },
+                  "type": "array",
+                },
+              },
+              "type": "object",
+            },
+          },
+          "required": [
+            "amount",
+            "companyId",
+            "name",
+            "position",
+          ],
+          "type": "object",
+        },
+        "maxItems": 20,
+        "minItems": 1,
+        "type": "array",
+      },
+    },
+    "required": [
+      "records",
+    ],
+    "type": "object",
+  },
+}
+`;
+
+exports[`DatabaseToolProvider input schemas should leave restricted fields out of the input schemas 1`] = `
+{
+  "createOne": [
+    "address",
+    "aliases",
+    "attachments",
+    "closeDate",
+    "contactName",
+    "emails",
+    "emptySelect",
+    "externalId",
+    "isPriority",
+    "lastContactAt",
+    "name",
+    "notes",
+    "payload",
+    "phones",
+    "pointOfContactId",
+    "position",
+    "probability",
+    "rating",
+    "reviewer",
+    "score",
+    "seats",
+    "stage",
+    "tags",
+    "targetPersonId",
+    "website",
+  ],
+  "findManyArguments": [
+    "address",
+    "aliases",
+    "amount",
+    "and",
+    "attachments",
+    "closeDate",
+    "contactName",
+    "emails",
+    "externalId",
+    "isPriority",
+    "lastContactAt",
+    "limit",
+    "not",
+    "notes",
+    "offset",
+    "or",
+    "orderBy",
+    "payload",
+    "phones",
+    "pointOfContactId",
+    "probability",
+    "rating",
+    "reviewer",
+    "score",
+    "seats",
+    "select",
+    "stage",
+    "tags",
+    "targetPersonId",
+    "website",
+  ],
+  "groupBy": [
+    "createdAt",
+    "updatedAt",
+    "notes",
+    "notes",
+    "seats",
+    "probability",
+    "score",
+    "isPriority",
+    "closeDate",
+    "lastContactAt",
+    "stage",
+    "emptySelect",
+    "tags",
+    "rating",
+    "externalId",
+    "aliases",
+    "reviewer",
+    "reviewer",
+    "reviewer",
+    "website",
+    "website",
+    "amount",
+    "amount",
+    "contactName",
+    "contactName",
+    "address",
+    "address",
+    "address",
+    "address",
+    "address",
+    "address",
+    "address",
+    "address",
+    "emails",
+    "phones",
+    "phones",
+    "phones",
+    "pointOfContactId",
+    "targetPersonId",
+  ],
+  "orderBy": [
+    "address",
+    "aliases",
+    "amount",
+    "attachments",
+    "closeDate",
+    "contactName",
+    "createdAt",
+    "emails",
+    "emptySelect",
+    "externalId",
+    "id",
+    "isPriority",
+    "lastContactAt",
+    "notes",
+    "payload",
+    "phones",
+    "pointOfContactId",
+    "position",
+    "probability",
+    "rating",
+    "reviewer",
+    "score",
+    "seats",
+    "stage",
+    "tags",
+    "targetPersonId",
+    "updatedAt",
+    "website",
+  ],
+  "recordFilter": [
+    "address",
+    "aliases",
+    "amount",
+    "and",
+    "attachments",
+    "closeDate",
+    "contactName",
+    "emails",
+    "externalId",
+    "isPriority",
+    "lastContactAt",
+    "not",
+    "notes",
+    "or",
+    "payload",
+    "phones",
+    "pointOfContactId",
+    "probability",
+    "rating",
+    "reviewer",
+    "score",
+    "seats",
+    "stage",
+    "tags",
+    "targetPersonId",
+    "website",
+  ],
+  "updateManyData": [
+    "address",
+    "aliases",
+    "attachments",
+    "closeDate",
+    "contactName",
+    "emails",
+    "emptySelect",
+    "externalId",
+    "isPriority",
+    "lastContactAt",
+    "name",
+    "notes",
+    "payload",
+    "phones",
+    "pointOfContactId",
+    "position",
+    "probability",
+    "rating",
+    "reviewer",
+    "score",
+    "seats",
+    "stage",
+    "tags",
+    "targetPersonId",
+    "website",
+  ],
+}
+`;
