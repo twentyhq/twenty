@@ -2252,7 +2252,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       .where({ id: In(recordIds) })
       .withDeleted()
       .select(['id'])
-      .andWhere(condition.sql, condition.parameters)
+      .addRowAccessCondition(condition.sql, condition.parameters)
       .getMany<ObjectRecord>({ noFormatting: true });
 
     return new Set(admittedRecords.map((record) => String(record.id)));
@@ -2432,7 +2432,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     parameters: ObjectLiteral;
   }): void {
     if (alias === queryBuilder.alias) {
-      queryBuilder.andWhere(sql, parameters);
+      queryBuilder.addRowAccessCondition(sql, parameters);
 
       return;
     }
