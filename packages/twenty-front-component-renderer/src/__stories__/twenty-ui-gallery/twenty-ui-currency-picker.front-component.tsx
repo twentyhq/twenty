@@ -74,7 +74,7 @@ const CurrencyPickerExample = () => {
             currencies={CURRENCIES}
             value="EUR"
             disabled
-            onValueChange={setPrimaryCurrency}
+            onValueChange={() => undefined}
           />
         </Dropdown.Content>
       </Dropdown.Root>
