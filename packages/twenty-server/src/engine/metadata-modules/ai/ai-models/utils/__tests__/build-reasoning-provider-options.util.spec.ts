@@ -177,9 +177,28 @@ describe('buildReasoningProviderOptions', () => {
         expect(
           buildReasoningProviderOptions(
             { modelId, sdkPackage, supportsReasoning: true },
-            { shouldIncludeReasoningSummary: true },
+            {
+              shouldIncludeReasoningSummary: true,
+              isOpenAiReasoningSummaryEnabled: true,
+            },
           ),
         ).toEqual(expected);
+      },
+    );
+
+    it.each([AI_SDK_OPENAI, AI_SDK_AZURE] as const)(
+      'asks %s for no summary until OpenAI summaries are enabled',
+      (sdkPackage) => {
+        expect(
+          buildReasoningProviderOptions(
+            {
+              modelId: 'openai/gpt-5.6-sol',
+              sdkPackage,
+              supportsReasoning: true,
+            },
+            { shouldIncludeReasoningSummary: true },
+          ),
+        ).toEqual({});
       },
     );
 
@@ -210,7 +229,10 @@ describe('buildReasoningProviderOptions', () => {
             supportsReasoning: true,
             effort: 'none',
           },
-          { shouldIncludeReasoningSummary: true },
+          {
+            shouldIncludeReasoningSummary: true,
+            isOpenAiReasoningSummaryEnabled: true,
+          },
         ),
       ).toEqual({ openai: { reasoningEffort: 'none' } });
     });

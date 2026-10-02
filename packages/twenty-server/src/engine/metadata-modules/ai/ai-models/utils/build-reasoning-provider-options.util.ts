@@ -18,7 +18,13 @@ export const buildReasoningProviderOptions = (
     RegisteredAiModel,
     'modelId' | 'sdkPackage' | 'supportsReasoning' | 'effort'
   >,
-  { shouldIncludeReasoningSummary = false } = {},
+  {
+    shouldIncludeReasoningSummary = false,
+    isOpenAiReasoningSummaryEnabled = false,
+  }: {
+    shouldIncludeReasoningSummary?: boolean;
+    isOpenAiReasoningSummaryEnabled?: boolean;
+  } = {},
 ): ProviderOptions => {
   const { effort } = model;
   const thinksAdaptively =
@@ -56,7 +62,11 @@ export const buildReasoningProviderOptions = (
       };
     case AI_SDK_OPENAI:
     case AI_SDK_AZURE: {
-      if (!isDefined(effort) && !includesReasoningSummary) {
+      // OpenAI rejects summary requests from organizations it has not verified.
+      const includesOpenAiReasoningSummary =
+        includesReasoningSummary && isOpenAiReasoningSummaryEnabled;
+
+      if (!isDefined(effort) && !includesOpenAiReasoningSummary) {
         return {};
       }
 
@@ -66,7 +76,9 @@ export const buildReasoningProviderOptions = (
       return {
         [providerKey]: {
           ...(isDefined(effort) ? { reasoningEffort: effort } : {}),
-          ...(includesReasoningSummary ? { reasoningSummary: 'auto' } : {}),
+          ...(includesOpenAiReasoningSummary
+            ? { reasoningSummary: 'auto' }
+            : {}),
         },
       };
     }

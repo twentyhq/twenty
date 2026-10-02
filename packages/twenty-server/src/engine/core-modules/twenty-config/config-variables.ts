@@ -2102,6 +2102,15 @@ export class ConfigVariables {
   AI_MODELS_DEFAULT_DISABLED: string[] = DEFAULT_DISABLED_MODELS;
 
   @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.LLM,
+    description:
+      'Ask OpenAI and Azure reasoning models for reasoning summaries in AI chat. OpenAI rejects these requests for organizations that are not verified.',
+    type: ConfigVariableType.BOOLEAN,
+  })
+  @IsOptional()
+  IS_OPENAI_REASONING_SUMMARY_ENABLED = false;
+
+  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SERVER_CONFIG,
     description: 'Enable or disable multi-workspace support',
     type: ConfigVariableType.BOOLEAN,

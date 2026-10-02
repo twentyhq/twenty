@@ -13,6 +13,7 @@ import {
   AiModelRegistryService,
   RegisteredAiModel,
 } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { SdkProviderFactoryService } from 'src/engine/metadata-modules/ai/ai-models/services/sdk-provider-factory.service';
 import { type NativeModelToolOptions } from 'src/engine/metadata-modules/ai/ai-models/types/native-model-tool-options.type';
 import { buildReasoningProviderOptions } from 'src/engine/metadata-modules/ai/ai-models/utils/build-reasoning-provider-options.util';
@@ -23,13 +24,19 @@ export class AiModelConfigService {
   constructor(
     private readonly aiModelRegistryService: AiModelRegistryService,
     private readonly sdkProviderFactory: SdkProviderFactoryService,
+    private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
   getReasoningProviderOptions(
     model: RegisteredAiModel,
     options?: { shouldIncludeReasoningSummary?: boolean },
   ): ProviderOptions {
-    return buildReasoningProviderOptions(model, options);
+    return buildReasoningProviderOptions(model, {
+      shouldIncludeReasoningSummary: options?.shouldIncludeReasoningSummary,
+      isOpenAiReasoningSummaryEnabled: this.twentyConfigService.get(
+        'IS_OPENAI_REASONING_SUMMARY_ENABLED',
+      ),
+    });
   }
 
   getNativeModelTools(

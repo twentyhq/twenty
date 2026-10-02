@@ -348,6 +348,25 @@ describe('ThinkingStepsDisplay', () => {
     expect(screen.queryByText(/\*\*/)).toBeNull();
   });
 
+  it('should not offer to expand a thought that only has a title', async () => {
+    renderThinkingStepsDisplay({
+      isLastMessageStreaming: false,
+      hasAssistantTextResponseStarted: true,
+      parts: [
+        createReasoningPart({
+          state: 'done',
+          text: '**Looking up Clearstreet**',
+        }),
+      ],
+    });
+
+    await userEvent.click(screen.getByRole('button', { name: /1 step/i }));
+
+    expect(
+      screen.getByRole('button', { name: 'Looking up Clearstreet' }),
+    ).toBeDisabled();
+  });
+
   it('should label the live thinking row with the title of the streaming summary', () => {
     renderThinkingStepsDisplay({
       isLastMessageStreaming: true,

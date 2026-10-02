@@ -408,13 +408,8 @@ const ThinkingReasoningStepRow = ({ part }: { part: ReasoningUIPart }) => {
       <StyledToolRowButton
         type="button"
         isExpandable={isExpandable}
-        onClick={() => {
-          if (!isExpandable) {
-            return;
-          }
-
-          setIsExpanded((previousValue) => !previousValue);
-        }}
+        disabled={!isExpandable}
+        onClick={() => setIsExpanded((previousValue) => !previousValue)}
         aria-expanded={isExpandable ? isExpanded : undefined}
       >
         <StyledIconContainer>
