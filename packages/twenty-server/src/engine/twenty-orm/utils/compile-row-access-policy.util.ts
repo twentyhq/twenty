@@ -51,11 +51,13 @@ export const compileRowAccessExpression = ({
       return buildRecordShareCondition({
         ...expression,
         recordShareTableExpression: environment.recordShareTableExpression,
+        nameIndex: environment.allocateNameIndex(),
       });
     case 'recordNotRestricted':
       return buildRecordShareExceptionCondition({
         ...expression,
         recordShareTableExpression: environment.recordShareTableExpression,
+        nameIndex: environment.allocateNameIndex(),
       });
     case 'inheritedReadability':
       return buildInheritedReadabilityCondition({
@@ -65,6 +67,7 @@ export const compileRowAccessExpression = ({
         accessLevels: expression.accessLevels,
         isOpenWhenDetached: expression.isOpenWhenDetached,
         recordShareTableExpression: environment.recordShareTableExpression,
+        nameIndex: environment.allocateNameIndex(),
         parents: expression.parents.map((parent) =>
           parent.kind === 'column'
             ? {

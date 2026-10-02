@@ -92,6 +92,10 @@ export type RowAccessPolicyEnvironment = {
 export type RowAccessCompilationEnvironment = {
   recordShareTableExpression: string;
   resolveTableExpression: (objectMetadataId: string) => string;
+  // Unique within one statement and allocated in the same order every time,
+  // so parameter names and subquery aliases never clash and the SQL text of
+  // a given query is stable
+  allocateNameIndex: () => number;
 };
 
 export type RowAccessPolicyContext = {

@@ -1,7 +1,5 @@
 /* @license Enterprise */
 
-import { randomBytes } from 'node:crypto';
-
 import { type RecordShareAccessLevel } from 'twenty-shared/types';
 import { type ObjectLiteral } from 'typeorm';
 
@@ -14,6 +12,7 @@ export const buildRecordShareCondition = ({
   principalIds,
   accessLevels,
   isUncorrelated = false,
+  nameIndex,
 }: {
   tableAlias: string;
   recordShareTableExpression: string;
@@ -21,13 +20,15 @@ export const buildRecordShareCondition = ({
   principalIds: string[];
   accessLevels: RecordShareAccessLevel[];
   isUncorrelated?: boolean;
+  nameIndex: number;
 }): { sql: string; parameters: ObjectLiteral } => {
-  const parameterSuffix = randomBytes(5).toString('hex');
-  const objectMetadataIdParameterName = `recordShareObjectMetadataId_${parameterSuffix}`;
-  const principalIdsParameterName = `recordSharePrincipalIds_${parameterSuffix}`;
-  const accessLevelsParameterName = `recordShareAccessLevels_${parameterSuffix}`;
+  const objectMetadataIdParameterName = `recordShareObjectMetadataId_${nameIndex}`;
+  const principalIdsParameterName = `recordSharePrincipalIds_${nameIndex}`;
+  const accessLevelsParameterName = `recordShareAccessLevels_${nameIndex}`;
 
-  const recordShareAlias = escapeIdentifier(`${tableAlias}_recordShare`);
+  // Not derived from the table alias: once Postgres truncates a long alias to
+  // 63 bytes, the two would collide and the share row would shadow the record
+  const recordShareAlias = escapeIdentifier(`recordShare_${nameIndex}`);
 
   const recordId = `${escapeIdentifier(tableAlias)}."id"`;
   const grantConditions = [

@@ -40,7 +40,6 @@ import { type InheritedReadabilityParentLink } from 'src/engine/core-modules/rec
 import {
   type RowAccessExpression,
   type RowAccessPolicy,
-  type RowAccessCompilationEnvironment,
   type RowAccessPolicyEnvironment,
   type RowAccessPolicySubject,
   type SqlCondition,
@@ -2035,7 +2034,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     }
 
     return this.executeRaw<RecordShareGrant>(
-      `SELECT "recordId", "principalId", "accessLevel" FROM ${this.resolveRowAccessPolicyEnvironment().recordShareTableExpression} WHERE "objectMetadataId" = :objectMetadataId AND "recordId" = ANY(:recordIds) AND "deletedAt" IS NULL`,
+      `SELECT "recordId", "principalId", "accessLevel" FROM ${this.recordShareTableExpression} WHERE "objectMetadataId" = :objectMetadataId AND "recordId" = ANY(:recordIds) AND "deletedAt" IS NULL`,
       { objectMetadataId, recordIds },
     );
   }
@@ -2217,7 +2216,10 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
         this.addConditionForAlias({
           queryBuilder,
           alias,
-          ...this.compileRowAccessExpression(policy.expression),
+          ...this.compileRowAccessExpression({
+            expression: policy.expression,
+            queryBuilder,
+          }),
         });
 
         return;
@@ -2245,10 +2247,12 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       return new Set(recordIds);
     }
 
-    const condition = this.compileRowAccessExpression(policy.expression);
-    const admittedRecords = await this.buildBypassingEventSelectQueryBuilder(
-      tableAlias,
-    )
+    const queryBuilder = this.buildBypassingEventSelectQueryBuilder(tableAlias);
+    const condition = this.compileRowAccessExpression({
+      expression: policy.expression,
+      queryBuilder,
+    });
+    const admittedRecords = await queryBuilder
       .where({ id: In(recordIds) })
       .withDeleted()
       .select(['id'])
@@ -2258,12 +2262,21 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     return new Set(admittedRecords.map((record) => String(record.id)));
   }
 
-  private compileRowAccessExpression(
-    expression: RowAccessExpression,
-  ): SqlCondition {
+  private compileRowAccessExpression({
+    expression,
+    queryBuilder,
+  }: {
+    expression: RowAccessExpression;
+    queryBuilder: WorkspaceSelectQueryBuilder;
+  }): SqlCondition {
     return compileRowAccessExpression({
       expression,
-      environment: this.resolveRowAccessPolicyEnvironment(),
+      environment: {
+        recordShareTableExpression: this.recordShareTableExpression,
+        resolveTableExpression: (objectMetadataId) =>
+          this.getTableExpression(objectMetadataId),
+        allocateNameIndex: () => queryBuilder.allocateRowAccessNameIndex(),
+      },
     });
   }
 
@@ -2356,19 +2369,19 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     };
   }
 
-  private resolveRowAccessPolicyEnvironment(): RowAccessPolicyEnvironment &
-    RowAccessCompilationEnvironment {
+  private resolveRowAccessPolicyEnvironment(): RowAccessPolicyEnvironment {
     return {
       flatFieldMetadataMaps: this.options.internalContext.flatFieldMetadataMaps,
       flatObjectMetadataMaps:
         this.options.internalContext.flatObjectMetadataMaps,
-      recordShareTableExpression: this.getTableExpression(
-        this.options.internalContext.objectIdByNameSingular.recordShare,
-      ),
-      resolveTableExpression: (objectMetadataId) =>
-        this.getTableExpression(objectMetadataId),
       isRecordSharingEnabled: this.isRecordSharingEnabled,
     };
+  }
+
+  private get recordShareTableExpression(): string {
+    return this.getTableExpression(
+      this.options.internalContext.objectIdByNameSingular.recordShare,
+    );
   }
 
   private get isRecordSharingEnabled(): boolean {

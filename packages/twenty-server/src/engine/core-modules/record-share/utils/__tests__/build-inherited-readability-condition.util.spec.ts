@@ -13,7 +13,7 @@ const PRINCIPAL_IDS = ['principal-1', 'principal-2'];
 const ACCESS_LEVELS = [RecordShareAccessLevel.READ];
 
 const OWN_RECORD_SHARE_EXISTS =
-  '(EXISTS (SELECT 1 FROM "workspace_abc"."recordShare" AS "attachment_recordShare" WHERE "attachment_recordShare"."recordId" = "attachment"."id"';
+  '(EXISTS (SELECT 1 FROM "workspace_abc"."recordShare" AS "recordShare_0" WHERE "recordShare_0"."recordId" = "attachment"."id"';
 
 const countOccurrences = (haystack: string, needle: string): number =>
   haystack.split(needle).length - 1;
@@ -30,6 +30,7 @@ const build = (
     principalIds: PRINCIPAL_IDS,
     accessLevels: ACCESS_LEVELS,
     isOpenWhenDetached,
+    nameIndex: 0,
   });
 
 const noteParent = (

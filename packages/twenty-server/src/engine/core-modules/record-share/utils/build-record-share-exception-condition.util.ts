@@ -1,7 +1,5 @@
 /* @license Enterprise */
 
-import { randomBytes } from 'node:crypto';
-
 import { EVERYONE_PRINCIPAL_ID } from 'twenty-shared/constants';
 import { RecordShareAccessLevel } from 'twenty-shared/types';
 import { type ObjectLiteral } from 'typeorm';
@@ -20,27 +18,28 @@ export const buildRecordShareExceptionCondition = ({
   objectMetadataId,
   principalIds,
   accessLevels,
+  nameIndex,
 }: {
   tableAlias: string;
   recordShareTableExpression: string;
   objectMetadataId: string;
   principalIds: string[];
   accessLevels: RecordShareAccessLevel[];
+  nameIndex: number;
 }): { sql: string; parameters: ObjectLiteral } => {
-  const parameterSuffix = randomBytes(5).toString('hex');
-  const objectMetadataIdParameterName = `recordShareExceptionObjectMetadataId_${parameterSuffix}`;
-  const everyonePrincipalIdParameterName = `recordShareExceptionEveryonePrincipalId_${parameterSuffix}`;
-  const restrictedAccessLevelsParameterName = `recordShareExceptionRestrictedAccessLevels_${parameterSuffix}`;
-  const principalIdsParameterName = `recordShareExceptionPrincipalIds_${parameterSuffix}`;
-  const accessLevelsParameterName = `recordShareExceptionAccessLevels_${parameterSuffix}`;
+  const objectMetadataIdParameterName = `recordShareExceptionObjectMetadataId_${nameIndex}`;
+  const everyonePrincipalIdParameterName = `recordShareExceptionEveryonePrincipalId_${nameIndex}`;
+  const restrictedAccessLevelsParameterName = `recordShareExceptionRestrictedAccessLevels_${nameIndex}`;
+  const principalIdsParameterName = `recordShareExceptionPrincipalIds_${nameIndex}`;
+  const accessLevelsParameterName = `recordShareExceptionAccessLevels_${nameIndex}`;
 
   // Derived from the table alias, these would collide once Postgres
   // truncates a long alias to 63 bytes and the grant would shadow the
   // restriction it must correlate with
   const restrictionAlias = escapeIdentifier(
-    `recordShareRestriction_${parameterSuffix}`,
+    `recordShareRestriction_${nameIndex}`,
   );
-  const grantAlias = escapeIdentifier(`recordShareGrant_${parameterSuffix}`);
+  const grantAlias = escapeIdentifier(`recordShareGrant_${nameIndex}`);
 
   const grantConditions = [
     `${grantAlias}."recordId" = ${restrictionAlias}."recordId"`,

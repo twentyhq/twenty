@@ -12,37 +12,25 @@ const ACCESS_LEVELS = [
   RecordShareAccessLevel.FULL,
 ];
 
-const build = () =>
+const build = (nameIndex = 0) =>
   buildRecordShareCondition({
     tableAlias: 'company',
     recordShareTableExpression: '"workspace_abc"."recordShare"',
     objectMetadataId: OBJECT_METADATA_ID,
     principalIds: PRINCIPAL_IDS,
     accessLevels: ACCESS_LEVELS,
+    nameIndex,
   });
 
 describe('buildRecordShareCondition', () => {
   it('should render a correlated EXISTS on the record share table', () => {
-    const { sql, parameters } = build();
-    const parameterNames = Object.keys(parameters);
-
-    const [objectMetadataIdParameterName] = parameterNames.filter((name) =>
-      name.startsWith('recordShareObjectMetadataId_'),
-    );
-    const [principalIdsParameterName] = parameterNames.filter((name) =>
-      name.startsWith('recordSharePrincipalIds_'),
-    );
-    const [accessLevelsParameterName] = parameterNames.filter((name) =>
-      name.startsWith('recordShareAccessLevels_'),
-    );
-
-    expect(sql).toBe(
-      `EXISTS (SELECT 1 FROM "workspace_abc"."recordShare" AS "company_recordShare" WHERE "company_recordShare"."recordId" = "company"."id" AND "company_recordShare"."objectMetadataId" = :${objectMetadataIdParameterName} AND "company_recordShare"."principalId" = ANY(:${principalIdsParameterName}) AND "company_recordShare"."accessLevel" IN (:...${accessLevelsParameterName}) AND "company_recordShare"."deletedAt" IS NULL)`,
-    );
-    expect(parameters).toEqual({
-      [objectMetadataIdParameterName]: OBJECT_METADATA_ID,
-      [principalIdsParameterName]: PRINCIPAL_IDS,
-      [accessLevelsParameterName]: ACCESS_LEVELS,
+    expect(build()).toEqual({
+      sql: 'EXISTS (SELECT 1 FROM "workspace_abc"."recordShare" AS "recordShare_0" WHERE "recordShare_0"."recordId" = "company"."id" AND "recordShare_0"."objectMetadataId" = :recordShareObjectMetadataId_0 AND "recordShare_0"."principalId" = ANY(:recordSharePrincipalIds_0) AND "recordShare_0"."accessLevel" IN (:...recordShareAccessLevels_0) AND "recordShare_0"."deletedAt" IS NULL)',
+      parameters: {
+        recordShareObjectMetadataId_0: OBJECT_METADATA_ID,
+        recordSharePrincipalIds_0: PRINCIPAL_IDS,
+        recordShareAccessLevels_0: ACCESS_LEVELS,
+      },
     });
   });
 
@@ -50,7 +38,7 @@ describe('buildRecordShareCondition', () => {
     const { sql, parameters } = build();
 
     expect(compileNamedParameters(sql, parameters)).toEqual({
-      text: 'EXISTS (SELECT 1 FROM "workspace_abc"."recordShare" AS "company_recordShare" WHERE "company_recordShare"."recordId" = "company"."id" AND "company_recordShare"."objectMetadataId" = $1 AND "company_recordShare"."principalId" = ANY($2) AND "company_recordShare"."accessLevel" IN ($3, $4) AND "company_recordShare"."deletedAt" IS NULL)',
+      text: 'EXISTS (SELECT 1 FROM "workspace_abc"."recordShare" AS "recordShare_0" WHERE "recordShare_0"."recordId" = "company"."id" AND "recordShare_0"."objectMetadataId" = $1 AND "recordShare_0"."principalId" = ANY($2) AND "recordShare_0"."accessLevel" IN ($3, $4) AND "recordShare_0"."deletedAt" IS NULL)',
       values: [
         OBJECT_METADATA_ID,
         PRINCIPAL_IDS,
@@ -60,28 +48,35 @@ describe('buildRecordShareCondition', () => {
     });
   });
 
-  it('should use distinct parameter names on every call', () => {
-    const first = build();
-    const second = build();
+  it('should render the same SQL for the same name index', () => {
+    expect(build(3)).toEqual(build(3));
+  });
+
+  it('should use distinct parameter names and alias for distinct name indexes', () => {
+    const first = build(0);
+    const second = build(1);
 
     expect(
       Object.keys(first.parameters).filter(
         (parameterName) => parameterName in second.parameters,
       ),
     ).toEqual([]);
+    expect(second.sql).toContain('AS "recordShare_1"');
   });
 
-  it('should escape the alias it derives', () => {
+  it('should escape the table alias and keep the share alias apart from a long one', () => {
+    const longTableAlias = `per"son${'a'.repeat(80)}`;
     const { sql } = buildRecordShareCondition({
-      tableAlias: 'per"son',
+      tableAlias: longTableAlias,
       recordShareTableExpression: '"workspace_abc"."recordShare"',
       objectMetadataId: OBJECT_METADATA_ID,
       principalIds: PRINCIPAL_IDS,
       accessLevels: ACCESS_LEVELS,
+      nameIndex: 0,
     });
 
-    expect(sql).toContain('AS "per""son_recordShare"');
-    expect(sql).toContain('= "per""son"."id"');
+    expect(sql).toContain('AS "recordShare_0"');
+    expect(sql).toContain(`= "per""son${'a'.repeat(80)}"."id"`);
   });
 
   it('should match the record id against the grants read once when uncorrelated', () => {
@@ -92,10 +87,11 @@ describe('buildRecordShareCondition', () => {
       principalIds: ['principal-1'],
       accessLevels: [RecordShareAccessLevel.READ, RecordShareAccessLevel.FULL],
       isUncorrelated: true,
+      nameIndex: 0,
     });
 
     expect(compileNamedParameters(sql, parameters)).toEqual({
-      text: '"company"."id" = ANY(ARRAY(SELECT "company_recordShare"."recordId" FROM "workspace_abc"."recordShare" AS "company_recordShare" WHERE "company_recordShare"."objectMetadataId" = $1 AND "company_recordShare"."principalId" = ANY($2) AND "company_recordShare"."accessLevel" IN ($3, $4) AND "company_recordShare"."deletedAt" IS NULL))',
+      text: '"company"."id" = ANY(ARRAY(SELECT "recordShare_0"."recordId" FROM "workspace_abc"."recordShare" AS "recordShare_0" WHERE "recordShare_0"."objectMetadataId" = $1 AND "recordShare_0"."principalId" = ANY($2) AND "recordShare_0"."accessLevel" IN ($3, $4) AND "recordShare_0"."deletedAt" IS NULL))',
       values: [
         OBJECT_METADATA_ID,
         ['principal-1'],

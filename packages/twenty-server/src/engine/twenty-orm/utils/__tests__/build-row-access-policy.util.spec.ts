@@ -57,7 +57,7 @@ const person = buildObject({
 });
 
 const environment: RowAccessPolicyEnvironment &
-  RowAccessCompilationEnvironment = {
+  Omit<RowAccessCompilationEnvironment, 'allocateNameIndex'> = {
   flatFieldMetadataMaps: { byId: {} } as never,
   flatObjectMetadataMaps: { byId: {} } as never,
   recordShareTableExpression: '"workspace"."recordShare"',
@@ -70,11 +70,17 @@ const buildCompiledRowAccessPolicy = (
   args: Parameters<typeof buildRowAccessPolicy>[0] & {
     environment: typeof environment;
   },
-) =>
-  compileRowAccessPolicy({
+) => {
+  let nameIndex = 0;
+
+  return compileRowAccessPolicy({
     policy: buildRowAccessPolicy(args),
-    environment: args.environment,
+    environment: {
+      ...args.environment,
+      allocateNameIndex: () => nameIndex++,
+    },
   });
+};
 
 const readEverything: RowAccessPolicySubject = {
   isSystemContext: false,
@@ -188,7 +194,7 @@ describe('buildRowAccessPolicy', () => {
     expect(policy.kind).toBe('gated');
     if (policy.kind !== 'gated') throw new Error('Expected an exception gate');
     expect(policy.condition.sql).toMatch(
-      /^\(NOT EXISTS \(SELECT 1 FROM "workspace"."recordShare" AS "recordShareRestriction_[0-9a-f]{10}"/,
+      /^\(NOT EXISTS \(SELECT 1 FROM "workspace"."recordShare" AS "recordShareRestriction_0"/,
     );
   });
 
@@ -267,7 +273,7 @@ describe('buildRowAccessPolicy', () => {
       expect(policy.kind).toBe('gated');
       if (policy.kind !== 'gated') throw new Error('Expected a grant gate');
       expect(policy.condition.sql).toMatch(
-        /^"company"."id" = ANY\(ARRAY\(SELECT "company_recordShare"."recordId" FROM "workspace"."recordShare"/,
+        /^"company"."id" = ANY\(ARRAY\(SELECT "recordShare_0"."recordId" FROM "workspace"."recordShare"/,
       );
       expect(Object.values(policy.condition.parameters)).toContainEqual([
         'role-2',
@@ -323,7 +329,7 @@ describe('buildRowAccessPolicy', () => {
 
       if (policy.kind !== 'gated') throw new Error('Expected a grant gate');
       expect(policy.condition.sql).toMatch(
-        /^\(\(\("company"."title" = :restricted\) AND \(NOT EXISTS .*\)\) OR \("company"."id" = ANY\(ARRAY\(SELECT "company_recordShare"."recordId"/,
+        /^\(\(\("company"."title" = :restricted\) AND \(NOT EXISTS .*\)\) OR \("company"."id" = ANY\(ARRAY\(SELECT "recordShare_1"."recordId"/,
       );
     });
 
@@ -364,7 +370,7 @@ describe('buildRowAccessPolicy', () => {
 
   it('gates a PRIVATE object on its share rows and leaves it open without principals', () => {
     expect(gatedSql(readEverything, person)).toContain(
-      '"person_recordShare"."recordId" = "person"."id"',
+      '"recordShare_0"."recordId" = "person"."id"',
     );
     expect(
       build({ ...readEverything, principalIds: undefined }, person),
@@ -385,7 +391,29 @@ describe('buildRowAccessPolicy', () => {
       '"attachment"."targetNoteId" IS NOT NULL AND EXISTS (SELECT 1 FROM "workspace"."note" AS "attachment_targetNoteId" WHERE "attachment_targetNoteId"."id" = "attachment"."targetNoteId" AND ("attachment_targetNoteId"."title" = :restricted))',
     );
     expect(sql).toContain(
-      '"attachment"."targetPersonId" IS NOT NULL AND EXISTS (SELECT 1 FROM "workspace"."person" AS "attachment_targetPersonId" WHERE "attachment_targetPersonId"."id" = "attachment"."targetPersonId" AND (EXISTS (SELECT 1 FROM "workspace"."recordShare" AS "attachment_targetPersonId_recordShare"',
+      '"attachment"."targetPersonId" IS NOT NULL AND EXISTS (SELECT 1 FROM "workspace"."person" AS "attachment_targetPersonId" WHERE "attachment_targetPersonId"."id" = "attachment"."targetPersonId" AND (EXISTS (SELECT 1 FROM "workspace"."recordShare" AS "recordShare_1"',
+    );
+  });
+
+  it('names every record share condition of a nested policy apart and the same way each time', () => {
+    const subject = {
+      ...readEverything,
+      resolveRowLevelPermissionRecordFilter: (
+        objectMetadata: FlatObjectMetadata,
+      ) => (objectMetadata.id === note.id ? NOTE_FILTER : null),
+    };
+    const first = build(subject, attachment);
+    const second = build(subject, attachment);
+
+    if (first.kind !== 'gated') throw new Error('Expected a grant gate');
+    expect(first).toEqual(second);
+    expect(first.condition.sql).toContain('AS "recordShare_0"');
+    expect(first.condition.sql).toContain('AS "recordShare_1"');
+    expect(Object.keys(first.condition.parameters)).toEqual(
+      expect.arrayContaining([
+        'recordSharePrincipalIds_0',
+        'recordSharePrincipalIds_1',
+      ]),
     );
   });
 

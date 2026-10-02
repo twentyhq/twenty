@@ -9,13 +9,14 @@ import { buildRecordShareExceptionCondition } from 'src/engine/core-modules/reco
 const OBJECT_METADATA_ID = 'object-metadata-1';
 const PRINCIPAL_IDS = ['principal-1', EVERYONE_PRINCIPAL_ID];
 
-const build = (accessLevels: RecordShareAccessLevel[]) =>
+const build = (accessLevels: RecordShareAccessLevel[], nameIndex = 0) =>
   buildRecordShareExceptionCondition({
     tableAlias: 'company',
     recordShareTableExpression: '"workspace_abc"."recordShare"',
     objectMetadataId: OBJECT_METADATA_ID,
     principalIds: PRINCIPAL_IDS,
     accessLevels,
+    nameIndex,
   });
 
 describe('buildRecordShareExceptionCondition', () => {
@@ -25,16 +26,8 @@ describe('buildRecordShareExceptionCondition', () => {
       RecordShareAccessLevel.FULL,
     ]);
 
-    const { text, values } = compileNamedParameters(sql, parameters);
-
-    expect({
-      text: text.replace(
-        /recordShare(Restriction|Grant)_[0-9a-f]{10}/g,
-        'recordShare$1',
-      ),
-      values,
-    }).toEqual({
-      text: 'NOT EXISTS (SELECT 1 FROM "workspace_abc"."recordShare" AS "recordShareRestriction" WHERE "recordShareRestriction"."recordId" = "company"."id" AND "recordShareRestriction"."objectMetadataId" = $1 AND "recordShareRestriction"."principalId" = $2 AND "recordShareRestriction"."accessLevel" IN ($3, $4) AND "recordShareRestriction"."deletedAt" IS NULL AND NOT EXISTS (SELECT 1 FROM "workspace_abc"."recordShare" AS "recordShareGrant" WHERE "recordShareGrant"."recordId" = "recordShareRestriction"."recordId" AND "recordShareGrant"."objectMetadataId" = $1 AND "recordShareGrant"."principalId" = ANY($5) AND "recordShareGrant"."accessLevel" IN ($6, $7) AND "recordShareGrant"."deletedAt" IS NULL))',
+    expect(compileNamedParameters(sql, parameters)).toEqual({
+      text: 'NOT EXISTS (SELECT 1 FROM "workspace_abc"."recordShare" AS "recordShareRestriction_0" WHERE "recordShareRestriction_0"."recordId" = "company"."id" AND "recordShareRestriction_0"."objectMetadataId" = $1 AND "recordShareRestriction_0"."principalId" = $2 AND "recordShareRestriction_0"."accessLevel" IN ($3, $4) AND "recordShareRestriction_0"."deletedAt" IS NULL AND NOT EXISTS (SELECT 1 FROM "workspace_abc"."recordShare" AS "recordShareGrant_0" WHERE "recordShareGrant_0"."recordId" = "recordShareRestriction_0"."recordId" AND "recordShareGrant_0"."objectMetadataId" = $1 AND "recordShareGrant_0"."principalId" = ANY($5) AND "recordShareGrant_0"."accessLevel" IN ($6, $7) AND "recordShareGrant_0"."deletedAt" IS NULL))',
       values: [
         OBJECT_METADATA_ID,
         EVERYONE_PRINCIPAL_ID,
@@ -54,6 +47,7 @@ describe('buildRecordShareExceptionCondition', () => {
       objectMetadataId: OBJECT_METADATA_ID,
       principalIds: PRINCIPAL_IDS,
       accessLevels: [RecordShareAccessLevel.FULL],
+      nameIndex: 0,
     });
 
     const aliases = [...sql.matchAll(/ AS "([^"]+)"/g)].map(([, alias]) =>
@@ -78,9 +72,19 @@ describe('buildRecordShareExceptionCondition', () => {
     expect(restrictedAccessLevels).toEqual([RecordShareAccessLevel.NONE]);
   });
 
-  it('should not reuse parameter names between two conditions', () => {
-    const first = Object.keys(build([RecordShareAccessLevel.FULL]).parameters);
-    const second = Object.keys(build([RecordShareAccessLevel.FULL]).parameters);
+  it('should render the same SQL for the same name index', () => {
+    expect(build([RecordShareAccessLevel.FULL], 2)).toEqual(
+      build([RecordShareAccessLevel.FULL], 2),
+    );
+  });
+
+  it('should not reuse parameter names between two name indexes', () => {
+    const first = Object.keys(
+      build([RecordShareAccessLevel.FULL], 0).parameters,
+    );
+    const second = Object.keys(
+      build([RecordShareAccessLevel.FULL], 1).parameters,
+    );
 
     expect(first.filter((name) => second.includes(name))).toEqual([]);
   });

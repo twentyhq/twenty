@@ -273,4 +273,28 @@ describe('WorkspaceSelectQueryBuilder joins', () => {
     expect(queryBuilder.markRowLevelPermissionApplied('person')).toBe(true);
     expect(queryBuilder.markRowLevelPermissionApplied('company')).toBe(false);
   });
+
+  it('should allocate row access name indexes from zero on a new builder', () => {
+    const { queryBuilder } = buildQueryBuilder();
+
+    expect(queryBuilder.allocateRowAccessNameIndex()).toBe(0);
+    expect(queryBuilder.allocateRowAccessNameIndex()).toBe(1);
+    expect(buildQueryBuilder().queryBuilder.allocateRowAccessNameIndex()).toBe(
+      0,
+    );
+  });
+
+  it('should not reallocate the row access name indexes of a clone or a copied WHERE', () => {
+    const { queryBuilder } = buildQueryBuilder();
+
+    queryBuilder.allocateRowAccessNameIndex();
+    queryBuilder.allocateRowAccessNameIndex();
+
+    expect(queryBuilder.clone().allocateRowAccessNameIndex()).toBe(2);
+    expect(
+      buildQueryBuilder()
+        .queryBuilder.copyWhereFrom(queryBuilder)
+        .allocateRowAccessNameIndex(),
+    ).toBe(2);
+  });
 });

@@ -97,6 +97,7 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
   private includeDeleted = false;
   private explicitSelection?: string[];
   private readonly aliasesWithRowLevelPermissionApplied = new Set<string>();
+  private rowAccessNameSequence = 0;
 
   constructor(alias: string, context: QueryBuilderContext) {
     this.alias = alias;
@@ -157,6 +158,8 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
       cloned.aliasesWithRowLevelPermissionApplied.add(alias);
     }
 
+    cloned.rowAccessNameSequence = this.rowAccessNameSequence;
+
     return cloned;
   }
 
@@ -179,6 +182,10 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
       })),
     );
     this.parameters = { ...this.parameters, ...source.parameters };
+    this.rowAccessNameSequence = Math.max(
+      this.rowAccessNameSequence,
+      source.rowAccessNameSequence,
+    );
 
     return this;
   }
@@ -713,6 +720,10 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
     this.aliasesWithRowLevelPermissionApplied.add(alias);
 
     return true;
+  }
+
+  allocateRowAccessNameIndex(): number {
+    return this.rowAccessNameSequence++;
   }
 
   getReferencedColumnNamesByAlias(): Record<string, string[]> {
