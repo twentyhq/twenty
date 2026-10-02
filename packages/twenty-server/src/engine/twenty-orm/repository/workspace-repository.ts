@@ -279,10 +279,6 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     }
   }
 
-  getInternalContext(): WorkspaceInternalContext {
-    return this.options.internalContext;
-  }
-
   get internalContext(): WorkspaceInternalContext {
     return this.options.internalContext;
   }
@@ -1916,7 +1912,6 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       objectIdByNameSingular:
         this.options.internalContext.objectIdByNameSingular,
       selectedColumns: columnsToReturn,
-      allFieldsSelected: false,
       updatedColumns,
       authContext: this.options.authContext,
       isRecordSharingEnabled: this.isRecordSharingEnabled,
@@ -2122,7 +2117,6 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
           this.options.internalContext.objectIdByNameSingular,
         isRecordSharingEnabled: this.isRecordSharingEnabled,
         selectedColumns: columnNames,
-        allFieldsSelected: false,
         updatedColumns: [],
       });
     }

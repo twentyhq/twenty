@@ -27,8 +27,8 @@ export class ViewAccessService {
     viewId: string | null,
     accessContext: ViewAccessContext,
   ): Promise<boolean> {
-    // If viewId is null, the entity doesn't exist - allow the operation
-    // so the service can handle the NOT_FOUND error properly
+    // A missing view or child entity is let through so the service throws
+    // its entity-specific NOT_FOUND error instead of a generic one
     if (!viewId) {
       return true;
     }
@@ -38,31 +38,6 @@ export class ViewAccessService {
       accessContext.workspaceId,
     );
 
-    // If view doesn't exist, allow through to service for proper error message
-    if (!view) {
-      return true;
-    }
-
-    return this.checkViewAccess(view, accessContext);
-  }
-
-  async canUserModifyViewByChildEntity(
-    viewId: string | null,
-    accessContext: ViewAccessContext,
-  ): Promise<boolean> {
-    // If viewId is null, the child entity doesn't exist
-    // Allow through so the service can throw the proper entity-specific error
-    // (e.g., "View field not found" instead of generic "View not found")
-    if (!viewId) {
-      return true;
-    }
-
-    const view = await this.viewService.findByIdIncludingDeleted(
-      viewId,
-      accessContext.workspaceId,
-    );
-
-    // If view doesn't exist, allow through to service for proper error message
     if (!view) {
       return true;
     }
