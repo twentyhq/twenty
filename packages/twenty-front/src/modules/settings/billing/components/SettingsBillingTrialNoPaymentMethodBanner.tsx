@@ -2,7 +2,7 @@ import { ToastOnQueryErrorEffect } from '@/apollo/components/ToastOnQueryErrorEf
 import { type CurrentWorkspace } from '@/auth/states/currentWorkspaceState';
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { getSubscriptionPlanKey } from '@/settings/billing/utils/getSubscriptionPlanKey';
-import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { SettingsPath } from 'twenty-shared/types';
@@ -26,8 +26,9 @@ export const SettingsBillingTrialNoPaymentMethodBanner = ({
 }: SettingsBillingTrialNoPaymentMethodBannerProps) => {
   const { redirect } = useRedirect();
 
-  const { [PermissionFlagType.BILLING]: hasPermissionToManageBilling } =
-    usePermissionFlagMap();
+  const hasPermissionToManageBilling = useHasPermissionFlag(
+    PermissionFlagType.BILLING,
+  );
 
   const { data, error } = useQuery(BillingPortalSessionDocument, {
     variables: {

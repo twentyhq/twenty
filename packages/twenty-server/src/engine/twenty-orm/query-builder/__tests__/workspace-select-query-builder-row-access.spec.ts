@@ -2,6 +2,7 @@ import {
   applyRowAccessCondition,
   buildQueryBuilder,
 } from 'src/engine/twenty-orm/query-builder/__tests__/workspace-select-query-builder-test-shapes.util';
+import { WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/query-builder/workspace-select-query-builder';
 
 const GUARDED_OR_CHAIN =
   '(("person"."id" = :a) OR ("person"."id" = :b)) AND ("person"."companyId" = :rowAccessCompanyId)';
@@ -59,11 +60,14 @@ describe('WorkspaceSelectQueryBuilder row access conditions', () => {
   it('should guard a mutation built from the select builder', () => {
     const { queryBuilder } = buildRowAccessQueryBuilder();
 
-    const mutationQueryBuilder = queryBuilder
-      .where('"person"."id" = :a', { a: 1 })
-      .orWhere('"person"."id" = :b', { b: 2 })
-      .applyRowLevelPermissions()
-      .delete();
+    const mutationQueryBuilder =
+      WorkspaceSelectQueryBuilder.toMutationQueryBuilder(
+        queryBuilder
+          .where('"person"."id" = :a', { a: 1 })
+          .orWhere('"person"."id" = :b', { b: 2 })
+          .applyRowLevelPermissions(),
+        'delete',
+      );
 
     expect(mutationQueryBuilder.getQuery()).toBe(
       `DELETE FROM "workspace_1wgvd1injqtife6y4rvfbu3h5"."person" AS "person" WHERE ${GUARDED_OR_CHAIN}`,
@@ -110,11 +114,14 @@ describe('WorkspaceSelectQueryBuilder row access conditions', () => {
   it('should keep the row access condition on a mutation built after where() replaces the WHERE', () => {
     const { queryBuilder } = buildRowAccessQueryBuilder();
 
-    const mutationQueryBuilder = queryBuilder
-      .applyRowLevelPermissions()
-      .where('"person"."id" = :a', { a: 1 })
-      .orWhere('"person"."id" = :b', { b: 2 })
-      .delete();
+    const mutationQueryBuilder =
+      WorkspaceSelectQueryBuilder.toMutationQueryBuilder(
+        queryBuilder
+          .applyRowLevelPermissions()
+          .where('"person"."id" = :a', { a: 1 })
+          .orWhere('"person"."id" = :b', { b: 2 }),
+        'delete',
+      );
 
     expect(mutationQueryBuilder.getQuery()).toBe(
       `DELETE FROM "workspace_1wgvd1injqtife6y4rvfbu3h5"."person" AS "person" WHERE ${GUARDED_OR_CHAIN}`,
