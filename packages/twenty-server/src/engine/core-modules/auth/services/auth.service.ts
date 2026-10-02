@@ -46,6 +46,7 @@ import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services
 import { SsoExchangeTokenService } from 'src/engine/core-modules/auth/token/services/sso-exchange-token.service';
 import { AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
+import { type WorkspaceLoginAccess } from 'src/engine/core-modules/auth/types/workspace-login-access.type';
 import {
   type AuthProviderWithPasswordType,
   type ExistingUserOrNewUser,
@@ -109,17 +110,17 @@ export class AuthService {
     private readonly userSessionService: UserSessionService,
   ) {}
 
-  private async findInvitationToJoinWorkspaceOrThrow(
+  private async getWorkspaceLoginAccessOrThrow(
     workspace: WorkspaceEntity,
     user: UserEntity,
-  ): Promise<AppTokenEntity | null> {
+  ): Promise<WorkspaceLoginAccess> {
     if (
       await this.userWorkspaceService.checkUserWorkspaceExists(
         user.id,
         workspace.id,
       )
     ) {
-      return null;
+      return { type: 'member' };
     }
 
     const invitation =
@@ -134,7 +135,7 @@ export class AuthService {
         email: user.email,
       });
 
-      return invitation;
+      return { type: 'invitation', roleId: invitation.context?.roleId };
     }
 
     throw new AuthException(
@@ -179,9 +180,9 @@ export class AuthService {
       }
     }
 
-    const invitationToJoinWorkspace = isDefined(targetWorkspace)
-      ? await this.findInvitationToJoinWorkspaceOrThrow(targetWorkspace, user)
-      : null;
+    const workspaceLoginAccess = isDefined(targetWorkspace)
+      ? await this.getWorkspaceLoginAccessOrThrow(targetWorkspace, user)
+      : undefined;
 
     if (!user.passwordHash) {
       throw new AuthException(
@@ -207,11 +208,14 @@ export class AuthService {
 
     await this.checkIsEmailVerified(user.isEmailVerified);
 
-    if (isDefined(targetWorkspace) && isDefined(invitationToJoinWorkspace)) {
+    if (
+      isDefined(targetWorkspace) &&
+      workspaceLoginAccess?.type === 'invitation'
+    ) {
       await this.userWorkspaceService.addUserToWorkspaceIfUserNotInWorkspace(
         user,
         targetWorkspace,
-        invitationToJoinWorkspace.context?.roleId,
+        workspaceLoginAccess.roleId,
       );
     }
 
