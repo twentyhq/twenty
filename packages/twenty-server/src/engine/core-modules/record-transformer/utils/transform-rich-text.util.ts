@@ -13,15 +13,24 @@ import { convertMarkdownToBlocknoteBlocks } from 'src/engine/core-modules/record
 // the cost of dynamic import resolution + instance creation (~90ms) on every transform.
 let serverBlockNoteEditorPromise: Promise<ServerBlockNoteEditor> | null = null;
 
+// SWC compiles import() to require() in CJS mode, which breaks ESM-only
+// transitive dependencies in @blocknote/core. Native import() resolves
+// the ESM bundle path where the full chain works.
+const nativeImport = new Function('specifier', 'return import(specifier)');
+
+const loadServerBlockNoteEditor = async (): Promise<ServerBlockNoteEditor> => {
+  const module = await nativeImport('@blocknote/server-util');
+
+  return module.ServerBlockNoteEditor.create();
+};
+
 const getServerBlockNoteEditor = (): Promise<ServerBlockNoteEditor> => {
-  if (!isDefined(serverBlockNoteEditorPromise)) {
-    serverBlockNoteEditorPromise = import('@blocknote/server-util')
-      .then(({ ServerBlockNoteEditor }) => ServerBlockNoteEditor.create())
-      .catch((error) => {
-        serverBlockNoteEditorPromise = null;
-        throw error;
-      });
-  }
+  serverBlockNoteEditorPromise ??= loadServerBlockNoteEditor().catch(
+    (error: unknown) => {
+      serverBlockNoteEditorPromise = null;
+      throw error;
+    },
+  );
 
   return serverBlockNoteEditorPromise;
 };
