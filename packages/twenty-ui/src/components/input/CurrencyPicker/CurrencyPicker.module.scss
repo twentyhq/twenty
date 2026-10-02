@@ -1,0 +1,47 @@
+.trigger {
+  align-items: center;
+  appearance: none;
+  background: transparent;
+  border: 0;
+  border-inline-end: 1px solid var(--t-border-color-medium);
+  border-radius: 0;
+  box-sizing: border-box;
+  color: var(--t-font-color-tertiary);
+  cursor: pointer;
+  display: inline-flex;
+  flex-shrink: 0;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: var(--t-font-weight-medium);
+  gap: var(--t-spacing-1);
+  block-size: 32px;
+  justify-content: center;
+  padding-block: 0;
+  padding-inline: var(--t-spacing-2);
+  user-select: none;
+
+  &:hover:not([data-disabled]) {
+    background: var(--t-background-transparent-light);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--t-color-blue);
+    outline-offset: -2px;
+  }
+
+  &[data-disabled] {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+}
+
+.chevron {
+  block-size: calc(var(--t-icon-size-sm) * 1px);
+  inline-size: calc(var(--t-icon-size-sm) * 1px);
+}
+
+.options {
+  display: flex;
+  flex-direction: column;
+  min-inline-size: 0;
+}
