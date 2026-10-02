@@ -255,16 +255,6 @@ export class ObjectMetadataService {
       },
     );
 
-    if (
-      updateObjectInputs.some(({ update }) =>
-        isDefined(update.labelIdentifierFieldMetadataId),
-      )
-    ) {
-      await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
-        'rolesPermissions',
-      ]);
-    }
-
     if (updateObjectInputs.some(({ update }) => isDefined(update.isActive))) {
       await this.flatEntityMapsCacheService.invalidateFlatEntityMaps({
         workspaceId,

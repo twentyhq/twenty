@@ -311,10 +311,6 @@ export class FieldPermissionService {
       );
     }
 
-    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
-      'rolesPermissions',
-    ]);
-
     const freshFlatFieldPermissionMaps: FlatFieldPermissionMaps = (
       (await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatFieldPermissionMaps',
