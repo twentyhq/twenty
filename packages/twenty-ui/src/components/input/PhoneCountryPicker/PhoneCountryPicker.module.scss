@@ -1,0 +1,58 @@
+.trigger {
+  @include focus-ring;
+
+  align-items: center;
+  background: none;
+  block-size: var(--t-spacing-8);
+  border: 0;
+  border-end-start-radius: var(--t-border-radius-xs);
+  border-inline-end: 1px solid var(--t-border-color-medium);
+  border-start-start-radius: var(--t-border-radius-xs);
+  color: var(--t-font-color-tertiary);
+  cursor: pointer;
+  display: inline-flex;
+  flex-shrink: 0;
+  gap: var(--t-spacing-0_5);
+  padding-block: 0;
+  padding-inline: var(--t-spacing-2) var(--t-spacing-1);
+  user-select: none;
+
+  &:disabled,
+  &[aria-disabled='true'] {
+    cursor: not-allowed;
+  }
+
+  &:not(:disabled, [aria-disabled='true']) {
+    @include hover-capable {
+      &:hover {
+        background: var(--t-background-transparent-light);
+      }
+    }
+  }
+}
+
+.triggerFlag,
+.optionFlag {
+  align-items: center;
+  color: var(--t-font-color-tertiary);
+  display: inline-flex;
+  justify-content: center;
+
+  svg {
+    block-size: 12px;
+    border-radius: var(--t-border-radius-xs);
+  }
+}
+
+.triggerFlag svg {
+  inline-size: 16px;
+}
+
+.optionFlag {
+  padding-inline-end: var(--t-spacing-1);
+}
+
+.chevron {
+  block-size: 14px;
+  inline-size: 14px;
+}

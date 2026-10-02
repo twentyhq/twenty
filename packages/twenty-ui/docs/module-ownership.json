@@ -66,6 +66,7 @@
     "MetricRow",
     "NotificationCounter",
     "OverflowingList",
+    "PhoneCountryPicker",
     "SearchInput",
     "Section",
     "SettingsRow",
