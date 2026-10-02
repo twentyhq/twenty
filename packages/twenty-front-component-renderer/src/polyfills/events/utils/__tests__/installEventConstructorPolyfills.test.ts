@@ -189,6 +189,23 @@ describe('installEventConstructorPolyfills', () => {
     expect(new InputEventImplementation('input').data).toBeNull();
   });
 
+  it('should keep the data transfer passed to the input event constructor', () => {
+    const { globalScope } = createInstalledScope();
+    const InputEventImplementation = readEventClass<
+      new (
+        type: string,
+        eventInit: { dataTransfer: object },
+      ) => { dataTransfer: unknown }
+    >(globalScope, 'InputEvent');
+    const dataTransfer = {};
+
+    const inputEvent = new InputEventImplementation('beforeinput', {
+      dataTransfer,
+    });
+
+    expect(inputEvent.dataTransfer).toBe(dataTransfer);
+  });
+
   it('should expose wheel event deltas and delta mode constants', () => {
     const { globalScope } = createInstalledScope();
     const WheelEventImplementation = readEventClass<typeof WheelEvent>(
