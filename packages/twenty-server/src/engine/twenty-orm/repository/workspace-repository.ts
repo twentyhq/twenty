@@ -2360,8 +2360,11 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
         });
       }
 
+      const idQueryBuilder = this.createQueryBuilder(tableAlias).select(['id']);
+
       this.validateQueryIsPermitted(
-        this.createQueryBuilder(tableAlias).select(['id']),
+        idQueryBuilder,
+        idQueryBuilder.getReferencedColumnNamesByAlias(),
       );
 
       const policy = this.buildRowAccessPolicyForAlias({
