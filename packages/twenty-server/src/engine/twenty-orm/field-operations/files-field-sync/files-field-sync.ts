@@ -123,8 +123,9 @@ export class FilesFieldSync {
     updatePayload: Record<string, unknown>,
     objectMetadataId: string,
   ): boolean {
-    return this.getFilesFields(objectMetadataId).some((filesField) =>
-      isDefined(updatePayload[filesField.name]),
+    return this.isPayloadTouchingFilesFields(
+      updatePayload,
+      this.getFilesFields(objectMetadataId),
     );
   }
 
@@ -138,16 +139,16 @@ export class FilesFieldSync {
       this.internalContext,
     );
 
+    const filesFields = this.getFilesFields(objectMetadata.id);
+
     if (
-      !this.isUpdatingFilesField(
+      !this.isPayloadTouchingFilesFields(
         updatePayload as Record<string, unknown>,
-        objectMetadata.id,
+        filesFields,
       )
     ) {
       return null;
     }
-
-    const filesFields = this.getFilesFields(objectMetadata.id);
 
     if (existingRecords.length !== 1) {
       throw new TwentyOrmException(
@@ -639,6 +640,15 @@ export class FilesFieldSync {
 
       return updatedEntity;
     });
+  }
+
+  private isPayloadTouchingFilesFields(
+    updatePayload: Record<string, unknown>,
+    filesFields: OrmFlatFieldMetadata[],
+  ): boolean {
+    return filesFields.some((filesField) =>
+      isDefined(updatePayload[filesField.name]),
+    );
   }
 
   private getFilesFields(objectMetadataId: string): OrmFlatFieldMetadata[] {
