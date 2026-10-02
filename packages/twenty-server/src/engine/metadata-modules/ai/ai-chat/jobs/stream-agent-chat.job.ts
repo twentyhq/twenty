@@ -808,6 +808,14 @@ export class StreamAgentChatJob {
     turnModelId: string;
     turnId: string;
   }): Promise<AgentChatTurnOutcome | null> {
+    const replyText =
+      responseMessage.parts
+        .flatMap((part) =>
+          part.type === 'text' && isNonEmptyString(part.text.trim())
+            ? [part.text]
+            : [],
+        )
+        .pop() ?? null;
     const hasText = responseMessage.parts.some(
       (part) => part.type === 'text' && isNonEmptyString(part.text),
     );
@@ -868,8 +876,9 @@ export class StreamAgentChatJob {
       workspaceId,
       threadId,
       streamId,
-      shouldRecordActivity:
-        await this.sharingService.hasInboxState(workspaceId),
+      recordedActivity: (await this.sharingService.hasInboxState(workspaceId))
+        ? { lastMessageText: replyText }
+        : null,
       usage: {
         totalInputTokens: streamUsage.inputTokens,
         totalOutputTokens: streamUsage.outputTokens,
@@ -887,7 +896,7 @@ export class StreamAgentChatJob {
       // The reply is saved even though a newer stream owns the thread. That
       // activity is best-effort and must not turn the saved reply into an error
       await this.agentChatService
-        .recordThreadActivity({ workspaceId, threadId })
+        .recordThreadActivity({ workspaceId, threadId, text: replyText })
         .catch((error: unknown) =>
           this.logger.warn(
             `Could not record reply activity on thread ${threadId}: ${error instanceof Error ? error.message : String(error)}`,

@@ -1,8 +1,7 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { type ReactNode, useMemo, useRef } from 'react';
+import { type ReactNode, useRef } from 'react';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 import {
   Dropdown,
   LightIconButton,
@@ -18,7 +17,6 @@ import {
 } from 'twenty-ui/icon';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
-import { AgentChatThreadPreviewsEffect } from '@/ai/components/AgentChatThreadPreviewsEffect';
 import { AiChatThreadLinkedRecordsPage } from '@/ai/components/AiChatThreadLinkedRecordsPage';
 import { useAgentChatThreadMembers } from '@/ai/hooks/useAgentChatThreadMembers';
 import { useAiChatThreadLinkedRecords } from '@/ai/hooks/useAiChatThreadLinkedRecords';
@@ -159,21 +157,11 @@ export const AiChatThreadDetailsDropdown = ({
     agentChatThreadRecordFamilySelector,
     threadId,
   );
-  const followers = useAgentChatThreadMembers({
-    threadId,
-    ownerWorkspaceMemberId: thread?.workspaceMemberId,
-  });
+  const followers = useAgentChatThreadMembers(thread);
   const { closeDropdown } = useCloseDropdown();
   const isAiChatArtifactSurface = useIsAiChatArtifactSurface();
   const { openRecordTarget } = useChatTargetNavigation();
   const dropdownContentRef = useRef<HTMLDivElement>(null);
-  const previewThreads = useMemo(
-    () =>
-      isDefined(thread)
-        ? [{ id: threadId, lastActivityAt: thread.lastActivityAt }]
-        : [],
-    [thread, threadId],
-  );
 
   return (
     <DropdownRoot
@@ -201,7 +189,6 @@ export const AiChatThreadDetailsDropdown = ({
         width={GenericDropdownContentWidth.ExtraLarge}
         aria-label={t`Chat details`}
       >
-        <AgentChatThreadPreviewsEffect threads={previewThreads} />
         <Dropdown.Page id={AI_CHAT_THREAD_DETAILS_PAGE.DETAILS} type="panel">
           <StyledDetails>
             {areLinkedRecordsAvailable && (

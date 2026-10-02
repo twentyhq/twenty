@@ -25,6 +25,8 @@ const RUN_ON_WORKSPACE_ARGS = {
 const SCHEMA = getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID);
 
 const CREATED_AT = new Date('2026-01-01T00:00:00.000Z');
+const LEGACY_USER_MESSAGE_AT = new Date('2026-01-01T10:00:00.000Z');
+const MEMBER_MESSAGE_AT = new Date('2026-01-01T11:00:00.000Z');
 const LAST_VISIBLE_MESSAGE_AT = new Date('2026-01-02T00:00:00.000Z');
 const HIDDEN_MESSAGE_AT = new Date('2026-01-03T00:00:00.000Z');
 const ARCHIVED_AT = new Date('2026-01-05T00:00:00.000Z');
@@ -93,23 +95,50 @@ describe('2-45 workspace commands - agent chat thread inbox state (integration)'
       ],
     );
 
-  const insertMessage = (
+  const insertMessage = async (
     threadId: string,
-    { createdAt, isHidden }: { createdAt: Date; isHidden: boolean },
-  ) =>
-    global.testDataSource.query(
-      `INSERT INTO ${SCHEMA}."agentMessage" ("threadId", role, status, "isHidden", "createdAt")
-       VALUES ($1, 'assistant', 'sent', $2, $3)`,
-      [threadId, isHidden, createdAt],
+    {
+      createdAt,
+      isHidden,
+      role = 'assistant',
+      text,
+      senderWorkspaceMemberId = null,
+    }: {
+      createdAt: Date;
+      isHidden: boolean;
+      role?: 'user' | 'assistant';
+      text?: string;
+      senderWorkspaceMemberId?: string | null;
+    },
+  ) => {
+    const messageId = randomUUID();
+
+    await global.testDataSource.query(
+      `INSERT INTO ${SCHEMA}."agentMessage" (id, "threadId", role, status, "isHidden", "createdAt", "senderWorkspaceMemberId")
+       VALUES ($1, $2, $3, 'sent', $4, $5, $6)`,
+      [messageId, threadId, role, isHidden, createdAt, senderWorkspaceMemberId],
     );
+
+    if (text !== undefined) {
+      await global.testDataSource.query(
+        `INSERT INTO ${SCHEMA}."agentMessagePart" ("messageId", "orderIndex", type, "textContent")
+         VALUES ($1, 0, 'text', $2)`,
+        [messageId, text],
+      );
+    }
+  };
 
   const readThreads = async () => {
     const rows: {
       id: string;
       lastActivityAt: Date | null;
       deletedAt: Date | null;
+      lastMessageText: string | null;
+      lastMessageSenderWorkspaceMemberId: string | null;
+      writerWorkspaceMemberIds: string[] | null;
     }[] = await global.testDataSource.query(
-      `SELECT id, "lastActivityAt", "deletedAt" FROM ${SCHEMA}."agentChatThread" WHERE id = ANY($1)`,
+      `SELECT id, "lastActivityAt", "deletedAt", "lastMessageText", "lastMessageSenderWorkspaceMemberId", "writerWorkspaceMemberIds"
+       FROM ${SCHEMA}."agentChatThread" WHERE id = ANY($1)`,
       [threadIds],
     );
 
@@ -156,6 +185,7 @@ describe('2-45 workspace commands - agent chat thread inbox state (integration)'
       workspaceId: SEED_APPLE_WORKSPACE_ID,
       workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
       threadId: createdBeforeUpgradeThreadId,
+      text: 'Sent before the upgrade',
     });
 
     beforeUpgrade = {
@@ -185,13 +215,32 @@ describe('2-45 workspace commands - agent chat thread inbox state (integration)'
       [MOVE_MIGRATION_NAME, SEED_APPLE_WORKSPACE_ID, MOVE_RECORDED_AT],
     );
 
+    // A user message without a sender predates multiplayer chats and was
+    // the owner's
+    await insertMessage(sharedThreadId, {
+      createdAt: LEGACY_USER_MESSAGE_AT,
+      isHidden: false,
+      role: 'user',
+      text: 'An older message without a sender',
+    });
+    await insertMessage(sharedThreadId, {
+      createdAt: MEMBER_MESSAGE_AT,
+      isHidden: false,
+      role: 'user',
+      text: 'Can you check the Stripe renewal?',
+      senderWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
+    });
     await insertMessage(sharedThreadId, {
       createdAt: LAST_VISIBLE_MESSAGE_AT,
       isHidden: false,
+      text: 'The renewal is due next week.',
     });
     await insertMessage(sharedThreadId, {
       createdAt: HIDDEN_MESSAGE_AT,
       isHidden: true,
+      role: 'user',
+      text: 'A hidden message',
+      senderWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
     });
     await insertMessage(legacyArchivedThreadId, {
       createdAt: LAST_VISIBLE_MESSAGE_AT,
@@ -268,6 +317,27 @@ describe('2-45 workspace commands - agent chat thread inbox state (integration)'
       LAST_VISIBLE_MESSAGE_AT,
     );
     expect(threads[emptyThreadId].lastActivityAt).toEqual(CREATED_AT);
+  });
+
+  it('keeps the last visible message and who wrote in each thread', async () => {
+    const threads = await readThreads();
+
+    expect(threads[sharedThreadId]).toMatchObject({
+      lastMessageText: 'The renewal is due next week.',
+      lastMessageSenderWorkspaceMemberId: null,
+    });
+    expect(
+      [...threads[sharedThreadId].writerWorkspaceMemberIds!].sort(),
+    ).toEqual(
+      [
+        WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+        WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
+      ].sort(),
+    );
+    expect(threads[emptyThreadId]).toMatchObject({
+      lastMessageText: null,
+      writerWorkspaceMemberIds: null,
+    });
   });
 
   it('starts every member who could read a thread with it read', async () => {

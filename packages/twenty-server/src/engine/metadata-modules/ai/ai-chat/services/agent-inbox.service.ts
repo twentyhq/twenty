@@ -120,7 +120,11 @@ export class AgentInboxService {
     );
 
     if (isWritten) {
-      await this.threadService.recordThreadActivity({ workspaceId, threadId });
+      await this.threadService.recordThreadActivity({
+        workspaceId,
+        threadId,
+        text: input.text,
+      });
     }
 
     return { threadId };

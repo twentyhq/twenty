@@ -2,7 +2,7 @@ import { t } from '@lingui/core/macro';
 import { isString } from '@sniptt/guards';
 import { isDefined, isNonEmptyString } from 'twenty-shared/utils';
 
-import { type AgentChatThreadPreview } from '~/generated-metadata/graphql';
+import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { getChatReferenceSegments } from '@/ai/utils/getChatReferenceSegments';
 import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPartialMembers';
 import { stripMarkdown } from '~/utils/string/stripMarkdown';
@@ -10,17 +10,20 @@ import { stripMarkdown } from '~/utils/string/stripMarkdown';
 // Members' messages carry who wrote them; agent replies read as plain text,
 // as they do in the chat itself
 export const getAgentChatThreadPreviewText = ({
-  preview,
+  thread,
   workspaceMembers,
   currentWorkspaceMemberId,
 }: {
-  preview: AgentChatThreadPreview | null;
+  thread: Pick<
+    AgentChatThreadRecord,
+    'lastMessageText' | 'lastMessageSenderWorkspaceMemberId'
+  >;
   workspaceMembers: PartialWorkspaceMember[];
   currentWorkspaceMemberId: string | undefined;
 }): string | null => {
   // The server cuts the text short, which can leave half a reference at the end
   const text = stripMarkdown(
-    getChatReferenceSegments(preview?.lastMessageText ?? '')
+    getChatReferenceSegments(thread.lastMessageText ?? '')
       .map((segment) => (isString(segment) ? segment : segment.displayName))
       .join('')
       .replace(/\[\[[^\]]*$/, ''),
@@ -30,7 +33,7 @@ export const getAgentChatThreadPreviewText = ({
     return null;
   }
 
-  const senderId = preview?.lastMessageSenderWorkspaceMemberId;
+  const senderId = thread.lastMessageSenderWorkspaceMemberId;
 
   if (!isDefined(senderId)) {
     return text;

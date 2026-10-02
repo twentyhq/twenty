@@ -16,10 +16,6 @@ jest.mock('@/side-panel/hooks/useOpenRecordInSidePanel', () => ({
   useOpenRecordInSidePanel: () => ({ openRecordInSidePanel }),
 }));
 
-jest.mock('@/ai/components/AgentChatThreadPreviewsEffect', () => ({
-  AgentChatThreadPreviewsEffect: () => null,
-}));
-
 jest.mock('@/ai/components/AiChatThreadActionsDropdown', () => ({
   AiChatThreadActionsDropdown: () => null,
 }));

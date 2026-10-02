@@ -25,6 +25,9 @@ export class AgentChatThreadWorkspaceEntity extends BaseWorkspaceEntity {
   workflowRunId: string | null;
   title: string | null;
   lastActivityAt: string | null;
+  lastMessageText: string | null;
+  lastMessageSenderWorkspaceMemberId: string | null;
+  writerWorkspaceMemberIds: string[] | null;
   totalInputTokens: number;
   totalOutputTokens: number;
   contextWindowTokens: number | null;

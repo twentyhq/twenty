@@ -3089,15 +3089,6 @@ export interface AgentChatThreadParticipant {
     __typename: 'AgentChatThreadParticipant'
 }
 
-export interface AgentChatThreadPreview {
-    threadId: Scalars['UUID']
-    lastMessageRole?: Scalars['String']
-    lastMessageText?: Scalars['String']
-    lastMessageSenderWorkspaceMemberId?: Scalars['UUID']
-    memberIds: Scalars['UUID'][]
-    __typename: 'AgentChatThreadPreview'
-}
-
 export interface AgentChatEvent {
     threadId: Scalars['String']
     event: Scalars['JSON']
@@ -3488,7 +3479,6 @@ export interface Query {
     chatStreamCatchupChunks: ChatStreamCatchupChunks
     getAiSystemPromptPreview: AiSystemPromptPreview
     myAgentChatThreadParticipants: AgentChatThreadParticipant[]
-    agentChatThreadPreviews: AgentChatThreadPreview[]
     skills: Skill[]
     skill?: Skill
     agentTurns: AgentTurn[]
@@ -7044,16 +7034,6 @@ export interface AgentChatThreadParticipantGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface AgentChatThreadPreviewGenqlSelection{
-    threadId?: boolean | number
-    lastMessageRole?: boolean | number
-    lastMessageText?: boolean | number
-    lastMessageSenderWorkspaceMemberId?: boolean | number
-    memberIds?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
 export interface AgentChatEventGenqlSelection{
     threadId?: boolean | number
     event?: boolean | number
@@ -7462,7 +7442,6 @@ export interface QueryGenqlSelection{
     chatStreamCatchupChunks?: (ChatStreamCatchupChunksGenqlSelection & { __args: {threadId: Scalars['UUID']} })
     getAiSystemPromptPreview?: AiSystemPromptPreviewGenqlSelection
     myAgentChatThreadParticipants?: AgentChatThreadParticipantGenqlSelection
-    agentChatThreadPreviews?: (AgentChatThreadPreviewGenqlSelection & { __args: {threadIds: Scalars['UUID'][]} })
     skills?: SkillGenqlSelection
     skill?: (SkillGenqlSelection & { __args: {id: Scalars['UUID']} })
     agentTurns?: (AgentTurnGenqlSelection & { __args: {agentId: Scalars['UUID']} })
@@ -10562,14 +10541,6 @@ export interface CreateRecordExportInput {objectMetadataId: Scalars['UUID'],fiel
     export const isAgentChatThreadParticipant = (obj?: { __typename?: any } | null): obj is AgentChatThreadParticipant => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isAgentChatThreadParticipant"')
       return AgentChatThreadParticipant_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const AgentChatThreadPreview_possibleTypes: string[] = ['AgentChatThreadPreview']
-    export const isAgentChatThreadPreview = (obj?: { __typename?: any } | null): obj is AgentChatThreadPreview => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isAgentChatThreadPreview"')
-      return AgentChatThreadPreview_possibleTypes.includes(obj.__typename)
     }
     
 

@@ -245,6 +245,7 @@ export class ToolCallAnswerService {
             threadId,
             workspaceMemberId: args.workspaceMemberId,
             workspaceId,
+            text: answerText,
           })
           .catch((error: unknown) =>
             this.logger.warn(

@@ -30,6 +30,9 @@ const CHAT_THREADS_FOR_RECORD_GQL_FIELDS = {
     deletedAt: true,
     updatedAt: true,
     lastActivityAt: true,
+    lastMessageText: true,
+    lastMessageSenderWorkspaceMemberId: true,
+    writerWorkspaceMemberIds: true,
     workspaceMemberId: true,
   },
 };

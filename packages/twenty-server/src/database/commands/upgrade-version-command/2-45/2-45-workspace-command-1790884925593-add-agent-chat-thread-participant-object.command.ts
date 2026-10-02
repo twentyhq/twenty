@@ -24,6 +24,11 @@ const PARTICIPANT_OBJECT_UNIVERSAL_IDENTIFIER =
 const EXISTING_OBJECT_FIELD_UNIVERSAL_IDENTIFIERS = [
   STANDARD_OBJECTS.agentChatThread.fields.participants.universalIdentifier,
   STANDARD_OBJECTS.agentChatThread.fields.lastActivityAt.universalIdentifier,
+  STANDARD_OBJECTS.agentChatThread.fields.lastMessageText.universalIdentifier,
+  STANDARD_OBJECTS.agentChatThread.fields.lastMessageSenderWorkspaceMemberId
+    .universalIdentifier,
+  STANDARD_OBJECTS.agentChatThread.fields.writerWorkspaceMemberIds
+    .universalIdentifier,
   STANDARD_OBJECTS.workspaceMember.fields.agentChatThreadParticipants
     .universalIdentifier,
 ];
@@ -32,7 +37,7 @@ const EXISTING_OBJECT_FIELD_UNIVERSAL_IDENTIFIERS = [
 @Command({
   name: 'upgrade:2-45:add-agent-chat-thread-participant-object',
   description:
-    'Create the agentChatThreadParticipant object and the last activity of chat threads',
+    'Create the agentChatThreadParticipant object and the last activity and message of chat threads',
 })
 export class AddAgentChatThreadParticipantObjectCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(

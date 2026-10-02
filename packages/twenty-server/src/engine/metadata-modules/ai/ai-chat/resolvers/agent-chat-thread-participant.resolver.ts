@@ -12,7 +12,6 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { AgentChatThreadParticipantDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-thread-participant.dto';
-import { AgentChatThreadPreviewDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-thread-preview.dto';
 import { AgentChatThreadParticipantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant.service';
 import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai/interceptors/ai-graphql-api-exception.interceptor';
 
@@ -46,19 +45,6 @@ export class AgentChatThreadParticipantResolver {
     return this.participantService.findForWorkspaceMember({
       workspaceId,
       workspaceMemberId,
-    });
-  }
-
-  @Query(() => [AgentChatThreadPreviewDTO])
-  async agentChatThreadPreviews(
-    @Args('threadIds', { type: () => [UUIDScalarType] }) threadIds: string[],
-    @AuthWorkspaceMemberId() workspaceMemberId: string,
-    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ): Promise<AgentChatThreadPreviewDTO[]> {
-    return this.participantService.findPreviewsForThreads({
-      workspaceId,
-      workspaceMemberId,
-      threadIds,
     });
   }
 

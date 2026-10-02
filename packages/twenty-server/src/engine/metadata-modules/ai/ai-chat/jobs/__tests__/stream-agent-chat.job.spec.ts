@@ -979,6 +979,7 @@ describe('StreamAgentChatJob', () => {
     expect(agentChatService.recordThreadActivity).toHaveBeenCalledWith({
       workspaceId: jobData.workspaceId,
       threadId: jobData.threadId,
+      text: 'Hello',
     });
     expect(turnCounts('ai-chat/turn-cancelled')).toEqual([
       expect.objectContaining({
@@ -1002,6 +1003,7 @@ describe('StreamAgentChatJob', () => {
     expect(agentChatService.recordThreadActivity).toHaveBeenCalledWith({
       workspaceId: jobData.workspaceId,
       threadId: jobData.threadId,
+      text: 'Hello',
     });
 
     expect(turnCounts('ai-chat/turn-cancelled')).toEqual([

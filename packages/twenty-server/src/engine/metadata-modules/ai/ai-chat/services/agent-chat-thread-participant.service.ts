@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
+import { AGENT_CHAT_THREAD_LAST_MESSAGE_TEXT_MAX_LENGTH } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-thread-last-message-text-max-length.constant';
 import { type AgentChatThreadParticipantDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-thread-participant.dto';
-import { type AgentChatThreadPreviewDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-thread-preview.dto';
 import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
 import { getAgentChatThreadParticipantTable } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-agent-chat-thread-participant-table.util';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
@@ -20,12 +20,19 @@ type ParticipantArgs = {
   threadId: string;
 };
 
-type ThreadActivityTimestamps = {
+export type AgentChatThreadActivity = {
   lastActivityAt: Date | null;
   updatedAt: Date;
-};
+} & Partial<
+  Pick<
+    AgentChatThreadWorkspaceEntity,
+    | 'lastMessageText'
+    | 'lastMessageSenderWorkspaceMemberId'
+    | 'writerWorkspaceMemberIds'
+  >
+>;
 
-const PREVIEW_TEXT_MAX_LENGTH = 280;
+const THREAD_ACTIVITY_COLUMNS = `"lastActivityAt", "updatedAt", "lastMessageText", "lastMessageSenderWorkspaceMemberId", "writerWorkspaceMemberIds"`;
 
 const PARTICIPANT_COLUMNS = `"threadId", "lastReadAt", "archivedAt", "snoozedUntil"`;
 
@@ -69,74 +76,6 @@ export class AgentChatThreadParticipantService {
     );
 
     return rows.filter(({ threadId }) => readableThreadIds.has(threadId));
-  }
-
-  // A user message without a sender predates multiplayer chats, when every
-  // user message was the owner's
-  async findPreviewsForThreads({
-    workspaceId,
-    workspaceMemberId,
-    threadIds,
-  }: {
-    workspaceId: string;
-    workspaceMemberId: string;
-    threadIds: string[];
-  }): Promise<AgentChatThreadPreviewDTO[]> {
-    const readableThreadIds = await this.sharingService.findReadableThreadIds({
-      workspaceId,
-      workspaceMemberId,
-      threadIds,
-    });
-
-    if (readableThreadIds.length === 0) {
-      return [];
-    }
-
-    return this.threadRepository.query(workspaceId, ({ manager, table }) =>
-      manager.query<AgentChatThreadPreviewDTO[]>(
-        `SELECT thread.id AS "threadId",
-           last_message.role AS "lastMessageRole",
-           left(last_text."textContent", $2) AS "lastMessageText",
-           last_message."senderWorkspaceMemberId" AS "lastMessageSenderWorkspaceMemberId",
-           COALESCE(member."memberIds", ARRAY[]::uuid[]) AS "memberIds"
-         FROM ${table('agentChatThread')} thread
-         LEFT JOIN LATERAL (
-           SELECT message.id, message.role,
-             CASE WHEN message.role = 'user'
-               THEN COALESCE(message."senderWorkspaceMemberId", thread."workspaceMemberId")
-             END AS "senderWorkspaceMemberId"
-           FROM ${table('agentMessage')} message
-           WHERE message."threadId" = thread.id
-             AND message."deletedAt" IS NULL
-             AND message."isHidden" = false
-             AND message.role IN ('user', 'assistant')
-           ORDER BY message."createdAt" DESC, message.id DESC
-           LIMIT 1
-         ) last_message ON true
-         LEFT JOIN LATERAL (
-           SELECT part."textContent"
-           FROM ${table('agentMessagePart')} part
-           WHERE part."messageId" = last_message.id
-             AND part.type = 'text'
-             AND btrim(coalesce(part."textContent", '')) <> ''
-           ORDER BY part."orderIndex" DESC
-           LIMIT 1
-         ) last_text ON true
-         LEFT JOIN LATERAL (
-           SELECT array_remove(
-             array_agg(DISTINCT COALESCE(message."senderWorkspaceMemberId", thread."workspaceMemberId")),
-             NULL
-           ) AS "memberIds"
-           FROM ${table('agentMessage')} message
-           WHERE message."threadId" = thread.id
-             AND message."deletedAt" IS NULL
-             AND message."isHidden" = false
-             AND message.role = 'user'
-         ) member ON true
-         WHERE thread.id = ANY($1)`,
-        [readableThreadIds, PREVIEW_TEXT_MAX_LENGTH],
-      ),
-    );
   }
 
   async markAsRead(
@@ -212,7 +151,8 @@ export class AgentChatThreadParticipantService {
     workspaceId,
     workspaceMemberId,
     threadId,
-  }: ParticipantArgs): Promise<ThreadActivityTimestamps> {
+    text,
+  }: ParticipantArgs & { text: string }): Promise<AgentChatThreadActivity> {
     if (!(await this.sharingService.hasInboxState(workspaceId))) {
       const activity = await this.touchThread({ workspaceId, threadId });
 
@@ -231,12 +171,18 @@ export class AgentChatThreadParticipantService {
     const rows = await this.threadRepository.query(
       workspaceId,
       ({ manager, table }) =>
-        manager.query<ThreadActivityTimestamps[]>(
+        manager.query<AgentChatThreadActivity[]>(
           `WITH thread AS (
              UPDATE ${table('agentChatThread')}
-             SET "lastActivityAt" = clock_timestamp(), "updatedAt" = now()
+             SET "lastActivityAt" = clock_timestamp(), "updatedAt" = now(),
+               "lastMessageText" = left(NULLIF(btrim($3), ''), ${AGENT_CHAT_THREAD_LAST_MESSAGE_TEXT_MAX_LENGTH}),
+               "lastMessageSenderWorkspaceMemberId" = $2::uuid,
+               "writerWorkspaceMemberIds" = CASE
+                 WHEN $2::uuid::text = ANY(COALESCE("writerWorkspaceMemberIds", '{}')) THEN "writerWorkspaceMemberIds"
+                 ELSE array_append(COALESCE("writerWorkspaceMemberIds", '{}'), $2::uuid::text)
+               END
              WHERE id = $1
-             RETURNING id, "lastActivityAt", "updatedAt"
+             RETURNING id, ${THREAD_ACTIVITY_COLUMNS}
            ), participant AS (
              INSERT INTO ${participantTable} AS participant ("threadId", "workspaceMemberId", "lastReadAt")
              SELECT thread.id, $2, thread."lastActivityAt" FROM thread
@@ -246,8 +192,8 @@ export class AgentChatThreadParticipantService {
                "snoozedUntil" = NULL,
                "updatedAt" = now()
            )
-           SELECT "lastActivityAt", "updatedAt" FROM thread`,
-          [threadId, workspaceMemberId],
+           SELECT ${THREAD_ACTIVITY_COLUMNS} FROM thread`,
+          [threadId, workspaceMemberId, text],
         ),
     );
 
@@ -264,10 +210,10 @@ export class AgentChatThreadParticipantService {
   async recordThreadActivity({
     workspaceId,
     threadId,
-  }: Omit<
-    ParticipantArgs,
-    'workspaceMemberId'
-  >): Promise<ThreadActivityTimestamps | null> {
+    text,
+  }: Omit<ParticipantArgs, 'workspaceMemberId'> & {
+    text: string | null;
+  }): Promise<AgentChatThreadActivity | null> {
     if (!(await this.sharingService.hasInboxState(workspaceId))) {
       return this.touchThread({ workspaceId, threadId });
     }
@@ -275,15 +221,17 @@ export class AgentChatThreadParticipantService {
     const rows = await this.threadRepository.query(
       workspaceId,
       ({ manager, table }) =>
-        manager.query<ThreadActivityTimestamps[]>(
+        manager.query<AgentChatThreadActivity[]>(
           `WITH thread AS (
              UPDATE ${table('agentChatThread')}
-             SET "lastActivityAt" = clock_timestamp(), "updatedAt" = now()
+             SET "lastActivityAt" = clock_timestamp(), "updatedAt" = now(),
+               "lastMessageText" = left(NULLIF(btrim($2), ''), ${AGENT_CHAT_THREAD_LAST_MESSAGE_TEXT_MAX_LENGTH}),
+               "lastMessageSenderWorkspaceMemberId" = NULL
              WHERE id = $1
-             RETURNING "lastActivityAt", "updatedAt"
+             RETURNING ${THREAD_ACTIVITY_COLUMNS}
            )
-           SELECT "lastActivityAt", "updatedAt" FROM thread`,
-          [threadId],
+           SELECT ${THREAD_ACTIVITY_COLUMNS} FROM thread`,
+          [threadId, text],
         ),
     );
 
@@ -297,11 +245,11 @@ export class AgentChatThreadParticipantService {
   }: Omit<
     ParticipantArgs,
     'workspaceMemberId'
-  >): Promise<ThreadActivityTimestamps | null> {
+  >): Promise<AgentChatThreadActivity | null> {
     const rows = await this.threadRepository.query(
       workspaceId,
       ({ manager, table }) =>
-        manager.query<ThreadActivityTimestamps[]>(
+        manager.query<AgentChatThreadActivity[]>(
           `WITH thread AS (
              UPDATE ${table('agentChatThread')}
              SET "updatedAt" = now()

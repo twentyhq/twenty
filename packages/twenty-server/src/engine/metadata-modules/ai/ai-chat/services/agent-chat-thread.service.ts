@@ -3,7 +3,10 @@ import { Injectable } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 
 import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
-import { AgentChatThreadParticipantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant.service';
+import {
+  type AgentChatThreadActivity,
+  AgentChatThreadParticipantService,
+} from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant.service';
 import { AgentChatThreadRecordEventService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-record-event.service';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
@@ -90,10 +93,12 @@ export class AgentChatThreadService {
     threadId,
     workspaceMemberId,
     workspaceId,
+    text,
   }: {
     threadId: string;
     workspaceMemberId: string;
     workspaceId: string;
+    text: string;
   }): Promise<void> {
     const thread = await this.getWritableThread({
       threadId,
@@ -107,9 +112,10 @@ export class AgentChatThreadService {
       threadId,
       workspaceMemberId,
       workspaceId,
+      text,
     });
 
-    await this.emitThreadActivityUpdated({ workspaceId, thread, ...activity });
+    await this.emitThreadActivityUpdated({ workspaceId, thread, activity });
   }
 
   // Activity no member wrote, such as an agent turn or an application's
@@ -117,9 +123,11 @@ export class AgentChatThreadService {
   async recordThreadActivity({
     workspaceId,
     threadId,
+    text,
   }: {
     workspaceId: string;
     threadId: string;
+    text: string | null;
   }): Promise<void> {
     const thread = await this.threadRepository.findOne(workspaceId, {
       where: { id: threadId },
@@ -132,32 +140,32 @@ export class AgentChatThreadService {
     const activity = await this.participantService.recordThreadActivity({
       workspaceId,
       threadId,
+      text,
     });
 
     if (!isDefined(activity)) {
       return;
     }
 
-    await this.emitThreadActivityUpdated({ workspaceId, thread, ...activity });
+    await this.emitThreadActivityUpdated({ workspaceId, thread, activity });
   }
 
   // Open chat lists reorder and bring the chat back from these events
   private async emitThreadActivityUpdated({
     workspaceId,
     thread,
-    lastActivityAt,
-    updatedAt,
+    activity: { lastActivityAt, updatedAt, ...lastMessage },
   }: {
     workspaceId: string;
     thread: AgentChatThreadWorkspaceEntity;
-    lastActivityAt: Date | null;
-    updatedAt: Date;
+    activity: AgentChatThreadActivity;
   }): Promise<void> {
     await this.threadRecordEventService.emitThreadUpdated({
       workspaceId,
       threadBefore: thread,
       threadAfter: {
         ...thread,
+        ...lastMessage,
         lastActivityAt: lastActivityAt?.toISOString() ?? thread.lastActivityAt,
         updatedAt: updatedAt.toISOString(),
       },

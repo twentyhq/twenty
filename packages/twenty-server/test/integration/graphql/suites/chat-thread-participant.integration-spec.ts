@@ -69,14 +69,23 @@ const findMyParticipant = async (
   ).find((participant) => participant.threadId === threadId);
 };
 
-const readLastActivityAt = async (threadId: string): Promise<Date> => {
-  const [row]: { lastActivityAt: Date }[] = await global.testDataSource.query(
-    `SELECT "lastActivityAt" FROM ${SCHEMA}."agentChatThread" WHERE id = $1`,
+const readThreadActivity = async (threadId: string) => {
+  const [row]: {
+    lastActivityAt: Date;
+    lastMessageText: string | null;
+    lastMessageSenderWorkspaceMemberId: string | null;
+    writerWorkspaceMemberIds: string[] | null;
+  }[] = await global.testDataSource.query(
+    `SELECT "lastActivityAt", "lastMessageText", "lastMessageSenderWorkspaceMemberId", "writerWorkspaceMemberIds"
+     FROM ${SCHEMA}."agentChatThread" WHERE id = $1`,
     [threadId],
   );
 
-  return row.lastActivityAt;
+  return row;
 };
+
+const readLastActivityAt = async (threadId: string): Promise<Date> =>
+  (await readThreadActivity(threadId)).lastActivityAt;
 
 const createThread = async (): Promise<string> => {
   const threadId = randomUUID();
@@ -274,11 +283,17 @@ describe('Chat thread participant state through the authenticated API', () => {
         workspaceId: SEED_APPLE_WORKSPACE_ID,
         workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
         threadId,
+        text: 'Can you check the Stripe renewal?',
       });
 
     const owner = await findMyParticipant(threadId);
 
     expect(lastActivityAt).not.toBeNull();
+    expect(await readThreadActivity(threadId)).toMatchObject({
+      lastMessageText: 'Can you check the Stripe renewal?',
+      lastMessageSenderWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+      writerWorkspaceMemberIds: [WORKSPACE_MEMBER_DATA_SEED_IDS.JANE],
+    });
     expect(owner).toMatchObject({ archivedAt: null, snoozedUntil: null });
     expect(new Date(owner!.lastReadAt!).getTime()).toBe(
       lastActivityAt!.getTime(),
@@ -309,10 +324,20 @@ describe('Chat thread participant state through the authenticated API', () => {
 
     await getAppProviderByClassName<AgentChatService>(
       'AgentChatService',
-    ).recordThreadActivity({ workspaceId: SEED_APPLE_WORKSPACE_ID, threadId });
+    ).recordThreadActivity({
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      threadId,
+      text: 'The renewal is due next week.',
+    });
 
     const owner = await findMyParticipant(threadId);
-    const lastActivityAt = await readLastActivityAt(threadId);
+    const { lastActivityAt, ...lastMessage } =
+      await readThreadActivity(threadId);
+
+    expect(lastMessage).toMatchObject({
+      lastMessageText: 'The renewal is due next week.',
+      lastMessageSenderWorkspaceMemberId: null,
+    });
 
     expect(new Date(owner!.archivedAt!).getTime()).toBeLessThan(
       lastActivityAt.getTime(),

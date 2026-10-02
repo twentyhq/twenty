@@ -16,7 +16,6 @@ import { TextInput } from '@/ui/input/components/TextInput';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { VisibilityHidden } from 'twenty-ui/primitives/accessibility';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { agentChatThreadPreviewFamilySelector } from '@/ai/states/selectors/agentChatThreadPreviewFamilySelector';
 import { useFormatAgentChatThreadDate } from '@/ai/hooks/useFormatAgentChatThreadDate';
 import { beautifyPastDateRelativeToNowShort } from '~/utils/date-utils';
 import { getAgentChatThreadLastActivityAt } from '@/ai/utils/getAgentChatThreadLastActivityAt';
@@ -149,21 +148,14 @@ export const AiChatThreadListItem = ({
       threadId: thread.id,
       lastActivityAt: thread.lastActivityAt ?? null,
     });
-  const preview = useAtomFamilySelectorValue(
-    agentChatThreadPreviewFamilySelector,
-    thread.id,
-  );
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const currentWorkspaceMembers = useAtomStateValue(
     currentWorkspaceMembersState,
   );
-  const threadMembers = useAgentChatThreadMembers({
-    threadId: thread.id,
-    ownerWorkspaceMemberId: thread.workspaceMemberId,
-  });
+  const threadMembers = useAgentChatThreadMembers(thread);
   const isShownAsUnread = !isDefined(thread.deletedAt) && isUnread;
   const previewText = getAgentChatThreadPreviewText({
-    preview,
+    thread,
     workspaceMembers: currentWorkspaceMembers,
     currentWorkspaceMemberId: currentWorkspaceMember?.id,
   });

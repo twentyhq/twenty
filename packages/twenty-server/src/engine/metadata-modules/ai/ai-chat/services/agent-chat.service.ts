@@ -407,6 +407,7 @@ export class AgentChatService {
       threadId,
       workspaceMemberId,
       workspaceId,
+      text,
     });
 
     return {

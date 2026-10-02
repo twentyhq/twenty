@@ -3512,14 +3512,6 @@ type AgentChatThreadParticipant {
   snoozedUntil: DateTime
 }
 
-type AgentChatThreadPreview {
-  threadId: UUID!
-  lastMessageRole: String
-  lastMessageText: String
-  lastMessageSenderWorkspaceMemberId: UUID
-  memberIds: [UUID!]!
-}
-
 type AgentChatEvent {
   threadId: String!
   event: JSON!
@@ -3975,7 +3967,6 @@ type Query {
   chatStreamCatchupChunks(threadId: UUID!): ChatStreamCatchupChunks!
   getAiSystemPromptPreview: AiSystemPromptPreview!
   myAgentChatThreadParticipants: [AgentChatThreadParticipant!]!
-  agentChatThreadPreviews(threadIds: [UUID!]!): [AgentChatThreadPreview!]!
   skills: [Skill!]!
   skill(id: UUID!): Skill
   agentTurns(agentId: UUID!): [AgentTurn!]!

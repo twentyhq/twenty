@@ -18,12 +18,7 @@ const getText = (
   lastMessageText = 'Legal is   reviewing\nthe terms',
 ) =>
   getAgentChatThreadPreviewText({
-    preview: {
-      threadId: 'thread',
-      lastMessageText,
-      lastMessageSenderWorkspaceMemberId,
-      memberIds: [],
-    },
+    thread: { lastMessageText, lastMessageSenderWorkspaceMemberId },
     workspaceMembers: MEMBERS,
     currentWorkspaceMemberId: 'me',
   });

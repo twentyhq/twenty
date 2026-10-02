@@ -6,7 +6,6 @@ import { type ReactNode } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 
 import { AiChatThreadDetailsDropdown } from '@/ai/components/AiChatThreadDetailsDropdown';
-import { agentChatThreadPreviewsState } from '@/ai/states/agentChatThreadPreviewsState';
 import { setAgentChatThreadPermissions } from '@/ai/testing/setAgentChatThreadPermissions';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -63,11 +62,6 @@ jest.mock('@/object-record/hooks/useFindOneRecord', () => ({
 
 jest.mock('@/sse-db-event/hooks/useListenToEventsForQuery', () => ({
   useListenToEventsForQuery: jest.fn(),
-}));
-
-// Previews are seeded in the store; MockedProvider can't answer the request.
-jest.mock('@/ai/components/AgentChatThreadPreviewsEffect', () => ({
-  AgentChatThreadPreviewsEffect: () => null,
 }));
 
 jest.mock('@/object-record/hooks/useObjectRecordSearchRecords', () => ({
@@ -174,17 +168,12 @@ const renderDetails = ({
         deletedAt: null,
         workspaceMemberId: OWNER_ID,
         lastActivityAt: '2026-10-01T10:00:00.000Z',
+        writerWorkspaceMemberIds: [WRITER_ID, OWNER_ID],
       });
       store.set(currentWorkspaceMembersState.atom, [
         buildWorkspaceMember(OWNER_ID, 'Owner'),
         buildWorkspaceMember(WRITER_ID, 'Writer'),
       ]);
-      store.set(agentChatThreadPreviewsState.atom, {
-        [THREAD_ID]: {
-          lastActivityAt: '2026-10-01T10:00:00.000Z',
-          preview: { threadId: THREAD_ID, memberIds: [WRITER_ID, OWNER_ID] },
-        },
-      });
     },
   });
 
