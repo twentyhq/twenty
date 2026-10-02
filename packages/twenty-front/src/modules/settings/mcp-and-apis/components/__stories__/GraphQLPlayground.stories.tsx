@@ -22,13 +22,12 @@ const PlaygroundApiKeySetterEffect = () => {
   return null;
 };
 
-const monacoGlobal = globalThis as unknown as {
-  MonacoEnvironment?: Environment;
-};
+const inertWorkerUrl = URL.createObjectURL(
+  new Blob([], { type: 'text/javascript' }),
+);
 
 const inertMonacoEnvironment: Environment = {
-  getWorker: () =>
-    new Worker(URL.createObjectURL(new Blob([], { type: 'text/javascript' }))),
+  getWorker: () => new Worker(inertWorkerUrl),
 };
 
 const meta: Meta<typeof GraphQLPlayground> = {
@@ -37,12 +36,12 @@ const meta: Meta<typeof GraphQLPlayground> = {
   decorators: [ComponentDecorator, ComponentWithRouterDecorator],
   // Monaco rethrows a worker load failure as an uncaught error; rendering doesn't need workers.
   beforeEach: () => {
-    const appMonacoEnvironment = monacoGlobal.MonacoEnvironment;
+    const appMonacoEnvironment = window.MonacoEnvironment;
 
-    monacoGlobal.MonacoEnvironment = inertMonacoEnvironment;
+    window.MonacoEnvironment = inertMonacoEnvironment;
 
     return () => {
-      monacoGlobal.MonacoEnvironment = appMonacoEnvironment;
+      window.MonacoEnvironment = appMonacoEnvironment;
     };
   },
   parameters: {
