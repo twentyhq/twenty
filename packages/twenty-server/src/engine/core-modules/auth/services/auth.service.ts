@@ -111,51 +111,6 @@ export class AuthService {
     private readonly userSessionService: UserSessionService,
   ) {}
 
-  async validateLoginWithPassword(input: UserCredentialsInput) {
-    const user = await this.findUserByEmailOrThrow(input.email);
-
-    await this.validatePasswordCredentialsOrThrow(user, input.password);
-
-    return user;
-  }
-
-  async validateLoginWithPasswordAndJoinWorkspaceIfInvited(
-    input: UserCredentialsInput,
-    workspace: WorkspaceEntity,
-  ): Promise<UserEntity> {
-    const user = await this.findUserByEmailOrThrow(input.email);
-
-    await this.assertPasswordAuthAllowedOnWorkspaceOrThrow(user, workspace);
-
-    // Access is checked before the password so that a non-member cannot tell a right password from a wrong one
-    const isWorkspaceMember =
-      await this.userWorkspaceService.checkUserWorkspaceExists(
-        user.id,
-        workspace.id,
-      );
-
-    if (isWorkspaceMember) {
-      await this.validatePasswordCredentialsOrThrow(user, input.password);
-
-      return user;
-    }
-
-    const workspaceInvitation = await this.getValidWorkspaceInvitationOrThrow(
-      workspace,
-      user,
-    );
-
-    await this.validatePasswordCredentialsOrThrow(user, input.password);
-
-    await this.userWorkspaceService.addUserToWorkspaceIfUserNotInWorkspace(
-      user,
-      workspace,
-      workspaceInvitation.roleId,
-    );
-
-    return user;
-  }
-
   private async findUserByEmailOrThrow(email: string) {
     const user = await this.userRepository.findOne({
       where: { email },
@@ -229,6 +184,51 @@ export class AuthService {
     await assertUserPasswordIsValidOrThrow({ user, password });
 
     await this.checkIsEmailVerified(user.isEmailVerified);
+  }
+
+  async validateLoginWithPassword(input: UserCredentialsInput) {
+    const user = await this.findUserByEmailOrThrow(input.email);
+
+    await this.validatePasswordCredentialsOrThrow(user, input.password);
+
+    return user;
+  }
+
+  async validateLoginWithPasswordAndJoinWorkspaceIfInvited(
+    input: UserCredentialsInput,
+    workspace: WorkspaceEntity,
+  ): Promise<UserEntity> {
+    const user = await this.findUserByEmailOrThrow(input.email);
+
+    await this.assertPasswordAuthAllowedOnWorkspaceOrThrow(user, workspace);
+
+    // Access is checked before the password so that a non-member cannot tell a right password from a wrong one
+    const isWorkspaceMember =
+      await this.userWorkspaceService.checkUserWorkspaceExists(
+        user.id,
+        workspace.id,
+      );
+
+    if (isWorkspaceMember) {
+      await this.validatePasswordCredentialsOrThrow(user, input.password);
+
+      return user;
+    }
+
+    const workspaceInvitation = await this.getValidWorkspaceInvitationOrThrow(
+      workspace,
+      user,
+    );
+
+    await this.validatePasswordCredentialsOrThrow(user, input.password);
+
+    await this.userWorkspaceService.addUserToWorkspaceIfUserNotInWorkspace(
+      user,
+      workspace,
+      workspaceInvitation.roleId,
+    );
+
+    return user;
   }
 
   async checkIsEmailVerified(isEmailVerified: boolean) {
