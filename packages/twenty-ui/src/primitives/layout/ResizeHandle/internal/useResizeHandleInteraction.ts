@@ -47,7 +47,7 @@ export const useResizeHandleInteraction = ({
   const isReversed = isDefined(direction)
     ? direction === 'reverse'
     : axis === 'x' && textDirection === 'rtl';
-  const { cancelResize, isPointerActive, ...pointerInteractionProps } =
+  const { isPointerActive, ...pointerInteractionProps } =
     useResizeHandlePointerInteraction({
       axis,
       isReversed,
@@ -65,18 +65,14 @@ export const useResizeHandleInteraction = ({
     });
 
   const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
-    if (event.defaultPrevented) {
-      return;
-    }
+    const hasModifierKey = event.altKey || event.ctrlKey || event.metaKey;
 
-    if (event.key === 'Escape' && cancelResize()) {
-      event.preventDefault();
-      event.stopPropagation();
-
-      return;
-    }
-
-    if (disabled || isPointerActive()) {
+    if (
+      event.defaultPrevented ||
+      disabled ||
+      hasModifierKey ||
+      isPointerActive()
+    ) {
       return;
     }
 

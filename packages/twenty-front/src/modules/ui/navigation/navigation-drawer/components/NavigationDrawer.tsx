@@ -1,5 +1,6 @@
 import { styled } from '@linaria/react';
-import { type ReactNode, useState } from 'react';
+import { type ReactNode, useRef, useState } from 'react';
+import { flushSync } from 'react-dom';
 
 import { useNavigationDrawerExpanded } from '@/navigation/hooks/useNavigationDrawerExpanded';
 import { tableWidthResizeIsActiveState } from '@/object-record/record-table/states/tableWidthResizeIsActivedState';
@@ -17,6 +18,7 @@ import {
   NAVIGATION_DRAWER_WIDTH_VAR,
   navigationDrawerWidthState,
 } from '@/ui/navigation/states/navigationDrawerWidthState';
+import { focusNavigationDrawerExpandButton } from '@/ui/navigation/navigation-drawer/utils/focusNavigationDrawerExpandButton';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
@@ -34,7 +36,7 @@ const StyledAnimatedContainer = styled.div<{
 }>`
   height: 100%;
   max-height: 100%;
-  overflow: hidden;
+  overflow: clip;
   position: relative;
   transition: ${({ isResizing }) =>
     isResizing
@@ -85,6 +87,7 @@ export const NavigationDrawer = ({
   className,
 }: NavigationDrawerProps) => {
   const { t } = useLingui();
+  const resizeHandleRef = useRef<HTMLDivElement>(null);
   const [isResizing, setIsResizing] = useState(false);
   const isMobile = useIsMobile();
   const isExpanded = useNavigationDrawerExpanded();
@@ -102,10 +105,19 @@ export const NavigationDrawer = ({
   );
 
   const handleCollapse = () => {
-    setIsNavigationDrawerExpanded(false);
-    setNavigationDrawerActiveTab(NAVIGATION_DRAWER_TABS.NAVIGATION_MENU);
-    setIsResizing(false);
-    setTableWidthResizeIsActive(true);
+    const isResizeHandleFocused =
+      resizeHandleRef.current === document.activeElement;
+
+    flushSync(() => {
+      setIsNavigationDrawerExpanded(false);
+      setNavigationDrawerActiveTab(NAVIGATION_DRAWER_TABS.NAVIGATION_MENU);
+      setIsResizing(false);
+      setTableWidthResizeIsActive(true);
+    });
+
+    if (isResizeHandleFocused) {
+      focusNavigationDrawerExpandButton();
+    }
   };
 
   const handleWidthChange = (width: number) => {
@@ -147,6 +159,7 @@ export const NavigationDrawer = ({
 
         {isNavigationDrawerExpanded && !isMobile && (
           <ResizablePanel
+            ref={resizeHandleRef}
             side="right"
             min={NAVIGATION_DRAWER_CONSTRAINTS.min}
             max={NAVIGATION_DRAWER_CONSTRAINTS.max}

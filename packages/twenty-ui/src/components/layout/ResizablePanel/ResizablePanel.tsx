@@ -19,6 +19,7 @@ export const ResizablePanel = ({
   max,
   gapSize = 0,
   showHandle = true,
+  disabled = false,
   onSizeChange,
   onSizeCommit,
   onResizeStart,
@@ -28,9 +29,10 @@ export const ResizablePanel = ({
   style,
   ...props
 }: ResizablePanelProps) => {
+  const [uncontrolledDefaultSize] = useState(defaultSize ?? min);
   const [size, setSize] = useControlled({
     controlled: controlledSize,
-    default: defaultSize ?? min,
+    default: uncontrolledDefaultSize,
     name: 'ResizablePanel',
   });
   const boundedSize = clamp(size, min, max);
@@ -84,6 +86,7 @@ export const ResizablePanel = ({
       min={min}
       max={max}
       dragThreshold={RESIZABLE_PANEL_DRAG_THRESHOLD}
+      disabled={disabled}
       onValueChange={handleSizeChange}
       onValueCommit={handleSizeCommit}
       onResizeStart={handleResizeStart}
@@ -91,7 +94,7 @@ export const ResizablePanel = ({
       onActivate={onCollapse}
       aria-keyshortcuts={
         props['aria-keyshortcuts'] ??
-        (isDefined(onCollapse) ? 'Enter Space' : undefined)
+        (isDefined(onCollapse) && !disabled ? 'Enter Space' : undefined)
       }
       data-side={side}
       data-variant={variant}

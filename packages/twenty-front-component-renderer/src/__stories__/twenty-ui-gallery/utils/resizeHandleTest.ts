@@ -63,7 +63,7 @@ export const resizeHandleTest: TwentyUiGalleryPlayFunction = async (
         coords: { y: 100 },
       });
       await expect(setPointerCapture).toHaveBeenLastCalledWith(1);
-      await expect(handle).toHaveFocus();
+      await expect(handle).not.toHaveFocus();
       await pointer.pointer({ target: handle, coords: { y: 80 } });
       await waitFor(() => {
         expect(handle).toHaveAttribute('aria-valuenow', '180');
@@ -72,6 +72,7 @@ export const resizeHandleTest: TwentyUiGalleryPlayFunction = async (
       await fireEvent[endEvent](handle, { pointerId: 1, clientY: 80 });
       await pointer.pointer({ target: handle, coords: { y: 0 } });
       await pointer.pointer({ target: handle, keys: '[/MouseLeft]' });
+      handle.focus();
       await userEvent.keyboard('{ArrowDown}');
       await waitFor(() =>
         expect(handle).toHaveAttribute('aria-valuenow', '190'),

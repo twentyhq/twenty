@@ -52,6 +52,9 @@ export const NavigationDrawerCollapseButton = ({
           size="sm"
           onClick={toggleNavigationDrawer}
           aria-label={label}
+          data-navigation-drawer-expand-button={
+            direction === 'right' || undefined
+          }
         >
           <Icon />
         </LightIconButton>
