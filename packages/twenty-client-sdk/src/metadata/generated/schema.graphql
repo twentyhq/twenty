@@ -1774,12 +1774,17 @@ type RecordPermissionsDTO {
 
 type RecordSharingGrantDTO {
   id: ID!
-  principalType: String!
+  principalType: RecordSharePrincipalType!
   principalId: UUID!
+  principalRoleId: UUID
   accessLevel: RecordShareAccessLevel!
-  rowCause: String!
-  canRoleRead: Boolean
-  canRoleUpdate: Boolean
+  rowCause: RecordShareRowCause!
+}
+
+enum RecordSharePrincipalType {
+  EVERYONE
+  WORKSPACE_MEMBER
+  ROLE
 }
 
 enum RecordShareAccessLevel {
@@ -1789,22 +1794,45 @@ enum RecordShareAccessLevel {
   FULL
 }
 
+enum RecordShareRowCause {
+  OWNER
+  MANUAL
+  RULE
+  APPLICATION
+}
+
 type RecordSharingRoleDTO {
   id: UUID!
   label: String!
+  canRead: Boolean
+  canUpdate: Boolean
 }
 
 type RecordSharingDTO {
-  viewerAccessLevel: RecordShareAccessLevel
+  sharingMode: RecordSharingMode!
+  canManageSharing: Boolean!
   permissions: RecordPermissionsDTO!
-  isEnabled: Boolean!
-  hasInheritedAccess: Boolean!
-  isOpenByDefault: Boolean!
   generalAccessLevel: RecordShareAccessLevel
-  isGeneralAccessDefault: Boolean!
-  sharingReach: ObjectSharingReach!
+  defaultGeneralAccessLevel: RecordShareAccessLevel
+  hasManagedGeneralAccess: Boolean!
   roles: [RecordSharingRoleDTO!]!
   shares: [RecordSharingGrantDTO!]!
+}
+
+"""
+How records of an object are shared: only through roles, private until shared, readable through linked records, or open by default with per-record exceptions
+"""
+enum RecordSharingMode {
+  ROLE_ONLY
+  PRIVATE
+  INHERITED
+  OPEN_BY_DEFAULT
+}
+
+type RecordPermissionsResult {
+  objectMetadataId: UUID!
+  recordId: UUID!
+  permissions: RecordPermissionsDTO!
 }
 
 type JobStatus {
@@ -3571,12 +3599,6 @@ type RecordExport {
   downloadPath: String
 }
 
-type RecordPermissionsResult {
-  objectMetadataId: UUID!
-  recordId: UUID!
-  permissions: RecordPermissionsDTO!
-}
-
 type AgentTurnEvaluation {
   id: UUID!
   turnId: UUID!
@@ -3840,7 +3862,8 @@ type MinimalMetadata {
 }
 
 type Query {
-  recordSharing(target: RecordSharingTargetInput!): RecordSharingDTO!
+  recordSharing(target: RecordTargetInput!): RecordSharingDTO!
+  recordPermissions(targets: [RecordTargetInput!]!): [RecordPermissionsResult!]!
   navigationMenuItems: [NavigationMenuItem!]!
   navigationMenuItem(id: UUID!): NavigationMenuItem
   enterprisePortalSession(returnUrlPath: String): String
@@ -3901,6 +3924,7 @@ type Query {
   findWorkspaceInvitations: [WorkspaceInvitation!]!
   getApprovedAccessDomains: [ApprovedAccessDomain!]!
   getRoles: [Role!]!
+  getRole(id: UUID!): Role!
   apiKeys: [ApiKey!]!
   getApiKeyRoles: [Role!]!
   apiKey(input: GetApiKeyInput!): ApiKey
@@ -3971,7 +3995,6 @@ type Query {
   validationRules(objectMetadataId: UUID!): [ValidationRule!]!
   timelineActivityTypes: [TimelineActivityType!]!
   metadataTranslations(input: MetadataTranslationsInput!): [MetadataTranslation!]!
-  recordPermissions(targets: [RecordPermissionsTargetInput!]!): [RecordPermissionsResult!]!
   checkUserExists(email: String!, captchaToken: String): CheckUserExist!
   checkWorkspaceInviteHashIsValid(inviteHash: String!): WorkspaceInviteHashValid!
   findWorkspaceFromInviteHash(inviteHash: String!): Workspace!
@@ -3995,7 +4018,7 @@ type Query {
   currentUserApplicationAuthorizations: [ApplicationAuthorization!]!
 }
 
-input RecordSharingTargetInput {
+input RecordTargetInput {
   objectMetadataId: UUID!
   recordId: UUID!
 }
@@ -4073,11 +4096,6 @@ input MetadataTranslationsInput {
   locale: String
 }
 
-input RecordPermissionsTargetInput {
-  objectMetadataId: UUID!
-  recordId: UUID!
-}
-
 input EventLogQueryInput {
   table: EventLogTable!
   filters: EventLogFiltersInput
@@ -4136,7 +4154,9 @@ input BarChartDataInput {
 type Mutation {
   addQueryToEventStream(input: AddQuerySubscriptionInput!): Boolean!
   removeQueryFromEventStream(input: RemoveQueryFromEventStreamInput!): Boolean!
-  setRecordShare(target: RecordSharingTargetInput!, principal: RecordSharePrincipalInput!, enabled: Boolean!, accessLevel: RecordShareAccessLevel = READ): RecordSharingDTO!
+  setRecordGeneralAccess(target: RecordTargetInput!, accessLevel: RecordShareAccessLevel!): RecordSharingDTO!
+  setRecordShare(target: RecordTargetInput!, principal: RecordSharePrincipalInput!, accessLevel: RecordShareAccessLevel!): RecordSharingDTO!
+  removeRecordShare(target: RecordTargetInput!, principal: RecordSharePrincipalInput!): RecordSharingDTO!
   createManyNavigationMenuItems(inputs: [CreateNavigationMenuItemInput!]!): [NavigationMenuItem!]!
   createNavigationMenuItem(input: CreateNavigationMenuItemInput!): NavigationMenuItem!
   updateManyNavigationMenuItems(inputs: [UpdateOneNavigationMenuItemInput!]!): [NavigationMenuItem!]!
@@ -4416,7 +4436,6 @@ input RemoveQueryFromEventStreamInput {
 input RecordSharePrincipalInput {
   workspaceMemberId: UUID
   roleId: UUID
-  everyone: Boolean
 }
 
 input CreateNavigationMenuItemInput {

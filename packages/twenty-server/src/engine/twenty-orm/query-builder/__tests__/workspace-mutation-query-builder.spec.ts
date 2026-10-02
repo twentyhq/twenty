@@ -96,12 +96,13 @@ describe('WorkspaceMutationQueryBuilder', () => {
   it('should build a soft delete that stamps deletedAt and updatedAt on live rows only', () => {
     const { selectQueryBuilder } = buildBuilders();
 
-    const mutationQueryBuilder = selectQueryBuilder
-      .where('"person"."id" IN (:...ids)', {
-        ids: ['id-1', 'id-2'],
-      })
-      .softDelete()
-      .returning(['id', 'nameFirstName']);
+    const mutationQueryBuilder =
+      WorkspaceSelectQueryBuilder.toMutationQueryBuilder(
+        selectQueryBuilder.where('"person"."id" IN (:...ids)', {
+          ids: ['id-1', 'id-2'],
+        }),
+        'soft-delete',
+      ).returning(['id', 'nameFirstName']);
 
     expect(mutationQueryBuilder.getQuery()).toBe(
       `UPDATE "${SCHEMA_NAME}"."person" AS "person" ` +
@@ -114,12 +115,15 @@ describe('WorkspaceMutationQueryBuilder', () => {
   it('should let a soft delete reach rows already in the trash only after withDeleted', () => {
     const { selectQueryBuilder } = buildBuilders();
 
-    const mutationQueryBuilder = selectQueryBuilder
-      .where('"person"."id" IN (:...ids)', {
-        ids: ['id-1', 'id-2'],
-      })
-      .withDeleted()
-      .softDelete();
+    const mutationQueryBuilder =
+      WorkspaceSelectQueryBuilder.toMutationQueryBuilder(
+        selectQueryBuilder
+          .where('"person"."id" IN (:...ids)', {
+            ids: ['id-1', 'id-2'],
+          })
+          .withDeleted(),
+        'soft-delete',
+      );
 
     expect(mutationQueryBuilder.getQuery()).toBe(
       `UPDATE "${SCHEMA_NAME}"."person" AS "person" ` +
@@ -131,10 +135,13 @@ describe('WorkspaceMutationQueryBuilder', () => {
   it('should build a restore that clears deletedAt and stamps updatedAt', () => {
     const { selectQueryBuilder } = buildBuilders();
 
-    const mutationQueryBuilder = selectQueryBuilder
-      .where('"person"."id" IN (:...ids)', { ids: ['id-1'] })
-      .restore()
-      .returning(['id']);
+    const mutationQueryBuilder =
+      WorkspaceSelectQueryBuilder.toMutationQueryBuilder(
+        selectQueryBuilder.where('"person"."id" IN (:...ids)', {
+          ids: ['id-1'],
+        }),
+        'restore',
+      ).returning(['id']);
 
     expect(mutationQueryBuilder.getQuery()).toBe(
       `UPDATE "${SCHEMA_NAME}"."person" AS "person" ` +
@@ -147,10 +154,13 @@ describe('WorkspaceMutationQueryBuilder', () => {
   it('should build a hard delete with no SET clause', () => {
     const { selectQueryBuilder } = buildBuilders();
 
-    const mutationQueryBuilder = selectQueryBuilder
-      .where('"person"."id" IN (:...ids)', { ids: ['id-1'] })
-      .delete()
-      .returning(['id']);
+    const mutationQueryBuilder =
+      WorkspaceSelectQueryBuilder.toMutationQueryBuilder(
+        selectQueryBuilder.where('"person"."id" IN (:...ids)', {
+          ids: ['id-1'],
+        }),
+        'delete',
+      ).returning(['id']);
 
     expect(mutationQueryBuilder.getQuery()).toBe(
       `DELETE FROM "${SCHEMA_NAME}"."person" AS "person" ` +
@@ -162,9 +172,10 @@ describe('WorkspaceMutationQueryBuilder', () => {
   it('should build an update that binds set values and appends updatedAt maintenance', () => {
     const { selectQueryBuilder } = buildBuilders();
 
-    const [sql, values] = selectQueryBuilder
-      .where('"person"."id" IN (:...ids)', { ids: ['id-1'] })
-      .update()
+    const [sql, values] = WorkspaceSelectQueryBuilder.toMutationQueryBuilder(
+      selectQueryBuilder.where('"person"."id" IN (:...ids)', { ids: ['id-1'] }),
+      'update',
+    )
       .set({ jobTitle: 'Tech Lead' })
       .returning(['id', 'jobTitle'])
       .getQueryAndParameters();
@@ -181,9 +192,10 @@ describe('WorkspaceMutationQueryBuilder', () => {
   it('should not append updatedAt maintenance when the caller sets updatedAt itself', () => {
     const { selectQueryBuilder } = buildBuilders();
 
-    const [sql, values] = selectQueryBuilder
-      .where('"person"."id" = :id', { id: 'id-1' })
-      .update()
+    const [sql, values] = WorkspaceSelectQueryBuilder.toMutationQueryBuilder(
+      selectQueryBuilder.where('"person"."id" = :id', { id: 'id-1' }),
+      'update',
+    )
       .set({ jobTitle: 'Tech Lead', updatedAt: null })
       .returning(['id'])
       .getQueryAndParameters();
@@ -202,9 +214,12 @@ describe('WorkspaceMutationQueryBuilder', () => {
       rows: [{ person_id: 'id-1' }, { person_id: 'id-2' }],
     });
 
-    const result = await selectQueryBuilder
-      .where('"person"."id" IN (:...ids)', { ids: ['id-1', 'id-2'] })
-      .softDelete()
+    const result = await WorkspaceSelectQueryBuilder.toMutationQueryBuilder(
+      selectQueryBuilder.where('"person"."id" IN (:...ids)', {
+        ids: ['id-1', 'id-2'],
+      }),
+      'soft-delete',
+    )
       .returning(['id'])
       .execute();
 
@@ -216,9 +231,12 @@ describe('WorkspaceMutationQueryBuilder', () => {
   it('should not overwrite a where parameter that collides with a set parameter name', () => {
     const { selectQueryBuilder } = buildBuilders();
 
-    const [, values] = selectQueryBuilder
-      .where('"person"."id" = :ormSet_0', { ormSet_0: 'id-1' })
-      .update()
+    const [, values] = WorkspaceSelectQueryBuilder.toMutationQueryBuilder(
+      selectQueryBuilder.where('"person"."id" = :ormSet_0', {
+        ormSet_0: 'id-1',
+      }),
+      'update',
+    )
       .set({ jobTitle: 'Tech Lead' })
       .returning(['id'])
       .getQueryAndParameters();
@@ -248,9 +266,10 @@ describe('WorkspaceMutationQueryBuilder', () => {
     });
 
     expect(() =>
-      selectQueryBuilder
-        .where('"person"."id" = :id', { id: 'id-1' })
-        .softDelete()
+      WorkspaceSelectQueryBuilder.toMutationQueryBuilder(
+        selectQueryBuilder.where('"person"."id" = :id', { id: 'id-1' }),
+        'soft-delete',
+      )
         .returning(['id'])
         .getQuery(),
     ).toThrow(TwentyOrmException);
@@ -260,9 +279,10 @@ describe('WorkspaceMutationQueryBuilder', () => {
     const { selectQueryBuilder } = buildBuilders();
 
     expect(() =>
-      selectQueryBuilder
-        .where('"person"."id" = :id', { id: 'id-1' })
-        .update()
+      WorkspaceSelectQueryBuilder.toMutationQueryBuilder(
+        selectQueryBuilder.where('"person"."id" = :id', { id: 'id-1' }),
+        'update',
+      )
         .set({ missingColumn: 'x' })
         .returning(['id'])
         .getQuery(),
@@ -273,9 +293,10 @@ describe('WorkspaceMutationQueryBuilder', () => {
     const { selectQueryBuilder } = buildBuilders();
 
     expect(
-      selectQueryBuilder
-        .where('"person"."id" = :id', { id: 'id-1' })
-        .update()
+      WorkspaceSelectQueryBuilder.toMutationQueryBuilder(
+        selectQueryBuilder.where('"person"."id" = :id', { id: 'id-1' }),
+        'update',
+      )
         .returning(['id'])
         .getQuery(),
     ).toBe(
@@ -306,9 +327,10 @@ describe('WorkspaceMutationQueryBuilder', () => {
     });
 
     expect(() =>
-      selectQueryBuilder
-        .where('"person"."id" = :id', { id: 'id-1' })
-        .update()
+      WorkspaceSelectQueryBuilder.toMutationQueryBuilder(
+        selectQueryBuilder.where('"person"."id" = :id', { id: 'id-1' }),
+        'update',
+      )
         .returning(['id'])
         .getQuery(),
     ).toThrow(TwentyOrmException);
@@ -319,6 +341,11 @@ describe('WorkspaceMutationQueryBuilder', () => {
 
     selectQueryBuilder.leftJoin('person.company', 'company');
 
-    expect(() => selectQueryBuilder.softDelete()).toThrow(TwentyOrmException);
+    expect(() =>
+      WorkspaceSelectQueryBuilder.toMutationQueryBuilder(
+        selectQueryBuilder,
+        'soft-delete',
+      ),
+    ).toThrow(TwentyOrmException);
   });
 });

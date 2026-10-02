@@ -13,7 +13,7 @@ import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomStat
 import { workspaceAuthBypassProvidersState } from '@/workspace/states/workspaceAuthBypassProvidersState';
 import { useCallback } from 'react';
 import { SOURCE_LOCALE, type APP_LOCALES } from 'twenty-shared/translations';
-import { type ObjectPermissions } from 'twenty-shared/types';
+import { type CurrentUserWorkspaceObjectPermissions } from '@/auth/types/CurrentUserWorkspaceObjectPermissions';
 import { isDefined } from 'twenty-shared/utils';
 import { toOpenRecordInPreference } from '@/workspace-member/utils/toOpenRecordInPreference';
 import {
@@ -82,9 +82,9 @@ export const useLoadCurrentUser = () => {
         twoFactorAuthenticationMethodSummary:
           user.currentUserWorkspace.twoFactorAuthenticationMethodSummary ?? [],
         objectsPermissions:
-          (user.currentUserWorkspace.objectsPermissions as Array<
-            ObjectPermissions & { objectMetadataId: string }
-          >) ?? [],
+          (user.currentUserWorkspace
+            .objectsPermissions as CurrentUserWorkspaceObjectPermissions[]) ??
+          [],
         isImpersonating: user.currentUserWorkspace.isImpersonating ?? false,
       });
     }
