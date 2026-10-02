@@ -9,7 +9,7 @@ import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/w
 import {
   buildPositionIdIndexes,
   type PositionIdIndex,
-} from 'src/database/commands/upgrade-version-command/2-45/utils/build-position-id-indexes.util';
+} from 'src/database/commands/upgrade-version-command/2-46/utils/build-position-id-indexes.util';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { POSITION_ID_INDEX_FIELD_NAMES } from 'src/engine/metadata-modules/object-metadata/utils/build-position-id-index-for-object.util';
@@ -22,9 +22,9 @@ import { getWorkspaceSchemaContextForMigration } from 'src/engine/workspace-mana
 
 // Lists sort by position then id; without this index every page sorts the
 // whole table. Built CONCURRENTLY so writes are not blocked on large tables
-@RegisteredWorkspaceCommand('2.45.0', 1790876939146)
+@RegisteredWorkspaceCommand('2.46.0', 1790938680463)
 @Command({
-  name: 'upgrade:2-45:add-position-id-indexes',
+  name: 'upgrade:2-46:add-position-id-indexes',
   description:
     'Index (position, id) on every object so the default list order does not sort the table',
 })

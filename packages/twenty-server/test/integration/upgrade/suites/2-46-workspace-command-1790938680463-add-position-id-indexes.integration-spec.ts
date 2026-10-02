@@ -1,6 +1,6 @@
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
-import { type AddPositionIdIndexesCommand } from 'src/database/commands/upgrade-version-command/2-45/2-45-workspace-command-1790876939146-add-position-id-indexes.command';
+import { type AddPositionIdIndexesCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-workspace-command-1790938680463-add-position-id-indexes.command';
 import { type UpgradeCommandRegistryService } from 'src/engine/core-modules/upgrade/services/upgrade-command-registry.service';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
@@ -10,7 +10,7 @@ import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder
 const workspaceId = SEED_APPLE_WORKSPACE_ID;
 const schemaName = getWorkspaceSchemaName(workspaceId);
 
-describe('2-45 workspace command 1790876939146 - AddPositionIdIndexesCommand (integration)', () => {
+describe('2-46 workspace command 1790938680463 - AddPositionIdIndexesCommand (integration)', () => {
   let command: AddPositionIdIndexesCommand;
   let workspaceOrmManager: WorkspaceOrmManager;
 
@@ -60,12 +60,12 @@ describe('2-45 workspace command 1790876939146 - AddPositionIdIndexesCommand (in
     await run('up');
   });
 
-  it('is registered in the 2.45 bundle', () => {
+  it('is registered in the 2.46 bundle', () => {
     const registry = getAppProviderByClassName<UpgradeCommandRegistryService>(
       'UpgradeCommandRegistryService',
     );
 
-    expect(registry.getBundleForVersion('2.45.0').workspaceCommands).toEqual(
+    expect(registry.getBundleForVersion('2.46.0').workspaceCommands).toEqual(
       expect.arrayContaining([
         expect.objectContaining({ command, timestamp: 1790876939146 }),
       ]),
