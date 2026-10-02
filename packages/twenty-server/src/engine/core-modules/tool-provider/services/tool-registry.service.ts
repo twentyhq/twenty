@@ -451,7 +451,7 @@ export class ToolRegistryService {
         onlyIfParent: true,
         attributes: {
           'tool.category': provider.category,
-          'tool.include_schemas': options.includeSchemas === true,
+          'tool.include_schemas': options.includeSchemas ?? false,
           ...(isDefined(options.toolNames) && {
             'tool.requested_count': options.toolNames.size,
           }),

@@ -140,6 +140,13 @@ describe('buildApiAccessLogLine', () => {
     expect(line).toContain('mcp_tool=find_many_people');
   });
 
+  it('should omit MCP fields for a non MCP request', () => {
+    const line = build();
+
+    expect(line).not.toContain('mcp_method=');
+    expect(line).not.toContain('mcp_tool=');
+  });
+
   it('should log the resolvers captured by the graphql pipelines', () => {
     const line = build({
       request: {

@@ -40,4 +40,10 @@ describe('getMcpRequestLogFields', () => {
       getMcpRequestLogFields({ method: 'x'.repeat(129) }).method,
     ).toBeUndefined();
   });
+
+  it('should keep values at the length limit', () => {
+    expect(getMcpRequestLogFields({ method: 'x'.repeat(128) }).method).toBe(
+      'x'.repeat(128),
+    );
+  });
 });
