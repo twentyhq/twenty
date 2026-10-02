@@ -922,6 +922,7 @@
       "getUserDevice": "utilities/device/getUserDevice",
       "isDefined": "utilities/utils/isDefined",
       "MOBILE_MEDIA_QUERY": "utilities/responsive/constants/MobileMediaQuery",
+      "normalizeSearchText": "utilities/utils/normalizeSearchText",
       "parseThemeColor": "utilities/color/utils/parseThemeColor",
       "stringToThemeColor": "utilities/color/utils/stringToThemeColorP3String",
       "stringToThemeColorP3String": "utilities/color/utils/stringToThemeColorP3String",

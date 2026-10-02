@@ -8,9 +8,9 @@ import inputStyles from '@ui/primitives/input/Input/Input.module.scss';
 import selectStyles from '@ui/primitives/input/Select/Select.module.scss';
 import { mergeClassNames } from '@ui/utilities/internal/mergeClassNames';
 import { isDefined } from '@ui/utilities/utils/isDefined';
+import { normalizeSearchText } from '@ui/utilities/utils/normalizeSearchText';
 
 import styles from './CountrySelect.module.scss';
-import { normalizeCountrySearch } from './internal/normalizeCountrySearch';
 import { type CountrySelectProps } from './types/CountrySelectProps';
 
 export const CountrySelect = ({
@@ -48,11 +48,11 @@ export const CountrySelect = ({
   ) : (
     <IconCircleOff />
   );
-  const normalizedSearch = normalizeCountrySearch(search);
+  const normalizedSearch = normalizeSearchText(search);
   const filteredCountries = countries.filter((country) =>
-    normalizeCountrySearch(country.label).includes(normalizedSearch),
+    normalizeSearchText(country.label).includes(normalizedSearch),
   );
-  const showNoCountry = normalizeCountrySearch(labels.noCountry).includes(
+  const showNoCountry = normalizeSearchText(labels.noCountry).includes(
     normalizedSearch,
   );
   const hasResults = showNoCountry || isNonEmptyArray(filteredCountries);

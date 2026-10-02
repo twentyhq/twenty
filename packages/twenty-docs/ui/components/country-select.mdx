@@ -55,7 +55,7 @@ An unknown value displays the no-country label and icon. It does not call `onVal
 
 ## Search and interaction
 
-Search matches the prepared display labels without distinguishing letter case or accents. The no-country label participates in the same search. A query with no matching options displays `labels.noResults`. Closing and reopening the picker clears its search.
+Search matches the prepared display labels without distinguishing letter case or Latin accents and folds letters such as `ø`, `æ`, and `ß` into their Latin equivalents. Marks that distinguish letters in other scripts remain significant. The no-country label participates in the same search. A query with no matching options displays `labels.noResults`. Closing and reopening the picker clears its search.
 
 The picker handles pointer selection, keyboard movement, selected-option presentation, focus, and closing. Selecting an option closes the popup. Escape closes it and restores trigger focus. Each instance has independent popup and search state.
 
