@@ -33,12 +33,15 @@ const RECORD_ID = randomUUID();
 const workspaceId = SEED_APPLE_WORKSPACE_ID;
 const JONY = { workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY };
 const fields =
-  'viewerAccessLevel sharingMode canManageSharing generalAccessLevel defaultGeneralAccessLevel permissions { canRead canUpdate } shares { principalId rowCause accessLevel }';
+  'sharingMode canManageSharing generalAccessLevel defaultGeneralAccessLevel permissions { canRead canUpdate } shares { principalId rowCause accessLevel }';
 const READ_SHARING = parse(
   `query RecordSharing($target: RecordTargetInput!) { recordSharing(target: $target) { ${fields} } }`,
 );
 const SET_SHARE = parse(
   `mutation SetShare($target: RecordTargetInput!, $principal: RecordSharePrincipalInput!, $accessLevel: RecordShareAccessLevel!) { setRecordShare(target: $target, principal: $principal, accessLevel: $accessLevel) { ${fields} } }`,
+);
+const REMOVE_SHARE = parse(
+  `mutation RemoveShare($target: RecordTargetInput!, $principal: RecordSharePrincipalInput!) { removeRecordShare(target: $target, principal: $principal) { ${fields} } }`,
 );
 const SET_GENERAL_ACCESS = parse(
   `mutation SetGeneralAccess($target: RecordTargetInput!, $accessLevel: RecordShareAccessLevel!) { setRecordGeneralAccess(target: $target, accessLevel: $accessLevel) { ${fields} } }`,
@@ -200,7 +203,6 @@ describe('Record-level sharing on an object open by default', () => {
       canManageSharing: true,
       generalAccessLevel: RecordShareAccessLevel.READ_WRITE,
       defaultGeneralAccessLevel: RecordShareAccessLevel.READ_WRITE,
-      viewerAccessLevel: RecordShareAccessLevel.FULL,
       shares: [],
     });
     expect(
@@ -277,7 +279,6 @@ describe('Record-level sharing on an object open by default', () => {
       (await readSharing(APPLE_JONY_MEMBER_ACCESS_TOKEN)).body.data
         .recordSharing,
     ).toMatchObject({
-      viewerAccessLevel: RecordShareAccessLevel.READ,
       canManageSharing: false,
       permissions: { canRead: true, canUpdate: false },
     });
@@ -316,14 +317,16 @@ describe('Record-level sharing on an object open by default', () => {
       (await readSharing(APPLE_JONY_MEMBER_ACCESS_TOKEN)).body.data
         .recordSharing,
     ).toMatchObject({
-      viewerAccessLevel: RecordShareAccessLevel.READ_WRITE,
       canManageSharing: false,
       shares: [],
     });
   });
 
   it('should keep a full access holder who restricts the record in charge of it', async () => {
-    await setGeneralAccess(RecordShareAccessLevel.FULL);
+    await setShare({
+      principal: JONY,
+      accessLevel: RecordShareAccessLevel.FULL,
+    });
 
     const restricted = await setGeneralAccess(
       RecordShareAccessLevel.NONE,
@@ -331,13 +334,33 @@ describe('Record-level sharing on an object open by default', () => {
     );
 
     expect(restricted.body.errors).toBeUndefined();
+
+    const unshared = await makeMetadataApiRequest({
+      query: REMOVE_SHARE,
+      variables: { target: target(), principal: JONY },
+    });
+
+    expect(unshared.body.errors).toBeUndefined();
     expect(await findRecordIds(APPLE_JONY_MEMBER_ACCESS_TOKEN)).toEqual([
       RECORD_ID,
     ]);
     expect(
       (await readSharing(APPLE_JONY_MEMBER_ACCESS_TOKEN)).body.data
-        .recordSharing.viewerAccessLevel,
-    ).toBe(RecordShareAccessLevel.FULL);
+        .recordSharing.canManageSharing,
+    ).toBe(true);
+  });
+
+  it('should refuse full access as general access', async () => {
+    const response = await setGeneralAccess(RecordShareAccessLevel.FULL);
+
+    expect(response.body.errors?.[0]?.extensions?.code).toBe('BAD_USER_INPUT');
+    expect(
+      await shares.findByRecordIds({
+        workspaceId,
+        objectMetadataId,
+        recordIds: [RECORD_ID],
+      }),
+    ).toEqual([]);
   });
 
   it('should refuse NONE as a granted access level', async () => {
@@ -362,9 +385,7 @@ describe('Record-level sharing on an object open by default', () => {
     await setShare({ principal: JONY });
 
     const removed = await makeMetadataApiRequest({
-      query: parse(
-        `mutation RemoveShare($target: RecordTargetInput!, $principal: RecordSharePrincipalInput!) { removeRecordShare(target: $target, principal: $principal) { ${fields} } }`,
-      ),
+      query: REMOVE_SHARE,
       variables: { target: target(), principal: JONY },
     });
 
@@ -390,7 +411,7 @@ describe('Record-level sharing on an object open by default', () => {
         RECORD_ID,
       ]);
       expect((await readSharing()).body.data.recordSharing).toMatchObject({
-        sharingMode: RecordSharingMode.NONE,
+        sharingMode: RecordSharingMode.ROLE_ONLY,
         canManageSharing: false,
         generalAccessLevel: null,
         defaultGeneralAccessLevel: null,

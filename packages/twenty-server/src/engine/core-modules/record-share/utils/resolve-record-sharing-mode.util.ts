@@ -22,6 +22,6 @@ export const resolveRecordSharingMode = ({
       return isRecordSharingEnabled &&
         isRecordShareExceptionObject(flatObjectMetadata)
         ? RecordSharingMode.OPEN_BY_DEFAULT
-        : RecordSharingMode.NONE;
+        : RecordSharingMode.ROLE_ONLY;
   }
 };

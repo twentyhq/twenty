@@ -78,9 +78,6 @@ export class RecordSharingDTO {
   @Field(() => Boolean)
   canManageSharing: boolean;
 
-  @Field(() => RecordShareAccessLevel, { nullable: true })
-  viewerAccessLevel: RecordShareAccessLevel | null;
-
   @Field(() => RecordPermissionsDTO)
   permissions: RecordPermissionsDTO;
 

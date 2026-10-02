@@ -15,6 +15,11 @@ import { type RecordShareInput } from 'src/engine/core-modules/record-share/type
 import { type ShareWithInput } from 'src/engine/core-modules/record-share/types/share-with-input.type';
 import { resolveShareWithPrincipalOrThrow } from 'src/engine/core-modules/record-share/utils/resolve-share-with-principal-or-throw.util';
 
+const ACCESS_LEVELS_RESTRICTING_OPEN_RECORDS = [
+  RecordShareAccessLevel.NONE,
+  RecordShareAccessLevel.READ,
+];
+
 type RecordShareInputForRecord = Omit<
   RecordShareInput,
   'recordId' | 'objectMetadataId'
@@ -140,7 +145,9 @@ export const buildRecordShareInputsForCreatedRecords = ({
       (shareWithPrincipal) =>
         shareWithPrincipal.principalType ===
           RecordSharePrincipalType.EVERYONE &&
-        shareWithPrincipal.accessLevel === RecordShareAccessLevel.READ,
+        ACCESS_LEVELS_RESTRICTING_OPEN_RECORDS.includes(
+          shareWithPrincipal.accessLevel,
+        ),
     );
 
   return [

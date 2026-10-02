@@ -32,6 +32,21 @@ describe('resolveShareWithToWrite', () => {
     },
   );
 
+  it.each([RecordSharingMode.PRIVATE, RecordSharingMode.INHERITED])(
+    'should leave no everyone row when everyone keeps the default of a %s object',
+    (sharingMode) => {
+      expect(
+        resolveShareWithToWrite({
+          sharingMode,
+          shareWith: [
+            ROLE_GRANT,
+            { everyone: true, accessLevel: RecordShareAccessLevel.NONE },
+          ],
+        }),
+      ).toEqual([ROLE_GRANT]);
+    },
+  );
+
   it('should write named grants and a general access other than the default on a record open by default', () => {
     expect(
       resolveShareWithToWrite({
@@ -65,7 +80,7 @@ describe('resolveShareWithToWrite', () => {
   it('should write nothing when records of the object are not shared', () => {
     expect(
       resolveShareWithToWrite({
-        sharingMode: RecordSharingMode.NONE,
+        sharingMode: RecordSharingMode.ROLE_ONLY,
         shareWith: [ROLE_GRANT],
       }),
     ).toBeNull();

@@ -42,7 +42,7 @@ const RESTRICTED_RECORD_ID = randomUUID();
 const SHARED_RECORD_ID = randomUUID();
 const workspaceId = SEED_APPLE_WORKSPACE_ID;
 const fields =
-  'viewerAccessLevel canManageSharing generalAccessLevel shares { principalId rowCause accessLevel }';
+  'canManageSharing generalAccessLevel shares { principalId rowCause accessLevel }';
 const READ_SHARING = parse(
   `query RecordSharing($target: RecordTargetInput!) { recordSharing(target: $target) { ${fields} } }`,
 );
@@ -230,10 +230,7 @@ describe('Access to all records and ownership transfer', () => {
     );
 
     expect(sharing.body.errors).toBeUndefined();
-    expect(sharing.body.data.recordSharing).toMatchObject({
-      viewerAccessLevel: RecordShareAccessLevel.FULL,
-      canManageSharing: true,
-    });
+    expect(sharing.body.data.recordSharing.canManageSharing).toBe(true);
 
     const shared = await setShare({
       recordId: RESTRICTED_RECORD_ID,

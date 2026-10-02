@@ -15,7 +15,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type UserWorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { NotFoundError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { GRANTABLE_RECORD_SHARE_ACCESS_LEVELS } from 'src/engine/core-modules/record-share/constants/grantable-record-share-access-levels.constant';
+import { GENERAL_RECORD_SHARE_ACCESS_LEVELS } from 'src/engine/core-modules/record-share/constants/general-record-share-access-levels.constant';
 import {
   type RecordSharePrincipalInput,
   type RecordSharingDTO,
@@ -40,6 +40,7 @@ import { validateShareWithPrincipalsOrThrow } from 'src/engine/core-modules/reco
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { DENIED_RECORD_PERMISSIONS } from 'src/engine/metadata-modules/record-permissions/constants/denied-record-permissions.constant';
 import { type RecordPermissionsDTO } from 'src/engine/metadata-modules/record-permissions/dtos/record-permissions.dto';
 import { type RecordTargetInput } from 'src/engine/metadata-modules/record-permissions/dtos/record-target.input';
 import { RecordPermissionsService } from 'src/engine/metadata-modules/record-permissions/services/record-permissions.service';
@@ -98,6 +99,14 @@ export class RecordSharingService {
   async setGeneralAccess(
     args: RecordSharingArgs & { accessLevel: RecordShareAccessLevel },
   ): Promise<RecordSharingDTO> {
+    if (!GENERAL_RECORD_SHARE_ACCESS_LEVELS.includes(args.accessLevel)) {
+      throw new RecordShareException(
+        `General access level "${args.accessLevel}" must be one of ${GENERAL_RECORD_SHARE_ACCESS_LEVELS.join(', ')}`,
+        RecordShareExceptionCode.INVALID_SHARE_WITH,
+        { userFriendlyMessage: msg`Invalid access level.` },
+      );
+    }
+
     return this.changeSharing(args, (change) =>
       this.writeGeneralAccess({ ...change, args }),
     );
@@ -109,36 +118,24 @@ export class RecordSharingService {
       accessLevel: RecordShareAccessLevel;
     },
   ): Promise<RecordSharingDTO> {
-    const principal = resolveRecordSharePrincipalOrThrow(args.principal);
-
-    // NONE only withdraws the general access of a record and is never granted
-    if (!GRANTABLE_RECORD_SHARE_ACCESS_LEVELS.includes(args.accessLevel)) {
-      throw new RecordShareException(
-        `Access level "${args.accessLevel}" must be one of ${GRANTABLE_RECORD_SHARE_ACCESS_LEVELS.join(', ')}`,
-        RecordShareExceptionCode.INVALID_SHARE_WITH,
-        { userFriendlyMessage: msg`Invalid access level.` },
-      );
-    }
+    const maps = await this.workspaceCacheService.getOrRecompute(
+      args.authContext.workspace.id,
+      ['flatWorkspaceMemberMaps', 'flatRoleMaps'],
+    );
+    const [principal] = validateShareWithPrincipalsOrThrow({
+      shareWith: [{ ...args.principal, accessLevel: args.accessLevel }],
+      ...maps,
+    });
 
     return this.changeSharing(
       args,
       async ({ workspaceId, transactionScope, sharingObject }) => {
-        const maps = await this.workspaceCacheService.getOrRecompute(
-          workspaceId,
-          ['flatWorkspaceMemberMaps', 'flatRoleMaps'],
-        );
-
-        validateShareWithPrincipalsOrThrow({
-          shareWith: [{ ...args.principal, accessLevel: args.accessLevel }],
-          ...maps,
-        });
         await this.recordShareStorageService.setManualShare({
           workspaceId,
           transactionScope,
           enabled: true,
           share: {
             ...principal,
-            accessLevel: args.accessLevel,
             objectMetadataId: args.objectMetadataId,
             recordId: args.recordId,
             sourceId: args.recordId,
@@ -187,7 +184,7 @@ export class RecordSharingService {
     const { flatObjectMetadata, sharingMode } = sharingObject;
     const workspaceId = args.authContext.workspace.id;
 
-    if (sharingMode === RecordSharingMode.NONE) {
+    if (sharingMode === RecordSharingMode.ROLE_ONLY) {
       throw new NotFoundError('Record not found');
     }
 
@@ -256,7 +253,6 @@ export class RecordSharingService {
       return {
         sharingMode,
         canManageSharing: false,
-        viewerAccessLevel: null,
         permissions,
         generalAccessLevel: null,
         defaultGeneralAccessLevel:
@@ -385,7 +381,7 @@ export class RecordSharingService {
     const { shares, viewerAccessLevel, generalAccessLevel } =
       await this.getRecordShares({ ...args, sharingObject });
     const canManageSharing =
-      sharingMode !== RecordSharingMode.NONE &&
+      sharingMode !== RecordSharingMode.ROLE_ONLY &&
       permissions.canUpdate &&
       viewerAccessLevel === RecordShareAccessLevel.FULL &&
       (await this.isUpdatePermittedByRole({
@@ -401,7 +397,6 @@ export class RecordSharingService {
     return {
       sharingMode,
       canManageSharing,
-      viewerAccessLevel,
       permissions,
       generalAccessLevel,
       defaultGeneralAccessLevel: resolveDefaultGeneralAccessLevel(sharingMode),
@@ -603,18 +598,23 @@ export class RecordSharingService {
       : undefined;
   }
 
-  private getPermissions({
+  private async getPermissions({
     args,
     sharingObject,
   }: {
     args: RecordSharingArgs;
     sharingObject: RecordSharingObject;
   }): Promise<RecordPermissionsDTO> {
-    return this.recordPermissionsService.getPermissions({
-      authContext: args.authContext,
-      flatObjectMetadata: sharingObject.flatObjectMetadata,
-      recordId: args.recordId,
-    });
+    const permissionsByRecordId =
+      await this.recordPermissionsService.getPermissionsForRecords({
+        authContext: args.authContext,
+        flatObjectMetadata: sharingObject.flatObjectMetadata,
+        recordIds: [args.recordId],
+      });
+
+    return (
+      permissionsByRecordId.get(args.recordId) ?? DENIED_RECORD_PERMISSIONS
+    );
   }
 
   private isUpdatePermittedByRole({

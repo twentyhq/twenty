@@ -46,7 +46,7 @@ const OBJECT_PLURAL = 'sharingPolicyRecords';
 const RECORD_ID = randomUUID();
 const workspaceId = SEED_APPLE_WORKSPACE_ID;
 const fields =
-  'viewerAccessLevel sharingMode canManageSharing generalAccessLevel permissions { canRead canUpdate canDelete canSoftDelete } roles { id canRead canUpdate } shares { principalId principalRoleId rowCause accessLevel }';
+  'sharingMode canManageSharing generalAccessLevel permissions { canRead canUpdate canDelete canSoftDelete } roles { id canRead canUpdate } shares { principalId principalRoleId rowCause accessLevel }';
 const READ_SHARING = parse(
   `query RecordSharing($target: RecordTargetInput!) { recordSharing(target: $target) { ${fields} } }`,
 );
@@ -166,8 +166,8 @@ describe('Generic sharing API on an ordinary private object', () => {
     expect(
       (await invite(RecordShareAccessLevel.FULL)).body.errors,
     ).toBeUndefined();
-    expect((await settings()).body.data.recordSharing.viewerAccessLevel).toBe(
-      RecordShareAccessLevel.FULL,
+    expect((await settings()).body.data.recordSharing.canManageSharing).toBe(
+      true,
     );
   });
 
@@ -370,7 +370,7 @@ describe('Generic sharing API on an ordinary private object', () => {
       expect((await settings()).body.errors).toBeDefined();
       await grant(RecordShareAccessLevel.FULL);
       expect((await settings()).body.data.recordSharing).toMatchObject({
-        viewerAccessLevel: 'FULL',
+        canManageSharing: true,
         permissions: { canRead: true, canUpdate: true },
       });
       const permissions = await makeMetadataApiRequest(
@@ -453,7 +453,6 @@ describe('Generic sharing API on an ordinary private object', () => {
         }),
       ).toEqual(before);
       expect((await settings()).body.data.recordSharing).toMatchObject({
-        viewerAccessLevel: accessLevel,
         canManageSharing: false,
         shares: [],
         roles: [],
@@ -520,9 +519,7 @@ describe('Generic sharing API on an ordinary private object', () => {
       for (const accessLevel of GRANTABLE_RECORD_SHARE_ACCESS_LEVELS) {
         const response = await share(principal, accessLevel);
         expect(response.body.errors).toBeUndefined();
-        expect(response.body.data.sharing.viewerAccessLevel).toBe(
-          RecordShareAccessLevel.FULL,
-        );
+        expect(response.body.data.sharing.canManageSharing).toBe(true);
         expect(response.body.data.sharing.shares).toEqual(
           expect.arrayContaining([
             expect.objectContaining({
@@ -556,7 +553,6 @@ describe('Generic sharing API on an ordinary private object', () => {
     );
     expect(response.body.errors).toBeUndefined();
     expect(response.body.data.sharing).toMatchObject({
-      viewerAccessLevel: RecordShareAccessLevel.READ_WRITE,
       canManageSharing: false,
       permissions: { canRead: true, canUpdate: true },
       shares: [],
@@ -695,7 +691,6 @@ describe('Generic sharing API on an ordinary private object', () => {
     expect(response.body.data.sharing).toMatchObject({
       sharingMode: 'PRIVATE',
       canManageSharing: false,
-      viewerAccessLevel: null,
       generalAccessLevel: null,
       permissions: { canRead: false, canUpdate: false },
       shares: [],

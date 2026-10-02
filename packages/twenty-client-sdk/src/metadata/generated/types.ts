@@ -3456,9 +3456,6 @@ export default {
             "canManageSharing": [
                 8
             ],
-            "viewerAccessLevel": [
-                173
-            ],
             "permissions": [
                 169
             ],

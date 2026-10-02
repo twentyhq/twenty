@@ -10,7 +10,7 @@ export const resolveDefaultGeneralAccessLevel = (
   sharingMode: RecordSharingMode,
 ): RecordShareAccessLevel | null => {
   switch (sharingMode) {
-    case RecordSharingMode.NONE:
+    case RecordSharingMode.ROLE_ONLY:
       return null;
     case RecordSharingMode.OPEN_BY_DEFAULT:
       return RecordShareAccessLevel.READ_WRITE;

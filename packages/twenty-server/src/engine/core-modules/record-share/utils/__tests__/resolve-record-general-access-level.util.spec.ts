@@ -30,7 +30,7 @@ describe('resolveRecordGeneralAccessLevel', () => {
     [RecordSharingMode.OPEN_BY_DEFAULT, RecordShareAccessLevel.READ_WRITE],
     [RecordSharingMode.PRIVATE, RecordShareAccessLevel.NONE],
     [RecordSharingMode.INHERITED, RecordShareAccessLevel.NONE],
-    [RecordSharingMode.NONE, null],
+    [RecordSharingMode.ROLE_ONLY, null],
   ])(
     'should fall back to the default of a %s object',
     (sharingMode, accessLevel) => {
@@ -75,7 +75,7 @@ describe('resolveRecordGeneralAccessLevel', () => {
   it('should report no general access when records are not shared', () => {
     expect(
       resolveRecordGeneralAccessLevel({
-        sharingMode: RecordSharingMode.NONE,
+        sharingMode: RecordSharingMode.ROLE_ONLY,
         recordShares: [buildEveryoneShare(RecordShareAccessLevel.READ)],
       }),
     ).toBeNull();

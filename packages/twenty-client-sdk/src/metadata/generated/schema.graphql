@@ -1811,7 +1811,6 @@ type RecordSharingRoleDTO {
 type RecordSharingDTO {
   sharingMode: RecordSharingMode!
   canManageSharing: Boolean!
-  viewerAccessLevel: RecordShareAccessLevel
   permissions: RecordPermissionsDTO!
   generalAccessLevel: RecordShareAccessLevel
   defaultGeneralAccessLevel: RecordShareAccessLevel
@@ -1821,10 +1820,10 @@ type RecordSharingDTO {
 }
 
 """
-How records of an object are shared: not at all, private until shared, readable through linked records, or open by default with per-record exceptions
+How records of an object are shared: only through roles, private until shared, readable through linked records, or open by default with per-record exceptions
 """
 enum RecordSharingMode {
-  NONE
+  ROLE_ONLY
   PRIVATE
   INHERITED
   OPEN_BY_DEFAULT

@@ -787,7 +787,7 @@ describe('createShareWithObjectRecordsPermissions', () => {
         createOneOperation({
           data: { id: recordId, name: 'open object' },
           shareWith: [
-            { everyone: true, accessLevel: RecordShareAccessLevel.FULL },
+            { everyone: true, accessLevel: RecordShareAccessLevel.READ },
           ],
         }),
       );
@@ -911,6 +911,65 @@ describe('createShareWithObjectRecordsPermissions', () => {
       );
 
       expect(renamedByJony.body.errors).toBeDefined();
+    });
+
+    it('should create a record restricted to its creator', async () => {
+      const recordId = trackRecordId();
+
+      const response = await makeGraphqlApiRequest(
+        createOneOperation({
+          data: { id: recordId, name: 'restricted to the creator' },
+          shareWith: [
+            { everyone: true, accessLevel: RecordShareAccessLevel.NONE },
+          ],
+        }),
+      );
+
+      expect(response.body.errors).toBeUndefined();
+      expect(await findRecordShares(recordId)).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining(
+            ownerRowFor(recordId, WORKSPACE_MEMBER_DATA_SEED_IDS.JANE),
+          ),
+          expect.objectContaining({
+            principalId: EVERYONE_PRINCIPAL_ID,
+            accessLevel: RecordShareAccessLevel.NONE,
+            rowCause: RecordShareRowCause.MANUAL,
+          }),
+        ]),
+      );
+
+      const jonyRead = await makeGraphqlApiRequestWithMemberRole(
+        findManyOperation(recordId),
+      );
+      const creatorRead = await makeGraphqlApiRequest(
+        findManyOperation(recordId),
+      );
+
+      expect(jonyRead.body.data[OBJECT_PLURAL].edges).toEqual([]);
+      expect(
+        creatorRead.body.data[OBJECT_PLURAL].edges.map(
+          (edge: { node: { id: string } }) => edge.node.id,
+        ),
+      ).toEqual([recordId]);
+    });
+
+    it('should refuse full access for everyone', async () => {
+      const recordId = trackRecordId();
+
+      const response = await makeGraphqlApiRequest(
+        createOneOperation({
+          data: { id: recordId, name: 'full access for everyone' },
+          shareWith: [
+            { everyone: true, accessLevel: RecordShareAccessLevel.FULL },
+          ],
+        }),
+      );
+
+      expect(response.body.errors?.[0]?.extensions?.code).toBe(
+        'BAD_USER_INPUT',
+      );
+      expect(await findRecordShares(recordId)).toEqual([]);
     });
 
     it('should refuse a grant the role of its recipient cannot use when sharing stays within roles', async () => {

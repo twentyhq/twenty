@@ -1411,7 +1411,6 @@ export interface RecordSharingRoleDTO {
 export interface RecordSharingDTO {
     sharingMode: RecordSharingMode
     canManageSharing: Scalars['Boolean']
-    viewerAccessLevel?: RecordShareAccessLevel
     permissions: RecordPermissionsDTO
     generalAccessLevel?: RecordShareAccessLevel
     defaultGeneralAccessLevel?: RecordShareAccessLevel
@@ -1422,8 +1421,8 @@ export interface RecordSharingDTO {
 }
 
 
-/** How records of an object are shared: not at all, private until shared, readable through linked records, or open by default with per-record exceptions */
-export type RecordSharingMode = 'NONE' | 'PRIVATE' | 'INHERITED' | 'OPEN_BY_DEFAULT'
+/** How records of an object are shared: only through roles, private until shared, readable through linked records, or open by default with per-record exceptions */
+export type RecordSharingMode = 'ROLE_ONLY' | 'PRIVATE' | 'INHERITED' | 'OPEN_BY_DEFAULT'
 
 export interface RecordPermissionsResult {
     objectMetadataId: Scalars['UUID']
@@ -5245,7 +5244,6 @@ export interface RecordSharingRoleDTOGenqlSelection{
 export interface RecordSharingDTOGenqlSelection{
     sharingMode?: boolean | number
     canManageSharing?: boolean | number
-    viewerAccessLevel?: boolean | number
     permissions?: RecordPermissionsDTOGenqlSelection
     generalAccessLevel?: boolean | number
     defaultGeneralAccessLevel?: boolean | number
@@ -11312,7 +11310,7 @@ export const enumRecordShareRowCause = {
 }
 
 export const enumRecordSharingMode = {
-   NONE: 'NONE' as const,
+   ROLE_ONLY: 'ROLE_ONLY' as const,
    PRIVATE: 'PRIVATE' as const,
    INHERITED: 'INHERITED' as const,
    OPEN_BY_DEFAULT: 'OPEN_BY_DEFAULT' as const

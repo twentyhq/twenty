@@ -11,10 +11,10 @@ describe('resolveRecordSharingMode', () => {
     [MetadataReadability.PRIVATE, true, false, RecordSharingMode.PRIVATE],
     [MetadataReadability.INHERITED, false, false, RecordSharingMode.INHERITED],
     [MetadataReadability.OPEN, false, true, RecordSharingMode.OPEN_BY_DEFAULT],
-    [MetadataReadability.OPEN, false, false, RecordSharingMode.NONE],
-    [MetadataReadability.OPEN, true, true, RecordSharingMode.NONE],
-    [MetadataReadability.SYSTEM, false, true, RecordSharingMode.NONE],
-    [MetadataReadability.APPLICATION, false, true, RecordSharingMode.NONE],
+    [MetadataReadability.OPEN, false, false, RecordSharingMode.ROLE_ONLY],
+    [MetadataReadability.OPEN, true, true, RecordSharingMode.ROLE_ONLY],
+    [MetadataReadability.SYSTEM, false, true, RecordSharingMode.ROLE_ONLY],
+    [MetadataReadability.APPLICATION, false, true, RecordSharingMode.ROLE_ONLY],
   ])(
     'should resolve a %s object (system: %s) with the flag %s to %s',
     (readability, isSystem, isRecordSharingEnabled, sharingMode) => {

@@ -42,13 +42,13 @@ const OTHER_RECORD_ID = randomUUID();
 const workspaceId = SEED_APPLE_WORKSPACE_ID;
 const JONY = { workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY };
 const SET_SHARE = parse(
-  `mutation SetShare($target: RecordTargetInput!, $principal: RecordSharePrincipalInput!, $accessLevel: RecordShareAccessLevel!) { setRecordShare(target: $target, principal: $principal, accessLevel: $accessLevel) { viewerAccessLevel } }`,
+  `mutation SetShare($target: RecordTargetInput!, $principal: RecordSharePrincipalInput!, $accessLevel: RecordShareAccessLevel!) { setRecordShare(target: $target, principal: $principal, accessLevel: $accessLevel) { canManageSharing } }`,
 );
 const SET_GENERAL_ACCESS = parse(
-  `mutation SetGeneralAccess($target: RecordTargetInput!, $accessLevel: RecordShareAccessLevel!) { setRecordGeneralAccess(target: $target, accessLevel: $accessLevel) { viewerAccessLevel } }`,
+  `mutation SetGeneralAccess($target: RecordTargetInput!, $accessLevel: RecordShareAccessLevel!) { setRecordGeneralAccess(target: $target, accessLevel: $accessLevel) { canManageSharing } }`,
 );
 const READ_SHARING = parse(
-  `query RecordSharing($target: RecordTargetInput!) { recordSharing(target: $target) { viewerAccessLevel canManageSharing permissions { canRead canUpdate canDelete } shares { principalId } } }`,
+  `query RecordSharing($target: RecordTargetInput!) { recordSharing(target: $target) { canManageSharing permissions { canRead canUpdate canDelete } shares { principalId } } }`,
 );
 
 describe('Records shared beyond the role that can access their object', () => {
@@ -273,7 +273,6 @@ describe('Records shared beyond the role that can access their object', () => {
     );
 
     expect(sharing.body.data.recordSharing).toMatchObject({
-      viewerAccessLevel: RecordShareAccessLevel.FULL,
       canManageSharing: false,
       permissions: { canRead: true, canUpdate: true, canDelete: false },
       shares: [],

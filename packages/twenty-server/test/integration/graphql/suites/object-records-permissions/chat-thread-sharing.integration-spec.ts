@@ -450,13 +450,21 @@ describe('Conversation sharing through the authenticated API', () => {
               .extensions.code,
           ).toBe('NOT_FOUND');
         }
-        expect(
-          (await grant(RecordShareAccessLevel.FULL)).body.errors,
-        ).toBeUndefined();
-        for (const enabled of [true, false]) {
+        // Full access lets its holder manage sharing, so everyone never gets it
+        if (threadAudience === 'everyone') {
           expect(
-            (await changeSharingAsParticipant(enabled)).body.errors,
+            (await grant(RecordShareAccessLevel.FULL)).body.errors[0].extensions
+              .code,
+          ).toBe('BAD_USER_INPUT');
+        } else {
+          expect(
+            (await grant(RecordShareAccessLevel.FULL)).body.errors,
           ).toBeUndefined();
+          for (const enabled of [true, false]) {
+            expect(
+              (await changeSharingAsParticipant(enabled)).body.errors,
+            ).toBeUndefined();
+          }
         }
         expect(
           (await grant(RecordShareAccessLevel.READ_WRITE)).body.errors,
