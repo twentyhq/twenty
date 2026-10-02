@@ -10,7 +10,6 @@ import { GqlExecutionContext } from '@nestjs/graphql';
 import { msg } from '@lingui/core/macro';
 import { type PermissionFlagType } from 'twenty-shared/constants';
 
-import { hasSettingsPermission } from 'src/engine/guards/utils/has-settings-permission.util';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -28,12 +27,16 @@ export const SettingsPermissionGuard = (
     async canActivate(context: ExecutionContext): Promise<boolean> {
       const request = GqlExecutionContext.create(context).getContext().req;
 
-      const hasPermission = await hasSettingsPermission({
-        permissionsService: this.permissionsService,
-        workspace: request.workspace,
-        authContext: request,
-        setting: requiredPermission,
-      });
+      const hasPermission =
+        await this.permissionsService.userHasWorkspaceSettingPermissionOrWorkspaceIsBeingCreated(
+          {
+            workspace: request.workspace,
+            userWorkspaceId: request.userWorkspaceId,
+            setting: requiredPermission,
+            apiKeyId: request.apiKey?.id,
+            applicationId: request.application?.id,
+          },
+        );
 
       if (hasPermission) {
         return true;

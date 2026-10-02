@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { msg } from '@lingui/core/macro';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
 import {
@@ -11,6 +12,7 @@ import {
 } from 'src/engine/core-modules/application/application.exception';
 import { type FlatApplicationCacheMaps } from 'src/engine/core-modules/application/types/flat-application-cache-maps.type';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatRoleMaps } from 'src/engine/metadata-modules/flat-role/types/flat-role-maps.type';
 import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
@@ -131,6 +133,37 @@ export class PermissionsService {
         }),
       )
     );
+  }
+
+  public async userHasWorkspaceSettingPermissionOrWorkspaceIsBeingCreated({
+    workspace,
+    userWorkspaceId,
+    setting,
+    apiKeyId,
+    applicationId,
+  }: {
+    workspace: Pick<FlatWorkspace, 'id' | 'activationStatus'>;
+    userWorkspaceId?: string;
+    setting: PermissionFlagType;
+    apiKeyId?: string;
+    applicationId: string | undefined;
+  }): Promise<boolean> {
+    if (
+      [
+        WorkspaceActivationStatus.PENDING_CREATION,
+        WorkspaceActivationStatus.ONGOING_CREATION,
+      ].includes(workspace.activationStatus)
+    ) {
+      return true;
+    }
+
+    return this.userHasWorkspaceSettingPermission({
+      userWorkspaceId,
+      workspaceId: workspace.id,
+      setting,
+      apiKeyId,
+      applicationId,
+    });
   }
 
   public async checkRolesPermissions(

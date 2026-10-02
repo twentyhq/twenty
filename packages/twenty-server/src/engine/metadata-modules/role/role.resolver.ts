@@ -31,7 +31,6 @@ import { AuthApplication } from 'src/engine/decorators/auth/auth-application.dec
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
-import { hasSettingsPermission } from 'src/engine/guards/utils/has-settings-permission.util';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { AiAgentRoleService } from 'src/engine/metadata-modules/ai/ai-agent-role/ai-agent-role.service';
 import { AgentDTO } from 'src/engine/metadata-modules/ai/ai-agent/dtos/agent.dto';
@@ -472,17 +471,21 @@ export class RoleResolver {
   // Field resolvers skip class-level guards, and Role is reachable outside getRoles (e.g. currentWorkspace.defaultRole)
   private async assertHasRolesPermission({
     workspace,
-    authContext,
+    authContext: { userWorkspaceId, apiKey, application },
   }: {
     workspace: WorkspaceEntity;
     authContext: RawAuthContext;
   }): Promise<void> {
-    const hasRolesPermission = await hasSettingsPermission({
-      permissionsService: this.permissionsService,
-      workspace,
-      authContext,
-      setting: PermissionFlagType.ROLES,
-    });
+    const hasRolesPermission =
+      await this.permissionsService.userHasWorkspaceSettingPermissionOrWorkspaceIsBeingCreated(
+        {
+          workspace,
+          userWorkspaceId,
+          setting: PermissionFlagType.ROLES,
+          apiKeyId: apiKey?.id,
+          applicationId: application?.id,
+        },
+      );
 
     if (!hasRolesPermission) {
       permissionGraphqlApiExceptionHandler(

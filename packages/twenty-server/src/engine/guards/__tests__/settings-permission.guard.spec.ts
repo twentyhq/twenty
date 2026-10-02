@@ -26,6 +26,9 @@ describe('SettingsPermissionGuard', () => {
   beforeEach(() => {
     mockPermissionsService = {
       userHasWorkspaceSettingPermission: jest.fn(),
+      userHasWorkspaceSettingPermissionOrWorkspaceIsBeingCreated:
+        PermissionsService.prototype
+          .userHasWorkspaceSettingPermissionOrWorkspaceIsBeingCreated,
     } as any;
 
     mockGqlContext = {
