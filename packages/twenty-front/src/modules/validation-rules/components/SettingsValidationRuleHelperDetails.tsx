@@ -1,25 +1,40 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/icon';
 import { Tag } from 'twenty-ui/primitives/data-display';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 import { getSettingsFieldTypeConfig } from '@/settings/data-model/utils/getSettingsFieldTypeConfig';
 import { isFieldTypeSupportedInSettings } from '@/settings/data-model/utils/isFieldTypeSupportedInSettings';
-import { SettingsValidationRuleExpressionText } from '@/validation-rules/components/SettingsValidationRuleExpressionText';
-import { SettingsValidationRuleHelperItemIcon } from '@/validation-rules/components/SettingsValidationRuleHelperItemIcon';
+import { SettingsValidationRuleExampleExpression } from '@/validation-rules/components/SettingsValidationRuleExampleExpression';
 import { type ValidationRuleEditorField } from '@/validation-rules/types/ValidationRuleEditorField';
 import { type ValidationRuleHelperItem } from '@/validation-rules/types/ValidationRuleHelperItem';
 import { computeValidationRuleHelperItemExamples } from '@/validation-rules/utils/computeValidationRuleHelperItemExamples';
 import { getValidationRuleEditorFieldChipLabel } from '@/validation-rules/utils/getValidationRuleEditorFieldChipLabel';
+import { getValidationRuleHelperItemIcon } from '@/validation-rules/utils/getValidationRuleHelperItemIcon';
 
 const StyledDetails = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${themeCssVariables.spacing[3]};
+  gap: ${themeCssVariables.spacing[2]};
   min-width: 0;
   overflow-y: auto;
   padding: ${themeCssVariables.spacing[3]};
+`;
+
+const StyledHeader = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[1]};
+  margin-bottom: ${themeCssVariables.spacing[1]};
+`;
+
+const StyledTitleRow = styled.div`
+  align-items: center;
+  display: flex;
+  gap: ${themeCssVariables.spacing[2]};
+  justify-content: space-between;
 `;
 
 const StyledTitle = styled.div`
@@ -27,19 +42,17 @@ const StyledTitle = styled.div`
   color: ${themeCssVariables.font.color.primary};
   display: flex;
   font-weight: ${themeCssVariables.font.weight.medium};
-  gap: ${themeCssVariables.spacing[2]};
+  gap: ${themeCssVariables.spacing[1]};
+  min-width: 0;
 `;
 
 const StyledSignature = styled.span`
   font-family: ${themeCssVariables.code.font.family};
 `;
 
-const StyledMeta = styled.div`
-  align-items: center;
-  color: ${themeCssVariables.font.color.tertiary};
-  display: flex;
-  flex-wrap: wrap;
-  gap: ${themeCssVariables.spacing[2]};
+const StyledSubtitle = styled.div`
+  color: ${themeCssVariables.font.color.light};
+  font-size: ${themeCssVariables.font.size.sm};
 `;
 
 const StyledDescription = styled.div`
@@ -47,16 +60,11 @@ const StyledDescription = styled.div`
   line-height: 1.5;
 `;
 
-const StyledExamplesTitle = styled.div`
-  color: ${themeCssVariables.font.color.light};
-  font-size: ${themeCssVariables.font.size.xs};
-  font-weight: ${themeCssVariables.font.weight.semiBold};
-`;
-
 const StyledExample = styled.div`
   background: ${themeCssVariables.background.transparent.lighter};
   border: 1px solid ${themeCssVariables.border.color.light};
   border-radius: ${themeCssVariables.border.radius.sm};
+  line-height: 24px;
   padding: ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[2]};
 `;
 
@@ -73,12 +81,22 @@ export const SettingsValidationRuleHelperDetails = ({
   const theme = useTheme();
   const { getIcon } = useIcons();
 
+  const ItemIcon = getValidationRuleHelperItemIcon({ item, getIcon });
+
   const examples = computeValidationRuleHelperItemExamples({
     item,
     fields: editorFields,
   });
 
-  const renderSummary = () => {
+  const itemIcon = (
+    <ItemIcon
+      size={theme.icon.size.md}
+      stroke={theme.icon.stroke.sm}
+      color={theme.font.color.tertiary}
+    />
+  );
+
+  const renderHeader = () => {
     switch (item.kind) {
       case 'field': {
         const typeLabel = isFieldTypeSupportedInSettings(item.field.type)
@@ -89,24 +107,19 @@ export const SettingsValidationRuleHelperDetails = ({
 
         return (
           <>
-            <StyledTitle>
-              <SettingsValidationRuleHelperItemIcon item={item} />
-              {getValidationRuleEditorFieldChipLabel(item.field)}
-            </StyledTitle>
-            <StyledMeta>
-              {t`${typeLabel} field`}
+            <StyledTitleRow>
+              <StyledTitle>
+                {itemIcon}
+                {getValidationRuleEditorFieldChipLabel(item.field)}
+              </StyledTitle>
               <Tag
-                color="gray"
+                color="blue"
                 startIcon={<ObjectIcon size={theme.icon.size.sm} />}
               >
                 {item.field.objectLabelSingular}
               </Tag>
-            </StyledMeta>
-            {item.field.readsRelatedRecord && (
-              <StyledDescription>
-                {t`Checked only when the record this rule belongs to is saved. Editing the related record does not check it again.`}
-              </StyledDescription>
-            )}
+            </StyledTitleRow>
+            <StyledSubtitle>{t`${typeLabel} field`}</StyledSubtitle>
           </>
         );
       }
@@ -115,33 +128,43 @@ export const SettingsValidationRuleHelperDetails = ({
         return (
           <>
             <StyledTitle>
-              <SettingsValidationRuleHelperItemIcon item={item} />
+              {itemIcon}
               <StyledSignature>{item.definition.signature}</StyledSignature>
             </StyledTitle>
-            <StyledMeta>
+            <StyledSubtitle>
               {item.kind === 'function' ? t`Function` : t`Keyword`}
-            </StyledMeta>
-            <StyledDescription>
-              {t(item.definition.description)}
-            </StyledDescription>
+            </StyledSubtitle>
           </>
         );
     }
   };
 
+  const getDescription = () => {
+    if (item.kind !== 'field') {
+      return t(item.definition.description);
+    }
+
+    return item.field.readsRelatedRecord
+      ? t`Checked only when the record this rule belongs to is saved. Editing the related record does not check it again.`
+      : undefined;
+  };
+
+  const description = getDescription();
+
   return (
     <StyledDetails>
-      {renderSummary()}
-      {examples.length > 0 && (
-        <>
-          <StyledExamplesTitle>{t`Examples`}</StyledExamplesTitle>
-          {examples.map((example) => (
-            <StyledExample key={example}>
-              <SettingsValidationRuleExpressionText expression={example} />
-            </StyledExample>
-          ))}
-        </>
+      <StyledHeader>{renderHeader()}</StyledHeader>
+      {isDefined(description) && (
+        <StyledDescription>{description}</StyledDescription>
       )}
+      {examples.map((example) => (
+        <StyledExample key={example}>
+          <SettingsValidationRuleExampleExpression
+            expression={example}
+            editorFields={editorFields}
+          />
+        </StyledExample>
+      ))}
     </StyledDetails>
   );
 };

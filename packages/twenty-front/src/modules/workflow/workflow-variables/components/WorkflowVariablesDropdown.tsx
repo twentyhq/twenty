@@ -1,5 +1,6 @@
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { WorkflowVariablesDropdownStepItems } from '@/workflow/workflow-variables/components/WorkflowVariablesDropdownStepItems';
 import { WorkflowVariablesDropdownSteps } from '@/workflow/workflow-variables/components/WorkflowVariablesDropdownSteps';
@@ -12,7 +13,8 @@ import { type WorkflowVariableStepSelection } from '@/workflow/workflow-variable
 import { t } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 import { useState } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { Dropdown } from 'twenty-ui/components';
 import { IconVariablePlus } from 'twenty-ui/icon';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
@@ -32,17 +34,7 @@ const StyledDropdownVariableButtonContainer = styled.div<{
   user-select: none;
 `;
 
-export const WorkflowVariablesDropdown = ({
-  clickableComponent,
-  disabled,
-  fieldTypesToExclude,
-  instanceId,
-  onVariableSelect,
-  shouldDisplayRecordFields,
-  shouldDisplayRecordObjects,
-  objectNameSingularsToSelect,
-}: {
-  clickableComponent?: React.ReactNode;
+type WorkflowVariablesDropdownProps = {
   disabled?: boolean;
   fieldTypesToExclude?: InputSchemaPropertyType[];
   instanceId: string;
@@ -50,17 +42,28 @@ export const WorkflowVariablesDropdown = ({
   shouldDisplayRecordFields: boolean;
   shouldDisplayRecordObjects: boolean;
   objectNameSingularsToSelect?: string[];
-}) => {
+};
+
+export const WorkflowVariablesDropdown = ({
+  disabled,
+  fieldTypesToExclude,
+  instanceId,
+  onVariableSelect,
+  shouldDisplayRecordFields,
+  shouldDisplayRecordObjects,
+  objectNameSingularsToSelect,
+}: WorkflowVariablesDropdownProps) => {
   const theme = useTheme();
   const dropdownId = `${SEARCH_VARIABLES_DROPDOWN_ID}-${instanceId}`;
-  const { closeDropdown } = useCloseDropdown();
   const availableVariablesInWorkflowStep = useAvailableVariablesInWorkflowStep({
     shouldDisplayRecordFields,
     shouldDisplayRecordObjects,
     fieldTypesToExclude,
   });
 
-  const noAvailableVariables = availableVariablesInWorkflowStep.length === 0;
+  const noAvailableVariables = !isNonEmptyArray(
+    availableVariablesInWorkflowStep,
+  );
 
   const initialStep =
     availableVariablesInWorkflowStep.length === 1
@@ -80,13 +83,6 @@ export const WorkflowVariablesDropdown = ({
     setSelectedStep(
       availableVariablesInWorkflowStep.find((step) => step.id === stepId),
     );
-  };
-
-  const handleSubItemSelect = (subItem: string) => {
-    onVariableSelect(subItem);
-    setSelectedStep(initialStep);
-    setSelectedPath([]);
-    closeDropdown(dropdownId);
   };
 
   const handleBack = () => {
@@ -115,24 +111,36 @@ export const WorkflowVariablesDropdown = ({
   }
 
   return (
-    <Dropdown
+    <DropdownRoot
       dropdownId={dropdownId}
-      isDropdownInModal={true}
-      clickableComponent={
-        clickableComponent ?? (
-          <StyledDropdownVariableButtonContainer>
-            <IconVariablePlus size={theme.icon.size.md} />
-          </StyledDropdownVariableButtonContainer>
-        )
-      }
-      dropdownComponents={
-        !isDefined(selectedStep) ? (
+      type="picker"
+      onOpenChange={(open) => {
+        if (!open) {
+          return;
+        }
+
+        setSelectedStep(initialStep);
+        setSelectedPath([]);
+      }}
+    >
+      <Dropdown.Trigger
+        aria-label={t`Insert variable`}
+        nativeButton={false}
+        render={<StyledDropdownVariableButtonContainer />}
+      >
+        <IconVariablePlus size={theme.icon.size.md} />
+      </Dropdown.Trigger>
+      <DropdownContent
+        align="end"
+        sideOffset={4}
+        width={GenericDropdownContentWidth.ExtraLarge}
+      >
+        {!isDefined(selectedStep) ? (
           <WorkflowVariablesDropdownSteps
-            dropdownId={dropdownId}
             steps={availableVariablesInWorkflowStep}
             onSelect={handleStepSelect}
             onVariableSelect={({ rawVariableName }) =>
-              handleSubItemSelect(rawVariableName)
+              onVariableSelect(rawVariableName)
             }
             shouldDisplayRecordObjects={shouldDisplayRecordObjects}
             objectNameSingularsToSelect={objectNameSingularsToSelect}
@@ -141,17 +149,13 @@ export const WorkflowVariablesDropdown = ({
           <WorkflowVariablesDropdownStepItems
             step={selectedStep}
             initialPath={selectedPath}
-            onSelect={handleSubItemSelect}
+            onSelect={onVariableSelect}
             onBack={handleBack}
             shouldDisplayRecordObjects={shouldDisplayRecordObjects}
             objectNameSingularsToSelect={objectNameSingularsToSelect}
           />
-        )
-      }
-      dropdownPlacement="bottom-end"
-      dropdownOffset={{
-        y: parseInt(theme.spacing[1], 10),
-      }}
-    />
+        )}
+      </DropdownContent>
+    </DropdownRoot>
   );
 };

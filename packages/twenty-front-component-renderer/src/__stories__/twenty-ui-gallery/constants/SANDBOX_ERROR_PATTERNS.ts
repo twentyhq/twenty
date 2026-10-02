@@ -5,6 +5,8 @@ export const SANDBOX_ERROR_PATTERNS = {
     "Uncaught TypeError: Cannot read properties of undefined (reading 'width')",
   NATIVE_EVENT_DEFAULT_PREVENTED:
     "Uncaught TypeError: Cannot read properties of undefined (reading 'defaultPrevented')",
+  MISSING_EVENT_CONSTRUCTOR:
+    "Uncaught TypeError: Right-hand side of 'instanceof' is not an object",
   POINTER_TYPE:
     "Uncaught TypeError: Cannot read properties of undefined (reading 'pointerType')",
   ELEMENT_CONTAINS:
