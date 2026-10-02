@@ -1,3 +1,4 @@
+import { OVERFLOWING_LIST_PROP_DESCRIPTIONS } from './overflowingListPropDescriptions';
 import { METRIC_ROW_PROP_DESCRIPTIONS } from './metricRowPropDescriptions';
 import { PROGRESS_RING_PROP_DESCRIPTIONS } from './progressRingPropDescriptions';
 import { AVATAR_GROUP_PROP_DESCRIPTIONS } from './avatarGroupPropDescriptions';
@@ -491,6 +492,13 @@ export const DOCUMENTED_COMPONENTS = [
         nativeButton: 'true when render is omitted; false otherwise',
       },
     },
+  },
+  {
+    name: 'OverflowingList',
+    source: 'components/layout/OverflowingList/OverflowingList.tsx',
+    entryPoint: 'twenty-ui/components',
+    slug: 'components/overflowing-list',
+    propDescriptions: OVERFLOWING_LIST_PROP_DESCRIPTIONS,
   },
   {
     name: 'Section',
