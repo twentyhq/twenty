@@ -1,4 +1,5 @@
 import { COUNTRY_SELECT_PROP_DESCRIPTIONS } from './countrySelectPropDescriptions';
+import { CURRENCY_PICKER_PART_PROP_DESCRIPTIONS } from './currencyPickerPartPropDescriptions';
 import { OVERFLOWING_LIST_PROP_DESCRIPTIONS } from './overflowingListPropDescriptions';
 import { METRIC_ROW_PROP_DESCRIPTIONS } from './metricRowPropDescriptions';
 import { PROGRESS_RING_PROP_DESCRIPTIONS } from './progressRingPropDescriptions';
@@ -72,6 +73,14 @@ export const DOCUMENTED_COMPONENTS = [
     entryPoint: 'twenty-ui/components',
     slug: 'components/country-select',
     propDescriptions: COUNTRY_SELECT_PROP_DESCRIPTIONS,
+  },
+  {
+    name: 'CurrencyPicker',
+    source: 'components/input/CurrencyPicker/CurrencyPicker.tsx',
+    entryPoint: 'twenty-ui/components',
+    slug: 'components/currency-picker',
+    parts: ['Trigger', 'Options'],
+    partPropDescriptions: CURRENCY_PICKER_PART_PROP_DESCRIPTIONS,
   },
   {
     name: 'ProgressRing',
