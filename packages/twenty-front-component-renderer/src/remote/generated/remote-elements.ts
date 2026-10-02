@@ -129,10 +129,7 @@ const createSerializedEventConfig = (
       detail: eventData,
     }) as RemoteEvent<SerializedEventData>;
 
-    applySerializedEventProperties(
-      event as unknown as Record<string, unknown>,
-      eventData,
-    );
+    applySerializedEventProperties(event, eventData);
 
     return event;
   },

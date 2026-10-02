@@ -140,14 +140,9 @@ const generateCommonEventsType = ({
               });
               writer.writeLine('}) as RemoteEvent<SerializedEventData>;');
               writer.blankLine();
-              writer.writeLine('applySerializedEventProperties(');
-              writer.indent(() => {
-                writer.writeLine(
-                  'event as unknown as Record<string, unknown>,',
-                );
-                writer.writeLine('eventData,');
-              });
-              writer.writeLine(');');
+              writer.writeLine(
+                'applySerializedEventProperties(event, eventData);',
+              );
               writer.blankLine();
               writer.writeLine('return event;');
             });

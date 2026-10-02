@@ -43,7 +43,7 @@ const SERIALIZED_EVENT_PROPERTY_KEYS = [
 ] as const satisfies readonly (keyof SerializedEventData)[];
 
 export const applySerializedEventProperties = (
-  event: Record<string, unknown>,
+  event: object,
   eventData: SerializedEventData,
 ): void => {
   for (const key of SERIALIZED_EVENT_PROPERTY_KEYS) {
