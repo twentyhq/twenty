@@ -42,11 +42,16 @@ jest.mock('@/ai/components/CodeExecutionDisplay', () => ({
   CodeExecutionDisplay: () => <div data-testid="code-execution-display" />,
 }));
 
-jest.mock('@/ai/components/AiChatToolPartRenderer', () => ({
-  AiChatToolPartRenderer: ({ toolPart }: { toolPart: { type: string } }) => (
+jest.mock('@/ai/components/AiChatToolWidget', () => ({
+  AiChatToolWidget: ({ toolPart }: { toolPart: { type: string } }) => (
     <div data-testid="tool-widget">{toolPart.type}</div>
   ),
 }));
+
+const APP_WIDGET = {
+  kind: 'front-component',
+  frontComponentId: '20202020-0000-4000-8000-000000000001',
+};
 
 const mockUseToolWidgetByName = jest.fn(() => new Map());
 
@@ -440,12 +445,17 @@ describe('AiChatAssistantMessageRenderer', () => {
       'thinking-1-answer-started',
     );
   });
-  it('should render a tool call that has a widget on its own, not folded into the step group', () => {
+  it('should keep a records widget call in the step group so it does not split the steps', () => {
     mockUseToolWidgetByName.mockReturnValue(
       new Map([['find_many_companies', { kind: 'builtin', name: 'records' }]]),
     );
 
     renderAssistantRenderer([
+      {
+        type: 'reasoning',
+        text: 'Reasoning content',
+        state: 'done',
+      },
       {
         type: 'tool-find_many_companies',
         toolCallId: 'call_1',
@@ -453,17 +463,46 @@ describe('AiChatAssistantMessageRenderer', () => {
         input: {},
         output: { recordReferences: [] },
       },
+      {
+        type: 'tool-web_search',
+        toolCallId: 'call_2',
+        input: { query: 'crm software' },
+        output: { result: { ok: true } },
+        state: 'output-available',
+      },
+    ] as unknown as ExtendedUIMessagePart[]);
+
+    expect(screen.getAllByTestId('thinking-steps-display')).toHaveLength(1);
+    expect(screen.getByTestId('thinking-steps-display')).toHaveTextContent(
+      'thinking-3',
+    );
+    expect(screen.queryByTestId('tool-widget')).toBeNull();
+  });
+
+  it('should render a call that has an app widget on its own, not folded into the step group', () => {
+    mockUseToolWidgetByName.mockReturnValue(
+      new Map([['app_show_chart', APP_WIDGET]]),
+    );
+
+    renderAssistantRenderer([
+      {
+        type: 'tool-app_show_chart',
+        toolCallId: 'call_1',
+        state: 'output-available',
+        input: {},
+        output: {},
+      },
     ] as unknown as ExtendedUIMessagePart[]);
 
     expect(screen.getByTestId('tool-widget')).toHaveTextContent(
-      'tool-find_many_companies',
+      'tool-app_show_chart',
     );
     expect(screen.queryByTestId('thinking-steps-display')).toBeNull();
   });
 
   it('should resolve the widget of a call dispatched through execute_tool', () => {
     mockUseToolWidgetByName.mockReturnValue(
-      new Map([['create_one_task', { kind: 'builtin', name: 'records' }]]),
+      new Map([['app_show_chart', APP_WIDGET]]),
     );
 
     renderAssistantRenderer([
@@ -471,29 +510,78 @@ describe('AiChatAssistantMessageRenderer', () => {
         type: 'tool-execute_tool',
         toolCallId: 'call_1',
         state: 'output-available',
-        input: { toolName: 'create_one_task', arguments: { title: 'Ship it' } },
-        output: { recordReferences: [] },
+        input: { toolName: 'app_show_chart', arguments: {} },
+        output: {},
       },
     ] as unknown as ExtendedUIMessagePart[]);
 
     expect(screen.getByTestId('tool-widget')).toBeInTheDocument();
   });
 
-  it('should keep a call that has a widget but has not run yet in the step group', () => {
+  it('should keep a call that has an app widget but is still streaming its input in the step group', () => {
     mockUseToolWidgetByName.mockReturnValue(
-      new Map([['find_many_companies', { kind: 'builtin', name: 'records' }]]),
+      new Map([['app_show_chart', APP_WIDGET]]),
     );
 
     renderAssistantRenderer([
       {
-        type: 'tool-find_many_companies',
+        type: 'tool-app_show_chart',
         toolCallId: 'call_1',
-        state: 'input-available',
+        state: 'input-streaming',
         input: {},
       },
     ] as unknown as ExtendedUIMessagePart[]);
 
     expect(screen.getByTestId('thinking-steps-display')).toBeInTheDocument();
     expect(screen.queryByTestId('tool-widget')).toBeNull();
+  });
+
+  it('should drop finished reasoning that has no text', () => {
+    renderAssistantRenderer([
+      {
+        type: 'reasoning',
+        text: '',
+        state: 'done',
+      },
+      {
+        type: 'tool-web_search',
+        toolCallId: 'tool-1',
+        input: { query: 'crm software' },
+        output: { result: { ok: true } },
+        state: 'output-available',
+      },
+      {
+        type: 'reasoning',
+        text: '  ',
+        state: 'done',
+      },
+      {
+        type: 'text',
+        text: 'Final answer',
+      },
+    ] as ExtendedUIMessagePart[]);
+
+    expect(screen.getByTestId('thinking-steps-display')).toHaveTextContent(
+      'thinking-1-answer-started',
+    );
+  });
+
+  it('should drop a step group made only of hidden reasoning', () => {
+    renderAssistantRenderer([
+      {
+        type: 'reasoning',
+        text: '',
+        state: 'done',
+      },
+      {
+        type: 'text',
+        text: 'Final answer',
+      },
+    ] as ExtendedUIMessagePart[]);
+
+    expect(screen.queryByTestId('thinking-steps-display')).toBeNull();
+    expect(screen.getByTestId('markdown-renderer')).toHaveTextContent(
+      'Final answer',
+    );
   });
 });

@@ -26,23 +26,62 @@ jest.mock(
   }),
 );
 
-jest.mock('@/ui/layout/tab-list/components/TabList', () => ({
-  TabList: ({
-    tabs,
-    onTabChange,
+jest.mock('@/ui/layout/tab-list/components/TabList', () => {
+  const { useEffect } = jest.requireActual('react');
+  const { useAtomComponentState } = jest.requireActual(
+    '@/ui/utilities/state/jotai/hooks/useAtomComponentState',
+  );
+  const { activeTabIdComponentState } = jest.requireActual(
+    '@/ui/layout/tab-list/states/activeTabIdComponentState',
+  );
+
+  return {
+    TabList: ({
+      tabs,
+      componentInstanceId,
+    }: {
+      tabs: Array<{ id: string; title: string }>;
+      componentInstanceId: string;
+    }) => {
+      const [activeTabId, setActiveTabId] = useAtomComponentState(
+        activeTabIdComponentState,
+        componentInstanceId,
+      );
+
+      useEffect(() => {
+        if (activeTabId === null) {
+          setActiveTabId(tabs[0].id);
+        }
+      }, [activeTabId, setActiveTabId, tabs]);
+
+      return (
+        <div>
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              type="button"
+              onClick={() => setActiveTabId(tab.id)}
+            >
+              {tab.title}
+            </button>
+          ))}
+        </div>
+      );
+    },
+  };
+});
+
+jest.mock('@/ai/components/ToolRecordsWidget', () => ({
+  ToolRecordsWidget: ({
+    recordReferences,
   }: {
-    tabs: Array<{ id: string; title: string }>;
-    onTabChange?: (tabId: string) => void;
+    recordReferences: Array<{ displayName: string }>;
   }) => (
     <div>
-      {tabs.map((tab) => (
-        <button
-          key={tab.id}
-          type="button"
-          onClick={() => onTabChange?.(tab.id)}
-        >
-          {tab.title}
-        </button>
+      {recordReferences.map((recordReference) => (
+        <span key={recordReference.displayName}>
+          {recordReference.displayName}
+        </span>
       ))}
     </div>
   ),
@@ -226,29 +265,123 @@ describe('ThinkingStepsDisplay', () => {
     expect(screen.queryByText('Completed reasoning content')).toBeNull();
   });
 
-  it('should render rows and full reasoning content after expanding done state', async () => {
+  it('should reveal each thought behind its own row after expanding done state', async () => {
     renderThinkingStepsDisplay({
       isLastMessageStreaming: false,
       hasAssistantTextResponseStarted: true,
       parts: [
+        createReasoningPart({
+          state: 'done',
+          text: 'First reasoning content',
+        }),
         createToolPart(),
         createReasoningPart({
           state: 'done',
-          text: 'Completed reasoning content',
+          text: 'Second reasoning content',
         }),
       ],
     });
 
-    const summaryButton = screen.getByRole('button', { name: /2 steps/i });
+    const summaryButton = screen.getByRole('button', { name: /3 steps/i });
 
     await userEvent.click(summaryButton);
 
     expect(summaryButton).toHaveAttribute('aria-expanded', 'true');
-    expect(screen.getByText('Thought')).toBeInTheDocument();
-    expect(screen.getByText('Completed reasoning content')).toBeInTheDocument();
     expect(
       screen.getByText('Searched the web for crm software'),
     ).toBeInTheDocument();
+    expect(screen.queryByText('First reasoning content')).toBeNull();
+    expect(screen.queryByText('Second reasoning content')).toBeNull();
+
+    const [firstThoughtButton] = screen.getAllByRole('button', {
+      name: 'Thought',
+    });
+
+    await userEvent.click(firstThoughtButton);
+
+    expect(firstThoughtButton).toHaveAttribute('aria-expanded', 'true');
+    expect(screen.getByText('First reasoning content')).toBeInTheDocument();
+    expect(screen.queryByText('Second reasoning content')).toBeNull();
+  });
+
+  it('should label a thought with the title its summary opens with', async () => {
+    renderThinkingStepsDisplay({
+      isLastMessageStreaming: false,
+      hasAssistantTextResponseStarted: true,
+      parts: [
+        createReasoningPart({
+          state: 'done',
+          text: '**Looking up Clearstreet**\n\nI should search companies first.',
+        }),
+      ],
+    });
+
+    await userEvent.click(screen.getByRole('button', { name: /1 step/i }));
+
+    const thoughtButton = screen.getByRole('button', {
+      name: 'Looking up Clearstreet',
+    });
+
+    await userEvent.click(thoughtButton);
+
+    expect(
+      screen.getByText('I should search companies first.'),
+    ).toBeInTheDocument();
+    expect(screen.queryByText(/\*\*/)).toBeNull();
+  });
+
+  it('should label the live thinking row with the title of the streaming summary', () => {
+    renderThinkingStepsDisplay({
+      isLastMessageStreaming: true,
+      parts: [
+        createReasoningPart({
+          state: 'streaming',
+          text: '**Looking up Clearstreet**\n\nI should search companies first.',
+        }),
+      ],
+    });
+
+    expect(screen.getByText('Looking up Clearstreet')).toBeInTheDocument();
+    expect(
+      screen.getByText('I should search companies first.'),
+    ).toBeInTheDocument();
+    expect(screen.queryByText('Thinking')).toBeNull();
+  });
+
+  it('should show the records a tool step found when its row is expanded', async () => {
+    renderThinkingStepsDisplay({
+      isLastMessageStreaming: false,
+      hasAssistantTextResponseStarted: true,
+      parts: [
+        createToolPart({
+          type: 'tool-find_many_companies',
+          input: {},
+          output: {
+            message: 'Found 1 company record',
+            recordReferences: [
+              {
+                objectNameSingular: 'company',
+                recordId: '20202020-0000-4000-8000-000000000001',
+                displayName: 'Clearstreet',
+              },
+            ],
+          },
+        }),
+      ],
+    });
+
+    await userEvent.click(screen.getByRole('button', { name: /1 step/i }));
+
+    expect(screen.queryByText('Clearstreet')).toBeNull();
+
+    const toolButton = screen.getByRole('button', {
+      name: /find_many_companies/i,
+    });
+
+    await userEvent.click(toolButton);
+
+    expect(screen.getByRole('button', { name: 'Records' })).toBeInTheDocument();
+    expect(screen.getByText('Clearstreet')).toBeInTheDocument();
   });
 
   it('should toggle tool details and display output/input tabs', async () => {

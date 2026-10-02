@@ -1,9 +1,14 @@
 import { TabListRoot } from '@/ui/layout/tab-list/components/TabListRoot';
 import { styled } from '@linaria/react';
 import { plural, t } from '@lingui/core/macro';
-import { getToolName, type DynamicToolUIPart, type ToolUIPart } from 'ai';
+import {
+  getToolName,
+  type DynamicToolUIPart,
+  type ReasoningUIPart,
+  type ToolUIPart,
+} from 'ai';
 import { useState } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { JsonTree } from 'twenty-ui/components';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { IconChevronRight, IconCpu } from 'twenty-ui/icon';
@@ -14,11 +19,14 @@ import { type JsonValue } from 'type-fest';
 
 import { AiChatThinkingRow } from '@/ai/components/AiChatThinkingRow';
 import { ShimmeringText } from '@/ai/components/ShimmeringText';
+import { ToolRecordsWidget } from '@/ai/components/ToolRecordsWidget';
 import { useToolDisplayContext } from '@/ai/hooks/useToolDisplayContext';
 import { getActiveReasoningContent } from '@/ai/utils/getActiveReasoningContent';
 import { getLastReasoningContent } from '@/ai/utils/getLastReasoningContent';
 import { getToolIcon } from '@/ai/utils/getToolIcon';
+import { getToolRecordOutput } from '@/ai/utils/getToolRecordOutput';
 import { isThinkingStepPartActive } from '@/ai/utils/isThinkingStepPartActive';
+import { splitReasoningTitle } from '@/ai/utils/splitReasoningTitle';
 import { type ThinkingStepPart } from '@/ai/utils/thinkingStepPart';
 import { getToolDisplayMessage } from '@/ai/utils/tool-display/get-tool-display-message';
 import { unwrapToolInput } from '@/ai/utils/tool-display/unwrap-tool-input.util';
@@ -90,23 +98,6 @@ const StyledRowsContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[1]};
-`;
-
-const StyledRow = styled.div`
-  align-items: center;
-  color: ${themeCssVariables.font.color.tertiary};
-  display: flex;
-  gap: ${themeCssVariables.spacing[2]};
-  min-height: 24px;
-`;
-
-const StyledRowLabel = styled.span`
-  color: inherit;
-  font-size: ${themeCssVariables.font.size.md};
-  font-weight: ${themeCssVariables.font.weight.regular};
-  line-height: ${themeCssVariables.text.lineHeight.md};
-  transition: color calc(${themeCssVariables.animation.duration.fast} * 1s)
-    ease-in-out;
 `;
 
 const StyledToolRowLabel = styled.div`
@@ -250,7 +241,18 @@ const StyledToolErrorText = styled.p`
   white-space: pre-wrap;
 `;
 
-type ToolDetailsTab = 'output' | 'input';
+type ToolDetailsTab = 'records' | 'output' | 'input';
+
+const getActiveToolDetailsTab = (
+  activeTabId: string | null | undefined,
+  hasRecords: boolean,
+): ToolDetailsTab => {
+  if (activeTabId === 'input' || activeTabId === 'output') {
+    return activeTabId;
+  }
+
+  return hasRecords ? 'records' : 'output';
+};
 
 const ThinkingToolStepRow = ({
   isActive,
@@ -280,6 +282,9 @@ const ThinkingToolStepRow = ({
   });
   const hasError = isDefined(part.errorText);
   const isExpandable = isDefined(part.output) || hasError;
+  const { message: recordsMessage, recordReferences } =
+    getToolRecordOutput(part);
+  const hasRecords = isNonEmptyArray(recordReferences);
 
   const outputObj =
     typeof part.output === 'object' && part.output !== null
@@ -293,9 +298,9 @@ const ThinkingToolStepRow = ({
     activeTabIdComponentState,
     toolTabListComponentInstanceId,
   );
-  const activeTab: ToolDetailsTab =
-    activeTabId === 'input' ? 'input' : 'output';
+  const activeTab = getActiveToolDetailsTab(activeTabId, hasRecords);
   const toolTabs = [
+    ...(hasRecords ? [{ id: 'records', title: t`Records` }] : []),
     { id: 'output', title: t`Output` },
     { id: 'input', title: t`Input` },
   ];
@@ -356,27 +361,82 @@ const ThinkingToolStepRow = ({
                     value={activeTab}
                     render={<StyledToolJsonContent />}
                   >
-                    <StyledJsonTreeContainer>
-                      <JsonTree
-                        value={
-                          (activeTab === 'output'
-                            ? toolOutput
-                            : toolInput) as JsonValue
-                        }
-                        shouldExpandNodeInitially={() => false}
-                        emptyArrayLabel={t`Empty Array`}
-                        emptyObjectLabel={t`Empty Object`}
-                        emptyStringLabel={t`[empty string]`}
-                        arrowButtonCollapsedLabel={t`Expand`}
-                        arrowButtonExpandedLabel={t`Collapse`}
-                        onNodeValueClick={copyToClipboard}
+                    {activeTab === 'records' ? (
+                      <ToolRecordsWidget
+                        message={recordsMessage ?? ''}
+                        recordReferences={recordReferences}
                       />
-                    </StyledJsonTreeContainer>
+                    ) : (
+                      <StyledJsonTreeContainer>
+                        <JsonTree
+                          value={
+                            (activeTab === 'output'
+                              ? toolOutput
+                              : toolInput) as JsonValue
+                          }
+                          shouldExpandNodeInitially={() => false}
+                          emptyArrayLabel={t`Empty Array`}
+                          emptyObjectLabel={t`Empty Object`}
+                          emptyStringLabel={t`[empty string]`}
+                          arrowButtonCollapsedLabel={t`Expand`}
+                          arrowButtonExpandedLabel={t`Collapse`}
+                          onNodeValueClick={copyToClipboard}
+                        />
+                      </StyledJsonTreeContainer>
+                    )}
                   </Tabs.Panel>
                 </StyledToolDetailsContent>
               </TabListRoot>
             )}
           </StyledToolDetailsContainer>
+        </Collapsible>
+      )}
+    </StyledToolRowContainer>
+  );
+};
+
+const ThinkingReasoningStepRow = ({ part }: { part: ReasoningUIPart }) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const { title, body } = splitReasoningTitle(part.text);
+  const isExpandable = body.length > 0;
+
+  return (
+    <StyledToolRowContainer>
+      <StyledToolRowButton
+        type="button"
+        isExpandable={isExpandable}
+        onClick={() => {
+          if (!isExpandable) {
+            return;
+          }
+
+          setIsExpanded((previousValue) => !previousValue);
+        }}
+        aria-expanded={isExpandable ? isExpanded : undefined}
+      >
+        <StyledIconContainer>
+          <IconCpu size={14} />
+        </StyledIconContainer>
+        <StyledRowLabelContainer>
+          <StyledToolRowLabel>
+            <OverflowingTextWithTooltip
+              text={title ?? t`Thought`}
+              tooltipDelay={TooltipDelay.shortDelay}
+            />
+          </StyledToolRowLabel>
+          {isExpandable && (
+            <StyledChevronContainer isExpanded={isExpanded}>
+              <IconChevronRight size={14} />
+            </StyledChevronContainer>
+          )}
+        </StyledRowLabelContainer>
+      </StyledToolRowButton>
+
+      {isExpandable && (
+        <Collapsible isExpanded={isExpanded}>
+          <StyledReasoningContainer>
+            <StyledReasoningText>{body}</StyledReasoningText>
+          </StyledReasoningContainer>
         </Collapsible>
       )}
     </StyledToolRowContainer>
@@ -403,19 +463,10 @@ const ThinkingStepRow = ({
   }
 
   if (isActive) {
-    return <AiChatThinkingRow />;
+    return <AiChatThinkingRow label={splitReasoningTitle(part.text).title} />;
   }
 
-  return (
-    <StyledRow>
-      <StyledIconContainer>
-        <IconCpu size={14} />
-      </StyledIconContainer>
-      <StyledRowLabelContainer>
-        <StyledRowLabel>{t`Thought`}</StyledRowLabel>
-      </StyledRowLabelContainer>
-    </StyledRow>
-  );
+  return <ThinkingReasoningStepRow part={part} />;
 };
 
 export const ThinkingStepsDisplay = ({
@@ -436,13 +487,16 @@ export const ThinkingStepsDisplay = ({
     isThinkingStepPartActive(part, isLastMessageStreaming),
   );
 
-  const activeReasoningContent = getActiveReasoningContent(parts);
-  const finalReasoningContent = getLastReasoningContent(parts);
-  const reasoningContent = hasActiveStep
-    ? activeReasoningContent
-    : finalReasoningContent;
-  const shouldDisplayReasoningContent = reasoningContent?.trim().length;
   const shouldKeepExpandedBeforeAnswer = !hasAssistantTextResponseStarted;
+  // Live reasoning streams under the rows; once the turn settles, each thought sits behind its own row.
+  const liveReasoningContent = hasActiveStep
+    ? getActiveReasoningContent(parts)
+    : isLastMessageStreaming && shouldKeepExpandedBeforeAnswer
+      ? getLastReasoningContent(parts)
+      : null;
+  const liveReasoningBody = isDefined(liveReasoningContent)
+    ? splitReasoningTitle(liveReasoningContent).body
+    : '';
   const shouldShowSummaryButton =
     !hasActiveStep && !shouldKeepExpandedBeforeAnswer;
 
@@ -487,9 +541,9 @@ export const ThinkingStepsDisplay = ({
               <AiChatThinkingRow />
             )}
           </StyledRowsContainer>
-          {!!shouldDisplayReasoningContent && (
+          {liveReasoningBody.length > 0 && (
             <StyledReasoningContainer>
-              <StyledReasoningText>{reasoningContent}</StyledReasoningText>
+              <StyledReasoningText>{liveReasoningBody}</StyledReasoningText>
             </StyledReasoningContainer>
           )}
         </StyledStepsContentContainer>

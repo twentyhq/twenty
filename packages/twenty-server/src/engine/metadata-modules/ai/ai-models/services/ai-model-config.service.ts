@@ -25,8 +25,11 @@ export class AiModelConfigService {
     private readonly sdkProviderFactory: SdkProviderFactoryService,
   ) {}
 
-  getReasoningProviderOptions(model: RegisteredAiModel): ProviderOptions {
-    return buildReasoningProviderOptions(model);
+  getReasoningProviderOptions(
+    model: RegisteredAiModel,
+    options?: { shouldIncludeReasoningSummary?: boolean },
+  ): ProviderOptions {
+    return buildReasoningProviderOptions(model, options);
   }
 
   getNativeModelTools(

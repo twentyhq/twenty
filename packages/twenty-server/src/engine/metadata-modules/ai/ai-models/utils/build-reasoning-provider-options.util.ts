@@ -18,10 +18,16 @@ export const buildReasoningProviderOptions = (
     RegisteredAiModel,
     'modelId' | 'sdkPackage' | 'supportsReasoning' | 'effort'
   >,
+  { shouldIncludeReasoningSummary = false } = {},
 ): ProviderOptions => {
   const { effort } = model;
   const thinksAdaptively =
     model.supportsReasoning && isAdaptiveThinkingClaudeModel(model.modelId);
+  // OpenAI and Gemini keep their reasoning hidden unless asked for a summary.
+  const includesReasoningSummary =
+    shouldIncludeReasoningSummary &&
+    model.supportsReasoning === true &&
+    effort !== 'none';
 
   switch (model.sdkPackage) {
     case AI_SDK_ANTHROPIC:
@@ -49,13 +55,34 @@ export const buildReasoningProviderOptions = (
         },
       };
     case AI_SDK_OPENAI:
-      return isDefined(effort) ? { openai: { reasoningEffort: effort } } : {};
-    case AI_SDK_AZURE:
-      return isDefined(effort) ? { azure: { reasoningEffort: effort } } : {};
+    case AI_SDK_AZURE: {
+      if (!isDefined(effort) && !includesReasoningSummary) {
+        return {};
+      }
+
+      const providerKey =
+        model.sdkPackage === AI_SDK_OPENAI ? 'openai' : 'azure';
+
+      return {
+        [providerKey]: {
+          ...(isDefined(effort) ? { reasoningEffort: effort } : {}),
+          ...(includesReasoningSummary ? { reasoningSummary: 'auto' } : {}),
+        },
+      };
+    }
     case AI_SDK_GOOGLE:
-      return isDefined(effort)
-        ? { google: { thinkingConfig: { thinkingLevel: effort } } }
-        : {};
+      if (!isDefined(effort) && !includesReasoningSummary) {
+        return {};
+      }
+
+      return {
+        google: {
+          thinkingConfig: {
+            ...(isDefined(effort) ? { thinkingLevel: effort } : {}),
+            ...(includesReasoningSummary ? { includeThoughts: true } : {}),
+          },
+        },
+      };
     case AI_SDK_MISTRAL:
       return isDefined(effort) ? { mistral: { reasoningEffort: effort } } : {};
     case AI_SDK_XAI:
