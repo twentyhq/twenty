@@ -47,6 +47,17 @@ describe('splitReasoningTitle', () => {
     });
   });
 
+  it('takes a title that is still streaming without its closing asterisks', () => {
+    expect(splitReasoningTitle('**Searching for Clear')).toEqual({
+      title: 'Searching for Clear',
+      body: '',
+    });
+    expect(splitReasoningTitle('**Searching for Clearstreet*')).toEqual({
+      title: 'Searching for Clearstreet',
+      body: '',
+    });
+  });
+
   it('falls back to no title when the bold line is blank', () => {
     expect(splitReasoningTitle('**   **\nBody.')).toEqual({
       title: null,

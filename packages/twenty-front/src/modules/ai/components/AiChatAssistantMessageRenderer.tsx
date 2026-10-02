@@ -148,7 +148,11 @@ export const AiChatAssistantMessageRenderer = ({
   const lastRenderItemIndex = renderItems.length - 1;
 
   if (!renderItems.length && !hasError) {
-    return hasSucceededCompleteWorkspaceSetupToolPart ? null : (
+    const hasOnlyHiddenReasoning =
+      !isLastMessageStreaming && messageParts.some(isEmptyReasoningPart);
+
+    return hasSucceededCompleteWorkspaceSetupToolPart ||
+      hasOnlyHiddenReasoning ? null : (
       <AiChatInitialLoadingIndicator />
     );
   }

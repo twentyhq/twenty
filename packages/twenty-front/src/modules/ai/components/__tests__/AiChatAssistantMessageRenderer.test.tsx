@@ -584,4 +584,32 @@ describe('AiChatAssistantMessageRenderer', () => {
       'Final answer',
     );
   });
+
+  it('should render nothing for a finished message whose only reasoning was hidden', () => {
+    const { container } = renderAssistantRenderer([
+      { type: 'step-start' },
+      {
+        type: 'reasoning',
+        text: '',
+        state: 'done',
+      },
+    ] as ExtendedUIMessagePart[]);
+
+    expect(container).toBeEmptyDOMElement();
+  });
+
+  it('should keep the loading indicator while hidden reasoning streams in', () => {
+    const { container } = renderAssistantRenderer(
+      [
+        {
+          type: 'reasoning',
+          text: '',
+          state: 'done',
+        },
+      ] as ExtendedUIMessagePart[],
+      { isLastMessageStreaming: true },
+    );
+
+    expect(container).not.toBeEmptyDOMElement();
+  });
 });

@@ -1,4 +1,5 @@
 import { render, screen, waitFor } from '@testing-library/react';
+import { createStore, Provider as JotaiProvider } from 'jotai';
 import userEvent from '@testing-library/user-event';
 import { ThemeProvider } from 'twenty-ui/theme';
 
@@ -48,11 +49,13 @@ jest.mock('@/ui/layout/tab-list/components/TabList', () => {
         componentInstanceId,
       );
 
+      const firstTabId = tabs[0]?.id ?? null;
+
       useEffect(() => {
         if (activeTabId === null) {
-          setActiveTabId(tabs[0].id);
+          setActiveTabId(firstTabId);
         }
-      }, [activeTabId, setActiveTabId, tabs]);
+      }, [activeTabId, setActiveTabId, firstTabId]);
 
       return (
         <div>
@@ -131,14 +134,16 @@ const renderThinkingStepsDisplay = ({
   isTrailingWhileStreaming?: boolean;
 }) => {
   return render(
-    <ThemeProvider colorScheme="light">
-      <ThinkingStepsDisplay
-        parts={parts}
-        isLastMessageStreaming={isLastMessageStreaming}
-        hasAssistantTextResponseStarted={hasAssistantTextResponseStarted}
-        isTrailingWhileStreaming={isTrailingWhileStreaming}
-      />
-    </ThemeProvider>,
+    <JotaiProvider store={createStore()}>
+      <ThemeProvider colorScheme="light">
+        <ThinkingStepsDisplay
+          parts={parts}
+          isLastMessageStreaming={isLastMessageStreaming}
+          hasAssistantTextResponseStarted={hasAssistantTextResponseStarted}
+          isTrailingWhileStreaming={isTrailingWhileStreaming}
+        />
+      </ThemeProvider>
+    </JotaiProvider>,
   );
 };
 

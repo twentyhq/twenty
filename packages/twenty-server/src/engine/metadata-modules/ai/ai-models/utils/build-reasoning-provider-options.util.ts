@@ -32,7 +32,7 @@ export const buildReasoningProviderOptions = (
   // OpenAI and Gemini keep their reasoning hidden unless asked for a summary.
   const includesReasoningSummary =
     shouldIncludeReasoningSummary &&
-    model.supportsReasoning === true &&
+    model.supportsReasoning &&
     effort !== 'none';
 
   switch (model.sdkPackage) {
