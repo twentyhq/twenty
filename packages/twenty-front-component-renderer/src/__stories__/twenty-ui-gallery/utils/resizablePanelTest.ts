@@ -74,6 +74,24 @@ export const resizablePanelTest: TwentyUiGalleryPlayFunction = async ({
       await expect(await canvas.findByText('Collapse count: 2')).toBeVisible();
 
       await fireEvent.pointerDown(edge, {
+        pointerId: 5,
+        button: 0,
+        clientX: 100,
+      });
+      await fireEvent.pointerMove(edge, { pointerId: 5, clientX: 130 });
+      await waitFor(() => {
+        expect(edge).toHaveAttribute('aria-valuenow', '180');
+        expect(canvas.getByText('Resize result: Resizing')).toBeVisible();
+      });
+      await userEvent.keyboard('{Escape}');
+      await waitFor(() => {
+        expect(edge).toHaveAttribute('aria-valuenow', '210');
+        expect(canvas.getByText('Committed edge: 210')).toBeVisible();
+        expect(canvas.getByText('Resize result: Cancelled')).toBeVisible();
+      });
+      await fireEvent.pointerUp(edge, { pointerId: 5, clientX: 130 });
+
+      await fireEvent.pointerDown(edge, {
         pointerId: 3,
         button: 0,
         clientX: 100,
@@ -83,7 +101,8 @@ export const resizablePanelTest: TwentyUiGalleryPlayFunction = async ({
       await expect(await canvas.findByText('Collapse count: 3')).toBeVisible();
 
       await userEvent.click(gap);
-      await expect(gap).toHaveFocus();
+      await expect(gap).not.toHaveFocus();
+      gap.focus();
       await userEvent.keyboard('{ArrowUp}');
       await waitFor(() => {
         expect(gap).toHaveAttribute('aria-valuenow', '110');

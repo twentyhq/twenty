@@ -86,7 +86,7 @@ The application owns the value and can update it from other controls. Keep `valu
 
 For `axis="y"`, Down increases the size and Up decreases it. For `axis="x"`, Right increases and Left decreases in left-to-right content; the directions reverse under [TextDirectionProvider](/ui/primitives/layout/text-direction-provider) with `direction="rtl"`.
 
-Arrow keys use `step`, which defaults to `10`. Home moves to `min`, and End moves to `max`. Pointer dragging uses the pixel movement and is not snapped to `step`. Both interactions stay within the bounds. `disabled` prevents resizing and removes the handle from the tab order.
+Arrow keys use `step`, which defaults to `10`. Home moves to `min`, and End moves to `max`. Keys pressed with Alt, Control or Meta are ignored. Pointer dragging uses the pixel movement and is not snapped to `step`. Both interactions stay within the bounds. Pointer presses do not move focus; keyboard users reach the handle with Tab. `disabled` prevents resizing and removes the handle from the tab order.
 
 The separator orientation describes the dividing edge: horizontal for height resizing and vertical for width resizing.
 

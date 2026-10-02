@@ -38,10 +38,6 @@ export const ResizeHandle = ({
   });
   const boundedValue = clamp(value, min, max);
   const handleValueChange = (nextValue: number) => {
-    if (nextValue === boundedValue) {
-      return;
-    }
-
     setValue(nextValue);
     onValueChange?.(nextValue);
   };

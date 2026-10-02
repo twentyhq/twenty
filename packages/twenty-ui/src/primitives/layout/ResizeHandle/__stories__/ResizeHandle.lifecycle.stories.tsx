@@ -49,7 +49,9 @@ export const ClickAndDrag: Story = {
         await pointer.pointer({ target: handle, keys: '[/MouseLeft]' });
         await expect(args.onActivate).toHaveBeenCalledTimes(1);
         await expect(args.onValueCommit).not.toHaveBeenCalled();
+        await expect(handle).not.toHaveFocus();
 
+        handle.focus();
         await userEvent.keyboard('{Enter} ');
         await expect(args.onActivate).toHaveBeenCalledTimes(3);
         await pointer.pointer({
@@ -139,6 +141,7 @@ export const ScaledPhysicalDirection: Story = {
         await expect(args.scale).toHaveBeenCalledTimes(1);
         await expect(args.onValueCommit).toHaveBeenCalledTimes(1);
         await expect(args.onValueCommit).toHaveBeenCalledWith(200);
+        handle.focus();
         await userEvent.keyboard('{ArrowLeft}');
         await expect(handle).toHaveAttribute('aria-valuenow', '190');
         await expect(args.onValueCommit).toHaveBeenLastCalledWith(190);
@@ -164,6 +167,7 @@ export const ReverseVertical: Story = {
         await pointer.pointer({ target: handle, coords: { y: 70 } });
         await expect(handle).toHaveAttribute('aria-valuenow', '180');
         await pointer.pointer({ target: handle, keys: '[/MouseLeft]' });
+        handle.focus();
         await userEvent.keyboard('{ArrowDown}');
         await expect(handle).toHaveAttribute('aria-valuenow', '170');
         await expect(args.onValueCommit).toHaveBeenLastCalledWith(170);
@@ -176,32 +180,45 @@ export const EscapeCancellation: Story = {
   play: async ({ canvasElement, args }) => {
     const handle = within(canvasElement).getByRole('separator');
     const pointer = userEvent.setup();
+    const handleDocumentKeyDown = fn();
+    const ownerDocument = canvasElement.ownerDocument;
 
-    await withMockPointerCapture({
-      handle,
-      run: async () => {
-        await pointer.pointer({
-          target: handle,
-          keys: '[MouseLeft>]',
-          coords: { x: 100 },
-        });
-        await pointer.pointer({ target: handle, coords: { x: 140 } });
-        await userEvent.keyboard('{Escape}');
-        await expect(args.onResizeEnd).toHaveBeenCalledTimes(1);
-        await expect(args.onResizeEnd).toHaveBeenCalledWith({
-          cancelled: true,
-          value: 190,
-        });
-        await expect(handle.releasePointerCapture).toHaveBeenCalledWith(1);
-        await pointer.pointer({ target: handle, coords: { x: 180 } });
-        await pointer.pointer({ target: handle, keys: '[/MouseLeft]' });
-        await expect(handle).toHaveAttribute('aria-valuenow', '190');
-        await expect(args.onValueCommit).not.toHaveBeenCalled();
-        await expect(args.onActivate).not.toHaveBeenCalled();
-        await fireEvent.click(handle, { detail: 0 });
-        await expect(args.onActivate).toHaveBeenCalledTimes(1);
-      },
-    });
+    ownerDocument.addEventListener('keydown', handleDocumentKeyDown);
+
+    try {
+      await withMockPointerCapture({
+        handle,
+        run: async () => {
+          await pointer.pointer({
+            target: handle,
+            keys: '[MouseLeft>]',
+            coords: { x: 100 },
+          });
+          await pointer.pointer({ target: handle, coords: { x: 140 } });
+          await expect(handle).not.toHaveFocus();
+          await userEvent.keyboard('{Escape}');
+          await expect(args.onResizeEnd).toHaveBeenCalledTimes(1);
+          await expect(args.onResizeEnd).toHaveBeenCalledWith({
+            cancelled: true,
+            value: 190,
+          });
+          await expect(handleDocumentKeyDown).not.toHaveBeenCalled();
+          await expect(handle.releasePointerCapture).toHaveBeenCalledWith(1);
+          await pointer.pointer({ target: handle, coords: { x: 180 } });
+          await pointer.pointer({ target: handle, keys: '[/MouseLeft]' });
+          await expect(handle).toHaveAttribute('aria-valuenow', '190');
+          await expect(args.onValueCommit).not.toHaveBeenCalled();
+          await expect(args.onActivate).not.toHaveBeenCalled();
+          await fireEvent.click(handle, { detail: 0 });
+          await expect(args.onActivate).toHaveBeenCalledTimes(1);
+        },
+      });
+
+      await userEvent.keyboard('{Escape}');
+      await expect(handleDocumentKeyDown).toHaveBeenCalledTimes(1);
+    } finally {
+      ownerDocument.removeEventListener('keydown', handleDocumentKeyDown);
+    }
   },
 };
 

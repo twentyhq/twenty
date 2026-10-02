@@ -71,7 +71,9 @@ Escape, pointer cancellation, lost pointer capture, disabling the separator and 
 
 ## Keyboard and collapse
 
-Arrow keys move the selected edge by `step`, which defaults to `10`. Home selects `min`; End selects `max`. Each size change commits immediately. The separator orientation describes the dividing edge, so width resizing uses a vertical separator.
+Arrow keys move the selected edge by `step`, which defaults to `10`. Home selects `min`; End selects `max`. Each size change commits immediately. Keys pressed with Alt, Control or Meta are ignored so application and browser shortcuts keep working. The separator orientation describes the dividing edge, so width resizing uses a vertical separator.
+
+Pointer presses do not move focus, so an input keeps its focus while the user resizes the panel around it. Keyboard users reach the separator with Tab.
 
 Supply `onCollapse` to receive a collapse request from a click without dragging, Enter or Space. A drag that moves away and returns to its start remains a drag. The application decides whether to hide the panel and where to restore focus. `disabled` prevents resizing and collapse and removes the separator from the tab order.
 

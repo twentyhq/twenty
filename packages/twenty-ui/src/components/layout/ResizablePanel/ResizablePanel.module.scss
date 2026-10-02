@@ -1,6 +1,11 @@
 .root {
-  position: relative;
-  z-index: 1;
+  &:not([data-disabled])[data-axis='x'] {
+    cursor: col-resize;
+  }
+
+  &:not([data-disabled])[data-axis='y'] {
+    cursor: row-resize;
+  }
 
   &[data-variant='edge'] {
     position: absolute;
@@ -35,6 +40,8 @@
 
   &[data-variant='gap'] {
     box-sizing: content-box;
+    position: relative;
+    z-index: 1;
   }
 
   &[data-variant='gap'][data-axis='x'] {

@@ -642,6 +642,7 @@
                       "ui/components/menu-picker",
                       "ui/components/metric-row",
                       "ui/components/notification-counter",
+                      "ui/components/resizable-panel",
                       "ui/components/search-input",
                       "ui/components/tinted-icon-tile"
                     ]

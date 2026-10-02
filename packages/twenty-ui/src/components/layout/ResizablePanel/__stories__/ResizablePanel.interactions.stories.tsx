@@ -1,6 +1,13 @@
 import { DirectionProvider } from '@base-ui/react/direction-provider';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { expect, fireEvent, fn, userEvent, within } from 'storybook/test';
+import {
+  expect,
+  fireEvent,
+  fn,
+  userEvent,
+  waitFor,
+  within,
+} from 'storybook/test';
 
 import { ComponentDecorator } from '@ui/testing';
 
@@ -111,6 +118,9 @@ export const PhysicalEdges: Story = {
       await userEvent.keyboard(key);
       await expect(handle).toHaveAttribute('aria-valuenow', '210');
       await expect(handle).toHaveAttribute('aria-orientation', orientation);
+      await expect(getComputedStyle(handle).cursor).toBe(
+        orientation === 'vertical' ? 'col-resize' : 'row-resize',
+      );
       await withMockPointerCapture({
         handle,
         run: async () => {
@@ -149,7 +159,7 @@ export const ControlledZoomAndLimits: Story = {
         });
         await pointer.pointer({ target: handle, coords: { x: 200, y: 900 } });
         await expect(handle.setPointerCapture).toHaveBeenCalledWith(1);
-        await expect(handle).toHaveFocus();
+        await expect(handle).not.toHaveFocus();
         await expect(handle).toHaveAttribute('aria-valuenow', '250');
         await expect(canvas.getByText('Live size: 250')).toBeVisible();
         await expect(canvas.getByText('Saved size: 200')).toBeVisible();
@@ -181,6 +191,43 @@ export const ControlledZoomAndLimits: Story = {
     handle.focus();
     await userEvent.keyboard('{ArrowLeft}');
     await expect(canvas.getByText('Saved size: 230')).toBeVisible();
+  },
+};
+
+export const FastPointerMoves: Story = {
+  play: async ({ canvasElement, args }) => {
+    const handle = within(canvasElement).getByRole('separator');
+
+    await withMockPointerCapture({
+      handle,
+      run: async () => {
+        await fireEvent.pointerDown(handle, {
+          pointerId: 1,
+          button: 0,
+          clientX: 100,
+        });
+        await fireEvent.pointerMove(handle, { pointerId: 1, clientX: 140 });
+        await waitFor(() =>
+          expect(handle).toHaveAttribute('aria-valuenow', '240'),
+        );
+
+        for (const [type, clientX] of [
+          ['pointermove', 170],
+          ['pointermove', 140],
+          ['pointerup', 140],
+        ] as const) {
+          handle.dispatchEvent(
+            new PointerEvent(type, { bubbles: true, pointerId: 1, clientX }),
+          );
+        }
+
+        await expect(args.onSizeChange).toHaveBeenLastCalledWith(240);
+        await expect(args.onSizeCommit).toHaveBeenCalledWith(240);
+        await waitFor(() =>
+          expect(handle).toHaveAttribute('aria-valuenow', '240'),
+        );
+      },
+    });
   },
 };
 
@@ -285,9 +332,11 @@ export const Disabled: Story = {
 
     await expect(handle).toHaveAttribute('aria-disabled', 'true');
     await expect(handle).toHaveAttribute('tabindex', '-1');
+    await expect(handle).not.toHaveAttribute('aria-keyshortcuts');
     await userEvent.tab();
     await expect(handle).not.toHaveFocus();
     await userEvent.click(handle);
+    await expect(handle).not.toHaveFocus();
     handle.focus();
     await userEvent.keyboard('{ArrowRight}{Enter} ');
     await expect(handle).toHaveAttribute('aria-valuenow', '200');
@@ -314,10 +363,7 @@ export const UnmountWhileDragging: Story = {
         });
         await pointer.pointer({ target: handle, coords: { x: 150, y: 10 } });
         await expect(canvas.getByText('Live size: 250')).toBeVisible();
-        await userEvent.tab();
-        await expect(
-          canvas.getByRole('button', { name: 'Hide panel' }),
-        ).toHaveFocus();
+        canvas.getByRole('button', { name: 'Hide panel' }).focus();
         await userEvent.keyboard('{Enter}');
         await expect(canvas.queryByRole('separator')).not.toBeInTheDocument();
         await expect(canvas.getByText('Live size: 200')).toBeVisible();

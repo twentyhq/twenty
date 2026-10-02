@@ -44,10 +44,11 @@ export const useResizeHandlePointerInteraction = ({
     const gesture = gestureRef.current;
 
     if (!isDefined(gesture)) {
-      return false;
+      return;
     }
 
     gestureRef.current = null;
+    gesture.removeEscapeKeyListener();
     suppressActivationRef.current = cancelled || gesture.hasStarted;
 
     if (gesture.target.hasPointerCapture?.(gesture.pointerId)) {
@@ -55,7 +56,7 @@ export const useResizeHandlePointerInteraction = ({
     }
 
     if (!gesture.hasStarted) {
-      return true;
+      return;
     }
 
     if (!cancelled) {
@@ -63,8 +64,6 @@ export const useResizeHandlePointerInteraction = ({
     }
 
     onResizeEnd?.({ cancelled, value: gesture.currentValue });
-
-    return true;
   });
 
   useEffect(() => {
@@ -79,6 +78,10 @@ export const useResizeHandlePointerInteraction = ({
     },
     [finishResize],
   );
+
+  const handleMouseDown = (event: MouseEvent<HTMLDivElement>) => {
+    event.preventDefault();
+  };
 
   const handlePointerDown = (event: PointerEvent<HTMLDivElement>) => {
     if (
@@ -95,10 +98,20 @@ export const useResizeHandlePointerInteraction = ({
       Number.isFinite(requestedScale) && requestedScale > 0
         ? requestedScale
         : 1;
+    const ownerWindow = event.currentTarget.ownerDocument?.defaultView;
 
-    event.preventDefault();
-    event.currentTarget.focus?.();
+    const handleEscapeKeyDown = (keyboardEvent: KeyboardEvent) => {
+      if (keyboardEvent.key !== 'Escape') {
+        return;
+      }
+
+      keyboardEvent.preventDefault();
+      keyboardEvent.stopPropagation();
+      finishResize(true);
+    };
+
     event.currentTarget.setPointerCapture?.(event.pointerId);
+    ownerWindow?.addEventListener('keydown', handleEscapeKeyDown, true);
     suppressActivationRef.current = false;
     gestureRef.current = {
       pointerId: event.pointerId,
@@ -110,6 +123,8 @@ export const useResizeHandlePointerInteraction = ({
       multiplier: (isReversed ? -1 : 1) / resolvedScale,
       threshold: Math.max(0, dragThreshold),
       hasStarted: false,
+      removeEscapeKeyListener: () =>
+        ownerWindow?.removeEventListener('keydown', handleEscapeKeyDown, true),
     };
   };
 
@@ -138,6 +153,10 @@ export const useResizeHandlePointerInteraction = ({
       min,
       max,
     );
+
+    if (gesture.hasStarted && nextValue === gesture.currentValue) {
+      return;
+    }
 
     gesture.currentValue = nextValue;
 
@@ -177,13 +196,13 @@ export const useResizeHandlePointerInteraction = ({
   };
 
   return {
+    onMouseDown: handleMouseDown,
     onPointerDown: handlePointerDown,
     onPointerMove: updateResize,
     onPointerUp: handlePointerUp,
     onPointerCancel: handlePointerCancel,
     onLostPointerCapture: handlePointerCancel,
     onClick: handleClick,
-    cancelResize: () => finishResize(true),
     isPointerActive: () => isDefined(gestureRef.current),
   };
 };

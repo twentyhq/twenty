@@ -290,9 +290,6 @@ export const LogConsole = () => {
   );
   const [isDetailPanelResizing, setIsDetailPanelResizing] = useState(false);
   const [isResizing, setIsResizing] = useState(false);
-  const [resizeStartDisplayMode, setResizeStartDisplayMode] = useState(
-    logConsoleDisplayMode,
-  );
 
   const isOpen = logConsoleDisplayMode === 'open';
   const isFullScreen = isOpen && isLogConsoleFullScreen;
@@ -338,7 +335,7 @@ export const LogConsole = () => {
 
   const appHeight = windowHeight / getUiZoom();
   const logConsoleResizeConstraints = {
-    min: 0,
+    min: isOpen && !isResizing ? LOG_CONSOLE_HEIGHT_CONSTRAINTS.min : 0,
     max: Math.max(
       appHeight - APP_HEADER_HEIGHT - LOG_CONSOLE_MIN_PAGE_HEIGHT,
       LOG_CONSOLE_HEIGHT_CONSTRAINTS.min,
@@ -424,10 +421,9 @@ export const LogConsole = () => {
   };
 
   const handleResizeStart = (height: number) => {
-    setResizeStartDisplayMode(logConsoleDisplayMode);
     setIsResizing(true);
 
-    if (height > 0) {
+    if (height > 0 && logConsoleDisplayMode === 'collapsed') {
       openLogConsole();
     }
   };
@@ -456,15 +452,21 @@ export const LogConsole = () => {
     );
   };
 
-  const handleResizeEnd = ({ cancelled }: { cancelled: boolean }) => {
+  const handleResizeEnd = ({
+    cancelled,
+    value,
+  }: {
+    cancelled: boolean;
+    value: number;
+  }) => {
     setIsResizing(false);
     document.documentElement.style.removeProperty(
       LOG_CONSOLE_HEIGHT_CSS_VARIABLE,
     );
 
+    const isCancelledResizeFromCollapsed = cancelled && value === 0;
     const shouldRestoreCollapsedMode =
-      cancelled &&
-      resizeStartDisplayMode === 'collapsed' &&
+      isCancelledResizeFromCollapsed &&
       store.get(logConsoleDisplayModeState.atom) === 'open' &&
       !store.get(isLogConsoleFullScreenState.atom);
 
@@ -482,9 +484,17 @@ export const LogConsole = () => {
 
   const handleHeightChange = (height: number) => {
     setIsResizing(false);
+    document.documentElement.style.removeProperty(
+      LOG_CONSOLE_HEIGHT_CSS_VARIABLE,
+    );
 
     if (height === 0) {
       setLogConsoleDisplayMode('collapsed');
+      return;
+    }
+
+    if (!isOpen && height < LOG_CONSOLE_HEIGHT_CONSTRAINTS.min) {
+      openLogConsole();
       return;
     }
 

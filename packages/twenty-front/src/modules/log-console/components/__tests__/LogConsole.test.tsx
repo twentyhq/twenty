@@ -12,8 +12,10 @@ import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceSta
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isClickHouseConfiguredState } from '@/client-config/states/isClickHouseConfiguredState';
 import { LogConsole } from '@/log-console/components/LogConsole';
+import { LOG_CONSOLE_HEIGHT_CONSTRAINTS } from '@/log-console/constants/LogConsoleHeightConstraints';
 import { isLogConsoleFullScreenState } from '@/log-console/states/isLogConsoleFullScreenState';
 import { logConsoleDisplayModeState } from '@/log-console/states/logConsoleDisplayModeState';
+import { logConsoleHeightState } from '@/log-console/states/logConsoleHeightState';
 import { useSetAdvancedMode } from '@/navigation/hooks/useSetAdvancedMode';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -117,7 +119,7 @@ describe('LogConsole', () => {
     act(() =>
       capturedResizablePanelProps?.onResizeEnd?.({
         cancelled: true,
-        value: 100,
+        value: 0,
       }),
     );
 
@@ -136,7 +138,7 @@ describe('LogConsole', () => {
     expect(jotaiStore.get(logConsoleDisplayModeState.atom)).toBe('open');
 
     act(() => jotaiStore.set(logConsoleDisplayModeState.atom, 'closed'));
-    act(() => onResizeEnd?.({ cancelled: true, value: 100 }));
+    act(() => onResizeEnd?.({ cancelled: true, value: 0 }));
 
     expect(jotaiStore.get(logConsoleDisplayModeState.atom)).toBe('closed');
   });
@@ -153,10 +155,57 @@ describe('LogConsole', () => {
     expect(jotaiStore.get(logConsoleDisplayModeState.atom)).toBe('open');
 
     act(() => jotaiStore.set(isLogConsoleFullScreenState.atom, true));
-    act(() => onResizeEnd?.({ cancelled: true, value: 100 }));
+    act(() => onResizeEnd?.({ cancelled: true, value: 0 }));
 
     expect(jotaiStore.get(logConsoleDisplayModeState.atom)).toBe('open');
     expect(jotaiStore.get(isLogConsoleFullScreenState.atom)).toBe(true);
+  });
+
+  it('restores the collapsed console when the cancel arrives before the drag start renders', () => {
+    renderWithLogsFeatureFlag(true);
+    act(() => {
+      jotaiStore.set(isAdvancedModeEnabledState.atom, true);
+      jotaiStore.set(logConsoleDisplayModeState.atom, 'collapsed');
+    });
+    const onResizeStart = capturedResizablePanelProps?.onResizeStart;
+    const onResizeEnd = capturedResizablePanelProps?.onResizeEnd;
+
+    act(() => {
+      onResizeStart?.(100);
+      onResizeEnd?.({ cancelled: true, value: 0 });
+    });
+
+    expect(jotaiStore.get(logConsoleDisplayModeState.atom)).toBe('collapsed');
+  });
+
+  it('opens a collapsed console at its saved height on a small keyboard step', () => {
+    renderWithLogsFeatureFlag(true);
+    act(() => {
+      jotaiStore.set(isAdvancedModeEnabledState.atom, true);
+      jotaiStore.set(logConsoleHeightState.atom, 450);
+      jotaiStore.set(logConsoleDisplayModeState.atom, 'collapsed');
+    });
+
+    act(() => capturedResizablePanelProps?.onSizeCommit?.(10));
+
+    expect(jotaiStore.get(logConsoleDisplayModeState.atom)).toBe('open');
+    expect(jotaiStore.get(logConsoleHeightState.atom)).toBe(450);
+  });
+
+  it('keeps keyboard resizing of an open console above its minimum height', () => {
+    renderWithLogsFeatureFlag(true);
+    act(() => {
+      jotaiStore.set(isAdvancedModeEnabledState.atom, true);
+      jotaiStore.set(logConsoleDisplayModeState.atom, 'open');
+    });
+
+    expect(capturedResizablePanelProps?.min).toBe(
+      LOG_CONSOLE_HEIGHT_CONSTRAINTS.min,
+    );
+
+    act(() => capturedResizablePanelProps?.onResizeStart?.(300));
+
+    expect(capturedResizablePanelProps?.min).toBe(0);
   });
 
   it('opens when developer mode is turned on', async () => {

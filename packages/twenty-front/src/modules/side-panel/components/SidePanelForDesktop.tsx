@@ -177,21 +177,22 @@ export const SidePanelForDesktop = () => {
       <SidePanelAskAiHandoffEffect
         onContinueChatFromFullWidth={handleContinueChatFromFullWidth}
       />
-      <ResizablePanel
-        side="left"
-        min={SIDE_PANEL_CONSTRAINTS.min}
-        max={SIDE_PANEL_CONSTRAINTS.max}
-        size={sidePanelWidth}
-        onSizeChange={handleWidthPreview}
-        onSizeCommit={handleWidthChange}
-        onCollapse={handleCollapse}
-        variant="gap"
-        disabled={!isSidePanelOpened}
-        aria-label={t`Resize side panel`}
-        scale={getUiZoom}
-        onResizeEnd={handleResizeEnd}
-        onResizeStart={handleResizeStart}
-      />
+      {isSidePanelOpened && (
+        <ResizablePanel
+          side="left"
+          min={SIDE_PANEL_CONSTRAINTS.min}
+          max={SIDE_PANEL_CONSTRAINTS.max}
+          size={sidePanelWidth}
+          onSizeChange={handleWidthPreview}
+          onSizeCommit={handleWidthChange}
+          onCollapse={handleCollapse}
+          variant="gap"
+          aria-label={t`Resize side panel`}
+          scale={getUiZoom}
+          onResizeEnd={handleResizeEnd}
+          onResizeStart={handleResizeStart}
+        />
+      )}
 
       <StyledSidePanelWrapper
         isOpen={isSidePanelOpened}

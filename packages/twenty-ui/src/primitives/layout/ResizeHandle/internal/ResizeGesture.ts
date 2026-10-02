@@ -8,4 +8,5 @@ export type ResizeGesture = {
   multiplier: number;
   threshold: number;
   hasStarted: boolean;
+  removeEscapeKeyListener: () => void;
 };

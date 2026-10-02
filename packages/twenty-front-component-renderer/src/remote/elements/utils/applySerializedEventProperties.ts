@@ -48,7 +48,12 @@ export const applySerializedEventProperties = (
 ): void => {
   for (const key of SERIALIZED_EVENT_PROPERTY_KEYS) {
     if (key in eventData) {
-      event[key] = eventData[key];
+      Object.defineProperty(event, key, {
+        value: eventData[key],
+        configurable: true,
+        enumerable: true,
+        writable: true,
+      });
     }
   }
 
