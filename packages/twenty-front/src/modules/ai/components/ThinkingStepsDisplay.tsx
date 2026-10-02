@@ -243,10 +243,13 @@ const StyledToolErrorText = styled.p`
 
 type ToolDetailsTab = 'records' | 'output' | 'input';
 
-const getActiveToolDetailsTab = (
-  activeTabId: string | null | undefined,
-  hasRecords: boolean,
-): ToolDetailsTab => {
+const getActiveToolDetailsTab = ({
+  activeTabId,
+  hasRecords,
+}: {
+  activeTabId: string | null | undefined;
+  hasRecords: boolean;
+}): ToolDetailsTab => {
   if (activeTabId === 'input' || activeTabId === 'output') {
     return activeTabId;
   }
@@ -298,7 +301,7 @@ const ThinkingToolStepRow = ({
     activeTabIdComponentState,
     toolTabListComponentInstanceId,
   );
-  const activeTab = getActiveToolDetailsTab(activeTabId, hasRecords);
+  const activeTab = getActiveToolDetailsTab({ activeTabId, hasRecords });
   const toolTabs = [
     ...(hasRecords ? [{ id: 'records', title: t`Records` }] : []),
     { id: 'output', title: t`Output` },
@@ -488,7 +491,6 @@ export const ThinkingStepsDisplay = ({
   );
 
   const shouldKeepExpandedBeforeAnswer = !hasAssistantTextResponseStarted;
-  // Live reasoning streams under the rows; once the turn settles, each thought sits behind its own row.
   const liveReasoningContent = hasActiveStep
     ? getActiveReasoningContent(parts)
     : isLastMessageStreaming && shouldKeepExpandedBeforeAnswer
