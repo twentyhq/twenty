@@ -19,15 +19,7 @@ import { type UserRoleService } from 'src/engine/metadata-modules/user-role/user
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 
 const workspaceId = 'workspace-id';
-const callerRoleId = '20202020-0000-4000-8000-000000000001';
-const otherRoleId = '20202020-0000-4000-8000-000000000002';
-const supportRoleId = '20202020-0000-4000-8000-000000000003';
-const callerWorkspaceMemberId = '20202020-0000-4000-8000-000000000004';
-const targetWorkspaceMemberId = '20202020-0000-4000-8000-000000000005';
-const companyObjectMetadataId = '20202020-0000-4000-8000-000000000006';
-const ownerFieldMetadataId = '20202020-0000-4000-8000-000000000007';
-const predicateGroupId = '20202020-0000-4000-8000-000000000008';
-const workspaceMemberIdFieldMetadataId = '20202020-0000-4000-8000-000000000009';
+const callerRoleId = 'caller-role-id';
 const callerUserWorkspaceId = 'caller-user-workspace-id';
 
 const buildProvider = (options?: { hasRolesPermission?: boolean }) => {
@@ -40,7 +32,7 @@ const buildProvider = (options?: { hasRolesPermission?: boolean }) => {
   const userRoleService = {
     assignRoleToWorkspaceMember: jest.fn().mockResolvedValue({
       workspaceMember: {
-        id: targetWorkspaceMemberId,
+        id: 'target-member-id',
         userId: 'target-user-id',
         name: { firstName: 'Jane', lastName: 'Doe' },
       },
@@ -107,7 +99,7 @@ const context: ToolProviderContext = {
   userWorkspaceId: callerUserWorkspaceId,
   actorContext: {
     source: FieldActorSource.MANUAL,
-    workspaceMemberId: callerWorkspaceMemberId,
+    workspaceMemberId: 'caller-workspace-member-id',
     name: 'Caller',
     context: {},
   },
@@ -331,14 +323,14 @@ describe('RoleToolProvider', () => {
       const { provider, roleService } = buildProvider();
 
       roleService.updateRole.mockResolvedValue({
-        id: otherRoleId,
+        id: 'other-role-id',
         label: 'Support L1',
       });
 
       const output = await provider.executeStaticTool(
         'update_role',
         {
-          roleId: otherRoleId,
+          roleId: 'other-role-id',
           update: { canUpdateAllSettings: false, label: 'Support L1' },
         },
         context,
@@ -348,7 +340,7 @@ describe('RoleToolProvider', () => {
       expect(roleService.updateRole).toHaveBeenCalledWith({
         workspaceId,
         input: {
-          id: otherRoleId,
+          id: 'other-role-id',
           update: { canUpdateAllSettings: false, label: 'Support L1' },
         },
         actingRoleIds: [callerRoleId],
@@ -383,19 +375,19 @@ describe('RoleToolProvider', () => {
       const { provider, roleService } = buildProvider();
 
       roleService.deleteRole.mockResolvedValue({
-        id: otherRoleId,
+        id: 'other-role-id',
         label: 'Support',
       });
 
       const output = await provider.executeStaticTool(
         'delete_role',
-        { roleId: otherRoleId },
+        { roleId: 'other-role-id' },
         context,
       );
 
       expect(output.success).toBe(true);
       expect(roleService.deleteRole).toHaveBeenCalledWith({
-        roleId: otherRoleId,
+        roleId: 'other-role-id',
         workspaceId,
         actingRoleIds: [callerRoleId],
       });
@@ -430,15 +422,15 @@ describe('RoleToolProvider', () => {
 
       const output = await provider.executeStaticTool(
         'assign_role_to_workspace_member',
-        { workspaceMemberId: targetWorkspaceMemberId, roleId: otherRoleId },
+        { workspaceMemberId: 'target-member-id', roleId: 'other-role-id' },
         context,
       );
 
       expect(output.success).toBe(true);
       expect(userRoleService.assignRoleToWorkspaceMember).toHaveBeenCalledWith({
         workspaceId,
-        workspaceMemberId: targetWorkspaceMemberId,
-        roleId: otherRoleId,
+        workspaceMemberId: 'target-member-id',
+        roleId: 'other-role-id',
         actingUserWorkspaceId: callerUserWorkspaceId,
       });
     });
@@ -456,8 +448,8 @@ describe('RoleToolProvider', () => {
       const output = await provider.executeStaticTool(
         'assign_role_to_workspace_member',
         {
-          workspaceMemberId: callerWorkspaceMemberId,
-          roleId: otherRoleId,
+          workspaceMemberId: 'caller-workspace-member-id',
+          roleId: 'other-role-id',
         },
         context,
       );
@@ -475,7 +467,7 @@ describe('RoleToolProvider', () => {
 
       objectPermissionService.upsertObjectPermissions.mockResolvedValue([
         {
-          objectMetadataId: companyObjectMetadataId,
+          objectMetadataId: 'object-metadata-id',
           canReadObjectRecords: true,
           canUpdateObjectRecords: false,
           canSoftDeleteObjectRecords: false,
@@ -486,10 +478,10 @@ describe('RoleToolProvider', () => {
       const output = await provider.executeStaticTool(
         'upsert_object_permissions',
         {
-          roleId: supportRoleId,
+          roleId: 'support-role-id',
           objectPermissions: [
             {
-              objectMetadataId: companyObjectMetadataId,
+              objectMetadataId: 'object-metadata-id',
               canReadObjectRecords: true,
               canUpdateObjectRecords: false,
               canSoftDeleteObjectRecords: false,
@@ -506,10 +498,10 @@ describe('RoleToolProvider', () => {
       ).toHaveBeenCalledWith({
         workspaceId,
         input: {
-          roleId: supportRoleId,
+          roleId: 'support-role-id',
           objectPermissions: [
             {
-              objectMetadataId: companyObjectMetadataId,
+              objectMetadataId: 'object-metadata-id',
               canReadObjectRecords: true,
               canUpdateObjectRecords: false,
               canSoftDeleteObjectRecords: false,
@@ -528,17 +520,18 @@ describe('RoleToolProvider', () => {
       const output = await provider.executeStaticTool(
         'upsert_row_level_permission_rules',
         {
-          roleId: supportRoleId,
-          objectMetadataId: companyObjectMetadataId,
+          roleId: 'support-role-id',
+          objectMetadataId: 'object-metadata-id',
           predicates: [
             {
-              fieldMetadataId: ownerFieldMetadataId,
+              fieldMetadataId: 'owner-field-metadata-id',
               operand: 'IS',
-              workspaceMemberFieldMetadataId: workspaceMemberIdFieldMetadataId,
-              rowLevelPermissionPredicateGroupId: predicateGroupId,
+              workspaceMemberFieldMetadataId:
+                'workspace-member-id-field-metadata-id',
+              rowLevelPermissionPredicateGroupId: 'group-id',
             },
           ],
-          predicateGroups: [{ id: predicateGroupId, logicalOperator: 'AND' }],
+          predicateGroups: [{ id: 'group-id', logicalOperator: 'AND' }],
         },
         context,
       );
@@ -549,13 +542,13 @@ describe('RoleToolProvider', () => {
       ).toHaveBeenCalledWith({
         workspaceId,
         input: expect.objectContaining({
-          roleId: supportRoleId,
-          objectMetadataId: companyObjectMetadataId,
+          roleId: 'support-role-id',
+          objectMetadataId: 'object-metadata-id',
           predicateGroups: [
             expect.objectContaining({
-              id: predicateGroupId,
+              id: 'group-id',
               logicalOperator: 'AND',
-              objectMetadataId: companyObjectMetadataId,
+              objectMetadataId: 'object-metadata-id',
             }),
           ],
         }),
@@ -574,8 +567,8 @@ describe('RoleToolProvider', () => {
       const output = await provider.executeStaticTool(
         'upsert_row_level_permission_rules',
         {
-          roleId: supportRoleId,
-          objectMetadataId: companyObjectMetadataId,
+          roleId: 'support-role-id',
+          objectMetadataId: 'object-metadata-id',
           predicates: [],
           predicateGroups: [],
         },
