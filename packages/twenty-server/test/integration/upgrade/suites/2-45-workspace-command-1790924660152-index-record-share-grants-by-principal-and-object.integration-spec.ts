@@ -179,6 +179,41 @@ describe('2-45 workspace command 1790924660152 - IndexRecordShareGrantsByPrincip
     });
   });
 
+  it('rebuilds a legacy index left invalid by an interrupted concurrent build on the way down', async () => {
+    await run('down');
+
+    const { name: sourceIdIndexName } =
+      await getCoreRepository<IndexMetadataEntity>(
+        IndexMetadataEntity,
+      ).findOneOrFail({
+        where: {
+          workspaceId,
+          universalIdentifier: LEGACY_INDEX_UNIVERSAL_IDENTIFIERS[1],
+        },
+      });
+    const schemaName = getWorkspaceSchemaName(workspaceId);
+
+    await run('up');
+    await globalThis.testDataSource.query(
+      `CREATE INDEX "${sourceIdIndexName}" ON "${schemaName}"."recordShare" ("principalId")`,
+    );
+    await globalThis.testDataSource.query(
+      `UPDATE pg_index SET indisvalid = false WHERE indexrelid = $1::regclass`,
+      [`"${schemaName}"."${sourceIdIndexName}"`],
+    );
+
+    expect(await findPhysicalIndex(sourceIdIndexName)).toMatchObject({
+      isValid: false,
+    });
+
+    await run('down');
+
+    expect(await findPhysicalIndex(sourceIdIndexName)).toEqual({
+      isValid: true,
+      indexDefinition: expect.stringContaining('("sourceId")'),
+    });
+  });
+
   it('replaces the legacy indexes with a (principalId, objectMetadataId) index, once', async () => {
     await run('down');
     await run('up');
