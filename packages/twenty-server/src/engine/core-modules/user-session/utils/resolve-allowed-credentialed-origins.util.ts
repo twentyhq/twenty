@@ -59,14 +59,8 @@ type CredentialedOriginsConfig = {
   nodeEnvironment: NodeEnvironment;
 };
 
-type CachedAllowedCredentialedOrigins = {
-  config: CredentialedOriginsConfig;
-  allowedOrigins: ReadonlySet<string>;
-};
-
-let cachedAllowedCredentialedOrigins:
-  | CachedAllowedCredentialedOrigins
-  | undefined;
+let cachedConfig: CredentialedOriginsConfig | undefined;
+let cachedComputedAllowedOrigins: ReadonlySet<string> | undefined;
 
 const isSameCredentialedOriginsConfig = (
   config: CredentialedOriginsConfig,
@@ -132,18 +126,17 @@ export const resolveAllowedCredentialedOrigins = (
   };
 
   if (
-    isDefined(cachedAllowedCredentialedOrigins) &&
-    isSameCredentialedOriginsConfig(
-      cachedAllowedCredentialedOrigins.config,
-      config,
-    )
+    isDefined(cachedConfig) &&
+    isDefined(cachedComputedAllowedOrigins) &&
+    isSameCredentialedOriginsConfig(cachedConfig, config)
   ) {
-    return cachedAllowedCredentialedOrigins.allowedOrigins;
+    return cachedComputedAllowedOrigins;
   }
 
   const allowedOrigins = computeAllowedCredentialedOrigins(config);
 
-  cachedAllowedCredentialedOrigins = { config, allowedOrigins };
+  cachedConfig = config;
+  cachedComputedAllowedOrigins = allowedOrigins;
 
   return allowedOrigins;
 };
