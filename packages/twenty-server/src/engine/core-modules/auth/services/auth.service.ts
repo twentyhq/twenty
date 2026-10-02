@@ -111,6 +111,76 @@ export class AuthService {
     private readonly userSessionService: UserSessionService,
   ) {}
 
+  async validateLoginWithPassword(input: UserCredentialsInput) {
+    const user = await this.findUserByEmailOrThrow(input.email);
+
+    await this.validatePasswordCredentialsOrThrow(user, input.password);
+
+    return user;
+  }
+
+  async validateWorkspaceLoginWithPassword(
+    input: UserCredentialsInput,
+    workspace: WorkspaceEntity,
+  ): Promise<{ user: UserEntity; workspaceInvitation?: WorkspaceInvitation }> {
+    const user = await this.findUserByEmailOrThrow(input.email);
+
+    await this.assertPasswordAuthAllowedOnWorkspaceOrThrow(user, workspace);
+
+    // Access is checked before the password so that a non-member cannot tell a right password from a wrong one
+    const isWorkspaceMember =
+      await this.userWorkspaceService.checkUserWorkspaceExists(
+        user.id,
+        workspace.id,
+      );
+
+    const workspaceInvitation = isWorkspaceMember
+      ? undefined
+      : await this.getValidWorkspaceInvitationOrThrow(workspace, user);
+
+    await this.validatePasswordCredentialsOrThrow(user, input.password);
+
+    return { user, workspaceInvitation };
+  }
+
+  private async findUserByEmailOrThrow(email: string) {
+    const user = await this.userRepository.findOne({
+      where: { email },
+      relations: { userWorkspaces: true },
+    });
+
+    if (!user) {
+      throw new AuthException(
+        'User not found',
+        AuthExceptionCode.USER_NOT_FOUND,
+      );
+    }
+
+    return user;
+  }
+
+  private async assertPasswordAuthAllowedOnWorkspaceOrThrow(
+    user: UserEntity,
+    workspace: WorkspaceEntity,
+  ) {
+    if (workspace.isPasswordAuthEnabled) {
+      return;
+    }
+
+    const canBypass = await this.canUserBypassAuthProvider({
+      user,
+      workspace,
+      provider: AuthProviderEnum.Password,
+    });
+
+    if (!canBypass) {
+      throw new AuthException(
+        'Email/Password auth is not enabled for this workspace',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
+    }
+  }
+
   private async getValidWorkspaceInvitationOrThrow(
     workspace: WorkspaceEntity,
     user: UserEntity,
@@ -139,51 +209,10 @@ export class AuthService {
     return castAppTokenToWorkspaceInvitationUtil(invitation);
   }
 
-  async validateLoginWithPassword(
-    input: UserCredentialsInput,
-    targetWorkspace?: WorkspaceEntity,
+  private async validatePasswordCredentialsOrThrow(
+    user: UserEntity,
+    password: string,
   ) {
-    const user = await this.userRepository.findOne({
-      where: {
-        email: input.email,
-      },
-      relations: { userWorkspaces: true },
-    });
-
-    if (!user) {
-      throw new AuthException(
-        'User not found',
-        AuthExceptionCode.USER_NOT_FOUND,
-      );
-    }
-
-    if (targetWorkspace && !targetWorkspace.isPasswordAuthEnabled) {
-      const canBypass = await this.canUserBypassAuthProvider({
-        user,
-        workspace: targetWorkspace,
-        provider: AuthProviderEnum.Password,
-      });
-
-      if (!canBypass) {
-        throw new AuthException(
-          'Email/Password auth is not enabled for this workspace',
-          AuthExceptionCode.FORBIDDEN_EXCEPTION,
-        );
-      }
-    }
-
-    const isTargetWorkspaceMember =
-      isDefined(targetWorkspace) &&
-      (await this.userWorkspaceService.checkUserWorkspaceExists(
-        user.id,
-        targetWorkspace.id,
-      ));
-
-    const invitationToJoinTargetWorkspace =
-      isDefined(targetWorkspace) && !isTargetWorkspaceMember
-        ? await this.getValidWorkspaceInvitationOrThrow(targetWorkspace, user)
-        : undefined;
-
     if (!user.passwordHash) {
       throw new AuthException(
         'Incorrect login method',
@@ -194,7 +223,7 @@ export class AuthService {
       );
     }
 
-    const isValid = await compareHash(input.password, user.passwordHash);
+    const isValid = await compareHash(password, user.passwordHash);
 
     if (!isValid) {
       throw new AuthException(
@@ -207,19 +236,6 @@ export class AuthService {
     }
 
     await this.checkIsEmailVerified(user.isEmailVerified);
-
-    if (
-      isDefined(targetWorkspace) &&
-      isDefined(invitationToJoinTargetWorkspace)
-    ) {
-      await this.userWorkspaceService.addUserToWorkspaceIfUserNotInWorkspace(
-        user,
-        targetWorkspace,
-        invitationToJoinTargetWorkspace.roleId,
-      );
-    }
-
-    return user;
   }
 
   async checkIsEmailVerified(isEmailVerified: boolean) {
