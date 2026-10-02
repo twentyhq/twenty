@@ -56,6 +56,7 @@ import {
 } from 'src/engine/core-modules/record-share/utils/evaluate-row-access-policy.util';
 import { isRowAccessExpressionReadingRoleFilter } from 'src/engine/twenty-orm/utils/is-row-access-expression-reading-role-filter.util';
 import { isRecordGrantBeyondRoleAllowed } from 'src/engine/core-modules/record-share/utils/is-record-grant-beyond-role-allowed.util';
+import { isRecordShareableObject } from 'src/engine/core-modules/record-share/utils/is-record-shareable-object.util';
 import { isObjectOperationPermitted } from 'src/engine/twenty-orm/utils/is-object-operation-permitted.util';
 import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
@@ -1614,6 +1615,18 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     columnsToReturn: string[];
     data?: Partial<ObjectRecord>;
   }): Promise<ObjectRecord[]> {
+    if (args.kind === 'delete' && this.canHoldRecordShares) {
+      return this.runAtomically((repository) =>
+        repository.performMutation({
+          ...args,
+          selectQueryBuilder: this.bindQueryBuilderToRepository(
+            args.selectQueryBuilder,
+            repository,
+          ),
+        }),
+      );
+    }
+
     if (args.kind !== 'update') {
       return this.performMutation(args);
     }
@@ -1622,13 +1635,22 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       write: (repository, validateWrittenRecords) =>
         repository.performMutation({
           ...args,
-          selectQueryBuilder:
-            repository === this
-              ? args.selectQueryBuilder
-              : args.selectQueryBuilder.clone(repository.options.executor),
+          selectQueryBuilder: this.bindQueryBuilderToRepository(
+            args.selectQueryBuilder,
+            repository,
+          ),
           validateWrittenRecords,
         }),
     });
+  }
+
+  private bindQueryBuilderToRepository(
+    selectQueryBuilder: WorkspaceSelectQueryBuilder,
+    repository: WorkspaceRepository<TEntity>,
+  ): WorkspaceSelectQueryBuilder {
+    return repository === this
+      ? selectQueryBuilder
+      : selectQueryBuilder.clone(repository.options.executor);
   }
 
   private async performMutation({
@@ -1743,11 +1765,16 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
               columnsToReturn,
               this.options.tableShape,
             )
-          : columnsToReturn,
+          : kind === 'delete' && !columnsToReturn.includes('id')
+            ? [...columnsToReturn, 'id']
+            : columnsToReturn,
       setColumns,
     });
 
     if (kind === 'delete') {
+      await this.deleteRecordSharesOfDestroyedRecords(
+        mutationResult.generatedMaps,
+      );
       await this.releaseRecordStock(mutationResult.generatedMaps.length);
     }
 
@@ -2021,6 +2048,31 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       resolveRecordIdsReadableThroughParents: async ({ records }) =>
         new Set(records.map((record) => record.id)),
     };
+  }
+
+  // A destroyed record's id can be reused on create, which would otherwise
+  // inherit the grants and restrictions left behind
+  private async deleteRecordSharesOfDestroyedRecords(
+    destroyedRecords: ObjectRecord[],
+  ): Promise<void> {
+    const recordShareObjectMetadataId =
+      this.options.internalContext.objectIdByNameSingular.recordShare;
+
+    if (
+      destroyedRecords.length === 0 ||
+      !this.canHoldRecordShares ||
+      !isDefined(recordShareObjectMetadataId)
+    ) {
+      return;
+    }
+
+    await this.executeRaw(
+      `DELETE FROM ${this.getTableExpression(recordShareObjectMetadataId)} WHERE "objectMetadataId" = :objectMetadataId AND "recordId" = ANY(:recordIds)`,
+      {
+        objectMetadataId: this.options.flatObjectMetadata.id,
+        recordIds: destroyedRecords.map((record) => String(record.id)),
+      },
+    );
   }
 
   private async findRecordShareGrants({
@@ -2369,6 +2421,14 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
         this.getTableExpression(objectMetadataId),
       isRecordSharingEnabled: this.isRecordSharingEnabled,
     };
+  }
+
+  // Rows outlive a sharing flag toggle, so cleanup ignores the flag
+  private get canHoldRecordShares(): boolean {
+    return isRecordShareableObject({
+      flatObjectMetadata: this.options.flatObjectMetadata,
+      isRecordSharingEnabled: true,
+    });
   }
 
   private get isRecordSharingEnabled(): boolean {

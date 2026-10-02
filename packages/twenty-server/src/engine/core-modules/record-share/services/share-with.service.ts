@@ -66,7 +66,7 @@ export class ShareWithService {
   }): Promise<void> {
     const workspaceId = authContext.workspace.id;
 
-    // A hard-destroyed record leaves its rows behind, and a client may reuse its id
+    // Rows orphaned by destroys from older versions may remain, and a client may reuse a destroyed record's id
     await this.recordShareStorageService.deleteByRecordIds({
       workspaceId,
       objectMetadataId,
