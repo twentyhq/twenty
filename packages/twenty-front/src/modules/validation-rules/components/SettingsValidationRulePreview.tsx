@@ -1,6 +1,5 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { isNonEmptyString } from '@sniptt/guards';
 import { VALIDATION_RULE_NOW_VARIABLE_NAME } from 'twenty-shared/constants';
 import {
   type ValidationRuleCompilationResult,
@@ -11,38 +10,60 @@ import {
   isDefined,
   parseValidationRuleExpression,
 } from 'twenty-shared/utils';
-import { IconAlertTriangle, IconCheck, IconX } from 'twenty-ui/icon';
+import { IconCheck, IconX, useIcons } from 'twenty-ui/icon';
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { RecordChip } from '@/object-record/components/RecordChip';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { SettingsDataModelObjectPreview } from '@/settings/data-model/objects/components/SettingsDataModelObjectSummary';
 import { type ValidationRuleEditorField } from '@/validation-rules/types/ValidationRuleEditorField';
 import { formatValidationRulePreviewValue } from '@/validation-rules/utils/formatValidationRulePreviewValue';
 import { getValidationRuleEditorFieldChipLabel } from '@/validation-rules/utils/getValidationRuleEditorFieldChipLabel';
 import { getValidationRulePreviewValue } from '@/validation-rules/utils/getValidationRulePreviewValue';
 
-const StyledPreview = styled.div`
+const StyledHeader = styled.div`
+  align-items: center;
+  display: flex;
+  gap: ${themeCssVariables.spacing[2]};
+`;
+
+const StyledObjectPreview = styled.div`
+  flex: 1;
+  min-width: 0;
+`;
+
+const StyledStatus = styled.span`
+  display: flex;
+  flex-shrink: 0;
+`;
+
+const StyledFieldValues = styled.div`
+  background-color: ${themeCssVariables.background.primary};
+  border: 1px solid ${themeCssVariables.border.color.medium};
+  border-radius: ${themeCssVariables.border.radius.sm};
   display: flex;
   flex-direction: column;
   font-size: ${themeCssVariables.font.size.md};
-  gap: ${themeCssVariables.spacing[3]};
+  margin-top: ${themeCssVariables.spacing[2]};
+  padding: ${themeCssVariables.spacing[2]};
 `;
 
-const StyledRecord = styled.div`
+const StyledFieldValue = styled.div`
+  align-items: center;
   display: flex;
+  gap: ${themeCssVariables.spacing[2]};
+  line-height: 24px;
+  min-width: 0;
+  white-space: nowrap;
 `;
 
-const StyledValues = styled.div`
-  column-gap: ${themeCssVariables.spacing[4]};
-  display: grid;
-  grid-template-columns: max-content minmax(0, 1fr);
-  row-gap: ${themeCssVariables.spacing[1]};
-`;
-
-const StyledValueLabel = styled.span`
+const StyledFieldLabel = styled.span`
+  align-items: center;
   color: ${themeCssVariables.font.color.tertiary};
+  display: flex;
+  flex-shrink: 0;
+  gap: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledValue = styled.span<{ isEmpty: boolean }>`
@@ -52,14 +73,6 @@ const StyledValue = styled.span<{ isEmpty: boolean }>`
       : themeCssVariables.font.color.primary};
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;
-`;
-
-const StyledResult = styled.div<{ color: string }>`
-  align-items: center;
-  color: ${({ color }) => color};
-  display: flex;
-  gap: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledMuted = styled.div`
@@ -72,7 +85,6 @@ type SettingsValidationRulePreviewProps = {
   editorFields: ValidationRuleEditorField[];
   expression: string;
   compilationResult: ValidationRuleCompilationResult;
-  message: string;
   record: ObjectRecord | undefined;
 };
 
@@ -82,11 +94,11 @@ export const SettingsValidationRulePreview = ({
   editorFields,
   expression,
   compilationResult,
-  message,
   record,
 }: SettingsValidationRulePreviewProps) => {
   const { t } = useLingui();
   const theme = useTheme();
+  const { getIcon } = useIcons();
 
   if (!isDefined(record)) {
     return (
@@ -110,11 +122,9 @@ export const SettingsValidationRulePreview = ({
       ].filter((path) => path !== VALIDATION_RULE_NOW_VARIABLE_NAME)
     : [];
 
-  const renderResult = () => {
+  const renderStatus = () => {
     if (!compilationResult.isValid) {
-      return (
-        <StyledMuted>{t`Write a valid condition to see the result.`}</StyledMuted>
-      );
+      return null;
     }
 
     const evaluationResult = evaluateValidationRuleExpression({
@@ -127,69 +137,71 @@ export const SettingsValidationRulePreview = ({
     switch (evaluationResult.status) {
       case 'passed':
         return (
-          <StyledResult color={themeCssVariables.color.green}>
-            <IconCheck size={theme.icon.size.md} />
-            {t`Passes. This record can be saved.`}
-          </StyledResult>
+          <StyledStatus role="img" aria-label={t`This record can be saved`}>
+            <IconCheck
+              size={theme.icon.size.md}
+              stroke={theme.icon.stroke.sm}
+              color={theme.color.green}
+            />
+          </StyledStatus>
         );
       case 'failed':
         return (
-          <StyledResult color={themeCssVariables.color.red}>
-            <IconX size={theme.icon.size.md} />
-            {isNonEmptyString(message.trim())
-              ? t`Blocked: ${message}`
-              : t`Blocked. This record could not be saved.`}
-          </StyledResult>
+          <StyledStatus role="img" aria-label={t`This record is blocked`}>
+            <IconX
+              size={theme.icon.size.md}
+              stroke={theme.icon.stroke.sm}
+              color={theme.color.red}
+            />
+          </StyledStatus>
         );
       case 'errored':
-        return (
-          <StyledResult color={themeCssVariables.color.orange}>
-            <IconAlertTriangle size={theme.icon.size.md} />
-            {evaluationResult.errorMessage}
-          </StyledResult>
-        );
+        return null;
     }
   };
 
   return (
     <Card.Root fullWidth>
       <Card.Content>
-        <StyledPreview>
-          <StyledRecord>
-            <RecordChip
-              objectNameSingular={objectMetadataItem.nameSingular}
-              record={record}
-              forceDisableClick
+        <StyledHeader>
+          {renderStatus()}
+          <StyledObjectPreview>
+            <SettingsDataModelObjectPreview
+              objectMetadataItems={[objectMetadataItem]}
             />
-          </StyledRecord>
-          {referencedPaths.length > 0 && (
-            <StyledValues>
-              {referencedPaths.map((path) => {
-                const editorField = editorFields.find(
-                  (candidate) => candidate.path === path,
-                );
-                const formattedValue = formatValidationRulePreviewValue(
-                  getValidationRulePreviewValue(record, path),
-                );
+          </StyledObjectPreview>
+        </StyledHeader>
+        {referencedPaths.length > 0 && (
+          <StyledFieldValues>
+            {referencedPaths.map((path) => {
+              const editorField = editorFields.find(
+                (candidate) => candidate.path === path,
+              );
+              const fieldLabel = isDefined(editorField)
+                ? getValidationRuleEditorFieldChipLabel(editorField)
+                : path;
+              const FieldIcon = getIcon(editorField?.iconName);
+              const formattedValue = formatValidationRulePreviewValue(
+                getValidationRulePreviewValue(record, path),
+              );
 
-                return [
-                  <StyledValueLabel key={`${path}-label`}>
-                    {isDefined(editorField)
-                      ? getValidationRuleEditorFieldChipLabel(editorField)
-                      : path}
-                  </StyledValueLabel>,
-                  <StyledValue
-                    key={`${path}-value`}
-                    isEmpty={formattedValue.length === 0}
-                  >
+              return (
+                <StyledFieldValue key={path}>
+                  <StyledFieldLabel>
+                    <FieldIcon
+                      size={theme.icon.size.md}
+                      stroke={theme.icon.stroke.sm}
+                    />
+                    {`${fieldLabel}:`}
+                  </StyledFieldLabel>
+                  <StyledValue isEmpty={formattedValue.length === 0}>
                     {formattedValue.length > 0 ? formattedValue : t`Empty`}
-                  </StyledValue>,
-                ];
-              })}
-            </StyledValues>
-          )}
-          {renderResult()}
-        </StyledPreview>
+                  </StyledValue>
+                </StyledFieldValue>
+              );
+            })}
+          </StyledFieldValues>
+        )}
       </Card.Content>
     </Card.Root>
   );

@@ -15,7 +15,6 @@ type SettingsValidationRuleConditionCardProps = {
   fields: ValidationRuleFieldDescriptor[];
   editorFields: ValidationRuleEditorField[];
   expression: string;
-  message: string;
   onExpressionChange: (expression: string) => void;
 };
 
@@ -24,7 +23,6 @@ export const SettingsValidationRuleConditionCard = ({
   fields,
   editorFields,
   expression,
-  message,
   onExpressionChange,
 }: SettingsValidationRuleConditionCardProps) => {
   const [previewRecordIndex, setPreviewRecordIndex] = useState(0);
@@ -59,7 +57,6 @@ export const SettingsValidationRuleConditionCard = ({
             editorFields={editorFields}
             expression={expression}
             compilationResult={compilationResult}
-            message={message}
             record={record}
           />
         )
