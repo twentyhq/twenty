@@ -6,7 +6,6 @@ import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileModule } from 'src/engine/core-modules/file/file.module';
 import { JwtModule } from 'src/engine/core-modules/jwt/jwt.module';
-import { RecordCrudModule } from 'src/engine/core-modules/record-crud/record-crud.module';
 import { SecureHttpClientModule } from 'src/engine/core-modules/secure-http-client/secure-http-client.module';
 import { CreateCalendarEventTool } from 'src/engine/core-modules/tool/tools/calendar-tool/create-calendar-event-tool';
 import { CodeInterpreterTool } from 'src/engine/core-modules/tool/tools/code-interpreter-tool/code-interpreter-tool';
@@ -44,7 +43,6 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     FeatureFlagModule,
     FileModule,
     JwtModule,
-    RecordCrudModule,
     SecureHttpClientModule,
     ObjectMetadataModule,
     ViewModule,

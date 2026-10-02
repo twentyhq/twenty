@@ -1,46 +1,35 @@
 import { Injectable } from '@nestjs/common';
 
-import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 import { sleep } from 'cloudflare/core';
 import Fuse from 'fuse.js';
 import { NavigateAppToolOutput } from 'twenty-shared/ai';
-import { FieldMetadataType, OrderByDirection } from 'twenty-shared/types';
-import { escapeForIlike, isDefined, isValidUuid } from 'twenty-shared/utils';
+import { type ObjectsPermissions } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
-import { type ObjectRecordOrderBy } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
-
-import { assertFieldIsReadableOrThrow } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/utils/assert-field-is-readable-or-throw.util';
-import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import { FindRecordsService } from 'src/engine/core-modules/record-crud/services/find-records.service';
 import {
   type NavigateAppInput,
   NavigateAppInputZodSchema,
 } from 'src/engine/core-modules/tool/tools/navigate-tool/navigate-app-tool.schema';
-import { type RecordReference } from 'src/engine/core-modules/tool/types/record-reference.type';
+import { buildNavigateToRecordOutput } from 'src/engine/core-modules/tool/tools/navigate-tool/utils/build-navigate-to-record-output.util';
+import { buildNavigateToViewOutput } from 'src/engine/core-modules/tool/tools/navigate-tool/utils/build-navigate-to-view-output.util';
 import { type ToolInput } from 'src/engine/core-modules/tool/types/tool-input.type';
 import { ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { type ToolExecutionContext } from 'src/engine/core-modules/tool/types/tool-execution-context.type';
 import { type Tool } from 'src/engine/core-modules/tool/types/tool.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
-import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { NavigationMenuItemType } from 'src/engine/metadata-modules/navigation-menu-item/enums/navigation-menu-item-type.enum';
 import { NavigationMenuItemService } from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.service';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
-import { resolveEffectiveFlatEntityProperty } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-flat-entity-property.util';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config.type';
 import { getObjectsPermissionsFromRolePermissionConfig } from 'src/engine/twenty-orm/utils/get-objects-permissions-from-role-permission-config.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
-const NAVIGATE_TO_RECORD_CANDIDATE_LIMIT = 20;
-
 @Injectable()
 export class NavigateAppTool implements Tool {
   description = `Navigate the application.
-    Use navigateToRecord when the user wants to go to a specific record by name.
+    Use navigateToRecord to open a specific record. It needs the record id: find it first with the find_* tools, or take it from the result of the tool that created the record.
     Default to navigateToObject for all other navigation requests.
-    Only use navigateToView when the user explicitly mentions the word "view" in their request.
+    Only use navigateToView when the user explicitly mentions the word "view" in their request, or right after creating a view. It needs the view id from get_views or from the tool that created the view.
     If the user asks to wait, use the wait tool with the specified duration.`;
 
   inputSchema = NavigateAppInputZodSchema;
@@ -49,7 +38,6 @@ export class NavigateAppTool implements Tool {
     private readonly navigationMenuItemService: NavigationMenuItemService,
     private readonly viewService: ViewService,
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
-    private readonly findRecordsService: FindRecordsService,
     private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
@@ -71,11 +59,11 @@ export class NavigateAppTool implements Tool {
 
     switch (input.type) {
       case 'navigateToView':
-        return this.navigateToView(
-          input.viewName,
-          context.workspaceId,
-          context.userWorkspaceId,
-        );
+        return this.navigateToView({
+          viewId: input.viewId,
+          workspaceId: context.workspaceId,
+          userWorkspaceId: context.userWorkspaceId,
+        });
       case 'navigateToObject':
         return this.navigateToObject(
           input.objectNameSingular,
@@ -84,9 +72,8 @@ export class NavigateAppTool implements Tool {
       case 'navigateToRecord':
         return this.navigateToRecord({
           objectNameSingular: input.objectNameSingular,
-          recordName: input.recordName,
+          recordId: input.recordId,
           workspaceId: context.workspaceId,
-          authContext: context.authContext,
           rolePermissionConfig: context.rolePermissionConfig,
         });
       case 'wait':
@@ -109,33 +96,16 @@ export class NavigateAppTool implements Tool {
     };
   }
 
-  private async navigateToView(
-    viewName: string,
-    workspaceId: string,
-    userWorkspaceId?: string,
-  ): Promise<ToolOutput<NavigateAppToolOutput>> {
-    const views = await this.viewService.findByWorkspaceId(
-      workspaceId,
-      userWorkspaceId,
-    );
-
-    const fuse = new Fuse(views, {
-      keys: ['name'],
-      threshold: 0.4,
-    });
-
-    const results = fuse.search(viewName);
-    const matchingView = results[0]?.item;
-
-    if (!matchingView) {
-      const availableViewNames = views.map((view) => view.name).join(', ');
-
-      return {
-        success: false,
-        message: `View "${viewName}" not found`,
-        error: `No view matching "${viewName}" was found in this workspace. Available views: ${availableViewNames}`,
-      };
-    }
+  private async navigateToView({
+    viewId,
+    workspaceId,
+    userWorkspaceId,
+  }: {
+    viewId: string;
+    workspaceId: string;
+    userWorkspaceId?: string;
+  }): Promise<ToolOutput<NavigateAppToolOutput>> {
+    const view = await this.viewService.findById(viewId, workspaceId);
 
     const { flatObjectMetadataMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
@@ -145,35 +115,12 @@ export class NavigateAppTool implements Tool {
         },
       );
 
-    const objectMetadataUniversalIdentifier =
-      flatObjectMetadataMaps.universalIdentifierById[
-        matchingView.objectMetadataId
-      ];
-
-    const objectMetadata = isDefined(objectMetadataUniversalIdentifier)
-      ? flatObjectMetadataMaps.byUniversalIdentifier[
-          objectMetadataUniversalIdentifier
-        ]
-      : undefined;
-
-    if (!isDefined(objectMetadata)) {
-      return {
-        success: false,
-        message: `Object metadata for view "${matchingView.name}" not found`,
-        error: `Could not resolve the object associated with view "${matchingView.name}"`,
-      };
-    }
-
-    return {
-      success: true,
-      message: `Navigating to view "${matchingView.name}"`,
-      result: {
-        action: 'navigateToView',
-        viewId: matchingView.id,
-        viewName: matchingView.name,
-        objectNameSingular: objectMetadata.nameSingular,
-      },
-    };
+    return buildNavigateToViewOutput({
+      viewId,
+      view,
+      userWorkspaceId,
+      flatObjectMetadataMaps,
+    });
   }
 
   private async navigateToObject(
@@ -276,306 +223,58 @@ export class NavigateAppTool implements Tool {
 
   private async navigateToRecord({
     objectNameSingular,
-    recordName,
+    recordId,
     workspaceId,
-    authContext,
     rolePermissionConfig,
   }: {
     objectNameSingular: string;
-    recordName: string;
+    recordId: string;
     workspaceId: string;
-    authContext?: WorkspaceAuthContext;
     rolePermissionConfig?: RolePermissionConfig;
   }): Promise<ToolOutput<NavigateAppToolOutput>> {
-    const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
+    const { flatObjectMetadataMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatMapsKeys: ['flatObjectMetadataMaps', 'flatFieldMetadataMaps'],
+          flatMapsKeys: ['flatObjectMetadataMaps'],
         },
       );
 
-    const flatObjectMetadata = Object.values(
-      flatObjectMetadataMaps.byUniversalIdentifier,
-    ).find(
-      (metadata): metadata is FlatObjectMetadata =>
-        isDefined(metadata) &&
-        metadata.nameSingular === objectNameSingular &&
-        resolveEffectiveFlatEntityProperty({
-          metadataName: 'objectMetadata',
-          flatEntity: metadata,
-          property: 'isActive',
-        }),
-    );
-
-    if (!isDefined(flatObjectMetadata)) {
-      const availableObjectNames = Object.values(
-        flatObjectMetadataMaps.byUniversalIdentifier,
-      )
-        .filter(
-          (metadata): metadata is FlatObjectMetadata =>
-            isDefined(metadata) &&
-            resolveEffectiveFlatEntityProperty({
-              metadataName: 'objectMetadata',
-              flatEntity: metadata,
-              property: 'isActive',
-            }),
-        )
-        .map((metadata) => metadata.nameSingular)
-        .join(', ');
-
-      return {
-        success: false,
-        message: `Object "${objectNameSingular}" not found`,
-        error: `No object with singular name "${objectNameSingular}" was found. Available objects: ${availableObjectNames}`,
-      };
-    }
-
-    if (!isDefined(flatObjectMetadata.labelIdentifierFieldMetadataId)) {
-      return {
-        success: false,
-        message: `Object "${objectNameSingular}" has no label identifier field`,
-        error: `Cannot search records by name for object "${objectNameSingular}" because it has no label identifier field configured.`,
-      };
-    }
-
-    const labelIdentifierField = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId: flatObjectMetadata.labelIdentifierFieldMetadataId,
-      flatEntityMaps: flatFieldMetadataMaps,
-    });
-
-    if (!isDefined(labelIdentifierField)) {
-      return {
-        success: false,
-        message: `Label identifier field not found for object "${objectNameSingular}"`,
-        error: `The label identifier field metadata could not be resolved for object "${objectNameSingular}".`,
-      };
-    }
-
-    if (
-      !isDefined(authContext) ||
-      !isDefined(rolePermissionConfig) ||
-      !(await this.isFieldReadable({
-        workspaceId,
-        objectMetadataId: flatObjectMetadata.id,
-        fieldMetadataId: labelIdentifierField.id,
-        rolePermissionConfig,
-      }))
-    ) {
-      return this.buildRecordNotFoundOutput(objectNameSingular, recordName);
-    }
-
-    const matchingRecord = await this.findBestMatchingRecord({
+    return buildNavigateToRecordOutput({
       objectNameSingular,
-      recordName,
-      labelIdentifierField,
-      authContext,
-      rolePermissionConfig,
-    });
-
-    if (!isDefined(matchingRecord)) {
-      return this.buildRecordNotFoundOutput(objectNameSingular, recordName);
-    }
-
-    return {
-      success: true,
-      message: `Navigating to ${objectNameSingular} record "${matchingRecord.displayName}"`,
-      result: {
-        action: 'navigateToRecord',
-        objectNameSingular,
-        recordId: matchingRecord.recordId,
-      },
-    };
-  }
-
-  // Tiers run from strictest to loosest so the row limit never pushes an exact match out of the candidates
-  private async findBestMatchingRecord({
-    objectNameSingular,
-    recordName,
-    labelIdentifierField,
-    authContext,
-    rolePermissionConfig,
-  }: {
-    objectNameSingular: string;
-    recordName: string;
-    labelIdentifierField: FlatFieldMetadata;
-    authContext: WorkspaceAuthContext;
-    rolePermissionConfig: RolePermissionConfig;
-  }): Promise<RecordReference | undefined> {
-    const nameFilterTiers = this.buildRecordNameFilterTiers(
-      labelIdentifierField,
-      recordName,
-    );
-    const normalizedRecordName = recordName.trim().split(/\s+/).join(' ');
-
-    for (const nameFilter of nameFilterTiers) {
-      // Same permission-scoped path as find_many, so object, field and row-level permissions and record sharing apply
-      const findRecordsOutput = await this.findRecordsService.execute({
-        objectName: objectNameSingular,
-        filter: nameFilter,
-        orderBy: this.buildLabelIdentifierOrderBy(labelIdentifierField),
-        limit: NAVIGATE_TO_RECORD_CANDIDATE_LIMIT,
-        select: [labelIdentifierField.name],
-        shouldBuildEffectiveSelectFields: true,
-        authContext,
+      recordId,
+      flatObjectMetadataMaps,
+      objectsPermissions: await this.getObjectsPermissions({
+        workspaceId,
         rolePermissionConfig,
-      });
-
-      if (!findRecordsOutput.success) {
-        return undefined;
-      }
-
-      const fuse = new Fuse(findRecordsOutput.recordReferences ?? [], {
-        keys: ['displayName'],
-        threshold: 0.4,
-        ignoreLocation: true,
-      });
-
-      const bestMatchingRecord = fuse.search(normalizedRecordName)[0]?.item;
-
-      if (isDefined(bestMatchingRecord)) {
-        return bestMatchingRecord;
-      }
-    }
-
-    return undefined;
+      }),
+    });
   }
 
-  // A label the caller cannot read must not be matched or echoed back, even through a filter
-  private async isFieldReadable({
+  // Missing or unloadable permissions fail closed into the not found result
+  private async getObjectsPermissions({
     workspaceId,
-    objectMetadataId,
-    fieldMetadataId,
     rolePermissionConfig,
   }: {
     workspaceId: string;
-    objectMetadataId: string;
-    fieldMetadataId: string;
-    rolePermissionConfig: RolePermissionConfig;
-  }): Promise<boolean> {
+    rolePermissionConfig?: RolePermissionConfig;
+  }): Promise<ObjectsPermissions> {
+    if (!isDefined(rolePermissionConfig)) {
+      return {};
+    }
+
     try {
       const { rolesPermissions } =
         await this.workspaceCacheService.getOrRecompute(workspaceId, [
           'rolesPermissions',
         ]);
 
-      assertFieldIsReadableOrThrow({
-        objectsPermissions: getObjectsPermissionsFromRolePermissionConfig({
-          rolesPermissions,
-          rolePermissionConfig,
-        }),
-        objectMetadataId,
-        fieldMetadataId,
+      return getObjectsPermissionsFromRolePermissionConfig({
+        rolesPermissions,
+        rolePermissionConfig,
       });
-
-      return true;
     } catch {
-      return false;
+      return {};
     }
-  }
-
-  private buildRecordNameFilterTiers(
-    labelIdentifierField: FlatFieldMetadata,
-    recordName: string,
-  ): Record<string, unknown>[] {
-    const fieldName = labelIdentifierField.name;
-
-    if (labelIdentifierField.type === FieldMetadataType.UUID) {
-      const trimmedRecordName = recordName.trim();
-
-      return isValidUuid(trimmedRecordName)
-        ? [{ [fieldName]: { eq: trimmedRecordName } }]
-        : [];
-    }
-
-    const searchWords = recordName.trim().split(/\s+/).filter(isNonEmptyString);
-
-    if (!isNonEmptyArray(searchWords)) {
-      return [];
-    }
-
-    if (labelIdentifierField.type === FieldMetadataType.FULL_NAME) {
-      const matchFirstOrLastName = (pattern: string) => ({
-        or: [
-          { [fieldName]: { firstName: { ilike: pattern } } },
-          { [fieldName]: { lastName: { ilike: pattern } } },
-        ],
-      });
-
-      const exactFullNameFilter =
-        searchWords.length === 1
-          ? matchFirstOrLastName(escapeForIlike(searchWords[0]))
-          : {
-              or: searchWords.slice(1).map((_, index) => ({
-                [fieldName]: {
-                  firstName: {
-                    ilike: escapeForIlike(
-                      searchWords.slice(0, index + 1).join(' '),
-                    ),
-                  },
-                  lastName: {
-                    ilike: escapeForIlike(
-                      searchWords.slice(index + 1).join(' '),
-                    ),
-                  },
-                },
-              })),
-            };
-
-      return [
-        exactFullNameFilter,
-        {
-          and: searchWords.map((searchWord) =>
-            matchFirstOrLastName(`${escapeForIlike(searchWord)}%`),
-          ),
-        },
-        {
-          and: searchWords.map((searchWord) =>
-            matchFirstOrLastName(`%${escapeForIlike(searchWord)}%`),
-          ),
-        },
-      ];
-    }
-
-    const escapedRecordName = escapeForIlike(searchWords.join(' '));
-
-    return [
-      { [fieldName]: { ilike: escapedRecordName } },
-      { [fieldName]: { ilike: `${escapedRecordName}%` } },
-      {
-        and: searchWords.map((searchWord) => ({
-          [fieldName]: { ilike: `%${escapeForIlike(searchWord)}%` },
-        })),
-      },
-    ];
-  }
-
-  // Ascending label order puts the shortest of several labels sharing a prefix first
-  private buildLabelIdentifierOrderBy(
-    labelIdentifierField: FlatFieldMetadata,
-  ): ObjectRecordOrderBy {
-    if (labelIdentifierField.type === FieldMetadataType.FULL_NAME) {
-      return [
-        {
-          [labelIdentifierField.name]: {
-            firstName: OrderByDirection.AscNullsLast,
-            lastName: OrderByDirection.AscNullsLast,
-          },
-        },
-      ];
-    }
-
-    return [{ [labelIdentifierField.name]: OrderByDirection.AscNullsLast }];
-  }
-
-  private buildRecordNotFoundOutput(
-    objectNameSingular: string,
-    recordName: string,
-  ): ToolOutput<NavigateAppToolOutput> {
-    return {
-      success: false,
-      message: `Record "${recordName}" not found in ${objectNameSingular}`,
-      error: `No ${objectNameSingular} record matching "${recordName}" was found, or you do not have access to it.`,
-    };
   }
 }

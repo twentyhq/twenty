@@ -1,22 +1,19 @@
 import { randomUUID } from 'node:crypto';
 
 import request from 'supertest';
-import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
-import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
-import {
-  type CompanyNameRlsRoleSetup,
-  cleanupCompanyNameRlsRole,
-  setupCompanyNameRlsRole,
-} from 'test/integration/graphql/utils/setup-company-name-rls-role.util';
-import {
-  type RlsCompanyRelationRecords,
-  cleanupRlsCompanyRelationRecords,
-  setupRlsCompanyRelationRecords,
-} from 'test/integration/graphql/utils/setup-rls-company-relation-records.util';
 import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
 import { upsertObjectPermissions } from 'test/integration/metadata/suites/object-permission/utils/upsert-object-permissions.util';
-import { deleteRecordsByIds } from 'test/integration/utils/delete-records-by-ids';
+import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
+import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
+import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
+import { updateWorkspaceMemberRole } from 'test/integration/metadata/suites/role/utils/update-workspace-member-role.util';
+import { createOneView } from 'test/integration/metadata/suites/view/utils/create-one-view.util';
+import { destroyOneView } from 'test/integration/metadata/suites/view/utils/destroy-one-view.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
+import { ViewVisibility } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
+
+import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
 type NavigateAppToolPayload = {
   success: boolean;
@@ -26,20 +23,15 @@ type NavigateAppToolPayload = {
     action: string;
     objectNameSingular?: string;
     recordId?: string;
+    viewId?: string;
+    viewName?: string;
   };
 };
 
-const RECORDS_CREATED_AT = '2019-08-15T10:00:00.000Z';
-
-const navigateToRecord = async ({
-  objectNameSingular,
-  recordName,
-  token,
-}: {
-  objectNameSingular: string;
-  recordName: string;
-  token: string;
-}): Promise<NavigateAppToolPayload> => {
+const navigate = async (
+  navigation: Record<string, unknown>,
+  token: string,
+): Promise<NavigateAppToolPayload> => {
   const id = `call-${randomUUID()}`;
 
   const response = await request(`http://localhost:${APP_PORT}`)
@@ -56,13 +48,7 @@ const navigateToRecord = async ({
           name: 'execute_tool',
           arguments: {
             toolName: 'navigate_app',
-            arguments: {
-              navigation: {
-                type: 'navigateToRecord',
-                objectNameSingular,
-                recordName,
-              },
-            },
+            arguments: { navigation },
           },
         },
       }),
@@ -78,48 +64,58 @@ const navigateToRecord = async ({
   return JSON.parse(text) as NavigateAppToolPayload;
 };
 
-describe('navigate_app tool respects the caller record permissions (integration)', () => {
-  let rlsRole: CompanyNameRlsRoleSetup;
-  let companies: RlsCompanyRelationRecords;
-  const opportunityId = randomUUID();
-  const opportunityName = `Navigate App Tool Opportunity ${randomUUID()}`;
+describe('navigate_app tool respects the caller permissions (integration)', () => {
+  const recordId = randomUUID();
+  let restrictedRoleId: string | undefined;
+  let originalMemberRoleId: string | undefined;
+  let unlistedViewId: string | undefined;
+  let workspaceViewId: string | undefined;
 
   beforeAll(async () => {
-    rlsRole = await setupCompanyNameRlsRole({
-      label: 'Navigate App Tool RLS Test Role',
-      description:
-        'Role for testing that navigate_app only finds readable records',
-    });
-
-    companies = await setupRlsCompanyRelationRecords({
-      companyNamePrefix: `Navigate App Tool ${randomUUID().slice(0, 8)}`,
-      createdAt: RECORDS_CREATED_AT,
-    });
-
-    await makeGraphqlApiRequest(
-      createOneOperationFactory({
-        objectMetadataSingularName: 'opportunity',
-        gqlFields: 'id name',
-        data: { id: opportunityId, name: opportunityName },
-      }),
-    );
-
     const { objects } = await findManyObjectMetadata({
       expectToFail: false,
       input: { filter: {}, paging: { first: 1000 } },
       gqlFields: 'id nameSingular',
     });
 
+    const companyObjectMetadataId = objects?.find(
+      (object) => object.nameSingular === 'company',
+    )?.id;
     const opportunityObjectMetadataId = objects?.find(
       (object) => object.nameSingular === 'opportunity',
     )?.id;
 
+    jestExpectToBeDefined(companyObjectMetadataId);
     jestExpectToBeDefined(opportunityObjectMetadataId);
+
+    originalMemberRoleId = (await findOneRoleByLabel({ label: 'Member' })).id;
+
+    const { data: roleData } = await createOneRole({
+      expectToFail: false,
+      input: {
+        label: 'Navigate App Tool Test Role',
+        description: 'Role that cannot read opportunities',
+        icon: 'IconSettings',
+        canUpdateAllSettings: false,
+        canAccessAllTools: true,
+        canReadAllObjectRecords: true,
+        canUpdateAllObjectRecords: false,
+        canSoftDeleteAllObjectRecords: false,
+        canDestroyAllObjectRecords: false,
+        canBeAssignedToUsers: true,
+        canBeAssignedToAgents: false,
+        canBeAssignedToApiKeys: false,
+      },
+    });
+
+    restrictedRoleId = roleData?.createOneRole?.id;
+
+    jestExpectToBeDefined(restrictedRoleId);
 
     await upsertObjectPermissions({
       expectToFail: false,
       input: {
-        roleId: rlsRole.customRoleId,
+        roleId: restrictedRoleId,
         objectPermissions: [
           {
             objectMetadataId: opportunityObjectMetadataId,
@@ -131,68 +127,152 @@ describe('navigate_app tool respects the caller record permissions (integration)
         ],
       },
     });
+
+    await updateWorkspaceMemberRole({
+      input: {
+        roleId: restrictedRoleId,
+        workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+      },
+      expectToFail: false,
+    });
+
+    const { data: unlistedViewData } = await createOneView({
+      expectToFail: false,
+      input: {
+        name: 'Navigate App Tool Unlisted View',
+        objectMetadataId: companyObjectMetadataId,
+        icon: 'IconBuildingSkyscraper',
+        visibility: ViewVisibility.UNLISTED,
+      },
+    });
+
+    unlistedViewId = unlistedViewData?.createView?.id;
+
+    const { data: workspaceViewData } = await createOneView({
+      expectToFail: false,
+      input: {
+        name: 'Navigate App Tool Workspace View',
+        objectMetadataId: companyObjectMetadataId,
+        icon: 'IconBuildingSkyscraper',
+        visibility: ViewVisibility.WORKSPACE,
+      },
+    });
+
+    workspaceViewId = workspaceViewData?.createView?.id;
+
+    jestExpectToBeDefined(unlistedViewId);
+    jestExpectToBeDefined(workspaceViewId);
   });
 
   afterAll(async () => {
-    await deleteRecordsByIds('opportunity', [opportunityId]);
-    await cleanupRlsCompanyRelationRecords(companies);
-    await cleanupCompanyNameRlsRole(rlsRole);
+    for (const viewId of [unlistedViewId, workspaceViewId]) {
+      if (isDefined(viewId)) {
+        await destroyOneView({ viewId, expectToFail: false });
+      }
+    }
+
+    if (isDefined(originalMemberRoleId)) {
+      await updateWorkspaceMemberRole({
+        input: {
+          roleId: originalMemberRoleId,
+          workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+        },
+        expectToFail: false,
+      });
+    }
+
+    if (isDefined(restrictedRoleId)) {
+      await deleteOneRole({
+        expectToFail: false,
+        input: { idToDelete: restrictedRoleId },
+      });
+    }
   });
 
-  it('should find a record hidden by row-level permissions for a caller allowed to read it', async () => {
-    const payload = await navigateToRecord({
-      objectNameSingular: 'company',
-      recordName: companies.hiddenCompanyName,
-      token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+  describe('navigateToRecord', () => {
+    it('should return the record route on an object the caller can read', async () => {
+      const payload = await navigate(
+        { type: 'navigateToRecord', objectNameSingular: 'company', recordId },
+        APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      );
+
+      expect(payload.success).toBe(true);
+      expect(payload.result).toEqual({
+        action: 'navigateToRecord',
+        objectNameSingular: 'company',
+        recordId,
+      });
     });
 
-    expect(payload.success).toBe(true);
-    expect(payload.result?.recordId).toBe(companies.hiddenCompanyId);
+    it('should return not found on an object the caller cannot read', async () => {
+      const payload = await navigate(
+        {
+          type: 'navigateToRecord',
+          objectNameSingular: 'opportunity',
+          recordId,
+        },
+        APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      );
+
+      expect(payload.success).toBe(false);
+      expect(payload.result).toBeUndefined();
+      expect(payload.error).toBe(
+        `No opportunity record with id "${recordId}" was found, or you do not have access to it.`,
+      );
+    });
+
+    it('should return the record route on that object for a caller who can read it', async () => {
+      const payload = await navigate(
+        {
+          type: 'navigateToRecord',
+          objectNameSingular: 'opportunity',
+          recordId,
+        },
+        APPLE_JANE_ADMIN_ACCESS_TOKEN,
+      );
+
+      expect(payload.success).toBe(true);
+      expect(payload.result?.recordId).toBe(recordId);
+    });
   });
 
-  it('should not find a record hidden from the caller by row-level permissions', async () => {
-    const payload = await navigateToRecord({
-      objectNameSingular: 'company',
-      recordName: companies.hiddenCompanyName,
-      token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+  describe('navigateToView', () => {
+    it('should return the view route for a workspace view', async () => {
+      const payload = await navigate(
+        { type: 'navigateToView', viewId: workspaceViewId },
+        APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      );
+
+      expect(payload.success).toBe(true);
+      expect(payload.result).toEqual({
+        action: 'navigateToView',
+        viewId: workspaceViewId,
+        viewName: 'Navigate App Tool Workspace View',
+        objectNameSingular: 'company',
+      });
     });
 
-    expect(payload.success).toBe(false);
-    expect(payload.result).toBeUndefined();
-    expect(JSON.stringify(payload)).not.toContain(companies.hiddenCompanyId);
-  });
+    it("should return not found for another user's unlisted view", async () => {
+      const payload = await navigate(
+        { type: 'navigateToView', viewId: unlistedViewId },
+        APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      );
 
-  it('should find a record the caller can read under the same row-level permissions', async () => {
-    const payload = await navigateToRecord({
-      objectNameSingular: 'company',
-      recordName: companies.visibleCompanyName,
-      token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      expect(payload.success).toBe(false);
+      expect(payload.result).toBeUndefined();
+      expect(JSON.stringify(payload)).not.toContain(
+        'Navigate App Tool Unlisted View',
+      );
     });
 
-    expect(payload.success).toBe(true);
-    expect(payload.result?.recordId).toBe(companies.visibleCompanyId);
-  });
+    it('should return the view route for an unlisted view to its creator', async () => {
+      const payload = await navigate(
+        { type: 'navigateToView', viewId: unlistedViewId },
+        APPLE_JANE_ADMIN_ACCESS_TOKEN,
+      );
 
-  it('should find a record of an object the caller is allowed to read', async () => {
-    const payload = await navigateToRecord({
-      objectNameSingular: 'opportunity',
-      recordName: opportunityName,
-      token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+      expect(payload.success).toBe(true);
+      expect(payload.result?.viewId).toBe(unlistedViewId);
     });
-
-    expect(payload.success).toBe(true);
-    expect(payload.result?.recordId).toBe(opportunityId);
-  });
-
-  it('should not find any record of an object the caller cannot read', async () => {
-    const payload = await navigateToRecord({
-      objectNameSingular: 'opportunity',
-      recordName: opportunityName,
-      token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
-    });
-
-    expect(payload.success).toBe(false);
-    expect(payload.result).toBeUndefined();
-    expect(JSON.stringify(payload)).not.toContain(opportunityId);
   });
 });
