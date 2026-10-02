@@ -89,3 +89,46 @@ describe('getLoginTokenFromCredentials with a personal invitation (integration)'
     expect(await countAppleMemberships(userId)).toBe(1);
   });
 });
+
+describe('getLoginTokenFromCredentials without access to the workspace (integration)', () => {
+  const email = `outsider-login-${Date.now()}@example.com`;
+  let userId: string;
+
+  beforeAll(async () => {
+    const insertedRows = await global.testDataSource.query(
+      `INSERT INTO core."user" ("firstName", "lastName", "email", "passwordHash", "isEmailVerified")
+       VALUES ($1, $2, $3, $4, true)
+       RETURNING "id"`,
+      ['Outsider', 'User', email, PASSWORD_HASH],
+    );
+
+    userId = insertedRows[0].id;
+  });
+
+  afterAll(async () => {
+    await global.testDataSource.query(
+      'DELETE FROM core."user" WHERE "id" = $1',
+      [userId],
+    );
+  });
+
+  it.each([PASSWORD, 'wrong-password'])(
+    'rejects as not a member whatever the password (%s)',
+    async (password) => {
+      const response = await makeMetadataApiRequest(
+        getLoginTokenFromCredentialsQueryFactory({
+          email,
+          password,
+          origin: buildAppleWorkspaceOrigin(),
+        }),
+        null,
+      );
+
+      expect(response.body.data?.getLoginTokenFromCredentials).toBeFalsy();
+      expect(response.body.errors[0].message).toBe(
+        'User is not a member of the workspace.',
+      );
+      expect(await countAppleMemberships(userId)).toBe(0);
+    },
+  );
+});

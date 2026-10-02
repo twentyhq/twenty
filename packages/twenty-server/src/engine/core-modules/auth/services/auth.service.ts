@@ -109,17 +109,17 @@ export class AuthService {
     private readonly userSessionService: UserSessionService,
   ) {}
 
-  private async checkAccessAndUseInvitationOrThrow(
+  private async findInvitationToJoinWorkspaceOrThrow(
     workspace: WorkspaceEntity,
     user: UserEntity,
-  ) {
+  ): Promise<AppTokenEntity | null> {
     if (
       await this.userWorkspaceService.checkUserWorkspaceExists(
         user.id,
         workspace.id,
       )
     ) {
-      return;
+      return null;
     }
 
     const invitation =
@@ -133,13 +133,8 @@ export class AuthService {
         workspacePersonalInviteToken: invitation.value,
         email: user.email,
       });
-      await this.userWorkspaceService.addUserToWorkspaceIfUserNotInWorkspace(
-        user,
-        workspace,
-        invitation.context?.roleId,
-      );
 
-      return;
+      return invitation;
     }
 
     throw new AuthException(
@@ -184,6 +179,10 @@ export class AuthService {
       }
     }
 
+    const invitationToJoinWorkspace = isDefined(targetWorkspace)
+      ? await this.findInvitationToJoinWorkspaceOrThrow(targetWorkspace, user)
+      : null;
+
     if (!user.passwordHash) {
       throw new AuthException(
         'Incorrect login method',
@@ -208,8 +207,12 @@ export class AuthService {
 
     await this.checkIsEmailVerified(user.isEmailVerified);
 
-    if (targetWorkspace) {
-      await this.checkAccessAndUseInvitationOrThrow(targetWorkspace, user);
+    if (isDefined(targetWorkspace) && isDefined(invitationToJoinWorkspace)) {
+      await this.userWorkspaceService.addUserToWorkspaceIfUserNotInWorkspace(
+        user,
+        targetWorkspace,
+        invitationToJoinWorkspace.context?.roleId,
+      );
     }
 
     return user;
