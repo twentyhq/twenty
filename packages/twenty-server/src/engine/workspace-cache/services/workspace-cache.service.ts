@@ -315,8 +315,6 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
         attributes: { 'cache.key_count': cacheKeyNames.length },
       },
       async () => {
-        await this.memoizer.clearKeys(`${workspaceId}-`);
-
         await this.flush(workspaceId, cacheKeyNames);
         await this.recomputeDataFromProvider(workspaceId, cacheKeyNames, {
           strategy: 'mint',
@@ -362,6 +360,8 @@ export class WorkspaceCacheService implements OnModuleInit, OnModuleDestroy {
     await this.deleteFromRedis(workspaceId, cacheKeyNames);
 
     this.deleteFromLocalCache(workspaceId, cacheKeyNames);
+
+    await this.memoizer.clearKeys(`${workspaceId}-`);
   }
 
   public async evictWorkspaceFromLocalCache(

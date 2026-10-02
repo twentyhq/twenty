@@ -144,8 +144,6 @@ describe('Workspace cache recompute superseded by an invalidation', () => {
 
     await computeStarted;
     await workspaceCacheService.flush(workspaceId, ['flatWorkspaceMemberMaps']);
-    // flush alone keeps memoized reads, which would hide what the superseded recompute published
-    await workspaceCacheService.evictWorkspaceFromLocalCache(workspaceId);
 
     resolveCompute(STALE_WORKSPACE_MEMBER_MAPS);
 
@@ -167,5 +165,37 @@ describe('Workspace cache recompute superseded by an invalidation', () => {
     expect(Object.keys(freshWorkspaceMemberMaps.byId).length).toBeGreaterThan(
       0,
     );
+  });
+
+  it('serves fresh data after a bare flush that superseded an in-flight read', async () => {
+    const { computeStarted, resolveCompute } =
+      deferNextComputeForCache(triggerMapProvider);
+
+    await workspaceCacheService.evictWorkspaceFromLocalCache(workspaceId);
+    await workspaceCacheService.flush(workspaceId, [
+      'workflowAutomatedTriggerMaps',
+    ]);
+
+    const supersededRead = workspaceCacheService.getOrRecompute(workspaceId, [
+      'workflowAutomatedTriggerMaps',
+    ]);
+
+    await computeStarted;
+    await workspaceCacheService.flush(workspaceId, [
+      'workflowAutomatedTriggerMaps',
+    ]);
+
+    resolveCompute(STALE_TRIGGER_MAPS);
+
+    expect(await supersededRead).toEqual({
+      workflowAutomatedTriggerMaps: STALE_TRIGGER_MAPS,
+    });
+
+    const { workflowAutomatedTriggerMaps: freshTriggerMaps } =
+      await workspaceCacheService.getOrRecompute(workspaceId, [
+        'workflowAutomatedTriggerMaps',
+      ]);
+
+    expect(freshTriggerMaps.byWorkflowId[STALE_WORKFLOW_ID]).toBeUndefined();
   });
 });
