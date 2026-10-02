@@ -5,6 +5,7 @@ import { useLocation } from 'react-router-dom';
 import { shouldContinueAiChatInSidePanelState } from '@/ai/states/shouldContinueAiChatInSidePanelState';
 import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 import { useOpenAskAiPageInSidePanel } from '@/side-panel/hooks/useOpenAskAiPageInSidePanel';
+import { isAiChatInboxPath } from '~/utils/isAiChatInboxPath';
 import { isAiChatPath } from '~/utils/isAiChatPath';
 import { isSettingsPath } from '~/utils/isSettingsPath';
 
@@ -21,6 +22,13 @@ export const SidePanelAskAiHandoffEffect = ({
 
   useLayoutEffect(() => {
     if (isAiChatPath(pathname)) {
+      return;
+    }
+
+    // The inbox shows its own chat, which keeps the handoff pending; only the
+    // onboarding chat ends there
+    if (isAiChatInboxPath(pathname)) {
+      store.set(shouldOpenAiChatAfterOnboardingState.atom, false);
       return;
     }
 
