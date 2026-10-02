@@ -34,7 +34,6 @@ const meta: Meta<typeof GraphQLPlayground> = {
   title: 'Modules/Settings/Playground/GraphQLPlayground',
   component: GraphQLPlayground,
   decorators: [ComponentDecorator, ComponentWithRouterDecorator],
-  // Monaco rethrows a worker load failure as an uncaught error; rendering doesn't need workers.
   beforeEach: () => {
     const appMonacoEnvironment = window.MonacoEnvironment;
 
