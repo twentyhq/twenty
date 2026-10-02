@@ -6,12 +6,14 @@ type SettingsValidationRuleFieldNodeViewProps = NodeViewProps;
 
 export const SettingsValidationRuleFieldNodeView = ({
   node,
-}: SettingsValidationRuleFieldNodeViewProps) => (
-  <NodeViewWrapper as="span">
-    <SettingsValidationRuleFieldChip
-      path={String(node.attrs.path)}
-      label={String(node.attrs.label)}
-      iconName={String(node.attrs.iconName)}
-    />
-  </NodeViewWrapper>
-);
+}: SettingsValidationRuleFieldNodeViewProps) => {
+  return (
+    <NodeViewWrapper as="span">
+      <SettingsValidationRuleFieldChip
+        path={String(node.attrs.path)}
+        label={String(node.attrs.label)}
+        iconName={String(node.attrs.iconName)}
+      />
+    </NodeViewWrapper>
+  );
+};
