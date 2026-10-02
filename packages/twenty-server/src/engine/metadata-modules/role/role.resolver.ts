@@ -20,6 +20,7 @@ import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorato
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { type RawAuthContext } from 'src/engine/core-modules/auth/types/raw-auth-context.type';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { WorkspaceMemberDTO } from 'src/engine/core-modules/user/dtos/workspace-member.dto';
@@ -51,6 +52,8 @@ import {
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
+import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
+import { permissionGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/permissions/utils/permission-graphql-api-exception-handler.util';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { CreateRoleInput } from 'src/engine/metadata-modules/role/dtos/create-role.input';
 import {
@@ -104,6 +107,7 @@ export class RoleResolver {
     private readonly applicationService: ApplicationService,
     private readonly rowLevelPermissionPredicateService: RowLevelPermissionPredicateService,
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
+    private readonly permissionsService: PermissionsService,
   ) {}
 
   @Query(() => [RoleDTO])
@@ -369,8 +373,10 @@ export class RoleResolver {
   async getWorkspaceMembersAssignedToRole(
     @Parent() role: RoleDTO,
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @Context() context: { loaders: IDataloaders },
+    @Context() context: { loaders: IDataloaders; req: RawAuthContext },
   ): Promise<FlatWorkspaceMember[]> {
+    await this.assertHasRolesPermission(workspace.id, context.req);
+
     return context.loaders.workspaceMembersByRoleIdLoader.load({
       workspaceId: workspace.id,
       roleId: role.id,
@@ -381,8 +387,10 @@ export class RoleResolver {
   async getAgentsAssignedToRole(
     @Parent() role: RoleDTO,
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @Context() context: { loaders: IDataloaders },
+    @Context() context: { loaders: IDataloaders; req: RawAuthContext },
   ): Promise<AgentDTO[]> {
+    await this.assertHasRolesPermission(workspace.id, context.req);
+
     return context.loaders.agentsByRoleIdLoader.load({
       workspaceId: workspace.id,
       roleId: role.id,
@@ -393,8 +401,10 @@ export class RoleResolver {
   async getApiKeysAssignedToRole(
     @Parent() role: RoleDTO,
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @Context() context: { loaders: IDataloaders },
+    @Context() context: { loaders: IDataloaders; req: RawAuthContext },
   ): Promise<ApiKeyForRoleDTO[]> {
+    await this.assertHasRolesPermission(workspace.id, context.req);
+
     return context.loaders.apiKeysByRoleIdLoader.load({
       workspaceId: workspace.id,
       roleId: role.id,
@@ -409,8 +419,10 @@ export class RoleResolver {
   async getRowLevelPermissionPredicatesForRole(
     @Parent() role: RoleDTO,
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @Context() context: { loaders: IDataloaders },
+    @Context() context: { loaders: IDataloaders; req: RawAuthContext },
   ): Promise<RowLevelPermissionPredicateDTO[]> {
+    await this.assertHasRolesPermission(workspace.id, context.req);
+
     const { rowLevelPermissionPredicates } =
       await context.loaders.rowLevelPermissionsByRoleIdLoader.load({
         workspaceId: workspace.id,
@@ -428,8 +440,10 @@ export class RoleResolver {
   async getRowLevelPermissionPredicateGroupsForRole(
     @Parent() role: RoleDTO,
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @Context() context: { loaders: IDataloaders },
+    @Context() context: { loaders: IDataloaders; req: RawAuthContext },
   ): Promise<RowLevelPermissionPredicateGroupDTO[]> {
+    await this.assertHasRolesPermission(workspace.id, context.req);
+
     const { rowLevelPermissionPredicateGroups } =
       await context.loaders.rowLevelPermissionsByRoleIdLoader.load({
         workspaceId: workspace.id,
@@ -437,5 +451,29 @@ export class RoleResolver {
       });
 
     return rowLevelPermissionPredicateGroups;
+  }
+
+  // Field resolvers skip class-level guards, and Role is reachable outside getRoles (e.g. currentWorkspace.defaultRole)
+  private async assertHasRolesPermission(
+    workspaceId: string,
+    { userWorkspaceId, apiKey, application }: RawAuthContext,
+  ): Promise<void> {
+    const hasRolesPermission =
+      await this.permissionsService.userHasWorkspaceSettingPermission({
+        workspaceId,
+        userWorkspaceId,
+        apiKeyId: apiKey?.id,
+        applicationId: application?.id,
+        setting: PermissionFlagType.ROLES,
+      });
+
+    if (!hasRolesPermission) {
+      permissionGraphqlApiExceptionHandler(
+        new PermissionsException(
+          PermissionsExceptionMessage.PERMISSION_DENIED,
+          PermissionsExceptionCode.PERMISSION_DENIED,
+        ),
+      );
+    }
   }
 }

@@ -469,6 +469,110 @@ describe('roles permissions', () => {
     });
   });
 
+  describe('role relations reached outside getRoles', () => {
+    const defaultRoleQuery = (roleFields: string) => ({
+      query: `
+        query CurrentWorkspaceDefaultRole {
+          currentWorkspace {
+            defaultRole {
+              id
+              ${roleFields}
+            }
+          }
+        }
+      `,
+    });
+
+    it.each([
+      'workspaceMembers',
+      'agents',
+      'apiKeys',
+      'rowLevelPermissionPredicates',
+      'rowLevelPermissionPredicateGroups',
+    ])(
+      'should deny defaultRole.%s to a member without the roles permission',
+      async (roleField) => {
+        const resp = await client
+          .post('/metadata')
+          .set('Authorization', `Bearer ${APPLE_JONY_MEMBER_ACCESS_TOKEN}`)
+          .send(defaultRoleQuery(`${roleField} { id }`));
+
+        expect(resp.status).toBe(200);
+        expect(resp.body.errors).toHaveLength(1);
+        expect(resp.body.errors[0].message).toBe(
+          PermissionsExceptionMessage.PERMISSION_DENIED,
+        );
+        expect(resp.body.errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
+      },
+    );
+
+    it('should deny role relations reached through workspace member roles to a member without the roles permission', async () => {
+      const resp = await client
+        .post('/metadata')
+        .set('Authorization', `Bearer ${APPLE_JONY_MEMBER_ACCESS_TOKEN}`)
+        .send({
+          query: `
+            query CurrentUserWorkspaceMemberRoles {
+              currentUser {
+                workspaceMembers {
+                  roles {
+                    workspaceMembers {
+                      id
+                    }
+                  }
+                }
+              }
+            }
+          `,
+        });
+
+      expect(resp.status).toBe(200);
+      expect(resp.body.errors.length).toBeGreaterThan(0);
+
+      for (const error of resp.body.errors) {
+        expect(error.message).toBe(
+          PermissionsExceptionMessage.PERMISSION_DENIED,
+        );
+        expect(error.extensions.code).toBe(ErrorCode.FORBIDDEN);
+      }
+    });
+
+    it('should still let a member read the default role settings', async () => {
+      const resp = await client
+        .post('/metadata')
+        .set('Authorization', `Bearer ${APPLE_JONY_MEMBER_ACCESS_TOKEN}`)
+        .send(defaultRoleQuery('label canUpdateAllSettings'));
+
+      expect(resp.status).toBe(200);
+      expect(resp.body.errors).toBeUndefined();
+      expect(resp.body.data.currentWorkspace.defaultRole).toMatchObject({
+        label: 'Member',
+        canUpdateAllSettings: false,
+      });
+    });
+
+    it('should let an admin read the default role relations', async () => {
+      const resp = await client
+        .post('/metadata')
+        .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
+        .send(
+          defaultRoleQuery(`
+            workspaceMembers { id }
+            agents { id }
+            apiKeys { id }
+            rowLevelPermissionPredicates { id }
+            rowLevelPermissionPredicateGroups { id }
+          `),
+        );
+
+      expect(resp.status).toBe(200);
+      expect(resp.body.errors).toBeUndefined();
+      expect(
+        resp.body.data.currentWorkspace.defaultRole.workspaceMembers,
+      ).toContainEqual({ id: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY });
+    });
+  });
+
   describe('updateWorkspaceMemberRole', () => {
     it('should throw a permission error when user does not have permission to update roles (member role)', async () => {
       const query = {
