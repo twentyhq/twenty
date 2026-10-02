@@ -26,9 +26,6 @@ export class ObjectAccessOverviewRoleDTO {
 
   @Field(() => Boolean)
   hasRowFilter: boolean;
-
-  @Field(() => Boolean)
-  canAccessAllRecords: boolean;
 }
 
 @ObjectType()

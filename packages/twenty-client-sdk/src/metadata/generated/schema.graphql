@@ -1773,7 +1773,6 @@ type ObjectAccessOverviewRoleDTO {
   canUpdate: Boolean!
   canSoftDelete: Boolean!
   hasRowFilter: Boolean!
-  canAccessAllRecords: Boolean!
 }
 
 type ObjectAccessOverviewDTO {

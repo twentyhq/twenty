@@ -1384,7 +1384,6 @@ export interface ObjectAccessOverviewRoleDTO {
     canUpdate: Scalars['Boolean']
     canSoftDelete: Scalars['Boolean']
     hasRowFilter: Scalars['Boolean']
-    canAccessAllRecords: Scalars['Boolean']
     __typename: 'ObjectAccessOverviewRoleDTO'
 }
 
@@ -5231,7 +5230,6 @@ export interface ObjectAccessOverviewRoleDTOGenqlSelection{
     canUpdate?: boolean | number
     canSoftDelete?: boolean | number
     hasRowFilter?: boolean | number
-    canAccessAllRecords?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }

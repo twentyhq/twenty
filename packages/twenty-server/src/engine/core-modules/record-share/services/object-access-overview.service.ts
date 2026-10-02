@@ -28,17 +28,12 @@ export class ObjectAccessOverviewService {
     workspaceId: string;
     objectMetadataId: string;
   }): Promise<ObjectAccessOverviewDTO> {
-    const {
-      flatObjectMetadataMaps,
-      flatRoleMaps,
-      rolesPermissions,
-      roleIdsWithAllRecordsAccess,
-    } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
-      'flatObjectMetadataMaps',
-      'flatRoleMaps',
-      'rolesPermissions',
-      'roleIdsWithAllRecordsAccess',
-    ]);
+    const { flatObjectMetadataMaps, flatRoleMaps, rolesPermissions } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatObjectMetadataMaps',
+        'flatRoleMaps',
+        'rolesPermissions',
+      ]);
 
     const objectMetadata = findFlatEntityByIdInFlatEntityMaps({
       flatEntityId: objectMetadataId,
@@ -67,7 +62,6 @@ export class ObjectAccessOverviewService {
           canSoftDelete: objectPermissions?.canSoftDeleteObjectRecords ?? false,
           hasRowFilter:
             (objectPermissions?.rowLevelPermissionPredicates.length ?? 0) > 0,
-          canAccessAllRecords: roleIdsWithAllRecordsAccess.includes(role.id),
         };
       })
       .sort((roleA, roleB) => roleA.label.localeCompare(roleB.label));

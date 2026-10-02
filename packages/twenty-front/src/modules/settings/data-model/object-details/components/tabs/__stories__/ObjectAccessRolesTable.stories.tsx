@@ -18,7 +18,6 @@ const meta: Meta<typeof ObjectAccessRolesTable> = {
         canUpdate: true,
         canSoftDelete: true,
         hasRowFilter: false,
-        canAccessAllRecords: true,
       },
       {
         id: '20202020-0000-4000-8000-000000000002',
@@ -28,7 +27,6 @@ const meta: Meta<typeof ObjectAccessRolesTable> = {
         canUpdate: true,
         canSoftDelete: false,
         hasRowFilter: true,
-        canAccessAllRecords: false,
       },
       {
         id: '20202020-0000-4000-8000-000000000003',
@@ -38,7 +36,6 @@ const meta: Meta<typeof ObjectAccessRolesTable> = {
         canUpdate: false,
         canSoftDelete: false,
         hasRowFilter: false,
-        canAccessAllRecords: false,
       },
     ],
   },

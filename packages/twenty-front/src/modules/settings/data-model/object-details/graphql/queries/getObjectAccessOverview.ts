@@ -13,7 +13,6 @@ export const GET_OBJECT_ACCESS_OVERVIEW = gql`
         canUpdate
         canSoftDelete
         hasRowFilter
-        canAccessAllRecords
       }
     }
   }

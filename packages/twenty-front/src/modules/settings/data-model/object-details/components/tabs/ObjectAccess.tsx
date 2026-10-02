@@ -91,7 +91,11 @@ export const ObjectAccess = ({ objectMetadataItem }: ObjectAccessProps) => {
             <Section.Root>
               <Section.Header
                 title={t`Sharing`}
-                description={t`Who a record of ${objectLabel} can be shared with.`}
+                description={
+                  isOpenByDefault
+                    ? t`Who a record of ${objectLabel} can be shared with. Roles that can update all settings, such as Admin, also see restricted records and can change who has access.`
+                    : t`Who a record of ${objectLabel} can be shared with.`
+                }
               />
               <ObjectSharingReachPicker
                 objectMetadataItem={objectMetadataItem}

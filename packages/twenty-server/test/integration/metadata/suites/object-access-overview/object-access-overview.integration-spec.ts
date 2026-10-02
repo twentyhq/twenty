@@ -30,7 +30,6 @@ const OBJECT_ACCESS_OVERVIEW_QUERY = parse(`
         canUpdate
         canSoftDelete
         hasRowFilter
-        canAccessAllRecords
       }
     }
   }
@@ -107,11 +106,9 @@ describe('Object access overview', () => {
       canUpdate: true,
       canSoftDelete: true,
       hasRowFilter: false,
-      canAccessAllRecords: true,
     });
     expect(roleByLabel.get('Guest')).toMatchObject({
       canUpdate: false,
-      canAccessAllRecords: false,
     });
   });
 

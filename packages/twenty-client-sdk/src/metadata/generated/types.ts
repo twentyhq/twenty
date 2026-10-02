@@ -3407,9 +3407,6 @@ export default {
             "hasRowFilter": [
                 8
             ],
-            "canAccessAllRecords": [
-                8
-            ],
             "__typename": [
                 1
             ]

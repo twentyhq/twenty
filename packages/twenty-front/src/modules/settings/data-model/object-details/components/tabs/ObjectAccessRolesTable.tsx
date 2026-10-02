@@ -15,7 +15,7 @@ type ObjectAccessRolesTableProps = {
   roles: ObjectAccessOverviewRoleDto[];
 };
 
-const GRID_AUTO_COLUMNS = '3fr 1fr 1fr 1fr 2fr 1.5fr';
+const GRID_AUTO_COLUMNS = '3fr 1fr 1fr 1fr 2fr';
 
 const StyledNameCell = styled.div`
   align-items: center;
@@ -52,7 +52,6 @@ export const ObjectAccessRolesTable = ({
         <TableHeader align="center">{t`Edit`}</TableHeader>
         <TableHeader align="center">{t`Delete`}</TableHeader>
         <TableHeader>{t`Row filter`}</TableHeader>
-        <TableHeader align="center">{t`All records`}</TableHeader>
       </TableRow>
       {roles.map((role) => {
         const RoleIcon = getIcon(role.icon ?? 'IconUser');
@@ -97,12 +96,6 @@ export const ObjectAccessRolesTable = ({
               ) : (
                 '-'
               )}
-            </TableCell>
-            <TableCell
-              align="center"
-              color={themeCssVariables.font.color.tertiary}
-            >
-              {renderAllowed(role.canAccessAllRecords)}
             </TableCell>
           </TableRow>
         );
