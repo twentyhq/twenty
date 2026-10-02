@@ -30,10 +30,16 @@ describe('serializeEvent', () => {
     });
   });
 
-  it.each([0, 1])('should preserve click detail %s', (detail) => {
-    expect(serializeEvent({ type: 'click', detail })).toEqual({
+  it('should preserve the click count of a pointer click', () => {
+    expect(serializeEvent({ type: 'click', detail: 2 })).toEqual({
       type: 'click',
-      detail,
+      detail: 2,
+    });
+  });
+
+  it('should leave out the zero detail of a keyboard click', () => {
+    expect(serializeEvent({ type: 'click', detail: 0 })).toEqual({
+      type: 'click',
     });
   });
 
