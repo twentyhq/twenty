@@ -3,10 +3,6 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { createStore, Provider } from 'jotai';
 import { type ReactNode, useState } from 'react';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
-import {
-  RecordSharePrincipalType,
-  RecordShareRowCause,
-} from 'twenty-shared/types';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
@@ -15,11 +11,16 @@ import { SidePanelShareRecordContent } from '@/side-panel/pages/share-record/com
 import {
   ObjectSharingReach,
   RecordShareAccessLevel,
+  RecordSharePrincipalType,
+  RecordShareRowCause,
+  RecordSharingMode,
 } from '~/generated-metadata/graphql';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 
+const setGeneralAccess = fn();
 const setShare = fn();
+const removeShare = fn();
 const refetch = fn().mockResolvedValue(undefined);
 
 const MEMBERS = [
@@ -44,12 +45,11 @@ const MEMBERS = [
 ];
 
 const SHARING = {
-  isEnabled: true,
-  hasInheritedAccess: false,
-  isOpenByDefault: false,
+  sharingMode: RecordSharingMode.PRIVATE,
+  canManageSharing: true,
   generalAccessLevel: RecordShareAccessLevel.NONE,
-  sharingReach: ObjectSharingReach.WORKSPACE,
-  viewerAccessLevel: RecordShareAccessLevel.FULL,
+  defaultGeneralAccessLevel: RecordShareAccessLevel.NONE,
+  hasManagedGeneralAccess: false,
   permissions: {
     canRead: true,
     canUpdate: true,
@@ -61,31 +61,28 @@ const SHARING = {
       id: 'owner-grant',
       principalId: 'owner',
       principalType: RecordSharePrincipalType.WORKSPACE_MEMBER,
+      principalRoleId: 'sales',
       rowCause: RecordShareRowCause.OWNER,
       accessLevel: RecordShareAccessLevel.FULL,
-      canRoleRead: true,
-      canRoleUpdate: true,
     },
     {
       id: 'member-grant',
       principalId: 'member',
       principalType: RecordSharePrincipalType.WORKSPACE_MEMBER,
+      principalRoleId: 'sales',
       rowCause: RecordShareRowCause.MANUAL,
       accessLevel: RecordShareAccessLevel.READ_WRITE,
-      canRoleRead: true,
-      canRoleUpdate: true,
     },
     {
       id: 'role-grant',
       principalId: 'sales',
       principalType: RecordSharePrincipalType.ROLE,
+      principalRoleId: null,
       rowCause: RecordShareRowCause.MANUAL,
       accessLevel: RecordShareAccessLevel.READ,
-      canRoleRead: true,
-      canRoleUpdate: true,
     },
   ],
-  roles: [{ id: 'sales', label: 'Sales' }],
+  roles: [{ id: 'sales', label: 'Sales', canRead: true, canUpdate: true }],
 };
 
 const StyledSidePanel = styled.div`
@@ -128,12 +125,15 @@ const meta: Meta<typeof SidePanelShareRecordContent> = {
   args: {
     recordUrl: 'https://example.com/chat/shared-chat',
     objectLabelPlural: 'Chats',
+    sharingReach: ObjectSharingReach.WORKSPACE,
     sharingState: {
       sharing: SHARING,
       loading: false,
       error: undefined,
       saving: false,
+      setGeneralAccess,
       setShare,
+      removeShare,
       refetch,
     },
   },
@@ -160,7 +160,6 @@ export const Default: Story = {
     await waitFor(() =>
       expect(setShare).toHaveBeenCalledWith({
         principal: { workspaceMemberId: 'member' },
-        enabled: true,
         accessLevel: RecordShareAccessLevel.FULL,
       }),
     );
@@ -185,12 +184,16 @@ export const ReadOnly: Story = {
     sharingState: {
       sharing: {
         ...SHARING,
-        viewerAccessLevel: RecordShareAccessLevel.READ,
+        canManageSharing: false,
+        shares: [],
+        roles: [],
       },
       loading: false,
       error: undefined,
       saving: false,
+      setGeneralAccess,
       setShare,
+      removeShare,
       refetch,
     },
   },
@@ -213,7 +216,9 @@ export const LoadError: Story = {
       loading: false,
       error: new Error('Sharing unavailable'),
       saving: false,
+      setGeneralAccess,
       setShare,
+      removeShare,
       refetch,
     },
   },

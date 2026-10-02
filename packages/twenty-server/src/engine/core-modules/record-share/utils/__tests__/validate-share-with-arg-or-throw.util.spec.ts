@@ -114,7 +114,33 @@ describe('validateShareWithArgOrThrow', () => {
     );
   });
 
-  it('should reject the NONE access level, which only withdraws access', () => {
+  it('should reject NONE for a named principal and FULL for everyone', () => {
+    expect(() =>
+      validateShareWithArgOrThrow({
+        authContext: userAuthContext,
+        shareWith: [
+          {
+            workspaceMemberId: '20202020-0000-4000-8000-000000000001',
+            accessLevel: RecordShareAccessLevel.NONE,
+          },
+        ],
+      }),
+    ).toThrow(
+      'shareWith access level "NONE" must be one of READ, READ_WRITE, FULL',
+    );
+    expect(() =>
+      validateShareWithArgOrThrow({
+        authContext: userAuthContext,
+        shareWith: [
+          { everyone: true, accessLevel: RecordShareAccessLevel.FULL },
+        ],
+      }),
+    ).toThrow(
+      'shareWith access level "FULL" must be one of NONE, READ, READ_WRITE',
+    );
+  });
+
+  it('should accept NONE for everyone, which restricts the record', () => {
     expect(() =>
       validateShareWithArgOrThrow({
         authContext: userAuthContext,
@@ -122,9 +148,7 @@ describe('validateShareWithArgOrThrow', () => {
           { everyone: true, accessLevel: RecordShareAccessLevel.NONE },
         ],
       }),
-    ).toThrow(
-      'shareWith access level "NONE" must be one of READ, READ_WRITE, FULL',
-    );
+    ).not.toThrow();
   });
 
   it('should reject a workspaceMemberId that is not a uuid', () => {
