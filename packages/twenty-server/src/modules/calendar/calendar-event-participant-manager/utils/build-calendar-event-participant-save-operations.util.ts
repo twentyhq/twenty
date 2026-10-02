@@ -24,8 +24,7 @@ const hasParticipantChanged = ({
     (fetchedParticipant.displayName ?? '') ||
   (existingParticipant.responseStatus ?? '') !==
     (fetchedParticipant.responseStatus ?? '') ||
-  Boolean(existingParticipant.isOrganizer) !==
-    Boolean(fetchedParticipant.isOrganizer);
+  existingParticipant.isOrganizer !== fetchedParticipant.isOrganizer;
 
 export const buildCalendarEventParticipantSaveOperations = ({
   fetchedParticipants,

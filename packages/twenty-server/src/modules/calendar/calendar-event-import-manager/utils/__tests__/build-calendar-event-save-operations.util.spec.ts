@@ -1,6 +1,6 @@
 import { buildCalendarEventSaveOperations } from 'src/modules/calendar/calendar-event-import-manager/utils/build-calendar-event-save-operations.util';
+import { type ComparableCalendarEvent } from 'src/modules/calendar/calendar-event-import-manager/utils/has-calendar-event-changed.util';
 import { type CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity';
-import { type CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event.workspace-entity';
 import { type FetchedCalendarEvent } from 'src/modules/calendar/common/types/fetched-calendar-event.type';
 
 const CALENDAR_CHANNEL_ID = 'calendar-channel-id';
@@ -37,28 +37,25 @@ const buildFetchedCalendarEvent = (
 });
 
 const buildExistingCalendarEvent = (
-  overrides: Partial<CalendarEventWorkspaceEntity> = {},
-): CalendarEventWorkspaceEntity =>
-  ({
-    id: CALENDAR_EVENT_ID,
-    title: 'Weekly sync',
-    iCalUid: 'ical-uid',
-    description: 'Agenda',
-    startsAt: new Date('2026-10-02T08:00:00.000Z'),
-    endsAt: new Date('2026-10-02T09:00:00.000Z'),
-    location: null,
-    isFullDay: false,
-    isCanceled: false,
-    conferenceSolution: 'hangoutsMeet',
-    conferenceLink: {
-      primaryLinkLabel: 'Meet',
-      primaryLinkUrl: 'https://meet.example.com/abc',
-      secondaryLinks: null,
-    },
-    externalCreatedAt: new Date('2026-09-01T08:00:00.000Z'),
-    externalUpdatedAt: new Date('2026-09-15T08:00:00.000Z'),
-    ...overrides,
-  }) as unknown as CalendarEventWorkspaceEntity;
+  overrides: Partial<ComparableCalendarEvent> = {},
+): ComparableCalendarEvent => ({
+  id: CALENDAR_EVENT_ID,
+  title: 'Weekly sync',
+  iCalUid: 'ical-uid',
+  description: 'Agenda',
+  startsAt: '2026-10-02T08:00:00.000Z',
+  endsAt: '2026-10-02T09:00:00.000Z',
+  location: null,
+  isFullDay: false,
+  isCanceled: false,
+  conferenceSolution: 'hangoutsMeet',
+  conferenceLink: {
+    primaryLinkLabel: 'Meet',
+    primaryLinkUrl: 'https://meet.example.com/abc',
+    secondaryLinks: null,
+  },
+  ...overrides,
+});
 
 const buildExistingAssociation = (
   overrides: Partial<CalendarChannelEventAssociationWorkspaceEntity> = {},
@@ -79,7 +76,6 @@ describe('buildCalendarEventSaveOperations', () => {
       existingAssociations: [buildExistingAssociation()],
       existingCalendarEvents: [buildExistingCalendarEvent()],
       calendarChannelId: CALENDAR_CHANNEL_ID,
-      shouldSkipUnchangedCalendarEvents: true,
     });
 
     expect(plan.saveOperations).toEqual({
@@ -100,65 +96,76 @@ describe('buildCalendarEventSaveOperations', () => {
     ]);
   });
 
-  it('updates unchanged events and associations when skipping is disabled', () => {
-    const plan = buildCalendarEventSaveOperations({
-      fetchedCalendarEvents: [buildFetchedCalendarEvent()],
-      existingAssociations: [buildExistingAssociation()],
-      existingCalendarEvents: [],
-      calendarChannelId: CALENDAR_CHANNEL_ID,
-      shouldSkipUnchangedCalendarEvents: false,
-    });
-
-    expect(plan.saveOperations.calendarEventsToUpdate).toHaveLength(1);
-    expect(plan.saveOperations.associationsToUpdate).toEqual([
-      {
-        criteria: ASSOCIATION_ID,
-        partialEntity: { recurringEventExternalId: '' },
-      },
-    ]);
-  });
-
-  it('treats an empty fetched timestamp as equal to a null persisted one', () => {
+  it('ignores provider bookkeeping timestamps when nothing else changed', () => {
     const plan = buildCalendarEventSaveOperations({
       fetchedCalendarEvents: [
-        buildFetchedCalendarEvent({ externalCreatedAt: '' }),
+        buildFetchedCalendarEvent({
+          externalCreatedAt: '2026-10-02T15:00:00.000Z',
+          externalUpdatedAt: '2026-10-02T15:00:00.000Z',
+        }),
       ],
       existingAssociations: [buildExistingAssociation()],
-      existingCalendarEvents: [
-        buildExistingCalendarEvent({ externalCreatedAt: null }),
-      ],
+      existingCalendarEvents: [buildExistingCalendarEvent()],
       calendarChannelId: CALENDAR_CHANNEL_ID,
-      shouldSkipUnchangedCalendarEvents: true,
     });
 
     expect(plan.saveOperations.calendarEventsToUpdate).toEqual([]);
   });
 
-  it.each<[string, Partial<FetchedCalendarEvent>]>([
-    ['title', { title: 'Weekly sync (moved)' }],
-    ['startsAt', { startsAt: '2026-10-02T10:30:00+02:00' }],
-    ['isCanceled', { isCanceled: true }],
-    ['conference link', { conferenceLinkUrl: 'https://meet.example.com/xyz' }],
-    ['location', { location: 'Room 1' }],
-  ])('updates an existing event when its %s changed', (_, overrides) => {
+  it('treats an empty fetched end date as equal to a null persisted one', () => {
     const plan = buildCalendarEventSaveOperations({
-      fetchedCalendarEvents: [buildFetchedCalendarEvent(overrides)],
+      fetchedCalendarEvents: [buildFetchedCalendarEvent({ endsAt: '' })],
       existingAssociations: [buildExistingAssociation()],
-      existingCalendarEvents: [buildExistingCalendarEvent()],
+      existingCalendarEvents: [buildExistingCalendarEvent({ endsAt: null })],
       calendarChannelId: CALENDAR_CHANNEL_ID,
-      shouldSkipUnchangedCalendarEvents: true,
     });
 
-    expect(plan.saveOperations.calendarEventsToUpdate).toEqual([
-      {
-        criteria: CALENDAR_EVENT_ID,
-        partialEntity: expect.objectContaining({
-          title: overrides.title ?? 'Weekly sync',
-        }),
-      },
-    ]);
-    expect(plan.saveOperations.associationsToUpdate).toEqual([]);
+    expect(plan.saveOperations.calendarEventsToUpdate).toEqual([]);
   });
+
+  it.each<[string, Partial<FetchedCalendarEvent>, Record<string, unknown>]>([
+    [
+      'title',
+      { title: 'Weekly sync (moved)' },
+      { title: 'Weekly sync (moved)' },
+    ],
+    [
+      'startsAt',
+      { startsAt: '2026-10-02T10:30:00+02:00' },
+      { startsAt: '2026-10-02T10:30:00+02:00' },
+    ],
+    ['isCanceled', { isCanceled: true }, { isCanceled: true }],
+    [
+      'conference link',
+      { conferenceLinkUrl: 'https://meet.example.com/xyz' },
+      {
+        conferenceLink: {
+          primaryLinkLabel: 'Meet',
+          primaryLinkUrl: 'https://meet.example.com/xyz',
+          secondaryLinks: [],
+        },
+      },
+    ],
+    ['location', { location: 'Room 1' }, { location: 'Room 1' }],
+  ])(
+    'updates an existing event when its %s changed',
+    (_, overrides, written) => {
+      const plan = buildCalendarEventSaveOperations({
+        fetchedCalendarEvents: [buildFetchedCalendarEvent(overrides)],
+        existingAssociations: [buildExistingAssociation()],
+        existingCalendarEvents: [buildExistingCalendarEvent()],
+        calendarChannelId: CALENDAR_CHANNEL_ID,
+      });
+
+      expect(plan.saveOperations.calendarEventsToUpdate).toEqual([
+        {
+          criteria: CALENDAR_EVENT_ID,
+          partialEntity: expect.objectContaining(written),
+        },
+      ]);
+      expect(plan.saveOperations.associationsToUpdate).toEqual([]);
+    },
+  );
 
   it('updates an existing event that has secondary links to clear them', () => {
     const plan = buildCalendarEventSaveOperations({
@@ -174,22 +181,26 @@ describe('buildCalendarEventSaveOperations', () => {
         }),
       ],
       calendarChannelId: CALENDAR_CHANNEL_ID,
-      shouldSkipUnchangedCalendarEvents: true,
     });
 
     expect(plan.saveOperations.calendarEventsToUpdate).toHaveLength(1);
   });
 
-  it('updates an existing event that could not be loaded', () => {
+  it('updates the event and its association when the event was not loaded', () => {
     const plan = buildCalendarEventSaveOperations({
       fetchedCalendarEvents: [buildFetchedCalendarEvent()],
       existingAssociations: [buildExistingAssociation()],
       existingCalendarEvents: [],
       calendarChannelId: CALENDAR_CHANNEL_ID,
-      shouldSkipUnchangedCalendarEvents: true,
     });
 
     expect(plan.saveOperations.calendarEventsToUpdate).toHaveLength(1);
+    expect(plan.saveOperations.associationsToUpdate).toEqual([
+      {
+        criteria: ASSOCIATION_ID,
+        partialEntity: { recurringEventExternalId: '' },
+      },
+    ]);
   });
 
   it('updates the association only when the recurring event id changed', () => {
@@ -200,7 +211,6 @@ describe('buildCalendarEventSaveOperations', () => {
       existingAssociations: [buildExistingAssociation()],
       existingCalendarEvents: [buildExistingCalendarEvent()],
       calendarChannelId: CALENDAR_CHANNEL_ID,
-      shouldSkipUnchangedCalendarEvents: true,
     });
 
     expect(plan.saveOperations.calendarEventsToUpdate).toEqual([]);
@@ -218,7 +228,6 @@ describe('buildCalendarEventSaveOperations', () => {
       existingAssociations: [],
       existingCalendarEvents: [],
       calendarChannelId: CALENDAR_CHANNEL_ID,
-      shouldSkipUnchangedCalendarEvents: true,
     });
 
     expect(plan.saveOperations.calendarEventsToInsert).toHaveLength(1);

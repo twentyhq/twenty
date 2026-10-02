@@ -3,9 +3,11 @@ import { v4 as uuid } from 'uuid';
 
 import { type CalendarEventSaveOperations } from 'src/modules/calendar/calendar-event-import-manager/types/calendar-event-save-operations.type';
 import { type CalendarEventSavePlan } from 'src/modules/calendar/calendar-event-import-manager/types/calendar-event-save-plan.type';
-import { hasCalendarEventChanged } from 'src/modules/calendar/calendar-event-import-manager/utils/has-calendar-event-changed.util';
+import {
+  type ComparableCalendarEvent,
+  hasCalendarEventChanged,
+} from 'src/modules/calendar/calendar-event-import-manager/utils/has-calendar-event-changed.util';
 import { type CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity';
-import { type CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event.workspace-entity';
 import { type FetchedCalendarEvent } from 'src/modules/calendar/common/types/fetched-calendar-event.type';
 import { type FetchedParticipantWithCalendarEventId } from 'src/modules/calendar/common/types/fetched-participant-with-calendar-event-id.type';
 
@@ -14,13 +16,11 @@ export const buildCalendarEventSaveOperations = ({
   existingAssociations,
   existingCalendarEvents,
   calendarChannelId,
-  shouldSkipUnchangedCalendarEvents,
 }: {
   fetchedCalendarEvents: FetchedCalendarEvent[];
   existingAssociations: CalendarChannelEventAssociationWorkspaceEntity[];
-  existingCalendarEvents: CalendarEventWorkspaceEntity[];
+  existingCalendarEvents: ComparableCalendarEvent[];
   calendarChannelId: string;
-  shouldSkipUnchangedCalendarEvents: boolean;
 }): CalendarEventSavePlan => {
   const existingAssociationByEventExternalId = new Map(
     existingAssociations.map((association) => [
@@ -83,7 +83,6 @@ export const buildCalendarEventSaveOperations = ({
       existingCalendarEventIds.push(calendarEventId);
 
       if (
-        !shouldSkipUnchangedCalendarEvents ||
         !isDefined(existingCalendarEvent) ||
         hasCalendarEventChanged({ existingCalendarEvent, calendarEvent })
       ) {
@@ -94,7 +93,7 @@ export const buildCalendarEventSaveOperations = ({
       }
 
       if (
-        !shouldSkipUnchangedCalendarEvents ||
+        !isDefined(existingCalendarEvent) ||
         (existingAssociation.recurringEventExternalId ?? '') !==
           recurringEventExternalId
       ) {

@@ -84,7 +84,6 @@ export class CalendarSaveEventsService {
             existingAssociations,
             existingCalendarEvents,
             calendarChannelId: calendarChannel.id,
-            shouldSkipUnchangedCalendarEvents: shouldSkipUnchangedRecords,
           });
 
           const existingParticipants =

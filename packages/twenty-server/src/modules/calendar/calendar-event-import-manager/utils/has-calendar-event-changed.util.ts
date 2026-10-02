@@ -3,8 +3,9 @@ import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { type CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event.workspace-entity';
 
-type CalendarEventWritableFields = Pick<
+export type ComparableCalendarEvent = Pick<
   CalendarEventWorkspaceEntity,
+  | 'id'
   | 'iCalUid'
   | 'title'
   | 'description'
@@ -14,14 +15,8 @@ type CalendarEventWritableFields = Pick<
   | 'isFullDay'
   | 'isCanceled'
   | 'conferenceSolution'
-  | 'externalCreatedAt'
-  | 'externalUpdatedAt'
-> & {
-  conferenceLink: Pick<
-    CalendarEventWorkspaceEntity['conferenceLink'],
-    'primaryLinkLabel' | 'primaryLinkUrl'
-  >;
-};
+  | 'conferenceLink'
+>;
 
 const TEXT_FIELD_NAMES = [
   'iCalUid',
@@ -31,12 +26,7 @@ const TEXT_FIELD_NAMES = [
   'conferenceSolution',
 ] as const;
 
-const DATE_TIME_FIELD_NAMES = [
-  'startsAt',
-  'endsAt',
-  'externalCreatedAt',
-  'externalUpdatedAt',
-] as const;
+const DATE_TIME_FIELD_NAMES = ['startsAt', 'endsAt'] as const;
 
 const BOOLEAN_FIELD_NAMES = ['isFullDay', 'isCanceled'] as const;
 
@@ -58,8 +48,8 @@ export const hasCalendarEventChanged = ({
   existingCalendarEvent,
   calendarEvent,
 }: {
-  existingCalendarEvent: CalendarEventWorkspaceEntity;
-  calendarEvent: CalendarEventWritableFields;
+  existingCalendarEvent: ComparableCalendarEvent;
+  calendarEvent: Omit<ComparableCalendarEvent, 'id'>;
 }): boolean =>
   TEXT_FIELD_NAMES.some(
     (fieldName) =>
@@ -74,8 +64,7 @@ export const hasCalendarEventChanged = ({
   ) ||
   BOOLEAN_FIELD_NAMES.some(
     (fieldName) =>
-      Boolean(existingCalendarEvent[fieldName]) !==
-      Boolean(calendarEvent[fieldName]),
+      existingCalendarEvent[fieldName] !== calendarEvent[fieldName],
   ) ||
   (existingCalendarEvent.conferenceLink?.primaryLinkLabel ?? '') !==
     (calendarEvent.conferenceLink.primaryLinkLabel ?? '') ||
