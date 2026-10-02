@@ -144,14 +144,14 @@ export const UnknownCurrencyUsesDisplayFallback: Story = {
     expect(
       body.queryByRole('button', { pressed: true }),
     ).not.toBeInTheDocument();
+    const search = await body.findByRole('searchbox', { name: 'Search' });
+
+    await waitFor(() => expect(search).toHaveFocus());
     await userEvent.keyboard('{Enter}');
     expect(body.getByRole('dialog', { name: 'Currency' })).toBeVisible();
     expect(onCurrencyChange).not.toHaveBeenCalled();
 
-    await userEvent.type(
-      body.getByRole('searchbox', { name: 'Search' }),
-      'usd',
-    );
+    await userEvent.type(search, 'usd');
     await userEvent.click(
       await body.findByRole('button', { name: /\(USD\)$/ }),
     );
