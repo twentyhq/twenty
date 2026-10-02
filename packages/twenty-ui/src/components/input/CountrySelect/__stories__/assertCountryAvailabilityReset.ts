@@ -21,13 +21,20 @@ export const assertCountryAvailabilityReset = async ({
     within(popup).getByRole('button', { name: 'Make countries unavailable' }),
   );
   await waitFor(() => expect(popup).not.toBeInTheDocument());
-  expect(trigger).toBeDisabled();
+  expect(trigger).toHaveAttribute('aria-disabled', 'true');
+  await waitFor(() => expect(trigger).toHaveFocus());
   expect(args.onOpenChange).toHaveBeenLastCalledWith(false);
+  expect(args.onOpenChange).toHaveBeenCalledTimes(2);
+  await userEvent.keyboard('{Enter}');
+  await userEvent.click(trigger);
+  expect(
+    within(canvasElement.ownerDocument.body).queryByRole('dialog'),
+  ).toBeNull();
   expect(args.onOpenChange).toHaveBeenCalledTimes(2);
   await userEvent.click(
     canvas.getByRole('button', { name: 'Restore countries' }),
   );
-  expect(trigger).toBeEnabled();
+  expect(trigger).not.toHaveAttribute('aria-disabled');
   expect(trigger).toHaveAttribute('aria-expanded', 'false');
   expect(args.onOpenChange).toHaveBeenCalledTimes(2);
   await userEvent.click(trigger);

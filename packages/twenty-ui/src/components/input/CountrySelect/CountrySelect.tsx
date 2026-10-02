@@ -1,5 +1,6 @@
+import { type Popover as PopoverPrimitive } from '@base-ui/react/popover';
 import { clsx } from 'clsx';
-import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
+import { isFunction, isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 import { useId, useState } from 'react';
 
 import { Dropdown } from '@ui/components/navigation/Dropdown/Dropdown';
@@ -9,10 +10,11 @@ import selectStyles from '@ui/primitives/input/Select/Select.module.scss';
 import { OverflowingTextWithTooltip } from '@ui/primitives/typography/OverflowingTextWithTooltip/OverflowingTextWithTooltip';
 import { mergeClassNames } from '@ui/utilities/internal/mergeClassNames';
 import { isDefined } from '@ui/utilities/utils/isDefined';
-import { normalizeSearchText } from '@ui/utilities/utils/normalizeSearchText';
 
 import styles from './CountrySelect.module.scss';
 import { CountrySelectAvailabilityEffect } from './internal/CountrySelectAvailabilityEffect';
+import { CountrySelectOptions } from './internal/CountrySelectOptions';
+import { getCountrySelectLabelledBy } from './internal/getCountrySelectLabelledBy';
 import { type CountrySelectProps } from './types/CountrySelectProps';
 
 export const CountrySelect = ({
@@ -20,53 +22,74 @@ export const CountrySelect = ({
   value,
   onValueChange,
   label,
-  labels,
+  searchLabel = 'Search',
+  noCountryLabel = 'No country',
+  noResultsLabel = 'No results',
   open: controlledOpen,
   onOpenChange,
   popupProps,
   disabled = false,
   className,
+  style,
+  render,
   id,
   'aria-label': ariaLabel,
+  'aria-labelledby': ariaLabelledBy,
   'aria-describedby': ariaDescribedBy,
   ...props
 }: CountrySelectProps) => {
   const generatedId = useId();
   const triggerId = id ?? generatedId;
+  const labelId = `${generatedId}-label`;
   const selectedValueId = `${generatedId}-value`;
-  const describedBy = [ariaDescribedBy, selectedValueId]
-    .filter(isNonEmptyString)
-    .join(' ');
+  const hasVisibleLabel = isNonEmptyString(label);
+  const nonEmptyAriaLabel = isNonEmptyString(ariaLabel) ? ariaLabel : undefined;
+  const labelledBy = getCountrySelectLabelledBy({
+    ariaLabelledBy,
+    ariaLabel: nonEmptyAriaLabel,
+    visibleLabelId: hasVisibleLabel ? labelId : undefined,
+  });
+  const hasExternalName = isDefined(labelledBy) || isDefined(nonEmptyAriaLabel);
+  const describedByIds = [
+    ariaDescribedBy,
+    hasExternalName ? selectedValueId : undefined,
+  ].filter(isNonEmptyString);
   const [uncontrolledOpen, setUncontrolledOpen] = useState(false);
   const isDisabled = disabled || !isNonEmptyArray(countries);
   const requestedOpen = controlledOpen ?? uncontrolledOpen;
   const open = !isDisabled && requestedOpen;
   const [previousOpen, setPreviousOpen] = useState(open);
-  const [search, setSearch] = useState('');
+  const [openingCount, setOpeningCount] = useState(0);
 
   if (previousOpen !== open) {
     setPreviousOpen(open);
-    setSearch('');
+
+    if (open) {
+      setOpeningCount(openingCount + 1);
+    }
   }
 
   const selectedCountry = countries.find((country) => country.value === value);
-  const selectedLabel = selectedCountry?.label ?? labels.noCountry;
+  const selectedLabel = selectedCountry?.label ?? noCountryLabel;
   const selectedFlag = isDefined(selectedCountry) ? (
     selectedCountry.flag
   ) : (
     <IconCircleOff />
   );
-  const normalizedSearch = normalizeSearchText(search);
-  const filteredCountries = countries.filter((country) =>
-    normalizeSearchText(country.label).includes(normalizedSearch),
+
+  const getTriggerState = (
+    state: PopoverPrimitive.Trigger.State,
+  ): PopoverPrimitive.Trigger.State => ({ ...state, disabled: isDisabled });
+  const triggerClassName = mergeClassNames<PopoverPrimitive.Trigger.State>(
+    clsx(inputStyles.input, inputStyles.md, selectStyles.trigger),
+    className,
   );
-  const showNoCountry = normalizeSearchText(labels.noCountry).includes(
-    normalizedSearch,
-  );
-  const hasResults = showNoCountry || isNonEmptyArray(filteredCountries);
-  const popupLabel = [label, ariaLabel].find(isNonEmptyString);
 
   const handleOpenChange = (nextOpen: boolean) => {
+    if (nextOpen && isDisabled) {
+      return;
+    }
+
     setUncontrolledOpen(nextOpen);
     onOpenChange?.(nextOpen);
   };
@@ -78,8 +101,8 @@ export const CountrySelect = ({
         open={requestedOpen}
         onOpenChange={handleOpenChange}
       />
-      {isNonEmptyString(label) && (
-        <label className={styles.label} htmlFor={triggerId}>
+      {hasVisibleLabel && (
+        <label id={labelId} className={styles.label} htmlFor={triggerId}>
           {label}
         </label>
       )}
@@ -87,13 +110,25 @@ export const CountrySelect = ({
         <Dropdown.Trigger
           {...props}
           id={triggerId}
-          disabled={isDisabled}
-          aria-label={ariaLabel}
-          aria-describedby={describedBy}
-          className={mergeClassNames(
-            clsx(inputStyles.input, inputStyles.md, selectStyles.trigger),
-            className,
-          )}
+          aria-label={nonEmptyAriaLabel}
+          aria-labelledby={labelledBy}
+          aria-describedby={
+            isNonEmptyArray(describedByIds)
+              ? describedByIds.join(' ')
+              : undefined
+          }
+          aria-disabled={isDisabled || undefined}
+          data-disabled={isDisabled ? '' : undefined}
+          className={(state) => triggerClassName(getTriggerState(state))}
+          style={
+            isFunction(style) ? (state) => style(getTriggerState(state)) : style
+          }
+          render={
+            isFunction(render)
+              ? (renderProps, state) =>
+                  render(renderProps, getTriggerState(state))
+              : render
+          }
         >
           <span className={styles.flag} aria-hidden="true">
             {selectedFlag}
@@ -105,46 +140,20 @@ export const CountrySelect = ({
             <IconChevronDown />
           </span>
         </Dropdown.Trigger>
-        <Dropdown.Content {...popupProps} aria-label={popupLabel}>
-          <Dropdown.Search
-            value={search}
-            onValueChange={setSearch}
-            placeholder={labels.search}
-            aria-label={labels.search}
+        <Dropdown.Content
+          {...popupProps}
+          aria-label={nonEmptyAriaLabel}
+          aria-labelledby={labelledBy}
+        >
+          <CountrySelectOptions
+            key={openingCount}
+            countries={countries}
+            value={value}
+            onValueChange={onValueChange}
+            searchLabel={searchLabel}
+            noCountryLabel={noCountryLabel}
+            noResultsLabel={noResultsLabel}
           />
-          {hasResults && <Dropdown.Separator />}
-          {hasResults && (
-            <Dropdown.Section scrollable>
-              {showNoCountry && (
-                <Dropdown.OptionItem
-                  selected={!isNonEmptyString(value)}
-                  startIcon={
-                    <span className={styles.flag} aria-hidden="true">
-                      <IconCircleOff />
-                    </span>
-                  }
-                  onSelect={() => onValueChange('')}
-                >
-                  {labels.noCountry}
-                </Dropdown.OptionItem>
-              )}
-              {filteredCountries.map((country) => (
-                <Dropdown.OptionItem
-                  key={country.value}
-                  selected={country.value === value}
-                  startIcon={
-                    <span className={styles.flag} aria-hidden="true">
-                      {country.flag}
-                    </span>
-                  }
-                  onSelect={() => onValueChange(country.value)}
-                >
-                  {country.label}
-                </Dropdown.OptionItem>
-              ))}
-            </Dropdown.Section>
-          )}
-          {!hasResults && <Dropdown.Empty>{labels.noResults}</Dropdown.Empty>}
         </Dropdown.Content>
       </Dropdown.Root>
     </div>

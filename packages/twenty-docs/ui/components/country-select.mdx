@@ -6,7 +6,7 @@ description: Search prepared country choices and select a country or an explicit
 import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 import CountrySelectReference from '/snippets/ui/generated/components/country-select.mdx';
 
-`CountrySelect` combines a labeled trigger, decorative flags, country search, selected options, and an explicit no-country choice. It uses the shared Dropdown picker behavior. Your application supplies country data and labels and decides how selected values are stored.
+`CountrySelect` combines a labeled trigger, decorative flags, country search, selected options, and an explicit no-country choice. It uses the shared Dropdown picker behavior. Your application supplies country data and translated text and decides how selected values are stored.
 
 <StoryEmbed
   storyId="ui-input-countryselect--default"
@@ -35,11 +35,9 @@ export const ShippingCountry = () => {
       ]}
       value={country}
       onValueChange={setCountry}
-      labels={{
-        search: 'Search countries',
-        noCountry: 'No country',
-        noResults: 'No countries found',
-      }}
+      searchLabel="Search countries"
+      noCountryLabel="No country"
+      noResultsLabel="No countries found"
     />
   );
 };
@@ -51,27 +49,29 @@ export const ShippingCountry = () => {
 
 The empty string (`''`) represents no country. The no-country option appears beside the supplied choices and reports that empty string when selected. Reserve it for the empty selection instead of using it as a country value.
 
-An unknown value displays the no-country label and icon. It does not call `onValueChange` or overwrite the host value. This lets the application decide how to handle a stored value that is absent from the current choices.
+An unknown value displays `noCountryLabel` and the no-country icon. It does not call `onValueChange` or overwrite the host value. This lets the application decide how to handle a stored value that is absent from the current choices.
 
 ## Search and interaction
 
-Search matches the prepared display labels without distinguishing letter case or Latin accents and folds letters such as `ø`, `æ`, and `ß` into their Latin equivalents. Marks that distinguish letters in other scripts remain significant. The no-country label participates in the same search. A query with no matching options displays `labels.noResults`. Closing and reopening the picker clears its search.
+Search matches the prepared display labels. It ignores letter case, optional accents in Latin, Greek, Arabic, and Hebrew text, and Cyrillic stress marks, treats the Cyrillic `ё` as `е`, and folds letters such as `ø`, `æ`, and `ß` into `o`, `ae`, and `ss`. It also ignores standalone accent characters such as `^`, `` ` ``, `´`, `¨`, and `ˇ`, so a pending dead key does not hide matches. Marks that form distinct letters remain significant, such as Japanese voicing marks, Indic vowel signs, and the Cyrillic `й`. A Korean syllable typed without its final consonant, such as 하, matches syllables that start with it, such as 한. `noCountryLabel` participates in the same search. While a search is active, matching countries are listed before the no-country choice, so Enter picks the first matching country. A query with no matching options displays `noResultsLabel`. Closing and reopening the picker clears its search.
 
 The picker handles pointer selection, keyboard movement, selected-option presentation, focus, and closing. Selecting an option closes the popup. Escape closes it and restores trigger focus. Each instance has independent popup and search state.
 
-Provide a visible `label`, or use `aria-label` or `aria-labelledby` on the trigger. The selected country is also available as the trigger's accessible description, and a tooltip reveals the full label when it is truncated. The required `labels` object supplies the search input's accessible name, no-country text, and empty-result text. Native trigger attributes, event handlers, `className`, `style`, and `ref` apply to its button.
+Provide a visible `label`, or use `aria-label` or `aria-labelledby` on the trigger. `aria-labelledby` takes precedence over a non-empty `aria-label`, which takes precedence over the visible label, and the popup takes the same name as the trigger. The visible label also names a trigger that `render` replaces with a non-button element. When the trigger is named this way, the selected country is its accessible description. Without any of them, the selected country names the trigger and the popup. A tooltip reveals the full selected label when it is truncated.
 
-`disabled` prevents opening and selection. A picker with no supplied countries is disabled as well. If either condition occurs while the popup is open, it closes and reports `onOpenChange(false)`. Enabling the picker again does not reopen it automatically.
+`searchLabel` supplies the search input's placeholder and accessible name, `noCountryLabel` the no-country text, and `noResultsLabel` the empty-result text. They default to `Search`, `No country`, and `No results`. Pass translated strings when your application is localized. Native trigger attributes, event handlers, `className`, `style`, and `ref` apply to its button.
+
+`disabled` prevents opening and selection. A picker with no supplied countries is disabled as well. If either condition occurs while the popup is open, the popup closes, reports `onOpenChange(false)`, and returns focus to the trigger. Enabling the picker again does not reopen it automatically. While disabled, the trigger stays focusable, is marked with `aria-disabled`, and still runs its event handlers, but it never opens. Function forms of `className`, `style`, and `render` receive `disabled: true` in the trigger state.
 
 ## Host integration
 
-Use `open` and `onOpenChange` when the application needs to register or control the popup. Without `open`, the picker manages its own open state. `popupProps` accepts Dropdown popup options for positioning, portal placement, and focus handling.
+Use `open` and `onOpenChange` when the application needs to register or control the popup. Without `open`, the picker manages its own open state. `popupProps` accepts Dropdown popup options for positioning, portal placement, and focus handling. The popup takes its name from the trigger, so `popupProps` does not accept `aria-label` or `aria-labelledby`.
 
 Keep application dropdown IDs, focus stacks, field metadata, persistence, and editing lifecycle in the host adapter. Changing the display label or flag does not require changing the stored value.
 
 ## Front component renderer
 
-The React and Preact front component sandboxes render the selected country, decorative flag, and disabled trigger. Opening the popup is currently unsupported: the underlying Dropdown encounters missing viewport width data, and React also reports missing event-type data. Search, selection, popup focus, and closing therefore remain unavailable in those sandboxes. Renderer fixtures check initial presentation and explicitly assert the known popup failure. The UI Storybook exercises these interactions in a regular browser.
+The React and Preact front component sandboxes render the selected country, decorative flag, and disabled trigger. Opening the popup is currently unsupported. Base UI reads pointer contact data from the `nativeEvent` of the forwarded event, which the sandbox does not provide. When the popup content still mounts, the Dropdown reads the popup element's `dataset`, which worker elements do not provide. Search, selection, popup focus, and closing are therefore unavailable in those sandboxes for now. Renderer fixtures check the initial presentation and the disabled trigger, then assert the known opening errors. The UI Storybook exercises these interactions in a regular browser.
 
 ## Props
 

@@ -30,11 +30,9 @@ export const CountrySelectAvailabilityExample = ({
         }
         disabled={unavailable && availability === 'disabled'}
         label="Country"
-        labels={{
-          search: 'Search countries',
-          noCountry: 'No country',
-          noResults: 'No countries found',
-        }}
+        searchLabel="Search countries"
+        noCountryLabel="No country"
+        noResultsLabel="No countries found"
         value="France"
         onValueChange={() => undefined}
         open={controlled ? open : undefined}

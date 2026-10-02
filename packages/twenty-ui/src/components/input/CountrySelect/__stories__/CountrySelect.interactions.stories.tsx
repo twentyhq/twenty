@@ -1,5 +1,5 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { useState } from 'react';
+import { type CSSProperties, useState } from 'react';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 
 import { Button } from '@ui/primitives/input/Button/Button';
@@ -90,6 +90,8 @@ export const SearchAndKeyboard: Story = {
     expect(choices.getByRole('button', { name: 'Brésil' })).toBeVisible();
     await userEvent.keyboard('{Enter}');
     expect(args.onValueChange).toHaveBeenCalledWith('Brazil');
+    expect(choices.getByRole('searchbox')).toHaveValue('BRESIL');
+    expect(choices.queryByRole('button', { name: 'France' })).toBeNull();
     await waitFor(() => expect(popup).not.toBeInTheDocument());
     await waitFor(() => expect(trigger).toHaveFocus());
     await userEvent.keyboard('{Enter}');
@@ -109,6 +111,39 @@ export const SearchAndKeyboard: Story = {
     expect(args.onValueChange).toHaveBeenLastCalledWith('France');
     await waitFor(() => expect(reopenedPopup).not.toBeInTheDocument());
     expect(trigger).toHaveTextContent('France');
+  },
+};
+
+export const SearchListsCountriesBeforeNoCountry: Story = {
+  play: async ({ canvasElement, args }) => {
+    const trigger = within(canvasElement).getByRole('button', {
+      name: 'Country',
+    });
+
+    await userEvent.click(trigger);
+    const popup = await waitForCountryPopup({ canvasElement });
+    const choices = within(popup);
+    const search = choices.getByRole('searchbox');
+
+    expect(choices.getAllByRole('button')[0]).toHaveAccessibleName(
+      'No country',
+    );
+    await userEvent.type(search, ' ');
+    const unfilteredChoices = choices.getAllByRole('button');
+
+    expect(unfilteredChoices).toHaveLength(4);
+    expect(unfilteredChoices[0]).toHaveAccessibleName('No country');
+    await userEvent.type(search, 'o');
+    const matchingChoices = choices.getAllByRole('button');
+
+    expect(matchingChoices).toHaveLength(2);
+    expect(matchingChoices[0]).toHaveAccessibleName('Japon');
+    expect(matchingChoices[1]).toHaveAccessibleName('No country');
+    await userEvent.keyboard('{Enter}');
+    expect(args.onValueChange).toHaveBeenCalledTimes(1);
+    expect(args.onValueChange).toHaveBeenCalledWith('Japan');
+    await waitFor(() => expect(popup).not.toBeInTheDocument());
+    expect(trigger).toHaveTextContent('Japon');
   },
 };
 
@@ -165,6 +200,41 @@ export const EmptySearchAndEscape: Story = {
   },
 };
 
+export const ReopenDuringExitFade: Story = {
+  args: {
+    popupProps: {
+      style: { '--t-animation-duration-fast': '1' } as CSSProperties,
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const trigger = within(canvasElement).getByRole('button', {
+      name: 'Country',
+    });
+
+    await userEvent.click(trigger);
+    const popup = await waitForCountryPopup({ canvasElement });
+
+    await userEvent.type(within(popup).getByRole('searchbox'), 'bresil');
+    await waitFor(() => expect(getComputedStyle(popup).opacity).toBe('1'), {
+      timeout: 2000,
+    });
+    await userEvent.keyboard('{Escape}');
+    expect(trigger).toHaveAttribute('aria-expanded', 'false');
+    expect(popup).toBeInTheDocument();
+    await userEvent.click(trigger);
+    const reopenedPopup = await waitForCountryPopup({ canvasElement });
+    const reopenedChoices = within(reopenedPopup);
+
+    expect(reopenedPopup).toBe(popup);
+    expect(reopenedChoices.getByRole('searchbox')).toHaveValue('');
+    expect(reopenedChoices.getAllByRole('button')).toHaveLength(4);
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() => expect(reopenedPopup).not.toBeInTheDocument(), {
+      timeout: 2000,
+    });
+  },
+};
+
 export const UnknownStoredValue: Story = {
   args: { value: 'Previously stored country' },
   play: async ({ canvasElement, args }) => {
@@ -201,20 +271,28 @@ export const DisabledAndUnavailable: Story = {
   ),
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
 
     for (const name of ['Disabled country', 'Unavailable countries']) {
       const trigger = canvas.getByRole('button', { name });
 
-      expect(trigger).toBeDisabled();
+      expect(trigger).toHaveAttribute('aria-disabled', 'true');
+      expect(trigger).toHaveAttribute('data-disabled');
+      await userEvent.tab();
+      expect(trigger).toHaveFocus();
+      await userEvent.keyboard('{ArrowDown}');
+      await userEvent.keyboard('{Enter}');
+      await userEvent.keyboard(' ');
       await userEvent.click(trigger);
-      expect(trigger).not.toHaveFocus();
+      expect(trigger).toHaveAttribute('aria-expanded', 'false');
+      expect(body.queryByRole('dialog')).toBeNull();
+      await userEvent.click(canvas.getByText(name, { selector: 'label' }));
+      expect(trigger).toHaveAttribute('aria-expanded', 'false');
+      expect(body.queryByRole('dialog')).toBeNull();
     }
 
     expect(args.onOpenChange).not.toHaveBeenCalled();
     expect(args.onValueChange).not.toHaveBeenCalled();
-    expect(
-      within(canvasElement.ownerDocument.body).queryByRole('dialog'),
-    ).toBeNull();
   },
 };
 
@@ -271,11 +349,9 @@ const ControlledCountryExample = ({
       <CountrySelect
         countries={COUNTRY_CHOICES}
         label="Country"
-        labels={{
-          search: 'Search countries',
-          noCountry: 'No country',
-          noResults: 'No countries found',
-        }}
+        searchLabel="Search countries"
+        noCountryLabel="No country"
+        noResultsLabel="No countries found"
         value={value}
         onValueChange={onValueChange ?? (() => undefined)}
         open={open}

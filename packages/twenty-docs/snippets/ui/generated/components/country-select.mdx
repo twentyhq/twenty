@@ -15,48 +15,34 @@
   Class applied to the trigger.
 </ParamField>
 
-<ParamField body="closeDelay" type="number" default="0">
-  How long to wait before closing the popover that was opened on hover.
-  Specified in milliseconds.
-
-  Requires the `openOnHover` prop.
-</ParamField>
-
 <ParamField body="countries" type="readonly CountryChoice[]" required>
   Prepared country choices with unique non-empty values, display labels, and optional decorative flags.
 </ParamField>
 
-<ParamField body="delay" type="number" default="300">
-  How long to wait before the popover may be opened on hover. Specified in milliseconds.
-
-  Requires the `openOnHover` prop.
-</ParamField>
-
 <ParamField body="disabled" type="boolean" default="false">
-  Disables opening and selection. An empty country list is also disabled.
-</ParamField>
-
-<ParamField body="handle" type="PopoverHandle&lt;unknown&gt;">
-  A handle to associate the trigger with a popover.
+  Prevents opening and selection while the trigger stays focusable. An empty country list is also disabled.
 </ParamField>
 
 <ParamField body="id" type="string">
-  ID of the trigger. In addition to being forwarded to the rendered element,
-  it is also used to specify the active trigger for the popover in controlled mode (with the PopoverRoot `triggerId` prop).
+  ID of the trigger. Generated when omitted.
 </ParamField>
 
 <ParamField body="label" type="string">
-  Optional visible label associated with the trigger.
-</ParamField>
-
-<ParamField body="labels" type="{ search: string; noCountry: string; noResults: string; }" required>
-  Host-provided search, no-country, and empty-result text.
+  Optional visible label that names the trigger and the popup.
 </ParamField>
 
 <ParamField body="nativeButton" type="boolean" default="true">
   Whether the component renders a native `<button>` element when replacing it
   via the `render` prop.
   Set to `false` if the rendered element is not a button (e.g. `<div>`).
+</ParamField>
+
+<ParamField body="noCountryLabel" type="string" default="No country">
+  Text of the no-country choice, also displayed when no country is selected.
+</ParamField>
+
+<ParamField body="noResultsLabel" type="string" default="No results">
+  Text displayed when no choice matches the search.
 </ParamField>
 
 <ParamField body="onOpenChange" type="((open: boolean) =&gt; void)">
@@ -71,15 +57,7 @@
   Controls whether the country popup is open.
 </ParamField>
 
-<ParamField body="openOnHover" type="boolean" default="false">
-  Whether the popover should also open when the trigger is hovered.
-</ParamField>
-
-<ParamField body="payload" type="unknown">
-  A payload to pass to the popover when it is opened.
-</ParamField>
-
-<ParamField body="popupProps" type="Omit&lt;DropdownContentProps, &quot;children&quot; | &quot;aria-label&quot; | &quot;keepMounted&quot;&gt;">
+<ParamField body="popupProps" type="Omit&lt;DropdownContentProps, &quot;children&quot; | &quot;aria-label&quot; | &quot;aria-labelledby&quot; | &quot;keepMounted&quot;&gt;">
   Dropdown popup positioning, portal, focus, and event options for host integration.
 </ParamField>
 
@@ -89,6 +67,10 @@
 
 <ParamField body="render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, PopoverTriggerState&gt;">
   Replaces the trigger element while preserving its behavior and props.
+</ParamField>
+
+<ParamField body="searchLabel" type="string" default="Search">
+  Placeholder and accessible name of the search input.
 </ParamField>
 
 <ParamField body="style" type="CSSProperties | ((state: PopoverTriggerState) =&gt; CSSProperties | undefined)">

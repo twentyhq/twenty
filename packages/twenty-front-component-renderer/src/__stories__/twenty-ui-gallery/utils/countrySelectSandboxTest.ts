@@ -2,18 +2,15 @@ import { expect, userEvent, within } from 'storybook/test';
 
 import { errorHandler } from '@/__stories__/shared/test-utils/createFrontComponentStoryMeta';
 import { expectFrontComponentMounted } from '@/__stories__/shared/test-utils/matchers/expectFrontComponentMounted';
+import { SANDBOX_ROUND_TRIP_SETTLE_DELAY } from '@/__stories__/shared/test-utils/timeouts';
 import { SANDBOX_ERROR_PATTERNS } from '@/__stories__/twenty-ui-gallery/constants/SANDBOX_ERROR_PATTERNS';
 import { type TwentyUiGalleryPlayFunction } from '@/__stories__/twenty-ui-gallery/types/TwentyUiGalleryPlayFunction';
 import { expectSandboxErrors } from '@/__stories__/twenty-ui-gallery/utils/expectSandboxErrors';
-
-const MISSING_EVENT_TYPE =
-  "Uncaught TypeError: Cannot read properties of undefined (reading 'type')";
 
 export const countrySelectSandboxTest: TwentyUiGalleryPlayFunction = async ({
   canvasElement,
 }) => {
   const canvas = within(canvasElement);
-  const body = within(canvasElement.ownerDocument.body);
 
   await expectFrontComponentMounted(canvas);
   const billing = canvas.getByRole('button', { name: 'Billing country' });
@@ -26,16 +23,31 @@ export const countrySelectSandboxTest: TwentyUiGalleryPlayFunction = async ({
     'aria-hidden',
     'true',
   );
-  expect(disabled).toBeDisabled();
-  await userEvent.click(disabled);
-  expect(body.queryByRole('dialog')).toBeNull();
+  expect(within(shipping).getByText('🇯🇵')).toHaveAttribute(
+    'aria-hidden',
+    'true',
+  );
+  expect(disabled).toHaveAttribute('aria-disabled', 'true');
+  expect(disabled).not.toBeDisabled();
+  expect(disabled).toHaveTextContent('France');
   expect(errorHandler).not.toHaveBeenCalled();
+
+  await userEvent.click(disabled);
+  await new Promise((resolve) =>
+    setTimeout(resolve, SANDBOX_ROUND_TRIP_SETTLE_DELAY),
+  );
+  await expectSandboxErrors({
+    requiredErrors: [SANDBOX_ERROR_PATTERNS.VIEWPORT_WIDTH],
+  });
+  expect(disabled).toHaveAttribute('aria-expanded', 'false');
   expect(
     canvas.getByRole('status', { name: 'Saved countries' }),
   ).toHaveTextContent('Billing: France; Shipping: Japan');
+  errorHandler.mockClear();
+
   await userEvent.click(billing);
   await expectSandboxErrors({
     requiredErrors: [SANDBOX_ERROR_PATTERNS.VIEWPORT_WIDTH],
-    allowedAdditionalErrors: [MISSING_EVENT_TYPE],
+    allowedAdditionalErrors: [SANDBOX_ERROR_PATTERNS.DATASET_TYPE],
   });
 };

@@ -5,21 +5,27 @@ import { type CountryChoice } from './CountryChoice';
 
 export type CountrySelectProps = Omit<
   DropdownTriggerProps,
-  'children' | 'value' | 'defaultValue' | 'onChange'
+  | 'children'
+  | 'value'
+  | 'defaultValue'
+  | 'onChange'
+  | 'handle'
+  | 'payload'
+  | 'openOnHover'
+  | 'delay'
+  | 'closeDelay'
 > & {
   countries: readonly CountryChoice[];
   value: string;
   onValueChange: (value: string) => void;
   label?: string;
-  labels: {
-    search: string;
-    noCountry: string;
-    noResults: string;
-  };
+  searchLabel?: string;
+  noCountryLabel?: string;
+  noResultsLabel?: string;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
   popupProps?: Omit<
     DropdownContentProps,
-    'children' | 'aria-label' | 'keepMounted'
+    'children' | 'aria-label' | 'aria-labelledby' | 'keepMounted'
   >;
 };

@@ -65,11 +65,78 @@ export const TriggerNameFallback: Story = {
       name: 'France',
     });
 
+    expect(trigger).not.toHaveAttribute('aria-describedby');
+    expect(trigger).toHaveAccessibleDescription('');
     await userEvent.click(trigger);
     const popup = await waitForCountryPopup({ canvasElement, name: 'France' });
 
     await userEvent.keyboard('{Escape}');
     await waitFor(() => expect(popup).not.toBeInTheDocument());
+  },
+};
+
+export const ExternalLabelledBy: Story = {
+  args: { label: '' },
+  render: (args) => (
+    <>
+      <span id="country-name">Destination country</span>
+      <CountrySelectExample {...args} aria-labelledby="country-name" />
+    </>
+  ),
+  play: async ({ canvasElement }) => {
+    const trigger = within(canvasElement).getByRole('button', {
+      name: 'Destination country',
+    });
+
+    expect(trigger).toHaveAccessibleDescription('France');
+    await userEvent.click(trigger);
+    const popup = await waitForCountryPopup({
+      canvasElement,
+      name: 'Destination country',
+    });
+
+    expect(popup).toHaveAttribute('aria-labelledby', 'country-name');
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() => expect(popup).not.toBeInTheDocument());
+  },
+};
+
+export const AriaLabelOverVisibleLabel: Story = {
+  args: { label: 'Country', 'aria-label': 'Shipping country' },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const trigger = canvas.getByRole('button', { name: 'Shipping country' });
+
+    expect(canvas.getByText('Country')).toBeVisible();
+    expect(trigger).toHaveAccessibleDescription('France');
+    await userEvent.click(trigger);
+    const popup = await waitForCountryPopup({
+      canvasElement,
+      name: 'Shipping country',
+    });
+
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() => expect(popup).not.toBeInTheDocument());
+  },
+};
+
+export const NonButtonTriggerLabel: Story = {
+  render: (args) => (
+    <CountrySelectExample {...args} render={<div />} nativeButton={false} />
+  ),
+  play: async ({ canvasElement }) => {
+    const trigger = within(canvasElement).getByRole('button', {
+      name: 'Country',
+    });
+
+    expect(trigger.tagName).toBe('DIV');
+    expect(trigger).toHaveAccessibleDescription('France');
+    await userEvent.click(trigger);
+    const popup = await waitForCountryPopup({ canvasElement });
+
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() => expect(popup).not.toBeInTheDocument());
+    await waitFor(() => expect(trigger).toHaveFocus());
   },
 };
 

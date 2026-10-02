@@ -12,13 +12,6 @@
         "description": "Class applied to the trigger."
       },
       {
-        "name": "closeDelay",
-        "type": "number",
-        "required": false,
-        "defaultValue": "0",
-        "description": "How long to wait before closing the popover that was opened on hover.\nSpecified in milliseconds.\n\nRequires the `openOnHover` prop."
-      },
-      {
         "name": "countries",
         "type": "readonly CountryChoice[]",
         "required": true,
@@ -26,46 +19,25 @@
         "description": "Prepared country choices with unique non-empty values, display labels, and optional decorative flags."
       },
       {
-        "name": "delay",
-        "type": "number",
-        "required": false,
-        "defaultValue": "300",
-        "description": "How long to wait before the popover may be opened on hover. Specified in milliseconds.\n\nRequires the `openOnHover` prop."
-      },
-      {
         "name": "disabled",
         "type": "boolean",
         "required": false,
         "defaultValue": "false",
-        "description": "Disables opening and selection. An empty country list is also disabled."
-      },
-      {
-        "name": "handle",
-        "type": "PopoverHandle<unknown>",
-        "required": false,
-        "defaultValue": null,
-        "description": "A handle to associate the trigger with a popover."
+        "description": "Prevents opening and selection while the trigger stays focusable. An empty country list is also disabled."
       },
       {
         "name": "id",
         "type": "string",
         "required": false,
         "defaultValue": null,
-        "description": "ID of the trigger. In addition to being forwarded to the rendered element,\nit is also used to specify the active trigger for the popover in controlled mode (with the PopoverRoot `triggerId` prop)."
+        "description": "ID of the trigger. Generated when omitted."
       },
       {
         "name": "label",
         "type": "string",
         "required": false,
         "defaultValue": null,
-        "description": "Optional visible label associated with the trigger."
-      },
-      {
-        "name": "labels",
-        "type": "{ search: string; noCountry: string; noResults: string; }",
-        "required": true,
-        "defaultValue": null,
-        "description": "Host-provided search, no-country, and empty-result text."
+        "description": "Optional visible label that names the trigger and the popup."
       },
       {
         "name": "nativeButton",
@@ -73,6 +45,20 @@
         "required": false,
         "defaultValue": "true",
         "description": "Whether the component renders a native `<button>` element when replacing it\nvia the `render` prop.\nSet to `false` if the rendered element is not a button (e.g. `<div>`)."
+      },
+      {
+        "name": "noCountryLabel",
+        "type": "string",
+        "required": false,
+        "defaultValue": "No country",
+        "description": "Text of the no-country choice, also displayed when no country is selected."
+      },
+      {
+        "name": "noResultsLabel",
+        "type": "string",
+        "required": false,
+        "defaultValue": "No results",
+        "description": "Text displayed when no choice matches the search."
       },
       {
         "name": "onOpenChange",
@@ -96,22 +82,8 @@
         "description": "Controls whether the country popup is open."
       },
       {
-        "name": "openOnHover",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": "false",
-        "description": "Whether the popover should also open when the trigger is hovered."
-      },
-      {
-        "name": "payload",
-        "type": "unknown",
-        "required": false,
-        "defaultValue": null,
-        "description": "A payload to pass to the popover when it is opened."
-      },
-      {
         "name": "popupProps",
-        "type": "Omit<DropdownContentProps, \"children\" | \"aria-label\" | \"keepMounted\">",
+        "type": "Omit<DropdownContentProps, \"children\" | \"aria-label\" | \"aria-labelledby\" | \"keepMounted\">",
         "required": false,
         "defaultValue": null,
         "description": "Dropdown popup positioning, portal, focus, and event options for host integration."
@@ -129,6 +101,13 @@
         "required": false,
         "defaultValue": null,
         "description": "Replaces the trigger element while preserving its behavior and props."
+      },
+      {
+        "name": "searchLabel",
+        "type": "string",
+        "required": false,
+        "defaultValue": "Search",
+        "description": "Placeholder and accessible name of the search input."
       },
       {
         "name": "style",

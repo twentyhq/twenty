@@ -15,11 +15,9 @@ const StatefulCountrySelectExample = ({
     <CountrySelect
       countries={COUNTRY_CHOICES}
       label="Country"
-      labels={{
-        search: 'Search countries',
-        noCountry: 'No country',
-        noResults: 'No countries found',
-      }}
+      searchLabel="Search countries"
+      noCountryLabel="No country"
+      noResultsLabel="No countries found"
       {...props}
       value={value}
       onValueChange={(nextValue) => {

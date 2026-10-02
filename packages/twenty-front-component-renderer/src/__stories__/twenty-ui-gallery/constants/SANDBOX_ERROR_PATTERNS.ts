@@ -11,6 +11,8 @@ export const SANDBOX_ERROR_PATTERNS = {
     "Uncaught TypeError: Cannot read properties of undefined (reading 'pointerType')",
   ELEMENT_CONTAINS:
     /^(?:Uncaught TypeError: )?\w+\.contains is not a function$/,
+  DATASET_TYPE:
+    "Uncaught TypeError: Cannot read properties of undefined (reading 'type')",
   HOST_EVENT_LISTENER: 'Uncaught TypeError: listener is not a function',
   POINTER_EVENT_CONSTRUCTOR:
     /^Uncaught TypeError: .+\.PointerEvent is not a constructor$/,

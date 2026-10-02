@@ -1,8 +1,13 @@
 import { isDefined } from './isDefined';
 
-const LATIN_DIACRITICS = /(\p{Script=Latin})\p{Mark}+/gu;
-const SPECIAL_LATIN_LETTERS = /[øæßðþłœđıŋ]/g;
-const SEARCH_REPLACEMENTS: Record<string, string> = {
+const SPACING_DIACRITICS = /[·ʻʼ´¨ˆ˜΄ˇ˘˙˚˛˝¯¸^`]/g;
+const MARKS_AFTER_LATIN_GREEK_ARABIC_OR_HEBREW_LETTER =
+  /([\p{Script=Latin}\p{Script=Greek}\p{Script_Extensions=Arabic}\p{Script=Hebrew}])\p{Mark}+/gu;
+const CYRILLIC_LETTER_WITH_MARKS = /(\p{Script=Cyrillic})(\p{Mark}+)/gu;
+const CYRILLIC_STRESS_ACCENTS = /[\u0300\u0301]/g;
+const CYRILLIC_LETTERS_FORMED_WITH_ACUTE = ['г', 'к'];
+const HANGUL_SYLLABLES = /[가-힣]+/g;
+const SEARCH_LETTER_REPLACEMENTS: Record<string, string> = {
   ø: 'o',
   æ: 'ae',
   ß: 'ss',
@@ -13,7 +18,22 @@ const SEARCH_REPLACEMENTS: Record<string, string> = {
   đ: 'd',
   ı: 'i',
   ŋ: 'ng',
+  ς: 'σ',
+  ё: 'е',
 };
+const LETTERS_WITH_SEARCH_REPLACEMENT = new RegExp(
+  `[${Object.keys(SEARCH_LETTER_REPLACEMENTS).join('')}]`,
+  'g',
+);
+
+const removeCyrillicStressAccents = (
+  _match: string,
+  letter: string,
+  marks: string,
+) =>
+  CYRILLIC_LETTERS_FORMED_WITH_ACUTE.includes(letter)
+    ? `${letter}${marks}`
+    : `${letter}${marks.replace(CYRILLIC_STRESS_ACCENTS, '')}`;
 
 export const normalizeSearchText = (
   text: string | null | undefined,
@@ -23,12 +43,15 @@ export const normalizeSearchText = (
   }
 
   return text
-    .normalize('NFD')
-    .replace(LATIN_DIACRITICS, '$1')
-    .normalize('NFC')
     .toLowerCase()
+    .normalize('NFD')
+    .replace(SPACING_DIACRITICS, '')
+    .replace(MARKS_AFTER_LATIN_GREEK_ARABIC_OR_HEBREW_LETTER, '$1')
+    .replace(CYRILLIC_LETTER_WITH_MARKS, removeCyrillicStressAccents)
+    .normalize('NFC')
+    .replace(HANGUL_SYLLABLES, (syllables) => syllables.normalize('NFD'))
     .replace(
-      SPECIAL_LATIN_LETTERS,
-      (letter) => SEARCH_REPLACEMENTS[letter] ?? letter,
+      LETTERS_WITH_SEARCH_REPLACEMENT,
+      (letter) => SEARCH_LETTER_REPLACEMENTS[letter] ?? letter,
     );
 };

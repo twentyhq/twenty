@@ -10,12 +10,6 @@ const COUNTRIES = [
   { value: 'Japan', label: 'Japon', flag: '🇯🇵' },
 ];
 
-const LABELS = {
-  search: 'Search countries',
-  noCountry: 'No country',
-  noResults: 'No countries found',
-};
-
 const CountrySelectExample = () => {
   const [country, setCountry] = useState('France');
   const [shippingCountry, setShippingCountry] = useState('Japan');
@@ -24,21 +18,18 @@ const CountrySelectExample = () => {
     <TwentyUiGalleryCard title="Country selection">
       <CountrySelect
         countries={COUNTRIES}
-        labels={LABELS}
         label="Billing country"
         value={country}
         onValueChange={setCountry}
       />
       <CountrySelect
         countries={COUNTRIES}
-        labels={LABELS}
         label="Shipping country"
         value={shippingCountry}
         onValueChange={setShippingCountry}
       />
       <CountrySelect
         countries={COUNTRIES}
-        labels={LABELS}
         label="Disabled country"
         value="France"
         onValueChange={setCountry}

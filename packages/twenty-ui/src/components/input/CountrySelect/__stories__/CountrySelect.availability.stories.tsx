@@ -54,7 +54,8 @@ export const NotifyControlledHostOnce: Story = {
       within(popup).getByRole('button', { name: 'Make countries unavailable' }),
     );
     await waitFor(() => expect(popup).not.toBeInTheDocument());
-    expect(trigger).toBeDisabled();
+    expect(trigger).toHaveAttribute('aria-disabled', 'true');
+    await waitFor(() => expect(trigger).toHaveFocus());
     expect(args.onOpenChange).toHaveBeenLastCalledWith(false);
     await userEvent.click(
       canvas.getByRole('button', { name: 'Refresh host 0' }),
