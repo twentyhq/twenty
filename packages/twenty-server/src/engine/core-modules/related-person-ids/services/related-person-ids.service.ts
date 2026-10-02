@@ -77,7 +77,14 @@ export class RelatedPersonIdsService {
         personIdsForPath.forEach((personId) => personIds.add(personId));
       }
 
-      return [...personIds];
+      // A many-to-one hop only proves its owner is readable, not the person its foreign key points to
+      return this.workspaceOrmManager
+        .getRepositoryWithContextPermissions(PERSON_OBJECT_NAME_SINGULAR)
+        .findRecordIdsAllowedForOperation({
+          recordIds: [...personIds],
+          operationType: 'select',
+          withDeleted: true,
+        });
     });
   }
 
