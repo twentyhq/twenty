@@ -12,7 +12,11 @@ import {
   FileFolder,
   TwoFactorAuthenticationStrategy,
 } from 'twenty-shared/types';
-import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
+import {
+  assertIsDefinedOrThrow,
+  isDefined,
+  isNonEmptyString,
+} from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import type { FileUpload } from 'graphql-upload/processRequest.mjs';
@@ -123,6 +127,10 @@ import { AuthService } from './services/auth.service';
 
 const PASSWORD_RESET_EMAIL_RATE_LIMIT_MAX = 3;
 const PASSWORD_RESET_EMAIL_RATE_LIMIT_WINDOW_MS = 15 * 60 * 1000;
+const PASSWORD_SIGN_IN_MAX_FAILURES_PER_EMAIL = 10;
+const PASSWORD_SIGN_IN_MAX_FAILURES_PER_IP = 50;
+const OTP_MAX_FAILURES_PER_USER = 5;
+const SIGN_IN_FAILURES_WINDOW_MS = 15 * 60 * 1000;
 
 @UsePipes(ResolverValidationPipe)
 @MetadataResolver()
@@ -222,6 +230,7 @@ export class AuthResolver {
     @Args()
     getLoginTokenFromCredentialsInput: UserCredentialsInput,
     @Args('origin') origin: string,
+    @Context() context: { req: Request },
   ): Promise<LoginTokenDTO> {
     const workspace =
       await this.workspaceDomainsService.getWorkspaceByOriginOrDefaultWorkspace(
@@ -236,10 +245,18 @@ export class AuthResolver {
       ),
     );
 
-    const user = await this.authService.validateLoginWithPassword(
-      getLoginTokenFromCredentialsInput,
-      workspace,
-    );
+    const user = await this.throttlerService.runWithFailureLimitOrThrow({
+      limits: this.getPasswordSignInFailureLimits({
+        email: getLoginTokenFromCredentialsInput.email,
+        request: context.req,
+      }),
+      timeWindow: SIGN_IN_FAILURES_WINDOW_MS,
+      attempt: () =>
+        this.authService.validateLoginWithPassword(
+          getLoginTokenFromCredentialsInput,
+          workspace,
+        ),
+    });
 
     const loginToken = await this.loginTokenService.generateLoginToken(
       user.email,
@@ -259,8 +276,15 @@ export class AuthResolver {
     userCredentials: UserCredentialsInput,
     @Context() context: { req: Request },
   ): Promise<AvailableWorkspacesAndAccessTokensDTO> {
-    const user =
-      await this.authService.validateLoginWithPassword(userCredentials);
+    const user = await this.throttlerService.runWithFailureLimitOrThrow({
+      limits: this.getPasswordSignInFailureLimits({
+        email: userCredentials.email,
+        request: context.req,
+      }),
+      timeWindow: SIGN_IN_FAILURES_WINDOW_MS,
+      attempt: () =>
+        this.authService.validateLoginWithPassword(userCredentials),
+    });
 
     const availableWorkspaces =
       await this.userWorkspaceService.findAvailableWorkspacesByEmail(
@@ -429,12 +453,22 @@ export class AuthResolver {
 
     const user = await this.userService.findUserByEmailOrThrow(email);
 
-    await this.twoFactorAuthenticationService.validateStrategy(
-      user.id,
-      twoFactorAuthenticationVerificationInput.otp,
-      workspace.id,
-      TwoFactorAuthenticationStrategy.TOTP,
-    );
+    await this.throttlerService.runWithFailureLimitOrThrow({
+      limits: [
+        {
+          key: `sign-in-otp:user:${user.id}`,
+          maxFailures: OTP_MAX_FAILURES_PER_USER,
+        },
+      ],
+      timeWindow: SIGN_IN_FAILURES_WINDOW_MS,
+      attempt: () =>
+        this.twoFactorAuthenticationService.validateStrategy(
+          user.id,
+          twoFactorAuthenticationVerificationInput.otp,
+          workspace.id,
+          TwoFactorAuthenticationStrategy.TOTP,
+        ),
+    });
 
     const authTokens = await this.authService.verify(
       email,
@@ -1248,5 +1282,30 @@ export class AuthResolver {
     return this.resetPasswordService.validatePasswordResetToken(
       args.passwordResetToken,
     );
+  }
+
+  private getPasswordSignInFailureLimits({
+    email,
+    request,
+  }: {
+    email: string;
+    request: Pick<Request, 'ip'>;
+  }) {
+    const emailLimit = {
+      key: `sign-in-password:email:${email.trim().toLowerCase()}`,
+      maxFailures: PASSWORD_SIGN_IN_MAX_FAILURES_PER_EMAIL,
+    };
+
+    if (!isNonEmptyString(request.ip)) {
+      return [emailLimit];
+    }
+
+    return [
+      emailLimit,
+      {
+        key: `sign-in-password:ip:${request.ip}`,
+        maxFailures: PASSWORD_SIGN_IN_MAX_FAILURES_PER_IP,
+      },
+    ];
   }
 }

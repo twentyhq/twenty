@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { isDefined } from 'twenty-shared/utils';
+
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
@@ -105,6 +107,45 @@ export class ThrottlerService {
     );
   }
 
+  async runWithFailureLimitOrThrow<TResult>({
+    limits,
+    timeWindow,
+    attempt,
+  }: {
+    limits: { key: string; maxFailures: number }[];
+    timeWindow: number;
+    attempt: () => Promise<TResult>;
+  }): Promise<TResult> {
+    const failureCounts = await Promise.all(
+      limits.map(async ({ key }) => {
+        const failureCount = await this.cacheStorage.incrBy(key, 1);
+
+        await this.cacheStorage.expire(key, timeWindow);
+
+        return failureCount;
+      }),
+    );
+
+    const exceededLimit = limits.find(
+      ({ maxFailures }, index) => failureCounts[index] > maxFailures,
+    );
+
+    if (isDefined(exceededLimit)) {
+      await this.releaseFailureReservations(limits);
+
+      throw new ThrottlerException(
+        `Limit reached (${exceededLimit.maxFailures} failed attempts per ${timeWindow} ms)`,
+        ThrottlerExceptionCode.LIMIT_REACHED,
+      );
+    }
+
+    const result = await attempt();
+
+    await this.releaseFailureReservations(limits);
+
+    return result;
+  }
+
   async getAvailableTokensCount(
     key: string,
     maxTokens: number,
@@ -121,5 +162,13 @@ export class ThrottlerService {
     const refillAmount = Math.floor((now - lastRefillAt) * refillRate);
 
     return Math.min(tokens + refillAmount, maxTokens);
+  }
+
+  private async releaseFailureReservations(
+    limits: { key: string }[],
+  ): Promise<void> {
+    await Promise.all(
+      limits.map(({ key }) => this.cacheStorage.incrBy(key, -1)),
+    );
   }
 }
