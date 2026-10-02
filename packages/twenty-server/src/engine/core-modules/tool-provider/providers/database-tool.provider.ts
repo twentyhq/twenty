@@ -234,11 +234,12 @@ export class DatabaseToolProvider implements ToolProvider {
         });
 
         const groupByName = `group_by_${snakePlural}`;
-        const groupBySchema = includeSchemas
+        const shouldIncludeGroupBySchema = shouldIncludeSchema(groupByName);
+        const groupBySchema = shouldIncludeGroupBySchema
           ? generateGroupByToolInputSchema({ objectMetadata, restrictedFields })
           : null;
 
-        if (!includeSchemas || isDefined(groupBySchema)) {
+        if (!shouldIncludeGroupBySchema || isDefined(groupBySchema)) {
           descriptors.push({
             name: groupByName,
             ...getCrudToolLabels(
@@ -249,10 +250,7 @@ export class DatabaseToolProvider implements ToolProvider {
             ),
             description: `Group ${objectMetadata.labelPlural} records by one or two fields and compute an aggregate (COUNT, SUM, AVG, MIN, MAX, etc.). Use for questions like "how many deals per stage?" or "total revenue by company". Returns groups with dimension values and aggregate results, ordered by the aggregate value.`,
             category: ToolCategory.DATABASE_CRUD,
-            ...(isDefined(groupBySchema) &&
-              shouldIncludeSchema(groupByName) && {
-                inputSchema: groupBySchema,
-              }),
+            ...(isDefined(groupBySchema) && { inputSchema: groupBySchema }),
             executionRef: {
               kind: 'database_crud',
               objectNameSingular: objectMetadata.nameSingular,
@@ -408,7 +406,7 @@ export class DatabaseToolProvider implements ToolProvider {
           ),
           description: `Delete a ${objectMetadata.labelSingular} record by marking it as deleted. The record is hidden from normal queries. This is reversible. Use this to remove records.`,
           category: ToolCategory.DATABASE_CRUD,
-          ...(includeSchemas && {
+          ...(shouldIncludeSchema(`delete_one_${snakeSingular}`) && {
             inputSchema: DELETE_TOOL_INPUT_SCHEMA,
           }),
           executionRef: {
@@ -431,7 +429,7 @@ export class DatabaseToolProvider implements ToolProvider {
           ),
           description: `Soft-delete multiple ${objectMetadata.labelPlural} records matching a filter in a single operation. Deleted records are hidden from normal queries and the operation is reversible. WARNING: Use specific filters to avoid unintended mass deletions.`,
           category: ToolCategory.DATABASE_CRUD,
-          ...(includeSchemas && {
+          ...(shouldIncludeSchema(`delete_many_${snakePlural}`) && {
             inputSchema: generateBulkDeleteToolInputSchema({
               objectMetadata,
               restrictedFields,
