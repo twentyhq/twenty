@@ -1,3 +1,7 @@
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
+import { Dropdown } from 'twenty-ui/components';
+import { Button } from 'twenty-ui/primitives/input';
 import { WorkflowVariablesDropdownStepItems } from '@/workflow/workflow-variables/components/WorkflowVariablesDropdownStepItems';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, within } from 'storybook/test';
@@ -10,6 +14,14 @@ const ASYNC_DECORATOR_WAIT_OPTIONS = { timeout: 5_000 };
 const meta = {
   title: 'Modules/Workflow/Variables/WorkflowVariablesDropdownStepItems',
   component: WorkflowVariablesDropdownStepItems,
+  render: (args) => (
+    <DropdownRoot dropdownId="workflow-variables-story" type="picker">
+      <Dropdown.Trigger render={<Button title="Open variables" />} />
+      <DropdownContent width={320}>
+        <WorkflowVariablesDropdownStepItems {...args} />
+      </DropdownContent>
+    </DropdownRoot>
+  ),
   args: {
     step: {
       id: 'code',
@@ -43,10 +55,15 @@ type Story = StoryObj<typeof meta>;
 
 export const NestedFieldSearch: Story = {
   play: async ({ canvasElement, args }) => {
-    const canvas = within(canvasElement);
+    await userEvent.click(
+      await within(canvasElement).findByRole('button', {
+        name: 'Open variables',
+      }),
+    );
+    const canvas = within(canvasElement.ownerDocument.body);
 
     const searchInput = await canvas.findByRole(
-      'textbox',
+      'searchbox',
       undefined,
       ASYNC_DECORATOR_WAIT_OPTIONS,
     );

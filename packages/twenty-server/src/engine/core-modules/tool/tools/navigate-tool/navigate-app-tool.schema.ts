@@ -5,12 +5,13 @@ export const NavigateAppActionZodSchema = z.discriminatedUnion('type', [
     type: z
       .literal('navigateToView')
       .describe(
-        'Navigate to a specific view by name. ONLY use this type when the user explicitly mentions the word "view" (e.g. "go to the My Companies view", "open view All People"). Do NOT use this for general navigation requests.',
+        'Navigate to a specific view by id. ONLY use this type when the user explicitly mentions the word "view" (e.g. "go to the My Companies view") or right after you created or updated a view. Do NOT use this for general navigation requests.',
       ),
-    viewName: z
+    viewId: z
       .string()
+      .uuid()
       .describe(
-        'The name of the view to navigate to (e.g. "My Companies", "All People")',
+        'The id of the view to navigate to. Take it from get_views, or from the result of the tool that created or updated the view (e.g. upsert_complete_view, create_view).',
       ),
   }),
   z.object({
@@ -29,18 +30,14 @@ export const NavigateAppActionZodSchema = z.discriminatedUnion('type', [
     type: z
       .literal('navigateToRecord')
       .describe(
-        'Navigate to a specific record page. Use this when the user wants to go to a particular record by name (e.g. "go to the company Acme", "open the person John Doe", "show me the deal Enterprise Plan").',
+        'Navigate to a specific record page by id. Find the record id first with the find_* tools (e.g. find_many_companies filtered by name), or take it from the result of the tool that created the record. If several records match what the user asked for, ask which one they mean before navigating.',
       ),
     objectNameSingular: z
       .string()
       .describe(
         'The singular name of the object type (e.g. "company", "person", "opportunity")',
       ),
-    recordName: z
-      .string()
-      .describe(
-        'The name or label of the record to navigate to (e.g. "Acme", "John Doe", "Enterprise Plan")',
-      ),
+    recordId: z.string().uuid().describe('The id of the record to navigate to'),
   }),
   z.object({
     type: z
