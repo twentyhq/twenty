@@ -119,6 +119,16 @@ export class FilesFieldSync {
       : null;
   }
 
+  isUpdatingFilesField(
+    updatePayload: Record<string, unknown>,
+    objectMetadataId: string,
+  ): boolean {
+    return this.isPayloadTouchingFilesFields(
+      updatePayload,
+      this.getFilesFields(objectMetadataId),
+    );
+  }
+
   computeFilesFieldDiffBeforeUpdateOne<Entity extends ObjectLiteral>(
     updatePayload: QueryDeepPartialEntity<Entity>,
     target: EntityTarget<Entity>,
@@ -131,15 +141,12 @@ export class FilesFieldSync {
 
     const filesFields = this.getFilesFields(objectMetadata.id);
 
-    if (filesFields.length === 0) {
-      return null;
-    }
-
-    const isModifyingFilesField = filesFields.some((filesField) =>
-      isDefined(updatePayload[filesField.name as keyof typeof updatePayload]),
-    );
-
-    if (!isModifyingFilesField) {
+    if (
+      !this.isPayloadTouchingFilesFields(
+        updatePayload as Record<string, unknown>,
+        filesFields,
+      )
+    ) {
       return null;
     }
 
@@ -633,6 +640,15 @@ export class FilesFieldSync {
 
       return updatedEntity;
     });
+  }
+
+  private isPayloadTouchingFilesFields(
+    updatePayload: Record<string, unknown>,
+    filesFields: OrmFlatFieldMetadata[],
+  ): boolean {
+    return filesFields.some((filesField) =>
+      isDefined(updatePayload[filesField.name]),
+    );
   }
 
   private getFilesFields(objectMetadataId: string): OrmFlatFieldMetadata[] {

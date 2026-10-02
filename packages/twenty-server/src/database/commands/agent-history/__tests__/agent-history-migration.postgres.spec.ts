@@ -225,6 +225,12 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
           threads as never,
           chatSharing as never,
           chatRecordEvents as never,
+          {
+            recordMemberActivity: jest.fn().mockResolvedValue({
+              lastActivityAt: new Date(),
+              updatedAt: new Date(),
+            }),
+          } as never,
         ),
       );
 
@@ -1121,6 +1127,7 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
           repository: threads,
           workspaceId: WORKSPACE_ID,
           threadId: THREAD_ID,
+          recordedActivity: null,
           usage: {
             totalInputTokens: 1,
             totalOutputTokens: 2,

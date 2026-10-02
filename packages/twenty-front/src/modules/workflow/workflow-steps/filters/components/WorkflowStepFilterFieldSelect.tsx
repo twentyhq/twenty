@@ -1,8 +1,9 @@
 import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
 import { useObjectMetadataSelectHelpers } from '@/object-metadata/hooks/useObjectMetadataSelectHelpers';
 import { SelectControl } from '@/ui/input/components/SelectControl';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { WorkflowDropdownStepOutputItems } from '@/workflow/workflow-steps/components/WorkflowDropdownStepOutputItems';
 import { useUpdateStepFilterFromVariable } from '@/workflow/workflow-steps/filters/hooks/useUpdateStepFilterFromVariable';
 import { WorkflowStepFilterContext } from '@/workflow/workflow-steps/filters/states/context/WorkflowStepFilterContext';
@@ -20,7 +21,8 @@ import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useContext, useState } from 'react';
 import { type StepFilter } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { Dropdown } from 'twenty-ui/components';
 import {
   TRIGGER_STEP_ID,
   extractRawVariableNamePart,
@@ -45,7 +47,6 @@ export const WorkflowStepFilterFieldSelect = ({
     WorkflowStepFilterContext,
   );
   const { t } = useLingui();
-  const { closeDropdown } = useCloseDropdown();
   const { updateStepFilterFromVariable } = useUpdateStepFilterFromVariable({
     stepFilter,
   });
@@ -58,7 +59,9 @@ export const WorkflowStepFilterFieldSelect = ({
     shouldDisplayRecordObjects: true,
     fieldTypesToExclude: NON_SELECTABLE_FIELD_TYPES,
   });
-  const noAvailableVariables = availableVariablesInWorkflowStep.length === 0;
+  const noAvailableVariables = !isNonEmptyArray(
+    availableVariablesInWorkflowStep,
+  );
 
   const initialStep =
     availableVariablesInWorkflowStep.length === 1
@@ -98,12 +101,6 @@ export const WorkflowStepFilterFieldSelect = ({
     );
   };
 
-  const handleSubItemSelect = () => {
-    setSelectedStep(initialStep);
-    setSelectedPath([]);
-    closeDropdown(dropdownId);
-  };
-
   const handleBack = () => {
     setSelectedStep(undefined);
   };
@@ -126,7 +123,6 @@ export const WorkflowStepFilterFieldSelect = ({
       stepType: step.type,
       isFullRecord,
     });
-    handleSubItemSelect();
   };
 
   const isSelectedFieldNotFound = !isDefined(variableLabel);
@@ -168,21 +164,15 @@ export const WorkflowStepFilterFieldSelect = ({
 
     return (
       <>
-        <Dropdown
-          dropdownId={dropdownId}
-          clickableComponent={
-            <SelectControl
-              selectedOption={{
-                value: stepFilter.stepOutputKey,
-                label: disabledLabel,
-                fullLabel: variablePathLabel,
-                Icon: icon,
-                iconThemeColor,
-              }}
-              isDisabled={true}
-            />
-          }
-          dropdownComponents={[]}
+        <SelectControl
+          selectedOption={{
+            value: stepFilter.stepOutputKey,
+            label: disabledLabel,
+            fullLabel: variablePathLabel,
+            Icon: icon,
+            iconThemeColor,
+          }}
+          isDisabled={true}
         />
         {brokenFieldReferenceHint}
       </>
@@ -191,9 +181,19 @@ export const WorkflowStepFilterFieldSelect = ({
 
   return (
     <>
-      <Dropdown
+      <DropdownRoot
         dropdownId={dropdownId}
-        clickableComponent={
+        type="picker"
+        onOpenChange={(open) => {
+          if (!open) {
+            return;
+          }
+
+          setSelectedStep(initialStep);
+          setSelectedPath([]);
+        }}
+      >
+        <Dropdown.Trigger nativeButton={false} render={<div />}>
           <SelectControl
             selectedOption={{
               label,
@@ -203,13 +203,16 @@ export const WorkflowStepFilterFieldSelect = ({
               iconThemeColor,
             }}
             textAccent={isSelectedFieldNotFound ? 'placeholder' : 'default'}
-            isDisabled={readonly}
           />
-        }
-        dropdownComponents={
-          !isDefined(selectedStep) ? (
+        </Dropdown.Trigger>
+        <DropdownContent
+          align="end"
+          sideOffset={4}
+          alignOffset={-2}
+          width={GenericDropdownContentWidth.ExtraLarge}
+        >
+          {!isDefined(selectedStep) ? (
             <WorkflowVariablesDropdownSteps
-              dropdownId={dropdownId}
               steps={availableVariablesInWorkflowStep}
               onSelect={handleStepSelect}
               onVariableSelect={handleVariableSelect}
@@ -221,17 +224,11 @@ export const WorkflowStepFilterFieldSelect = ({
               stepFilter={stepFilter}
               step={selectedStep}
               initialPath={selectedPath}
-              onSelect={handleSubItemSelect}
               onBack={handleBack}
             />
-          )
-        }
-        dropdownPlacement="bottom-end"
-        dropdownOffset={{
-          x: 2,
-          y: 4,
-        }}
-      />
+          )}
+        </DropdownContent>
+      </DropdownRoot>
       {brokenFieldReferenceHint}
     </>
   );

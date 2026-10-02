@@ -1,5 +1,4 @@
 import { AgentChatActorService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-actor.service';
-import { RecordShareModule } from 'src/engine/core-modules/record-share/record-share.module';
 import { AgentChatStreamStateModule } from 'src/engine/metadata-modules/ai/ai-chat/agent-chat-stream-state.module';
 import { AgentChatThreadLifecycleModule } from 'src/engine/metadata-modules/ai/ai-chat/agent-chat-thread-lifecycle.module';
 import { AgentChatThreadModule } from 'src/engine/metadata-modules/ai/ai-chat/agent-chat-thread.module';
@@ -37,6 +36,7 @@ import { WorkflowToolsModule } from 'src/modules/workflow/workflow-tools/workflo
 import { AgentChatThreadEntity } from './entities/agent-chat-thread.entity';
 import { StreamAgentChatJob } from './jobs/stream-agent-chat.job';
 import { AgentChatResolver } from './resolvers/agent-chat.resolver';
+import { AgentChatThreadParticipantResolver } from './resolvers/agent-chat-thread-participant.resolver';
 import { AgentChatSubscriptionResolver } from './resolvers/agent-chat-subscription.resolver';
 import { AgentInboxResolver } from './resolvers/agent-inbox.resolver';
 import { WorkspaceSetupChatResolver } from './resolvers/workspace-setup-chat.resolver';
@@ -53,7 +53,6 @@ import { SystemPromptBuilderService } from './services/system-prompt-builder.ser
 
 @Module({
   imports: [
-    RecordShareModule,
     AgentChatStreamStateModule,
     AgentChatThreadLifecycleModule,
     AgentChatThreadModule,
@@ -90,6 +89,7 @@ import { SystemPromptBuilderService } from './services/system-prompt-builder.ser
     AiChatUsageResolver,
     AgentChatCancelSubscriberService,
     AgentChatResolver,
+    AgentChatThreadParticipantResolver,
     AgentChatSubscriptionResolver,
     WorkspaceSetupChatResolver,
     AgentInboxResolver,

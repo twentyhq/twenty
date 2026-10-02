@@ -4,10 +4,8 @@ import { type ToolSet } from 'ai';
 import { ViewFilterOperand } from 'twenty-shared/types';
 import { z } from 'zod';
 
-import { formatValidationErrors } from 'src/engine/core-modules/tool-provider/utils/format-validation-errors.util';
 import { ViewFilterService } from 'src/engine/metadata-modules/view-filter/services/view-filter.service';
 import { type ViewFilterValue } from 'src/engine/metadata-modules/view-filter/types/view-filter-value.type';
-import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 
 const VIEW_FILTER_OPERAND_OPTIONS = Object.values(ViewFilterOperand);
 
@@ -131,32 +129,24 @@ export class ViewFilterToolsFactory {
           value: unknown;
           subFieldName?: string;
         }) => {
-          try {
-            const filter = await this.viewFilterService.createOne({
-              createViewFilterInput: {
-                viewId: parameters.viewId,
-                fieldMetadataId: parameters.fieldMetadataId,
-                operand: parameters.operand,
-                value: parameters.value as ViewFilterValue,
-                subFieldName: parameters.subFieldName,
-              },
-              workspaceId,
-            });
+          const filter = await this.viewFilterService.createOne({
+            createViewFilterInput: {
+              viewId: parameters.viewId,
+              fieldMetadataId: parameters.fieldMetadataId,
+              operand: parameters.operand,
+              value: parameters.value as ViewFilterValue,
+              subFieldName: parameters.subFieldName,
+            },
+            workspaceId,
+          });
 
-            return {
-              id: filter.id,
-              viewId: filter.viewId,
-              fieldMetadataId: filter.fieldMetadataId,
-              operand: filter.operand,
-              value: filter.value,
-            };
-          } catch (error) {
-            if (error instanceof WorkspaceMigrationBuilderException) {
-              throw new Error(formatValidationErrors(error));
-            }
-
-            throw error;
-          }
+          return {
+            id: filter.id,
+            viewId: filter.viewId,
+            fieldMetadataId: filter.fieldMetadataId,
+            operand: filter.operand,
+            value: filter.value,
+          };
         },
       },
       create_many_view_filters: {
@@ -175,31 +165,23 @@ export class ViewFilterToolsFactory {
           const results = [];
 
           for (const filterInput of parameters.filters) {
-            try {
-              const filter = await this.viewFilterService.createOne({
-                createViewFilterInput: {
-                  viewId: filterInput.viewId,
-                  fieldMetadataId: filterInput.fieldMetadataId,
-                  operand: filterInput.operand,
-                  value: filterInput.value as ViewFilterValue,
-                  subFieldName: filterInput.subFieldName,
-                },
-                workspaceId,
-              });
+            const filter = await this.viewFilterService.createOne({
+              createViewFilterInput: {
+                viewId: filterInput.viewId,
+                fieldMetadataId: filterInput.fieldMetadataId,
+                operand: filterInput.operand,
+                value: filterInput.value as ViewFilterValue,
+                subFieldName: filterInput.subFieldName,
+              },
+              workspaceId,
+            });
 
-              results.push({
-                id: filter.id,
-                viewId: filter.viewId,
-                fieldMetadataId: filter.fieldMetadataId,
-                operand: filter.operand,
-              });
-            } catch (error) {
-              if (error instanceof WorkspaceMigrationBuilderException) {
-                throw new Error(formatValidationErrors(error));
-              }
-
-              throw error;
-            }
+            results.push({
+              id: filter.id,
+              viewId: filter.viewId,
+              fieldMetadataId: filter.fieldMetadataId,
+              operand: filter.operand,
+            });
           }
 
           return { created: results };
@@ -215,33 +197,25 @@ export class ViewFilterToolsFactory {
           value?: unknown;
           subFieldName?: string;
         }) => {
-          try {
-            const filter = await this.viewFilterService.updateOne({
-              updateViewFilterInput: {
-                id: parameters.id,
-                update: {
-                  operand: parameters.operand,
-                  value: parameters.value as ViewFilterValue,
-                  subFieldName: parameters.subFieldName,
-                },
+          const filter = await this.viewFilterService.updateOne({
+            updateViewFilterInput: {
+              id: parameters.id,
+              update: {
+                operand: parameters.operand,
+                value: parameters.value as ViewFilterValue,
+                subFieldName: parameters.subFieldName,
               },
-              workspaceId,
-            });
+            },
+            workspaceId,
+          });
 
-            return {
-              id: filter.id,
-              viewId: filter.viewId,
-              fieldMetadataId: filter.fieldMetadataId,
-              operand: filter.operand,
-              value: filter.value,
-            };
-          } catch (error) {
-            if (error instanceof WorkspaceMigrationBuilderException) {
-              throw new Error(formatValidationErrors(error));
-            }
-
-            throw error;
-          }
+          return {
+            id: filter.id,
+            viewId: filter.viewId,
+            fieldMetadataId: filter.fieldMetadataId,
+            operand: filter.operand,
+            value: filter.value,
+          };
         },
       },
       delete_view_filter: {
@@ -249,23 +223,15 @@ export class ViewFilterToolsFactory {
           'Remove a filter from a view. Use get_view_filters to find the filter ID.',
         inputSchema: DeleteViewFilterInputSchema,
         execute: async (parameters: { id: string }) => {
-          try {
-            const filter = await this.viewFilterService.deleteOne({
-              deleteViewFilterInput: { id: parameters.id },
-              workspaceId,
-            });
+          const filter = await this.viewFilterService.deleteOne({
+            deleteViewFilterInput: { id: parameters.id },
+            workspaceId,
+          });
 
-            return {
-              id: filter.id,
-              deleted: true,
-            };
-          } catch (error) {
-            if (error instanceof WorkspaceMigrationBuilderException) {
-              throw new Error(formatValidationErrors(error));
-            }
-
-            throw error;
-          }
+          return {
+            id: filter.id,
+            deleted: true,
+          };
         },
       },
     };

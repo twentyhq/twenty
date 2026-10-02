@@ -5,15 +5,13 @@ import { RECORD_SHARING_FRAGMENT } from '@/object-record/record-sharing/graphql/
 export const SET_RECORD_SHARE = gql`
   ${RECORD_SHARING_FRAGMENT}
   mutation SetRecordShare(
-    $target: RecordSharingTargetInput!
+    $target: RecordTargetInput!
     $principal: RecordSharePrincipalInput!
-    $enabled: Boolean!
-    $accessLevel: RecordShareAccessLevel
+    $accessLevel: RecordShareAccessLevel!
   ) {
     setRecordShare(
       target: $target
       principal: $principal
-      enabled: $enabled
       accessLevel: $accessLevel
     ) {
       ...RecordSharingFields

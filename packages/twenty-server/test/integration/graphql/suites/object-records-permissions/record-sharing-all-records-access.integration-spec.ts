@@ -41,14 +41,16 @@ const OBJECT_PLURAL = 'allRecordsAccessRecords';
 const RESTRICTED_RECORD_ID = randomUUID();
 const SHARED_RECORD_ID = randomUUID();
 const workspaceId = SEED_APPLE_WORKSPACE_ID;
-const EVERYONE = { everyone: true };
 const fields =
-  'viewerAccessLevel generalAccessLevel shares { principalId rowCause accessLevel }';
+  'canManageSharing generalAccessLevel shares { principalId rowCause accessLevel }';
 const READ_SHARING = parse(
-  `query RecordSharing($target: RecordSharingTargetInput!) { recordSharing(target: $target) { ${fields} } }`,
+  `query RecordSharing($target: RecordTargetInput!) { recordSharing(target: $target) { ${fields} } }`,
 );
 const SET_SHARE = parse(
-  `mutation SetShare($target: RecordSharingTargetInput!, $principal: RecordSharePrincipalInput!, $enabled: Boolean!, $accessLevel: RecordShareAccessLevel) { setRecordShare(target: $target, principal: $principal, enabled: $enabled, accessLevel: $accessLevel) { ${fields} } }`,
+  `mutation SetShare($target: RecordTargetInput!, $principal: RecordSharePrincipalInput!, $accessLevel: RecordShareAccessLevel!) { setRecordShare(target: $target, principal: $principal, accessLevel: $accessLevel) { ${fields} } }`,
+);
+const SET_GENERAL_ACCESS = parse(
+  `mutation SetGeneralAccess($target: RecordTargetInput!, $accessLevel: RecordShareAccessLevel!) { setRecordGeneralAccess(target: $target, accessLevel: $accessLevel) { ${fields} } }`,
 );
 
 describe('Access to all records and ownership transfer', () => {
@@ -67,13 +69,11 @@ describe('Access to all records and ownership transfer', () => {
   const setShare = ({
     recordId,
     principal,
-    enabled,
     accessLevel = RecordShareAccessLevel.READ,
     token,
   }: {
     recordId: string;
     principal: RecordSharePrincipalInput;
-    enabled: boolean;
     accessLevel?: RecordShareAccessLevel;
     token: string;
   }) =>
@@ -83,7 +83,6 @@ describe('Access to all records and ownership transfer', () => {
         variables: {
           target: target(recordId),
           principal,
-          enabled,
           accessLevel,
         },
       },
@@ -182,12 +181,16 @@ describe('Access to all records and ownership transfer', () => {
 
       expect(created.body.errors).toBeUndefined();
 
-      const restricted = await setShare({
-        recordId,
-        principal: EVERYONE,
-        enabled: false,
-        token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
-      });
+      const restricted = await makeMetadataApiRequest(
+        {
+          query: SET_GENERAL_ACCESS,
+          variables: {
+            target: target(recordId),
+            accessLevel: RecordShareAccessLevel.NONE,
+          },
+        },
+        APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      );
 
       expect(restricted.body.errors).toBeUndefined();
     }
@@ -227,14 +230,11 @@ describe('Access to all records and ownership transfer', () => {
     );
 
     expect(sharing.body.errors).toBeUndefined();
-    expect(sharing.body.data.recordSharing.viewerAccessLevel).toBe(
-      RecordShareAccessLevel.FULL,
-    );
+    expect(sharing.body.data.recordSharing.canManageSharing).toBe(true);
 
     const shared = await setShare({
       recordId: RESTRICTED_RECORD_ID,
       principal: { workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL },
-      enabled: true,
       token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
     });
 
@@ -310,20 +310,17 @@ describe('Access to all records and ownership transfer', () => {
     await setShare({
       recordId: SHARED_RECORD_ID,
       principal: { workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL },
-      enabled: true,
       accessLevel: RecordShareAccessLevel.FULL,
       token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
     });
     await setShare({
       recordId: RESTRICTED_RECORD_ID,
       principal: { workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL },
-      enabled: true,
       token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
     });
     await setShare({
       recordId: SHARED_RECORD_ID,
       principal: { workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE },
-      enabled: true,
       token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
     });
 
