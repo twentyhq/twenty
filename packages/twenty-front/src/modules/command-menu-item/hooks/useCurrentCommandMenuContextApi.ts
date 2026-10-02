@@ -1,7 +1,7 @@
 import { currentUserState } from '@/auth/states/currentUserState';
-import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { objectPermissionsFamilySelector } from '@/auth/states/objectPermissionsFamilySelector';
+import { EMPTY_COMMAND_MENU_CONTEXT_API } from '@/command-menu-item/constants/EmptyCommandMenuContextApi';
+import { commandMenuTargetObjectPermissionsSelector } from '@/command-menu-item/states/commandMenuTargetObjectPermissionsSelector';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { useContextStoreInstanceId } from '@/context-store/hooks/useContextStoreInstanceId';
@@ -18,6 +18,7 @@ import { recordPermissionsByRecordIdFamilySelector } from '@/object-record/recor
 import { recordStoreRecordsSelector } from '@/object-record/record-store/states/selectors/recordStoreRecordsSelector';
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
 import { currentPageLayoutIdState } from '@/page-layout/states/currentPageLayoutIdState';
+import { permissionFlagMapSelector } from '@/settings/roles/states/permissionFlagMapSelector';
 import { getWorkspaceFeatureFlagsMap } from '@/workspace/utils/getWorkspaceFeatureFlagsMap';
 import { isDashboardInEditModeComponentState } from '@/page-layout/states/isDashboardInEditModeComponentState';
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
@@ -26,7 +27,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isNonEmptyArray } from '@sniptt/guards';
-import { useAtomValue, useStore } from 'jotai';
+import { useAtomValue } from 'jotai';
 import {
   ContextStorePageType,
   type CommandMenuContextApi,
@@ -34,8 +35,6 @@ import {
 import { isDefined, resolveObjectMetadataLabel } from 'twenty-shared/utils';
 
 export const useCurrentCommandMenuContextApi = (): CommandMenuContextApi => {
-  const store = useStore();
-
   const workspaceSurface = useWorkspaceSurface();
   const isInSidePanel = workspaceSurface.type === 'side-panel';
   const contextStoreInstanceId = useContextStoreInstanceId();
@@ -101,21 +100,12 @@ export const useCurrentCommandMenuContextApi = (): CommandMenuContextApi => {
   const dashboardPageLayoutIdForCommandMenu =
     selectedRecords[0]?.pageLayoutId ?? currentPageLayoutId ?? '';
 
-  const objectPermissionsFromHook = useObjectPermissionsForObject(
+  const currentObjectPermissions = useObjectPermissionsForObject(
     objectMetadataItem?.id ?? '',
   );
   const objectPermissions = isDefined(objectMetadataItem)
-    ? objectPermissionsFromHook
-    : {
-        canReadObjectRecords: false,
-        canUpdateObjectRecords: false,
-        canSoftDeleteObjectRecords: false,
-        canDestroyObjectRecords: false,
-        restrictedFields: {},
-        objectMetadataId: '',
-        rowLevelPermissionPredicates: [],
-        rowLevelPermissionPredicateGroups: [],
-      };
+    ? currentObjectPermissions
+    : EMPTY_COMMAND_MENU_CONTEXT_API.objectPermissions;
 
   const contextStoreCurrentViewId = useAtomComponentStateValue(
     contextStoreCurrentViewIdComponentState,
@@ -163,32 +153,14 @@ export const useCurrentCommandMenuContextApi = (): CommandMenuContextApi => {
     currentWorkspace?.featureFlags,
   );
 
-  const currentUserWorkspace = useAtomStateValue(currentUserWorkspaceState);
-
-  const permissionFlags: Record<string, boolean> = {};
-
-  for (const flag of currentUserWorkspace?.permissionFlags ?? []) {
-    permissionFlags[flag] = true;
-  }
+  const permissionFlagMap = useAtomStateValue(permissionFlagMapSelector);
 
   const currentUser = useAtomStateValue(currentUserState);
   const canImpersonate = currentUser?.canImpersonate === true;
   const canAccessFullAdminPanel = currentUser?.canAccessFullAdminPanel === true;
 
-  const targetObjectReadPermissions: Record<string, boolean> = {};
-  const targetObjectWritePermissions: Record<string, boolean> = {};
-
-  for (const metadataItem of objectMetadataItems) {
-    const permissions = store.get(
-      objectPermissionsFamilySelector.selectorFamily({
-        objectNameSingular: metadataItem.nameSingular,
-      }),
-    );
-    targetObjectReadPermissions[metadataItem.nameSingular] =
-      permissions.canRead;
-    targetObjectWritePermissions[metadataItem.nameSingular] =
-      permissions.canUpdate;
-  }
+  const { targetObjectReadPermissions, targetObjectWritePermissions } =
+    useAtomStateValue(commandMenuTargetObjectPermissionsSelector);
 
   const objectMetadataLabel = isDefined(objectMetadataItem)
     ? resolveObjectMetadataLabel({
@@ -209,7 +181,7 @@ export const useCurrentCommandMenuContextApi = (): CommandMenuContextApi => {
     objectPermissions,
     selectedRecords,
     featureFlags,
-    permissionFlags,
+    permissionFlags: permissionFlagMap,
     targetObjectReadPermissions,
     targetObjectWritePermissions,
     canImpersonate,

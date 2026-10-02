@@ -26,11 +26,11 @@ import { ConnectedAccountMetadataModule } from 'src/engine/metadata-modules/conn
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { NavigationMenuItemModule } from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.module';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
-import { ViewModule } from 'src/engine/metadata-modules/view/view.module';
 import { CalendarEventCreationManagerModule } from 'src/modules/calendar/calendar-event-creation-manager/calendar-event-creation-manager.module';
 import { MessagingImportManagerModule } from 'src/modules/messaging/message-import-manager/messaging-import-manager.module';
 import { MessagingSendManagerModule } from 'src/modules/messaging/message-outbound-manager/messaging-send-manager.module';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
+import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 @Module({
   imports: [
     MessagingImportManagerModule,
@@ -44,9 +44,9 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     JwtModule,
     SecureHttpClientModule,
     ObjectMetadataModule,
-    ViewModule,
     NavigationMenuItemModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
+    WorkspaceCacheModule,
   ],
   providers: [
     HttpTool,

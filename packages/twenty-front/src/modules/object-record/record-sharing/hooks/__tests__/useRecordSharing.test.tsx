@@ -29,6 +29,9 @@ const createHarness = () => {
     },
     isEnabled: true,
     hasInheritedAccess: false,
+    isOpenByDefault: false,
+    generalAccessLevel: 'NONE',
+    sharingReach: 'WORKSPACE',
     shares: [],
     roles: [],
   };
@@ -45,6 +48,8 @@ const createHarness = () => {
                 principalType: 'WORKSPACE_MEMBER',
                 accessLevel: 'READ',
                 rowCause: 'MANUAL',
+                canRoleRead: true,
+                canRoleUpdate: true,
               },
             ],
           },

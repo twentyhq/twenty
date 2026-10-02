@@ -67,6 +67,7 @@ export type QueryBuilderContext = {
   tableShape: WorkspaceTableShape;
   executor: QueryExecutor;
   objectRecordsPermissions: ObjectsPermissions;
+  isRecordSharingEnabled?: boolean;
   tableShapeByObjectMetadataId: (
     objectMetadataId: string,
   ) => WorkspaceTableShape;
@@ -78,9 +79,11 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
   readonly alias: string;
   readonly tableShape: WorkspaceTableShape;
   readonly objectRecordsPermissions: ObjectsPermissions;
+  readonly isRecordSharingEnabled: boolean;
 
   private readonly context: QueryBuilderContext;
   private readonly whereClauses: WhereClause[] = [];
+  private readonly rowAccessConditions: string[] = [];
   private readonly joinClauses: JoinClause[] = [];
   private readonly existsFilterClauses: ExistsFilterClause[] = [];
   private readonly extraSelectClauses: SelectClause[] = [];
@@ -100,6 +103,7 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
     this.alias = alias;
     this.tableShape = context.tableShape;
     this.objectRecordsPermissions = context.objectRecordsPermissions;
+    this.isRecordSharingEnabled = context.isRecordSharingEnabled ?? false;
     this.context = context;
   }
 
@@ -123,6 +127,7 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
     );
 
     cloned.whereClauses.push(...this.whereClauses);
+    cloned.rowAccessConditions.push(...this.rowAccessConditions);
     cloned.existsFilterClauses.push(
       ...this.existsFilterClauses.map((existsFilterClause) => ({
         ...existsFilterClause,
@@ -162,13 +167,13 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
     parameters?: Record<string, unknown>,
   ): this {
     this.whereClauses.length = 0;
-    this.aliasesWithRowLevelPermissionApplied.delete(this.alias);
 
     return this.appendWhere('and', condition, parameters);
   }
 
   copyWhereFrom(source: WorkspaceSelectQueryBuilder): this {
     this.whereClauses.push(...source.whereClauses);
+    this.rowAccessConditions.push(...source.rowAccessConditions);
     this.existsFilterClauses.push(
       ...source.existsFilterClauses.map((existsFilterClause) => ({
         ...existsFilterClause,
@@ -192,6 +197,21 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
     parameters?: Record<string, unknown>,
   ): this {
     return this.appendWhere('or', condition, parameters);
+  }
+
+  addRowAccessCondition(
+    condition: string,
+    parameters?: Record<string, unknown>,
+  ): this {
+    if (isDefined(parameters)) {
+      this.setParameters(parameters);
+    }
+
+    if (condition.length > 0) {
+      this.rowAccessConditions.push(condition);
+    }
+
+    return this;
   }
 
   setParameters(parameters: Record<string, unknown>): this {
@@ -793,6 +813,7 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
         formatResult: this.context.formatResult,
       },
       whereClauses: this.whereClauses,
+      rowAccessConditions: this.rowAccessConditions,
       includeDeleted: this.includeDeleted,
       parameters: this.parameters,
     });
@@ -1265,6 +1286,7 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
       columnSelections: this.resolveColumnSelections(),
       joinClauses: this.joinClauses,
       whereClauses: this.whereClauses,
+      rowAccessConditions: this.rowAccessConditions,
       existsFilterClauses: this.existsFilterClauses,
       groupByExpressions: this.groupByExpressions,
       orderByClauses: this.orderByClauses,
