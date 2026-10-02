@@ -16,8 +16,8 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
 
-import { RolePermissionFlagEntity } from 'src/engine/metadata-modules/role-permission-flag/role-permission-flag.entity';
-import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
+import { isPermissionFlagGranted } from 'src/engine/metadata-modules/permissions/utils/is-permission-flag-granted.util';
+import { type RolePermissionFlagEntity } from 'src/engine/metadata-modules/role-permission-flag/role-permission-flag.entity';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { type WorkspaceCacheProviderContext } from 'src/engine/workspace-cache/types/workspace-cache-provider-context.type';
 import { type WorkspaceCacheRowsRequirement } from 'src/engine/workspace-cache/types/workspace-cache-rows-requirement.type';
@@ -87,17 +87,25 @@ export class WorkspaceRolesPermissionsCacheService extends WorkspaceCacheProvide
     for (const role of roles) {
       const roleObjectPermissions =
         objectPermissions.byRoleId.get(role.id) ?? [];
-      const roleRolePermissionFlags = (
-        rolePermissionFlags.byRoleId.get(role.id) ?? []
-      ).map(
-        (rolePermissionFlagRow) =>
-          ({
-            ...rolePermissionFlagRow,
-            permissionFlag: permissionFlagById.get(
-              rolePermissionFlagRow.permissionFlagId,
-            ),
-          }) as RolePermissionFlagEntity,
+      const assignedPermissionFlagUniversalIdentifiers = new Set(
+        (rolePermissionFlags.byRoleId.get(role.id) ?? []).map(
+          (rolePermissionFlagRow) =>
+            this.getRolePermissionFlagUniversalIdentifier({
+              ...rolePermissionFlagRow,
+              permissionFlag: permissionFlagById.get(
+                rolePermissionFlagRow.permissionFlagId,
+              ),
+            } as RolePermissionFlagEntity),
+        ),
       );
+      const isRolePermissionFlagGranted = (
+        permissionFlag: PermissionFlagType,
+      ): boolean =>
+        isPermissionFlagGranted({
+          role,
+          permissionFlag,
+          assignedPermissionFlagUniversalIdentifiers,
+        });
       const roleFieldPermissions = fieldPermissions.byRoleId.get(role.id) ?? [];
 
       const roleRowLevelPermissionPredicates =
@@ -128,12 +136,9 @@ export class WorkspaceRolesPermissionsCacheService extends WorkspaceCacheProvide
           );
 
         if (isWorkflowRelatedObject) {
-          const hasWorkflowsPermissions =
-            this.hasSettingsGatedObjectPermissions(
-              role,
-              roleRolePermissionFlags,
-              PermissionFlagType.WORKFLOWS,
-            );
+          const hasWorkflowsPermissions = isRolePermissionFlagGranted(
+            PermissionFlagType.WORKFLOWS,
+          );
 
           canRead = hasWorkflowsPermissions;
           canUpdate = hasWorkflowsPermissions;
@@ -141,12 +146,9 @@ export class WorkspaceRolesPermissionsCacheService extends WorkspaceCacheProvide
           canDestroy = hasWorkflowsPermissions;
         } else {
           if (isWorkspaceMemberObject) {
-            const hasWorkspaceMembersPermissions =
-              this.hasSettingsGatedObjectPermissions(
-                role,
-                roleRolePermissionFlags,
-                PermissionFlagType.WORKSPACE_MEMBERS,
-              );
+            const hasWorkspaceMembersPermissions = isRolePermissionFlagGranted(
+              PermissionFlagType.WORKSPACE_MEMBERS,
+            );
 
             canRead = true;
             canUpdate = hasWorkspaceMembersPermissions;
@@ -209,12 +211,9 @@ export class WorkspaceRolesPermissionsCacheService extends WorkspaceCacheProvide
           universalIdentifier ===
           STANDARD_OBJECTS.agentChatThread.universalIdentifier
         ) {
-          const hasAiPermission =
-            role.canAccessAllTools ||
-            this.hasPermissionFlag(
-              roleRolePermissionFlags,
-              PermissionFlagType.AI,
-            );
+          const hasAiPermission = isRolePermissionFlagGranted(
+            PermissionFlagType.AI,
+          );
           canRead = canRead && hasAiPermission;
           canUpdate = canUpdate && hasAiPermission;
           canSoftDelete = canSoftDelete && hasAiPermission;
@@ -244,31 +243,6 @@ export class WorkspaceRolesPermissionsCacheService extends WorkspaceCacheProvide
     }
 
     return permissionsByRoleId;
-  }
-
-  private hasSettingsGatedObjectPermissions(
-    role: RoleEntity,
-    rolePermissionFlags: RolePermissionFlagEntity[],
-    permissionFlagType: PermissionFlagType,
-  ): boolean {
-    const hasPermissionFromRole = role.canUpdateAllSettings;
-    return (
-      hasPermissionFromRole ||
-      this.hasPermissionFlag(rolePermissionFlags, permissionFlagType)
-    );
-  }
-
-  private hasPermissionFlag(
-    rolePermissionFlags: RolePermissionFlagEntity[],
-    permissionFlagType: PermissionFlagType,
-  ): boolean {
-    const permissionFlagUniversalIdentifier =
-      SystemPermissionFlag[permissionFlagType];
-    return rolePermissionFlags.some(
-      (flag) =>
-        this.getRolePermissionFlagUniversalIdentifier(flag) ===
-        permissionFlagUniversalIdentifier,
-    );
   }
 
   private getRolePermissionFlagUniversalIdentifier(
