@@ -323,8 +323,7 @@ const buildFieldWidgetConfiguration = ({
       fieldDisplayMode,
       viewId: embeddedViewId,
     },
-    // The universal FIELD configuration carries the view universal identifier
-    // under viewId, resolved to the workspace view id at migration time.
+    // viewId holds the view universal identifier until migration resolves it
     universalConfiguration: {
       configurationType: WidgetConfigurationType.FIELD,
       fieldMetadataId: fieldUniversalIdentifier,

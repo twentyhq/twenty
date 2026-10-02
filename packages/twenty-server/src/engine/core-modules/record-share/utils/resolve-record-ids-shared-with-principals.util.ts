@@ -2,14 +2,14 @@
 
 import { type RecordShareAccessLevel } from 'twenty-shared/types';
 
-import { type RecordShare } from 'src/engine/core-modules/record-share/types/record-share.type';
+import { type RecordShareGrant } from 'src/engine/core-modules/record-share/types/record-share-grant.type';
 
 export const resolveRecordIdsSharedWithPrincipals = ({
   recordShares,
   principalIds,
   accessLevels,
 }: {
-  recordShares: RecordShare[];
+  recordShares: RecordShareGrant[];
   principalIds: string[];
   accessLevels: RecordShareAccessLevel[];
 }): Set<string> =>

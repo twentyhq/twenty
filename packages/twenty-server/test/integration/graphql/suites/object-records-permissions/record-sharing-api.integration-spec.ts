@@ -34,6 +34,7 @@ import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
+import { GRANTABLE_RECORD_SHARE_ACCESS_LEVELS } from 'src/engine/core-modules/record-share/constants/grantable-record-share-access-levels.constant';
 import { type RecordSharePrincipalInput } from 'src/engine/core-modules/record-share/dtos/record-sharing.dto';
 import { type RecordShareStorageService } from 'src/engine/core-modules/record-share/services/record-share-storage.service';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -497,7 +498,7 @@ describe('Generic sharing API on an ordinary private object', () => {
       const principal = {
         workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
       };
-      for (const accessLevel of Object.values(RecordShareAccessLevel)) {
+      for (const accessLevel of GRANTABLE_RECORD_SHARE_ACCESS_LEVELS) {
         const response = await change(
           principal,
           true,

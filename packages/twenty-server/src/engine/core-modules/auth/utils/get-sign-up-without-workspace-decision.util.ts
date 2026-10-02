@@ -3,8 +3,7 @@ export type SignUpWithoutWorkspaceDecision =
   | 'refused'
   | 'requiresDestination';
 
-// Tri-state rather than a boolean so callers only pay for the destination
-// lookup on instances that restrict workspace creation.
+// Tri-state so callers only pay for the destination lookup on instances restricting workspace creation
 export const getSignUpWithoutWorkspaceDecision = ({
   isMultiWorkspaceEnabled,
   isWorkspaceCreationLimitedToServerAdmins,

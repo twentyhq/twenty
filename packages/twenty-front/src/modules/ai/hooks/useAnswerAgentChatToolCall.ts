@@ -28,8 +28,7 @@ export const useAnswerAgentChatToolCall = () => {
   const { enqueueToast } = useToast();
   const { modelIdForRequest } = useAgentChatModelId();
 
-  // Returns whether the call was answered, so a card can keep itself disabled
-  // until the call is closed rather than invite a second answer.
+  // Returns whether answered, so a card stays disabled until the call closes.
   const answerAgentChatToolCall = useCallback(
     async ({
       toolCallId,
@@ -85,8 +84,7 @@ export const useAnswerAgentChatToolCall = () => {
           modelId: modelIdForRequest,
         });
 
-        // No chunk follows when a workflow run resumes in its own executor,
-        // or when other calls of the same step still wait on their answers.
+        // No chunk follows when a workflow run resumes in its own executor or other calls still wait.
         if (!isDefined(streamId)) {
           store.set(isAwaitingFirstChunkAtom, false);
         }

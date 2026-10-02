@@ -8,8 +8,7 @@ import { clientConfigApiStatusState } from '@/client-config/states/clientConfigA
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { SignOutDocument } from '~/generated-metadata/graphql';
 
-// A signOut that never reached the server leaves the httpOnly cookie alive, and
-// only the server can revoke it, so the next boot has to retry.
+// Only the server can revoke the httpOnly cookie, so a signOut that never reached it is retried on next boot.
 export const PendingServerSignOutEffect = () => {
   const apolloClient = useApolloClient();
   const store = useStore();
@@ -29,9 +28,7 @@ export const PendingServerSignOutEffect = () => {
       }
 
       try {
-        // Never retried: a retry is issued seconds later and carries whatever
-        // cookie exists by then, so it would revoke a session established in
-        // the meantime. A failure waits for the next boot instead.
+        // Never retried: a delayed retry would carry, and revoke, a session established in the meantime.
         await apolloClient.mutate({
           mutation: SignOutDocument,
           context: { skipRetry: true },

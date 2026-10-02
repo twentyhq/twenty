@@ -6,15 +6,8 @@ import JsonWorker from 'monaco-editor/esm/vs/language/json/json.worker.js?worker
 import TypeScriptWorker from 'monaco-editor/esm/vs/language/typescript/ts.worker.js?worker';
 import GraphqlWorker from 'monaco-graphql/esm/graphql.worker.js?worker';
 
-// Monaco resolves every language worker through this single global, shared by
-// all editors on the page (GraphiQL's and CodeEditor's alike), so it has to be
-// set up once for the whole app rather than per feature.
-//
-// Every label Monaco can ask for must be mapped: an unmapped label silently
-// falls back to the generic editor worker, which carries no language service.
-// Requests to it then reject with "Missing requestHandler or method: <method>"
-// (`resetSchema`, `findDocumentColors`, `getCodeFixesAtPosition`, ...) and the
-// language features go quietly dead.
+// One global shared by every editor on the page, so it is set up once for the whole app.
+// Every label must be mapped: an unmapped one falls back to the generic worker and its language features silently die.
 const monacoEnvironment: Environment = {
   getWorker: (_workerId, label) => {
     switch (label) {

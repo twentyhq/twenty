@@ -109,8 +109,6 @@ describe('RecordTableWidgetRendererContent', () => {
     },
   );
 
-  // A layout that fell through to the table renderer was the bug this widget
-  // type set out to fix, so every layout has to claim its own renderer.
   it.each([
     [ViewType.TABLE_WIDGET, 'record table widget'],
     [ViewType.KANBAN_WIDGET, 'record board widget'],
@@ -122,7 +120,6 @@ describe('RecordTableWidgetRendererContent', () => {
     expect(screen.getByText(expectedWidget)).toBeVisible();
   });
 
-  // A widget can be backed by a plain view, which keeps that view's layout.
   it('should render a non-widget list view as a list', () => {
     renderWidgetForViewType(ViewType.LIST);
 

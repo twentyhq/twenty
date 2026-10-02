@@ -55,8 +55,6 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 
 const SUGGESTIONS_SEARCH_DEBOUNCE_MS = 300;
 
-// The field sits inside a bordered composer row, so it carries no chrome of its
-// own; the drop-target tint is the only surface it paints.
 const StyledRowContainer = styled.div<{ $isDropTarget: boolean }>`
   align-content: flex-start;
   align-items: center;
@@ -103,8 +101,7 @@ const StyledInput = styled.input`
 
 type EmailRecipientsFieldInputProps = {
   fieldId: EmailRecipientsFieldId;
-  // Indices being dragged out of this field, or null when the drag started
-  // elsewhere.
+  // null when the drag started in another field.
   draggedSourceIndices: number[] | null;
   label: string;
   recipients: EmailRecipient[];
@@ -239,8 +236,7 @@ export const EmailRecipientsFieldInput = ({
 
   const getChipId = (chipIndex: number) => `${focusId}-chip-${chipIndex}`;
 
-  // Gaps at either end of the dragged run put the chips back exactly where they
-  // came from, so marking them would promise a reorder that cannot happen.
+  // Gaps at either end of the dragged run are no-op drops, so marking them would promise a reorder.
   const isNoOpDropGap = (gapIndex: number) => {
     if (draggedSourceIndices === null || draggedSourceIndices.length === 0) {
       return false;

@@ -4,8 +4,7 @@ export type WorkflowExecutorInput = {
   workspaceId: string;
   shouldComputeWorkflowRunStatus?: boolean;
   executedStepsCount?: number;
-  // Set only when stepIds is the one step resuming after its question was
-  // answered, already claimed out of PENDING: the conversation it continues.
+  // The conversation the resumed step continues; set only when stepIds is that one step, already claimed out of PENDING
   resumedThreadId?: string;
 };
 

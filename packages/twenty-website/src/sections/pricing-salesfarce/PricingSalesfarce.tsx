@@ -74,8 +74,6 @@ const CompareList = styled.ul`
   padding: 0;
 `;
 
-// The footer's hover-marker link affordance, so the list reads as the same
-// navigation language.
 const HoverMarker = styled.span`
   background-color: ${semanticColor.ink};
   border-radius: 1px;

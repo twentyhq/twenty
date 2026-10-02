@@ -1,7 +1,6 @@
 import { expect, test } from '../lib/fixtures/screenshot';
 test.describe.serial('Create Kanban View', () => {
-// Unique per run: retries of this serial group re-run field creation against
-// the same database, and a duplicate label makes the form unsubmittable.
+// Unique per run: serial-group retries re-create the field, and a duplicate label blocks the form.
 const industryLabel = `Industry ${Date.now()}`;
 test('Create Industry Select Field', async ({ page }) => {
     await page.getByRole('button', { name: 'Settings', exact: true }).click();

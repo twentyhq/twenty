@@ -518,9 +518,7 @@ export class FileStorageService {
     return file;
   }
 
-  // Creates the file record ahead of a direct client upload. The bytes are
-  // not in storage yet: the record stays PENDING until the upload is
-  // confirmed (completeFileUpload) or reaped by the cleanup cron.
+  // Stays PENDING until completeFileUpload confirms it or the cleanup cron reaps it.
   async createPendingFile({
     fileFolder,
     applicationUniversalIdentifier,
@@ -792,9 +790,7 @@ export class FileStorageService {
     });
   }
 
-  // Removes only the stored object. deleteFile also drops any row sitting at
-  // that path, which is wrong once the row is gone or belongs to a later
-  // upload that reused the same resource path.
+  // Unlike deleteFile, leaves the row alone: it may be gone or belong to a later upload at the same path.
   async deleteFileObject(params: ResourceIdentifier): Promise<void> {
     const driver = this.fileStorageDriverFactory.getCurrentDriver();
     const { onStorageFilePath } =

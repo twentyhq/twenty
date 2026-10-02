@@ -22,9 +22,7 @@ const AUTHORED_METADATA_LABELS = [
 ];
 
 describe('authored metadata label placeholders', () => {
-  // Lingui drops ICU arguments it is not given, so a placeholder outside the
-  // closed vocabulary would be silently erased from the translated label
-  // instead of reaching whoever can fill it.
+  // Lingui silently drops ICU arguments it is not given, so an undeclared placeholder vanishes from translated labels
   it('only uses names the placeholder vocabulary declares', () => {
     const usedNames = new Set(
       AUTHORED_METADATA_LABELS.flatMap((label) =>
@@ -32,8 +30,7 @@ describe('authored metadata label placeholders', () => {
       ),
     );
 
-    // Guards the assertion below against passing vacuously if the authored
-    // labels stopped carrying placeholders at all.
+    // Guards against the check below passing vacuously
     expect(usedNames.size).toBeGreaterThan(0);
     expect(
       [...usedNames].filter(

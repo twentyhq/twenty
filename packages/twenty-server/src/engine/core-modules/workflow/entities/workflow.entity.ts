@@ -1,3 +1,4 @@
+import { ADD_APPLICATION_WORKFLOW_SIDE_EFFECTS_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-45/add-application-workflow-side-effects-upgrade-command-name.constant';
 import {
   Column,
   CreateDateColumn,
@@ -38,6 +39,13 @@ export class WorkflowEntity extends SyncableEntity {
   @Column({ type: 'text', nullable: true })
   name: string | null;
 
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      ADD_APPLICATION_WORKFLOW_SIDE_EFFECTS_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ type: 'text', nullable: true })
+  versionDefinitionHash: string | null;
+
   @Column({ type: 'uuid', nullable: true })
   lastPublishedVersionId: string | null;
 
@@ -54,9 +62,7 @@ export class WorkflowEntity extends SyncableEntity {
   @Column({ type: 'uuid', nullable: true })
   lastPublishedCoreWorkflowVersionId: string | null;
 
-  // Enforced where ids are resolved rather than at each endpoint, so a workflow
-  // private to someone else stops resolving at all and its versions and steps
-  // are unreachable too. See CoreWorkflowIdResolutionService.
+  // Enforced where ids resolve (CoreWorkflowIdResolutionService), so a private workflow's versions and steps are unreachable too.
   @WasIntroducedInUpgrade({
     upgradeCommandName: ADD_WORKFLOW_VISIBILITY_UPGRADE_COMMAND_NAME,
   })

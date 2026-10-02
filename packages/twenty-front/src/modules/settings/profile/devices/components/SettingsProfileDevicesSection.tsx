@@ -29,8 +29,6 @@ const StyledContainer = styled.div`
   gap: ${themeCssVariables.spacing[2]};
 `;
 
-// A flex row so the button keeps its natural width while the card above it
-// stretches to the section.
 const StyledButtonContainer = styled.div`
   display: flex;
 `;

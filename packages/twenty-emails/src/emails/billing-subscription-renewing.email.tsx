@@ -14,9 +14,7 @@ type BillingSubscriptionRenewingEmailProps = {
   locale: keyof typeof APP_LOCALES;
 };
 
-// Sent 7 days before a yearly subscription renews. Goal: never let a large annual
-// charge be a surprise. This is both fair to the customer and expected by auto-renewal
-// laws in several regions. Monthly subscriptions intentionally get no renewal reminders.
+// Sent 7 days before a yearly renewal, as auto-renewal laws in several regions expect; monthly plans get none.
 export const BillingSubscriptionRenewingEmail = ({
   userName,
   workspaceDisplayName,
