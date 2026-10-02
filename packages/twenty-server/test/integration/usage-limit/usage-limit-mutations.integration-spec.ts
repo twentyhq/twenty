@@ -10,6 +10,7 @@ import { type CreateUsageLimitInput } from 'src/engine/core-modules/usage-limit/
 import { UsageLimitEntity } from 'src/engine/core-modules/usage-limit/usage-limit.entity';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
+import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 const CREATE_USAGE_LIMIT = gql`
@@ -59,7 +60,7 @@ const buildPayload = (
   limitKind: 'quota',
   periodCount: 1,
   periodUnit: 'month',
-  meter: 'creditsUsedMicro',
+  unit: UsageUnit.CREDIT,
   limitValue: 1_000_000,
   burstValue: null,
   ...overrides,
@@ -163,6 +164,37 @@ describe('Usage limit mutations', () => {
         'A quota limit cannot hold a burst value',
       );
     });
+
+    it('refuses a unit the operation does not record', async () => {
+      const response = await createUsageLimitRequest({
+        resourceType: UsageResourceType.EMAIL,
+        operationType: UsageOperationType.EMAIL_SEND,
+        unit: UsageUnit.MILLISECOND,
+      });
+
+      expect(response.body.errors?.[0]?.message).toBe(
+        'EMAIL EMAIL_SEND quota limits cannot count MILLISECOND, only CREDIT, INVOCATION',
+      );
+    });
+
+    it('refuses a speed limit spanning every operation', async () => {
+      const response = await createUsageLimitRequest({
+        resourceType: UsageResourceType.WEBHOOK,
+        operationType: UsageOperationType.ALL,
+        limitKind: 'speed',
+        periodUnit: 'second',
+        unit: UsageUnit.REQUEST,
+      });
+
+      expect(response.body.errors?.[0]?.message).toBe(
+        'A speed limit targets a single operation, not ALL',
+      );
+      expect(
+        await usageLimitRepository.countBy({
+          workspaceId: SEED_APPLE_WORKSPACE_ID,
+        }),
+      ).toBe(0);
+    });
   });
 
   describe('updateUsageLimit', () => {
@@ -261,7 +293,7 @@ describe('Usage limit mutations', () => {
           limitKind: 'stock',
           periodCount: 1,
           periodUnit: 'lifetime',
-          meter: 'quantity',
+          unit: UsageUnit.FILE,
           limitValue: 5_000,
         }),
         spenderId: '',
@@ -271,7 +303,7 @@ describe('Usage limit mutations', () => {
 
       const usageLimit = await usageLimitRepository.findOneByOrFail({
         workspaceId: SEED_APPLE_WORKSPACE_ID,
-        meter: 'quantity',
+        unit: UsageUnit.FILE,
       });
 
       return usageLimit;
@@ -287,7 +319,7 @@ describe('Usage limit mutations', () => {
         limitKind: 'stock',
         periodCount: 1,
         periodUnit: 'lifetime',
-        meter: 'quantity',
+        unit: UsageUnit.FILE,
         limitValue: 9_000_000,
       });
 
@@ -329,7 +361,7 @@ describe('Usage limit mutations', () => {
         limitKind: 'stock',
         periodCount: 1,
         periodUnit: 'lifetime',
-        meter: 'bytes',
+        unit: UsageUnit.BYTE,
         limitValue: 1_000_000,
         ...overrides,
       });
@@ -368,10 +400,10 @@ describe('Usage limit mutations', () => {
       ).toBe(0);
     });
 
-    it('allows a workspace write on a meter no default covers', async () => {
+    it('allows a workspace write on a unit no default covers', async () => {
       const response = await makeMetadataApiRequest({
         query: CREATE_USAGE_LIMIT,
-        variables: { input: storageStockPayload({ meter: 'quantity' }) },
+        variables: { input: storageStockPayload({ unit: UsageUnit.FILE }) },
       });
 
       expect(response.body.errors).toBeUndefined();
@@ -385,7 +417,7 @@ describe('Usage limit mutations', () => {
         variables: {
           input: {
             id: usageLimit.id,
-            payload: storageStockPayload({ meter: 'quantity' }),
+            payload: storageStockPayload({ unit: UsageUnit.FILE }),
           },
         },
       });
@@ -395,8 +427,8 @@ describe('Usage limit mutations', () => {
       );
       expect(
         (await usageLimitRepository.findOneByOrFail({ id: usageLimit.id }))
-          .meter,
-      ).toBe('bytes');
+          .unit,
+      ).toBe(UsageUnit.BYTE);
     });
 
     it('refuses deleting an operator override', async () => {
