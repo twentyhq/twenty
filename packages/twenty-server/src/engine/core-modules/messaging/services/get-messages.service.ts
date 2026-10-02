@@ -2,13 +2,17 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { TIMELINE_THREADS_DEFAULT_PAGE_SIZE } from 'src/engine/core-modules/messaging/constants/messaging.constants';
+import {
+  TIMELINE_THREADS_DEFAULT_PAGE_SIZE,
+  TIMELINE_THREADS_OBJECT_NAMES_SINGULAR,
+} from 'src/engine/core-modules/messaging/constants/messaging.constants';
 import { type TimelineThreadsWithTotalDTO } from 'src/engine/core-modules/messaging/dtos/timeline-threads-with-total.dto';
 import { TimelineMessagingService } from 'src/engine/core-modules/messaging/services/timeline-messaging.service';
 import { formatThreads } from 'src/engine/core-modules/messaging/utils/format-threads.util';
 import { RelatedPersonIdsService } from 'src/engine/core-modules/related-person-ids/services/related-person-ids.service';
 import { type TargetFilter } from 'src/engine/core-modules/target/utils/get-target-field-name-for-object-record.util';
 import { MessageCalendarTargetReadinessService } from 'src/engine/core-modules/target/services/message-calendar-target-readiness.service';
+import { TimelineRecordAccessService } from 'src/engine/core-modules/target/services/timeline-record-access.service';
 
 @Injectable()
 export class GetMessagesService {
@@ -16,6 +20,7 @@ export class GetMessagesService {
     private readonly timelineMessagingService: TimelineMessagingService,
     private readonly relatedPersonIdsService: RelatedPersonIdsService,
     private readonly messageCalendarTargetReadinessService: MessageCalendarTargetReadinessService,
+    private readonly timelineRecordAccessService: TimelineRecordAccessService,
   ) {}
 
   async getMessagesFromPersonIds(
@@ -81,6 +86,21 @@ export class GetMessagesService {
     page = 1,
     pageSize: number = TIMELINE_THREADS_DEFAULT_PAGE_SIZE,
   ): Promise<TimelineThreadsWithTotalDTO> {
+    const canReadRecordTimeline =
+      await this.timelineRecordAccessService.canReadRecordTimeline({
+        objectNameSingular,
+        recordId,
+        timelineObjectNamesSingular: TIMELINE_THREADS_OBJECT_NAMES_SINGULAR,
+      });
+
+    if (!canReadRecordTimeline) {
+      return {
+        totalNumberOfThreads: 0,
+        timelineThreads: [],
+        relatedPersonIds: [],
+      };
+    }
+
     const personIds = await this.relatedPersonIdsService.getRelatedPersonIds({
       workspaceId,
       objectNameSingular,

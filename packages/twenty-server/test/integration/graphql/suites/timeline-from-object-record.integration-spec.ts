@@ -6,7 +6,17 @@ import { destroyOneOperationFactory } from 'test/integration/graphql/utils/destr
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
+import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
+import { upsertObjectPermissions } from 'test/integration/metadata/suites/object-permission/utils/upsert-object-permissions.util';
+import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
+import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
+import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
+import { updateWorkspaceMemberRole } from 'test/integration/metadata/suites/role/utils/update-workspace-member-role.util';
+import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
+import { isDefined } from 'twenty-shared/utils';
+
+import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
 const PAGE_SIZE = 50;
 
@@ -80,6 +90,19 @@ const requestTimeline = (
     query,
     variables: { objectNameSingular, recordId, page, pageSize },
   });
+
+const requestTimelineAsMember = (
+  query: DocumentNode,
+  objectNameSingular: string,
+  recordId: string,
+) =>
+  makeGraphqlApiRequest(
+    {
+      query,
+      variables: { objectNameSingular, recordId, page: 1, pageSize: PAGE_SIZE },
+    },
+    APPLE_JONY_MEMBER_ACCESS_TOKEN,
+  );
 
 const TIMELINE_COMPANY_ID = '20202020-7e57-4000-8000-000000000001';
 const TIMELINE_PERSON_ID = '20202020-7e57-4000-8000-000000000002';
@@ -625,6 +648,178 @@ describe('timeline from object record resolvers (integration)', () => {
     expect(fromLegacy.body.data.getTimelineCalendarEventsFromCompanyId).toEqual(
       fromObjectRecord.body.data.getTimelineCalendarEventsFromObjectRecord,
     );
+  });
+
+  describe('for a member whose role cannot read part of the timeline', () => {
+    let originalMemberRoleId: string | undefined;
+    let roleWithoutCompanyReadId: string | undefined;
+    let roleWithoutMessageReadId: string | undefined;
+
+    const createRoleWithoutReadOn = async ({
+      label,
+      objectMetadataId,
+    }: {
+      label: string;
+      objectMetadataId: string;
+    }) => {
+      const { data } = await createOneRole({
+        expectToFail: false,
+        input: {
+          label,
+          description: 'Timeline integration test role',
+          canUpdateAllSettings: false,
+          canAccessAllTools: false,
+          canReadAllObjectRecords: true,
+          canUpdateAllObjectRecords: false,
+          canSoftDeleteAllObjectRecords: false,
+          canDestroyAllObjectRecords: false,
+          canBeAssignedToUsers: true,
+        },
+      });
+
+      const roleId = data?.createOneRole?.id;
+
+      jestExpectToBeDefined(roleId);
+
+      await upsertObjectPermissions({
+        expectToFail: false,
+        input: {
+          roleId,
+          objectPermissions: [
+            {
+              objectMetadataId,
+              canReadObjectRecords: false,
+              canUpdateObjectRecords: false,
+              canSoftDeleteObjectRecords: false,
+              canDestroyObjectRecords: false,
+            },
+          ],
+        },
+      });
+
+      return roleId;
+    };
+
+    const assignRoleToMember = async (roleId: string) => {
+      await updateWorkspaceMemberRole({
+        expectToFail: false,
+        input: {
+          roleId,
+          workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+        },
+      });
+    };
+
+    beforeAll(async () => {
+      originalMemberRoleId = (await findOneRoleByLabel({ label: 'Member' })).id;
+
+      const { objects } = await findManyObjectMetadata({
+        expectToFail: false,
+        input: { filter: {}, paging: { first: 1000 } },
+        gqlFields: 'id nameSingular',
+      });
+      const companyObjectMetadataId = objects.find(
+        ({ nameSingular }) => nameSingular === 'company',
+      )?.id;
+      const messageObjectMetadataId = objects.find(
+        ({ nameSingular }) => nameSingular === 'message',
+      )?.id;
+
+      jestExpectToBeDefined(companyObjectMetadataId);
+      jestExpectToBeDefined(messageObjectMetadataId);
+
+      roleWithoutCompanyReadId = await createRoleWithoutReadOn({
+        label: 'Timeline Without Company Read',
+        objectMetadataId: companyObjectMetadataId,
+      });
+      roleWithoutMessageReadId = await createRoleWithoutReadOn({
+        label: 'Timeline Without Message Read',
+        objectMetadataId: messageObjectMetadataId,
+      });
+    });
+
+    afterAll(async () => {
+      if (isDefined(originalMemberRoleId)) {
+        await assignRoleToMember(originalMemberRoleId);
+      }
+
+      for (const roleId of [
+        roleWithoutCompanyReadId,
+        roleWithoutMessageReadId,
+      ]) {
+        if (isDefined(roleId)) {
+          await deleteOneRole({
+            expectToFail: false,
+            input: { idToDelete: roleId },
+          });
+        }
+      }
+    });
+
+    it('should return empty timelines for a record the member cannot read', async () => {
+      jestExpectToBeDefined(roleWithoutCompanyReadId);
+      await assignRoleToMember(roleWithoutCompanyReadId);
+
+      const [companyThreads, companyEvents, personThreads] = await Promise.all([
+        requestTimelineAsMember(
+          GET_TIMELINE_THREADS,
+          'company',
+          TIMELINE_COMPANY_ID,
+        ),
+        requestTimelineAsMember(
+          GET_TIMELINE_CALENDAR_EVENTS,
+          'company',
+          TIMELINE_COMPANY_ID,
+        ),
+        requestTimelineAsMember(
+          GET_TIMELINE_THREADS,
+          'person',
+          TIMELINE_PERSON_ID,
+        ),
+      ]);
+
+      expect(companyThreads.body.errors).toBeUndefined();
+      expect(companyEvents.body.errors).toBeUndefined();
+      expect(personThreads.body.errors).toBeUndefined();
+      expect(
+        companyThreads.body.data.getTimelineThreadsFromObjectRecord,
+      ).toEqual({ totalNumberOfThreads: 0, timelineThreads: [] });
+      expect(
+        companyEvents.body.data.getTimelineCalendarEventsFromObjectRecord,
+      ).toEqual({ totalNumberOfCalendarEvents: 0, timelineCalendarEvents: [] });
+      expect(
+        personThreads.body.data.getTimelineThreadsFromObjectRecord
+          .totalNumberOfThreads,
+      ).toBeGreaterThan(0);
+    });
+
+    it('should return an empty message timeline when the member cannot read messages', async () => {
+      jestExpectToBeDefined(roleWithoutMessageReadId);
+      await assignRoleToMember(roleWithoutMessageReadId);
+
+      const [personThreads, personEvents] = await Promise.all([
+        requestTimelineAsMember(
+          GET_TIMELINE_THREADS,
+          'person',
+          TIMELINE_PERSON_ID,
+        ),
+        requestTimelineAsMember(
+          GET_TIMELINE_CALENDAR_EVENTS,
+          'person',
+          TIMELINE_PERSON_ID,
+        ),
+      ]);
+
+      expect(personThreads.body.errors).toBeUndefined();
+      expect(personEvents.body.errors).toBeUndefined();
+      expect(
+        personThreads.body.data.getTimelineThreadsFromObjectRecord,
+      ).toEqual({ totalNumberOfThreads: 0, timelineThreads: [] });
+      expect(
+        personEvents.body.data.getTimelineCalendarEventsFromObjectRecord
+          .totalNumberOfCalendarEvents,
+      ).toBeGreaterThan(0);
+    });
   });
 
   describe('with a custom object that has no people on its timeline', () => {

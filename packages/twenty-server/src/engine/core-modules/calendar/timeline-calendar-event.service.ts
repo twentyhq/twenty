@@ -7,12 +7,16 @@ import { isDefined } from 'twenty-shared/utils';
 import { Any, In, type Repository } from 'typeorm';
 
 import { CalendarChannelVisibility } from 'twenty-shared/types';
-import { TIMELINE_CALENDAR_EVENTS_DEFAULT_PAGE_SIZE } from 'src/engine/core-modules/calendar/constants/calendar.constants';
+import {
+  TIMELINE_CALENDAR_EVENTS_DEFAULT_PAGE_SIZE,
+  TIMELINE_CALENDAR_EVENTS_OBJECT_NAMES_SINGULAR,
+} from 'src/engine/core-modules/calendar/constants/calendar.constants';
 import { type TimelineCalendarEventsWithTotalDTO } from 'src/engine/core-modules/calendar/dtos/timeline-calendar-events-with-total.dto';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { RelatedPersonIdsService } from 'src/engine/core-modules/related-person-ids/services/related-person-ids.service';
 import { type TargetFilter } from 'src/engine/core-modules/target/utils/get-target-field-name-for-object-record.util';
 import { MessageCalendarTargetReadinessService } from 'src/engine/core-modules/target/services/message-calendar-target-readiness.service';
+import { TimelineRecordAccessService } from 'src/engine/core-modules/target/services/timeline-record-access.service';
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -36,6 +40,7 @@ export class TimelineCalendarEventService {
     private readonly relatedPersonIdsService: RelatedPersonIdsService,
     private readonly fileUrlService: FileUrlService,
     private readonly messageCalendarTargetReadinessService: MessageCalendarTargetReadinessService,
+    private readonly timelineRecordAccessService: TimelineRecordAccessService,
   ) {}
 
   async getCalendarEventsFromPersonIds({
@@ -344,6 +349,22 @@ export class TimelineCalendarEventService {
     page: number;
     pageSize: number;
   }): Promise<TimelineCalendarEventsWithTotalDTO> {
+    const canReadRecordTimeline =
+      await this.timelineRecordAccessService.canReadRecordTimeline({
+        objectNameSingular,
+        recordId,
+        timelineObjectNamesSingular:
+          TIMELINE_CALENDAR_EVENTS_OBJECT_NAMES_SINGULAR,
+      });
+
+    if (!canReadRecordTimeline) {
+      return {
+        totalNumberOfCalendarEvents: 0,
+        timelineCalendarEvents: [],
+        relatedPersonIds: [],
+      };
+    }
+
     const personIds = await this.relatedPersonIdsService.getRelatedPersonIds({
       workspaceId,
       objectNameSingular,

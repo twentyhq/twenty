@@ -8,8 +8,11 @@ import {
   findRelationPathsToPerson,
   type RelationPathToPerson,
 } from 'src/engine/core-modules/related-person-ids/utils/find-relation-paths-to-person.util';
+import {
+  PermissionsException,
+  PermissionsExceptionCode,
+} from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
-import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 const PERSON_OBJECT_NAME_SINGULAR = 'person';
@@ -59,13 +62,23 @@ export class RelatedPersonIdsService {
         const personIdsForPath = await this.walkRelationPath({
           recordId,
           relationPath,
+        }).catch((error: unknown) => {
+          // A path through an object or field the caller cannot read contributes no people
+          if (
+            error instanceof PermissionsException &&
+            error.code === PermissionsExceptionCode.PERMISSION_DENIED
+          ) {
+            return [];
+          }
+
+          throw error;
         });
 
         personIdsForPath.forEach((personId) => personIds.add(personId));
       }
 
       return [...personIds];
-    }, buildSystemAuthContext(workspaceId));
+    });
   }
 
   private async walkRelationPath({
@@ -83,9 +96,8 @@ export class RelatedPersonIdsService {
       }
 
       const repository =
-        this.workspaceOrmManager.getRepository<RelationWalkRecord>(
+        this.workspaceOrmManager.getRepositoryWithContextPermissions<RelationWalkRecord>(
           hop.queryObjectNameSingular,
-          { shouldBypassPermissionChecks: true },
         );
 
       if (hop.direction === RelationType.MANY_TO_ONE) {
