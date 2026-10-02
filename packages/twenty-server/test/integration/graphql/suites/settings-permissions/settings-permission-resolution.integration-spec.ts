@@ -261,11 +261,23 @@ describe('Settings permission resolution', () => {
 
   afterAll(async () => {
     for (const apiKeyId of createdApiKeyIds) {
+      await makeMetadataApiRequest({
+        query: gql`
+          mutation RevokeApiKey($input: RevokeApiKeyInput!) {
+            revokeApiKey(input: $input) {
+              id
+            }
+          }
+        `,
+        variables: { input: { id: apiKeyId } },
+      });
       await globalThis.testDataSource.query(
         'DELETE FROM core."apiKey" WHERE id = $1',
         [apiKeyId],
       );
     }
+
+    await invalidateWorkspaceCache(['apiKeyMap', 'apiKeyRoleMap']);
 
     for (const roleId of createdRoleIds) {
       await deleteOneRole({

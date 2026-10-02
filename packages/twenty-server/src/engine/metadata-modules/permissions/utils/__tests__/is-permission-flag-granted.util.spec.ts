@@ -104,7 +104,7 @@ describe('isPermissionFlagGranted', () => {
     );
   });
 
-  it('denies a flag it cannot classify unless it is assigned', () => {
+  it('denies a flag it cannot classify', () => {
     const unknownPermissionFlag = 'UNKNOWN_FLAG' as PermissionFlagType;
 
     expect(
