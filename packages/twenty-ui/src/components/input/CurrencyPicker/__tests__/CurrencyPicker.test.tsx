@@ -5,6 +5,7 @@ import { runComponentConformance } from '@test-utilities/conformance/runComponen
 import { Dropdown } from '@ui/components/navigation/Dropdown/Dropdown';
 
 import { CurrencyPicker } from '../CurrencyPicker';
+import styles from '../CurrencyPicker.module.scss';
 
 const CurrencyPickerTriggerWrapper = ({
   children,
@@ -27,6 +28,7 @@ runComponentConformance({
   element: <CurrencyPicker.Trigger value="USD" aria-label="Currency" />,
   refInstanceOf: HTMLButtonElement,
   wrapper: CurrencyPickerTriggerWrapper,
+  ownClassName: styles.trigger,
   renderPropTagName: 'button',
 });
 
@@ -41,5 +43,6 @@ runComponentConformance({
   ),
   refInstanceOf: HTMLDivElement,
   wrapper: CurrencyPickerOptionsWrapper,
+  ownClassName: styles.options,
   renderPropTagName: 'div',
 });
