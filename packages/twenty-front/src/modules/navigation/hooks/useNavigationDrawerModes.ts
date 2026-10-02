@@ -2,8 +2,8 @@ import { useLingui } from '@lingui/react/macro';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import {
   type IconComponent,
-  IconComment,
   IconHome,
+  IconInbox,
   IconSettings,
 } from 'twenty-ui/icon';
 
@@ -44,8 +44,8 @@ export const useNavigationDrawerModes = (): NavigationDrawerMode[] => {
       label: t`Home`,
     },
     [NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY]: {
-      Icon: IconComment,
-      label: t`AI`,
+      Icon: IconInbox,
+      label: t`Inbox`,
     },
     [NAVIGATION_DRAWER_TABS.SETTINGS]: {
       Icon: IconSettings,

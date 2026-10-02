@@ -289,6 +289,23 @@ describe('ChatReferenceChip', () => {
     });
   });
 
+  it('should open a record beside a chat shown in the inbox', () => {
+    renderWithReferences(
+      <ChatReferenceChip reference={findCase('record').reference} />,
+      { initialPath: '/inbox/99999999-9999-4999-8999-999999999999' },
+    );
+
+    clickChip('Acme');
+
+    expect(openRecordInSidePanelMock).toHaveBeenCalledWith({
+      recordId: RECORD_ID,
+      objectNameSingular: 'company',
+    });
+    expect(screen.getByTestId('location-probe')).toHaveTextContent(
+      '/inbox/99999999-9999-4999-8999-999999999999',
+    );
+  });
+
   it('should navigate to the application settings from the chat page since they have no side panel route', () => {
     renderWithReferences(
       <ChatReferenceChip reference={findCase('app').reference} />,

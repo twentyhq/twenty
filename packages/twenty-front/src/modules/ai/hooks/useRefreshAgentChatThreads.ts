@@ -8,9 +8,11 @@ import { agentChatUsageComponentFamilyState } from '@/ai/states/agentChatUsageCo
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { buildAgentChatThreadListFilter } from '@/ai/utils/buildAgentChatThreadListFilter';
+import { getAgentChatThreadLastActivityFieldName } from '@/ai/utils/getAgentChatThreadLastActivityFieldName';
 import { getAgentChatUsageFromThread } from '@/ai/utils/getAgentChatUsageFromThread';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { useAgentChatThreadParticipants } from '@/ai/hooks/useAgentChatThreadParticipants';
 import { useApplyAgentChatThreadUpdate } from '@/ai/hooks/useApplyAgentChatThreadUpdate';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
@@ -37,6 +39,8 @@ export const useRefreshAgentChatThreads = () => {
   const { refreshAgentChatThreadPermissions } =
     useRefreshAgentChatThreadPermissions();
   const { addAgentChatThread } = useApplyAgentChatThreadUpdate();
+  const { refreshAgentChatThreadParticipants } =
+    useAgentChatThreadParticipants();
 
   const fetchAgentChatThreadsPage = useCallback(
     async ({
@@ -77,7 +81,13 @@ export const useRefreshAgentChatThreads = () => {
                   ],
                 }
               : buildAgentChatThreadListFilter(chatObjectMetadataItem),
-            orderBy: [{ updatedAt: 'DescNullsLast' }],
+            orderBy: [
+              {
+                [getAgentChatThreadLastActivityFieldName(
+                  chatObjectMetadataItem,
+                )]: 'DescNullsLast',
+              },
+            ],
             limit: QUERY_MAX_RECORDS,
             lastCursor,
           },
@@ -184,10 +194,14 @@ export const useRefreshAgentChatThreads = () => {
     ],
   );
 
-  const refreshAgentChatThreads = useCallback(
-    () => loadAgentChatThreads('refresh'),
-    [loadAgentChatThreads],
-  );
+  const refreshAgentChatThreads = useCallback(async () => {
+    const [threads] = await Promise.all([
+      loadAgentChatThreads('refresh'),
+      refreshAgentChatThreadParticipants(),
+    ]);
+
+    return threads;
+  }, [loadAgentChatThreads, refreshAgentChatThreadParticipants]);
 
   const fetchMoreAgentChatThreads = useCallback(
     () => loadAgentChatThreads('fetch-more'),
