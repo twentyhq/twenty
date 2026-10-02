@@ -1,12 +1,10 @@
 /* @license Enterprise */
 
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { msg } from '@lingui/core/macro';
 import { RecordSharePrincipalType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { In, Repository } from 'typeorm';
 
 import {
   RecordShareException,
@@ -15,7 +13,6 @@ import {
 import { type RecordShareInput } from 'src/engine/core-modules/record-share/types/record-share-input.type';
 import { buildRoleRowAccessPolicySubject } from 'src/engine/core-modules/record-share/utils/build-role-row-access-policy-subject.util';
 import { isRecordGrantBeyondRoleAllowed } from 'src/engine/core-modules/record-share/utils/is-record-grant-beyond-role-allowed.util';
-import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -28,11 +25,7 @@ type RecordSharePrincipal = Pick<
 
 @Injectable()
 export class RecordSharePrincipalService {
-  constructor(
-    private readonly workspaceCacheService: WorkspaceCacheService,
-    @InjectRepository(UserWorkspaceEntity)
-    private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
-  ) {}
+  constructor(private readonly workspaceCacheService: WorkspaceCacheService) {}
 
   // Undefined for everyone, and for a member who left or whose membership is gone
   async resolveRoleIds({
@@ -47,52 +40,30 @@ export class RecordSharePrincipalService {
         'flatWorkspaceMemberMaps',
         'userWorkspaceRoleMap',
       ]);
-    const userIdByWorkspaceMemberId = new Map(
-      principals
-        .filter(
-          (principal) =>
-            principal.principalType ===
-            RecordSharePrincipalType.WORKSPACE_MEMBER,
-        )
-        .map((principal) => {
-          const flatWorkspaceMember =
-            flatWorkspaceMemberMaps.byId[principal.principalId];
-
-          return [
-            principal.principalId,
-            isDefined(flatWorkspaceMember?.deletedAt)
-              ? undefined
-              : flatWorkspaceMember?.userId,
-          ];
-        })
-        .filter((entry): entry is [string, string] => isDefined(entry[1])),
-    );
-    // Members are cached without their user workspace, which holds the role
-    const userWorkspaces =
-      userIdByWorkspaceMemberId.size > 0
-        ? await this.userWorkspaceRepository.find({
-            select: ['id', 'userId'],
-            where: {
-              workspaceId,
-              userId: In([...userIdByWorkspaceMemberId.values()]),
-            },
-          })
-        : [];
-    const roleIdByUserId = new Map(
-      userWorkspaces.map((userWorkspace) => [
-        userWorkspace.userId,
-        userWorkspaceRoleMap[userWorkspace.id],
-      ]),
-    );
 
     return principals.map((principal) => {
       switch (principal.principalType) {
         case RecordSharePrincipalType.ROLE:
           return principal.principalId;
         case RecordSharePrincipalType.WORKSPACE_MEMBER: {
-          const userId = userIdByWorkspaceMemberId.get(principal.principalId);
+          const flatWorkspaceMember =
+            flatWorkspaceMemberMaps.byId[principal.principalId];
 
-          return isDefined(userId) ? roleIdByUserId.get(userId) : undefined;
+          if (
+            !isDefined(flatWorkspaceMember) ||
+            isDefined(flatWorkspaceMember.deletedAt)
+          ) {
+            return undefined;
+          }
+
+          const userWorkspaceId =
+            flatWorkspaceMemberMaps.userWorkspaceIdByUserId[
+              flatWorkspaceMember.userId
+            ];
+
+          return isDefined(userWorkspaceId)
+            ? userWorkspaceRoleMap[userWorkspaceId]
+            : undefined;
         }
         default:
           return undefined;
