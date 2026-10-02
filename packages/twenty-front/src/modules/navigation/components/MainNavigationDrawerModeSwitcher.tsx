@@ -144,7 +144,7 @@ export const MainNavigationDrawerModeSwitcher = () => {
               isDisabled
                 ? mode === NAVIGATION_DRAWER_TABS.SETTINGS
                   ? t`Finish editing the layout to open Settings`
-                  : t`Finish editing the layout to open AI`
+                  : t`Finish editing the layout to open Inbox`
                 : label
             }
             disabled={!shouldShowTooltips && !isDisabled}

@@ -1,8 +1,4 @@
-import { isObject } from '@sniptt/guards';
+import { isFailedToolOutput } from 'src/engine/core-modules/tool-provider/utils/is-failed-tool-output.util';
 
-export const isToolOutputSuccessful = (output: unknown): boolean => {
-  const isFailure =
-    isObject(output) && 'success' in output && output.success === false;
-
-  return !isFailure;
-};
+export const isToolOutputSuccessful = (output: unknown): boolean =>
+  !isFailedToolOutput(output);

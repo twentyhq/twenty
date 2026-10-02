@@ -71,6 +71,35 @@ export const STANDARD_OBJECT_FIELDS = {
     recordTargets: {
       universalIdentifier: '5b37eceb-2992-4d27-9897-14af3e3ce9b2',
     },
+    participants: {
+      universalIdentifier: '2ede85e4-216b-4308-8556-b045971414e7',
+    },
+    lastActivityAt: {
+      universalIdentifier: 'b3847509-8e98-4038-88de-dd891767d6fc',
+    },
+    lastMessageText: {
+      universalIdentifier: '1c16eaef-172b-4778-b14b-f302bc6021e4',
+    },
+    lastMessageSenderWorkspaceMemberId: {
+      universalIdentifier: '5c3611a7-7324-472e-9b43-4c7779e5e7cf',
+    },
+    writerWorkspaceMemberIds: {
+      universalIdentifier: 'c8fe2406-ad9c-4274-aeb5-9beb74d4b353',
+    },
+  },
+  agentChatThreadParticipant: {
+    ...buildStandardObjectBaseFields(
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.agentChatThreadParticipant,
+    ),
+    thread: { universalIdentifier: '7d0282a5-11ce-4da8-a165-30909ffdf383' },
+    workspaceMember: {
+      universalIdentifier: '4345764d-878b-4a3a-b1c9-822378f868e6',
+    },
+    lastReadAt: { universalIdentifier: '7e3a8319-c127-4c4f-add4-6feac37ea555' },
+    archivedAt: { universalIdentifier: 'ee092c9d-f27e-4fbc-8dad-9ec950936216' },
+    snoozedUntil: {
+      universalIdentifier: '65bc5785-877d-4363-b65c-95175ba20fd0',
+    },
   },
   agentChatThreadTarget: {
     ...buildStandardObjectBaseFields(
@@ -1572,6 +1601,9 @@ export const STANDARD_OBJECT_FIELDS = {
     },
     agentChatThreads: {
       universalIdentifier: 'fbaf92a6-44ae-4b6d-9d10-2c15d84eaea1',
+    },
+    agentChatThreadParticipants: {
+      universalIdentifier: 'd1de909f-a0eb-4e94-8903-abec012864c9',
     },
     timeZone: {
       universalIdentifier: '20202020-2d33-4c21-a86e-5943b050dd54',
