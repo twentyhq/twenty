@@ -4,7 +4,7 @@ import { convertBlockNoteHtmlToBlocks } from 'src/engine/core-modules/record-tra
 // Compares the DOM-free markdown conversion with BlockNote's own jsdom +
 // ProseMirror parser. Run it after upgrading @blocknote/core, then update
 // BLOCKNOTE_VERSION_VERIFIED_FOR_PARITY:
-//   npx tsx scripts/check-blocknote-markdown-parity.ts
+//   npx tsx test/rich-text/check-blocknote-markdown-parity.ts
 
 const createRandom = (seed: number) => {
   let state = seed;
