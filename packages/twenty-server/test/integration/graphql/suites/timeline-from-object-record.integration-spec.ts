@@ -9,11 +9,13 @@ import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { upsertObjectPermissions } from 'test/integration/metadata/suites/object-permission/utils/upsert-object-permissions.util';
+import { upsertRowLevelPermissionPredicates } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-predicates.util';
 import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
 import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
 import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
 import { updateWorkspaceMemberRole } from 'test/integration/metadata/suites/role/utils/update-workspace-member-role.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
+import { RowLevelPermissionPredicateOperand } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
@@ -58,6 +60,24 @@ const GET_TIMELINE_CALENDAR_EVENTS = gql`
       timelineCalendarEvents {
         id
       }
+    }
+  }
+`;
+
+const GET_TIMELINE_RELATED_PERSON_IDS = gql`
+  query GetTimelineRelatedPersonIds(
+    $objectNameSingular: String!
+    $recordId: UUID!
+    $page: Int!
+    $pageSize: Int!
+  ) {
+    getTimelineThreadsFromObjectRecord(
+      objectNameSingular: $objectNameSingular
+      recordId: $recordId
+      page: $page
+      pageSize: $pageSize
+    ) {
+      relatedPersonIds
     }
   }
 `;
@@ -136,6 +156,9 @@ const TIMELINE_SECOND_CALENDAR_EVENT_TARGET_ID =
   '20202020-7e57-4000-8000-000000000013';
 const TIMELINE_SECOND_MESSAGE_PARTICIPANT_ID =
   '20202020-7e57-4000-8000-000000000014';
+const TIMELINE_POINT_OF_CONTACT_PERSON_ID =
+  '20202020-7e57-4000-8000-000000000015';
+const TIMELINE_OPPORTUNITY_ID = '20202020-7e57-4000-8000-000000000016';
 
 // Destroyed in afterAll in child-before-parent order to satisfy foreign keys.
 const TIMELINE_FIXTURES: { objectMetadataSingularName: string; id: string }[] =
@@ -205,7 +228,12 @@ const TIMELINE_FIXTURES: { objectMetadataSingularName: string; id: string }[] =
       objectMetadataSingularName: 'messageThread',
       id: TIMELINE_SECOND_MESSAGE_THREAD_ID,
     },
+    { objectMetadataSingularName: 'opportunity', id: TIMELINE_OPPORTUNITY_ID },
     { objectMetadataSingularName: 'person', id: TIMELINE_PERSON_ID },
+    {
+      objectMetadataSingularName: 'person',
+      id: TIMELINE_POINT_OF_CONTACT_PERSON_ID,
+    },
     { objectMetadataSingularName: 'company', id: TIMELINE_MANUAL_COMPANY_ID },
     { objectMetadataSingularName: 'company', id: TIMELINE_COMPANY_ID },
   ];
@@ -360,6 +388,18 @@ describe('timeline from object record resolvers (integration)', () => {
       id: TIMELINE_SECOND_CALENDAR_EVENT_TARGET_ID,
       calendarEventId: TIMELINE_SECOND_CALENDAR_EVENT_ID,
       targetCompanyId: TIMELINE_MANUAL_COMPANY_ID,
+    });
+
+    await createTimelineRecord('person', {
+      id: TIMELINE_POINT_OF_CONTACT_PERSON_ID,
+      name: { firstName: 'Timeline', lastName: 'Point Of Contact' },
+    });
+
+    await createTimelineRecord('opportunity', {
+      id: TIMELINE_OPPORTUNITY_ID,
+      name: 'Timeline Opportunity',
+      companyId: TIMELINE_COMPANY_ID,
+      pointOfContactId: TIMELINE_POINT_OF_CONTACT_PERSON_ID,
     });
 
     personWithThreads = {
@@ -650,18 +690,38 @@ describe('timeline from object record resolvers (integration)', () => {
     );
   });
 
+  it('should return empty timelines for an unknown object', async () => {
+    const [threadResponse, calendarResponse] = await Promise.all([
+      requestTimeline(
+        GET_TIMELINE_THREADS,
+        'notATimelineObject',
+        TIMELINE_COMPANY_ID,
+      ),
+      requestTimeline(
+        GET_TIMELINE_CALENDAR_EVENTS,
+        'notATimelineObject',
+        TIMELINE_COMPANY_ID,
+      ),
+    ]);
+
+    expect(threadResponse.body.errors).toBeUndefined();
+    expect(calendarResponse.body.errors).toBeUndefined();
+    expect(threadResponse.body.data.getTimelineThreadsFromObjectRecord).toEqual(
+      { totalNumberOfThreads: 0, timelineThreads: [] },
+    );
+    expect(
+      calendarResponse.body.data.getTimelineCalendarEventsFromObjectRecord,
+    ).toEqual({ totalNumberOfCalendarEvents: 0, timelineCalendarEvents: [] });
+  });
+
   describe('for a member whose role cannot read part of the timeline', () => {
     let originalMemberRoleId: string | undefined;
     let roleWithoutCompanyReadId: string | undefined;
     let roleWithoutMessageReadId: string | undefined;
+    let roleWithoutPersonReadId: string | undefined;
+    let roleWithCompanyRowLevelPermissionId: string | undefined;
 
-    const createRoleWithoutReadOn = async ({
-      label,
-      objectMetadataId,
-    }: {
-      label: string;
-      objectMetadataId: string;
-    }) => {
+    const createTimelineRole = async (label: string) => {
       const { data } = await createOneRole({
         expectToFail: false,
         input: {
@@ -680,6 +740,18 @@ describe('timeline from object record resolvers (integration)', () => {
       const roleId = data?.createOneRole?.id;
 
       jestExpectToBeDefined(roleId);
+
+      return roleId;
+    };
+
+    const createRoleWithoutReadOn = async ({
+      label,
+      objectMetadataId,
+    }: {
+      label: string;
+      objectMetadataId: string;
+    }) => {
+      const roleId = await createTimelineRole(label);
 
       await upsertObjectPermissions({
         expectToFail: false,
@@ -716,17 +788,27 @@ describe('timeline from object record resolvers (integration)', () => {
       const { objects } = await findManyObjectMetadata({
         expectToFail: false,
         input: { filter: {}, paging: { first: 1000 } },
-        gqlFields: 'id nameSingular',
+        gqlFields: 'id nameSingular fieldsList { id name }',
       });
-      const companyObjectMetadataId = objects.find(
+      const companyObjectMetadata = objects.find(
         ({ nameSingular }) => nameSingular === 'company',
-      )?.id;
+      );
+      const companyObjectMetadataId = companyObjectMetadata?.id;
+      const companyNameFieldMetadataId =
+        companyObjectMetadata?.fieldsList?.find(
+          ({ name }) => name === 'name',
+        )?.id;
       const messageObjectMetadataId = objects.find(
         ({ nameSingular }) => nameSingular === 'message',
+      )?.id;
+      const personObjectMetadataId = objects.find(
+        ({ nameSingular }) => nameSingular === 'person',
       )?.id;
 
       jestExpectToBeDefined(companyObjectMetadataId);
       jestExpectToBeDefined(messageObjectMetadataId);
+      jestExpectToBeDefined(personObjectMetadataId);
+      jestExpectToBeDefined(companyNameFieldMetadataId);
 
       roleWithoutCompanyReadId = await createRoleWithoutReadOn({
         label: 'Timeline Without Company Read',
@@ -736,6 +818,32 @@ describe('timeline from object record resolvers (integration)', () => {
         label: 'Timeline Without Message Read',
         objectMetadataId: messageObjectMetadataId,
       });
+      roleWithoutPersonReadId = await createRoleWithoutReadOn({
+        label: 'Timeline Without Person Read',
+        objectMetadataId: personObjectMetadataId,
+      });
+
+      const rowLevelPermissionRoleId = await createTimelineRole(
+        'Timeline Company Row Level Permission',
+      );
+
+      await upsertRowLevelPermissionPredicates({
+        expectToFail: false,
+        input: {
+          roleId: rowLevelPermissionRoleId,
+          objectMetadataId: companyObjectMetadataId,
+          predicates: [
+            {
+              fieldMetadataId: companyNameFieldMetadataId,
+              operand: RowLevelPermissionPredicateOperand.DOES_NOT_CONTAIN,
+              value: 'Timeline Source',
+            },
+          ],
+          predicateGroups: [],
+        },
+      });
+
+      roleWithCompanyRowLevelPermissionId = rowLevelPermissionRoleId;
     });
 
     afterAll(async () => {
@@ -746,6 +854,8 @@ describe('timeline from object record resolvers (integration)', () => {
       for (const roleId of [
         roleWithoutCompanyReadId,
         roleWithoutMessageReadId,
+        roleWithoutPersonReadId,
+        roleWithCompanyRowLevelPermissionId,
       ]) {
         if (isDefined(roleId)) {
           await deleteOneRole({
@@ -759,6 +869,43 @@ describe('timeline from object record resolvers (integration)', () => {
     it('should return empty timelines for a record the member cannot read', async () => {
       jestExpectToBeDefined(roleWithoutCompanyReadId);
       await assignRoleToMember(roleWithoutCompanyReadId);
+
+      const [companyThreads, companyEvents, personThreads] = await Promise.all([
+        requestTimelineAsMember(
+          GET_TIMELINE_THREADS,
+          'company',
+          TIMELINE_COMPANY_ID,
+        ),
+        requestTimelineAsMember(
+          GET_TIMELINE_CALENDAR_EVENTS,
+          'company',
+          TIMELINE_COMPANY_ID,
+        ),
+        requestTimelineAsMember(
+          GET_TIMELINE_THREADS,
+          'person',
+          TIMELINE_PERSON_ID,
+        ),
+      ]);
+
+      expect(companyThreads.body.errors).toBeUndefined();
+      expect(companyEvents.body.errors).toBeUndefined();
+      expect(personThreads.body.errors).toBeUndefined();
+      expect(
+        companyThreads.body.data.getTimelineThreadsFromObjectRecord,
+      ).toEqual({ totalNumberOfThreads: 0, timelineThreads: [] });
+      expect(
+        companyEvents.body.data.getTimelineCalendarEventsFromObjectRecord,
+      ).toEqual({ totalNumberOfCalendarEvents: 0, timelineCalendarEvents: [] });
+      expect(
+        personThreads.body.data.getTimelineThreadsFromObjectRecord
+          .totalNumberOfThreads,
+      ).toBeGreaterThan(0);
+    });
+
+    it('should return empty timelines for a record hidden by row-level permissions', async () => {
+      jestExpectToBeDefined(roleWithCompanyRowLevelPermissionId);
+      await assignRoleToMember(roleWithCompanyRowLevelPermissionId);
 
       const [companyThreads, companyEvents, personThreads] = await Promise.all([
         requestTimelineAsMember(
@@ -819,6 +966,35 @@ describe('timeline from object record resolvers (integration)', () => {
         personEvents.body.data.getTimelineCalendarEventsFromObjectRecord
           .totalNumberOfCalendarEvents,
       ).toBeGreaterThan(0);
+    });
+
+    it('should not expose people reached through a foreign key the member cannot read', async () => {
+      const adminResponse = await requestTimeline(
+        GET_TIMELINE_RELATED_PERSON_IDS,
+        'company',
+        TIMELINE_COMPANY_ID,
+      );
+
+      expect(adminResponse.body.errors).toBeUndefined();
+      expect(
+        adminResponse.body.data.getTimelineThreadsFromObjectRecord
+          .relatedPersonIds,
+      ).toContain(TIMELINE_POINT_OF_CONTACT_PERSON_ID);
+
+      jestExpectToBeDefined(roleWithoutPersonReadId);
+      await assignRoleToMember(roleWithoutPersonReadId);
+
+      const memberResponse = await requestTimelineAsMember(
+        GET_TIMELINE_RELATED_PERSON_IDS,
+        'company',
+        TIMELINE_COMPANY_ID,
+      );
+
+      expect(memberResponse.body.errors).toBeUndefined();
+      expect(
+        memberResponse.body.data.getTimelineThreadsFromObjectRecord
+          .relatedPersonIds,
+      ).toEqual([]);
     });
   });
 

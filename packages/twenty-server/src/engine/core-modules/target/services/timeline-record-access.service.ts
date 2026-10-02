@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
+import { canReadTimelineObjects } from 'src/engine/core-modules/target/utils/can-read-timeline-objects.util';
 import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
 import { resolveObjectRecordsPermissions } from 'src/engine/twenty-orm/utils/resolve-object-records-permissions.util';
 import { resolveRolePermissionConfig } from 'src/engine/twenty-orm/utils/resolve-role-permission-config.util';
@@ -41,20 +42,14 @@ export class TimelineRecordAccessService {
           objectPermissionsByRoleId: workspaceContext.permissionsPerRoleId,
         });
 
-      const canReadTimelineObjects =
-        shouldBypassPermissionChecks ||
-        timelineObjectNamesSingular.every((timelineObjectNameSingular) => {
-          const objectMetadataId =
-            workspaceContext.objectIdByNameSingular[timelineObjectNameSingular];
-
-          return (
-            isDefined(objectMetadataId) &&
-            objectRecordsPermissions[objectMetadataId]?.canReadObjectRecords ===
-              true
-          );
-        });
-
-      if (!canReadTimelineObjects) {
+      if (
+        !shouldBypassPermissionChecks &&
+        !canReadTimelineObjects({
+          timelineObjectNamesSingular,
+          objectIdByNameSingular: workspaceContext.objectIdByNameSingular,
+          objectRecordsPermissions,
+        })
+      ) {
         return false;
       }
 
