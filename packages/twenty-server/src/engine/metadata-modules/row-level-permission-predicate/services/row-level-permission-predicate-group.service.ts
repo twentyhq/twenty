@@ -8,7 +8,6 @@ import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/bil
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { EnterprisePlanService } from 'src/engine/core-modules/enterprise/services/enterprise-plan.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { fromFlatRowLevelPermissionPredicateGroupToDto } from 'src/engine/metadata-modules/flat-row-level-permission-predicate/utils/from-flat-row-level-permission-predicate-group-to-dto.util';
 import { RowLevelPermissionPredicateGroupDTO } from 'src/engine/metadata-modules/row-level-permission-predicate/dtos/row-level-permission-predicate-group.dto';
 import { RowLevelPermissionPredicateGroupEntity } from 'src/engine/metadata-modules/row-level-permission-predicate/entities/row-level-permission-predicate-group.entity';
@@ -88,37 +87,6 @@ export class RowLevelPermissionPredicateGroupService {
           (b.positionInRowLevelPermissionPredicateGroup ?? 0),
       )
       .map(fromFlatRowLevelPermissionPredicateGroupToDto);
-  }
-
-  async findById(
-    id: string,
-    workspaceId: string,
-  ): Promise<RowLevelPermissionPredicateGroupDTO | null> {
-    const hasRowLevelPermissionFeature =
-      await this.hasRowLevelPermissionFeature(workspaceId);
-
-    if (!hasRowLevelPermissionFeature) {
-      return null;
-    }
-
-    const { flatRowLevelPermissionPredicateGroupMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatRowLevelPermissionPredicateGroupMaps'],
-        },
-      );
-
-    const flatGroup = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId: id,
-      flatEntityMaps: flatRowLevelPermissionPredicateGroupMaps,
-    });
-
-    if (!isDefined(flatGroup) || flatGroup.deletedAt !== null) {
-      return null;
-    }
-
-    return fromFlatRowLevelPermissionPredicateGroupToDto(flatGroup);
   }
 
   public async deleteAllRowLevelPermissionPredicateGroups(workspaceId: string) {

@@ -17,6 +17,7 @@ import { Field } from 'twenty-ui/primitives/input';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { useCombinedRefs } from '~/hooks/useCombinedRefs';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
+import { PASSWORD_MANAGER_IGNORE_ATTRIBUTES } from '@/ui/input/constants/PasswordManagerIgnoreAttributes';
 const StyledContainer = styled.div<Pick<TextInputComponentProps, 'fullWidth'>>`
   box-sizing: border-box;
   display: inline-flex;
@@ -259,6 +260,7 @@ export type TextInputComponentProps = Omit<
   rightAdornment?: string;
   leftAdornment?: string;
   textClickOutsideId?: string;
+  ignorePasswordManagers?: boolean;
 };
 
 type TextInputWithAutoGrowWrapperProps = TextInputComponentProps;
@@ -300,6 +302,7 @@ const TextInputComponent = forwardRef<
       rightAdornment,
       leftAdornment,
       textClickOutsideId,
+      ignorePasswordManagers = false,
     },
     ref,
   ) => {
@@ -362,6 +365,9 @@ const TextInputComponent = forwardRef<
               width={width}
               data-testid={dataTestId}
               autoComplete={autoComplete ?? 'off'}
+              // oxlint-disable-next-line react/jsx-props-no-spreading
+              {...(ignorePasswordManagers &&
+                PASSWORD_MANAGER_IGNORE_ATTRIBUTES)}
               ref={combinedRef}
               tabIndex={tabIndex ?? 0}
               onFocus={handleFocus}
