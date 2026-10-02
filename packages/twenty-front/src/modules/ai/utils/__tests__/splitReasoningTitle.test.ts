@@ -32,4 +32,25 @@ describe('splitReasoningTitle', () => {
       body: '**Note** the deal is closed.',
     });
   });
+
+  it('splits a title followed by a CRLF line break', () => {
+    expect(splitReasoningTitle('**Checking deals**\r\nTwo are open.')).toEqual({
+      title: 'Checking deals',
+      body: 'Two are open.',
+    });
+  });
+
+  it('keeps emphasis nested in the title', () => {
+    expect(splitReasoningTitle('**Why it *matters***\n\nBody.')).toEqual({
+      title: 'Why it *matters*',
+      body: 'Body.',
+    });
+  });
+
+  it('falls back to no title when the bold line is blank', () => {
+    expect(splitReasoningTitle('**   **\nBody.')).toEqual({
+      title: null,
+      body: '**   **\nBody.',
+    });
+  });
 });

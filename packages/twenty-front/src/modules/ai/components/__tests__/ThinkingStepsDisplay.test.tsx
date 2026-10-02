@@ -263,6 +263,32 @@ describe('ThinkingStepsDisplay', () => {
     expect(screen.getByText('Completed reasoning content')).toBeInTheDocument();
   });
 
+  it('should not offer to expand the thought already shown under the rows', () => {
+    renderThinkingStepsDisplay({
+      isLastMessageStreaming: true,
+      parts: [
+        createReasoningPart({
+          state: 'done',
+          text: 'Earlier reasoning content',
+        }),
+        createToolPart(),
+        createReasoningPart({
+          state: 'done',
+          text: 'Completed reasoning content',
+        }),
+      ],
+    });
+
+    const [earlierThoughtButton, latestThoughtButton] = screen.getAllByRole(
+      'button',
+      { name: 'Thought' },
+    );
+
+    expect(earlierThoughtButton).toHaveAttribute('aria-disabled', 'false');
+    expect(latestThoughtButton).toHaveAttribute('aria-disabled', 'true');
+    expect(screen.getAllByText('Completed reasoning content')).toHaveLength(1);
+  });
+
   it('should collapse done state once answer text starts while streaming', () => {
     renderThinkingStepsDisplay({
       isLastMessageStreaming: true,
@@ -364,7 +390,7 @@ describe('ThinkingStepsDisplay', () => {
 
     expect(
       screen.getByRole('button', { name: 'Looking up Clearstreet' }),
-    ).toBeDisabled();
+    ).toHaveAttribute('aria-disabled', 'true');
   });
 
   it('should label the live thinking row with the title of the streaming summary', () => {
