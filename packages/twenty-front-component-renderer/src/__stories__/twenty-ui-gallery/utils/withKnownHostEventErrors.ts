@@ -2,7 +2,7 @@ import { expect } from 'storybook/test';
 
 import { SANDBOX_ERROR_PATTERNS } from '@/__stories__/twenty-ui-gallery/constants/SANDBOX_ERROR_PATTERNS';
 
-export const withKnownListItemHostErrors = async (
+export const withKnownHostEventErrors = async (
   runTest: () => Promise<void>,
 ) => {
   const hostErrors: ErrorEvent[] = [];

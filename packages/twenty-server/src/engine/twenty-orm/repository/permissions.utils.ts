@@ -37,8 +37,7 @@ type ValidateOperationIsPermittedOrThrowArgs = {
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   objectIdByNameSingular: Record<string, string>;
-  selectedColumns: string[] | '*';
-  allFieldsSelected: boolean;
+  selectedColumns: string[];
   updatedColumns: string[];
   authContext?: WorkspaceAuthContext;
   isRecordSharingEnabled?: boolean;
@@ -52,7 +51,6 @@ export const validateOperationIsPermittedOrThrow = ({
   flatFieldMetadataMaps,
   objectIdByNameSingular,
   selectedColumns,
-  allFieldsSelected,
   updatedColumns,
   authContext,
   isRecordSharingEnabled = false,
@@ -119,11 +117,13 @@ export const validateOperationIsPermittedOrThrow = ({
 
   switch (operationType) {
     case 'select':
+    case 'delete':
+    case 'restore':
+    case 'soft-delete':
       validateReadFieldPermissionOrThrow({
         restrictedFields,
         selectedColumns,
         columnNameToFieldMetadataIdMap,
-        allFieldsSelected,
         entityName,
         flatFieldMetadataMaps,
       });
@@ -179,34 +179,11 @@ export const validateOperationIsPermittedOrThrow = ({
         });
       }
       break;
-    case 'delete':
-      validateReadFieldPermissionOrThrow({
-        restrictedFields,
-        selectedColumns,
-        columnNameToFieldMetadataIdMap,
-        entityName,
-        flatFieldMetadataMaps,
-      });
-      break;
-    case 'restore':
-    case 'soft-delete':
-      validateReadFieldPermissionOrThrow({
-        restrictedFields,
-        selectedColumns,
-        columnNameToFieldMetadataIdMap,
-        entityName,
-        flatFieldMetadataMaps,
-      });
-      break;
     default:
       throw new PermissionsException(
         PermissionsExceptionMessage.UNKNOWN_OPERATION_NAME,
         PermissionsExceptionCode.UNKNOWN_OPERATION_NAME,
       );
-  }
-
-  if (isEmpty(restrictedFields)) {
-    return;
   }
 };
 
@@ -236,16 +213,14 @@ const validateReadFieldPermissionOrThrow = ({
   restrictedFields,
   selectedColumns,
   columnNameToFieldMetadataIdMap,
-  allFieldsSelected,
   entityName,
   flatFieldMetadataMaps,
 }: {
   restrictedFields: RestrictedFieldsPermissions;
-  selectedColumns: string[] | '*';
+  selectedColumns: string[];
   columnNameToFieldMetadataIdMap: Record<string, string>;
   entityName: string;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
-  allFieldsSelected?: boolean;
 }) => {
   const noReadRestrictions =
     isEmpty(restrictedFields) ||
@@ -253,13 +228,6 @@ const validateReadFieldPermissionOrThrow = ({
 
   if (noReadRestrictions) {
     return;
-  }
-
-  if (allFieldsSelected || selectedColumns === '*') {
-    throw new PermissionsException(
-      PermissionsExceptionMessage.PERMISSION_DENIED,
-      PermissionsExceptionCode.PERMISSION_DENIED,
-    );
   }
 
   for (const column of selectedColumns) {
