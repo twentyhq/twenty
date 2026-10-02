@@ -3,7 +3,7 @@ import { IndexType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
+import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -55,7 +55,7 @@ export type RecordShareIndexSyncPlan = {
   indexesToDelete: FlatIndexMetadata[];
 };
 
-const buildRecordShareIndexToCreate = ({
+const buildRecordShareIndexToCreateOrThrow = ({
   indexDefinition,
   recordShareFlatObjectMetadata,
   flatFieldMetadataMaps,
@@ -67,21 +67,12 @@ const buildRecordShareIndexToCreate = ({
   now: string;
 }): RecordShareIndexToCreate => {
   const indexedFlatFieldMetadatas =
-    indexDefinition.fieldUniversalIdentifiers.map((fieldUniversalIdentifier) => {
-      const flatFieldMetadata =
-        findFlatEntityByUniversalIdentifier<FlatFieldMetadata>({
-          flatEntityMaps: flatFieldMetadataMaps,
-          universalIdentifier: fieldUniversalIdentifier,
-        });
-
-      if (!isDefined(flatFieldMetadata)) {
-        throw new Error(
-          `recordShare field ${fieldUniversalIdentifier} not found, cannot build index ${indexDefinition.universalIdentifier}`,
-        );
-      }
-
-      return flatFieldMetadata;
-    });
+    indexDefinition.fieldUniversalIdentifiers.map((fieldUniversalIdentifier) =>
+      findFlatEntityByUniversalIdentifierOrThrow<FlatFieldMetadata>({
+        flatEntityMaps: flatFieldMetadataMaps,
+        universalIdentifier: fieldUniversalIdentifier,
+      }),
+    );
 
   const universalFlatIndexMetadata = generateFlatIndexMetadataWithNameOrThrow({
     flatObjectMetadata: recordShareFlatObjectMetadata,
@@ -118,7 +109,7 @@ const buildRecordShareIndexToCreate = ({
   };
 };
 
-export const buildRecordShareIndexSyncPlan = ({
+export const buildRecordShareIndexSyncPlanOrThrow = ({
   recordShareFlatObjectMetadata,
   flatFieldMetadataMaps,
   flatIndexMaps,
@@ -127,7 +118,7 @@ export const buildRecordShareIndexSyncPlan = ({
 }: {
   recordShareFlatObjectMetadata: FlatObjectMetadata;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
-  flatIndexMaps: FlatEntityMaps<FlatIndexMetadata>;
+  flatIndexMaps: Pick<FlatEntityMaps<FlatIndexMetadata>, 'byUniversalIdentifier'>;
   direction: 'up' | 'down';
   now: string;
 }): RecordShareIndexSyncPlan => {
@@ -147,7 +138,7 @@ export const buildRecordShareIndexSyncPlan = ({
           !isDefined(flatIndexMaps.byUniversalIdentifier[universalIdentifier]),
       )
       .map((indexDefinition) =>
-        buildRecordShareIndexToCreate({
+        buildRecordShareIndexToCreateOrThrow({
           indexDefinition,
           recordShareFlatObjectMetadata,
           flatFieldMetadataMaps,

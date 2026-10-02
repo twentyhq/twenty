@@ -26,9 +26,10 @@ export const buildRecordShareCondition = ({
   const principalIdsParameterName = `recordSharePrincipalIds_${nameIndex}`;
   const accessLevelsParameterName = `recordShareAccessLevels_${nameIndex}`;
 
-  // Not derived from the table alias: once Postgres truncates a long alias to
-  // 63 bytes, the two would collide and the share row would shadow the record
-  const recordShareAlias = escapeIdentifier(`recordShare_${nameIndex}`);
+  // Not derived from the table alias, which Postgres truncates to 63 bytes,
+  // and led by underscores no object or field name can start with, so no
+  // alias of the statement can shadow it or be shadowed by it
+  const recordShareAlias = escapeIdentifier(`__recordShare_${nameIndex}`);
 
   const recordId = `${escapeIdentifier(tableAlias)}."id"`;
   const grantConditions = [

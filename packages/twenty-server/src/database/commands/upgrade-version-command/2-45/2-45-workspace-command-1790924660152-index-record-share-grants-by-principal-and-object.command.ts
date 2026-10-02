@@ -11,8 +11,9 @@ import { WorkspaceIteratorService } from 'src/database/commands/command-runners/
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import {
   type RecordShareIndexToCreate,
-  buildRecordShareIndexSyncPlan,
-} from 'src/database/commands/upgrade-version-command/2-45/utils/build-record-share-index-sync-plan.util';
+  buildRecordShareIndexSyncPlanOrThrow,
+} from 'src/database/commands/upgrade-version-command/2-45/utils/build-record-share-index-sync-plan-or-throw.util';
+import { findInvalidIndexNames } from 'src/database/commands/upgrade-version-command/2-45/utils/find-invalid-index-names.util';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -81,7 +82,7 @@ export class IndexRecordShareGrantsByPrincipalAndObjectCommand extends Provision
       return;
     }
 
-    const { indexesToCreate, indexesToDelete } = buildRecordShareIndexSyncPlan(
+    const { indexesToCreate, indexesToDelete } = buildRecordShareIndexSyncPlanOrThrow(
       {
         recordShareFlatObjectMetadata,
         flatFieldMetadataMaps,
@@ -158,38 +159,53 @@ export class IndexRecordShareGrantsByPrincipalAndObjectCommand extends Provision
       objectMetadata: recordShareFlatObjectMetadata,
     });
     const queryRunner = this.dataSource.createQueryRunner();
+    let isQueryRunnerConnected = false;
 
     try {
       await queryRunner.connect();
+      isQueryRunnerConnected = true;
+
+      // An interrupted concurrent build leaves an invalid index behind,
+      // which IF NOT EXISTS would keep and the migration would register
+      const invalidIndexNames = await findInvalidIndexNames({
+        queryRunner,
+        schemaName,
+        indexNames: indexesToCreate.map(
+          ({ universalFlatIndexMetadata }) => universalFlatIndexMetadata.name,
+        ),
+      });
+
+      for (const indexName of invalidIndexNames) {
+        await this.workspaceSchemaManagerService.indexManager.dropIndex({
+          queryRunner,
+          schemaName,
+          indexName,
+          concurrently: true,
+        });
+
+        this.logger.warn(
+          `Dropped invalid index ${indexName} left by an interrupted build in workspace ${workspaceId}, recreating it`,
+        );
+      }
 
       for (const { universalFlatIndexMetadata, columnNames } of indexesToCreate) {
-        try {
-          await this.workspaceSchemaManagerService.indexManager.createIndex({
-            queryRunner,
-            schemaName,
-            tableName,
-            index: {
-              name: universalFlatIndexMetadata.name,
-              columns: columnNames,
-              isUnique: universalFlatIndexMetadata.isUnique,
-              type: universalFlatIndexMetadata.indexType,
-            },
-            concurrently: true,
-          });
-        } catch (error) {
-          // A failed concurrent build leaves an invalid index behind that
-          // IF NOT EXISTS would keep on the next run
-          await this.workspaceSchemaManagerService.indexManager.dropIndex({
-            queryRunner,
-            schemaName,
-            indexName: universalFlatIndexMetadata.name,
-            concurrently: true,
-          });
-          throw error;
-        }
+        await this.workspaceSchemaManagerService.indexManager.createIndex({
+          queryRunner,
+          schemaName,
+          tableName,
+          index: {
+            name: universalFlatIndexMetadata.name,
+            columns: columnNames,
+            isUnique: universalFlatIndexMetadata.isUnique,
+            type: universalFlatIndexMetadata.indexType,
+          },
+          concurrently: true,
+        });
       }
     } finally {
-      await queryRunner.release();
+      if (isQueryRunnerConnected) {
+        await queryRunner.release();
+      }
     }
   }
 }

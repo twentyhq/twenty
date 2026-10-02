@@ -27,7 +27,7 @@ describe('buildRecordShareExceptionCondition', () => {
     ]);
 
     expect(compileNamedParameters(sql, parameters)).toEqual({
-      text: 'NOT EXISTS (SELECT 1 FROM "workspace_abc"."recordShare" AS "recordShareRestriction_0" WHERE "recordShareRestriction_0"."recordId" = "company"."id" AND "recordShareRestriction_0"."objectMetadataId" = $1 AND "recordShareRestriction_0"."principalId" = $2 AND "recordShareRestriction_0"."accessLevel" IN ($3, $4) AND "recordShareRestriction_0"."deletedAt" IS NULL AND NOT EXISTS (SELECT 1 FROM "workspace_abc"."recordShare" AS "recordShareGrant_0" WHERE "recordShareGrant_0"."recordId" = "recordShareRestriction_0"."recordId" AND "recordShareGrant_0"."objectMetadataId" = $1 AND "recordShareGrant_0"."principalId" = ANY($5) AND "recordShareGrant_0"."accessLevel" IN ($6, $7) AND "recordShareGrant_0"."deletedAt" IS NULL))',
+      text: 'NOT EXISTS (SELECT 1 FROM "workspace_abc"."recordShare" AS "__recordShareRestriction_0" WHERE "__recordShareRestriction_0"."recordId" = "company"."id" AND "__recordShareRestriction_0"."objectMetadataId" = $1 AND "__recordShareRestriction_0"."principalId" = $2 AND "__recordShareRestriction_0"."accessLevel" IN ($3, $4) AND "__recordShareRestriction_0"."deletedAt" IS NULL AND NOT EXISTS (SELECT 1 FROM "workspace_abc"."recordShare" AS "__recordShareGrant_0" WHERE "__recordShareGrant_0"."recordId" = "__recordShareRestriction_0"."recordId" AND "__recordShareGrant_0"."objectMetadataId" = $1 AND "__recordShareGrant_0"."principalId" = ANY($5) AND "__recordShareGrant_0"."accessLevel" IN ($6, $7) AND "__recordShareGrant_0"."deletedAt" IS NULL))',
       values: [
         OBJECT_METADATA_ID,
         EVERYONE_PRINCIPAL_ID,
@@ -56,6 +56,21 @@ describe('buildRecordShareExceptionCondition', () => {
 
     expect(aliases).toHaveLength(2);
     expect(new Set(aliases).size).toBe(2);
+  });
+
+  it('should keep its aliases apart from table aliases shaped like them', () => {
+    const { sql } = buildRecordShareExceptionCondition({
+      tableAlias: 'recordShareRestriction_0',
+      recordShareTableExpression: '"workspace_abc"."recordShare"',
+      objectMetadataId: OBJECT_METADATA_ID,
+      principalIds: PRINCIPAL_IDS,
+      accessLevels: [RecordShareAccessLevel.FULL],
+      nameIndex: 0,
+    });
+
+    expect(sql).toContain(
+      '"__recordShareRestriction_0"."recordId" = "recordShareRestriction_0"."id"',
+    );
   });
 
   it('should only treat levels below the required ones as restrictions', () => {
