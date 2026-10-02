@@ -76,7 +76,6 @@ export class DataArgProcessorService {
     flatFieldMetadataMaps,
     flatObjectMetadataMaps,
     shouldBackfillPositionIfUndefined = true,
-    shouldRejectSlowRichTextConversion = false,
   }: {
     partialRecordInputs: Partial<ObjectRecord>[] | undefined;
     authContext: WorkspaceAuthContext;
@@ -84,7 +83,6 @@ export class DataArgProcessorService {
     flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
     shouldBackfillPositionIfUndefined?: boolean;
-    shouldRejectSlowRichTextConversion?: boolean;
   }): Promise<Partial<ObjectRecord>[]> {
     if (!isDefined(partialRecordInputs)) {
       return [];
@@ -159,14 +157,13 @@ export class DataArgProcessorService {
           continue;
         }
 
-        processedRecord[key] = await this.processField({
+        processedRecord[key] = await this.processField(
           fieldMetadata,
           key,
           value,
           flatFieldMetadataMaps,
           flatObjectMetadataMaps,
-          shouldRejectSlowRichTextConversion,
-        });
+        );
       }
       processedRecords.push(processedRecord);
     }
@@ -174,21 +171,13 @@ export class DataArgProcessorService {
     return processedRecords;
   }
 
-  private async processField({
-    fieldMetadata,
-    key,
-    value,
-    flatFieldMetadataMaps,
-    flatObjectMetadataMaps,
-    shouldRejectSlowRichTextConversion = false,
-  }: {
-    fieldMetadata: OrmFlatFieldMetadata;
-    key: string;
-    value: unknown;
-    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
-    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
-    shouldRejectSlowRichTextConversion?: boolean;
-  }): Promise<unknown> {
+  private async processField(
+    fieldMetadata: OrmFlatFieldMetadata,
+    key: string,
+    value: unknown,
+    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>,
+    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
+  ): Promise<unknown> {
     switch (fieldMetadata.type) {
       case FieldMetadataType.POSITION:
         return validateOverriddenPositionFieldOrThrow(value, key);
@@ -341,9 +330,7 @@ export class DataArgProcessorService {
       case FieldMetadataType.RICH_TEXT: {
         const validatedValue = validateRichTextFieldOrThrow(value, key);
 
-        return await transformRichTextValue(validatedValue, {
-          shouldRejectSlowConversion: shouldRejectSlowRichTextConversion,
-        });
+        return await transformRichTextValue(validatedValue);
       }
       case FieldMetadataType.LINKS: {
         const settings = isFieldMetadataSettingsOfType(
@@ -430,13 +417,13 @@ export class DataArgProcessorService {
       }
 
       try {
-        const processedValue = await this.processField({
-          fieldMetadata: whereFieldMetadata,
-          key: whereKey,
-          value: whereValue,
+        const processedValue = await this.processField(
+          whereFieldMetadata,
+          whereKey,
+          whereValue,
           flatFieldMetadataMaps,
           flatObjectMetadataMaps,
-        });
+        );
 
         // Only keep original keys — processField may add null subfields that alter WHERE semantics
         if (isObject(whereValue) && isObject(processedValue)) {

@@ -12,7 +12,6 @@ export enum RecordTransformerExceptionCode {
   CONFLICTING_PHONE_COUNTRY_CODE = 'CONFLICTING_PHONE_COUNTRY_CODE',
   CONFLICTING_PHONE_CALLING_CODE = 'CONFLICTING_PHONE_CALLING_CODE',
   CONFLICTING_PHONE_CALLING_CODE_AND_COUNTRY_CODE = 'CONFLICTING_PHONE_CALLING_CODE_AND_COUNTRY_CODE',
-  RICH_TEXT_CONTENT_NOT_SUPPORTED_IN_BATCH = 'RICH_TEXT_CONTENT_NOT_SUPPORTED_IN_BATCH',
 }
 
 const getRecordTransformerExceptionUserFriendlyMessage = (
@@ -33,8 +32,6 @@ const getRecordTransformerExceptionUserFriendlyMessage = (
       return msg`Conflicting phone calling code.`;
     case RecordTransformerExceptionCode.CONFLICTING_PHONE_CALLING_CODE_AND_COUNTRY_CODE:
       return msg`Conflicting phone calling code and country code.`;
-    case RecordTransformerExceptionCode.RICH_TEXT_CONTENT_NOT_SUPPORTED_IN_BATCH:
-      return msg`This rich text can only be saved one record at a time.`;
     default:
       assertUnreachable(code);
   }
