@@ -154,7 +154,7 @@ export class AgentActorContextService {
       );
     }
 
-    const roleId = await this.resolveRoleIdOrThrow({
+    await this.assertHasRoleOrThrow({
       userWorkspaceId: userWorkspace.id,
       workspaceId,
       workspaceMemberId,
@@ -174,11 +174,10 @@ export class AgentActorContextService {
         workspaceMember,
         viaApplication,
       }),
-      roleId,
     };
   }
 
-  private async resolveRoleIdOrThrow({
+  private async assertHasRoleOrThrow({
     userWorkspaceId,
     workspaceId,
     workspaceMemberId,
@@ -186,9 +185,9 @@ export class AgentActorContextService {
     userWorkspaceId: string;
     workspaceId: string;
     workspaceMemberId: string;
-  }): Promise<string> {
+  }): Promise<void> {
     try {
-      return await this.userRoleService.getRoleIdForUserWorkspace({
+      await this.userRoleService.getRoleIdForUserWorkspace({
         userWorkspaceId,
         workspaceId,
       });

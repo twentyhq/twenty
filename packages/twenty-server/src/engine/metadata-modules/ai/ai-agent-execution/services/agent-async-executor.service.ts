@@ -21,6 +21,7 @@ import {
 } from 'twenty-shared/utils';
 import { type Repository } from 'typeorm';
 
+import { isSystemAuthContext } from 'src/engine/core-modules/auth/guards/is-system-auth-context.guard';
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { TOOL_EXECUTION_DURATION_MS_BUCKET_BOUNDARIES } from 'src/engine/core-modules/metrics/constants/tool-execution-duration-ms-bucket-boundaries.constant';
@@ -77,8 +78,11 @@ import {
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
+import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config.type';
+import { resolveRoleIdsFromAuthContext } from 'src/engine/twenty-orm/utils/resolve-role-ids-from-auth-context.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 const EMPTY_USAGE: LanguageModelUsage = {
   inputTokens: 0,
@@ -112,6 +116,7 @@ export class AgentAsyncExecutorService {
     private readonly roleTargetRepository: WorkspaceScopedRepository<RoleTargetEntity>,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
+    private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
   private async getAgentRoleId(
@@ -126,6 +131,45 @@ export class AgentAsyncExecutorService {
     });
 
     return roleTarget?.roleId;
+  }
+
+  // The agent acts for the principal of its auth context, so it must never get more than that principal could
+  private async buildRolePermissionConfig({
+    agentRoleId,
+    authContext,
+    workspaceId,
+  }: {
+    agentRoleId: string;
+    authContext?: WorkspaceAuthContext;
+    workspaceId: string;
+  }): Promise<RolePermissionConfig> {
+    if (!isDefined(authContext) || isSystemAuthContext(authContext)) {
+      return buildAgentRolePermissionConfig({
+        agentRoleId,
+        principalRoleIds: [],
+      });
+    }
+
+    const { userWorkspaceRoleMap, apiKeyRoleMap } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'userWorkspaceRoleMap',
+        'apiKeyRoleMap',
+      ]);
+
+    const principalRoleIds = resolveRoleIdsFromAuthContext({
+      authContext,
+      userWorkspaceRoleMap,
+      apiKeyRoleMap,
+    });
+
+    if (!isNonEmptyArray(principalRoleIds)) {
+      throw new AiException(
+        'The agent runs for a principal that has no role',
+        AiExceptionCode.RUN_AGENT_NOT_ALLOWED,
+      );
+    }
+
+    return buildAgentRolePermissionConfig({ agentRoleId, principalRoleIds });
   }
 
   private resolveUserIdentity(authContext?: WorkspaceAuthContext): {
@@ -146,13 +190,13 @@ export class AgentAsyncExecutorService {
   private async buildPreloadedRegistryTools({
     agent,
     agentRoleId,
-    runAsRoleId,
+    rolePermissionConfig,
     authContext,
     actorContext,
   }: {
     agent: AgentEntity;
     agentRoleId: string;
-    runAsRoleId?: string;
+    rolePermissionConfig: RolePermissionConfig;
     authContext?: WorkspaceAuthContext;
     actorContext?: ActorMetadata;
   }): Promise<ToolSet> {
@@ -161,10 +205,7 @@ export class AgentAsyncExecutorService {
     const toolProviderContext: ToolProviderContext = {
       workspaceId: agent.workspaceId,
       roleId: agentRoleId,
-      rolePermissionConfig: buildAgentRolePermissionConfig({
-        agentRoleId,
-        runAsRoleId,
-      }),
+      rolePermissionConfig,
       requireExplicitObjectGrants: true,
       authContext,
       actorContext,
@@ -187,21 +228,17 @@ export class AgentAsyncExecutorService {
   private async buildLazyRegistryTools({
     agent,
     agentRoleId,
-    runAsRoleId,
+    rolePermissionConfig,
     authContext,
     actorContext,
   }: {
     agent: AgentEntity;
     agentRoleId: string;
-    runAsRoleId?: string;
+    rolePermissionConfig: RolePermissionConfig;
     authContext?: WorkspaceAuthContext;
     actorContext?: ActorMetadata;
   }): Promise<{ tools: ToolSet; catalogSection: string }> {
     const { userId, userWorkspaceId } = this.resolveUserIdentity(authContext);
-
-    const rolePermissionConfig = isDefined(runAsRoleId)
-      ? buildAgentRolePermissionConfig({ agentRoleId, runAsRoleId })
-      : undefined;
 
     const toolContext: ToolContext = {
       workspaceId: agent.workspaceId,
@@ -262,7 +299,6 @@ export class AgentAsyncExecutorService {
     authContext,
     workspaceId,
     userWorkspaceId,
-    runAsRoleId,
     operationType = UsageOperationType.AI_WORKFLOW_TOKEN,
     toolLoadingStrategy = 'preload',
     priorModelMessages = [],
@@ -278,7 +314,6 @@ export class AgentAsyncExecutorService {
     authContext?: WorkspaceAuthContext;
     workspaceId: string;
     userWorkspaceId?: string | null;
-    runAsRoleId?: string;
     operationType?: UsageOperationType;
     toolLoadingStrategy?: AgentToolLoadingStrategy;
   }): Promise<AgentExecutionResult> {
@@ -346,11 +381,17 @@ export class AgentAsyncExecutorService {
         let registryTools: ToolSet = {};
 
         if (isDefined(agentRoleId)) {
+          const rolePermissionConfig = await this.buildRolePermissionConfig({
+            agentRoleId,
+            authContext,
+            workspaceId,
+          });
+
           if (toolLoadingStrategy === 'lazy') {
             const lazyToolset = await this.buildLazyRegistryTools({
               agent,
               agentRoleId,
-              runAsRoleId,
+              rolePermissionConfig,
               authContext,
               actorContext,
             });
@@ -361,7 +402,7 @@ export class AgentAsyncExecutorService {
             registryTools = await this.buildPreloadedRegistryTools({
               agent,
               agentRoleId,
-              runAsRoleId,
+              rolePermissionConfig,
               authContext,
               actorContext,
             });

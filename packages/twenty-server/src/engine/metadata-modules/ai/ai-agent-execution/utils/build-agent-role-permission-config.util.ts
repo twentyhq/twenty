@@ -1,17 +1,12 @@
-import { isDefined } from 'twenty-shared/utils';
-
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config.type';
 
+// The agent role comes first: explicit object grants are read from the first role of the intersection
 export const buildAgentRolePermissionConfig = ({
   agentRoleId,
-  runAsRoleId,
+  principalRoleIds,
 }: {
   agentRoleId: string;
-  runAsRoleId?: string;
-}): RolePermissionConfig => {
-  if (isDefined(runAsRoleId)) {
-    return { intersectionOf: [runAsRoleId] };
-  }
-
-  return { intersectionOf: [agentRoleId] };
-};
+  principalRoleIds: string[];
+}): Extract<RolePermissionConfig, { intersectionOf: string[] }> => ({
+  intersectionOf: [...new Set([agentRoleId, ...principalRoleIds])],
+});

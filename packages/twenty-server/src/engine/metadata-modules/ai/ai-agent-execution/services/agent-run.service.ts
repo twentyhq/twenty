@@ -110,7 +110,6 @@ export class AgentRunService {
       requestUserWorkspaceId,
       requestWorkspaceMemberId,
       workspaceId: workspace.id,
-      application,
     });
 
     const authContext: WorkspaceAuthContext = runAsContext?.authContext ?? {
@@ -130,7 +129,6 @@ export class AgentRunService {
           workspaceId: workspace.id,
           userWorkspaceId:
             runAsContext?.authContext.userWorkspaceId ?? requestUserWorkspaceId,
-          runAsRoleId: runAsContext?.roleId,
           operationType: UsageOperationType.AI_WORKFLOW_TOKEN,
           toolLoadingStrategy: 'lazy',
         }),
@@ -152,7 +150,8 @@ export class AgentRunService {
     } catch (error) {
       if (
         error instanceof AiException &&
-        error.code === AiExceptionCode.INVALID_AGENT_INPUT
+        (error.code === AiExceptionCode.INVALID_AGENT_INPUT ||
+          error.code === AiExceptionCode.RUN_AGENT_NOT_ALLOWED)
       ) {
         throw error;
       }
@@ -176,14 +175,12 @@ export class AgentRunService {
     requestUserWorkspaceId,
     requestWorkspaceMemberId,
     workspaceId,
-    application,
   }: {
     runAsWorkspaceMemberId?: string;
     callerApplication?: FlatApplication;
     requestUserWorkspaceId: string | null;
     requestWorkspaceMemberId: string | null;
     workspaceId: string;
-    application: FlatApplication;
   }): Promise<RunAsWorkspaceMemberContext | undefined> {
     if (!isDefined(runAsWorkspaceMemberId)) {
       return undefined;
@@ -206,10 +203,18 @@ export class AgentRunService {
       );
     }
 
+    // The application role caps the member's, so without one the application could act with any member's access
+    if (!isDefined(callerApplication.defaultRoleId)) {
+      throw new AiException(
+        'Running an agent as a workspace member requires an application with a role',
+        AiExceptionCode.RUN_AS_WORKSPACE_MEMBER_NOT_ALLOWED,
+      );
+    }
+
     return this.agentActorContextService.buildRunAsWorkspaceMemberContext({
       workspaceMemberId: runAsWorkspaceMemberId,
       workspaceId,
-      viaApplication: application,
+      viaApplication: callerApplication,
     });
   }
 }

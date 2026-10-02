@@ -5,5 +5,4 @@ import { type UserWorkspaceAuthContext } from 'src/engine/core-modules/auth/type
 export type RunAsWorkspaceMemberContext = {
   actorContext: ActorMetadata;
   authContext: UserWorkspaceAuthContext;
-  roleId: string;
 };
