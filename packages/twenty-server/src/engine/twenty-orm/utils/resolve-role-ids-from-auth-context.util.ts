@@ -1,4 +1,4 @@
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { isApiKeyAuthContext } from 'src/engine/core-modules/auth/guards/is-api-key-auth-context.guard';
 import { isApplicationAuthContext } from 'src/engine/core-modules/auth/guards/is-application-auth-context.guard';
@@ -17,10 +17,22 @@ export const resolveRoleIdsFromAuthContext = ({
   apiKeyRoleMap: Record<string, string>;
 }): string[] => {
   if (isUserAuthContext(authContext)) {
-    return resolveRoleIdsForUser({
+    const userRoleIds = resolveRoleIdsForUser({
       userRoleId: userWorkspaceRoleMap[authContext.userWorkspaceId],
       applicationRoleId: authContext.application?.defaultRoleId,
     });
+    const runAsApplicationRoleId = authContext.viaApplication?.defaultRoleId;
+
+    // An application running as a member must not reach past its own role by picking a more privileged member
+    if (
+      !isNonEmptyArray(userRoleIds) ||
+      !isDefined(runAsApplicationRoleId) ||
+      userRoleIds.includes(runAsApplicationRoleId)
+    ) {
+      return userRoleIds;
+    }
+
+    return [...userRoleIds, runAsApplicationRoleId];
   }
 
   if (isApiKeyAuthContext(authContext)) {

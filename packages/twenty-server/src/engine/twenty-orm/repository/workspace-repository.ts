@@ -45,6 +45,7 @@ import {
   type RowAccessPolicySubject,
   type SqlCondition,
 } from 'src/engine/twenty-orm/types/row-access-policy.type';
+import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config.type';
 import { compileRowAccessExpression } from 'src/engine/twenty-orm/utils/compile-row-access-policy.util';
 import { resolveRecordShareGateKind } from 'src/engine/core-modules/record-share/utils/resolve-record-share-gate-kind.util';
 import { buildRowAccessPolicy } from 'src/engine/twenty-orm/utils/build-row-access-policy.util';
@@ -67,7 +68,7 @@ import {
 import { isChildRecordBoundAtDeletion } from 'src/engine/twenty-orm/utils/is-child-record-bound-at-deletion.util';
 import { isOwningApplicationAuthContext } from 'src/engine/twenty-orm/utils/is-owning-application-auth-context.util';
 import { resolvePrincipalIdsFromAuthContext } from 'src/engine/twenty-orm/utils/resolve-principal-ids-from-auth-context.util';
-import { resolveRoleIdsFromAuthContext } from 'src/engine/twenty-orm/utils/resolve-role-ids-from-auth-context.util';
+import { resolveRowLevelPermissionRoleIds } from 'src/engine/twenty-orm/utils/resolve-row-level-permission-role-ids.util';
 import { resolveInheritedReadabilityChildLinks } from 'src/engine/core-modules/record-share/utils/resolve-inherited-readability-child-links.util';
 import { resolveInheritedReadabilityParents } from 'src/engine/core-modules/record-share/utils/resolve-inherited-readability-parents.util';
 import { resolveRowLevelPermissionRecordFilter } from 'src/engine/twenty-orm/utils/resolve-row-level-permission-record-filter.util';
@@ -143,6 +144,7 @@ type WorkspaceRepositoryOptions<TEntity extends ObjectLiteral> = {
   authContext: WorkspaceAuthContext;
   executor: QueryExecutor;
   objectRecordsPermissions: ObjectsPermissions;
+  rolePermissionConfig?: RolePermissionConfig;
   shouldBypassPermissionChecks: boolean;
   // Suppresses database events and their snapshot SELECT, for bulk system writes only: webhooks, workflow triggers
   // and timeline activities will NOT fire
@@ -1071,6 +1073,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       objectMetadata: this.options.flatObjectMetadata,
       internalContext: this.options.internalContext,
       authContext: this.options.authContext,
+      rolePermissionConfig: this.options.rolePermissionConfig,
       shouldBypassPermissionChecks: this.options.shouldBypassPermissionChecks,
     });
 
@@ -2338,7 +2341,10 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       objectsPermissions: this.options.objectRecordsPermissions,
       principalIds: resolvePrincipalIdsFromAuthContext(roleMaps),
       canAccessAllRecords: canRolesAccessAllRecords({
-        roleIds: resolveRoleIdsFromAuthContext(roleMaps),
+        roleIds: resolveRowLevelPermissionRoleIds({
+          ...roleMaps,
+          rolePermissionConfig: this.options.rolePermissionConfig,
+        }),
         roleIdsWithAllRecordsAccess:
           this.options.internalContext.roleIdsWithAllRecordsAccess,
       }),
@@ -2351,6 +2357,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
         resolveRowLevelPermissionRecordFilter({
           internalContext: this.options.internalContext,
           authContext: this.options.authContext,
+          rolePermissionConfig: this.options.rolePermissionConfig,
           objectMetadata,
         }),
     };

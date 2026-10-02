@@ -216,6 +216,7 @@ export class WorkspaceDataSource {
       authContext: this.authContext,
       executor,
       objectRecordsPermissions,
+      rolePermissionConfig,
       shouldBypassPermissionChecks,
       shouldSkipEventEmission: shouldSkipEventEmission ?? false,
       tableShapeByObjectMetadataId: (targetObjectMetadataId) =>
