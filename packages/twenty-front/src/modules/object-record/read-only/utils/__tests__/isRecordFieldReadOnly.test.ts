@@ -11,6 +11,7 @@ import {
 const OBJECT_METADATA_ID = 'object-metadata-id';
 const TARGET_OBJECT_METADATA_ID = 'target-object-metadata-id';
 const FIELD_METADATA_ID = 'field-metadata-id';
+const INVERSE_FIELD_METADATA_ID = 'inverse-field-metadata-id';
 
 const buildObjectPermissions = (
   overrides: Partial<ObjectPermissionsWithObjectMetadataId> = {},
@@ -50,7 +51,7 @@ const oneToManyFieldDefinition: FieldDefinition<FieldRelationMetadata> = {
     relationObjectMetadataId: TARGET_OBJECT_METADATA_ID,
     relationObjectMetadataNameSingular: 'person',
     relationObjectMetadataNamePlural: 'people',
-    relationFieldMetadataId: 'inverse-field-metadata-id',
+    relationFieldMetadataId: INVERSE_FIELD_METADATA_ID,
     objectMetadataNameSingular: 'company',
     targetFieldMetadataName: 'company',
   },
@@ -179,5 +180,23 @@ describe('isRecordFieldReadOnly', () => {
         },
       }),
     ).toBe(false);
+  });
+
+  it('should return true for a one-to-many relation whose inverse field on the updatable target is update-restricted', () => {
+    expect(
+      isRecordFieldReadOnly({
+        ...baseParams,
+        fieldDefinition: oneToManyFieldDefinition,
+        objectPermissionsByObjectMetadataId: {
+          ...baseParams.objectPermissionsByObjectMetadataId,
+          [TARGET_OBJECT_METADATA_ID]: buildObjectPermissions({
+            objectMetadataId: TARGET_OBJECT_METADATA_ID,
+            restrictedFields: {
+              [INVERSE_FIELD_METADATA_ID]: { canUpdate: false },
+            },
+          }),
+        },
+      }),
+    ).toBe(true);
   });
 });

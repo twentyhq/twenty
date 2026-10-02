@@ -1,7 +1,7 @@
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
-import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
+import { isObjectReadOnly } from '@/object-record/read-only/utils/isObjectReadOnly';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const useIsObjectReadOnly = (objectMetadataId: string) => {
@@ -15,8 +15,9 @@ export const useIsObjectReadOnly = (objectMetadataId: string) => {
 
   const objectPermissions = useObjectPermissionsForObject(objectMetadataId);
 
-  return (
-    isLayoutCustomizationModeEnabled ||
-    isObjectMetadataReadOnly({ objectPermissions, objectMetadataItem })
-  );
+  return isObjectReadOnly({
+    isLayoutCustomizationModeEnabled,
+    objectPermissions,
+    objectMetadataItem,
+  });
 };
