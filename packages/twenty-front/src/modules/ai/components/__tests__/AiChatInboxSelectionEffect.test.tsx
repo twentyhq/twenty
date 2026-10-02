@@ -10,8 +10,8 @@ jest.mock('~/hooks/useNavigateApp', () => ({
   useNavigateApp: () => navigate,
 }));
 
-const buildThreads = (ids: string[]) =>
-  ids.map((id) => ({ id }) as AgentChatThreadRecord);
+const buildThreads = (ids: string[]): Pick<AgentChatThreadRecord, 'id'>[] =>
+  ids.map((id) => ({ id }));
 
 const expectSelected = (threadId: string | null) =>
   expect(navigate).toHaveBeenLastCalledWith(
