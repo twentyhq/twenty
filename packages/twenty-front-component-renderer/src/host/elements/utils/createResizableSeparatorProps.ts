@@ -2,7 +2,29 @@ import { isFunction } from '@sniptt/guards';
 import { type PointerEvent } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-const separatorsReleasedAtGestureEnd = new WeakSet<Element>();
+const pointerIdsReleasedAtGestureEndBySeparator = new WeakMap<
+  Element,
+  Set<number>
+>();
+
+const markPointerReleasedAtGestureEnd = (
+  separator: Element,
+  pointerId: number,
+) => {
+  const releasedPointerIds =
+    pointerIdsReleasedAtGestureEndBySeparator.get(separator) ??
+    new Set<number>();
+
+  releasedPointerIds.add(pointerId);
+  pointerIdsReleasedAtGestureEndBySeparator.set(separator, releasedPointerIds);
+};
+
+const takePointerReleasedAtGestureEnd = (
+  separator: Element,
+  pointerId: number,
+): boolean =>
+  pointerIdsReleasedAtGestureEndBySeparator.get(separator)?.delete(pointerId) ??
+  false;
 
 export const createResizableSeparatorProps = (
   reactBindableProps: Record<string, unknown>,
@@ -26,11 +48,12 @@ export const createResizableSeparatorProps = (
   const releasePointerCaptureAtGestureEnd = (
     event: PointerEvent<HTMLElement>,
   ) => {
-    separatorsReleasedAtGestureEnd.add(event.currentTarget);
-
-    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
-      event.currentTarget.releasePointerCapture(event.pointerId);
+    if (!event.currentTarget.hasPointerCapture(event.pointerId)) {
+      return;
     }
+
+    markPointerReleasedAtGestureEnd(event.currentTarget, event.pointerId);
+    event.currentTarget.releasePointerCapture(event.pointerId);
   };
 
   return {
@@ -39,7 +62,7 @@ export const createResizableSeparatorProps = (
         return;
       }
 
-      separatorsReleasedAtGestureEnd.delete(event.currentTarget);
+      takePointerReleasedAtGestureEnd(event.currentTarget, event.pointerId);
       event.preventDefault();
       event.currentTarget.focus();
       event.currentTarget.setPointerCapture(event.pointerId);
@@ -58,7 +81,9 @@ export const createResizableSeparatorProps = (
       }
     },
     onLostPointerCapture: (event: PointerEvent<HTMLElement>) => {
-      if (separatorsReleasedAtGestureEnd.delete(event.currentTarget)) {
+      if (
+        takePointerReleasedAtGestureEnd(event.currentTarget, event.pointerId)
+      ) {
         return;
       }
 

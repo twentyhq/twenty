@@ -7,18 +7,30 @@ type SeparatorHandlers = Record<
   (event: PointerEvent<HTMLElement>) => void
 >;
 
-const createSeparatorElement = () =>
-  Object.assign(document.createElement('div'), {
-    setPointerCapture: jest.fn(),
-    hasPointerCapture: jest.fn(() => true),
-    releasePointerCapture: jest.fn(),
-  });
+const createSeparatorElement = () => {
+  const capturedPointerIds = new Set<number>();
 
-const createPointerEvent = (currentTarget: HTMLElement) =>
+  return Object.assign(document.createElement('div'), {
+    setPointerCapture: jest.fn((pointerId: number) =>
+      capturedPointerIds.add(pointerId),
+    ),
+    hasPointerCapture: jest.fn((pointerId: number) =>
+      capturedPointerIds.has(pointerId),
+    ),
+    releasePointerCapture: jest.fn((pointerId: number) =>
+      capturedPointerIds.delete(pointerId),
+    ),
+  });
+};
+
+const createPointerEvent = (
+  currentTarget: HTMLElement,
+  { pointerId = 1, button = 0 }: { pointerId?: number; button?: number } = {},
+) =>
   ({
-    button: 0,
+    button,
     defaultPrevented: false,
-    pointerId: 1,
+    pointerId,
     currentTarget,
     preventDefault: jest.fn(),
   }) as unknown as PointerEvent<HTMLElement>;
@@ -82,6 +94,20 @@ describe('createResizableSeparatorProps', () => {
 
     handlers.onPointerDown(createPointerEvent(separator));
     handlers.onPointerCancel(createPointerEvent(separator));
+    handlers.onLostPointerCapture(createPointerEvent(separator));
+
+    expect(remotePointerCancel).toHaveBeenCalledTimes(1);
+  });
+
+  it('should still forward the drag pointer losing its capture after another pointer ended on the separator', () => {
+    const { handlers, remotePointerCancel } = createSeparatorHandlers();
+    const separator = createSeparatorElement();
+
+    handlers.onPointerDown(createPointerEvent(separator));
+    handlers.onPointerDown(
+      createPointerEvent(separator, { pointerId: 2, button: 2 }),
+    );
+    handlers.onPointerUp(createPointerEvent(separator, { pointerId: 2 }));
     handlers.onLostPointerCapture(createPointerEvent(separator));
 
     expect(remotePointerCancel).toHaveBeenCalledTimes(1);
