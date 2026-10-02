@@ -7876,6 +7876,15 @@ export default {
             "getRoles": [
                 51
             ],
+            "getRole": [
+                51,
+                {
+                    "id": [
+                        3,
+                        "UUID!"
+                    ]
+                }
+            ],
             "apiKeys": [
                 2
             ],

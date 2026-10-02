@@ -10,12 +10,12 @@ import { workflowAiAgentActionAgentState } from '@/workflow/workflow-steps/workf
 import { workflowAiAgentPermissionsIsAddingPermissionState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentPermissionsIsAddingPermissionState';
 import { workflowAiAgentPermissionsIsSystemObjectsListOpenState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentPermissionsIsSystemObjectsListOpenState';
 import { workflowAiAgentPermissionsSelectedObjectIdState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentPermissionsSelectedObjectIdState';
-import { useQuery } from '@apollo/client/react';
+import { useApolloClient, useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { type Agent, GetRolesDocument } from '~/generated-metadata/graphql';
+import { type Agent, GetRoleDocument } from '~/generated-metadata/graphql';
 import { SidePanelSkeletonLoader } from '~/loading/components/SidePanelSkeletonLoader';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 
@@ -100,16 +100,15 @@ export const WorkflowAiAgentPermissionsTab = ({
       itemA.nameSingular.localeCompare(itemB.nameSingular),
     );
 
-  const {
-    data: rolesData,
-    loading: rolesLoading,
-    refetch: refetchRoles,
-  } = useQuery(GetRolesDocument);
+  const apolloClient = useApolloClient();
+  const agentRoleId = workflowAiAgentActionAgent?.roleId;
+  const { data: roleData, loading: roleLoading } = useQuery(GetRoleDocument, {
+    variables: { id: agentRoleId ?? '' },
+    skip: !isDefined(agentRoleId),
+  });
 
   const [searchQuery, setSearchQuery] = useState('');
-  const role = rolesData?.getRoles.find(
-    (item) => item.id === workflowAiAgentActionAgent?.roleId,
-  );
+  const role = roleData?.getRole;
   const objectPermissions = role?.objectPermissions || [];
   const permissionFlagKeys =
     role?.permissionFlags?.map((permissionFlag) => permissionFlag.flag) ?? [];
@@ -143,7 +142,7 @@ export const WorkflowAiAgentPermissionsTab = ({
   });
 
   const refetchAgentAndRoles = async () => {
-    await refetchRoles();
+    await apolloClient.refetchQueries({ include: [GetRoleDocument] });
     const result = await refetchAgent();
     return {
       refetchedAgent: result?.data?.findOneAgent,
@@ -162,7 +161,7 @@ export const WorkflowAiAgentPermissionsTab = ({
     refetchAgentAndRoles,
   });
 
-  if (isAgentLoading || rolesLoading) {
+  if (isAgentLoading || roleLoading) {
     return <SidePanelSkeletonLoader />;
   }
 
