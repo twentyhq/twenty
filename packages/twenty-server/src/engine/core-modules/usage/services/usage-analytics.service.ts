@@ -67,9 +67,7 @@ type GroupByField = (typeof ALLOWED_GROUP_BY_FIELDS)[number];
 
 const BREAKDOWN_QUERY_LIMIT = 50;
 
-// Scopes a declared operation name to the application that declared it. Both
-// halves of the comparison are built here so the SQL and the array it is
-// matched against cannot spell the pair differently.
+// Scopes a declared operation to its application; both sides of the comparison use it so they cannot spell the pair differently.
 const DECLARED_OPERATION_KEY_SEPARATOR = ':';
 
 @Injectable()
@@ -91,8 +89,7 @@ export class UsageAnalyticsService {
   }): Promise<UsageConsumptionRow[]> {
     const periodClause = buildUsagePeriodClause(periodAnchor);
 
-    // The filtered keys are grouped again so the shape matches the
-    // consumption_by_scope projection, which is only picked on a full key match.
+    // Grouped again so the shape matches the consumption_by_scope projection, which is picked only on a full key match.
     return this.clickHouseService.selectOrThrow<UsageConsumptionRow>(
       `SELECT operationType, unit, userWorkspaceId, apiKeyId, applicationId,
               agentId, workflowId, logicFunctionId,
@@ -172,8 +169,7 @@ export class UsageAnalyticsService {
     workspaceId: string;
     periodStart: Date;
   }): Promise<number> {
-    // Both keys are pinned, so the grouping only exists to match the
-    // billing_by_workspace_period projection; it still returns a single row.
+    // The grouping only exists to match the billing_by_workspace_period projection; it still returns one row.
     const rows = await this.clickHouseService.selectOrThrow<{
       total: string | number | null;
     }>(
@@ -254,15 +250,8 @@ export class UsageAnalyticsService {
     });
   }
 
-  // Apps pick their operation type from a closed platform enum, so unrelated
-  // apps merge under whichever one they picked. Grouping on the application
-  // and on the operation it declared answers "what did this app charge me
-  // for" without disturbing the operation-type breakdown, which still
-  // accounts for every credit.
-  //
-  // Contexts the app never declared collapse here rather than in the
-  // resolver, so a row is a displayed slice and the limit truncates the same
-  // way it does for every other breakdown.
+  // Apps share a closed operation-type enum, so grouping on the app and its declared operation shows what each app charged.
+  // Undeclared contexts collapse here rather than in the resolver, so the limit truncates displayed slices.
   async getUsageByApplication({
     workspaceId,
     periodStart,
@@ -333,10 +322,7 @@ export class UsageAnalyticsService {
     }));
   }
 
-  // Which recurring charges an application has already been billed for in a
-  // period. The usage row is itself the record of the charge, so re-running the
-  // cron re-reads it instead of needing separate bookkeeping. Compared with >=
-  // rather than = so a truncated timestamp cannot miss the current period.
+  // The usage row is the record of the charge; >= so a truncated timestamp cannot miss the current period.
   async getChargedRecurringKeys({
     workspaceId,
     periodStart,

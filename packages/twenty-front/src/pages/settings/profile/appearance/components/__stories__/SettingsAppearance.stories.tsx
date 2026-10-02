@@ -53,6 +53,16 @@ const meta = {
         ? 'System settings'
         : selectedColorScheme;
 
+    for (const label of ['Light', 'Dark', 'System settings']) {
+      const radioBounds = group
+        .getByRole('radio', { name: label })
+        .getBoundingClientRect();
+      const labelBounds = group.getByText(label).getBoundingClientRect();
+
+      expect(radioBounds.height).toBe(80);
+      expect(labelBounds.top - radioBounds.bottom).toBe(8);
+    }
+
     expect(group.getAllByRole('radio', { checked: true })).toHaveLength(1);
     expect(group.getByRole('radio', { checked: true })).toHaveAccessibleName(
       selectedLabel,

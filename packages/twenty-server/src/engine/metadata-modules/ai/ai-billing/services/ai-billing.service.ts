@@ -78,9 +78,7 @@ export class AiBillingService {
     };
   }
 
-  // Evaluation models are looked up first: they price like a language model
-  // but live in their own registry, and getEffectiveModelConfig would throw on
-  // an id it has never registered.
+  // evaluation models first: getEffectiveModelConfig throws on ids outside its registry
   private getCostConfig(modelId: ModelId): AiModelCostConfig {
     return (
       this.aiModelRegistryService.getEvaluationModelConfig(modelId) ??

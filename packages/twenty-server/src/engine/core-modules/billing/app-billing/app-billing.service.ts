@@ -25,9 +25,8 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 type AppChargeableOperationType =
   (typeof UsageOperationType)[UsageOperationTypeValue];
 
-// An app sends a quantity and never a unit, so the platform names what the
-// number counts. Keyed on the app-facing vocabulary, so adding a value to
-// twenty-shared's USAGE_OPERATION_TYPES fails to compile until it has a unit.
+// Apps send a quantity, never a unit, so the platform names what it counts.
+// Keyed on the app-facing vocabulary so a new USAGE_OPERATION_TYPES value fails to compile until it has a unit
 const USAGE_UNIT_BY_OPERATION_TYPE: Record<
   AppChargeableOperationType,
   UsageUnit
@@ -41,9 +40,7 @@ const USAGE_UNIT_BY_OPERATION_TYPE: Record<
   [UsageOperationType.EMAIL_SEND]: UsageUnit.INVOCATION,
 };
 
-// `workspaceId` + `applicationId` come from the application-access token,
-// never from the body — an app can't charge a different workspace or
-// masquerade as a different app.
+// workspaceId and applicationId come from the token, never the body, so an app can't charge another workspace or pose as another app
 @Injectable()
 export class AppBillingService {
   private readonly logger = new Logger(AppBillingService.name);
@@ -139,8 +136,7 @@ export class AppBillingService {
     );
     // Undefined until the upgrade that adds the column has run.
     const billableOperations = application?.billing?.operations ?? {};
-    // Own-property only: an operation named `constructor` or `__proto__` would
-    // otherwise resolve to an inherited value and charge under no category.
+    // Own-property only: `constructor` or `__proto__` would resolve to inherited values and charge under no category
     const billableOperation = Object.prototype.hasOwnProperty.call(
       billableOperations,
       charge.operation,
@@ -154,25 +150,19 @@ export class AppBillingService {
       );
     }
 
-    // `operations` is jsonb, so the declaration is untrusted at the point it is
-    // used however the manifest typed it. An unknown value indexes the enum to
-    // undefined and records a row with no category and no unit, and a
-    // platform-only value like SUBSCRIPTION would let the declared-operation
-    // path raise what ChargeDto's @IsIn stops an app raising directly.
+    // jsonb is untrusted: an unknown value would record a row with no category or unit,
+    // and a platform-only value like SUBSCRIPTION would bypass ChargeDto's @IsIn
     if (!isUsageOperationTypeValue(billableOperation.operationType)) {
       throw new BadRequestException(
         `Billable operation "${charge.operation}" declares an unknown operationType.`,
       );
     }
 
-    // Indexing the enum by the manifest literal is also what stops
-    // twenty-shared's USAGE_OPERATION_TYPES from promising apps a category the
-    // platform does not meter: a drifted value fails to compile here.
+    // Indexing by the manifest literal makes a drifted USAGE_OPERATION_TYPES value fail to compile
     return UsageOperationType[billableOperation.operationType];
   }
 
-  // Scoped to the token's workspace, so an app cannot attribute its spend to
-  // someone outside the workspace its token was issued for.
+  // Scoped to the token's workspace so an app cannot attribute spend outside it
   private async findWorkspaceScopedUserWorkspaceId({
     workspaceId,
     userWorkspaceId,

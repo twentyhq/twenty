@@ -182,9 +182,7 @@ export class FlatIndexValidatorService {
                   (property) => property.isIncludedInUniqueConstraint,
                 );
 
-              // Each MANY_TO_ONE relation, including one concrete member of a
-              // morph group, owns one UUID join column that Postgres can
-              // uniquely index. The inverse side has no join column.
+              // Only the MANY_TO_ONE side owns a join column Postgres can uniquely index
               const isUnindexableRelation =
                 isMorphOrRelationUniversalFlatFieldMetadata(relatedFlatField) &&
                 relatedFlatField.universalSettings?.relationType !==

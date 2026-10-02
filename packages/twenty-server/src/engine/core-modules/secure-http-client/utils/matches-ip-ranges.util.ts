@@ -4,8 +4,7 @@ const fromLong = (ipl: number): string => {
   return `${ipl >>> 24}.${(ipl >> 16) & 255}.${(ipl >> 8) & 255}.${ipl & 255}`;
 };
 
-// Parses IPv4 in any encoding (dotted decimal, octal, hex, bare integer)
-// into a 32-bit unsigned integer. Returns -1 for invalid input.
+// Every IPv4 encoding (octal, hex, bare integer) must normalize, or it slips past the range check. -1 means invalid.
 const normalizeToLong = (addr: string): number => {
   const parts = addr.split('.').map((part) => {
     if (part.startsWith('0x') || part.startsWith('0X')) {
@@ -47,9 +46,6 @@ const normalizeToLong = (addr: string): number => {
   return val >>> 0;
 };
 
-// Extracts the embedded IPv4 from an IPv4-mapped IPv6 address in hex
-// notation (e.g. ::ffff:a9fe:a9fe → 169.254.169.254). Returns null
-// if the address is not in this form.
 const HEX_MAPPED_RE = /^::ffff:([0-9a-f]{1,4}):([0-9a-f]{1,4})$/i;
 
 const extractIpv4FromHexMappedIpv6 = (addr: string): string | null => {
@@ -65,8 +61,6 @@ const extractIpv4FromHexMappedIpv6 = (addr: string): string | null => {
   return `${(hi >> 8) & 0xff}.${hi & 0xff}.${(lo >> 8) & 0xff}.${lo & 0xff}`;
 };
 
-// Extracts the embedded IPv4 from an IPv4-mapped IPv6 address in
-// dotted-decimal notation (e.g. ::ffff:127.0.0.1 → 127.0.0.1).
 const DOTTED_MAPPED_RE = /^::ffff:(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})$/i;
 
 const extractIpv4FromDottedMappedIpv6 = (addr: string): string | null => {
@@ -76,26 +70,23 @@ const extractIpv4FromDottedMappedIpv6 = (addr: string): string | null => {
 };
 
 export const matchesIpRanges = (ranges: BlockList, addr: string): boolean => {
-  // IPv4-mapped IPv6 in hex form — the form Node.js URL parser produces.
+  // The form Node's URL parser produces.
   const hexMappedIpv4 = extractIpv4FromHexMappedIpv6(addr);
 
   if (hexMappedIpv4 !== null) {
     return ranges.check(hexMappedIpv4);
   }
 
-  // IPv4-mapped IPv6 in dotted-decimal form (::ffff:D.D.D.D)
   const dottedMappedIpv4 = extractIpv4FromDottedMappedIpv6(addr);
 
   if (dottedMappedIpv4 !== null) {
     return ranges.check(dottedMappedIpv4);
   }
 
-  // Pure IPv6 (any address containing a colon that isn't IPv4-mapped)
   if (addr.includes(':')) {
     return ranges.check(addr, 'ipv6');
   }
 
-  // IPv4 in any encoding (standard, octal, hex, bare integer)
   const ipl = normalizeToLong(addr);
 
   if (ipl < 0) {

@@ -3,8 +3,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 
-// Mirrors the chat list query: deleted chats stay listed so they can be
-// restored, and workflow run conversations are left to their run
+// Mirrors the chat list: deleted chats stay listed for restore, run conversations are excluded.
 export const listChatThreadIds = async (
   token = APPLE_JANE_ADMIN_ACCESS_TOKEN,
 ): Promise<string[]> => {

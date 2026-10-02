@@ -14,9 +14,7 @@ export const SignInUpSsoExchangeTokenEffect = () => {
       return;
     }
 
-    // Stripping synchronously through window.history rather than the router
-    // (whose data-router navigations defer the replace) latches re-invoked and
-    // remounted effects out: they re-read window.location and find no token
+    // Synchronous strip (the router defers replace) so re-run or remounted effects find no token
     window.history.replaceState(
       window.history.state,
       '',

@@ -9,8 +9,6 @@ import { parsePendingToolCall } from '@/ai/utils/parsePendingToolCall';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
-// The conversation waits once its turn is over, on every call still pending,
-// in the order the agent made them.
 export const useAgentChatPendingToolCalls = (): AgentChatPendingToolCall[] => {
   const agentChatDisplayedThread = useAtomStateValue(
     agentChatDisplayedThreadState,

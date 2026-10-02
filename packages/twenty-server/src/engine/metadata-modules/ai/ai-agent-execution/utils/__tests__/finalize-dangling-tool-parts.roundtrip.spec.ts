@@ -70,8 +70,7 @@ const unresolvedToolCallIds = async (
   return [...pending];
 };
 
-// convertToModelMessages drops the `input` field when a tool part's input is
-// nullish, so every reconstructed tool-call must carry a defined input.
+// convertToModelMessages drops a nullish `input`, so every reconstructed tool-call must carry one
 const toolCallInputs = async (messages: UIMessage[]): Promise<unknown[]> => {
   const modelMessages = await convertToModelMessages(messages);
   const inputs: unknown[] = [];
@@ -151,8 +150,7 @@ describe('finalizeDanglingToolParts round-trip', () => {
     );
   });
 
-  // A tool call that failed input validation: persisted as output-error with
-  // a null input (issue #21695).
+  // failed input validation: persisted as output-error with a null input (#21695)
   const validationErroredPart: ExtendedUIMessagePart = {
     type: 'tool-execute_tool',
     toolCallId: 'validation_failed_1',

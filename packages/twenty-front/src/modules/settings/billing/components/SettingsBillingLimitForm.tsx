@@ -1,6 +1,7 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
+import { ProgressRing } from 'twenty-ui/primitives/feedback';
 import { Section } from 'twenty-ui/components';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -26,7 +27,6 @@ import { getUsageLimitRingColor } from '@/settings/billing/utils/getUsageLimitRi
 import { getUsageLimitUnitLabel } from '@/settings/billing/utils/getUsageLimitUnitLabel';
 import { Select } from '@/ui/input/components/Select';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
-import { ProgressRing } from '@/ui/feedback/progress-ring/components/ProgressRing';
 import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import {
   type UsageQuotaDefinitionsQuery,
@@ -232,6 +232,7 @@ export const SettingsBillingLimitForm = ({
                   <StyledRingAnchor id={RING_ANCHOR_ID}>
                     <ProgressRing
                       value={consumedPercentage}
+                      aria-label={t`Used`}
                       barColor={getUsageLimitRingColor({
                         consumedPercentage,
                         isExhausted,

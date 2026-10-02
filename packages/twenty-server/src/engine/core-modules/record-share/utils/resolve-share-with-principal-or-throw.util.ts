@@ -5,6 +5,7 @@ import { EVERYONE_PRINCIPAL_ID } from 'twenty-shared/constants';
 import { RecordSharePrincipalType } from 'twenty-shared/types';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
 
+import { GRANTABLE_RECORD_SHARE_ACCESS_LEVELS } from 'src/engine/core-modules/record-share/constants/grantable-record-share-access-levels.constant';
 import {
   RecordShareException,
   RecordShareExceptionCode,
@@ -63,6 +64,17 @@ export const resolveShareWithPrincipalOrThrow = (
       `shareWith principal "${principal.principalId}" is not a valid UUID`,
       RecordShareExceptionCode.INVALID_SHARE_WITH,
       { userFriendlyMessage: msg`Invalid UUID format.` },
+    );
+  }
+
+  // NONE only withdraws the default access of a record and is never granted
+  if (
+    !GRANTABLE_RECORD_SHARE_ACCESS_LEVELS.includes(shareWithEntry.accessLevel)
+  ) {
+    throw new RecordShareException(
+      `shareWith access level "${shareWithEntry.accessLevel}" must be one of ${GRANTABLE_RECORD_SHARE_ACCESS_LEVELS.join(', ')}`,
+      RecordShareExceptionCode.INVALID_SHARE_WITH,
+      { userFriendlyMessage: msg`Invalid access level.` },
     );
   }
 

@@ -67,8 +67,7 @@ export const UsageBreakdownPieSection = ({
 
   const total = breakdownData.reduce((sum, item) => sum + item.creditsUsed, 0);
 
-  // Operation types are a fixed platform vocabulary translated here; the other
-  // breakdowns name workspace data, which only the server can resolve.
+  // Operation types are a fixed vocabulary translated here; other breakdowns name workspace data only the server resolves
   const formatLabel = ({
     key,
     label,

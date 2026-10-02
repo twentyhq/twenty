@@ -39,8 +39,7 @@ export class ResendDriver implements EmailingDomainDriverInterface {
     private readonly unsubscribeContentService: UnsubscribeContentService,
   ) {}
 
-  // Resend has no per-workspace resources: domains are account-level and
-  // workspace attribution travels on each send as a tag.
+  // Resend domains are account-level; workspace attribution travels on each send as a tag.
   async provisionWorkspace(workspaceId: string): Promise<void> {
     this.logger.log(
       `No Resend resources to provision for workspace ${workspaceId}`,
