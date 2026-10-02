@@ -1,5 +1,5 @@
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-import { FieldMetadataType, ObjectsPermissions } from 'twenty-shared/types';
+import { FieldMetadataType, type ObjectPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { getAllSelectableFields } from 'src/engine/api/common/common-select-fields/utils/get-all-selectable-fields.util';
@@ -14,6 +14,35 @@ import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-fiel
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
+type RelationsSelectFlatObjectMetadata = Pick<
+  FlatObjectMetadata,
+  | 'id'
+  | 'universalIdentifier'
+  | 'applicationId'
+  | 'workspaceId'
+  | 'fieldIds'
+  | 'nameSingular'
+  | 'labelIdentifierFieldMetadataId'
+  | 'imageIdentifierFieldMetadataId'
+>;
+
+type RelationsSelectFlatFieldMetadata = Pick<
+  OrmFlatFieldMetadata,
+  | 'id'
+  | 'universalIdentifier'
+  | 'applicationId'
+  | 'workspaceId'
+  | 'type'
+  | 'name'
+  | 'settings'
+  | 'relationTargetObjectMetadataId'
+>;
+
+type RelationsSelectObjectsPermissions = Record<
+  string,
+  Pick<ObjectPermissions, 'canReadObjectRecords' | 'restrictedFields'>
+>;
+
 export const getRelationsSelectFields = ({
   flatObjectMetadataMaps,
   flatFieldMetadataMaps,
@@ -24,10 +53,10 @@ export const getRelationsSelectFields = ({
   currentDepthLevelIsAJunctionTable = false,
   recurseIntoJunctionTableRelations = false,
 }: {
-  flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
-  flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
-  flatObjectMetadata: FlatObjectMetadata;
-  objectsPermissions: ObjectsPermissions;
+  flatObjectMetadataMaps: FlatEntityMaps<RelationsSelectFlatObjectMetadata>;
+  flatFieldMetadataMaps: FlatEntityMaps<RelationsSelectFlatFieldMetadata>;
+  flatObjectMetadata: RelationsSelectFlatObjectMetadata;
+  objectsPermissions: RelationsSelectObjectsPermissions;
   depth: Depth | undefined;
   onlyUseLabelIdentifierFieldsInRelations?: boolean;
   currentDepthLevelIsAJunctionTable?: boolean;
