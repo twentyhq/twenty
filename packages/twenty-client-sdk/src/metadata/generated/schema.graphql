@@ -1778,6 +1778,8 @@ type RecordSharingGrantDTO {
   principalId: UUID!
   accessLevel: RecordShareAccessLevel!
   rowCause: String!
+  canRoleRead: Boolean
+  canRoleUpdate: Boolean
 }
 
 enum RecordShareAccessLevel {
@@ -1800,6 +1802,7 @@ type RecordSharingDTO {
   isOpenByDefault: Boolean!
   generalAccessLevel: RecordShareAccessLevel
   isGeneralAccessDefault: Boolean!
+  sharingReach: ObjectSharingReach!
   roles: [RecordSharingRoleDTO!]!
   shares: [RecordSharingGrantDTO!]!
 }

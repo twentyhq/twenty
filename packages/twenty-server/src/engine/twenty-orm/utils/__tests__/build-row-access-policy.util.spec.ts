@@ -9,10 +9,12 @@ import {
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import {
+  type RowAccessCompilationEnvironment,
   type RowAccessPolicyEnvironment,
   type RowAccessPolicySubject,
 } from 'src/engine/twenty-orm/types/row-access-policy.type';
 import { buildRowAccessPolicy } from 'src/engine/twenty-orm/utils/build-row-access-policy.util';
+import { compileRowAccessPolicy } from 'src/engine/twenty-orm/utils/compile-row-access-policy.util';
 import { renderRowLevelPermissionFilterToSql } from 'src/engine/twenty-orm/utils/render-row-level-permission-filter-to-sql.util';
 import { resolveInheritedReadabilityParents } from 'src/engine/core-modules/record-share/utils/resolve-inherited-readability-parents.util';
 
@@ -54,7 +56,8 @@ const person = buildObject({
   readability: MetadataReadability.PRIVATE,
 });
 
-const environment: RowAccessPolicyEnvironment = {
+const environment: RowAccessPolicyEnvironment &
+  RowAccessCompilationEnvironment = {
   flatFieldMetadataMaps: { byId: {} } as never,
   flatObjectMetadataMaps: { byId: {} } as never,
   recordShareTableExpression: '"workspace"."recordShare"',
@@ -63,10 +66,21 @@ const environment: RowAccessPolicyEnvironment = {
   isRecordSharingEnabled: false,
 };
 
+const buildCompiledRowAccessPolicy = (
+  args: Parameters<typeof buildRowAccessPolicy>[0] & {
+    environment: typeof environment;
+  },
+) =>
+  compileRowAccessPolicy({
+    policy: buildRowAccessPolicy(args),
+    environment: args.environment,
+  });
+
 const readEverything: RowAccessPolicySubject = {
   isSystemContext: false,
   objectsPermissions: undefined,
   principalIds: ['member-1'],
+  canAccessAllRecords: false,
   isOwningApplication: () => false,
   resolveRowLevelPermissionRecordFilter: () => null,
 };
@@ -75,7 +89,7 @@ const build = (
   subject: RowAccessPolicySubject,
   flatObjectMetadata: FlatObjectMetadata,
 ) =>
-  buildRowAccessPolicy({
+  buildCompiledRowAccessPolicy({
     subject,
     environment,
     tableAlias: flatObjectMetadata.nameSingular,
@@ -124,7 +138,7 @@ describe('buildRowAccessPolicy', () => {
     (readability) => {
       for (const operationType of ['select', 'update', 'delete'] as const) {
         expect(
-          buildRowAccessPolicy({
+          buildCompiledRowAccessPolicy({
             subject: {
               ...readEverything,
               isSystemContext: true,
@@ -162,7 +176,7 @@ describe('buildRowAccessPolicy', () => {
       id: 'company',
       readability: MetadataReadability.OPEN,
     });
-    const policy = buildRowAccessPolicy({
+    const policy = buildCompiledRowAccessPolicy({
       subject: readEverything,
       environment: { ...environment, isRecordSharingEnabled: true },
       tableAlias: 'company',
@@ -178,9 +192,28 @@ describe('buildRowAccessPolicy', () => {
     );
   });
 
+  it('lifts the restrictions of an OPEN object for a subject with access to all records', () => {
+    expect(
+      buildCompiledRowAccessPolicy({
+        subject: { ...readEverything, canAccessAllRecords: true },
+        environment: { ...environment, isRecordSharingEnabled: true },
+        tableAlias: 'note',
+        flatObjectMetadata: note,
+        operationType: 'select',
+        depth: 0,
+      }),
+    ).toEqual({ kind: 'open' });
+  });
+
+  it('keeps PRIVATE records gated for a subject with access to all records', () => {
+    expect(
+      gatedSql({ ...readEverything, canAccessAllRecords: true }, person),
+    ).toContain('recordShare');
+  });
+
   it('keeps an OPEN system object open when record sharing is enabled', () => {
     expect(
-      buildRowAccessPolicy({
+      buildCompiledRowAccessPolicy({
         subject: readEverything,
         environment: { ...environment, isRecordSharingEnabled: true },
         tableAlias: 'note',
@@ -193,7 +226,7 @@ describe('buildRowAccessPolicy', () => {
 
   it('leaves an OPEN object open to inserts when record sharing is enabled', () => {
     expect(
-      buildRowAccessPolicy({
+      buildCompiledRowAccessPolicy({
         subject: readEverything,
         environment: { ...environment, isRecordSharingEnabled: true },
         tableAlias: 'note',
@@ -214,7 +247,7 @@ describe('buildRowAccessPolicy', () => {
       subject: RowAccessPolicySubject,
       operationType: 'select' | 'update' | 'delete' = 'select',
     ) =>
-      buildRowAccessPolicy({
+      buildCompiledRowAccessPolicy({
         subject,
         environment: sharingEnvironment,
         tableAlias: 'company',
@@ -296,7 +329,7 @@ describe('buildRowAccessPolicy', () => {
 
     it('keeps the role limits when the object restricts sharing to the role', () => {
       expect(
-        buildRowAccessPolicy({
+        buildCompiledRowAccessPolicy({
           subject: withoutObjectPermission,
           environment: sharingEnvironment,
           tableAlias: 'company',
@@ -392,7 +425,7 @@ describe('buildRowAccessPolicy', () => {
           },
         },
       ]);
-      const policy = buildRowAccessPolicy({
+      const policy = buildCompiledRowAccessPolicy({
         subject: readEverything,
         environment,
         tableAlias: 'attachment',
@@ -408,7 +441,7 @@ describe('buildRowAccessPolicy', () => {
   );
 
   it('keeps private records gated regardless of the sharing UI flag', () => {
-    const policy = buildRowAccessPolicy({
+    const policy = buildCompiledRowAccessPolicy({
       subject: readEverything,
       environment,
       tableAlias: 'person',

@@ -142,6 +142,16 @@ describe('isRecordMatchingRLSRowLevelPermissionPredicate', () => {
       },
     ),
     createMockFlatFieldMetadata('users-id', 'users', FieldMetadataType.ARRAY),
+    createMockFlatFieldMetadata(
+      'created-by-id',
+      'createdBy',
+      FieldMetadataType.ACTOR,
+    ),
+    createMockFlatFieldMetadata(
+      'emails-id',
+      'emails',
+      FieldMetadataType.EMAILS,
+    ),
   ];
 
   const flatObjectMetadata = createMockFlatObjectMetadata(
@@ -161,6 +171,15 @@ describe('isRecordMatchingRLSRowLevelPermissionPredicate', () => {
     },
     companyId: 'company-1',
     users: ['user-1', 'user-2'],
+    createdBy: {
+      source: 'MANUAL',
+      name: 'Jane Doe',
+      workspaceMemberId: 'member-1',
+    },
+    emails: {
+      primaryEmail: 'jane@acme.com',
+      additionalEmails: ['jane.doe@acme.com'],
+    },
     deletedAt: null,
     id: 'record-1',
     createdAt: new Date().toISOString(),
@@ -288,25 +307,153 @@ describe('isRecordMatchingRLSRowLevelPermissionPredicate', () => {
     expect(result).toBe(false);
   });
 
-  it('matches composite address filters using at least one sub-field', () => {
-    const result = isRecordMatchingRLSRowLevelPermissionPredicate({
-      record: baseRecord,
-      filter: {
-        address: {
-          addressStreet1: {
-            eq: 'Main Street',
+  it.each([
+    ['London', false],
+    ['Paris', true],
+  ])(
+    'requires every composite sub-field to match, as SQL does (city %s)',
+    (addressCity, expected) => {
+      expect(
+        isRecordMatchingRLSRowLevelPermissionPredicate({
+          record: baseRecord,
+          filter: {
+            address: {
+              addressStreet1: { eq: 'Main Street' },
+              addressCity: { eq: addressCity },
+            },
           },
-          addressCity: {
-            eq: 'London',
-          },
-        },
-      },
-      flatObjectMetadata,
-      flatFieldMetadataMaps,
-    });
+          flatObjectMetadata,
+          flatFieldMetadataMaps,
+        }),
+      ).toBe(expected);
+    },
+  );
 
-    expect(result).toBe(true);
+  it('never matches a composite sub-field it cannot read', () => {
+    expect(
+      isRecordMatchingRLSRowLevelPermissionPredicate({
+        record: baseRecord,
+        filter: {
+          address: {
+            addressCity: { eq: 'Paris' },
+            addressPlanet: { eq: 'Earth' },
+          },
+        } as RecordGqlOperationFilter,
+        flatObjectMetadata,
+        flatFieldMetadataMaps,
+      }),
+    ).toBe(false);
   });
+
+  it.each([
+    ['the creator', 'member-1', true],
+    ['another member', 'member-2', false],
+  ])(
+    'matches an actor on its workspace member, for %s',
+    (_, workspaceMemberId, expected) => {
+      expect(
+        isRecordMatchingRLSRowLevelPermissionPredicate({
+          record: baseRecord,
+          filter: {
+            createdBy: { workspaceMemberId: { eq: workspaceMemberId } },
+          },
+          flatObjectMetadata,
+          flatFieldMetadataMaps,
+        }),
+      ).toBe(expected);
+    },
+  );
+
+  it('treats a null actor source as no constraint', () => {
+    expect(
+      isRecordMatchingRLSRowLevelPermissionPredicate({
+        record: baseRecord,
+        filter: {
+          createdBy: { source: null, name: { eq: 'Jane Doe' } },
+        } as RecordGqlOperationFilter,
+        flatObjectMetadata,
+        flatFieldMetadataMaps,
+      }),
+    ).toBe(true);
+  });
+
+  it.each([
+    ['%jane.doe%', true],
+    ['%john%', false],
+  ])('matches additional emails like %s', (like, expected) => {
+    expect(
+      isRecordMatchingRLSRowLevelPermissionPredicate({
+        record: baseRecord,
+        filter: { emails: { additionalEmails: { like } } },
+        flatObjectMetadata,
+        flatFieldMetadataMaps,
+      }),
+    ).toBe(expected);
+  });
+
+  it('never lets a null JSON sub-field match a like pattern', () => {
+    expect(
+      isRecordMatchingRLSRowLevelPermissionPredicate({
+        record: {
+          ...baseRecord,
+          emails: { primaryEmail: 'jane@acme.com', additionalEmails: null },
+        },
+        filter: { emails: { additionalEmails: { like: '%null%' } } },
+        flatObjectMetadata,
+        flatFieldMetadataMaps,
+      }),
+    ).toBe(false);
+  });
+
+  it('matches address coordinates', () => {
+    expect(
+      isRecordMatchingRLSRowLevelPermissionPredicate({
+        record: {
+          ...baseRecord,
+          address: { ...baseRecord.address, addressLat: 48.85 },
+        },
+        filter: {
+          address: { addressLat: { gte: 48 } },
+        } as RecordGqlOperationFilter,
+        flatObjectMetadata,
+        flatFieldMetadataMaps,
+      }),
+    ).toBe(true);
+  });
+
+  it('treats null and empty sub-field filters as no constraint', () => {
+    expect(
+      isRecordMatchingRLSRowLevelPermissionPredicate({
+        record: baseRecord,
+        filter: {
+          name: { firstName: null, lastName: { eq: 'Doe' } },
+          address: { addressLat: {}, addressCity: { eq: 'Paris' } },
+        } as RecordGqlOperationFilter,
+        flatObjectMetadata,
+        flatFieldMetadataMaps,
+      }),
+    ).toBe(true);
+  });
+
+  it.each([
+    ['createdBy', { context: { is: 'NULL' } }, true],
+    ['createdBy', { context: { is: 'NOT_NULL' } }, false],
+    ['address', { addressLat: { is: 'NULL' } }, true],
+    ['address', { addressCity: { eq: 'Paris' } }, false],
+    ['name', { firstName: { is: 'NULL' } }, true],
+  ])(
+    'reads a null %s as null sub-fields for %j',
+    (fieldName, subFieldFilter, expected) => {
+      expect(
+        isRecordMatchingRLSRowLevelPermissionPredicate({
+          record: { ...baseRecord, [fieldName]: null },
+          filter: { [fieldName]: subFieldFilter } as RecordGqlOperationFilter,
+          flatObjectMetadata,
+          flatFieldMetadataMaps,
+        }),
+      ).toBe(expected);
+    },
+  );
 
   it('supports relation join column filters', () => {
     const result = isRecordMatchingRLSRowLevelPermissionPredicate({

@@ -284,6 +284,108 @@ describe('Records shared beyond the role that can access their object', () => {
     expect((await findIdsAsJony()).ids).toEqual([SHARED_RECORD_ID]);
   });
 
+  it('should tell owners what the role of each recipient grants on its own', async () => {
+    await setShare({ principal: JONY });
+    await setShare({ principal: { roleId: memberRoleId } });
+    await setShare({ principal: EVERYONE });
+
+    const sharing = await makeMetadataApiRequest({
+      query: parse(
+        `query RecordSharing($target: RecordSharingTargetInput!) { recordSharing(target: $target) { sharingReach shares { principalId canRoleRead canRoleUpdate } } }`,
+      ),
+      variables: { target: target() },
+    });
+
+    expect(sharing.body.data.recordSharing.sharingReach).toBe(
+      ObjectSharingReach.WORKSPACE,
+    );
+    expect(sharing.body.data.recordSharing.shares).toEqual(
+      expect.arrayContaining([
+        {
+          principalId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+          canRoleRead: false,
+          canRoleUpdate: false,
+        },
+        { principalId: memberRoleId, canRoleRead: false, canRoleUpdate: false },
+        {
+          principalId: EVERYONE_PRINCIPAL_ID,
+          canRoleRead: null,
+          canRoleUpdate: null,
+        },
+      ]),
+    );
+  });
+
+  it('should refuse to share with someone the object cannot reach', async () => {
+    await setSharingReach(ObjectSharingReach.ROLE_ACCESS);
+
+    const response = await setShare({ principal: JONY });
+
+    expect(response.body.errors?.[0]?.extensions?.subCode).toBe(
+      'INVALID_SHARE_WITH',
+    );
+
+    expect(
+      (await setShare({ principal: { roleId: memberRoleId } })).body.errors?.[0]
+        ?.extensions?.subCode,
+    ).toBe('INVALID_SHARE_WITH');
+
+    await setMemberObjectAccess(true);
+
+    expect((await setShare({ principal: JONY })).body.errors).toBeUndefined();
+    expect(
+      (await setShare({ principal: { roleId: memberRoleId } })).body.errors,
+    ).toBeUndefined();
+  });
+
+  it('should refuse a share the row filter of the recipient would hide, but let the role filter each member on read', async () => {
+    await setMemberObjectAccess(true);
+    await setSharingReach(ObjectSharingReach.ROLE_ACCESS);
+    await upsertRowLevelPermissionPredicates({
+      expectToFail: false,
+      input: {
+        roleId: memberRoleId,
+        objectMetadataId,
+        predicates: [
+          {
+            fieldMetadataId: nameFieldMetadataId,
+            operand: RowLevelPermissionPredicateOperand.CONTAINS,
+            value: 'Visible',
+          },
+        ],
+        predicateGroups: [],
+      },
+    });
+
+    try {
+      const response = await setShare({ principal: JONY });
+
+      expect(response.body.errors?.[0]?.extensions?.subCode).toBe(
+        'INVALID_SHARE_WITH',
+      );
+      expect(
+        await shares.findByRecordIds({
+          workspaceId,
+          objectMetadataId,
+          recordIds: [SHARED_RECORD_ID],
+        }),
+      ).toEqual([]);
+      expect(
+        (await setShare({ principal: { roleId: memberRoleId } })).body.errors,
+      ).toBeUndefined();
+    } finally {
+      await upsertRowLevelPermissionPredicates({
+        expectToFail: false,
+        input: {
+          roleId: memberRoleId,
+          objectMetadataId,
+          predicates: [],
+          predicateGroups: [],
+        },
+      });
+    }
+  });
+
   it('should stay within the role when the object limits sharing to it', async () => {
     await setShare({ principal: JONY });
     await setSharingReach(ObjectSharingReach.ROLE_ACCESS);
@@ -378,6 +480,7 @@ describe('Records shared beyond the role that can access their object', () => {
             WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
             memberRoleId,
           ],
+          canAccessAllRecords: false,
           isOwningApplication: () => false,
           resolveRowLevelPermissionRecordFilter: () => null,
         });

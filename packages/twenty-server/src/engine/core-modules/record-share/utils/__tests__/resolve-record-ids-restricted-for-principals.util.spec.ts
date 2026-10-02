@@ -112,6 +112,16 @@ describe('resolveRecordIdsRestrictedForPrincipals', () => {
   });
 
   it('should not let another everyone row lift a restriction', () => {
+    const applicationEveryoneShare: RecordShare = {
+      ...buildShare(
+        'restricted',
+        EVERYONE_PRINCIPAL_ID,
+        RecordShareAccessLevel.FULL,
+      ),
+      rowCause: RecordShareRowCause.APPLICATION,
+      sourceId: 'application-1',
+    };
+
     expect(
       resolveRecordIdsRestrictedForPrincipals({
         recordShares: [
@@ -120,15 +130,7 @@ describe('resolveRecordIdsRestrictedForPrincipals', () => {
             EVERYONE_PRINCIPAL_ID,
             RecordShareAccessLevel.NONE,
           ),
-          {
-            ...buildShare(
-              'restricted',
-              EVERYONE_PRINCIPAL_ID,
-              RecordShareAccessLevel.FULL,
-            ),
-            rowCause: RecordShareRowCause.APPLICATION,
-            sourceId: 'application-1',
-          },
+          applicationEveryoneShare,
         ],
         principalIds: [EVERYONE_PRINCIPAL_ID, MEMBER_ID],
         accessLevels: SELECT_ACCESS_LEVELS,
