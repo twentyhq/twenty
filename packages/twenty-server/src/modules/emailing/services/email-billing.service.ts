@@ -3,12 +3,10 @@ import { Injectable } from '@nestjs/common';
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { type UsageRefusal } from 'src/engine/core-modules/billing/types/usage-refusal.type';
 import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
-import { buildQuotaCostFromUsageEvents } from 'src/engine/core-modules/usage-limit/utils/build-quota-cost-from-usage-events.util';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 import { UsageRecorderService } from 'src/engine/core-modules/usage/services/usage-recorder.service';
-import { type RecordUsageInput } from 'src/engine/core-modules/usage/types/record-usage-input.type';
 import { type UsageSpenders } from 'src/engine/core-modules/usage/types/usage-spenders.type';
 import { buildEmailQuotaCost } from 'src/modules/emailing/utils/build-email-quota-cost.util';
 import { computeEmailCreditsUsedMicro } from 'src/modules/emailing/utils/compute-email-credits-used-micro.util';
@@ -65,25 +63,28 @@ export class EmailBillingService {
       return;
     }
 
-    const usageEvents: RecordUsageInput[] = [
-      {
-        resourceType: UsageResourceType.EMAIL,
-        operationType: UsageOperationType.EMAIL_SEND,
-        creditsUsedMicro: computeEmailCreditsUsedMicro(sentEmailCount),
-        quantity: sentEmailCount,
-        unit: UsageUnit.INVOCATION,
-        spenders,
-      },
-    ];
+    const creditsUsedMicro = computeEmailCreditsUsedMicro(sentEmailCount);
 
     await this.usageLimitQuotaService.consumeQuota({
       workspaceId,
       resourceType: UsageResourceType.EMAIL,
       operationType: UsageOperationType.EMAIL_SEND,
       spenders,
-      cost: buildQuotaCostFromUsageEvents(usageEvents),
+      cost: {
+        [UsageUnit.CREDIT]: creditsUsedMicro,
+        [UsageUnit.INVOCATION]: sentEmailCount,
+      },
     });
 
-    await this.usageRecorderService.record(workspaceId, usageEvents);
+    await this.usageRecorderService.record(workspaceId, [
+      {
+        resourceType: UsageResourceType.EMAIL,
+        operationType: UsageOperationType.EMAIL_SEND,
+        creditsUsedMicro,
+        quantity: sentEmailCount,
+        unit: UsageUnit.INVOCATION,
+        spenders,
+      },
+    ]);
   }
 }

@@ -58,7 +58,6 @@ describe('buildLogicFunctionExecutionUsage', () => {
       cost: {
         [UsageUnit.CREDIT]: 0,
         [UsageUnit.INVOCATION]: 1,
-        [UsageUnit.MILLISECOND]: 0,
       },
     });
   });

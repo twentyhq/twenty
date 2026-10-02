@@ -18,7 +18,6 @@ import {
 } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
-import { buildQuotaCostFromUsageEvents } from 'src/engine/core-modules/usage-limit/utils/build-quota-cost-from-usage-events.util';
 import { isUsageRefusedError } from 'src/engine/core-modules/billing/utils/is-usage-refused-error.util';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
@@ -31,7 +30,6 @@ import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-op
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 import { UsageRecorderService } from 'src/engine/core-modules/usage/services/usage-recorder.service';
-import { type RecordUsageInput } from 'src/engine/core-modules/usage/types/record-usage-input.type';
 import { shouldCaptureException } from 'src/engine/utils/global-exception-handler.util';
 import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { workflowHasRunningSteps } from 'src/modules/workflow/common/utils/workflow-has-running-steps.util';
@@ -455,7 +453,15 @@ export class WorkflowExecutorWorkspaceService {
     workspaceId: string,
     billingSpenders: WorkflowBillingSpenders,
   ) {
-    const usageEvents: RecordUsageInput[] = [
+    await this.usageLimitQuotaService.consumeQuota({
+      workspaceId,
+      resourceType: UsageResourceType.WORKFLOW,
+      operationType: UsageOperationType.WORKFLOW_EXECUTION,
+      spenders: billingSpenders,
+      cost: { [UsageUnit.CREDIT]: 100, [UsageUnit.INVOCATION]: 1 },
+    });
+
+    await this.usageRecorderService.record(workspaceId, [
       {
         resourceType: UsageResourceType.WORKFLOW,
         operationType: UsageOperationType.WORKFLOW_EXECUTION,
@@ -465,17 +471,7 @@ export class WorkflowExecutorWorkspaceService {
         resourceId: billingSpenders.workflowId,
         spenders: billingSpenders,
       },
-    ];
-
-    await this.usageLimitQuotaService.consumeQuota({
-      workspaceId,
-      resourceType: UsageResourceType.WORKFLOW,
-      operationType: UsageOperationType.WORKFLOW_EXECUTION,
-      spenders: billingSpenders,
-      cost: buildQuotaCostFromUsageEvents(usageEvents),
-    });
-
-    await this.usageRecorderService.record(workspaceId, usageEvents);
+    ]);
   }
 
   private async processStepExecutionResult({

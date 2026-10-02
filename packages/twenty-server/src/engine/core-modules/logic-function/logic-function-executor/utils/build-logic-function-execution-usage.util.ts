@@ -1,6 +1,5 @@
 import { computeLogicFunctionExecutionCreditsMicro } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/compute-logic-function-execution-credits-micro.util';
 import { type QuotaCost } from 'src/engine/core-modules/usage-limit/types/quota-cost.type';
-import { buildQuotaCostFromUsageEvents } from 'src/engine/core-modules/usage-limit/utils/build-quota-cost-from-usage-events.util';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
@@ -42,5 +41,11 @@ export const buildLogicFunctionExecutionUsage = ({
     },
   ];
 
-  return { usageEvents, cost: buildQuotaCostFromUsageEvents(usageEvents) };
+  return {
+    usageEvents,
+    cost: {
+      [UsageUnit.CREDIT]: invocationCreditsMicro + durationCreditsMicro,
+      [UsageUnit.INVOCATION]: 1,
+    },
+  };
 };
