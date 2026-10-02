@@ -12,6 +12,9 @@ import { PHONE_COUNTRY_PICKER_STORY_A11Y_PARAMETERS } from './phoneCountryPicker
 const meta: Meta<typeof PhoneCountryPickerExample> = {
   title: 'UI/Input/PhoneCountryPicker',
   component: PhoneCountryPickerExample,
+  render: (args) => (
+    <PhoneCountryPickerExample key={args.initialValue} {...args} />
+  ),
   decorators: [ComponentDecorator],
   parameters: {
     container: { width: 320, height: 360 },
@@ -107,10 +110,10 @@ export const Disabled: Story = {
 };
 
 export const RightToLeft: Story = {
-  render: () => (
+  render: (args) => (
     <TextDirectionProvider direction="rtl">
       <Text dir="rtl">
-        <PhoneCountryPickerExample />
+        <PhoneCountryPickerExample key={args.initialValue} {...args} />
       </Text>
     </TextDirectionProvider>
   ),

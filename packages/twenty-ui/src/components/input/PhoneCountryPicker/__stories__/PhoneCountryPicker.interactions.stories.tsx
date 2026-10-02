@@ -12,6 +12,9 @@ import { PHONE_COUNTRY_PICKER_STORY_A11Y_PARAMETERS } from './phoneCountryPicker
 const meta: Meta<typeof PhoneCountryPickerExample> = {
   title: 'UI/Input/PhoneCountryPicker/Interactions',
   component: PhoneCountryPickerExample,
+  render: (args) => (
+    <PhoneCountryPickerExample key={args.initialValue} {...args} />
+  ),
   tags: ['!autodocs'],
   decorators: [ComponentDecorator],
   parameters: {
@@ -106,7 +109,7 @@ export const DismissalResetsSearch: Story = {
   args: { onValueChange: fn() },
   render: (args) => (
     <Text style={{ display: 'grid', gap: 16 }}>
-      <PhoneCountryPickerExample {...args} />
+      <PhoneCountryPickerExample key={args.initialValue} {...args} />
       <Button>Next field</Button>
     </Text>
   ),
@@ -137,9 +140,13 @@ export const DismissalResetsSearch: Story = {
 };
 
 export const IndependentInstances: Story = {
-  render: () => (
+  render: (args) => (
     <Text style={{ display: 'flex', gap: 24 }}>
-      <PhoneCountryPickerExample label="Primary country" />
+      <PhoneCountryPickerExample
+        key={args.initialValue}
+        {...args}
+        label="Primary country"
+      />
       <PhoneCountryPickerExample label="Secondary country" initialValue="GB" />
     </Text>
   ),
