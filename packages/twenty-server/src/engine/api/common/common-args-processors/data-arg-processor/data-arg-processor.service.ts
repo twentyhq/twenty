@@ -159,14 +159,14 @@ export class DataArgProcessorService {
           continue;
         }
 
-        processedRecord[key] = await this.processField(
+        processedRecord[key] = await this.processField({
           fieldMetadata,
           key,
           value,
           flatFieldMetadataMaps,
           flatObjectMetadataMaps,
           shouldRejectSlowRichTextConversion,
-        );
+        });
       }
       processedRecords.push(processedRecord);
     }
@@ -174,14 +174,21 @@ export class DataArgProcessorService {
     return processedRecords;
   }
 
-  private async processField(
-    fieldMetadata: OrmFlatFieldMetadata,
-    key: string,
-    value: unknown,
-    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>,
-    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
+  private async processField({
+    fieldMetadata,
+    key,
+    value,
+    flatFieldMetadataMaps,
+    flatObjectMetadataMaps,
     shouldRejectSlowRichTextConversion = false,
-  ): Promise<unknown> {
+  }: {
+    fieldMetadata: OrmFlatFieldMetadata;
+    key: string;
+    value: unknown;
+    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
+    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
+    shouldRejectSlowRichTextConversion?: boolean;
+  }): Promise<unknown> {
     switch (fieldMetadata.type) {
       case FieldMetadataType.POSITION:
         return validateOverriddenPositionFieldOrThrow(value, key);
@@ -423,13 +430,13 @@ export class DataArgProcessorService {
       }
 
       try {
-        const processedValue = await this.processField(
-          whereFieldMetadata,
-          whereKey,
-          whereValue,
+        const processedValue = await this.processField({
+          fieldMetadata: whereFieldMetadata,
+          key: whereKey,
+          value: whereValue,
           flatFieldMetadataMaps,
           flatObjectMetadataMaps,
-        );
+        });
 
         // Only keep original keys — processField may add null subfields that alter WHERE semantics
         if (isObject(whereValue) && isObject(processedValue)) {
