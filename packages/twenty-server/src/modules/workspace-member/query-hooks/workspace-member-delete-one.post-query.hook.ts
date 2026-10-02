@@ -21,6 +21,7 @@ import {
   PermissionsExceptionCode,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @WorkspaceQueryHook({
@@ -37,6 +38,7 @@ export class WorkspaceMemberDeleteOnePostQueryHook implements WorkspacePostQuery
     private readonly recordShareOwnershipTransferService: RecordShareOwnershipTransferService,
     @InjectAgentHistoryRepository('agentChatThread')
     private readonly agentChatThreadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
+    private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
   async execute(
@@ -117,6 +119,10 @@ export class WorkspaceMemberDeleteOnePostQueryHook implements WorkspacePostQuery
       userWorkspaceId: userWorkspace.id,
       workspaceId: workspace.id,
     });
+
+    await this.workspaceCacheService.invalidateAndRecompute(workspace.id, [
+      'flatWorkspaceMemberMaps',
+    ]);
 
     // After the membership is gone, so a failed removal keeps the history and racing threads are cleaned too
     await this.agentChatThreadRepository.delete(workspace.id, {
