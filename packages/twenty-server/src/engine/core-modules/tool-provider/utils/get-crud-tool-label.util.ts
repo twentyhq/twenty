@@ -17,6 +17,7 @@ const OPERATION_VERBS: Record<DatabaseCrudOperation, MessageDescriptor> = {
   upsert_many: msg`Upsert`,
   delete_one: msg`Delete`,
   delete_many: msg`Delete`,
+  merge: msg`Merge`,
 };
 
 type CrudToolLabel = {

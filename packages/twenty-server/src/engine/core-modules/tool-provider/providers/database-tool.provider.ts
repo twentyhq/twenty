@@ -20,6 +20,7 @@ import { generateUpdateManyRecordInputSchema } from 'src/engine/core-modules/rec
 import { generateUpdateRecordInputSchema } from 'src/engine/core-modules/record-crud/utils/generate-update-record-input-schema.util';
 import { toToolJsonSchema } from 'src/engine/core-modules/record-crud/utils/to-tool-json-schema.util';
 import { generateBulkDeleteToolInputSchema } from 'src/engine/core-modules/record-crud/zod-schemas/bulk-delete-tool.zod-schema';
+import { MergeToolInputSchema } from 'src/engine/core-modules/record-crud/zod-schemas/merge-tool.zod-schema';
 import { DeleteToolInputSchema } from 'src/engine/core-modules/record-crud/zod-schemas/delete-tool.zod-schema';
 import { FindOneToolInputSchema } from 'src/engine/core-modules/record-crud/zod-schemas/find-one-tool.zod-schema';
 import { generateFindToolInputSchema } from 'src/engine/core-modules/record-crud/zod-schemas/find-tool.zod-schema';
@@ -408,6 +409,31 @@ export class DatabaseToolProvider implements ToolProvider {
           icon: flatObject.icon ?? undefined,
           operation: 'upsert_many',
         });
+
+        if (isDefined(flatObject.duplicateCriteria)) {
+          descriptors.push({
+            name: `merge_${snakePlural}`,
+            ...getCrudToolLabels(
+              'merge',
+              flatObject.labelPlural,
+              this.i18nService,
+              context.locale,
+            ),
+            description: `Merge multiple duplicate ${objectMetadata.labelPlural} records into one surviving record. Specify the array of record IDs in "ids", the "conflictPriorityIndex" indicating which record in "ids" takes precedence on conflict, and optional "dryRun" boolean (default false) to preview the merged result without persisting changes.`,
+            category: ToolCategory.DATABASE_CRUD,
+            ...(shouldIncludeSchema(`merge_${snakePlural}`) && {
+              inputSchema: toToolJsonSchema(MergeToolInputSchema),
+            }),
+            executionRef: {
+              kind: 'database_crud',
+              objectNameSingular: objectMetadata.nameSingular,
+              operation: 'merge',
+            },
+            objectName: objectMetadata.nameSingular,
+            icon: flatObject.icon ?? undefined,
+            operation: 'merge',
+          });
+        }
       }
 
       if (canSoftDeleteRecords) {
@@ -520,7 +546,8 @@ export class DatabaseToolProvider implements ToolProvider {
       toolNames.has(`update_many_${snakePlural}`) ||
       toolNames.has(`delete_one_${snakeSingular}`) ||
       toolNames.has(`delete_many_${snakePlural}`) ||
-      toolNames.has(`upsert_many_${snakePlural}`)
+      toolNames.has(`upsert_many_${snakePlural}`) ||
+      toolNames.has(`merge_${snakePlural}`)
     );
   }
 }
