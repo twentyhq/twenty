@@ -16,6 +16,7 @@ import { ResizablePanel } from '../ResizablePanel';
 
 import { ControlledResizablePanel } from './ControlledResizablePanel';
 import { playCancelledPanelResize } from './playCancelledPanelResize';
+import { ResizablePanelDemo } from './ResizablePanelDemo';
 import { UnmountingResizablePanel } from './UnmountingResizablePanel';
 
 const meta = {
@@ -294,6 +295,26 @@ export const CollapseAndDrag: Story = {
     await expect(args.onCollapse).toHaveBeenCalledTimes(3);
     await expect(args.onSizeCommit).toHaveBeenCalledTimes(1);
     await expect(handle).toHaveFocus();
+  },
+};
+
+export const CollapseMovesFocus: Story = {
+  render: () => <ResizablePanelDemo side="right" min={140} max={360} />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await userEvent.tab();
+    await expect(
+      canvas.getByRole('separator', { name: 'Resize notes' }),
+    ).toHaveFocus();
+    await userEvent.keyboard('{Enter}');
+    await expect(
+      canvas.getByRole('button', { name: 'Show notes' }),
+    ).toHaveFocus();
+    await userEvent.keyboard('{Enter}');
+    await expect(
+      canvas.getByRole('separator', { name: 'Resize notes' }),
+    ).toHaveFocus();
   },
 };
 

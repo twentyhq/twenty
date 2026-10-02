@@ -11,7 +11,7 @@ export const UnmountingResizablePanel = ({
   ...props
 }: ResizablePanelProps) => {
   const [isVisible, setIsVisible] = useState(true);
-  const [liveSize, setLiveSize] = useState(200);
+  const [liveSize, setLiveSize] = useState(props.defaultSize ?? props.min);
 
   return (
     <>

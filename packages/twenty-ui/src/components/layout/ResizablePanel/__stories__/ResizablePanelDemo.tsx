@@ -1,4 +1,5 @@
-import { useId, useState } from 'react';
+import { useId, useRef, useState } from 'react';
+import { flushSync } from 'react-dom';
 
 import { Button } from '@ui/primitives/input/Button/Button';
 import { Card } from '@ui/primitives/surfaces/Card/Card';
@@ -10,11 +11,31 @@ import { type ResizablePanelProps } from '../types/ResizablePanelProps';
 export const ResizablePanelDemo = ({
   side = 'right',
   variant = 'edge',
-}: Pick<ResizablePanelProps, 'side' | 'variant'>) => {
+  min,
+  max,
+}: Pick<ResizablePanelProps, 'side' | 'variant' | 'min' | 'max'>) => {
   const regionId = useId();
+  const separatorRef = useRef<HTMLDivElement>(null);
+  const showNotesButtonRef = useRef<HTMLButtonElement>(null);
   const [size, setSize] = useState(220);
   const [committedSize, setCommittedSize] = useState(220);
   const [isCollapsed, setIsCollapsed] = useState(false);
+
+  const collapseNotes = () => {
+    const isSeparatorFocused = separatorRef.current === document.activeElement;
+
+    flushSync(() => setIsCollapsed(true));
+
+    if (isSeparatorFocused) {
+      showNotesButtonRef.current?.focus();
+    }
+  };
+
+  const showNotes = () => {
+    flushSync(() => setIsCollapsed(false));
+    separatorRef.current?.focus();
+  };
+
   const isHorizontal = side === 'left' || side === 'right';
   const isBefore = side === 'left' || side === 'top';
   const adjacentPanel = (
@@ -24,22 +45,27 @@ export const ResizablePanelDemo = ({
   );
   const separator = (
     <ResizablePanel
+      ref={separatorRef}
       side={side}
       variant={variant}
       gapSize={12}
       aria-label="Resize notes"
       aria-controls={regionId}
       size={committedSize}
-      min={140}
-      max={360}
+      min={min}
+      max={max}
       onSizeChange={setSize}
       onSizeCommit={setCommittedSize}
-      onCollapse={() => setIsCollapsed(true)}
+      onCollapse={collapseNotes}
     />
   );
 
   if (isCollapsed) {
-    return <Button onClick={() => setIsCollapsed(false)}>Show notes</Button>;
+    return (
+      <Button ref={showNotesButtonRef} onClick={showNotes}>
+        Show notes
+      </Button>
+    );
   }
 
   return (
