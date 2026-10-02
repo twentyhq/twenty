@@ -39,10 +39,10 @@ import { FieldMetadataType, SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
   IconApps,
+  IconFiles,
   IconListDetails,
   IconListSearch,
   IconNotes,
-  IconPaperclip,
 } from 'twenty-ui/icon';
 import { v4 as uuidv4 } from 'uuid';
 import {
@@ -524,7 +524,7 @@ export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
         {canAddFilesWidget && (
           <SelectableListItem itemId="files" onEnter={handleCreateFilesWidget}>
             <CommandMenuItem
-              Icon={IconPaperclip}
+              Icon={IconFiles}
               label={t`Files`}
               id="files"
               onClick={handleCreateFilesWidget}
