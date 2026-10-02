@@ -65,7 +65,6 @@ export const WorkflowEditActionFindRecords = ({
   const dropdownId = 'workflow-edit-action-record-find-records-object-name';
 
   const { objectMetadataItems } = useFilteredObjectMetadataItems();
-  const objectOptions = useWorkflowObjectSelectOptions();
 
   const [formData, setFormData] = useState<FindRecordsFormData>(() => ({
     objectNameSingular: action.settings.input.objectName,
@@ -87,6 +86,9 @@ export const WorkflowEditActionFindRecords = ({
   const [offsetError, setOffsetError] = useState<string | undefined>(undefined);
   const isFormDisabled = actionOptions.readonly ?? false;
   const instanceId = `workflow-edit-action-record-find-records-${action.id}-${formData.objectNameSingular}`;
+  const objectOptions = useWorkflowObjectSelectOptions({
+    selectedObjectNameSingular: formData.objectNameSingular,
+  });
 
   const selectedObjectMetadataItem = objectMetadataItems.find(
     (item) => item.nameSingular === formData.objectNameSingular,

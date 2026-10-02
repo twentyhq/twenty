@@ -59,7 +59,6 @@ export const WorkflowEditActionPickRecord = ({
   const dropdownId = `workflow-edit-action-pick-record-object-name-${action.id}`;
 
   const { objectMetadataItems } = useFilteredObjectMetadataItems();
-  const objectOptions = useWorkflowObjectSelectOptions();
 
   const [formData, setFormData] = useState<PickRecordFormData>(() => ({
     objectNameSingular: action.settings.input.objectName,
@@ -69,6 +68,12 @@ export const WorkflowEditActionPickRecord = ({
   }));
 
   const isFormDisabled = actionOptions.readonly ?? false;
+  const objectOptions = useWorkflowObjectSelectOptions({
+    selectedObjectNameSingular: formData.objectNameSingular,
+  });
+  const loadBalanceObjectOptions = useWorkflowObjectSelectOptions({
+    selectedObjectNameSingular: formData.loadBalance?.objectNameSingular,
+  });
 
   const strategyOptions: SelectOption<PickRecordStrategy>[] = [
     { label: t`Random`, value: 'RANDOM' },
@@ -249,7 +254,7 @@ export const WorkflowEditActionPickRecord = ({
                 label: i18n._(defaultSelectedOptionMessage),
                 value: '',
               }}
-              options={objectOptions}
+              options={loadBalanceObjectOptions}
               onChange={handleLoadBalanceObjectChange}
               withSearchInput
               dropdownSideOffset={4}
