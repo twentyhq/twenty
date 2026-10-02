@@ -73,13 +73,27 @@ describe('RecordShare standard metadata build', () => {
     ]);
   });
 
-  it('indexes the lookups the read gate and the writers need', () => {
-    expect(getIndexedFieldUniversalIdentifiers('principalIdIndex')).toEqual([
+  it('indexes the grants of a principal on an object for the read gate', () => {
+    expect(
+      getIndexedFieldUniversalIdentifiers('principalIdObjectMetadataIdIndex'),
+    ).toEqual([
       STANDARD_OBJECTS.recordShare.fields.principalId.universalIdentifier,
+      STANDARD_OBJECTS.recordShare.fields.objectMetadataId.universalIdentifier,
     ]);
-    expect(getIndexedFieldUniversalIdentifiers('sourceIdIndex')).toEqual([
-      STANDARD_OBJECTS.recordShare.fields.sourceId.universalIdentifier,
-    ]);
+  });
+
+  it('declares no other index on recordShare', () => {
+    expect(
+      Object.values(allFlatEntityMaps.flatIndexMaps.byUniversalIdentifier)
+        .filter(isDefined)
+        .filter((flatIndex) => flatIndex.objectMetadataId === recordShare?.id)
+        .map((flatIndex) => flatIndex.universalIdentifier)
+        .sort(),
+    ).toEqual(
+      Object.values(STANDARD_OBJECTS.recordShare.indexes)
+        .map(({ universalIdentifier }) => universalIdentifier)
+        .sort(),
+    );
   });
 
   it('declares no view for recordShare', () => {
