@@ -15,8 +15,8 @@ import { Card } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { RecordChip } from '@/object-record/components/RecordChip';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { SettingsDataModelObjectPreview } from '@/settings/data-model/objects/components/SettingsDataModelObjectSummary';
 import { type ValidationRuleEditorField } from '@/validation-rules/types/ValidationRuleEditorField';
 import { formatValidationRulePreviewValue } from '@/validation-rules/utils/formatValidationRulePreviewValue';
 import { getValidationRuleEditorFieldChipLabel } from '@/validation-rules/utils/getValidationRuleEditorFieldChipLabel';
@@ -26,11 +26,6 @@ const StyledHeader = styled.div`
   align-items: center;
   display: flex;
   gap: ${themeCssVariables.spacing[2]};
-`;
-
-const StyledObjectPreview = styled.div`
-  flex: 1;
-  min-width: 0;
 `;
 
 const StyledStatus = styled.span`
@@ -169,16 +164,20 @@ export const SettingsValidationRulePreview = ({
     <Card.Root fullWidth>
       <Card.Content>
         <StyledHeader>
+          <RecordChip
+            objectNameSingular={objectMetadataItem.nameSingular}
+            record={record}
+            forceDisableClick
+          />
           {renderStatus()}
-          <StyledObjectPreview>
-            <SettingsDataModelObjectPreview
-              objectMetadataItems={[objectMetadataItem]}
-            />
-          </StyledObjectPreview>
         </StyledHeader>
-        {referencedPaths.length > 0 && (
-          <StyledFieldValues>
-            {referencedPaths.map((path) => {
+        <StyledFieldValues>
+          {referencedPaths.length === 0 ? (
+            <StyledMuted>
+              {t`Fields used in the condition show their values here.`}
+            </StyledMuted>
+          ) : (
+            referencedPaths.map((path) => {
               const editorField = editorFields.find(
                 (candidate) => candidate.path === path,
               );
@@ -208,9 +207,9 @@ export const SettingsValidationRulePreview = ({
                   </StyledValue>
                 </StyledFieldValue>
               );
-            })}
-          </StyledFieldValues>
-        )}
+            })
+          )}
+        </StyledFieldValues>
       </Card.Content>
     </Card.Root>
   );
