@@ -1,252 +1,157 @@
-import { readdirSync, readFileSync } from 'fs';
-import { join, relative } from 'path';
+import { type CanActivate, type Type } from '@nestjs/common';
+import { GUARDS_METADATA, PATH_METADATA } from '@nestjs/common/constants';
+import { MetadataScanner, Reflector } from '@nestjs/core';
+import { NestContainer } from '@nestjs/core/injector/container';
+import { GraphInspector } from '@nestjs/core/inspector/graph-inspector';
+import { DependenciesScanner } from '@nestjs/core/scanner';
+import { RESOLVER_TYPE_METADATA } from '@nestjs/graphql/dist/graphql.constants.js';
 
-import { isDefined } from 'twenty-shared/utils';
-import * as ts from 'typescript';
+import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
-type DeclaredValue = boolean | string | DeclaredObject;
+import { APPLICATION_TARGET_METADATA_KEY } from 'src/engine/core-modules/application/constants/application-target-metadata-key.constant';
+import { type ApplicationTarget } from 'src/engine/core-modules/application/types/application-target.type';
+import { AUTH_PRINCIPAL_GUARD_CONFIG_KEY } from 'src/engine/guards/constants/auth-principal-guard-config-key.constant';
+import { type AuthPrincipalGuardConfig } from 'src/engine/guards/types/auth-principal-guard-config.type';
 
-type DeclaredObject = { [key: string]: DeclaredValue };
-
-type EndpointPermissionDeclarations = Partial<
-  Record<'authPrincipalGuard' | 'applicationTarget', DeclaredObject>
->;
-
-type EndpointPermissionDeclarationsByFilePath = Record<
-  string,
-  Record<string, EndpointPermissionDeclarations>
->;
-
-const PACKAGE_ROOT_PATH = join(__dirname, '../../../..');
-const SOURCE_ROOT_PATH = join(PACKAGE_ROOT_PATH, 'src');
-
-const AUTH_PRINCIPAL_GUARD = 'AuthPrincipalGuard';
-
-const NAME_ARGUMENTS_BY_APPLICATION_TARGET_DECORATOR = new Map<
-  string,
-  string[]
->([
-  ['ApplicationTargetArg', ['argName']],
-  ['ApplicationTargetArgs', []],
-  ['ApplicationTargetParam', ['paramName']],
-]);
-
-const isScannedSourceFilePath = (filePath: string): boolean =>
-  filePath.endsWith('.ts') &&
-  !filePath.endsWith('.spec.ts') &&
-  !filePath.endsWith('.integration-spec.ts') &&
-  !filePath.includes('__tests__');
-
-const formatLocation = (node: ts.Node): string => {
-  const sourceFile = node.getSourceFile();
-  const { line } = sourceFile.getLineAndCharacterOfPosition(node.getStart());
-
-  return `${relative(PACKAGE_ROOT_PATH, sourceFile.fileName)}:${line + 1}`;
+type EndpointPermissionDeclarations = {
+  authPrincipalGuards: AuthPrincipalGuardConfig[];
+  applicationTarget: ApplicationTarget | null;
 };
 
-const throwNotInlineLiteral = (node: ts.Node): never => {
-  throw new Error(
-    `${formatLocation(node)}: ${node.getText()} must be an inline literal so the endpoint permission snapshot records its value`,
-  );
-};
+type EndpointClass = Type<object>;
 
-const readInlineObjectLiteral = (node: ts.Expression): DeclaredObject => {
-  if (!ts.isObjectLiteralExpression(node)) {
-    return throwNotInlineLiteral(node);
-  }
+type EndpointHandler = (...args: never[]) => unknown;
 
-  return Object.fromEntries(
-    node.properties.map((property) => {
-      if (
-        !ts.isPropertyAssignment(property) ||
-        !(ts.isIdentifier(property.name) || ts.isStringLiteral(property.name))
-      ) {
-        return throwNotInlineLiteral(property);
-      }
+type ScannedClass = { endpointClass: EndpointClass; isController: boolean };
 
-      return [property.name.text, readInlineLiteral(property.initializer)];
-    }),
-  );
-};
+type Guard = Type<CanActivate> | CanActivate;
 
-const readInlineLiteral = (node: ts.Expression): DeclaredValue => {
-  if (node.kind === ts.SyntaxKind.TrueKeyword) {
-    return true;
-  }
+// Field resolvers are left out: guards do not run on them, as twenty does not
+// enable fieldResolverEnhancers
+const GRAPHQL_OPERATION_TYPES = new Set(['Query', 'Mutation', 'Subscription']);
 
-  if (node.kind === ts.SyntaxKind.FalseKeyword) {
-    return false;
-  }
+const reflector = new Reflector();
+const metadataScanner = new MetadataScanner();
 
-  if (ts.isStringLiteralLike(node)) {
-    return node.text;
-  }
+// Builds the module graph Nest would boot, without creating any provider
+const scanClasses = async (
+  rootModule: Type<object>,
+): Promise<ScannedClass[]> => {
+  const container = new NestContainer();
 
-  return readInlineObjectLiteral(node);
-};
+  await new DependenciesScanner(
+    container,
+    metadataScanner,
+    new GraphInspector(container),
+  ).scan(rootModule);
 
-const getDecoratedEndpointName = (decorator: ts.Decorator): string => {
-  const decoratedNode = ts.isParameter(decorator.parent)
-    ? decorator.parent.parent
-    : decorator.parent;
+  const isControllerByClass = new Map<EndpointClass, boolean>();
 
-  if (ts.isClassDeclaration(decoratedNode) && isDefined(decoratedNode.name)) {
-    return decoratedNode.name.text;
-  }
+  for (const moduleRef of container.getModules().values()) {
+    for (const [wrappers, isController] of [
+      [moduleRef.controllers, true],
+      [moduleRef.providers, false],
+    ] as const) {
+      for (const { metatype } of wrappers.values()) {
+        // Value and factory providers have no class to read endpoints from
+        if (typeof metatype !== 'function' || !isDefined(metatype.prototype)) {
+          continue;
+        }
 
-  if (
-    ts.isMethodDeclaration(decoratedNode) &&
-    ts.isClassDeclaration(decoratedNode.parent) &&
-    isDefined(decoratedNode.parent.name)
-  ) {
-    return `${decoratedNode.parent.name.text}.${decoratedNode.name.getText()}`;
-  }
+        const endpointClass = metatype as EndpointClass;
 
-  throw new Error(
-    `${formatLocation(decorator)}: the endpoint permission snapshot only records declarations on a named class or one of its methods`,
-  );
-};
-
-const addDeclaration = ({
-  declarationsByFilePath,
-  node,
-  endpointName,
-  declarationKind,
-  declaration,
-}: {
-  declarationsByFilePath: EndpointPermissionDeclarationsByFilePath;
-  node: ts.Node;
-  endpointName: string;
-  declarationKind: keyof EndpointPermissionDeclarations;
-  declaration: DeclaredObject;
-}): void => {
-  const filePath = relative(PACKAGE_ROOT_PATH, node.getSourceFile().fileName);
-  const declarationsByEndpointName = (declarationsByFilePath[filePath] ??= {});
-  const endpointDeclarations = (declarationsByEndpointName[endpointName] ??=
-    {});
-
-  if (isDefined(endpointDeclarations[declarationKind])) {
-    throw new Error(
-      `${formatLocation(node)}: ${endpointName} declares more than one ${declarationKind}`,
-    );
-  }
-
-  endpointDeclarations[declarationKind] = declaration;
-};
-
-const collectAuthPrincipalGuard = (
-  declarationsByFilePath: EndpointPermissionDeclarationsByFilePath,
-  callExpression: ts.CallExpression,
-): void => {
-  const decorator = ts.findAncestor(callExpression, ts.isDecorator);
-
-  if (!isDefined(decorator)) {
-    throw new Error(
-      `${formatLocation(callExpression)}: ${AUTH_PRINCIPAL_GUARD} must be invoked inside a decorator so the endpoint permission snapshot attributes it to an endpoint`,
-    );
-  }
-
-  addDeclaration({
-    declarationsByFilePath,
-    node: callExpression,
-    endpointName: getDecoratedEndpointName(decorator),
-    declarationKind: 'authPrincipalGuard',
-    declaration: readInlineObjectLiteral(callExpression.arguments[0]),
-  });
-};
-
-const collectApplicationTarget = (
-  declarationsByFilePath: EndpointPermissionDeclarationsByFilePath,
-  callExpression: ts.CallExpression,
-  decoratorName: string,
-  nameArgumentNames: string[],
-): void => {
-  if (!ts.isDecorator(callExpression.parent)) {
-    throw new Error(
-      `${formatLocation(callExpression)}: ${decoratorName} must be applied as a parameter decorator`,
-    );
-  }
-
-  addDeclaration({
-    declarationsByFilePath,
-    node: callExpression,
-    endpointName: getDecoratedEndpointName(callExpression.parent),
-    declarationKind: 'applicationTarget',
-    declaration: {
-      decorator: decoratorName,
-      ...Object.fromEntries(
-        nameArgumentNames.map((argumentName, argumentIndex) => [
-          argumentName,
-          readInlineLiteral(callExpression.arguments[argumentIndex]),
-        ]),
-      ),
-      ...readInlineObjectLiteral(
-        callExpression.arguments[nameArgumentNames.length],
-      ),
-    },
-  });
-};
-
-const collectFromSourceFile = (
-  declarationsByFilePath: EndpointPermissionDeclarationsByFilePath,
-  sourceFile: ts.SourceFile,
-): void => {
-  const visit = (node: ts.Node): void => {
-    if (ts.isCallExpression(node) && ts.isIdentifier(node.expression)) {
-      const calleeName = node.expression.text;
-      const nameArgumentNames =
-        NAME_ARGUMENTS_BY_APPLICATION_TARGET_DECORATOR.get(calleeName);
-
-      if (calleeName === AUTH_PRINCIPAL_GUARD) {
-        collectAuthPrincipalGuard(declarationsByFilePath, node);
-      } else if (isDefined(nameArgumentNames)) {
-        collectApplicationTarget(
-          declarationsByFilePath,
-          node,
-          calleeName,
-          nameArgumentNames,
+        isControllerByClass.set(
+          endpointClass,
+          isController || (isControllerByClass.get(endpointClass) ?? false),
         );
       }
     }
+  }
 
-    ts.forEachChild(node, visit);
-  };
-
-  visit(sourceFile);
+  return [...isControllerByClass.entries()].map(
+    ([endpointClass, isController]) => ({ endpointClass, isController }),
+  );
 };
 
-export const collectEndpointPermissionDeclarations =
-  (): EndpointPermissionDeclarationsByFilePath => {
-    const declarationsByFilePath: EndpointPermissionDeclarationsByFilePath = {};
+// Nest only routes controllers, while GraphQL reads operations from any provider
+const isEndpointHandler = (
+  handler: unknown,
+  isController: boolean,
+): handler is EndpointHandler =>
+  typeof handler === 'function' &&
+  (GRAPHQL_OPERATION_TYPES.has(
+    Reflect.getMetadata(RESOLVER_TYPE_METADATA, handler),
+  ) ||
+    (isController && isDefined(reflector.get(PATH_METADATA, handler))));
 
-    const sourceFilePaths = readdirSync(SOURCE_ROOT_PATH, {
-      recursive: true,
-      encoding: 'utf8',
-    })
-      .filter(isScannedSourceFilePath)
-      .sort();
+const readAuthPrincipalGuardConfigs = (
+  guardsOwner: EndpointClass | EndpointHandler,
+): AuthPrincipalGuardConfig[] =>
+  (reflector.get<Guard[] | undefined>(GUARDS_METADATA, guardsOwner) ?? [])
+    .map((guard) =>
+      reflector.get<AuthPrincipalGuardConfig | undefined>(
+        AUTH_PRINCIPAL_GUARD_CONFIG_KEY,
+        typeof guard === 'function' ? guard : guard.constructor,
+      ),
+    )
+    .filter(isDefined);
 
-    for (const sourceFilePath of sourceFilePaths) {
-      const absoluteFilePath = join(SOURCE_ROOT_PATH, sourceFilePath);
-      const sourceText = readFileSync(absoluteFilePath, 'utf8');
+const stringifyWithSortedKeys = (value: unknown): string =>
+  JSON.stringify(value, (_key, nestedValue: unknown) =>
+    isPlainObject(nestedValue)
+      ? Object.fromEntries(
+          Object.entries(nestedValue).sort(([left], [right]) =>
+            left.localeCompare(right),
+          ),
+        )
+      : nestedValue,
+  );
 
-      if (
-        !sourceText.includes(AUTH_PRINCIPAL_GUARD) &&
-        !sourceText.includes('ApplicationTarget')
-      ) {
+// One line per mounted endpoint, so a diff names the endpoint it changes
+export const collectEndpointPermissionDeclarations = async (
+  rootModule: Type<object>,
+): Promise<string[]> => {
+  const declarationsByEndpoint = new Map<
+    string,
+    EndpointPermissionDeclarations
+  >();
+
+  for (const { endpointClass, isController } of await scanClasses(rootModule)) {
+    const prototype = endpointClass.prototype;
+
+    for (const methodName of metadataScanner.getAllMethodNames(prototype)) {
+      const handler: unknown = prototype[methodName as keyof typeof prototype];
+
+      if (!isEndpointHandler(handler, isController)) {
         continue;
       }
 
-      collectFromSourceFile(
-        declarationsByFilePath,
-        ts.createSourceFile(
-          absoluteFilePath,
-          sourceText,
-          ts.ScriptTarget.Latest,
-          true,
-        ),
-      );
-    }
+      const endpoint = `${endpointClass.name}.${methodName}`;
 
-    return declarationsByFilePath;
-  };
+      if (declarationsByEndpoint.has(endpoint)) {
+        throw new Error(
+          `${endpoint} is declared by two different classes: rename one so the endpoint permission snapshot can tell them apart`,
+        );
+      }
+
+      declarationsByEndpoint.set(endpoint, {
+        authPrincipalGuards: [
+          ...readAuthPrincipalGuardConfigs(endpointClass),
+          ...readAuthPrincipalGuardConfigs(handler),
+        ],
+        applicationTarget:
+          reflector.get<ApplicationTarget | undefined>(
+            APPLICATION_TARGET_METADATA_KEY,
+            handler,
+          ) ?? null,
+      });
+    }
+  }
+
+  return [...declarationsByEndpoint.entries()]
+    .sort(([left], [right]) => left.localeCompare(right))
+    .map(
+      ([endpoint, declarations]) =>
+        `${endpoint} ${stringifyWithSortedKeys(declarations)}`,
+    );
+};
