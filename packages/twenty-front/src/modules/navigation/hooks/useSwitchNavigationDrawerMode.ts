@@ -22,7 +22,7 @@ import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMe
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { isAiChatPath } from '~/utils/isAiChatPath';
+import { isAiModePath } from '~/utils/isAiModePath';
 
 export const useSwitchNavigationDrawerMode = () => {
   const isMobile = useIsMobile();
@@ -33,7 +33,7 @@ export const useSwitchNavigationDrawerMode = () => {
   const activeNavigationDrawerMode = useActiveNavigationDrawerMode();
   const isSettingsDrawer = useIsSettingsDrawer();
   const isSettingsPage = useIsSettingsPage();
-  const isAiChatPage = isAiChatPath(location.pathname);
+  const isAiModePage = isAiModePath(location.pathname);
 
   const navigationMemorizedUrl = useAtomStateValue(navigationMemorizedUrlState);
   const navigationDrawerExpandedMemorized = useAtomStateValue(
@@ -79,7 +79,7 @@ export const useSwitchNavigationDrawerMode = () => {
       return;
     }
 
-    if (isAiChatPage) {
+    if (isAiModePage) {
       returnFromExpandedAiChat();
     }
   };
@@ -90,7 +90,7 @@ export const useSwitchNavigationDrawerMode = () => {
     switchToNewChat();
   };
 
-  // AI mode also lists chat history beside other pages, so only the chat page makes a click a no-op.
+  // AI mode also lists chat history beside other pages, so only the chat and inbox pages make a click a no-op.
   const switchNavigationDrawerMode = (mode: NavigationDrawerActiveTab) => {
     switch (mode) {
       case NAVIGATION_DRAWER_TABS.NAVIGATION_MENU:
@@ -102,7 +102,7 @@ export const useSwitchNavigationDrawerMode = () => {
         switchToNavigationMenu();
         break;
       case NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY:
-        if (isAiChatPage) {
+        if (isAiModePage) {
           return;
         }
         switchToAiChat();
