@@ -10,7 +10,11 @@ export type PausingToolDefinition<TInput, TOutput> = {
   complete: (args: {
     output: TOutput;
     input: TInput;
+    pendingToolOutput: unknown;
     context: PausingToolCompletionContext;
   }) => Promise<PausingToolCompletion>;
-  toSkippedToolResult: (input: TInput) => Record<string, unknown>;
+  toSkippedToolResult: (
+    input: TInput,
+    pendingToolOutput: unknown,
+  ) => Record<string, unknown>;
 };

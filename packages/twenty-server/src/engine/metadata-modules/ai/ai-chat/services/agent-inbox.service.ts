@@ -42,10 +42,17 @@ export class AgentInboxService {
     workspaceId,
     sender,
     input,
+    awaitingToolCall,
   }: {
     workspaceId: string;
     sender: AgentInboxSender;
     input: Omit<SendInboxMessageInput, 'toolCall'> & { toolCall?: unknown };
+    // a pausing call the server already resolved, with its pending output
+    awaitingToolCall?: {
+      toolName: string;
+      input: Record<string, unknown>;
+      output: Record<string, unknown>;
+    };
   }): Promise<SendInboxMessageResult> {
     const senderDetails = getAgentInboxSenderDetails(sender);
     const { threadId, turnId, openingMessageId, messageId, toolCallId } =
@@ -67,18 +74,29 @@ export class AgentInboxService {
       return { threadId };
     }
 
-    const toolCallPart = isDefined(input.toolCall)
-      ? await buildInboxMessageToolCallPart({
-          toolCall: input.toolCall,
-          toolCallId,
-          findApplicationTool: (logicFunctionUniversalIdentifier) =>
-            this.findApplicationTool({
-              workspaceId,
-              applicationId: senderDetails.applicationId,
-              logicFunctionUniversalIdentifier,
-            }),
-        })
-      : undefined;
+    const toolCallPart = isDefined(awaitingToolCall)
+      ? {
+          part: {
+            type: `tool-${awaitingToolCall.toolName}`,
+            toolCallId,
+            state: 'output-available',
+            input: awaitingToolCall.input,
+            output: awaitingToolCall.output,
+          } as ExtendedUIMessagePart,
+          isAwaitingAnswer: true,
+        }
+      : isDefined(input.toolCall)
+        ? await buildInboxMessageToolCallPart({
+            toolCall: input.toolCall,
+            toolCallId,
+            findApplicationTool: (logicFunctionUniversalIdentifier) =>
+              this.findApplicationTool({
+                workspaceId,
+                applicationId: senderDetails.applicationId,
+                logicFunctionUniversalIdentifier,
+              }),
+          })
+        : undefined;
 
     const thread =
       existingThread ??

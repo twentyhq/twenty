@@ -12,7 +12,10 @@ import {
   type ToolSet,
 } from 'ai';
 import { type RunAgentMessage } from 'twenty-shared/application';
-import { AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID } from 'twenty-shared/ai';
+import {
+  AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID,
+  PROPOSE_TOOL_CALL_TOOL_NAME,
+} from 'twenty-shared/ai';
 import { type ActorMetadata } from 'twenty-shared/types';
 import {
   isDefined,
@@ -36,6 +39,7 @@ import {
   LEARN_TOOLS_TOOL_NAME,
 } from 'src/engine/core-modules/tool-provider/tools';
 import { type ToolContext } from 'src/engine/core-modules/tool-provider/types/tool-context.type';
+import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
 import { buildToolCatalogSection } from 'src/engine/core-modules/tool-provider/utils/build-tool-catalog-section.util';
 import { estimateToolOutputTokens } from 'src/engine/core-modules/tool-provider/utils/estimate-tool-output-tokens.util';
 import { getToolMetricName } from 'src/engine/core-modules/tool-provider/utils/get-tool-metric-name.util';
@@ -46,6 +50,8 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { OPEN_ENDED_AGENT_REGISTRY_TOOL_CATEGORIES } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/open-ended-agent-registry-tool-categories.const';
 import { WORKFLOW_AGENT_EXCLUDED_TOOL_NAMES } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/workflow-agent-excluded-tool-names.const';
 import { WORKFLOW_AGENT_REGISTRY_TOOL_CATEGORIES } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/workflow-agent-registry-tool-categories.const';
+import { type PausingToolCompletionContext } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/types/pausing-tool-completion-context.type';
+import { resolveProposedToolCall } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/resolve-proposed-tool-call.util';
 import { RunAgentAttachmentService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/run-agent-attachment.service';
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
 import { type AgentToolLoadingStrategy } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-tool-loading-strategy.type';
@@ -67,6 +73,7 @@ import {
 } from 'src/engine/metadata-modules/ai/ai-billing/utils/extract-cache-creation-tokens.util';
 import { mergeLanguageModelUsage } from 'src/engine/metadata-modules/ai/ai-billing/utils/merge-language-model-usage.util';
 import { getCallLevelProviderOptions } from 'src/engine/metadata-modules/ai/ai-chat/utils/provider-options.util';
+import { createProposeToolCallTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/propose-tool-call.tool';
 import { buildAiTelemetry } from 'src/engine/metadata-modules/ai/ai-models/utils/build-ai-telemetry.util';
 import { AiModelConfigService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-config.service';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
@@ -79,6 +86,11 @@ import {
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+
+type ProposableTools = {
+  findTool: (toolName: string) => Promise<ToolIndexEntry | undefined>;
+  executeTool: PausingToolCompletionContext['executeTool'];
+};
 
 const EMPTY_USAGE: LanguageModelUsage = {
   inputTokens: 0,
@@ -155,7 +167,7 @@ export class AgentAsyncExecutorService {
     runAsRoleId?: string;
     authContext?: WorkspaceAuthContext;
     actorContext?: ActorMetadata;
-  }): Promise<ToolSet> {
+  }): Promise<{ tools: ToolSet; proposableTools: ProposableTools }> {
     const { userId, userWorkspaceId } = this.resolveUserIdentity(authContext);
 
     const toolProviderContext: ToolProviderContext = {
@@ -172,14 +184,39 @@ export class AgentAsyncExecutorService {
       userWorkspaceId,
     };
 
-    return this.toolRegistry.getToolsByCategories(toolProviderContext, {
-      categories: WORKFLOW_AGENT_REGISTRY_TOOL_CATEGORIES,
-      excludeTools: [
-        ...OUTPUT_NAVIGATION_TOOL_NAMES,
-        ...WORKFLOW_AGENT_EXCLUDED_TOOL_NAMES,
-      ],
-      wrapWithErrorContext: false,
-    });
+    const tools = await this.toolRegistry.getToolsByCategories(
+      toolProviderContext,
+      {
+        categories: WORKFLOW_AGENT_REGISTRY_TOOL_CATEGORIES,
+        excludeTools: [
+          ...OUTPUT_NAVIGATION_TOOL_NAMES,
+          ...WORKFLOW_AGENT_EXCLUDED_TOOL_NAMES,
+        ],
+        wrapWithErrorContext: false,
+      },
+    );
+
+    const toolContext: ToolContext = {
+      workspaceId: agent.workspaceId,
+      roleId: agentRoleId,
+      rolePermissionConfig: toolProviderContext.rolePermissionConfig,
+      authContext,
+      actorContext,
+      userId,
+      userWorkspaceId,
+    };
+
+    return {
+      tools,
+      proposableTools: {
+        findTool: async (toolName) =>
+          toolName in tools
+            ? this.toolRegistry.findCatalogEntry(toolName, toolContext)
+            : undefined,
+        executeTool: ({ toolName, args }) =>
+          this.toolRegistry.resolveAndExecute(toolName, args, toolContext),
+      },
+    };
   }
 
   // open-ended agents have broad access, so preloading would ship every schema: expose a compact catalog plus
@@ -196,7 +233,11 @@ export class AgentAsyncExecutorService {
     runAsRoleId?: string;
     authContext?: WorkspaceAuthContext;
     actorContext?: ActorMetadata;
-  }): Promise<{ tools: ToolSet; catalogSection: string }> {
+  }): Promise<{
+    tools: ToolSet;
+    catalogSection: string;
+    proposableTools: ProposableTools;
+  }> {
     const { userId, userWorkspaceId } = this.resolveUserIdentity(authContext);
 
     const rolePermissionConfig = isDefined(runAsRoleId)
@@ -251,7 +292,16 @@ export class AgentAsyncExecutorService {
       ),
     };
 
-    return { tools, catalogSection: buildToolCatalogSection(catalog, []) };
+    return {
+      tools,
+      catalogSection: buildToolCatalogSection(catalog, []),
+      proposableTools: {
+        findTool: async (toolName) =>
+          catalog.find((toolIndexEntry) => toolIndexEntry.name === toolName),
+        executeTool: ({ toolName, args }) =>
+          this.toolRegistry.resolveAndExecute(toolName, args, toolContext),
+      },
+    };
   }
 
   async executeAgent({
@@ -267,12 +317,15 @@ export class AgentAsyncExecutorService {
     toolLoadingStrategy = 'preload',
     priorModelMessages = [],
     pausingTools = {},
+    canProposeToolCalls = false,
   }: {
     agent: AgentEntity | null;
     messages: RunAgentMessage[];
     // a continued conversation, with the tool calls and results plain run messages cannot carry
     priorModelMessages?: ModelMessage[];
     pausingTools?: ToolSet;
+    // offers propose_tool_call over the registry tools the agent can call itself
+    canProposeToolCalls?: boolean;
     baseSystemPrompt: string;
     actorContext?: ActorMetadata;
     authContext?: WorkspaceAuthContext;
@@ -322,6 +375,7 @@ export class AgentAsyncExecutorService {
 
       let tools: ToolSet = {};
       let toolCatalogSection = '';
+      let offeredPausingTools: ToolSet = pausingTools;
       const providerOptions = getCallLevelProviderOptions({
         sdkPackage: registeredModel.sdkPackage,
         providerOptions:
@@ -346,25 +400,39 @@ export class AgentAsyncExecutorService {
         let registryTools: ToolSet = {};
 
         if (isDefined(agentRoleId)) {
-          if (toolLoadingStrategy === 'lazy') {
-            const lazyToolset = await this.buildLazyRegistryTools({
-              agent,
-              agentRoleId,
-              runAsRoleId,
-              authContext,
-              actorContext,
-            });
+          const registryToolset =
+            toolLoadingStrategy === 'lazy'
+              ? await this.buildLazyRegistryTools({
+                  agent,
+                  agentRoleId,
+                  runAsRoleId,
+                  authContext,
+                  actorContext,
+                })
+              : {
+                  ...(await this.buildPreloadedRegistryTools({
+                    agent,
+                    agentRoleId,
+                    runAsRoleId,
+                    authContext,
+                    actorContext,
+                  })),
+                  catalogSection: '',
+                };
 
-            registryTools = lazyToolset.tools;
-            toolCatalogSection = lazyToolset.catalogSection;
-          } else {
-            registryTools = await this.buildPreloadedRegistryTools({
-              agent,
-              agentRoleId,
-              runAsRoleId,
-              authContext,
-              actorContext,
-            });
+          registryTools = registryToolset.tools;
+          toolCatalogSection = registryToolset.catalogSection;
+
+          if (canProposeToolCalls) {
+            const { findTool, executeTool } = registryToolset.proposableTools;
+
+            offeredPausingTools = {
+              ...offeredPausingTools,
+              [PROPOSE_TOOL_CALL_TOOL_NAME]: createProposeToolCallTool({
+                resolveProposal: (input) =>
+                  resolveProposedToolCall({ input, findTool, executeTool }),
+              }),
+            };
           }
         }
 
@@ -392,11 +460,11 @@ export class AgentAsyncExecutorService {
           )?.modalities,
         });
 
-      const offeredToolNames = Object.keys(pausingTools);
+      const offeredToolNames = Object.keys(offeredPausingTools);
 
       const textResponse = await generateText({
         instructions: `${baseSystemPrompt}\n\n${agent ? tipTapDocumentToMarkdown(agent.prompt) : ''}${toolCatalogSection}`,
-        tools: { ...tools, ...pausingTools },
+        tools: { ...tools, ...offeredPausingTools },
         model: registeredModel.model,
         messages: [...priorModelMessages, ...modelMessages],
         stopWhen: (step) =>

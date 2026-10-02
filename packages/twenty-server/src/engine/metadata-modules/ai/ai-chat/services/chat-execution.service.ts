@@ -47,6 +47,7 @@ import { isToolOutputSuccessful } from 'src/engine/core-modules/tool-provider/ut
 import { resolveToolName } from 'src/engine/core-modules/tool-provider/utils/resolve-tool-name.util';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentActorContextService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-actor-context.service';
+import { resolveProposedToolCall } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/resolve-proposed-tool-call.util';
 import { endsOnPausingToolCall } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/ends-on-pausing-tool-call.util';
 import { finalizeDanglingToolParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/finalize-dangling-tool-parts.util';
 import { guideUncallableToolCallsToMetaTool } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/guide-uncallable-tool-calls-to-meta-tool.util';
@@ -78,6 +79,10 @@ import {
   PROPOSE_EMAIL_TOOL_NAME,
   createProposeEmailTool,
 } from 'src/engine/metadata-modules/ai/ai-chat/tools/propose-email.tool';
+import {
+  PROPOSE_TOOL_CALL_TOOL_NAME,
+  createProposeToolCallTool,
+} from 'src/engine/metadata-modules/ai/ai-chat/tools/propose-tool-call.tool';
 import {
   REQUEST_FORM_TOOL_NAME,
   createRequestFormTool,
@@ -314,6 +319,7 @@ export class ChatExecutionService {
       ...Object.keys(nativeTools),
       ASK_QUESTIONS_TOOL_NAME,
       REQUEST_FORM_TOOL_NAME,
+      PROPOSE_TOOL_CALL_TOOL_NAME,
       ...(canProposeEmail ? [PROPOSE_EMAIL_TOOL_NAME] : []),
       ...(isWorkspaceSetupThread ? [COMPLETE_WORKSPACE_SETUP_TOOL_NAME] : []),
       ...(canAttachConversationToRecords
@@ -330,6 +336,18 @@ export class ChatExecutionService {
         isWorkspaceSetupThread,
       }),
       [REQUEST_FORM_TOOL_NAME]: createRequestFormTool(),
+      [PROPOSE_TOOL_CALL_TOOL_NAME]: createProposeToolCallTool({
+        resolveProposal: (input) =>
+          resolveProposedToolCall({
+            input,
+            findTool: async (toolName) =>
+              toolCatalog.find(
+                (toolIndexEntry) => toolIndexEntry.name === toolName,
+              ),
+            executeTool: ({ toolName, args }) =>
+              this.toolRegistry.resolveAndExecute(toolName, args, toolContext),
+          }),
+      }),
       ...(canProposeEmail
         ? { [PROPOSE_EMAIL_TOOL_NAME]: createProposeEmailTool() }
         : {}),

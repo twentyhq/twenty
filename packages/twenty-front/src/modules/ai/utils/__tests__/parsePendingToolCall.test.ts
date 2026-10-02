@@ -82,4 +82,45 @@ describe('parsePendingToolCall', () => {
   ])('ignores %s', (_description, part) => {
     expect(parsePendingToolCall(part)).toBeNull();
   });
+
+  it('reads a tool call to approve from the proposal the server resolved', () => {
+    const proposal = {
+      toolName: 'update_one_company',
+      toolLabel: 'Update Company',
+      summary: 'Fix the headcount',
+      arguments: { id: 'company-id', employees: 25 },
+      template: 'recordUpdate',
+      objectNameSingular: 'company',
+      recordId: 'company-id',
+      currentValues: { employees: 10 },
+    };
+    const part = {
+      type: 'tool-propose_tool_call',
+      toolCallId: 'call-1',
+      state: 'output-available',
+      input: {
+        toolName: proposal.toolName,
+        arguments: proposal.arguments,
+        summary: proposal.summary,
+      },
+      output: { success: true, result: { status: 'pending', proposal } },
+    } as unknown as ExtendedUIMessagePart;
+
+    expect(parsePendingToolCall(part)).toEqual({
+      toolCallId: 'call-1',
+      kind: 'toolCallApproval',
+      proposal,
+    });
+  });
+
+  it('ignores a tool call to approve without its proposal', () => {
+    expect(
+      parsePendingToolCall(
+        toolPart({
+          toolName: 'propose_tool_call',
+          input: { toolName: 'x', arguments: {}, summary: 'Do x' },
+        }),
+      ),
+    ).toBeNull();
+  });
 });

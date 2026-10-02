@@ -1,5 +1,7 @@
 import gql from 'graphql-tag';
+import { answerToolCall } from 'test/integration/graphql/suites/workflow/utils/answer-tool-call.util';
 import { runWorkflowActionStep } from 'test/integration/graphql/suites/workflow/utils/run-workflow-action-step.util';
+import { waitForWorkflowRunStepStatus } from 'test/integration/graphql/suites/workflow/utils/workflow-run-test.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { destroyAgentChatThread } from 'test/integration/utils/destroy-agent-chat-thread.util';
@@ -83,6 +85,179 @@ describe('Send chat message workflow step', () => {
       }
     }
   }, 120000);
+
+  describe('with an action to approve', () => {
+    let companyId: string;
+
+    const readEmployees = async (): Promise<number | null> => {
+      const [company] = await global.testDataSource.query(
+        `SELECT employees FROM "${SCHEMA}"."company" WHERE id = $1`,
+        [companyId],
+      );
+
+      return company?.employees ?? null;
+    };
+
+    // the step waits on the recipient, who answers the call it posted to their inbox
+    const answerPostedCall = async ({
+      workflowRunId,
+      stepId,
+      response,
+    }: {
+      workflowRunId: string;
+      stepId: string;
+      response: Record<string, unknown>;
+    }) => {
+      await waitForWorkflowRunStepStatus(workflowRunId, stepId, 'PENDING');
+
+      const [{ threadId }] = await global.testDataSource.query(
+        `SELECT state->'stepInfos'->$2->>'threadId' AS "threadId" FROM "${SCHEMA}"."workflowRun" WHERE id = $1`,
+        [workflowRunId, stepId],
+      );
+      const [part] = await global.testDataSource.query(
+        `SELECT p."toolCallId", p."toolOutput"
+         FROM "${SCHEMA}"."agentMessagePart" p
+         JOIN "${SCHEMA}"."agentMessage" m ON m.id = p."messageId"
+         WHERE m."threadId" = $1 AND p."toolName" = 'propose_tool_call'`,
+        [threadId],
+      );
+
+      expect(part.toolOutput.result).toMatchObject({
+        status: 'pending',
+        proposal: {
+          template: 'recordUpdate',
+          recordId: companyId,
+          currentValues: { employees: 10 },
+        },
+      });
+
+      const answer = await answerToolCall({
+        toolCall: { threadId, toolCallId: part.toolCallId },
+        response,
+      });
+
+      expect(answer.body.errors).toBeUndefined();
+
+      return threadId as string;
+    };
+
+    beforeEach(async () => {
+      await setSendChatMessageEnabled(true);
+
+      const response = await makeGraphqlApiRequest({
+        query: gql`
+          mutation CreateCompany($data: CompanyCreateInput!) {
+            createCompany(data: $data) {
+              id
+            }
+          }
+        `,
+        variables: {
+          data: { name: `Approval ${uuidv4()}`, employees: 10 },
+        },
+      });
+
+      companyId = response.body.data.createCompany.id;
+    });
+
+    afterEach(async () => {
+      await makeGraphqlApiRequest({
+        query: gql`
+          mutation DestroyCompany($id: UUID!) {
+            destroyCompany(id: $id) {
+              id
+            }
+          }
+        `,
+        variables: { id: companyId },
+      });
+    });
+
+    it('runs the action as the recipient approved it, then goes on', async () => {
+      let threadId: string | undefined;
+
+      const { status, stepStatus, stepResult } = await runWorkflowActionStep({
+        name: 'Approve a headcount change',
+        stepType: 'SEND_CHAT_MESSAGE',
+        input: {
+          workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+          title: 'Headcount check',
+          text: 'Raise the headcount to 25?',
+          toolCall: {
+            toolName: 'update_one_company',
+            arguments: { id: companyId, employees: 25 },
+          },
+        },
+        whileRunning: async ({ workflowRunId, stepId }) => {
+          threadId = await answerPostedCall({
+            workflowRunId,
+            stepId,
+            response: {
+              decision: 'approve',
+              arguments: { id: companyId, employees: 30 },
+            },
+          });
+        },
+      });
+
+      try {
+        expect({ status, stepStatus }).toEqual({
+          status: 'COMPLETED',
+          stepStatus: 'SUCCESS',
+        });
+        expect(stepResult).toMatchObject({
+          threadId,
+          isApproved: true,
+          status: 'approved',
+          arguments: { id: companyId, employees: 30 },
+        });
+        expect(await readEmployees()).toBe(30);
+      } finally {
+        if (threadId !== undefined) {
+          await destroyAgentChatThread({ threadId });
+        }
+      }
+    }, 120000);
+
+    it('runs nothing when the recipient rejects the action', async () => {
+      let threadId: string | undefined;
+
+      const { status, stepResult } = await runWorkflowActionStep({
+        name: 'Reject a headcount change',
+        stepType: 'SEND_CHAT_MESSAGE',
+        input: {
+          workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+          title: 'Headcount check',
+          text: 'Raise the headcount to 25?',
+          toolCall: {
+            toolName: 'update_one_company',
+            arguments: { id: companyId, employees: 25 },
+          },
+        },
+        whileRunning: async ({ workflowRunId, stepId }) => {
+          threadId = await answerPostedCall({
+            workflowRunId,
+            stepId,
+            response: { decision: 'reject', feedback: 'Wait for the audit' },
+          });
+        },
+      });
+
+      try {
+        expect(status).toBe('COMPLETED');
+        expect(stepResult).toMatchObject({
+          isApproved: false,
+          status: 'rejected',
+          feedback: 'Wait for the audit',
+        });
+        expect(await readEmployees()).toBe(10);
+      } finally {
+        if (threadId !== undefined) {
+          await destroyAgentChatThread({ threadId });
+        }
+      }
+    }, 120000);
+  });
 
   it('fails a step that runs after the feature flag is turned off', async () => {
     await setSendChatMessageEnabled(true);

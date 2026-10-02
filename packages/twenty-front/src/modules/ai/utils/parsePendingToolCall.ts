@@ -5,7 +5,9 @@ import {
   type AskQuestionItem,
   type ExtendedUIMessagePart,
   PROPOSE_EMAIL_TOOL_NAME,
+  PROPOSE_TOOL_CALL_TOOL_NAME,
   type ProposedEmail,
+  type ProposedToolCall,
   REQUEST_FORM_TOOL_NAME,
   type RequestFormField,
 } from 'twenty-shared/ai';
@@ -28,6 +30,7 @@ export const parsePendingToolCall = (
   }
 
   const { toolCallId, input } = part;
+  const { proposal } = part.output.result;
 
   switch (getToolName(part)) {
     case ASK_QUESTIONS_TOOL_NAME:
@@ -54,6 +57,17 @@ export const parsePendingToolCall = (
             toolCallId,
             kind: 'form',
             fields: input.fields as RequestFormField[],
+          }
+        : null;
+    case PROPOSE_TOOL_CALL_TOOL_NAME:
+      return isPlainObject(proposal) &&
+        isString(proposal.toolName) &&
+        isString(proposal.template) &&
+        isPlainObject(proposal.arguments)
+        ? {
+            toolCallId,
+            kind: 'toolCallApproval',
+            proposal: proposal as ProposedToolCall,
           }
         : null;
     default:

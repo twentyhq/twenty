@@ -1,5 +1,9 @@
+import { useGetToolIndex } from '@/ai/hooks/useGetToolIndex';
+import { FormRawJsonFieldInput } from '@/object-record/record-field/ui/form-types/components/FormRawJsonFieldInput';
 import { FormSingleRecordPicker } from '@/object-record/record-field/ui/form-types/components/FormSingleRecordPicker';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
+import { Select } from '@/ui/input/components/Select';
+import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { type WorkflowSendChatMessageAction } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
@@ -7,10 +11,13 @@ import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components
 import { t } from '@lingui/core/macro';
 import { useEffect, useState } from 'react';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { isDefined, isPlainObject } from 'twenty-shared/utils';
 import { useDebouncedCallback } from 'use-debounce';
 
 type SendChatMessageFormData =
   WorkflowSendChatMessageAction['settings']['input'];
+
+type SendChatMessageToolCall = NonNullable<SendChatMessageFormData['toolCall']>;
 
 type WorkflowEditActionSendChatMessageProps = {
   action: WorkflowSendChatMessageAction;
@@ -28,9 +35,13 @@ export const WorkflowEditActionSendChatMessage = ({
   action,
   actionOptions,
 }: WorkflowEditActionSendChatMessageProps) => {
+  const { toolIndex } = useGetToolIndex();
   const [formData, setFormData] = useState<SendChatMessageFormData>(
     action.settings.input,
   );
+  const [toolArgumentsError, setToolArgumentsError] = useState<
+    string | undefined
+  >(undefined);
 
   const saveAction = useDebouncedCallback(
     (nextFormData: SendChatMessageFormData) => {
@@ -55,15 +66,69 @@ export const WorkflowEditActionSendChatMessage = ({
     };
   }, [saveAction]);
 
-  const handleFieldChange = (
-    fieldName: keyof SendChatMessageFormData,
-    value: string,
-  ) => {
-    const nextFormData = { ...formData, [fieldName]: value };
-
+  const updateFormData = (nextFormData: SendChatMessageFormData) => {
     setFormData(nextFormData);
     saveAction(nextFormData);
   };
+
+  const handleFieldChange = (
+    fieldName: 'workspaceMemberId' | 'title' | 'text',
+    value: string,
+  ) => {
+    updateFormData({ ...formData, [fieldName]: value });
+  };
+
+  const handleToolCallChange = (toolCall: SendChatMessageToolCall | null) => {
+    const { toolCall: _previousToolCall, ...formDataWithoutToolCall } =
+      formData;
+
+    updateFormData(
+      isDefined(toolCall)
+        ? { ...formDataWithoutToolCall, toolCall }
+        : formDataWithoutToolCall,
+    );
+  };
+
+  const handleToolNameChange = (toolName: string) => {
+    setToolArgumentsError(undefined);
+    handleToolCallChange(
+      toolName === ''
+        ? null
+        : { toolName, arguments: formData.toolCall?.arguments ?? {} },
+    );
+  };
+
+  // variables sit inside JSON strings, so arguments are saved only once they parse
+  const handleToolArgumentsChange = (value: string | null) => {
+    const toolName = formData.toolCall?.toolName;
+
+    if (!isDefined(toolName)) {
+      return;
+    }
+
+    try {
+      const parsedArguments: unknown = JSON.parse(value ?? '{}');
+
+      if (!isPlainObject(parsedArguments)) {
+        setToolArgumentsError(t`Arguments must be a JSON object`);
+
+        return;
+      }
+
+      setToolArgumentsError(undefined);
+      handleToolCallChange({
+        toolName,
+        arguments: parsedArguments as SendChatMessageToolCall['arguments'],
+      });
+    } catch {
+      setToolArgumentsError(t`Arguments must be valid JSON`);
+    }
+  };
+
+  const toolOptions = toolIndex.map((toolIndexEntry) => ({
+    label: toolIndexEntry.label,
+    value: toolIndexEntry.name,
+  }));
 
   return (
     <>
@@ -96,6 +161,31 @@ export const WorkflowEditActionSendChatMessage = ({
           onChange={(value) => handleFieldChange('text', value)}
           VariablePicker={WorkflowVariablePicker}
         />
+        <Select
+          dropdownId={`workflow-send-chat-message-tool-${action.id}`}
+          label={t`Action to approve`}
+          fullWidth
+          disabled={actionOptions.readonly}
+          value={formData.toolCall?.toolName ?? ''}
+          emptyOption={{ label: t`None, only send the message`, value: '' }}
+          options={toolOptions}
+          onChange={handleToolNameChange}
+          withSearchInput
+          dropdownSideOffset={4}
+          dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
+        />
+        {isDefined(formData.toolCall) && (
+          <FormRawJsonFieldInput
+            key={formData.toolCall.toolName}
+            label={t`Action arguments`}
+            placeholder={t`Enter the arguments as a JSON object`}
+            defaultValue={JSON.stringify(formData.toolCall.arguments, null, 2)}
+            onChange={handleToolArgumentsChange}
+            error={toolArgumentsError}
+            readonly={actionOptions.readonly}
+            VariablePicker={WorkflowVariablePicker}
+          />
+        )}
       </WorkflowStepBody>
       {!actionOptions.readonly && <WorkflowStepFooter stepId={action.id} />}
     </>

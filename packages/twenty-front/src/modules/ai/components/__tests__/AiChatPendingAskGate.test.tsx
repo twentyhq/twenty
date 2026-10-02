@@ -32,6 +32,11 @@ jest.mock('@/ai/components/AiChatFormCard', () => ({
     </div>
   ),
 }));
+jest.mock('@/ai/components/AiChatToolCallApprovalCard', () => ({
+  AiChatToolCallApprovalCard: () => (
+    <div role="group" aria-label="Tool call approval" />
+  ),
+}));
 jest.mock('@/ai/components/AiChatEmailApprovalCard', () => ({
   AiChatEmailApprovalCard: ({ email }: { email: ProposedEmail }) => (
     <div role="group" aria-label="Email approval">

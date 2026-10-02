@@ -172,6 +172,7 @@ export class AiAgentWorkflowAction implements WorkflowAction {
             [REQUEST_FORM_TOOL_NAME]: createRequestFormTool(),
           }
         : {},
+      canProposeToolCalls: isAskingQuestionsAllowed,
       actorContext: executionContext.isActingOnBehalfOfUser
         ? executionContext.initiator
         : undefined,
