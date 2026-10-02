@@ -298,6 +298,30 @@ export const CollapseAndDrag: Story = {
   },
 };
 
+export const DragPinnedAtBound: Story = {
+  args: { defaultSize: 300 },
+  play: async ({ canvasElement, args }) => {
+    const handle = within(canvasElement).getByRole('separator');
+    const pointer = userEvent.setup();
+
+    await withMockPointerCapture({
+      handle,
+      run: async () => {
+        await pointer.pointer({
+          target: handle,
+          keys: '[MouseLeft>]',
+          coords: { x: 100, y: 10 },
+        });
+        await pointer.pointer({ target: handle, coords: { x: 160, y: 10 } });
+        await pointer.pointer({ target: handle, keys: '[/MouseLeft]' });
+        await expect(handle).toHaveAttribute('aria-valuenow', '300');
+        await expect(args.onResizeStart).toHaveBeenCalledWith(300);
+        await expect(args.onCollapse).not.toHaveBeenCalled();
+      },
+    });
+  },
+};
+
 export const CollapseMovesFocus: Story = {
   render: () => <ResizablePanelDemo side="right" min={140} max={360} />,
   play: async ({ canvasElement }) => {
