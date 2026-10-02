@@ -31,6 +31,12 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "lastActivityAt": {
         "universalIdentifier": "b3847509-8e98-4038-88de-dd891767d6fc",
       },
+      "lastMessageSenderWorkspaceMemberId": {
+        "universalIdentifier": "5c3611a7-7324-472e-9b43-4c7779e5e7cf",
+      },
+      "lastMessageText": {
+        "universalIdentifier": "1c16eaef-172b-4778-b14b-f302bc6021e4",
+      },
       "lastStreamError": {
         "universalIdentifier": "2e389238-ba5c-4951-83d4-b14f94592c5c",
       },
@@ -81,6 +87,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       },
       "workspaceMember": {
         "universalIdentifier": "6f3ed3b5-0642-4a2a-9558-98376adb60f4",
+      },
+      "writerWorkspaceMemberIds": {
+        "universalIdentifier": "c8fe2406-ad9c-4274-aeb5-9beb74d4b353",
       },
     },
     "indexes": {

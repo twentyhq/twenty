@@ -1,7 +1,7 @@
 import { Node } from '@tiptap/core';
 import { ReactNodeViewRenderer } from '@tiptap/react';
 
-import { SettingsValidationRuleFieldChip } from '@/validation-rules/components/SettingsValidationRuleFieldChip';
+import { SettingsValidationRuleFieldNodeView } from '@/validation-rules/components/SettingsValidationRuleFieldNodeView';
 import { VALIDATION_RULE_FIELD_NODE_NAME } from '@/validation-rules/constants/ValidationRuleFieldNodeName';
 
 export const ValidationRuleFieldNode = Node.create({
@@ -25,6 +25,6 @@ export const ValidationRuleFieldNode = Node.create({
   renderText: ({ node }) => String(node.attrs.path),
 
   addNodeView() {
-    return ReactNodeViewRenderer(SettingsValidationRuleFieldChip);
+    return ReactNodeViewRenderer(SettingsValidationRuleFieldNodeView);
   },
 });

@@ -5,7 +5,7 @@ import { flatObjectMetadataItemsSelector } from '@/object-metadata/states/flatOb
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getNonReadableFieldMetadataIdsFromObjectPermissions } from '@/object-metadata/utils/getNonReadableFieldMetadataIdsFromObjectPermissions';
 import { getNonUpdatableFieldMetadataIdsFromObjectPermissions } from '@/object-metadata/utils/getNonUpdatableFieldMetadataIdsFromObjectPermissions';
-import { getObjectPermissionsFromMapByObjectMetadataId } from '@/settings/roles/role-permissions/objects-permissions/utils/getObjectPermissionsFromMapByObjectMetadataId';
+import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { createAtomSelector } from '@/ui/utilities/state/jotai/utils/createAtomSelector';
 import { type ObjectPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -64,10 +64,10 @@ export const objectMetadataItemsWithFieldsSelector = createAtomSelector<
       const fields = fieldsByObjectId.get(flatObject.id) ?? [];
       const indexMetadatas = indexesByObjectId.get(flatObject.id) ?? [];
 
-      const objectPermissions = getObjectPermissionsFromMapByObjectMetadataId({
+      const objectPermissions = getObjectPermissionsForObject(
         objectPermissionsByObjectMetadataId,
-        objectMetadataId: flatObject.id,
-      });
+        flatObject.id,
+      );
 
       const nonReadableFieldMetadataIds =
         getNonReadableFieldMetadataIdsFromObjectPermissions({
