@@ -3,6 +3,7 @@ import { FIND_MANY_FRONT_COMPONENTS } from '@/front-components/graphql/queries/f
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useInsertCreatedWidgetAtContext } from '@/page-layout/hooks/useInsertCreatedWidgetAtContext';
 import { useCreateRecordPageNoteWidget } from '@/page-layout/hooks/useCreateRecordPageNoteWidget';
+import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { widgetCreationTargetTabIdComponentState } from '@/page-layout/states/widgetCreationTargetTabIdComponentState';
@@ -12,6 +13,10 @@ import { addWidgetToTab } from '@/page-layout/utils/addWidgetToTab';
 import { createDefaultFieldWidget } from '@/page-layout/utils/createDefaultFieldWidget';
 import { createDefaultFieldsWidget } from '@/page-layout/utils/createDefaultFieldsWidget';
 import { buildDraftPageLayoutWidget } from '@/page-layout/utils/buildDraftPageLayoutWidget';
+import { buildTabWidgetLayouts } from '@/page-layout/utils/buildTabWidgetLayouts';
+import { getUpdatedTabLayouts } from '@/page-layout/utils/getUpdatedTabLayouts';
+import { getWidgetGridPosition } from '@/page-layout/utils/getWidgetGridPosition';
+import { getWidgetSize } from '@/page-layout/utils/getWidgetSize';
 import { isVerticalListPosition } from '@/page-layout/utils/isVerticalListPosition';
 import { removeWidgetFromTab } from '@/page-layout/utils/removeWidgetFromTab';
 import { useFieldWidgetEligibleFields } from '@/page-layout/widgets/field/hooks/useFieldWidgetEligibleFields';
@@ -65,6 +70,11 @@ export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
 
   const pageLayoutDraftState = useAtomComponentStateCallbackState(
     pageLayoutDraftComponentState,
+    pageLayoutId,
+  );
+
+  const pageLayoutCurrentLayoutsState = useAtomComponentStateCallbackState(
+    pageLayoutCurrentLayoutsComponentState,
     pageLayoutId,
   );
 
@@ -301,6 +311,33 @@ export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
     const updatedPageLayout = store.get(pageLayoutDraftState);
     const activeTab = updatedPageLayout.tabs.find((tab) => tab.id === tabId);
     const widgetId = uuidv4();
+    const isGridTab = activeTab?.layoutMode === PageLayoutTabLayoutMode.GRID;
+    const existingGridPosition =
+      isReplaceMode && isDefined(existingWidget)
+        ? getWidgetGridPosition(existingWidget)
+        : undefined;
+    const currentTabLayouts =
+      store.get(pageLayoutCurrentLayoutsState)[tabId] ??
+      buildTabWidgetLayouts(activeTab?.widgets ?? []);
+    const gridSize = getWidgetSize(WidgetConfigurationType.FILES, 'default');
+    const gridMinimumSize = getWidgetSize(
+      WidgetConfigurationType.FILES,
+      'minimum',
+    );
+    const gridBottomRow = [
+      ...(currentTabLayouts.desktop ?? []),
+      ...(currentTabLayouts.mobile ?? []),
+    ].reduce(
+      (bottomRow, layout) => Math.max(bottomRow, layout.y + layout.h),
+      0,
+    );
+    const gridPosition = {
+      layoutMode: PageLayoutTabLayoutMode.GRID,
+      row: existingGridPosition?.row ?? gridBottomRow ?? 0,
+      column: existingGridPosition?.column ?? 0,
+      rowSpan: existingGridPosition?.rowSpan ?? gridSize.h,
+      columnSpan: existingGridPosition?.columnSpan ?? gridSize.w,
+    };
 
     const newWidget = buildDraftPageLayoutWidget({
       id: widgetId,
@@ -311,10 +348,12 @@ export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
         __typename: 'FilesConfiguration',
         configurationType: WidgetConfigurationType.FILES,
       },
-      position: {
-        layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
-        index: replacePositionIndex ?? activeTab?.widgets.length ?? 0,
-      },
+      position: isGridTab
+        ? gridPosition
+        : {
+            layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+            index: replacePositionIndex ?? activeTab?.widgets.length ?? 0,
+          },
       objectMetadataId: objectMetadataItem.id,
     });
 
@@ -323,8 +362,39 @@ export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
       tabs: addWidgetToTab(prev.tabs, tabId, newWidget),
     }));
 
+    if (isGridTab) {
+      store.set(pageLayoutCurrentLayoutsState, (prev) => {
+        const layoutsWithoutReplacedWidget = {
+          desktop: currentTabLayouts.desktop?.filter(
+            (layout) => layout.i !== existingWidget?.id,
+          ),
+          mobile: currentTabLayouts.mobile?.filter(
+            (layout) => layout.i !== existingWidget?.id,
+          ),
+        };
+
+        const newLayout = {
+          i: widgetId,
+          x: gridPosition.column,
+          y: gridPosition.row,
+          w: gridPosition.columnSpan,
+          h: gridPosition.rowSpan,
+          minW: gridMinimumSize.w,
+          minH: gridMinimumSize.h,
+        };
+
+        return getUpdatedTabLayouts(
+          { ...prev, [tabId]: layoutsWithoutReplacedWidget },
+          tabId,
+          newLayout,
+        );
+      });
+    }
+
     setPageLayoutEditingWidgetId(widgetId);
-    insertCreatedWidgetAtContext({ newWidgetId: widgetId });
+    if (!isGridTab) {
+      insertCreatedWidgetAtContext({ newWidgetId: widgetId });
+    }
     closeSidePanelMenu();
   };
 
