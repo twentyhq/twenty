@@ -27,25 +27,19 @@ describe('shouldToolPartRenderStandalone', () => {
     ).toBe(false);
   });
 
-  describe('a built-in widget', () => {
-    it('renders once the call has produced output', () => {
+  it.each([
+    'input-streaming',
+    'input-available',
+    'output-available',
+    'output-error',
+  ])(
+    'leaves a built-in records widget in the step group in the %s state',
+    (state) => {
       expect(
-        shouldToolPartRenderStandalone(
-          buildToolPart('output-available'),
-          BUILTIN_WIDGET,
-        ),
-      ).toBe(true);
-    });
-
-    it.each(['input-streaming', 'input-available', 'output-error'])(
-      'has nothing to draw in the %s state',
-      (state) => {
-        expect(
-          shouldToolPartRenderStandalone(buildToolPart(state), BUILTIN_WIDGET),
-        ).toBe(false);
-      },
-    );
-  });
+        shouldToolPartRenderStandalone(buildToolPart(state), BUILTIN_WIDGET),
+      ).toBe(false);
+    },
+  );
 
   describe('an app widget', () => {
     it.each([

@@ -41,7 +41,13 @@ const NOTE_ID = randomUUID();
 const NOTE_TARGET_ID = randomUUID();
 
 const SET_SHARE = parse(
-  `mutation SetShare($target: RecordSharingTargetInput!, $principal: RecordSharePrincipalInput!, $enabled: Boolean!, $accessLevel: RecordShareAccessLevel) { setRecordShare(target: $target, principal: $principal, enabled: $enabled, accessLevel: $accessLevel) { generalAccessLevel } }`,
+  `mutation SetShare($target: RecordTargetInput!, $principal: RecordSharePrincipalInput!, $accessLevel: RecordShareAccessLevel!) { setRecordShare(target: $target, principal: $principal, accessLevel: $accessLevel) { generalAccessLevel } }`,
+);
+const REMOVE_SHARE = parse(
+  `mutation RemoveShare($target: RecordTargetInput!, $principal: RecordSharePrincipalInput!) { removeRecordShare(target: $target, principal: $principal) { generalAccessLevel } }`,
+);
+const SET_GENERAL_ACCESS = parse(
+  `mutation SetGeneralAccess($target: RecordTargetInput!, $accessLevel: RecordShareAccessLevel!) { setRecordGeneralAccess(target: $target, accessLevel: $accessLevel) { generalAccessLevel } }`,
 );
 
 const FIND_COMPANIES = parse(
@@ -55,22 +61,19 @@ describe('A restricted record on an object open by default', () => {
   let companyObjectMetadataId: string;
   let shares: RecordShareStorageService;
 
-  const setShare = (
-    principal: { everyone: true } | { workspaceMemberId: string },
-    enabled: boolean,
-    accessLevel = RecordShareAccessLevel.READ,
+  const changeSharing = (
+    query: typeof SET_SHARE,
+    variables: Record<string, unknown>,
   ) =>
     makeMetadataApiRequest(
       {
-        query: SET_SHARE,
+        query,
         variables: {
           target: {
             objectMetadataId: companyObjectMetadataId,
             recordId: RESTRICTED_COMPANY_ID,
           },
-          principal,
-          enabled,
-          accessLevel,
+          ...variables,
         },
       },
       APPLE_JANE_ADMIN_ACCESS_TOKEN,
@@ -145,10 +148,12 @@ describe('A restricted record on an object open by default', () => {
       targetCompanyId: RESTRICTED_COMPANY_ID,
     });
 
-    const restricted = await setShare({ everyone: true }, false);
+    const restricted = await changeSharing(SET_GENERAL_ACCESS, {
+      accessLevel: RecordShareAccessLevel.NONE,
+    });
 
     expect(restricted.body.errors).toBeUndefined();
-    expect(restricted.body.data.setRecordShare.generalAccessLevel).toBe(
+    expect(restricted.body.data.setRecordGeneralAccess.generalAccessLevel).toBe(
       RecordShareAccessLevel.NONE,
     );
   });
@@ -415,10 +420,10 @@ describe('A restricted record on an object open by default', () => {
   });
 
   it('should show it on every surface once it is shared with the member', async () => {
-    const shared = await setShare(
-      { workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY },
-      true,
-    );
+    const shared = await changeSharing(SET_SHARE, {
+      principal: { workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY },
+      accessLevel: RecordShareAccessLevel.READ,
+    });
 
     expect(shared.body.errors).toBeUndefined();
     expect((await findCompanyIds(APPLE_JONY_MEMBER_ACCESS_TOKEN)).ids).toEqual(
@@ -451,10 +456,9 @@ describe('A restricted record on an object open by default', () => {
 
     expect(collectIds(notes.body.data.notes.edges)).toEqual([NOTE_ID]);
 
-    await setShare(
-      { workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY },
-      false,
-    );
+    await changeSharing(REMOVE_SHARE, {
+      principal: { workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY },
+    });
 
     expect((await findCompanyIds(APPLE_JONY_MEMBER_ACCESS_TOKEN)).ids).toEqual([
       OPEN_COMPANY_ID,

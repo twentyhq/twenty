@@ -377,5 +377,6 @@ export const NestedScopesAndPortals: Story = {
     await userEvent.click(
       canvas.getByRole('button', { name: 'Close explicit portal' }),
     );
+    await waitFor(() => expect(explicitPortal).not.toBeInTheDocument());
   },
 };
