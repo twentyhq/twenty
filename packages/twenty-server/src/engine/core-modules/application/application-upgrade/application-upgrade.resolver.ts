@@ -39,9 +39,16 @@ export class ApplicationUpgradeResolver {
   ) {}
 
   @Query(() => [ApplicationUpgradeRoleGrantDTO])
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.APPLICATIONS))
+  @UseGuards(
+    SettingsPermissionGuard(PermissionFlagType.APPLICATIONS),
+    ApplicationTargetGuard,
+  )
   async applicationUpgradeRoleGrants(
-    @Args('applicationId', { type: () => UUIDScalarType })
+    @ApplicationTargetArg(
+      'applicationId',
+      { kind: 'applicationId', requireApplicationRegistrationOwnership: false },
+      { type: () => UUIDScalarType },
+    )
     applicationId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<ApplicationUpgradeRoleGrantDTO[]> {
