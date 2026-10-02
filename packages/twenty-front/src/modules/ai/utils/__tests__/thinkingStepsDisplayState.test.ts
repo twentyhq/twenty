@@ -1,5 +1,7 @@
 import { type ExtendedUIMessagePart } from 'twenty-shared/ai';
 
+import { getActiveReasoningContent } from '@/ai/utils/getActiveReasoningContent';
+import { getLastReasoningContent } from '@/ai/utils/getLastReasoningContent';
 import { groupContiguousThinkingStepParts } from '@/ai/utils/groupContiguousThinkingStepParts';
 import { isThinkingStepPartActive } from '@/ai/utils/isThinkingStepPartActive';
 import { type ThinkingStepPart } from '@/ai/utils/thinkingStepPart';
@@ -118,6 +120,22 @@ describe('thinkingStepsDisplayState', () => {
         false,
       );
       expect(isThinkingStepPartActive(failedToolPart, true)).toBe(false);
+    });
+  });
+
+  describe('reasoning content helpers', () => {
+    const parts = [
+      createReasoningPart({ state: 'done', text: 'Initial reasoning' }),
+      createToolPart({ type: 'tool-web_search' }),
+      createReasoningPart({ state: 'streaming', text: 'Active reasoning' }),
+    ];
+
+    it('should return active reasoning content', () => {
+      expect(getActiveReasoningContent(parts)).toBe('Active reasoning');
+    });
+
+    it('should return the latest reasoning content', () => {
+      expect(getLastReasoningContent(parts)).toBe('Active reasoning');
     });
   });
 });

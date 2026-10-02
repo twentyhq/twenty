@@ -24,17 +24,13 @@ const StyledLabel = styled.span`
   line-height: ${themeCssVariables.text.lineHeight.md};
 `;
 
-type AiChatThinkingRowProps = {
-  label?: string | null;
-};
-
-export const AiChatThinkingRow = ({ label }: AiChatThinkingRowProps) => {
+export const AiChatThinkingRow = () => {
   return (
     <StyledRow>
       <StyledLoaderIconContainer>
         <ThinkingOrbitLoaderIcon />
       </StyledLoaderIconContainer>
-      <StyledLabel>{label ?? t`Thinking`}</StyledLabel>
+      <StyledLabel>{t`Thinking`}</StyledLabel>
     </StyledRow>
   );
 };

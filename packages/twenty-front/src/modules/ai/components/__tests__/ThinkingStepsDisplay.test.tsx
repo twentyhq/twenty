@@ -1,5 +1,4 @@
 import { render, screen, waitFor } from '@testing-library/react';
-import { createStore, Provider as JotaiProvider } from 'jotai';
 import userEvent from '@testing-library/user-event';
 import { ThemeProvider } from 'twenty-ui/theme';
 
@@ -27,52 +26,27 @@ jest.mock(
   }),
 );
 
-jest.mock('@/ui/layout/tab-list/components/TabList', () => {
-  const { useEffect } = jest.requireActual('react');
-  const { useAtomComponentState } = jest.requireActual(
-    '@/ui/utilities/state/jotai/hooks/useAtomComponentState',
-  );
-  const { activeTabIdComponentState } = jest.requireActual(
-    '@/ui/layout/tab-list/states/activeTabIdComponentState',
-  );
-
-  return {
-    TabList: ({
-      tabs,
-      componentInstanceId,
-    }: {
-      tabs: Array<{ id: string; title: string }>;
-      componentInstanceId: string;
-    }) => {
-      const [activeTabId, setActiveTabId] = useAtomComponentState(
-        activeTabIdComponentState,
-        componentInstanceId,
-      );
-
-      const firstTabId = tabs[0]?.id ?? null;
-
-      useEffect(() => {
-        if (activeTabId === null) {
-          setActiveTabId(firstTabId);
-        }
-      }, [activeTabId, setActiveTabId, firstTabId]);
-
-      return (
-        <div>
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              onClick={() => setActiveTabId(tab.id)}
-            >
-              {tab.title}
-            </button>
-          ))}
-        </div>
-      );
-    },
-  };
-});
+jest.mock('@/ui/layout/tab-list/components/TabList', () => ({
+  TabList: ({
+    tabs,
+    onTabChange,
+  }: {
+    tabs: Array<{ id: string; title: string }>;
+    onTabChange?: (tabId: string) => void;
+  }) => (
+    <div>
+      {tabs.map((tab) => (
+        <button
+          key={tab.id}
+          type="button"
+          onClick={() => onTabChange?.(tab.id)}
+        >
+          {tab.title}
+        </button>
+      ))}
+    </div>
+  ),
+}));
 
 jest.mock('@/ai/components/ToolRecordsWidget', () => ({
   ToolRecordsWidget: ({
@@ -134,16 +108,14 @@ const renderThinkingStepsDisplay = ({
   isTrailingWhileStreaming?: boolean;
 }) => {
   return render(
-    <JotaiProvider store={createStore()}>
-      <ThemeProvider colorScheme="light">
-        <ThinkingStepsDisplay
-          parts={parts}
-          isLastMessageStreaming={isLastMessageStreaming}
-          hasAssistantTextResponseStarted={hasAssistantTextResponseStarted}
-          isTrailingWhileStreaming={isTrailingWhileStreaming}
-        />
-      </ThemeProvider>
-    </JotaiProvider>,
+    <ThemeProvider colorScheme="light">
+      <ThinkingStepsDisplay
+        parts={parts}
+        isLastMessageStreaming={isLastMessageStreaming}
+        hasAssistantTextResponseStarted={hasAssistantTextResponseStarted}
+        isTrailingWhileStreaming={isTrailingWhileStreaming}
+      />
+    </ThemeProvider>,
   );
 };
 
@@ -250,50 +222,6 @@ describe('ThinkingStepsDisplay', () => {
     expect(screen.getByText('Completed reasoning content')).toBeInTheDocument();
   });
 
-  it('should keep the last thought visible while the next tool step runs', () => {
-    renderThinkingStepsDisplay({
-      isLastMessageStreaming: true,
-      parts: [
-        createReasoningPart({
-          state: 'done',
-          text: 'Completed reasoning content',
-        }),
-        createToolPart({ output: null, state: 'input-available' }),
-      ],
-    });
-
-    expect(
-      screen.getByText('Searching the web for crm software'),
-    ).toBeInTheDocument();
-    expect(screen.getByText('Completed reasoning content')).toBeInTheDocument();
-  });
-
-  it('should not offer to expand the thought already shown under the rows', () => {
-    renderThinkingStepsDisplay({
-      isLastMessageStreaming: true,
-      parts: [
-        createReasoningPart({
-          state: 'done',
-          text: 'Earlier reasoning content',
-        }),
-        createToolPart(),
-        createReasoningPart({
-          state: 'done',
-          text: 'Completed reasoning content',
-        }),
-      ],
-    });
-
-    const [earlierThoughtButton, latestThoughtButton] = screen.getAllByRole(
-      'button',
-      { name: 'Thought' },
-    );
-
-    expect(earlierThoughtButton).toHaveAttribute('aria-disabled', 'false');
-    expect(latestThoughtButton).toHaveAttribute('aria-disabled', 'true');
-    expect(screen.getAllByText('Completed reasoning content')).toHaveLength(1);
-  });
-
   it('should collapse done state once answer text starts while streaming', () => {
     renderThinkingStepsDisplay({
       isLastMessageStreaming: true,
@@ -314,142 +242,29 @@ describe('ThinkingStepsDisplay', () => {
     expect(screen.queryByText('Completed reasoning content')).toBeNull();
   });
 
-  it('should reveal each thought behind its own row after expanding done state', async () => {
+  it('should render rows and full reasoning content after expanding done state', async () => {
     renderThinkingStepsDisplay({
       isLastMessageStreaming: false,
       hasAssistantTextResponseStarted: true,
       parts: [
-        createReasoningPart({
-          state: 'done',
-          text: 'First reasoning content',
-        }),
         createToolPart(),
         createReasoningPart({
           state: 'done',
-          text: 'Second reasoning content',
+          text: 'Completed reasoning content',
         }),
       ],
     });
 
-    const summaryButton = screen.getByRole('button', { name: /3 steps/i });
+    const summaryButton = screen.getByRole('button', { name: /2 steps/i });
 
     await userEvent.click(summaryButton);
 
     expect(summaryButton).toHaveAttribute('aria-expanded', 'true');
+    expect(screen.getByText('Thought')).toBeInTheDocument();
+    expect(screen.getByText('Completed reasoning content')).toBeInTheDocument();
     expect(
       screen.getByText('Searched the web for crm software'),
     ).toBeInTheDocument();
-    expect(screen.queryByText('First reasoning content')).toBeNull();
-    expect(screen.queryByText('Second reasoning content')).toBeNull();
-
-    const [firstThoughtButton] = screen.getAllByRole('button', {
-      name: 'Thought',
-    });
-
-    await userEvent.click(firstThoughtButton);
-
-    expect(firstThoughtButton).toHaveAttribute('aria-expanded', 'true');
-    expect(screen.getByText('First reasoning content')).toBeInTheDocument();
-    expect(screen.queryByText('Second reasoning content')).toBeNull();
-  });
-
-  it('should label a thought with the title its summary opens with', async () => {
-    renderThinkingStepsDisplay({
-      isLastMessageStreaming: false,
-      hasAssistantTextResponseStarted: true,
-      parts: [
-        createReasoningPart({
-          state: 'done',
-          text: '**Looking up Clearstreet**\n\nI should search companies first.',
-        }),
-      ],
-    });
-
-    await userEvent.click(screen.getByRole('button', { name: /1 step/i }));
-
-    const thoughtButton = screen.getByRole('button', {
-      name: 'Looking up Clearstreet',
-    });
-
-    await userEvent.click(thoughtButton);
-
-    expect(
-      screen.getByText('I should search companies first.'),
-    ).toBeInTheDocument();
-    expect(screen.queryByText(/\*\*/)).toBeNull();
-  });
-
-  it('should not offer to expand a thought that only has a title', async () => {
-    renderThinkingStepsDisplay({
-      isLastMessageStreaming: false,
-      hasAssistantTextResponseStarted: true,
-      parts: [
-        createReasoningPart({
-          state: 'done',
-          text: '**Looking up Clearstreet**',
-        }),
-      ],
-    });
-
-    await userEvent.click(screen.getByRole('button', { name: /1 step/i }));
-
-    expect(
-      screen.getByRole('button', { name: 'Looking up Clearstreet' }),
-    ).toHaveAttribute('aria-disabled', 'true');
-  });
-
-  it('should label the live thinking row with the title of the streaming summary', () => {
-    renderThinkingStepsDisplay({
-      isLastMessageStreaming: true,
-      parts: [
-        createReasoningPart({
-          state: 'streaming',
-          text: '**Looking up Clearstreet**\n\nI should search companies first.',
-        }),
-      ],
-    });
-
-    expect(screen.getByText('Looking up Clearstreet')).toBeInTheDocument();
-    expect(
-      screen.getByText('I should search companies first.'),
-    ).toBeInTheDocument();
-    expect(screen.queryByText('Thinking')).toBeNull();
-  });
-
-  it('should show the records a tool step found when its row is expanded', async () => {
-    renderThinkingStepsDisplay({
-      isLastMessageStreaming: false,
-      hasAssistantTextResponseStarted: true,
-      parts: [
-        createToolPart({
-          type: 'tool-find_many_companies',
-          input: {},
-          output: {
-            message: 'Found 1 company record',
-            recordReferences: [
-              {
-                objectNameSingular: 'company',
-                recordId: '20202020-0000-4000-8000-000000000001',
-                displayName: 'Clearstreet',
-              },
-            ],
-          },
-        }),
-      ],
-    });
-
-    await userEvent.click(screen.getByRole('button', { name: /1 step/i }));
-
-    expect(screen.queryByText('Clearstreet')).toBeNull();
-
-    const toolButton = screen.getByRole('button', {
-      name: /find_many_companies/i,
-    });
-
-    await userEvent.click(toolButton);
-
-    expect(screen.getByRole('button', { name: 'Records' })).toBeInTheDocument();
-    expect(screen.getByText('Clearstreet')).toBeInTheDocument();
   });
 
   it('should toggle tool details and display output/input tabs', async () => {
@@ -489,5 +304,38 @@ describe('ThinkingStepsDisplay', () => {
       expect(screen.queryByRole('button', { name: 'Output' })).toBeNull();
       expect(screen.queryByRole('button', { name: 'Input' })).toBeNull();
     });
+  });
+
+  it('should show the records a tool step found when its row is expanded', async () => {
+    renderThinkingStepsDisplay({
+      isLastMessageStreaming: false,
+      hasAssistantTextResponseStarted: true,
+      parts: [
+        createToolPart({
+          type: 'tool-find_many_companies',
+          input: {},
+          output: {
+            message: 'Found 1 company record',
+            recordReferences: [
+              {
+                objectNameSingular: 'company',
+                recordId: '20202020-0000-4000-8000-000000000001',
+                displayName: 'Clearstreet',
+              },
+            ],
+          },
+        }),
+      ],
+    });
+
+    await userEvent.click(screen.getByRole('button', { name: /1 step/i }));
+
+    expect(screen.queryByText('Clearstreet')).toBeNull();
+
+    await userEvent.click(
+      screen.getByRole('button', { name: /find_many_companies/i }),
+    );
+
+    expect(screen.getByText('Clearstreet')).toBeInTheDocument();
   });
 });
