@@ -191,6 +191,38 @@ describe('convertMarkdownToBlocknoteBlocks', () => {
     ]);
   });
 
+  it('should keep quote content in source order', () => {
+    expect(convertWithoutIds('> before\n>\n> - middle\n>\n> after')).toEqual([
+      {
+        type: 'quote',
+        props: { backgroundColor: 'default', textColor: 'default' },
+        content: [text('before\nmiddle\nafter')],
+        children: [],
+      },
+    ]);
+  });
+
+  it('should turn images nested in links into image blocks', () => {
+    expect(
+      convertWithoutIds(
+        '[![logo](https://example.com/logo.png)](https://example.com)',
+      ),
+    ).toEqual([
+      {
+        type: 'image',
+        props: {
+          textAlignment: 'left',
+          backgroundColor: 'default',
+          name: 'logo',
+          url: 'https://example.com/logo.png',
+          caption: '',
+          showPreview: true,
+        },
+        children: [],
+      },
+    ]);
+  });
+
   it('should convert tables with their column alignment', () => {
     const cellProps = {
       colspan: 1,

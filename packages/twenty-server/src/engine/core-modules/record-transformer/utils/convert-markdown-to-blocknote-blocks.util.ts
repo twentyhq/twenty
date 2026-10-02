@@ -2,7 +2,7 @@ import { randomUUID } from 'crypto';
 
 import type { PartialBlock } from '@blocknote/core';
 import { Lexer, type Token, type Tokens } from 'marked';
-import { isSafeUrl } from 'twenty-shared/utils';
+import { isNonEmptyArray, isSafeUrl } from 'twenty-shared/utils';
 
 import {
   convertMarkdownInlineTokens,
@@ -40,6 +40,24 @@ const convertImage = (image: Tokens.Image): PartialBlock =>
     },
   });
 
+const getChildTokens = (token: Token): Token[] =>
+  (token as Tokens.Generic).tokens ?? [];
+
+const collectImageTokens = (token: Token): Tokens.Image[] =>
+  isImageToken(token)
+    ? [token]
+    : getChildTokens(token).flatMap(collectImageTokens);
+
+const removeImageTokens = (token: Token): Token =>
+  isNonEmptyArray(getChildTokens(token))
+    ? ({
+        ...token,
+        tokens: getChildTokens(token)
+          .filter((childToken) => !isImageToken(childToken))
+          .map(removeImageTokens),
+      } as Token)
+    : token;
+
 const convertParagraph = (tokens: Token[]): PartialBlock[] => {
   const blocks: PartialBlock[] = [];
   let pendingTokens: Token[] = [];
@@ -61,13 +79,19 @@ const convertParagraph = (tokens: Token[]): PartialBlock[] => {
   };
 
   for (const token of tokens) {
-    if (!isImageToken(token)) {
+    const imageTokens = collectImageTokens(token);
+
+    if (imageTokens.length === 0) {
       pendingTokens.push(token);
       continue;
     }
 
+    if (!isImageToken(token)) {
+      pendingTokens.push(removeImageTokens(token));
+    }
+
     flushParagraph();
-    blocks.push(convertImage(token));
+    blocks.push(...imageTokens.map(convertImage));
   }
 
   flushParagraph();
@@ -89,10 +113,10 @@ const convertListItem = (
 
   const inlineTokens = hasInlineFirstToken ? (firstToken.tokens ?? []) : [];
   const content = convertMarkdownInlineTokens(
-    inlineTokens.filter((token) => !isImageToken(token)),
+    inlineTokens.filter((token) => !isImageToken(token)).map(removeImageTokens),
   );
   const children = [
-    ...inlineTokens.filter(isImageToken).map(convertImage),
+    ...inlineTokens.flatMap(collectImageTokens).map(convertImage),
     ...convertBlockTokens(hasInlineFirstToken ? otherTokens : tokens),
   ];
 
@@ -126,6 +150,26 @@ const convertListItem = (
     children,
   });
 };
+
+const collectQuoteLines = (tokens: Token[]): Token[][] =>
+  tokens.flatMap((token): Token[][] => {
+    switch (token.type) {
+      case 'space':
+        return [];
+      case 'paragraph':
+      case 'text':
+      case 'heading':
+        return [getChildTokens(token)];
+      case 'list':
+        return token.items.flatMap((item: Tokens.ListItem) =>
+          collectQuoteLines(item.tokens),
+        );
+      case 'blockquote':
+        return collectQuoteLines(getChildTokens(token));
+      default:
+        return [[{ type: 'text', raw: token.raw, text: token.raw.trimEnd() }]];
+    }
+  });
 
 const convertTable = (table: Tokens.Table): PartialBlock => {
   const toRow = (cells: Tokens.TableCell[]) => ({
@@ -188,32 +232,20 @@ const convertBlockTokens = (tokens: Token[]): PartialBlock[] =>
         ];
       case 'hr':
         return [createBlock({ type: 'divider', props: {} })];
-      case 'blockquote': {
-        const quoteTokens = (token.tokens ?? []).filter(
-          (quoteToken) => quoteToken.type !== 'space',
-        );
-        const inlineTokens = quoteTokens.flatMap((quoteToken, index) =>
-          quoteToken.type === 'paragraph'
-            ? [
-                ...(index > 0 ? [{ type: 'br', raw: '\n' } as Tokens.Br] : []),
-                ...(quoteToken.tokens ?? []),
-              ]
-            : [],
-        );
-
+      case 'blockquote':
         return [
           createBlock({
             type: 'quote',
             props: { backgroundColor: 'default', textColor: 'default' },
-            content: convertMarkdownInlineTokens(inlineTokens),
-            children: convertBlockTokens(
-              quoteTokens.filter(
-                (quoteToken) => quoteToken.type !== 'paragraph',
+            content: convertMarkdownInlineTokens(
+              collectQuoteLines(token.tokens ?? []).flatMap((line, index) =>
+                index > 0
+                  ? [{ type: 'br', raw: '\n' } as Tokens.Br, ...line]
+                  : line,
               ),
             ),
           }),
         ];
-      }
       case 'list':
         return token.items.map((item: Tokens.ListItem, index: number) =>
           convertListItem(token as Tokens.List, item, index),
