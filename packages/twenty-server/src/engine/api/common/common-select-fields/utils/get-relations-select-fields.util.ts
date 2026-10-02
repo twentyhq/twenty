@@ -1,3 +1,4 @@
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { FieldMetadataType, ObjectsPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -74,6 +75,14 @@ export const getRelationsSelectFields = ({
 
     if (
       !objectsPermissions[relationTargetObjectMetadata.id]?.canReadObjectRecords
+    ) {
+      continue;
+    }
+
+    // Timeline history grows with every update, so expanding it per record turns one page into thousands of rows
+    if (
+      relationTargetObjectMetadata.universalIdentifier ===
+      STANDARD_OBJECTS.timelineActivity.universalIdentifier
     ) {
       continue;
     }
