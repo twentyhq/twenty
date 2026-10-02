@@ -1,4 +1,5 @@
 import { type FieldMultiSelectValue } from '@/object-record/record-field/ui/types/FieldMetadata';
+import { isKeyboardEventComposing } from '@/ui/utilities/hotkey/utils/isKeyboardEventComposing';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { createElement, useState } from 'react';
@@ -59,7 +60,7 @@ export const MultiSelectInput = ({
         onKeyDown={(event) => {
           const shouldSubmit =
             event.key === Key.Enter &&
-            !event.nativeEvent.isComposing &&
+            !isKeyboardEventComposing(event.nativeEvent) &&
             !isNonEmptyString(searchFilter) &&
             isDefined(onEnter);
 

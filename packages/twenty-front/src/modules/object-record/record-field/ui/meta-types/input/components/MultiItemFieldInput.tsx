@@ -13,6 +13,7 @@ import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotke
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
@@ -22,6 +23,7 @@ import { LightIconButton } from 'twenty-ui/components';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { IconCheck, IconPlus } from 'twenty-ui/icon';
 import { ListItem } from 'twenty-ui/primitives/navigation';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { useDebounce } from 'use-debounce';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { moveArrayItem } from '~/utils/array/moveArrayItem';
@@ -29,6 +31,10 @@ import { toSpliced } from '~/utils/array/toSpliced';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
+
+const StyledAddItemContainer = styled.div`
+  padding: ${themeCssVariables.spacing[1]};
+`;
 
 type MultiItemFieldInputProps<T> = {
   items: T[];
@@ -355,6 +361,7 @@ export const MultiItemFieldInput = <T,>({
                   : handleInputChange('');
               }}
               onEnter={handleEnter}
+              preventTabNavigation
               hasItem={isNonEmptyArray(items)}
               rightComponent={
                 isNonEmptyArray(items) ? (
@@ -368,13 +375,13 @@ export const MultiItemFieldInput = <T,>({
               }
             />
           ) : !isLimitReached ? (
-            <OverlayMenuList>
+            <StyledAddItemContainer>
               <ListItem onClick={handleAddButtonClick} startIcon={<IconPlus />}>
                 <OverflowingTextWithTooltip
                   text={newItemLabel || `Add ${placeholder}`}
                 />
               </ListItem>
-            </OverlayMenuList>
+            </StyledAddItemContainer>
           ) : null}
         </>
       }

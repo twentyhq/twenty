@@ -11,7 +11,7 @@ import { normalizeSearchText } from '~/utils/normalizeSearchText';
 type SelectInputProps = {
   onOptionSelected: (selectedOption: SelectOption) => void;
   options: SelectOption[];
-  defaultOption?: SelectOption;
+  value?: string | null;
   onClear?: () => void;
   clearLabel?: string;
   onAddSelectOption?: (optionName: string) => void;
@@ -22,16 +22,18 @@ export const SelectInput = ({
   onClear,
   clearLabel,
   options,
-  defaultOption,
+  value,
   onAddSelectOption,
 }: SelectInputProps) => {
   const [searchFilter, setSearchFilter] = useState('');
+  const trimmedSearchFilter = searchFilter.trim();
+  const isSearching = isNonEmptyString(trimmedSearchFilter);
   const searchTerm = normalizeSearchText(searchFilter);
   const filteredOptions = options.filter((option) =>
     normalizeSearchText(option.label).includes(searchTerm),
   );
   const selectedOption = filteredOptions.find(
-    (option) => option.value === defaultOption?.value,
+    (option) => option.value === value,
   );
   const optionsInDropdown = isDefined(selectedOption)
     ? [
@@ -46,11 +48,22 @@ export const SelectInput = ({
     isDefined(onClear) &&
     isNonEmptyString(clearLabel) &&
     normalizeSearchText(emptyLabel).includes(searchTerm);
-  const trimmedSearchFilter = searchFilter.trim();
   const shouldShowAddOption =
     isDefined(onAddSelectOption) &&
-    isNonEmptyString(trimmedSearchFilter) &&
+    isSearching &&
     !isNonEmptyArray(filteredOptions);
+
+  const clearOptionItem = shouldShowClearOption ? (
+    <Dropdown.OptionItem
+      onSelect={onClear}
+      selected={!isNonEmptyString(value)}
+      closeOnSelect={false}
+    >
+      <Tag color="transparent" borderStyle="dashed" variant="outline">
+        {emptyLabel}
+      </Tag>
+    </Dropdown.OptionItem>
+  ) : null;
 
   return (
     <>
@@ -62,22 +75,12 @@ export const SelectInput = ({
       />
       <Dropdown.Separator />
       <Dropdown.Section scrollable>
-        {shouldShowClearOption && (
-          <Dropdown.OptionItem
-            onSelect={onClear}
-            selected={!isDefined(defaultOption)}
-            closeOnSelect={false}
-          >
-            <Tag color="transparent" borderStyle="dashed" variant="outline">
-              {emptyLabel}
-            </Tag>
-          </Dropdown.OptionItem>
-        )}
+        {!isSearching && clearOptionItem}
         {optionsInDropdown.map((option) => (
           <Dropdown.OptionItem
             key={option.value}
             onSelect={() => onOptionSelected(option)}
-            selected={defaultOption?.value === option.value}
+            selected={option.value === value}
             closeOnSelect={false}
           >
             <Tag
@@ -92,6 +95,7 @@ export const SelectInput = ({
             </Tag>
           </Dropdown.OptionItem>
         ))}
+        {isSearching && clearOptionItem}
         {!shouldShowClearOption && !isNonEmptyArray(optionsInDropdown) && (
           <Dropdown.Empty>{t`No option found`}</Dropdown.Empty>
         )}

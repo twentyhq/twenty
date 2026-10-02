@@ -221,3 +221,23 @@ export const OutsideInputThenTab: Story = {
     });
   },
 };
+
+export const EmptyLabelUsesPlaceholderAsName: Story = {
+  args: {
+    ...Default.args,
+    label: '',
+    placeholder: 'Choose policies',
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+
+    await userEvent.click(
+      await canvas.findByRole('button', { name: 'Choose policies' }),
+    );
+
+    expect(
+      await body.findByRole('dialog', { name: 'Choose policies' }),
+    ).toBeVisible();
+  },
+};

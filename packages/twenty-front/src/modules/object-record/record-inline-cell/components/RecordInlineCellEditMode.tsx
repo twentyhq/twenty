@@ -1,5 +1,5 @@
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
-import { FieldInputAnchorContext } from '@/object-record/record-field/ui/contexts/FieldInputAnchorContext';
+import { FieldInputAnchorContextProvider } from '@/object-record/record-field/ui/contexts/FieldInputAnchorContext';
 import { getFieldInputAnchorPosition } from '@/object-record/record-field/ui/utils/getFieldInputAnchorPosition';
 import { isFieldInputRenderedAsDropdown } from '@/object-record/record-field/ui/utils/isFieldInputRenderedAsDropdown';
 import { getFloatingReferenceScale } from '@/ui/layout/overlay/utils/getFloatingReferenceScale';
@@ -121,7 +121,7 @@ export const RecordInlineCellEditMode = ({
       data-testid="inline-cell-edit-mode-container"
     >
       {isDropdownFieldInput ? (
-        <FieldInputAnchorContext.Provider
+        <FieldInputAnchorContextProvider
           value={getFieldInputAnchorPosition({
             anchorRef: refs.domReference,
             sideOffset,
@@ -131,7 +131,7 @@ export const RecordInlineCellEditMode = ({
           })}
         >
           {children}
-        </FieldInputAnchorContext.Provider>
+        </FieldInputAnchorContextProvider>
       ) : (
         createPortal(
           <StyledOverlayPortalLayer

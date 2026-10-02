@@ -1,4 +1,4 @@
-import { FieldInputAnchorContext } from '@/object-record/record-field/ui/contexts/FieldInputAnchorContext';
+import { FieldInputAnchorContextProvider } from '@/object-record/record-field/ui/contexts/FieldInputAnchorContext';
 import { getFieldInputAnchorPosition } from '@/object-record/record-field/ui/utils/getFieldInputAnchorPosition';
 import { type Decorator } from '@storybook/react-vite';
 import { useRef } from 'react';
@@ -7,7 +7,7 @@ export const FieldInputAnchorDecorator: Decorator = (Story) => {
   const anchorRef = useRef<HTMLDivElement>(null);
 
   return (
-    <FieldInputAnchorContext.Provider
+    <FieldInputAnchorContextProvider
       value={getFieldInputAnchorPosition({
         anchorRef,
         sideOffset: -33,
@@ -19,6 +19,6 @@ export const FieldInputAnchorDecorator: Decorator = (Story) => {
         <div ref={anchorRef} style={{ height: 32, width: 200 }} />
         <Story />
       </div>
-    </FieldInputAnchorContext.Provider>
+    </FieldInputAnchorContextProvider>
   );
 };

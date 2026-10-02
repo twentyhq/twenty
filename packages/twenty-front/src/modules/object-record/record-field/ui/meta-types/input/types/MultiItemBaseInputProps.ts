@@ -11,6 +11,7 @@ export type MultiItemBaseInputProps = Pick<
   onEscape?: () => void;
   onShiftTab?: () => void;
   onTab?: () => void;
+  preventTabNavigation?: boolean;
   rightComponent?: ReactNode;
   renderInput?: (
     props: Pick<

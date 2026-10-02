@@ -106,6 +106,25 @@ export const SearchThenEnter: Story = {
   },
 };
 
+export const SearchMatchingClearOptionThenEnter: Story = {
+  play: async ({ canvasElement, args }) => {
+    const body = within(canvasElement.ownerDocument.body);
+    const popup = await body.findByRole('dialog', { name: 'Status' });
+    const picker = within(popup);
+
+    await userEvent.type(picker.getByRole('searchbox'), 's');
+    expect(
+      picker.getByRole('button', { name: 'No Status' }),
+    ).toBeInTheDocument();
+    await userEvent.keyboard('{Enter}');
+
+    await waitFor(() => {
+      expect(args.onSubmit).toHaveBeenCalledWith({ newValue: 'IN_PROGRESS' });
+    });
+    expect(args.onCancel).not.toHaveBeenCalled();
+  },
+};
+
 export const OutsideInputThenEscape: Story = {
   play: async ({ canvasElement, args }) => {
     const body = within(canvasElement.ownerDocument.body);

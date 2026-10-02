@@ -1,4 +1,5 @@
 import { styled } from '@linaria/react';
+import { t } from '@lingui/core/macro';
 
 import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
 import { FormFieldInputInnerContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputInnerContainer';
@@ -12,7 +13,7 @@ import { MultiSelectInput } from '@/ui/field/input/components/MultiSelectInput';
 import { Field, type SelectOption } from 'twenty-ui/primitives/input';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { isStandaloneVariableString } from 'twenty-shared/workflow';
-import { isArray } from '@sniptt/guards';
+import { isArray, isNonEmptyString } from '@sniptt/guards';
 import { useId, useRef, useState } from 'react';
 import { Key } from 'ts-key-enum';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
@@ -21,6 +22,7 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { getDropdownTabTarget } from '@/ui/layout/dropdown/utils/getDropdownTabTarget';
+import { preventDropdownDismissOnInputElement } from '@/ui/layout/dropdown/utils/preventDropdownDismissOnInputElement';
 import { IconChevronDown } from 'twenty-ui/icon';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
@@ -163,6 +165,8 @@ export const FormMultiSelectFieldInput = ({
       : undefined;
 
   const placeholderText = placeholder ?? label;
+  const accessibleLabel =
+    [label, placeholder].find(isNonEmptyString) ?? t`Select options`;
 
   return (
     <FormFieldInputContainer data-testid={testId}>
@@ -198,11 +202,7 @@ export const FormMultiSelectFieldInput = ({
                 dropdownId={instanceId}
                 type="picker"
                 multiple
-                onInteractOutside={(event) => {
-                  if (event.target instanceof HTMLInputElement) {
-                    event.preventDefault();
-                  }
-                }}
+                onInteractOutside={preventDropdownDismissOnInputElement}
               >
                 <Dropdown.Trigger
                   ref={(element) => {
@@ -210,7 +210,7 @@ export const FormMultiSelectFieldInput = ({
                   }}
                   render={<StyledDisplayModeContainer />}
                   nativeButton={false}
-                  aria-label={label ?? placeholder}
+                  aria-label={accessibleLabel}
                 >
                   {isNonEmptyArray(selectedOptions) ? (
                     <StyledMultiSelectDisplay
@@ -252,7 +252,7 @@ export const FormMultiSelectFieldInput = ({
                   width={
                     dropdownWidth ?? GenericDropdownContentWidth.ExtraLarge
                   }
-                  aria-label={label ?? placeholder}
+                  aria-label={accessibleLabel}
                 >
                   <MultiSelectInput
                     options={options}

@@ -129,6 +129,29 @@ export const Default: Story = {
   },
 };
 
+export const TabKeepsFocusInEditor: Story = {
+  args: {
+    value: {
+      primaryEmail: 'john@example.com',
+      additionalEmails: [],
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await userEvent.click(await canvas.findByText('Add Email'));
+
+    const input = await canvas.findByPlaceholderText('Email');
+    await userEvent.type(input, 'new.email@example.com');
+
+    await userEvent.tab();
+    expect(input).toHaveFocus();
+
+    await userEvent.tab({ shift: true });
+    expect(input).toHaveFocus();
+  },
+};
+
 export const TrimInput: Story = {
   args: {
     value: {

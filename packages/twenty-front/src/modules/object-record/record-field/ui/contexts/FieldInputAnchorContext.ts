@@ -1,14 +1,7 @@
-import { createContext, type ComponentProps, type RefObject } from 'react';
-import { type Dropdown } from 'twenty-ui/components';
+import { type FieldInputAnchorPosition } from '@/object-record/record-field/ui/types/FieldInputAnchorPosition';
+import { createRequiredContext } from '~/utils/createRequiredContext';
 
-type FieldInputAnchorContextValue = Pick<
-  ComponentProps<typeof Dropdown.Content>,
-  'align' | 'sideOffset' | 'alignOffset' | 'collisionPadding'
-> & {
-  anchorRef: RefObject<Element | null>;
-};
-
-export const FieldInputAnchorContext =
-  createContext<FieldInputAnchorContextValue>({
-    anchorRef: { current: null },
-  });
+export const [
+  FieldInputAnchorContextProvider,
+  useFieldInputAnchorContextOrThrow,
+] = createRequiredContext<FieldInputAnchorPosition>('FieldInputAnchorContext');

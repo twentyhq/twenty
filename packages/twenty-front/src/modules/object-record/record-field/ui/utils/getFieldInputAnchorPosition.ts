@@ -1,12 +1,5 @@
-import { type ComponentProps, type RefObject } from 'react';
-import { type Dropdown } from 'twenty-ui/components';
-
+import { type FieldInputAnchorPosition } from '@/object-record/record-field/ui/types/FieldInputAnchorPosition';
 import { getFloatingReferenceScale } from '@/ui/layout/overlay/utils/getFloatingReferenceScale';
-
-type FieldInputAnchorPosition = Pick<
-  ComponentProps<typeof Dropdown.Content>,
-  'align' | 'sideOffset' | 'alignOffset' | 'collisionPadding'
-> & { anchorRef: RefObject<Element | null> };
 
 export const getFieldInputAnchorPosition = ({
   anchorRef,

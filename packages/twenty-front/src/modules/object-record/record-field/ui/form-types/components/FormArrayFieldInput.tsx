@@ -138,6 +138,8 @@ export const FormArrayFieldInput = ({
     dropdownId,
   );
 
+  const accessibleLabel = isNonEmptyString(label) ? label : t`Items`;
+
   const preventContainerFocusStackUpdate =
     draftValue.type === 'static' && draftValue.value.length >= 1;
 
@@ -389,7 +391,7 @@ export const FormArrayFieldInput = ({
                     <StyledDisplayModeContainer data-open={isDropdownOpen} />
                   }
                   nativeButton={false}
-                  aria-label={label ?? t`Items`}
+                  aria-label={accessibleLabel}
                 >
                   <ArrayDisplay value={draftValue.value} />
                 </Dropdown.Trigger>
@@ -397,7 +399,7 @@ export const FormArrayFieldInput = ({
                   side="bottom"
                   align="start"
                   sideOffset={parseSpacingValueAsNumber(theme.spacing[1])}
-                  aria-label={label ?? t`Items`}
+                  aria-label={accessibleLabel}
                 >
                   <Dropdown.Section scrollable>
                     {draftValue.type === 'static' &&

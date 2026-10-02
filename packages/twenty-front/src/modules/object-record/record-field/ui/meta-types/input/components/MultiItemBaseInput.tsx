@@ -83,6 +83,7 @@ export const MultiItemBaseInput = ({
   onEscape,
   onShiftTab,
   onTab,
+  preventTabNavigation = false,
   onFocus,
   onBlur,
   rightComponent,
@@ -112,6 +113,10 @@ export const MultiItemBaseInput = ({
 
     if (isKeyboardEventComposing(event.nativeEvent) || hasUnsupportedModifier) {
       return;
+    }
+
+    if (event.key === Key.Tab && preventTabNavigation) {
+      event.preventDefault();
     }
 
     const handler =
