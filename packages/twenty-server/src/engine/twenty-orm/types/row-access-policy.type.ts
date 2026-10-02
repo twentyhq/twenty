@@ -6,7 +6,6 @@ import {
   type RecordShareAccessLevel,
 } from 'twenty-shared/types';
 
-import { type RecordSharingRule } from 'src/engine/core-modules/record-share/types/record-sharing-rule.type';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -34,12 +33,6 @@ export type RowAccessExpression =
       isUncorrelated?: boolean;
     } & RecordShareExpressionTarget)
   | ({ kind: 'recordNotRestricted' } & RecordShareExpressionTarget)
-  | {
-      kind: 'sharingRule';
-      tableAlias: string;
-      workspaceId: string;
-      rule: RecordSharingRule;
-    }
   | ({
       kind: 'inheritedReadability';
       parents: InheritedReadabilityParentExpression[];

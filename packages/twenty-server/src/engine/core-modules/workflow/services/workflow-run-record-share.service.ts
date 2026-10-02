@@ -3,9 +3,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import {
-  RecordShareAccessLevel,
   RecordSharePrincipalType,
   RecordShareRowCause,
+  WorkflowVisibility,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type FindOptionsWhere, In, type Repository } from 'typeorm';
@@ -14,6 +14,7 @@ import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.
 import { RecordShareStorageService } from 'src/engine/core-modules/record-share/services/record-share-storage.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
+import { buildWorkflowRunRecordShares } from 'src/engine/core-modules/workflow/utils/build-workflow-run-record-shares.util';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
@@ -27,9 +28,12 @@ const WORKFLOW_RUN_BATCH_SIZE = 500;
 // A whole workflow's runs can take longer than the default lock lifetime.
 const CORE_WORKFLOW_LOCK_OPTIONS = { ttl: 30_000, maxRetries: 300 };
 
-// Who sees a run beyond its creator follows from its core workflow at read
-// time (WORKFLOW_RUN_OF_SHARED_WORKFLOW_SHARING_RULE); only the creator's grant
-// is stored, replaced wholesale when the workflow changes hands
+type CoreWorkflowAccess = {
+  isWorkspaceVisible: boolean;
+  creatorWorkspaceMemberId: string | null;
+};
+
+// runs carry their workflow's data, so their grants are derived from it and replaced wholesale to revoke what the old state granted
 @Injectable()
 export class WorkflowRunRecordShareService {
   constructor(
@@ -104,7 +108,7 @@ export class WorkflowRunRecordShareService {
         await this.replaceShares({
           workspaceId,
           workflowRunIds: runIds,
-          creatorWorkspaceMemberId: null,
+          access: { isWorkspaceVisible: true, creatorWorkspaceMemberId: null },
         });
         continue;
       }
@@ -115,11 +119,7 @@ export class WorkflowRunRecordShareService {
           this.replaceShares({
             workspaceId,
             workflowRunIds: runIds,
-            creatorWorkspaceMemberId:
-              await this.resolveCreatorWorkspaceMemberId({
-                workspaceId,
-                coreWorkflowId,
-              }),
+            access: await this.resolveAccess({ workspaceId, coreWorkflowId }),
           }),
       );
     }
@@ -156,21 +156,18 @@ export class WorkflowRunRecordShareService {
     await this.replaceShares({
       workspaceId,
       workflowRunIds: runs.map(({ id }) => id),
-      creatorWorkspaceMemberId: await this.resolveCreatorWorkspaceMemberId({
-        workspaceId,
-        coreWorkflowId,
-      }),
+      access: await this.resolveAccess({ workspaceId, coreWorkflowId }),
     });
   }
 
   private async replaceShares({
     workspaceId,
     workflowRunIds,
-    creatorWorkspaceMemberId,
+    access,
   }: {
     workspaceId: string;
     workflowRunIds: string[];
-    creatorWorkspaceMemberId: string | null;
+    access: CoreWorkflowAccess;
   }): Promise<void> {
     const { flatObjectMetadataMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
@@ -208,28 +205,22 @@ export class WorkflowRunRecordShareService {
                   // grant, which would otherwise let that role read a private workflow's runs
                   { ...recordScope, sourceId: In(batch) },
                   { ...recordScope, rowCause: RecordShareRowCause.APPLICATION },
-                  // the core workflow alone decides who else sees its runs
+                  // a grant to everyone means workspace-visible, which only the core workflow decides
                   {
                     ...recordScope,
                     principalType: RecordSharePrincipalType.EVERYONE,
                   },
                 ],
               });
-              if (isDefined(creatorWorkspaceMemberId)) {
-                await this.recordShareStorageService.insertMany({
-                  workspaceId,
-                  transactionScope,
-                  recordShares: batch.map((workflowRunId) => ({
-                    objectMetadataId,
-                    recordId: workflowRunId,
-                    principalId: creatorWorkspaceMemberId,
-                    principalType: RecordSharePrincipalType.WORKSPACE_MEMBER,
-                    accessLevel: RecordShareAccessLevel.FULL,
-                    rowCause: RecordShareRowCause.OWNER,
-                    sourceId: workflowRunId,
-                  })),
-                });
-              }
+              await this.recordShareStorageService.insertMany({
+                workspaceId,
+                transactionScope,
+                recordShares: buildWorkflowRunRecordShares({
+                  objectMetadataId,
+                  workflowRunIds: batch,
+                  ...access,
+                }),
+              });
             },
           ),
         buildSystemAuthContext(workspaceId),
@@ -237,30 +228,37 @@ export class WorkflowRunRecordShareService {
     }
   }
 
-  private async resolveCreatorWorkspaceMemberId({
+  private async resolveAccess({
     workspaceId,
     coreWorkflowId,
   }: {
     workspaceId: string;
     coreWorkflowId: string;
-  }): Promise<string | null> {
+  }): Promise<CoreWorkflowAccess> {
     const coreWorkflow = await this.coreWorkflowRepository.findOne(
       workspaceId,
       {
         where: { id: coreWorkflowId },
-        select: { id: true, createdByUserWorkspaceId: true },
+        select: { id: true, visibility: true, createdByUserWorkspaceId: true },
         withDeleted: true,
       },
     );
 
-    if (!isDefined(coreWorkflow?.createdByUserWorkspaceId)) {
-      return null;
+    if (!isDefined(coreWorkflow)) {
+      return { isWorkspaceVisible: true, creatorWorkspaceMemberId: null };
     }
 
-    return this.resolveWorkspaceMemberId({
-      workspaceId,
-      userWorkspaceId: coreWorkflow.createdByUserWorkspaceId,
-    });
+    return {
+      isWorkspaceVisible:
+        coreWorkflow.visibility === WorkflowVisibility.WORKSPACE ||
+        !isDefined(coreWorkflow.createdByUserWorkspaceId),
+      creatorWorkspaceMemberId: isDefined(coreWorkflow.createdByUserWorkspaceId)
+        ? await this.resolveWorkspaceMemberId({
+            workspaceId,
+            userWorkspaceId: coreWorkflow.createdByUserWorkspaceId,
+          })
+        : null,
+    };
   }
 
   private async resolveWorkspaceMemberId({

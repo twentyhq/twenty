@@ -4,12 +4,11 @@ import { EVERYONE_PRINCIPAL_ID } from 'twenty-shared/constants';
 import { FieldMetadataType, RecordShareAccessLevel } from 'twenty-shared/types';
 
 import { type RecordShareGrant } from 'src/engine/core-modules/record-share/types/record-share-grant.type';
-import { type RecordSharingRule } from 'src/engine/core-modules/record-share/types/record-sharing-rule.type';
 import {
   evaluateRowAccessPolicy,
   type RowAccessEvaluationContext,
+  type RowAccessRecord,
 } from 'src/engine/core-modules/record-share/utils/evaluate-row-access-policy.util';
-import { type RowAccessRecord } from 'src/engine/core-modules/record-share/types/row-access-record.type';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
@@ -93,7 +92,6 @@ const buildContext = (
       recordIds.includes(recordShare.recordId),
     ),
   ),
-  executeRawQuery: jest.fn(async () => []),
   resolveRecordIdsReadableThroughParents: jest.fn(
     async () => new Set<string>(),
   ),
@@ -188,42 +186,6 @@ describe('evaluateRowAccessPolicy', () => {
       objectMetadataId: flatObjectMetadata.id,
       recordIds: ['active-private', 'archived-shared'],
     });
-  });
-
-  it('admits the records a sharing rule resolves, querying through the context', async () => {
-    const executeRawQuery = jest.fn(async () => [{ id: 'active-private' }]);
-    const rule: RecordSharingRule = {
-      objectUniversalIdentifier: flatObjectMetadata.universalIdentifier,
-      principalId: EVERYONE_PRINCIPAL_ID,
-      accessLevel: RecordShareAccessLevel.READ,
-      buildCondition: () => ({ sql: 'TRUE', parameters: {} }),
-      resolveMatchingRecordIds: async ({ records, executeRawQuery }) => {
-        const matchingIds = new Set(
-          (await executeRawQuery('SELECT "id"', {})).map((row) =>
-            String(row.id),
-          ),
-        );
-
-        return new Set(
-          records
-            .filter((record) => matchingIds.has(record.id))
-            .map((record) => record.id),
-        );
-      },
-    };
-
-    expect(
-      await evaluate(
-        {
-          kind: 'sharingRule',
-          tableAlias: 'company',
-          workspaceId: 'workspace-id',
-          rule,
-        },
-        buildContext({ executeRawQuery }),
-      ),
-    ).toEqual(new Set(['active-private']));
-    expect(executeRawQuery).toHaveBeenCalledTimes(1);
   });
 
   it('asks parents only about records not shared directly', async () => {
