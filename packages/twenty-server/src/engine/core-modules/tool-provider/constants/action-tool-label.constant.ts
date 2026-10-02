@@ -15,6 +15,7 @@ export const ACTION_TOOL_IDS = [
   'save_campaign',
   'create_file_upload',
   'complete_file_upload',
+  'share_record',
 ] as const;
 
 export type ActionToolId = (typeof ACTION_TOOL_IDS)[number];
@@ -52,5 +53,8 @@ export const ACTION_TOOL_LABELS: Record<ActionToolId, ActionToolLabel> = {
   },
   complete_file_upload: {
     label: i18nLabel(msg`Complete File Upload`),
+  },
+  share_record: {
+    label: i18nLabel(msg`Share Record`),
   },
 };
