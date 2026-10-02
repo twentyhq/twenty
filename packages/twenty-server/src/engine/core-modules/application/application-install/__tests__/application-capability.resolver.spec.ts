@@ -66,7 +66,7 @@ describe('ApplicationCapabilityResolver', () => {
     update: jest.fn(),
   };
   const permissionsService = {
-    userHasWorkspaceSettingPermission: jest.fn(),
+    userHasWorkspaceSettingPermissionOrWorkspaceIsBeingCreated: jest.fn(),
   };
 
   const grantCapabilities = ({
@@ -110,7 +110,7 @@ describe('ApplicationCapabilityResolver', () => {
 
   beforeEach(() => {
     jest.resetAllMocks();
-    permissionsService.userHasWorkspaceSettingPermission.mockResolvedValue(
+    permissionsService.userHasWorkspaceSettingPermissionOrWorkspaceIsBeingCreated.mockResolvedValue(
       true,
     );
     applicationService.findOneApplicationWithRelationsOrThrow.mockResolvedValue(
@@ -141,10 +141,10 @@ describe('ApplicationCapabilityResolver', () => {
       grantedCapabilities: ['microphone', 'camera'],
     });
     expect(
-      permissionsService.userHasWorkspaceSettingPermission,
+      permissionsService.userHasWorkspaceSettingPermissionOrWorkspaceIsBeingCreated,
     ).toHaveBeenCalledWith(
       expect.objectContaining({
-        workspaceId: WORKSPACE_ID,
+        workspace: WORKSPACE,
         userWorkspaceId: USER_REQUEST.userWorkspaceId,
         setting: PermissionFlagType.APPLICATIONS,
       }),
@@ -187,7 +187,7 @@ describe('ApplicationCapabilityResolver', () => {
   });
 
   it('rejects members without the manage-apps permission', async () => {
-    permissionsService.userHasWorkspaceSettingPermission.mockResolvedValue(
+    permissionsService.userHasWorkspaceSettingPermissionOrWorkspaceIsBeingCreated.mockResolvedValue(
       false,
     );
 
