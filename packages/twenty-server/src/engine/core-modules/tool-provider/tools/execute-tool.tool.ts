@@ -40,6 +40,9 @@ export const executeToolInputSchema = jsonSchema<ExecuteToolInput>(
   },
 );
 
+// All invocations route through the registry — there is no fast path for
+// preloaded or native tools. Native tools are exposed to the model directly
+// via the top-level ToolSet passed to streamText, not through this meta-tool.
 export const createExecuteToolTool = (
   toolRegistry: ToolRegistryService,
   context: ToolContext,

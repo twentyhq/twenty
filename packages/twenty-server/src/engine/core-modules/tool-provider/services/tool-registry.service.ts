@@ -386,6 +386,7 @@ export class ToolRegistryService {
     );
   }
 
+  // MCP and the workflow agent need full schemas.
   async getToolsByCategories(
     context: ToolProviderContext,
     options: ToolRetrievalOptions = {},

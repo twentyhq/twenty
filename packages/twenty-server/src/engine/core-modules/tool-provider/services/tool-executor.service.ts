@@ -334,6 +334,7 @@ export class ToolExecutorService {
       );
     }
 
+    // Defense-in-depth: re-verify at dispatch whatever path the descriptor came from.
     if (!(await provider.isAvailable(context))) {
       return {
         success: false,
