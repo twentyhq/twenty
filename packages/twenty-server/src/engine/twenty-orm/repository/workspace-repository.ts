@@ -2277,11 +2277,17 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     }
 
     const tableAlias = this.options.tableShape.nameSingular;
+    const queryBuilder = this.buildBypassingEventSelectQueryBuilder(tableAlias)
+      .where({ id: In(recordIds) })
+      .withDeleted()
+      .select([])
+      .addSelect(`${escapeIdentifier(tableAlias)}."id"`, 'id');
     const recordAccesses = operationTypes.map((operationType, index) => ({
       operationType,
       access: this.resolveRecordAccessForOperation({
         operationType,
         tableAlias,
+        queryBuilder,
       }),
       columnAlias: `isAllowed_${index}`,
     }));
@@ -2289,12 +2295,6 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     if (recordAccesses.every(({ access }) => access === false)) {
       return allowedRecordIdsByOperationType;
     }
-
-    const queryBuilder = this.buildBypassingEventSelectQueryBuilder(tableAlias)
-      .where({ id: In(recordIds) })
-      .withDeleted()
-      .select([])
-      .addSelect(`${escapeIdentifier(tableAlias)}."id"`, 'id');
 
     for (const { access, columnAlias } of recordAccesses) {
       if (typeof access === 'boolean') {
@@ -2325,9 +2325,11 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
   private resolveRecordAccessForOperation({
     operationType,
     tableAlias,
+    queryBuilder,
   }: {
     operationType: OperationType;
     tableAlias: string;
+    queryBuilder: WorkspaceSelectQueryBuilder;
   }): boolean | SqlCondition {
     if (this.options.shouldBypassPermissionChecks) {
       return true;
@@ -2359,7 +2361,10 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
         case 'denied':
           return false;
         case 'gated':
-          return this.compileRowAccessExpression(policy.expression);
+          return this.compileRowAccessExpression({
+            expression: policy.expression,
+            queryBuilder,
+          });
         default:
           return assertUnreachable(policy);
       }
