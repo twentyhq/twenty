@@ -1,3 +1,5 @@
+import { randomUUID } from 'node:crypto';
+
 import { buildAppleWorkspaceOrigin } from 'test/integration/graphql/utils/build-apple-workspace-origin.util';
 import { getLoginTokenFromCredentialsQueryFactory } from 'test/integration/graphql/utils/get-login-token-from-credentials.query-factory.util';
 import {
@@ -24,10 +26,12 @@ const countAppleMemberships = async (userId: string): Promise<number> => {
 };
 
 describe('getLoginTokenFromCredentials with a personal invitation (integration)', () => {
-  const email = `invited-login-${Date.now()}@example.com`;
+  let email: string;
   let userId: string;
 
-  beforeAll(async () => {
+  beforeEach(async () => {
+    email = `invited-login-${randomUUID()}@example.com`;
+
     const insertedRows = await global.testDataSource.query(
       `INSERT INTO core."user" ("firstName", "lastName", "email", "passwordHash", "isEmailVerified")
        VALUES ($1, $2, $3, $4, true)
@@ -39,12 +43,12 @@ describe('getLoginTokenFromCredentials with a personal invitation (integration)'
 
     await seedWorkspaceInvitation({
       email,
-      value: `invited-login-token-${Date.now()}`,
+      value: `invited-login-token-${randomUUID()}`,
       expiresAt: new Date(Date.now() + ONE_HOUR_IN_MS),
     });
   });
 
-  afterAll(async () => {
+  afterEach(async () => {
     await deleteWorkspaceInvitationsByEmail({ email });
     await global.testDataSource.query(
       'DELETE FROM core."userWorkspace" WHERE "userId" = $1',

@@ -257,18 +257,9 @@ export class AuthService {
     }
 
     if (userData.type === 'existingUser') {
-      if (!userData.existingUser.passwordHash) {
-        throw new AuthException(
-          'Incorrect login method',
-          AuthExceptionCode.INVALID_INPUT,
-          {
-            userFriendlyMessage: msg`User was not created with email/password`,
-          },
-        );
-      }
-      await this.signInUpService.validatePassword({
+      await assertUserPasswordIsValidOrThrow({
+        user: userData.existingUser,
         password: authParams.password,
-        passwordHash: userData.existingUser.passwordHash,
       });
     }
   }
