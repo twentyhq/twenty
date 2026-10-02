@@ -9,13 +9,19 @@ import {
   makeTab,
 } from '@/page-layout/testing/pageLayoutDraftFixtures';
 import { SidePanelPageLayoutRecordPageWidgetTypeSelect } from '@/side-panel/pages/page-layout/components/SidePanelPageLayoutRecordPageWidgetTypeSelect';
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { createStore } from 'jotai';
 import { type ReactNode } from 'react';
 import { type IconComponent } from 'twenty-ui/icon';
 import type * as TwentyIcons from 'twenty-ui/icon';
+import { FieldMetadataType } from 'twenty-shared/types';
+import {
+  WidgetConfigurationType,
+  WidgetType,
+} from '~/generated-metadata/graphql';
 
 const mockNavigatePageLayoutSidePanel = jest.fn();
+const mockObjectFields = jest.fn();
 
 jest.mock('twenty-ui/icon', () => ({
   ...jest.requireActual<typeof TwentyIcons>('twenty-ui/icon'),
@@ -28,7 +34,9 @@ jest.mock('@apollo/client/react', () => ({
 }));
 
 jest.mock('@/object-metadata/hooks/useObjectMetadataItem', () => ({
-  useObjectMetadataItem: () => ({ objectMetadataItem: { id: 'company' } }),
+  useObjectMetadataItem: () => ({
+    objectMetadataItem: { id: 'note', fields: mockObjectFields() },
+  }),
 }));
 
 jest.mock(
@@ -56,7 +64,7 @@ jest.mock(
   () => ({
     usePageLayoutIdFromContextStore: () => ({
       pageLayoutId: PAGE_LAYOUT_TEST_INSTANCE_ID,
-      objectNameSingular: 'company',
+      objectNameSingular: 'note',
     }),
   }),
 );
@@ -104,7 +112,10 @@ jest.mock('@/command-menu/components/CommandMenuItem', () => ({
 }));
 
 describe('SidePanelPageLayoutRecordPageWidgetTypeSelect', () => {
-  beforeEach(() => jest.clearAllMocks());
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockObjectFields.mockReturnValue([]);
+  });
 
   it('labels standard widgets and distinguishes a fields group from a single field', () => {
     const store = createStore();
@@ -139,5 +150,57 @@ describe('SidePanelPageLayoutRecordPageWidgetTypeSelect', () => {
       screen.getByRole('img', { name: 'Fields group icon' }),
     ).toBeInTheDocument();
     expect(screen.getByRole('img', { name: 'Field icon' })).toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: 'Files' }),
+    ).not.toBeInTheDocument();
+  });
+
+  it('lets a Note with an active attachments relation restore its Files widget', () => {
+    mockObjectFields.mockReturnValue([
+      {
+        name: 'attachments',
+        type: FieldMetadataType.RELATION,
+        isActive: true,
+      },
+    ]);
+
+    const store = createStore();
+    store.set(
+      pageLayoutDraftComponentState.atomFamily({
+        instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+      }),
+      makeDraft([makeTab('tab-1', [])]),
+    );
+    store.set(
+      widgetCreationTargetTabIdComponentState.atomFamily({
+        instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+      }),
+      'tab-1',
+    );
+
+    render(
+      <PageLayoutTestWrapper store={store}>
+        <SidePanelPageLayoutRecordPageWidgetTypeSelect />
+      </PageLayoutTestWrapper>,
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: 'Files' }));
+
+    const draft = store.get(
+      pageLayoutDraftComponentState.atomFamily({
+        instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+      }),
+    );
+
+    expect(draft.tabs[0].widgets).toEqual([
+      expect.objectContaining({
+        title: 'Files',
+        type: WidgetType.FILES,
+        objectMetadataId: 'note',
+        configuration: expect.objectContaining({
+          configurationType: WidgetConfigurationType.FILES,
+        }),
+      }),
+    ]);
   });
 });

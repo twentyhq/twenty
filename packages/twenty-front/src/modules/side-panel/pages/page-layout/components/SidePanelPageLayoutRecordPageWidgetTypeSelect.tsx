@@ -11,6 +11,7 @@ import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { addWidgetToTab } from '@/page-layout/utils/addWidgetToTab';
 import { createDefaultFieldWidget } from '@/page-layout/utils/createDefaultFieldWidget';
 import { createDefaultFieldsWidget } from '@/page-layout/utils/createDefaultFieldsWidget';
+import { buildDraftPageLayoutWidget } from '@/page-layout/utils/buildDraftPageLayoutWidget';
 import { isVerticalListPosition } from '@/page-layout/utils/isVerticalListPosition';
 import { removeWidgetFromTab } from '@/page-layout/utils/removeWidgetFromTab';
 import { useFieldWidgetEligibleFields } from '@/page-layout/widgets/field/hooks/useFieldWidgetEligibleFields';
@@ -30,13 +31,14 @@ import { useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
-import { SidePanelPages } from 'twenty-shared/types';
+import { FieldMetadataType, SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
   IconApps,
   IconListDetails,
   IconListSearch,
   IconNotes,
+  IconPaperclip,
 } from 'twenty-ui/icon';
 import { v4 as uuidv4 } from 'uuid';
 import {
@@ -90,6 +92,14 @@ export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular: targetObjectNameSingular,
   });
+
+  const canAddFilesWidget = objectMetadataItem.fields.some(
+    (field) =>
+      field.name === 'attachments' &&
+      field.isActive &&
+      (field.type === FieldMetadataType.RELATION ||
+        field.type === FieldMetadataType.MORPH_RELATION),
+  );
 
   const allFieldWidgetFields = useFieldWidgetEligibleFields(
     targetObjectNameSingular,
@@ -284,6 +294,40 @@ export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
     insertCreatedWidgetAtContext({ newWidgetId: newWidget.id });
   };
 
+  const handleCreateFilesWidget = () => {
+    const replacePositionIndex = getExistingWidgetPositionIndex();
+    removeExistingWidgetIfReplacing();
+
+    const updatedPageLayout = store.get(pageLayoutDraftState);
+    const activeTab = updatedPageLayout.tabs.find((tab) => tab.id === tabId);
+    const widgetId = uuidv4();
+
+    const newWidget = buildDraftPageLayoutWidget({
+      id: widgetId,
+      pageLayoutTabId: tabId,
+      title: t`Files`,
+      type: WidgetType.FILES,
+      configuration: {
+        __typename: 'FilesConfiguration',
+        configurationType: WidgetConfigurationType.FILES,
+      },
+      position: {
+        layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+        index: replacePositionIndex ?? activeTab?.widgets.length ?? 0,
+      },
+      objectMetadataId: objectMetadataItem.id,
+    });
+
+    store.set(pageLayoutDraftState, (prev) => ({
+      ...prev,
+      tabs: addWidgetToTab(prev.tabs, tabId, newWidget),
+    }));
+
+    setPageLayoutEditingWidgetId(widgetId);
+    insertCreatedWidgetAtContext({ newWidgetId: widgetId });
+    closeSidePanelMenu();
+  };
+
   const handleCreateFrontComponentWidget = useCallback(
     (frontComponent: FrontComponent) => {
       const replacePositionIndex = getExistingWidgetPositionIndex();
@@ -347,6 +391,7 @@ export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
     'fields',
     'field',
     'note',
+    ...(canAddFilesWidget ? ['files'] : []),
     ...frontComponentsWithSelectItemId.map(({ selectItemId }) => selectItemId),
   ];
 
@@ -378,6 +423,16 @@ export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
             onClick={handleCreateNoteWidget}
           />
         </SelectableListItem>
+        {canAddFilesWidget && (
+          <SelectableListItem itemId="files" onEnter={handleCreateFilesWidget}>
+            <CommandMenuItem
+              Icon={IconPaperclip}
+              label={t`Files`}
+              id="files"
+              onClick={handleCreateFilesWidget}
+            />
+          </SelectableListItem>
+        )}
       </SidePanelGroup>
 
       {frontComponentsWithSelectItemId.length > 0 && (

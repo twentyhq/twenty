@@ -24,6 +24,18 @@ import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout
 import { validateWidgetConfigurationInput } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-widget-configuration-input.util';
 
 describe('validateWidgetConfigurationInput', () => {
+  describe('FILES widget', () => {
+    it('accepts the configuration created by the record page widget selector', () => {
+      expect(() =>
+        validateWidgetConfigurationInput({
+          configuration: {
+            configurationType: WidgetConfigurationType.FILES,
+          },
+        }),
+      ).not.toThrow();
+    });
+  });
+
   describe('EMAIL_THREAD widget', () => {
     it('should not throw for valid email thread configuration', () => {
       expect(() =>
