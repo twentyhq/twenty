@@ -9,5 +9,6 @@ export type CommonSelectedFieldsResult = {
   relations: CommonSelectedFields;
   aggregate: Record<string, AggregationField>;
   relationFieldsCount?: number;
+  relationFieldsCountUnderOneToMany?: number;
   hasAtLeastTwoNestedOneToManyRelations?: boolean;
 };

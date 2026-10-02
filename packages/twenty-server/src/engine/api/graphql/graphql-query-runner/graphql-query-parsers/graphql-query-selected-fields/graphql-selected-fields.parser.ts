@@ -24,6 +24,7 @@ export type GraphqlQuerySelectedFieldsResult = {
   // oxlint-disable-next-line typescript/no-explicit-any
   aggregate: Record<string, any>;
   relationFieldsCount: number;
+  relationFieldsCountUnderOneToMany: number;
   hasAtLeastTwoNestedOneToManyRelations: boolean;
 };
 
@@ -58,6 +59,7 @@ export class GraphqlQuerySelectedFieldsParser {
       relations: {},
       aggregate: {},
       relationFieldsCount: 0,
+      relationFieldsCountUnderOneToMany: 0,
       hasAtLeastTwoNestedOneToManyRelations: false,
     };
 

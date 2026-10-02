@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 
+import { QUERY_MAX_RECORDS_FROM_RELATION } from 'twenty-shared/constants';
 import { FieldMetadataType, type ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -20,6 +21,7 @@ import {
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
 import { buildMutationQueryBuilder } from 'src/engine/api/common/common-query-runners/utils/build-mutation-query-builder.util';
+import { computeMaxRecordCountFromSelection } from 'src/engine/api/common/common-query-runners/utils/compute-max-record-count-from-selection.util';
 import { isRecordFilterEmpty } from 'src/engine/api/common/common-query-runners/utils/is-record-filter-empty.util';
 import { CommonResultGettersService } from 'src/engine/api/common/common-result-getters/common-result-getters.service';
 import { CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
@@ -141,15 +143,11 @@ export abstract class CommonBaseQueryRunnerService<
       selectedFieldsResult,
     } as CommonExtendedInput<Args>;
 
-    const queryComplexity = this.validateQueryComplexity(
+    this.validateQueryComplexity(
       selectedFieldsResult,
       processedArgs,
       queryRunnerContext,
     );
-
-    if (isRootOperation) {
-      this.recordApiComplexityUsage(authContext, queryComplexity);
-    }
 
     const results = await this.workspaceOrmManager.executeInWorkspaceContext(
       async () =>
@@ -160,6 +158,13 @@ export abstract class CommonBaseQueryRunnerService<
         ),
       authContext,
     );
+
+    if (isRootOperation) {
+      this.recordApiComplexityUsage(
+        authContext,
+        this.computeMaxRecordCount(processedArgs, results),
+      );
+    }
 
     return {
       results,
@@ -200,6 +205,17 @@ export abstract class CommonBaseQueryRunnerService<
       simpleFieldsComplexity + (selectedFieldsResult.relationFieldsCount ?? 0);
 
     return selectedFieldsComplexity;
+  }
+
+  protected computeMaxRecordCount(
+    args: CommonExtendedInput<Args>,
+    _results: Output,
+  ): number {
+    return computeMaxRecordCountFromSelection({
+      rootRecordCount: 1,
+      selectedFieldsResult: args.selectedFieldsResult,
+      recordLimitPerOneToManyRelation: QUERY_MAX_RECORDS_FROM_RELATION,
+    });
   }
 
   private async processArgs(
@@ -488,7 +504,7 @@ export abstract class CommonBaseQueryRunnerService<
 
   private recordApiComplexityUsage(
     authContext: WorkspaceAuthContext,
-    queryComplexity: number,
+    maxRecordCount: number,
   ) {
     const apiType = getApiType();
 
@@ -499,7 +515,7 @@ export abstract class CommonBaseQueryRunnerService<
     this.usageRecorderService.accumulate(authContext.workspace.id, {
       resourceType: UsageResourceType.API,
       operationType: UsageOperationType.API_REQUEST,
-      quantity: queryComplexity,
+      quantity: maxRecordCount,
       unit: UsageUnit.COMPLEXITY,
       resourceContext: apiType,
       spenders: buildUsageSpendersFromAuthContext(authContext),
@@ -563,7 +579,7 @@ export abstract class CommonBaseQueryRunnerService<
     selectedFieldsResult: CommonSelectedFieldsResult,
     args: CommonExtendedInput<Args>,
     queryRunnerContext: CommonBaseQueryRunnerContext,
-  ): number {
+  ): void {
     const maximumComplexity = this.twentyConfigService.get(
       'COMMON_QUERY_COMPLEXITY_LIMIT',
     );
@@ -593,7 +609,5 @@ export abstract class CommonBaseQueryRunnerService<
         },
       );
     }
-
-    return queryComplexity;
   }
 }

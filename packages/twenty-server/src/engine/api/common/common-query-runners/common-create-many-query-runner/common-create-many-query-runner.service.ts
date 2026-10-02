@@ -27,6 +27,7 @@ import {
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
+import { computeMaxRecordCountFromSelection } from 'src/engine/api/common/common-query-runners/utils/compute-max-record-count-from-selection.util';
 import { CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
 import { CommonExtendedQueryRunnerContext } from 'src/engine/api/common/types/common-extended-query-runner-context.type';
 import {
@@ -828,5 +829,15 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     }
 
     return recordWithoutCreatedByUpdate;
+  }
+
+  protected override computeMaxRecordCount(
+    args: CommonExtendedInput<CreateManyQueryArgs>,
+  ): number {
+    return computeMaxRecordCountFromSelection({
+      rootRecordCount: args.data.length,
+      selectedFieldsResult: args.selectedFieldsResult,
+      recordLimitPerOneToManyRelation: QUERY_MAX_RECORDS,
+    });
   }
 }
