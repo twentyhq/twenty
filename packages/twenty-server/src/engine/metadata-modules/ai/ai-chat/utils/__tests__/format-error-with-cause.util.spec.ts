@@ -13,6 +13,16 @@ describe('formatErrorWithCause', () => {
     );
   });
 
+  it('shows a cause the AI SDK sets as a plain string', () => {
+    const error = Object.assign(new Error('Type validation failed'), {
+      cause: 'value must be a string in the enum',
+    });
+
+    expect(formatErrorWithCause(error)).toBe(
+      'Error: Type validation failed <- value must be a string in the enum',
+    );
+  });
+
   it('formats an error without a cause', () => {
     expect(formatErrorWithCause(new Error('Provider timed out'))).toBe(
       'Error: Provider timed out',

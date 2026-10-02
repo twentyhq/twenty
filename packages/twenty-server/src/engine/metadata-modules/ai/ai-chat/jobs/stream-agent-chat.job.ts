@@ -188,7 +188,7 @@ export class StreamAgentChatJob {
       );
     } catch (error) {
       this.logger.error(
-        `[AI_CHAT_TURN_FAILED] failurePhase=execution, model=${turnModelId}, threadId=${data.threadId}, workspaceId=${data.workspaceId}: ${formatErrorWithCause(error)}`,
+        `[AI_CHAT_TURN_FAILED] failurePhase=execution, model=${turnModelId}, threadId=${data.threadId}, workspaceId=${data.workspaceId}, streamId=${data.streamId}: ${formatErrorWithCause(error)}`,
       );
       const streamError = mapErrorToStreamError(error);
 
