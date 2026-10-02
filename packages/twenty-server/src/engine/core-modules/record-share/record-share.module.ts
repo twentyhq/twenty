@@ -4,9 +4,7 @@ import { ObjectAccessOverviewResolver } from 'src/engine/core-modules/record-sha
 import { RecordSharingResolver } from 'src/engine/core-modules/record-share/resolvers/record-sharing.resolver';
 import { RecordSharingService } from 'src/engine/core-modules/record-share/services/record-sharing.service';
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { ObjectAccessOverviewService } from 'src/engine/core-modules/record-share/services/object-access-overview.service';
 import { RecordAccessPolicyService } from 'src/engine/core-modules/record-share/services/record-access-policy.service';
 import { RecordSharePrincipalService } from 'src/engine/core-modules/record-share/services/record-share-principal.service';
@@ -24,7 +22,6 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     RecordShareStorageModule,
     PermissionsModule,
     RecordPermissionsModule,
-    TypeOrmModule.forFeature([UserWorkspaceEntity]),
   ],
   providers: [
     ShareWithService,
