@@ -94,11 +94,11 @@ export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await expect(
-      await canvas.findByRole('progressbar', {
-        name: /used by Production key$/,
-      }),
-    ).toHaveAttribute('aria-valuenow', '98');
+    const [logicFunctionRunsRing] = await canvas.findAllByRole('progressbar', {
+      name: /used by Enrich company$/,
+    });
+
+    await expect(logicFunctionRunsRing).toHaveAttribute('aria-valuenow', '98');
 
     await userEvent.hover(await canvas.findByText('Deactivated'));
 

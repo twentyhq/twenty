@@ -32,7 +32,9 @@ export const useUsageLimitFormatter = () => {
     }
 
     if (unit === UsageUnit.MILLISECOND) {
-      return formatUsageLimitDuration(value);
+      return formatUsageLimitDuration(value, (amount) =>
+        formatNumber(amount, { decimals: 1 }),
+      );
     }
 
     if (unit === UsageUnit.BYTE) {

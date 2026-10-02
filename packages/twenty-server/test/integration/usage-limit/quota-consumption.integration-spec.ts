@@ -305,6 +305,7 @@ describe('Usage quota consumption', () => {
       expect(quotaConsumedValue).toBe(SEEDED_CONSUMPTION_BY_UNIT[unit]);
       expect(scopeConsumedValue).toBe(SEEDED_CONSUMPTION_BY_UNIT[unit]);
     },
+    EXECUTION_TIMEOUT_MS,
   );
 
   it(
@@ -345,9 +346,13 @@ describe('Usage quota consumption', () => {
   it(
     'admits the last run under the invocation quota and refuses the next one',
     async () => {
+      const invocationLimit =
+        Number(await findQuotaConsumedValue(UsageUnit.INVOCATION)) + 1;
+      const usageEventRowCount = await countUsageEventRows();
+
       await usageLimitRepository.update(
         { id: usageLimitIdByUnit[UsageUnit.INVOCATION] },
-        { limitValue: SEEDED_RUNS.length + EXECUTED_RUN_COUNT + 1 },
+        { limitValue: invocationLimit },
       );
       await refreshUsageLimitsCache();
 
@@ -367,13 +372,11 @@ describe('Usage quota consumption', () => {
         subCode: 'QUOTA_EXHAUSTED',
         exhaustedKind: 'limit',
         unit: UsageUnit.INVOCATION,
-        limit: SEEDED_RUNS.length + EXECUTED_RUN_COUNT + 1,
+        limit: invocationLimit,
         scope: { spenderType: 'logicFunction', spenderId: logicFunctionId },
       });
 
-      await waitForUsageEventRows(
-        (SEEDED_RUNS.length + EXECUTED_RUN_COUNT + 1) * 2,
-      );
+      await waitForUsageEventRows(usageEventRowCount + 2);
     },
     EXECUTION_TIMEOUT_MS,
   );

@@ -39,7 +39,7 @@ export const buildCreateUsageLimitInput = (
 
   const scaledLimitValue = Math.round(limitValue * scale);
 
-  if (scaledLimitValue < 1) {
+  if (!Number.isSafeInteger(scaledLimitValue) || scaledLimitValue < 1) {
     return null;
   }
 
