@@ -281,6 +281,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: true,
       universalProperty: undefined,
     },
+    sharingReach: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
     isUICreatable: {
       toCompare: true,
       toStringify: false,

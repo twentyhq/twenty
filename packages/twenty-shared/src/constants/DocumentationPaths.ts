@@ -135,6 +135,7 @@ export const DOCUMENTATION_PATHS = {
   UI_COMPONENTS_CODE_EDITOR: '/ui/components/code-editor',
   UI_COMPONENTS_COMMAND_BLOCK: '/ui/components/command-block',
   UI_COMPONENTS_DROPDOWN: '/ui/components/dropdown',
+  UI_COMPONENTS_IMAGE_INPUT: '/ui/components/image-input',
   UI_COMPONENTS_INLINE_BANNER: '/ui/components/inline-banner',
   UI_COMPONENTS_INPUT_ICON_BUTTON: '/ui/components/input/icon-button',
   UI_COMPONENTS_INPUT_LIGHT_BUTTON: '/ui/components/input/light-button',
@@ -175,6 +176,7 @@ export const DOCUMENTATION_PATHS = {
   UI_PRIMITIVES_INPUT_FIELD: '/ui/primitives/input/field',
   UI_PRIMITIVES_INPUT_INPUT: '/ui/primitives/input/input',
   UI_PRIMITIVES_INPUT_INPUT_GROUP: '/ui/primitives/input/input-group',
+  UI_PRIMITIVES_INPUT_NUMBER_STEPPER: '/ui/primitives/input/number-stepper',
   UI_PRIMITIVES_INPUT_RADIO: '/ui/primitives/input/radio',
   UI_PRIMITIVES_INPUT_RADIO_GROUP: '/ui/primitives/input/radio-group',
   UI_PRIMITIVES_INPUT_SEGMENTED_CONTROL:
