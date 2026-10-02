@@ -9,8 +9,10 @@ import {
   type SpreadsheetMatchedSelectOptionsColumn,
 } from '@/spreadsheet-import/types/SpreadsheetColumn';
 import { type SpreadsheetMatchedOptions } from '@/spreadsheet-import/types/SpreadsheetMatchedOptions';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
+import { useLingui } from '@lingui/react/macro';
+import { Dropdown } from 'twenty-ui/components';
 import { styled } from '@linaria/react';
 import { type SelectOption } from 'twenty-ui/primitives/input';
 
@@ -18,7 +20,7 @@ const StyledDropdownContainer = styled.div`
   width: 100%;
 `;
 
-interface SubMatchingSelectRowRightDropdownProps {
+type SubMatchingSelectRowRightDropdownProps = {
   option: SpreadsheetMatchedOptions | Partial<SpreadsheetMatchedOptions>;
   column:
     | SpreadsheetMatchedSelectColumn
@@ -28,7 +30,7 @@ interface SubMatchingSelectRowRightDropdownProps {
   selectedOption?:
     | SpreadsheetMatchedOptions
     | Partial<SpreadsheetMatchedOptions>;
-}
+};
 
 export const SubMatchingSelectRowRightDropdown = ({
   option,
@@ -36,40 +38,39 @@ export const SubMatchingSelectRowRightDropdown = ({
   onSubChange,
   placeholder,
 }: SubMatchingSelectRowRightDropdownProps) => {
-  const dropdownId = `sub-matching-select-dropdown-${option.entry}`;
+  const entry = option.entry ?? '';
+  const dropdownId = `sub-matching-select-dropdown-${column.index}-${entry}`;
 
-  const { closeDropdown } = useCloseDropdown();
+  const { t } = useLingui();
 
   const { spreadsheetImportFields: fields } = useSpreadsheetImportInternal();
-  const options = getFieldOptions(fields, column.value) as SelectOption[];
-  const value = options.find((opt) => opt.value === option.value);
+  const options = getFieldOptions(fields, column.value);
+  const value = options.find(
+    (fieldOption) => fieldOption.value === option.value,
+  );
 
   const handleSelect = (selectedOption: SelectOption) => {
-    onSubChange(selectedOption.value, column.index, option.entry ?? '');
-    closeDropdown(dropdownId);
+    onSubChange(selectedOption.value, column.index, entry);
   };
 
   return (
     <StyledDropdownContainer>
-      <Dropdown
-        dropdownId={dropdownId}
-        dropdownPlacement="bottom-start"
-        clickableComponent={
+      <DropdownRoot dropdownId={dropdownId} type="picker">
+        <Dropdown.Trigger render={<div />} nativeButton={false}>
           <SubMatchingSelectDropdownButton
             column={column}
             option={option}
             placeholder={placeholder}
           />
-        }
-        dropdownComponents={
+        </Dropdown.Trigger>
+        <DropdownContent align="start" aria-label={t`Match ${entry}`}>
           <SubMatchingSelectInput
-            defaultOption={value}
+            selectedOption={value}
             options={options}
             onOptionSelected={handleSelect}
           />
-        }
-        isDropdownInModal
-      />
+        </DropdownContent>
+      </DropdownRoot>
     </StyledDropdownContainer>
   );
 };

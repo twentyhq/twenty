@@ -200,7 +200,7 @@ export const FormAdvancedTextFieldInput = ({
         ? focusedHtmlEditor
         : editor;
 
-    variableTargetEditor.commands.insertVariableTag(variableName);
+    variableTargetEditor.chain().focus().insertVariableTag(variableName).run();
   };
 
   const defaultBreadcrumbs: BreadcrumbProps['links'] = [
