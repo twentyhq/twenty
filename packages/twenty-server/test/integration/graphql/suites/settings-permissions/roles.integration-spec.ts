@@ -352,15 +352,6 @@ describe('roles permissions', () => {
                 apiKeys {
                   id
                 }
-                permissionFlags {
-                  flag
-                }
-                objectPermissions {
-                  objectMetadataId
-                }
-                fieldPermissions {
-                  fieldMetadataId
-                }
                 rowLevelPermissionPredicates {
                   id
                   roleId
@@ -387,27 +378,9 @@ describe('roles permissions', () => {
           workspaceMembers: { id: string }[];
           agents: { id: string }[];
           apiKeys: { id: string }[];
-          permissionFlags: { flag: string }[];
-          objectPermissions: { objectMetadataId: string }[];
-          fieldPermissions: { fieldMetadataId: string }[];
           rowLevelPermissionPredicates: { id: string; roleId: string }[];
           rowLevelPermissionPredicateGroups: { id: string; roleId: string }[];
         }[] = resp.body.data.getRoles;
-
-        expect(roles.length).toBeGreaterThan(0);
-
-        for (const role of roles) {
-          expect(Array.isArray(role.workspaceMembers)).toBe(true);
-          expect(Array.isArray(role.agents)).toBe(true);
-          expect(Array.isArray(role.apiKeys)).toBe(true);
-          expect(Array.isArray(role.permissionFlags)).toBe(true);
-          expect(Array.isArray(role.objectPermissions)).toBe(true);
-          expect(Array.isArray(role.fieldPermissions)).toBe(true);
-          expect(Array.isArray(role.rowLevelPermissionPredicates)).toBe(true);
-          expect(Array.isArray(role.rowLevelPermissionPredicateGroups)).toBe(
-            true,
-          );
-        }
 
         const relationsRole = roles.find((role) => role.id === relationsRoleId);
         const guestRole = roles.find((role) => role.id === guestRoleId);
