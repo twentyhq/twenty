@@ -11,6 +11,7 @@ import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/uti
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
 import { RecordCreationFormProvider } from '@/object-record/record-form/components/RecordCreationFormProvider';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
+import { useIsObjectReadOnly } from '@/object-record/read-only/hooks/useIsObjectReadOnly';
 import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
 import { RecordIndexContextProvider } from '@/object-record/record-index/contexts/RecordIndexContext';
@@ -106,6 +107,7 @@ const InternalTableContextProviders = ({
 }) => {
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
+  const isObjectReadOnly = useIsObjectReadOnly(objectMetadataItem.id);
 
   const currentRecordFields = useAtomComponentStateValue(
     currentRecordFieldsComponentState,
@@ -182,6 +184,7 @@ const InternalTableContextProviders = ({
             objectPermissionsByObjectMetadataId,
             objectMetadataItem.id,
           ),
+          isObjectReadOnly,
           visibleRecordFields,
           onRecordIdentifierClick: () => {},
           triggerEvent,

@@ -1,13 +1,11 @@
-import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { fieldMetadataItemsSelector } from '@/metadata-store/states/fieldMetadataItemsSelector';
 import { indexMetadataItemsSelector } from '@/metadata-store/states/indexMetadataItemsSelector';
 import { flatObjectMetadataItemsSelector } from '@/object-metadata/states/flatObjectMetadataItemsSelector';
+import { objectPermissionsByObjectMetadataIdSelector } from '@/object-metadata/states/objectPermissionsByObjectMetadataIdSelector';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { getNonReadableFieldMetadataIdsFromObjectPermissions } from '@/object-metadata/utils/getNonReadableFieldMetadataIdsFromObjectPermissions';
-import { getNonUpdatableFieldMetadataIdsFromObjectPermissions } from '@/object-metadata/utils/getNonUpdatableFieldMetadataIdsFromObjectPermissions';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
+import { getPermittedFields } from '@/object-metadata/utils/getPermittedFields';
 import { createAtomSelector } from '@/ui/utilities/state/jotai/utils/createAtomSelector';
-import { type ObjectPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 export const objectMetadataItemsWithFieldsSelector = createAtomSelector<
@@ -18,7 +16,9 @@ export const objectMetadataItemsWithFieldsSelector = createAtomSelector<
     const flatObjects = get(flatObjectMetadataItemsSelector);
     const allFlatFields = get(fieldMetadataItemsSelector);
     const allFlatIndexes = get(indexMetadataItemsSelector);
-    const currentUserWorkspace = get(currentUserWorkspaceState);
+    const objectPermissionsByObjectMetadataId = get(
+      objectPermissionsByObjectMetadataIdSelector,
+    );
 
     const fieldsByObjectId = new Map<
       string,
@@ -50,46 +50,22 @@ export const objectMetadataItemsWithFieldsSelector = createAtomSelector<
       }
     }
 
-    const objectPermissionsByObjectMetadataId =
-      currentUserWorkspace?.objectsPermissions.reduce(
-        (accumulator, objectPermission) => {
-          accumulator[objectPermission.objectMetadataId] = objectPermission;
-
-          return accumulator;
-        },
-        {} as Record<string, ObjectPermissions & { objectMetadataId: string }>,
-      ) ?? {};
-
     return flatObjects.map((flatObject) => {
       const fields = fieldsByObjectId.get(flatObject.id) ?? [];
       const indexMetadatas = indexesByObjectId.get(flatObject.id) ?? [];
-
-      const objectPermissions = getObjectPermissionsForObject(
-        objectPermissionsByObjectMetadataId,
-        flatObject.id,
-      );
-
-      const nonReadableFieldMetadataIds =
-        getNonReadableFieldMetadataIdsFromObjectPermissions({
-          objectPermissions,
-        });
-
-      const nonUpdatableFieldMetadataIds =
-        getNonUpdatableFieldMetadataIdsFromObjectPermissions({
-          objectPermissions,
-        });
 
       return {
         ...flatObject,
         fields,
         indexMetadatas,
         searchFieldMetadatas: flatObject.searchFieldMetadatas ?? [],
-        readableFields: fields.filter(
-          (field) => !nonReadableFieldMetadataIds.includes(field.id),
-        ),
-        updatableFields: fields.filter(
-          (field) => !nonUpdatableFieldMetadataIds.includes(field.id),
-        ),
+        ...getPermittedFields({
+          fields,
+          objectPermissions: getObjectPermissionsForObject(
+            objectPermissionsByObjectMetadataId,
+            flatObject.id,
+          ),
+        }),
       } satisfies EnrichedObjectMetadataItem;
     });
   },
