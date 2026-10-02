@@ -11,6 +11,7 @@ import { isDefined } from '@ui/utilities/utils/isDefined';
 import { normalizeSearchText } from '@ui/utilities/utils/normalizeSearchText';
 
 import styles from './CountrySelect.module.scss';
+import { CountrySelectAvailabilityEffect } from './internal/CountrySelectAvailabilityEffect';
 import { type CountrySelectProps } from './types/CountrySelectProps';
 
 export const CountrySelect = ({
@@ -32,7 +33,8 @@ export const CountrySelect = ({
   const triggerId = id ?? generatedId;
   const [uncontrolledOpen, setUncontrolledOpen] = useState(false);
   const isDisabled = disabled || !isNonEmptyArray(countries);
-  const open = !isDisabled && (controlledOpen ?? uncontrolledOpen);
+  const requestedOpen = controlledOpen ?? uncontrolledOpen;
+  const open = !isDisabled && requestedOpen;
   const [previousOpen, setPreviousOpen] = useState(open);
   const [search, setSearch] = useState('');
 
@@ -64,6 +66,11 @@ export const CountrySelect = ({
 
   return (
     <div className={styles.root}>
+      <CountrySelectAvailabilityEffect
+        disabled={isDisabled}
+        open={requestedOpen}
+        onOpenChange={handleOpenChange}
+      />
       {isNonEmptyString(label) && (
         <label className={styles.label} htmlFor={triggerId}>
           {label}

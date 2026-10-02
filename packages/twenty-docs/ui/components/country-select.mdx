@@ -61,7 +61,7 @@ The picker handles pointer selection, keyboard movement, selected-option present
 
 Provide a visible `label`, or use `aria-label` or `aria-labelledby` on the trigger. The required `labels` object supplies the search input's accessible name, no-country text, and empty-result text. Native trigger attributes, event handlers, `className`, `style`, and `ref` apply to its button.
 
-`disabled` prevents opening and selection. A picker with no supplied countries is disabled as well.
+`disabled` prevents opening and selection. A picker with no supplied countries is disabled as well. If either condition occurs while the popup is open, it closes and reports `onOpenChange(false)`. Enabling the picker again does not reopen it automatically.
 
 ## Host integration
 
