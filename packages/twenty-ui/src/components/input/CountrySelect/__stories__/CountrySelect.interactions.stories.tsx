@@ -296,6 +296,55 @@ export const DisabledAndUnavailable: Story = {
   },
 };
 
+export const DisabledSkipsTriggerHandlers: Story = {
+  args: {
+    disabled: true,
+    onClick: fn(),
+    onPointerDown: fn(),
+    onKeyDown: fn(),
+  },
+  play: async ({ canvasElement, args }) => {
+    const trigger = within(canvasElement).getByRole('button', {
+      name: 'Country',
+    });
+
+    await userEvent.tab();
+    expect(trigger).toHaveFocus();
+    await userEvent.keyboard('{Shift}');
+    await userEvent.click(trigger);
+
+    expect(trigger).toHaveAttribute('aria-expanded', 'false');
+    expect(args.onKeyDown).not.toHaveBeenCalled();
+    expect(args.onPointerDown).not.toHaveBeenCalled();
+    expect(args.onClick).not.toHaveBeenCalled();
+  },
+};
+
+export const EnabledRunsTriggerHandlers: Story = {
+  args: {
+    onClick: fn(),
+    onPointerDown: fn(),
+    onKeyDown: fn(),
+  },
+  play: async ({ canvasElement, args }) => {
+    const trigger = within(canvasElement).getByRole('button', {
+      name: 'Country',
+    });
+
+    await userEvent.tab();
+    expect(trigger).toHaveFocus();
+    await userEvent.keyboard('{Shift}');
+    await userEvent.click(trigger);
+    const popup = await waitForCountryPopup({ canvasElement });
+
+    expect(args.onKeyDown).toHaveBeenCalledTimes(1);
+    expect(args.onPointerDown).toHaveBeenCalledTimes(1);
+    expect(args.onClick).toHaveBeenCalledTimes(1);
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() => expect(popup).not.toBeInTheDocument());
+  },
+};
+
 export const IndependentInstances: Story = {
   render: () => (
     <>
